@@ -53,7 +53,6 @@
 
 #ifdef S60_DEVVIDEO_RECORDING_SUPPORTED
 #include <mmf/devvideo/devvideorecord.h>
-#include <mmf/devvideo/devvideobase.h>
 #endif
 
 #ifdef USE_SYMBIAN_VIDEOENUMS
@@ -64,17 +63,24 @@ S60VideoCaptureSession::S60VideoCaptureSession(QObject *parent) :
     QObject(parent),
     m_cameraEngine(NULL),
     m_videoRecorder(NULL),
-    m_videoQuality(QtMultimediaKit::NormalQuality * KSymbianImageQualityCoefficient),   // Default video quality
-    m_error(NoError),
+    m_error(KErrNone),
     m_captureState(ENotInitialized),    // Default state
-    m_videoControllerMap(QHash<QString, VideoControllerData>()),
-    m_videoCodecData(QHash<QString, QList<TSupportedFrameRatePictureSize> >()),
+    m_sink(QUrl()),
+    m_requestedSink(QUrl()),
+    m_videoQuality(QtMultimediaKit::VeryHighQuality * KSymbianImageQualityCoefficient),   // Default video quality
+    m_container(QString()),
+    m_requestedContainer(QString()),
     m_muted(false),
-    m_startAfterPrepareComplete(false),
+    m_maxClipSize(-1),
+    m_videoControllerMap(QHash<int, QHash<int,VideoFormatData> >()),
+    m_videoParametersForEncoder(QList<MaxResolutionRatesAndTypes>()),
+    m_openWhenInitialized(false),
     m_prepareAfterOpenComplete(false),
-    m_maxClipSize(-1)
+    m_startAfterPrepareComplete(false),
+    m_uncommittedSettings(false)
 {
 #ifdef S60_DEVVIDEO_RECORDING_SUPPORTED
+    // Populate info of supported codecs, and their resolution, etc.
     TRAPD(err, doPopulateVideoCodecsDataL());
     setError(err);
 #endif // S60_DEVVIDEO_RECORDING_SUPPORTED
@@ -82,6 +88,14 @@ S60VideoCaptureSession::S60VideoCaptureSession(QObject *parent) :
 
 S60VideoCaptureSession::~S60VideoCaptureSession()
 {
+    if (m_captureState >= ERecording) {
+        m_videoRecorder->Stop();
+    }
+
+    if (m_captureState >= EInitialized) {
+        m_videoRecorder->Close();
+    }
+
     if (m_videoRecorder) {
         delete m_videoRecorder;
         m_videoRecorder = NULL;
@@ -96,6 +110,12 @@ void S60VideoCaptureSession::setError(TInt aError)
 {
     if (aError == KErrNone)
         return;
+
+    if (m_captureState >= ERecording)
+        m_videoRecorder->Stop();
+
+    if (m_captureState >= EInitialized)
+        m_videoRecorder->Close();
 
     // Reset state
     m_captureState = ENotInitialized;
@@ -122,6 +142,9 @@ void S60VideoCaptureSession::setError(TInt aError)
     }
 
     emit error(cameraError, errorDescription);
+
+    // Reset VideoCaptureSession
+    resetSession();
 }
 
 QCamera::Error S60VideoCaptureSession::fromSymbianErrorToQtMultimediaError(int aError)
@@ -146,7 +169,7 @@ QCamera::Error S60VideoCaptureSession::fromSymbianErrorToQtMultimediaError(int a
 /*
  * This function applies all recording settings to make latency during the
  * start of the recording as short as possible. After this it is not possible to
- * set settings (inc. output location) after stopping the recording.
+ * set settings (inc. output location) before stopping the recording.
  */
 void S60VideoCaptureSession::applyAllSettings()
 {
@@ -160,38 +183,93 @@ void S60VideoCaptureSession::applyAllSettings()
         m_prepareAfterOpenComplete = true;
         return;
     }
+    if (m_captureState < EInitialized || m_captureState >= ERecording) {
+        return;
+    }
+    if (m_captureState == EPrepared) {
+        m_captureState = EOpenComplete; // Revert state internally to allow commit
+    }
+    // Commit settings
+    commitVideoEncoderSettings();
 
     // Start preparing
     m_captureState = EPreparing;
     emit stateChanged(m_captureState);
 
-    commitVideoEncoderSettings();
-    m_videoRecorder->Prepare();
+    if (m_cameraEngine->IsCameraReady())
+        m_videoRecorder->Prepare();
 }
 
-QList<QSize> S60VideoCaptureSession::supportedVideoResolutions()
+void S60VideoCaptureSession::setCameraHandle(CCameraEngine* cameraHandle)
+{
+    m_cameraEngine = cameraHandle;
+
+    resetSession();
+}
+
+void S60VideoCaptureSession::doInitializeVideoRecorderL()
+{
+    if (m_captureState > ENotInitialized) {
+        resetSession();
+    }
+
+    m_captureState = EInitializing;
+    emit stateChanged(m_captureState);
+
+    // Open Dummy file to be able to query supported settings
+    int cameraHandle = m_cameraEngine->Camera()->Handle();
+
+    TUid controllerUid;
+    TUid formatUid;
+    selectController(m_requestedContainer, controllerUid, formatUid);
+
+    if (m_videoRecorder) {
+        // File open completes in MvruoOpenComplete
+        TRAPD(err, m_videoRecorder->OpenFileL(KDummyVideoFile, cameraHandle, controllerUid, formatUid));
+        setError(err);
+        m_container = m_requestedContainer;
+    } else {
+        setError(KErrNotReady);
+    }
+}
+
+void S60VideoCaptureSession::resetSession()
+{
+    if (m_videoRecorder) {
+        delete m_videoRecorder;
+        m_videoRecorder = NULL;
+    }
+
+    m_captureState = ENotInitialized;
+
+    // Reset error to be able to recover from error
+    m_error = KErrNone;
+
+    m_openWhenInitialized = false;
+    m_prepareAfterOpenComplete = false;
+    m_startAfterPrepareComplete = false;
+    m_uncommittedSettings = false;
+
+    TRAPD(err, m_videoRecorder = CVideoRecorderUtility::NewL(*this));
+    setError(err);
+
+    updateVideoCaptureContainers();
+}
+
+QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(bool &continuous)
 {
     QList<QSize> list;
 
-    // If we have cameraengine loaded and we can update camerainfo
-    if (m_cameraEngine && queryCurrentCameraInfo()) {
+    if (m_videoParametersForEncoder.count() > 0) {
 
-        foreach (QString codecName, formatMap().keys()) {
-            int codecIndex = formatMap().value(codecName);
-            CCamera::TFormat format = static_cast<CCamera::TFormat>(codecIndex);
-            TUint32 videoFormatsSupported = m_info.iVideoFrameFormatsSupported;
+        // Also arbitrary resolutions are supported
+        continuous = true;
 
-            if (videoFormatsSupported&format) {
-                CCamera *camera = m_cameraEngine->Camera();
-                for (int i = 0; i < m_info.iNumVideoFrameSizesSupported; i++) {
-                    TSize size;
-                    camera->EnumerateVideoFrameSizes(size, i, format);
-                    QSize qSize(size.iWidth, size.iHeight);
-                    if (!list.contains(qSize))
-                        list << QSize(size.iWidth, size.iHeight);
-                }
-            }
-        }
+        // Append all supported resolutions to the list
+        foreach (MaxResolutionRatesAndTypes parameters, m_videoParametersForEncoder)
+            for (int i = 0; i < parameters.frameRatePictureSizePair.count(); ++i)
+                if (!list.contains(parameters.frameRatePictureSizePair[i].frameSize))
+                    list.append(parameters.frameRatePictureSizePair[i].frameSize);
     }
 
 #ifdef Q_CC_NOKIAX86 // Emulator
@@ -203,36 +281,40 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions()
     return list;
 }
 
-QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(const QVideoEncoderSettings &settings)
+QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(const QVideoEncoderSettings &settings, bool &continuous)
 {
     QList<QSize> supportedFrameSizes;
 
     if (settings.codec().isEmpty())
         return supportedFrameSizes;
-    if (!m_videoCodeclist.contains(settings.codec()))
+    if (!m_videoCodeclist.contains(settings.codec(), Qt::CaseInsensitive)) {
         return supportedFrameSizes;
-    if (m_videoCodecData.isEmpty())
-        return supportedVideoResolutions();
-
-    QList<TSupportedFrameRatePictureSize> list = m_videoCodecData[settings.codec()];
-
-    if (settings.frameRate() == 0.0) {
-        foreach(TSupportedFrameRatePictureSize size, list) {
-            if(!supportedFrameSizes.contains(size.frameSize))
-                supportedFrameSizes << size.frameSize;
-        }
-    } else {
-        foreach(TSupportedFrameRatePictureSize size, list) {
-            if (qFuzzyCompare(size.frameRate,settings.frameRate()))
-                if(!supportedFrameSizes.contains(size.frameSize))
-                    supportedFrameSizes << size.frameSize;
-        }
     }
 
-    QList<QSize> cameraSupportedFrameSizes = supportedVideoResolutions();
-    foreach(QSize frameSize, supportedFrameSizes) {
-        if (!cameraSupportedFrameSizes.contains(frameSize))
-            supportedFrameSizes.removeAll(frameSize);
+    // Also arbitrary resolutions are supported
+    continuous = true;
+
+    // Find maximum resolution (using defined framerate if set)
+    for (int i = 0; i < m_videoParametersForEncoder.count(); ++i) {
+        // Check if encoder supports the requested codec
+        if (!m_videoParametersForEncoder[i].mimeTypes.contains(settings.codec(), Qt::CaseInsensitive)) {
+            continue;
+        }
+
+        foreach (SupportedFrameRatePictureSize pair, m_videoParametersForEncoder[i].frameRatePictureSizePair) {
+            if (!supportedFrameSizes.contains(pair.frameSize)) {
+                QSize maxForMime = maximumResolutionForMimeType(settings.codec());
+                if (settings.frameRate() != 0) {
+                    if(settings.frameRate() <= pair.frameRate) {
+                        if ((pair.frameSize.width() * pair.frameSize.height()) <= (maxForMime.width() * maxForMime.height()))
+                            supportedFrameSizes.append(pair.frameSize);
+                    }
+                } else {
+                    if ((pair.frameSize.width() * pair.frameSize.height()) <= (maxForMime.width() * maxForMime.height()))
+                        supportedFrameSizes.append(pair.frameSize);
+                }
+            }
+        }
     }
 
 #ifdef Q_CC_NOKIAX86 // Emulator
@@ -244,51 +326,28 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(const QVideoEncod
     return supportedFrameSizes;
 }
 
-void S60VideoCaptureSession::setCameraHandle(CCameraEngine* cameraHandle)
+QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(bool &continuous)
 {
-    m_cameraEngine = cameraHandle;
+    QList<qreal> list;
 
-    resetSession();
-}
+    if (m_videoParametersForEncoder.count() > 0) {
+        // Insert min and max to the list and set continuous flag
+        list.append(1.0); // Use 1fps as sensible minimum
+        qreal foundMaxFrameRate(0.0);
 
-void S60VideoCaptureSession::resetSession()
-{
-    if (m_videoRecorder) {
-        delete m_videoRecorder;
-        m_videoRecorder = NULL;
-    }
+        // Also arbitrary framerates are supported
+        continuous = true;
 
-    m_error = KErrNone;
-    TRAPD(err, m_videoRecorder = CVideoRecorderUtility::NewL(*this));
-    setError(err);
-
-    updateVideoCaptureContainers();
-}
-
-QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates()
-{
-    QList<qreal> list = QList<qreal>();
-
-    // If we have cameraengine loaded and we can update camerainfo
-    if (m_cameraEngine && queryCurrentCameraInfo()) {
-
-        foreach (QString codecName, formatMap().keys()) {
-            int codecIndex = formatMap().value(codecName);
-            CCamera::TFormat format = static_cast<CCamera::TFormat>( codecIndex );
-            TUint32 videoFormatsSupported = m_info.iVideoFrameFormatsSupported;
-
-            if (videoFormatsSupported & format) {
-                CCamera *camera = m_cameraEngine->Camera();
-                for (int i=0; i < m_info.iNumVideoFrameRatesSupported; i++) {
-                    TReal32 rate;
-                    TInt maxSizeIndex=0;
-                    camera->EnumerateVideoFrameRates(rate, i,format, maxSizeIndex);
-                    if (!list.contains(rate))
-                        if (rate > 0.0)
-                            list << rate;
-                }
+        // Find max framerate
+        foreach (MaxResolutionRatesAndTypes parameters, m_videoParametersForEncoder) {
+            for (int i = 0; i < parameters.frameRatePictureSizePair.count(); ++i) {
+                qreal maxFrameRate = parameters.frameRatePictureSizePair[i].frameRate;
+                if (maxFrameRate > foundMaxFrameRate)
+                    foundMaxFrameRate = maxFrameRate;
             }
         }
+
+        list.append(foundMaxFrameRate);
     }
 
 #ifdef Q_CC_NOKIAX86 // Emulator
@@ -298,34 +357,38 @@ QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates()
     return list;
 }
 
-QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(const QVideoEncoderSettings &settings)
+QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(const QVideoEncoderSettings &settings, bool &continuous)
 {
     QList<qreal> supportedFrameRates;
 
     if (settings.codec().isEmpty())
         return supportedFrameRates;
-    if (!m_videoCodeclist.contains(settings.codec()))
+    if (!m_videoCodeclist.contains(settings.codec(), Qt::CaseInsensitive))
         return supportedFrameRates;
-    if (m_videoCodecData.isEmpty())
-        return supportedVideoFrameRates();
 
-    QList<TSupportedFrameRatePictureSize> list = m_videoCodecData[settings.codec()];
+    // Also arbitrary framerates are supported
+    continuous = true;
 
-    if (settings.resolution().isEmpty()) {
-        foreach(TSupportedFrameRatePictureSize size, list)
-            if(!supportedFrameRates.contains(size.frameRate))
-                supportedFrameRates << size.frameRate;
-    }else {
-        foreach(TSupportedFrameRatePictureSize size, list) {
-            if(!supportedFrameRates.contains(size.frameRate))
-                supportedFrameRates << size.frameRate;
+    // Find maximum framerate (using defined resolution if set)
+    for (int i = 0; i < m_videoParametersForEncoder.count(); ++i) {
+        // Check if encoder supports the requested codec
+        if (!m_videoParametersForEncoder[i].mimeTypes.contains(settings.codec(), Qt::CaseInsensitive))
+            continue;
+
+        foreach (SupportedFrameRatePictureSize pair, m_videoParametersForEncoder[i].frameRatePictureSizePair) {
+            if (!supportedFrameRates.contains(pair.frameRate)) {
+                qreal maxRateForMime = maximumFrameRateForMimeType(settings.codec());
+                if (settings.resolution().width() != 0 && settings.resolution().height() != 0) {
+                    if((settings.resolution().width() * settings.resolution().height()) <= (pair.frameSize.width() * pair.frameSize.height())) {
+                        if (pair.frameRate <= maxRateForMime)
+                            supportedFrameRates.append(pair.frameRate);
+                    }
+                } else {
+                    if (pair.frameRate <= maxRateForMime)
+                        supportedFrameRates.append(pair.frameRate);
+                }
+            }
         }
-    }
-
-    QList<qreal> cameraSupportedFrameRates = supportedVideoFrameRates();
-    foreach(qreal frameRate, supportedFrameRates) {
-        if (!cameraSupportedFrameRates.contains(frameRate))
-            supportedFrameRates.removeAll(frameRate);
     }
 
 #ifdef Q_CC_NOKIAX86 // Emulator
@@ -336,42 +399,88 @@ QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(const QVideoEncode
 
 bool S60VideoCaptureSession::setOutputLocation(const QUrl &sink)
 {
-    if (m_captureState < EInitialized || m_captureState >= EOpenComplete) {
+    if (m_error)
+        return false;
+
+    if (m_captureState == ENotInitialized || m_captureState == EInitializing) {
+        m_requestedSink = sink;
+        m_openWhenInitialized = true;
+        return true;
+    }
+
+    if (m_captureState != EInitialized && m_captureState != EOpenComplete) {
         setError(KErrNotReady);
         return false;
     }
 
-    // Empty URL
+    // Empty URL - Use default file name and path (C:\Data\Videos\video.mp4)
     if (sink.isEmpty()) {
-        // Use default file name and path (C:\Data\Videos\video.mp4)
-        m_sink.setUrl("C:\\Data\\Videos\\video.mp4");
-
-    // Relative URL
-    } else if (sink.isRelative()) {
-        QUrl base(QDir::rootPath());
-        QUrl resolvedUrl = base.resolved(sink);
-        QString fileName = QDir::toNativeSeparators(resolvedUrl.toString());
-        TPtrC16 path(reinterpret_cast<const TUint16*>(fileName.utf16()));
-        TRAPD(err, BaflUtils::EnsurePathExistsL(CCoeEnv::Static()->FsSession(), path));
-        if (!err) {
-            m_sink = resolvedUrl;
-        } else {
-            return false;
+        // Make sure default directory exists
+        QDir videoDir(QDir::rootPath());
+        if (!videoDir.exists(KDefaultVideoPath)) {
+            videoDir.mkpath(KDefaultVideoPath);
         }
+        QString defaultFile = KDefaultVideoPath;
+        defaultFile.append("\\");
+        defaultFile.append(KDefaultVideoFileName);
+        m_sink.setUrl(defaultFile);
 
-    // Absolute URL
     } else {
-        QString fileName = QDir::toNativeSeparators(sink.toString());
-        TPtrC16 path(reinterpret_cast<const TUint16*>(fileName.utf16()));
-        TRAPD(err, BaflUtils::EnsurePathExistsL(CCoeEnv::Static()->FsSession(), path));
-        if (!err) {
-            m_sink = sink;
+
+        QString fullUrl = sink.scheme();
+
+        // Relative URL
+        if (sink.isRelative()) {
+
+            // Extract file name and path from the URL
+            fullUrl = KDefaultVideoPath;
+            fullUrl.append("\\");
+            fullUrl.append(QDir::toNativeSeparators(sink.path()));
+
+        // Absolute URL
         } else {
-            return false;
+            // Extract file name and path from the URL
+            if (fullUrl == "file") {
+                fullUrl = QDir::toNativeSeparators(sink.path().right(sink.path().length() - 1));
+            } else {
+                fullUrl.append(":");
+                fullUrl.append(QDir::toNativeSeparators(sink.path()));
+            }
         }
+
+        QString fileName = fullUrl.right(fullUrl.length() - fullUrl.lastIndexOf("\\") - 1);
+        QString directory = fullUrl.left(fullUrl.lastIndexOf("\\"));
+        if (directory.lastIndexOf("\\") == (directory.length() - 1))
+            directory = directory.left(directory.length() - 1);
+
+        // URL is Absolute path, not including file name
+        if (!fileName.contains(".")) {
+            if (fileName != "") {
+                directory.append("\\");
+                directory.append(fileName);
+            }
+            fileName = KDefaultVideoFileName;
+        }
+
+        // Make sure absolute directory exists
+        QDir videoDir(QDir::rootPath());
+        if (!videoDir.exists(directory)) {
+            videoDir.mkpath(directory);
+        }
+
+        QString resolvedURL = directory;
+        resolvedURL.append("\\");
+        resolvedURL.append(fileName);
+        m_sink = QUrl(resolvedURL);
     }
 
     if (m_captureState == EInitialized) {
+
+        // First close the Dummy file
+        if (m_videoRecorder)
+            m_videoRecorder->Close();
+        else
+            setError(KErrNotReady);
 
         // Open file
         QString fileName = QDir::toNativeSeparators(m_sink.toString());
@@ -379,28 +488,21 @@ bool S60VideoCaptureSession::setOutputLocation(const QUrl &sink)
 
         int cameraHandle = m_cameraEngine->Camera()->Handle();
 
-        TUid controllerUid(TUid::Uid(m_videoControllerMap[m_container].controllerUid));
-        TUid formatUid(TUid::Uid(m_videoControllerMap[m_container].formatUid));
-
-        TPtrC16 str(reinterpret_cast<const TUint16*>(m_videoSettings.codec().utf16()));
-        HBufC8* videocodec(NULL);
-        TRAPD(error, videocodec = CnvUtfConverter::ConvertFromUnicodeToUtf8L(str));
-        setError(error);
-        CleanupStack::PushL(videocodec);
-        TFourCC audioCodec = m_audioCodeclist[m_audioSettings.codec()];
+        TUid controllerUid;
+        TUid formatUid;
+        selectController(m_requestedContainer, controllerUid, formatUid);
 
         if (m_videoRecorder) {
             // File open completes in MvruoOpenComplete
-            TRAPD(err, m_videoRecorder->OpenFileL(sink, cameraHandle, controllerUid, formatUid, *videocodec, audioCodec));
+            TRAPD(err, m_videoRecorder->OpenFileL(sink, cameraHandle, controllerUid, formatUid));
             setError(err);
-            CleanupStack::PopAndDestroy(videocodec);
+            m_container = m_requestedContainer;
             m_captureState = EOpening;
             emit stateChanged(m_captureState);
         }
-        else {
-            CleanupStack::PopAndDestroy(videocodec);
+        else
             setError(KErrNotReady);
-        }
+
     } else {
         setError(KErrNotReady);
     }
@@ -437,38 +539,43 @@ bool S60VideoCaptureSession::isMuted() const
 
 void S60VideoCaptureSession::setMuted(const bool muted)
 {
-    // Muting audio from recording is not supported in Symbian
-    Q_UNUSED(muted);
+    if (m_captureState != EOpenComplete && m_captureState != EPrepared)
+        return;
+
+    TRAPD(err, m_videoRecorder->SetAudioEnabledL((TBool)muted));
+    setError(err);
+
+    m_uncommittedSettings = true;
 }
 
 void S60VideoCaptureSession::commitVideoEncoderSettings()
 {
-    if (m_captureState >= EInitialized && m_captureState <= EOpenComplete) {
-/*
+    if (m_captureState == EOpenComplete) {
+        doSetCodecs(m_audioSettings.codec(), m_videoSettings.codec());
         doSetVideoResolution(m_videoSettings.resolution());
         doSetFrameRate(m_videoSettings.frameRate());
         doSetBitrate(m_videoSettings.bitRate());
-*/
-    }
-}
 
-void S60VideoCaptureSession::doSetVideoFrameRateFixed(bool fixed)
-{
-#ifndef PRE_S60_50_PLATFORM // S60 5.0 or later
-    if (m_videoRecorder) {
-        TRAPD(err, m_videoRecorder->SetVideoFrameRateFixedL(fixed));
-        setError(err);
-    }
-    else
-        setError(KErrNotReady);
-#else // PRE_S60_50_PLATFORM - S60 3.1 or 3.2
-    Q_UNUSED(fixed);
-#endif // PRE_S60_50_PLATFORM
-}
+        // Audio/Video EncodingMode are not supported in Symbian
 
-void S60VideoCaptureSession::setVideoEncoderSettings(const QVideoEncoderSettings &videoSettings)
-{
-    m_videoSettings = videoSettings;
+        TRAPD(err, m_videoRecorder->SetAudioBitRateL((TInt)m_audioSettings.bitRate()));
+        if (err != KErrNotSupported)
+            setError(err);
+
+#ifndef S60_31_PLATFORM
+        if (m_audioSettings.sampleRate() != -1) {
+            TRAP(err, m_videoRecorder->SetAudioSampleRateL((TInt)m_audioSettings.sampleRate()));
+            if (err != KErrNotSupported)
+                setError(err);
+        }
+
+        TRAP(err, m_videoRecorder->SetAudioChannelsL((TUint)m_audioSettings.channelCount()));
+        if (err != KErrNotSupported)
+            setError(err);
+#endif // S60_31_PLATFORM
+
+        m_uncommittedSettings = false; // Reset
+    }
 }
 
 void S60VideoCaptureSession::videoEncoderSettings(QVideoEncoderSettings &videoSettings) const
@@ -476,49 +583,155 @@ void S60VideoCaptureSession::videoEncoderSettings(QVideoEncoderSettings &videoSe
     videoSettings = m_videoSettings;
 }
 
-void S60VideoCaptureSession::setAudioEncoderSettings(const QAudioEncoderSettings &audioSettings)
-{
-    m_audioSettings = audioSettings;
-}
-
 void S60VideoCaptureSession::audioEncoderSettings(QAudioEncoderSettings &audioSettings) const
 {
     audioSettings = m_audioSettings;
 }
 
-QtMultimediaKit::EncodingQuality S60VideoCaptureSession::videoCaptureQuality() const
+void S60VideoCaptureSession::setVideoCaptureQuality(const QtMultimediaKit::EncodingQuality quality,
+                                                    const VideoQualityDefinition mode)
 {
-#ifndef PRE_S60_50_PLATFORM
-    if (m_videoQuality == EVideoQualityLow)
-        return QtMultimediaKit::LowQuality;
-    else if (m_videoQuality == EVideoQualityNormal)
-        return QtMultimediaKit::NormalQuality;
-    else if (m_videoQuality == EVideoQualityHigh)
-        return QtMultimediaKit::HighQuality;
-    else if (m_videoQuality == EVideoQualityLossless)
-        return QtMultimediaKit::VeryHighQuality;
-#endif // PRE_S60_50_PLATFORM
+#ifndef S60_3X_PLATFORM // S60 5.0 or later
+    Q_UNUSED(mode);
 
-    return QtMultimediaKit::NormalQuality;
-}
-
-void S60VideoCaptureSession::setVideoCaptureQuality(QtMultimediaKit::EncodingQuality quality)
-{
-#ifndef PRE_S60_50_PLATFORM
     m_videoQuality = quality * KSymbianImageQualityCoefficient;
+    if (m_videoQuality == 0)
+        m_videoQuality = 25;
+
     if (m_videoRecorder) {
         TRAPD(err, m_videoRecorder->SetVideoQualityL(m_videoQuality));
-        setError(err);
+        if (err != KErrNotSupported)
+            setError(err);
     }
     else
         setError(KErrNotReady);
-#endif // PRE_S60_50_PLATFORM
+#else // S60 3.1 or 3.2
 
-    // Otherwise ignore
+#ifdef S60_31_PLATFORM
+    if (quality == QtMultimediaKit::VeryLowQuality) {
+
+    } else if (quality == QtMultimediaKit::LowQuality) {
+
+    } else if (quality == QtMultimediaKit::NormalQuality) {
+
+    } else if (quality == QtMultimediaKit::HighQuality) {
+
+    } else if (quality == QtMultimediaKit::VeryHighQuality) {
+
+    }
+#else // S60 3.2
+    if (quality == QtMultimediaKit::VeryLowQuality) {
+
+    } else if (quality == QtMultimediaKit::LowQuality) {
+
+    } else if (quality == QtMultimediaKit::NormalQuality) {
+
+    } else if (quality == QtMultimediaKit::HighQuality) {
+
+    } else if (quality == QtMultimediaKit::VeryHighQuality) {
+
+    }
+#endif // S60_31_PLATFORM
+
+#endif // S60_3X_PLATFORM
+
+    m_videoSettings.setQuality(quality);
+
+    m_uncommittedSettings = true;
+}
+
+void S60VideoCaptureSession::setAudioCaptureQuality(const QtMultimediaKit::EncodingQuality quality,
+                                                    const AudioQualityDefinition mode)
+{
+    // Based on audio quality definition mode, select proper samplerate and bitrate
+    switch (mode) {
+        case EOnlyAudioQuality:
+            switch (quality) {
+                case QtMultimediaKit::VeryLowQuality:
+                    m_audioSettings.setBitRate(128000);
+                    m_audioSettings.setSampleRate(44100);
+                    break;
+                case QtMultimediaKit::LowQuality:
+                    m_audioSettings.setBitRate(128000);
+                    m_audioSettings.setSampleRate(44100);
+                    break;
+                case QtMultimediaKit::NormalQuality:
+                    m_audioSettings.setBitRate(128000);
+                    m_audioSettings.setSampleRate(44100);
+                    break;
+                case QtMultimediaKit::HighQuality:
+                    m_audioSettings.setBitRate(128000);
+                    m_audioSettings.setSampleRate(44100);
+                    break;
+                case QtMultimediaKit::VeryHighQuality:
+                    m_audioSettings.setBitRate(128000);
+                    m_audioSettings.setSampleRate(44100);
+                    break;
+                default:
+                    setError(KErrGeneral);
+            }
+            break;
+        case EAudioQualityAndBitRate:
+            switch (quality) {
+                case QtMultimediaKit::VeryLowQuality:
+                    m_audioSettings.setSampleRate(44100);
+                    break;
+                case QtMultimediaKit::LowQuality:
+                    m_audioSettings.setSampleRate(44100);
+                    break;
+                case QtMultimediaKit::NormalQuality:
+                    m_audioSettings.setSampleRate(44100);
+                    break;
+                case QtMultimediaKit::HighQuality:
+                    m_audioSettings.setSampleRate(44100);
+                    break;
+                case QtMultimediaKit::VeryHighQuality:
+                    m_audioSettings.setSampleRate(44100);
+                    break;
+                default:
+                    setError(KErrGeneral);
+            }
+            break;
+        case EAudioQualityAndSampleRate:
+            switch (quality) {
+                case QtMultimediaKit::VeryLowQuality:
+                    m_audioSettings.setBitRate(128000);
+                    break;
+                case QtMultimediaKit::LowQuality:
+                    m_audioSettings.setBitRate(128000);
+                    break;
+                case QtMultimediaKit::NormalQuality:
+                    m_audioSettings.setBitRate(128000);
+                    break;
+                case QtMultimediaKit::HighQuality:
+                    m_audioSettings.setBitRate(128000);
+                    break;
+                case QtMultimediaKit::VeryHighQuality:
+                    m_audioSettings.setBitRate(128000);
+                    break;
+                default:
+                    setError(KErrGeneral);
+            }
+            break;
+        case ENoAudioQuality:
+            // No actions required, just set quality parameter
+            break;
+
+        default:
+            setError(KErrGeneral);
+    }
+
+    m_audioSettings.setQuality(quality);
+
+    m_uncommittedSettings = true;
 }
 
 int S60VideoCaptureSession::initializeVideoRecording()
 {
+    if (m_error) {
+        return m_error;
+    }
+
     TInt symbianError = KErrNone;
     TRAP(symbianError, doInitializeVideoRecorderL());
     setError(symbianError);
@@ -528,8 +741,13 @@ int S60VideoCaptureSession::initializeVideoRecording()
 
 void S60VideoCaptureSession::startRecording()
 {
-    if (m_captureState == EInitialized) {
-        setOutputLocation(QUrl());
+    if (m_error)
+        return;
+
+    if (m_captureState <= EInitialized) {
+        if (m_captureState == EInitialized) {
+            setOutputLocation(QUrl());
+        }
         m_startAfterPrepareComplete = true;
         return;
     }
@@ -540,14 +758,20 @@ void S60VideoCaptureSession::startRecording()
         return;
     }
 
-    if (m_captureState == EOpenComplete) {
+    if (m_captureState == EOpenComplete || (m_captureState == EPrepared && m_uncommittedSettings)) {
+
+
+        m_captureState = EOpenComplete; // Internally revert state to apply settings
         commitVideoEncoderSettings();
 
         // Start preparing
         m_captureState = EPreparing;
         emit stateChanged(m_captureState);
 
-        m_videoRecorder->Prepare();
+        if (m_cameraEngine->IsCameraReady()) {
+            m_startAfterPrepareComplete = true;
+            m_videoRecorder->Prepare();
+        }
     }
 
     if (m_captureState == EPaused || m_captureState == EPrepared) {
@@ -600,26 +824,18 @@ void S60VideoCaptureSession::stopRecording()
         m_videoRecorder->Stop();
         m_videoRecorder->Close();
 
-        m_captureState = EInitialized;
+        m_captureState = ENotInitialized;
         emit stateChanged(m_captureState);
+
+        if (m_cameraEngine->IsCameraReady()) {
+            initializeVideoRecording();
+        }
     }
     else
         setError(KErrNotReady);
 }
 
-bool S60VideoCaptureSession::queryCurrentCameraInfo()
-{
-    bool returnValue = false;
-
-    if (m_cameraEngine) {
-        CCamera *camera = m_cameraEngine->Camera();
-        if (camera)
-            camera->CameraInfo(m_info);
-        returnValue = true;
-    }
-    return returnValue;
-}
-
+/*
 QMap<QString, int> S60VideoCaptureSession::formatMap()
 {
     QMap<QString, int> formats;
@@ -647,14 +863,14 @@ QMap<QString, int> S60VideoCaptureSession::formatMap()
 
     return formats;
 }
-
+*/
 void S60VideoCaptureSession::updateVideoCaptureContainers()
 {
-    TRAPD(err, updateVideoCaptureContainersL());
+    TRAPD(err, doUpdateVideoCaptureContainersL());
     setError(err);
 }
 
-void S60VideoCaptureSession::updateVideoCaptureContainersL()
+void S60VideoCaptureSession::doUpdateVideoCaptureContainersL()
 {
     m_videoControllerMap.clear();
 
@@ -669,10 +885,12 @@ void S60VideoCaptureSession::updateVideoCaptureContainersL()
     pluginParameters->SetRequiredPlayFormatSupportL(*format);
     pluginParameters->SetRequiredRecordFormatSupportL(*format);
 
-    // Set the media ids
+    // Set the media IDs
     RArray<TUid> mediaIds;
     CleanupClosePushL(mediaIds);
+
     User::LeaveIfError(mediaIds.Append(KUidMediaTypeVideo));
+
     // Get plugins that support at least video
     pluginParameters->SetMediaIdsL(mediaIds,
         CMMFPluginSelectionParameters::EAllowOtherMediaIds);
@@ -685,30 +903,57 @@ void S60VideoCaptureSession::updateVideoCaptureContainersL()
     pluginParameters->ListImplementationsL(controllers);
 
     // Find the first controller with at least one record format available
-    for (TInt index=0; index<controllers.Count(); index++) {
-        const RMMFFormatImplInfoArray& recordFormats =
-            controllers[index]->RecordFormats();
-        for (TInt j=0; j<recordFormats.Count(); j++) {
+    for (TInt index = 0; index < controllers.Count(); ++index) {
+        m_videoControllerMap.insert(controllers[index]->Uid().iUid, QHash<TInt,VideoFormatData>());
+
+        const RMMFFormatImplInfoArray& recordFormats = controllers[index]->RecordFormats();
+        for (TInt j = 0; j < recordFormats.Count(); ++j) {
+            VideoFormatData formatData;
+            formatData.description = QString::fromUtf16(
+                                    recordFormats[j]->DisplayName().Ptr(),
+                                    recordFormats[j]->DisplayName().Length());
+
             const CDesC8Array& mimeTypes = recordFormats[j]->SupportedMimeTypes();
-            TInt count = mimeTypes.Count();
-            if (count > 0) {
-                TPtrC8 mimeType = mimeTypes[0];
+            for (int k = 0; k < mimeTypes.Count(); ++k) {
+                TPtrC8 mimeType = mimeTypes[k];
                 QString type = QString::fromUtf8((char *)mimeType.Ptr(),
                         mimeType.Length());
-                VideoControllerData data;
-                data.controllerUid = controllers[index]->Uid().iUid;
-                data.formatUid = recordFormats[j]->Uid().iUid;
-                data.formatDescription = QString::fromUtf16(
-                        recordFormats[j]->DisplayName().Ptr(),
-                        recordFormats[j]->DisplayName().Length());
-                m_videoControllerMap[type] = data;
+                formatData.supportedMimeTypes.append(type);
             }
+
+            m_videoControllerMap[controllers[index]->Uid().iUid].insert(recordFormats[j]->Uid().iUid, formatData);
         }
+
     }
+
     CleanupStack::PopAndDestroy(&controllers);
     CleanupStack::PopAndDestroy(&mediaIds);
     CleanupStack::PopAndDestroy(format);
     CleanupStack::PopAndDestroy(pluginParameters);
+}
+
+/*
+ * This goes through the available controllers and selects proper one based
+ * on the format, audio and video codec. Function sets proper UIDs to be used
+ * for controller and format.
+ */
+void S60VideoCaptureSession::selectController(const QString &format,
+                                              TUid &controllerUid,
+                                              TUid &formatUid)
+{
+    QList<TInt> controllers = m_videoControllerMap.keys();
+    QList<TInt> formats;
+
+    for (int i = 0; i < controllers.count(); ++i) {
+        formats = m_videoControllerMap[controllers[i]].keys();
+        for (int j = 0; j < formats.count(); ++j) {
+            VideoFormatData formatData = m_videoControllerMap[controllers[i]][formats[j]];
+            if (formatData.supportedMimeTypes.contains(format, Qt::CaseInsensitive)) {
+                controllerUid = TUid::Uid(controllers[i]);
+                formatUid = TUid::Uid(formats[j]);
+            }
+        }
+    }
 }
 
 QStringList S60VideoCaptureSession::supportedVideoCaptureCodecs()
@@ -723,27 +968,75 @@ QStringList S60VideoCaptureSession::supportedAudioCaptureCodecs()
     return keys;
 }
 
-QList<int> S60VideoCaptureSession::supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous)
+QList<int> S60VideoCaptureSession::supportedSampleRates(const QAudioEncoderSettings &settings, bool &continuous)
 {
-    Q_UNUSED(settings);
-    Q_UNUSED(continuous);
+    QList<int> sampleRates;
 
-    return QList<int>();
+#ifndef S60_31_PLATFORM
+    RArray<TUint> supportedSampleRates;
+    CleanupClosePushL(supportedSampleRates);
+
+    TInt error = KErrNone;
+
+    if (!settings.codec().isEmpty()) {
+        TFourCC currentAudioCodec;
+        TRAP(error, currentAudioCodec = m_videoRecorder->AudioTypeL());
+        setError(error);
+
+        TFourCC requestedAudioCodec;
+        if (qstrcmp(settings.codec().toLocal8Bit().constData(), "audio/aac") == 0)
+            requestedAudioCodec.Set(KMMFFourCCCodeAAC);
+        else if (qstrcmp(settings.codec().toLocal8Bit().constData(), "audio/amr") == 0)
+            requestedAudioCodec.Set(KMMFFourCCCodeAMR);
+
+        TRAP(error, m_videoRecorder->SetAudioTypeL(requestedAudioCodec));
+        setError(error);
+
+        TRAP(error, m_videoRecorder->GetSupportedAudioSampleRatesL(supportedSampleRates));
+        if (error != KErrNotSupported)
+            setError(error);
+
+        TRAP(error, m_videoRecorder->SetAudioTypeL(currentAudioCodec));
+        setError(error);
+    } else {
+        TRAP(error, m_videoRecorder->GetSupportedAudioSampleRatesL(supportedSampleRates));
+        if (error != KErrNotSupported)
+            setError(error);
+    }
+
+    for (int i = 0; i < supportedSampleRates.Count(); ++i) {
+        sampleRates.append((int)supportedSampleRates[i]);
+    }
+
+    CleanupStack::PopAndDestroy(); // RArray<TUint> supportedSampleRates
+
+#endif // S60_31_PLATFORM
+
+    return sampleRates;
 }
 
-bool S60VideoCaptureSession::isSupportedVideoCaptureCodec(const QString &codecName)
+void S60VideoCaptureSession::setAudioSampleRate(const int sampleRate)
 {
-    return m_videoCodeclist.contains(codecName);
+    if (sampleRate != -1)
+        m_audioSettings.setSampleRate(sampleRate);
+
+    m_uncommittedSettings = true;
 }
 
-QString S60VideoCaptureSession::audioCaptureCodec() const
+void S60VideoCaptureSession::setAudioBitRate(const int bitRate)
 {
-    return m_audioSettings.codec();
+    if (bitRate != -1)
+        m_audioSettings.setBitRate(bitRate);
+
+    m_uncommittedSettings = true;
 }
 
-QString S60VideoCaptureSession::videoCaptureCodec() const
+void S60VideoCaptureSession::setAudioChannelCount(const int channelCount)
 {
-    return m_videoSettings.codec();
+    if (channelCount != -1)
+        m_audioSettings.setChannelCount(channelCount);
+
+    m_uncommittedSettings = true;
 }
 
 void S60VideoCaptureSession::setVideoCaptureCodec(const QString &codecName)
@@ -752,6 +1045,8 @@ void S60VideoCaptureSession::setVideoCaptureCodec(const QString &codecName)
         return;
 
     m_videoSettings.setCodec(codecName);
+
+    m_uncommittedSettings = true;
 }
 
 void S60VideoCaptureSession::setAudioCaptureCodec(const QString &codecName)
@@ -760,92 +1055,183 @@ void S60VideoCaptureSession::setAudioCaptureCodec(const QString &codecName)
         return;
 
     m_audioSettings.setCodec(codecName);
+
+    m_uncommittedSettings = true;
 }
 
 QString S60VideoCaptureSession::videoCaptureCodecDescription(const QString &codecName)
 {
     QString codecDescription;
-    codecDescription = codecName;
+    if (codecName.contains("video/H263-2000", Qt::CaseInsensitive))
+        codecDescription.append("H.263 Video Codec");
+    else if (codecName.contains("video/mp4v-es", Qt::CaseInsensitive))
+        codecDescription.append("MPEG-4 Part 2 Video Codec");
+    else if (codecName.contains("video/H264", Qt::CaseInsensitive))
+        codecDescription.append("H.264 AVC (MPEG-4 Part 10) Video Codec");
+    else
+        codecDescription.append("Video Codec");
 
     return codecDescription;
 }
 
-int S60VideoCaptureSession::bitrate()
+void S60VideoCaptureSession::doSetCodecs(const QString &aCodec, const QString &vCodec)
 {
-    return m_videoSettings.bitRate();
+    if (m_videoRecorder) {
+        TPtrC16 str(reinterpret_cast<const TUint16*>(m_videoSettings.codec().utf16()));
+        HBufC8* videoCodec(NULL);
+        TRAPD(error, videoCodec = CnvUtfConverter::ConvertFromUnicodeToUtf8L(str));
+        setError(error);
+        CleanupStack::PushL(videoCodec);
+
+        TFourCC audioCodec = m_audioCodeclist[m_audioSettings.codec()];
+
+        TRAP(error, m_videoRecorder->SetVideoTypeL(*videoCodec));
+        setError(error);
+
+        TRAP(error, m_videoRecorder->SetAudioTypeL(audioCodec));
+        setError(error);
+
+        CleanupStack::PopAndDestroy(videoCodec);
+    }
+    else
+        setError(KErrNotReady);
 }
 
 void S60VideoCaptureSession::setBitrate(const int bitrate)
 {
     m_videoSettings.setBitRate(bitrate);
+
+    m_uncommittedSettings = true;
 }
 
 void S60VideoCaptureSession::doSetBitrate(const int &bitrate)
 {
-    if (m_videoRecorder) {
-        TRAPD(err, m_videoRecorder->SetVideoBitRateL(bitrate));
-        setError(err);
-    } else {
-        setError(KErrNotReady);
+    if (bitrate != -1) {
+        if (m_videoRecorder) {
+            TRAPD(err, m_videoRecorder->SetVideoBitRateL(bitrate));
+            setError(err);
+        } else {
+            setError(KErrNotReady);
+        }
     }
-}
-
-QSize S60VideoCaptureSession::videoResolution() const
-{
-    return m_videoSettings.resolution();
 }
 
 void S60VideoCaptureSession::setVideoResolution(const QSize &resolution)
 {
     m_videoSettings.setResolution(resolution);
+
+    m_uncommittedSettings = true;
 }
 
 void S60VideoCaptureSession::doSetVideoResolution(const QSize &resolution)
 {
-    if (m_videoRecorder) {
-        TSize size(resolution.width(), resolution.height());
-        TRAPD(err, m_videoRecorder->SetVideoFrameSizeL(size));
-        setError(err);
-    } else {
-        setError(KErrNotReady);
+    if (resolution.width() != -1 && resolution.height() != -1) {
+        if (m_videoRecorder) {
+            TSize size((TInt)resolution.width(), (TInt)resolution.height());
+            TRAPD(err, m_videoRecorder->SetVideoFrameSizeL((TSize)size));
+            if (err == KErrNotSupported) {
+                TSize fallBack(640,480);
+                TRAPD(err, m_videoRecorder->SetVideoFrameSizeL(fallBack));
+                if (err == KErrNone)
+                    m_videoSettings.setResolution(QSize(fallBack.iWidth,fallBack.iHeight));
+                else
+                    setError(err);
+            }
+            else
+                setError(err);
+        } else {
+            setError(KErrNotReady);
+        }
     }
-}
-
-qreal S60VideoCaptureSession::framerate() const
-{
-    return m_videoSettings.frameRate();
 }
 
 void S60VideoCaptureSession::setFrameRate(qreal rate)
 {
     m_videoSettings.setFrameRate(rate);
+
+    m_uncommittedSettings = true;
 }
 
 void S60VideoCaptureSession::doSetFrameRate(qreal rate)
 {
-    if (m_videoRecorder) {
-        QList<qreal> list = supportedVideoFrameRates();
-        if (list.contains(rate)) {
-            TRAPD(err, m_videoRecorder->SetVideoFrameRateL(rate));
-            setError(err);
+    if (rate != 0) {
+        if (m_videoRecorder) {
+            bool continuous = false;
+            QList<qreal> list = supportedVideoFrameRates(continuous);
+            qreal maxRate = 0.0;
+            foreach (qreal fRate, list)
+                if (fRate > maxRate)
+                    maxRate = fRate;
+            if (maxRate >= rate) {
+#ifndef S60_31_PLATFORM
+// TODO: Debug the problem with S60 3.1 (returns KErrNotReady)
+                TRAPD(err, m_videoRecorder->SetVideoFrameRateL((TReal32)rate));
+                if (err == KErrNotSupported) {
+                    TReal32 fallBack = 15.0;
+                    TRAPD(err, m_videoRecorder->SetVideoFrameRateL(fallBack));
+                    if (err == KErrNone)
+                        m_videoSettings.setFrameRate((qreal)fallBack);
+                    else
+                        setError(err);
+                }
+                else
+                    setError(err);
+#endif // S60_31_PLATFORM
+            } else {
+                setError(KErrNotSupported);
+            }
         } else {
-            setError(KErrNotSupported);
+            setError(KErrNotReady);
         }
-    } else {
-        setError(KErrNotReady);
     }
+}
+
+void S60VideoCaptureSession::setVideoEncodingMode(const QtMultimediaKit::EncodingMode mode)
+{
+    // This has no effect as it has no support in Symbian
+    m_videoSettings.setEncodingMode(mode);
+
+    //m_uncommittedSettings = true;
+}
+
+void S60VideoCaptureSession::setAudioEncodingMode(const QtMultimediaKit::EncodingMode mode)
+{
+    // This has no effect as it has no support in Symbian
+    m_audioSettings.setEncodingMode(mode);
+
+    //m_uncommittedSettings = true;
 }
 
 void S60VideoCaptureSession::initializeVideoCaptureSettings()
 {
-    if (m_videoCodeclist.count() > 0)
-        m_videoSettings.setCodec(m_videoCodeclist[0]); // Setting the first video codec found as default value
-    if (m_audioCodeclist.keys().count() > 0)
-        m_audioSettings.setCodec(m_audioCodeclist.keys()[0]); // Setting the first audio codec found as default value
+    // Codecs
+    if (m_videoCodeclist.count() > 0) {
+        if (m_videoCodeclist.contains(KMimeTypeDefaultVideoCodec, Qt::CaseInsensitive)) {
+            m_videoSettings.setCodec(KMimeTypeDefaultVideoCodec);
+        } else {
+            if (m_videoCodeclist.size() > 0)
+                m_videoSettings.setCodec(m_videoCodeclist[m_videoCodeclist.size()-1]);
+        }
+    }
 
-     // Use maximum resolution and framerate
+    QStringList aCodecs = m_audioCodeclist.keys();
+    if (aCodecs.count() > 0) {
+        if (aCodecs.contains(KMimeTypeDefaultAudioCodec, Qt::CaseInsensitive)) {
+            m_audioSettings.setCodec(KMimeTypeDefaultAudioCodec);
+        } else {
+            if (aCodecs.size() > 0)
+                m_audioSettings.setCodec(aCodecs[0]);
+        }
+    }
 
-    QList<QSize> sizes = supportedVideoResolutions();
+    // Video Settings
+    m_videoSettings.setBitRate(maximumBitRateForMimeType(m_videoSettings.codec())); // Use max supported
+    m_videoSettings.setEncodingMode(QtMultimediaKit::AverageBitRateEncoding);
+    m_videoSettings.setQuality(QtMultimediaKit::VeryHighQuality);
+
+    // Use maximum resolution and framerate supported
+    bool continuous = false;
+    QList<QSize> sizes = supportedVideoResolutions(m_videoSettings, continuous);
     QSize maxSize = QSize();
     foreach (QSize size, sizes) {
         if ((size.width() * size.height()) > (maxSize.width() * maxSize.height()))
@@ -853,16 +1239,28 @@ void S60VideoCaptureSession::initializeVideoCaptureSettings()
     }
     m_videoSettings.setResolution(maxSize);
 
-    QList<qreal> rates = supportedVideoFrameRates();
+    QList<qreal> rates = supportedVideoFrameRates(m_videoSettings, continuous);
     qreal maxRate = 0.0;
     foreach (qreal rate, rates)
         maxRate = qMax(maxRate, rate);
     m_videoSettings.setFrameRate(maxRate);
 
-    // Use VBR as default value
-    m_videoSettings.setBitRate(KMMFVariableVideoBitRate);
+    // Audio Settings
+    m_audioSettings.setEncodingMode(QtMultimediaKit::AverageBitRateEncoding);
+    m_audioSettings.setBitRate(KDefaultBitRate);
+    m_audioSettings.setChannelCount(KDefaultChannelCount);
+    m_audioSettings.setQuality(QtMultimediaKit::VeryHighQuality);
 
-    m_videoSettings.setQuality(QtMultimediaKit::HighQuality);
+    QList<int> sampleRates = supportedSampleRates(m_audioSettings, continuous);
+    if (sampleRates.count() > 0) {
+        if (sampleRates.indexOf(KDefaultSampleRate) != -1)
+            m_audioSettings.setSampleRate(KDefaultSampleRate);
+        else
+            m_audioSettings.setSampleRate(sampleRates[0]);
+    }
+    else
+        m_audioSettings.setSampleRate(-1); // Setting SampleRate is not supported
+
 }
 
 QSize S60VideoCaptureSession::pixelAspectRatio()
@@ -890,6 +1288,8 @@ void S60VideoCaptureSession::setPixelAspectRatio(const QSize par)
 #else // S60_31_PLATFORM
     Q_UNUSED(par);
 #endif // !S60_31_PLATFORM
+
+    m_uncommittedSettings = true;
 }
 
 int S60VideoCaptureSession::gain()
@@ -908,6 +1308,8 @@ void S60VideoCaptureSession::setGain(const int gain)
     if (err) {
         setError(err);
     }
+
+    m_uncommittedSettings = true;
 }
 
 int S60VideoCaptureSession::maxClipSizeInBytes() const
@@ -922,38 +1324,81 @@ void S60VideoCaptureSession::setMaxClipSizeInBytes(const int size)
         setError(err);
     } else
         m_maxClipSize = size;
+
+    m_uncommittedSettings = true;
 }
 
 void S60VideoCaptureSession::MvruoOpenComplete(TInt aError)
 {
-    if (aError == KErrNone && m_videoRecorder) {
-        m_captureState = EOpenComplete;
-        emit stateChanged(m_captureState);
+    if (m_error)
+        return;
 
-        // Prepare right away
-        if (m_startAfterPrepareComplete || m_prepareAfterOpenComplete) {
-            m_prepareAfterOpenComplete = false; // Reset
-            commitVideoEncoderSettings();
-            m_videoRecorder->Prepare();
+    if (aError == KErrNone && m_videoRecorder) {
+        if (m_captureState == EInitializing) {
+            // Dummy file open completed, initialize settings
+            TRAPD(err, doPopulateAudioCodecsL());
+            setError(err);
+
+            // For DevVideoRecord codecs are populated during
+            // doPopulateVideoCodecsDataL()
+            TRAP(err, doPopulateVideoCodecsL());
+            setError(err);
+#ifndef S60_DEVVIDEO_RECORDING_SUPPORTED
+            // Max parameters needed to be populated, if not using DevVideoRecord
+            // Otherwise done already in constructor
+            doPopulateMaxVideoParameters();
+#endif
+
+            initializeVideoCaptureSettings();
+
+            m_captureState = EInitialized;
+            emit stateChanged(m_captureState);
+
+            if (m_openWhenInitialized == true) {
+                setOutputLocation(m_requestedSink);
+                m_openWhenInitialized = false;
+            }
+
+            return;
+
+        } else if (m_captureState == EOpening) {
+            // Actual file open completed
+            m_captureState = EOpenComplete;
+            emit stateChanged(m_captureState);
+
+            // Prepare right away
+            if (m_startAfterPrepareComplete || m_prepareAfterOpenComplete) {
+                m_prepareAfterOpenComplete = false; // Reset
+                commitVideoEncoderSettings();
+                if (m_cameraEngine->IsCameraReady())
+                    m_videoRecorder->Prepare();
+            }
+            return;
         }
+        setError(KErrGeneral);
         return;
     }
 
+    m_videoRecorder->Close();
     setError(aError);
 }
 
 void S60VideoCaptureSession::MvruoPrepareComplete(TInt aError)
 {
+    if (m_error)
+        return;
+
     if(aError == KErrNone) {
         m_captureState = EPrepared;
         emit stateChanged(EPrepared);
-    }
-    else
-        setError(aError);
 
-    if (m_startAfterPrepareComplete) {
-        m_startAfterPrepareComplete = false; // Reset
-        startRecording();
+        if (m_startAfterPrepareComplete) {
+            m_startAfterPrepareComplete = false; // Reset
+            startRecording();
+        }
+    } else {
+        m_videoRecorder->Close();
+        setError(aError);
     }
 }
 
@@ -1009,52 +1454,87 @@ void S60VideoCaptureSession::MdvroStreamEnd()
 {
 }
 
+/*
+ * This populates video codec information (supported codecs, resolutions,
+ * framerates, etc.) using DevVideoRecord API.
+ */
 void S60VideoCaptureSession::doPopulateVideoCodecsDataL()
 {
-    RArray<TUid> encs;
-    CMMFDevVideoRecord *mDvr;
-    mDvr = CMMFDevVideoRecord::NewL(*this);
-    CleanupStack::PushL(mDvr);
-    mDvr->GetEncoderListL(encs);
-    CleanupClosePushL(encs);
-    //qDebug()<< "MDF DevVideoRecord encoders count ="<<encs.Count();
-    for (int i = 0; i < encs.Count(); i++ ) {
-        //qDebug()<<"************************************************";
-        //qDebug()<<"Get info for encoder 0x%08x"<<encs[i].iUid;
-        CVideoEncoderInfo *einfo = mDvr->VideoEncoderInfoLC(encs[i]);
-        const RPointerArray<CCompressedVideoFormat> &vformts=einfo->SupportedOutputFormats();
-        for(int x=0; x<vformts.Count(); x++) {
-            QString codecMimeType = QString::fromUtf8((char *)vformts[x]->MimeType().Ptr(),vformts[x]->MimeType().Length());
-            //qDebug()<<"Supported Mimetype: "<<codecMimeType;
-            if (codecMimeType.contains("video/h263", Qt::CaseSensitive) || codecMimeType.contains("video/MP4", Qt::CaseSensitive) )
-                continue;
+    RArray<TUid> encoders;
+    CleanupClosePushL(encoders);
 
-            const RArray<TPictureRateAndSize> &rsz=einfo->MaxPictureRates();
-            TSupportedFrameRatePictureSize data;
-            for(int j=0; j<rsz.Count(); j++) {
-                data.frameRate = rsz[j].iPictureRate;
-                data.frameSize = QSize(rsz[j].iPictureSize.iWidth,rsz[j].iPictureSize.iHeight);
-                m_videoCodecData[codecMimeType] << data;
-                /*qDebug()<<"Codec mimetype: "<<codecMimeType;
-                qDebug()<<"Max framerate: "<<rsz[j].iPictureRate;
-                qDebug()<<"Max framesize: "<<rsz[j].iPictureSize.iWidth<<"x"<<rsz[j].iPictureSize.iHeight;*/
-            }
+    CMMFDevVideoRecord *mDevVideoRecord = CMMFDevVideoRecord::NewL(*this);
+    CleanupStack::PushL(mDevVideoRecord);
+
+    // Retrieve list of all encoders provided by the platform
+    mDevVideoRecord->GetEncoderListL(encoders);
+
+    for (int i = 0; i < encoders.Count(); ++i ) {
+        CVideoEncoderInfo *encoderInfo = mDevVideoRecord->VideoEncoderInfoLC(encoders[i]);
+
+        // Discard encoders that are not HW accelerated and do not support direct capture
+        if (encoderInfo->Accelerated() == false || encoderInfo->SupportsDirectCapture() == false) {
+            CleanupStack::Check(encoderInfo);
+            CleanupStack::PopAndDestroy(encoderInfo);
+            continue;
         }
-        CleanupStack::PopAndDestroy(einfo);
+
+        m_videoParametersForEncoder.append(MaxResolutionRatesAndTypes());
+        int newIndex = m_videoParametersForEncoder.count() - 1;
+
+        m_videoParametersForEncoder[newIndex].bitRate = (int)encoderInfo->MaxBitrate();
+
+        // Get supported MIME Types
+        const RPointerArray<CCompressedVideoFormat> &videoFormats = encoderInfo->SupportedOutputFormats();
+        for(int x = 0; x < videoFormats.Count(); ++x) {
+            QString codecMimeType = QString::fromUtf8((char *)videoFormats[x]->MimeType().Ptr(),videoFormats[x]->MimeType().Length());
+
+            //m_videoCodeclist.append(codecMimeType); TODO: Done in PopulateVideoCodecs
+            m_videoParametersForEncoder[newIndex].mimeTypes.append(codecMimeType);
+        }
+
+        // Get supported maximum Resolution/Framerate pairs
+        const RArray<TPictureRateAndSize> &ratesAndSizes = encoderInfo->MaxPictureRates();
+        SupportedFrameRatePictureSize data;
+        for(int j = 0; j < ratesAndSizes.Count(); ++j) {
+            data.frameRate = ratesAndSizes[j].iPictureRate;
+            data.frameSize = QSize(ratesAndSizes[j].iPictureSize.iWidth, ratesAndSizes[j].iPictureSize.iHeight);
+
+            // Save data to the hash
+            m_videoParametersForEncoder[newIndex].frameRatePictureSizePair.append(data);
+        }
+
+        CleanupStack::Check(encoderInfo);
+        CleanupStack::PopAndDestroy(encoderInfo);
     }
-    CleanupStack::PopAndDestroy(&encs);
-    CleanupStack::PopAndDestroy(mDvr);
+
+    CleanupStack::Check(mDevVideoRecord);
+    CleanupStack::PopAndDestroy(mDevVideoRecord);
+    CleanupStack::PopAndDestroy(); // RArray<TUid> encoders
 }
 #endif  // S60_DEVVIDEO_RECORDING_SUPPORTED
 
 QStringList S60VideoCaptureSession::supportedVideoContainers()
 {
-    return m_videoControllerMap.keys();
+    QStringList containers;
+
+    QList<TInt> controllers = m_videoControllerMap.keys();
+    for (int i = 0; i < controllers.count(); ++i) {
+        foreach (VideoFormatData formatData, m_videoControllerMap[controllers[i]]) {
+            for (int j = 0; j < formatData.supportedMimeTypes.count(); ++j) {
+                if (containers.contains(formatData.supportedMimeTypes[j], Qt::CaseInsensitive) == false) {
+                    containers.append(formatData.supportedMimeTypes[j]);
+                }
+            }
+        }
+    }
+
+    return containers;
 }
 
 bool S60VideoCaptureSession::isSupportedVideoContainer(const QString &containerName)
 {
-    return m_videoControllerMap.keys().contains(containerName);
+    return supportedVideoContainers().contains(containerName, Qt::CaseInsensitive);
 }
 
 QString S60VideoCaptureSession::videoContainer() const
@@ -1064,16 +1544,26 @@ QString S60VideoCaptureSession::videoContainer() const
 
 void S60VideoCaptureSession::setVideoContainer(const QString &containerName)
 {
-    if (containerName == m_container)
+    if (containerName == m_requestedContainer)
         return;
 
-    m_container = containerName;
+    m_requestedContainer = containerName;
 }
 
 QString S60VideoCaptureSession::videoContainerDescription(const QString &containerName)
 {
-    return m_videoControllerMap.keys().contains(containerName) ?
-        m_videoControllerMap[containerName].formatDescription : QString();
+    QList<TInt> formats;
+    QList<TInt> encoders = m_videoControllerMap.keys();
+    for (int i = 0; i < encoders.count(); ++i) {
+        formats = m_videoControllerMap[encoders[i]].keys();
+        for (int j = 0; j < formats.count(); ++j) {
+            if (m_videoControllerMap[encoders[i]][formats[j]].supportedMimeTypes.contains(containerName, Qt::CaseInsensitive)) {
+                return m_videoControllerMap[encoders[i]][formats[j]].description;
+            }
+        }
+    }
+
+    return QString();
 }
 
 void S60VideoCaptureSession::doPopulateAudioCodecsL()
@@ -1083,19 +1573,18 @@ void S60VideoCaptureSession::doPopulateAudioCodecsL()
 
         RArray<TFourCC> audioTypes;
         CleanupClosePushL(audioTypes);
+
         if (m_videoRecorder)
             m_videoRecorder->GetSupportedAudioTypesL(audioTypes);
         else
             setError(KErrNotReady);
+
         for (TInt i = 0; i < audioTypes.Count(); i++) {
             TUint32 codec = audioTypes[i].FourCC();
-        }
-        if (audioTypes.Find(TFourCC(KMMFFourCCCodeAMR)) != KErrNotFound) {
-            m_audioCodeclist[QString("audio/amr")] = KMMFFourCCCodeAMR;
-        }
-
-        if (audioTypes.Find(TFourCC(KMMFFourCCCodeAAC)) != KErrNotFound) {
-            m_audioCodeclist[QString("audio/aac")] = KMMFFourCCCodeAAC;
+            if (codec == KMMFFourCCCodeAMR)
+                m_audioCodeclist.insert(QString("audio/amr"), KMMFFourCCCodeAMR);
+            if (codec == KMMFFourCCCodeAAC)
+                m_audioCodeclist.insert(QString("audio/aac"), KMMFFourCCCodeAAC);
         }
         CleanupStack::PopAndDestroy(&audioTypes);
     }
@@ -1108,38 +1597,491 @@ void S60VideoCaptureSession::doPopulateVideoCodecsL()
 
         CDesC8ArrayFlat* videoTypes = new (ELeave) CDesC8ArrayFlat(10);
         CleanupStack::PushL(videoTypes);
+
         if (m_videoRecorder)
             m_videoRecorder->GetSupportedVideoTypesL(*videoTypes);
         else
             setError(KErrNotReady);
+
         for (TInt i = 0; i < videoTypes->Count(); i++) {
             TPtrC8 videoType = videoTypes->MdcaPoint(i);
-            m_videoCodeclist << QString::fromUtf8((char *)videoType.Ptr(), videoType.Length());
+            QString codecMimeType = QString::fromUtf8((char *)videoType.Ptr(), videoType.Length());
+#ifdef S60_DEVVIDEO_RECORDING_SUPPORTED
+            for (int j = 0; j < m_videoParametersForEncoder.size(); ++j) {
+                if (m_videoParametersForEncoder[j].mimeTypes.contains(codecMimeType, Qt::CaseInsensitive)) {
+                    m_videoCodeclist << codecMimeType;
+                    break;
+                }
+            }
+#else // CVideoRecorderUtility
+            m_videoCodeclist << codecMimeType;
+#endif // S60_DEVVIDEO_RECORDING_SUPPORTED
         }
         CleanupStack::PopAndDestroy(videoTypes);
     }
 }
 
-void S60VideoCaptureSession::doInitializeVideoRecorderL()
+#ifndef S60_DEVVIDEO_RECORDING_SUPPORTED
+/*
+ * Maximum resolution, framerate and bitrate can not be queried via MMF or
+ * ECam, but needs to be set according to the definitions of the video
+ * standard in question. In video standards, the values often depend on each
+ * other, but the below function defines constant maximums.
+ */
+void S60VideoCaptureSession::doPopulateMaxVideoParameters()
 {
     m_captureState = EInitializing;
     emit stateChanged(m_captureState);
+    m_videoParametersForEncoder.append(MaxResolutionRatesAndTypes()); // For H.263
+    m_videoParametersForEncoder.append(MaxResolutionRatesAndTypes()); // For MPEG-4
+    m_videoParametersForEncoder.append(MaxResolutionRatesAndTypes()); // For H.264
 
-    if (m_videoRecorder) {
-/*
-        TRAPD(err, doPopulateVideoCodecsL());
-        setError(err);
-        TRAP(err, doPopulateAudioCodecsL());
-        setError(err);
-*/
-        initializeVideoCaptureSettings();
+    for (int i = 0; i < m_videoCodeclist.count(); ++i) {
 
-        m_captureState = EInitialized;
-        emit stateChanged(m_captureState);
+        QString codec = m_videoCodeclist[i].toLower();
 
-    } else {
-        setError(KErrNotReady);
+        if (codec.contains("video/h263-2000", Qt::CaseInsensitive)) {
+            // H.263
+            if (codec == "video/h263-2000" ||
+                codec == "video/h263-2000; profile=0" ||
+                codec == "video/h263-2000; profile=0; level=10" ||
+                codec == "video/h263-2000; profile=3") {
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(15.0, QSize(176,144)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 64000)
+                    m_videoParametersForEncoder[0].bitRate = 64000;
+                continue;
+            } else if (codec == "video/h263-2000; profile=0; level=20") {
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(15.0, QSize(352,288)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 128000)
+                    m_videoParametersForEncoder[0].bitRate = 128000;
+                continue;
+            } else if (codec == "video/h263-2000; profile=0; level=30") {
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(30.0, QSize(352,288)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 384000)
+                    m_videoParametersForEncoder[0].bitRate = 384000;
+                continue;
+            } else if (codec == "video/h263-2000; profile=0; level=40") {
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(30.0, QSize(352,288)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 2048000)
+                    m_videoParametersForEncoder[0].bitRate = 2048000;
+                continue;
+            } else if (codec == "video/h263-2000; profile=0; level=45") {
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(15.0, QSize(176,144)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 128000)
+                    m_videoParametersForEncoder[0].bitRate = 128000;
+                continue;
+            } else if (codec == "video/h263-2000; profile=0; level=50") {
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(15.0, QSize(352,288)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 4096000)
+                    m_videoParametersForEncoder[0].bitRate = 4096000;
+                continue;
+            }
+
+        } else if (codec.contains("video/mp4v-es", Qt::CaseInsensitive)) {
+            // Mpeg-4
+            if (codec == "video/mp4v-es" ||
+                codec == "video/mp4v-es; profile-level-id=1" ||
+                codec == "video/mp4v-es; profile-level-id=8") {
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(15.0, QSize(176,144)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 64000)
+                    m_videoParametersForEncoder[0].bitRate = 64000;
+                continue;
+            } else if (codec == "video/mp4v-es; profile-level-id=2" ||
+                       codec == "video/mp4v-es; profile-level-id=9") {
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(15.0, QSize(352,288)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 128000)
+                    m_videoParametersForEncoder[0].bitRate = 128000;
+                continue;
+            } else if (codec == "video/mp4v-es; profile-level-id=3") {
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(30.0, QSize(352,288)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 384000)
+                    m_videoParametersForEncoder[0].bitRate = 384000;
+                continue;
+            } else if (codec == "video/mp4v-es; profile-level-id=4") {
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(30.0, QSize(640,480)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 4000000)
+                    m_videoParametersForEncoder[0].bitRate = 4000000;
+                continue;
+            } else if (codec == "video/mp4v-es; profile-level-id=5") {
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(25.0, QSize(720,576)));
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(30.0, QSize(720,480)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 8000000)
+                    m_videoParametersForEncoder[0].bitRate = 8000000;
+                continue;
+            } else if (codec == "video/mp4v-es; profile-level-id=6") {
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(30.0, QSize(1280,720)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 12000000)
+                    m_videoParametersForEncoder[0].bitRate = 12000000;
+                continue;
+            }
+
+        } else if (codec.contains("video/h264", Qt::CaseInsensitive)) {
+            // H.264
+            if (codec == "video/h264" ||
+                codec == "video/h264; profile-level-id=42800a") {
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(15.0, QSize(176,144)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 64000)
+                    m_videoParametersForEncoder[0].bitRate = 64000;
+                continue;
+            } else if (codec == "video/h264; profile-level-id=42900b") { // BP, L1b
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(15.0, QSize(176,144)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 128000)
+                    m_videoParametersForEncoder[0].bitRate = 128000;
+                continue;
+            } else if (codec == "video/h264; profile-level-id=42800b") { // BP, L1.1
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(7.5, QSize(352,288)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 192000)
+                    m_videoParametersForEncoder[0].bitRate = 192000;
+                continue;
+            } else if (codec == "video/h264; profile-level-id=42800c") { // BP, L1.2
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(15.0, QSize(352,288)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 384000)
+                    m_videoParametersForEncoder[0].bitRate = 384000;
+                continue;
+            } else if (codec == "video/h264; profile-level-id=42800d") { // BP, L1.3
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(30.0, QSize(352,288)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 768000)
+                    m_videoParametersForEncoder[0].bitRate = 768000;
+                continue;
+            } else if (codec == "video/h264; profile-level-id=428014") { // BP, L2
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(30.0, QSize(352,288)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 2000000)
+                    m_videoParametersForEncoder[0].bitRate = 2000000;
+                continue;
+            } else if (codec == "video/h264; profile-level-id=428015") { // BP, L2.1
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(50.0, QSize(352,288)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 4000000)
+                    m_videoParametersForEncoder[0].bitRate = 4000000;
+                continue;
+            } else if (codec == "video/h264; profile-level-id=428016") { // BP, L2.2
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(16.9, QSize(640,480)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 4000000)
+                    m_videoParametersForEncoder[0].bitRate = 4000000;
+                continue;
+            } else if (codec == "video/h264; profile-level-id=42801e") { // BP, L3
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(33.8, QSize(640,480)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 10000000)
+                    m_videoParametersForEncoder[0].bitRate = 10000000;
+                continue;
+            } else if (codec == "video/h264; profile-level-id=42801f") { // BP, L3.1
+                m_videoParametersForEncoder[0].frameRatePictureSizePair.append(SupportedFrameRatePictureSize(30.0, QSize(1280,720)));
+                m_videoParametersForEncoder[0].mimeTypes.append(codec);
+                if (m_videoParametersForEncoder[0].bitRate < 14000000)
+                    m_videoParametersForEncoder[0].bitRate = 14000000;
+                continue;
+            }
+        }
     }
+}
+#endif // S60_DEVVIDEO_RECORDING_SUPPORTED
+
+QSize S60VideoCaptureSession::maximumResolutionForMimeType(const QString &mimeType) const
+{
+    QSize maxSize(-1,-1);
+    QString lowerMimeType = mimeType.toLower();
+
+    if (lowerMimeType == "video/h263-2000") {
+        maxSize = KResH263;
+    } else if (lowerMimeType == "video/h263-2000; profile=0") {
+        maxSize = KResH263_Profile0;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=10") {
+        maxSize = KResH263_Profile0_Level10;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=20") {
+        maxSize = KResH263_Profile0_Level20;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=30") {
+        maxSize = KResH263_Profile0_Level30;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=40") {
+        maxSize = KResH263_Profile0_Level40;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=45") {
+        maxSize = KResH263_Profile0_Level45;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=50") {
+        maxSize = KResH263_Profile0_Level50;
+    } else if (lowerMimeType == "video/h263-2000; profile=3") {
+        maxSize = KResH263_Profile3;
+    } else if (lowerMimeType == "video/mp4v-es") {
+        maxSize = KResMPEG4;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=1") {
+        maxSize = KResMPEG4_PLID_1;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=2") {
+        maxSize = KResMPEG4_PLID_2;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=3") {
+        maxSize = KResMPEG4_PLID_3;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=4") {
+        maxSize = KResMPEG4_PLID_4;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=5") {
+        maxSize = KResMPEG4_PLID_5;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=6") {
+        maxSize = KResMPEG4_PLID_6;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=8") {
+        maxSize = KResMPEG4_PLID_8;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=9") {
+        maxSize = KResMPEG4_PLID_9;
+    } else if (lowerMimeType == "video/h264") {
+        maxSize = KResH264;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42800a" ||
+               lowerMimeType == "video/h264; profile-level-id=4d400a" ||
+               lowerMimeType == "video/h264; profile-level-id=64400a") { // L1
+        maxSize = KResH264_PLID_42800A;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42900b" ||
+               lowerMimeType == "video/h264; profile-level-id=4d500b" ||
+               lowerMimeType == "video/h264; profile-level-id=644009") { // L1.b
+        maxSize = KResH264_PLID_42900B;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42800b" ||
+               lowerMimeType == "video/h264; profile-level-id=4d400b" ||
+               lowerMimeType == "video/h264; profile-level-id=64400b") { // L1.1
+        maxSize = KResH264_PLID_42800B;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42800c" ||
+               lowerMimeType == "video/h264; profile-level-id=4d400c" ||
+               lowerMimeType == "video/h264; profile-level-id=64400c") { // L1.2
+        maxSize = KResH264_PLID_42800C;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42800d" ||
+               lowerMimeType == "video/h264; profile-level-id=4d400d" ||
+               lowerMimeType == "video/h264; profile-level-id=64400d") { // L1.3
+        maxSize = KResH264_PLID_42800D;
+    } else if (lowerMimeType == "video/h264; profile-level-id=428014" ||
+               lowerMimeType == "video/h264; profile-level-id=4d4014" ||
+               lowerMimeType == "video/h264; profile-level-id=644014") { // L2
+        maxSize = KResH264_PLID_428014;
+    } else if (lowerMimeType == "video/h264; profile-level-id=428015" ||
+               lowerMimeType == "video/h264; profile-level-id=4d4015" ||
+               lowerMimeType == "video/h264; profile-level-id=644015") { // L2.1
+        maxSize = KResH264_PLID_428015;
+    } else if (lowerMimeType == "video/h264; profile-level-id=428016" ||
+               lowerMimeType == "video/h264; profile-level-id=4d4016" ||
+               lowerMimeType == "video/h264; profile-level-id=644016") { // L2.2
+        maxSize = KResH264_PLID_428016;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42801e" ||
+               lowerMimeType == "video/h264; profile-level-id=4d401e" ||
+               lowerMimeType == "video/h264; profile-level-id=64401e") { // L3
+        maxSize = KResH264_PLID_42801E;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42801f" ||
+               lowerMimeType == "video/h264; profile-level-id=4d401f" ||
+               lowerMimeType == "video/h264; profile-level-id=64401f") { // L3.1
+        maxSize = KResH264_PLID_42801F;
+    } else if (lowerMimeType == "video/h264; profile-level-id=428020" ||
+               lowerMimeType == "video/h264; profile-level-id=4d4020" ||
+               lowerMimeType == "video/h264; profile-level-id=644020") { // L3.2
+        maxSize = KResH264_PLID_428020;
+    } else if (lowerMimeType == "video/h264; profile-level-id=428028" ||
+               lowerMimeType == "video/h264; profile-level-id=4d4028" ||
+               lowerMimeType == "video/h264; profile-level-id=644028") { // L4
+        maxSize = KResH264_PLID_428028;
+    }
+
+    return maxSize;
+}
+
+qreal S60VideoCaptureSession::maximumFrameRateForMimeType(const QString &mimeType) const
+{
+    qreal maxRate(-1.0);
+    QString lowerMimeType = mimeType.toLower();
+
+    if (lowerMimeType == "video/h263-2000") {
+        maxRate = KFrR_H263;
+    } else if (lowerMimeType == "video/h263-2000; profile=0") {
+        maxRate = KFrR_H263_Profile0;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=10") {
+        maxRate = KFrR_H263_Profile0_Level10;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=20") {
+        maxRate = KFrR_H263_Profile0_Level20;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=30") {
+        maxRate = KFrR_H263_Profile0_Level30;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=40") {
+        maxRate = KFrR_H263_Profile0_Level40;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=45") {
+        maxRate = KFrR_H263_Profile0_Level45;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=50") {
+        maxRate = KFrR_H263_Profile0_Level50;
+    } else if (lowerMimeType == "video/h263-2000; profile=3") {
+        maxRate = KFrR_H263_Profile3;
+    } else if (lowerMimeType == "video/mp4v-es") {
+        maxRate = KFrR_MPEG4;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=1") {
+        maxRate = KFrR_MPEG4_PLID_1;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=2") {
+        maxRate = KFrR_MPEG4_PLID_2;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=3") {
+        maxRate = KFrR_MPEG4_PLID_3;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=4") {
+        maxRate = KFrR_MPEG4_PLID_4;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=5") {
+        maxRate = KFrR_MPEG4_PLID_5;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=6") {
+        maxRate = KFrR_MPEG4_PLID_6;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=8") {
+        maxRate = KFrR_MPEG4_PLID_8;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=9") {
+        maxRate = KFrR_MPEG4_PLID_9;
+    } else if (lowerMimeType == "video/h264") {
+        maxRate = KFrR_H264;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42800a" ||
+               lowerMimeType == "video/h264; profile-level-id=4d400a" ||
+               lowerMimeType == "video/h264; profile-level-id=64400a") { // L1
+        maxRate = KFrR_H264_PLID_42800A;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42900b" ||
+               lowerMimeType == "video/h264; profile-level-id=4d500b" ||
+               lowerMimeType == "video/h264; profile-level-id=644009") { // L1.b
+        maxRate = KFrR_H264_PLID_42900B;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42800b" ||
+               lowerMimeType == "video/h264; profile-level-id=4d400b" ||
+               lowerMimeType == "video/h264; profile-level-id=64400b") { // L1.1
+        maxRate = KFrR_H264_PLID_42800B;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42800c" ||
+               lowerMimeType == "video/h264; profile-level-id=4d400c" ||
+               lowerMimeType == "video/h264; profile-level-id=64400c") { // L1.2
+        maxRate = KFrR_H264_PLID_42800C;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42800d" ||
+               lowerMimeType == "video/h264; profile-level-id=4d400d" ||
+               lowerMimeType == "video/h264; profile-level-id=64400d") { // L1.3
+        maxRate = KFrR_H264_PLID_42800D;
+    } else if (lowerMimeType == "video/h264; profile-level-id=428014" ||
+               lowerMimeType == "video/h264; profile-level-id=4d4014" ||
+               lowerMimeType == "video/h264; profile-level-id=644014") { // L2
+        maxRate = KFrR_H264_PLID_428014;
+    } else if (lowerMimeType == "video/h264; profile-level-id=428015" ||
+               lowerMimeType == "video/h264; profile-level-id=4d4015" ||
+               lowerMimeType == "video/h264; profile-level-id=644015") { // L2.1
+        maxRate = KFrR_H264_PLID_428015;
+    } else if (lowerMimeType == "video/h264; profile-level-id=428016" ||
+               lowerMimeType == "video/h264; profile-level-id=4d4016" ||
+               lowerMimeType == "video/h264; profile-level-id=644016") { // L2.2
+        maxRate = KFrR_H264_PLID_428016;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42801e" ||
+               lowerMimeType == "video/h264; profile-level-id=4d401e" ||
+               lowerMimeType == "video/h264; profile-level-id=64401e") { // L3
+        maxRate = KFrR_H264_PLID_42801E;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42801f" ||
+               lowerMimeType == "video/h264; profile-level-id=4d401f" ||
+               lowerMimeType == "video/h264; profile-level-id=64401f") { // L3.1
+        maxRate = KFrR_H264_PLID_42801F;
+    } else if (lowerMimeType == "video/h264; profile-level-id=428020" ||
+               lowerMimeType == "video/h264; profile-level-id=4d4020" ||
+               lowerMimeType == "video/h264; profile-level-id=644020") { // L3.2
+        maxRate = KFrR_H264_PLID_428020;
+    } else if (lowerMimeType == "video/h264; profile-level-id=428028" ||
+               lowerMimeType == "video/h264; profile-level-id=4d4028" ||
+               lowerMimeType == "video/h264; profile-level-id=644028") { // L4
+        maxRate = KFrR_H264_PLID_428028;
+    }
+
+    return maxRate;
+}
+
+int S60VideoCaptureSession::maximumBitRateForMimeType(const QString &mimeType) const
+{
+    int maxRate(-1.0);
+    QString lowerMimeType = mimeType.toLower();
+
+    if (lowerMimeType == "video/h263-2000") {
+        maxRate = KBiR_H263;
+    } else if (lowerMimeType == "video/h263-2000; profile=0") {
+        maxRate = KBiR_H263_Profile0;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=10") {
+        maxRate = KBiR_H263_Profile0_Level10;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=20") {
+        maxRate = KBiR_H263_Profile0_Level20;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=30") {
+        maxRate = KBiR_H263_Profile0_Level30;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=40") {
+        maxRate = KBiR_H263_Profile0_Level40;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=45") {
+        maxRate = KBiR_H263_Profile0_Level45;
+    } else if (lowerMimeType == "video/h263-2000; profile=0; level=50") {
+        maxRate = KBiR_H263_Profile0_Level50;
+    } else if (lowerMimeType == "video/h263-2000; profile=3") {
+        maxRate = KBiR_H263_Profile3;
+    } else if (lowerMimeType == "video/mp4v-es") {
+        maxRate = KBiR_MPEG4;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=1") {
+        maxRate = KBiR_MPEG4_PLID_1;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=2") {
+        maxRate = KBiR_MPEG4_PLID_2;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=3") {
+        maxRate = KBiR_MPEG4_PLID_3;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=4") {
+        maxRate = KBiR_MPEG4_PLID_4;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=5") {
+        maxRate = KBiR_MPEG4_PLID_5;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=6") {
+        maxRate = KBiR_MPEG4_PLID_6;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=8") {
+        maxRate = KBiR_MPEG4_PLID_8;
+    } else if (lowerMimeType == "video/mp4v-es; profile-level-id=9") {
+        maxRate = KBiR_MPEG4_PLID_9;
+    } else if (lowerMimeType == "video/h264") {
+        maxRate = KBiR_H264;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42800a" ||
+               lowerMimeType == "video/h264; profile-level-id=4d400a" ||
+               lowerMimeType == "video/h264; profile-level-id=64400a") { // L1
+        maxRate = KBiR_H264_PLID_42800A;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42900b" ||
+               lowerMimeType == "video/h264; profile-level-id=4d500b" ||
+               lowerMimeType == "video/h264; profile-level-id=644009") { // L1.b
+        maxRate = KBiR_H264_PLID_42900B;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42800b" ||
+               lowerMimeType == "video/h264; profile-level-id=4d400b" ||
+               lowerMimeType == "video/h264; profile-level-id=64400b") { // L1.1
+        maxRate = KBiR_H264_PLID_42800B;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42800c" ||
+               lowerMimeType == "video/h264; profile-level-id=4d400c" ||
+               lowerMimeType == "video/h264; profile-level-id=64400c") { // L1.2
+        maxRate = KBiR_H264_PLID_42800C;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42800d" ||
+               lowerMimeType == "video/h264; profile-level-id=4d400d" ||
+               lowerMimeType == "video/h264; profile-level-id=64400d") { // L1.3
+        maxRate = KBiR_H264_PLID_42800D;
+    } else if (lowerMimeType == "video/h264; profile-level-id=428014" ||
+               lowerMimeType == "video/h264; profile-level-id=4d4014" ||
+               lowerMimeType == "video/h264; profile-level-id=644014") { // L2
+        maxRate = KBiR_H264_PLID_428014;
+    } else if (lowerMimeType == "video/h264; profile-level-id=428015" ||
+               lowerMimeType == "video/h264; profile-level-id=4d4015" ||
+               lowerMimeType == "video/h264; profile-level-id=644015") { // L2.1
+        maxRate = KBiR_H264_PLID_428015;
+    } else if (lowerMimeType == "video/h264; profile-level-id=428016" ||
+               lowerMimeType == "video/h264; profile-level-id=4d4016" ||
+               lowerMimeType == "video/h264; profile-level-id=644016") { // L2.2
+        maxRate = KBiR_H264_PLID_428016;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42801e" ||
+               lowerMimeType == "video/h264; profile-level-id=4d401e" ||
+               lowerMimeType == "video/h264; profile-level-id=64401e") { // L3
+        maxRate = KBiR_H264_PLID_42801E;
+    } else if (lowerMimeType == "video/h264; profile-level-id=42801f" ||
+               lowerMimeType == "video/h264; profile-level-id=4d401f" ||
+               lowerMimeType == "video/h264; profile-level-id=64401f") { // L3.1
+        maxRate = KBiR_H264_PLID_42801F;
+    } else if (lowerMimeType == "video/h264; profile-level-id=428020" ||
+               lowerMimeType == "video/h264; profile-level-id=4d4020" ||
+               lowerMimeType == "video/h264; profile-level-id=644020") { // L3.2
+        maxRate = KBiR_H264_PLID_428020;
+    } else if (lowerMimeType == "video/h264; profile-level-id=428028" ||
+               lowerMimeType == "video/h264; profile-level-id=4d4028" ||
+               lowerMimeType == "video/h264; profile-level-id=644028") { // L4
+        maxRate = KBiR_H264_PLID_428028;
+    }
+
+    return maxRate;
 }
 
 // End of file

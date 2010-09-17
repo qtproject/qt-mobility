@@ -108,8 +108,8 @@ private: // Worker functions
     // Save detail definition
     void SaveDetailDefinitionL();
 #ifdef SYMBIAN_CALENDAR_V2
-    // Fetch collection local Id
-    void CollectionIdL();
+    // Fetch collection local Ids
+    void CollectionIds();
     // Fetch collection
     void CollectionL();
     // Save collection

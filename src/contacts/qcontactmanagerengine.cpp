@@ -2756,7 +2756,7 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
         // Now fetch the existing contacts
         QMap<int, QContactManager::Error> fetchErrors;
         QContactManager::Error fetchError = QContactManager::NoError;
-        QList<QContact> existingContacts = this->contacts(existingContactIds, &fetchErrors, QContactFetchHint() , &fetchError);
+        QList<QContact> existingContacts = this->contacts(existingContactIds, QContactFetchHint(), &fetchErrors, &fetchError);
 
         // Prepare the list to save
         QList<QContact> contactsToSave;
@@ -2844,7 +2844,7 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
 
   \sa QContactFetchHint
  */
-QList<QContact> QContactManagerEngineV2::contacts(const QList<QContactLocalId> &localIds, QMap<int, QContactManager::Error> *errorMap, const QContactFetchHint &fetchHint, QContactManager::Error *error) const
+QList<QContact> QContactManagerEngineV2::contacts(const QList<QContactLocalId> &localIds, const QContactFetchHint &fetchHint, QMap<int, QContactManager::Error> *errorMap, QContactManager::Error *error) const
 {
     // Default implementation is to fetch one by one
     QList<QContact> ret;

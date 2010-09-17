@@ -77,7 +77,7 @@ class Q_ORGANIZER_EXPORT QOrganizerItem
 public:
     QOrganizerItem();
 
-    ~QOrganizerItem();
+    virtual ~QOrganizerItem();
 
     QOrganizerItem(const QOrganizerItem& other);
     QOrganizerItem& operator=(const QOrganizerItem& other);

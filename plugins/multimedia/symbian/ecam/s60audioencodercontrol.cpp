@@ -102,7 +102,12 @@ void S60AudioEncoderControl::setEncodingOption(
 QList<int> S60AudioEncoderControl::supportedSampleRates(
     const QAudioEncoderSettings &settings, bool *continuous) const
 {
-    return m_session->supportedSampleRates(settings, continuous);
+    if(continuous)
+        return m_session->supportedSampleRates(settings, *continuous);
+    else {
+        bool tempCont = false;
+        return m_session->supportedSampleRates(settings, tempCont);
+    }
 }
 
 QAudioEncoderSettings S60AudioEncoderControl::audioSettings() const
@@ -115,7 +120,32 @@ QAudioEncoderSettings S60AudioEncoderControl::audioSettings() const
 
 void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &settings)
 {
-    m_session->setAudioEncoderSettings(settings);
+    // Quality defines SampleRate/BitRate combination if either or both are missing
+    if (settings.codec().isEmpty()) { // Empty settings
+        m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::EOnlyAudioQuality);
+
+    } else if (settings.bitRate() == -1 && settings.sampleRate() != -1) { // SampleRate set
+        m_session->setAudioCaptureCodec(settings.codec());
+        m_session->setAudioChannelCount(settings.channelCount());
+        m_session->setAudioSampleRate(settings.sampleRate());
+        m_session->setAudioEncodingMode(settings.encodingMode());
+        m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::EAudioQualityAndSampleRate);
+
+    } else if (settings.bitRate() != -1 && settings.sampleRate() == -1) { // BitRate set
+        m_session->setAudioCaptureCodec(settings.codec());
+        m_session->setAudioChannelCount(settings.channelCount());
+        m_session->setAudioBitRate(settings.bitRate());
+        m_session->setAudioEncodingMode(settings.encodingMode());
+        m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::EAudioQualityAndBitRate);
+
+    } else { // SampleRate and BitRate set
+        m_session->setAudioCaptureCodec(settings.codec());
+        m_session->setAudioChannelCount(settings.channelCount());
+        m_session->setAudioSampleRate(settings.sampleRate());
+        m_session->setAudioBitRate(settings.bitRate());
+        m_session->setAudioEncodingMode(settings.encodingMode());
+        m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::ENoAudioQuality);
+    }
 }
 
 // End of file
