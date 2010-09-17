@@ -62,6 +62,7 @@
 #include "organizeritemguidtransform.h"
 #include "qorganizeritemrequestqueue.h"
 #include "organizersymbianutils.h"
+#include "resetanddestroy.h"
 
 using namespace OrganizerSymbianUtils;
 
@@ -233,6 +234,7 @@ uint QOrganizerCollectionSymbianEngineLocalId::hash() const
 // valid. The error code is not expected to clash with any symbian calendar
 // API errors.
 const TInt KErrInvalidOccurrence(-32768);
+const TInt KErrInvalidItemType(-32769);
 
 QOrganizerItemManagerEngine* QOrganizerItemSymbianFactory::engine(
     const QMap<QString, QString>& parameters, 
@@ -275,8 +277,7 @@ Q_EXPORT_PLUGIN2(qtorganizer_symbian, QOrganizerItemSymbianFactory);
 
 QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
     QOrganizerItemManagerEngine(),
-    m_defaultCollection(this),
-    m_activeSchedulerWait(0)
+    m_defaultCollection(this)
 {
 
 }
@@ -285,9 +286,9 @@ void QOrganizerItemSymbianEngine::initializeL()
 {
     // Open the default collection
     m_defaultCollection.openL(KNullDesC);
-    m_collections.insert(m_defaultCollection.localId(), m_defaultCollection); 
-    m_defaultCollection.createEntryViewL();
-    
+    m_collections.insert(m_defaultCollection.localId(), m_defaultCollection);
+    m_defaultCollection.createViewsL();
+
 #ifdef SYMBIAN_CALENDAR_V2
     // Start listening to calendar file changes
     m_defaultCollection.calSession()->StartFileChangeNotificationL(*this);
@@ -318,20 +319,12 @@ void QOrganizerItemSymbianEngine::initializeL()
         OrganizerSymbianCollection collection(this);
         collection.openL(calInfo->FileNameL());
         m_collections.insert(collection.localId(), collection);
-        collection.createEntryViewL();
-        
+        collection.createViewsL();
+
         CleanupStack::PopAndDestroy(calInfo);
     }
     CleanupStack::PopAndDestroy(iterator);
 #endif
-       
-    m_instanceView = CCalInstanceView::NewL(*m_defaultCollection.calSession(), *this);
-    // TODO: multical instance view(s)
-    // TODO: The calendar session may take some time to initialize which would
-    // make an UI app using symbian backend freeze. To be refactored.
-    m_activeSchedulerWait = new CActiveSchedulerWait(); 
-    m_activeSchedulerWait->Start();
-    
     // Create request queue for asynch requests
     m_requestServiceProviderQueue = QOrganizerItemRequestQueue::instance(*this);
 }
@@ -342,8 +335,6 @@ QOrganizerItemSymbianEngine::~QOrganizerItemSymbianEngine()
     m_defaultCollection.calSession()->StopFileChangeNotification();
 #endif
 	delete m_requestServiceProviderQueue;
-    delete m_activeSchedulerWait;
-    delete m_instanceView;
 }
 
 QString QOrganizerItemSymbianEngine::managerName() const
@@ -364,186 +355,163 @@ int QOrganizerItemSymbianEngine::managerVersion() const
 }
 
 QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(
-    const QOrganizerItem& generator, const QDateTime& periodStart, 
-    const QDateTime& periodEnd, int maxCount, 
+    const QOrganizerItem& generator,
+    const QDateTime& periodStart,
+    const QDateTime& periodEnd,
+    int maxCount,
     QOrganizerItemManager::Error* error) const
 {
-    QList<QOrganizerItem> occurrenceList;
-
-    quint32 defaultCollectionLocalIdValue = 0;
-    QOrganizerCollectionSymbianEngineLocalId* idPtr = static_cast<QOrganizerCollectionSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalCollectionId(m_defaultCollection.localId()));
-    if (idPtr != 0)
-        defaultCollectionLocalIdValue = idPtr->m_localCollectionId;
-    
-    // Parent item should be an Event or a Todo
-    if (!((generator.type()== QOrganizerItemType::TypeEvent) ||(generator.type()== QOrganizerItemType::TypeTodo))) {
-        *error = QOrganizerItemManager::InvalidItemTypeError;
-        return occurrenceList;
-    }
-
-    //check for valid periodStart    
-    if (periodStart.isValid()&&(periodEnd.isValid() || (maxCount > 0))) {
-        
-        // End period should be greater than start period.   
-        if (periodEnd.isValid() && (periodEnd < periodStart)) {
-            *error = QOrganizerItemManager::BadArgumentError;
-            return occurrenceList;
-        }
-        RPointerArray<CCalInstance> instanceList;
-        QDateTime endDateTime(periodEnd);
-        CalCommon::TCalViewFilter filter(0);
-        //use maximum end date if only count is present.
-        if ((!periodEnd.isValid()) && (maxCount > 0)) {
-              TCalTime endTime; 
-              endTime.SetTimeUtcL(TCalTime::MaxTime());
-              endDateTime = toQDateTimeL(endTime);  
-        }
-        
-        if (generator.type() == QOrganizerItemType::TypeEvent) {
-        	filter = CalCommon::EIncludeAppts; 
-        } else if (generator.type() ==  QOrganizerItemType::TypeTodo) {
-        	filter = (CalCommon::EIncludeCompletedTodos |
-        	CalCommon::EIncludeIncompletedTodos);
-        }
-		#ifdef SYMBIAN_CALENDAR_V2
-            CCalInstanceIterator *iterator(NULL);
-            CCalFindInstanceSettings *findIntanceSettings = CCalFindInstanceSettings::NewL(filter,
-                CalCommon::TCalTimeRange(toTCalTimeL(periodStart),
-                                         toTCalTimeL(endDateTime)));
-            CleanupStack::PushL(findIntanceSettings);
-        
-            TRAPD(err,iterator = m_instanceView->FindInstanceL(*findIntanceSettings));
-            CleanupStack::PopAndDestroy(findIntanceSettings);
-            CleanupStack::PushL(iterator);
-        #else        
-        
-            TRAPD(err, m_instanceView->FindInstanceL(instanceList,filter,
-                                                     CalCommon::TCalTimeRange(
-                                       toTCalTimeL(periodStart),
-                                       toTCalTimeL(endDateTime))
-                                       ));
-        #endif    
+    QList<QOrganizerItem> itemInstances; 
+    TRAPD(err, itemInstancesL(itemInstances, generator, periodStart, periodEnd, maxCount));
+    if (err != KErrNone) {
         transformError(err, error);
-   
-        if (*error == QOrganizerItemManager::NoError) {
-            #ifdef SYMBIAN_CALENDAR_V2
-                int count(iterator->Count()); 
-            #else
-                int count(instanceList.Count()); 
-            #endif
-            // Convert calninstance list to  QOrganizerEventOccurrence and add to QOrganizerItem list                 
-            for( int index=0; index < count;index++ ) {
-                 QOrganizerItem itemInstance;
-                 CCalInstance* calInstance(NULL);
-                 #ifdef SYMBIAN_CALENDAR_V2
-                     calInstance = iterator->NextL(); 
-                 #else
-                     calInstance = (instanceList)[index];
-                 #endif     
-                     CleanupStack::PushL(calInstance);
-                     
-                 if (QOrganizerItemType::TypeEvent == generator.type())
-                     itemInstance.setType(QOrganizerItemType::TypeEventOccurrence);
-                 else if (QOrganizerItemType::TypeTodo == generator.type())
-                     itemInstance.setType(QOrganizerItemType::TypeTodoOccurrence);
-                 else
-                     User::Leave(KErrNotSupported);
-
-                 TRAPD(err, m_itemTransform.toItemInstanceL(*calInstance, &itemInstance));
-                 transformError(err, error);
-                 if ((*error == QOrganizerItemManager::NoError)&&(generator.guid() == itemInstance.guid())) {
-                     if ((periodEnd.isValid()&& (maxCount < 0))||(maxCount > 0) && (index < maxCount)) {
-                         QOrganizerItemId id;
-                         id.setManagerUri(this->managerUri());
-                         // The instance might be modified. Then it will not point to the parent entry.
-                         // In this case local id must be set. Otherwise it should be zero.
-                         QOrganizerItemLocalId instanceEntryId(new QOrganizerItemSymbianEngineLocalId(defaultCollectionLocalIdValue, calInstance->Entry().LocalUidL()));
-                         if (instanceEntryId != generator.localId())
-                             id.setLocalId(instanceEntryId);
-                         itemInstance.setId(id);
-                         occurrenceList.append(itemInstance);
-                     }
-                 }    
-                 CleanupStack::PopAndDestroy(calInstance);                  
-            }           
-        }
-        #ifdef SYMBIAN_CALENDAR_V2
-            CleanupStack::PopAndDestroy(iterator);
-        #else
-            instanceList.Close();
-        #endif
-        
-    } else {
-        *error = QOrganizerItemManager::BadArgumentError;
+        return QList<QOrganizerItem>();
     }
-    
-    return occurrenceList;
+    return itemInstances;
 }
+
+void QOrganizerItemSymbianEngine::itemInstancesL(
+    QList<QOrganizerItem> &itemInstances,
+    const QOrganizerItem &generator,
+    const QDateTime &periodStart,
+    const QDateTime &periodEnd,
+    int maxCount) const
+{
+    // Check parameters
+    if (periodStart.isValid() && periodEnd.isValid() && periodEnd < periodStart) {
+        User::Leave(KErrArgument);
+    }
+
+    // Set cal view filter based on the item type
+    // TODO: move to transform classes?
+    CalCommon::TCalViewFilter filter(0);
+    QString itemType;
+    if (generator.type() == QOrganizerItemType::TypeEvent) {
+        itemType = QOrganizerItemType::TypeEventOccurrence.latin1();
+        filter = CalCommon::EIncludeAppts | CalCommon::EIncludeEvents;
+    } else if (generator.type() == QOrganizerItemType::TypeTodo) {
+        itemType = QOrganizerItemType::TypeTodoOccurrence.latin1();
+        filter = (CalCommon::EIncludeCompletedTodos | CalCommon::EIncludeIncompletedTodos);
+    } else {
+        User::Leave(KErrInvalidItemType);
+    }
+
+    // If start time is not defined, use minimum start date
+    TCalTime startTime;
+    startTime.SetTimeUtcL(TCalTime::MinTime());
+    if (periodStart.isValid())
+        startTime.SetTimeUtcL(toTTime(periodStart, Qt::UTC));
+
+    // If end date is not defined, use maximum end date
+    TCalTime endTime;
+    endTime.SetTimeUtcL(TCalTime::MaxTime());
+    if (periodEnd.isValid())
+        endTime.SetTimeUtcL(toTTime(periodEnd, Qt::UTC));
+
+    // Loop through all the instance views and fetch the item instances
+    foreach(QOrganizerCollectionLocalId collectionId, m_collections.keys()) {
+        RPointerArray<CCalInstance> instanceList;
+        CleanupResetAndDestroyPushL(instanceList);
+        instanceViewL(collectionId)->FindInstanceL(instanceList, filter,
+            CalCommon::TCalTimeRange(startTime, endTime));
+        // Transform CCalInstances to QOrganizerItems
+        toItemInstancesL(instanceList, generator, maxCount, collectionId, itemInstances);
+        CleanupStack::PopAndDestroy(&instanceList);
+    }
+}
+
 QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(
-    const QOrganizerItemFilter& filter, 
-    const QList<QOrganizerItemSortOrder>& sortOrders, 
+    const QOrganizerItemFilter& filter,
+    const QList<QOrganizerItemSortOrder>& sortOrders,
     const QOrganizerItemFetchHint& fetchHint,
     QOrganizerItemManager::Error* error) const
 {
+    QList<QOrganizerItem> itemInstances;
+    TRAPD(err, itemInstancesL(itemInstances, filter, sortOrders, fetchHint));
+    if (err != KErrNone) {
+        transformError(err, error);
+        return QList<QOrganizerItem>();
+    }
+    return itemInstances;
+}
+
+QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstancesL(
+    QList<QOrganizerItem> &itemInstances,
+    const QOrganizerItemFilter &filter,
+    const QList<QOrganizerItemSortOrder> &sortOrders,
+    const QOrganizerItemFetchHint &fetchHint) const
+{
+    // TODO: It might be possible to optimize by using fetch hint
     Q_UNUSED(fetchHint);
-    QList<QOrganizerItem> occurrenceList;
+
     TCalTime startTime;
     startTime.SetTimeUtcL(TCalTime::MinTime());
-
     TCalTime endTime;
     endTime.SetTimeUtcL(TCalTime::MaxTime());
 
-    RPointerArray<CCalInstance> instanceList;
-    TRAPD(err, m_instanceView->FindInstanceL(instanceList,CalCommon::EIncludeAll,
-                                   CalCommon::TCalTimeRange(startTime,endTime)));
+    // Loop through all the instance views and fetch the item instances
+    foreach(QOrganizerCollectionLocalId collectionId, m_collections.keys()) {
+        RPointerArray<CCalInstance> instanceList;
+        CleanupResetAndDestroyPushL(instanceList);
+        instanceViewL(collectionId)->FindInstanceL(
+            instanceList, CalCommon::EIncludeAll,
+            CalCommon::TCalTimeRange(startTime, endTime));
+        // Transform CCalInstances to QOrganizerItems
+        toItemInstancesL(instanceList, QOrganizerItem(), -1, collectionId, itemInstances);
+        CleanupStack::PopAndDestroy(&instanceList);
+    }
 
+    // Use the general implementation to filter and sort items
+    itemInstances = slowFilter(itemInstances, filter, sortOrders);
+
+    return itemInstances;
+}
+
+void QOrganizerItemSymbianEngine::toItemInstancesL(
+    const RPointerArray<CCalInstance> &calInstanceList,
+    QOrganizerItem generator,
+    const int maxCount,
+    QOrganizerCollectionLocalId collectionLocalId,
+    QList<QOrganizerItem> &itemInstances) const
+{
     // find the default collection local id value
     quint32 defaultCollectionLocalIdValue = 0;
     QOrganizerCollectionSymbianEngineLocalId* idPtr = static_cast<QOrganizerCollectionSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalCollectionId(m_defaultCollection.localId()));
     if (idPtr != 0)
         defaultCollectionLocalIdValue = idPtr->m_localCollectionId;
-            
-    transformError(err, error);
-    //Convert instance list to list of QOrganizerItem    
-    if (*error == QOrganizerItemManager::NoError) {  
-        int count(instanceList.Count()); 
-        // Convert calninstance list to  QOrganizerEventOccurrence and add to QOrganizerItem list                 
-        for( int index=0; index < count;index++ ) {
-             QOrganizerItem itemInstance;
-             CCalInstance* calInstance = (instanceList)[index];
-                                 
-             TRAPD(err, m_itemTransform.toItemInstanceL(*calInstance, &itemInstance));
-             transformError(err, error);
-             if (*error == QOrganizerItemManager::NoError) {
-                 QOrganizerItemId id;
-                 id.setManagerUri(this->managerUri());
-                 
-                 // The instance might be modified. Then it will not point to the parent entry.
-                 // In this case local id must be set. Otherwise it should be zero.                                                  
-                 if (calInstance->Entry().RecurrenceIdL().TimeUtcL() != Time::NullTTime()) {
-                     QOrganizerItemLocalId instanceEntryId(new QOrganizerItemSymbianEngineLocalId(defaultCollectionLocalIdValue, calInstance->Entry().LocalUidL()));
-                     id.setLocalId(instanceEntryId);
-                     itemInstance.setId(id);
-                 }                                                                      
-                 occurrenceList.append(itemInstance);
-             }    
-        }           
-    } else {
-        instanceList.ResetAndDestroy();
-        return occurrenceList;
+
+    // Transform all the instances to QOrganizerItems
+    for(int i(0); i < calInstanceList.Count(); i++) {
+        QOrganizerItem itemInstance;
+        CCalInstance* calInstance = calInstanceList[i];
+        m_itemTransform.toItemInstanceL(*calInstance, &itemInstance);
+
+        // Optimization: if a generator instance is defined, skip the instances that do not match
+        if (!generator.isEmpty() && generator.guid() != itemInstance.guid())
+            continue;
+
+        // Check if maxCount limit is reached
+        if(maxCount > 0 && i >= maxCount)
+            break;
+
+        // Set item id
+        QOrganizerItemId id;
+        id.setManagerUri(managerUri());
+        // Set local id if this is an exceptional item
+        if (calInstance->Entry().RecurrenceIdL().TimeUtcL() != Time::NullTTime()) {
+            QOrganizerItemLocalId instanceEntryId(new QOrganizerItemSymbianEngineLocalId(defaultCollectionLocalIdValue, calInstance->Entry().LocalUidL()));
+            id.setLocalId(instanceEntryId);
+        }
+        itemInstance.setId(id);
+
+        // Set collection id
+        QOrganizerCollectionId cid;
+        cid.setLocalId(collectionLocalId);
+        cid.setManagerUri(managerUri());
+        setItemCollectionId(&itemInstance, cid);
+
+        itemInstances.append(itemInstance);
     }
-    instanceList.ResetAndDestroy();
-    
-    //Check whether no filtering and sorting needed.Return complete list.
-    if (filter == QOrganizerItemInvalidFilter() && sortOrders.count() == 0)
-        return occurrenceList;    
-            
-    // Use the general implementation to filter and sort items
-    QList<QOrganizerItem> filteredAndSortedItemList = slowFilter(occurrenceList, filter, sortOrders);
-    occurrenceList.clear();
-    occurrenceList.append(filteredAndSortedItemList);
-                   
-    return occurrenceList;
 }
 
 QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
@@ -704,14 +672,14 @@ void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId,
         itemLocalIdValue = idPtr->m_localItemId;
 
     // Fetch item
-    TCalLocalUid uid(itemLocalIdValue);
+    TCalLocalUid localId(itemLocalIdValue);
     CCalEntry *calEntry(0);
     QOrganizerCollectionLocalId collectionLocalId(new QOrganizerCollectionSymbianEngineLocalId(0));
     foreach (const OrganizerSymbianCollection &collection, m_collections) {
         // TODO: instead of looping through entry views, get the collection id from
         // local id? (not certain that is the correct way, because the Qt API for
         // collections is still under development)
-        calEntry = collection.calEntryView()->FetchL(uid);
+        calEntry = collection.calEntryView()->FetchL(localId);
         if (calEntry) {
             collectionLocalId = collection.localId();
             break;
@@ -820,9 +788,9 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item,
     bool isNewEntry(false);
     if(item->type()== QOrganizerItemType::TypeEventOccurrence
         || item->type()== QOrganizerItemType::TypeTodoOccurrence) {
-        entry = entryForItemOccurrenceL(collectionId, item, isNewEntry);
+        entry = entryForItemOccurrenceL(collectionLocalId, item, isNewEntry);
     } else {
-        entry = entryForItemL(collectionId, item, isNewEntry);
+        entry = entryForItemL(collectionLocalId, item, isNewEntry);
     }
     CleanupStack::PushL(entry);
 
@@ -834,7 +802,7 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item,
     CleanupClosePushL(entries);
     entries.AppendL(entry);
     TInt count(0);
-    entryViewL(collectionId)->StoreL(entries, count);
+    entryViewL(collectionLocalId)->StoreL(entries, count);
     if (count != entries.Count()) {
         // The documentation states about count "On return, this
         // contains the number of entries which were successfully stored".
@@ -848,7 +816,7 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item,
 
     // Set collection id
     QOrganizerCollectionId cid;
-    cid.setLocalId(collectionLocalIdL(*item, collectionId));
+    cid.setLocalId(collectionLocalId);
     cid.setManagerUri(managerUri());
     setItemCollectionId(item, cid);
 
@@ -874,7 +842,7 @@ CCalEntryView* QOrganizerItemSymbianEngine::entryViewL(
 {
     QOrganizerCollectionLocalId tempCollectionId = collectionId;
 
-    // 0 is interpreted as the default collection
+    // Null is interpreted as the default collection
     if (tempCollectionId.isNull())
         tempCollectionId = m_defaultCollection.localId();
 
@@ -884,6 +852,24 @@ CCalEntryView* QOrganizerItemSymbianEngine::entryViewL(
     return m_collections[tempCollectionId].calEntryView();
 }
 
+/*!
+ * Retrieves the instance view for the collection. Leaves with KErrArgument if
+ * not found.
+ */
+CCalInstanceView* QOrganizerItemSymbianEngine::instanceViewL(const QOrganizerCollectionLocalId& collectionId) const
+{
+    QOrganizerCollectionLocalId tempCollectionId = collectionId;
+
+    // Null is interpreted as the default collection
+    if (tempCollectionId.isNull())
+        tempCollectionId = m_defaultCollection.localId();
+
+    if (!m_collections.contains(tempCollectionId))
+        User::Leave(KErrArgument);
+
+    return m_collections[tempCollectionId].calInstanceView();
+}
+    
 /*!
  * Returns item's collection id if it is valid. If not returns collectionId
  * given as a parameter if it is valid. Fallback is to return the default
@@ -924,7 +910,7 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(
             User::Leave(KErrInvalidOccurrence);
 
         // Fetch the item (will return NULL if the localid is not found)
-        entry = entryViewL(collectionLocalIdL(*item))->FetchL(toTCalLocalUid(item->localId()));
+        entry = entryViewL(collectionId)->FetchL(toTCalLocalUid(item->localId()));
         if (!entry)
             User::Leave(KErrInvalidOccurrence);
         return entry;
@@ -1158,7 +1144,11 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(
     const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
     QList<QOrganizerItem> filteredAndSorted;
-    
+
+    // TODO: should we return the complete list in case of invalid filter?
+    if (filter == QOrganizerItemInvalidFilter() && sortOrders.count() == 0)
+        return items;
+
     if (filter != QOrganizerItemInvalidFilter()) {
         foreach(const QOrganizerItem& item, items) {
             if (QOrganizerItemManagerEngine::testFilter(filter, item))
@@ -1263,8 +1253,8 @@ bool QOrganizerItemSymbianEngine::saveCollection(
     
     if (*error == QOrganizerItemManager::NoError) {
         if (isNewCollection)
-            emit collectionsAdded(QList<QOrganizerCollectionLocalId>() << 
-                collection->id().localId());
+            emit collectionsAdded(QList<QOrganizerCollectionLocalId>()
+                << collection->id().localId());
         // NOTE: collectionsChanged signal will be emitted from 
         // CalendarInfoChangeNotificationL
     }
@@ -1312,7 +1302,7 @@ void QOrganizerItemSymbianEngine::saveCollectionL(
         // Create a new collection
         symbianCollection.openL(toPtrC16(fileName), calInfo);
         m_collections.insert(symbianCollection.localId(), symbianCollection);
-        symbianCollection.createEntryViewL();
+        symbianCollection.createViewsL();
     }
     else {
         // Cannot allow changing the filename for an existing collection
@@ -1572,35 +1562,6 @@ QStringList QOrganizerItemSymbianEngine::supportedItemTypes() const
     return ret;
 }
 
-/*!
- * From MCalProgressCallBack
- */
-void QOrganizerItemSymbianEngine::Progress(TInt /*aPercentageCompleted*/)
-{
-}
-
-/*!
- * From MCalProgressCallBack
- */
-void QOrganizerItemSymbianEngine::Completed(TInt aError)
-{
-	Q_UNUSED(aError)
-    // TODO: How to handle aError? The client should be informed that the
-    // initialization failed
-
-    // Let's continue the operation that started the calendar operation
-    m_activeSchedulerWait->AsyncStop();
-}
-
-/*!
- * From MCalProgressCallBack
- */
-TBool QOrganizerItemSymbianEngine::NotifyProgress()
-{
-    // No 
-    return EFalse;
-}
-
 #ifdef SYMBIAN_CALENDAR_V2
 void QOrganizerItemSymbianEngine::CalendarInfoChangeNotificationL(
     RPointerArray<CCalFileChangeInfo>& aCalendarInfoChangeEntries)
@@ -1633,7 +1594,7 @@ void QOrganizerItemSymbianEngine::CalendarInfoChangeNotificationL(
                 // instance.
                 collection.openL(fileName);
                 m_collections.insert(collection.localId(), collection);
-                collection.createEntryViewL();
+                collection.createViewsL();
                 collectionsAdded << collection.localId();
             }
             break;
@@ -1666,7 +1627,7 @@ void QOrganizerItemSymbianEngine::CalendarInfoChangeNotificationL(
             } else {
                 // Calendar file has been modified but we do not have a session 
                 // to it.
-                collection.openL(fileName);             
+                collection.openL(fileName);
                 
                 // Is it marked for deletion?
                 if (collection.isMarkedForDeletionL()) {
@@ -1676,7 +1637,7 @@ void QOrganizerItemSymbianEngine::CalendarInfoChangeNotificationL(
                     // A calendar file which was marked for deletion has been 
                     // taken into use again.
                     m_collections.insert(collection.localId(), collection);
-                    collection.createEntryViewL();
+                    collection.createViewsL();
                     collectionsAdded << collection.localId();
                 }
             }
@@ -1757,6 +1718,11 @@ bool QOrganizerItemSymbianEngine::transformError(TInt symbianError, QOrganizerIt
         case KErrInvalidOccurrence:
         {
             *qtError = QOrganizerItemManager::InvalidOccurrenceError;
+            break;
+        }
+        case KErrInvalidItemType:
+        {
+            *qtError = QOrganizerItemManager::InvalidItemTypeError;
             break;
         }
         default:

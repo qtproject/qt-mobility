@@ -43,6 +43,7 @@
 #include <QDebug>
 #include <calsession.h>
 #include <calentryview.h>
+#include <calinstanceview.h>
 #include "organizersymbianutils.h"
 #include "qorganizeritemchangeset.h"
 #include "qorganizeritemmanagerengine.h"
@@ -54,6 +55,7 @@ OrganizerSymbianCollectionPrivate::OrganizerSymbianCollectionPrivate()
     m_engine(0),
     m_calSession(0),
     m_calEntryView(0),
+    m_calInstanceView(0),
     m_calCollectionId(0),
     m_error(0)
 {
@@ -65,6 +67,7 @@ OrganizerSymbianCollectionPrivate::~OrganizerSymbianCollectionPrivate()
     if (m_calSession)
         m_calSession->StopChangeNotification();
     delete m_calEntryView;
+    delete m_calInstanceView;
     delete m_calSession;
     delete m_activeSchedulerWait;
 }    
@@ -164,6 +167,8 @@ void OrganizerSymbianCollection::openL(const TDesC &fileName)
         d->m_calSession->StopChangeNotification();
     delete d->m_calEntryView;
     d->m_calEntryView = 0;
+    delete d->m_calInstanceView;
+    d->m_calInstanceView = 0;
     delete d->m_calSession;
     d->m_calSession = 0;
     
@@ -226,11 +231,16 @@ void OrganizerSymbianCollection::openL(const TDesC &fileName)
     delete filter;
 }
 
-void OrganizerSymbianCollection::createEntryViewL()
+void OrganizerSymbianCollection::createViewsL()
 {
     // Create an entry view
     d->m_calEntryView = CCalEntryView::NewL(*d->m_calSession, *d);
     d->m_activeSchedulerWait->Start(); // stopped at Completed()
+    User::LeaveIfError(d->m_error);
+
+    // Create an instance view
+    d->m_calInstanceView = CCalInstanceView::NewL(*d->m_calSession, *d);
+    d->m_activeSchedulerWait->Start();
     User::LeaveIfError(d->m_error);
 }
 
@@ -257,6 +267,11 @@ CCalSession *OrganizerSymbianCollection::calSession() const
 CCalEntryView *OrganizerSymbianCollection::calEntryView() const
 { 
     return d->m_calEntryView; 
+}
+
+CCalInstanceView *OrganizerSymbianCollection::calInstanceView() const
+{ 
+    return d->m_calInstanceView; 
 }
 
 QString OrganizerSymbianCollection::fileName() const

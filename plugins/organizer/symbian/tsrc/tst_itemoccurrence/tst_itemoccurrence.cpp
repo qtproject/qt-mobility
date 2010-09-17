@@ -265,6 +265,7 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     //fetch instances and modify displaylabel for second and third instance
     QList<QOrganizerItem> instanceList;
     instanceList = m_om->itemInstances(item,startTime,QDateTime(),10);
+    QCOMPARE(instanceList.count(), 3);
     instanceList[1].setDisplayLabel(modifiedLabel);
     instanceList[2].setDisplayLabel(modifiedLabel);
     QVERIFY(m_om->saveItem(&instanceList[1]));
@@ -754,17 +755,20 @@ void tst_ItemOccurrence::fetchNegative()
     instanceList = m_om->itemInstances(invalidItem,startTime,endTime);
     QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidItemTypeError);
     
-    // Fetch the item instance with invalid count
-    instanceList = m_om->itemInstances(item,startTime,QDateTime(),-2);
-    QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
-    
-   // Fetch the item instance with invalid starttime
-   instanceList = m_om->itemInstances(item,QDateTime(),endTime);
-   QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
-   
-   // Fetch the item instance with invalid endtime
-   instanceList = m_om->itemInstances(item,startTime,QDateTime());
-   QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);   
+    // Fetch the item instance with negative count
+    instanceList = m_om->itemInstances(item, startTime, QDateTime(), -2);
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(instanceList.count(), 1);
+
+    // Fetch the item instance with undefined starttime
+    instanceList = m_om->itemInstances(item, QDateTime(), endTime);
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(instanceList.count(), 1);
+
+    // Fetch the item instance with undefined endtime
+    instanceList = m_om->itemInstances(item, startTime, QDateTime());
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(instanceList.count(), 1);
 }
 
 void tst_ItemOccurrence::daylightSavingTime()

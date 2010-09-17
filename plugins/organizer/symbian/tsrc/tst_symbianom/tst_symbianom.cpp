@@ -717,12 +717,11 @@ void tst_SymbianOm::addReminderToSingleInstance()
     instance1 = m_om->item(instance1.localId());
     rptReminder = instance1.detail<QOrganizerItemReminder>();
     QVERIFY(!rptReminder.isEmpty());
-	
+
 	// Verify that the other instances have not been modified
-	itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
-	instance1 = itemInstances.at(1);
-    rptReminder = instance1.detail<QOrganizerItemReminder>();
-    QVERIFY(rptReminder.isEmpty());
+    itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
+    QCOMPARE(itemInstances.count(), 3);
+    QVERIFY(itemInstances.at(1).detail<QOrganizerItemReminder>().isEmpty());
 }
 
 /*!
@@ -776,9 +775,8 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
 	
 	// Check if the other instances are intact
 	itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
-	instance1 = itemInstances.at(1);
-    rptReminder = instance1.detail<QOrganizerItemReminder>();
-    QVERIFY(!rptReminder.isEmpty());
+	QCOMPARE(itemInstances.count(), 3);
+    QVERIFY(!itemInstances.at(1).detail<QOrganizerItemReminder>().isEmpty());
 }
 
 void tst_SymbianOm::timezone()

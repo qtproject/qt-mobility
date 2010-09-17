@@ -131,6 +131,9 @@ private slots:  // Test cases
     void fetchItemInstance_data(){ addManagers(); };
     void fetchItemInstance();
 
+    void modifyItemInstance_data(){ addManagers(); };
+    void modifyItemInstance();
+
     // TODO: test all known properties
     //void collectionProperties_data();
     //void collectionProperties();
@@ -654,9 +657,54 @@ void tst_symbianomcollections::fetchItemInstance()
     QVERIFY(m_om->saveItem(&item, c.id().localId()));
 
     // Verify
-    QCOMPARE(m_om->itemInstances().count(), 5);
     QCOMPARE(m_om->items().count(), 1);
     QCOMPARE(m_om->items().at(0).collectionId(), c.id());
+    QCOMPARE(m_om->itemInstances().count(), 5);
+    QVERIFY(m_om->itemInstances().at(0).localId() == 0);
+    QVERIFY(m_om->itemInstances().at(1).localId() == 0);
+    QCOMPARE(m_om->itemInstances().at(0).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QCOMPARE(m_om->itemInstances().at(1).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+}
+
+void tst_symbianomcollections::modifyItemInstance()
+{
+    // Save a collection
+    QOrganizerCollection c;
+    c.setMetaData("Name", "modifyItemInstance");
+    c.setMetaData("FileName", "c:modifyiteminstance");
+    QVERIFY(m_om->saveCollection(&c));
+
+    // Save a weekly recurring item
+    QOrganizerItem item = createItem(QOrganizerItemType::TypeEvent,
+                                      QString("modifyiteminstance"),
+                                      QDateTime::currentDateTime().addMSecs(3600));
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    rrule.setCount(5);
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    rrules.append(rrule);
+    QOrganizerItemRecurrence recurrence;
+    recurrence.setRecurrenceRules(rrules);
+    QVERIFY(item.saveDetail(&recurrence));
+    QVERIFY(m_om->saveItem(&item, c.id().localId()));
+    QCOMPARE(m_om->itemInstances().count(), 5);
+
+    // Modify the second instance
+    QOrganizerItem secondInstance = m_om->itemInstances().at(1);
+    secondInstance.setDisplayLabel("secondinstance");
+    QVERIFY(m_om->saveItem(&secondInstance));
+
+    // Verify
+    QCOMPARE(m_om->itemInstances().count(), 5);
+    QCOMPARE(m_om->itemInstances().at(0).collectionId(), c.id());
+    QCOMPARE(m_om->itemInstances().at(1).collectionId(), c.id());
+    QCOMPARE(m_om->itemInstances().at(2).collectionId(), c.id());
+    QVERIFY(m_om->itemInstances().at(0).localId() == 0);
+    QVERIFY(m_om->itemInstances().at(1).localId() != 0);
+    QVERIFY(m_om->itemInstances().at(2).localId() == 0);
+    QCOMPARE(m_om->itemInstances().at(0).displayLabel(), QString("modifyiteminstance"));
+    QCOMPARE(m_om->itemInstances().at(1).displayLabel(), QString("secondinstance"));
+    QCOMPARE(m_om->itemInstances().at(2).displayLabel(), QString("modifyiteminstance"));
 }
 
 /*!

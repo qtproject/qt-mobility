@@ -193,8 +193,8 @@ class QOrganizerItemRequestQueue;
 class CCalCalendarInfo;
 #endif
 
-class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, 
-                                    public MCalProgressCallBack
+class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine
+
 #ifdef SYMBIAN_CALENDAR_V2
                                     ,public MCalFileChangeObserver
 #endif
@@ -307,11 +307,28 @@ public:
     /* Util functions */
     static bool transformError(TInt symbianError, 
         QOrganizerItemManager::Error* qtError);
-    void saveItemL(QOrganizerItem *item, 
-        const QOrganizerCollectionLocalId& collectionId, 
-        QOrganizerItemChangeSet *changeSet);
+    void itemInstancesL(
+        QList<QOrganizerItem> &itemInstances,
+        const QOrganizerItem &generator,
+        const QDateTime &periodStart,
+        const QDateTime &periodEnd,
+        int maxCount) const;
+    QList<QOrganizerItem> itemInstancesL(
+        QList<QOrganizerItem> &itemInstances,
+        const QOrganizerItemFilter &filter,
+        const QList<QOrganizerItemSortOrder> &sortOrders,
+        const QOrganizerItemFetchHint &fetchHint) const;
+    void toItemInstancesL(
+        const RPointerArray<CCalInstance> &calInstanceList,
+        QOrganizerItem generator,
+        const int maxCount,
+        QOrganizerCollectionLocalId collectionLocalId,
+        QList<QOrganizerItem> &itemInstances) const;
     void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, 
             const QOrganizerItemFetchHint& fetchHint) const;
+    void saveItemL(QOrganizerItem *item,
+        const QOrganizerCollectionLocalId& collectionId,
+        QOrganizerItemChangeSet *changeSet);
     void removeItemL(const QOrganizerItemLocalId& organizeritemId);
     QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, 
         const QOrganizerItemFilter& filter, 
@@ -327,8 +344,8 @@ public:
 #endif
     
 private:
-    CCalEntryView* entryViewL(
-        const QOrganizerCollectionLocalId& collectionId) const;
+    CCalEntryView* entryViewL(const QOrganizerCollectionLocalId& collectionId) const;
+    CCalInstanceView* instanceViewL(const QOrganizerCollectionLocalId& collectionId) const;
     QOrganizerCollectionLocalId collectionLocalIdL(QOrganizerItem item, 
         const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId()) const;
     CCalEntry* entryForItemOccurrenceL(
@@ -348,8 +365,6 @@ private:
     
     OrganizerSymbianCollection m_defaultCollection;
     QMap<QOrganizerCollectionLocalId, OrganizerSymbianCollection> m_collections;
-    CCalInstanceView *m_instanceView;
-    CActiveSchedulerWait *m_activeSchedulerWait;
     QOrganizerItemRequestQueue* m_requestServiceProviderQueue;
     OrganizerItemTransform m_itemTransform;
     mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definition;

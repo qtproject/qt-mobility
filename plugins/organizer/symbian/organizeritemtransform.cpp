@@ -193,7 +193,9 @@ void OrganizerItemTransform::toItemPostSaveL(const CCalEntry &entry, QOrganizerI
     item->setId(itemId);
 }
 
-void OrganizerItemTransform::toItemInstanceL(const CCalInstance &instance, QOrganizerItem *itemInstance) const
+void OrganizerItemTransform::toItemInstanceL(
+    const CCalInstance &instance,
+    QOrganizerItem *itemInstance) const
 {
     //debugInstanceL(instance);
 
