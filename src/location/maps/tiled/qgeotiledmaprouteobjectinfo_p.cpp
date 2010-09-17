@@ -120,7 +120,7 @@ void QGeoTiledMapRouteObjectInfo::updateData()
 
     QPointF lastPoint = points.at(0);
     distanceFilteredPoints.append(points.at(0));
-    for (int i = 1; i < points.size() - 1; ++i) {
+    for (int i = 1; i < points.size(); ++i) {
         if ((lastPoint - points.at(i)).manhattanLength() >= route->detailLevel() * tiledMapData->zoomFactor()) {
             distanceFilteredPoints.append(points.at(i));
             lastPoint = points.at(i);
