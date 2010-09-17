@@ -69,6 +69,8 @@
 #include "qorganizeritemmanager.h"
 #include "qorganizeritemmanagerengine.h"
 #include "qorganizeritemmanagerenginefactory.h"
+#include "qorganizeritemenginelocalid.h"
+#include "qorganizercollectionenginelocalid.h"
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
@@ -87,7 +89,6 @@
 #include <CJournal.h>
 #include <CRecurrence.h>
 
-QTM_USE_NAMESPACE
 
 class QOrganizerItemMaemo5Factory : public QObject, public QOrganizerItemManagerEngineFactory
 {
@@ -95,6 +96,8 @@ class QOrganizerItemMaemo5Factory : public QObject, public QOrganizerItemManager
   Q_INTERFACES(QtMobility::QOrganizerItemManagerEngineFactory)
   public:
     QOrganizerItemManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error*);
+    QOrganizerItemEngineLocalId* createItemEngineLocalId() const;
+    QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() const;
     QString managerName() const;
 };
 
@@ -131,7 +134,6 @@ public:
     // calendar database accessor instance
     OrganizerCalendarDatabaseAccess m_databaseAccess;
 };
-
 
 class QOrganizerItemMaemo5Engine : public QOrganizerItemManagerEngine
 {
