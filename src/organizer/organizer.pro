@@ -18,6 +18,8 @@ include(engines/engines.pri)
 # Input
 PUBLIC_HEADERS += \
     qorganizercollection.h \
+    qorganizercollectionchangeset.h \
+    qorganizercollectionenginelocalid.h \
     qorganizercollectionid.h \
     qorganizeritemabstractrequest.h \
     qorganizeritemchangeset.h \
@@ -39,6 +41,7 @@ PUBLIC_HEADERS += \
 
 PRIVATE_HEADERS += \
     qorganizercollection_p.h \
+    qorganizercollectionchangeset_p.h \
     qorganizercollectionid_p.h \
     qorganizeritemabstractrequest_p.h \
     qorganizeritemchangeset_p.h \
@@ -55,6 +58,8 @@ PRIVATE_HEADERS += \
 
 SOURCES += \
     qorganizercollection.cpp \
+    qorganizercollectionchangeset.cpp \
+    qorganizercollectionenginelocalid.cpp \
     qorganizercollectionid.cpp \
     qorganizeritemabstractrequest.cpp \
     qorganizeritemchangeset.cpp \

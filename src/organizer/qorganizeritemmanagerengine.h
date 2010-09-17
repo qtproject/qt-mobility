@@ -183,6 +183,7 @@ public:
 private:
     /* QOrganizerItemChangeSet is a utility class used to emit the appropriate signals */
     friend class QOrganizerItemChangeSet;
+    friend class QOrganizerCollectionChangeSet;
 };
 
 QTM_END_NAMESPACE
