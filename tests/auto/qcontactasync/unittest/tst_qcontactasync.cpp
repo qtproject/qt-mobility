@@ -1162,9 +1162,9 @@ void tst_QContactAsync::contactPartialSave()
     contacts[0].saveDetail(&phn);
 
     QContactSaveRequest csr;
+    csr.setManager(cm.data());
     csr.setContacts(contacts);
     csr.setDefinitionMask(QStringList(QContactEmailAddress::DefinitionName));
-    csr.setManager(cm.data());
     qRegisterMetaType<QContactSaveRequest*>("QContactSaveRequest*");
     QThreadSignalSpy spy(&csr, SIGNAL(stateChanged(QContactAbstractRequest::State)));
     QVERIFY(csr.start());
@@ -1176,16 +1176,108 @@ void tst_QContactAsync::contactPartialSave()
 
     QCOMPARE(csr.error(), QContactManager::NoError);
     QVERIFY(csr.errorMap().isEmpty());
-    QCOMPARE(cm->contact(aId).detail<QContactPhoneNumber>().number(),
+    contacts[0] = cm->contact(aId);
+    QCOMPARE(contacts[0].detail<QContactPhoneNumber>().number(),
             originalContacts[0].detail<QContactPhoneNumber>().number());
 
     // Test 2: saving a contact with a changed detail in the mask changes it
+    QContactEmailAddress email;
+    email.setEmailAddress("me@example.com");
+    contacts[1].saveDetail(&email);
+    csr.setContacts(contacts);
+    csr.setDefinitionMask(QStringList(QContactEmailAddress::DefinitionName));
+    QVERIFY(csr.start());
+    QVERIFY(csr.waitForFinished());
+    QCOMPARE(csr.error(), QContactManager::NoError);
+    QVERIFY(csr.errorMap().isEmpty());
+    contacts[1] = cm->contact(bId);
+    QCOMPARE(contacts[1].detail<QContactEmailAddress>().emailAddress(), QString("me@example.com"));
+
+    // 3) Remove an email address and a phone number
+    QCOMPARE(contacts[1].details<QContactPhoneNumber>().count(), 1);
+    QCOMPARE(contacts[1].details<QContactEmailAddress>().count(), 1);
+    QVERIFY(contacts[1].removeDetail(&email));
+    phn = contacts[1].detail<QContactPhoneNumber>();
+    QVERIFY(contacts[1].removeDetail(&phn));
+    QVERIFY(contacts[1].details<QContactEmailAddress>().count() == 0);
+    QVERIFY(contacts[1].details<QContactPhoneNumber>().count() == 0);
+    csr.setContacts(contacts);
+    csr.setDefinitionMask(QStringList(QContactEmailAddress::DefinitionName));
+    QVERIFY(csr.start());
+    QVERIFY(csr.waitForFinished());
+    QCOMPARE(csr.error(), QContactManager::NoError);
+    QVERIFY(csr.errorMap().isEmpty());
+    contacts[1] = cm->contact(bId);
+    QCOMPARE(contacts[1].details<QContactEmailAddress>().count(), 0);
+    QCOMPARE(contacts[1].details<QContactPhoneNumber>().count(), 1);
+
+    // 4 - New contact, no details in the mask
+    QContact newContact;
+    newContact.saveDetail(&email);
+    newContact.saveDetail(&phn);
+    contacts.append(newContact);
+    csr.setContacts(contacts);
+    csr.setDefinitionMask(QStringList(QContactOnlineAccount::DefinitionName));
+    QVERIFY(csr.start());
+    QVERIFY(csr.waitForFinished());
+    QCOMPARE(csr.error(), QContactManager::NoError);
+    QVERIFY(csr.errorMap().isEmpty());
+    contacts = csr.contacts();
+    QCOMPARE(contacts.size()-1, 3);  // Just check that we are dealing with the contact at index 3
+    QContactLocalId dId = contacts[3].localId();
+    contacts[3] = cm->contact(dId);
+    QVERIFY(contacts[3].details<QContactEmailAddress>().count() == 0); // not saved
+    QVERIFY(contacts[3].details<QContactPhoneNumber>().count() == 0); // not saved
+
+    // 5 - New contact, some details in the mask
+    QVERIFY(newContact.localId() == 0);
+    QVERIFY(newContact.details<QContactEmailAddress>().count() == 1);
+    QVERIFY(newContact.details<QContactPhoneNumber>().count() == 1);
+    contacts.append(newContact);
+    csr.setContacts(contacts);
     csr.setDefinitionMask(QStringList(QContactPhoneNumber::DefinitionName));
     QVERIFY(csr.start());
     QVERIFY(csr.waitForFinished());
     QCOMPARE(csr.error(), QContactManager::NoError);
     QVERIFY(csr.errorMap().isEmpty());
-    QCOMPARE(cm->contact(aId).detail<QContactPhoneNumber>().number(), QString("new number"));
+    contacts = csr.contacts();
+    QCOMPARE(contacts.size()-1, 4);  // Just check that we are dealing with the contact at index 4
+    QContactLocalId eId = contacts[4].localId();
+    contacts[4] = cm->contact(eId);
+    QCOMPARE(contacts[4].details<QContactEmailAddress>().count(), 0); // not saved
+    QCOMPARE(contacts[4].details<QContactPhoneNumber>().count(), 1); // saved
+
+    // 6) Have a bad manager uri in the middle followed by a save error
+    QContactId id3(contacts[3].id());
+    QContactId badId(id3);
+    badId.setManagerUri(QString());
+    contacts[3].setId(badId);
+    QContactDetail badDetail("BadDetail");
+    badDetail.setValue("BadField", "BadValue");
+    contacts[4].saveDetail(&badDetail);
+    csr.setContacts(contacts);
+    csr.setDefinitionMask(QStringList("BadDetail"));
+    QVERIFY(csr.start());
+    QVERIFY(csr.waitForFinished());
+    QVERIFY(csr.error() != QContactManager::NoError);
+    QMap<int, QContactManager::Error> errorMap(csr.errorMap());
+    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap[3], QContactManager::DoesNotExistError);
+    QCOMPARE(errorMap[4], QContactManager::InvalidDetailError);
+
+    // 7) Have a non existing contact in the middle followed by a save error
+    badId = id3;
+    badId.setLocalId(987234); // something nonexistent (hopefully)
+    contacts[3].setId(badId);
+    csr.setContacts(contacts);
+    csr.setDefinitionMask(QStringList("BadDetail"));
+    QVERIFY(csr.start());
+    QVERIFY(csr.waitForFinished());
+    QVERIFY(csr.error() != QContactManager::NoError);
+    errorMap = csr.errorMap();
+    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap[3], QContactManager::DoesNotExistError);
+    QCOMPARE(errorMap[4], QContactManager::InvalidDetailError);
 }
 
 void tst_QContactAsync::definitionFetch()

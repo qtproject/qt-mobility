@@ -68,7 +68,7 @@ Rectangle {
     // Example: landmark proximity filter
     LandmarkProximityFilter {
         id: landmarkFilterSpecificLocation
-	coordinate: Coordinate {
+	center: Coordinate {
 	        longitude: 10
 		latitude: 20
         }
@@ -81,7 +81,7 @@ Rectangle {
     }
     LandmarkProximityFilter {
         id: landmarkFilterMyCurrentLocation
-	coordinate: myPosition.position.coordinate
+	center: myPosition.position.coordinate
 	radius: 500
     }
     
@@ -92,7 +92,7 @@ Rectangle {
 	    name: "Darwin"
         }
 	LandmarkProximityFilter {
-	    coordinate: Coordinate {
+	    center: Coordinate {
 	        longitude:  10
 	        latitude: 20
 		}
@@ -108,7 +108,7 @@ Rectangle {
 	    name: "Nimbin"
         }
 	LandmarkProximityFilter {
-            coordinate: myPosition.position.coordinate
+            center: myPosition.position.coordinate
 	    radius: 50
 	}
     }

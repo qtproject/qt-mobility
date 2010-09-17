@@ -13,11 +13,8 @@ contains(mobility_modules,serviceframework) {
     #These examples do not work on Symbian yet
     !symbian:SUBDIRS+= sfw-notes
     
-    !symbian:contains(QT_CONFIG, declarative) {
-        SUBDIRS += declarative-sfw-dialer
-
-        sources.files += declarative-sfw-notes \
-                         declarative-sfw-dialer/declarative-sfw-dialer
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative-sfw-dialer declarative-sfw-notes
     }
 }
 
@@ -73,7 +70,12 @@ contains(mobility_modules,publishsubscribe) {
 }
 
 #System Information
-contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
+contains(mobility_modules,systeminfo) {
+ SUBDIRS += sysinfo
+   contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative-systeminfo
+   }
+}
 
 #Multimedia
 contains(mobility_modules,multimedia) {
@@ -119,7 +121,8 @@ contains(mobility_modules,gallery) {
         mediabrowser
 
     contains(QT_CONFIG, declarative) {
-        sources.files += declarative-music-browser
+        SUBDIRS += \
+                declarative-music-browser
     }
 }
 
@@ -130,7 +133,7 @@ contains(mobility_modules, organizer) {
 
 # Feedback API examples
 contains(mobility_modules, feedback) {
-    #SUBDIRS += hapticsplayer # this not a good UI for mobile screens at the moment
+    SUBDIRS += hapticsplayer # this not a good UI for mobile screens at the moment
     contains(QT_CONFIG, declarative) {
         SUBDIRS += hapticsquare
     }

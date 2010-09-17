@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,62 +38,31 @@
 **
 ****************************************************************************/
 
-#ifndef QMLORGANIZERITEM_H
-#define QMLORGANIZERITEM_H
+#ifndef UTILITY_H
+#define UTILITY_H
 
-#include <QList>
-#include <QtDeclarative>
+#include <QtCore/QObject>
+#include <QtCore/QRegExp>
+#include <QtCore/QUrl>
 
-#include "qorganizeritem.h"
-#include "qorganizeritemmanager.h"
-#include "qorganizeritemsaverequest.h"
-
-QTM_USE_NAMESPACE;
-
-class QMLOrganizerItem : public QAbstractListModel
+class Utility : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY (bool itemChanged READ itemChanged NOTIFY onItemChanged)
-    Q_PROPERTY (int itemId READ itemId NOTIFY onItemIdChanged)
 public:
-    enum {
-        DetailNameRole = Qt::UserRole + 500,
-        DetailFieldKeyRole,
-        DetailFieldValueRole,
-        DetailFieldRole
-    };
+    Utility(QObject *parent = 0);
+    ~Utility();
 
-    explicit QMLOrganizerItem(QObject *parent = 0);
-    void setItem(const QOrganizerItem& c);
-    void setManager(QOrganizerItemManager* manager);
-    QOrganizerItem item() const;
-    QVariant itemMap() const;
-    Q_INVOKABLE QList<QObject*> details() const;
-    Q_INVOKABLE QList<QObject*> detailFields() const;
-    bool itemChanged() const;
-    Q_INVOKABLE void save();
+    Q_INVOKABLE QString formatDuration(int duration) const;
+    Q_INVOKABLE QUrl getAlbumArtUrl(const QString &artist, const QString &title) const;
+    Q_INVOKABLE QUrl getAlbumArtThumbnailUrl(const QString &artist, const QString &title) const;
 
-    int itemId() const;
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
-
-
-signals:
-    void onItemChanged();
-    void onItemIdChanged();
-private slots:
-    void onItemSaved();
+#if defined(Q_OS_UNIX) && !(defined(Q_OS_SYMBIAN) || defined(Q_OS_MAC))
 private:
-    QOrganizerItem m_item;
-    QDeclarativePropertyMap* m_itemMap;
-    QList<QDeclarativePropertyMap*> m_detailMaps;
-    QList<QObject*> m_details;
-    QList<QObject*> m_detailFields;
-    QOrganizerItemManager* m_manager;
-    QOrganizerItemSaveRequest m_saveRequest;
+    QString hash(const QString &identifier) const;
+
+    QRegExp illegalCharacters;
+    QString whitespace;
+#endif
 };
 
-
-QML_DECLARE_TYPE(QMLOrganizerItem)
-
-#endif // QMLORGANIZERITEM_H
+#endif

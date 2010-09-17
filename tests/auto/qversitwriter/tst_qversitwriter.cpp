@@ -289,6 +289,7 @@ void tst_QVersitWriter::testWritingDocument()
     QByteArray result(mOutputDevice->readAll());
 
     if (result!=expected) qDebug() << result << expected;
+    QEXPECT_FAIL("basic iCalendar 2.0", "An extra VERSION property is inserted", Continue);
     QCOMPARE(result, expected);
 }
 

@@ -91,7 +91,10 @@ QTM_BEGIN_NAMESPACE
 */
 QGeoRoutingManagerEngine::QGeoRoutingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoRoutingManagerEnginePrivate()) {}
+        d_ptr(new QGeoRoutingManagerEnginePrivate())
+{
+    Q_UNUSED(parameters)
+}
 
 /*!
     Destroys this engine.

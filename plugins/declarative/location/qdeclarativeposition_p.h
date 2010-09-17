@@ -50,7 +50,7 @@
 #include <QtDeclarative/qdeclarative.h>
 
 // Define this to get qDebug messages
-#define QDECLARATIVE_POSITION_DEBUG
+// #define QDECLARATIVE_POSITION_DEBUG
 
 #ifdef QDECLARATIVE_POSITION_DEBUG
 #include <QDebug>
@@ -65,8 +65,8 @@ class QDeclarativePosition : public QObject
     Q_PROPERTY(bool longitudeValid READ isLongitudeValid NOTIFY longitudeValidChanged)
     Q_PROPERTY(bool altitudeValid READ isAltitudeValid NOTIFY altitudeValidChanged)
     Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QDateTime timestamp READ timestamp WRITE setTimestamp NOTIFY timestampChanged)
-    Q_PROPERTY(double speed READ speed WRITE setSpeed NOTIFY speedChanged)
+    Q_PROPERTY(QDateTime timestamp READ timestamp NOTIFY timestampChanged)
+    Q_PROPERTY(double speed READ speed NOTIFY speedChanged)
     Q_PROPERTY(bool speedValid READ isSpeedValid NOTIFY speedValidChanged)
 
 public:

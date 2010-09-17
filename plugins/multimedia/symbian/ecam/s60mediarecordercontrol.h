@@ -94,7 +94,7 @@ public Q_SLOTS: // QMediaRecorderControl
 
 private:
 
-    QMediaRecorder::State convertMMFStateToQtState(
+    QMediaRecorder::State convertInternalStateToQtState(
         S60VideoCaptureSession::TVideoCaptureState aState) const;
 
 private Q_SLOTS:

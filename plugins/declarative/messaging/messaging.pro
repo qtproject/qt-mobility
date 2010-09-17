@@ -35,9 +35,9 @@ INSTALLS += qmldir
 simulator|contains(qmf_enabled, yes) {
     mac {
         QMAKE_LFLAGS += -F$$(QMF_LIBDIR)
-        LIBS += -framework qtopiamail
+        LIBS += -framework qmfclient
     } else {
-        LIBS += -L$$(QMF_LIBDIR) -l$$qtLibraryTarget(qtopiamail)
+        LIBS += -L$$(QMF_LIBDIR) -l$$qtLibraryTarget(qmfclient)
     }
 }
 

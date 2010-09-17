@@ -42,11 +42,14 @@
 #include "s60audiocapturesession.h"
 #include "s60audioendpointselector.h"
 
+#include <qaudiodeviceinfo.h>
+
 S60AudioEndpointSelector::S60AudioEndpointSelector(QObject *session, QObject *parent)
     :QAudioEndpointSelector(parent)
 {    
-    m_session = qobject_cast<S60AudioCaptureSession*>(session);
-    connect(m_session, SIGNAL(activeEndpointChanged(const QString &)), this, SIGNAL(activeEndpointChanged(const QString &)));
+    m_session = qobject_cast<S60AudioCaptureSession*>(session); 
+    update();    
+    m_audioInput = defaultEndpoint();
 }
 
 S60AudioEndpointSelector::~S60AudioEndpointSelector()
@@ -55,25 +58,50 @@ S60AudioEndpointSelector::~S60AudioEndpointSelector()
 
 QList<QString> S60AudioEndpointSelector::availableEndpoints() const
 {
-    return m_session->availableEndpoints();
+    return m_names;
 }
 
 QString S60AudioEndpointSelector::endpointDescription(const QString& name) const
 {
-    return m_session->endpointDescription(name);
+    QString desc;
+    for(int i = 0; i < m_names.count(); i++) {
+        if (m_names.at(i).compare(name) == 0) {
+            desc = m_descriptions.at(i);
+            break;
+        }
+    }
+    return desc;
 }
 
 QString S60AudioEndpointSelector::defaultEndpoint() const
 {
-    return m_session->defaultEndpoint();
+    return QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice()).deviceName();
 }
 
 QString S60AudioEndpointSelector::activeEndpoint() const
 {
-    return m_session->activeEndpoint();
+    return m_audioInput;
 }
 
 void S60AudioEndpointSelector::setActiveEndpoint(const QString& name)
 {
-    m_session->setActiveEndpoint(name);
+    if (m_audioInput.compare(name) != 0) {
+        m_audioInput = name;    
+        m_session->setCaptureDevice(name);
+        emit activeEndpointChanged(name);
+    }
+}
+
+void S60AudioEndpointSelector::update()
+{
+    m_names.clear();
+    m_descriptions.clear();    
+    QList<QAudioDeviceInfo> devices;
+    devices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
+    for(int i = 0; i < devices.size(); ++i) {
+        m_names.append(devices.at(i).deviceName());
+        m_descriptions.append(devices.at(i).deviceName());
+    }
+    if (m_names.isEmpty())
+        m_names.append("MMF");
 }

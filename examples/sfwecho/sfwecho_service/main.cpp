@@ -45,6 +45,9 @@
 #include <QDateTime>
 #include <QDebug>
 
+#include <sys/types.h>          /* See NOTES */
+#include <sys/socket.h>
+
 QTM_USE_NAMESPACE
 
 class EchoSharedService : public QObject
@@ -113,6 +116,16 @@ void registerExampleService()
 
 Q_DECLARE_METATYPE(QMetaType::Type);
 
+bool check(const void *p)
+{
+    const QRemoteServiceControlLocalSocketCred *cr = (const struct QRemoteServiceControlLocalSocketCred *)p;
+    if(cr->pid%2) {
+           qDebug() << "Failing client: " << cr->pid;
+        return false;
+    }
+    return true;
+}
+
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
@@ -122,6 +135,7 @@ int main(int argc, char** argv)
     QRemoteServiceClassRegister::registerType<EchoSharedService>(QRemoteServiceClassRegister::SharedInstance);
     QRemoteServiceClassRegister::registerType<EchoUniqueService>(QRemoteServiceClassRegister::UniqueInstance);
     QRemoteServiceControl* control = new QRemoteServiceControl();
+/*    control->setSecurityFilter(check); */
     control->publishServices("sfwecho_service");
     int res =  app.exec();
     

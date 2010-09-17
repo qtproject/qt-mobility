@@ -139,7 +139,7 @@ private:
 class QDeclarativeLandmarkProximityFilter : public QDeclarativeLandmarkFilterBase
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
+    Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(double radius READ radius WRITE setRadius NOTIFY radiusChanged)
 
 public:
@@ -148,14 +148,14 @@ public:
 
     double radius() const;
     void setRadius(const double radius);
-    QDeclarativeCoordinate* coordinate() const;
-    void setCoordinate(QDeclarativeCoordinate* coordinate);
+    QDeclarativeCoordinate* center() const;
+    void setCenter(QDeclarativeCoordinate* coordinate);
     // From QDeclarativeLandmarkFilterBase
     virtual QLandmarkFilter* filter();
 
 signals:
     void radiusChanged();
-    void coordinateChanged();
+    void centerChanged();
 
 private:
     double m_radius;

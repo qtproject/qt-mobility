@@ -53,19 +53,15 @@ class QLandmarkProximityFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkProximityFilter : public QLandmarkFilter
 {
 public:
-    enum Selection{SelectNearestOnly, SelectAll};
-    QLandmarkProximityFilter(const QGeoCoordinate &coordinate = QGeoCoordinate(), double radius = -1);
+    QLandmarkProximityFilter(const QGeoCoordinate &center = QGeoCoordinate(), qreal radius = -1);
     QLandmarkProximityFilter(const QLandmarkFilter &other);
     virtual ~QLandmarkProximityFilter();
 
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate &coordinate);
+    QGeoCoordinate center() const;
+    void setCenter(const QGeoCoordinate &center);
 
-    void setSelection(Selection selection);
-    Selection selection() const;
-
-    double radius() const;
-    void setRadius(double radius);
+    qreal radius() const;
+    void setRadius(qreal radius);
 
 private:
     Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkProximityFilter)

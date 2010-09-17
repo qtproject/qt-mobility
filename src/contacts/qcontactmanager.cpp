@@ -508,12 +508,12 @@ QContact QContactManager::contact(const QContactLocalId& contactId, const QConta
 
   \sa QContactFetchHint
  */
-QList<QContact> QContactManager::contacts(const QList<QContactLocalId>& localIds, QMap<int, QContactManager::Error> *errorMap, const QContactFetchHint &fetchHint) const
+QList<QContact> QContactManager::contacts(const QList<QContactLocalId>& localIds, const QContactFetchHint &fetchHint, QMap<int, QContactManager::Error> *errorMap) const
 {
     d->m_error = QContactManager::NoError;
     if (errorMap)
         errorMap->clear();
-    return d->m_engine->contacts(localIds, errorMap, fetchHint, &d->m_error);
+    return d->m_engine->contacts(localIds, fetchHint, errorMap, &d->m_error);
 }
 
 /*!
