@@ -50,16 +50,22 @@
 QTM_BEGIN_NAMESPACE
 
 // MSVC needs the function declared before the friend declaration
-class QOrganizerItemManagerEngine;
-class QOrganizerCollectionEngineLocalId;
 class QOrganizerCollectionLocalId;
+class QOrganizerCollectionId;
 Q_ORGANIZER_EXPORT uint qHash(const QOrganizerCollectionLocalId& key);
+Q_ORGANIZER_EXPORT uint qHash(const QOrganizerCollectionId& key);
 #ifndef QT_NO_DATASTREAM
 Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionLocalId& id);
+Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionId& collectionId);
+Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId);
 #endif
 #ifndef QT_NO_DEBUG_STREAM
 Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerCollectionLocalId& id);
+Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerCollectionId& id);
 #endif
+
+class QOrganizerItemManagerEngine;
+class QOrganizerCollectionEngineLocalId;
 
 class QOrganizerCollectionId;
 class Q_ORGANIZER_EXPORT QOrganizerCollectionLocalId
@@ -116,20 +122,6 @@ public:
 private:
     QSharedDataPointer<QOrganizerCollectionIdPrivate> d;
 };
-
-Q_ORGANIZER_EXPORT uint qHash(const QOrganizerCollectionId& key);
-Q_ORGANIZER_EXPORT uint qHash(const QTM_PREPEND_NAMESPACE(QOrganizerCollectionLocalId)& key);
-#ifndef QT_NO_DEBUG_STREAM
-Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerCollectionId& id);
-Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerCollectionLocalId& id);
-#endif
-
-#ifndef QT_NO_DATASTREAM
-Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionId& collectionId);
-Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId);
-Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionLocalId& id);
-Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerCollectionLocalId& id);
-#endif
 
 QTM_END_NAMESPACE
 
