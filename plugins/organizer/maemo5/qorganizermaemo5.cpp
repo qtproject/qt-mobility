@@ -197,7 +197,7 @@ uint QOrganizerCollectionMaemo5EngineLocalId::engineLocalIdType() const
 {
     // engines should embed the result of this as const read-only data (uint),
     // instead of calculating it every time the function is called...
-    return qHash(QString(QLatin1String("memory")));
+    return qHash(QString(QLatin1String("maemo5")));
 }
 
 QOrganizerCollectionEngineLocalId* QOrganizerCollectionMaemo5EngineLocalId::clone() const
