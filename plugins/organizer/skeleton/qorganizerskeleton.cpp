@@ -55,13 +55,13 @@ QOrganizerItemManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QS
     return ret;
 }
 
-QOrganizerItemEngineLocalId* QOrganizerItemSkeletonFactory::createEngineLocalId()
+QOrganizerItemEngineLocalId* QOrganizerItemSkeletonFactory::createItemEngineLocalId() const
 {
     /* TODO - return the localid specific to the engine */
     return NULL;
 }
 
-QOrganizerCollectionEngineLocalId* QOrganizerItemSkeletonFactory::createCollectionEngineLocalId()
+QOrganizerCollectionEngineLocalId* QOrganizerItemSkeletonFactory::createCollectionEngineLocalId() const
 {
     /* TODO - return the localid specific to the engine */
     return NULL;

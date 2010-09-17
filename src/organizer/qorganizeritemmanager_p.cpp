@@ -269,7 +269,7 @@ QOrganizerItemEngineLocalId* QOrganizerItemManagerData::createEngineItemLocalId(
 
     loadFactories();
     QOrganizerItemManagerEngineFactory *engineFactory = m_engines.value(managerName);
-    return engineFactory ? engineFactory->createEngineItemLocalId() : NULL;
+    return engineFactory ? engineFactory->createItemEngineLocalId() : NULL;
 }
 
 /* Caller takes ownership of the id */
@@ -283,7 +283,7 @@ QOrganizerCollectionEngineLocalId* QOrganizerItemManagerData::createEngineCollec
 
     loadFactories();
     QOrganizerItemManagerEngineFactory *engineFactory = m_engines.value(managerName);
-    return engineFactory ? engineFactory->createEngineCollectionLocalId() : NULL;
+    return engineFactory ? engineFactory->createCollectionEngineLocalId() : NULL;
 }
 
 // trampoline for private classes

@@ -94,6 +94,8 @@ class QOrganizerItemMaemo6Factory : public QObject, public QOrganizerItemManager
   public:
     QOrganizerItemManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error*);
     QString managerName() const;
+    QOrganizerItemEngineLocalId* createItemEngineLocalId() const;
+    QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() const;
 };
 
 class QOrganizerItemMaemo6EngineData : public QSharedData
@@ -108,10 +110,6 @@ public:
     ~QOrganizerItemMaemo6EngineData()
     {
     }
-
-    // key = Incidence.uid();
-    // value = QOrganizerItemLocalId(qHash(key));
-    QMap<QOrganizerItemLocalId, QString> m_QIdToKId;
 
     // map of organizeritem type to map of definition name to definitions:
     mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definitions;
