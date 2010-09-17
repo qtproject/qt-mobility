@@ -898,9 +898,9 @@ QOrganizerCollectionLocalId QOrganizerItemSymbianEngine::collectionLocalIdL(
     if (!itemCollectionId.isNull() && !collectionId.isNull()
         && collectionId != itemCollectionId)
             User::Leave(KErrArgument);
-    else if (collectionId)
+    else if (!collectionId.isNull())
         return collectionId;
-    else if (itemCollectionId)
+    else if (!itemCollectionId.isNull())
         return itemCollectionId;
 #else
     Q_UNUSED(item);
@@ -918,7 +918,7 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(
     CCalEntry * entry(NULL);
 
     // Find the child entry corresponding to the item occurrence
-    if (item->localId()) {
+    if (!item->localId().isNull()) {
         // The item has a local id, check the item is from this manager
         if (item->id().managerUri() != managerUri())
             User::Leave(KErrInvalidOccurrence);
@@ -994,7 +994,7 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(
     CCalEntry *entry(0);
 
     // There must be an existing entry if local id is provided
-    if (localId) {
+    if (!localId.isNull()) {
         // The item has a local id, check the item is from this manager
         if (manageruri == managerUri()) {
             // Fetch the item (will return NULL if the localid is not found)
@@ -1040,7 +1040,7 @@ CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(
 
     // Try to find with parent's local id
     QOrganizerItemInstanceOrigin origin = item->detail<QOrganizerItemInstanceOrigin>();
-    if (origin.parentLocalId()) {
+    if (!origin.parentLocalId().isNull()) {
         // Fetch the item (will return NULL if the localid is not found)
         parent = entryViewL(collectionId)->FetchL(origin.parentLocalId()); // ownership transferred
         if (!parent)
@@ -1066,7 +1066,7 @@ CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(
         && globalUid.Compare(parent->UidL())) {
         // Guid is not consistent with parentEntry UID
         User::Leave(KErrInvalidOccurrence);
-    } else if(origin.parentLocalId()
+    } else if (!origin.parentLocalId().isNull()
         && (origin.parentLocalId() != parent->LocalUidL())) {
         // parentLocalId is not consistent with parentEntry localUID
         User::Leave(KErrInvalidOccurrence);
@@ -1255,7 +1255,7 @@ bool QOrganizerItemSymbianEngine::saveCollection(
     QOrganizerItemManager::Error* error)
 {
     bool isNewCollection = true;
-    if (collection->id().localId())
+    if (!collection->id().localId().isNull())
         isNewCollection = false;
     
     TRAPD(err, saveCollectionL(collection));
@@ -1284,7 +1284,7 @@ void QOrganizerItemSymbianEngine::saveCollectionL(
     // Find existing collection
     QOrganizerCollectionLocalId localId = collection->id().localId();
     OrganizerSymbianCollection symbianCollection(this);
-    if (localId) {
+    if (!localId.isNull()) {
         if (m_collections.contains(localId))
             symbianCollection = m_collections[localId];
         else
