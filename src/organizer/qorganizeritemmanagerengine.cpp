@@ -2444,7 +2444,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::sortItems(const QList<
   Returns the engine local id from the given \a localId.
   The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
  */
-QOrganizerItemEngineLocalId* QOrganizerItemManagerEngine::engineLocalId(const QOrganizerItemLocalId& localId)
+QOrganizerItemEngineLocalId* QOrganizerItemManagerEngine::engineLocalItemId(const QOrganizerItemLocalId& localId)
 {
     return localId.d;
 }
@@ -2453,7 +2453,7 @@ QOrganizerItemEngineLocalId* QOrganizerItemManagerEngine::engineLocalId(const QO
   Returns the engine local id from the given \a localId.
   The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
  */
-QOrganizerCollectionEngineLocalId* QOrganizerItemManagerEngine::engineLocalId(const QOrganizerCollectionLocalId& localId)
+QOrganizerCollectionEngineLocalId* QOrganizerItemManagerEngine::engineLocalCollectionId(const QOrganizerCollectionLocalId& localId)
 {
     return localId.d;
 }

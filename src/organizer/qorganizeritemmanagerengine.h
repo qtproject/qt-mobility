@@ -168,8 +168,8 @@ public:
     // Other protected area update functions
     static void setDetailAccessConstraints(QOrganizerItemDetail* detail, QOrganizerItemDetail::AccessConstraints constraints);
     static void setItemCollectionId(QOrganizerItem* item, const QOrganizerCollectionId& collectionId); // XXX TODO: setting in QOrganizerItem instead
-    static QOrganizerItemEngineLocalId* engineLocalId(const QOrganizerItemLocalId& localId);
-    static QOrganizerCollectionEngineLocalId* engineLocalId(const QOrganizerCollectionLocalId& localId);
+    static QOrganizerItemEngineLocalId* engineLocalItemId(const QOrganizerItemLocalId& localId);
+    static QOrganizerCollectionEngineLocalId* engineLocalCollectionId(const QOrganizerCollectionLocalId& localId);
 
     /* Helper functions */
     static int compareItem(const QOrganizerItem& a, const QOrganizerItem& b, const QList<QOrganizerItemSortOrder>& sortOrders);

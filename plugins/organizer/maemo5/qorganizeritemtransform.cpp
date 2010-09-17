@@ -381,7 +381,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
     *error = QOrganizerItemManager::InvalidItemTypeError;
 
     QOrganizerItemLocalId itemId = item->localId();
-    QString itemIdStr = QString::number((static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalId(itemId)))->m_localItemId);
+    QString itemIdStr = QString::number((static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemId)))->m_localItemId);
     int calId = cal->getCalendarId();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     CComponent *retn = 0; // Return null on errors

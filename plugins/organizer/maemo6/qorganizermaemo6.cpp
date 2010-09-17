@@ -125,7 +125,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo6Engine::itemInstances(const QOrganizer
     */
 
     QOrganizerItemLocalId generatorId = generator.localId();
-    QString kId = static_cast<Maemo6ItemLocalId*>(QOrganizerItemManagerEngine::engineLocalId(generatorId))->toString();
+    QString kId = static_cast<Maemo6ItemLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(generatorId))->toString();
     Incidence* generatorIncidence = d->m_calendarBackend.incidence(kId);
     Incidence::List generatorList;
     generatorList.append(generatorIncidence);
@@ -536,7 +536,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMaem
 
 Incidence* QOrganizerItemMaemo6Engine::incidence(const QOrganizerItemLocalId& itemId) const
 {
-    QString kId = static_cast<Maemo6ItemLocalId*>(QOrganizerItemManagerEngine::engineLocalId(itemId))->toString();
+    QString kId = static_cast<Maemo6ItemLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemId))->toString();
     return d->m_calendarBackend.incidence(kId);
 }
 

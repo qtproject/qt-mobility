@@ -374,7 +374,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
 
     CCalendar *cal = d->m_mcInstance->getDefaultCalendar();
 
-    std::string nativeId = QString::number(static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalId(generator.localId()))->m_localItemId).toStdString();
+    std::string nativeId = QString::number(static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(generator.localId()))->m_localItemId).toStdString();
 
     if (generator.type() == QOrganizerItemType::TypeEvent)
     {
@@ -627,7 +627,7 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId> 
         QOrganizerItem currItem = internalFetchItem(currId, fetchMinimalData(), error, false);
         if (*error == QOrganizerItemManager::NoError) {
             // Item exists
-            QString itemId = QString::number((static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalId(currItem.localId())))->m_localItemId);
+            QString itemId = QString::number((static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(currItem.localId())))->m_localItemId);
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
             if (currItem.type() == QOrganizerItemType::TypeEvent) {
                 // Delete also child events if this event is a parent
@@ -736,7 +736,7 @@ QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::collections(const QList<
     foreach (QOrganizerCollectionLocalId collectionId, fetchCollIds) {
         if (collectionIds.isEmpty() || collectionIds.contains(collectionId)) {
             // Fetch calendar
-            int calendarId = static_cast<int>(static_cast<QOrganizerCollectionMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalId(collectionId))->m_localCollectionId);
+            int calendarId = static_cast<int>(static_cast<QOrganizerCollectionMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalCollectionId(collectionId))->m_localCollectionId);
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
             CCalendar *cal = d->m_mcInstance->getCalendarById(calendarId, calError);
             if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
@@ -908,7 +908,7 @@ bool QOrganizerItemMaemo5Engine::saveCollection(QOrganizerCollection* collection
         // Modify calendar
 
         bool ok = d->m_mcInstance->modifyCalendar(
-                static_cast<int>(static_cast<QOrganizerCollectionMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalId(collection->id().localId()))->m_localCollectionId),
+                static_cast<int>(static_cast<QOrganizerCollectionMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalCollectionId(collection->id().localId()))->m_localCollectionId),
                 calName.toStdString(),
                 calColor,
                 calReadOnly ? 1 : 0,
@@ -934,7 +934,7 @@ bool QOrganizerItemMaemo5Engine::saveCollection(QOrganizerCollection* collection
 bool QOrganizerItemMaemo5Engine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
-    bool ok = d->m_mcInstance->deleteCalendar(static_cast<int>((static_cast<QOrganizerCollectionMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalId(collectionId)))->m_localCollectionId), calError);
+    bool ok = d->m_mcInstance->deleteCalendar(static_cast<int>((static_cast<QOrganizerCollectionMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalCollectionId(collectionId)))->m_localCollectionId), calError);
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     return ok;
 }
@@ -1681,7 +1681,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
     const int JOURNAL_TYPE = 3;
 
     CCalendar *cal = d->m_mcInstance->getDefaultCalendar();
-    std::string nativeId = QString::number((static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalId(itemId)))->m_localItemId).toStdString();
+    std::string nativeId = QString::number((static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemId)))->m_localItemId).toStdString();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
 
     CEvent *cevent = 0;
