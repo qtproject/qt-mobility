@@ -75,6 +75,10 @@ private slots:
     void displayErrorMessage();
     QUrl generateAudioFilePath();
 
+#ifdef Q_OS_SYMBIAN
+    void updateSampleRatesBitRatesForCodec(const QString & codec);
+#endif
+
 private:
     Ui::AudioRecorder *ui;
 

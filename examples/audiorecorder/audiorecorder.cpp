@@ -40,7 +40,9 @@
 
 #include <QtCore/qdir.h>
 #include <QtGui/qfiledialog.h>
-
+#ifdef Q_OS_SYMBIAN
+#include <QAudioEncoderControl>
+#endif
 #include <qaudiocapturesource.h>
 #include <qmediarecorder.h>
 
@@ -50,6 +52,10 @@
 #include "ui_audiorecorder_small.h"
 #else
 #include "ui_audiorecorder.h"
+#endif
+
+#ifdef Q_OS_SYMBIAN
+Q_DECLARE_METATYPE(QList<uint>)
 #endif
 
 AudioRecorder::AudioRecorder(QWidget *parent)
@@ -63,42 +69,80 @@ AudioRecorder::AudioRecorder(QWidget *parent)
     capture = new QMediaRecorder(audiosource, this);
 
     //audio devices
+#ifndef Q_OS_SYMBIAN
     ui->audioDeviceBox->addItem(tr("Default"), QVariant(QString()));
+#endif
     foreach(const QString &device, audiosource->audioInputs()) {
         ui->audioDeviceBox->addItem(device, QVariant(device));
     }
-
+#ifdef Q_OS_SYMBIAN
+    ui->audioDeviceBox->setCurrentIndex(audiosource->audioInputs().indexOf(audiosource->defaultAudioInput()));
+#endif
     //audio codecs
+#ifndef Q_OS_SYMBIAN
     ui->audioCodecBox->addItem(tr("Default"), QVariant(QString()));
+#endif
     foreach(const QString &codecName, capture->supportedAudioCodecs()) {
         ui->audioCodecBox->addItem(codecName, QVariant(codecName));
     }
+#ifdef Q_OS_SYMBIAN
+    ui->audioCodecBox->setCurrentIndex(capture->supportedAudioCodecs().indexOf(capture->audioSettings().codec()));
+#endif
 
     //containers
+#ifndef Q_OS_SYMBIAN
     ui->containerBox->addItem(tr("Default"), QVariant(QString()));
+#endif
     foreach(const QString &containerName, capture->supportedContainers()) {
         ui->containerBox->addItem(containerName, QVariant(containerName));
     }
+#ifdef Q_OS_SYMBIAN
+    ui->containerBox->setCurrentIndex(capture->supportedContainers().indexOf(capture->containerMimeType()));
+#endif
 
-    //sample rate:
+    //sample rate
+#ifndef Q_OS_SYMBIAN
     ui->sampleRateBox->addItem(tr("Default"), QVariant(0));
     foreach(int sampleRate, capture->supportedAudioSampleRates()) {
         ui->sampleRateBox->addItem(QString::number(sampleRate), QVariant(sampleRate));
     }
+#else
+    ui->sampleRateBox->addItem(tr("Default"), QVariant(-1));
+    foreach(int sampleRate, capture->supportedAudioSampleRates(capture->audioSettings())) {
+        ui->sampleRateBox->addItem(QString::number(sampleRate), QVariant(sampleRate));
+    }
+    if (capture->audioSettings().sampleRate() == -1)
+        ui->sampleRateBox->setCurrentIndex(0);
+    else
+        ui->sampleRateBox->setCurrentIndex(capture->supportedAudioSampleRates(capture->audioSettings()).indexOf(capture->audioSettings().sampleRate()));
+#endif
 
     ui->qualitySlider->setRange(0, int(QtMultimediaKit::VeryHighQuality));
     ui->qualitySlider->setValue(int(QtMultimediaKit::NormalQuality));
 
-    //bitrates:
+#ifndef Q_OS_SYMBIAN
     ui->bitrateBox->addItem(QString("Default"), QVariant(0));
     ui->bitrateBox->addItem(QString("32000"), QVariant(32000));
     ui->bitrateBox->addItem(QString("64000"), QVariant(64000));
     ui->bitrateBox->addItem(QString("96000"), QVariant(96000));
     ui->bitrateBox->addItem(QString("128000"), QVariant(128000));
-
+#else
+    //bitrates:
+    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(capture->mediaObject()->service()->requestControl(QAudioEncoderControl_iid));
+    QVariant encodeOption = audioEncoder->encodingOption(ui->audioCodecBox->currentText(), QString("bitrate"));
+    QMap<QString,QVariant> map = qvariant_cast<QMap<QString,QVariant> >(encodeOption);
+    QVariant supportedBitRates = map.value("bitrates");
+    QList<uint> bitRatesList = qvariant_cast<QList<uint> >(supportedBitRates);
+    foreach(int bitRate, bitRatesList) {
+        ui->bitrateBox->addItem(QString::number(bitRate), QVariant(bitRate));
+    }
+#endif
     connect(capture, SIGNAL(durationChanged(qint64)), this, SLOT(updateProgress(qint64)));
     connect(capture, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateState(QMediaRecorder::State)));
     connect(capture, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
+#ifdef Q_OS_SYMBIAN
+    connect(ui->audioCodecBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(updateSampleRatesBitRatesForCodec(const QString &)));
+#endif
 }
 
 AudioRecorder::~AudioRecorder()
@@ -160,9 +204,10 @@ void AudioRecorder::toggleRecord()
     if (capture->state() == QMediaRecorder::StoppedState) {
         audiosource->setAudioInput(boxValue(ui->audioDeviceBox).toString());
 
+#ifndef Q_OS_SYMBIAN
         if (!outputLocationSet)
             capture->setOutputLocation(generateAudioFilePath());
-
+#endif
         QAudioEncoderSettings settings;
         settings.setCodec(boxValue(ui->audioCodecBox).toString());
         settings.setSampleRate(boxValue(ui->sampleRateBox).toInt());
@@ -175,6 +220,12 @@ void AudioRecorder::toggleRecord()
         QString container = boxValue(ui->containerBox).toString();
 
         capture->setEncodingSettings(settings, QVideoEncoderSettings(), container);
+
+#ifdef Q_OS_SYMBIAN
+        if (!outputLocationSet)
+            capture->setOutputLocation(generateAudioFilePath());
+#endif
+
         capture->record();
     } else {
         capture->stop();
@@ -217,3 +268,27 @@ QUrl AudioRecorder::generateAudioFilePath()
     QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath()+QString("/testclip_%1").arg(lastImage+1,4,10,QLatin1Char('0'))));
     return location;
 }
+
+#ifdef Q_OS_SYMBIAN
+void AudioRecorder::updateSampleRatesBitRatesForCodec(const QString & codec)
+{
+    QAudioEncoderSettings settings;
+    settings.setCodec(codec);
+    ui->sampleRateBox->clear();
+    ui->sampleRateBox->addItem(tr("Default"), QVariant(-1));
+    foreach(int sampleRate, capture->supportedAudioSampleRates(settings)) {
+        ui->sampleRateBox->addItem(QString::number(sampleRate), QVariant(sampleRate));
+    }
+    if (capture->audioSettings().sampleRate() != -1)
+        ui->sampleRateBox->setCurrentIndex(capture->supportedAudioSampleRates(capture->audioSettings()).indexOf(capture->audioSettings().sampleRate()));
+    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(capture->mediaObject()->service()->requestControl(QAudioEncoderControl_iid));
+    QVariant encodeOption = audioEncoder->encodingOption(codec, QString("bitrate"));
+    QMap<QString,QVariant> map = qvariant_cast<QMap<QString,QVariant> >(encodeOption);
+    QVariant supportedBitRates = map.value("bitrates");
+    QList<uint> bitRatesList = qvariant_cast<QList<uint> >(supportedBitRates);
+    ui->bitrateBox->clear();
+    foreach(int bitRate, bitRatesList) {
+        ui->bitrateBox->addItem(QString::number(bitRate), QVariant(bitRate));
+    }
+}
+#endif
