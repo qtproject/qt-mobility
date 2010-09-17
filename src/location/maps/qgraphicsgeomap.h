@@ -101,8 +101,12 @@ public:
     void removeMapObject(QGeoMapObject *mapObject);
     void clearMapObjects();
 
-    QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
-    QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
+    QGeoBoundingBox viewport() const;
+    void fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false);
+
+    QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition) const;
+    QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect) const;
+    QList<QGeoMapObject*> mapObjectsInViewport() const;
 
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
     QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;

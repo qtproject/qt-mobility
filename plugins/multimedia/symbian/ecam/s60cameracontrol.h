@@ -112,7 +112,7 @@ public: // QCameraControl
     // Property Setting
     bool canChangeProperty(QCameraControl::PropertyChangeType changeType, QCamera::Status status) const;
 
-    /*
+/*
 Q_SIGNALS:
     void stateChanged(QCamera::State);
     void statusChanged(QCamera::Status);
@@ -171,11 +171,16 @@ private: // Data
     S60VideoCaptureSession  *m_videoSession;
     QObject                 *m_videoOutput;
     QCamera::CaptureMode    m_captureMode;
+    QCamera::CaptureMode    m_requestedCaptureMode;
     QCamera::Status         m_internalState;
     QCamera::State          m_requestedState;
     int                     m_deviceIndex;
     mutable int             m_error;
+
     bool                    m_startWhenLoaded;
+    bool                    m_releaseWhenReady;
+    bool                    m_stopWhenReady;
+    bool                    m_changeCaptureModeWhenReady;
 };
 
 #endif // S60CAMERACONTROL_H

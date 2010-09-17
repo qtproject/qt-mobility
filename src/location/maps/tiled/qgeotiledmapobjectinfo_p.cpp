@@ -43,6 +43,7 @@
 
 #include "qgeotiledmapdata.h"
 #include "qgeotiledmapdata_p.h"
+#include "qgeoboundingbox.h"
 
 #include <QGraphicsScene>
 
@@ -54,7 +55,9 @@ QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
         : QGeoMapObjectInfo(mapData, mapObject),
-        graphicsItem(0)
+        graphicsItem(0),
+        isVisible(true),
+        isValid(true)
 {
     tiledMapData = static_cast<QGeoTiledMapData*>(mapData);
     tiledMapDataPrivate = static_cast<QGeoTiledMapDataPrivate*>(tiledMapData->d_ptr);
@@ -62,50 +65,49 @@ QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObje
 
 QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()
 {
-    if (graphicsItem)
-        delete graphicsItem;
-}
-
-void QGeoTiledMapObjectInfo::addToParent()
-{
-    if (graphicsItem) {
-        QGeoTiledMapObjectInfo *parentInfo
-                = static_cast<QGeoTiledMapObjectInfo*>(parentObjectInfo());
-
-        if (parentInfo)
-            graphicsItem->setParentItem(parentInfo->graphicsItem);
-        else
-            tiledMapDataPrivate->scene->addItem(graphicsItem);
-
-        tiledMapDataPrivate->itemMap.insert(graphicsItem, mapObject());
-        graphicsItem->setVisible(mapObject()->isVisible());
-        graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable);
-        graphicsItem->setSelected(mapObject()->isSelected());
-    }
-}
-
-void QGeoTiledMapObjectInfo::removeFromParent()
-{
     if (graphicsItem) {
         tiledMapDataPrivate->scene->removeItem(graphicsItem);
         tiledMapDataPrivate->itemMap.remove(graphicsItem);
+        delete graphicsItem;
+    }
+}
+
+void QGeoTiledMapObjectInfo::setup()
+{
+    if (graphicsItem) {
+        if (!graphicsItem->scene())
+            tiledMapDataPrivate->scene->addItem(graphicsItem);
+
+        tiledMapDataPrivate->itemMap.insert(graphicsItem, mapObject());
+        graphicsItem->setVisible(mapObject()->isVisible() && isValid);
+        graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable);
+    }
+}
+
+void QGeoTiledMapObjectInfo::zValueChanged(int zValue)
+{
+    if (graphicsItem) {
+        graphicsItem->setZValue(zValue);
+        updateItem();
     }
 }
 
 void QGeoTiledMapObjectInfo::visibleChanged(bool visible)
 {
+    isVisible = visible;
     if (graphicsItem) {
-        graphicsItem->setVisible(visible);
+        graphicsItem->setVisible((isVisible && isValid));
         updateItem();
     }
 }
 
 void QGeoTiledMapObjectInfo::selectedChanged(bool selected)
 {
-    if (graphicsItem) {
-        graphicsItem->setSelected(selected);
-        updateItem();
-    }
+    // don't want to draw the selection box
+//    if (graphicsItem) {
+//        graphicsItem->setSelected(selected);
+//        updateItem();
+//    }
 }
 
 QGeoBoundingBox QGeoTiledMapObjectInfo::boundingBox() const
@@ -130,6 +132,20 @@ bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coord) const
         return true;
 
     return false;
+}
+
+void QGeoTiledMapObjectInfo::setValid(bool valid)
+{
+    isValid = valid;
+    if (graphicsItem) {
+        graphicsItem->setVisible((isVisible && isValid));
+        updateItem();
+    }
+}
+
+bool QGeoTiledMapObjectInfo::valid() const
+{
+    return isValid;
 }
 
 void QGeoTiledMapObjectInfo::updateItem()
@@ -212,6 +228,8 @@ QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &pat
 
     return points;
 }
+
+#include "moc_qgeotiledmapobjectinfo_p.cpp"
 
 QTM_END_NAMESPACE
 

@@ -139,16 +139,10 @@ TBool COrganizerItemRequestsServiceProvider::StartRequest(
                 break;
             case QOrganizerItemAbstractRequest::CollectionFetchRequest :
                 {
-                QList<QOrganizerCollectionId> collectionIds(
+                iCollectionLocalIds.append(
                     ((QOrganizerCollectionFetchRequest*) iReq)
                     ->collectionIds());
-                TInt count(collectionIds.count());
-                for (TInt index(0); index < count; index++)
-                    {
-                    iCollectionLocalIds.append(
-                        collectionIds.at(index).localId());
-                    }
-                iNoOfItems = iOrganizerItemManagerEngine.sessionCount();
+                iNoOfItems = iOrganizerItemManagerEngine.collectionCount();
                 }
                 break;
 #endif
@@ -236,7 +230,7 @@ void COrganizerItemRequestsServiceProvider::RunL()
             break;
         case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest:
             {
-            CollectionIdL();
+            CollectionIds();
             }
             break;
         case QOrganizerItemAbstractRequest::CollectionRemoveRequest :
@@ -556,16 +550,13 @@ void COrganizerItemRequestsServiceProvider::SaveDetailDefinitionL()
     }
 
 #ifdef SYMBIAN_CALENDAR_V2
-// Fetch collection local Id
-void COrganizerItemRequestsServiceProvider::CollectionIdL()
+// Fetch collection local Ids
+void COrganizerItemRequestsServiceProvider::CollectionIds()
     {
-    QList<QOrganizerCollectionLocalId> collectionLocalIds = 
-        iOrganizerItemManagerEngine.collectionIdsL();
-
     // Notify results
     QOrganizerItemManagerEngine::updateCollectionLocalIdFetchRequest( 
-        (QOrganizerCollectionLocalIdFetchRequest*)(iReq), collectionLocalIds, 
-        iError, QOrganizerItemAbstractRequest::FinishedState);
+        (QOrganizerCollectionLocalIdFetchRequest*)(iReq), iOrganizerItemManagerEngine.collectionIds(), 
+        QOrganizerItemManager::NoError, QOrganizerItemAbstractRequest::FinishedState);
     }
 
 // Fetch collection
@@ -631,11 +622,11 @@ void COrganizerItemRequestsServiceProvider::RemoveCollectionL()
         // update index beforehand in case removeCollectionL leaves, if so
         // RunError would call SelfComplete() for recursive operation
         iIndex++;
-        QOrganizerCollectionId collectionId(
+        QOrganizerCollectionLocalId collectionId(
             ((QOrganizerCollectionRemoveRequest*) iReq)
             ->collectionIds().at(iIndex-1));
 
-        iOrganizerItemManagerEngine.removeCollectionL(collectionId.localId());
+        iOrganizerItemManagerEngine.removeCollectionL(collectionId);
         // Calls itself recursively until all the items are deleted
         SelfComplete();
         }

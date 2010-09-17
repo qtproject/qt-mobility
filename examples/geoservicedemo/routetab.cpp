@@ -50,7 +50,6 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QMessageBox>
-#include <qgeorouterequest.h>
 
 #include <QDialogButtonBox>
 
@@ -117,6 +116,10 @@ RouteTab::RouteTab(QWidget *parent) :
     m_dst.setLatitude(52.382306);
     m_dst.setLongitude(9.733887);
 
+    m_requestTravelModes = QGeoRouteRequest::CarTravel;
+    m_requestAvoidTypes = QGeoRouteRequest::AvoidNothing;
+    m_requestRouteOptimizations = QGeoRouteRequest::FastestRoute;
+
     m_requestBtn = new QPushButton(tr("Request Route"));
     m_requestBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_requestBtn->setDisabled(true);
@@ -182,6 +185,9 @@ void RouteTab::on_btnRequest_clicked()
                 request.setSegmentDetail(QGeoRouteRequest::BasicSegmentData);
             if ((m_routingManager->supportedInstructionDetails() & QGeoRouteRequest::BasicInstructions) != 0)
                 request.setInstructionDetail(QGeoRouteRequest::BasicInstructions);
+            request.setTravelModes(m_requestTravelModes);
+            request.setAvoidFeatureTypes(m_requestAvoidTypes);
+            request.setRouteOptimization(m_requestRouteOptimizations);
 
             m_routingManager->calculateRoute(request);
         }

@@ -144,7 +144,9 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &rout
     }
 
     QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(QUrl(reqString)));
-    QGeoRouteReplyNokia *reply = new QGeoRouteReplyNokia(QGeoRouteRequest(), networkReply, this);
+    QGeoRouteRequest updateRequest(route.request());
+    updateRequest.setTravelModes(route.travelMode());
+    QGeoRouteReplyNokia *reply = new QGeoRouteReplyNokia(updateRequest, networkReply, this);
 
     connect(reply,
             SIGNAL(finished()),
@@ -263,45 +265,35 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::Rout
     QString requestString;
 
     QStringList types;
-    if ((optimization & QGeoRouteRequest::ShortestRoute) != 0)
-        types.append("directDrive");
-    if ((optimization & QGeoRouteRequest::FastestRoute) != 0)
+    if (optimization.testFlag(QGeoRouteRequest::ShortestRoute))
+        types.append("shortest");
+    if (optimization.testFlag(QGeoRouteRequest::FastestRoute))
         types.append("fastestNow");
-    if ((optimization & QGeoRouteRequest::MostEconomicRoute) != 0)
+    if (optimization.testFlag(QGeoRouteRequest::MostEconomicRoute))
         types.append("economic");
-    if ((optimization & QGeoRouteRequest::MostScenicRoute) != 0)
+    if (optimization.testFlag(QGeoRouteRequest::MostScenicRoute))
         types.append("scenic");
 
     QStringList modes;
-    if ((travelModes & QGeoRouteRequest::CarTravel) != 0)
+    if (travelModes.testFlag(QGeoRouteRequest::CarTravel))
         modes.append("car");
-    if ((travelModes & QGeoRouteRequest::PedestrianTravel) != 0)
+    if (travelModes.testFlag(QGeoRouteRequest::PedestrianTravel))
         modes.append("pedestrian");
-    if ((travelModes & QGeoRouteRequest::PublicTransitTravel) != 0)
+    if (travelModes.testFlag(QGeoRouteRequest::PublicTransitTravel))
         modes.append("publicTransport");
-    if ((travelModes & QGeoRouteRequest::BicycleTravel) != 0)
-        modes.append("bicycle");
-    if ((travelModes & QGeoRouteRequest::TruckTravel) != 0)
-        modes.append("truck");
 
     QStringList avoidTypes;
-    if (avoid != QGeoRouteRequest::AvoidNothing) {
-        if ((avoid & QGeoRouteRequest::AvoidTolls) != 0)
-            avoidTypes.append("disallowTollroads");
-        if ((avoid & QGeoRouteRequest::AvoidHighways) != 0)
-            avoidTypes.append("disallowMotorways");
-        if ((avoid & QGeoRouteRequest::AvoidFerries) != 0)
-            avoidTypes.append("disallowFerries");
-        if ((avoid & QGeoRouteRequest::AvoidTunnels) != 0)
-            avoidTypes.append("disallowTunnels");
-        if ((avoid & QGeoRouteRequest::AvoidDirtRoads) != 0)
-            avoidTypes.append("disallowDirtRoads");
-        if ((avoid & QGeoRouteRequest::AvoidPublicTransit) != 0)
-            avoidTypes.append("disallowPublicTransport");
-        if ((avoid & QGeoRouteRequest::AvoidPark) != 0)
-            avoidTypes.append("disallowPark");
-        if ((avoid & QGeoRouteRequest::AvoidMotorPoolLanes) != 0)
-            avoidTypes.append("allowHOVLanes");
+    if (!avoid.testFlag(QGeoRouteRequest::AvoidNothing)) {
+        if (avoid.testFlag(QGeoRouteRequest::AvoidTolls))
+            avoidTypes.append("tollroad:-2");
+        if (avoid.testFlag(QGeoRouteRequest::AvoidHighways))
+            avoidTypes.append("motorway:-2");
+        if (avoid.testFlag(QGeoRouteRequest::AvoidFerries))
+            avoidTypes.append("boatFerry:-2,railFerry:-2");
+        if (avoid.testFlag(QGeoRouteRequest::AvoidTunnels))
+            avoidTypes.append("tunnel:-2");
+        if (avoid.testFlag(QGeoRouteRequest::AvoidDirtRoads))
+            avoidTypes.append("dirtRoad:-2");
     }
 
     for (int i = 0;i < types.count();++i) {
@@ -358,7 +350,7 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
     requestString += "&instructionformat=text";
 
     requestString += "&language=";
-    requestString += locale().name().replace("_","-");
+    requestString += locale().name();
 
     return requestString;
 }

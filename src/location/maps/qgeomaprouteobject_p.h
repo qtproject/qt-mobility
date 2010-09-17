@@ -42,17 +42,16 @@
 #ifndef QGEOMAPROUTEOBJECT_P_H
 #define QGEOMAPROUTEOBJECT_P_H
 
-#include "qgeomapobject_p.h"
 #include "qgeoroute.h"
 
 #include <QPen>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapRouteObjectPrivate : public QGeoMapObjectPrivate
+class QGeoMapRouteObjectPrivate
 {
 public:
-    QGeoMapRouteObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
+    QGeoMapRouteObjectPrivate();
     ~QGeoMapRouteObjectPrivate();
 
     QPen pen;

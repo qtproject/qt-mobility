@@ -80,7 +80,10 @@ QTM_BEGIN_NAMESPACE
 */
 QGeoMappingManagerEngine::QGeoMappingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoMappingManagerEnginePrivate()) {}
+        d_ptr(new QGeoMappingManagerEnginePrivate())
+{
+    Q_UNUSED(parameters)
+}
 
 /*!
   \internal
