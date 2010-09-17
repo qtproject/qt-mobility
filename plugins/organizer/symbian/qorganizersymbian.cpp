@@ -844,7 +844,7 @@ CCalEntryView* QOrganizerItemSymbianEngine::entryViewL(
     QOrganizerCollectionLocalId tempCollectionId = collectionId;
 
     // 0 is interpreted as the default collection
-    if (tempCollectionId == 0)
+    if (tempCollectionId.isNull())
         tempCollectionId = m_defaultCollection.localId();
 
     if (!m_collections.contains(tempCollectionId))
