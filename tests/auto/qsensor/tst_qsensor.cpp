@@ -375,6 +375,33 @@ private slots:
         }
     }
 
+    void testSensorsChangedSignal()
+    {
+        TestSensor sensor;
+
+        // Register a bogus backend
+        sensor.sensorsChangedEmitted = false;
+        QSensorManager::registerBackend(TestSensor::type, "a random id", 0);
+        QVERIFY(sensor.sensorsChangedEmitted);
+
+        // Unregister a bogus backend
+        sensor.sensorsChangedEmitted = false;
+        QSensorManager::unregisterBackend(TestSensor::type, "a random id");
+        QVERIFY(sensor.sensorsChangedEmitted);
+
+        // Unregister an unknown identifier
+        sensor.sensorsChangedEmitted = false;
+        QTest::ignoreMessage(QtWarningMsg, "Identifier \"a random id\" is not registered ");
+        QSensorManager::unregisterBackend(TestSensor::type, "a random id");
+        QVERIFY(!sensor.sensorsChangedEmitted);
+
+        // Unregister for an unknown type
+        sensor.sensorsChangedEmitted = false;
+        QTest::ignoreMessage(QtWarningMsg, "No backends of type \"foo\" are registered ");
+        QSensorManager::unregisterBackend("foo", "bar");
+        QVERIFY(!sensor.sensorsChangedEmitted);
+    }
+
     // This test must be LAST or it will interfere with the other tests
     void testLoadingPlugins()
     {

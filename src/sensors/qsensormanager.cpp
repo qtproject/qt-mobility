@@ -162,9 +162,15 @@ void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &i
 void QSensorManager::unregisterBackend(const QByteArray &type, const QByteArray &identifier)
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    Q_ASSERT(d->backendsByType.contains(type));
+    if (!d->backendsByType.contains(type)) {
+        qWarning() << "No backends of type" << type << "are registered";
+        return;
+    }
     FactoryForIdentifierMap &factoryByIdentifier = d->backendsByType[type];
-    Q_ASSERT(factoryByIdentifier.contains(identifier));
+    if (!factoryByIdentifier.contains(identifier)) {
+        qWarning() << "Identifier" << identifier << "is not registered";
+        return;
+    }
 
     (void)factoryByIdentifier.take(identifier); // we don't own this pointer anyway
     if (d->firstIdentifierForType[type] == identifier) {
