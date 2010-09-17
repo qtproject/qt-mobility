@@ -110,7 +110,7 @@ void QLandmarkProximityFilter::setCoordinate(const QGeoCoordinate &coordinate)
 }
 
 /*!
-    Returns the radius of the filter.
+    Returns the radius of the filter.  the unit of the radius is meters.
 */
 double QLandmarkProximityFilter::radius() const
 {
@@ -119,7 +119,7 @@ double QLandmarkProximityFilter::radius() const
 }
 
 /*!
-    Sets the \a radius of the filter.
+    Sets the \a radius of the filter.  The unit of the radius is meters.
 */
 void QLandmarkProximityFilter::setRadius(double radius)
 {
