@@ -611,6 +611,7 @@ void COrganizerItemRequestsServiceProvider::SaveCollectionL()
         QOrganizerCollection collection(((QOrganizerCollectionSaveRequest*)
             (iReq))->collections().at(iIndex-1));
         iOrganizerItemManagerEngine.saveCollectionL(&collection);
+        iCollectionChangeSet.insertAddedCollection(collection.localId());
         // Append the successfully saved collection iSuccessfullCollections
         iSuccessfullCollections.append(collection);
         // Calls itself recursively until all the items are deleted
@@ -618,6 +619,8 @@ void COrganizerItemRequestsServiceProvider::SaveCollectionL()
         }
     else
         {
+        // Notify changeset
+        iCollectionChangeSet.emitSignals(&iOrganizerItemManagerEngine);
         // Notify results
         QOrganizerItemManagerEngine::updateCollectionSaveRequest(
             (QOrganizerCollectionSaveRequest*)(iReq), 
@@ -640,11 +643,14 @@ void COrganizerItemRequestsServiceProvider::RemoveCollectionL()
             ->collectionIds().at(iIndex-1));
 
         iOrganizerItemManagerEngine.removeCollectionL(collectionId);
+        iCollectionChangeSet.insertRemovedCollection(collectionId);
         // Calls itself recursively until all the items are deleted
         SelfComplete();
         }
     else
         {
+        // Notify changeset
+        iCollectionChangeSet.emitSignals(&iOrganizerItemManagerEngine);
         // Notify results
         QOrganizerItemManagerEngine::updateCollectionRemoveRequest(
             (QOrganizerCollectionRemoveRequest*)(iReq), iError, 
@@ -696,4 +702,5 @@ void COrganizerItemRequestsServiceProvider::Cleanup()
     iCollectionLocalIds.clear();
 #endif
     iChangeSet.clearAll();
+    iCollectionChangeSet.clearAll();
     }
