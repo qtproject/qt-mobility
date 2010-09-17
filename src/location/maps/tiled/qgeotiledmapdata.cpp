@@ -121,6 +121,8 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGe
 
     QGeoTiledMappingManagerEngine *tileEngine = static_cast<QGeoTiledMappingManagerEngine *>(d->engine);
 
+    setBlockPropertyChangeSignals(true);
+
     setZoomLevel(8.0);
 
     d->maxZoomSize = (1 << qRound(tileEngine->maximumZoomLevel())) * tileEngine->tileSize();
@@ -278,12 +280,17 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
 {
     Q_D(QGeoTiledMapData);
 
+    bool changed = (d->center != center);
+
     QGeoMapData::setCenter(center);
 
     d->maxZoomCenter = coordinateToWorldPixel(center);
     d->updateScreenRect();
     geoMap()->update();
     d->updateMapImage();
+
+    if (changed)
+        emit centerChanged(center);
 }
 
 /*!
@@ -293,6 +300,8 @@ void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 {
     Q_D(QGeoTiledMapData);
 
+    bool changed = (d->mapType != mapType);
+
     QGeoMapData::setMapType(mapType);
 
     d->clearRequests();
@@ -300,6 +309,9 @@ void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
     d->zoomCache.clear();
     geoMap()->update();
     d->updateMapImage();
+
+    if (changed)
+        emit mapTypeChanged(d->mapType);
 }
 
 /*!
@@ -425,6 +437,8 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
 
     d->clearRequests();
     d->updateMapImage();
+
+    emit zoomLevelChanged(d->zoomLevel);
 }
 
 /*!
@@ -434,10 +448,15 @@ void QGeoTiledMapData::setWindowSize(const QSizeF &size)
 {
     Q_D(QGeoTiledMapData);
 
+    bool changed = (d->windowSize != size);
+
     QGeoMapData::setWindowSize(size);
 
     d->updateScreenRect();
     d->updateMapImage();
+
+    if (changed)
+        emit windowSizeChanged(d->windowSize);
 }
 
 /*!
@@ -464,6 +483,8 @@ void QGeoTiledMapData::pan(int dx, int dy)
     d->maxZoomCenter.setX(x);
     d->maxZoomCenter.setY(y);
 
+    QGeoMapData::setCenter(center());
+
     d->updateScreenRect();
     d->updateMapImage();
 }
@@ -486,7 +507,7 @@ QGeoBoundingBox QGeoTiledMapData::viewport() const
 /*!
     \reimp
 */
-void QGeoTiledMapData::fitToViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
+void QGeoTiledMapData::fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
 {
     Q_D(QGeoTiledMapData);
 
@@ -1062,8 +1083,6 @@ void QGeoTiledMapDataPrivate::updateScreenRect()
         maxZoomScreenRectClippedLeft = QRect(x, y, widthLeft, height);
         maxZoomScreenRectClippedRight = QRect(0, y, widthRight, height);
     }
-
-    containerObject->mapUpdated();
 }
 
 bool QGeoTiledMapDataPrivate::containedInScreen(const QPoint &point) const

@@ -105,17 +105,13 @@ public:
     bool operator<(const QGeoMapObject &other) const;
     bool operator>(const QGeoMapObject &other) const;
 
-    void mapUpdated();
-
-signals:
+Q_SIGNALS:
     void zValueChanged(int zValue);
     void visibleChanged(bool visible);
     void selectedChanged(bool selected);
 
 protected:
     QGeoMapObject(QGeoMapObjectPrivate *dd);
-
-    void objectUpdated();
 
     QGeoMapObjectPrivate *d_ptr;
 

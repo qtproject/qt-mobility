@@ -80,7 +80,8 @@ QTM_BEGIN_NAMESPACE
     \a mapObject which are specific to \a mapData.
 */
 QGeoMapObjectInfo::QGeoMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
+        : QObject(mapObject),
+          d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
 
 /*!
     Destroys this info object.
@@ -129,15 +130,44 @@ void QGeoMapObjectInfo::removeFromParent() {}
 void QGeoMapObjectInfo::objectUpdated() {}
 
 /*!
-    This function is run when the map is updated in a way that might effect the
-    rendering of an object.
+    This function is called when the window size of the map changes.
 
-    An example of where this is useful is for objects which need to be rendered
-    differently at different zoom levels for performance reasons.
-
-  The default implementation does nothing.
+    The default implementation does nothing.
 */
-void QGeoMapObjectInfo::mapUpdated() {}
+void QGeoMapObjectInfo::windowSizeChanged(const QSizeF &windowSize)
+{
+    Q_UNUSED(windowSize)
+}
+
+/*!
+    This function is called when the zoom level of the map changes.
+
+    The default implementation does nothing.
+*/
+void QGeoMapObjectInfo::zoomLevelChanged(qreal zoomLevel)
+{
+    Q_UNUSED(zoomLevel)
+}
+
+/*!
+    This function is called when the center of the map changes.
+
+    The default implementation does nothing.
+*/
+void QGeoMapObjectInfo::centerChanged(const QGeoCoordinate &coordinate)
+{
+    Q_UNUSED(coordinate)
+}
+
+/*!
+    This function is run when the z value of the object changes.
+
+    The default implementation does nothing.
+*/
+void QGeoMapObjectInfo::zValueChanged(int zValue)
+{
+    Q_UNUSED(zValue)
+}
 
 /*!
     This function is run when the visible state of the object changes.
@@ -208,5 +238,7 @@ QGeoMapObjectInfoPrivate::~QGeoMapObjectInfoPrivate() {}
 
 /*******************************************************************************
 *******************************************************************************/
+
+#include "moc_qgeomapobjectinfo.cpp"
 
 QTM_END_NAMESPACE

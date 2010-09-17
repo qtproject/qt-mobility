@@ -83,7 +83,7 @@ public:
     QBrush brush() const;
     void setBrush(const QBrush &brush);
 
-signals:
+Q_SIGNALS:
     void centerChanged(const QGeoCoordinate &center);
     void radiusChanged(qreal radius);
     void penChanged(const QPen &pen);

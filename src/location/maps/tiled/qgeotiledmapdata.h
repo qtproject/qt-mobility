@@ -69,7 +69,7 @@ public:
     void setMapType(QGraphicsGeoMap::MapType mapType);
 
     virtual QGeoBoundingBox viewport() const;
-    virtual void fitToViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false);
+    virtual void fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false);
 
     QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition) const;
     QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect) const;

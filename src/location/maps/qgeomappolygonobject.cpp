@@ -93,7 +93,6 @@ void QGeoMapPolygonObject::setPath(const QList<QGeoCoordinate> &path)
     Q_D(QGeoMapPolygonObject);
     if (d->path != path) {
         d->path = path;
-        objectUpdated();
         emit pathChanged(emit d->path);
     }
 }
@@ -125,7 +124,6 @@ void QGeoMapPolygonObject::setPen(const QPen &pen)
         return;
 
     d->pen = newPen;
-    objectUpdated();
     emit penChanged(d->pen);
 }
 
@@ -149,7 +147,6 @@ void QGeoMapPolygonObject::setBrush(const QBrush &brush)
     Q_D(QGeoMapPolygonObject);
     if (d->brush != brush) {
         d->brush = brush;
-        objectUpdated();
         emit brushChanged(d->brush);
     }
 }

@@ -140,7 +140,8 @@ void QGeoMapData::setWindowSize(const QSizeF &size)
 
     d_ptr->windowSize = size;
 
-    emit windowSizeChanged(d_ptr->windowSize);
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit windowSizeChanged(d_ptr->windowSize);
 }
 
 /*!
@@ -173,7 +174,8 @@ void QGeoMapData::setZoomLevel(qreal zoomLevel)
 
     d_ptr->zoomLevel = zoomLevel;
 
-    emit zoomLevelChanged(d_ptr->zoomLevel);
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit zoomLevelChanged(d_ptr->zoomLevel);
 }
 
 /*!
@@ -195,6 +197,8 @@ qreal QGeoMapData::zoomLevel() const
     By default this will mean that positive values of \a dx move the
     viewed area to the right and that positive values of \a dy move the
     viewed area down.
+
+    Subclasses should call QGeoMapData::setCenter() when the pan has completed.
 */
 void QGeoMapData::pan(int dx, int dy)
 {
@@ -212,7 +216,8 @@ void QGeoMapData::setCenter(const QGeoCoordinate &center)
 
     d_ptr->center = center;
 
-    emit centerChanged(d_ptr->center);
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit centerChanged(d_ptr->center);
 }
 
 /*!
@@ -233,7 +238,8 @@ void QGeoMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 
     d_ptr->mapType = mapType;
 
-    emit mapTypeChanged(mapType);
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit mapTypeChanged(mapType);
 }
 
 /*!
@@ -295,7 +301,7 @@ void QGeoMapData::clearMapObjects()
 */
 
 /*!
-    \fn void QGeoMapData::fitToViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
+    \fn void QGeoMapData::fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
 
     Attempts to fit the bounding box \a bounds into the viewport of the map.
 
@@ -510,6 +516,33 @@ void QGeoMapData::associateMapObject(QGeoMapObject *mapObject)
 {
     QGeoMapObjectInfo* info = createMapObjectInfo(mapObject);
     d_ptr->setObjectInfo(mapObject, info);
+
+    connect(this,
+            SIGNAL(windowSizeChanged(QSizeF)),
+            info,
+            SLOT(windowSizeChanged(QSizeF)));
+    connect(this,
+            SIGNAL(zoomLevelChanged(qreal)),
+            info,
+            SLOT(zoomLevelChanged(qreal)));
+    connect(this,
+            SIGNAL(centerChanged(QGeoCoordinate)),
+            info,
+            SLOT(centerChanged(QGeoCoordinate)));
+
+    connect(mapObject,
+            SIGNAL(zValueChanged(int)),
+            info,
+            SLOT(zValueChanged(int)));
+    connect(mapObject,
+            SIGNAL(visibleChanged(bool)),
+            info,
+            SLOT(visibleChanged(bool)));
+    connect(mapObject,
+            SIGNAL(selectedChanged(bool)),
+            info,
+            SLOT(selectedChanged(bool)));
+
 }
 
 /*!
@@ -524,6 +557,11 @@ QGeoMapObjectInfo* QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
     return 0;
 }
 
+void QGeoMapData::setBlockPropertyChangeSignals(bool block)
+{
+    d_ptr->blockPropertyChangeSignals = block;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
@@ -531,7 +569,8 @@ QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEn
         : q_ptr(parent),
         engine(engine),
         geoMap(geoMap),
-        zoomLevel(-1.0)
+        zoomLevel(-1.0),
+        blockPropertyChangeSignals(false)
 {
     Q_Q(QGeoMapData);
     containerObject = new QGeoMapObject(q);
@@ -546,8 +585,6 @@ QGeoMapDataPrivate::~QGeoMapDataPrivate()
 void QGeoMapDataPrivate::setObjectInfo(QGeoMapObject *object, QGeoMapObjectInfo *info)
 {
     object->d_ptr->info = info;
-    if (info)
-        info->objectUpdated();
 }
 
 QGeoMapObjectInfo* QGeoMapDataPrivate::parentObjectInfo(QGeoMapObject *object) const

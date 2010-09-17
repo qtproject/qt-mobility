@@ -44,6 +44,9 @@
 
 #include "qmobilityglobal.h"
 
+#include <QObject>
+#include <QSizeF>
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
@@ -53,8 +56,9 @@ class QGeoMapData;
 class QGeoMapObject;
 class QGeoMapObjectInfoPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapObjectInfo
+class Q_LOCATION_EXPORT QGeoMapObjectInfo : public QObject
 {
+    Q_OBJECT
 public:
     QGeoMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     virtual ~QGeoMapObjectInfo();
@@ -65,13 +69,18 @@ public:
     virtual void removeFromParent();
 
     virtual void objectUpdated();
-    virtual void mapUpdated();
-
-    virtual void visibleChanged(bool visible);
-    virtual void selectedChanged(bool selected);
 
     virtual QGeoBoundingBox boundingBox() const;
     virtual bool contains(const QGeoCoordinate &coordinate) const;
+
+public slots:
+    virtual void windowSizeChanged(const QSizeF &windowSize);
+    virtual void zoomLevelChanged(qreal zoomLevel);
+    virtual void centerChanged(const QGeoCoordinate &coordinate);
+
+    virtual void zValueChanged(int zValue);
+    virtual void visibleChanged(bool visible);
+    virtual void selectedChanged(bool selected);
 
 protected:
     QGeoMapData* mapData();

@@ -88,6 +88,8 @@ public:
 
     QList<QGeoMapOverlay*> overlays;
 
+    bool blockPropertyChangeSignals;
+
     Q_DECLARE_PUBLIC(QGeoMapData)
 private:
     Q_DISABLE_COPY(QGeoMapDataPrivate)

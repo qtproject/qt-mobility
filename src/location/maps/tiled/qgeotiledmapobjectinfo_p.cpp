@@ -54,7 +54,9 @@ QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
         : QGeoMapObjectInfo(mapData, mapObject),
-        graphicsItem(0)
+        graphicsItem(0),
+        isVisible(true),
+        isValid(true)
 {
     tiledMapData = static_cast<QGeoTiledMapData*>(mapData);
     tiledMapDataPrivate = static_cast<QGeoTiledMapDataPrivate*>(tiledMapData->d_ptr);
@@ -78,9 +80,8 @@ void QGeoTiledMapObjectInfo::addToParent()
             tiledMapDataPrivate->scene->addItem(graphicsItem);
 
         tiledMapDataPrivate->itemMap.insert(graphicsItem, mapObject());
-        graphicsItem->setVisible(mapObject()->isVisible());
+        graphicsItem->setVisible(mapObject()->isVisible() && isValid);
         graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable);
-        graphicsItem->setSelected(mapObject()->isSelected());
     }
 }
 
@@ -92,20 +93,30 @@ void QGeoTiledMapObjectInfo::removeFromParent()
     }
 }
 
-void QGeoTiledMapObjectInfo::visibleChanged(bool visible)
+void QGeoTiledMapObjectInfo::zValueChanged(int zValue)
 {
     if (graphicsItem) {
-        graphicsItem->setVisible(visible);
+        graphicsItem->setZValue(zValue);
+        updateItem();
+    }
+}
+
+void QGeoTiledMapObjectInfo::visibleChanged(bool visible)
+{
+    isVisible = visible;
+    if (graphicsItem) {
+        graphicsItem->setVisible((isVisible && isValid));
         updateItem();
     }
 }
 
 void QGeoTiledMapObjectInfo::selectedChanged(bool selected)
 {
-    if (graphicsItem) {
-        graphicsItem->setSelected(selected);
-        updateItem();
-    }
+    // don't want to draw the selection box
+//    if (graphicsItem) {
+//        graphicsItem->setSelected(selected);
+//        updateItem();
+//    }
 }
 
 QGeoBoundingBox QGeoTiledMapObjectInfo::boundingBox() const
@@ -130,6 +141,20 @@ bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coord) const
         return true;
 
     return false;
+}
+
+void QGeoTiledMapObjectInfo::setValid(bool valid)
+{
+    isValid = valid;
+    if (graphicsItem) {
+        graphicsItem->setVisible((isVisible && isValid));
+        updateItem();
+    }
+}
+
+bool QGeoTiledMapObjectInfo::valid() const
+{
+    return isValid;
 }
 
 void QGeoTiledMapObjectInfo::updateItem()
@@ -212,6 +237,8 @@ QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &pat
 
     return points;
 }
+
+#include "moc_qgeotiledmapobjectinfo_p.cpp"
 
 QTM_END_NAMESPACE
 

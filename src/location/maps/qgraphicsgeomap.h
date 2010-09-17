@@ -102,7 +102,7 @@ public:
     void clearMapObjects();
 
     QGeoBoundingBox viewport() const;
-    void fitToViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false);
+    void fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false);
 
     QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition) const;
     QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect) const;

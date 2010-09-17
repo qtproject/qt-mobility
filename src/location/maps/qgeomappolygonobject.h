@@ -72,7 +72,7 @@ public:
     void setBrush(const QBrush &brush);
     QBrush brush() const;
 
-signals:
+Q_SIGNALS:
     void pathChanged(const QList<QGeoCoordinate> &path);
     void penChanged(const QPen &pen);
     void brushChanged(const QBrush &brush);

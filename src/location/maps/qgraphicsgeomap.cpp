@@ -449,12 +449,12 @@ QGeoBoundingBox QGraphicsGeoMap::viewport() const
     bounding box \a bounds before the zoom level is changed, otherwise the 
     center of the map will not be changed.
 */
-void QGraphicsGeoMap::fitToViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
+void QGraphicsGeoMap::fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
 {
     if (!d_ptr->mapData)
         return;
 
-    d_ptr->mapData->fitToViewport(bounds, preserveViewportCenter);
+    d_ptr->mapData->fitInViewport(bounds, preserveViewportCenter);
 }
 
 /*!

@@ -74,7 +74,7 @@ public:
     quint32 detailLevel() const;
     void setDetailLevel(quint32 detailLevel);
 
-signals:
+Q_SIGNALS:
     void routeChanged(const QGeoRoute &route);
     void penChanged(const QPen &pen);
     void detailLevelChanged(quint32 detailLevel);

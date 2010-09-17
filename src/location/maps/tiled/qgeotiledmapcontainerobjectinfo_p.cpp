@@ -51,24 +51,16 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapContainerObjectInfo::QGeoTiledMapContainerObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-        pathItem(0)
+        : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
+    pathItem = new QGraphicsPathItem();
+    graphicsItem = pathItem;
+    pathItem->setPos(0.0, 0.0);
+    updateItem();
 }
 
 QGeoTiledMapContainerObjectInfo::~QGeoTiledMapContainerObjectInfo() {}
 
-void QGeoTiledMapContainerObjectInfo::objectUpdated()
-{
-    if (!pathItem) {
-        pathItem = new QGraphicsPathItem();
-        pathItem->setPos(0.0, 0.0);
-    }
-
-    graphicsItem = pathItem;
-
-    updateItem();
-}
-
+#include "moc_qgeotiledmapcontainerobjectinfo_p.cpp"
 
 QTM_END_NAMESPACE

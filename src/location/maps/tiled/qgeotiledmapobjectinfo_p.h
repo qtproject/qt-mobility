@@ -68,6 +68,7 @@ class QGeoTiledMapDataPrivate;
 
 class QGeoTiledMapObjectInfo : public QGeoMapObjectInfo
 {
+    Q_OBJECT
 public:
     QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapObjectInfo();
@@ -80,11 +81,11 @@ public:
     void addToParent();
     void removeFromParent();
 
-    void visibleChanged(bool visible);
-    void selectedChanged(bool selected);
-
     QGeoBoundingBox boundingBox() const;
     bool contains(const QGeoCoordinate &coord) const;
+
+    void setValid(bool valid);
+    bool valid() const;
 
     void updateItem();
 
@@ -92,6 +93,15 @@ public:
 
     QGraphicsItem *graphicsItem;
     QGeoTiledMapData *tiledMapData;
+
+    bool isValid;
+    bool isVisible;
+
+public slots:
+    void zValueChanged(int zValue);
+    void visibleChanged(bool visible);
+    void selectedChanged(bool selected);
+
 private:
     QGeoTiledMapDataPrivate *tiledMapDataPrivate;
 };

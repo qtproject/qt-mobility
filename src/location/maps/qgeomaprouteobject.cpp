@@ -110,7 +110,6 @@ void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
     Q_D(QGeoMapRouteObject);
     //if (d->route != route) {
     d->route = route;
-    objectUpdated();
     emit routeChanged(d->route);
     //}
 }
@@ -141,7 +140,6 @@ void QGeoMapRouteObject::setPen(const QPen &pen)
         return;
 
     d->pen = newPen;
-    objectUpdated();
     emit penChanged(d->pen);
 }
 
@@ -171,7 +169,6 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
     Q_D(QGeoMapRouteObject);
     if (d->detailLevel != detailLevel) {
         d->detailLevel = detailLevel;
-        objectUpdated();
         emit detailLevelChanged(d->detailLevel);
     }
 }

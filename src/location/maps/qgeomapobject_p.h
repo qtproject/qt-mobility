@@ -83,7 +83,6 @@ public:
     void removeFromParent();
 
     void objectUpdated();
-    void mapUpdated();
 
     QGeoBoundingBox boundingBox() const;
     bool contains(const QGeoCoordinate &coord) const;

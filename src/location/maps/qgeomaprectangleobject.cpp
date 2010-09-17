@@ -163,7 +163,6 @@ void QGeoMapRectangleObject::setTopLeft(const QGeoCoordinate &topLeft)
     Q_D(QGeoMapRectangleObject);
     if (d->bounds.topLeft() != topLeft) {
         d->bounds.setTopLeft(topLeft);
-        objectUpdated();
         emit topLeftChanged(d->bounds.topLeft());
     }
 }
@@ -188,7 +187,6 @@ void QGeoMapRectangleObject::setBottomRight(const QGeoCoordinate &bottomRight)
     Q_D(QGeoMapRectangleObject);
     if (d->bounds.bottomRight() != bottomRight) {
         d->bounds.setBottomRight(bottomRight);
-        objectUpdated();
         emit bottomRightChanged(d->bounds.bottomRight());
     }
 }
@@ -220,7 +218,6 @@ void QGeoMapRectangleObject::setPen(const QPen &pen)
         return;
 
     d->pen = newPen;
-    objectUpdated();
     emit penChanged(d->pen);
 }
 
@@ -244,7 +241,6 @@ void QGeoMapRectangleObject::setBrush(const QBrush &brush)
     Q_D(QGeoMapRectangleObject);
     if (d->brush != brush) {
         d->brush = brush;
-        objectUpdated();
         emit brushChanged(d->brush);
     }
 }

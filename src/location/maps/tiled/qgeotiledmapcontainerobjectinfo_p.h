@@ -63,11 +63,10 @@ class QGeoMapContainerObject;
 
 class QGeoTiledMapContainerObjectInfo : public QGeoTiledMapObjectInfo
 {
+    Q_OBJECT
 public:
     QGeoTiledMapContainerObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapContainerObjectInfo();
-
-    void objectUpdated();
 
     QGraphicsPathItem *pathItem;
 };

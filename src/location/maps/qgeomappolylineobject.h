@@ -69,7 +69,7 @@ public:
     void setPen(const QPen &pen);
     QPen pen() const;
 
-signals:
+Q_SIGNALS:
     void pathChanged(const QList<QGeoCoordinate> &path);
     void penChanged(const QPen &pen);
 

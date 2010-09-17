@@ -92,7 +92,6 @@ void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
     Q_D(QGeoMapPolylineObject);
     if (d->path != path) {
         d->path = path;
-        objectUpdated();
         emit pathChanged(d->path);
     }
 }
@@ -123,7 +122,6 @@ void QGeoMapPolylineObject::setPen(const QPen &pen)
         return;
 
     d->pen = newPen;
-    objectUpdated();
     emit penChanged(d->pen);
 }
 

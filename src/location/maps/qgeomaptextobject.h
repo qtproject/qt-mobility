@@ -94,7 +94,7 @@ public:
     Qt::Alignment alignment() const;
     void setAlignment(Qt::Alignment alignment);
 
-signals:
+Q_SIGNALS:
     void coordinateChanged(const QGeoCoordinate &coordinate);
     void textChanged(const QString &text);
     void fontChanged(const QFont &font);

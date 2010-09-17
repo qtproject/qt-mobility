@@ -121,7 +121,6 @@ void QGeoMapTextObject::setCoordinate(const QGeoCoordinate &coordinate)
     Q_D(QGeoMapTextObject);
     if (d->coordinate != coordinate) {
         d->coordinate = coordinate;
-        objectUpdated();
         emit coordinateChanged(d->coordinate);
     }
 }
@@ -144,7 +143,6 @@ void QGeoMapTextObject::setText(const QString &text)
     Q_D(QGeoMapTextObject);
     if (d->text != text) {
         d->text = text;
-        objectUpdated();
         emit textChanged(d->text);
     }
 }
@@ -171,7 +169,6 @@ void QGeoMapTextObject::setFont(const QFont &font)
     Q_D(QGeoMapTextObject);
     if (d->font != font) {
         d->font = font;
-        objectUpdated();
         emit fontChanged(d->font);
     }
 }
@@ -203,7 +200,6 @@ void QGeoMapTextObject::setPen(const QPen &pen)
         return;
 
     d->pen = newPen;
-    objectUpdated();
     emit penChanged(d->pen);
 }
 
@@ -227,7 +223,6 @@ void QGeoMapTextObject::setBrush(const QBrush &brush)
     Q_D(QGeoMapTextObject);
     if (d->brush != brush) {
         d->brush = brush;
-        objectUpdated();
         emit brushChanged(d->brush);
     }
 }
@@ -251,7 +246,6 @@ void QGeoMapTextObject::setOffset(const QPoint &offset)
     Q_D(QGeoMapTextObject);
     if (d->offset != offset) {
         d->offset = offset;
-        objectUpdated();
         emit offsetChanged(d->offset);
     }
 }
@@ -280,7 +274,6 @@ void QGeoMapTextObject::setAlignment(Qt::Alignment alignment)
     Q_D(QGeoMapTextObject);
     if (d->alignment != alignment) {
         d->alignment = alignment;
-        objectUpdated();
         emit alignmentChanged(d->alignment);
     }
 }

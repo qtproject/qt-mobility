@@ -89,8 +89,7 @@ public:
         return ret;
     }
 
-
-signals:
+Q_SIGNALS:
     void coordinateChanged(const QGeoCoordinate &coordinate);
     void pixmapChanged(const QPixmap &pixmap);
     void offsetChanged(const QPoint &offset);

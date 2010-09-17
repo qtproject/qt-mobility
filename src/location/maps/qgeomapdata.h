@@ -91,7 +91,7 @@ public:
     void clearMapObjects();
     
     virtual QGeoBoundingBox viewport() const = 0;
-    virtual void fitToViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false) = 0;
+    virtual void fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false) = 0;
 
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition) const;
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect) const;
@@ -115,6 +115,8 @@ protected:
     QGraphicsGeoMap* geoMap() const;
     QGeoMappingManagerEngine* engine() const;
     QGeoMapObject* containerObject();
+
+    void setBlockPropertyChangeSignals(bool block);
 
     virtual void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
     virtual void paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
