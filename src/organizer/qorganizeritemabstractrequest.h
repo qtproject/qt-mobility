@@ -114,6 +114,7 @@ private:
     QOrganizerItemAbstractRequest(QObject* parent = 0) : QObject(parent), d_ptr(0) {}
     Q_DISABLE_COPY(QOrganizerItemAbstractRequest)
     friend class QOrganizerItemManagerEngine;
+    friend class QOrganizerItemAbstractRequestPrivate;
 };
 
 QTM_END_NAMESPACE

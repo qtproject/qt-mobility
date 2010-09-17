@@ -39,54 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILDEFINITIONFIELD_P_H
-#define QORGANIZERITEMDETAILDEFINITIONFIELD_P_H
+#ifndef QORGANIZERITEMENGINELOCALID_H
+#define QORGANIZERITEMENGINELOCALID_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qorganizeritemdetailfielddefinition.h"
-
-#include <QSharedData>
-#include <QMap>
 #include <QString>
-#include <QVariant>
-#include <QList>
+#include <QSharedDataPointer>
+
+#include "qtorganizerglobal.h"
+
+class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemDetailFieldDefinitionPrivate : public QSharedData
+class Q_ORGANIZER_EXPORT QOrganizerItemEngineLocalId
 {
 public:
-    QOrganizerItemDetailFieldDefinitionPrivate()
-        : QSharedData(),
-        m_dataType(QVariant::Invalid)
-    {
-    }
+    virtual ~QOrganizerItemEngineLocalId() {}
 
-    QOrganizerItemDetailFieldDefinitionPrivate(const QOrganizerItemDetailFieldDefinitionPrivate& other)
-        : QSharedData(other),
-        m_allowableValues(other.m_allowableValues),
-        m_dataType(other.m_dataType)
-    {
-    }
+    virtual bool isEqualTo(const QOrganizerItemEngineLocalId* other) const = 0;
+    virtual bool isLessThan(const QOrganizerItemEngineLocalId* other) const = 0;
 
-    ~QOrganizerItemDetailFieldDefinitionPrivate()
-    {
-    }
+    virtual uint engineLocalIdType() const = 0;
+    virtual QOrganizerItemEngineLocalId* clone() const = 0;
 
-    QVariantList m_allowableValues;
-    int m_dataType;
+#ifndef QT_NO_DEBUG_STREAM
+    // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
+    virtual QDebug debugStreamOut(QDebug dbg) = 0;
+#endif
+#ifndef QT_NO_DATASTREAM
+    // NOTE: on platforms where Qt is built without data streams enabled, vtable will differ!
+    virtual QDataStream& dataStreamOut(QDataStream& out) = 0;
+    virtual QDataStream& dataStreamIn(QDataStream& in) = 0;
+#endif
+    virtual uint hash() const = 0;
 };
 
 QTM_END_NAMESPACE
 
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemEngineLocalId), Q_MOVABLE_TYPE);
+
+
 #endif
+

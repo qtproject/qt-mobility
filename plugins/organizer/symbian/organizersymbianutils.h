@@ -52,6 +52,7 @@
 #include "local_calenmulticaluids.hrh"
 #include <calcalendarinfo.h>
 #endif
+#include "qorganizersymbian_p.h"
 
 const int KPropertyKeyLen = 32;
 
@@ -66,6 +67,9 @@ namespace OrganizerSymbianUtils
     QDateTime toQDateTimeL(const TCalTime &calTime);
     TTime toTTime(const QDateTime &dateTime, Qt::TimeSpec timeSpec);
     QDateTime toQDateTime(const TTime &time, Qt::TimeSpec timeSpec);
+    QOrganizerCollectionLocalId toCollectionLocalId(quint32 collectionId);
+    QOrganizerItemLocalId toItemLocalId(quint32 collectionId, quint32 itemId);
+    TCalLocalUid toTCalLocalUid(const QOrganizerItemLocalId& itemLocalId);
 #ifdef SYMBIAN_CALENDAR_V2
     
     template<typename T>

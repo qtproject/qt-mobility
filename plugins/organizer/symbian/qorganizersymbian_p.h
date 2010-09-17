@@ -66,6 +66,8 @@
 #include <QObject>
 
 #include "qorganizeritem.h"
+#include "qorganizeritemenginelocalid.h"
+#include "qorganizercollectionenginelocalid.h"
 #include "qorganizeritemmanager.h"
 #include "qorganizeritemmanagerengine.h"
 #include "qorganizeritemmanagerenginefactory.h"
@@ -83,6 +85,73 @@
 
 QTM_USE_NAMESPACE
 
+class OrganizerItemTransform; // forward declare transform class.
+class QOrganizerItemSymbianEngine; // forward declare symbian engine.
+class QOrganizerCollectionSymbianEngineLocalId : public QOrganizerCollectionEngineLocalId
+{
+public:
+    QOrganizerCollectionSymbianEngineLocalId();
+    QOrganizerCollectionSymbianEngineLocalId(quint32 collectionId);
+    ~QOrganizerCollectionSymbianEngineLocalId();
+    QOrganizerCollectionSymbianEngineLocalId(const QOrganizerCollectionSymbianEngineLocalId& other);
+
+    bool isEqualTo(const QOrganizerCollectionEngineLocalId* other) const;
+    bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const;
+
+    uint engineLocalIdType() const;
+    QOrganizerCollectionEngineLocalId* clone() const;
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug debugStreamOut(QDebug dbg);
+#endif
+#ifndef QT_NO_DATASTREAM
+    QDataStream& dataStreamOut(QDataStream& out);
+    QDataStream& dataStreamIn(QDataStream& in);
+#endif
+    uint hash() const;
+
+private:
+    quint32 m_localCollectionId; // this will be the hash of the calendar file name.  XXX TODO: handle collisions.
+    friend class QOrganizerItemSymbianEngine;
+};
+
+class QOrganizerItemSymbianEngineLocalId : public QOrganizerItemEngineLocalId
+{
+public:
+    QOrganizerItemSymbianEngineLocalId();
+    QOrganizerItemSymbianEngineLocalId(quint32 collectionId, quint32 itemId);
+    ~QOrganizerItemSymbianEngineLocalId();
+    QOrganizerItemSymbianEngineLocalId(const QOrganizerItemSymbianEngineLocalId& other);
+
+    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const;
+    bool isLessThan(const QOrganizerItemEngineLocalId* other) const;
+
+    uint engineLocalIdType() const;
+    QOrganizerItemEngineLocalId* clone() const;
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug debugStreamOut(QDebug dbg);
+#endif
+#ifndef QT_NO_DATASTREAM
+    QDataStream& dataStreamOut(QDataStream& out);
+    QDataStream& dataStreamIn(QDataStream& in);
+#endif
+    uint hash() const;
+    
+public:
+    quint32 calLocalUid() { return m_localItemId; }
+    quint32 calCollectionId() { return m_localCollectionId; }
+    
+private:
+    quint32 m_localItemId; // the symbian backend requires quint32 for itemId + quint32 for collectionId
+    quint32 m_localCollectionId;
+    friend class QOrganizerItemSymbianEngine;
+    friend class OrganizerItemTransform;
+};
+
+
+
+
 class QOrganizerItemSymbianFactory : public QObject, 
 public QOrganizerItemManagerEngineFactory
 {
@@ -93,6 +162,8 @@ public QOrganizerItemManagerEngineFactory
         const QMap<QString, QString>& parameters, 
         QOrganizerItemManager::Error*);
     QString managerName() const;
+    QOrganizerItemEngineLocalId* createItemEngineLocalId() const;
+    QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() const;
 };
 
 class QOrganizerItemSymbianEngineData : public QSharedData
@@ -122,8 +193,8 @@ class QOrganizerItemRequestQueue;
 class CCalCalendarInfo;
 #endif
 
-class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, 
-                                    public MCalProgressCallBack
+class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine
+
 #ifdef SYMBIAN_CALENDAR_V2
                                     ,public MCalFileChangeObserver
 #endif
@@ -211,7 +282,7 @@ public:
     bool hasFeature(QOrganizerItemManager::ManagerFeature feature, 
         const QString& itemType) const;
     bool isFilterSupported(const QOrganizerItemFilter& filter) const;
-    QList<QVariant::Type> supportedDataTypes() const;
+    QList<int> supportedDataTypes() const;
     QStringList supportedItemTypes() const;
 
     /* Asynchronous Request Support */
@@ -236,15 +307,33 @@ public:
     /* Util functions */
     static bool transformError(TInt symbianError, 
         QOrganizerItemManager::Error* qtError);
-    void saveItemL(QOrganizerItem *item, 
-        const QOrganizerCollectionLocalId& collectionId, 
-        QOrganizerItemChangeSet *changeSet);
+    void itemInstancesL(
+        QList<QOrganizerItem> &itemInstances,
+        const QOrganizerItem &generator,
+        const QDateTime &periodStart,
+        const QDateTime &periodEnd,
+        int maxCount) const;
+    QList<QOrganizerItem> itemInstancesL(
+        QList<QOrganizerItem> &itemInstances,
+        const QOrganizerItemFilter &filter,
+        const QList<QOrganizerItemSortOrder> &sortOrders,
+        const QOrganizerItemFetchHint &fetchHint) const;
+    void toItemInstancesL(
+        const RPointerArray<CCalInstance> &calInstanceList,
+        QOrganizerItem generator,
+        const int maxCount,
+        QOrganizerCollectionLocalId collectionLocalId,
+        QList<QOrganizerItem> &itemInstances) const;
     void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, 
             const QOrganizerItemFetchHint& fetchHint) const;
+    void saveItemL(QOrganizerItem *item,
+        const QOrganizerCollectionLocalId& collectionId,
+        QOrganizerItemChangeSet *changeSet);
     void removeItemL(const QOrganizerItemLocalId& organizeritemId);
     QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, 
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders) const;
+    QOrganizerItemRequestQueue* requestQueue();
 #ifdef SYMBIAN_CALENDAR_V2
     QList<QOrganizerCollectionLocalId> collectionIds() const;
     int collectionCount() const;
@@ -255,10 +344,10 @@ public:
 #endif
     
 private:
-    CCalEntryView* entryViewL(
-        const QOrganizerCollectionLocalId& collectionId) const;
+    CCalEntryView* entryViewL(const QOrganizerCollectionLocalId& collectionId) const;
+    CCalInstanceView* instanceViewL(const QOrganizerCollectionLocalId& collectionId) const;
     QOrganizerCollectionLocalId collectionLocalIdL(QOrganizerItem item, 
-        const QOrganizerCollectionLocalId& collectionId = 0) const;
+        const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId()) const;
     CCalEntry* entryForItemOccurrenceL(
         const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, 
         bool &isNewEntry) const;
@@ -276,8 +365,6 @@ private:
     
     OrganizerSymbianCollection m_defaultCollection;
     QMap<QOrganizerCollectionLocalId, OrganizerSymbianCollection> m_collections;
-    CCalInstanceView *m_instanceView;
-    CActiveSchedulerWait *m_activeSchedulerWait;
     QOrganizerItemRequestQueue* m_requestServiceProviderQueue;
     OrganizerItemTransform m_itemTransform;
     mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definition;

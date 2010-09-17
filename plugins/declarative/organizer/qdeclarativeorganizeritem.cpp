@@ -178,7 +178,7 @@ void QMLOrganizerItem::onItemSaved()
 
 int QMLOrganizerItem::itemId() const
 {
-    return m_item.localId();
+    return qHash(m_item.localId()); // XXX FIXME
 }
 
 int QMLOrganizerItem::rowCount(const QModelIndex &parent) const
