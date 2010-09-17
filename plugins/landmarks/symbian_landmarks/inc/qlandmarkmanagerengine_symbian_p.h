@@ -230,6 +230,16 @@ private:
     CPosLmCategoryManager* m_LandmarkCatMgr;
     LandmarkEventObserver& m_LmEventObserver;
 
+    QStringList m_CreatedLmIds;
+    QStringList m_UpdatedLmIds;
+    QStringList m_DeletedLmIds;
+
+    QStringList m_CreatedCatIds;
+    QStringList m_UpdatedCatIds;
+    QStringList m_DeletedCatIds;
+
+    QStringList m_UnknownIds;
+
 private:
     friend class QLandmarkDbEventObserver;
 };
