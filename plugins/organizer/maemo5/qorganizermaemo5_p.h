@@ -129,7 +129,10 @@ public:
     OrganizerAsynchProcess *m_asynchProcess;
 
     // calendar database accessor instance
-    OrganizerCalendarDatabaseAccess m_databaseAccess;
+    OrganizerCalendarDatabaseAccess* m_dbAccess;
+
+    // calendar database cache instance
+    OrganizerDbCache* m_dbCache;
 };
 
 

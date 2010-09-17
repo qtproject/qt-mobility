@@ -40,6 +40,7 @@
 ****************************************************************************/
 #include "qorganizermaemo5_p.h"
 #include "qtorganizer.h"
+#include "qorganizerdbcache.h"
 
 #include <QDir>
 #include <QFileSystemWatcher>
@@ -98,7 +99,11 @@ QOrganizerItemMaemo5Engine::QOrganizerItemMaemo5Engine()
     d->m_itemTransformer.setManagerUri(managerUri());
     d->m_asynchProcess = new OrganizerAsynchProcess(this);
 
-    bool dbOk = d->m_databaseAccess.open(QDir::homePath().append(CALENDAR).append(CALENDARDB));
+    d->m_dbCache = new OrganizerDbCache();
+    connect(databaseMonitor, SIGNAL(fileChanged(const QString &)), d->m_dbCache, SLOT(invalidate()));
+    d->m_dbAccess = new OrganizerCalendarDatabaseAccess(d->m_dbCache);
+
+    bool dbOk = d->m_dbAccess->open(QDir::homePath().append(CALENDAR).append(CALENDARDB));
     if (!dbOk) {
         qDebug() << "Database didn't open!";
         // TODO: Then what? Constructor has no error status. Throw an exception?
@@ -295,7 +300,8 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItemInstances(const QO
 
     if (generator.type() == QOrganizerItemType::TypeEvent)
     {
-        CEvent *cevent = cal->getEvent(nativeId, calError);
+        //CEvent *cevent = cal->getEvent(nativeId, calError);
+        CEvent *cevent = d->m_dbAccess->getEvent(cal, nativeId, calError);
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         if (cevent && *error == QOrganizerItemManager::NoError)
         {
@@ -337,7 +343,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItemInstances(const QO
             // events (because they have become modified). Those occurrences are saved with GUID set
             // equal to the generator event's GUID.
             QString eventType = QOrganizerItemType::TypeEvent;
-            std::vector<CEvent*> occurrenceCandidates = d->m_databaseAccess.getEvents(cal->getCalendarId(), cevent->getGUid(), calError);
+            std::vector<CEvent*> occurrenceCandidates = d->m_dbAccess->getEvents(cal->getCalendarId(), cevent->getGUid(), calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError) {
                 std::vector<CEvent*>::iterator occCand;
@@ -441,7 +447,9 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::internalItemIds(const Q
         std::vector<std::string>::const_iterator id;
 
         // Append event ids
-        std::vector<std::string> eventIds = cal->getIdList(E_EVENT, calError);
+        std::vector<std::string> eventIds;
+        d->m_dbAccess->getIdList(cal, E_EVENT, calError, eventIds);
+        //std::vector<std::string> eventIds = cal->getIdList(E_EVENT, calError);
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         if (*error != QOrganizerItemManager::NoError)
             return retn;
@@ -449,7 +457,9 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::internalItemIds(const Q
             retn << QString::fromStdString(*id).toUInt();
 
         // Append todo ids
-        std::vector<std::string> todoIds = cal->getIdList(E_TODO, calError);
+        std::vector<std::string> todoIds;
+        d->m_dbAccess->getIdList(cal, E_TODO, calError, todoIds);
+        //std::vector<std::string> todoIds = cal->getIdList(E_TODO, calError);
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         if (*error != QOrganizerItemManager::NoError)
             return retn;
@@ -457,7 +467,9 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::internalItemIds(const Q
             retn << QString::fromStdString(*id).toUInt();
 
         // Append journal ids
-        std::vector<std::string> journalIds = cal->getIdList(E_JOURNAL, calError);
+        std::vector<std::string> journalIds;
+        d->m_dbAccess->getIdList(cal, E_JOURNAL, calError, journalIds);
+        //std::vector<std::string> journalIds = cal->getIdList(E_JOURNAL, calError);
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         if (*error != QOrganizerItemManager::NoError)
             return retn;
@@ -579,11 +591,12 @@ bool QOrganizerItemMaemo5Engine::internalRemoveItems(const QList<QOrganizerItemL
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
             if (currItem.type() == QOrganizerItemType::TypeEvent) {
                 // Delete also child events if this event is a parent
-                CEvent* cevent = cal->getEvent(itemId.toStdString(), calError);
+                //CEvent* cevent = cal->getEvent(itemId.toStdString(), calError);
+                CEvent* cevent = d->m_dbAccess->getEvent(cal, itemId.toStdString(), calError);
                 if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
                     bool parentItem = isParent(cal, cevent, QOrganizerItemType::TypeEvent, error);
                     if (parentItem && *error == QOrganizerItemManager::NoError) {
-                        std::vector<CEvent*> eventsWithGuid = d->m_databaseAccess.getEvents(cal->getCalendarId(), cevent->getGUid(), calError);
+                        std::vector<CEvent*> eventsWithGuid = d->m_dbAccess->getEvents(cal->getCalendarId(), cevent->getGUid(), calError);
                         *error = d->m_itemTransformer.calErrorToManagerError(calError);
                         if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
                             std::vector<CEvent*>::const_iterator childEvent;
@@ -603,6 +616,7 @@ bool QOrganizerItemMaemo5Engine::internalRemoveItems(const QList<QOrganizerItemL
             if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
                 // Delete a component:
                 cal->deleteComponent(itemId.toStdString(), calError);
+                d->m_dbCache->invalidate();
                 *error = d->m_itemTransformer.calErrorToManagerError(calError);
 
                 if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
@@ -828,6 +842,7 @@ bool QOrganizerItemMaemo5Engine::internalSaveCollection(QOrganizerCollection* co
                 calTune.toStdString(),
                 calVersion.toStdString(),
                 calError);
+        d->m_dbCache->invalidate();
 
         if (!newCalendar) {
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
@@ -865,6 +880,7 @@ bool QOrganizerItemMaemo5Engine::internalSaveCollection(QOrganizerCollection* co
                 calTune.toStdString(),
                 calVersion.toStdString(),
                 calError);
+        d->m_dbCache->invalidate();
 
         if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
@@ -883,6 +899,7 @@ bool QOrganizerItemMaemo5Engine::internalRemoveCollection(const QOrganizerCollec
 {
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     bool ok = d->m_mcInstance->deleteCalendar(static_cast<int>(collectionId), calError);
+    d->m_dbCache->invalidate();
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     return ok;
 }
@@ -1006,7 +1023,7 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
             // The parent ID was not set, so the GUID is always set here.
             // Must find at least one event with the given GUID.
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
-            std::vector<CEvent*> eventsWithGuid = d->m_databaseAccess.getEvents(cal->getCalendarId(), eventOccurrence->guid().toStdString(), calError);
+            std::vector<CEvent*> eventsWithGuid = d->m_dbAccess->getEvents(cal->getCalendarId(), eventOccurrence->guid().toStdString(), calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             int numberOfEvents = eventsWithGuid.size();
             for (int i = 0; i < numberOfEvents; ++i)
@@ -1054,7 +1071,7 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
         else {
             // Must find at least one todo with the GUID from the DB
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
-            std::vector<CTodo*> todosWithGuid = d->m_databaseAccess.getTodos(cal->getCalendarId(), todoOccurrence->guid().toStdString(), calError);
+            std::vector<CTodo*> todosWithGuid = d->m_dbAccess->getTodos(cal->getCalendarId(), todoOccurrence->guid().toStdString(), calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             int numberOfTodos = todosWithGuid.size();
             for (int i = 0; i < numberOfTodos; ++i)
@@ -1103,10 +1120,12 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             cevent->setSequence(cevent->getSequence() + 1);
 
             cal->modifyEvent(cevent, calError);
+            d->m_dbCache->invalidate();
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError) {
                 // Set alarm (must always be set only after the component is saved)
                 d->m_itemTransformer.setAlarm(cal, item, component);
+                d->m_dbCache->invalidate();
 
                 cs.insertChangedItem(item->localId());
             }
@@ -1118,6 +1137,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             cevent->setSequence(0);
 
             cal->addEvent(cevent, calError);
+            d->m_dbCache->invalidate();
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (calError == CALENDAR_OPERATION_SUCCESSFUL || calError == CALENDAR_ENTRY_DUPLICATED)
                 // The Maemo5 calendar does not accept two items if all the
@@ -1136,6 +1156,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
                 // Set alarm (must always be set only after the component is saved)
                 d->m_itemTransformer.setAlarm(cal, item, component);
+                d->m_dbCache->invalidate();
 
                 // Update changeset
                 if (calError == CALENDAR_ENTRY_DUPLICATED)
@@ -1182,7 +1203,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         // to the GUID.
         if (item->type() == QOrganizerItemType::TypeTodoOccurrence && ctodoId.isEmpty()) {
             calError = CALENDAR_OPERATION_SUCCESSFUL;
-            std::vector<CTodo*> todosWithGuid = d->m_databaseAccess.getTodos(cal->getCalendarId(), item->guid().toStdString(), calError);
+            std::vector<CTodo*> todosWithGuid = d->m_dbAccess->getTodos(cal->getCalendarId(), item->guid().toStdString(), calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
                 delete ctodo;
@@ -1202,10 +1223,12 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             ctodo->setSequence(ctodo->getSequence() + 1);
 
             cal->modifyTodo(ctodo, calError);
+            d->m_dbCache->invalidate();
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError) {
                 // Set alarm (must always be set only after the component is saved)
                 d->m_itemTransformer.setAlarm(cal, item, component);
+                d->m_dbCache->invalidate();
 
                 cs.insertChangedItem(item->localId());
             }
@@ -1217,6 +1240,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             ctodo->setSequence(0);
 
             cal->addTodo(ctodo, calError);
+            d->m_dbCache->invalidate();
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (calError == CALENDAR_OPERATION_SUCCESSFUL || calError == CALENDAR_ENTRY_DUPLICATED)
                 // The Maemo5 calendar does not accept two items if all the
@@ -1235,6 +1259,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
                 // Set alarm (must always be set only after the component is saved)
                 d->m_itemTransformer.setAlarm(cal, item, component);
+                d->m_dbCache->invalidate();
 
                 // Update changeset
                 if (calError == CALENDAR_ENTRY_DUPLICATED)
@@ -1260,6 +1285,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             cjournal->setSequence(cjournal->getSequence() + 1);
 
             cal->modifyJournal(cjournal, calError);
+            d->m_dbCache->invalidate();
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError) {
                 // Set alarm (must always be set only after the component is saved)
@@ -1275,6 +1301,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             cjournal->setSequence(0);
 
             cal->addJournal(cjournal, calError);
+            d->m_dbCache->invalidate();
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (calError == CALENDAR_OPERATION_SUCCESSFUL || calError == CALENDAR_ENTRY_DUPLICATED)
                 // The Maemo5 calendar does not accept two items if all the
@@ -1422,6 +1449,7 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
         cevent->setSequence(cevent->getSequence() + 1);
 
         cal->modifyEvent(cevent, calError);
+        d->m_dbCache->invalidate();
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         if (calError != CALENDAR_OPERATION_SUCCESSFUL && parentModified) {
             // occurrence saving failed, we must undo the parent changes too
@@ -1436,6 +1464,7 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
         cevent->setSequence(0);
 
         cal->addEvent(cevent, calError);
+        d->m_dbCache->invalidate();
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
 
         if (calError == CALENDAR_OPERATION_SUCCESSFUL || calError == CALENDAR_ENTRY_DUPLICATED)
@@ -1505,7 +1534,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerIt
         else {
             // parent local id was not set, fetch with [GUID,originalDate]
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
-            std::vector<CEvent*> parentCands = d->m_databaseAccess.getEvents(cal->getCalendarId(), eventOccurrence->guid().toStdString(), calError);
+            std::vector<CEvent*> parentCands = d->m_dbAccess->getEvents(cal->getCalendarId(), eventOccurrence->guid().toStdString(), calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             std::vector<CEvent*>::iterator pCand;
 
@@ -1614,7 +1643,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
     const int JOURNAL_TYPE = 3;
 
     // Get calendar id (or -1) of the target item
-    int calId = d->m_databaseAccess.calIdOf(itemId);
+    int calId = d->m_dbAccess->calIdOf(itemId);
     QOrganizerCollectionLocalId collectionLocalId(0);
     if (calId > 0)
         collectionLocalId = static_cast<QOrganizerCollectionLocalId>(calId);
@@ -1628,8 +1657,9 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
 
     CEvent *cevent = 0;
-    if (d->m_databaseAccess.typeOf(itemId) == EVENT_TYPE)
-        cevent = cal->getEvent(nativeId, calError);
+    if (d->m_dbAccess->typeOf(itemId) == EVENT_TYPE)
+        cevent = d->m_dbAccess->getEvent(cal, nativeId, calError);
+        //cevent = cal->getEvent(nativeId, calError);
     else
         calError = CALENDAR_NONE_INDB;
 
@@ -1682,7 +1712,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
     }
 
     CTodo *todo = 0;
-    if (d->m_databaseAccess.typeOf(itemId) == TODO_TYPE)
+    if (d->m_dbAccess->typeOf(itemId) == TODO_TYPE)
         todo = cal->getTodo(nativeId, calError);
     else
         calError = CALENDAR_NONE_INDB;
@@ -1701,7 +1731,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
     }
 
     CJournal *journal = 0;
-    if (d->m_databaseAccess.typeOf(itemId) == JOURNAL_TYPE)
+    if (d->m_dbAccess->typeOf(itemId) == JOURNAL_TYPE)
         journal = cal->getJournal(nativeId, calError);
     else
         calError = CALENDAR_NONE_INDB;
@@ -1741,7 +1771,7 @@ bool QOrganizerItemMaemo5Engine::isOccurrence(CCalendar *cal, CComponent *ccompo
 
         // if no duplicate GUIDs are found, event can't be an occurrence
         int calError = CALENDAR_OPERATION_SUCCESSFUL;
-        std::vector<CEvent*> eventsWithGuid = d->m_databaseAccess.getEvents(cal->getCalendarId(), guid.toStdString(), calError);
+        std::vector<CEvent*> eventsWithGuid = d->m_dbAccess->getEvents(cal->getCalendarId(), guid.toStdString(), calError);
         int eventsWithGuidSize = eventsWithGuid.size();
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         if (eventsWithGuidSize < 2) {
@@ -1803,7 +1833,7 @@ bool QOrganizerItemMaemo5Engine::isParent(CCalendar *cal, CComponent *ccomponent
     if (typeStr == QOrganizerItemType::TypeEvent) {
         bool retValue = false;
         int calError = CALENDAR_OPERATION_SUCCESSFUL;
-        std::vector<CEvent*> eventsWithGuid = d->m_databaseAccess.getEvents(cal->getCalendarId(), guid.toStdString(), calError);
+        std::vector<CEvent*> eventsWithGuid = d->m_dbAccess->getEvents(cal->getCalendarId(), guid.toStdString(), calError);
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         int eventsWithGuidSize = eventsWithGuid.size();
         if (eventsWithGuidSize > 1) {
@@ -1827,9 +1857,9 @@ bool QOrganizerItemMaemo5Engine::isParent(CCalendar *cal, CComponent *ccomponent
 
 bool QOrganizerItemMaemo5Engine::containsRecurrenceInformation(CComponent *ccomponent) const
 {
-    CRecurrence *crecurrence = ccomponent->getRecurrence();
-    if (crecurrence) {
-        return (crecurrence->getRecurrenceRule().size() > 0
+     CRecurrence *crecurrence = ccomponent->getRecurrence();
+     if (crecurrence) {
+         return (crecurrence->getRecurrenceRule().size() > 0
                 || crecurrence->getRDays().size() > 0
                 || crecurrence->getEDays().size() > 0);
     }

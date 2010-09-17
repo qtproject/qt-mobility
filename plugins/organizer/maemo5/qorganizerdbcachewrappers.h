@@ -38,9 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef QORGANIZERCALDBACCESS_H
-#define QORGANIZERCALDBACCESS_H
+#ifndef QORGANIZERDBCACHEWRAPPERS_H
+#define QORGANIZERDBCACHEWRAPPERS_H
 
 //
 //  W A R N I N G
@@ -54,42 +53,49 @@
 //
 
 #include "qtorganizer.h"
-#include <QtSql>
+#include <CEvent.h>
+#include <CTodo.h>
+#include <CJournal.h>
 
 QTM_USE_NAMESPACE
 
-class OrganizerDbCache;
-class CEvent;
-class CTodo;
-class CJournal;
-class CCalendar;
-
-class OrganizerCalendarDatabaseAccess
-{
+class OrganizerCacheEvent {
 public:
-    OrganizerCalendarDatabaseAccess(OrganizerDbCache* dbCache);
-    ~OrganizerCalendarDatabaseAccess();
+    OrganizerCacheEvent(const CEvent* event);
+    OrganizerCacheEvent(const OrganizerCacheEvent& other);
+    ~OrganizerCacheEvent();
+    OrganizerCacheEvent operator=(const OrganizerCacheEvent& other);
 
-    bool open(QString databasePathName);
-    void close();
-
-    int calIdOf(QOrganizerItemLocalId id);
-    int typeOf(QOrganizerItemLocalId id);
-    std::vector<CEvent *> getEvents(int calId, std::string guid, int &pErrorCode);
-    std::vector<CTodo *> getTodos(int calId, std::string guid, int &pErrorCode);
-    std::vector<CJournal *> getJournals(int calId, std::string guid, int &pErrorCode);
-
-    CEvent* getEvent(CCalendar* cal, const std::string& id, int& calError);
-    //CTodo* getTodo(const std::string& id, int& calError);
-    //CJournal* getJournal(const std::string& id, int& calError);
-
-    void getIdList(CCalendar* cal, int compType, int& calError, std::vector<std::string>& result);
-
-    static void sqliteErrorMapper(const QSqlError &sqlError, int& errorCode);
+    CEvent* event();
 
 private:
-    QSqlDatabase m_db;
-    OrganizerDbCache* m_dbCache;
+    CEvent m_event;
 };
 
-#endif // QORGANIZERCALDBACCESS_H
+class OrganizerCacheTodo {
+public:
+    OrganizerCacheTodo(const CTodo* todo);
+    OrganizerCacheTodo(const OrganizerCacheTodo& other);
+    ~OrganizerCacheTodo();
+    OrganizerCacheTodo operator=(const OrganizerCacheTodo& other);
+
+    CTodo* todo();
+
+private:
+    CTodo m_todo;
+};
+
+class OrganizerCacheJournal {
+public:
+    OrganizerCacheJournal(const CJournal* journal);
+    OrganizerCacheJournal(const OrganizerCacheJournal& other);
+    ~OrganizerCacheJournal();
+    OrganizerCacheJournal operator=(const OrganizerCacheJournal& other);
+
+    CJournal* journal();
+
+private:
+    CJournal m_journal;
+};
+
+#endif // QORGANIZERDBCACHEWRAPPERS_H
