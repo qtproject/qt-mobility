@@ -609,8 +609,13 @@ QList<QOrganizerCollection> QOrganizerItemManager::collections(const QList<QOrga
  */
 bool QOrganizerItemManager::saveCollection(QOrganizerCollection* collection)
 {
-    d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->saveCollection(collection, &d->m_error);
+    if (collection) {
+        d->m_error = QOrganizerItemManager::NoError;
+        return d->m_engine->saveCollection(collection, &d->m_error);
+    } else {
+        d->m_error = QOrganizerItemManager::BadArgumentError;
+        return false;
+    }
 }
 
 /*!
