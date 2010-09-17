@@ -851,18 +851,20 @@ int QSystemNetworkInfoLinuxCommonPrivate::getBluetoothRssi()
 
 QString QSystemNetworkInfoLinuxCommonPrivate::getBluetoothInfo(const QString &file)
 {
-    const QString sysPath = "/sys/class/bluetooth/";
-    const QDir sysDir(sysPath);
-    QStringList filters;
-    filters << "*";
-    const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
-    foreach(const QString dir, sysList) {
-        QFile btFile(sysPath + dir+"/"+file);
-        if(btFile.exists()) {
-            if (btFile.open(QIODevice::ReadOnly)) {
-                QTextStream btFileStream(&btFile);
-                QString line = btFileStream.readAll();
-                return line.simplified();
+    if(currentBluetoothPowerState()) {
+        const QString sysPath = "/sys/class/bluetooth/";
+        const QDir sysDir(sysPath);
+        QStringList filters;
+        filters << "*";
+        const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+        foreach(const QString dir, sysList) {
+            QFile btFile(sysPath + dir+"/"+file);
+            if(btFile.exists()) {
+                if (btFile.open(QIODevice::ReadOnly)) {
+                    QTextStream btFileStream(&btFile);
+                    QString line = btFileStream.readAll();
+                    return line.simplified();
+                }
             }
         }
     }
