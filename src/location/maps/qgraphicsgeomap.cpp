@@ -182,6 +182,10 @@ void QGraphicsGeoMap::setMappingManager(QGeoMappingManager *manager)
     }
 
     d_ptr->mapData = d_ptr->manager->createMapData(this);
+    d_ptr->mapData->setup();
+
+    setMapType(type);
+    d_ptr->mapData->setWindowSize(QSizeF(300, 300));
 
     connect(d_ptr->mapData,
            SIGNAL(zoomLevelChanged(qreal)),
@@ -195,9 +199,6 @@ void QGraphicsGeoMap::setMappingManager(QGeoMappingManager *manager)
             SIGNAL(centerChanged(QGeoCoordinate)),
             this,
             SIGNAL(centerChanged(QGeoCoordinate)));
-
-    setMapType(type);
-    d_ptr->mapData->setWindowSize(QSizeF(300, 300));
 }
 
 /*!

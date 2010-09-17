@@ -96,38 +96,20 @@ QGeoMapObjectInfo::~QGeoMapObjectInfo()
     this object, or 0 if it has no parent or if there is no QGeoMapObjectInfo
     instance asssoicated with the parent object.
 */
-QGeoMapObjectInfo* QGeoMapObjectInfo::parentObjectInfo()
-{
-    if (!d_ptr->mapData)
-        return 0;
+//QGeoMapObjectInfo* QGeoMapObjectInfo::parentObjectInfo()
+//{
+//    if (!d_ptr->mapData)
+//        return 0;
 
-    return d_ptr->mapData->d_ptr->parentObjectInfo(d_ptr->mapObject);
-}
+//    return d_ptr->mapData->d_ptr->parentObjectInfo(d_ptr->mapObject);
+//}
 
 /*!
-    This function is run when a map object is made a child of another object.
+    This function is run after the constructor.
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::addToParent() {}
-
-/*!
-    This function is run when a map object is removed from its parent object.
-
-    The default implementation does nothing.
-*/
-void QGeoMapObjectInfo::removeFromParent() {}
-
-/*!
-    This function is run when an attribute of an object changes in a way
-    that might effect the rendering of an object.
-
-    An example of where this is useful is for when objects are moved or
-    when the pen or brush used to draw an object are changed.
-
-    The default implementation does nothing.
-*/
-void QGeoMapObjectInfo::objectUpdated() {}
+void QGeoMapObjectInfo::setup() {}
 
 /*!
     This function is called when the window size of the map changes.

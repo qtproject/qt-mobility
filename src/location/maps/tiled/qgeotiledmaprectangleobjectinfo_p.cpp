@@ -44,6 +44,8 @@
 #include "qgeotiledmapdata.h"
 #include "qgeotiledmapdata_p.h"
 
+#include "qgeoboundingbox.h"
+
 #include "qgeomaprectangleobject.h"
 
 QTM_BEGIN_NAMESPACE

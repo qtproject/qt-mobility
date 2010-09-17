@@ -59,7 +59,7 @@ class QGraphicsPathItem;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapContainerObject;
+class QGeoMapGroupObject;
 
 class QGeoTiledMapContainerObjectInfo : public QGeoTiledMapObjectInfo
 {
@@ -68,7 +68,12 @@ public:
     QGeoTiledMapContainerObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapContainerObjectInfo();
 
+    QGeoMapGroupObject *group;
     QGraphicsPathItem *pathItem;
+
+public slots:
+    void visibleChanged(bool visible);
+    void selectedChanged(bool selected);
 };
 
 QTM_END_NAMESPACE

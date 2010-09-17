@@ -71,6 +71,8 @@ public:
     QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
     virtual ~QGeoMapData();
 
+    virtual void setup();
+
     virtual void setWindowSize(const QSizeF &size);
     virtual QSizeF windowSize() const;
 
@@ -107,8 +109,6 @@ public:
 
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
-    void associateMapObject(QGeoMapObject *mapObject);
-
 protected:
     QGeoMapData(QGeoMapDataPrivate *dd);
 
@@ -136,6 +136,7 @@ private:
     Q_DECLARE_PRIVATE(QGeoMapData)
     Q_DISABLE_COPY(QGeoMapData)
 
+    friend class QGeoMapObject;
     friend class QGeoMapObjectInfo;
 };
 

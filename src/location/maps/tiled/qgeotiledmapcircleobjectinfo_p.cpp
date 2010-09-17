@@ -58,8 +58,7 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapCircleObjectInfo::QGeoTiledMapCircleObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-          polygonItem(0)
+        : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
     circle = static_cast<QGeoMapCircleObject*>(mapObject);
 

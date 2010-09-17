@@ -127,19 +127,19 @@ class QGeoTileIterator
 {
 public:
     QGeoTileIterator(const QGeoTiledMapDataPrivate *mapData);
-    QGeoTileIterator(QGeoTiledMapData *mapData, const QRect &screenRect, const QSize &tileSize, int zoomLevel);
+    QGeoTileIterator(QGraphicsGeoMap::MapType mapType, const QRect &screenRect, const QSize &tileSize, int zoomLevel);
 
     bool hasNext();
     QGeoTiledMapRequest next();
 
 private:
-    QGeoTiledMapData *mapData;
     bool atEnd;
     int row;
     int col;
     int width;
     QRect screenRect;
     QSize tileSize;
+    QGraphicsGeoMap::MapType mapType;
     int zoomLevel;
     QPoint currTopLeft;
     QRect tileRect;

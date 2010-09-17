@@ -54,7 +54,7 @@
 //
 
 #include "qgraphicsgeomap.h"
-#include "qgeomapobject.h"
+#include "qgeomapgroupobject.h"
 
 #include "qgeocoordinate.h"
 #include <QList>
@@ -72,14 +72,9 @@ public:
     QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
     virtual ~QGeoMapDataPrivate();
 
-    void setObjectInfo(QGeoMapObject *object, QGeoMapObjectInfo *info);
-    QGeoMapObjectInfo* parentObjectInfo(QGeoMapObject *object) const;
-
-    QGeoMapData *q_ptr;
-
     QGeoMappingManagerEngine *engine;
     QGraphicsGeoMap *geoMap;
-    QGeoMapObject* containerObject;
+    QGeoMapGroupObject* containerObject;
 
     qreal zoomLevel;
     QGeoCoordinate center;
@@ -90,6 +85,7 @@ public:
 
     bool blockPropertyChangeSignals;
 
+    QGeoMapData *q_ptr;
     Q_DECLARE_PUBLIC(QGeoMapData)
 private:
     Q_DISABLE_COPY(QGeoMapDataPrivate)

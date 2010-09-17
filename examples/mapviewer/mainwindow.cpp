@@ -1048,12 +1048,9 @@ void MainWindow::drawText(bool /*checked*/)
 
     QGeoMapTextObject *text = new QGeoMapTextObject(start, QString("text"));
 
-    QGeoMapObject *object = new QGeoMapObject();
-    object->addChildObject(text);
-
     QColor fill(Qt::black);
     text->setBrush(QBrush(fill));
-    m_mapWidget->addMapObject(object);
+    m_mapWidget->addMapObject(text);
 }
 
 void MainWindow::drawPixmap(bool /*checked*/)

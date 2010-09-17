@@ -282,15 +282,18 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
 
     bool changed = (d->center != center);
 
+    if (!changed)
+        return;
+
     QGeoMapData::setCenter(center);
 
     d->maxZoomCenter = coordinateToWorldPixel(center);
     d->updateScreenRect();
     geoMap()->update();
-    d->updateMapImage();
 
-    if (changed)
-        emit centerChanged(center);
+    emit centerChanged(center);
+
+    d->updateMapImage();
 }
 
 /*!
@@ -302,16 +305,19 @@ void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 
     bool changed = (d->mapType != mapType);
 
+    if (!changed)
+        return;
+
     QGeoMapData::setMapType(mapType);
 
     d->clearRequests();
     d->cache.clear();
     d->zoomCache.clear();
     geoMap()->update();
-    d->updateMapImage();
 
-    if (changed)
-        emit mapTypeChanged(d->mapType);
+    emit mapTypeChanged(d->mapType);
+
+    d->updateMapImage();
 }
 
 /*!
@@ -360,6 +366,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
 
     if (oldZoomLevel == -1.0) {
         d->updateMapImage();
+        emit zoomLevelChanged(d->zoomLevel);
         return;
     }
 
@@ -450,13 +457,16 @@ void QGeoTiledMapData::setWindowSize(const QSizeF &size)
 
     bool changed = (d->windowSize != size);
 
+    if (!changed)
+        return;
+
     QGeoMapData::setWindowSize(size);
 
     d->updateScreenRect();
-    d->updateMapImage();
 
-    if (changed)
-        emit windowSizeChanged(d->windowSize);
+    emit windowSizeChanged(d->windowSize);
+
+    d->updateMapImage();
 }
 
 /*!
@@ -765,7 +775,7 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &scr
 QGeoMapObjectInfo* QGeoTiledMapData::createMapObjectInfo(QGeoMapObject *mapObject)
 {
     switch (mapObject->type()) {
-        case QGeoMapObject::ContainerType:
+        case QGeoMapObject::GroupType:
             return new QGeoTiledMapContainerObjectInfo(this, mapObject);
         case QGeoMapObject::RectangleType:
             return new QGeoTiledMapRectangleObjectInfo(this, mapObject);
@@ -838,13 +848,15 @@ QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
         reply->abort();
         reply->deleteLater();
     }
+
+    itemMap.clear();
 }
 
 void QGeoTiledMapDataPrivate::updateMapImage()
 {
     Q_Q(QGeoTiledMapData);
 
-    if (zoomLevel == -1.0)
+    if ((zoomLevel == -1.0) || !windowSize.isValid())
         return;
 
     bool wasEmpty = (requests.size() == 0);
@@ -1128,11 +1140,11 @@ QList<QPair<QRect, QRect> > QGeoTiledMapDataPrivate::intersectedScreen(const QRe
 *******************************************************************************/
 
 QGeoTileIterator::QGeoTileIterator(const QGeoTiledMapDataPrivate *mapDataPrivate)
-        : mapData(static_cast<QGeoTiledMapData*>(mapDataPrivate->q_ptr)),
-        atEnd(false),
+        : atEnd(false),
         row(-1),
         col(-1),
         screenRect(mapDataPrivate->maxZoomScreenRect),
+        mapType(mapDataPrivate->mapType),
         zoomLevel(mapDataPrivate->zoomLevel)
 {
     QGeoTiledMappingManagerEngine *tiledEngine
@@ -1149,13 +1161,13 @@ QGeoTileIterator::QGeoTileIterator(const QGeoTiledMapDataPrivate *mapDataPrivate
     currTopLeft.setY(y * tileSize.height());
 }
 
-QGeoTileIterator::QGeoTileIterator(QGeoTiledMapData *mapData, const QRect &screenRect, const QSize &tileSize, int zoomLevel)
-        : mapData(mapData),
-        atEnd(false),
+QGeoTileIterator::QGeoTileIterator(QGraphicsGeoMap::MapType mapType, const QRect &screenRect, const QSize &tileSize, int zoomLevel)
+        : atEnd(false),
         row(-1),
         col(-1),
         screenRect(screenRect),
         tileSize(tileSize),
+        mapType(mapType),
         zoomLevel(zoomLevel),
         tileRect(QPoint(0, 0), tileSize)
 {
@@ -1193,7 +1205,7 @@ QGeoTiledMapRequest QGeoTileIterator::next()
     if (currTopLeft.y() > screenRect.bottom()) //done
         atEnd = true;
 
-    return QGeoTiledMapRequest(mapData, row, col, tileRect);
+    return QGeoTiledMapRequest(mapType, zoomLevel, row, col, tileRect);
 }
 
 #include "moc_qgeotiledmapdata.cpp"

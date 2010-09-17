@@ -46,6 +46,7 @@
 #include "qgeocoordinate.h"
 #include "qgraphicsgeomap.h"
 #include "qgeomapobject.h"
+#include "qgeomapgroupobject.h"
 #include "qgeomappingmanagerengine.h"
 #include "qgeomapoverlay.h"
 
@@ -101,6 +102,11 @@ QGeoMapData::~QGeoMapData()
 {
     Q_D(QGeoMapData);
     delete d;
+}
+
+void QGeoMapData::setup()
+{
+    d_ptr->containerObject = new QGeoMapGroupObject(this);
 }
 
 /*!
@@ -502,50 +508,6 @@ void QGeoMapData::clearMapOverlays()
 }
 
 /*!
-    Sets up the associated between the map object \a mapObject and this map.
-
-    This will setup an instance of a QGeoMapObjectInfo subclass for \a
-    mapObject which will handle any of the map object behaviour which is
-    specifical to this QGeoMapData subclass.
-
-    This function uses createMapObjectInfo as a factory for the
-    QGeoMapObjectInfo instance, and so subclasses should reimplement
-    createMapObjectInfo to create the appropriate QGeoMapObjectInfo objects.
-*/
-void QGeoMapData::associateMapObject(QGeoMapObject *mapObject)
-{
-    QGeoMapObjectInfo* info = createMapObjectInfo(mapObject);
-    d_ptr->setObjectInfo(mapObject, info);
-
-    connect(this,
-            SIGNAL(windowSizeChanged(QSizeF)),
-            info,
-            SLOT(windowSizeChanged(QSizeF)));
-    connect(this,
-            SIGNAL(zoomLevelChanged(qreal)),
-            info,
-            SLOT(zoomLevelChanged(qreal)));
-    connect(this,
-            SIGNAL(centerChanged(QGeoCoordinate)),
-            info,
-            SLOT(centerChanged(QGeoCoordinate)));
-
-    connect(mapObject,
-            SIGNAL(zValueChanged(int)),
-            info,
-            SLOT(zValueChanged(int)));
-    connect(mapObject,
-            SIGNAL(visibleChanged(bool)),
-            info,
-            SLOT(visibleChanged(bool)));
-    connect(mapObject,
-            SIGNAL(selectedChanged(bool)),
-            info,
-            SLOT(selectedChanged(bool)));
-
-}
-
-/*!
     Creates a QGeoMapObjectInfo instance which implements the behaviours of
     the map object \a object which are specific to this QGeoMapData.
 
@@ -569,30 +531,15 @@ QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEn
         : q_ptr(parent),
         engine(engine),
         geoMap(geoMap),
+        containerObject(0),
         zoomLevel(-1.0),
-        blockPropertyChangeSignals(false)
-{
-    Q_Q(QGeoMapData);
-    containerObject = new QGeoMapObject(q);
-}
+        blockPropertyChangeSignals(false) {}
 
 QGeoMapDataPrivate::~QGeoMapDataPrivate()
 {
-    delete containerObject;
+    if (containerObject)
+        delete containerObject;
     qDeleteAll(overlays);
-}
-
-void QGeoMapDataPrivate::setObjectInfo(QGeoMapObject *object, QGeoMapObjectInfo *info)
-{
-    object->d_ptr->info = info;
-}
-
-QGeoMapObjectInfo* QGeoMapDataPrivate::parentObjectInfo(QGeoMapObject *object) const
-{
-    QGeoMapObject *parent = object->d_ptr->parent;
-    if (!parent)
-        return 0;
-    return parent->d_ptr->info;
 }
 
 #include "moc_qgeomapdata.cpp"

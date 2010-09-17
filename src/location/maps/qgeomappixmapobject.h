@@ -67,9 +67,11 @@ class Q_LOCATION_EXPORT QGeoMapPixmapObject : public QGeoMapObject
     Q_PROPERTY(QPoint offset READ offset WRITE setOffset NOTIFY offsetChanged)
 
 public:
-    QGeoMapPixmapObject(QGeoMapObject *parent = 0);
-    QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset = QPoint(0, 0), const QPixmap &pixmap = QPixmap(), QGeoMapObject *parent = 0);
+    QGeoMapPixmapObject();
+    QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset = QPoint(0, 0), const QPixmap &pixmap = QPixmap());
     ~QGeoMapPixmapObject();
+
+    QGeoMapObject::Type type() const;
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
@@ -95,6 +97,7 @@ Q_SIGNALS:
     void offsetChanged(const QPoint &offset);
 
 private:
+    QGeoMapPixmapObjectPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeoMapPixmapObject)
     Q_DISABLE_COPY(QGeoMapPixmapObject)
 };

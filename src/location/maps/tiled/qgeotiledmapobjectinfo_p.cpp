@@ -43,6 +43,7 @@
 
 #include "qgeotiledmapdata.h"
 #include "qgeotiledmapdata_p.h"
+#include "qgeoboundingbox.h"
 
 #include <QGraphicsScene>
 
@@ -64,32 +65,22 @@ QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObje
 
 QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()
 {
-    if (graphicsItem)
+    if (graphicsItem) {
+        tiledMapDataPrivate->scene->removeItem(graphicsItem);
+        tiledMapDataPrivate->itemMap.remove(graphicsItem);
         delete graphicsItem;
+    }
 }
 
-void QGeoTiledMapObjectInfo::addToParent()
+void QGeoTiledMapObjectInfo::setup()
 {
     if (graphicsItem) {
-        QGeoTiledMapObjectInfo *parentInfo
-                = static_cast<QGeoTiledMapObjectInfo*>(parentObjectInfo());
-
-        if (parentInfo)
-            graphicsItem->setParentItem(parentInfo->graphicsItem);
-        else
+        if (!graphicsItem->scene())
             tiledMapDataPrivate->scene->addItem(graphicsItem);
 
         tiledMapDataPrivate->itemMap.insert(graphicsItem, mapObject());
         graphicsItem->setVisible(mapObject()->isVisible() && isValid);
         graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable);
-    }
-}
-
-void QGeoTiledMapObjectInfo::removeFromParent()
-{
-    if (graphicsItem) {
-        tiledMapDataPrivate->scene->removeItem(graphicsItem);
-        tiledMapDataPrivate->itemMap.remove(graphicsItem);
     }
 }
 
