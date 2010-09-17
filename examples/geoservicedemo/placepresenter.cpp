@@ -141,6 +141,7 @@ void PlacePresenter::showAddress(QTreeWidgetItem* addrItem, const QGeoAddress& a
         streetNameItem->setText(1, s);
     }
 
+/* TODO: check on windows
     s = address.streetNumber();
 
     if (!s.isEmpty()) {
@@ -148,6 +149,7 @@ void PlacePresenter::showAddress(QTreeWidgetItem* addrItem, const QGeoAddress& a
         streetNumberItem->setText(0, "street number");
         streetNumberItem->setText(1, s);
     }
+*/
 
     s = address.postCode();
 

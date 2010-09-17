@@ -96,7 +96,6 @@ void QDeclarativeLandmark::setLandmark(const QLandmark& landmark)
     m_landmark = landmark;
     m_coordinate.setCoordinate(m_landmark.coordinate());
     emit coordinateChanged();
-    // TODO update notifications when the whole scenario is more clear
 }
 
 QList<QLandmarkCategoryId> QDeclarativeLandmark::categoryIds () const

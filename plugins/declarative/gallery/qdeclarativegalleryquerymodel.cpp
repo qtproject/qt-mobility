@@ -69,14 +69,117 @@ void QDeclarativeGalleryQueryModel::componentComplete()
 {
     m_complete = true;
 
-    if (m_filter)
-        m_request.setFilter(m_filter->filter());
+    if (m_filter) {
+        connect(m_filter.data(), SIGNAL(filterChanged()), this, SLOT(deferredExecute()));
+
+        m_request.setFilter(m_filter.data()->filter());
+    }
     m_request.execute();
+}
+
+qreal QDeclarativeGalleryQueryModel::progress() const
+{
+    const int max = m_request.maximumProgress();
+
+    return max > 0 ? qreal(m_request.currentProgress()) / max : qreal(0.0);
+}
+
+void QDeclarativeGalleryQueryModel::setPropertyNames(const QStringList &names)
+{
+    if (!m_complete && m_request.propertyNames() != names) {
+        m_request.setPropertyNames(names);
+
+        emit propertyNamesChanged();
+    }
+}
+
+void QDeclarativeGalleryQueryModel::setSortPropertyNames(const QStringList &names)
+{
+    if (m_request.sortPropertyNames() != names) {
+        m_request.setSortPropertyNames(names);
+
+        deferredExecute();
+
+        emit sortPropertyNamesChanged();
+    }
+}
+
+void QDeclarativeGalleryQueryModel::setAutoUpdate(bool enabled)
+{
+    if (m_request.autoUpdate() != enabled) {
+        m_request.setAutoUpdate(enabled);
+
+        deferredExecute();
+
+        emit autoUpdateChanged();
+    }
+}
+
+void QDeclarativeGalleryQueryModel::setScope(Scope scope)
+{
+    if (m_request.scope() != QGalleryQueryRequest::Scope(scope)) {
+        m_request.setScope(QGalleryQueryRequest::Scope(scope));
+
+        deferredExecute();
+
+        emit scopeChanged();
+    }
+}
+
+void QDeclarativeGalleryQueryModel::setRootItem(const QVariant &itemId)
+{
+    if (m_request.rootItem() != itemId) {
+        m_request.setRootItem(itemId);
+
+        deferredExecute();
+
+        emit rootItemChanged();
+    }
+}
+
+void QDeclarativeGalleryQueryModel::setFilter(QDeclarativeGalleryFilterBase *filter)
+{
+    if (m_filter)
+        disconnect(m_filter.data(), SIGNAL(filterChanged()), this, SLOT(deferredExecute()));
+
+    m_filter = filter;
+
+    if (m_filter)
+        connect(m_filter.data(), SIGNAL(filterChanged()), this, SLOT(deferredExecute()));
+
+    deferredExecute();
+
+    emit filterChanged();
+}
+
+void QDeclarativeGalleryQueryModel::setOffset(int offset)
+{
+    if (m_request.offset() != offset) {
+        m_request.setOffset(offset);
+
+        deferredExecute();
+
+        emit offsetChanged();
+    }
+}
+
+void QDeclarativeGalleryQueryModel::setLimit(int limit)
+{
+    if (m_request.limit() != limit) {
+        m_request.setLimit(limit);
+
+        deferredExecute();
+
+        emit limitChanged();
+    }
 }
 
 void QDeclarativeGalleryQueryModel::reload()
 {
-    m_request.setFilter(m_filter ? m_filter->filter() : QGalleryFilter());
+    m_executeTimer.stop();
+
+    m_request.setFilter(m_filter ? m_filter.data()->filter() : QGalleryFilter());
+
     m_request.execute();
 }
 
@@ -111,7 +214,8 @@ QVariant QDeclarativeGalleryQueryModel::data(const QModelIndex &index, int role)
     }
 }
 
-bool QDeclarativeGalleryQueryModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool QDeclarativeGalleryQueryModel::setData(
+        const QModelIndex &index, const QVariant &value, int role)
 {
     if (index.isValid() && (role -= MetaDataOffset) > 0) {
         if (m_resultSet->currentIndex() != index.row() && !m_resultSet->fetch(index.row()))
@@ -124,7 +228,8 @@ bool QDeclarativeGalleryQueryModel::setData(const QModelIndex &index, const QVar
 
 }
 
-QModelIndex QDeclarativeGalleryQueryModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex QDeclarativeGalleryQueryModel::index(
+        int row, int column, const QModelIndex &parent) const
 {
     return !parent.isValid() && row >= 0 && row < m_rowCount && column == 0
             ? createIndex(row, column)
@@ -217,6 +322,24 @@ void QDeclarativeGalleryQueryModel::setProperty(
     }
 
     m_resultSet->setMetaData(m_resultSet->propertyKey(property), value);
+}
+
+
+
+void QDeclarativeGalleryQueryModel::deferredExecute()
+{
+    if (m_complete && !m_executeTimer.isActive())
+        m_executeTimer.start(0, this);
+}
+
+void QDeclarativeGalleryQueryModel::timerEvent(QTimerEvent *event) {
+    if (event->timerId() == m_executeTimer.timerId()) {
+        reload();
+
+        event->accept();
+    } else {
+        QAbstractListModel::timerEvent(event);
+    }
 }
 
 void QDeclarativeGalleryQueryModel::_q_statusChanged()

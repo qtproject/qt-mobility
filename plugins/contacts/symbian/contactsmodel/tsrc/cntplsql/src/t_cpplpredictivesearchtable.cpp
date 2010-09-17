@@ -831,18 +831,18 @@ void UT_CPplPredictiveSearchTable::UT_ConvertToHexL()
 // Get 1..N keymaps and their ownership
 void UT_CPplPredictiveSearchTable::UT_HbKeymapFactoryApiL()
     {
-/* Temporarily commented out, since does not compile in pre-wk32 environment
+	HbKeymapFactory::instance();
+//	__UHEAP_MARK;
     const HbKeymap* keymap =
         HbKeymapFactory::instance()->keymap(QLocale::English,  
                                             HbKeymapFactory::NoCaching);
     delete keymap;
+//	__UHEAP_MARKEND; // panics, since leaks memory
     
-
     keymap = NULL;
     keymap = HbKeymapFactory::instance()->keymap(QLocale::Swedish,  
-                                                HbKeymapFactory::NoCaching);
+                                                 HbKeymapFactory::NoCaching);
     delete keymap;
-*/
     }
 
 void UT_CPplPredictiveSearchTable::AddContactL(const TDesC& aFirstName,

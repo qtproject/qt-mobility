@@ -122,6 +122,19 @@ QtPublishSubscribe
  - foo
     * bar
 
+QtSensors
+------
+
+ - Fix a packaging bug affecting S60 3.1 devices [QTMOBILITY-423]
+ - Document why sensor readings are not available after calling start() [QTMOBILITY-440]
+ - Document Sensors.conf [QTMOBILITY-441]
+ - Document output range meta-data [QTMOBILITY-469]
+ - Use prefixed includes from public headers [QTMOBILITY-476]
+
+Note that the above fixes are also in 1.0.3.
+
+ - Don't allow setting invalid values for enum types [QTMOBILITY-277]
+
 QtServiceFramework
 ------
 

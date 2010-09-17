@@ -45,10 +45,56 @@
 
 QTM_BEGIN_NAMESPACE
 
+void QDeclarativeGalleryValueFilter::setValue(const QVariant &value)
+{
+    m_filter.setValue(value);
+
+    emit valueChanged();
+    emit filterChanged();
+}
+void QDeclarativeGalleryValueFilter::setPropertyName(const QString &name)
+{
+    m_filter.setPropertyName(name);
+
+    emit propertyNameChanged();
+    emit filterChanged();
+}
+
+void QDeclarativeGalleryValueFilter::setInverted(bool inverted)
+{
+    m_filter.setInverted(inverted);
+
+    emit invertedChanged();
+    emit filterChanged();
+}
 
 QGalleryFilter QDeclarativeGalleryValueFilter::filter() const
 {
     return m_filter;
+}
+
+void QDeclarativeGalleryStringFilter::setPropertyName(const QString &name)
+{
+    m_filter.setPropertyName(name);
+
+    emit propertyNameChanged();
+    emit filterChanged();
+}
+
+void QDeclarativeGalleryStringFilter::setValue(const QString &value)
+{
+    m_filter.setValue(value);
+
+    emit valueChanged();
+    emit filterChanged();
+}
+
+void QDeclarativeGalleryStringFilter::setInverted(bool inverted)
+{
+    m_filter.setInverted(inverted);
+
+    emit invertedChanged();
+    emit filterChanged();
 }
 
 QGalleryFilter QDeclarativeGalleryStringFilter::filter() const
@@ -394,6 +440,72 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 
     This property holds whether the result of a filter should be inverted.
 */
+
+
+void QDeclarativeGalleryFilterGroup::classBegin()
+{
+}
+
+void QDeclarativeGalleryFilterGroup::componentComplete()
+{
+    m_complete = true;
+
+    typedef QList<QDeclarativeGalleryFilterBase *>::const_iterator iterator;
+    for (iterator it = m_filters.constBegin(), end = m_filters.constEnd(); it != end; ++it)
+        connect(*it, SIGNAL(filterChanged()), this, SIGNAL(filterChanged()));
+}
+
+QDeclarativeListProperty<QDeclarativeGalleryFilterBase> QDeclarativeGalleryFilterGroup::filters()
+{
+    return QDeclarativeListProperty<QDeclarativeGalleryFilterBase>(
+            this, &m_filters, append, count, at, clear);
+}
+
+void QDeclarativeGalleryFilterGroup::append(
+        QDeclarativeListProperty<QDeclarativeGalleryFilterBase> *filters,
+        QDeclarativeGalleryFilterBase *filter)
+{
+    QDeclarativeGalleryFilterGroup *filterGroup
+            = static_cast<QDeclarativeGalleryFilterGroup *>(filters->object);
+
+    static_cast<QList<QDeclarativeGalleryFilterBase *>*>(filters->data)->append(filter);
+
+    if (static_cast<QDeclarativeGalleryFilterGroup *>(filters->object)->m_complete) {
+        connect(filter, SIGNAL(filterChanged()), filterGroup, SIGNAL(filterChanged()));
+
+        emit filterGroup->filterChanged();
+    }
+}
+
+int QDeclarativeGalleryFilterGroup::count(
+        QDeclarativeListProperty<QDeclarativeGalleryFilterBase> *filters)
+{
+    return static_cast<QList<QDeclarativeGalleryFilterBase *>*>(filters->data)->count();
+}
+
+QDeclarativeGalleryFilterBase *QDeclarativeGalleryFilterGroup::at(
+        QDeclarativeListProperty<QDeclarativeGalleryFilterBase> *filters, int index)
+{
+    return static_cast<QList<QDeclarativeGalleryFilterBase *>*>(filters->data)->at(index);
+}
+
+void QDeclarativeGalleryFilterGroup::clear(
+        QDeclarativeListProperty<QDeclarativeGalleryFilterBase> *filters)
+{
+    QDeclarativeGalleryFilterGroup *filterGroup
+            = static_cast<QDeclarativeGalleryFilterGroup *>(filters->object);
+
+    QList<QDeclarativeGalleryFilterBase *> *list
+            = static_cast<QList<QDeclarativeGalleryFilterBase *>*>(filters->data);
+
+    typedef QList<QDeclarativeGalleryFilterBase *>::const_iterator iterator;
+    for (iterator it = list->constBegin(), end = list->constEnd(); it != end; ++it)
+        disconnect(*it, SIGNAL(filterChanged()), filterGroup, SIGNAL(filterChanged()));
+
+    list->clear();
+
+    emit filterGroup->filterChanged();
+}
 
 /*!
     \qmlclass GalleryFilterUnion GalleryFilterUnion

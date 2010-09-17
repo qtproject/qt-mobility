@@ -130,7 +130,8 @@ public:
     virtual QStringList supportedContactTypes() const;
 
     /* Reports the built-in definitions from the schema */
-    static QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions();
+    static QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions(); // returns version 1 of the schema
+    static QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions(int schemaVersion); // returns schema of the specified version
 
 Q_SIGNALS:
     void dataChanged();
@@ -175,6 +176,39 @@ private:
     friend class QContactChangeSet;
 };
 
+
+class QContactLocalIdFetchRequest;
+class QContactFetchRequest;
+class QContactSaveRequest;
+class QContactRemoveRequest;
+class QContactDetailDefinitionFetchRequest;
+class QContactDetailDefinitionRemoveRequest;
+class QContactDetailDefinitionSaveRequest;
+class QContactRelationshipFetchRequest;
+class QContactRelationshipSaveRequest;
+class QContactRelationshipRemoveRequest;
+
+class Q_CONTACTS_EXPORT QContactManagerEngineV2 : public QContactManagerEngine
+{
+    Q_OBJECT
+public:
+    QContactManagerEngineV2() : QContactManagerEngine() {}
+
+    // This is the V1 function - c++ overloading rules require this here, or to use "using"
+    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
+    virtual bool saveContacts(QList<QContact>* contacts,  const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
+
+    // Again, this is the v1 function
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
+    virtual QList<QContact> contacts(const QList<QContactLocalId>& localIds, const QContactFetchHint& fetchHint, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error) const;
+
+    static void updateContactFetchByIdRequest(QContactFetchByIdRequest* req, const QList<QContact>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State);
+};
+
 QTM_END_NAMESPACE
 
+QT_BEGIN_NAMESPACE
+#define QT_CONTACTS_ENGINEV2_INTERFACE "com.nokia.qt.mobility.contacts.engine/2.0"
+Q_DECLARE_INTERFACE(QtMobility::QContactManagerEngineV2, QT_CONTACTS_ENGINEV2_INTERFACE);
+QT_END_NAMESPACE
 #endif

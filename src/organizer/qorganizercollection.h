@@ -70,6 +70,7 @@ public:
     /* Every collection has an id */
     QOrganizerCollectionId id() const;
     void setId(const QOrganizerCollectionId& id);
+    QOrganizerCollectionLocalId localId() const;
 
     /* Metadata?  Colour?  Icon?  Haptic Feel?  etc */
     // DEFINE_LATIN1_CONSTANT(FieldName, "Name");

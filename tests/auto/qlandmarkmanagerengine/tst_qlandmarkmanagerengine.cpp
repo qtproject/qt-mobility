@@ -251,6 +251,7 @@ private slots:
         QVERIFY(!MockEngine::testFilter(filter,lm));
 
 
+        /* TODO: remove custom attributes
         //test multiple custom attributes ,AND operation
         QLandmark lm2;
         lm2.setCustomAttribute("name", "LM1");
@@ -316,6 +317,7 @@ private slots:
         QVERIFY(!MockEngine::testFilter(filter,lm3));
         filter.setAttribute("capcity", 5);
         QVERIFY(MockEngine::testFilter(filter,lm3));
+        */
     }
 
     void testFilterBox() {
@@ -569,20 +571,10 @@ private slots:
         QVERIFY(!MockEngine::testFilter(nameFilter,lm));
     }
 
-    void testNearestFilter()
-    {
-        QLandmarkProximityFilter nearestFilter;
-        nearestFilter.setCoordinate(QGeoCoordinate(30,30));
-        nearestFilter.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
-        QLandmark lm;
-        lm.setCoordinate(QGeoCoordinate(40,30));
-        QVERIFY(MockEngine::testFilter(nearestFilter,lm));
-    }
-
     void testProximityFilter()
     {
         QLandmarkProximityFilter proximityFilter;
-        proximityFilter.setCoordinate(QGeoCoordinate(30,30));
+        proximityFilter.setCenter(QGeoCoordinate(30,30));
         proximityFilter.setRadius( QGeoCoordinate(30,30).distanceTo(QGeoCoordinate(30,32)) );
 
         //test landmark in the centre
