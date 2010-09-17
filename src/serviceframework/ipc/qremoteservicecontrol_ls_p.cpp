@@ -52,10 +52,10 @@
 
 #include <time.h>
 #include <sys/types.h>          /* See NOTES */
-#include <sys/socket.h>
 
 #ifndef Q_OS_WIN
 #include <sys/un.h>
+#include <sys/socket.h>
 #endif
 
 #ifdef LOCAL_PEERCRED /* from sys/un.h */
