@@ -39,6 +39,9 @@
 **
 ****************************************************************************/
 
+#ifndef QORGANIZERMAEMO5IDS_P_H
+#define QORGANIZERMAEMO5IDS_P_H
+
 #include "qtorganizer.h"
 #include "qorganizeritemenginelocalid.h"
 #include "qorganizercollectionenginelocalid.h"
@@ -108,3 +111,6 @@ private:
     friend class OrganizerItemTransform;
     friend class OrganizerCalendarDatabaseAccess;
 };
+
+#endif
+
