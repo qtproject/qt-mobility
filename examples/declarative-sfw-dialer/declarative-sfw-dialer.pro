@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 SUBDIRS += voipdialer \
-           landlinedialer
+           landlinedialer \
+           declarative-sfw-dialer
