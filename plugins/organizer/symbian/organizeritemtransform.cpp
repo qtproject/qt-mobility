@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "organizeritemtransform.h"
+#include "qorganizersymbian_p.h"
 
 #include <QDebug>
 #include <calentry.h>
@@ -187,7 +188,7 @@ void OrganizerItemTransform::toItemPostSaveL(const CCalEntry &entry, QOrganizerI
     // Update local id
     QOrganizerItemId itemId;
     TCalLocalUid localUid = entry.LocalUidL();
-    itemId.setLocalId(localUid);
+    itemId.setLocalId(QOrganizerItemLocalId(new QOrganizerItemSymbianEngineLocalId(0, localUid))); // XXX TODO: FIXME: when multicalendar is implemented.
     itemId.setManagerUri(managerUri);
     item->setId(itemId);
 }
