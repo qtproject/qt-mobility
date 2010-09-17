@@ -93,12 +93,12 @@ QMap<QString, QOrganizerItemMemoryEngineData*> QOrganizerItemMemoryEngine::engin
   the precise implementation required may differ.
  */
 QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId()
-    : m_localCollectionId(0), m_localItemId(0)
+    : QOrganizerItemEngineLocalId(), m_localCollectionId(0), m_localItemId(0)
 {
 }
 
 QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId(quint32 collectionId, quint32 itemId)
-    : m_localCollectionId(collectionId), m_localItemId(itemId)
+    : QOrganizerItemEngineLocalId(), m_localCollectionId(collectionId), m_localItemId(itemId)
 {
 }
 
@@ -107,7 +107,7 @@ QOrganizerItemMemoryEngineLocalId::~QOrganizerItemMemoryEngineLocalId()
 }
 
 QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId(const QOrganizerItemMemoryEngineLocalId& other)
-    : m_localCollectionId(other.m_localCollectionId), m_localItemId(other.m_localItemId)
+    : QOrganizerItemEngineLocalId(), m_localCollectionId(other.m_localCollectionId), m_localItemId(other.m_localItemId)
 {
 }
 
@@ -190,12 +190,17 @@ uint QOrganizerItemMemoryEngineLocalId::hash() const
   the precise implementation required may differ.
  */
 QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId()
-    : m_localCollectionId(0)
+    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(0)
+{
+}
+
+QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId(quint32 collectionId)
+    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(collectionId)
 {
 }
 
 QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId(const QOrganizerCollectionMemoryEngineLocalId& other)
-    : m_localCollectionId(other.m_localCollectionId)
+    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(other.m_localCollectionId)
 {
 }
 
