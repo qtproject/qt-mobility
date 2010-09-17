@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qorganizeritemmanagerengine.h"
+#include "qorganizeritemenginelocalid.h"
 
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemdetailfielddefinition.h"
@@ -449,9 +450,9 @@ bool QOrganizerItemManagerEngine::isFilterSupported(const QOrganizerItemFilter& 
 /*!
   Returns the list of data types supported by this engine.
  */
-QList<QVariant::Type> QOrganizerItemManagerEngine::supportedDataTypes() const
+QList<int> QOrganizerItemManagerEngine::supportedDataTypes() const
 {
-    return QList<QVariant::Type>();
+    return QList<int>();
 }
 
 /*!
@@ -835,7 +836,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     // instance origin
     d.setName(QOrganizerItemInstanceOrigin::DefinitionName);
     fields.clear();
-    f.setDataType(QVariant::Int);
+    f.setDataType(qMetaTypeId<QOrganizerItemLocalId>());
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
     f.setDataType(QVariant::Date);
@@ -1579,7 +1580,7 @@ bool QOrganizerItemManagerEngine::validateDefinition(const QOrganizerItemDetailD
     }
 
     // Check each field now
-    QList<QVariant::Type> types = supportedDataTypes();
+    QList<int> types = supportedDataTypes();
     QMapIterator<QString, QOrganizerItemDetailFieldDefinition> it(definition.fields());
     while(it.hasNext()) {
         it.next();
@@ -1595,7 +1596,7 @@ bool QOrganizerItemManagerEngine::validateDefinition(const QOrganizerItemDetailD
 
         // Check that each allowed value is the same type
         for (int i=0; i < it.value().allowableValues().count(); i++) {
-            if (it.value().allowableValues().at(i).type() != it.value().dataType()) {
+            if (it.value().allowableValues().at(i).userType() != it.value().dataType()) {
                 *error = QOrganizerItemManager::BadArgumentError;
                 return false;
             }
@@ -1703,6 +1704,21 @@ void QOrganizerItemManagerEngine::setItemCollectionId(QOrganizerItem* item, cons
     if (item) {
         QOrganizerItemData::setCollectionId(item, collectionId);
     }
+}
+
+/*!
+  Creates a new local item id from an engine-local item id.
+  Takes ownership of the \a engineId pointer.
+  Do not delete \a engineId after calling this function, or
+  undefined behaviour will occur.  Do not call this function
+  multiple times with the same pointer, or undefined behavior
+  will occur.
+
+  XXX TODO: is this an argument for using a shared data pointer in QOILId?
+ */
+QOrganizerItemLocalId QOrganizerItemManagerEngine::createLocalItemId(QOrganizerItemEngineLocalId* engineId)
+{
+    return (QOrganizerItemLocalId(engineId));
 }
 
 

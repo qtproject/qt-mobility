@@ -41,6 +41,8 @@
 
 #include "qorganizercollectionid.h"
 #include "qorganizercollectionid_p.h"
+#include "qorganizercollectionenginelocalid.h"
+#include "qorganizeritemmanager_p.h"
 #include <QHash>
 #include <QDebug>
 
@@ -63,15 +65,132 @@ QTM_BEGIN_NAMESPACE
   \typedef QOrganizerCollectionLocalId
   \relates QOrganizerCollectionId
   \brief The QOrganizerCollectionLocalId type represents the unique id of a collection within its manager.
-
+olle
   Most collection-related operations within a \l QOrganizerItemManager accept a QOrganizerCollectionLocalId.  Some operations
   (involving links to collections outside a particular manager) also accept a manager URI - this
   combination is stored in a \l QOrganizerCollectionId.
 
-  An invalid QOrganizerCollectionLocalId is represented by a zero (0) value.
+  A default-constructed QOrganizerCollectionLocalId is a null QOrganizerCollectionLocalId, which does not identify
+  any item in a manager.
 
   \sa QOrganizerCollectionId
 */
+
+/*!
+  Constructs a new, null QOrganizerCollectionLocalId.
+ */
+QOrganizerCollectionLocalId::QOrganizerCollectionLocalId()
+    : d(0)
+{
+}
+
+/*!
+  Cleans up any memory in use by this local id.
+ */
+QOrganizerCollectionLocalId::~QOrganizerCollectionLocalId()
+{
+    delete d;
+}
+
+/*!
+  Constructs a manager-unique local id which wraps the given engine-unique item id
+  \a engineItemId.  This local id takes ownership of the engine-unique item id and
+  will delete it when the local id goes out of scope.  Engine implementors must not
+  delete the \a engineItemId or undefined behaviour will occur.
+ */
+QOrganizerCollectionLocalId::QOrganizerCollectionLocalId(QOrganizerCollectionEngineLocalId* engineItemId)
+    : d(engineItemId)
+{
+}
+
+/*!
+  Constructs a new copy of the \a other id.
+ */
+QOrganizerCollectionLocalId::QOrganizerCollectionLocalId(const QOrganizerCollectionLocalId& other)
+{
+    d = 0;
+    if (other.d)
+        d = other.d->clone();
+}
+
+/*!
+  Assigns the \a other id to this id.
+ */
+QOrganizerCollectionLocalId& QOrganizerCollectionLocalId::operator=(const QOrganizerCollectionLocalId& other)
+{
+    if (d == other.d)
+        return *this;
+
+    // clean up our "old" engine id.
+    if (d)
+        delete d;
+
+    if (other.d)
+        d = other.d->clone();
+    else
+        d = 0;
+
+    return *this;
+}
+
+/*!
+  Returns true if this id is equal to the \a other id; otherwise returns false.
+ */
+bool QOrganizerCollectionLocalId::operator==(const QOrganizerCollectionLocalId& other) const
+{
+    // if both ids are null then they are equal.
+    if (d == 0 && other.d == 0)
+        return true;
+
+    if (d && other.d) {
+        // ensure they're of the same type (and therefore comparable)
+        if (d->engineLocalIdType() && other.d->engineLocalIdType()) {
+            return d->isEqualTo(other.d);
+        }
+    }
+    return false;
+}
+
+/*!
+  Returns true if this id is not equal to the \a other id; otherwise, returns false.
+ */
+bool QOrganizerCollectionLocalId::operator!=(const QOrganizerCollectionLocalId& other) const
+{
+    if (d && other.d) {
+        // ensure they're of the same type (and therefore comparable)
+        if (d->engineLocalIdType() && other.d->engineLocalIdType()) {
+            return !(d->isEqualTo(other.d));
+        }
+    }
+    return false;
+}
+
+/*!
+  Returns true if this id is less than the \a other id; otherwise, returns false.
+ */
+bool QOrganizerCollectionLocalId::operator<(const QOrganizerCollectionLocalId& other) const
+{
+    // a null id is always less than a non-null id.
+    if (d == 0 && other.d != 0)
+        return true;
+
+    if (d && other.d) {
+        // ensure they're of the same type (and therefore comparable)
+        if (d->engineLocalIdType() && other.d->engineLocalIdType()) {
+            return d->isLessThan(other.d);
+        }
+    }
+
+    return false;
+}
+
+/*!
+  Returns true if this id is a null or default constructed id; otherwise, returns false.
+ */
+bool QOrganizerCollectionLocalId::isNull() const
+{
+    return (d == 0);
+}
 
 /*!
  * Constructs a new organizeritem id
@@ -143,10 +262,20 @@ bool QOrganizerCollectionId::operator<(const QOrganizerCollectionId& other) cons
 /*!
  * Returns the hash value for \a key.
  */
+uint qHash(const QOrganizerCollectionLocalId &key)
+{
+    if (key.d)
+        return QT_PREPEND_NAMESPACE(qHash)(key.d->hash());
+    return 0;
+}
+
+/*!
+ * Returns the hash value for \a key.
+ */
 uint qHash(const QOrganizerCollectionId &key)
 {
     return QT_PREPEND_NAMESPACE(qHash)(key.managerUri())
-            + QT_PREPEND_NAMESPACE(qHash)(key.localId());
+            + qHash(key.localId());
 }
 
 #ifndef QT_NO_DEBUG_STREAM
@@ -154,6 +283,14 @@ QDebug operator<<(QDebug dbg, const QOrganizerCollectionId& id)
 {
     dbg.nospace() << "QOrganizerCollectionId(" << id.managerUri() << ", " << id.localId() << ")";
     return dbg.maybeSpace();
+}
+
+QDebug operator<<(QDebug dbg, const QOrganizerCollectionLocalId& id)
+{
+    if (id.d) {
+        return id.d->debugStreamOut(dbg);
+    }
+    return (dbg << QString(QLatin1String("(null)")));
 }
 #endif
 
@@ -169,6 +306,16 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionId& collecti
                << collectionId.localId();
 }
 
+QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionLocalId& id)
+{
+    if (id.d) {
+        // we include a marker which contains "true" if there is local id data to be streamed.
+        out << static_cast<quint8>(true);
+        return id.d->dataStreamOut(out);
+    }
+    return (out << static_cast<quint8>(false));
+}
+
 /*!
  * Reads an organizer collection id from stream \a in into \a collectionId.
  */
@@ -178,17 +325,26 @@ QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId)
     in >> formatVersion;
     if (formatVersion == 1) {
         QString managerUri;
-        QOrganizerCollectionLocalId lid;
-        in >> managerUri >> lid;
+        in >> managerUri;
+        quint8 localIdMarker = static_cast<quint8>(false);
+        in >> localIdMarker;
+        QOrganizerCollectionLocalId localId(QOrganizerItemManagerData::createEngineCollectionLocalId(managerUri));
         collectionId = QOrganizerCollectionId();
-        collectionId.setManagerUri(managerUri);
-        collectionId.setLocalId(lid);
+        if (localId.d) {
+            collectionId.setManagerUri(managerUri);
+            if (localIdMarker) {
+                // only stream in the local id data if it exists.
+                localId.d->dataStreamIn(in);
+            }
+        }
     } else {
         in.setStatus(QDataStream::ReadCorruptData);
     }
     return in;
 }
+
 #endif
+
 
 /*!
  * Returns the URI of the manager which contains the organizeritem identified by this id

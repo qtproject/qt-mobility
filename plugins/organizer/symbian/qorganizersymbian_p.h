@@ -211,7 +211,7 @@ public:
     bool hasFeature(QOrganizerItemManager::ManagerFeature feature, 
         const QString& itemType) const;
     bool isFilterSupported(const QOrganizerItemFilter& filter) const;
-    QList<QVariant::Type> supportedDataTypes() const;
+    QList<int> supportedDataTypes() const;
     QStringList supportedItemTypes() const;
 
     /* Asynchronous Request Support */
