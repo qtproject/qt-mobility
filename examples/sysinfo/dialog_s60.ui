@@ -939,12 +939,12 @@
          <item>
           <widget class="QLabel" name="label_154">
            <property name="text">
-            <string>Contrast</string>
+            <string>Color Depth</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="contrastLabel">
+          <widget class="QLabel" name="colorDepthLabel">
            <property name="text">
             <string/>
            </property>
