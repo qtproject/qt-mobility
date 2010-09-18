@@ -124,6 +124,37 @@ static bool halAvailable()
 
 bool halIsAvailable;
 
+static bool btHasPower() {
+#if !defined(QT_NO_DBUS)
+     QDBusConnection dbusConnection = QDBusConnection::systemBus();
+     QDBusInterface *connectionInterface;
+     connectionInterface = new QDBusInterface("org.bluez",
+                                              "/",
+                                              "org.bluez.Manager",
+                                              dbusConnection);
+     if (connectionInterface->isValid()) {
+         QDBusReply<  QDBusObjectPath > reply = connectionInterface->call("DefaultAdapter");
+         if (reply.isValid()) {
+             QDBusInterface *adapterInterface;
+             adapterInterface = new QDBusInterface("org.bluez",
+                                                   reply.value().path(),
+                                                   "org.bluez.Adapter",
+                                                   dbusConnection);
+             if (adapterInterface->isValid()) {
+                 QDBusReply<QVariantMap > reply =  adapterInterface->call(QLatin1String("GetProperties"));
+                 QVariant var;
+                 QString property="Powered";
+                 QVariantMap map = reply.value();
+                 if (map.contains(property)) {
+                     return map.value(property ).toBool();
+                 }
+             }
+         }
+     }
+#endif
+     return false;
+}
+
 QTM_BEGIN_NAMESPACE
 
 QSystemInfoLinuxCommonPrivate::QSystemInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
@@ -851,7 +882,7 @@ int QSystemNetworkInfoLinuxCommonPrivate::getBluetoothRssi()
 
 QString QSystemNetworkInfoLinuxCommonPrivate::getBluetoothInfo(const QString &file)
 {
-    if(currentBluetoothPowerState()) {
+    if(btHasPower()) {
         const QString sysPath = "/sys/class/bluetooth/";
         const QDir sysDir(sysPath);
         QStringList filters;
@@ -1351,7 +1382,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
                                 qDebug() << "connection malfunction";
                             }
                         }
-                        break;
+                        return;
                     }
                 }
             }
@@ -1368,7 +1399,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
                             qDebug() << "connection malfunction";
                         }
                     }
-                    break;
+                    return;
                 }
             }
         }
@@ -1384,7 +1415,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
                             qDebug() << "connection malfunction";
                         }
                     }
-                    break;
+                    return;
                 }
             }
         }
