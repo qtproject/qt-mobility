@@ -45,9 +45,6 @@
 #include <QDateTime>
 #include <QDebug>
 
-#include <sys/types.h>          /* See NOTES */
-#include <sys/socket.h>
-
 QTM_USE_NAMESPACE
 
 class EchoSharedService : public QObject
