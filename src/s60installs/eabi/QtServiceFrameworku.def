@@ -131,4 +131,5 @@ EXPORTS
 	_ZN10QtMobility21QRemoteServiceControl27setQuitOnLastInstanceClosedEb @ 130 NONAME
 	_ZN10QtMobility21QRemoteServiceControl18lastInstanceClosedEv @ 131 NONAME
 	_ZNK10QtMobility21QRemoteServiceControl24quitOnLastInstanceClosedEv @ 132 NONAME
+	_ZN10QtMobility21QRemoteServiceControl17setSecurityFilterEPFbPKvE @ 133 NONAME
 

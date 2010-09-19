@@ -42,7 +42,7 @@
 #ifndef QREMOTESERVICECONTROL_S60_P_H
 #define QREMOTESERVICECONTROL_S60_P_H
 
-#define QT_SFW_SYMBIAN_IPC_DEBUG
+//#define QT_SFW_SYMBIAN_IPC_DEBUG
 
 #include "qremoteservicecontrol.h"
 #include "qremoteservicecontrol_p.h"
@@ -139,7 +139,7 @@ private:
 // needed for creating server thread.
 const TUint KDefaultHeapSize = 0x10000;
 
-class CServiceProviderServer : public CServer2
+class CServiceProviderServer : public CPolicyServer
     {
     public:
         CServiceProviderServer(QRemoteServiceControlSymbianPrivate* aOwner);
@@ -150,10 +150,16 @@ class CServiceProviderServer : public CServer2
         void IncreaseSessions();
         void DecreaseSessions();
 
+        void setSecurityFilter(QRemoteServiceControl::securityFilter filter);
+
+    protected:
+        virtual TCustomResult CustomSecurityCheckL(const RMessage2 &,TInt &,TSecurityInfo &);
+
     private:
 
         int iSessionCount;
         QRemoteServiceControlSymbianPrivate* iOwner;
+        QRemoteServiceControl::securityFilter iFilter;
     };
 
 class CServiceProviderServerSession : public CSession2
@@ -196,7 +202,12 @@ public:
     static QObject* proxyForService(const QRemoteServiceIdentifier& typeId, const QString& location);
     void processIncoming(CServiceProviderServerSession* session);
 
+    virtual QRemoteServiceControl::securityFilter setSecurityFilter(QRemoteServiceControl::securityFilter filter);
+
     void closingLastInstance();
+
+private:    
+    CServiceProviderServer *m_server;
 };
 
 // A helper class that actively listens for serviceprovider messages.

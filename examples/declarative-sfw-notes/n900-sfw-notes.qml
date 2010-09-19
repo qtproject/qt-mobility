@@ -39,73 +39,18 @@
 ****************************************************************************/
 
 import Qt 4.7
+import "content"
 
 Rectangle {
-    property string text: ""
-    property bool cancelable: true
-    signal confirmed();
+    id: screen
+    width: 800; height: 480
+    color: "black"
 
-    id: page
-    opacity: 0
-    border.width: mainWindow.screenScale
-    color: "lightgray"; radius: 5
-
-    width: parent.width - (parent.width * 1/11); 
-    height: dialogText.height + okButton.height + 35
-    anchors.verticalCenter: mainWindow.verticalCenter
-    anchors.horizontalCenter: mainWindow.horizontalCenter
-
-    Text {
-        id: dialogText
-        text: page.text
-        font.pointSize: 10 * mainWindow.screenScale
-        wrapMode: Text.Wrap
-        x: 15; y: 15
-        width: parent.width - 20;
-        color: "black"
-        anchors.horizontalCenter: page.horizontalCenter
-        horizontalAlignment: Text.AlignHCenter
-    }
-
-    Button {
-        id: okButton
-        text: "Ok"
-        width: 75 * mainWindow.screenScale
-        height: 25 * mainWindow.screenScale
-        anchors.top: dialogText.bottom; anchors.topMargin: 7
-
-        onClicked: {
-            page.confirmed();
-            forceClose();
-        }
-    }
-
-    Button {
-        id: noButton
-        text: "Cancel"
-        width: 75 * mainWindow.screenScale
-        height: 25 * mainWindow.screenScale
-        anchors.left: page.horizontalCenter; anchors.leftMargin: 5
-        anchors.top: dialogText.bottom; anchors.topMargin: 7
-    
-        onClicked: {
-            forceClose();
-        }
-    }
-
-    function forceClose()
-    {
-        page.opacity = 0;
-        mainWindow.enableScreen(true);
-    }
-
-    Component.onCompleted: {
-        if (cancelable == false) {
-            noButton.opacity = 0;
-            okButton.anchors.horizontalCenter = page.horizontalCenter;
-        } else {
-            okButton.anchors.right = page.horizontalCenter; 
-            okButton.anchors.rightMargin = 5;
-        }
+    Main {
+        id: main
+        screenWidth: screen.width
+        screenHeight: screen.height
+        screenColor: screen.color
+        screenScale: 1.75
     }
 }
