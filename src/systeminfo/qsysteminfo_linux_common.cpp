@@ -124,6 +124,37 @@ static bool halAvailable()
 
 bool halIsAvailable;
 
+static bool btHasPower() {
+#if !defined(QT_NO_DBUS)
+     QDBusConnection dbusConnection = QDBusConnection::systemBus();
+     QDBusInterface *connectionInterface;
+     connectionInterface = new QDBusInterface("org.bluez",
+                                              "/",
+                                              "org.bluez.Manager",
+                                              dbusConnection);
+     if (connectionInterface->isValid()) {
+         QDBusReply<  QDBusObjectPath > reply = connectionInterface->call("DefaultAdapter");
+         if (reply.isValid()) {
+             QDBusInterface *adapterInterface;
+             adapterInterface = new QDBusInterface("org.bluez",
+                                                   reply.value().path(),
+                                                   "org.bluez.Adapter",
+                                                   dbusConnection);
+             if (adapterInterface->isValid()) {
+                 QDBusReply<QVariantMap > reply =  adapterInterface->call(QLatin1String("GetProperties"));
+                 QVariant var;
+                 QString property="Powered";
+                 QVariantMap map = reply.value();
+                 if (map.contains(property)) {
+                     return map.value(property ).toBool();
+                 }
+             }
+         }
+     }
+#endif
+     return false;
+}
+
 QTM_BEGIN_NAMESPACE
 
 QSystemInfoLinuxCommonPrivate::QSystemInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
@@ -851,18 +882,20 @@ int QSystemNetworkInfoLinuxCommonPrivate::getBluetoothRssi()
 
 QString QSystemNetworkInfoLinuxCommonPrivate::getBluetoothInfo(const QString &file)
 {
-    const QString sysPath = "/sys/class/bluetooth/";
-    const QDir sysDir(sysPath);
-    QStringList filters;
-    filters << "*";
-    const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
-    foreach(const QString dir, sysList) {
-        QFile btFile(sysPath + dir+"/"+file);
-        if(btFile.exists()) {
-            if (btFile.open(QIODevice::ReadOnly)) {
-                QTextStream btFileStream(&btFile);
-                QString line = btFileStream.readAll();
-                return line.simplified();
+    if(btHasPower()) {
+        const QString sysPath = "/sys/class/bluetooth/";
+        const QDir sysDir(sysPath);
+        QStringList filters;
+        filters << "*";
+        const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+        foreach(const QString dir, sysList) {
+            QFile btFile(sysPath + dir+"/"+file);
+            if(btFile.exists()) {
+                if (btFile.open(QIODevice::ReadOnly)) {
+                    QTextStream btFileStream(&btFile);
+                    QString line = btFileStream.readAll();
+                    return line.simplified();
+                }
             }
         }
     }
@@ -887,8 +920,8 @@ int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
     return wid.screen(screen)->x11Info().depth();
 #else
 #endif
-    return QPixmap::defaultDepth();
 #endif
+    return QPixmap::defaultDepth();
 }
 
 
@@ -1304,12 +1337,31 @@ QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject
  #if !defined(QT_NO_DBUS)
     setupBluetooth();
 #endif
+    initBatteryStatus();
 }
 
 QSystemDeviceInfoLinuxCommonPrivate::~QSystemDeviceInfoLinuxCommonPrivate()
 {
 }
 
+void QSystemDeviceInfoLinuxCommonPrivate::initBatteryStatus()
+{
+    const int level = batteryLevel();
+    QSystemDeviceInfo::BatteryStatus stat = QSystemDeviceInfo::NoBatteryLevel;
+
+    if(level < 4) {
+        stat = QSystemDeviceInfo::BatteryCritical;
+    } else if(level < 11) {
+         stat = QSystemDeviceInfo::BatteryVeryLow;
+    } else if(level < 41) {
+         stat =  QSystemDeviceInfo::BatteryLow;
+    } else if(level > 40) {
+         stat = QSystemDeviceInfo::BatteryNormal;
+    }
+    if(currentBatStatus != stat) {
+        currentBatStatus = stat;
+    }
+}
 
 void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
 {
@@ -1330,7 +1382,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
                                 qDebug() << "connection malfunction";
                             }
                         }
-                        break;
+                        return;
                     }
                 }
             }
@@ -1347,7 +1399,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
                             qDebug() << "connection malfunction";
                         }
                     }
-                    break;
+                    return;
                 }
             }
         }
@@ -1363,7 +1415,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
                             qDebug() << "connection malfunction";
                         }
                     }
-                    break;
+                    return;
                 }
             }
         }
@@ -1380,24 +1432,28 @@ void QSystemDeviceInfoLinuxCommonPrivate::halChanged(int,QVariantList map)
        if(map.at(i).toString() == "battery.charge_level.percentage") {
             const int level = batteryLevel();
             emit batteryLevelChanged(level);
+            QSystemDeviceInfo::BatteryStatus stat = QSystemDeviceInfo::NoBatteryLevel;
+
             if(level < 4) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
+                stat = QSystemDeviceInfo::BatteryCritical;
             } else if(level < 11) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryVeryLow);
+                 stat = QSystemDeviceInfo::BatteryVeryLow;
             } else if(level < 41) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryLow);
+                 stat =  QSystemDeviceInfo::BatteryLow;
             } else if(level > 40) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryNormal);
+                 stat = QSystemDeviceInfo::BatteryNormal;
             }
-            else {
-                emit batteryStatusChanged(QSystemDeviceInfo::NoBatteryLevel);
+            if(currentBatStatus != stat) {
+                currentBatStatus = stat;
+                Q_EMIT batteryStatusChanged(stat);
             }
         }
         if((map.at(i).toString() == "ac_adapter.present")
         || (map.at(i).toString() == "battery.rechargeable.is_charging")) {
             QSystemDeviceInfo::PowerState state = currentPowerState();
             emit powerStateChanged(state);
-       }} //end map
+       }
+    } //end map
 }
 #endif
 
