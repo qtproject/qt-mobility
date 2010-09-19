@@ -157,7 +157,7 @@ public:
         ChangeLogs
     };
     bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType = QOrganizerItemType::TypeEvent) const;
-    QList<QVariant::Type> supportedDataTypes() const;
+    QList<int> supportedDataTypes() const;
     bool isFilterSupported(const QOrganizerItemFilter& filter) const;
     QStringList supportedItemTypes() const;
 

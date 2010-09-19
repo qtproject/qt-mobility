@@ -43,6 +43,7 @@
 #include <QDebug>
 #include <calsession.h>
 #include <calentryview.h>
+#include <calinstanceview.h>
 #include "organizersymbianutils.h"
 #include "qorganizeritemchangeset.h"
 #include "qorganizeritemmanagerengine.h"
@@ -54,6 +55,8 @@ OrganizerSymbianCollectionPrivate::OrganizerSymbianCollectionPrivate()
     m_engine(0),
     m_calSession(0),
     m_calEntryView(0),
+    m_calInstanceView(0),
+    m_calCollectionId(0),
     m_error(0)
 {
     m_activeSchedulerWait = new CActiveSchedulerWait();
@@ -64,6 +67,7 @@ OrganizerSymbianCollectionPrivate::~OrganizerSymbianCollectionPrivate()
     if (m_calSession)
         m_calSession->StopChangeNotification();
     delete m_calEntryView;
+    delete m_calInstanceView;
     delete m_calSession;
     delete m_activeSchedulerWait;
 }    
@@ -103,23 +107,22 @@ void OrganizerSymbianCollectionPrivate::CalChangeNotification(RArray<TCalChangeE
     // caused by something else than our manager instance.
 
     QOrganizerItemChangeSet changeSet;
-
     int count = aChangeItems.Count();
     for (int i=0; i<count; i++) 
     {
-        QOrganizerItemLocalId entryId = QOrganizerItemLocalId(aChangeItems[i].iEntryId);
+        QOrganizerItemLocalId id = toItemLocalId(m_calCollectionId, aChangeItems[i].iEntryId);
         switch(aChangeItems[i].iChangeType)
         {
         case MCalChangeCallBack2::EChangeAdd:       
-            changeSet.insertAddedItem(entryId);
+            changeSet.insertAddedItem(id);
             break;
 
         case MCalChangeCallBack2::EChangeDelete:
-            changeSet.insertRemovedItem(entryId);
+            changeSet.insertRemovedItem(id);
             break;
 
         case MCalChangeCallBack2::EChangeModify:
-            changeSet.insertChangedItem(entryId);
+            changeSet.insertChangedItem(id);
             break;
 
         case MCalChangeCallBack2::EChangeUndefined:
@@ -164,6 +167,8 @@ void OrganizerSymbianCollection::openL(const TDesC &fileName)
         d->m_calSession->StopChangeNotification();
     delete d->m_calEntryView;
     d->m_calEntryView = 0;
+    delete d->m_calInstanceView;
+    d->m_calInstanceView = 0;
     delete d->m_calSession;
     d->m_calSession = 0;
     
@@ -205,12 +210,14 @@ void OrganizerSymbianCollection::openL(const TDesC &fileName)
     
     // Get collection id
 #ifdef SYMBIAN_CALENDAR_V2
-    d->m_id.setLocalId(d->m_calSession->CollectionIdL());
+    // TODO: Use filename hash instead of CollectionIdL
+    d->m_calCollectionId = d->m_calSession->CollectionIdL();
+    d->m_id.setLocalId(toCollectionLocalId(d->m_calCollectionId));
 #else
     // TODO: If multiple calendars are to be supported without native support
     // we need to generate a real id here. Currently there will only be one
     // collection so it does not matter if its just a magic number.
-    d->m_id.setLocalId(1);
+    d->m_id.setLocalId(toCollectionLocalId(1));
 #endif
     
     // Start listening to calendar events
@@ -224,11 +231,16 @@ void OrganizerSymbianCollection::openL(const TDesC &fileName)
     delete filter;
 }
 
-void OrganizerSymbianCollection::createEntryViewL()
+void OrganizerSymbianCollection::createViewsL()
 {
     // Create an entry view
     d->m_calEntryView = CCalEntryView::NewL(*d->m_calSession, *d);
     d->m_activeSchedulerWait->Start(); // stopped at Completed()
+    User::LeaveIfError(d->m_error);
+
+    // Create an instance view
+    d->m_calInstanceView = CCalInstanceView::NewL(*d->m_calSession, *d);
+    d->m_activeSchedulerWait->Start();
     User::LeaveIfError(d->m_error);
 }
 
@@ -242,6 +254,11 @@ QOrganizerCollectionLocalId OrganizerSymbianCollection::localId() const
     return d->m_id.localId(); 
 }
 
+quint32 OrganizerSymbianCollection::calCollectionId() const
+{
+    return d->m_calCollectionId;
+}
+
 CCalSession *OrganizerSymbianCollection::calSession() const
 {
     return d->m_calSession; 
@@ -252,6 +269,11 @@ CCalEntryView *OrganizerSymbianCollection::calEntryView() const
     return d->m_calEntryView; 
 }
 
+CCalInstanceView *OrganizerSymbianCollection::calInstanceView() const
+{ 
+    return d->m_calInstanceView; 
+}
+
 QString OrganizerSymbianCollection::fileName() const
 {
     return d->m_fileName;
@@ -259,7 +281,7 @@ QString OrganizerSymbianCollection::fileName() const
 
 bool OrganizerSymbianCollection::isValid() const
 {
-    return (d->m_id.localId() > 0);
+    return (d->m_calCollectionId > 0);
 }
 
 bool OrganizerSymbianCollection::isMarkedForDeletionL() const
