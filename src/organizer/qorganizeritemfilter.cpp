@@ -156,6 +156,8 @@ bool QOrganizerItemFilter::operator==(const QOrganizerItemFilter& other) const
 #ifndef QT_NO_DATASTREAM
 /*!
  * Writes \a filter to the stream \a out.
+ *
+ * A QOrganizerItemLocalIdFilter will not be preserved if streamed to a QDataStream.
  */
 QDataStream& operator<<(QDataStream& out, const QOrganizerItemFilter& filter)
 {
@@ -168,6 +170,8 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerItemFilter& filter)
 
 /*!
  * Reads an organizer item filter from stream \a in into \a filter.
+ *
+ * A QOrganizerItemLocalIdFilter will not be preserved if streamed from a QDataStream.
  */
 QDataStream& operator>>(QDataStream& in, QOrganizerItemFilter& filter)
 {

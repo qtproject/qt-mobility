@@ -141,7 +141,7 @@ void tst_SymbianOmAsync::addSimpleItem()
     QCOMPARE(saveItemRequest.state(), QOrganizerItemAbstractRequest::FinishedState);
     QCOMPARE(saveItemRequest.error(), QOrganizerItemManager::NoError);
     QCOMPARE(saveItemRequest.items().count(), 1);
-    QVERIFY(saveItemRequest.items().at(0).localId() != 0);
+    QVERIFY(saveItemRequest.items().at(0).localId() != QOrganizerItemLocalId());
 }
 
 void tst_SymbianOmAsync::fetchSimpleItem()
@@ -152,7 +152,7 @@ void tst_SymbianOmAsync::fetchSimpleItem()
 
     // Save (synchronously)
     QVERIFY(m_om->saveItem(&item));
-    QVERIFY(item.id().localId() != 0);
+    QVERIFY(item.id().localId() != QOrganizerItemLocalId());
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
     // Create fetch request
@@ -173,7 +173,7 @@ void tst_SymbianOmAsync::fetchSimpleItem()
     QCOMPARE(fetchItemRequest.state(), QOrganizerItemAbstractRequest::FinishedState);
     QCOMPARE(fetchItemRequest.error(), QOrganizerItemManager::NoError);
     QCOMPARE(fetchItemRequest.items().count(), 1);
-    QVERIFY(fetchItemRequest.items().at(0).localId() != 0);
+    QVERIFY(fetchItemRequest.items().at(0).localId() != QOrganizerItemLocalId());
 }
 
 void tst_SymbianOmAsync::fetchWaitForFinished()
@@ -184,7 +184,7 @@ void tst_SymbianOmAsync::fetchWaitForFinished()
 
      // Save (synchronously)
      QVERIFY(m_om->saveItem(&item));
-     QVERIFY(item.id().localId() != 0);
+     QVERIFY(item.id().localId() != QOrganizerItemLocalId());
      QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
      // Create fetch request

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMABSTRACTREQUEST_P_H
-#define QORGANIZERITEMABSTRACTREQUEST_P_H
+#ifndef MAEMO6ITEMLOCALID_H
+#define MAEMO6ITEMLOCALID_H
 
 //
 //  W A R N I N G
@@ -53,57 +53,61 @@
 // We mean it.
 //
 
-#include "qorganizeritemmanager.h"
-#include "qorganizeritemmanager_p.h"
-#include "qorganizeritemabstractrequest.h"
+#include "qorganizeritemenginelocalid.h"
 
-#include <QList>
-#include <QPointer>
-#include <QMutex>
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-
-class QOrganizerItemAbstractRequestPrivate
+class Maemo6ItemLocalId : public QOrganizerItemEngineLocalId
 {
 public:
-    QOrganizerItemAbstractRequestPrivate()
-        : m_error(QOrganizerItemManager::NoError),
-            m_state(QOrganizerItemAbstractRequest::InactiveState),
-            m_manager(0)
+    Maemo6ItemLocalId() {}
+    Maemo6ItemLocalId(const QString& id) : m_id(id) {}
+    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const
     {
+        return m_id == static_cast<const Maemo6ItemLocalId*>(other)->m_id;
+    }
+    bool isLessThan(const QOrganizerItemEngineLocalId* other) const
+    {
+        return m_id < static_cast<const Maemo6ItemLocalId*>(other)->m_id;
+    }
+    uint engineLocalIdType() const
+    {
+        static uint t = qHash("maemo6");
+        return t;
+    }
+    QOrganizerItemEngineLocalId* clone() const
+    {
+        return new Maemo6ItemLocalId(m_id);
+    }
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug debugStreamOut(QDebug dbg)
+    {
+        return dbg << m_id;
+    }
+#endif
+#ifndef QT_NO_DATASTREAM
+    QDataStream& dataStreamOut(QDataStream& out)
+    {
+        return out << m_id;
+    }
+    QDataStream& dataStreamIn(QDataStream& in)
+    {
+        in >> m_id;
+        return in;
+    }
+#endif
+    uint hash() const
+    {
+        return qHash(m_id);
     }
 
-    virtual ~QOrganizerItemAbstractRequestPrivate()
+    QString toString() const
     {
+        return m_id;
     }
 
-    virtual QOrganizerItemAbstractRequest::RequestType type() const
-    {
-        return QOrganizerItemAbstractRequest::InvalidRequest;
-    }
-
-    static void notifyEngine(QOrganizerItemAbstractRequest* request)
-    {
-        Q_ASSERT(request);
-        QOrganizerItemAbstractRequestPrivate* d = request->d_ptr;
-        if (d) {
-            QMutexLocker ml(&d->m_mutex);
-            QOrganizerItemManagerEngine *engine = QOrganizerItemManagerData::engine(d->m_manager);
-            ml.unlock();
-            if (engine) {
-                engine->requestDestroyed(request);
-            }
-        }
-    }
-
-    QOrganizerItemManager::Error m_error;
-    QOrganizerItemAbstractRequest::State m_state;
-    QPointer<QOrganizerItemManager> m_manager;
-    QPointer<QOrganizerItemManagerEngine> m_engine;
-
-    mutable QMutex m_mutex;
+private:
+    QString m_id;
 };
-
-QTM_END_NAMESPACE
 
 #endif

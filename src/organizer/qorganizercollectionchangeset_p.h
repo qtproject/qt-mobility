@@ -39,8 +39,9 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMABSTRACTREQUEST_P_H
-#define QORGANIZERITEMABSTRACTREQUEST_P_H
+
+#ifndef QORGANIZERCOLLECTIONCHANGESET_P_H
+#define QORGANIZERCOLLECTIONCHANGESET_P_H
 
 //
 //  W A R N I N G
@@ -53,55 +54,39 @@
 // We mean it.
 //
 
-#include "qorganizeritemmanager.h"
-#include "qorganizeritemmanager_p.h"
-#include "qorganizeritemabstractrequest.h"
-
-#include <QList>
-#include <QPointer>
-#include <QMutex>
+#include "qtorganizerglobal.h"
+#include <QSharedData>
+#include <QSet>
+#include <QPair>
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemAbstractRequestPrivate
+class QOrganizerCollectionChangeSetData : public QSharedData
 {
 public:
-    QOrganizerItemAbstractRequestPrivate()
-        : m_error(QOrganizerItemManager::NoError),
-            m_state(QOrganizerItemAbstractRequest::InactiveState),
-            m_manager(0)
+    QOrganizerCollectionChangeSetData()
+        : QSharedData(),
+        m_dataChanged(false)
     {
     }
 
-    virtual ~QOrganizerItemAbstractRequestPrivate()
+    QOrganizerCollectionChangeSetData(const QOrganizerCollectionChangeSetData& other)
+        : QSharedData(other),
+        m_dataChanged(other.m_dataChanged),
+        m_addedCollections(other.m_addedCollections),
+        m_changedCollections(other.m_changedCollections),
+        m_removedCollections(other.m_removedCollections)
     {
     }
 
-    virtual QOrganizerItemAbstractRequest::RequestType type() const
+    ~QOrganizerCollectionChangeSetData()
     {
-        return QOrganizerItemAbstractRequest::InvalidRequest;
     }
 
-    static void notifyEngine(QOrganizerItemAbstractRequest* request)
-    {
-        Q_ASSERT(request);
-        QOrganizerItemAbstractRequestPrivate* d = request->d_ptr;
-        if (d) {
-            QMutexLocker ml(&d->m_mutex);
-            QOrganizerItemManagerEngine *engine = QOrganizerItemManagerData::engine(d->m_manager);
-            ml.unlock();
-            if (engine) {
-                engine->requestDestroyed(request);
-            }
-        }
-    }
-
-    QOrganizerItemManager::Error m_error;
-    QOrganizerItemAbstractRequest::State m_state;
-    QPointer<QOrganizerItemManager> m_manager;
-    QPointer<QOrganizerItemManagerEngine> m_engine;
-
-    mutable QMutex m_mutex;
+    bool m_dataChanged;
+    QSet<QOrganizerCollectionLocalId> m_addedCollections;
+    QSet<QOrganizerCollectionLocalId> m_changedCollections;
+    QSet<QOrganizerCollectionLocalId> m_removedCollections;
 };
 
 QTM_END_NAMESPACE
