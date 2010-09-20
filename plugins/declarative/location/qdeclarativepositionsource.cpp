@@ -70,50 +70,7 @@ QTM_BEGIN_NAMESPACE
 
     Here is very simple example QML to illustrate the usage:
 
-    \qml
-    import Qt 4.7
-    import QtMobility.location 1.1
-
-    Rectangle {
-        id: page
-        width: 350
-        height: 350
-        PositionSource {
-            id: positionSource
-            updateInterval: 1000
-            active: true
-            // nmeaSource: "nmealog.txt"
-        }
-        Column {
-            Text {text: "<==== PositionSource ====>"}
-            Text {text: "positioningMethod: "  + printableMethod(positionSource.positioningMethod)}
-            Text {text: "nmeaSource: "         + positionSource.nmeaSource}
-            Text {text: "updateInterval: "     + positionSource.updateInterval}
-            Text {text: "active: "     + positionSource.active}
-            Text {text: "<==== Position ====>"}
-            Text {text: "latitude: "   + positionSource.position.coordinate.latitude}
-            Text {text: "longitude: "   + positionSource.position.coordinate.longitude}
-            Text {text: "altitude: "   + positionSource.position.coordinate.altitude}
-            Text {text: "speed: " + positionSource.position.speed}
-            Text {text: "timestamp: "  + positionSource.position.timestamp}
-            Text {text: "altitudeValid: "  + positionSource.position.altitudeValid}
-            Text {text: "longitudeValid: "  + positionSource.position.longitudeValid}
-            Text {text: "latitudeValid: "  + positionSource.position.latitudeValid}
-            Text {text: "speedValid: "     + positionSource.position.speedValid}
-        }
-        function printableMethod(method) {
-            if (method == PositionSource.SatellitePositioningMethod)
-                return "Satellite";
-            else if (method == PositionSource.NoPositioningMethod)
-                return "Not available"
-            else if (method == PositionSource.NonSatellitePositioningMethod)
-                return "Non-satellite"
-            else if (method == PositionSource.AllPositioningMethods)
-                return "All/multiple"
-            return "source error";
-        }
-    }
-    \endqml
+    \snippet doc/src/snippets/declarative/declarative-location.qml 0
 
     \sa {QGeoPositionInfoSource}, {QGeoPositionInfo}, {QNmeaPositionInfoSource}, {QGeoCoordinate}
 
@@ -226,15 +183,6 @@ void QDeclarativePositionSource::setUpdateInterval(int updateInterval)
 
     If nmeaSource has been set for a PositionSource element, there is no way to revert
     back to non-file sources.
-
-    For example if there is a file called "nmealog.txt" in the same folder as the .qml file:
-
-    \qml
-    PositionSource {
-        id: positionSource
-        nmeaSource: "nmealog.txt"
-    }
-    \endqml
 */
 
 QUrl QDeclarativePositionSource::nmeaSource() const
@@ -257,7 +205,7 @@ int QDeclarativePositionSource::updateInterval() const
 }
 
 /*!
-    \qmlproperty enumeration PositionSource::PositioningMethods
+    \qmlproperty enumeration PositionSource::positioningMethod
 
     This property holds the supported positioning methods of the
     current source.
@@ -405,7 +353,7 @@ bool QDeclarativePositionSource::isActive() const
     (e.g. sometimes an update does not have speed or altitude data).
 
     However, whenever a \l positionChanged signal has been received, at least
-    \l Position::Coordinate::latitude, \l Position::Coordinate::longitude, and \l Position::timestamp can
+    \l position::coordinate::latitude, \l position::coordinate::longitude, and \l position::timestamp can
     be assumed to be valid.
 
     \sa start, stop, update

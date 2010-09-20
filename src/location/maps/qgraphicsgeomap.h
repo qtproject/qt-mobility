@@ -74,6 +74,13 @@ public:
         TerrainMap
     };
 
+    enum ConnectivityMode {
+        NoConnectivity,
+        OfflineMode,
+        OnlineMode,
+        HybridMode
+    };
+
     QGraphicsGeoMap(QGraphicsItem *parent = 0);
     QGraphicsGeoMap(QGeoMappingManager *manager, QGraphicsItem *parent = 0);
     virtual ~QGraphicsGeoMap();
@@ -95,6 +102,10 @@ public:
     QList<MapType> supportedMapTypes() const;
     void setMapType(MapType mapType);
     MapType mapType() const;
+
+    QList<ConnectivityMode> supportedConnectivityModes() const;
+    void setConnectivityMode(ConnectivityMode connectivityMode);
+    ConnectivityMode connectivityMode() const;
 
     QList<QGeoMapObject*> mapObjects() const;
     void addMapObject(QGeoMapObject *mapObject);
