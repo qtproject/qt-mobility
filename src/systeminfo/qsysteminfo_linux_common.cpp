@@ -1330,7 +1330,8 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
 
 
 
-QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
+QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject *parent)
+    : QObject(parent)
 {
     halIsAvailable = halAvailable();
     setConnection();
@@ -1368,22 +1369,24 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
-
         QStringList list = iface.findDeviceByCapability("battery");
         if(!list.isEmpty()) {
+            QString lastdev;
             foreach(const QString dev, list) {
+                if(lastdev == dev)
+                    continue;
+                lastdev = dev;
                 halIfaceDevice = new QHalDeviceInterface(dev);
                 if (halIfaceDevice->isValid()) {
                     const QString batType = halIfaceDevice->getPropertyString("battery.type");
-                    if(batType == "primary" || batType == "pda") {
-                        if(halIfaceDevice->setConnections() ) {
+                    if(batType == "primary" || batType == "pda" &&
+                       halIfaceDevice->setConnections() ) {
                             if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                         this,SLOT(halChanged(int,QVariantList)))) {
                                 qDebug() << "connection malfunction";
                             }
-                        }
-                        return;
                     }
+                    return;
                 }
             }
         }
@@ -1394,6 +1397,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
                 halIfaceDevice = new QHalDeviceInterface(dev);
                 if (halIfaceDevice->isValid()) {
                     if(halIfaceDevice->setConnections() ) {
+                        qDebug() << "connect ac_adapter" ;
                         if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                     this,SLOT(halChanged(int,QVariantList)))) {
                             qDebug() << "connection malfunction";
@@ -1410,6 +1414,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
                 halIfaceDevice = new QHalDeviceInterface(dev);
                 if (halIfaceDevice->isValid()) {
                     if(halIfaceDevice->setConnections()) {
+                        qDebug() << "connect battery" <<  halIfaceDevice->getPropertyString("battery.type");
                         if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                     this,SLOT(halChanged(int,QVariantList)))) {
                             qDebug() << "connection malfunction";
