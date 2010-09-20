@@ -88,7 +88,13 @@ QTM_BEGIN_NAMESPACE
     \a geoMap and makes use of the functionality provided by \a engine.
 */
 QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
-        : d_ptr(new QGeoMapDataPrivate(this, engine, geoMap)) {}
+        : d_ptr(new QGeoMapDataPrivate(this, engine, geoMap))
+{
+    if (engine->supportedConnectivityModes().length() > 0)
+        setConnectivityMode(engine->supportedConnectivityModes().at(0));
+    else
+        setConnectivityMode(QGraphicsGeoMap::NoConnectivity);
+}
 
 /*!
   \internal
@@ -254,6 +260,28 @@ void QGeoMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 QGraphicsGeoMap::MapType QGeoMapData::mapType() const
 {
     return d_ptr->mapType;
+}
+
+/*!
+    Changes the connectivity mode of this map to \a connectivityMode
+*/
+void QGeoMapData::setConnectivityMode(QGraphicsGeoMap::ConnectivityMode connectivityMode)
+{
+    if (d_ptr->connectivityMode == connectivityMode)
+        return;
+
+    d_ptr->connectivityMode = connectivityMode;
+
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit connectivityModeChanged(connectivityMode);
+}
+
+/*!
+    Returns the connectivity mode for this map.
+*/
+QGraphicsGeoMap::ConnectivityMode QGeoMapData::connectivityMode() const
+{
+    return d_ptr->connectivityMode;
 }
 
 /*!

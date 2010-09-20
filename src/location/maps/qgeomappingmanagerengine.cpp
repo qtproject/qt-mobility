@@ -63,6 +63,7 @@ QTM_BEGIN_NAMESPACE
 
     The functions
     setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes),
+    setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes),
     setMinimumZoomLevel(qreal minimumZoom),
     setMaximumZoomLevel(qreal maximumZoom),
     setMinimumImageSize(const QSize &minimumSize) and
@@ -176,6 +177,15 @@ QList<QGraphicsGeoMap::MapType> QGeoMappingManagerEngine::supportedMapTypes() co
 }
 
 /*!
+    Returns a list of the connectivity modes supported by this engine.
+*/
+QList<QGraphicsGeoMap::ConnectivityMode> QGeoMappingManagerEngine::supportedConnectivityModes() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d->supportedConnectivityModes;
+}
+
+/*!
     Returns the minimum zoom level supported by this engine.
 
     Larger values of the zoom level correspond to more detailed views of the
@@ -234,6 +244,22 @@ void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<QGraphicsGeoMap:
 {
     Q_D(QGeoMappingManagerEngine);
     d->supportedMapTypes = mapTypes;
+}
+
+/*!
+    Sets the list of connectivity modes supported by this engine to \a connectivityModes.
+
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
+    that supportedConnectivityModes() provides accurate information.
+
+    If createMapData does not specify a connectivity mode the first mode from
+    \a connectivityModes will be used, or QGraphicsGeoMap::NoConnectivity will
+    be used if \a connectivityModes is empty.
+*/
+void QGeoMappingManagerEngine::setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes)
+{
+    Q_D(QGeoMappingManagerEngine);
+    d->supportedConnectivityModes = connectivityModes;
 }
 
 /*!
