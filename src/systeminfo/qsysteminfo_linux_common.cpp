@@ -583,13 +583,14 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
     switch(mode) {
         case QSystemNetworkInfo::WlanMode:
         {
+            qDebug() << Q_FUNC_INFO;
             QString result;
             const QString baseSysDir = "/sys/class/net/";
             const QDir wDir(baseSysDir);
             const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
-                const QFileInfo fi(devFile + "/wireless");
+                const QFileInfo fi(devFile + "/phy80211");
                 if(fi.exists()) {
                     QFile rx(devFile + "/address");
                     if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
