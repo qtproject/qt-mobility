@@ -481,7 +481,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::internalItemIds(const Q
     }
 
     // If no filtering and sorting needed, return the result (the fast case)
-    if (filter == QOrganizerItemInvalidFilter() && sortOrders.count() == 0)
+    if (filter == QOrganizerItemFilter() && sortOrders.count() == 0)
         return retn;
 
     // Use the general implementation to filter and sort items
