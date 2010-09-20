@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
     view->rootContext()->setContextProperty("hapticplayer", new Buzzer);
 
-    view->setSource(QUrl::fromLocalFile(":/hapticsquare.qml"));
+    view->setSource(QUrl("qrc:hapticsquare.qml"));
     mw.setCentralWidget(view);
     mw.showMaximized();
 
