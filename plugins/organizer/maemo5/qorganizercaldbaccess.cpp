@@ -41,6 +41,7 @@
 
 #include "qorganizercaldbaccess.h"
 #include "qorganizerdbcache.h"
+#include "qorganizermaemo5ids_p.h"
 #include "qtorganizer.h"
 
 #include <CalendarErrors.h>
@@ -118,15 +119,16 @@ void OrganizerCalendarDatabaseAccess::close()
 
 int OrganizerCalendarDatabaseAccess::calIdOf(QOrganizerItemLocalId id)
 {
-    if (m_dbCache->containsCalId(id)) {
-        return m_dbCache->takeCalId(id);
+    quint32 convertedId = static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(id))->m_localItemId;
+    if (m_dbCache->containsCalId(convertedId)) {
+        return m_dbCache->takeCalId(convertedId);
     }
     else {
         //qDebug() << "calIdOf";
         QSqlQuery query;
         if (!query.prepare(selectComponentCalIdType))
             return -1;
-        query.bindValue(":compId", QString::number(id));
+        query.bindValue(":compId", QString::number(convertedId));
 
         int retn = -1;
         if (query.exec()) {
@@ -134,22 +136,23 @@ int OrganizerCalendarDatabaseAccess::calIdOf(QOrganizerItemLocalId id)
                 retn = query.value(0).toInt();
         }
 
-        m_dbCache->insertCalId(id, retn);
+        m_dbCache->insertCalId(convertedId, retn);
         return retn;
     }
 }
 
 int OrganizerCalendarDatabaseAccess::typeOf(QOrganizerItemLocalId id)
 {
-    if (m_dbCache->containsTypeId(id)) {
-        return m_dbCache->takeTypeId(id);
+    quint32 convertedId = static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(id))->m_localItemId;
+    if (m_dbCache->containsTypeId(convertedId)) {
+        return m_dbCache->takeTypeId(convertedId);
     }
     else {
         //qDebug() << "typeOf";
         QSqlQuery query;
         if (!query.prepare(selectComponentCalIdType))
             return -1;
-        query.bindValue(":compId", QString::number(id));
+        query.bindValue(":compId", QString::number(convertedId));
 
         int retn = -1;
         if (query.exec()) {
@@ -157,7 +160,7 @@ int OrganizerCalendarDatabaseAccess::typeOf(QOrganizerItemLocalId id)
                 retn = query.value(1).toInt();
         }
 
-        m_dbCache->insertTypeId(id, retn);
+        m_dbCache->insertTypeId(convertedId, retn);
         return retn;
     }
 }

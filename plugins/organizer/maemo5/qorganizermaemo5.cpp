@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include "qorganizermaemo5_p.h"
+#include "qorganizermaemo5ids_p.h"
 #include "qtorganizer.h"
 #include "qorganizerdbcache.h"
 
@@ -73,6 +74,173 @@ QTM_USE_NAMESPACE
 static const char* CALENDAR =  "/.calendar";
 static const char* CALENDARDB = "/calendardb";
 
+
+
+
+
+
+
+
+QOrganizerItemMaemo5EngineLocalId::QOrganizerItemMaemo5EngineLocalId()
+    : QOrganizerItemEngineLocalId(), m_localItemId(0)
+{
+}
+
+QOrganizerItemMaemo5EngineLocalId::QOrganizerItemMaemo5EngineLocalId(quint32 itemId)
+    : QOrganizerItemEngineLocalId(), m_localItemId(itemId)
+{
+}
+
+QOrganizerItemMaemo5EngineLocalId::~QOrganizerItemMaemo5EngineLocalId()
+{
+}
+
+QOrganizerItemMaemo5EngineLocalId::QOrganizerItemMaemo5EngineLocalId(const QOrganizerItemMaemo5EngineLocalId& other)
+    : QOrganizerItemEngineLocalId(), m_localItemId(other.m_localItemId)
+{
+}
+
+bool QOrganizerItemMaemo5EngineLocalId::isEqualTo(const QOrganizerItemEngineLocalId* other) const
+{
+    quint32 otherlocalItemId = static_cast<const QOrganizerItemMaemo5EngineLocalId*>(other)->m_localItemId;
+    if (m_localItemId != otherlocalItemId)
+        return false;
+    return true;
+}
+
+bool QOrganizerItemMaemo5EngineLocalId::isLessThan(const QOrganizerItemEngineLocalId* other) const
+{
+    quint32 otherlocalItemId = static_cast<const QOrganizerItemMaemo5EngineLocalId*>(other)->m_localItemId;
+    return (m_localItemId < otherlocalItemId);
+}
+
+uint QOrganizerItemMaemo5EngineLocalId::engineLocalIdType() const
+{
+    // engines should embed the result of this as const read-only data (uint),
+    // instead of calculating it every time the function is called...
+    return qHash(QString(QLatin1String("maemo5")));
+}
+
+QOrganizerItemEngineLocalId* QOrganizerItemMaemo5EngineLocalId::clone() const
+{
+    QOrganizerItemMaemo5EngineLocalId *myClone = new QOrganizerItemMaemo5EngineLocalId;
+    myClone->m_localItemId = m_localItemId;
+    return myClone;
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug QOrganizerItemMaemo5EngineLocalId::debugStreamOut(QDebug dbg)
+{
+    dbg.nospace() << "QOrganizerItemMaemo5EngineLocalId(" << m_localItemId << ")";
+    return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& QOrganizerItemMaemo5EngineLocalId::dataStreamOut(QDataStream& out)
+{
+    out << m_localItemId;
+    return out;
+}
+
+QDataStream& QOrganizerItemMaemo5EngineLocalId::dataStreamIn(QDataStream& in)
+{
+    in >> m_localItemId;
+    return in;
+}
+#endif
+
+uint QOrganizerItemMaemo5EngineLocalId::hash() const
+{
+    // Note: doesn't need to be unique, since == ensures difference.
+    // hash function merely determines distribution in a hash table.
+    return m_localItemId;
+}
+
+
+QOrganizerCollectionMaemo5EngineLocalId::QOrganizerCollectionMaemo5EngineLocalId()
+    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(0)
+{
+}
+
+QOrganizerCollectionMaemo5EngineLocalId::QOrganizerCollectionMaemo5EngineLocalId(quint32 collectionId)
+    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(collectionId)
+{
+}
+
+QOrganizerCollectionMaemo5EngineLocalId::QOrganizerCollectionMaemo5EngineLocalId(const QOrganizerCollectionMaemo5EngineLocalId& other)
+    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(other.m_localCollectionId)
+{
+}
+
+QOrganizerCollectionMaemo5EngineLocalId::~QOrganizerCollectionMaemo5EngineLocalId()
+{
+}
+
+bool QOrganizerCollectionMaemo5EngineLocalId::isEqualTo(const QOrganizerCollectionEngineLocalId* other) const
+{
+    quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionMaemo5EngineLocalId*>(other)->m_localCollectionId;
+    if (m_localCollectionId != otherlocalCollectionId)
+        return false;
+    return true;
+}
+
+bool QOrganizerCollectionMaemo5EngineLocalId::isLessThan(const QOrganizerCollectionEngineLocalId* other) const
+{
+    // order by collection, then by item in collection.
+    quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionMaemo5EngineLocalId*>(other)->m_localCollectionId;
+    if (m_localCollectionId < otherlocalCollectionId)
+        return true;
+    return false;
+}
+
+uint QOrganizerCollectionMaemo5EngineLocalId::engineLocalIdType() const
+{
+    // engines should embed the result of this as const read-only data (uint),
+    // instead of calculating it every time the function is called...
+    return qHash(QString(QLatin1String("maemo5")));
+}
+
+QOrganizerCollectionEngineLocalId* QOrganizerCollectionMaemo5EngineLocalId::clone() const
+{
+    QOrganizerCollectionMaemo5EngineLocalId *myClone = new QOrganizerCollectionMaemo5EngineLocalId;
+    myClone->m_localCollectionId = m_localCollectionId;
+    return myClone;
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug QOrganizerCollectionMaemo5EngineLocalId::debugStreamOut(QDebug dbg)
+{
+    dbg.nospace() << "QOrganizerCollectionMaemo5EngineLocalId(" << m_localCollectionId << ")";
+    return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& QOrganizerCollectionMaemo5EngineLocalId::dataStreamOut(QDataStream& out)
+{
+    return (out << m_localCollectionId);
+}
+
+QDataStream& QOrganizerCollectionMaemo5EngineLocalId::dataStreamIn(QDataStream& in)
+{
+    return (in >> m_localCollectionId);
+}
+#endif
+
+uint QOrganizerCollectionMaemo5EngineLocalId::hash() const
+{
+    return QT_PREPEND_NAMESPACE(qHash)(m_localCollectionId);
+}
+
+
+
+
+
+
+
+
+
 QOrganizerItemManagerEngine* QOrganizerItemMaemo5Factory::engine(const QMap<QString, QString> &parameters, QOrganizerItemManager::Error *error)
 {
     Q_UNUSED(parameters);
@@ -80,6 +248,16 @@ QOrganizerItemManagerEngine* QOrganizerItemMaemo5Factory::engine(const QMap<QStr
 
     QOrganizerItemMaemo5Engine* retn = new QOrganizerItemMaemo5Engine(); // manager takes ownership and will clean up.
     return retn;
+}
+
+QOrganizerItemEngineLocalId* QOrganizerItemMaemo5Factory::createItemEngineLocalId() const
+{
+    return new QOrganizerItemMaemo5EngineLocalId;
+}
+
+QOrganizerCollectionEngineLocalId* QOrganizerItemMaemo5Factory::createCollectionEngineLocalId() const
+{
+    return new QOrganizerCollectionMaemo5EngineLocalId;
 }
 
 QString QOrganizerItemMaemo5Factory::managerName() const
@@ -296,7 +474,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItemInstances(const QO
         return retn;
     }
 
-    std::string nativeId = QString::number(generator.localId()).toStdString();
+    std::string nativeId = QString::number(static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(generator.localId()))->m_localItemId).toStdString();
 
     if (generator.type() == QOrganizerItemType::TypeEvent)
     {
@@ -354,7 +532,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItemInstances(const QO
                         QDateTime instanceStartDate = QDateTime::fromTime_t(coccurrenceCandidate->getDateStart());
                         QDateTime instanceEndDate = QDateTime::fromTime_t(coccurrenceCandidate->getDateEnd());
                         QString idString = QString::fromStdString(cevent->getId());
-                        QOrganizerItemLocalId parentLocalId = idString.toUInt();
+                        QOrganizerItemLocalId parentLocalId(new QOrganizerItemMaemo5EngineLocalId(idString.toUInt())); // ctor takes ownership of the ptr.
 
                         // instance must be within the period
                         // NOTE: If this implementation have to be changed so that only items
@@ -429,17 +607,24 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::internalItemIds(const Q
     QList<QOrganizerItemLocalId> retn;
 
     // Resolve from which collections (calendars) the items must be fetch (pre-filtering)
-    QSet<QOrganizerCollectionLocalId> collectionLocalIds = extractCollectionLocalIds(filter);
+    QSet<QOrganizerCollectionId> collectionIds = extractCollectionIds(filter);
 
-    if (collectionLocalIds.empty()) {
+    if (collectionIds.empty()) {
         // use all calendars if no collection filter is specified
-        collectionLocalIds = internalCollectionIds(error).toSet();
+        QSet<QOrganizerCollectionLocalId> localIds = internalCollectionIds(error).toSet();
         if (*error != QOrganizerItemManager::NoError)
             return retn;
+
+        foreach(QOrganizerCollectionLocalId localId, localIds) {
+            QOrganizerCollectionId newCollectionId;
+            newCollectionId.setManagerUri(managerUri());
+            newCollectionId.setLocalId(localId);
+            collectionIds << newCollectionId;
+        }
     }
 
-    foreach (QOrganizerCollectionLocalId collectionLocalId, collectionLocalIds) {
-        CCalendar *cal = d->m_mcInstance->getCalendarById(static_cast<int>(collectionLocalId), calError);
+    foreach (QOrganizerCollectionId collectionId, collectionIds) {
+        CCalendar *cal = d->m_mcInstance->getCalendarById(static_cast<int>(static_cast<QOrganizerCollectionMaemo5EngineLocalId *>(QOrganizerItemManagerEngine::engineLocalCollectionId(collectionId.localId()))->m_localCollectionId), calError);
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         if (*error != QOrganizerItemManager::NoError)
             return retn;
@@ -454,7 +639,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::internalItemIds(const Q
         if (*error != QOrganizerItemManager::NoError)
             return retn;
         for (id = eventIds.begin(); id != eventIds.end(); ++id)
-            retn << QString::fromStdString(*id).toUInt();
+        retn << QOrganizerItemLocalId(new QOrganizerItemMaemo5EngineLocalId(QString::fromStdString(*id).toUInt()));
 
         // Append todo ids
         std::vector<std::string> todoIds;
@@ -464,7 +649,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::internalItemIds(const Q
         if (*error != QOrganizerItemManager::NoError)
             return retn;
         for (id = todoIds.begin(); id != todoIds.end(); ++id)
-            retn << QString::fromStdString(*id).toUInt();
+        retn << QOrganizerItemLocalId(new QOrganizerItemMaemo5EngineLocalId(QString::fromStdString(*id).toUInt()));
 
         // Append journal ids
         std::vector<std::string> journalIds;
@@ -474,7 +659,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::internalItemIds(const Q
         if (*error != QOrganizerItemManager::NoError)
             return retn;
         for (id = journalIds.begin(); id != journalIds.end(); ++id)
-            retn << QString::fromStdString(*id).toUInt();
+        retn << QOrganizerItemLocalId(new QOrganizerItemMaemo5EngineLocalId(QString::fromStdString(*id).toUInt()));
 
         // Cleanup calendar
         cleanupCal(cal);
@@ -587,7 +772,7 @@ bool QOrganizerItemMaemo5Engine::internalRemoveItems(const QList<QOrganizerItemL
         QOrganizerItem currItem = internalFetchItem(currId, fetchMinimalData(), error, false);
         if (*error == QOrganizerItemManager::NoError) {
             // Item exists
-            QString itemId = QString::number(currItem.localId());
+            QString itemId = QString::number((static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(currItem.localId())))->m_localItemId);
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
             if (currItem.type() == QOrganizerItemType::TypeEvent) {
                 // Delete also child events if this event is a parent
@@ -601,7 +786,7 @@ bool QOrganizerItemMaemo5Engine::internalRemoveItems(const QList<QOrganizerItemL
                         if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
                             std::vector<CEvent*>::const_iterator childEvent;
                             for (childEvent = eventsWithGuid.begin(); childEvent != eventsWithGuid.end(); ++childEvent) {
-                                QOrganizerItemLocalId childId = QString::fromStdString((*childEvent)->getId()).toUInt();
+                                QOrganizerItemLocalId childId = QOrganizerItemLocalId(new QOrganizerItemMaemo5EngineLocalId(QString::fromStdString((*childEvent)->getId()).toUInt()));
                                 if (!idsToDelete.contains(childId))
                                     idsToDelete << childId;
                                 delete *childEvent;
@@ -653,7 +838,7 @@ QOrganizerCollectionLocalId QOrganizerItemMaemo5Engine::internalDefaultCollectio
 {
     *error = QOrganizerItemManager::NoError;
     CCalendar *cal = d->m_mcInstance->getDefaultCalendar();
-    return static_cast<QOrganizerCollectionLocalId>(cal->getCalendarId());
+    return QOrganizerCollectionLocalId(new QOrganizerCollectionMaemo5EngineLocalId(cal->getCalendarId()));
 }
 
 QList<QOrganizerCollectionLocalId> QOrganizerItemMaemo5Engine::internalCollectionIds(QOrganizerItemManager::Error* error) const
@@ -668,7 +853,7 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemMaemo5Engine::internalCollectio
     std::vector<CCalendar*> calendars = d->m_mcInstance->getListCalFromMc();
     std::vector<CCalendar*>::iterator calendar;
     for (calendar = calendars.begin(); calendar != calendars.end(); ++calendar) {
-        QOrganizerCollectionLocalId current = static_cast<QOrganizerCollectionLocalId>((*calendar)->getCalendarId());
+        QOrganizerCollectionLocalId current(new QOrganizerCollectionMaemo5EngineLocalId((*calendar)->getCalendarId()));
         if (current != retn[0])
             retn << current;
     }
@@ -698,7 +883,7 @@ QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::internalCollections(cons
     foreach (QOrganizerCollectionLocalId collectionId, fetchCollIds) {
         if (collectionIds.isEmpty() || collectionIds.contains(collectionId)) {
             // Fetch calendar
-            int calendarId = static_cast<int>(collectionId);
+            int calendarId = static_cast<int>(static_cast<QOrganizerCollectionMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalCollectionId(collectionId))->m_localCollectionId);
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
             CCalendar *cal = d->m_mcInstance->getCalendarById(calendarId, calError);
             if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
@@ -768,7 +953,7 @@ bool QOrganizerItemMaemo5Engine::internalSaveCollection(QOrganizerCollection* co
 
     if (collection->id().managerUri() != managerUri())
     {
-        if (collection->id().localId() != 0) {
+        if (!collection->id().localId().isNull()) {
             // Do not allow to save other manager's collection with local id set
             *error = QOrganizerItemManager::BadArgumentError;
             return false;
@@ -859,7 +1044,7 @@ bool QOrganizerItemMaemo5Engine::internalSaveCollection(QOrganizerCollection* co
         // Build collection id
         QOrganizerCollectionId collId;
         collId.setManagerUri(managerUri());
-        collId.setLocalId(static_cast<QOrganizerCollectionLocalId>(newCalendar->getCalendarId()));
+        collId.setLocalId(QOrganizerCollectionLocalId(new QOrganizerCollectionMaemo5EngineLocalId(newCalendar->getCalendarId())));
 
         // Set collection id
         collection->setId(collId);
@@ -871,7 +1056,7 @@ bool QOrganizerItemMaemo5Engine::internalSaveCollection(QOrganizerCollection* co
         // Modify calendar
 
         bool ok = d->m_mcInstance->modifyCalendar(
-                static_cast<int>(collection->id().localId()),
+                static_cast<int>(static_cast<QOrganizerCollectionMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalCollectionId(collection->id().localId()))->m_localCollectionId),
                 calName.toStdString(),
                 calColor,
                 calReadOnly ? 1 : 0,
@@ -898,7 +1083,7 @@ bool QOrganizerItemMaemo5Engine::internalSaveCollection(QOrganizerCollection* co
 bool QOrganizerItemMaemo5Engine::internalRemoveCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
-    bool ok = d->m_mcInstance->deleteCalendar(static_cast<int>(collectionId), calError);
+    bool ok = d->m_mcInstance->deleteCalendar(static_cast<int>((static_cast<QOrganizerCollectionMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalCollectionId(collectionId)))->m_localCollectionId), calError);
     d->m_dbCache->invalidate();
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     return ok;
@@ -945,9 +1130,9 @@ bool QOrganizerItemMaemo5Engine::isFilterSupported(const QOrganizerItemFilter &f
     return false;
 }
 
-QList<QVariant::Type> QOrganizerItemMaemo5Engine::supportedDataTypes() const
+QList<int> QOrganizerItemMaemo5Engine::supportedDataTypes() const
 {
-    QList<QVariant::Type> retn;
+    QList<int> retn;
     retn << QVariant::String;
     retn << QVariant::Date;
     retn << QVariant::DateTime;
@@ -971,7 +1156,7 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
     *error = QOrganizerItemManager::NoError;
 
     // Check local id
-    if (checkItem->localId()) {
+    if (!checkItem->localId().isNull()) {
         // Don't allow saving with local id defined unless the item is from this manager.
         if (checkItem->id().managerUri() != managerUri()) {
             *error = QOrganizerItemManager::BadArgumentError;
@@ -1002,14 +1187,14 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
         }
 
         // Either parent id or GUID (or both) must be set
-        if (!eventOccurrence->parentLocalId() && eventOccurrence->guid().isEmpty()) {
+        if (eventOccurrence->parentLocalId().isNull() && eventOccurrence->guid().isEmpty()) {
             *error = QOrganizerItemManager::InvalidOccurrenceError;
             return;
         }
 
         // If the parent ID is set, it must point to an event
         QOrganizerItem parent;
-        if (eventOccurrence->parentLocalId()) {
+        if (!eventOccurrence->parentLocalId().isNull()) {
             parent = internalItem(eventOccurrence->parentLocalId(), fetchMinimalData(), error);
             if (*error != QOrganizerItemManager::NoError)
                 return;
@@ -1039,7 +1224,7 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
         }
 
         // If both parent ID and GUID are set, they must be consistent
-        if (eventOccurrence->parentLocalId() && !eventOccurrence->guid().isEmpty()) {
+        if (!eventOccurrence->parentLocalId().isNull() && !eventOccurrence->guid().isEmpty()) {
             if (eventOccurrence->guid() != parent.guid()) {
                 *error = QOrganizerItemManager::InvalidOccurrenceError;
                 return;
@@ -1056,12 +1241,12 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
         }
 
         // Either parent id or GUID (or both) must be set
-        if (!todoOccurrence->parentLocalId() && todoOccurrence->guid().isEmpty()) {
+        if (todoOccurrence->parentLocalId().isNull() && todoOccurrence->guid().isEmpty()) {
             *error = QOrganizerItemManager::InvalidOccurrenceError;
             return;
         }
 
-        if (todoOccurrence->parentLocalId()) {
+        if (!todoOccurrence->parentLocalId().isNull()) {
             // Parent ID must point to this occurrence due to restrictions in Maemo5 todos
             if (todoOccurrence->parentLocalId() != todoOccurrence->localId()) {
                 *error = QOrganizerItemManager::InvalidOccurrenceError;
@@ -1148,7 +1333,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             {
                 // Set id for the event
                 QString newIdString = QString::fromStdString(cevent->getId());
-                QOrganizerItemLocalId newId = newIdString.toUInt();
+                QOrganizerItemLocalId newId(new QOrganizerItemMaemo5EngineLocalId(newIdString.toUInt()));
                 QOrganizerItemId id;
                 id.setLocalId(newId);
                 id.setManagerUri(managerUri());
@@ -1178,7 +1363,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
         QOrganizerItem parentItem = parentOf(cal, eventOccurrence, error);
         if (*error == QOrganizerItemManager::NoError) {
-            if (parentItem.localId()) {
+            if (!parentItem.localId().isNull()) {
                 // parent item found, cast it to event
                 QOrganizerEvent *parentEvent = static_cast<QOrganizerEvent *>(&parentItem);
 
@@ -1251,7 +1436,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             {
                 // Set id for the todo
                 QString newIdString = QString::fromStdString(ctodo->getId());
-                QOrganizerItemLocalId newId = newIdString.toUInt();
+                QOrganizerItemLocalId newId(new QOrganizerItemMaemo5EngineLocalId(newIdString.toUInt()));
                 QOrganizerItemId id;
                 id.setLocalId(newId);
                 id.setManagerUri(managerUri());
@@ -1312,7 +1497,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             {
                 // Set id for the journal
                 QString newIdString = QString::fromStdString(cjournal->getId());
-                QOrganizerItemLocalId newId = newIdString.toUInt();
+                QOrganizerItemLocalId newId(new QOrganizerItemMaemo5EngineLocalId(newIdString.toUInt()));
                 QOrganizerItemId id;
                 id.setLocalId(newId);
                 id.setManagerUri(managerUri());
@@ -1355,7 +1540,7 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
     // did parent become modified
     bool parentModified = false;
 
-    if (!occurrence->localId()) {
+    if (occurrence->localId().isNull()) {
         // Does not contain a local id => this is a generated occurrence or a new exception occurrence
         // After modifications this won't be saved anymore as a generated occurrence
         // but as an event to the calendar DB. Add an exception rule to the parent item
@@ -1477,7 +1662,7 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
 
             // Set id for the occurrence
             QString newIdString = QString::fromStdString(cevent->getId());
-            QOrganizerItemLocalId newId = newIdString.toUInt();
+            QOrganizerItemLocalId newId(new QOrganizerItemMaemo5EngineLocalId(newIdString.toUInt()));
             QOrganizerItemId id;
             id.setLocalId(newId);
             id.setManagerUri(managerUri());
@@ -1524,10 +1709,10 @@ void QOrganizerItemMaemo5Engine::insertOccurenceSortedByStartDate(QOrganizerItem
 QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerItem *occurrence, QOrganizerItemManager::Error *error) const
 {
     // the occurrence is supposed be valid when this method becomes called
-    QOrganizerItemLocalId parentLocalId = 0;
+    QOrganizerItemLocalId parentLocalId;
     if (occurrence->type() == QOrganizerItemType::TypeEventOccurrence) {
         QOrganizerEventOccurrence *eventOccurrence = static_cast<QOrganizerEventOccurrence *>(occurrence);
-        if (eventOccurrence->parentLocalId()) {
+        if (!eventOccurrence->parentLocalId().isNull()) {
             // the simple case: parent local id was set
             parentLocalId = eventOccurrence->parentLocalId();
         }
@@ -1541,7 +1726,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerIt
             // Check if some event contains recurrence information and then that the given
             // occurrence is one of the occurrences obtained from the recurrence information.
             for (pCand = parentCands.begin(); pCand != parentCands.end(); ++pCand) {
-                QOrganizerItemLocalId candidateLocalId = QString::fromStdString((*pCand)->getId()).toUInt();
+                QOrganizerItemLocalId candidateLocalId(new QOrganizerItemMaemo5EngineLocalId(QString::fromStdString((*pCand)->getId()).toUInt()));
 
                 QOrganizerItem parentCandidate = internalFetchItem(candidateLocalId, fetchMinimalData(), error, false);
                 if (*error == QOrganizerItemManager::NoError) {
@@ -1584,7 +1769,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerIt
                 }
             }
 
-            if (parentLocalId)
+            if (!parentLocalId.isNull())
             {
                 // Parent local id got, just free the resources
                 for (pCand = parentCands.begin(); pCand != parentCands.end(); ++pCand)
@@ -1610,7 +1795,8 @@ QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerIt
 
                 if (firstCreated) {
                     // the firstly created event resolved, return it as parent
-                    parentLocalId = QString::fromStdString(firstCreated->getId()).toUInt();
+		    QOrganizerItemLocalId resolvedParentId(new QOrganizerItemMaemo5EngineLocalId(QString::fromStdString(firstCreated->getId()).toUInt()));
+                    parentLocalId = resolvedParentId; // assignment operator will automatically delete the d if it exists, therefore avoids leaking memory.
                 }
 
                 // Free the resources
@@ -1644,16 +1830,14 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
 
     // Get calendar id (or -1) of the target item
     int calId = d->m_dbAccess->calIdOf(itemId);
-    QOrganizerCollectionLocalId collectionLocalId(0);
-    if (calId > 0)
-        collectionLocalId = static_cast<QOrganizerCollectionLocalId>(calId);
+    QOrganizerCollectionLocalId collectionLocalId(new QOrganizerCollectionMaemo5EngineLocalId(calId));
 
     // Build collection id
     QOrganizerCollectionId collectionId;
     collectionId.setManagerUri(managerUri());
     collectionId.setLocalId(collectionLocalId);
 
-    std::string nativeId = QString::number(itemId).toStdString();
+    std::string nativeId = QString::number((static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemId)))->m_localItemId).toStdString();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
 
     CEvent *cevent = 0;
@@ -1887,15 +2071,63 @@ CCalendar* QOrganizerItemMaemo5Engine::getCalendar(QOrganizerCollectionLocalId c
 {
     CCalendar *cal = 0;
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
-    if (collectionId == QOrganizerCollectionLocalId(0))
+    if (collectionId.isNull())
         cal = d->m_mcInstance->getDefaultCalendar();
     else
-        cal = d->m_mcInstance->getCalendarById(static_cast<int>(collectionId), calError);
+        cal = d->m_mcInstance->getCalendarById(static_cast<int>(static_cast<QOrganizerCollectionMaemo5EngineLocalId *>(QOrganizerItemManagerEngine::engineLocalCollectionId(collectionId))->m_localCollectionId), calError);
 
     if (!cal || calError != CALENDAR_OPERATION_SUCCESSFUL)
         *error = QOrganizerItemManager::InvalidCollectionError;
 
     return cal;
+}
+
+QSet<QOrganizerCollectionId> QOrganizerItemMaemo5Engine::extractCollectionIds(const QOrganizerItemFilter& filter) const
+{
+    QSet<QOrganizerCollectionId> retn;
+
+    QOrganizerItemFilter::FilterType type = filter.type();
+    switch(type) {
+    case QOrganizerItemFilter::CollectionFilter: {
+        QOrganizerItemCollectionFilter collectionFilter = static_cast<QOrganizerItemCollectionFilter>(filter);
+        QSet<QOrganizerCollectionLocalId> tmp = collectionFilter.collectionIds();
+        foreach(QOrganizerCollectionLocalId curr, tmp) {
+            QOrganizerCollectionId newCollectionId;
+            newCollectionId.setManagerUri(managerUri());
+            newCollectionId.setLocalId(curr);
+            retn << newCollectionId;
+        }
+
+        break;
+    }
+    case QOrganizerItemFilter::IntersectionFilter: {
+        QOrganizerItemIntersectionFilter intersectionFilter = static_cast<QOrganizerItemIntersectionFilter>(filter);
+        QList<QOrganizerItemFilter> filters = intersectionFilter.filters();
+        if (!filters.isEmpty()) {
+            retn = extractCollectionIds(filters.at(0));
+            for (int i = 1; i < filters.count(); ++i) {
+                QSet<QOrganizerCollectionId> subset = extractCollectionIds(filters.at(i));
+                // do not intersect empty subsets, because there can be other than collection filters that produce them
+                if (!subset.empty())
+                    retn.intersect(subset);
+            }
+        }
+        break;
+    }
+    case QOrganizerItemFilter::UnionFilter: {
+        QOrganizerItemUnionFilter unionFilter = static_cast<QOrganizerItemUnionFilter>(filter);
+        QList<QOrganizerItemFilter> filters = unionFilter.filters();
+        if (!filters.isEmpty()) {
+            retn = extractCollectionIds(filters.at(0));
+            for (int i = 1; i < filters.count(); ++i)
+                retn.unite(extractCollectionIds(filters.at(i)));
+        }
+        break;
+    }
+    default:
+        break;
+    }
+    return retn;
 }
 
 QSet<QOrganizerCollectionLocalId> QOrganizerItemMaemo5Engine::extractCollectionLocalIds(const QOrganizerItemFilter& filter) const

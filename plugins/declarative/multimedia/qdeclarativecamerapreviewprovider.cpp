@@ -55,7 +55,7 @@ struct QDeclarativeCameraPreviewProviderPrivate
 Q_GLOBAL_STATIC(QDeclarativeCameraPreviewProviderPrivate, qDeclarativeCameraPreviewProviderPrivate)
 
 QDeclarativeCameraPreviewProvider::QDeclarativeCameraPreviewProvider()
-    :QDeclarativeImageProvider(QDeclarativeImageProvider::Image)
+: QDeclarativeImageProvider(QDeclarativeImageProvider::Image)
 {
 }
 
@@ -67,7 +67,7 @@ QDeclarativeCameraPreviewProvider::~QDeclarativeCameraPreviewProvider()
     d->image = QImage();
 }
 
-QImage QDeclarativeCameraPreviewProvider::requestImage(const QString &id, QSize *size, const QSize& requestedSize)
+QImage QDeclarativeCameraPreviewProvider::request(const QString &id, QSize *size, const QSize& requestedSize)
 {
     QDeclarativeCameraPreviewProviderPrivate *d = qDeclarativeCameraPreviewProviderPrivate();
     QMutexLocker lock(&d->mutex);

@@ -50,17 +50,21 @@ Rectangle {
     id: page
     opacity: 0
 
-    width: dialogText.width + 30 + size; height: dialogText.height + okButton.height + inputText.height + 44
+    width: parent.width - (parent.width * 1/11);
+    height: dialogText.height + okButton.height + inputText.height + 44
     anchors.verticalCenter: mainWindow.verticalCenter
     anchors.horizontalCenter: mainWindow.horizontalCenter
 
-    border.width: 1; color: "lightgray"; radius: 5
+    border.width: mainWindow.screenScale
+    color: "lightgray"; radius: 5
 
     Text {
         id: dialogText
         text: page.text
+        font.pointSize: 10 * mainWindow.screenScale
+        wrapMode: Text.Wrap
         x: 15; y: 15
-        color: activePalette.buttonText
+        color: "black"
     }
 
     Rectangle {
@@ -72,9 +76,10 @@ Rectangle {
         anchors.top: dialogText.bottom; anchors.topMargin: 7
     }
 
-    TextEdit {
+    TextInput {
         id: inputText
         text: page.defaultText
+        font.pointSize: 10 * parent.parent.screenScale
         width: inputArea.width - 10
         anchors.verticalCenter: inputArea.verticalCenter
         anchors.horizontalCenter: inputArea.horizontalCenter
@@ -83,7 +88,8 @@ Rectangle {
     Button {
         id: okButton
         text: "Ok"
-        width: 75; height: 25
+        width: 75 * mainWindow.screenScale
+        height: 25 * mainWindow.screenScale
         anchors.top: inputArea.bottom; anchors.topMargin: 10
 
         onClicked: {
@@ -95,7 +101,8 @@ Rectangle {
     Button {
         id: noButton
         text: "Cancel"
-        width: 75; height: 25
+        width: 75 * mainWindow.screenScale
+        height: 25 * mainWindow.screenScale
         anchors.left: page.horizontalCenter; anchors.leftMargin: 5
         anchors.top: inputArea.bottom; anchors.topMargin: 10
     
@@ -108,6 +115,7 @@ Rectangle {
     {
         page.opacity = 0;
         inputText.text = "";
+        mainWindow.enableScreen(true);
     }
 
     Component.onCompleted: {

@@ -62,13 +62,19 @@ class QGeoMapOverlay;
 class Q_LOCATION_EXPORT QGeoMapData : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QSizeF windowSize READ windowSize WRITE setWindowSize NOTIFY windowSizeChanged)
+    Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
+    Q_PROPERTY(QGraphicsGeoMap::MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
 
 public:
     QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
     virtual ~QGeoMapData();
 
-    virtual void setViewportSize(const QSizeF &size);
-    virtual QSizeF viewportSize() const;
+    virtual void setup();
+
+    virtual void setWindowSize(const QSizeF &size);
+    virtual QSizeF windowSize() const;
 
     virtual void setZoomLevel(qreal zoomLevel);
     virtual qreal zoomLevel() const;
@@ -85,9 +91,13 @@ public:
     void addMapObject(QGeoMapObject *mapObject);
     void removeMapObject(QGeoMapObject *mapObject);
     void clearMapObjects();
+    
+    virtual QGeoBoundingBox viewport() const = 0;
+    virtual void fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false) = 0;
 
-    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
-    virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
+    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition) const;
+    virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect) const;
+    virtual QList<QGeoMapObject*> mapObjectsInViewport() const;
 
     QList<QGeoMapOverlay*> mapOverlays() const;
     void addMapOverlay(QGeoMapOverlay *overlay);
@@ -99,8 +109,6 @@ public:
 
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
-    void associateMapObject(QGeoMapObject *mapObject);
-
 protected:
     QGeoMapData(QGeoMapDataPrivate *dd);
 
@@ -108,14 +116,27 @@ protected:
     QGeoMappingManagerEngine* engine() const;
     QGeoMapObject* containerObject();
 
+    void setBlockPropertyChangeSignals(bool block);
+
+    virtual void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    virtual void paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    virtual void paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *option);
+
     virtual QGeoMapObjectInfo* createMapObjectInfo(QGeoMapObject *object);
 
     QGeoMapDataPrivate* d_ptr;
+
+Q_SIGNALS:
+    void windowSizeChanged(const QSizeF &windowSize);
+    void zoomLevelChanged(qreal zoomLevel);
+    void centerChanged(const QGeoCoordinate &coordinate);
+    void mapTypeChanged(QGraphicsGeoMap::MapType mapType);
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapData)
     Q_DISABLE_COPY(QGeoMapData)
 
+    friend class QGeoMapObject;
     friend class QGeoMapObjectInfo;
 };
 

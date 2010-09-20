@@ -154,7 +154,7 @@ void EditCalendarsPage::showPage(QOrganizerItemManager *manager)
         if (collection.metaData("Name").canConvert(QVariant::String))
             visibleName = collection.metaData("Name").toString();
         else
-            visibleName = "Calendar id " + QString::number(collection.id().localId());
+            visibleName = "(Unknown calendar)";
 
         QListWidgetItem* listItem = new QListWidgetItem();
         listItem->setText(visibleName);

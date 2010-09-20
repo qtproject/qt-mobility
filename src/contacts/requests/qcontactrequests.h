@@ -54,6 +54,7 @@
 #include "qcontactrelationshipsaverequest.h"
 
 #include "qcontactfetchrequest.h"
+#include "qcontactfetchbyidrequest.h"
 #include "qcontactlocalidfetchrequest.h"
 #include "qcontactremoverequest.h"
 #include "qcontactsaverequest.h"

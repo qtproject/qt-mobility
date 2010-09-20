@@ -25,6 +25,8 @@ public:
     QUrl iconSource();
     void setIconSource(const QUrl& iconSource);
 
+    QLandmarkCategory category() const;
+
 signals:
     void nameChanged();
     void iconSourceChanged();

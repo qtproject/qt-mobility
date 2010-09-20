@@ -90,4 +90,9 @@ EXPORTS
 	?actuator@QFeedbackHapticsEffect@QtMobility@@QBE?AVQFeedbackActuator@2@XZ @ 89 NONAME ; class QtMobility::QFeedbackActuator QtMobility::QFeedbackHapticsEffect::actuator(void) const
 	?staticMetaObject@QFeedbackEffect@QtMobility@@2UQMetaObject@@B @ 90 NONAME ; struct QMetaObject const QtMobility::QFeedbackEffect::staticMetaObject
 	??_EQFeedbackEffect@QtMobility@@UAE@I@Z @ 91 NONAME ; QtMobility::QFeedbackEffect::~QFeedbackEffect(unsigned int)
+	??0QFeedbackActuator@QtMobility@@QAE@ABV01@@Z @ 92 NONAME ; QtMobility::QFeedbackActuator::QFeedbackActuator(class QtMobility::QFeedbackActuator const &)
+	??0QFeedbackFileInterface@QtMobility@@QAE@XZ @ 93 NONAME ; QtMobility::QFeedbackFileInterface::QFeedbackFileInterface(void)
+	??0QFeedbackHapticsInterface@QtMobility@@QAE@XZ @ 94 NONAME ; QtMobility::QFeedbackHapticsInterface::QFeedbackHapticsInterface(void)
+	??4QFeedbackActuator@QtMobility@@QAEAAV01@ABV01@@Z @ 95 NONAME ; class QtMobility::QFeedbackActuator & QtMobility::QFeedbackActuator::operator=(class QtMobility::QFeedbackActuator const &)
+	??8QFeedbackActuator@QtMobility@@QBE_NABV01@@Z @ 96 NONAME ; bool QtMobility::QFeedbackActuator::operator==(class QtMobility::QFeedbackActuator const &) const
 

@@ -83,16 +83,14 @@ public:
     };
 
     enum SupportLevel {
-        Native,
-        Emulated,
-        None
+        NativeSupport,
+        EmulatedSupport,
+        NoSupport
     };
 
     enum LandmarkFeature {
-        ExtendedAttributes,
-        CustomAttributes,
-        ImportExport,
-        Notifications
+        ImportExportFeature,
+        NotificationsFeature
     };
 
 
@@ -178,12 +176,6 @@ public:
 
     QStringList landmarkAttributeKeys() const;
     QStringList categoryAttributeKeys() const;
-
-    bool isCustomAttributesEnabled() const;
-    void setCustomAttributesEnabled(bool enabled);
-
-    bool isExtendedAttributesEnabled() const;
-    void setExtendedAttributesEnabled(bool enabled);
 
     QString managerName() const;
     QMap<QString, QString> managerParameters() const;

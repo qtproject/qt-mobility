@@ -42,6 +42,7 @@
 #include "qorganizerasynchprocess.h"
 #include "qtorganizer.h"
 #include "qorganizermaemo5_p.h"
+#include "qorganizermaemo5ids_p.h"
 #include <QtCore/qtimer.h>
 #include <QtCore/qcoreapplication.h>
 
@@ -321,10 +322,7 @@ void OrganizerAsynchProcess::handleDefinitionSaveRequest(QOrganizerItemDetailDef
 void OrganizerAsynchProcess::handleCollectionFetchRequest(QOrganizerCollectionFetchRequest *req)
 {
     QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
-    QList<QOrganizerCollectionId> collectionIds = req->collectionIds();
-    QList<QOrganizerCollectionLocalId> collectionLocalIds;
-    foreach(QOrganizerCollectionId collectionId, collectionIds)
-        collectionLocalIds << collectionId.localId();
+    QList<QOrganizerCollectionLocalId> collectionLocalIds = req->collectionIds();
     QList<QOrganizerCollection> collections = m_engine->collections(collectionLocalIds, &err);
     QOrganizerItemManagerEngine::updateCollectionFetchRequest(req, collections, err, QOrganizerItemAbstractRequest::FinishedState);
 }
@@ -340,13 +338,10 @@ void OrganizerAsynchProcess::handleCollectionRemoveRequest(QOrganizerCollectionR
 {
     QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
     QMap<int, QOrganizerItemManager::Error> errorMap;
-    QList<QOrganizerCollectionId> collectionIds = req->collectionIds();
-    QList<QOrganizerCollectionLocalId> collectionLocalIds;
-    foreach(QOrganizerCollectionId collectionId, collectionIds)
-        collectionLocalIds << collectionId.localId();
+    QList<QOrganizerCollectionLocalId> collectionLocalIds = req->collectionIds();
     foreach (QOrganizerCollectionLocalId id, collectionLocalIds) {
         m_engine->removeCollection(id, &err);
-        errorMap.insert(id, err);
+        errorMap.insert(static_cast<int>(static_cast<QOrganizerCollectionMaemo5EngineLocalId *>(QOrganizerItemManagerEngine::engineLocalCollectionId(id))->m_localCollectionId), err);
     }
     QOrganizerItemManagerEngine::updateCollectionRemoveRequest(req, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
 }
@@ -358,7 +353,7 @@ void OrganizerAsynchProcess::handleCollectionSaveRequest(QOrganizerCollectionSav
     QList<QOrganizerCollection> collections = req->collections();
     foreach (QOrganizerCollection collection, collections) {
         m_engine->saveCollection(&collection, &err);
-        errorMap.insert(collection.id().localId(), err);
+        errorMap.insert(static_cast<int>(static_cast<QOrganizerCollectionMaemo5EngineLocalId *>(QOrganizerItemManagerEngine::engineLocalCollectionId(collection.id().localId()))->m_localCollectionId), err);
     }
     QOrganizerItemManagerEngine::updateCollectionSaveRequest(req, collections, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
 }

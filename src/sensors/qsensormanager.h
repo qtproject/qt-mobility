@@ -43,7 +43,6 @@
 #define QSENSORMANAGER_H
 
 #include "qsensor.h"
-#include <QHash>
 
 QTM_BEGIN_NAMESPACE
 

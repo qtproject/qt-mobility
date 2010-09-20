@@ -244,7 +244,6 @@ void tst_QDeclarativePosition::defaultProperties()
     QVERIFY(coordinate_obj != 0);
     // Verify position default data
     QCOMPARE(position_obj->property("timestamp").toDateTime(), QDateTime());
-    QCOMPARE(position_obj->property("speed").toDouble(), static_cast<double>(0));
     QCOMPARE(position_obj->property("latitudeValid").toBool(), false);
     QCOMPARE(position_obj->property("longitudeValid").toBool(), false);
     QCOMPARE(position_obj->property("altitudeValid").toBool(), false);
@@ -457,6 +456,7 @@ QList<QSignalSpy*> createPositionSpies(QObject* position_obj)
     Q_ASSERT(position_obj);
     QList<QSignalSpy*> spies;
     QDeclarativeCoordinate* coordinate_obj = position_obj->property("coordinate").value<QDeclarativeCoordinate*>();
+
     Q_ASSERT(coordinate_obj);
 
     spies.append(new QSignalSpy(coordinate_obj, SIGNAL(latitudeChanged(double)))); //4

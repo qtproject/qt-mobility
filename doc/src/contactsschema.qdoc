@@ -39,14 +39,23 @@
 The \l{Contacts}{Qt Contacts API} makes use of detail leaf classes
 which provide certain well-known functionality.  In order to develop a backend engine which
 can service clients or provide synchronization to other backends, the schema must be
-known.
+known.  The schema provided by the \l{Contacts}{Qt Contacts API} is updated with every
+release of Qt Mobility, so the function which returns the default schema definitions can
+take an integer which identifies the schema version which the engine writer developed against.
+Engine writers should call \l{QContactManagerEngine::schemaDefinitions()}{schemaDefinitions()}
+in their code which generates the manager-specific schema (which is returned to clients when
+they call \l{QContactManager::detailDefinitions()}).
+
+The \l{QContactManagerEngine::schemaDefinitions()}{schemaDefinitions()} function should
+NOT be called by clients; rather, clients should call \l{QContactManager::detailDefinitions()}
+instead.
 
 \section1 Schema Definition
 
 Different backends have different capabilities.  Some backends may not be able to implement
 certain definitions in the default schema (for example, some backends might not have support for
 storing location information), while other backends may not be able to implement some aspects
-of a particular definition in the default schema (for example, a logo field for organisation
+of a particular definition in the default schema (for example, a logo field for organization
 details).
 
 In order to be useful for clients, however, all backends should attempt to support the default
@@ -60,8 +69,15 @@ the default schema will work without source modification against their backend.
 
 \section1 Default Schema
 
-The leaf details that form the default schema are as follows:
+The leaf details that form the current version of the default schema are as follows:
 \annotatedlist contacts-details
+
+Note that the following leaf details were added to the default schema in version 1.1 of the
+Qt Mobility project:
+\list
+  \o QContactFamily
+  \o QContactFavorite
+\endlist
 
 
 \section2 Detail Definition Uniqueness

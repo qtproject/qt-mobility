@@ -83,16 +83,20 @@ QGeoTiledMapRequest::QGeoTiledMapRequest()
     The rectangle that the tile occupies on the map at the maximum zoom level
     is also given as \a tileRect.
 */
-QGeoTiledMapRequest::QGeoTiledMapRequest(QGeoTiledMapData *mapData, int row, int column, const QRect &tileRect)
+QGeoTiledMapRequest::QGeoTiledMapRequest(QGraphicsGeoMap::MapType mapType,
+                                         qreal zoomLevel,
+                                         int row,
+                                         int column,
+                                         const QRect &tileRect)
         : d_ptr(new QGeoTiledMapRequestPrivate())
 {
-    d_ptr->mapData = mapData;
+    //d_ptr->mapData = mapData;
     d_ptr->row = row;
     d_ptr->column = column;
     d_ptr->tileRect = tileRect;
 
-    d_ptr->zoomLevel = mapData->zoomLevel();
-    d_ptr->mapType = mapData->mapType();
+    d_ptr->zoomLevel = zoomLevel;
+    d_ptr->mapType = mapType;
 }
 
 /*!

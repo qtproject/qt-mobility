@@ -18,6 +18,7 @@ INCLUDEPATH += ../../../src/organizer \
     ../../../src/organizer/filters \
     ../../../src/organizer/details
 HEADERS += qorganizermaemo5_p.h \
+    qorganizermaemo5ids_p.h \
     qorganizerrecurrencetransform.h \
     qorganizeritemtransform.h \
     qorganizerasynchprocess.h \

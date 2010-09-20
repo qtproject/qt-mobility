@@ -56,7 +56,7 @@ void QDeclarativeLandmarkAbstractModel::categoriesChanged(const QList<QLandmarkC
     Q_UNUSED(ids)
     if (m_autoUpdate)
         update();
-    emit modelChanged();
+    emit databaseChanged();
 }
 
 void QDeclarativeLandmarkAbstractModel::landmarksChanged(const QList<QLandmarkId>& ids)
@@ -64,14 +64,14 @@ void QDeclarativeLandmarkAbstractModel::landmarksChanged(const QList<QLandmarkId
     Q_UNUSED(ids)
     if (m_autoUpdate)
         update();
-    emit modelChanged();
+    emit databaseChanged();
 }
 
 void QDeclarativeLandmarkAbstractModel::dataChanged()
 {
     if (m_autoUpdate)
         update();
-    emit modelChanged();
+    emit databaseChanged();
 }
 
 void QDeclarativeLandmarkAbstractModel::setAutoUpdate(bool autoUpdate)
@@ -112,10 +112,13 @@ void QDeclarativeLandmarkAbstractModel::setDbFileName(QString fileName)
         delete m_manager;
         m_manager = 0;
     }
-
     QMap<QString, QString> map;
     map["filename"] = m_dbFileName;
+#ifdef Q_OS_SYMBIAN
+    m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.symbian", map);
+#else
     m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
+#endif
     connectManager();
 }
 
@@ -343,7 +346,7 @@ void QDeclarativeLandmarkModel::setFetchRange()
 
 void QDeclarativeLandmarkModel::setFetchOrder()
 {
-    if (!m_fetchRequest || ((m_sortKey == NoSort) && (m_sortOrder = NoOrder)))
+    if (!m_fetchRequest || ((m_sortKey == NoSort) && (m_sortOrder == NoOrder)))
         return;
     if (m_sortingOrder)
         delete m_sortingOrder;
@@ -493,12 +496,12 @@ void QDeclarativeLandmarkModel::fetchRequestStateChanged(QLandmarkAbstractReques
         // Convert into declarative classes
         convertLandmarksToDeclarative();
         endResetModel();
+        if (!(oldCount == 0 && m_landmarks.count() == 0))
+            emit modelChanged();
         if (oldCount != m_landmarks.count())
             emit countChanged();
     } else if (m_error != m_fetchRequest->errorString()) {        
         m_error = m_fetchRequest->errorString();
-        // Convert into declarative classes
-        convertLandmarksToDeclarative();
         emit errorChanged();
     }
 }

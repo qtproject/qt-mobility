@@ -227,7 +227,7 @@ void EventEditPage::eventChanged(QOrganizerItemManager *manager, const QOrganize
     int index = 0;
     int eventCalendarIndex = -1;
     foreach(QOrganizerCollection collection, m_collections) {
-        QString visibleName = "Calendar id = " + QString::number(collection.id().localId());
+        QString visibleName = "(Unknown calendar)";
         if (!calendarNameMetadataKey.isNull())
             visibleName = collection.metaData(calendarNameMetadataKey).toString();
 

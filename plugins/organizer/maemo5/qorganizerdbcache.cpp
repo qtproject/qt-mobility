@@ -113,13 +113,13 @@ void OrganizerDbCache::insertJournalVector(const OrganizerGuidCacheKey &key, con
     m_guidJournalCache.insert(key, cacheList);
 }
 
-void OrganizerDbCache::insertCalId(QOrganizerItemLocalId key, int value)
+void OrganizerDbCache::insertCalId(quint32 key, int value)
 {
     int *cacheInt = new int(value);
     m_calIdCache.insert(key, cacheInt);
 }
 
-void OrganizerDbCache::insertTypeId(QOrganizerItemLocalId key, int value)
+void OrganizerDbCache::insertTypeId(quint32 key, int value)
 {
     int *cacheInt = new int(value);
     m_typeCache.insert(key, cacheInt);
@@ -151,12 +151,12 @@ bool OrganizerDbCache::containsJournalVector(const OrganizerGuidCacheKey &key) c
     return m_guidJournalCache.contains(key);
 }
 
-bool OrganizerDbCache::containsCalId(QOrganizerItemLocalId key) const
+bool OrganizerDbCache::containsCalId(quint32 key) const
 {
     return m_calIdCache.contains(key);
 }
 
-bool OrganizerDbCache::containsTypeId(QOrganizerItemLocalId key) const
+bool OrganizerDbCache::containsTypeId(quint32 key) const
 {
     return m_typeCache.contains(key);
 }
@@ -205,13 +205,13 @@ void OrganizerDbCache::takeJournalVector(const OrganizerGuidCacheKey &key, std::
         result.push_back(journal.journal());
 }
 
-int OrganizerDbCache::takeCalId(QOrganizerItemLocalId key) const
+int OrganizerDbCache::takeCalId(quint32 key) const
 {
     int *cacheInt = m_calIdCache.object(key);
     return *cacheInt;
 }
 
-int OrganizerDbCache::takeTypeId(QOrganizerItemLocalId key) const
+int OrganizerDbCache::takeTypeId(quint32 key) const
 {
     int *cacheInt = m_typeCache.object(key);
     return *cacheInt;

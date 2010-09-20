@@ -405,7 +405,7 @@ bool QGeoCodeXmlParser::parseAddress(QGeoAddress *address)
         }
 
         if (inThoroughfare && (m_reader->name() == "number")) {
-            address->setStreetNumber(m_reader->readElementText());
+            address->setStreet(m_reader->readElementText() + " " + address->street());
             if (!m_reader->readNextStartElement())
                 inThoroughfare = false;
         }

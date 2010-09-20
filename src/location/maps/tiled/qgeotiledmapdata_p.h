@@ -83,11 +83,13 @@ public:
     void clearRequests();
 
     void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
-    void paintMapObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    void paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
     void cleanupCaches();
 
     bool intersects(QGeoMapObject *mapObject, const QRectF &rect);
+
+    QRect screenRectForZoomFactor(int zoomFactor);
     void updateScreenRect();
 
     bool containedInScreen(const QPoint &point) const;
@@ -125,19 +127,19 @@ class QGeoTileIterator
 {
 public:
     QGeoTileIterator(const QGeoTiledMapDataPrivate *mapData);
-    QGeoTileIterator(QGeoTiledMapData *mapData, const QRect &screenRect, const QSize &tileSize, int zoomLevel);
+    QGeoTileIterator(QGraphicsGeoMap::MapType mapType, const QRect &screenRect, const QSize &tileSize, int zoomLevel);
 
     bool hasNext();
     QGeoTiledMapRequest next();
 
 private:
-    QGeoTiledMapData *mapData;
     bool atEnd;
     int row;
     int col;
     int width;
     QRect screenRect;
     QSize tileSize;
+    QGraphicsGeoMap::MapType mapType;
     int zoomLevel;
     QPoint currTopLeft;
     QRect tileRect;

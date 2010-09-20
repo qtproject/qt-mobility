@@ -110,10 +110,8 @@ void CQwertyPredictiveSearchTable::CreateTableL()
 	{
 	PRINT(_L("CQwertyPredictiveSearchTable::CreateTableL"));
 
-	// How many columns have index
-    const TInt KIndexedColumnCount = 9;
-    // Names of columns that have index
-    const TDesC* indexColumns[] = {
+    const TInt KIndexedColumnCount = 9; // How many columns have index
+    const TDesC* indexColumns[] = {	// Names of columns that have index
         &KPredSearchQwertyMailNameAsNumber,
         &KPredSearchQwertyMailNameAsNumber2,
         &KPredSearchQwertyMailNameAsNumber3,
@@ -123,8 +121,8 @@ void CQwertyPredictiveSearchTable::CreateTableL()
         &KPredSearchQwertyMailNameAsNumber7,
         &KPredSearchQwertyMailFirstName,
         &KPredSearchQwertyMailLastName};
-    
     TInt maxColumnLength(0); // Length of longest column name
+
     for (TInt column = 0; column < KIndexedColumnCount; ++column)
         {
         TInt columnNameLength = indexColumns[column]->Length();
@@ -133,11 +131,12 @@ void CQwertyPredictiveSearchTable::CreateTableL()
             maxColumnLength = columnNameLength;
             }
         }    
-    
-	// Space needed to represent number CQwertyKeyMap::EAmountOfKeysInQwertyKeypad
-	const TInt KCharsNeededForTableNumber = 2;
+
+	// How many characters are needed to represent number
+	// CQwertyKeyMap::EMaxAmountOfKeysInQwertyKeypad
+	const TInt KCharsNeededForLargestTableNumber = 2;
 	const TInt KMaxIndexNameLength =
-		KIndexNameFormat().Length() + maxColumnLength + KCharsNeededForTableNumber;
+		KIndexNameFormat().Length() + maxColumnLength + KCharsNeededForLargestTableNumber;
 
 	HBufC* tableName = HBufC::NewLC(KMaxTableNameLength);
 	TPtr ptrTableName = tableName->Des();
@@ -149,15 +148,15 @@ void CQwertyPredictiveSearchTable::CreateTableL()
 	HBufC* indexName = HBufC::NewLC(KMaxIndexNameLength);
 	TPtr ptrIndexName = indexName->Des();
 	HBufC* createIndexCmd = HBufC::NewLC(KPredSearchCreateQwertyMailIndexFormat().Length() +
-									  KMaxIndexNameLength +
-									  KMaxTableNameLength +
-									  maxColumnLength);
+										 KMaxIndexNameLength +
+										 KMaxTableNameLength +
+										 maxColumnLength);
 	TPtr ptrCreateIndexCmd = createIndexCmd->Des();
 
-	for (TInt table = 0; table < CQwertyKeyMap::EAmountOfKeysInQwertyKeypad; ++table)
+	const TInt tableCount = static_cast<CQwertyKeyMap*>(iKeyMap)->MappedKeyCount();
+	for (TInt table = 0; table < tableCount; ++table)
 		{
 		ptrTableName.Format(KTableNameFormat, table);
-
 		ptrCreateTableCmd.Format(KPredSearchCreateQwertyMailTableFormat, tableName);
 		PRINT1(_L("SQL command: %S"), createTableCmd);
 		User::LeaveIfError(iDatabase.Exec(*createTableCmd));
@@ -169,7 +168,7 @@ void CQwertyPredictiveSearchTable::CreateTableL()
 
 			ptrCreateIndexCmd.Format(KPredSearchCreateQwertyMailIndexFormat,
 								     indexName, tableName, indexColumns[column]);
-//			PRINT1(_L("SQL command: %S"), createIndexCmd);
+			// PRINT1(_L("SQL command: %S"), createIndexCmd);
 			User::LeaveIfError(iDatabase.Exec(*createIndexCmd));			
 			}
 		}
@@ -206,10 +205,11 @@ HBufC* CQwertyPredictiveSearchTable::TableNameL(const QChar aCh) const
 QList<QChar> CQwertyPredictiveSearchTable::FillAllTables() const
 	{
 	QList<QChar> tables;
+	const TInt tableCount = static_cast<CQwertyKeyMap*>(iKeyMap)->MappedKeyCount();
 
-	for (TInt key = 0; key < CQwertyKeyMap::EAmountOfKeysInQwertyKeypad; ++key)
+	for (TInt i = 0; i < tableCount; ++i)
 		{
-		tables.append(iKeyMap->ArrayIndexToMappedChar(key));
+		tables.append(iKeyMap->ArrayIndexToMappedChar(i));
 		}
 
 	return tables;

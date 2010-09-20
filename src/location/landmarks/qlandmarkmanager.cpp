@@ -112,7 +112,8 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
     The QLandmarkFilter defines the criteria for selecting landmarks e.g. a QLandmarkCategoryFilter may be used
     to choose landmarks that belong to a certain category or a QLandmarkProximityFilter to choose landmarks
     within a certain range from a given location.  A QLandmarkSortOrder order defines how the results should
-    be sorted.  The limit allows specification of the maximum number of items to
+    be sorted.  (Note that if you wish to sort by distance, you must use a QLandmarkProximityFilter, usually
+    in conjunction with a QLandmarkIntersectionFilter).  The limit allows specification of the maximum number of items to
     return and the offset defines the index of the first item.  The following demonstrates how to search for the first 100
     landmarks belonging to a given category, sorted by name.
 
@@ -906,7 +907,7 @@ QLandmarkManager::SupportLevel QLandmarkManager::filterSupportLevel(const QLandm
      if (!d->engine) {
         d->errorCode = QLandmarkManager::InvalidManagerError;
         d->errorString = QString("Invalid Manager");
-        return QLandmarkManager::None;
+        return QLandmarkManager::NoSupport;
     }
 
     return d->engine->filterSupportLevel(filter, &(d->errorCode), &(d->errorString));
@@ -922,7 +923,7 @@ QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QLi
      if (!d->engine) {
         d->errorCode = QLandmarkManager::InvalidManagerError;
         d->errorString = QString("Invalid Manager");
-        return QLandmarkManager::None;
+        return QLandmarkManager::NoSupport;
     }
 
     return d->engine->sortOrderSupportLevel(sortOrders, &(d->errorCode), &(d->errorString));
@@ -1020,76 +1021,6 @@ QStringList QLandmarkManager::categoryAttributeKeys() const
         d->errorString = QString("Invalid Manager");
     }
     return  d->engine->categoryAttributeKeys(&(d->errorCode), &(d->errorString));
-}
-
-/*!
-    Returns whether extended attributes specific to this manager are enabled or not.
-    If extended attributes are enabled, retrieved landmarks will have
-    extra attribute keys accessible through the QLandmark::attribute() function.
-    Extended attributes must be enabled to save any landmarks which possess
-    extended attributes.  This same behaviour will also apply to categories
-    if extended category attributes are supported.
-*/
-bool QLandmarkManager::isExtendedAttributesEnabled() const
-{
-    Q_D(const QLandmarkManager);
-
-    if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager");
-    }
-    return  d->engine->isExtendedAttributesEnabled(&(d->errorCode), &(d->errorString));
-}
-
-/*!
-    Sets whether extended attributes are \a enabled or not
-*/
-void QLandmarkManager::setExtendedAttributesEnabled(bool enabled)
-{
-    Q_D(QLandmarkManager);
-
-   if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager");
-    }
-
-    d->engine->setExtendedAttributesEnabled(enabled, &(d->errorCode), &(d->errorString));
-}
-
-/*!
-    Returns whether custom attributes are enabled or not. Custom attributes
-    are arbitrary attributes created by the application for a landmark or category.
-    If custom attributes are enabled (and the manager supports them),
-    retrieved landmarks and categories will have extra attributes accessible
-    using QLandmark::customAttributes().  Custom attributes must be enabled
-    to save any landmarks with possess custom attributes.  This same behaviour
-    applies to categories if custom category attributes are supported.
-*/
-bool QLandmarkManager::isCustomAttributesEnabled() const
-{
-    Q_D(const QLandmarkManager);
-
-    if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager");
-    }
-
-    return d->engine->isCustomAttributesEnabled(&(d->errorCode), &(d->errorString));
-}
-
-/*!
-    Sets whether custom attributes are \a enabled or not.
-*/
-void QLandmarkManager::setCustomAttributesEnabled(bool enabled)
-{
-    Q_D(QLandmarkManager);
-
-        if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager");
-    }
-
-    d->engine->setCustomAttributesEnabled(enabled, &(d->errorCode), &(d->errorString));
 }
 
 /*!

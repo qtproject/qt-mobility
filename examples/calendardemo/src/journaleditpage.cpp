@@ -155,7 +155,7 @@ void JournalEditPage::journalChanged(QOrganizerItemManager *manager, const QOrga
     int index = 0;
     int journalCalendarIndex = -1;
     foreach(QOrganizerCollection collection, m_collections) {
-        QString visibleName = "Calendar id = " + QString::number(collection.id().localId());
+        QString visibleName = "(Unknown calendar)";
         if (!calendarNameMetadataKey.isNull())
             visibleName = collection.metaData(calendarNameMetadataKey).toString();
 

@@ -75,7 +75,11 @@ CCameraEngine::~CCameraEngine()
     delete iAutoFocus;
 #endif
 
-    delete iCamera;
+    if (iCamera) {
+        iCamera->Release();
+        delete iCamera;
+        iCamera = NULL;
+    }
 }
 
 TInt CCameraEngine::CamerasAvailable()
@@ -96,33 +100,28 @@ CCameraEngine* CCameraEngine::NewL(TInt aCameraHandle,
 
 void CCameraEngine::ConstructL()
 {
-    if (!CCamera::CamerasAvailable()) {
+    if (!CCamera::CamerasAvailable())
         User::Leave(KErrHardwareNotAvailable);
-    }
+
 #ifndef Q_CC_NOKIAX86 // Not Emulator
-    TInt v2err( KErrNone );
+    TInt err(KErrNone);
 #else // Emulator
-    TInt v2err(KErrNotFound);
+    TInt err(KErrNotFound);
 #endif // !(Q_CC_NOKIAX86)
 
-#ifdef S60_CAM_AUTOFOCUS_SUPPORT
+#ifdef S60_31_PLATFORM
     // Construct CCamera object for S60 3.1 (NewL)
-    if( !iCamera || v2err ) {
-        iCamera = CCamera::NewL( *this, iCameraHandle );
-        TRAP_IGNORE( iAutoFocus = CCamAutoFocus::NewL( iCamera ) );
-    }
-#endif // !S60_CAM_AUTOFOCUS_SUPPORT
+    TRAP(err, iCamera = CCamera::NewL(*this, iCameraHandle));
+#else // For S60 3.2 onwards - use this constructor (New2L)
+    TRAP(err, iCamera = CCamera::New2L(*this, iCameraHandle, iPriority));
+#endif // S60_31_PLATFORM
 
-    // For S60 3.2 onwards - use this constructor (New2L)
-#if (defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER) || \
-     defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || \
-     defined(SYMBIAN_3_PLATFORM))
-    TRAP( v2err, iCamera = CCamera::New2L( *this, iCameraHandle, iPriority ) );
-#endif
+#ifdef S60_CAM_AUTOFOCUS_SUPPORT
+    TRAP(err, iAutoFocus = CCamAutoFocus::NewL(iCamera));
+#endif // S60_CAM_AUTOFOCUS_SUPPORT
 
-    if (iCamera == NULL) {
+    if (iCamera == NULL)
         User::Leave(KErrNoMemory);
-    }
 
     iImageBitmap = new (ELeave) CFbsBitmap;
     iCamera->CameraInfo(iCameraInfo);
@@ -238,6 +237,11 @@ void CCameraEngine::CaptureL()
 
     iCamera->CaptureImage();
     iEngineState = EEngineCapturing;
+}
+
+void CCameraEngine::cancelCapture()
+{
+    iCamera->CancelCaptureImage();
 }
 
 void CCameraEngine::HandleEvent(const TECAMEvent &aEvent)
@@ -425,6 +429,19 @@ TBool CCameraEngine::IsCameraReady() const
         return ETrue;
 
     return EFalse;
+}
+
+TBool CCameraEngine::IsDirectViewFinderSupported() const
+{
+    if (iCameraInfo.iOptionsSupported & TCameraInfo::EViewFinderDirectSupported)
+        return true;
+    else
+        return false;
+}
+
+TCameraInfo *CCameraEngine::cameraInfo()
+{
+    return &iCameraInfo;
 }
 
 TBool CCameraEngine::IsAutoFocusSupported() const

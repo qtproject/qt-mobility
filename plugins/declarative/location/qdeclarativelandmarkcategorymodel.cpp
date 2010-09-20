@@ -22,6 +22,7 @@ QDeclarativeLandmarkCategoryModel::QDeclarativeLandmarkCategoryModel(QObject *pa
 QDeclarativeLandmarkCategoryModel::~QDeclarativeLandmarkCategoryModel()
 {
     delete m_fetchRequest;
+    delete m_sortingOrder;
     qDeleteAll(m_categoryMap.values());
     m_categoryMap.clear();
 }
@@ -107,13 +108,15 @@ void QDeclarativeLandmarkCategoryModel::setFetchRange()
 void QDeclarativeLandmarkCategoryModel::setFetchOrder()
 {
     if (!m_fetchRequest ||
-        ((m_sortKey == NoSort) && (m_sortOrder = NoOrder)) ||
+        ((m_sortKey == NoSort) && (m_sortOrder == NoOrder)) ||
         m_fetchRequest->type() != QLandmarkAbstractRequest::CategoryFetchRequest)
         return;
-    if (m_sortingOrder)
+    if (m_sortingOrder) {
         delete m_sortingOrder;
+        m_sortingOrder = 0;
+    }
     if (m_sortKey == NameSort) {
-        m_sortingOrder = new QLandmarkNameSort(); // Only supported sort type
+        m_sortingOrder = new QLandmarkNameSort();
     } else {
         m_sortingOrder = new QLandmarkSortOrder();
     }
@@ -193,12 +196,12 @@ void QDeclarativeLandmarkCategoryModel::fetchRequestStateChanged(QLandmarkAbstra
         // Convert into declarative classes
         convertCategoriesToDeclarative();
         endResetModel();
+        if (!(oldCount == 0 && m_categories.count() == 0))
+            emit modelChanged();
         if (oldCount != m_categories.count())
             emit countChanged();
     } else if (m_error != m_fetchRequest->errorString()) {
         m_error = m_fetchRequest->errorString();
-        // Convert into declarative classes
-        convertCategoriesToDeclarative();
         emit errorChanged();
     }
 }

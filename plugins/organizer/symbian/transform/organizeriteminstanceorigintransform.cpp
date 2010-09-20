@@ -56,7 +56,8 @@ void OrganizerItemInstanceOriginTransform::transformToEntryL(const QOrganizerIte
 void OrganizerItemInstanceOriginTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
 {
     QOrganizerItemInstanceOrigin origin;
-    origin.setParentLocalId(instance.Entry().LocalUidL());
+    // TODO: Collection id for parent
+    origin.setParentLocalId(toItemLocalId(0, instance.Entry().LocalUidL()));
     origin.setOriginalDate(toQDateTimeL(instance.StartTimeL()).date());
     itemInstance->saveDetail(&origin);
 }
