@@ -65,7 +65,7 @@ private:
 
 void tst_QDocumentGallery::isRequestSupported()
 {
-#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS) || defined (Q_OS_SYMBIAN)
     const bool platformSupported = true;
 #else
     const bool platformSupported = false;
@@ -99,6 +99,18 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::lastModified
             << QDocumentGallery::mimeType;
 #endif
+#if defined (Q_OS_SYMBIAN)
+            << QDocumentGallery::url
+            << QDocumentGallery::fileSize                
+            << QDocumentGallery::lastModified
+            << QDocumentGallery::title
+            << QDocumentGallery::mimeType
+            << QDocumentGallery::author            
+            << QDocumentGallery::copyright
+            << QDocumentGallery::description
+            << QDocumentGallery::comments
+            << QDocumentGallery::rating
+#endif
             ;
     QTest::newRow("File") << QString(QDocumentGallery::File) << (QStringList(fileProperties)
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
@@ -131,6 +143,14 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::title
             << QDocumentGallery::trackNumber
 #endif
+#if defined (Q_OS_SYMBIAN)
+            << QDocumentGallery::duration
+            << QDocumentGallery::performer
+            << QDocumentGallery::audioCodec
+            << QDocumentGallery::audioBitRate
+            << QDocumentGallery::playCount
+            << QDocumentGallery::sampleRate
+#endif
         );
 
     QTest::newRow("Album") << QString(QDocumentGallery::Album) << (QStringList()
@@ -142,7 +162,47 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::title
             << QDocumentGallery::trackCount
 #endif
+#if defined (Q_OS_SYMBIAN)
+            << QDocumentGallery::url
+            << QDocumentGallery::fileSize
+            << QDocumentGallery::lastModified
+            << QDocumentGallery::title
+            << QDocumentGallery::mimeType
+#endif            
         );
+
+#if defined (Q_OS_SYMBIAN)
+    QTest::newRow("Image") << QString(QDocumentGallery::Image) << (QStringList(fileProperties)
+            << QDocumentGallery::duration
+            << QDocumentGallery::performer
+            << QDocumentGallery::playCount
+            << QDocumentGallery::width
+            << QDocumentGallery::height
+            << QDocumentGallery::orientation
+            << QDocumentGallery::dateTaken
+            << QDocumentGallery::cameraManufacturer
+            << QDocumentGallery::cameraModel
+            << QDocumentGallery::exposureProgram
+            << QDocumentGallery::exposureTime
+            << QDocumentGallery::fNumber
+            << QDocumentGallery::flashEnabled
+            << QDocumentGallery::focalLength
+            << QDocumentGallery::meteringMode
+            << QDocumentGallery::whiteBalance
+    );
+    QTest::newRow("Video") << QString(QDocumentGallery::Video) << (QStringList(fileProperties)
+            << QDocumentGallery::duration
+            << QDocumentGallery::performer
+            << QDocumentGallery::videoBitRate
+            << QDocumentGallery::playCount
+            << QDocumentGallery::width
+            << QDocumentGallery::height
+            << QDocumentGallery::language
+            << QDocumentGallery::frameRate
+            << QDocumentGallery::resumePosition
+    );
+#endif
+
 }
 
 void tst_QDocumentGallery::itemTypeProperties()

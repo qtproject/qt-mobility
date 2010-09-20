@@ -46,7 +46,7 @@
 int main(int, char**)
 {   
     using namespace MdeConstants::MediaObject;
-    TDesC  mediaproperty ( KSampleProperty );
+    TDesC  mediaproperty (KAudioFourCCProperty);
     return 0;
 }
 

@@ -77,14 +77,23 @@ void QMdeSession::HandleSessionError(CMdESession& /*aSession*/, TInt /*aError*/)
 
 CMdENamespaceDef& QMdeSession::GetDefaultNamespaceDefL()
 {
-    return m_cmdeSession->GetDefaultNamespaceDefL();
+    if (m_cmdeSession) {
+#ifdef MDS_25_COMPILATION_ENABLED
+        return m_cmdeSession->GetDefaultNamespaceDefL();
+    }
+#else
+    CMdENamespaceDef *nameSpaceDef = NULL;
+        nameSpaceDef = m_cmdeSession->GetDefaultNamespaceDefL();
+    if (!nameSpaceDef)
+        User::Leave(KErrBadHandle);
+    return *nameSpaceDef;    
+    }
+#endif //MDS_25_COMPILATION_ENABLED
 }
 
-CMdEObject* QMdeSession::GetFullObjectL( const unsigned int id )
+CMdEObject* QMdeSession::GetFullObjectL(const unsigned int id)
 {
-    CMdEObject* ret = m_cmdeSession->GetFullObjectL( id );
-
-    return ret;
+    return m_cmdeSession->GetFullObjectL(id);
 }
 
 void QMdeSession::CommitObjectL( CMdEObject& object )
@@ -97,9 +106,9 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
     int &error)
 {
     CMdENamespaceDef& defaultNamespace = GetDefaultNamespaceDefL();
-
     CMdEObjectQuery* query = NULL;
-
+    
+#ifdef MDS_25_COMPILATION_ENABLED
     if (request->rootType() == QDocumentGallery::File.name()) {
         CMdEObjectDef& mediaObjDef = defaultNamespace.GetObjectDefL(
             MdeConstants::MediaObject::KMediaObject );
@@ -130,6 +139,12 @@ CMdEObjectQuery* QMdeSession::NewObjectQueryL(MMdEQueryObserver *observer,
         query = m_cmdeSession->NewObjectQueryL( defaultNamespace, objdef, observer );
     }
 
+#else
+    CMdEObjectDef& objdef = QDocumentGalleryMDSUtility::ObjDefFromItemTypeL(defaultNamespace, request->rootType());
+    query = m_cmdeSession->NewObjectQueryL( defaultNamespace, objdef, observer );
+#endif //MDS_25_COMPILATION_ENABLED
+    
+    q_check_ptr(query); // check if we have a valid pointer as the next function is not leaving
     error = QDocumentGalleryMDSUtility::SetupQueryConditions(query, request, defaultNamespace);
 
     return query;
@@ -159,21 +174,36 @@ int QMdeSession::RemoveObject( const unsigned int itemId )
 
 void QMdeSession::AddItemAddedObserverL( MMdEObjectObserver& observer, CMdELogicCondition *condition )
 {
+#ifdef MDS_25_COMPILATION_ENABLED    
     m_cmdeSession->AddObjectObserverL( observer, condition, ENotifyAdd );
+#else
+    // TODO: check whether default namespace is ok (NULL -> default used)
+    m_cmdeSession->AddObjectObserverL(observer, condition, NULL);
+#endif //MDS_25_COMPILATION_ENABLED
 }
 
 void QMdeSession::AddItemChangedObserverL( MMdEObjectObserver& observer, RArray<TItemId> &idArray )
 {
     CMdELogicCondition* condition = CMdELogicCondition::NewLC( ELogicConditionOperatorOr );
     condition->AddObjectConditionL( idArray );
-
+#ifdef MDS_25_COMPILATION_ENABLED
     m_cmdeSession->AddObjectObserverL( observer, condition, (ENotifyModify | ENotifyRemove) );
+#else
+    // TODO: check whether default namespace is ok (NULL -> default used)
+    m_cmdeSession->AddObjectObserverL( observer, condition, NULL );
+#endif //MDS_25_COMPILATION_ENABLED
     CleanupStack::Pop(); // condition
 }
 
 void QMdeSession::RemoveObjectObserver( MMdEObjectObserver& observer )
 {
-    TRAP_IGNORE( m_cmdeSession->RemoveObjectObserverL( observer ) );
+    if (m_cmdeSession) {
+#ifdef MDS_25_COMPILATION_ENABLED    
+        TRAP_IGNORE( m_cmdeSession->RemoveObjectObserverL(observer));
+#else
+        m_cmdeSession->RemoveObjectObserver(observer);
+#endif //MDS_25_COMPILATION_ENABLED
+    }
 }
 
 #include "moc_qmdesession.cpp"

@@ -58,6 +58,13 @@ public MMdEObjectObserver
     Q_OBJECT
 public:
 
+    enum QMdeSessionObserverQueryNotificationType
+    {
+        ENotifyAdd    = 0x0001,
+        ENotifyModify = 0x0002,
+        ENotifyRemove = 0x0004
+    };
+
     QMDEGalleryQueryResultSet(QMdeSession *session, QObject *parent = 0);
     ~QMDEGalleryQueryResultSet();
 
@@ -66,14 +73,23 @@ public:
         TInt aNewItemCount );
 
     void HandleQueryCompleted( CMdEQuery& aQuery, TInt aError );
-
+#ifdef MDS_25_COMPILATION_ENABLED
     void HandleObjectNotification( CMdESession& aSession,
         TObserverNotificationType aType,
         const RArray<TItemId>& aObjectIdArray );
-
+#else    
+    void HandleObjectAdded(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
+    void HandleObjectModified(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
+    void HandleObjectRemoved(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
+#endif //MDS_25_COMPILATION_ENABLED
+    
     void createQuery();
 
 private:
+    
+    void doHandleObjectNotificationL(CMdESession& aSession,
+        QMdeSessionObserverQueryNotificationType aType,
+        const RArray<TItemId>& aObjectIdArray);
 
     void handleUpdatedResults();
 

@@ -6,6 +6,10 @@ contains(mds_25_enabled, yes) {
     DEFINES += MDS_25_COMPILATION_ENABLED
 }
 
+contains(mds_25_92mcl_enabled, yes) {
+    DEFINES += MDS_25_92MCL_COMPILATION_ENABLED
+}
+
 # Input
 LIBS +=     -lmdeclient.dll \
             -leuser.dll \
