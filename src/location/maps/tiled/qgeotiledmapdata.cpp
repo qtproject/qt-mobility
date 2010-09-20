@@ -1040,7 +1040,6 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
     if (worldRect.contains(maxZoomScreenRect)) {
         // the screen is completely contained inside the map, which means we can just draw once and be done.
         scene->render(painter,
-        //scene->render(painter,
                       QRectF(targetX, targetY, targetW, targetH),
                       maxZoomScreenRect,
                       Qt::IgnoreAspectRatio);
@@ -1059,7 +1058,6 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
     westside.setHeight(maxZoomScreenRect.height());
 
     scene->render(painter,
-    //scene->render(painter,
                   QRectF(targetX, targetY, westsideWidth, targetH),
                   westside,
                   Qt::IgnoreAspectRatio);
@@ -1072,7 +1070,6 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
                           maxZoomScreenRect.height());
 
     scene->render(painter,
-    //scene->render(painter,
                   QRectF(targetX + targetW - eastsideWidth, targetY, eastsideWidth, targetH),
                   eastside,
                   Qt::IgnoreAspectRatio);
