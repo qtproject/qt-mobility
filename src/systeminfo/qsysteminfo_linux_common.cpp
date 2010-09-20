@@ -682,8 +682,12 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
                 if(line.left(6).contains(iface)) {
                     QString token = line.section(" ",4,5).simplified();
                     token.chop(1);
-                    int percent = (int)rint ((log (token.toInt()) / log (92)) * 100.0);
-                    return percent;
+                    bool ok;
+                    int percent = (int)rint ((log (token.toInt(&ok)) / log (92)) * 100.0);
+                    if(ok)
+                        return percent;
+                    else
+                        return 0;
                 }
                 line = in.readLine();
             }
