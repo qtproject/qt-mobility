@@ -501,7 +501,7 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
         // Set parent id
         if (isException) {
             HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(itemInstance);
-            CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, &itemInstance, *globalUid);
+            CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, itemInstance, *globalUid);
             parentLocalUid = parentEntry->LocalUidL();
             CleanupStack::PopAndDestroy(parentEntry);
             CleanupStack::PopAndDestroy(globalUid);
