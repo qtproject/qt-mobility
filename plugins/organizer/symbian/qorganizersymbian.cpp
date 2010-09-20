@@ -110,9 +110,7 @@ bool QOrganizerItemSymbianEngineLocalId::isLessThan(const QOrganizerItemEngineLo
 
 uint QOrganizerItemSymbianEngineLocalId::engineLocalIdType() const
 {
-    // engines should embed the result of this as const read-only data (uint),
-    // instead of calculating it every time the function is called...
-    return qHash(QString(QLatin1String("symbian")));
+    return KSymbianEngineLocalIdType;
 }
 
 QOrganizerItemEngineLocalId* QOrganizerItemSymbianEngineLocalId::clone() const
@@ -192,9 +190,7 @@ bool QOrganizerCollectionSymbianEngineLocalId::isLessThan(const QOrganizerCollec
 
 uint QOrganizerCollectionSymbianEngineLocalId::engineLocalIdType() const
 {
-    // engines should embed the result of this as const read-only data (uint),
-    // instead of calculating it every time the function is called...
-    return qHash(QString(QLatin1String("symbian")));
+    return KSymbianEngineLocalIdType;
 }
 
 QOrganizerCollectionEngineLocalId* QOrganizerCollectionSymbianEngineLocalId::clone() const

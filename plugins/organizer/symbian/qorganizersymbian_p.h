@@ -85,6 +85,10 @@
 
 QTM_USE_NAMESPACE
 
+// This is the result of qHash(QString(QLatin1String("symbian")))
+// Precalculated value is used for performance reasons.
+const uint KSymbianEngineLocalIdType = 0xb038f9e;
+
 class OrganizerItemTransform; // forward declare transform class.
 class QOrganizerItemSymbianEngine; // forward declare symbian engine.
 class QOrganizerCollectionSymbianEngineLocalId : public QOrganizerCollectionEngineLocalId
