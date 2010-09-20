@@ -939,11 +939,9 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
         : QSystemDeviceInfoLinuxCommonPrivate(parent)
 {
-    setConnection();
     flightMode = false;
  #if !defined(QT_NO_DBUS)
     previousPowerState = QSystemDeviceInfo::UnknownPower;
-    setupBluetooth();
     setupProfile();
 #endif
 }
@@ -960,17 +958,20 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
        if(map.at(i).toString() == "battery.charge_level.percentage") {
             int level = batteryLevel();
             emit batteryLevelChanged(level);
+            QSystemDeviceInfo::BatteryStatus stat = QSystemDeviceInfo::NoBatteryLevel;
+
             if(level < 4) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
+                stat = QSystemDeviceInfo::BatteryCritical;
             } else if(level < 11) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryVeryLow);
+                stat = QSystemDeviceInfo::BatteryVeryLow;
             } else if(level < 41) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryLow);
+                stat = QSystemDeviceInfo::BatteryLow;
             } else if(level > 40) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryNormal);
+                stat = QSystemDeviceInfo::BatteryNormal;
             }
-            else {
-                emit batteryStatusChanged(QSystemDeviceInfo::NoBatteryLevel);
+            if(currentBatStatus != stat) {
+                currentBatStatus = stat;
+                Q_EMIT batteryStatusChanged(stat);
             }
         }
         if((map.at(i).toString() == "maemo.charger.connection_status")
@@ -979,7 +980,8 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
             if (previousPowerState != state)
                 emit powerStateChanged(state);
             previousPowerState = state;
-       }} //end map
+       }
+    } //end map
 }
 #endif
 
