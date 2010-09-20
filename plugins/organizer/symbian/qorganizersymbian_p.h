@@ -350,19 +350,19 @@ public:
 private:
     CCalEntryView* entryViewL(const QOrganizerCollectionLocalId& collectionId) const;
     CCalInstanceView* instanceViewL(const QOrganizerCollectionLocalId& collectionId) const;
-    QOrganizerCollectionLocalId collectionLocalIdL(QOrganizerItem item, 
-        const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId()) const;
+    QOrganizerCollectionLocalId collectionLocalIdL(const QOrganizerItem &item, 
+        const QOrganizerCollectionLocalId &collectionId = QOrganizerCollectionLocalId()) const;
     CCalEntry* entryForItemOccurrenceL(
-        const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, 
+        const QOrganizerCollectionLocalId &collectionId, const QOrganizerItem &item, 
         bool &isNewEntry) const;
-    CCalEntry* entryForItemL(const QOrganizerCollectionLocalId collectionId, 
-        QOrganizerItem *item, bool &isNewEntry) const;
-    CCalEntry* findEntryL(const QOrganizerCollectionLocalId collectionId, 
-        QOrganizerItemLocalId localId, QString manageruri) const;
-    CCalEntry* findEntryL(const QOrganizerCollectionLocalId collectionId, 
+    CCalEntry* entryForItemL(const QOrganizerCollectionLocalId &collectionId, 
+        const QOrganizerItem &item, bool &isNewEntry) const;
+    CCalEntry* findEntryL(const QOrganizerCollectionLocalId &collectionId, 
+        const QOrganizerItemLocalId &localId, QString manageruri) const;
+    CCalEntry* findEntryL(const QOrganizerCollectionLocalId &collectionId, 
         const TDesC8& globalUid) const;
-    CCalEntry* findParentEntryLC(const QOrganizerCollectionLocalId collectionId,
-        QOrganizerItem *item, const TDesC8& globalUid) const;
+    CCalEntry* findParentEntryLC(const QOrganizerCollectionLocalId &collectionId,
+        const QOrganizerItem &item, const TDesC8& globalUid) const;
 	
 private:
     QOrganizerItemSymbianEngineData *d;

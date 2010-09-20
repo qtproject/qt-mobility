@@ -668,7 +668,7 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& i
     if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
         HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(item);
         quint32 localCollectionIdValue = m_collections[collectionLocalId].calCollectionId();
-        CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, &item, *globalUid);
+        CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, item, *globalUid);
         QOrganizerEventOccurrence *eventOccurrence = static_cast<QOrganizerEventOccurrence *>(&item);
         eventOccurrence->setParentLocalId(toItemLocalId(localCollectionIdValue, parentEntry->LocalUidL()));
         CleanupStack::PopAndDestroy(parentEntry);
@@ -749,9 +749,9 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item,
     bool isNewEntry(false);
     if(item->type()== QOrganizerItemType::TypeEventOccurrence
         || item->type()== QOrganizerItemType::TypeTodoOccurrence) {
-        entry = entryForItemOccurrenceL(collectionLocalId, item, isNewEntry);
+        entry = entryForItemOccurrenceL(collectionLocalId, *item, isNewEntry);
     } else {
-        entry = entryForItemL(collectionLocalId, item, isNewEntry);
+        entry = entryForItemL(collectionLocalId, *item, isNewEntry);
     }
     CleanupStack::PushL(entry);
 
@@ -843,7 +843,7 @@ CCalInstanceView* QOrganizerItemSymbianEngine::instanceViewL(const QOrganizerCol
  * session's collection id.
  */
 QOrganizerCollectionLocalId QOrganizerItemSymbianEngine::collectionLocalIdL(
-    QOrganizerItem item, const QOrganizerCollectionLocalId& collectionId) const
+    const QOrganizerItem &item, const QOrganizerCollectionLocalId &collectionId) const
 {
 #ifdef SYMBIAN_CALENDAR_V2
     QOrganizerCollectionLocalId itemCollectionId = item.collectionId().localId();
@@ -865,32 +865,32 @@ QOrganizerCollectionLocalId QOrganizerItemSymbianEngine::collectionLocalIdL(
 }
 
 CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(
-    const QOrganizerCollectionLocalId collectionId, QOrganizerItem *item, 
+    const QOrganizerCollectionLocalId &collectionId, const QOrganizerItem &item, 
     bool &isNewEntry) const
 {
     CCalEntry * entry(NULL);
 
     // Find the child entry corresponding to the item occurrence
-    if (!item->localId().isNull()) {
+    if (!item.localId().isNull()) {
         // The item has a local id, check the item is from this manager
-        if (item->id().managerUri() != managerUri())
+        if (item.id().managerUri() != managerUri())
             User::Leave(KErrInvalidOccurrence);
 
         // Fetch the item (will return NULL if the localid is not found)
-        entry = entryViewL(collectionId)->FetchL(toTCalLocalUid(item->localId()));
+        entry = entryViewL(collectionId)->FetchL(toTCalLocalUid(item.localId()));
         if (!entry)
             User::Leave(KErrInvalidOccurrence);
         return entry;
     }
 
     // Entry not found, find the parent entry and create a new child for it
-    HBufC8* parentGlobalUid(OrganizerItemGuidTransform::guidLC(*item));
+    HBufC8* parentGlobalUid(OrganizerItemGuidTransform::guidLC(item));
     CCalEntry *parentEntry(
         findParentEntryLC(collectionId, item, *parentGlobalUid));
 
     // Get the parameters for the new child entry
     QOrganizerItemInstanceOrigin origin(
-        item->detail<QOrganizerItemInstanceOrigin>());
+        item.detail<QOrganizerItemInstanceOrigin>());
     if (!origin.originalDate().isValid()) {
         User::Leave(KErrInvalidOccurrence);
     }
@@ -916,20 +916,20 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(
 }
 
 CCalEntry* QOrganizerItemSymbianEngine::entryForItemL(
-    const QOrganizerCollectionLocalId collectionId, 
-    QOrganizerItem *item, bool &isNewEntry) const
+    const QOrganizerCollectionLocalId &collectionId, 
+    const QOrganizerItem &item, bool &isNewEntry) const
 {
     // Try to find with local id
-    CCalEntry *entry = findEntryL(collectionId, item->localId(), item->id().managerUri());
+    CCalEntry *entry = findEntryL(collectionId, item.localId(), item.id().managerUri());
 
     // Not found. Try to find with globalUid
     if (!entry) {
-        HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
+        HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(item);
 
         entry = findEntryL(collectionId, *globalUid);
         // Not found? Create a new entry instance to be saved to the database
         if (!entry) {
-            CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
+            CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(item);
             entry = CCalEntry::NewL(type, globalUid, CCalEntry::EMethodAdd, 0);
             isNewEntry = true;
             CleanupStack::Pop(globalUid); // Ownership transferred to the new entry
@@ -941,8 +941,8 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemL(
 }
 
 CCalEntry * QOrganizerItemSymbianEngine::findEntryL(
-    const QOrganizerCollectionLocalId collectionId, 
-    QOrganizerItemLocalId localId, QString manageruri) const
+    const QOrganizerCollectionLocalId &collectionId, 
+    const QOrganizerItemLocalId &localId, QString manageruri) const
 {
     CCalEntry *entry(0);
 
@@ -964,7 +964,7 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(
 }
 
 CCalEntry * QOrganizerItemSymbianEngine::findEntryL(
-    const QOrganizerCollectionLocalId collectionId, 
+    const QOrganizerCollectionLocalId &collectionId, 
     const TDesC8& globalUid) const
 {
     CCalEntry *entry(0);
@@ -986,13 +986,13 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(
 }
 
 CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(
-    const QOrganizerCollectionLocalId collectionId, 
-    QOrganizerItem *item, const TDesC8& globalUid) const
+    const QOrganizerCollectionLocalId &collectionId, 
+    const QOrganizerItem &item, const TDesC8& globalUid) const
 {
     CCalEntry *parent(0);
 
     // Try to find with parent's local id
-    QOrganizerItemInstanceOrigin origin = item->detail<QOrganizerItemInstanceOrigin>();
+    QOrganizerItemInstanceOrigin origin = item.detail<QOrganizerItemInstanceOrigin>();
     if (!origin.parentLocalId().isNull()) {
         // Fetch the item (will return NULL if the localid is not found)
         parent = entryViewL(collectionId)->FetchL(toTCalLocalUid(origin.parentLocalId())); // ownership transferred
@@ -1011,11 +1011,11 @@ CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(
     }
 
     // Verify the item against parent
-    if(parent->EntryTypeL() != OrganizerItemTypeTransform::entryTypeL(*item))
+    if(parent->EntryTypeL() != OrganizerItemTypeTransform::entryTypeL(item))
         User::Leave(KErrInvalidOccurrence);
 
     // Check for UID consistency for item with parentEntry
-    if (!item->guid().isEmpty()
+    if (!item.guid().isEmpty()
         && globalUid.Compare(parent->UidL())) {
         // Guid is not consistent with parentEntry UID
         User::Leave(KErrInvalidOccurrence);
