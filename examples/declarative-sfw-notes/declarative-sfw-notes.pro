@@ -14,7 +14,7 @@ qml.files = content
 symbian {
     qml.files += declarative-sfw-notes.qml
 } maemo* {
-    qml.files += maemo-sfw-notes.qmil
+    qml.files += maemo-sfw-notes.qml
 } else {
     qml.files += declarative-sfw-notes.qml
 }
