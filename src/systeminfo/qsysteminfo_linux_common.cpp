@@ -671,23 +671,25 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
-            QString result;
-            const QString baseSysDir = "/sys/class/net/";
-            const QDir wDir(baseSysDir);
-            const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
-            foreach(const QString dir, dirs) {
-                const QString devFile = baseSysDir + dir;
-                const QFileInfo fi(devFile + "/wireless/link");
-                if(fi.exists()) {
-                    QFile rx(fi.absoluteFilePath());
-                    if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                        QTextStream in(&rx);
-                        in >> result;
-                        rx.close();
-                        return result.toInt();
+            QString iface = interfaceForMode(QSystemNetworkInfo::WlanMode).name();
+            QFile file("/proc/net/wireless");
 
-                    }
+            if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+                return 0;
+            QTextStream in(&file);
+            QString line = in.readLine();
+            while (!line.isNull()) {
+                if(line.left(6).contains(iface)) {
+                    QString token = line.section(" ",4,5).simplified();
+                    token.chop(1);
+                    bool ok;
+                    int percent = (int)rint ((log (token.toInt(&ok)) / log (92)) * 100.0);
+                    if(ok)
+                        return percent;
+                    else
+                        return 0;
                 }
+                line = in.readLine();
             }
         }
         break;
