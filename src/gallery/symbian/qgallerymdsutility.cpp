@@ -1,47 +1,47 @@
 /****************************************************************************
- **
- ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
- ** All rights reserved.
- ** Contact: Nokia Corporation (qt-info@nokia.com)
- **
- ** This file is part of the Qt Mobility Components.
- **
- ** $QT_BEGIN_LICENSE:LGPL$
- ** No Commercial Usage
- ** This file contains pre-release code and may not be distributed.
- ** You may use this file in accordance with the terms and conditions
- ** contained in the Technology Preview License Agreement accompanying
- ** this package.
- **
- ** GNU Lesser General Public License Usage
- ** Alternatively, this file may be used under the terms of the GNU Lesser
- ** General Public License version 2.1 as published by the Free Software
- ** Foundation and appearing in the file LICENSE.LGPL included in the
- ** packaging of this file.  Please review the following information to
- ** ensure the GNU Lesser General Public License version 2.1 requirements
- ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
- **
- ** In addition, as a special exception, Nokia gives you certain additional
- ** rights.  These rights are described in the Nokia Qt LGPL Exception
- ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
- **
- ** If you have questions regarding the use of this file, please contact
- ** Nokia at qt-info@nokia.com.
- **
- **
- **
- **
- **
- **
- **
- **
- ** $QT_END_LICENSE$
- **
- ****************************************************************************/
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
 #include <qurl.h>
 //Backend
-#include "qgallerymdsutility.h"
+#include "qgallerymdsutility_p.h"
 //Symbian
 #include <mdeconstants.h>
 #include <mdesession.h>
@@ -61,6 +61,24 @@ QDocumentGalleryMDSUtility::~QDocumentGalleryMDSUtility()
 }
 
 CMdEObjectDef& QDocumentGalleryMDSUtility::ObjDefFromItemTypeL( CMdENamespaceDef &nameSpace, QString itemType )
+{
+#ifdef MDS_25_COMPILATION_ENABLED
+    return ObjDefFromItemTypeForMDS25L( nameSpace, itemType );
+#else
+    CMdEObjectDef* mdEObjectDef = ObjDefFromItemTypeForMDS20L( nameSpace, itemType );
+    if( !mdEObjectDef )
+        User::Leave( KErrBadHandle );
+    
+    return *mdEObjectDef;
+#endif // MDS_25_COMPILATION_ENABLED 
+}
+
+#ifdef MDS_25_COMPILATION_ENABLED
+CMdEObjectDef& QDocumentGalleryMDSUtility::ObjDefFromItemTypeForMDS25L( CMdENamespaceDef &nameSpace, QString itemType )
+#else
+//mds 2.0 return pointer instead of ref from GetObjectDefL function
+CMdEObjectDef* QDocumentGalleryMDSUtility::ObjDefFromItemTypeForMDS20L( CMdENamespaceDef &nameSpace, QString itemType )
+#endif // MDS_25_COMPILATION_ENABLED
 {
     if (itemType == QDocumentGallery::Audio.name()) {
         return nameSpace.GetObjectDefL( MdeConstants::Audio::KAudioObject );
@@ -184,6 +202,19 @@ void QDocumentGalleryMDSUtility::GetDataFieldsForItemType( QStringList &property
 
 void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVariant &output, int key )
 {
+#ifdef MDS_25_COMPILATION_ENABLED
+    GetMetaDataFieldForMDS25L( inputItem, output, key );
+#else
+    GetMetaDataFieldForMDS20L( inputItem, output, key );
+#endif // MDS_25_COMPILATION_ENABLED 
+}
+
+#ifdef MDS_25_COMPILATION_ENABLED
+void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputItem, QVariant &output, int key )
+{
+    if (!inputItem)
+        return;
+
     output.clear();
     switch (key) {
     case EUri:
@@ -340,7 +371,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-#ifdef MDS_25_COMPILATION_ENABLED            
+#ifdef MDS_25_92MCL_COMPILATION_ENABLED            
     case EAudioCodec:
         {
             if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
@@ -357,7 +388,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
             }
             break;
         }
-#endif //MDS_25_COMPILATION_ENABLED
+#endif //MDS_25_92MCL_COMPILATION_ENABLED
     case EAudioBitrate:
     case EVideoBitrate:
         {
@@ -634,6 +665,656 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldL( CMdEObject *inputItem, QVari
     }
 }
 
+#else
+
+void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputItem, QVariant &output, int key )
+{
+    if (!inputItem)
+        return;
+
+    output.clear();
+    switch (key) {
+    case EUri:
+        {
+            QUrl url( s60DescToQString( inputItem->Uri() ) );
+            output.setValue( url );
+            break;
+        }
+    case EFileSize:
+        {
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Object::KSizeProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* sizeProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, sizeProp );
+            if ( foundIndex != KErrNotFound && sizeProp ) {
+                CMdEUint32Property*     uint32Property = NULL;
+                uint32Property = ( CMdEUint32Property* )sizeProp;
+                unsigned long int value = uint32Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case ELastModified:
+        {
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Object::KLastModifiedDateProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* modProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, modProp );
+            if ( foundIndex != KErrNotFound && modProp ) {
+                CMdETimeProperty*     timeProperty = NULL;
+                timeProperty = ( CMdETimeProperty* )modProp;
+                output.setValue( symbianTTimetoQDateTime( timeProperty->Value() ) );
+            }
+            break;
+        }
+    case ETitle:
+        {
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Object::KTitleProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* titleProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, titleProp );
+            if ( foundIndex != KErrNotFound && titleProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )titleProp;
+                output.setValue( s60DescToQString( textProperty->Value() ) );
+            }
+            break;
+        }
+    case EMime:
+        {
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Object::KItemTypeProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* mimeProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, mimeProp );
+            if ( foundIndex != KErrNotFound && mimeProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )mimeProp;
+                output.setValue( s60DescToQString( textProperty->Value() ) );
+            }
+            break;
+        }
+    case EAuthor:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KAuthorProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* authorProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, authorProp );
+            if ( foundIndex != KErrNotFound && authorProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )authorProp;
+                output.setValue( s60DescToQString( textProperty->Value() ) );
+            }
+            break;
+        }
+    case ECopyright:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KCopyrightProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* copyProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, copyProp );
+            if ( foundIndex != KErrNotFound && copyProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )copyProp;
+                output.setValue( s60DescToQString( textProperty->Value() ) );
+            }
+            break;
+        }
+    case EDescription:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KDescriptionProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* desProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, desProp );
+            if ( foundIndex != KErrNotFound && desProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )desProp;
+                output.setValue( s60DescToQString( textProperty->Value() ) );
+            }
+            break;
+        }
+    case EComments:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KCommentProperty );
+            if( !propDef )
+                return;
+
+<<<<<<< HEAD:src/gallery/symbian/qgallerymdsutility.cpp
+ \a desc descriptor to be converted
+ \return QString containing the converted string
+ */
+QString QDocumentGalleryMDSUtility::s60DescToQString(const TDesC& desc)
+{
+    return QString::fromUtf16(desc.Ptr(), desc.Length());
+}
+=======
+            CMdEProperty* comProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, comProp );
+            if ( foundIndex != KErrNotFound && comProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )comProp;
+                output.setValue( s60DescToQString( textProperty->Value() ) );
+            }
+            break;
+        }
+    case ERating:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
+            if( !propDef )
+                return;
+>>>>>>> 94fab8630bd996815014dca6d97347e09cf68b7f:src/gallery/symbian/qgallerymdsutility.cpp
+
+            CMdEProperty* rateProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, rateProp );
+            if ( foundIndex != KErrNotFound && rateProp ) {
+                CMdEUint8Property*     uint8Property = NULL;
+                uint8Property = ( CMdEUint8Property* )rateProp;
+                unsigned int value = uint8Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EDuration:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KDurationProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* duraProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, duraProp );
+            if ( foundIndex != KErrNotFound && duraProp ) {
+                CMdEReal32Property*     real32Property = NULL;
+                real32Property = ( CMdEReal32Property* )duraProp;
+                double value = real32Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EPerformer:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
+            if( !propDef )
+                return;
+
+<<<<<<< HEAD:src/gallery/symbian/qgallerymdsutility.cpp
+ \a string QString to be converted
+ \return Pointer to a Symbian S60 descriptor on success;
+ otherwise returns NULL pointer
+ */
+HBufC* QDocumentGalleryMDSUtility::qStringToS60Desc(const QString& string)
+{
+    TPtrC16 str(reinterpret_cast<const TUint16*>(string.utf16()));
+    return str.Alloc();
+}
+=======
+            CMdEProperty* artistProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, artistProp );
+            if ( foundIndex != KErrNotFound && artistProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )artistProp;
+                output.setValue( s60DescToQString( textProperty->Value() ) );
+            }
+            break;
+        }
+    case EAudioCodec:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KAudioFourCCProperty );
+            if( !propDef )
+                return;
+>>>>>>> 94fab8630bd996815014dca6d97347e09cf68b7f:src/gallery/symbian/qgallerymdsutility.cpp
+
+            CMdEProperty* codecProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, codecProp );
+            if ( foundIndex != KErrNotFound && codecProp ) {
+                CMdEUint32Property*     uint32Property = NULL;
+                uint32Property = ( CMdEUint32Property* )codecProp;
+                unsigned long int value = uint32Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EAudioBitrate:
+    case EVideoBitrate:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KBitrateProperty );
+            if( !propDef )
+                return;
+
+<<<<<<< HEAD:src/gallery/symbian/qgallerymdsutility.cpp
+ \a desc 8 bit descriptor to be converted
+ \return Converted QString on success; otherwise returns null QString
+ */
+QString QDocumentGalleryMDSUtility::s60Desc8ToQString(const TDesC8& desc)
+{
+    QString qtString;
+    HBufC* s60str;
+    TRAPD(error, s60str = CnvUtfConverter::ConvertToUnicodeFromUtf8L(desc));
+    if (error == KErrNone) {
+        qtString = QString::fromUtf16(s60str->Ptr(), s60str->Length());
+        delete s60str;
+    }
+    return qtString;
+}
+=======
+            CMdEProperty* brateProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, brateProp );
+            if ( foundIndex != KErrNotFound && brateProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )brateProp;
+                unsigned int value = uint16Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EPlayCount:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
+            if( !propDef )
+                return;
+>>>>>>> 94fab8630bd996815014dca6d97347e09cf68b7f:src/gallery/symbian/qgallerymdsutility.cpp
+
+            CMdEProperty* countProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, countProp );
+            if ( foundIndex != KErrNotFound && countProp ) {
+                CMdEUint32Property*     uint32Property = NULL;
+                uint32Property = ( CMdEUint32Property* )countProp;
+                unsigned long int value = uint32Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case ESampleRate:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Audio::KSamplingFrequencyProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* samplingProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, samplingProp );
+            if ( foundIndex != KErrNotFound && samplingProp ) {
+                CMdEReal32Property*     real32Property = NULL;
+                real32Property = ( CMdEReal32Property* )samplingProp;
+                double value = real32Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EWidth:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KWidthProperty );
+            if( !propDef )
+                return;
+
+<<<<<<< HEAD:src/gallery/symbian/qgallerymdsutility.cpp
+ \a string QString to be converted
+ \return Pointer to a Symbian S60 descriptor containing the UTF8 string on success;
+ otherwise returns NULL pointer
+ */
+HBufC8* QDocumentGalleryMDSUtility::qStringToS60Desc8(const QString& string)
+{
+    TPtrC16 str(reinterpret_cast<const TUint16*>(string.utf16()));
+    HBufC8* s60str;
+    TRAPD(error, s60str = CnvUtfConverter::ConvertFromUnicodeToUtf8L(str));
+    if (error != KErrNone) {
+        return NULL;
+    }
+    return s60str;
+}
+=======
+            CMdEProperty* widthProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, widthProp );
+            if ( foundIndex != KErrNotFound && widthProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )widthProp;
+                unsigned int value = uint16Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EHeight:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KHeightProperty );
+            if( !propDef )
+                return;
+>>>>>>> 94fab8630bd996815014dca6d97347e09cf68b7f:src/gallery/symbian/qgallerymdsutility.cpp
+
+            CMdEProperty* heightProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, heightProp );
+            if ( foundIndex != KErrNotFound && heightProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )heightProp;
+                unsigned int value = uint16Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EOrientation:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KOrientationProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* orientationProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, orientationProp );
+            if ( foundIndex != KErrNotFound && orientationProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )orientationProp;
+                unsigned int value = uint16Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EDateTaken:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KDateTimeOriginalProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* dateProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, dateProp );
+            if ( foundIndex != KErrNotFound && dateProp ) {
+                CMdETimeProperty*     timeProperty = NULL;
+                timeProperty = ( CMdETimeProperty* )dateProp;
+                output.setValue( symbianTTimetoQDateTime( timeProperty->Value() ) );
+            }
+            break;
+        }
+    case ECameraManufacturer:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KMakeProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* makeProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, makeProp );
+            if ( foundIndex != KErrNotFound && makeProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )makeProp;
+                output.setValue( s60DescToQString( textProperty->Value() ) );
+            }
+            break;
+        }
+    case ECameraModel:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KModelProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* modelProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, modelProp );
+            if ( foundIndex != KErrNotFound && modelProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )modelProp;
+                output.setValue( s60DescToQString( textProperty->Value() ) );
+            }
+            break;
+        }
+    case EExposureProgram:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KExposureProgramProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* exppProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, exppProp );
+            if ( foundIndex != KErrNotFound && exppProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )exppProp;
+                unsigned int value = uint16Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EExposureTime:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KExposureTimeProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* exptProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, exptProp );
+            if ( foundIndex != KErrNotFound && exptProp ) {
+                CMdEReal32Property*     real32Property = NULL;
+                real32Property = ( CMdEReal32Property* )exptProp;
+                double value = real32Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EFNumber:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KFNumberProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* fnumProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, fnumProp );
+            if ( foundIndex != KErrNotFound && fnumProp ) {
+                CMdEReal32Property*     real32Property = NULL;
+                real32Property = ( CMdEReal32Property* )fnumProp;
+                double value = real32Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EFlashEnabled:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KFlashProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* flashProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, flashProp );
+            if ( foundIndex != KErrNotFound && flashProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )flashProp;
+                unsigned int value = uint16Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EFocalLength:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KFocalLengthIn35mmFilmProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* focalProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, focalProp );
+            if ( foundIndex != KErrNotFound && focalProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )focalProp;
+                unsigned int value = uint16Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EMeteringMode:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KMeteringModeProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* metProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, metProp );
+            if ( foundIndex != KErrNotFound && metProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )metProp;
+                unsigned int value = uint16Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EWhiteBalance:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KWhiteBalanceProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* whiteProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, whiteProp );
+            if ( foundIndex != KErrNotFound && whiteProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )whiteProp;
+                unsigned int value = uint16Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EFrameRate:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KFramerateProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* framerProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, framerProp );
+            if ( foundIndex != KErrNotFound && framerProp ) {
+                CMdEReal32Property*     real32Property = NULL;
+                real32Property = ( CMdEReal32Property* )framerProp;
+                double value = real32Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+    case EResumePosition:
+        {
+            if (inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
+                break;
+            }
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KLastPlayPositionProperty );
+            if( !propDef )
+                return;
+
+            CMdEProperty* posProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, posProp );
+            if ( foundIndex != KErrNotFound && posProp ) {
+                CMdEReal32Property*     real32Property = NULL;
+                real32Property = ( CMdEReal32Property* )posProp;
+                double value = real32Property->Value();
+                output.setValue( value );
+            }
+            break;
+        }
+        default:
+        break;
+    }
+}
+
+#endif // MDS_25_COMPILATION_ENABLED 
+
 QString QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( CMdEObject *inputItem )
 {
     if (inputItem->Def().Name() == MdeConstants::Album::KAlbumObject) {
@@ -647,7 +1328,6 @@ QString QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( CMdEObject *inputI
     } else if (inputItem->Def().Name() == MdeConstants::Video::KVideoObject) {
         return QDocumentGallery::Video.name();
     }
-
     QString null;
     return null;
 }
@@ -859,6 +1539,17 @@ TTime QDocumentGalleryMDSUtility::QDateTimetosymbianTTime(const QDateTime& time)
 CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefL( const QString &property,
     CMdENamespaceDef& defaultNameSpace )
 {
+#ifdef MDS_25_COMPILATION_ENABLED
+    return GetMDSPropertyDefForMDS25L( property, defaultNameSpace );
+#else
+    return GetMDSPropertyDefForMDS20L( property, defaultNameSpace );
+#endif
+}
+
+#ifdef MDS_25_COMPILATION_ENABLED
+CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefForMDS25L( const QString &property,
+    CMdENamespaceDef& defaultNameSpace )
+{
     if (property == QDocumentGallery::fileSize.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Object::KBaseObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Object::KSizeProperty );
@@ -927,13 +1618,13 @@ CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefL( const QString &
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
         return &propDef;
-#ifdef MDS_25_COMPILATION_ENABLED
-    } else if (property == QDocumentGallery::audioCodec.name()) {
+#ifdef MDS_25_92MCL_COMPILATION_ENABLED
+    }  else if (property == QDocumentGallery::audioCodec.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KAudioFourCCProperty );
         return &propDef;
-#endif //MDS_25_COMPILATION_ENABLED
-    } else if (property == QDocumentGallery::playCount.name()) {
+#endif //MDS_25_92MCL_COMPILATION_ENABLED
+    }  else if (property == QDocumentGallery::playCount.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
         return &propDef;
@@ -992,6 +1683,203 @@ CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefL( const QString &
     }
     return NULL;
 }
+
+#else
+
+CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefForMDS20L( const QString &property,
+    CMdENamespaceDef& defaultNameSpace )
+{
+    if (property == QDocumentGallery::fileSize.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Object::KBaseObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Object::KSizeProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::lastModified.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Object::KBaseObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Object::KLastModifiedDateProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::title.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Object::KBaseObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Object::KTitleProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::mimeType.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Object::KBaseObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Object::KItemTypeProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::duration.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::MediaObject::KDurationProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::performer.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::width.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::MediaObject::KWidthProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::height.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::MediaObject::KHeightProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::orientation.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Image::KOrientationProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::audioBitRate.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::MediaObject::KBitrateProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::videoBitRate.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::MediaObject::KBitrateProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::frameRate.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Video::KVideoObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Video::KFramerateProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::author.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::MediaObject::KAuthorProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::copyright.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::MediaObject::KCopyrightProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::description.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::MediaObject::KDescriptionProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::comments.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::MediaObject::KCommentProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::rating.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::audioCodec.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Video::KAudioFourCCProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::playCount.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::sampleRate.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Audio::KAudioObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Audio::KSamplingFrequencyProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::dateTaken.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Image::KDateTimeOriginalProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::cameraManufacturer.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Image::KMakeProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::cameraModel.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Image::KModelProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::exposureProgram.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Image::KExposureProgramProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::exposureTime.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Image::KExposureTimeProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::fNumber.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Image::KFNumberProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::flashEnabled.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Image::KFlashProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::focalLength.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Image::KFocalLengthIn35mmFilmProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::meteringMode.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Image::KMeteringModeProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::whiteBalance.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Image::KImageObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Image::KWhiteBalanceProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::resumePosition.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::Video::KVideoObject );
+        if( !def )
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::Video::KLastPlayPositionProperty );
+        return propDef;
+    }
+    return NULL;
+}
+
+#endif // MDS_25_COMPILATION_ENABLED
 
 int QDocumentGalleryMDSUtility::SetupQueryConditions(CMdEObjectQuery *query,
     QGalleryQueryRequest *request,
@@ -1060,6 +1948,19 @@ int QDocumentGalleryMDSUtility::SetupQueryConditions(CMdEObjectQuery *query,
 
 bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVariant &value, int key )
 {
+#ifdef MDS_25_COMPILATION_ENABLED
+    SetMetaDataFieldForMDS25L( item, value, key );
+#else
+    SetMetaDataFieldForMDS20L( item, value, key );
+#endif
+}
+
+#ifdef MDS_25_COMPILATION_ENABLED
+bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, const QVariant &value, int key )
+{
+    if (!item)
+        return false;
+    
     switch( key )
     {
     case EUri:
@@ -1071,18 +1972,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, sizeProp );
             if ( sizeProp ) {
                 TRAPD( err, sizeProp->SetUint32ValueL( value.toULongLong() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddUint32PropertyL( propDef, value.toULongLong() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case ELastModified:
@@ -1092,19 +1985,11 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, modProp );
             if ( modProp ) {
                 TRAPD( err, modProp->SetTimeValueL( QDateTimetosymbianTTime( value.toDateTime() ) ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
             else {
                 TRAPD( err, item->AddTimePropertyL( propDef, QDateTimetosymbianTTime( value.toDateTime() ) ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case ETitle:
@@ -1115,18 +2000,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( titleProp ) {
                 TRAPD( err, titleProp->SetTextValueL( text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EMime:
@@ -1144,18 +2021,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( authorProp ) {
                 TRAPD( err, authorProp->SetTextValueL( text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case ECopyright:
@@ -1171,18 +2040,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( copyProp ) {
                 TRAPD( err, copyProp->SetTextValueL( text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EDescription:
@@ -1198,18 +2059,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( desProp ) {
                 TRAPD( err, desProp->SetTextValueL( text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EComments:
@@ -1225,18 +2078,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( comProp ) {
                 TRAPD( err, comProp->SetTextValueL( text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case ERating:
@@ -1251,18 +2096,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, rateProp );
             if ( rateProp ) {
                 TRAPD( err, rateProp->SetUint8ValueL( value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddUint8PropertyL( propDef, value.toUInt() ) );
-                if(err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EDuration:
@@ -1277,18 +2114,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, duraProp );
             if ( duraProp ) {
                 TRAPD( err, duraProp->SetReal32ValueL( value.toDouble() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddReal32PropertyL( propDef, value.toDouble() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EPerformer:
@@ -1304,22 +2133,14 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( artistProp ) {
                 TRAPD( err, artistProp->SetTextValueL( text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
-#ifdef MDS_25_COMPILATION_ENABLED            
-    case EAudioCodec:
+#ifdef MDS_25_92MCL_COMPILATION_ENABLED            
+     case EAudioCodec:
         {
             if (item->Def().Name() != MdeConstants::Audio::KAudioObject
                     && item->Def().Name() != MdeConstants::Video::KVideoObject
@@ -1331,21 +2152,13 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, codecProp );
             if ( codecProp ) {
                 TRAPD( err, codecProp->SetUint32ValueL( value.toULongLong() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddUint32PropertyL( propDef, value.toULongLong() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
-#endif //MDS_25_COMPILATION_ENABLED
+#endif //MDS_25_92MCL_COMPILATION_ENABLED
     case EAudioBitrate:
     case EVideoBitrate:
         {
@@ -1359,18 +2172,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, brateProp );
             if ( brateProp ) {
                 TRAPD( err, brateProp->SetUint16ValueL( value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EPlayCount:
@@ -1385,18 +2190,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, countProp );
             if ( countProp ) {
                 TRAPD( err, countProp->SetUint32ValueL( value.toULongLong() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddUint32PropertyL( propDef, value.toULongLong() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case ESampleRate:
@@ -1409,18 +2206,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, samplingProp );
             if ( samplingProp ) {
                 TRAPD( err, samplingProp->SetReal32ValueL( value.toDouble() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddReal32PropertyL( propDef, value.toDouble() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EWidth:
@@ -1435,18 +2224,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, widthProp );
             if ( widthProp ) {
                 TRAPD( err, widthProp->SetUint16ValueL( value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EHeight:
@@ -1461,18 +2242,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, heightProp );
             if ( heightProp ) {
                 TRAPD( err, heightProp->SetUint16ValueL( value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EOrientation:
@@ -1485,19 +2258,11 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, orientationProp );
             if ( orientationProp ) {
                 TRAPD( err, orientationProp->SetUint16ValueL( value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
             else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EDateTaken:
@@ -1510,18 +2275,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, dateProp );
             if ( dateProp ) {
                 TRAPD( err, dateProp->SetTimeValueL( QDateTimetosymbianTTime( value.toDateTime() ) ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddTimePropertyL( propDef, QDateTimetosymbianTTime( value.toDateTime() ) ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case ECameraManufacturer:
@@ -1535,18 +2292,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( makeProp ) {
                 TRAPD( err, makeProp->SetTextValueL( text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case ECameraModel:
@@ -1560,18 +2309,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( modelProp ) {
                 TRAPD( err, modelProp->SetTextValueL( text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EExposureProgram:
@@ -1584,18 +2325,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, exppProp );
             if ( exppProp ) {
                 TRAPD( err, exppProp->SetUint16ValueL( value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EExposureTime:
@@ -1608,18 +2341,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, exptProp );
             if ( exptProp ) {
                 TRAPD( err, exptProp->SetReal32ValueL( value.toDouble() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddReal32PropertyL( propDef, value.toDouble() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EFNumber:
@@ -1632,18 +2357,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, fnumProp );
             if ( fnumProp ) {
                 TRAPD( err, fnumProp->SetReal32ValueL( value.toDouble() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddReal32PropertyL( propDef, value.toDouble() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EFlashEnabled:
@@ -1656,18 +2373,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, flashProp );
             if ( flashProp ) {
                 TRAPD( err, flashProp->SetUint16ValueL( value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EFocalLength:
@@ -1680,18 +2389,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, focalProp );
             if ( focalProp ) {
                 TRAPD( err, focalProp->SetUint16ValueL( value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     case EMeteringMode:
@@ -1704,20 +2405,10 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, metProp );
             if ( metProp ) {
                 TRAPD( err, metProp->SetUint16ValueL( value.toUInt() ) );
-                if (err) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if (err) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
         case EWhiteBalance:
@@ -1730,19 +2421,11 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, whiteProp );
             if ( whiteProp ) {
                 TRAPD( err, whiteProp->SetUint16ValueL( value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
             else {
                 TRAPD( err, item->AddUint16PropertyL( propDef, value.toUInt() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
         case ELanguage:
@@ -1756,19 +2439,11 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             const TDesC text( qStringToS60Desc( value.toString() )->Des() );
             if ( langProp ) {
                 TRAPD( err, langProp->SetTextValueL( text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
             else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
         case EFrameRate:
@@ -1781,19 +2456,11 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, framerProp );
             if ( framerProp ) {
                 TRAPD( err, framerProp->SetReal32ValueL( value.toDouble() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
             else {
                 TRAPD( err, item->AddReal32PropertyL( propDef, value.toDouble() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
         case EResumePosition:
@@ -1806,25 +2473,675 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
             item->Property( propDef, posProp );
             if ( posProp ) {
                 TRAPD( err, posProp->SetReal32ValueL( value.toDouble() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
             else {
                 TRAPD( err, item->AddReal32PropertyL( propDef, value.toDouble() ) );
-                if (err) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return err == KErrNone ? true : false ;
             }
         }
     default:
         return false;
     }
 }
+
+#else
+
+bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, const QVariant &value, int key )
+{
+    if (!item)
+        return false;
+
+    switch( key )
+    {
+    case EUri:
+        return false;
+    case EFileSize:
+        {
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Object::KSizeProperty );
+            if( !propDef )
+                return false;
+            
+            CMdEProperty* sizeProp = NULL;
+            int foundIndex = item->Property( *propDef, sizeProp );
+            if ( foundIndex != KErrNotFound && sizeProp ) {
+                CMdEUint32Property*     uint32Property = NULL;
+                uint32Property = ( CMdEUint32Property* )sizeProp;
+                TRAPD( err, uint32Property->SetValueL( value.toULongLong() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddUint32PropertyL( *propDef, value.toULongLong() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case ELastModified:
+        {
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Object::KLastModifiedDateProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* modProp = NULL;
+            int foundIndex = item->Property( *propDef, modProp );
+            if ( foundIndex != KErrNotFound && modProp ) {
+                CMdETimeProperty*     timeProperty = NULL;
+                timeProperty = ( CMdETimeProperty* )modProp;
+                TRAPD( err, timeProperty->SetValueL( QDateTimetosymbianTTime( value.toDateTime() ) ) );
+                return err == KErrNone ? true : false ;
+            }
+            else {
+                TRAPD( err, item->AddTimePropertyL( *propDef, QDateTimetosymbianTTime( value.toDateTime() ) ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case ETitle:
+        {
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Object::KTitleProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* titleProp = NULL;
+            int foundIndex = item->Property( *propDef, titleProp );
+            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
+            if ( foundIndex != KErrNotFound && titleProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )titleProp;
+                TRAPD( err, textProperty->SetValueL( text ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EMime:
+        return false;
+    case EAuthor:
+        {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KAuthorProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* authorProp = NULL;
+            int foundIndex = item->Property( *propDef, authorProp );
+            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
+            if ( foundIndex != KErrNotFound && authorProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )authorProp;
+                TRAPD( err, textProperty->SetValueL( text ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case ECopyright:
+        {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject ) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KCopyrightProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* copyProp = NULL;
+            int foundIndex = item->Property( *propDef, copyProp );
+            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
+            if ( foundIndex != KErrNotFound && copyProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )copyProp;
+                TRAPD( err, textProperty->SetValueL( text ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EDescription:
+        {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KDescriptionProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* desProp = NULL;
+            int foundIndex = item->Property( *propDef, desProp );
+            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
+            if ( foundIndex != KErrNotFound && desProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )desProp;
+                TRAPD( err, textProperty->SetValueL( text ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EComments:
+        {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KCommentProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* comProp = NULL;
+            int foundIndex = item->Property( *propDef, comProp );
+            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
+            if ( foundIndex != KErrNotFound && comProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )comProp;
+                TRAPD( err, textProperty->SetValueL( text ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case ERating:
+        {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* rateProp = NULL;
+            int foundIndex = item->Property( *propDef, rateProp );
+            if ( foundIndex != KErrNotFound && rateProp ) {
+                CMdEUint8Property*     uint8Property = NULL;
+                uint8Property = ( CMdEUint8Property* )rateProp;
+                TRAPD( err, uint8Property->SetValueL( value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddUint8PropertyL( *propDef, value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EDuration:
+        {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KDurationProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* duraProp = NULL;
+            int foundIndex = item->Property( *propDef, duraProp );
+            if ( foundIndex != KErrNotFound && duraProp ) {
+                CMdEReal32Property*     real32Property = NULL;
+                real32Property = ( CMdEReal32Property* )duraProp;
+                TRAPD( err, real32Property->SetValueL( value.toDouble() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddReal32PropertyL( *propDef, value.toDouble() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EPerformer:
+        {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* artistProp = NULL;
+            int foundIndex = item->Property( *propDef, artistProp );
+            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
+            if ( foundIndex != KErrNotFound && artistProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )artistProp;
+                TRAPD( err, textProperty->SetValueL( text ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EAudioCodec:
+        {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject ) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KAudioFourCCProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* codecProp = NULL;
+            int foundIndex = item->Property( *propDef, codecProp );
+            if ( foundIndex != KErrNotFound && codecProp ) {
+                CMdEUint32Property*     uint32Property = NULL;
+                uint32Property = ( CMdEUint32Property* )codecProp;
+                TRAPD( err, uint32Property->SetValueL( value.toULongLong() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddUint32PropertyL( *propDef, value.toULongLong() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EAudioBitrate:
+    case EVideoBitrate:
+        {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KBitrateProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* brateProp = NULL;
+            int foundIndex = item->Property( *propDef, brateProp );
+            if ( foundIndex != KErrNotFound && brateProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )brateProp;
+                TRAPD( err, uint16Property->SetValueL( value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddUint16PropertyL( *propDef, value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EPlayCount:
+        {
+            if(item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* countProp = NULL;
+            int foundIndex = item->Property( *propDef, countProp );
+            if ( foundIndex != KErrNotFound && countProp ) {
+                CMdEUint32Property*     uint32Property = NULL;
+                uint32Property = ( CMdEUint32Property* )countProp;
+                TRAPD( err, uint32Property->SetValueL( value.toULongLong() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddUint32PropertyL( *propDef, value.toULongLong() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case ESampleRate:
+        {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Audio::KSamplingFrequencyProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* samplingProp = NULL;
+            int foundIndex = item->Property( *propDef, samplingProp );
+            if ( foundIndex != KErrNotFound && samplingProp ) {
+                CMdEReal32Property*     real32Property = NULL;
+                real32Property = ( CMdEReal32Property* )samplingProp;
+                TRAPD( err, real32Property->SetValueL( value.toDouble() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddReal32PropertyL( *propDef, value.toDouble() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EWidth:
+        {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KWidthProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* widthProp = NULL;
+            int foundIndex = item->Property( *propDef, widthProp );
+            if ( foundIndex != KErrNotFound && widthProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )widthProp;
+                TRAPD( err, uint16Property->SetValueL( value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddUint16PropertyL( *propDef, value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EHeight:
+        {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KHeightProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* heightProp = NULL;
+            int foundIndex = item->Property( *propDef, heightProp );
+            if ( foundIndex != KErrNotFound && heightProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )heightProp;
+                TRAPD( err, uint16Property->SetValueL( value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddUint16PropertyL( *propDef, value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EOrientation:
+        {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject ) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KOrientationProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* orientationProp = NULL;
+            int foundIndex = item->Property( *propDef, orientationProp );
+            if ( foundIndex != KErrNotFound && orientationProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )orientationProp;
+                TRAPD( err, uint16Property->SetValueL( value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            }
+            else {
+                TRAPD( err, item->AddUint16PropertyL( *propDef, value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EDateTaken:
+        {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KDateTimeOriginalProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* dateProp = NULL;
+            int foundIndex = item->Property( *propDef, dateProp );
+            if ( foundIndex != KErrNotFound && dateProp ) {
+                CMdETimeProperty*     timeProperty = NULL;
+                timeProperty = ( CMdETimeProperty* )dateProp;
+                TRAPD( err, timeProperty->SetValueL( QDateTimetosymbianTTime( value.toDateTime() ) ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTimePropertyL( *propDef, QDateTimetosymbianTTime( value.toDateTime() ) ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case ECameraManufacturer:
+        {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KMakeProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* makeProp = NULL;
+            int foundIndex = item->Property( *propDef, makeProp );
+            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
+            if ( foundIndex != KErrNotFound && makeProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )makeProp;
+                TRAPD( err, textProperty->SetValueL( text ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case ECameraModel:
+        {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KModelProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* modelProp = NULL;
+            int foundIndex = item->Property( *propDef, modelProp );
+            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
+            if ( foundIndex != KErrNotFound && modelProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )modelProp;
+                TRAPD( err, textProperty->SetValueL( text ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EExposureProgram:
+        {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KExposureProgramProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* exppProp = NULL;
+            int foundIndex = item->Property( *propDef, exppProp );
+            if ( foundIndex != KErrNotFound && exppProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )exppProp;
+                TRAPD( err, uint16Property->SetValueL( value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddUint16PropertyL( *propDef, value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EExposureTime:
+        {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KExposureTimeProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* exptProp = NULL;
+            int foundIndex = item->Property( *propDef, exptProp );
+            if ( foundIndex != KErrNotFound && exptProp ) {
+                CMdEReal32Property*     real32Property = NULL;
+                real32Property = ( CMdEReal32Property* )exptProp;
+                TRAPD( err, real32Property->SetValueL( value.toDouble() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddReal32PropertyL( *propDef, value.toDouble() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EFNumber:
+        {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KFNumberProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* fnumProp = NULL;
+            int foundIndex = item->Property( *propDef, fnumProp );
+            if ( foundIndex != KErrNotFound && fnumProp ) {
+                CMdEReal32Property*     real32Property = NULL;
+                real32Property = ( CMdEReal32Property* )fnumProp;
+                TRAPD( err, real32Property->SetValueL( value.toDouble() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddReal32PropertyL( *propDef, value.toDouble() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EFlashEnabled:
+        {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KFlashProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* flashProp = NULL;
+            int foundIndex = item->Property( *propDef, flashProp );
+            if ( foundIndex != KErrNotFound && flashProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )flashProp;
+                TRAPD( err, uint16Property->SetValueL( value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddUint16PropertyL( *propDef, value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EFocalLength:
+        {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KFocalLengthIn35mmFilmProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* focalProp = NULL;
+            int foundIndex = item->Property( *propDef, focalProp );
+            if ( foundIndex != KErrNotFound && focalProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )focalProp;
+                TRAPD( err, uint16Property->SetValueL( value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddUint16PropertyL( *propDef, value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EMeteringMode:
+        {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KMeteringModeProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* metProp = NULL;
+            int foundIndex = item->Property( *propDef, metProp );
+            if ( foundIndex != KErrNotFound && metProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )metProp;
+                TRAPD( err, uint16Property->SetValueL( value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddUint16PropertyL( *propDef, value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+        case EWhiteBalance:
+        {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KWhiteBalanceProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* whiteProp = NULL;
+            int foundIndex = item->Property( *propDef, whiteProp );
+            if ( foundIndex != KErrNotFound && whiteProp ) {
+                CMdEUint16Property*     uint16Property = NULL;
+                uint16Property = ( CMdEUint16Property* )whiteProp;
+                TRAPD( err, uint16Property->SetValueL( value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            }
+            else {
+                TRAPD( err, item->AddUint16PropertyL( *propDef, value.toUInt() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+        case EFrameRate:
+        {
+            if (item->Def().Name() != MdeConstants::Video::KVideoObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KFramerateProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* framerProp = NULL;
+            int foundIndex = item->Property( *propDef, framerProp );
+            if ( foundIndex != KErrNotFound && framerProp ) {
+                CMdEReal32Property*     real32Property = NULL;
+                real32Property = ( CMdEReal32Property* )framerProp;
+                TRAPD( err, real32Property->SetValueL( value.toDouble() ) );
+                return err == KErrNone ? true : false ;
+            }
+            else {
+                TRAPD( err, item->AddReal32PropertyL( *propDef, value.toDouble() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+        case EResumePosition:
+        {
+            if (item->Def().Name() != MdeConstants::Video::KVideoObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KLastPlayPositionProperty );
+            if( !propDef )
+                return false;
+
+            CMdEProperty* posProp = NULL;
+            int foundIndex = item->Property( *propDef, posProp );
+            if ( foundIndex != KErrNotFound && posProp ) {
+                CMdEReal32Property*     real32Property = NULL;
+                real32Property = ( CMdEReal32Property* )posProp;
+                TRAPD( err, real32Property->SetValueL( value.toDouble() ) );
+                return err == KErrNone ? true : false ;
+            }
+            else {
+                TRAPD( err, item->AddReal32PropertyL( *propDef, value.toDouble() ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    default:
+        return false;
+    }
+}
+
+#endif // MDS_25_COMPILATION_ENABLED
 
 int QDocumentGalleryMDSUtility::InsertUInt32PropertyCondition( CMdELogicCondition &rootCond,
     CMdEPropertyDef *propDef,

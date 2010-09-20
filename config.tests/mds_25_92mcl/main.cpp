@@ -39,51 +39,14 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYTRACKERFILEREMOVERESPONSE_P_H
-#define QGALLERYTRACKERFILEREMOVERESPONSE_P_H
+#include <e32def.h>
+#include <e32cmn.h>
+#include <mdeconstants.h>
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+int main(int, char**)
+{   
+    using namespace MdeConstants::MediaObject;
+    TDesC  mediaproperty (KAudioFourCCProperty);
+    return 0;
+}
 
-#include "qgalleryabstractresponse_p.h"
-
-#include "qgallerydbusinterface_p.h"
-
-QT_BEGIN_NAMESPACE
-class QDBusPendingCallWatcher;
-QT_END_NAMESPACE
-
-QTM_BEGIN_NAMESPACE
-
-class QGalleryTrackerRemoveResponsePrivate;
-
-class QGalleryTrackerRemoveResponse : public QGalleryAbstractResponse
-{
-    Q_OBJECT
-public:
-    QGalleryTrackerRemoveResponse(
-            const QGalleryDBusInterfacePointer &fileInterface,
-            const QString &uri,
-            QObject *parent = 0);
-    ~QGalleryTrackerRemoveResponse();
-
-    void cancel();
-
-    bool waitForFinished(int msecs);
-
-private:
-    Q_DECLARE_PRIVATE(QGalleryTrackerRemoveResponse)
-    Q_PRIVATE_SLOT(d_func(), void _q_removeFinished(QDBusPendingCallWatcher *))
-};
-
-QTM_END_NAMESPACE
-
-#endif

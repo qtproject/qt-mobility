@@ -267,7 +267,6 @@ QOrganizerCollectionEngineLocalId* QOrganizerItemSymbianFactory::createCollectio
 
 QString QOrganizerItemSymbianFactory::managerName() const
 {
-    /* TODO - put your engine name here */
     return QLatin1String("symbian");
 }
 Q_EXPORT_PLUGIN2(qtorganizer_symbian, QOrganizerItemSymbianFactory);
@@ -380,7 +379,6 @@ void QOrganizerItemSymbianEngine::itemInstancesL(
     }
 
     // Set cal view filter based on the item type
-    // TODO: move to transform classes?
     CalCommon::TCalViewFilter filter(0);
     QString itemType;
     if (generator.type() == QOrganizerItemType::TypeEvent) {
@@ -397,13 +395,13 @@ void QOrganizerItemSymbianEngine::itemInstancesL(
     TCalTime startTime;
     startTime.SetTimeUtcL(TCalTime::MinTime());
     if (periodStart.isValid())
-        startTime.SetTimeUtcL(toTTime(periodStart, Qt::UTC));
+        startTime.SetTimeLocalL(toTTime(periodStart, Qt::LocalTime));
 
     // If end date is not defined, use maximum end date
     TCalTime endTime;
     endTime.SetTimeUtcL(TCalTime::MaxTime());
     if (periodEnd.isValid())
-        endTime.SetTimeUtcL(toTTime(periodEnd, Qt::UTC));
+        endTime.SetTimeLocalL(toTTime(periodEnd, Qt::LocalTime));
 
     // Loop through all the instance views and fetch the item instances
     foreach(QOrganizerCollectionLocalId collectionId, m_collections.keys()) {
@@ -509,13 +507,10 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
         } else {
             parentLocalUid = calInstance->Entry().LocalUidL();
         }
-        QOrganizerEventOccurrence *eventOccurrence = static_cast<QOrganizerEventOccurrence *>(&itemInstance);
-        eventOccurrence->setParentLocalId(toItemLocalId(localCollectionIdValue, parentLocalUid));
 
         // Set instance origin, the detail is set here because the corresponding transform class
         // does not know the required values
-        QOrganizerItemInstanceOrigin origin(
-            itemInstance.detail<QOrganizerItemInstanceOrigin>());
+        QOrganizerItemInstanceOrigin origin(itemInstance.detail<QOrganizerItemInstanceOrigin>());
         origin.setParentLocalId(toItemLocalId(localCollectionIdValue, parentLocalUid));
         origin.setOriginalDate(toQDateTimeL(calInstance->StartTimeL()).date());
         itemInstance.saveDetail(&origin);
@@ -530,7 +525,10 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
     }
 }
 
-QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(
+        const QOrganizerItemFilter& filter,
+        const QList<QOrganizerItemSortOrder>& sortOrders,
+        QOrganizerItemManager::Error* error) const
 {
     QList<QOrganizerItemLocalId> ids;
     TRAPD(err, itemIdsL(ids, filter, sortOrders))
@@ -676,24 +674,31 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& i
     // Transform CCalEntry -> QOrganizerItem
     QOrganizerItem item;
     m_itemTransform.toItemL(*calEntry, &item);
+    
+    // Set instance origin
+    if (item.type() == QOrganizerItemType::TypeEventOccurrence
+        || item.type() == QOrganizerItemType::TypeTodoOccurrence) {
+        HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(item);
+        quint64 localCollectionIdValue = m_collections[collectionLocalId].calCollectionId();
+        CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, item, *globalUid);
+
+        // Set instance origin, the detail is set here because the corresponding transform class
+        // does not know the required values
+        QOrganizerItemInstanceOrigin origin(item.detail<QOrganizerItemInstanceOrigin>());
+        origin.setParentLocalId(toItemLocalId(localCollectionIdValue, parentEntry->LocalUidL()));
+        origin.setOriginalDate(toQDateTimeL(calEntry->StartTimeL()).date());
+        item.saveDetail(&origin);
+
+        CleanupStack::PopAndDestroy(parentEntry);
+        CleanupStack::PopAndDestroy(globalUid);
+    }
     CleanupStack::PopAndDestroy(calEntry);
     
     // Set item id
     QOrganizerItemId id;
     id.setLocalId(itemId);
     id.setManagerUri(managerUri());
-    item.setId(id);
-
-    // Set parent local id
-    if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
-        HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(item);
-        quint64 localCollectionIdValue = m_collections[collectionLocalId].calCollectionId();
-        CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, item, *globalUid);
-        QOrganizerEventOccurrence *eventOccurrence = static_cast<QOrganizerEventOccurrence *>(&item);
-        eventOccurrence->setParentLocalId(toItemLocalId(localCollectionIdValue, parentEntry->LocalUidL()));
-        CleanupStack::PopAndDestroy(parentEntry);
-        CleanupStack::PopAndDestroy(globalUid);
-    }
+    item.setId(id);    
 
     // Set collection id
     QOrganizerCollectionId cid;
@@ -992,13 +997,14 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(
     if (globalUid.Length()) {
         // Search for an existing entry based on guid
         RPointerArray<CCalEntry> calEntryArray;
+        CleanupResetAndDestroyPushL(calEntryArray);
         entryViewL(collectionId)->FetchL(globalUid, calEntryArray);
         if (calEntryArray.Count()) {
             // take the first item in the array
             entry = calEntryArray[0];
             calEntryArray.Remove(0);
-            calEntryArray.ResetAndDestroy();
         }
+        CleanupStack::PopAndDestroy(&calEntryArray);
     }
 
     // ownership transferred
@@ -1102,27 +1108,19 @@ void QOrganizerItemSymbianEngine::removeItemL(
 {
     // TODO: How to remove item instances?
 
-    // Fetch item
-    // There is a bug in symbian calendar API. It will not report any error
-    // when removing a nonexisting entry. So we need to fetch the item to see
-    // if it really exists before trying to delete it.
-    TCalLocalUid uid = toTCalLocalUid(organizeritemId);
-    CCalEntry *calEntry(0);
-    QOrganizerCollectionLocalId collectionLocalId(0);
-    foreach (const OrganizerSymbianCollection &collection, m_collections) {
-        // TODO: instead of looping through entry views, get the collection id from
-        // local id? (not certain that is the correct way, because the Qt API for
-        // collections is still under development)
-        calEntry = collection.calEntryView()->FetchL(uid);
-        if (calEntry) {
-            collectionLocalId = collection.localId();
-            break;
-        }
-    }
+    QOrganizerCollectionLocalId collectionId = getCollectionLocalId(organizeritemId);
+    if (!m_collections.contains(collectionId))
+        User::Leave(KErrNotFound);
+
+    // Find entry
+    TCalLocalUid calLocalId = toTCalLocalUid(organizeritemId);
+    CCalEntry *calEntry = entryViewL(collectionId)->FetchL(calLocalId);
+    CleanupStack::PushL(calEntry);
     if (!calEntry)
         User::Leave(KErrNotFound);
-    CleanupStack::PushL(calEntry);
-    entryViewL(collectionLocalId)->DeleteL(*calEntry);
+
+    // Remove entry
+    entryViewL(collectionId)->DeleteL(*calEntry);
     CleanupStack::PopAndDestroy(calEntry);
 }
 
@@ -1167,7 +1165,6 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemSymbianEngine::collectionIds(
 
 QList<QOrganizerCollectionLocalId> QOrganizerItemSymbianEngine::collectionIds() const
 {
-    // TODO: refactor as function is no longer leaving
     QList<QOrganizerCollectionLocalId> ids;
     foreach (const OrganizerSymbianCollection &collection, m_collections)
         ids.append(collection.localId());
@@ -1322,7 +1319,6 @@ void QOrganizerItemSymbianEngine::removeCollectionL(
     const QOrganizerCollectionLocalId& collectionId)
 {
     // Dont allow removing the default collection
-    // TODO: Or should we allow this?
     if (collectionId == m_defaultCollection.localId())
         User::Leave(KErrAccessDenied);
     
@@ -1494,20 +1490,16 @@ bool QOrganizerItemSymbianEngine::hasFeature(
     QOrganizerItemManager::ManagerFeature feature, 
     const QString& itemType) const
 {
-    // TODO - the answer to the question may depend on the type
     Q_UNUSED(itemType);
     switch(feature) {
         case QOrganizerItemManager::MutableDefinitions:
-            // TODO If you support save/remove detail definition, return true
+            // We don't support save/remove detail definition
             return false;
-
         case QOrganizerItemManager::Anonymous:
-            // TODO if this engine is anonymous (e.g. no other engine can share 
-            // the data) return true (mostly for an in memory engine)
+            // The engines share the same data
             return false;
         case QOrganizerItemManager::ChangeLogs:
-            // TODO if this engine supports filtering by last modified/created/
-            // removed timestamps, return true
+            // Change logs not supported
             return false;
     }
     return false;
@@ -1516,16 +1508,15 @@ bool QOrganizerItemSymbianEngine::hasFeature(
 bool QOrganizerItemSymbianEngine::isFilterSupported(
     const QOrganizerItemFilter& filter) const
 {
-    // TODO if you engine can natively support the filter, return true.  
-    // Otherwise you should emulate support in the item{Ids} functions.
     Q_UNUSED(filter);
+    // TODO: filtering based on timestamps could be an exception to the rule,
+    // i.e. timestamp detail filters should then return true.
     return false;
 }
 
 QList<int> QOrganizerItemSymbianEngine::supportedDataTypes() const
 {
     QList<int> ret;
-    // TODO - tweak which data types this engine understands
     ret << QVariant::String;
     ret << QVariant::Date;
     ret << QVariant::DateTime;

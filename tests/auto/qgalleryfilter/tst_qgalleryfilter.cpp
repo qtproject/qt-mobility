@@ -92,7 +92,7 @@ void tst_QGalleryFilter::metaDataFilter_data()
     QTest::addColumn<QString>("propertyName");
     QTest::addColumn<QVariant>("value");
     QTest::addColumn<QGalleryFilter::Comparator>("comparator");
-    QTest::addColumn<bool>("inverted");
+    QTest::addColumn<bool>("negated");
 
     QTest::newRow("album title")
             << QString::fromLatin1("albumTitle")
@@ -112,7 +112,7 @@ void tst_QGalleryFilter::metaDataFilter()
     QFETCH(QString, propertyName);
     QFETCH(QVariant, value);
     QFETCH(QGalleryFilter::Comparator, comparator);
-    QFETCH(bool, inverted);
+    QFETCH(bool, negated);
 
     {
         QGalleryMetaDataFilter filter;
@@ -121,23 +121,23 @@ void tst_QGalleryFilter::metaDataFilter()
         QCOMPARE(filter.propertyName(), QString());
         QCOMPARE(filter.value(), QVariant());
         QCOMPARE(filter.comparator(), QGalleryFilter::Equals);
-        QCOMPARE(filter.isInverted(), false);
+        QCOMPARE(filter.isNegated(), false);
 
         filter.setPropertyName(propertyName);
         filter.setValue(value);
         filter.setComparator(comparator);
-        filter.setInverted(inverted);
+        filter.setNegated(negated);
 
         QCOMPARE(filter.propertyName(), propertyName);
         QCOMPARE(filter.value(), value);
         QCOMPARE(filter.comparator(), comparator);
-        QCOMPARE(filter.isInverted(), inverted);
+        QCOMPARE(filter.isNegated(), negated);
     }
 
     {
         QGalleryMetaDataFilter filter(propertyName, value, comparator);
 
-        if (inverted)
+        if (negated)
             filter = !filter;
 
         QCOMPARE(filter.isValid(), true);
@@ -145,7 +145,7 @@ void tst_QGalleryFilter::metaDataFilter()
         QCOMPARE(filter.propertyName(), propertyName);
         QCOMPARE(filter.value(), value);
         QCOMPARE(filter.comparator(), comparator);
-        QCOMPARE(filter.isInverted(), inverted);
+        QCOMPARE(filter.isNegated(), negated);
     }
 }
 
@@ -401,7 +401,7 @@ void tst_QGalleryFilter::copyOnWrite()
         filter.setPropertyName(QLatin1String("albumTitle"));
         filter.setValue(QLatin1String("Greatest Hits"));
         filter.setComparator(QGalleryFilter::EndsWith);
-        filter.setInverted(true);
+        filter.setNegated(true);
 
         metaDataFilter = filter;
 
@@ -413,12 +413,12 @@ void tst_QGalleryFilter::copyOnWrite()
         QCOMPARE(filterCopy.propertyName(), QLatin1String("albumTitle"));
         QCOMPARE(filterCopy.value(), QVariant(QLatin1String("Greatest Hits")));
         QCOMPARE(filterCopy.comparator(), QGalleryFilter::EndsWith);
-        QCOMPARE(filterCopy.isInverted(), true);
+        QCOMPARE(filterCopy.isNegated(), true);
 
         QCOMPARE(filter.propertyName(), QLatin1String("artist"));
         QCOMPARE(filter.value(), QVariant(QLatin1String("Self Titled")));
         QCOMPARE(filter.comparator(), QGalleryFilter::StartsWith);
-        QCOMPARE(filter.isInverted(), true);
+        QCOMPARE(filter.isNegated(), true);
     } {
         QGalleryUnionFilter filter;
         filter.append(QGalleryMetaDataFilter());
@@ -462,7 +462,7 @@ void tst_QGalleryFilter::copyOnWrite()
     QCOMPARE(metaDataFilter.propertyName(), QLatin1String("albumTitle"));
     QCOMPARE(metaDataFilter.value(), QVariant(QLatin1String("Greatest Hits")));
     QCOMPARE(metaDataFilter.comparator(), QGalleryFilter::EndsWith);
-    QCOMPARE(metaDataFilter.isInverted(), true);
+    QCOMPARE(metaDataFilter.isNegated(), true);
 
     filters = unionFilter.filters();
     QCOMPARE(filters.count(), 1);

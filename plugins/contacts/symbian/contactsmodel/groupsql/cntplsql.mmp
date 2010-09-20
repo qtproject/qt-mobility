@@ -92,9 +92,12 @@ source      cntpplviewsession.cpp
 source		cpcskeymap.cpp
 source		c12keykeymap.cpp
 source		cqwertykeymap.cpp
+source		ckoreankeymap.cpp
 //source		cntmetadataoperation.cpp
 source		cpplpresencetable.cpp
-source    cntsqlsearch.cpp
+source    	cntsqlsearch.cpp
+source 		cntsqlkoreanitut.cpp
+source		cntsqlsearchbase.cpp
 
 LIBRARY         euser.lib 
 LIBRARY         efsrv.lib 
