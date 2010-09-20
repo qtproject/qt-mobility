@@ -237,7 +237,6 @@ public:
      */
     static QStringList landmarkAttributeKeys();
 
-
     /*
      * Returns Category Attribute keys
      *

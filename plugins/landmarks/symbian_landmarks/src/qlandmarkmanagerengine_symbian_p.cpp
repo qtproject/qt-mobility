@@ -775,16 +775,12 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarks(QList<QLandmark> * landm
     }
 
     if (noErrors) {
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            *errorString = "";
+        *error = QLandmarkManager::NoError;
+        *errorString = "";
     }
     else {
-        if (error)
-            *error = lastError;
-        if (errorString)
-            *errorString = lastErrorString;
+        *error = lastError;
+        *errorString = lastErrorString;
     }
 
     // handle to emit appropriate signal
@@ -905,16 +901,12 @@ bool LandmarkManagerEngineSymbianPrivate::removeLandmarks(const QList<QLandmarkI
     }
 
     if (noErrors) {
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            *errorString = "";
+        *error = QLandmarkManager::NoError;
+        *errorString = "";
     }
     else {
-        if (error)
-            *error = lastError;
-        if (errorString)
-            *errorString = lastErrorString;
+        *error = lastError;
+        *errorString = lastErrorString;
     }
 
     // handle to emit appropriate signal
@@ -2251,6 +2243,8 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
             savedsymbianLmId);
         landmark->setLandmarkId(savedQtLmId);
 
+        m_CreatedLmIds << savedQtLmId.localId();
+
         //        qDebug() << "Landmark = " << landmark->name() << "LandmarkId = " << savedQtLmId.localId()
         //            << " Saved Successfully!";
 
@@ -2275,6 +2269,9 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
             m_LandmarkDb->UpdateLandmarkL(*symbianLandmark);
             CleanupStack::Pop(symbianLandmark);
             *changed = true;
+
+            m_UpdatedLmIds << landmarkId.localId();
+
             result = true;
         }
     }
@@ -2314,6 +2311,8 @@ bool LandmarkManagerEngineSymbianPrivate::removeLandmarkInternalL(const QLandmar
         CleanupStack::PopAndDestroy(lm);
 
     m_LandmarkDb->RemoveLandmarkL(symbianLmId);
+
+    m_DeletedLmIds << landmarkId.localId();
 
     //    qDebug() << "Landmark id = " << landmarkId.localId() << "removed successfully.";
 
@@ -2396,6 +2395,8 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
             managerUri(), savedsymbianLmCatId);
         category->setCategoryId(savedQtCategoryId);
 
+        m_CreatedCatIds << savedQtCategoryId.localId();
+
         //        qDebug() << "category " << category->name() << " created successfully " << "cat Id ="
         //            << category->categoryId().localId();
 
@@ -2420,6 +2421,9 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
             //                << category->categoryId().localId();
 
             CleanupStack::Pop(symbiancat);
+
+            m_UpdatedCatIds << categoryId.localId();
+
             *changed = true;
             result = true;
         }
@@ -2461,6 +2465,8 @@ bool LandmarkManagerEngineSymbianPrivate::removeCategoryInternalL(
         CleanupStack::PopAndDestroy(cat);
 
     ExecuteAndDeleteLD(m_LandmarkCatMgr->RemoveCategoryL(symbianCategoryId));
+
+    m_DeletedCatIds << categoryId.localId();
 
     //    qDebug() << "category id = " << categoryId.localId() << " removed successfully";
 
@@ -2945,7 +2951,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
             TPtr filterName = filterbuf->Des();
 
             HBufC* filterbufcont = HBufC::NewL(keyValue.toString().size() + KExtrachars);
-            TPtr filterNamecont = filterbuf->Des();
+            TPtr filterNamecont = filterbufcont->Des();
 
             // If filter attribute value is valid then search for that specific text based on matchflags, else return all the landmarks
             // whose that attribute is set to some valid value.
@@ -4732,34 +4738,144 @@ void LandmarkManagerEngineSymbianPrivate::handleDatabaseEvent(const TPosLmEvent&
     qDebug() << "aEvent.iLandmarkItemId = " << aEvent.iLandmarkItemId;
     qDebug() << "aEvent.iEventType = " << aEvent.iEventType;
 
+    TInt id = aEvent.iLandmarkItemId;
+    QString localId;
+    localId.append(QString("%1").arg(id));
+
     switch (aEvent.iEventType) {
     case EPosLmEventLandmarkCreated:
     {
+        if (m_CreatedLmIds.contains(localId, Qt::CaseInsensitive)) {
+
+            for (int i = 0; i < m_CreatedLmIds.size(); ++i) {
+                if (m_CreatedLmIds.at(i) == localId) {
+                    m_CreatedLmIds.removeAt(i);
+                    break;
+                }
+            }
+        }
+        else {
+            QLandmarkId lmid;
+            lmid.setLocalId(localId);
+            lmid.setManagerUri(managerUri());
+            QList<QLandmarkId> lmids;
+            lmids << lmid;
+            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkAdded, lmids);
+        }
+
         qDebug() << "landmark created";
         break;
     }
     case EPosLmEventLandmarkDeleted:
     {
+        if (m_DeletedLmIds.contains(localId, Qt::CaseInsensitive)) {
+
+            for (int i = 0; i < m_DeletedLmIds.size(); ++i) {
+                if (m_DeletedLmIds.at(i) == localId) {
+                    m_DeletedLmIds.removeAt(i);
+                    break;
+                }
+            }
+        }
+        else {
+            QLandmarkId lmid;
+            lmid.setLocalId(localId);
+            lmid.setManagerUri(managerUri());
+            QList<QLandmarkId> lmids;
+            lmids << lmid;
+            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkRemoved, lmids);
+        }
         qDebug() << "landmark deleted";
         break;
     }
     case EPosLmEventLandmarkUpdated:
     {
+        if (m_UpdatedLmIds.contains(localId, Qt::CaseInsensitive)) {
+
+            for (int i = 0; i < m_UpdatedLmIds.size(); ++i) {
+                if (m_UpdatedLmIds.at(i) == localId) {
+                    m_UpdatedLmIds.removeAt(i);
+                    break;
+                }
+            }
+        }
+        else {
+            QLandmarkId lmid;
+            lmid.setLocalId(localId);
+            lmid.setManagerUri(managerUri());
+            QList<QLandmarkId> lmids;
+            lmids << lmid;
+            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkUpdated, lmids);
+        }
         qDebug() << "landmark updated";
         break;
     }
     case EPosLmEventCategoryCreated:
     {
+        if (m_CreatedCatIds.contains(localId, Qt::CaseInsensitive)) {
+
+            for (int i = 0; i < m_CreatedCatIds.size(); ++i) {
+                if (m_CreatedCatIds.at(i) == localId) {
+                    m_CreatedCatIds.removeAt(i);
+                    break;
+                }
+            }
+        }
+        else {
+            QLandmarkCategoryId catid;
+            catid.setLocalId(localId);
+            catid.setManagerUri(managerUri());
+            QList<QLandmarkCategoryId> catids;
+            catids << catid;
+            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::categoryAdded, QList<
+                QLandmarkId> (), catids);
+        }
         qDebug() << "landmark category created";
         break;
     }
     case EPosLmEventCategoryDeleted:
     {
+        if (m_DeletedCatIds.contains(localId, Qt::CaseInsensitive)) {
+
+            for (int i = 0; i < m_DeletedCatIds.size(); ++i) {
+                if (m_DeletedCatIds.at(i) == localId) {
+                    m_DeletedCatIds.removeAt(i);
+                    break;
+                }
+            }
+        }
+        else {
+            QLandmarkCategoryId catid;
+            catid.setLocalId(localId);
+            catid.setManagerUri(managerUri());
+            QList<QLandmarkCategoryId> catids;
+            catids << catid;
+            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::categoryRemoved, QList<
+                QLandmarkId> (), catids);
+        }
         qDebug() << "landmark category deleted";
         break;
     }
     case EPosLmEventCategoryUpdated:
     {
+        if (m_UpdatedCatIds.contains(localId, Qt::CaseInsensitive)) {
+
+            for (int i = 0; i < m_UpdatedCatIds.size(); ++i) {
+                if (m_UpdatedCatIds.at(i) == localId) {
+                    m_UpdatedCatIds.removeAt(i);
+                    break;
+                }
+            }
+        }
+        else {
+            QLandmarkCategoryId catid;
+            catid.setLocalId(localId);
+            catid.setManagerUri(managerUri());
+            QList<QLandmarkCategoryId> catids;
+            catids << catid;
+            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::categoryUpdated, QList<
+                QLandmarkId> (), catids);
+        }
         qDebug() << "landmark category updated";
         break;
     }
