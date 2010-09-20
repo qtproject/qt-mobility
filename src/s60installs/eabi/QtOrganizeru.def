@@ -898,13 +898,13 @@ EXPORTS
 	_ZTVN10QtMobility25QOrganizerEventOccurrenceE @ 897 NONAME
 	_ZTVN10QtMobility25QOrganizerItemSaveRequestE @ 898 NONAME
 	_ZTVN10QtMobility26QOrganizerItemFetchRequestE @ 899 NONAME
-	_ZTVN10QtMobility27QOrganizerItemEngineLocalIdE @ 900 NONAME
+	_ZTVN10QtMobility27QOrganizerItemEngineLocalIdE @ 900 NONAME ABSENT
 	_ZTVN10QtMobility27QOrganizerItemManagerEngineE @ 901 NONAME
 	_ZTVN10QtMobility27QOrganizerItemRemoveRequestE @ 902 NONAME
 	_ZTVN10QtMobility29QOrganizerItemAbstractRequestE @ 903 NONAME
 	_ZTVN10QtMobility31QOrganizerCollectionSaveRequestE @ 904 NONAME
 	_ZTVN10QtMobility32QOrganizerCollectionFetchRequestE @ 905 NONAME
-	_ZTVN10QtMobility33QOrganizerCollectionEngineLocalIdE @ 906 NONAME
+	_ZTVN10QtMobility33QOrganizerCollectionEngineLocalIdE @ 906 NONAME ABSENT
 	_ZTVN10QtMobility33QOrganizerCollectionRemoveRequestE @ 907 NONAME
 	_ZTVN10QtMobility33QOrganizerItemLocalIdFetchRequestE @ 908 NONAME
 	_ZTVN10QtMobility34QOrganizerItemInstanceFetchRequestE @ 909 NONAME
