@@ -53,34 +53,32 @@ testcase = {
 
 
 
-  add_item: function()
+  add_event: function()
   {
       prompt(twiki('*Add Calendar Event*
 
     1. Launch calendardemo application
     1. Verify the layout and UI of the application is apropriate for device
     1. Verify the correct date and calendar is shown.
-    1. Verify that todays date is higlighted, and that (no entries) is shown
+    1. Verify that todays date is higlighted
     1. Select appropriate backend
-    1. Select: Add event
-    1. For Number of entries, select 1
-    1. Enter event detail: Subject, Start time, End time (eg: Event 1, today's date), leve Repeat: None. Click OK
+    1. In the application menu, select: Add event
+    1. Enter event detail: Subject, Start time, End time (eg: Event 1, today's date), select Alarm option, leave Repeat as: None. Click Save
     1. Verify that you are presented with the day view for today and that Evenet 1 is listed with start time shown
-    1. Click Back
-    1. Verify that you are in the Month View with todays date higlighted, and that Event 1 is listed in the list of today's events.
+    1. Click View Month
+    1. Verify that you are in the Month View with todays date underlined.
     1. As in previous steps, add Event Invalid with todays Start date, but Yesterdays End date
-    1. Verify that you are presented with an error: Failed to save event (error code 9). Click Done
+    1. Verify that you are presented with an error: "Failed! Start date is not before due date". Click Done, click Cancel
     1. Verify that Event Invalid is not listed in either Todays, or Yesterdays date.
     1. As in previous steps, add Event 2 with same date as Event 1, but with different start time
     1. Verify that Event 1 and Event 2 are listed for todays date in both Day View and Month View
-    1. Create Event 3 by clicking Add Event in Month View with todays date selected, and edit the date for tomorrows date, click OK
-    1. Create Event 4 by clicking a date 2 days in the future, click Add Event, add Subject, Click OK
+    1. Create Event 3 by clicking a date 2 days in the future, click Add Event, add Subject, Click OK
     1. Close and reopen Calendardemo, and select the abovementoned backend again.
     1. Verify that Today has Event 1 and Event 2 listed with correct details
-    1. Verify that Event 3 is listed for tomorrow, and Event 4 for the day after.'));
+    1. Verify that Event 3 is listed for the day after tomorrow.'));
   },
 
-  delete_item: function()
+  delete_event: function()
   {
       prompt(twiki('*Delete Calendar Event*
 
@@ -96,7 +94,7 @@ testcase = {
     1. Verify that Event 1 has been removed from list.'));
   },
 
-  edit_item: function()
+  edit_event: function()
   {
       prompt(twiki('*Edit Calendar Event*
 
@@ -111,14 +109,14 @@ testcase = {
     1. Verify that Event 2 is now listed under tomorrow's date
     1. Select Event 2 and click Edit
     1. Change End time of event to todays date, leaving Start date to point to tomorrow's date
-    1. Verify that you are presented with an error: Failed to save event (error code 9). Click Done
+    1. Verify that you are presented with an error: "Failed! Start date is not before end date". Click Done then Cancel
     1. Verify that Event 2 has not been edited
     1. Highlight Event 2 and click Edit
-    1. Change both Start time and End time to todays date with a valid range
+    1. Change both Start time and End time to today's date with a valid range
     1. Verify that Event 2 is now listed under events for today.'));
   },
 
-  item_recurrence: function()
+  event_recurrence: function()
   {
       prompt(twiki('*Event Recurrence*
 
@@ -133,8 +131,29 @@ testcase = {
     1. Select: Set count, select 5, and click OK
     1. Verify that created event is listed in event list
     1. Select date 7 days from today
-    1. Verify that Recurring event is listed on that day
-'));
+    1. Verify that Recurring event is listed on that day'));
+  },
+
+  add_todo: function()
+  {
+      prompt(twiki('*Add Calendar Todo*
+
+    1. Launch calendardemo application
+    1. Select appropriate backend
+    1. In the application menu, select: Add Todo
+    1. Enter Todo detail: Subject, Start time, End time (eg: Todo 1, tomorrows date), Priority, Status, select Alarm option. Click Save
+    1. Verify that you are presented with the day view for tomorrow and that Todo 1 is listed with start time shown
+    1. Click View Month
+    1. Verify that you are in the Month View with today's date underlined, and that tomorrows date is highlighted ingreen.
+    1. As in previous steps, add new Todo as: Todo Invalid with todays Start date, but Yesterdays End date
+    1. Verify that you are presented with an error: "Failed! Start date is not before due date." Click Done, then Cancel.
+    1. Verify that Todo Invalid is not listed in either Todays, or Yesterdays date.
+    1. As in previous steps, add Todo 2 with same date as Todo 1, but with different start time
+    1. Verify that Todo 1 and Todo 2 are listed for today's date in Day View
+    1. Create Todo 3 by clicking a date 2 days in the future, select menu, Add Todo, add Subject, Click OK
+    1. Close and reopen Calendardemo, and select the abovementoned backend again.
+    1. Verify that Today has Todo 1 and Todo 2 listed with correct details
+    1. Verify that Event 3 is listed for the day after tomorrow.'));
   },
 
   search_items_by_time: function()
@@ -186,18 +205,37 @@ Access all organizer items corresponding to a particular period. For example, an
     * Control who can and who cannot view organizer items.'));
   },
 
+  export_ical: function()
+  {
+     prompt(twiki('*Export iCalendar items*
+    1. Open Calendardemo application
+    1. If not already populated by events and todos, enter some test items
+    1. In app menu, select: "Export items"
+    1. Select name, Location and Type (iCalendar files) for export
+    1. Verify that file is saved at intended location.
+    '));
+
   import_ical: function()
   {
-      prompt(twiki('---++ Import iCal 	
-    * Import a iCal data into a calendar store.
-    * For example, import data exported from another calendar.'));
+      prompt(twiki('*Import iCalendar items* 	
+    
+    1. Open Calendardemo application
+    1. On app menu, select "Delete all items" to insure you are dealing with a pristine calendar
+    1. On app menu, select "Import items", then navigate to a saved instance of an iCalendar file
+    1. Click on file
+    1. Verify that calendar items have populated the dates in the calendar. 
+    '));
   },
 
   import_vcal: function()
   {
-      prompt(twiki('---++ Import vCal 	
-    * Import vCal data.
-    * Format used on Symbian 3.x devices.'));
+      prompt(twiki('*Import vCal items* 	
+
+    1. Open Calendardemo application
+    1. On app menu, select "Delete all items" to insure you are dealing with a pristine calendar
+    1. On app menu, select "Import items", then navigate to a saved instance of an vCal file
+    1. Click on file
+    1. Verify that calendar items have populated the dates in the calendar.
   }
 
 }
