@@ -87,7 +87,7 @@ qreal QDeclarativeGalleryQueryModel::progress() const
 
 void QDeclarativeGalleryQueryModel::setPropertyNames(const QStringList &names)
 {
-    if (!m_complete && m_request.propertyNames() != names) {
+    if (!m_complete) {
         m_request.setPropertyNames(names);
 
         emit propertyNamesChanged();
@@ -182,6 +182,20 @@ void QDeclarativeGalleryQueryModel::reload()
     m_request.setFilter(m_filter ? m_filter.data()->filter() : QGalleryFilter());
 
     m_request.execute();
+}
+
+void QDeclarativeGalleryQueryModel::cancel()
+{
+    m_executeTimer.stop();
+
+    m_request.cancel();
+}
+
+void QDeclarativeGalleryQueryModel::clear()
+{
+    m_executeTimer.stop();
+
+    m_request.clear();
 }
 
 
@@ -358,7 +372,7 @@ void QDeclarativeGalleryQueryModel::_q_statusChanged()
 void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet)
 {
     if (m_rowCount > 0) {
-        beginRemoveRows(QModelIndex(), 0, m_rowCount);
+        beginRemoveRows(QModelIndex(), 0, m_rowCount - 1);
         m_rowCount = 0;
         m_resultSet = resultSet;
         endRemoveRows();

@@ -47,25 +47,31 @@ QTM_BEGIN_NAMESPACE
 
 void QDeclarativeGalleryValueFilter::setValue(const QVariant &value)
 {
-    m_filter.setValue(value);
+    if (value != m_filter.value()) {
+        m_filter.setValue(value);
 
-    emit valueChanged();
-    emit filterChanged();
+        emit valueChanged();
+        emit filterChanged();
+    }
 }
 void QDeclarativeGalleryValueFilter::setPropertyName(const QString &name)
 {
-    m_filter.setPropertyName(name);
+    if (name != m_filter.propertyName()) {
+        m_filter.setPropertyName(name);
 
-    emit propertyNameChanged();
-    emit filterChanged();
+        emit propertyNameChanged();
+        emit filterChanged();
+    }
 }
 
 void QDeclarativeGalleryValueFilter::setInverted(bool inverted)
 {
-    m_filter.setInverted(inverted);
+    if (inverted != m_filter.isInverted()) {
+        m_filter.setInverted(inverted);
 
-    emit invertedChanged();
-    emit filterChanged();
+        emit invertedChanged();
+        emit filterChanged();
+    }
 }
 
 QGalleryFilter QDeclarativeGalleryValueFilter::filter() const
@@ -75,26 +81,32 @@ QGalleryFilter QDeclarativeGalleryValueFilter::filter() const
 
 void QDeclarativeGalleryStringFilter::setPropertyName(const QString &name)
 {
-    m_filter.setPropertyName(name);
+    if (name != m_filter.propertyName()) {
+        m_filter.setPropertyName(name);
 
-    emit propertyNameChanged();
-    emit filterChanged();
+        emit propertyNameChanged();
+        emit filterChanged();
+    }
 }
 
 void QDeclarativeGalleryStringFilter::setValue(const QString &value)
 {
-    m_filter.setValue(value);
+    if (value != m_filter.value()) {
+        m_filter.setValue(value);
 
-    emit valueChanged();
-    emit filterChanged();
+        emit valueChanged();
+        emit filterChanged();
+    }
 }
 
 void QDeclarativeGalleryStringFilter::setInverted(bool inverted)
 {
-    m_filter.setInverted(inverted);
+    if (inverted != m_filter.isInverted()) {
+        m_filter.setInverted(inverted);
 
-    emit invertedChanged();
-    emit filterChanged();
+        emit invertedChanged();
+        emit filterChanged();
+    }
 }
 
 QGalleryFilter QDeclarativeGalleryStringFilter::filter() const
