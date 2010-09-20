@@ -83,7 +83,7 @@
 QTM_USE_NAMESPACE
 
 // TODO: Some of these could be exposed in a GUI and should probably be put elsewhere in that case (and made non-const)
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 static const bool enableKineticPanning = true;
 static const qreal kineticPanningHalflife = 200.0; // time until kinetic panning speed slows down to 50%, in msec
 static const qreal panSpeedNormal = 0.3; // keyboard panning speed without modifiers, in pixels/msec
