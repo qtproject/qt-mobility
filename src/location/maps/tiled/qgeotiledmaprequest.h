@@ -56,7 +56,8 @@ class Q_LOCATION_EXPORT QGeoTiledMapRequest
 {
 public:
     QGeoTiledMapRequest();
-    QGeoTiledMapRequest(QGraphicsGeoMap::MapType mapType,
+    QGeoTiledMapRequest(QGraphicsGeoMap::ConnectivityMode connectivityMode,
+                        QGraphicsGeoMap::MapType mapType,
                         qreal zoomLevel,
                         int row,
                         int column,
@@ -68,8 +69,9 @@ public:
 
     bool operator== (const QGeoTiledMapRequest &other) const;
 
-    QGeoTiledMapData *mapData() const;
+    //QGeoTiledMapData *mapData() const;
 
+    QGraphicsGeoMap::ConnectivityMode connectivityMode() const;
     QGraphicsGeoMap::MapType mapType() const;
     int zoomLevel() const;
 

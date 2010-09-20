@@ -49,7 +49,7 @@ contains(mobility_modules,location) {
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo \
                     geoservicedemo \
-                    bearer
+                    mapviewer
       }  
     contains(QT_CONFIG, declarative) {
         SUBDIRS += declarative-location

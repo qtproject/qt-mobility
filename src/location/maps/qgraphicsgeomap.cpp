@@ -107,6 +107,24 @@ The map data is a graphical representation of terrain features.  This may also
 include some of the information provided by QGraphicsGeoMap::StreetMap.
 */
 
+/*!
+\enum QGraphicsGeoMap::ConnectivityMode
+
+Describes the method of obtaining the mapping data.
+
+\value NoConnectivity
+There is no map data.
+
+\value OfflineMode
+The map data will come from an offline source.
+
+\value OnlineMode
+The map data will come from an online source.
+
+\value HybridMod
+The map data will come from a combination of offline and online sources.
+*/
+
 // Temporary constructor, for use by QML bindings until we come up
 // with the right QML / service provider mapping
 QGraphicsGeoMap::QGraphicsGeoMap(QGraphicsItem *parent)
@@ -361,6 +379,43 @@ QGraphicsGeoMap::MapType QGraphicsGeoMap::mapType() const
         return d_ptr->mapData->mapType();
 
     return QGraphicsGeoMap::NoMap;
+}
+
+/*!
+    Returns the connectivity modes supported by the QGeoMappingManager associated with
+    this widget.
+*/
+QList<QGraphicsGeoMap::ConnectivityMode> QGraphicsGeoMap::supportedConnectivityModes() const
+{
+    if (d_ptr->manager)
+        return d_ptr->manager->supportedConnectivityModes();
+
+    return QList<QGraphicsGeoMap::ConnectivityMode>();
+}
+
+/*!
+  \property QGraphicsGeoMap::connectivityMode
+  \brief This property holds the connectivity mode used to obtain the map data.
+
+  Setting connectivityMode to a mode not present in supportedConnectivityModes() will do
+  nothing.
+*/
+void QGraphicsGeoMap::setConnectivityMode(QGraphicsGeoMap::ConnectivityMode connectivityMode)
+{
+    if (d_ptr->mapData && d_ptr->manager) {
+        if (!d_ptr->manager->supportedConnectivityModes().contains(connectivityMode))
+            return;
+
+        d_ptr->mapData->setConnectivityMode(connectivityMode);
+    }
+}
+
+QGraphicsGeoMap::ConnectivityMode QGraphicsGeoMap::connectivityMode() const
+{
+    if (d_ptr->mapData)
+        return d_ptr->mapData->connectivityMode();
+
+    return QGraphicsGeoMap::NoConnectivity;
 }
 
 /*!

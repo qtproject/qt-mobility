@@ -80,6 +80,7 @@ public:
     QGeoCoordinate center;
     QSizeF windowSize;
     QGraphicsGeoMap::MapType mapType;
+    QGraphicsGeoMap::ConnectivityMode connectivityMode;
 
     QList<QGeoMapOverlay*> overlays;
 
