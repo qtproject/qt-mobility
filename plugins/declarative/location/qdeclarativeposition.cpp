@@ -53,11 +53,10 @@ QTM_BEGIN_NAMESPACE
     \brief The Position element holds various positional data, such as coordinate
     (longitude, latitude, altitude) and speed.
     \inherits QObject
-
     \ingroup qml-location
 
     The Position element holds various positional data, such as \l coordinate,
-    (longitude, latitude, and altitude) and \l speed, as well as \timestamp.
+    (longitude, latitude, and altitude) and \l speed, as well as \l timestamp.
 
     Not all of these are always available (e.g. latitude and longitude may be valid,
     but speed update has not been received or set manually), and hence there are
@@ -136,7 +135,7 @@ QDeclarativeCoordinate* QDeclarativePosition::coordinate()
     (to indicate whether that data has been received or not, as every update
     does not necessarily contain all data).
 
-    \sa latitude
+    \sa coordinate
 
 */
 
@@ -153,7 +152,7 @@ bool QDeclarativePosition::isLatitudeValid() const
     (to indicate whether that data has been received or not, as every update
     does not necessarily contain all data).
 
-    \sa longitude
+    \sa coordinate
 
 */
 
@@ -186,7 +185,7 @@ bool QDeclarativePosition::isSpeedValid() const
     (to indicate whether that data has been received or not, as every update
     does not necessarily contain all data).
 
-    \sa altitude
+    \sa coordinate
 
 */
 
@@ -199,6 +198,7 @@ bool QDeclarativePosition::isAltitudeValid() const
     \qmlproperty double Position::speed
 
     This property holds the value of speed (groundspeed, metres / second).
+    Currently a read-only property.
 
     \sa speedValid, coordinate
 */
