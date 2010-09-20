@@ -44,6 +44,8 @@
 
 #include <qgeomappingmanager.h>
 #include <qgeoroutingmanager.h>
+#include <qgeosearchmanager.h>
+#include <qgeosearchreply.h>
 #include <qgraphicsgeomap.h>
 #include <qgeoserviceprovider.h>
 #include <qgeomappixmapobject.h>
@@ -158,6 +160,10 @@ private slots:
     void removePixmaps();
     void selectObjects();
 
+    void searchClicked();
+    void searchReplyFinished(QGeoSearchReply* reply);
+    void resultsError(QGeoSearchReply* reply, QGeoSearchReply::Error errorCode, QString errorString);
+
     void sliderValueChanged(int zoomLevel);
     void mapZoomLevelChanged(qreal zoomLevel);
     void mapTypeToggled(bool checked);
@@ -173,6 +179,7 @@ private:
     QGeoServiceProvider *m_serviceProvider;
     QGeoMappingManager *m_mapManager;
     QGeoRoutingManager *m_routingManager;
+    QGeoSearchManager *m_searchManager;
 
     MapWidget *m_mapWidget;
     QGraphicsPathItem* m_fullScreenButton;
@@ -189,6 +196,8 @@ private:
     QLineEdit *m_longitudeEdit;
     QToolButton *m_captureCoordsButton;
     QPushButton *m_setCoordsButton;
+    QLineEdit *m_searchEdit;
+    QPushButton *m_searchButton;
 
     QLayout *m_layout;
     bool m_controlsVisible;

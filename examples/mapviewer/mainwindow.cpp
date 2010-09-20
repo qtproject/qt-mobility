@@ -73,6 +73,8 @@
 #include <qgeomaptextobject.h>
 #include <qgeorouterequest.h>
 #include <qnetworkconfigmanager.h>
+#include <qgeoboundingbox.h>
+#include <qgeoboundingcircle.h>
 
 #include <cmath>
 
@@ -638,10 +640,17 @@ void MainWindow::setupUi()
     m_latitudeEdit = new QLineEdit();
     m_longitudeEdit = new QLineEdit();
 
-    QFormLayout *formLayout = new QFormLayout();
-    formLayout->addRow("Latitude", m_latitudeEdit);
-    formLayout->addRow("Longitude", m_longitudeEdit);
+    QFormLayout *latitudeLayout = new QFormLayout();
+    QFormLayout *longitudeLayout = new QFormLayout();
 
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    latitudeLayout->addRow("Lat.:", m_latitudeEdit);
+    longitudeLayout->addRow("Lng.:", m_longitudeEdit);
+#else
+    latitudeLayout->addRow("Latitude", m_latitudeEdit);
+    longitudeLayout->addRow("Longitude", m_longitudeEdit);
+#endif
+    
     m_captureCoordsButton = new QToolButton();
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     m_captureCoordsButton->setText("Get coords");
@@ -649,27 +658,40 @@ void MainWindow::setupUi()
     m_captureCoordsButton->setText("Capture coordinates");
 #endif
     m_captureCoordsButton->setCheckable(true);
+    m_captureCoordsButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
     connect(m_captureCoordsButton, SIGNAL(toggled(bool)), m_mapWidget, SLOT(setMouseClickCoordQuery(bool)));
     connect(m_mapWidget, SIGNAL(coordQueryResult(QGeoCoordinate)), this, SLOT(updateCoords(QGeoCoordinate)));
 
     m_setCoordsButton = new QPushButton();
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    m_setCoordsButton->setText("Set coords");
+    m_setCoordsButton->setText("Goto coords");
 #else
-    m_setCoordsButton->setText("Set coordinates");
+    m_setCoordsButton->setText("Go to coordinates");
 #endif
 
     connect(m_setCoordsButton, SIGNAL(clicked()), this, SLOT(setCoordsClicked()));
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    m_searchEdit = new QLineEdit();
 
-    buttonLayout->addWidget(m_captureCoordsButton);
-    buttonLayout->addWidget(m_setCoordsButton);
+    m_searchButton = new QPushButton();
+    m_searchButton->setText("Search");
 
-    QVBoxLayout *coordControlLayout = new QVBoxLayout();
-    coordControlLayout->addLayout(formLayout);
-    coordControlLayout->addLayout(buttonLayout);
+    connect(m_searchEdit, SIGNAL(returnPressed()), this, SLOT(searchClicked()));
+    connect(m_searchButton, SIGNAL(clicked()), this, SLOT(searchClicked()));
+
+    QGridLayout *searchLayout = new QGridLayout();
+    searchLayout->setColumnStretch(0, 1);
+    searchLayout->setColumnStretch(1, 0);
+    searchLayout->addWidget(m_searchEdit, 0, 0);
+    searchLayout->addWidget(m_searchButton, 0, 1);
+
+    QGridLayout *coordControlLayout = new QGridLayout();
+    coordControlLayout->addLayout(latitudeLayout, 0, 0);
+    coordControlLayout->addLayout(longitudeLayout, 0, 1);
+    coordControlLayout->addWidget(m_captureCoordsButton, 1, 0);
+    coordControlLayout->addWidget(m_setCoordsButton, 1, 1);
+    coordControlLayout->addLayout(searchLayout, 2, 0, 1, 2);
 
     QWidget *widget = new QWidget(this);
 
@@ -776,7 +798,7 @@ void MainWindow::updateCoords(const QGeoCoordinate &coords)
 void MainWindow::setProvider(QString providerId)
 {
     if (m_serviceProvider)
-        delete m_serviceProvider ;
+        delete m_serviceProvider;
     m_serviceProvider = new QGeoServiceProvider(providerId);
     if (m_serviceProvider->error() != QGeoServiceProvider::NoError) {
         QMessageBox::information(this, tr("MapViewer Example"), tr(
@@ -787,6 +809,54 @@ void MainWindow::setProvider(QString providerId)
 
     m_mapManager = m_serviceProvider->mappingManager();
     m_routingManager = m_serviceProvider->routingManager();
+    m_searchManager = m_serviceProvider->searchManager();
+
+    QObject::connect(m_searchManager, SIGNAL(finished(QGeoSearchReply*)), this,
+                     SLOT(searchReplyFinished(QGeoSearchReply*)));
+    QObject::connect(m_searchManager,
+                     SIGNAL(error(QGeoSearchReply*, QGeoSearchReply::Error, QString)), this,
+                     SLOT(resultsError(QGeoSearchReply*, QGeoSearchReply::Error, QString)));
+}
+
+void MainWindow::searchClicked()
+{
+    m_searchManager->search(m_searchEdit->text());
+    m_qgv->setFocus();
+}
+
+void MainWindow::searchReplyFinished(QGeoSearchReply* reply)
+{
+    QList<QGeoPlace> places = reply->places();
+
+    if (places.length() == 0)
+        return;
+    
+    int markerIndex = 0;
+    for (int i = 0; i < places.length(); ++i) {
+        QGeoPlace & place = places[i];
+        QGeoMapPixmapObject *marker = QGeoMapPixmapObject::createStandardMarker(place.coordinate(), SHAPE_BALLOON, QString::number(i+1), QPen(), QPen(QColor(Qt::white)), QBrush(QColor(255, 128, 0)));
+        m_mapWidget->addMapObject(marker);
+        m_markerObjects.append(marker); // TODO: add to different marker list, clear markers from list before searching
+    }
+    
+    QGeoBoundingArea * viewport = reply->viewport();
+    if (viewport) {
+        if (viewport->type() == QGeoBoundingArea::BoxType) {
+            m_mapWidget->fitInViewport(*static_cast<QGeoBoundingBox *>(viewport));
+            return;
+        }
+        else if (viewport->type() == QGeoBoundingArea::CircleType) {
+            m_mapWidget->setCenter(static_cast<QGeoBoundingCircle *>(viewport)->center());
+            return;
+        }
+    }
+    m_mapWidget->setCenter(places[0].coordinate());
+}
+
+void MainWindow::resultsError(QGeoSearchReply* reply, QGeoSearchReply::Error errorCode, QString errorString)
+{
+    QMessageBox::information(this, tr("MapViewer Example"), tr(
+                                 "Error #%1 while trying to process your search query.").arg(errorCode));
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
