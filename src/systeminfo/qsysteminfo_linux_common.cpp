@@ -452,7 +452,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
             const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
-                const QFileInfo wiFi(devFile + "/wireless");
+                const QFileInfo wiFi(devFile + "/phy80211");
                 const QFileInfo fi("/proc/net/route");
                 if(wiFi.exists() && fi.exists()) {
                     QFile rx(fi.absoluteFilePath());
@@ -583,7 +583,6 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
     switch(mode) {
         case QSystemNetworkInfo::WlanMode:
         {
-            qDebug() << Q_FUNC_INFO;
             QString result;
             const QString baseSysDir = "/sys/class/net/";
             const QDir wDir(baseSysDir);
