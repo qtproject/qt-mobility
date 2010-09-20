@@ -61,7 +61,9 @@ isEmpty(QT_LIBINFIX):symbian {
     contains(mobility_modules, location) {
         qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtLocation.dll
         qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtgeoservices_nokia.dll
+        qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtlandmarks_symbian.dll
         pluginstubs += "\"$$QT_MOBILITY_BUILD_TREE/plugins/geoservices/nokia/qmakepluginstubs/qtgeoservices_nokia.qtplugin\" - \"!:\\resource\\qt\\plugins\\geoservices\\qtgeoservices_nokia.qtplugin\""
+        pluginstubs += "\"$$QT_MOBILITY_BUILD_TREE/plugins/landmarks/symbian_landmarks/qmakepluginstubs/qtlandmarks_symbian.qtplugin\" - \"!:\\resource\\qt\\plugins\\landmarks\\qtlandmarks_symbian.qtplugin\""
         contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_location.dll \
@@ -81,15 +83,24 @@ isEmpty(QT_LIBINFIX):symbian {
         contains(QT_CONFIG, declarative): {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_systeminfo.dll
-
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\systeminfo\\qmakepluginstubs\\declarative_systeminfo.qtplugin\"  - \"!:\\reso
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\systeminfo\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\systeminfo\\
+        }
         sysinfo = \
-            "IF package(0x102032BE)" \
+            "IF package(0x1028315F)" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtfeedback_symbian.dll\" - \"!:\\sys\\bin\\qtfeedback_symbian.dll\"" \
+            "ELSEIF package(0x102032BE)" \
             "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtsysteminfo_symbian.dll\" - \"!:\\sys\\bin\\qtsysteminfo_symbian.dll\"" \
+            "ELSEIF package(0x102752AE)" \
+            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtsysteminfo_symbian.dll\" - \"!:\\sys\\bin\\qtsysteminfo_symbian.dll\"" \
             "ELSE" \
             "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtsysteminfo_symbian.dll\" - \"!:\\sys\\bin\\qtsysteminfo_symbian.dll\"" \
             "ENDIF"
 
         qtmobilitydeployment.pkg_postrules += sysinfo
+        }
     }
 
     contains(mobility_modules, publishsubscribe) {
