@@ -145,10 +145,10 @@ public:
     void setWlanSignalStrengthCheckEnabled(bool enabled);
 
 protected:
-    void setupNetworkInfo();
 
 private Q_SLOTS:
     void bluetoothNetworkStatusCheck();
+    void setupNetworkInfo();
 #if defined(Q_WS_MAEMO_6)
     // Slots only available in Maemo6
     void slotSignalStrengthChanged(int percent, int dbm);

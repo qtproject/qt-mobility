@@ -362,67 +362,6 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::deviceTypeToMode(quin
 
 #endif
 
-int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
-{
-    switch(mode) {
-    case QSystemNetworkInfo::WlanMode:
-        {
-            QString result;
-            const QString baseSysDir = QLatin1String("/sys/class/net/");
-            const QDir wDir(baseSysDir);
-            const QStringList dirs = wDir.entryList(QStringList() << QLatin1String("*"), QDir::AllDirs | QDir::NoDotAndDotDot);
-            foreach(const QString dir, dirs) {
-                QString devFile = baseSysDir + dir;
-                QFileInfo fi(devFile + QLatin1String("/wireless/link"));
-                if(fi.exists()) {
-                    QFile rx(fi.absoluteFilePath());
-                    if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                        QTextStream in(&rx);
-                        in >> result;
-                        rx.close();
-                        return result.toInt();
-
-                    }
-                }
-            }
-        }
-        break;
-    case QSystemNetworkInfo::EthernetMode:
-        {
-            QString result;
-            const QString baseSysDir = QLatin1String("/sys/class/net/");
-            const QDir eDir(baseSysDir);
-            const QStringList dirs = eDir.entryList(QStringList() << QLatin1String("eth*"), QDir::AllDirs | QDir::NoDotAndDotDot);
-            foreach(const QString dir, dirs) {
-                QString devFile = baseSysDir + dir;
-                QFileInfo fi(devFile + QLatin1String("/carrier"));
-                if(fi.exists()) {
-                    QFile rx(fi.absoluteFilePath());
-                    if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                        QTextStream in(&rx);
-                        in >> result;
-                        rx.close();
-                        return result.toInt() * 100;
-
-                    }
-                }
-            }
-        }
-        break;
-        case QSystemNetworkInfo::BluetoothMode:
-        {
-#if !defined(QT_NO_DBUS)
-            return getBluetoothRssi();
-#endif
-        }
-        break;
-    default:
-        break;
-    };
-
-    return -1;
-}
-
 int QSystemNetworkInfoPrivate::cellId()
 {
     return -1;
