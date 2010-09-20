@@ -162,20 +162,7 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     qRegisterMetaType<QSystemDeviceInfo::Profile>("QSystemDeviceInfo::Profile");
     qRegisterMetaType<QSystemDeviceInfo::InputMethodFlags>("QSystemDeviceInfo::InputMethodFlags");
 
-    connect(d,SIGNAL(batteryLevelChanged(int)),
-            this,SIGNAL(batteryLevelChanged(int)));
 
-    connect(d,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
-            this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
-
-    connect(d,SIGNAL(bluetoothStateChanged(bool)),
-            this,SIGNAL(bluetoothStateChanged(bool)));
-
-    connect(d,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
-            this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)));
-
-    connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
-            this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
     }
 
 /*!
@@ -196,7 +183,31 @@ QSystemDeviceInfo::~QSystemDeviceInfo()
 
 void QSystemDeviceInfo::connectNotify(const char *signal)
 {
-    Q_UNUSED(signal);
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryLevelChanged(int))))) {
+        connect(d,SIGNAL(batteryLevelChanged(int)),
+                this,SIGNAL(batteryLevelChanged(int)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryStatusChanged(QSystemDeviceInfo::BatteryStatus))))) {
+        connect(d,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
+                this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            bluetoothStateChanged(bool))))) {
+        connect(d,SIGNAL(bluetoothStateChanged(bool)),
+                this,SIGNAL(bluetoothStateChanged(bool)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentProfileChanged(QSystemDeviceInfo::Profile))))) {
+        connect(d,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
+                this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            powerStateChanged(QSystemDeviceInfo::PowerState))))) {
+        connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
+                this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
+    }
 }
 
 /*!

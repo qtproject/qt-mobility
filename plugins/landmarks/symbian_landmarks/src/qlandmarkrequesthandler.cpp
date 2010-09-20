@@ -297,7 +297,9 @@ TBool CLandmarkRequestAO::WaitForFinished(TInt aTime)
     }
 
     RTimer timer;
-    TRequestStatus timestatus;// = KRequestPending;
+    //coverity[UNINIT]
+    //intentionally not initialize, ignore for coverity prevent    
+    TRequestStatus timestatus;
     if (aTime > 0) {
         if (timer.CreateLocal() != KErrNone) {
             return EFalse; // ???

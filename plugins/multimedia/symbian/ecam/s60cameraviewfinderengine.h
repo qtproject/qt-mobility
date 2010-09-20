@@ -51,11 +51,11 @@
 
 class CCameraEngine;
 class QAbstractVideoSurface;
-#ifdef SYMBIAN_3_PLATFORM
+
+// For DirectScreen ViewFinder
 class RWsSession;
 class CWsScreenDevice;
 class RWindowBase;
-#endif // SYMBIAN_3_PLATFORM
 
 class CCameraViewfinderEngine : public QObject, public MCameraViewfinderObserver
 {
@@ -74,10 +74,10 @@ public: // Methods
     void setVideoWindowControl(QObject *viewfinderOutput);
 
     // Controls
-    void startViewfinderL();
-    void stopViewfinder();
+    void startViewfinder(const bool internalStart = false);
+    void stopViewfinder(const bool internalStop = false);
 
-protected: // MCameraViewfinderObserver
+protected: // MCameraViewfinderObserver / Bitmap ViewFinder
 
     void MceoViewFinderFrameReady(CFbsBitmap& aFrame);
 
@@ -91,9 +91,14 @@ private Q_SLOTS:
     void resetViewfinderSize(QSize size);
     void resetViewfinderDisplay();
     void viewFinderBitmapReady(const QPixmap &pixmap);
+    void handleVisibilityChange(const bool isVisible);
 
 private: // Enums
 
+    /*
+     * Defines whether viewfinder output backend control is of type
+     * QVideoWidgetControl, QVideoRendererControl or QVideoWindowControl
+     */
     enum ViewfinderOutputType {
         OutputTypeNotSet = 0,
         OutputTypeVideoWidget,
@@ -101,19 +106,44 @@ private: // Enums
         OutputTypevideoWindow
     };
 
+    /*
+     * Defines the internal state of the viewfinder. ViewFinder will only be
+     * started if output is connected to Camera and Camera is started (and
+     * ViewFinder widget is visible in case of QVideoWidget).
+     */
+    enum ViewFinderState {
+        EVFNotConnectedNotStarted = 0,
+        EVFNotConnectedIsStarted,
+        EVFIsConnectedNotStarted,
+        EVFIsConnectedIsStartedNotVisible,
+        EVFIsConnectedIsStartedIsVisible
+    };
+
+    /*
+     * The native type of ViewFinder. DirectScreen ViewFinder is used with
+     * QVideoWidget if support for it is available in the platform. For
+     * QGraphicsVideoItem Bitmap ViewFinder is always used.
+     */
+    enum NativeViewFinderType {
+        EBitmapViewFinder = 0,
+        EDirectScreenViewFinder
+    };
+
 private: // Data
 
     CCameraEngine           *m_cameraEngine;
     QObject                 *m_viewfinderOutput;
     QAbstractVideoSurface   *m_viewfinderSurface; // Used only by QVideoRendererControl
-#ifdef SYMBIAN_3_PLATFORM
     RWsSession              &m_wsSession;
     CWsScreenDevice         &m_screenDevice;
     RWindowBase             *m_window;
-#endif // SYMBIAN_3_PLATFORM
+    ViewFinderState         m_vfState;
     QSize                   m_viewfinderSize;
+    QSize                   m_actualViewFinderSize;
     ViewfinderOutputType    m_viewfinderType;
+    NativeViewFinderType    m_viewfinderNativeType;
     QVideoSurfaceFormat     m_surfaceFormat; // Used only by QVideoRendererControl
+    bool                    m_isViewFinderVisible;
 };
 
 #endif // S60CAMERAVIEWFINDERENGINE_H

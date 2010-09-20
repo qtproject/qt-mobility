@@ -268,6 +268,9 @@ private Q_SLOTS:
     virtual void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
 #endif
+private:
+    QSystemDeviceInfo::BatteryStatus currentBatStatus;
+    void initBatteryStatus();
 };
 
 
@@ -279,10 +282,10 @@ public:
     QSystemScreenSaverLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemScreenSaverLinuxCommonPrivate();
 
-    bool screenSaverInhibited() {return false;}
-    bool setScreenSaverInhibit() {return false;}
-    bool isScreenLockEnabled() {return false;}
-    bool isScreenSaverActive() {return false;}
+//    bool screenSaverInhibited() {return false;}
+//    bool setScreenSaverInhibit() {return false;}
+//    bool isScreenLockEnabled() {return false;}
+//    bool isScreenSaverActive() {return false;}
 };
 
 QTM_END_NAMESPACE

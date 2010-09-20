@@ -56,7 +56,8 @@ class Q_LOCATION_EXPORT QGeoTiledMapRequest
 {
 public:
     QGeoTiledMapRequest();
-    QGeoTiledMapRequest(QGeoTiledMapData *mapData,
+    QGeoTiledMapRequest(QGraphicsGeoMap::MapType mapType,
+                        qreal zoomLevel,
                         int row,
                         int column,
                         const QRect &tileRect);

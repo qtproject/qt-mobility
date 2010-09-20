@@ -64,14 +64,14 @@ QOrganizerCollectionFetchRequest::QOrganizerCollectionFetchRequest(QObject* pare
 }
 
 /*! Sets the list of ids of collections which will be retrieved for this request to \a collectionIds */
-void QOrganizerCollectionFetchRequest::setCollectionIds(const QList<QOrganizerCollectionId>& collectionIds)
+void QOrganizerCollectionFetchRequest::setCollectionIds(const QList<QOrganizerCollectionLocalId>& collectionIds)
 {
     Q_D(QOrganizerCollectionFetchRequest);
     d->m_collectionIds = collectionIds;
 }
 
 /*! Returns the list of ids of collections which will be retrieved by this request if possible */
-QList<QOrganizerCollectionId> QOrganizerCollectionFetchRequest::collectionIds() const
+QList<QOrganizerCollectionLocalId> QOrganizerCollectionFetchRequest::collectionIds() const
 {
     Q_D(const QOrganizerCollectionFetchRequest);
     return d->m_collectionIds;

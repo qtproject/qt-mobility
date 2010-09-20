@@ -478,8 +478,11 @@ QStringList QOrganizerItemManagerEngine::supportedItemTypes() const
   Returns the engine backend implementation version number
  */
 
-/*! Returns the base schema definitions */
-QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemManagerEngine::schemaDefinitions()
+/*!
+   Returns the default schema definitions for the given \a version of the schema.
+   Version 1 of the schema corresponds to version 1.1 of the Qt Mobility APIs.
+ */
+QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemManagerEngine::schemaDefinitions(int version)
 {
     // This implementation provides the base schema.
     // The schema documentation (organizeritemsschema.qdoc)
@@ -1460,7 +1463,13 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
 
     retnSchema.insert(QOrganizerItemType::TypeJournal, retn);
 
-    return retnSchema;
+    if (version == 1) {
+        return retnSchema;
+    }
+
+    // the most recent version of the schema is version 1.
+    QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > empty;
+    return empty;
 }
 
 /*!

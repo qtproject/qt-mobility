@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-#include <qglobal.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qdir.h>
 
@@ -55,14 +54,14 @@ S60ImageCaptureSession::S60ImageCaptureSession(QObject *parent) :
     QObject(parent),
     m_cameraEngine(NULL),
     m_advancedSettings(NULL),
-    m_imageQuality(QtMultimediaKit::NormalQuality*KSymbianImageQualityCoefficient),
-    m_captureSize(QSize()),
+    m_cameraInfo(NULL),
+    m_error(KErrNone),
     m_activeDeviceIndex(KDefaultCameraDevice),
-    m_error(NoError),
+    m_icState(EImageCaptureNotPrepared),
+    m_captureSize(QSize()),
+    m_imageQuality(QtMultimediaKit::NormalQuality*KSymbianImageQualityCoefficient),
     m_currentImageId(0)
 {
-    // Set defaults so that camera works with all devices
-    m_currentCodec = defaultCodec();
 }
 
 S60ImageCaptureSession::~S60ImageCaptureSession()
@@ -74,9 +73,9 @@ S60ImageCaptureSession::~S60ImageCaptureSession()
 CCamera::TFormat S60ImageCaptureSession::defaultCodec()
 {
     if (m_activeDeviceIndex == 0)
-        return CCamera::EFormatExif; // Primary Camera
+        return KDefaultImageFormatPrimaryCam; // Primary Camera
     else
-        return CCamera::EFormatFbsBitmapColor64K; // Secondary Camera or other
+        return KDefaultImageFormatSecondaryCam; // Secondary Camera or other
 }
 
 bool S60ImageCaptureSession::isDeviceReady()
@@ -88,7 +87,7 @@ bool S60ImageCaptureSession::isDeviceReady()
     if (m_cameraEngine)
         return m_cameraEngine->IsCameraReady();
 
-    return EFalse;
+    return false;
 }
 
 void S60ImageCaptureSession::deleteAdvancedSettings()
@@ -190,28 +189,49 @@ int S60ImageCaptureSession::currentImageId() const
     return m_currentImageId;
 }
 
+void S60ImageCaptureSession::initializeImageCaptureSettings()
+{
+    m_currentCodec = defaultCodec();
+
+    QList<QSize> resolutions = supportedCaptureSizesForCodec(imageCaptureCodec());
+    if (resolutions.size() > 0)
+        m_captureSize = resolutions[0]; // First is the maximum
+
+    m_imageQuality = 100; // Best quality
+}
+
 int S60ImageCaptureSession::prepareImageCapture()
 {
+    if (m_icState < EImageCapturePrepared) {
+        // Set defaults
+        initializeImageCaptureSettings();
+    }
+
     int symbianError = KErrNone;
     TSize captureSize = TSize(m_captureSize.width(), m_captureSize.height());
     TRAP(symbianError, m_cameraEngine->PrepareL(captureSize, m_currentCodec));
+
+    if (!symbianError)
+        m_icState = EImageCapturePrepared;
 
     return symbianError;
 }
 
 int S60ImageCaptureSession::capture(const QString &fileName)
 {
+    if (m_icState != EImageCapturePrepared) {
+        return KErrNotReady;
+    }
+
+    m_icState = EImageCaptureCapturing;
+
     // Give new ID for the new image
     m_currentImageId += 1;
 
     m_error = KErrNone;
     emit readyForCaptureChanged(false);
 
-    if (m_stillCaptureFileName.isNull() || m_stillCaptureFileName.isEmpty() ) {
-        m_stillCaptureFileName = "C:\\Data\\Images\\image.jpg";
-    } else {
-        m_stillCaptureFileName = fileName;
-    }
+    processFileName(fileName);
 
     // Check capture size - uses the default one if not set
     setCaptureSize(m_captureSize);
@@ -234,6 +254,73 @@ int S60ImageCaptureSession::capture(const QString &fileName)
 
 void S60ImageCaptureSession::cancelCapture()
 {
+    if (m_icState != EImageCaptureCapturing) {
+        return;
+    }
+
+    if (m_cameraEngine)
+        m_cameraEngine->cancelCapture();
+
+    m_icState = EImageCapturePrepared;
+}
+
+void S60ImageCaptureSession::processFileName(const QString &fileName)
+{
+    // Empty FileName - Use default file name and path (C:\Data\Images\image.jpg)
+    if (fileName.isEmpty()) {
+        // Make sure default directory exists
+        QDir videoDir(QDir::rootPath());
+        if (!videoDir.exists(KDefaultImagePath)) {
+            videoDir.mkpath(KDefaultImagePath);
+        }
+        QString defaultFile = KDefaultImagePath;
+        defaultFile.append("\\");
+        defaultFile.append(KDefaultImageFileName);
+        m_stillCaptureFileName = defaultFile;
+
+    } else { // Not empty
+
+        QString fullFileName;
+
+        // Relative FileName
+        if (!fileName.contains(":")) {
+            // Extract file name and path from the URL
+            fullFileName = KDefaultImagePath;
+            if (fileName.at(0) != '\\')
+                fullFileName.append("\\");
+            fullFileName.append(QDir::toNativeSeparators(fileName));
+
+        // Absolute FileName
+        } else {
+            // Extract file name and path from the given location
+            fullFileName = QDir::toNativeSeparators(fileName);
+        }
+
+        QString fileNameOnly = fullFileName.right(fullFileName.length() - fullFileName.lastIndexOf("\\") - 1);
+        QString directory = fullFileName.left(fullFileName.lastIndexOf("\\"));
+        if (directory.lastIndexOf("\\") == (directory.length() - 1))
+            directory = directory.left(directory.length() - 1);
+
+        // URL is Absolute path, not including file name
+        if (!fileNameOnly.contains(".")) {
+            if (fileNameOnly != "") {
+                directory.append("\\");
+                directory.append(fileNameOnly);
+            }
+            fileNameOnly = KDefaultImageFileName;
+        }
+
+        // Make sure absolute directory exists
+        QDir imageDir(QDir::rootPath());
+        if (!imageDir.exists(directory)) {
+            imageDir.mkpath(directory);
+        }
+
+        QString resolvedFileName = directory;
+        resolvedFileName.append("\\");
+        resolvedFileName.append(fileNameOnly);
+        m_stillCaptureFileName = resolvedFileName;
+    }
 }
 
 void S60ImageCaptureSession::MceoCameraReady()
@@ -248,6 +335,8 @@ void S60ImageCaptureSession::MceoFocusComplete()
 
 void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
 {
+    m_icState = EImageCaptureWritingImage;
+
     // Create snapshot
     QImage snapImage = QImage::fromData((const uchar *)aData->Ptr(), aData->Length());
     emit imageCaptured(m_currentImageId, snapImage);
@@ -259,6 +348,8 @@ void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
     setError(err);
     emit imageSaved(m_currentImageId, m_stillCaptureFileName);
 
+    m_icState = EImageCapturePrepared;
+
     // Release image resources
     releaseImageBuffer();
 }
@@ -266,28 +357,13 @@ void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
 TFileName S60ImageCaptureSession::imagePath()
 {
     TFileName path = KNullDesC();
-    QFileInfo fileInfo(m_stillCaptureFileName);
-    QString absolutePath = fileInfo.path();
-    QDir dir(absolutePath);
-    if (!dir.exists()) {
-        emit error(QCameraImageCapture::ResourceError, QLatin1String("Folder does not exist"));
-        return path;
-    }
 
     // Convert to Symbian path
     TPtrC16 attachmentPath(KNullDesC);
-    if (absolutePath.length() > 1) {
-        // Path is already included in filename
-        attachmentPath.Set(reinterpret_cast<const TUint16*>(QDir::toNativeSeparators(m_stillCaptureFileName).utf16()));
-        path.Append(attachmentPath);
-    } else {
-        // Use default path
-        path = PathInfo::PhoneMemoryRootPath();
-        path.Append(PathInfo::ImagesPath());
-        attachmentPath.Set(reinterpret_cast<const TUint16*>(m_stillCaptureFileName.utf16()));
-        path.Append(attachmentPath);
-        m_stillCaptureFileName.prepend(QDesktopServices::storageLocation(QDesktopServices::PicturesLocation)+"/");
-    }
+
+    // Path is already included in filename
+    attachmentPath.Set(reinterpret_cast<const TUint16*>(QDir::toNativeSeparators(m_stillCaptureFileName).utf16()));
+    path.Append(attachmentPath);
 
     return path;
 }
@@ -300,7 +376,7 @@ void S60ImageCaptureSession::saveImageL(TDesC8* aData, TFileName aPath)
         CleanupClosePushL(fs);
 
         RFile file;
-        User::LeaveIfError(file.Create(fs, aPath, EFileWrite));
+        User::LeaveIfError(file.Replace(fs, aPath, EFileWrite));
         CleanupClosePushL(file);
         User::LeaveIfError(file.Write(*aData));
 
@@ -324,6 +400,8 @@ void S60ImageCaptureSession::releaseImageBuffer()
 
 void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
 {
+    m_icState = EImageCaptureWritingImage;
+
     if(aBitmap)
     {
         TSize size = aBitmap->SizeInPixels();
@@ -388,6 +466,8 @@ void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
     } else {
         setError(KErrBadHandle);
     }
+
+    m_icState = EImageCapturePrepared;
 }
 
 void S60ImageCaptureSession::MceoViewFinderFrameReady(CFbsBitmap& aFrame)
@@ -410,10 +490,7 @@ void S60ImageCaptureSession::MceoHandleError(TCameraEngineError aErrorType, TInt
 bool S60ImageCaptureSession::queryCurrentCameraInfo()
 {
     if (m_cameraEngine) {
-        CCamera *camera = m_cameraEngine->Camera();
-        if (camera) {
-            camera->CameraInfo(m_info);
-        }
+        m_cameraInfo = m_cameraEngine->cameraInfo();
         return true;
     }
 
@@ -456,13 +533,13 @@ QList<QSize> S60ImageCaptureSession::supportedCaptureSizesForCodec(const QString
         if (codecName == "")
             format = defaultCodec();
         else
-            format = static_cast<CCamera::TFormat>( formatMap().value(codecName) );
+            format = static_cast<CCamera::TFormat>(formatMap().value(codecName));
 
         CCamera *camera = m_cameraEngine->Camera();
-        for (int i = 0; i < m_info.iNumImageSizesSupported; i++) {
-            TSize size;
-            camera->EnumerateVideoFrameSizes(size, i, format);
-            list << QSize(size.iWidth, size.iHeight); // Add resolution to the list
+        TSize imageSize;
+        for (int i = 0; i < m_cameraInfo->iNumImageSizesSupported; i++) {
+            camera->EnumerateCaptureSizes(imageSize, i, format);
+            list << QSize(imageSize.iWidth, imageSize.iHeight); // Add resolution to the list
         }
     }
 
@@ -551,13 +628,13 @@ void S60ImageCaptureSession::updateImageCaptureCodecs()
 {
     m_formats.clear();
     if (m_cameraEngine && queryCurrentCameraInfo()) {
-        TUint32 supportedFormats = m_info.iImageFormatsSupported;
+        TUint32 supportedFormats = m_cameraInfo->iImageFormatsSupported;
 
-#ifdef PRE_S60_50_PLATFORM // S60 3.1 & 3.2
+#ifdef S60_3X_PLATFORM // S60 3.1 & 3.2
         int maskEnd = CCamera::EFormatFbsBitmapColor16MU;
-#else
+#else // S60 5.0 or later
         int maskEnd = CCamera::EFormatEncodedH264;
-#endif
+#endif // S60_3X_PLATFORM
 
         for (int mask = CCamera::EFormatMonochrome; mask <= maskEnd; mask <<= 1) {
             if (supportedFormats & mask)
@@ -572,7 +649,7 @@ QString S60ImageCaptureSession::imageCaptureCodec()
 }
 void S60ImageCaptureSession::setImageCaptureCodec(const QString &codecName)
 {
-    m_currentCodec = static_cast<CCamera::TFormat>( formatMap().value(codecName) );
+    m_currentCodec = static_cast<CCamera::TFormat>(formatMap().value(codecName));
 }
 
 QString S60ImageCaptureSession::imageCaptureCodecDescription(const QString &codecName)
@@ -589,7 +666,7 @@ QtMultimediaKit::EncodingQuality S60ImageCaptureSession::captureQuality() const
     return static_cast<QtMultimediaKit::EncodingQuality> (m_imageQuality / KSymbianImageQualityCoefficient);
 }
 
-void S60ImageCaptureSession::setCaptureQuality(QtMultimediaKit::EncodingQuality quality)
+void S60ImageCaptureSession::setCaptureQuality(const QtMultimediaKit::EncodingQuality &quality)
 {
     switch (quality) {
         case QtMultimediaKit::VeryLowQuality:
@@ -623,14 +700,14 @@ void S60ImageCaptureSession::setZoomFactor(qreal optical, qreal digital)
         if (camera) {
 
             // Digital Zoom
-            if (digital > m_info.iMaxZoom && digital <= m_info.iMaxDigitalZoom) {
+            if (digital > m_cameraInfo->iMaxZoom && digital <= m_cameraInfo->iMaxDigitalZoom) {
                 TRAPD(err, camera->SetDigitalZoomFactorL(digital));
                 setError(err);
                 if (err == KErrNone)
                     emit digitalZoomChanged(digital);
 
             // Optical Zoom
-            } else if (optical >= m_info.iMinZoom && optical <= m_info.iMaxZoom) {
+            } else if (optical >= m_cameraInfo->iMinZoom && optical <= m_cameraInfo->iMaxZoom) {
                 TRAPD(err2, camera->SetZoomFactorL(optical));
                 setError(err2);
                 if (err2 == KErrNone)
@@ -660,7 +737,7 @@ int S60ImageCaptureSession::digitalZoomFactor()
     return factor;
 }
 
-bool S60ImageCaptureSession::isFocusSupported()
+bool S60ImageCaptureSession::isFocusSupported() const
 {
     return m_cameraEngine->IsAutoFocusSupported();
 }
@@ -688,7 +765,7 @@ void S60ImageCaptureSession::cancelFocus()
 int S60ImageCaptureSession::maximumZoom()
 {
     if (queryCurrentCameraInfo()) {
-        return m_info.iMaxZoom;
+        return m_cameraInfo->iMaxZoom;
     } else {
         return 0;
     }
@@ -697,7 +774,7 @@ int S60ImageCaptureSession::maximumZoom()
 int S60ImageCaptureSession::minZoom()
 {
     if (queryCurrentCameraInfo()) {
-        return m_info.iMinZoom;
+        return m_cameraInfo->iMinZoom;
     } else {
         return 0;
     }
@@ -706,7 +783,7 @@ int S60ImageCaptureSession::minZoom()
 int S60ImageCaptureSession::maxDigitalZoom()
 {
     if (queryCurrentCameraInfo()) {
-        return m_info.iMaxDigitalZoom;
+        return m_cameraInfo->iMaxDigitalZoom;
     } else {
         return 0;
     }
@@ -776,7 +853,7 @@ QCameraExposure::FlashModes S60ImageCaptureSession::supportedFlashModes()
     QCameraExposure::FlashModes modes = QCameraExposure::FlashOff;
 
     if (queryCurrentCameraInfo()) {
-        TInt supportedModes = m_info.iFlashModesSupported;
+        TInt supportedModes = m_cameraInfo->iFlashModesSupported;
 
         if (supportedModes == 0)
             return modes;
@@ -831,7 +908,7 @@ QCameraExposure::ExposureMode S60ImageCaptureSession::exposureMode()
 
 bool S60ImageCaptureSession::isExposureModeSupported(QCameraExposure::ExposureMode mode) const
 {
-    TInt supportedModes = m_info.iExposureModesSupported;
+    TInt supportedModes = m_cameraInfo->iExposureModesSupported;
 
     if (supportedModes == 0)
         return false;
@@ -1025,7 +1102,7 @@ void S60ImageCaptureSession::setWhiteBalanceModeL( QCameraImageProcessing::White
 bool S60ImageCaptureSession::isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const
 {
     if (m_cameraEngine) {
-        TInt supportedModes = m_info.iWhiteBalanceModesSupported;
+        TInt supportedModes = m_cameraInfo->iWhiteBalanceModesSupported;
         switch (mode) {
             case QCameraImageProcessing::WhiteBalanceManual:
                 if (supportedModes & CCamera::EWBManual)
