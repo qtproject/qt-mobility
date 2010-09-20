@@ -332,9 +332,9 @@ void QMessageServicePrivate::setFinished(bool successful)
         _error = QMessageManager::RequestIncomplete;
     }
 
+    _active = false;
     _state = QMessageService::FinishedState;
     emit q_ptr->stateChanged(_state);
-    _active = false;
 }
 
 QMessageService::QMessageService(QObject *parent)
