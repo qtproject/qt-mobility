@@ -872,8 +872,10 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 
 void QSystemNetworkInfoPrivate::wlanSignalStrengthCheck()
 {
-    if (currentWlanSignalStrength != networkSignalStrength(QSystemNetworkInfo::WlanMode)) {
-        currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
+    int strength = 0;
+    strength =  networkSignalStrength(QSystemNetworkInfo::WlanMode);
+    if (currentWlanSignalStrength != strength) {
+        currentWlanSignalStrength = strength;
         emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, currentWlanSignalStrength);
     }
 }
