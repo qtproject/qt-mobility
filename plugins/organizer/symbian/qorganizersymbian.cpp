@@ -470,11 +470,7 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
     QOrganizerCollectionLocalId collectionLocalId,
     QList<QOrganizerItem> &itemInstances) const
 {
-    // find the default collection local id value
-    quint32 defaultCollectionLocalIdValue = 0;
-    QOrganizerCollectionSymbianEngineLocalId* idPtr = static_cast<QOrganizerCollectionSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalCollectionId(m_defaultCollection.localId()));
-    if (idPtr != 0)
-        defaultCollectionLocalIdValue = idPtr->m_localCollectionId;
+    quint32 localCollectionIdValue = m_collections[collectionLocalId].calCollectionId();
 
     // Transform all the instances to QOrganizerItems
     for(int i(0); i < calInstanceList.Count(); i++) {
@@ -490,15 +486,38 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
         if(maxCount > 0 && i >= maxCount)
             break;
 
-        // Set item id
+        bool isException = (calInstance->Entry().RecurrenceIdL().TimeUtcL() != Time::NullTTime());
         QOrganizerItemId id;
-        id.setManagerUri(managerUri());
+        TCalLocalUid parentLocalUid(0);
         // Set local id if this is an exceptional item
-        if (calInstance->Entry().RecurrenceIdL().TimeUtcL() != Time::NullTTime()) {
-            QOrganizerItemLocalId instanceEntryId(new QOrganizerItemSymbianEngineLocalId(defaultCollectionLocalIdValue, calInstance->Entry().LocalUidL()));
+        if (isException) {
+            QOrganizerItemLocalId instanceEntryId(new QOrganizerItemSymbianEngineLocalId(
+                localCollectionIdValue, calInstance->Entry().LocalUidL()));
             id.setLocalId(instanceEntryId);
         }
+        id.setManagerUri(managerUri());
         itemInstance.setId(id);
+
+        // Set parent id
+        if (isException) {
+            HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(itemInstance);
+            CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, &itemInstance, *globalUid);
+            parentLocalUid = parentEntry->LocalUidL();
+            CleanupStack::PopAndDestroy(parentEntry);
+            CleanupStack::PopAndDestroy(globalUid);
+        } else {
+            parentLocalUid = calInstance->Entry().LocalUidL();
+        }
+        QOrganizerEventOccurrence *eventOccurrence = static_cast<QOrganizerEventOccurrence *>(&itemInstance);
+        eventOccurrence->setParentLocalId(toItemLocalId(localCollectionIdValue, parentLocalUid));
+
+        // Set instance origin, the detail is set here because the corresponding transform class
+        // does not know the required values
+        QOrganizerItemInstanceOrigin origin(
+            itemInstance.detail<QOrganizerItemInstanceOrigin>());
+        origin.setParentLocalId(toItemLocalId(localCollectionIdValue, parentLocalUid));
+        origin.setOriginalDate(toQDateTimeL(calInstance->StartTimeL()).date());
+        itemInstance.saveDetail(&origin);
 
         // Set collection id
         QOrganizerCollectionId cid;
