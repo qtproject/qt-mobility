@@ -109,6 +109,7 @@ QGalleryFilter QDeclarativeGalleryStringFilter::filter() const
     if a meta-data property is equal to a value.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
     
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -158,6 +159,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     if a meta-data property is less than a value.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -195,6 +197,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     if a meta-data property is less than or equal to a value.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -232,6 +235,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     if a meta-data property is greater than a value.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -268,6 +272,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     tests if a meta-data property is greater than or equal to a value.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -304,6 +309,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     a meta-data property contains a string.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -340,6 +346,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     a meta-data property starts with a string.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -376,6 +383,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     meta-data property ends with a string.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -412,6 +420,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     meta-data property against a value using wildcard matching.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -513,6 +522,7 @@ void QDeclarativeGalleryFilterGroup::clear(
     \brief The GalleryFilterUnion elements provides a union of gallery filters.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 */
@@ -554,6 +564,7 @@ QGalleryFilter QDeclarativeGalleryFilterUnion::filter() const
     gallery filters.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 */
