@@ -167,6 +167,8 @@ bool QOrganizerItemLocalId::operator!=(const QOrganizerItemLocalId& other) const
         if (d->engineLocalIdType() == other.d->engineLocalIdType()) {
             return !(d->isEqualTo(other.d));
         }
+    } else if (d || other.d) {
+        return true;
     }
     return false;
 }
