@@ -250,8 +250,8 @@ Rectangle {
             landmarkModel.setDbFileName("generatedExampleLandmarkDb.db");
         }
         else if (action == "Set import file" ) {
-	    console.log("log: Setting import file to AUS-PublicToilet-Queensland.gpx")
-	    landmarkModel.importFile = "AUS-PublicToilet-Queensland.gpx"
+	    console.log("log: Setting import file to mylm.lmx")
+	    landmarkModel.importFile = "mylm.lmx"
         }
         else if (action == "Import" ) {
 	    console.log("log:Calling importLandmarks()")

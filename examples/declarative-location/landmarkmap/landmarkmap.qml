@@ -41,8 +41,8 @@
 
 import Qt 4.7
 import QtMobility.location 1.1
-import "common" as Common
-import "mobile" as Mobile
+import "landmarkmapcommon" as Common
+import "landmarkmapmobile" as Mobile
 
 Item {
     id: page
@@ -97,7 +97,7 @@ Item {
             y: map.toScreenPosition(landmark.coordinate).y
             Image {
                 id: landmarkIcon
-                source: "mobile/images/landmarkstar.png"
+                source: "landmarkmapmobile/images/landmarkstar.png"
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {
@@ -144,7 +144,7 @@ Item {
         width: parent.width
         color: "#343434"
         //height: toolbar1.y - titleBar.height
-        Image { source: "mobile/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 0.3 }
+        Image { source: "landmarkmapmobile/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 0.3 }
         MouseArea {
             anchors.fill: parent
             onDoubleClicked: map.center = map.toCoordinate(Qt.point(mouse.x, mouse.y))
@@ -264,7 +264,7 @@ Item {
         height: 40; width: parent.width
         anchors.bottom: parent.bottom
         z: 6
-        button1Label: "nmealog.txt"; button2Label: "mydb.gpx"; button3Label: "show me"
+        button1Label: "nmealog.txt"; button2Label: "mylm.lmx"; button3Label: "show me"
         button3FontColor: "pink"
         onButton1Clicked: {
             console.log("Clicked, setting nmea log as source");
@@ -273,7 +273,7 @@ Item {
         }
         onButton2Clicked: {
             console.log("Clicked, setting import file to get landmarks, count was: " + landmarkModel.count);
-            landmarkModel.importFile = "mydb.gpx"
+            landmarkModel.importFile = "mylm.lmx"
         }
         onButton3Clicked: {
             console.log("Clicked, setting map center to current location");
