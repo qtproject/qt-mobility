@@ -70,6 +70,8 @@ namespace OrganizerSymbianUtils
     QOrganizerCollectionLocalId toCollectionLocalId(quint32 collectionId);
     QOrganizerItemLocalId toItemLocalId(quint32 collectionId, quint32 itemId);
     TCalLocalUid toTCalLocalUid(const QOrganizerItemLocalId& itemLocalId);
+    quint32 toTCalCollectionId(const QOrganizerItemLocalId& itemLocalId);
+    QOrganizerCollectionLocalId getCollectionLocalId(const QOrganizerItemLocalId& itemLocalId);
 #ifdef SYMBIAN_CALENDAR_V2
     
     template<typename T>

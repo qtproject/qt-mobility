@@ -138,6 +138,19 @@ TCalLocalUid toTCalLocalUid(const QOrganizerItemLocalId& itemLocalId)
     return static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemLocalId))->calLocalUid();
 }
 
+quint32 toTCalCollectionId(const QOrganizerItemLocalId& itemLocalId)
+{
+    // TODO: should we have a check for engineLocalIdType here?
+    return static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemLocalId))->calCollectionId();
+}
+
+QOrganizerCollectionLocalId getCollectionLocalId(const QOrganizerItemLocalId& itemLocalId)
+{
+    // TODO: should we have a check for engineLocalIdType here?
+    quint32 calCollectionId  = static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemLocalId))->calCollectionId();
+    return toCollectionLocalId(calCollectionId);
+}
+
 #ifdef SYMBIAN_CALENDAR_V2
 
 void setCalInfoPropertyL(CCalCalendarInfo *calInfo, TCalenPropertyUid propertyUid, const QString &value)

@@ -402,9 +402,9 @@ void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIdsL()
         // RunError would call SelfComplete() for recursive operation
         iIndex++;
         // Fetch the item
-        QOrganizerItem item;
-        iOrganizerItemManagerEngine.itemL(
-                iItemIds.at(iIndex-1), &item, fetchHint);
+        QOrganizerItem item =
+            iOrganizerItemManagerEngine.itemL(
+                iItemIds.at(iIndex-1), fetchHint);
         // Append the fetched item to iItemList
         iItemList << item;
         // Calls itself recursively until all the items are deleted
@@ -431,9 +431,9 @@ void COrganizerItemRequestsServiceProvider::FetchItemsandFilterL(
             // RunError would call SelfComplete() for recursive operation
             iIndex++;
             // Fetch the item
-            QOrganizerItem item;
-            iOrganizerItemManagerEngine.itemL(
-                    iItemIds.at(iIndex-1), &item, fetchHint);
+            QOrganizerItem item = 
+                iOrganizerItemManagerEngine.itemL(
+                    iItemIds.at(iIndex-1), fetchHint);
             // Append the fetched item to iItemList
             iItemList << item;
             // Calls itself recursively until all the items are deleted

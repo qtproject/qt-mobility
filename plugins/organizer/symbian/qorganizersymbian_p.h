@@ -224,9 +224,9 @@ public:
     QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders, 
         QOrganizerItemManager::Error* error) const;
-    void QOrganizerItemSymbianEngine::getIdsModifiedSinceDateL(
-        RArray<TCalLocalUid>& ids, const QOrganizerItemFilter& filter) const;
-    void QOrganizerItemSymbianEngine::itemIdsL(
+    QList<QOrganizerItemLocalId> getIdsModifiedSinceDateL(
+        const QOrganizerItemFilter& filter) const;
+    void itemIdsL(
         QList<QOrganizerItemLocalId>& ids, 
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders) const;
@@ -234,7 +234,7 @@ public:
         const QList<QOrganizerItemSortOrder>& sortOrders, 
         const QOrganizerItemFetchHint& fetchHint, 
         QOrganizerItemManager::Error* error) const;
-    void QOrganizerItemSymbianEngine::itemsL(QList<QOrganizerItem>& itemsList, 
+    void itemsL(QList<QOrganizerItem>& itemsList, 
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders, 
         const QOrganizerItemFetchHint& fetchHint) const;
@@ -324,7 +324,7 @@ public:
         const int maxCount,
         QOrganizerCollectionLocalId collectionLocalId,
         QList<QOrganizerItem> &itemInstances) const;
-    void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, 
+    QOrganizerItem itemL(const QOrganizerItemLocalId& itemId,
             const QOrganizerItemFetchHint& fetchHint) const;
     void saveItemL(QOrganizerItem *item,
         const QOrganizerCollectionLocalId& collectionId,

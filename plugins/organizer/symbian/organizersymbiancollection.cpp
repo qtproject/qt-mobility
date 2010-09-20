@@ -212,13 +212,13 @@ void OrganizerSymbianCollection::openL(const TDesC &fileName)
 #ifdef SYMBIAN_CALENDAR_V2
     // TODO: Use filename hash instead of CollectionIdL
     d->m_calCollectionId = d->m_calSession->CollectionIdL();
-    d->m_id.setLocalId(toCollectionLocalId(d->m_calCollectionId));
 #else
     // TODO: If multiple calendars are to be supported without native support
     // we need to generate a real id here. Currently there will only be one
     // collection so it does not matter if its just a magic number.
-    d->m_id.setLocalId(toCollectionLocalId(1));
+    d->m_calCollectionId = 1;
 #endif
+    d->m_id.setLocalId(toCollectionLocalId(d->m_calCollectionId));
     
     // Start listening to calendar events
     TCalTime minTime;
