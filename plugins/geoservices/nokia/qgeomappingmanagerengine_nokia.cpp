@@ -55,6 +55,13 @@
 
 #define LARGE_TILE_DIMENSION 256
 
+// TODO: Tweak the max size or create something better
+#if defined(Q_OS_SYMBIAN)
+    #define DISK_CACHE_MAX_SIZE 10*1024*1024  //10MB
+#else
+    #define DISK_CACHE_MAX_SIZE 50*1024*1024  //50MB
+#endif
+
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
         m_host("maptile.maps.svc.ovi.com")
@@ -107,6 +114,9 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
         if (ok)
             m_cache->setMaximumCacheSize(cacheSize);
     }
+
+    if (m_cache->maximumCacheSize() > DISK_CACHE_MAX_SIZE)
+        m_cache->setMaximumCacheSize(DISK_CACHE_MAX_SIZE);
 
     m_nam->setCache(m_cache);
 }
