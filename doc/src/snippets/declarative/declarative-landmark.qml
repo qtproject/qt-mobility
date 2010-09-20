@@ -52,6 +52,26 @@ Rectangle {
     
     // Just to see everything instantiates, also used in docs.
 
+    //![Box filter]
+    PositionSource {
+        id: myPositionSource
+    }
+
+    Map {
+        id: map
+        zoomLevel: 15
+        size.width: parent.width
+        size.height: parent.height
+        center: myPositionSource.position.coordinate
+    }
+
+    LandmarkBoxFilter {
+        id: boxFilter
+        topLeft: map.toCoordinate(Qt.point(0,0))
+        bottomRight: map.toCoordinate(Qt.point(map.size.width, map.size.height))
+    }
+    //![Box filter]
+
     //![User declared landmark]
     Landmark { 
         id: myLandmark
@@ -76,10 +96,13 @@ Rectangle {
     LandmarkUnionFilter { }
 
     // Example: landmark name filter
+    //![Landmark name filter]
     LandmarkNameFilter {
 	id: landmarkFilterUndercity
 	name: "Undercity"
-    }    
+    }
+    //![Landmark name filter]
+
     // Example: landmark proximity filter
     LandmarkProximityFilter {
         id: landmarkFilterSpecificLocation
@@ -90,6 +113,7 @@ Rectangle {
 	radius: 500
     }
 
+    //![Landmark proximity filter]
     PositionSource {
         id: myPosition
         updateInterval: 1000
@@ -97,12 +121,15 @@ Rectangle {
     LandmarkProximityFilter {
         id: landmarkFilterMyCurrentLocation
 	center: myPosition.position.coordinate
-	radius: 500
+        radius: 1500
     }
-    
+    //![Landmark proximity filter]
+
     // Example: landmark intersection filter
+
+    //![LandmarkModel intersection filter]
     LandmarkIntersectionFilter {
-        id: landmarkIntersectionFilterNameAndProximity
+        id: filterExample
 	LandmarkNameFilter {
 	    name: "Darwin"
         }
@@ -110,13 +137,14 @@ Rectangle {
 	    center: Coordinate {
 	        longitude:  10
 	        latitude: 20
-		}
-	        radius: 500
+            }
+            radius: 5000
         }
     }
-
+    //![LandmarkModel intersection filter]
     
     // Example: landmark union filter
+    //![LandmarkModel union filter]
     LandmarkUnionFilter {
         id: landmarkUnionFilterNameAndProximity
 	LandmarkNameFilter {
@@ -124,37 +152,42 @@ Rectangle {
         }
 	LandmarkProximityFilter {
             center: myPosition.position.coordinate
-	    radius: 50
+            radius: 1500
 	}
     }
+    //![LandmarkModel union filter]
     
+    //![LandmarkModel import file]
+    LandmarkModel {
+        id: landmarkModelForImport
+        importFile: "mylandmarkfile.gpx"
+    }
+    //![LandmarkModel import file]
+
+    //![LandmarkModel landmarks iteration]
+    LandmarkModel {
+        id: landmarkModelForIteration
+        onLandmarksChanged: {
+            console.log("log: Landmark count is: "+ count);
+            for (var index = 0; index < landmarks.length; index++)  {
+                console.log("Index, name:" + index + " , " + landmarks[index].name);
+            }
+        }
+    }
+    //![LandmarkModel landmarks iteration]
+
     // Example: landmark model
+    //![LandmarkModel filter]
+    LandmarkNameFilter {
+        id: coralFilter
+        name: "Flinders Reef"
+    }
+
     LandmarkModel {
         id: landmarkModel
-	//  autoUpdate determines if model is automatically updated:
-	//  1) after instantiated  (no need to call update())
-	//  2) whenever database data changes (QLandmarkManager reports changes)
-	//  3) filters are changed
-	// Value is true by default
-        autoUpdate: false
-	// filter determines what data is requested
-	//filter: landmarkFilterUndercity
-	
-	// Imports landmarks and categories from files.
-	// Setting this variable automatically triggers the import operation,
-	// irrespective of ongoing updates (or autoUpdate) setting.
-	// importFile: "AUS-PublicToilet-Queensland.gpx"
-	// If seen convinient, the landmarks can be enumerated like this as well, instead of 
-	// accessing them via model
-	onLandmarksChanged: {
-	    console.log("log: Landmark count is: "+ count);
-	    for (var index = 0; index < landmarks.length; index++)  {
-	        console.log("Index, name:" + index + " , " + landmarks[index].name);
-            }
-	}
-	
-	/* 
-	// Alternatively filter could be declared directly
+        filter: coralFilter
+        // Alternatively filter could be declared directly, e.g:
+        /*
 	filter: LandmarkIntersectionFilter {
 	    LandmarkNameFilter {
 	        ...
@@ -171,14 +204,11 @@ Rectangle {
 	    }
 	}
 	*/
-	// Limit determines the maximum number of items this model holds
         limit: 100
-	// Offset determines the index where to start elements (e.g. in tabbed/paged browsing)
-	offset: 0
     }
+    //![LandmarkModel filter]
 
     // Example: landmark category model
-
     //![Categories list iteration]
     LandmarkCategoryModel {
         id: categoriesOfGivenLandmark
@@ -190,7 +220,7 @@ Rectangle {
             }
         }
     }
-    //![Category list iteration]
+    //![Categories list iteration]
     
     // The view
     ListView {
@@ -273,4 +303,45 @@ Rectangle {
             console.log("log: Unassigned clicked")
         }
     }
+
+    //![LandmarkModel example]
+    Rectangle {
+        width: 350
+        height: 350
+
+        // The model
+        LandmarkModel {
+            id: myLandmarkModel
+            sortBy: LandmarkModel.NameSort;
+            sortOrder: LandmarkModel.AscendingOrder
+            limit: 15
+            onLandmarksChanged: {
+                // Direct list access
+                for (var index = 0; index < landmarks.length; index++)  {
+                    console.log("Index, name:" + index + " , " + landmarks[index].name);
+                }
+            }
+        }
+        // The view
+        ListView {
+            id: myLandmarkListView
+            model: landmarkModel
+            delegate: myLandmarkListDelegate
+            width: parent.width; height: parent.height
+            highlightFollowsCurrentItem: false
+            focus: true
+            anchors.fill: parent
+            keyNavigationWraps: true
+        }
+        // The delegate
+        Component {
+            id: myLandmarkListDelegate
+            Item {
+                width: 200; height: 20
+                Text {id: nameField; text: landmark.name }
+                Text { id: phoneField; text: "  tel:"  + landmark.phoneNumber; anchors.left: nameField.right;}
+            }
+        }
+    }
+    //![LandmarkModel example]
 }

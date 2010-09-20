@@ -115,11 +115,13 @@ Item {
         }
     }
 
+    //![Category model]
     LandmarkCategoryModel {
         id: landmarkCategoryModel
         autoUpdate: true
         onModelChanged: console.log("Category model changed, category count: " + count)
     }
+
     Component {
         id: landmarkCategoryListDelegate
         Item {
@@ -130,7 +132,7 @@ Item {
             }
         }
     }
-
+    //![Category model]
 
     Mobile.TitleBar { id: titleBar; z: 5; width: parent.width - statusBar.width; height: 40; opacity: 0.8 }
     Mobile.StatusBar { id: statusBar; z: 6; width: 80; height: titleBar.height; opacity: titleBar.opacity; anchors.right: parent.right}
@@ -159,6 +161,7 @@ Item {
             focus: true
         }
 
+        //![Category model]
         ListView {
             id: landmarkCategoryListView;
             model: landmarkCategoryModel;
@@ -169,7 +172,7 @@ Item {
             highlightFollowsCurrentItem: false
             focus: true
         }
-
+        //![Category model]
         Map {
             id: map
             anchors.fill: parent
@@ -271,7 +274,6 @@ Item {
         onButton2Clicked: {
             console.log("Clicked, setting import file to get landmarks, count was: " + landmarkModel.count);
             landmarkModel.importFile = "mydb.gpx"
-            myPositionSource.start()
         }
         onButton3Clicked: {
             console.log("Clicked, setting map center to current location");
