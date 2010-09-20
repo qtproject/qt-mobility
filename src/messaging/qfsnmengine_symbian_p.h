@@ -168,7 +168,10 @@ public slots:
     void addMessageCompleted(int success, CFSAsynchronousAddOperation *operation);
     void saveCompleted(QVariant variant, int success);
     void deleteCompleted(QVariant variant, int success);
-      
+
+signals: 
+    void addMessageCompleted();    
+    
 private:
 
     void startEventObserver();
@@ -346,7 +349,7 @@ public:
     
 public slots:
     void createDraftMessageCompleted(int success, QVariant message);
-    void saveCompleted(QVariant variant, int success);
+    void saveCompleted(int success);
     
 signals:    
     void messageAdded(int success, CFSAsynchronousAddOperation *operation);

@@ -140,57 +140,76 @@ void createFSMessage(QMessage &message, NmApiMessage &fsMessage)
         envelope.setBccRecipients(bccRecipients);
     }
     
-    QMessageContentContainerIdList contentIds = message.contentIds();
-    foreach (QMessageContentContainerId id, contentIds){
-        QMessageContentContainer container = message.find(id);
-        QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
-        if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
-            // Message contains only body (not attachments)
-            QString messageBody = message.textContent();
-            if (!messageBody.isEmpty()) {
-                QByteArray type = message.contentType();
-                QByteArray subType = message.contentSubType();
-                NmApiTextContent content;
-                content.setContent(message.textContent());
-                if (type == "text" && subType == "plain")
-                    fsMessage.setPlainTextContent(content);
-                else if (type == "text" && subType == "html")
-                    fsMessage.setHtmlContent(content);
-                else
-                    envelope.setPlainText(messageBody);
-            }
-        } else {
-            // Message contains body and attachments
-            QMessageContentContainerIdList contentIds = message.contentIds();
-            foreach (QMessageContentContainerId id, contentIds){
-                QMessageContentContainer container = message.find(id);
-                QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
-                if (pPrivateContainer->_id == message.bodyId()) {
-                    // ContentContainer is body
-                    if (!container.textContent().isEmpty()) {               
+    if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
+        // Message contains only body (not attachments)
+        QString messageBody = message.textContent();
+        if (!messageBody.isEmpty()) {
+            QByteArray type = message.contentType();
+            QByteArray subType = message.contentSubType();
+            NmApiTextContent content;
+            content.setContent(message.textContent());
+            if (type == "text" && subType == "plain")
+                fsMessage.setPlainTextContent(content);
+            else if (type == "text" && subType == "html")
+                fsMessage.setHtmlContent(content);
+            else
+                envelope.setPlainText(messageBody);
+        }
+    } else {
+        QMessageContentContainerIdList contentIds = message.contentIds();
+        foreach (QMessageContentContainerId id, contentIds){
+            QMessageContentContainer container = message.find(id);
+            QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
+            if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
+                // Message contains only body (not attachments)
+                QString messageBody = message.textContent();
+                if (!messageBody.isEmpty()) {
                     QByteArray type = message.contentType();
                     QByteArray subType = message.contentSubType();
                     NmApiTextContent content;
-                    content.setContent(container.textContent());
+                    content.setContent(message.textContent());
                     if (type == "text" && subType == "plain")
                         fsMessage.setPlainTextContent(content);
                     else if (type == "text" && subType == "html")
                         fsMessage.setHtmlContent(content);
                     else
-                        envelope.setPlainText(container.textContent());
-                    }
-                } else {
-                    // ContentContainer is attachment
-                    QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
-                    NmApiAttachment attachment;
-                    QString temp_path = QString(filePath);
-                    attachment.setFileName(temp_path);
-                    fsMessage.addAttachment(attachment);
-                }        
+                        envelope.setPlainText(messageBody);
+                }
+            } else {
+                // Message contains body and attachments
+                QMessageContentContainerIdList contentIds = message.contentIds();
+                foreach (QMessageContentContainerId id, contentIds){
+                    QMessageContentContainer container = message.find(id);
+                    QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
+                    if (pPrivateContainer->_id == message.bodyId()) {
+                        // ContentContainer is body
+                        if (!container.textContent().isEmpty()) {               
+                        QByteArray type = message.contentType();
+                        QByteArray subType = message.contentSubType();
+                        NmApiTextContent content;
+                        content.setContent(container.textContent());
+                        if (type == "text" && subType == "plain")
+                            fsMessage.setPlainTextContent(content);
+                        else if (type == "text" && subType == "html")
+                            fsMessage.setHtmlContent(content);
+                        else
+                            envelope.setPlainText(container.textContent());
+                        }
+                    } else {
+                        // ContentContainer is attachment
+                        // TODO: use messagemanager->createAttachment()
+                        QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
+                        NmApiAttachment attachment;
+                        QString temp_path = QString(filePath);
+                        attachment.setFileName(temp_path);
+                        fsMessage.addAttachment(attachment);
+                    }        
+                }
             }
         }
     }
-    envelope.setSubject(message.subject());   
+    
+    envelope.setSubject("Morjes");//message.subject());   
     fsMessage.setEnvelope(envelope);
     
     QMessagePrivate *privateMessage = QMessagePrivate::implementation(message);
@@ -595,16 +614,16 @@ bool CFSEngine::addMessage(QMessage *message)
     catch(...){
         return false;
     }
-
+    QEventLoop* eventloop = new QEventLoop();
     connect(addOperation, SIGNAL(messageAdded(int, CFSAsynchronousAddOperation*)), this, 
                 SLOT(addMessageCompleted(int, CFSAsynchronousAddOperation*)));
-    m_addList.append(addOperation);    
-    QEventLoop* eventloop = new QEventLoop();
-    connect(addOperation, SIGNAL(messageAdded(int, CFSAsynchronousAddOperation*)), eventloop, SLOT(quit()));
+    m_addList.append(addOperation); 
+    connect(this, SIGNAL(addMessageCompleted()), eventloop, SLOT(quit()));
     addOperation->addMessage(*message);
+    eventloop->exec();
     
-    eventloop->exec();  
     delete eventloop;
+
     if (!m_addMessageError)
         return true;
     else
@@ -619,6 +638,8 @@ void CFSEngine::addMessageCompleted(int success, CFSAsynchronousAddOperation *op
         m_addMessageError = false;
     else
         m_addMessageError = true;
+    
+    emit addMessageCompleted();
 }
 
 bool CFSEngine::updateMessage(QMessage *message)
@@ -829,9 +850,13 @@ bool CFSEngine::showMessage(const QMessageId &id)
 {
     bool syncronous;
         
-    XQAiwRequest* request = m_applicationManager.create(emailInterfaceNameMessage,
+   /* XQAiwRequest* request = m_applicationManager.create(emailInterfaceNameMessage,
             emailOperationViewMessage,
-            syncronous);
+            syncronous);*/
+    
+    XQAiwRequest* request = m_applicationManager.create(XQI_EMAIL_MESSAGE_VIEW,
+            XQOP_EMAIL_MESSAGE_VIEW,
+                syncronous);
   
     QMessage qmessage = message(id);
    
@@ -2712,7 +2737,7 @@ CFSAsynchronousAddOperation::CFSAsynchronousAddOperation()
 
 CFSAsynchronousAddOperation::~CFSAsynchronousAddOperation()
 {
-
+    m_manager = NULL;
 }
 
 void CFSAsynchronousAddOperation::addMessage(QMessage &message)
@@ -2736,7 +2761,7 @@ void CFSAsynchronousAddOperation::createDraftMessageCompleted(int success, QVari
         emit messageAdded(success, this);
 }
 
-void CFSAsynchronousAddOperation::saveCompleted(QVariant message, int success)
+void CFSAsynchronousAddOperation::saveCompleted(int success)
 {
     emit messageAdded(success, this);
 }
@@ -2745,14 +2770,14 @@ void CFSAsynchronousAddOperation::saveMessage()
 {
     QPointer<NmApiOperation> operation = m_manager->saveMessage(m_fsMessage);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(saveCompleted(QVariant, int)));
+    connect(operation, SIGNAL(operationComplete(int)), this, SLOT(saveCompleted(int)));
 }
     
 void CFSAsynchronousAddOperation::createDraftMessage()
 {
     QPointer<NmApiOperation> operation = m_manager->createDraftMessage(NULL);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(createDraftMessageCompleted(int, QVariant)));
+    connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(createDraftMessageCompleted(int, QVariant)));    
 }
 
 CFSAsynchronousRetrieveBodyOperation::CFSAsynchronousRetrieveBodyOperation()
@@ -2785,6 +2810,6 @@ void CFSAsynchronousRetrieveAttachmentOperation::retrieveAttachment(QMessageId &
     m_privateService = &privateService;
 }
 
-#include "..\..\build\Release\QtMessaging\moc\moc_qfsnmengine_symbian_p.cpp";
+#include "moc_qfsnmengine_symbian_p.cpp";
 
 QTM_END_NAMESPACE
