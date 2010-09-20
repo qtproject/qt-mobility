@@ -72,6 +72,41 @@ QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
 {
 }
 
+qreal QDeclarativeGalleryItem::progress() const
+{
+    const int max = m_request.maximumProgress();
+
+    return max > 0
+            ? qreal(m_request.currentProgress()) / max
+            : qreal(0.0);
+}
+
+void QDeclarativeGalleryItem::setPropertyNames(const QStringList &names)
+{
+    if (!m_complete) {
+        m_request.setPropertyNames(names);
+
+        emit propertyNamesChanged();
+    }
+}
+
+void QDeclarativeGalleryItem::setAutoUpdate(bool enabled)
+{
+    m_request.setAutoUpdate(enabled);
+
+    emit autoUpdateChanged();
+}
+
+void QDeclarativeGalleryItem::setItemId(const QVariant &itemId)
+{
+    m_request.setItemId(itemId);
+
+    if (m_complete)
+        m_request.execute();
+
+    emit itemIdChanged();
+}
+
 void QDeclarativeGalleryItem::componentComplete()
 {
     m_complete = true;

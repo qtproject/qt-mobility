@@ -70,6 +70,31 @@ QDeclarativeGalleryType::~QDeclarativeGalleryType()
 {
 }
 
+qreal QDeclarativeGalleryType::progress() const
+{
+    const int max = m_request.maximumProgress();
+
+    return max > 0
+            ? qreal(m_request.currentProgress()) / max
+            : qreal(0.0);
+}
+
+void QDeclarativeGalleryType::setPropertyNames(const QStringList &names)
+{
+    if (!m_complete) {
+        m_request.setPropertyNames(names);
+
+        emit propertyNamesChanged();
+    }
+}
+
+void QDeclarativeGalleryType::setAutoUpdate(bool enabled)
+{
+    m_request.setAutoUpdate(enabled);
+
+    emit autoUpdateChanged();
+}
+
 void QDeclarativeGalleryType::componentComplete()
 {
     m_complete = true;

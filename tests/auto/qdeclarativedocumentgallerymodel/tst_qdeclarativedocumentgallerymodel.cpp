@@ -2480,10 +2480,10 @@ void tst_QDeclarativeDocumentGalleryModel::asyncResponse()
 
     QSignalSpy spy(object.data(), SIGNAL(statusChanged()));
 
-    QCOMPARE(object->property("status"), QVariant(int(QDeclarativeGalleryQueryModel::Active)));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Active));
 
     gallery.response()->finish();
-    QCOMPARE(object->property("status"), QVariant(int(QDeclarativeGalleryQueryModel::Finished)));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Finished));
     QCOMPARE(spy.count(), 1);
 }
 
@@ -2506,10 +2506,10 @@ void tst_QDeclarativeDocumentGalleryModel::cancelAsyncResponse()
 
     QSignalSpy spy(object.data(), SIGNAL(statusChanged()));
 
-    QCOMPARE(object->property("status"), QVariant(int(QDeclarativeGalleryQueryModel::Active)));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Active));
 
     QMetaObject::invokeMethod(object.data(), "cancel");
-    QCOMPARE(object->property("status"), QVariant(int(QDeclarativeGalleryQueryModel::Cancelled)));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Cancelled));
     QCOMPARE(spy.count(), 1);
 }
 
@@ -2532,10 +2532,10 @@ void tst_QDeclarativeDocumentGalleryModel::cancelIdleResponse()
 
     QSignalSpy spy(object.data(), SIGNAL(statusChanged()));
 
-    QCOMPARE(object->property("status"), QVariant(int(QDeclarativeGalleryQueryModel::Idle)));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Idle));
 
     QMetaObject::invokeMethod(object.data(), "cancel");
-    QCOMPARE(object->property("status"), QVariant(int(QDeclarativeGalleryQueryModel::Finished)));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Finished));
     QCOMPARE(spy.count(), 1);
 }
 
@@ -2561,10 +2561,10 @@ void tst_QDeclarativeDocumentGalleryModel::clear()
     QSignalSpy statusSpy(object.data(), SIGNAL(statusChanged()));
     QSignalSpy removeSpy(object.data(), SIGNAL(rowsRemoved(QModelIndex,int,int)));
 
-    QCOMPARE(object->property("status"), QVariant(int(QDeclarativeGalleryQueryModel::Finished)));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Finished));
 
     QMetaObject::invokeMethod(object.data(), "clear");
-    QCOMPARE(object->property("status"), QVariant(int(QDeclarativeGalleryQueryModel::Null)));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Null));
     QCOMPARE(statusSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 1);
     QCOMPARE(removeSpy.last().value(1).toInt(), 0);
@@ -2602,7 +2602,7 @@ void tst_QDeclarativeDocumentGalleryModel::error()
     QScopedPointer<QObject> object(component.create());
     QVERIFY(object);
 
-    QCOMPARE(object->property("status"), QVariant(int(QDeclarativeGalleryQueryModel::Error)));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Error));
     QCOMPARE(object->property("errorMessage"), QVariant(expectedErrorMessage));
 }
 
