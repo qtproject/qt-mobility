@@ -51,6 +51,7 @@ QDeclarativeGalleryQueryModel::QDeclarativeGalleryQueryModel(QObject *parent)
     : QAbstractListModel(parent)
     , m_resultSet(0)
     , m_status(Null)
+    , m_rowCount(0)
     , m_complete(false)
 {
     connect(&m_request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
@@ -86,7 +87,7 @@ qreal QDeclarativeGalleryQueryModel::progress() const
 
 void QDeclarativeGalleryQueryModel::setPropertyNames(const QStringList &names)
 {
-    if (!m_complete && m_request.propertyNames() != names) {
+    if (!m_complete) {
         m_request.setPropertyNames(names);
 
         emit propertyNamesChanged();
@@ -183,6 +184,20 @@ void QDeclarativeGalleryQueryModel::reload()
     m_request.execute();
 }
 
+void QDeclarativeGalleryQueryModel::cancel()
+{
+    m_executeTimer.stop();
+
+    m_request.cancel();
+}
+
+void QDeclarativeGalleryQueryModel::clear()
+{
+    m_executeTimer.stop();
+
+    m_request.clear();
+}
+
 
 int QDeclarativeGalleryQueryModel::rowCount(const QModelIndex &parent) const
 {
@@ -217,7 +232,7 @@ QVariant QDeclarativeGalleryQueryModel::data(const QModelIndex &index, int role)
 bool QDeclarativeGalleryQueryModel::setData(
         const QModelIndex &index, const QVariant &value, int role)
 {
-    if (index.isValid() && (role -= MetaDataOffset) > 0) {
+    if (index.isValid() && (role -= MetaDataOffset) >= 0) {
         if (m_resultSet->currentIndex() != index.row() && !m_resultSet->fetch(index.row()))
             return false;
 
@@ -281,7 +296,7 @@ QVariant QDeclarativeGalleryQueryModel::property(int index, const QString &prope
     if (property == QLatin1String("itemId")) {
         return m_resultSet->itemId();
     } else if (property == QLatin1String("itemType")) {
-        return m_resultSet->itemType();
+        return itemType(m_resultSet->itemType());
     } else {
         const int propertyKey = m_resultSet->propertyKey(property);
 
@@ -314,7 +329,6 @@ void QDeclarativeGalleryQueryModel::set(int index, const QScriptValue &values)
 void QDeclarativeGalleryQueryModel::setProperty(
         int index, const QString &property, const QVariant &value)
 {
-
     if (index < 0
             || index >= m_rowCount
             || (m_resultSet->currentIndex() != index && !m_resultSet->fetch(index))) {
@@ -344,18 +358,12 @@ void QDeclarativeGalleryQueryModel::timerEvent(QTimerEvent *event) {
 
 void QDeclarativeGalleryQueryModel::_q_statusChanged()
 {
-    Status status = m_status;
     QString message = m_request.errorString();
+    qSwap(message, m_errorMessage);
 
     m_status = Status(m_request.status());
 
-    qSwap(message, m_errorMessage);
-
-    if (m_status != status) {
-        m_status = status;
-
-        emit statusChanged();
-    }
+    emit statusChanged();
 
     if (message != m_errorMessage)
         emit errorMessageChanged();
@@ -364,7 +372,7 @@ void QDeclarativeGalleryQueryModel::_q_statusChanged()
 void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet)
 {
     if (m_rowCount > 0) {
-        beginRemoveRows(QModelIndex(), 0, m_rowCount);
+        beginRemoveRows(QModelIndex(), 0, m_rowCount - 1);
         m_rowCount = 0;
         m_resultSet = resultSet;
         endRemoveRows();
@@ -384,8 +392,10 @@ void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet
                 ++it) {
             const int key = m_resultSet->propertyKey(*it);
 
-            roleNames.insert(key + MetaDataOffset, it->toLatin1());
-            m_propertyNames.append(qMakePair(key, *it));
+            if (key >= 0) {
+                roleNames.insert(key + MetaDataOffset, it->toLatin1());
+                m_propertyNames.append(qMakePair(key, *it));
+            }
         }
         roleNames.insert(ItemId, QByteArray("itemId"));
         roleNames.insert(ItemType, QByteArray("itemType"));
