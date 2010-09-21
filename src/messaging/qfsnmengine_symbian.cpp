@@ -209,7 +209,7 @@ void createFSMessage(QMessage &message, NmApiMessage &fsMessage)
         }
     }
     
-    envelope.setSubject("Morjes");//message.subject());   
+    envelope.setSubject(message.subject());   
     fsMessage.setEnvelope(envelope);
     
     QMessagePrivate *privateMessage = QMessagePrivate::implementation(message);
@@ -2682,7 +2682,7 @@ void CFSAsynchronousSendOperation::sendMessage(QMessageServicePrivate& privateSe
     createDraftMessage();
 }
     
-void CFSAsynchronousSendOperation::createDraftMessageCompleted(QVariant message, int success)
+void CFSAsynchronousSendOperation::createDraftMessageCompleted(int success, QVariant message)
 {
     if (success == 0) {
         if (message.canConvert<NmApiMessage>()) {
@@ -2695,7 +2695,7 @@ void CFSAsynchronousSendOperation::createDraftMessageCompleted(QVariant message,
         emit messageSend(success, this);
 }
 
-void CFSAsynchronousSendOperation::saveCompleted(QVariant message, int success)
+void CFSAsynchronousSendOperation::saveCompleted(int success)
 {
     if (success == 0)
         sendMessage();
@@ -2703,7 +2703,7 @@ void CFSAsynchronousSendOperation::saveCompleted(QVariant message, int success)
         emit messageSend(success, this);
 }
     
-void CFSAsynchronousSendOperation::sendCompleted(QVariant message, int success)
+void CFSAsynchronousSendOperation::sendCompleted(int success)
 {
     m_privateService->setFinished(success);
     emit messageSend(success, this);
@@ -2713,21 +2713,21 @@ void CFSAsynchronousSendOperation::saveMessage()
 {
     QPointer<NmApiOperation> operation = m_manager->saveMessage(m_fsMessage);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(saveCompleted(QVariant, int)));
+    connect(operation, SIGNAL(operationComplete(int)), this, SLOT(saveCompleted(int)));
 }
     
 void CFSAsynchronousSendOperation::createDraftMessage()
 {
     QPointer<NmApiOperation> operation = m_manager->createDraftMessage(NULL);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(createDraftMessageCompleted(QVariant, int)));
+    connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(createDraftMessageCompleted(int, QVariant)));
 }
     
 void CFSAsynchronousSendOperation::sendMessage()
 {
     QPointer<NmApiOperation> operation = m_manager->sendMessage(m_fsMessage);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(sendCompleted(QVariant, int)));
+    connect(operation, SIGNAL(operationComplete(int)), this, SLOT(sendCompleted(int)));
 }
 
 CFSAsynchronousAddOperation::CFSAsynchronousAddOperation()

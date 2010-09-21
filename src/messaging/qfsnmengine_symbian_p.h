@@ -317,9 +317,9 @@ public:
     void sendMessage(QMessageServicePrivate &privateService, QMessage &message);
     
 public slots:
-    void createDraftMessageCompleted(QVariant message, int success);
-    void saveCompleted(QVariant variant, int success);
-    void sendCompleted(QVariant variant, int success);
+    void createDraftMessageCompleted(int success, QVariant message);
+    void saveCompleted(int success);
+    void sendCompleted(int success);
     
 signals:    
     void messageSend(int success, CFSAsynchronousSendOperation *operation);
