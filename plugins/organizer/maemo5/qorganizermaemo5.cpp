@@ -672,10 +672,12 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::internalItemIds(const Q
     // Use the general implementation to filter and sort items
     QList<QOrganizerItem> filteredAndSorted;
     foreach(const QOrganizerItemLocalId& id, retn) {
+        *error = QOrganizerItemManager::NoError;
         QOrganizerItem item = internalFetchItem(id, fetchMinimalData(), error, true);
         if (*error == QOrganizerItemManager::NoError) {
-            if (QOrganizerItemManagerEngine::testFilter(filter, item))
+            if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
                 QOrganizerItemManagerEngine::addSorted(&filteredAndSorted, item, sortOrders);
+            }
         }
     }
 
@@ -1474,6 +1476,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             if (*error == QOrganizerItemManager::NoError) {
                 // Set alarm (must always be set only after the component is saved)
                 d->m_itemTransformer.setAlarm(cal, item, component);
+                d->m_dbCache->invalidate();
 
                 cs.insertChangedItem(item->localId());
             }
@@ -1504,6 +1507,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
                 // Set alarm (must always be set only after the component is saved)
                 d->m_itemTransformer.setAlarm(cal, item, component);
+                d->m_dbCache->invalidate();
 
                 // Update changeset
                 if (calError == CALENDAR_ENTRY_DUPLICATED)
@@ -1836,8 +1840,6 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
     collectionId.setManagerUri(managerUri());
     collectionId.setLocalId(collectionLocalId);
 
-    ////
-    //std::string nativeId = QString::number((static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemId)))->m_localItemId).toStdString();
     std::string nativeId = QString::number(readItemLocalId(itemId)).toStdString();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
 
@@ -1895,12 +1897,13 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
         }
     }
 
+    calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error
     CTodo *todo = 0;
     if (d->m_dbAccess->typeOf(itemId) == TODO_TYPE)
-        //todo = cal->getTodo(nativeId, calError);
         todo = d->m_dbAccess->getTodo(cal, nativeId, calError);
     else
         calError = CALENDAR_NONE_INDB;
+
 
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     if (todo) {
@@ -1915,12 +1918,13 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
         return retn;
     }
 
+    calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error
     CJournal *journal = 0;
     if (d->m_dbAccess->typeOf(itemId) == JOURNAL_TYPE)
-        //journal = cal->getJournal(nativeId, calError);
         journal = d->m_dbAccess->getJournal(cal, nativeId, calError);
     else
         calError = CALENDAR_NONE_INDB;
+
 
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     if (journal) {
