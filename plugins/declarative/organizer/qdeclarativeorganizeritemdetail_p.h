@@ -96,7 +96,7 @@ class QDeclarativeOrganizerEventTimeRange : public QDeclarativeOrganizerItemDeta
     Q_OBJECT
     Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
     Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime NOTIFY valueChanged)
-    Q_PROPERTY(bool timeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
+    Q_PROPERTY(bool isTimeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
 public:
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "eventTimeRange");
 
