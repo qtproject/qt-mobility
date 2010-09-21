@@ -388,7 +388,7 @@ bool GConfLayer::removeValue(QValueSpacePublisher */*creator*/,
     }
 
     GConfItem gconfItem(fullPath);
-    gconfItem.unset();
+    gconfItem.recursiveUnset();
 
     return true;
 }
