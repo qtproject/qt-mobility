@@ -343,6 +343,9 @@ private Q_SLOTS:
     virtual void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
 #endif
+private:
+    QSystemDeviceInfo::BatteryStatus currentBatStatus;
+    void initBatteryStatus();
 };
 
 

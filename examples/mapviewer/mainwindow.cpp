@@ -170,7 +170,7 @@ void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             if (entries_considered > 0) kineticPanSpeed /= entries_considered;
             lastMoveTime = currentTime;
 
-            // When releasing the mouse button/finger while moving, start the kinetic panning timer (which also takes care of calling stopPanning).
+            // When releasing the mouse button/finger while moving, start the kinetic panning timer
             kineticTimer->start();
             panDecellerate = true;
         }
@@ -193,7 +193,7 @@ void MapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
         // Calculate position delta
         QPointF delta = event->lastPos() - event->pos();
 
-        // Calculate and set speed (TODO: average over 3 events)
+        // Calculate and set speed
         if (deltaTime > 0) {
             kineticPanSpeed = delta / deltaTime;
 
@@ -411,11 +411,6 @@ MainWindow::MainWindow(QWidget *parent) :
             SLOT(error(QNetworkSession::SessionError)));
 
     m_session->open();
-    m_session->waitForOpened();
-
-    QNetworkProxyFactory::setUseSystemConfiguration(true);
-    setProvider("nokia");
-    setupUi();
 }
 
 MainWindow::~MainWindow()
@@ -425,6 +420,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::networkSessionOpened()
 {
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
+    setProvider("nokia");
+    setupUi();
 }
 
 void MainWindow::error(QNetworkSession::SessionError error)
@@ -1048,18 +1046,36 @@ void MainWindow::drawText(bool /*checked*/)
 
     QGeoMapTextObject *text = new QGeoMapTextObject(start, QString("text"));
 
-    QGeoMapObject *object = new QGeoMapObject();
-    object->addChildObject(text);
-
     QColor fill(Qt::black);
     text->setBrush(QBrush(fill));
-    m_mapWidget->addMapObject(object);
+    m_mapWidget->addMapObject(text);
 }
 
 void MainWindow::drawPixmap(bool /*checked*/)
 {
-    QGeoMapPixmapObject *marker = new QGeoMapPixmapObject(m_mapWidget->screenPositionToCoordinate(m_lastClicked),
-            QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon);
+    QGeoCoordinate coordinate = m_mapWidget->screenPositionToCoordinate(m_lastClicked);
+
+    static int markerIndex = 0;
+    markerIndex++;
+
+    const QString & indexString = QString::number(markerIndex);
+
+    QGeoMapPixmapObject *marker;
+    //marker = new QGeoMapPixmapObject(coordinate, QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon);
+
+    //switch (rand()%3) {
+    //switch ((markerIndex-1)%3) {
+    switch (0) {
+        case 0:
+            marker = QGeoMapPixmapObject::createStandardMarker(coordinate, SHAPE_BALLOON, indexString, QPen(), QPen(QColor(Qt::white)), QBrush(QColor(0, 0, 136)));
+            break;
+        case 1:
+            marker = QGeoMapPixmapObject::createStandardMarker(coordinate, SHAPE_STAR, indexString, QPen(QColor(0, 0, 136)), QPen(QColor(Qt::white)), QBrush(QColor(0, 0, 136, 64)));
+            break;
+        case 2:
+            marker = QGeoMapPixmapObject::createStandardMarker(coordinate, SHAPE_STAR, indexString, QPen(QColor(0, 0, 136, 128)), QPen(QColor(Qt::white)), QBrush(QColor(0, 128, 255, 32)));
+            break;
+    }
     m_mapWidget->addMapObject(marker);
     m_markerObjects.append(marker);
 }
@@ -1077,7 +1093,7 @@ void MainWindow::customContextMenuRequest(const QPoint& point)
 {
     m_lastClicked = point;
 #ifdef Q_OS_SYMBIAN
-    // Work around a bug with QGraphicsView's customContextMenuRequeste signal on Symbian
+    // Work around a bug with QGraphicsView's customContextMenuRequested signal on Symbian
     // TODO: adjust this #ifdef, so it doesn't break with versions that fix the bug
     m_lastClicked -= m_qgv->geometry().topLeft();
 #endif

@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 import Qt 4.7
-import "../common" as Common
+import "../flickrcommon" as Common
 
 Flipable {
     id: container

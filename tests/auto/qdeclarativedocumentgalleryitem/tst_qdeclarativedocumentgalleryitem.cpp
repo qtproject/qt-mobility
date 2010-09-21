@@ -50,6 +50,9 @@
 #include <QtDeclarative/qdeclarativecontext.h>
 #include <QtDeclarative/qdeclarativeengine.h>
 
+#include <qdeclarativedocumentgallery.h>
+#include <qdeclarativegalleryitem.h>
+
 #include <QtTest/QtTest>
 
 QTM_USE_NAMESPACE
@@ -135,7 +138,7 @@ class QtTestGallery : public QAbstractGallery
 public:
     QtTestGallery()
         : m_count(0)
-        , m_status(QGalleryAbstractRequest::Active)
+        , m_status(QGalleryAbstractRequest::Finished)
         , m_error(QGalleryAbstractRequest::NoError)
     {}
 
@@ -150,6 +153,13 @@ public:
 
     QGalleryItemRequest *request() const { return m_request.data(); }
     QtGalleryTestResponse *response() const { return m_response.data(); }
+
+    void reset()
+    {
+        m_count = 0;
+        m_status = QGalleryAbstractRequest::Finished;
+        m_error = QGalleryItemRequest::NoError;
+    }
 
 protected:
     QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request)
@@ -181,10 +191,17 @@ class tst_QDeclarativeDocumentGalleryItem : public QObject
     Q_OBJECT
 public Q_SLOTS:
     void initTestCase();
+    void cleanup();
 
 private Q_SLOTS:
     void construct_data();
     void construct();
+    void asyncResponse();
+    void cancelAsyncResponse();
+    void cancelIdleResponse();
+    void clear();
+    void error_data();
+    void error();
 
 private:
     QtTestGallery gallery;
@@ -194,6 +211,11 @@ private:
 void tst_QDeclarativeDocumentGalleryItem::initTestCase()
 {
     engine.rootContext()->setContextProperty(QLatin1String("qt_testGallery"), &gallery);
+}
+
+void tst_QDeclarativeDocumentGalleryItem::cleanup()
+{
+    gallery.reset();
 }
 
 void tst_QDeclarativeDocumentGalleryItem::construct_data()
@@ -271,6 +293,147 @@ void tst_QDeclarativeDocumentGalleryItem::construct()
     QCOMPARE(gallery.request()->autoUpdate(), autoUpdate);
 }
 
+void tst_QDeclarativeDocumentGalleryItem::asyncResponse()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryItem { item: 12 }\n");
+
+    gallery.setStatus(QGalleryAbstractRequest::Active);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(statusChanged()));
+
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryItem::Active));
+
+    gallery.response()->finish();
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryItem::Finished));
+    QCOMPARE(spy.count(), 1);
+}
+
+void tst_QDeclarativeDocumentGalleryItem::cancelAsyncResponse()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryItem { item: 12 }\n");
+
+    gallery.setStatus(QGalleryAbstractRequest::Active);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(statusChanged()));
+
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryItem::Active));
+
+    QMetaObject::invokeMethod(object.data(), "cancel");
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryItem::Cancelled));
+    QCOMPARE(spy.count(), 1);
+}
+
+void tst_QDeclarativeDocumentGalleryItem::cancelIdleResponse()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryItem { item: 12 }\n");
+
+    gallery.setStatus(QGalleryAbstractRequest::Idle);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(statusChanged()));
+
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryItem::Idle));
+
+    QMetaObject::invokeMethod(object.data(), "cancel");
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryItem::Finished));
+    QCOMPARE(spy.count(), 1);
+}
+
+void tst_QDeclarativeDocumentGalleryItem::clear()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryItem { item: 12 }\n");
+
+    gallery.setCount(1);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy statusSpy(object.data(), SIGNAL(statusChanged()));
+    QSignalSpy availableSpy(object.data(), SIGNAL(availableChanged()));
+
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryItem::Finished));
+
+    QMetaObject::invokeMethod(object.data(), "clear");
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryItem::Null));
+    QCOMPARE(object->property("available"), QVariant(false));
+    QCOMPARE(statusSpy.count(), 1);
+    QCOMPARE(availableSpy.count(), 1);
+}
+
+void tst_QDeclarativeDocumentGalleryItem::error_data()
+{
+    QTest::addColumn<int>("errorCode");
+    QTest::addColumn<QString>("errorMessage");
+    QTest::addColumn<QString>("expectedErrorMessage");
+
+    QTest::newRow("Connection Error")
+            << int(QDocumentGallery::ConnectionError)
+            << "Connection to server failed"
+            << "Connection to server failed";
+}
+
+void tst_QDeclarativeDocumentGalleryItem::error()
+{
+    QFETCH(int, errorCode);
+    QFETCH(QString, errorMessage);
+    QFETCH(QString, expectedErrorMessage);
+
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryItem { item: 12 }\n");
+
+    gallery.setError(errorCode, errorMessage);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryItem::Error));
+    QCOMPARE(object->property("errorMessage"), QVariant(expectedErrorMessage));
+}
 QTEST_MAIN(tst_QDeclarativeDocumentGalleryItem)
 
 #include "tst_qdeclarativedocumentgalleryitem.moc"

@@ -74,6 +74,13 @@ public:
         TerrainMap
     };
 
+    enum ConnectivityMode {
+        NoConnectivity,
+        OfflineMode,
+        OnlineMode,
+        HybridMode
+    };
+
     QGraphicsGeoMap(QGraphicsItem *parent = 0);
     QGraphicsGeoMap(QGeoMappingManager *manager, QGraphicsItem *parent = 0);
     virtual ~QGraphicsGeoMap();
@@ -96,13 +103,21 @@ public:
     void setMapType(MapType mapType);
     MapType mapType() const;
 
+    QList<ConnectivityMode> supportedConnectivityModes() const;
+    void setConnectivityMode(ConnectivityMode connectivityMode);
+    ConnectivityMode connectivityMode() const;
+
     QList<QGeoMapObject*> mapObjects() const;
     void addMapObject(QGeoMapObject *mapObject);
     void removeMapObject(QGeoMapObject *mapObject);
     void clearMapObjects();
 
-    QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
-    QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
+    QGeoBoundingBox viewport() const;
+    void fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false);
+
+    QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition) const;
+    QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect) const;
+    QList<QGeoMapObject*> mapObjectsInViewport() const;
 
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
     QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;

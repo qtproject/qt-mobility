@@ -46,27 +46,31 @@ Rectangle {
     signal clicked
     property string image: ""
     property string text: ""
+    property bool enableButton: true
 
-    color: activePalette.button; smooth: true
-    border.width: 1; border.color: Qt.darker(activePalette.button); radius: 8;
-
-    gradient: Gradient {
-        GradientStop {
-            id: topGrad; position: 0.0
-            color :if (mr.pressed) { activePalette.dark } else { activePalette.light } }
-        GradientStop { position: 1.0; color: activePalette.button }
-    }
+    color: if (mouseArea.pressed) { "gray" } else { "lightgray" }
+    smooth: true
+    radius: 8;
+    border.width: mainWindow.screenScale; border.color: Qt.darker(container.color); 
 
     Image {
-        id: imgItem;
+        id: imgItem
         smooth: true
-        width: 16; height: 16;
+        width: container.height - 20 
+        height: container.height - 20
         source: container.image; anchors.centerIn: container
+
+        Component.onCompleted: {
+            imgItem.width = (imgItem.width < 16) ? 16 : imgItem.width;
+            imgItem.height = (imgItem.height < 16) ? 16 : imgItem.height;
+        }
     }
 
-    MouseArea { id: mr; anchors.fill: parent; onClicked: container.clicked() }
+    MouseArea { id: mouseArea; enabled: enableButton; anchors.fill: parent; onClicked: container.clicked() }
 
     Text {
-        id: txtItem; text: container.text; anchors.centerIn: container; color: activePalette.buttonText
+        id: txtItem; text: container.text; color: "black"
+        font.pointSize: 10 * mainWindow.screenScale
+        anchors.centerIn: container;
     }
 }

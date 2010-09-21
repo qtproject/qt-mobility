@@ -70,6 +70,31 @@ QDeclarativeGalleryType::~QDeclarativeGalleryType()
 {
 }
 
+qreal QDeclarativeGalleryType::progress() const
+{
+    const int max = m_request.maximumProgress();
+
+    return max > 0
+            ? qreal(m_request.currentProgress()) / max
+            : qreal(0.0);
+}
+
+void QDeclarativeGalleryType::setPropertyNames(const QStringList &names)
+{
+    if (!m_complete) {
+        m_request.setPropertyNames(names);
+
+        emit propertyNamesChanged();
+    }
+}
+
+void QDeclarativeGalleryType::setAutoUpdate(bool enabled)
+{
+    m_request.setAutoUpdate(enabled);
+
+    emit autoUpdateChanged();
+}
+
 void QDeclarativeGalleryType::componentComplete()
 {
     m_complete = true;
@@ -80,18 +105,12 @@ void QDeclarativeGalleryType::componentComplete()
 
 void QDeclarativeGalleryType::_q_statusChanged()
 {
-    Status status = m_status;
     QString message = m_request.errorString();
+    qSwap(message, m_errorMessage);
 
     m_status = Status(m_request.status());
 
-    qSwap(message, m_errorMessage);
-
-    if (m_status != status) {
-        m_status = status;
-
-        emit statusChanged();
-    }
+    emit statusChanged();
 
     if (message != m_errorMessage)
         emit errorMessageChanged();
