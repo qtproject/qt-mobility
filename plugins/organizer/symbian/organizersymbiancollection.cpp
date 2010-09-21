@@ -210,8 +210,9 @@ void OrganizerSymbianCollection::openL(const TDesC &fileName)
     
     // Get collection id
 #ifdef SYMBIAN_CALENDAR_V2
-    // TODO: Use filename hash instead of CollectionIdL
-    d->m_calCollectionId = d->m_calSession->CollectionIdL();
+    TCalFileId calFileId(0);
+    d->m_calSession->FileIdL(calFileId);
+    d->m_calCollectionId = calFileId;
 #else
     // TODO: If multiple calendars are to be supported without native support
     // we need to generate a real id here. Currently there will only be one
@@ -254,7 +255,7 @@ QOrganizerCollectionLocalId OrganizerSymbianCollection::localId() const
     return d->m_id.localId(); 
 }
 
-quint32 OrganizerSymbianCollection::calCollectionId() const
+quint64 OrganizerSymbianCollection::calCollectionId() const
 {
     return d->m_calCollectionId;
 }

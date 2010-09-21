@@ -95,7 +95,7 @@ class QOrganizerCollectionSymbianEngineLocalId : public QOrganizerCollectionEngi
 {
 public:
     QOrganizerCollectionSymbianEngineLocalId();
-    QOrganizerCollectionSymbianEngineLocalId(quint32 collectionId);
+    QOrganizerCollectionSymbianEngineLocalId(quint64 collectionId);
     ~QOrganizerCollectionSymbianEngineLocalId();
     QOrganizerCollectionSymbianEngineLocalId(const QOrganizerCollectionSymbianEngineLocalId& other);
 
@@ -115,7 +115,7 @@ public:
     uint hash() const;
 
 private:
-    quint32 m_localCollectionId; // this will be the hash of the calendar file name.  XXX TODO: handle collisions.
+    quint64 m_localCollectionId; // this will be the hash of the calendar file name.  XXX TODO: handle collisions.
     friend class QOrganizerItemSymbianEngine;
 };
 
@@ -123,7 +123,7 @@ class QOrganizerItemSymbianEngineLocalId : public QOrganizerItemEngineLocalId
 {
 public:
     QOrganizerItemSymbianEngineLocalId();
-    QOrganizerItemSymbianEngineLocalId(quint32 collectionId, quint32 itemId);
+    QOrganizerItemSymbianEngineLocalId(quint64 collectionId, quint32 itemId);
     ~QOrganizerItemSymbianEngineLocalId();
     QOrganizerItemSymbianEngineLocalId(const QOrganizerItemSymbianEngineLocalId& other);
 
@@ -144,11 +144,11 @@ public:
     
 public:
     quint32 calLocalUid() { return m_localItemId; }
-    quint32 calCollectionId() { return m_localCollectionId; }
+    quint64 calCollectionId() { return m_localCollectionId; }
     
 private:
-    quint32 m_localCollectionId;
-    quint32 m_localItemId; // the symbian backend requires quint32 for itemId + quint32 for collectionId
+    quint64 m_localCollectionId;
+    quint32 m_localItemId; // the symbian backend requires quint32 for itemId + quint64 for collectionId
     friend class QOrganizerItemSymbianEngine;
     friend class OrganizerItemTransform;
 };

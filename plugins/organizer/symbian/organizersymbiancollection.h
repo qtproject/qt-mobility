@@ -73,7 +73,7 @@ public:
     CCalEntryView *m_calEntryView;
     CCalInstanceView *m_calInstanceView;
     QOrganizerCollectionId m_id;
-    quint32 m_calCollectionId;
+    quint64 m_calCollectionId;
     CActiveSchedulerWait *m_activeSchedulerWait;
     QString m_fileName;
     int m_error;
@@ -94,7 +94,7 @@ public:
     void createViewsL();
     QOrganizerCollectionId id() const;
     QOrganizerCollectionLocalId localId() const;
-    quint32 calCollectionId() const;
+    quint64 calCollectionId() const;
     CCalSession *calSession() const; 
     CCalEntryView *calEntryView() const;
     CCalInstanceView *calInstanceView() const;

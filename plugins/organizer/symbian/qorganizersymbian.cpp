@@ -71,7 +71,7 @@ QOrganizerItemSymbianEngineLocalId::QOrganizerItemSymbianEngineLocalId()
 {
 }
 
-QOrganizerItemSymbianEngineLocalId::QOrganizerItemSymbianEngineLocalId(quint32 collectionId, quint32 itemId)
+QOrganizerItemSymbianEngineLocalId::QOrganizerItemSymbianEngineLocalId(quint64 collectionId, quint32 itemId)
     : QOrganizerItemEngineLocalId(), m_localCollectionId(collectionId), m_localItemId(itemId)
 {
 }
@@ -87,7 +87,7 @@ QOrganizerItemSymbianEngineLocalId::QOrganizerItemSymbianEngineLocalId(const QOr
 
 bool QOrganizerItemSymbianEngineLocalId::isEqualTo(const QOrganizerItemEngineLocalId* other) const
 {
-    quint32 otherlocalCollectionId = static_cast<const QOrganizerItemSymbianEngineLocalId*>(other)->m_localCollectionId;
+    quint64 otherlocalCollectionId = static_cast<const QOrganizerItemSymbianEngineLocalId*>(other)->m_localCollectionId;
     quint32 otherlocalItemId = static_cast<const QOrganizerItemSymbianEngineLocalId*>(other)->m_localItemId;
     if (m_localCollectionId != otherlocalCollectionId)
         return false;
@@ -99,7 +99,7 @@ bool QOrganizerItemSymbianEngineLocalId::isEqualTo(const QOrganizerItemEngineLoc
 bool QOrganizerItemSymbianEngineLocalId::isLessThan(const QOrganizerItemEngineLocalId* other) const
 {
     // order by collection, then by item in collection.
-    quint32 otherlocalCollectionId = static_cast<const QOrganizerItemSymbianEngineLocalId*>(other)->m_localCollectionId;
+    quint64 otherlocalCollectionId = static_cast<const QOrganizerItemSymbianEngineLocalId*>(other)->m_localCollectionId;
     quint32 otherlocalItemId = static_cast<const QOrganizerItemSymbianEngineLocalId*>(other)->m_localItemId;
     if (m_localCollectionId < otherlocalCollectionId)
         return true;
@@ -146,7 +146,8 @@ uint QOrganizerItemSymbianEngineLocalId::hash() const
 {
     // Note: doesn't need to be unique, since == ensures difference.
     // hash function merely determines distribution in a hash table.
-    quint64 combinedLocalId = m_localItemId;
+    // TODO: collection id is 64 bit
+    quint32 combinedLocalId = m_localItemId;
     combinedLocalId <<= 32;
     combinedLocalId += m_localCollectionId;
     return uint(((combinedLocalId >> (8 * sizeof(uint) - 1)) ^ combinedLocalId) & (~0U));
@@ -157,7 +158,7 @@ QOrganizerCollectionSymbianEngineLocalId::QOrganizerCollectionSymbianEngineLocal
 {
 }
 
-QOrganizerCollectionSymbianEngineLocalId::QOrganizerCollectionSymbianEngineLocalId(quint32 collectionId)
+QOrganizerCollectionSymbianEngineLocalId::QOrganizerCollectionSymbianEngineLocalId(quint64 collectionId)
     : QOrganizerCollectionEngineLocalId(), m_localCollectionId(collectionId)
 {
 }
@@ -173,7 +174,7 @@ QOrganizerCollectionSymbianEngineLocalId::~QOrganizerCollectionSymbianEngineLoca
 
 bool QOrganizerCollectionSymbianEngineLocalId::isEqualTo(const QOrganizerCollectionEngineLocalId* other) const
 {
-    quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionSymbianEngineLocalId*>(other)->m_localCollectionId;
+    quint64 otherlocalCollectionId = static_cast<const QOrganizerCollectionSymbianEngineLocalId*>(other)->m_localCollectionId;
     if (m_localCollectionId != otherlocalCollectionId)
         return false;
     return true;
@@ -182,7 +183,7 @@ bool QOrganizerCollectionSymbianEngineLocalId::isEqualTo(const QOrganizerCollect
 bool QOrganizerCollectionSymbianEngineLocalId::isLessThan(const QOrganizerCollectionEngineLocalId* other) const
 {
     // order by collection, then by item in collection.
-    quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionSymbianEngineLocalId*>(other)->m_localCollectionId;
+    quint64 otherlocalCollectionId = static_cast<const QOrganizerCollectionSymbianEngineLocalId*>(other)->m_localCollectionId;
     if (m_localCollectionId < otherlocalCollectionId)
         return true;
     return false;
@@ -470,7 +471,7 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
     QOrganizerCollectionLocalId collectionLocalId,
     QList<QOrganizerItem> &itemInstances) const
 {
-    quint32 localCollectionIdValue = m_collections[collectionLocalId].calCollectionId();
+    quint64 localCollectionIdValue = m_collections[collectionLocalId].calCollectionId();
 
     // Transform all the instances to QOrganizerItems
     for(int i(0); i < calInstanceList.Count(); i++) {
@@ -488,7 +489,6 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
 
         bool isException = (calInstance->Entry().RecurrenceIdL().TimeUtcL() != Time::NullTTime());
         QOrganizerItemId id;
-        TCalLocalUid parentLocalUid(0);
         // Set local id if this is an exceptional item
         if (isException) {
             QOrganizerItemLocalId instanceEntryId(new QOrganizerItemSymbianEngineLocalId(
@@ -499,6 +499,7 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
         itemInstance.setId(id);
 
         // Set parent id
+        TCalLocalUid parentLocalUid(0);
         if (isException) {
             HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(itemInstance);
             CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, itemInstance, *globalUid);
@@ -686,7 +687,7 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& i
     // Set parent local id
     if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
         HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(item);
-        quint32 localCollectionIdValue = m_collections[collectionLocalId].calCollectionId();
+        quint64 localCollectionIdValue = m_collections[collectionLocalId].calCollectionId();
         CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, item, *globalUid);
         QOrganizerEventOccurrence *eventOccurrence = static_cast<QOrganizerEventOccurrence *>(&item);
         eventOccurrence->setParentLocalId(toItemLocalId(localCollectionIdValue, parentEntry->LocalUidL()));

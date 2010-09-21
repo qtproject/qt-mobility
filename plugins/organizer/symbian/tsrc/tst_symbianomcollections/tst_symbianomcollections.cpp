@@ -609,7 +609,7 @@ void tst_symbianomcollections::fetchItems()
     c.setMetaData("FileName", "c:fetchitems");
     QVERIFY(m_om->saveCollection(&c));
 
-    const int itemCount(100);
+    const int itemCount(1000);
     for (int i(0); i < itemCount; i++) {
         // Save similar item to both of the collections
         QOrganizerItem item1 = createItem(QOrganizerItemType::TypeEvent,
