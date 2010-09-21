@@ -124,7 +124,6 @@ public:
 
 public slots:
     void pan(int dx, int dy);
-    //void pan(const QPoint &offset);
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
@@ -133,7 +132,6 @@ Q_SIGNALS:
     void zoomLevelChanged(qreal zoomLevel);
     void centerChanged(const QGeoCoordinate &coordinate);
     void mapTypeChanged(QGraphicsGeoMap::MapType mapType);
-    void panned(const QPoint &offset);
 
 private:
     QGraphicsGeoMapPrivate *d_ptr;

@@ -561,9 +561,14 @@ void QGeoTiledMapData::pan(int dx, int dy)
     d->maxZoomCenter.setX(x);
     d->maxZoomCenter.setY(y);
 
-    QGeoMapData::setCenter(center());
+    QGeoCoordinate centerCoord = center();
+
+    QGeoMapData::setCenter(centerCoord);
 
     d->updateScreenRect();
+
+    emit centerChanged(centerCoord);
+
     d->updateMapImage();
 }
 
