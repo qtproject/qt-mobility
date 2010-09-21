@@ -195,7 +195,6 @@ contains(mobility_modules,gallery) {
         qgalleryitemrequest \
         qgalleryquerymodel \
         qgalleryqueryrequest \
-        qgalleryremoverequest \
         qgalleryresource \
         qgallerytyperequest
 

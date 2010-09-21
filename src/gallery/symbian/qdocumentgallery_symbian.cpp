@@ -45,7 +45,6 @@
 
 #include "qgalleryitemrequest.h"
 #include "qgalleryqueryrequest.h"
-#include "qgalleryremoverequest.h"
 #include "qgallerytyperequest.h"
 //Qt
 #include <QtCore/qmetaobject.h>
@@ -54,7 +53,6 @@
 #include "qgallerymdsutility.h"
 #include "qmdegallerytyperesultset.h"
 #include "qmdegalleryitemresultset.h"
-#include "qmdegalleryremoveresultset.h"
 #include "qmdegalleryqueryresultset.h"
 #include "qmdesession.h"
 
@@ -65,7 +63,6 @@ class QDocumentGalleryPrivate : public QAbstractGalleryPrivate
 public:
     QGalleryAbstractResponse* createTypeResponse(QGalleryTypeRequest *request);
     QGalleryAbstractResponse* createItemResponse(QGalleryItemRequest *request);
-    QGalleryAbstractResponse* createRemoveResponse(QGalleryRemoveRequest *request);
     QGalleryAbstractResponse* createQueryResponse(QGalleryQueryRequest *request);
 
     QMdeSession *m_session;
@@ -84,14 +81,6 @@ QGalleryAbstractResponse* QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     // Fill up response class with with request data (create proper query)
     QMDEGalleryItemResultSet *response = new QMDEGalleryItemResultSet(m_session, request);
     return response;
-}
-
-QGalleryAbstractResponse* QDocumentGalleryPrivate::createRemoveResponse(QGalleryRemoveRequest *request)
-{
-    // Fill up response class with with request data (create proper query)
-    QMDEGalleryRemoveResultSet *response = new QMDEGalleryRemoveResultSet(m_session, request);
-    return response;
-
 }
 
 QGalleryAbstractResponse* QDocumentGalleryPrivate::createQueryResponse(QGalleryQueryRequest *request)
@@ -119,7 +108,6 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::RequestType t
     case QGalleryAbstractRequest::QueryRequest:
     case QGalleryAbstractRequest::ItemRequest:
     case QGalleryAbstractRequest::TypeRequest:
-    case QGalleryAbstractRequest::RemoveRequest:
         return true;
         default:
         return false;
@@ -152,8 +140,6 @@ QGalleryAbstractResponse* QDocumentGallery::createResponse(QGalleryAbstractReque
         return d->createItemResponse(static_cast<QGalleryItemRequest *>(request));
     case QGalleryAbstractRequest::TypeRequest:
         return d->createTypeResponse(static_cast<QGalleryTypeRequest *>(request));
-    case QGalleryAbstractRequest::RemoveRequest:
-        return d->createRemoveResponse(static_cast<QGalleryRemoveRequest *>(request));
     case QGalleryAbstractRequest::QueryRequest:
         return d->createQueryResponse(static_cast<QGalleryQueryRequest *>(request));
     default:
