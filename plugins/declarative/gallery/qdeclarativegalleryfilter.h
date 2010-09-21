@@ -83,7 +83,7 @@ class QDeclarativeGalleryValueFilter : public QDeclarativeGalleryFilterBase
     Q_OBJECT
     Q_PROPERTY(QString property READ propertyName WRITE setPropertyName NOTIFY propertyNameChanged)
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
-    Q_PROPERTY(bool inverted READ isInverted WRITE setInverted NOTIFY invertedChanged)
+    Q_PROPERTY(bool negated READ isNegated WRITE setNegated NOTIFY negatedChanged)
 public:
     QString propertyName() const { return m_filter.propertyName(); }
     void setPropertyName(const QString &name);
@@ -91,15 +91,15 @@ public:
     QVariant value() const { return m_filter.value(); }
     void setValue(const QVariant &value);
 
-    bool isInverted() const { return m_filter.isInverted(); }
-    void setInverted(bool inverted);
+    bool isNegated() const { return m_filter.isNegated(); }
+    void setNegated(bool negated);
 
     QGalleryFilter filter() const;
 
 Q_SIGNALS:
     void propertyNameChanged();
     void valueChanged();
-    void invertedChanged();
+    void negatedChanged();
 
 protected:
     explicit QDeclarativeGalleryValueFilter(
@@ -117,7 +117,7 @@ class QDeclarativeGalleryStringFilter : public QDeclarativeGalleryFilterBase
     Q_OBJECT
     Q_PROPERTY(QString property READ propertyName WRITE setPropertyName NOTIFY propertyNameChanged)
     Q_PROPERTY(QString value READ value WRITE setValue NOTIFY valueChanged)
-    Q_PROPERTY(bool inverted READ isInverted WRITE setInverted NOTIFY invertedChanged)
+    Q_PROPERTY(bool negated READ isNegated WRITE setNegated NOTIFY negatedChanged)
 public:
     QString propertyName() const { return m_filter.propertyName(); }
     void setPropertyName(const QString &name);
@@ -125,15 +125,15 @@ public:
     QString value() const { return m_filter.value().toString(); }
     void setValue(const QString &value);
 
-    bool isInverted() const { return m_filter.isInverted(); }
-    void setInverted(bool inverted);
+    bool isNegated() const { return m_filter.isNegated(); }
+    void setNegated(bool negated);
 
     QGalleryFilter filter() const;
 
 Q_SIGNALS:
     void propertyNameChanged();
     void valueChanged();
-    void invertedChanged();
+    void negatedChanged();
 
 protected:
     explicit QDeclarativeGalleryStringFilter(

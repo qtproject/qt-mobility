@@ -66,12 +66,49 @@ QMDEGalleryItemResultSet::~QMDEGalleryItemResultSet()
 
     m_session->RemoveObjectObserver( *this );
 }
-
-void QMDEGalleryItemResultSet::HandleObjectNotification( CMdESession& /*aSession*/,
+#ifdef MDS_25_COMPILATION_ENABLED
+void QMDEGalleryItemResultSet::HandleObjectNotification( CMdESession& aSession,
     TObserverNotificationType aType,
     const RArray<TItemId>& aObjectIdArray )
 {
+    int err = KErrNone;
     if (aType == ENotifyModify) {
+        TRAP(err, doHandleObjectNotificationL(aSession,QMDEGalleryItemResultSet::ENotifyModify, aObjectIdArray);)
+    } else if (aType == ENotifyRemove) {
+        TRAP(err, doHandleObjectNotificationL(aSession,QMDEGalleryItemResultSet::ENotifyRemove, aObjectIdArray);)
+    }
+    if (err != KErrNone)
+        emit error(err);
+}
+#else
+
+void QMDEGalleryItemResultSet::HandleObjectAdded(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
+{
+    //No impl needed.
+}
+
+void QMDEGalleryItemResultSet::HandleObjectModified(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
+{
+    TRAPD(err, doHandleObjectNotificationL(aSession,QMDEGalleryItemResultSet::ENotifyModify, aObjectIdArray);)
+
+    if (err != KErrNone)
+        emit error(err);
+}
+
+void QMDEGalleryItemResultSet::HandleObjectRemoved(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray)
+{
+    TRAPD(err, doHandleObjectNotificationL(aSession,QMDEGalleryItemResultSet::ENotifyRemove, aObjectIdArray);)
+
+    if (err != KErrNone)
+        emit error(err);    
+}
+#endif //MDS_25_COMPILATION_ENABLED
+
+void QMDEGalleryItemResultSet::doHandleObjectNotificationL( CMdESession& /*aSession*/,
+    QMdeSessionObserverNotificationType aType,
+    const RArray<TItemId>& aObjectIdArray )
+{
+    if (aType == QMDEGalleryItemResultSet::ENotifyModify) {
         delete m_resultObject;
         TRAP_IGNORE( m_resultObject = m_session->GetFullObjectL( aObjectIdArray[0] ) );
         if (m_resultObject) {
@@ -88,7 +125,7 @@ void QMDEGalleryItemResultSet::HandleObjectNotification( CMdESession& /*aSession
             }
             emit metaDataChanged( 0, 1, keys );
         }
-    } else if (aType == ENotifyRemove) {
+    } else if (aType == QMDEGalleryItemResultSet::ENotifyRemove) {
         delete m_resultObject;
         m_resultObject = NULL;
         m_isValid = false;
