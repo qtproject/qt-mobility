@@ -517,7 +517,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
             const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
-                const QFileInfo fi(devFile + "/wireless");
+                const QFileInfo fi(devFile + "/phy80211");
                 if(fi.exists()) {
                     wlanInterface = dir;
                 }
