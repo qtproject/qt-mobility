@@ -329,11 +329,13 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
         quint8 localIdMarker = static_cast<quint8>(false);
         in >> localIdMarker;
         QOrganizerItemLocalId localId(QOrganizerItemManagerData::createEngineItemLocalId(managerUri));
-        if (localId.d) {
+        if (localIdMarker == static_cast<quint8>(true)) {
             id.setManagerUri(managerUri);
-            if (localIdMarker == static_cast<quint8>(true)) {
-                // only try to stream in data if it exists.  otherwise, skip it.
+            if (localId.d) {
+                // only try to stream in data if it exists and the engine could create an engine
+                // specific localId based on the managerUri. otherwise, skip it.
                 localId.d->dataStreamIn(in);
+                id.setLocalId(localId);
             }
         }
     } else {
