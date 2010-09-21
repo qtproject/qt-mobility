@@ -153,14 +153,14 @@ void QGeoTiledMapRouteObjectInfo::updateVisible()
 
     bool offScreen = true;
 
-    for (int i = 0; i < distanceFilteredPoints.size() - 1; ++i) {
+    for (int i = 0; i < distanceFilteredPoints.size(); ++i) {
         if (!offScreen)
             painterPath.lineTo(distanceFilteredPoints.at(i));
 
         bool wasOffScreen = offScreen;
 
         QPointF point1 = distanceFilteredPoints.at(i);
-        QPointF point2 = distanceFilteredPoints.at(i + 1);
+        QPointF point2 = distanceFilteredPoints.at(i + 1 < distanceFilteredPoints.size() ? i + 1 : i);
         QPointF midpoint = (point1 + point2) / 2.0;
 
         QRect maxZoomScreenRect = tiledMapData->maxZoomScreenRect();
