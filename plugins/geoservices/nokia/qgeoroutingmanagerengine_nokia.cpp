@@ -78,9 +78,9 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
     avoidFeatures |= QGeoRouteRequest::AvoidDirtRoads;
     setSupportedAvoidFeatureTypes(avoidFeatures);
 
-    QGeoRouteRequest::InstructionDetails instructionDetails;
-    instructionDetails |= QGeoRouteRequest::BasicInstructions;
-    setSupportedInstructionDetails(instructionDetails);
+    QGeoRouteRequest::ManeuverDetails maneuverDetails;
+    maneuverDetails |= QGeoRouteRequest::BasicManeuvers;
+    setSupportedManeuverDetails(maneuverDetails);
 
     QGeoRouteRequest::RouteOptimizations optimizations;
     optimizations |= QGeoRouteRequest::ShortestRoute;
@@ -168,7 +168,7 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
     if ((request.avoidFeatureTypes() & supportedAvoidFeatureTypes()) != request.avoidFeatureTypes())
         supported = false;
 
-    if ((request.instructionDetail() & supportedInstructionDetails()) != request.instructionDetail())
+    if ((request.maneuverDetail() & supportedManeuverDetails()) != request.maneuverDetail())
         supported = false;
 
     if ((request.segmentDetail() & supportedSegmentDetails()) != request.segmentDetail())
@@ -222,7 +222,7 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
     if ((route.request().avoidFeatureTypes() & supportedAvoidFeatureTypes()) != route.request().avoidFeatureTypes())
         supported = false;
 
-    if ((route.request().instructionDetail() & supportedInstructionDetails()) != route.request().instructionDetail())
+    if ((route.request().maneuverDetail() & supportedManeuverDetails()) != route.request().maneuverDetail())
         supported = false;
 
     if ((route.request().segmentDetail() & supportedSegmentDetails()) != route.request().segmentDetail())
@@ -325,16 +325,32 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
         }
     }
 
+//    TODO: work out what was going on here
+//    - segment and instruction/maneuever functions are mixed and matched
+//    - tried to implement sensible equivalents below
+//    QStringList legAttributes;
+//    if (request.instructionDetail() & QGeoRouteRequest::BasicSegmentData) {
+//        requestString += "&linkattributes=sh,le"; //shape,length
+//        legAttributes.append("links");
+//    }
+//
+//    if (request.instructionDetail() & QGeoRouteRequest::BasicInstructions) {
+//        legAttributes.append("maneuvers");
+//        requestString += "&maneuverattributes=po,tt,le,di"; //position,traveltime,length,direction
+//        if (!(request.instructionDetail() & QGeoRouteRequest::NoSegmentData))
+//            requestString += ",li"; //link
+//    }
+
     QStringList legAttributes;
-    if (request.instructionDetail() & QGeoRouteRequest::BasicSegmentData) {
+    if (request.segmentDetail() & QGeoRouteRequest::BasicSegmentData) {
         requestString += "&linkattributes=sh,le"; //shape,length
         legAttributes.append("links");
     }
 
-    if (request.instructionDetail() & QGeoRouteRequest::BasicInstructions) {
+    if (request.maneuverDetail() & QGeoRouteRequest::BasicManeuvers) {
         legAttributes.append("maneuvers");
         requestString += "&maneuverattributes=po,tt,le,di"; //position,traveltime,length,direction
-        if (!(request.instructionDetail() & QGeoRouteRequest::NoSegmentData))
+        if (!(request.segmentDetail() & QGeoRouteRequest::NoSegmentData))
             requestString += ",li"; //link
     }
 

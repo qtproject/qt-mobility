@@ -58,10 +58,10 @@ class QIODevice;
 
 QTM_USE_NAMESPACE
 
-class QGeoInstructionContainer
+class QGeoManeuverContainer
 {
 public:
-    QGeoInstruction instruction;
+    QGeoManeuver maneuver;
     QString id;
     QString toId;
 };
@@ -71,7 +71,7 @@ class QGeoRouteSegmentContainer
 public:
     QGeoRouteSegment segment;
     QString id;
-    QString instructionId;
+    QString maneuverId;
 };
 
 class QGeoRouteXmlParser
@@ -103,7 +103,7 @@ private:
     QXmlStreamReader *m_reader;
     QList<QGeoRoute> m_results;
     QString m_errorString;
-    QList<QGeoInstructionContainer> instructions;
+    QList<QGeoManeuverContainer> maneuvers;
     QList<QGeoRouteSegmentContainer> segments;
 };
 

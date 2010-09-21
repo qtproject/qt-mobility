@@ -201,19 +201,19 @@ void RoutePresenter::showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRout
     pathItem->setText(0, "path");
     showPoints(pathItem, segment.path());
 
-    if (!segment.instruction().instructionText().isEmpty()) {
+    if (!segment.maneuver().instructionText().isEmpty()) {
         QTreeWidgetItem* instructionItem = new QTreeWidgetItem(segmentItem);
         instructionItem->setText(0, "instruction");
 
         QTreeWidgetItem* positionItem = new QTreeWidgetItem(instructionItem);
         positionItem->setText(0, "position");
         QList<QGeoCoordinate> points;
-        points.append(segment.instruction().position());
+        points.append(segment.maneuver().position());
         showPoints(positionItem, points);
 
         QTreeWidgetItem* instructionTextItem = new QTreeWidgetItem(instructionItem);
         instructionTextItem->setText(0, "text");
-        instructionTextItem->setText(1, segment.instruction().instructionText());
+        instructionTextItem->setText(1, segment.maneuver().instructionText());
     }
 }
 

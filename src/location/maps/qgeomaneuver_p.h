@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOINSTRUCTION_P_H
-#define QGEOINSTRUCTION_P_H
+#ifndef QGEOMANEUVER_P_H
+#define QGEOMANEUVER_P_H
 
 //
 //  W A R N I N G
@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgeoinstruction.h"
+#include "qgeomaneuver.h"
 #include "qgeocoordinate.h"
 
 #include <QSharedData>
@@ -61,19 +61,19 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoInstructionPrivate : public QSharedData
+class QGeoManeuverPrivate : public QSharedData
 {
 public:
-    QGeoInstructionPrivate();
-    QGeoInstructionPrivate(const QGeoInstructionPrivate &other);
-    ~QGeoInstructionPrivate();
+    QGeoManeuverPrivate();
+    QGeoManeuverPrivate(const QGeoManeuverPrivate &other);
+    ~QGeoManeuverPrivate();
 
-    bool operator== (const QGeoInstructionPrivate &other) const;
+    bool operator== (const QGeoManeuverPrivate &other) const;
 
     QString id;
     QGeoCoordinate position;
     QString text;
-    QGeoInstruction::InstructionDirection direction;
+    QGeoManeuver::InstructionDirection direction;
     int timeToNextInstruction;
     qreal distanceToNextInstruction;
 };
