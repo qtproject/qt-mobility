@@ -728,11 +728,19 @@ void tst_QValueSpacePublisher::testQtMobility400_data()
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
+    bool foundSupported = false;
+
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
-        if (layer->layerOptions() & QValueSpace::PermanentLayer)
+        if (layer->layerOptions() & QValueSpace::PermanentLayer) {
+            foundSupported = true;
+
             QTest::newRow(layer->name().toAscii().constData()) << layer->id();
+        }
     }
+
+    if (!foundSupported)
+        QSKIP("No layer with Permanent flag set.", SkipAll);
 }
 
 void tst_QValueSpacePublisher::testQtMobility400()
