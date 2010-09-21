@@ -16,6 +16,7 @@
 
 // INCLUDE FILES
 #include "c12keykeymap.h"
+#include "predictivesearchkeymapdefs.h"
 // This macro suppresses log writes
 // #define NO_PRED_SEARCH_LOGS
 #include "predictivesearchlog.h"
@@ -68,8 +69,7 @@ const QChar KPadChar		   = 'f';
 const QChar KLowerLimitPadding = '0';
 const QChar KUpperLimitPadding = 'f';
 
-const int KLatin1 = 4; // ISO_8859-1
-const int KThaiLanguage = 2259; // Thai Industrial Standards Institute
+const int KMibThaiLanguage = 2259; // Thai Industrial Standards Institute
 
 
 // ============================== MEMBER FUNCTIONS ============================
@@ -262,8 +262,8 @@ void C12keyKeyMap::ConstructL()
 // ----------------------------------------------------------------------------
 void C12keyKeyMap::GetTextCodecs()
     {
-    iLatinCodec = QTextCodec::codecForMib(KLatin1);
-    iThaiCodec = QTextCodec::codecForMib(KThaiLanguage);
+    iLatinCodec = QTextCodec::codecForMib(KMibLatin1);
+    iThaiCodec = QTextCodec::codecForMib(KMibThaiLanguage);
     }
 
 // End of file

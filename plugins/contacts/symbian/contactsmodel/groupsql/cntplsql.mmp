@@ -92,6 +92,7 @@ source      cntpplviewsession.cpp
 source		cpcskeymap.cpp
 source		c12keykeymap.cpp
 source		cqwertykeymap.cpp
+source		ckoreankeymap.cpp
 //source		cntmetadataoperation.cpp
 source		cpplpresencetable.cpp
 source    cntsqlsearch.cpp
