@@ -149,12 +149,15 @@ void EditCalendarsPage::showPage(QOrganizerItemManager *manager)
     m_manager = manager;
     m_calendarList->clear();
     QList<QOrganizerCollection> collections = manager->collections();
+    int index = 0;
     foreach(QOrganizerCollection collection, collections) {
         QString visibleName;
         if (collection.metaData("Name").canConvert(QVariant::String))
             visibleName = collection.metaData("Name").toString();
         else
-            visibleName = "Calendar id " + QString::number(collection.id().localId());
+            // We currently have no way of stringifying ids
+            // visibleName = "Calendar id " + QString::number(collection.id().localId());
+            visibleName = "Calendar " + QString::number(index++);
 
         QListWidgetItem* listItem = new QListWidgetItem();
         listItem->setText(visibleName);

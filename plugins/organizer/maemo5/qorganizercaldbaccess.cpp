@@ -120,9 +120,7 @@ int OrganizerCalendarDatabaseAccess::calIdOf(QOrganizerItemLocalId id)
     QSqlQuery query;
     if (!query.prepare(selectComponentCalIdType))
         return -1;
-    query.bindValue(":compId", QString::number(
-        static_cast<QOrganizerItemMaemo5EngineLocalId*>(
-            QOrganizerItemManagerEngine::engineLocalItemId(id))->m_localItemId));
+    query.bindValue(":compId", QString::number(readItemLocalId(id)));
 
     int retn = -1;
     if (query.exec()) {
@@ -138,7 +136,7 @@ int OrganizerCalendarDatabaseAccess::typeOf(QOrganizerItemLocalId id)
     QSqlQuery query;
     if (!query.prepare(selectComponentCalIdType))
         return -1;
-    query.bindValue(":compId", QString::number(id));
+    query.bindValue(":compId", QString::number(readItemLocalId(id)));
 
     int retn = -1;
     if (query.exec()) {

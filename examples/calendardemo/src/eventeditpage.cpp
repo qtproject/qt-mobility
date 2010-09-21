@@ -227,7 +227,9 @@ void EventEditPage::eventChanged(QOrganizerItemManager *manager, const QOrganize
     int index = 0;
     int eventCalendarIndex = -1;
     foreach(QOrganizerCollection collection, m_collections) {
-        QString visibleName = "Calendar id = " + QString::number(collection.id().localId());
+        // We currently have no way of stringifying ids
+        //QString visibleName = "Calendar id = " + QString::number(collection.id().localId());
+        QString visibleName = "Calendar " + QString::number(index);
         if (!calendarNameMetadataKey.isNull())
             visibleName = collection.metaData(calendarNameMetadataKey).toString();
 

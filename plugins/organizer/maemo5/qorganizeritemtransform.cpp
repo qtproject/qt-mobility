@@ -247,7 +247,7 @@ QOrganizerTodoOccurrence OrganizerItemTransform::convertCTodoToQTodoOccurrence(C
     // Only the following are occurrence specific details:
 
     // In maemo, the parent id is the same as this id (todo's only have one occurrence)
-    retn.setParentLocalId(QOrganizerItemLocalId(new QOrganizerItemMaemo5EngineLocalId(QString::fromStdString(ctodo->getId()).toUInt())));
+    retn.setParentLocalId(makeItemLocalId(QString::fromStdString(ctodo->getId()).toUInt()));
 
     // Original date
     retn.setOriginalDate(retn.startDateTime().date());
@@ -381,7 +381,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
     *error = QOrganizerItemManager::InvalidItemTypeError;
 
     QOrganizerItemLocalId itemId = item->localId();
-    QString itemIdStr = QString::number((static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemId)))->m_localItemId);
+    QString itemIdStr = QString::number(readItemLocalId(itemId));
     int calId = cal->getCalendarId();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     CComponent *retn = 0; // Return null on errors

@@ -321,11 +321,7 @@ void OrganizerAsynchProcess::handleDefinitionSaveRequest(QOrganizerItemDetailDef
 void OrganizerAsynchProcess::handleCollectionFetchRequest(QOrganizerCollectionFetchRequest *req)
 {
     QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
-    QList<QOrganizerCollectionId> collectionIds = req->collectionIds();
-    QList<QOrganizerCollectionLocalId> collectionLocalIds;
-    foreach(QOrganizerCollectionId collectionId, collectionIds)
-        collectionLocalIds << collectionId.localId();
-    QList<QOrganizerCollection> collections = m_engine->collections(collectionLocalIds, &err);
+    QList<QOrganizerCollection> collections = m_engine->collections(req->collectionIds(), &err);
     QOrganizerItemManagerEngine::updateCollectionFetchRequest(req, collections, err, QOrganizerItemAbstractRequest::FinishedState);
 }
 
@@ -340,13 +336,11 @@ void OrganizerAsynchProcess::handleCollectionRemoveRequest(QOrganizerCollectionR
 {
     QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
     QMap<int, QOrganizerItemManager::Error> errorMap;
-    QList<QOrganizerCollectionId> collectionIds = req->collectionIds();
-    QList<QOrganizerCollectionLocalId> collectionLocalIds;
-    foreach(QOrganizerCollectionId collectionId, collectionIds)
-        collectionLocalIds << collectionId.localId();
-    foreach (QOrganizerCollectionLocalId id, collectionLocalIds) {
+    int i = 0;
+    foreach (QOrganizerCollectionLocalId id, req->collectionIds()) {
         m_engine->removeCollection(id, &err);
-        errorMap.insert(id, err);
+        errorMap.insert(i, err);
+        i++;
     }
     QOrganizerItemManagerEngine::updateCollectionRemoveRequest(req, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
 }
@@ -356,9 +350,11 @@ void OrganizerAsynchProcess::handleCollectionSaveRequest(QOrganizerCollectionSav
     QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
     QMap<int, QOrganizerItemManager::Error> errorMap;
     QList<QOrganizerCollection> collections = req->collections();
+    int i = 0;
     foreach (QOrganizerCollection collection, collections) {
         m_engine->saveCollection(&collection, &err);
-        errorMap.insert(collection.id().localId(), err);
+        errorMap.insert(i, err);
+        i++;
     }
     QOrganizerItemManagerEngine::updateCollectionSaveRequest(req, collections, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
 }

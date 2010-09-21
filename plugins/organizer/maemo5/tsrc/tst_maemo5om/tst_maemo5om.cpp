@@ -900,7 +900,7 @@ void tst_Maemo5Om::saveCollection()
     QVERIFY(m_om->saveCollection(&newCollection));
     QOrganizerCollectionId newCollectionId = newCollection.id();
     QVERIFY(newCollectionId.managerUri() == m_om->managerUri());
-    QVERIFY(newCollectionId.localId() != 0);
+    QVERIFY(!newCollectionId.localId().isNull());
 
     QList<QOrganizerCollection> fetchCollectionList =
             m_om->collections(QList<QOrganizerCollectionLocalId>() << newCollectionId.localId());
@@ -968,7 +968,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     // Save
     QVERIFY(m_om->saveItem(&event1, collId));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
-    QVERIFY(event1.id().localId() != 0);
+    QVERIFY(!event1.id().localId().isNull());
     QVERIFY(event1.id().managerUri().contains(managerName));
     QVERIFY(!event1.guid().isEmpty());
 
@@ -985,7 +985,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     QVERIFY(m_om->saveItems(&items, collId, 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     foreach (QOrganizerItem item, items) {
-        QVERIFY(item.id().localId() != 0);
+        QVERIFY(!item.id().localId().isNull());
         QVERIFY(item.id().managerUri().contains(managerName));
         QVERIFY(!item.guid().isEmpty());
     }
@@ -1005,7 +1005,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     QVERIFY(errorMap.count() == 0);
     foreach ( QOrganizerItem item2, items ) {
-        QVERIFY(item2.id().localId() != 0);
+        QVERIFY(!item2.id().localId().isNull());
         QVERIFY(item2.id().managerUri().contains(managerName));
         QVERIFY(!item2.guid().isEmpty());
     }
@@ -1031,7 +1031,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     // Save event
     QVERIFY(m_om->saveItem(&recurrenceEvent, collId));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
-    QVERIFY(recurrenceEvent.id().localId() != 0);
+    QVERIFY(!recurrenceEvent.id().localId().isNull());
     QVERIFY(recurrenceEvent.id().managerUri().contains(managerName));
     QVERIFY(!recurrenceEvent.guid().isEmpty());
 
