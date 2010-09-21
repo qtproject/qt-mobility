@@ -22,11 +22,11 @@
 // INCLUDES
 #include <QList>
 #include <QMap.h>
+#include <QChar>
 #include <e32base.h>
 
 // FORWARD DECLARATIONS
 class QString;
-class QChar;
 class QTextCodec;
 
 
@@ -71,9 +71,10 @@ NONSHARABLE_CLASS(CKoreanKeyMap) : public CBase
 
 		void FillKeyPressMap();
 
-		void MapCharacters(QChar aJamoChar,
-						   QChar aCompatibilityJamoChar,
-						   QString aKeySequence);
+		void MapCharacters(QString aKeySequence,
+						   QChar aJamoChar,
+						   QChar aCompatibilityJamoChar = 0,
+						   QChar aOtherJamoChar = 0);
 
 		TBool IsSyllable(QChar aChar) const;
 

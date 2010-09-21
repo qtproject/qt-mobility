@@ -108,9 +108,9 @@ void UT_CKoreanKeyMap::Teardown()
 void UT_CKoreanKeyMap::UT_GetMappedString_JamoL()
 	{
 	QString koreanInput;
-	koreanInput += QChar(0x1100);
-	koreanInput += QChar(0x1101);
-	koreanInput += QChar(0x1102);
+	koreanInput += QChar(0x1100); // key-1
+	koreanInput += QChar(0x1101); // key-1 key-#
+	koreanInput += QChar(0x1102); // key-2
 
 	QString result = iKeyMap->GetMappedString(koreanInput);
 
@@ -124,12 +124,12 @@ void UT_CKoreanKeyMap::UT_GetMappedString_JamoL()
 void UT_CKoreanKeyMap::UT_GetMappedString_HangulL()
     {
     QString koreanInput;
-    koreanInput += QChar(0xAC00);
-    koreanInput += QChar(0xAC50);
+    koreanInput += QChar(0xAC00); // cho:key-1  jung:key-3  jong:none
+    koreanInput += QChar(0xAC50); // cho:key-1  jung:key-3 key-*  jong:key-1 key-*
 
     QString result = iKeyMap->GetMappedString(koreanInput);
 
-//  EUNIT_ASSERT_EQUALS( *numericBuf, KNumeric );
+    EUNIT_ASSERT(result == "1313a1a");
     }
 
 // -----------------------------------------------------------------------------
@@ -139,14 +139,14 @@ void UT_CKoreanKeyMap::UT_GetMappedString_HangulL()
 void UT_CKoreanKeyMap::UT_GetMappedString_MixedL()
     {
     QString koreanInput;
-    koreanInput += QChar(0xAC00);
-    koreanInput += QChar(0x1100);
-    koreanInput += QChar(0xAC50);
-    koreanInput += QChar(0x1102);
+    koreanInput += QChar(0xAC00); // cho:key-1 + jung:key-3 + jong:none
+    koreanInput += QChar(0x1101); // key-1 key-#
+    koreanInput += QChar(0xAC50); // cho:key-1  jung:key-3 key-*  jong:key-1 key-*
+    koreanInput += QChar(0x1168); // key-3 key-3 key-* key-9
 
     QString result = iKeyMap->GetMappedString(koreanInput);
 
-//  EUNIT_ASSERT_EQUALS( *numericBuf, KNumeric );
+    EUNIT_ASSERT(result == "131b13a1a33a9");
     }
 
 

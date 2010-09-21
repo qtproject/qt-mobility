@@ -16,7 +16,6 @@
 
 // INCLUDE FILES
 #include "ckoreankeymap.h"
-#include <QChar>
 #include <QString>
 #include <QTextCodec>
 
@@ -175,75 +174,93 @@ void CKoreanKeyMap::FillKeyPressMap()
 	// then QMap::key(const T & value) returns the _first_ key with value.
 	// but is there a need for this reverse search at all?
 
-// TODO: the aJamoChar's of jong (U11A8..U11C2) are not yet mapped
-// those 19 that are same as cho chars can be mapped similarly, but what about the
-// other 8 that look like they are formed from two cho characters?
-// should they be mapped as two individual chos?
+	MapCharacters("1", 0x1100, 0x3131, 0x11a8);
+	MapCharacters("1a", 0x110f, 0x314b, 0x11bf);
+	MapCharacters("1b", 0x1101, 0x3132, 0x11a9);
 
-	MapCharacters(0x1100, 0x3131, "1");
-	MapCharacters(0x110f, 0x314b, "1a");
-	MapCharacters(0x1101, 0x3132, "1b");
+	MapCharacters("2", 0x1102, 0x3134, 0x11ab);
+	MapCharacters("2a", 0x1103, 0x3137, 0x11ae);
+	MapCharacters("2aa", 0x1110, 0x314c, 0x11c0);
+	MapCharacters("2ab", 0x1104, 0x3138);
 
-	MapCharacters(0x1102, 0x3134, "2");
-	MapCharacters(0x1103, 0x3137, "2a");
-	MapCharacters(0x1110, 0x314c, "2aa");
-	MapCharacters(0x1104, 0x3138, "2ab");
-
-	MapCharacters(0x1161, 0x314f, "3");
-	MapCharacters(0x1162, 0x3150, "39");
-	MapCharacters(0x1163, 0x3151, "3a");
-	MapCharacters(0x1164, 0x3152, "3a9");
+	MapCharacters("3", 0x1161, 0x314f);
+	MapCharacters("39", 0x1162, 0x3150);
+	MapCharacters("3a", 0x1163, 0x3151);
+	MapCharacters("3a9", 0x1164, 0x3152);
 
 	// Double-3 tap is stored as 33
-	MapCharacters(0x1165, 0x3153, "33");
-	MapCharacters(0x1166, 0x3154, "339");
-	MapCharacters(0x1167, 0x3155, "33a");
-	MapCharacters(0x1168, 0x3156, "33a9");
+	MapCharacters("33", 0x1165, 0x3153);
+	MapCharacters("339", 0x1166, 0x3154);
+	MapCharacters("33a", 0x1167, 0x3155);
+	MapCharacters("33a9", 0x1168, 0x3156);
 
-	MapCharacters(0x1105, 0x3139, "4");
+	MapCharacters("4", 0x1105, 0x3139, 0x11af);
 
-	MapCharacters(0x1106, 0x3141, "5");
-	MapCharacters(0x1107, 0x3142, "5a");
-	MapCharacters(0x1111, 0x314d, "5aa");
-	MapCharacters(0x1108, 0x3143, "5ab");
+	MapCharacters("5", 0x1106, 0x3141, 0x11b7);
+	MapCharacters("5a", 0x1107, 0x3142, 0x11b8);
+	MapCharacters("5aa", 0x1111, 0x314d, 0x11c1);
+	MapCharacters("5ab", 0x1108, 0x3143);
 
-	MapCharacters(0x1169, 0x3157, "6");
-	MapCharacters(0x116a, 0x3158, "63");
-	MapCharacters(0x116b, 0x3159, "639");
-	MapCharacters(0x116c, 0x315a, "69");
-	MapCharacters(0x116d, 0x315b, "6a");
+	MapCharacters("6", 0x1169, 0x3157);
+	MapCharacters("63", 0x116a, 0x3158);
+	MapCharacters("639", 0x116b, 0x3159);
+	MapCharacters("69", 0x116c, 0x315a);
+	MapCharacters("6a", 0x116d, 0x315b);
 
 	// Double-6 tap is stored as 66
-	MapCharacters(0x116e, 0x315c, "66");
-	MapCharacters(0x116f, 0x315d, "663");
-	MapCharacters(0x1170, 0x315e, "6639");
-	MapCharacters(0x1171, 0x315f, "669");
-	MapCharacters(0x1172, 0x3160, "66a");
+	MapCharacters("66", 0x116e, 0x315c);
+	MapCharacters("663", 0x116f, 0x315d);
+	MapCharacters("6639", 0x1170, 0x315e);
+	MapCharacters("669", 0x1171, 0x315f);
+	MapCharacters("66a", 0x1172, 0x3160);
 
-	MapCharacters(0x1109, 0x3145, "7");
-	MapCharacters(0x110c, 0x3148, "7a");
-	MapCharacters(0x110e, 0x314a, "7aa");
-	MapCharacters(0x110d, 0x3149, "7ab");
-	MapCharacters(0x110a, 0x3146, "7b");
+	MapCharacters("7", 0x1109, 0x3145, 0x11ba);
+	MapCharacters("7a", 0x110c, 0x3148, 0x11bd);
+	MapCharacters("7aa", 0x110e, 0x314a, 0x11be);
+	MapCharacters("7ab", 0x110d, 0x3149);
+	MapCharacters("7b", 0x110a, 0x3146, 0x11bb);
 
-	MapCharacters(0x110b, 0x3147, "8");
-	MapCharacters(0x1112, 0x314e, "8a");
+	MapCharacters("8", 0x110b, 0x3147, 0x11bc);
+	MapCharacters("8a", 0x1112, 0x314e, 0x11c2);
 
-	MapCharacters(0x1175, 0x3163, "9");
+	MapCharacters("9", 0x1175, 0x3163);
 
-	MapCharacters(0x1173, 0x3161, "0");
-	MapCharacters(0x1174, 0x3162, "09");
+	MapCharacters("0", 0x1173, 0x3161);
+	MapCharacters("09", 0x1174, 0x3162);
+
+
+	// The 11 jong characters that consist of two consonants.
+	// Map them to key sequence that produces the two consonants (TODO: chk if this is the correct way)
+	MapCharacters("17", 0x11aa);
+	MapCharacters("27a", 0x11ac);
+	MapCharacters("28a", 0x11ad);
+	MapCharacters("41", 0x11b0);
+	MapCharacters("45", 0x11b1);
+	MapCharacters("45a", 0x11b2);
+	MapCharacters("47", 0x11b3);
+	MapCharacters("42aa", 0x11b4);
+	MapCharacters("45aa", 0x11b5);
+	MapCharacters("48a", 0x11b6);
+	MapCharacters("5a7", 0x11b9);
 	}
 
 // ----------------------------------------------------------------------------
 // CKoreanKeyMap::MapCharacters
 // ----------------------------------------------------------------------------
-void CKoreanKeyMap::MapCharacters(QChar aJamoChar,
+void CKoreanKeyMap::MapCharacters(QString aKeySequence,
+								  QChar aJamoChar,
 								  QChar aCompatibilityJamoChar,
-								  QString aKeySequence)
+								  QChar aOtherJamoChar)
 	{
 	iKeyPressMap.insert(aJamoChar, aKeySequence);
-	iKeyPressMap.insert(aCompatibilityJamoChar, aKeySequence);
+	if (aOtherJamoChar.unicode() > 0)
+		{
+		iKeyPressMap.insert(aOtherJamoChar, aKeySequence);
+		}
+	if (aCompatibilityJamoChar.unicode() > 0)
+		{
+		iKeyPressMap.insert(aCompatibilityJamoChar, aKeySequence);
+		}
 	}
 
 // ----------------------------------------------------------------------------
