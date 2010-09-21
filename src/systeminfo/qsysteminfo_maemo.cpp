@@ -862,6 +862,13 @@ void QSystemNetworkInfoPrivate::usbCableAction()
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
+    if(networkStatus(QSystemNetworkInfo::EthernetMode) == QSystemNetworkInfo::Connected) {
+        return QSystemNetworkInfo::EthernetMode;
+    }
+    if(networkStatus(QSystemNetworkInfo::WlanMode) == QSystemNetworkInfo::Connected) {
+        return QSystemNetworkInfo::WlanMode;
+    }
+
     if (radioAccessTechnology == 1)
         return QSystemNetworkInfo::GsmMode;
     if (radioAccessTechnology == 2)
