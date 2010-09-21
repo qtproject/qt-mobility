@@ -267,7 +267,6 @@ QOrganizerCollectionEngineLocalId* QOrganizerItemSymbianFactory::createCollectio
 
 QString QOrganizerItemSymbianFactory::managerName() const
 {
-    /* TODO - put your engine name here */
     return QLatin1String("symbian");
 }
 Q_EXPORT_PLUGIN2(qtorganizer_symbian, QOrganizerItemSymbianFactory);
@@ -380,7 +379,6 @@ void QOrganizerItemSymbianEngine::itemInstancesL(
     }
 
     // Set cal view filter based on the item type
-    // TODO: move to transform classes?
     CalCommon::TCalViewFilter filter(0);
     QString itemType;
     if (generator.type() == QOrganizerItemType::TypeEvent) {
@@ -530,7 +528,10 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
     }
 }
 
-QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(
+        const QOrganizerItemFilter& filter,
+        const QList<QOrganizerItemSortOrder>& sortOrders,
+        QOrganizerItemManager::Error* error) const
 {
     QList<QOrganizerItemLocalId> ids;
     TRAPD(err, itemIdsL(ids, filter, sortOrders))
@@ -992,13 +993,14 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(
     if (globalUid.Length()) {
         // Search for an existing entry based on guid
         RPointerArray<CCalEntry> calEntryArray;
+        CleanupResetAndDestroyPushL(calEntryArray);
         entryViewL(collectionId)->FetchL(globalUid, calEntryArray);
         if (calEntryArray.Count()) {
             // take the first item in the array
             entry = calEntryArray[0];
             calEntryArray.Remove(0);
-            calEntryArray.ResetAndDestroy();
         }
+        CleanupStack::PopAndDestroy(&calEntryArray);
     }
 
     // ownership transferred
@@ -1167,7 +1169,6 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemSymbianEngine::collectionIds(
 
 QList<QOrganizerCollectionLocalId> QOrganizerItemSymbianEngine::collectionIds() const
 {
-    // TODO: refactor as function is no longer leaving
     QList<QOrganizerCollectionLocalId> ids;
     foreach (const OrganizerSymbianCollection &collection, m_collections)
         ids.append(collection.localId());
@@ -1322,7 +1323,6 @@ void QOrganizerItemSymbianEngine::removeCollectionL(
     const QOrganizerCollectionLocalId& collectionId)
 {
     // Dont allow removing the default collection
-    // TODO: Or should we allow this?
     if (collectionId == m_defaultCollection.localId())
         User::Leave(KErrAccessDenied);
     
@@ -1494,20 +1494,16 @@ bool QOrganizerItemSymbianEngine::hasFeature(
     QOrganizerItemManager::ManagerFeature feature, 
     const QString& itemType) const
 {
-    // TODO - the answer to the question may depend on the type
     Q_UNUSED(itemType);
     switch(feature) {
         case QOrganizerItemManager::MutableDefinitions:
-            // TODO If you support save/remove detail definition, return true
+            // We don't support save/remove detail definition
             return false;
-
         case QOrganizerItemManager::Anonymous:
-            // TODO if this engine is anonymous (e.g. no other engine can share 
-            // the data) return true (mostly for an in memory engine)
+            // The engines share the same data
             return false;
         case QOrganizerItemManager::ChangeLogs:
-            // TODO if this engine supports filtering by last modified/created/
-            // removed timestamps, return true
+            // Change logs not supported
             return false;
     }
     return false;
@@ -1516,16 +1512,15 @@ bool QOrganizerItemSymbianEngine::hasFeature(
 bool QOrganizerItemSymbianEngine::isFilterSupported(
     const QOrganizerItemFilter& filter) const
 {
-    // TODO if you engine can natively support the filter, return true.  
-    // Otherwise you should emulate support in the item{Ids} functions.
     Q_UNUSED(filter);
+    // TODO: filtering based on timestamps could be an exception to the rule,
+    // i.e. timestamp detail filters should then return true.
     return false;
 }
 
 QList<int> QOrganizerItemSymbianEngine::supportedDataTypes() const
 {
     QList<int> ret;
-    // TODO - tweak which data types this engine understands
     ret << QVariant::String;
     ret << QVariant::Date;
     ret << QVariant::DateTime;
