@@ -44,6 +44,7 @@
 
 #include <qgalleryresultset.h>
 
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include <QtDeclarative/qdeclarativepropertymap.h>
 
 QTM_BEGIN_NAMESPACE
@@ -107,15 +108,29 @@ void QDeclarativeGalleryType::componentComplete()
 
 void QDeclarativeGalleryType::_q_statusChanged()
 {
-    QString message = m_request.errorString();
-    qSwap(message, m_errorMessage);
-
     m_status = Status(m_request.status());
 
-    emit statusChanged();
+    if (m_status == Error) {
+        const QString message = m_request.errorString();
 
-    if (message != m_errorMessage)
-        emit errorMessageChanged();
+        if (!message.isEmpty()) {
+            qmlInfo(this) << message;
+        } else {
+            switch (m_request.error()) {
+            case QDocumentGallery::ConnectionError:
+                qmlInfo(this) << tr("An error was encountered connecting to the document gallery");
+                break;
+            case QDocumentGallery::ItemTypeError:
+                qmlInfo(this) << tr("DocumentGallery.%1 is not a supported item type")
+                        .arg(m_request.itemType());
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    emit statusChanged();
 }
 
 void QDeclarativeGalleryType::_q_typeChanged()

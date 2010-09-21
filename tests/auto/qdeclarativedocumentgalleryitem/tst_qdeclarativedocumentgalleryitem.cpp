@@ -563,28 +563,65 @@ void tst_QDeclarativeDocumentGalleryItem::clear()
 
 void tst_QDeclarativeDocumentGalleryItem::error_data()
 {
+    QTest::addColumn<QByteArray>("qml");
     QTest::addColumn<int>("errorCode");
     QTest::addColumn<QString>("errorMessage");
-    QTest::addColumn<QString>("expectedErrorMessage");
+    QTest::addColumn<QByteArray>("expectedErrorMessage");
 
-    QTest::newRow("Connection Error")
+    QTest::newRow("Specific error message")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryItem { item: 0 }\n")
             << int(QDocumentGallery::ConnectionError)
             << "Connection to server failed"
-            << "Connection to server failed";
+            << QByteArray(
+                    "<Unknown File>: QML DocumentGalleryItem: "
+                    "Connection to server failed");
+
+    QTest::newRow("Generic connection Error")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryItem { item: 0 }\n")
+            << int(QDocumentGallery::ConnectionError)
+            << QString()
+            << QByteArray(
+                    "<Unknown File>: QML DocumentGalleryItem: "
+                    "An error was encountered connecting to the document gallery");
+
+    QTest::newRow("Generic rootItem error")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryItem { item: 0 }\n")
+            << int(QDocumentGallery::ItemIdError)
+            << QString()
+            << QByteArray(
+                    "<Unknown File>: QML DocumentGalleryItem: "
+                    "The value of item is not a valid item ID");
+
+    QTest::newRow("Unhandled error code")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryItem { item: 0 }\n")
+            << int(QDocumentGallery::NoGallery)
+            << QString()
+            << QByteArray();
 }
 
 void tst_QDeclarativeDocumentGalleryItem::error()
 {
+    QFETCH(QByteArray, qml);
     QFETCH(int, errorCode);
     QFETCH(QString, errorMessage);
-    QFETCH(QString, expectedErrorMessage);
-
-    const QByteArray qml(
-            "import Qt 4.7\n"
-            "import QtMobility.gallery 1.1\n"
-            "DocumentGalleryItem { item: 12 }\n");
+    QFETCH(QByteArray, expectedErrorMessage);
 
     gallery.setError(errorCode, errorMessage);
+
+    if (!expectedErrorMessage.isEmpty())
+        QTest::ignoreMessage(QtWarningMsg, expectedErrorMessage.constData());
 
     QDeclarativeComponent component(&engine);
     component.setData(qml, QUrl());
@@ -593,7 +630,6 @@ void tst_QDeclarativeDocumentGalleryItem::error()
     QVERIFY(object);
 
     QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryItem::Error));
-    QCOMPARE(object->property("errorMessage"), QVariant(expectedErrorMessage));
 }
 
 void tst_QDeclarativeDocumentGalleryItem::progress_data()

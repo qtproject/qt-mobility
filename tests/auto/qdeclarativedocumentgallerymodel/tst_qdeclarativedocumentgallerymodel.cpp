@@ -2573,28 +2573,98 @@ void tst_QDeclarativeDocumentGalleryModel::clear()
 
 void tst_QDeclarativeDocumentGalleryModel::error_data()
 {
+    QTest::addColumn<QByteArray>("qml");
     QTest::addColumn<int>("errorCode");
     QTest::addColumn<QString>("errorMessage");
-    QTest::addColumn<QString>("expectedErrorMessage");
+    QTest::addColumn<QByteArray>("expectedErrorMessage");
 
-    QTest::newRow("Connection Error")
+    QTest::newRow("Specific error message")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {}\n")
             << int(QDocumentGallery::ConnectionError)
             << "Connection to server failed"
-            << "Connection to server failed";
+            << QByteArray(
+                    "<Unknown File>: QML DocumentGalleryModel: "
+                    "Connection to server failed");
+
+    QTest::newRow("Generic connection Error")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {}\n")
+            << int(QDocumentGallery::ConnectionError)
+            << QString()
+            << QByteArray(
+                    "<Unknown File>: QML DocumentGalleryModel: "
+                    "An error was encountered connecting to the document gallery");
+
+    QTest::newRow("Generic rootType Error")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel { rootType: DocumentGallery.Video }\n")
+            << int(QDocumentGallery::ItemTypeError)
+            << QString()
+            << QByteArray(
+                    "<Unknown File>: QML DocumentGalleryModel: "
+                    "DocumentGallery.Video is not a supported item type");
+
+    QTest::newRow("Invalid rootType Error")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel { rootType: DocumentGallery.InvalidType }\n")
+            << int(QDocumentGallery::ItemTypeError)
+            << QString()
+            << QByteArray(
+                    "<Unknown File>: QML DocumentGalleryModel: "
+                    "DocumentGallery.InvalidType is not a supported item type");
+
+    QTest::newRow("Generic rootItem error")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {}\n")
+            << int(QDocumentGallery::ItemIdError)
+            << QString()
+            << QByteArray(
+                    "<Unknown File>: QML DocumentGalleryModel: "
+                    "The value of rootItem is not a valid item ID");
+
+    QTest::newRow("Generic filter Error")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {}\n")
+            << int(QDocumentGallery::FilterError)
+            << QString()
+            << QByteArray(
+                    "<Unknown File>: QML DocumentGalleryModel: "
+                    "The value of filter is unsupported");
+
+    QTest::newRow("Unhandled error code")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {}\n")
+            << int(QDocumentGallery::NoGallery)
+            << QString()
+            << QByteArray();
 }
 
 void tst_QDeclarativeDocumentGalleryModel::error()
 {
+    QFETCH(QByteArray, qml);
     QFETCH(int, errorCode);
     QFETCH(QString, errorMessage);
-    QFETCH(QString, expectedErrorMessage);
-
-    const QByteArray qml(
-            "import Qt 4.7\n"
-            "import QtMobility.gallery 1.1\n"
-            "DocumentGalleryModel {}\n");
+    QFETCH(QByteArray, expectedErrorMessage);
 
     gallery.setError(errorCode, errorMessage);
+
+    if (!expectedErrorMessage.isEmpty())
+        QTest::ignoreMessage(QtWarningMsg, expectedErrorMessage.constData());
 
     QDeclarativeComponent component(&engine);
     component.setData(qml, QUrl());
@@ -2603,7 +2673,6 @@ void tst_QDeclarativeDocumentGalleryModel::error()
     QVERIFY(object);
 
     QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Error));
-    QCOMPARE(object->property("errorMessage"), QVariant(expectedErrorMessage));
 }
 
 QTEST_MAIN(tst_QDeclarativeDocumentGalleryModel)
