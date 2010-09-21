@@ -124,7 +124,6 @@ int OrganizerCalendarDatabaseAccess::calIdOf(QOrganizerItemLocalId id)
         return m_dbCache->takeCalId(convertedId);
     }
     else {
-        //qDebug() << "calIdOf";
         QSqlQuery query;
         if (!query.prepare(selectComponentCalIdType))
             return -1;
@@ -148,7 +147,6 @@ int OrganizerCalendarDatabaseAccess::typeOf(QOrganizerItemLocalId id)
         return m_dbCache->takeTypeId(convertedId);
     }
     else {
-        //qDebug() << "typeOf";
         QSqlQuery query;
         if (!query.prepare(selectComponentCalIdType))
             return -1;
@@ -490,8 +488,6 @@ std::vector<CEvent *> OrganizerCalendarDatabaseAccess::getEvents(int calId, std:
     // put to cache
     m_dbCache->insertEventVector(cacheKey, listEvent);
 
-    qDebug() << "DB";
-
     return listEvent;
 }
 
@@ -746,8 +742,6 @@ std::vector<CTodo *> OrganizerCalendarDatabaseAccess::getTodos(int calId, std::s
     // put to cache
     m_dbCache->insertTodoVector(cacheKey, listTodo);
 
-    qDebug() << "DB";
-
     return listTodo;
 }
 
@@ -944,7 +938,6 @@ std::vector<CJournal *> OrganizerCalendarDatabaseAccess::getJournals(int calId, 
 
     // put to cache
     m_dbCache->insertJournalVector(cacheKey, listJournal);
-    qDebug() << "DB";
 
     return listJournal;
 }
@@ -958,8 +951,33 @@ CEvent* OrganizerCalendarDatabaseAccess::getEvent(CCalendar* cal, const std::str
     else {
         CEvent* event = cal->getEvent(id, calError);
         m_dbCache->insertEvent(cacheKey, event);
-        qDebug() << "DB";
         return event;
+    }
+}
+
+CTodo* OrganizerCalendarDatabaseAccess::getTodo(CCalendar* cal, const std::string& id, int& calError)
+{
+    OrganizerIdCacheKey cacheKey(cal->getCalendarId(), QString::fromStdString(id));
+    if (m_dbCache->containsTodo(cacheKey)) {
+        return m_dbCache->takeTodo(cacheKey);
+    }
+    else {
+        CTodo* todo = cal->getTodo(id, calError);
+        m_dbCache->insertTodo(cacheKey, todo);
+        return todo;
+    }
+}
+
+CJournal* OrganizerCalendarDatabaseAccess::getJournal(CCalendar* cal, const std::string& id, int& calError)
+{
+    OrganizerIdCacheKey cacheKey(cal->getCalendarId(), QString::fromStdString(id));
+    if (m_dbCache->containsJournal(cacheKey)) {
+        return m_dbCache->takeJournal(cacheKey);
+    }
+    else {
+        CJournal* journal = cal->getJournal(id, calError);
+        m_dbCache->insertJournal(cacheKey, journal);
+        return journal;
     }
 }
 
@@ -972,7 +990,6 @@ void OrganizerCalendarDatabaseAccess::getIdList(CCalendar* cal, int compType, in
     else {
         result = cal->getIdList(compType, calError);
         m_dbCache->insertIds(cacheKey, result);
-        qDebug() << "all ids";
     }
 }
 

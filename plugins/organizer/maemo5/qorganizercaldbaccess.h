@@ -80,8 +80,8 @@ public:
     std::vector<CJournal *> getJournals(int calId, std::string guid, int &pErrorCode);
 
     CEvent* getEvent(CCalendar* cal, const std::string& id, int& calError);
-    //CTodo* getTodo(const std::string& id, int& calError);
-    //CJournal* getJournal(const std::string& id, int& calError);
+    CTodo* getTodo(CCalendar* cal, const std::string& id, int& calError);
+    CJournal* getJournal(CCalendar* cal, const std::string& id, int& calError);
 
     void getIdList(CCalendar* cal, int compType, int& calError, std::vector<std::string>& result);
 

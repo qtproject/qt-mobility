@@ -46,13 +46,15 @@ QTM_USE_NAMESPACE
 
 OrganizerDbCache::OrganizerDbCache()
 {
-    m_guidEventCache.setMaxCost(1000); // TODO: Adjust the costs
-    m_guidTodoCache.setMaxCost(1000); // TODO: Adjust the costs
-    m_guidJournalCache.setMaxCost(1000); // TODO: Adjust the costs
-    m_idEventCache.setMaxCost(1000); // TODO: Adjust the costs
-    m_calIdCache.setMaxCost(1000); // TODO: Adjust the costs
-    m_typeCache.setMaxCost(1000); // TODO: Adjust the costs
-    m_idsCache.setMaxCost(1000); // TODO: Adjust the costs
+    m_guidEventCache.setMaxCost(500);
+    m_guidTodoCache.setMaxCost(500);
+    m_guidJournalCache.setMaxCost(100);
+    m_idEventCache.setMaxCost(500);
+    m_idTodoCache.setMaxCost(500);
+    m_idJournalCache.setMaxCost(500);
+    m_calIdCache.setMaxCost(500);
+    m_typeCache.setMaxCost(500);
+    m_idsCache.setMaxCost(50);
 }
 
 OrganizerDbCache::~OrganizerDbCache()
@@ -62,21 +64,38 @@ OrganizerDbCache::~OrganizerDbCache()
 
 void OrganizerDbCache::invalidate()
 {
-    //qDebug() << "invalidate";
     m_guidEventCache.clear();
     m_guidTodoCache.clear();
     m_guidJournalCache.clear();
     m_idEventCache.clear();
+    m_idTodoCache.clear();
+    m_idJournalCache.clear();
     m_calIdCache.clear();
     m_typeCache.clear();
     m_idsCache.clear();
 }
 
-void OrganizerDbCache::insertEvent(const OrganizerIdCacheKey &key, const CEvent* event)
+void OrganizerDbCache::insertEvent(const OrganizerIdCacheKey &key, const CEvent *event)
 {
     if (event) {
-        OrganizerCacheEvent* cacheEvent = new OrganizerCacheEvent(event);
+        OrganizerCacheEvent *cacheEvent = new OrganizerCacheEvent(event);
         m_idEventCache.insert(key, cacheEvent);
+    }
+}
+
+void OrganizerDbCache::insertTodo(const OrganizerIdCacheKey &key, const CTodo *todo)
+{
+    if (todo) {
+        OrganizerCacheTodo *cacheTodo = new OrganizerCacheTodo(todo);
+        m_idTodoCache.insert(key, cacheTodo);
+    }
+}
+
+void OrganizerDbCache::insertJournal(const OrganizerIdCacheKey &key, const CJournal *journal)
+{
+    if (journal) {
+        OrganizerCacheJournal *cacheJournal = new OrganizerCacheJournal(journal);
+        m_idJournalCache.insert(key, cacheJournal);
     }
 }
 
@@ -136,6 +155,16 @@ bool OrganizerDbCache::containsEvent(const OrganizerIdCacheKey &key) const
     return m_idEventCache.contains(key);
 }
 
+bool OrganizerDbCache::containsTodo(const OrganizerIdCacheKey &key) const
+{
+    return m_idTodoCache.contains(key);
+}
+
+bool OrganizerDbCache::containsJournal(const OrganizerIdCacheKey &key) const
+{
+    return m_idJournalCache.contains(key);
+}
+
 bool OrganizerDbCache::containsEventVector(const OrganizerGuidCacheKey &key) const
 {
     return m_guidEventCache.contains(key);
@@ -170,6 +199,18 @@ CEvent* OrganizerDbCache::takeEvent(const OrganizerIdCacheKey &key) const
 {
     OrganizerCacheEvent* cacheEvent = m_idEventCache.object(key);
     return cacheEvent->event();
+}
+
+CTodo* OrganizerDbCache::takeTodo(const OrganizerIdCacheKey &key) const
+{
+    OrganizerCacheTodo* cacheTodo = m_idTodoCache.object(key);
+    return cacheTodo->todo();
+}
+
+CJournal* OrganizerDbCache::takeJournal(const OrganizerIdCacheKey &key) const
+{
+    OrganizerCacheJournal* cacheJournal = m_idJournalCache.object(key);
+    return cacheJournal->journal();
 }
 
 void OrganizerDbCache::takeEventVector(const OrganizerGuidCacheKey &key, std::vector<CEvent *>& result) const

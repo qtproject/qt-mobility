@@ -941,7 +941,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     newCollection.setMetaData("Color", "White");
     QVERIFY(m_om->saveCollection(&newCollection));
     QOrganizerCollectionLocalId collId = newCollection.id().localId();
-    QVERIFY(collId != QOrganizerCollectionLocalId(0));
+    QVERIFY(!collId.isNull());
 
     // Save an item to the new collection
     QDate startDate1(2010, 8, 3);
@@ -1099,6 +1099,10 @@ void tst_Maemo5Om::saveItemsToNewCollection()
 
     // Get all item ids of the union collection
     QList<QOrganizerItemLocalId> unionItemIds = m_om->itemIds(unionFilter, noSort);
+
+    qDebug() << "Default:" << defaultCollectionItemIds;
+    qDebug() << "New:" << newCollectionItemIds;
+    qDebug() << "Union:" << unionItemIds;
 
     // Number of item ids in the new collection + number of ids in the default collection
     // should match to the number of ids in union

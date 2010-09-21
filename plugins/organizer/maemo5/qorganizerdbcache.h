@@ -54,9 +54,6 @@
 
 #include "qtorganizer.h"
 #include "qorganizerdbcachewrappers.h"
-//#include <CEvent.h>
-//#include <CTodo.h>
-//#include <CJournal.h>
 #include <QCache>
 
 QTM_USE_NAMESPACE
@@ -128,25 +125,37 @@ public:
     ~OrganizerDbCache();
 
     void insertEvent(const OrganizerIdCacheKey &key, const CEvent* event);
+    void insertTodo(const OrganizerIdCacheKey &key, const CTodo* todo);
+    void insertJournal(const OrganizerIdCacheKey &key, const CJournal* journal);
+
     void insertEventVector(const OrganizerGuidCacheKey &key, const std::vector<CEvent *>& eventVector);
     void insertTodoVector(const OrganizerGuidCacheKey &key, const std::vector<CTodo *>& todoVector);
     void insertJournalVector(const OrganizerGuidCacheKey &key, const std::vector<CJournal *>& journalVector);
+
     void insertCalId(quint32 key, int value);
     void insertTypeId(quint32 key, int value);
     void insertIds(const OrganizerCalIdTypeIdCacheKey &key, const std::vector<std::string>& idsVector);
 
     bool containsEvent(const OrganizerIdCacheKey &key) const;
+    bool containsTodo(const OrganizerIdCacheKey &key) const;
+    bool containsJournal(const OrganizerIdCacheKey &key) const;
+
     bool containsEventVector(const OrganizerGuidCacheKey &key) const;
     bool containsTodoVector(const OrganizerGuidCacheKey &key) const;
     bool containsJournalVector(const OrganizerGuidCacheKey &key) const;
+
     bool containsCalId(quint32 key) const;
     bool containsTypeId(quint32 key) const;
     bool containsIds(const OrganizerCalIdTypeIdCacheKey &key) const;
 
     CEvent* takeEvent(const OrganizerIdCacheKey &key) const;
+    CTodo* takeTodo(const OrganizerIdCacheKey &key) const;
+    CJournal* takeJournal(const OrganizerIdCacheKey &key) const;
+
     void takeEventVector(const OrganizerGuidCacheKey &key, std::vector<CEvent *>& result) const;
     void takeTodoVector(const OrganizerGuidCacheKey &key, std::vector<CTodo *>& result) const;
     void takeJournalVector(const OrganizerGuidCacheKey &key, std::vector<CJournal *>& result) const;
+
     int takeCalId(quint32 key) const;
     int takeTypeId(quint32 key) const;
     void takeIdsVector(const OrganizerCalIdTypeIdCacheKey &key, std::vector<std::string>& result) const;
@@ -156,8 +165,8 @@ public Q_SLOTS:
 
 private:
     QCache<OrganizerIdCacheKey, OrganizerCacheEvent> m_idEventCache;
-    //QCache<OrganizerIdCacheKey, OrganizerCacheTodo> m_idTodoCache; // TODO
-    //QCache<OrganizerIdCacheKey, OrganizerCacheJournal> m_idJournalCache; // TODO
+    QCache<OrganizerIdCacheKey, OrganizerCacheTodo> m_idTodoCache;
+    QCache<OrganizerIdCacheKey, OrganizerCacheJournal> m_idJournalCache;
 
     QCache<OrganizerGuidCacheKey, QList<OrganizerCacheEvent> > m_guidEventCache;
     QCache<OrganizerGuidCacheKey, QList<OrganizerCacheTodo> > m_guidTodoCache;

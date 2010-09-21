@@ -478,7 +478,6 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItemInstances(const QO
 
     if (generator.type() == QOrganizerItemType::TypeEvent)
     {
-        //CEvent *cevent = cal->getEvent(nativeId, calError);
         CEvent *cevent = d->m_dbAccess->getEvent(cal, nativeId, calError);
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         if (cevent && *error == QOrganizerItemManager::NoError)
@@ -568,7 +567,8 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItemInstances(const QO
     }
     else if (generator.type() == QOrganizerItemType::TypeTodo)
     {
-        CTodo* ctodo = cal->getTodo(nativeId, calError);
+        CTodo* ctodo = d->m_dbAccess->getTodo(cal, nativeId, calError);
+        //CTodo* ctodo = cal->getTodo(nativeId, calError);
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         if (ctodo && *error == QOrganizerItemManager::NoError)
         {
@@ -776,7 +776,6 @@ bool QOrganizerItemMaemo5Engine::internalRemoveItems(const QList<QOrganizerItemL
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
             if (currItem.type() == QOrganizerItemType::TypeEvent) {
                 // Delete also child events if this event is a parent
-                //CEvent* cevent = cal->getEvent(itemId.toStdString(), calError);
                 CEvent* cevent = d->m_dbAccess->getEvent(cal, itemId.toStdString(), calError);
                 if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
                     bool parentItem = isParent(cal, cevent, QOrganizerItemType::TypeEvent, error);
@@ -1843,7 +1842,6 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
     CEvent *cevent = 0;
     if (d->m_dbAccess->typeOf(itemId) == EVENT_TYPE)
         cevent = d->m_dbAccess->getEvent(cal, nativeId, calError);
-        //cevent = cal->getEvent(nativeId, calError);
     else
         calError = CALENDAR_NONE_INDB;
 
@@ -1897,7 +1895,8 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
 
     CTodo *todo = 0;
     if (d->m_dbAccess->typeOf(itemId) == TODO_TYPE)
-        todo = cal->getTodo(nativeId, calError);
+        //todo = cal->getTodo(nativeId, calError);
+        todo = d->m_dbAccess->getTodo(cal, nativeId, calError);
     else
         calError = CALENDAR_NONE_INDB;
 
@@ -1916,7 +1915,8 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
 
     CJournal *journal = 0;
     if (d->m_dbAccess->typeOf(itemId) == JOURNAL_TYPE)
-        journal = cal->getJournal(nativeId, calError);
+        //journal = cal->getJournal(nativeId, calError);
+        journal = d->m_dbAccess->getJournal(cal, nativeId, calError);
     else
         calError = CALENDAR_NONE_INDB;
 
