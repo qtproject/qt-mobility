@@ -147,8 +147,8 @@ public:
     quint32 calCollectionId() { return m_localCollectionId; }
     
 private:
-    quint32 m_localItemId; // the symbian backend requires quint32 for itemId + quint32 for collectionId
     quint32 m_localCollectionId;
+    quint32 m_localItemId; // the symbian backend requires quint32 for itemId + quint32 for collectionId
     friend class QOrganizerItemSymbianEngine;
     friend class OrganizerItemTransform;
 };
