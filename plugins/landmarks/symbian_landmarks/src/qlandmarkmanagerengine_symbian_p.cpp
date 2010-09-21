@@ -1373,7 +1373,7 @@ QStringList LandmarkManagerEngineSymbianPrivate::supportedFormats(
         }
     }
     else if (operation == QLandmarkManager::ExportOperation) {
-        //TODO: Sqlite Plugin's GPX encoder can be used to support GPX export
+        //Sqlite Plugin's GPX encoder can be used to support GPX export
         //formats << QLandmarkManager::Gpx;
         formats << QLandmarkManager::Lmx;
     }
@@ -2231,6 +2231,13 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
         return result;
     }
 
+    if (landmark->iconUrl().toString().size() > KMaxFileName) {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString
+            = "Landmark Icon string is greater than its maxlength i.e. KMaxFileName = 256.";
+        return result;
+    }
+
     CPosLandmark* symbianLandmark = NULL;
     QLandmarkId landmarkId = landmark->landmarkId();
 
@@ -2265,7 +2272,7 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
         symbianLandmark = m_LandmarkDb->ReadLandmarkLC(symbianLmId);
         if (symbianLandmark) {
             // updating existing landmark
-            LandmarkUtility::setSymbianLandmarkL(*symbianLandmark, landmark);
+            LandmarkUtility::setSymbianLandmarkL(*symbianLandmark, landmark, m_LandmarkCatMgr);
             m_LandmarkDb->UpdateLandmarkL(*symbianLandmark);
             CleanupStack::Pop(symbianLandmark);
             *changed = true;
@@ -2384,6 +2391,13 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
         return result;
     }
 
+    if (category->iconUrl().toString().size() > KMaxFileName) {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString
+            = "Category Icon string is greater than its maxlength i.e. KMaxFileName = 256.";
+        return result;
+    }
+
     CPosLandmarkCategory* symbiancat = NULL;
     QLandmarkCategoryId categoryId = category->categoryId();
 
@@ -2463,6 +2477,12 @@ bool LandmarkManagerEngineSymbianPrivate::removeCategoryInternalL(
     CPosLandmarkCategory* cat = m_LandmarkCatMgr->ReadCategoryLC(symbianCategoryId);
     if (cat)
         CleanupStack::PopAndDestroy(cat);
+
+    if (LandmarkUtility::isGlobalCategoryId(m_LandmarkCatMgr, categoryId)) {
+        *error = QLandmarkManager::PermissionsError;
+        *errorString = "Category is readonly, cannot be deleted.";
+        return result;
+    }
 
     ExecuteAndDeleteLD(m_LandmarkCatMgr->RemoveCategoryL(symbianCategoryId));
 
@@ -3195,9 +3215,9 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
             else {
                 qDebug() << "Not supported attribute provided";
                 CleanupStack::PopAndDestroy(compositeCriteria);
-                User::Leave( KErrNotSupported);
+                User::Leave(KErrNotSupported);
             }
-            
+
         }
 
         // TODO : This check is required in case of emulation.

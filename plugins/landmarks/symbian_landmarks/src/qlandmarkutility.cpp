@@ -251,7 +251,8 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
  * convert qt landmark to  symbian landmark
  * 
  */
-void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandmark* qtLandmark)
+void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandmark* qtLandmark,
+    CPosLmCategoryManager* catMgr)
 {
     if (!qtLandmark)
         return;
@@ -262,6 +263,9 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
         TPtrC symbianLmName(reinterpret_cast<const TText*> (lmName.constData()), lmName.length());
         symbianLandmark.SetLandmarkNameL(symbianLmName);
     }
+    else {
+        symbianLandmark.SetLandmarkNameL(KNullDesC);
+    }
 
     // set coordinate
     QGeoCoordinate coord = qtLandmark->coordinate();
@@ -270,11 +274,17 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
         local.SetCoordinate(coord.latitude(), coord.longitude(), coord.altitude());
         symbianLandmark.SetPositionL(local);
     }
+    else {
+        User::Leave(KErrArgument);
+    }
 
     // set coverage radius
     qreal rad = qtLandmark->radius();
     if (rad > 0) {
         symbianLandmark.SetCoverageRadius(rad);
+    }
+    else {
+        User::Leave(KErrArgument);
     }
 
     // set landmark description
@@ -283,26 +293,21 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
         TPtrC symbianLmDesc(reinterpret_cast<const TText*> (lmDesc.constData()), lmDesc.length());
         symbianLandmark.SetLandmarkDescriptionL(symbianLmDesc);
     }
+    else {
+        symbianLandmark.SetLandmarkDescriptionL(KNullDesC);
+    }
 
+    int iconIdx = 0;
+    int iconMaskIdx = 0;
     // set icon info
     QString lmIconInfo = qtLandmark->iconUrl().toString();
     if (lmIconInfo.length() > 0) {
         TPtrC symbianLmIcon(reinterpret_cast<const TText*> (lmIconInfo.constData()),
             lmIconInfo.length());
-        if (symbianLmIcon.Length() > 0) {
-            int iconIdx = 0;
-            int iconMaskIdx = 0;
-            symbianLandmark.SetIconL(symbianLmIcon, iconIdx, iconMaskIdx);
-        }
+        symbianLandmark.SetIconL(symbianLmIcon, iconIdx, iconMaskIdx);
     }
-
-    // set category ids
-    QList<QLandmarkCategoryId> catList = qtLandmark->categoryIds();
-    if (catList.count() > 0) {
-        for (int i = 0; i < catList.count(); ++i) {
-            TPosLmItemId catId = convertToSymbianLandmarkCategoryId(catList.at(i));
-            symbianLandmark.AddCategoryL(catId);
-        }
+    else {
+        symbianLandmark.SetIconL(KNullDesC, iconIdx, iconMaskIdx);
     }
 
     // set phone
@@ -312,12 +317,18 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
             lmPhoneNo.length());
         symbianLandmark.SetPositionFieldL(EPositionFieldBuildingTelephone, symbianLmPhone);
     }
+    else {
+        symbianLandmark.SetPositionFieldL(EPositionFieldBuildingTelephone, KNullDesC);
+    }
 
     // set url
     QString lmUrl = qtLandmark->url().toString();
     if (lmUrl.length() > 0) {
         TPtrC symbianLmUrl(reinterpret_cast<const TText*> (lmUrl.constData()), lmUrl.length());
         symbianLandmark.SetPositionFieldL(EPositionFieldMediaLinks, symbianLmUrl);
+    }
+    else {
+        symbianLandmark.SetPositionFieldL(EPositionFieldMediaLinks, KNullDesC);
     }
 
     // set address
@@ -329,6 +340,9 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
             lmCity.length());
         symbianLandmark.SetPositionFieldL(EPositionFieldCity, symbianLmPosField);
     }
+    else {
+        symbianLandmark.SetPositionFieldL(EPositionFieldCity, KNullDesC);
+    }
 
     // set district
     QString lmDistrict = qtLandmark->address().district();
@@ -337,7 +351,10 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
             lmDistrict.length());
         symbianLandmark.SetPositionFieldL(EPositionFieldDistrict, symbianLmPosField);
     }
-    
+    else {
+        symbianLandmark.SetPositionFieldL(EPositionFieldDistrict, KNullDesC);
+    }
+
     // set county
     QString lmCounty = qtLandmark->address().county();
     if (lmCounty.length() > 0) {
@@ -345,13 +362,19 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
             lmCounty.length());
         symbianLandmark.SetPositionFieldL(EPositionFieldCounty, symbianLmPosField);
     }
-    
+    else {
+        symbianLandmark.SetPositionFieldL(EPositionFieldCounty, KNullDesC);
+    }
+
     // set state
     QString lmState = qtLandmark->address().state();
     if (lmState.length() > 0) {
         TPtrC symbianLmPosField(reinterpret_cast<const TText*> (lmState.constData()),
             lmState.length());
         symbianLandmark.SetPositionFieldL(EPositionFieldState, symbianLmPosField);
+    }
+    else {
+        symbianLandmark.SetPositionFieldL(EPositionFieldState, KNullDesC);
     }
 
     // set country
@@ -361,6 +384,9 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
             lmCountry.length());
         symbianLandmark.SetPositionFieldL(EPositionFieldCountry, symbianLmPosField);
     }
+    else {
+        symbianLandmark.SetPositionFieldL(EPositionFieldCountry, KNullDesC);
+    }
 
     // set country code
     QString lmCountryCode = qtLandmark->address().countryCode();
@@ -368,6 +394,9 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
         TPtrC symbianLmPosField(reinterpret_cast<const TText*> (lmCountryCode.constData()),
             lmCountryCode.length());
         symbianLandmark.SetPositionFieldL(EPositionFieldCountryCode, symbianLmPosField);
+    }
+    else {
+        symbianLandmark.SetPositionFieldL(EPositionFieldCountryCode, KNullDesC);
     }
 
     // set postcode
@@ -377,6 +406,9 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
             lmPostalCode.length());
         symbianLandmark.SetPositionFieldL(EPositionFieldPostalCode, symbianLmPosField);
     }
+    else {
+        symbianLandmark.SetPositionFieldL(EPositionFieldPostalCode, KNullDesC);
+    }
 
     // set street
     QString lmStreet = qtLandmark->address().street();
@@ -385,6 +417,33 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
             lmStreet.length());
         symbianLandmark.SetPositionFieldL(EPositionFieldStreet, symbianLmPosField);
     }
+    else {
+        symbianLandmark.SetPositionFieldL(EPositionFieldStreet, KNullDesC);
+    }
+
+    // set category ids
+    QList<QLandmarkCategoryId> catList = qtLandmark->categoryIds();
+    if (catList.count() > 0) {
+        for (int i = 0; i < catList.count(); ++i) {
+            TPosLmItemId catId = convertToSymbianLandmarkCategoryId(catList.at(i));
+            symbianLandmark.AddCategoryL(catId);
+        }
+    }
+    else {
+        // remove categories if any
+        RArray<TPosLmItemId> catIds;
+        RArray<TPosLmItemId> lmIds;
+        lmIds.Append(symbianLandmark.LandmarkId());
+
+        symbianLandmark.GetCategoriesL(catIds);
+        if (catIds.Count() > 0) {
+            for (int i = 0; i < catIds.Count(); ++i) {
+                symbianLandmark.RemoveCategory(catIds[i]);
+                ExecuteAndDeleteLD(catMgr->RemoveCategoryFromLandmarksL(catIds[i], lmIds));
+            }
+        }
+    }
+
 }
 
 CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
@@ -428,11 +487,9 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
     if (lmIconInfo.length() > 0) {
         TPtrC symbianLmIcon(reinterpret_cast<const TText*> (lmIconInfo.constData()),
             lmIconInfo.length());
-        if (symbianLmIcon.Length() > 0) {
-            int iconIdx = 0;
-            int iconMaskIdx = 0;
-            symbianLandmark->SetIconL(symbianLmIcon, iconIdx, iconMaskIdx);
-        }
+        int iconIdx = 0;
+        int iconMaskIdx = 0;
+        symbianLandmark->SetIconL(symbianLmIcon, iconIdx, iconMaskIdx);
     }
 
     // set category ids
@@ -660,11 +717,9 @@ CPosLandmarkCategory* LandmarkUtility::convertToSymbianLandmarkCategoryL(
     if (catIconInfo.length() > 0) {
         TPtrC symbianLmIcon(reinterpret_cast<const TText*> (catIconInfo.constData()),
             catIconInfo.length());
-        if (symbianLmIcon.Length() > 0) {
-            int iconIdx = 0;
-            int iconMaskIdx = 0;
-            symbianLmCategory->SetIconL(symbianLmIcon, iconIdx, iconMaskIdx);
-        }
+        int iconIdx = 0;
+        int iconMaskIdx = 0;
+        symbianLmCategory->SetIconL(symbianLmIcon, iconIdx, iconMaskIdx);
     }
 
     CleanupStack::Pop(symbianLmCategory);
@@ -688,17 +743,21 @@ void LandmarkUtility::setSymbianLandmarkCategoryL(CPosLandmarkCategory& symbianL
             symbianCatName(reinterpret_cast<const TText*> (catName.constData()), catName.length());
         symbianLmCategory.SetCategoryNameL(symbianCatName);
     }
+    else {
+        symbianLmCategory.SetCategoryNameL(KNullDesC);
+    }
 
     // set icon info
+    int iconIdx = 0;
+    int iconMaskIdx = 0;
     QString catIconInfo = qtLandmarkCategory->iconUrl().toString();
     if (catIconInfo.length() > 0) {
         TPtrC symbianLmIcon(reinterpret_cast<const TText*> (catIconInfo.constData()),
             catIconInfo.length());
-        if (symbianLmIcon.Length() > 0) {
-            int iconIdx = 0;
-            int iconMaskIdx = 0;
-            symbianLmCategory.SetIconL(symbianLmIcon, iconIdx, iconMaskIdx);
-        }
+        symbianLmCategory.SetIconL(symbianLmIcon, iconIdx, iconMaskIdx);
+    }
+    else {
+        symbianLmCategory.SetIconL(KNullDesC, iconIdx, iconMaskIdx);
     }
 }
 
