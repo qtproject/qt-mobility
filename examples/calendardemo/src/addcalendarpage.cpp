@@ -92,12 +92,12 @@ AddCalendarPage::AddCalendarPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_colorComboBox);
     scrollAreaLayout->addWidget(typeLabel);
     scrollAreaLayout->addWidget(m_typeComboBox);
-#endif
 
     QHBoxLayout *checkBoxLayout = new QHBoxLayout();
     checkBoxLayout->addWidget(m_visibleCheckBox);
     checkBoxLayout->addWidget(m_readonlyCheckBox);
     scrollAreaLayout->addLayout(checkBoxLayout);
+#endif
 
     scrollAreaLayout->addStretch();
 
