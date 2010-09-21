@@ -109,9 +109,6 @@ private:
     QMessageStore* q_ptr;
 
     CMTMEngine* _mtmEngine;
-#ifdef FREESTYLEMAILUSED
-    CFSEngine* _fsEngine;
-#endif
 
     QMessageManager::Error _error;
     
