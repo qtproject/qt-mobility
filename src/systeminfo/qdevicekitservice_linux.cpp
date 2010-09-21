@@ -83,7 +83,7 @@ QStringList QUDisksInterface::enumerateDeviceFiles()
     return reply.value();
 }
 
-QDBusObjectPath QUDisksInterface::findDeviceByDeviceFile(const QString &path)
+QDBusObjectPath QUDisksInterface::findDeviceByDeviceFile(const QString &/*path*/)
 {
     QDBusReply<QDBusObjectPath > reply =  this->call(QLatin1String("FindDeviceByDeviceFile"));
     return reply.value();
@@ -135,7 +135,7 @@ void QUDisksInterface::connectNotify(const char *signal)
     }
 }
 
-void QUDisksInterface::disconnectNotify(const char *signal)
+void QUDisksInterface::disconnectNotify(const char */*signal*/)
 {
 }
 
@@ -229,8 +229,7 @@ bool QUDisksDeviceInterface::deviceIsRotational()
 
 QString QUDisksDeviceInterface::driveMediaCompatibility()
 {
-    return this->getProperty("DriveMediaCompatibility").toBool();
-
+    return this->getProperty("DriveMediaCompatibility").toString();
 }
 
 QString QUDisksDeviceInterface::uuid()

@@ -144,6 +144,7 @@ static bool udisksAvailable()
     return false;
 }
 
+#if !defined(QT_NO_CONNMAN)
 static bool connmanAvailable()
 {
 #if !defined(QT_NO_DBUS)
@@ -174,6 +175,7 @@ static bool ofonoAvailable()
 
     return false;
 }
+#endif
 
 bool halIsAvailable;
 bool udisksIsAvailable;
@@ -1581,6 +1583,8 @@ int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 
 int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 {
+    Q_UNUSED(screen);
+
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
@@ -1785,7 +1789,7 @@ void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
 }
 
 #if !defined(QT_NO_DBUS)
-void QSystemStorageInfoLinuxCommonPrivate::udisksDeviceChanged(const QDBusObjectPath &path)
+void QSystemStorageInfoLinuxCommonPrivate::udisksDeviceChanged(const QDBusObjectPath &/*path*/)
 {
     storageChanged = true;
     if(udisksIsAvailable) {
@@ -1997,7 +2001,7 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
     endmntent(mntfp);
 }
 
-QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVolume)
+QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &/*driveVolume*/)
 {
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
@@ -2118,7 +2122,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
                 halIfaceDevice = new QHalDeviceInterface(dev);
                 if (halIfaceDevice->isValid()) {
                     const QString batType = halIfaceDevice->getPropertyString("battery.type");
-                    if(batType == "primary" || batType == "pda") {
+                    if((batType == "primary") || (batType == "pda")) {
                         if(halIfaceDevice->setConnections() ) {
                             if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                         this,SLOT(halChanged(int,QVariantList)))) {
@@ -2534,7 +2538,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                          //0x002540  9536
                          if (map.contains(property)) {
                              uint classId = map.value(property).toUInt();
-                             if(classId = 9536 &&  map.value("Connected").toBool()) {
+                             if((classId = 9536) &&  map.value("Connected").toBool()) {
                                  // keyboard"
                                  hasWirelessKeyboardConnected = true;
                                  qDebug() <<map.value("Name").toString() << map.value(property);
@@ -2584,7 +2588,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
          //0x002540  9536
          if (map.contains(property)) {
              uint classId = map.value(property).toUInt();
-             if(classId = 9536 &&  conn) {
+             if((classId = 9536) &&  conn) {
                  // keyboard"
                      hasWirelessKeyboardConnected = conn;
                      emit wirelessKeyboardConnected(conn);
