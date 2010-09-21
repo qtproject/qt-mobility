@@ -4339,6 +4339,8 @@ CMsvEntry* CMTMEngine::retrieveCMsvEntryAndPushToCleanupStack(TMsvId id) const
         if (retVal != KErrNone) {
             delete pEntry;
             pEntry = NULL;
+        } else {
+            iCmsvEntryPoolFree.Remove(iCmsvEntryPoolFree.Count()-1);
         }
     } else {
         if (id == 0) {
