@@ -122,6 +122,35 @@ QDateTime toQDateTime(const TTime &time, Qt::TimeSpec timeSpec)
     return qdt.toTimeSpec(Qt::LocalTime); // return with default timespec set
 }
 
+QOrganizerCollectionLocalId toCollectionLocalId(quint32 collectionId)
+{
+    return QOrganizerCollectionLocalId(new QOrganizerCollectionSymbianEngineLocalId(collectionId));
+}
+
+QOrganizerItemLocalId toItemLocalId(quint32 collectionId, quint32 itemId)
+{
+    return QOrganizerItemLocalId(new QOrganizerItemSymbianEngineLocalId(collectionId, itemId));
+}
+
+TCalLocalUid toTCalLocalUid(const QOrganizerItemLocalId& itemLocalId)
+{
+    // TODO: should we have a check for engineLocalIdType here?
+    return static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemLocalId))->calLocalUid();
+}
+
+quint32 toTCalCollectionId(const QOrganizerItemLocalId& itemLocalId)
+{
+    // TODO: should we have a check for engineLocalIdType here?
+    return static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemLocalId))->calCollectionId();
+}
+
+QOrganizerCollectionLocalId getCollectionLocalId(const QOrganizerItemLocalId& itemLocalId)
+{
+    // TODO: should we have a check for engineLocalIdType here?
+    quint32 calCollectionId  = static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemLocalId))->calCollectionId();
+    return toCollectionLocalId(calCollectionId);
+}
+
 #ifdef SYMBIAN_CALENDAR_V2
 
 void setCalInfoPropertyL(CCalCalendarInfo *calInfo, TCalenPropertyUid propertyUid, const QString &value)

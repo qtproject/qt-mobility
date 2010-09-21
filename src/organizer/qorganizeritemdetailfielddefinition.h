@@ -62,8 +62,8 @@ public:
     QOrganizerItemDetailFieldDefinition(const QOrganizerItemDetailFieldDefinition& other);
     QOrganizerItemDetailFieldDefinition& operator=(const QOrganizerItemDetailFieldDefinition& other);
 
-    QVariant::Type dataType() const;
-    void setDataType(QVariant::Type type);
+    int dataType() const;
+    void setDataType(int type);
 
     QVariantList allowableValues() const;
     void setAllowableValues(const QVariantList values);
