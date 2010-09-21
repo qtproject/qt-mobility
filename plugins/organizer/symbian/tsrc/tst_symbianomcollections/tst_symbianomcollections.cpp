@@ -72,12 +72,7 @@ QTM_USE_NAMESPACE
     QTRY_COMPARE(removedSpy2.count(), removedCount);
     
 Q_DECLARE_METATYPE(QList<QOrganizerItemLocalId>)
-
-// TODO:
-// We cannot declare this because its QOrganizerCollectionLocalId quint32 and so is QOrganizerItemLocalId.
-// This means using QVariant::value<QList<QOrganizerCollectionLocalId> >() won't work.
-// The upcoming API change on QOrganizerCollectionLocalId will however fix this issue.   
-//Q_DECLARE_METATYPE(QList<QOrganizerCollectionLocalId>)
+Q_DECLARE_METATYPE(QList<QOrganizerCollectionLocalId>)
 
 /*!
  * For testing symbian backend via QOrganizerItemManager API. The target is
@@ -298,20 +293,18 @@ void tst_symbianomcollections::saveCollection()
     c2.setMetaData("FileName", "c:testcalendarmodified");
     QVERIFY(!m_om->saveCollection(&c2));
     
-    // Try saving with unknown id. Should fail.
-    c2 = c1;
-    QOrganizerCollectionId id = c2.id();
-    // TODO: Disabled because of API change. REFACTOR!
-    //id.setLocalId(12345);
-    //c2.setId(id);
-    //QVERIFY(!m_om->saveCollection(&c2));
-    
     // Try saving with unknown manager uri. Should fail.
     c2 = c1;
-    id = c2.id();
+    QOrganizerCollectionId id = c2.id();
     id.setManagerUri("foobar");
     c2.setId(id);
-    QVERIFY(!m_om->saveCollection(&c2));    
+    QVERIFY(!m_om->saveCollection(&c2));
+    
+    // Remove the collection
+    QVERIFY(m_om->removeCollection(c1.localId()));
+    
+    // Try saving again without clearing local id. Should fail.
+    QVERIFY(!m_om->saveCollection(&c1));
 }
 
 void tst_symbianomcollections::removeCollection()
@@ -397,11 +390,10 @@ void tst_symbianomcollections::collectionSignalEmission()
     QVERIFY(m_om->saveCollection(&c));
     addedCount++;
     QTRY_COMPARE_SIGNAL_COUNTS();
-    // TODO: Disabled temporarily. See Q_DECLARE_METATYPE(QList<QOrganizerCollectionLocalId>) comments.
-    //QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
-    //QVERIFY(addedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().contains(c.id().localId()));
-    //QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
-    //QVERIFY(addedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().contains(c.id().localId()));
+    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
+    QVERIFY(addedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().contains(c.id().localId()));
+    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
+    QVERIFY(addedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().contains(c.id().localId()));
     
     // Modify collection
     c.setMetaData("Name", "testsignalemissionmodified");
