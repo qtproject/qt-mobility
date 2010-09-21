@@ -72,6 +72,8 @@
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 
+#include "engines/qorganizeritemmemorybackend_p.h"
+
 QTM_USE_NAMESPACE
 
 class QOrganizerItemSimulatorFactory : public QObject, public QOrganizerItemManagerEngineFactory
@@ -85,71 +87,27 @@ class QOrganizerItemSimulatorFactory : public QObject, public QOrganizerItemMana
     QString managerName() const;
 };
 
-class QOrganizerItemSimulatorEngineData : public QSharedData
-{
-public:
-    QOrganizerItemSimulatorEngineData()
-        : QSharedData()
-    {
-    }
-
-    QOrganizerItemSimulatorEngineData(const QOrganizerItemSimulatorEngineData& other)
-        : QSharedData(other)
-    {
-    }
-
-    ~QOrganizerItemSimulatorEngineData()
-    {
-    }
-};
-
-class QOrganizerItemSimulatorEngine : public QOrganizerItemManagerEngine
+class QOrganizerItemSimulatorEngine : public QOrganizerItemMemoryEngine
 {
     Q_OBJECT
 
 public:
     ~QOrganizerItemSimulatorEngine();
 
-    /* URI reporting */
     QString managerName() const;
-    QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
-    QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
-    QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
+protected:
+    QOrganizerItemSimulatorEngine(QOrganizerItemMemoryEngineData* data);
 
-    bool saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
-    bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
-
-    /* Definitions - Accessors and Mutators */
-    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const;
-    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const;
-    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error);
-    bool removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error);
-
-    /* Collections - every item belongs to exactly one collection */
-    QOrganizerCollectionLocalId defaultCollectionId(QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerCollectionLocalId> collectionIds(QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const;
-    bool saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
-    bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
-
-    /* Capabilities reporting */
-    bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const;
-    bool isFilterSupported(const QOrganizerItemFilter& filter) const;
-    QList<int> supportedDataTypes() const;
-    QStringList supportedItemTypes() const;
-
-    /* Asynchronous Request Support */
-    void requestDestroyed(QOrganizerItemAbstractRequest* req);
-    bool startRequest(QOrganizerItemAbstractRequest* req);
-    bool cancelRequest(QOrganizerItemAbstractRequest* req);
-    bool waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs);
+protected:
+    bool saveItem(QOrganizerItem* theOrganizerItem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
+    bool removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
+    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
+    bool removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
 
 private:
-    QOrganizerItemSimulatorEngineData* d;
+    static QOrganizerItemMemoryEngineData* engineData;
 
     friend class QOrganizerItemSimulatorFactory;
 };

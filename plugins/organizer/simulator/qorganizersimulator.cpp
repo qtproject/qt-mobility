@@ -44,27 +44,39 @@
 
 //QTM_USE_NAMESPACE
 
+QOrganizerItemMemoryEngineData *QOrganizerItemSimulatorEngine::engineData = 0;
+
 QOrganizerItemManagerEngine* QOrganizerItemSimulatorFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(parameters);
     Q_UNUSED(error);
 
-    /* TODO - if you understand any specific parameters. save them in the engine so that engine::managerParameters can return them */
+    // all simulator engines always share the same engineData
+    QOrganizerItemMemoryEngineData* data = QOrganizerItemSimulatorEngine::engineData;
+    if (data) {
+        data->m_refCount.ref();
+    } else {
+        data = new QOrganizerItemMemoryEngineData();
+        data->m_id = QLatin1String("simulatorengine");
+        data->m_anonymous = false;
 
-    QOrganizerItemSimulatorEngine* ret = new QOrganizerItemSimulatorEngine(); // manager takes ownership and will clean up.
-    return ret;
+        // we never want the data to be deleted, so push the refcount to two!
+        data->ref.ref();
+
+        QOrganizerItemSimulatorEngine::engineData = data;
+    }
+    return new QOrganizerItemSimulatorEngine(data);
 }
 
 QOrganizerItemEngineLocalId* QOrganizerItemSimulatorFactory::createItemEngineLocalId() const
 {
-    /* TODO - return the localid specific to the engine */
-    return NULL;
+    return new QOrganizerItemMemoryEngineLocalId;
 }
 
 QOrganizerCollectionEngineLocalId* QOrganizerItemSimulatorFactory::createCollectionEngineLocalId() const
 {
     /* TODO - return the localid specific to the engine */
-    return NULL;
+    return new QOrganizerCollectionMemoryEngineLocalId;
 }
 
 QString QOrganizerItemSimulatorFactory::managerName() const
@@ -77,7 +89,10 @@ Q_EXPORT_PLUGIN2(qtorganizer_simulator, QOrganizerItemSimulatorFactory);
 
 QOrganizerItemSimulatorEngine::~QOrganizerItemSimulatorEngine()
 {
-    /* TODO clean up your stuff.  Perhaps a QScopedPointer or QSharedDataPointer would be in order */
+    // have to be extremely careful with the QOrganizerItemMemoryEngine destructor
+    // it decrements the refcount and deletes engineData if the count hits 0
+    // luckily, we set up the refcount to always be >= 2
+    Q_ASSERT(engineData->ref >= 2);
 }
 
 QString QOrganizerItemSimulatorEngine::managerName() const
@@ -86,398 +101,33 @@ QString QOrganizerItemSimulatorEngine::managerName() const
     return QLatin1String("simulator");
 }
 
-QMap<QString, QString> QOrganizerItemSimulatorEngine::managerParameters() const
-{
-    /* TODO - in case you have any actual parameters that are relevant that you saved in the factory method, return them here */
-    return QMap<QString, QString>();
-}
-
 int QOrganizerItemSimulatorEngine::managerVersion() const
 {
     /* TODO - implement this appropriately.  This is strictly defined by the engine, so return whatever you like */
     return 1;
 }
 
-QList<QOrganizerItem> QOrganizerItemSimulatorEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
+bool QOrganizerItemSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
-    /*
-        TODO
-
-        This function should create a list of instances that occur in the time period from the supplied item.
-        The periodStart should always be valid, and either the periodEnd or the maxCount will be valid (if periodEnd is
-        valid, use that.  Otherwise use the count).  It's permissible to limit the number of items returned...
-
-        Basically, if the generator item is an Event, a list of EventOccurrences should be returned.  Similarly for
-        Todo/TodoOccurrence.
-
-        If there are no instances, return an empty list.
-
-        The returned items should have a QOrganizerItemInstanceOrigin detail that points to the generator and the
-        original instance that the event would have occurred on (e.g. with an exception).
-
-        They should not have recurrence information details in them.
-
-        We might change the signature to split up the periodStart + periodEnd / periodStart + maxCount cases.
-    */
-
-    return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, error);
+    return QOrganizerItemMemoryEngine::saveItem(theOrganizerItem, collectionId, changeSet, error);
 }
 
-QList<QOrganizerItemLocalId> QOrganizerItemSimulatorEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
+bool QOrganizerItemSimulatorEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
-    /*
-        TODO
-
-        Given the supplied filter and sort order, fetch the list of items [not instances] that correspond, and return their ids.
-
-        If you don't support the filter or sort orders, you can fetch a partially (or un-) filtered list and ask the helper
-        functions to filter and sort it for you.
-
-        If you do have to fetch, consider setting a fetch hint that restricts the information to that needed for filtering/sorting.
-    */
-
-    *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
-
-    QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
-    QList<QOrganizerItem> ret;
-
-    foreach(const QOrganizerItem& item, partiallyFilteredItems) {
-        if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
-            ret.append(item);
-        }
-    }
-
-    return QOrganizerItemManagerEngine::sortItems(ret, sortOrders);
+    return QOrganizerItemMemoryEngine::removeItem(organizeritemId, changeSet, error);
 }
 
-QList<QOrganizerItem> QOrganizerItemSimulatorEngine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+bool QOrganizerItemSimulatorEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
-    /*
-        TODO
-
-        Given the supplied filter and sort order, fetch the list of items [not instances] that correspond, and return them.
-
-        If you don't support the filter or sort orders, you can fetch a partially (or un-) filtered list and ask the helper
-        functions to filter and sort it for you.
-
-        The fetch hint suggests how much of the item to fetch.  You can ignore the fetch hint and fetch everything (but you must
-        fetch at least what is mentioned in the fetch hint).
-    */
-
-    Q_UNUSED(fetchHint);
-    *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
-
-    QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
-    QList<QOrganizerItem> ret;
-
-    foreach(const QOrganizerItem& item, partiallyFilteredItems) {
-        if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
-            QOrganizerItemManagerEngine::addSorted(&ret, item, sortOrders);
-        }
-    }
-
-    /* An alternative formulation, depending on how your engine is implemented is just:
-
-        foreach(const QOrganizerItemLocalId& id, itemIds(filter, sortOrders, error)) {
-            ret.append(item(id, fetchHint, error);
-        }
-     */
-
-    return ret;
+    return QOrganizerItemMemoryEngine::saveDetailDefinition(def, organizeritemType, changeSet, error);
 }
 
-QOrganizerItem QOrganizerItemSimulatorEngine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+bool QOrganizerItemSimulatorEngine::removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
-    /*
-        TODO
-
-        Fetch a single item by id.
-
-        The fetch hint suggests how much of the item to fetch.  You can ignore the fetch hint and fetch everything (but you must
-        fetch at least what is mentioned in the fetch hint).
-
-    */
-    return QOrganizerItemManagerEngine::item(itemId, fetchHint, error);
+    return QOrganizerItemMemoryEngine::removeDetailDefinition(definitionId, organizeritemType, changeSet, error);
 }
 
-bool QOrganizerItemSimulatorEngine::saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+QOrganizerItemSimulatorEngine::QOrganizerItemSimulatorEngine(QOrganizerItemMemoryEngineData* data)
+    : QOrganizerItemMemoryEngine(data)
 {
-    /*
-        TODO
-
-        Save a list of items into the collection specified (or their current collection
-        if no collection is specified and they already exist, or the default collection
-        if no collection is specified and they do not exist).
-
-        For each item, convert it to your local type, assign an item id, and update the
-        QOrganizerItem's ID (in the list above - e.g. *items[idx] = updated item).
-
-        If you encounter an error (e.g. converting to local type, or saving), insert an entry into
-        the map above at the corresponding index (e.g. errorMap->insert(idx, QOIM::InvalidDetailError).
-        You should set the "error" variable as well (first, last, most serious error etc).
-
-        The item passed in should be validated according to the schema.
-    */
-    return QOrganizerItemManagerEngine::saveItems(items, collectionId, errorMap, error);
-
-}
-
-bool QOrganizerItemSimulatorEngine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
-{
-    /*
-        TODO
-
-        Remove a list of items, given by their id.
-
-        If you encounter an error, insert an error into the appropriate place in the error map,
-        and update the error variable as well.
-
-        DoesNotExistError should be used if the id refers to a non existent item.
-    */
-    return QOrganizerItemManagerEngine::removeItems(itemIds, errorMap, error);
-}
-
-QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSimulatorEngine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
-{
-    /* TODO - once you know what your engine will support, implement this properly.  One way is to call the base version, and add/remove things as needed */
-    return QOrganizerItemManagerEngine::detailDefinitions(itemType, error);
-}
-
-QOrganizerItemDetailDefinition QOrganizerItemSimulatorEngine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
-{
-    /* TODO - the default implementation just calls the base detailDefinitions function.  If that's inefficent, implement this */
-    return QOrganizerItemManagerEngine::detailDefinition(definitionId, itemType, error);
-}
-
-bool QOrganizerItemSimulatorEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error)
-{
-    /* TODO - if you support adding custom fields, do that here.  Otherwise call the base functionality. */
-    return QOrganizerItemManagerEngine::saveDetailDefinition(def, itemType, error);
-}
-
-bool QOrganizerItemSimulatorEngine::removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error)
-{
-    /* TODO - if you support removing custom fields, do that here.  Otherwise call the base functionality. */
-    return QOrganizerItemManagerEngine::removeDetailDefinition(definitionId, itemType, error);
-}
-
-
-QOrganizerCollectionLocalId QOrganizerItemSimulatorEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
-{
-    /*
-        TODO
-
-        This allows clients to determine which collection an item will be saved,
-        if the item is saved via saveItems() without specifying a collection id
-        of a collection in which to save the item.
-
-        If the backend does not support multiple collections (calendars) it may
-        return the default constructed collection id.
-
-        There is always at least one collection in a manager, and all items are
-        saved in exactly one collection.
-     */
-    return QOrganizerItemManagerEngine::defaultCollectionId(error);
-}
-
-QList<QOrganizerCollectionLocalId> QOrganizerItemSimulatorEngine::collectionIds(QOrganizerItemManager::Error* error) const
-{
-    /*
-        TODO
-
-        This allows clients to retrieve the ids of all collections currently
-        in this manager.  Some backends will have a prepopulated list of valid
-        collections, others will not.
-     */
-    return QOrganizerItemManagerEngine::collectionIds(error);
-}
-
-QList<QOrganizerCollection> QOrganizerItemSimulatorEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
-{
-    /*
-        TODO
-
-        This allows clients to retrieve the collections which correspond
-        to the given collection ids.  A collection can have properties
-        like colour, description, perhaps a priority, etc etc.
-     */
-    return QOrganizerItemManagerEngine::collections(collectionIds, error);
-}
-
-bool QOrganizerItemSimulatorEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
-{
-    /*
-        TODO
-
-        This allows clients to create or update collections if the backend supports
-        mutable collections.  If the backend does support mutable collections, it
-        should report that it supports the MutableCollections manager feature.
-     */
-    return QOrganizerItemManagerEngine::saveCollection(collection, error);
-}
-
-bool QOrganizerItemSimulatorEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
-{
-    /*
-        TODO
-
-        This allows clients to remove collections if the backend supports mutable
-        collections.  If the backend does support mutable collections, it should
-        report that it supports the MutableCollections manager feature.
-
-        When a collection is removed, all items in the collection are removed.
-        That is, they are _not_ transferred to another collection.
-
-        If the user attempts to remove the collection which is the default collection,
-        the backend may decide whether to fail (with a permissions error) or to
-        succeed and arbitrarily choose another collection to be the default collection.
-     */
-    return QOrganizerItemManagerEngine::removeCollection(collectionId, error);
-}
-
-bool QOrganizerItemSimulatorEngine::startRequest(QOrganizerItemAbstractRequest* req)
-{
-    /*
-        TODO
-
-        This is the entry point to the async API.  The request object describes the
-        type of request (switch on req->type()).  Req will not be null when called
-        by the framework.
-
-        Generally, you can queue the request and process them at some later time
-        (probably in another thread).
-
-        Once you start a request, call the updateRequestState and/or the
-        specific updateXXXXXRequest functions to mark it in the active state.
-
-        If your engine is particularly fast, or the operation involves only in
-        memory data, you can process and complete the request here.  That is
-        probably not the case, though.
-
-        Note that when the client is threaded, and the request might live on a
-        different thread, you might need to be careful with locking.  In particular,
-        the request might be deleted while you are still working on it.  In this case,
-        your requestDestroyed function will be called while the request is still valid,
-        and you should block in that function until your worker thread (etc) has been
-        notified not to touch that request any more.
-
-        We plan to provide some boiler plate code that will allow you to:
-
-        1) implement the sync functions, and have the async versions call the sync
-           in another thread
-
-        2) or implement the async versions of the function, and have the sync versions
-           call the async versions.
-
-        It's not ready yet, though.
-
-        Return true if the request can be started, false otherwise.  You can set an error
-        in the request if you like.
-    */
-    return QOrganizerItemManagerEngine::startRequest(req);
-}
-
-bool QOrganizerItemSimulatorEngine::cancelRequest(QOrganizerItemAbstractRequest* req)
-{
-    /*
-        TODO
-
-        Cancel an in progress async request.  If not possible, return false from here.
-    */
-    return QOrganizerItemManagerEngine::cancelRequest(req);
-}
-
-bool QOrganizerItemSimulatorEngine::waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs)
-{
-    /*
-        TODO
-
-        Wait for a request to complete (up to a max of msecs milliseconds).
-
-        Return true if the request is finished (including if it was already).  False otherwise.
-
-        You should really implement this function, if nothing else than as a delay, since clients
-        may call this in a loop.
-
-        It's best to avoid processing events, if you can, or at least only process non-UI events.
-    */
-    return QOrganizerItemManagerEngine::waitForRequestFinished(req, msecs);
-}
-
-void QOrganizerItemSimulatorEngine::requestDestroyed(QOrganizerItemAbstractRequest* req)
-{
-    /*
-        TODO
-
-        This is called when a request is being deleted.  It lets you know:
-
-        1) the client doesn't care about the request any more.  You can still complete it if
-           you feel like it.
-        2) you can't reliably access any properties of the request pointer any more.  The pointer will
-           be invalid once this function returns.
-
-        This means that if you have a worker thread, you need to let that thread know that the
-        request object is not valid and block until that thread acknowledges it.  One way to do this
-        is to have a QSet<QOIAR*> (or QMap<QOIAR, MyCustomRequestState>) that tracks active requests, and
-        insert into that set in startRequest, and remove in requestDestroyed (or when it finishes or is
-        cancelled).  Protect that set/map with a mutex, and make sure you take the mutex in the worker
-        thread before calling any of the QOIAR::updateXXXXXXRequest functions.  And be careful of lock
-        ordering problems :D
-
-    */
-    return QOrganizerItemManagerEngine::requestDestroyed(req);
-}
-
-bool QOrganizerItemSimulatorEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const
-{
-    // TODO - the answer to the question may depend on the type
-    Q_UNUSED(itemType);
-    switch(feature) {
-        case QOrganizerItemManager::MutableDefinitions:
-            // TODO If you support save/remove detail definition, return true
-            return false;
-
-        case QOrganizerItemManager::Anonymous:
-            // TODO if this engine is anonymous (e.g. no other engine can share the data) return true
-            // (mostly for an in memory engine)
-            return false;
-        case QOrganizerItemManager::ChangeLogs:
-            // TODO if this engine supports filtering by last modified/created/removed timestamps, return true
-            return false;
-    }
-    return false;
-}
-
-bool QOrganizerItemSimulatorEngine::isFilterSupported(const QOrganizerItemFilter& filter) const
-{
-    // TODO if you engine can natively support the filter, return true.  Otherwise you should emulate support in the item{Ids} functions.
-    Q_UNUSED(filter);
-    return false;
-}
-
-QList<int> QOrganizerItemSimulatorEngine::supportedDataTypes() const
-{
-    QList<int> ret;
-    // TODO - tweak which data types this engine understands
-    ret << QVariant::String;
-    ret << QVariant::Date;
-    ret << QVariant::DateTime;
-    ret << QVariant::Time;
-
-    return ret;
-}
-
-QStringList QOrganizerItemSimulatorEngine::supportedItemTypes() const
-{
-    // TODO - return which [predefined] types this engine supports
-    QStringList ret;
-
-    ret << QOrganizerItemType::TypeEvent;
-    ret << QOrganizerItemType::TypeEventOccurrence;
-    ret << QOrganizerItemType::TypeJournal;
-    ret << QOrganizerItemType::TypeNote;
-    ret << QOrganizerItemType::TypeTodo;
-    ret << QOrganizerItemType::TypeTodoOccurrence;
-
-    return ret;
 }
