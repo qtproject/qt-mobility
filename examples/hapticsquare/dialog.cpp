@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,11 +39,13 @@
 **
 ****************************************************************************/
 
-#include <QDebug>
-#include <QCoreApplication>
-#include "buzzer.h"
+#include "dialog.h"
+#include "hapticbutton.h"
 
-Buzzer::Buzzer() : m_oceaning(false)
+#include <QGridLayout>
+#include <QDebug>
+
+Dialog::Dialog()
 {
     // First: Define a generic "rumble" custom effect.
     // we start with an intensity of zero (nothing).
@@ -74,41 +76,55 @@ Buzzer::Buzzer() : m_oceaning(false)
     m_ocean.setFadeIntensity(0.05);
     // it is a periodic effect, with a period of 1.5 seconds
     m_ocean.setPeriod(1500);
+
+    // Third: Create our UI elements and lay them out.
+    m_btnRumble = new HapticButton(tr("Rumble!"));
+    m_btnOcean = new HapticButton(tr("Ocean"));
+    m_btnOcean->setCheckable(true);
+    m_btnButtonClick = new HapticButton(tr("Click"));
+    m_btnNegativeEffect = new HapticButton(tr("Oops!"));
+    QGridLayout *topLayout = new QGridLayout(this);
+    topLayout->addWidget(m_btnRumble, 0, 0);
+    topLayout->addWidget(m_btnOcean, 0, 1);
+    topLayout->addWidget(m_btnButtonClick, 1, 0);
+    topLayout->addWidget(m_btnNegativeEffect, 1, 1);
+
+    // Finally: Connect our UI elements to slots which control haptic effects
+    connect(m_btnRumble, SIGNAL(clicked()), this, SLOT(playRumble()));
+    connect(m_btnOcean, SIGNAL(toggled(bool)), this, SLOT(playOcean(bool)));
+    connect(m_btnButtonClick, SIGNAL(clicked()), this, SLOT(playButtonClick()));
+    connect(m_btnNegativeEffect, SIGNAL(clicked()), this, SLOT(playNegativeEffect()));
 }
 
-void Buzzer::rumble()
+Dialog::~Dialog()
+{
+    delete m_btnRumble;
+    delete m_btnOcean;
+    delete m_btnButtonClick;
+    delete m_btnNegativeEffect;
+}
+
+void Dialog::playRumble()
 {
     m_rumble.start();
 }
 
-void Buzzer::setOceaning(bool on)
+void Dialog::playOcean(bool toggleState)
 {
-    if (on != m_oceaning) {
-        if (on)
-            m_ocean.start();
-        else
-            m_ocean.stop();
-        m_oceaning = on;
-        emit oceaningChanged();
-    }
+    if (toggleState)
+        m_ocean.start();
+    else
+        m_ocean.stop();
 }
 
-bool Buzzer::oceaning() const
-{
-    return m_oceaning;
-}
-
-void Buzzer::click()
+void Dialog::playButtonClick()
 {
     QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeBasicButton);
 }
 
-void Buzzer::oops()
+void Dialog::playNegativeEffect()
 {
     QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeNegativeTacticon);
 }
 
-void Buzzer::quit()
-{
-    QCoreApplication::quit();
-}
+#include "moc_dialog.cpp"
