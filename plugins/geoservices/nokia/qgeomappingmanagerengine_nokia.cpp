@@ -62,6 +62,12 @@
     #define DISK_CACHE_MAX_SIZE 50*1024*1024  //50MB
 #endif
 
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    #undef DISK_CACHE_ENABLED
+#else
+    #define DISK_CACHE_ENABLED 1
+#endif
+
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
         m_host("maptile.maps.svc.ovi.com")
@@ -80,13 +86,6 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     setSupportedMapTypes(types);
 
     m_nam = new QNetworkAccessManager(this);
-    m_cache = new QNetworkDiskCache(this);
-
-    QDir dir = QDir::temp();
-    dir.mkdir("maptiles");
-    dir.cd("maptiles");
-
-    m_cache->setCacheDirectory(dir.path());
 
     QList<QString> keys = parameters.keys();
 
@@ -101,6 +100,15 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
         if (!host.isEmpty())
             m_host = host;
     }
+
+#ifdef DISK_CACHE_ENABLED
+    m_cache = new QNetworkDiskCache(this);
+
+    QDir dir = QDir::temp();
+    dir.mkdir("maptiles");
+    dir.cd("maptiles");
+
+    m_cache->setCacheDirectory(dir.path());
 
     if (keys.contains("mapping.cache.directory")) {
         QString cacheDir = parameters.value("mapping.cache.directory").toString();
@@ -119,6 +127,7 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
         m_cache->setMaximumCacheSize(DISK_CACHE_MAX_SIZE);
 
     m_nam->setCache(m_cache);
+#endif
 }
 
 QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
@@ -128,9 +137,12 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
     QString rawRequest = getRequestString(request);
 
     QNetworkRequest netRequest((QUrl(rawRequest))); // The extra pair of parens disambiguates this from a function declaration
-    netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
     netRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+
+#ifdef DISK_CACHE_ENABLED
+    netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
     m_cache->metaData(netRequest.url()).setLastModified(QDateTime::currentDateTime());
+#endif
 
     QNetworkReply* netReply = m_nam->get(netRequest);
 
