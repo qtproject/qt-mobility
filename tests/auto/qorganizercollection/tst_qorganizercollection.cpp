@@ -211,21 +211,18 @@ void tst_QOrganizerCollection::datastream()
 {
     QByteArray buffer;
     QDataStream stream1(&buffer, QIODevice::WriteOnly);
-    QOrganizerCollection contactIn;
-    QOrganizerCollectionId id;
-    id.setManagerUri("manager");
-    id.setLocalId(makeId(1234));
-    contactIn.setId(id);
-    contactIn.setMetaData("key", "value");
-    stream1 << contactIn;
+    QOrganizerCollection collectionIn;
+    collectionIn.setMetaData("key", "value");
+    QOrganizerItemManager om("memory");
+    om.saveCollection(&collectionIn); // fill in its ID
+    stream1 << collectionIn;
 
     QVERIFY(buffer.size() > 0);
 
     QDataStream stream2(buffer);
-    QOrganizerCollection contactOut;
-    stream2 >> contactOut;
-    QEXPECT_FAIL("", "Bad test - we can only stream IDs that can be created by a QOrganizerItemManagerEngineFactory", Continue);
-    QCOMPARE(contactOut, contactIn);
+    QOrganizerCollection collectionOut;
+    stream2 >> collectionOut;
+    QCOMPARE(collectionOut, collectionIn);
 }
 
 void tst_QOrganizerCollection::traits()
@@ -254,8 +251,8 @@ void tst_QOrganizerCollection::localIdTraits()
 {
     QVERIFY(sizeof(QOrganizerCollectionId) == sizeof(void *));
     QTypeInfo<QTM_PREPEND_NAMESPACE(QOrganizerCollectionLocalId)> ti;
-    // QVERIFY(!ti.isComplex);
     QEXPECT_FAIL("", "Need to investigate this", Continue);
+    QVERIFY(!ti.isComplex);
     QVERIFY(!ti.isStatic);
     QVERIFY(!ti.isLarge);
     QVERIFY(!ti.isPointer);
