@@ -59,6 +59,7 @@ public:
                                   QString *errorString);
     ~QGeoMappingManagerEngineNokia();
 
+    QGeoMapData* createMapData(QGraphicsGeoMap *geoMap);
     QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request);
 
 private:

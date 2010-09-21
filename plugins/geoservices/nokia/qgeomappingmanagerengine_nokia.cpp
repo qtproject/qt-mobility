@@ -85,6 +85,10 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     types << QGraphicsGeoMap::TerrainMap;
     setSupportedMapTypes(types);
 
+    QList<QGraphicsGeoMap::ConnectivityMode> modes;
+    modes << QGraphicsGeoMap::OnlineMode;
+    setSupportedConnectivityModes(modes);
+
     m_nam = new QNetworkAccessManager(this);
 
     QList<QString> keys = parameters.keys();
@@ -132,8 +136,19 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
 
 QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
 
+QGeoMapData* QGeoMappingManagerEngineNokia::createMapData(QGraphicsGeoMap *geoMap)
+{
+    QGeoMapData *data = QGeoTiledMappingManagerEngine::createMapData(geoMap);
+    if (!data)
+        return 0;
+
+    data->setConnectivityMode(QGraphicsGeoMap::OnlineMode);
+    return data;
+}
+
 QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMapRequest &request)
 {
+    // TODO add error detection for if request.connectivityMode() != QGraphicsGeoMap::OnlineMode
     QString rawRequest = getRequestString(request);
 
     QNetworkRequest netRequest((QUrl(rawRequest))); // The extra pair of parens disambiguates this from a function declaration
