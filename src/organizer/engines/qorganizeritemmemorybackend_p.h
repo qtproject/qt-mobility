@@ -77,7 +77,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemMemoryEngineLocalId : public QOrganizerItemEngineLocalId
+class Q_ORGANIZER_EXPORT QOrganizerItemMemoryEngineLocalId : public QOrganizerItemEngineLocalId
 {
 public:
     QOrganizerItemMemoryEngineLocalId();
@@ -106,7 +106,7 @@ private:
     friend class QOrganizerItemMemoryEngine;
 };
 
-class QOrganizerCollectionMemoryEngineLocalId : public QOrganizerCollectionEngineLocalId
+class Q_ORGANIZER_EXPORT QOrganizerCollectionMemoryEngineLocalId : public QOrganizerCollectionEngineLocalId
 {
 public:
     QOrganizerCollectionMemoryEngineLocalId();
@@ -178,7 +178,7 @@ public:
     QList<QOrganizerItemManagerEngine*> m_sharedEngines;   // The list of engines that share this data
 };
 
-class QOrganizerItemMemoryEngine : public QOrganizerItemManagerEngine
+class Q_ORGANIZER_EXPORT QOrganizerItemMemoryEngine : public QOrganizerItemManagerEngine
 {
     Q_OBJECT
 
@@ -249,14 +249,16 @@ public:
 protected:
     QOrganizerItemMemoryEngine(QOrganizerItemMemoryEngineData* data);
 
-private:
+protected:
     /* Implement "signal coalescing" for batch functions via change set */
-    bool saveItem(QOrganizerItem* theOrganizerItem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
+    virtual bool saveItem(QOrganizerItem* theOrganizerItem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
+    virtual bool removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
+    virtual bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
+    virtual bool removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
+
+private:
     bool fixOccurrenceReferences(QOrganizerItem* item, QOrganizerItemManager::Error* error);
     bool typesAreRelated(const QString& occurrenceType, const QString& parentType);
-    bool removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
-    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
-    bool removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
 
     void performAsynchronousOperation(QOrganizerItemAbstractRequest* request);
 
