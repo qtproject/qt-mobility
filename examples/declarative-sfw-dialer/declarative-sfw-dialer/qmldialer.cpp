@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the demonstration applications of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,29 +39,24 @@
 **
 ****************************************************************************/
 
-#ifndef CNTDISPLAYLABELSQLFILTER_H_
-#define CNTDISPLAYLABELSQLFILTER_H_
+#include <QtGui/QApplication>
+#include <QtDeclarative/QDeclarativeView>
+#include <QtDeclarative/QDeclarativeEngine>
 
-#include <qtcontactsglobal.h>
-#include <qcontactmanager.h>
-#include <qcontactdetailfilter.h>
-
-QTM_USE_NAMESPACE
-
-class CntDisplayLabelSqlFilter
+int main(int argc, char *argv[])
 {
-public:
-    CntDisplayLabelSqlFilter();
-    virtual ~CntDisplayLabelSqlFilter();
-
-    void createSqlQuery(const QContactDetailFilter& filter,
-                        QString& sqlQuery,
-                        QContactManager::Error* error);
-private:
-    void createQuerySingleSearchValue(QString& sqlQuery, const QString &searchValue, const QStringList &columns) const;
-    void createQueryMultipleSearchValues(QString& sqlQuery, const QStringList &searchValues, const QStringList &columns) const;
-    QString createSubQuery(const QString &searchValue, const QString &column) const;
-    QString columnName(const QPair<QLatin1String, QLatin1String> &detail) const;
-};
-
-#endif /* CNTDISPLAYLABELSQLFILTER_H_ */
+    QApplication application(argc, argv);
+    const QString mainQmlApp = QLatin1String("declarative-sfw-dialer/declarative-sfw-dialer.qml");
+    QDeclarativeView view;
+    view.setSource(QUrl(mainQmlApp));
+    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    // Qt.quit() called in embedded .qml by default only emits
+    // quit() signal, so do this (optionally use Qt.exit()).
+    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
+#if defined(Q_OS_SYMBIAN)
+    view.showFullScreen();
+#else // Q_OS_SYMBIAN
+    view.show();
+#endif // Q_OS_SYMBIAN
+    return application.exec();
+}

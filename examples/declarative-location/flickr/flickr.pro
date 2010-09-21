@@ -1,5 +1,5 @@
-include($$PWD/deployment.pri)
 include($$PWD/../declarative-location.pri)
+include($$PWD/deployment.pri)
 
 QT += declarative network
 SOURCES += $$PWD/qmllocationflickr.cpp

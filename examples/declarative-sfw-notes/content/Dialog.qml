@@ -47,43 +47,56 @@ Rectangle {
 
     id: page
     opacity: 0
-    border.width: 1; color: "lightgray"; radius: 5
+    border.width: mainWindow.screenScale
+    color: "lightgray"; radius: 5
 
-    width: 200; height: dialogText.height + okButton.height + 35
+    width: parent.width - (parent.width * 1/11); 
+    height: dialogText.height + okButton.height + 35
     anchors.verticalCenter: mainWindow.verticalCenter
     anchors.horizontalCenter: mainWindow.horizontalCenter
 
     Text {
         id: dialogText
         text: page.text
-        wrapMode: Text.WordWrap
+        font.pointSize: 10 * mainWindow.screenScale
+        wrapMode: Text.Wrap
         x: 15; y: 15
-        color: activePalette.buttonText
+        width: parent.width - 20;
+        color: "black"
         anchors.horizontalCenter: page.horizontalCenter
+        horizontalAlignment: Text.AlignHCenter
     }
 
     Button {
         id: okButton
         text: "Ok"
-        width: 75; height: 25
+        width: 75 * mainWindow.screenScale
+        height: 25 * mainWindow.screenScale
         anchors.top: dialogText.bottom; anchors.topMargin: 7
 
         onClicked: {
             page.confirmed();
-            page.opacity = 0;
+            forceClose();
         }
     }
 
     Button {
         id: noButton
         text: "Cancel"
-        width: 75; height: 25
+        width: 75 * mainWindow.screenScale
+        height: 25 * mainWindow.screenScale
         anchors.left: page.horizontalCenter; anchors.leftMargin: 5
         anchors.top: dialogText.bottom; anchors.topMargin: 7
     
         onClicked: {
-            page.opacity = 0;
+            forceClose();
         }
+    }
+
+    function forceClose()
+    {
+        page.opacity = 0;
+        mainWindow.enableScreen(true);
     }
 
     Component.onCompleted: {

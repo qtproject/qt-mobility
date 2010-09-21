@@ -150,8 +150,8 @@ public:
 
 public Q_SLOTS:
     void reload();
-    void cancel() { m_request.cancel(); }
-    void clear() { m_request.clear(); }
+    void cancel();
+    void clear();
 
 Q_SIGNALS:
     void statusChanged();

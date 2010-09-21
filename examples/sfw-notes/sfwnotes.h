@@ -47,7 +47,11 @@
 #include <QDateTime>
 #include <qmobilityglobal.h>
 
+#if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "ui_sfwnotes_mobile.h"
+#else
 #include "ui_sfwnotes.h"
+#endif
 
 QTM_BEGIN_NAMESPACE
 class QServiceManager;
@@ -72,7 +76,7 @@ private slots:
 
 private:
     void init();
-    void refreshList();
+    void refreshList(bool view = true);
     void refreshNotes();
     void registerExampleServices();
     void unregisterExampleServices();
