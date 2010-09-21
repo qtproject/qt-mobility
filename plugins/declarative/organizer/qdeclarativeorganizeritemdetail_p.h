@@ -94,10 +94,12 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemDetail)
 class QDeclarativeOrganizerEventTimeRange : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
-    Q_PROPERTY(QDateTime start READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
-    Q_PROPERTY(QDateTime end READ endDateTime WRITE setEndDateTime NOTIFY valueChanged)
+    Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
+    Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime NOTIFY valueChanged)
     Q_PROPERTY(bool timeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "eventTimeRange");
+
     QDeclarativeOrganizerEventTimeRange(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
@@ -112,6 +114,7 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerEventTimeRange)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEventTimeRange::DetailName, "eventTimeRange");
 
 //comment detail
 class QDeclarativeOrganizerItemComment : public QDeclarativeOrganizerItemDetail
@@ -119,6 +122,9 @@ class QDeclarativeOrganizerItemComment : public QDeclarativeOrganizerItemDetail
     Q_OBJECT
     Q_PROPERTY(QString comment READ comment WRITE setComment NOTIFY valueChanged)
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "comment");
+    Q_DECLARE_LATIN1_CONSTANT(DetailGroupName, "comments");
+
     QDeclarativeOrganizerItemComment(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
@@ -129,6 +135,8 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemComment)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemComment::DetailName, "comment");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemComment::DetailGroupName, "comments");
 
 //description detail
 class QDeclarativeOrganizerItemDescription : public QDeclarativeOrganizerItemDetail
@@ -136,6 +144,8 @@ class QDeclarativeOrganizerItemDescription : public QDeclarativeOrganizerItemDet
     Q_OBJECT
     Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY valueChanged)
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "description");
+
     QDeclarativeOrganizerItemDescription(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
@@ -146,6 +156,7 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemDescription)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemDescription::DetailName, "description");
 
 //display label detail
 class QDeclarativeOrganizerItemDisplayLabel : public QDeclarativeOrganizerItemDetail
@@ -153,6 +164,7 @@ class QDeclarativeOrganizerItemDisplayLabel : public QDeclarativeOrganizerItemDe
     Q_OBJECT
     Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY valueChanged)
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "label");
     QDeclarativeOrganizerItemDisplayLabel(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
@@ -163,7 +175,7 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemDisplayLabel)
-
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemDisplayLabel::DetailName, "label");
 
 //guid detail
 class QDeclarativeOrganizerItemGuid : public QDeclarativeOrganizerItemDetail
@@ -171,6 +183,7 @@ class QDeclarativeOrganizerItemGuid : public QDeclarativeOrganizerItemDetail
     Q_OBJECT
     Q_PROPERTY(QString guid READ guid WRITE setGuid NOTIFY valueChanged)
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "guid");
     QDeclarativeOrganizerItemGuid(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
@@ -182,6 +195,7 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemGuid)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemGuid::DetailName, "guid");
 
 //instance origin detail
 class QDeclarativeQrganizerItemInstanceOrigin : public QDeclarativeOrganizerItemDetail
@@ -191,6 +205,7 @@ class QDeclarativeQrganizerItemInstanceOrigin : public QDeclarativeOrganizerItem
     Q_PROPERTY(QString originalDate READ originalDate WRITE setOriginalDate NOTIFY valueChanged)
 
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "instanceOrigin");
     QDeclarativeQrganizerItemInstanceOrigin(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
@@ -207,6 +222,7 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeQrganizerItemInstanceOrigin)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeQrganizerItemInstanceOrigin::DetailName, "instanceOrigin");
 
 //location detail
 class QDeclarativeOrganizerItemLocation : public QDeclarativeOrganizerItemDetail
@@ -217,6 +233,7 @@ class QDeclarativeOrganizerItemLocation : public QDeclarativeOrganizerItemDetail
     Q_PROPERTY(QString locationName READ locationName WRITE setLocationName NOTIFY valueChanged)
 
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "location");
     QDeclarativeOrganizerItemLocation(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
@@ -232,6 +249,7 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemLocation)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemLocation::DetailName, "location");
 
 //priority detail
 class QDeclarativeOrganizerItemPriority : public QDeclarativeOrganizerItemDetail
@@ -240,6 +258,7 @@ class QDeclarativeOrganizerItemPriority : public QDeclarativeOrganizerItemDetail
     Q_PROPERTY(Priority priority READ priority WRITE setPriority NOTIFY valueChanged)
     Q_ENUMS(Priority)
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "priority");
     enum Priority {
         UnknownPriority = QOrganizerItemPriority::UnknownPriority,
         HighestPriority = QOrganizerItemPriority::HighestPriority,
@@ -264,6 +283,7 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemPriority)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemPriority::DetailName, "priority");
 
 //recurrence detail
 class QDeclarativeOrganizerItemRecurrence : public QDeclarativeOrganizerItemDetail
@@ -274,6 +294,7 @@ class QDeclarativeOrganizerItemRecurrence : public QDeclarativeOrganizerItemDeta
     Q_PROPERTY(QVariantList recurrenceDates READ recurrenceDates WRITE setRecurrenceDates NOTIFY valueChanged)
     Q_PROPERTY(QVariantList exceptionDates  READ exceptionDates WRITE setExceptionDates NOTIFY valueChanged)
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "recurrence");
     QDeclarativeOrganizerItemRecurrence(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
@@ -343,6 +364,7 @@ private:
     QList<QDeclarativeOrganizerItemRecurrenceRule*>   m_exceptionRules;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemRecurrence)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemRecurrence::DetailName, "recurrence");
 
 //reminder detail
 class QDeclarativeOrganizerItemReminder : public QDeclarativeOrganizerItemDetail
@@ -355,6 +377,8 @@ class QDeclarativeOrganizerItemReminder : public QDeclarativeOrganizerItemDetail
     Q_PROPERTY(int repetitionDelay READ repetitionDelay WRITE setRepetitionDelay NOTIFY valueChanged)
     Q_ENUMS(ReminderType)
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "reminder");
+    Q_DECLARE_LATIN1_CONSTANT(DetailGroupName, "reminders");
     enum ReminderType {
         NoReminder = QOrganizerItemReminder::NoReminder,
         VisualReminder = QOrganizerItemReminder::VisualReminder,
@@ -383,6 +407,8 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemReminder)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemReminder::DetailName, "reminder");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemReminder::DetailGroupName, "reminders");
 
 //audible reminder detail
 class QDeclarativeOrganizerItemAudibleReminder : public QDeclarativeOrganizerItemReminder
@@ -390,6 +416,8 @@ class QDeclarativeOrganizerItemAudibleReminder : public QDeclarativeOrganizerIte
     Q_OBJECT
     Q_PROPERTY(QUrl dataUrl READ dataUrl WRITE setDataUrl NOTIFY valueChanged)
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "audibleReminder");
+    Q_DECLARE_LATIN1_CONSTANT(DetailGroupName, "audibleReminders");
     QDeclarativeOrganizerItemAudibleReminder(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
@@ -400,6 +428,8 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemAudibleReminder)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemAudibleReminder::DetailName, "audibleReminder");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemAudibleReminder::DetailGroupName, "audibleReminders");
 
 //visual reminder detail
 class QDeclarativeOrganizerItemVisualReminder : public QDeclarativeOrganizerItemReminder
@@ -408,6 +438,8 @@ class QDeclarativeOrganizerItemVisualReminder : public QDeclarativeOrganizerItem
     Q_PROPERTY(QString message READ message WRITE setMessage NOTIFY valueChanged)
     Q_PROPERTY(QUrl dataUrl READ dataUrl WRITE setDataUrl NOTIFY valueChanged)
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "visualReminder");
+    Q_DECLARE_LATIN1_CONSTANT(DetailGroupName, "visualReminders");
     QDeclarativeOrganizerItemVisualReminder(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
@@ -422,6 +454,8 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemVisualReminder)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemVisualReminder::DetailName, "visualReminder");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemVisualReminder::DetailGroupName, "visualReminders");
 
 //email reminder detail
 class QDeclarativeOrganizerItemEmailReminder : public QDeclarativeOrganizerItemReminder
@@ -432,6 +466,8 @@ class QDeclarativeOrganizerItemEmailReminder : public QDeclarativeOrganizerItemR
     Q_PROPERTY(QStringList recipients READ recipients WRITE setRecipients NOTIFY valueChanged)
     Q_PROPERTY(QStringList attachments READ attachments WRITE setAttachments NOTIFY valueChanged)
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "emailReminder");
+    Q_DECLARE_LATIN1_CONSTANT(DetailGroupName, "emailReminders");
     QDeclarativeOrganizerItemEmailReminder(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
@@ -452,6 +488,8 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemEmailReminder)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemEmailReminder::DetailName, "emailReminder");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemEmailReminder::DetailGroupName, "emailReminders");
 
 //timestamp detail
 class QDeclarativeOrganizerItemTimestamp : public QDeclarativeOrganizerItemDetail
@@ -460,6 +498,7 @@ class QDeclarativeOrganizerItemTimestamp : public QDeclarativeOrganizerItemDetai
     Q_PROPERTY(QDateTime lastModified READ lastModified WRITE setLastModified NOTIFY valueChanged)
     Q_PROPERTY(QDateTime created READ created WRITE setCreated NOTIFY valueChanged)
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "timestamp");
     QDeclarativeOrganizerItemTimestamp(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
@@ -473,6 +512,8 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemTimestamp)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemTimestamp::DetailName, "timestamp");
+
 
 //type detail
 class QDeclarativeOrganizerItemType : public QDeclarativeOrganizerItemDetail
@@ -498,6 +539,7 @@ class QDeclarativeOrganizerJournalTimeRange : public QDeclarativeOrganizerItemDe
     Q_OBJECT
     Q_PROPERTY(QDateTime type READ entryDateTime WRITE setEntryDateTime NOTIFY valueChanged)
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "journalTimeRange");
     QDeclarativeOrganizerJournalTimeRange(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
@@ -508,6 +550,7 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerJournalTimeRange)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerJournalTimeRange::DetailName, "journalTimeRange");
 
 //todo progress detail
 class QDeclarativeOrganizerTodoProgress : public QDeclarativeOrganizerItemDetail
@@ -518,6 +561,8 @@ class QDeclarativeOrganizerTodoProgress : public QDeclarativeOrganizerItemDetail
     Q_PROPERTY(QDateTime finishedDateTime READ finishedDateTime WRITE setFinishedDateTime NOTIFY valueChanged)
     Q_ENUMS(Status)
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName,"todoProgress");
+
     QDeclarativeOrganizerTodoProgress(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
@@ -544,6 +589,7 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerTodoProgress)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoProgress::DetailName, "todoProgress");
 
 //todo time range detail
 class QDeclarativeOrganizerTodoTimeRange : public QDeclarativeOrganizerItemDetail
@@ -553,6 +599,7 @@ class QDeclarativeOrganizerTodoTimeRange : public QDeclarativeOrganizerItemDetai
     Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
     Q_PROPERTY(QDateTime dueDateTime READ dueDateTime WRITE setDueDateTime NOTIFY valueChanged)
 public:
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "todoTimeRange");
     QDeclarativeOrganizerTodoTimeRange(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
@@ -568,6 +615,7 @@ signals:
     void valueChanged();
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerTodoTimeRange)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoTimeRange::DetailName, "todoTimeRange");
 #endif // QDECLARATIVEORGANIZERITEMDETAIL_H
 
 
