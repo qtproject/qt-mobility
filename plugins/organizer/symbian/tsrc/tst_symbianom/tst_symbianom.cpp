@@ -382,13 +382,16 @@ void tst_SymbianOm::uniqueIds()
         QVERIFY(guids[i] == item.guid());
     }
     
-    // Save a new todo item with own localid. Should fail.
-    QOrganizerTodo todo;
-    QOrganizerItemId id;
-    // TODO: Disabled because of API change. REFACTOR!
-    //id.setLocalId(12345); 
-    //todo.setId(id);
-    //QVERIFY(!m_om->saveItem(&todo));
+    // Try saving a removed item without clearing local id. Should fail
+    QOrganizerTodo todo(items[0]);
+    QVERIFY(m_om->removeItem(todo.localId()));
+    QVERIFY(!m_om->saveItem(&todo));
+    
+    // Try saving a removed item without clearing local id and with own guid. Should fail.
+    todo = QOrganizerTodo(items[1]);
+    todo.setGuid("11111");
+    QVERIFY(m_om->removeItem(todo.localId()));
+    QVERIFY(!m_om->saveItem(&todo));
     
     // Save a new todo item with own guid. Should pass.
     todo = QOrganizerTodo();
@@ -404,19 +407,10 @@ void tst_SymbianOm::uniqueIds()
     QVERIFY(todo.localId() == localId); // local id should remain the same
     
     // Change manager uri and save again. Should fail.
-    id = todo.id();
+    QOrganizerItemId id = todo.id();
     id.setManagerUri("foobar");
     todo.setId(id);
     QVERIFY(!m_om->saveItem(&todo));    
-        
-    // Save a new todo item with own guid & localid. Should fail.
-    todo = QOrganizerTodo();
-    id = QOrganizerItemId();
-    // TODO: Disabled because of API change. REFACTOR!
-    //id.setLocalId(12345);
-    //todo.setId(id);
-    //todo.setGuid("11111");
-    //QVERIFY(!m_om->saveItem(&todo));
 }
 
 void tst_SymbianOm::timeStamp()
