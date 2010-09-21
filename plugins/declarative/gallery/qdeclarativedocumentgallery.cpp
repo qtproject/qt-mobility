@@ -70,7 +70,7 @@ Q_GLOBAL_STATIC(QDocumentGallery, qt_declarativeDocumentGalleryInstance);
 QString QDeclarativeDocumentGallery::toString(ItemType type)
 {
     return type > InvalidType && type < NItemTypes
-            ? QLatin1String(qt_documentGalleryTypes[type - 1])
+            ? QLatin1String(qt_documentGalleryTypes[type - File])
             : QString();
 }
 

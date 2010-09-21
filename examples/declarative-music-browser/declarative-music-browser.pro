@@ -21,7 +21,7 @@ OTHER_FILES += \
         MusicBrowserCore/LineEdit.qml \
         MusicBrowserCore/MenuButton.qml \
         MusicBrowserCore/AlbumDelegate.qml \
-        MusicBrowserCore/SongDelegate.qml \ \
+        MusicBrowserCore/SongDelegate.qml \
         MusicBrowserCore/SongProperties.qml \
         MusicBrowserCore/SongView.qml \
         MusicBrowserCore/TypeDelegate.qml

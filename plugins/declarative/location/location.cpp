@@ -85,6 +85,7 @@ public:
         qmlRegisterType<QDeclarativeLandmarkCategory>(uri, 1, 1, "LandmarkCategory");
         qmlRegisterType<QDeclarativeLandmarkCategoryModel>(uri, 1, 1, "LandmarkCategoryModel");
         qmlRegisterUncreatableType<QDeclarativeLandmarkFilterBase>(uri, 1, 1, "LandmarkFilterBase", QDeclarativeLandmarkFilterBase::tr("LandmarkFilterBase is an abstract class"));
+        qmlRegisterUncreatableType<QDeclarativeLandmarkAbstractModel>(uri, 1, 1, "LandmarkAbstractModel", QDeclarativeLandmarkAbstractModel::tr("LandmarkAbstractModel is an abstract class"));
         qmlRegisterType<QDeclarativeCoordinate>(uri, 1, 1, "Coordinate");
         qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 1, 1, "Map");
         qmlRegisterType<QGeoMapObject>(uri, 1, 1, "QGeoMapObject");

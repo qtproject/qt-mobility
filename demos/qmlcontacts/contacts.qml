@@ -53,10 +53,6 @@ Rectangle {
 
     QmlContactModel {
         id: contactModel 
-        manager: "memory"
-        Component.onCompleted : {
-            contactModel.importContacts("contents/example.vcf");
-        }
     }
 
     Component {

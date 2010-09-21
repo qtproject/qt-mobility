@@ -255,19 +255,19 @@ void RoutePresenter::showModes(QTreeWidgetItem* top, QGeoRouteRequest::RouteOpti
     QTreeWidgetItem* optimizationItem = new QTreeWidgetItem(top);
     optimizationItem->setText(0, "optimization");
 
-    if ((optimization & QGeoRouteRequest::ShortestRoute) != 0) {
+    if (optimization.testFlag(QGeoRouteRequest::ShortestRoute)) {
         QTreeWidgetItem* shortestRouteItem = new QTreeWidgetItem(optimizationItem);
         shortestRouteItem->setText(1, "ShortestRoute");
     }
-    if ((optimization & QGeoRouteRequest::FastestRoute) != 0) {
+    if (optimization.testFlag(QGeoRouteRequest::FastestRoute)) {
         QTreeWidgetItem* fastestRouteItem = new QTreeWidgetItem(optimizationItem);
         fastestRouteItem->setText(1, "FastestRoute");
     }
-    if ((optimization & QGeoRouteRequest::MostEconomicRoute) != 0) {
+    if (optimization.testFlag(QGeoRouteRequest::MostEconomicRoute)) {
         QTreeWidgetItem* economicRouteItem = new QTreeWidgetItem(optimizationItem);
         economicRouteItem->setText(1, "MostEconomicRoute");
     }
-    if ((optimization & QGeoRouteRequest::MostScenicRoute) != 0) {
+    if (optimization.testFlag(QGeoRouteRequest::MostScenicRoute)) {
         QTreeWidgetItem* scenicRouteItem = new QTreeWidgetItem(optimizationItem);
         scenicRouteItem->setText(1, "MostScenicRoute");
     }
@@ -275,64 +275,64 @@ void RoutePresenter::showModes(QTreeWidgetItem* top, QGeoRouteRequest::RouteOpti
     QTreeWidgetItem* travelModeItem = new QTreeWidgetItem(top);
     travelModeItem->setText(0, "travel mode");
 
-    if ((travelModes & QGeoRouteRequest::CarTravel) != 0) {
+    if (travelModes.testFlag(QGeoRouteRequest::CarTravel)) {
         QTreeWidgetItem* carTravelItem = new QTreeWidgetItem(travelModeItem);
         carTravelItem->setText(1, "CarTravel");
     }
-    if ((travelModes & QGeoRouteRequest::PedestrianTravel) != 0) {
+    if (travelModes.testFlag(QGeoRouteRequest::PedestrianTravel)) {
         QTreeWidgetItem* pedestrianTravelItem = new QTreeWidgetItem(travelModeItem);
         pedestrianTravelItem->setText(1, "PedestrianTravel");
     }
-    if ((travelModes & QGeoRouteRequest::PublicTransitTravel) != 0) {
+    if (travelModes.testFlag(QGeoRouteRequest::PublicTransitTravel)) {
         QTreeWidgetItem* transitTravelItem = new QTreeWidgetItem(travelModeItem);
         transitTravelItem->setText(1, "PublicTransitTravel");
     }
-    if ((travelModes & QGeoRouteRequest::BicycleTravel) != 0) {
+    if (travelModes.testFlag(QGeoRouteRequest::BicycleTravel)) {
         QTreeWidgetItem* bicycleTravelItem = new QTreeWidgetItem(travelModeItem);
         bicycleTravelItem->setText(1, "BicycleTravel");
     }
-    if ((travelModes & QGeoRouteRequest::TruckTravel) != 0) {
+    if (travelModes.testFlag(QGeoRouteRequest::TruckTravel)) {
         QTreeWidgetItem* truckTravelItem = new QTreeWidgetItem(travelModeItem);
         truckTravelItem->setText(1, "TruckTravel");
     }
 
-    QTreeWidgetItem* avoitItem = new QTreeWidgetItem(top);
-    avoitItem->setText(0, "avoid");
+    QTreeWidgetItem* avoidItem = new QTreeWidgetItem(top);
+    avoidItem->setText(0, "avoid");
 
-    if (avoid == QGeoRouteRequest::AvoidNothing) {
-        QTreeWidgetItem* nothingAvoidItem = new QTreeWidgetItem(avoitItem);
+    if (avoid.testFlag(QGeoRouteRequest::AvoidNothing)) {
+        QTreeWidgetItem* nothingAvoidItem = new QTreeWidgetItem(avoidItem);
         nothingAvoidItem->setText(1, "AvoidNothing");
     }
-    if ((avoid & QGeoRouteRequest::AvoidTolls) != 0) {
-        QTreeWidgetItem* tollsAvoidItem = new QTreeWidgetItem(avoitItem);
+    if (avoid.testFlag(QGeoRouteRequest::AvoidTolls)) {
+        QTreeWidgetItem* tollsAvoidItem = new QTreeWidgetItem(avoidItem);
         tollsAvoidItem->setText(1, "AvoidTolls");
     }
-    if ((avoid & QGeoRouteRequest::AvoidHighways) != 0) {
-        QTreeWidgetItem* highwaysAvoidItem = new QTreeWidgetItem(avoitItem);
+    if (avoid.testFlag(QGeoRouteRequest::AvoidHighways)) {
+        QTreeWidgetItem* highwaysAvoidItem = new QTreeWidgetItem(avoidItem);
         highwaysAvoidItem->setText(1, "AvoidHighways");
     }
-    if ((avoid & QGeoRouteRequest::AvoidFerries) != 0) {
-        QTreeWidgetItem* ferriesAvoidItem = new QTreeWidgetItem(avoitItem);
+    if (avoid.testFlag(QGeoRouteRequest::AvoidFerries)) {
+        QTreeWidgetItem* ferriesAvoidItem = new QTreeWidgetItem(avoidItem);
         ferriesAvoidItem->setText(1, "AvoidFerries");
     }
-    if ((avoid & QGeoRouteRequest::AvoidTunnels) != 0) {
-        QTreeWidgetItem* tunnelsAvoidItem = new QTreeWidgetItem(avoitItem);
+    if (avoid.testFlag(QGeoRouteRequest::AvoidTunnels)) {
+        QTreeWidgetItem* tunnelsAvoidItem = new QTreeWidgetItem(avoidItem);
         tunnelsAvoidItem->setText(1, "AvoidTunnels");
     }
-    if ((avoid & QGeoRouteRequest::AvoidDirtRoads) != 0) {
-        QTreeWidgetItem* dirtRoadsAvoidItem = new QTreeWidgetItem(avoitItem);
+    if (avoid.testFlag(QGeoRouteRequest::AvoidDirtRoads)) {
+        QTreeWidgetItem* dirtRoadsAvoidItem = new QTreeWidgetItem(avoidItem);
         dirtRoadsAvoidItem->setText(1, "AvoidDirtRoads");
     }
-    if ((avoid & QGeoRouteRequest::AvoidPublicTransit) != 0) {
-        QTreeWidgetItem* publicTransitAvoidItem = new QTreeWidgetItem(avoitItem);
+    if (avoid.testFlag(QGeoRouteRequest::AvoidPublicTransit)) {
+        QTreeWidgetItem* publicTransitAvoidItem = new QTreeWidgetItem(avoidItem);
         publicTransitAvoidItem->setText(1, "AvoidPublicTransit");
     }
-    if ((avoid & QGeoRouteRequest::AvoidPark) != 0) {
-        QTreeWidgetItem* parkAvoidItem = new QTreeWidgetItem(avoitItem);
+    if (avoid.testFlag(QGeoRouteRequest::AvoidMotorPoolLanes)) {
+        QTreeWidgetItem* parkAvoidItem = new QTreeWidgetItem(avoidItem);
         parkAvoidItem->setText(1, "AvoidPark");
     }
-    if ((avoid & QGeoRouteRequest::AvoidMotorPoolLanes) != 0) {
-        QTreeWidgetItem* motorPoolLanesAvoidItem = new QTreeWidgetItem(avoitItem);
+    if (avoid.testFlag(QGeoRouteRequest::AvoidMotorPoolLanes)) {
+        QTreeWidgetItem* motorPoolLanesAvoidItem = new QTreeWidgetItem(avoidItem);
         motorPoolLanesAvoidItem->setText(1, "AvoidMotorPoolLanes");
     }
 }

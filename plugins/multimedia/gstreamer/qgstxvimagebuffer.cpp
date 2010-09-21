@@ -105,6 +105,7 @@ void QGstXvImageBuffer::buffer_finalize(QGstXvImageBuffer * xvImage)
 QGstXvImageBufferPool::QGstXvImageBufferPool(QObject *parent)
     :QObject(parent)
 {
+    m_threadId = QThread::currentThreadId();
 }
 
 QGstXvImageBufferPool::~QGstXvImageBufferPool()
@@ -141,11 +142,9 @@ QGstXvImageBuffer *QGstXvImageBufferPool::takeBuffer(const QVideoSurfaceFormat &
 
 
     if (m_pool.isEmpty()) {
-        //qDebug() << "QGstXvImageBufferPool::takeBuffer: no buffer available, allocate the new one";
-        if (QThread::currentThread() == thread()) {
-            m_poolMutex.unlock();
-            queuedAlloc();
-            m_poolMutex.lock();
+        //qDebug() << "QGstXvImageBufferPool::takeBuffer: no buffer available, allocate the new one" << QThread::currentThreadId() << m_threadId;
+        if (QThread::currentThreadId() == m_threadId) {
+            doAlloc();
         } else {
             QMetaObject::invokeMethod(this, "queuedAlloc", Qt::QueuedConnection);
             m_allocWaitCondition.wait(&m_poolMutex, 300);
@@ -165,8 +164,16 @@ QGstXvImageBuffer *QGstXvImageBufferPool::takeBuffer(const QVideoSurfaceFormat &
 void QGstXvImageBufferPool::queuedAlloc()
 {
     QMutexLocker lock(&m_poolMutex);
+    doAlloc();
+    m_allocWaitCondition.wakeOne();
+}
 
-    Q_ASSERT(QThread::currentThread() == thread());
+void QGstXvImageBufferPool::doAlloc()
+{
+    //should be always called from the main thread with m_poolMutex locked
+    //Q_ASSERT(QThread::currentThread() == thread());
+
+    XSync(QX11Info::display(), false);
 
     QGstXvImageBuffer *xvBuffer = (QGstXvImageBuffer *)gst_mini_object_new(QGstXvImageBuffer::get_type());
 
@@ -184,20 +191,22 @@ void QGstXvImageBufferPool::queuedAlloc()
             );
 
     if (!xvBuffer->xvImage) {
-        //qDebug() << "QGstXvImageBufferPool: XvShmCreateImage failed";
-        m_allocWaitCondition.wakeOne();
+        qWarning() << "QGstXvImageBufferPool: XvShmCreateImage failed";
         return;
     }
+
+    XSync(QX11Info::display(), false);
 
     xvBuffer->shmInfo.shmid = shmget(IPC_PRIVATE, xvBuffer->xvImage->data_size, IPC_CREAT | 0777);
     xvBuffer->shmInfo.shmaddr = xvBuffer->xvImage->data = (char*)shmat(xvBuffer->shmInfo.shmid, 0, 0);
     xvBuffer->shmInfo.readOnly = False;
 
     if (!XShmAttach(QX11Info::display(), &xvBuffer->shmInfo)) {
-        //qDebug() << "QGstXvImageBufferPool: XShmAttach failed";
-        m_allocWaitCondition.wakeOne();
+        qWarning() << "QGstXvImageBufferPool: XShmAttach failed";
         return;
     }
+
+    XSync(QX11Info::display(), false);
 
     shmctl (xvBuffer->shmInfo.shmid, IPC_RMID, NULL);
 
@@ -210,7 +219,7 @@ void QGstXvImageBufferPool::queuedAlloc()
     m_allBuffers.append(xvBuffer);
     m_pool.append(xvBuffer);
 
-    m_allocWaitCondition.wakeOne();
+    XSync(QX11Info::display(), false);
 }
 
 
@@ -238,6 +247,8 @@ void QGstXvImageBufferPool::doClear()
 void QGstXvImageBufferPool::queuedDestroy()
 {
     QMutexLocker lock(&m_destroyMutex);
+
+    XSync(QX11Info::display(), false);
 
     foreach(XvShmImage xvImage, m_imagesToDestroy) {
         if (xvImage.shmInfo.shmaddr != ((void *) -1)) {

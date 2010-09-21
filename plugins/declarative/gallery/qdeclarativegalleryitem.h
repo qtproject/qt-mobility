@@ -83,24 +83,18 @@ public:
 
     Status status() const { return m_status; }
 
-    qreal progress() const
-    {
-        const int max = m_request.maximumProgress();
-        return max > 0 ? qreal(m_request.currentProgress()) / max : qreal(0.0);
-    }
+    qreal progress() const;
 
     QString errorMessage() const { return m_errorMessage; }
 
     QStringList propertyNames() { return m_request.propertyNames(); }
-    void setPropertyNames(const QStringList &names) {
-        if (!m_complete) m_request.setPropertyNames(names); emit propertyNamesChanged(); }
+    void setPropertyNames(const QStringList &names);
 
     bool autoUpdate() const { return m_request.autoUpdate(); }
-    void setAutoUpdate(bool enabled) { m_request.setAutoUpdate(enabled); emit autoUpdateChanged(); }
+    void setAutoUpdate(bool enabled);
 
     QVariant itemId() const { return m_request.itemId(); }
-    void setItemId(const QVariant &itemId) {
-        m_request.setItemId(itemId); if (m_complete) m_request.execute(); emit itemIdChanged(); }
+    void setItemId(const QVariant &itemId);
 
     bool available() const { return m_request.isValid(); }
 

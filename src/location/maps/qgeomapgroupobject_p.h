@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,29 +39,24 @@
 **
 ****************************************************************************/
 
-#ifndef CNTDISPLAYLABELSQLFILTER_H_
-#define CNTDISPLAYLABELSQLFILTER_H_
+#ifndef QGEOMAPGROUPOBJECT_P_H
+#define QGEOMAPGROUPOBJECT_P_H
 
-#include <qtcontactsglobal.h>
-#include <qcontactmanager.h>
-#include <qcontactdetailfilter.h>
+#include "qgeomapobject.h"
 
-QTM_USE_NAMESPACE
+#include <QList>
 
-class CntDisplayLabelSqlFilter
+QTM_BEGIN_NAMESPACE
+
+class QGeoMapGroupObjectPrivate
 {
 public:
-    CntDisplayLabelSqlFilter();
-    virtual ~CntDisplayLabelSqlFilter();
+    QGeoMapGroupObjectPrivate();
+    ~QGeoMapGroupObjectPrivate();
 
-    void createSqlQuery(const QContactDetailFilter& filter,
-                        QString& sqlQuery,
-                        QContactManager::Error* error);
-private:
-    void createQuerySingleSearchValue(QString& sqlQuery, const QString &searchValue, const QStringList &columns) const;
-    void createQueryMultipleSearchValues(QString& sqlQuery, const QStringList &searchValues, const QStringList &columns) const;
-    QString createSubQuery(const QString &searchValue, const QString &column) const;
-    QString columnName(const QPair<QLatin1String, QLatin1String> &detail) const;
+    QList<QGeoMapObject *> children;
 };
 
-#endif /* CNTDISPLAYLABELSQLFILTER_H_ */
+QTM_END_NAMESPACE
+
+#endif

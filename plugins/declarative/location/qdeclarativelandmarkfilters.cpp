@@ -1,3 +1,44 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+***************************************************************************/
+
 #include "qdeclarativelandmarkfilters_p.h"
 #include "qdeclarativeposition_p.h"
 
@@ -6,22 +47,18 @@ QTM_BEGIN_NAMESPACE
 /*!
     \qmlclass LandmarkNameFilter QDeclarativeLandmarkNameFilter
     \brief The LandmarkNameFilter element specifies a name filter for landmark model.
+    \ingroup qml-location
+
+    The LandmarkNameFilter element specifies a name filter for landmark model.
+    Logical combinations of this and other landmark filters can be
+    formed using \l LandmarkIntersectionFilter and \l LandmarkUnionFilter.
+    Currently wild card matching is not supported (only exact matches).
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
-    Logical combinations of this and other landmark filters can be
-    formed using \l LandmarkIntersectionFilter and \l LandmarkUnionFilter.
+    \snippet doc/src/snippets/declarative/declarative-landmark.qml Landmark name filter
 
-    The following example creates a filter which filters for landmarks named "Undercity".
-
-    \qml
-    LandmarkNameFilter {
-        id: landmarkFilterUndercity
-        name: "Undercity"
-    }
-    \endqml
-
-    \sa LandmarkModel
+    \sa LandmarkModel, {QLandmarkNameFilter}
 
 */
 
@@ -65,25 +102,14 @@ QLandmarkFilter* QDeclarativeLandmarkNameFilter::filter()
 /*!
     \qmlclass LandmarkCategoryFilter QDeclarativeLandmarkCategoryFilter
     \brief The LandmarkCategoryFilter element specifies a category filter for landmark model.
+    \ingroup qml-location
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
     Logical combinations of this and other landmark filters can be
     formed using \l LandmarkIntersectionFilter and \l LandmarkUnionFilter.
 
-    The following example creates a filter which filters for landmarks which belong to
-    categories "Cities" and "Sunshine cities". Notably the categories used must come from
-    databases because their internal category identifiers need to be correct (not exposed
-    to QML).
-
-    \qml
-
-    TODO
-
-    \endqml
-
-    \sa LandmarkModel LandmarkCategoryModel
-
+    \sa LandmarkModel, LandmarkCategoryModel, {QLandmarkCategoryFilter}
 */
 
 QDeclarativeLandmarkCategoryFilter::QDeclarativeLandmarkCategoryFilter(QObject* parent) :
@@ -124,35 +150,20 @@ QLandmarkFilter* QDeclarativeLandmarkCategoryFilter::filter()
 /*!
     \qmlclass LandmarkBoxFilter QDeclarativeLandmarkBoxFilter
     \brief The LandmarkBoxFilter element specifies a box (rectangle) filter for landmark model.
+    \ingroup qml-location
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
+    The LandmarkBoxFilter element specifies a box (rectangle) filter for landmark model.
     Logical combinations of this and other landmark filters can be
     formed using \l LandmarkIntersectionFilter and \l LandmarkUnionFilter.
 
     The following example creates a filter which filters for landmarks located within
     the given box (rectangle between top left and bottom right coordinates).
 
-    TODO verify the filter when example app is ready (there seems to be slightly excessive amount
-    of landmarks atm).
+    \snippet doc/src/snippets/declarative/declarative-landmark.qml Box filter
 
-    \qml
-    Map {
-        id: map
-        zoomLevel: 15
-        size.width: parent.width
-        size.height: parent.height
-        center: myPositionSource.position.coordinate
-    }
-
-    LandmarkBoxFilter {
-        id: boxFilter
-        topLeft: map.toCoordinate(Qt.point(0,0))
-        bottomRight: map.toCoordinate(Qt.point(map.width, map.height))
-    }
-    \endqml
-
-    \sa LandmarkModel
+    \sa LandmarkModel, {QLandmarkBoxFilter}
 
 */
 
@@ -213,30 +224,20 @@ QLandmarkFilter* QDeclarativeLandmarkBoxFilter::filter()
 /*!
     \qmlclass LandmarkProximityFilter QDeclarativeLandmarkProximityFilter
     \brief The LandmarkProximityFilter element specifies a proximity filter for landmark model.
+    \ingroup qml-location
 
-    This element is part of the \bold{QtMobility.location 1.1} module.
-
+    The LandmarkProximityFilter element specifies a proximity filter for landmark model.
     Logical combinations of this and other landmark filters can be
     formed using \l LandmarkIntersectionFilter and \l LandmarkUnionFilter.
+
+    This element is part of the \bold{QtMobility.location 1.1} module.
 
     The following example creates a filter which filters for landmarks located within
     1500 metres of the current position.
 
-    \qml
-    PositionSource {
-        id: myPositionSource
-        updateInterval: 5000
-        active: true
-    }
+    \snippet doc/src/snippets/declarative/declarative-landmark.qml Landmark proximity filter
 
-    LandmarkProximityFilter {
-        id: proximityFilter
-        center: myPositionSource.position.coordinate
-        radius: 1500
-    }
-    \endqml
-
-    \sa LandmarkModel
+    \sa LandmarkModel, {QLandmarkProximityFilter}
 */
 
 QDeclarativeLandmarkProximityFilter::QDeclarativeLandmarkProximityFilter(QObject *parent) :
@@ -373,32 +374,19 @@ template <class T>
 /*!
     \qmlclass LandmarkUnionFilter QDeclarativeLandmarkUnionFilter
     \brief The LandmarkUnionFilter element specifies a union of landmark filters.
+    \ingroup qml-location
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
     Logical OR combinations of landmark filters can be formed using LandmarkUnionFilter.
 
     The following example creates a filter which filters for landmarks which are
-    either named \c Darwin, or located within 500 metres from coordinate (20,10)
+    either named \c Nimbin, or located within 1500 metres from current location
     (or both).
 
-    \qml
-    LandmarkUnionFilter {
-        id: landmarkUnionFilter
-        LandmarkNameFilter {
-            name: "Darwin"
-        }
-        LandmarkProximityFilter {
-            coordinate: Coordinate {
-                latitude: 20
-                longitude:  10
-            }
-            radius: 500
-        }
-    }
-    \endqml
+    \snippet doc/src/snippets/declarative/declarative-landmark.qml LandmarkModel union filter
 
-    \sa LandmarkIntersectionFilter LandmarkModel
+    \sa LandmarkIntersectionFilter LandmarkModel, {QLandmarkUnionFilter}
 
 */
 
@@ -415,31 +403,19 @@ QDeclarativeLandmarkUnionFilter::QDeclarativeLandmarkUnionFilter(QObject* parent
 /*!
     \qmlclass LandmarkIntersectionFilter QDeclarativeLandmarkIntersectionFilter
     \brief The LandmarkIntersectionFilter element specifies an insection of landmark filters.
+    \ingroup qml-location
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
+    The LandmarkIntersectionFilter element specifies an insection of landmark filters.
     Logical AND combinations of LandmarkFilters can be formed using LandmarkIntersectionFilter.
 
     The following example creates a filter which filters for landmarks named \c Darwin within
     500 metres of coordinate (20,10).
 
-    \qml
-    LandmarkIntersectionFilter {
-        id: landmarkIntersectionFilter
-        LandmarkNameFilter {
-            name: "Darwin"
-        }
-        LandmarkProximityFilter {
-            coordinate: Coordinate {
-                latitude: 20
-                longitude:  10
-            }
-            radius: 500
-        }
-    }
-    \endqml
+    \snippet doc/src/snippets/declarative/declarative-landmark.qml LandmarkModel intersection filter
 
-    \sa LandmarkUnionFilter LandmarkModel
+    \sa LandmarkUnionFilter, LandmarkModel, {QLandmarkIntersectionFilter}
 */
 
 QDeclarativeLandmarkIntersectionFilter::QDeclarativeLandmarkIntersectionFilter(QObject* parent)

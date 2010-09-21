@@ -544,6 +544,8 @@ void TestFiltering::testContactDetailFilter()
     testContactDetailFilter_5();
 	testContactDetailFilter_6();
 	testContactDetailFilter_7();
+	testContactDetailFilter_8();
+	testContactDetailFilter_9();
 }
 
 void TestFiltering::testContactDetailFilter_1()
@@ -839,6 +841,45 @@ void TestFiltering::testContactDetailFilter_7()
     // check counts 
     int seachedcontactcount = cnt_ids.count();
     int expectedCount =2;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestFiltering::testContactDetailFilter_8()
+{    
+    // Fetch contacts list using display label
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
+        
+    QContactDetailFilter filter;
+    QString filterString("J");
+    QStringList searchList = filterString.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+    filter.setDetailDefinitionName(QContactDisplayLabel::DefinitionName,
+        QContactDisplayLabel::FieldLabel);
+    filter.setMatchFlags(QContactFilter::MatchStartsWith);
+    filter.setValue(searchList);
+    
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount =2;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestFiltering::testContactDetailFilter_9()
+{    
+    // Fetch all contacts having phonenumbers
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
+    
+    // Empty field name
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName); 
+    
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
+    // check counts 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount =9;  
     QVERIFY(expectedCount == seachedcontactcount);
 }
 

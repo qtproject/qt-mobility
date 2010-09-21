@@ -106,7 +106,6 @@ public:
     QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
-    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     int cellId();
     int locationAreaCode();
 

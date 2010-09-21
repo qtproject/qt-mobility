@@ -335,6 +335,8 @@ QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
 
 void QGeoServiceProviderPrivate::loadPlugin(const QString &providerName, const QMap<QString, QVariant> &parameters)
 {
+    Q_UNUSED(parameters)
+
     if (!QGeoServiceProviderPrivate::plugins().keys().contains(providerName)) {
         error = QGeoServiceProvider::NotSupportedError;
         errorString = QString("The geoservices provider %1 is not supported.").arg(providerName);
@@ -412,7 +414,6 @@ void QGeoServiceProviderPrivate::loadStaticPlugins(QHash<QString, QGeoServicePro
             QString name = f->providerName();
 
 #if !defined QT_NO_DEBUG
-            const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
             if (showDebug)
                 qDebug() << "Static: found a service provider plugin with name" << name;
 #endif
