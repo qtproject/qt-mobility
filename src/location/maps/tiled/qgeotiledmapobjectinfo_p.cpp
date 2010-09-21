@@ -56,8 +56,8 @@ QTM_BEGIN_NAMESPACE
 QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
         : QGeoMapObjectInfo(mapData, mapObject),
         graphicsItem(0),
-        isVisible(true),
-        isValid(true)
+        isValid(true),
+        isVisible(true)
 {
     tiledMapData = static_cast<QGeoTiledMapData*>(mapData);
     tiledMapDataPrivate = static_cast<QGeoTiledMapDataPrivate*>(tiledMapData->d_ptr);
@@ -128,17 +128,17 @@ bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coord) const
 {
     QPoint point = tiledMapData->coordinateToWorldPixel(coord);
 
-    if (graphicsItem && graphicsItem->mapToParent(graphicsItem->shape()).contains(point))
-        return true;
+    if (!graphicsItem)
+        return false;
 
-    return false;
+    return graphicsItem->mapToParent(graphicsItem->shape()).contains(point);
 }
 
 void QGeoTiledMapObjectInfo::setValid(bool valid)
 {
     isValid = valid;
     if (graphicsItem) {
-        graphicsItem->setVisible((isVisible && isValid));
+        graphicsItem->setVisible(isVisible && isValid);
         updateItem();
     }
 }

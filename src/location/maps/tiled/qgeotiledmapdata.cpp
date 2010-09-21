@@ -577,7 +577,8 @@ void QGeoTiledMapData::processRequests()
         QGeoTiledMapReply *reply = replyIter.next();
         if (!d->intersectsScreen(reply->request().tileRect())
                 || (zoomLevel() != reply->request().zoomLevel())
-                || (mapType() != reply->request().mapType())) {
+                || (mapType() != reply->request().mapType())
+                || (connectivityMode() != reply->request().connectivityMode())) {
             reply->abort();
             d->replyRects.remove(reply->request().tileRect());
             replyIter.remove();
@@ -655,7 +656,8 @@ void QGeoTiledMapData::tileFinished()
     }
 
     if ((zoomLevel() != reply->request().zoomLevel())
-            || (mapType() != reply->request().mapType())) {
+            || (mapType() != reply->request().mapType())
+            || (connectivityMode() != reply->request().connectivityMode())) {
         if (d->requests.size() > 0)
             QTimer::singleShot(0, this, SLOT(processRequests()));
         QTimer::singleShot(0, reply, SLOT(deleteLater()));
@@ -1145,6 +1147,7 @@ QGeoTileIterator::QGeoTileIterator(const QGeoTiledMapDataPrivate *mapDataPrivate
         col(-1),
         screenRect(mapDataPrivate->maxZoomScreenRect),
         mapType(mapDataPrivate->mapType),
+        connectivityMode(mapDataPrivate->connectivityMode),
         zoomLevel(mapDataPrivate->zoomLevel)
 {
     QGeoTiledMappingManagerEngine *tiledEngine
@@ -1161,13 +1164,18 @@ QGeoTileIterator::QGeoTileIterator(const QGeoTiledMapDataPrivate *mapDataPrivate
     currTopLeft.setY(y * tileSize.height());
 }
 
-QGeoTileIterator::QGeoTileIterator(QGraphicsGeoMap::MapType mapType, const QRect &screenRect, const QSize &tileSize, int zoomLevel)
+QGeoTileIterator::QGeoTileIterator(QGraphicsGeoMap::ConnectivityMode connectivityMode,
+                                   QGraphicsGeoMap::MapType mapType,
+                                   const QRect &screenRect,
+                                   const QSize &tileSize,
+                                   int zoomLevel)
         : atEnd(false),
         row(-1),
         col(-1),
         screenRect(screenRect),
         tileSize(tileSize),
         mapType(mapType),
+        connectivityMode(connectivityMode),
         zoomLevel(zoomLevel),
         tileRect(QPoint(0, 0), tileSize)
 {
@@ -1205,7 +1213,7 @@ QGeoTiledMapRequest QGeoTileIterator::next()
     if (currTopLeft.y() > screenRect.bottom()) //done
         atEnd = true;
 
-    return QGeoTiledMapRequest(mapType, zoomLevel, row, col, tileRect);
+    return QGeoTiledMapRequest(connectivityMode, mapType, zoomLevel, row, col, tileRect);
 }
 
 #include "moc_qgeotiledmapdata.cpp"

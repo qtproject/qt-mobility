@@ -72,14 +72,14 @@ QContactDetail *CntTransformRingtone::transformItemField(const CContactItemField
     QContactRingtone *ringtone = new QContactRingtone(contact.detail<QContactRingtone>());
 
 	CContactTextField* storage = field.TextStorage();
-    QString ringtoneFilePath = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
+    QString ringtoneString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
     	
     
     if (field.ContentType().ContainsFieldType(KUidContactFieldRingTone)) {
-        ringtone->setAudioRingtoneUrl(QUrl::fromLocalFile(ringtoneFilePath));
+        ringtone->setAudioRingtoneUrl(ringtoneString);
 	}
     else if (field.ContentType().ContainsFieldType(KUidContactFieldVideoRingTone)) {
-        ringtone->setVideoRingtoneUrl(QUrl::fromLocalFile(ringtoneFilePath));
+        ringtone->setVideoRingtoneUrl(ringtoneString);
     }
 
     return ringtone;

@@ -201,7 +201,8 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxComm
     csStatusMaemo6["NoCoverage"] = 10;  // Offline and in power save mode because of poor coverage.
     csStatusMaemo6["Rejected"]   = 11;  // Offline because SIM was rejected by the network.
 
-    setupNetworkInfo();
+    QTimer::singleShot(0,this,SLOT(setupNetworkInfo()));
+
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
@@ -871,8 +872,10 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 
 void QSystemNetworkInfoPrivate::wlanSignalStrengthCheck()
 {
-    if (currentWlanSignalStrength != networkSignalStrength(QSystemNetworkInfo::WlanMode)) {
-        currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
+    int strength = 0;
+    strength =  networkSignalStrength(QSystemNetworkInfo::WlanMode);
+    if (currentWlanSignalStrength != strength) {
+        currentWlanSignalStrength = strength;
         emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, currentWlanSignalStrength);
     }
 }
