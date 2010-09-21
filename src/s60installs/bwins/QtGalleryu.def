@@ -187,7 +187,7 @@ EXPORTS
 	?isEmpty@QGalleryIntersectionFilter@QtMobility@@QBE_NXZ @ 186 NONAME ; bool QtMobility::QGalleryIntersectionFilter::isEmpty(void) const
 	?isEmpty@QGalleryUnionFilter@QtMobility@@QBE_NXZ @ 187 NONAME ; bool QtMobility::QGalleryUnionFilter::isEmpty(void) const
 	?isIdle@QGalleryAbstractResponse@QtMobility@@QBE_NXZ @ 188 NONAME ; bool QtMobility::QGalleryAbstractResponse::isIdle(void) const
-	?isInverted@QGalleryMetaDataFilter@QtMobility@@QBE_NXZ @ 189 NONAME ; bool QtMobility::QGalleryMetaDataFilter::isInverted(void) const
+	?isInverted@QGalleryMetaDataFilter@QtMobility@@QBE_NXZ @ 189 NONAME ABSENT ; bool QtMobility::QGalleryMetaDataFilter::isInverted(void) const
 	?isLive@QGalleryCountRequest@QtMobility@@QBE_NXZ @ 190 NONAME ABSENT ; bool QtMobility::QGalleryCountRequest::isLive(void) const
 	?isLive@QGalleryItemRequest@QtMobility@@QBE_NXZ @ 191 NONAME ABSENT ; bool QtMobility::QGalleryItemRequest::isLive(void) const
 	?isLive@QGalleryQueryRequest@QtMobility@@QBE_NXZ @ 192 NONAME ABSENT ; bool QtMobility::QGalleryQueryRequest::isLive(void) const
@@ -296,7 +296,7 @@ EXPORTS
 	?setGallery@QGalleryAbstractRequest@QtMobility@@QAEXPAVQAbstractGallery@2@@Z @ 295 NONAME ; void QtMobility::QGalleryAbstractRequest::setGallery(class QtMobility::QAbstractGallery *)
 	?setHeaderData@QGalleryItemListModel@QtMobility@@UAE_NHW4Orientation@Qt@@ABVQVariant@@H@Z @ 296 NONAME ABSENT ; bool QtMobility::QGalleryItemListModel::setHeaderData(int, enum Qt::Orientation, class QVariant const &, int)
 	?setInitialCursorPosition@QGalleryQueryRequest@QtMobility@@QAEXH@Z @ 297 NONAME ABSENT ; void QtMobility::QGalleryQueryRequest::setInitialCursorPosition(int)
-	?setInverted@QGalleryMetaDataFilter@QtMobility@@QAEX_N@Z @ 298 NONAME ; void QtMobility::QGalleryMetaDataFilter::setInverted(bool)
+	?setInverted@QGalleryMetaDataFilter@QtMobility@@QAEX_N@Z @ 298 NONAME ABSENT ; void QtMobility::QGalleryMetaDataFilter::setInverted(bool)
 	?setItemId@QGalleryItemRequest@QtMobility@@QAEXABVQVariant@@@Z @ 299 NONAME ; void QtMobility::QGalleryItemRequest::setItemId(class QVariant const &)
 	?setItemId@QGalleryRemoveRequest@QtMobility@@QAEXABVQVariant@@@Z @ 300 NONAME ABSENT ; void QtMobility::QGalleryRemoveRequest::setItemId(class QVariant const &)
 	?setItemList@QGalleryItemListModel@QtMobility@@QAEXPAVQGalleryItemList@2@@Z @ 301 NONAME ABSENT ; void QtMobility::QGalleryItemListModel::setItemList(class QtMobility::QGalleryItemList *)
@@ -694,4 +694,6 @@ EXPORTS
 	?autoUpdate@QGalleryQueryModel@QtMobility@@QBE_NXZ @ 693 NONAME ; bool QtMobility::QGalleryQueryModel::autoUpdate(void) const
 	?autoUpdate@QGalleryQueryRequest@QtMobility@@QBE_NXZ @ 694 NONAME ; bool QtMobility::QGalleryQueryRequest::autoUpdate(void) const
 	??0QGalleryMetaDataFilter@QtMobility@@QAE@ABVQString@@ABVQVariant@@W4Comparator@QGalleryFilter@1@@Z @ 695 NONAME ; QtMobility::QGalleryMetaDataFilter::QGalleryMetaDataFilter(class QString const &, class QVariant const &, enum QtMobility::QGalleryFilter::Comparator)
+	?setNegated@QGalleryMetaDataFilter@QtMobility@@QAEX_N@Z @ 696 NONAME ; void QtMobility::QGalleryMetaDataFilter::setNegated(bool)
+	?isNegated@QGalleryMetaDataFilter@QtMobility@@QBE_NXZ @ 697 NONAME ; bool QtMobility::QGalleryMetaDataFilter::isNegated(void) const
 

@@ -272,7 +272,7 @@ EXPORTS
 	_ZN10QtMobility21QGalleryRemoveRequestD0Ev @ 271 NONAME ABSENT
 	_ZN10QtMobility21QGalleryRemoveRequestD1Ev @ 272 NONAME ABSENT
 	_ZN10QtMobility21QGalleryRemoveRequestD2Ev @ 273 NONAME ABSENT
-	_ZN10QtMobility22QGalleryMetaDataFilter11setInvertedEb @ 274 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilter11setInvertedEb @ 274 NONAME ABSENT
 	_ZN10QtMobility22QGalleryMetaDataFilter13setComparatorENS_14QGalleryFilter10ComparatorE @ 275 NONAME
 	_ZN10QtMobility22QGalleryMetaDataFilter15setPropertyNameERK7QString @ 276 NONAME
 	_ZN10QtMobility22QGalleryMetaDataFilter18setCaseSensitivityEN2Qt15CaseSensitivityE @ 277 NONAME ABSENT
@@ -456,7 +456,7 @@ EXPORTS
 	_ZNK10QtMobility21QGalleryRemoveRequest10metaObjectEv @ 455 NONAME ABSENT
 	_ZNK10QtMobility21QGalleryRemoveRequest6itemIdEv @ 456 NONAME ABSENT
 	_ZNK10QtMobility22QGalleryMetaDataFilter10comparatorEv @ 457 NONAME
-	_ZNK10QtMobility22QGalleryMetaDataFilter10isInvertedEv @ 458 NONAME
+	_ZNK10QtMobility22QGalleryMetaDataFilter10isInvertedEv @ 458 NONAME ABSENT
 	_ZNK10QtMobility22QGalleryMetaDataFilter12propertyNameEv @ 459 NONAME
 	_ZNK10QtMobility22QGalleryMetaDataFilter15caseSensitivityEv @ 460 NONAME ABSENT
 	_ZNK10QtMobility22QGalleryMetaDataFilter5valueEv @ 461 NONAME
@@ -537,4 +537,6 @@ EXPORTS
 	_ZNK10QtMobility20QGalleryQueryRequest10autoUpdateEv @ 536 NONAME
 	_ZN10QtMobility22QGalleryMetaDataFilterC1ERK7QStringRK8QVariantNS_14QGalleryFilter10ComparatorE @ 537 NONAME
 	_ZN10QtMobility22QGalleryMetaDataFilterC2ERK7QStringRK8QVariantNS_14QGalleryFilter10ComparatorE @ 538 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilter10setNegatedEb @ 539 NONAME
+	_ZNK10QtMobility22QGalleryMetaDataFilter9isNegatedEv @ 540 NONAME
 
