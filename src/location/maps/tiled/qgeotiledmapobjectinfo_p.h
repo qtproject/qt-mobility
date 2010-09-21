@@ -72,7 +72,7 @@ class QGeoTiledMapObjectInfo : public QGeoMapObjectInfo
 {
     Q_OBJECT
 public:
-    QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapObjectInfo();
 
     static QPolygonF createPolygon(const QList<QGeoCoordinate> & path,

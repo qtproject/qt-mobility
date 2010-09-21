@@ -53,7 +53,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapContainerObjectInfo::QGeoTiledMapContainerObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+QGeoTiledMapContainerObjectInfo::QGeoTiledMapContainerObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
         : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
     group = static_cast<QGeoMapGroupObject*>(mapObject);

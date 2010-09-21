@@ -65,7 +65,7 @@ class QGeoTiledMapContainerObjectInfo : public QGeoTiledMapObjectInfo
 {
     Q_OBJECT
 public:
-    QGeoTiledMapContainerObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    QGeoTiledMapContainerObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapContainerObjectInfo();
 
     QGeoMapGroupObject *group;
