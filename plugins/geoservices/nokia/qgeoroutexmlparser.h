@@ -54,7 +54,7 @@ class QIODevice;
 #include <qgeocoordinate.h>
 #include <qgeoboundingbox.h>
 #include <qgeorouterequest.h>
-#include <qgeoinstruction.h>
+#include <qgeomaneuver.h>
 
 QTM_USE_NAMESPACE
 
