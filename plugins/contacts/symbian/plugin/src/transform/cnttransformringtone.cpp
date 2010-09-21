@@ -73,7 +73,8 @@ QContactDetail *CntTransformRingtone::transformItemField(const CContactItemField
 
 	CContactTextField* storage = field.TextStorage();
     QString ringtoneString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-
+    	
+    
     if (field.ContentType().ContainsFieldType(KUidContactFieldRingTone)) {
         ringtone->setAudioRingtoneUrl(ringtoneString);
 	}

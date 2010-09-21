@@ -105,14 +105,9 @@ void QNmDBusHelper::slotPropertiesChanged(QMap<QString,QVariant> map)
                 || state == NM_DEVICE_STATE_FAILED) {
                 emit  pathForPropertiesChanged( msg.path(), map);
             }
-        } else if( i.key() == "ActiveAccessPoint") {
-            //            qWarning()  << __PRETTY_FUNCTION__ << i.key() << ": " << i.value().value<QDBusObjectPath>().path();
-            //      } else if( i.key() == "Strength")
-            //            qWarning()  << __PRETTY_FUNCTION__ << i.key() << ": " << i.value().toUInt();
-            //   else
-            //            qWarning()  << __PRETTY_FUNCTION__ << i.key() << ": " << i.value();
         }
     }
+    emit  pathForPropertiesChanged( msg.path(), map);
 }
 
 void QNmDBusHelper::slotSettingsRemoved()

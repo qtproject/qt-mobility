@@ -544,6 +544,8 @@ void TestFiltering::testContactDetailFilter()
     testContactDetailFilter_5();
 	testContactDetailFilter_6();
 	testContactDetailFilter_7();
+	testContactDetailFilter_8();
+	testContactDetailFilter_9();
 }
 
 void TestFiltering::testContactDetailFilter_1()
@@ -629,7 +631,8 @@ void TestFiltering::testContactDetailFilter_2()
     expectedCount =1;  
     QVERIFY(expectedCount == seachedcontactcount);
     
-    // Test Not supported fields
+    // Test Not supported fields (by our SQL-based filtering, so it rolls
+    // back to slow filtering inside Qt Contacts Mobility)
     QContactDetailFilter cdf3;
     cdf3.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
     cdf3.setValue("aba");
@@ -639,7 +642,7 @@ void TestFiltering::testContactDetailFilter_2()
     seachedcontactcount = cnt_ids.count();
     expectedCount =0;  
     QVERIFY(expectedCount == seachedcontactcount);
-    QVERIFY(error == QContactManager::NotSupportedError);
+    QVERIFY(error == QContactManager::NoError);
     
     QContactDetailFilter cdf4;
     cdf4.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
@@ -650,7 +653,7 @@ void TestFiltering::testContactDetailFilter_2()
     seachedcontactcount = cnt_ids.count();
     expectedCount =0;  
     QVERIFY(expectedCount == seachedcontactcount);
-    QVERIFY(error == QContactManager::NotSupportedError);
+    QVERIFY(error == QContactManager::NoError);
 }   
 
 void TestFiltering::testContactDetailFilter_3()
@@ -838,6 +841,45 @@ void TestFiltering::testContactDetailFilter_7()
     // check counts 
     int seachedcontactcount = cnt_ids.count();
     int expectedCount =2;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestFiltering::testContactDetailFilter_8()
+{    
+    // Fetch contacts list using display label
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
+        
+    QContactDetailFilter filter;
+    QString filterString("J");
+    QStringList searchList = filterString.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+    filter.setDetailDefinitionName(QContactDisplayLabel::DefinitionName,
+        QContactDisplayLabel::FieldLabel);
+    filter.setMatchFlags(QContactFilter::MatchStartsWith);
+    filter.setValue(searchList);
+    
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount =2;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestFiltering::testContactDetailFilter_9()
+{    
+    // Fetch all contacts having phonenumbers
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
+    
+    // Empty field name
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName); 
+    
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
+    // check counts 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount =9;  
     QVERIFY(expectedCount == seachedcontactcount);
 }
 
@@ -1494,10 +1536,6 @@ void TestFiltering::testFilterSupported()
     flag = filterDefault.filterSupported(QContactFilter());
     QVERIFY(flag ==true);
     
-    CntFilterDetail filterDetail(*m_database,srvConnection,dbInfo);
-    flag = filterDetail.filterSupported(QContactDetailFilter());
-    QVERIFY(flag ==true);
-        
     CntFilterRelationship filterRlationship(*m_database,srvConnection,dbInfo);
     QContactRelationshipFilter relationFilter;                   
     relationFilter.setRelationshipType(QContactRelationship::HasMember);
@@ -1513,6 +1551,10 @@ void TestFiltering::testFilterSupported()
     QVERIFY(flag ==true);
         
     //Not supported cases
+    CntFilterDetail filterDetail(*m_database,srvConnection,dbInfo);
+    flag = filterDetail.filterSupported(QContactDetailFilter());
+    QVERIFY(flag ==false);
+    
     flag = filterDefault.filterSupported(f1);
     QVERIFY(flag ==false);
         

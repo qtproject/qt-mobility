@@ -53,6 +53,10 @@ void OrganizerItemReminderTransform::modifyBaseSchemaDefinitions(QMap<QString, Q
 {
     // Find reminder details
     foreach (QString itemTypeName, schemaDefs.keys()) {
+        if (itemTypeName == QOrganizerItemType::TypeNote) {
+            schemaDefs[itemTypeName].remove(QOrganizerItemReminder::DefinitionName);
+            continue;
+        }
         QMap<QString, QOrganizerItemDetailDefinition> details = schemaDefs.value(itemTypeName);
         if (details.contains(QOrganizerItemReminder::DefinitionName)) {
             // Symbian alarm subsystem does not support setting the count or delay values
@@ -84,6 +88,9 @@ void OrganizerItemReminderTransform::transformToDetailL(const CCalEntry& entry, 
 
 void OrganizerItemReminderTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
+    if (QOrganizerItemType::TypeNote == item.type()) {
+        return;
+    }
     QOrganizerItemReminder reminder = item.detail<QOrganizerItemReminder>();
 
     if (reminder.isEmpty()) {

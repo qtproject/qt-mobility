@@ -87,7 +87,7 @@ private slots:
         QCOMPARE(lm.attribute("name").toString(), QString("LM1"));
         QCOMPARE(lm.attribute("description").toString(), QString("LM1 description"));
         QCOMPARE(lm.attribute("iconUrl").toString(), QString("LM1 icon url"));
-        QCOMPARE(lm.attribute("radius").toDouble(), 5.0);
+        QCOMPARE(lm.attribute("radius").toReal(), 5.0);
         QCOMPARE(lm.attribute("phoneNumber").toString(),QString("lm1 phoneNumber"));
         QCOMPARE(lm.attribute("url").toUrl(), QUrl("lm1 url"));
 
@@ -119,7 +119,7 @@ private slots:
         QFETCH(QString, postcode);
         QFETCH(QString, phone);
         QFETCH(QString, url);
-        QFETCH(double, radius);
+        QFETCH(qreal, radius);
         QFETCH(QGeoCoordinate, coordinate);
         QFETCH(QList<QLandmarkCategory>, categories);
         QFETCH(variantMap, attributes);
@@ -180,7 +180,7 @@ private slots:
         QFETCH(QString, postcode);
         QFETCH(QString, phone);
         QFETCH(QString, url);
-        QFETCH(double, radius);
+        QFETCH(real, radius);
         QFETCH(QGeoCoordinate, coordinate);
         QFETCH(QList<QLandmarkCategory>, categories);
         QFETCH(variantMap, attributes);
@@ -243,7 +243,7 @@ private slots:
         QFETCH(QString, postcode);
         QFETCH(QString, phone);
         QFETCH(QString, url);
-        QFETCH(double, radius);
+        QFETCH(qreal, radius);
         QFETCH(QGeoCoordinate, coordinate);
         QFETCH(QList<QLandmarkCategory>, categories);
         QFETCH(variantMap, attributes);
@@ -478,7 +478,7 @@ private:
         QTest::addColumn<QString>("name");
         QTest::addColumn<QString>("description");
         QTest::addColumn<QString>("iconurl");
-        QTest::addColumn<double>("radius");
+        QTest::addColumn<qreal>("radius");
         QTest::addColumn<QString>("phone");
         QTest::addColumn<QString>("url");
 

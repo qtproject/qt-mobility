@@ -77,7 +77,7 @@ Item {
 
     Rectangle {
         id: dialNumber
-        height: 20
+        height: childrenRect.height + 5
         width: numberPad.width
         anchors.top: parent.top
         anchors.left: parent.left

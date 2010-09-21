@@ -153,6 +153,8 @@ private slots:  // Test cases
 	void addReminderToSingleInstance_data(){ addManagers(); };
 	void removeReminderFromSingleInstance();
 	void removeReminderFromSingleInstance_data(){ addManagers(); };
+	void timezone();
+	void timezone_data() { addManagers(); };
 
 private:
     // TODO: enable the following test cases by moving them to "private slots"
@@ -181,6 +183,7 @@ private: // util functions
 
 private:
     QOrganizerItemManager *m_om;
+    TTimeIntervalSeconds m_UTCOffset;
 };
 
 
@@ -191,6 +194,9 @@ void tst_SymbianOm::init()
 
     // Remove all organizer items first (Note: ignores possible errors)
     m_om->removeItems(m_om->itemIds(), 0);
+	
+    // Save UTC offset
+    m_UTCOffset = User::UTCOffset();
 }
 
 void tst_SymbianOm::cleanup()
@@ -199,6 +205,9 @@ void tst_SymbianOm::cleanup()
     m_om->removeItems(m_om->itemIds(), 0);
     delete m_om;
     m_om = 0;
+	
+    // Restore UTC offset
+    User::SetUTCOffset(m_UTCOffset);
 }
 
 void tst_SymbianOm::addSimpleItem()
@@ -213,7 +222,7 @@ void tst_SymbianOm::addSimpleItem()
     // Save
     QVERIFY(m_om->saveItem(&item));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
-    QVERIFY(item.id().localId() != 0);
+    QVERIFY(item.id().localId() != QOrganizerItemLocalId());
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
     // Save with list parameter
@@ -222,7 +231,7 @@ void tst_SymbianOm::addSimpleItem()
     QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     foreach (QOrganizerItem listitem, items) {
-        QVERIFY(listitem.id().localId() != 0);
+        QVERIFY(listitem.id().localId() != QOrganizerItemLocalId());
         QVERIFY(item.id().managerUri().contains(m_om->managerName()));
     }
 
@@ -232,7 +241,7 @@ void tst_SymbianOm::addSimpleItem()
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     QVERIFY(errorMap.count() == 0);
     foreach (QOrganizerItem listitem2, items) {
-        QVERIFY(listitem2.id().localId() != 0);
+        QVERIFY(listitem2.id().localId() != QOrganizerItemLocalId());
         QVERIFY(item.id().managerUri().contains(m_om->managerName()));
     }
 }
@@ -245,7 +254,7 @@ void tst_SymbianOm::fetchSimpleItem()
 
     // Save
     QVERIFY(m_om->saveItem(&item));
-    QVERIFY(item.id().localId() != 0);
+    QVERIFY(item.id().localId() != QOrganizerItemLocalId());
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
     // Fetch
@@ -263,7 +272,7 @@ void tst_SymbianOm::removeSimpleItem()
 
     // Save
     QVERIFY(m_om->saveItem(&item));
-    QVERIFY(item.id().localId() != 0);
+    QVERIFY(item.id().localId() != QOrganizerItemLocalId());
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
     // Remove
@@ -376,9 +385,10 @@ void tst_SymbianOm::uniqueIds()
     // Save a new todo item with own localid. Should fail.
     QOrganizerTodo todo;
     QOrganizerItemId id;
-    id.setLocalId(12345);
-    todo.setId(id);
-    QVERIFY(!m_om->saveItem(&todo));
+    // TODO: Disabled because of API change. REFACTOR!
+    //id.setLocalId(12345); 
+    //todo.setId(id);
+    //QVERIFY(!m_om->saveItem(&todo));
     
     // Save a new todo item with own guid. Should pass.
     todo = QOrganizerTodo();
@@ -402,10 +412,11 @@ void tst_SymbianOm::uniqueIds()
     // Save a new todo item with own guid & localid. Should fail.
     todo = QOrganizerTodo();
     id = QOrganizerItemId();
-    id.setLocalId(12345);
-    todo.setId(id);
-    todo.setGuid("11111");
-    QVERIFY(!m_om->saveItem(&todo));
+    // TODO: Disabled because of API change. REFACTOR!
+    //id.setLocalId(12345);
+    //todo.setId(id);
+    //todo.setGuid("11111");
+    //QVERIFY(!m_om->saveItem(&todo));
 }
 
 void tst_SymbianOm::timeStamp()
@@ -460,7 +471,7 @@ void tst_SymbianOm::addNegative()
     QVERIFY(!m_om->saveItem(0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
-    QVERIFY(!m_om->saveItems(0, 0, 0));
+    QVERIFY(!m_om->saveItems(0, QOrganizerCollectionLocalId(), 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
     QList<QOrganizerItem> items;
@@ -541,7 +552,7 @@ void tst_SymbianOm::addItem()
         // Save
         QVERIFY(m_om->saveItem(&item));
         QCOMPARE(m_om->error(), expectedErrorCode);
-        QVERIFY(item.id().localId() != 0);
+        QVERIFY(item.id().localId() != QOrganizerItemLocalId());
         QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
         // Fetch item to verify everything was saved successfully
@@ -706,12 +717,11 @@ void tst_SymbianOm::addReminderToSingleInstance()
     instance1 = m_om->item(instance1.localId());
     rptReminder = instance1.detail<QOrganizerItemReminder>();
     QVERIFY(!rptReminder.isEmpty());
-	
+
 	// Verify that the other instances have not been modified
-	itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
-	instance1 = itemInstances.at(1);
-    rptReminder = instance1.detail<QOrganizerItemReminder>();
-    QVERIFY(rptReminder.isEmpty());
+    itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
+    QCOMPARE(itemInstances.count(), 3);
+    QVERIFY(itemInstances.at(1).detail<QOrganizerItemReminder>().isEmpty());
 }
 
 /*!
@@ -765,9 +775,36 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
 	
 	// Check if the other instances are intact
 	itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
-	instance1 = itemInstances.at(1);
-    rptReminder = instance1.detail<QOrganizerItemReminder>();
-    QVERIFY(!rptReminder.isEmpty());
+	QCOMPARE(itemInstances.count(), 3);
+    QVERIFY(!itemInstances.at(1).detail<QOrganizerItemReminder>().isEmpty());
+}
+
+void tst_SymbianOm::timezone()
+{
+    // Set local time to UTC+2
+    User::SetUTCOffset(2*60*60);
+    
+    // Save a simple event 
+    QOrganizerEvent event;
+    event.setDisplayLabel("test timezone");
+    QDateTime startDateTime(QDate(2010, 1, 1));
+    QDateTime endDateTime = startDateTime.addSecs(60*60);
+    event.setStartDateTime(startDateTime);
+    event.setEndDateTime(endDateTime);
+    QVERIFY(m_om->saveItem(&event));
+    
+    // Fetch & verify
+    event = m_om->item(event.localId());
+    QVERIFY(event.startDateTime() == startDateTime);
+    QVERIFY(event.endDateTime() == endDateTime);
+       
+    // Set local time to UTC+3
+    User::SetUTCOffset(3*60*60);
+    
+    // Fetch & verify
+    event = m_om->item(event.localId());
+    QVERIFY(event.startDateTime() == startDateTime);
+    QVERIFY(event.endDateTime() == endDateTime);
 }
 
 /*!

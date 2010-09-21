@@ -50,5 +50,6 @@ INCLUDEPATH += . \
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \
-                        WriteUserData
+                        WriteUserData \
+                        ReadDeviceData
 }

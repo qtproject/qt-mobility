@@ -48,11 +48,11 @@
 #include <QtCore/qmap.h>
 #include <QtCore/qdatetime.h> // QTime
 #include <QtGui/qicon.h>
-#include <QtMultimedia/qvideoframe.h>
 
 #include <qcamera.h>
 #include <qcamerafocus.h>
 #include <qcameraimagecapture.h>
+#include <qvideoframe.h>
 
 #include <e32base.h>
 
@@ -70,20 +70,19 @@ class S60ImageCaptureSession : public QObject, public MCameraEngineObserver
 
 public: // Enums
 
-    enum Error {
-        NoError = 0,
-        OutOfMemoryError,
-        InUseError,
-        NotReadyError,
-        UnknownError = -1
+    enum ImageCaptureState {
+        EImageCaptureNotPrepared = 0,
+        EImageCapturePrepared,
+        EImageCaptureCapturing,
+        EImageCaptureWritingImage
     };
 
     enum EcamErrors {
-        KErrECamCameraDisabled = -12100,        // The camera has been disabled, hence calls do not succeed
-        KErrECamSettingDisabled = -12101,       // This parameter or operation is supported, but presently is disabled.
-        KErrECamParameterNotInRange = -12102,   // This value is out of range.
-        KErrECamSettingNotSupported = -12103,   // This parameter or operation is not supported.
-        KErrECamNotOptimalFocus = -12104        // The optimum focus is lost
+        KErrECamCameraDisabled =        -12100, // The camera has been disabled, hence calls do not succeed
+        KErrECamSettingDisabled =       -12101, // This parameter or operation is supported, but presently is disabled.
+        KErrECamParameterNotInRange =   -12102, // This value is out of range.
+        KErrECamSettingNotSupported =   -12103, // This parameter or operation is not supported.
+        KErrECamNotOptimalFocus =       -12104  // The optimum focus is lost
     };
 
 public: // Constructor & Destructor
@@ -117,16 +116,18 @@ public: // Methods
     QSize maximumCaptureSize();
     QList<QSize> supportedCaptureSizesForCodec(const QString &codecName);
     void setCaptureSize(const QSize &size);
+
     QStringList supportedImageCaptureCodecs();
     QString imageCaptureCodec();
     void setImageCaptureCodec(const QString &codecName);
     QString imageCaptureCodecDescription(const QString &codecName);
-    QtMultimediaKit::EncodingQuality captureQuality() const;
-    void setCaptureQuality(QtMultimediaKit::EncodingQuality);
     void updateImageCaptureCodecs();
 
+    QtMultimediaKit::EncodingQuality captureQuality() const;
+    void setCaptureQuality(const QtMultimediaKit::EncodingQuality &quality);
+
     // S60 3.1 Focus Control (S60 3.2 and later via S60CameraSettings class)
-    bool isFocusSupported();
+    bool isFocusSupported() const;
     void startFocus();
     void cancelFocus();
 
@@ -179,7 +180,9 @@ private: // Internal
     void setFlashModeL(QCameraExposure::FlashModes mode);
     void setExposureModeL(QCameraExposure::ExposureMode mode);
     void saveImageL(TDesC8* aData, TFileName aPath);
+    void processFileName(const QString &fileName);
     TFileName imagePath();
+    void initializeImageCaptureSettings();
 
 Q_SIGNALS: // Notifications
 
@@ -200,15 +203,16 @@ private: // Data
 
     CCameraEngine       *m_cameraEngine;
     S60CameraSettings   *m_advancedSettings;
-    int                 m_imageQuality;
-    QSize               m_captureSize;
+    mutable TCameraInfo *m_cameraInfo;
+    mutable int         m_error; // Symbian ErrorCode
     TInt                m_activeDeviceIndex;
-    mutable int         m_error;
+    ImageCaptureState   m_icState;
     CCamera::TFormat    m_currentCodec;
-    QList<uint>         m_formats;
+    QSize               m_captureSize;
+    int                 m_imageQuality;
     QString             m_stillCaptureFileName;
-    mutable TCameraInfo m_info;
     mutable int         m_currentImageId;
+    QList<uint>         m_formats;
 };
 
 #endif // S60IMAGECAPTURESESSION_H

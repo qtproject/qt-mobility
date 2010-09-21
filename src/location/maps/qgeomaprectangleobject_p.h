@@ -42,17 +42,17 @@
 #ifndef QGEOMAPRECTANGLEOBJECT_P_H
 #define QGEOMAPRECTANGLEOBJECT_P_H
 
-#include "qgeomapobject_p.h"
+#include "qgeoboundingbox.h"
 
 #include <QPen>
 #include <QBrush>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapRectangleObjectPrivate : public QGeoMapObjectPrivate
+class QGeoMapRectangleObjectPrivate
 {
 public:
-    QGeoMapRectangleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
+    QGeoMapRectangleObjectPrivate();
     ~QGeoMapRectangleObjectPrivate();
 
     QGeoBoundingBox bounds;

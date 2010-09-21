@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qorganizercaldbaccess.h"
+#include "qorganizermaemo5ids_p.h"
 #include "qtorganizer.h"
 
 #include <CalendarErrors.h>
@@ -119,7 +120,9 @@ int OrganizerCalendarDatabaseAccess::calIdOf(QOrganizerItemLocalId id)
     QSqlQuery query;
     if (!query.prepare(selectComponentCalIdType))
         return -1;
-    query.bindValue(":compId", QString::number(id));
+    query.bindValue(":compId", QString::number(
+        static_cast<QOrganizerItemMaemo5EngineLocalId*>(
+            QOrganizerItemManagerEngine::engineLocalItemId(id))->m_localItemId));
 
     int retn = -1;
     if (query.exec()) {

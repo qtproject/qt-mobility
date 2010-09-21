@@ -188,6 +188,7 @@ public:
     QMap<QString, QContactDetail> preferredDetails() const;
 
 private:
+    friend class QContactData;
     friend class QContactManager;
     friend class QContactManagerData;
     friend class QContactManagerEngine;
@@ -195,11 +196,6 @@ private:
     friend QDataStream& operator>>(QDataStream& in, QContact& contact);
 
     QSharedDataPointer<QContactData> d;
-
-#if defined(SIMULATOR_APPLICATION) || defined(QT_SIMULATOR)
-    friend QDataStream &operator<<(QDataStream &, const QContact &);
-    friend QDataStream &operator>>(QDataStream &, QContact &);
-#endif
 };
 
 Q_CONTACTS_EXPORT uint qHash(const QContact& key);
