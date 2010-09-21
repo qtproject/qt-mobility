@@ -92,19 +92,23 @@ void QDeclarativeGalleryItem::setPropertyNames(const QStringList &names)
 
 void QDeclarativeGalleryItem::setAutoUpdate(bool enabled)
 {
-    m_request.setAutoUpdate(enabled);
+    if (m_request.autoUpdate() != enabled) {
+        m_request.setAutoUpdate(enabled);
 
-    emit autoUpdateChanged();
+        emit autoUpdateChanged();
+    }
 }
 
 void QDeclarativeGalleryItem::setItemId(const QVariant &itemId)
 {
-    m_request.setItemId(itemId);
+    if (m_request.itemId() != itemId) {
+        m_request.setItemId(itemId);
 
-    if (m_complete)
-        m_request.execute();
+        if (m_complete)
+            m_request.execute();
 
-    emit itemIdChanged();
+        emit itemIdChanged();
+    }
 }
 
 void QDeclarativeGalleryItem::componentComplete()

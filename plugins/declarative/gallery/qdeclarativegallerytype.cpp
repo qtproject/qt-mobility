@@ -90,9 +90,11 @@ void QDeclarativeGalleryType::setPropertyNames(const QStringList &names)
 
 void QDeclarativeGalleryType::setAutoUpdate(bool enabled)
 {
-    m_request.setAutoUpdate(enabled);
+    if (m_request.autoUpdate() != enabled) {
+        m_request.setAutoUpdate(enabled);
 
-    emit autoUpdateChanged();
+        emit autoUpdateChanged();
+    }
 }
 
 void QDeclarativeGalleryType::componentComplete()
@@ -267,12 +269,16 @@ QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGalleryType::itemType(
 
 void QDeclarativeDocumentGalleryType::setItemType(QDeclarativeDocumentGallery::ItemType itemType)
 {
-    m_request.setItemType(QDeclarativeDocumentGallery::toString(itemType));
+    const QString type = QDeclarativeDocumentGallery::toString(itemType);
 
-    if (m_complete)
-        m_request.execute();
+    if (type != m_request.itemType()) {
+        m_request.setItemType(type);
 
-    emit itemTypeChanged();
+        if (m_complete)
+            m_request.execute();
+
+        emit itemTypeChanged();
+    }
 }
 
 /*!

@@ -373,8 +373,8 @@ void tst_QDeclarativeDocumentGalleryModel::populateGallery()
 void tst_QDeclarativeDocumentGalleryModel::rootType_data()
 {
     QTest::addColumn<QByteArray>("qml");
-    QTest::addColumn<QString>("initialRootTypeString");
-    QTest::addColumn<int>("initialRootType");
+    QTest::addColumn<QString>("qmlRootTypeString");
+    QTest::addColumn<int>("qmlRootType");
     QTest::addColumn<int>("rootType");
 
     QTest::newRow("Default -> Audio")
@@ -423,8 +423,8 @@ void tst_QDeclarativeDocumentGalleryModel::rootType_data()
 void tst_QDeclarativeDocumentGalleryModel::rootType()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(QString, initialRootTypeString);
-    QFETCH(int, initialRootType);
+    QFETCH(QString, qmlRootTypeString);
+    QFETCH(int, qmlRootType);
     QFETCH(int, rootType);
 
     QDeclarativeComponent component(&engine);
@@ -437,22 +437,22 @@ void tst_QDeclarativeDocumentGalleryModel::rootType()
 
     QSignalSpy spy(object.data(), SIGNAL(rootTypeChanged()));
 
-    QCOMPARE(object->property("rootType"), QVariant(initialRootType));
-    QCOMPARE(gallery.request()->rootType(), initialRootTypeString);
+    QCOMPARE(object->property("rootType"), QVariant(qmlRootType));
+    QCOMPARE(gallery.request()->rootType(), qmlRootTypeString);
 
     object->setProperty("rootType", rootType);
-    QCOMPARE(object->property("rootType"), QVariant(initialRootType));
+    QCOMPARE(object->property("rootType"), QVariant(qmlRootType));
     QCOMPARE(spy.count(), 0);
 
     QMetaObject::invokeMethod(object.data(), "reload");
-    QCOMPARE(gallery.request()->rootType(), initialRootTypeString);
+    QCOMPARE(gallery.request()->rootType(), qmlRootTypeString);
 }
 
 void tst_QDeclarativeDocumentGalleryModel::rootTypeAuto()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(QString, initialRootTypeString);
-    QFETCH(int, initialRootType);
+    QFETCH(QString, qmlRootTypeString);
+    QFETCH(int, qmlRootType);
     QFETCH(int, rootType);
 
     QDeclarativeComponent component(&engine);
@@ -465,21 +465,21 @@ void tst_QDeclarativeDocumentGalleryModel::rootTypeAuto()
 
     QSignalSpy spy(object.data(), SIGNAL(rootTypeChanged()));
 
-    QCOMPARE(object->property("rootType"), QVariant(initialRootType));
-    QCOMPARE(gallery.request()->rootType(), initialRootTypeString);
+    QCOMPARE(object->property("rootType"), QVariant(qmlRootType));
+    QCOMPARE(gallery.request()->rootType(), qmlRootTypeString);
 
     object->setProperty("rootType", rootType);
-    QCOMPARE(object->property("rootType"), QVariant(initialRootType));
+    QCOMPARE(object->property("rootType"), QVariant(qmlRootType));
     QCOMPARE(spy.count(), 0);
 
     QCoreApplication::processEvents();
-    QCOMPARE(gallery.request()->rootType(), initialRootTypeString);
+    QCOMPARE(gallery.request()->rootType(), qmlRootTypeString);
 }
 
 void tst_QDeclarativeDocumentGalleryModel::properties_data()
 {
     QTest::addColumn<QByteArray>("qml");
-    QTest::addColumn<QStringList>("initialPropertyNames");
+    QTest::addColumn<QStringList>("qmlPropertyNames");
     QTest::addColumn<QStringList>("propertyNames");
 
     QTest::newRow("Default -> [ title ]")
@@ -505,7 +505,7 @@ void tst_QDeclarativeDocumentGalleryModel::properties_data()
 void tst_QDeclarativeDocumentGalleryModel::properties()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(QStringList, initialPropertyNames);
+    QFETCH(QStringList, qmlPropertyNames);
     QFETCH(QStringList, propertyNames);
 
     QDeclarativeComponent component(&engine);
@@ -518,21 +518,21 @@ void tst_QDeclarativeDocumentGalleryModel::properties()
 
     QSignalSpy spy(object.data(), SIGNAL(propertyNamesChanged()));
 
-    QCOMPARE(object->property("properties"), QVariant(initialPropertyNames));
-    QCOMPARE(gallery.request()->propertyNames(), initialPropertyNames);
+    QCOMPARE(object->property("properties"), QVariant(qmlPropertyNames));
+    QCOMPARE(gallery.request()->propertyNames(), qmlPropertyNames);
 
     object->setProperty("properties", propertyNames);
-    QCOMPARE(object->property("properties"), QVariant(initialPropertyNames));
+    QCOMPARE(object->property("properties"), QVariant(qmlPropertyNames));
     QCOMPARE(spy.count(), 0);
 
     QMetaObject::invokeMethod(object.data(), "reload");
-    QCOMPARE(gallery.request()->propertyNames(), initialPropertyNames);
+    QCOMPARE(gallery.request()->propertyNames(), qmlPropertyNames);
 }
 
 void tst_QDeclarativeDocumentGalleryModel::propertiesAuto()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(QStringList, initialPropertyNames);
+    QFETCH(QStringList, qmlPropertyNames);
     QFETCH(QStringList, propertyNames);
 
     QDeclarativeComponent component(&engine);
@@ -545,21 +545,21 @@ void tst_QDeclarativeDocumentGalleryModel::propertiesAuto()
 
     QSignalSpy spy(object.data(), SIGNAL(propertyNamesChanged()));
 
-    QCOMPARE(object->property("properties"), QVariant(initialPropertyNames));
-    QCOMPARE(gallery.request()->propertyNames(), initialPropertyNames);
+    QCOMPARE(object->property("properties"), QVariant(qmlPropertyNames));
+    QCOMPARE(gallery.request()->propertyNames(), qmlPropertyNames);
 
     object->setProperty("properties", propertyNames);
-    QCOMPARE(object->property("properties"), QVariant(initialPropertyNames));
+    QCOMPARE(object->property("properties"), QVariant(qmlPropertyNames));
     QCOMPARE(spy.count(), 0);
 
     QCoreApplication::processEvents();
-    QCOMPARE(gallery.request()->propertyNames(), initialPropertyNames);
+    QCOMPARE(gallery.request()->propertyNames(), qmlPropertyNames);
 }
 
 void tst_QDeclarativeDocumentGalleryModel::sortProperties_data()
 {
     QTest::addColumn<QByteArray>("qml");
-    QTest::addColumn<QStringList>("initialSortPropertyNames");
+    QTest::addColumn<QStringList>("qmlSortPropertyNames");
     QTest::addColumn<QStringList>("sortPropertyNames");
 
     QTest::newRow("Default -> [ +rating ]")
@@ -603,7 +603,7 @@ void tst_QDeclarativeDocumentGalleryModel::sortProperties_data()
 void tst_QDeclarativeDocumentGalleryModel::sortProperties()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(QStringList, initialSortPropertyNames);
+    QFETCH(QStringList, qmlSortPropertyNames);
     QFETCH(QStringList, sortPropertyNames);
 
     QDeclarativeComponent component(&engine);
@@ -616,28 +616,28 @@ void tst_QDeclarativeDocumentGalleryModel::sortProperties()
 
     QSignalSpy spy(object.data(), SIGNAL(sortPropertyNamesChanged()));
 
-    QCOMPARE(object->property("sortProperties"), QVariant(initialSortPropertyNames));
-    QCOMPARE(gallery.request()->sortPropertyNames(), initialSortPropertyNames);
+    QCOMPARE(object->property("sortProperties"), QVariant(qmlSortPropertyNames));
+    QCOMPARE(gallery.request()->sortPropertyNames(), qmlSortPropertyNames);
 
     object->setProperty("sortProperties", sortPropertyNames);
     QCOMPARE(object->property("sortProperties"), QVariant(sortPropertyNames));
-    QCOMPARE(spy.count(), initialSortPropertyNames != sortPropertyNames ? 1 : 0);
+    QCOMPARE(spy.count(), qmlSortPropertyNames != sortPropertyNames ? 1 : 0);
 
     QMetaObject::invokeMethod(object.data(), "reload");
     QCOMPARE(gallery.request()->sortPropertyNames(), sortPropertyNames);
 
-    object->setProperty("sortProperties", initialSortPropertyNames);
-    QCOMPARE(object->property("sortProperties"), QVariant(initialSortPropertyNames));
-    QCOMPARE(spy.count(), initialSortPropertyNames != sortPropertyNames ? 2 : 0);
+    object->setProperty("sortProperties", qmlSortPropertyNames);
+    QCOMPARE(object->property("sortProperties"), QVariant(qmlSortPropertyNames));
+    QCOMPARE(spy.count(), qmlSortPropertyNames != sortPropertyNames ? 2 : 0);
 
     QCoreApplication::processEvents();
-    QCOMPARE(gallery.request()->sortPropertyNames(), initialSortPropertyNames);
+    QCOMPARE(gallery.request()->sortPropertyNames(), qmlSortPropertyNames);
 }
 
 void tst_QDeclarativeDocumentGalleryModel::sortPropertiesAuto()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(QStringList, initialSortPropertyNames);
+    QFETCH(QStringList, qmlSortPropertyNames);
     QFETCH(QStringList, sortPropertyNames);
 
     QDeclarativeComponent component(&engine);
@@ -650,12 +650,12 @@ void tst_QDeclarativeDocumentGalleryModel::sortPropertiesAuto()
 
     QSignalSpy spy(object.data(), SIGNAL(sortPropertyNamesChanged()));
 
-    QCOMPARE(object->property("sortProperties"), QVariant(initialSortPropertyNames));
-    QCOMPARE(gallery.request()->sortPropertyNames(), initialSortPropertyNames);
+    QCOMPARE(object->property("sortProperties"), QVariant(qmlSortPropertyNames));
+    QCOMPARE(gallery.request()->sortPropertyNames(), qmlSortPropertyNames);
 
     object->setProperty("sortProperties", sortPropertyNames);
     QCOMPARE(object->property("sortProperties"), QVariant(sortPropertyNames));
-    QCOMPARE(spy.count(), initialSortPropertyNames != sortPropertyNames ? 1 : 0);
+    QCOMPARE(spy.count(), qmlSortPropertyNames != sortPropertyNames ? 1 : 0);
 
     QCoreApplication::processEvents();
     QCOMPARE(gallery.request()->sortPropertyNames(), sortPropertyNames);
@@ -664,7 +664,7 @@ void tst_QDeclarativeDocumentGalleryModel::sortPropertiesAuto()
 void tst_QDeclarativeDocumentGalleryModel::autoUpdate_data()
 {
     QTest::addColumn<QByteArray>("qml");
-    QTest::addColumn<bool>("initialAutoUpdate");
+    QTest::addColumn<bool>("qmlAutoUpdate");
     QTest::addColumn<bool>("autoUpdate");
 
     QTest::newRow("Default -> true")
@@ -719,7 +719,7 @@ void tst_QDeclarativeDocumentGalleryModel::autoUpdate_data()
 void tst_QDeclarativeDocumentGalleryModel::autoUpdate()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(bool, initialAutoUpdate);
+    QFETCH(bool, qmlAutoUpdate);
     QFETCH(bool, autoUpdate);
 
     QDeclarativeComponent component(&engine);
@@ -732,12 +732,12 @@ void tst_QDeclarativeDocumentGalleryModel::autoUpdate()
 
     QSignalSpy spy(object.data(), SIGNAL(autoUpdateChanged()));
 
-    QCOMPARE(object->property("autoUpdate"), QVariant(initialAutoUpdate));
-    QCOMPARE(gallery.request()->autoUpdate(), initialAutoUpdate);
+    QCOMPARE(object->property("autoUpdate"), QVariant(qmlAutoUpdate));
+    QCOMPARE(gallery.request()->autoUpdate(), qmlAutoUpdate);
 
     object->setProperty("autoUpdate", autoUpdate);
     QCOMPARE(object->property("autoUpdate"), QVariant(autoUpdate));
-    QCOMPARE(spy.count(), initialAutoUpdate != autoUpdate ? 1 : 0);
+    QCOMPARE(spy.count(), qmlAutoUpdate != autoUpdate ? 1 : 0);
 
     QMetaObject::invokeMethod(object.data(), "reload");
     QCOMPARE(gallery.request()->autoUpdate(), autoUpdate);
@@ -746,7 +746,7 @@ void tst_QDeclarativeDocumentGalleryModel::autoUpdate()
 void tst_QDeclarativeDocumentGalleryModel::autoUpdateAuto()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(bool, initialAutoUpdate);
+    QFETCH(bool, qmlAutoUpdate);
     QFETCH(bool, autoUpdate);
 
     QDeclarativeComponent component(&engine);
@@ -759,12 +759,12 @@ void tst_QDeclarativeDocumentGalleryModel::autoUpdateAuto()
 
     QSignalSpy spy(object.data(), SIGNAL(autoUpdateChanged()));
 
-    QCOMPARE(object->property("autoUpdate"), QVariant(initialAutoUpdate));
-    QCOMPARE(gallery.request()->autoUpdate(), initialAutoUpdate);
+    QCOMPARE(object->property("autoUpdate"), QVariant(qmlAutoUpdate));
+    QCOMPARE(gallery.request()->autoUpdate(), qmlAutoUpdate);
 
     object->setProperty("autoUpdate", autoUpdate);
     QCOMPARE(object->property("autoUpdate"), QVariant(autoUpdate));
-    QCOMPARE(spy.count(), initialAutoUpdate != autoUpdate ? 1 : 0);
+    QCOMPARE(spy.count(), qmlAutoUpdate != autoUpdate ? 1 : 0);
 
     QCoreApplication::processEvents();
     QCOMPARE(gallery.request()->autoUpdate(), autoUpdate);
@@ -773,7 +773,7 @@ void tst_QDeclarativeDocumentGalleryModel::autoUpdateAuto()
 void tst_QDeclarativeDocumentGalleryModel::rootItem_data()
 {
     QTest::addColumn<QByteArray>("qml");
-    QTest::addColumn<QVariant>("initialRootItem");
+    QTest::addColumn<QVariant>("qmlRootItem");
     QTest::addColumn<QVariant>("rootItem");
 
     QTest::newRow("Default -> 34")
@@ -819,7 +819,7 @@ void tst_QDeclarativeDocumentGalleryModel::rootItem_data()
 void tst_QDeclarativeDocumentGalleryModel::rootItem()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(QVariant, initialRootItem);
+    QFETCH(QVariant, qmlRootItem);
     QFETCH(QVariant, rootItem);
 
     QDeclarativeComponent component(&engine);
@@ -832,12 +832,12 @@ void tst_QDeclarativeDocumentGalleryModel::rootItem()
 
     QSignalSpy spy(object.data(), SIGNAL(rootItemChanged()));
 
-    QCOMPARE(object->property("rootItem"), initialRootItem);
-    QCOMPARE(gallery.request()->rootItem(), initialRootItem);
+    QCOMPARE(object->property("rootItem"), qmlRootItem);
+    QCOMPARE(gallery.request()->rootItem(), qmlRootItem);
 
     object->setProperty("rootItem", rootItem);
     QCOMPARE(object->property("rootItem"), rootItem);
-    QCOMPARE(spy.count(), initialRootItem != rootItem ? 1 : 0);
+    QCOMPARE(spy.count(), qmlRootItem != rootItem ? 1 : 0);
 
     QMetaObject::invokeMethod(object.data(), "reload");
     QCOMPARE(gallery.request()->rootItem(), rootItem);
@@ -846,7 +846,7 @@ void tst_QDeclarativeDocumentGalleryModel::rootItem()
 void tst_QDeclarativeDocumentGalleryModel::rootItemAuto()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(QVariant, initialRootItem);
+    QFETCH(QVariant, qmlRootItem);
     QFETCH(QVariant, rootItem);
 
     QDeclarativeComponent component(&engine);
@@ -859,12 +859,12 @@ void tst_QDeclarativeDocumentGalleryModel::rootItemAuto()
 
     QSignalSpy spy(object.data(), SIGNAL(rootItemChanged()));
 
-    QCOMPARE(object->property("rootItem"), initialRootItem);
-    QCOMPARE(gallery.request()->rootItem(), initialRootItem);
+    QCOMPARE(object->property("rootItem"), qmlRootItem);
+    QCOMPARE(gallery.request()->rootItem(), qmlRootItem);
 
     object->setProperty("rootItem", rootItem);
     QCOMPARE(object->property("rootItem"), rootItem);
-    QCOMPARE(spy.count(), initialRootItem != rootItem ? 1 : 0);
+    QCOMPARE(spy.count(), qmlRootItem != rootItem ? 1 : 0);
 
     QCoreApplication::processEvents();
     QCOMPARE(gallery.request()->rootItem(), rootItem);
@@ -873,7 +873,7 @@ void tst_QDeclarativeDocumentGalleryModel::rootItemAuto()
 void tst_QDeclarativeDocumentGalleryModel::scope_data()
 {
     QTest::addColumn<QByteArray>("qml");
-    QTest::addColumn<QGalleryQueryRequest::Scope>("initialScope");
+    QTest::addColumn<QGalleryQueryRequest::Scope>("qmlScope");
     QTest::addColumn<QGalleryQueryRequest::Scope>("scope");
 
     QTest::newRow("Default -> DirectDescendants")
@@ -929,7 +929,7 @@ void tst_QDeclarativeDocumentGalleryModel::scope_data()
 void tst_QDeclarativeDocumentGalleryModel::scope()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(QGalleryQueryRequest::Scope, initialScope);
+    QFETCH(QGalleryQueryRequest::Scope, qmlScope);
     QFETCH(QGalleryQueryRequest::Scope, scope);
 
     QDeclarativeComponent component(&engine);
@@ -942,12 +942,12 @@ void tst_QDeclarativeDocumentGalleryModel::scope()
 
     QSignalSpy spy(object.data(), SIGNAL(scopeChanged()));
 
-    QCOMPARE(object->property("scope"), QVariant(int(initialScope)));
-    QCOMPARE(gallery.request()->scope(), initialScope);
+    QCOMPARE(object->property("scope"), QVariant(int(qmlScope)));
+    QCOMPARE(gallery.request()->scope(), qmlScope);
 
     object->setProperty("scope", scope);
     QCOMPARE(object->property("scope"), QVariant(int(scope)));
-    QCOMPARE(spy.count(), initialScope != scope ? 1 : 0);
+    QCOMPARE(spy.count(), qmlScope != scope ? 1 : 0);
 
     QMetaObject::invokeMethod(object.data(), "reload");
     QCOMPARE(gallery.request()->scope(), scope);
@@ -956,7 +956,7 @@ void tst_QDeclarativeDocumentGalleryModel::scope()
 void tst_QDeclarativeDocumentGalleryModel::scopeAuto()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(QGalleryQueryRequest::Scope, initialScope);
+    QFETCH(QGalleryQueryRequest::Scope, qmlScope);
     QFETCH(QGalleryQueryRequest::Scope, scope);
 
     QDeclarativeComponent component(&engine);
@@ -969,12 +969,12 @@ void tst_QDeclarativeDocumentGalleryModel::scopeAuto()
 
     QSignalSpy spy(object.data(), SIGNAL(scopeChanged()));
 
-    QCOMPARE(object->property("scope"), QVariant(int(initialScope)));
-    QCOMPARE(gallery.request()->scope(), initialScope);
+    QCOMPARE(object->property("scope"), QVariant(int(qmlScope)));
+    QCOMPARE(gallery.request()->scope(), qmlScope);
 
     object->setProperty("scope", scope);
     QCOMPARE(object->property("scope"), QVariant(int(scope)));
-    QCOMPARE(spy.count(), initialScope != scope ? 1 : 0);
+    QCOMPARE(spy.count(), qmlScope != scope ? 1 : 0);
 
     QCoreApplication::processEvents();
     QCOMPARE(gallery.request()->scope(), scope);
@@ -983,7 +983,7 @@ void tst_QDeclarativeDocumentGalleryModel::scopeAuto()
 void tst_QDeclarativeDocumentGalleryModel::offset_data()
 {
     QTest::addColumn<QByteArray>("qml");
-    QTest::addColumn<int>("initialOffset");
+    QTest::addColumn<int>("qmlOffset");
     QTest::addColumn<int>("offset");
 
     QTest::newRow("Default -> 125")
@@ -1018,7 +1018,7 @@ void tst_QDeclarativeDocumentGalleryModel::offset_data()
 void tst_QDeclarativeDocumentGalleryModel::offset()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(int, initialOffset);
+    QFETCH(int, qmlOffset);
     QFETCH(int, offset);
 
     QDeclarativeComponent component(&engine);
@@ -1031,12 +1031,12 @@ void tst_QDeclarativeDocumentGalleryModel::offset()
 
     QSignalSpy spy(object.data(), SIGNAL(offsetChanged()));
 
-    QCOMPARE(object->property("offset"), QVariant(initialOffset));
-    QCOMPARE(gallery.request()->offset(), initialOffset);
+    QCOMPARE(object->property("offset"), QVariant(qmlOffset));
+    QCOMPARE(gallery.request()->offset(), qmlOffset);
 
     object->setProperty("offset", offset);
     QCOMPARE(object->property("offset"), QVariant(offset));
-    QCOMPARE(spy.count(), initialOffset != offset ? 1 : 0);
+    QCOMPARE(spy.count(), qmlOffset != offset ? 1 : 0);
 
     QMetaObject::invokeMethod(object.data(), "reload");
     QCOMPARE(gallery.request()->offset(), offset);
@@ -1045,7 +1045,7 @@ void tst_QDeclarativeDocumentGalleryModel::offset()
 void tst_QDeclarativeDocumentGalleryModel::offsetAuto()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(int, initialOffset);
+    QFETCH(int, qmlOffset);
     QFETCH(int, offset);
 
     QDeclarativeComponent component(&engine);
@@ -1058,12 +1058,12 @@ void tst_QDeclarativeDocumentGalleryModel::offsetAuto()
 
     QSignalSpy spy(object.data(), SIGNAL(offsetChanged()));
 
-    QCOMPARE(object->property("offset"), QVariant(initialOffset));
-    QCOMPARE(gallery.request()->offset(), initialOffset);
+    QCOMPARE(object->property("offset"), QVariant(qmlOffset));
+    QCOMPARE(gallery.request()->offset(), qmlOffset);
 
     object->setProperty("offset", offset);
     QCOMPARE(object->property("offset"), QVariant(offset));
-    QCOMPARE(spy.count(), initialOffset != offset ? 1 : 0);
+    QCOMPARE(spy.count(), qmlOffset != offset ? 1 : 0);
 
     QCoreApplication::processEvents();
     QCOMPARE(gallery.request()->offset(), offset);
@@ -1072,7 +1072,7 @@ void tst_QDeclarativeDocumentGalleryModel::offsetAuto()
 void tst_QDeclarativeDocumentGalleryModel::limit_data()
 {
     QTest::addColumn<QByteArray>("qml");
-    QTest::addColumn<int>("initialLimit");
+    QTest::addColumn<int>("qmlLimit");
     QTest::addColumn<int>("limit");
 
     QTest::newRow("Default -> 125")
@@ -1107,7 +1107,7 @@ void tst_QDeclarativeDocumentGalleryModel::limit_data()
 void tst_QDeclarativeDocumentGalleryModel::limit()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(int, initialLimit);
+    QFETCH(int, qmlLimit);
     QFETCH(int, limit);
 
     QDeclarativeComponent component(&engine);
@@ -1120,12 +1120,12 @@ void tst_QDeclarativeDocumentGalleryModel::limit()
 
     QSignalSpy spy(object.data(), SIGNAL(limitChanged()));
 
-    QCOMPARE(object->property("limit"), QVariant(initialLimit));
-    QCOMPARE(gallery.request()->limit(), initialLimit);
+    QCOMPARE(object->property("limit"), QVariant(qmlLimit));
+    QCOMPARE(gallery.request()->limit(), qmlLimit);
 
     object->setProperty("limit", limit);
     QCOMPARE(object->property("limit"), QVariant(limit));
-    QCOMPARE(spy.count(), initialLimit != limit ? 1 : 0);
+    QCOMPARE(spy.count(), qmlLimit != limit ? 1 : 0);
 
     QMetaObject::invokeMethod(object.data(), "reload");
     QCOMPARE(gallery.request()->limit(), limit);
@@ -1134,7 +1134,7 @@ void tst_QDeclarativeDocumentGalleryModel::limit()
 void tst_QDeclarativeDocumentGalleryModel::limitAuto()
 {
     QFETCH(QByteArray, qml);
-    QFETCH(int, initialLimit);
+    QFETCH(int, qmlLimit);
     QFETCH(int, limit);
 
     QDeclarativeComponent component(&engine);
@@ -1147,12 +1147,12 @@ void tst_QDeclarativeDocumentGalleryModel::limitAuto()
 
     QSignalSpy spy(object.data(), SIGNAL(limitChanged()));
 
-    QCOMPARE(object->property("limit"), QVariant(initialLimit));
-    QCOMPARE(gallery.request()->limit(), initialLimit);
+    QCOMPARE(object->property("limit"), QVariant(qmlLimit));
+    QCOMPARE(gallery.request()->limit(), qmlLimit);
 
     object->setProperty("limit", limit);
     QCOMPARE(object->property("limit"), QVariant(limit));
-    QCOMPARE(spy.count(), initialLimit != limit ? 1 : 0);
+    QCOMPARE(spy.count(), qmlLimit != limit ? 1 : 0);
 
     QCoreApplication::processEvents();
     QCOMPARE(gallery.request()->limit(), limit);
@@ -1179,7 +1179,7 @@ void tst_QDeclarativeDocumentGalleryModel::filter_data()
                         "filter: GalleryEqualsFilter {\n"
                             "property: \"width\"\n"
                             "value: 1920\n"
-                            "inverted: false\n"
+                            "negated: false\n"
                         "}\n"
                     "}\n")
             << QGalleryFilter(QDocumentGallery::width == 1920);
@@ -1192,7 +1192,7 @@ void tst_QDeclarativeDocumentGalleryModel::filter_data()
                         "filter: GalleryEqualsFilter {\n"
                             "property: \"width\"\n"
                             "value: 1920\n"
-                            "inverted: true\n"
+                            "negated: true\n"
                         "}\n"
                     "}\n")
             << QGalleryFilter(!(QDocumentGallery::width == 1920));
@@ -1253,7 +1253,7 @@ void tst_QDeclarativeDocumentGalleryModel::filter_data()
                         "filter: GalleryStartsWithFilter {\n"
                             "property: \"fileName\"\n"
                             "value: \"p\"\n"
-                            "inverted: false\n"
+                            "negated: false\n"
                         "}\n"
                     "}\n")
             << QGalleryFilter(QGalleryMetaDataFilter(
@@ -1267,7 +1267,7 @@ void tst_QDeclarativeDocumentGalleryModel::filter_data()
                         "filter: GalleryStartsWithFilter {\n"
                             "property: \"fileName\"\n"
                             "value: \"p\"\n"
-                            "inverted: true\n"
+                            "negated: true\n"
                         "}\n"
                     "}\n")
             << QGalleryFilter(!QGalleryMetaDataFilter(
@@ -1532,7 +1532,7 @@ void tst_QDeclarativeDocumentGalleryModel::filterProperties_data()
     QTest::addColumn<QByteArray>("qml");
     QTest::addColumn<QByteArray>("property");
     QTest::addColumn<QByteArray>("changeSignal");
-    QTest::addColumn<QVariant>("initialValue");
+    QTest::addColumn<QVariant>("qmlValue");
     QTest::addColumn<QVariant>("value");
 
     QTest::newRow("Equals.property: Default -> title")
@@ -1595,33 +1595,33 @@ void tst_QDeclarativeDocumentGalleryModel::filterProperties_data()
             << QVariant(QLatin1String("Interlude"))
             << QVariant(45000);
 
-    QTest::newRow("Equals.inverted: Default -> true")
+    QTest::newRow("Equals.negated: Default -> true")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "GalleryEqualsFilter {}\n")
-            << QByteArray("inverted")
-            << QByteArray(SIGNAL(invertedChanged()))
+            << QByteArray("negated")
+            << QByteArray(SIGNAL(negatedChanged()))
             << QVariant(false)
             << QVariant(true);
 
-    QTest::newRow("Equals.inverted: true -> true")
+    QTest::newRow("Equals.negated: true -> true")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
-                    "GalleryEqualsFilter { inverted: true }\n")
-            << QByteArray("inverted")
-            << QByteArray(SIGNAL(invertedChanged()))
+                    "GalleryEqualsFilter { negated: true }\n")
+            << QByteArray("negated")
+            << QByteArray(SIGNAL(negatedChanged()))
             << QVariant(true)
             << QVariant(true);
 
-    QTest::newRow("Equals.inverted: true -> false")
+    QTest::newRow("Equals.negated: true -> false")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
-                    "GalleryEqualsFilter { inverted: true }\n")
-            << QByteArray("inverted")
-            << QByteArray(SIGNAL(invertedChanged()))
+                    "GalleryEqualsFilter { negated: true }\n")
+            << QByteArray("negated")
+            << QByteArray(SIGNAL(negatedChanged()))
             << QVariant(true)
             << QVariant(false);
 
@@ -1685,33 +1685,33 @@ void tst_QDeclarativeDocumentGalleryModel::filterProperties_data()
             << QVariant(QLatin1String("*Interlude"))
             << QVariant(QLatin1String("interlude.*"));
 
-    QTest::newRow("Wildcard.inverted: Default -> true")
+    QTest::newRow("Wildcard.negated: Default -> true")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "GalleryWildcardFilter {}\n")
-            << QByteArray("inverted")
-            << QByteArray(SIGNAL(invertedChanged()))
+            << QByteArray("negated")
+            << QByteArray(SIGNAL(negatedChanged()))
             << QVariant(false)
             << QVariant(true);
 
-    QTest::newRow("Wildcard.inverted: false -> false")
+    QTest::newRow("Wildcard.negated: false -> false")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
-                    "GalleryWildcardFilter { inverted: true }\n")
-            << QByteArray("inverted")
-            << QByteArray(SIGNAL(invertedChanged()))
+                    "GalleryWildcardFilter { negated: true }\n")
+            << QByteArray("negated")
+            << QByteArray(SIGNAL(negatedChanged()))
             << QVariant(true)
             << QVariant(true);
 
-    QTest::newRow("Wildcard.inverted: false -> true")
+    QTest::newRow("Wildcard.negated: false -> true")
             << QByteArray(
                     "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
-                    "GalleryWildcardFilter { inverted: true }\n")
-            << QByteArray("inverted")
-            << QByteArray(SIGNAL(invertedChanged()))
+                    "GalleryWildcardFilter { negated: true }\n")
+            << QByteArray("negated")
+            << QByteArray(SIGNAL(negatedChanged()))
             << QVariant(true)
             << QVariant(false);
 }
@@ -1721,7 +1721,7 @@ void tst_QDeclarativeDocumentGalleryModel::filterProperties()
     QFETCH(QByteArray, qml);
     QFETCH(QByteArray, property);
     QFETCH(QByteArray, changeSignal);
-    QFETCH(QVariant, initialValue);
+    QFETCH(QVariant, qmlValue);
     QFETCH(QVariant, value);
 
     QDeclarativeComponent component(&engine);
@@ -1732,11 +1732,11 @@ void tst_QDeclarativeDocumentGalleryModel::filterProperties()
 
     QSignalSpy spy(object.data(), changeSignal.constData());
 
-    QCOMPARE(object->property(property.constData()), initialValue);
+    QCOMPARE(object->property(property.constData()), qmlValue);
 
     QCOMPARE(object->setProperty(property.constData(), value), true);
     QCOMPARE(object->property(property.constData()), value);
-    QCOMPARE(spy.count(), initialValue != value ? 1 : 0);
+    QCOMPARE(spy.count(), qmlValue != value ? 1 : 0);
 }
 
 void tst_QDeclarativeDocumentGalleryModel::progress_data()
