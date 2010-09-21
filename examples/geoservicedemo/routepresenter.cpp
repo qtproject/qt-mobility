@@ -43,7 +43,7 @@
 
 #include <QStringBuilder>
 #include <qgeoboundingbox.h>
-#include <qgeoinstruction.h>
+#include <qgeomaneuver.h>
 
 RoutePresenter::RoutePresenter(QTreeWidget* treeWidget, const QGeoRouteReply* routeReply)
         : GeoPresenter(treeWidget), m_routeReply(routeReply)
