@@ -89,6 +89,10 @@ contains(mobility_modules,multimedia) {
         audiooutput \
         videographicsitem \
         videowidget
+
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative-camera
+    }
 }
 
 
