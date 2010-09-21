@@ -48,8 +48,6 @@
 #include <qdeclarative.h>
 #include <qdeclarativelist.h>
 
-//Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
-
 QTM_BEGIN_NAMESPACE
 
 class QDeclarativeService : public QObject {
@@ -100,7 +98,15 @@ class QDeclarativeServiceList : public QObject {
     Q_PROPERTY(int minorVersion READ minorVersion WRITE setMinorVersion NOTIFY minorVersionChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeService> services READ services NOTIFY servicesChanged)
 
+    Q_PROPERTY(MatchRule versionMatch READ versionMatch WRITE setVersionMatch NOTIFY versionMatchChanged)
+    Q_ENUMS(MatchRule);
+
 public:
+    enum MatchRule {
+        Minimum = 0,
+        Exact
+    };
+
     QDeclarativeServiceList();
     ~QDeclarativeServiceList();
 
@@ -118,6 +124,9 @@ public:
     void setMajorVersion(int major);
     int majorVersion() const;
     
+    void setVersionMatch(QDeclarativeServiceList::MatchRule match);
+    QDeclarativeServiceList::MatchRule versionMatch() const;
+    
 private:
     QList<QDeclarativeService *> m_services;
     QServiceManager* serviceManager;
@@ -125,6 +134,7 @@ private:
     QString m_interface;
     int m_major;
     int m_minor;
+    QDeclarativeServiceList::MatchRule m_match;
 
 Q_SIGNALS:
     void servicesChanged(const QDeclarativeListProperty<QDeclarativeService>&);
@@ -132,6 +142,7 @@ Q_SIGNALS:
     void interfaceNameChanged();
     void minorVersionChanged();
     void majorVersionChanged();
+    void versionMatchChanged();
 
 };
 

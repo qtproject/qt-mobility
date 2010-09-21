@@ -77,8 +77,7 @@ within QML so that clients can make metacalls on the service object.
 
 This example demonstrates how QML can be used to completely control the logic of the 
 application, using a combination of declarative elements and Javascript code.  To run the 
-application refer to the README file supplied which includes instructions on how to setup
-and run the QML file for declarative service framework capabilities.
+application refer to the above execution instructions on how to setup and run the example.
 
 There is also another service framework example that demonstrates how to use the QML library 
 plugin browse a list of services to select for dialing usage.  See 
@@ -99,7 +98,7 @@ meaning that we should declare a global variant for the QObject returned from th
 instance. It is also good practice to initialise this value to 0.
 \snippet declarative-sfw-notes/content-sfw-notes/Main.qml 1
 
-Now we can initiate our /l Service element with a default interface name and obtain the
+Now we can initiate our \l Service element with a default interface name and obtain the
 service instance to our global object variable in the component on-completion section.
 \snippet declarative-sfw-notes/content-sfw-notes/Main.qml 6
 
@@ -108,7 +107,7 @@ the Service::interfaceName property of the \l Service element to check if there 
 valid default service at this interface name. Similarly, if there is a valid descriptor 
 then the service instance can be obtained and we can call the initialise code of our
 notes manager.
-\snippet declarative-sfw-notes/content-sfw-notes/Main.qml5
+\snippet declarative-sfw-notes/content-sfw-notes/Main.qml 2
 
 Connecting signals from our service object requires the following code. Note the use
 of the ignoreUnknownSignals property which removes warnings for connecting unknown signals
