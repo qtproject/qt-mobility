@@ -182,7 +182,8 @@ public:
      * returns false, if invalid categories are associated with landmark object.
      * returns true, if no any category ids are associated with landmark object. 
      */
-    static bool validCategoriesExist(CPosLmCategoryManager* catMgr, QLandmark* qtLandmark);
+    static bool validCategoriesExist(CPosLmCategoryManager* catMgr, QLandmark* qtLandmark,
+        QString mgrUri);
 
     /*
      * checks the valid local id

@@ -468,6 +468,12 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
         local.SetCoordinate(coord.latitude(), coord.longitude(), coord.altitude());
         symbianLandmark->SetPositionL(local);
     }
+    else if (!isValidLat(coord.latitude()) && isValidLong(coord.longitude())) {
+        User::Leave(KErrArgument);
+    }
+    else if (!isValidLong(coord.longitude()) && isValidLat(coord.latitude())) {
+        User::Leave(KErrArgument);
+    }
 
     // set coverage radius
     qreal rad = qtLandmark->radius();
@@ -849,18 +855,23 @@ QList<QLandmarkCategoryId> LandmarkUtility::getCategoryIds(QString managerUri,
  * validate landmark categories
  * 
  */
-bool LandmarkUtility::validCategoriesExist(CPosLmCategoryManager* catMgr, QLandmark* qtLandmark)
+bool LandmarkUtility::validCategoriesExist(CPosLmCategoryManager* catMgr, QLandmark* qtLandmark,
+    QString mgrUri)
 {
     bool result = false;
 
     QList<QLandmarkCategoryId> catList = qtLandmark->categoryIds();
     if (catList.size() > 0) {
-        qDebug() << "category list size = " << catList.size();
+        //qDebug() << "category list size = " << catList.size();
         for (int i = 0; i < catList.size(); ++i) {
             TPosLmItemId symbianCatId = convertToSymbianLandmarkCategoryId(catList.at(i));
+            if (catList.at(i).managerUri() != mgrUri) {
+                result = false;
+                break;
+            }
             CPosLandmarkCategory* symbiancat = NULL;
             TRAPD(err, symbiancat = catMgr->ReadCategoryLC(symbianCatId);
-                if (symbiancat!=NULL) CleanupStack::Pop( symbiancat ) )
+                if (symbiancat) CleanupStack::PopAndDestroy( symbiancat ) )
 
             if (err != KErrNone) {
                 result = false;

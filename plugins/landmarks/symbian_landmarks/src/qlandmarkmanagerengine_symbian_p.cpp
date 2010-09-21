@@ -2224,7 +2224,8 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
         return result;
     }
 
-    bool categoryExists = LandmarkUtility::validCategoriesExist(m_LandmarkCatMgr, landmark);
+    bool categoryExists = LandmarkUtility::validCategoriesExist(m_LandmarkCatMgr, landmark,
+        managerUri());
     if (!categoryExists) {
         *error = QLandmarkManager::BadArgumentError;
         *errorString = "Landmark contains a category id that does not exist";
@@ -4755,8 +4756,8 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::importLandmarksL(QIODevi
  */
 void LandmarkManagerEngineSymbianPrivate::handleDatabaseEvent(const TPosLmEvent& aEvent)
 {
-    qDebug() << "aEvent.iLandmarkItemId = " << aEvent.iLandmarkItemId;
-    qDebug() << "aEvent.iEventType = " << aEvent.iEventType;
+    //qDebug() << "aEvent.iLandmarkItemId = " << aEvent.iLandmarkItemId;
+    //qDebug() << "aEvent.iEventType = " << aEvent.iEventType;
 
     TInt id = aEvent.iLandmarkItemId;
     QString localId;
