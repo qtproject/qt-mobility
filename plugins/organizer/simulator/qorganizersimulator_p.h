@@ -108,8 +108,6 @@ class QOrganizerItemSimulatorEngine : public QOrganizerItemManagerEngine
     Q_OBJECT
 
 public:
-    static QOrganizerItemSimulatorEngine *createSimulatorEngine(const QMap<QString, QString>& parameters);
-
     ~QOrganizerItemSimulatorEngine();
 
     /* URI reporting */
