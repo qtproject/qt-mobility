@@ -44,61 +44,61 @@
 
 //QTM_USE_NAMESPACE
 
-QOrganizerItemManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
+QOrganizerItemManagerEngine* QOrganizerItemSimulatorFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(parameters);
     Q_UNUSED(error);
 
     /* TODO - if you understand any specific parameters. save them in the engine so that engine::managerParameters can return them */
 
-    QOrganizerItemSkeletonEngine* ret = new QOrganizerItemSkeletonEngine(); // manager takes ownership and will clean up.
+    QOrganizerItemSimulatorEngine* ret = new QOrganizerItemSimulatorEngine(); // manager takes ownership and will clean up.
     return ret;
 }
 
-QOrganizerItemEngineLocalId* QOrganizerItemSkeletonFactory::createItemEngineLocalId() const
+QOrganizerItemEngineLocalId* QOrganizerItemSimulatorFactory::createItemEngineLocalId() const
 {
     /* TODO - return the localid specific to the engine */
     return NULL;
 }
 
-QOrganizerCollectionEngineLocalId* QOrganizerItemSkeletonFactory::createCollectionEngineLocalId() const
+QOrganizerCollectionEngineLocalId* QOrganizerItemSimulatorFactory::createCollectionEngineLocalId() const
 {
     /* TODO - return the localid specific to the engine */
     return NULL;
 }
 
-QString QOrganizerItemSkeletonFactory::managerName() const
+QString QOrganizerItemSimulatorFactory::managerName() const
 {
     /* TODO - put your engine name here */
-    return QString("skeleton");
+    return QString("simulator");
 }
-Q_EXPORT_PLUGIN2(qtorganizer_skeleton, QOrganizerItemSkeletonFactory);
+Q_EXPORT_PLUGIN2(qtorganizer_simulator, QOrganizerItemSimulatorFactory);
 
 
-QOrganizerItemSkeletonEngine::~QOrganizerItemSkeletonEngine()
+QOrganizerItemSimulatorEngine::~QOrganizerItemSimulatorEngine()
 {
     /* TODO clean up your stuff.  Perhaps a QScopedPointer or QSharedDataPointer would be in order */
 }
 
-QString QOrganizerItemSkeletonEngine::managerName() const
+QString QOrganizerItemSimulatorEngine::managerName() const
 {
     /* TODO - put your engine name here */
-    return QLatin1String("Skeleton");
+    return QLatin1String("simulator");
 }
 
-QMap<QString, QString> QOrganizerItemSkeletonEngine::managerParameters() const
+QMap<QString, QString> QOrganizerItemSimulatorEngine::managerParameters() const
 {
     /* TODO - in case you have any actual parameters that are relevant that you saved in the factory method, return them here */
     return QMap<QString, QString>();
 }
 
-int QOrganizerItemSkeletonEngine::managerVersion() const
+int QOrganizerItemSimulatorEngine::managerVersion() const
 {
     /* TODO - implement this appropriately.  This is strictly defined by the engine, so return whatever you like */
     return 1;
 }
 
-QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemSimulatorEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -123,7 +123,7 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganiz
     return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, error);
 }
 
-QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItemLocalId> QOrganizerItemSimulatorEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -150,7 +150,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QOrgani
     return QOrganizerItemManagerEngine::sortItems(ret, sortOrders);
 }
 
-QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemSimulatorEngine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -186,7 +186,7 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QOrganizerItemFi
     return ret;
 }
 
-QOrganizerItem QOrganizerItemSkeletonEngine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+QOrganizerItem QOrganizerItemSimulatorEngine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -200,7 +200,7 @@ QOrganizerItem QOrganizerItemSkeletonEngine::item(const QOrganizerItemLocalId& i
     return QOrganizerItemManagerEngine::item(itemId, fetchHint, error);
 }
 
-bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSimulatorEngine::saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
     /*
         TODO
@@ -222,7 +222,7 @@ bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, const
 
 }
 
-bool QOrganizerItemSkeletonEngine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSimulatorEngine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
     /*
         TODO
@@ -237,32 +237,32 @@ bool QOrganizerItemSkeletonEngine::removeItems(const QList<QOrganizerItemLocalId
     return QOrganizerItemManagerEngine::removeItems(itemIds, errorMap, error);
 }
 
-QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSkeletonEngine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
+QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSimulatorEngine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
 {
     /* TODO - once you know what your engine will support, implement this properly.  One way is to call the base version, and add/remove things as needed */
     return QOrganizerItemManagerEngine::detailDefinitions(itemType, error);
 }
 
-QOrganizerItemDetailDefinition QOrganizerItemSkeletonEngine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
+QOrganizerItemDetailDefinition QOrganizerItemSimulatorEngine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
 {
     /* TODO - the default implementation just calls the base detailDefinitions function.  If that's inefficent, implement this */
     return QOrganizerItemManagerEngine::detailDefinition(definitionId, itemType, error);
 }
 
-bool QOrganizerItemSkeletonEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSimulatorEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error)
 {
     /* TODO - if you support adding custom fields, do that here.  Otherwise call the base functionality. */
     return QOrganizerItemManagerEngine::saveDetailDefinition(def, itemType, error);
 }
 
-bool QOrganizerItemSkeletonEngine::removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSimulatorEngine::removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error)
 {
     /* TODO - if you support removing custom fields, do that here.  Otherwise call the base functionality. */
     return QOrganizerItemManagerEngine::removeDetailDefinition(definitionId, itemType, error);
 }
 
 
-QOrganizerCollectionLocalId QOrganizerItemSkeletonEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
+QOrganizerCollectionLocalId QOrganizerItemSimulatorEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -280,7 +280,7 @@ QOrganizerCollectionLocalId QOrganizerItemSkeletonEngine::defaultCollectionId(QO
     return QOrganizerItemManagerEngine::defaultCollectionId(error);
 }
 
-QList<QOrganizerCollectionLocalId> QOrganizerItemSkeletonEngine::collectionIds(QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollectionLocalId> QOrganizerItemSimulatorEngine::collectionIds(QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -292,7 +292,7 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemSkeletonEngine::collectionIds(Q
     return QOrganizerItemManagerEngine::collectionIds(error);
 }
 
-QList<QOrganizerCollection> QOrganizerItemSkeletonEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemSimulatorEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -304,7 +304,7 @@ QList<QOrganizerCollection> QOrganizerItemSkeletonEngine::collections(const QLis
     return QOrganizerItemManagerEngine::collections(collectionIds, error);
 }
 
-bool QOrganizerItemSkeletonEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSimulatorEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
 {
     /*
         TODO
@@ -316,7 +316,7 @@ bool QOrganizerItemSkeletonEngine::saveCollection(QOrganizerCollection* collecti
     return QOrganizerItemManagerEngine::saveCollection(collection, error);
 }
 
-bool QOrganizerItemSkeletonEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSimulatorEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
     /*
         TODO
@@ -335,7 +335,7 @@ bool QOrganizerItemSkeletonEngine::removeCollection(const QOrganizerCollectionLo
     return QOrganizerItemManagerEngine::removeCollection(collectionId, error);
 }
 
-bool QOrganizerItemSkeletonEngine::startRequest(QOrganizerItemAbstractRequest* req)
+bool QOrganizerItemSimulatorEngine::startRequest(QOrganizerItemAbstractRequest* req)
 {
     /*
         TODO
@@ -377,7 +377,7 @@ bool QOrganizerItemSkeletonEngine::startRequest(QOrganizerItemAbstractRequest* r
     return QOrganizerItemManagerEngine::startRequest(req);
 }
 
-bool QOrganizerItemSkeletonEngine::cancelRequest(QOrganizerItemAbstractRequest* req)
+bool QOrganizerItemSimulatorEngine::cancelRequest(QOrganizerItemAbstractRequest* req)
 {
     /*
         TODO
@@ -387,7 +387,7 @@ bool QOrganizerItemSkeletonEngine::cancelRequest(QOrganizerItemAbstractRequest* 
     return QOrganizerItemManagerEngine::cancelRequest(req);
 }
 
-bool QOrganizerItemSkeletonEngine::waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs)
+bool QOrganizerItemSimulatorEngine::waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs)
 {
     /*
         TODO
@@ -404,7 +404,7 @@ bool QOrganizerItemSkeletonEngine::waitForRequestFinished(QOrganizerItemAbstract
     return QOrganizerItemManagerEngine::waitForRequestFinished(req, msecs);
 }
 
-void QOrganizerItemSkeletonEngine::requestDestroyed(QOrganizerItemAbstractRequest* req)
+void QOrganizerItemSimulatorEngine::requestDestroyed(QOrganizerItemAbstractRequest* req)
 {
     /*
         TODO
@@ -428,7 +428,7 @@ void QOrganizerItemSkeletonEngine::requestDestroyed(QOrganizerItemAbstractReques
     return QOrganizerItemManagerEngine::requestDestroyed(req);
 }
 
-bool QOrganizerItemSkeletonEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const
+bool QOrganizerItemSimulatorEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const
 {
     // TODO - the answer to the question may depend on the type
     Q_UNUSED(itemType);
@@ -448,14 +448,14 @@ bool QOrganizerItemSkeletonEngine::hasFeature(QOrganizerItemManager::ManagerFeat
     return false;
 }
 
-bool QOrganizerItemSkeletonEngine::isFilterSupported(const QOrganizerItemFilter& filter) const
+bool QOrganizerItemSimulatorEngine::isFilterSupported(const QOrganizerItemFilter& filter) const
 {
     // TODO if you engine can natively support the filter, return true.  Otherwise you should emulate support in the item{Ids} functions.
     Q_UNUSED(filter);
     return false;
 }
 
-QList<int> QOrganizerItemSkeletonEngine::supportedDataTypes() const
+QList<int> QOrganizerItemSimulatorEngine::supportedDataTypes() const
 {
     QList<int> ret;
     // TODO - tweak which data types this engine understands
@@ -467,7 +467,7 @@ QList<int> QOrganizerItemSkeletonEngine::supportedDataTypes() const
     return ret;
 }
 
-QStringList QOrganizerItemSkeletonEngine::supportedItemTypes() const
+QStringList QOrganizerItemSimulatorEngine::supportedItemTypes() const
 {
     // TODO - return which [predefined] types this engine supports
     QStringList ret;

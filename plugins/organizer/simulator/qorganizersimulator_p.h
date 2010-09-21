@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERSKELETON_P_H
-#define QORGANIZERSKELETON_P_H
+#ifndef QORGANIZERSIMULATOR_P_H
+#define QORGANIZERSIMULATOR_P_H
 
 //
 //  W A R N I N G
@@ -74,7 +74,7 @@
 
 QTM_USE_NAMESPACE
 
-class QOrganizerItemSkeletonFactory : public QObject, public QOrganizerItemManagerEngineFactory
+class QOrganizerItemSimulatorFactory : public QObject, public QOrganizerItemManagerEngineFactory
 {
   Q_OBJECT
   Q_INTERFACES(QtMobility::QOrganizerItemManagerEngineFactory)
@@ -85,32 +85,32 @@ class QOrganizerItemSkeletonFactory : public QObject, public QOrganizerItemManag
     QString managerName() const;
 };
 
-class QOrganizerItemSkeletonEngineData : public QSharedData
+class QOrganizerItemSimulatorEngineData : public QSharedData
 {
 public:
-    QOrganizerItemSkeletonEngineData()
+    QOrganizerItemSimulatorEngineData()
         : QSharedData()
     {
     }
 
-    QOrganizerItemSkeletonEngineData(const QOrganizerItemSkeletonEngineData& other)
+    QOrganizerItemSimulatorEngineData(const QOrganizerItemSimulatorEngineData& other)
         : QSharedData(other)
     {
     }
 
-    ~QOrganizerItemSkeletonEngineData()
+    ~QOrganizerItemSimulatorEngineData()
     {
     }
 };
 
-class QOrganizerItemSkeletonEngine : public QOrganizerItemManagerEngine
+class QOrganizerItemSimulatorEngine : public QOrganizerItemManagerEngine
 {
     Q_OBJECT
 
 public:
-    static QOrganizerItemSkeletonEngine *createSkeletonEngine(const QMap<QString, QString>& parameters);
+    static QOrganizerItemSimulatorEngine *createSimulatorEngine(const QMap<QString, QString>& parameters);
 
-    ~QOrganizerItemSkeletonEngine();
+    ~QOrganizerItemSimulatorEngine();
 
     /* URI reporting */
     QString managerName() const;
@@ -151,10 +151,10 @@ public:
     bool waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs);
 
 private:
-    QOrganizerItemSkeletonEngineData* d;
+    QOrganizerItemSimulatorEngineData* d;
 
-    friend class QOrganizerItemSkeletonFactory;
+    friend class QOrganizerItemSimulatorFactory;
 };
 
-#endif
+#endif // QORGANIZERSIMULATOR_P_H
 
