@@ -674,14 +674,7 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& i
     // Transform CCalEntry -> QOrganizerItem
     QOrganizerItem item;
     m_itemTransform.toItemL(*calEntry, &item);
-    CleanupStack::PopAndDestroy(calEntry);
     
-    // Set item id
-    QOrganizerItemId id;
-    id.setLocalId(itemId);
-    id.setManagerUri(managerUri());
-    item.setId(id);
-
     // Set instance origin
     if (item.type() == QOrganizerItemType::TypeEventOccurrence
         || item.type() == QOrganizerItemType::TypeTodoOccurrence) {
@@ -699,6 +692,13 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& i
         CleanupStack::PopAndDestroy(parentEntry);
         CleanupStack::PopAndDestroy(globalUid);
     }
+    CleanupStack::PopAndDestroy(calEntry);
+    
+    // Set item id
+    QOrganizerItemId id;
+    id.setLocalId(itemId);
+    id.setManagerUri(managerUri());
+    item.setId(id);    
 
     // Set collection id
     QOrganizerCollectionId cid;
