@@ -1007,7 +1007,7 @@ QStringList LandmarkUtility::categoryAttributeKeys()
  * list of searchable landmark attribute keys
  * 
  */
-QStringList LandmarkUtility::serachableLandmarkAttributeKeys()
+QStringList LandmarkUtility::searchableLandmarkAttributeKeys()
 {
     QStringList commonKeys = QStringList()
                              << "name"

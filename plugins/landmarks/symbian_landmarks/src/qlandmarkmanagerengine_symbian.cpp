@@ -469,14 +469,14 @@ QStringList QLandmarkManagerEngineSymbian::categoryAttributeKeys(QLandmarkManage
     return LandmarkUtility::categoryAttributeKeys();
 }
 
-QStringList QLandmarkManagerEngineSymbian::serachableLandmarkAttributeKeys(
+QStringList QLandmarkManagerEngineSymbian::searchableLandmarkAttributeKeys(
     QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
-    return LandmarkUtility::serachableLandmarkAttributeKeys();
+    return LandmarkUtility::searchableLandmarkAttributeKeys();
 }
 
 //protected methods

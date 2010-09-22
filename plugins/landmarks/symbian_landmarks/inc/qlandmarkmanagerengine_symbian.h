@@ -177,7 +177,7 @@ public:
 public:
     QStringList landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
     QStringList categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
-    QStringList serachableLandmarkAttributeKeys(QLandmarkManager::Error *error,
+    QStringList searchableLandmarkAttributeKeys(QLandmarkManager::Error *error,
         QString *errorString) const;
 public:
 

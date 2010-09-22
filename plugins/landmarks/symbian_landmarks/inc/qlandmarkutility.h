@@ -261,7 +261,7 @@ public:
      * or even be removed.
      *
      */
-    static QStringList serachableLandmarkAttributeKeys();
+    static QStringList searchableLandmarkAttributeKeys();
 
     /**
      * converts the attribute key string to symbian position field value. 
