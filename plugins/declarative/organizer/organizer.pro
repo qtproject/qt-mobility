@@ -34,7 +34,8 @@ HEADERS += qdeclarativeorganizermodel_p.h \
            qdeclarativeorganizer_p.h \
            qmetaobjectbuilder_p.h \
            qdeclarativeopenmetaobject_p.h \
-           qdeclarativeorganizeritemfilter_p.h
+           qdeclarativeorganizeritemfilter_p.h \
+           qdeclarativeorganizeritemmetaobject_p.h
 
 SOURCES += plugin.cpp \
            qmllorganizermodel.cpp \
@@ -42,7 +43,8 @@ SOURCES += plugin.cpp \
            qdeclarativeorganizeritemdetail.cpp \
            qdeclarativeorganizer.cpp \
            qmetaobjectbuilder.cpp \
-           qdeclarativeopenmetaobject.cpp
+           qdeclarativeopenmetaobject.cpp \
+           qdeclarativeorganizeritemmetaobject.cpp
 
 
 qmldir.files += $$PWD/qmldir
