@@ -64,10 +64,12 @@ cd $shell_path/../build/tests/bin
 ./tst_qservicemanager
 ./tst_qabstractsecuritysession
 ./tst_qservicecontext
+./tst_headers
 ./tst_icheck
 ./tst_qmetaobjectbuilder
 ./tst_qremoteserviceclassregister
 ./tst_qservicemanager_ipc
+./tst_qlatin1constant
 
 #BearerManagement
 ./tst_qnetworkconfiguration
@@ -88,10 +90,17 @@ cd $shell_path/../build/tests/bin
 ./tst_qnmeapositioninfosource_simulation
 ./tst_qnmeapositioninfosource_simulation_generic
 ./tst_qdeclarativeposition
+./tst_qgeoboundingbox
+./tst_qlandmarkfilehandler_gpx
+./tst_qlandmarkfilehandler_lmx
+./tst_qlandmarkmanagerengine
+./tst_qlandmarkmanagerengine_sqlite
+./tst_qlandmarkmanagerplugins
 
 #Landmarks
 ./tst_qlandmark
 ./tst_qlandmarkcategory
+./tst_qdeclarativelandmark
 
 #Publish and Subscribe
 ./tst_qmallocpool
@@ -115,6 +124,11 @@ cd $shell_path/../build/tests/bin
 
 #QMedia
 ./tst_qaudiocapturesource
+./tst_qaudiodeviceinfo
+./tst_qaudioformat
+./tst_qaudioinput
+./tst_qaudiooutput
+./tst_qcamera
 ./tst_qgraphicsvideoitem
 ./tst_qmediacontent
 ./tst_qmediaimageviewer
@@ -130,7 +144,11 @@ cd $shell_path/../build/tests/bin
 ./tst_qpaintervideosurface
 ./tst_qradiotuner
 ./tst_qvideowidget
-a
+./tst_qmediatimerange
+./tst_qvideoframe
+./tst_qvideosurfaceformat
+
+
 #QContacts
 ./tst_qcontact
 ./tst_qcontactactions
@@ -142,6 +160,7 @@ a
 ./tst_qcontactmanager
 ./tst_qcontactmanagerfiltering
 ./tst_qcontactmanagerplugins
+./tst_qcontactmemusage
 ./tst_qcontactrelationship
 ./tst_qvcard21writer
 ./tst_qvcard30writer
@@ -159,9 +178,41 @@ a
 ./tst_qmessage
 ./tst_qmessagestore
 ./tst_qmessagestorekeys
+./tst_qmessageservice
 
 #QOrganizer
 ./tst_qorganizeritemmanager
+./tst_qorganizercollection
+./tst_qorganizeritem
+./tst_qorganizeritemasync
+./tst_qorganizeritemdetail
+./tst_qorganizeritemdetaildefinition
+./tst_qorganizeritemfilter
+
+#QDocumentGallery
+./tst_qdocumentgallery
+./tst_qdeclarativedocumentgalleryitem
+./tst_qdeclarativedocumentgallerymodel
+./tst_qdeclarativedocumentgallerytype
+./tst_qgalleryabstractrequest
+./tst_qgalleryabstractresponse
+./tst_qgalleryfilter
+./tst_qgalleryitemrequest
+./tst_qgalleryquerymodel
+./tst_qgalleryqueryrequest
+./tst_qgalleryremoverequest
+./tst_qgalleryresource
+./tst_qgallerytrackerresultset
+./tst_qgallerytrackerschema
+./tst_qgallerytyperequest
+
+#Feedback
+./tst_qfeedbackactuator
+./tst_qfeedbackhapticseffect
+./tst_qfeedbackplugin
+
+#QSensor
+./tst_qsensor
 
 cd $SAVED_PWD
 
