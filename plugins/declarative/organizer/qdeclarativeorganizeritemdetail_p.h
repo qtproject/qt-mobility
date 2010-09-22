@@ -198,7 +198,7 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemGuid)
 Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemGuid::DetailName, "guid");
 
 //instance origin detail
-class QDeclarativeQrganizerItemInstanceOrigin : public QDeclarativeOrganizerItemDetail
+class QDeclarativeOrganizerItemInstanceOrigin : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
     Q_PROPERTY(QOrganizerItemLocalId parentLocalId READ parentLocalId WRITE setParentLocalId NOTIFY valueChanged)
@@ -206,7 +206,7 @@ class QDeclarativeQrganizerItemInstanceOrigin : public QDeclarativeOrganizerItem
 
 public:
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "instanceOrigin");
-    QDeclarativeQrganizerItemInstanceOrigin(QObject* parent)
+    QDeclarativeOrganizerItemInstanceOrigin(QObject* parent)
         :QDeclarativeOrganizerItemDetail(parent)
     {
     }
@@ -221,8 +221,8 @@ public:
 signals:
     void valueChanged();
 };
-QML_DECLARE_TYPE(QDeclarativeQrganizerItemInstanceOrigin)
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeQrganizerItemInstanceOrigin::DetailName, "instanceOrigin");
+QML_DECLARE_TYPE(QDeclarativeOrganizerItemInstanceOrigin)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemInstanceOrigin::DetailName, "instanceOrigin");
 
 //location detail
 class QDeclarativeOrganizerItemLocation : public QDeclarativeOrganizerItemDetail
@@ -537,7 +537,7 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemType)
 class QDeclarativeOrganizerJournalTimeRange : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
-    Q_PROPERTY(QDateTime type READ entryDateTime WRITE setEntryDateTime NOTIFY valueChanged)
+    Q_PROPERTY(QDateTime entryDateTime READ entryDateTime WRITE setEntryDateTime NOTIFY valueChanged)
 public:
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "journalTimeRange");
     QDeclarativeOrganizerJournalTimeRange(QObject* parent)
@@ -557,7 +557,7 @@ class QDeclarativeOrganizerTodoProgress : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
     Q_PROPERTY(Status status READ status WRITE setStatus NOTIFY valueChanged)
-    Q_PROPERTY(int percentageComplete READ percentageComplete WRITE setPercentageComplete NOTIFY valueChanged)
+    Q_PROPERTY(int percentage READ percentageComplete WRITE setPercentageComplete NOTIFY valueChanged)
     Q_PROPERTY(QDateTime finishedDateTime READ finishedDateTime WRITE setFinishedDateTime NOTIFY valueChanged)
     Q_ENUMS(Status)
 public:
