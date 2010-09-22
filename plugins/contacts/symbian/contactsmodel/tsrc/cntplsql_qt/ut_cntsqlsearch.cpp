@@ -1720,6 +1720,6 @@ void WritePart(const TDesC& s)
 
 
 #ifdef SQL_QT_TEST
-QTEST_APPLESS_MAIN(UT_CntSqlSearch)
+//QTEST_APPLESS_MAIN(UT_CntSqlSearch)
 #endif
 
