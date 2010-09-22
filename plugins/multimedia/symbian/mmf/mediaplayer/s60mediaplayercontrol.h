@@ -73,17 +73,21 @@ public:
     {
     }
     
+    enum TMediaType {Unknown, Video, Audio, Data};
+
     void setVolume(int volume) { m_volume = volume; }
     void setMuted(bool muted) { m_muted = muted; }
     void setPlaybackRate(int rate) { m_playbackRate = rate; }
     void setMediaStatus(QMediaPlayer::MediaStatus status) {m_mediaStatus=status;}
     void setAudioEndpoint(const QString& audioEndpoint) { m_audioEndpoint = audioEndpoint; }
+    void setMediaType(S60MediaSettings::TMediaType type) { m_mediaType = type; }
     
     int volume() const { return m_volume; }
     bool isMuted() const { return m_muted; }
     qreal playbackRate() const { return m_playbackRate; }
     QMediaPlayer::MediaStatus mediaStatus() const {return m_mediaStatus;}
     QString audioEndpoint() const { return m_audioEndpoint; }
+    S60MediaSettings::TMediaType mediaType() const { return m_mediaType; }
     
 private:
     int m_volume;
@@ -91,6 +95,7 @@ private:
     qreal m_playbackRate;
     QMediaPlayer::MediaStatus m_mediaStatus;
     QString m_audioEndpoint;
+    S60MediaSettings::TMediaType m_mediaType;
 };
 
 class S60MediaPlayerControl : public QMediaPlayerControl
@@ -123,14 +128,15 @@ public:
     virtual void setMedia(const QMediaContent&, QIODevice *);
     virtual void play();
     virtual void pause();
-    virtual void stop();  
-    S60MediaPlayerSession* session();
-    void setAudioEndpoint(const QString& name);
+    virtual void stop();
 
     // Own methods
+    S60MediaPlayerSession* session();
     void setVideoOutput(QObject *output);
     const S60MediaSettings& mediaControlSettings() const;
- 
+    void setAudioEndpoint(const QString& name);
+    void setMediaType(S60MediaSettings::TMediaType type);
+
 private:
     MS60MediaPlayerResolver &m_mediaPlayerResolver;
     S60MediaPlayerSession *m_session;
