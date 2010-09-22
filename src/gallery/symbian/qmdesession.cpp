@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 // Backend
-#include "qmdesession.h"
-#include "qgallerymdsutility.h"
+#include "qmdesession_p.h"
+#include "qgallerymdsutility_p.h"
 // API
 #include "qgalleryabstractrequest.h"
 // Symbian
@@ -206,5 +206,5 @@ void QMdeSession::RemoveObjectObserver( MMdEObjectObserver& observer )
     }
 }
 
-#include "moc_qmdesession.cpp"
+#include "moc_qmdesession_p.cpp"
 QTM_END_NAMESPACE

@@ -39,12 +39,23 @@
 **
 ****************************************************************************/
 
-#ifndef QMDEGALLERYTYPERESULTSET_H
-#define QMDEGALLERYTYPERESULTSET_H
+#ifndef QMDEGALLERYTYPERESULTSET_P_H
+#define QMDEGALLERYTYPERESULTSET_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #include <qstringlist.h>
 
-#include "qmdegalleryresultset.h"
+#include "qmdegalleryresultset_p.h"
 
 QTM_BEGIN_NAMESPACE
 

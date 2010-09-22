@@ -39,34 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef QMDEGALLERYITEMRESULTSET_H
-#define QMDEGALLERYITEMRESULTSET_H
+#ifndef QMDEGALLERYQUERYRESULTSET_P_H
+#define QMDEGALLERYQUERYRESULTSET_P_H
 
-#include "qmdegalleryresultset.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
+#include "qmdegalleryresultset_p.h"
+#include <qeventloop.h>
+#include <mdequery.h>
 #include <mdesession.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryItemRequest;
+class QGalleryQueryRequest;
 
-class QMDEGalleryItemResultSet : public QMDEGalleryResultSet,
+class QMDEGalleryQueryResultSet : public QMDEGalleryResultSet,
+public MMdEQueryObserver,
 public MMdEObjectObserver
 {
     Q_OBJECT
 public:
 
-    enum QMdeSessionObserverNotificationType
+    enum QMdeSessionObserverQueryNotificationType
     {
         ENotifyAdd    = 0x0001,
         ENotifyModify = 0x0002,
         ENotifyRemove = 0x0004
     };
 
-    
-    QMDEGalleryItemResultSet(QMdeSession *session, QObject *parent = 0);
-    ~QMDEGalleryItemResultSet();
+    QMDEGalleryQueryResultSet(QMdeSession *session, QObject *parent = 0);
+    ~QMDEGalleryQueryResultSet();
 
+    void HandleQueryNewResults( CMdEQuery &aQuery,
+        TInt aFirstNewItemIndex,
+        TInt aNewItemCount );
+
+    void HandleQueryCompleted( CMdEQuery& aQuery, TInt aError );
 #ifdef MDS_25_COMPILATION_ENABLED
     void HandleObjectNotification( CMdESession& aSession,
         TObserverNotificationType aType,
@@ -75,22 +92,33 @@ public:
     void HandleObjectAdded(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
     void HandleObjectModified(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
     void HandleObjectRemoved(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
-#endif
-    
-    void doHandleObjectNotificationL(CMdESession& aSession,
-        QMdeSessionObserverNotificationType aType,
-        const RArray<TItemId>& aObjectIdArray);
+#endif //MDS_25_COMPILATION_ENABLED
     
     void createQuery();
 
+private:
+    
+    void doHandleObjectNotificationL(CMdESession& aSession,
+        QMdeSessionObserverQueryNotificationType aType,
+        const RArray<TItemId>& aObjectIdArray);
+
+    void handleUpdatedResults();
 
 private:
-    QGalleryItemRequest *m_request;
-    CMdEObject *m_resultObject;
+    QGalleryQueryRequest *m_request;
+    CMdEObjectQuery *m_query;
+    QEventLoop m_eventLoop;
 
+    CMdELogicCondition *m_queryConditions;
     RArray<TItemId> m_currentObjectIDs;
+
+    bool m_launchUpdateQuery;
+    RPointerArray<CMdEObject> m_updatedItemArray;
+    RArray<TItemId> m_updatedObjectIDs;
+
+    bool m_query_running;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QMDEGALLERYITEMRESULTSET_H
+#endif // QMDEGALLERYQUERYRESULTSET_H

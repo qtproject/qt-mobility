@@ -23,9 +23,9 @@ SOURCES += $$PWD/qmdegalleryresultset.cpp \
            $$PWD/qmdesession.cpp \
            $$PWD/qdocumentgallery_symbian.cpp
 
-PRIVATE_HEADERS += $$PWD/qmdegalleryresultset.h \
-           $$PWD/qgallerymdsutility.h \
-           $$PWD/qmdegallerytyperesultset.h \
-           $$PWD/qmdegalleryitemresultset.h \
-           $$PWD/qmdegalleryqueryresultset.h \
-           $$PWD/qmdesession.h
+PRIVATE_HEADERS += $$PWD/qmdegalleryresultset_p.h \
+           $$PWD/qgallerymdsutility_p.h \
+           $$PWD/qmdegallerytyperesultset_p.h \
+           $$PWD/qmdegalleryitemresultset_p.h \
+           $$PWD/qmdegalleryqueryresultset_p.h \
+           $$PWD/qmdesession_p.h

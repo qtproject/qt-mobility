@@ -40,9 +40,9 @@
 ****************************************************************************/
 
 //Backend
-#include "qmdegalleryitemresultset.h"
-#include "qgallerymdsutility.h"
-#include "qmdesession.h"
+#include "qmdegalleryitemresultset_p.h"
+#include "qgallerymdsutility_p.h"
+#include "qmdesession_p.h"
 //API
 #include "qdocumentgallery.h"
 #include "qgalleryitemrequest.h"
@@ -156,5 +156,5 @@ void QMDEGalleryItemResultSet::createQuery()
     }
 }
 
-#include "moc_qmdegalleryitemresultset.cpp"
+#include "moc_qmdegalleryitemresultset_p.cpp"
 QTM_END_NAMESPACE

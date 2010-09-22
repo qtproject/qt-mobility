@@ -40,9 +40,9 @@
 ****************************************************************************/
 
 //Backend
-#include "qmdegallerytyperesultset.h"
-#include "qgallerymdsutility.h"
-#include "qmdesession.h"
+#include "qmdegallerytyperesultset_p.h"
+#include "qgallerymdsutility_p.h"
+#include "qmdesession_p.h"
 //API
 #include "qgallerytyperequest.h"
 
@@ -163,5 +163,5 @@ bool QMDEGalleryTypeResultSet::fetchLast()
     return false;
 }
 
-#include "moc_qmdegallerytyperesultset.cpp"
+#include "moc_qmdegallerytyperesultset_p.cpp"
 QTM_END_NAMESPACE

@@ -50,11 +50,11 @@
 #include <QtCore/qmetaobject.h>
 
 //Backend
-#include "qgallerymdsutility.h"
-#include "qmdegallerytyperesultset.h"
-#include "qmdegalleryitemresultset.h"
-#include "qmdegalleryqueryresultset.h"
-#include "qmdesession.h"
+#include "qgallerymdsutility_p.h"
+#include "qmdegallerytyperesultset_p.h"
+#include "qmdegalleryitemresultset_p.h"
+#include "qmdegalleryqueryresultset_p.h"
+#include "qmdesession_p.h"
 
 QTM_BEGIN_NAMESPACE
 

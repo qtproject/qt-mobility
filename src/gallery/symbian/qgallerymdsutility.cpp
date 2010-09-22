@@ -41,7 +41,7 @@
 
 #include <qurl.h>
 //Backend
-#include "qgallerymdsutility.h"
+#include "qgallerymdsutility_p.h"
 //Symbian
 #include <mdeconstants.h>
 #include <mdesession.h>

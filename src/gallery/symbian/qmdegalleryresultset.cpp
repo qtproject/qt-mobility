@@ -41,9 +41,9 @@
 
 #include "qgalleryresource.h"
 //Backend
-#include "qmdegalleryresultset.h"
-#include "qgallerymdsutility.h"
-#include "qmdesession.h"
+#include "qmdegalleryresultset_p.h"
+#include "qgallerymdsutility_p.h"
+#include "qmdesession_p.h"
 //Symbian
 #include <mdeproperty.h>
 #include <mdeobject.h>
@@ -261,5 +261,5 @@ bool QMDEGalleryResultSet::fetchLast()
     }
 }
 
-#include "moc_qmdegalleryresultset.cpp"
+#include "moc_qmdegalleryresultset_p.cpp"
 QTM_END_NAMESPACE

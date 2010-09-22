@@ -39,67 +39,69 @@
 **
 ****************************************************************************/
 
-#ifndef QMDESESSION_H
-#define QMDESESSION_H
+#ifndef QMDEGALLERYITEMRESULTSET_P_H
+#define QMDEGALLERYITEMRESULTSET_P_H
 
-#include <qmobilityglobal.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include "qgalleryqueryrequest.h"
+#include "qmdegalleryresultset_p.h"
 
-#include <QObject>
-#include <QEventloop>
 #include <mdesession.h>
-#include <mdequery.h>
-#include <e32std.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryAbstractResponse;
+class QGalleryItemRequest;
 
-class QMdeSession : public QObject, public MMdESessionObserver
+class QMDEGalleryItemResultSet : public QMDEGalleryResultSet,
+public MMdEObjectObserver
 {
     Q_OBJECT
 public:
 
-    QMdeSession(QObject *parent = 0);
-    virtual ~QMdeSession();
+    enum QMdeSessionObserverNotificationType
+    {
+        ENotifyAdd    = 0x0001,
+        ENotifyModify = 0x0002,
+        ENotifyRemove = 0x0004
+    };
 
-public: // From MMdESessionObserver
-    /**
-     * For checking MdE initialization status
-     * @param aSession  MdE Session which was opened
-     * @param aError  Error code from the opening
-     */
-    void HandleSessionOpened( CMdESession &aSession, TInt aError );
+    
+    QMDEGalleryItemResultSet(QMdeSession *session, QObject *parent = 0);
+    ~QMDEGalleryItemResultSet();
 
-    /**
-     * For checking MdE session errors
-     * @param aSession  MdE Session which was opened
-     * @param aError  Error which has occurred
-     */
-    void HandleSessionError( CMdESession &aSession, TInt aError );
+#ifdef MDS_25_COMPILATION_ENABLED
+    void HandleObjectNotification( CMdESession& aSession,
+        TObserverNotificationType aType,
+        const RArray<TItemId>& aObjectIdArray );
+#else    
+    void HandleObjectAdded(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
+    void HandleObjectModified(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
+    void HandleObjectRemoved(CMdESession& aSession, const RArray<TItemId>& aObjectIdArray);
+#endif
+    
+    void doHandleObjectNotificationL(CMdESession& aSession,
+        QMdeSessionObserverNotificationType aType,
+        const RArray<TItemId>& aObjectIdArray);
+    
+    void createQuery();
 
-    CMdENamespaceDef& GetDefaultNamespaceDefL();
-
-    CMdEObject* GetFullObjectL( const unsigned int id );
-
-    void CommitObjectL( CMdEObject& object );
-
-    CMdEObjectQuery* NewObjectQueryL(MMdEQueryObserver *observer,
-        QGalleryQueryRequest *request,
-        int &error);
-
-    int RemoveObject( const unsigned int itemId );
-
-    void AddItemAddedObserverL( MMdEObjectObserver &observer, CMdELogicCondition *condition );
-    void AddItemChangedObserverL( MMdEObjectObserver &observer, RArray<TItemId> &idArray );
-    void RemoveObjectObserver( MMdEObjectObserver &observer );
 
 private:
+    QGalleryItemRequest *m_request;
+    CMdEObject *m_resultObject;
 
-    QEventLoop m_eventLoop;
-    CMdESession *m_cmdeSession;
+    RArray<TItemId> m_currentObjectIDs;
 };
+
 QTM_END_NAMESPACE
 
-#endif // QMDESESSION_H
+#endif // QMDEGALLERYITEMRESULTSET_H

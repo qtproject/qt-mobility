@@ -40,9 +40,9 @@
 ****************************************************************************/
 
 //Backend
-#include "qmdegalleryqueryresultset.h"
-#include "qgallerymdsutility.h"
-#include "qmdesession.h"
+#include "qmdegalleryqueryresultset_p.h"
+#include "qgallerymdsutility_p.h"
+#include "qmdesession_p.h"
 //API
 #include "qdocumentgallery.h"
 #include "qgalleryqueryrequest.h"
@@ -328,5 +328,5 @@ void QMDEGalleryQueryResultSet::handleUpdatedResults()
     m_currentObjectIDs = m_updatedObjectIDs;
 }
 
-#include "moc_qmdegalleryqueryresultset.cpp"
+#include "moc_qmdegalleryqueryresultset_p.cpp"
 QTM_END_NAMESPACE
