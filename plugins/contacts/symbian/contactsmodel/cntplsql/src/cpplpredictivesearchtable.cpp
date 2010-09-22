@@ -97,8 +97,9 @@ void CPplPredictiveSearchTableBase::DeleteL(const CContactItem& aItem,
 Default implementation returns empty list.
 */
 QStringList CPplPredictiveSearchTableBase::GetTableSpecificFields(
-	const CContactItem& /*aItem*/) const
+	const CContactItem& /*aItem*/, bool& aRequiredFieldsExist) const
 	{
+	aRequiredFieldsExist = true;
 	QStringList emptyList;
 	return emptyList;
 	}
@@ -204,10 +205,15 @@ void CPplPredictiveSearchTableBase::WriteToDbL(const CContactItem& aItem)
 
 	QStringList tokens;
 	QList<QChar> tables;
+	bool requiredFieldsExist(false);
 	QT_TRYCATCH_LEAVING({
-		QStringList tableSpecificFields = GetTableSpecificFields(aItem);
-		tokens = GetTokens(tableSpecificFields, firstNameAsNbr, lastNameAsNbr);
-		tables = DetermineTables(tokens);
+		QStringList tableSpecificFields =
+			GetTableSpecificFields(aItem, requiredFieldsExist);
+		if (requiredFieldsExist)
+			{
+			tokens = GetTokens(tableSpecificFields, firstNameAsNbr, lastNameAsNbr);
+			tables = DetermineTables(tokens);
+			}
 		});
 
 	HBufC* tableName(NULL);
