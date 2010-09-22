@@ -132,6 +132,9 @@ private slots:  // Test cases
     void modifyItemInstance_data(){ addManagers(); };
     void modifyItemInstance();
 
+    void itemsInDeletedCollection_data(){ addManagers(); };
+    void itemsInDeletedCollection();
+
     // TODO: test all known properties
     //void collectionProperties_data();
     //void collectionProperties();
@@ -760,6 +763,46 @@ void tst_symbianomcollections::modifyItemInstance()
     QCOMPARE(m_om->itemInstances().at(0).displayLabel(), QString("modifyiteminstance"));
     QCOMPARE(m_om->itemInstances().at(1).displayLabel(), QString("secondinstance"));
     QCOMPARE(m_om->itemInstances().at(2).displayLabel(), QString("modifyiteminstance"));
+}
+
+void tst_symbianomcollections::itemsInDeletedCollection()
+{
+    // Save a collection
+    QOrganizerCollection c;
+    c.setMetaData("Name", "itemsInDeletedCollection");
+    c.setMetaData("FileName", "c:itemsindeletedcollection");
+    QVERIFY(m_om->saveCollection(&c));
+
+    // Save items to be used for testing
+    QOrganizerItem itemSave = createItem(QOrganizerItemType::TypeEvent,
+                                      QString("saveitem"),
+                                      QDateTime::currentDateTime().addMSecs(3600));
+    QVERIFY(m_om->saveItem(&itemSave, c.id().localId()));
+
+    QOrganizerItem itemRemove = createItem(QOrganizerItemType::TypeEvent,
+                                      QString("removeitem"),
+                                      QDateTime::currentDateTime().addMSecs(3600));
+    QVERIFY(m_om->saveItem(&itemRemove, c.id().localId()));
+
+    QOrganizerItem itemFetch= createItem(QOrganizerItemType::TypeEvent,
+                                      QString("fethcitem"),
+                                      QDateTime::currentDateTime().addMSecs(3600));
+    QVERIFY(m_om->saveItem(&itemFetch, c.id().localId()));
+
+    // Remove the collection
+    QVERIFY(m_om->removeCollection(c.localId()));
+
+    // Try to modify an item in the deleted collection
+    QVERIFY(!m_om->saveItem(&itemSave));
+
+    // Try to remove item from the deleted collection
+    QVERIFY(!m_om->removeItem(itemRemove.localId()));
+
+    // Try to fetch an item from the deleted collection
+    QVERIFY(m_om->item(itemFetch.localId()).isEmpty());
+
+    // Try to fetch item instances from the deleted collection
+    QVERIFY(m_om->itemInstances(itemFetch).count() == 0);
 }
 
 /*!
