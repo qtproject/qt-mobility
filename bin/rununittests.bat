@@ -46,21 +46,19 @@ set PATH=%BATCH_PATH%..\lib;%PATH%
 
 cd %BATCH_PATH%..\build\tests\bin
 
-::service framework
-tst_qserviceinterfacedescriptor.exe
+::ServiceFramework
+tst_servicemetadata.exe
 tst_servicedatabase.exe
 tst_databasemanager.exe
-tst_servicemetadata.exe
-tst_qservicefilter.exe
 tst_qservicemanager.exe
+tst_qservicefilter.exe
+tst_qserviceinterfacedescriptor.exe
 tst_qabstractsecuritysession.exe
 tst_qservicecontext.exe
-tst_headers.exe
-tst_icheck.exe
 tst_qmetaobjectbuilder.exe
-tst_qremoteserviceclassregister.exe
+tst_icheck.exe
 tst_qservicemanager_ipc.exe
-tst_qlatin1constant.exe
+tst_qremoteserviceclassregister.exe
 
 ::BearerManagement
 tst_qnetworkconfiguration.exe
@@ -68,37 +66,26 @@ tst_qnetworkconfigurationmanager.exe
 tst_qnetworksession.exe
 
 ::Location
-tst_qgeoareamonitor.exe
 tst_qgeocoordinate.exe
 tst_qgeopositioninfo.exe
-tst_qgeopositioninfosource.exe
 tst_qgeosatelliteinfo.exe
 tst_qgeosatelliteinfosource.exe
+tst_qgeopositioninfosource.exe
+tst_qgeoareamonitor.exe
 tst_qlocationutils.exe
 tst_dummynmeapositioninfosource.exe
 tst_qnmeapositioninfosource_realtime.exe
 tst_qnmeapositioninfosource_realtime_generic.exe
 tst_qnmeapositioninfosource_simulation.exe
 tst_qnmeapositioninfosource_simulation_generic.exe
-tst_qdeclarativeposition.exe
-tst_qgeoboundingbox.exe
-tst_qlandmarkfilehandler_gpx.exe
-tst_qlandmarkfilehandler_lmx.exe
-tst_qlandmarkmanagerengine.exe
-tst_qlandmarkmanagerengine_sqlite.exe
-tst_qlandmarkmanagerplugins.exe
 
 ::Landmarks
 tst_qlandmark.exe
 tst_qlandmarkcategory.exe
-tst_qdeclarativelandmark.exe
 
 ::Publish and Subscribe
-tst_qmallocpool.exe
-tst_qpacket.exe
-tst_qpacketprotocol.exe
 tst_qvaluespace.exe
-tst_qvaluespacepublisher.exe
+tst_qvaluespaceprovider.exe
 tst_qvaluespacesubscriber.exe
 tst_qvaluespacesubscriber_oop.exe
 tst_qsystemreadwritelock.exe
@@ -109,17 +96,12 @@ tst_qcrmlparser.exe
 tst_qsystemdeviceinfo.exe
 tst_qsystemdisplayinfo.exe
 tst_qsysteminfo.exe
-tst_qsystemstorageinfo.exe
 tst_qsystemnetworkinfo.exe
 tst_qsystemscreensaver.exe
+tst_qsystemstorageinfo.exe
 
 ::QMedia
 tst_qaudiocapturesource.exe
-tst_qaudiodeviceinfo.exe
-tst_qaudioformat.exe
-tst_qaudioinput.exe
-tst_qaudiooutput.exe
-tst_qcamera.exe
 tst_qgraphicsvideoitem.exe
 tst_qmediacontent.exe
 tst_qmediaimageviewer.exe
@@ -135,9 +117,6 @@ tst_qmediaserviceprovider.exe
 tst_qpaintervideosurface.exe
 tst_qradiotuner.exe
 tst_qvideowidget.exe
-tst_qmediatimerange.exe
-tst_qvideoframe.exe
-tst_qvideosurfaceformat.exe
 
 ::QContacts
 tst_qcontact.exe
@@ -150,59 +129,21 @@ tst_qcontactfilter.exe
 tst_qcontactmanager.exe
 tst_qcontactmanagerfiltering.exe
 tst_qcontactmanagerplugins.exe
-tst_qcontactmemusage.exe
 tst_qcontactrelationship.exe
 tst_qvcard21writer.exe
 tst_qvcard30writer.exe
-tst_qversit.exe
 tst_qversitcontactexporter.exe
 tst_qversitcontactimporter.exe
 tst_qversitdocument.exe
-tst_qversitorganizerexporter.exe
-tst_qversitorganizerimporter.exe
 tst_qversitproperty.exe
 tst_qversitreader.exe
 tst_qversitwriter.exe
+tst_versitutils.exe
 
 ::QMessaging
 tst_qmessage.exe
 tst_qmessagestore.exe
 tst_qmessagestorekeys.exe
-tst_qmessageservice.exe
-
-::QOrganizer
-tst_qorganizeritemmanager.exe
-tst_qorganizercollection.exe
-tst_qorganizeritem.exe
-tst_qorganizeritemasync.exe
-tst_qorganizeritemdetail.exe
-tst_qorganizeritemdetaildefinition.exe
-tst_qorganizeritemfilter.exe
-
-::QDocumentGallery
-tst_qdocumentgallery.exe
-tst_qdeclarativedocumentgalleryitem.exe
-tst_qdeclarativedocumentgallerymodel.exe
-tst_qdeclarativedocumentgallerytype.exe
-tst_qgalleryabstractrequest.exe
-tst_qgalleryabstractresponse.exe
-tst_qgalleryfilter.exe
-tst_qgalleryitemrequest.exe
-tst_qgalleryquerymodel.exe
-tst_qgalleryqueryrequest.exe
-tst_qgalleryremoverequest.exe
-tst_qgalleryresource.exe
-tst_qgallerytrackerresultset.exe
-tst_qgallerytrackerschema.exe
-tst_qgallerytyperequest.exe
-
-::Feedback
-tst_qfeedbackactuator.exe
-tst_qfeedbackhapticseffect.exe
-tst_qfeedbackplugin.exe
-
-::QSensor
-tst_qsensor.exe
 
 cd %SAVED_PWD%
 
