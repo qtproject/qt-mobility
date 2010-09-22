@@ -153,7 +153,7 @@ LandmarkManagerEngineSymbianPrivate::LandmarkManagerEngineSymbianPrivate(
 
         HBufC* dbName = m_LandmarkDb->DatabaseUriLC();
         m_dbFilename = QString((QChar*) (dbName->Ptr()), dbName->Length());
-        CleanupStack::Pop(dbName);
+        CleanupStack::PopAndDestroy(dbName);
     );
 
     m_DbEventHandler.AddObsever(this);

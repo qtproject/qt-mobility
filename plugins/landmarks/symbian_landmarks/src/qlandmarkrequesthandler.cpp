@@ -540,6 +540,7 @@ LandmarkRequestHandler::~LandmarkRequestHandler()
     }
     iRequestList.Close();
     iRequestListLock.Signal();
+    iRequestListLock.Close();
 }
 
 TInt LandmarkRequestHandler::AddAsyncRequest(QLandmarkAbstractRequest *aQtReq,

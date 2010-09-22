@@ -269,22 +269,29 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
 
     // set coordinate
     QGeoCoordinate coord = qtLandmark->coordinate();
-    TLocality local;
     if (isValidLat(coord.latitude()) && isValidLong(coord.longitude())) {
+        TLocality local;
         local.SetCoordinate(coord.latitude(), coord.longitude(), coord.altitude());
         symbianLandmark.SetPositionL(local);
     }
-    else {
+    if (!isValidLat(coord.latitude()) && isValidLong(coord.longitude())) {
         User::Leave(KErrArgument);
+    }
+    else if (!isValidLong(coord.longitude()) && isValidLat(coord.latitude())) {
+        User::Leave(KErrArgument);
+    }
+    else {
+        symbianLandmark.RemoveLandmarkAttributes(CPosLandmark::EPosition);
     }
 
     // set coverage radius
     qreal rad = qtLandmark->radius();
-    if (rad > 0) {
-        symbianLandmark.SetCoverageRadius(rad);
+    if (rad < 0) {
+        // radius cannot be -ve
+        User::Leave(KErrArgument);
     }
     else {
-        User::Leave(KErrArgument);
+        symbianLandmark.SetCoverageRadius(rad);
     }
 
     // set landmark description
@@ -464,6 +471,7 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
     // set coordinate
     QGeoCoordinate coord = qtLandmark->coordinate();
     TLocality local;
+
     if (isValidLat(coord.latitude()) && isValidLong(coord.longitude())) {
         local.SetCoordinate(coord.latitude(), coord.longitude(), coord.altitude());
         symbianLandmark->SetPositionL(local);
@@ -944,16 +952,31 @@ bool LandmarkUtility::isGlobalCategoryId(CPosLmCategoryManager* catMgr,
 {
     bool result = false;
     QStringList globalCategories;
-    globalCategories << "3000" << "6000" << "9000" << "12000" << "15000" << "18000" << "21000"
-        << "24000" << "27000" << "30000" << "33000" << "36000" << "39000" << "42000" << "45000";
+    globalCategories << "3000";
+    globalCategories << "6000";
+    globalCategories << "9000";
+    globalCategories << "12000";
+    globalCategories << "15000";
+    globalCategories << "18000";
+    globalCategories << "21000";
+    globalCategories << "24000";
+    globalCategories << "27000";
+    globalCategories << "30000";
+    globalCategories << "33000";
+    globalCategories << "36000";
+    globalCategories << "39000";
+    globalCategories << "42000";
+    globalCategories << "45000";
 
     TPosLmItemId glCatId = convertToSymbianLandmarkCategoryId(qtCategoryId);
+    qDebug() << "aCatId = " << glCatId;
 
     for (int i = 0; i < globalCategories.size(); ++i) {
         TPosLmGlobalCategory gblCat = globalCategories.operator [](i).toUShort();
         TPosLmItemId gId = KPosLmNullItemId;
         TRAPD(err, gId= catMgr->GetGlobalCategoryL(gblCat);)
         if (err == KErrNone) {
+            qDebug() << "GlobalId = " << gblCat << " catId = " << gId;
             if (gId != KPosLmNullItemId && glCatId == gId) {
                 result = true;
                 break;
@@ -970,24 +993,24 @@ bool LandmarkUtility::isGlobalCategoryId(CPosLmCategoryManager* catMgr,
  */
 QStringList LandmarkUtility::landmarkAttributeKeys()
 {
-    QStringList commonKeys = QStringList()
-                             << "name"
-                             << "description"
-                             << "iconUrl"
-                             << "radius"
-                             << "phoneNumber"
-                             << "url"
-                             << "latitude"
-                             << "longitude"
-                             << "altitude"
-                             << "country"
-                             << "countryCode"
-                             << "state"
-                             << "county"
-                             << "city"
-                             << "district"
-                             << "street"
-                             << "postCode";
+    QStringList commonKeys = QStringList();
+    commonKeys << "name";
+    commonKeys << "description";
+    commonKeys << "iconUrl";
+    commonKeys << "radius";
+    commonKeys << "phoneNumber";
+    commonKeys << "url";
+    commonKeys << "latitude";
+    commonKeys << "longitude";
+    commonKeys << "altitude";
+    commonKeys << "country";
+    commonKeys << "countryCode";
+    commonKeys << "state";
+    commonKeys << "county";
+    commonKeys << "city";
+    commonKeys << "district";
+    commonKeys << "street";
+    commonKeys << "postCode";
     return commonKeys;
 }
 
@@ -997,9 +1020,9 @@ QStringList LandmarkUtility::landmarkAttributeKeys()
  */
 QStringList LandmarkUtility::categoryAttributeKeys()
 {
-    QStringList commonKeys = QStringList()
-                             << "name"
-                             << "iconUrl";
+    QStringList commonKeys = QStringList();
+    commonKeys << "name";
+    commonKeys << "iconUrl";
     return commonKeys;
 }
 
@@ -1009,19 +1032,19 @@ QStringList LandmarkUtility::categoryAttributeKeys()
  */
 QStringList LandmarkUtility::searchableLandmarkAttributeKeys()
 {
-    QStringList commonKeys = QStringList()
-                             << "name"
-                             << "description"
-                             << "phoneNumber"
-                             << "url"
-                             << "country"
-                             << "countryCode"
-                             << "state"
-                             << "county"
-                             << "city"
-                             << "district"
-                             << "street"
-                             << "postCode";
+    QStringList commonKeys = QStringList();
+    commonKeys << "name";
+    commonKeys << "description";
+    commonKeys << "phoneNumber";
+    commonKeys << "url";
+    commonKeys << "country";
+    commonKeys << "countryCode";
+    commonKeys << "state";
+    commonKeys << "county";
+    commonKeys << "city";
+    commonKeys << "district";
+    commonKeys << "street";
+    commonKeys << "postCode";
     return commonKeys;
 }
 

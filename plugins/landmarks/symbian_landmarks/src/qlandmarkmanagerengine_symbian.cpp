@@ -627,10 +627,6 @@ void QLandmarkManagerEngineSymbian::handleLandmarkEvent(LandmarkEventObserver::l
         emit dataChanged();
         break;
     }
-    default:
-    {
-        break;
-    }
     } // switch closure
 }
 
