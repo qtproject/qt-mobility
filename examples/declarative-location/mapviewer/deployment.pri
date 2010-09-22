@@ -6,3 +6,7 @@ symbian {
 }
 my_files.sources = $$my_src_dir/mapviewer.qml
 DEPLOYMENT += my_files
+
+install_files.files += $$my_src_dir/mapviewer.qml
+install_files.path = $$QT_MOBILITY_EXAMPLES
+INSTALLS += install_files

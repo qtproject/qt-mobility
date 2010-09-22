@@ -66,11 +66,6 @@ CntDbInfo::~CntDbInfo()
     commAddrExtraInfoMap.clear();
 }
 
-QContactManagerEngine* CntDbInfo::engine()
-{
-    return m_engine;
-}
-
 bool CntDbInfo::SupportsDetail(QString definitionName, QString fieldName)
 {
     QString fieldId = QString("%1.%2").arg(definitionName, fieldName);

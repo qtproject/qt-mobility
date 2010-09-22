@@ -66,7 +66,6 @@ Rectangle {
     
     Text {
         id: title
-        height: 20
         width: 200
         anchors.top: parent.top
         anchors.left: parent.left
@@ -126,7 +125,9 @@ Rectangle {
                     anchors.left: parent.left
                     anchors.topMargin: 5
                     anchors.leftMargin: 3
-                    text: " <b>Service:</b> " + serviceName + "  (" + versionNumber + ")"
+                    text: " <b>Service:</b> " + serviceName + "  (" +
+                                                majorVersion + "." +
+                                                minorVersion + ")"
                 }
                 
                 Text { 
@@ -162,8 +163,8 @@ Rectangle {
         //! [0]
         ListView {
             id: serviceListView
-            height: 100
-            width: 260
+            height: mainPage.height * 4/10 
+            width: mainPage.width - dialScreen.width - 26
             anchors.topMargin: 5
             anchors.leftMargin: 5
             anchors.rightMargin: 5
@@ -180,7 +181,8 @@ Rectangle {
     ServiceList {
         id: dialerServiceList
         interfaceName: "com.nokia.qt.examples.Dialer"
-        minVersion: "1.0"
+        majorVersion: 1
+        minorVersion: 0
     }
     //! [5]
 }

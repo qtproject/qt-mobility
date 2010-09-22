@@ -77,7 +77,7 @@ Item {
 
     Rectangle {
         id: dialNumber
-        height: 20
+        height: dialText.height + 5
         width: numberPad.width
         anchors.top: parent.top
         anchors.left: parent.left
@@ -87,6 +87,7 @@ Item {
         border.color: "black"
         
         Text { 
+            id: dialText
             text: dialString
             anchors.centerIn: parent
         }

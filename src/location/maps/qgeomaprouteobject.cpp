@@ -42,7 +42,7 @@
 #include "qgeomaprouteobject.h"
 #include "qgeomaprouteobject_p.h"
 
-#define DEFAULT_ROUTE_DETAIL_LEVEL 20
+#define DEFAULT_ROUTE_DETAIL_LEVEL 6
 
 QTM_BEGIN_NAMESPACE
 
@@ -158,7 +158,7 @@ void QGeoMapRouteObject::setPen(const QPen &pen)
     will skip members of the list until the manhattan distance between the
     start point and the end point of the line is at least \a detailLevel.
 
-    The default value of this property is 20.
+    The default value of this property is 6.
 */
 quint32 QGeoMapRouteObject::detailLevel() const
 {

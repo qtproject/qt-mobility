@@ -65,6 +65,7 @@ class Q_LOCATION_EXPORT QGeoMapData : public QObject
     Q_PROPERTY(QSizeF windowSize READ windowSize WRITE setWindowSize NOTIFY windowSizeChanged)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
     Q_PROPERTY(QGraphicsGeoMap::MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
+    Q_PROPERTY(QGraphicsGeoMap::ConnectivityMode connectivityMode READ connectivityMode WRITE setConnectivityMode NOTIFY connectivityModeChanged)
     Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
 
 public:
@@ -86,6 +87,9 @@ public:
 
     virtual void setMapType(QGraphicsGeoMap::MapType mapType);
     virtual QGraphicsGeoMap::MapType mapType() const;
+
+    virtual void setConnectivityMode(QGraphicsGeoMap::ConnectivityMode connectivityMode);
+    virtual QGraphicsGeoMap::ConnectivityMode connectivityMode() const;
 
     QList<QGeoMapObject*> mapObjects() const;
     void addMapObject(QGeoMapObject *mapObject);
@@ -131,6 +135,7 @@ Q_SIGNALS:
     void zoomLevelChanged(qreal zoomLevel);
     void centerChanged(const QGeoCoordinate &coordinate);
     void mapTypeChanged(QGraphicsGeoMap::MapType mapType);
+    void connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode);
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapData)

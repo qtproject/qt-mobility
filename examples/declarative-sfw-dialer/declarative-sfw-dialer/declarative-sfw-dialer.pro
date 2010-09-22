@@ -1,11 +1,8 @@
-include(deployment.pri)
 include(declarative-sfw-dialer.pri)
+include(deployment.pri)
 
 QT += declarative network script
-TEMPLATE=app
-
 SOURCES += qmldialer.cpp
-
 TARGET = qmldialer
 
 symbian {

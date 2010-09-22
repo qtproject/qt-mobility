@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,29 +39,53 @@
 **
 ****************************************************************************/
 
-#ifndef CNTDISPLAYLABELSQLFILTER_H_
-#define CNTDISPLAYLABELSQLFILTER_H_
+#ifndef TESTRUNNER_H
+#define TESTRUNNER_H
 
-#include <qtcontactsglobal.h>
-#include <qcontactmanager.h>
-#include <qcontactdetailfilter.h>
+#include <QXmlDefaultHandler>
 
-QTM_USE_NAMESPACE
 
-class CntDisplayLabelSqlFilter
+class TestRunner : public QXmlDefaultHandler
 {
-public:
-    CntDisplayLabelSqlFilter();
-    virtual ~CntDisplayLabelSqlFilter();
+public: // Constructors and destructor
+    TestRunner(const QString& name);
+    ~TestRunner();
+       
+public: // New functions
+    
+    int runTests(QObject& testObject);
+    void printResults();
+    
+protected: // From QXmlContentHandler 
+    bool startElement(
+        const QString& namespaceURI,
+        const QString& localName,
+        const QString& qName,
+        const QXmlAttributes& atts);
+    
+    bool endElement(
+        const QString& namespaceURI,
+        const QString& localName,
+        const QString& qName);
+    
+    bool characters(const QString& ch);
 
-    void createSqlQuery(const QContactDetailFilter& filter,
-                        QString& sqlQuery,
-                        QContactManager::Error* error);
-private:
-    void createQuerySingleSearchValue(QString& sqlQuery, const QString &searchValue, const QStringList &columns) const;
-    void createQueryMultipleSearchValues(QString& sqlQuery, const QStringList &searchValues, const QStringList &columns) const;
-    QString createSubQuery(const QString &searchValue, const QString &column) const;
-    QString columnName(const QPair<QLatin1String, QLatin1String> &detail) const;
+private: // New functions
+
+    void parse(const QString& fileName);
+
+private: // Data
+    QStringList mTestRunParams;
+    QString mHomeDir;
+    int mTestCount;
+    QStringList mErrors;
+    bool mParsingIncidentElement;
+    bool mParsingDescriptionElement;
+    bool mCurrentTestFailed;
+    QString mCurrentTestName;
+    QString mCurrentTestFile;
+    int mCurrentTestFailureLine;
 };
 
-#endif /* CNTDISPLAYLABELSQLFILTER_H_ */
+
+#endif // TESTRUNNER_H

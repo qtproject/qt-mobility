@@ -68,8 +68,7 @@ symbian: {
         inc/filtering/cntsymbianfiltersql.h \
         inc/filtering/cntsymbiansorterdbms.h \
         inc/filtering/cntsymbiansrvconnection.h \
-        inc/filtering/cntdisplaylabelsqlfilter.h
-        
+                
     SOURCES += \
         src/transform/cnttransformcontact.cpp \
         src/transform/cnttransformcontactdata.cpp \
@@ -107,7 +106,6 @@ symbian: {
         src/filtering/cntsymbianfiltersql.cpp \
         src/filtering/cntsymbiansorterdbms.cpp \
         src/filtering/cntsymbiansrvconnection.cpp \
-        src/filtering/cntdisplaylabelsqlfilter.cpp \
         src/cntsymbianengine.cpp \
         src/cntabstractrelationship.cpp \
         src/cntrelationshipgroup.cpp \

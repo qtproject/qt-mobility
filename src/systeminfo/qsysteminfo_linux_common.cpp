@@ -452,7 +452,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
             const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
-                const QFileInfo wiFi(devFile + "/wireless");
+                const QFileInfo wiFi(devFile + "/phy80211");
                 const QFileInfo fi("/proc/net/route");
                 if(wiFi.exists() && fi.exists()) {
                     QFile rx(fi.absoluteFilePath());
@@ -589,7 +589,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
             const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
-                const QFileInfo fi(devFile + "/wireless");
+                const QFileInfo fi(devFile + "/phy80211");
                 if(fi.exists()) {
                     QFile rx(devFile + "/address");
                     if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -671,23 +671,25 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
-            QString result;
-            const QString baseSysDir = "/sys/class/net/";
-            const QDir wDir(baseSysDir);
-            const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
-            foreach(const QString dir, dirs) {
-                const QString devFile = baseSysDir + dir;
-                const QFileInfo fi(devFile + "/wireless/link");
-                if(fi.exists()) {
-                    QFile rx(fi.absoluteFilePath());
-                    if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                        QTextStream in(&rx);
-                        in >> result;
-                        rx.close();
-                        return result.toInt();
+            QString iface = interfaceForMode(QSystemNetworkInfo::WlanMode).name();
+            QFile file("/proc/net/wireless");
 
-                    }
+            if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+                return 0;
+            QTextStream in(&file);
+            QString line = in.readLine();
+            while (!line.isNull()) {
+                if(line.left(6).contains(iface)) {
+                    QString token = line.section(" ",4,5).simplified();
+                    token.chop(1);
+                    bool ok;
+                    int percent = (int)rint ((log (token.toInt(&ok)) / log (92)) * 100.0);
+                    if(ok)
+                        return percent;
+                    else
+                        return 0;
                 }
+                line = in.readLine();
             }
         }
         break;
@@ -1330,7 +1332,8 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
 
 
 
-QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
+QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject *parent)
+    : QObject(parent)
 {
     halIsAvailable = halAvailable();
     setConnection();
@@ -1368,22 +1371,24 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
-
         QStringList list = iface.findDeviceByCapability("battery");
         if(!list.isEmpty()) {
+            QString lastdev;
             foreach(const QString dev, list) {
+                if(lastdev == dev)
+                    continue;
+                lastdev = dev;
                 halIfaceDevice = new QHalDeviceInterface(dev);
                 if (halIfaceDevice->isValid()) {
                     const QString batType = halIfaceDevice->getPropertyString("battery.type");
-                    if(batType == "primary" || batType == "pda") {
-                        if(halIfaceDevice->setConnections() ) {
+                    if(batType == "primary" || batType == "pda" &&
+                       halIfaceDevice->setConnections() ) {
                             if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                         this,SLOT(halChanged(int,QVariantList)))) {
                                 qDebug() << "connection malfunction";
                             }
-                        }
-                        return;
                     }
+                    return;
                 }
             }
         }
@@ -1394,6 +1399,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
                 halIfaceDevice = new QHalDeviceInterface(dev);
                 if (halIfaceDevice->isValid()) {
                     if(halIfaceDevice->setConnections() ) {
+                        qDebug() << "connect ac_adapter" ;
                         if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                     this,SLOT(halChanged(int,QVariantList)))) {
                             qDebug() << "connection malfunction";
@@ -1410,6 +1416,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
                 halIfaceDevice = new QHalDeviceInterface(dev);
                 if (halIfaceDevice->isValid()) {
                     if(halIfaceDevice->setConnections()) {
+                        qDebug() << "connect battery" <<  halIfaceDevice->getPropertyString("battery.type");
                         if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                     this,SLOT(halChanged(int,QVariantList)))) {
                             qDebug() << "connection malfunction";

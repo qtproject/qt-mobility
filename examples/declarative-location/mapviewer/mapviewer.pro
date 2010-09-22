@@ -1,7 +1,7 @@
 QT += declarative network
 SOURCES += $$PWD/qmlmapviewer.cpp
-include($$PWD/deployment.pri)
 include($$PWD/../declarative-location.pri)
+include($$PWD/deployment.pri)
 
 TARGET = qml_mapviewer
 
