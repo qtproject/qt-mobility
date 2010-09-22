@@ -15,6 +15,7 @@ TARGET = qml_camera
 RESOURCES += declarative-camera.qrc
 
 symbian {
+    load(data_caging_paths)
     TARGET.CAPABILITY = NetworkServices Location ReadUserData WriteUserData
     TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
 }
