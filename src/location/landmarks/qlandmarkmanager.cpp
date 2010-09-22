@@ -985,15 +985,6 @@ bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
 
 /*!
     Returns the list of attribute keys the landmarks will have.
-    If extended attributes are enabled (provided manager supported them)
-    landmarks will possess  extra keys in addition to the standard cross platform keys.
-
-    Note: When saving a landark with extended attributes, all attributes much match
-    those of the manager otherwise a QLandmarkManager::BadArgumentError is set.
-    If the landmark does not have one of the extended attributes in its list,
-    then that particular attribute is ignored.  This differs from the semantics
-    for custom attributes where if a custom attribute is not present then it
-    is removed when the landmark is saved.
 */
 QStringList QLandmarkManager::landmarkAttributeKeys() const
 {
@@ -1007,10 +998,24 @@ QStringList QLandmarkManager::landmarkAttributeKeys() const
     return d->engine->landmarkAttributeKeys(&(d->errorCode), &(d->errorString));
 }
 
+
+/*!
+    Returns a list of landmark attribute keys that may be used in a
+    QLandmarkAttributeFilter.
+*/
+QStringList QLandmarkManager::searchableLandmarkAttributeKeys() const
+{
+    Q_D(const QLandmarkManager);
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+    }
+
+    return d->engine->searchableLandmarkAttributeKeys(&(d->errorCode), &(d->errorString));
+}
+
 /*!
     Returns the list of attribute keys the categories will have.
-    If extended attributes are enabled (provided the manager supports them),
-    categories will possess extra keys in addition to the standad cross platform keys.
 */
 QStringList QLandmarkManager::categoryAttributeKeys() const
 {
