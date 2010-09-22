@@ -266,7 +266,10 @@ void EventEditPage::saveClicked()
     m_organizerEvent.setStartDateTime(start);
     m_organizerEvent.setEndDateTime(end);
     m_listOfEvents.append(m_organizerEvent);
-    m_manager->saveItem(&m_organizerEvent, m_collections[m_calendarComboBox->currentIndex()].id().localId());
+    if (m_calendarComboBox->currentIndex() > 0)
+        m_manager->saveItem(&m_organizerEvent, m_collections[m_calendarComboBox->currentIndex()].localId());
+    else
+        m_manager->saveItem(&m_organizerEvent);
     if (m_manager->error())
         QMessageBox::warning(this, "Failed!", QString("Failed to save event!\n(error code %1)").arg(m_manager->error()));
     else
