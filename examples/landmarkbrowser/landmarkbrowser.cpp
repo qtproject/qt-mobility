@@ -10,16 +10,22 @@
 
 #include "landmarkbrowser.h"
 #include "landmarkadddialog.cpp"
+#include "categoryadddialog.h"
 
 QTM_USE_NAMESPACE
 
 LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
-    :currentOffset(0),
+    :currentLandmarkOffset(0),
+     currentCategoryOffset(0),
      limit(20)
 {
     setupUi(this);
     table->insertColumn(3);
     table->hideColumn(3);
+
+    categoryTable->removeColumn(2);
+    categoryTable->hideColumn(1);
+    categoryTable->setHorizontalHeaderItem(0, new QTableWidgetItem("Name"));
 
     manager = new QLandmarkManager(this);
 
@@ -43,19 +49,29 @@ LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
      QObject::connect(landmarkSave, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
                 this,SLOT(fetchHandler(QLandmarkAbstractRequest::State)));
 
+     categoryFetch = new QLandmarkCategoryFetchRequest(manager, this);
+     QObject::connect(categoryFetch, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
+                      this,SLOT(fetchHandler(QLandmarkAbstractRequest::State)));
+
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    categoryTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     table->setHorizontalHeaderItem(0, new QTableWidgetItem("Lat"));
     table->setHorizontalHeaderItem(1, new QTableWidgetItem("Long"));
     table->setHorizontalHeaderItem(2, new QTableWidgetItem("Name"));
 
-    prevButton->setEnabled(false);
+    prevLandmarkButton->setEnabled(false);
     progress = new QProgressDialog (tr("Please wait..."),tr("Cancel"),0,0, this);
     progress->setWindowTitle(tr("Loading Landmarks"));
     QObject::connect(progress,SIGNAL(canceled()), this, SLOT(cancel()));
     landmarkFetch->setLimit(limit);
-    landmarkFetch->setOffset(currentOffset);
+    landmarkFetch->setOffset(currentLandmarkOffset);
     landmarkFetch->start();
+
+    categoryFetch->setLimit(limit);
+    categoryFetch->setOffset(currentCategoryOffset);
+    categoryFetch->start();
+
     progress->show();
 
     #ifdef Q_OS_SYMBIAN
@@ -76,6 +92,8 @@ LandmarkBrowser::~LandmarkBrowser()
     landmarkRemove =0;
     delete landmarkSave;
     landmarkSave =0;
+    delete categoryFetch;
+    categoryFetch = 0;
     delete progress;
     progress =0;
     delete manager;
@@ -122,7 +140,7 @@ void LandmarkBrowser::on_exportLandmarks_clicked()
     }
 }
 
-void LandmarkBrowser::on_deleteLandmarks_clicked()
+void LandmarkBrowser::on_deleteLandmarksButton_clicked()
 {
     QItemSelectionModel *selection  = table->selectionModel();
     QModelIndexList selectedIndexes = selection->selectedRows();
@@ -144,10 +162,40 @@ void LandmarkBrowser::on_deleteLandmarks_clicked()
         return;
 
     manager->removeLandmarks(deleteIds);
-    updateTable(manager->landmarks(QLandmarkFilter(), deleteIds.count(), currentOffset+table->rowCount()));
+    updateTable(manager->landmarks(QLandmarkFilter(), deleteIds.count(), currentLandmarkOffset+table->rowCount()));
     updateRowLabels();
     if (table->rowCount() < limit)
-        nextButton->setEnabled(false);
+        nextLandmarkButton->setEnabled(false);
+}
+
+void LandmarkBrowser::on_deleteCategoriesButton_clicked()
+{
+    QItemSelectionModel *selection  = categoryTable->selectionModel();
+    QModelIndexList selectedIndexes = selection->selectedRows();
+
+    QList<QLandmarkCategoryId> deleteIds;
+
+    QLandmarkCategoryId id;
+    QModelIndex index;
+    while(selectedIndexes.count() > 0) {
+        index = selectedIndexes.takeLast();
+        id.setManagerUri(manager->managerUri());
+        id.setLocalId(categoryTable->item(index.row(),1)->text());
+
+        deleteIds.append(id);
+        categoryTable->removeRow(index.row());
+        selectedIndexes = categoryTable->selectionModel()->selectedRows();
+    }
+
+    if (deleteIds.count() == 0)
+        return;
+
+    for (int i =0;i < deleteIds.count(); ++i)
+        manager->removeCategory(deleteIds.at(i));
+    updateCategoryTable(manager->categories(deleteIds.count(), currentCategoryOffset+categoryTable->rowCount()));
+    updateCategoryRowLabels();
+    if (categoryTable->rowCount() < limit)
+        nextCategoryButton->setEnabled(false);
 }
 
 void LandmarkBrowser::on_addLandmark_clicked()
@@ -161,7 +209,7 @@ void LandmarkBrowser::on_addLandmark_clicked()
     manager->saveLandmark(&lm);
 
     if (table->rowCount() == limit)
-        nextButton->setEnabled(true);
+        nextLandmarkButton->setEnabled(true);
 
     if (table->rowCount() < limit) {
         table->insertRow(table->rowCount());
@@ -173,6 +221,24 @@ void LandmarkBrowser::on_addLandmark_clicked()
     }
 }
 
+void LandmarkBrowser::on_addCategoryButton_clicked()
+{
+    CategoryAddDialog categoryAddDialog(this);
+    if (!categoryAddDialog.exec()) {
+        return;
+    }
+    QLandmarkCategory category = categoryAddDialog.category();
+    manager->saveCategory(&category);
+    if (manager->error() == QLandmarkManager::AlreadyExistsError) {
+        QMessageBox::warning(this,"Warning", "Add Category Failed: category already Exists", QMessageBox::Ok, QMessageBox::NoButton);
+        return;
+    }
+
+    categoryFetch->setOffset(currentCategoryOffset);
+    categoryFetch->start();
+    progress->setWindowTitle(tr("Loading Categories"));
+    progress->show();
+}
 
 void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
 {
@@ -184,7 +250,7 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
         switch (request->type()) {
             case QLandmarkAbstractRequest::ImportRequest : {
                     if (request->error() == QLandmarkManager::NoError) {
-                        landmarkFetch->setOffset(currentOffset);
+                        landmarkFetch->setOffset(currentLandmarkOffset);
                         landmarkFetch->start();
                     } else if (request->error() == QLandmarkManager::CancelError) {
                             // do nothing
@@ -209,15 +275,15 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
             }
             case QLandmarkAbstractRequest::LandmarkFetchRequest: {
                     if (landmarkFetch->error() == QLandmarkManager::NoError) {
-                        if (currentOffset < limit)
-                            prevButton->setEnabled(false);
+                        if (currentLandmarkOffset < limit)
+                            prevLandmarkButton->setEnabled(false);
                         else
-                            prevButton->setEnabled(true);
+                            prevLandmarkButton->setEnabled(true);
 
                         if (landmarkFetch->landmarks().count() < limit)
-                            nextButton->setEnabled(false);
+                            nextLandmarkButton->setEnabled(false);
                         else
-                            nextButton->setEnabled(true);
+                            nextLandmarkButton->setEnabled(true);
 
                         table->setUpdatesEnabled(false);
                         for(int i = table->rowCount() -1;  i >= 0; --i) {
@@ -238,6 +304,37 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                     progress->hide();
                 break;
             }
+        case QLandmarkAbstractRequest::CategoryFetchRequest: {
+                if (categoryFetch->error() == QLandmarkManager::NoError) {
+                    if (currentCategoryOffset < limit)
+                        prevCategoryButton->setEnabled(false);
+                    else
+                        prevCategoryButton->setEnabled(true);
+
+                    if (categoryFetch->categories().count() < limit)
+                        nextCategoryButton->setEnabled(false);
+                    else
+                        nextCategoryButton->setEnabled(true);
+
+                    categoryTable->setUpdatesEnabled(false);
+                    for (int i = categoryTable->rowCount() -1; i>=0; --i) {
+                        if (i %20 ==0)
+                            qApp->processEvents();
+                        categoryTable->removeRow(i);
+                    }
+
+                    QList<QLandmarkCategory> cats;
+                    cats = categoryFetch->categories();
+                    updateCategoryTable(cats);
+
+                    categoryTable->setUpdatesEnabled(true);
+                } else {
+                    QMessageBox::warning(this, "Warning", "Category Fetch Failed", QMessageBox::Ok, QMessageBox::NoButton);
+                }
+                updateCategoryRowLabels();
+                if (tabWidget->currentIndex() == 1)
+                    progress->hide();
+            }
         }
     }
 }
@@ -254,27 +351,55 @@ void LandmarkBrowser::updateRowLabels()
 {
     QStringList labels;
     for (int i=0; i < table->rowCount(); ++i)
-        labels << QString::number(currentOffset + i);
+        labels << QString::number(currentLandmarkOffset + i);
     table->setVerticalHeaderLabels(labels);
 }
 
-void LandmarkBrowser::on_nextButton_clicked()
+void LandmarkBrowser::updateCategoryRowLabels()
 {
-    currentOffset = currentOffset + limit;
-    landmarkFetch->setOffset(currentOffset);
+    QStringList labels;
+    for (int i=0; i < categoryTable->rowCount(); ++i)
+        labels << QString::number(currentCategoryOffset + i);
+    categoryTable->setVerticalHeaderLabels(labels);
+}
+
+void LandmarkBrowser::on_nextLandmarkButton_clicked()
+{
+    currentLandmarkOffset = currentLandmarkOffset + limit;
+    landmarkFetch->setOffset(currentLandmarkOffset);
     landmarkFetch->start();
     progress->setWindowTitle(tr("Loading Landmarks"));
     progress->show();
 }
 
-void LandmarkBrowser::on_prevButton_clicked()
+void LandmarkBrowser::on_prevLandmarkButton_clicked()
 {
-    currentOffset = currentOffset - limit;
-    if (currentOffset < 0)
-        currentOffset = 0;
-    landmarkFetch->setOffset(currentOffset);
+    currentLandmarkOffset = currentLandmarkOffset - limit;
+    if (currentLandmarkOffset < 0)
+        currentLandmarkOffset = 0;
+    landmarkFetch->setOffset(currentLandmarkOffset);
     landmarkFetch->start();
     progress->setWindowTitle(tr("Loading Landmarks"));
+    progress->show();
+}
+
+void LandmarkBrowser::on_nextCategoryButton_clicked()
+{
+    currentCategoryOffset = currentCategoryOffset + limit;
+    categoryFetch->setOffset(currentCategoryOffset);
+    categoryFetch->start();
+    progress->setWindowTitle(tr("Loading Categories"));
+    progress->show();
+}
+
+void LandmarkBrowser::on_prevCategoryButton_clicked()
+{
+    currentCategoryOffset = currentCategoryOffset - limit;
+    if (currentCategoryOffset < 0)
+        currentCategoryOffset = 0;
+    categoryFetch->setOffset(currentLandmarkOffset);
+    categoryFetch->start();
+    progress->setWindowTitle(tr("Loading Categories"));
     progress->show();
 }
 
@@ -288,6 +413,20 @@ void LandmarkBrowser::updateTable(const QList<QLandmark> &lms)
         table->setItem(table->rowCount()-1,1,new QTableWidgetItem(QString::number(lm.coordinate().longitude(),'f',2)));
         table->setItem(table->rowCount()-1,2,new QTableWidgetItem(lm.name()));
         table->setItem(table->rowCount()-1,3,new QTableWidgetItem(lm.landmarkId().localId()));
+
+        if (i %20)
+            qApp->processEvents();
+    }
+}
+
+void LandmarkBrowser::updateCategoryTable(const QList<QLandmarkCategory> &cats)
+{
+    QLandmarkCategory cat;
+    for ( int i =0; i < cats.count(); ++i) {
+        cat = cats.at(i);
+        categoryTable->insertRow(categoryTable->rowCount());
+        categoryTable->setItem(categoryTable->rowCount()-1,0,new QTableWidgetItem(cat.name()));
+        categoryTable->setItem(categoryTable->rowCount()-1,1,new QTableWidgetItem(cat.categoryId().localId()));
 
         if (i %20)
             qApp->processEvents();
