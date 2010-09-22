@@ -67,13 +67,13 @@ class QDeclarativeOrganizerItemDetail;
 class QDeclarativeOrganizerItem : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY (QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> details READ details NOTIFY detailsChanged);
-    Q_PROPERTY (uint itemId READ itemId NOTIFY itemIdChanged)
-    Q_PROPERTY (QString type READ type NOTIFY typeChanged)
-    Q_PROPERTY (QString displayLabel READ displayLabel WRITE setDisplayLabel NOTIFY typeChanged)
-    Q_PROPERTY (QString description READ description WRITE setDescription NOTIFY typeChanged)
-    Q_PROPERTY (QStringList comments READ comments WRITE addComment NOTIFY typeChanged)
-    Q_PROPERTY (QString guid READ guid WRITE setGuid NOTIFY typeChanged)
+    Q_PROPERTY (QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> details READ details NOTIFY valueChanged);
+    Q_PROPERTY (uint itemId READ itemId NOTIFY valueChanged)
+    Q_PROPERTY (QString type READ type NOTIFY valueChanged)
+    Q_PROPERTY (QString displayLabel READ displayLabel WRITE setDisplayLabel NOTIFY valueChanged)
+    Q_PROPERTY (QString description READ description WRITE setDescription NOTIFY valueChanged)
+    Q_PROPERTY (QStringList comments READ comments WRITE addComment NOTIFY valueChanged)
+    Q_PROPERTY (QString guid READ guid WRITE setGuid NOTIFY valueChanged)
     Q_CLASSINFO("DefaultProperty", "details")
 
 public:
@@ -108,8 +108,7 @@ public:
     void setGuid(const QString& guid);
     QDeclarativeOrganizerItemMetaObject* metaObject() const;
 signals:
-    void detailsChanged();
-    void iItemIdChanged();
+    void valueChanged();
 private:
     QDeclarativeOrganizerItemMetaObject* d;
     friend class QDeclarativeOrganizerItemMetaObject;
@@ -127,8 +126,8 @@ class QDeclarativeOrganizerEvent : public QDeclarativeOrganizerItem
     Q_PROPERTY(QString locationName READ locationName WRITE setLocationName NOTIFY valueChanged)
     Q_PROPERTY(QString locationAddress READ locationAddress WRITE setLocationAddress NOTIFY valueChanged)
     Q_PROPERTY(QString locationGeoCoordinates READ locationGeoCoordinates WRITE setLocationGeoCoordinates NOTIFY valueChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> recurrenceRules READ recurrenceRules NOTIFY recurrenceRulesChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> exceptionRules READ exceptionRules NOTIFY exceptionRulesChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> recurrenceRules READ recurrenceRules NOTIFY valueChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> exceptionRules READ exceptionRules NOTIFY valueChanged)
     Q_PROPERTY(QVariantList recurrenceDates READ recurrenceDates WRITE setRecurrenceDates NOTIFY valueChanged)
     Q_PROPERTY(QVariantList exceptionDates  READ exceptionDates WRITE setExceptionDates NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemPriority::Priority priority READ priority WRITE setPriority NOTIFY valueChanged)
@@ -136,190 +135,6 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "event");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "events");
 
-    explicit QDeclarativeOrganizerEvent(QObject *parent = 0)
-        :QDeclarativeOrganizerItem(parent)
-    {
-
-    }
-
-    void setStartDateTime(const QDateTime& startDateTime)
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerEventTimeRange::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            detail->setProperty("startDateTime", startDateTime);
-    }
-
-    QDateTime startDateTime() const
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerEventTimeRange::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            return detail->property("startDateTime");
-        return QDateTime();
-    }
-
-    void setEndDateTime(const QDateTime& endDateTime)
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerEventTimeRange::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            detail->setProperty("endDateTime", endDateTime);
-    }
-
-    QDateTime endDateTime() const
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerEventTimeRange::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            return detail->property("endDateTime");
-        return QDateTime();
-    }
-
-    void setTimeSpecified(bool isTimeSpecified)
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerEventTimeRange::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            detail->setProperty("isTimeSpecified", isTimeSpecified);
-    }
-
-    bool isTimeSpecified() const
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerEventTimeRange::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            return detail->property("isTimeSpecified");
-        return false;
-    }
-
-    QDeclarativeListProperty<QOrganizerItemRecurrenceRule> recurrenceRules()
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemRecurrence::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            return detail->property("recurrenceRules");
-
-        return QDeclarativeListProperty<QOrganizerItemRecurrenceRule>();
-    }
-
-    QDeclarativeListProperty<QOrganizerItemRecurrenceRule> exceptionRules()
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemRecurrence::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            return detail->property("exceptionRules");
-
-        return QDeclarativeListProperty<QOrganizerItemRecurrenceRule>();
-    }
-
-    QVariantList recurrenceDates() const
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemRecurrence::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            return detail->property("recurrenceDates");
-        return QVariantList();
-    }
-
-    void setRecurrenceDates(const QVariantList& dates)
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemRecurrence::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            detail->setProperty("recurrenceDates", dates);
-    }
-
-    void setExceptionDates(const QVariantList& dates)
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemRecurrence::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            detail->setProperty("exceptionDates", dates);
-    }
-
-    QVariantList exceptionDates() const
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemRecurrence::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            return detail->property("exceptionDates");
-        return QVariantList();
-    }
-
-    void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemPriority::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            detail->setProperty("priority", priority);
-    }
-
-    QDeclarativeOrganizerItemPriority::Priority priority() const
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemPriority::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            return detail->property("priority");
-        return QDeclarativeOrganizerItemPriority::MediumPriority;
-    }
-
-    QString locationName() const
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemLocation::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            return detail->property("locationName");
-        return QString();
-    }
-    void setLocationName(const QString& locationName)
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemLocation::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-           detail->setProperty("locationName", locationName);
-    }
-
-    QString locationAddress() const
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemLocation::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            return detail->property("address");
-        return QString();
-    }
-    void setLocationAddress(const QString& locationAddress)
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemLocation::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            detail->setProperty("address", locationAddress);
-    }
-
-    QString locationGeoCoordinates() const
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemLocation::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            return detail->property("geoLocation");
-        return QString();
-    }
-
-    void setLocationGeoCoordinates(const QString& locationCoordinates)
-    {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemLocation::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            detail->setProperty("geoLocation", locationCoordinates);
-    }
-
-signals:
-    void detailsChanged();
-
-};
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEvent::ItemName, "event");
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEvent::ItemGroupName, "events");
-
-//event occurrence
-class QDeclarativeOrganizerEventOccurrence : public QDeclarativeOrganizerItem
-{
-    Q_OBJECT
-    Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
-    Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime NOTIFY valueChanged)
-    Q_PROPERTY(bool isTimeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
-    Q_PROPERTY(QString locationName READ locationName WRITE setLocationName NOTIFY valueChanged)
-    Q_PROPERTY(QString locationAddress READ locationAddress WRITE setLocationAddress NOTIFY valueChanged)
-    Q_PROPERTY(QString locationGeoCoordinates READ locationGeoCoordinates WRITE setLocationGeoCoordinates NOTIFY valueChanged)
-    Q_PROPERTY(QDeclarativeOrganizerItemPriority::Priority priority READ priority WRITE setPriority NOTIFY valueChanged)
-    Q_PROPERTY(uint parentId READ parentLocalId WRITE setParentLocalId NOTIFY valueChanged)
-public:
-    Q_DECLARE_LATIN1_CONSTANT(ItemName, "eventOccurrence");
-    Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "eventOccurrences");
-
-    void setParentLocalId(const QOrganizerItemLocalId& parentId);
-    QOrganizerItemLocalId parentLocalId() const;
-    void setOriginalDate(const QDate& date);
-    QDate originalDate() const;
     explicit QDeclarativeOrganizerEvent(QObject *parent = 0)
         :QDeclarativeOrganizerItem(parent)
     {
@@ -407,119 +222,419 @@ public:
 
     QString locationAddress() const
     {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemLocation::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            return detail->property("address");
-        return QString();
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemLocation, "address", QString())
     }
     void setLocationAddress(const QString& locationAddress)
     {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemLocation::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            detail->setProperty("address", locationAddress);
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemLocation, "address", locationAddress)
     }
 
     QString locationGeoCoordinates() const
     {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemLocation::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            return detail->property("geoLocation");
-        return QString();
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemLocation, "geoLocation", QString())
     }
 
     void setLocationGeoCoordinates(const QString& locationCoordinates)
     {
-        QDeclarativeOrganizerItemDetail* detail = property(QDeclarativeOrganizerItemLocation::DetailName).value<QDeclarativeOrganizerItemDetail*>();
-        if (detail)
-            detail->setProperty("geoLocation", locationCoordinates);
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET   (QDeclarativeOrganizerItemLocation, "geoLocation", locationCoordinates)
     }
 
 signals:
-    void detailsChanged();
+    void valueChanged();
+
+};
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEvent::ItemName, "event");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEvent::ItemGroupName, "events");
+QML_DECLARE_TYPE(QDeclarativeOrganizerEvent)
+
+//event occurrence
+class QDeclarativeOrganizerEventOccurrence : public QDeclarativeOrganizerItem
+{
+    Q_OBJECT
+    Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
+    Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime NOTIFY valueChanged)
+    Q_PROPERTY(bool isTimeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
+    Q_PROPERTY(QString locationName READ locationName WRITE setLocationName NOTIFY valueChanged)
+    Q_PROPERTY(QString locationAddress READ locationAddress WRITE setLocationAddress NOTIFY valueChanged)
+    Q_PROPERTY(QString locationGeoCoordinates READ locationGeoCoordinates WRITE setLocationGeoCoordinates NOTIFY valueChanged)
+    Q_PROPERTY(QDeclarativeOrganizerItemPriority::Priority priority READ priority WRITE setPriority NOTIFY valueChanged)
+    Q_PROPERTY(uint parentId READ parentLocalId WRITE setParentLocalId NOTIFY valueChanged)
+    Q_PROPERTY(QDate originalDate READ originalDate WRITE setOriginalDate NOTIFY valueChanged)
+public:
+    Q_DECLARE_LATIN1_CONSTANT(ItemName, "eventOccurrence");
+    Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "eventOccurrences");
+
+    explicit QDeclarativeOrganizerEvent(QObject *parent = 0)
+        :QDeclarativeOrganizerItem(parent)
+    {
+
+    }
+
+    void setParentLocalId(uint parentId)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemInstanceOrigin, "parentLocalId", parentId)
+    }
+
+    uint parentLocalId() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemInstanceOrigin, "parentLocalId", 0)
+    }
+    void setOriginalDate(const QDate& date)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemInstanceOrigin, "originalDate", date)
+    }
+
+    QDate originalDate() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemInstanceOrigin, "originalDate", QDate())
+    }
+
+    void setStartDateTime(const QDateTime& startDateTime)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTimeRange, "startDateTime", startDateTime)
+    }
+
+    QDateTime startDateTime() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTimeRange, "startDateTime", QDateTime())
+    }
+
+    void setEndDateTime(const QDateTime& endDateTime)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTimeRange, "endDateTime", endDateTime)
+    }
+
+    QDateTime endDateTime() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTimeRange, "endDateTime", QDateTime())
+    }
+
+    void setTimeSpecified(bool isTimeSpecified)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTimeRange, "isTimeSpecified", isTimeSpecified)
+    }
+
+    bool isTimeSpecified() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTimeRange, "isTimeSpecified", false)
+    }
+
+    void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", priority)
+    }
+
+    QDeclarativeOrganizerItemPriority::Priority priority() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemPriority, "priority", QDeclarativeOrganizerItemPriority::MediumPriority)
+    }
+
+    QString locationName() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemLocation, "locationName", QString())
+    }
+    void setLocationName(const QString& locationName)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemLocation, "locationName", locationName)
+    }
+
+    QString locationAddress() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemLocation, "address", QString())
+    }
+    void setLocationAddress(const QString& locationAddress)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemLocation, "address", locationAddress)
+    }
+
+    QString locationGeoCoordinates() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemLocation, "geoLocation", QString())
+    }
+
+    void setLocationGeoCoordinates(const QString& locationCoordinates)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET   (QDeclarativeOrganizerItemLocation, "geoLocation", locationCoordinates)
+    }
+
+signals:
+    void valueChanged();
 };
 Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEventOccurrence::ItemName, "eventOccurrence");
 Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEventOccurrence::ItemGroupName, "eventOccurrences");
+QML_DECLARE_TYPE(QDeclarativeOrganizerEventOccurrence)
 
 //journal
-class Q_ORGANIZER_EXPORT QOrganizerJournal : public QOrganizerItem
+class QDeclarativeOrganizerJournal : public QDeclarativeOrganizerItem
 {
+    Q_OBJECT
+    Q_PROPERTY(QDateTime dateTime READ dateTime WRITE setDateTime NOTIFY valueChanged)
 public:
-    Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerJournal, QOrganizerItemType::TypeJournal)
+    Q_DECLARE_LATIN1_CONSTANT(ItemName, "journal");
+    Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "journals");
+    explicit QDeclarativeOrganizerJournal(QObject *parent = 0)
+        :QDeclarativeOrganizerItem(parent)
+    {
 
-    // XXX TODO: research whether journal is a single point in time, or can cover a period of time...
-    void setDateTime(const QDateTime& dateTime);
-    QDateTime dateTime() const;
+    }
+    void setDateTime(const QDateTime& dateTime)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerJournalTimeRange, "entryDateTime", dateTime)
+    }
+
+    QDateTime dateTime() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerJournalTimeRange, "entryDateTime", QDateTime())
+    }
+signals:
+    void valueChanged();
 };
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerJournal::ItemName, "journal");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerJournal::ItemGroupName, "journals");
+QML_DECLARE_TYPE(QDeclarativeOrganizerJournal)
 
 //note
-class Q_ORGANIZER_EXPORT QOrganizerNote : public QOrganizerItem
+class QDeclarativeOrganizerNote : public QDeclarativeOrganizerItem
 {
+    Q_OBJECT
 public:
-    Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerNote, QOrganizerItemType::TypeNote)
+    Q_DECLARE_LATIN1_CONSTANT(ItemName, "note");
+    Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "notes");
+
+    explicit QDeclarativeOrganizerNote(QObject *parent = 0)
+        :QDeclarativeOrganizerItem(parent)
+    {
+    }
+signals:
+    void valueChanged();
 };
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerNote::ItemName, "note");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerNote::ItemGroupName, "notes");
+QML_DECLARE_TYPE(QDeclarativeOrganizerNote)
 
 //todo
-class Q_ORGANIZER_EXPORT QOrganizerTodo : public QOrganizerItem
+class QDeclarativeOrganizerTodo : public QDeclarativeOrganizerItem
 {
+    Q_OBJECT
+    Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
+    Q_PROPERTY(QDateTime dueDateTime READ dueDateTime WRITE setDueDateTime NOTIFY valueChanged)
+    Q_PROPERTY(bool isTimeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> recurrenceRules READ recurrenceRules NOTIFY valueChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> exceptionRules READ exceptionRules NOTIFY valueChanged)
+    Q_PROPERTY(QVariantList recurrenceDates READ recurrenceDates WRITE setRecurrenceDates NOTIFY valueChanged)
+    Q_PROPERTY(QVariantList exceptionDates  READ exceptionDates WRITE setExceptionDates NOTIFY valueChanged)
+    Q_PROPERTY(QDeclarativeOrganizerItemPriority::Priority priority READ priority WRITE setPriority NOTIFY valueChanged)
+    Q_PROPERTY(int progressPercentage READ progressPercentage WRITE setProgressPercentage NOTIFY valueChanged)
+    Q_PROPERTY(QDeclarativeOrganizerTodoProgress::Status status READ status WRITE setStatus NOTIFY valueChanged)
+    Q_PROPERTY(QDateTime finishedDateTime READ finishedDateTime WRITE setFinishedDateTime NOTIFY valueChanged)
+
 public:
-    Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerTodo, QOrganizerItemType::TypeTodo)
+    Q_DECLARE_LATIN1_CONSTANT(ItemName, "todo");
+    Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "todos");
 
-    // XXX TODO: some questions about "recurring periods and doneness"...
-    void setStartDateTime(const QDateTime& dueDateTime);
-    QDateTime startDateTime() const;
-    void setDueDateTime(const QDateTime& dueDateTime);
-    QDateTime dueDateTime() const;
+    explicit QDeclarativeOrganizerTodo(QObject *parent = 0)
+        :QDeclarativeOrganizerItem(parent)
+    {
+    }
+    void setStartDateTime(const QDateTime& startDateTime)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QOrganizerTodoTimeRange, "startDateTime", startDateTime)
+    }
 
-    void setTimeSpecified(bool isTimeSpecified);
-    bool isTimeSpecified() const;
+    QDateTime startDateTime() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QOrganizerTodoTimeRange, "startDateTime", QDateTime())
+    }
 
-    void setRecurrenceDates(const QList<QDate>& rdates);
-    QList<QDate> recurrenceDates() const;
-    void setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules);
-    QList<QOrganizerItemRecurrenceRule> recurrenceRules() const;
-    void setExceptionDates(const QList<QDate>& exdates);
-    QList<QDate> exceptionDates() const;
-    void setExceptionRules(const QList<QOrganizerItemRecurrenceRule>& exrules);
-    QList<QOrganizerItemRecurrenceRule> exceptionRules() const;
+    void setDueDateTime(const QDateTime& dueDateTime)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QOrganizerTodoTimeRange, "dueDateTime", dueDateTime)
+    }
 
-    void setPriority(QOrganizerItemPriority::Priority);
-    QOrganizerItemPriority::Priority priority() const;
+    QDateTime dueDateTime() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QOrganizerTodoTimeRange, "dueDateTime", QDateTime())
+    }
 
-    void setProgressPercentage(int percentage);
-    int progressPercentage() const;
-    void setStatus(QOrganizerTodoProgress::Status status);
-    QOrganizerTodoProgress::Status status() const;
-    void setFinishedDateTime(const QDateTime& finishedDateTime);
-    QDateTime finishedDateTime() const;
+    void setTimeSpecified(bool isTimeSpecified)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QOrganizerTodoTimeRange, "isTimeSpecified", isTimeSpecified)
+    }
+
+    bool isTimeSpecified() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QOrganizerTodoTimeRange, "isTimeSpecified", false)
+    }
+
+    QDeclarativeListProperty<QOrganizerItemRecurrenceRule> recurrenceRules()
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemRecurrence, "recurrenceRules", QDeclarativeListProperty<QOrganizerItemRecurrenceRule>())
+    }
+
+    QDeclarativeListProperty<QOrganizerItemRecurrenceRule> exceptionRules()
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemRecurrence, "exceptionRules", QDeclarativeListProperty<QOrganizerItemRecurrenceRule>())
+    }
+
+    QVariantList recurrenceDates() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemRecurrence, "recurrenceDates", QVariantList())
+    }
+
+    void setRecurrenceDates(const QVariantList& dates)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemRecurrence, "recurrenceDates", dates)
+    }
+
+    void setExceptionDates(const QVariantList& dates)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemRecurrence, "exceptionDates", dates)
+    }
+
+    QVariantList exceptionDates() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemRecurrence, "exceptionDates", QVariantList())
+    }
+
+    void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", priority)
+    }
+
+    void setProgressPercentage(int percentage)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "percentage", percentage)
+    }
+
+    int progressPercentage() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoProgress, "percentage", 0)
+    }
+
+    void setStatus(QDeclarativeOrganizerTodoProgress::Status status)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "status", status)
+    }
+
+    QDeclarativeOrganizerTodoProgress::Status status() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "status", QDeclarativeOrganizerTodoProgress::StatusNotStarted)
+    }
+
+    void setFinishedDateTime(const QDateTime& finishedDateTime)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "finishedDateTime", finishedDateTime)
+    }
+
+    QDateTime finishedDateTime() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "finishedDateTime", QDateTime())
+    }
+signals:
+    void valueChanged();
 };
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodo::ItemName, "todo");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodo::ItemGroupName, "todos");
+QML_DECLARE_TYPE(QDeclarativeOrganizerTodo)
 
 //todo occurrence
-class Q_ORGANIZER_EXPORT QOrganizerTodoOccurrence : public QOrganizerItem
+class QDeclarativeOrganizerTodoOccurrence : public QDeclarativeOrganizerItem
 {
+    Q_OBJECT
+    Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
+    Q_PROPERTY(QDateTime dueDateTime READ dueDateTime WRITE setDueDateTime NOTIFY valueChanged)
+    Q_PROPERTY(QDeclarativeOrganizerItemPriority::Priority priority READ priority WRITE setPriority NOTIFY valueChanged)
+    Q_PROPERTY(int progressPercentage READ progressPercentage WRITE setProgressPercentage NOTIFY valueChanged)
+    Q_PROPERTY(QDeclarativeOrganizerTodoProgress::Status status READ status WRITE setStatus NOTIFY valueChanged)
+    Q_PROPERTY(QDateTime finishedDateTime READ finishedDateTime WRITE setFinishedDateTime NOTIFY valueChanged)
+    Q_PROPERTY(uint parentId READ parentLocalId WRITE setParentLocalId NOTIFY valueChanged)
+    Q_PROPERTY(QDate originalDate READ originalDate WRITE setOriginalDate NOTIFY valueChanged)
 public:
-    Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerTodoOccurrence, QOrganizerItemType::TypeTodoOccurrence)
+    Q_DECLARE_LATIN1_CONSTANT(ItemName, "todoOccurrence");
+    Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "todoOccurrences");
 
-    // XXX TODO: see discussion in qorganizertodo.h
-    void setStartDateTime(const QDateTime& startDateTime);
-    QDateTime startDateTime() const;
-    void setDueDateTime(const QDateTime& dueDateTime);
-    QDateTime dueDateTime() const;
+    explicit QDeclarativeOrganizerTodoOccurrence(QObject *parent = 0)
+        :QDeclarativeOrganizerItem(parent)
+    {
+    }
+    void setStartDateTime(const QDateTime& startDateTime)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QOrganizerTodoTimeRange, "startDateTime", startDateTime)
+    }
 
-    void setParentLocalId(const QOrganizerItemLocalId& parentId);
-    QOrganizerItemLocalId parentLocalId() const;
-    void setOriginalDate(const QDate& date);
-    QDate originalDate() const;
+    QDateTime startDateTime() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QOrganizerTodoTimeRange, "startDateTime", QDateTime())
+    }
 
-    void setPriority(QOrganizerItemPriority::Priority);
-    QOrganizerItemPriority::Priority priority() const;
+    void setDueDateTime(const QDateTime& dueDateTime)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QOrganizerTodoTimeRange, "dueDateTime", dueDateTime)
+    }
 
-    void setProgressPercentage(int percentage);
-    int progressPercentage() const;
-    void setStatus(QOrganizerTodoProgress::Status status);
-    QOrganizerTodoProgress::Status status() const;
-    void setFinishedDateTime(const QDateTime& finishedDateTime);
-    QDateTime finishedDateTime() const;
+    QDateTime dueDateTime() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QOrganizerTodoTimeRange, "dueDateTime", QDateTime())
+    }
+
+
+    void setParentLocalId(uint parentId)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemInstanceOrigin, "parentLocalId", parentId)
+    }
+
+    uint parentLocalId() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemInstanceOrigin, "parentLocalId", 0)
+    }
+    void setOriginalDate(const QDate& date)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemInstanceOrigin, "originalDate", date)
+    }
+
+    QDate originalDate() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemInstanceOrigin, "originalDate", QDate())
+    }
+
+    void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", priority)
+    }
+
+    void setProgressPercentage(int percentage)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "percentage", percentage)
+    }
+
+    int progressPercentage() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoProgress, "percentage", 0)
+    }
+
+    void setStatus(QDeclarativeOrganizerTodoProgress::Status status)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "status", status)
+    }
+
+    QDeclarativeOrganizerTodoProgress::Status status() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "status", QDeclarativeOrganizerTodoProgress::StatusNotStarted)
+    }
+
+    void setFinishedDateTime(const QDateTime& finishedDateTime)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "finishedDateTime", finishedDateTime)
+    }
+
+    QDateTime finishedDateTime() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "finishedDateTime", QDateTime())
+    }
+signals:
+    void valueChanged();
 };
-
-QML_DECLARE_TYPE(QDeclarativeOrganizerEvent)
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoOccurrence::ItemName, "todoOccurrence");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoOccurrence::ItemGroupName, "todoOccurrences");
+QML_DECLARE_TYPE(QDeclarativeOrganizerTodoOccurrence)
 #endif // QDECLARATIVEORGANIZERITEM_H
