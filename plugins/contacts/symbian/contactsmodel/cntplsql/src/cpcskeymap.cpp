@@ -21,14 +21,10 @@
 #include <hbinputkeymap.h>
 #include <hbinputkeymapfactory.h>
 
+#include "predictivesearchkeymapdefs.h"
 // This macro suppresses log writes
 // #define NO_PRED_SEARCH_LOGS
 #include "predictivesearchlog.h"
-
-const QChar KSpaceChar = ' ';
-
-// Separator character stored in predictive search table columns
-const QChar KSeparatorChar = ' ';
 
 
 // ============================== MEMBER FUNCTIONS ============================
@@ -75,6 +71,10 @@ QString CPcsKeyMap::GetMappedString(QString aSource) const
 
 	QString destination;
 	TBool skipHashStar = DetermineSpecialCharBehaviour(aSource);
+
+	// TODO: check if aSource has korean chars. if yes:then use the korea-specific
+	// mapping code, instead of the iKeyMapping strings.
+
 	TInt length = aSource.length();
 
     for (int i = 0; i < length; ++i)

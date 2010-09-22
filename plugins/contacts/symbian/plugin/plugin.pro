@@ -145,7 +145,6 @@ symbian: {
     DEPLOYMENT += symbianplugin
     
     # Public header
-    headers.path = epoc32/include
     headers.sources = inc/cntbackendsdefs.h
-    for(header, headers.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$headers.path/$$basename(header)"
+    for(header, headers.sources):BLD_INF_RULES.prj_exports += "$$header $$basename(header)"
 }
