@@ -43,7 +43,6 @@
 #include <qmobilityglobal.h>
 #include <qtorganizer.h>
 #include <QtTest/QtTest>
-#include <QDebug>
 
 QTM_USE_NAMESPACE
 
@@ -1098,10 +1097,6 @@ void tst_Maemo5Om::saveItemsToNewCollection()
 
     // Get all item ids of the union collection
     QList<QOrganizerItemLocalId> unionItemIds = m_om->itemIds(unionFilter, noSort);
-
-    qDebug() << "Default:" << defaultCollectionItemIds;
-    qDebug() << "New:" << newCollectionItemIds;
-    qDebug() << "Union:" << unionItemIds;
 
     // Number of item ids in the new collection + number of ids in the default collection
     // should match to the number of ids in union
