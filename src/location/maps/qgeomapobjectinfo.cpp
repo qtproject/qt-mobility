@@ -91,7 +91,7 @@ QGeoMapObjectInfo::~QGeoMapObjectInfo()
     delete d_ptr;
 }
 
-/*!
+/*
     Returns the QGeoMapObjectInfo instance associated with the parent of
     this object, or 0 if it has no parent or if there is no QGeoMapObjectInfo
     instance asssoicated with the parent object.

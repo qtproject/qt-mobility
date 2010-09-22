@@ -135,7 +135,7 @@ bool QGeoTiledMapRequest::operator== (const QGeoTiledMapRequest &other) const
             (d_ptr->connectivityMode == other.d_ptr->connectivityMode);
 }
 
-/*!
+/*
     Returns the QGeoMapData instance associated with this request.
 */
 //QGeoTiledMapData* QGeoTiledMapRequest::mapData() const

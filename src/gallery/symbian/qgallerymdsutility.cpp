@@ -776,7 +776,7 @@ QVariant::Type QDocumentGalleryMDSUtility::GetPropertyType( int key )
 /*!
  Converts a Symbian S60 descriptor (string) to a QString
 
- \param desc descriptor to be converted
+ \a desc descriptor to be converted
  \return QString containing the converted string
  */
 QString QDocumentGalleryMDSUtility::s60DescToQString(const TDesC& desc)
@@ -789,7 +789,7 @@ QString QDocumentGalleryMDSUtility::s60DescToQString(const TDesC& desc)
 
  Note: Ownership of the returned descriptor (string) is transferred to caller.
 
- \param string QString to be converted
+ \a string QString to be converted
  \return Pointer to a Symbian S60 descriptor on success;
  otherwise returns NULL pointer
  */
@@ -802,7 +802,7 @@ HBufC* QDocumentGalleryMDSUtility::qStringToS60Desc(const QString& string)
 /*!
  Converts a Symbian S60 8 bit descriptor (UTF8 string) to a QString
 
- \param desc 8 bit descriptor to be converted
+ \a desc 8 bit descriptor to be converted
  \return Converted QString on success; otherwise returns null QString
  */
 QString QDocumentGalleryMDSUtility::s60Desc8ToQString(const TDesC8& desc)
@@ -822,7 +822,7 @@ QString QDocumentGalleryMDSUtility::s60Desc8ToQString(const TDesC8& desc)
 
  Note: Ownership of the returned descriptor (string) is transferred to the caller
 
- \param string QString to be converted
+ \a string QString to be converted
  \return Pointer to a Symbian S60 descriptor containing the UTF8 string on success;
  otherwise returns NULL pointer
  */
