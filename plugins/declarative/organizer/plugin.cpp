@@ -64,22 +64,29 @@ public:
         qmlRegisterType<QDeclarativeOrganizer>(uri, 1, 1, "Organizer");
 
         //items
+        qmlRegisterType<QDeclarativeOrganizerItem>(uri, 1, 1, "OrganizerItem");
+        qmlRegisterType<QDeclarativeOrganizerEvent>(uri, 1, 1, "OrganizerEvent");
+        qmlRegisterType<QDeclarativeOrganizerEventOccurrence>(uri, 1, 1, "OrganizerEventOccurrence");
+        qmlRegisterType<QDeclarativeOrganizerJournal>(uri, 1, 1, "OrganizerJournal");
+        qmlRegisterType<QDeclarativeOrganizerNote>(uri, 1, 1, "OrganizerNote");
+        qmlRegisterType<QDeclarativeOrganizerTodo>(uri, 1, 1, "OrganizerTodo");
+        qmlRegisterType<QDeclarativeOrganizerTodoOccurrence>(uri, 1, 1, "OrganizerTodoOccurrence");
 
         //details
         qmlRegisterType<QDeclarativeOrganizerItemDetail>(uri, 1, 1, "OrganizerItemDetail");
         qmlRegisterType<QDeclarativeOrganizerEventTimeRange>(uri, 1, 1, "OrganizerEventTimeRange");
-        qmlRegisterType<QDeclarativeOrganizerItemDescription>(uri, 1, 1, "OrganizerItemDescription");
-        qmlRegisterType<QDeclarativeOrganizerItemDisplayLabel>(uri, 1, 1, "OrganizerItemDisplayLabel");
-        qmlRegisterType<QDeclarativeOrganizerItemGuid>(uri, 1, 1, "OrganizerItemGuid");
-        qmlRegisterType<QDeclarativeQrganizerItemInstanceOrigin>(uri, 1, 1, "QrganizerItemInstanceOrigi");
-        qmlRegisterType<QDeclarativeOrganizerItemLocation>(uri, 1, 1, "OrganizerItemLocation");
-        qmlRegisterType<QDeclarativeOrganizerItemPriority>(uri, 1, 1, "OrganizerItemPriority");
-        qmlRegisterType<QDeclarativeOrganizerItemRecurrence>(uri, 1, 1, "OrganizerItemRecurrence");
-        qmlRegisterType<QDeclarativeOrganizerItemReminder>(uri, 1, 1, "OrganizerItemReminder");
-        qmlRegisterType<QDeclarativeOrganizerItemAudibleReminder>(uri, 1, 1, "OrganizerItemAudibleReminder");
-        qmlRegisterType<QDeclarativeOrganizerItemVisualReminder>(uri, 1, 1, "OrganizerItemVisualReminder");
-        qmlRegisterType<QDeclarativeOrganizerItemEmailReminder>(uri, 1, 1, "OrganizerItemEmailReminder");
-        qmlRegisterType<QDeclarativeOrganizerItemTimestamp>(uri, 1, 1, "OrganizerItemTimestamp");
+        qmlRegisterType<QDeclarativeOrganizerItemDescription>(uri, 1, 1, "OrganizerDescription");
+        qmlRegisterType<QDeclarativeOrganizerItemDisplayLabel>(uri, 1, 1, "OrganizerDisplayLabel");
+        qmlRegisterType<QDeclarativeOrganizerItemGuid>(uri, 1, 1, "OrganizerGuid");
+        qmlRegisterType<QDeclarativeOrganizerItemInstanceOrigin>(uri, 1, 1, "OrganizerInstanceOrigin");
+        qmlRegisterType<QDeclarativeOrganizerItemLocation>(uri, 1, 1, "OrganizerLocation");
+        qmlRegisterType<QDeclarativeOrganizerItemPriority>(uri, 1, 1, "OrganizerPriority");
+        qmlRegisterType<QDeclarativeOrganizerItemRecurrence>(uri, 1, 1, "OrganizerRecurrence");
+        qmlRegisterType<QDeclarativeOrganizerItemReminder>(uri, 1, 1, "OrganizerReminder");
+        qmlRegisterType<QDeclarativeOrganizerItemAudibleReminder>(uri, 1, 1, "OrganizerAudibleReminder");
+        qmlRegisterType<QDeclarativeOrganizerItemVisualReminder>(uri, 1, 1, "OrganizerVisualReminder");
+        qmlRegisterType<QDeclarativeOrganizerItemEmailReminder>(uri, 1, 1, "OrganizerEmailReminder");
+        qmlRegisterType<QDeclarativeOrganizerItemTimestamp>(uri, 1, 1, "OrganizerTimestamp");
         qmlRegisterType<QDeclarativeOrganizerItemType>(uri, 1, 1, "OrganizerItemType");
         qmlRegisterType<QDeclarativeOrganizerJournalTimeRange>(uri, 1, 1, "OrganizerJournalTimeRange");
         qmlRegisterType<QDeclarativeOrganizerTodoProgress>(uri, 1, 1, "OrganizerTodoProgress");
