@@ -39,36 +39,60 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYREMOVEREQUEST_H
-#define QGALLERYREMOVEREQUEST_H
+#ifndef QMDEGALLERYTYPERESULTSET_P_H
+#define QMDEGALLERYTYPERESULTSET_P_H
 
-#include <qgalleryabstractrequest.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QtCore/qvariant.h>
+#include <qstringlist.h>
+
+#include "qmdegalleryresultset_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryItemList;
+class QGalleryTypeRequest;
 
-class QGalleryRemoveRequestPrivate;
-
-class Q_GALLERY_EXPORT QGalleryRemoveRequest : public QGalleryAbstractRequest
+class QMDEGalleryTypeResultSet : public QMDEGalleryResultSet
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QGalleryRemoveRequest)
-    Q_PROPERTY(QVariant itemId READ itemId WRITE setItemId)
 public:
-    explicit QGalleryRemoveRequest(QObject *parent = 0);
-    explicit QGalleryRemoveRequest(QAbstractGallery *gallery, QObject *parent = 0);
-    ~QGalleryRemoveRequest();
+    QMDEGalleryTypeResultSet(QMdeSession *session, QObject *parent = 0);
+    ~QMDEGalleryTypeResultSet();
 
-    QVariant itemId() const;
-    void setItemId(const QVariant &id);
+    void createQuery();
 
-protected:
-    void setResponse(QGalleryAbstractResponse *response);
+public: // from QGalleryResultSet
+
+    virtual int itemCount() const;
+
+    virtual QVariant itemId() const;
+    virtual QUrl itemUrl() const;
+
+    virtual QVariant metaData(int key) const;
+    virtual bool setMetaData(int key, const QVariant &value);
+
+    virtual bool fetch(int index);
+    /* non pure virtual */
+    virtual bool fetchNext();
+    virtual bool fetchPrevious();
+    virtual bool fetchFirst();
+    virtual bool fetchLast();
+
+private:
+
+    QGalleryTypeRequest *m_request;
+    QStringList m_propertyList;
+
 };
 
 QTM_END_NAMESPACE
-
-#endif
+#endif // QMDEGALLERYTYPERESULTSET_H
