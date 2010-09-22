@@ -156,13 +156,7 @@ bool QOrganizerCollectionLocalId::operator==(const QOrganizerCollectionLocalId& 
  */
 bool QOrganizerCollectionLocalId::operator!=(const QOrganizerCollectionLocalId& other) const
 {
-    if (d && other.d) {
-        // ensure they're of the same type (and therefore comparable)
-        if (d->engineLocalIdType() == other.d->engineLocalIdType()) {
-            return !(d->isEqualTo(other.d));
-        }
-    }
-    return false;
+    return !(*this == other);
 }
 
 /*!
