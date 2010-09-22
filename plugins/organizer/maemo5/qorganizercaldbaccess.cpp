@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qorganizercaldbaccess.h"
+#include "qorganizermaemo5ids_p.h"
 #include "qtorganizer.h"
 
 #include <CalendarErrors.h>
@@ -117,7 +118,7 @@ void OrganizerCalendarDatabaseAccess::close()
 int OrganizerCalendarDatabaseAccess::typeOf(QOrganizerItemLocalId id)
 {
     QString queryString = selectLeftJoin;
-    queryString.replace("$1", QString::number(id)); // TODO: binding parameter values do not work for some reason
+    queryString.replace("$1", QString::number((static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(id)))->m_localItemId)); // TODO: binding parameter values do not work for some reason
     QSqlQuery query(queryString);
 
     int retn = -1;

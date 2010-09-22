@@ -80,6 +80,8 @@ class QOrganizerItemSkeletonFactory : public QObject, public QOrganizerItemManag
   Q_INTERFACES(QtMobility::QOrganizerItemManagerEngineFactory)
   public:
     QOrganizerItemManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error*);
+    QOrganizerItemEngineLocalId* createItemEngineLocalId() const;
+    QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() const;
     QString managerName() const;
 };
 
@@ -139,7 +141,7 @@ public:
     /* Capabilities reporting */
     bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const;
     bool isFilterSupported(const QOrganizerItemFilter& filter) const;
-    QList<QVariant::Type> supportedDataTypes() const;
+    QList<int> supportedDataTypes() const;
     QStringList supportedItemTypes() const;
 
     /* Asynchronous Request Support */
