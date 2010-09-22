@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the plugins of the Qt Toolkit.
+** This file is part of the demonstration applications of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,38 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVECAMERAPREVIEWPROVIDER_H
-#define QDECLARATIVECAMERAPREVIEWPROVIDER_H
+#include <QtGui/QApplication>
+#include <QtDeclarative/QDeclarativeView>
+#include <QtDeclarative/QDeclarativeEngine>
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists for the convenience
-// of other Qt classes.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QtDeclarative/qdeclarativeimageprovider.h>
-
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-class QDeclarativeCameraPreviewProvider : public QDeclarativeImageProvider
-{
-public:
-    QDeclarativeCameraPreviewProvider();
-    ~QDeclarativeCameraPreviewProvider();
-
-    virtual QImage requestImage(const QString &id, QSize *size, const QSize& requestedSize);
-    static void registerPreview(const QString &id, const QImage &preview);
-};
-
-QT_END_NAMESPACE
-
-QT_END_HEADER
-
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+#include <QtOpenGL/QGLWidget>
 #endif
+
+int main(int argc, char *argv[])
+{
+    QApplication application(argc, argv);
+    const QString mainQmlApp = QLatin1String("qrc:/declarative-camera.qml");
+    QDeclarativeView view;
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+    view.setViewport(new QGLWidget);
+#endif
+    view.setSource(QUrl(mainQmlApp));
+    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    // Qt.quit() called in embedded .qml by default only emits
+    // quit() signal, so do this (optionally use Qt.exit()).
+    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    view.showFullScreen();
+#else
+    view.setGeometry(QRect(100, 100, 800, 480));
+    view.show();
+#endif
+    return application.exec();
+}
+
