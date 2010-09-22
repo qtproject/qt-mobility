@@ -17,6 +17,7 @@
 // INCLUDE FILES
 #include "c12keykeymap.h"
 #include "predictivesearchkeymapdefs.h"
+#include "ckoreankeymap.h"
 // This macro suppresses log writes
 // #define NO_PRED_SEARCH_LOGS
 #include "predictivesearchlog.h"
@@ -97,6 +98,9 @@ C12keyKeyMap* C12keyKeyMap::NewL()
 C12keyKeyMap::~C12keyKeyMap()
     {
     PRINT(_L("Enter C12keyKeyMap::~C12keyKeyMap"));
+
+	delete iKoreanKeymap;
+
     PRINT(_L("End C12keyKeyMap::~C12keyKeyMap"));
     }
 
@@ -229,6 +233,18 @@ TBool C12keyKeyMap::ShouldSkipChar(QChar aChar, TBool aSkipHashStar) const
 	}
 
 // ----------------------------------------------------------------------------
+// C12keyKeyMap::ReadExtraCharacters
+// ----------------------------------------------------------------------------
+MLanguageSpecificKeymap* C12keyKeyMap::CheckLanguage(QString aSource) const
+	{
+	if (iKoreanKeymap->IsLanguageSupported(aSource))
+		{
+		return iKoreanKeymap;
+		}
+	return NULL;
+	}
+
+// ----------------------------------------------------------------------------
 // C12keyKeyMap::C12keyKeyMap
 // Fill QList with empty strings
 // ----------------------------------------------------------------------------
@@ -253,6 +269,8 @@ void C12keyKeyMap::ConstructL()
         PRINT1(_L("C12keyKeyMap::ConstructL exception, err=%d"), err);
         User::Leave(err);
         }
+
+	iKoreanKeymap = CKoreanKeyMap::NewL();
 
 	PRINT(_L("End C12keyKeyMap::ConstructL"));
 	}
