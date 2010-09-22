@@ -507,13 +507,10 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
         } else {
             parentLocalUid = calInstance->Entry().LocalUidL();
         }
-        QOrganizerEventOccurrence *eventOccurrence = static_cast<QOrganizerEventOccurrence *>(&itemInstance);
-        eventOccurrence->setParentLocalId(toItemLocalId(localCollectionIdValue, parentLocalUid));
 
         // Set instance origin, the detail is set here because the corresponding transform class
         // does not know the required values
-        QOrganizerItemInstanceOrigin origin(
-            itemInstance.detail<QOrganizerItemInstanceOrigin>());
+        QOrganizerItemInstanceOrigin origin(itemInstance.detail<QOrganizerItemInstanceOrigin>());
         origin.setParentLocalId(toItemLocalId(localCollectionIdValue, parentLocalUid));
         origin.setOriginalDate(toQDateTimeL(calInstance->StartTimeL()).date());
         itemInstance.saveDetail(&origin);
@@ -685,13 +682,20 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& i
     id.setManagerUri(managerUri());
     item.setId(id);
 
-    // Set parent local id
-    if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
+    // Set instance origin
+    if (item.type() == QOrganizerItemType::TypeEventOccurrence
+        || item.type() == QOrganizerItemType::TypeTodoOccurrence) {
         HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(item);
         quint64 localCollectionIdValue = m_collections[collectionLocalId].calCollectionId();
         CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, item, *globalUid);
-        QOrganizerEventOccurrence *eventOccurrence = static_cast<QOrganizerEventOccurrence *>(&item);
-        eventOccurrence->setParentLocalId(toItemLocalId(localCollectionIdValue, parentEntry->LocalUidL()));
+
+        // Set instance origin, the detail is set here because the corresponding transform class
+        // does not know the required values
+        QOrganizerItemInstanceOrigin origin(item.detail<QOrganizerItemInstanceOrigin>());
+        origin.setParentLocalId(toItemLocalId(localCollectionIdValue, parentEntry->LocalUidL()));
+        origin.setOriginalDate(toQDateTimeL(calEntry->StartTimeL()).date());
+        item.saveDetail(&origin);
+
         CleanupStack::PopAndDestroy(parentEntry);
         CleanupStack::PopAndDestroy(globalUid);
     }
