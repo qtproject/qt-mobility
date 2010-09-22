@@ -75,11 +75,8 @@ public:
 #endif
     uint hash() const;
 
-private:
+public:
     quint32 m_localCollectionId;
-    friend class QOrganizerItemMaemo5Engine;
-    friend class OrganizerItemTransform;
-    friend class OrganizerCalendarDatabaseAccess;
 };
 
 class QOrganizerItemMaemo5EngineLocalId : public QOrganizerItemEngineLocalId
@@ -105,12 +102,27 @@ public:
 #endif
     uint hash() const;
 
-private:
+public:
     quint32 m_localItemId; // the maemo5 backend can use a single quint32 to uniquely identify an item in it.
-    friend class QOrganizerItemMaemo5Engine;
-    friend class OrganizerItemTransform;
-    friend class OrganizerCalendarDatabaseAccess;
 };
+
+inline QOrganizerItemLocalId makeItemLocalId(quint32 id) {
+    return QOrganizerItemLocalId(new QOrganizerItemMaemo5EngineLocalId(id));
+}
+
+inline quint32 readItemLocalId(const QOrganizerItemLocalId& id) {
+    return static_cast<QOrganizerItemMaemo5EngineLocalId*>(
+            QOrganizerItemManagerEngine::engineLocalItemId(id))->m_localItemId;
+}
+
+inline QOrganizerCollectionLocalId makeCollectionLocalId(quint32 id) {
+    return QOrganizerCollectionLocalId(new QOrganizerCollectionMaemo5EngineLocalId(id));
+}
+
+inline quint32 readCollectionLocalId(const QOrganizerCollectionLocalId& id) {
+    return static_cast<QOrganizerCollectionMaemo5EngineLocalId*>(
+            QOrganizerItemManagerEngine::engineLocalCollectionId(id))->m_localCollectionId;
+}
 
 #endif
 

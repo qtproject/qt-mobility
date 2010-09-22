@@ -37,55 +37,51 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef JOURNALEDITPAGE_H_
-#define JOURNALEDITPAGE_H_
+#ifndef EDITCALENDARSPAGE_H
+#define EDITCALENDARSPAGE_H
 
 #include <QWidget>
-#include <QDate>
 #include <qmobilityglobal.h>
-#include <qorganizeritemid.h>
-#include <qorganizerjournal.h>
+#include <qorganizercollection.h>
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItemManager;
-class QOrganizerEvent;
-class QOrganizerItem;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-class QComboBox;
-class QLineEdit;
-class QDateTimeEdit;
+class QListWidget;
+class QListWidgetItem;
+class QVBoxLayout;
+class QString;
 
-class JournalEditPage : public QWidget
+class EditCalendarsPage : public QWidget
 {
     Q_OBJECT
 
 public:
-    JournalEditPage(QWidget *parent = 0);
-    ~JournalEditPage();
+    EditCalendarsPage(QWidget *parent = 0);
+    ~EditCalendarsPage();
 
 public Q_SLOTS:
-    void cancelClicked();
-    void saveClicked();
-    void journalChanged(QOrganizerItemManager *manager, const QOrganizerJournal &journal);
-    void handleAlarmIndexChanged(const QString);
+    void editClicked();
+    void deleteClicked();
+    void backClicked();
+    void itemDoubleClicked(QListWidgetItem *listItem);
+    void showPage(QOrganizerItemManager *manager);
 
 Q_SIGNALS:
-    void showDayPage();
+    void addClicked();
+    void showPreviousPage();
+    void showAddCalendarPage(QOrganizerItemManager*, QOrganizerCollection*);
 
 protected: // from QWidget
     void showEvent(QShowEvent *event);
 
 private:
     QOrganizerItemManager *m_manager;
-    QOrganizerJournal m_organizerJournal;
-    QLineEdit *m_subjectEdit;
-    QDateTimeEdit *m_timeEdit;
-    QComboBox *m_alarmComboBox;
-    QComboBox *m_calendarComboBox;
-    QList<QOrganizerCollection> m_collections;
+    QOrganizerCollection m_collection;
+    QAction *m_saveOrNextSoftKey;
+    QListWidget *m_calendarList;
 };
 
-#endif // JOURNALEDITPAGE_H_
+#endif // EDITCALENDARSPAGE_H

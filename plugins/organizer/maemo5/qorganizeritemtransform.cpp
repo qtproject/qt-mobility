@@ -247,7 +247,7 @@ QOrganizerTodoOccurrence OrganizerItemTransform::convertCTodoToQTodoOccurrence(C
     // Only the following are occurrence specific details:
 
     // In maemo, the parent id is the same as this id (todo's only have one occurrence)
-    retn.setParentLocalId(QOrganizerItemLocalId(new QOrganizerItemMaemo5EngineLocalId(QString::fromStdString(ctodo->getId()).toUInt())));
+    retn.setParentLocalId(makeItemLocalId(QString::fromStdString(ctodo->getId()).toUInt()));
 
     // Original date
     retn.setOriginalDate(retn.startDateTime().date());
@@ -381,7 +381,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
     *error = QOrganizerItemManager::InvalidItemTypeError;
 
     QOrganizerItemLocalId itemId = item->localId();
-    QString itemIdStr = QString::number((static_cast<QOrganizerItemMaemo5EngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemId)))->m_localItemId);
+    QString itemIdStr = QString::number(readItemLocalId(itemId));
     int calId = cal->getCalendarId();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     CComponent *retn = 0; // Return null on errors
@@ -498,10 +498,6 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
             cjournal->setDateStart(journal->dateTime().toTime_t());
 
         retn = cjournal;
-    }
-    else if (item->type() == QOrganizerItemType::TypeNote) {
-        *error = QOrganizerItemManager::NotSupportedError;
-        // TODO
     }
 
     if (retn) {
@@ -645,7 +641,7 @@ QOrganizerItemManager::Error OrganizerItemTransform::calErrorToManagerError(int 
 
         case CALENDAR_SYSTEM_ERROR:
         case CALENDAR_DATABASE_ERROR:
-        // case CALENDAR_DBUS_ERROR: // CALENDAR_DBUS_ERROR and CALENDAR_FILE_ERROR has the same value 3
+        // case CALENDAR_DBUS_ERROR: // CALENDAR_DBUS_ERROR and CALENDAR_FILE_ERROR have the same value 3
         case CALENDAR_LTIME_ERROR:
         case CALENDAR_LIBALARM_ERROR:
         case CALENDAR_ALARM_ERROR:
