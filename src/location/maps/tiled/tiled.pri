@@ -9,7 +9,7 @@ PUBLIC_HEADERS += \
 
 PRIVATE_HEADERS += \
                     maps/tiled/qgeotiledmapcircleobjectinfo_p.h \
-                    maps/tiled/qgeotiledmapcontainerobjectinfo_p.h \
+                    maps/tiled/qgeotiledmapgroupobjectinfo_p.h \
                     maps/tiled/qgeotiledmapdata_p.h \
                     maps/tiled/qgeotiledmapobjectinfo_p.h \
                     maps/tiled/qgeotiledmappingmanagerengine_p.h \
@@ -24,7 +24,7 @@ PRIVATE_HEADERS += \
 
 SOURCES += \
                     maps/tiled/qgeotiledmapcircleobjectinfo_p.cpp \
-                    maps/tiled/qgeotiledmapcontainerobjectinfo_p.cpp \
+                    maps/tiled/qgeotiledmapgroupobjectinfo_p.cpp \
                     maps/tiled/qgeotiledmapdata.cpp \
                     maps/tiled/qgeotiledmapobjectinfo_p.cpp \
                     maps/tiled/qgeotiledmappingmanagerengine.cpp \
