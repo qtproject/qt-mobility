@@ -162,15 +162,7 @@ bool QOrganizerItemLocalId::operator==(const QOrganizerItemLocalId& other) const
  */
 bool QOrganizerItemLocalId::operator!=(const QOrganizerItemLocalId& other) const
 {
-    if (d && other.d) {
-        // ensure they're of the same type (and therefore comparable)
-        if (d->engineLocalIdType() == other.d->engineLocalIdType()) {
-            return !(d->isEqualTo(other.d));
-        }
-    } else if (d || other.d) {
-        return true;
-    }
-    return false;
+    return !(*this == other);
 }
 
 /*!

@@ -81,7 +81,7 @@ int QDeclarativeOrganizerItemMetaObject::createProperty(const char * name,  cons
         else
             propId = QDeclarativeOpenMetaObject::createProperty(name, "QVariant");
         m_properties.insert(propId, detailMetaData);
-        qDebug() << "createProperty:" << name << " propId:" << propId;
+        qDebug() << "createProperty:" << name << "propId:" << propId;
         return propId;
     }
     return -1;
@@ -126,8 +126,8 @@ QVariant QDeclarativeOrganizerItemMetaObject::details(const QString& name)
 
 void QDeclarativeOrganizerItemMetaObject::setItem(const QOrganizerItem& contact)
 {
-    m_contact = contact;
-    QList<QOrganizerItemDetail> details = m_contact.details();
+    m_item = contact;
+    QList<QOrganizerItemDetail> details = m_item.details();
     m_details.clear();
     foreach (const QOrganizerItemDetail& detail, details) {
       QDeclarativeOrganizerItemDetail* cd = new QDeclarativeOrganizerItemDetail(object());
@@ -141,17 +141,17 @@ void QDeclarativeOrganizerItemMetaObject::setItem(const QOrganizerItem& contact)
 
 QOrganizerItem QDeclarativeOrganizerItemMetaObject::contact()
 {
-    m_contact.clearDetails();
+    m_item.clearDetails();
     foreach (const QDeclarativeOrganizerItemDetail* cd, m_details) {
        QOrganizerItemDetail detail = cd->detail();
-       m_contact.saveDetail(&detail);
+       m_item.saveDetail(&detail);
     }
-    return m_contact;
+    return m_item;
 }
 
 int QDeclarativeOrganizerItemMetaObject::localId() const
 {
-    return m_contact.localId();
+    return m_item.localId();
 }
 
 void QDeclarativeOrganizerItemMetaObject::detail_append(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p, QDeclarativeOrganizerItemDetail *detail)

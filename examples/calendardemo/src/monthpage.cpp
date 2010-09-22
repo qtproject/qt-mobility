@@ -197,6 +197,7 @@ void MonthPage::refresh()
     	// Get the instances of the item for that month and collect those dates.
         instanceList.clear();
         instanceList.append(m_manager->itemInstances(item, startDateTime, endDateTime));
+        instanceList.append(item);
         for (int count = 0; count < instanceList.count(); count++) {
             QOrganizerEventTimeRange eventTimeRange = instanceList.at(count).detail<QOrganizerEventTimeRange>();
             QDate startDate(eventTimeRange.startDateTime().date());

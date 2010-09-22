@@ -21,14 +21,11 @@
 #include <hbinputkeymap.h>
 #include <hbinputkeymapfactory.h>
 
+#include "mlanguagespecifickeymap.h"
+#include "predictivesearchkeymapdefs.h"
 // This macro suppresses log writes
 // #define NO_PRED_SEARCH_LOGS
 #include "predictivesearchlog.h"
-
-const QChar KSpaceChar = ' ';
-
-// Separator character stored in predictive search table columns
-const QChar KSeparatorChar = ' ';
 
 
 // ============================== MEMBER FUNCTIONS ============================
@@ -74,22 +71,30 @@ QString CPcsKeyMap::GetMappedString(QString aSource) const
 #endif
 
 	QString destination;
-	TBool skipHashStar = DetermineSpecialCharBehaviour(aSource);
-	TInt length = aSource.length();
+	MLanguageSpecificKeymap* keymap = CheckLanguage(aSource);
+	if (keymap)
+		{
+		destination = keymap->GetMappedString(aSource);
+		}
+	else
+		{
+		TBool skipHashStar = DetermineSpecialCharBehaviour(aSource);
 
-    for (int i = 0; i < length; ++i)
-        {
-        if (aSource[i] == KSpaceChar)
-            {
-            destination.append(KSeparatorChar);
-            }
-        else
+		TInt length = aSource.length();
+		for (int i = 0; i < length; ++i)
 			{
-			QChar ch(0);
-            ch = MappedKeyForChar(aSource[i]);
-			if (!ShouldSkipChar(ch, skipHashStar))
+			if (aSource[i] == KSpaceChar)
 				{
-				destination.append(ch);
+				destination.append(KSeparatorChar);
+				}
+			else
+				{
+				QChar ch(0);
+				ch = MappedKeyForChar(aSource[i]);
+				if (!ShouldSkipChar(ch, skipHashStar))
+					{
+					destination.append(ch);
+					}
 				}
 			}
 		}
@@ -175,6 +180,15 @@ TBool CPcsKeyMap::ShouldSkipChar(QChar /*aChar*/, TBool /*aSkipHashStar*/) const
 
 // ----------------------------------------------------------------------------
 // CPcsKeyMap::ReadExtraCharacters
+// Default implementation
+// ----------------------------------------------------------------------------
+MLanguageSpecificKeymap* CPcsKeyMap::CheckLanguage(QString /*aSource*/) const
+	{
+	return NULL;
+	}
+
+// ----------------------------------------------------------------------------
+// CPcsKeyMap::ReadExtraCharacters
 // Default implementation does nothing
 // ----------------------------------------------------------------------------
 TInt CPcsKeyMap::ReadExtraCharacters(const HbInputLanguage& /*aLanguage*/)
@@ -239,7 +253,7 @@ CPcsKeyMap::AddNewKeyToMap(TInt aKey, const QString aCharsForKey, TInt& aCount)
             if (ascChar == 0) // ch can't be represented in ASCII
                 {
                 PRINT2(_L("CPcsKeyMap: map key(%c) <-> char=0x%x"),
-                       logChar, ch);
+                       logChar, ch.unicode());
                 }
             else
                 {

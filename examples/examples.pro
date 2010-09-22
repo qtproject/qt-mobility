@@ -135,10 +135,7 @@ contains(mobility_modules, organizer) {
 
 # Feedback API examples
 contains(mobility_modules, feedback) {
-    SUBDIRS += hapticsplayer # this not a good UI for mobile screens at the moment
-    contains(QT_CONFIG, declarative) {
-        SUBDIRS += hapticsquare
-    }
+    SUBDIRS += hapticsplayer hapticsquare # this not a good UI for mobile screens at the moment
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES

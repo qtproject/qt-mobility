@@ -223,8 +223,6 @@ const QMetaObject* QServiceMetaObjectDBus::dbusMetaObject(bool signalsObject) co
     const QMetaObject* mo = d->serviceMeta;
     while (mo && strcmp(mo->className(), "QObject")) {
         // Add our methods, signals and slots
-        int methodCount = d->serviceMeta->methodCount();
-        //for (int i=0; i<methodCount; i++) {
         for (int i = mo->methodOffset(); i < mo->methodCount(); i++) {
             QMetaMethod mm = mo->method(i);
 

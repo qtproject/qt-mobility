@@ -87,6 +87,12 @@ struct MessageEvent
     bool unfiltered;
 };
 
+struct PendingSend
+{
+    TMsvId messageId;
+    QMessageServicePrivate* privateService;
+};
+
 struct MessageQueryInfo
 {
     int operationId;
@@ -145,11 +151,11 @@ public:
     QMessage message(const QMessageId& id) const;
     
     bool storeMMS(QMessage &message);
-    bool sendMMS(QMessage &message);
+    bool sendMMS(QMessageServicePrivate& privateService, QMessage &message);
     bool storeEmail(QMessage &message);
-    bool sendEmail(QMessage &message);
+    bool sendEmail(QMessageServicePrivate& privateService, QMessage &message);
     bool storeSMS(QMessage &message);
-    bool sendSMS(QMessage &message);
+    bool sendSMS(QMessageServicePrivate& privateService, QMessage &message);
     bool retrieve(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id);
     bool retrieveBody(QMessageServicePrivate& privateService, const QMessageId& id);
     bool retrieveHeader(QMessageServicePrivate& privateService, const QMessageId& id);
@@ -230,12 +236,12 @@ private:
     void showMessageL(const QMessageId &id);
     
     void storeMMSL(QMessage &message);
-    void sendMMSL(QMessage &message);
+    void sendMMSL(QMessageServicePrivate& privateService, QMessage &message);
     void storeEmailL(QMessage &message);
-    void sendEmailL(QMessage &message);
+    void sendEmailL(QMessageServicePrivate& privateService, QMessage &message);
     void storeSMSL(QMessage &message);
     bool validateSMS();
-    void sendSMSL(QMessage &message);
+    void sendSMSL(QMessageServicePrivate& privateService, QMessage &message);
     void retrieveL(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id);
     void retrieveBodyL(QMessageServicePrivate& privateService, const QMessageId& id);
     void retrieveHeaderL(QMessageServicePrivate& privateService, const QMessageId& id);
@@ -257,6 +263,8 @@ private:
                                                               TMsvId serviceId);
     void deleteAsynchronousMTMOperation(CAsynchronousMTMOperation *apOperation);
     bool checkIfWaitingDiscardClearMessage(TMsvId aMessageId);
+    
+    bool isGsm0338CompatibleUnicodeCharacter(TUint16 aValue);
 
 private: // from CActive
     void RunL();
@@ -311,6 +319,7 @@ private:
     
     mutable int iOperationIds;
     mutable QList<MessageQueryInfo> iMessageQueries;
+    mutable QList<PendingSend> iPendingSends;
     
     mutable QMessageAccountSortOrder iCurrentAccountOrdering;
     mutable QMessageFolderSortOrder iCurrentFolderOrdering;

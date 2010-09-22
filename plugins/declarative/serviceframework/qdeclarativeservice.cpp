@@ -70,7 +70,7 @@ QDeclarativeService::~QDeclarativeService()
 }
 
 /*!
-    \qmlproperty bool Service::valid
+    \qmlproperty bool Service::valid read-only
 
     This property holds whether a default service was found at the
     interface name and corresponds to QServiceInterfaceDescriptor::isValid(). 
@@ -197,12 +197,15 @@ QObject* QDeclarativeService::serviceObject()
     select the desired service and instantiate a service object for access via the QMetaObject.
 
     This element is a simplified reflection of the QServiceFilter class that provides a list
-    of simplified QServiceInterfaceDescriptors.
+    of simplified QServiceInterfaceDescriptors. Similarly, if the ServiceList::serviceName 
+    and ServiceList::versionMatch are not provided they will respectively default to an empty 
+    string with a minimum verison match.
 
     \sa Service
 */
 QDeclarativeServiceList::QDeclarativeServiceList()
-    : m_service(QString())
+    : m_service(QString()),
+      m_match(QDeclarativeServiceList::Minimum)
 {
     serviceManager = new QServiceManager();
 }
@@ -275,6 +278,25 @@ int QDeclarativeServiceList::minorVersion() const
 }
 
 /*!
+    \qmlproperty enumeration ServiceList::versionMatch
+    
+    This property holds the veresion match rule of the service filter that
+    corresponds to QServiceFilter::versionMatchRule(). Within QML the values
+    ServiceList.Exact and ServiceList.Minimum correspond to 
+    QServiceFilter::ExactVersionMatch and QServiceFilter::MinimumVersionMatch
+    repsectively.
+*/
+void QDeclarativeServiceList::setVersionMatch(MatchRule match)
+{
+    m_match = match;
+}
+
+QDeclarativeServiceList::MatchRule QDeclarativeServiceList::versionMatch() const
+{
+    return m_match;
+}
+
+/*!
     \qmlproperty QDeclarativeListProperty ServiceList::services
 
     This property holds the list of \l Service elements that match
@@ -282,12 +304,18 @@ int QDeclarativeServiceList::minorVersion() const
 */
 QDeclarativeListProperty<QDeclarativeService> QDeclarativeServiceList::services()
 {
-    QDeclarativeService *service;
     QString version = QString::number(m_major) + "." + QString::number(m_minor);
-    QServiceFilter filter(m_interface, version);
+    
+    QServiceFilter filter;
     filter.setServiceName(m_service);
+    if (m_match == QDeclarativeServiceList::Exact)
+        filter.setInterface(m_interface, version, QServiceFilter::ExactVersionMatch);
+    else
+        filter.setInterface(m_interface, version);
+    
     QList<QServiceInterfaceDescriptor> list = serviceManager->findInterfaces(filter);
     for (int i = 0; i < list.size(); i++) {
+        QDeclarativeService *service;
         service = new QDeclarativeService();
         service->setInterfaceDesc(list.at(i));
         m_services.append(service);

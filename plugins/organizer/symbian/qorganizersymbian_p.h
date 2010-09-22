@@ -115,7 +115,7 @@ public:
     uint hash() const;
 
 private:
-    quint64 m_localCollectionId; // this will be the hash of the calendar file name.  XXX TODO: handle collisions.
+    quint64 m_localCollectionId;
     friend class QOrganizerItemSymbianEngine;
 };
 

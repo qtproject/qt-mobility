@@ -86,7 +86,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> QDeclarativeOrganizerI
     return d->details(QString()).value< QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> >();
 }
 
-QOrganizerItemLocalId QDeclarativeOrganizerItem::itemId() const
+uint QDeclarativeOrganizerItem::itemId() const
 {
     return d->localId();
 }
@@ -100,4 +100,23 @@ QVariant QDeclarativeOrganizerItem::detail(const QString& name)
 QVariant QDeclarativeOrganizerItem::details(const QString& name)
 {
     return d->details(name);
+}
+
+
+void QDeclarativeOrganizerItem::addComment(const QString& comment)
+{
+    d->m_item.addComment(comment);
+    emit valueChanged();
+}
+
+void QDeclarativeOrganizerItem::clearComments()
+{
+    d->m_item.clearComments();
+    emit valueChanged();
+}
+
+void QDeclarativeOrganizerItem::clearDetails()
+{
+    d->m_item.clearDetails();
+    emit valueChanged();
 }
