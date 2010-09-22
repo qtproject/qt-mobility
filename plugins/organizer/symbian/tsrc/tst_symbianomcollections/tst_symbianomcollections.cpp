@@ -123,6 +123,9 @@ private slots:  // Test cases
     void fetchItems_data(){ addManagers(); };
     void fetchItems();
 
+    void removeItems_data(){ addManagers(); };
+    void removeItems();
+
     void fetchItemInstance_data(){ addManagers(); };
     void fetchItemInstance();
 
@@ -595,13 +598,14 @@ void tst_symbianomcollections::removeItem()
 
 void tst_symbianomcollections::fetchItems()
 {
-    // Save a collection
+    // Create a new collection
     QOrganizerCollection c;
     c.setMetaData("Name", "fetchItems");
     c.setMetaData("FileName", "c:fetchitems");
     QVERIFY(m_om->saveCollection(&c));
 
-    const int itemCount(1000);
+    // Create items to the collections
+    const int itemCount(100);
     for (int i(0); i < itemCount; i++) {
         // Save similar item to both of the collections
         QOrganizerItem item1 = createItem(QOrganizerItemType::TypeEvent,
@@ -615,6 +619,7 @@ void tst_symbianomcollections::fetchItems()
     // Verify
     QCOMPARE(m_om->itemIds().count(), itemCount * 2);
     QCOMPARE(m_om->items().count(), itemCount * 2);
+
     // Verify there are no duplicates in the list
     bool noduplicates(true);
     foreach(QOrganizerItemLocalId localid, m_om->itemIds()) {
@@ -624,6 +629,64 @@ void tst_symbianomcollections::fetchItems()
         }
     }
     QVERIFY(noduplicates);
+}
+
+void tst_symbianomcollections::removeItems()
+{
+    // Create two new collections
+    QOrganizerCollection c1;
+    c1.setMetaData("Name", "removeItems1");
+    c1.setMetaData("FileName", "c:removeitems1");
+    QVERIFY(m_om->saveCollection(&c1));
+    QOrganizerCollection c2;
+    c2.setMetaData("Name", "removeItems2");
+    c2.setMetaData("FileName", "c:removeitems2");
+    QVERIFY(m_om->saveCollection(&c2));
+
+    // Create items to the collections
+    const int itemCount(100);
+    for (int i(0); i < itemCount; i++) {
+        // Save similar item to both of the collections
+        QOrganizerItem item = createItem(QOrganizerItemType::TypeEvent,
+                                          QString("removeitem")+ i,
+                                          QDateTime::currentDateTime().addMSecs(3600));
+        QOrganizerItem item1 = item;
+        QOrganizerItem item2 = item;
+        QVERIFY(m_om->saveItem(&item));
+        QVERIFY(m_om->saveItem(&item1, c1.localId()));
+        QVERIFY(m_om->saveItem(&item2, c2.localId()));
+    }
+
+    // Verify
+    QCOMPARE(m_om->itemIds().count(), itemCount * 3);
+
+    // Filter for the first new collection
+    QOrganizerItemCollectionFilter filter1;
+    QSet<QOrganizerCollectionLocalId> collectionIds1;
+    collectionIds1.insert(c1.localId());
+    filter1.setCollectionIds(collectionIds1);
+
+    // Filter for the second new collection
+    QOrganizerItemCollectionFilter filter2;
+    QSet<QOrganizerCollectionLocalId> collectionIds2;
+    collectionIds2.insert(c2.localId());
+    filter2.setCollectionIds(collectionIds2);
+
+    // Remove from the first new collection and verify
+    QVERIFY(m_om->removeItems(m_om->itemIds(filter1), 0));
+    QCOMPARE(m_om->itemIds(filter1).count(), 0);
+    QCOMPARE(m_om->itemIds(filter2).count(), itemCount);
+    QCOMPARE(m_om->itemIds().count(), itemCount * 2);
+
+    // Remove from the second new collection and verify
+    QVERIFY(m_om->removeItems(m_om->itemIds(filter2), 0));
+    QCOMPARE(m_om->itemIds(filter1).count(), 0);
+    QCOMPARE(m_om->itemIds(filter2).count(), 0);
+    QCOMPARE(m_om->itemIds().count(), itemCount);
+
+    // Remove from all collections and verify
+    QVERIFY(m_om->removeItems(m_om->itemIds(), 0));
+    QCOMPARE(m_om->itemIds().count(), 0);
 }
 
 void tst_symbianomcollections::fetchItemInstance()

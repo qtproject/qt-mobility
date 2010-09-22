@@ -1104,27 +1104,19 @@ void QOrganizerItemSymbianEngine::removeItemL(
 {
     // TODO: How to remove item instances?
 
-    // Fetch item
-    // There is a bug in symbian calendar API. It will not report any error
-    // when removing a nonexisting entry. So we need to fetch the item to see
-    // if it really exists before trying to delete it.
-    TCalLocalUid uid = toTCalLocalUid(organizeritemId);
-    CCalEntry *calEntry(0);
-    QOrganizerCollectionLocalId collectionLocalId(0);
-    foreach (const OrganizerSymbianCollection &collection, m_collections) {
-        // TODO: instead of looping through entry views, get the collection id from
-        // local id? (not certain that is the correct way, because the Qt API for
-        // collections is still under development)
-        calEntry = collection.calEntryView()->FetchL(uid);
-        if (calEntry) {
-            collectionLocalId = collection.localId();
-            break;
-        }
-    }
+    QOrganizerCollectionLocalId collectionId = getCollectionLocalId(organizeritemId);
+    if (!m_collections.contains(collectionId))
+        User::Leave(KErrNotFound);
+
+    // Find entry
+    TCalLocalUid calLocalId = toTCalLocalUid(organizeritemId);
+    CCalEntry *calEntry = entryViewL(collectionId)->FetchL(calLocalId);
+    CleanupStack::PushL(calEntry);
     if (!calEntry)
         User::Leave(KErrNotFound);
-    CleanupStack::PushL(calEntry);
-    entryViewL(collectionLocalId)->DeleteL(*calEntry);
+
+    // Remove entry
+    entryViewL(collectionId)->DeleteL(*calEntry);
     CleanupStack::PopAndDestroy(calEntry);
 }
 
