@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtDeclarative module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,41 +39,45 @@
 **
 ****************************************************************************/
 
-import Qt 4.7
+#ifndef QORGANIZERITEMENGINELOCALID_H
+#define QORGANIZERITEMENGINELOCALID_H
 
-Item {
-    id: container
+#include <QString>
+#include <QSharedDataPointer>
 
-    signal clicked
+#include "qtorganizerglobal.h"
 
-    property string text
+class QDataStream;
 
-    BorderImage {
-        id: buttonImage
-        source: "images/toolbutton.sci"
-        width: container.width; height: container.height
-    }
-    BorderImage {
-        id: pressed
-        opacity: 0
-        source: "images/toolbutton.sci"
-        width: container.width; height: container.height
-    }
-    MouseArea {
-        id: mouseRegion
-        anchors.fill: buttonImage
-        onClicked: { container.clicked(); }
-    }
-    Text {
-        color: "white"
-        anchors.centerIn: buttonImage; font.bold: true
-        text: container.text; style: Text.Raised; styleColor: "black"
-    }
-    states: [
-        State {
-            name: "Pressed"
-            when: mouseRegion.pressed == true
-            PropertyChanges { target: pressed; opacity: 1 }
-        }
-    ]
-}
+QTM_BEGIN_NAMESPACE
+
+class Q_ORGANIZER_EXPORT QOrganizerItemEngineLocalId
+{
+public:
+    virtual ~QOrganizerItemEngineLocalId() {}
+
+    virtual bool isEqualTo(const QOrganizerItemEngineLocalId* other) const = 0;
+    virtual bool isLessThan(const QOrganizerItemEngineLocalId* other) const = 0;
+
+    virtual uint engineLocalIdType() const = 0;
+    virtual QOrganizerItemEngineLocalId* clone() const = 0;
+
+#ifndef QT_NO_DEBUG_STREAM
+    // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
+    virtual QDebug debugStreamOut(QDebug dbg) = 0;
+#endif
+#ifndef QT_NO_DATASTREAM
+    // NOTE: on platforms where Qt is built without data streams enabled, vtable will differ!
+    virtual QDataStream& dataStreamOut(QDataStream& out) = 0;
+    virtual QDataStream& dataStreamIn(QDataStream& in) = 0;
+#endif
+    virtual uint hash() const = 0;
+};
+
+QTM_END_NAMESPACE
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemEngineLocalId), Q_MOVABLE_TYPE);
+
+
+#endif
+

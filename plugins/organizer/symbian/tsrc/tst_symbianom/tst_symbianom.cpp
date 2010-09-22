@@ -222,7 +222,7 @@ void tst_SymbianOm::addSimpleItem()
     // Save
     QVERIFY(m_om->saveItem(&item));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
-    QVERIFY(item.id().localId() != 0);
+    QVERIFY(item.id().localId() != QOrganizerItemLocalId());
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
     // Save with list parameter
@@ -231,7 +231,7 @@ void tst_SymbianOm::addSimpleItem()
     QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     foreach (QOrganizerItem listitem, items) {
-        QVERIFY(listitem.id().localId() != 0);
+        QVERIFY(listitem.id().localId() != QOrganizerItemLocalId());
         QVERIFY(item.id().managerUri().contains(m_om->managerName()));
     }
 
@@ -241,7 +241,7 @@ void tst_SymbianOm::addSimpleItem()
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     QVERIFY(errorMap.count() == 0);
     foreach (QOrganizerItem listitem2, items) {
-        QVERIFY(listitem2.id().localId() != 0);
+        QVERIFY(listitem2.id().localId() != QOrganizerItemLocalId());
         QVERIFY(item.id().managerUri().contains(m_om->managerName()));
     }
 }
@@ -254,7 +254,7 @@ void tst_SymbianOm::fetchSimpleItem()
 
     // Save
     QVERIFY(m_om->saveItem(&item));
-    QVERIFY(item.id().localId() != 0);
+    QVERIFY(item.id().localId() != QOrganizerItemLocalId());
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
     // Fetch
@@ -272,7 +272,7 @@ void tst_SymbianOm::removeSimpleItem()
 
     // Save
     QVERIFY(m_om->saveItem(&item));
-    QVERIFY(item.id().localId() != 0);
+    QVERIFY(item.id().localId() != QOrganizerItemLocalId());
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
     // Remove
@@ -382,11 +382,15 @@ void tst_SymbianOm::uniqueIds()
         QVERIFY(guids[i] == item.guid());
     }
     
-    // Save a new todo item with own localid. Should fail.
-    QOrganizerTodo todo;
-    QOrganizerItemId id;
-    id.setLocalId(12345);
-    todo.setId(id);
+    // Try saving a removed item without clearing local id. Should fail
+    QOrganizerTodo todo(items[0]);
+    QVERIFY(m_om->removeItem(todo.localId()));
+    QVERIFY(!m_om->saveItem(&todo));
+    
+    // Try saving a removed item without clearing local id and with own guid. Should fail.
+    todo = QOrganizerTodo(items[1]);
+    todo.setGuid("11111");
+    QVERIFY(m_om->removeItem(todo.localId()));
     QVERIFY(!m_om->saveItem(&todo));
     
     // Save a new todo item with own guid. Should pass.
@@ -403,18 +407,10 @@ void tst_SymbianOm::uniqueIds()
     QVERIFY(todo.localId() == localId); // local id should remain the same
     
     // Change manager uri and save again. Should fail.
-    id = todo.id();
+    QOrganizerItemId id = todo.id();
     id.setManagerUri("foobar");
     todo.setId(id);
     QVERIFY(!m_om->saveItem(&todo));    
-        
-    // Save a new todo item with own guid & localid. Should fail.
-    todo = QOrganizerTodo();
-    id = QOrganizerItemId();
-    id.setLocalId(12345);
-    todo.setId(id);
-    todo.setGuid("11111");
-    QVERIFY(!m_om->saveItem(&todo));
 }
 
 void tst_SymbianOm::timeStamp()
@@ -469,7 +465,7 @@ void tst_SymbianOm::addNegative()
     QVERIFY(!m_om->saveItem(0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
-    QVERIFY(!m_om->saveItems(0, 0, 0));
+    QVERIFY(!m_om->saveItems(0, QOrganizerCollectionLocalId(), 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
     QList<QOrganizerItem> items;
@@ -550,7 +546,7 @@ void tst_SymbianOm::addItem()
         // Save
         QVERIFY(m_om->saveItem(&item));
         QCOMPARE(m_om->error(), expectedErrorCode);
-        QVERIFY(item.id().localId() != 0);
+        QVERIFY(item.id().localId() != QOrganizerItemLocalId());
         QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
         // Fetch item to verify everything was saved successfully
@@ -680,8 +676,9 @@ void tst_SymbianOm::addReminderToSingleInstance()
     
 	// Add the start and end time
 	QOrganizerEventTimeRange timeRange;
-    timeRange.setStartDateTime(QDateTime::currentDateTime());
-    timeRange.setEndDateTime(QDateTime::currentDateTime().addSecs(3000));
+	QDateTime startDateTime = QDateTime::currentDateTime();
+    timeRange.setStartDateTime(startDateTime);
+    timeRange.setEndDateTime(startDateTime.addSecs(3000));
     
 	// Create a daily recurrence rule
 	QOrganizerItemRecurrence recurrence;
@@ -698,7 +695,7 @@ void tst_SymbianOm::addReminderToSingleInstance()
     QVERIFY(m_om->saveItem(&repeatingEvent));
     
 	// Fetch the instances
-	QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
+	QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
     QVERIFY(itemInstances.count() == 3);
     
 	// Verify that reminder detail is empty
@@ -707,7 +704,7 @@ void tst_SymbianOm::addReminderToSingleInstance()
     QVERIFY(rptReminder.isEmpty());
     
 	// Add reminder detail to create an exceptional entry
-	rptReminder.setDateTime(QDateTime::currentDateTime().addSecs(-300));
+	rptReminder.setDateTime(startDateTime.addSecs(-300));
     instance1.saveDetail(&rptReminder);
     QVERIFY(m_om->saveItem(&instance1));
 	
@@ -715,12 +712,11 @@ void tst_SymbianOm::addReminderToSingleInstance()
     instance1 = m_om->item(instance1.localId());
     rptReminder = instance1.detail<QOrganizerItemReminder>();
     QVERIFY(!rptReminder.isEmpty());
-	
+
 	// Verify that the other instances have not been modified
-	itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
-	instance1 = itemInstances.at(1);
-    rptReminder = instance1.detail<QOrganizerItemReminder>();
-    QVERIFY(rptReminder.isEmpty());
+    itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
+    QCOMPARE(itemInstances.count(), 3);
+    QVERIFY(itemInstances.at(1).detail<QOrganizerItemReminder>().isEmpty());
 }
 
 /*!
@@ -731,11 +727,12 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
 	// Repeating event with reminder
     QOrganizerItem repeatingEvent;
     repeatingEvent.setType(QOrganizerItemType::TypeEvent);
-	
+    
 	// Add the start and end time
     QOrganizerEventTimeRange timeRange;
-    timeRange.setStartDateTime(QDateTime::currentDateTime());
-    timeRange.setEndDateTime(QDateTime::currentDateTime().addSecs(3000));
+    QDateTime startDateTime = QDateTime::currentDateTime();
+    timeRange.setStartDateTime(startDateTime);
+    timeRange.setEndDateTime(startDateTime.addSecs(3000));
     
 	// Create a daily recurrence rule
 	QOrganizerItemRecurrence recurrence;
@@ -748,7 +745,7 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
     
 	// Add reminder detail
 	QOrganizerItemReminder repeatReminder;
-    repeatReminder.setDateTime(QDateTime::currentDateTime().addSecs(-300));
+    repeatReminder.setDateTime(startDateTime.addSecs(-300));
     
 	// Save the item
 	repeatingEvent.saveDetail(&timeRange);
@@ -757,7 +754,7 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
     QVERIFY(m_om->saveItem(&repeatingEvent));
     
 	// Fetch the instances
-	QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
+	QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
     QVERIFY(itemInstances.count() == 3);
     
 	// Modify first instance by removing reminder detail and save
@@ -773,10 +770,9 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
     QVERIFY(rptReminder.isEmpty());
 	
 	// Check if the other instances are intact
-	itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
-	instance1 = itemInstances.at(1);
-    rptReminder = instance1.detail<QOrganizerItemReminder>();
-    QVERIFY(!rptReminder.isEmpty());
+	itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
+	QCOMPARE(itemInstances.count(), 3);
+    QVERIFY(!itemInstances.at(1).detail<QOrganizerItemReminder>().isEmpty());
 }
 
 void tst_SymbianOm::timezone()

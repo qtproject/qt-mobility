@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,36 +39,56 @@
 **
 ****************************************************************************/
 
-#ifndef BUZZER_H
-#define BUZZER_H
 
-#include <qmobilityglobal.h>
-#include <qfeedbackeffect.h>
+#ifndef QORGANIZERCOLLECTIONCHANGESET_P_H
+#define QORGANIZERCOLLECTIONCHANGESET_P_H
 
-QTM_USE_NAMESPACE
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-class Buzzer : public QObject
+#include "qtorganizerglobal.h"
+#include <QSharedData>
+#include <QSet>
+#include <QPair>
+
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerCollectionChangeSetData : public QSharedData
 {
-    Q_OBJECT
-    Q_PROPERTY(bool oceaning READ oceaning WRITE setOceaning NOTIFY oceaningChanged)
 public:
-    Buzzer();
-    void setOceaning(bool on);
-    bool oceaning() const;
+    QOrganizerCollectionChangeSetData()
+        : QSharedData(),
+        m_dataChanged(false)
+    {
+    }
 
-public Q_SLOTS:
-    void rumble();
-    void click();
-    void oops();
-    void quit();
+    QOrganizerCollectionChangeSetData(const QOrganizerCollectionChangeSetData& other)
+        : QSharedData(other),
+        m_dataChanged(other.m_dataChanged),
+        m_addedCollections(other.m_addedCollections),
+        m_changedCollections(other.m_changedCollections),
+        m_removedCollections(other.m_removedCollections)
+    {
+    }
 
-Q_SIGNALS:
-    void oceaningChanged();
+    ~QOrganizerCollectionChangeSetData()
+    {
+    }
 
-private:
-    QFeedbackHapticsEffect m_rumble;
-    QFeedbackHapticsEffect m_ocean;
-    bool m_oceaning;
+    bool m_dataChanged;
+    QSet<QOrganizerCollectionLocalId> m_addedCollections;
+    QSet<QOrganizerCollectionLocalId> m_changedCollections;
+    QSet<QOrganizerCollectionLocalId> m_removedCollections;
 };
+
+QTM_END_NAMESPACE
 
 #endif

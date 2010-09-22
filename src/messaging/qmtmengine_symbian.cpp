@@ -5928,6 +5928,6 @@ void CAsynchronousMTMOperation::DoCancel()
     ipMsvOperation->Cancel();
 }
 
-#include "..\..\build\Release\QtMessaging\moc\moc_qmtmengine_symbian_p.cpp";
+#include "moc_qmtmengine_symbian_p.cpp"
 
 QTM_END_NAMESPACE

@@ -54,10 +54,12 @@
 //
 
 #include "qorganizeritemmanager.h"
+#include "qorganizeritemmanager_p.h"
 #include "qorganizeritemabstractrequest.h"
 
 #include <QList>
 #include <QPointer>
+#include <QMutex>
 
 QTM_BEGIN_NAMESPACE
 
@@ -80,9 +82,26 @@ public:
         return QOrganizerItemAbstractRequest::InvalidRequest;
     }
 
+    static void notifyEngine(QOrganizerItemAbstractRequest* request)
+    {
+        Q_ASSERT(request);
+        QOrganizerItemAbstractRequestPrivate* d = request->d_ptr;
+        if (d) {
+            QMutexLocker ml(&d->m_mutex);
+            QOrganizerItemManagerEngine *engine = QOrganizerItemManagerData::engine(d->m_manager);
+            ml.unlock();
+            if (engine) {
+                engine->requestDestroyed(request);
+            }
+        }
+    }
+
     QOrganizerItemManager::Error m_error;
     QOrganizerItemAbstractRequest::State m_state;
     QPointer<QOrganizerItemManager> m_manager;
+    QPointer<QOrganizerItemManagerEngine> m_engine;
+
+    mutable QMutex m_mutex;
 };
 
 QTM_END_NAMESPACE

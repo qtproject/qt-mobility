@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtDeclarative module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,51 +39,40 @@
 **
 ****************************************************************************/
 
-import Qt 4.7
-import "components"
+#include <qmobilityglobal.h>
+#include <qfeedbackeffect.h>
 
-Item {
-    Button {
-        id: rumbleButton
-        text: "Rumble"
-        anchors.top: parent.top
-        anchors.left: parent.left
-        width : parent.width/2
-        height : parent.height/2
-        onClicked: {
-            hapticplayer.rumble();
-        }
-    }
-    Button {
-        id: oceanButton
-        text: { if (!hapticplayer.oceaning) "Start Ocean"; else "Stop Ocean" }
-        anchors.top: parent.top
-        anchors.left: rumbleButton.right
-        width : parent.width/2
-        height : parent.height/2
-        onClicked: {
-            hapticplayer.oceaning = !hapticplayer.oceaning
-        }
-    }
-    Button {
-        id: clickButton
-        text: "Click"
-        anchors.top: rumbleButton.bottom
-        anchors.left: parent.left
-        width : parent.width/2
-        height : parent.height/2
-        onClicked: {
-            hapticplayer.click();
-        }
-    }
-    Button {
-        text: "Oops!"
-        anchors.top: oceanButton.bottom
-        anchors.left: clickButton.right
-        width : parent.width/2
-        height : parent.height/2
-        onClicked: {
-            hapticplayer.oops();
-        }
-    }
-}
+#include <QDialog>
+class HapticButton;
+
+QTM_USE_NAMESPACE
+
+#ifndef DIALOG_H_
+#define DIALOG_H_
+
+class Dialog : public QDialog
+{
+    Q_OBJECT
+
+public:
+    Dialog();
+    ~Dialog();
+
+private Q_SLOTS:
+    void playRumble();
+    void playOcean(bool toggleState);
+    void playButtonClick();
+    void playNegativeEffect();
+
+private:
+    HapticButton *m_btnRumble;
+    HapticButton *m_btnOcean;
+    HapticButton *m_btnButtonClick;
+    HapticButton *m_btnNegativeEffect;
+
+    QFeedbackHapticsEffect m_rumble;
+    QFeedbackHapticsEffect m_ocean;
+};
+
+#endif
+
