@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the demonstration applications of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,46 +38,34 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtCore/qcoreapplication.h>
-#include <QtTest/QtTest>
 
-#include "tst_qmediaobject.h"
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-#include "tst_qmediaobject_xa.h"
-#else
-#include "tst_qmediaobject_mmf.h"
-#endif
+#include <QtGui/QApplication>
+#include <QtDeclarative/QDeclarativeView>
+#include <QtDeclarative/QDeclarativeEngine>
+
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+#include <QtOpenGL/QGLWidget>
 #endif
 
-int main(int argc, char**argv)
+int main(int argc, char *argv[])
 {
-    QApplication app(argc,argv);
-    int ret;
-    tst_QMediaObject test_api;
-    ret = QTest::qExec(&test_api, argc, argv);
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-    char *new_argv[3];
-    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";
-    QByteArray   bytes  = str.toAscii();
-    char arg1[] = "-o";
-    new_argv[0] = argv[0];
-    new_argv[1] = arg1;
-    new_argv[2] = bytes.data();
-    tst_QMetadata_xa test_xa;
-    ret = QTest::qExec(&test_xa, 3, new_argv);
+    QApplication application(argc, argv);
+    const QString mainQmlApp = QLatin1String("qrc:/declarative-camera.qml");
+    QDeclarativeView view;
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+    view.setViewport(new QGLWidget);
+#endif
+    view.setSource(QUrl(mainQmlApp));
+    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    // Qt.quit() called in embedded .qml by default only emits
+    // quit() signal, so do this (optionally use Qt.exit()).
+    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    view.showFullScreen();
 #else
-    char *new_argv[3];
-    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";
-    QByteArray   bytes  = str.toAscii();
-    char arg1[] = "-o";
-    new_argv[0] = argv[0];
-    new_argv[1] = arg1;
-    new_argv[2] = bytes.data();
-    tst_QMediaObject_mmf test_mmf;
-    ret = QTest::qExec(&test_mmf, 3, new_argv);
+    view.setGeometry(QRect(100, 100, 800, 480));
+    view.show();
 #endif
-#endif
-    return ret;
+    return application.exec();
 }
+

@@ -89,6 +89,16 @@ Item {
         }
     }
 
+    CameraButton {
+        id: quitButton
+        anchors.right : parent.right
+        anchors.rightMargin: 8
+        anchors.bottom : parent.bottom
+        anchors.bottomMargin: 8
+        text: "Quit"
+        onClicked: Qt.quit()
+    }
+
     Item {
         id: exposureDetails
         anchors.bottom : parent.bottom
