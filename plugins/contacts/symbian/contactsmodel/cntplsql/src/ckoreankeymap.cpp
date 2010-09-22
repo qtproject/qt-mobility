@@ -62,10 +62,10 @@ CKoreanKeyMap::~CKoreanKeyMap()
     }
 
 // ----------------------------------------------------------------------------
-// CKoreanKeyMap::IsKoreanString
+// CKoreanKeyMap::IsLanguageSupported
 // TODO: how to handle strings with both latin and Korean chars?
 // ----------------------------------------------------------------------------
-TBool CKoreanKeyMap::IsKoreanString(QString aSource) const
+TBool CKoreanKeyMap::IsLanguageSupported(QString aSource) const
 	{
 	if (iLatinCodec && iLatinCodec->canEncode(aSource))
 		{

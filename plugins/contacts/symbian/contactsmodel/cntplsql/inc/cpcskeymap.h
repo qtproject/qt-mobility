@@ -30,9 +30,12 @@
 class QString;
 class QChar;
 class HbKeymap;
+class MLanguageSpecificKeymap;
 
 // Code using the new API (wk32 onwards) is put here. Remove old API code
 // when wk30 is no longer used.
+// There seems to be a resource leak when using the new API. That's why the old
+// API is still being used.
 // #define NEW_KEYMAP_FACTORY_API
 
 
@@ -102,6 +105,8 @@ NONSHARABLE_CLASS(CPcsKeyMap) : public CBase
 		virtual TBool DetermineSpecialCharBehaviour(QString aSource) const;
 
 		virtual TBool ShouldSkipChar(QChar aChar, TBool aSkipHashStar) const;
+
+		virtual MLanguageSpecificKeymap* CheckLanguage(QString aSource) const;
 
 		/**
          * Read the keymap-specific extra characters from the keymap and append
