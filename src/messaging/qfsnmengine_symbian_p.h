@@ -276,6 +276,7 @@ public:
 public slots:
     void searchOperationCompleted();
     void searchCompleted();
+    void messageFound(EmailClientApi::NmApiMessage message);
 
 private:
     //void getAllMessagesL();

@@ -804,12 +804,22 @@ NmApiMessage CFSEngine::message(const quint64 mailboxId, const quint64 folderId,
 
 QMessage CFSEngine::message(const QMessageId &id) const
 {
-    // TODO:
-    /* Use NmApiEmailService::getMessage() to find NmApiMessage by messageId.
-    fsMessage = ...
-    conver fsMessage to qmessage, using CreateQMessage()
-*/
-    return QMessage();
+    QMessage message = QMessage();
+    NmApiMessage fsMessage;
+    foreach (QMessageAccount account, m_accounts) {
+        quint64 mailboxId(stripIdPrefix(account.id().toString()).toLongLong());
+        quint64 messageId(stripIdPrefix(id.toString()).toLongLong());
+        NmApiMessage fsMessage;
+        if (m_emailServiceInitialized) {
+            m_emailService->getMessage(mailboxId, 0, messageId, fsMessage);       
+            message = CreateQMessage(&fsMessage);            
+            QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
+            privateMessage->_id = id; 
+            privateMessage->_modified = false;
+            return message;
+        }
+    }
+    return message;
 }
 
 bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOption /*option*/)
@@ -1223,7 +1233,7 @@ void CFSEngine::countMessagesL(QMessageServicePrivate &privateService, const QMe
 void CFSEngine::filterAndOrderMessagesReady(bool success, int operationId, QMessageIdList ids, int numberOfHandledFilters,
                                              bool resultSetOrdered)
 {
- /*   int index=0;
+    int index=0;
     for (; index < m_messageQueries.count(); index++) {
         if (m_messageQueries[index].operationId == operationId) {
             break;
@@ -1322,7 +1332,7 @@ void CFSEngine::filterAndOrderMessagesReady(bool success, int operationId, QMess
     }
 
     delete m_messageQueries[index].findOperation;
-    m_messageQueries.removeAt(index);*/
+    m_messageQueries.removeAt(index);
 }
 
 void CFSEngine::applyOffsetAndLimitToMsgIds(QMessageIdList &idList, int offset, int limit) const
@@ -2249,7 +2259,7 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
                 QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
                 if (cmp == QMessageDataComparator::Equal) {
                     QMessageAccount messageAccount = m_owner.account(pf->_value.toString());
-                    //getAccountSpecificMessagesL(messageAccount);
+                    getAccountSpecificMessages(messageAccount, sortCriteria);
                     m_resultCorrectlyOrdered = true;
                 } else { // NotEqual
                     QStringList exludedAccounts;
@@ -2365,10 +2375,10 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
             break;
             }
         case QMessageFilterPrivate::StandardFolder: {
-            m_numberOfHandledFilters++;
+         /*   m_numberOfHandledFilters++;
             QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
             QMessage::StandardFolder standardFolder = static_cast<QMessage::StandardFolder>(pf->_value.toInt());
-            /*
+            
             TFolderType stdFolder = m_owner.standardFolderId(standardFolder);
 
             if (cmp == QMessageDataComparator::Equal) {
@@ -2543,10 +2553,18 @@ void CFSMessagesFindOperation::getAccountSpecificMessages(QMessageAccount& messa
         searchKeys.append(m_searchKey);
     operation.m_AccountSearch->initialise(searchKeys, sortCriteria);
     m_searchOperations.append(operation);
-    //connect(operation.m_FolderSearch, SIGNAL(messageFound(NmApiMessage)), this, SLOT(messageFound(NmApiMessage)));
+    connect(operation.m_FolderSearch, SIGNAL(messageFound(EmailClientApi::NmApiMessage)), this, SLOT(messageFound(EmailClientApi::NmApiMessage)));
     connect(operation.m_AccountSearch, SIGNAL(searchComplete(int)), this, SLOT(searchOperationCompleted()));
     if (m_searchOperations.count() == 1)
         operation.m_AccountSearch->start();
+}
+
+void CFSMessagesFindOperation::messageFound(EmailClientApi::NmApiMessage message)
+{
+    QMessageId messageId(addIdPrefix(QString::number(message.envelope().id()), SymbianHelpers::EngineTypeFreestyle));
+    if (!m_excludeIdList.contains(messageId)) {
+        m_idList.append(messageId);   
+    }
 }
 
 void CFSMessagesFindOperation::getAllMessages(NmApiMailSortCriteria& sortCriteria)
@@ -2591,7 +2609,7 @@ void CFSMessagesFindOperation::searchOperationCompleted()
         else // operation.m_Type == FSSearchOperation::SearchAccount
             operation.m_AccountSearch->start();
     } else {
-        QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
     }
 }
 
