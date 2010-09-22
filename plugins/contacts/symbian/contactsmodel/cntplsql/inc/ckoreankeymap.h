@@ -51,14 +51,6 @@ NONSHARABLE_CLASS(CKoreanKeyMap) : public CBase, public MLanguageSpecificKeymap
          */
 		TBool IsLanguageSupported(QString aSource) const;
 
-#if 0 //old code
-		/**
-		 * Maps the given string using a built-in Korean key map.
-		 * aSource String to be converted
-		 * returns Conversion result
-		 */
-		QString GetMappedString(QString aSource) const;
-#endif
 	protected: // Constructors
 		/**
          * Constructor
