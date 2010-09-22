@@ -72,7 +72,6 @@ class QDeclarativeOrganizerItem : public QObject
     Q_PROPERTY (QString type READ type NOTIFY valueChanged)
     Q_PROPERTY (QString displayLabel READ displayLabel WRITE setDisplayLabel NOTIFY valueChanged)
     Q_PROPERTY (QString description READ description WRITE setDescription NOTIFY valueChanged)
-    Q_PROPERTY (QStringList comments READ comments WRITE addComment NOTIFY valueChanged)
     Q_PROPERTY (QString guid READ guid WRITE setGuid NOTIFY valueChanged)
     Q_CLASSINFO("DefaultProperty", "details")
 
@@ -93,20 +92,43 @@ public:
 
     Q_INVOKABLE QVariant detail(const QString& name);
     Q_INVOKABLE QVariant details(const QString& name);
-
-    QString type() const;
-    QString displayLabel() const;
-
-    QString description() const;
-    void setDescription(const QString& description);
-
-    QStringList comments() const;
-    void addComment(const QString& comment);
+    Q_INVOKABLE void addComment(const QString& comment);
     Q_INVOKABLE void clearComments();
+    Q_INVOKABLE void clearDetails();
 
-    QString guid() const;
-    void setGuid(const QString& guid);
-    QDeclarativeOrganizerItemMetaObject* metaObject() const;
+    QString type() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemType, "type", QOrganizerItemType::TypeEvent)
+    }
+    QString displayLabel() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemDisplayLabel, "label", QString())
+    }
+
+    void setDisplayLabel(const QString& label)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemDisplayLabel, "label", label)
+    }
+
+    QString description() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemDescription, "description", QString())
+    }
+
+    void setDescription(const QString& description)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemDescription, "description", description)
+    }
+
+    QString guid() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemGuid, "guid", QString())
+    }
+    void setGuid(const QString& guid)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemGuid, "guid", guid)
+    }
+
 signals:
     void valueChanged();
 private:
