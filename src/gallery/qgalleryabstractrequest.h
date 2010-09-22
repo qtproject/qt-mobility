@@ -92,7 +92,6 @@ public:
         QueryRequest,
         ItemRequest,
         TypeRequest,
-        RemoveRequest
     };
 
     explicit QGalleryAbstractRequest(RequestType type, QObject *parent = 0);

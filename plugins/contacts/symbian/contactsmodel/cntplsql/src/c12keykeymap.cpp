@@ -16,6 +16,8 @@
 
 // INCLUDE FILES
 #include "c12keykeymap.h"
+#include "predictivesearchkeymapdefs.h"
+#include "ckoreankeymap.h"
 // This macro suppresses log writes
 // #define NO_PRED_SEARCH_LOGS
 #include "predictivesearchlog.h"
@@ -68,8 +70,7 @@ const QChar KPadChar		   = 'f';
 const QChar KLowerLimitPadding = '0';
 const QChar KUpperLimitPadding = 'f';
 
-const int KLatin1 = 4; // ISO_8859-1
-const int KThaiLanguage = 2259; // Thai Industrial Standards Institute
+const int KMibThaiLanguage = 2259; // Thai Industrial Standards Institute
 
 
 // ============================== MEMBER FUNCTIONS ============================
@@ -97,6 +98,9 @@ C12keyKeyMap* C12keyKeyMap::NewL()
 C12keyKeyMap::~C12keyKeyMap()
     {
     PRINT(_L("Enter C12keyKeyMap::~C12keyKeyMap"));
+
+	delete iKoreanKeymap;
+
     PRINT(_L("End C12keyKeyMap::~C12keyKeyMap"));
     }
 
@@ -229,6 +233,18 @@ TBool C12keyKeyMap::ShouldSkipChar(QChar aChar, TBool aSkipHashStar) const
 	}
 
 // ----------------------------------------------------------------------------
+// C12keyKeyMap::ReadExtraCharacters
+// ----------------------------------------------------------------------------
+MLanguageSpecificKeymap* C12keyKeyMap::CheckLanguage(QString aSource) const
+	{
+	if (iKoreanKeymap->IsLanguageSupported(aSource))
+		{
+		return iKoreanKeymap;
+		}
+	return NULL;
+	}
+
+// ----------------------------------------------------------------------------
 // C12keyKeyMap::C12keyKeyMap
 // Fill QList with empty strings
 // ----------------------------------------------------------------------------
@@ -254,6 +270,8 @@ void C12keyKeyMap::ConstructL()
         User::Leave(err);
         }
 
+	iKoreanKeymap = CKoreanKeyMap::NewL();
+
 	PRINT(_L("End C12keyKeyMap::ConstructL"));
 	}
 
@@ -262,8 +280,8 @@ void C12keyKeyMap::ConstructL()
 // ----------------------------------------------------------------------------
 void C12keyKeyMap::GetTextCodecs()
     {
-    iLatinCodec = QTextCodec::codecForMib(KLatin1);
-    iThaiCodec = QTextCodec::codecForMib(KThaiLanguage);
+    iLatinCodec = QTextCodec::codecForMib(KMibLatin1);
+    iThaiCodec = QTextCodec::codecForMib(KMibThaiLanguage);
     }
 
 // End of file

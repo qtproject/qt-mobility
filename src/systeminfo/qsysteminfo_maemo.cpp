@@ -99,7 +99,11 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QStringList languages;
 
+#if !defined(Q_WS_MAEMO_6)
     GConfItem languagesItem("/apps/osso/inputmethod/available_languages");
+#else
+    GConfItem languagesItem("/meegotouch/inputmethods/languages");
+#endif
     const QStringList locales = languagesItem.value().toStringList();
 
     foreach(const QString locale, locales) {

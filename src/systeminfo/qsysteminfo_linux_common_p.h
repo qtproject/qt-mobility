@@ -257,8 +257,8 @@ private:
      QMap<QString, QString> mountEntriesMap;
      QMap<QString, QSystemStorageInfo::StorageState> stateMap;
      void mountEntries();
-     QFileSystemWatcher *mtabWatcherA;
-     QFileSystemWatcher *mtabWatcherB;
+     int mtabWatchA;
+     int inotifyFD;
 
      QTimer *storageTimer;
 
@@ -274,9 +274,8 @@ private Q_SLOTS:
 #endif
 
 private Q_SLOTS:
-    void deviceChanged(const QString &path);
-    void checkAvailableStorage();
-
+    void deviceChanged();
+    void inotifyActivated();
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);

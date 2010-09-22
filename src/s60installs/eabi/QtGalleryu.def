@@ -259,20 +259,20 @@ EXPORTS
 	_ZN10QtMobility20QGalleryQueryRequestD0Ev @ 258 NONAME
 	_ZN10QtMobility20QGalleryQueryRequestD1Ev @ 259 NONAME
 	_ZN10QtMobility20QGalleryQueryRequestD2Ev @ 260 NONAME
-	_ZN10QtMobility21QGalleryRemoveRequest11qt_metacallEN11QMetaObject4CallEiPPv @ 261 NONAME
-	_ZN10QtMobility21QGalleryRemoveRequest11qt_metacastEPKc @ 262 NONAME
-	_ZN10QtMobility21QGalleryRemoveRequest11setResponseEPNS_24QGalleryAbstractResponseE @ 263 NONAME
-	_ZN10QtMobility21QGalleryRemoveRequest16staticMetaObjectE @ 264 NONAME DATA 16
-	_ZN10QtMobility21QGalleryRemoveRequest19getStaticMetaObjectEv @ 265 NONAME
-	_ZN10QtMobility21QGalleryRemoveRequest9setItemIdERK8QVariant @ 266 NONAME
-	_ZN10QtMobility21QGalleryRemoveRequestC1EP7QObject @ 267 NONAME
-	_ZN10QtMobility21QGalleryRemoveRequestC1EPNS_16QAbstractGalleryEP7QObject @ 268 NONAME
-	_ZN10QtMobility21QGalleryRemoveRequestC2EP7QObject @ 269 NONAME
-	_ZN10QtMobility21QGalleryRemoveRequestC2EPNS_16QAbstractGalleryEP7QObject @ 270 NONAME
-	_ZN10QtMobility21QGalleryRemoveRequestD0Ev @ 271 NONAME
-	_ZN10QtMobility21QGalleryRemoveRequestD1Ev @ 272 NONAME
-	_ZN10QtMobility21QGalleryRemoveRequestD2Ev @ 273 NONAME
-	_ZN10QtMobility22QGalleryMetaDataFilter11setInvertedEb @ 274 NONAME
+	_ZN10QtMobility21QGalleryRemoveRequest11qt_metacallEN11QMetaObject4CallEiPPv @ 261 NONAME ABSENT
+	_ZN10QtMobility21QGalleryRemoveRequest11qt_metacastEPKc @ 262 NONAME ABSENT
+	_ZN10QtMobility21QGalleryRemoveRequest11setResponseEPNS_24QGalleryAbstractResponseE @ 263 NONAME ABSENT
+	_ZN10QtMobility21QGalleryRemoveRequest16staticMetaObjectE @ 264 NONAME DATA 16 ABSENT
+	_ZN10QtMobility21QGalleryRemoveRequest19getStaticMetaObjectEv @ 265 NONAME ABSENT
+	_ZN10QtMobility21QGalleryRemoveRequest9setItemIdERK8QVariant @ 266 NONAME ABSENT
+	_ZN10QtMobility21QGalleryRemoveRequestC1EP7QObject @ 267 NONAME ABSENT
+	_ZN10QtMobility21QGalleryRemoveRequestC1EPNS_16QAbstractGalleryEP7QObject @ 268 NONAME ABSENT
+	_ZN10QtMobility21QGalleryRemoveRequestC2EP7QObject @ 269 NONAME ABSENT
+	_ZN10QtMobility21QGalleryRemoveRequestC2EPNS_16QAbstractGalleryEP7QObject @ 270 NONAME ABSENT
+	_ZN10QtMobility21QGalleryRemoveRequestD0Ev @ 271 NONAME ABSENT
+	_ZN10QtMobility21QGalleryRemoveRequestD1Ev @ 272 NONAME ABSENT
+	_ZN10QtMobility21QGalleryRemoveRequestD2Ev @ 273 NONAME ABSENT
+	_ZN10QtMobility22QGalleryMetaDataFilter11setInvertedEb @ 274 NONAME ABSENT
 	_ZN10QtMobility22QGalleryMetaDataFilter13setComparatorENS_14QGalleryFilter10ComparatorE @ 275 NONAME
 	_ZN10QtMobility22QGalleryMetaDataFilter15setPropertyNameERK7QString @ 276 NONAME
 	_ZN10QtMobility22QGalleryMetaDataFilter18setCaseSensitivityEN2Qt15CaseSensitivityE @ 277 NONAME ABSENT
@@ -453,10 +453,10 @@ EXPORTS
 	_ZNK10QtMobility20QGalleryQueryRequest9itemCountEv @ 452 NONAME
 	_ZNK10QtMobility20QGalleryQueryRequest9resourcesEv @ 453 NONAME
 	_ZNK10QtMobility20QGalleryQueryRequest9resultSetEv @ 454 NONAME
-	_ZNK10QtMobility21QGalleryRemoveRequest10metaObjectEv @ 455 NONAME
-	_ZNK10QtMobility21QGalleryRemoveRequest6itemIdEv @ 456 NONAME
+	_ZNK10QtMobility21QGalleryRemoveRequest10metaObjectEv @ 455 NONAME ABSENT
+	_ZNK10QtMobility21QGalleryRemoveRequest6itemIdEv @ 456 NONAME ABSENT
 	_ZNK10QtMobility22QGalleryMetaDataFilter10comparatorEv @ 457 NONAME
-	_ZNK10QtMobility22QGalleryMetaDataFilter10isInvertedEv @ 458 NONAME
+	_ZNK10QtMobility22QGalleryMetaDataFilter10isInvertedEv @ 458 NONAME ABSENT
 	_ZNK10QtMobility22QGalleryMetaDataFilter12propertyNameEv @ 459 NONAME
 	_ZNK10QtMobility22QGalleryMetaDataFilter15caseSensitivityEv @ 460 NONAME ABSENT
 	_ZNK10QtMobility22QGalleryMetaDataFilter5valueEv @ 461 NONAME
@@ -484,7 +484,7 @@ EXPORTS
 	_ZTIN10QtMobility19QGalleryItemRequestE @ 483 NONAME
 	_ZTIN10QtMobility19QGalleryTypeRequestE @ 484 NONAME
 	_ZTIN10QtMobility20QGalleryQueryRequestE @ 485 NONAME
-	_ZTIN10QtMobility21QGalleryRemoveRequestE @ 486 NONAME
+	_ZTIN10QtMobility21QGalleryRemoveRequestE @ 486 NONAME ABSENT
 	_ZTIN10QtMobility23QGalleryAbstractRequestE @ 487 NONAME
 	_ZTIN10QtMobility24QGalleryAbstractResponseE @ 488 NONAME
 	_ZTVN10QtMobility16QAbstractGalleryE @ 489 NONAME
@@ -494,7 +494,7 @@ EXPORTS
 	_ZTVN10QtMobility19QGalleryItemRequestE @ 493 NONAME
 	_ZTVN10QtMobility19QGalleryTypeRequestE @ 494 NONAME
 	_ZTVN10QtMobility20QGalleryQueryRequestE @ 495 NONAME
-	_ZTVN10QtMobility21QGalleryRemoveRequestE @ 496 NONAME
+	_ZTVN10QtMobility21QGalleryRemoveRequestE @ 496 NONAME ABSENT
 	_ZTVN10QtMobility23QGalleryAbstractRequestE @ 497 NONAME
 	_ZTVN10QtMobility24QGalleryAbstractResponseE @ 498 NONAME
 	_ZN10QtMobility18QGalleryQueryModel12errorChangedEv @ 499 NONAME
@@ -537,4 +537,6 @@ EXPORTS
 	_ZNK10QtMobility20QGalleryQueryRequest10autoUpdateEv @ 536 NONAME
 	_ZN10QtMobility22QGalleryMetaDataFilterC1ERK7QStringRK8QVariantNS_14QGalleryFilter10ComparatorE @ 537 NONAME
 	_ZN10QtMobility22QGalleryMetaDataFilterC2ERK7QStringRK8QVariantNS_14QGalleryFilter10ComparatorE @ 538 NONAME
+	_ZN10QtMobility22QGalleryMetaDataFilter10setNegatedEb @ 539 NONAME
+	_ZNK10QtMobility22QGalleryMetaDataFilter9isNegatedEv @ 540 NONAME
 

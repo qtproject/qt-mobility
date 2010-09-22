@@ -43,6 +43,7 @@
 #include "qmessagecontentcontainer_maemo_p.h"
 #include "qmessagemanager.h"
 #include "qmessageid_p.h"
+#include "modestengine_maemo_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -96,6 +97,7 @@ QMessage::QMessage()
     setDerivedMessage(this);
     d_ptr->_size = 0;
     d_ptr->_modified = false;
+    d_ptr->_mimeInformationRetrieved = true;
 }
 
 QMessage::QMessage(const QMessageId& id)
@@ -285,6 +287,10 @@ void QMessage::setPriority(Priority newPriority)
 
 int QMessage::size() const
 {
+    if (d_ptr->_type == QMessage::Email) {
+        ModestEngine::instance()->retrieveMessageMimeInformation(*(QMessage*)this);
+    }
+
     int size = 0;
     if (d_ptr->_size != 0) {
         size = d_ptr->_size;
@@ -305,6 +311,9 @@ QMessageContentContainerId QMessage::bodyId() const
     // TODO: Example body finding algorithm.
     // If the content type of the message is text, then that is the body
     // otherwise if the first part of the body is text then that is the body.
+    if (d_ptr->_type == QMessage::Email) {
+        ModestEngine::instance()->retrieveMessageMimeInformation(*(QMessage*)this);
+    }
 
     return d_ptr->_bodyId;
 }
@@ -380,6 +389,10 @@ QMessageContentContainerIdList QMessage::attachmentIds() const
 {
     QMessageContentContainerIdList ids;
 
+    if (d_ptr->_type == QMessage::Email) {
+        ModestEngine::instance()->retrieveMessageMimeInformation(*(QMessage*)this);
+    }
+
     QMessageContentContainerId msgBodyId(bodyId());
     foreach (const QMessageContentContainerId &contentId, contentIds()) {
         if (contentId != msgBodyId) {
@@ -392,6 +405,10 @@ QMessageContentContainerIdList QMessage::attachmentIds() const
 
 void QMessage::appendAttachments(const QStringList &fileNames)
 {
+    if (d_ptr->_type == QMessage::Email) {
+        ModestEngine::instance()->retrieveMessageMimeInformation(*(QMessage*)this);
+    }
+
     if (!fileNames.isEmpty()) {
         d_ptr->_modified = true;
 
@@ -441,6 +458,10 @@ bool QMessage::isModified() const
 
 QMessage QMessage::createResponseMessage(ResponseType type) const
 {
+    if (d_ptr->_type == QMessage::Email) {
+        ModestEngine::instance()->retrieveMessageMimeInformation(*(QMessage*)this);
+    }
+
     QMessage message;
     message.setType(d_ptr->_type);
     message.setParentAccountId(d_ptr->_parentAccountId);

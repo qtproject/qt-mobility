@@ -9,7 +9,7 @@ CONFIG += qtestlib
 
 symbian:
 {
-	INCLUDEPATH += .\inc
+	INCLUDEPATH += ./inc
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
     SOURCES += tst_symbianasynchfetchiteminstance.cpp

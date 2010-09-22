@@ -36,6 +36,7 @@ symbian: {
         organizersymbiancollection.h \
         organizersymbianutils.h \
         organizeritemtransform.h \
+        resetanddestroy.h \
         transform/organizeritemdetailtransform.h \
         transform/organizereventtimerangetransform.h \
         transform/organizeritemdescriptiontransform.h \
@@ -50,7 +51,8 @@ symbian: {
         transform/organizerjournaltimerangetransform.h \
         transform/organizertodoprogresstransform.h \
         transform/organizertodotimerangetransform.h \
-	transform/organizeritemremindertransform.h
+        transform/organizeritemremindertransform.h
+
     SOURCES += \
     	qorganizeritemrequestqueue.cpp \
     	organizeritemrequestserviceprovider.cpp \
@@ -72,7 +74,7 @@ symbian: {
         transform/organizerjournaltimerangetransform.cpp \
         transform/organizertodoprogresstransform.cpp \
         transform/organizertodotimerangetransform.cpp \
-	transform/organizeritemremindertransform.cpp
+        transform/organizeritemremindertransform.cpp
 
     LIBS += -lcalinterimapi
 

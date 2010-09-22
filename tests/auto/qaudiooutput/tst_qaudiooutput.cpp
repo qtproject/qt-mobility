@@ -57,6 +57,8 @@
 #define SRCDIR ""
 #endif
 
+Q_DECLARE_METATYPE(QAudioFormat)
+
 class tst_QAudioOutput : public QObject
 {
     Q_OBJECT
@@ -67,6 +69,7 @@ private slots:
     void initTestCase();
 
     void format();
+    void invalidFormat_data();
     void invalidFormat();
 
     void bufferSize();
@@ -174,6 +177,8 @@ void tst_QAudioOutput::createSineWaveData(const QAudioFormat &format, qint64 len
 
 void tst_QAudioOutput::initTestCase()
 {
+    qRegisterMetaType<QAudioFormat>();
+
     // Only perform tests if audio output device exists
     const QList<QAudioDeviceInfo> devices =
         QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
@@ -262,10 +267,34 @@ void tst_QAudioOutput::format()
             QString("sampleType: requested=%1, actual=%2").arg(requested.sampleType()).arg(actual.sampleType()).toLocal8Bit().constData());
 }
 
+void tst_QAudioOutput::invalidFormat_data()
+{
+    QTest::addColumn<QAudioFormat>("invalidFormat");
+
+    QAudioFormat format;
+
+    QTest::newRow("Null Format")
+            << format;
+
+    format = audioDevice.preferredFormat();
+    format.setChannelCount(0);
+    QTest::newRow("Channel count 0")
+            << format;
+
+    format = audioDevice.preferredFormat();
+    format.setSampleRate(0);
+    QTest::newRow("Sample rate 0")
+            << format;
+
+    format = audioDevice.preferredFormat();
+    format.setSampleSize(0);
+    QTest::newRow("Sample size 0")
+            << format;
+}
+
 void tst_QAudioOutput::invalidFormat()
 {
-    QAudioFormat invalidFormat;
-    invalidFormat.setFrequency(0);
+    QFETCH(QAudioFormat, invalidFormat);
 
     QVERIFY2(!audioDevice.isFormatSupported(invalidFormat),
             "isFormatSupported() is returning true on an invalid format");
