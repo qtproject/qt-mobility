@@ -395,13 +395,13 @@ void QOrganizerItemSymbianEngine::itemInstancesL(
     TCalTime startTime;
     startTime.SetTimeUtcL(TCalTime::MinTime());
     if (periodStart.isValid())
-        startTime.SetTimeUtcL(toTTime(periodStart, Qt::UTC));
+        startTime.SetTimeLocalL(toTTime(periodStart, Qt::LocalTime));
 
     // If end date is not defined, use maximum end date
     TCalTime endTime;
     endTime.SetTimeUtcL(TCalTime::MaxTime());
     if (periodEnd.isValid())
-        endTime.SetTimeUtcL(toTTime(periodEnd, Qt::UTC));
+        endTime.SetTimeLocalL(toTTime(periodEnd, Qt::LocalTime));
 
     // Loop through all the instance views and fetch the item instances
     foreach(QOrganizerCollectionLocalId collectionId, m_collections.keys()) {
