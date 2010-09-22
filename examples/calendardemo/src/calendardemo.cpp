@@ -311,27 +311,32 @@ void CalendarDemo::importItems()
        tr("Select iCalendar file"), ".", tr("iCalendar files (*.ics)"));
     QFile file(fileName);
     file.open(QIODevice::ReadOnly);
-    if (file.isReadable()) {
-        QVersitReader reader;
-        reader.setDevice(&file);
-        if (reader.startReading() && reader.waitForFinished()) {
-            QVersitOrganizerImporter importer;
-            foreach (const QVersitDocument& document, reader.results()) {
-                if (importer.importDocument(document)) {
-                    QList<QOrganizerItem> items = importer.items();
-                    QMap<int, QOrganizerItemManager::Error> errorMap;
-                    QList<QOrganizerItem>::iterator it = items.begin();
-                    while (it != items.end()) {
-                        *it = m_manager->compatibleItem(*it);
-                        it++;
-                    }
-                    m_manager->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap);
-                }
-            }
-            m_monthPage->refresh();
-            m_dayPage->refresh();
-        }
+    if (!file.isReadable()) {
+        qWarning() << "File is not readable";
+        return;
     }
+    QVersitReader reader;
+    reader.setDevice(&file);
+    if (!reader.startReading() || !reader.waitForFinished()) {
+        qWarning() << "Read failed, " << reader.error();
+    }
+    QVersitOrganizerImporter importer;
+    foreach (const QVersitDocument& document, reader.results()) {
+        if (!importer.importDocument(document)) {
+            qWarning() << "Import failed, " << importer.errors();
+            continue;
+        }
+        QList<QOrganizerItem> items = importer.items();
+        QMap<int, QOrganizerItemManager::Error> errorMap;
+        QList<QOrganizerItem>::iterator it = items.begin();
+        while (it != items.end()) {
+            *it = m_manager->compatibleItem(*it);
+            it++;
+        }
+        m_manager->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap);
+    }
+    m_monthPage->refresh();
+    m_dayPage->refresh();
 #endif
 }
 
@@ -347,16 +352,22 @@ void CalendarDemo::exportItems()
                                                     tr("iCalendar files (*.ics)"));
     QFile file(fileName);
     file.open(QIODevice::WriteOnly);
-    if (file.isWritable()) {
-        QList<QOrganizerItem> items(m_manager->items());
-        QVersitOrganizerExporter exporter;
-        if(exporter.exportItems(items, QVersitDocument::ICalendar20Type)) {
-            QVersitDocument document = exporter.document();
-            QVersitWriter writer;
-            writer.setDevice(&file);
-            writer.startWriting(QList<QVersitDocument>() << document);
-            writer.waitForFinished();
-        }
+    if (!file.isWritable()) {
+        qWarning() << "File is not writable";
+        return;
+    }
+    QList<QOrganizerItem> items(m_manager->items());
+    QVersitOrganizerExporter exporter;
+    if (!exporter.exportItems(items, QVersitDocument::ICalendar20Type)) {
+        qWarning() << "Export failed, " << exporter.errors();
+        return;
+    }
+    QVersitDocument document = exporter.document();
+    QVersitWriter writer;
+    writer.setDevice(&file);
+    if (!writer.startWriting(QList<QVersitDocument>() << document)
+        || !writer.waitForFinished()) {
+        qWarning() << "Write failed, " << writer.error();
     }
 #endif
 }
