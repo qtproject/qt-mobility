@@ -181,8 +181,8 @@ Rectangle {
     ServiceList {
         id: dialerServiceList
         interfaceName: "com.nokia.qt.examples.Dialer"
-        minorVersion: 1
-        majorVersion: 0
+        majorVersion: 1
+        minorVersion: 0
     }
     //! [5]
 }
