@@ -37,55 +37,60 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef JOURNALEDITPAGE_H_
-#define JOURNALEDITPAGE_H_
+#ifndef ADDCALENDARPAGE_H
+#define ADDCALENDARPAGE_H
 
 #include <QWidget>
-#include <QDate>
 #include <qmobilityglobal.h>
-#include <qorganizeritemid.h>
-#include <qorganizerjournal.h>
+#include <qorganizercollection.h>
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItemManager;
-class QOrganizerEvent;
-class QOrganizerItem;
+class QOrganizerCollection;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
 class QComboBox;
 class QLineEdit;
-class QDateTimeEdit;
+class QCheckBox;
+class QVBoxLayout;
+class QString;
 
-class JournalEditPage : public QWidget
+class AddCalendarPage : public QWidget
 {
     Q_OBJECT
 
 public:
-    JournalEditPage(QWidget *parent = 0);
-    ~JournalEditPage();
+    AddCalendarPage(QWidget *parent = 0);
+    ~AddCalendarPage();
 
 public Q_SLOTS:
     void cancelClicked();
     void saveClicked();
-    void journalChanged(QOrganizerItemManager *manager, const QOrganizerJournal &journal);
-    void handleAlarmIndexChanged(const QString);
+    void calendarChanged(QOrganizerItemManager *manager, QOrganizerCollection& calendar);
+
+#if defined(Q_WS_MAEMO_5)
+    void colorChanged(const QString&);
+    void typeChanged(const QString&);
+    void visibilityChanged(int);
+    void readonlyChanged(int);
+#endif
 
 Q_SIGNALS:
-    void showDayPage();
-
-protected: // from QWidget
-    void showEvent(QShowEvent *event);
+    void showPreviousPage();
 
 private:
     QOrganizerItemManager *m_manager;
-    QOrganizerJournal m_organizerJournal;
-    QLineEdit *m_subjectEdit;
-    QDateTimeEdit *m_timeEdit;
-    QComboBox *m_alarmComboBox;
-    QComboBox *m_calendarComboBox;
-    QList<QOrganizerCollection> m_collections;
+    QOrganizerCollection m_collection;
+    QAction *m_saveOrNextSoftKey;
+
+#if defined(Q_WS_MAEMO_5)
+    QLineEdit *m_nameEdit;
+    QComboBox *m_colorComboBox;
+    QComboBox *m_typeComboBox;
+    QCheckBox *m_visibleCheckBox;
+    QCheckBox *m_readonlyCheckBox;
+#endif
 };
 
-#endif // JOURNALEDITPAGE_H_
+#endif // ADDCALENDARPAGE_H
