@@ -1511,6 +1511,12 @@ void tst_QDeclarativeDocumentGalleryModel::filter()
     QVERIFY(object);
     QVERIFY(gallery.request());
     QCOMPARE(gallery.request()->filter(), filter);
+
+    if (filter.isValid()) {
+        QVERIFY(object->property("filter").value<QDeclarativeGalleryFilterBase *>());
+    } else {
+        QVERIFY(!object->property("filter").value<QDeclarativeGalleryFilterBase *>());
+    }
 }
 
 void tst_QDeclarativeDocumentGalleryModel::changeFilter_data()
