@@ -369,15 +369,15 @@ QGeoRouteRequest::SegmentDetails QGeoRoutingManager::supportedSegmentDetails() c
 }
 
 /*!
-    Returns the levels of detail for navigation instructions which can be
+    Returns the levels of detail for navigation maneuvers which can be
     requested by this manager.
 */
-QGeoRouteRequest::InstructionDetails QGeoRoutingManager::supportedInstructionDetails() const
+QGeoRouteRequest::ManeuverDetails QGeoRoutingManager::supportedManeuverDetails() const
 {
 //    if (!d_ptr->engine)
 //        return QGeoRouteRequest::InstructionDetails();
 
-    return d_ptr->engine->supportedInstructionDetails();
+    return d_ptr->engine->supportedManeuverDetails();
 }
 
 /*!

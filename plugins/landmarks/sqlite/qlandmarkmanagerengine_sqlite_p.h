@@ -156,6 +156,8 @@ public:
     QStringList landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
     QStringList categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
 
+    QStringList searchableLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
+
     bool isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
     void setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString);
 

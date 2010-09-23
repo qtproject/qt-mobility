@@ -436,6 +436,18 @@ QStringList QLandmarkManagerEngineSqlite::categoryAttributeKeys(QLandmarkManager
     return commonKeys;
 }
 
+QStringList QLandmarkManagerEngineSqlite::searchableLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString ="";
+    //TODO: optimize
+    QStringList commonKeys = DatabaseOperations::supportedSearchableAttributes;
+    commonKeys.sort();
+    return commonKeys;
+}
+
 bool QLandmarkManagerEngineSqlite::isReadOnly(QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);

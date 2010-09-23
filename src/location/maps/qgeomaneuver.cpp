@@ -39,27 +39,27 @@
 **
 ****************************************************************************/
 
-#include "qgeoinstruction.h"
-#include "qgeoinstruction_p.h"
+#include "qgeomaneuver.h"
+#include "qgeomaneuver_p.h"
 
 #include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QGeoInstruction
-    \brief The QGeoInstruction class represents a navigation instruction.
+    \class QGeoManeuver
+    \brief The QGeoManeuver class represents a navigation instruction.
 
     \inmodule QtLocation
 
     \ingroup maps-routing
 
-    A QGeoInstruction instance has a position at which the
+    A QGeoManeuver instance has a position at which the
     instruction applies and a textual instruction to provide at that position.
 */
 
 /*!
-\enum QGeoInstruction::InstructionDirection
+\enum QGeoManeuver::InstructionDirection
 
 Describes the change in direction associated with an instruction.
 
@@ -104,26 +104,26 @@ The instruction indicates that the direction of travel should bear to the left.
 /*!
     Constructs a navigation instruction object.
 */
-QGeoInstruction::QGeoInstruction()
-        : d_ptr(new QGeoInstructionPrivate()) {}
+QGeoManeuver::QGeoManeuver()
+        : d_ptr(new QGeoManeuverPrivate()) {}
 
 
 /*!
     Constructs a navigation instruction object from the contents of \a other.
 */
-QGeoInstruction::QGeoInstruction(const QGeoInstruction &other)
+QGeoManeuver::QGeoManeuver(const QGeoManeuver &other)
         : d_ptr(other.d_ptr) {}
 
 /*!
     Destroys this navigation instruction object.
 */
-QGeoInstruction::~QGeoInstruction() {}
+QGeoManeuver::~QGeoManeuver() {}
 
 /*!
     Assigns \a other to this navigation instruction object and then returns
     a reference to this navigation instruction object.
 */
-QGeoInstruction& QGeoInstruction::operator= (const QGeoInstruction & other)
+QGeoManeuver& QGeoManeuver::operator= (const QGeoManeuver & other)
 {
     d_ptr = other.d_ptr;
     return *this;
@@ -132,7 +132,7 @@ QGeoInstruction& QGeoInstruction::operator= (const QGeoInstruction & other)
 /*!
     Returns whether this navigation instruction is equal to \a other.
 */
-bool QGeoInstruction::operator== (const QGeoInstruction &other) const
+bool QGeoManeuver::operator== (const QGeoManeuver &other) const
 {
     return (*(d_ptr.constData()) == *(other.d_ptr.constData()));
 }
@@ -140,15 +140,21 @@ bool QGeoInstruction::operator== (const QGeoInstruction &other) const
 /*!
     Returns whether this navigation instruction is not equal to \a other.
 */
-bool QGeoInstruction::operator!= (const QGeoInstruction &other) const
+bool QGeoManeuver::operator!= (const QGeoManeuver &other) const
 {
     return !(operator==(other));
 }
 
+/*
+bool QGeoManeuver::isValid() const
+{
+}
+*/
+
 /*!
     Sets the position where the instructions should be provided to \a position.
 */
-void QGeoInstruction::setPosition(const QGeoCoordinate &position)
+void QGeoManeuver::setPosition(const QGeoCoordinate &position)
 {
     d_ptr->position = position;
 }
@@ -156,7 +162,7 @@ void QGeoInstruction::setPosition(const QGeoCoordinate &position)
 /*!
     Returns the position where the instructions should be provided.
 */
-QGeoCoordinate QGeoInstruction::position() const
+QGeoCoordinate QGeoManeuver::position() const
 {
     return d_ptr->position;
 }
@@ -164,7 +170,7 @@ QGeoCoordinate QGeoInstruction::position() const
 /*!
     Sets the textual navigation instructions to \a instructionText.
 */
-void QGeoInstruction::setInstructionText(const QString &instructionText)
+void QGeoManeuver::setInstructionText(const QString &instructionText)
 {
     d_ptr->text = instructionText;
 }
@@ -172,7 +178,7 @@ void QGeoInstruction::setInstructionText(const QString &instructionText)
 /*!
     Returns the textual navigation instructions.
 */
-QString QGeoInstruction::instructionText() const
+QString QGeoManeuver::instructionText() const
 {
     return d_ptr->text;
 }
@@ -180,7 +186,7 @@ QString QGeoInstruction::instructionText() const
 /*!
     Sets the direction associated with this instruction to \a direction.
 */
-void QGeoInstruction::setDirection(QGeoInstruction::InstructionDirection direction)
+void QGeoManeuver::setDirection(QGeoManeuver::InstructionDirection direction)
 {
     d_ptr->direction = direction;
 }
@@ -188,7 +194,7 @@ void QGeoInstruction::setDirection(QGeoInstruction::InstructionDirection directi
 /*!
     Returns the direction associated with this instruction.
 */
-QGeoInstruction::InstructionDirection QGeoInstruction::direction() const
+QGeoManeuver::InstructionDirection QGeoManeuver::direction() const
 {
     return d_ptr->direction;
 }
@@ -198,7 +204,7 @@ QGeoInstruction::InstructionDirection QGeoInstruction::direction() const
     instruction was issued and the point that the next instruction should be
     issued, in seconds, to \a secs.
 */
-void QGeoInstruction::setTimeToNextInstruction(int secs)
+void QGeoManeuver::setTimeToNextInstruction(int secs)
 {
     d_ptr->timeToNextInstruction = secs;
 }
@@ -208,7 +214,7 @@ void QGeoInstruction::setTimeToNextInstruction(int secs)
     this instruction was issued and the point that the next instruction should
     be issued, in seconds.
 */
-int QGeoInstruction::timeToNextInstruction() const
+int QGeoManeuver::timeToNextInstruction() const
 {
     return d_ptr->timeToNextInstruction;
 }
@@ -217,7 +223,7 @@ int QGeoInstruction::timeToNextInstruction() const
     Sets the distance, in metres, between the point at which this instruction was issued
     and the point that the next instruction should be issued to \a distance.
 */
-void QGeoInstruction::setDistanceToNextInstruction(qreal distance)
+void QGeoManeuver::setDistanceToNextInstruction(qreal distance)
 {
     d_ptr->distanceToNextInstruction = distance;
 }
@@ -226,7 +232,7 @@ void QGeoInstruction::setDistanceToNextInstruction(qreal distance)
     Returns the distance, in metres, between the point at which this instruction was issued
     and the point that the next instruction should be issued.
 */
-qreal QGeoInstruction::distanceToNextInstruction() const
+qreal QGeoManeuver::distanceToNextInstruction() const
 {
     return d_ptr->distanceToNextInstruction;
 }
@@ -234,12 +240,12 @@ qreal QGeoInstruction::distanceToNextInstruction() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoInstructionPrivate::QGeoInstructionPrivate()
-        : direction(QGeoInstruction::NoDirection),
+QGeoManeuverPrivate::QGeoManeuverPrivate()
+        : direction(QGeoManeuver::NoDirection),
         timeToNextInstruction(0),
         distanceToNextInstruction(0.0) {}
 
-QGeoInstructionPrivate::QGeoInstructionPrivate(const QGeoInstructionPrivate &other)
+QGeoManeuverPrivate::QGeoManeuverPrivate(const QGeoManeuverPrivate &other)
         : QSharedData(other),
         position(other.position),
         text(other.text),
@@ -247,9 +253,9 @@ QGeoInstructionPrivate::QGeoInstructionPrivate(const QGeoInstructionPrivate &oth
         timeToNextInstruction(other.timeToNextInstruction),
         distanceToNextInstruction(other.distanceToNextInstruction) {}
 
-QGeoInstructionPrivate::~QGeoInstructionPrivate() {}
+QGeoManeuverPrivate::~QGeoManeuverPrivate() {}
 
-bool QGeoInstructionPrivate::operator ==(const QGeoInstructionPrivate &other) const
+bool QGeoManeuverPrivate::operator ==(const QGeoManeuverPrivate &other) const
 {
     return ((position == other.position)
             && (text == other.text)

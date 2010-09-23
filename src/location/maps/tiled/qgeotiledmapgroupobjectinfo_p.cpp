@@ -39,71 +39,56 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOINSTRUCTION_H
-#define QGEOINSTRUCTION_H
+#include "qgeotiledmapgroupobjectinfo_p.h"
 
-#include "qmobilityglobal.h"
+#include "qgeotiledmapobjectinfo_p.h"
+#include "qgeotiledmapdata.h"
+#include "qgeotiledmapdata_p.h"
 
-#include <QExplicitlySharedDataPointer>
+#include "qgeomapobject.h"
+#include "qgeomapgroupobject.h"
 
-class QString;
-
-QT_BEGIN_HEADER
+#include <QGraphicsItem>
+#include <QGraphicsPathItem>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QGeoInstructionPrivate;
-
-class Q_LOCATION_EXPORT QGeoInstruction
+QGeoTiledMapGroupObjectInfo::QGeoTiledMapGroupObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
+        : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
+    group = static_cast<QGeoMapGroupObject*>(mapObject);
 
-public:
-    enum InstructionDirection {
-        NoDirection,
-        DirectionForward,
-        DirectionBearRight,
-        DirectionLightRight,
-        DirectionRight,
-        DirectionHardRight,
-        DirectionUTurnRight,
-        DirectionUTurnLeft,
-        DirectionHardLeft,
-        DirectionLeft,
-        DirectionLightLeft,
-        DirectionBearLeft
-    };
+    connect(group,
+            SIGNAL(visibleChanged(bool)),
+            this,
+            SLOT(visibleChanged(bool)));
+    connect(group,
+            SIGNAL(selectedChanged(bool)),
+            this,
+            SLOT(selectedChanged(bool)));
 
-    QGeoInstruction();
-    QGeoInstruction(const QGeoInstruction &other);
-    ~QGeoInstruction();
+    pathItem = new QGraphicsPathItem();
+    graphicsItem = pathItem;
+    pathItem->setPos(0.0, 0.0);
+    updateItem();
+}
 
-    QGeoInstruction& operator= (const QGeoInstruction &other);
+QGeoTiledMapGroupObjectInfo::~QGeoTiledMapGroupObjectInfo() {}
 
-    bool operator== (const QGeoInstruction &other) const;
-    bool operator!= (const QGeoInstruction &other) const;
+void QGeoTiledMapGroupObjectInfo::visibleChanged(bool visible)
+{
+    QList<QGeoMapObject*> objects = group->childObjects();
+    for (int i = 0; i < objects.size(); ++i)
+        objects[i]->setVisible(visible);
+}
 
-    void setPosition(const QGeoCoordinate &position);
-    QGeoCoordinate position() const;
+void QGeoTiledMapGroupObjectInfo::selectedChanged(bool selected)
+{
+    QList<QGeoMapObject*> objects = group->childObjects();
+    for (int i = 0; i < objects.size(); ++i)
+        objects[i]->setSelected(selected);
+}
 
-    void setInstructionText(const QString &instructionText);
-    QString instructionText() const;
-
-    void setDirection(InstructionDirection direction);
-    InstructionDirection direction() const;
-
-    void setTimeToNextInstruction(int secs);
-    int timeToNextInstruction() const;
-
-    void setDistanceToNextInstruction(qreal distance);
-    qreal distanceToNextInstruction() const;
-
-private:
-    QExplicitlySharedDataPointer<QGeoInstructionPrivate> d_ptr;
-};
+#include "moc_qgeotiledmapgroupobjectinfo_p.cpp"
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

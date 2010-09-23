@@ -74,7 +74,7 @@ public:
     QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes() const;
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations() const;
     QGeoRouteRequest::SegmentDetails supportedSegmentDetails() const;
-    QGeoRouteRequest::InstructionDetails supportedInstructionDetails() const;
+    QGeoRouteRequest::ManeuverDetails supportedManeuverDetails() const;
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;
@@ -91,7 +91,7 @@ protected:
     void setSupportedAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes);
     void setSupportedRouteOptimizations(QGeoRouteRequest::RouteOptimizations optimizations);
     void setSupportedSegmentDetails(QGeoRouteRequest::SegmentDetails segmentDetails);
-    void setSupportedInstructionDetails(QGeoRouteRequest::InstructionDetails instructionDetails);
+    void setSupportedManeuverDetails(QGeoRouteRequest::ManeuverDetails maneuverDetails);
 
 private:
     void setManagerName(const QString &managerName);

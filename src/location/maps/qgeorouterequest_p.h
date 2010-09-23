@@ -77,7 +77,7 @@ public:
     QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes;
     QGeoRouteRequest::RouteOptimizations routeOptimization;
     QGeoRouteRequest::SegmentDetail segmentDetail;
-    QGeoRouteRequest::InstructionDetail instructionDetail;
+    QGeoRouteRequest::ManeuverDetail maneuverDetail;
 };
 
 QTM_END_NAMESPACE

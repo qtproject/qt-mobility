@@ -153,7 +153,7 @@ LandmarkManagerEngineSymbianPrivate::LandmarkManagerEngineSymbianPrivate(
 
         HBufC* dbName = m_LandmarkDb->DatabaseUriLC();
         m_dbFilename = QString((QChar*) (dbName->Ptr()), dbName->Length());
-        CleanupStack::Pop(dbName);
+        CleanupStack::PopAndDestroy(dbName);
     );
 
     m_DbEventHandler.AddObsever(this);
@@ -734,6 +734,8 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarks(QList<QLandmark> * landm
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
+    if (errorMap)
+        errorMap->clear();
 
     QList<QLandmarkId> addedIds;
     QList<QLandmarkId> changedIds;
@@ -1373,7 +1375,7 @@ QStringList LandmarkManagerEngineSymbianPrivate::supportedFormats(
         }
     }
     else if (operation == QLandmarkManager::ExportOperation) {
-        //TODO: Sqlite Plugin's GPX encoder can be used to support GPX export
+        //Sqlite Plugin's GPX encoder can be used to support GPX export
         //formats << QLandmarkManager::Gpx;
         formats << QLandmarkManager::Lmx;
     }
@@ -2224,10 +2226,18 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
         return result;
     }
 
-    bool categoryExists = LandmarkUtility::validCategoriesExist(m_LandmarkCatMgr, landmark);
+    bool categoryExists = LandmarkUtility::validCategoriesExist(m_LandmarkCatMgr, landmark,
+        managerUri());
     if (!categoryExists) {
         *error = QLandmarkManager::BadArgumentError;
         *errorString = "Landmark contains a category id that does not exist";
+        return result;
+    }
+
+    if (landmark->iconUrl().toString().size() > KMaxFileName) {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString
+            = "Landmark Icon string is greater than its maxlength i.e. KMaxFileName = 256.";
         return result;
     }
 
@@ -2265,7 +2275,7 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
         symbianLandmark = m_LandmarkDb->ReadLandmarkLC(symbianLmId);
         if (symbianLandmark) {
             // updating existing landmark
-            LandmarkUtility::setSymbianLandmarkL(*symbianLandmark, landmark);
+            LandmarkUtility::setSymbianLandmarkL(*symbianLandmark, landmark, m_LandmarkCatMgr);
             m_LandmarkDb->UpdateLandmarkL(*symbianLandmark);
             CleanupStack::Pop(symbianLandmark);
             *changed = true;
@@ -2332,14 +2342,15 @@ QLandmark LandmarkManagerEngineSymbianPrivate::fetchLandmarkL(const QLandmarkId 
     Q_ASSERT(errorString);
 
     if (landmarkId.managerUri() != managerUri()) {
-        *error = QLandmarkManager::BadArgumentError;
-        *errorString = "Landmark id comes from different landmark manager.";
+        *error = QLandmarkManager::DoesNotExistError;
+        *errorString = "Landmark not found as landmark id comes from different landmark manager.";
         return QLandmark();
     }
     else if (!LandmarkUtility::validLocalId(landmarkId.localId())) {
-        *error = QLandmarkManager::BadArgumentError;
+        *error = QLandmarkManager::DoesNotExistError;
         *errorString
-            = "Bad LandmarkId : Invalid local id is assigned. Symbian Supports unsigned double type for Landmark Ids";
+            = "Landmark not found as local id is invalid. For symbian the local id is a string representation of "
+              "an unsigned double type";
         return QLandmark();
     }
 
@@ -2381,6 +2392,13 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
         *error = QLandmarkManager::BadArgumentError;
         *errorString
             = "Category Name is greater than its maxlength i.e. KPosLmMaxCategoryNameLength = 124.";
+        return result;
+    }
+
+    if (category->iconUrl().toString().size() > KMaxFileName) {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString
+            = "Category Icon string is greater than its maxlength i.e. KMaxFileName = 256.";
         return result;
     }
 
@@ -2464,6 +2482,12 @@ bool LandmarkManagerEngineSymbianPrivate::removeCategoryInternalL(
     if (cat)
         CleanupStack::PopAndDestroy(cat);
 
+    if (LandmarkUtility::isGlobalCategoryId(m_LandmarkCatMgr, categoryId)) {
+        *error = QLandmarkManager::PermissionsError;
+        *errorString = "Category is readonly, cannot be deleted.";
+        return result;
+    }
+
     ExecuteAndDeleteLD(m_LandmarkCatMgr->RemoveCategoryL(symbianCategoryId));
 
     m_DeletedCatIds << categoryId.localId();
@@ -2487,19 +2511,19 @@ QLandmarkCategory LandmarkManagerEngineSymbianPrivate::fetchCategoryL(
     Q_ASSERT(errorString);
 
     if (&landmarkCategoryId == 0) {
-        *error = QLandmarkManager::BadArgumentError;
-        *errorString = "Invalid category id or empty id.";
+        *error = QLandmarkManager::DoesNotExistError;
+        *errorString = "Category not found because the category id is invalid or empty";
         return QLandmarkCategory();
     }
     else if (landmarkCategoryId.managerUri() != managerUri()) {
-        *error = QLandmarkManager::BadArgumentError;
-        *errorString = "Category id comes from different landmark manager.";
+        *error = QLandmarkManager::DoesNotExistError;
+        *errorString = "Category not found because the id's manager uri refers to different manager";
         return QLandmarkCategory();
     }
     else if (!LandmarkUtility::validLocalId(landmarkCategoryId.localId())) {
-        *error = QLandmarkManager::BadArgumentError;
+        *error = QLandmarkManager::DoesNotExistError;
         *errorString
-            = "Bad CategoryId : Invalid local id is assigned. Symbian Supports unsigned double type for Category Ids";
+            = "Category not found because the local id is invalid.  For Symbian the local id must the string representation of an unsigned double type.";
         return QLandmarkCategory();
     }
 
@@ -3195,9 +3219,9 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
             else {
                 qDebug() << "Not supported attribute provided";
                 CleanupStack::PopAndDestroy(compositeCriteria);
-                User::Leave( KErrNotSupported);
+                User::Leave(KErrNotSupported);
             }
-            
+
         }
 
         // TODO : This check is required in case of emulation.
@@ -3830,7 +3854,7 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 aData->iErrorMap.insert(aData->iOpCount, error);
                 aData->error = error;
                 aData->errorString = errorString;
-                aData->iLandmarks.append(QLandmark());
+                aData->iLandmarks.append((lmSaveRequest->landmarks()).at(aData->iOpCount));
             }
 
             if (added)
@@ -3912,7 +3936,7 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 aData->iErrorMap.insert(aData->iOpCount, error);
                 aData->error = error;
                 aData->errorString = errorString;
-                aData->iCategories.append(QLandmarkCategory());
+                aData->iCategories.append((saveCategoryRequest->categories()).at(aData->iOpCount));
             }
 
             if (added)
@@ -4735,8 +4759,8 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::importLandmarksL(QIODevi
  */
 void LandmarkManagerEngineSymbianPrivate::handleDatabaseEvent(const TPosLmEvent& aEvent)
 {
-    qDebug() << "aEvent.iLandmarkItemId = " << aEvent.iLandmarkItemId;
-    qDebug() << "aEvent.iEventType = " << aEvent.iEventType;
+    //qDebug() << "aEvent.iLandmarkItemId = " << aEvent.iLandmarkItemId;
+    //qDebug() << "aEvent.iEventType = " << aEvent.iEventType;
 
     TInt id = aEvent.iLandmarkItemId;
     QString localId;

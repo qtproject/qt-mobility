@@ -68,7 +68,7 @@ class QGeoTiledMapRectangleObjectInfo : public QGeoTiledMapObjectInfo
 {
     Q_OBJECT
 public:
-    QGeoTiledMapRectangleObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    QGeoTiledMapRectangleObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapRectangleObjectInfo();
 
     QGeoMapRectangleObject* rectangle;

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPCONTAINEROBJECT_INFO_P_H
-#define QGEOTILEDMAPCONTAINEROBJECT_INFO_P_H
+#ifndef QGEOMANEUVER_P_H
+#define QGEOMANEUVER_P_H
 
 //
 //  W A R N I N G
@@ -53,29 +53,31 @@
 // We mean it.
 //
 
-#include "qgeotiledmapobjectinfo_p.h"
+#include "qgeomaneuver.h"
+#include "qgeocoordinate.h"
 
-class QGraphicsPathItem;
+#include <QSharedData>
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapGroupObject;
-
-class QGeoTiledMapContainerObjectInfo : public QGeoTiledMapObjectInfo
+class QGeoManeuverPrivate : public QSharedData
 {
-    Q_OBJECT
 public:
-    QGeoTiledMapContainerObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
-    ~QGeoTiledMapContainerObjectInfo();
+    QGeoManeuverPrivate();
+    QGeoManeuverPrivate(const QGeoManeuverPrivate &other);
+    ~QGeoManeuverPrivate();
 
-    QGeoMapGroupObject *group;
-    QGraphicsPathItem *pathItem;
+    bool operator== (const QGeoManeuverPrivate &other) const;
 
-public slots:
-    void visibleChanged(bool visible);
-    void selectedChanged(bool selected);
+    QString id;
+    QGeoCoordinate position;
+    QString text;
+    QGeoManeuver::InstructionDirection direction;
+    int timeToNextInstruction;
+    qreal distanceToNextInstruction;
 };
 
 QTM_END_NAMESPACE
 
-#endif //QGEOTILEDMAPCONTAINEROBJECT_INFO_P_H
+#endif
