@@ -74,12 +74,6 @@ QTM_USE_NAMESPACE
 static const char* CALENDAR =  "/.calendar";
 static const char* CALENDARDB = "/calendardb";
 
-
-
-
-
-
-
 QOrganizerItemMaemo5EngineLocalId::QOrganizerItemMaemo5EngineLocalId()
     : QOrganizerItemEngineLocalId(), m_localItemId(0)
 {
@@ -231,14 +225,6 @@ uint QOrganizerCollectionMaemo5EngineLocalId::hash() const
 {
     return QT_PREPEND_NAMESPACE(qHash)(m_localCollectionId);
 }
-
-
-
-
-
-
-
-
 
 QOrganizerItemManagerEngine* QOrganizerItemMaemo5Factory::engine(const QMap<QString, QString> &parameters, QOrganizerItemManager::Error *error)
 {
@@ -1309,9 +1295,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             d->m_dbCache->invalidate();
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError) {
-                // Set alarm (must always be set only after the component is saved)
-                d->m_itemTransformer.setAlarm(cal, item, component);
-                d->m_dbCache->invalidate();
+                // Modify alarm to contain the reminder information
+                // (must always be done only after the component is saved)
+                QPair<qint32, qint32> cookieChange = d->m_itemTransformer.modifyAlarmEvent(cal, item, component);
+                d->m_dbAccess->fixAlarmCookie(cookieChange);
 
                 cs.insertChangedItem(item->localId());
             }
@@ -1340,9 +1327,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 id.setManagerUri(managerUri());
                 item->setId(id);
 
-                // Set alarm (must always be set only after the component is saved)
-                d->m_itemTransformer.setAlarm(cal, item, component);
-                d->m_dbCache->invalidate();
+                // Modify alarm to contain the reminder information
+                // (must always be done only after the component is saved)
+                QPair<qint32, qint32> cookieChange = d->m_itemTransformer.modifyAlarmEvent(cal, item, component);
+                d->m_dbAccess->fixAlarmCookie(cookieChange);
 
                 // Update changeset
                 if (calError == CALENDAR_ENTRY_DUPLICATED)
@@ -1412,9 +1400,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             d->m_dbCache->invalidate();
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError) {
-                // Set alarm (must always be set only after the component is saved)
-                d->m_itemTransformer.setAlarm(cal, item, component);
-                d->m_dbCache->invalidate();
+                // Modify alarm to contain the reminder information
+                // (must always be done only after the component is saved)
+                QPair<qint32, qint32> cookieChange = d->m_itemTransformer.modifyAlarmEvent(cal, item, component);
+                d->m_dbAccess->fixAlarmCookie(cookieChange);
 
                 cs.insertChangedItem(item->localId());
             }
@@ -1443,9 +1432,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 id.setManagerUri(managerUri());
                 item->setId(id);
 
-                // Set alarm (must always be set only after the component is saved)
-                d->m_itemTransformer.setAlarm(cal, item, component);
-                d->m_dbCache->invalidate();
+                // Modify alarm to contain the reminder information
+                // (must always be done only after the component is saved)
+                QPair<qint32, qint32> cookieChange = d->m_itemTransformer.modifyAlarmEvent(cal, item, component);
+                d->m_dbAccess->fixAlarmCookie(cookieChange);
 
                 // Update changeset
                 if (calError == CALENDAR_ENTRY_DUPLICATED)
@@ -1474,9 +1464,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             d->m_dbCache->invalidate();
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (*error == QOrganizerItemManager::NoError) {
-                // Set alarm (must always be set only after the component is saved)
-                d->m_itemTransformer.setAlarm(cal, item, component);
-                d->m_dbCache->invalidate();
+                // Modify alarm to contain the reminder information
+                // (must always be done only after the component is saved)
+                QPair<qint32, qint32> cookieChange = d->m_itemTransformer.modifyAlarmEvent(cal, item, component);
+                d->m_dbAccess->fixAlarmCookie(cookieChange);
 
                 cs.insertChangedItem(item->localId());
             }
@@ -1505,9 +1496,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 id.setManagerUri(managerUri());
                 item->setId(id);
 
-                // Set alarm (must always be set only after the component is saved)
-                d->m_itemTransformer.setAlarm(cal, item, component);
-                d->m_dbCache->invalidate();
+                // Modify alarm to contain the reminder information
+                // (must always be done only after the component is saved)
+                QPair<qint32, qint32> cookieChange = d->m_itemTransformer.modifyAlarmEvent(cal, item, component);
+                d->m_dbAccess->fixAlarmCookie(cookieChange);
 
                 // Update changeset
                 if (calError == CALENDAR_ENTRY_DUPLICATED)

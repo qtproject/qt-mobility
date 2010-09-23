@@ -51,6 +51,7 @@
 #include <CRecurrence.h>
 #include <CComponentDetails.h>
 #include <CAlarm.h>
+#include <alarmd/libalarm.h>
 
 QTM_USE_NAMESPACE
 
@@ -354,7 +355,6 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
             // TODO: This does not work, but it seems that it doesn't work in Maemo5 the calendar
             // backend either. Maybe it's not possible to implement alarm fetch?
 
-            /*
             // Get the cookie
             std::vector<long> cookies = alarm->getCookie();
             if (cookies.size() > 0) {
@@ -362,14 +362,13 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
 
                 alarm_event_t *eve = 0;
                 if ((eve = alarmd_event_get(cookie)) != 0) {
-                    QString message = QString::fromStdString(alarm_event_get_message(eve));
+                    QString message = QString::fromStdString(alarm_event_get_title(eve));
                     reminder.setMessage(message);
                     time_t alarmTime = alarm_event_get_trigger(eve);
                     reminder.setDateTime(QDateTime::fromTime_t(alarmTime));
                     alarm_event_delete(eve);
                 }
             }
-            */
 
             item->saveDetail(&reminder);
         }
@@ -614,27 +613,26 @@ CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* ite
     return 0; // no recurrence information for this item type
 }
 
-void OrganizerItemTransform::setAlarm(CCalendar *cal, QOrganizerItem *item, CComponent *component)
+QPair<qint32, qint32> OrganizerItemTransform::modifyAlarmEvent(CCalendar *cal, QOrganizerItem *item, CComponent *component)
 {
+    qint32 oldCookie = -1;
+    qint32 newCookie = -1;
     CAlarm *alarm = component->getAlarm();
     if (alarm) {
-        // Delete all the previous alarms
         std::vector<long> cookies = alarm->getCookie();
-        std::vector<long>::iterator cookie;
-        int ignoreErrors = 0;
-        for (cookie = cookies.begin(); cookie != cookies.end(); ++cookie)
-            alarm->deleteAlarmEvent(*cookie, ignoreErrors);
+        if (!cookies.empty()) {
+            oldCookie = cookies[0];
 
-        // Set alarm
-        QOrganizerItemVisualReminder reminder = item->detail<QOrganizerItemVisualReminder>();
-        if (reminder.dateTime() != QDateTime()) {
-            alarm->addAlarmEvent(reminder.dateTime().toTime_t(), reminder.message().toStdString(),
-                                 component->getLocation(), component->getDateStart(), component->getDateEnd(),
-                                 component->getId(), cal->getCalendarId(), component->getDescription(),
-                                 component->getType(), component->getAllDay(), QString("").toStdString(),
-                                 ignoreErrors);
+            QOrganizerItemVisualReminder reminder = item->detail<QOrganizerItemVisualReminder>();
+            int ignoreErrors = 0;
+            newCookie = alarm->modifyAlarmEvent(oldCookie, reminder.dateTime().toTime_t(), reminder.message().toStdString(),
+                                                component->getLocation(), component->getDateStart(), component->getDateEnd(),
+                                                component->getId(), cal->getCalendarId(), component->getDescription(),
+                                                component->getType(), component->getAllDay(), QString("").toStdString(),
+                                                ignoreErrors);
         }
     }
+    return QPair<qint32, qint32>(oldCookie, newCookie);
 }
 
 QOrganizerItemManager::Error OrganizerItemTransform::calErrorToManagerError(int calError) const
