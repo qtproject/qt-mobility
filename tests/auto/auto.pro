@@ -39,7 +39,8 @@ contains(mobility_modules,location) {
           #qlandmarkmanagerplugins \
           qlandmarkmanagerengine \
           qlandmark \
-          qlandmarkcategory
+          qlandmarkcategory \
+          qlandmarkmanager
 
      contains(QT_CONFIG, declarative) {
          SUBDIRS += qdeclarativeposition

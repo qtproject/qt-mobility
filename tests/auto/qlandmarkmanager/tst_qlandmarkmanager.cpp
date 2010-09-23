@@ -295,6 +295,11 @@ private:
                  result = (!m_manager->saveCategory(category))
                           && (m_manager->error() == error);
              }
+             if (!result) {
+                 qWarning() << "Actual error = " << m_manager->error();
+                 qWarning() << "Actual error string = " << m_manager->errorString();
+                 qWarning() << "Expected error=" << error;
+             }
          } else if (type == "async") {
              QLandmarkCategorySaveRequest catSaveRequest(m_manager);
              QSignalSpy spy(&catSaveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
@@ -302,15 +307,26 @@ private:
              catSaveRequest.setCategory(*category);
              catSaveRequest.start();
              result = waitForAsync(spy, &catSaveRequest,error,1000);
+             if (!result) {
+                 qWarning() << "Wait for asynchronous request failed";
+             }
+
              QMap<int, QLandmarkManager::Error> errorMap;
              errorMap = catSaveRequest.errorMap();
              result = result && (catSaveRequest.categories().count() ==1);
+
              if (error == QLandmarkManager::NoError) {
                  result = result && (errorMap.count() ==0);
              } else {
                  result = result && (errorMap.count() == 1)
                            && (errorMap.value(0) == error);
              }
+             if (!result) {
+                 qWarning() << "Actual error " << catSaveRequest.error();
+                 qWarning() << "Actual error string = " << catSaveRequest.errorString();
+                 qWarning() << "Expected error = " << error;
+             }
+
              *category = catSaveRequest.categories().at(0);
          } else {
              qFatal("Unknown test row type");
@@ -577,6 +593,7 @@ private:
         connectNotifications();
     }
 
+#ifdef Q_OS_SYMBIAN
     void deleteDefaultDb(){
         CPosLmDatabaseManager* lmDbManager = CPosLmDatabaseManager::NewL();
         CleanupStack::PushL(lmDbManager);
@@ -587,6 +604,7 @@ private:
         CleanupStack::PopAndDestroy(defaultDbUri);
         CleanupStack::PopAndDestroy(lmDbManager);
     }
+#endif
 
     void deleteDb() {
         QFile file;
