@@ -94,8 +94,10 @@ private slots:  // Test cases
     void fetchItemsDetailFilter();
     void fetchItemsSortOrder_data(){ addManagers(); };
     void fetchItemsSortOrder();
-    void saveItems_data(){ addManagers(); };
-    void saveItems();
+    void addItems_data(){ addManagers(); };
+    void addItems();
+    void modifyItems_data(){ addManagers(); };
+    void modifyItems();
     void removeItems_data(){ addManagers(); };
     void removeItems();
 
@@ -393,11 +395,11 @@ void tst_SymbianOmAsync::fetchItemsSortOrder()
     QVERIFY(req.items().at(0).localId() != QOrganizerItemLocalId());
 }
 
-void tst_SymbianOmAsync::saveItems()
+void tst_SymbianOmAsync::addItems()
 {
     // Create items
     const int itemCount(100);
-    QList<QOrganizerItem> items = createItems(QString("saveitems"), itemCount);
+    QList<QOrganizerItem> items = createItems(QString("additems"), itemCount);
 
     // Create save request
     QOrganizerItemSaveRequest req;
@@ -409,11 +411,12 @@ void tst_SymbianOmAsync::saveItems()
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
     QSignalSpy addedSpy(m_om, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
 
-    // Fetch
+    // Save
     QVERIFY(req.start());
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
     QCOMPARE(stateSpy.count(), 1);
     QTRY_COMPARE(resultSpy.count(), 1);
+    QVERIFY(addedSpy.count() > 0);
     // Check that there were more than one "added" signal. The reasoning for this is that if you
     // create several items asynchronously, there is not much point in the async api if you only
     // get one signal. For example showing information like "54% complete" to the user is not
@@ -427,6 +430,40 @@ void tst_SymbianOmAsync::saveItems()
     foreach (QOrganizerItem item, req.items()) {
         QVERIFY(!item.localId().isNull());
     }
+}
+
+void tst_SymbianOmAsync::modifyItems()
+{
+    // Save items (synchronously)
+    const int itemCount(100);
+    QList<QOrganizerItem> items = createItems(QString("modifyitems1"), itemCount);
+    QVERIFY(m_om->saveItems(&items));
+    foreach (QOrganizerItem item, items) {
+        item.setDisplayLabel("modifyitems2");
+    }
+
+    // Create save request
+    QOrganizerItemSaveRequest req;
+    req.setManager(m_om);
+    req.setItems(items);
+
+    // Create signal spys for verification purposes
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+    QSignalSpy changedSpy(m_om, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)));
+
+    // Save
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(resultSpy.count(), 1);
+    QVERIFY(changedSpy.count() > 0);
+    QVERIFY(changedSpy.count() > 1);
+
+    // Verify
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req.items().count(), itemCount);
 }
 
 void tst_SymbianOmAsync::removeItems()
@@ -443,6 +480,7 @@ void tst_SymbianOmAsync::removeItems()
     // Create signal spys for verification purposes
     QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+    QSignalSpy removedSpy(m_om, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)));
 
     // Remove
     req.setItemIds(m_om->itemIds());
@@ -451,6 +489,8 @@ void tst_SymbianOmAsync::removeItems()
     QCOMPARE(stateSpy.count(), 1);
     QTRY_COMPARE(resultSpy.count(), 1);
     QTRY_COMPARE(stateSpy.count(), 2);
+    QVERIFY(removedSpy.count() > 0);
+    QVERIFY(removedSpy.count() > 1);
 
     // Verify
     QCOMPARE(m_om->itemIds().count(), 0);
