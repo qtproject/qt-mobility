@@ -84,8 +84,23 @@ private slots:  // Test cases
     void fetchSimpleItem();
     void fetchWaitForFinished_data(){ addManagers(); };
     void fetchWaitForFinished();
+    void fetchItems_data(){ addManagers(); };
+    void fetchItems();
+    void fetchItemIds_data(){ addManagers(); };
+    void fetchItemIds();
+    void fetchItemsIdFilter_data(){ addManagers(); };
+    void fetchItemsIdFilter();
+    void fetchItemsDetailFilter_data(){ addManagers(); };
+    void fetchItemsDetailFilter();
+    void saveItems_data(){ addManagers(); };
+    void saveItems();
+    void removeItems_data(){ addManagers(); };
+    void removeItems();
 
 private: // util functions
+    QOrganizerItem createItem(
+        QString itemType, QString label, QDateTime startTime, QDateTime endTime = QDateTime());
+    QList<QOrganizerItem> createItems(QString label, int itemCount);
     void addManagers();
 
 private:
@@ -96,6 +111,7 @@ tst_SymbianOmAsync::tst_SymbianOmAsync() :
     m_om(0)
 {
     qRegisterMetaType<QOrganizerItemAbstractRequest::State>("QOrganizerItemAbstractRequest::State");
+    qRegisterMetaType<QList<QOrganizerItemLocalId> >("QList<QOrganizerItemLocalId>");
 }
 
 void tst_SymbianOmAsync::init()
@@ -129,12 +145,14 @@ void tst_SymbianOmAsync::addSimpleItem()
     // Create signal spys for verification purposes
     QSignalSpy stateSpy(&saveItemRequest, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
     QSignalSpy resultSpy(&saveItemRequest, SIGNAL(resultsAvailable()));
+    QSignalSpy addedSpy(m_om, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
 
     // Save
     QVERIFY(saveItemRequest.start());
     QCOMPARE(saveItemRequest.state(), QOrganizerItemAbstractRequest::ActiveState);
     QCOMPARE(stateSpy.count(), 1);
     QTRY_COMPARE(resultSpy.count(), 1);
+    QTRY_COMPARE(addedSpy.count(), 1);
 
     // Verify
     QCOMPARE(m_om->itemIds().count(), 1);
@@ -147,8 +165,10 @@ void tst_SymbianOmAsync::addSimpleItem()
 void tst_SymbianOmAsync::fetchSimpleItem()
 {
     // Create item
-    QOrganizerItem item;
-    item.setType(QOrganizerItemType::TypeTodo);
+    QOrganizerItem item = createItem(
+        QOrganizerItemType::TypeEvent,
+        QString("fetchItem"),
+        QDateTime::currentDateTime().addSecs(3600));
 
     // Save (synchronously)
     QVERIFY(m_om->saveItem(&item));
@@ -209,6 +229,231 @@ void tst_SymbianOmAsync::fetchWaitForFinished()
      // too slow
      QVERIFY(startTime.secsTo(QTime::currentTime()) < 2);
 }
+
+void tst_SymbianOmAsync::fetchItems()
+{
+    // Save items (synchronously)
+    const int itemCount(100);
+    QList<QOrganizerItem> items = createItems(QString("fetchitems"), itemCount);
+    QVERIFY(m_om->saveItems(&items));
+
+    // Create fetch request
+    QOrganizerItemFetchRequest req;
+    req.setManager(m_om);
+
+    // Create signal spys for verification purposes
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+
+    // Fetch
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(resultSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);
+
+    // Verify
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req.items().count(), itemCount);
+    QVERIFY(req.items().at(0).localId() != QOrganizerItemLocalId());
+}
+
+void tst_SymbianOmAsync::fetchItemIds()
+{
+    // Save items (synchronously)
+    const int itemCount(100);
+    QList<QOrganizerItem> items = createItems(QString("fetchitems"), itemCount);
+    QVERIFY(m_om->saveItems(&items));
+
+    // Create fetch request
+    QOrganizerItemLocalIdFetchRequest req;
+    req.setManager(m_om);
+
+    // Create signal spys for verification purposes
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+
+    // Fetch
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(resultSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);
+
+    // Verify
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req.itemIds().count(), itemCount);
+    QVERIFY(req.itemIds().at(0) != QOrganizerItemLocalId());
+}
+
+void tst_SymbianOmAsync::fetchItemsIdFilter()
+{
+    // Save items (synchronously)
+    const int itemCount(100);
+    QList<QOrganizerItem> items = createItems(QString("fetchitemsidfilter"), itemCount);
+    QVERIFY(m_om->saveItems(&items));
+
+    // Create fetch request
+    QOrganizerItemFetchRequest req;
+    req.setManager(m_om);
+
+    // Create signal spys for verification purposes
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+
+    // Fetch with local id filter
+    QOrganizerItemLocalIdFilter localIdFilter;
+    localIdFilter.setIds(m_om->itemIds());
+    req.setFilter(localIdFilter);
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(resultSpy.count(), 1);
+
+    // Verify
+    QCOMPARE(req.items().count(), itemCount);
+    QVERIFY(req.items().at(0).localId() != QOrganizerItemLocalId());
+}
+
+void tst_SymbianOmAsync::fetchItemsDetailFilter()
+{
+    // Save items (synchronously)
+    const int itemCount(100);
+    QList<QOrganizerItem> items = createItems(QString("fetchitemsdetailfilter"), itemCount);
+    QVERIFY(m_om->saveItems(&items));
+
+    // Create fetch request
+    QOrganizerItemFetchRequest req;
+    req.setManager(m_om);
+
+    // Create signal spys for verification purposes
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+
+    // Fetch with detail filter
+    QOrganizerItemDetailFilter detailFilter;
+    detailFilter.setDetailDefinitionName(QOrganizerItemDisplayLabel::DefinitionName);
+    req.setFilter(detailFilter);
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(resultSpy.count(), 1);
+
+    // Verify
+    QCOMPARE(req.items().count(), itemCount);
+    QVERIFY(req.items().at(0).localId() != QOrganizerItemLocalId());
+}
+
+void tst_SymbianOmAsync::saveItems()
+{
+    // Create items
+    const int itemCount(100);
+    QList<QOrganizerItem> items = createItems(QString("saveitems"), itemCount);
+
+    // Create save request
+    QOrganizerItemSaveRequest req;
+    req.setManager(m_om);
+    req.setItems(items);
+
+    // Create signal spys for verification purposes
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+    QSignalSpy addedSpy(m_om, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
+
+    // Fetch
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(resultSpy.count(), 1);
+    // Check that there were more than one "added" signal. The reasoning for this is that if you
+    // create several items asynchronously, there is not much point in the async api if you only
+    // get one signal. For example showing information like "54% complete" to the user is not
+    // possible if you get only one signal once the request is completed.
+    QVERIFY(addedSpy.count() > 1);
+
+    // Verify
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req.items().count(), itemCount);
+    foreach (QOrganizerItem item, req.items()) {
+        QVERIFY(!item.localId().isNull());
+    }
+}
+
+void tst_SymbianOmAsync::removeItems()
+{
+    // Save items (synchronously)
+    const int itemCount(100);
+    QList<QOrganizerItem> items = createItems(QString("removeitems"), itemCount);
+    QVERIFY(m_om->saveItems(&items));
+
+    // Create remove request
+    QOrganizerItemRemoveRequest req;
+    req.setManager(m_om);
+
+    // Create signal spys for verification purposes
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+
+    // Remove
+    req.setItemIds(m_om->itemIds());
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(resultSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);
+
+    // Verify
+    QCOMPARE(m_om->itemIds().count(), 0);
+}
+
+/*!
+ * A helper method for creating a QOrganizerItem instance.
+ */
+QOrganizerItem tst_SymbianOmAsync::createItem(QString itemType, QString label, QDateTime startTime, QDateTime endTime)
+{
+    QOrganizerItem item;
+    item.setType(itemType);
+    item.setDisplayLabel(label);
+    if (itemType == QOrganizerItemType::TypeTodo) {
+        QOrganizerTodoTimeRange timeRange;
+        if (startTime.isValid())
+            timeRange.setStartDateTime(startTime);
+        if (endTime.isValid())
+            timeRange.setDueDateTime(endTime);
+        if (!timeRange.isEmpty())
+            item.saveDetail(&timeRange);
+    } else {
+        QOrganizerEventTimeRange timeRange;
+        if (startTime.isValid())
+            timeRange.setStartDateTime(startTime);
+        if (endTime.isValid())
+            timeRange.setEndDateTime(endTime);
+        if (!timeRange.isEmpty())
+            item.saveDetail(&timeRange);
+    }
+    return item;
+}
+
+/*!
+ * A helper method for adding several items.
+ */
+QList<QOrganizerItem> tst_SymbianOmAsync::createItems(QString label, int itemCount)
+{
+    QList<QOrganizerItem> items;
+    for (int i(0); i < itemCount; i++) {
+        QOrganizerItem item = createItem(
+            QOrganizerItemType::TypeEvent,
+            label + i,
+            QDateTime::currentDateTime().addSecs(3600),
+            QDateTime::currentDateTime().addSecs(7200));
+        items.append(item);
+    }
+    return items;
+}
+
 
 /*!
  * Helper method for executing test cases with all the available managers
