@@ -1256,8 +1256,7 @@ void tst_QDeclarativeDocumentGalleryModel::filter_data()
                             "negated: false\n"
                         "}\n"
                     "}\n")
-            << QGalleryFilter(QGalleryMetaDataFilter(
-                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
+            << QGalleryFilter(QDocumentGallery::fileName.startsWith(QLatin1String("p")));
 
     QTest::newRow("!fileName.startsWith(p)")
             << QByteArray(
@@ -1270,8 +1269,8 @@ void tst_QDeclarativeDocumentGalleryModel::filter_data()
                             "negated: true\n"
                         "}\n"
                     "}\n")
-            << QGalleryFilter(!QGalleryMetaDataFilter(
-                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
+            << QGalleryFilter(!QDocumentGallery::fileName.startsWith(QLatin1String("p")));
+
     QTest::newRow("fileName.endsWith(.jpg)")
             << QByteArray(
                     "import Qt 4.7\n"
@@ -1282,8 +1281,7 @@ void tst_QDeclarativeDocumentGalleryModel::filter_data()
                             "value: \".jpg\"\n"
                         "}\n"
                     "}\n")
-            << QGalleryFilter(QGalleryMetaDataFilter(
-                    QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith));
+            << QGalleryFilter(QDocumentGallery::fileName.endsWith(QLatin1String(".jpg")));
 
     QTest::newRow("fileName.contains(p)")
             << QByteArray(
@@ -1295,8 +1293,7 @@ void tst_QDeclarativeDocumentGalleryModel::filter_data()
                             "value: \"p\"\n"
                         "}\n"
                     "}\n")
-            << QGalleryFilter(QGalleryMetaDataFilter(
-                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::Contains));
+            << QGalleryFilter(QDocumentGallery::fileName.contains(QLatin1String("p")));
 
     QTest::newRow("fileName.wildcard(p*.jpg)")
             << QByteArray(
@@ -1308,8 +1305,7 @@ void tst_QDeclarativeDocumentGalleryModel::filter_data()
                             "value: \"p*.jpg\"\n"
                         "}\n"
                     "}\n")
-            << QGalleryFilter(QGalleryMetaDataFilter(
-                    QDocumentGallery::fileName, QLatin1String("p*.jpg"), QGalleryFilter::Wildcard));
+            << QGalleryFilter(QDocumentGallery::fileName.wildcard(QLatin1String("p*.jpg")));
 
     QTest::newRow("fileName.regExp(p\\d{6}\\.(jpg|jpeg))")
             << QByteArray(
@@ -1321,17 +1317,14 @@ void tst_QDeclarativeDocumentGalleryModel::filter_data()
                             "value: /p\\d{6}\\.(jpg|jpeg)/\n"
                         "}\n"
                     "}\n")
-            << QGalleryFilter(QGalleryMetaDataFilter(
-                    QDocumentGallery::fileName,
-                    QRegExp(QLatin1String("p\\d{6}\\.(jpg|jpeg)"), Qt::CaseSensitive, QRegExp::RegExp2),
-                    QGalleryFilter::RegExp));
+            << QGalleryFilter(QDocumentGallery::fileName.regExp(QRegExp(
+                    QLatin1String("p\\d{6}\\.(jpg|jpeg)"), Qt::CaseSensitive, QRegExp::RegExp2)));
+
 
     {
         QGalleryIntersectionFilter filter;
-        filter.append(QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
-        filter.append(QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith));
+        filter.append(QDocumentGallery::fileName.startsWith(QLatin1String("p")));
+        filter.append(QDocumentGallery::fileName.endsWith(QLatin1String(".jpg")));
 
         QTest::newRow("fileName.startsWith(p) && fileName.endsWith(.jpg")
                 << QByteArray(
@@ -1413,17 +1406,13 @@ void tst_QDeclarativeDocumentGalleryModel::filter_data()
         QGalleryUnionFilter filter;
         {
             QGalleryIntersectionFilter intersectionFilter;
-            intersectionFilter.append(QGalleryMetaDataFilter(
-                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
-            intersectionFilter.append(QGalleryMetaDataFilter(
-                    QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith));
+            intersectionFilter.append(QDocumentGallery::fileName.startsWith(QLatin1String("p")));
+            intersectionFilter.append(QDocumentGallery::fileName.endsWith(QLatin1String(".jpg")));
             filter.append(intersectionFilter);
         } {
             QGalleryIntersectionFilter intersectionFilter;
-            intersectionFilter.append(QGalleryMetaDataFilter(
-                    QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
-            intersectionFilter.append(QGalleryMetaDataFilter(
-                    QDocumentGallery::fileName, QLatin1String(".jpeg"), QGalleryFilter::EndsWith));
+            intersectionFilter.append(QDocumentGallery::fileName.startsWith(QLatin1String("p")));
+            intersectionFilter.append(QDocumentGallery::fileName.endsWith(QLatin1String(".jpeg")));
             filter.append(intersectionFilter);
         }
 
@@ -1458,10 +1447,8 @@ void tst_QDeclarativeDocumentGalleryModel::filter_data()
                 << QGalleryFilter(filter);
     } {
         QGalleryIntersectionFilter filter;
-        filter.append(QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String("p"), QGalleryFilter::StartsWith));
-        filter.append(QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith));
+        filter.append(QDocumentGallery::fileName.startsWith(QLatin1String("p")));
+        filter.append(QDocumentGallery::fileName.endsWith(QLatin1String(".jpg")));
 
         QTest::newRow("fileName.startsWith(p) && (fileName.endsWith(.jpg)")
                 << QByteArray(
@@ -1484,10 +1471,8 @@ void tst_QDeclarativeDocumentGalleryModel::filter_data()
                 << QGalleryFilter(filter);
     } {
         QGalleryUnionFilter filter;
-        filter.append(QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String(".jpg"), QGalleryFilter::EndsWith));
-        filter.append(QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String(".jpeg"), QGalleryFilter::EndsWith));
+        filter.append(QDocumentGallery::fileName.endsWith(QLatin1String(".jpg")));
+        filter.append(QDocumentGallery::fileName.endsWith(QLatin1String(".jpeg")));
 
         QTest::newRow("fileName.endsWith(.jpg) || (fileName.endsWith(.jpeg)")
                 << QByteArray(
