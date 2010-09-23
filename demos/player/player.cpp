@@ -124,6 +124,7 @@ Player::Player(QWidget *parent)
 
 #ifndef Q_WS_MAEMO_5
     colorButton = new QPushButton(tr("Color Options..."), this);
+    colorButton->setEnabled(false);
     connect(colorButton, SIGNAL(clicked()), this, SLOT(showColorDialog()));
 #endif
 
@@ -324,6 +325,7 @@ void Player::videoAvailableChanged(bool available)
         if (fullScreenButton->isChecked())
             videoWidget->setFullScreen(true);
     }
+    colorButton->setEnabled(available);
 }
 
 void Player::setTrackInfo(const QString &info)
