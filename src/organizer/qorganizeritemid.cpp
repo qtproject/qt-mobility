@@ -223,11 +223,11 @@ QOrganizerItemId& QOrganizerItemId::operator=(const QOrganizerItemId& other)
 /*! Returns true if the organizer item id has the same manager URI and local id as \a other */
 bool QOrganizerItemId::operator==(const QOrganizerItemId& other) const
 {
-    if (d->m_managerUri != other.d->m_managerUri)
-        return false;
-    if (d->m_localId != other.d->m_localId)
-        return false;
-    return true;
+    if (d && other.d)
+        return (d->m_managerUri == other.d->m_managerUri) &&
+               (d->m_localId == other.d->m_localId);
+
+    return !d && !other.d;
 }
 
 /*! Returns true if either the manager URI or local id of the organizer item id is different to that of \a other */
