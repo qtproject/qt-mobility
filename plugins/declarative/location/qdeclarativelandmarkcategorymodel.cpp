@@ -1,3 +1,44 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+***************************************************************************/
+
 #include "qdeclarativelandmarkcategorymodel_p.h"
 #include <qlandmarkcategoryfetchrequest.h>
 #include <qlandmarkcategoryfetchbyidrequest.h>
@@ -8,6 +49,33 @@
 #endif
 
 QTM_BEGIN_NAMESPACE
+
+/*!
+    \qmlclass LandmarkCategoryModel QDeclarativeLandmarkCategoryModel
+    \brief The LandmarkCategoryModel element provides access to categories.
+    \inherits LandmarkAbstractModel
+    \ingroup qml-location
+
+    This element is part of the \bold{QtMobility.location 1.1} module.
+
+    LandmarkCategoryModel provides a model of categories from the categories store.
+    The contents of the model can be specified with \l landmark, and sorted
+    via the \l LandmarkAbstractModel::sortBy and \l LandmarkAbstractModel::sortOrder properties.
+    Whether the model is automatically updated when the store or \l landmark changes, can be
+    controlled with \l LandmarkAbstractModel::autoUpdate property.
+
+    There are two ways of accessing the category data: via model by using views and delegates,
+    or alternatively via \l categories list property. Of the two, the model access is preferred.
+    Direct list access (i.e. non-model) is not guaranteed to be in order set by sortBy and
+    sortOrder.
+
+    At the moment only data role provided by the model is \c category.
+    Through that one can access any data provided by the LandmarkCategory element.
+
+    \snippet examples/declarative-location/landmarkmap/landmarkmap.qml Category model
+
+    \sa LandmarkAbstractModel, LandmarkModel, {QLandmarkManager}
+*/
 
 QDeclarativeLandmarkCategoryModel::QDeclarativeLandmarkCategoryModel(QObject *parent) :
         QDeclarativeLandmarkAbstractModel(parent), m_fetchRequest(0), m_landmark(0)
@@ -22,6 +90,7 @@ QDeclarativeLandmarkCategoryModel::QDeclarativeLandmarkCategoryModel(QObject *pa
 QDeclarativeLandmarkCategoryModel::~QDeclarativeLandmarkCategoryModel()
 {
     delete m_fetchRequest;
+    delete m_sortingOrder;
     qDeleteAll(m_categoryMap.values());
     m_categoryMap.clear();
 }
@@ -51,6 +120,15 @@ QDeclarativeLandmark* QDeclarativeLandmarkCategoryModel::landmark() const
 {
     return m_landmark;
 }
+
+/*!
+  \qmlproperty Landmark LandmarkCategoryModel::landmark
+
+  Landmark whose categories the model should represent.
+  Note that the landmark needs to be from \l LandmarkModel
+  because its internal category identifiers need to be set.
+
+ */
 
 void QDeclarativeLandmarkCategoryModel::setLandmark(QDeclarativeLandmark *landmark)
 {
@@ -107,13 +185,15 @@ void QDeclarativeLandmarkCategoryModel::setFetchRange()
 void QDeclarativeLandmarkCategoryModel::setFetchOrder()
 {
     if (!m_fetchRequest ||
-        ((m_sortKey == NoSort) && (m_sortOrder = NoOrder)) ||
+        ((m_sortKey == NoSort) && (m_sortOrder == NoOrder)) ||
         m_fetchRequest->type() != QLandmarkAbstractRequest::CategoryFetchRequest)
         return;
-    if (m_sortingOrder)
+    if (m_sortingOrder) {
         delete m_sortingOrder;
+        m_sortingOrder = 0;
+    }
     if (m_sortKey == NameSort) {
-        m_sortingOrder = new QLandmarkNameSort(); // Only supported sort type
+        m_sortingOrder = new QLandmarkNameSort();
     } else {
         m_sortingOrder = new QLandmarkSortOrder();
     }
@@ -193,12 +273,12 @@ void QDeclarativeLandmarkCategoryModel::fetchRequestStateChanged(QLandmarkAbstra
         // Convert into declarative classes
         convertCategoriesToDeclarative();
         endResetModel();
+        if (!(oldCount == 0 && m_categories.count() == 0))
+            emit modelChanged();
         if (oldCount != m_categories.count())
             emit countChanged();
     } else if (m_error != m_fetchRequest->errorString()) {
         m_error = m_fetchRequest->errorString();
-        // Convert into declarative classes
-        convertCategoriesToDeclarative();
         emit errorChanged();
     }
 }
@@ -208,6 +288,17 @@ QList<QLandmarkCategory> QDeclarativeLandmarkCategoryModel::categoryList()
 {
     return m_categories;
 }
+
+/*!
+    \qmlproperty QDeclarativeListProperty LandmarkCategoryModel::categories
+
+    This element holds the list of \l LandmarkCategory elements that the model currently has.
+    Accessing categories by iterating over this list is not guaranteed to be in the
+    order set by \l LandmarkAbstractModel::sortBy or \l LandmarkAbstractModel::sortOrder
+
+    \snippet doc/src/snippets/declarative/declarative-landmark.qml Categories list iteration
+
+*/
 
 QDeclarativeListProperty<QDeclarativeLandmarkCategory> QDeclarativeLandmarkCategoryModel::categories()
 {

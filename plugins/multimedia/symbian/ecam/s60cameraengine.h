@@ -118,9 +118,19 @@ public:
     TBool IsCameraReady() const;
 
     /**
+     * Returns whether DirectScreen ViewFinder is supported by the platform
+     */
+    TBool IsDirectViewFinderSupported() const;
+
+    /**
      * Returns true if the camera supports AutoFocus.
      */
     TBool IsAutoFocusSupported() const;
+
+    /**
+     * Returns camera info
+     */
+    TCameraInfo *cameraInfo();
 
     /**
      * Captures an image. When complete, observer will receive
@@ -130,6 +140,11 @@ public:
      * reserved or prepared for capture.
      */
     void CaptureL();
+
+    /**
+     * Cancels ongoing image capture
+     */
+    void cancelCapture();
 
     /**
      * Reserves and powers on the camera. When complete,

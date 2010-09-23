@@ -83,7 +83,7 @@ LIBS+=-lX11 -lXrandr
     maemo5|maemo6: {
             #Qt GConf wrapper added here until a proper place is found for it.
             CONFIG += link_pkgconfig
-            LIBS += -lXrandr
+          #  LIBS += -lXrandr
             SOURCES += qsysteminfo_maemo.cpp gconfitem.cpp
             HEADERS += qsysteminfo_maemo_p.h gconfitem_p.h
         contains(QT_CONFIG,dbus): {
@@ -132,6 +132,7 @@ LIBS+=-lX11 -lXrandr
         }        
 
         contains(hb_symbian_enabled,yes) {
+            ## for symbian ^4 
             CONFIG += qt hb
             DEFINES += HB_SUPPORTED
             message("s60_HbKeymap enabled")

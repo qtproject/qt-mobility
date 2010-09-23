@@ -63,15 +63,23 @@ QOrganizerCollectionRemoveRequest::QOrganizerCollectionRemoveRequest(QObject* pa
 {
 }
 
+/*! Sets the list of ids of collections which will be removed by this request to a list containing the single element \a collectionId */
+void QOrganizerCollectionRemoveRequest::setCollectionId(const QOrganizerCollectionLocalId& collectionId)
+{
+    Q_D(QOrganizerCollectionRemoveRequest);
+    d->m_collectionIds.clear();
+    d->m_collectionIds.append(collectionId);
+}
+
 /*! Sets the list of ids of collections which will be removed by this request to \a collectionIds */
-void QOrganizerCollectionRemoveRequest::setCollectionIds(const QList<QOrganizerCollectionId>& collectionIds)
+void QOrganizerCollectionRemoveRequest::setCollectionIds(const QList<QOrganizerCollectionLocalId>& collectionIds)
 {
     Q_D(QOrganizerCollectionRemoveRequest);
     d->m_collectionIds = collectionIds;
 }
 
 /*! Returns the list of ids of collections which will be removed by this request if possible */
-QList<QOrganizerCollectionId> QOrganizerCollectionRemoveRequest::collectionIds() const
+QList<QOrganizerCollectionLocalId> QOrganizerCollectionRemoveRequest::collectionIds() const
 {
     Q_D(const QOrganizerCollectionRemoveRequest);
     return d->m_collectionIds;

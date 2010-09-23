@@ -161,14 +161,6 @@ public:
     bool isReadOnly(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error,
         QString *errorString) const;
 
-    bool isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
-    void setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error,
-        QString *errorString);
-
-    bool isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
-    void setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error,
-        QString *errorString);
-
     /* Asynchronous Request Support */
     void requestDestroyed(QLandmarkAbstractRequest* request);
     bool startRequest(QLandmarkAbstractRequest* request);
@@ -178,9 +170,6 @@ public:
     /* From MLandmarkRequestObserver */
     void HandleExecutionL(CLandmarkRequestData*, TRequestStatus&);
     void HandleCompletionL(CLandmarkRequestData*);
-
-    // to get keys defined by managerengine.
-    void setLandmarkAttributeKeys(QStringList landmarkKeys);
 
 private:
     bool saveLandmarkInternalL(QLandmark* landmark, QLandmarkManager::Error *error,
@@ -214,7 +203,7 @@ private:
         int maxMatches) const;
 
     bool sortFetchedLmIds(int limit, int offset, QList<QLandmarkSortOrder> sortOrders, QList<
-        QLandmarkId>& landmarkIds, bool isNearestFilter, QLandmarkFilter::FilterType filterType,
+        QLandmarkId>& landmarkIds, QLandmarkFilter::FilterType filterType,
         QLandmarkManager::Error *error, QString *errorString) const;
 
     // to handle symbian errors to assign appropriate manager error and error description.
@@ -240,10 +229,16 @@ private:
     CPosLandmarkDatabase* m_LandmarkDb;
     CPosLmCategoryManager* m_LandmarkCatMgr;
     LandmarkEventObserver& m_LmEventObserver;
-    QStringList m_LandmarkAttributeKeys;
 
-    bool m_isExtendedAttributesEnabled;
-    bool m_isCustomAttributesEnabled;
+    QStringList m_CreatedLmIds;
+    QStringList m_UpdatedLmIds;
+    QStringList m_DeletedLmIds;
+
+    QStringList m_CreatedCatIds;
+    QStringList m_UpdatedCatIds;
+    QStringList m_DeletedCatIds;
+
+    QStringList m_UnknownIds;
 
 private:
     friend class QLandmarkDbEventObserver;

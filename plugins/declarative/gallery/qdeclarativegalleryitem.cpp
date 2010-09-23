@@ -43,6 +43,7 @@
 
 #include <qgalleryresultset.h>
 
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include <QtDeclarative/qdeclarativepropertymap.h>
 
 QTM_BEGIN_NAMESPACE
@@ -72,8 +73,43 @@ QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
 {
 }
 
-void QDeclarativeGalleryItem::classBegin()
+qreal QDeclarativeGalleryItem::progress() const
 {
+    const int max = m_request.maximumProgress();
+
+    return max > 0
+            ? qreal(m_request.currentProgress()) / max
+            : qreal(0.0);
+}
+
+void QDeclarativeGalleryItem::setPropertyNames(const QStringList &names)
+{
+    if (!m_complete) {
+        m_request.setPropertyNames(names);
+
+        emit propertyNamesChanged();
+    }
+}
+
+void QDeclarativeGalleryItem::setAutoUpdate(bool enabled)
+{
+    if (m_request.autoUpdate() != enabled) {
+        m_request.setAutoUpdate(enabled);
+
+        emit autoUpdateChanged();
+    }
+}
+
+void QDeclarativeGalleryItem::setItemId(const QVariant &itemId)
+{
+    if (m_request.itemId() != itemId) {
+        m_request.setItemId(itemId);
+
+        if (m_complete)
+            m_request.execute();
+
+        emit itemIdChanged();
+    }
 }
 
 void QDeclarativeGalleryItem::componentComplete()
@@ -86,21 +122,29 @@ void QDeclarativeGalleryItem::componentComplete()
 
 void QDeclarativeGalleryItem::_q_statusChanged()
 {
-    Status status = m_status;
-    QString message = m_request.errorString();
-
     m_status = Status(m_request.status());
 
-    qSwap(message, m_errorMessage);
+    if (m_status == Error) {
+        const QString message = m_request.errorString();
 
-    if (m_status != status) {
-        m_status = status;
-
-        emit statusChanged();
+        if (!message.isEmpty()) {
+            qmlInfo(this) << message;
+        } else {
+            switch (m_request.error()) {
+            case QDocumentGallery::ConnectionError:
+                qmlInfo(this) << tr("An error was encountered connecting to the document gallery");
+                break;
+            case QDocumentGallery::ItemIdError:
+                qmlInfo(this) << tr("The value of item is not a valid item ID");
+                break;
+            default:
+                break;
+            }
+        }
     }
 
-    if (message != m_errorMessage)
-        emit errorMessageChanged();
+    emit statusChanged();
+
 }
 
 void QDeclarativeGalleryItem::_q_itemChanged()
@@ -169,13 +213,16 @@ void QDeclarativeGalleryItem::_q_metaDataChanged(const QList<int> &keys)
 QDeclarativeDocumentGalleryItem::QDeclarativeDocumentGalleryItem(QObject *parent)
     : QDeclarativeGalleryItem(parent)
 {
-    m_request.setGallery(QDeclarativeDocumentGallery::gallery());
-
     connect(this, SIGNAL(availableChanged()), this, SIGNAL(itemTypeChanged()));
 }
 
 QDeclarativeDocumentGalleryItem::~QDeclarativeDocumentGalleryItem()
 {
+}
+
+void QDeclarativeDocumentGalleryItem::classBegin()
+{
+    m_request.setGallery(QDeclarativeDocumentGallery::gallery(this));
 }
 
 /*!

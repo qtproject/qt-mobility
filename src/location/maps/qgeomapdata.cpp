@@ -46,6 +46,7 @@
 #include "qgeocoordinate.h"
 #include "qgraphicsgeomap.h"
 #include "qgeomapobject.h"
+#include "qgeomapgroupobject.h"
 #include "qgeomappingmanagerengine.h"
 #include "qgeomapoverlay.h"
 
@@ -87,7 +88,13 @@ QTM_BEGIN_NAMESPACE
     \a geoMap and makes use of the functionality provided by \a engine.
 */
 QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
-        : d_ptr(new QGeoMapDataPrivate(this, engine, geoMap)) {}
+        : d_ptr(new QGeoMapDataPrivate(this, engine, geoMap))
+{
+    if (engine->supportedConnectivityModes().length() > 0)
+        setConnectivityMode(engine->supportedConnectivityModes().at(0));
+    else
+        setConnectivityMode(QGraphicsGeoMap::NoConnectivity);
+}
 
 /*!
   \internal
@@ -101,6 +108,11 @@ QGeoMapData::~QGeoMapData()
 {
     Q_D(QGeoMapData);
     delete d;
+}
+
+void QGeoMapData::setup()
+{
+    d_ptr->containerObject = new QGeoMapGroupObject(this);
 }
 
 /*!
@@ -133,9 +145,15 @@ QGeoMapObject* QGeoMapData::containerObject()
 
     The size will be adjusted by the associated QGraphicsGeoMap as it resizes.
 */
-void QGeoMapData::setViewportSize(const QSizeF &size)
+void QGeoMapData::setWindowSize(const QSizeF &size)
 {
-    d_ptr->viewportSize = size;
+    if (d_ptr->windowSize == size)
+        return;
+
+    d_ptr->windowSize = size;
+
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit windowSizeChanged(d_ptr->windowSize);
 }
 
 /*!
@@ -143,9 +161,9 @@ void QGeoMapData::setViewportSize(const QSizeF &size)
 
     The size will be adjusted by the associated QGraphicsGeoMap as it resizes.
 */
-QSizeF QGeoMapData::viewportSize() const
+QSizeF QGeoMapData::windowSize() const
 {
-    return d_ptr->viewportSize;
+    return d_ptr->windowSize;
 }
 
 /*!
@@ -162,7 +180,14 @@ void QGeoMapData::setZoomLevel(qreal zoomLevel)
 {
     zoomLevel = qMin(zoomLevel, d_ptr->engine->maximumZoomLevel());
     zoomLevel = qMax(zoomLevel, d_ptr->engine->minimumZoomLevel());
+
+    if (d_ptr->zoomLevel == zoomLevel)
+        return;
+
     d_ptr->zoomLevel = zoomLevel;
+
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit zoomLevelChanged(d_ptr->zoomLevel);
 }
 
 /*!
@@ -184,6 +209,8 @@ qreal QGeoMapData::zoomLevel() const
     By default this will mean that positive values of \a dx move the
     viewed area to the right and that positive values of \a dy move the
     viewed area down.
+
+    Subclasses should call QGeoMapData::setCenter() when the pan has completed.
 */
 void QGeoMapData::pan(int dx, int dy)
 {
@@ -196,7 +223,16 @@ void QGeoMapData::pan(int dx, int dy)
 */
 void QGeoMapData::setCenter(const QGeoCoordinate &center)
 {
+    if (d_ptr->center == center)
+        return;
+
     d_ptr->center = center;
+
+    // TODO: Blocking centerChanged causes route object not to draw route when panning
+    // Is blocking here always necessary or should thecenterChanged, or something else,
+    // be emitted somewhere else for route object to update visible route?
+    //if (!d_ptr->blockPropertyChangeSignals)
+        emit centerChanged(d_ptr->center);
 }
 
 /*!
@@ -212,7 +248,13 @@ QGeoCoordinate QGeoMapData::center() const
 */
 void QGeoMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 {
+    if (d_ptr->mapType == mapType)
+        return;
+
     d_ptr->mapType = mapType;
+
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit mapTypeChanged(mapType);
 }
 
 /*!
@@ -221,6 +263,28 @@ void QGeoMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 QGraphicsGeoMap::MapType QGeoMapData::mapType() const
 {
     return d_ptr->mapType;
+}
+
+/*!
+    Changes the connectivity mode of this map to \a connectivityMode
+*/
+void QGeoMapData::setConnectivityMode(QGraphicsGeoMap::ConnectivityMode connectivityMode)
+{
+    if (d_ptr->connectivityMode == connectivityMode)
+        return;
+
+    d_ptr->connectivityMode = connectivityMode;
+
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit connectivityModeChanged(connectivityMode);
+}
+
+/*!
+    Returns the connectivity mode for this map.
+*/
+QGraphicsGeoMap::ConnectivityMode QGeoMapData::connectivityMode() const
+{
+    return d_ptr->connectivityMode;
 }
 
 /*!
@@ -265,10 +329,32 @@ void QGeoMapData::clearMapObjects()
 }
 
 /*!
-    Returns the list of map objects managed by this map which
+    \fn QGeoBoundingBox QGeoMapData::viewport() const
+    Returns a bounding box corresponding to the physical area displayed
+    in the viewport of the map.
+
+    The bounding box which is returned is defined by the upper left and
+    lower right corners of the visible area of the map.
+*/
+
+/*!
+    \fn void QGeoMapData::fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
+
+    Attempts to fit the bounding box \a bounds into the viewport of the map.
+
+    This method will change the zoom level to the maximum zoom level such
+    that all of \bounds is visible within the resulting viewport.
+
+    If \a preserveViewportCenter is false the map will be centered on the
+    bounding box \a bounds before the zoom level is changed, otherwise the
+    center of the map will not be changed.
+*/
+
+/*!
+    Returns the list of visible map objects managed by this map which
     contain the point \a screenPosition within their boundaries.
 */
-QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition)
+QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition) const
 {
     QList<QGeoMapObject*> results;
 
@@ -276,7 +362,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
     int childObjectCount = d_ptr->containerObject->childObjects().count();
     for (int i = 0; i < childObjectCount; ++i) {
         QGeoMapObject *object = d_ptr->containerObject->childObjects().at(i);
-        if (object->contains(coord))
+        if (object->contains(coord) && object->isVisible())
             results.append(object);
     }
 
@@ -284,14 +370,13 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
 }
 
 /*!
-    Returns the list of map objects managed by this map which are displayed at
+    Returns the list of visible map objects managed by this map which are displayed at
     least partially within the on screen rectangle \a screenRect.
 */
-QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRect)
+QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRect) const
 {
     QList<QGeoMapObject*> results;
 
-    // TODO - find a way to disambiguate rectangles at poles
     QGeoCoordinate topLeft = screenPositionToCoordinate(screenRect.topLeft());
     QGeoCoordinate bottomRight = screenPositionToCoordinate(screenRect.bottomRight());
 
@@ -300,11 +385,23 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
     int childObjectCount = d_ptr->containerObject->childObjects().count();
     for (int i = 0; i < childObjectCount; ++i) {
         QGeoMapObject *object = d_ptr->containerObject->childObjects().at(i);
-        if (bounds.intersects(object->boundingBox()))
+        if (bounds.intersects(object->boundingBox()) && object->isVisible())
             results.append(object);
     }
 
     return results;
+}
+
+/*!
+    Returns the list of visible map objects manager by this widget which
+    are displayed at least partially within the viewport of the map.
+*/
+QList<QGeoMapObject*> QGeoMapData::mapObjectsInViewport() const
+{
+    return mapObjectsInScreenRect(QRectF(0.0,
+                                         0.0,
+                                         d_ptr->windowSize.width(),
+                                         d_ptr->windowSize.height()));
 }
 
 /*!
@@ -327,17 +424,71 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
 */
 
 /*!
-    Paints the map on \a painter, using the options \a option.
+    Paints the map and everything associated with it on \a painter, using the
+    options \a option.
 
-    This should handle the painting of the map overlays and the map objects as
-    well.
-
-    The default implementation just draws the overlays.
+    This will paint the map with paintMap(), then the map overlays with
+    QGeoMapOverlay::paint(), then the map objects with paintObjects(), and
+    finally paintProviderNotices().
 */
 void QGeoMapData::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
+    paintMap(painter, option);
+
     for (int i = 0; i < d_ptr->overlays.size(); ++i)
         d_ptr->overlays[i]->paint(painter, option);
+
+    paintObjects(painter, option);
+
+    paintProviderNotices(painter, option);
+}
+
+/*!
+    Paints the map on \a painter, using the options \a option.
+
+    The map overlays, map objects and the provider notices (such as copyright
+    and powered by notices) are painted in separate methods, which are combined
+    in the paint() method.
+
+    The default implementation does not paint anything.
+*/
+void QGeoMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option)
+{
+    Q_UNUSED(painter)
+    Q_UNUSED(option)
+}
+
+/*!
+    Paints the map objects on \a painter, using the options \a option.
+
+    The default implementation does not paint anything.
+*/
+void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
+{
+    Q_UNUSED(painter)
+    Q_UNUSED(option)
+}
+
+/*!
+    Paints the provider notices on \a painter, using the options \a option.
+
+    The provider notices are things like the copyright and powered by notices.
+
+    The provider may not want the client developers to be able to move the
+    notices from their standard positions and so we have not provided API
+    support for specifying the position of the notices at this time.
+
+    If support for hinting at the positon of the notices is to be provided by
+    plugin parameters, the suggested parameter keys are
+    "mapping.notices.copyright.alignment" and
+    "mapping.notices.poweredby.alignment", with type Qt::Alignment.
+
+    The default implementation does not paint anything.
+*/
+void QGeoMapData::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *option)
+{
+    Q_UNUSED(painter)
+    Q_UNUSED(option)
 }
 
 /*!
@@ -388,23 +539,6 @@ void QGeoMapData::clearMapOverlays()
 }
 
 /*!
-    Sets up the associated between the map object \a mapObject and this map.
-
-    This will setup an instance of a QGeoMapObjectInfo subclass for \a
-    mapObject which will handle any of the map object behaviour which is
-    specifical to this QGeoMapData subclass.
-
-    This function uses createMapObjectInfo as a factory for the
-    QGeoMapObjectInfo instance, and so subclasses should reimplement
-    createMapObjectInfo to create the appropriate QGeoMapObjectInfo objects.
-*/
-void QGeoMapData::associateMapObject(QGeoMapObject *mapObject)
-{
-    QGeoMapObjectInfo* info = createMapObjectInfo(mapObject);
-    d_ptr->setObjectInfo(mapObject, info);
-}
-
-/*!
     Creates a QGeoMapObjectInfo instance which implements the behaviours of
     the map object \a object which are specific to this QGeoMapData.
 
@@ -412,7 +546,13 @@ void QGeoMapData::associateMapObject(QGeoMapObject *mapObject)
 */
 QGeoMapObjectInfo* QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
 {
+    Q_UNUSED(object)
     return 0;
+}
+
+void QGeoMapData::setBlockPropertyChangeSignals(bool block)
+{
+    d_ptr->blockPropertyChangeSignals = block;
 }
 
 /*******************************************************************************
@@ -422,31 +562,15 @@ QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEn
         : q_ptr(parent),
         engine(engine),
         geoMap(geoMap),
-        zoomLevel(-1.0)
-{
-    Q_Q(QGeoMapData);
-    containerObject = new QGeoMapObject(q);
-}
+        containerObject(0),
+        zoomLevel(-1.0),
+        blockPropertyChangeSignals(false) {}
 
 QGeoMapDataPrivate::~QGeoMapDataPrivate()
 {
-    delete containerObject;
+    if (containerObject)
+        delete containerObject;
     qDeleteAll(overlays);
-}
-
-void QGeoMapDataPrivate::setObjectInfo(QGeoMapObject *object, QGeoMapObjectInfo *info)
-{
-    object->d_ptr->info = info;
-    if (info)
-        info->objectUpdated();
-}
-
-QGeoMapObjectInfo* QGeoMapDataPrivate::parentObjectInfo(QGeoMapObject *object) const
-{
-    QGeoMapObject *parent = object->d_ptr->parent;
-    if (!parent)
-        return 0;
-    return parent->d_ptr->info;
 }
 
 #include "moc_qgeomapdata.cpp"

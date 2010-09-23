@@ -84,9 +84,6 @@ public:
     QString street() const;
     void setStreet(const QString &street);
 
-    QString streetNumber() const;
-    void setStreetNumber(const QString &streetNumber);
-
     QString postCode() const;
     void setPostCode(const QString &postCode);
 

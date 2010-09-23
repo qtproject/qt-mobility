@@ -73,6 +73,7 @@ public:
     QGeoMapData* createMapData(QGraphicsGeoMap *geoMap);
 
     QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
+    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
 
     QSize minimumImageSize() const;
     QSize maximumImageSize() const;

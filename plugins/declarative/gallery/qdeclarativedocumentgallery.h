@@ -76,7 +76,7 @@ public:
     static QString toString(ItemType type);
     static ItemType itemTypeFromString(const QString &string);
 
-    static QAbstractGallery *gallery();
+    static QAbstractGallery *gallery(QObject *object);
 };
 
 QTM_END_NAMESPACE

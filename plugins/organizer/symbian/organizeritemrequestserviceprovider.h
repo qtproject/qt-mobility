@@ -45,7 +45,7 @@
 #include <e32base.h>
 #include <qtorganizer.h>
 #include <calcommon.h>
-
+#include "QOrganizerItemChangeSet.h"
 // Forward declarations
 class QOrganizerItemSymbianEngine; // Symbian Plugin
 
@@ -108,8 +108,8 @@ private: // Worker functions
     // Save detail definition
     void SaveDetailDefinitionL();
 #ifdef SYMBIAN_CALENDAR_V2
-    // Fetch collection local Id
-    void CollectionIdL();
+    // Fetch collection local Ids
+    void CollectionIds();
     // Fetch collection
     void CollectionL();
     // Save collection
@@ -129,11 +129,10 @@ private:
     TInt                                    iNoOfItems;
     TInt                                    iIndex;
 #ifdef SYMBIAN_CALENDAR_V2
-    QList<QOrganizerCollection>             iCollections;
     QList<QOrganizerCollection>             iSuccessfullCollections;
-    QList<QOrganizerCollectionId>           iCollectionIds;
     QList<QOrganizerCollectionLocalId>      iCollectionLocalIds;
 #endif
+    QOrganizerItemChangeSet                 iChangeSet;
     };
 
 #endif /* CORGANIZERITEMREQUESTSSERVICEPROVIDER_H_ */

@@ -61,9 +61,11 @@ class Q_LOCATION_EXPORT QGeoMapRouteObject : public QGeoMapObject
     Q_PROPERTY(quint32 detailLevel READ detailLevel WRITE setDetailLevel NOTIFY detailLevelChanged)
 
 public:
-    QGeoMapRouteObject(QGeoMapObject *parent = 0);
-    QGeoMapRouteObject(const QGeoRoute &route, QGeoMapObject *parent = 0);
+    QGeoMapRouteObject();
+    QGeoMapRouteObject(const QGeoRoute &route);
     ~QGeoMapRouteObject();
+
+    QGeoMapObject::Type type() const;
 
     QGeoRoute route() const;
     void setRoute(const QGeoRoute &route);
@@ -74,12 +76,13 @@ public:
     quint32 detailLevel() const;
     void setDetailLevel(quint32 detailLevel);
 
-signals:
+Q_SIGNALS:
     void routeChanged(const QGeoRoute &route);
     void penChanged(const QPen &pen);
     void detailLevelChanged(quint32 detailLevel);
 
 private:
+    QGeoMapRouteObjectPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeoMapRouteObject)
     Q_DISABLE_COPY(QGeoMapRouteObject)
 };

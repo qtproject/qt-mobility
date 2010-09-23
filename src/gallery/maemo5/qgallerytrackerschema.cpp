@@ -489,7 +489,7 @@ static bool qt_writeCondition(
 {
     QXmlStackStreamWriter writer(xml);
 
-    if (filter.isInverted())
+    if (filter.isNegated())
         writer.writeStartElement("rdfq:not");
 
     const QString propertyName = filter.propertyName();

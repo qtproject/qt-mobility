@@ -237,6 +237,30 @@ public:
      */
     static QStringList landmarkAttributeKeys();
 
+    /*
+     * Returns Category Attribute keys
+     *
+     * These are the symbian platform specific landmark attribute key list
+     * relative to qt mobility api support.
+     *
+     * This list may change from version to version without notice,
+     * or even be removed.
+     *
+     */
+    static QStringList categoryAttributeKeys();
+
+    /*
+     * Returns Landmark Searchable Attribute keys
+     * 
+     * These are the symbian platform specific searchable landmark attribute key list
+     * relative to qt mobility api support.
+     * 
+     * This list may change from version to version without notice, 
+     * or even be removed.
+     *
+     */
+    static QStringList serachableLandmarkAttributeKeys();
+
     /**
      * converts the attribute key string to symbian position field value. 
      */

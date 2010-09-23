@@ -184,7 +184,6 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
     \value QueryRequest The request is a QGalleryQueryRequest.
     \value ItemRequest The request is a QGalleryItemRequest.
     \value TypeRequest The request is a QGalleryTypeRequest
-    \value RemoveRequest The request is a QGalleryRemoveRequest.
 */
 
 /*!

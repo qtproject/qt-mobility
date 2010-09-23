@@ -63,13 +63,20 @@ public:
     virtual bool quitOnLastInstanceClosed() const;
     virtual void setQuitOnLastInstanceClosed(const bool quit);
 
+    virtual QRemoteServiceControl::securityFilter setSecurityFilter(QRemoteServiceControl::securityFilter filter);
+
 Q_SIGNALS:
     void lastInstanceClosed();
 
 public slots:
     void processIncoming(); 
+
+protected:
+    virtual QRemoteServiceControl::securityFilter getSecurityFilter();
+
 private:
-    bool m_quit;
+    bool m_quit;    
+    QRemoteServiceControl::securityFilter iFilter;
 
 public:
     static QObject* proxyForService(const QRemoteServiceIdentifier& typeId, const QString& location);
