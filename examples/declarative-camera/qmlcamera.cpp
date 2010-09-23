@@ -43,7 +43,7 @@
 #include <QtDeclarative/QDeclarativeView>
 #include <QtDeclarative/QDeclarativeEngine>
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+#if !defined(QT_NO_OPENGL)
 #include <QtOpenGL/QGLWidget>
 #endif
 
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     QApplication application(argc, argv);
     const QString mainQmlApp = QLatin1String("qrc:/declarative-camera.qml");
     QDeclarativeView view;
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+#if !defined(QT_NO_OPENGL)
     view.setViewport(new QGLWidget);
 #endif
     view.setSource(QUrl(mainQmlApp));
