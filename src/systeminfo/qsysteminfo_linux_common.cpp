@@ -1606,10 +1606,10 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             QTextStream batinfo(&infofile);
             QString line = batinfo.readLine();
             while (!line.isNull()) {
-                if(line.contains("design capacity")) {
+                if(line.contains("last full capacity")) {
                     bool ok;
                     line = line.simplified();
-                    QString levels = line.section(" ", 2,2);
+                    QString levels = line.section(" ", 3,3);
                     levelWhenFull = levels.toFloat(&ok);
                     infofile.close();
                     break;
