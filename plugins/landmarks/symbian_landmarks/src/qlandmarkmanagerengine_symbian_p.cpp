@@ -734,6 +734,8 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarks(QList<QLandmark> * landm
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
+    if (errorMap)
+        errorMap->clear();
 
     QList<QLandmarkId> addedIds;
     QList<QLandmarkId> changedIds;
@@ -2340,14 +2342,15 @@ QLandmark LandmarkManagerEngineSymbianPrivate::fetchLandmarkL(const QLandmarkId 
     Q_ASSERT(errorString);
 
     if (landmarkId.managerUri() != managerUri()) {
-        *error = QLandmarkManager::BadArgumentError;
-        *errorString = "Landmark id comes from different landmark manager.";
+        *error = QLandmarkManager::DoesNotExistError;
+        *errorString = "Landmark not found as landmark id comes from different landmark manager.";
         return QLandmark();
     }
     else if (!LandmarkUtility::validLocalId(landmarkId.localId())) {
-        *error = QLandmarkManager::BadArgumentError;
+        *error = QLandmarkManager::DoesNotExistError;
         *errorString
-            = "Bad LandmarkId : Invalid local id is assigned. Symbian Supports unsigned double type for Landmark Ids";
+            = "Landmark not found as local id is invalid. For symbian the local id is a string representation of "
+              "an unsigned double type";
         return QLandmark();
     }
 
@@ -2508,19 +2511,19 @@ QLandmarkCategory LandmarkManagerEngineSymbianPrivate::fetchCategoryL(
     Q_ASSERT(errorString);
 
     if (&landmarkCategoryId == 0) {
-        *error = QLandmarkManager::BadArgumentError;
-        *errorString = "Invalid category id or empty id.";
+        *error = QLandmarkManager::DoesNotExistError;
+        *errorString = "Category not found because the category id is invalid or empty";
         return QLandmarkCategory();
     }
     else if (landmarkCategoryId.managerUri() != managerUri()) {
-        *error = QLandmarkManager::BadArgumentError;
-        *errorString = "Category id comes from different landmark manager.";
+        *error = QLandmarkManager::DoesNotExistError;
+        *errorString = "Category not found because the id's manager uri refers to different manager";
         return QLandmarkCategory();
     }
     else if (!LandmarkUtility::validLocalId(landmarkCategoryId.localId())) {
-        *error = QLandmarkManager::BadArgumentError;
+        *error = QLandmarkManager::DoesNotExistError;
         *errorString
-            = "Bad CategoryId : Invalid local id is assigned. Symbian Supports unsigned double type for Category Ids";
+            = "Category not found because the local id is invalid.  For Symbian the local id must the string representation of an unsigned double type.";
         return QLandmarkCategory();
     }
 
@@ -3851,7 +3854,7 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 aData->iErrorMap.insert(aData->iOpCount, error);
                 aData->error = error;
                 aData->errorString = errorString;
-                aData->iLandmarks.append(QLandmark());
+                aData->iLandmarks.append((lmSaveRequest->landmarks()).at(aData->iOpCount));
             }
 
             if (added)
@@ -3933,7 +3936,7 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 aData->iErrorMap.insert(aData->iOpCount, error);
                 aData->error = error;
                 aData->errorString = errorString;
-                aData->iCategories.append(QLandmarkCategory());
+                aData->iCategories.append((saveCategoryRequest->categories()).at(aData->iOpCount));
             }
 
             if (added)

@@ -46,6 +46,10 @@
 #include <QStringList>
 #include <QVariant>
 
+#ifdef CATEGORYPRIVATE_DEBUG
+#include <QDebug>
+#endif
+
 QTM_USE_NAMESPACE
 
 // ----- QLandmarkCategoryPrivate -----
@@ -57,7 +61,6 @@ QLandmarkCategoryPrivate::QLandmarkCategoryPrivate()
     : QSharedData(),
       name(QString()),
       iconUrl(QUrl()),
-      description(QString()),
       id(QLandmarkCategoryId())
 {
 }
@@ -66,7 +69,6 @@ QLandmarkCategoryPrivate::QLandmarkCategoryPrivate(const QLandmarkCategoryPrivat
     : QSharedData(other),
       name(other.name),
       iconUrl(other.iconUrl),
-      description(other.description),
       id(other.id)
 {
 }
@@ -79,7 +81,6 @@ QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCa
 {
     name = other.name;
     iconUrl = other.iconUrl;
-    description = other.description;
     id = other.id;
 
     return *this;
@@ -87,9 +88,13 @@ QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCa
 
 bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &other) const
 {
+
+#ifdef CATEGORYPRIVATE_DEBUG
+    qDebug() << "name: " << (name == other.name);
+    qDebug() << "id:" << (id == other.id);
+#endif
     return ((name == other.name)
             && (iconUrl == other.iconUrl)
-            && (description == other.description)
             && (id == other.id));
 }
 
@@ -284,6 +289,5 @@ void QLandmarkCategory::clear()
 {
     d->name.clear();
     d->iconUrl.clear();
-    d->description.clear();
     d->id = QLandmarkCategoryId();
 }
