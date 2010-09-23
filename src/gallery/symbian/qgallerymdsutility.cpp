@@ -49,6 +49,8 @@
 #include <e32cmn.h>
 #include <e32des8.h>
 
+#include <QFileInfo>
+
 QTM_BEGIN_NAMESPACE
 
 QDocumentGalleryMDSUtility::QDocumentGalleryMDSUtility()
@@ -95,19 +97,42 @@ CMdEObjectDef* QDocumentGalleryMDSUtility::ObjDefFromItemTypeForMDS20L( CMdEName
     // Return Base Object definition
     return nameSpace.GetObjectDefL( MdeConstants::Object::KBaseObject );
 }
-
+bool QDocumentGalleryMDSUtility::isItemTypeSupported(const QString &itemType)
+{
+    bool isSupported = false;
+    if (itemType == QDocumentGallery::Audio.name())
+        isSupported = true;
+    else if (itemType == QDocumentGallery::File.name())
+        isSupported = true;
+    else if (itemType == QDocumentGallery::Image.name())
+        isSupported = true;
+    else if (itemType == QDocumentGallery::PhotoAlbum.name())
+        isSupported = true;
+    else if (itemType == QDocumentGallery::Video.name())
+        isSupported = true;
+    else if (itemType == QDocumentGallery::Album.name())
+        isSupported = false; // only photoalbum currently supported
+    else 
+        isSupported = false;
+    
+    return isSupported;
+    
+}
 void QDocumentGalleryMDSUtility::GetDataFieldsForItemType( QStringList &propertyList, QString itemType )
 {
-    if (itemType == QDocumentGallery::Album.name()) {
+    if (itemType == QDocumentGallery::PhotoAlbum.name()) {
         // From MDS base object
         propertyList.append( QDocumentGallery::url.name() );
         propertyList.append( QDocumentGallery::fileSize.name() );
         propertyList.append( QDocumentGallery::lastModified.name() );
         propertyList.append( QDocumentGallery::title.name() );
         propertyList.append( QDocumentGallery::mimeType.name() );
-    } else if (itemType == QDocumentGallery::Audio.name()) {
+    } 
+    else if (itemType == QDocumentGallery::Audio.name()) {
         // From MDS base object
         propertyList.append( QDocumentGallery::url.name() );
+        propertyList.append( QDocumentGallery::fileName.name() );
+        propertyList.append( QDocumentGallery::filePath.name() );
         propertyList.append( QDocumentGallery::fileSize.name() );
         propertyList.append( QDocumentGallery::lastModified.name() );
         propertyList.append( QDocumentGallery::title.name() );
@@ -127,9 +152,18 @@ void QDocumentGalleryMDSUtility::GetDataFieldsForItemType( QStringList &property
         propertyList.append( QDocumentGallery::playCount.name() );
         //From MDS audio object
         propertyList.append( QDocumentGallery::sampleRate.name() );
+        propertyList.append( QDocumentGallery::albumTitle.name() );
+        propertyList.append( QDocumentGallery::trackNumber.name() );
+        propertyList.append( QDocumentGallery::albumArtist.name() );
+        propertyList.append( QDocumentGallery::artist.name() );
+        propertyList.append( QDocumentGallery::composer.name() );
+        propertyList.append( QDocumentGallery::genre.name() );
+        
     } else if (itemType == QDocumentGallery::File.name()) {
         // From MDS base object
         propertyList.append( QDocumentGallery::url.name() );
+        propertyList.append( QDocumentGallery::fileName.name() );
+        propertyList.append( QDocumentGallery::filePath.name() );
         propertyList.append( QDocumentGallery::fileSize.name() );
         propertyList.append( QDocumentGallery::lastModified.name() );
         propertyList.append( QDocumentGallery::title.name() );
@@ -142,6 +176,8 @@ void QDocumentGalleryMDSUtility::GetDataFieldsForItemType( QStringList &property
         propertyList.append( QDocumentGallery::rating.name() );
     } else if (itemType == QDocumentGallery::Image.name()) {
         propertyList.append( QDocumentGallery::url.name() );
+        propertyList.append( QDocumentGallery::fileName.name() );
+        propertyList.append( QDocumentGallery::filePath.name() );
         propertyList.append( QDocumentGallery::fileSize.name() );
         propertyList.append( QDocumentGallery::lastModified.name() );
         propertyList.append( QDocumentGallery::title.name() );
@@ -174,6 +210,8 @@ void QDocumentGalleryMDSUtility::GetDataFieldsForItemType( QStringList &property
         propertyList.append( QDocumentGallery::whiteBalance.name() );
     } else if (itemType == QDocumentGallery::Video.name()) {
         propertyList.append( QDocumentGallery::url.name() );
+        propertyList.append( QDocumentGallery::fileName.name() );
+        propertyList.append( QDocumentGallery::filePath.name() );
         propertyList.append( QDocumentGallery::fileSize.name() );
         propertyList.append( QDocumentGallery::lastModified.name() );
         propertyList.append( QDocumentGallery::title.name() );
@@ -221,6 +259,18 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         {
             QUrl url( s60DescToQString( inputItem->Uri() ) );
             output.setValue( url );
+            break;
+        }
+    case EFileName:
+        {
+            QFileInfo fileinfo(s60DescToQString(inputItem->Uri()));
+            output.setValue(fileinfo.fileName());
+            break;
+        }
+    case EFilePath:
+    {
+            QFileInfo fileinfo(s60DescToQString(inputItem->Uri()));
+            output.setValue(fileinfo.absoluteFilePath());
             break;
         }
     case EFileSize:
@@ -371,6 +421,68 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             }
             break;
         }
+    case EAlbumTitle:
+        {
+            if (inputItem->Def().Name() != MdeConstants::MediaObject::KMediaObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef &propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumProperty);
+            CMdEProperty *albumProp = NULL;
+            int foundIndex = inputItem->Property(propDef,albumProp);
+            if ( foundIndex != KErrNotFound && albumProp ) {
+                output.setValue(s60DescToQString(albumProp->TextValueL()));
+            }
+            break;
+        }
+    case EAlbumArtist:
+        {
+            if (inputItem->Def().Name() != MdeConstants::MediaObject::KMediaObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef &propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumArtistProperty);
+            CMdEProperty *albumArtistProp = NULL;
+            int foundIndex = inputItem->Property(propDef, albumArtistProp);
+            if ( foundIndex != KErrNotFound && albumArtistProp ) {
+                output.setValue(s60DescToQString(albumArtistProp->TextValueL()));
+            }
+            break;
+        }
+    case EComposer:
+        {
+            if (inputItem->Def().Name() != MdeConstants::MediaObject::KMediaObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef &propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KComposerProperty);
+            CMdEProperty *composerProp = NULL;
+            int foundIndex = inputItem->Property(propDef, composerProp);
+            if ( foundIndex != KErrNotFound && composerProp ) {
+                output.setValue(s60DescToQString(composerProp->TextValueL()));
+            }
+            break;
+        }
+    case ETrackNumber:
+            {
+                if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
+                        && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                        && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                    break;
+                }
+                CMdEPropertyDef &propDef = inputItem->Def().GetPropertyDefL(MdeConstants::MediaObject::KTrackProperty);
+                CMdEProperty* trackProp = NULL;
+                int foundIndex = inputItem->Property(propDef, trackProp);
+                if ( foundIndex != KErrNotFound && trackProp ) {
+                    unsigned long int value = trackProp->Uint32ValueL();
+                    output.setValue( value );
+                }
+                break;
+            }
+
     case EAudioCodec:
         {
             if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
@@ -674,9 +786,21 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
     switch (key) {
     case EUri:
         {
-            QUrl url( s60DescToQString( inputItem->Uri() ) );
-            output.setValue( url );
+            QUrl url(s60DescToQString( inputItem->Uri()));
+            output.setValue(url);
             break;
+        }
+    case EFileName:
+        {
+        QFileInfo fileinfo(s60DescToQString(inputItem->Uri()));
+        output.setValue(fileinfo.fileName());
+        break;
+        }
+    case EFilePath:
+        {
+        QFileInfo fileinfo(s60DescToQString(inputItem->Uri()));
+        output.setValue(fileinfo.absoluteFilePath());
+        break;
         }
     case EFileSize:
         {
@@ -881,6 +1005,87 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
             }
             break;
         }
+    case EAlbumTitle:
+        {
+            if (inputItem->Def().Name() != MdeConstants::MediaObject::KMediaObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef *propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumProperty);
+            if( !propDef )
+                return;
+
+            CMdEProperty *albumProp = NULL;
+            int foundIndex = inputItem->Property(*propDef,albumProp);
+            if ( foundIndex != KErrNotFound && albumProp ) {
+                CMdETextProperty *textProperty = NULL;
+                textProperty = (CMdETextProperty*)albumProp;
+                output.setValue(s60DescToQString(textProperty->Value()));
+            }
+            break;
+        }
+    case EAlbumArtist:
+        {
+            if (inputItem->Def().Name() != MdeConstants::MediaObject::KMediaObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef *propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumArtistProperty);
+            if( !propDef )
+                return;
+
+            CMdEProperty *albumArtistProp = NULL;
+            int foundIndex = inputItem->Property(*propDef, albumArtistProp);
+            if ( foundIndex != KErrNotFound && albumArtistProp ) {
+                CMdETextProperty *textProperty = NULL;
+                textProperty = (CMdETextProperty*)albumArtistProp;
+                output.setValue(s60DescToQString(textProperty->Value()));
+            }
+            break;
+        }
+    case EComposer:
+        {
+            if (inputItem->Def().Name() != MdeConstants::MediaObject::KMediaObject
+                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                break;
+            }
+            CMdEPropertyDef *propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KComposerProperty);
+            if(!propDef)
+                return;
+
+            CMdEProperty *composerProp = NULL;
+            int foundIndex = inputItem->Property(*propDef, composerProp);
+            if ( foundIndex != KErrNotFound && composerProp ) {
+                CMdETextProperty *textProperty = NULL;
+                textProperty = (CMdETextProperty*)composerProp;
+                output.setValue(s60DescToQString(textProperty->Value()));
+            }
+            break;
+        }
+    case ETrackNumber:
+            {
+                if (inputItem->Def().Name() != MdeConstants::MediaObject::KMediaObject
+                        && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
+                        && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+                    break;
+                }
+                CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KTrackProperty);
+                if( !propDef )
+                    return;
+
+                CMdEProperty* trackProp = NULL;
+                int foundIndex = inputItem->Property( *propDef, trackProp );
+                if ( foundIndex != KErrNotFound && trackProp ) {
+                    CMdEUint32Property*     uint32Property = NULL;
+                    uint32Property = ( CMdEUint32Property* )trackProp;
+                    unsigned long int value = uint32Property->Value();
+                    output.setValue( value );
+                }
+                break;
+            }
     case EAudioCodec:
         {
             if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
@@ -1272,12 +1477,15 @@ QString QDocumentGalleryMDSUtility::GetItemTypeFromMDEObject( CMdEObject *inputI
         return QDocumentGallery::Image.name();
     } else if (inputItem->Def().Name() == MdeConstants::Video::KVideoObject) {
         return QDocumentGallery::Video.name();
-    }
+    } else
+        return QDocumentGallery::File.name();
 }
 
 int QDocumentGalleryMDSUtility::GetPropertyKey( const QString &property )
 {
-    if (property == QDocumentGallery::url.name()) {
+    if (property == QDocumentGallery::url.name() ||
+        property == QDocumentGallery::fileName.name() ||
+        property == QDocumentGallery::filePath.name()) {
         return EUri;
     } else if (property == QDocumentGallery::fileSize.name()) {
         return EFileSize;
@@ -1291,6 +1499,18 @@ int QDocumentGalleryMDSUtility::GetPropertyKey( const QString &property )
         return EDuration;
     } else if (property == QDocumentGallery::performer.name()) {
         return EPerformer;
+    } else if (property == QDocumentGallery::artist.name()) {
+        return EPerformer;        
+    } else if (property == QDocumentGallery::albumTitle.name()) {
+        return EAlbumTitle;        
+    } else if (property == QDocumentGallery::albumArtist.name()) {
+        return EAlbumArtist;        
+    } else if (property == QDocumentGallery::trackNumber.name()) {
+        return ETrackNumber;        
+    } else if (property == QDocumentGallery::genre.name()) {
+        return EGenre;        
+    } else if (property == QDocumentGallery::composer.name()) {
+        return EComposer;        
     } else if (property == QDocumentGallery::width.name()) {
         return EWidth;
     } else if (property == QDocumentGallery::height.name()) {
@@ -1368,6 +1588,9 @@ QVariant::Type QDocumentGalleryMDSUtility::GetPropertyType( int key )
     case EDescription:
     case EComments:
     case EPerformer:
+    case EAlbumTitle:        
+    case EAlbumArtist:        
+    case EGenre:                
     case ECameraManufacturer:
     case ECameraModel:
     case ELanguage:
@@ -1383,6 +1606,7 @@ QVariant::Type QDocumentGalleryMDSUtility::GetPropertyType( int key )
     case EMeteringMode:
     case EWhiteBalance:
     case EVideoBitrate:
+    case ETrackNumber:
         return QVariant::UInt;
     case EDuration:
     case ESampleRate:
@@ -1516,6 +1740,26 @@ CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefForMDS25L( const Q
     } else if (property == QDocumentGallery::performer.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
+        return &propDef;
+    } else if (property == QDocumentGallery::albumTitle.name()) {
+        CMdEObjectDef &def = defaultNameSpace.GetObjectDefL(MdeConstants::Audio::KAudioObject);
+        CMdEPropertyDef &propDef = def.GetPropertyDefL(MdeConstants::Audio::KAlbumProperty);
+        return &propDef;
+    } else if (property == QDocumentGallery::albumArtist.name()) {
+        CMdEObjectDef &def = defaultNameSpace.GetObjectDefL(MdeConstants::Audio::KAudioObject);
+        CMdEPropertyDef &propDef = def.GetPropertyDefL(MdeConstants::Audio::KAlbumArtistProperty);
+        return &propDef;
+    } else if (property == QDocumentGallery::trackNumber.name()) {
+        CMdEObjectDef &def = defaultNameSpace.GetObjectDefL(MdeConstants::MediaObject::KMediaObject);
+        CMdEPropertyDef& propDef = def.GetPropertyDefL(MdeConstants::MediaObject::KTrackProperty);
+        return &propDef;
+    } else if (property == QDocumentGallery::composer.name()) {
+        CMdEObjectDef &def = defaultNameSpace.GetObjectDefL(MdeConstants::Audio::KAudioObject);
+        CMdEPropertyDef &propDef = def.GetPropertyDefL(MdeConstants::Audio::KComposerProperty);
+        return &propDef;
+    } else if (property == QDocumentGallery::genre.name()) {
+        CMdEObjectDef &def = defaultNameSpace.GetObjectDefL(MdeConstants::MediaObject::KMediaObject);
+        CMdEPropertyDef &propDef = def.GetPropertyDefL(MdeConstants::MediaObject::KGenreProperty);
         return &propDef;
     } else if (property == QDocumentGallery::width.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
@@ -1664,11 +1908,41 @@ CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefForMDS20L( const Q
             return NULL;
         CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::MediaObject::KDurationProperty );
         return propDef;
-    } else if (property == QDocumentGallery::performer.name()) {
+    } else if (property == QDocumentGallery::performer.name() || property == QDocumentGallery::artist.name()) {
         CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
         if( !def )
             return NULL;
         CMdEPropertyDef* propDef = def->GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
+        return propDef;
+    } else if (property == QDocumentGallery::albumTitle.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL(MdeConstants::Audio::KAudioObject);
+        if(!def)
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL(MdeConstants::Audio::KAlbumProperty);
+        return propDef;
+    } else if (property == QDocumentGallery::albumArtist.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL(MdeConstants::Audio::KAudioObject);
+        if(!def)
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL(MdeConstants::Audio::KAlbumArtistProperty);
+        return propDef;
+    } else if (property == QDocumentGallery::trackNumber.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL(MdeConstants::Audio::KAudioObject);
+        if(!def)
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL(MdeConstants::Audio::KTrackProperty);
+        return propDef;
+    } else if (property == QDocumentGallery::composer.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL(MdeConstants::Audio::KAudioObject);
+        if(!def)
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL(MdeConstants::Audio::KComposerProperty);
+        return propDef;
+    } else if (property == QDocumentGallery::genre.name()) {
+        CMdEObjectDef* def = defaultNameSpace.GetObjectDefL(MdeConstants::MediaObject::KMediaObject);
+        if(!def)
+            return NULL;
+        CMdEPropertyDef* propDef = def->GetPropertyDefL(MdeConstants::MediaObject::KGenreProperty);
         return propDef;
     } else if (property == QDocumentGallery::width.name()) {
         CMdEObjectDef* def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
@@ -1909,6 +2183,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
     switch( key )
     {
     case EUri:
+    case EFileName:
+    case EFilePath:
         return false;
     case EFileSize:
         {
@@ -2081,6 +2357,100 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
                 return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddTextPropertyL( propDef, text ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EGenre:
+        {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef &propDef = item->Def().GetPropertyDefL(MdeConstants::MediaObject::KGenreProperty);
+            CMdEProperty* genreProp = NULL;
+            int foundIndex = item->Property(propDef, genreProp);
+            const TDesC text(qStringToS60Desc(value.toString() )->Des());
+            if (foundIndex != KErrNotFound && genreProp) {
+                TRAPD( err, genreProp->SetTextValueL(text));
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL(propDef, text) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EComposer:
+        {
+            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef &propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KComposerProperty);
+            CMdEProperty* composerProp = NULL;
+            int foundIndex = item->Property(propDef, composerProp);
+            const TDesC text(qStringToS60Desc(value.toString())->Des());
+            if ( foundIndex != KErrNotFound && composerProp ) {
+                TRAPD( err, composerProp->SetTextValueL( text ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL(propDef, text) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EAlbumTitle:
+        {
+            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef &propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumProperty);
+            CMdEProperty* albumTitleProp = NULL;
+            int foundIndex = item->Property(propDef, albumTitleProp);
+            const TDesC text(qStringToS60Desc(value.toString())->Des());
+            if ( foundIndex != KErrNotFound && albumTitleProp ) {
+                TRAPD( err, albumTitleProp->SetTextValueL(text) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL(propDef, text));
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EAlbumArtist:
+        {
+            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef &propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumArtistProperty);
+            CMdEProperty* albumArtistProp = NULL;
+            int foundIndex = item->Property( propDef, albumArtistProp );
+            const TDesC text(qStringToS60Desc(value.toString())->Des());
+            if ( foundIndex != KErrNotFound && albumArtistProp ) {
+                TRAPD( err, albumArtistProp->SetTextValueL(text));
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL(propDef, text));
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case ETrackNumber:
+        {
+            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef &propDef = item->Def().GetPropertyDefL(MdeConstants::MediaObject::KTrackProperty);
+            CMdEProperty* trackProp = NULL;
+            int foundIndex = item->Property(propDef, trackProp);
+            if ( foundIndex != KErrNotFound && trackProp ) {
+                TRAPD( err, trackProp->SetUint32ValueL(value.toULongLong()) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddUint32PropertyL(propDef, value.toULongLong()) );
                 return err == KErrNone ? true : false ;
             }
         }
@@ -2439,6 +2809,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
     switch( key )
     {
     case EUri:
+    case EFileName:
+    case EFilePath:
         return false;
     case EFileSize:
         {
@@ -2661,6 +3033,125 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
                 return err == KErrNone ? true : false ;
             } else {
                 TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EGenre:
+        {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL(MdeConstants::MediaObject::KGenreProperty);
+            if( !propDef )
+                return false;
+
+            CMdEProperty* genreProp = NULL;
+            int foundIndex = item->Property( *propDef, genreProp );
+            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
+            if ( foundIndex != KErrNotFound && genreProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )genreProp;
+                TRAPD( err, textProperty->SetValueL( text ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EComposer:
+        {
+            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KComposerProperty);
+            if( !propDef )
+                return false;
+
+            CMdEProperty* composerProp = NULL;
+            int foundIndex = item->Property( *propDef, composerProp );
+            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
+            if ( foundIndex != KErrNotFound && composerProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )composerProp;
+                TRAPD( err, textProperty->SetValueL( text ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EAlbumTitle:
+        {
+            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumProperty);
+            if( !propDef )
+                return false;
+
+            CMdEProperty* albumTitleProp = NULL;
+            int foundIndex = item->Property( *propDef, albumTitleProp );
+            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
+            if ( foundIndex != KErrNotFound && albumTitleProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )albumTitleProp;
+                TRAPD( err, textProperty->SetValueL( text ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case EAlbumArtist:
+        {
+            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumArtistProperty);
+            if( !propDef )
+                return false;
+
+            CMdEProperty* albumArtistProp = NULL;
+            int foundIndex = item->Property( *propDef, albumArtistProp );
+            const TDesC text( qStringToS60Desc( value.toString() )->Des() );
+            if ( foundIndex != KErrNotFound && albumArtistProp ) {
+                CMdETextProperty*     textProperty = NULL;
+                textProperty = ( CMdETextProperty* )albumArtistProp;
+                TRAPD( err, textProperty->SetValueL( text ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddTextPropertyL( *propDef, text ) );
+                return err == KErrNone ? true : false ;
+            }
+        }
+    case ETrackNumber:
+        {
+            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
+                    && item->Def().Name() != MdeConstants::Video::KVideoObject
+                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+                return false;
+            }
+            CMdEPropertyDef* propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KTrackProperty);
+            if( !propDef )
+                return false;
+
+            CMdEProperty* trackProp = NULL;
+            int foundIndex = item->Property( *propDef, trackProp );
+            if ( foundIndex != KErrNotFound && trackProp ) {
+                CMdEUint32Property*     uint32Property = NULL;
+                uint32Property = ( CMdEUint32Property* )trackProp;
+                TRAPD( err, uint32Property->SetValueL( value.toULongLong() ) );
+                return err == KErrNone ? true : false ;
+            } else {
+                TRAPD( err, item->AddUint32PropertyL( *propDef, value.toULongLong() ) );
                 return err == KErrNone ? true : false ;
             }
         }
@@ -3358,7 +3849,8 @@ int QDocumentGalleryMDSUtility::AddMetadataFilter(CMdELogicCondition &rootCond,
     QString propertyToMatch = metaDataFilter.propertyName();
 
     bool uriComparison = false;
-    if (propertyToMatch == QDocumentGallery::url.name()) {
+    if (propertyToMatch == QDocumentGallery::url.name() ||
+        propertyToMatch == QDocumentGallery::filePath.name() ) {
         uriComparison = true;
     }
 

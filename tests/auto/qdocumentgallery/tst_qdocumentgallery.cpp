@@ -101,6 +101,8 @@ void tst_QDocumentGallery::itemTypeProperties_data()
 #endif
 #if defined (Q_OS_SYMBIAN)
             << QDocumentGallery::url
+            << QDocumentGallery::fileName
+            << QDocumentGallery::filePath
             << QDocumentGallery::fileSize                
             << QDocumentGallery::lastModified
             << QDocumentGallery::title
@@ -150,8 +152,14 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::audioBitRate
             << QDocumentGallery::playCount
             << QDocumentGallery::sampleRate
+            << QDocumentGallery::albumTitle
+            << QDocumentGallery::trackNumber
+            << QDocumentGallery::albumArtist
+            << QDocumentGallery::artist
+            << QDocumentGallery::composer
+            << QDocumentGallery::genre 
 #endif
-        );
+    );
 
     QTest::newRow("Album") << QString(QDocumentGallery::Album) << (QStringList()
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
@@ -162,14 +170,16 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::title
             << QDocumentGallery::trackCount
 #endif
-#if defined (Q_OS_SYMBIAN)
-            << QDocumentGallery::url
-            << QDocumentGallery::fileSize
-            << QDocumentGallery::lastModified
-            << QDocumentGallery::title
-            << QDocumentGallery::mimeType
-#endif            
-        );
+    );
+    QTest::newRow("PhotoAlbum") << QString(QDocumentGallery::PhotoAlbum) << (QStringList()
+    #if defined (Q_OS_SYMBIAN)
+                << QDocumentGallery::url
+                << QDocumentGallery::fileSize
+                << QDocumentGallery::lastModified
+                << QDocumentGallery::title
+                << QDocumentGallery::mimeType
+    #endif            
+    );    
 
 #if defined (Q_OS_SYMBIAN)
     QTest::newRow("Image") << QString(QDocumentGallery::Image) << (QStringList(fileProperties)
@@ -250,7 +260,7 @@ void tst_QDocumentGallery::propertyAttributes_data()
     QTest::newRow("File.fileName")
             << QString(QDocumentGallery::File)
             << QString(QDocumentGallery::fileName)
-#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS) || defined (Q_OS_SYMBIAN)
             << (QGalleryProperty::CanRead
                     | QGalleryProperty::CanFilter
                     | QGalleryProperty::CanSort);
@@ -260,7 +270,7 @@ void tst_QDocumentGallery::propertyAttributes_data()
     QTest::newRow("File.filePath")
                     << QString(QDocumentGallery::File)
                     << QString(QDocumentGallery::filePath)
-#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS) || defined (Q_OS_SYMBIAN)
                     << (QGalleryProperty::CanRead | QGalleryProperty::CanFilter);
 #else
                     << QGalleryProperty::Attributes();
@@ -269,7 +279,7 @@ void tst_QDocumentGallery::propertyAttributes_data()
     QTest::newRow("Audio.albumTitle")
             << QString(QDocumentGallery::Audio)
             << QString(QDocumentGallery::albumTitle)
-#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS) || defined (Q_OS_SYMBIAN)
             << (QGalleryProperty::CanRead
                     | QGalleryProperty::CanWrite
                     | QGalleryProperty::CanFilter
@@ -283,7 +293,14 @@ void tst_QDocumentGallery::propertyAttributes_data()
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
             << QGalleryProperty::Attributes(QGalleryProperty::CanRead);
 #else
+#ifndef Q_OS_SYMBIAN
             << QGalleryProperty::Attributes();
+#else
+            << (QGalleryProperty::CanRead
+                | QGalleryProperty::CanWrite
+                | QGalleryProperty::CanFilter
+                | QGalleryProperty::CanSort);
+#endif        
 #endif
 }
 

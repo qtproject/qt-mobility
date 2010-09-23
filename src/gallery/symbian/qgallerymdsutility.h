@@ -62,6 +62,8 @@ public:
     enum TPropertyKeys
     {
         EUri = 0,
+        EFileName,
+        EFilePath,
         EFileSize,
         ELastModified,
         ETitle,
@@ -72,11 +74,16 @@ public:
         EComments,
         ERating,
         EDuration,
-        EPerformer,
+        EPerformer, //=also maps to artist
         EAudioCodec,
         EAudioBitrate,
         EPlayCount,
         ESampleRate,
+        EAlbumTitle,        
+        EAlbumArtist,        
+        ETrackNumber,        
+        EGenre,        
+        EComposer,
         EWidth,
         EHeight,
         EOrientation,
@@ -93,7 +100,8 @@ public:
         EVideoBitrate,
         ELanguage,
         EFrameRate,
-        EResumePosition
+        EResumePosition,
+        EPropertyKeysLength
     };
 
     QDocumentGalleryMDSUtility();
@@ -107,6 +115,7 @@ public:
     static void GetDataFieldsForItemType( QStringList &propertyList, QString itemType );
     static void GetMetaDataFieldL( CMdEObject *inputItem, QVariant &output, int key );
     static QString GetItemTypeFromMDEObject( CMdEObject *inputItem );
+    static bool isItemTypeSupported( const QString &itemType);
     static int GetPropertyKey( const QString &property );
     static QVariant::Type GetPropertyType( int key );
 
