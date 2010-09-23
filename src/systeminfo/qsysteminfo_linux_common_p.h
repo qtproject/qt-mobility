@@ -259,6 +259,7 @@ private:
      void mountEntries();
      int mtabWatchA;
      int inotifyFD;
+     void checkAvailableStorage();
 
      QTimer *storageTimer;
 

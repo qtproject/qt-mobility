@@ -1749,12 +1749,13 @@ void QSystemStorageInfoLinuxCommonPrivate::connectNotify(const char *signal)
 #endif
         } else {
 
-        inotifyFD = ::inotify_init();
-        mtabWatchA = ::inotify_add_watch(inotifyFD, "/etc/mtab", IN_MODIFY);
-        if(mtabWatchA > 0) {
-            QSocketNotifier *notifier = new QSocketNotifier
-                                        (inotifyFD, QSocketNotifier::Read, this);
-            connect(notifier, SIGNAL(activated(int)), this, SLOT(inotifyActivated()));
+            inotifyFD = ::inotify_init();
+            mtabWatchA = ::inotify_add_watch(inotifyFD, "/etc/mtab", IN_MODIFY);
+            if(mtabWatchA > 0) {
+                QSocketNotifier *notifier = new QSocketNotifier
+                                            (inotifyFD, QSocketNotifier::Read, this);
+                connect(notifier, SIGNAL(activated(int)), this, SLOT(inotifyActivated()));
+            }
         }
     }
 }
@@ -1767,14 +1768,16 @@ void QSystemStorageInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
             disconnect(udisksIface,SIGNAL(deviceChanged(QDBusObjectPath)),
-                    this,SLOT(udisksDeviceChanged(QDBusObjectPath)));
+                       this,SLOT(udisksDeviceChanged(QDBusObjectPath)));
 #endif
 #endif
         } else {
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageAdded())))) {
-        ::inotify_rm_watch(inotifyFD, mtabWatchA);
+            ::inotify_rm_watch(inotifyFD, mtabWatchA);
+        }
     }
 }
+
+
 void QSystemStorageInfoLinuxCommonPrivate::inotifyActivated()
 {
     char buffer[1024];
@@ -1819,7 +1822,7 @@ void QSystemStorageInfoLinuxCommonPrivate::deviceChanged()
 }
 
 #if !defined(QT_NO_DBUS)
-void QSystemStorageInfoLinuxCommonPrivate::udisksDeviceChanged(const QDBusObjectPath &/*path*/)
+void QSystemStorageInfoLinuxCommonPrivate::udisksDeviceChanged(const QDBusObjectPath &path)
 {
     storageChanged = true;
     if(udisksIsAvailable) {
@@ -2031,7 +2034,7 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
     endmntent(mntfp);
 }
 
-QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &/*driveVolume*/)
+QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVolume)
 {
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
@@ -2175,7 +2178,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
                 halIfaceDevice = new QHalDeviceInterface(dev);
                 if (halIfaceDevice->isValid()) {
                     const QString batType = halIfaceDevice->getPropertyString("battery.type");
-                    if(batType == "primary" || batType == "pda" &&
+                    if((batType == "primary" || batType == "pda") &&
                        halIfaceDevice->setConnections() ) {
                             if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                         this,SLOT(halChanged(int,QVariantList)))) {
