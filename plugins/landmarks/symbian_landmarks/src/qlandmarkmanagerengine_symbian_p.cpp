@@ -464,6 +464,8 @@ QList<QLandmark> LandmarkManagerEngineSymbianPrivate::landmarks(
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
+    if (errorMap)
+        errorMap->clear();
 
     QList<QLandmark> result;
     if (&landmarkIds == 0 || landmarkIds.isEmpty()) {
@@ -865,6 +867,8 @@ bool LandmarkManagerEngineSymbianPrivate::removeLandmarks(const QList<QLandmarkI
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
+    if (errorMap)
+        errorMap->clear();
 
     QList<QLandmarkId> removedIds;
 
