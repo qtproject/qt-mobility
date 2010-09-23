@@ -48,6 +48,10 @@
 #include "qdeclarativeorganizer_p.h"
 #include "qdeclarativeorganizeritemdetail_p.h"
 #include "qdeclarativeorganizeritemfilter_p.h"
+#include "qdeclarativeorganizeritemrecurrencerule_p.h"
+#include "qdeclarativeorganizeritemfetchhint_p.h"
+#include "qdeclarativeorganizeritemsortorder_p.h"
+#include "qdeclarativeorganizeritemcollection_p.h"
 
 QT_USE_NAMESPACE
 
@@ -62,6 +66,10 @@ public:
         qmlRegisterType<QDeclarativeOrganizerModel>(uri, 1, 1, "OrganizerModel");
         qmlRegisterType<QDeclarativeOrganizerItem>(uri, 1, 1, "OrganizerItem");
         qmlRegisterType<QDeclarativeOrganizer>(uri, 1, 1, "Organizer");
+        qmlRegisterType<QDeclarativeOrganizerItemRecurrenceRule>(uri, 1, 1, "OrganizerItemRecurrenceRule");
+        qmlRegisterType<QDeclarativeOrganizerItemFetchHint>(uri, 1, 1, "fetchHint");
+        qmlRegisterType<QDeclarativeOrganizerItemSortOrder>(uri, 1, 1, "OrganizerItemSortOrder");
+        qmlRegisterType<QDeclarativeOrganizerCollection>(uri, 1, 1, "OrganizerCollection");
 
         //items
         qmlRegisterType<QDeclarativeOrganizerItem>(uri, 1, 1, "OrganizerItem");
