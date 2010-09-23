@@ -1319,8 +1319,6 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
     endmntent(mntfp);
 }
 
-
-
 QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject *parent)
     : QObject(parent)
 {
@@ -1609,10 +1607,14 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             QString line = batinfo.readLine();
             while (!line.isNull()) {
                 if(line.contains("design capacity")) {
-                    levelWhenFull = line.split(" ").at(1).trimmed().toFloat();
+                    bool ok;
+                    line = line.simplified();
+                    QString levels = line.section(" ", 2,2);
+                    levelWhenFull = levels.toFloat(&ok);
                     infofile.close();
                     break;
                 }
+
                 line = batinfo.readLine();
             }
             infofile.close();
@@ -1626,7 +1628,10 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             QString line = batstate.readLine();
             while (!line.isNull()) {
                 if(line.contains("remaining capacity")) {
-                    level = line.split(" ").at(1).trimmed().toFloat();
+                    bool ok;
+                    line = line.simplified();
+                    QString levels = line.section(" ", 2,2);
+                    level = levels.toFloat(&ok);
                     statefile.close();
                     break;
                 }
