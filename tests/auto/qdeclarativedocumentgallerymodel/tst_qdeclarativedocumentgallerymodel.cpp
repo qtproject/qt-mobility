@@ -289,6 +289,10 @@ private Q_SLOTS:
     void limitAuto();
     void filter_data();
     void filter();
+    void changeFilter_data();
+    void changeFilter();
+    void changeFilterAuto_data() { changeFilter_data(); }
+    void changeFilterAuto();
     void filterProperties_data();
     void filterProperties();
     void progress_data();
@@ -326,7 +330,6 @@ void tst_QDeclarativeDocumentGalleryModel::initTestCase()
     qRegisterMetaType<QGalleryFilter>();
     qRegisterMetaType<QGalleryQueryRequest::Scope>();
     qRegisterMetaType<QModelIndex>();
-
     QHash<QString, QGalleryProperty::Attributes> propertyAttributes;
     propertyAttributes.insert(QLatin1String("title"), QGalleryProperty::CanRead
             | QGalleryProperty::CanWrite
@@ -1507,8 +1510,187 @@ void tst_QDeclarativeDocumentGalleryModel::filter()
     QScopedPointer<QObject> object(component.create());
     QVERIFY(object);
     QVERIFY(gallery.request());
-    QVERIFY(gallery.response());
+    QCOMPARE(gallery.request()->filter(), filter);
+}
 
+void tst_QDeclarativeDocumentGalleryModel::changeFilter_data()
+{
+    QTest::addColumn<QByteArray>("qml");
+    QTest::addColumn<QGalleryFilter>("qmlFilter");
+    QTest::addColumn<QByteArray>("filterQml");
+    QTest::addColumn<QGalleryFilter>("filter");
+
+    QTest::newRow("undefined -> width == 1920")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {}\n")
+            << QGalleryFilter()
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "GalleryEqualsFilter {\n"
+                        "property: \"width\"\n"
+                        "value: 1920\n"
+                        "negated: false\n"
+                    "}\n")
+            << QGalleryFilter(QDocumentGallery::width == 1920);
+
+    QTest::newRow("width == 1920 -> width == 1920")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "filter: GalleryEqualsFilter {\n"
+                            "property: \"width\"\n"
+                            "value: 1920\n"
+                            "negated: false\n"
+                        "}\n"
+                    "}\n")
+            << QGalleryFilter(QDocumentGallery::width == 1920)
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "GalleryEqualsFilter {\n"
+                        "property: \"width\"\n"
+                        "value: 1920\n"
+                        "negated: false\n"
+                    "}\n")
+            << QGalleryFilter(QDocumentGallery::width == 1920);
+
+    QTest::newRow("width == 1920 -> width != 1920")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "filter: GalleryEqualsFilter {\n"
+                            "property: \"width\"\n"
+                            "value: 1920\n"
+                            "negated: false\n"
+                        "}\n"
+                    "}\n")
+            << QGalleryFilter(QDocumentGallery::width == 1920)
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "GalleryEqualsFilter {\n"
+                        "property: \"width\"\n"
+                        "value: 1920\n"
+                        "negated: true\n"
+                    "}\n")
+            << QGalleryFilter(!(QDocumentGallery::width == 1920));
+
+    QTest::newRow("width == 1920 -> undefined")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "filter: GalleryEqualsFilter {\n"
+                            "property: \"width\"\n"
+                            "value: 1920\n"
+                            "negated: false\n"
+                        "}\n"
+                    "}\n")
+            << QGalleryFilter(QDocumentGallery::width == 1920)
+            << QByteArray()
+            << QGalleryFilter();
+}
+
+void tst_QDeclarativeDocumentGalleryModel::changeFilter()
+{
+    QFETCH(QByteArray, qml);
+    QFETCH(QGalleryFilter, qmlFilter);
+    QFETCH(QByteArray, filterQml);
+    QFETCH(QGalleryFilter, filter);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QCOMPARE(gallery.request()->filter(), qmlFilter);
+
+    QSignalSpy spy(object.data(), SIGNAL(filterChanged()));
+
+    if (!filterQml.isEmpty()) {
+        QDeclarativeComponent filterComponent(&engine);
+        filterComponent.setData(filterQml, QUrl());
+
+        QScopedPointer<QObject> filterObject(filterComponent.create());
+        QVERIFY(filterObject);
+
+        QDeclarativeGalleryFilterBase *declarativeFilter
+                = static_cast<QDeclarativeGalleryFilterBase *>(filterObject.data());
+        void *argv[] = { &declarativeFilter };
+
+        int propertyIndex = object->metaObject()->indexOfProperty("filter");
+        QVERIFY(propertyIndex != -1);
+        object->qt_metacall(QMetaObject::WriteProperty, propertyIndex, argv);
+        QCOMPARE(spy.count(), 1);
+
+        QMetaObject::invokeMethod(object.data(), "reload");
+    } else {
+        QDeclarativeGalleryFilterBase *declarativeFilter = 0;
+        void *argv[] = { &declarativeFilter };
+
+        int propertyIndex = object->metaObject()->indexOfProperty("filter");
+        QVERIFY(propertyIndex != -1);
+        object->qt_metacall(QMetaObject::WriteProperty, propertyIndex, argv);
+        QCOMPARE(spy.count(), 1);
+
+        QMetaObject::invokeMethod(object.data(), "reload");
+    }
+    QVERIFY(gallery.request());
+    QCOMPARE(gallery.request()->filter(), filter);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::changeFilterAuto()
+{
+    QFETCH(QByteArray, qml);
+    QFETCH(QGalleryFilter, qmlFilter);
+    QFETCH(QByteArray, filterQml);
+    QFETCH(QGalleryFilter, filter);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QCOMPARE(gallery.request()->filter(), qmlFilter);
+
+    QSignalSpy spy(object.data(), SIGNAL(filterChanged()));
+
+    if (!filterQml.isEmpty()) {
+        QDeclarativeComponent filterComponent(&engine);
+        filterComponent.setData(filterQml, QUrl());
+
+        QScopedPointer<QObject> filterObject(filterComponent.create());
+        QVERIFY(filterObject);
+
+        QDeclarativeGalleryFilterBase *declarativeFilter
+                = static_cast<QDeclarativeGalleryFilterBase *>(filterObject.data());
+        void *argv[] = { &declarativeFilter };
+
+        int propertyIndex = object->metaObject()->indexOfProperty("filter");
+        QVERIFY(propertyIndex != -1);
+        object->qt_metacall(QMetaObject::WriteProperty, propertyIndex, argv);
+        QCOMPARE(spy.count(), 1);
+
+        QCoreApplication::processEvents();
+    } else {
+        QDeclarativeGalleryFilterBase *declarativeFilter = 0;
+        void *argv[] = { &declarativeFilter };
+
+        int propertyIndex = object->metaObject()->indexOfProperty("filter");
+        QVERIFY(propertyIndex != -1);
+        object->qt_metacall(QMetaObject::WriteProperty, propertyIndex, argv);
+        QCOMPARE(spy.count(), 1);
+
+        QCoreApplication::processEvents();
+    }
+    QVERIFY(gallery.request());
     QCOMPARE(gallery.request()->filter(), filter);
 }
 
