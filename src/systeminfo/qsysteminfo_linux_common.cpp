@@ -1650,58 +1650,49 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
         foreach(const QString brightnessFileName, brightnessList) {
             float numLevels = 0.0;
             float curLevel = 0.0;
-            QFile curBrightnessFile(backlightPath+brightnessFileName+"/LCD/brightness");
-            if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qDebug()<<"File not opened";
-            } else {
-                const QString strvalue = curBrightnessFile.readAll().trimmed();
-                if(strvalue.contains("levels")) {
-                    QStringList list = strvalue.split(" ");
-                    numLevels = list.at(2).toFloat();
-                }
-                if(strvalue.contains("current")) {
-                    QStringList list = strvalue.split(": ");
-                    curLevel = list.at(list.count()-1).toFloat();
-                }
-                curBrightnessFile.close();
-                return curLevel / numLevels * 100;
-            }
-        }
-    }
-#if 0
-    QString backlightPath = "/sys/devices/virtual/backlight/";
-    QDir videoDir(backlightPath);
-    QStringList filters;
-    filters << "*";
-    QStringList brightnessList = videoDir.entryList(filters,
-                                                     QDir::Dirs
-                                                     | QDir::NoDotAndDotDot,
-                                                     QDir::Name);
-    foreach(QString brightnessFileName, brightnessList) {
-        float numLevels = 0.0;
-        float curLevel = 0.0;
-        QFile curBrightnessFile(backlightPath+brightnessFileName+"/brightness");
-        if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qDebug()<<"File not opened";
-        } else {
-            QString strvalue;
-            strvalue = curBrightnessFile.readLine().trimmed();
-            curBrightnessFile.close();
-            curLevel = strvalue.toFloat();
 
-            QFile maxBrightnessFile(backlightPath+brightnessFileName+"/max_brightness");
-            if(!maxBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qDebug()<<"File not opened";
-            } else {
-                QString strvalue;
-                strvalue = maxBrightnessFile.readLine().trimmed();
-                maxBrightnessFile.close();
-                numLevels = strvalue.toFloat();
+            const QDir videoSubDir(backlightPath+"/"+brightnessFileName);
+
+            const QStringList vidDirList = videoSubDir.entryList(filters,
+                                                              QDir::Dirs
+                                                              | QDir::NoDotAndDotDot,
+                                                              QDir::Name);
+            foreach(const QString vidFileName, vidDirList) {
+                QFile curBrightnessFile(backlightPath+brightnessFileName+"/"+vidFileName+"/brightness");
+                if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                    qDebug()<<"File not opened";
+                } else {
+                    QTextStream bri(&curBrightnessFile);
+                    QString line = bri.readLine();
+                    while(!line.isNull()) {
+                        if(!line.contains("not supported")) {
+                            if(line.contains("levels")) {
+                                QString level = line.section(" ",-1);
+                                bool ok;
+                                numLevels = level.toFloat(&ok);
+                                if(!ok)
+                                    numLevels = -1;
+                            }
+                            if(line.contains("current")) {
+                                QString level = line.section(": ",-1);
+                                bool ok;
+                                curLevel = level.toFloat(&ok);
+                                if(!ok)
+                                    curLevel = 0;
+                            }
+                        }
+                        line = bri.readLine();
+                    }
+
+                    qDebug() << numLevels << curLevel;
+                    curBrightnessFile.close();
+                    if(curLevel > -1 && numLevels > 0) {
+                        return curLevel / numLevels * 100;
+                    }
+                }
             }
-            return curLevel / numLevels * 100;
         }
     }
-#endif
     return -1;
 }
 
