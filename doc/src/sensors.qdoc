@@ -210,7 +210,8 @@ classes to use.
 Since sensor backends are created on demand, the sensor plugin is loaded and asked
 to register the sensor backends it handles. The plugin should implement
 QSensorPluginInterface::registerSensors() and call QSensorManager::registerBackend()
-to register available backends. Typically the plugin will also implement
+to register available backends. Typically the plugin will also inherit from
+QSensorBackendFactory and implement
 QSensorBackendFactory::createBackend() in order to instantiate backends it has registered.
 
 The simplest plugin will have just once sensor backend although there is no reason
@@ -274,5 +275,34 @@ QAccelerometer = n900.accelerometer
 
 If Sensors.conf specifies an identifier that is not registered then the system will fall back to
 the first registered identifier as the default.
+
+*/
+/*!
+\page dynamic-sensor-backend-registration.html
+\title Dynamic Sensor Backend Registration
+\ingroup sensors_backend_topics
+
+\section1 Static Backend Registration
+
+Sensor backends are generally registered statically. The registration happens when the sensors
+library is first used and the registration remains in effect while the program runs.
+
+Statically registered backends may still exhibit some dynamic behaviour as the
+QSensorBackendFactory is free to return 0 to indicate that a backend cannot be created.
+
+\section1 Dynamic Backend Registration
+
+While static registration is fine for most backends there are some situations where this is
+problematic.
+
+The clearest example is backends that represent non-fixed hardware. As an example, lets consider
+a game controller that is connected via Bluetooth. As there may be more than one game controller
+in range of the phone, the program wants to record that a specific game controller should be used.
+If the backend had been registered statically there would have been no unique information about
+the controller. Instead, the registration is delayed until the controller is seen.
+
+\section1 Suggested Registration Policy
+
+Register your backend as soon as possible. Only delay if you need information from an external system.
 
 */
