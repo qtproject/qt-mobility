@@ -626,7 +626,7 @@ private:
 
 #ifdef Q_OS_SYMBIAN
     void clearDb() {
-        
+
         QList<QLandmarkId> lmIds = m_manager->landmarkIds();
         for(int i=0; i < lmIds.count(); ++i)
             QVERIFY(m_manager->removeLandmark(lmIds.at(i)));
@@ -1618,7 +1618,6 @@ void tst_QLandmarkManager::saveLandmark() {
     QVERIFY(checkLandmarkCount(newLandmarkCount));
     QCOMPARE(lmCatNotExist, lmCatNotExistInitial);
 
-#ifdef RESTORE_REMOVE_CATEGORY_FROM_LANDMARK
     //try saving a landmark with a category belonging to a different manager
     QLandmarkCategoryId catIdManagerMismatch;
     catIdManagerMismatch.setLocalId(cat1.categoryId().localId());
@@ -1633,8 +1632,23 @@ void tst_QLandmarkManager::saveLandmark() {
     QVERIFY(checkLandmarkCount(newLandmarkCount));
     QCOMPARE(lmCatManagerMismatch, lmCatManagerMismatchInitial);
 
-    //TODO:removal of a category
-#endif
+    //try removing a category from a landmark
+    QLandmark lm2;
+    lm2.setName("LM2");
+    lm2.addCategoryId(cat2.categoryId());
+    QVERIFY(doSingleLandmarkSave(type, &lm2,QLandmarkManager::NoError));
+    QVERIFY(m_manager->landmark(lm2.landmarkId()).categoryIds().contains(cat2.categoryId()));
+    newLandmarkCount = newLandmarkCount +1;
+    lm2.removeCategoryId(cat2.categoryId());
+    QVERIFY(doSingleLandmarkSave(type, &lm2, QLandmarkManager::NoError));
+    QCOMPARE(m_manager->landmark(lm2.landmarkId()).categoryIds().count(), 0);
+
+    QTest::qWait(10);
+    QCOMPARE(spyAdd.count(), 1);
+    QCOMPARE(spyChange.count(), 1);
+    QCOMPARE(spyRemove.count(),0);
+    spyAdd.clear();
+    spyChange.clear();
 
     //try saving a landmark which has an id but does not exist
     QLandmark lmNotExist = lm1Changed;
