@@ -1193,6 +1193,24 @@ void tst_SymbianOm::addItem_dataTodoTimeRange(QString managerName, QString itemT
             << timeStart
             << timeDue
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusComplete));    
+
+    if (managerName != m_managerNameSymbian) {
+        QTest::newRow(testCaseName("item with progress percentage", managerName, itemType).toLatin1().constData())
+            << managerName
+            << (int) QOrganizerItemManager::NoError
+            << (QTstDetailFieldList(itemTypeDetails)
+                << timeStart
+                << timeDue
+                << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 50));
+    } else {
+        QTest::newRow(testCaseName("item with progress percentage", managerName, itemType).toLatin1().constData())
+            << managerName
+            << (int) QOrganizerItemManager::InvalidDetailError
+            << (QTstDetailFieldList(itemTypeDetails)
+                << timeStart
+                << timeDue
+                << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 50));
+    }
 }
 
 /*!
