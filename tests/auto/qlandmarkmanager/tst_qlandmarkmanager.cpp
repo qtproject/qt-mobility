@@ -92,6 +92,9 @@
 #include <QSqlError>
 #endif
 
+//defines to turn on and off tests
+//#DEFINE SAVE_LANDMARK
+#define SAVE_CATEGORY
 
 #include <float.h>
 
@@ -688,13 +691,16 @@ private slots:
     void asyncLandmarkFetchCancel();
 */
 
-/* RE-ENABLE
+#ifdef SAVE_CATEGORY
     void saveCategory();
     void saveCategory_data();
-*/
+#endif
 
+#ifdef SAVE_LANDMARK
     void saveLandmark();
     void saveLandmark_data();
+#endif
+
     /*
     void addLandmarkAsync();
 
@@ -1201,7 +1207,9 @@ void tst_QLandmarkManager::retrieveLandmark_data() {
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
+*/
 
+#ifdef SAVE_CATEGORY
 void tst_QLandmarkManager::saveCategory() {
     QFETCH(QString, type);
     QSignalSpy spyAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
@@ -1279,16 +1287,28 @@ void tst_QLandmarkManager::saveCategory() {
            accommodation = cats.at(i);
    }
 
-#ifdef RESTORE_DELETE_GLOBAL CATEGORY
+#ifdef Q_OS_SYMBIAN
+   //check that global category is read-only
+   QVERIFY(m_manager->isReadOnly(accommodation.categoryId()));
+
+#ifdef UNRESOLVED_SAVING_GLOBAL_CATEGORY
    //try save a global category
+   m_manager->saveCategory(&accommodation);
+   QVERIFY(doSingleCategorySave(type, &accommodation, QLandmarkManager::PermissionsError));
+
+   //try rename a global category;
+   accommodation.setName("hotels");
    m_manager->saveCategory(&accommodation);
    QVERIFY(doSingleCategorySave(type, &accommodation, QLandmarkManager::PermissionsError));
 #endif
 
-   QTest::qWait(10);
-   QCOMPARE(spyAdd.count(), 0);
-   QCOMPARE(spyChange.count(), 0);
-   QCOMPARE(spyRemove.count(), 0);
+   //try save a (new) category with the same name as a global category
+   QLandmarkCategory accommodationDuplicate;
+   accommodationDuplicate.setName("Accommodation");
+   QVERIFY(doSingleCategorySave(type, &accommodationDuplicate, QLandmarkManager::AlreadyExistsError));
+
+
+#endif
 
    //try modify a category that does not exist
    QLandmarkCategory catDoesNotExist = cat2Original;
@@ -1461,8 +1481,10 @@ void tst_QLandmarkManager::saveCategory_data()
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
-*/
+#endif
 
+
+#ifdef SAVE_LANDMARK
 void tst_QLandmarkManager::saveLandmark() {
     QFETCH(QString, type);
     QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
@@ -1810,6 +1832,7 @@ void tst_QLandmarkManager::saveLandmark_data() {
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
+#endif
 
 QTEST_MAIN(tst_QLandmarkManager)
 #include "tst_qlandmarkmanager.moc"
