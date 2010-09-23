@@ -175,6 +175,11 @@ MainWindow::MainWindow(QWidget *parent) :
     mapTypes.append(QGraphicsGeoMap::SatelliteMapNight); mapTypeNames.append(tr("Satellite - Night"));
     mapTypes.append(QGraphicsGeoMap::TerrainMap);        mapTypeNames.append(tr("Terrain"));
 
+    QSignalMapper * mapper = new QSignalMapper(this);
+    connect(mapper, SIGNAL(mapped(int)), this, SLOT(mapTypeToggled(int)));
+
+    QMenu * mapTypeMenu = new QMenu(tr("Map type"), this);
+
     for (int i = 0; i < mapTypes.size(); ++i) {
         QRadioButton *button = new QRadioButton(this);
         button->setText(mapTypeNames[i]);
@@ -183,7 +188,13 @@ MainWindow::MainWindow(QWidget *parent) :
         m_mapControlTypes.append(mapTypes[i]);
         mapControlLayout->addWidget(button);
         connect(button, SIGNAL(toggled(bool)), this, SLOT(mapTypeToggled(bool)));
+
+        QAction* action = new QAction(mapTypeNames[i], this);
+        mapTypeMenu->addAction(action);
+        connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
+        mapper->setMapping(action, mapTypes[i]);
     }
+    menuBar()->addMenu(mapTypeMenu);
 
 #if 1
     QGridLayout *topLayout = new QGridLayout();
@@ -416,6 +427,11 @@ void MainWindow::mapTypeToggled(bool checked)
             m_mapWidget->setMapType(m_mapControlTypes.at(index));
     }
 
+}
+
+void MainWindow::mapTypeToggled(int type)
+{
+    m_mapWidget->setMapType((QGraphicsGeoMap::MapType)type);
 }
 
 void MainWindow::mapTypeChanged(QGraphicsGeoMap::MapType type)

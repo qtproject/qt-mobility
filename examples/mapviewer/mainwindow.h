@@ -114,6 +114,7 @@ private slots:
     void sliderValueChanged(int zoomLevel);
     void mapZoomLevelChanged(qreal zoomLevel);
     void mapTypeToggled(bool checked);
+    void mapTypeToggled(int type);
     void mapTypeChanged(QGraphicsGeoMap::MapType type);
     void setCoordsClicked();
     void updateCoords(const QGeoCoordinate &coords);
