@@ -6,7 +6,9 @@ TEMPLATE=app
 QT += declarative network
 
 !maemo* {
-    QT += opengl
+    contains(QT_CONFIG, opengl) {
+        QT += opengl
+    }
 }
 
 SOURCES += $$PWD/qmlcamera.cpp
