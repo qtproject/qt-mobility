@@ -92,6 +92,13 @@ NONSHARABLE_CLASS(CPcsKeyMap) : public CBase
 								  TBool aUpperLimit,
 								  QString& aValue) const = 0;
 
+		/**
+         * Read the keymap-specific extra characters from the keymap and append
+		 * them to the internal keymap (iKeyMapping).
+         * Returns they amount of characters appended.
+         */
+		virtual TInt ReadExtraCharacters(const HbInputLanguage& aLanguage) = 0;
+
 	protected: // Virtual functions
 		virtual QList<HbInputLanguage> SelectLanguages();
 
@@ -107,13 +114,6 @@ NONSHARABLE_CLASS(CPcsKeyMap) : public CBase
 		virtual TBool ShouldSkipChar(QChar aChar, TBool aSkipHashStar) const;
 
 		virtual MLanguageSpecificKeymap* CheckLanguage(QString aSource) const;
-
-		/**
-         * Read the keymap-specific extra characters from the keymap and append
-		 * them to the internal keymap (iKeyMapping).
-         * Returns they amount of characters appended.
-         */
-		virtual TInt ReadExtraCharacters(const HbInputLanguage& aLanguage);
 
 	protected: // Constructors
 		/**

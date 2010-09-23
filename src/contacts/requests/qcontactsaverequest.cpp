@@ -99,7 +99,9 @@ void QContactSaveRequest::setContacts(const QList<QContact>& contacts)
 }
 
 /*! Returns the list of contacts which will be saved if called prior to calling \c start(),
-    otherwise returns the list of contacts as they were saved in the contacts store */
+    otherwise returns the list of contacts with their ids set appropriately (successfully
+    saved new contacts will have an id assigned).
+*/
 QList<QContact> QContactSaveRequest::contacts() const
 {
     Q_D(const QContactSaveRequest);
@@ -107,7 +109,7 @@ QList<QContact> QContactSaveRequest::contacts() const
     return d->m_contacts;
 }
 
-/*! Returns the map of input definition list indices to errors which occurred */
+/*! Returns the map of input contact list indices to errors which occurred */
 QMap<int, QContactManager::Error> QContactSaveRequest::errorMap() const
 {
     Q_D(const QContactSaveRequest);

@@ -47,6 +47,8 @@ NONSHARABLE_CLASS(C12keyKeyMap) : public CPcsKeyMap
 								  TBool aUpperLimit,
 								  QString& aValue) const;
 
+		virtual TInt ReadExtraCharacters(const HbInputLanguage& aLanguage);
+
 		virtual QList<HbInputLanguage> SelectLanguages();
 
 		virtual void SetHardcodedCharacters();
