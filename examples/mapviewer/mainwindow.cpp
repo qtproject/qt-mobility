@@ -63,6 +63,7 @@
 #include <QToolButton>
 #include <QRadioButton>
 #include <QSlider>
+#include <QSignalMapper>
 
 #include <qnetworkconfigmanager.h>
 #include <qgeoboundingcircle.h>
@@ -166,37 +167,23 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QVBoxLayout *mapControlLayout = new QVBoxLayout();
 
-    QRadioButton *streetMap = new QRadioButton(this);
-    streetMap->setText(tr("Street"));
-    streetMap->setEnabled(false);
-    m_mapControlButtons.append(streetMap);
-    m_mapControlTypes.append(QGraphicsGeoMap::StreetMap);
-    mapControlLayout->addWidget(streetMap);
-    connect(streetMap, SIGNAL(toggled(bool)), this, SLOT(mapTypeToggled(bool)));
+    QVector<QGraphicsGeoMap::MapType> mapTypes;
+    QVector<QString> mapTypeNames;
 
-    QRadioButton *satelliteMap = new QRadioButton(this);
-    satelliteMap->setText(tr("Satellite"));
-    satelliteMap->setEnabled(false);
-    m_mapControlButtons.append(satelliteMap);
-    m_mapControlTypes.append(QGraphicsGeoMap::SatelliteMapDay);
-    mapControlLayout->addWidget(satelliteMap);
-    connect(satelliteMap, SIGNAL(toggled(bool)), this, SLOT(mapTypeToggled(bool)));
+    mapTypes.append(QGraphicsGeoMap::StreetMap);         mapTypeNames.append(tr("Street"));
+    mapTypes.append(QGraphicsGeoMap::SatelliteMapDay);   mapTypeNames.append(tr("Satellite"));
+    mapTypes.append(QGraphicsGeoMap::SatelliteMapNight); mapTypeNames.append(tr("Satellite - Night"));
+    mapTypes.append(QGraphicsGeoMap::TerrainMap);        mapTypeNames.append(tr("Terrain"));
 
-    QRadioButton *satelliteNightMap = new QRadioButton(this);
-    satelliteNightMap->setText(tr("Satellite - Night"));
-    satelliteNightMap->setEnabled(false);
-    m_mapControlButtons.append(satelliteNightMap);
-    m_mapControlTypes.append(QGraphicsGeoMap::SatelliteMapNight);
-    mapControlLayout->addWidget(satelliteNightMap);
-    connect(satelliteNightMap, SIGNAL(toggled(bool)), this, SLOT(mapTypeToggled(bool)));
-
-    QRadioButton *terrainMap = new QRadioButton(this);
-    terrainMap->setText(tr("Terrain"));
-    terrainMap->setEnabled(false);
-    m_mapControlButtons.append(terrainMap);
-    m_mapControlTypes.append(QGraphicsGeoMap::TerrainMap);
-    mapControlLayout->addWidget(terrainMap);
-    connect(terrainMap, SIGNAL(toggled(bool)), this, SLOT(mapTypeToggled(bool)));
+    for (int i = 0; i < mapTypes.size(); ++i) {
+        QRadioButton *button = new QRadioButton(this);
+        button->setText(mapTypeNames[i]);
+        button->setEnabled(false);
+        m_mapControlButtons.append(button);
+        m_mapControlTypes.append(mapTypes[i]);
+        mapControlLayout->addWidget(button);
+        connect(button, SIGNAL(toggled(bool)), this, SLOT(mapTypeToggled(bool)));
+    }
 
 #if 1
     QGridLayout *topLayout = new QGridLayout();
