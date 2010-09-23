@@ -92,7 +92,20 @@ GeoCodingInputDialog::GeoCodingInputDialog(QString &obloc, QGeoAddress &address,
     gridLayout->setSizeConstraint(QLayout::SetMinimumSize);
     gridLayout->setSpacing(2);
     gridLayout->setContentsMargins(2, 1, 2, 1);
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    gridLayout->addWidget(streetlbl, 1, 0);
+    gridLayout->addWidget(m_street, 1, 1,1,3);
 
+    gridLayout->addWidget(ziplbl, 2, 0);
+    gridLayout->addWidget(citylbl, 2, 2);
+    gridLayout->addWidget(m_zip, 2, 1);
+    gridLayout->addWidget(m_city, 2, 3);
+
+    gridLayout->addWidget(statelbl, 3, 0);
+    gridLayout->addWidget(countrylbl, 3, 2);
+    gridLayout->addWidget(m_state, 3, 1);
+    gridLayout->addWidget(m_country, 3, 3);
+#else
     gridLayout->addWidget(streetlbl, 1, 0);
     gridLayout->addWidget(m_street, 2, 0,1,2);
 
@@ -105,7 +118,7 @@ GeoCodingInputDialog::GeoCodingInputDialog(QString &obloc, QGeoAddress &address,
     gridLayout->addWidget(countrylbl, 5, 1);
     gridLayout->addWidget(m_state, 6, 0);
     gridLayout->addWidget(m_country, 6, 1);
-
+#endif
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSizeConstraint(QLayout::SetFixedSize);
     mainLayout->setSpacing(2);
