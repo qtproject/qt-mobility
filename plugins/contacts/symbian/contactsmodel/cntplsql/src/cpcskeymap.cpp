@@ -179,21 +179,12 @@ TBool CPcsKeyMap::ShouldSkipChar(QChar /*aChar*/, TBool /*aSkipHashStar*/) const
 	}
 
 // ----------------------------------------------------------------------------
-// CPcsKeyMap::ReadExtraCharacters
+// CPcsKeyMap::CheckLanguage
 // Default implementation
 // ----------------------------------------------------------------------------
 MLanguageSpecificKeymap* CPcsKeyMap::CheckLanguage(QString /*aSource*/) const
 	{
 	return NULL;
-	}
-
-// ----------------------------------------------------------------------------
-// CPcsKeyMap::ReadExtraCharacters
-// Default implementation does nothing
-// ----------------------------------------------------------------------------
-TInt CPcsKeyMap::ReadExtraCharacters(const HbInputLanguage& /*aLanguage*/)
-	{
-	return 0;
 	}
 
 // ----------------------------------------------------------------------------

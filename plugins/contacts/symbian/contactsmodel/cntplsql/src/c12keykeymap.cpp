@@ -24,6 +24,7 @@
 
 // Detection for Thai language is needed for both hardcoded and Orbit keymaps
 #include <QTextCodec>
+#include <hbinputkeymap.h>
 #include <hbinputkeymapfactory.h>
 //#include <hbinputsettingproxy.h>
 
@@ -173,6 +174,47 @@ TInt C12keyKeyMap::ComputeValue(QString aString,
 	return KErrNone;
 	}
 
+
+// ----------------------------------------------------------------------------
+// C12keyKeyMap::ReadExtraCharacters
+// The special chars that are listed in HbKeyboardSctPortrait, but not in
+// HbKeyboardVirtual12Key, are mapped to key-* except the hardcoded characters
+// "+*#".
+// ----------------------------------------------------------------------------
+TInt C12keyKeyMap::ReadExtraCharacters(const HbInputLanguage& aLanguage)
+	{
+	PRINT(_L("C12keyKeyMap::ReadExtraCharacters"));
+
+	TInt count(0); // How many new keys have been mapped
+
+#if defined(NEW_KEYMAP_FACTORY_API)
+	// Takes ownership
+	QScopedPointer<const HbKeymap> keymap(
+		HbKeymapFactory::instance()->keymap(aLanguage, HbKeymapFactory::NoCaching));
+#else
+	const HbKeymap* keymap =
+		HbKeymapFactory::instance()->keymap(aLanguage, HbKeymapFactory::Default);
+#endif
+
+	if (keymap)
+		{
+		TInt i(0);
+		const HbMappedKey* mappedKey = keymap->keyForIndex(HbKeyboardSctPortrait, i);
+		while (mappedKey)
+			{
+			AddNewKeyToMap(EKeyStar, mappedKey->characters(HbModifierNone), count);
+			mappedKey = keymap->keyForIndex(HbKeyboardSctPortrait, ++i);
+			}
+		}
+	else
+		{
+		PRINT1(_L("no keymap for language %d"), aLanguage.language());
+		}
+
+    PRINT1(_L("End C12keyKeyMap::ReadExtraCharacters added %d chars"), count);
+	return count;
+	}
+
 // ----------------------------------------------------------------------------
 // C12keyKeyMap::SelectLanguages
 // In emulator (except in unit tests), select just the default language, as new
@@ -233,7 +275,7 @@ TBool C12keyKeyMap::ShouldSkipChar(QChar aChar, TBool aSkipHashStar) const
 	}
 
 // ----------------------------------------------------------------------------
-// C12keyKeyMap::ReadExtraCharacters
+// C12keyKeyMap::CheckLanguage
 // ----------------------------------------------------------------------------
 MLanguageSpecificKeymap* C12keyKeyMap::CheckLanguage(QString aSource) const
 	{
