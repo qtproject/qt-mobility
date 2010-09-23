@@ -85,74 +85,6 @@ uint qHash(const QRectF& key)
 
 QTM_BEGIN_NAMESPACE
 
-class ZOrderCriterion
-{
-
-    QGraphicsItem ** list;
-
-    public:
-        ZOrderCriterion(QGraphicsItem ** list) : list(list) {}
-
-        bool operator()(int aIndex, int bIndex)
-        {
-            QGraphicsItem * a = list[aIndex];
-            QGraphicsItem * b = list[bIndex];
-
-            if (a->type() == QGraphicsPixmapItem::Type) {
-                if (b->type() == QGraphicsPixmapItem::Type) {
-                    if (a->y() == b->y()) {
-                        return a->zValue() < b->zValue();
-                    }
-                    else {
-                        return a->y() < b->y();
-                    }
-                }
-                else {
-                    return false; // non-pixmaps are always behind pixmaps
-                }
-            }
-            else {
-                if (b->type() == QGraphicsPixmapItem::Type) {
-                    return true; // pixmaps are always on top of non-pixmaps
-                }
-                else {
-                    return a->zValue() < b->zValue();
-                }
-            }
-        }
-};
-
-
-class GeoGraphicsScene : public QGraphicsScene
-{
-    public:
-        GeoGraphicsScene(const QRectF &sceneRect, QObject *parent = 0) : QGraphicsScene(sceneRect, parent) {}
-
-    protected:
-        virtual void drawItems(QPainter *painter, int numItems, QGraphicsItem *items[], const QStyleOptionGraphicsItem options[], QWidget *widget = 0)
-        {
-            QVector<int> indices(numItems);
-            for (int i = 0; i < numItems; ++i)
-                indices[i] = i;
-
-            ZOrderCriterion criterion(items);
-
-            qStableSort(indices.begin(), indices.end(), criterion);
-
-            QGraphicsItem **newItems = new QGraphicsItem *[numItems];
-            QStyleOptionGraphicsItem *newOptions = new QStyleOptionGraphicsItem[numItems];
-
-            for (int i = 0; i < numItems; ++i) {
-                newItems[i] = items[indices[i]];
-                newOptions[i] = options[indices[i]];
-            }
-
-            QGraphicsScene::drawItems(painter, numItems, newItems, newOptions, widget);
-        }
-};
-
-
-
 /*!
     \class QGeoTiledMapData
     \brief The QGeoTiledMapData class is a subclass of QGeoMapData provided
@@ -195,7 +127,7 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGe
 
     d->maxZoomSize = (1 << qRound(tileEngine->maximumZoomLevel())) * tileEngine->tileSize();
 
-    d->scene = new GeoGraphicsScene(QRectF(QPointF(0.0, 0.0), d->maxZoomSize));
+    d->scene = new QGraphicsScene(QRectF(QPointF(0.0, 0.0), d->maxZoomSize));
     d->scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
     // TODO get this from the engine, which should give different values depending on if this is running on a device or not
@@ -1045,7 +977,6 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
     if (worldRect.contains(maxZoomScreenRect)) {
         // the screen is completely contained inside the map, which means we can just draw once and be done.
         scene->render(painter,
-        //scene->render(painter,
                       QRectF(targetX, targetY, targetW, targetH),
                       maxZoomScreenRect,
                       Qt::IgnoreAspectRatio);
@@ -1064,7 +995,6 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
     westside.setHeight(maxZoomScreenRect.height());
 
     scene->render(painter,
-    //scene->render(painter,
                   QRectF(targetX, targetY, westsideWidth, targetH),
                   westside,
                   Qt::IgnoreAspectRatio);
@@ -1077,7 +1007,6 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
                           maxZoomScreenRect.height());
 
     scene->render(painter,
-    //scene->render(painter,
                   QRectF(targetX + targetW - eastsideWidth, targetY, eastsideWidth, targetH),
                   eastside,
                   Qt::IgnoreAspectRatio);
