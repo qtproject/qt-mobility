@@ -506,7 +506,11 @@ void MainWindow::searchReplyFinished(QGeoSearchReply* reply)
 
     for (int i = 0; i < places.length(); ++i) {
         QGeoPlace & place = places[i];
-        QGeoMapPixmapObject *marker = QGeoMapPixmapObject::createStandardMarker(place.coordinate(), SHAPE_BALLOON, QString::number(i+1), QPen(), QPen(QColor(Qt::white)), QBrush(QColor(255, 128, 0)));
+        QGeoMapPixmapObject *marker 
+            = new QGeoMapPixmapObject(place.coordinate(),
+                                      QPoint(-(MARKER_WIDTH / 2),
+                                      -MARKER_HEIGHT),
+                                      m_markerIcon);
         m_mapWidget->addMapObject(marker);
         m_markerObjects.append(marker); // TODO: add to different marker list, clear markers from list before searching
     }
