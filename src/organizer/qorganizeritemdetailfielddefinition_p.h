@@ -84,7 +84,7 @@ public:
     }
 
     QVariantList m_allowableValues;
-    QVariant::Type m_dataType;
+    int m_dataType;
 };
 
 QTM_END_NAMESPACE

@@ -59,6 +59,11 @@ QTM_BEGIN_NAMESPACE
     \sa QRemoteServiceClassRegister   
 */
 
+
+/*! \typedef QRemoteServiceControl::securityFilter
+    QRemoteServiceControl -style synonym for bool (*securityFilter)(const void *message)
+*/
+
 /*!
     Creates a service control instance with the given \a parent.
 */
@@ -87,6 +92,9 @@ void QRemoteServiceControl::publishServices( const QString& ident)
     d->publishServices(ident);
 }
 
+/*!
+    \property QRemoteServiceControl::quitOnLastInstanceClosed
+*/
 bool QRemoteServiceControl::quitOnLastInstanceClosed() const
 {
   return d->quitOnLastInstanceClosed();

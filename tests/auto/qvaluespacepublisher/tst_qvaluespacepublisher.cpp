@@ -108,6 +108,9 @@ private slots:
     void threads_data();
     void threads();
 
+    void testQtMobility400_data();
+    void testQtMobility400();
+
 private:
     int variantMetaTypeId;
 };
@@ -719,6 +722,47 @@ void tst_QValueSpacePublisher::threads()
     // Delete writer threads.
     for (unsigned int i = 0; i < threads; ++i)
         delete writeThreads[i];
+}
+
+void tst_QValueSpacePublisher::testQtMobility400_data()
+{
+    QTest::addColumn<QUuid>("uuid");
+
+    QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
+
+    bool foundSupported = false;
+
+    for (int i = 0; i < layers.count(); ++i) {
+        QAbstractValueSpaceLayer *layer = layers.at(i);
+        if (layer->layerOptions() & QValueSpace::PermanentLayer) {
+            foundSupported = true;
+
+            QTest::newRow(layer->name().toAscii().constData()) << layer->id();
+        }
+    }
+
+    if (!foundSupported)
+        QSKIP("No layer with Permanent flag set.", SkipAll);
+}
+
+void tst_QValueSpacePublisher::testQtMobility400()
+{
+    QFETCH(QUuid, uuid);
+
+    QValueSpacePublisher publisher(uuid, QLatin1String("/Device"));
+    publisher.setValue(QLatin1String("State"), QLatin1String("Starting"));
+    publisher.setValue(QLatin1String("State/Memory"), 1000);
+    publisher.sync();
+
+    QCOMPARE(QValueSpaceSubscriber(QLatin1String("/Device/State")).value().toString(),
+             QLatin1String("Starting"));
+    QCOMPARE(QValueSpaceSubscriber(QLatin1String("/Device/State/Memory")).value().toInt(), 1000);
+
+    publisher.resetValue("State");
+    publisher.sync();
+
+    QVERIFY(!QValueSpaceSubscriber(QLatin1String("/Device/State")).value().isValid());
+    QVERIFY(!QValueSpaceSubscriber(QLatin1String("/Device/State/Memory")).value().isValid());
 }
 
 QTEST_MAIN(tst_QValueSpacePublisher)

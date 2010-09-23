@@ -206,16 +206,16 @@ Q_SIGNALS:
 private:
      QMap<QString, QString> mountEntriesMap;
      void mountEntries();
-     QFileSystemWatcher *mtabWatcherA;
-     QFileSystemWatcher *mtabWatcherB;
+     int mtabWatchA;
+     int inotifyFD;
 
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
 #endif
 private Q_SLOTS:
-    void deviceChanged(const QString &path);
-
+    void deviceChanged();
+    void inotifyActivated();
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);

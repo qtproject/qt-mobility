@@ -609,8 +609,13 @@ QList<QOrganizerCollection> QOrganizerItemManager::collections(const QList<QOrga
  */
 bool QOrganizerItemManager::saveCollection(QOrganizerCollection* collection)
 {
-    d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->saveCollection(collection, &d->m_error);
+    if (collection) {
+        d->m_error = QOrganizerItemManager::NoError;
+        return d->m_engine->saveCollection(collection, &d->m_error);
+    } else {
+        d->m_error = QOrganizerItemManager::BadArgumentError;
+        return false;
+    }
 }
 
 /*!
@@ -712,7 +717,7 @@ bool QOrganizerItemManager::hasFeature(QOrganizerItemManager::ManagerFeature fea
 /*!
   Returns the list of data types supported by the manager
  */
-QList<QVariant::Type> QOrganizerItemManager::supportedDataTypes() const
+QList<int> QOrganizerItemManager::supportedDataTypes() const
 {
     return d->m_engine->supportedDataTypes();
 }

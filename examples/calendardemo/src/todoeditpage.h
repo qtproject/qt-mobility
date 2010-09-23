@@ -87,6 +87,8 @@ private:
     QComboBox *m_priorityEdit;
     QComboBox *m_statusEdit;
     QComboBox *m_alarmComboBox;
+    QComboBox *m_calendarComboBox;
+    QList<QOrganizerCollection> m_collections;
 };
 
 #endif // TODOEDITPAGE_H_

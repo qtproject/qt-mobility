@@ -46,9 +46,9 @@
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
-    const QString mainQmlApp = QLatin1String("messaging.qml");
+    const QString mainQmlApp = QLatin1String("qrc:messaging.qml");
     QDeclarativeView view;
-    view.setSource(QUrl::fromLocalFile(mainQmlApp));
+    view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
     // Qt.quit() called in embedded .qml by default only emits
     // quit() signal, so do this (optionally use Qt.exit()).

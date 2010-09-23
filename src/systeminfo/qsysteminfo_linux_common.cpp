@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include "qsysteminfo_linux_common_p.h"
+
 #include <QTimer>
 #include <QFile>
 #include <QDir>
@@ -80,6 +81,8 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
+#include <sys/inotify.h>
 
 //we cannot include iwlib.h as the platform may not have it installed
 //there we have to go via the kernel's wireless.h
@@ -517,7 +520,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
             const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
-                const QFileInfo fi(devFile + "/wireless");
+                const QFileInfo fi(devFile + "/phy80211");
                 if(fi.exists()) {
                     wlanInterface = dir;
                 }
@@ -1117,22 +1120,21 @@ QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObje
 
 QSystemStorageInfoLinuxCommonPrivate::~QSystemStorageInfoLinuxCommonPrivate()
 {
+    ::close(inotifyFD);
 }
 
 void QSystemStorageInfoLinuxCommonPrivate::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
-        mtabWatcherA = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
-        connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
-                this,SLOT(deviceChanged(const QString &)));
-    }
 
-    if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
-        mtabWatcherB = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
-        connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
-                this,SLOT(deviceChanged(const QString &)));
+        inotifyFD = ::inotify_init();
+        mtabWatchA = ::inotify_add_watch(inotifyFD, "/etc/mtab", IN_MODIFY);
+        if(mtabWatchA > 0) {
+            QSocketNotifier *notifier = new QSocketNotifier
+                                        (inotifyFD, QSocketNotifier::Read, this);
+            connect(notifier, SIGNAL(activated(int)), this, SLOT(inotifyActivated()));
+        }
     }
 }
 
@@ -1140,20 +1142,26 @@ void QSystemStorageInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
 {
     if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageAdded())))) {
-        delete mtabWatcherA;
-        mtabWatcherA = 0;
-
+        ::inotify_rm_watch(inotifyFD, mtabWatchA);
     }
-    if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageRemoved())))) {
-        delete mtabWatcherB;
-        mtabWatcherB = 0;
+}
+void QSystemStorageInfoLinuxCommonPrivate::inotifyActivated()
+{
+    char buffer[1024];
+    struct inotify_event *event;
+    int len = ::read(inotifyFD, (void *)buffer, sizeof(buffer));
+    if (len > 0) {
+        event = (struct inotify_event *)buffer;
+        if (event->wd == mtabWatchA /*&& (event->mask & IN_IGNORED) == 0*/) {
+            ::inotify_rm_watch(inotifyFD, mtabWatchA);
+            QTimer::singleShot(1000,this,SLOT(deviceChanged()));//give this time to finish write
+            mtabWatchA = ::inotify_add_watch(inotifyFD, "/etc/mtab", IN_MODIFY);
+        }
     }
 }
 
-void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
+void QSystemStorageInfoLinuxCommonPrivate::deviceChanged()
 {
-    Q_UNUSED(path);
     QMap<QString, QString> oldDrives = mountEntriesMap;
     mountEntries();
 
@@ -1162,11 +1170,6 @@ void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
         while (i.hasNext()) {
             i.next();
             if(!mountEntriesMap.contains(i.key())) {
-                delete mtabWatcherA;
-                mtabWatcherA = 0;
-                mtabWatcherA = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
-                connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
-                        this,SLOT(deviceChanged(const QString &)));
                 emit logicalDriveChanged(false, i.key());
             }
         }
@@ -1177,11 +1180,6 @@ void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
 
             if(oldDrives.contains(i.key()))
                 continue;
-            delete mtabWatcherB;
-            mtabWatcherB = 0;
-            mtabWatcherB = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
-            connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
-                    this,SLOT(deviceChanged(false, const QString &)));
             emit logicalDriveChanged(true,i.key());
         }
     }
@@ -1760,6 +1758,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 
 QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
+
 }
 
 QSystemScreenSaverLinuxCommonPrivate::~QSystemScreenSaverLinuxCommonPrivate()

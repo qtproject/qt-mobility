@@ -40,7 +40,7 @@
 
 import Qt 4.7
 import QtMobility.serviceframework 1.1
-import "content"
+import "content-sfw-dialer"
 
 //Layout of the mainPage
 //----------------------------------------------  ____ mainPage

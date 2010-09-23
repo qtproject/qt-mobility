@@ -128,7 +128,7 @@ Q_SIGNALS:
     void signalStrengthChanged(int signalStrength);
     void volumeChanged(int volume);
     void mutedChanged(bool muted);
-    void error(Error err);
+    void error(QRadioTuner::Error error);
 
 private:
     Q_DISABLE_COPY(QRadioTuner)
