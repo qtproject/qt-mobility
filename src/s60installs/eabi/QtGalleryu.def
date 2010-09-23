@@ -539,4 +539,10 @@ EXPORTS
 	_ZN10QtMobility22QGalleryMetaDataFilterC2ERK7QStringRK8QVariantNS_14QGalleryFilter10ComparatorE @ 538 NONAME
 	_ZN10QtMobility22QGalleryMetaDataFilter10setNegatedEb @ 539 NONAME
 	_ZNK10QtMobility22QGalleryMetaDataFilter9isNegatedEv @ 540 NONAME
+	_ZNK10QtMobility16QGalleryProperty10startsWithERK7QString @ 541 NONAME
+	_ZNK10QtMobility16QGalleryProperty6regExpERK7QRegExp @ 542 NONAME
+	_ZNK10QtMobility16QGalleryProperty6regExpERK7QString @ 543 NONAME
+	_ZNK10QtMobility16QGalleryProperty8containsERK7QString @ 544 NONAME
+	_ZNK10QtMobility16QGalleryProperty8endsWithERK7QString @ 545 NONAME
+	_ZNK10QtMobility16QGalleryProperty8wildcardERK7QString @ 546 NONAME
 

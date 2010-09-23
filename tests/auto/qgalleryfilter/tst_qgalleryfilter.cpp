@@ -49,6 +49,7 @@
 Q_DECLARE_METATYPE(QVariant);
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGalleryFilter))
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGalleryFilter::Comparator))
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGalleryMetaDataFilter))
 
 QTM_USE_NAMESPACE
 
@@ -67,6 +68,7 @@ private Q_SLOTS:
     void cast();
     void intersectionOperator();
     void unionOperator();
+    void propertyOperators_data();
     void propertyOperators();
     void equality_data();
     void equality();
@@ -602,45 +604,94 @@ void tst_QGalleryFilter::unionOperator()
     QCOMPARE(filters.at(2).type(), QGalleryFilter::MetaData);
 }
 
+void tst_QGalleryFilter::propertyOperators_data()
+{
+    QTest::addColumn<QGalleryMetaDataFilter>("filter");
+    QTest::addColumn<QString>("propertyName");
+    QTest::addColumn<QVariant>("value");
+    QTest::addColumn<QGalleryFilter::Comparator>("comparator");
+
+    const QGalleryProperty albumTitle("albumTitle");
+    const QGalleryProperty trackNumber("trackNumber");
+
+    QTest::newRow("albumTitle == Self Titled")
+            << (albumTitle == QLatin1String("Self Titled"))
+            << "albumTitle"
+            << QVariant(QLatin1String("Self Titled"))
+            << QGalleryFilter::Equals;
+
+    QTest::newRow("trackNumber >= 3")
+            << (trackNumber >= 3)
+            << "trackNumber"
+            << QVariant(3)
+            << QGalleryFilter::GreaterThanEquals;
+
+    QTest::newRow("trackNumber > 3")
+            << (trackNumber > 3)
+            << "trackNumber"
+            << QVariant(3)
+            << QGalleryFilter::GreaterThan;
+
+    QTest::newRow("trackNumber <= 3")
+            << (trackNumber <= 3)
+            << "trackNumber"
+            << QVariant(3)
+            << QGalleryFilter::LessThanEquals;
+
+    QTest::newRow("trackNumber < 3")
+            << (trackNumber < 3)
+            << "trackNumber"
+            << QVariant(3)
+            << QGalleryFilter::LessThan;
+
+    QTest::newRow("albumTitle.contains(lf Titl)")
+            << albumTitle.contains(QLatin1String("lf Titl"))
+            << "albumTitle"
+            << QVariant(QLatin1String("lf Titl"))
+            << QGalleryFilter::Contains;
+
+    QTest::newRow("albumTitle.startsWith(Self)")
+            << albumTitle.startsWith(QLatin1String("Self"))
+            << "albumTitle"
+            << QVariant(QLatin1String("Self"))
+            << QGalleryFilter::StartsWith;
+
+    QTest::newRow("albumTitle.endsWith(Self)")
+            << albumTitle.endsWith(QLatin1String("Titled"))
+            << "albumTitle"
+            << QVariant(QLatin1String("Titled"))
+            << QGalleryFilter::EndsWith;
+
+    QTest::newRow("albumTitle.wildcard(S*f T*d)")
+            << albumTitle.wildcard(QLatin1String("S*f T*d"))
+            << "albumTitle"
+            << QVariant(QLatin1String("S*f T*d"))
+            << QGalleryFilter::Wildcard;
+
+    QTest::newRow("albumTitle.regExp((Self Titled|Greatest Hits))")
+            << albumTitle.regExp(QLatin1String("(Self Titled|Greatest Hits)"))
+            << "albumTitle"
+            << QVariant(QLatin1String("(Self Titled|Greatest Hits)"))
+            << QGalleryFilter::RegExp;
+
+    QTest::newRow("albumTitle.regExp(QRegExp((Self Titled|Greatest Hits)))")
+            << albumTitle.regExp(QRegExp(QLatin1String("(Self Titled|Greatest Hits)")))
+            << "albumTitle"
+            << QVariant(QRegExp(QLatin1String("(Self Titled|Greatest Hits)")))
+            << QGalleryFilter::RegExp;
+}
+
 void tst_QGalleryFilter::propertyOperators()
 {
-    const QGalleryProperty albumProperty("albumTitle");
-    const QGalleryProperty trackProperty("trackNumber");
+    QFETCH(QGalleryMetaDataFilter, filter);
+    QFETCH(QString, propertyName);
+    QFETCH(QVariant, value);
+    QFETCH(QGalleryFilter::Comparator, comparator);
 
-    const QVariant albumTitle = QLatin1String("Self Titled");
-    const QVariant track = 3;
-
-    {
-        QGalleryMetaDataFilter filter = albumProperty == QLatin1String("Self Titled");
-        QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.propertyName(), albumProperty.name());
-        QCOMPARE(filter.value(), albumTitle);
-        QCOMPARE(filter.comparator(), QGalleryFilter::Equals);
-    } {
-        QGalleryMetaDataFilter filter = trackProperty >= 3;
-        QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.propertyName(), trackProperty.name());
-        QCOMPARE(filter.value(), track);
-        QCOMPARE(filter.comparator(), QGalleryFilter::GreaterThanEquals);
-    } {
-        QGalleryMetaDataFilter filter = trackProperty > 3;
-        QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.propertyName(), trackProperty.name());
-        QCOMPARE(filter.value(), track);
-        QCOMPARE(filter.comparator(), QGalleryFilter::GreaterThan);
-    } {
-        QGalleryMetaDataFilter filter = trackProperty <= 3;
-        QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.propertyName(), trackProperty.name());
-        QCOMPARE(filter.value(), track);
-        QCOMPARE(filter.comparator(), QGalleryFilter::LessThanEquals);
-    } {
-        QGalleryMetaDataFilter filter = trackProperty < 3;
-        QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.propertyName(), trackProperty.name());
-        QCOMPARE(filter.value(), track);
-        QCOMPARE(filter.comparator(), QGalleryFilter::LessThan);
-    }
+    QCOMPARE(filter.isValid(), true);
+    QCOMPARE(filter.propertyName(), propertyName);
+    QCOMPARE(filter.value(), value);
+    QCOMPARE(filter.comparator(), comparator);
 }
 
 void tst_QGalleryFilter::equality_data()
@@ -719,13 +770,11 @@ void tst_QGalleryFilter::equality_data()
             << QGalleryFilter(albumProperty == QLatin1String("Greatest Hits"))
             << false;
     QTest::newRow("unequal meta-data filter match flags")
-            << QGalleryFilter(QGalleryMetaDataFilter(
-                    albumProperty, QLatin1String("Self Titled"), QGalleryFilter::Contains))
+            << QGalleryFilter(albumProperty.contains(QLatin1String("Self Titled")))
             << QGalleryFilter(albumProperty == QLatin1String("Self Titled"))
             << false;
     QTest::newRow("unequal meta-data filters")
-            << QGalleryFilter(QGalleryMetaDataFilter(
-                    albumProperty, QLatin1String("Greatest Hits"), QGalleryFilter::Contains))
+            << QGalleryFilter(albumProperty.contains(QLatin1String("Greatest Hits")))
             << QGalleryFilter(artistProperty == QLatin1String("Self Titled"))
             << false;
 

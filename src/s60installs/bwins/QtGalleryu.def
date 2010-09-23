@@ -696,4 +696,10 @@ EXPORTS
 	??0QGalleryMetaDataFilter@QtMobility@@QAE@ABVQString@@ABVQVariant@@W4Comparator@QGalleryFilter@1@@Z @ 695 NONAME ; QtMobility::QGalleryMetaDataFilter::QGalleryMetaDataFilter(class QString const &, class QVariant const &, enum QtMobility::QGalleryFilter::Comparator)
 	?setNegated@QGalleryMetaDataFilter@QtMobility@@QAEX_N@Z @ 696 NONAME ; void QtMobility::QGalleryMetaDataFilter::setNegated(bool)
 	?isNegated@QGalleryMetaDataFilter@QtMobility@@QBE_NXZ @ 697 NONAME ; bool QtMobility::QGalleryMetaDataFilter::isNegated(void) const
+	?startsWith@QGalleryProperty@QtMobility@@QBE?AVQGalleryMetaDataFilter@2@ABVQString@@@Z @ 698 NONAME ; class QtMobility::QGalleryMetaDataFilter QtMobility::QGalleryProperty::startsWith(class QString const &) const
+	?wildcard@QGalleryProperty@QtMobility@@QBE?AVQGalleryMetaDataFilter@2@ABVQString@@@Z @ 699 NONAME ; class QtMobility::QGalleryMetaDataFilter QtMobility::QGalleryProperty::wildcard(class QString const &) const
+	?endsWith@QGalleryProperty@QtMobility@@QBE?AVQGalleryMetaDataFilter@2@ABVQString@@@Z @ 700 NONAME ; class QtMobility::QGalleryMetaDataFilter QtMobility::QGalleryProperty::endsWith(class QString const &) const
+	?contains@QGalleryProperty@QtMobility@@QBE?AVQGalleryMetaDataFilter@2@ABVQString@@@Z @ 701 NONAME ; class QtMobility::QGalleryMetaDataFilter QtMobility::QGalleryProperty::contains(class QString const &) const
+	?regExp@QGalleryProperty@QtMobility@@QBE?AVQGalleryMetaDataFilter@2@ABVQString@@@Z @ 702 NONAME ; class QtMobility::QGalleryMetaDataFilter QtMobility::QGalleryProperty::regExp(class QString const &) const
+	?regExp@QGalleryProperty@QtMobility@@QBE?AVQGalleryMetaDataFilter@2@ABVQRegExp@@@Z @ 703 NONAME ; class QtMobility::QGalleryMetaDataFilter QtMobility::QGalleryProperty::regExp(class QRegExp const &) const
 
