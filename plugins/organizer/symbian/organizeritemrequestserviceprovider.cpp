@@ -112,6 +112,9 @@ TBool COrganizerItemRequestsServiceProvider::StartRequest(
                 break;
             case QOrganizerItemAbstractRequest::ItemFetchRequest:
                 {
+                iItemIds.clear();
+                iNoOfItems = 0;
+                    
                 QOrganizerItemFilter filter = 
                         ((QOrganizerItemFetchRequest*)iReq)->filter();
                 if (QOrganizerItemFilter::LocalIdFilter == filter.type())
