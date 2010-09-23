@@ -761,27 +761,11 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
 */
 
 /*!
-   \fn QOrganizerItemReminder::setRepetitionCount(int count)
-
-   Sets the number of times the user should be reminded of the item to \a count.
-
-   \sa setRepetitionDelay()
-*/
-
-/*!
    \fn int QOrganizerItemReminder::repetitionCount() const
 
    Returns the number of times the user should be reminded of the item.
 
    \sa repetitionDelay()
-*/
-
-/*!
-   \fn QOrganizerItemReminder::setRepetitionDelay(int delay)
-
-   Sets the delay (in seconds) between each repetition of the reminder to \a delay.
-
-   \sa setRepetitionCount()
 */
 
 /*!
@@ -830,7 +814,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::DefinitionName, "AudibleReminder");
 
 /*!
-   \variable QOrganizerItemAudibleReminder::DataUrl
+   \variable QOrganizerItemAudibleReminder::FieldDataUrl
    The constant key for which the value of the sound data url is stored.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldDataUrl, "DataUrl");
@@ -839,12 +823,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldDataUrl, "DataUrl")
    \fn QOrganizerItemAudibleReminder::setDataUrl(const QUrl& dataUrl)
 
    Sets the url of the audible data which should be played to \a dataUrl.
-*/
-
-/*!
-   \fn QUrl QOrganizerItemAudibleReminder::dataUrl() const
-
-   Returns the url of the audible data which should be played.
 */
 
 /* ==================== QOrganizerItemEmailReminder ======================= */
@@ -909,12 +887,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldRecipients, "Recipien
    \fn QString QOrganizerItemEmailReminder::body() const
 
    Returns the body of the email.
-*/
-
-/*!
-   \fn QVariantList QOrganizerItemEmailReminder::attachments() const
-
-   Retruns the attachments of the email.
 */
 
 /*!
