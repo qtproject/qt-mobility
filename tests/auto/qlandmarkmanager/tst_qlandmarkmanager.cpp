@@ -93,8 +93,8 @@
 #endif
 
 //defines to turn on and off tests
-//#DEFINE SAVE_LANDMARK
 #define SAVE_CATEGORY
+#define SAVE_LANDMARK
 
 #include <float.h>
 
@@ -640,7 +640,7 @@ private:
                 QVERIFY(m_manager->removeCategory(catIds.at(i)));
         }
 
-        QTest::qWait(10);//try ensure notifications for these deletions
+        QTest::qWait(20);//try ensure notifications for these deletions
                          //are made prior to each test function
     }
 #endif
@@ -1824,6 +1824,30 @@ void tst_QLandmarkManager::saveLandmark() {
     QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(1), secondLandmarkId);
     QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(2), thirdLandmarkId);
     spyChange.clear();
+
+    if (type == "async") {
+        //check that errorMap is cleared for async landmark save request
+        QLandmarkSaveRequest lmSaveRequest(m_manager);
+        QSignalSpy spy(&lmSaveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        QSignalSpy spyResults(&lmSaveRequest, SIGNAL(resultsAvailable()));
+        lms.clear();
+        lms << lmNew << lmBad << lmChange;
+        lmSaveRequest.setLandmarks(lms);
+        lmSaveRequest.start();
+        QVERIFY(waitForAsync(spy, &lmSaveRequest, QLandmarkManager::DoesNotExistError));
+        QCOMPARE(lmSaveRequest.errorMap().count(), 1);
+        QCOMPARE(lmSaveRequest.errorMap().value(1), QLandmarkManager::DoesNotExistError);
+        QCOMPARE(spyResults.count(), 1);
+        spyResults.clear();
+
+        lms.clear();
+        lms << lmNew1 << lmNew2 << lmNew3;
+        lmSaveRequest.setLandmarks(lms);
+        lmSaveRequest.start();
+        QVERIFY(waitForAsync(spy, &lmSaveRequest, QLandmarkManager::NoError));
+        QCOMPARE(lmSaveRequest.errorMap().count(), 0);
+        QCOMPARE(spyResults.count(), 1);
+    }
 }
 
 void tst_QLandmarkManager::saveLandmark_data() {
