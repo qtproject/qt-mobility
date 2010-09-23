@@ -86,9 +86,9 @@ QTM_USE_NAMESPACE
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
         m_serviceProvider(0),
+        m_mapWidget(0),
         m_popupMenu(0),
-        m_controlsVisible(true),
-        m_mapWidget(0)
+        m_controlsVisible(true)
 {
     setWindowTitle(tr("Map Viewer Demo"));
 
