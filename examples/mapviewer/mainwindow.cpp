@@ -165,64 +165,36 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Setup map type controls
 
-    QVBoxLayout *mapControlLayout = new QVBoxLayout();
-
-    QVector<QGraphicsGeoMap::MapType> mapTypes;
     QVector<QString> mapTypeNames;
 
-    mapTypes.append(QGraphicsGeoMap::StreetMap);         mapTypeNames.append(tr("Street"));
-    mapTypes.append(QGraphicsGeoMap::SatelliteMapDay);   mapTypeNames.append(tr("Satellite"));
-    mapTypes.append(QGraphicsGeoMap::SatelliteMapNight); mapTypeNames.append(tr("Satellite - Night"));
-    mapTypes.append(QGraphicsGeoMap::TerrainMap);        mapTypeNames.append(tr("Terrain"));
+    m_mapControlTypes.append(QGraphicsGeoMap::StreetMap);         mapTypeNames.append(tr("Street"));
+    m_mapControlTypes.append(QGraphicsGeoMap::SatelliteMapDay);   mapTypeNames.append(tr("Satellite"));
+    m_mapControlTypes.append(QGraphicsGeoMap::SatelliteMapNight); mapTypeNames.append(tr("Satellite - Night"));
+    m_mapControlTypes.append(QGraphicsGeoMap::TerrainMap);        mapTypeNames.append(tr("Terrain"));
 
     QSignalMapper * mapper = new QSignalMapper(this);
     connect(mapper, SIGNAL(mapped(int)), this, SLOT(mapTypeToggled(int)));
 
     QMenu * mapTypeMenu = new QMenu(tr("Map type"), this);
 
-    for (int i = 0; i < mapTypes.size(); ++i) {
-        QRadioButton *button = new QRadioButton(this);
-        button->setText(mapTypeNames[i]);
-        button->setEnabled(false);
-        m_mapControlButtons.append(button);
-        m_mapControlTypes.append(mapTypes[i]);
-        mapControlLayout->addWidget(button);
-        connect(button, SIGNAL(toggled(bool)), this, SLOT(mapTypeToggled(bool)));
-
+    for (int i = 0; i < m_mapControlTypes.size(); ++i) {
         QAction* action = new QAction(mapTypeNames[i], this);
+        action->setCheckable(true);
+
         mapTypeMenu->addAction(action);
+        m_mapControlActions.append(action);
+
         connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
-        mapper->setMapping(action, mapTypes[i]);
+        mapper->setMapping(action, m_mapControlTypes[i]);
     }
     menuBar()->addMenu(mapTypeMenu);
 
-#if 1
-    QGridLayout *topLayout = new QGridLayout();
-    QGridLayout *bottomLayout = new QGridLayout();
-
-    topLayout->setColumnStretch(0, 0);
-    topLayout->setColumnStretch(1, 1);
-
-    bottomLayout->setColumnStretch(0, 0);
-    bottomLayout->setColumnStretch(1, 1);
-
-    topLayout->addWidget(m_slider, 0, 0);
-    topLayout->addWidget(m_qgv, 0, 1);
-
-    bottomLayout->addLayout(mapControlLayout, 0, 0);
-    bottomLayout->addLayout(coordControlLayout, 0, 1);
-
-    layout->addLayout(topLayout,0,0);
-    layout->addLayout(bottomLayout,1,0);
-#else
     layout->setColumnStretch(0, 0);
     layout->setColumnStretch(1, 1);
 
-    layout->addWidget(m_slider, 0, 0);
+    layout->addWidget(m_slider, 0, 0, 2, 1);
     layout->addWidget(m_qgv, 0, 1);
-    layout->addLayout(mapControlLayout, 1, 0);
     layout->addLayout(coordControlLayout, 1, 1);
-#endif
 
     m_layout = layout;
 
@@ -313,15 +285,18 @@ void MainWindow::setupUi()
     connect(m_mapWidget, SIGNAL(mapTypeChanged(QGraphicsGeoMap::MapType)), this, SLOT(mapTypeChanged(QGraphicsGeoMap::MapType)));
 
     QList<QGraphicsGeoMap::MapType> types = m_mapWidget->supportedMapTypes();
-    for (int i = 0; i < types.size(); ++i) {
-        if(types.at(i) != QGraphicsGeoMap::NoMap) {
-            int index = m_mapControlTypes.indexOf(types.at(i));
-            QRadioButton *button = m_mapControlButtons.at(index);
-            button->setEnabled(true);
+    for (int controlIndex = 0; controlIndex < m_mapControlTypes.size(); ++controlIndex) {
+        QAction *action = m_mapControlActions.at(controlIndex);
+        int supportedTypeIndex = types.indexOf(m_mapControlTypes[controlIndex]);
 
-            if (types.at(i) == m_mapWidget->mapType())
-                button->setChecked(true);
+        if (supportedTypeIndex == -1) {
+            action->setEnabled(false);
         }
+        else {
+            action->setEnabled(true);
+            action->setChecked(m_mapControlTypes[controlIndex] == m_mapWidget->mapType());
+        }
+
     }
 
     connect(m_captureCoordsButton, SIGNAL(toggled(bool)), m_mapWidget, SLOT(setMouseClickCoordQuery(bool)));
@@ -418,17 +393,6 @@ void MainWindow::mapZoomLevelChanged(qreal zoomLevel)
     m_slider->setSliderPosition(qRound(zoomLevel));
 }
 
-void MainWindow::mapTypeToggled(bool checked)
-{
-    if (checked) {
-        QRadioButton *button = qobject_cast<QRadioButton*>(sender());
-        int index = m_mapControlButtons.indexOf(button);
-        if (index != -1)
-            m_mapWidget->setMapType(m_mapControlTypes.at(index));
-    }
-
-}
-
 void MainWindow::mapTypeToggled(int type)
 {
     m_mapWidget->setMapType((QGraphicsGeoMap::MapType)type);
@@ -436,9 +400,10 @@ void MainWindow::mapTypeToggled(int type)
 
 void MainWindow::mapTypeChanged(QGraphicsGeoMap::MapType type)
 {
-    int index = m_mapControlTypes.indexOf(type);
-    if (index != -1)
-        m_mapControlButtons.at(index)->setChecked(true);
+    for (int i = 0; i < m_mapControlTypes.size(); ++i) {
+        QAction *action = m_mapControlActions[i];
+        action->setChecked(m_mapControlTypes[i] == type);
+    }
 }
 
 void MainWindow::setCoordsClicked()

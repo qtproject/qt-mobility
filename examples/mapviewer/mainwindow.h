@@ -113,7 +113,6 @@ private slots:
 
     void sliderValueChanged(int zoomLevel);
     void mapZoomLevelChanged(qreal zoomLevel);
-    void mapTypeToggled(bool checked);
     void mapTypeToggled(int type);
     void mapTypeChanged(QGraphicsGeoMap::MapType type);
     void setCoordsClicked();
@@ -138,7 +137,7 @@ private:
 
     QGraphicsView* m_qgv;
     QSlider* m_slider;
-    QList<QRadioButton*> m_mapControlButtons;
+    QList<QAction*> m_mapControlActions;
     QList<QGraphicsGeoMap::MapType> m_mapControlTypes;
     QLineEdit *m_latitudeEdit;
     QLineEdit *m_longitudeEdit;
