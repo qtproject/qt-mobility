@@ -23,6 +23,7 @@
 
 // FORWARD DECLARATIONS
 class QTextCodec;	// if Thai-recog is needed also in qwerty, move QTextCodecs to CPcsKeyMap
+class CKoreanKeyMap;
 
 // CLASS DECLARATION
 NONSHARABLE_CLASS(C12keyKeyMap) : public CPcsKeyMap
@@ -57,6 +58,8 @@ NONSHARABLE_CLASS(C12keyKeyMap) : public CPcsKeyMap
 		virtual TBool DetermineSpecialCharBehaviour(QString aSource) const;
 		virtual TBool ShouldSkipChar(QChar aChar, TBool aSkipHashStar) const;
 
+		MLanguageSpecificKeymap* CheckLanguage(QString aSource) const;
+
 	private: // Constructors
         /**
          * Constructor
@@ -75,6 +78,8 @@ NONSHARABLE_CLASS(C12keyKeyMap) : public CPcsKeyMap
 		// Not owned
 		QTextCodec* iLatinCodec;
 		QTextCodec* iThaiCodec;
+
+		CKoreanKeyMap* iKoreanKeymap; // Korea-specific keymap, owned
 
 		// For unit testing
 		friend class UT_CPcsKeyMap;

@@ -37,6 +37,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "keycontroller.h"
 
 KeyController::KeyController(): TimedController(), m_step(5){}

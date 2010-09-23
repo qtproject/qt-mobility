@@ -10,35 +10,6 @@ Rectangle {
         model: MessageModel {
             sortBy: MessageModel.Timestamp
             sortOrder: MessageModel.DescendingOrder
-            /*
-            filter: MessageIntersectionFilter {
-                MessageFilter {
-                    type: MessageFilter.Size
-                    value: 1024
-                    comparator: MessageFilter.LessThan
-                }
-                MessageUnionFilter {
-                    MessageIntersectionFilter {
-                        MessageFilter {
-                            type: MessageFilter.Sender
-                            value: "martin"
-                            comparator: MessageFilter.Includes
-                        }
-                        MessageFilter {
-                            negated: true
-                            type: MessageFilter.Subject
-                            value: "re:"
-                            comparator: MessageFilter.Includes
-                        }
-                    }
-                    MessageFilter {
-                        type: MessageFilter.Sender
-                        value: "don"
-                        comparator: MessageFilter.Includes
-                    }
-                }
-            }
-            */
         }
         delegate: Item {
             id: wrapper

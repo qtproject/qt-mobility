@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 import Qt 4.7
-import "content"
+import "content-sfw-notes"
 
 Rectangle {
     id: screen

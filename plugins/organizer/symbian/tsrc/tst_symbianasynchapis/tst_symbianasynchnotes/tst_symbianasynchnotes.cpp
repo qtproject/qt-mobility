@@ -622,11 +622,12 @@ QList<QOrganizerItem> TestNoteItems::createItems_Negative(int noOfItems)
         organizerItem.setGuid(guId);
         
         //Set Luid
-        QOrganizerItemId id;
-        QOrganizerItemLocalId localId(1234);
-        id.setLocalId(localId);
-        id.setManagerUri("qtorganizer:symbian:");
-        organizerItem.setId(id);
+        // TODO: Disabled because of API change. REFACTOR!
+        //QOrganizerItemId id;
+        //QOrganizerItemLocalId localId(1234);
+        //id.setLocalId(localId);
+        //id.setManagerUri("qtorganizer:symbian:");
+        //organizerItem.setId(id);
 
         // Set current time
         QOrganizerEventTimeRange timeRange;

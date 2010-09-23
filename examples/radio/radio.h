@@ -68,6 +68,7 @@ public slots:
     void freqChanged(int f);
     void signalChanged(int s);
     void updateVolume(int v);
+    void error(QRadioTuner::Error error);
 
 private:
     QLabel* freq;

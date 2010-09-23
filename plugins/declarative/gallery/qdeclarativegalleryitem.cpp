@@ -43,6 +43,7 @@
 
 #include <qgalleryresultset.h>
 
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include <QtDeclarative/qdeclarativepropertymap.h>
 
 QTM_BEGIN_NAMESPACE
@@ -92,19 +93,23 @@ void QDeclarativeGalleryItem::setPropertyNames(const QStringList &names)
 
 void QDeclarativeGalleryItem::setAutoUpdate(bool enabled)
 {
-    m_request.setAutoUpdate(enabled);
+    if (m_request.autoUpdate() != enabled) {
+        m_request.setAutoUpdate(enabled);
 
-    emit autoUpdateChanged();
+        emit autoUpdateChanged();
+    }
 }
 
 void QDeclarativeGalleryItem::setItemId(const QVariant &itemId)
 {
-    m_request.setItemId(itemId);
+    if (m_request.itemId() != itemId) {
+        m_request.setItemId(itemId);
 
-    if (m_complete)
-        m_request.execute();
+        if (m_complete)
+            m_request.execute();
 
-    emit itemIdChanged();
+        emit itemIdChanged();
+    }
 }
 
 void QDeclarativeGalleryItem::componentComplete()
@@ -117,15 +122,29 @@ void QDeclarativeGalleryItem::componentComplete()
 
 void QDeclarativeGalleryItem::_q_statusChanged()
 {
-    QString message = m_request.errorString();
-    qSwap(message, m_errorMessage);
-
     m_status = Status(m_request.status());
+
+    if (m_status == Error) {
+        const QString message = m_request.errorString();
+
+        if (!message.isEmpty()) {
+            qmlInfo(this) << message;
+        } else {
+            switch (m_request.error()) {
+            case QDocumentGallery::ConnectionError:
+                qmlInfo(this) << tr("An error was encountered connecting to the document gallery");
+                break;
+            case QDocumentGallery::ItemIdError:
+                qmlInfo(this) << tr("The value of item is not a valid item ID");
+                break;
+            default:
+                break;
+            }
+        }
+    }
 
     emit statusChanged();
 
-    if (message != m_errorMessage)
-        emit errorMessageChanged();
 }
 
 void QDeclarativeGalleryItem::_q_itemChanged()

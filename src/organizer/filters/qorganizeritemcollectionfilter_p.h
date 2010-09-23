@@ -60,6 +60,7 @@
 #include <QString>
 #include <QVariant>
 #include <QSet>
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -87,17 +88,15 @@ public:
 
     QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
     {
-        if (formatVersion == 1) {
-            stream << m_ids;
-        }
+        Q_UNUSED(formatVersion);
+        qWarning() << "Can't stream a local ID filter to a QDataStream";
         return stream;
     }
 
     QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
     {
-        if (formatVersion == 1) {
-            stream >> m_ids;
-        }
+        Q_UNUSED(formatVersion);
+        qWarning() << "Can't stream a local ID filter to a QDataStream";
         return stream;
     }
 

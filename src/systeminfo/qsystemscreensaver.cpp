@@ -78,7 +78,6 @@ QSystemScreenSaver::~QSystemScreenSaver()
 }
 
 /*!
-  \fn bool QSystemScreenSaver::setScreenSaverInhibit()
   \brief Set the screensaver to be inhibited.
 
    Temporarily inhibits the screensaver.

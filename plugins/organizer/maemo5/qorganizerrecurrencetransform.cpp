@@ -159,17 +159,8 @@ void OrganizerRecurrenceTransform::addQOrganizerItemExceptionRule(const QOrganiz
 
 void OrganizerRecurrenceTransform::addQOrganizerItemRecurrenceDate(const QDate &date)
 {
-    QString icalDate = qrecurrenceDateToIcalRecurrenceDate(date);
-
     // Store the new date to the recurrence date vector
-    m_vRecDateList.push_back(icalDate.toStdString());
-
-    // A new recurrence rule must also be set, because the Fremantle calendar
-    // does not care of the recurrence dates
-    CRecurrenceRule *crecrule = new CRecurrenceRule();
-    crecrule->setRuleType(RECURRENCE_RULE);
-    crecrule->setRrule(createSingleDayRuleFor(date).toStdString());
-    m_vRRuleList.push_back(crecrule);
+    m_vRecDateList.push_back(QString::number(QDateTime(date, QTime(0, 0, 0)).toTime_t()).toStdString());
 
     if (!m_rtype)
         m_rtype = qfrequencyToRtype(QOrganizerItemRecurrenceRule::Yearly);
@@ -177,17 +168,8 @@ void OrganizerRecurrenceTransform::addQOrganizerItemRecurrenceDate(const QDate &
 
 void OrganizerRecurrenceTransform::addQOrganizerItemExceptionDate(const QDate &date)
 {
-    QString icalDate = qrecurrenceDateToIcalRecurrenceDate(date);
-
     // Store the new date to the exception date vector
-    m_vExceptionDateList.push_back(icalDate.toStdString());
-
-    // A new exception rule must also be set, because the Fremantle calendar
-    // does not care of the exception dates
-    CRecurrenceRule *crecrule = new CRecurrenceRule();
-    crecrule->setRuleType(EXCEPTION_RULE);
-    crecrule->setRrule(createSingleDayRuleFor(date).toStdString());
-    m_vRRuleList.push_back(crecrule);
+    m_vExceptionDateList.push_back(QString::number(QDateTime(date, QTime(0, 0, 0)).toTime_t()).toStdString());
 }
 
 QString OrganizerRecurrenceTransform::qrecurrenceRuleToIcalRecurrenceRule(const QOrganizerItemRecurrenceRule& rule) const
@@ -244,6 +226,7 @@ QString OrganizerRecurrenceTransform::qfrequencyToIcalFrequency(QOrganizerItemRe
     case QOrganizerItemRecurrenceRule::Weekly: return QString("FREQ=WEEKLY");
     case QOrganizerItemRecurrenceRule::Monthly: return QString("FREQ=MONTHLY");
     case QOrganizerItemRecurrenceRule::Yearly: return QString("FREQ=YEARLY");
+    default: return QString("FREQ=WEEKLY"); // invalid frequency, assume weekly
     }
 }
 
@@ -344,11 +327,6 @@ int OrganizerRecurrenceTransform::qfrequencyToRtype(QOrganizerItemRecurrenceRule
     }
 }
 
-QString OrganizerRecurrenceTransform::qrecurrenceDateToIcalRecurrenceDate(const QDate &date) const
-{
-    return QString("VALUE=DATE:") + date.toString("yyyyMMdd");
-}
-
 void OrganizerRecurrenceTransform::transformToQrecurrence(CRecurrence *crecurrence)
 {
     m_lRecurrenceRules.clear();
@@ -375,65 +353,17 @@ void OrganizerRecurrenceTransform::transformToQrecurrence(CRecurrence *crecurren
         }
     }
 
+    // Recurrence dates
+    std::vector< std::string > recurrenceDates = crecurrence->getRDays();
+    std::vector< std::string >::const_iterator recurrenceDate;
+    for (recurrenceDate = recurrenceDates.begin(); recurrenceDate != recurrenceDates.end(); ++recurrenceDate)
+        m_lRecurrenceDates << QDateTime::fromTime_t(QString::fromStdString(*recurrenceDate).toInt()).date();
+
     // Exception dates
     std::vector< std::string > exceptionDates = crecurrence->getEDays();
     std::vector< std::string >::const_iterator exceptionDate;
     for (exceptionDate = exceptionDates.begin(); exceptionDate != exceptionDates.end(); ++exceptionDate)
-    {
-        m_lExceptionDates << convertRDate(QString::fromStdString(*exceptionDate));
-    }
-}
-
-QList<QDate> OrganizerRecurrenceTransform::convertRDate(const QString &rdate) const
-{
-    QStringList splitted = rdate.split(":");
-    QList<QDate> dates;
-
-    if (splitted.first().contains("VALUE=DATE")) {
-        QStringList values = splitted.last().split(",");
-        for (int i = 0; i < values.count(); i++) {
-            QDate date = convertString(values[i]);
-            dates << date;
-        }
-    } else if (splitted.first().contains("VALUE=PERIOD")) {
-        QStringList values = splitted.last().split(",");
-        for (int i = 0; i < values.count(); i++) {
-            QString value = values[i].split('/').first();
-            if (!values.isEmpty()) {
-                QDate date = convertString(value);
-                dates << date;
-            }
-        }
-    } else if (splitted.first().startsWith("RDATE:")) {
-         QDate date = convertString(splitted.last());
-         dates << date;
-    }
-    // TODO: What to do if a timezone has also been defined f.ex "RDATE;TZID=US-EASTERN:19970714T083000"?
-
-    return dates;
-}
-
-QDate OrganizerRecurrenceTransform::convertString(const QString &rdate) const
-{
-    QString time = rdate;
-    bool isUtc = false;
-    if (time.endsWith('Z')) {
-        time.chop(1);
-        isUtc = true;
-    }
-
-    QDateTime dateTime;
-    if (time.contains('T')) {
-        time.remove('T');
-        dateTime = QDateTime::fromString(time, "yyyyMMddHHmmss");
-    } else {
-        dateTime = QDateTime::fromString(time, "yyyyMMdd");
-    }
-
-    if (isUtc)
-        dateTime = dateTime.toUTC();
-
-    return dateTime.date();
+        m_lExceptionDates << QDateTime::fromTime_t(QString::fromStdString(*exceptionDate).toInt()).date();
 }
 
 QList<QOrganizerItemRecurrenceRule> OrganizerRecurrenceTransform::recurrenceRules() const
@@ -469,7 +399,6 @@ QOrganizerItemRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQ
     time_t until = rule->getUntil();
     if (until > 0) {
         QDateTime endDate(QDateTime::fromTime_t(until));
-        m_lRecurrenceDates << endDate.date();
         retn.setEndDate(endDate.date().addDays(1)); // in Maemo5 the end date is inclusive
     }
 
@@ -585,35 +514,4 @@ QMap<QString, Qt::DayOfWeek> OrganizerRecurrenceTransform::icalRecurrenceWeekDay
     mapping["SA"] = Qt::Saturday;
     mapping["SU"] = Qt::Sunday;
     return mapping;
-}
-
-QString OrganizerRecurrenceTransform::createSingleDayRuleFor(const QDate& date) const
-{
-    QStringList retn;
-
-    // set as yearly recurrence
-    retn << qfrequencyToIcalFrequency(QOrganizerItemRecurrenceRule::Yearly);
-
-    // set months to date's month
-    QList<QOrganizerItemRecurrenceRule::Month> months;
-    months << static_cast<QOrganizerItemRecurrenceRule::Month>(date.month());
-    retn << qmonthsToIcalByMonth(months);
-
-    // set days to date's day
-    QList<int> daysOfMonth;
-    daysOfMonth << date.day();
-    retn << qdaysOfMonthToIcalByMonthDay(daysOfMonth);
-
-    // set weekday to weekday of the target date
-    QList<Qt::DayOfWeek> daysOfWeek;
-    daysOfWeek << static_cast<Qt::DayOfWeek>(date.dayOfWeek());
-    retn << qdaysOfWeekToIcalByDay(daysOfWeek);
-
-    // set interval
-    retn << qintervalToIcalInterval(1);
-
-    // set end date
-    retn << qendDateToIcalUntil(date);
-
-    return retn.join(";");
 }

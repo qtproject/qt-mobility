@@ -111,7 +111,7 @@ private:
     QSharedDataPointer<QContactActionDescriptorPrivate> d;
     friend class QContactActionFactory;
     friend class QContactActionServiceManager;
-    friend uint qHash(const QContactActionDescriptor& key);
+    Q_CONTACTS_EXPORT friend uint qHash(const QContactActionDescriptor& key);
 };
 
 QTM_END_NAMESPACE
