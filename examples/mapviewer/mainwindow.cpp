@@ -417,6 +417,11 @@ MainWindow::MainWindow(QWidget *parent) :
             SLOT(error(QNetworkSession::SessionError)));
 
     m_session->open();
+    m_session->waitForOpened();
+
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
+    setProvider("nokia");
+    setupUi();
 }
 
 MainWindow::~MainWindow()
@@ -426,9 +431,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::networkSessionOpened()
 {
-    QNetworkProxyFactory::setUseSystemConfiguration(true);
-    setProvider("nokia");
-    setupUi();
 }
 
 void MainWindow::error(QNetworkSession::SessionError error)
