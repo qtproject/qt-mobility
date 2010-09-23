@@ -141,7 +141,8 @@ private:
     QList<QGraphicsGeoMap::MapType> m_mapControlTypes;
     QLineEdit *m_latitudeEdit;
     QLineEdit *m_longitudeEdit;
-    QToolButton *m_captureCoordsButton;
+    QAction *m_captureCoordsAction;
+    QDialog *m_coordControlDialog;
     QPushButton *m_setCoordsButton;
     QLineEdit *m_searchEdit;
     QPushButton *m_searchButton;
