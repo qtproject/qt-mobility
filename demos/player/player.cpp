@@ -122,7 +122,7 @@ Player::Player(QWidget *parent)
     fullScreenButton = new QPushButton(tr("FullScreen"), this);
     fullScreenButton->setCheckable(true);
 
-#ifndef Q_WS_MAEMO_5
+#ifndef PLAYER_NO_COLOROPTIONS
     colorButton = new QPushButton(tr("Color Options..."), this);
     colorButton->setEnabled(false);
     connect(colorButton, SIGNAL(clicked()), this, SLOT(showColorDialog()));
@@ -139,8 +139,9 @@ Player::Player(QWidget *parent)
     controlLayout->addWidget(controls);
     controlLayout->addStretch(1);
     controlLayout->addWidget(fullScreenButton);
-    if (colorButton)
-        controlLayout->addWidget(colorButton);
+#ifndef PLAYER_NO_COLOROPTIONS
+    controlLayout->addWidget(colorButton);
+#endif
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->addLayout(displayLayout);
@@ -157,8 +158,9 @@ Player::Player(QWidget *parent)
         controls->setEnabled(false);
         playlistView->setEnabled(false);
         openButton->setEnabled(false);
-        if (colorButton)
-            colorButton->setEnabled(false);
+#ifndef PLAYER_NO_COLOROPTIONS
+        colorButton->setEnabled(false);
+#endif
         fullScreenButton->setEnabled(false);
     }
 
@@ -325,7 +327,9 @@ void Player::videoAvailableChanged(bool available)
         if (fullScreenButton->isChecked())
             videoWidget->setFullScreen(true);
     }
+#ifndef PLAYER_NO_COLOROPTIONS
     colorButton->setEnabled(available);
+#endif
 }
 
 void Player::setTrackInfo(const QString &info)
