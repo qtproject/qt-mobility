@@ -93,7 +93,8 @@
 #endif
 
 //defines to turn on and off tests
-#define RETRIEVE_LANDMARK
+#define RETRIEVE_CATEGORY
+//#define RETRIEVE_LANDMARK
 //#define SAVE_CATEGORY
 //#define SAVE_LANDMARK
 
@@ -694,10 +695,10 @@ private slots:
     void createDbExists();
 #endif
 
-/*RE-ENABLE
+#ifdef RETRIEVE_CATEGORY
     void retrieveCategory();
     void retrieveCategory_data();
- RE-ENABLE*/
+#endif
 
 #ifdef RESTORE
     void categoryFetchCancelAsync();
@@ -860,7 +861,7 @@ void tst_QLandmarkManager::createDbExists() {
 }
 #endif
 
-/* RE-ENABLE
+#ifdef RETRIEVE_CATEGORY
 void tst_QLandmarkManager::retrieveCategory() {
     QFETCH(QString, type);
     QLandmarkCategoryId id1;
@@ -877,7 +878,8 @@ void tst_QLandmarkManager::retrieveCategory() {
 
         //try an id does not exist
         id1.setManagerUri(m_manager->managerUri());
-        id1.setLocalId("1");
+        id1.setLocalId("100");
+
         QCOMPARE(m_manager->category(id1), QLandmarkCategory());
         QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
         QCOMPARE(m_manager->category(id1).categoryId().isValid(), false);
@@ -893,7 +895,7 @@ void tst_QLandmarkManager::retrieveCategory() {
 
         //try an id that does not exist
         id1.setManagerUri(m_manager->managerUri());
-        id1.setLocalId("1");
+        id1.setLocalId("100");
         catFetchByIdRequest.setCategoryId(id1);
         catFetchByIdRequest.start();
         QVERIFY(waitForAsync(spy, &catFetchByIdRequest,QLandmarkManager::DoesNotExistError,100));
@@ -951,6 +953,56 @@ void tst_QLandmarkManager::retrieveCategory() {
     } else {
         qFatal("Unknown test row type");
     }
+
+    if (type == "async") {
+        //try retrive multiple categories
+        QLandmarkCategory catA;
+        catA.setName("CAT-A");
+        m_manager->saveCategory(&catA);
+
+        QLandmarkCategory catB;
+        catB.setName("CAT-B");
+        m_manager->saveCategory(&catB);
+
+        QLandmarkCategoryId catIdNotExist;
+        catIdNotExist.setManagerUri(m_manager->managerUri());
+
+        QLandmarkCategoryId catIdNotExist2;
+
+        QList<QLandmarkCategoryId> catIds;
+        QSignalSpy spyResult(&catFetchByIdRequest, SIGNAL(resultsAvailable()));
+        catIds << catA.categoryId() << catIdNotExist << catB.categoryId() << catIdNotExist2;
+        catFetchByIdRequest.setCategoryIds(catIds);
+        catFetchByIdRequest.start();
+        QVERIFY(waitForAsync(spy, &catFetchByIdRequest, QLandmarkManager::DoesNotExistError,100));
+        cats = catFetchByIdRequest.categories();
+        QCOMPARE(cats.count(), 4);
+        QCOMPARE(cats.at(0), catA);
+        QCOMPARE(cats.at(1), QLandmarkCategory());
+        QCOMPARE(cats.at(2), catB);
+        QCOMPARE(cats.at(3), QLandmarkCategory());
+        QCOMPARE(catFetchByIdRequest.errorMap().count(), 2);
+        QCOMPARE(catFetchByIdRequest.errorMap().keys().at(0), 1);
+        QCOMPARE(catFetchByIdRequest.errorMap().keys().at(1), 3);
+        QCOMPARE(catFetchByIdRequest.errorMap().value(1), QLandmarkManager::DoesNotExistError);
+        QCOMPARE(catFetchByIdRequest.errorMap().value(3), QLandmarkManager::DoesNotExistError);
+        QCOMPARE(spyResult.count(), 1);
+        spyResult.clear();
+
+        catIds.clear();
+        catIds << catA.categoryId() << catB.categoryId() << cat2.categoryId();
+        catFetchByIdRequest.setCategoryIds(catIds);
+        catFetchByIdRequest.start();
+        QVERIFY(waitForAsync(spy, &catFetchByIdRequest, QLandmarkManager::NoError,100));
+        cats = catFetchByIdRequest.categories();
+        QCOMPARE(cats.count(), 3);
+        QCOMPARE(cats.at(0), catA);
+        QCOMPARE(cats.at(1), catB);
+        QCOMPARE(cats.at(2), cat2);
+        QCOMPARE(catFetchByIdRequest.errorMap().count(), 0);
+        QCOMPARE(spyResult.count(),1);
+        spyResult.clear();
+    }
 }
 
 void tst_QLandmarkManager::retrieveCategory_data() {
@@ -959,7 +1011,7 @@ void tst_QLandmarkManager::retrieveCategory_data() {
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
-*/
+#endif
 
 #ifdef RESTORE_CANCEL_CATEGORY_FETCH
 void tst_QLandmarkManager::categoryFetchCancelAsync()
