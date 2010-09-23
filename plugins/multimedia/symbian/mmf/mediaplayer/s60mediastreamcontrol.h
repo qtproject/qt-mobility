@@ -38,46 +38,42 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtCore/qcoreapplication.h>
-#include <QtTest/QtTest>
 
-#include "tst_qmediaobject.h"
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-#include "tst_qmediaobject_xa.h"
-#else
-#include "tst_qmediaobject_mmf.h"
-#endif
-#endif
+#ifndef S60MEDIASTREAMCONTROL_H
+#define S60MEDIASTREAMCONTROL_H
 
-int main(int argc, char**argv)
+#include <QVariant>
+
+#include "s60mediaplayercontrol.h"
+
+#include <qmediastreamscontrol.h>
+#include <qtmedianamespace.h>
+
+QT_USE_NAMESPACE
+
+class S60MediaPlayerControl;
+class S60MediaSettings;
+
+class S60MediaStreamControl : public QMediaStreamsControl
 {
-    QApplication app(argc,argv);
-    int ret;
-    tst_QMediaObject test_api;
-    ret = QTest::qExec(&test_api, argc, argv);
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-    char *new_argv[3];
-    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";
-    QByteArray   bytes  = str.toAscii();
-    char arg1[] = "-o";
-    new_argv[0] = argv[0];
-    new_argv[1] = arg1;
-    new_argv[2] = bytes.data();
-    tst_QMetadata_xa test_xa;
-    ret = QTest::qExec(&test_xa, 3, new_argv);
-#else
-    char *new_argv[3];
-    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";
-    QByteArray   bytes  = str.toAscii();
-    char arg1[] = "-o";
-    new_argv[0] = argv[0];
-    new_argv[1] = arg1;
-    new_argv[2] = bytes.data();
-    tst_QMediaObject_mmf test_mmf;
-    ret = QTest::qExec(&test_mmf, 3, new_argv);
-#endif
-#endif
-    return ret;
-}
+    Q_OBJECT
+public:
+    S60MediaStreamControl(QObject *session, QObject *parent = 0);
+    ~S60MediaStreamControl();
+
+    // from QMediaStreamsControl
+    int streamCount();
+    QMediaStreamsControl::StreamType streamType(int streamNumber);
+    QVariant metaData(int streamNumber, QtMultimediaKit::MetaData key);
+    bool isActive(int streamNumber);
+    void setActive(int streamNumber, bool state);
+
+public Q_SLOTS:
+    void handleStreamsChanged();
+
+private:
+    S60MediaPlayerControl *m_control;
+    S60MediaSettings::TMediaType m_mediaType;
+};
+
+#endif //S60MEDIASTREAMCONTROL_H

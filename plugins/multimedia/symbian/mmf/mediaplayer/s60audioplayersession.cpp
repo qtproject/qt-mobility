@@ -90,11 +90,11 @@ qint64 S60AudioPlayerSession::doGetPositionL() const
     return ms.Int64() / qint64(1000);
 }
 
-bool S60AudioPlayerSession::isVideoAvailable() const
+bool S60AudioPlayerSession::isVideoAvailable()
 {
     return false;
 }
-bool S60AudioPlayerSession::isAudioAvailable() const
+bool S60AudioPlayerSession::isAudioAvailable()
 {
     return true; // this is a bit happy scenario, but we do emit error that we can't play
 }

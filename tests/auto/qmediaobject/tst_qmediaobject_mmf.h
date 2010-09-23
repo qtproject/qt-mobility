@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,46 +38,44 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtCore/qcoreapplication.h>
+
+#ifndef TST_QMEDIAOBJECT_MMF_H
+#define TST_QMEDIAOBJECT_MMF_H
+
 #include <QtTest/QtTest>
+#include <QtCore>
+#include <QtGui>
 
-#include "tst_qmediaobject.h"
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-#include "tst_qmediaobject_xa.h"
-#else
-#include "tst_qmediaobject_mmf.h"
-#endif
-#endif
+#include <qtmedianamespace.h>
+#include <QMediaPlayer>
+#include <QMediaPlayerControl>
+#include <QMediaPlaylist>
+#include <QMediaService>
+#include <QMediaStreamsControl>
+#include <QVideoWidget>
 
-int main(int argc, char**argv)
+QT_USE_NAMESPACE
+
+class tst_QMediaObject_mmf : public QObject
 {
-    QApplication app(argc,argv);
-    int ret;
-    tst_QMediaObject test_api;
-    ret = QTest::qExec(&test_api, argc, argv);
-#ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_MEDIAPLAY_BACKEND
-    char *new_argv[3];
-    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";
-    QByteArray   bytes  = str.toAscii();
-    char arg1[] = "-o";
-    new_argv[0] = argv[0];
-    new_argv[1] = arg1;
-    new_argv[2] = bytes.data();
-    tst_QMetadata_xa test_xa;
-    ret = QTest::qExec(&test_xa, 3, new_argv);
-#else
-    char *new_argv[3];
-    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";
-    QByteArray   bytes  = str.toAscii();
-    char arg1[] = "-o";
-    new_argv[0] = argv[0];
-    new_argv[1] = arg1;
-    new_argv[2] = bytes.data();
-    tst_QMediaObject_mmf test_mmf;
-    ret = QTest::qExec(&test_mmf, 3, new_argv);
-#endif
-#endif
-    return ret;
-}
+    Q_OBJECT
+
+public slots:
+    void initTestCase_data();
+    void initTestCase();
+    void cleanupTestCase();
+    void init();
+    void cleanup();
+
+private slots:
+    void isMetaDataAvailable();
+    void metaData();
+    void availableMetaData();
+    void extendedMetaData();
+    void availableExtendedMetaData();
+
+private:
+    QString metaDataKeyAsString(QtMultimediaKit::MetaData key) const;
+};
+
+#endif // TST_QMEDIAOBJECT_MMF_H

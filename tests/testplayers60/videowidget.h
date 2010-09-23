@@ -37,84 +37,23 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef VIDEOWIDGET_H
+#define VIDEOWIDGET_H
 
-#ifndef PLAYER_H
-#define PLAYER_H
-
-#include <QtGui/QWidget>
-
-#include <qmediaplayer.h>
-#include <qmediaplaylist.h>
 #include <qvideowidget.h>
-
-
-QT_BEGIN_NAMESPACE
-class QAbstractItemView;
-class QLabel;
-class QModelIndex;
-class QSlider;
-class QPushButton;
-
-class QMediaPlayer;
-class QVideoWidget;
-QT_END_NAMESPACE
 
 QT_USE_NAMESPACE
 
-class PlaylistModel;
-
-class Player : public QWidget
+class VideoWidget : public QVideoWidget
 {
     Q_OBJECT
 public:
-    Player(QWidget *parent = 0);
-    ~Player();
+    VideoWidget(QWidget *parent = 0);
 
-Q_SIGNALS:
-    void fullScreenChanged(bool fullScreen);
-
-private slots:
-    void open();
-    void durationChanged(qint64 duration);
-    void positionChanged(qint64 progress);
-    void metaDataChanged();
-
-    void previousClicked();
-
-    void seek(int seconds);
-    void jump(const QModelIndex &index);
-    void playlistPositionChanged(int);
-
-    void statusChanged(QMediaPlayer::MediaStatus status);
-    void bufferingProgress(int progress);
-    void videoAvailableChanged(bool available);
-
-    void displayErrorMessage();
-
-    void showColorDialog();
-    
-    void addToPlaylist(const QStringList& fileNames);
-
-private:
-    void setTrackInfo(const QString &info);
-    void setStatusInfo(const QString &info);
-    void handleCursor(QMediaPlayer::MediaStatus status);
-
-
-    QMediaPlayer *player;
-    QMediaPlaylist *playlist;
-    QVideoWidget *videoWidget;
-    QLabel *coverLabel;
-    QSlider *slider;
-    QPushButton *fullScreenButton;
-#ifndef PLAYER_NO_COLOROPTIONS
-    QPushButton *colorButton;
-#endif
-    PlaylistModel *playlistModel;
-    QAbstractItemView *playlistView;
-    QString trackInfo;
-    QString statusInfo;
-    QDialog *colorDialog;
+protected:
+    void keyPressEvent(QKeyEvent *event);
+    void mouseDoubleClickEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
 };
 
 #endif

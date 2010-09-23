@@ -38,83 +38,63 @@
 **
 ****************************************************************************/
 
-#ifndef PLAYER_H
-#define PLAYER_H
+#include "videowidget.h"
 
-#include <QtGui/QWidget>
+#include <QtGui>
 
-#include <qmediaplayer.h>
-#include <qmediaplaylist.h>
-#include <qvideowidget.h>
+#ifdef Q_OS_SYMBIAN
+const int KKeyPadOpenEventKey = 16777385;
+const int KKeyPadCloseEventKey = 16777386;
+#endif
 
 
-QT_BEGIN_NAMESPACE
-class QAbstractItemView;
-class QLabel;
-class QModelIndex;
-class QSlider;
-class QPushButton;
-
-class QMediaPlayer;
-class QVideoWidget;
-QT_END_NAMESPACE
-
-QT_USE_NAMESPACE
-
-class PlaylistModel;
-
-class Player : public QWidget
+VideoWidget::VideoWidget(QWidget *parent)
+    : QVideoWidget(parent)
 {
-    Q_OBJECT
-public:
-    Player(QWidget *parent = 0);
-    ~Player();
+    setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-Q_SIGNALS:
-    void fullScreenChanged(bool fullScreen);
+    QPalette p = palette();
+    p.setColor(QPalette::Window, Qt::black);
+    setPalette(p);
 
-private slots:
-    void open();
-    void durationChanged(qint64 duration);
-    void positionChanged(qint64 progress);
-    void metaDataChanged();
+    setAttribute(Qt::WA_OpaquePaintEvent);
+}
 
-    void previousClicked();
-
-    void seek(int seconds);
-    void jump(const QModelIndex &index);
-    void playlistPositionChanged(int);
-
-    void statusChanged(QMediaPlayer::MediaStatus status);
-    void bufferingProgress(int progress);
-    void videoAvailableChanged(bool available);
-
-    void displayErrorMessage();
-
-    void showColorDialog();
-    
-    void addToPlaylist(const QStringList& fileNames);
-
-private:
-    void setTrackInfo(const QString &info);
-    void setStatusInfo(const QString &info);
-    void handleCursor(QMediaPlayer::MediaStatus status);
-
-
-    QMediaPlayer *player;
-    QMediaPlaylist *playlist;
-    QVideoWidget *videoWidget;
-    QLabel *coverLabel;
-    QSlider *slider;
-    QPushButton *fullScreenButton;
-#ifndef PLAYER_NO_COLOROPTIONS
-    QPushButton *colorButton;
+void VideoWidget::keyPressEvent(QKeyEvent *event)
+{
+#ifdef Q_OS_SYMBIAN
+    if (isFullScreen() && event->key() != KKeyPadOpenEventKey && event->key() != KKeyPadCloseEventKey)
+        setFullScreen(false);
 #endif
-    PlaylistModel *playlistModel;
-    QAbstractItemView *playlistView;
-    QString trackInfo;
-    QString statusInfo;
-    QDialog *colorDialog;
-};
 
+    if (event->key() == Qt::Key_Escape && isFullScreen()) {
+        showNormal();
+
+        event->accept();
+    } else if (event->key() == Qt::Key_Enter && event->modifiers() & Qt::Key_Alt) {
+        setFullScreen(!isFullScreen());
+
+        event->accept();
+    } else {
+        QVideoWidget::keyPressEvent(event);
+    }
+}
+
+void VideoWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    setFullScreen(!isFullScreen());
+
+    event->accept();
+}
+
+void VideoWidget::mousePressEvent(QMouseEvent *event)
+{
+#ifdef Q_WS_MAEMO_5
+    if (isFullScreen())
+        setFullScreen(false);
+
+    event->accept();
+#else
+    QVideoWidget::mousePressEvent(event);
 #endif
+}
