@@ -5,7 +5,7 @@ INCLUDEPATH += . \
     ../../../src/organizer/requests \
     ../../../src/organizer/details \
     ../../../src/organizer/filters \
-    ../../../src/versit
+    ../../../src/versitorganizer
 
 TARGET = $$qtLibraryTarget(declarative_organizer)
 TARGETPATH = QtMobility/organizer
@@ -48,8 +48,8 @@ SOURCES += plugin.cpp \
            qdeclarativeorganizer.cpp \
            qmetaobjectbuilder.cpp \
            qdeclarativeopenmetaobject.cpp \
-           qdeclarativeorganizeritemmetaobject.cpp
-
+           qdeclarativeorganizeritemmetaobject.cpp \
+           qdeclarativeorganizermodel.cpp
 
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
