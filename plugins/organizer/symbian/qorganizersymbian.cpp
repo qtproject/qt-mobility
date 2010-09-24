@@ -1141,7 +1141,6 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(
     return filteredAndSorted;
 }
 
-#ifdef SYMBIAN_CALENDAR_V2
 QOrganizerCollectionLocalId QOrganizerItemSymbianEngine::defaultCollectionId(
     QOrganizerItemManager::Error* error) const
 {
@@ -1210,6 +1209,10 @@ bool QOrganizerItemSymbianEngine::saveCollection(
 void QOrganizerItemSymbianEngine::saveCollectionL(
     QOrganizerCollection* collection)
 {
+#ifndef SYMBIAN_CALENDAR_V2
+    Q_UNUSED(collection);
+    User::Leave(KErrNotSupported);
+#else
     // Check manager uri if defined
     if (!collection->id().managerUri().isEmpty()) {
         if (collection->id().managerUri() != this->managerUri())
@@ -1262,6 +1265,7 @@ void QOrganizerItemSymbianEngine::saveCollectionL(
     
     // Update id to the collection object
     collection->setId(symbianCollection.id());
+#endif //SYMBIAN_CALENDAR_V2
 }
 
 bool QOrganizerItemSymbianEngine::removeCollection(
@@ -1281,6 +1285,10 @@ bool QOrganizerItemSymbianEngine::removeCollection(
 void QOrganizerItemSymbianEngine::removeCollectionL(
     const QOrganizerCollectionLocalId& collectionId)
 {
+#ifndef SYMBIAN_CALENDAR_V2
+    Q_UNUSED(collectionId);
+    User::Leave(KErrNotSupported);
+#else
     // Dont allow removing the default collection
     if (collectionId == m_defaultCollection.localId())
         User::Leave(KErrAccessDenied);
@@ -1329,8 +1337,9 @@ void QOrganizerItemSymbianEngine::removeCollectionL(
         }
     }
     User::Leave(KErrNotFound);
-}
 #endif // SYMBIAN_CALENDAR_V2
+}
+
 
 QMap<QString, QOrganizerItemDetailDefinition> 
 QOrganizerItemSymbianEngine::detailDefinitions(

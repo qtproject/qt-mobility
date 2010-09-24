@@ -44,10 +44,7 @@
 #include <qtorganizer.h>
 #include <QtTest/QtTest>
 #include <QDebug>
-
-#ifdef Q_OS_SYMBIAN
-    #include <calcommon.h> // for SYMBIAN_CALENDAR_V2
-#endif
+#include <calcommon.h> // for SYMBIAN_CALENDAR_V2
 
 QTM_USE_NAMESPACE
 
@@ -75,7 +72,10 @@ class tst_SymbianOmAsync : public QObject
 
 public:
     tst_SymbianOmAsync();
-
+    
+public slots:
+    void initTestCase();
+    
 private slots:  // Init & cleanup
     void init();
     void cleanup();
@@ -104,14 +104,12 @@ private slots:  // Test cases
     void modifyItems();
     void removeItems_data(){ addManagers(); };
     void removeItems();
-#ifdef SYMBIAN_CALENDAR_V2
     void addCollection_data(){ addManagers(); };
     void addCollection();
     void modifyCollection_data(){ addManagers(); };
     void modifyCollection();
     void removeCollection_data(){ addManagers(); };
     void removeCollection();
-#endif
 
 private: // util functions
     QOrganizerItem createItem(
@@ -121,6 +119,7 @@ private: // util functions
 
 private:
     QOrganizerItemManager *m_om;
+    bool m_customCollectionsSupported;
 };
 
 tst_SymbianOmAsync::tst_SymbianOmAsync() :
@@ -129,6 +128,17 @@ tst_SymbianOmAsync::tst_SymbianOmAsync() :
     qRegisterMetaType<QOrganizerItemAbstractRequest::State>("QOrganizerItemAbstractRequest::State");
     qRegisterMetaType<QList<QOrganizerItemLocalId> >("QList<QOrganizerItemLocalId>");
     qRegisterMetaType<QList<QOrganizerCollectionLocalId> >("QList<QOrganizerCollectionLocalId>");
+}
+
+void tst_SymbianOmAsync::initTestCase()
+{
+    // TODO: How could this be done dynamically? 
+    // Some kind of manager feature flag would be nice.
+#ifdef SYMBIAN_CALENDAR_V2
+    m_customCollectionsSupported = true;
+#else
+    m_customCollectionsSupported = false;
+#endif
 }
 
 void tst_SymbianOmAsync::init()
@@ -522,7 +532,6 @@ void tst_SymbianOmAsync::removeItems()
     QCOMPARE(m_om->itemIds().count(), 0);
 }
 
-#ifdef SYMBIAN_CALENDAR_V2
 void tst_SymbianOmAsync::addCollection()
 {
     // Create the request
@@ -542,6 +551,16 @@ void tst_SymbianOmAsync::addCollection()
     collection.setMetaData("Color", QColor(Qt::red));
     collection.setMetaData("Enabled", true);
     req.setCollection(collection);
+    
+    // Not supported?
+    if (!m_customCollectionsSupported) {
+        QWARN("Saving collections not supported!");
+        QVERIFY(!req.start());
+        QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+        QCOMPARE(stateSpy.count(), 1);
+        QTRY_COMPARE(resultSpy.count(), 1);
+        return;
+    }
 
     // Start the request
     QVERIFY(req.start());
@@ -559,6 +578,9 @@ void tst_SymbianOmAsync::addCollection()
 
 void tst_SymbianOmAsync::modifyCollection()
 {
+    if (!m_customCollectionsSupported)
+        QSKIP("Saving/modifying collections not supported!", SkipSingle);
+        
     // Create async request
     QOrganizerCollectionSaveRequest req;
     req.setManager(m_om);
@@ -608,6 +630,16 @@ void tst_SymbianOmAsync::removeCollection()
     QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
     QSignalSpy removedSpy(m_om, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)));
+    
+    // Not supported?
+    if (!m_customCollectionsSupported) {
+        QWARN("Removing collections not supported!");
+        QVERIFY(!req.start());
+        QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+        QCOMPARE(stateSpy.count(), 1);
+        QTRY_COMPARE(resultSpy.count(), 1);
+        return;
+    }    
 
     // Create new collection (synchronously)
     QOrganizerCollection collection;
@@ -633,7 +665,6 @@ void tst_SymbianOmAsync::removeCollection()
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
     QCOMPARE(m_om->collections().count(), 1); // the default
 }
-#endif
 
 /*!
  * A helper method for creating a QOrganizerItem instance.
