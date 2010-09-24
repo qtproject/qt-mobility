@@ -566,6 +566,9 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
                 resFile.close();
             }
         }
+            if(netname.isEmpty()) {
+             netname = "Wired";
+            }
     }
     break;
         case QSystemNetworkInfo::BluetoothMode:
@@ -990,14 +993,13 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
                                 if(!ok)
                                     curLevel = 0;
                             }
+                            qDebug() << numLevels << curLevel;
+                            curBrightnessFile.close();
+                            if(curLevel > -1 && numLevels > 0) {
+                                return curLevel / numLevels * 100;
+                            }
                         }
                         line = bri.readLine();
-                    }
-
-                    qDebug() << numLevels << curLevel;
-                    curBrightnessFile.close();
-                    if(curLevel > -1 && numLevels > 0) {
-                        return curLevel / numLevels * 100;
                     }
                 }
             }
