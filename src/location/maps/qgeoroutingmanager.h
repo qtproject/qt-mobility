@@ -74,7 +74,7 @@ public:
     QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes() const;
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations() const;
     QGeoRouteRequest::SegmentDetails supportedSegmentDetails() const;
-    QGeoRouteRequest::InstructionDetails supportedInstructionDetails() const;
+    QGeoRouteRequest::ManeuverDetails supportedManeuverDetails() const;
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;

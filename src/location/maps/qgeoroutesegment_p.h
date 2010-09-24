@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgeoinstruction.h"
+#include "qgeomaneuver.h"
 
 #include <QSharedData>
 #include <QList>
@@ -75,7 +75,7 @@ public:
     int travelTime;
     qreal distance;
     QList<QGeoCoordinate> path;
-    QGeoInstruction instruction;
+    QGeoManeuver maneuver;
 };
 
 QTM_END_NAMESPACE

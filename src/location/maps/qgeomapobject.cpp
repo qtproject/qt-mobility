@@ -68,8 +68,10 @@ QTM_BEGIN_NAMESPACE
 
     Describes the type of a map object.
 
-    \value ContainerType
-        A basic QGeoMapObject.
+    \value NullType
+        An empty QGeoMapObject.
+    \value GroupType
+        A QGeoMapObject used to organize other map objects into groups.
     \value RectangleType
         A QGeoMapObject used to display a rectangular region.
     \value CircleType

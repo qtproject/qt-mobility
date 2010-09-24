@@ -69,7 +69,7 @@ class QGeoTiledMapTextObjectInfo : public QGeoTiledMapObjectInfo
 {
     Q_OBJECT
 public:
-    QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    QGeoTiledMapTextObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapTextObjectInfo();
 
     void updateValidity();

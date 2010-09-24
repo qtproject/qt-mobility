@@ -11,12 +11,15 @@ include(../examples.pri)
 # Input
 SOURCES += main.cpp \
     landmarkbrowser.cpp \
-    landmarkadddialog.cpp
+    landmarkadddialog.cpp \
+    categoryadddialog.cpp
 HEADERS += landmarkbrowser.h \
-    landmarkadddialog.h
+    landmarkadddialog.h \
+    categoryadddialog.h
 CONFIG += mobility
 FORMS += landmarkbrowser.ui \
-    landmarkadddialog.ui
+    landmarkadddialog.ui \
+    categoryadddialog.ui
 MOBILITY += location
 
 symbian|wince* {

@@ -1367,6 +1367,9 @@ QList<QLandmark> DatabaseOperations::landmarks(const QList<QLandmarkId> &landmar
         QLandmarkManager::Error *error,
         QString *errorString)  const
 {
+    if (errorMap)
+        errorMap->clear();
+
     QList<QLandmark> result;
     QLandmark lm;
     QLandmarkManager::Error lastError = QLandmarkManager::NoError;
@@ -1503,8 +1506,12 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
         QLandmarkCategoryId id = landmark->categoryIds().at(i);
         if (id.managerUri() == managerUri)
             lmCats << id.localId();
-        else
-            landmark->removeCategoryId(id);
+        else {
+            *error = QLandmarkManager::BadArgumentError;
+            *errorString = "Landmark contains category that belongs to another manager";
+            return false;
+        }
+
     }
 
     QStringList queries;
@@ -1607,6 +1614,8 @@ bool DatabaseOperations::saveLandmarks(QList<QLandmark> * landmark,
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
+    if (errorMap)
+        errorMap->clear();
 
     QSqlDatabase db = QSqlDatabase::database(connectionName);
     if (!db.transaction()) {
@@ -1704,6 +1713,8 @@ bool DatabaseOperations::removeLandmarks(const QList<QLandmarkId> &landmarkIds,
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
+    if (errorMap)
+        errorMap->clear();
 
     QSqlDatabase db = QSqlDatabase::database(connectionName);
     if (!db.transaction()) {
@@ -1976,6 +1987,8 @@ QList<QLandmarkCategory> DatabaseOperations::categories(const QList<QLandmarkCat
                 QMap<int, QLandmarkManager::Error> *errorMap,
                 QLandmarkManager::Error *error, QString *errorString) const
 {
+    if (errorMap)
+        errorMap->clear();
     QList<QLandmarkCategory> result;
     QLandmarkCategory cat;
     QLandmarkManager::Error lastError = QLandmarkManager::NoError;
@@ -2142,35 +2155,67 @@ bool DatabaseOperations::saveCategories(QList<QLandmarkCategory> * categories,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    QList<QLandmarkCategoryId> addedIds;
-    QList<QLandmarkCategoryId> changedIds;
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    if (errorMap)
+        errorMap->clear();
+
+
+    QSqlDatabase db = QSqlDatabase::database(connectionName);
+    if (!db.transaction()) {
+        *error = QLandmarkManager::UnknownError;
+        *errorString = QString("Save Categories: unable to begin transaction, reason: %1").arg(db.lastError().text());
+
+        if (errorMap) {
+            for (int i=0; i < categories->size(); ++i)
+                errorMap->insert(i, *error);
+        }
+        return false;
+    }
+
     bool noErrors = true;
     QLandmarkManager::Error lastError = QLandmarkManager::NoError;
     QString lastErrorString;
     QLandmarkManager::Error loopError;
     QString loopErrorString;
+    bool result;
     for (int i = 0; i < categories->size(); ++i) {
         loopError = QLandmarkManager::NoError;
         loopErrorString = "";
-        bool added = false;
-        bool changed = false;
 
-        bool result = saveCategory(&(categories->operator [](i)), &loopError, &loopErrorString);
-
-        if (errorMap)
-            errorMap->insert(i, loopError);
+        if (queryRun && queryRun->isCanceled) {
+            lastError = QLandmarkManager::CancelError;
+            lastErrorString = "Category save was canceled";
+            if (errorMap) {
+                for (i; i < categories->size(); ++i)
+                    errorMap->insert(i, lastError);
+            }
+            noErrors = false;
+            break;
+        }
+        QSqlQuery query(db);
+        if (!query.exec("SAVEPOINT save")) {
+            loopError = QLandmarkManager::UnknownError;
+            loopErrorString = QString("Save categories: could not execute statement: %1\nReason:%2").arg(query.lastQuery()).arg(query.lastError().text());
+            result = false;
+        } else {
+           result = saveCategoryHelper(&(categories->operator [](i)), &loopError, &loopErrorString);
+        }
 
         if (!result) {
             noErrors = false;
             lastError = loopError;
             lastErrorString = loopErrorString;
-        }
 
-        if (added)
-            addedIds << categories->at(i).categoryId();
-        if (changed)
-            changedIds << categories->at(i).categoryId();
+            if (errorMap)
+                errorMap->insert(i, loopError);
+            query.exec("ROLLBACK TO SAVEPOINT save");
+        } else {
+            query.exec("RELEASE SAVEPOINT save");
+        }
     }
+
+    db.commit();
 
     if (noErrors) {
         if (error)
@@ -2183,14 +2228,6 @@ bool DatabaseOperations::saveCategories(QList<QLandmarkCategory> * categories,
         if (errorString)
             *errorString = lastErrorString;
     }
-
-    //TODO: Notifications
-    //if (addedIds.size() != 0)
-    //    emit landmarksAdded(addedIds);
-
-    //TODO: Notifications
-    //if (changedIds.size() != 0)
-    //    emit landmarksChanged(changedIds);
 
     return noErrors;
 }
@@ -2259,6 +2296,11 @@ bool DatabaseOperations::removeCategories(const QList<QLandmarkCategoryId> &cate
                     QLandmarkManager::Error *error,
                     QString *errorString)
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    if (errorMap)
+        errorMap->clear();
+
     QList<QLandmarkCategoryId> removedIds;
 
     bool noErrors = true;

@@ -39,45 +39,73 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOINSTRUCTION_P_H
-#define QGEOINSTRUCTION_P_H
+#ifndef QGEOMANEUVER_H
+#define QGEOMANEUVER_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qmobilityglobal.h"
 
-#include "qgeoinstruction.h"
-#include "qgeocoordinate.h"
+#include <QExplicitlySharedDataPointer>
 
-#include <QSharedData>
-#include <QString>
+class QString;
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoInstructionPrivate : public QSharedData
+class QGeoCoordinate;
+class QGeoManeuverPrivate;
+
+class Q_LOCATION_EXPORT QGeoManeuver
 {
+
 public:
-    QGeoInstructionPrivate();
-    QGeoInstructionPrivate(const QGeoInstructionPrivate &other);
-    ~QGeoInstructionPrivate();
+    enum InstructionDirection {
+        NoDirection,
+        DirectionForward,
+        DirectionBearRight,
+        DirectionLightRight,
+        DirectionRight,
+        DirectionHardRight,
+        DirectionUTurnRight,
+        DirectionUTurnLeft,
+        DirectionHardLeft,
+        DirectionLeft,
+        DirectionLightLeft,
+        DirectionBearLeft
+    };
 
-    bool operator== (const QGeoInstructionPrivate &other) const;
+    QGeoManeuver();
+    QGeoManeuver(const QGeoManeuver &other);
+    ~QGeoManeuver();
 
-    QString id;
-    QGeoCoordinate position;
-    QString text;
-    QGeoInstruction::InstructionDirection direction;
-    int timeToNextInstruction;
-    qreal distanceToNextInstruction;
+    QGeoManeuver& operator= (const QGeoManeuver &other);
+
+    bool operator== (const QGeoManeuver &other) const;
+    bool operator!= (const QGeoManeuver &other) const;
+
+//    bool isValid() const;
+
+    void setPosition(const QGeoCoordinate &position);
+    QGeoCoordinate position() const;
+
+    void setInstructionText(const QString &instructionText);
+    QString instructionText() const;
+
+    void setDirection(InstructionDirection direction);
+    InstructionDirection direction() const;
+
+    void setTimeToNextInstruction(int secs);
+    int timeToNextInstruction() const;
+
+    void setDistanceToNextInstruction(qreal distance);
+    qreal distanceToNextInstruction() const;
+
+private:
+    QExplicitlySharedDataPointer<QGeoManeuverPrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

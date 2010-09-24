@@ -39,56 +39,43 @@
 **
 ****************************************************************************/
 
-#include "qgeotiledmapcontainerobjectinfo_p.h"
+#ifndef QGEOTILEDMAPGROUPOBJECT_INFO_P_H
+#define QGEOTILEDMAPGROUPOBJECT_INFO_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #include "qgeotiledmapobjectinfo_p.h"
-#include "qgeotiledmapdata.h"
-#include "qgeotiledmapdata_p.h"
 
-#include "qgeomapobject.h"
-#include "qgeomapgroupobject.h"
-
-#include <QGraphicsItem>
-#include <QGraphicsPathItem>
+class QGraphicsPathItem;
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapContainerObjectInfo::QGeoTiledMapContainerObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject)
+class QGeoMapGroupObject;
+
+class QGeoTiledMapGroupObjectInfo : public QGeoTiledMapObjectInfo
 {
-    group = static_cast<QGeoMapGroupObject*>(mapObject);
+    Q_OBJECT
+public:
+    QGeoTiledMapGroupObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
+    ~QGeoTiledMapGroupObjectInfo();
 
-    connect(group,
-            SIGNAL(visibleChanged(bool)),
-            this,
-            SLOT(visibleChanged(bool)));
-    connect(group,
-            SIGNAL(selectedChanged(bool)),
-            this,
-            SLOT(selectedChanged(bool)));
+    QGeoMapGroupObject *group;
+    QGraphicsPathItem *pathItem;
 
-    pathItem = new QGraphicsPathItem();
-    graphicsItem = pathItem;
-    pathItem->setPos(0.0, 0.0);
-    updateItem();
-}
-
-QGeoTiledMapContainerObjectInfo::~QGeoTiledMapContainerObjectInfo() {}
-
-void QGeoTiledMapContainerObjectInfo::visibleChanged(bool visible)
-{
-    QList<QGeoMapObject*> objects = group->childObjects();
-    for (int i = 0; i < objects.size(); ++i)
-        objects[i]->setVisible(visible);
-}
-
-void QGeoTiledMapContainerObjectInfo::selectedChanged(bool selected)
-{
-    QList<QGeoMapObject*> objects = group->childObjects();
-    for (int i = 0; i < objects.size(); ++i)
-        objects[i]->setSelected(selected);
-}
-
-#include "moc_qgeotiledmapcontainerobjectinfo_p.cpp"
+public slots:
+    void visibleChanged(bool visible);
+    void selectedChanged(bool selected);
+};
 
 QTM_END_NAMESPACE
+
+#endif //QGEOTILEDMAPGROUPOBJECT_INFO_P_H
