@@ -294,7 +294,6 @@ const QString CKoreanKeyMap::ExtractJamos(QChar aChar) const
 	QChar jung = KJungBase + jungValue;
 	QChar cho  = KChoBase + choValue;
 
-	//QString result = cho + jung + jong; // won't compile
 	QString result = cho;
 	result += jung;
 	// If jong is zero, it is missing. Such hangul has just cho and jung.

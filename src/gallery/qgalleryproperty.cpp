@@ -134,6 +134,66 @@ QGalleryMetaDataFilter QGalleryProperty::operator >(const QVariant &value) const
 }
 
 /*!
+    Returns a gallery filter which tests if a property value contains contains
+    a \a string literal.
+*/
+
+QGalleryMetaDataFilter QGalleryProperty::contains(const QString &string) const
+{
+    return QGalleryMetaDataFilter(name(), string, QGalleryFilter::Contains);
+}
+
+/*!
+    Returns a gallery filter which tests if a property value starts with a
+    \a string literal.
+*/
+
+QGalleryMetaDataFilter QGalleryProperty::startsWith(const QString &string) const
+{
+    return QGalleryMetaDataFilter(name(), string, QGalleryFilter::StartsWith);
+}
+
+/*!
+    Returns a gallery filter which tests if a property value ends with a
+    \a string literal.
+*/
+
+QGalleryMetaDataFilter QGalleryProperty::endsWith(const QString &string) const
+{
+    return QGalleryMetaDataFilter(name(), string, QGalleryFilter::EndsWith);
+}
+
+/*!
+    Returns a gallery filter which tests if a property value matches a
+    \a string literal using wildcard matching.
+*/
+
+QGalleryMetaDataFilter QGalleryProperty::wildcard(const QString &string) const
+{
+    return QGalleryMetaDataFilter(name(), string, QGalleryFilter::Wildcard);
+}
+
+/*!
+    Returns a gallery filter which tests if a property value matches a
+    \a regExp.
+*/
+
+QGalleryMetaDataFilter QGalleryProperty::regExp(const QString &regExp) const
+{
+    return QGalleryMetaDataFilter(name(), regExp, QGalleryFilter::RegExp);
+}
+
+/*!
+    Returns a gallery filter which tests if a property value matches a
+    \a regExp.
+*/
+
+QGalleryMetaDataFilter QGalleryProperty::regExp(const QRegExp &regExp) const
+{
+    return QGalleryMetaDataFilter(name(), regExp, QGalleryFilter::RegExp);
+}
+
+/*!
     Returns a sort key which indicating items should be sorted a property in
     ascending order.
 */
