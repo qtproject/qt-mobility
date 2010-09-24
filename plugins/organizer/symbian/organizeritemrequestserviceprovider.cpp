@@ -112,6 +112,9 @@ TBool COrganizerItemRequestsServiceProvider::StartRequest(
                 break;
             case QOrganizerItemAbstractRequest::ItemFetchRequest:
                 {
+                iItemIds.clear();
+                iNoOfItems = 0;
+                    
                 QOrganizerItemFilter filter = 
                         ((QOrganizerItemFetchRequest*)iReq)->filter();
                 if (QOrganizerItemFilter::LocalIdFilter == filter.type())
@@ -244,6 +247,38 @@ void COrganizerItemRequestsServiceProvider::RunL()
             SaveCollectionL();
             }
             break;
+#else
+        case QOrganizerItemAbstractRequest::CollectionFetchRequest : 
+            {
+            QOrganizerItemManagerEngine::updateCollectionFetchRequest(
+                (QOrganizerCollectionFetchRequest*)(iReq), QList<QOrganizerCollection>(), 
+                QOrganizerItemManager::NotSupportedError, QOrganizerItemAbstractRequest::FinishedState);
+            }
+            break;
+        case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest:
+            {
+                QOrganizerItemManagerEngine::updateCollectionLocalIdFetchRequest( 
+                    (QOrganizerCollectionLocalIdFetchRequest*)(iReq), QList<QOrganizerCollectionLocalId>(), 
+                    QOrganizerItemManager::NotSupportedError, QOrganizerItemAbstractRequest::FinishedState);
+            }
+            break;
+        case QOrganizerItemAbstractRequest::CollectionRemoveRequest :
+            {
+                QMap<int, QOrganizerItemManager::Error> errorMap;
+                QOrganizerItemManagerEngine::updateCollectionRemoveRequest(
+                    (QOrganizerCollectionRemoveRequest*)(iReq), QOrganizerItemManager::NotSupportedError, 
+                    errorMap, QOrganizerItemAbstractRequest::FinishedState);
+            }
+            break;
+        case QOrganizerItemAbstractRequest::CollectionSaveRequest :
+            {
+                QMap<int, QOrganizerItemManager::Error> errorMap;
+                QOrganizerItemManagerEngine::updateCollectionSaveRequest(
+                    (QOrganizerCollectionSaveRequest*)(iReq), QList<QOrganizerCollection>(),
+                    QOrganizerItemManager::NotSupportedError, errorMap, 
+                    QOrganizerItemAbstractRequest::FinishedState);
+            }
+            break;            
 #endif
         default:
             {
@@ -265,7 +300,6 @@ void COrganizerItemRequestsServiceProvider::FetchInstanceL()
     QOrganizerItemManagerEngine::updateItemInstanceFetchRequest(
         (QOrganizerItemInstanceFetchRequest*)(iReq), iItemList, 
         iError, QOrganizerItemAbstractRequest::FinishedState);
-    iOrganizerItemManagerEngine.requestQueue()->exitLoop();
     }
 
 // Delete item
@@ -292,7 +326,6 @@ void COrganizerItemRequestsServiceProvider::RemoveItemL()
                 (QOrganizerItemRemoveRequest*)(iReq), 
                 iError, iErrorMap, 
                 QOrganizerItemAbstractRequest::FinishedState);
-        iOrganizerItemManagerEngine.requestQueue()->exitLoop();
         }
     }
 
@@ -333,7 +366,6 @@ void COrganizerItemRequestsServiceProvider::SaveItemL()
                 (QOrganizerItemSaveRequest*)(iReq), 
                 iSuccessfullItems, iError, iErrorMap, 
                 QOrganizerItemAbstractRequest::FinishedState);
-        iOrganizerItemManagerEngine.requestQueue()->exitLoop();
         }    
     }
 
@@ -389,7 +421,6 @@ void COrganizerItemRequestsServiceProvider::FetchItemIdsL()
     QOrganizerItemManagerEngine::updateItemLocalIdFetchRequest(
             (QOrganizerItemLocalIdFetchRequest*)iReq, 
             iItemIds, iError, QOrganizerItemAbstractRequest::FinishedState);
-    iOrganizerItemManagerEngine.requestQueue()->exitLoop();
     }
 
 // Fetch Entries by local Ids
@@ -416,7 +447,6 @@ void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIdsL()
         QOrganizerItemManagerEngine::updateItemFetchRequest(
                 (QOrganizerItemFetchRequest*)(iReq), iItemList, iError, 
                 QOrganizerItemAbstractRequest::FinishedState);
-        iOrganizerItemManagerEngine.requestQueue()->exitLoop();
         }    
     }
 
@@ -448,7 +478,6 @@ void COrganizerItemRequestsServiceProvider::FetchItemsandFilterL(
             QOrganizerItemManagerEngine::updateItemFetchRequest(
                     (QOrganizerItemFetchRequest*)(iReq), items, iError, 
                     QOrganizerItemAbstractRequest::FinishedState);
-            iOrganizerItemManagerEngine.requestQueue()->exitLoop();
             }    
     }
 
@@ -489,7 +518,6 @@ void COrganizerItemRequestsServiceProvider::FetchDetailDefinitionL()
             (QOrganizerItemDetailDefinitionFetchRequest*)(iReq), 
             detailDefinitionMap, iError, iErrorMap, 
             QOrganizerItemAbstractRequest::FinishedState);
-    iOrganizerItemManagerEngine.requestQueue()->exitLoop();
     }
 
 // Remove detail definition
@@ -520,7 +548,6 @@ void COrganizerItemRequestsServiceProvider::RemoveDetailDefinitionL()
     QOrganizerItemManagerEngine::updateDefinitionRemoveRequest(
             (QOrganizerItemDetailDefinitionRemoveRequest*)(iReq), 
             iError, iErrorMap, QOrganizerItemAbstractRequest::FinishedState);
-    iOrganizerItemManagerEngine.requestQueue()->exitLoop();
     }
 
 // Save detail definition
@@ -556,7 +583,6 @@ void COrganizerItemRequestsServiceProvider::SaveDetailDefinitionL()
             (QOrganizerItemDetailDefinitionSaveRequest*)(iReq), 
             detailDefinitions, iError, iErrorMap, 
             QOrganizerItemAbstractRequest::FinishedState);
-    iOrganizerItemManagerEngine.requestQueue()->exitLoop();
     }
 
 #ifdef SYMBIAN_CALENDAR_V2
@@ -567,7 +593,6 @@ void COrganizerItemRequestsServiceProvider::CollectionIds()
     QOrganizerItemManagerEngine::updateCollectionLocalIdFetchRequest( 
         (QOrganizerCollectionLocalIdFetchRequest*)(iReq), iOrganizerItemManagerEngine.collectionIds(), 
         QOrganizerItemManager::NoError, QOrganizerItemAbstractRequest::FinishedState);
-    iOrganizerItemManagerEngine.requestQueue()->exitLoop();
     }
 
 // Fetch collection
@@ -596,7 +621,6 @@ void COrganizerItemRequestsServiceProvider::CollectionL()
         QOrganizerItemManagerEngine::updateCollectionFetchRequest(
             (QOrganizerCollectionFetchRequest*)(iReq), iSuccessfullCollections, 
             iError, QOrganizerItemAbstractRequest::FinishedState);
-        iOrganizerItemManagerEngine.requestQueue()->exitLoop();
         }    
     }
 
@@ -626,7 +650,6 @@ void COrganizerItemRequestsServiceProvider::SaveCollectionL()
             (QOrganizerCollectionSaveRequest*)(iReq), 
             iSuccessfullCollections, iError, iErrorMap, 
             QOrganizerItemAbstractRequest::FinishedState);
-        iOrganizerItemManagerEngine.requestQueue()->exitLoop();
         }    
     }
 
@@ -655,7 +678,6 @@ void COrganizerItemRequestsServiceProvider::RemoveCollectionL()
         QOrganizerItemManagerEngine::updateCollectionRemoveRequest(
             (QOrganizerCollectionRemoveRequest*)(iReq), iError, 
             iErrorMap, QOrganizerItemAbstractRequest::FinishedState);
-        iOrganizerItemManagerEngine.requestQueue()->exitLoop();
         }    
     }
 #endif

@@ -47,7 +47,7 @@
 
 QTM_USE_NAMESPACE
 
-class QDeclarativeOrganizerItemFetchHint
+class QDeclarativeOrganizerItemFetchHint : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(OptimizationHints optimizationHints READ optimizationHints WRITE setOptimizationHints NOTIFY valueChanged)

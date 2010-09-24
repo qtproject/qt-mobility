@@ -548,10 +548,8 @@ void QOrganizerItemSymbianEngine::itemIdsL(
     // Get item ids
     QList<QOrganizerItemLocalId> itemIds = getIdsModifiedSinceDateL(filter);
 
-    QOrganizerItemFilter::FilterType filterType = filter.type();
     // No filtering and sorting needed?
-    if (filterType == QOrganizerItemFilter::InvalidFilter || 
-        filterType == QOrganizerItemFilter::DefaultFilter && 
+    if (filter.type() == QOrganizerItemFilter::DefaultFilter &&
         sortOrders.count() == 0) {
         itemLocalids.append(itemIds);
         return;
@@ -630,10 +628,8 @@ void QOrganizerItemSymbianEngine::itemsL(QList<QOrganizerItem>& itemsList,
     foreach (QOrganizerItemLocalId id, itemIds)
         items << itemL(id, fetchHint);
     
-    QOrganizerItemFilter::FilterType filterType = filter.type();
     // No filtering and sorting needed?
-    if (filter.type() == QOrganizerItemFilter::InvalidFilter || 
-        filter.type() == QOrganizerItemFilter::DefaultFilter && 
+    if (filter.type() == QOrganizerItemFilter::DefaultFilter &&
         sortOrders.count() == 0) {
         itemsList.append(items);
         return;
@@ -1130,21 +1126,18 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(
 {
     QList<QOrganizerItem> filteredAndSorted;
 
-    // TODO: should we return the complete list in case of invalid filter?
-    if (filter == QOrganizerItemInvalidFilter() && sortOrders.count() == 0)
-        return items;
-
-    if (filter != QOrganizerItemInvalidFilter()) {
+    if (filter.type() == QOrganizerItemFilter::DefaultFilter) {
+        // Only sort items.
+        foreach(const QOrganizerItem& item, items) {
+            QOrganizerItemManagerEngine::addSorted(&filteredAndSorted, item, sortOrders);
+        }
+    } else if (filter.type() != QOrganizerItemFilter::InvalidFilter) {
         foreach(const QOrganizerItem& item, items) {
             if (QOrganizerItemManagerEngine::testFilter(filter, item))
                 QOrganizerItemManagerEngine::addSorted(&filteredAndSorted, item, sortOrders);
-        }     
-    } else {
-	    // Only sort items.
-        foreach(const QOrganizerItem& item, items) {
-            QOrganizerItemManagerEngine::addSorted(&filteredAndSorted, item, sortOrders); 
         }
     }
+
     return filteredAndSorted;
 }
 

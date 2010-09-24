@@ -41,7 +41,7 @@
 #ifndef QDECLARATIVEORGANIZERITEM_H
 #define QDECLARATIVEORGANIZERITEM_H
 
-#include <qdeclarative.h>
+#include "qdeclarative.h"
 #include <QDeclarativeExtensionPlugin>
 #include <QDeclarativeListProperty>
 
