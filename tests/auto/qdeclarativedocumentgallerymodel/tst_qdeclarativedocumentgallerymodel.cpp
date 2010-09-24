@@ -307,6 +307,10 @@ private Q_SLOTS:
     void property();
     void setProperty_data() { setData_data(); }
     void setProperty();
+    void get_data() { data_data(); }
+    void get();
+    void set_data() { setData_data(); }
+    void set();
     void itemsInserted();
     void itemsRemoved();
     void itemsMoved();
@@ -2403,6 +2407,142 @@ void tst_QDeclarativeDocumentGalleryModel::setProperty()
     QCOMPARE(QT_GALLERY_MODEL_CALL_PROPERTY(index, "turtle"), true);
     QCOMPARE(value, QVariant());
     QCOMPARE(spy.count(), isValid ? 1 : 0);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::get()
+{
+    QFETCH(int, index);
+    QFETCH(QVariant, itemId);
+    QFETCH(QVariant, itemType);
+    QFETCH(QVariant, fileName);
+    QFETCH(QVariant, title);
+
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryModel {\n"
+                "properties: [ \"fileName\", \"title\", \"turtle\" ]\n"
+            "}\n");
+
+    populateGallery();
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QCOMPARE(object->property("count"), QVariant(2));
+
+    QScriptEngine scriptEngine;
+    QScriptValue values;
+    QVERIFY(QMetaObject::invokeMethod(
+            object.data(),
+            "get",
+            Q_RETURN_ARG(QScriptValue, values),
+            Q_ARG(QScriptValue, QScriptValue(&scriptEngine, index))));
+
+    QCOMPARE(values.property(QLatin1String("itemId")).toVariant(), itemId);
+    QCOMPARE(values.property(QLatin1String("itemType")).toInt32(), itemType.toInt());
+    QCOMPARE(values.property(QLatin1String("fileName")).toVariant(), fileName);
+    QCOMPARE(values.property(QLatin1String("title")).toVariant(), title);
+    QCOMPARE(values.property(QLatin1String("turtle")).toVariant(), QVariant());
+}
+
+#define QT_GALLERY_MODEL_CALL_SET(index) \
+    QMetaObject::invokeMethod( \
+            object.data(), \
+            "setProperty", \
+            Q_ARG(int, index), \
+            Q_ARG(QString, QLatin1String(property)), \
+            Q_ARG(QVariant, QVariant(value)))
+
+void tst_QDeclarativeDocumentGalleryModel::set()
+{
+    QFETCH(int, index);
+    QFETCH(bool, isValid);
+    QFETCH(QVariant, itemId);
+    QFETCH(QVariant, newItemId);
+    QFETCH(QVariant, itemType);
+    QFETCH(QVariant, newItemType);
+    QFETCH(QVariant, fileName);
+    QFETCH(QVariant, newFileName);
+    QFETCH(QVariant, title);
+    QFETCH(QVariant, newTitle);
+
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryModel {\n"
+                "properties: [ \"fileName\", \"title\", \"turtle\" ]\n"
+            "}\n");
+
+    populateGallery();
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(dataChanged(QModelIndex,QModelIndex)));
+
+    QCOMPARE(object->property("count"), QVariant(2));
+
+    QScriptEngine scriptEngine;
+    QScriptValue values = scriptEngine.newObject();
+
+    values.setProperty(QLatin1String("itemId"), qScriptValueFromValue(&scriptEngine, newItemId));
+    values.setProperty(QLatin1String("itemUrl"), qScriptValueFromValue(&scriptEngine, newItemType));
+    values.setProperty(QLatin1String("fileName"), qScriptValueFromValue(&scriptEngine, newFileName));
+    values.setProperty(QLatin1String("title"), qScriptValueFromValue(&scriptEngine, newTitle));
+    values.setProperty(
+            QLatin1String("turtle"), QScriptValue(&scriptEngine, QLatin1String("It's a turtle")));
+
+    QVERIFY(QMetaObject::invokeMethod(
+            object.data(), "set", Q_ARG(int, index), Q_ARG(QScriptValue, values)));
+
+    QVERIFY(QMetaObject::invokeMethod(
+            object.data(),
+            "get",
+            Q_RETURN_ARG(QScriptValue, values),
+            Q_ARG(QScriptValue, QScriptValue(&scriptEngine, index))));
+
+    QCOMPARE(values.property(QLatin1String("itemId")).toVariant(), itemId);
+    QCOMPARE(values.property(QLatin1String("itemType")).toInt32(), itemType.toInt());
+    QCOMPARE(values.property(QLatin1String("fileName")).toVariant(), fileName);
+    QCOMPARE(values.property(QLatin1String("title")).toVariant(), isValid ? newTitle : title);
+    QCOMPARE(values.property(QLatin1String("turtle")).toVariant(), QVariant());
+
+    QCOMPARE(spy.count(), isValid ? 1 : 0);
+
+    values.setProperty(QLatin1String("itemId"), qScriptValueFromValue(&scriptEngine, itemId));
+    values.setProperty(QLatin1String("itemUrl"), qScriptValueFromValue(&scriptEngine, itemType));
+    values.setProperty(QLatin1String("fileName"), qScriptValueFromValue(&scriptEngine, fileName));
+    values.setProperty(QLatin1String("title"), qScriptValueFromValue(&scriptEngine, title));
+    values.setProperty(
+            QLatin1String("turtle"), QScriptValue(&scriptEngine, QLatin1String("It's a turtle")));
+
+    QVERIFY(QMetaObject::invokeMethod(
+            object.data(), "set", Q_ARG(int, index), Q_ARG(QScriptValue, values)));
+
+    QVERIFY(QMetaObject::invokeMethod(
+            object.data(),
+            "get",
+            Q_RETURN_ARG(QScriptValue, values),
+            Q_ARG(QScriptValue, QScriptValue(&scriptEngine, index))));
+
+    QCOMPARE(values.property(QLatin1String("itemId")).toVariant(), itemId);
+    QCOMPARE(values.property(QLatin1String("itemType")).toInt32(), itemType.toInt());
+    QCOMPARE(values.property(QLatin1String("fileName")).toVariant(), fileName);
+    QCOMPARE(values.property(QLatin1String("title")).toVariant(), title);
+    QCOMPARE(values.property(QLatin1String("turtle")).toVariant(), QVariant());
+
+    QCOMPARE(spy.count(), isValid ? 2 : 0);
 }
 
 void tst_QDeclarativeDocumentGalleryModel::itemsInserted()
