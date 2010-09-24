@@ -405,6 +405,8 @@ QList<int> QXARecordSession::supportedSampleRates(
     RETURN_s_IF_m_impl_IS_NULL(srList);
 
     QString selectedCodec = settings.codec();
+    if (selectedCodec.isNull() || selectedCodec.isEmpty())
+        selectedCodec = QString("pcm");
 
     if (m_codecs.indexOf(selectedCodec) >= 0) {
         RArray<TInt32> sampleRates;
