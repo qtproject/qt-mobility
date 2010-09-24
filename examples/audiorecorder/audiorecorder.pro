@@ -25,5 +25,5 @@ maemo*: {
     FORMS += audiorecorder.ui
 }
 symbian: {
-    TARGET.CAPABILITY = ALL -TCB 
+    TARGET.CAPABILITY = UserEnvironment ReadDeviceData WriteDeviceData AllFiles
 }
