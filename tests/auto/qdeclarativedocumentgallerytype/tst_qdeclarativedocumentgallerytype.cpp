@@ -112,7 +112,18 @@ public:
         }
     }
 
-    void setCount(int count) { m_count = count; }
+    void setCount(int count)
+    {
+        qSwap(m_count, count);
+
+        if (m_count == 0) {
+            m_currentIndex = -1;
+
+            emit itemsRemoved(0, count);
+        } else if (count == 0) {
+            emit itemsInserted(0, count);
+        }
+    }
 
     using QGalleryResultSet::finish;
     using QGalleryResultSet::resume;
@@ -204,6 +215,7 @@ private Q_SLOTS:
     void error();
     void progress_data();
     void progress();
+    void available();
 
 private:
     QtTestGallery gallery;
@@ -693,6 +705,33 @@ void tst_QDeclarativeDocumentGalleryType::progress()
     gallery.response()->progressChanged(currentProgress, maximumProgress);
     QCOMPARE(object->property("progress"), QVariant(normalizedProgress));
     QCOMPARE(spy.count(), 1);
+}
+
+void tst_QDeclarativeDocumentGalleryType::available()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryType { itemType: DocumentGallery.File }\n");
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+    QCOMPARE(object->property("available"), QVariant(false));
+
+    QSignalSpy spy(object.data(), SIGNAL(availableChanged()));
+
+    gallery.response()->setCount(1);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(object->property("available"), QVariant(true));
+
+    gallery.response()->setCount(0);
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(object->property("available"), QVariant(false));
 }
 
 QTEST_MAIN(tst_QDeclarativeDocumentGalleryType)

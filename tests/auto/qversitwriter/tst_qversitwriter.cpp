@@ -289,7 +289,6 @@ void tst_QVersitWriter::testWritingDocument()
     QByteArray result(mOutputDevice->readAll());
 
     if (result!=expected) qDebug() << result << expected;
-    QEXPECT_FAIL("basic iCalendar 2.0", "An extra VERSION property is inserted", Continue);
     QCOMPARE(result, expected);
 }
 
@@ -331,15 +330,21 @@ void tst_QVersitWriter::testWritingDocument_data()
     
     {
         QVersitDocument document(QVersitDocument::ICalendar20Type);
-        document.setComponentType(QLatin1String("VEVENT"));
+        document.setComponentType(QLatin1String("VCALENDAR"));
+        QVersitDocument subdocument(QVersitDocument::ICalendar20Type);
+        subdocument.setComponentType(QLatin1String("VEVENT"));
         property.setValueType(QVersitProperty::PreformattedType);
         property.setName(QLatin1String("RRULE"));
         property.setValue(QLatin1String("FREQ=MONTHLY;BYMONTHDAY=1,3"));
-        document.addProperty(property);
+        subdocument.addProperty(property);
+        document.addSubDocument(subdocument);
         QTest::newRow("basic iCalendar 2.0") << document << QByteArray(
+                "BEGIN:VCALENDAR\r\n"
+                "VERSION:2.0\r\n"
                 "BEGIN:VEVENT\r\n"
                 "RRULE:FREQ=MONTHLY;BYMONTHDAY=1,3\r\n"
-                "END:VEVENT\r\n");
+                "END:VEVENT\r\n"
+                "END:VCALENDAR\r\n");
     }
 
     {

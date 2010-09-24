@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "organizeritemtransform.h"
+#include "qorganizersymbian_p.h"
 
 #include <QDebug>
 #include <calentry.h>
@@ -183,16 +184,11 @@ void OrganizerItemTransform::toItemPostSaveL(const CCalEntry &entry, QOrganizerI
     foreach (OrganizerItemDetailTransform *i, m_detailTransforms) {
         i->transformToDetailPostSaveL(entry, item);
     }
-
-    // Update local id
-    QOrganizerItemId itemId;
-    TCalLocalUid localUid = entry.LocalUidL();
-    itemId.setLocalId(localUid);
-    itemId.setManagerUri(managerUri);
-    item->setId(itemId);
 }
 
-void OrganizerItemTransform::toItemInstanceL(const CCalInstance &instance, QOrganizerItem *itemInstance) const
+void OrganizerItemTransform::toItemInstanceL(
+    const CCalInstance &instance,
+    QOrganizerItem *itemInstance) const
 {
     //debugInstanceL(instance);
 

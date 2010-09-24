@@ -78,6 +78,7 @@ public:
     void progressChanged(uint value, uint total);
 
 public slots:
+    void finishedSlot(bool successful = true);
     void messagesFoundSlot();
     void messagesCountedSlot();
     void messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted);

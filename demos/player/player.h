@@ -53,6 +53,7 @@ class QAbstractItemView;
 class QLabel;
 class QModelIndex;
 class QSlider;
+class QPushButton;
 
 class QMediaPlayer;
 class QVideoWidget;
@@ -86,6 +87,7 @@ private slots:
 
     void statusChanged(QMediaPlayer::MediaStatus status);
     void bufferingProgress(int progress);
+    void videoAvailableChanged(bool available);
 
     void displayErrorMessage();
 
@@ -104,6 +106,10 @@ private:
     QVideoWidget *videoWidget;
     QLabel *coverLabel;
     QSlider *slider;
+    QPushButton *fullScreenButton;
+#ifndef PLAYER_NO_COLOROPTIONS
+    QPushButton *colorButton;
+#endif
     PlaylistModel *playlistModel;
     QAbstractItemView *playlistView;
     QString trackInfo;
