@@ -38,29 +38,38 @@
 **
 ****************************************************************************/
 
-#ifndef QMLORGANIZERMODEL_H
-#define QMLORGANIZERMODEL_H
+#ifndef QDECLARATIVEORGANIZERMODEL_H
+#define QDECLARATIVEORGANIZERMODEL_H
 
-#include <QList>
-#include <QMap>
-#include <QDate>
 #include <QAbstractListModel>
 #include <QDeclarativeListProperty>
-#include <QtDeclarative>
-#include <qorganizeritemfilters.h>
-
 #include "qorganizeritem.h"
-#include "qorganizeritemmanager.h"
-#include "qorganizeriteminstancefetchrequest.h"
+#include "qdeclarativeorganizeritem_p.h"
+#include "qversitreader.h"
+#include "qversitwriter.h"
+
+#include "qdeclarativeorganizeritemfetchhint_p.h"
+#include "qdeclarativeorganizeritemsortorder_p.h"
+#include "qdeclarativeorganizeritemfilter_p.h"
 
 QTM_USE_NAMESPACE;
-class QMLOrganizerItem;
-class QMLOrganizerModel : public QAbstractListModel
+class QDeclarativeOrganizerModelPrivate;
+class QDeclarativeOrganizerModel : public QAbstractListModel
 {
-Q_OBJECT
-Q_PROPERTY(QString manager READ manager)
-Q_PROPERTY(QDateTime startPeriod READ startPeriod)
-Q_PROPERTY(QDateTime endPeriod READ endPeriod)
+    Q_OBJECT
+    Q_PROPERTY(QString manager READ manager)
+    Q_PROPERTY(QDateTime startPeriod READ startPeriod)
+    Q_PROPERTY(QDateTime endPeriod READ endPeriod)
+    Q_PROPERTY(QDeclarativeOrganizerItemFilter* filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(QDeclarativeOrganizerItemFetchHint* fetchHint READ fetchHint WRITE setFetchHint NOTIFY fetchHintChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> sortOrders READ sortOrders NOTIFY sortOrdersChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> items READ items NOTIFY itemsChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> events READ events NOTIFY itemsChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> eventOccurrences READ eventOccurrences NOTIFY itemsChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> todos READ todos NOTIFY itemsChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> todoOccurrences READ todoOccurrences NOTIFY itemsChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> journals READ journals NOTIFY itemsChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> notes READ notes NOTIFY itemsChanged)
 
 public:
     enum {
@@ -68,8 +77,8 @@ public:
         OrganizerItemRole
 
     };
-    explicit QMLOrganizerModel(QObject *parent = 0);
-    explicit QMLOrganizerModel(QOrganizerItemManager* manager, const QDateTime& start, const QDateTime& end, QObject *parent = 0);
+    explicit QDeclarativeOrganizerModel(QObject *parent = 0);
+    explicit QDeclarativeOrganizerModel(QOrganizerItemManager* manager, const QDateTime& start, const QDateTime& end, QObject *parent = 0);
 
     QString manager();
     void setManager(QOrganizerItemManager* manager);
@@ -83,18 +92,51 @@ public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
 
+    QDeclarativeOrganizerItemFilter* filter() const;
+    void setFilter(QDeclarativeOrganizerItemFilter* filter);
+
+    QDeclarativeOrganizerItemFetchHint* fetchHint() const;
+    void setFetchHint(QDeclarativeOrganizerItemFetchHint* fetchHint);
+
+    int rowCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+
+    QDeclarativeListProperty<QDeclarativeOrganizerItem> items() ;
+    QDeclarativeListProperty<QDeclarativeContactSortOrder> sortOrders() ;
+
+    Q_INVOKABLE void removeItem(uint id);
+    Q_INVOKABLE void removeItems(const QList<uint>& ids);
+    Q_INVOKABLE void saveItem(QDeclarativeOrganizerItem* item);
+
+
+signals:
+    void managerChanged();
+    void filterChanged();
+    void fetchHintChanged();
+    void itemsChanged();
+    void vcardChanged();
+    void sortOrdersChanged();
+
+public slots:
+    void exportItems(const QString& file);
+    void importItems(const QString& file);
 private slots:
-    void reloadData();
-    void itemsReceived();
+    void fetchAgain();
+    void contactFetched();
+
+    void saveContact();
+    void contactSaved();
+
+    void removeContact();
+    void contactRemoved();
+
+    void startImport(QVersitReader::State state);
+    void contactsExported(QVersitWriter::State state);
+
+
+
 private:
-    QList<QMLOrganizerItem*> m_items;
-    QOrganizerItemManager* m_manager;
-    QOrganizerItemInstanceFetchRequest m_request;
-    QDateTime m_start;
-    QDateTime m_end;
-    QOrganizerItemDateTimePeriodFilter m_filter;
+    QDeclarativeOrganizerItemModelPrivate* d;
 };
 
-QML_DECLARE_TYPE(QMLOrganizerModel)
-
-#endif // QMLCONTACTMODEL_H
+#endif // QDECLARATIVEORGANIZERMODEL_H

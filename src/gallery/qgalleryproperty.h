@@ -80,6 +80,13 @@ public:
     QGalleryMetaDataFilter operator >=(const QVariant &value) const;
     QGalleryMetaDataFilter operator >(const QVariant &value) const;
 
+    QGalleryMetaDataFilter contains(const QString &string) const;
+    QGalleryMetaDataFilter startsWith(const QString &string) const;
+    QGalleryMetaDataFilter endsWith(const QString &string) const;
+    QGalleryMetaDataFilter wildcard(const QString &string) const;
+    QGalleryMetaDataFilter regExp(const QString &regExp) const;
+    QGalleryMetaDataFilter regExp(const QRegExp &regExp) const;
+
     QString ascending() const;
     QString descending() const;
 

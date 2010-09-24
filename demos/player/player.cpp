@@ -71,6 +71,7 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
             this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
+    connect(player, SIGNAL(videoAvailableChanged(bool)), this, SLOT(videoAvailableChanged(bool)));
     connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
 
 //! [2]
@@ -118,17 +119,12 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(volumeChanged(int)), controls, SLOT(setVolume(int)));
     connect(player, SIGNAL(mutedChanged(bool)), controls, SLOT(setMuted(bool)));
 
-    QPushButton *fullScreenButton = new QPushButton(tr("FullScreen"), this);
+    fullScreenButton = new QPushButton(tr("FullScreen"), this);
     fullScreenButton->setCheckable(true);
 
-
-    connect(fullScreenButton, SIGNAL(clicked(bool)), videoWidget, SLOT(setFullScreen(bool)));
-    connect(videoWidget, SIGNAL(fullScreenChanged(bool)),
-            fullScreenButton, SLOT(setChecked(bool)));
-
-    QPushButton *colorButton = 0;
-#ifndef Q_WS_MAEMO_5
+#ifndef PLAYER_NO_COLOROPTIONS
     colorButton = new QPushButton(tr("Color Options..."), this);
+    colorButton->setEnabled(false);
     connect(colorButton, SIGNAL(clicked()), this, SLOT(showColorDialog()));
 #endif
 
@@ -143,8 +139,9 @@ Player::Player(QWidget *parent)
     controlLayout->addWidget(controls);
     controlLayout->addStretch(1);
     controlLayout->addWidget(fullScreenButton);
-    if (colorButton)
-        controlLayout->addWidget(colorButton);
+#ifndef PLAYER_NO_COLOROPTIONS
+    controlLayout->addWidget(colorButton);
+#endif
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->addLayout(displayLayout);
@@ -161,8 +158,9 @@ Player::Player(QWidget *parent)
         controls->setEnabled(false);
         playlistView->setEnabled(false);
         openButton->setEnabled(false);
-        if (colorButton)
-            colorButton->setEnabled(false);
+#ifndef PLAYER_NO_COLOROPTIONS
+        colorButton->setEnabled(false);
+#endif
         fullScreenButton->setEnabled(false);
     }
 
@@ -310,6 +308,28 @@ void Player::handleCursor(QMediaPlayer::MediaStatus status)
 void Player::bufferingProgress(int progress)
 {
     setStatusInfo(tr("Buffering %4%").arg(progress));
+}
+
+void Player::videoAvailableChanged(bool available)
+{
+    if (!available) {
+        disconnect(fullScreenButton, SIGNAL(clicked(bool)),
+                    videoWidget, SLOT(setFullScreen(bool)));
+        disconnect(videoWidget, SIGNAL(fullScreenChanged(bool)),
+                fullScreenButton, SLOT(setChecked(bool)));
+        videoWidget->setFullScreen(false);
+    } else {
+        connect(fullScreenButton, SIGNAL(clicked(bool)),
+                videoWidget, SLOT(setFullScreen(bool)));
+        connect(videoWidget, SIGNAL(fullScreenChanged(bool)),
+                fullScreenButton, SLOT(setChecked(bool)));
+
+        if (fullScreenButton->isChecked())
+            videoWidget->setFullScreen(true);
+    }
+#ifndef PLAYER_NO_COLOROPTIONS
+    colorButton->setEnabled(available);
+#endif
 }
 
 void Player::setTrackInfo(const QString &info)

@@ -99,8 +99,8 @@ public:
     }
 
     QVariant itemId() const { return isValid() ? QVariant(1) : QVariant(); }
-    QUrl itemUrl() const { return isValid() ? QUrl("http://example.com") : QUrl(); }
-    QString itemType() const { return isValid() ? QLatin1String("WebPage") : QString(); }
+    QUrl itemUrl() const { return isValid() ? QUrl("file:///path/to/song.mp3") : QUrl(); }
+    QString itemType() const { return isValid() ? QLatin1String("Audio") : QString(); }
 
     QVariant metaData(int key) const { return isValid() ? m_metaData.value(key) : QVariant(); }
     bool setMetaData(int key, const QVariant &value)
@@ -114,7 +114,18 @@ public:
         }
     }
 
-    void setCount(int count) { m_count = count; }
+    void setCount(int count)
+    {
+        qSwap(m_count, count);
+
+        if (m_count == 0) {
+            m_currentIndex = -1;
+
+            emit itemsRemoved(0, count);
+        } else if (count == 0) {
+            emit itemsInserted(0, count);
+        }
+    }
 
     using QGalleryResultSet::finish;
     using QGalleryResultSet::resume;
@@ -209,6 +220,9 @@ private Q_SLOTS:
     void error();
     void progress_data();
     void progress();
+    void available();
+    void itemUrl();
+    void itemType();
 
 private:
     QtTestGallery gallery;
@@ -687,6 +701,86 @@ void tst_QDeclarativeDocumentGalleryItem::progress()
     QCOMPARE(spy.count(), 1);
 }
 
+void tst_QDeclarativeDocumentGalleryItem::available()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryItem { item: 12 }\n");
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+    QCOMPARE(object->property("available"), QVariant(false));
+
+    QSignalSpy spy(object.data(), SIGNAL(availableChanged()));
+
+    gallery.response()->setCount(1);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(object->property("available"), QVariant(true));
+
+    gallery.response()->setCount(0);
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(object->property("available"), QVariant(false));
+}
+
+void tst_QDeclarativeDocumentGalleryItem::itemUrl()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryItem { item: 12 }\n");
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+    QCOMPARE(object->property("itemUrl"), QVariant(QUrl()));
+
+    QSignalSpy spy(object.data(), SIGNAL(availableChanged()));
+
+    gallery.response()->setCount(1);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(object->property("itemUrl"), QVariant(QUrl(QLatin1String("file:///path/to/song.mp3"))));
+
+    gallery.response()->setCount(0);
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(object->property("itemUrl"), QVariant(QUrl()));
+}
+
+void tst_QDeclarativeDocumentGalleryItem::itemType()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryItem { item: 12 }\n");
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+    QCOMPARE(object->property("itemType"), QVariant(QDeclarativeDocumentGallery::InvalidType));
+
+    QSignalSpy spy(object.data(), SIGNAL(availableChanged()));
+
+    gallery.response()->setCount(1);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(object->property("itemType"), QVariant(QDeclarativeDocumentGallery::Audio));
+
+    gallery.response()->setCount(0);
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(object->property("itemType"), QVariant(QDeclarativeDocumentGallery::InvalidType));
+}
 
 QTEST_MAIN(tst_QDeclarativeDocumentGalleryItem)
 

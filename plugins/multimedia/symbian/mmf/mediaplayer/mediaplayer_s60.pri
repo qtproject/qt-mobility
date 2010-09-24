@@ -34,7 +34,8 @@ HEADERS += \
     $$PWD/s60audioplayersession.h \
     $$PWD/ms60mediaplayerresolver.h \
     $$PWD/s60videowidget.h \
-    $$PWD/s60mediaplayeraudioendpointselector.h
+    $$PWD/s60mediaplayeraudioendpointselector.h \
+    $$PWD/s60mediastreamcontrol.h
 
 SOURCES += \
     $$PWD/s60mediaplayercontrol.cpp \
@@ -48,7 +49,8 @@ SOURCES += \
     $$PWD/s60mediarecognizer.cpp \
     $$PWD/s60audioplayersession.cpp \
     $$PWD/s60videowidget.cpp \
-    $$PWD/s60mediaplayeraudioendpointselector.cpp
+    $$PWD/s60mediaplayeraudioendpointselector.cpp \
+    $$PWD/s60mediastreamcontrol.cpp
 
 
 contains(surfaces_s60_enabled,yes) {

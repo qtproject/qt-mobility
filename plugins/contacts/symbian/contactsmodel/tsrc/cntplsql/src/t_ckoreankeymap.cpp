@@ -161,6 +161,33 @@ void UT_CKoreanKeyMap::UT_GetMappedString_MixedL()
     EUNIT_ASSERT(result == "131b013a1a33a92ab");
     }
 
+// -----------------------------------------------------------------------------
+// UT_CKoreanKeyMap::UT_IsLanguageSupported_LatinTextL
+// -----------------------------------------------------------------------------
+//
+void UT_CKoreanKeyMap::UT_IsLanguageSupported_LatinTextL()
+    {
+    EUNIT_ASSERT_EQUALS(EFalse, iKeyMap->IsLanguageSupported("abcdef ghijk"));
+    EUNIT_ASSERT_EQUALS(EFalse, iKeyMap->IsLanguageSupported("123"));
+    EUNIT_ASSERT_EQUALS(EFalse, iKeyMap->IsLanguageSupported("-a (h % *"));
+    
+    // Default behaviour is latin
+    EUNIT_ASSERT_EQUALS(EFalse, iKeyMap->IsLanguageSupported(""));
+    }
+
+// -----------------------------------------------------------------------------
+// UT_CKoreanKeyMap::UT_IsLanguageSupported_KoreanTextL
+// -----------------------------------------------------------------------------
+//
+void UT_CKoreanKeyMap::UT_IsLanguageSupported_KoreanTextL()
+    {
+    QChar someKoreanChars[] =
+        {0x1100, 0x3131, 0x1169, 0x314f, 0x11aa, 0x11b6, 0x3147, 0xac00,
+         0xd7af, 0x3162};
+    QString koreanText(someKoreanChars, sizeof(someKoreanChars) / sizeof(QChar));
+    
+    EUNIT_ASSERT_EQUALS(EFalse, iKeyMap->IsLanguageSupported(koreanText));
+    }
 
 //  TEST TABLE
 
@@ -189,6 +216,20 @@ EUNIT_TEST(
     "GetMappedStringL",
     "FUNCTIONALITY",
     SetupL, UT_GetMappedString_MixedL, Teardown )
+
+EUNIT_TEST(
+    "IsLanguageSupported - test latin text",
+    "UT_CKoreanKeyMap",
+    "IsLanguageSupported",
+    "FUNCTIONALITY",
+    SetupL, UT_IsLanguageSupported_LatinTextL, Teardown )
+
+EUNIT_TEST(
+    "IsLanguageSupported - test korean text",
+    "UT_CKoreanKeyMap",
+    "IsLanguageSupported",
+    "FUNCTIONALITY",
+    SetupL, UT_IsLanguageSupported_KoreanTextL, Teardown )
 
 EUNIT_END_TEST_TABLE
 
