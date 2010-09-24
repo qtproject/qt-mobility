@@ -52,6 +52,7 @@
 #include <QMenuBar>
 #include <QPainter>
 #include <QDesktopWidget>
+#include <QDialog>
 
 #include <QGridLayout>
 #include <QFormLayout>
@@ -63,6 +64,7 @@
 #include <QToolButton>
 #include <QRadioButton>
 #include <QSlider>
+#include <QSignalMapper>
 
 #include <qnetworkconfigmanager.h>
 #include <qgeoboundingcircle.h>
@@ -86,9 +88,9 @@ QTM_USE_NAMESPACE
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
         m_serviceProvider(0),
+        m_mapWidget(0),
         m_popupMenu(0),
-        m_controlsVisible(true),
-        m_mapWidget(0)
+        m_controlsVisible(true)
 {
     setWindowTitle(tr("Map Viewer Demo"));
 
@@ -124,15 +126,6 @@ MainWindow::MainWindow(QWidget *parent) :
     longitudeLayout->addRow(tr("Longitude"), m_longitudeEdit);
 #endif
 
-    m_captureCoordsButton = new QToolButton();
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    m_captureCoordsButton->setText(tr("Get coords"));
-#else
-    m_captureCoordsButton->setText(tr("Capture coordinates"));
-#endif
-    m_captureCoordsButton->setCheckable(true);
-    m_captureCoordsButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-
     m_setCoordsButton = new QPushButton();
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     m_setCoordsButton->setText(tr("Goto coords"));
@@ -154,83 +147,68 @@ MainWindow::MainWindow(QWidget *parent) :
     QGridLayout *coordControlLayout = new QGridLayout();
     coordControlLayout->addLayout(latitudeLayout, 0, 0);
     coordControlLayout->addLayout(longitudeLayout, 0, 1);
-    coordControlLayout->addWidget(m_captureCoordsButton, 1, 0);
-    coordControlLayout->addWidget(m_setCoordsButton, 1, 1);
-    coordControlLayout->addLayout(searchLayout, 2, 0, 1, 2);
+    coordControlLayout->addWidget(m_setCoordsButton, 1, 1, 1, 2);
+
+    QMenu * coordsMenu = new QMenu(tr("Coordinates"), this);
+
+    m_captureCoordsAction = new QAction(tr("Capture"), this);
+    coordsMenu->addAction(m_captureCoordsAction);
+    m_captureCoordsAction->setCheckable(true);
+
+    // Build coordinates dialog
+
+    m_coordControlDialog = new QDialog(this);
+    m_coordControlDialog->setLayout(coordControlLayout);
+
+    QAction * setCoordsAction = new QAction(tr("Go to"), this);
+    coordsMenu->addAction(setCoordsAction);
+    connect(m_setCoordsButton, SIGNAL(clicked()), m_coordControlDialog, SLOT(hide()));
+    connect(setCoordsAction, SIGNAL(triggered(bool)), m_coordControlDialog, SLOT(show()));
+
+    // Setup map type controls
+
+    QVector<QString> mapTypeNames;
+
+    m_mapControlTypes.append(QGraphicsGeoMap::StreetMap);         mapTypeNames.append(tr("Street"));
+    m_mapControlTypes.append(QGraphicsGeoMap::SatelliteMapDay);   mapTypeNames.append(tr("Satellite"));
+    m_mapControlTypes.append(QGraphicsGeoMap::SatelliteMapNight); mapTypeNames.append(tr("Satellite - Night"));
+    m_mapControlTypes.append(QGraphicsGeoMap::TerrainMap);        mapTypeNames.append(tr("Terrain"));
+
+    QSignalMapper * mapper = new QSignalMapper(this);
+    connect(mapper, SIGNAL(mapped(int)), this, SLOT(mapTypeToggled(int)));
+
+    QMenu * mapTypeMenu = new QMenu(tr("Map type"), this);
+
+    for (int i = 0; i < m_mapControlTypes.size(); ++i) {
+        QAction* action = new QAction(mapTypeNames[i], this);
+        action->setCheckable(true);
+
+        mapTypeMenu->addAction(action);
+        m_mapControlActions.append(action);
+
+        connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
+        mapper->setMapping(action, m_mapControlTypes[i]);
+    }
 
     QGridLayout *layout = new QGridLayout();
     layout->setRowStretch(0, 1);
     layout->setRowStretch(1, 0);
 
-    // Setup map type controls
-
-    QVBoxLayout *mapControlLayout = new QVBoxLayout();
-
-    QRadioButton *streetMap = new QRadioButton(this);
-    streetMap->setText(tr("Street"));
-    streetMap->setEnabled(false);
-    m_mapControlButtons.append(streetMap);
-    m_mapControlTypes.append(QGraphicsGeoMap::StreetMap);
-    mapControlLayout->addWidget(streetMap);
-    connect(streetMap, SIGNAL(toggled(bool)), this, SLOT(mapTypeToggled(bool)));
-
-    QRadioButton *satelliteMap = new QRadioButton(this);
-    satelliteMap->setText(tr("Satellite"));
-    satelliteMap->setEnabled(false);
-    m_mapControlButtons.append(satelliteMap);
-    m_mapControlTypes.append(QGraphicsGeoMap::SatelliteMapDay);
-    mapControlLayout->addWidget(satelliteMap);
-    connect(satelliteMap, SIGNAL(toggled(bool)), this, SLOT(mapTypeToggled(bool)));
-
-    QRadioButton *satelliteNightMap = new QRadioButton(this);
-    satelliteNightMap->setText(tr("Satellite - Night"));
-    satelliteNightMap->setEnabled(false);
-    m_mapControlButtons.append(satelliteNightMap);
-    m_mapControlTypes.append(QGraphicsGeoMap::SatelliteMapNight);
-    mapControlLayout->addWidget(satelliteNightMap);
-    connect(satelliteNightMap, SIGNAL(toggled(bool)), this, SLOT(mapTypeToggled(bool)));
-
-    QRadioButton *terrainMap = new QRadioButton(this);
-    terrainMap->setText(tr("Terrain"));
-    terrainMap->setEnabled(false);
-    m_mapControlButtons.append(terrainMap);
-    m_mapControlTypes.append(QGraphicsGeoMap::TerrainMap);
-    mapControlLayout->addWidget(terrainMap);
-    connect(terrainMap, SIGNAL(toggled(bool)), this, SLOT(mapTypeToggled(bool)));
-
-#if 1
-    QGridLayout *topLayout = new QGridLayout();
-    QGridLayout *bottomLayout = new QGridLayout();
-
-    topLayout->setColumnStretch(0, 0);
-    topLayout->setColumnStretch(1, 1);
-
-    bottomLayout->setColumnStretch(0, 0);
-    bottomLayout->setColumnStretch(1, 1);
-
-    topLayout->addWidget(m_slider, 0, 0);
-    topLayout->addWidget(m_qgv, 0, 1);
-
-    bottomLayout->addLayout(mapControlLayout, 0, 0);
-    bottomLayout->addLayout(coordControlLayout, 0, 1);
-
-    layout->addLayout(topLayout,0,0);
-    layout->addLayout(bottomLayout,1,0);
-#else
     layout->setColumnStretch(0, 0);
     layout->setColumnStretch(1, 1);
 
-    layout->addWidget(m_slider, 0, 0);
+    layout->addWidget(m_slider, 0, 0, 2, 1);
     layout->addWidget(m_qgv, 0, 1);
-    layout->addLayout(mapControlLayout, 1, 0);
-    layout->addLayout(coordControlLayout, 1, 1);
-#endif
+    layout->addLayout(searchLayout, 1, 1);
 
     m_layout = layout;
 
     QWidget *widget = new QWidget(this);
     widget->setLayout(layout);
     setCentralWidget(widget);
+
+    menuBar()->addMenu(mapTypeMenu);
+    menuBar()->addMenu(coordsMenu);
 
     // Set Internet Access Point
     QNetworkConfigurationManager manager;
@@ -315,19 +293,23 @@ void MainWindow::setupUi()
     connect(m_mapWidget, SIGNAL(mapTypeChanged(QGraphicsGeoMap::MapType)), this, SLOT(mapTypeChanged(QGraphicsGeoMap::MapType)));
 
     QList<QGraphicsGeoMap::MapType> types = m_mapWidget->supportedMapTypes();
-    for (int i = 0; i < types.size(); ++i) {
-        if(types.at(i) != QGraphicsGeoMap::NoMap) {
-            int index = m_mapControlTypes.indexOf(types.at(i));
-            QRadioButton *button = m_mapControlButtons.at(index);
-            button->setEnabled(true);
+    for (int controlIndex = 0; controlIndex < m_mapControlTypes.size(); ++controlIndex) {
+        QAction *action = m_mapControlActions.at(controlIndex);
+        int supportedTypeIndex = types.indexOf(m_mapControlTypes[controlIndex]);
 
-            if (types.at(i) == m_mapWidget->mapType())
-                button->setChecked(true);
+        if (supportedTypeIndex == -1) {
+            action->setEnabled(false);
         }
+        else {
+            action->setEnabled(true);
+            action->setChecked(m_mapControlTypes[controlIndex] == m_mapWidget->mapType());
+        }
+
     }
 
-    connect(m_captureCoordsButton, SIGNAL(toggled(bool)), m_mapWidget, SLOT(setMouseClickCoordQuery(bool)));
+    connect(m_captureCoordsAction, SIGNAL(toggled(bool)), m_mapWidget, SLOT(setMouseClickCoordQuery(bool)));
     connect(m_mapWidget, SIGNAL(coordQueryResult(QGeoCoordinate)), this, SLOT(updateCoords(QGeoCoordinate)));
+    connect(m_mapWidget, SIGNAL(coordQueryResult(QGeoCoordinate)), m_coordControlDialog, SLOT(show()));
     connect(m_setCoordsButton, SIGNAL(clicked()), this, SLOT(setCoordsClicked()));
     connect(m_searchEdit, SIGNAL(returnPressed()), this, SLOT(searchClicked()));
     connect(m_searchButton, SIGNAL(clicked()), this, SLOT(searchClicked()));
@@ -420,22 +402,17 @@ void MainWindow::mapZoomLevelChanged(qreal zoomLevel)
     m_slider->setSliderPosition(qRound(zoomLevel));
 }
 
-void MainWindow::mapTypeToggled(bool checked)
+void MainWindow::mapTypeToggled(int type)
 {
-    if (checked) {
-        QRadioButton *button = qobject_cast<QRadioButton*>(sender());
-        int index = m_mapControlButtons.indexOf(button);
-        if (index != -1)
-            m_mapWidget->setMapType(m_mapControlTypes.at(index));
-    }
-
+    m_mapWidget->setMapType((QGraphicsGeoMap::MapType)type);
 }
 
 void MainWindow::mapTypeChanged(QGraphicsGeoMap::MapType type)
 {
-    int index = m_mapControlTypes.indexOf(type);
-    if (index != -1)
-        m_mapControlButtons.at(index)->setChecked(true);
+    for (int i = 0; i < m_mapControlTypes.size(); ++i) {
+        QAction *action = m_mapControlActions[i];
+        action->setChecked(m_mapControlTypes[i] == type);
+    }
 }
 
 void MainWindow::setCoordsClicked()
@@ -463,7 +440,7 @@ void MainWindow::updateCoords(const QGeoCoordinate &coords)
     m_latitudeEdit->setText(QString::number(coords.latitude()));
     m_longitudeEdit->setText(QString::number(coords.longitude()));
 
-    m_captureCoordsButton->setChecked(false);
+    m_captureCoordsAction->setChecked(false);
 }
 
 void MainWindow::setProvider(QString providerId)
