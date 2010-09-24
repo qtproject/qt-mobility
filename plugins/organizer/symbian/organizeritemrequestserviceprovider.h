@@ -110,14 +110,10 @@ private: // Worker functions
     // Save detail definition
     void SaveDetailDefinitionL();
 #ifdef SYMBIAN_CALENDAR_V2
-    // Fetch collection local Ids
     void CollectionIds();
-    // Fetch collection
-    void CollectionL();
-    // Save collection
-    void SaveCollectionL();
-    // Remove collection
-    void RemoveCollectionL();
+    void FetchCollections();
+    void SaveCollections();
+    void RemoveCollections();
 #endif
     
 private:
@@ -130,12 +126,7 @@ private:
     QOrganizerItemManager::Error            iError; // Error
     TInt                                    iNoOfItems;
     TInt                                    iIndex;
-#ifdef SYMBIAN_CALENDAR_V2
-    QList<QOrganizerCollection>             iSuccessfullCollections;
-    QList<QOrganizerCollectionLocalId>      iCollectionLocalIds;
-#endif
     QOrganizerItemChangeSet                 iChangeSet;
-    QOrganizerCollectionChangeSet           iCollectionChangeSet;
     };
 
 #endif /* CORGANIZERITEMREQUESTSSERVICEPROVIDER_H_ */

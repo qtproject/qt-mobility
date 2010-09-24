@@ -1153,21 +1153,10 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemSymbianEngine::collectionIds(
     QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NoError;
-    return collectionIds();    
-}
-
-QList<QOrganizerCollectionLocalId> QOrganizerItemSymbianEngine::collectionIds() const
-{
     QList<QOrganizerCollectionLocalId> ids;
     foreach (const OrganizerSymbianCollection &collection, m_collections)
         ids.append(collection.localId());
     return ids;
-}
-
-// Returns number of sessions currently open
-int QOrganizerItemSymbianEngine::collectionCount() const
-{
-    return m_collections.count();
 }
 
 QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collections(
@@ -1175,46 +1164,22 @@ QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collections(
     QOrganizerItemManager::Error* error) const
 {
     QList<QOrganizerCollection> collections;
-    TRAPD(err, collections = collectionsL(collectionIds));
+    TRAPD(err, collectionsL(collectionIds, collections));
     transformError(err, error);
-    return collections;   
-}
-
-QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collectionsL(
-    const QList<QOrganizerCollectionLocalId>& collectionIds) const
-    {
-    // Find collections
-    QList<QOrganizerCollection> collections;
-    foreach (const OrganizerSymbianCollection &collection, m_collections) {
-        // NOTE: If return all if no local ids are defined
-        if (collectionIds.count() == 0 || collectionIds.contains(collection.localId()))
-            collections << collection.toQOrganizerCollectionL();
-    }
-    
-    // Nothing found?
-    if (collections.isEmpty())
-        User::Leave(KErrNotFound);
-
     return collections;
 }
 
-bool QOrganizerItemSymbianEngine::collectionL(const int 
-    index, const QList<QOrganizerCollectionLocalId>& collectionIds, 
-    QOrganizerCollection& collection) const
+void QOrganizerItemSymbianEngine::collectionsL(
+    const QList<QOrganizerCollectionLocalId> &collectionIds,
+    QList<QOrganizerCollection> &collections) const
 {
-    // Get collection id
-    QOrganizerCollectionLocalId localId(m_collections.values()[index].localId());
-    
-    // Find matching collection if id is provided
-    if (!collectionIds.isEmpty()) {
-        if (!collectionIds.contains(localId))
-            return false;
+    foreach (const OrganizerSymbianCollection &collection, m_collections) {
+        if (collectionIds.count() == 0 || collectionIds.contains(collection.localId()))
+            collections << collection.toQOrganizerCollectionL();
     }
-    
-    // Convert to QOrganizerCollection
-    collection = m_collections[localId].toQOrganizerCollectionL();
 
-    return true;
+    if (collections.isEmpty())
+        User::Leave(KErrNotFound);
 }
 
 bool QOrganizerItemSymbianEngine::saveCollection(
@@ -1227,15 +1192,18 @@ bool QOrganizerItemSymbianEngine::saveCollection(
     
     TRAPD(err, saveCollectionL(collection));
     transformError(err, error);
-    
+
     if (*error == QOrganizerItemManager::NoError) {
-        if (isNewCollection)
-            emit collectionsAdded(QList<QOrganizerCollectionLocalId>()
-                << collection->id().localId());
+        if (isNewCollection) {
+            // Emit changes
+            QOrganizerCollectionChangeSet changeSet;
+            changeSet.insertAddedCollection(collection->localId());
+            changeSet.emitSignals(this);
+        }
         // NOTE: collectionsChanged signal will be emitted from 
         // CalendarInfoChangeNotificationL
     }
-    
+
     return (*error == QOrganizerItemManager::NoError);   
 }
 
@@ -1302,9 +1270,11 @@ bool QOrganizerItemSymbianEngine::removeCollection(
 {
     TRAPD(err, removeCollectionL(collectionId));
     transformError(err, error);
-    if (*error == QOrganizerItemManager::NoError)
-        emit collectionsRemoved(
-            QList<QOrganizerCollectionLocalId>() << collectionId);
+    if (*error == QOrganizerItemManager::NoError) {
+        QOrganizerCollectionChangeSet collectionChangeSet;
+        collectionChangeSet.insertRemovedCollection(collectionId);
+        collectionChangeSet.emitSignals(this);
+    }
     return (*error == QOrganizerItemManager::NoError);
 }
 
