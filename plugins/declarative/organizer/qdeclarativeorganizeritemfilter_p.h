@@ -124,7 +124,7 @@ public:
         EventRemoved = QOrganizerItemChangeLogFilter::EventRemoved
     };
 
-    QDeclarativeOrganizerItemChangelogFilter(QObject *parent)
+    QDeclarativeOrganizerItemChangelogFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
@@ -155,7 +155,7 @@ class QDeclarativeOrganizerItemCollectionFilter : public QDeclarativeOrganizerIt
     Q_OBJECT
     Q_PROPERTY(QVariantList ids READ ids WRITE setIds NOTIFY valueChanged)
 public:
-    QDeclarativeOrganizerItemCollectionFilter(QObject *parent)
+    QDeclarativeOrganizerItemCollectionFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
@@ -195,7 +195,7 @@ class QDeclarativeOrganizerItemDateTimePeriodFilter : public QDeclarativeOrganiz
     Q_PROPERTY(QDateTime start READ start WRITE setStart NOTIFY valueChanged)
     Q_PROPERTY(QDateTime end READ end WRITE setEnd NOTIFY valueChanged)
 public:
-    QDeclarativeOrganizerItemDateTimePeriodFilter(QObject *parent)
+    QDeclarativeOrganizerItemDateTimePeriodFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
@@ -231,7 +231,7 @@ class QDeclarativeOrganizerItemDetailFilter : public QDeclarativeOrganizerItemFi
     Q_PROPERTY(QString detailDefinitionName READ detailDefinitionName WRITE setDetailDefinitionName NOTIFY valueChanged)
 
 public:
-    QDeclarativeOrganizerItemDetailFilter(QObject *parent)
+    QDeclarativeOrganizerItemDetailFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
@@ -301,7 +301,7 @@ public:
     };
     Q_DECLARE_FLAGS(RangeFlags, RangeFlag)
 
-    QDeclarativeOrganizerItemDetailRangeFilter(QObject *parent)
+    QDeclarativeOrganizerItemDetailRangeFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
@@ -374,7 +374,7 @@ class QDeclarativeOrganizerItemLocalIdFilter : public QDeclarativeOrganizerItemF
     Q_PROPERTY(QVariantList ids READ ids WRITE setIds NOTIFY valueChanged)
 
 public:
-    QDeclarativeOrganizerItemLocalIdFilter(QObject *parent)
+    QDeclarativeOrganizerItemLocalIdFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
@@ -414,7 +414,7 @@ class QDeclarativeOrganizerItemIntersectionFilter : public QDeclarativeOrganizer
     Q_CLASSINFO("DefaultProperty", "subFilters")
 
 public:
-    QDeclarativeOrganizerItemIntersectionFilter(QObject *parent)
+    QDeclarativeOrganizerItemIntersectionFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
@@ -452,7 +452,7 @@ class QDeclarativeOrganizerItemUnionFilter : public QDeclarativeOrganizerItemFil
     Q_CLASSINFO("DefaultProperty", "subFilters")
 
 public:
-    QDeclarativeOrganizerItemUnionFilter(QObject *parent)
+    QDeclarativeOrganizerItemUnionFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
@@ -486,7 +486,7 @@ class QDeclarativeOrganizerItemInvalidFilter : public QDeclarativeOrganizerItemF
 {
     Q_OBJECT
 public:
-    QDeclarativeOrganizerItemInvalidFilter(QObject *parent)
+    QDeclarativeOrganizerItemInvalidFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }

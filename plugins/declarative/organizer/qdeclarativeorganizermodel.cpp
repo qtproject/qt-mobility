@@ -124,13 +124,13 @@ void QDeclarativeOrganizerModel::exportItems(const QString& fileName)
        items.append(di->item());
    }
 
-   exporter.exportItems(items, QVersitDocument::VCard30Type);
-   QList<QVersitDocument> documents = exporter.documents();
+   exporter.exportItems(items);
+   QVersitDocument document = exporter.document();
    QFile* file = new QFile(fileName);
    bool ok = file->open(QIODevice::ReadWrite);
    if (ok) {
       d->m_writer.setDevice(file);
-      d->m_writer.startWriting(documents);
+      d->m_writer.startWriting(QList<QVersitDocument>() << document);
    }
 }
 
@@ -192,7 +192,7 @@ void QDeclarativeOrganizerModel::setFetchHint(QDeclarativeOrganizerItemFetchHint
 
 QDeclarativeOrganizerModel::Error QDeclarativeOrganizerModel::error() const
 {
-    return d->m_manager->error();
+    return static_cast<QDeclarativeOrganizerModel::Error>(d->m_manager->error());
 }
 
 
@@ -204,17 +204,20 @@ QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> QDeclarativeOrganiz
 void QDeclarativeOrganizerModel::startImport(QVersitReader::State state)
 {
     if (state == QVersitReader::FinishedState || state == QVersitReader::CanceledState) {
-        QVersitOrganizerImporter importer;
-        importer.importDocuments(d->m_reader.results());
-        QList<QOrganizerItem> items = importer.items();
+        if (!d->m_reader.results().isEmpty()) {
+            QVersitOrganizerImporter importer;
 
-        delete d->m_reader.device();
-        d->m_reader.setDevice(0);
+            importer.importDocument(d->m_reader.results().at(0));
+            QList<QOrganizerItem> items = importer.items();
 
-        if (d->m_manager) {
-            if (d->m_manager->saveItems(&items, 0))
-                qWarning() << "items imported.";
-                fetchAgain();
+            delete d->m_reader.device();
+            d->m_reader.setDevice(0);
+
+            if (d->m_manager) {
+                if (d->m_manager->saveItems(&items, QOrganizerCollectionLocalId()))//TODO..
+                    qWarning() << "items imported.";
+                    fetchAgain();
+            }
         }
     }
 }
@@ -291,16 +294,18 @@ void QDeclarativeOrganizerModel::itemSaved()
 }
 
 
-void QDeclarativeOrganizerModel::removeItem(QOrganizerItemLocalId id)
+void QDeclarativeOrganizerModel::removeItem(uint id)
 {
-    removeItems(QList<QOrganizerItemLocalId>() << id);
+    //TODO
+    //removeItems(QList<QOrganizerItemLocalId>() << id);
 }
 
-void QDeclarativeOrganizerModel::removeItems(const QList<QOrganizerItemLocalId>& ids)
+void QDeclarativeOrganizerModel::removeItems(const QList<uint>& ids)
 {
     QOrganizerItemRemoveRequest* req = new QOrganizerItemRemoveRequest(this);
     req->setManager(d->m_manager);
-    req->setItemIds(ids);
+    //TODO
+    //req->setItemIds(ids);
 
     connect(req,SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(itemRemoved()));
 
@@ -333,7 +338,7 @@ QVariant QDeclarativeOrganizerModel::data(const QModelIndex &index, int role) co
         case OrganizerItemRole:
             return QVariant::fromValue(di);
         case OrganizerItemIdRole:
-            return item.localId();
+            return qHash(item.localId());
     }
     return QVariant();
 }
@@ -346,37 +351,37 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 
 QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::events()
 {
-    void* d = reinterpret_cast<void*>(QOrganizerItemType::TypeEvent.latin1());
+    void* d = const_cast<char*>(QOrganizerItemType::TypeEvent.latin1());
     return QDeclarativeListProperty<QDeclarativeOrganizerItem>(this, d, item_append, item_count, item_at, item_clear);
 }
 
 QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::eventOccurrences()
 {
-    void* d = reinterpret_cast<void*>(QOrganizerItemType::TypeEventOccurrence.latin1());
+    void* d = const_cast<char*>(QOrganizerItemType::TypeEventOccurrence.latin1());
     return QDeclarativeListProperty<QDeclarativeOrganizerItem>(this, d, item_append, item_count, item_at, item_clear);
 }
 
 QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::todos()
 {
-    void* d = reinterpret_cast<void*>(QOrganizerItemType::TypeTodo.latin1());
+    void* d = const_cast<char*>(QOrganizerItemType::TypeTodo.latin1());
     return QDeclarativeListProperty<QDeclarativeOrganizerItem>(this, d, item_append, item_count, item_at, item_clear);
 }
 
 QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::todoOccurrences()
 {
-    void* d = reinterpret_cast<void*>(QOrganizerItemType::TypeTodoOccurrence.latin1());
+    void* d = const_cast<char*>(QOrganizerItemType::TypeTodoOccurrence.latin1());
     return QDeclarativeListProperty<QDeclarativeOrganizerItem>(this, d, item_append, item_count, item_at, item_clear);
 }
 
 QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::journals()
 {
-    void* d = reinterpret_cast<void*>(QOrganizerItemType::TypeJournal.latin1());
+    void* d = const_cast<char*>(QOrganizerItemType::TypeJournal.latin1());
     return QDeclarativeListProperty<QDeclarativeOrganizerItem>(this, d, item_append, item_count, item_at, item_clear);
 }
 
 QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::notes()
 {
-    void* d = reinterpret_cast<void*>(QOrganizerItemType::TypeNote.latin1());
+    void* d = const_cast<char*>(QOrganizerItemType::TypeNote.latin1());
     return QDeclarativeListProperty<QDeclarativeOrganizerItem>(this, d, item_append, item_count, item_at, item_clear);
 }
 
@@ -414,7 +419,7 @@ QDeclarativeOrganizerItem * QDeclarativeOrganizerModel::item_at(QDeclarativeList
     QDeclarativeOrganizerItem* item = 0;
     if (model && !type.isEmpty()) {
         int i = 0;
-        foreach(const QDeclarativeOrganizerItem* di, model->d->m_items) {
+        foreach(QDeclarativeOrganizerItem* di, model->d->m_items) {
             if (di->item().type() == type) {
                 if (i == idx) {
                     item = di;

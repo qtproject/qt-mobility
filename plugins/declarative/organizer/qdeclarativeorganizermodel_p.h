@@ -57,7 +57,8 @@ class QDeclarativeOrganizerModelPrivate;
 class QDeclarativeOrganizerModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(QString manager READ manager)
+    Q_PROPERTY(QString manager READ manager NOTIFY managerChanged)
+    Q_PROPERTY(QStringList availableManagers READ availableManagers NOTIFY availableManagersChanged)
     Q_PROPERTY(QDateTime startPeriod READ startPeriod WRITE setStartPeriod NOTIFY startPeriodChanged)
     Q_PROPERTY(QDateTime endPeriod READ endPeriod WRITE setEndPeriod NOTIFY endPeriodChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemFilter* filter READ filter WRITE setFilter NOTIFY filterChanged)
@@ -102,9 +103,9 @@ public:
     explicit QDeclarativeOrganizerModel(QOrganizerItemManager* manager, const QDateTime& start, const QDateTime& end, QObject *parent = 0);
 
     Error error() const;
-    QString manager();
-    void setManager(QOrganizerItemManager* manager);
-
+    QString manager() const;
+    void setManager(const QString& managerName);
+    QStringList availableManagers() const;
     QDateTime startPeriod() const;
     void setStartPeriod(const QDateTime& start);
 
@@ -120,8 +121,6 @@ public:
     QDeclarativeOrganizerItemFetchHint* fetchHint() const;
     void setFetchHint(QDeclarativeOrganizerItemFetchHint* fetchHint);
 
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
 
     QDeclarativeListProperty<QDeclarativeOrganizerItem> items() ;
     QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> sortOrders() ;
@@ -139,6 +138,7 @@ public:
 
 signals:
     void managerChanged();
+    void availableManagersChanged();
     void filterChanged();
     void fetchHintChanged();
     void itemsChanged();
@@ -160,7 +160,7 @@ private slots:
     void itemRemoved();
 
     void startImport(QVersitReader::State state);
-    void itemExported(QVersitWriter::State state);
+    void itemsExported(QVersitWriter::State state);
 
 
 
