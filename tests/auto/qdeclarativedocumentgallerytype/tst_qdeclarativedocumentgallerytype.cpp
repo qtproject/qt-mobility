@@ -261,6 +261,7 @@ void tst_QDeclarativeDocumentGalleryType::itemType_data()
     QTest::addColumn<int>("qmlItemType");
     QTest::addColumn<QString>("qmlItemTypeString");
     QTest::addColumn<int>("itemType");
+    QTest::addColumn<int>("expectedItemType");
     QTest::addColumn<QString>("itemTypeString");
 
     QTest::newRow("Null -> Audio")
@@ -270,6 +271,7 @@ void tst_QDeclarativeDocumentGalleryType::itemType_data()
                     "DocumentGalleryType {}\n")
             << int(QDeclarativeDocumentGallery::InvalidType)
             << QString()
+            << int(QDeclarativeDocumentGallery::Audio)
             << int(QDeclarativeDocumentGallery::Audio)
             << "Audio";
 
@@ -281,6 +283,7 @@ void tst_QDeclarativeDocumentGalleryType::itemType_data()
             << int(QDeclarativeDocumentGallery::Audio)
             << "Audio"
             << int(QDeclarativeDocumentGallery::Audio)
+            << int(QDeclarativeDocumentGallery::Audio)
             << "Audio";
 
     QTest::newRow("Audio -> PhotoAlbum")
@@ -290,6 +293,7 @@ void tst_QDeclarativeDocumentGalleryType::itemType_data()
                     "DocumentGalleryType { itemType: DocumentGallery.Audio }\n")
             << int(QDeclarativeDocumentGallery::Audio)
             << "Audio"
+            << int(QDeclarativeDocumentGallery::PhotoAlbum)
             << int(QDeclarativeDocumentGallery::PhotoAlbum)
             << "PhotoAlbum";
 
@@ -301,6 +305,18 @@ void tst_QDeclarativeDocumentGalleryType::itemType_data()
             << int(QDeclarativeDocumentGallery::PhotoAlbum)
             << "PhotoAlbum"
             << int(QDeclarativeDocumentGallery::InvalidType)
+            << int(QDeclarativeDocumentGallery::InvalidType)
+            << QString();
+
+    QTest::newRow("PhotoAlbum -> Undefined Type")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryType { itemType: DocumentGallery.PhotoAlbum }\n")
+            << int(QDeclarativeDocumentGallery::PhotoAlbum)
+            << "PhotoAlbum"
+            << int(300)
+            << int(QDeclarativeDocumentGallery::InvalidType)
             << QString();
 }
 
@@ -310,6 +326,7 @@ void tst_QDeclarativeDocumentGalleryType::itemType()
     QFETCH(int, qmlItemType);
     QFETCH(QString, qmlItemTypeString);
     QFETCH(int, itemType);
+    QFETCH(int, expectedItemType);
     QFETCH(QString, itemTypeString);
 
     QDeclarativeComponent component(&engine);
@@ -330,12 +347,12 @@ void tst_QDeclarativeDocumentGalleryType::itemType()
     QCOMPARE(object->property("itemType"), QVariant(qmlItemType));
 
     QCOMPARE(object->setProperty("itemType", itemType), true);
-    QCOMPARE(object->property("itemType"), QVariant(itemType));
+    QCOMPARE(object->property("itemType"), QVariant(expectedItemType));
     QCOMPARE(spy.count(), itemType != qmlItemType ? 1 : 0);
 
     QMetaObject::invokeMethod(object.data(), "reload");
 
-    if (itemType != QDeclarativeDocumentGallery::InvalidType) {
+    if (expectedItemType != QDeclarativeDocumentGallery::InvalidType) {
         QVERIFY(gallery.request());
         QCOMPARE(gallery.request()->itemType(), itemTypeString);
     }
