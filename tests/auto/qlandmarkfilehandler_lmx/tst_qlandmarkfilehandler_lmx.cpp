@@ -75,7 +75,6 @@ public:
     }
 };
 
-Q_DECLARE_METATYPE(QLandmarkCategoryId);
 Q_DECLARE_METATYPE(QList<QLandmark>);
 Q_DECLARE_METATYPE(QList<QLandmarkCategory>);
 
