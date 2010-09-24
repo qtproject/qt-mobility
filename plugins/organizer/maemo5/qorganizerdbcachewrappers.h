@@ -38,56 +38,64 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QORGANIZERDBCACHEWRAPPERS_H
+#define QORGANIZERDBCACHEWRAPPERS_H
 
-#ifndef QDECLARATIVEORGANIZERCOLLECTION_H
-#define QDECLARATIVEORGANIZERCOLLECTION_H
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include "qdeclarative.h"
-#include "qorganizercollection.h"
+#include "qtorganizer.h"
+#include <CEvent.h>
+#include <CTodo.h>
+#include <CJournal.h>
 
 QTM_USE_NAMESPACE
 
-
-class QDeclarativeOrganizerCollection : public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(uint collectionId READ id NOTIFY valueChanged)
+class OrganizerCacheEvent {
 public:
-    QDeclarativeOrganizerCollection(QObject* parent = 0)
-        :QObject(parent)
-    {
-    }
+    OrganizerCacheEvent(const CEvent* event);
+    OrganizerCacheEvent(const OrganizerCacheEvent& other);
+    ~OrganizerCacheEvent();
+    OrganizerCacheEvent operator=(const OrganizerCacheEvent& other);
 
+    CEvent* event();
 
-    uint id() const
-    {
-        return qHash(d.id());
-    }
-
-    Q_INVOKABLE void setMetaData(const QString& key, const QVariant& value)
-    {
-        d.setMetaData(key, value);
-    }
-
-    Q_INVOKABLE  QVariant metaData(const QString& key)
-    {
-        return d.metaData(key);
-    }
-
-    QOrganizerCollection collection() const
-    {
-        return d;
-    }
-
-    void setCollection(const QOrganizerCollection& collection)
-    {
-        d = collection;
-    }
-signals:
-    void valueChanged();
 private:
-    QOrganizerCollection d;
+    CEvent m_event;
 };
-QML_DECLARE_TYPE(QDeclarativeOrganizerCollection)
-#endif
 
+class OrganizerCacheTodo {
+public:
+    OrganizerCacheTodo(const CTodo* todo);
+    OrganizerCacheTodo(const OrganizerCacheTodo& other);
+    ~OrganizerCacheTodo();
+    OrganizerCacheTodo operator=(const OrganizerCacheTodo& other);
+
+    CTodo* todo();
+
+private:
+    CTodo m_todo;
+};
+
+class OrganizerCacheJournal {
+public:
+    OrganizerCacheJournal(const CJournal* journal);
+    OrganizerCacheJournal(const OrganizerCacheJournal& other);
+    ~OrganizerCacheJournal();
+    OrganizerCacheJournal operator=(const OrganizerCacheJournal& other);
+
+    CJournal* journal();
+
+private:
+    CJournal m_journal;
+};
+
+#endif // QORGANIZERDBCACHEWRAPPERS_H

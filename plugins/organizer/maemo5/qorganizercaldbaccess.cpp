@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qorganizercaldbaccess.h"
+#include "qorganizerdbcache.h"
 #include "qorganizermaemo5ids_p.h"
 #include "qtorganizer.h"
 
@@ -47,6 +48,7 @@
 #include <CEvent.h>
 #include <CTodo.h>
 #include <CJournal.h>
+#include <CCalendar.h>
 #include <CAlarm.h>
 #include <CRecurrence.h>
 #include <CAttendee.h>
@@ -86,7 +88,7 @@ const QString selectComponentCalIdType = QString("select CalendarId, ComponentTy
 
 const QString selectInnerJoinBatchGuid = QString("select * from components left join componentdetails on components.Id = componentdetails.Id Left Join alarm on components.Id = alarm.Id Left Join Recursive on components.Id = Recursive.Id where Calendarid = :calId AND Components.ComponentType = :compType AND Components.Uid = :compUid");
 
-OrganizerCalendarDatabaseAccess::OrganizerCalendarDatabaseAccess()
+OrganizerCalendarDatabaseAccess::OrganizerCalendarDatabaseAccess(OrganizerDbCache* dbCache) : m_dbCache(dbCache)
 {
 }
 
@@ -117,42 +119,66 @@ void OrganizerCalendarDatabaseAccess::close()
 
 int OrganizerCalendarDatabaseAccess::calIdOf(QOrganizerItemLocalId id)
 {
-    QSqlQuery query;
-    if (!query.prepare(selectComponentCalIdType))
-        return -1;
-    query.bindValue(":compId", QString::number(readItemLocalId(id)));
-
-    int retn = -1;
-    if (query.exec()) {
-        if (query.next())
-            retn = query.value(0).toInt();
+    quint32 convertedId = readItemLocalId(id);
+    if (m_dbCache->containsCalId(convertedId)) {
+        return m_dbCache->takeCalId(convertedId);
     }
+    else {
+        QSqlQuery query;
+        if (!query.prepare(selectComponentCalIdType))
+            return -1;
+        query.bindValue(":compId", QString::number(convertedId));
 
-    return retn;
+        int retn = -1;
+        if (query.exec()) {
+            if (query.next())
+                retn = query.value(0).toInt();
+        }
+
+        m_dbCache->insertCalId(convertedId, retn);
+        return retn;
+    }
 }
 
 int OrganizerCalendarDatabaseAccess::typeOf(QOrganizerItemLocalId id)
 {
-    QSqlQuery query;
-    if (!query.prepare(selectComponentCalIdType))
-        return -1;
-    query.bindValue(":compId", QString::number(readItemLocalId(id)));
-
-    int retn = -1;
-    if (query.exec()) {
-        if (query.next())
-            retn = query.value(1).toInt();
+    quint32 convertedId = readItemLocalId(id);
+    if (m_dbCache->containsTypeId(convertedId)) {
+        return m_dbCache->takeTypeId(convertedId);
     }
-    return retn;
+    else {
+        QSqlQuery query;
+        if (!query.prepare(selectComponentCalIdType))
+            return -1;
+        query.bindValue(":compId", QString::number(convertedId));
+
+        int retn = -1;
+        if (query.exec()) {
+            if (query.next())
+                retn = query.value(1).toInt();
+        }
+
+        m_dbCache->insertTypeId(convertedId, retn);
+        return retn;
+    }
 }
 
 std::vector<CEvent *> OrganizerCalendarDatabaseAccess::getEvents(int calId, std::string guid, int &pErrorCode)
 {
+    std::vector<CEvent*> listEvent;
+
+    OrganizerGuidCacheKey cacheKey(calId, E_EVENT, QString::fromStdString(guid));
+    if (m_dbCache->containsEventVector(cacheKey))
+    {
+        // found in cache
+        m_dbCache->takeEventVector(cacheKey, listEvent);
+        return listEvent;
+    }
+
     const int columnNumber = 49;
     CEvent *event = 0;
     CAlarm *pAlarm = 0;
     CRecurrence *pRec = 0;
-    std::vector<CEvent*> listEvent;
     int iI_EventCount = 0;
     int iJ_EventCount = 0;
     pErrorCode = CALENDAR_OPERATION_SUCCESSFUL;
@@ -459,15 +485,27 @@ std::vector<CEvent *> OrganizerCalendarDatabaseAccess::getEvents(int calId, std:
         ++iI_EventCount;
     }
 
+    // put to cache
+    m_dbCache->insertEventVector(cacheKey, listEvent);
+
     return listEvent;
 }
 
 std::vector<CTodo *> OrganizerCalendarDatabaseAccess::getTodos(int calId, std::string guid, int &pErrorCode)
 {
+    std::vector<CTodo*> listTodo;
+
+    OrganizerGuidCacheKey cacheKey(calId, E_TODO, QString::fromStdString(guid));
+    if (m_dbCache->containsTodoVector(cacheKey))
+    {
+        // found in cache
+        m_dbCache->takeTodoVector(cacheKey, listTodo);
+        return listTodo;
+    }
+
     const int columnNumber = 49;
     CTodo *todo = 0;
     CAlarm *pAlarm = 0;
-    std::vector<CTodo*> listTodo;
     int iI_TodoCount = 0;
     int iJ_TodoCount = 0;
     pErrorCode = CALENDAR_OPERATION_SUCCESSFUL;
@@ -701,14 +739,26 @@ std::vector<CTodo *> OrganizerCalendarDatabaseAccess::getTodos(int calId, std::s
         ++iI_TodoCount;
     }
 
+    // put to cache
+    m_dbCache->insertTodoVector(cacheKey, listTodo);
+
     return listTodo;
 }
 
 std::vector<CJournal *> OrganizerCalendarDatabaseAccess::getJournals(int calId, std::string guid, int &pErrorCode)
 {
+    std::vector<CJournal*> listJournal;
+
+    OrganizerGuidCacheKey cacheKey(calId, E_JOURNAL, QString::fromStdString(guid));
+    if (m_dbCache->containsJournalVector(cacheKey))
+    {
+        // found in cache
+        m_dbCache->takeJournalVector(cacheKey, listJournal);
+        return listJournal;
+    }
+
     const int columnNumber = 49;
     CJournal *journal = 0;
-    std::vector<CJournal*> listJournal;
     int iI_JourCount = 0;
     int iJ_JourCount = 0;
     pErrorCode = CALENDAR_OPERATION_SUCCESSFUL;
@@ -886,7 +936,61 @@ std::vector<CJournal *> OrganizerCalendarDatabaseAccess::getJournals(int calId, 
         ++iI_JourCount;
     }
 
+    // put to cache
+    m_dbCache->insertJournalVector(cacheKey, listJournal);
+
     return listJournal;
+}
+
+CEvent* OrganizerCalendarDatabaseAccess::getEvent(CCalendar* cal, const std::string& id, int& calError)
+{
+    OrganizerIdCacheKey cacheKey(cal->getCalendarId(), QString::fromStdString(id));
+    if (m_dbCache->containsEvent(cacheKey)) {
+        return m_dbCache->takeEvent(cacheKey);
+    }
+    else {
+        CEvent* event = cal->getEvent(id, calError);
+        m_dbCache->insertEvent(cacheKey, event);
+        return event;
+    }
+}
+
+CTodo* OrganizerCalendarDatabaseAccess::getTodo(CCalendar* cal, const std::string& id, int& calError)
+{
+    OrganizerIdCacheKey cacheKey(cal->getCalendarId(), QString::fromStdString(id));
+    if (m_dbCache->containsTodo(cacheKey)) {
+        return m_dbCache->takeTodo(cacheKey);
+    }
+    else {
+        CTodo* todo = cal->getTodo(id, calError);
+        m_dbCache->insertTodo(cacheKey, todo);
+        return todo;
+    }
+}
+
+CJournal* OrganizerCalendarDatabaseAccess::getJournal(CCalendar* cal, const std::string& id, int& calError)
+{
+    OrganizerIdCacheKey cacheKey(cal->getCalendarId(), QString::fromStdString(id));
+    if (m_dbCache->containsJournal(cacheKey)) {
+        return m_dbCache->takeJournal(cacheKey);
+    }
+    else {
+        CJournal* journal = cal->getJournal(id, calError);
+        m_dbCache->insertJournal(cacheKey, journal);
+        return journal;
+    }
+}
+
+void OrganizerCalendarDatabaseAccess::getIdList(CCalendar* cal, int compType, int& calError, std::vector<std::string> &result)
+{
+    OrganizerCalIdTypeIdCacheKey cacheKey(cal->getCalendarId(), compType);
+    if (m_dbCache->containsIds(cacheKey)) {
+        m_dbCache->takeIdsVector(cacheKey, result);
+    }
+    else {
+        result = cal->getIdList(compType, calError);
+        m_dbCache->insertIds(cacheKey, result);
+    }
 }
 
 void OrganizerCalendarDatabaseAccess::sqliteErrorMapper(const QSqlError &sqlError, int& errorCode)
