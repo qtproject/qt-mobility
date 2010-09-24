@@ -348,12 +348,9 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
             // TODO: Only visual remainders are supported
             QOrganizerItemVisualReminder reminder = item->detail<QOrganizerItemVisualReminder>();
             reminder.setRepetition(alarm->getRepeat(), reminder.repetitionDelay());
-            reminder.setTimeDelta(alarm->getTimeBefore());
 
             // Alarm time and messages can't be read with CAlarm,
             // read them straight from the alarm framework:
-            // TODO: This does not work, but it seems that it doesn't work in Maemo5 the calendar
-            // backend either. Maybe it's not possible to implement alarm fetch?
 
             // Get the cookie
             std::vector<long> cookies = alarm->getCookie();
@@ -367,6 +364,10 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
                     time_t alarmTime = alarm_event_get_trigger(eve);
                     reminder.setDateTime(QDateTime::fromTime_t(alarmTime));
                     alarm_event_delete(eve);
+
+                    QDateTime sTime = QDateTime::fromTime_t(component->getDateStart());
+                    QDateTime aTime = QDateTime::fromTime_t(alarmTime);
+                    reminder.setTimeDelta(aTime.secsTo(sTime));
                 }
             }
 
@@ -388,6 +389,8 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
     int calId = cal->getCalendarId();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     CComponent *retn = 0; // Return null on errors
+
+    QDateTime dateStartForAlarm;
 
     if (item->type() == QOrganizerItemType::TypeEvent
         || item->type() == QOrganizerItemType::TypeEventOccurrence) {
@@ -416,8 +419,11 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         cevent->setPriority(static_cast<int>(event->priority()));
 
         // Start date
-        if (!event->startDateTime().isNull())
-            cevent->setDateStart(event->startDateTime().toTime_t());
+        if (!event->startDateTime().isNull()) {
+            time_t startTime = event->startDateTime().toTime_t();
+            cevent->setDateStart(startTime);
+            dateStartForAlarm = QDateTime::fromTime_t(startTime);
+        }
 
         // End date
         if (!event->endDateTime().isNull())
@@ -456,13 +462,16 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         // Priority
         ctodo->setPriority(static_cast<int>(todo->priority()));
 
-        // Date start
-        if (!todo->startDateTime().isNull())
-            ctodo->setDateStart(todo->startDateTime().toTime_t());
-
         // Due date
         if (!todo->dueDateTime().isNull())
             ctodo->setDue(todo->dueDateTime().toTime_t());
+
+        // Date start
+        if (!todo->startDateTime().isNull()) {
+            time_t startTime = todo->startDateTime().toTime_t();
+            ctodo->setDateStart(startTime);
+            dateStartForAlarm = QDateTime::fromTime_t(startTime);
+        }
 
         // Completed time
         if (!todo->finishedDateTime().isNull())
@@ -545,16 +554,30 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
 
         // Visual reminder (alarm)
         QOrganizerItemVisualReminder reminder = item->detail<QOrganizerItemVisualReminder>();
-        if (reminder.dateTime() != QDateTime()) {
+        QDateTime reminderDateTime = reminder.dateTime();
+        QDateTime deltaDateTime;
+        if (reminder.variantValues().contains(QOrganizerItemReminder::FieldTimeDelta))
+            deltaDateTime = dateStartForAlarm.addSecs(-reminder.timeDelta());
+
+        if (!reminderDateTime.isNull() || !deltaDateTime.isNull()) {
+            if (!reminderDateTime.isNull() && !deltaDateTime.isNull()) {
+                if (reminderDateTime != deltaDateTime) {
+                    // reminder date time and the set delta do not match
+                    *error = QOrganizerItemManager::BadArgumentError;
+                    return 0;
+                }
+            }
+
+            QDateTime resolvedDateTime = !reminderDateTime.isNull() ? reminderDateTime : deltaDateTime;
+
             // Set alarm for the ccomponent
             CAlarm alarm;
 
-            alarm.setTimeBefore(reminder.timeDelta());
             alarm.setRepeat(reminder.repetitionCount());
-            retn->setAlarmBefore(reminder.timeDelta());
+            alarm.setDuration(E_AM_EXACTDATETIME);
+            alarm.setTrigger(resolvedDateTime.toTime_t());
 
-            if (calError == CALENDAR_OPERATION_SUCCESSFUL)
-                retn->setAlarm(&alarm); // makes a copy
+            retn->setAlarm(&alarm); // makes a copy
         }
     }
 
@@ -624,12 +647,38 @@ QPair<qint32, qint32> OrganizerItemTransform::modifyAlarmEvent(CCalendar *cal, Q
             oldCookie = cookies[0];
 
             QOrganizerItemVisualReminder reminder = item->detail<QOrganizerItemVisualReminder>();
+
+            QDateTime reminderDateTime = reminder.dateTime();
+            if (reminderDateTime.isNull()) {
+                // use time delta instead
+                QDateTime startDateTime;
+                if (item->type() == QOrganizerItemType::TypeEvent || item->type() == QOrganizerItemType::TypeEventOccurrence) {
+                    startDateTime = item->detail<QOrganizerEventTimeRange>().startDateTime();
+                }
+                else if (item->type() == QOrganizerItemType::TypeTodo || item->type() == QOrganizerItemType::TypeTodoOccurrence) {
+                    startDateTime = item->detail<QOrganizerTodoTimeRange>().startDateTime();
+                }
+                else if (item->type() == QOrganizerItemType::TypeJournal) {
+                    startDateTime = item->detail<QOrganizerJournalTimeRange>().entryDateTime();
+                }
+
+                reminderDateTime = startDateTime.addSecs(-reminder.timeDelta());
+            }
+
             int ignoreErrors = 0;
+            newCookie = alarm->modifyAlarmEvent(oldCookie, reminderDateTime.toTime_t(), reminder.message().toStdString(),
+                                                component->getLocation(), component->getDateStart(), component->getDateEnd(),
+                                                component->getId(), cal->getCalendarId(), component->getDescription(),
+                                                component->getType(), component->getAllDay(), QString("").toStdString(),
+                                                ignoreErrors);
+
+            /*
             newCookie = alarm->modifyAlarmEvent(oldCookie, reminder.dateTime().toTime_t(), reminder.message().toStdString(),
                                                 component->getLocation(), component->getDateStart(), component->getDateEnd(),
                                                 component->getId(), cal->getCalendarId(), component->getDescription(),
                                                 component->getType(), component->getAllDay(), QString("").toStdString(),
                                                 ignoreErrors);
+                                                */
         }
     }
     return QPair<qint32, qint32>(oldCookie, newCookie);
