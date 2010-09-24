@@ -58,6 +58,7 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QGalleryFilter)
+Q_DECLARE_METATYPE(QGalleryFilter::Type)
 Q_DECLARE_METATYPE(QGalleryQueryRequest::Scope)
 Q_DECLARE_METATYPE(QModelIndex)
 
@@ -295,6 +296,8 @@ private Q_SLOTS:
     void changeFilterAuto();
     void filterProperties_data();
     void filterProperties();
+    void groupFilter_data();
+    void groupFilter();
     void progress_data();
     void progress();
     void roleNames();
@@ -332,6 +335,7 @@ private:
 void tst_QDeclarativeDocumentGalleryModel::initTestCase()
 {
     qRegisterMetaType<QGalleryFilter>();
+    qRegisterMetaType<QGalleryFilter::Type>();
     qRegisterMetaType<QGalleryQueryRequest::Scope>();
     qRegisterMetaType<QModelIndex>();
     QHash<QString, QGalleryProperty::Attributes> propertyAttributes;
@@ -1914,6 +1918,144 @@ void tst_QDeclarativeDocumentGalleryModel::filterProperties()
     QCOMPARE(object->setProperty(property.constData(), value), true);
     QCOMPARE(object->property(property.constData()), value);
     QCOMPARE(spy.count(), qmlValue != value ? 1 : 0);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::groupFilter_data()
+{
+    QTest::addColumn<QByteArray>("qml");
+    QTest::addColumn<QGalleryFilter::Type>("type");
+
+    QTest::newRow("Intersection")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "filter: GalleryFilterIntersection {}\n"
+                    "}\n")
+            << QGalleryFilter::Intersection;
+
+    QTest::newRow("Union")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryModel {\n"
+                        "filter: GalleryFilterUnion {}\n"
+                    "}\n")
+            << QGalleryFilter::Union;
+}
+
+void tst_QDeclarativeDocumentGalleryModel::groupFilter()
+{
+    QFETCH(QByteArray, qml);
+    QFETCH(QGalleryFilter::Type, type);
+
+    QGalleryFilter filter;
+    QList<QGalleryFilter> actualFilters;
+    QList<QGalleryFilter> expectedFilters;
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+
+    QObject *declarativeFilter = object->property("filter").value<QDeclarativeGalleryFilterBase *>();
+    QVERIFY(declarativeFilter);
+
+    QSignalSpy spy(declarativeFilter, SIGNAL(filterChanged()));
+
+    QDeclarativeListProperty<QDeclarativeGalleryFilterBase> filterList
+            = declarativeFilter->property("filters")
+                    .value<QDeclarativeListProperty<QDeclarativeGalleryFilterBase> >();
+
+    QVERIFY(filterList.append);
+    QVERIFY(filterList.count);
+    QVERIFY(filterList.at);
+    QVERIFY(filterList.clear);
+
+    QCOMPARE(filterList.count(&filterList), 0);
+
+    {
+        const QByteArray filterQml(
+                "import Qt 4.7\n"
+                "import QtMobility.gallery 1.1\n"
+                "GalleryEqualsFilter { property: \"fileName\"; value: \"filename.ext\" }\n");
+
+        QDeclarativeComponent filterComponent(&engine);
+        filterComponent.setData(filterQml, QUrl());
+
+        QScopedPointer<QObject> filterObject(filterComponent.create());
+        QVERIFY(filterObject);
+
+        filterList.append(
+                &filterList, static_cast<QDeclarativeGalleryFilterBase *>(filterObject.take()));
+    }
+    QCOMPARE(filterList.count(&filterList), 1);
+    QVERIFY(filterList.at(&filterList, 0));
+    QCOMPARE(filterList.at(&filterList, 0)->filter(),
+             QGalleryFilter(QDocumentGallery::fileName == QLatin1String("filename.ext")));
+    QCOMPARE(spy.count(), 1);
+
+    QCoreApplication::processEvents();
+    QVERIFY(gallery.request());
+
+    filter = gallery.request()->filter();
+    QCOMPARE(filter.type(), type);
+
+    actualFilters = type == QGalleryFilter::Intersection
+            ? filter.toIntersectionFilter().filters()
+            : filter.toUnionFilter().filters();
+    expectedFilters.append(QDocumentGallery::fileName == QLatin1String("filename.ext"));
+    QCOMPARE(actualFilters, expectedFilters);
+
+    {
+        const QByteArray filterQml(
+                "import Qt 4.7\n"
+                "import QtMobility.gallery 1.1\n"
+                "GalleryLessThanFilter { property: \"trackNumber\"; value: 12 }\n");
+
+        QDeclarativeComponent filterComponent(&engine);
+        filterComponent.setData(filterQml, QUrl());
+
+        QScopedPointer<QObject> filterObject(filterComponent.create());
+        QVERIFY(filterObject);
+
+        filterList.append(
+                &filterList, static_cast<QDeclarativeGalleryFilterBase *>(filterObject.take()));
+    }
+    QCOMPARE(filterList.count(&filterList), 2);
+    QVERIFY(filterList.at(&filterList, 1));
+    QCOMPARE(filterList.at(&filterList, 1)->filter(),
+             QGalleryFilter(QDocumentGallery::trackNumber < 12));
+    QCOMPARE(spy.count(), 2);
+
+    QCoreApplication::processEvents();
+    QVERIFY(gallery.request());
+
+    filter = gallery.request()->filter();
+    QCOMPARE(filter.type(), type);
+
+    actualFilters = type == QGalleryFilter::Intersection
+            ? filter.toIntersectionFilter().filters()
+            : filter.toUnionFilter().filters();
+    expectedFilters.append(QDocumentGallery::trackNumber < 12);
+    QCOMPARE(actualFilters, expectedFilters);
+
+    filterList.clear(&filterList);
+    QCOMPARE(filterList.count(&filterList), 0);
+    QCOMPARE(spy.count(), 3);
+
+    QCoreApplication::processEvents();
+    QVERIFY(gallery.request());
+
+    filter = gallery.request()->filter();
+    QCOMPARE(filter.type(), type);
+
+    actualFilters = type == QGalleryFilter::Intersection
+            ? filter.toIntersectionFilter().filters()
+            : filter.toUnionFilter().filters();
+    expectedFilters.clear();
+    QCOMPARE(actualFilters, expectedFilters);
 }
 
 void tst_QDeclarativeDocumentGalleryModel::progress_data()
