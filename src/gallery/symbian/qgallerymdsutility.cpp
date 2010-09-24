@@ -812,6 +812,15 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
             if( !propDef )
                 return;
 
+<<<<<<< HEAD:src/gallery/symbian/qgallerymdsutility.cpp
+ \a desc descriptor to be converted
+ \return QString containing the converted string
+ */
+QString QDocumentGalleryMDSUtility::s60DescToQString(const TDesC& desc)
+{
+    return QString::fromUtf16(desc.Ptr(), desc.Length());
+}
+=======
             CMdEProperty* comProp = NULL;
             int foundIndex = inputItem->Property( *propDef, comProp );
             if ( foundIndex != KErrNotFound && comProp ) {
@@ -831,6 +840,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
             if( !propDef )
                 return;
+>>>>>>> 94fab8630bd996815014dca6d97347e09cf68b7f:src/gallery/symbian/qgallerymdsutility.cpp
 
             CMdEProperty* rateProp = NULL;
             int foundIndex = inputItem->Property( *propDef, rateProp );
@@ -874,6 +884,17 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
             if( !propDef )
                 return;
 
+<<<<<<< HEAD:src/gallery/symbian/qgallerymdsutility.cpp
+ \a string QString to be converted
+ \return Pointer to a Symbian S60 descriptor on success;
+ otherwise returns NULL pointer
+ */
+HBufC* QDocumentGalleryMDSUtility::qStringToS60Desc(const QString& string)
+{
+    TPtrC16 str(reinterpret_cast<const TUint16*>(string.utf16()));
+    return str.Alloc();
+}
+=======
             CMdEProperty* artistProp = NULL;
             int foundIndex = inputItem->Property( *propDef, artistProp );
             if ( foundIndex != KErrNotFound && artistProp ) {
@@ -893,6 +914,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KAudioFourCCProperty );
             if( !propDef )
                 return;
+>>>>>>> 94fab8630bd996815014dca6d97347e09cf68b7f:src/gallery/symbian/qgallerymdsutility.cpp
 
             CMdEProperty* codecProp = NULL;
             int foundIndex = inputItem->Property( *propDef, codecProp );
@@ -916,6 +938,22 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
             if( !propDef )
                 return;
 
+<<<<<<< HEAD:src/gallery/symbian/qgallerymdsutility.cpp
+ \a desc 8 bit descriptor to be converted
+ \return Converted QString on success; otherwise returns null QString
+ */
+QString QDocumentGalleryMDSUtility::s60Desc8ToQString(const TDesC8& desc)
+{
+    QString qtString;
+    HBufC* s60str;
+    TRAPD(error, s60str = CnvUtfConverter::ConvertToUnicodeFromUtf8L(desc));
+    if (error == KErrNone) {
+        qtString = QString::fromUtf16(s60str->Ptr(), s60str->Length());
+        delete s60str;
+    }
+    return qtString;
+}
+=======
             CMdEProperty* brateProp = NULL;
             int foundIndex = inputItem->Property( *propDef, brateProp );
             if ( foundIndex != KErrNotFound && brateProp ) {
@@ -936,6 +974,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
             if( !propDef )
                 return;
+>>>>>>> 94fab8630bd996815014dca6d97347e09cf68b7f:src/gallery/symbian/qgallerymdsutility.cpp
 
             CMdEProperty* countProp = NULL;
             int foundIndex = inputItem->Property( *propDef, countProp );
@@ -977,6 +1016,22 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
             if( !propDef )
                 return;
 
+<<<<<<< HEAD:src/gallery/symbian/qgallerymdsutility.cpp
+ \a string QString to be converted
+ \return Pointer to a Symbian S60 descriptor containing the UTF8 string on success;
+ otherwise returns NULL pointer
+ */
+HBufC8* QDocumentGalleryMDSUtility::qStringToS60Desc8(const QString& string)
+{
+    TPtrC16 str(reinterpret_cast<const TUint16*>(string.utf16()));
+    HBufC8* s60str;
+    TRAPD(error, s60str = CnvUtfConverter::ConvertFromUnicodeToUtf8L(str));
+    if (error != KErrNone) {
+        return NULL;
+    }
+    return s60str;
+}
+=======
             CMdEProperty* widthProp = NULL;
             int foundIndex = inputItem->Property( *propDef, widthProp );
             if ( foundIndex != KErrNotFound && widthProp ) {
@@ -997,6 +1052,7 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KHeightProperty );
             if( !propDef )
                 return;
+>>>>>>> 94fab8630bd996815014dca6d97347e09cf68b7f:src/gallery/symbian/qgallerymdsutility.cpp
 
             CMdEProperty* heightProp = NULL;
             int foundIndex = inputItem->Property( *propDef, heightProp );
@@ -1400,7 +1456,7 @@ QVariant::Type QDocumentGalleryMDSUtility::GetPropertyType( int key )
 /*!
  Converts a Symbian S60 descriptor (string) to a QString
 
- \param desc descriptor to be converted
+ \a desc descriptor to be converted
  \return QString containing the converted string
  */
 QString QDocumentGalleryMDSUtility::s60DescToQString(const TDesC& desc)
@@ -1413,7 +1469,7 @@ QString QDocumentGalleryMDSUtility::s60DescToQString(const TDesC& desc)
 
  Note: Ownership of the returned descriptor (string) is transferred to caller.
 
- \param string QString to be converted
+ \a string QString to be converted
  \return Pointer to a Symbian S60 descriptor on success;
  otherwise returns NULL pointer
  */
@@ -1426,7 +1482,7 @@ HBufC* QDocumentGalleryMDSUtility::qStringToS60Desc(const QString& string)
 /*!
  Converts a Symbian S60 8 bit descriptor (UTF8 string) to a QString
 
- \param desc 8 bit descriptor to be converted
+ \a desc 8 bit descriptor to be converted
  \return Converted QString on success; otherwise returns null QString
  */
 QString QDocumentGalleryMDSUtility::s60Desc8ToQString(const TDesC8& desc)
@@ -1446,7 +1502,7 @@ QString QDocumentGalleryMDSUtility::s60Desc8ToQString(const TDesC8& desc)
 
  Note: Ownership of the returned descriptor (string) is transferred to the caller
 
- \param string QString to be converted
+ \a string QString to be converted
  \return Pointer to a Symbian S60 descriptor containing the UTF8 string on success;
  otherwise returns NULL pointer
  */

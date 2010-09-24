@@ -101,7 +101,7 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileBackup, "Backup");
  */
 
 /*!
-  \fn int index() const
+  \fn int QVersitContactHandlerFactory::index() const
   This function should return an index that helps with determining the order in which to run the
   plugins.  Plugins are run in the following order:
   \list

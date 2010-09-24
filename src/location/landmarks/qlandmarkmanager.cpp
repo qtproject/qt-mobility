@@ -186,22 +186,18 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
 /*!
     \enum QLandmarkManager::LandmarkFeature
     Defines the possible features the landmark manager can support.
-    \value ExtendedAttributes The manager supports extra attributes above the standard cross platform attributes.
-                              These attributes are specific to the manager backend implementation.
-    \value CustomAttributes The manager supports applications associating arbitrary custom attributes to
-                            landmarks and categories.
-    \value ImportExport The manager supports import and/or export operations
-    \value Notifications The manager will emit notification signals when landmarks/categories have
+    \value ImportExportFeature The manager supports import and/or export operations
+    \value NotificationsFeature The manager will emit notification signals when landmarks/categories have
                          been added/modified/removed from the datastore it manages.
 */
 
 /*!
     \enum QLandmarkManager::SupportLevel
     Defines the possible support levels the manager can provide for a given filter or sort order list.
-    \value Native The manager natively supports the filter or sort order list.
-    \value Emulated The manager emulates the behaviour of the filter or sort order list.
+    \value NativeSupport The manager natively supports the filter or sort order list.
+    \value EmulatedSupport The manager emulates the behaviour of the filter or sort order list.
                      Emulated behaviour will inherently be slower than a natively supported implementation.
-    \value None The manager does not support the filter or sort order list at all.
+    \value NoSupport The manager does not support the filter or sort order list at all.
 */
 
 /*!

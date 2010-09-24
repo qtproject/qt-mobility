@@ -705,7 +705,7 @@ void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::
 */
 
 /*!
-    \qmlproperty DocumentGalleryModel::count
+    \qmlproperty int DocumentGalleryModel::count
 
     This property holds the number of results returned by a query.
 */

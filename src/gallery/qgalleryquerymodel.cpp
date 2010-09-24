@@ -676,27 +676,15 @@ QString QGalleryQueryModel::errorString() const
 */
 
 /*!
-    \fn QGalleryQueryModel::succeeded()
-
-    Signals that the query has finished successfully.
-*/
-
-/*!
     \fn QGalleryQueryModel::cancelled()
 
     Signals that the query was cancelled.
 */
 
 /*!
-    \fn QGalleryQueryModel::failed(int result)
-
-    Signals that the query has failed with the given \a result.
-*/
-
-/*!
     \fn QGalleryQueryModel::finished()
 
-    Signals that the query has finished with the given \a result.
+    Signals that the query has finished.
 */
 
 /*!

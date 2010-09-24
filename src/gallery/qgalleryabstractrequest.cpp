@@ -138,42 +138,20 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
     \value Active The request is currently executing.
     \value Cancelling The request was cancelled, but hasn't yet returned to the
     Inactive status.
+    \value Cancelled The request was cancelled.
     \value Idle The request has finished, and is monitoring its return values
     for changes.
+    \value Finished The request is finished.
+    \value Error The request runs into an error.
 */
 
 /*!
-    \enum QGalleryAbstractRequest::Result
+    \enum QGalleryAbstractRequest::RequestError
 
-    Identifies the result of a gallery request.
-
-    \value NoResult The request is still active and no result is available yet.
-    \value Succeeded The request succeeded sucessfully.
-    \value Cancelled The request was cancelled before it could finish.
-    \value NoGallery The request cannot be executed because no \l gallery is
-    set.
-    \value NotSupported The request isn't supported by the \l gallery.
-    \value ConnectionError The request could not be executed due to a problem
-    connecting to the gallery.
-    \value InvalidItemError The request could not be executed due to an invalid
-    item ID.
-    \value ItemTypeError The request could not be executed due to an invalid
-    item type.
-    \value InvalidPropertyError The request could not be executed because a
-    filter referenced an invalid property.
-    \value PropertyTypeError The request could not be executed because a filter
-    compared a property to an invalid variant type.
-    \value UnsupportedFilterTypeError The request could not be executed because
-    a filter is not supported by the gallery.
-    \value UnsupportedFilterOptionError The request could not be executed
-    because an option on a filter is not supported by the gallery.
-    \value PermissionsError The request could not be executed because the
-    user has insufficient permissions.
-    \value InvalidDestinationError  The request could not be executed because
-    the given destination ID is invalid.
-    \value InvalidUrlError The request could not be executed due to an invalid
-    URL.
-    \value RequestError A minimum value for request specific error results.
+    \value NoError No error.
+    \value NoGallery No gallery found.
+    \value NotSupported Request is not supported.
+    \value GalleryError The gallery is wrong or corrupt.
 */
 
 /*!
@@ -289,12 +267,6 @@ QGalleryAbstractRequest::Status QGalleryAbstractRequest::status() const
 {
     return d_ptr->status;
 }
-
-/*!
-    \fn QGalleryAbstractRequest::statusChanged(GalleryAbstractRequest::Status status)
-
-    Signals that the \a status of a request has changed.
-*/
 
 /*!
     \property QGalleryAbstractRequest::error
@@ -540,6 +512,12 @@ void QGalleryAbstractRequest::clear()
     \fn QGalleryAbstractRequest::cancelled()
 
     Signals that a request was cancelled before it could finish.
+*/
+
+/*!
+    \fn QGalleryAbstractRequest::statusChanged(QGalleryAbstractRequest::Status status)
+
+    Signals that the \a status of a request has changed.
 */
 
 /*!
