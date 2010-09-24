@@ -81,10 +81,6 @@
 #include <qgeorouterequest.h>
 #include <qgeoboundingbox.h>
 
-#define MARKER_HEIGHT 36
-#define MARKER_WIDTH 25
-#define MARKER_PIN_LEN 10
-
 QTM_USE_NAMESPACE
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -249,8 +245,6 @@ void MainWindow::setupUi()
     menuBar()->addAction(exitAction);
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 #endif
-
-    createPixmapIcon();
 
     m_mapWidget = new MapWidget(m_mapManager);
     m_qgv->scene()->addItem(m_mapWidget);
@@ -634,7 +628,7 @@ void MainWindow::createMenus()
                      this, SLOT(calcRoute(bool)));
 }
 
-#define MVTEST_MARK(pos) do { QGeoMapPixmapObject *marker = new QGeoMapPixmapObject(pos, QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon); m_mapWidget->addMapObject(marker); m_markerObjects.append(marker); } while (0)
+#define MVTEST_MARK(pos) do { QGeoMapPixmapObject *marker = new QGeoMapPixmapObject(pos); m_mapWidget->addMapObject(marker); m_markerObjects.append(marker); } while (0)
 #define MVTEST_MARK2(lat,lng) MVTEST_MARK(QGeoCoordinate(lat,lng))
 #define MVTEST_RECT(topleft,bottomright) removePixmaps(); MVTEST_MARK(topleft); MVTEST_MARK(bottomright); drawRect(false);
 #define MVTEST_RECT2(topleftlat,topleftlng,bottomrightlat,bottomrightlng) MVTEST_RECT(QGeoCoordinate(topleftlat,topleftlng),QGeoCoordinate(bottomrightlat,bottomrightlng))
@@ -846,29 +840,6 @@ void MainWindow::customContextMenuRequest(const QPoint& point)
 
         m_popupMenu->popup(m_qgv->mapToGlobal(m_lastClicked));
     }
-}
-
-void MainWindow::createPixmapIcon()
-{
-    m_markerIcon = QPixmap(MARKER_WIDTH, MARKER_HEIGHT);
-    m_markerIcon.fill(Qt::transparent);
-    QPainter painter(&m_markerIcon);
-
-    QPointF p1(MARKER_WIDTH / 2, MARKER_HEIGHT - 1);
-    QPointF p2(MARKER_WIDTH / 2, MARKER_HEIGHT - 1 - MARKER_PIN_LEN);
-    QPen pen(Qt::black);
-    pen.setWidth(2);
-    pen.setCosmetic(true);
-    painter.setPen(pen);
-    painter.drawLine(p1, p2);
-    QRectF ellipse(0, 0, MARKER_WIDTH - 1, MARKER_WIDTH - 1);
-    pen.setWidth(1);
-    painter.setPen(pen);
-    QColor color(Qt::green);
-    color.setAlpha(127);
-    QBrush brush(color);
-    painter.setBrush(brush);
-    painter.drawEllipse(ellipse);
 }
 
 void MainWindow::calcRoute(bool /*checked*/)
