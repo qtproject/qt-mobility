@@ -11,7 +11,9 @@ include(mediarecorder/mediarecorder.pri)
 
 DEPENDPATH += .
 
-HEADERS += qxamediaserviceproviderplugin.h
+HEADERS += qxamediaserviceproviderplugin.h \
+           qxacommon.h \
+           xacommon.h
 
 SOURCES += qxamediaserviceproviderplugin.cpp
 
