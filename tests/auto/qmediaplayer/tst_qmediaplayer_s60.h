@@ -104,17 +104,24 @@ public slots:
     void initTestCase_data();
     void initTestCase_data_default_winscw();
     void initTestCase_data_default_armv5();
+    void initTestCase_data_50_winscw();
+    void initTestCase_data_50_armv5();
+    void initTestCase_data_32_winscw();
+    void initTestCase_data_32_armv5();
+    void initTestCase_data_31_winscw();
+    void initTestCase_data_31_armv5();
     void initTestCase();
     void cleanupTestCase();
     void init();
     void cleanup();
 
 private slots:
+    void testPositionWhilePlaying();
     void testNullService();
     void testMedia();
     void testDuration();
     void testPosition();
-    void testPositionWhilePlaying();
+
     void testVolume();
     void testVolumeWhilePlaying();
     void testMuted();
@@ -126,7 +133,8 @@ private slots:
     void testStop();
     void testMediaStatus();
     void testPlaylist();
-    void testStreamControl();
+    void testPlaybackRate();
+    void testPlaybackRateWhilePlaying();
 
 private:
     QMediaPlayer *m_player;
