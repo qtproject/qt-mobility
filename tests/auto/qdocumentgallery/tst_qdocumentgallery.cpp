@@ -97,8 +97,7 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::lastAccessed
             << QDocumentGallery::lastModified
             << QDocumentGallery::mimeType;
-#endif
-#if defined (Q_OS_SYMBIAN)
+#elif defined (Q_OS_SYMBIAN)
             << QDocumentGallery::url
             << QDocumentGallery::fileName
             << QDocumentGallery::filePath
@@ -143,8 +142,7 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::sampleRate
             << QDocumentGallery::title
             << QDocumentGallery::trackNumber
-#endif
-#if defined (Q_OS_SYMBIAN)
+#elif defined (Q_OS_SYMBIAN)
             << QDocumentGallery::duration
             << QDocumentGallery::performer
             << QDocumentGallery::audioCodec
@@ -171,13 +169,16 @@ void tst_QDocumentGallery::itemTypeProperties_data()
 #endif
     );
     QTest::newRow("PhotoAlbum") << QString(QDocumentGallery::PhotoAlbum) << (QStringList()
-    #if defined (Q_OS_SYMBIAN)
+#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+                << QDocumentGallery::title
+                << QDocumentGallery::trackCount
+#elif defined (Q_OS_SYMBIAN)
                 << QDocumentGallery::url
                 << QDocumentGallery::fileSize
                 << QDocumentGallery::lastModified
                 << QDocumentGallery::title
                 << QDocumentGallery::mimeType
-    #endif            
+#endif
     );    
 
 #if defined (Q_OS_SYMBIAN)
