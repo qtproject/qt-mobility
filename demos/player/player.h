@@ -91,8 +91,9 @@ private slots:
 
     void displayErrorMessage();
 
+#ifndef PLAYER_NO_COLOROPTIONS
     void showColorDialog();
-    
+#endif
     void addToPlaylist(const QStringList& fileNames);
 
 private:
@@ -109,12 +110,12 @@ private:
     QPushButton *fullScreenButton;
 #ifndef PLAYER_NO_COLOROPTIONS
     QPushButton *colorButton;
+    QDialog *colorDialog;
 #endif
     PlaylistModel *playlistModel;
     QAbstractItemView *playlistView;
     QString trackInfo;
     QString statusInfo;
-    QDialog *colorDialog;
 };
 
 #endif
