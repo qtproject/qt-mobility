@@ -42,6 +42,7 @@
 #include "qorganizerasynchprocess.h"
 #include "qtorganizer.h"
 #include "qorganizermaemo5_p.h"
+#include "qorganizermaemo5ids_p.h"
 #include <QtCore/qtimer.h>
 #include <QtCore/qcoreapplication.h>
 

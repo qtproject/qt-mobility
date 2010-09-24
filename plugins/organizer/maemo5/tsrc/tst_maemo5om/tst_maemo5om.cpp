@@ -43,7 +43,6 @@
 #include <qmobilityglobal.h>
 #include <qtorganizer.h>
 #include <QtTest/QtTest>
-#include <QDebug>
 
 QTM_USE_NAMESPACE
 
@@ -940,7 +939,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     newCollection.setMetaData("Color", "White");
     QVERIFY(m_om->saveCollection(&newCollection));
     QOrganizerCollectionLocalId collId = newCollection.id().localId();
-    QVERIFY(collId != QOrganizerCollectionLocalId(0));
+    QVERIFY(!collId.isNull());
 
     // Save an item to the new collection
     QDate startDate1(2010, 8, 3);
