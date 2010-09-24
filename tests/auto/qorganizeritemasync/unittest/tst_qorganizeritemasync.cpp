@@ -855,6 +855,9 @@ void tst_QOrganizerItemAsync::itemRemove()
     testTodo1.setId(QOrganizerItemId());
     label.setLabel("Test todo 2");
     testTodo1.saveDetail(&label);
+    QOrganizerItemComment comment;
+    comment.setComment("todo comment");
+    testTodo1.saveDetail(&comment);
     QVERIFY(oim->saveItem(&testTodo1));
 
     QList<QOrganizerItemLocalId> allIds(oim->itemIds());
@@ -868,7 +871,7 @@ void tst_QOrganizerItemAsync::itemRemove()
     // specific contact removal via detail filter
     int originalCount = oim->itemIds().size();
     QOrganizerItemDetailFilter dfil;
-    dfil.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLocationName);
+    dfil.setDetailDefinitionName(QOrganizerItemComment::DefinitionName, QOrganizerItemComment::FieldComment);
     irr.setItemIds(oim->itemIds(dfil));
     irr.setManager(oim.data());
     QCOMPARE(irr.manager(), oim.data());
