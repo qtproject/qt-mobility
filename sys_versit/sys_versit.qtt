@@ -61,43 +61,29 @@ function contactsMenuItem(menuText)
 
 }
 
-
-// returns true if automated testing can be done, false manual testing is to be done
-function automatedTestEnvironment(){
-      return (checkOS("symbian") || checkOS("maemo"));
-      //return (checkOS("symbian") || checkOS("maemo") || checkOS("linux"));
-}
-
 function importContactsMenu() {
     return contactsMenuItem("&Import contacts...");
 }
 
-function exportContactsMenu() {
+function exportVCardContactsMenu() {
     return contactsMenuItem("Ex&port contacts...");
 }
 
+var checkImportedVCardContactData = new Array(
+   ["John Smith", "+123456", "John.Smith@SmithsComputerServices.com", "1/21 Anywhere St", "BAT"],
+   ["Bill Smith", "+9876", "Bill.Smith@SmithsComputerServices.com", "2/21 Anywhere St", "BAT"]
+);
+
 testcase = {
 
-
-    initTestCase: function() {
-        startApplication("samplephonebook");
-
-        if (!automatedTestEnvironment()){
-            prompt(twiki('---+++ Initialize Contacts Test case
-    1. Start the =samplephonebook= application on target and select a *Store:* value to suit !QtContacts Backend Engine for this test
-    1. If =Import Contacts...= menu and =Export Contacts...= menu is missing skip all tests
-                '));
-        }
-
-    },
-
-
-    importContacts_data : {
+    importVCardContacts_data : {
         vCard1 : ["testdata/testimport1.vcf"]
     },
 
-    importContacts: function(vCardFile) {
-        if (automatedTestEnvironment()){
+    importVCardContacts: function(vCardFile) {
+
+        if (!runAsManualTest()){
+            startApplication("samplephonebook");
             var menuItem = importContactsMenu();
             if (menuItem == undefined)
                 skip("Versit support not enabled", SkipAll);
@@ -108,67 +94,53 @@ testcase = {
             enter(vCardFile, "File name:");
             // need to accept entry due to autocompletion
             keyClick(Qt.Key_Enter);
+            // verify the contacts
+            for (var contactIndex=0; contactIndex < checkImportedVCardContactData.length;contactIndex++){
+                var contactList = findWidget( { className: "QListWidget" } );
+                select(checkImportedVCardContactData[contactIndex][0], contactList[0]);
+                select("&Edit");
+                compare(getText("Name"), checkImportedVCardContactData[contactIndex][0]);
+                compare(getText("Phone"), checkImportedVCardContactData[contactIndex][1]);
+                compare(getText("Email"), checkImportedVCardContactData[contactIndex][2]);
+                compare(getText("Address"), checkImportedVCardContactData[contactIndex][3]);
+                prompt("Verify that the Avatar looks like the word *BAT*");
+                select("Cancel");
+            }
+
         } else {
-            prompt(twiki('---+++ Verify Can Import Contacts
+            var promptText = "| *Name* | *Phone Number* | *Email* | *Address* | *Avatar* |\n";
+            for (var contactIndex=0; contactIndex < checkImportedVCardContactData.length;contactIndex++){
+                for (var contactDataIndex=0; contactDataIndex < checkImportedVCardContactData[0].length; contactDataIndex++){
+                    promptText += "|" + checkImportedVCardContactData[contactIndex][contactDataIndex];
+                }
+                promptText += "|\n";
+            }
+
+            prompt(twiki('---+++ Verify Can Import vCard Contacts
     1. If =Import Contacts...= menu is missing skip this test
     1. Select the =Import Contacts...= menu
     1. Enter the vCard file name of : *' + vCardFile + '*
     1. Accept the value for vCard file (close file selection dialog)
     1. Verify that no errors are present on screen
+    1. Verify the imported contacts :\n' + promptText + '
                 '));
         }
 
+
     },
 
 
-
-    checkImportedContact_data : {
-        Name1 : ["John Smith", "+123456", "John.Smith@SmithsComputerServices.com", "1/21 Anywhere St"],
-        Name2 : ["Bill Smith", "+9876", "Bill.Smith@SmithsComputerServices.com", "2/21 Anywhere St"]
-    },
-
-    /* Requirement: Verify the contact details */
-    checkImportedContact : function (name, phone, email, address) {
-        if (automatedTestEnvironment()){
-            if (importContactsMenu() == undefined)
-                skip("Versit support not enabled", SkipAll);
-
-            var contactList = findWidget( { className: "QListWidget" } );
-            select(name, contactList[0]);
-            select("&Edit");
-            compare(getText("Name"), name);
-            compare(getText("Phone"), phone);
-            compare(getText("Email"), email);
-            compare(getText("Address"), address);
-            select("Cancel");
-        }else{
-            prompt(twiki('---+++ Verify Imported Contacts
-    1. If =Import Contacts...= menu is not present skip this test
-    1. Select contact *' + name + '* from Contact List
-    1. Click the =Edit= button
-    1. For all text fields shown in Contact Details dialog *Verify* they match the values imported, eg:
-    | *Field Name* | *Value* |
-    | Name    | ' + name    + ' |
-    | Phone   | ' + phone   + ' |
-    | Email   | ' + email   + ' |
-    | Address | ' + address + ' |
-    1. Verify that the Avatar looks like the word *BAT*
-    1. Click the =Cancel= button
-                '));
-        }
-    },
-
-
-    exportContacts_data : {
+    exportVCardContacts_data : {
         NameSet1 : ["testdata/contacts.vcf", "FN:John Smith", "FN:Bill Smith"]
     },
 
     /* Requirement : Verify contact export*/
     /* If versit suport is present test it */
-    exportContacts: function(vCardFile, name1, name2)
+    exportVCardContacts: function(vCardFile, name1, name2)
     {
-        if (automatedTestEnvironment()){
-            var menuItem = exportContactsMenu();
+        if (!runAsManualTest()){
+            startApplication("samplephonebook");
+            var menuItem = exportVCardContactsMenu();
             if (menuItem == undefined)
                 skip("Versit support not enabled", SkipAll);
 
@@ -186,7 +158,7 @@ testcase = {
             }
             deletePath(vCardFile);
         }else{
-            prompt(twiki('---+++ Verify Exported Contacts
+            prompt(twiki('---+++ Verify Exported vCard Contacts
     1. If =Export Contacts...= menu is missing skip this test
     1. Select the =Export Contacts...= menu
     1. Enter name of contacts vCard as *' + vCardFile + '*
@@ -195,5 +167,4 @@ testcase = {
         }
 
     }
-
 }
