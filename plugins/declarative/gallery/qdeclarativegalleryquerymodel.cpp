@@ -321,10 +321,7 @@ void QDeclarativeGalleryQueryModel::set(int index, const QScriptValue &values)
     QScriptValueIterator it(values);
     while (it.hasNext()) {
         it.next();
-
-        QVariant variant = it.value().toVariant();
-        if (variant.isValid())
-            m_resultSet->setMetaData(m_resultSet->propertyKey(it.name()), variant);
+        m_resultSet->setMetaData(m_resultSet->propertyKey(it.name()), it.value().toVariant());
     }
 }
 
