@@ -662,7 +662,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "Excepti
    \value NoReminder This reminder is entirely unobtrusive
    \value AudibleReminder This reminder has an audible element
    \value VisualReminder This reminder has a visual element
-   \value TactileReminder This reminder has a tactile element
+   \value EmailReminder This reminder has a email element
 */
 
 /*!
