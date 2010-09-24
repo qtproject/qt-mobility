@@ -933,7 +933,17 @@ void MainWindow::selectObjects()
 
 void MainWindow::networkSessionOpened()
 {
-    QNetworkProxyFactory::setUseSystemConfiguration(true);
+    QString urlEnv = QProcessEnvironment::systemEnvironment().value("http_proxy");
+    if(urlEnv.length()) {
+        QUrl url = QUrl(urlEnv, QUrl::TolerantMode);
+        QNetworkProxy proxy;
+        proxy.setType(QNetworkProxy::HttpProxy);
+        proxy.setHostName(url.host());
+        proxy.setPort(url.port(8080));
+        QNetworkProxy::setApplicationProxy(proxy);
+    } else
+        QNetworkProxyFactory::setUseSystemConfiguration(true);
+
     setProvider("nokia");
     // finalize ui setup
     setupUi();
