@@ -566,6 +566,9 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
                 resFile.close();
             }
         }
+            if(netname.isEmpty()) {
+             netname = "Wired";
+            }
     }
     break;
         case QSystemNetworkInfo::BluetoothMode:
