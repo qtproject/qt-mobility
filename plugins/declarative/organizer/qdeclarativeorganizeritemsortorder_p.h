@@ -54,8 +54,8 @@ class QDeclarativeOrganizerItemSortOrder : public QObject
     Q_PROPERTY(QString definitionName READ definitionName WRITE setDefinitionName NOTIFY valueChanged)
     Q_PROPERTY(QString fieldName READ fieldName WRITE setFieldName NOTIFY valueChanged)
     Q_PROPERTY(BlankPolicy blankPolicy READ blankPolicy WRITE setBlankPolicy NOTIFY valueChanged)
-    Q_PROPERTY(Qt::SortOrder direction READ direction WRITE seDdirection NOTIFY valueChanged)
-    Q_PROPERTY(Qt::CaseSensitivity sensitivity READ sensitivity WRITE setCaseSensitivity NOTIFY valueChanged)
+    Q_PROPERTY(Qt::SortOrder direction READ direction WRITE setDirection NOTIFY valueChanged)
+    Q_PROPERTY(Qt::CaseSensitivity sensitivity READ caseSensitivity WRITE setCaseSensitivity NOTIFY valueChanged)
 
     Q_ENUMS(BlankPolicy)
 public:

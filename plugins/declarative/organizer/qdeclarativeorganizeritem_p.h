@@ -284,8 +284,6 @@ signals:
     void valueChanged();
 
 };
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEvent::ItemName, "event");
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEvent::ItemGroupName, "events");
 QML_DECLARE_TYPE(QDeclarativeOrganizerEvent)
 
 //event occurrence
@@ -412,8 +410,6 @@ public:
 signals:
     void valueChanged();
 };
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEventOccurrence::ItemName, "eventOccurrence");
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEventOccurrence::ItemGroupName, "eventOccurrences");
 QML_DECLARE_TYPE(QDeclarativeOrganizerEventOccurrence)
 
 //journal
@@ -442,8 +438,6 @@ public:
 signals:
     void valueChanged();
 };
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerJournal::ItemName, "journal");
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerJournal::ItemGroupName, "journals");
 QML_DECLARE_TYPE(QDeclarativeOrganizerJournal)
 
 //note
@@ -461,8 +455,6 @@ public:
 signals:
     void valueChanged();
 };
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerNote::ItemName, "note");
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerNote::ItemGroupName, "notes");
 QML_DECLARE_TYPE(QDeclarativeOrganizerNote)
 
 //todo
@@ -561,6 +553,14 @@ public:
         Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", priority)
     }
 
+    QDeclarativeOrganizerItemPriority::Priority priority() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemPriority, "priority", returnValue)
+        if (returnValue.isNull())
+            return QDeclarativeOrganizerItemPriority::MediumPriority;
+        return static_cast<QDeclarativeOrganizerItemPriority::Priority>(returnValue.value<int>());
+    }
+
     void setProgressPercentage(int percentage)
     {
         Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "percentage", percentage)
@@ -598,8 +598,6 @@ public:
 signals:
     void valueChanged();
 };
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodo::ItemName, "todo");
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodo::ItemGroupName, "todos");
 QML_DECLARE_TYPE(QDeclarativeOrganizerTodo)
 
 //todo occurrence
@@ -650,6 +648,19 @@ public:
         Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemInstanceOrigin, "parentLocalId", parentId)
     }
 
+    void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", priority)
+    }
+
+    QDeclarativeOrganizerItemPriority::Priority priority() const
+    {
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemPriority, "priority", returnValue)
+        if (returnValue.isNull())
+            return QDeclarativeOrganizerItemPriority::MediumPriority;
+        return static_cast<QDeclarativeOrganizerItemPriority::Priority>(returnValue.value<int>());
+    }
+
     uint parentLocalId() const
     {
         Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemInstanceOrigin, "parentLocalId", returnValue)
@@ -664,11 +675,6 @@ public:
     {
         Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemInstanceOrigin, "originalDate", returnValue)
         return returnValue.value<QDate>();
-    }
-
-    void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", priority)
     }
 
     void setProgressPercentage(int percentage)
@@ -708,7 +714,5 @@ public:
 signals:
     void valueChanged();
 };
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoOccurrence::ItemName, "todoOccurrence");
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoOccurrence::ItemGroupName, "todoOccurrences");
 QML_DECLARE_TYPE(QDeclarativeOrganizerTodoOccurrence)
 #endif // QDECLARATIVEORGANIZERITEM_H

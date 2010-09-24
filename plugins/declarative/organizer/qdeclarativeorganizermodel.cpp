@@ -57,7 +57,9 @@ public:
     QDeclarativeOrganizerModelPrivate()
         :m_manager(0),
         m_fetchHint(0),
-        m_filter(0)
+        m_filter(0),
+        m_startPeriod(QDateTime::currentDateTime()),
+        m_endPeriod(QDateTime::currentDateTime())
     {
     }
     ~QDeclarativeOrganizerModelPrivate()
@@ -74,6 +76,8 @@ public:
 
     QVersitReader m_reader;
     QVersitWriter m_writer;
+    QDateTime m_startPeriod;
+    QDateTime m_endPeriod;
 };
 
 QDeclarativeOrganizerModel::QDeclarativeOrganizerModel(QObject *parent) :
@@ -90,6 +94,8 @@ QDeclarativeOrganizerModel::QDeclarativeOrganizerModel(QObject *parent) :
     connect(this, SIGNAL(filterChanged()), SLOT(fetchAgain()));
     connect(this, SIGNAL(fetchHintChanged()), SLOT(fetchAgain()));
     connect(this, SIGNAL(sortOrdersChanged()), SLOT(fetchAgain()));
+    connect(this, SIGNAL(startPeriodChanged()), SLOT(fetchAgain()));
+    connect(this, SIGNAL(endPeriodChanged()), SLOT(fetchAgain()));
 
     //import vcard
     connect(&d->m_reader, SIGNAL(stateChanged(QVersitReader::State)), this, SLOT(startImport(QVersitReader::State)));
@@ -104,6 +110,25 @@ QStringList QDeclarativeOrganizerModel::availableManagers() const
 {
     return QOrganizerItemManager::availableManagers();
 }
+
+QDateTime QDeclarativeOrganizerModel::startPeriod() const
+{
+    return d->m_startPeriod;
+}
+void QDeclarativeOrganizerModel::setStartPeriod(const QDateTime& start)
+{
+    d->m_startPeriod = start;
+}
+
+QDateTime QDeclarativeOrganizerModel::endPeriod() const
+{
+    return d->m_endPeriod;
+}
+void QDeclarativeOrganizerModel::setEndPeriod(const QDateTime& end)
+{
+    d->m_endPeriod = end;
+}
+
 
 void QDeclarativeOrganizerModel::importItems(const QString& fileName)
 {
