@@ -108,32 +108,24 @@ QCameraLocksControl::~QCameraLocksControl()
     \fn QCameraLocksControl::lockStatus(QCamera::LockType lock) const
 
     Returns the camera \a lock status.
-
-    \sa QCamera::lockStatus(QCamera::LockType)
 */
 
 /*!
     \fn QCameraLocksControl::searchAndLock(QCamera::LockTypes locks)
 
     Request camera \a locks.
-
-    \sa QCamera::searchAndLock(QCamera::LockTypes)
 */
 
 /*!
     \fn QCameraLocksControl::unlock(QCamera::LockTypes locks)
 
     Unlock camera \a locks.
-
-    \sa QCamera::unlock(QCamera::LockTypes)
 */
 
 /*!
     \fn QCameraLocksControl::lockStatusChanged(QCamera::LockType lock, QCamera::LockStatus status, QCamera::LockChangeReason reason)
 
     Signals the \a lock \a status was changed with a specified \a reason.
-
-    \sa QCamera::lockStatusChanged
 */
 
 
