@@ -22,6 +22,7 @@
 #include <QLocale>
 
 class CntSqlSearchInterface;
+class C12keyKeyMap;
 
 /**
  * 
@@ -32,7 +33,7 @@ class CntSqlFactory
 
 public: 
 
-    CntSqlFactory();
+    CntSqlFactory(C12keyKeyMap* twelveKeyKeyMap);
     
     ~CntSqlFactory();
     
@@ -43,6 +44,10 @@ private:
     int getQueryType(const QString &pattern); 
     
     friend class UT_CntSqlFactory;
+    
+private:
+    
+    C12keyKeyMap* mTwelveKeyKeyMap;
     
 };
 

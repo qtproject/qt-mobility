@@ -22,6 +22,7 @@
 
 #include <QString>
 
+class CPcsKeyMap;
 
 class CntSqlSearchInterface 
 {
@@ -30,7 +31,7 @@ public:
     
 public:
     
-    ~CntSqlSearchInterface() {};
+    virtual ~CntSqlSearchInterface() {};
     
 public: //abstracts
 
