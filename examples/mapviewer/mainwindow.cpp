@@ -53,6 +53,8 @@
 #include <QPainter>
 #include <QDesktopWidget>
 #include <QDialog>
+#include <QProcessEnvironment>
+#include <QUrl>
 
 #include <QGridLayout>
 #include <QFormLayout>
@@ -934,7 +936,7 @@ void MainWindow::selectObjects()
 void MainWindow::networkSessionOpened()
 {
     QString urlEnv = QProcessEnvironment::systemEnvironment().value("http_proxy");
-    if(urlEnv.length()) {
+    if(!urlEnv.isEmpty()) {
         QUrl url = QUrl(urlEnv, QUrl::TolerantMode);
         QNetworkProxy proxy;
         proxy.setType(QNetworkProxy::HttpProxy);
