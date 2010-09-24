@@ -67,12 +67,18 @@ public:
 
     OptimizationHints optimizationHints() const
     {
-        return d.optimizationHints();
+        OptimizationHints hints;
+        hints &= 0xFFFFFFFF;
+        hints &= (int)d.optimizationHints();
+        return hints;
     }
 
     void setOptimizationHints(OptimizationHints hints)
     {
-        d.setOptimizationHints(hints);
+        QOrganizerItemFetchHint::OptimizationHints newHints;
+        newHints &= 0xFFFFFFFF;
+        newHints &= (int)hints;
+        d.setOptimizationHints(newHints);
     }
 
     QOrganizerItemFetchHint fetchHint() const
