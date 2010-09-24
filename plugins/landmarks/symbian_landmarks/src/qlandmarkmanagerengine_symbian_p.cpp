@@ -698,7 +698,7 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmark(QLandmark* landmark,
     }
 
     if (!result)
-        qDebug() << "\nError " << *error << "  \nErrorString = " << *errorString;
+        qDebug() << "Error " << *error << " = " << *errorString;
     return result;
 }
 
@@ -980,7 +980,7 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategory(QLandmarkCategory* catego
     }
 
     if (!result)
-        qDebug() << "\nError " << *error << "  \nErrorString = " << *errorString;
+        qDebug() << "Error " << *error << " = " << *errorString;
     return result;
 }
 
@@ -2281,7 +2281,7 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
             // updating existing landmark
             LandmarkUtility::setSymbianLandmarkL(*symbianLandmark, landmark, m_LandmarkCatMgr);
             m_LandmarkDb->UpdateLandmarkL(*symbianLandmark);
-            CleanupStack::Pop(symbianLandmark);
+            CleanupStack::PopAndDestroy(symbianLandmark);
             *changed = true;
 
             m_UpdatedLmIds << landmarkId.localId();
@@ -2431,6 +2431,14 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
             = "Bad Local Id assigned, Symbian Database Supports only unsigned long values for Landmark Id.";
     }
     else {
+        
+        // check if category is global category 
+        if (LandmarkUtility::isGlobalCategoryId(m_LandmarkCatMgr, category->categoryId())) {
+            *error = QLandmarkManager::PermissionsError;
+            *errorString = "Category is readonly, cannot be updated.";
+            return result;
+        }        
+        
         // check for existing category with category id
         TPosLmItemId symbianCatId = LandmarkUtility::convertToSymbianLandmarkCategoryId(
             category->categoryId());
@@ -2442,7 +2450,7 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
             //            qDebug() << "category " << category->name() << " updated successfully " << "cat Id ="
             //                << category->categoryId().localId();
 
-            CleanupStack::Pop(symbiancat);
+            CleanupStack::PopAndDestroy(symbiancat);
 
             m_UpdatedCatIds << categoryId.localId();
 

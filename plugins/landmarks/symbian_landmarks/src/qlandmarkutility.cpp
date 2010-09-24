@@ -967,14 +967,14 @@ bool LandmarkUtility::isGlobalCategoryId(CPosLmCategoryManager* catMgr,
     globalCategories << "45000";
 
     TPosLmItemId glCatId = convertToSymbianLandmarkCategoryId(qtCategoryId);
-    qDebug() << "aCatId = " << glCatId;
+    //qDebug() << "aCatId = " << glCatId;
 
     for (int i = 0; i < globalCategories.size(); ++i) {
         TPosLmGlobalCategory gblCat = globalCategories.operator [](i).toUShort();
         TPosLmItemId gId = KPosLmNullItemId;
         TRAPD(err, gId= catMgr->GetGlobalCategoryL(gblCat);)
         if (err == KErrNone) {
-            qDebug() << "GlobalId = " << gblCat << " catId = " << gId;
+            //qDebug() << "GlobalId = " << gblCat << " catId = " << gId;
             if (gId != KPosLmNullItemId && glCatId == gId) {
                 result = true;
                 break;
