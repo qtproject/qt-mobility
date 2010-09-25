@@ -121,7 +121,7 @@ The map data will come from an offline source.
 \value OnlineMode
 The map data will come from an online source.
 
-\value HybridMod
+\value HybridMode
 The map data will come from a combination of offline and online sources.
 */
 

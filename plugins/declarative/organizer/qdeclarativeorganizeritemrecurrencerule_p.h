@@ -97,12 +97,12 @@ public:
 
     void setFrequency(Frequency freq)
     {
-        m_rule.setFrequency(freq);
+        m_rule.setFrequency(static_cast<QOrganizerItemRecurrenceRule::Frequency>(freq));
     }
 
     Frequency frequency() const
     {
-        return m_rule.frequency();
+        return static_cast<Frequency>(m_rule.frequency());
     }
 
     void setCount(int count)
@@ -139,7 +139,7 @@ public:
     {
         QList<Qt::DayOfWeek> saved;
         foreach(QVariant day, days) {
-            saved << day.value<Qt::DayOfWeek>();
+            saved << static_cast<Qt::DayOfWeek>(day.value<int>());
         }
         m_rule.setDaysOfWeek(saved);
     }
@@ -154,9 +154,9 @@ public:
 
     void setDaysOfMonth(const QVariantList& days)
     {
-        QList<int> saved;
+        QList<Qt::DayOfWeek> saved;
         foreach(QVariant day, days) {
-            saved << day.value<int>();
+            saved << static_cast<Qt::DayOfWeek>(day.value<int>());
         }
         m_rule.setDaysOfWeek(saved);
     }
@@ -188,9 +188,9 @@ public:
 
     void setMonths(const QVariantList& months)
     {
-        QList<Month> saved;
+        QList<QOrganizerItemRecurrenceRule::Month> saved;
         foreach(QVariant day, months) {
-            saved << day.value<Month>();
+            saved << static_cast<QOrganizerItemRecurrenceRule::Month>(day.value<int>());
         }
         m_rule.setMonths(saved);
     }
@@ -246,7 +246,10 @@ public:
     {
         return m_rule.weekStart();
     }
-
+    QOrganizerItemRecurrenceRule rule() const
+    {
+        return m_rule;
+    }
 signals:
     void valueChanged();
 private:

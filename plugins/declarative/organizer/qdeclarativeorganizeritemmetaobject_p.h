@@ -64,7 +64,7 @@ class QDeclarativeOrganizerItemMetaObject : public QDeclarativeOpenMetaObject
 public:
     QDeclarativeOrganizerItemMetaObject(QObject* obj, const QOrganizerItem& item);
 
-    ~QDeclarativeContactMetaObject();
+    ~QDeclarativeOrganizerItemMetaObject();
 
     virtual void getValue(int id, void **a);
     virtual void setValue(int id, void **a);

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,46 +38,64 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QORGANIZERDBCACHEWRAPPERS_H
+#define QORGANIZERDBCACHEWRAPPERS_H
 
-#ifndef QDECLARATIVEDOCUMENTGALLERY_H
-#define QDECLARATIVEDOCUMENTGALLERY_H
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <qdocumentgallery.h>
+#include "qtorganizer.h"
+#include <CEvent.h>
+#include <CTodo.h>
+#include <CJournal.h>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-class QDeclarativeDocumentGallery : public QObject
-{
-    Q_OBJECT
-    Q_ENUMS(ItemType)
+class OrganizerCacheEvent {
 public:
+    OrganizerCacheEvent(const CEvent* event);
+    OrganizerCacheEvent(const OrganizerCacheEvent& other);
+    ~OrganizerCacheEvent();
+    OrganizerCacheEvent operator=(const OrganizerCacheEvent& other);
 
-    enum ItemType
-    {
-        InvalidType,
-        File,
-        Folder,
-        Document,
-        Text,
-        Audio,
-        Image,
-        Video,
-        Playlist,
-        Artist,
-        AlbumArtist,
-        Album,
-        AudioGenre,
-        PhotoAlbum,
-    };
+    CEvent* event();
 
-    static QString toString(ItemType type);
-    static ItemType itemTypeFromString(const QString &string);
-
-    static QAbstractGallery *gallery(QObject *object);
+private:
+    CEvent m_event;
 };
 
-QTM_END_NAMESPACE
+class OrganizerCacheTodo {
+public:
+    OrganizerCacheTodo(const CTodo* todo);
+    OrganizerCacheTodo(const OrganizerCacheTodo& other);
+    ~OrganizerCacheTodo();
+    OrganizerCacheTodo operator=(const OrganizerCacheTodo& other);
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QDeclarativeDocumentGallery::ItemType))
+    CTodo* todo();
 
-#endif
+private:
+    CTodo m_todo;
+};
+
+class OrganizerCacheJournal {
+public:
+    OrganizerCacheJournal(const CJournal* journal);
+    OrganizerCacheJournal(const OrganizerCacheJournal& other);
+    ~OrganizerCacheJournal();
+    OrganizerCacheJournal operator=(const OrganizerCacheJournal& other);
+
+    CJournal* journal();
+
+private:
+    CJournal m_journal;
+};
+
+#endif // QORGANIZERDBCACHEWRAPPERS_H

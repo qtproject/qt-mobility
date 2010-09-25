@@ -42,6 +42,8 @@
 #ifndef QDECLARATIVEORGANIZERITEMFILTER_P_H
 #define QDECLARATIVEORGANIZERITEMFILTER_P_H
 
+#include <QSet>
+
 #include <qdeclarative.h>
 #include <QDeclarativeExtensionPlugin>
 #include <qorganizeritemfilters.h>
@@ -79,7 +81,7 @@ public:
     };
 
     FilterType type() const {
-        return filter().type();
+        return static_cast<QDeclarativeOrganizerItemFilter::FilterType>(filter().type());
     }
 
 
@@ -122,7 +124,7 @@ public:
         EventRemoved = QOrganizerItemChangeLogFilter::EventRemoved
     };
 
-    QDeclarativeOrganizerItemChangelogFilter(QObject *parent)
+    QDeclarativeOrganizerItemChangelogFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
@@ -130,10 +132,10 @@ public:
     QDateTime since() const { return d.since(); }
     void setSince(const QDateTime& since) { d.setSince(since); }
 
-    EventType eventType() const { return d.eventType(); }
-    void setEventType(EventType type) { d.setEventType(type); }
+    EventType eventType() const { return static_cast<QDeclarativeOrganizerItemChangelogFilter::EventType>(d.eventType()); }
+    void setEventType(EventType type) { d.setEventType(static_cast<QOrganizerItemChangeLogFilter::EventType>(type)); }
 
-    QDeclarativeOrganizerItemFilter filter() const
+    QOrganizerItemFilter filter() const
     {
         return d;
     }
@@ -151,32 +153,38 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemChangelogFilter)
 class QDeclarativeOrganizerItemCollectionFilter : public QDeclarativeOrganizerItemFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeListProperty<QOrganizerCollectionLocalId> ids READ ids NOTIFY valueChanged)
-    Q_CLASSINFO("DefaultProperty", "ids")
+    Q_PROPERTY(QVariantList ids READ ids WRITE setIds NOTIFY valueChanged)
 public:
-    QDeclarativeOrganizerItemCollectionFilter(QObject *parent)
+    QDeclarativeOrganizerItemCollectionFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
 
-    QDeclarativeListProperty<QOrganizerCollectionLocalId> ids()
+    QVariantList ids() const
     {
-        return QDeclarativeListProperty<QOrganizerCollectionLocalId>(this, m_ids);
+        return QVariantList(); //TODO
     }
 
-    QDeclarativeOrganizerItemFilter filter() const
+    void setIds(const QVariantList& ids)
     {
-        d.setCollectionIds(m_ids.toSet());
-        return d;
+        //TODO
+    }
+
+    QOrganizerItemFilter filter() const
+    {
+
+        QSet<QOrganizerCollectionLocalId> ids;
+        //TODO: ids <= m_ids
+        QOrganizerItemCollectionFilter f;
+        f.setCollectionIds(ids);
+        return f;
     }
 
 signals:
     void valueChanged();
 
 private:
-    QList<QOrganizerCollectionLocalId> m_ids;
-    QOrganizerItemCollectionFilter d;
-
+    QList<uint> m_ids;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemCollectionFilter)
 
@@ -187,7 +195,7 @@ class QDeclarativeOrganizerItemDateTimePeriodFilter : public QDeclarativeOrganiz
     Q_PROPERTY(QDateTime start READ start WRITE setStart NOTIFY valueChanged)
     Q_PROPERTY(QDateTime end READ end WRITE setEnd NOTIFY valueChanged)
 public:
-    QDeclarativeOrganizerItemDateTimePeriodFilter(QObject *parent)
+    QDeclarativeOrganizerItemDateTimePeriodFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
@@ -198,7 +206,7 @@ public:
     QDateTime end() const { return d.endPeriod(); }
     void setEnd(const QDateTime& dateTime) { d.setEndPeriod(dateTime); }
 
-    QDeclarativeOrganizerItemFilter filter() const
+    QOrganizerItemFilter filter() const
     {
         return d;
     }
@@ -218,12 +226,12 @@ class QDeclarativeOrganizerItemDetailFilter : public QDeclarativeOrganizerItemFi
 {
     Q_OBJECT
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
-    Q_PROPERTY(MatchFlags matchFlags READ matchFlags WRITE setMatchFlags NOTIFY valueChanged)
+    Q_PROPERTY(QDeclarativeOrganizerItemFilter::MatchFlags matchFlags READ matchFlags WRITE setMatchFlags NOTIFY valueChanged)
     Q_PROPERTY(QString detailFieldName READ detailFieldName WRITE setDetailFieldName NOTIFY valueChanged)
     Q_PROPERTY(QString detailDefinitionName READ detailDefinitionName WRITE setDetailDefinitionName NOTIFY valueChanged)
 
 public:
-    QDeclarativeOrganizerItemDetailFilter(QObject *parent)
+    QDeclarativeOrganizerItemDetailFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
@@ -235,14 +243,27 @@ public:
     QString detailFieldName() const { return d.detailFieldName(); }
     void setDetailFieldName(const QString& fieldName) { d.setDetailDefinitionName(d.detailDefinitionName(), fieldName); }
 
-    void setMatchFlags(QOrganizerItemFilter::MatchFlags flags) { d.setMatchFlags(flags); }
-    QOrganizerItemFilter::MatchFlags matchFlags() const { return d.matchFlags(); }
+
+    void setMatchFlags(QDeclarativeOrganizerItemFilter::MatchFlags flags)
+    {
+        QOrganizerItemFilter::MatchFlags newFlags;
+        newFlags &= 0xFFFFFFFF;
+        newFlags &= (int)flags;
+        d.setMatchFlags(newFlags);
+    }
+    QDeclarativeOrganizerItemFilter::MatchFlags matchFlags() const
+    {
+        QDeclarativeOrganizerItemFilter::MatchFlags newFlags;
+        newFlags &= 0xFFFFFFFF;
+        newFlags &= (int)d.matchFlags();
+        return newFlags;
+    }
 
 
     void setValue(const QVariant& value) { d.setValue(value); }
     QVariant value() const { return d.value(); }
 
-    QDeclarativeOrganizerItemFilter filter() const
+    QOrganizerItemFilter filter() const
     {
         return d;
     }
@@ -263,7 +284,7 @@ class QDeclarativeOrganizerItemDetailRangeFilter : public QDeclarativeOrganizerI
     Q_OBJECT
     Q_PROPERTY(QVariant min READ minValue WRITE setMinValue NOTIFY valueChanged)
     Q_PROPERTY(QVariant max READ maxValue WRITE setMaxValue NOTIFY valueChanged)
-    Q_PROPERTY(MatchFlags matchFlags READ matchFlags WRITE setMatchFlags NOTIFY valueChanged)
+    Q_PROPERTY(QDeclarativeOrganizerItemFilter::MatchFlags matchFlags READ matchFlags WRITE setMatchFlags NOTIFY valueChanged)
     Q_PROPERTY(RangeFlags rangeFlags READ rangeFlags WRITE setRangeFlags NOTIFY valueChanged)
     Q_PROPERTY(QString detailFieldName READ detailFieldName WRITE setDetailFieldName NOTIFY valueChanged)
     Q_PROPERTY(QString detailDefinitionName READ detailDefinitionName WRITE setDetailDefinitionName NOTIFY valueChanged)
@@ -280,7 +301,7 @@ public:
     };
     Q_DECLARE_FLAGS(RangeFlags, RangeFlag)
 
-    QDeclarativeOrganizerItemDetailRangeFilter(QObject *parent)
+    QDeclarativeOrganizerItemDetailRangeFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
@@ -292,11 +313,37 @@ public:
     QString detailFieldName() const { return d.detailFieldName(); }
     void setDetailFieldName(const QString& fieldName) { d.setDetailDefinitionName(d.detailDefinitionName(), fieldName); }
 
-    void setMatchFlags(QOrganizerItemFilter::MatchFlags flags) { d.setMatchFlags(flags); }
-    QOrganizerItemFilter::MatchFlags matchFlags() const { return d.matchFlags(); }
+    void setMatchFlags(QDeclarativeOrganizerItemFilter::MatchFlags flags)
+    {
+        QOrganizerItemFilter::MatchFlags newFlags;
+        newFlags &= 0xFFFFFFFF;
+        newFlags &= (int)flags;
+        d.setMatchFlags(newFlags);
+    }
+    QDeclarativeOrganizerItemFilter::MatchFlags matchFlags() const
+    {
+        QDeclarativeOrganizerItemFilter::MatchFlags newFlags;
+        newFlags &= 0xFFFFFFFF;
+        newFlags &= (int)d.matchFlags();
+        return newFlags;
+    }
 
-    void setRangeFlags(RangeFlags flags) { d.setRange(d.minValue(), d.maxValue(), flags); }
-    RangeFlags rangeFlags() const { return d.rangeFlags(); }
+    void setRangeFlags(RangeFlags flags)
+    {
+        QOrganizerItemDetailRangeFilter::RangeFlags newFlags;
+        newFlags &= 0xFFFFFFFF;
+        newFlags &= (int)flags;
+
+        d.setRange(d.minValue(), d.maxValue(), newFlags);
+    }
+    RangeFlags rangeFlags() const
+    {
+        QDeclarativeOrganizerItemDetailRangeFilter::RangeFlags newFlags;
+        newFlags &= 0xFFFFFFFF;
+        newFlags &= (int)d.rangeFlags();
+
+        return newFlags;
+    }
 
 
     void setMinValue(const QVariant& value) { d.setRange(value, d.maxValue(), d.rangeFlags()); }
@@ -305,7 +352,7 @@ public:
     void setMaxValue(const QVariant& value) { d.setRange(d.minValue(), value, d.rangeFlags()); }
     QVariant maxValue() const { return d.maxValue(); }
 
-    QDeclarativeOrganizerItemFilter filter() const
+    QOrganizerItemFilter filter() const
     {
         return d;
     }
@@ -324,24 +371,30 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemDetailRangeFilter)
 class QDeclarativeOrganizerItemLocalIdFilter : public QDeclarativeOrganizerItemFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeListProperty<QOrganizerItemLocalId> ids READ ids NOTIFY valueChanged)
-    Q_CLASSINFO("DefaultProperty", "ids")
+    Q_PROPERTY(QVariantList ids READ ids WRITE setIds NOTIFY valueChanged)
 
 public:
-    QDeclarativeOrganizerItemLocalIdFilter(QObject *parent)
+    QDeclarativeOrganizerItemLocalIdFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
 
-    QDeclarativeOrganizerItemFilter filter() const
+    QOrganizerItemFilter filter() const
     {
-        d.setIds(m_ids);
-        return d;
+        QOrganizerItemLocalIdFilter f;
+        f.setIds(m_ids);
+        return f;
     }
 
-    QDeclarativeListProperty<QOrganizerItemLocalId> ids()
+    QVariantList ids() const
     {
-        return QDeclarativeListProperty<QOrganizerItemLocalId>(this, m_ids);
+        //TODO
+        return QVariantList();
+    }
+
+    void setIds(const QVariantList& ids)
+    {
+        //TODO
     }
 
 signals:
@@ -349,8 +402,6 @@ signals:
 
 private:
     QList<QOrganizerItemLocalId> m_ids;
-    QOrganizerItemLocalIdFilter d;
-
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemLocalIdFilter)
 
@@ -363,24 +414,25 @@ class QDeclarativeOrganizerItemIntersectionFilter : public QDeclarativeOrganizer
     Q_CLASSINFO("DefaultProperty", "subFilters")
 
 public:
-    QDeclarativeOrganizerItemIntersectionFilter(QObject *parent)
+    QDeclarativeOrganizerItemIntersectionFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
 
-    QDeclarativeOrganizerItemFilter filter() const
+    QOrganizerItemFilter filter() const
     {
-        QList<QDeclarativeOrganizerItemFilter> filters;
+        QList<QOrganizerItemFilter> filters;
         foreach (const QDeclarativeOrganizerItemFilter* filter, m_filters) {
-            filters.append(filter->filter());
+            filters << filter->filter();
         }
-        d.setFilters(filters);
-        return d;
+        QOrganizerItemIntersectionFilter f;
+        f.setFilters(filters);
+        return f;
     }
 
     QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> subFilters()
     {
-        return QDeclarativeListProperty<QOrganizerItemLocalId>(this, m_filters);
+        return QDeclarativeListProperty<QDeclarativeOrganizerItemFilter>(this, m_filters);
     }
 
 signals:
@@ -388,8 +440,6 @@ signals:
 
 private:
     QList<QDeclarativeOrganizerItemFilter*> m_filters;
-    QOrganizerItemIntersectionFilter d;
-
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemIntersectionFilter)
 
@@ -402,24 +452,25 @@ class QDeclarativeOrganizerItemUnionFilter : public QDeclarativeOrganizerItemFil
     Q_CLASSINFO("DefaultProperty", "subFilters")
 
 public:
-    QDeclarativeOrganizerItemUnionFilter(QObject *parent)
+    QDeclarativeOrganizerItemUnionFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
 
-    QDeclarativeOrganizerItemFilter filter() const
+    QOrganizerItemFilter filter() const
     {
-        QList<QDeclarativeOrganizerItemFilter> filters;
+        QList<QOrganizerItemFilter> filters;
         foreach (const QDeclarativeOrganizerItemFilter* filter, m_filters) {
-            filters.append(filter->filter());
+            filters << filter->filter();
         }
-        d.setFilters(filters);
-        return d;
+        QOrganizerItemUnionFilter f;
+        f.setFilters(filters);
+        return f;
     }
 
     QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> subFilters()
     {
-        return QDeclarativeListProperty<QOrganizerItemLocalId>(this, m_filters);
+        return QDeclarativeListProperty<QDeclarativeOrganizerItemFilter>(this, m_filters);
     }
 
 signals:
@@ -427,8 +478,6 @@ signals:
 
 private:
     QList<QDeclarativeOrganizerItemFilter*> m_filters;
-    QOrganizerItemUnionFilter d;
-
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemUnionFilter)
 
@@ -437,12 +486,12 @@ class QDeclarativeOrganizerItemInvalidFilter : public QDeclarativeOrganizerItemF
 {
     Q_OBJECT
 public:
-    QDeclarativeOrganizerItemInvalidFilter(QObject *parent)
+    QDeclarativeOrganizerItemInvalidFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
     }
 
-    QDeclarativeOrganizerItemFilter filter() const
+    QOrganizerItemFilter filter() const
     {
         return QOrganizerItemInvalidFilter();
     }
