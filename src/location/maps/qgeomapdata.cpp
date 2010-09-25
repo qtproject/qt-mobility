@@ -231,10 +231,7 @@ void QGeoMapData::setCenter(const QGeoCoordinate &center)
 
     d_ptr->center = center;
 
-    // TODO: Blocking centerChanged causes route object not to draw route when panning
-    // Is blocking here always necessary or should thecenterChanged, or something else,
-    // be emitted somewhere else for route object to update visible route?
-    //if (!d_ptr->blockPropertyChangeSignals)
+    if (!d_ptr->blockPropertyChangeSignals)
         emit centerChanged(d_ptr->center);
 }
 

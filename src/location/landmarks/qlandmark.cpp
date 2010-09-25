@@ -55,6 +55,7 @@
 
 #include <QVariant>
 #include <QStringList>
+#include <qnumeric.h>
 
 #ifdef LANDMARKPRIVATE_DEBUG
 #include <QDebug>
@@ -86,14 +87,14 @@ QLandmarkPrivate::QLandmarkPrivate()
         : QGeoPlacePrivate()
 {
     type = QGeoPlacePrivate::LandmarkType;
-    radius = -1.0;
+    radius = qQNaN();
 }
 
 QLandmarkPrivate::QLandmarkPrivate(const QGeoPlacePrivate &other)
         : QGeoPlacePrivate(other)
 {
     type = QGeoPlacePrivate::LandmarkType;
-    radius = -1.0;
+    radius = qQNaN();
 }
 
 QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
@@ -156,12 +157,20 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
         categoryIdsMatch = false;
     }
 
+    bool radiusIsMatch = false;
+    if (qIsNaN(radius) && qIsNaN(other.radius))
+        radiusIsMatch = true;
+    else if (qFuzzyCompare(1 +radius, 1 + other.radius))
+        radiusIsMatch = true;
+    else
+        radiusIsMatch = false;
+
 #ifdef LANDMARKPRIVATE_DEBUG
     qDebug() << "==" << (QGeoPlacePrivate::operator== (other));
     qDebug() << "name:" << (name == other.name);
     qDebug() << "description:" <<  (description == other.description);
     qDebug() << "iconUrl:" << (iconUrl == other.iconUrl);
-    qDebug() << "radius:" <<  (radius == other.radius);
+    qDebug() << "radius:" <<  radiusIsMatch;
     qDebug() << "phoneNumber:" << (phoneNumber == other.phoneNumber);
     qDebug() << "url:" << (url == other.url);
     qDebug() << "categoryIds:" << (categoryIdsMatch);
@@ -173,7 +182,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
             && (name == other.name)
             && (description == other.description)
             && (iconUrl == other.iconUrl)
-            && (radius == other.radius)
+            && radiusIsMatch
             && (phoneNumber == other.phoneNumber)
             && (url == other.url)
             && (categoryIdsMatch)
@@ -510,7 +519,12 @@ void QLandmark::setAttribute(const QString &key, const QVariant &value)
         setIconUrl(QUrl(value.toUrl()));
         return;
     } else if (key.compare("radius", Qt::CaseInsensitive) == 0) {
-        setRadius(value.toReal());
+        bool ok;
+        qreal radiusValue = value.toReal(&ok);
+        if (ok)
+            setRadius(radiusValue);
+        else
+            setRadius(qQNaN());
         return;
     } else if (key.compare("phoneNumber", Qt::CaseInsensitive) == 0) {
         setPhoneNumber(value.toString());
@@ -634,7 +648,7 @@ void QLandmark::clear()
     d->categoryIds.clear();
     d->description.clear();
     d->iconUrl.clear();
-    d->radius = 0.0;
+    d->radius = qQNaN();
     d->customAttributes.clear();
     d->phoneNumber.clear();
     d->url.clear();

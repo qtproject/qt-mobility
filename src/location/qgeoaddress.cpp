@@ -43,7 +43,6 @@
 #include "qgeoaddress.h"
 #include "qgeoaddress_p.h"
 
-
 #ifdef QGEOADDRESS_DEBUG
 #include <QDebug>
 #endif
