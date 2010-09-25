@@ -38,34 +38,48 @@
 **
 ****************************************************************************/
 
-#ifndef LANDMARKADDDIALOG_H
-#define LANDMARKADDDIALOG_H
+#ifndef LANDMARKFILTERDIALOG_H
+#define LANDMARKFILTERDIALOG_H
 
 #include <QListWidget>
 #include <QWidget>
 
 #include <qlandmark.h>
+#include <qlandmarkfilter.h>
+#include <qlandmarkfetchrequest.h>
 
-#include "ui_landmarkadddialog.h"
+#include "ui_landmarkfilterdialog.h"
 
 QTM_USE_NAMESPACE
 
-class LandmarkAddDialog : public QDialog, public Ui_LandmarkAddDialog
+class LandmarkFilterDialog : public QDialog, public Ui_LandmarkFilterDialog
 {
 Q_OBJECT
 public:
-    LandmarkAddDialog(QWidget *parent =0, Qt::WindowFlags flags =0, const QLandmark &landmark = QLandmark());
-    ~LandmarkAddDialog();
+    LandmarkFilterDialog(QLandmarkFetchRequest *fetchRequest, QWidget *parent =0, Qt::WindowFlags flags =0);
+    ~LandmarkFilterDialog();
 
-    QLandmark landmark();
+signals:
+    void doFetchAll();
 
 public slots:
     virtual void accept();
     virtual void reject();
 
+    void filterAllCheckBoxStateChanged(int state);
+    void otherFiltersCheckBoxStateChanged(int state);
+    void categoryRemoved(const QList<QLandmarkCategoryId> &categoryIds);
+
+protected:
+    void showEvent(QShowEvent *showEvent);
+
 private:
-    QLandmark lm;
-    QListWidget *categoryList;
+    bool setupFetchRequest();
+    bool isValidLatitude(const QString &latitude);
+    bool isValidLongitude(const QString &longitude);
+    QLandmarkCategoryId oldCategoryId;
+    QLandmarkFetchRequest *fetchRequest;
+    QLandmarkManager manager;
 };
 
-#endif // LANDMARKADDDIALOG_H
+#endif

@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -34,9 +34,23 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="editLandmarkButton">
+           <property name="text">
+            <string>Edit Landmark</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="deleteLandmarksButton">
            <property name="text">
             <string>Delete Landmarks</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="setFilterButton">
+           <property name="text">
+            <string>Set Filter</string>
            </property>
           </widget>
          </item>
