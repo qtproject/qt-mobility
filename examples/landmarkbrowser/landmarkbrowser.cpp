@@ -152,6 +152,7 @@ LandmarkBrowser::~LandmarkBrowser()
 void LandmarkBrowser::on_importLandmarks_clicked()
 {
     QString fileFilterString;
+
     #ifdef Q_OS_SYMBIAN
         fileFilterString = tr("Landmark files (*.lmx *)");
     #else
@@ -268,6 +269,7 @@ void LandmarkBrowser::on_deleteCategoriesButton_clicked()
 void LandmarkBrowser::on_addLandmark_clicked()
 {
     LandmarkAddDialog addDialog(this);
+    addDialog.resize(this->width(), this->height());
     if (!addDialog.exec()) {
         return;
     }
@@ -344,7 +346,7 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
             }
             case QLandmarkAbstractRequest::ExportRequest : {
                 if (request->error() == QLandmarkManager::NoError) {
-                    progress->hide();                   
+                    progress->hide();
                     QMessageBox::information(this,"Finished", "Export Successful", QMessageBox::Ok, QMessageBox::NoButton);
 
                 } else if (request->error() == QLandmarkManager::CancelError) {
@@ -382,7 +384,8 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                         QMessageBox::warning(this,"Warning", "Fetch Failed", QMessageBox::Ok, QMessageBox::NoButton);
                     }
                     updateRowLabels();
-                    progress->hide();
+                    delete progress;
+                    progress = new QProgressDialog (tr("Please wait..."),tr("Cancel"),0,0, this);
                 break;
             }
         case QLandmarkAbstractRequest::CategoryFetchRequest: {
@@ -413,8 +416,11 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                     QMessageBox::warning(this, "Warning", "Category Fetch Failed", QMessageBox::Ok, QMessageBox::NoButton);
                 }
                 updateCategoryRowLabels();
-                if (tabWidget->currentIndex() == 1)
-                    progress->hide();
+                if (tabWidget->currentIndex() == 1) {
+                    //progress->hide();
+                    delete progress;
+                    progress = new QProgressDialog (tr("Please wait..."),tr("Cancel"),0,0, this);
+                }
             }
         }
     }
