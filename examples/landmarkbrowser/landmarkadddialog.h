@@ -65,7 +65,6 @@ public slots:
 
 private:
     QLandmark lm;
-    QListWidget *categoryList;
 };
 
 #endif // LANDMARKADDDIALOG_H

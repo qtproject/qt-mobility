@@ -51,6 +51,8 @@ LandmarkAddDialog::LandmarkAddDialog(QWidget *parent, Qt::WindowFlags flags, con
 {
     setupUi(this);
     if (landmark != QLandmark()) {
+        setWindowTitle("Edit Landmark");
+
         lm = landmark;
         nameLineEdit->setText(landmark.name());
         latitudeLineEdit->setText(QString::number(landmark.coordinate().latitude()));
@@ -65,11 +67,13 @@ LandmarkAddDialog::LandmarkAddDialog(QWidget *parent, Qt::WindowFlags flags, con
         urlLineEdit->setText(landmark.url().toString());
         phoneLineEdit->setText(landmark.phoneNumber());
         radiusLineEdit->setText(QString::number(landmark.radius()));
+    } else {
+        setWindowTitle("Add Landmark");
     }
 
     QLandmarkManager manager;
     QList<QLandmarkCategory> categories = manager.categories();
-    categoryList = new QListWidget(this);
+
     foreach( QLandmarkCategory category, categories) {
         QListWidgetItem  *categoryItem = new QListWidgetItem(categoryList,QListWidgetItem::UserType + 1);
         categoryItem->setData(Qt::DisplayRole,category.name());
@@ -81,10 +85,11 @@ LandmarkAddDialog::LandmarkAddDialog(QWidget *parent, Qt::WindowFlags flags, con
             categoryItem->setCheckState(Qt::Checked);
         else
             categoryItem->setCheckState(Qt::Unchecked);
-
     }
 
-    gridLayout->addWidget(categoryList,gridLayout->rowCount(),0,1,0);
+    categoryList->setMinimumHeight(categories.count()
+                                   * (categoryList->sizeHintForRow(0) + categoryList->spacing())
+                                   + categoryList->frameWidth() *2);
 }
 
 LandmarkAddDialog::~LandmarkAddDialog()

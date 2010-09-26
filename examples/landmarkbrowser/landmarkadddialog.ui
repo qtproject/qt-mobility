@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>253</width>
-    <height>192</height>
+    <width>313</width>
+    <height>340</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Add Landmark</string>
@@ -23,9 +29,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-286</y>
-        <width>216</width>
-        <height>417</height>
+        <y>-219</y>
+        <width>276</width>
+        <height>519</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
@@ -167,6 +173,23 @@
            </property>
           </widget>
          </item>
+         <item row="12" column="1">
+          <widget class="QLineEdit" name="radiusLineEdit">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="0" colspan="2">
+          <widget class="QListWidget" name="categoryList">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </item>
          <item row="12" column="0">
           <widget class="QLabel" name="label_9">
            <property name="text">
@@ -174,10 +197,10 @@
            </property>
           </widget>
          </item>
-         <item row="12" column="1">
-          <widget class="QLineEdit" name="radiusLineEdit">
+         <item row="14" column="0" colspan="2">
+          <widget class="QLabel" name="label_14">
            <property name="text">
-            <string/>
+            <string>Categories:</string>
            </property>
           </widget>
          </item>

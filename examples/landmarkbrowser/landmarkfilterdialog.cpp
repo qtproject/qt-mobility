@@ -38,6 +38,7 @@
 **
 ****************************************************************************/
 
+#include <QButtonGroup>
 #include <QListWidgetItem>
 #include <QMessageBox>
 
@@ -72,6 +73,10 @@ LandmarkFilterDialog::LandmarkFilterDialog(QLandmarkFetchRequest *fetchRequest, 
             this, SLOT(categoryRemoved(QList<QLandmarkCategoryId>)));
 
     filterAllCheckBox->setCheckState(Qt::Checked);
+
+    QButtonGroup * buttonGroup = new QButtonGroup(this);
+    buttonGroup->addButton(startsWithRadioButton);
+    buttonGroup->addButton(containsRadioButton);
 }
 
 LandmarkFilterDialog::~LandmarkFilterDialog()
