@@ -89,6 +89,7 @@ private:
     void setupUi();
     void setProvider(QString providerId);
     void createMenus();
+    void createPixmapIcon();
 
 private slots:
     void demo1(bool checked);
@@ -130,6 +131,7 @@ private:
     MapWidget *m_mapWidget;
     QGraphicsPathItem* m_fullScreenButton;
     QMenu* m_popupMenu;
+    QPixmap m_markerIcon;
     QPoint m_lastClicked;
     QList<QGeoMapPixmapObject*> m_markerObjects;
 
