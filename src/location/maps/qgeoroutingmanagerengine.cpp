@@ -296,18 +296,39 @@ QGeoRouteRequest::TravelModes QGeoRoutingManagerEngine::supportedTravelModes() c
     reports its capabilities correctly.  If this function is not used the
     engine will report that it does not support avoiding features.
 */
-void QGeoRoutingManagerEngine::setSupportedAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes)
-{
-    d_ptr->supportedAvoidFeatureTypes = avoidFeatureTypes;
-}
 
 /*!
     Returns the types of features that this engine can avoid during route planning.
 */
-QGeoRouteRequest::AvoidFeatureTypes QGeoRoutingManagerEngine::supportedAvoidFeatureTypes() const
+
+/*!
+*/
+void QGeoRoutingManagerEngine::setSupportedFeatureTypes(QGeoRouteRequest::FeatureTypes featureTypes)
 {
-    return d_ptr->supportedAvoidFeatureTypes;
+    d_ptr->supportedFeatureTypes = featureTypes;
 }
+
+/*!
+*/
+QGeoRouteRequest::FeatureTypes QGeoRoutingManagerEngine::supportedFeatureTypes() const
+{
+    return d_ptr->supportedFeatureTypes;
+}
+
+/*!
+*/
+void QGeoRoutingManagerEngine::setSupportedFeatureWeights(QGeoRouteRequest::FeatureWeights featureWeights)
+{
+    d_ptr->supportedFeatureWeights = featureWeights;
+}
+
+/*!
+*/
+QGeoRouteRequest::FeatureWeights QGeoRoutingManagerEngine::supportedFeatureWeights() const
+{
+    return d_ptr->supportedFeatureWeights;
+}
+
 
 /*!
     Sets the route optimizations supported by this engine to \a optimizations.
