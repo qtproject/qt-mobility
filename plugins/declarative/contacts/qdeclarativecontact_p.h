@@ -38,57 +38,49 @@
 **
 ****************************************************************************/
 
-#ifndef QMLCONTACT_H
-#define QMLCONTACT_H
-#include <QAbstractListModel>
-#include <QDeclarativePropertyMap>
+#ifndef QDECLARATIVECONTACT_P_H
+#define QDECLARATIVECONTACT_P_H
+#include <qdeclarative.h>
+#include <QDeclarativeListProperty>
 #include "qcontact.h"
-#include "qcontactmanager.h"
-#include "qcontactsaverequest.h"
 
 QTM_USE_NAMESPACE;
 
-class QMLContact : public QAbstractListModel
+class QDeclarativeContactMetaObject;
+class QDeclarativeContactDetail;
+class QDeclarativeContact : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY (bool contactChanged READ contactChanged NOTIFY onContactChanged);
-    Q_PROPERTY (int contactId READ contactId NOTIFY onContactIdChanged);
+    Q_PROPERTY (QContactLocalId contactId READ contactId NOTIFY contactIdChanged);
+    Q_PROPERTY (QDeclarativeListProperty<QDeclarativeContactDetail> details READ details NOTIFY detailsChanged);
+    Q_CLASSINFO("DefaultProperty", "details")
+
 public:
-    enum {
-        DetailNameRole = Qt::UserRole + 500,
-        DetailFieldKeyRole,
-        DetailFieldValueRole,
-        DetailFieldRole
-    };
+    explicit QDeclarativeContact(QObject *parent = 0);
+    explicit QDeclarativeContact(const QContact& contact, const QMap<QString, QContactDetailDefinition>& defs, QObject *parent = 0);
+    ~QDeclarativeContact();
 
-    explicit QMLContact(QObject *parent = 0);
     void setContact(const QContact& c);
-    void setManager(QContactManager* manager);
     QContact contact() const;
-    QVariant contactMap() const;
-    Q_INVOKABLE QList<QObject*> details() const;
-    Q_INVOKABLE QList<QObject*> detailFields() const;
-    bool contactChanged() const; 
-    Q_INVOKABLE void save();
 
-    int contactId() const;
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
+    void setDetailDefinitions(const QMap<QString, QContactDetailDefinition>& defs);
+    QMap<QString, QContactDetailDefinition> detailDefinitions() const;
 
+    QContactLocalId contactId() const;
+
+    QDeclarativeListProperty<QDeclarativeContactDetail> details();
+
+    Q_INVOKABLE QVariant detail(const QString& name);
+    Q_INVOKABLE QVariant details(const QString& name);
 
 signals:
-    void onContactChanged();
-    void onContactIdChanged();
-private slots:
-    void onContactSaved();
+    void contactIdChanged();
+    void detailsChanged();
 private:
-    QContact m_contact;
-    QDeclarativePropertyMap* m_contactMap;
-    QList<QDeclarativePropertyMap*> m_detailMaps;
-    QList<QObject*> m_details;
-    QList<QObject*> m_detailFields;
-    QContactManager* m_manager;
-    QContactSaveRequest m_saveRequest;
+    QDeclarativeContactMetaObject* d;
+    friend class QDeclarativeContactMetaObject;
 };
 
-#endif // QMLCONTACT_H
+QML_DECLARE_TYPE(QDeclarativeContact)
+
+#endif // QDECLARATIVECONTACT_P_H
