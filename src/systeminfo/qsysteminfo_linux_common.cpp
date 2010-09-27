@@ -1405,7 +1405,7 @@ void QSystemNetworkInfoLinuxCommonPrivate::connmanServicePropertyChangedContext(
     }
 }
 
-void QSystemNetworkInfoLinuxCommonPrivate::ofonoPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
+void QSystemNetworkInfoLinuxCommonPrivate::ofonoPropertyChangedContext(const QString &/*contextpath*/,const QString &item, const QDBusVariant &value)
 {
 //    qDebug() << __FUNCTION__ << path << item << value.variant();
     if(item == "Modems") {
@@ -1463,7 +1463,7 @@ void QSystemNetworkInfoLinuxCommonPrivate::ofonoNetworkPropertyChangedContext(co
     }
 }
 
-void QSystemNetworkInfoLinuxCommonPrivate::ofonoModemPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
+void QSystemNetworkInfoLinuxCommonPrivate::ofonoModemPropertyChangedContext(const QString &/*path*/,const QString &/*item*/, const QDBusVariant &/*value*/)
 {
 //    qDebug() << __FUNCTION__ << path << item << value.variant();
 
@@ -2675,14 +2675,15 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_CONNMAN)
      if(ofonoIsAvailable) {
-         QString modem = ofonoManager->currentModem().path();
+         QOfonoManagerInterface ofonoManager;
+         QString modem = ofonoManager.currentModem().path();
          if(!modem.isEmpty()) {
              QOfonoModemInterface modemIface(modem,this);
 
-                 QString imei = modemIface.getSerial();
-                 if(!imei.isEmpty()) {
-                     return imei;
-                 }
+             QString imei = modemIface.getSerial();
+             if(!imei.isEmpty()) {
+                 return imei;
+             }
              }
          }
 #endif
@@ -2695,7 +2696,8 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_CONNMAN)
      if(ofonoIsAvailable) {
-         QString modem = ofonoManager->currentModem().path();
+         QOfonoManagerInterface ofonoManager;
+         QString modem = ofonoManager.currentModem().path();
          if(!modem.isEmpty()) {
              QOfonoSimInterface simInterface(modem,this);
              if(simInterface.isPresent()) {
