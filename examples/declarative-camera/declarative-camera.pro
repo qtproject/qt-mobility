@@ -12,7 +12,8 @@ QT += declarative network
 }
 
 SOURCES += $$PWD/qmlcamera.cpp
-TARGET = qml_camera
+!mac:TARGET = qml_camera
+else:TARGET = QmlCamera
 
 RESOURCES += declarative-camera.qrc
 
