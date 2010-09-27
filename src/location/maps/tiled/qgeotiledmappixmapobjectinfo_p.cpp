@@ -48,7 +48,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapPixmapObjectInfo::QGeoTiledMapPixmapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+QGeoTiledMapPixmapObjectInfo::QGeoTiledMapPixmapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
         : QGeoTiledMapObjectInfo(mapData, mapObject),
         pixmapItem(0)
 

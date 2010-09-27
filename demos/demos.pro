@@ -9,7 +9,7 @@ contains(mobility_modules,multimedia) {
 }
 
 #Messaging demos
-contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
+contains(qmf_enabled,yes)|wince*|win32|symbian|maemo* {
     contains(mobility_modules,messaging) {
         !win32-g++ {
 	    SUBDIRS += \

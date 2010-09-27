@@ -176,6 +176,8 @@ public:
 
     QStringList landmarkAttributeKeys() const;
     QStringList categoryAttributeKeys() const;
+    
+    QStringList searchableLandmarkAttributeKeys() const;
 
     QString managerName() const;
     QMap<QString, QString> managerParameters() const;

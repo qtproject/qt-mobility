@@ -18,7 +18,8 @@ INCLUDEPATH += ../../../src/organizer \
                 ../../../src/organizer/details
 
 HEADERS += \
-        qorganizermaemo6.h
+        qorganizermaemo6.h \
+        maemo6itemlocalid.h
 SOURCES += \
         qorganizermaemo6.cpp
 

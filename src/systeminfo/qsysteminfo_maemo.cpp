@@ -99,7 +99,11 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QStringList languages;
 
+#if !defined(Q_WS_MAEMO_6)
     GConfItem languagesItem("/apps/osso/inputmethod/available_languages");
+#else
+    GConfItem languagesItem("/meegotouch/inputmethods/languages");
+#endif
     const QStringList locales = languagesItem.value().toStringList();
 
     foreach(const QString locale, locales) {
@@ -862,6 +866,13 @@ void QSystemNetworkInfoPrivate::usbCableAction()
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
+    if(networkStatus(QSystemNetworkInfo::EthernetMode) == QSystemNetworkInfo::Connected) {
+        return QSystemNetworkInfo::EthernetMode;
+    }
+    if(networkStatus(QSystemNetworkInfo::WlanMode) == QSystemNetworkInfo::Connected) {
+        return QSystemNetworkInfo::WlanMode;
+    }
+
     if (radioAccessTechnology == 1)
         return QSystemNetworkInfo::GsmMode;
     if (radioAccessTechnology == 2)

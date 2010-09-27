@@ -39,134 +39,29 @@
 ****************************************************************************/
 
 #include <qorganizeritemdetails.h>
-#include "qmlorganizeritemdetail.h"
-#include "qmlorganizeritemdetailfield.h"
+#include "qdeclarativeorganizeritemdetail_p.h"
 
 
-static QString normalizePropertyName(const QString& name)
-{
-   if (!name.isEmpty())
-     return name.mid(1).prepend(name[0].toLower());
-   return QString();
-}
-
-static QString defaultPropertyNameForOrganizerItemDetail(const QOrganizerItemDetail& detail)
-{
-    if (detail.definitionName() == QOrganizerItemDescription::DefinitionName)
-        return QOrganizerItemDescription::FieldDescription;
-
-    if (detail.definitionName() == QOrganizerItemDisplayLabel::DefinitionName)
-        return QOrganizerItemDisplayLabel::FieldLabel;
-
-    if (detail.definitionName() == QOrganizerEventTimeRange::DefinitionName)
-        return QOrganizerEventTimeRange::FieldStartDateTime;
-
-    if (detail.definitionName() == QOrganizerItemGuid::DefinitionName)
-        return QOrganizerItemGuid::FieldGuid;
-
-    if (detail.definitionName() == QOrganizerItemInstanceOrigin::DefinitionName)
-        return QOrganizerItemInstanceOrigin::FieldParentLocalId;
-
-    if (detail.definitionName() == QOrganizerJournalTimeRange::DefinitionName)
-        return QOrganizerJournalTimeRange::FieldEntryDateTime;
-
-    if (detail.definitionName() == QOrganizerItemLocation::DefinitionName)
-        return QOrganizerItemLocation::FieldLocationName;
-
-    if (detail.definitionName() == QOrganizerItemComment::DefinitionName)
-        return QOrganizerItemComment::FieldComment;
-
-    if (detail.definitionName() == QOrganizerItemPriority::DefinitionName)
-        return QOrganizerItemPriority::FieldPriority;
-
-    if (detail.definitionName() == QOrganizerItemRecurrence::DefinitionName)
-        return QOrganizerItemRecurrence::FieldRecurrenceRules;
-
-    if (detail.definitionName() == QOrganizerItemTimestamp::DefinitionName)
-        return QOrganizerItemTimestamp::FieldModificationTimestamp;
-
-    if (detail.definitionName() == QOrganizerTodoProgress::DefinitionName)
-        return QOrganizerTodoProgress::FieldStatus;
-
-    if (detail.definitionName() == QOrganizerTodoTimeRange::DefinitionName)
-        return QOrganizerTodoTimeRange::FieldDueDateTime;
-
-    if (detail.definitionName() == QOrganizerItemType::DefinitionName)
-        return QOrganizerItemType::FieldType;
-
-    return QString();
-}
-
-static QString unNormalizePropertyName(const QString& name)
-{
-   if (!name.isEmpty())
-     return name.mid(1).prepend(name[0].toUpper());
-   return QString();
-}
-
-
-QMLOrganizerItemDetail::QMLOrganizerItemDetail(QObject* parent)
-    :QObject(parent),
-    m_detailChanged(false)
-{
-
-}
-
-QDeclarativePropertyMap* QMLOrganizerItemDetail::propertyMap() const
-{
-    return m_map;
-}
-void QMLOrganizerItemDetail::setDetailPropertyMap(QDeclarativePropertyMap* map)
-{
-    m_map = map;
-
-    foreach (const QString& key, m_map->keys()) {
-        QMLOrganizerItemDetailField* field = new QMLOrganizerItemDetailField(this);
-        field->setDetailPropertyMap(m_map);
-        field->setKey(key);
-        field->setDetailName(m_detailName);
-        m_fields.append(field);
-
-    }
-}
-
-QList<QObject*> QMLOrganizerItemDetail::fields() const
-{
-    return m_fields;
-}
-
-QString QMLOrganizerItemDetail::name() const
-{
-    return m_detailName;
-}
-
-void QMLOrganizerItemDetail::setName(const QString& name)
-{
-    m_detailName = name;
-}
-
-bool QMLOrganizerItemDetail::detailChanged() const
-{
-    return m_detailChanged;
-}
-
-QOrganizerItemDetail QMLOrganizerItemDetail::detail() const
-{
-    QOrganizerItemDetail d(unNormalizePropertyName(name()));
-    foreach (const QString& key, m_map->keys()) {
-        d.setValue(unNormalizePropertyName(key), m_map->value(key));
-    }
-    return d;
-}
-
-void QMLOrganizerItemDetail::detailChanged(const QString &key, const QVariant &value)
-{
-    qWarning() << "detailChanged field:"  << key << " value:" << value;
-    m_detailChanged = true;
-}
-
-void QMLOrganizerItemDetail::setDetailChanged(bool changed)
-{
-    m_detailChanged = changed;
-    emit onDetailChanged();
-}
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEventTimeRange::DetailName, "eventTimeRange");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemComment::DetailName, "comment");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemComment::DetailGroupName, "comments");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemDescription::DetailName, "description");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemDisplayLabel::DetailName, "label");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemGuid::DetailName, "guid");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemInstanceOrigin::DetailName, "instanceOrigin");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemLocation::DetailName, "location");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemPriority::DetailName, "priority");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemRecurrence::DetailName, "recurrence");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemReminder::DetailName, "reminder");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemReminder::DetailGroupName, "reminders");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemAudibleReminder::DetailName, "audibleReminder");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemAudibleReminder::DetailGroupName, "audibleReminders");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemVisualReminder::DetailName, "visualReminder");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemVisualReminder::DetailGroupName, "visualReminders");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemEmailReminder::DetailName, "emailReminder");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemEmailReminder::DetailGroupName, "emailReminders");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemTimestamp::DetailName, "timestamp");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemType::DetailName, "type");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerJournalTimeRange::DetailName, "journalTimeRange");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoProgress::DetailName, "todoProgress");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoTimeRange::DetailName, "todoTimeRange");

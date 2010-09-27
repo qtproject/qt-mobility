@@ -45,6 +45,8 @@
 
 #include <qgalleryresultset.h>
 
+#include <QtDeclarative/qdeclarativeinfo.h>
+
 QTM_BEGIN_NAMESPACE
 
 QDeclarativeGalleryQueryModel::QDeclarativeGalleryQueryModel(QObject *parent)
@@ -319,10 +321,7 @@ void QDeclarativeGalleryQueryModel::set(int index, const QScriptValue &values)
     QScriptValueIterator it(values);
     while (it.hasNext()) {
         it.next();
-        QScriptValue value = it.value();
-
-        if (value.isVariant())
-            m_resultSet->setMetaData(m_resultSet->propertyKey(it.name()), value.toVariant());
+        m_resultSet->setMetaData(m_resultSet->propertyKey(it.name()), it.value().toVariant());
     }
 }
 
@@ -358,15 +357,36 @@ void QDeclarativeGalleryQueryModel::timerEvent(QTimerEvent *event) {
 
 void QDeclarativeGalleryQueryModel::_q_statusChanged()
 {
-    QString message = m_request.errorString();
-    qSwap(message, m_errorMessage);
-
     m_status = Status(m_request.status());
 
-    emit statusChanged();
+    if (m_status == Error) {
+        const QString message = m_request.errorString();
 
-    if (message != m_errorMessage)
-        emit errorMessageChanged();
+        if (!message.isEmpty()) {
+            qmlInfo(this) << message;
+        } else {
+            switch (m_request.error()) {
+            case QDocumentGallery::ConnectionError:
+                qmlInfo(this) << tr("An error was encountered connecting to the document gallery");
+                break;
+            case QDocumentGallery::ItemTypeError:
+                qmlInfo(this) << (m_request.rootType().isEmpty()
+                        ? tr("DocumentGallery.InvalidType is not a supported item type")
+                        : tr("DocumentGallery.%1 is not a supported item type")
+                                .arg(m_request.rootType()));
+                break;
+            case QDocumentGallery::ItemIdError:
+                qmlInfo(this) << tr("The value of rootItem is not a valid item ID");
+                break;
+            case QDocumentGallery::FilterError:
+                qmlInfo(this) << tr("The value of filter is unsupported");
+            default:
+                break;
+            }
+        }
+    }
+
+    emit statusChanged();
 }
 
 void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet)
@@ -682,7 +702,7 @@ void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::
 */
 
 /*!
-    \qmlproperty DocumentGalleryModel::count
+    \qmlproperty int DocumentGalleryModel::count
 
     This property holds the number of results returned by a query.
 */

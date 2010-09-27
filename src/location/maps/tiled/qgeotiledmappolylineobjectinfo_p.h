@@ -69,7 +69,7 @@ class QGeoTiledMapPolylineObjectInfo : public QGeoTiledMapObjectInfo
 {
     Q_OBJECT
 public:
-    QGeoTiledMapPolylineObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    QGeoTiledMapPolylineObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapPolylineObjectInfo();
 
     QGeoMapPolylineObject *polyline;

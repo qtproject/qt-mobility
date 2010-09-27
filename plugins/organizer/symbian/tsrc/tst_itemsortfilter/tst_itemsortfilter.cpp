@@ -67,7 +67,8 @@ public:
 class QTstSortOrder
 {
 public:
-    QTstSortOrder(QString definitionName, QString fieldName, QOrganizerItemSortOrder::BlankPolicy blankPolicy, Qt::SortOrder direction, Qt::CaseSensitivity caseSensitivity)
+    QTstSortOrder(QString definitionName, QString fieldName, QOrganizerItemSortOrder::BlankPolicy blankPolicy,
+        Qt::SortOrder direction, Qt::CaseSensitivity caseSensitivity)
     {
         m_definitionName = definitionName;
         m_fieldName = fieldName;
@@ -102,12 +103,7 @@ public:
     tst_itemSortFilter();
     virtual ~tst_itemSortFilter();
 
-private slots:  // Init & cleanup
-    void init();
-    void cleanup();
-
 private slots:  // Test cases
-
     void filterItems_data();
     void filterItems();
     void sortItems_data();
@@ -119,11 +115,11 @@ private: // util functions
     bool parseDetails(QTstDetailFieldList detailsString, QList<QOrganizerItemDetail> &details);
     QOrganizerItemLocalId addTestDataItem(int mgrIndex, QString displayLabel, QTstDetailFieldList detailsList);
     void addNewFilterRow(int mgrIndex, QOrganizerItemFilter filter, QString matchingItems);
-    void addNewSortRow(int mgrIndex, QTstSortOrderList sortOrderList, QString matchingItemsStr);
+    void addNewSortRow(int mgrIndex, QTstSortOrderList sortDetailList, QString matchingItemsStr);
     QString convertIds(int mgrIndex, QOrganizerItemLocalIdList ids);
     QOrganizerItemFilter invalidFilter();
     QOrganizerItemFilter defaultFilter();
-    QOrganizerItemFilter detailFilter(QString defNam, QString fieldNam, int flags, QString filterCriterion);
+    QOrganizerItemFilter detailFilter(QString defNam, QString fieldNam, int flags, QVariant filterCriterion);
     QOrganizerItemFilter dateTimeFilter(QDateTime start, QDateTime end);
     QOrganizerItemFilter detailRangeFilter(QString defNam, QString fieldNam, int flags, QVariant min, QVariant max);
 private:
@@ -155,14 +151,6 @@ tst_itemSortFilter::~tst_itemSortFilter()
     }
 }
 
-void tst_itemSortFilter::init()
-{
-}
-
-void tst_itemSortFilter::cleanup()
-{
-}
-
 QOrganizerItemLocalId tst_itemSortFilter::addTestDataItem(int mgrIndex, QString displayLabel, QTstDetailFieldList detailsList)
 {
     QOrganizerItem item;
@@ -184,16 +172,16 @@ QOrganizerItemLocalId tst_itemSortFilter::addTestDataItem(int mgrIndex, QString 
 
 void tst_itemSortFilter::addNewFilterRow(int mgrIndex, QOrganizerItemFilter filter, QString matchingItemsStr)
 {
-    QString title = QString("[%1] Filter : filterType=%2 matchingItems=%3").arg((m_managers.at(mgrIndex)->managerName()).toLatin1().constData()).arg(filter.type()).arg(matchingItemsStr.toLatin1().constData());
+    QString title = QString("[%1] Filter : filterType=%2 matchingItems=%3").arg((m_managers.at(mgrIndex)->managerName()).toLatin1().constData())
+        .arg(filter.type()).arg(matchingItemsStr.toLatin1().constData());
     QTest::newRow(title.toAscii().constData()) << mgrIndex << filter << matchingItemsStr;
 }
 
-void tst_itemSortFilter::addNewSortRow(int mgrIndex, QTstSortOrderList detailsList, QString matchingItemsStr)
+void tst_itemSortFilter::addNewSortRow(int mgrIndex, QTstSortOrderList sortDetailList, QString matchingItemsStr)
 {
-    // Set sorting order
     QOrganizerItemSortOrderList sortOrderList;
 
-    foreach (QTstSortOrder tstSortOrder, detailsList) {
+    foreach (QTstSortOrder tstSortOrder, sortDetailList) {
         QOrganizerItemSortOrder sorting;
         sorting.setDetailDefinitionName(tstSortOrder.m_definitionName, tstSortOrder.m_fieldName);
         sorting.setBlankPolicy(tstSortOrder.m_blankPolicy);
@@ -202,7 +190,8 @@ void tst_itemSortFilter::addNewSortRow(int mgrIndex, QTstSortOrderList detailsLi
         sortOrderList.append(sorting);
     }
 
-    QString title = QString("[%1] Sort : sortOrderCount=%2 firstSortOrder=%3 matchingItems=%4").arg((m_managers.at(mgrIndex)->managerName()).toLatin1().constData()).arg(sortOrderList.count()).arg(sortOrderList.first().detailFieldName().toLatin1().constData()).arg(matchingItemsStr.toLatin1().constData());
+    QString title = QString("[%1] Sort : sortOrderCount=%2 firstSortOrder=%3 matchingItems=%4").arg((m_managers.at(mgrIndex)->managerName()).toLatin1().constData())
+        .arg(sortOrderList.count()).arg(sortOrderList.first().detailFieldName().toLatin1().constData()).arg(matchingItemsStr.toLatin1().constData());
     QTest::newRow(title.toAscii().constData()) << mgrIndex << sortOrderList << matchingItemsStr;
 }
 
@@ -213,35 +202,53 @@ void tst_itemSortFilter::filterItems_data()
     QTest::addColumn<QString>("matchingItemsStr");
 
     for (int i=0;i < m_managers.size();i++) {
-//TODO: invalidFilter FAIL on symbian backend (returns all items)
         addNewFilterRow(i, invalidFilter(), QString());
         addNewFilterRow(i, defaultFilter(), "abcdef");
 
-        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemFilter::MatchExactly, "Abc"), "ad");
-        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemFilter::MatchExactly, "Cde"), "cf");
-        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemFilter::MatchContains, "b"), "abde");
-        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemFilter::MatchContains, "de"), "cf");
-        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemFilter::MatchStartsWith, "b"), "be");
-        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemFilter::MatchStartsWith, "bc"), "be");
-        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemFilter::MatchEndsWith, "c"), "ad");
-        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemFilter::MatchEndsWith, "bc"), "ad");
+        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+            QOrganizerItemFilter::MatchExactly, QVariant("Abc")), "ad");
+        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+            QOrganizerItemFilter::MatchExactly, QVariant("Cde")), "cf");
+        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+            QOrganizerItemFilter::MatchContains, QVariant("b")), "abde");
+        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+            QOrganizerItemFilter::MatchContains, QVariant("de")), "cf");
+        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+            QOrganizerItemFilter::MatchStartsWith, QVariant("b")), "be");
+        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+            QOrganizerItemFilter::MatchStartsWith, QVariant("bc")), "be");
+        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+            QOrganizerItemFilter::MatchEndsWith, QVariant("c")), "ad");
+        addNewFilterRow(i, detailFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+            QOrganizerItemFilter::MatchEndsWith, QVariant("bc")), "ad");
+        addNewFilterRow(i, detailFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus,
+            QOrganizerItemFilter::MatchExactly, QVariant(QOrganizerTodoProgress::StatusNotStarted)), "ad");
+        addNewFilterRow(i, detailFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus,
+            QOrganizerItemFilter::MatchExactly, QVariant(QOrganizerTodoProgress::StatusInProgress)), "be");
+        addNewFilterRow(i, detailFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus,
+            QOrganizerItemFilter::MatchExactly, QVariant(QOrganizerTodoProgress::StatusComplete)), "cf");
 
         addNewFilterRow(i, dateTimeFilter(QDateTime::currentDateTime().addDays(-1), QDateTime::currentDateTime().addDays(3)), "abcdef");
         addNewFilterRow(i, dateTimeFilter(QDateTime::currentDateTime().addDays(-1), QDateTime::currentDateTime().addDays(1)), "abc");
         addNewFilterRow(i, dateTimeFilter(QDateTime::currentDateTime(), QDateTime::currentDateTime().addDays(3)), "def");
         addNewFilterRow(i, dateTimeFilter(QDateTime::currentDateTime(), QDateTime::currentDateTime().addDays(1)), QString());
 
-        addNewFilterRow(i, detailRangeFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemFilter::MatchStartsWith, QVariant("a"), QVariant("d")), "abcdef");
-        addNewFilterRow(i, detailRangeFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemFilter::MatchStartsWith, QVariant("b"), QVariant("c")), "be");
-//TODO: Following 2 tests FAIL on symbian and memory backends (test validity needs to be checked)
-        addNewFilterRow(i, detailRangeFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemFilter::MatchEndsWith, QVariant("e"), QVariant("f")), "cf");
-        addNewFilterRow(i, detailRangeFilter(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemFilter::MatchEndsWith, QVariant("d"), QVariant("e")), "be");
-//TODO: 3X detailRangeFilter, FieldPercentageComplete FAIL on symbian backend (returns empty list)
-        addNewFilterRow(i, detailRangeFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, QOrganizerItemFilter::MatchExactly, QVariant(0), QVariant(101)), "bcef");
-        addNewFilterRow(i, detailRangeFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, QOrganizerItemFilter::MatchExactly, QVariant(25), QVariant(80)), "be");
-        addNewFilterRow(i, detailRangeFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, QOrganizerItemFilter::MatchExactly, QVariant(75), QVariant(80)), "b");
+        if (m_managers.at(i)->detailDefinitions(QOrganizerItemType::TypeTodo).value(QOrganizerTodoProgress::DefinitionName)
+            .fields().contains(QOrganizerTodoProgress::FieldPercentageComplete)) {
+            addNewFilterRow(i, detailRangeFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete,
+                QOrganizerItemFilter::MatchExactly, QVariant(), QVariant()), "bcef");
+            addNewFilterRow(i, detailRangeFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete,
+                QOrganizerItemFilter::MatchExactly, QVariant(25), QVariant(80)), "be");
+            addNewFilterRow(i, detailRangeFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete,
+                QOrganizerItemFilter::MatchExactly, QVariant(75), QVariant(80)), "b");
+        }
 
-        addNewFilterRow(i, detailRangeFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime, QOrganizerItemFilter::MatchExactly, QVariant(QDateTime::currentDateTime().addDays(-1)), QVariant(QDateTime::currentDateTime().addDays(5))), "cf");
+        addNewFilterRow(i, detailRangeFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime,
+            QOrganizerItemFilter::MatchExactly, QVariant(QDateTime::currentDateTime().addDays(-1)), QVariant(QDateTime::currentDateTime().addDays(5))), "cf");
+        addNewFilterRow(i, detailRangeFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime,
+            QOrganizerItemFilter::MatchExactly, QVariant(QDateTime::currentDateTime().addDays(-1)), QVariant(QDateTime::currentDateTime())), "c");
+        addNewFilterRow(i, detailRangeFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime,
+            QOrganizerItemFilter::MatchExactly, QVariant(), QVariant()), "cf");
         }
 }
 
@@ -260,8 +267,6 @@ void tst_itemSortFilter::filterItems()
     }
     actualItemsStr = convertIds(mgrIndex, actualIds);
 
-    qDebug() << actualItemsStr << matchingItemsStr;
-
     QVERIFY(actualItemsStr.length() == matchingItemsStr.length());
     for(int i=0;i < matchingItemsStr.length();i++) {
         QVERIFY(actualItemsStr.contains(matchingItemsStr.at(i)));
@@ -276,24 +281,41 @@ void tst_itemSortFilter::sortItems_data()
 
     for (int i=0;i < m_managers.size();i++) {
         addNewSortRow(i, QTstSortOrderList()
-            << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemSortOrder::BlanksLast, Qt::AscendingOrder, Qt::CaseSensitive),
-            "defabc");
+            << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+                QOrganizerItemSortOrder::BlanksLast, Qt::AscendingOrder, Qt::CaseSensitive), "defabc");
         addNewSortRow(i, QTstSortOrderList()
-            << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemSortOrder::BlanksLast, Qt::DescendingOrder, Qt::CaseSensitive),
-            "cbafed");
+            << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+                QOrganizerItemSortOrder::BlanksLast, Qt::DescendingOrder, Qt::CaseSensitive), "cbafed");
         addNewSortRow(i, QTstSortOrderList()
-            << QTstSortOrder(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QOrganizerItemSortOrder::BlanksLast, Qt::AscendingOrder, Qt::CaseInsensitive)
-            << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemSortOrder::BlanksLast, Qt::AscendingOrder, Qt::CaseSensitive),
-            "abcdef");
-//TODO: Following test FAIL in symbian and memory backends (test validity needs to be checked)
+            << QTstSortOrder(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime,
+                QOrganizerItemSortOrder::BlanksLast, Qt::AscendingOrder, Qt::CaseInsensitive)
+            << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+                QOrganizerItemSortOrder::BlanksLast, Qt::AscendingOrder, Qt::CaseSensitive), "abcdef");
         addNewSortRow(i, QTstSortOrderList()
-            << QTstSortOrder(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QOrganizerItemSortOrder::BlanksLast, Qt::DescendingOrder, Qt::CaseInsensitive)
-            << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemSortOrder::BlanksLast, Qt::AscendingOrder, Qt::CaseSensitive),
-            "defabc");
+            << QTstSortOrder(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime,
+                QOrganizerItemSortOrder::BlanksLast, Qt::DescendingOrder, Qt::CaseInsensitive)
+            << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+                QOrganizerItemSortOrder::BlanksLast, Qt::DescendingOrder, Qt::CaseSensitive), "fedcba");
         addNewSortRow(i, QTstSortOrderList()
-            << QTstSortOrder(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QOrganizerItemSortOrder::BlanksLast, Qt::DescendingOrder, Qt::CaseInsensitive)
-            << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel, QOrganizerItemSortOrder::BlanksLast, Qt::DescendingOrder, Qt::CaseSensitive),
-            "fedcba");
+            << QTstSortOrder(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus,
+                QOrganizerItemSortOrder::BlanksLast, Qt::DescendingOrder, Qt::CaseSensitive)
+            << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+                QOrganizerItemSortOrder::BlanksLast, Qt::DescendingOrder, Qt::CaseSensitive), "cfbead");
+        addNewSortRow(i, QTstSortOrderList()
+            << QTstSortOrder(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus,
+                QOrganizerItemSortOrder::BlanksLast, Qt::AscendingOrder, Qt::CaseSensitive)
+            << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+                QOrganizerItemSortOrder::BlanksLast, Qt::DescendingOrder, Qt::CaseSensitive), "adbecf");
+        addNewSortRow(i, QTstSortOrderList()
+            << QTstSortOrder(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus,
+                QOrganizerItemSortOrder::BlanksLast, Qt::AscendingOrder, Qt::CaseSensitive)
+            << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+                QOrganizerItemSortOrder::BlanksLast, Qt::AscendingOrder, Qt::CaseSensitive), "daebfc");
+        addNewSortRow(i, QTstSortOrderList()
+            << QTstSortOrder(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus,
+                QOrganizerItemSortOrder::BlanksLast, Qt::DescendingOrder, Qt::CaseSensitive)
+            << QTstSortOrder(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel,
+                QOrganizerItemSortOrder::BlanksLast, Qt::AscendingOrder, Qt::CaseSensitive), "fcebda");
     }
 }
 
@@ -311,8 +333,6 @@ void tst_itemSortFilter::sortItems()
         actualIds << item.localId();
     }
     actualItemsStr = convertIds(mgrIndex, actualIds);
-
-    qDebug() << actualItemsStr << matchingItemsStr;
 
     QCOMPARE(actualItemsStr, matchingItemsStr);
 }
@@ -333,37 +353,66 @@ void tst_itemSortFilter::addTodo_data(int mgrIndex)
 {
     QTstDetailField itemTypeTodo(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodo);
     QOrganizerItemLocalIdList itemIdList;
+    bool fieldPercentageSupported = (m_managers.at(mgrIndex)->detailDefinitions(QOrganizerItemType::TypeTodo)
+        .value(QOrganizerTodoProgress::DefinitionName).fields().contains(QOrganizerTodoProgress::FieldPercentageComplete));
 
     itemIdList << addTestDataItem(mgrIndex, "abc", QTstDetailFieldList() << itemTypeTodo
         << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusNotStarted)
         << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
         << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime()));
-    itemIdList << addTestDataItem(mgrIndex,"bcd", QTstDetailFieldList() << itemTypeTodo
-        << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusInProgress)
-        << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
-        << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
-        << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 75));
-    itemIdList << addTestDataItem(mgrIndex, "cde", QTstDetailFieldList() << itemTypeTodo
-        << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusComplete)
-        << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
-        << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
-        << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime, QDateTime::currentDateTime())
-        << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 100));
+
+    if (fieldPercentageSupported) {
+        itemIdList << addTestDataItem(mgrIndex,"bcd", QTstDetailFieldList() << itemTypeTodo
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusInProgress)
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 75));
+        itemIdList << addTestDataItem(mgrIndex, "cde", QTstDetailFieldList() << itemTypeTodo
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusComplete)
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime, QDateTime::currentDateTime())
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 100));
+    } else {
+        itemIdList << addTestDataItem(mgrIndex,"bcd", QTstDetailFieldList() << itemTypeTodo
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusInProgress)
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime()));
+        itemIdList << addTestDataItem(mgrIndex, "cde", QTstDetailFieldList() << itemTypeTodo
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusComplete)
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime, QDateTime::currentDateTime()));
+    }
+
     itemIdList << addTestDataItem(mgrIndex, "Abc", QTstDetailFieldList() << itemTypeTodo
         << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusNotStarted)
         << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
         << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(2)));
-    itemIdList << addTestDataItem(mgrIndex, "Bcd", QTstDetailFieldList() << itemTypeTodo
-        << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusInProgress)
-        << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
-        << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(2))
-        << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 25));
-    itemIdList << addTestDataItem(mgrIndex, "Cde", QTstDetailFieldList() << itemTypeTodo
-        << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusComplete)
-        << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
-        << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(2))
-        << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime, QDateTime::currentDateTime().addDays(2))
-        << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 100));
+
+    if (fieldPercentageSupported) {
+        itemIdList << addTestDataItem(mgrIndex, "Bcd", QTstDetailFieldList() << itemTypeTodo
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusInProgress)
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(2))
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 25));
+        itemIdList << addTestDataItem(mgrIndex, "Cde", QTstDetailFieldList() << itemTypeTodo
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusComplete)
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(2))
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime, QDateTime::currentDateTime().addDays(2))
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 100));
+    } else {
+        itemIdList << addTestDataItem(mgrIndex, "Bcd", QTstDetailFieldList() << itemTypeTodo
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusInProgress)
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(2)));
+        itemIdList << addTestDataItem(mgrIndex, "Cde", QTstDetailFieldList() << itemTypeTodo
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusComplete)
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(3))
+            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(2))
+            << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime, QDateTime::currentDateTime().addDays(2)));
+    }
 
      m_itemIds << itemIdList;
 }
@@ -424,12 +473,12 @@ QOrganizerItemFilter tst_itemSortFilter::defaultFilter()
     return f;
 }
 
-QOrganizerItemFilter tst_itemSortFilter::detailFilter(QString defNam, QString fieldNam, int flags, QString filterCriterion)
+QOrganizerItemFilter tst_itemSortFilter::detailFilter(QString defNam, QString fieldNam, int flags, QVariant filterCriterion)
 {
     QOrganizerItemDetailFilter f;
     f.setDetailDefinitionName(defNam, fieldNam);
     f.setMatchFlags(QOrganizerItemFilter::MatchFlags(flags));
-    f.setValue(QVariant(filterCriterion));
+    f.setValue(filterCriterion);
     return f;
 }
 

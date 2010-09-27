@@ -67,7 +67,7 @@ class QGeoTiledMapPixmapObjectInfo : public QGeoTiledMapObjectInfo
 {
     Q_OBJECT
 public:
-    QGeoTiledMapPixmapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    QGeoTiledMapPixmapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapPixmapObjectInfo();
 
     QGeoMapPixmapObject* pixmap;

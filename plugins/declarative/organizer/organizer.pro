@@ -4,8 +4,10 @@ INCLUDEPATH += . \
     ../../../src/organizer \
     ../../../src/organizer/requests \
     ../../../src/organizer/details \
+    ../../../src/organizer/items \
     ../../../src/organizer/filters \
-    ../../../src/versit
+    ../../../src/versit \
+    ../../../src/versitorganizer
 
 TARGET = $$qtLibraryTarget(declarative_organizer)
 TARGETPATH = QtMobility/organizer
@@ -21,7 +23,7 @@ QT += script network
 
 
 CONFIG += mobility
-MOBILITY = organizer
+MOBILITY = organizer versit versitorganizer
 
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
@@ -31,19 +33,22 @@ target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 HEADERS += qdeclarativeorganizermodel_p.h \
            qdeclarativeorganizeritem_p.h \
            qdeclarativeorganizeritemdetail_p.h \
-           qdeclarativeorganizer_p.h \
            qmetaobjectbuilder_p.h \
            qdeclarativeopenmetaobject_p.h \
-           qdeclarativeorganizeritemfilter_p.h
+           qdeclarativeorganizeritemfilter_p.h \
+           qdeclarativeorganizeritemmetaobject_p.h \
+           qdeclarativeorganizeritemrecurrencerule_p.h \
+           qdeclarativeorganizeritemcollection_p.h \
+           qdeclarativeorganizeritemsortorder_p.h \
+           qdeclarativeorganizeritemfetchhint_p.h
 
 SOURCES += plugin.cpp \
-           qmllorganizermodel.cpp \
            qdeclarativeorganizeritem.cpp \
            qdeclarativeorganizeritemdetail.cpp \
-           qdeclarativeorganizer.cpp \
            qmetaobjectbuilder.cpp \
-           qdeclarativeopenmetaobject.cpp
-
+           qdeclarativeopenmetaobject.cpp \
+           qdeclarativeorganizeritemmetaobject.cpp \
+           qdeclarativeorganizermodel.cpp
 
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH

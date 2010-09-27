@@ -183,8 +183,8 @@ void RouteTab::on_btnRequest_clicked()
             QGeoRouteRequest request(m_src, m_dst);
             if ((m_routingManager->supportedSegmentDetails() & QGeoRouteRequest::BasicSegmentData) != 0)
                 request.setSegmentDetail(QGeoRouteRequest::BasicSegmentData);
-            if ((m_routingManager->supportedInstructionDetails() & QGeoRouteRequest::BasicInstructions) != 0)
-                request.setInstructionDetail(QGeoRouteRequest::BasicInstructions);
+            if ((m_routingManager->supportedManeuverDetails() & QGeoRouteRequest::BasicManeuvers) != 0)
+                request.setManeuverDetail(QGeoRouteRequest::BasicManeuvers);
             request.setTravelModes(m_requestTravelModes);
             request.setAvoidFeatureTypes(m_requestAvoidTypes);
             request.setRouteOptimization(m_requestRouteOptimizations);

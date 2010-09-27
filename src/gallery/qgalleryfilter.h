@@ -243,8 +243,8 @@ public:
     QGalleryFilter::Comparator comparator() const;
     void setComparator(QGalleryFilter::Comparator comparator);
 
-    bool isInverted() const;
-    void setInverted(bool inverted);
+    bool isNegated() const;
+    void setNegated(bool inverted);
 
     QGalleryMetaDataFilter operator !() const;
 
