@@ -122,6 +122,8 @@ private:
     bool m_customCollectionsSupported;
 };
 
+Q_DECLARE_METATYPE(QList<QOrganizerCollectionLocalId>)
+
 tst_SymbianOmAsync::tst_SymbianOmAsync() :
     m_om(0)
 {
@@ -574,6 +576,10 @@ void tst_SymbianOmAsync::addCollection()
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
     QCOMPARE(m_om->collections().count(), 2); // the default plus the new one
     QCOMPARE(m_om->collections().at(1).metaData().value("Name").toString(), QString("addCollection"));
+    // Verify the signal emitted contains the id of the new collection
+    QCOMPARE(addedSpy.last().count(), 1);
+    QCOMPARE(addedSpy.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
+    QCOMPARE(addedSpy.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), req.collections().at(0).localId());
 }
 
 void tst_SymbianOmAsync::modifyCollection()
@@ -594,7 +600,7 @@ void tst_SymbianOmAsync::modifyCollection()
     // Create new collection (synchronously)
     QOrganizerCollection collection;
     collection.setMetaData("Name", "modifyCollection");
-    collection.setMetaData("FileName", "c:modifycollection");
+    collection.setMetaData("FileName", "c:modifyCollection");
     collection.setMetaData("Description", "modifyCollection test");
     collection.setMetaData("Color", QColor(Qt::red));
     collection.setMetaData("Enabled", true);
@@ -664,6 +670,13 @@ void tst_SymbianOmAsync::removeCollection()
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
     QCOMPARE(m_om->collections().count(), 1); // the default
+
+    // Try to remove again, should fail
+    req.setCollectionId(collection.localId());
+    QVERIFY(req.start());
+    QTRY_COMPARE(resultSpy.count(), 2);
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerItemManager::DoesNotExistError);
 }
 
 /*!
