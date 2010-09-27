@@ -476,6 +476,13 @@ void MainWindow::searchClicked()
 
 void MainWindow::searchReplyFinished(QGeoSearchReply* reply)
 {
+    Q_ASSERT(reply);
+
+    if (reply->error() != QGeoSearchReply::NoError) {
+        // Errors are handled in a different slot (resultsError)
+        return;
+    }
+
     QList<QGeoPlace> places = reply->places();
     if (places.length() == 0) {
         QMessageBox::information(this, tr("Map Viewer Demo"), tr("Search did not find anything."));
