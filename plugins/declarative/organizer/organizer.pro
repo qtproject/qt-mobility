@@ -48,7 +48,8 @@ SOURCES += plugin.cpp \
            qmetaobjectbuilder.cpp \
            qdeclarativeopenmetaobject.cpp \
            qdeclarativeorganizeritemmetaobject.cpp \
-           qdeclarativeorganizermodel.cpp
+           qdeclarativeorganizermodel.cpp \
+           qdeclarativeorganizeritemfilter.cpp
 
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH

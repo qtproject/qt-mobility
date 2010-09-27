@@ -149,10 +149,16 @@ QOrganizerItem QDeclarativeOrganizerItemMetaObject::item()
     return m_item;
 }
 
-int QDeclarativeOrganizerItemMetaObject::localId() const
+uint QDeclarativeOrganizerItemMetaObject::localId() const
 {
     return qHash(m_item.localId());
 }
+
+uint QDeclarativeOrganizerItemMetaObject::itemId() const
+{
+    return qHash(m_item.id());
+}
+
 
 void QDeclarativeOrganizerItemMetaObject::detail_append(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p, QDeclarativeOrganizerItemDetail *detail)
 {
