@@ -127,6 +127,7 @@ private:
     TInt                                    iNoOfItems;
     TInt                                    iIndex;
     QOrganizerItemChangeSet                 iChangeSet;
+    QOrganizerCollectionLocalId             iCollectionLocalId;
     };
 
 #endif /* CORGANIZERITEMREQUESTSSERVICEPROVIDER_H_ */

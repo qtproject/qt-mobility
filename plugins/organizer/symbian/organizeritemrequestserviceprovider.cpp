@@ -113,6 +113,8 @@ TBool COrganizerItemRequestsServiceProvider::StartRequest(
                 {
                 iItemList.append(((QOrganizerItemSaveRequest*)(iReq))->items());
                 iNoOfItems = iItemList.count();
+                iCollectionLocalId = ((QOrganizerItemSaveRequest*)(iReq))
+                    ->collectionId();
                 }
                 break;
             case QOrganizerItemAbstractRequest::ItemFetchRequest:
@@ -340,10 +342,7 @@ void COrganizerItemRequestsServiceProvider::SaveItemL()
         if (isItemSupported)
             {
             // Save item
-            // TODO: collection id needed!
-            // without changeSet signaling does not work, and without collection id
-            // the item is always stored to the default collection
-            iOrganizerItemManagerEngine.saveItemL(&item, QOrganizerCollectionLocalId(), &iChangeSet);
+            iOrganizerItemManagerEngine.saveItemL(&item, iCollectionLocalId, &iChangeSet);
             iSuccessfullItems.append(item);
             // Notify changeset
             iChangeSet.emitSignals(&iOrganizerItemManagerEngine);

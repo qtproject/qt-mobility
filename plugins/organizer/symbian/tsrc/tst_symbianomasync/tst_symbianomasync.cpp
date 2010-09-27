@@ -166,6 +166,7 @@ void tst_SymbianOmAsync::addSimpleItem()
     QOrganizerItemSaveRequest saveItemRequest;
     saveItemRequest.setManager(m_om);
     saveItemRequest.setItem(item);
+    saveItemRequest.setCollectionId(QOrganizerCollectionLocalId());
 
     // Create signal spys for verification purposes
     QSignalSpy stateSpy(&saveItemRequest, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
