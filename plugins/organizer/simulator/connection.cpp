@@ -48,11 +48,9 @@
 
 #include <QtNetwork/QLocalSocket>
 
-QTM_BEGIN_NAMESPACE
-
+QTM_USE_NAMESPACE
 using namespace QtSimulatorPrivate;
-
-namespace Simulator {
+using namespace Simulator;
 
 Connection::Connection(MobilityConnection *mobilityCon)
     : QObject(mobilityCon)
@@ -118,8 +116,4 @@ void Connection::initialOrganizerDataSent()
     mInitialDataReceived = true;
 }
 
-} // namespace Simulator
-
 #include "moc_connection_p.cpp"
-
-QTM_END_NAMESPACE

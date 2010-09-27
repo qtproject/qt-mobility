@@ -41,6 +41,7 @@
 
 #include "qorganizersimulator_p.h"
 #include "qtorganizer.h"
+#include "connection_p.h"
 
 //QTM_USE_NAMESPACE
 
@@ -65,7 +66,9 @@ QOrganizerItemManagerEngine* QOrganizerItemSimulatorFactory::engine(const QMap<Q
 
         QOrganizerItemSimulatorEngine::engineData = data;
     }
-    return new QOrganizerItemSimulatorEngine(data);
+    QOrganizerItemSimulatorEngine *engine = new QOrganizerItemSimulatorEngine(data);
+    Simulator::Connection::instance()->setEngine(engine);
+    return engine;
 }
 
 QOrganizerItemEngineLocalId* QOrganizerItemSimulatorFactory::createItemEngineLocalId() const

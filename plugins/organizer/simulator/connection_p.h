@@ -62,9 +62,9 @@ QT_BEGIN_HEADER
 
 QT_FORWARD_DECLARE_CLASS(QLocalSocket)
 
-QTM_BEGIN_NAMESPACE
+class QOrganizerItemSimulatorEngine;
 
-struct QOrganizerItemSimulatorEngine;
+QTM_BEGIN_NAMESPACE
 
 namespace Simulator {
 
