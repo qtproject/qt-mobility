@@ -308,13 +308,15 @@ void COrganizerItemRequestsServiceProvider::RemoveItemL()
         QOrganizerItemLocalId itemLocalId(iItemIds.at(iIndex-1));
         iOrganizerItemManagerEngine.removeItemL(itemLocalId);
         iChangeSet.insertRemovedItem(itemLocalId);
+        // Notify changeset
+        iChangeSet.emitSignals(&iOrganizerItemManagerEngine);
+        // Clear changeset so that it can be used for next item
+        iChangeSet.clearAll();
         // Calls itself recursively until all the items are deleted
         SelfComplete();
         }
     else
         {
-        // Notify changeset
-        iChangeSet.emitSignals(&iOrganizerItemManagerEngine);
         // Notify results
         QOrganizerItemManagerEngine::updateItemRemoveRequest(
                 (QOrganizerItemRemoveRequest*)(iReq), 
@@ -343,6 +345,10 @@ void COrganizerItemRequestsServiceProvider::SaveItemL()
             // the item is always stored to the default collection
             iOrganizerItemManagerEngine.saveItemL(&item, QOrganizerCollectionLocalId(), &iChangeSet);
             iSuccessfullItems.append(item);
+            // Notify changeset
+            iChangeSet.emitSignals(&iOrganizerItemManagerEngine);
+            // Clear changeset so that it can be used for next item
+            iChangeSet.clearAll();
             }
         else
             {
@@ -353,8 +359,6 @@ void COrganizerItemRequestsServiceProvider::SaveItemL()
         }
     else
         {
-        // Notify changeset
-        iChangeSet.emitSignals(&iOrganizerItemManagerEngine);
         // Notify results
         QOrganizerItemManagerEngine::updateItemSaveRequest(
                 (QOrganizerItemSaveRequest*)(iReq), 
