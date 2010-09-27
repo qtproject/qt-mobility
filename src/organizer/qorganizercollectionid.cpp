@@ -57,24 +57,7 @@ QTM_BEGIN_NAMESPACE
   and the local id of the collection in that manager.
 
   A "null" QOrganizerCollectionId has an empty manager URI, and an invalid QOrganizerCollectionLocalId (0).
-
-  \sa QOrganizerCollectionLocalId
  */
-
-/*!
-  \typedef QOrganizerCollectionLocalId
-  \relates QOrganizerCollectionId
-  \brief The QOrganizerCollectionLocalId type represents the unique id of a collection within its manager.
-olle
-  Most collection-related operations within a \l QOrganizerItemManager accept a QOrganizerCollectionLocalId.  Some operations
-  (involving links to collections outside a particular manager) also accept a manager URI - this
-  combination is stored in a \l QOrganizerCollectionId.
-
-  A default-constructed QOrganizerCollectionLocalId is a null QOrganizerCollectionLocalId, which does not identify
-  any item in a manager.
-
-  \sa QOrganizerCollectionId
-*/
 
 /*!
   Constructs a new, null QOrganizerCollectionLocalId.

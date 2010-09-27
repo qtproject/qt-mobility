@@ -20,7 +20,7 @@
 #include <QObject>
 
 class CntSqlKoreanItuT;
-
+class C12keyKeyMap;
 
 class UT_CntSqlKoreanItuT : public QObject                 
 {
@@ -45,11 +45,13 @@ private slots:
 
 private slots: //test methods
 
-    void testCreateInputSpecificSearch();
+    void testCreateInputSpecificSearch();     
+    void testGetSQLQueryType();
     
 private:
  
     CntSqlKoreanItuT* mSqlKoreanItuT;
-
+    C12keyKeyMap* mTwelveKeyMap;
+ 
 };
 #endif /* UT_CNTSQLKOREANITUT_H_ */

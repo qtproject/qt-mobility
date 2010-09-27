@@ -73,8 +73,8 @@ public:
     ~S60AudioPlayerSession();
     
     //From S60MediaPlayerSession
-    bool isVideoAvailable() const;
-    bool isAudioAvailable() const;
+    bool isVideoAvailable();
+    bool isAudioAvailable();
 
     // From MAudioLoadingObserver
     void MaloLoadingStarted();

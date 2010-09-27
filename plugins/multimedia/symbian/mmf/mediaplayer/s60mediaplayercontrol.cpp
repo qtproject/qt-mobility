@@ -127,13 +127,13 @@ QMediaTimeRange S60MediaPlayerControl::availablePlaybackRanges() const
 
 qreal S60MediaPlayerControl::playbackRate() const
 {
-    // TODO: Add Symbian^3 support
+    // Playback rate retrieving is not supported in Symbian
     return m_mediaSettings.playbackRate();
 }
 
 void S60MediaPlayerControl::setPlaybackRate(qreal rate)
 {
-    // TODO: Add Symbian^3 support
+    // Playback rate setting is not supported in Symbian
     m_mediaSettings.setPlaybackRate(rate);
     emit playbackRateChanged(playbackRate());
     
@@ -230,7 +230,7 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
         emit mediaStatusChanged(status);
     }
     emit mediaChanged(m_currentResource);
-  }
+}
 
 S60MediaPlayerSession* S60MediaPlayerControl::session()
 {
@@ -239,7 +239,7 @@ S60MediaPlayerSession* S60MediaPlayerControl::session()
 
 void S60MediaPlayerControl::setVideoOutput(QObject *output)
 {
-    m_mediaPlayerResolver.VideoPlayerSession()->setVideoRenderer(output);
+   m_mediaPlayerResolver.VideoPlayerSession()->setVideoRenderer(output);
 }
 
 bool S60MediaPlayerControl::isAudioAvailable() const
@@ -264,4 +264,9 @@ const S60MediaSettings& S60MediaPlayerControl::mediaControlSettings() const
 void S60MediaPlayerControl::setAudioEndpoint(const QString& name)
 {
     m_mediaSettings.setAudioEndpoint(name);
+}
+
+void S60MediaPlayerControl::setMediaType(S60MediaSettings::TMediaType type)
+{
+    m_mediaSettings.setMediaType(type);
 }

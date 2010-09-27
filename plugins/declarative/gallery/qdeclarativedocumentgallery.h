@@ -68,9 +68,6 @@ public:
         Album,
         AudioGenre,
         PhotoAlbum,
-#ifndef Q_MOC_RUN
-        NItemTypes
-#endif
     };
 
     static QString toString(ItemType type);

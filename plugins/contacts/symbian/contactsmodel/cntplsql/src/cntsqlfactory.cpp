@@ -24,13 +24,15 @@
 #include "cntsqlfactory.h"
 #include "cntsqlsearchinterface.h"
 #include "cntsqlkoreanitut.h"
+#include "c12keykeymap.h"
 
 #include <QString>
 #include <QLocale>
 /**
 CCntPplViewSession first phase constructor.
 */
-CntSqlFactory::CntSqlFactory()
+CntSqlFactory::CntSqlFactory( C12keyKeyMap* twelveKeyKeyMap )
+    :mTwelveKeyKeyMap(twelveKeyKeyMap)
     {
     
     }
@@ -51,7 +53,7 @@ CntSqlSearchInterface* CntSqlFactory::getSqlIinstance(const QString &pattern, QL
 
         switch (sysLang) {
         case 66:
-        return new CntSqlKoreanItuT();
+        return new CntSqlKoreanItuT(mTwelveKeyKeyMap);
         break;
         
         default:
