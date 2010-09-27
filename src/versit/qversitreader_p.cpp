@@ -77,58 +77,107 @@ LineReader::LineReader(QIODevice* device, QTextCodec *codec, int chunkSize)
     mCrlfList(*VersitUtils::newlineList(mCodec)),
     mBuffer(LByteArray(QByteArray())),
     mOdometer(0),
-    mSearchFrom(0)
+    mSearchFrom(0),
+    mColon(VersitUtils::encode(':', mCodec)),
+    mEquals(VersitUtils::encode('=', mCodec)),
+    mSpace(VersitUtils::encode(' ', mCodec)),
+    mTab(VersitUtils::encode('\t', mCodec))
 {
 }
 
 /*!
   Attempts to read a line and returns an LByteArray containing the line.
+  This wraps around readOneLine and provides a hack to do additional unwrapping for a malformed
+  vCard where a space is not added to the start of the line continuation.
+
+  Some malformed vCards we get look like this: (Case 1)
+  ORG:A
+   B
+  C
+  (CRLF-SPACE wrapping is employed for the first time, then the space is subsequently omitted).
+  But a valid vCard can be weirdly wrapped without the CRLF-SPACE, if it's quoted-printable and
+  ends in an equals, eg. (Case 2)
+  ORG;ENCODING=QUOTED-PRINTABLE:A=
+  B=
+  C
+  Unwrap in Case 1 but not in Case 2 - leave that for the QP-decoder in QVR::unencode
   */
 LByteArray LineReader::readLine()
 {
-    if (!mFirstLine.isEmpty()) {
-        LByteArray retval(mFirstLine);
-        mFirstLine.clear();
+    if (!mPushedLines.isEmpty()) {
+        LByteArray retval(mPushedLines.pop());
         return retval;
     }
-    mBuffer.mStart = mBuffer.mEnd;
-    mSearchFrom = mBuffer.mStart;
+    readOneLine(&mBuffer);
+    // Hack: read the next line and see if it's a continuation of this line
+    while (true) {
+        int prevStart = mBuffer.mStart;
+        int prevEnd = mBuffer.mEnd;
+        // readOneLine only appends to mBuffer so these saved offsets should remain valid
+        readOneLine(&mBuffer);
 
-    // First, look for a newline in the already-existing buffer.  If found, return the line.
-    if (tryReadLine(mBuffer, false)) {
-        mBuffer.dropOldData();
-        mOdometer += mBuffer.size();
-        return mBuffer;
-    }
-
-    // Otherwise, keep reading more data until either a CRLF is found, or there's no more to read.
-    while (!mDevice->atEnd()) {
-        QByteArray temp = mDevice->read(mChunkSize);
-        if (!temp.isEmpty()) {
-            mBuffer.mData.append(temp);
-            if (tryReadLine(mBuffer, false)) {
-                mBuffer.dropOldData();
-                mOdometer += mBuffer.size();
-                return mBuffer;
-            }
+        // Get an LByteArray of the previous line.  This should be fast because copying the
+        // LByteArray copies the QByteArray, which is implicitly shared
+        LByteArray prevLine(mBuffer.mData, prevStart, prevEnd);
+        if (mBuffer.isEmpty()
+                || mBuffer.contains(mColon)
+                || prevLine.endsWith(mEquals)) {
+            // Normal, the next line is empty, or a new property, or it's been wrapped using
+            // QUOTED-PRINTABLE.  Rewind it back one line so it gets read next time round.
+            mBuffer.setBounds(prevStart, prevEnd);
+            break;
         } else {
-            mDevice->waitForReadyRead(500);
+            // Some silly vCard generator has probably wrapped a line without prepending a space
+            // Join the previous line with this line by deleting the characters between prevEnd and
+            // mStart (eg. any newline characters)
+            int crlfLen = mBuffer.mStart-prevEnd;
+            mBuffer.mData.remove(prevEnd, crlfLen);
+            mBuffer.setBounds(prevStart, mBuffer.mEnd - crlfLen);
         }
     }
-
-    // We've reached the end of the stream.  Find a newline from the buffer (or return what's left).
-    tryReadLine(mBuffer, true);
     mBuffer.dropOldData();
     mOdometer += mBuffer.size();
     return mBuffer;
 }
 
 /*!
+  Attempts to read a line and updates \a cursor to contain the line.  This performes basic
+  line unwrapping as per the vCard specification (eg. if a line begins with a space, it is a
+  continuation of the next line)
+  */
+void LineReader::readOneLine(LByteArray* cursor) {
+    cursor->mStart = cursor->mEnd;
+    mSearchFrom = cursor->mStart;
+
+    // First, look for a newline in the already-existing buffer.  If found, return the line.
+    if (tryReadLine(cursor, false)) {
+        return;
+    }
+
+    // Otherwise, keep reading more data until either a CRLF is found, or there's no more to read.
+    while (!mDevice->atEnd()) {
+        QByteArray temp = mDevice->read(mChunkSize);
+        if (!temp.isEmpty()) {
+            cursor->mData.append(temp);
+            if (tryReadLine(cursor, false))
+                return;
+        } else {
+            mDevice->waitForReadyRead(500);
+        }
+    }
+
+    // We've reached the end of the stream.  Find a newline from the buffer (or return what's left).
+    tryReadLine(cursor, true);
+    return;
+}
+
+/*!
   Push a line onto the front of the line reader so it will be returned on the next call to readLine().
+  If multiple lines are pushed onto a line reader, they are read back in first-in-last-out order
   */
 void LineReader::pushLine(const QByteArray& line)
 {
-    mFirstLine = line;
+    mPushedLines.push(line);
 }
 
 /*!
@@ -146,7 +195,7 @@ int LineReader::odometer()
  */
 bool LineReader::atEnd()
 {
-    return mFirstLine.isEmpty() && mDevice->atEnd() && mBuffer.mEnd == mBuffer.mData.size();
+    return mPushedLines.isEmpty() && mDevice->atEnd() && mBuffer.mEnd == mBuffer.mData.size();
 }
 
 /*!
@@ -158,38 +207,38 @@ QTextCodec* LineReader::codec()
 }
 
 /*!
- * Get the next line of input from \a device to parse.  Also performs unfolding by removing
+ * Get the next line of input from the device to parse.  Also performs unfolding by removing
  * sequences of newline-space from the retrieved line.  Skips over any newlines at the start of the
  * input.
  *
- * Returns an LByteArray containing the line.
+ * \a cursor is filled with a the line
+ * \a atEnd is true if we've reached the end of the stream
+ * Returns true if a line was completely read (ie. a newline character was found)
  */
-bool LineReader::tryReadLine(LByteArray &cursor, bool atEnd)
+bool LineReader::tryReadLine(LByteArray *cursor, bool atEnd)
 {
     int crlfPos = -1;
 
-    QByteArray space = VersitUtils::encode(' ', mCodec);
-    const QByteArray tab = VersitUtils::encode('\t', mCodec);
-    int spaceLength = space.length();
+    int spaceLength = mSpace.length();
 
     forever {
         foreach(const QByteArrayMatcher& crlf, mCrlfList) {
             int crlfLength = crlf.pattern().length();
-            crlfPos = crlf.indexIn(cursor.mData, mSearchFrom);
-            if (crlfPos == cursor.mStart) {
+            crlfPos = crlf.indexIn(cursor->mData, mSearchFrom);
+            if (crlfPos == cursor->mStart) {
                 // Newline at start of line.  Set mStart to directly after it.
-                cursor.mStart += crlfLength;
-                mSearchFrom = cursor.mStart;
+                cursor->mStart += crlfLength;
+                mSearchFrom = cursor->mStart;
                 break;
-            } else if (crlfPos > cursor.mStart) {
+            } else if (crlfPos > cursor->mStart) {
                 // Found the CRLF.
-                if (QVersitReaderPrivate::containsAt(cursor.mData, space, crlfPos + crlfLength)
-                    || QVersitReaderPrivate::containsAt(cursor.mData, tab, crlfPos + crlfLength)) {
+                if (QVersitReaderPrivate::containsAt(cursor->mData, mSpace, crlfPos + crlfLength)
+                    || QVersitReaderPrivate::containsAt(cursor->mData, mTab, crlfPos + crlfLength)) {
                     // If it's followed by whitespace, collapse it.
-                    cursor.mData.remove(crlfPos, crlfLength + spaceLength);
+                    cursor->mData.remove(crlfPos, crlfLength + spaceLength);
                     mSearchFrom = crlfPos;
                     break;
-                } else if (!atEnd && crlfPos + crlfLength + spaceLength >= cursor.mData.size()) {
+                } else if (!atEnd && crlfPos + crlfLength + spaceLength >= cursor->mData.size()) {
                     // If our CRLF is at the end of the current buffer but there's more to read,
                     // it's possible that a space could be hiding on the next read from the device.
                     // Just pretend we didn't see the CRLF and pick it up the next time round.
@@ -197,14 +246,14 @@ bool LineReader::tryReadLine(LByteArray &cursor, bool atEnd)
                     return false;
                 } else {
                     // Found the CRLF.
-                    cursor.mEnd = crlfPos;
+                    cursor->mEnd = crlfPos;
                     return true;
                 }
             }
         }
         if (crlfPos == -1) {
             // No CRLF found.
-            cursor.mEnd = cursor.mData.size();
+            cursor->mEnd = cursor->mData.size();
             return false;
         }
     }
@@ -911,6 +960,7 @@ QString QVersitReaderPrivate::paramValue(const QByteArray& parameter, QTextCodec
 template <class T> bool QVersitReaderPrivate::containsAt(const T& text, const QByteArray& match, int index)
 {
     int n = match.length();
+    // This check is necessary because constData doesn't ensure it's null terminated at the right place
     if (text.size() - index < n)
         return false;
     const char* textData = text.constData();

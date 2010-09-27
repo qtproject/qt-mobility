@@ -658,7 +658,10 @@ void tst_QVersitReader::testParseVersitDocument_data()
                     "BEGIN:VCARD\r\n"
                     "VERSION:2.1\r\n"
                     "FN:John\r\n"
-                    "AGENT:BEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\n\r\n"
+                    "AGENT:BEGIN:VCARD\r\n"
+                    "FN:Jenny\r\n"
+                    "END:VCARD\r\n"
+                    "\r\n"
                     "EMAIL;ENCODING=QUOTED-PRINTABLE:john.citizen=40exam=\r\nple.com\r\n"
                     "END:VCARD\r\n")
             << true
@@ -1382,7 +1385,11 @@ void tst_QVersitReader::testReadLine()
         QByteArray expectedBytes(encoder->fromUnicode(expectedLine));
         QVERIFY(!lineReader.atEnd());
         line = lineReader.readLine();
-        QCOMPARE(line.toByteArray(), expectedBytes);
+        if(line.toByteArray() != expectedBytes) {
+            qDebug() << line.toByteArray();
+            qDebug() << expectedBytes;
+            QCOMPARE(line.toByteArray(), expectedBytes);
+        }
         QCOMPARE(line.size(), expectedBytes.length());
     }
 
@@ -1406,6 +1413,9 @@ void tst_QVersitReader::testReadLine_data()
 #ifdef QT_BUILD_INTERNAL
     // Note: for this test, we set mLineReader to read 10 bytes at a time.  Lines of multiples of
     // 10 bytes are hence border cases.
+    // Note: QVersitReaders' LineReader contains hacks that sniff for colons in the input to enable
+    // a workaround for malformed vCards with badly wrapped lines (see the last test case)
+    // For testing of normal wrapping behaviour, a colon must appear in every line.
     QTest::addColumn<QByteArray>("codecName");
     QTest::addColumn<QString>("data");
     QTest::addColumn<QList<QString> >("expectedLines");
@@ -1421,73 +1431,79 @@ void tst_QVersitReader::testReadLine_data()
 
         QTest::newRow("one line " + codecName)
                 << codecName
-                << "line"
-                << (QList<QString>() << QLatin1String("line"));
+                << "line:"
+                << (QList<QString>() << QLatin1String("line:"));
 
         QTest::newRow("one ten-byte line " + codecName)
                 << codecName
-                << "tenletters"
-                << (QList<QString>() << QLatin1String("tenletters"));
+                << "10letters:"
+                << (QList<QString>() << QLatin1String("10letters:"));
 
         QTest::newRow("one long line " + codecName)
                 << codecName
-                << "one line longer than ten characters"
-                << (QList<QString>() << QLatin1String("one line longer than ten characters"));
+                << "one:line longer than ten characters"
+                << (QList<QString>() << QLatin1String("one:line longer than ten characters"));
 
         QTest::newRow("one terminated line " + codecName)
                 << codecName
-                << "one line longer than ten characters\r\n"
-                << (QList<QString>() << QLatin1String("one line longer than ten characters"));
+                << "one:line longer than ten characters\r\n"
+                << (QList<QString>() << QLatin1String("one:line longer than ten characters"));
 
         QTest::newRow("two lines " + codecName)
                 << codecName
-                << "two\r\nlines"
-                << (QList<QString>() << QLatin1String("two") << QLatin1String("lines"));
+                << "two:\r\nlines:"
+                << (QList<QString>() << QLatin1String("two:") << QLatin1String("lines:"));
 
         QTest::newRow("two terminated lines " + codecName)
                 << codecName
-                << "two\r\nlines\r\n"
-                << (QList<QString>() << QLatin1String("two") << QLatin1String("lines"));
+                << "two:\r\nlines:\r\n"
+                << (QList<QString>() << QLatin1String("two:") << QLatin1String("lines:"));
 
         QTest::newRow("two long lines " + codecName)
                 << codecName
-                << "one line longer than ten characters\r\nanother line\r\n"
-                << (QList<QString>() << QLatin1String("one line longer than ten characters") << QLatin1String("another line"));
+                << "one:line longer than ten characters\r\nanother line:\r\n"
+                << (QList<QString>() << QLatin1String("one:line longer than ten characters") << QLatin1String("another line:"));
 
         QTest::newRow("two full lines " + codecName)
                 << codecName
-                << "tenletters\r\n8letters\r\n"
-                << (QList<QString>() << QLatin1String("tenletters") << QLatin1String("8letters"));
+                << "10letters:\r\n8letter:\r\n"
+                << (QList<QString>() << QLatin1String("10letters:") << QLatin1String("8letter:"));
 
         QTest::newRow("a nine-byte line " + codecName)
                 << codecName
-                << "9 letters\r\nanother line\r\n"
-                << (QList<QString>() << QLatin1String("9 letters") << QLatin1String("another line"));
+                << "9letters:\r\nanother:line\r\n"
+                << (QList<QString>() << QLatin1String("9letters:") << QLatin1String("another:line"));
 
         QTest::newRow("a blank line " + codecName)
                 << codecName
-                << "one\r\n\r\ntwo\r\n"
-                << (QList<QString>() << QLatin1String("one") << QLatin1String("two"));
+                << "one:\r\n\r\ntwo:\r\n"
+                << (QList<QString>() << QLatin1String("one:") << QLatin1String("two:"));
 
         QTest::newRow("folded lines " + codecName)
                 << codecName
-                << "folded\r\n  line\r\nsecond line\r\n"
-                << (QList<QString>() << QLatin1String("folded line") << QLatin1String("second line"));
+                << "fold:ed\r\n  line\r\nsecond: line\r\n"
+                << (QList<QString>() << QLatin1String("fold:ed line") << QLatin1String("second: line"));
 
         QTest::newRow("multiply folded lines " + codecName)
                 << codecName
-                << "fo\r\n lded\r\n  line\r\nseco\r\n\tnd l\r\n ine\r\n"
-                << (QList<QString>() << QLatin1String("folded line") << QLatin1String("second line"));
+                << "fo\r\n lded:\r\n  line\r\nseco\r\n\tnd:l\r\n ine\r\n"
+                << (QList<QString>() << QLatin1String("folded: line") << QLatin1String("second:line"));
 
         QTest::newRow("fold hidden after a chunk " + codecName)
                 << codecName
-                << "8letters\r\n  on one line\r\n"
-                << (QList<QString>() << QLatin1String("8letters on one line"));
+                << "8letter:\r\n  on one line\r\n"
+                << (QList<QString>() << QLatin1String("8letter: on one line"));
 
         QTest::newRow("three mac lines " + codecName)
                 << codecName
-                << "one\rtwo\rthree\r"
-                << (QList<QString>() << QLatin1String("one") << QLatin1String("two") << QLatin1String("three"));
+                << "one:\rtwo:\rthree:\r"
+                << (QList<QString>() << QLatin1String("one:") << QLatin1String("two:") << QLatin1String("three:"));
+
+        // Tests a workaround to parse a certain malformed vCard
+        QTest::newRow("badly wrapped lines " + codecName)
+                << codecName
+                << "one:line\r\ntwo\r\nthree\r\n"
+                << (QList<QString>() << QLatin1String("one:linetwothree"));
     }
 #endif
 }

@@ -65,6 +65,7 @@
 #include <QByteArray>
 #include <QIODevice>
 #include <QList>
+#include <QStack>
 #include <QPointer>
 #include <QScopedPointer>
 #include <QByteArray>
@@ -93,6 +94,7 @@ class QM_AUTOTEST_EXPORT LByteArray
 public:
     LByteArray() : mStart(0), mEnd(0) {}
     explicit LByteArray(const QByteArray& d) :mData(d), mStart(0), mEnd(d.size()) {}
+    LByteArray(const QByteArray& d, int start, int end) :mData(d), mStart(start), mEnd(end) {}
     bool isEmpty() const {
         return mEnd <= mStart;
     }
@@ -123,6 +125,15 @@ public:
     const char* constData() const {
         return mData.constData() + mStart;
     }
+    bool contains(const QByteArray& ba) const {
+        return mData.indexOf(ba, mStart) > 0;
+    }
+    bool endsWith(const QByteArray& ba) const {
+        // Loop backwards from ba and from mData (starting from index mEnd)
+        if (ba.size() > size())
+            return false;
+        return memcmp(mData.constData()+mEnd-ba.size(), ba.constData(), ba.size()) == 0;
+    }
     LByteArray& operator=(const QByteArray& ba) {
         mData = ba;
         mStart = 0;
@@ -145,6 +156,10 @@ private:
             mStart = 0;
         }
     }
+    void setBounds(int start, int end) {
+        mStart = start;
+        mEnd = end;
+    }
     QByteArray mData;
     int mStart;
     int mEnd;
@@ -155,23 +170,30 @@ class QM_AUTOTEST_EXPORT LineReader
 {
 public:
     LineReader(QIODevice* device, QTextCodec* codec, int chunkSize = 1000);
-    LByteArray readLine();
     void pushLine(const QByteArray& line);
     int odometer();
     bool atEnd();
     QTextCodec* codec();
+    LByteArray readLine();
 
 private:
-    bool tryReadLine(LByteArray& cursor, bool atEnd);
+    void readOneLine(LByteArray* cursor);
+    bool tryReadLine(LByteArray* cursor, bool atEnd);
 
-    QIODevice* mDevice;
-    QTextCodec* mCodec;
+    QIODevice* const mDevice;
+    QTextCodec* const mCodec;
     int mChunkSize; // How many bytes to read in one go.
     QList<QByteArrayMatcher> mCrlfList;
-    QByteArray mFirstLine; // Stores a line that has been "pushed" in front by pushLine
+    QStack<QByteArray> mPushedLines; // Stores a lines that has been "pushed" in front by pushLine
     LByteArray mBuffer;
     int mOdometer;
     int mSearchFrom;
+
+    // Cache of various characters encoded with mCodec
+    const QByteArray mColon;
+    const QByteArray mEquals;
+    const QByteArray mSpace;
+    const QByteArray mTab;
 };
 
 class QM_AUTOTEST_EXPORT QVersitReaderPrivate : public QThread
