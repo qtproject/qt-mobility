@@ -248,7 +248,7 @@ EXPORTS
 	_ZN10QtMobility15QGeoBoundingBox11setTopRightERKNS_14QGeoCoordinateE @ 247 NONAME
 	_ZN10QtMobility15QGeoBoundingBox13setBottomLeftERKNS_14QGeoCoordinateE @ 248 NONAME
 	_ZN10QtMobility15QGeoBoundingBox14setBottomRightERKNS_14QGeoCoordinateE @ 249 NONAME
-	_ZN10QtMobility15QGeoBoundingBox6heightEv @ 250 NONAME
+	_ZNK10QtMobility15QGeoBoundingBox6heightEv @ 250 NONAME
 	_ZN10QtMobility15QGeoBoundingBox8setWidthEd @ 251 NONAME
 	_ZN10QtMobility15QGeoBoundingBox9setCenterERKNS_14QGeoCoordinateE @ 252 NONAME
 	_ZN10QtMobility15QGeoBoundingBox9setHeightEd @ 253 NONAME
