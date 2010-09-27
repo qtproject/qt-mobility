@@ -107,8 +107,21 @@ QtMapsAndNavigation
 QtMessaging
 ------
 
- - foo
-    * bar
+ - Harmattan backend implemented
+ - Fix assigning an invalid QMessageId causes crash, QTMOBILITY-427
+ - Fix failure to compile with Qt 4.7, QTMOBILITY-390
+ - Fix ORing with an empty filter results in empty filter, MOBILITY-1241
+ - Fix writemessage example does not have a focused widget at start, MOBILITY-1229
+ - Fremantle, fix Scandinavian not correctly handled in SMS, MOBILITY-1362
+ - Fremantle, fix simultaneous SMS queries not possible, MOBILITY-1363
+ - Fremantle, Message caching, prefilter functionality and related tests implemented
+ - Fremantle, Modified and removed signals added for SMS messages
+ - Symbian, fix keepintouch searching doesn't stop, MOBILITY-1418
+ - Symbian, fix MMS message size limit not documented, MOBILITY-1224
+ - Symbian, fix unable to send Chinese language SMS, MOBILITY-1168
+ - Symbian, MTM, send status signaling improved, MOBILITY-1148
+ - Symbian^3, FreeStyle, fix backend is not thread safe, MOBILITY-1349
+ - Symbian^3, fix keepintouch example crashes on exit, MOBILITY-1417
 
 QtMultimediaKit
 ------
