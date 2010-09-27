@@ -1,6 +1,10 @@
 
 PRAGMA foreign_keys = ON;
 @@@
+CREATE TABLE IF NOT EXISTS version (
+    versionNumber INTEGER
+);
+@@@
 CREATE TABLE IF NOT EXISTS landmark (
     id INTEGER PRIMARY KEY,
     name TEXT,
