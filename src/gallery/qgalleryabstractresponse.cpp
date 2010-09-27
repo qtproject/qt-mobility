@@ -261,7 +261,7 @@ void QGalleryAbstractResponse::error(int error, const QString &errorString)
 /*!
     \fn QGalleryAbstractResponse::resumed()
 
-    Signals that an \l idle() response has resumed communications.
+    Signals that an idle response has resumed communications.
 */
 
 /*!

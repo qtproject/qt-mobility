@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include "qorganizermaemo5ids_p.h"
 #include "qorganizeritemtransform.h"
 #include "qtorganizer.h"
 
@@ -142,7 +143,7 @@ QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrenc
 
     // Set parent local id
     QString idString = QString::fromStdString(cevent->getId());
-    QOrganizerItemLocalId localId = idString.toUInt();
+    QOrganizerItemLocalId localId(new QOrganizerItemMaemo5EngineLocalId(idString.toUInt()));
     retn.setParentLocalId(localId);
 
     // Set original event date
@@ -246,7 +247,7 @@ QOrganizerTodoOccurrence OrganizerItemTransform::convertCTodoToQTodoOccurrence(C
     // Only the following are occurrence specific details:
 
     // In maemo, the parent id is the same as this id (todo's only have one occurrence)
-    retn.setParentLocalId(QString::fromStdString(ctodo->getId()).toUInt());
+    retn.setParentLocalId(makeItemLocalId(QString::fromStdString(ctodo->getId()).toUInt()));
 
     // Original date
     retn.setOriginalDate(retn.startDateTime().date());
@@ -321,7 +322,7 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
         id.setManagerUri(managerUri());
         if (setId) {
             QString idString = QString::fromStdString(component->getId());
-            QOrganizerItemLocalId localId = idString.toUInt();
+            QOrganizerItemLocalId localId(new QOrganizerItemMaemo5EngineLocalId(idString.toUInt()));
             id.setLocalId(localId);
         }
         else {
@@ -380,7 +381,11 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
     *error = QOrganizerItemManager::InvalidItemTypeError;
 
     QOrganizerItemLocalId itemId = item->localId();
-    QString itemIdStr = QString::number(itemId);
+
+    QString itemIdStr = "";
+    if (!itemId.isNull())
+        itemIdStr = QString::number(readItemLocalId(itemId));
+
     int calId = cal->getCalendarId();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     CComponent *retn = 0; // Return null on errors
@@ -497,10 +502,6 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
             cjournal->setDateStart(journal->dateTime().toTime_t());
 
         retn = cjournal;
-    }
-    else if (item->type() == QOrganizerItemType::TypeNote) {
-        *error = QOrganizerItemManager::NotSupportedError;
-        // TODO
     }
 
     if (retn) {
@@ -644,7 +645,7 @@ QOrganizerItemManager::Error OrganizerItemTransform::calErrorToManagerError(int 
 
         case CALENDAR_SYSTEM_ERROR:
         case CALENDAR_DATABASE_ERROR:
-        // case CALENDAR_DBUS_ERROR: // CALENDAR_DBUS_ERROR and CALENDAR_FILE_ERROR has the same value 3
+        // case CALENDAR_DBUS_ERROR: // CALENDAR_DBUS_ERROR and CALENDAR_FILE_ERROR have the same value 3
         case CALENDAR_LTIME_ERROR:
         case CALENDAR_LIBALARM_ERROR:
         case CALENDAR_ALARM_ERROR:

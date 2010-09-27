@@ -46,6 +46,7 @@
 class OrganizerTodoProgressTransform : public OrganizerItemDetailTransform
 {
 public:
+    void modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const;
     void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
     void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
     QString detailDefinitionName();

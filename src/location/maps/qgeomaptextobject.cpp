@@ -70,8 +70,7 @@ QGeoMapTextObject::QGeoMapTextObject()
 
 /*!
     Constructs a new text object which will display the text \a text with font
-    \a font at the coordinate \a coordinate on the map, with the parent \a
-    parent.
+    \a font at the coordinate \a coordinate on the map.
 */
 QGeoMapTextObject::QGeoMapTextObject(const QGeoCoordinate &coordinate,
                                      const QString &text,

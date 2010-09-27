@@ -617,7 +617,9 @@ void tst_QOrganizerItemAsync::itemFetch()
     QPointer<QObject> obj(ifr2);
     ifr2->setManager(oim.data());
     connect(ifr2, SIGNAL(resultsAvailable()), this, SLOT(deleteRequest()));
+qDebug() << "     fine";
     QVERIFY(ifr2->start());
+qDebug() << "     still fine?";
     int i = 100;
     // at this point we can't even call wait for finished..
     while(obj && i > 0) {
@@ -843,14 +845,33 @@ void tst_QOrganizerItemAsync::itemRemove()
     QVERIFY(!irr.cancel());
     QVERIFY(!irr.waitForFinished());
 
+    // fill manager with test data
+    QOrganizerTodo testTodo1;
+    QOrganizerItemDisplayLabel label;
+    label.setLabel("Test todo 1");
+    testTodo1.saveDetail(&label);
+    QVERIFY(oim->saveItem(&testTodo1));
+
+    testTodo1.setId(QOrganizerItemId());
+    label.setLabel("Test todo 2");
+    testTodo1.saveDetail(&label);
+    QOrganizerItemComment comment;
+    comment.setComment("todo comment");
+    testTodo1.saveDetail(&comment);
+    QVERIFY(oim->saveItem(&testTodo1));
+
+    QList<QOrganizerItemLocalId> allIds(oim->itemIds());
+    QVERIFY(!allIds.isEmpty());
+    QOrganizerItemLocalId removableId(allIds.first());
+
     // specific contact set
-    irr.setItemId(QOrganizerItemLocalId(3));
-    QVERIFY(irr.itemIds() == QList<QOrganizerItemLocalId>() << QOrganizerItemLocalId(3));
+    irr.setItemId(removableId);
+    QVERIFY(irr.itemIds() == QList<QOrganizerItemLocalId>() << removableId);
 
     // specific contact removal via detail filter
     int originalCount = oim->itemIds().size();
     QOrganizerItemDetailFilter dfil;
-    dfil.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLocationName);
+    dfil.setDetailDefinitionName(QOrganizerItemComment::DefinitionName, QOrganizerItemComment::FieldComment);
     irr.setItemIds(oim->itemIds(dfil));
     irr.setManager(oim.data());
     QCOMPARE(irr.manager(), oim.data());
@@ -982,14 +1003,14 @@ void tst_QOrganizerItemAsync::itemSave()
     QVERIFY(!isr.cancel());
     QVERIFY(!isr.waitForFinished());
 
-    // save a new contact
+    // save a new item
     int originalCount = oim->itemIds().size();
-    QOrganizerItem testContact;
+    QOrganizerTodo testTodo;
     QOrganizerItemDescription description;
-    description.setDescription("Test Contact");
-    testContact.saveDetail(&description);
+    description.setDescription("Test todo");
+    testTodo.saveDetail(&description);
     QList<QOrganizerItem> saveList;
-    saveList << testContact;
+    saveList << testTodo;
     isr.setManager(oim.data());
     QCOMPARE(isr.manager(), oim.data());
     QVERIFY(!isr.isActive());
@@ -998,7 +1019,7 @@ void tst_QOrganizerItemAsync::itemSave()
     QVERIFY(!isr.waitForFinished());
     qRegisterMetaType<QOrganizerItemSaveRequest*>("QOrganizerItemSaveRequest*");
     QThreadSignalSpy spy(&isr, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
-    isr.setItem(testContact);
+    isr.setItem(testTodo);
     QCOMPARE(isr.items(), saveList);
     QVERIFY(!isr.cancel()); // not started
     QVERIFY(isr.start());
@@ -1023,10 +1044,10 @@ void tst_QOrganizerItemAsync::itemSave()
     // update a previously saved contact
     QOrganizerItemPriority priority;
     priority.setPriority(QOrganizerItemPriority::LowestPriority);
-    testContact = result.first();
-    testContact.saveDetail(&priority);
+    testTodo = result.first();
+    testTodo.saveDetail(&priority);
     saveList.clear();
-    saveList << testContact;
+    saveList << testTodo;
     isr.setItems(saveList);
     QCOMPARE(isr.items(), saveList);
     QVERIFY(!isr.cancel()); // not started
@@ -1045,18 +1066,16 @@ void tst_QOrganizerItemAsync::itemSave()
     result << oim->item(expected.first().id().localId());
     //QVERIFY(compareContactLists(result, expected));
 
-    //here we can't compare the whole contact details, testContact would be updated by async call because we just use QThreadSignalSpy to receive signals.
-    //QVERIFY(containsIgnoringTimestamps(result, testContact));
+    //here we can't compare the whole contact details, testTodo would be updated by async call because we just use QThreadSignalSpy to receive signals.
+    //QVERIFY(containsIgnoringTimestamps(result, testTodo));
     // XXX: really, we should use isSuperset() from tst_QOrganizerItemManager, but this will do for now:
     QVERIFY(result.first().detail<QOrganizerItemPriority>().priority() == priority.priority());
     
     QCOMPARE(oim->itemIds().size(), originalCount + 1);
 
     // cancelling
-    QOrganizerItem temp = testContact;
-    QOrganizerItemLocation loc;
-    loc.setLocationName("should not get saved");
-    temp.saveDetail(&loc);
+    QOrganizerItem temp = testTodo;
+    temp.setDisplayLabel("should not get saved");
     saveList.clear();
     saveList << temp;
     isr.setItems(saveList);
@@ -1324,13 +1343,15 @@ void tst_QOrganizerItemAsync::definitionFetch()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    QMap<QString, QOrganizerItemDetailDefinition> defs = oim->detailDefinitions();
+    QMap<QString, QOrganizerItemDetailDefinition> defs = oim->detailDefinitions(QOrganizerItemType::TypeNote);
     QMap<QString, QOrganizerItemDetailDefinition> result = dfr.definitions();
     QCOMPARE(defs, result);
 
     // specific definition retrieval
     QStringList specific;
     specific << QOrganizerItemLocation::DefinitionName;
+    dfr.setItemType(QOrganizerItemType::TypeEvent);
+    QVERIFY(dfr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeEvent)));
     dfr.setDefinitionName(QOrganizerItemLocation::DefinitionName);
     QVERIFY(dfr.definitionNames() == specific);
     QVERIFY(!dfr.cancel()); // not started
@@ -1419,9 +1440,9 @@ void tst_QOrganizerItemAsync::definitionRemove()
     QOrganizerItemDetailDefinitionRemoveRequest drr;
     QVERIFY(drr.type() == QOrganizerItemAbstractRequest::DetailDefinitionRemoveRequest);
     QVERIFY(drr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeNote))); // ensure ctor sets contact type correctly.
-    drr.setItemType(QOrganizerItemType::TypeNote);
+    drr.setItemType(QOrganizerItemType::TypeEvent);
     drr.setDefinitionNames(QStringList());
-    QVERIFY(drr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeNote)));
+    QVERIFY(drr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeEvent)));
 
     // initial state - not started, no manager.
     QVERIFY(!drr.isActive());
@@ -1590,8 +1611,8 @@ void tst_QOrganizerItemAsync::definitionSave()
     QOrganizerItemDetailDefinitionSaveRequest dsr;
     QVERIFY(dsr.type() == QOrganizerItemAbstractRequest::DetailDefinitionSaveRequest);
     QVERIFY(dsr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeNote))); // ensure ctor sets contact type correctly
-    dsr.setItemType(QOrganizerItemType::TypeNote);
-    QVERIFY(dsr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeNote)));
+    dsr.setItemType(QOrganizerItemType::TypeEvent);
+    QVERIFY(dsr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeEvent)));
 
     // initial state - not started, no manager.
     QVERIFY(!dsr.isActive());
@@ -1746,10 +1767,13 @@ void tst_QOrganizerItemAsync::definitionSave()
 void tst_QOrganizerItemAsync::collectionFetch()
 {
     QFETCH(QString, uri);
+    // TODO: Remove this condition after the collection handling is implemented in the memory backend
+    if (uri.contains(":memory:"))
+        QSKIP("Collections are not yet implemented for memory engine", SkipSingle);
     QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
 
     QOrganizerCollectionFetchRequest cfr;
-    QVERIFY(cfr.type() == QOrganizerItemAbstractRequest::ItemFetchRequest);
+    QVERIFY(cfr.type() == QOrganizerItemAbstractRequest::CollectionFetchRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!cfr.isActive());
@@ -1867,9 +1891,12 @@ void tst_QOrganizerItemAsync::collectionFetch()
 void tst_QOrganizerItemAsync::collectionIdFetch()
 {
     QFETCH(QString, uri);
+    // TODO: Remove this condition after the collection handling is implemented in the memory backend
+    if (uri.contains(":memory:"))
+        QSKIP("Collections are not yet implemented for memory engine", SkipSingle);
     QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
     QOrganizerCollectionLocalIdFetchRequest cifr;
-    QVERIFY(cifr.type() == QOrganizerItemAbstractRequest::ItemLocalIdFetchRequest);
+    QVERIFY(cifr.type() == QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!cifr.isActive());
@@ -1962,9 +1989,12 @@ void tst_QOrganizerItemAsync::collectionIdFetch()
 void tst_QOrganizerItemAsync::collectionRemove()
 {
     QFETCH(QString, uri);
+    // TODO: Remove this condition after the collection handling is implemented in the memory backend
+    if (uri.contains(":memory:"))
+        QSKIP("Collections are not yet implemented for memory engine", SkipSingle);
     QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
     QOrganizerCollectionRemoveRequest crr;
-    QVERIFY(crr.type() == QOrganizerItemAbstractRequest::ItemRemoveRequest);
+    QVERIFY(crr.type() == QOrganizerItemAbstractRequest::CollectionRemoveRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!crr.isActive());
@@ -2091,9 +2121,12 @@ void tst_QOrganizerItemAsync::collectionRemove()
 void tst_QOrganizerItemAsync::collectionSave()
 {
     QFETCH(QString, uri);
+    // TODO: Remove this condition after the collection handling is implemented in the memory backend
+    if (uri.contains(":memory:"))
+        QSKIP("Collections are not yet implemented for memory engine", SkipSingle);
     QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
     QOrganizerCollectionSaveRequest csr;
-    QVERIFY(csr.type() == QOrganizerItemAbstractRequest::ItemSaveRequest);
+    QVERIFY(csr.type() == QOrganizerItemAbstractRequest::CollectionSaveRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!csr.isActive());

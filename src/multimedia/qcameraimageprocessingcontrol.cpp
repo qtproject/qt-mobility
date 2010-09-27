@@ -113,16 +113,6 @@ QCameraImageProcessingControl::~QCameraImageProcessingControl()
 */
 
 /*!
-    \fn QCameraImageProcessingControl::manualWhiteBalance() const
-    Return the manual white balance, in K.
-*/
-
-/*!
-    \fn QCameraImageProcessingControl::setManualWhiteBalance(int colorTemperature)
-    Set the white balance to \a colorTemperature
-*/
-
-/*!
     \fn bool QCameraImageProcessingControl::isProcessingParameterSupported(ProcessingParameter parameter) const
 
     Returns true if the camera supports adjusting image processing \a parameter.

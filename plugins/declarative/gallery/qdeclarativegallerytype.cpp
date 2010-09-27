@@ -44,6 +44,7 @@
 
 #include <qgalleryresultset.h>
 
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include <QtDeclarative/qdeclarativepropertymap.h>
 
 QTM_BEGIN_NAMESPACE
@@ -90,9 +91,11 @@ void QDeclarativeGalleryType::setPropertyNames(const QStringList &names)
 
 void QDeclarativeGalleryType::setAutoUpdate(bool enabled)
 {
-    m_request.setAutoUpdate(enabled);
+    if (m_request.autoUpdate() != enabled) {
+        m_request.setAutoUpdate(enabled);
 
-    emit autoUpdateChanged();
+        emit autoUpdateChanged();
+    }
 }
 
 void QDeclarativeGalleryType::componentComplete()
@@ -105,15 +108,29 @@ void QDeclarativeGalleryType::componentComplete()
 
 void QDeclarativeGalleryType::_q_statusChanged()
 {
-    QString message = m_request.errorString();
-    qSwap(message, m_errorMessage);
-
     m_status = Status(m_request.status());
 
-    emit statusChanged();
+    if (m_status == Error) {
+        const QString message = m_request.errorString();
 
-    if (message != m_errorMessage)
-        emit errorMessageChanged();
+        if (!message.isEmpty()) {
+            qmlInfo(this) << message;
+        } else {
+            switch (m_request.error()) {
+            case QDocumentGallery::ConnectionError:
+                qmlInfo(this) << tr("An error was encountered connecting to the document gallery");
+                break;
+            case QDocumentGallery::ItemTypeError:
+                qmlInfo(this) << tr("DocumentGallery.%1 is not a supported item type")
+                        .arg(m_request.itemType());
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    emit statusChanged();
 }
 
 void QDeclarativeGalleryType::_q_typeChanged()
@@ -267,12 +284,16 @@ QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGalleryType::itemType(
 
 void QDeclarativeDocumentGalleryType::setItemType(QDeclarativeDocumentGallery::ItemType itemType)
 {
-    m_request.setItemType(QDeclarativeDocumentGallery::toString(itemType));
+    const QString type = QDeclarativeDocumentGallery::toString(itemType);
 
-    if (m_complete)
-        m_request.execute();
+    if (type != m_request.itemType()) {
+        m_request.setItemType(type);
 
-    emit itemTypeChanged();
+        if (m_complete)
+            m_request.execute();
+
+        emit itemTypeChanged();
+    }
 }
 
 /*!

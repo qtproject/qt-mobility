@@ -274,8 +274,7 @@ else:contains(qmf_enabled, yes) {
     DEFINES += USE_QMF_IMPLEMENTATION
 
     # QMF headers must be located at $QMF_INCLUDEDIR
-    INCLUDEPATH += $$(QMF_INCLUDEDIR) \
-        $$(QMF_INCLUDEDIR)/support
+    INCLUDEPATH += $$(QMF_INCLUDEDIR)
 
     # QMF libraries must be located at $QMF_LIBDIR
     LIBS += -L \

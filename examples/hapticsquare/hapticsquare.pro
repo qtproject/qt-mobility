@@ -20,4 +20,8 @@ SOURCES += dialog.cpp main.cpp \
 CONFIG += mobility
 MOBILITY = feedback
 
+symbian: {
+     TARGET.CAPABILITY = WriteDeviceData ReadDeviceData
+}
+
 include(../examples.pri)

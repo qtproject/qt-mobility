@@ -6,8 +6,11 @@ INCLUDEPATH += ../../src/global \
                ../../src/location \
                ../../src/location/maps
 SOURCES += main.cpp \
+           mapwidget.cpp \
            mainwindow.cpp
-HEADERS += mainwindow.h
+           
+HEADERS += mapwidget.h \
+           mainwindow.h
 
 include(../examples.pri)
 
