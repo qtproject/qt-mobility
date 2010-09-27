@@ -169,7 +169,7 @@ bool LineReader::tryReadLine(LByteArray &cursor, bool atEnd)
     int crlfPos = -1;
 
     QByteArray space = VersitUtils::encode(' ', mCodec);
-    QByteArray tab = VersitUtils::encode('\t', mCodec);
+    const QByteArray tab = VersitUtils::encode('\t', mCodec);
     int spaceLength = space.length();
 
     forever {
@@ -473,13 +473,13 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
         QVersitDocument::VersitType versitType,
         LineReader& lineReader)
 {
-    LByteArray cursor = lineReader.readLine();
-    if (cursor.isEmpty())
+    LByteArray line = lineReader.readLine();
+    if (line.isEmpty())
         return QVersitProperty();
 
     // Otherwise, do stuff.
     QPair<QStringList,QString> groupsAndName =
-            extractPropertyGroupsAndName(cursor, lineReader.codec());
+            extractPropertyGroupsAndName(line, lineReader.codec());
 
     QVersitProperty property;
     property.setGroups(groupsAndName.first);
@@ -491,11 +491,11 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
         property.setValueType(valueTypeMap()->value(key));
 
     if (versitType == QVersitDocument::VCard21Type)
-        parseVCard21Property(cursor, property, lineReader);
+        parseVCard21Property(line, property, lineReader);
     else if (versitType == QVersitDocument::VCard30Type
             || versitType == QVersitDocument::VCard40Type
             || versitType == QVersitDocument::ICalendar20Type)
-        parseVCard30Property(versitType, cursor, property, lineReader);
+        parseVCard30Property(versitType, line, property, lineReader);
 
     return property;
 }
@@ -503,12 +503,12 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
 /*!
  * Parses the property according to vCard 2.1 syntax.
  */
-void QVersitReaderPrivate::parseVCard21Property(LByteArray& cursor, QVersitProperty& property,
+void QVersitReaderPrivate::parseVCard21Property(LByteArray& line, QVersitProperty& property,
                                                 LineReader& lineReader)
 {
-    property.setParameters(extractVCard21PropertyParams(cursor, lineReader.codec()));
+    property.setParameters(extractVCard21PropertyParams(line, lineReader.codec()));
 
-    QByteArray value = cursor.toByteArray();
+    QByteArray value = line.toByteArray();
     if (property.valueType() == QVersitProperty::VersitDocumentType) {
         // Hack to handle cases where start of document is on the same or next line as "AGENT:"
         if (value == "BEGIN:VCARD") {
@@ -543,12 +543,12 @@ void QVersitReaderPrivate::parseVCard21Property(LByteArray& cursor, QVersitPrope
  * and iCalendar properties.
  */
 void QVersitReaderPrivate::parseVCard30Property(QVersitDocument::VersitType versitType,
-                                                LByteArray& cursor, QVersitProperty& property,
+                                                LByteArray& line, QVersitProperty& property,
                                                 LineReader& lineReader)
 {
-    property.setParameters(extractVCard30PropertyParams(cursor, lineReader.codec()));
+    property.setParameters(extractVCard30PropertyParams(line, lineReader.codec()));
 
-    QByteArray value = cursor.toByteArray();
+    QByteArray value = line.toByteArray();
 
     QTextCodec* codec;
 
@@ -804,13 +804,14 @@ QMultiHash<QString,QString> QVersitReaderPrivate::extractVCard30PropertyParams(
 QList<QByteArray> QVersitReaderPrivate::extractParams(LByteArray& line, QTextCodec *codec) const
 {
     const QByteArray colon = VersitUtils::encode(':', codec);
+    const QByteArray semicolon = VersitUtils::encode(';', codec);
     QList<QByteArray> params;
 
     /* find the end of the name&params */
     int colonIndex = line.indexOf(colon);
     if (colonIndex > 0) {
         QByteArray nameAndParamsString = line.left(colonIndex);
-        params = extractParts(nameAndParamsString, VersitUtils::encode(';', codec), codec);
+        params = extractParts(nameAndParamsString, semicolon, codec);
 
         /* Update line */
         line.chopLeft(colonIndex + colon.length());
@@ -833,7 +834,7 @@ QList<QByteArray> QVersitReaderPrivate::extractParts(
     int partStartIndex = 0;
     int textLength = text.length();
     int separatorLength = separator.length();
-    QByteArray backslash = VersitUtils::encode('\\', codec);
+    const QByteArray backslash = VersitUtils::encode('\\', codec);
     int backslashLength = backslash.length();
 
     for (int i=0; i < textLength-separatorLength+1; i++) {
@@ -875,7 +876,7 @@ QString QVersitReaderPrivate::paramName(const QByteArray& parameter, QTextCodec*
 {
      if (parameter.trimmed().length() == 0)
          return QString();
-     QByteArray equals = VersitUtils::encode('=', codec);
+     const QByteArray equals = VersitUtils::encode('=', codec);
      int equalsIndex = parameter.indexOf(equals);
      if (equalsIndex > 0) {
          return codec->toUnicode(parameter.left(equalsIndex)).trimmed();
@@ -890,7 +891,7 @@ QString QVersitReaderPrivate::paramName(const QByteArray& parameter, QTextCodec*
 QString QVersitReaderPrivate::paramValue(const QByteArray& parameter, QTextCodec* codec) const
 {
     QByteArray value(parameter);
-    QByteArray equals = VersitUtils::encode('=', codec);
+    const QByteArray equals = VersitUtils::encode('=', codec);
     int equalsIndex = parameter.indexOf(equals);
     if (equalsIndex > 0) {
         int valueLength = parameter.length() - (equalsIndex + equals.length());
