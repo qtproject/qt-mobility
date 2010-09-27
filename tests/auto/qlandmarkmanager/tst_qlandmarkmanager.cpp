@@ -696,6 +696,8 @@ private slots:
     void createDbExists();
 #endif
 
+    void invalidManager();
+
 #ifdef RETRIEVE_CATEGORY
     void retrieveCategory();
     void retrieveCategory_data();
@@ -861,6 +863,134 @@ void tst_QLandmarkManager::createDbExists() {
     QVERIFY(tablesExist());
 }
 #endif
+
+void tst_QLandmarkManager::invalidManager()
+{
+    QLandmarkManager manager("does.not.exist");
+    QVERIFY(manager.error() == QLandmarkManager::InvalidManagerError);
+
+    QLandmark lm;
+    lm.setName("LM");
+    QVERIFY(!manager.saveLandmark(&lm));
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QList<QLandmark> lms;
+    lms.append(lm);
+    QVERIFY(!manager.saveLandmarks(&lms));
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QLandmarkId lmId;
+    QVERIFY(!manager.removeLandmark(lmId));
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QList<QLandmarkId> lmIds;
+    lmIds.append(lmId);
+    QVERIFY(!manager.removeLandmarks(lmIds));
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QLandmarkCategory cat;
+    cat.setName("cat");
+    QVERIFY(!manager.saveCategory(&cat));
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QLandmarkCategoryId catId;
+    QVERIFY(!manager.removeCategory(catId));
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QCOMPARE(manager.category(catId), QLandmarkCategory());
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QCOMPARE(manager.categories(), QList<QLandmarkCategory>());
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QCOMPARE(manager.categoryIds(), QList<QLandmarkCategoryId>());
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QList<QLandmarkCategoryId> catIds;
+    catIds << catId;
+    QCOMPARE(manager.categories(catIds), QList<QLandmarkCategory>());
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QCOMPARE(manager.landmark(lmId), QLandmark());
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QCOMPARE(manager.landmarks(lmIds), QList<QLandmark>());
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QCOMPARE(manager.landmarks(), QList<QLandmark>());
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QCOMPARE(manager.landmarkIds(), QList<QLandmarkId>());
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QVERIFY(!manager.importLandmarks("test.gpx"));
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QVERIFY(!manager.exportLandmarks("test.gpx", QLandmarkManager::Gpx));
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QCOMPARE(manager.supportedFormats(QLandmarkManager::ImportOperation), QStringList());
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QVERIFY(!manager.isFeatureSupported(QLandmarkManager::NotificationsFeature));
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QLandmarkFilter filter;
+    QCOMPARE(manager.filterSupportLevel(filter), QLandmarkManager::NoSupport);
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QVERIFY(manager.isReadOnly());
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QVERIFY(manager.isReadOnly(lmId));
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QVERIFY(manager.isReadOnly(catId));
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QCOMPARE(manager.searchableLandmarkAttributeKeys(), QStringList());
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QCOMPARE(manager.landmarkAttributeKeys(), QStringList());
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QCOMPARE(manager.categoryAttributeKeys(), QStringList());
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QCOMPARE(manager.managerName(), QString());
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QMap<QString,QString> stringMap;
+    QVERIFY(manager.managerParameters() == stringMap);
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QCOMPARE(manager.managerUri(), QString());
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+    QCOMPARE(manager.managerVersion(), 0);
+    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
+
+
+
+#ifndef Q_OS_SYMBIAN
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE","landmarkstest");
+    db.setDatabaseName("test2.db");
+
+    db.open();
+    QSqlQuery query(db);
+    query.exec("CREATE TABLE IF NOT EXISTS landmark( "
+            "id INTEGER PRIMARY KEY, "
+            "name TEXT, "
+            "latitude REAL, "
+            "longitude REAL, "
+            " altitude REAL);");
+
+    QMap<QString,QString> parameters;
+    parameters.insert("filename", "test2.db");
+    QLandmarkManager manager2 ("com.nokia.qt.landmarks.engines.sqlite",parameters);
+    QVERIFY(manager2.error() == QLandmarkManager::VersionMismatchError);
+#endif
+}
 
 #ifdef RETRIEVE_CATEGORY
 void tst_QLandmarkManager::retrieveCategory() {
