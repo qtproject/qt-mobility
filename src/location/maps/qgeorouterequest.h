@@ -95,11 +95,11 @@ public:
     };
     Q_DECLARE_FLAGS(SegmentDetails, SegmentDetail)
 
-    enum InstructionDetail {
-        NoInstructions = 0x0000,
-        BasicInstructions = 0x0001
+    enum ManeuverDetail {
+        NoManeuvers = 0x0000,
+        BasicManeuvers = 0x0001
     };
-    Q_DECLARE_FLAGS(InstructionDetails, InstructionDetail)
+    Q_DECLARE_FLAGS(ManeuverDetails, ManeuverDetail)
 
     QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints = QList<QGeoCoordinate>());
     QGeoRouteRequest(const QGeoCoordinate &origin,
@@ -139,9 +139,9 @@ public:
     void setSegmentDetail(SegmentDetail segmentDetail);
     SegmentDetail segmentDetail() const;
 
-    // defaults to BasicInstructions
-    void setInstructionDetail(InstructionDetail instructionDetail);
-    InstructionDetail instructionDetail() const;
+    // defaults to BasicManeuvers
+    void setManeuverDetail(ManeuverDetail maneuverDetail);
+    ManeuverDetail maneuverDetail() const;
 
 private:
     QExplicitlySharedDataPointer<QGeoRouteRequestPrivate> d_ptr;
@@ -151,7 +151,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::TravelModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::AvoidFeatureTypes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::RouteOptimizations)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::SegmentDetails)
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::InstructionDetails)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::ManeuverDetails)
 
 QTM_END_NAMESPACE
 

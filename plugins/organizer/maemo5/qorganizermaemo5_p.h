@@ -132,7 +132,10 @@ public:
     OrganizerAsynchProcess *m_asynchProcess;
 
     // calendar database accessor instance
-    OrganizerCalendarDatabaseAccess m_databaseAccess;
+    OrganizerCalendarDatabaseAccess* m_dbAccess;
+
+    // calendar database cache instance
+    OrganizerDbCache* m_dbCache;
 };
 
 class QOrganizerItemMaemo5Engine : public QOrganizerItemManagerEngine
@@ -226,6 +229,7 @@ private:
     CCalendar* getCalendar(QOrganizerCollectionLocalId collectionId, QOrganizerItemManager::Error *error) const;
 
     // extract possible collection ids from the filters
+    QSet<QOrganizerCollectionId> extractCollectionIds(const QOrganizerItemFilter& filter) const;
     QSet<QOrganizerCollectionLocalId> extractCollectionLocalIds(const QOrganizerItemFilter& filter) const;
 
     // ctor

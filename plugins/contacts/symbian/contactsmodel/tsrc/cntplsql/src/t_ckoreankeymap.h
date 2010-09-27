@@ -61,6 +61,9 @@ NONSHARABLE_CLASS(UT_CKoreanKeyMap): public CEUnitTestSuiteClass
         void UT_GetMappedString_JamoL();
         void UT_GetMappedString_HangulL();
         void UT_GetMappedString_MixedL();
+        void UT_IsLanguageSupported_LatinTextL();
+        void UT_IsLanguageSupported_KoreanTextL();
+        void UT_IsLanguageSupported_MixedTextL();
 
     private:    // Data
 

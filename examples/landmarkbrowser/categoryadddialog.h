@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,48 +38,30 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEORGANIZER_H
-#define QDECLARATIVEORGANIZER_H
+#ifndef CATEGORYADDDIALOG_H
+#define CATEGORYADDDIALOG_H
 
-#include <QList>
-#include <QPair>
-#include <QMap>
-#include <QDate>
-#include <QAbstractListModel>
-#include <QDeclarativeListProperty>
-#include <QtDeclarative>
+#include <QWidget>
 
-#include "qorganizeritem.h"
-#include "qorganizeritemmanager.h"
-#include "qorganizeritemlocalidfetchrequest.h"
+#include <qlandmarkcategory.h>
 
-QTM_USE_NAMESPACE;
+#include "ui_categoryadddialog.h"
 
-class QDeclarativeOrganizerItem;
-class QDeclarativeOrganizerModel;
-class QDeclarativeOrganizer : public QObject
+QTM_USE_NAMESPACE
+
+class CategoryAddDialog : public QDialog, public Ui_CategoryAddDialog
 {
 Q_OBJECT
-Q_PROPERTY(QStringList availableManagers READ availableManagers)
-Q_PROPERTY(QString manager READ manager WRITE setManager)
-
 public:
+    CategoryAddDialog(QWidget *parent, Qt::WindowFlags flags =0);
+    ~CategoryAddDialog();
 
-    explicit QDeclarativeOrganizer(QObject *parent = 0);
-
-    QStringList availableManagers() const;
-
-    QString manager();
-    void setManager(const QString& manager);
-
-    Q_INVOKABLE QDeclarativeOrganizerModel* itemModel(const QDateTime& start, const QDateTime& end);
-
+    QLandmarkCategory category();
+public slots:
+    virtual void accept();
+    virtual void reject();
 private:
-    friend class QDeclarativeOrganizerModel;
-    QMap<QPair<QDateTime,QDateTime>, QDeclarativeOrganizerModel*> m_models;
-    QOrganizerItemManager* m_manager;
+    QLandmarkCategory m_category;
 };
 
-QML_DECLARE_TYPE(QDeclarativeOrganizer)
-
-#endif // QDeclarativeOrganizer_H
+#endif

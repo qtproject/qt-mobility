@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,43 +39,55 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPCONTAINEROBJECT_INFO_P_H
-#define QGEOTILEDMAPCONTAINEROBJECT_INFO_P_H
+#ifndef QDECLARATIVEORGANIZERCOLLECTION_H
+#define QDECLARATIVEORGANIZERCOLLECTION_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qdeclarative.h"
+#include "qorganizercollection.h"
 
-#include "qgeotiledmapobjectinfo_p.h"
+QTM_USE_NAMESPACE
 
-class QGraphicsPathItem;
 
-QTM_BEGIN_NAMESPACE
-
-class QGeoMapGroupObject;
-
-class QGeoTiledMapContainerObjectInfo : public QGeoTiledMapObjectInfo
+class QDeclarativeOrganizerCollection : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(uint collectionId READ id NOTIFY valueChanged)
 public:
-    QGeoTiledMapContainerObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
-    ~QGeoTiledMapContainerObjectInfo();
+    QDeclarativeOrganizerCollection(QObject* parent = 0)
+        :QObject(parent)
+    {
+    }
 
-    QGeoMapGroupObject *group;
-    QGraphicsPathItem *pathItem;
 
-public slots:
-    void visibleChanged(bool visible);
-    void selectedChanged(bool selected);
+    uint id() const
+    {
+        return qHash(d.id());
+    }
+
+    Q_INVOKABLE void setMetaData(const QString& key, const QVariant& value)
+    {
+        d.setMetaData(key, value);
+    }
+
+    Q_INVOKABLE  QVariant metaData(const QString& key)
+    {
+        return d.metaData(key);
+    }
+
+    QOrganizerCollection collection() const
+    {
+        return d;
+    }
+
+    void setCollection(const QOrganizerCollection& collection)
+    {
+        d = collection;
+    }
+signals:
+    void valueChanged();
+private:
+    QOrganizerCollection d;
 };
+QML_DECLARE_TYPE(QDeclarativeOrganizerCollection)
+#endif
 
-QTM_END_NAMESPACE
-
-#endif //QGEOTILEDMAPCONTAINEROBJECT_INFO_P_H

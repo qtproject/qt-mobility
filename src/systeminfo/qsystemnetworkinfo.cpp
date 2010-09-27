@@ -260,6 +260,8 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
 }
 
 /*!
+ \property QSystemNetworkInfo::currentMode
+
     Returns the current active mode. If more than one mode is active, returns the
      default or preferred mode. If no modes are active, returns UnknownMode.
 

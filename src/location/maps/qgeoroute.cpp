@@ -179,6 +179,18 @@ QGeoBoundingBox QGeoRoute::bounds() const
     return d_ptr->bounds;
 }
 
+/*
+void QGeoRoute::setFirstRouteSegment(const QGeoRouteSegment &routeSegment)
+{
+
+}
+
+QGeoRouteSegment QGeoRoute::firstRouteSegment() const
+{
+
+}
+*/
+
 /*!
     Sets the list of route segements to \a routeSegments.
 

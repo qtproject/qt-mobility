@@ -58,14 +58,16 @@
 
 QTM_USE_NAMESPACE
 
+class OrganizerDbCache;
 class CEvent;
 class CTodo;
 class CJournal;
+class CCalendar;
 
 class OrganizerCalendarDatabaseAccess
 {
 public:
-    OrganizerCalendarDatabaseAccess();
+    OrganizerCalendarDatabaseAccess(OrganizerDbCache* dbCache);
     ~OrganizerCalendarDatabaseAccess();
 
     bool open(QString databasePathName);
@@ -77,10 +79,17 @@ public:
     std::vector<CTodo *> getTodos(int calId, std::string guid, int &pErrorCode);
     std::vector<CJournal *> getJournals(int calId, std::string guid, int &pErrorCode);
 
+    CEvent* getEvent(CCalendar* cal, const std::string& id, int& calError);
+    CTodo* getTodo(CCalendar* cal, const std::string& id, int& calError);
+    CJournal* getJournal(CCalendar* cal, const std::string& id, int& calError);
+
+    void getIdList(CCalendar* cal, int compType, int& calError, std::vector<std::string>& result);
+
     static void sqliteErrorMapper(const QSqlError &sqlError, int& errorCode);
 
 private:
     QSqlDatabase m_db;
+    OrganizerDbCache* m_dbCache;
 };
 
 #endif // QORGANIZERCALDBACCESS_H

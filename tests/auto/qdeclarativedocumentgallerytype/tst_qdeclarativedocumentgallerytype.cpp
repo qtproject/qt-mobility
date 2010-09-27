@@ -62,6 +62,7 @@ class QtGalleryTestResponse : public QGalleryResultSet
 public:
     QtGalleryTestResponse(
             const QStringList &propertyNames,
+            const QHash<QString, QVariant> &metaData,
             int count,
             QGalleryAbstractRequest::Status status,
             int error,
@@ -70,6 +71,14 @@ public:
         , m_currentIndex(-1)
         , m_propertyNames(propertyNames)
     {
+        typedef QHash<QString, QVariant>::const_iterator iterator;
+        for (iterator it = metaData.begin(), end = metaData.end(); it != end; ++it) {
+            int propertyKey = m_propertyNames.indexOf(it.key());
+
+            if (propertyKey >= 0)
+                m_metaData.insert(propertyKey, it.value());
+        }
+
         if (error != QGalleryAbstractRequest::NoError)
             QGalleryAbstractResponse::error(error, errorString);
         else if (status == QGalleryAbstractRequest::Finished)
@@ -82,7 +91,8 @@ public:
         return m_propertyNames.indexOf(propertyName); }
     QGalleryProperty::Attributes propertyAttributes(int) const {
         return QGalleryProperty::CanRead | QGalleryProperty::CanWrite; }
-    QVariant::Type propertyType(int) const { return QVariant::String; }
+    QVariant::Type propertyType(int key) const {
+        return key >= 0 ? QVariant::Int : QVariant::Invalid; }
 
     int itemCount() const { return m_count; }
 
@@ -112,7 +122,18 @@ public:
         }
     }
 
-    void setCount(int count) { m_count = count; }
+    void setCount(int count)
+    {
+        qSwap(m_count, count);
+
+        if (m_count == 0) {
+            m_currentIndex = -1;
+
+            emit itemsRemoved(0, count);
+        } else if (count == 0) {
+            emit itemsInserted(0, count);
+        }
+    }
 
     using QGalleryResultSet::finish;
     using QGalleryResultSet::resume;
@@ -147,6 +168,9 @@ public:
 
     void setCount(int count) { m_count = count; }
 
+    void setBlackList(const QStringList &propertyNames) { m_blacklist = propertyNames; }
+    void setMetaData(const QHash<QString, QVariant> &metaData) { m_metaData = metaData; }
+
     QGalleryTypeRequest *request() const { return m_request.data(); }
     QtGalleryTestResponse *response() const { return m_response.data(); }
 
@@ -155,14 +179,21 @@ public:
         m_count = 0;
         m_status = QGalleryAbstractRequest::Finished;
         m_error = QGalleryTypeRequest::NoError;
+        m_metaData.clear();
+        m_blacklist.clear();
     }
 
 protected:
     QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request)
     {
         if ((m_request = qobject_cast<QGalleryTypeRequest *>(request))) {
+            QStringList propertyNames = m_request.data()->propertyNames();
+            foreach (QString propertyName, m_blacklist)
+                propertyNames.removeAll(propertyName);
+
             m_response = new QtGalleryTestResponse(
-                    m_request.data()->propertyNames(),
+                    propertyNames,
+                    m_metaData,
                     m_count,
                     m_status,
                     m_error,
@@ -178,6 +209,8 @@ private:
     QGalleryAbstractRequest::Status m_status;
     int m_error;
     QString m_errorString;
+    QHash<QString, QVariant> m_metaData;
+    QStringList m_blacklist;
     QWeakPointer<QGalleryTypeRequest> m_request;
     QWeakPointer<QtGalleryTestResponse> m_response;
 };
@@ -204,6 +237,8 @@ private Q_SLOTS:
     void error();
     void progress_data();
     void progress();
+    void available();
+    void metaData();
 
 private:
     QtTestGallery gallery;
@@ -226,6 +261,7 @@ void tst_QDeclarativeDocumentGalleryType::itemType_data()
     QTest::addColumn<int>("qmlItemType");
     QTest::addColumn<QString>("qmlItemTypeString");
     QTest::addColumn<int>("itemType");
+    QTest::addColumn<int>("expectedItemType");
     QTest::addColumn<QString>("itemTypeString");
 
     QTest::newRow("Null -> Audio")
@@ -235,6 +271,7 @@ void tst_QDeclarativeDocumentGalleryType::itemType_data()
                     "DocumentGalleryType {}\n")
             << int(QDeclarativeDocumentGallery::InvalidType)
             << QString()
+            << int(QDeclarativeDocumentGallery::Audio)
             << int(QDeclarativeDocumentGallery::Audio)
             << "Audio";
 
@@ -246,6 +283,7 @@ void tst_QDeclarativeDocumentGalleryType::itemType_data()
             << int(QDeclarativeDocumentGallery::Audio)
             << "Audio"
             << int(QDeclarativeDocumentGallery::Audio)
+            << int(QDeclarativeDocumentGallery::Audio)
             << "Audio";
 
     QTest::newRow("Audio -> PhotoAlbum")
@@ -255,6 +293,7 @@ void tst_QDeclarativeDocumentGalleryType::itemType_data()
                     "DocumentGalleryType { itemType: DocumentGallery.Audio }\n")
             << int(QDeclarativeDocumentGallery::Audio)
             << "Audio"
+            << int(QDeclarativeDocumentGallery::PhotoAlbum)
             << int(QDeclarativeDocumentGallery::PhotoAlbum)
             << "PhotoAlbum";
 
@@ -266,6 +305,18 @@ void tst_QDeclarativeDocumentGalleryType::itemType_data()
             << int(QDeclarativeDocumentGallery::PhotoAlbum)
             << "PhotoAlbum"
             << int(QDeclarativeDocumentGallery::InvalidType)
+            << int(QDeclarativeDocumentGallery::InvalidType)
+            << QString();
+
+    QTest::newRow("PhotoAlbum -> Undefined Type")
+            << QByteArray(
+                    "import Qt 4.7\n"
+                    "import QtMobility.gallery 1.1\n"
+                    "DocumentGalleryType { itemType: DocumentGallery.PhotoAlbum }\n")
+            << int(QDeclarativeDocumentGallery::PhotoAlbum)
+            << "PhotoAlbum"
+            << int(300)
+            << int(QDeclarativeDocumentGallery::InvalidType)
             << QString();
 }
 
@@ -275,6 +326,7 @@ void tst_QDeclarativeDocumentGalleryType::itemType()
     QFETCH(int, qmlItemType);
     QFETCH(QString, qmlItemTypeString);
     QFETCH(int, itemType);
+    QFETCH(int, expectedItemType);
     QFETCH(QString, itemTypeString);
 
     QDeclarativeComponent component(&engine);
@@ -295,12 +347,12 @@ void tst_QDeclarativeDocumentGalleryType::itemType()
     QCOMPARE(object->property("itemType"), QVariant(qmlItemType));
 
     QCOMPARE(object->setProperty("itemType", itemType), true);
-    QCOMPARE(object->property("itemType"), QVariant(itemType));
+    QCOMPARE(object->property("itemType"), QVariant(expectedItemType));
     QCOMPARE(spy.count(), itemType != qmlItemType ? 1 : 0);
 
     QMetaObject::invokeMethod(object.data(), "reload");
 
-    if (itemType != QDeclarativeDocumentGallery::InvalidType) {
+    if (expectedItemType != QDeclarativeDocumentGallery::InvalidType) {
         QVERIFY(gallery.request());
         QCOMPARE(gallery.request()->itemType(), itemTypeString);
     }
@@ -693,6 +745,97 @@ void tst_QDeclarativeDocumentGalleryType::progress()
     gallery.response()->progressChanged(currentProgress, maximumProgress);
     QCOMPARE(object->property("progress"), QVariant(normalizedProgress));
     QCOMPARE(spy.count(), 1);
+}
+
+void tst_QDeclarativeDocumentGalleryType::available()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryType { itemType: DocumentGallery.File }\n");
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+    QCOMPARE(object->property("available"), QVariant(false));
+
+    QSignalSpy spy(object.data(), SIGNAL(availableChanged()));
+
+    gallery.response()->setCount(1);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(object->property("available"), QVariant(true));
+
+    gallery.response()->setCount(0);
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(object->property("available"), QVariant(false));
+}
+
+void tst_QDeclarativeDocumentGalleryType::metaData()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryType {\n"
+                "itemType: DocumentGallery.Audio\n"
+                "properties: [ \"count\", \"duration\", \"turtle\" ]\n"
+            "}\n");
+
+    {
+        QHash<QString, QVariant> metaData;
+        metaData.insert(QLatin1String("count"), 20);
+        gallery.setMetaData(metaData);
+        gallery.setBlackList(QStringList() << QLatin1String("turtle"));
+    }
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+
+    QObject *metaData = object->property("metaData").value<QObject *>();
+    QVERIFY(metaData);
+    QCOMPARE(metaData->property("count"), QVariant());
+    QCOMPARE(metaData->property("duration"), QVariant());
+    QCOMPARE(metaData->property("turtle"), QVariant());
+
+    gallery.response()->setCount(1);
+    QCOMPARE(metaData->property("count"), QVariant(20));
+    QCOMPARE(metaData->property("duration"), QVariant(QVariant::Int));
+    QCOMPARE(metaData->property("turtle"), QVariant());
+
+    {
+        QHash<QString, QVariant> metaData;
+        metaData.insert(QLatin1String("duration"), 12000);
+        gallery.setMetaData(metaData);
+        gallery.setCount(1);
+    }
+
+    gallery.setBlackList(QStringList() << QLatin1String("turtle") << QLatin1String("count"));
+    QMetaObject::invokeMethod(object.data(), "reload");
+
+    QCOMPARE(metaData->property("count"), QVariant());
+    QCOMPARE(metaData->property("duration"), QVariant(12000));
+    QCOMPARE(metaData->property("turtle"), QVariant());
+
+    QVERIFY(gallery.response());
+    const int durationKey = gallery.response()->propertyKey(QLatin1String("duration"));
+    QVERIFY(durationKey >= 0);
+
+    metaData->setProperty("duration", 30);
+    QCOMPARE(gallery.response()->metaData(durationKey), QVariant(12000));
+
+    gallery.response()->setMetaData(durationKey, 30);
+    QCOMPARE(metaData->property("duration"), QVariant(30));
+
+    gallery.response()->setCount(0);
+    QCOMPARE(metaData->property("count"), QVariant());
+    QCOMPARE(metaData->property("duration"), QVariant());
+    QCOMPARE(metaData->property("turtle"), QVariant());
 }
 
 QTEST_MAIN(tst_QDeclarativeDocumentGalleryType)

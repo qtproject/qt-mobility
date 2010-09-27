@@ -23,12 +23,26 @@
 #include <QString>
 #include "cntsqlsearchbase.h"
 
+class C12keyKeyMap;
+
 class CntSqlKoreanItuT : public CntSqlSearchBase 
 {
- 
 
 public:
-    CntSqlKoreanItuT();
+    enum SqlQueryType { NA,  
+                        // Basic cases:
+                        // 1: "0", "5"
+                        // Just one digit. Select all contact ids from the table. No need to compare
+                        // values.
+                        AllFromOneTable ,
+                        // 2: "123", "01", "10", "00"
+                        // No zeros which have non-zeros in their both sides
+                        // One or zero tokens, when pattern is split using '0'.
+                        ExactMatchFromOneTable
+                        };    
+
+public:
+    CntSqlKoreanItuT( C12keyKeyMap* twelveKeyKeyMap);
     
     ~CntSqlKoreanItuT();
     
@@ -38,10 +52,12 @@ public: //from CCntSqlSearchBase
     
     QueryType getQueryType();
     
-
 private:
     
+    SqlQueryType getSQLQueryType(const QString &pattern);
     
+
+friend class UT_CntSqlKoreanItuT;    
 };
 //#endif
 

@@ -154,7 +154,7 @@ void AddCalendarPage::calendarChanged(QOrganizerItemManager *manager, QOrganizer
 {
     m_manager = manager;
     m_collection = calendar;
-    window()->setWindowTitle(calendar.id().localId().isNull() ? "Add calendar" : "Edit calendar");
+    window()->setWindowTitle(!calendar.id().localId().isNull() ? "Edit calendar" : "Add calendar");
 
 #if defined(Q_WS_MAEMO_5)
     // Maemo5 calendar features

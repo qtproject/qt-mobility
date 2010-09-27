@@ -269,9 +269,6 @@ public:
     QList<QOrganizerCollection> collections(
         const QList<QOrganizerCollectionLocalId>& collectionIds, 
         QOrganizerItemManager::Error* error) const;
-    bool collectionL(const int 
-        index, const QList<QOrganizerCollectionLocalId>& collectionIds, 
-        QOrganizerCollection& collection) const;
     bool saveCollection(QOrganizerCollection* collection, 
         QOrganizerItemManager::Error* error);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId, 
@@ -338,16 +335,15 @@ public:
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders) const;
     QOrganizerItemRequestQueue* requestQueue();
+
+private:
 #ifdef SYMBIAN_CALENDAR_V2
-    QList<QOrganizerCollectionLocalId> collectionIds() const;
-    int collectionCount() const;
-    QList<QOrganizerCollection> collectionsL(
-        const QList<QOrganizerCollectionLocalId>& collectionIds) const;
+    void collectionsL(
+        const QList<QOrganizerCollectionLocalId> &collectionIds,
+        QList<QOrganizerCollection> &collections) const;
     void saveCollectionL(QOrganizerCollection* collection);
     void removeCollectionL(const QOrganizerCollectionLocalId& collectionId);
 #endif
-    
-private:
     CCalEntryView* entryViewL(const QOrganizerCollectionLocalId& collectionId) const;
     CCalInstanceView* instanceViewL(const QOrganizerCollectionLocalId& collectionId) const;
     QOrganizerCollectionLocalId collectionLocalIdL(const QOrganizerItem &item, 

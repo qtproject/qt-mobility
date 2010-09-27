@@ -157,6 +157,7 @@ void QGeoMapData::setWindowSize(const QSizeF &size)
 }
 
 /*!
+    \property QGeoMapData::windowSize
     Returns the size of the map viewport.
 
     The size will be adjusted by the associated QGraphicsGeoMap as it resizes.
@@ -191,6 +192,8 @@ void QGeoMapData::setZoomLevel(qreal zoomLevel)
 }
 
 /*!
+    \property QGeoMapData::zoomLevel
+
     Returns the zoom level of the map.
 
     Larger values of the zoom level correspond to more detailed views of the
@@ -228,14 +231,13 @@ void QGeoMapData::setCenter(const QGeoCoordinate &center)
 
     d_ptr->center = center;
 
-    // TODO: Blocking centerChanged causes route object not to draw route when panning
-    // Is blocking here always necessary or should thecenterChanged, or something else,
-    // be emitted somewhere else for route object to update visible route?
-    //if (!d_ptr->blockPropertyChangeSignals)
+    if (!d_ptr->blockPropertyChangeSignals)
         emit centerChanged(d_ptr->center);
 }
 
 /*!
+    \property QGeoMapData::center
+
     Returns the coordinate of the point in the center of the map viewport.
 */
 QGeoCoordinate QGeoMapData::center() const
@@ -258,6 +260,8 @@ void QGeoMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 }
 
 /*!
+    \property QGeoMapData::mapType
+
     Returns the type of map data which is being displayed.
 */
 QGraphicsGeoMap::MapType QGeoMapData::mapType() const
@@ -280,6 +284,8 @@ void QGeoMapData::setConnectivityMode(QGraphicsGeoMap::ConnectivityMode connecti
 }
 
 /*!
+    \property QGeoMapData::connectivityMode
+
     Returns the connectivity mode for this map.
 */
 QGraphicsGeoMap::ConnectivityMode QGeoMapData::connectivityMode() const

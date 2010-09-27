@@ -64,6 +64,7 @@ class QtGalleryTestResponse : public QGalleryResultSet
 public:
     QtGalleryTestResponse(
             const QStringList &propertyNames,
+            const QHash<QString, QVariant> &metaData,
             int count,
             QGalleryAbstractRequest::Status status,
             int error,
@@ -72,6 +73,14 @@ public:
         , m_currentIndex(-1)
         , m_propertyNames(propertyNames)
     {
+        typedef QHash<QString, QVariant>::const_iterator iterator;
+        for (iterator it = metaData.begin(), end = metaData.end(); it != end; ++it) {
+            int propertyKey = m_propertyNames.indexOf(it.key());
+
+            if (propertyKey >= 0)
+                m_metaData.insert(propertyKey, it.value());
+        }
+
         if (error != QGalleryAbstractRequest::NoError)
             QGalleryAbstractResponse::error(error, errorString);
         else if (status == QGalleryAbstractRequest::Finished)
@@ -99,8 +108,8 @@ public:
     }
 
     QVariant itemId() const { return isValid() ? QVariant(1) : QVariant(); }
-    QUrl itemUrl() const { return isValid() ? QUrl("http://example.com") : QUrl(); }
-    QString itemType() const { return isValid() ? QLatin1String("WebPage") : QString(); }
+    QUrl itemUrl() const { return isValid() ? QUrl("file:///path/to/song.mp3") : QUrl(); }
+    QString itemType() const { return isValid() ? QLatin1String("Audio") : QString(); }
 
     QVariant metaData(int key) const { return isValid() ? m_metaData.value(key) : QVariant(); }
     bool setMetaData(int key, const QVariant &value)
@@ -114,7 +123,18 @@ public:
         }
     }
 
-    void setCount(int count) { m_count = count; }
+    void setCount(int count)
+    {
+        qSwap(m_count, count);
+
+        if (m_count == 0) {
+            m_currentIndex = -1;
+
+            emit itemsRemoved(0, count);
+        } else if (count == 0) {
+            emit itemsInserted(0, count);
+        }
+    }
 
     using QGalleryResultSet::finish;
     using QGalleryResultSet::resume;
@@ -152,6 +172,9 @@ public:
 
     void setCount(int count) { m_count = count; }
 
+    void setBlackList(const QStringList &propertyNames) { m_blacklist = propertyNames; }
+    void setMetaData(const QHash<QString, QVariant> &metaData) { m_metaData = metaData; }
+
     QGalleryItemRequest *request() const { return m_request.data(); }
     QtGalleryTestResponse *response() const { return m_response.data(); }
 
@@ -160,14 +183,21 @@ public:
         m_count = 0;
         m_status = QGalleryAbstractRequest::Finished;
         m_error = QGalleryItemRequest::NoError;
+        m_metaData.clear();
+        m_blacklist.clear();
     }
 
 protected:
     QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request)
     {
         if ((m_request = qobject_cast<QGalleryItemRequest *>(request))) {
+            QStringList propertyNames = m_request.data()->propertyNames();
+            foreach (QString propertyName, m_blacklist)
+                propertyNames.removeAll(propertyName);
+
             m_response = new QtGalleryTestResponse(
-                    m_request.data()->propertyNames(),
+                    propertyNames,
+                    m_metaData,
                     m_count,
                     m_status,
                     m_error,
@@ -183,6 +213,8 @@ private:
     QGalleryAbstractRequest::Status m_status;
     int m_error;
     QString m_errorString;
+    QHash<QString, QVariant> m_metaData;
+    QStringList m_blacklist;
     QWeakPointer<QGalleryItemRequest> m_request;
     QWeakPointer<QtGalleryTestResponse> m_response;
 };
@@ -209,6 +241,10 @@ private Q_SLOTS:
     void error();
     void progress_data();
     void progress();
+    void available();
+    void itemUrl();
+    void itemType();
+    void metaData();
 
 private:
     QtTestGallery gallery;
@@ -687,6 +723,150 @@ void tst_QDeclarativeDocumentGalleryItem::progress()
     QCOMPARE(spy.count(), 1);
 }
 
+void tst_QDeclarativeDocumentGalleryItem::available()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryItem { item: 12 }\n");
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+    QCOMPARE(object->property("available"), QVariant(false));
+
+    QSignalSpy spy(object.data(), SIGNAL(availableChanged()));
+
+    gallery.response()->setCount(1);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(object->property("available"), QVariant(true));
+
+    gallery.response()->setCount(0);
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(object->property("available"), QVariant(false));
+}
+
+void tst_QDeclarativeDocumentGalleryItem::itemUrl()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryItem { item: 12 }\n");
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+    QCOMPARE(object->property("itemUrl"), QVariant(QUrl()));
+
+    QSignalSpy spy(object.data(), SIGNAL(availableChanged()));
+
+    gallery.response()->setCount(1);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(object->property("itemUrl"), QVariant(QUrl(QLatin1String("file:///path/to/song.mp3"))));
+
+    gallery.response()->setCount(0);
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(object->property("itemUrl"), QVariant(QUrl()));
+}
+
+void tst_QDeclarativeDocumentGalleryItem::itemType()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryItem { item: 12 }\n");
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+    QCOMPARE(object->property("itemType"), QVariant(QDeclarativeDocumentGallery::InvalidType));
+
+    QSignalSpy spy(object.data(), SIGNAL(availableChanged()));
+
+    gallery.response()->setCount(1);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(object->property("itemType"), QVariant(QDeclarativeDocumentGallery::Audio));
+
+    gallery.response()->setCount(0);
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(object->property("itemType"), QVariant(QDeclarativeDocumentGallery::InvalidType));
+}
+
+void tst_QDeclarativeDocumentGalleryItem::metaData()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryItem {\n"
+                "item: 12\n"
+                "properties: [ \"fileName\", \"title\", \"turtle\" ]\n"
+            "}\n");
+
+    {
+        QHash<QString, QVariant> metaData;
+        metaData.insert(QLatin1String("fileName"), QLatin1String("interlude.mp3"));
+        gallery.setMetaData(metaData);
+        gallery.setBlackList(QStringList() << QLatin1String("turtle"));
+    }
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+
+    QObject *metaData = object->property("metaData").value<QObject *>();
+    QVERIFY(metaData);
+    QCOMPARE(metaData->property("fileName"), QVariant());
+    QCOMPARE(metaData->property("title"), QVariant());
+    QCOMPARE(metaData->property("turtle"), QVariant());
+
+    gallery.response()->setCount(1);
+    QCOMPARE(metaData->property("fileName"), QVariant(QLatin1String("interlude.mp3")));
+    QCOMPARE(metaData->property("title"), QVariant(QVariant::String));
+    QCOMPARE(metaData->property("turtle"), QVariant());
+
+    {
+        QHash<QString, QVariant> metaData;
+        metaData.insert(QLatin1String("title"), QLatin1String("Interlude"));
+        gallery.setMetaData(metaData);
+        gallery.setCount(1);
+    }
+
+    gallery.setBlackList(QStringList() << QLatin1String("turtle") << QLatin1String("fileName"));
+    QMetaObject::invokeMethod(object.data(), "reload");
+
+    QCOMPARE(metaData->property("fileName"), QVariant());
+    QCOMPARE(metaData->property("title"), QVariant(QLatin1String("Interlude")));
+    QCOMPARE(metaData->property("turtle"), QVariant());
+
+    QVERIFY(gallery.response());
+    const int titleKey = gallery.response()->propertyKey(QLatin1String("title"));
+    QVERIFY(titleKey >= 0);
+
+    metaData->setProperty("title", QLatin1String("An Interlude"));
+    QCOMPARE(gallery.response()->metaData(titleKey), QVariant(QLatin1String("An Interlude")));
+
+    gallery.response()->setMetaData(titleKey, QLatin1String("Interlude"));
+    QCOMPARE(metaData->property("title"), QVariant(QLatin1String("Interlude")));
+
+    gallery.response()->setCount(0);
+    QCOMPARE(metaData->property("fileName"), QVariant());
+    QCOMPARE(metaData->property("title"), QVariant());
+    QCOMPARE(metaData->property("turtle"), QVariant());
+}
 
 QTEST_MAIN(tst_QDeclarativeDocumentGalleryItem)
 

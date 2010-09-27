@@ -39,71 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOINSTRUCTION_H
-#define QGEOINSTRUCTION_H
+#ifndef S60MEDIASTREAMCONTROL_H
+#define S60MEDIASTREAMCONTROL_H
 
-#include "qmobilityglobal.h"
+#include <QVariant>
 
-#include <QExplicitlySharedDataPointer>
+#include "s60mediaplayercontrol.h"
 
-class QString;
+#include <qmediastreamscontrol.h>
+#include <qtmedianamespace.h>
 
-QT_BEGIN_HEADER
+QT_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+class S60MediaPlayerControl;
+class S60MediaSettings;
 
-class QGeoCoordinate;
-class QGeoInstructionPrivate;
-
-class Q_LOCATION_EXPORT QGeoInstruction
+class S60MediaStreamControl : public QMediaStreamsControl
 {
-
+    Q_OBJECT
 public:
-    enum InstructionDirection {
-        NoDirection,
-        DirectionForward,
-        DirectionBearRight,
-        DirectionLightRight,
-        DirectionRight,
-        DirectionHardRight,
-        DirectionUTurnRight,
-        DirectionUTurnLeft,
-        DirectionHardLeft,
-        DirectionLeft,
-        DirectionLightLeft,
-        DirectionBearLeft
-    };
+    S60MediaStreamControl(QObject *session, QObject *parent = 0);
+    ~S60MediaStreamControl();
 
-    QGeoInstruction();
-    QGeoInstruction(const QGeoInstruction &other);
-    ~QGeoInstruction();
+    // from QMediaStreamsControl
+    int streamCount();
+    QMediaStreamsControl::StreamType streamType(int streamNumber);
+    QVariant metaData(int streamNumber, QtMultimediaKit::MetaData key);
+    bool isActive(int streamNumber);
+    void setActive(int streamNumber, bool state);
 
-    QGeoInstruction& operator= (const QGeoInstruction &other);
-
-    bool operator== (const QGeoInstruction &other) const;
-    bool operator!= (const QGeoInstruction &other) const;
-
-    void setPosition(const QGeoCoordinate &position);
-    QGeoCoordinate position() const;
-
-    void setInstructionText(const QString &instructionText);
-    QString instructionText() const;
-
-    void setDirection(InstructionDirection direction);
-    InstructionDirection direction() const;
-
-    void setTimeToNextInstruction(int secs);
-    int timeToNextInstruction() const;
-
-    void setDistanceToNextInstruction(qreal distance);
-    qreal distanceToNextInstruction() const;
+public Q_SLOTS:
+    void handleStreamsChanged();
 
 private:
-    QExplicitlySharedDataPointer<QGeoInstructionPrivate> d_ptr;
+    S60MediaPlayerControl *m_control;
+    S60MediaSettings::TMediaType m_mediaType;
 };
 
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif
+#endif //S60MEDIASTREAMCONTROL_H

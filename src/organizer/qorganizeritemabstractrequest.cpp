@@ -102,6 +102,10 @@ QTM_BEGIN_NAMESPACE
   \value DetailDefinitionFetchRequest A request to fetch a collection of detail definitions
   \value DetailDefinitionRemoveRequest A request to remove a list of detail definitions
   \value DetailDefinitionSaveRequest A request to save a list of detail definitions
+  \value CollectionFetchRequest A request to fetch a collection.
+  \value CollectionLocalIdFetchRequest A request to collect a local id.
+  \value CollectionRemoveRequest A request to remove a collection.
+  \value CollectionSaveRequest A request to save a collection.
  */
 
 /*!
