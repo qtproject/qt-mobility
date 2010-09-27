@@ -60,7 +60,6 @@ class QDeclarativeGalleryItem : public QObject, public QDeclarativeParserStatus
     Q_ENUMS(Status)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
-    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QVariant item READ itemId WRITE setItemId NOTIFY itemIdChanged)
@@ -84,8 +83,6 @@ public:
     Status status() const { return m_status; }
 
     qreal progress() const;
-
-    QString errorMessage() const { return m_errorMessage; }
 
     QStringList propertyNames() { return m_request.propertyNames(); }
     void setPropertyNames(const QStringList &names);
@@ -112,7 +109,6 @@ public Q_SLOTS:
 Q_SIGNALS:
     void statusChanged();
     void progressChanged();
-    void errorMessageChanged();
     void availableChanged();
     void metaDataChanged();
 
@@ -127,7 +123,6 @@ protected:
     QGalleryItemRequest m_request;
     QDeclarativePropertyMap *m_metaData;
     QHash<int, QString> m_propertyKeys;
-    QString m_errorMessage;
     Status m_status;
     bool m_complete;
 

@@ -121,7 +121,7 @@ The map data will come from an offline source.
 \value OnlineMode
 The map data will come from an online source.
 
-\value HybridMod
+\value HybridMode
 The map data will come from a combination of offline and online sources.
 */
 
@@ -500,7 +500,7 @@ QGeoBoundingBox QGraphicsGeoMap::viewport() const
     Attempts to fit the bounding box \a bounds into the viewport of the map.
 
     This method will change the zoom level to the maximum zoom level such 
-    that all of \bounds is visible within the resulting viewport.
+    that all of \a bounds is visible within the resulting viewport.
 
     If \a preserveViewportCenter is false the map will be centered on the 
     bounding box \a bounds before the zoom level is changed, otherwise the 

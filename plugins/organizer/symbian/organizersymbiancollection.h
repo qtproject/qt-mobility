@@ -52,6 +52,7 @@ class QOrganizerItemManagerEngine;
 QTM_END_NAMESPACE
 class CCalSession;
 class CCalEntryView;
+class CCalInstanceView;
 class CCalCalendarInfo;
 
 class OrganizerSymbianCollectionPrivate : public QSharedData,
@@ -70,7 +71,9 @@ public:
     QOrganizerItemManagerEngine *m_engine;
     CCalSession *m_calSession;
     CCalEntryView *m_calEntryView;
+    CCalInstanceView *m_calInstanceView;
     QOrganizerCollectionId m_id;
+    quint64 m_calCollectionId;
     CActiveSchedulerWait *m_activeSchedulerWait;
     QString m_fileName;
     int m_error;
@@ -88,11 +91,13 @@ public:
 #else
     void openL(const TDesC &fileName);
 #endif
-    void createEntryViewL();
+    void createViewsL();
     QOrganizerCollectionId id() const;
     QOrganizerCollectionLocalId localId() const;
+    quint64 calCollectionId() const;
     CCalSession *calSession() const; 
     CCalEntryView *calEntryView() const;
+    CCalInstanceView *calInstanceView() const;
     QString fileName() const;
     bool isValid() const;
     bool isMarkedForDeletionL() const;

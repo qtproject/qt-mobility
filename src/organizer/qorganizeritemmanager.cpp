@@ -299,17 +299,18 @@ QOrganizerItemManager::~QOrganizerItemManager()
   \value NoError The most recent operation was successful
   \value DoesNotExistError The most recent operation failed because the requested organizer item or detail definition does not exist
   \value AlreadyExistsError The most recent operation failed because the specified organizer item or detail definition already exists
-  \value InvalidDetailError The most recent operation failed because the specified organizer item contains details which do not conform to their definition
-  \value InvalidItemTypeError The most recent operation failed because the organizer item type specified was not valid for the operation
+  \value InvalidDetailError The most recent operation failed because the specified organizer detail definition already exists
   \value LockedError The most recent operation failed because the datastore specified is currently locked
   \value DetailAccessError The most recent operation failed because a detail was modified or removed and its access method does not allow that
   \value PermissionsError The most recent operation failed because the caller does not have permission to perform the operation
   \value OutOfMemoryError The most recent operation failed due to running out of memory
-  \value VersionMismatchError The most recent operation failed because the backend of the manager is not of the required version
-  \value LimitReachedError The most recent operation failed because the limit for that type of object has been reached
   \value NotSupportedError The most recent operation failed because the requested operation is not supported in the specified store
   \value BadArgumentError The most recent operation failed because one or more of the parameters to the operation were invalid
   \value UnspecifiedError The most recent operation failed for an undocumented reason
+  \value VersionMismatchError The most recent operation failed because the backend of the manager is not of the required version
+  \value LimitReachedError The most recent operation failed because the limit for that type of object has been reached
+  \value InvalidItemTypeError The most recent operation failed for an undocumented reason
+  \value InvalidCollectionError The most recent operation failed because the collection is invalid
   \value InvalidOccurrenceError The most recent operation failed because it was an attempt to save an occurrence without a correct InstanceOrigin detail
  */
 
@@ -609,8 +610,13 @@ QList<QOrganizerCollection> QOrganizerItemManager::collections(const QList<QOrga
  */
 bool QOrganizerItemManager::saveCollection(QOrganizerCollection* collection)
 {
-    d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->saveCollection(collection, &d->m_error);
+    if (collection) {
+        d->m_error = QOrganizerItemManager::NoError;
+        return d->m_engine->saveCollection(collection, &d->m_error);
+    } else {
+        d->m_error = QOrganizerItemManager::BadArgumentError;
+        return false;
+    }
 }
 
 /*!
@@ -712,7 +718,7 @@ bool QOrganizerItemManager::hasFeature(QOrganizerItemManager::ManagerFeature fea
 /*!
   Returns the list of data types supported by the manager
  */
-QList<QVariant::Type> QOrganizerItemManager::supportedDataTypes() const
+QList<int> QOrganizerItemManager::supportedDataTypes() const
 {
     return d->m_engine->supportedDataTypes();
 }

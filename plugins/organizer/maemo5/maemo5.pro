@@ -18,12 +18,17 @@ INCLUDEPATH += ../../../src/organizer \
     ../../../src/organizer/filters \
     ../../../src/organizer/details
 HEADERS += qorganizermaemo5_p.h \
+    qorganizermaemo5ids_p.h \
     qorganizerrecurrencetransform.h \
     qorganizeritemtransform.h \
     qorganizerasynchprocess.h \
-    qorganizercaldbaccess.h
+    qorganizercaldbaccess.h \
+    qorganizerdbcache.h \
+    qorganizerdbcachewrappers.h
 SOURCES += qorganizermaemo5.cpp \
     qorganizerrecurrencetransform.cpp \
     qorganizeritemtransform.cpp \
     qorganizerasynchprocess.cpp \
-    qorganizercaldbaccess.cpp
+    qorganizercaldbaccess.cpp \
+    qorganizerdbcache.cpp \
+    qorganizerdbcachewrappers.cpp

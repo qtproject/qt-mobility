@@ -71,8 +71,6 @@ QGeoTiledMapRequest::QGeoTiledMapRequest()
 /*!
     Constructs a new tiled map request.
 
-    The request is associated with \a mapData
-
     At a zoom level of z the world is represented as a 2^z by 2^z grid
     of tiles.
 
@@ -135,7 +133,7 @@ bool QGeoTiledMapRequest::operator== (const QGeoTiledMapRequest &other) const
             (d_ptr->connectivityMode == other.d_ptr->connectivityMode);
 }
 
-/*!
+/*
     Returns the QGeoMapData instance associated with this request.
 */
 //QGeoTiledMapData* QGeoTiledMapRequest::mapData() const

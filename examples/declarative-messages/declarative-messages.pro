@@ -1,6 +1,6 @@
 QT += declarative network
 SOURCES += $$PWD/qmlmessages.cpp
-include($$PWD/deployment.pri)
+RESOURCES = declarative-messages.qrc
 
 TARGET = qml_messages
 

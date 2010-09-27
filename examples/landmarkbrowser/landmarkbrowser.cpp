@@ -1,6 +1,46 @@
-#include <QDebug>
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
+**
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #include <qlandmarkfilter.h>
 #include <qlandmark.h>
+
 #include <QModelIndex>
 #include <QFileDialog>
 #include <QFile>
@@ -20,8 +60,6 @@ LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
      limit(20)
 {
     setupUi(this);
-    table->insertColumn(3);
-    table->hideColumn(3);
 
     categoryTable->removeColumn(2);
     categoryTable->hideColumn(1);
@@ -34,7 +72,7 @@ LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
                 this,SLOT(fetchHandler(QLandmarkAbstractRequest::State)));
 
     landmarkImport = new QLandmarkImportRequest(manager, this);
-    QObject::connect(landmarkImport, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
+    connect(landmarkImport, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
                 this,SLOT(fetchHandler(QLandmarkAbstractRequest::State)));
 
     landmarkExport = new QLandmarkExportRequest(manager, this);
@@ -61,11 +99,17 @@ LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
     table->setHorizontalHeaderItem(2, new QTableWidgetItem("Name"));
 
     prevLandmarkButton->setEnabled(false);
+
+    filterDialog = new LandmarkFilterDialog(landmarkFetch, this);
+    connect(filterDialog,SIGNAL(doFetchAll()), this, SLOT(doFetchAll()));
+
     progress = new QProgressDialog (tr("Please wait..."),tr("Cancel"),0,0, this);
     progress->setWindowTitle(tr("Loading Landmarks"));
     QObject::connect(progress,SIGNAL(canceled()), this, SLOT(cancel()));
+
     landmarkFetch->setLimit(limit);
     landmarkFetch->setOffset(currentLandmarkOffset);
+    landmarkFetch->setSorting(QLandmarkNameSort());
     landmarkFetch->start();
 
     categoryFetch->setLimit(limit);
@@ -82,6 +126,9 @@ LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
 
 LandmarkBrowser::~LandmarkBrowser()
 {
+     delete filterDialog;
+     filterDialog =0;
+
     delete landmarkFetch;
     landmarkFetch =0;
     delete landmarkImport;
@@ -94,8 +141,10 @@ LandmarkBrowser::~LandmarkBrowser()
     landmarkSave =0;
     delete categoryFetch;
     categoryFetch = 0;
+
     delete progress;
     progress =0;
+
     delete manager;
     manager=0;
 }
@@ -103,6 +152,7 @@ LandmarkBrowser::~LandmarkBrowser()
 void LandmarkBrowser::on_importLandmarks_clicked()
 {
     QString fileFilterString;
+
     #ifdef Q_OS_SYMBIAN
         fileFilterString = tr("Landmark files (*.lmx *)");
     #else
@@ -149,12 +199,12 @@ void LandmarkBrowser::on_deleteLandmarksButton_clicked()
 
     QLandmarkId id;
     QModelIndex index;
+
     while(selectedIndexes.count() > 0) {
         index = selectedIndexes.takeLast();
-        id.setManagerUri(manager->managerUri());
-        id.setLocalId(table->item(index.row(),3)->text());
-        deleteIds.append(id);
+        deleteIds.append(landmarks.at(index.row()).landmarkId());
         table->removeRow(index.row());
+        landmarks.removeAt(index.row());
         selectedIndexes = table->selectionModel()->selectedRows();
     }
 
@@ -162,10 +212,27 @@ void LandmarkBrowser::on_deleteLandmarksButton_clicked()
         return;
 
     manager->removeLandmarks(deleteIds);
-    updateTable(manager->landmarks(QLandmarkFilter(), deleteIds.count(), currentLandmarkOffset+table->rowCount()));
+    QList<QLandmark> newLandmarks = manager->landmarks(QLandmarkFilter(), deleteIds.count(), currentLandmarkOffset+table->rowCount());
+
+    updateTable(newLandmarks);
     updateRowLabels();
+    landmarks.append(newLandmarks);
+
     if (table->rowCount() < limit)
         nextLandmarkButton->setEnabled(false);
+}
+
+void LandmarkBrowser::on_setFilterButton_clicked()
+{
+    if (!filterDialog->exec()) {
+        return;
+    }
+
+    currentLandmarkOffset =0;
+    landmarkFetch->setOffset(currentLandmarkOffset);
+    landmarkFetch->start();
+    progress->setWindowTitle(tr("Loading Landmarks"));
+    progress->show();
 }
 
 void LandmarkBrowser::on_deleteCategoriesButton_clicked()
@@ -192,6 +259,7 @@ void LandmarkBrowser::on_deleteCategoriesButton_clicked()
 
     for (int i =0;i < deleteIds.count(); ++i)
         manager->removeCategory(deleteIds.at(i));
+
     updateCategoryTable(manager->categories(deleteIds.count(), currentCategoryOffset+categoryTable->rowCount()));
     updateCategoryRowLabels();
     if (categoryTable->rowCount() < limit)
@@ -201,6 +269,7 @@ void LandmarkBrowser::on_deleteCategoriesButton_clicked()
 void LandmarkBrowser::on_addLandmark_clicked()
 {
     LandmarkAddDialog addDialog(this);
+    addDialog.resize(this->width(), this->height());
     if (!addDialog.exec()) {
         return;
     }
@@ -208,16 +277,31 @@ void LandmarkBrowser::on_addLandmark_clicked()
     QLandmark lm = addDialog.landmark();
     manager->saveLandmark(&lm);
 
-    if (table->rowCount() == limit)
-        nextLandmarkButton->setEnabled(true);
+    landmarkFetch->setOffset(currentLandmarkOffset);
+    landmarkFetch->start();
+    progress->setWindowTitle(tr("Loading Landmarks"));
+    progress->show();
+}
 
-    if (table->rowCount() < limit) {
-        table->insertRow(table->rowCount());
-        table->setItem(table->rowCount()-1,0,new QTableWidgetItem(QString::number(lm.coordinate().latitude(),'f',2)));
-        table->setItem(table->rowCount()-1,1,new QTableWidgetItem(QString::number(lm.coordinate().longitude(),'f',2)));
-        table->setItem(table->rowCount()-1,2,new QTableWidgetItem(lm.name()));
-        table->setItem(table->rowCount()-1,3,new QTableWidgetItem(lm.landmarkId().localId()));
-        updateRowLabels();
+void LandmarkBrowser::on_editLandmarkButton_clicked()
+{
+    QItemSelectionModel *selection = table->selectionModel();
+    QModelIndexList selectedIndexes = selection->selectedRows();
+    if (selectedIndexes.count()  > 0) {
+        LandmarkAddDialog addDialog(this, 0, landmarks.at(selectedIndexes.at(0).row()));
+
+        if (!addDialog.exec()) {
+            return;
+        }
+
+        QLandmark lm = addDialog.landmark();
+        manager->saveLandmark(&lm);
+
+        currentLandmarkOffset = currentLandmarkOffset;
+        landmarkFetch->setOffset(currentLandmarkOffset);
+        landmarkFetch->start();
+        progress->setWindowTitle(tr("Loading Landmarks"));
+        progress->show();
     }
 }
 
@@ -262,7 +346,7 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
             }
             case QLandmarkAbstractRequest::ExportRequest : {
                 if (request->error() == QLandmarkManager::NoError) {
-                    progress->hide();                   
+                    progress->hide();
                     QMessageBox::information(this,"Finished", "Export Successful", QMessageBox::Ok, QMessageBox::NoButton);
 
                 } else if (request->error() == QLandmarkManager::CancelError) {
@@ -292,16 +376,16 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                             table->removeRow(i);
                         }
 
-                        QList<QLandmark> lms;
-                        lms = landmarkFetch->landmarks();
-                        updateTable(lms);
+                        landmarks = landmarkFetch->landmarks();
+                        updateTable(landmarks);
 
                         table->setUpdatesEnabled(true);
                     }  else {
                         QMessageBox::warning(this,"Warning", "Fetch Failed", QMessageBox::Ok, QMessageBox::NoButton);
                     }
                     updateRowLabels();
-                    progress->hide();
+                    delete progress;
+                    progress = new QProgressDialog (tr("Please wait..."),tr("Cancel"),0,0, this);
                 break;
             }
         case QLandmarkAbstractRequest::CategoryFetchRequest: {
@@ -332,11 +416,25 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                     QMessageBox::warning(this, "Warning", "Category Fetch Failed", QMessageBox::Ok, QMessageBox::NoButton);
                 }
                 updateCategoryRowLabels();
-                if (tabWidget->currentIndex() == 1)
-                    progress->hide();
+                if (tabWidget->currentIndex() == 1) {
+                    //progress->hide();
+                    delete progress;
+                    progress = new QProgressDialog (tr("Please wait..."),tr("Cancel"),0,0, this);
+                }
             }
         }
     }
+}
+
+//this is invoked when we delete category and we are filtering by that category
+//we need to do fetch all from scratch
+void LandmarkBrowser::doFetchAll()
+{
+    currentLandmarkOffset =0;
+    landmarkFetch->setOffset(currentLandmarkOffset);
+    landmarkFetch->start();
+    progress->setWindowTitle(tr("Loading Landmarks"));
+    progress->show();
 }
 
 void LandmarkBrowser::cancel()
@@ -412,7 +510,6 @@ void LandmarkBrowser::updateTable(const QList<QLandmark> &lms)
         table->setItem(table->rowCount()-1,0,new QTableWidgetItem(QString::number(lm.coordinate().latitude(),'f',2)));
         table->setItem(table->rowCount()-1,1,new QTableWidgetItem(QString::number(lm.coordinate().longitude(),'f',2)));
         table->setItem(table->rowCount()-1,2,new QTableWidgetItem(lm.name()));
-        table->setItem(table->rowCount()-1,3,new QTableWidgetItem(lm.landmarkId().localId()));
 
         if (i %20)
             qApp->processEvents();

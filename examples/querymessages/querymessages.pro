@@ -9,12 +9,6 @@ CONFIG += mobility console
 MOBILITY = messaging
 INCLUDEPATH += ../../src/messaging
 
-symbian|win32|wince*|maemo5|maemo6|mac {
-} else {
-# Temporarily link against local qmfclient lib (should be part of the platform)
-LIBS += -L $$(QMF_LIBDIR) -lqmfclient
-}
-
 SOURCES += \
     main.cpp
     

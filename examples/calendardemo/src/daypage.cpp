@@ -55,9 +55,9 @@ DayPage::DayPage(QWidget *parent)
     m_itemList(0),
     m_menuBar(0)
 {
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout();
 
-    QHBoxLayout *dateLayout = new QHBoxLayout(this);
+    QHBoxLayout *dateLayout = new QHBoxLayout();
     m_dateLabel = new QLabel(this);
     m_dateLabel->setAlignment(Qt::AlignCenter);
     dateLayout->addWidget(m_dateLabel);

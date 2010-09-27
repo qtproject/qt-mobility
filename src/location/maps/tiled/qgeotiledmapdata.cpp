@@ -49,7 +49,7 @@
 #include "qgeoboundingbox.h"
 #include "qgeomapoverlay.h"
 
-#include "qgeotiledmapcontainerobjectinfo_p.h"
+#include "qgeotiledmapgroupobjectinfo_p.h"
 #include "qgeotiledmapcircleobjectinfo_p.h"
 #include "qgeotiledmaprectangleobjectinfo_p.h"
 #include "qgeotiledmappolylineobjectinfo_p.h"
@@ -851,7 +851,7 @@ QGeoMapObjectInfo* QGeoTiledMapData::createMapObjectInfo(QGeoMapObject *mapObjec
 {
     switch (mapObject->type()) {
         case QGeoMapObject::GroupType:
-            return new QGeoTiledMapContainerObjectInfo(this, mapObject);
+            return new QGeoTiledMapGroupObjectInfo(this, mapObject);
         case QGeoMapObject::RectangleType:
             return new QGeoTiledMapRectangleObjectInfo(this, mapObject);
         case QGeoMapObject::CircleType:

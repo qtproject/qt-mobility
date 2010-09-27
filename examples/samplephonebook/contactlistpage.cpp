@@ -44,6 +44,7 @@
 #include "qversitcontactimporter.h"
 #include "qversitwriter.h"
 #include "qversitcontactexporter.h"
+#include <QDesktopServices>
 #endif
 
 #include <QtGui>
@@ -337,27 +338,41 @@ void ContactListPage::importClicked()
         qWarning() << "No manager selected; cannot import";
         return;
     }
+    QString docPath = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+    if (docPath.isEmpty())
+        docPath = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
+    if (docPath.isEmpty())
+        docPath = ".";
     QString fileName = QFileDialog::getOpenFileName(this,
-       tr("Select vCard file"), ".", tr("vCard files (*.vcf)"));
-    QFile file(fileName);
-    file.open(QIODevice::ReadOnly);
-    if (file.isReadable()) {
-        QVersitReader reader;
-        reader.setDevice(&file);
-        if (reader.startReading() && reader.waitForFinished()) {
-            QVersitContactImporter importer;
-            if (importer.importDocuments(reader.results())) {
-                QList<QContact> contacts = importer.contacts();
-                QMap<int, QContactManager::Error> errorMap;
-                QList<QContact>::iterator it = contacts.begin();
-                while (it != contacts.end()) {
-                    *it = m_manager->compatibleContact(*it);
-                    it++;
+       tr("Select vCard file"), docPath, tr("vCard files (*.vcf)"));
+
+    if (!fileName.isEmpty()) {
+        QFile file(fileName);
+        file.open(QIODevice::ReadOnly);
+        bool success = false;
+        if (file.isReadable()) {
+            QVersitReader reader;
+            reader.setDevice(&file);
+            if (reader.startReading() && reader.waitForFinished()) {
+                QVersitContactImporter importer;
+                if (importer.importDocuments(reader.results())) {
+                    QList<QContact> contacts = importer.contacts();
+                    QMap<int, QContactManager::Error> errorMap;
+                    QList<QContact>::iterator it = contacts.begin();
+                    while (it != contacts.end()) {
+                        *it = m_manager->compatibleContact(*it);
+                        it++;
+                    }
+                    if (contacts.count() > 0)
+                        success = m_manager->saveContacts(&contacts, &errorMap);
+                    //rebuildList(m_currentFilter);
                 }
-                m_manager->saveContacts(&contacts, &errorMap);
-                //rebuildList(m_currentFilter);
             }
         }
+
+        // We could be more specific, probably
+        if (!success)
+            QMessageBox::warning(this, tr("Error importing vCard"), tr("Unable to import vCard file.  Check that the file exists and is valid."));
     }
 #endif
 }
@@ -369,20 +384,34 @@ void ContactListPage::exportClicked()
         qWarning() << "No manager selected; cannot export";
         return;
     }
+    QString docPath = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+    if (docPath.isEmpty())
+        docPath = QDesktopServices::storageLocation(QDesktopServices::HomeLocation);
+    if (docPath.isEmpty())
+        docPath = ".";
+    docPath.append("/contacts.vcf");
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save vCard"),
-                                                    "./contacts.vcf",
+                                                    docPath,
                                                     tr("vCards (*.vcf)"));
-    QFile file(fileName);
-    file.open(QIODevice::WriteOnly);
-    if (file.isWritable()) {
-        QVersitContactExporter exporter;
-        if(exporter.exportContacts(m_contacts, QVersitDocument::VCard30Type)) {
-            QList<QVersitDocument> documents = exporter.documents();
-            QVersitWriter writer;
-            writer.setDevice(&file);
-            writer.startWriting(documents);
-            writer.waitForFinished();
+
+    if (!fileName.isEmpty()) {
+        bool success = false;
+        QFile file(fileName);
+        file.open(QIODevice::WriteOnly);
+        if (file.isWritable()) {
+            QVersitContactExporter exporter;
+            if(exporter.exportContacts(m_contacts, QVersitDocument::VCard30Type)) {
+                QList<QVersitDocument> documents = exporter.documents();
+                QVersitWriter writer;
+                writer.setDevice(&file);
+                writer.startWriting(documents);
+                writer.waitForFinished();
+                success = (writer.error() == QVersitWriter::NoError);
+            }
         }
+
+        if (!success)
+            QMessageBox::warning(this, tr("Error saving vCard"), tr("Unable to save vCard file.  Check that the path specified is writable."));
     }
 #endif
 }
