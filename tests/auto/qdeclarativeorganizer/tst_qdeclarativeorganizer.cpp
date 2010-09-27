@@ -160,10 +160,6 @@ void tst_QDeclarativeOrganizer::construction()
 
     if (shouldSucceed) {
         if (obj == 0) {
-            if (component.isError()) {
-                qDebug() << "Error(s) occured when trying to instantiate. QDeclarativeComponent::errors(): ";
-                qDebug() << component.errors();
-            }
             qWarning("--------- ------------- ------------- ---------------------- ------------ ");
             qWarning("--------- could not instantiate components from organizer   -------------- ");
             qWarning("--------- declarative plugin. make sure it is built and found ------------");
