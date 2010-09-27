@@ -2675,8 +2675,16 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_CONNMAN)
      if(ofonoIsAvailable) {
+         QString modem = ofonoManager->currentModem().path();
+         if(!modem.isEmpty()) {
+             QOfonoModemInterface modemIface(modem,this);
 
-     }
+                 QString imei = modemIface.getSerial();
+                 if(!imei.isEmpty()) {
+                     return imei;
+                 }
+             }
+         }
 #endif
 #endif
      return QLatin1String("");
