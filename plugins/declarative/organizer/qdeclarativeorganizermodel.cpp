@@ -393,7 +393,7 @@ QVariant QDeclarativeOrganizerModel::data(const QModelIndex &index, int role) co
 }
 
 
-QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::QDeclarativeOrganizerModel::items()
+QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::items()
 {
     return QDeclarativeListProperty<QDeclarativeOrganizerItem>(this, d->m_items);
 }
