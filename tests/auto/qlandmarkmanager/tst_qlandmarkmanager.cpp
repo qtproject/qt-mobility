@@ -586,7 +586,7 @@ private:
         QMap<QString, QString> map;
 #ifdef Q_OS_SYMBIAN
         m_manager = new QLandmarkManager();
-#else        
+#else
 
         map["filename"] = "test.db";
         m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
@@ -679,6 +679,7 @@ private:
         knownTables << "landmark_attribute";
         knownTables << "landmark_category";
         knownTables << "landmark_notification";
+        knownTables << "version";
         return (tables == knownTables);
     }
 #endif
@@ -1293,7 +1294,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
     lmA.setRadius(2000);
     lmA.setUrl(QUrl("url A"));
     lmA.addCategoryId(cat3.categoryId());
-    
+
     QLandmark lmB;
     lmB.setName("LMB");
     address.clear();
