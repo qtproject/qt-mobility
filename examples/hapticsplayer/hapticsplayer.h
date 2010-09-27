@@ -41,21 +41,21 @@
 
 #include <qmobilityglobal.h>
 
-#include "ui_dialog.h"
+#include "ui_hapticsplayer.h"
 
 #include <qfeedbackactuator.h>
 #include <qfeedbackeffect.h>
 
 QTM_USE_NAMESPACE
 
-#ifndef DIALOG_H_
-#define DIALOG_H_
+#ifndef HAPTICSPLAYER_H_
+#define HAPTICSPLAYER_H_
 
-class Dialog : public QDialog
+class HapticsPlayer : public QWidget
 {
     Q_OBJECT
 public:
-    Dialog();
+    HapticsPlayer();
 
 private Q_SLOTS:
     void actuatorChanged();
@@ -84,7 +84,7 @@ protected:
 
 private:
     QFeedbackActuator currentActuator() const;
-    Ui_Dialog ui;
+    Ui_HapticsPlayer ui;
     QFeedbackHapticsEffect effect;
     QFeedbackFileEffect fileEffect;
 };
