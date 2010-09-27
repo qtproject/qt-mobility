@@ -292,8 +292,8 @@ public:
     QSystemDeviceInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoLinuxCommonPrivate();
 
-    QString imei() {return QString();}
-    QString imsi() {return QString();}
+    QString imei();
+    QString imsi();
     QString manufacturer();
     QString model()  {return QString();}
     QString productName()  {return QString();}

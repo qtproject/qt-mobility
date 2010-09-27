@@ -236,6 +236,7 @@ public:
     QString pinRequired();
     QString lockedPins();
     QString cardIdentifier();
+    QString imsi();
 
 protected:
     void connectNotify(const char *signal);

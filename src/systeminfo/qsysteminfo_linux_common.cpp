@@ -2670,6 +2670,39 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
      return btPowered;
  }
 
+ QString QSystemDeviceInfoLinuxCommonPrivate::imei()
+ {
+#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_CONNMAN)
+     if(ofonoIsAvailable) {
+
+     }
+#endif
+#endif
+     return QLatin1String("");
+ }
+
+ QString QSystemDeviceInfoLinuxCommonPrivate::imsi()
+ {
+#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_CONNMAN)
+     if(ofonoIsAvailable) {
+         QString modem = ofonoManager->currentModem().path();
+         if(!modem.isEmpty()) {
+             QOfonoSimInterface simInterface(modem,this);
+             if(simInterface.isPresent()) {
+                 QString id = simInterface.getImsi();
+                 if(!id.isEmpty()) {
+                     return id;
+                 }
+             }
+         }
+     }
+#endif
+#endif
+         return QLatin1String("");
+ }
+
  QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoLinuxCommonPrivate::keyboardType()
  {
      QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();

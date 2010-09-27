@@ -562,6 +562,12 @@ QString QOfonoSimInterface::cardIdentifier()
     return qdbus_cast<QString>(var);
 }
 
+QString QOfonoSimInterface::getImsi()
+{
+    QVariant var = getProperty("SubscriberIdentity");
+    return qdbus_cast<QString>(var);
+}
+
 void QOfonoSimInterface::connectNotify(const char *signal)
 {
 if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QDBusVariant))) {
