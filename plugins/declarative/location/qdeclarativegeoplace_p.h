@@ -42,7 +42,7 @@
 #ifndef QDECLARATIVEGEOPLACE_P_H
 #define QDECLARATIVEGEOPLACE_P_H
 
-#include <QGeoPlace>
+#include <qgeoplace.h>
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoboundingbox_p.h"
 #include "qdeclarativegeoaddress_p.h"

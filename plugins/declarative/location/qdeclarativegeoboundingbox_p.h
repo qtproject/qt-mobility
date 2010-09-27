@@ -43,7 +43,7 @@
 #define QDECLARATIVEGEOBOUNDINGBOX_P_H
 
 #include "qdeclarativecoordinate_p.h"
-#include <QGeoBoundingBox>
+#include <qgeoboundingbox.h>
 
 #include <QtCore>
 #include <QtDeclarative/qdeclarative.h>

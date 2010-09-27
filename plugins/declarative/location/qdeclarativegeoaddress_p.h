@@ -42,7 +42,7 @@
 #ifndef QDECLARATIVEGEOADDRESS_P_H
 #define QDECLARATIVEGEOADDRESS_P_H
 
-#include <QGeoAddress>
+#include <qgeoaddress.h>
 #include <QtCore>
 #include <QtDeclarative/qdeclarative.h>
 
