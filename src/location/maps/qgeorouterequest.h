@@ -79,7 +79,7 @@ public:
         ParksFeature = 0x00000040,
         MotorPoolLaneFeature = 0x00000080
     };
-    Q_DECLARE_FLAGS(FeatureTypes, FeatureType);
+    Q_DECLARE_FLAGS(FeatureTypes, FeatureType)
 
     enum FeatureWeight {
         NeutralFeatureWeight = 0x00000000,
@@ -88,7 +88,7 @@ public:
         AvoidFeatureWeight = 0x00000004,
         DisallowFeatureWeight = 0x00000008
     };
-    Q_DECLARE_FLAGS(FeatureWeights, FeatureWeight);
+    Q_DECLARE_FLAGS(FeatureWeights, FeatureWeight)
 
     enum RouteOptimization {
         ShortestRoute = 0x0001,
