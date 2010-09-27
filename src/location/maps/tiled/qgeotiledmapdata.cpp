@@ -49,7 +49,7 @@
 #include "qgeoboundingbox.h"
 #include "qgeomapoverlay.h"
 
-#include "qgeotiledmapcontainerobjectinfo_p.h"
+#include "qgeotiledmapgroupobjectinfo_p.h"
 #include "qgeotiledmapcircleobjectinfo_p.h"
 #include "qgeotiledmaprectangleobjectinfo_p.h"
 #include "qgeotiledmappolylineobjectinfo_p.h"
@@ -84,6 +84,74 @@ uint qHash(const QRectF& key)
 }
 
 QTM_BEGIN_NAMESPACE
+
+class ZOrderCriterion
+{
+
+    QGraphicsItem ** list;
+
+    public:
+        ZOrderCriterion(QGraphicsItem ** list) : list(list) {}
+
+        bool operator()(int aIndex, int bIndex)
+        {
+            QGraphicsItem * a = list[aIndex];
+            QGraphicsItem * b = list[bIndex];
+
+            if (a->type() == QGraphicsPixmapItem::Type) {
+                if (b->type() == QGraphicsPixmapItem::Type) {
+                    if (a->y() == b->y()) {
+                        return a->zValue() < b->zValue();
+                    }
+                    else {
+                        return a->y() < b->y();
+                    }
+                }
+                else {
+                    return false; // non-pixmaps are always behind pixmaps
+                }
+            }
+            else {
+                if (b->type() == QGraphicsPixmapItem::Type) {
+                    return true; // pixmaps are always on top of non-pixmaps
+                }
+                else {
+                    return a->zValue() < b->zValue();
+                }
+            }
+        }
+};
+
+
+class GeoGraphicsScene : public QGraphicsScene
+{
+    public:
+        GeoGraphicsScene(const QRectF &sceneRect, QObject *parent = 0) : QGraphicsScene(sceneRect, parent) {}
+
+    protected:
+        virtual void drawItems(QPainter *painter, int numItems, QGraphicsItem *items[], const QStyleOptionGraphicsItem options[], QWidget *widget = 0)
+        {
+            QVector<int> indices(numItems);
+            for (int i = 0; i < numItems; ++i)
+                indices[i] = i;
+
+            ZOrderCriterion criterion(items);
+
+            qStableSort(indices.begin(), indices.end(), criterion);
+
+            QGraphicsItem **newItems = new QGraphicsItem *[numItems];
+            QStyleOptionGraphicsItem *newOptions = new QStyleOptionGraphicsItem[numItems];
+
+            for (int i = 0; i < numItems; ++i) {
+                newItems[i] = items[indices[i]];
+                newOptions[i] = options[indices[i]];
+            }
+
+            QGraphicsScene::drawItems(painter, numItems, newItems, newOptions, widget);
+        }
+};
+
+
 
 /*!
     \class QGeoTiledMapData
@@ -127,7 +195,7 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGe
 
     d->maxZoomSize = (1 << qRound(tileEngine->maximumZoomLevel())) * tileEngine->tileSize();
 
-    d->scene = new QGraphicsScene(QRectF(QPointF(0.0, 0.0), d->maxZoomSize));
+    d->scene = new GeoGraphicsScene(QRectF(QPointF(0.0, 0.0), d->maxZoomSize));
     d->scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
     // TODO get this from the engine, which should give different values depending on if this is running on a device or not
@@ -493,9 +561,14 @@ void QGeoTiledMapData::pan(int dx, int dy)
     d->maxZoomCenter.setX(x);
     d->maxZoomCenter.setY(y);
 
-    QGeoMapData::setCenter(center());
+    QGeoCoordinate centerCoord = center();
+
+    QGeoMapData::setCenter(centerCoord);
 
     d->updateScreenRect();
+
+    emit centerChanged(centerCoord);
+
     d->updateMapImage();
 }
 
@@ -778,7 +851,7 @@ QGeoMapObjectInfo* QGeoTiledMapData::createMapObjectInfo(QGeoMapObject *mapObjec
 {
     switch (mapObject->type()) {
         case QGeoMapObject::GroupType:
-            return new QGeoTiledMapContainerObjectInfo(this, mapObject);
+            return new QGeoTiledMapGroupObjectInfo(this, mapObject);
         case QGeoMapObject::RectangleType:
             return new QGeoTiledMapRectangleObjectInfo(this, mapObject);
         case QGeoMapObject::CircleType:

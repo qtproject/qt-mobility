@@ -20,7 +20,7 @@
 #include <QObject>
 
 class CntSqlFactory;
-
+class C12keyKeyMap;
 
 class UT_CntSqlFactory : public QObject                 
 {
@@ -50,6 +50,7 @@ private slots: //test methods
     
 private:
  
+    C12keyKeyMap* m12KeyKeyMap;
     CntSqlFactory* mCntSqlFactory;
 
 };

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,59 +38,48 @@
 **
 ****************************************************************************/
 
-#include <qorganizeritemdetails.h>
-#include <qorganizeritemfilters.h>
-#include <qorganizeritemrequests.h>
-#include "qmlorganizer.h"
-#include "qmlorganizermodel.h"
+#ifndef LANDMARKFILTERDIALOG_H
+#define LANDMARKFILTERDIALOG_H
 
-#include <QDebug>
+#include <QListWidget>
+#include <QWidget>
 
-QMLOrganizer::QMLOrganizer(QObject *parent)
-    :QObject(parent),
-    m_manager(0)
+#include <qlandmark.h>
+#include <qlandmarkfilter.h>
+#include <qlandmarkfetchrequest.h>
+
+#include "ui_landmarkfilterdialog.h"
+
+QTM_USE_NAMESPACE
+
+class LandmarkFilterDialog : public QDialog, public Ui_LandmarkFilterDialog
 {
-    setManager(QString());
-}
+Q_OBJECT
+public:
+    LandmarkFilterDialog(QLandmarkFetchRequest *fetchRequest, QWidget *parent =0, Qt::WindowFlags flags =0);
+    ~LandmarkFilterDialog();
 
-QStringList QMLOrganizer::availableManagers() const
-{
-    return QOrganizerItemManager::availableManagers();
-}
+signals:
+    void doFetchAll();
 
-QString QMLOrganizer::manager()
-{
-    if (m_manager)
-        return m_manager->managerName();
-    return QString();
-}
+public slots:
+    virtual void accept();
+    virtual void reject();
 
-void QMLOrganizer::setManager(const QString& managerName)
-{
-    delete m_manager;
-    m_manager = new QOrganizerItemManager(managerName);
+    void filterAllCheckBoxStateChanged(int state);
+    void otherFiltersCheckBoxStateChanged(int state);
+    void categoryRemoved(const QList<QLandmarkCategoryId> &categoryIds);
 
-    if (managerName == "memory" && m_manager->itemIds().isEmpty()) {
-        //fillOrganizerItemsIntoMemoryEngine(m_manager);
-    }
+protected:
+    void showEvent(QShowEvent *showEvent);
 
-    qWarning() << "Changed backend to: " << managerName;
+private:
+    bool setupFetchRequest();
+    bool isValidLatitude(const QString &latitude);
+    bool isValidLongitude(const QString &longitude);
+    QLandmarkCategoryId oldCategoryId;
+    QLandmarkFetchRequest *fetchRequest;
+    QLandmarkManager manager;
+};
 
-    QList< QPair<QDateTime, QDateTime> > keys = m_models.keys();
-
-    for (int i = 0; i < keys.count(); i++) {
-        QMLOrganizerModel* model = m_models.value(keys[i]);
-        model->setManager(m_manager);
-    }
-}
-
-QMLOrganizerModel* QMLOrganizer::itemModel(const QDateTime& start, const QDateTime& end)
-{
-    QMLOrganizerModel* model = 0;
-    if (m_models.contains(QPair<QDateTime, QDateTime>(start, end))) {
-        model = m_models.value(QPair<QDateTime, QDateTime>(start, end));
-    } else {
-        model = new QMLOrganizerModel(m_manager, start, end, this);
-    }
-    return model;
-}
+#endif

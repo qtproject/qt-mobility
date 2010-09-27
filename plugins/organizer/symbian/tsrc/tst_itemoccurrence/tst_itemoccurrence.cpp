@@ -303,14 +303,13 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     //Search without filtering and sorting.Full instanceList is returned
     instanceList.clear();
     sortList.clear();    
-    QOrganizerItemInvalidFilter invalidFilter;
-    instanceList = m_om->itemInstances(invalidFilter,sortList,fetchHint);
+    instanceList = m_om->itemInstances(f,sortList,fetchHint);
     QCOMPARE(instanceList.size(), 3);
     
     //Search full instance list in descending order without filtering
     instanceList.clear();
     sortList.append(sortOrder);
-    instanceList = m_om->itemInstances(invalidFilter,sortList,fetchHint);
+    instanceList = m_om->itemInstances(f,sortList,fetchHint);
     QCOMPARE(instanceList.size(), 3);
     QOrganizerItem thirdItem = instanceList.at(2);
     QCOMPARE(thirdItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));

@@ -104,6 +104,20 @@ bool QGeoRouteSegment::operator !=(const QGeoRouteSegment &other) const
     return (d_ptr.constData() != other.d_ptr.constData());
 }
 
+/*
+bool QGeoRouteSegment::isValid() const
+{
+}
+
+void QGeoRouteSegment::setNextRouteSegment(const QGeoRouteSegment &routeSegment)
+{
+}
+
+QGeoRouteSegment QGeoRouteSegment::nextRouteSegment() const
+{
+}
+*/
+
 /*!
     Sets the estimated amount of time it will take to traverse this segment of
     the route, in seconds, to \a secs.
@@ -161,19 +175,19 @@ QList<QGeoCoordinate> QGeoRouteSegment::path() const
     return d_ptr->path;
 }
 /*!
-    Sets the instruction for this route segement to \a instruction.
+    Sets the maneuver for this route segement to \a maneuver.
 */
-void QGeoRouteSegment::setInstruction(const QGeoInstruction &instruction)
+void QGeoRouteSegment::setManeuver(const QGeoManeuver &maneuver)
 {
-    d_ptr->instruction = instruction;
+    d_ptr->maneuver = maneuver;
 }
 
 /*!
     Returns the instruction for this route segment.
 */
-QGeoInstruction QGeoRouteSegment::instruction() const
+QGeoManeuver QGeoRouteSegment::maneuver() const
 {
-    return d_ptr->instruction;
+    return d_ptr->maneuver;
 }
 
 /*******************************************************************************
@@ -188,7 +202,7 @@ QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &
         travelTime(other.travelTime),
         distance(other.distance),
         path(other.path),
-        instruction(other.instruction) {}
+        maneuver(other.maneuver) {}
 
 QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
 
@@ -197,7 +211,7 @@ bool QGeoRouteSegmentPrivate::operator ==(const QGeoRouteSegmentPrivate &other) 
     return ((travelTime == other.travelTime)
             && (distance == other.distance)
             && (path == other.path)
-            && (instruction == other.instruction));
+            && (maneuver == other.maneuver));
 }
 
 QTM_END_NAMESPACE

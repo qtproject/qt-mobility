@@ -38,23 +38,40 @@
 **
 ****************************************************************************/
 
-#include "testplayers60.h"
+#include <QMessageBox>
 
-#include <QtGui>
+#include "categoryadddialog.h"
 
-int main(int argc, char *argv[])
+CategoryAddDialog::CategoryAddDialog(QWidget *parent, Qt::WindowFlags flags)
+    : QDialog(parent, flags)
 {
-    QApplication app(argc, argv);
+    setupUi(this);
+}
 
-#ifdef Q_OS_SYMBIAN
-    QMainWindow window;
-    window.setContentsMargins(10,10,10,10); //Temp fix till QTBUG-8697 is released
-    TestPlayers60 *player = new TestPlayers60(&window);
-    window.setCentralWidget(player);
-    window.showMaximized();
-#else
-    TestPlayers60 player;
-    player.show();
-#endif
-    return app.exec();
-};
+CategoryAddDialog::~CategoryAddDialog()
+{
+}
+
+QLandmarkCategory CategoryAddDialog::category()
+{
+    return m_category;
+}
+
+void CategoryAddDialog::accept()
+{
+
+    m_category.clear();
+    QString name = nameLineEdit->text();
+    if (name.isEmpty()) {
+        QMessageBox::warning(this, "Invalid Name", "Category name must not be empty",
+                             QMessageBox::Ok, QMessageBox::NoButton);
+    }
+    m_category.setName(nameLineEdit->text());
+    QDialog::accept();
+}
+
+void CategoryAddDialog::reject()
+{
+    m_category.clear();
+    QDialog::reject();
+}

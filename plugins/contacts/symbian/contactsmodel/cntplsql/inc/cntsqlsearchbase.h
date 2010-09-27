@@ -20,20 +20,41 @@
 #include "cntsqlsearchinterface.h"
 #include <QString>
 
+class C12keyKeyMap;
+
 class CntSqlSearchBase : public CntSqlSearchInterface 
 {
- 
+   
 public:
     
-    CntSqlSearchBase();
+    CntSqlSearchBase(){};
+    
+    CntSqlSearchBase(C12keyKeyMap* twelveKeyKeyMap);
     
     ~CntSqlSearchBase();
     
 public: //from CCntSqlSearchInterface
 
-    virtual QString createInputSpecificSearch(const QString &pattern) = 0;
+    virtual QString createInputSpecificSearch(const QString &pattern){return QString();};
     
-    virtual QueryType getQueryType() = 0;
+    virtual QueryType getQueryType(){return CntSqlSearchInterface::NA; };  
+    
+protected:
+      
+    QString exactMatch(const QString& pattern, QString table = "") const;
+    
+    QString exactMatchSearch(const QString& pattern) const;
+    
+    QString returnAllcontacts(const QString &pattern) const;
+    
+    QString selectTable(const QString &pattern) const;
+    
+private:
+    
+    const C12keyKeyMap* mTwelveKeyMap;
+    
+    friend class UT_CntSqlSearchBase;
+        
 };
     
 

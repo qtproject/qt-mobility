@@ -83,7 +83,8 @@ public:
     {
         d = collection;
     }
-
+signals:
+    void valueChanged();
 private:
     QOrganizerCollection d;
 };

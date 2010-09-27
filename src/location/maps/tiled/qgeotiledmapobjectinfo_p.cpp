@@ -53,14 +53,14 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
         : QGeoMapObjectInfo(mapData, mapObject),
         graphicsItem(0),
         isValid(true),
         isVisible(true)
 {
-    tiledMapData = static_cast<QGeoTiledMapData*>(mapData);
-    tiledMapDataPrivate = static_cast<QGeoTiledMapDataPrivate*>(tiledMapData->d_ptr);
+    tiledMapData = mapData;
+    tiledMapDataPrivate = static_cast<QGeoTiledMapDataPrivate*>(mapData->d_ptr);
 }
 
 QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()

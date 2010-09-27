@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,9 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef QGEOINSTRUCTION_P_H
-#define QGEOINSTRUCTION_P_H
+#ifndef QORGANIZERDBCACHEWRAPPERS_H
+#define QORGANIZERDBCACHEWRAPPERS_H
 
 //
 //  W A R N I N G
@@ -53,31 +52,50 @@
 // We mean it.
 //
 
-#include "qgeoinstruction.h"
-#include "qgeocoordinate.h"
+#include "qtorganizer.h"
+#include <CEvent.h>
+#include <CTodo.h>
+#include <CJournal.h>
 
-#include <QSharedData>
-#include <QString>
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-
-class QGeoInstructionPrivate : public QSharedData
-{
+class OrganizerCacheEvent {
 public:
-    QGeoInstructionPrivate();
-    QGeoInstructionPrivate(const QGeoInstructionPrivate &other);
-    ~QGeoInstructionPrivate();
+    OrganizerCacheEvent(const CEvent* event);
+    OrganizerCacheEvent(const OrganizerCacheEvent& other);
+    ~OrganizerCacheEvent();
+    OrganizerCacheEvent operator=(const OrganizerCacheEvent& other);
 
-    bool operator== (const QGeoInstructionPrivate &other) const;
+    CEvent* event();
 
-    QString id;
-    QGeoCoordinate position;
-    QString text;
-    QGeoInstruction::InstructionDirection direction;
-    int timeToNextInstruction;
-    qreal distanceToNextInstruction;
+private:
+    CEvent m_event;
 };
 
-QTM_END_NAMESPACE
+class OrganizerCacheTodo {
+public:
+    OrganizerCacheTodo(const CTodo* todo);
+    OrganizerCacheTodo(const OrganizerCacheTodo& other);
+    ~OrganizerCacheTodo();
+    OrganizerCacheTodo operator=(const OrganizerCacheTodo& other);
 
-#endif
+    CTodo* todo();
+
+private:
+    CTodo m_todo;
+};
+
+class OrganizerCacheJournal {
+public:
+    OrganizerCacheJournal(const CJournal* journal);
+    OrganizerCacheJournal(const OrganizerCacheJournal& other);
+    ~OrganizerCacheJournal();
+    OrganizerCacheJournal operator=(const OrganizerCacheJournal& other);
+
+    CJournal* journal();
+
+private:
+    CJournal m_journal;
+};
+
+#endif // QORGANIZERDBCACHEWRAPPERS_H
