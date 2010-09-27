@@ -23,7 +23,7 @@ QT += script network
 
 
 CONFIG += mobility
-MOBILITY = organizer versit versitorganizer
+MOBILITY = organizer versit
 
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
