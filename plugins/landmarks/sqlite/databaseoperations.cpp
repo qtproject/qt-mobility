@@ -505,14 +505,14 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
     QString uri = managerUri;
     if (landmarkId.managerUri() != uri) {
         if (error)
-            *error = QLandmarkManager::BadArgumentError;
+            *error = QLandmarkManager::DoesNotExistError;
         if (errorString)
             *errorString = "Landmark id comes from different landmark manager.";
         return QLandmark();
     }
 
     if (landmarkId.localId().isEmpty()) {
-        *error = QLandmarkManager::BadArgumentError;
+        *error = QLandmarkManager::DoesNotExistError;
         *errorString = "Landmark local id is empty";
         return QLandmark();
     }
@@ -1852,7 +1852,7 @@ QLandmarkCategory DatabaseOperations::category(const QLandmarkCategoryId &landma
 {
     if (!landmarkCategoryId.isValid() || landmarkCategoryId.managerUri() != managerUri) {
         if (error)
-            *error = QLandmarkManager::BadArgumentError;
+            *error = QLandmarkManager::DoesNotExistError;
         if (errorString)
             *errorString = "Category id is not valid for this manager";
         return QLandmarkCategory();
@@ -2931,7 +2931,7 @@ void QueryRun::run()
                     ml.unlock();
                 }
 
-                if (!isDeleted) {                    
+                if (!isDeleted) {
                     ml.relock();
                     if (engine->m_requestRunHash.contains(request))
                         engine->m_requestRunHash.remove(request);
