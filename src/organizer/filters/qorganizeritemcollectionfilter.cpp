@@ -72,7 +72,6 @@ QOrganizerItemCollectionFilter::QOrganizerItemCollectionFilter()
 
 /*!
  * Sets the list which contains the ids of possible matching organizeritems to \a ids
- * \sa ids()
  */
 void QOrganizerItemCollectionFilter::setCollectionIds(const QSet<QOrganizerCollectionLocalId> &ids)
 {
@@ -82,7 +81,6 @@ void QOrganizerItemCollectionFilter::setCollectionIds(const QSet<QOrganizerColle
 
 /*!
  * Returns the list of ids of organizeritems which match this filter
- * \sa setIds()
  */
 QSet<QOrganizerCollectionLocalId> QOrganizerItemCollectionFilter::collectionIds() const
 {

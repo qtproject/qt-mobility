@@ -57,9 +57,10 @@ class QDeclarativeOrganizerModelPrivate;
 class QDeclarativeOrganizerModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(QString manager READ manager)
-    Q_PROPERTY(QDateTime startPeriod READ startPeriod)
-    Q_PROPERTY(QDateTime endPeriod READ endPeriod)
+    Q_PROPERTY(QString manager READ manager NOTIFY managerChanged)
+    Q_PROPERTY(QStringList availableManagers READ availableManagers NOTIFY availableManagersChanged)
+    Q_PROPERTY(QDateTime startPeriod READ startPeriod WRITE setStartPeriod NOTIFY startPeriodChanged)
+    Q_PROPERTY(QDateTime endPeriod READ endPeriod WRITE setEndPeriod NOTIFY endPeriodChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemFilter* filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemFetchHint* fetchHint READ fetchHint WRITE setFetchHint NOTIFY fetchHintChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> sortOrders READ sortOrders NOTIFY sortOrdersChanged)
@@ -70,19 +71,41 @@ class QDeclarativeOrganizerModel : public QAbstractListModel
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> todoOccurrences READ todoOccurrences NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> journals READ journals NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> notes READ notes NOTIFY itemsChanged)
-
+    Q_PROPERTY(Error error READ error NOTIFY errorChanged)
+    Q_ENUMS(Error)
 public:
     enum {
         OrganizerItemIdRole = Qt::UserRole + 500,
         OrganizerItemRole
 
     };
+
+    enum Error {
+        NoError = QOrganizerItemManager::NoError,
+        DoesNotExistError = QOrganizerItemManager::DoesNotExistError,
+        AlreadyExistsError = QOrganizerItemManager::AlreadyExistsError,
+        InvalidDetailError = QOrganizerItemManager::InvalidDetailError,
+        LockedError = QOrganizerItemManager::LockedError,
+        DetailAccessError = QOrganizerItemManager::DetailAccessError,
+        PermissionsError = QOrganizerItemManager::PermissionsError,
+        OutOfMemoryError = QOrganizerItemManager::OutOfMemoryError,
+        NotSupportedError = QOrganizerItemManager::NotSupportedError,
+        BadArgumentError = QOrganizerItemManager::BadArgumentError,
+        UnspecifiedError = QOrganizerItemManager::UnspecifiedError,
+        VersionMismatchError = QOrganizerItemManager::VersionMismatchError,
+        LimitReachedError = QOrganizerItemManager::LimitReachedError,
+        InvalidItemTypeError = QOrganizerItemManager::InvalidItemTypeError,
+        InvalidCollectionError = QOrganizerItemManager::InvalidCollectionError,
+        InvalidOccurrenceError = QOrganizerItemManager::InvalidOccurrenceError
+    };
+
     explicit QDeclarativeOrganizerModel(QObject *parent = 0);
     explicit QDeclarativeOrganizerModel(QOrganizerItemManager* manager, const QDateTime& start, const QDateTime& end, QObject *parent = 0);
 
-    QString manager();
-    void setManager(QOrganizerItemManager* manager);
-
+    Error error() const;
+    QString manager() const;
+    void setManager(const QString& managerName);
+    QStringList availableManagers() const;
     QDateTime startPeriod() const;
     void setStartPeriod(const QDateTime& start);
 
@@ -98,11 +121,15 @@ public:
     QDeclarativeOrganizerItemFetchHint* fetchHint() const;
     void setFetchHint(QDeclarativeOrganizerItemFetchHint* fetchHint);
 
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
 
     QDeclarativeListProperty<QDeclarativeOrganizerItem> items() ;
-    QDeclarativeListProperty<QDeclarativeContactSortOrder> sortOrders() ;
+    QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> sortOrders() ;
+    QDeclarativeListProperty<QDeclarativeOrganizerItem> events();
+    QDeclarativeListProperty<QDeclarativeOrganizerItem> eventOccurrences();
+    QDeclarativeListProperty<QDeclarativeOrganizerItem> todos();
+    QDeclarativeListProperty<QDeclarativeOrganizerItem> todoOccurrences();
+    QDeclarativeListProperty<QDeclarativeOrganizerItem> journals();
+    QDeclarativeListProperty<QDeclarativeOrganizerItem> notes();
 
     Q_INVOKABLE void removeItem(uint id);
     Q_INVOKABLE void removeItems(const QList<uint>& ids);
@@ -111,32 +138,39 @@ public:
 
 signals:
     void managerChanged();
+    void availableManagersChanged();
     void filterChanged();
     void fetchHintChanged();
     void itemsChanged();
-    void vcardChanged();
     void sortOrdersChanged();
-
+    void errorChanged();
+    void startPeriodChanged();
+    void endPeriodChanged();
 public slots:
     void exportItems(const QString& file);
     void importItems(const QString& file);
 private slots:
     void fetchAgain();
-    void contactFetched();
+    void itemFetched();
 
-    void saveContact();
-    void contactSaved();
+    void saveItem();
+    void itemSaved();
 
-    void removeContact();
-    void contactRemoved();
+    void removeItem();
+    void itemRemoved();
 
     void startImport(QVersitReader::State state);
-    void contactsExported(QVersitWriter::State state);
+    void itemsExported(QVersitWriter::State state);
 
 
 
 private:
-    QDeclarativeOrganizerItemModelPrivate* d;
+    static void item_append(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p, QDeclarativeOrganizerItem *item);
+    static int  item_count(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p);
+    static QDeclarativeOrganizerItem * item_at(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p, int idx);
+    static void  item_clear(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p);
+
+    QDeclarativeOrganizerModelPrivate* d;
 };
 
 #endif // QDECLARATIVEORGANIZERMODEL_H

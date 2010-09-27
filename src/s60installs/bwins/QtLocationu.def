@@ -143,8 +143,8 @@ EXPORTS
 	??0QGeoBoundingCircle@QtMobility@@QAE@ABV01@@Z @ 142 NONAME ; QtMobility::QGeoBoundingCircle::QGeoBoundingCircle(class QtMobility::QGeoBoundingCircle const &)
 	??0QGeoBoundingCircle@QtMobility@@QAE@ABVQGeoCoordinate@1@M@Z @ 143 NONAME ; QtMobility::QGeoBoundingCircle::QGeoBoundingCircle(class QtMobility::QGeoCoordinate const &, float)
 	??0QGeoBoundingCircle@QtMobility@@QAE@XZ @ 144 NONAME ; QtMobility::QGeoBoundingCircle::QGeoBoundingCircle(void)
-	??0QGeoInstruction@QtMobility@@QAE@ABV01@@Z @ 145 NONAME ; QtMobility::QGeoInstruction::QGeoInstruction(class QtMobility::QGeoInstruction const &)
-	??0QGeoInstruction@QtMobility@@QAE@XZ @ 146 NONAME ; QtMobility::QGeoInstruction::QGeoInstruction(void)
+	??0QGeoManeuver@QtMobility@@QAE@ABV01@@Z @ 145 NONAME ; QtMobility::QGeoManeuver::QGeoManeuver(class QtMobility::QGeoManeuver const &)
+	??0QGeoManeuver@QtMobility@@QAE@XZ @ 146 NONAME ; QtMobility::QGeoManeuver::QGeoManeuver(void)
 	??0QGeoMapCircleObject@QtMobility@@QAE@ABVQGeoBoundingCircle@1@@Z @ 147 NONAME ; QtMobility::QGeoMapCircleObject::QGeoMapCircleObject(class QtMobility::QGeoBoundingCircle const &)
 	??0QGeoMapCircleObject@QtMobility@@QAE@ABVQGeoCoordinate@1@M@Z @ 148 NONAME ; QtMobility::QGeoMapCircleObject::QGeoMapCircleObject(class QtMobility::QGeoCoordinate const &, float)
 	??0QGeoMapCircleObject@QtMobility@@QAE@XZ @ 149 NONAME ; QtMobility::QGeoMapCircleObject::QGeoMapCircleObject(void)
@@ -250,7 +250,7 @@ EXPORTS
 	??1QGeoBoundingArea@QtMobility@@UAE@XZ @ 249 NONAME ; QtMobility::QGeoBoundingArea::~QGeoBoundingArea(void)
 	??1QGeoBoundingBox@QtMobility@@UAE@XZ @ 250 NONAME ; QtMobility::QGeoBoundingBox::~QGeoBoundingBox(void)
 	??1QGeoBoundingCircle@QtMobility@@UAE@XZ @ 251 NONAME ; QtMobility::QGeoBoundingCircle::~QGeoBoundingCircle(void)
-	??1QGeoInstruction@QtMobility@@QAE@XZ @ 252 NONAME ; QtMobility::QGeoInstruction::~QGeoInstruction(void)
+	??1QGeoManeuver@QtMobility@@QAE@XZ @ 252 NONAME ; QtMobility::QGeoManeuver::~QGeoManeuver(void)
 	??1QGeoMapCircleObject@QtMobility@@UAE@XZ @ 253 NONAME ; QtMobility::QGeoMapCircleObject::~QGeoMapCircleObject(void)
 	??1QGeoMapData@QtMobility@@UAE@XZ @ 254 NONAME ; QtMobility::QGeoMapData::~QGeoMapData(void)
 	??1QGeoMapGroupObject@QtMobility@@UAE@XZ @ 255 NONAME ; QtMobility::QGeoMapGroupObject::~QGeoMapGroupObject(void)
@@ -316,7 +316,7 @@ EXPORTS
 	??4QGeoAddress@QtMobility@@QAEAAV01@ABV01@@Z @ 315 NONAME ; class QtMobility::QGeoAddress & QtMobility::QGeoAddress::operator=(class QtMobility::QGeoAddress const &)
 	??4QGeoBoundingBox@QtMobility@@QAEAAV01@ABV01@@Z @ 316 NONAME ; class QtMobility::QGeoBoundingBox & QtMobility::QGeoBoundingBox::operator=(class QtMobility::QGeoBoundingBox const &)
 	??4QGeoBoundingCircle@QtMobility@@QAEAAV01@ABV01@@Z @ 317 NONAME ; class QtMobility::QGeoBoundingCircle & QtMobility::QGeoBoundingCircle::operator=(class QtMobility::QGeoBoundingCircle const &)
-	??4QGeoInstruction@QtMobility@@QAEAAV01@ABV01@@Z @ 318 NONAME ; class QtMobility::QGeoInstruction & QtMobility::QGeoInstruction::operator=(class QtMobility::QGeoInstruction const &)
+	??4QGeoManeuver@QtMobility@@QAEAAV01@ABV01@@Z @ 318 NONAME ; class QtMobility::QGeoManeuver & QtMobility::QGeoManeuver::operator=(class QtMobility::QGeoManeuver const &)
 	??4QGeoPlace@QtMobility@@QAEAAV01@ABV01@@Z @ 319 NONAME ; class QtMobility::QGeoPlace & QtMobility::QGeoPlace::operator=(class QtMobility::QGeoPlace const &)
 	??4QGeoRoute@QtMobility@@QAEAAV01@ABV01@@Z @ 320 NONAME ; class QtMobility::QGeoRoute & QtMobility::QGeoRoute::operator=(class QtMobility::QGeoRoute const &)
 	??4QGeoRouteRequest@QtMobility@@QAEAAV01@ABV01@@Z @ 321 NONAME ; class QtMobility::QGeoRouteRequest & QtMobility::QGeoRouteRequest::operator=(class QtMobility::QGeoRouteRequest const &)
@@ -334,7 +334,7 @@ EXPORTS
 	??8QGeoAddress@QtMobility@@QBE_NABV01@@Z @ 333 NONAME ; bool QtMobility::QGeoAddress::operator==(class QtMobility::QGeoAddress const &) const
 	??8QGeoBoundingBox@QtMobility@@QBE_NABV01@@Z @ 334 NONAME ; bool QtMobility::QGeoBoundingBox::operator==(class QtMobility::QGeoBoundingBox const &) const
 	??8QGeoBoundingCircle@QtMobility@@QBE_NABV01@@Z @ 335 NONAME ; bool QtMobility::QGeoBoundingCircle::operator==(class QtMobility::QGeoBoundingCircle const &) const
-	??8QGeoInstruction@QtMobility@@QBE_NABV01@@Z @ 336 NONAME ; bool QtMobility::QGeoInstruction::operator==(class QtMobility::QGeoInstruction const &) const
+	??8QGeoManeuver@QtMobility@@QBE_NABV01@@Z @ 336 NONAME ; bool QtMobility::QGeoManeuver::operator==(class QtMobility::QGeoManeuver const &) const
 	??8QGeoPlace@QtMobility@@QBE_NABV01@@Z @ 337 NONAME ; bool QtMobility::QGeoPlace::operator==(class QtMobility::QGeoPlace const &) const
 	??8QGeoRoute@QtMobility@@QBE_NABV01@@Z @ 338 NONAME ; bool QtMobility::QGeoRoute::operator==(class QtMobility::QGeoRoute const &) const
 	??8QGeoRouteRequest@QtMobility@@QBE_NABV01@@Z @ 339 NONAME ; bool QtMobility::QGeoRouteRequest::operator==(class QtMobility::QGeoRouteRequest const &) const
@@ -349,7 +349,7 @@ EXPORTS
 	??9QGeoAddress@QtMobility@@QBE_NABV01@@Z @ 348 NONAME ; bool QtMobility::QGeoAddress::operator!=(class QtMobility::QGeoAddress const &) const
 	??9QGeoBoundingBox@QtMobility@@QBE_NABV01@@Z @ 349 NONAME ; bool QtMobility::QGeoBoundingBox::operator!=(class QtMobility::QGeoBoundingBox const &) const
 	??9QGeoBoundingCircle@QtMobility@@QBE_NABV01@@Z @ 350 NONAME ; bool QtMobility::QGeoBoundingCircle::operator!=(class QtMobility::QGeoBoundingCircle const &) const
-	??9QGeoInstruction@QtMobility@@QBE_NABV01@@Z @ 351 NONAME ; bool QtMobility::QGeoInstruction::operator!=(class QtMobility::QGeoInstruction const &) const
+	??9QGeoManeuver@QtMobility@@QBE_NABV01@@Z @ 351 NONAME ; bool QtMobility::QGeoManeuver::operator!=(class QtMobility::QGeoManeuver const &) const
 	??9QGeoPlace@QtMobility@@QBE_NABV01@@Z @ 352 NONAME ; bool QtMobility::QGeoPlace::operator!=(class QtMobility::QGeoPlace const &) const
 	??9QGeoRoute@QtMobility@@QBE_NABV01@@Z @ 353 NONAME ; bool QtMobility::QGeoRoute::operator!=(class QtMobility::QGeoRoute const &) const
 	??9QGeoRouteRequest@QtMobility@@QBE_NABV01@@Z @ 354 NONAME ; bool QtMobility::QGeoRouteRequest::operator!=(class QtMobility::QGeoRouteRequest const &) const
@@ -643,12 +643,12 @@ EXPORTS
 	?detailLevelChanged@QGeoMapRouteObject@QtMobility@@IAEXI@Z @ 642 NONAME ; void QtMobility::QGeoMapRouteObject::detailLevelChanged(unsigned int)
 	?device@QLandmarkExportRequest@QtMobility@@QBEPAVQIODevice@@XZ @ 643 NONAME ; class QIODevice * QtMobility::QLandmarkExportRequest::device(void) const
 	?device@QLandmarkImportRequest@QtMobility@@QBEPAVQIODevice@@XZ @ 644 NONAME ; class QIODevice * QtMobility::QLandmarkImportRequest::device(void) const
-	?direction@QGeoInstruction@QtMobility@@QBE?AW4InstructionDirection@12@XZ @ 645 NONAME ; enum QtMobility::QGeoInstruction::InstructionDirection QtMobility::QGeoInstruction::direction(void) const
+	?direction@QGeoManeuver@QtMobility@@QBE?AW4InstructionDirection@12@XZ @ 645 NONAME ; enum QtMobility::QGeoManeuver::InstructionDirection QtMobility::QGeoManeuver::direction(void) const
 	?direction@QLandmarkSortOrder@QtMobility@@QBE?AW4SortOrder@Qt@@XZ @ 646 NONAME ; enum Qt::SortOrder QtMobility::QLandmarkSortOrder::direction(void) const
 	?disconnectNotify@QLandmarkManager@QtMobility@@MAEXPBD@Z @ 647 NONAME ; void QtMobility::QLandmarkManager::disconnectNotify(char const *)
 	?distance@QGeoRoute@QtMobility@@QBEMXZ @ 648 NONAME ; float QtMobility::QGeoRoute::distance(void) const
 	?distance@QGeoRouteSegment@QtMobility@@QBEMXZ @ 649 NONAME ; float QtMobility::QGeoRouteSegment::distance(void) const
-	?distanceToNextInstruction@QGeoInstruction@QtMobility@@QBEMXZ @ 650 NONAME ; float QtMobility::QGeoInstruction::distanceToNextInstruction(void) const
+	?distanceToNextInstruction@QGeoManeuver@QtMobility@@QBEMXZ @ 650 NONAME ; float QtMobility::QGeoManeuver::distanceToNextInstruction(void) const
 	?district@QGeoAddress@QtMobility@@QBE?AVQString@@XZ @ 651 NONAME ; class QString QtMobility::QGeoAddress::district(void) const
 	?engine@QGeoMapData@QtMobility@@IBEPAVQGeoMappingManagerEngine@2@XZ @ 652 NONAME ; class QtMobility::QGeoMappingManagerEngine * QtMobility::QGeoMapData::engine(void) const
 	?engine@QLandmarkManager@QtMobility@@AAEPAVQLandmarkManagerEngine@2@XZ @ 653 NONAME ; class QtMobility::QLandmarkManagerEngine * QtMobility::QLandmarkManager::engine(void)
@@ -749,94 +749,94 @@ EXPORTS
 	?importLandmarks@QLandmarkManager@QtMobility@@QAE_NABVQString@@0W4TransferOption@12@ABVQLandmarkCategoryId@2@@Z @ 748 NONAME ; bool QtMobility::QLandmarkManager::importLandmarks(class QString const &, class QString const &, enum QtMobility::QLandmarkManager::TransferOption, class QtMobility::QLandmarkCategoryId const &)
 	?importLandmarks@QLandmarkManager@QtMobility@@QAE_NPAVQIODevice@@ABVQString@@W4TransferOption@12@ABVQLandmarkCategoryId@2@@Z @ 749 NONAME ; bool QtMobility::QLandmarkManager::importLandmarks(class QIODevice *, class QString const &, enum QtMobility::QLandmarkManager::TransferOption, class QtMobility::QLandmarkCategoryId const &)
 	?importLandmarks@QLandmarkManagerEngine@QtMobility@@UAE_NPAVQIODevice@@ABVQString@@W4TransferOption@QLandmarkManager@2@ABVQLandmarkCategoryId@2@PAW4Error@62@PAV4@@Z @ 750 NONAME ; bool QtMobility::QLandmarkManagerEngine::importLandmarks(class QIODevice *, class QString const &, enum QtMobility::QLandmarkManager::TransferOption, class QtMobility::QLandmarkCategoryId const &, enum QtMobility::QLandmarkManager::Error *, class QString *)
-	?instruction@QGeoRouteSegment@QtMobility@@QBE?AVQGeoInstruction@2@XZ @ 751 NONAME ; class QtMobility::QGeoInstruction QtMobility::QGeoRouteSegment::instruction(void) const
-	?instructionDetail@QGeoRouteRequest@QtMobility@@QBE?AW4InstructionDetail@12@XZ @ 752 NONAME ; enum QtMobility::QGeoRouteRequest::InstructionDetail QtMobility::QGeoRouteRequest::instructionDetail(void) const
-	?instructionText@QGeoInstruction@QtMobility@@QBE?AVQString@@XZ @ 753 NONAME ; class QString QtMobility::QGeoInstruction::instructionText(void) const
-	?intersects@QGeoBoundingBox@QtMobility@@QBE_NABV12@@Z @ 754 NONAME ; bool QtMobility::QGeoBoundingBox::intersects(class QtMobility::QGeoBoundingBox const &) const
-	?isActive@QLandmarkAbstractRequest@QtMobility@@QBE_NXZ @ 755 NONAME ; bool QtMobility::QLandmarkAbstractRequest::isActive(void) const
-	?isCached@QGeoTiledMapReply@QtMobility@@QBE_NXZ @ 756 NONAME ; bool QtMobility::QGeoTiledMapReply::isCached(void) const
-	?isEmpty@QGeoAddress@QtMobility@@QBE_NXZ @ 757 NONAME ; bool QtMobility::QGeoAddress::isEmpty(void) const
-	?isEmpty@QGeoBoundingBox@QtMobility@@UBE_NXZ @ 758 NONAME ; bool QtMobility::QGeoBoundingBox::isEmpty(void) const
-	?isEmpty@QGeoBoundingCircle@QtMobility@@UBE_NXZ @ 759 NONAME ; bool QtMobility::QGeoBoundingCircle::isEmpty(void) const
-	?isFeatureSupported@QLandmarkManager@QtMobility@@QBE_NW4LandmarkFeature@12@@Z @ 760 NONAME ; bool QtMobility::QLandmarkManager::isFeatureSupported(enum QtMobility::QLandmarkManager::LandmarkFeature) const
-	?isFinished@QGeoRouteReply@QtMobility@@QBE_NXZ @ 761 NONAME ; bool QtMobility::QGeoRouteReply::isFinished(void) const
-	?isFinished@QGeoSearchReply@QtMobility@@QBE_NXZ @ 762 NONAME ; bool QtMobility::QGeoSearchReply::isFinished(void) const
-	?isFinished@QGeoTiledMapReply@QtMobility@@QBE_NXZ @ 763 NONAME ; bool QtMobility::QGeoTiledMapReply::isFinished(void) const
-	?isFinished@QLandmarkAbstractRequest@QtMobility@@QBE_NXZ @ 764 NONAME ; bool QtMobility::QLandmarkAbstractRequest::isFinished(void) const
-	?isInactive@QLandmarkAbstractRequest@QtMobility@@QBE_NXZ @ 765 NONAME ; bool QtMobility::QLandmarkAbstractRequest::isInactive(void) const
-	?isLandmark@QGeoPlace@QtMobility@@QBE_NXZ @ 766 NONAME ; bool QtMobility::QGeoPlace::isLandmark(void) const
-	?isReadOnly@QLandmarkManager@QtMobility@@QBE_NABVQLandmarkCategoryId@2@@Z @ 767 NONAME ; bool QtMobility::QLandmarkManager::isReadOnly(class QtMobility::QLandmarkCategoryId const &) const
-	?isReadOnly@QLandmarkManager@QtMobility@@QBE_NABVQLandmarkId@2@@Z @ 768 NONAME ; bool QtMobility::QLandmarkManager::isReadOnly(class QtMobility::QLandmarkId const &) const
-	?isReadOnly@QLandmarkManager@QtMobility@@QBE_NXZ @ 769 NONAME ; bool QtMobility::QLandmarkManager::isReadOnly(void) const
-	?isSelected@QGeoMapObject@QtMobility@@QBE_NXZ @ 770 NONAME ; bool QtMobility::QGeoMapObject::isSelected(void) const
-	?isValid@QGeoBoundingBox@QtMobility@@UBE_NXZ @ 771 NONAME ; bool QtMobility::QGeoBoundingBox::isValid(void) const
-	?isValid@QGeoBoundingCircle@QtMobility@@UBE_NXZ @ 772 NONAME ; bool QtMobility::QGeoBoundingCircle::isValid(void) const
-	?isValid@QLandmarkCategoryId@QtMobility@@QBE_NXZ @ 773 NONAME ; bool QtMobility::QLandmarkCategoryId::isValid(void) const
-	?isValid@QLandmarkId@QtMobility@@QBE_NXZ @ 774 NONAME ; bool QtMobility::QLandmarkId::isValid(void) const
-	?isVisible@QGeoMapObject@QtMobility@@QBE_NXZ @ 775 NONAME ; bool QtMobility::QGeoMapObject::isVisible(void) const
-	?landmark@QLandmarkManager@QtMobility@@QBE?AVQLandmark@2@ABVQLandmarkId@2@@Z @ 776 NONAME ; class QtMobility::QLandmark QtMobility::QLandmarkManager::landmark(class QtMobility::QLandmarkId const &) const
-	?landmark@QLandmarkManagerEngine@QtMobility@@UBE?AVQLandmark@2@ABVQLandmarkId@2@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 777 NONAME ; class QtMobility::QLandmark QtMobility::QLandmarkManagerEngine::landmark(class QtMobility::QLandmarkId const &, enum QtMobility::QLandmarkManager::Error *, class QString *) const
-	?landmarkAttributeKeys@QLandmarkManager@QtMobility@@QBE?AVQStringList@@XZ @ 778 NONAME ; class QStringList QtMobility::QLandmarkManager::landmarkAttributeKeys(void) const
-	?landmarkId@QLandmark@QtMobility@@QBE?AVQLandmarkId@2@XZ @ 779 NONAME ; class QtMobility::QLandmarkId QtMobility::QLandmark::landmarkId(void) const
-	?landmarkIds@QLandmarkExportRequest@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@XZ @ 780 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkExportRequest::landmarkIds(void) const
-	?landmarkIds@QLandmarkFetchByIdRequest@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@XZ @ 781 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkFetchByIdRequest::landmarkIds(void) const
-	?landmarkIds@QLandmarkIdFetchRequest@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@XZ @ 782 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkIdFetchRequest::landmarkIds(void) const
-	?landmarkIds@QLandmarkIdFilter@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@XZ @ 783 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkIdFilter::landmarkIds(void) const
-	?landmarkIds@QLandmarkImportRequest@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@XZ @ 784 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkImportRequest::landmarkIds(void) const
-	?landmarkIds@QLandmarkManager@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@ABVQLandmarkFilter@2@HHABV?$QList@VQLandmarkSortOrder@QtMobility@@@@@Z @ 785 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkManager::landmarkIds(class QtMobility::QLandmarkFilter const &, int, int, class QList<class QtMobility::QLandmarkSortOrder> const &) const
-	?landmarkIds@QLandmarkManager@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@ABVQLandmarkFilter@2@HHABVQLandmarkSortOrder@2@@Z @ 786 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkManager::landmarkIds(class QtMobility::QLandmarkFilter const &, int, int, class QtMobility::QLandmarkSortOrder const &) const
-	?landmarkIds@QLandmarkManagerEngine@QtMobility@@UBE?AV?$QList@VQLandmarkId@QtMobility@@@@ABVQLandmarkFilter@2@HHABV?$QList@VQLandmarkSortOrder@QtMobility@@@@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 787 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkManagerEngine::landmarkIds(class QtMobility::QLandmarkFilter const &, int, int, class QList<class QtMobility::QLandmarkSortOrder> const &, enum QtMobility::QLandmarkManager::Error *, class QString *) const
-	?landmarkIds@QLandmarkRemoveRequest@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@XZ @ 788 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkRemoveRequest::landmarkIds(void) const
-	?landmarks@QLandmarkFetchByIdRequest@QtMobility@@QBE?AV?$QList@VQLandmark@QtMobility@@@@XZ @ 789 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkFetchByIdRequest::landmarks(void) const
-	?landmarks@QLandmarkFetchRequest@QtMobility@@QBE?AV?$QList@VQLandmark@QtMobility@@@@XZ @ 790 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkFetchRequest::landmarks(void) const
-	?landmarks@QLandmarkManager@QtMobility@@QBE?AV?$QList@VQLandmark@QtMobility@@@@ABV?$QList@VQLandmarkId@QtMobility@@@@PAV?$QMap@HW4Error@QLandmarkManager@QtMobility@@@@@Z @ 791 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkManager::landmarks(class QList<class QtMobility::QLandmarkId> const &, class QMap<int, enum QtMobility::QLandmarkManager::Error> *) const
-	?landmarks@QLandmarkManager@QtMobility@@QBE?AV?$QList@VQLandmark@QtMobility@@@@ABVQLandmarkFilter@2@HHABV?$QList@VQLandmarkSortOrder@QtMobility@@@@@Z @ 792 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkManager::landmarks(class QtMobility::QLandmarkFilter const &, int, int, class QList<class QtMobility::QLandmarkSortOrder> const &) const
-	?landmarks@QLandmarkManager@QtMobility@@QBE?AV?$QList@VQLandmark@QtMobility@@@@ABVQLandmarkFilter@2@HHABVQLandmarkSortOrder@2@@Z @ 793 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkManager::landmarks(class QtMobility::QLandmarkFilter const &, int, int, class QtMobility::QLandmarkSortOrder const &) const
-	?landmarks@QLandmarkManagerEngine@QtMobility@@UBE?AV?$QList@VQLandmark@QtMobility@@@@ABV?$QList@VQLandmarkId@QtMobility@@@@PAV?$QMap@HW4Error@QLandmarkManager@QtMobility@@@@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 794 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkManagerEngine::landmarks(class QList<class QtMobility::QLandmarkId> const &, class QMap<int, enum QtMobility::QLandmarkManager::Error> *, enum QtMobility::QLandmarkManager::Error *, class QString *) const
-	?landmarks@QLandmarkManagerEngine@QtMobility@@UBE?AV?$QList@VQLandmark@QtMobility@@@@ABVQLandmarkFilter@2@HHABV?$QList@VQLandmarkSortOrder@QtMobility@@@@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 795 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkManagerEngine::landmarks(class QtMobility::QLandmarkFilter const &, int, int, class QList<class QtMobility::QLandmarkSortOrder> const &, enum QtMobility::QLandmarkManager::Error *, class QString *) const
-	?landmarks@QLandmarkSaveRequest@QtMobility@@QBE?AV?$QList@VQLandmark@QtMobility@@@@XZ @ 796 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkSaveRequest::landmarks(void) const
-	?landmarksAdded@QLandmarkManager@QtMobility@@IAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 797 NONAME ; void QtMobility::QLandmarkManager::landmarksAdded(class QList<class QtMobility::QLandmarkId> const &)
-	?landmarksAdded@QLandmarkManagerEngine@QtMobility@@IAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 798 NONAME ; void QtMobility::QLandmarkManagerEngine::landmarksAdded(class QList<class QtMobility::QLandmarkId> const &)
-	?landmarksChanged@QLandmarkManager@QtMobility@@IAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 799 NONAME ; void QtMobility::QLandmarkManager::landmarksChanged(class QList<class QtMobility::QLandmarkId> const &)
-	?landmarksChanged@QLandmarkManagerEngine@QtMobility@@IAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 800 NONAME ; void QtMobility::QLandmarkManagerEngine::landmarksChanged(class QList<class QtMobility::QLandmarkId> const &)
-	?landmarksRemoved@QLandmarkManager@QtMobility@@IAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 801 NONAME ; void QtMobility::QLandmarkManager::landmarksRemoved(class QList<class QtMobility::QLandmarkId> const &)
-	?landmarksRemoved@QLandmarkManagerEngine@QtMobility@@IAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 802 NONAME ; void QtMobility::QLandmarkManagerEngine::landmarksRemoved(class QList<class QtMobility::QLandmarkId> const &)
-	?limit@QGeoSearchReply@QtMobility@@QBEHXZ @ 803 NONAME ; int QtMobility::QGeoSearchReply::limit(void) const
-	?limit@QLandmarkCategoryFetchRequest@QtMobility@@QBEHXZ @ 804 NONAME ; int QtMobility::QLandmarkCategoryFetchRequest::limit(void) const
-	?limit@QLandmarkCategoryIdFetchRequest@QtMobility@@QBEHXZ @ 805 NONAME ; int QtMobility::QLandmarkCategoryIdFetchRequest::limit(void) const
-	?limit@QLandmarkFetchRequest@QtMobility@@QBEHXZ @ 806 NONAME ; int QtMobility::QLandmarkFetchRequest::limit(void) const
-	?limit@QLandmarkIdFetchRequest@QtMobility@@QBEHXZ @ 807 NONAME ; int QtMobility::QLandmarkIdFetchRequest::limit(void) const
-	?localId@QLandmarkCategoryId@QtMobility@@QBE?AVQString@@XZ @ 808 NONAME ; class QString QtMobility::QLandmarkCategoryId::localId(void) const
-	?localId@QLandmarkId@QtMobility@@QBE?AVQString@@XZ @ 809 NONAME ; class QString QtMobility::QLandmarkId::localId(void) const
-	?locale@QGeoMappingManager@QtMobility@@QBE?AVQLocale@@XZ @ 810 NONAME ; class QLocale QtMobility::QGeoMappingManager::locale(void) const
-	?locale@QGeoMappingManagerEngine@QtMobility@@QBE?AVQLocale@@XZ @ 811 NONAME ; class QLocale QtMobility::QGeoMappingManagerEngine::locale(void) const
-	?locale@QGeoRoutingManager@QtMobility@@QBE?AVQLocale@@XZ @ 812 NONAME ; class QLocale QtMobility::QGeoRoutingManager::locale(void) const
-	?locale@QGeoRoutingManagerEngine@QtMobility@@QBE?AVQLocale@@XZ @ 813 NONAME ; class QLocale QtMobility::QGeoRoutingManagerEngine::locale(void) const
-	?locale@QGeoSearchManager@QtMobility@@QBE?AVQLocale@@XZ @ 814 NONAME ; class QLocale QtMobility::QGeoSearchManager::locale(void) const
-	?locale@QGeoSearchManagerEngine@QtMobility@@QBE?AVQLocale@@XZ @ 815 NONAME ; class QLocale QtMobility::QGeoSearchManagerEngine::locale(void) const
-	?manager@QLandmarkAbstractRequest@QtMobility@@QBEPAVQLandmarkManager@2@XZ @ 816 NONAME ; class QtMobility::QLandmarkManager * QtMobility::QLandmarkAbstractRequest::manager(void) const
-	?managerName@QGeoMappingManager@QtMobility@@QBE?AVQString@@XZ @ 817 NONAME ; class QString QtMobility::QGeoMappingManager::managerName(void) const
-	?managerName@QGeoMappingManagerEngine@QtMobility@@QBE?AVQString@@XZ @ 818 NONAME ; class QString QtMobility::QGeoMappingManagerEngine::managerName(void) const
-	?managerName@QGeoRoutingManager@QtMobility@@QBE?AVQString@@XZ @ 819 NONAME ; class QString QtMobility::QGeoRoutingManager::managerName(void) const
-	?managerName@QGeoRoutingManagerEngine@QtMobility@@QBE?AVQString@@XZ @ 820 NONAME ; class QString QtMobility::QGeoRoutingManagerEngine::managerName(void) const
-	?managerName@QGeoSearchManager@QtMobility@@QBE?AVQString@@XZ @ 821 NONAME ; class QString QtMobility::QGeoSearchManager::managerName(void) const
-	?managerName@QGeoSearchManagerEngine@QtMobility@@QBE?AVQString@@XZ @ 822 NONAME ; class QString QtMobility::QGeoSearchManagerEngine::managerName(void) const
-	?managerName@QLandmarkManager@QtMobility@@QBE?AVQString@@XZ @ 823 NONAME ; class QString QtMobility::QLandmarkManager::managerName(void) const
-	?managerName@QLandmarkManagerEngine@QtMobility@@UBE?AVQString@@XZ @ 824 NONAME ; class QString QtMobility::QLandmarkManagerEngine::managerName(void) const
-	?managerParameters@QLandmarkManager@QtMobility@@QBE?AV?$QMap@VQString@@V1@@@XZ @ 825 NONAME ; class QMap<class QString, class QString> QtMobility::QLandmarkManager::managerParameters(void) const
-	?managerParameters@QLandmarkManagerEngine@QtMobility@@UBE?AV?$QMap@VQString@@V1@@@XZ @ 826 NONAME ; class QMap<class QString, class QString> QtMobility::QLandmarkManagerEngine::managerParameters(void) const
-	?managerUri@QLandmarkCategoryId@QtMobility@@QBE?AVQString@@XZ @ 827 NONAME ; class QString QtMobility::QLandmarkCategoryId::managerUri(void) const
-	?managerUri@QLandmarkId@QtMobility@@QBE?AVQString@@XZ @ 828 NONAME ; class QString QtMobility::QLandmarkId::managerUri(void) const
-	?managerUri@QLandmarkManager@QtMobility@@QBE?AVQString@@XZ @ 829 NONAME ; class QString QtMobility::QLandmarkManager::managerUri(void) const
-	?managerUri@QLandmarkManagerEngine@QtMobility@@QBE?AVQString@@XZ @ 830 NONAME ; class QString QtMobility::QLandmarkManagerEngine::managerUri(void) const
-	?managerVersion@QGeoMappingManager@QtMobility@@QBEHXZ @ 831 NONAME ; int QtMobility::QGeoMappingManager::managerVersion(void) const
-	?managerVersion@QGeoMappingManagerEngine@QtMobility@@QBEHXZ @ 832 NONAME ; int QtMobility::QGeoMappingManagerEngine::managerVersion(void) const
-	?managerVersion@QGeoRoutingManager@QtMobility@@QBEHXZ @ 833 NONAME ; int QtMobility::QGeoRoutingManager::managerVersion(void) const
-	?managerVersion@QGeoRoutingManagerEngine@QtMobility@@QBEHXZ @ 834 NONAME ; int QtMobility::QGeoRoutingManagerEngine::managerVersion(void) const
-	?managerVersion@QGeoSearchManager@QtMobility@@QBEHXZ @ 835 NONAME ; int QtMobility::QGeoSearchManager::managerVersion(void) const
-	?managerVersion@QGeoSearchManagerEngine@QtMobility@@QBEHXZ @ 836 NONAME ; int QtMobility::QGeoSearchManagerEngine::managerVersion(void) const
-	?managerVersion@QLandmarkManager@QtMobility@@QBEHXZ @ 837 NONAME ; int QtMobility::QLandmarkManager::managerVersion(void) const
-	?managerVersion@QLandmarkManagerEngine@QtMobility@@UBEHXZ @ 838 NONAME ; int QtMobility::QLandmarkManagerEngine::managerVersion(void) const
+	?instructionText@QGeoManeuver@QtMobility@@QBE?AVQString@@XZ @ 751 NONAME ; class QString QtMobility::QGeoManeuver::instructionText(void) const
+	?intersects@QGeoBoundingBox@QtMobility@@QBE_NABV12@@Z @ 752 NONAME ; bool QtMobility::QGeoBoundingBox::intersects(class QtMobility::QGeoBoundingBox const &) const
+	?isActive@QLandmarkAbstractRequest@QtMobility@@QBE_NXZ @ 753 NONAME ; bool QtMobility::QLandmarkAbstractRequest::isActive(void) const
+	?isCached@QGeoTiledMapReply@QtMobility@@QBE_NXZ @ 754 NONAME ; bool QtMobility::QGeoTiledMapReply::isCached(void) const
+	?isEmpty@QGeoAddress@QtMobility@@QBE_NXZ @ 755 NONAME ; bool QtMobility::QGeoAddress::isEmpty(void) const
+	?isEmpty@QGeoBoundingBox@QtMobility@@UBE_NXZ @ 756 NONAME ; bool QtMobility::QGeoBoundingBox::isEmpty(void) const
+	?isEmpty@QGeoBoundingCircle@QtMobility@@UBE_NXZ @ 757 NONAME ; bool QtMobility::QGeoBoundingCircle::isEmpty(void) const
+	?isFeatureSupported@QLandmarkManager@QtMobility@@QBE_NW4LandmarkFeature@12@@Z @ 758 NONAME ; bool QtMobility::QLandmarkManager::isFeatureSupported(enum QtMobility::QLandmarkManager::LandmarkFeature) const
+	?isFinished@QGeoRouteReply@QtMobility@@QBE_NXZ @ 759 NONAME ; bool QtMobility::QGeoRouteReply::isFinished(void) const
+	?isFinished@QGeoSearchReply@QtMobility@@QBE_NXZ @ 760 NONAME ; bool QtMobility::QGeoSearchReply::isFinished(void) const
+	?isFinished@QGeoTiledMapReply@QtMobility@@QBE_NXZ @ 761 NONAME ; bool QtMobility::QGeoTiledMapReply::isFinished(void) const
+	?isFinished@QLandmarkAbstractRequest@QtMobility@@QBE_NXZ @ 762 NONAME ; bool QtMobility::QLandmarkAbstractRequest::isFinished(void) const
+	?isInactive@QLandmarkAbstractRequest@QtMobility@@QBE_NXZ @ 763 NONAME ; bool QtMobility::QLandmarkAbstractRequest::isInactive(void) const
+	?isLandmark@QGeoPlace@QtMobility@@QBE_NXZ @ 764 NONAME ; bool QtMobility::QGeoPlace::isLandmark(void) const
+	?isReadOnly@QLandmarkManager@QtMobility@@QBE_NABVQLandmarkCategoryId@2@@Z @ 765 NONAME ; bool QtMobility::QLandmarkManager::isReadOnly(class QtMobility::QLandmarkCategoryId const &) const
+	?isReadOnly@QLandmarkManager@QtMobility@@QBE_NABVQLandmarkId@2@@Z @ 766 NONAME ; bool QtMobility::QLandmarkManager::isReadOnly(class QtMobility::QLandmarkId const &) const
+	?isReadOnly@QLandmarkManager@QtMobility@@QBE_NXZ @ 767 NONAME ; bool QtMobility::QLandmarkManager::isReadOnly(void) const
+	?isSelected@QGeoMapObject@QtMobility@@QBE_NXZ @ 768 NONAME ; bool QtMobility::QGeoMapObject::isSelected(void) const
+	?isValid@QGeoBoundingBox@QtMobility@@UBE_NXZ @ 769 NONAME ; bool QtMobility::QGeoBoundingBox::isValid(void) const
+	?isValid@QGeoBoundingCircle@QtMobility@@UBE_NXZ @ 770 NONAME ; bool QtMobility::QGeoBoundingCircle::isValid(void) const
+	?isValid@QLandmarkCategoryId@QtMobility@@QBE_NXZ @ 771 NONAME ; bool QtMobility::QLandmarkCategoryId::isValid(void) const
+	?isValid@QLandmarkId@QtMobility@@QBE_NXZ @ 772 NONAME ; bool QtMobility::QLandmarkId::isValid(void) const
+	?isVisible@QGeoMapObject@QtMobility@@QBE_NXZ @ 773 NONAME ; bool QtMobility::QGeoMapObject::isVisible(void) const
+	?landmark@QLandmarkManager@QtMobility@@QBE?AVQLandmark@2@ABVQLandmarkId@2@@Z @ 774 NONAME ; class QtMobility::QLandmark QtMobility::QLandmarkManager::landmark(class QtMobility::QLandmarkId const &) const
+	?landmark@QLandmarkManagerEngine@QtMobility@@UBE?AVQLandmark@2@ABVQLandmarkId@2@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 775 NONAME ; class QtMobility::QLandmark QtMobility::QLandmarkManagerEngine::landmark(class QtMobility::QLandmarkId const &, enum QtMobility::QLandmarkManager::Error *, class QString *) const
+	?landmarkAttributeKeys@QLandmarkManager@QtMobility@@QBE?AVQStringList@@XZ @ 776 NONAME ; class QStringList QtMobility::QLandmarkManager::landmarkAttributeKeys(void) const
+	?landmarkId@QLandmark@QtMobility@@QBE?AVQLandmarkId@2@XZ @ 777 NONAME ; class QtMobility::QLandmarkId QtMobility::QLandmark::landmarkId(void) const
+	?landmarkIds@QLandmarkExportRequest@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@XZ @ 778 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkExportRequest::landmarkIds(void) const
+	?landmarkIds@QLandmarkFetchByIdRequest@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@XZ @ 779 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkFetchByIdRequest::landmarkIds(void) const
+	?landmarkIds@QLandmarkIdFetchRequest@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@XZ @ 780 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkIdFetchRequest::landmarkIds(void) const
+	?landmarkIds@QLandmarkIdFilter@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@XZ @ 781 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkIdFilter::landmarkIds(void) const
+	?landmarkIds@QLandmarkImportRequest@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@XZ @ 782 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkImportRequest::landmarkIds(void) const
+	?landmarkIds@QLandmarkManager@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@ABVQLandmarkFilter@2@HHABV?$QList@VQLandmarkSortOrder@QtMobility@@@@@Z @ 783 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkManager::landmarkIds(class QtMobility::QLandmarkFilter const &, int, int, class QList<class QtMobility::QLandmarkSortOrder> const &) const
+	?landmarkIds@QLandmarkManager@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@ABVQLandmarkFilter@2@HHABVQLandmarkSortOrder@2@@Z @ 784 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkManager::landmarkIds(class QtMobility::QLandmarkFilter const &, int, int, class QtMobility::QLandmarkSortOrder const &) const
+	?landmarkIds@QLandmarkManagerEngine@QtMobility@@UBE?AV?$QList@VQLandmarkId@QtMobility@@@@ABVQLandmarkFilter@2@HHABV?$QList@VQLandmarkSortOrder@QtMobility@@@@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 785 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkManagerEngine::landmarkIds(class QtMobility::QLandmarkFilter const &, int, int, class QList<class QtMobility::QLandmarkSortOrder> const &, enum QtMobility::QLandmarkManager::Error *, class QString *) const
+	?landmarkIds@QLandmarkRemoveRequest@QtMobility@@QBE?AV?$QList@VQLandmarkId@QtMobility@@@@XZ @ 786 NONAME ; class QList<class QtMobility::QLandmarkId> QtMobility::QLandmarkRemoveRequest::landmarkIds(void) const
+	?landmarks@QLandmarkFetchByIdRequest@QtMobility@@QBE?AV?$QList@VQLandmark@QtMobility@@@@XZ @ 787 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkFetchByIdRequest::landmarks(void) const
+	?landmarks@QLandmarkFetchRequest@QtMobility@@QBE?AV?$QList@VQLandmark@QtMobility@@@@XZ @ 788 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkFetchRequest::landmarks(void) const
+	?landmarks@QLandmarkManager@QtMobility@@QBE?AV?$QList@VQLandmark@QtMobility@@@@ABV?$QList@VQLandmarkId@QtMobility@@@@PAV?$QMap@HW4Error@QLandmarkManager@QtMobility@@@@@Z @ 789 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkManager::landmarks(class QList<class QtMobility::QLandmarkId> const &, class QMap<int, enum QtMobility::QLandmarkManager::Error> *) const
+	?landmarks@QLandmarkManager@QtMobility@@QBE?AV?$QList@VQLandmark@QtMobility@@@@ABVQLandmarkFilter@2@HHABV?$QList@VQLandmarkSortOrder@QtMobility@@@@@Z @ 790 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkManager::landmarks(class QtMobility::QLandmarkFilter const &, int, int, class QList<class QtMobility::QLandmarkSortOrder> const &) const
+	?landmarks@QLandmarkManager@QtMobility@@QBE?AV?$QList@VQLandmark@QtMobility@@@@ABVQLandmarkFilter@2@HHABVQLandmarkSortOrder@2@@Z @ 791 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkManager::landmarks(class QtMobility::QLandmarkFilter const &, int, int, class QtMobility::QLandmarkSortOrder const &) const
+	?landmarks@QLandmarkManagerEngine@QtMobility@@UBE?AV?$QList@VQLandmark@QtMobility@@@@ABV?$QList@VQLandmarkId@QtMobility@@@@PAV?$QMap@HW4Error@QLandmarkManager@QtMobility@@@@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 792 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkManagerEngine::landmarks(class QList<class QtMobility::QLandmarkId> const &, class QMap<int, enum QtMobility::QLandmarkManager::Error> *, enum QtMobility::QLandmarkManager::Error *, class QString *) const
+	?landmarks@QLandmarkManagerEngine@QtMobility@@UBE?AV?$QList@VQLandmark@QtMobility@@@@ABVQLandmarkFilter@2@HHABV?$QList@VQLandmarkSortOrder@QtMobility@@@@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 793 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkManagerEngine::landmarks(class QtMobility::QLandmarkFilter const &, int, int, class QList<class QtMobility::QLandmarkSortOrder> const &, enum QtMobility::QLandmarkManager::Error *, class QString *) const
+	?landmarks@QLandmarkSaveRequest@QtMobility@@QBE?AV?$QList@VQLandmark@QtMobility@@@@XZ @ 794 NONAME ; class QList<class QtMobility::QLandmark> QtMobility::QLandmarkSaveRequest::landmarks(void) const
+	?landmarksAdded@QLandmarkManager@QtMobility@@IAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 795 NONAME ; void QtMobility::QLandmarkManager::landmarksAdded(class QList<class QtMobility::QLandmarkId> const &)
+	?landmarksAdded@QLandmarkManagerEngine@QtMobility@@IAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 796 NONAME ; void QtMobility::QLandmarkManagerEngine::landmarksAdded(class QList<class QtMobility::QLandmarkId> const &)
+	?landmarksChanged@QLandmarkManager@QtMobility@@IAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 797 NONAME ; void QtMobility::QLandmarkManager::landmarksChanged(class QList<class QtMobility::QLandmarkId> const &)
+	?landmarksChanged@QLandmarkManagerEngine@QtMobility@@IAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 798 NONAME ; void QtMobility::QLandmarkManagerEngine::landmarksChanged(class QList<class QtMobility::QLandmarkId> const &)
+	?landmarksRemoved@QLandmarkManager@QtMobility@@IAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 799 NONAME ; void QtMobility::QLandmarkManager::landmarksRemoved(class QList<class QtMobility::QLandmarkId> const &)
+	?landmarksRemoved@QLandmarkManagerEngine@QtMobility@@IAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 800 NONAME ; void QtMobility::QLandmarkManagerEngine::landmarksRemoved(class QList<class QtMobility::QLandmarkId> const &)
+	?limit@QGeoSearchReply@QtMobility@@QBEHXZ @ 801 NONAME ; int QtMobility::QGeoSearchReply::limit(void) const
+	?limit@QLandmarkCategoryFetchRequest@QtMobility@@QBEHXZ @ 802 NONAME ; int QtMobility::QLandmarkCategoryFetchRequest::limit(void) const
+	?limit@QLandmarkCategoryIdFetchRequest@QtMobility@@QBEHXZ @ 803 NONAME ; int QtMobility::QLandmarkCategoryIdFetchRequest::limit(void) const
+	?limit@QLandmarkFetchRequest@QtMobility@@QBEHXZ @ 804 NONAME ; int QtMobility::QLandmarkFetchRequest::limit(void) const
+	?limit@QLandmarkIdFetchRequest@QtMobility@@QBEHXZ @ 805 NONAME ; int QtMobility::QLandmarkIdFetchRequest::limit(void) const
+	?localId@QLandmarkCategoryId@QtMobility@@QBE?AVQString@@XZ @ 806 NONAME ; class QString QtMobility::QLandmarkCategoryId::localId(void) const
+	?localId@QLandmarkId@QtMobility@@QBE?AVQString@@XZ @ 807 NONAME ; class QString QtMobility::QLandmarkId::localId(void) const
+	?locale@QGeoMappingManager@QtMobility@@QBE?AVQLocale@@XZ @ 808 NONAME ; class QLocale QtMobility::QGeoMappingManager::locale(void) const
+	?locale@QGeoMappingManagerEngine@QtMobility@@QBE?AVQLocale@@XZ @ 809 NONAME ; class QLocale QtMobility::QGeoMappingManagerEngine::locale(void) const
+	?locale@QGeoRoutingManager@QtMobility@@QBE?AVQLocale@@XZ @ 810 NONAME ; class QLocale QtMobility::QGeoRoutingManager::locale(void) const
+	?locale@QGeoRoutingManagerEngine@QtMobility@@QBE?AVQLocale@@XZ @ 811 NONAME ; class QLocale QtMobility::QGeoRoutingManagerEngine::locale(void) const
+	?locale@QGeoSearchManager@QtMobility@@QBE?AVQLocale@@XZ @ 812 NONAME ; class QLocale QtMobility::QGeoSearchManager::locale(void) const
+	?locale@QGeoSearchManagerEngine@QtMobility@@QBE?AVQLocale@@XZ @ 813 NONAME ; class QLocale QtMobility::QGeoSearchManagerEngine::locale(void) const
+	?manager@QLandmarkAbstractRequest@QtMobility@@QBEPAVQLandmarkManager@2@XZ @ 814 NONAME ; class QtMobility::QLandmarkManager * QtMobility::QLandmarkAbstractRequest::manager(void) const
+	?managerName@QGeoMappingManager@QtMobility@@QBE?AVQString@@XZ @ 815 NONAME ; class QString QtMobility::QGeoMappingManager::managerName(void) const
+	?managerName@QGeoMappingManagerEngine@QtMobility@@QBE?AVQString@@XZ @ 816 NONAME ; class QString QtMobility::QGeoMappingManagerEngine::managerName(void) const
+	?managerName@QGeoRoutingManager@QtMobility@@QBE?AVQString@@XZ @ 817 NONAME ; class QString QtMobility::QGeoRoutingManager::managerName(void) const
+	?managerName@QGeoRoutingManagerEngine@QtMobility@@QBE?AVQString@@XZ @ 818 NONAME ; class QString QtMobility::QGeoRoutingManagerEngine::managerName(void) const
+	?managerName@QGeoSearchManager@QtMobility@@QBE?AVQString@@XZ @ 819 NONAME ; class QString QtMobility::QGeoSearchManager::managerName(void) const
+	?managerName@QGeoSearchManagerEngine@QtMobility@@QBE?AVQString@@XZ @ 820 NONAME ; class QString QtMobility::QGeoSearchManagerEngine::managerName(void) const
+	?managerName@QLandmarkManager@QtMobility@@QBE?AVQString@@XZ @ 821 NONAME ; class QString QtMobility::QLandmarkManager::managerName(void) const
+	?managerName@QLandmarkManagerEngine@QtMobility@@UBE?AVQString@@XZ @ 822 NONAME ; class QString QtMobility::QLandmarkManagerEngine::managerName(void) const
+	?managerParameters@QLandmarkManager@QtMobility@@QBE?AV?$QMap@VQString@@V1@@@XZ @ 823 NONAME ; class QMap<class QString, class QString> QtMobility::QLandmarkManager::managerParameters(void) const
+	?managerParameters@QLandmarkManagerEngine@QtMobility@@UBE?AV?$QMap@VQString@@V1@@@XZ @ 824 NONAME ; class QMap<class QString, class QString> QtMobility::QLandmarkManagerEngine::managerParameters(void) const
+	?managerUri@QLandmarkCategoryId@QtMobility@@QBE?AVQString@@XZ @ 825 NONAME ; class QString QtMobility::QLandmarkCategoryId::managerUri(void) const
+	?managerUri@QLandmarkId@QtMobility@@QBE?AVQString@@XZ @ 826 NONAME ; class QString QtMobility::QLandmarkId::managerUri(void) const
+	?managerUri@QLandmarkManager@QtMobility@@QBE?AVQString@@XZ @ 827 NONAME ; class QString QtMobility::QLandmarkManager::managerUri(void) const
+	?managerUri@QLandmarkManagerEngine@QtMobility@@QBE?AVQString@@XZ @ 828 NONAME ; class QString QtMobility::QLandmarkManagerEngine::managerUri(void) const
+	?managerVersion@QGeoMappingManager@QtMobility@@QBEHXZ @ 829 NONAME ; int QtMobility::QGeoMappingManager::managerVersion(void) const
+	?managerVersion@QGeoMappingManagerEngine@QtMobility@@QBEHXZ @ 830 NONAME ; int QtMobility::QGeoMappingManagerEngine::managerVersion(void) const
+	?managerVersion@QGeoRoutingManager@QtMobility@@QBEHXZ @ 831 NONAME ; int QtMobility::QGeoRoutingManager::managerVersion(void) const
+	?managerVersion@QGeoRoutingManagerEngine@QtMobility@@QBEHXZ @ 832 NONAME ; int QtMobility::QGeoRoutingManagerEngine::managerVersion(void) const
+	?managerVersion@QGeoSearchManager@QtMobility@@QBEHXZ @ 833 NONAME ; int QtMobility::QGeoSearchManager::managerVersion(void) const
+	?managerVersion@QGeoSearchManagerEngine@QtMobility@@QBEHXZ @ 834 NONAME ; int QtMobility::QGeoSearchManagerEngine::managerVersion(void) const
+	?managerVersion@QLandmarkManager@QtMobility@@QBEHXZ @ 835 NONAME ; int QtMobility::QLandmarkManager::managerVersion(void) const
+	?managerVersion@QLandmarkManagerEngine@QtMobility@@UBEHXZ @ 836 NONAME ; int QtMobility::QLandmarkManagerEngine::managerVersion(void) const
+	?maneuver@QGeoRouteSegment@QtMobility@@QBE?AVQGeoManeuver@2@XZ @ 837 NONAME ; class QtMobility::QGeoManeuver QtMobility::QGeoRouteSegment::maneuver(void) const
+	?maneuverDetail@QGeoRouteRequest@QtMobility@@QBE?AW4ManeuverDetail@12@XZ @ 838 NONAME ; enum QtMobility::QGeoRouteRequest::ManeuverDetail QtMobility::QGeoRouteRequest::maneuverDetail(void) const
 	?mapData@QGeoMapObject@QtMobility@@UBEPAVQGeoMapData@2@XZ @ 839 NONAME ; class QtMobility::QGeoMapData * QtMobility::QGeoMapObject::mapData(void) const
 	?mapData@QGeoMapObjectInfo@QtMobility@@IAEPAVQGeoMapData@2@XZ @ 840 NONAME ; class QtMobility::QGeoMapData * QtMobility::QGeoMapObjectInfo::mapData(void)
 	?mapImageData@QGeoTiledMapReply@QtMobility@@QBE?AVQByteArray@@XZ @ 841 NONAME ; class QByteArray QtMobility::QGeoTiledMapReply::mapImageData(void) const
@@ -936,159 +936,159 @@ EXPORTS
 	?pan@QGeoMapData@QtMobility@@UAEXHH@Z @ 935 NONAME ; void QtMobility::QGeoMapData::pan(int, int)
 	?pan@QGeoTiledMapData@QtMobility@@UAEXHH@Z @ 936 NONAME ; void QtMobility::QGeoTiledMapData::pan(int, int)
 	?pan@QGraphicsGeoMap@QtMobility@@QAEXHH@Z @ 937 NONAME ; void QtMobility::QGraphicsGeoMap::pan(int, int)
-	?panned@QGraphicsGeoMap@QtMobility@@IAEXABVQPoint@@@Z @ 938 NONAME ; void QtMobility::QGraphicsGeoMap::panned(class QPoint const &)
-	?parseUri@QLandmarkManager@QtMobility@@SA_NABVQString@@PAV3@PAV?$QMap@VQString@@V1@@@@Z @ 939 NONAME ; bool QtMobility::QLandmarkManager::parseUri(class QString const &, class QString *, class QMap<class QString, class QString> *)
-	?path@QGeoMapPolygonObject@QtMobility@@QBE?AV?$QList@VQGeoCoordinate@QtMobility@@@@XZ @ 940 NONAME ; class QList<class QtMobility::QGeoCoordinate> QtMobility::QGeoMapPolygonObject::path(void) const
-	?path@QGeoMapPolylineObject@QtMobility@@QBE?AV?$QList@VQGeoCoordinate@QtMobility@@@@XZ @ 941 NONAME ; class QList<class QtMobility::QGeoCoordinate> QtMobility::QGeoMapPolylineObject::path(void) const
-	?path@QGeoRoute@QtMobility@@QBE?AV?$QList@VQGeoCoordinate@QtMobility@@@@XZ @ 942 NONAME ; class QList<class QtMobility::QGeoCoordinate> QtMobility::QGeoRoute::path(void) const
-	?path@QGeoRouteSegment@QtMobility@@QBE?AV?$QList@VQGeoCoordinate@QtMobility@@@@XZ @ 943 NONAME ; class QList<class QtMobility::QGeoCoordinate> QtMobility::QGeoRouteSegment::path(void) const
-	?pathChanged@QGeoMapPolygonObject@QtMobility@@IAEXABV?$QList@VQGeoCoordinate@QtMobility@@@@@Z @ 944 NONAME ; void QtMobility::QGeoMapPolygonObject::pathChanged(class QList<class QtMobility::QGeoCoordinate> const &)
-	?pathChanged@QGeoMapPolylineObject@QtMobility@@IAEXABV?$QList@VQGeoCoordinate@QtMobility@@@@@Z @ 945 NONAME ; void QtMobility::QGeoMapPolylineObject::pathChanged(class QList<class QtMobility::QGeoCoordinate> const &)
-	?pen@QGeoMapCircleObject@QtMobility@@QBE?AVQPen@@XZ @ 946 NONAME ; class QPen QtMobility::QGeoMapCircleObject::pen(void) const
-	?pen@QGeoMapPolygonObject@QtMobility@@QBE?AVQPen@@XZ @ 947 NONAME ; class QPen QtMobility::QGeoMapPolygonObject::pen(void) const
-	?pen@QGeoMapPolylineObject@QtMobility@@QBE?AVQPen@@XZ @ 948 NONAME ; class QPen QtMobility::QGeoMapPolylineObject::pen(void) const
-	?pen@QGeoMapRectangleObject@QtMobility@@QBE?AVQPen@@XZ @ 949 NONAME ; class QPen QtMobility::QGeoMapRectangleObject::pen(void) const
-	?pen@QGeoMapRouteObject@QtMobility@@QBE?AVQPen@@XZ @ 950 NONAME ; class QPen QtMobility::QGeoMapRouteObject::pen(void) const
-	?pen@QGeoMapTextObject@QtMobility@@QBE?AVQPen@@XZ @ 951 NONAME ; class QPen QtMobility::QGeoMapTextObject::pen(void) const
-	?penChanged@QGeoMapCircleObject@QtMobility@@IAEXABVQPen@@@Z @ 952 NONAME ; void QtMobility::QGeoMapCircleObject::penChanged(class QPen const &)
-	?penChanged@QGeoMapPolygonObject@QtMobility@@IAEXABVQPen@@@Z @ 953 NONAME ; void QtMobility::QGeoMapPolygonObject::penChanged(class QPen const &)
-	?penChanged@QGeoMapPolylineObject@QtMobility@@IAEXABVQPen@@@Z @ 954 NONAME ; void QtMobility::QGeoMapPolylineObject::penChanged(class QPen const &)
-	?penChanged@QGeoMapRectangleObject@QtMobility@@IAEXABVQPen@@@Z @ 955 NONAME ; void QtMobility::QGeoMapRectangleObject::penChanged(class QPen const &)
-	?penChanged@QGeoMapRouteObject@QtMobility@@IAEXABVQPen@@@Z @ 956 NONAME ; void QtMobility::QGeoMapRouteObject::penChanged(class QPen const &)
-	?penChanged@QGeoMapTextObject@QtMobility@@IAEXABVQPen@@@Z @ 957 NONAME ; void QtMobility::QGeoMapTextObject::penChanged(class QPen const &)
-	?phoneNumber@QLandmark@QtMobility@@QBE?AVQString@@XZ @ 958 NONAME ; class QString QtMobility::QLandmark::phoneNumber(void) const
-	?pixmap@QGeoMapPixmapObject@QtMobility@@QBE?AVQPixmap@@XZ @ 959 NONAME ; class QPixmap QtMobility::QGeoMapPixmapObject::pixmap(void) const
-	?pixmapChanged@QGeoMapPixmapObject@QtMobility@@IAEXABVQPixmap@@@Z @ 960 NONAME ; void QtMobility::QGeoMapPixmapObject::pixmapChanged(class QPixmap const &)
-	?places@QGeoSearchReply@QtMobility@@QBE?AV?$QList@VQGeoPlace@QtMobility@@@@XZ @ 961 NONAME ; class QList<class QtMobility::QGeoPlace> QtMobility::QGeoSearchReply::places(void) const
-	?position@QGeoInstruction@QtMobility@@QBE?AVQGeoCoordinate@2@XZ @ 962 NONAME ; class QtMobility::QGeoCoordinate QtMobility::QGeoInstruction::position(void) const
-	?postCode@QGeoAddress@QtMobility@@QBE?AVQString@@XZ @ 963 NONAME ; class QString QtMobility::QGeoAddress::postCode(void) const
-	?prepend@QLandmarkIntersectionFilter@QtMobility@@QAEXABVQLandmarkFilter@2@@Z @ 964 NONAME ; void QtMobility::QLandmarkIntersectionFilter::prepend(class QtMobility::QLandmarkFilter const &)
-	?prepend@QLandmarkUnionFilter@QtMobility@@QAEXABVQLandmarkFilter@2@@Z @ 965 NONAME ; void QtMobility::QLandmarkUnionFilter::prepend(class QtMobility::QLandmarkFilter const &)
-	?processRequests@QGeoTiledMapData@QtMobility@@AAEXXZ @ 966 NONAME ; void QtMobility::QGeoTiledMapData::processRequests(void)
-	?qHash@QtMobility@@YAIABVQGeoTiledMapRequest@1@@Z @ 967 NONAME ; unsigned int QtMobility::qHash(class QtMobility::QGeoTiledMapRequest const &)
-	?qt_metacall@QGeoMapCircleObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 968 NONAME ; int QtMobility::QGeoMapCircleObject::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoMapData@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 969 NONAME ; int QtMobility::QGeoMapData::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoMapGroupObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 970 NONAME ; int QtMobility::QGeoMapGroupObject::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoMapObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 971 NONAME ; int QtMobility::QGeoMapObject::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoMapObjectInfo@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 972 NONAME ; int QtMobility::QGeoMapObjectInfo::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoMapPixmapObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 973 NONAME ; int QtMobility::QGeoMapPixmapObject::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoMapPolygonObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 974 NONAME ; int QtMobility::QGeoMapPolygonObject::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoMapPolylineObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 975 NONAME ; int QtMobility::QGeoMapPolylineObject::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoMapRectangleObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 976 NONAME ; int QtMobility::QGeoMapRectangleObject::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoMapRouteObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 977 NONAME ; int QtMobility::QGeoMapRouteObject::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoMapTextObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 978 NONAME ; int QtMobility::QGeoMapTextObject::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoMappingManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 979 NONAME ; int QtMobility::QGeoMappingManager::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoMappingManagerEngine@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 980 NONAME ; int QtMobility::QGeoMappingManagerEngine::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoRouteReply@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 981 NONAME ; int QtMobility::QGeoRouteReply::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoRoutingManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 982 NONAME ; int QtMobility::QGeoRoutingManager::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoRoutingManagerEngine@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 983 NONAME ; int QtMobility::QGeoRoutingManagerEngine::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoSearchManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 984 NONAME ; int QtMobility::QGeoSearchManager::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoSearchManagerEngine@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 985 NONAME ; int QtMobility::QGeoSearchManagerEngine::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoSearchReply@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 986 NONAME ; int QtMobility::QGeoSearchReply::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoTiledMapData@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 987 NONAME ; int QtMobility::QGeoTiledMapData::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoTiledMapReply@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 988 NONAME ; int QtMobility::QGeoTiledMapReply::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoTiledMappingManagerEngine@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 989 NONAME ; int QtMobility::QGeoTiledMappingManagerEngine::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGraphicsGeoMap@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 990 NONAME ; int QtMobility::QGraphicsGeoMap::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLandmarkAbstractRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 991 NONAME ; int QtMobility::QLandmarkAbstractRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLandmarkCategoryFetchByIdRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 992 NONAME ; int QtMobility::QLandmarkCategoryFetchByIdRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLandmarkCategoryFetchRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 993 NONAME ; int QtMobility::QLandmarkCategoryFetchRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLandmarkCategoryIdFetchRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 994 NONAME ; int QtMobility::QLandmarkCategoryIdFetchRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLandmarkCategoryRemoveRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 995 NONAME ; int QtMobility::QLandmarkCategoryRemoveRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLandmarkCategorySaveRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 996 NONAME ; int QtMobility::QLandmarkCategorySaveRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLandmarkExportRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 997 NONAME ; int QtMobility::QLandmarkExportRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLandmarkFetchByIdRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 998 NONAME ; int QtMobility::QLandmarkFetchByIdRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLandmarkFetchRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 999 NONAME ; int QtMobility::QLandmarkFetchRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLandmarkIdFetchRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1000 NONAME ; int QtMobility::QLandmarkIdFetchRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLandmarkImportRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1001 NONAME ; int QtMobility::QLandmarkImportRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLandmarkManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1002 NONAME ; int QtMobility::QLandmarkManager::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLandmarkManagerEngine@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1003 NONAME ; int QtMobility::QLandmarkManagerEngine::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLandmarkRemoveRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1004 NONAME ; int QtMobility::QLandmarkRemoveRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QLandmarkSaveRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1005 NONAME ; int QtMobility::QLandmarkSaveRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacast@QGeoMapCircleObject@QtMobility@@UAEPAXPBD@Z @ 1006 NONAME ; void * QtMobility::QGeoMapCircleObject::qt_metacast(char const *)
-	?qt_metacast@QGeoMapData@QtMobility@@UAEPAXPBD@Z @ 1007 NONAME ; void * QtMobility::QGeoMapData::qt_metacast(char const *)
-	?qt_metacast@QGeoMapGroupObject@QtMobility@@UAEPAXPBD@Z @ 1008 NONAME ; void * QtMobility::QGeoMapGroupObject::qt_metacast(char const *)
-	?qt_metacast@QGeoMapObject@QtMobility@@UAEPAXPBD@Z @ 1009 NONAME ; void * QtMobility::QGeoMapObject::qt_metacast(char const *)
-	?qt_metacast@QGeoMapObjectInfo@QtMobility@@UAEPAXPBD@Z @ 1010 NONAME ; void * QtMobility::QGeoMapObjectInfo::qt_metacast(char const *)
-	?qt_metacast@QGeoMapPixmapObject@QtMobility@@UAEPAXPBD@Z @ 1011 NONAME ; void * QtMobility::QGeoMapPixmapObject::qt_metacast(char const *)
-	?qt_metacast@QGeoMapPolygonObject@QtMobility@@UAEPAXPBD@Z @ 1012 NONAME ; void * QtMobility::QGeoMapPolygonObject::qt_metacast(char const *)
-	?qt_metacast@QGeoMapPolylineObject@QtMobility@@UAEPAXPBD@Z @ 1013 NONAME ; void * QtMobility::QGeoMapPolylineObject::qt_metacast(char const *)
-	?qt_metacast@QGeoMapRectangleObject@QtMobility@@UAEPAXPBD@Z @ 1014 NONAME ; void * QtMobility::QGeoMapRectangleObject::qt_metacast(char const *)
-	?qt_metacast@QGeoMapRouteObject@QtMobility@@UAEPAXPBD@Z @ 1015 NONAME ; void * QtMobility::QGeoMapRouteObject::qt_metacast(char const *)
-	?qt_metacast@QGeoMapTextObject@QtMobility@@UAEPAXPBD@Z @ 1016 NONAME ; void * QtMobility::QGeoMapTextObject::qt_metacast(char const *)
-	?qt_metacast@QGeoMappingManager@QtMobility@@UAEPAXPBD@Z @ 1017 NONAME ; void * QtMobility::QGeoMappingManager::qt_metacast(char const *)
-	?qt_metacast@QGeoMappingManagerEngine@QtMobility@@UAEPAXPBD@Z @ 1018 NONAME ; void * QtMobility::QGeoMappingManagerEngine::qt_metacast(char const *)
-	?qt_metacast@QGeoRouteReply@QtMobility@@UAEPAXPBD@Z @ 1019 NONAME ; void * QtMobility::QGeoRouteReply::qt_metacast(char const *)
-	?qt_metacast@QGeoRoutingManager@QtMobility@@UAEPAXPBD@Z @ 1020 NONAME ; void * QtMobility::QGeoRoutingManager::qt_metacast(char const *)
-	?qt_metacast@QGeoRoutingManagerEngine@QtMobility@@UAEPAXPBD@Z @ 1021 NONAME ; void * QtMobility::QGeoRoutingManagerEngine::qt_metacast(char const *)
-	?qt_metacast@QGeoSearchManager@QtMobility@@UAEPAXPBD@Z @ 1022 NONAME ; void * QtMobility::QGeoSearchManager::qt_metacast(char const *)
-	?qt_metacast@QGeoSearchManagerEngine@QtMobility@@UAEPAXPBD@Z @ 1023 NONAME ; void * QtMobility::QGeoSearchManagerEngine::qt_metacast(char const *)
-	?qt_metacast@QGeoSearchReply@QtMobility@@UAEPAXPBD@Z @ 1024 NONAME ; void * QtMobility::QGeoSearchReply::qt_metacast(char const *)
-	?qt_metacast@QGeoTiledMapData@QtMobility@@UAEPAXPBD@Z @ 1025 NONAME ; void * QtMobility::QGeoTiledMapData::qt_metacast(char const *)
-	?qt_metacast@QGeoTiledMapReply@QtMobility@@UAEPAXPBD@Z @ 1026 NONAME ; void * QtMobility::QGeoTiledMapReply::qt_metacast(char const *)
-	?qt_metacast@QGeoTiledMappingManagerEngine@QtMobility@@UAEPAXPBD@Z @ 1027 NONAME ; void * QtMobility::QGeoTiledMappingManagerEngine::qt_metacast(char const *)
-	?qt_metacast@QGraphicsGeoMap@QtMobility@@UAEPAXPBD@Z @ 1028 NONAME ; void * QtMobility::QGraphicsGeoMap::qt_metacast(char const *)
-	?qt_metacast@QLandmarkAbstractRequest@QtMobility@@UAEPAXPBD@Z @ 1029 NONAME ; void * QtMobility::QLandmarkAbstractRequest::qt_metacast(char const *)
-	?qt_metacast@QLandmarkCategoryFetchByIdRequest@QtMobility@@UAEPAXPBD@Z @ 1030 NONAME ; void * QtMobility::QLandmarkCategoryFetchByIdRequest::qt_metacast(char const *)
-	?qt_metacast@QLandmarkCategoryFetchRequest@QtMobility@@UAEPAXPBD@Z @ 1031 NONAME ; void * QtMobility::QLandmarkCategoryFetchRequest::qt_metacast(char const *)
-	?qt_metacast@QLandmarkCategoryIdFetchRequest@QtMobility@@UAEPAXPBD@Z @ 1032 NONAME ; void * QtMobility::QLandmarkCategoryIdFetchRequest::qt_metacast(char const *)
-	?qt_metacast@QLandmarkCategoryRemoveRequest@QtMobility@@UAEPAXPBD@Z @ 1033 NONAME ; void * QtMobility::QLandmarkCategoryRemoveRequest::qt_metacast(char const *)
-	?qt_metacast@QLandmarkCategorySaveRequest@QtMobility@@UAEPAXPBD@Z @ 1034 NONAME ; void * QtMobility::QLandmarkCategorySaveRequest::qt_metacast(char const *)
-	?qt_metacast@QLandmarkExportRequest@QtMobility@@UAEPAXPBD@Z @ 1035 NONAME ; void * QtMobility::QLandmarkExportRequest::qt_metacast(char const *)
-	?qt_metacast@QLandmarkFetchByIdRequest@QtMobility@@UAEPAXPBD@Z @ 1036 NONAME ; void * QtMobility::QLandmarkFetchByIdRequest::qt_metacast(char const *)
-	?qt_metacast@QLandmarkFetchRequest@QtMobility@@UAEPAXPBD@Z @ 1037 NONAME ; void * QtMobility::QLandmarkFetchRequest::qt_metacast(char const *)
-	?qt_metacast@QLandmarkIdFetchRequest@QtMobility@@UAEPAXPBD@Z @ 1038 NONAME ; void * QtMobility::QLandmarkIdFetchRequest::qt_metacast(char const *)
-	?qt_metacast@QLandmarkImportRequest@QtMobility@@UAEPAXPBD@Z @ 1039 NONAME ; void * QtMobility::QLandmarkImportRequest::qt_metacast(char const *)
-	?qt_metacast@QLandmarkManager@QtMobility@@UAEPAXPBD@Z @ 1040 NONAME ; void * QtMobility::QLandmarkManager::qt_metacast(char const *)
-	?qt_metacast@QLandmarkManagerEngine@QtMobility@@UAEPAXPBD@Z @ 1041 NONAME ; void * QtMobility::QLandmarkManagerEngine::qt_metacast(char const *)
-	?qt_metacast@QLandmarkRemoveRequest@QtMobility@@UAEPAXPBD@Z @ 1042 NONAME ; void * QtMobility::QLandmarkRemoveRequest::qt_metacast(char const *)
-	?qt_metacast@QLandmarkSaveRequest@QtMobility@@UAEPAXPBD@Z @ 1043 NONAME ; void * QtMobility::QLandmarkSaveRequest::qt_metacast(char const *)
-	?radius@QGeoBoundingCircle@QtMobility@@QBEMXZ @ 1044 NONAME ; float QtMobility::QGeoBoundingCircle::radius(void) const
-	?radius@QGeoMapCircleObject@QtMobility@@QBEMXZ @ 1045 NONAME ; float QtMobility::QGeoMapCircleObject::radius(void) const
-	?radius@QLandmark@QtMobility@@QBEMXZ @ 1046 NONAME ; float QtMobility::QLandmark::radius(void) const
-	?radius@QLandmarkProximityFilter@QtMobility@@QBEMXZ @ 1047 NONAME ; float QtMobility::QLandmarkProximityFilter::radius(void) const
-	?radiusChanged@QGeoMapCircleObject@QtMobility@@IAEXM@Z @ 1048 NONAME ; void QtMobility::QGeoMapCircleObject::radiusChanged(float)
-	?remove@QLandmarkIdFilter@QtMobility@@QAEXABVQLandmarkId@2@@Z @ 1049 NONAME ; void QtMobility::QLandmarkIdFilter::remove(class QtMobility::QLandmarkId const &)
-	?remove@QLandmarkIntersectionFilter@QtMobility@@QAEXABVQLandmarkFilter@2@@Z @ 1050 NONAME ; void QtMobility::QLandmarkIntersectionFilter::remove(class QtMobility::QLandmarkFilter const &)
-	?remove@QLandmarkUnionFilter@QtMobility@@QAEXABVQLandmarkFilter@2@@Z @ 1051 NONAME ; void QtMobility::QLandmarkUnionFilter::remove(class QtMobility::QLandmarkFilter const &)
-	?removeAttribute@QLandmarkAttributeFilter@QtMobility@@QAEXABVQString@@@Z @ 1052 NONAME ; void QtMobility::QLandmarkAttributeFilter::removeAttribute(class QString const &)
-	?removeCategory@QLandmarkManager@QtMobility@@QAE_NABVQLandmarkCategoryId@2@@Z @ 1053 NONAME ; bool QtMobility::QLandmarkManager::removeCategory(class QtMobility::QLandmarkCategoryId const &)
-	?removeCategory@QLandmarkManagerEngine@QtMobility@@UAE_NABVQLandmarkCategoryId@2@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 1054 NONAME ; bool QtMobility::QLandmarkManagerEngine::removeCategory(class QtMobility::QLandmarkCategoryId const &, enum QtMobility::QLandmarkManager::Error *, class QString *)
-	?removeCategoryId@QLandmark@QtMobility@@QAEXABVQLandmarkCategoryId@2@@Z @ 1055 NONAME ; void QtMobility::QLandmark::removeCategoryId(class QtMobility::QLandmarkCategoryId const &)
-	?removeChildObject@QGeoMapGroupObject@QtMobility@@QAEXPAVQGeoMapObject@2@@Z @ 1056 NONAME ; void QtMobility::QGeoMapGroupObject::removeChildObject(class QtMobility::QGeoMapObject *)
-	?removeLandmark@QLandmarkManager@QtMobility@@QAE_NABVQLandmarkId@2@@Z @ 1057 NONAME ; bool QtMobility::QLandmarkManager::removeLandmark(class QtMobility::QLandmarkId const &)
-	?removeLandmark@QLandmarkManagerEngine@QtMobility@@UAE_NABVQLandmarkId@2@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 1058 NONAME ; bool QtMobility::QLandmarkManagerEngine::removeLandmark(class QtMobility::QLandmarkId const &, enum QtMobility::QLandmarkManager::Error *, class QString *)
-	?removeLandmarks@QLandmarkManager@QtMobility@@QAE_NABV?$QList@VQLandmarkId@QtMobility@@@@PAV?$QMap@HW4Error@QLandmarkManager@QtMobility@@@@@Z @ 1059 NONAME ; bool QtMobility::QLandmarkManager::removeLandmarks(class QList<class QtMobility::QLandmarkId> const &, class QMap<int, enum QtMobility::QLandmarkManager::Error> *)
-	?removeLandmarks@QLandmarkManagerEngine@QtMobility@@UAE_NABV?$QList@VQLandmarkId@QtMobility@@@@PAV?$QMap@HW4Error@QLandmarkManager@QtMobility@@@@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 1060 NONAME ; bool QtMobility::QLandmarkManagerEngine::removeLandmarks(class QList<class QtMobility::QLandmarkId> const &, class QMap<int, enum QtMobility::QLandmarkManager::Error> *, enum QtMobility::QLandmarkManager::Error *, class QString *)
-	?removeMapObject@QGeoMapData@QtMobility@@QAEXPAVQGeoMapObject@2@@Z @ 1061 NONAME ; void QtMobility::QGeoMapData::removeMapObject(class QtMobility::QGeoMapObject *)
-	?removeMapObject@QGraphicsGeoMap@QtMobility@@QAEXPAVQGeoMapObject@2@@Z @ 1062 NONAME ; void QtMobility::QGraphicsGeoMap::removeMapObject(class QtMobility::QGeoMapObject *)
-	?removeMapOverlay@QGeoMapData@QtMobility@@QAEXPAVQGeoMapOverlay@2@@Z @ 1063 NONAME ; void QtMobility::QGeoMapData::removeMapOverlay(class QtMobility::QGeoMapOverlay *)
-	?request@QGeoRoute@QtMobility@@QBE?AVQGeoRouteRequest@2@XZ @ 1064 NONAME ; class QtMobility::QGeoRouteRequest QtMobility::QGeoRoute::request(void) const
-	?request@QGeoRouteReply@QtMobility@@QBE?AVQGeoRouteRequest@2@XZ @ 1065 NONAME ; class QtMobility::QGeoRouteRequest QtMobility::QGeoRouteReply::request(void) const
-	?request@QGeoTiledMapReply@QtMobility@@QBE?AVQGeoTiledMapRequest@2@XZ @ 1066 NONAME ; class QtMobility::QGeoTiledMapRequest QtMobility::QGeoTiledMapReply::request(void) const
-	?requestDestroyed@QLandmarkManagerEngine@QtMobility@@UAEXPAVQLandmarkAbstractRequest@2@@Z @ 1067 NONAME ; void QtMobility::QLandmarkManagerEngine::requestDestroyed(class QtMobility::QLandmarkAbstractRequest *)
-	?resizeEvent@QGraphicsGeoMap@QtMobility@@MAEXPAVQGraphicsSceneResizeEvent@@@Z @ 1068 NONAME ; void QtMobility::QGraphicsGeoMap::resizeEvent(class QGraphicsSceneResizeEvent *)
-	?resultsAvailable@QLandmarkAbstractRequest@QtMobility@@IAEXXZ @ 1069 NONAME ; void QtMobility::QLandmarkAbstractRequest::resultsAvailable(void)
-	?reverseGeocode@QGeoSearchManager@QtMobility@@QAEPAVQGeoSearchReply@2@ABVQGeoCoordinate@2@PAVQGeoBoundingArea@2@@Z @ 1070 NONAME ; class QtMobility::QGeoSearchReply * QtMobility::QGeoSearchManager::reverseGeocode(class QtMobility::QGeoCoordinate const &, class QtMobility::QGeoBoundingArea *)
-	?reverseGeocode@QGeoSearchManagerEngine@QtMobility@@UAEPAVQGeoSearchReply@2@ABVQGeoCoordinate@2@PAVQGeoBoundingArea@2@@Z @ 1071 NONAME ; class QtMobility::QGeoSearchReply * QtMobility::QGeoSearchManagerEngine::reverseGeocode(class QtMobility::QGeoCoordinate const &, class QtMobility::QGeoBoundingArea *)
-	?route@QGeoMapRouteObject@QtMobility@@QBE?AVQGeoRoute@2@XZ @ 1072 NONAME ; class QtMobility::QGeoRoute QtMobility::QGeoMapRouteObject::route(void) const
-	?routeChanged@QGeoMapRouteObject@QtMobility@@IAEXABVQGeoRoute@2@@Z @ 1073 NONAME ; void QtMobility::QGeoMapRouteObject::routeChanged(class QtMobility::QGeoRoute const &)
-	?routeId@QGeoRoute@QtMobility@@QBE?AVQString@@XZ @ 1074 NONAME ; class QString QtMobility::QGeoRoute::routeId(void) const
-	?routeOptimization@QGeoRouteRequest@QtMobility@@QBE?AV?$QFlags@W4RouteOptimization@QGeoRouteRequest@QtMobility@@@@XZ @ 1075 NONAME ; class QFlags<enum QtMobility::QGeoRouteRequest::RouteOptimization> QtMobility::QGeoRouteRequest::routeOptimization(void) const
-	?routeSegments@QGeoRoute@QtMobility@@QBE?AV?$QList@VQGeoRouteSegment@QtMobility@@@@XZ @ 1076 NONAME ; class QList<class QtMobility::QGeoRouteSegment> QtMobility::QGeoRoute::routeSegments(void) const
-	?routes@QGeoRouteReply@QtMobility@@QBE?AV?$QList@VQGeoRoute@QtMobility@@@@XZ @ 1077 NONAME ; class QList<class QtMobility::QGeoRoute> QtMobility::QGeoRouteReply::routes(void) const
-	?routingManager@QGeoServiceProvider@QtMobility@@QBEPAVQGeoRoutingManager@2@XZ @ 1078 NONAME ; class QtMobility::QGeoRoutingManager * QtMobility::QGeoServiceProvider::routingManager(void) const
-	?row@QGeoTiledMapRequest@QtMobility@@QBEHXZ @ 1079 NONAME ; int QtMobility::QGeoTiledMapRequest::row(void) const
-	?saveCategory@QLandmarkManager@QtMobility@@QAE_NPAVQLandmarkCategory@2@@Z @ 1080 NONAME ; bool QtMobility::QLandmarkManager::saveCategory(class QtMobility::QLandmarkCategory *)
-	?saveCategory@QLandmarkManagerEngine@QtMobility@@UAE_NPAVQLandmarkCategory@2@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 1081 NONAME ; bool QtMobility::QLandmarkManagerEngine::saveCategory(class QtMobility::QLandmarkCategory *, enum QtMobility::QLandmarkManager::Error *, class QString *)
-	?saveLandmark@QLandmarkManager@QtMobility@@QAE_NPAVQLandmark@2@@Z @ 1082 NONAME ; bool QtMobility::QLandmarkManager::saveLandmark(class QtMobility::QLandmark *)
-	?saveLandmark@QLandmarkManagerEngine@QtMobility@@UAE_NPAVQLandmark@2@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 1083 NONAME ; bool QtMobility::QLandmarkManagerEngine::saveLandmark(class QtMobility::QLandmark *, enum QtMobility::QLandmarkManager::Error *, class QString *)
-	?saveLandmarks@QLandmarkManager@QtMobility@@QAE_NPAV?$QList@VQLandmark@QtMobility@@@@PAV?$QMap@HW4Error@QLandmarkManager@QtMobility@@@@@Z @ 1084 NONAME ; bool QtMobility::QLandmarkManager::saveLandmarks(class QList<class QtMobility::QLandmark> *, class QMap<int, enum QtMobility::QLandmarkManager::Error> *)
-	?saveLandmarks@QLandmarkManagerEngine@QtMobility@@UAE_NPAV?$QList@VQLandmark@QtMobility@@@@PAV?$QMap@HW4Error@QLandmarkManager@QtMobility@@@@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 1085 NONAME ; bool QtMobility::QLandmarkManagerEngine::saveLandmarks(class QList<class QtMobility::QLandmark> *, class QMap<int, enum QtMobility::QLandmarkManager::Error> *, enum QtMobility::QLandmarkManager::Error *, class QString *)
-	?screenPositionToCoordinate@QGeoTiledMapData@QtMobility@@UBE?AVQGeoCoordinate@2@ABVQPointF@@@Z @ 1086 NONAME ; class QtMobility::QGeoCoordinate QtMobility::QGeoTiledMapData::screenPositionToCoordinate(class QPointF const &) const
-	?screenPositionToCoordinate@QGraphicsGeoMap@QtMobility@@QBE?AVQGeoCoordinate@2@VQPointF@@@Z @ 1087 NONAME ; class QtMobility::QGeoCoordinate QtMobility::QGraphicsGeoMap::screenPositionToCoordinate(class QPointF) const
-	?search@QGeoSearchManager@QtMobility@@QAEPAVQGeoSearchReply@2@ABVQString@@V?$QFlags@W4SearchType@QGeoSearchManager@QtMobility@@@@HHPAVQGeoBoundingArea@2@@Z @ 1088 NONAME ; class QtMobility::QGeoSearchReply * QtMobility::QGeoSearchManager::search(class QString const &, class QFlags<enum QtMobility::QGeoSearchManager::SearchType>, int, int, class QtMobility::QGeoBoundingArea *)
-	?search@QGeoSearchManagerEngine@QtMobility@@UAEPAVQGeoSearchReply@2@ABVQString@@V?$QFlags@W4SearchType@QGeoSearchManager@QtMobility@@@@HHPAVQGeoBoundingArea@2@@Z @ 1089 NONAME ; class QtMobility::QGeoSearchReply * QtMobility::QGeoSearchManagerEngine::search(class QString const &, class QFlags<enum QtMobility::QGeoSearchManager::SearchType>, int, int, class QtMobility::QGeoBoundingArea *)
-	?searchManager@QGeoServiceProvider@QtMobility@@QBEPAVQGeoSearchManager@2@XZ @ 1090 NONAME ; class QtMobility::QGeoSearchManager * QtMobility::QGeoServiceProvider::searchManager(void) const
+	?parseUri@QLandmarkManager@QtMobility@@SA_NABVQString@@PAV3@PAV?$QMap@VQString@@V1@@@@Z @ 938 NONAME ; bool QtMobility::QLandmarkManager::parseUri(class QString const &, class QString *, class QMap<class QString, class QString> *)
+	?path@QGeoMapPolygonObject@QtMobility@@QBE?AV?$QList@VQGeoCoordinate@QtMobility@@@@XZ @ 939 NONAME ; class QList<class QtMobility::QGeoCoordinate> QtMobility::QGeoMapPolygonObject::path(void) const
+	?path@QGeoMapPolylineObject@QtMobility@@QBE?AV?$QList@VQGeoCoordinate@QtMobility@@@@XZ @ 940 NONAME ; class QList<class QtMobility::QGeoCoordinate> QtMobility::QGeoMapPolylineObject::path(void) const
+	?path@QGeoRoute@QtMobility@@QBE?AV?$QList@VQGeoCoordinate@QtMobility@@@@XZ @ 941 NONAME ; class QList<class QtMobility::QGeoCoordinate> QtMobility::QGeoRoute::path(void) const
+	?path@QGeoRouteSegment@QtMobility@@QBE?AV?$QList@VQGeoCoordinate@QtMobility@@@@XZ @ 942 NONAME ; class QList<class QtMobility::QGeoCoordinate> QtMobility::QGeoRouteSegment::path(void) const
+	?pathChanged@QGeoMapPolygonObject@QtMobility@@IAEXABV?$QList@VQGeoCoordinate@QtMobility@@@@@Z @ 943 NONAME ; void QtMobility::QGeoMapPolygonObject::pathChanged(class QList<class QtMobility::QGeoCoordinate> const &)
+	?pathChanged@QGeoMapPolylineObject@QtMobility@@IAEXABV?$QList@VQGeoCoordinate@QtMobility@@@@@Z @ 944 NONAME ; void QtMobility::QGeoMapPolylineObject::pathChanged(class QList<class QtMobility::QGeoCoordinate> const &)
+	?pen@QGeoMapCircleObject@QtMobility@@QBE?AVQPen@@XZ @ 945 NONAME ; class QPen QtMobility::QGeoMapCircleObject::pen(void) const
+	?pen@QGeoMapPolygonObject@QtMobility@@QBE?AVQPen@@XZ @ 946 NONAME ; class QPen QtMobility::QGeoMapPolygonObject::pen(void) const
+	?pen@QGeoMapPolylineObject@QtMobility@@QBE?AVQPen@@XZ @ 947 NONAME ; class QPen QtMobility::QGeoMapPolylineObject::pen(void) const
+	?pen@QGeoMapRectangleObject@QtMobility@@QBE?AVQPen@@XZ @ 948 NONAME ; class QPen QtMobility::QGeoMapRectangleObject::pen(void) const
+	?pen@QGeoMapRouteObject@QtMobility@@QBE?AVQPen@@XZ @ 949 NONAME ; class QPen QtMobility::QGeoMapRouteObject::pen(void) const
+	?pen@QGeoMapTextObject@QtMobility@@QBE?AVQPen@@XZ @ 950 NONAME ; class QPen QtMobility::QGeoMapTextObject::pen(void) const
+	?penChanged@QGeoMapCircleObject@QtMobility@@IAEXABVQPen@@@Z @ 951 NONAME ; void QtMobility::QGeoMapCircleObject::penChanged(class QPen const &)
+	?penChanged@QGeoMapPolygonObject@QtMobility@@IAEXABVQPen@@@Z @ 952 NONAME ; void QtMobility::QGeoMapPolygonObject::penChanged(class QPen const &)
+	?penChanged@QGeoMapPolylineObject@QtMobility@@IAEXABVQPen@@@Z @ 953 NONAME ; void QtMobility::QGeoMapPolylineObject::penChanged(class QPen const &)
+	?penChanged@QGeoMapRectangleObject@QtMobility@@IAEXABVQPen@@@Z @ 954 NONAME ; void QtMobility::QGeoMapRectangleObject::penChanged(class QPen const &)
+	?penChanged@QGeoMapRouteObject@QtMobility@@IAEXABVQPen@@@Z @ 955 NONAME ; void QtMobility::QGeoMapRouteObject::penChanged(class QPen const &)
+	?penChanged@QGeoMapTextObject@QtMobility@@IAEXABVQPen@@@Z @ 956 NONAME ; void QtMobility::QGeoMapTextObject::penChanged(class QPen const &)
+	?phoneNumber@QLandmark@QtMobility@@QBE?AVQString@@XZ @ 957 NONAME ; class QString QtMobility::QLandmark::phoneNumber(void) const
+	?pixmap@QGeoMapPixmapObject@QtMobility@@QBE?AVQPixmap@@XZ @ 958 NONAME ; class QPixmap QtMobility::QGeoMapPixmapObject::pixmap(void) const
+	?pixmapChanged@QGeoMapPixmapObject@QtMobility@@IAEXABVQPixmap@@@Z @ 959 NONAME ; void QtMobility::QGeoMapPixmapObject::pixmapChanged(class QPixmap const &)
+	?places@QGeoSearchReply@QtMobility@@QBE?AV?$QList@VQGeoPlace@QtMobility@@@@XZ @ 960 NONAME ; class QList<class QtMobility::QGeoPlace> QtMobility::QGeoSearchReply::places(void) const
+	?position@QGeoManeuver@QtMobility@@QBE?AVQGeoCoordinate@2@XZ @ 961 NONAME ; class QtMobility::QGeoCoordinate QtMobility::QGeoManeuver::position(void) const
+	?postCode@QGeoAddress@QtMobility@@QBE?AVQString@@XZ @ 962 NONAME ; class QString QtMobility::QGeoAddress::postCode(void) const
+	?prepend@QLandmarkIntersectionFilter@QtMobility@@QAEXABVQLandmarkFilter@2@@Z @ 963 NONAME ; void QtMobility::QLandmarkIntersectionFilter::prepend(class QtMobility::QLandmarkFilter const &)
+	?prepend@QLandmarkUnionFilter@QtMobility@@QAEXABVQLandmarkFilter@2@@Z @ 964 NONAME ; void QtMobility::QLandmarkUnionFilter::prepend(class QtMobility::QLandmarkFilter const &)
+	?processRequests@QGeoTiledMapData@QtMobility@@AAEXXZ @ 965 NONAME ; void QtMobility::QGeoTiledMapData::processRequests(void)
+	?qHash@QtMobility@@YAIABVQGeoTiledMapRequest@1@@Z @ 966 NONAME ; unsigned int QtMobility::qHash(class QtMobility::QGeoTiledMapRequest const &)
+	?qt_metacall@QGeoMapCircleObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 967 NONAME ; int QtMobility::QGeoMapCircleObject::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoMapData@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 968 NONAME ; int QtMobility::QGeoMapData::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoMapGroupObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 969 NONAME ; int QtMobility::QGeoMapGroupObject::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoMapObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 970 NONAME ; int QtMobility::QGeoMapObject::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoMapObjectInfo@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 971 NONAME ; int QtMobility::QGeoMapObjectInfo::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoMapPixmapObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 972 NONAME ; int QtMobility::QGeoMapPixmapObject::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoMapPolygonObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 973 NONAME ; int QtMobility::QGeoMapPolygonObject::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoMapPolylineObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 974 NONAME ; int QtMobility::QGeoMapPolylineObject::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoMapRectangleObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 975 NONAME ; int QtMobility::QGeoMapRectangleObject::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoMapRouteObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 976 NONAME ; int QtMobility::QGeoMapRouteObject::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoMapTextObject@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 977 NONAME ; int QtMobility::QGeoMapTextObject::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoMappingManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 978 NONAME ; int QtMobility::QGeoMappingManager::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoMappingManagerEngine@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 979 NONAME ; int QtMobility::QGeoMappingManagerEngine::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoRouteReply@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 980 NONAME ; int QtMobility::QGeoRouteReply::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoRoutingManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 981 NONAME ; int QtMobility::QGeoRoutingManager::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoRoutingManagerEngine@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 982 NONAME ; int QtMobility::QGeoRoutingManagerEngine::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoSearchManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 983 NONAME ; int QtMobility::QGeoSearchManager::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoSearchManagerEngine@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 984 NONAME ; int QtMobility::QGeoSearchManagerEngine::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoSearchReply@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 985 NONAME ; int QtMobility::QGeoSearchReply::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoTiledMapData@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 986 NONAME ; int QtMobility::QGeoTiledMapData::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoTiledMapReply@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 987 NONAME ; int QtMobility::QGeoTiledMapReply::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoTiledMappingManagerEngine@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 988 NONAME ; int QtMobility::QGeoTiledMappingManagerEngine::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGraphicsGeoMap@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 989 NONAME ; int QtMobility::QGraphicsGeoMap::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLandmarkAbstractRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 990 NONAME ; int QtMobility::QLandmarkAbstractRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLandmarkCategoryFetchByIdRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 991 NONAME ; int QtMobility::QLandmarkCategoryFetchByIdRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLandmarkCategoryFetchRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 992 NONAME ; int QtMobility::QLandmarkCategoryFetchRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLandmarkCategoryIdFetchRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 993 NONAME ; int QtMobility::QLandmarkCategoryIdFetchRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLandmarkCategoryRemoveRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 994 NONAME ; int QtMobility::QLandmarkCategoryRemoveRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLandmarkCategorySaveRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 995 NONAME ; int QtMobility::QLandmarkCategorySaveRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLandmarkExportRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 996 NONAME ; int QtMobility::QLandmarkExportRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLandmarkFetchByIdRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 997 NONAME ; int QtMobility::QLandmarkFetchByIdRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLandmarkFetchRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 998 NONAME ; int QtMobility::QLandmarkFetchRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLandmarkIdFetchRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 999 NONAME ; int QtMobility::QLandmarkIdFetchRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLandmarkImportRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1000 NONAME ; int QtMobility::QLandmarkImportRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLandmarkManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1001 NONAME ; int QtMobility::QLandmarkManager::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLandmarkManagerEngine@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1002 NONAME ; int QtMobility::QLandmarkManagerEngine::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLandmarkRemoveRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1003 NONAME ; int QtMobility::QLandmarkRemoveRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QLandmarkSaveRequest@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1004 NONAME ; int QtMobility::QLandmarkSaveRequest::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacast@QGeoMapCircleObject@QtMobility@@UAEPAXPBD@Z @ 1005 NONAME ; void * QtMobility::QGeoMapCircleObject::qt_metacast(char const *)
+	?qt_metacast@QGeoMapData@QtMobility@@UAEPAXPBD@Z @ 1006 NONAME ; void * QtMobility::QGeoMapData::qt_metacast(char const *)
+	?qt_metacast@QGeoMapGroupObject@QtMobility@@UAEPAXPBD@Z @ 1007 NONAME ; void * QtMobility::QGeoMapGroupObject::qt_metacast(char const *)
+	?qt_metacast@QGeoMapObject@QtMobility@@UAEPAXPBD@Z @ 1008 NONAME ; void * QtMobility::QGeoMapObject::qt_metacast(char const *)
+	?qt_metacast@QGeoMapObjectInfo@QtMobility@@UAEPAXPBD@Z @ 1009 NONAME ; void * QtMobility::QGeoMapObjectInfo::qt_metacast(char const *)
+	?qt_metacast@QGeoMapPixmapObject@QtMobility@@UAEPAXPBD@Z @ 1010 NONAME ; void * QtMobility::QGeoMapPixmapObject::qt_metacast(char const *)
+	?qt_metacast@QGeoMapPolygonObject@QtMobility@@UAEPAXPBD@Z @ 1011 NONAME ; void * QtMobility::QGeoMapPolygonObject::qt_metacast(char const *)
+	?qt_metacast@QGeoMapPolylineObject@QtMobility@@UAEPAXPBD@Z @ 1012 NONAME ; void * QtMobility::QGeoMapPolylineObject::qt_metacast(char const *)
+	?qt_metacast@QGeoMapRectangleObject@QtMobility@@UAEPAXPBD@Z @ 1013 NONAME ; void * QtMobility::QGeoMapRectangleObject::qt_metacast(char const *)
+	?qt_metacast@QGeoMapRouteObject@QtMobility@@UAEPAXPBD@Z @ 1014 NONAME ; void * QtMobility::QGeoMapRouteObject::qt_metacast(char const *)
+	?qt_metacast@QGeoMapTextObject@QtMobility@@UAEPAXPBD@Z @ 1015 NONAME ; void * QtMobility::QGeoMapTextObject::qt_metacast(char const *)
+	?qt_metacast@QGeoMappingManager@QtMobility@@UAEPAXPBD@Z @ 1016 NONAME ; void * QtMobility::QGeoMappingManager::qt_metacast(char const *)
+	?qt_metacast@QGeoMappingManagerEngine@QtMobility@@UAEPAXPBD@Z @ 1017 NONAME ; void * QtMobility::QGeoMappingManagerEngine::qt_metacast(char const *)
+	?qt_metacast@QGeoRouteReply@QtMobility@@UAEPAXPBD@Z @ 1018 NONAME ; void * QtMobility::QGeoRouteReply::qt_metacast(char const *)
+	?qt_metacast@QGeoRoutingManager@QtMobility@@UAEPAXPBD@Z @ 1019 NONAME ; void * QtMobility::QGeoRoutingManager::qt_metacast(char const *)
+	?qt_metacast@QGeoRoutingManagerEngine@QtMobility@@UAEPAXPBD@Z @ 1020 NONAME ; void * QtMobility::QGeoRoutingManagerEngine::qt_metacast(char const *)
+	?qt_metacast@QGeoSearchManager@QtMobility@@UAEPAXPBD@Z @ 1021 NONAME ; void * QtMobility::QGeoSearchManager::qt_metacast(char const *)
+	?qt_metacast@QGeoSearchManagerEngine@QtMobility@@UAEPAXPBD@Z @ 1022 NONAME ; void * QtMobility::QGeoSearchManagerEngine::qt_metacast(char const *)
+	?qt_metacast@QGeoSearchReply@QtMobility@@UAEPAXPBD@Z @ 1023 NONAME ; void * QtMobility::QGeoSearchReply::qt_metacast(char const *)
+	?qt_metacast@QGeoTiledMapData@QtMobility@@UAEPAXPBD@Z @ 1024 NONAME ; void * QtMobility::QGeoTiledMapData::qt_metacast(char const *)
+	?qt_metacast@QGeoTiledMapReply@QtMobility@@UAEPAXPBD@Z @ 1025 NONAME ; void * QtMobility::QGeoTiledMapReply::qt_metacast(char const *)
+	?qt_metacast@QGeoTiledMappingManagerEngine@QtMobility@@UAEPAXPBD@Z @ 1026 NONAME ; void * QtMobility::QGeoTiledMappingManagerEngine::qt_metacast(char const *)
+	?qt_metacast@QGraphicsGeoMap@QtMobility@@UAEPAXPBD@Z @ 1027 NONAME ; void * QtMobility::QGraphicsGeoMap::qt_metacast(char const *)
+	?qt_metacast@QLandmarkAbstractRequest@QtMobility@@UAEPAXPBD@Z @ 1028 NONAME ; void * QtMobility::QLandmarkAbstractRequest::qt_metacast(char const *)
+	?qt_metacast@QLandmarkCategoryFetchByIdRequest@QtMobility@@UAEPAXPBD@Z @ 1029 NONAME ; void * QtMobility::QLandmarkCategoryFetchByIdRequest::qt_metacast(char const *)
+	?qt_metacast@QLandmarkCategoryFetchRequest@QtMobility@@UAEPAXPBD@Z @ 1030 NONAME ; void * QtMobility::QLandmarkCategoryFetchRequest::qt_metacast(char const *)
+	?qt_metacast@QLandmarkCategoryIdFetchRequest@QtMobility@@UAEPAXPBD@Z @ 1031 NONAME ; void * QtMobility::QLandmarkCategoryIdFetchRequest::qt_metacast(char const *)
+	?qt_metacast@QLandmarkCategoryRemoveRequest@QtMobility@@UAEPAXPBD@Z @ 1032 NONAME ; void * QtMobility::QLandmarkCategoryRemoveRequest::qt_metacast(char const *)
+	?qt_metacast@QLandmarkCategorySaveRequest@QtMobility@@UAEPAXPBD@Z @ 1033 NONAME ; void * QtMobility::QLandmarkCategorySaveRequest::qt_metacast(char const *)
+	?qt_metacast@QLandmarkExportRequest@QtMobility@@UAEPAXPBD@Z @ 1034 NONAME ; void * QtMobility::QLandmarkExportRequest::qt_metacast(char const *)
+	?qt_metacast@QLandmarkFetchByIdRequest@QtMobility@@UAEPAXPBD@Z @ 1035 NONAME ; void * QtMobility::QLandmarkFetchByIdRequest::qt_metacast(char const *)
+	?qt_metacast@QLandmarkFetchRequest@QtMobility@@UAEPAXPBD@Z @ 1036 NONAME ; void * QtMobility::QLandmarkFetchRequest::qt_metacast(char const *)
+	?qt_metacast@QLandmarkIdFetchRequest@QtMobility@@UAEPAXPBD@Z @ 1037 NONAME ; void * QtMobility::QLandmarkIdFetchRequest::qt_metacast(char const *)
+	?qt_metacast@QLandmarkImportRequest@QtMobility@@UAEPAXPBD@Z @ 1038 NONAME ; void * QtMobility::QLandmarkImportRequest::qt_metacast(char const *)
+	?qt_metacast@QLandmarkManager@QtMobility@@UAEPAXPBD@Z @ 1039 NONAME ; void * QtMobility::QLandmarkManager::qt_metacast(char const *)
+	?qt_metacast@QLandmarkManagerEngine@QtMobility@@UAEPAXPBD@Z @ 1040 NONAME ; void * QtMobility::QLandmarkManagerEngine::qt_metacast(char const *)
+	?qt_metacast@QLandmarkRemoveRequest@QtMobility@@UAEPAXPBD@Z @ 1041 NONAME ; void * QtMobility::QLandmarkRemoveRequest::qt_metacast(char const *)
+	?qt_metacast@QLandmarkSaveRequest@QtMobility@@UAEPAXPBD@Z @ 1042 NONAME ; void * QtMobility::QLandmarkSaveRequest::qt_metacast(char const *)
+	?radius@QGeoBoundingCircle@QtMobility@@QBEMXZ @ 1043 NONAME ; float QtMobility::QGeoBoundingCircle::radius(void) const
+	?radius@QGeoMapCircleObject@QtMobility@@QBEMXZ @ 1044 NONAME ; float QtMobility::QGeoMapCircleObject::radius(void) const
+	?radius@QLandmark@QtMobility@@QBEMXZ @ 1045 NONAME ; float QtMobility::QLandmark::radius(void) const
+	?radius@QLandmarkProximityFilter@QtMobility@@QBEMXZ @ 1046 NONAME ; float QtMobility::QLandmarkProximityFilter::radius(void) const
+	?radiusChanged@QGeoMapCircleObject@QtMobility@@IAEXM@Z @ 1047 NONAME ; void QtMobility::QGeoMapCircleObject::radiusChanged(float)
+	?remove@QLandmarkIdFilter@QtMobility@@QAEXABVQLandmarkId@2@@Z @ 1048 NONAME ; void QtMobility::QLandmarkIdFilter::remove(class QtMobility::QLandmarkId const &)
+	?remove@QLandmarkIntersectionFilter@QtMobility@@QAEXABVQLandmarkFilter@2@@Z @ 1049 NONAME ; void QtMobility::QLandmarkIntersectionFilter::remove(class QtMobility::QLandmarkFilter const &)
+	?remove@QLandmarkUnionFilter@QtMobility@@QAEXABVQLandmarkFilter@2@@Z @ 1050 NONAME ; void QtMobility::QLandmarkUnionFilter::remove(class QtMobility::QLandmarkFilter const &)
+	?removeAttribute@QLandmarkAttributeFilter@QtMobility@@QAEXABVQString@@@Z @ 1051 NONAME ; void QtMobility::QLandmarkAttributeFilter::removeAttribute(class QString const &)
+	?removeCategory@QLandmarkManager@QtMobility@@QAE_NABVQLandmarkCategoryId@2@@Z @ 1052 NONAME ; bool QtMobility::QLandmarkManager::removeCategory(class QtMobility::QLandmarkCategoryId const &)
+	?removeCategory@QLandmarkManagerEngine@QtMobility@@UAE_NABVQLandmarkCategoryId@2@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 1053 NONAME ; bool QtMobility::QLandmarkManagerEngine::removeCategory(class QtMobility::QLandmarkCategoryId const &, enum QtMobility::QLandmarkManager::Error *, class QString *)
+	?removeCategoryId@QLandmark@QtMobility@@QAEXABVQLandmarkCategoryId@2@@Z @ 1054 NONAME ; void QtMobility::QLandmark::removeCategoryId(class QtMobility::QLandmarkCategoryId const &)
+	?removeChildObject@QGeoMapGroupObject@QtMobility@@QAEXPAVQGeoMapObject@2@@Z @ 1055 NONAME ; void QtMobility::QGeoMapGroupObject::removeChildObject(class QtMobility::QGeoMapObject *)
+	?removeLandmark@QLandmarkManager@QtMobility@@QAE_NABVQLandmarkId@2@@Z @ 1056 NONAME ; bool QtMobility::QLandmarkManager::removeLandmark(class QtMobility::QLandmarkId const &)
+	?removeLandmark@QLandmarkManagerEngine@QtMobility@@UAE_NABVQLandmarkId@2@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 1057 NONAME ; bool QtMobility::QLandmarkManagerEngine::removeLandmark(class QtMobility::QLandmarkId const &, enum QtMobility::QLandmarkManager::Error *, class QString *)
+	?removeLandmarks@QLandmarkManager@QtMobility@@QAE_NABV?$QList@VQLandmarkId@QtMobility@@@@PAV?$QMap@HW4Error@QLandmarkManager@QtMobility@@@@@Z @ 1058 NONAME ; bool QtMobility::QLandmarkManager::removeLandmarks(class QList<class QtMobility::QLandmarkId> const &, class QMap<int, enum QtMobility::QLandmarkManager::Error> *)
+	?removeLandmarks@QLandmarkManagerEngine@QtMobility@@UAE_NABV?$QList@VQLandmarkId@QtMobility@@@@PAV?$QMap@HW4Error@QLandmarkManager@QtMobility@@@@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 1059 NONAME ; bool QtMobility::QLandmarkManagerEngine::removeLandmarks(class QList<class QtMobility::QLandmarkId> const &, class QMap<int, enum QtMobility::QLandmarkManager::Error> *, enum QtMobility::QLandmarkManager::Error *, class QString *)
+	?removeMapObject@QGeoMapData@QtMobility@@QAEXPAVQGeoMapObject@2@@Z @ 1060 NONAME ; void QtMobility::QGeoMapData::removeMapObject(class QtMobility::QGeoMapObject *)
+	?removeMapObject@QGraphicsGeoMap@QtMobility@@QAEXPAVQGeoMapObject@2@@Z @ 1061 NONAME ; void QtMobility::QGraphicsGeoMap::removeMapObject(class QtMobility::QGeoMapObject *)
+	?removeMapOverlay@QGeoMapData@QtMobility@@QAEXPAVQGeoMapOverlay@2@@Z @ 1062 NONAME ; void QtMobility::QGeoMapData::removeMapOverlay(class QtMobility::QGeoMapOverlay *)
+	?request@QGeoRoute@QtMobility@@QBE?AVQGeoRouteRequest@2@XZ @ 1063 NONAME ; class QtMobility::QGeoRouteRequest QtMobility::QGeoRoute::request(void) const
+	?request@QGeoRouteReply@QtMobility@@QBE?AVQGeoRouteRequest@2@XZ @ 1064 NONAME ; class QtMobility::QGeoRouteRequest QtMobility::QGeoRouteReply::request(void) const
+	?request@QGeoTiledMapReply@QtMobility@@QBE?AVQGeoTiledMapRequest@2@XZ @ 1065 NONAME ; class QtMobility::QGeoTiledMapRequest QtMobility::QGeoTiledMapReply::request(void) const
+	?requestDestroyed@QLandmarkManagerEngine@QtMobility@@UAEXPAVQLandmarkAbstractRequest@2@@Z @ 1066 NONAME ; void QtMobility::QLandmarkManagerEngine::requestDestroyed(class QtMobility::QLandmarkAbstractRequest *)
+	?resizeEvent@QGraphicsGeoMap@QtMobility@@MAEXPAVQGraphicsSceneResizeEvent@@@Z @ 1067 NONAME ; void QtMobility::QGraphicsGeoMap::resizeEvent(class QGraphicsSceneResizeEvent *)
+	?resultsAvailable@QLandmarkAbstractRequest@QtMobility@@IAEXXZ @ 1068 NONAME ; void QtMobility::QLandmarkAbstractRequest::resultsAvailable(void)
+	?reverseGeocode@QGeoSearchManager@QtMobility@@QAEPAVQGeoSearchReply@2@ABVQGeoCoordinate@2@PAVQGeoBoundingArea@2@@Z @ 1069 NONAME ; class QtMobility::QGeoSearchReply * QtMobility::QGeoSearchManager::reverseGeocode(class QtMobility::QGeoCoordinate const &, class QtMobility::QGeoBoundingArea *)
+	?reverseGeocode@QGeoSearchManagerEngine@QtMobility@@UAEPAVQGeoSearchReply@2@ABVQGeoCoordinate@2@PAVQGeoBoundingArea@2@@Z @ 1070 NONAME ; class QtMobility::QGeoSearchReply * QtMobility::QGeoSearchManagerEngine::reverseGeocode(class QtMobility::QGeoCoordinate const &, class QtMobility::QGeoBoundingArea *)
+	?route@QGeoMapRouteObject@QtMobility@@QBE?AVQGeoRoute@2@XZ @ 1071 NONAME ; class QtMobility::QGeoRoute QtMobility::QGeoMapRouteObject::route(void) const
+	?routeChanged@QGeoMapRouteObject@QtMobility@@IAEXABVQGeoRoute@2@@Z @ 1072 NONAME ; void QtMobility::QGeoMapRouteObject::routeChanged(class QtMobility::QGeoRoute const &)
+	?routeId@QGeoRoute@QtMobility@@QBE?AVQString@@XZ @ 1073 NONAME ; class QString QtMobility::QGeoRoute::routeId(void) const
+	?routeOptimization@QGeoRouteRequest@QtMobility@@QBE?AV?$QFlags@W4RouteOptimization@QGeoRouteRequest@QtMobility@@@@XZ @ 1074 NONAME ; class QFlags<enum QtMobility::QGeoRouteRequest::RouteOptimization> QtMobility::QGeoRouteRequest::routeOptimization(void) const
+	?routeSegments@QGeoRoute@QtMobility@@QBE?AV?$QList@VQGeoRouteSegment@QtMobility@@@@XZ @ 1075 NONAME ; class QList<class QtMobility::QGeoRouteSegment> QtMobility::QGeoRoute::routeSegments(void) const
+	?routes@QGeoRouteReply@QtMobility@@QBE?AV?$QList@VQGeoRoute@QtMobility@@@@XZ @ 1076 NONAME ; class QList<class QtMobility::QGeoRoute> QtMobility::QGeoRouteReply::routes(void) const
+	?routingManager@QGeoServiceProvider@QtMobility@@QBEPAVQGeoRoutingManager@2@XZ @ 1077 NONAME ; class QtMobility::QGeoRoutingManager * QtMobility::QGeoServiceProvider::routingManager(void) const
+	?row@QGeoTiledMapRequest@QtMobility@@QBEHXZ @ 1078 NONAME ; int QtMobility::QGeoTiledMapRequest::row(void) const
+	?saveCategory@QLandmarkManager@QtMobility@@QAE_NPAVQLandmarkCategory@2@@Z @ 1079 NONAME ; bool QtMobility::QLandmarkManager::saveCategory(class QtMobility::QLandmarkCategory *)
+	?saveCategory@QLandmarkManagerEngine@QtMobility@@UAE_NPAVQLandmarkCategory@2@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 1080 NONAME ; bool QtMobility::QLandmarkManagerEngine::saveCategory(class QtMobility::QLandmarkCategory *, enum QtMobility::QLandmarkManager::Error *, class QString *)
+	?saveLandmark@QLandmarkManager@QtMobility@@QAE_NPAVQLandmark@2@@Z @ 1081 NONAME ; bool QtMobility::QLandmarkManager::saveLandmark(class QtMobility::QLandmark *)
+	?saveLandmark@QLandmarkManagerEngine@QtMobility@@UAE_NPAVQLandmark@2@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 1082 NONAME ; bool QtMobility::QLandmarkManagerEngine::saveLandmark(class QtMobility::QLandmark *, enum QtMobility::QLandmarkManager::Error *, class QString *)
+	?saveLandmarks@QLandmarkManager@QtMobility@@QAE_NPAV?$QList@VQLandmark@QtMobility@@@@PAV?$QMap@HW4Error@QLandmarkManager@QtMobility@@@@@Z @ 1083 NONAME ; bool QtMobility::QLandmarkManager::saveLandmarks(class QList<class QtMobility::QLandmark> *, class QMap<int, enum QtMobility::QLandmarkManager::Error> *)
+	?saveLandmarks@QLandmarkManagerEngine@QtMobility@@UAE_NPAV?$QList@VQLandmark@QtMobility@@@@PAV?$QMap@HW4Error@QLandmarkManager@QtMobility@@@@PAW4Error@QLandmarkManager@2@PAVQString@@@Z @ 1084 NONAME ; bool QtMobility::QLandmarkManagerEngine::saveLandmarks(class QList<class QtMobility::QLandmark> *, class QMap<int, enum QtMobility::QLandmarkManager::Error> *, enum QtMobility::QLandmarkManager::Error *, class QString *)
+	?screenPositionToCoordinate@QGeoTiledMapData@QtMobility@@UBE?AVQGeoCoordinate@2@ABVQPointF@@@Z @ 1085 NONAME ; class QtMobility::QGeoCoordinate QtMobility::QGeoTiledMapData::screenPositionToCoordinate(class QPointF const &) const
+	?screenPositionToCoordinate@QGraphicsGeoMap@QtMobility@@QBE?AVQGeoCoordinate@2@VQPointF@@@Z @ 1086 NONAME ; class QtMobility::QGeoCoordinate QtMobility::QGraphicsGeoMap::screenPositionToCoordinate(class QPointF) const
+	?search@QGeoSearchManager@QtMobility@@QAEPAVQGeoSearchReply@2@ABVQString@@V?$QFlags@W4SearchType@QGeoSearchManager@QtMobility@@@@HHPAVQGeoBoundingArea@2@@Z @ 1087 NONAME ; class QtMobility::QGeoSearchReply * QtMobility::QGeoSearchManager::search(class QString const &, class QFlags<enum QtMobility::QGeoSearchManager::SearchType>, int, int, class QtMobility::QGeoBoundingArea *)
+	?search@QGeoSearchManagerEngine@QtMobility@@UAEPAVQGeoSearchReply@2@ABVQString@@V?$QFlags@W4SearchType@QGeoSearchManager@QtMobility@@@@HHPAVQGeoBoundingArea@2@@Z @ 1088 NONAME ; class QtMobility::QGeoSearchReply * QtMobility::QGeoSearchManagerEngine::search(class QString const &, class QFlags<enum QtMobility::QGeoSearchManager::SearchType>, int, int, class QtMobility::QGeoBoundingArea *)
+	?searchManager@QGeoServiceProvider@QtMobility@@QBEPAVQGeoSearchManager@2@XZ @ 1089 NONAME ; class QtMobility::QGeoSearchManager * QtMobility::QGeoServiceProvider::searchManager(void) const
+	?searchableLandmarkAttributeKeys@QLandmarkManager@QtMobility@@QBE?AVQStringList@@XZ @ 1090 NONAME ; class QStringList QtMobility::QLandmarkManager::searchableLandmarkAttributeKeys(void) const
 	?segmentDetail@QGeoRouteRequest@QtMobility@@QBE?AW4SegmentDetail@12@XZ @ 1091 NONAME ; enum QtMobility::QGeoRouteRequest::SegmentDetail QtMobility::QGeoRouteRequest::segmentDetail(void) const
 	?selectedChanged@QGeoMapObject@QtMobility@@IAEX_N@Z @ 1092 NONAME ; void QtMobility::QGeoMapObject::selectedChanged(bool)
 	?selectedChanged@QGeoMapObjectInfo@QtMobility@@UAEX_N@Z @ 1093 NONAME ; void QtMobility::QGeoMapObjectInfo::selectedChanged(bool)
@@ -1146,11 +1146,11 @@ EXPORTS
 	?setDetailLevel@QGeoMapRouteObject@QtMobility@@QAEXI@Z @ 1145 NONAME ; void QtMobility::QGeoMapRouteObject::setDetailLevel(unsigned int)
 	?setDevice@QLandmarkExportRequest@QtMobility@@QAEXPAVQIODevice@@@Z @ 1146 NONAME ; void QtMobility::QLandmarkExportRequest::setDevice(class QIODevice *)
 	?setDevice@QLandmarkImportRequest@QtMobility@@QAEXPAVQIODevice@@@Z @ 1147 NONAME ; void QtMobility::QLandmarkImportRequest::setDevice(class QIODevice *)
-	?setDirection@QGeoInstruction@QtMobility@@QAEXW4InstructionDirection@12@@Z @ 1148 NONAME ; void QtMobility::QGeoInstruction::setDirection(enum QtMobility::QGeoInstruction::InstructionDirection)
+	?setDirection@QGeoManeuver@QtMobility@@QAEXW4InstructionDirection@12@@Z @ 1148 NONAME ; void QtMobility::QGeoManeuver::setDirection(enum QtMobility::QGeoManeuver::InstructionDirection)
 	?setDirection@QLandmarkSortOrder@QtMobility@@QAEXW4SortOrder@Qt@@@Z @ 1149 NONAME ; void QtMobility::QLandmarkSortOrder::setDirection(enum Qt::SortOrder)
 	?setDistance@QGeoRoute@QtMobility@@QAEXM@Z @ 1150 NONAME ; void QtMobility::QGeoRoute::setDistance(float)
 	?setDistance@QGeoRouteSegment@QtMobility@@QAEXM@Z @ 1151 NONAME ; void QtMobility::QGeoRouteSegment::setDistance(float)
-	?setDistanceToNextInstruction@QGeoInstruction@QtMobility@@QAEXM@Z @ 1152 NONAME ; void QtMobility::QGeoInstruction::setDistanceToNextInstruction(float)
+	?setDistanceToNextInstruction@QGeoManeuver@QtMobility@@QAEXM@Z @ 1152 NONAME ; void QtMobility::QGeoManeuver::setDistanceToNextInstruction(float)
 	?setDistrict@QGeoAddress@QtMobility@@QAEXABVQString@@@Z @ 1153 NONAME ; void QtMobility::QGeoAddress::setDistrict(class QString const &)
 	?setError@QGeoRouteReply@QtMobility@@IAEXW4Error@12@ABVQString@@@Z @ 1154 NONAME ; void QtMobility::QGeoRouteReply::setError(enum QtMobility::QGeoRouteReply::Error, class QString const &)
 	?setError@QGeoSearchReply@QtMobility@@IAEXW4Error@12@ABVQString@@@Z @ 1155 NONAME ; void QtMobility::QGeoSearchReply::setError(enum QtMobility::QGeoSearchReply::Error, class QString const &)
@@ -1171,40 +1171,40 @@ EXPORTS
 	?setHeight@QGeoBoundingBox@QtMobility@@QAEXN@Z @ 1170 NONAME ; void QtMobility::QGeoBoundingBox::setHeight(double)
 	?setIconUrl@QLandmark@QtMobility@@QAEXABVQUrl@@@Z @ 1171 NONAME ; void QtMobility::QLandmark::setIconUrl(class QUrl const &)
 	?setIconUrl@QLandmarkCategory@QtMobility@@QAEXABVQUrl@@@Z @ 1172 NONAME ; void QtMobility::QLandmarkCategory::setIconUrl(class QUrl const &)
-	?setInstruction@QGeoRouteSegment@QtMobility@@QAEXABVQGeoInstruction@2@@Z @ 1173 NONAME ; void QtMobility::QGeoRouteSegment::setInstruction(class QtMobility::QGeoInstruction const &)
-	?setInstructionDetail@QGeoRouteRequest@QtMobility@@QAEXW4InstructionDetail@12@@Z @ 1174 NONAME ; void QtMobility::QGeoRouteRequest::setInstructionDetail(enum QtMobility::QGeoRouteRequest::InstructionDetail)
-	?setInstructionText@QGeoInstruction@QtMobility@@QAEXABVQString@@@Z @ 1175 NONAME ; void QtMobility::QGeoInstruction::setInstructionText(class QString const &)
-	?setLandmark@QLandmarkSaveRequest@QtMobility@@QAEXABVQLandmark@2@@Z @ 1176 NONAME ; void QtMobility::QLandmarkSaveRequest::setLandmark(class QtMobility::QLandmark const &)
-	?setLandmarkId@QLandmark@QtMobility@@QAEXABVQLandmarkId@2@@Z @ 1177 NONAME ; void QtMobility::QLandmark::setLandmarkId(class QtMobility::QLandmarkId const &)
-	?setLandmarkId@QLandmarkFetchByIdRequest@QtMobility@@QAEXABVQLandmarkId@2@@Z @ 1178 NONAME ; void QtMobility::QLandmarkFetchByIdRequest::setLandmarkId(class QtMobility::QLandmarkId const &)
-	?setLandmarkId@QLandmarkRemoveRequest@QtMobility@@QAEXABVQLandmarkId@2@@Z @ 1179 NONAME ; void QtMobility::QLandmarkRemoveRequest::setLandmarkId(class QtMobility::QLandmarkId const &)
-	?setLandmarkIds@QLandmarkExportRequest@QtMobility@@QAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 1180 NONAME ; void QtMobility::QLandmarkExportRequest::setLandmarkIds(class QList<class QtMobility::QLandmarkId> const &)
-	?setLandmarkIds@QLandmarkFetchByIdRequest@QtMobility@@QAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 1181 NONAME ; void QtMobility::QLandmarkFetchByIdRequest::setLandmarkIds(class QList<class QtMobility::QLandmarkId> const &)
-	?setLandmarkIds@QLandmarkIdFilter@QtMobility@@QAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 1182 NONAME ; void QtMobility::QLandmarkIdFilter::setLandmarkIds(class QList<class QtMobility::QLandmarkId> const &)
-	?setLandmarkIds@QLandmarkRemoveRequest@QtMobility@@QAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 1183 NONAME ; void QtMobility::QLandmarkRemoveRequest::setLandmarkIds(class QList<class QtMobility::QLandmarkId> const &)
-	?setLandmarks@QLandmarkSaveRequest@QtMobility@@QAEXABV?$QList@VQLandmark@QtMobility@@@@@Z @ 1184 NONAME ; void QtMobility::QLandmarkSaveRequest::setLandmarks(class QList<class QtMobility::QLandmark> const &)
-	?setLimit@QGeoSearchReply@QtMobility@@IAEXH@Z @ 1185 NONAME ; void QtMobility::QGeoSearchReply::setLimit(int)
-	?setLimit@QLandmarkCategoryFetchRequest@QtMobility@@QAEXH@Z @ 1186 NONAME ; void QtMobility::QLandmarkCategoryFetchRequest::setLimit(int)
-	?setLimit@QLandmarkCategoryIdFetchRequest@QtMobility@@QAEXH@Z @ 1187 NONAME ; void QtMobility::QLandmarkCategoryIdFetchRequest::setLimit(int)
-	?setLimit@QLandmarkFetchRequest@QtMobility@@QAEXH@Z @ 1188 NONAME ; void QtMobility::QLandmarkFetchRequest::setLimit(int)
-	?setLimit@QLandmarkIdFetchRequest@QtMobility@@QAEXH@Z @ 1189 NONAME ; void QtMobility::QLandmarkIdFetchRequest::setLimit(int)
-	?setLocalId@QLandmarkCategoryId@QtMobility@@QAEXABVQString@@@Z @ 1190 NONAME ; void QtMobility::QLandmarkCategoryId::setLocalId(class QString const &)
-	?setLocalId@QLandmarkId@QtMobility@@QAEXABVQString@@@Z @ 1191 NONAME ; void QtMobility::QLandmarkId::setLocalId(class QString const &)
-	?setLocale@QGeoMappingManager@QtMobility@@QAEXABVQLocale@@@Z @ 1192 NONAME ; void QtMobility::QGeoMappingManager::setLocale(class QLocale const &)
-	?setLocale@QGeoMappingManagerEngine@QtMobility@@QAEXABVQLocale@@@Z @ 1193 NONAME ; void QtMobility::QGeoMappingManagerEngine::setLocale(class QLocale const &)
-	?setLocale@QGeoRoutingManager@QtMobility@@QAEXABVQLocale@@@Z @ 1194 NONAME ; void QtMobility::QGeoRoutingManager::setLocale(class QLocale const &)
-	?setLocale@QGeoRoutingManagerEngine@QtMobility@@QAEXABVQLocale@@@Z @ 1195 NONAME ; void QtMobility::QGeoRoutingManagerEngine::setLocale(class QLocale const &)
-	?setLocale@QGeoSearchManager@QtMobility@@QAEXABVQLocale@@@Z @ 1196 NONAME ; void QtMobility::QGeoSearchManager::setLocale(class QLocale const &)
-	?setLocale@QGeoSearchManagerEngine@QtMobility@@QAEXABVQLocale@@@Z @ 1197 NONAME ; void QtMobility::QGeoSearchManagerEngine::setLocale(class QLocale const &)
-	?setManager@QLandmarkAbstractRequest@QtMobility@@QAEXPAVQLandmarkManager@2@@Z @ 1198 NONAME ; void QtMobility::QLandmarkAbstractRequest::setManager(class QtMobility::QLandmarkManager *)
-	?setManagerName@QGeoMappingManagerEngine@QtMobility@@AAEXABVQString@@@Z @ 1199 NONAME ; void QtMobility::QGeoMappingManagerEngine::setManagerName(class QString const &)
-	?setManagerName@QGeoRoutingManagerEngine@QtMobility@@AAEXABVQString@@@Z @ 1200 NONAME ; void QtMobility::QGeoRoutingManagerEngine::setManagerName(class QString const &)
-	?setManagerName@QGeoSearchManagerEngine@QtMobility@@AAEXABVQString@@@Z @ 1201 NONAME ; void QtMobility::QGeoSearchManagerEngine::setManagerName(class QString const &)
-	?setManagerUri@QLandmarkCategoryId@QtMobility@@QAEXABVQString@@@Z @ 1202 NONAME ; void QtMobility::QLandmarkCategoryId::setManagerUri(class QString const &)
-	?setManagerUri@QLandmarkId@QtMobility@@QAEXABVQString@@@Z @ 1203 NONAME ; void QtMobility::QLandmarkId::setManagerUri(class QString const &)
-	?setManagerVersion@QGeoMappingManagerEngine@QtMobility@@AAEXH@Z @ 1204 NONAME ; void QtMobility::QGeoMappingManagerEngine::setManagerVersion(int)
-	?setManagerVersion@QGeoRoutingManagerEngine@QtMobility@@AAEXH@Z @ 1205 NONAME ; void QtMobility::QGeoRoutingManagerEngine::setManagerVersion(int)
-	?setManagerVersion@QGeoSearchManagerEngine@QtMobility@@AAEXH@Z @ 1206 NONAME ; void QtMobility::QGeoSearchManagerEngine::setManagerVersion(int)
+	?setInstructionText@QGeoManeuver@QtMobility@@QAEXABVQString@@@Z @ 1173 NONAME ; void QtMobility::QGeoManeuver::setInstructionText(class QString const &)
+	?setLandmark@QLandmarkSaveRequest@QtMobility@@QAEXABVQLandmark@2@@Z @ 1174 NONAME ; void QtMobility::QLandmarkSaveRequest::setLandmark(class QtMobility::QLandmark const &)
+	?setLandmarkId@QLandmark@QtMobility@@QAEXABVQLandmarkId@2@@Z @ 1175 NONAME ; void QtMobility::QLandmark::setLandmarkId(class QtMobility::QLandmarkId const &)
+	?setLandmarkId@QLandmarkFetchByIdRequest@QtMobility@@QAEXABVQLandmarkId@2@@Z @ 1176 NONAME ; void QtMobility::QLandmarkFetchByIdRequest::setLandmarkId(class QtMobility::QLandmarkId const &)
+	?setLandmarkId@QLandmarkRemoveRequest@QtMobility@@QAEXABVQLandmarkId@2@@Z @ 1177 NONAME ; void QtMobility::QLandmarkRemoveRequest::setLandmarkId(class QtMobility::QLandmarkId const &)
+	?setLandmarkIds@QLandmarkExportRequest@QtMobility@@QAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 1178 NONAME ; void QtMobility::QLandmarkExportRequest::setLandmarkIds(class QList<class QtMobility::QLandmarkId> const &)
+	?setLandmarkIds@QLandmarkFetchByIdRequest@QtMobility@@QAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 1179 NONAME ; void QtMobility::QLandmarkFetchByIdRequest::setLandmarkIds(class QList<class QtMobility::QLandmarkId> const &)
+	?setLandmarkIds@QLandmarkIdFilter@QtMobility@@QAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 1180 NONAME ; void QtMobility::QLandmarkIdFilter::setLandmarkIds(class QList<class QtMobility::QLandmarkId> const &)
+	?setLandmarkIds@QLandmarkRemoveRequest@QtMobility@@QAEXABV?$QList@VQLandmarkId@QtMobility@@@@@Z @ 1181 NONAME ; void QtMobility::QLandmarkRemoveRequest::setLandmarkIds(class QList<class QtMobility::QLandmarkId> const &)
+	?setLandmarks@QLandmarkSaveRequest@QtMobility@@QAEXABV?$QList@VQLandmark@QtMobility@@@@@Z @ 1182 NONAME ; void QtMobility::QLandmarkSaveRequest::setLandmarks(class QList<class QtMobility::QLandmark> const &)
+	?setLimit@QGeoSearchReply@QtMobility@@IAEXH@Z @ 1183 NONAME ; void QtMobility::QGeoSearchReply::setLimit(int)
+	?setLimit@QLandmarkCategoryFetchRequest@QtMobility@@QAEXH@Z @ 1184 NONAME ; void QtMobility::QLandmarkCategoryFetchRequest::setLimit(int)
+	?setLimit@QLandmarkCategoryIdFetchRequest@QtMobility@@QAEXH@Z @ 1185 NONAME ; void QtMobility::QLandmarkCategoryIdFetchRequest::setLimit(int)
+	?setLimit@QLandmarkFetchRequest@QtMobility@@QAEXH@Z @ 1186 NONAME ; void QtMobility::QLandmarkFetchRequest::setLimit(int)
+	?setLimit@QLandmarkIdFetchRequest@QtMobility@@QAEXH@Z @ 1187 NONAME ; void QtMobility::QLandmarkIdFetchRequest::setLimit(int)
+	?setLocalId@QLandmarkCategoryId@QtMobility@@QAEXABVQString@@@Z @ 1188 NONAME ; void QtMobility::QLandmarkCategoryId::setLocalId(class QString const &)
+	?setLocalId@QLandmarkId@QtMobility@@QAEXABVQString@@@Z @ 1189 NONAME ; void QtMobility::QLandmarkId::setLocalId(class QString const &)
+	?setLocale@QGeoMappingManager@QtMobility@@QAEXABVQLocale@@@Z @ 1190 NONAME ; void QtMobility::QGeoMappingManager::setLocale(class QLocale const &)
+	?setLocale@QGeoMappingManagerEngine@QtMobility@@QAEXABVQLocale@@@Z @ 1191 NONAME ; void QtMobility::QGeoMappingManagerEngine::setLocale(class QLocale const &)
+	?setLocale@QGeoRoutingManager@QtMobility@@QAEXABVQLocale@@@Z @ 1192 NONAME ; void QtMobility::QGeoRoutingManager::setLocale(class QLocale const &)
+	?setLocale@QGeoRoutingManagerEngine@QtMobility@@QAEXABVQLocale@@@Z @ 1193 NONAME ; void QtMobility::QGeoRoutingManagerEngine::setLocale(class QLocale const &)
+	?setLocale@QGeoSearchManager@QtMobility@@QAEXABVQLocale@@@Z @ 1194 NONAME ; void QtMobility::QGeoSearchManager::setLocale(class QLocale const &)
+	?setLocale@QGeoSearchManagerEngine@QtMobility@@QAEXABVQLocale@@@Z @ 1195 NONAME ; void QtMobility::QGeoSearchManagerEngine::setLocale(class QLocale const &)
+	?setManager@QLandmarkAbstractRequest@QtMobility@@QAEXPAVQLandmarkManager@2@@Z @ 1196 NONAME ; void QtMobility::QLandmarkAbstractRequest::setManager(class QtMobility::QLandmarkManager *)
+	?setManagerName@QGeoMappingManagerEngine@QtMobility@@AAEXABVQString@@@Z @ 1197 NONAME ; void QtMobility::QGeoMappingManagerEngine::setManagerName(class QString const &)
+	?setManagerName@QGeoRoutingManagerEngine@QtMobility@@AAEXABVQString@@@Z @ 1198 NONAME ; void QtMobility::QGeoRoutingManagerEngine::setManagerName(class QString const &)
+	?setManagerName@QGeoSearchManagerEngine@QtMobility@@AAEXABVQString@@@Z @ 1199 NONAME ; void QtMobility::QGeoSearchManagerEngine::setManagerName(class QString const &)
+	?setManagerUri@QLandmarkCategoryId@QtMobility@@QAEXABVQString@@@Z @ 1200 NONAME ; void QtMobility::QLandmarkCategoryId::setManagerUri(class QString const &)
+	?setManagerUri@QLandmarkId@QtMobility@@QAEXABVQString@@@Z @ 1201 NONAME ; void QtMobility::QLandmarkId::setManagerUri(class QString const &)
+	?setManagerVersion@QGeoMappingManagerEngine@QtMobility@@AAEXH@Z @ 1202 NONAME ; void QtMobility::QGeoMappingManagerEngine::setManagerVersion(int)
+	?setManagerVersion@QGeoRoutingManagerEngine@QtMobility@@AAEXH@Z @ 1203 NONAME ; void QtMobility::QGeoRoutingManagerEngine::setManagerVersion(int)
+	?setManagerVersion@QGeoSearchManagerEngine@QtMobility@@AAEXH@Z @ 1204 NONAME ; void QtMobility::QGeoSearchManagerEngine::setManagerVersion(int)
+	?setManeuver@QGeoRouteSegment@QtMobility@@QAEXABVQGeoManeuver@2@@Z @ 1205 NONAME ; void QtMobility::QGeoRouteSegment::setManeuver(class QtMobility::QGeoManeuver const &)
+	?setManeuverDetail@QGeoRouteRequest@QtMobility@@QAEXW4ManeuverDetail@12@@Z @ 1206 NONAME ; void QtMobility::QGeoRouteRequest::setManeuverDetail(enum QtMobility::QGeoRouteRequest::ManeuverDetail)
 	?setMapData@QGeoMapGroupObject@QtMobility@@UAEXPAVQGeoMapData@2@@Z @ 1207 NONAME ; void QtMobility::QGeoMapGroupObject::setMapData(class QtMobility::QGeoMapData *)
 	?setMapData@QGeoMapObject@QtMobility@@UAEXPAVQGeoMapData@2@@Z @ 1208 NONAME ; void QtMobility::QGeoMapObject::setMapData(class QtMobility::QGeoMapData *)
 	?setMapImageData@QGeoTiledMapReply@QtMobility@@IAEXABVQByteArray@@@Z @ 1209 NONAME ; void QtMobility::QGeoTiledMapReply::setMapImageData(class QByteArray const &)
@@ -1243,7 +1243,7 @@ EXPORTS
 	?setPhoneNumber@QLandmark@QtMobility@@QAEXABVQString@@@Z @ 1242 NONAME ; void QtMobility::QLandmark::setPhoneNumber(class QString const &)
 	?setPixmap@QGeoMapPixmapObject@QtMobility@@QAEXABVQPixmap@@@Z @ 1243 NONAME ; void QtMobility::QGeoMapPixmapObject::setPixmap(class QPixmap const &)
 	?setPlaces@QGeoSearchReply@QtMobility@@IAEXABV?$QList@VQGeoPlace@QtMobility@@@@@Z @ 1244 NONAME ; void QtMobility::QGeoSearchReply::setPlaces(class QList<class QtMobility::QGeoPlace> const &)
-	?setPosition@QGeoInstruction@QtMobility@@QAEXABVQGeoCoordinate@2@@Z @ 1245 NONAME ; void QtMobility::QGeoInstruction::setPosition(class QtMobility::QGeoCoordinate const &)
+	?setPosition@QGeoManeuver@QtMobility@@QAEXABVQGeoCoordinate@2@@Z @ 1245 NONAME ; void QtMobility::QGeoManeuver::setPosition(class QtMobility::QGeoCoordinate const &)
 	?setPostCode@QGeoAddress@QtMobility@@QAEXABVQString@@@Z @ 1246 NONAME ; void QtMobility::QGeoAddress::setPostCode(class QString const &)
 	?setRadius@QGeoBoundingCircle@QtMobility@@QAEXM@Z @ 1247 NONAME ; void QtMobility::QGeoBoundingCircle::setRadius(float)
 	?setRadius@QGeoMapCircleObject@QtMobility@@QAEXM@Z @ 1248 NONAME ; void QtMobility::QGeoMapCircleObject::setRadius(float)
@@ -1267,7 +1267,7 @@ EXPORTS
 	?setStreet@QGeoAddress@QtMobility@@QAEXABVQString@@@Z @ 1266 NONAME ; void QtMobility::QGeoAddress::setStreet(class QString const &)
 	?setSupportedAvoidFeatureTypes@QGeoRoutingManagerEngine@QtMobility@@IAEXV?$QFlags@W4AvoidFeatureType@QGeoRouteRequest@QtMobility@@@@@Z @ 1267 NONAME ; void QtMobility::QGeoRoutingManagerEngine::setSupportedAvoidFeatureTypes(class QFlags<enum QtMobility::QGeoRouteRequest::AvoidFeatureType>)
 	?setSupportedConnectivityModes@QGeoMappingManagerEngine@QtMobility@@IAEXABV?$QList@W4ConnectivityMode@QGraphicsGeoMap@QtMobility@@@@@Z @ 1268 NONAME ; void QtMobility::QGeoMappingManagerEngine::setSupportedConnectivityModes(class QList<enum QtMobility::QGraphicsGeoMap::ConnectivityMode> const &)
-	?setSupportedInstructionDetails@QGeoRoutingManagerEngine@QtMobility@@IAEXV?$QFlags@W4InstructionDetail@QGeoRouteRequest@QtMobility@@@@@Z @ 1269 NONAME ; void QtMobility::QGeoRoutingManagerEngine::setSupportedInstructionDetails(class QFlags<enum QtMobility::QGeoRouteRequest::InstructionDetail>)
+	?setSupportedManeuverDetails@QGeoRoutingManagerEngine@QtMobility@@IAEXV?$QFlags@W4ManeuverDetail@QGeoRouteRequest@QtMobility@@@@@Z @ 1269 NONAME ; void QtMobility::QGeoRoutingManagerEngine::setSupportedManeuverDetails(class QFlags<enum QtMobility::QGeoRouteRequest::ManeuverDetail>)
 	?setSupportedMapTypes@QGeoMappingManagerEngine@QtMobility@@IAEXABV?$QList@W4MapType@QGraphicsGeoMap@QtMobility@@@@@Z @ 1270 NONAME ; void QtMobility::QGeoMappingManagerEngine::setSupportedMapTypes(class QList<enum QtMobility::QGraphicsGeoMap::MapType> const &)
 	?setSupportedRouteOptimizations@QGeoRoutingManagerEngine@QtMobility@@IAEXV?$QFlags@W4RouteOptimization@QGeoRouteRequest@QtMobility@@@@@Z @ 1271 NONAME ; void QtMobility::QGeoRoutingManagerEngine::setSupportedRouteOptimizations(class QFlags<enum QtMobility::QGeoRouteRequest::RouteOptimization>)
 	?setSupportedSearchTypes@QGeoSearchManagerEngine@QtMobility@@IAEXV?$QFlags@W4SearchType@QGeoSearchManager@QtMobility@@@@@Z @ 1272 NONAME ; void QtMobility::QGeoSearchManagerEngine::setSupportedSearchTypes(class QFlags<enum QtMobility::QGeoSearchManager::SearchType>)
@@ -1280,7 +1280,7 @@ EXPORTS
 	?setSupportsRouteUpdates@QGeoRoutingManagerEngine@QtMobility@@IAEX_N@Z @ 1279 NONAME ; void QtMobility::QGeoRoutingManagerEngine::setSupportsRouteUpdates(bool)
 	?setText@QGeoMapTextObject@QtMobility@@QAEXABVQString@@@Z @ 1280 NONAME ; void QtMobility::QGeoMapTextObject::setText(class QString const &)
 	?setTileSize@QGeoTiledMappingManagerEngine@QtMobility@@IAEXABVQSize@@@Z @ 1281 NONAME ; void QtMobility::QGeoTiledMappingManagerEngine::setTileSize(class QSize const &)
-	?setTimeToNextInstruction@QGeoInstruction@QtMobility@@QAEXH@Z @ 1282 NONAME ; void QtMobility::QGeoInstruction::setTimeToNextInstruction(int)
+	?setTimeToNextInstruction@QGeoManeuver@QtMobility@@QAEXH@Z @ 1282 NONAME ; void QtMobility::QGeoManeuver::setTimeToNextInstruction(int)
 	?setTopLeft@QGeoBoundingBox@QtMobility@@QAEXABVQGeoCoordinate@2@@Z @ 1283 NONAME ; void QtMobility::QGeoBoundingBox::setTopLeft(class QtMobility::QGeoCoordinate const &)
 	?setTopLeft@QGeoMapRectangleObject@QtMobility@@QAEXABVQGeoCoordinate@2@@Z @ 1284 NONAME ; void QtMobility::QGeoMapRectangleObject::setTopLeft(class QtMobility::QGeoCoordinate const &)
 	?setTopRight@QGeoBoundingBox@QtMobility@@QAEXABVQGeoCoordinate@2@@Z @ 1285 NONAME ; void QtMobility::QGeoBoundingBox::setTopRight(class QtMobility::QGeoCoordinate const &)
@@ -1325,8 +1325,8 @@ EXPORTS
 	?supportedFormats@QLandmarkManager@QtMobility@@QBE?AVQStringList@@W4TransferOperation@12@@Z @ 1324 NONAME ; class QStringList QtMobility::QLandmarkManager::supportedFormats(enum QtMobility::QLandmarkManager::TransferOperation) const
 	?supportedFormats@QLandmarkManagerEngine@QtMobility@@UBE?AVQStringList@@W4TransferOperation@QLandmarkManager@2@PAW4Error@52@PAVQString@@@Z @ 1325 NONAME ; class QStringList QtMobility::QLandmarkManagerEngine::supportedFormats(enum QtMobility::QLandmarkManager::TransferOperation, enum QtMobility::QLandmarkManager::Error *, class QString *) const
 	?supportedImplementationVersions@QLandmarkManagerEngineFactory@QtMobility@@UBE?AV?$QList@H@@XZ @ 1326 NONAME ; class QList<int> QtMobility::QLandmarkManagerEngineFactory::supportedImplementationVersions(void) const
-	?supportedInstructionDetails@QGeoRoutingManager@QtMobility@@QBE?AV?$QFlags@W4InstructionDetail@QGeoRouteRequest@QtMobility@@@@XZ @ 1327 NONAME ; class QFlags<enum QtMobility::QGeoRouteRequest::InstructionDetail> QtMobility::QGeoRoutingManager::supportedInstructionDetails(void) const
-	?supportedInstructionDetails@QGeoRoutingManagerEngine@QtMobility@@QBE?AV?$QFlags@W4InstructionDetail@QGeoRouteRequest@QtMobility@@@@XZ @ 1328 NONAME ; class QFlags<enum QtMobility::QGeoRouteRequest::InstructionDetail> QtMobility::QGeoRoutingManagerEngine::supportedInstructionDetails(void) const
+	?supportedManeuverDetails@QGeoRoutingManager@QtMobility@@QBE?AV?$QFlags@W4ManeuverDetail@QGeoRouteRequest@QtMobility@@@@XZ @ 1327 NONAME ; class QFlags<enum QtMobility::QGeoRouteRequest::ManeuverDetail> QtMobility::QGeoRoutingManager::supportedManeuverDetails(void) const
+	?supportedManeuverDetails@QGeoRoutingManagerEngine@QtMobility@@QBE?AV?$QFlags@W4ManeuverDetail@QGeoRouteRequest@QtMobility@@@@XZ @ 1328 NONAME ; class QFlags<enum QtMobility::QGeoRouteRequest::ManeuverDetail> QtMobility::QGeoRoutingManagerEngine::supportedManeuverDetails(void) const
 	?supportedMapTypes@QGeoMappingManager@QtMobility@@QBE?AV?$QList@W4MapType@QGraphicsGeoMap@QtMobility@@@@XZ @ 1329 NONAME ; class QList<enum QtMobility::QGraphicsGeoMap::MapType> QtMobility::QGeoMappingManager::supportedMapTypes(void) const
 	?supportedMapTypes@QGeoMappingManagerEngine@QtMobility@@QBE?AV?$QList@W4MapType@QGraphicsGeoMap@QtMobility@@@@XZ @ 1330 NONAME ; class QList<enum QtMobility::QGraphicsGeoMap::MapType> QtMobility::QGeoMappingManagerEngine::supportedMapTypes(void) const
 	?supportedMapTypes@QGraphicsGeoMap@QtMobility@@QBE?AV?$QList@W4MapType@QGraphicsGeoMap@QtMobility@@@@XZ @ 1331 NONAME ; class QList<enum QtMobility::QGraphicsGeoMap::MapType> QtMobility::QGraphicsGeoMap::supportedMapTypes(void) const
@@ -1355,7 +1355,7 @@ EXPORTS
 	?tileFinished@QGeoTiledMapData@QtMobility@@AAEXXZ @ 1354 NONAME ; void QtMobility::QGeoTiledMapData::tileFinished(void)
 	?tileRect@QGeoTiledMapRequest@QtMobility@@QBE?AVQRect@@XZ @ 1355 NONAME ; class QRect QtMobility::QGeoTiledMapRequest::tileRect(void) const
 	?tileSize@QGeoTiledMappingManagerEngine@QtMobility@@QBE?AVQSize@@XZ @ 1356 NONAME ; class QSize QtMobility::QGeoTiledMappingManagerEngine::tileSize(void) const
-	?timeToNextInstruction@QGeoInstruction@QtMobility@@QBEHXZ @ 1357 NONAME ; int QtMobility::QGeoInstruction::timeToNextInstruction(void) const
+	?timeToNextInstruction@QGeoManeuver@QtMobility@@QBEHXZ @ 1357 NONAME ; int QtMobility::QGeoManeuver::timeToNextInstruction(void) const
 	?topLeft@QGeoBoundingBox@QtMobility@@QBE?AVQGeoCoordinate@2@XZ @ 1358 NONAME ; class QtMobility::QGeoCoordinate QtMobility::QGeoBoundingBox::topLeft(void) const
 	?topLeft@QGeoMapRectangleObject@QtMobility@@QBE?AVQGeoCoordinate@2@XZ @ 1359 NONAME ; class QtMobility::QGeoCoordinate QtMobility::QGeoMapRectangleObject::topLeft(void) const
 	?topLeftChanged@QGeoMapRectangleObject@QtMobility@@IAEXABVQGeoCoordinate@2@@Z @ 1360 NONAME ; void QtMobility::QGeoMapRectangleObject::topLeftChanged(class QtMobility::QGeoCoordinate const &)

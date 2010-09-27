@@ -54,12 +54,12 @@ class QDeclarativeOrganizerItemSortOrder : public QObject
     Q_PROPERTY(QString definitionName READ definitionName WRITE setDefinitionName NOTIFY valueChanged)
     Q_PROPERTY(QString fieldName READ fieldName WRITE setFieldName NOTIFY valueChanged)
     Q_PROPERTY(BlankPolicy blankPolicy READ blankPolicy WRITE setBlankPolicy NOTIFY valueChanged)
-    Q_PROPERTY(Qt::SortOrder direction READ direction WRITE seDdirection NOTIFY valueChanged)
-    Q_PROPERTY(Qt::CaseSensitivity sensitivity READ sensitivity WRITE setCaseSensitivity NOTIFY valueChanged)
+    Q_PROPERTY(Qt::SortOrder direction READ direction WRITE setDirection NOTIFY valueChanged)
+    Q_PROPERTY(Qt::CaseSensitivity sensitivity READ caseSensitivity WRITE setCaseSensitivity NOTIFY valueChanged)
 
     Q_ENUMS(BlankPolicy)
 public:
-    QOrganizerItemSortOrder(QObject* parent = 0)
+    QDeclarativeOrganizerItemSortOrder(QObject* parent = 0)
         :QObject(parent)
     {}
 
@@ -69,19 +69,19 @@ public:
     };
 
 
-    void setDetailDefinitionName(const QString& name)
+    void setDefinitionName(const QString& name)
     {
         d.setDetailDefinitionName(name, d.detailFieldName());
     }
 
-    void setDetailFieldName(const QString& name)
+    void setFieldName(const QString& name)
     {
         d.setDetailDefinitionName(d.detailDefinitionName(), name);
     }
 
     void setBlankPolicy(BlankPolicy blankPolicy)
     {
-        d.setBlankPolicy(blankPolicy);
+        d.setBlankPolicy(static_cast<QOrganizerItemSortOrder::BlankPolicy>(blankPolicy));
     }
 
     void setDirection(Qt::SortOrder direction)
@@ -94,17 +94,17 @@ public:
         d.setCaseSensitivity(sensitivity);
     }
 
-    QString detailDefinitionName() const
+    QString definitionName() const
     {
         return d.detailDefinitionName();
     }
-    QString detailFieldName() const
+    QString fieldName() const
     {
         return d.detailFieldName();
     }
     BlankPolicy blankPolicy() const
     {
-        return d.blankPolicy();
+        return static_cast<QDeclarativeOrganizerItemSortOrder::BlankPolicy>(d.blankPolicy());
     }
     Qt::SortOrder direction() const
     {

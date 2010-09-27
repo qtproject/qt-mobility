@@ -50,7 +50,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
         : QGeoTiledMapObjectInfo(mapData, mapObject),
         textItem(0)
 

@@ -55,7 +55,9 @@ Player::Player(QWidget *parent)
     , videoWidget(0)
     , coverLabel(0)
     , slider(0)
+#ifndef PLAYER_NO_COLOROPTIONS
     , colorDialog(0)
+#endif
 {
 //! [create-objs]
     player = new QMediaPlayer(this);
@@ -357,6 +359,7 @@ void Player::displayErrorMessage()
 
 }
 
+#ifndef PLAYER_NO_COLOROPTIONS
 void Player::showColorDialog()
 {
     if (!colorDialog) {
@@ -396,3 +399,4 @@ void Player::showColorDialog()
     }
     colorDialog->show();
 }
+#endif

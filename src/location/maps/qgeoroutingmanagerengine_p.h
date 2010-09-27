@@ -76,7 +76,7 @@ public:
     QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes;
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations;
     QGeoRouteRequest::SegmentDetails supportedSegmentDetails;
-    QGeoRouteRequest::InstructionDetails supportedInstructionDetails;
+    QGeoRouteRequest::ManeuverDetails supportedManeuverDetails;
 
     QLocale locale;
 

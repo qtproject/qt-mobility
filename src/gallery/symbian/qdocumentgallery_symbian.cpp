@@ -122,13 +122,23 @@ QStringList QDocumentGallery::itemTypePropertyNames(const QString &itemType) con
 }
 
 QGalleryProperty::Attributes QDocumentGallery::propertyAttributes(
-    const QString &propertyName, const QString &/*itemType*/) const
+    const QString &propertyName, const QString &itemType) const
 {
-    if( propertyName == QDocumentGallery::url.name() ) {
-        return (QGalleryProperty::CanRead | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
-    } else {
+    if(propertyName.isNull() || propertyName.isEmpty() || itemType.isEmpty() || itemType.isNull() )
+        return QGalleryProperty::Attributes();
+    else if (KErrNotFound == QDocumentGalleryMDSUtility::GetPropertyKey(propertyName) )
+        return QGalleryProperty::Attributes();
+    else if (!QDocumentGalleryMDSUtility::isItemTypeSupported(itemType))
+        return QGalleryProperty::Attributes();
+    else if(propertyName == QDocumentGallery::url.name() || 
+            propertyName == QDocumentGallery::fileName.name() ||
+            propertyName == QDocumentGallery::fileExtension.name())
+        return (QGalleryProperty::CanRead | QGalleryProperty::CanSort | QGalleryProperty::CanFilter);
+    else if(propertyName == QDocumentGallery::filePath.name())
+        return (QGalleryProperty::CanRead | QGalleryProperty::CanFilter );
+    else
         return (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
-    }
+
 }
 
 QGalleryAbstractResponse* QDocumentGallery::createResponse(QGalleryAbstractRequest *request)

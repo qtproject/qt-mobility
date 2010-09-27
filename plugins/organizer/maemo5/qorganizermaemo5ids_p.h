@@ -51,6 +51,7 @@ QTM_USE_NAMESPACE
 class OrganizerCalendarDatabaseAccess;
 class OrganizerItemTransform;     // forward declare maemo5 transform.
 class QOrganizerItemMaemo5Engine; // forward declare maemo5 engine.
+class OrganizerAsynchProcess;     // forward declare maemo5 asynchronous process.
 
 class QOrganizerCollectionMaemo5EngineLocalId : public QOrganizerCollectionEngineLocalId
 {
@@ -77,6 +78,7 @@ public:
 
 public:
     quint32 m_localCollectionId;
+    friend class OrganizerAsynchProcess;
 };
 
 class QOrganizerItemMaemo5EngineLocalId : public QOrganizerItemEngineLocalId
@@ -104,6 +106,7 @@ public:
 
 public:
     quint32 m_localItemId; // the maemo5 backend can use a single quint32 to uniquely identify an item in it.
+    friend class OrganizerAsynchProcess;
 };
 
 inline QOrganizerItemLocalId makeItemLocalId(quint32 id) {

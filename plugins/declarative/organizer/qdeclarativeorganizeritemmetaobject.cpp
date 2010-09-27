@@ -51,7 +51,7 @@ void QDeclarativeOrganizerItemMetaObject::setValue(int propId, void **a)
             QVariant& v = *reinterpret_cast<QVariant *>(a[0]);
             QDeclarativeOrganizerItemDetail* detail = v.value<QDeclarativeOrganizerItemDetail*>();
 
-            foreach(const QDeclarativeOrganizerItemDetail* cd, m_details) {
+            foreach(QDeclarativeOrganizerItemDetail* cd, m_details) {
                 if (cd->detail().definitionName() == detailMetaData->definitionName) {
                     delete cd;
                     cd = detail;
@@ -64,12 +64,12 @@ void QDeclarativeOrganizerItemMetaObject::setValue(int propId, void **a)
 int QDeclarativeOrganizerItemMetaObject::createProperty(const char * name,  const char *)
 {
 
-    const int detailCount = sizeof(qt_OrganizerItemDetailNameMap)/sizeof(OrganizerItemDetailNameMap);
+    const int detailCount = sizeof(qt_organizerItemDetailNameMap)/sizeof(OrganizerItemDetailNameMap);
     OrganizerItemDetailNameMap* detailMetaData = 0;
 
     for (int i = 0; i < detailCount; i++) {
-        if (QString::fromLocal8Bit(qt_OrganizerItemDetailNameMap[i].name) == QString::fromLocal8Bit(name)) {
-            detailMetaData = &qt_OrganizerItemDetailNameMap[i];
+        if (QString::fromLocal8Bit(qt_organizerItemDetailNameMap[i].name) == QString::fromLocal8Bit(name)) {
+            detailMetaData = &qt_organizerItemDetailNameMap[i];
             break;
         }
     }
@@ -139,10 +139,10 @@ void QDeclarativeOrganizerItemMetaObject::setItem(const QOrganizerItem& contact)
     }
 }
 
-QOrganizerItem QDeclarativeOrganizerItemMetaObject::contact()
+QOrganizerItem QDeclarativeOrganizerItemMetaObject::item()
 {
     m_item.clearDetails();
-    foreach (const QDeclarativeOrganizerItemDetail* cd, m_details) {
+    foreach ( QDeclarativeOrganizerItemDetail* cd, m_details) {
        QOrganizerItemDetail detail = cd->detail();
        m_item.saveDetail(&detail);
     }
@@ -151,7 +151,7 @@ QOrganizerItem QDeclarativeOrganizerItemMetaObject::contact()
 
 int QDeclarativeOrganizerItemMetaObject::localId() const
 {
-    return m_item.localId();
+    return qHash(m_item.localId());
 }
 
 void QDeclarativeOrganizerItemMetaObject::detail_append(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p, QDeclarativeOrganizerItemDetail *detail)
@@ -172,7 +172,7 @@ int  QDeclarativeOrganizerItemMetaObject::detail_count(QDeclarativeListProperty<
     int count = 0;
     QDeclarativeOrganizerItem* dc = qobject_cast<QDeclarativeOrganizerItem*>(p->object);
     if (dc && data) {
-        foreach(const QDeclarativeOrganizerItemDetail* detail, dc->d->m_details) {
+        foreach(QDeclarativeOrganizerItemDetail* detail, dc->d->m_details) {
             if (detail->detail().definitionName() == data->definitionName)
                 count++;
         }

@@ -73,11 +73,13 @@ int QMDEGalleryResultSet::propertyKey(const QString &property) const
 
 QGalleryProperty::Attributes QMDEGalleryResultSet::propertyAttributes(int key) const
 {
-    if (key == QDocumentGalleryMDSUtility::EUri) {
+    if (key == QDocumentGalleryMDSUtility::EUri || key == QDocumentGalleryMDSUtility::EFileName ||
+        key == QDocumentGalleryMDSUtility::EFilePath)
         return (QGalleryProperty::CanRead | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
-    } else {
+    else if (key >= QDocumentGalleryMDSUtility::EPropertyKeysLength)
+        return QGalleryProperty::Attributes();
+    else
         return (QGalleryProperty::CanRead | QGalleryProperty::CanWrite | QGalleryProperty::CanSort | QGalleryProperty::CanFilter );
-    }
 }
 
 QVariant::Type QMDEGalleryResultSet::propertyType(int key) const

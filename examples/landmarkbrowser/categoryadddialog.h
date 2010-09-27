@@ -38,75 +38,30 @@
 **
 ****************************************************************************/
 
-#ifndef PLAYERCONTROLS_H
-#define PLAYERCONTROLS_H
+#ifndef CATEGORYADDDIALOG_H
+#define CATEGORYADDDIALOG_H
 
-#include <qmediaplayer.h>
+#include <QWidget>
 
-#include <QtGui/qwidget.h>
+#include <qlandmarkcategory.h>
 
-QT_BEGIN_NAMESPACE
-class QAbstractButton;
-class QAbstractSlider;
-class QComboBox;
-QT_END_NAMESPACE
+#include "ui_categoryadddialog.h"
 
-QT_USE_NAMESPACE
+QTM_USE_NAMESPACE
 
-class PlayerControls : public QWidget
+class CategoryAddDialog : public QDialog, public Ui_CategoryAddDialog
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    PlayerControls(QWidget *parent = 0);
+    CategoryAddDialog(QWidget *parent, Qt::WindowFlags flags =0);
+    ~CategoryAddDialog();
 
-    QMediaPlayer::State state() const;
-
-    int volume() const;
-    bool isMuted() const;
-    qreal playbackRate() const;
-
+    QLandmarkCategory category();
 public slots:
-    void setState(QMediaPlayer::State state);
-    void setVolume(int volume);
-    void setMuted(bool muted);
-    void setPlaybackRate(float rate);
-
-signals:
-    void play();
-    void pause();
-    void stop();
-    void next();
-    void previous();
-    void changeVolume(int volume);
-    void changeMuting(bool muting);
-    void changeRate(qreal rate);
-#ifdef Q_OS_SYMBIAN
-    void open();
-    void fullScreen(bool toggle);
-    void openPlayList();
-#endif
-
-private slots:
-    void playClicked();
-    void muteClicked();
-    void updateRate();
-
+    virtual void accept();
+    virtual void reject();
 private:
-    QMediaPlayer::State playerState;
-    bool playerMuted;
-    QAbstractButton *playButton;
-    QAbstractButton *stopButton;
-    QAbstractButton *nextButton;
-    QAbstractButton *previousButton;
-    QAbstractButton *muteButton;
-#ifdef Q_OS_SYMBIAN
-    QAbstractButton *openButton;
-    QAbstractButton *fullScreenButton;
-    QAbstractButton *playListButton;
-#else
-    QAbstractSlider *volumeSlider;
-    QComboBox *rateBox;
-#endif
+    QLandmarkCategory m_category;
 };
 
 #endif

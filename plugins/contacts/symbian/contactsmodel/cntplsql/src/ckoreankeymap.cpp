@@ -28,8 +28,9 @@
 const int KMibKorean = 36;
 
 // These constants are from Hangul and Jamo unicode specifications
+// UD7A4..UD7AF are unspecific
 const int KHangulSyllableLowerLimit = 0xAC00;
-const int KHangulSyllableUpperLimit = 0xD7AF;
+const int KHangulSyllableUpperLimit = 0xD7A3;
 
 const int KChoCount  = 19;
 const int KJungCount = 21;
@@ -71,6 +72,9 @@ TBool CKoreanKeyMap::IsLanguageSupported(QString aSource) const
 		{
 		return EFalse;
 		}
+	// Korean codec recognizes Hangul and Hangul compatibility Jamo characters,
+	// but not the Hangul Jamo characters (U1100+).
+	// It also recognizes latin characters.
     return iKoreanCodec && iKoreanCodec->canEncode(aSource);
 	}
 
@@ -83,7 +87,9 @@ TBool CKoreanKeyMap::IsLanguageSupported(QString aSource) const
 // ----------------------------------------------------------------------------
 QString CKoreanKeyMap::GetMappedString(QString aSource) const
 	{
-	// TODO: in a later sprint: put a KSeparatorChar between syllables
+	// TODO: in a later sprint: put a KSeparatorChar between syllables.
+	// If aSource has jamo chars, try to detect the syllable limits this way:
+	// syllable begins by C + V pair, which is never in the middle of a syllable.
 	
 	QString destination;
 	TInt length = aSource.length();
