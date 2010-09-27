@@ -47,7 +47,7 @@
 #include "qdeclarativeorganizeritem_p.h"
 #include "qversitreader.h"
 #include "qversitwriter.h"
-
+#include "qorganizercollectionid.h"
 #include "qdeclarativeorganizeritemfetchhint_p.h"
 #include "qdeclarativeorganizeritemsortorder_p.h"
 #include "qdeclarativeorganizeritemfilter_p.h"
@@ -136,6 +136,9 @@ public:
     Q_INVOKABLE void saveItem(QDeclarativeOrganizerItem* item);
 
 
+    static QOrganizerItemId itemIdFromHash(uint key);
+    static QOrganizerCollectionId collectionIdFromHash(uint key);
+
 signals:
     void managerChanged();
     void availableManagersChanged();
@@ -169,6 +172,7 @@ private:
     static int  item_count(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p);
     static QDeclarativeOrganizerItem * item_at(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p, int idx);
     static void  item_clear(QDeclarativeListProperty<QDeclarativeOrganizerItem> *p);
+
 
     QDeclarativeOrganizerModelPrivate* d;
 };
