@@ -306,7 +306,7 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
 /*!
     \fn QFeedbackHapticsInterface::actuators()
 
-    return the available actuators on the system.
+    return the available actuators on the system. The ownership of the actuators objects stays with plugin.
 */
 
 /*!
@@ -377,9 +377,9 @@ QFeedbackHapticsInterface *QFeedbackHapticsInterface::instance()
     the identifiers according to their needs.
 */
 
-QFeedbackActuator QFeedbackHapticsInterface::createFeedbackActuator(int id)
+QFeedbackActuator* QFeedbackHapticsInterface::createFeedbackActuator(QObject* parent, int id)
 {
-    return QFeedbackActuator(id);
+    return new QFeedbackActuator(parent, id);
 }
 
 

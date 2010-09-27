@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the plugins of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,67 +38,28 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QFEEDBACKACTUATOR_H
-#define QFEEDBACKACTUATOR_H
 
-#include <qmobilityglobal.h>
-#include <QtCore/QObject>
+#include <QtDeclarative/qdeclarativeextensionplugin.h>
+#include <QtDeclarative/qdeclarative.h>
 
-QT_BEGIN_HEADER
+#include "qdeclarativehapticseffect.h"
+#include "qdeclarativefileeffect.h"
 
-QTM_BEGIN_NAMESPACE
-
-class QFeedbackEffect;
-
-class Q_FEEDBACK_EXPORT QFeedbackActuator : public QObject
+class QFeedbackDeclarativeModule : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT
-    Q_PROPERTY(int id READ id)
-    Q_PROPERTY(QString name READ name)
-    Q_PROPERTY(QFeedbackActuator::State state READ state)
-    Q_PROPERTY(bool valid READ isValid)
-    Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
-    Q_ENUMS(Capability)
-    Q_ENUMS(State)
 public:
-    enum Capability {
-        Envelope,
-        Period
-    };
-
-    enum State {
-        Busy,
-        Ready,
-        Unknown
-    };
-
-    QFeedbackActuator(QObject *parent = 0);
-
-    int id() const;
-    bool isValid() const;
-
-    QString name() const;
-    State state() const;
-
-    Q_INVOKABLE bool isCapabilitySupported(Capability) const;
-
-    bool isEnabled() const;
-    void setEnabled(bool);
-
-    static QList<QFeedbackActuator*> actuators();
-    bool operator==(const QFeedbackActuator&) const;
-
-signals:
-    void enabledChanged();
-
-private:
-    QFeedbackActuator(QObject *parent, int id);
-    friend class QFeedbackHapticsInterface;
-    int m_id;
+    virtual void registerTypes(const char *uri)
+    {
+        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.feedback"));
+        qmlRegisterUncreatableType<QFeedbackEffect>("QtMobility.feedback", 1, 1, "FeedbackEffect", "FeedbackEffect is an abstract class");
+        qmlRegisterType<QFeedbackActuator>("QtMobility.feedback", 1, 1, "FeedbackActuator");
+        qmlRegisterType<QDeclarativeFileEffect>("QtMobility.feedback", 1, 1, "FeedbackFileEffect");
+        qmlRegisterType<QDeclarativeHapticsEffect>("QtMobility.feedback", 1, 1, "FeedbackHapticsEffect");
+    }
 };
 
-QTM_END_NAMESPACE
+#include "feedback.moc"
 
-QT_END_HEADER
+Q_EXPORT_PLUGIN2(declarative_feedback, QT_PREPEND_NAMESPACE(QFeedbackDeclarativeModule));
 
-#endif

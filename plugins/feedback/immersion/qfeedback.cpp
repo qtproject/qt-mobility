@@ -59,6 +59,11 @@ QFeedbackImmersion::QFeedbackImmersion() : QObject(qApp)
         //that should be done once
         //error management
         qWarning() << "the Immersion library could not be initialized";
+    } else {
+        const int nbDev = ImmVibeGetDeviceCount();
+        for (int i = 0; i < nbDev; ++i) {
+            actuators_ << createFeedbackActuator(this, i);
+        }
     }
 }
 
@@ -76,15 +81,9 @@ QFeedbackInterface::PluginPriority QFeedbackImmersion::pluginPriority()
     return PluginNormalPriority;
 }
 
-QList<QFeedbackActuator> QFeedbackImmersion::actuators()
+QList<QFeedbackActuator*> QFeedbackImmersion::actuators()
 {
-    QList<QFeedbackActuator> ret;
-    const int nbDev = ImmVibeGetDeviceCount();
-    for (int i = 0; i < nbDev; ++i) {
-        ret << createFeedbackActuator(i);
-    }
-
-    return ret;
+    return actuators_;
 }
 
 void QFeedbackImmersion::setActuatorProperty(const QFeedbackActuator &actuator, ActuatorProperty prop, const QVariant &value)

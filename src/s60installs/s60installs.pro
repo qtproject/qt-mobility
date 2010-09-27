@@ -149,6 +149,15 @@ isEmpty(QT_LIBINFIX):symbian {
 
         pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\feedback\\symbian\\qmakepluginstubs\\qtfeedback_symbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\feedback\\qtfeedback_symbian.qtplugin\""
+
+        contains(QT_CONFIG, declarative): {
+            qtmobilitydeployment.sources += \
+                $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_feedback.dll
+            pluginstubs += \
+                "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\feedback\\qmakepluginstubs\\declarative_feedback.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\feedback\\declarative_feedback.qtplugin\""
+            qmldirs += \
+                "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\feedback\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\feedback\\qmldir\""
+        }
     }
 
     contains(mobility_modules, organizer) { 

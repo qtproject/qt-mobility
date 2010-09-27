@@ -227,5 +227,8 @@ contains(mobility_modules,feedback) {
         qfeedbackactuator \
         qfeedbackhapticseffect \
         qfeedbackplugin
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += qdeclarativefeedback
+    }
 }
 
