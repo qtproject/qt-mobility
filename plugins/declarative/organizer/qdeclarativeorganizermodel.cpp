@@ -387,7 +387,7 @@ QVariant QDeclarativeOrganizerModel::data(const QModelIndex &index, int role) co
         case OrganizerItemRole:
             return QVariant::fromValue(di);
         case OrganizerItemIdRole:
-            return qHash(item.localId());
+            return qHash(item.id());
     }
     return QVariant();
 }
