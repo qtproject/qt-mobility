@@ -163,10 +163,134 @@ QCameraFocus::FocusModes S60CameraSettings::supportedFocusModes()
     return modes;
 }
 
+qreal S60CameraSettings::opticalZoomFactorL() const
+{
+    qreal factor = 1.0;
+
+#ifdef POST_31_PLATFORM
+    int symbianFactor = 0;
+    if (m_advancedSettings)
+        symbianFactor = m_advancedSettings->OpticalZoom();
+        else
+            User::Leave(KErrNotSupported);
+
+    if (symbianFactor != 0)
+        factor = symbianFactor / KSymbianFineResolutionFactor;
+#endif // POST_31_PLATFORM
+
+    return factor;
+}
+
+void S60CameraSettings::setOpticalZoomFactorL(const qreal zoomFactor)
+{
+#ifdef POST_31_PLATFORM
+    int symbianFactor = zoomFactor * KSymbianFineResolutionFactor;
+
+    // Make sure value is supported, and modify if needed
+
+    if (m_advancedSettings)
+        m_advancedSettings->SetDigitalZoom(symbianFactor);
+    else
+        User::Leave(KErrNotSupported);
+#else // S60 3.1 Platform
+    Q_UNUSED(zoomFactor);
+    emit error(QCamera::NotSupportedFeatureError, QString("Settings optical zoom factor is not supported."));
+#endif // POST_31_PLATFORM
+}
+
+QList<qreal> *S60CameraSettings::supportedDigitalZoomFactors()
+{
+    return &m_supportedDigitalZoomFactors;
+}
+
+qreal S60CameraSettings::digitalZoomFactorL() const
+{
+    qreal factor = 1.0;
+
+#ifdef POST_31_PLATFORM
+    int symbianFactor = 0;
+    if (m_advancedSettings)
+        symbianFactor = m_advancedSettings->DigitalZoom();
+        else
+            User::Leave(KErrNotSupported);
+
+    if (symbianFactor != 0)
+        factor = symbianFactor / KSymbianFineResolutionFactor;
+#endif // POST_31_PLATFORM
+
+    return factor;
+}
+
+void S60CameraSettings::setDigitalZoomFactorL(const qreal zoomFactor)
+{
+#ifdef POST_31_PLATFORM
+    int symbianFactor = zoomFactor * KSymbianFineResolutionFactor;
+
+    // Make sure value is supported, and modify if needed
+
+    if (m_advancedSettings)
+        m_advancedSettings->SetDigitalZoom(symbianFactor);
+    else
+        User::Leave(KErrNotSupported);
+#else // S60 3.1 Platform
+    Q_UNUSED(zoomFactor);
+    emit error(QCamera::NotSupportedFeatureError, QString("Settings digital zoom factor is not supported."));
+#endif // POST_31_PLATFORM
+}
+
 // MCameraObserver2
 void S60CameraSettings::HandleAdvancedEvent(const TECAMEvent& aEvent)
 {
 #ifdef POST_31_PLATFORM
+    if (aEvent.iErrorCode != KErrNone) {
+        switch (aEvent.iErrorCode) {
+            case KErrECamCameraDisabled:
+                emit error(QCamera::CameraError, QString("Unexpected camera error."));
+                return;
+            case KErrECamSettingDisabled:
+                emit error(QCamera::CameraError, QString("Unexpected camera error."));
+                return;
+            case KErrECamParameterNotInRange:
+                emit error(QCamera::NotSupportedFeatureError, QString("Requested value is not in supported range."));
+                return;
+            case KErrECamSettingNotSupported:
+                emit error(QCamera::NotSupportedFeatureError, QString("Requested setting is not supported."));
+                return;
+            case KErrECamNotOptimalFocus:
+                emit focusStatusChanged(QCamera::Unlocked, QCamera::LockFailed);
+                return;
+        }
+
+        if (aEvent.iEventType == KUidECamEventCameraSettingFocusRange ||
+            aEvent.iEventType == KUidECamEventCameraSettingAutoFocusType2) {
+            emit focusStatusChanged(QCamera::Unlocked, QCamera::LockFailed);
+            return;
+        } else if (aEvent.iEventType == KUidECamEventCameraSettingIsoRate) {
+            if (aEvent.iErrorCode == KErrNotSupported)
+                emit error(QCamera::NotSupportedFeatureError, QString("Requested ISO value is not supported."));
+            else
+                emit error(QCamera::CameraError, QString("Setting ISO value failed."));
+            return;
+        } else if (aEvent.iEventType == KUidECamEventCameraSettingAperture) {
+            if (aEvent.iErrorCode == KErrNotSupported)
+                emit error(QCamera::NotSupportedFeatureError, QString("Requested aperture value is not supported."));
+            else
+                emit error(QCamera::CameraError, QString("Setting aperture value failed."));
+            return;
+        } else if (aEvent.iEventType == KUidECamEventCameraSettingOpticalZoom ||
+                   aEvent.iEventType == KUidECamEventCameraSettingDigitalZoom) {
+            if (aEvent.iErrorCode == KErrNotSupported)
+                return; // Discard
+            else {
+                emit error(QCamera::CameraError, QString("Setting zoom factor failed."));
+                return;
+            }
+        } else {
+            emit error(QCamera::CameraError, QString("Unexpected camera error."));
+            return;
+        }
+    }
+
     if (aEvent.iEventType == KUidECamEventCameraSettingExposureLock) {
         if (m_advancedSettings->ExposureLockOn())
             emit exposureStatusChanged(QCamera::Locked, QCamera::LockAcquired);
