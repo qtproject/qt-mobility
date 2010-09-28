@@ -156,6 +156,8 @@ static bool connmanAvailable()
         QDBusReply<bool> reply = dbiface->isServiceRegistered("org.moblin.connman");
         if (reply.isValid() && reply.value()) {
             return reply.value();
+        } else {
+         qDebug() << "connman not available";
         }
     }
 #endif
@@ -171,6 +173,8 @@ static bool ofonoAvailable()
         QDBusReply<bool> reply = dbiface->isServiceRegistered("org.ofono");
         if (reply.isValid() && reply.value()) {
             return reply.value();
+        } else {
+         qDebug() << "ofono not available" << reply.value();
         }
     }
 #endif
@@ -2674,7 +2678,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
  {
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_CONNMAN)
-     if(ofonoIsAvailable) {
+     if(ofonoAvailable()) {
          QOfonoManagerInterface ofonoManager;
          QString modem = ofonoManager.currentModem().path();
          if(!modem.isEmpty()) {
@@ -2684,8 +2688,8 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
              if(!imei.isEmpty()) {
                  return imei;
              }
-             }
          }
+     }
 #endif
 #endif
      return QLatin1String("");
@@ -2695,7 +2699,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
  {
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_CONNMAN)
-     if(ofonoIsAvailable) {
+     if(ofonoAvailable()) {
          QOfonoManagerInterface ofonoManager;
          QString modem = ofonoManager.currentModem().path();
          if(!modem.isEmpty()) {

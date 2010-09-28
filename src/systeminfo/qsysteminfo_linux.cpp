@@ -587,15 +587,17 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
     return QSystemDeviceInfo::UnknownProfile;
 }
 
-QString QSystemDeviceInfoPrivate::imei()
-{
-        return QLatin1String("");
-}
+//QString QSystemDeviceInfoPrivate::imei()
+//{
+//    qDebug() << Q_FUNC_INFO;
+//    return QSystemDeviceInfoLinuxCommonPrivate::imei();//QLatin1String("");
+//}
 
-QString QSystemDeviceInfoPrivate::imsi()
-{
-        return QLatin1String("");
-}
+//QString QSystemDeviceInfoPrivate::imsi()
+//{
+//    return QSystemDeviceInfoLinuxCommonPrivate::imsi();//QLatin1String("");
+////        return QLatin1String("");
+//}
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
