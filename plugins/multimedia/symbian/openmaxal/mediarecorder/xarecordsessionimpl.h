@@ -90,7 +90,8 @@ public:
                           RArray<TInt32> &aSampleRates,
                           TBool &aIsContinuous);
     TInt32 getBitrates(const TDesC &aEncoder,
-                          RArray<TUint32> &aBitrates);
+                          RArray<TUint32> &aBitrates,
+                          TBool& aContinuous);
     /* For QAudioEncoderControl end */
 
     /* For QMediaContainerControl begin */
@@ -101,9 +102,12 @@ public:
     void resetEncoderAttributes();
     void setContainerType(const TDesC &aURI);
     TBool setCodec(const TDesC &aURI);
+    TUint32 getBitRate();
     void setBitRate(TUint32 aBitRate);
+    TUint32 getChannels();
     void setChannels(TUint32 aChannels);
     void setOptimalChannelCount();
+    TUint32 getSampleRate();
     void setSampleRate(TUint32 aSampleRate);
     void setOptimalSampleRate();
     TInt32 setCBRMode();
@@ -123,7 +127,8 @@ private:
     TInt32 initAudioInputDevicesList();
     TInt32 setEncoderSettingsToMediaRecorder();
     TInt32 getBitratesByAudioCodecID(XAuint32 encoderId,
-                          RArray<TUint32> &aBitrates);
+                          RArray<TUint32> &aBitrates,
+                          XAboolean& aContinuous);
     TInt32 getSampleRatesByAudioCodecID(XAuint32 encoderId,
                           RArray<TInt32> &aSampleRates);
 
