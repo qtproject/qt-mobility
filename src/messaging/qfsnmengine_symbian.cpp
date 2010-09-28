@@ -102,7 +102,10 @@ void createFSMessage(QMessage &message, NmApiMessage &fsMessage)
     else
         envelope.setIsRead(false);
            
-    envelope.setSender(message.from().addressee());
+    NmApiEmailAddress sender;
+    sender.setAddress(message.from().addressee());
+    
+    envelope.setSender(sender);
         
     QList<QMessageAddress> toList(message.to());
     if (toList.count() > 0) {
@@ -689,7 +692,10 @@ NmApiMessage CFSEngine::updateFsMessage(QMessage *message)
         envelope.setIsRead(false);
     }
         
-    envelope.setSender(message->from().addressee());
+    NmApiEmailAddress sender;
+    sender.setAddress(message->from().addressee());
+
+    envelope.setSender(sender);
     
     QList<QMessageAddress> toList(message->to());
     if (toList.count() > 0) {
@@ -1906,8 +1912,8 @@ QMessage CFSEngine::CreateQMessage(NmApiMessage* aMessage) const
     
     NmApiMessageEnvelope envelope = aMessage->envelope();
 
-    message.setDate(envelope.sentTime());
-    message.setReceivedDate(envelope.sentTime());
+    message.setDate(envelope.time());
+    message.setReceivedDate(envelope.time());
     
     quint64 mailboxId = envelope.mailboxId();
     const QMessageAccountId accountId = QMessageAccountId(QString::number(mailboxId));
@@ -1965,10 +1971,11 @@ QMessage CFSEngine::CreateQMessage(NmApiMessage* aMessage) const
     }
 
     //from
-    QString from = envelope.sender();
-    if (!from.isEmpty()) {
-        message.setFrom(QMessageAddress(QMessageAddress::Email, from));
-        QMessagePrivate::setSenderName(message, from);
+    NmApiEmailAddress sender = envelope.sender();
+
+    if (!sender.address().isEmpty()) {
+        message.setFrom(QMessageAddress(QMessageAddress::Email, sender.address()));
+        QMessagePrivate::setSenderName(message, sender.displayName());
     }
     
     //to
@@ -2559,13 +2566,15 @@ void CFSMessagesFindOperation::getAccountSpecificMessages(QMessageAccount& messa
     operation.m_AccountSearch = new NmApiMessageSearch(0, mailboxId);
     operation.m_Type = FSSearchOperation::SearchAccount;
     QList<QString> searchKeys;
-    if (m_searchKey.isEmpty())
+    if (m_searchKey.isEmpty()) {
         searchKeys.append(QString("*"));
-    else
+    } else {
         searchKeys.append(m_searchKey);
+    }
     operation.m_AccountSearch->initialise(searchKeys, sortCriteria);
     m_searchOperations.append(operation);
-    connect(operation.m_FolderSearch, SIGNAL(messageFound(EmailClientApi::NmApiMessage)), this, SLOT(messageFound(EmailClientApi::NmApiMessage)));
+    qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
+    connect(operation.m_AccountSearch, SIGNAL(messageFound(EmailClientApi::NmApiMessage&)), this, SLOT(messageFound(EmailClientApi::NmApiMessage)));
     connect(operation.m_AccountSearch, SIGNAL(searchComplete(int)), this, SLOT(searchOperationCompleted()));
     if (m_searchOperations.count() == 1)
         operation.m_AccountSearch->start();
