@@ -108,8 +108,8 @@ private slots:
     void selectObjects();
 
     void searchClicked();
-    void searchReplyFinished(QGeoSearchReply* reply);
-    void resultsError(QGeoSearchReply* reply, QGeoSearchReply::Error errorCode, QString errorString);
+    void searchReplyFinished();
+    void resultsError(QGeoSearchReply::Error errorCode, QString errorString);
 
     void sliderValueChanged(int zoomLevel);
     void mapZoomLevelChanged(qreal zoomLevel);
