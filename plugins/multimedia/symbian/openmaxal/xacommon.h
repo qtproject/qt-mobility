@@ -39,29 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef XARECORDSESSIONCOMMON_H
-#define XARECORDSESSIONCOMMON_H
+#ifndef XACOMMON_H
+#define XACOMMON_H
 
-#include <e32base.h>
-#include "xacommon.h"
+#ifdef PLUGIN_SYMBIAN_TRACE_ENABLED
+#   include <e32debug.h>
+#endif /* PLUGIN_SYMBIAN_TRACE_ENABLED */
 
-#define MAX_NUMBER_INTERFACES 20
-#define MAX_NUMBER_INPUT_DEVICES 10
-#define MAX_NUMBER_ENCODERS 10
+#ifdef PLUGIN_SYMBIAN_TRACE_ENABLED
+#   define TRACE_FUNCTION_ENTRY         RDebug::Printf( "%s >", __PRETTY_FUNCTION__)
+#   define TRACE_FUNCTION_EXIT          RDebug::Printf( "%s <", __PRETTY_FUNCTION__)
+#   define TRACE_FUNCTION_ENTRY_EXIT    RDebug::Printf( "%s ><", __PRETTY_FUNCTION__)
+#   define TRACE_LOG(s)                 RDebug::Print s
+#else
+#   define TRACE_FUNCTION_ENTRY
+#   define TRACE_FUNCTION_EXIT
+#   define TRACE_FUNCTION_ENTRY_EXIT
+#   define TRACE_LOG
+#endif /* PLUGIN_SYMBIAN_TRACE_ENABLED */
 
-//const TInt32 KExtErr = (TInt32)(-2147483648);
-const TInt32 KExtErr = -32768;
-const TInt32 KExtErrUnspecifiedCodecForContainer = (KExtErr+1);
-const TInt32 KExtErrUnsupportedCodecForContainer = (KExtErr+2);
-const TInt32 KExtErrUnsupportedURISuffixForContainer = (KExtErr+3);
+#define RET_IF_FALSE(e) \
+    if (e == false) \
+        { \
+        return; \
+        }
 
-class XARecordObserver
-{
-public:
-    virtual void cbDurationChanged(TInt64 new_pos) = 0;
-    virtual void cbAvailableAudioInputsChanged() = 0;
-    virtual void cbRecordingStarted() = 0;
-    virtual void cbRecordingStopped() = 0;
-};
+#define RET_BOOL_IF_FALSE(e) \
+    if (e == false) \
+        { \
+        return e; \
+        }
 
-#endif /* XARECORDSESSIONCOMMON_H */
+#define RET_ERR_IF_ERR(e) \
+    if (e != 0) \
+        { \
+        return e; \
+        }
+
+#endif /* XACOMMON_H */

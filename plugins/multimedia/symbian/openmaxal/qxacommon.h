@@ -151,4 +151,42 @@
 #   define QT_PRINT_TO_CONSOLE_HEAP_DIFF
 #endif /*PROFILE_HEAP_USAGE*/
 
+/* This macro checks p pointer for null. If it is, returns value 's' from
+ * function immediately.
+ */
+#define RET_s_IF_p_IS_NULL(p, s) \
+    if (p == NULL) { \
+        return s; \
+        }
+
+/* This macro checks p pointer for null. If it is, returns from function
+ * immediately.
+ */
+#define RET_IF_p_IS_NULL(p) \
+    if (p == NULL) { \
+        return; \
+        }
+
+/* This macro checks p pointer for null. If it is, emits an error signal
+ * error(QMediaPlayer::ServiceMissingError, tr("Service has not been started"));
+ * and returns value 's' from function immediately.
+ */
+#define RET_s_IF_p_IS_NULL_EMIT_PLAYER_RESOURCE_ERROR(p, s) \
+    if (p == NULL) { \
+        emit error(QMediaPlayer::ServiceMissingError, tr("Service has not been started")); \
+        SIGNAL_EMIT_TRACE1("emit error(QMediaPlayer::ServiceMissingError, tr(\"Service has not been started\"))"); \
+        return s; \
+        }
+
+/* This macro checks p pointer for null. If it is, emits an error signal
+ * error(QMediaPlayer::ServiceMissingError, tr("Service has not been started"));
+ * and returns from function immediately.
+ */
+#define RET_IF_p_IS_NULL_EMIT_PLAYER_RESOURCE_ERROR(p) \
+    if (p == NULL) { \
+        emit error(QMediaPlayer::ServiceMissingError, tr("Service has not been started")); \
+        SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::ServiceMissingError, tr(\"Service has not been started\"))"); \
+        return; \
+        }
+
 #endif /* QXACOMMON_H */

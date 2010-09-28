@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,31 +39,22 @@
 **
 ****************************************************************************/
 
-#include <QString>
-#include "qxarecordmediaserviceproviderplugin.h"
-#include "qxarecordmediaservice.h"
-#include "qxacommon.h"
+#ifndef QXAMEDIASERVICEPROVIDERPLUGIN_H
+#define QXAMEDIASERVICEPROVIDERPLUGIN_H
 
-QStringList QXARecordMediaServiceProviderPlugin::keys() const
+#include <QtCore/qobject.h>
+#include <qmediaserviceprovider.h>
+#include <qmediaserviceproviderplugin.h>
+
+QT_USE_NAMESPACE
+
+class QXAMediaServiceProviderPlugin : public QMediaServiceProviderPlugin
 {
-    return QStringList()
-            << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
-}
+    Q_OBJECT
+public:
+    QStringList keys() const;
+    QMediaService* create(QString const& key);
+    void release(QMediaService *service);
+};
 
-QMediaService* QXARecordMediaServiceProviderPlugin::create(QString const& key)
-{
-    if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
-        return new QXARecodMediaService;
-    else
-        QT_TRACE2("unsupported key:", key);
-    return 0;
-}
-
-void QXARecordMediaServiceProviderPlugin::release(QMediaService *service)
-{
-    QT_TRACE_FUNCTION_ENTRY;
-    delete service;
-    QT_TRACE_FUNCTION_EXIT;
-}
-
-Q_EXPORT_PLUGIN2(qtmultimediakit_openmaxalengine, QXARecordMediaServiceProviderPlugin);
+#endif /* QXAMEDIASERVICEPROVIDERPLUGIN_H */
