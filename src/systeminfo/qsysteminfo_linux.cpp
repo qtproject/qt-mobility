@@ -674,6 +674,7 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
      }
 #endif
 #endif
+    return QSystemDeviceInfo::SimNotAvailable;
 }
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
