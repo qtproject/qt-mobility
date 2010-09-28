@@ -279,7 +279,7 @@ void QDeclarativeNetworkInfo::startCurrentMobileNetworkCodeChanged()
 /*!
    \internal
 
-   This function is called when the client disconnects from the networkSignalStrengthChanged()
+   This function is called when the client connects from the networkSignalStrengthChanged()
    notification.
 
    \sa connectNotify()
@@ -342,7 +342,7 @@ QString QDeclarativeNetworkInfo::modeToString(QSystemNetworkInfo::NetworkMode mo
 /*!
    \internal
 
-   This function is called when the client disconnects from the networkSignalStrengthChanged()
+   This function is called when the client connects from the networkSignalStrengthChanged()
    signal.
 
    \sa connectNotify()
@@ -358,7 +358,7 @@ void QDeclarativeNetworkInfo::networkSignalStrengthChanged(QSystemNetworkInfo::N
 /*!
    \internal
 
-   This function is called when the client disconnects from the networkSignalStrengthChanged()
+   This function is called when the client connects from the networkSignalStrengthChanged()
    signal.
 
    \sa connectNotify()
@@ -373,7 +373,7 @@ void QDeclarativeNetworkInfo::networkNameChanged(QSystemNetworkInfo::NetworkMode
 /*!
    \internal
 
-   This function is called when the client disconnects from the networkSignalStrengthChanged()
+   This function is called when the client connects from the networkSignalStrengthChanged()
    signal.
 
    \sa connectNotify()

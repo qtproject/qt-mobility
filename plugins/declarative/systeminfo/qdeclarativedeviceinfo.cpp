@@ -48,10 +48,74 @@ QT_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QSystemDeviceInfo, deviceInfo)
 
+/*!
+    \qmlclass DeviceInfo QDeclarativeDeviceInfo
+    \brief The DeviceInfo element allows you to receive notifications from the device.
+
+    This element is part of the \bold{QtMobility.systeminfo 1.0} module.
+    It is a convience class to make QML usage easier.
+
+    Note: To use notification signals, you need to use the start* slots.
+
+
+    \qml
+        Component.onCompleted: {
+            deviceinfo.startPowerStateChanged();
+            deviceinfo.startBatteryLevelChanged();
+        }
+    \endqml
+
+\sa QSystemDeviceInfo
+*/
+
+/*!
+    \qmlsignal DeviceInfo::batteryLevelChanged()
+
+    This handler is called when battery level has changed.
+    Note: To receive this notification, you must first call \a startBatteryLevelChanged.
+*/
+/*!
+    \qmlsignal DeviceInfo::batteryStatusChanged()
+
+    This handler is called when battery status has changed.
+    Note: To receive this notification, you must first call \a startBatteryStatusChanged.
+*/
+/*!
+    \qmlsignal DeviceInfo::powerStateChanged()
+
+    This handler is called when the power state has changed.
+    Note: To receive this notification, you must first call \a startPowerStateChanged.
+*/
+/*!
+    \qmlsignal DeviceInfo::currentProfileChanged()
+
+    This handler is called when current device profile has changed.
+    Note: To receive this notification, you must first call \a startCurrentProfileChanged.
+*/
+/*!
+    \qmlsignal DeviceInfo::bluetoothStateChanged()
+
+    This handler is called when bluetooth power states has changed.
+    Note: To receive this notification, you must first call \a startBluetoothStateChanged.
+*/
+
+/*!
+    \internal
+    \class QDeclarativeDeviceInfo
+    \brief The QDeclarativeDeviceInfo class provides a DeviceInfo item that you can add to a QDeclarativeView.
+*/
+
 QDeclarativeDeviceInfo::QDeclarativeDeviceInfo(QObject *parent) :
     QSystemDeviceInfo(parent)
 {
 }
+
+/*!
+    \qmlmethod DeviceInfo::startBatteryLevelChanged()
+   This function is needed to start batteryLevelChanged notification
+
+   \sa connectNotify()
+*/
 
 void QDeclarativeDeviceInfo::startBatteryLevelChanged()
 {
@@ -59,50 +123,114 @@ void QDeclarativeDeviceInfo::startBatteryLevelChanged()
             this,SLOT(declarativeBatteryLevelChanged(int)));
 }
 
+/*!
+    \qmlmethod DeviceInfo::startBatteryStatusChanged()
+   This function is needed to start batteryStatusChanged notification
+
+   \sa connectNotify()
+*/
 void QDeclarativeDeviceInfo::startBatteryStatusChanged()
 {
     connect(deviceInfo(),SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
             this,SLOT(declarativeBatteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
 }
 
+/*!
+    \qmlmethod DeviceInfo::startPowerStateChanged()
+   This function is needed to start powerStateChanged notification
+
+   \sa connectNotify()
+*/
 void QDeclarativeDeviceInfo::startPowerStateChanged()
 {
     connect(deviceInfo(),SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
             this,SLOT(declarativePowerStateChanged(QSystemDeviceInfo::PowerState)));
 }
 
+/*!
+    \qmlmethod DeviceInfo::startCurrentProfileChanged()
+   This function is needed to start currentProfileChanged notification
+
+   \sa connectNotify()
+*/
 void QDeclarativeDeviceInfo::startCurrentProfileChanged()
 {
     connect(deviceInfo(),SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
             this,SLOT(declarativeCurrentProfileChanged(QSystemDeviceInfo::Profile)));
 }
 
+/*!
+    \qmlmethod DeviceInfo::startBluetoothStateChanged()
+   This function is needed to start bluetoothStateChanged notification
+
+   \sa connectNotify()
+*/
 void QDeclarativeDeviceInfo::startBluetoothStateChanged()
 {
     connect(deviceInfo(),SIGNAL(bluetoothStateChanged(bool)),
             this,SLOT(declarativeBluetoothStateChanged(bool)));
 }
 
+/*!
+   \internal
+
+   This function is called when the client connects from the networkSignalStrengthChanged()
+   notification.
+
+   \sa connectNotify()
+*/
 void QDeclarativeDeviceInfo::declarativeBatteryLevelChanged(int level)
 {
     Q_EMIT batteryLevelChanged(level);
 }
 
+/*!
+   \internal
+
+   This function is called when the client connects from the batteryStatusChanged()
+   notification.
+
+   \sa connectNotify()
+*/
 void QDeclarativeDeviceInfo::declarativeBatteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus)
 {
     Q_EMIT batteryStatusChanged(batteryStatus);
 }
 
+/*!
+   \internal
+
+   This function is called when the client connects from the powerStateChanged()
+   notification.
+
+   \sa connectNotify()
+*/
 void QDeclarativeDeviceInfo::declarativePowerStateChanged(QSystemDeviceInfo::PowerState powerState)
 {
     Q_EMIT powerStateChanged(powerState);
 }
 
+/*!
+   \internal
+
+   This function is called when the client connects from the currentProfileChanged()
+   notification.
+
+   \sa connectNotify()
+*/
 void QDeclarativeDeviceInfo::declarativeCurrentProfileChanged(QSystemDeviceInfo::Profile currentProfile)
 {
     Q_EMIT currentProfileChanged(currentProfile);
 }
 
+/*!
+   \internal
+
+   This function is called when the client connects from the bluetoothStateChanged()
+   notification.
+
+   \sa connectNotify()
+*/
 void QDeclarativeDeviceInfo::declarativeBluetoothStateChanged(bool on)
 {
     Q_EMIT bluetoothStateChanged(on);
