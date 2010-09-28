@@ -154,7 +154,7 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
 /*!
     \enum QLandmarkManager::Error
     Defines the possible errors for the landmark manager.
-    \value NoError No error occurred.
+    \value NoError No error occurred
     \value DoesNotExistError The most recent operation failed because the requested landmark or category does not exist.
     \value AlreadyExistsError The most recent operation failed because the specified landmark or category already exists.
     \value LockedError The most recent operation failed because the datastore specified is currently locked.

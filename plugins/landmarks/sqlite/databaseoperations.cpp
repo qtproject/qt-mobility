@@ -2265,7 +2265,6 @@ bool DatabaseOperations::removeCategoryHelper(const QLandmarkCategoryId &categor
     }
 
     QSqlDatabase db = QSqlDatabase::database(connectionName);
-
     QMap<QString,QVariant> bindValues;
     bindValues.insert("catId", categoryId.localId());
     QString q0 = QString("SELECT 1 FROM category WHERE id = :catId");

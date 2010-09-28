@@ -665,6 +665,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
 
         action = query.value(1).toString();
         categoryId.setLocalId(query.value(0).toString());
+
         if (action == "ADD") {
             addedCategoryIds << categoryId;
         } else if (action == "CHANGE") {
