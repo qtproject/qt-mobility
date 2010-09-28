@@ -2717,6 +2717,37 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
          return QLatin1String("");
  }
 
+
+ QSystemDeviceInfo::SimStatus QSystemDeviceInfoLinuxCommonPrivate::simStatus()
+ {
+#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_CONNMAN)
+     if(ofonoAvailable()) {
+         QOfonoManagerInterface ofonoManager;
+         QString modem = ofonoManager.currentModem().path();
+         if(!modem.isEmpty()) {
+             QOfonoSimInterface simInterface(modem,this);
+             QString simpin = simInterface.pinRequired();
+             if(simpin == "pin"
+            || simpin == "phone"
+            || simpin == "firstphone"
+            || simpin == "pin2"
+            || simpin == "puk"
+            || simpin == "firstphonepuk"
+            || simpin == "puk2"
+            ) {
+                 return QSystemDeviceInfo::SimLocked;
+             }
+             if(simInterface.isPresent()) {
+                 return QSystemDeviceInfo::SingleSimAvailable;
+             }
+         }
+     }
+#endif
+#endif
+     return QSystemDeviceInfo::SimNotAvailable;
+ }
+
  QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoLinuxCommonPrivate::keyboardType()
  {
      QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();

@@ -599,10 +599,10 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 ////        return QLatin1String("");
 //}
 
-QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
-{
-    return QSystemDeviceInfo::SimNotAvailable;
-}
+//QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
+//{
+//    return QSystemDeviceInfo::SimNotAvailable;
+//}
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {

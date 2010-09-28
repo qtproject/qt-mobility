@@ -181,7 +181,7 @@ public:
 
 //    QString imei();
 //    QString imsi();
-    QSystemDeviceInfo::SimStatus simStatus();
+//    QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     void setConnection();

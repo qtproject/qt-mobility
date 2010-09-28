@@ -302,7 +302,7 @@ public:
 
     int  batteryLevel() const ;
 
-    QSystemDeviceInfo::SimStatus simStatus() {return QSystemDeviceInfo::SimNotAvailable;}
+    QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked() {return false;}
     QSystemDeviceInfo::Profile currentProfile() {return QSystemDeviceInfo::UnknownProfile;}
 
