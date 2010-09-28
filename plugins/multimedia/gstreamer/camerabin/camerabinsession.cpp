@@ -257,6 +257,18 @@ void CameraBinSession::setupCaptureResolution()
 {
     if (m_captureMode == QCamera::CaptureStillImage) {
         QSize resolution = m_imageEncodeControl->imageSettings().resolution();
+
+        //by default select the maximum supported resolution
+        if (resolution.isEmpty()) {
+            updateVideoSourceCaps();
+            bool continuous = false;
+            QList<QSize> resolutions = supportedResolutions(qMakePair<int,int>(0,0),
+                                                            &continuous,
+                                                            QCamera::CaptureStillImage);
+            if (!resolutions.isEmpty())
+                resolution = resolutions.last();
+        }
+
         if (!resolution.isEmpty()) {
 #if CAMERABIN_DEBUG
             qDebug() << Q_FUNC_INFO << "set image resolution" << resolution;
@@ -307,20 +319,12 @@ GstElement *CameraBinSession::buildVideoSrc()
 void CameraBinSession::captureImage(int requestId, const QString &fileName)
 {
     QString actualFileName = fileName;
-    if (actualFileName.isEmpty()) {
+    if (actualFileName.isEmpty())
         actualFileName = generateFileName("img_", defaultDir(QCamera::CaptureStillImage), "jpg");
-    }
 
     m_requestId = requestId;
 
-    QSize resolution = m_imageEncodeControl->imageSettings().resolution();
-    if (!resolution.isEmpty()) {
-
-#if CAMERABIN_DEBUG
-        qDebug() << "Set image resolution" << resolution;
-#endif
-        g_signal_emit_by_name(G_OBJECT(m_pipeline), SET_IMAGE_RESOLUTION, resolution.width(), resolution.height(), NULL);
-    }
+    setupCaptureResolution();
 
     g_object_set(G_OBJECT(m_pipeline), FILENAME_PROPERTY, actualFileName.toLocal8Bit().constData(), NULL);
 
@@ -900,7 +904,9 @@ static bool resolutionLessThan(const QSize &r1, const QSize &r2)
 }
 
 
-QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate, bool *continuous) const
+QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate,
+                                                    bool *continuous,
+                                                    QCamera::CaptureMode mode) const
 {
     QList<QSize> res;
 
@@ -1005,11 +1011,14 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate, bool *c
                                << QSize(2560, 1600)
                                << QSize(2580, 1936);
         const QSize minSize = res.first();
+        QSize maxSize = res.last();
+
 
 #ifdef Q_WS_MAEMO_5
-        const QSize maxSize = QSize(848, 480);
+        if (mode == QCamera::CaptureVideo)
+            maxSize = QSize(848, 480);
 #else
-        const QSize maxSize = res.last();
+        Q_UNUSED(mode);
 #endif
 
         res.clear();
