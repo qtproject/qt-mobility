@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "dialog.h"
+#include "hapticsplayer.h"
 
 #include <QtCore/qmetaobject.h>
 
@@ -49,7 +49,7 @@
 static const char ENUM_THEME_EFFECT[] = "ThemeEffect";
 static const char ENUM_ANIMATION_STATE[] = "State";
 
-Dialog::Dialog()
+HapticsPlayer::HapticsPlayer()
 {
     ui.setupUi(this);
 
@@ -65,9 +65,6 @@ Dialog::Dialog()
     ui.verticalSpacer_7->changeSize(20, 30, QSizePolicy::Expanding, QSizePolicy::Fixed);
 #endif
 
-    //exit button
-    connect(ui.exitButton, SIGNAL(clicked()), qApp, SLOT(quit()));
-    
     connect(ui.actuators, SIGNAL(currentIndexChanged(int)), SLOT(actuatorChanged()));
     connect(ui.enabled, SIGNAL(toggled(bool)), SLOT(enabledChanged(bool)));
     connect(ui.playPause, SIGNAL(pressed()), SLOT(playPauseClicked()));
@@ -119,7 +116,7 @@ Dialog::Dialog()
     startTimer(50);
 }
 
-QFeedbackActuator Dialog::currentActuator() const
+QFeedbackActuator HapticsPlayer::currentActuator() const
 {
     QList<QFeedbackActuator> devs = QFeedbackActuator::actuators();
     int index = ui.actuators->currentIndex();
@@ -128,14 +125,14 @@ QFeedbackActuator Dialog::currentActuator() const
     return devs.at(index);
 }
 
-void Dialog::actuatorChanged()
+void HapticsPlayer::actuatorChanged()
 {
     QFeedbackActuator dev = currentActuator();
     enabledChanged(dev.isEnabled());
     effect.setActuator(dev);
 }
 
-void Dialog::enabledChanged(bool on)
+void HapticsPlayer::enabledChanged(bool on)
 {
     if (!on)
         effect.stop();
@@ -159,22 +156,16 @@ void Dialog::enabledChanged(bool on)
     }
 }
 
-void Dialog::playPauseClicked()
+void HapticsPlayer::playPauseClicked()
 {
     if (effect.state() == QFeedbackEffect::Running) {
         effect.pause();
-        if (effect.state() == QFeedbackEffect::Paused || effect.state() == QFeedbackEffect::Stopped) {
-            ui.playPause->setText(tr("play"));
-        }
     } else {
         effect.start();
-        if (effect.state() == QFeedbackEffect::Running || effect.state() == QFeedbackEffect::Loading) {
-            ui.playPause->setText(tr("pause"));
-        }
     }
 }
 
-void Dialog::durationChanged(int duration)
+void HapticsPlayer::durationChanged(int duration)
 {
     effect.setDuration(duration);
     ui.attackTime->setMaximum(duration);
@@ -182,13 +173,13 @@ void Dialog::durationChanged(int duration)
     attackTimeChanged(ui.attackTime->value());
 }
 
-void Dialog::intensityChanged(int value)
+void HapticsPlayer::intensityChanged(int value)
 {
     effect.setIntensity(qreal(value) / ui.intensity->maximum());
     ui.lblIntensity->setText(QString::number(effect.intensity()));
 }
 
-void Dialog::timerEvent(QTimerEvent *e)
+void HapticsPlayer::timerEvent(QTimerEvent *e)
 {
     //update the display for effect
     {
@@ -196,6 +187,10 @@ void Dialog::timerEvent(QTimerEvent *e)
         const QMetaObject *mo = effect.metaObject();
         ui.effectState->setText(mo->enumerator(mo->indexOfEnumerator(ENUM_ANIMATION_STATE)).key(newState));
         ui.stop->setEnabled(newState != QFeedbackEffect::Stopped);
+        if (effect.state() == QFeedbackEffect::Paused || effect.state() == QFeedbackEffect::Stopped)
+            ui.playPause->setText(tr("Play"));
+        else
+            ui.playPause->setText(tr("Pause"));
     }
 
     //update the display for effect
@@ -204,19 +199,14 @@ void Dialog::timerEvent(QTimerEvent *e)
         const QMetaObject *mo = fileEffect.metaObject();
         ui.fileEffectState->setText(mo->enumerator(mo->indexOfEnumerator(ENUM_ANIMATION_STATE)).key(newState));
         ui.fileStop->setEnabled(newState != QFeedbackEffect::Stopped);
-
-        if (fileEffect.isLoaded()) {
-            ui.fileStatus->setText( fileEffect.isLoaded() ? QString::fromLatin1("%1 : %2 ms").arg(tr("Loaded")).arg(fileEffect.duration()) : tr("Not Loaded") );
-            ui.filePlayPause->setEnabled(fileEffect.isLoaded());
-            ui.fileStop->setEnabled(false);
-        } else {
-            ui.fileStatus->setText( tr("No file loaded") );
-        }
+        ui.filePlayPause->setEnabled(fileEffect.isLoaded());
+        ui.browse->setEnabled(newState == QFeedbackEffect::Stopped);
+        ui.fileStatus->setText( fileEffect.isLoaded() ? QString::fromLatin1("%1 : %2 ms").arg(tr("Loaded")).arg(fileEffect.duration()) : tr("Not Loaded") );
     }
-    QDialog::timerEvent(e);
+    QWidget::timerEvent(e);
 }
 
-void Dialog::attackTimeChanged(int attackTime)
+void HapticsPlayer::attackTimeChanged(int attackTime)
 {
     effect.setAttackTime(attackTime);
     //let's check the boundaries
@@ -224,13 +214,13 @@ void Dialog::attackTimeChanged(int attackTime)
         ui.fadeTime->setValue(ui.duration->value() - attackTime);
 }
 
-void Dialog::attackIntensityChanged(int attackIntensity)
+void HapticsPlayer::attackIntensityChanged(int attackIntensity)
 {
     effect.setAttackIntensity(qreal(attackIntensity) / ui.attackIntensity->maximum());
     ui.lblAttackIntensity->setText(QString::number(effect.attackIntensity()));
 }
 
-void Dialog::fadeTimeChanged(int fadeTime)
+void HapticsPlayer::fadeTimeChanged(int fadeTime)
 {
     effect.setFadeTime(fadeTime);
     //let's check the boundaries
@@ -238,41 +228,39 @@ void Dialog::fadeTimeChanged(int fadeTime)
         ui.attackTime->setValue(ui.duration->value() - fadeTime);
 }
 
-void Dialog::fadeIntensityChanged(int fadeIntensity)
+void HapticsPlayer::fadeIntensityChanged(int fadeIntensity)
 {
     effect.setFadeIntensity(qreal(fadeIntensity) / ui.fadeIntensity->maximum());
     ui.lblFadeIntensity->setText(QString::number(effect.fadeIntensity()));
 }
 
-void Dialog::periodToggled(bool on)
+void HapticsPlayer::periodToggled(bool on)
 {
     effect.setPeriod(on ? ui.period->value() : 0);
 }
 
-void Dialog::periodChanged(int value)
+void HapticsPlayer::periodChanged(int value)
 {
     effect.setPeriod(value);
 }
 
-void Dialog::instantPlayClicked()
+void HapticsPlayer::instantPlayClicked()
 {
     const QMetaObject &mo = QFeedbackEffect::staticMetaObject;
     const QMetaEnum &me = mo.enumerator(mo.indexOfEnumerator(ENUM_THEME_EFFECT));
     QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeEffect(me.keyToValue(ui.instantEffect->currentText().toLatin1())));
 }
 
-void Dialog::browseClicked()
+void HapticsPlayer::browseClicked()
 {
-    fileEffect.stop();
-    QString filename = QFileDialog::getOpenFileName(this, tr("feedback file"));
-    ui.fileStop->setEnabled(false);
-    ui.filePlayPause->setEnabled(fileEffect.isLoaded());
-    ui.filename->setText(QDir::toNativeSeparators(filename));
-    ui.fileStatus->setText( tr("Loading") );
-    fileEffect.setFileName(filename);
+    QString filename = QFileDialog::getOpenFileName(this, tr("Feedback file"));
+    if (!filename.isEmpty()) {
+        ui.filename->setText(QDir::toNativeSeparators(filename));
+        fileEffect.setFileName(filename);
+    }
 }
 
-void Dialog::filePlayPauseClicked()
+void HapticsPlayer::filePlayPauseClicked()
 {
     if (fileEffect.state() == QFeedbackEffect::Running)
         fileEffect.pause();
@@ -280,4 +268,4 @@ void Dialog::filePlayPauseClicked()
         fileEffect.start();
 }
 
-#include "moc_dialog.cpp"
+#include "moc_hapticsplayer.cpp"
