@@ -316,8 +316,13 @@ public:
                                   & QNetworkConfigurationManager::CanStartAndStopInterfaces);
 
         // Is there default access point, use it
+#ifdef BEARER_IN_QTNETWORK
+        QNetworkConfiguration cfg1 = manager.defaultConfiguration();
+        if (!cfg1.isValid() || (!canStartIAP && cfg1.state() != QNetworkConfiguration::Active)) {
+#else
         QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg1 = manager.defaultConfiguration();
         if (!cfg1.isValid() || (!canStartIAP && cfg1.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
+#endif
             m_networkSetupError = QString(tr("This example requires networking, and no available networks or access points could be found."));
             QTimer::singleShot(0, this, SLOT(networkSetupError()));
             return;

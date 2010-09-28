@@ -742,7 +742,7 @@ EXPORTS
 	?getStaticMetaObject@QLandmarkManagerEngine@QtMobility@@SAABUQMetaObject@@XZ @ 741 NONAME ; struct QMetaObject const & QtMobility::QLandmarkManagerEngine::getStaticMetaObject(void)
 	?getStaticMetaObject@QLandmarkRemoveRequest@QtMobility@@SAABUQMetaObject@@XZ @ 742 NONAME ; struct QMetaObject const & QtMobility::QLandmarkRemoveRequest::getStaticMetaObject(void)
 	?getStaticMetaObject@QLandmarkSaveRequest@QtMobility@@SAABUQMetaObject@@XZ @ 743 NONAME ; struct QMetaObject const & QtMobility::QLandmarkSaveRequest::getStaticMetaObject(void)
-	?height@QGeoBoundingBox@QtMobility@@QAENXZ @ 744 NONAME ; double QtMobility::QGeoBoundingBox::height(void)
+	?height@QGeoBoundingBox@QtMobility@@QBENXZ @ 744 NONAME ; double QtMobility::QGeoBoundingBox::height(void)
 	?iconUrl@QLandmark@QtMobility@@QBE?AVQUrl@@XZ @ 745 NONAME ; class QUrl QtMobility::QLandmark::iconUrl(void) const
 	?iconUrl@QLandmarkCategory@QtMobility@@QBE?AVQUrl@@XZ @ 746 NONAME ; class QUrl QtMobility::QLandmarkCategory::iconUrl(void) const
 	?importLandmarks@QLandmarkManager@QtMobility@@QAE_NABVQString@@0W4TransferOption@12@ABVQLandmarkCategoryId@2@@Z @ 747 NONAME ; bool QtMobility::QLandmarkManager::importLandmarks(class QString const &, class QString const &, enum QtMobility::QLandmarkManager::TransferOption, class QtMobility::QLandmarkCategoryId const &)
