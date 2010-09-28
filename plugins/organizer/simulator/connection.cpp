@@ -73,12 +73,13 @@ Connection *Connection::instance()
 
 void Connection::setEngine(QOrganizerItemSimulatorEngine *engine)
 {
-    if (!mRegisteredWithSimulator) {
-        RemoteMetacall<void>::call(mConnection->sendSocket(), NoSync, "setRequestsOrganizerInfo");
-        mRegisteredWithSimulator = true;
-    }
+    Q_ASSERT(!mRegisteredWithSimulator);
 
     mEngine = engine;
+
+    RemoteMetacall<void>::call(mConnection->sendSocket(), NoSync, "setRequestsOrganizer");
+    mRegisteredWithSimulator = true;
+
     getInitialData();
 }
 

@@ -65,10 +65,11 @@ QOrganizerItemManagerEngine* QOrganizerItemSimulatorFactory::engine(const QMap<Q
         data->m_refCount.ref();
 
         QOrganizerItemSimulatorEngine::engineData = data;
+
+        // give an engine to the simulator connection
+        Simulator::Connection::instance()->setEngine(new QOrganizerItemSimulatorEngine(data));
     }
-    QOrganizerItemSimulatorEngine *engine = new QOrganizerItemSimulatorEngine(data);
-    Simulator::Connection::instance()->setEngine(engine);
-    return engine;
+    return new QOrganizerItemSimulatorEngine(data);
 }
 
 QOrganizerItemEngineLocalId* QOrganizerItemSimulatorFactory::createItemEngineLocalId() const
