@@ -373,8 +373,11 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemMaemo5Engine::collectionIds(QOr
     return internalCollectionIds(error);
 }
 
-QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
 {
+    Q_UNUSED(errorMap);
+    // XXX TODO: please use errormap -- test for null ptr, if exists, perform "fine grained error reporting"
+    // Note that the semantics of this function changed: if empty list of collectionIds given, return empty list of collections (NOT all collections).
     QMutexLocker locker(&m_operationMutex);
     return internalCollections(collectionIds, error);
 }

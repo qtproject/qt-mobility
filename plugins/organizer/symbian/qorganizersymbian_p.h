@@ -267,6 +267,7 @@ public:
         QOrganizerItemManager::Error* error) const;
     QList<QOrganizerCollection> collections(
         const QList<QOrganizerCollectionLocalId>& collectionIds, 
+        QMap<int, QOrganizerItemManager::Error>* errorMap,
         QOrganizerItemManager::Error* error) const;
     bool saveCollection(QOrganizerCollection* collection, 
         QOrganizerItemManager::Error* error);

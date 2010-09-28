@@ -292,7 +292,7 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemSkeletonEngine::collectionIds(Q
     return QOrganizerItemManagerEngine::collectionIds(error);
 }
 
-QList<QOrganizerCollection> QOrganizerItemSkeletonEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemSkeletonEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -301,7 +301,7 @@ QList<QOrganizerCollection> QOrganizerItemSkeletonEngine::collections(const QLis
         to the given collection ids.  A collection can have properties
         like colour, description, perhaps a priority, etc etc.
      */
-    return QOrganizerItemManagerEngine::collections(collectionIds, error);
+    return QOrganizerItemManagerEngine::collections(collectionIds, errorMap, error);
 }
 
 bool QOrganizerItemSkeletonEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)

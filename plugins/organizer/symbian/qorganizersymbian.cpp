@@ -1160,8 +1160,13 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemSymbianEngine::collectionIds(
 
 QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collections(
     const QList<QOrganizerCollectionLocalId>& collectionIds, 
+    QMap<int, QOrganizerItemManager::Error>* errorMap,
     QOrganizerItemManager::Error* error) const
 {
+    Q_UNUSED(errorMap);
+    // XXX TODO: please use errormap -- test for null ptr, if exists, perform "fine grained error reporting"
+    // Note that the semantics of this function changed: if empty list of collectionIds given, return empty list of collections (NOT all collections).
+
     QList<QOrganizerCollection> collections;
     TRAPD(err, collectionsL(collectionIds, collections));
     transformError(err, error);
