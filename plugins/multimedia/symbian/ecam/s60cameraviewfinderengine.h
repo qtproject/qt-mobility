@@ -41,7 +41,6 @@
 #ifndef S60CAMERAVIEWFINDERENGINE_H
 #define S60CAMERAVIEWFINDERENGINE_H
 
-#include <QtCore/qobject.h>
 #include <QtCore/qsize.h>
 #include <QtGui/qpixmap.h>
 
@@ -50,6 +49,7 @@
 #include "s60cameraengineobserver.h"
 
 class CCameraEngine;
+class S60CameraControl;
 class QAbstractVideoSurface;
 
 // For DirectScreen ViewFinder
@@ -57,14 +57,18 @@ class RWsSession;
 class CWsScreenDevice;
 class RWindowBase;
 
-class CCameraViewfinderEngine : public QObject, public MCameraViewfinderObserver
+/*
+ * Class implementing video output selection for the viewfinder and the handler of
+ * all common viewfinder operations.
+ */
+class S60CameraViewfinderEngine : public QObject, public MCameraViewfinderObserver
 {
     Q_OBJECT
 
 public: // Constructor & Destructor
 
-    CCameraViewfinderEngine(QObject *parent, CCameraEngine *engine);
-    virtual ~CCameraViewfinderEngine();
+    S60CameraViewfinderEngine(QObject *parent, CCameraEngine *engine);
+    virtual ~S60CameraViewfinderEngine();
 
 public: // Methods
 
@@ -77,7 +81,7 @@ public: // Methods
     void startViewfinder(const bool internalStart = false);
     void stopViewfinder(const bool internalStop = false);
 
-protected: // MCameraViewfinderObserver / Bitmap ViewFinder
+protected: // MCameraViewfinderObserver (Bitmap ViewFinder)
 
     void MceoViewFinderFrameReady(CFbsBitmap& aFrame);
 
@@ -100,10 +104,10 @@ private: // Enums
      * QVideoWidgetControl, QVideoRendererControl or QVideoWindowControl
      */
     enum ViewfinderOutputType {
-        OutputTypeNotSet = 0,
-        OutputTypeVideoWidget,
-        OutputTypeRenderer,
-        OutputTypevideoWindow
+        OutputTypeNotSet = 0,   // No viewfinder output connected
+        OutputTypeVideoWidget,  // Using QVideoWidget
+        OutputTypeRenderer,     // Using QGraphicsVideoItem
+        OutputTypevideoWindow   // Using QVideoWindow
     };
 
     /*
@@ -112,11 +116,11 @@ private: // Enums
      * ViewFinder widget is visible in case of QVideoWidget).
      */
     enum ViewFinderState {
-        EVFNotConnectedNotStarted = 0,
-        EVFNotConnectedIsStarted,
-        EVFIsConnectedNotStarted,
-        EVFIsConnectedIsStartedNotVisible,
-        EVFIsConnectedIsStartedIsVisible
+        EVFNotConnectedNotStarted = 0,      // 0 - No output connected, viewfinder is not started
+        EVFNotConnectedIsStarted,           // 1 - No output connected, viewfinder is started
+        EVFIsConnectedNotStarted,           // 2 - Output is connected, viewfinder is not started
+        EVFIsConnectedIsStartedNotVisible,  // 3 - Output is connected, viewfinder is started but is not visible
+        EVFIsConnectedIsStartedIsVisible    // 4 - Output is connected, viewfinder is started and is visible
     };
 
     /*
@@ -132,6 +136,7 @@ private: // Enums
 private: // Data
 
     CCameraEngine           *m_cameraEngine;
+    S60CameraControl        *m_cameraControl;
     QObject                 *m_viewfinderOutput;
     QAbstractVideoSurface   *m_viewfinderSurface; // Used only by QVideoRendererControl
     RWsSession              &m_wsSession;
@@ -139,11 +144,14 @@ private: // Data
     RWindowBase             *m_window;
     ViewFinderState         m_vfState;
     QSize                   m_viewfinderSize;
+    // Actual viewfinder size, which may differ from requested
+    // (m_viewfinderSize), if the size/aspect ratio was not supported.
     QSize                   m_actualViewFinderSize;
     ViewfinderOutputType    m_viewfinderType;
     NativeViewFinderType    m_viewfinderNativeType;
     QVideoSurfaceFormat     m_surfaceFormat; // Used only by QVideoRendererControl
     bool                    m_isViewFinderVisible;
+    bool                    m_uiLandscape; // For detecting UI rotation
 };
 
 #endif // S60CAMERAVIEWFINDERENGINE_H
