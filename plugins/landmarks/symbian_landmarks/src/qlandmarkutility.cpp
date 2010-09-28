@@ -1082,13 +1082,13 @@ HBufC8* LandmarkUtility::landmarkPackageFormatsStrL(const QString& format)
 {
     HBufC8* buffer = NULL;
     if (format == "lmx")
-        buffer = Klmx().AllocLC();
+        buffer = Klmx().AllocL();
     else if (format == "gpx")
-        buffer = Kgpx().AllocLC();
+        buffer = Kgpx().AllocL();
     else if (format == "kml")
-        buffer = Kkml().AllocLC();
+        buffer = Kkml().AllocL();
     else if (format == "kmz")
-        buffer = Kkmz().AllocLC();
+        buffer = Kkmz().AllocL();
     else
         User::Leave(KErrNotSupported);
 
