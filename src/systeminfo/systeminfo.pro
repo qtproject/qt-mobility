@@ -65,7 +65,6 @@ unix:!simulator {
     }
 
     !maemo5:!maemo6:linux-*: {
-            LIBS+=-lX11 -lXrandr
             SOURCES += qsysteminfo_linux.cpp
             HEADERS += qsysteminfo_linux_p.h
             contains(QT_CONFIG,dbus): {
@@ -83,7 +82,7 @@ unix:!simulator {
                     SOURCES += qdevicekitservice_linux.cpp
                     HEADERS += qdevicekitservice_linux_p.h
                 } else {
-                    DEFINES += QT_NO_UDISKS
+                    DEFINES += QT_NO_UDISKS QT_NO_MEEGO
                    }
                 contains(connman_enabled, yes): {
 
@@ -93,8 +92,9 @@ unix:!simulator {
                     DEFINES += QT_NO_CONNMAN
                 }
             } else {
-                DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN
-                LIBS += -lblkid
+                DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN QT_NO_MEEGO
+                LIBS += -lblkid -lX11 -lXrandr
+
             }
         }
         

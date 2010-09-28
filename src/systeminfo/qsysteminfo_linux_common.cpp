@@ -66,7 +66,7 @@
 #include <mntent.h>
 #include <sys/stat.h>
 
-#if !defined(Q_WS_MAEMO_6)
+#if !defined(Q_WS_MAEMO_6) && defined(QT_NO_MEEGO)
 #ifdef Q_WS_X11
 #include <QX11Info>
 #include <X11/Xlib.h>
@@ -1610,7 +1610,7 @@ QSystemDisplayInfoLinuxCommonPrivate::~QSystemDisplayInfoLinuxCommonPrivate()
 
 int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 {
-#if !defined(Q_WS_MAEMO_6)
+#if !defined(Q_WS_MAEMO_6)  && defined(QT_NO_MEEGO)
 #ifdef Q_WS_X11
     QDesktopWidget wid;
     return wid.screen(screen)->x11Info().depth();

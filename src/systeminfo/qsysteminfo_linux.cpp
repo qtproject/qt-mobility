@@ -73,7 +73,7 @@
 //#ifdef Q_WS_X11
 //#include <QX11Info>
 //#include <X11/Xlib.h>
-#if !defined(Q_WS_MAEMO_6)
+#if !defined(Q_WS_MAEMO_6) && defined(QT_NO_MEEGO)
 #ifdef Q_WS_X11
 #include <QX11Info>
 #include <X11/Xlib.h>
@@ -465,7 +465,7 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
 {
     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
-#ifdef Q_WS_X11
+#if defined(Q_WS_X11) && defined(QT_NO_MEEGO)
     XRRScreenConfiguration *sc;
     Rotation cur_rotation;
     sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
@@ -490,6 +490,8 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation
             break;
         };
     }
+#else
+Q_UNUSED(screen)
 #endif
     return orientation;
 }
@@ -523,6 +525,7 @@ int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
 int QSystemDisplayInfoPrivate::physicalHeight(int screen)
 {
     int height=0;
+#if defined(Q_WS_X11) && defined(QT_NO_MEEGO)
     XRRScreenResources *sr;
 
     sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
@@ -534,12 +537,16 @@ int QSystemDisplayInfoPrivate::physicalHeight(int screen)
         XRRFreeOutputInfo(output);
     }
     XRRFreeScreenResources(sr);
+#else
+Q_UNUSED(screen)
+#endif
     return height;
 }
 
 int QSystemDisplayInfoPrivate::physicalWidth(int screen)
 {
     int width=0;
+#if defined(Q_WS_X11) && defined(QT_NO_MEEGO)
     XRRScreenResources *sr;
 
     sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
@@ -551,7 +558,9 @@ int QSystemDisplayInfoPrivate::physicalWidth(int screen)
         XRRFreeOutputInfo(output);
     }
     XRRFreeScreenResources(sr);
-
+#else
+Q_UNUSED(screen)
+#endif
     return width;
 }
 
@@ -732,29 +741,31 @@ QString QSystemDeviceInfoPrivate::productName()
          }
 #endif
      }
-#if defined(QT_NO_DBUS)
-#ifdef Q_WS_X11
+#if defined(QT_NO_DBUS) && defined(Q_WS_X11) && defined(QT_NO_MEEGO)
      changeTimeout(-1);
-#endif
 #endif
  }
 
-#ifdef Q_WS_X11
  int QSystemScreenSaverPrivate::changeTimeout(int timeout)
  {
+#if defined(Q_WS_X11) && defined(QT_NO_MEEGO)
+
      int ttime;
      int interval;
      int preferBlank;
      int allowExp;
+
      Display *dis = QX11Info::display();
      if(dis) {
          XGetScreenSaver(dis, &ttime, &interval, &preferBlank, &allowExp);
          int result = XSetScreenSaver(QX11Info::display(), timeout, interval, preferBlank, allowExp);
          return result;
      }
+#else
+Q_UNUSED(timeout)
+#endif
      return 0;
  }
-#endif
 
  bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
  {
@@ -803,7 +814,8 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
         }
     }
 
-#ifdef Q_WS_X11
+#if defined(Q_WS_X11) && defined(QT_NO_MEEGO)
+
     int timeout;
     int interval;
     int preferBlank;
