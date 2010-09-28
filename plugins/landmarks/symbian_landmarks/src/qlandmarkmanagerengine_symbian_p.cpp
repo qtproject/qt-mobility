@@ -2476,14 +2476,15 @@ bool LandmarkManagerEngineSymbianPrivate::removeCategoryInternalL(
     bool result = false;
 
     if (categoryId.managerUri() != managerUri()) {
-        *error = QLandmarkManager::BadArgumentError;
-        *errorString = "Landmark cateogry id comes from different landmark manager.";
+        *error = QLandmarkManager::DoesNotExistError;
+        *errorString = "Category not found because the id's manager uri refers to a different landmark manager.";
         return result;
     }
     else if (!LandmarkUtility::validLocalId(categoryId.localId())) {
-        *error = QLandmarkManager::BadArgumentError;
+        *error = QLandmarkManager::DoesNotExistError;
         *errorString
-            = "Bad CategoryId : Invalid local id is assigned. Symbian Supports unsigned double type for Category Ids";
+            = "Category not found because the local id is invalid.  "
+              "For Symbian the local id must be the string representation of an unsigned double type";
         return result;
     }
 
