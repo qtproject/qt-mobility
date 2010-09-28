@@ -58,10 +58,11 @@ include(symbian_landmarks_defines.pri)
 
 symbian {
 
-	load(data_caging_paths)
-	INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
-	TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL -TCB    
+    load(data_caging_paths)
+    INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
+    TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x20034595
 
     LIBS += \
         -lflogger \
