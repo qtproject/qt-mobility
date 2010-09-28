@@ -40,7 +40,7 @@
 
 #include "qdeclarativenetworkinfo_p.h"
 
-#include <qsystemnetworkinfo.h>
+#include "qsystemnetworkinfo.h"
 #include <QMetaType>
 
 QT_BEGIN_NAMESPACE
