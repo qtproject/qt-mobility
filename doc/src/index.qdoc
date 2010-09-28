@@ -353,8 +353,8 @@
     <tr>
     <td rowspan="2">&nbsp;</td>
     <td rowspan="2"><b>API Maturity Level</b></td>
-    <td colspan="5" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
-    <td colspan="4" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
+    <td colspan="6" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
+    <td colspan="3" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
     </tr>
     <tr>
     <td><b>S60 3rd Edition, Feature Pack 1</b></td>
