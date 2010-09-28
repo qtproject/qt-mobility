@@ -63,6 +63,7 @@
 #include <QtGui/qimage.h>
 
 //#define CAMERABIN_DEBUG 1
+#define ENUM_NAME(c,e,v) (c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(e)).valueToKey((v)))
 
 #ifdef Q_WS_MAEMO_5
 #define FILENAME_PROPERTY "filename"
@@ -122,8 +123,8 @@
 #define gstRef(element) { gst_object_ref(GST_OBJECT(element)); gst_object_sink(GST_OBJECT(element)); }
 #define gstUnref(element) { if (element) { gst_object_unref(GST_OBJECT(element)); element = 0; } }
 
-#define PREVIEW_CAPS \
-    "video/x-raw-rgb, width = (int) [640, 848], height = (int) [320, 480]"
+#define PREVIEW_CAPS_4_3 \
+    "video/x-raw-rgb, width = (int) 640, height = (int) 480"
 
 static gboolean imgCaptured(GstElement *camera, const gchar *filename, gpointer user_data);
 
@@ -235,7 +236,7 @@ bool CameraBinSession::setupCameraBin()
         g_object_set(G_OBJECT(m_pipeline), VIEWFINDER_SINK_PROPERTY, preview, NULL);
     }
 
-    GstCaps *previewCaps = gst_caps_from_string(PREVIEW_CAPS);
+    GstCaps *previewCaps = gst_caps_from_string(PREVIEW_CAPS_4_3);
     g_object_set(G_OBJECT(m_pipeline), PREVIEW_CAPS_PROPERTY, previewCaps, NULL);
     gst_caps_unref(previewCaps);
 
@@ -256,12 +257,33 @@ void CameraBinSession::setupCaptureResolution()
 {
     if (m_captureMode == QCamera::CaptureStillImage) {
         QSize resolution = m_imageEncodeControl->imageSettings().resolution();
+
+        //by default select the maximum supported resolution
+        if (resolution.isEmpty()) {
+            updateVideoSourceCaps();
+            bool continuous = false;
+            QList<QSize> resolutions = supportedResolutions(qMakePair<int,int>(0,0),
+                                                            &continuous,
+                                                            QCamera::CaptureStillImage);
+            if (!resolutions.isEmpty())
+                resolution = resolutions.last();
+        }
+
+        QString previewCapsString = PREVIEW_CAPS_4_3;
+
         if (!resolution.isEmpty()) {
 #if CAMERABIN_DEBUG
-            qDebug() << "image resolution" << resolution;
+            qDebug() << Q_FUNC_INFO << "set image resolution" << resolution;
 #endif
             g_signal_emit_by_name(G_OBJECT(m_pipeline), SET_IMAGE_RESOLUTION, resolution.width(), resolution.height(), NULL);
+
+            previewCapsString = QString("video/x-raw-rgb, width = (int) %1, height = (int) 480")
+                    .arg(resolution.width()*480/resolution.height());
         }
+
+        GstCaps *previewCaps = gst_caps_from_string(previewCapsString.toLatin1());
+        g_object_set(G_OBJECT(m_pipeline), PREVIEW_CAPS_PROPERTY, previewCaps, NULL);
+        gst_caps_unref(previewCaps);
     }
 
     if (m_captureMode == QCamera::CaptureVideo) {
@@ -269,7 +291,7 @@ void CameraBinSession::setupCaptureResolution()
         qreal framerate = m_videoEncodeControl->videoSettings().frameRate();
         if (!resolution.isEmpty() || framerate > 0) {
 #if CAMERABIN_DEBUG
-            qDebug() << "video resolution" << resolution;
+            qDebug() << Q_FUNC_INFO << "set video resolution" << resolution;
 #endif
             g_signal_emit_by_name(G_OBJECT(m_pipeline),
                                   SET_VIDEO_RESOLUTION_FPS,
@@ -306,20 +328,12 @@ GstElement *CameraBinSession::buildVideoSrc()
 void CameraBinSession::captureImage(int requestId, const QString &fileName)
 {
     QString actualFileName = fileName;
-    if (actualFileName.isEmpty()) {
+    if (actualFileName.isEmpty())
         actualFileName = generateFileName("img_", defaultDir(QCamera::CaptureStillImage), "jpg");
-    }
 
     m_requestId = requestId;
 
-    QSize resolution = m_imageEncodeControl->imageSettings().resolution();
-    if (!resolution.isEmpty()) {
-
-#if CAMERABIN_DEBUG
-        qDebug() << "Set image resolution" << resolution;
-#endif
-        g_signal_emit_by_name(G_OBJECT(m_pipeline), SET_IMAGE_RESOLUTION, resolution.width(), resolution.height(), NULL);
-    }
+    setupCaptureResolution();
 
     g_object_set(G_OBJECT(m_pipeline), FILENAME_PROPERTY, actualFileName.toLocal8Bit().constData(), NULL);
 
@@ -475,7 +489,7 @@ void CameraBinSession::setState(QCamera::State newState)
     m_pendingState = newState;
 
 #if CAMERABIN_DEBUG
-    qDebug() << Q_FUNC_INFO << newState;
+    qDebug() << Q_FUNC_INFO << ENUM_NAME(QCamera, "State", newState);
 #endif
 
     switch (newState) {
@@ -899,7 +913,9 @@ static bool resolutionLessThan(const QSize &r1, const QSize &r2)
 }
 
 
-QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate, bool *continuous) const
+QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate,
+                                                    bool *continuous,
+                                                    QCamera::CaptureMode mode) const
 {
     QList<QSize> res;
 
@@ -1004,11 +1020,14 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate, bool *c
                                << QSize(2560, 1600)
                                << QSize(2580, 1936);
         const QSize minSize = res.first();
+        QSize maxSize = res.last();
+
 
 #ifdef Q_WS_MAEMO_5
-        const QSize maxSize = QSize(848, 480);
+        if (mode == QCamera::CaptureVideo)
+            maxSize = QSize(848, 480);
 #else
-        const QSize maxSize = res.last();
+        Q_UNUSED(mode);
 #endif
 
         res.clear();

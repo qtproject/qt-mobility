@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 import Qt 4.7
-import Qt.multimedia 4.7
+import QtMultimediaKit 1.1
 
 Rectangle {
     id : cameraUI
@@ -54,9 +54,11 @@ Rectangle {
             name: "PhotoCapture"
             StateChangeScript {
                 script: {
-                    camera.visible = true                    
+                    camera.visible = true
+                    camera.focus = true
                     stillControls.visible = true
                     photoPreview.visible = false
+                    camera.start()
                 }
             }
         },
@@ -64,10 +66,11 @@ Rectangle {
             name: "PhotoPreview"
             StateChangeScript {
                 script: {
-                    //don't stop the camera to allow processing of pending images
-                    camera.visible = false
+                    camera.visible = false                    
                     stillControls.visible = false
                     photoPreview.visible = true
+                    photoPreview.focus = true
+                    camera.stop()
                 }
             }
         }
@@ -114,4 +117,5 @@ Rectangle {
         camera: camera
         onPreviewSelected: cameraUI.state = "PhotoPreview"
     }
+
 }
