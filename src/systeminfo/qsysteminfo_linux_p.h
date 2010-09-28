@@ -179,9 +179,9 @@ public:
     QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent = 0);
     ~QSystemDeviceInfoPrivate();
 
-//    QString imei();
-//    QString imsi();
-//    QSystemDeviceInfo::SimStatus simStatus();
+    QString imei();
+    QString imsi();
+    QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     void setConnection();

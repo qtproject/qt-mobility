@@ -98,6 +98,23 @@ static bool halAvailable()
 #endif
     return false;
 }
+static bool ofonoAvailable()
+{
+#if !defined(QT_NO_DBUS)
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    if (dbusConnection.isConnected()) {
+        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.ofono");
+        if (reply.isValid() && reply.value()) {
+            return reply.value();
+        } else {
+         qDebug() << "ofono not available" << reply.value();
+        }
+    }
+#endif
+
+    return false;
+}
 
 QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
  : QSystemInfoLinuxCommonPrivate(parent)
@@ -587,22 +604,77 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
     return QSystemDeviceInfo::UnknownProfile;
 }
 
-//QString QSystemDeviceInfoPrivate::imei()
-//{
-//    qDebug() << Q_FUNC_INFO;
-//    return QSystemDeviceInfoLinuxCommonPrivate::imei();//QLatin1String("");
-//}
+QString QSystemDeviceInfoPrivate::imei()
+{
+#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_CONNMAN)
+     if(ofonoAvailable()) {
+         QOfonoManagerInterface ofonoManager;
+         QString modem = ofonoManager.currentModem().path();
+         if(!modem.isEmpty()) {
+             QOfonoModemInterface modemIface(modem,this);
 
-//QString QSystemDeviceInfoPrivate::imsi()
-//{
-//    return QSystemDeviceInfoLinuxCommonPrivate::imsi();//QLatin1String("");
-////        return QLatin1String("");
-//}
+             QString imei = modemIface.getSerial();
+             if(!imei.isEmpty()) {
+                 return imei;
+             }
+         }
+     }
+#endif
+#endif
+     return QLatin1String("");
+ }
 
-//QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
-//{
-//    return QSystemDeviceInfo::SimNotAvailable;
-//}
+QString QSystemDeviceInfoPrivate::imsi()
+{
+#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_CONNMAN)
+     if(ofonoAvailable()) {
+         QOfonoManagerInterface ofonoManager;
+         QString modem = ofonoManager.currentModem().path();
+         if(!modem.isEmpty()) {
+             QOfonoSimInterface simInterface(modem,this);
+             if(simInterface.isPresent()) {
+                 QString id = simInterface.getImsi();
+                 if(!id.isEmpty()) {
+                     return id;
+                 }
+             }
+         }
+     }
+#endif
+#endif
+         return QLatin1String("");
+}
+
+QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
+{
+#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_CONNMAN)
+     if(ofonoAvailable()) {
+         QOfonoManagerInterface ofonoManager;
+         QString modem = ofonoManager.currentModem().path();
+         if(!modem.isEmpty()) {
+             QOfonoSimInterface simInterface(modem,this);
+             QString simpin = simInterface.pinRequired();
+             if(simpin == "pin"
+            || simpin == "phone"
+            || simpin == "firstphone"
+            || simpin == "pin2"
+            || simpin == "puk"
+            || simpin == "firstphonepuk"
+            || simpin == "puk2"
+            ) {
+                 return QSystemDeviceInfo::SimLocked;
+             }
+             if(simInterface.isPresent()) {
+                 return QSystemDeviceInfo::SingleSimAvailable;
+             }
+         }
+     }
+#endif
+#endif
+}
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {

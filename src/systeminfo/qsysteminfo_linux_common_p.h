@@ -292,8 +292,8 @@ public:
     QSystemDeviceInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoLinuxCommonPrivate();
 
-    QString imei();
-    QString imsi();
+    QString imei() {return QString();}
+    QString imsi() {return QString();}
     QString manufacturer();
     QString model()  {return QString();}
     QString productName()  {return QString();}
@@ -302,7 +302,7 @@ public:
 
     int  batteryLevel() const ;
 
-    QSystemDeviceInfo::SimStatus simStatus();
+    QSystemDeviceInfo::SimStatus simStatus() {return QSystemDeviceInfo::SimNotAvailable;}
     bool isDeviceLocked() {return false;}
     QSystemDeviceInfo::Profile currentProfile() {return QSystemDeviceInfo::UnknownProfile;}
 
