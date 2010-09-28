@@ -759,37 +759,29 @@ private slots:
 
     void invalidManager();
 
-#ifdef RETRIEVE_CATEGORY
     void retrieveCategory();
     void retrieveCategory_data();
-#endif
 
 #ifdef RESTORE
     void categoryFetchCancelAsync();
 #endif
-#ifdef RETRIEVE_LANDMARK
+
     void retrieveLandmark();
     void retrieveLandmark_data();
-#endif
 
     /* TODO: restore
     void asyncLandmarkFetchCancel();
 */
 
-#ifdef SAVE_CATEGORY
     void saveCategory();
     void saveCategory_data();
-#endif
 
-#ifdef SAVE_LANDMARK
     void saveLandmark();
     void saveLandmark_data();
-#endif
 
-#ifdef REMOVE_CATEGORY
     void removeCategory();
     void removeCategory_data();
-#endif
+
     /*
     void addLandmarkAsync();
 
@@ -1058,7 +1050,6 @@ void tst_QLandmarkManager::invalidManager()
 #endif
 }
 
-#ifdef RETRIEVE_CATEGORY
 void tst_QLandmarkManager::retrieveCategory() {
     QFETCH(QString, type);
     QLandmarkCategoryId id1;
@@ -1208,7 +1199,6 @@ void tst_QLandmarkManager::retrieveCategory_data() {
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
-#endif
 
 #ifdef RESTORE_CANCEL_CATEGORY_FETCH
 void tst_QLandmarkManager::categoryFetchCancelAsync()
@@ -1255,7 +1245,6 @@ void tst_QLandmarkManager::categoryFetchCancelAsync()
 }
 #endif
 
-#ifdef RETRIEVE_LANDMARK
 void tst_QLandmarkManager::retrieveLandmark() {
     QFETCH(QString, type);
 
@@ -1613,9 +1602,7 @@ void tst_QLandmarkManager::retrieveLandmark_data() {
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
-#endif
 
-#ifdef SAVE_CATEGORY
 void tst_QLandmarkManager::saveCategory() {
     QFETCH(QString, type);
     QSignalSpy spyAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
@@ -1879,7 +1866,6 @@ void tst_QLandmarkManager::saveCategory() {
    }
 }
 
-
 void tst_QLandmarkManager::saveCategory_data()
 {
     QTest::addColumn<QString>("type");
@@ -1887,10 +1873,7 @@ void tst_QLandmarkManager::saveCategory_data()
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
-#endif
 
-
-#ifdef SAVE_LANDMARK
 void tst_QLandmarkManager::saveLandmark() {
     QFETCH(QString, type);
     QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
@@ -2262,9 +2245,8 @@ void tst_QLandmarkManager::saveLandmark_data() {
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
-#endif
 
-#ifdef REMOVE_CATEGORY
+
 void tst_QLandmarkManager::removeCategory() {
     QFETCH(QString, type);
     QSignalSpy spyLmAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
@@ -2566,7 +2548,6 @@ void tst_QLandmarkManager::removeCategory_data()
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
-#endif
 
 QTEST_MAIN(tst_QLandmarkManager)
 #include "tst_qlandmarkmanager.moc"
