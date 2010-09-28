@@ -89,13 +89,13 @@ private:
     QOrganizerCollectionEngineLocalId* d;
 
 #ifndef QT_NO_DEBUG_STREAM
-    friend QDebug operator<<(QDebug dbg, const QOrganizerCollectionLocalId& id);
+    Q_ORGANIZER_EXPORT friend QDebug operator<<(QDebug dbg, const QOrganizerCollectionLocalId& id);
 #endif
 #ifndef QT_NO_DATASTREAM
-    friend QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionLocalId& id);
-    friend QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& id);
+    Q_ORGANIZER_EXPORT friend QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionLocalId& id);
+    Q_ORGANIZER_EXPORT friend QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& id);
 #endif
-    friend uint qHash(const QOrganizerCollectionLocalId& key);
+    Q_ORGANIZER_EXPORT friend uint qHash(const QOrganizerCollectionLocalId& key);
     friend class QOrganizerItemManagerEngine;
 };
 
