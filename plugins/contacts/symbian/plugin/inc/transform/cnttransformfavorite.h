@@ -38,50 +38,24 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
+#ifndef TRANSFORMFAVORITE_H
+#define TRANSFORMFAVORITE_H
 
-class CntSymbianEngine;
+#include "cnttransformcontactdata.h"
 
-class TestSymbianEngine : public QObject
+QTM_USE_NAMESPACE
+
+class CntTransformFavorite : public CntTransformContactData
 {
-    Q_OBJECT
-
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
-    void init();
-    void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContactWithFavoriteDetail();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void retrieveName();
-    void retrieveNames();
-    void updateContact();
-    void updateContactByUid();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    void asyncRequests();
-    
-private:
-    void removeAllContacts();
-
-private:
-    CntSymbianEngine   *m_engine;
+protected:
+	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
+	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
+	bool supportsDetail(QString detailName) const;
+	QList<TUid> supportedFields() const;
+	QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
+    bool supportsSubType(const QString& subType) const;
+    quint32 getIdForField(const QString& fieldName) const;
+    void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const;
 };
+
+#endif
