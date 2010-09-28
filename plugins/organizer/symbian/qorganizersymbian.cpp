@@ -1251,12 +1251,6 @@ void QOrganizerItemSymbianEngine::saveCollectionL(
         symbianCollection.openL(toPtrC16(fileName), calInfo);
         m_collections.insert(symbianCollection.localId(), symbianCollection);
         symbianCollection.createViewsL();
-
-        // Refresh meta data (it may have changed during creation)
-        CCalCalendarInfo* calInfoNew = symbianCollection.calSession()->CalendarInfoL();
-        CleanupStack::PushL(calInfoNew);
-        collection->setMetaData(toMetaDataL(*calInfoNew));
-        CleanupStack::PopAndDestroy(calInfoNew);
     }
     else {
         // Cannot allow changing the filename for an existing collection
@@ -1266,6 +1260,12 @@ void QOrganizerItemSymbianEngine::saveCollectionL(
         // Update the existing collection
         symbianCollection.calSession()->SetCalendarInfoL(*calInfo);
     }
+
+    // Refresh meta data (it may have changed during save)
+    CCalCalendarInfo* calInfoNew = symbianCollection.calSession()->CalendarInfoL();
+    CleanupStack::PushL(calInfoNew);
+    collection->setMetaData(toMetaDataL(*calInfoNew));
+    CleanupStack::PopAndDestroy(calInfoNew);
 
     // Update id to the collection object
     collection->setId(symbianCollection.id());
