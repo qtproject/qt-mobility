@@ -63,6 +63,7 @@
 #include <QtGui/qimage.h>
 
 //#define CAMERABIN_DEBUG 1
+#define ENUM_NAME(c,e,v) (c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(e)).valueToKey((v)))
 
 #ifdef Q_WS_MAEMO_5
 #define FILENAME_PROPERTY "filename"
@@ -258,7 +259,7 @@ void CameraBinSession::setupCaptureResolution()
         QSize resolution = m_imageEncodeControl->imageSettings().resolution();
         if (!resolution.isEmpty()) {
 #if CAMERABIN_DEBUG
-            qDebug() << "image resolution" << resolution;
+            qDebug() << Q_FUNC_INFO << "set image resolution" << resolution;
 #endif
             g_signal_emit_by_name(G_OBJECT(m_pipeline), SET_IMAGE_RESOLUTION, resolution.width(), resolution.height(), NULL);
         }
@@ -269,7 +270,7 @@ void CameraBinSession::setupCaptureResolution()
         qreal framerate = m_videoEncodeControl->videoSettings().frameRate();
         if (!resolution.isEmpty() || framerate > 0) {
 #if CAMERABIN_DEBUG
-            qDebug() << "video resolution" << resolution;
+            qDebug() << Q_FUNC_INFO << "set video resolution" << resolution;
 #endif
             g_signal_emit_by_name(G_OBJECT(m_pipeline),
                                   SET_VIDEO_RESOLUTION_FPS,
@@ -475,7 +476,7 @@ void CameraBinSession::setState(QCamera::State newState)
     m_pendingState = newState;
 
 #if CAMERABIN_DEBUG
-    qDebug() << Q_FUNC_INFO << newState;
+    qDebug() << Q_FUNC_INFO << ENUM_NAME(QCamera, "State", newState);
 #endif
 
     switch (newState) {
