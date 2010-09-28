@@ -123,8 +123,8 @@
 #define gstRef(element) { gst_object_ref(GST_OBJECT(element)); gst_object_sink(GST_OBJECT(element)); }
 #define gstUnref(element) { if (element) { gst_object_unref(GST_OBJECT(element)); element = 0; } }
 
-#define PREVIEW_CAPS \
-    "video/x-raw-rgb, width = (int) [640, 848], height = (int) [320, 480]"
+#define PREVIEW_CAPS_4_3 \
+    "video/x-raw-rgb, width = (int) 640, height = (int) 480"
 
 static gboolean imgCaptured(GstElement *camera, const gchar *filename, gpointer user_data);
 
@@ -236,7 +236,7 @@ bool CameraBinSession::setupCameraBin()
         g_object_set(G_OBJECT(m_pipeline), VIEWFINDER_SINK_PROPERTY, preview, NULL);
     }
 
-    GstCaps *previewCaps = gst_caps_from_string(PREVIEW_CAPS);
+    GstCaps *previewCaps = gst_caps_from_string(PREVIEW_CAPS_4_3);
     g_object_set(G_OBJECT(m_pipeline), PREVIEW_CAPS_PROPERTY, previewCaps, NULL);
     gst_caps_unref(previewCaps);
 
@@ -269,12 +269,21 @@ void CameraBinSession::setupCaptureResolution()
                 resolution = resolutions.last();
         }
 
+        QString previewCapsString = PREVIEW_CAPS_4_3;
+
         if (!resolution.isEmpty()) {
 #if CAMERABIN_DEBUG
             qDebug() << Q_FUNC_INFO << "set image resolution" << resolution;
 #endif
             g_signal_emit_by_name(G_OBJECT(m_pipeline), SET_IMAGE_RESOLUTION, resolution.width(), resolution.height(), NULL);
+
+            previewCapsString = QString("video/x-raw-rgb, width = (int) %1, height = (int) 480")
+                    .arg(resolution.width()*480/resolution.height());
         }
+
+        GstCaps *previewCaps = gst_caps_from_string(previewCapsString.toLatin1());
+        g_object_set(G_OBJECT(m_pipeline), PREVIEW_CAPS_PROPERTY, previewCaps, NULL);
+        gst_caps_unref(previewCaps);
     }
 
     if (m_captureMode == QCamera::CaptureVideo) {
