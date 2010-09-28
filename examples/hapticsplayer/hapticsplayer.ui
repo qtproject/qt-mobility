@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>HapticsPlayer</class>
+ <widget class="QWidget" name="HapticsPlayer">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -12,11 +12,11 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>20</pointsize>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>HapticsPlayer</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -425,7 +425,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>play</string>
+                   <string>Play</string>
                   </property>
                  </widget>
                 </item>
@@ -438,14 +438,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>stop</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="exitButton">
-                  <property name="text">
-                   <string>Exit</string>
+                   <string>Stop</string>
                   </property>
                  </widget>
                 </item>
@@ -517,7 +510,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>play</string>
+               <string>Play</string>
               </property>
              </widget>
             </item>
@@ -599,7 +592,7 @@
                  <bool>false</bool>
                 </property>
                 <property name="text">
-                 <string>play/pause</string>
+                 <string>Play/pause</string>
                 </property>
                </widget>
               </item>
@@ -609,7 +602,7 @@
                  <bool>false</bool>
                 </property>
                 <property name="text">
-                 <string>stop</string>
+                 <string>Stop</string>
                 </property>
                </widget>
               </item>
