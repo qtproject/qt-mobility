@@ -99,7 +99,11 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QStringList languages;
 
+#if !defined(Q_WS_MAEMO_6)
     GConfItem languagesItem("/apps/osso/inputmethod/available_languages");
+#else
+    GConfItem languagesItem("/meegotouch/inputmethods/languages");
+#endif
     const QStringList locales = languagesItem.value().toStringList();
 
     foreach(const QString locale, locales) {
@@ -201,7 +205,8 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxComm
     csStatusMaemo6["NoCoverage"] = 10;  // Offline and in power save mode because of poor coverage.
     csStatusMaemo6["Rejected"]   = 11;  // Offline because SIM was rejected by the network.
 
-    setupNetworkInfo();
+    QTimer::singleShot(0,this,SLOT(setupNetworkInfo()));
+
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
@@ -861,6 +866,13 @@ void QSystemNetworkInfoPrivate::usbCableAction()
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
+    if(networkStatus(QSystemNetworkInfo::EthernetMode) == QSystemNetworkInfo::Connected) {
+        return QSystemNetworkInfo::EthernetMode;
+    }
+    if(networkStatus(QSystemNetworkInfo::WlanMode) == QSystemNetworkInfo::Connected) {
+        return QSystemNetworkInfo::WlanMode;
+    }
+
     if (radioAccessTechnology == 1)
         return QSystemNetworkInfo::GsmMode;
     if (radioAccessTechnology == 2)
@@ -871,8 +883,10 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 
 void QSystemNetworkInfoPrivate::wlanSignalStrengthCheck()
 {
-    if (currentWlanSignalStrength != networkSignalStrength(QSystemNetworkInfo::WlanMode)) {
-        currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
+    int strength = 0;
+    strength =  networkSignalStrength(QSystemNetworkInfo::WlanMode);
+    if (currentWlanSignalStrength != strength) {
+        currentWlanSignalStrength = strength;
         emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, currentWlanSignalStrength);
     }
 }

@@ -186,22 +186,18 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
 /*!
     \enum QLandmarkManager::LandmarkFeature
     Defines the possible features the landmark manager can support.
-    \value ExtendedAttributes The manager supports extra attributes above the standard cross platform attributes.
-                              These attributes are specific to the manager backend implementation.
-    \value CustomAttributes The manager supports applications associating arbitrary custom attributes to
-                            landmarks and categories.
-    \value ImportExport The manager supports import and/or export operations
-    \value Notifications The manager will emit notification signals when landmarks/categories have
+    \value ImportExportFeature The manager supports import and/or export operations
+    \value NotificationsFeature The manager will emit notification signals when landmarks/categories have
                          been added/modified/removed from the datastore it manages.
 */
 
 /*!
     \enum QLandmarkManager::SupportLevel
     Defines the possible support levels the manager can provide for a given filter or sort order list.
-    \value Native The manager natively supports the filter or sort order list.
-    \value Emulated The manager emulates the behaviour of the filter or sort order list.
+    \value NativeSupport The manager natively supports the filter or sort order list.
+    \value EmulatedSupport The manager emulates the behaviour of the filter or sort order list.
                      Emulated behaviour will inherently be slower than a natively supported implementation.
-    \value None The manager does not support the filter or sort order list at all.
+    \value NoSupport The manager does not support the filter or sort order list at all.
 */
 
 /*!
@@ -985,15 +981,6 @@ bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
 
 /*!
     Returns the list of attribute keys the landmarks will have.
-    If extended attributes are enabled (provided manager supported them)
-    landmarks will possess  extra keys in addition to the standard cross platform keys.
-
-    Note: When saving a landark with extended attributes, all attributes much match
-    those of the manager otherwise a QLandmarkManager::BadArgumentError is set.
-    If the landmark does not have one of the extended attributes in its list,
-    then that particular attribute is ignored.  This differs from the semantics
-    for custom attributes where if a custom attribute is not present then it
-    is removed when the landmark is saved.
 */
 QStringList QLandmarkManager::landmarkAttributeKeys() const
 {
@@ -1007,10 +994,24 @@ QStringList QLandmarkManager::landmarkAttributeKeys() const
     return d->engine->landmarkAttributeKeys(&(d->errorCode), &(d->errorString));
 }
 
+
+/*!
+    Returns a list of landmark attribute keys that may be used in a
+    QLandmarkAttributeFilter.
+*/
+QStringList QLandmarkManager::searchableLandmarkAttributeKeys() const
+{
+    Q_D(const QLandmarkManager);
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+    }
+
+    return d->engine->searchableLandmarkAttributeKeys(&(d->errorCode), &(d->errorString));
+}
+
 /*!
     Returns the list of attribute keys the categories will have.
-    If extended attributes are enabled (provided the manager supports them),
-    categories will possess extra keys in addition to the standad cross platform keys.
 */
 QStringList QLandmarkManager::categoryAttributeKeys() const
 {

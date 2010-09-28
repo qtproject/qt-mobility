@@ -5,6 +5,8 @@ CONFIG += testcase
 
 include (../../../common.pri)
 
+INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/plugins/declarative/gallery
+
 SOURCES += tst_qdeclarativedocumentgallerytype.cpp
 
 CONFIG += mobility

@@ -162,13 +162,7 @@ bool QOrganizerItemLocalId::operator==(const QOrganizerItemLocalId& other) const
  */
 bool QOrganizerItemLocalId::operator!=(const QOrganizerItemLocalId& other) const
 {
-    if (d && other.d) {
-        // ensure they're of the same type (and therefore comparable)
-        if (d->engineLocalIdType() == other.d->engineLocalIdType()) {
-            return !(d->isEqualTo(other.d));
-        }
-    }
-    return false;
+    return !(*this == other);
 }
 
 /*!
@@ -229,11 +223,11 @@ QOrganizerItemId& QOrganizerItemId::operator=(const QOrganizerItemId& other)
 /*! Returns true if the organizer item id has the same manager URI and local id as \a other */
 bool QOrganizerItemId::operator==(const QOrganizerItemId& other) const
 {
-    if (d->m_managerUri != other.d->m_managerUri)
-        return false;
-    if (d->m_localId != other.d->m_localId)
-        return false;
-    return true;
+    if (d && other.d)
+        return (d->m_managerUri == other.d->m_managerUri) &&
+               (d->m_localId == other.d->m_localId);
+
+    return !d && !other.d;
 }
 
 /*! Returns true if either the manager URI or local id of the organizer item id is different to that of \a other */
@@ -327,11 +321,13 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
         quint8 localIdMarker = static_cast<quint8>(false);
         in >> localIdMarker;
         QOrganizerItemLocalId localId(QOrganizerItemManagerData::createEngineItemLocalId(managerUri));
-        if (localId.d) {
+        if (localIdMarker == static_cast<quint8>(true)) {
             id.setManagerUri(managerUri);
-            if (localIdMarker == static_cast<quint8>(true)) {
-                // only try to stream in data if it exists.  otherwise, skip it.
+            if (localId.d) {
+                // only try to stream in data if it exists and the engine could create an engine
+                // specific localId based on the managerUri. otherwise, skip it.
                 localId.d->dataStreamIn(in);
+                id.setLocalId(localId);
             }
         }
     } else {

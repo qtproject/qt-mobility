@@ -47,25 +47,31 @@ QTM_BEGIN_NAMESPACE
 
 void QDeclarativeGalleryValueFilter::setValue(const QVariant &value)
 {
-    m_filter.setValue(value);
+    if (value != m_filter.value()) {
+        m_filter.setValue(value);
 
-    emit valueChanged();
-    emit filterChanged();
+        emit valueChanged();
+        emit filterChanged();
+    }
 }
 void QDeclarativeGalleryValueFilter::setPropertyName(const QString &name)
 {
-    m_filter.setPropertyName(name);
+    if (name != m_filter.propertyName()) {
+        m_filter.setPropertyName(name);
 
-    emit propertyNameChanged();
-    emit filterChanged();
+        emit propertyNameChanged();
+        emit filterChanged();
+    }
 }
 
-void QDeclarativeGalleryValueFilter::setInverted(bool inverted)
+void QDeclarativeGalleryValueFilter::setNegated(bool negated)
 {
-    m_filter.setInverted(inverted);
+    if (negated != m_filter.isNegated()) {
+        m_filter.setNegated(negated);
 
-    emit invertedChanged();
-    emit filterChanged();
+        emit negatedChanged();
+        emit filterChanged();
+    }
 }
 
 QGalleryFilter QDeclarativeGalleryValueFilter::filter() const
@@ -75,26 +81,32 @@ QGalleryFilter QDeclarativeGalleryValueFilter::filter() const
 
 void QDeclarativeGalleryStringFilter::setPropertyName(const QString &name)
 {
-    m_filter.setPropertyName(name);
+    if (name != m_filter.propertyName()) {
+        m_filter.setPropertyName(name);
 
-    emit propertyNameChanged();
-    emit filterChanged();
+        emit propertyNameChanged();
+        emit filterChanged();
+    }
 }
 
 void QDeclarativeGalleryStringFilter::setValue(const QString &value)
 {
-    m_filter.setValue(value);
+    if (value != m_filter.value()) {
+        m_filter.setValue(value);
 
-    emit valueChanged();
-    emit filterChanged();
+        emit valueChanged();
+        emit filterChanged();
+    }
 }
 
-void QDeclarativeGalleryStringFilter::setInverted(bool inverted)
+void QDeclarativeGalleryStringFilter::setNegated(bool negated)
 {
-    m_filter.setInverted(inverted);
+    if (negated != m_filter.isNegated()) {
+        m_filter.setNegated(negated);
 
-    emit invertedChanged();
-    emit filterChanged();
+        emit negatedChanged();
+        emit filterChanged();
+    }
 }
 
 QGalleryFilter QDeclarativeGalleryStringFilter::filter() const
@@ -134,9 +146,9 @@ QGalleryFilter QDeclarativeGalleryStringFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryEqualsFilter::inverted
+    \qmlproperty bool GalleryEqualsFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
@@ -184,9 +196,9 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryLessThanFilter::inverted
+    \qmlproperty bool GalleryLessThanFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 
@@ -222,9 +234,9 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryLessThanEqualsFilter::inverted
+    \qmlproperty bool GalleryLessThanEqualsFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 
@@ -260,9 +272,9 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryGreaterThanFilter::inverted
+    \qmlproperty bool GalleryGreaterThanFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 /*!
@@ -297,9 +309,9 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryGreaterThanEqualsFilter::inverted
+    \qmlproperty bool GalleryGreaterThanEqualsFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 /*!
@@ -334,9 +346,9 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryContainsFilter::inverted
+    \qmlproperty bool GalleryContainsFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 /*!
@@ -371,9 +383,9 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryStartsWithFilter::inverted
+    \qmlproperty bool GalleryStartsWithFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 /*!
@@ -408,9 +420,9 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryEndsWithFilter::inverted
+    \qmlproperty bool GalleryEndsWithFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 /*!
@@ -445,9 +457,9 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryWildcardFilter::inverted
+    \qmlproperty bool GalleryWildcardFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 

@@ -61,7 +61,6 @@ class QDeclarativeGalleryType : public QObject, public QDeclarativeParserStatus
     Q_ENUMS(Status)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
-    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(bool available READ available NOTIFY availableChanged)
@@ -82,20 +81,13 @@ public:
 
     Status status() const { return m_status; }
 
-    qreal progress() const
-    {
-        const int max = m_request.maximumProgress();
-        return max > 0 ? qreal(m_request.currentProgress()) / max : qreal(0.0);
-    }
-
-    QString errorMessage() const { return m_errorMessage; }
+    qreal progress() const;
 
     QStringList propertyNames() { return m_request.propertyNames(); }
-    void setPropertyNames(const QStringList &names) {
-        if (!m_complete) m_request.setPropertyNames(names); emit propertyNamesChanged(); }
+    void setPropertyNames(const QStringList &names);
 
     bool autoUpdate() const { return m_request.autoUpdate(); }
-    void setAutoUpdate(bool enabled) { m_request.setAutoUpdate(enabled); emit autoUpdateChanged(); }
+    void setAutoUpdate(bool enabled);
 
     bool available() const { return m_request.isValid(); }
 
@@ -111,7 +103,6 @@ public Q_SLOTS:
 Q_SIGNALS:
     void statusChanged();
     void progressChanged();
-    void errorMessageChanged();
     void availableChanged();
     void metaDataChanged();
 
@@ -125,7 +116,6 @@ protected:
     QGalleryTypeRequest m_request;
     QDeclarativePropertyMap *m_metaData;
     QHash<int, QString> m_propertyKeys;
-    QString m_errorMessage;
     Status m_status;
     bool m_complete;
 

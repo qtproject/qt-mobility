@@ -84,6 +84,7 @@ public:
         socket->setParent(this);
         connect(s, SIGNAL(readyRead()), this, SLOT(readIncoming()));
         connect(s, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
+        connect(s, SIGNAL(disconnected()), this, SLOT(ipcfault()));
 
         if (socket->bytesAvailable())
             QTimer::singleShot(0, this, SLOT(readIncoming()));
@@ -91,7 +92,11 @@ public:
 
     ~LocalSocketEndPoint() 
     {
+        disconnect(this, SLOT(ipcfault()));
     }
+
+Q_SIGNALS:
+    void errorUnrecoverableIPCFault(QService::UnrecoverableIPCError);
 
 
 protected:
@@ -102,7 +107,7 @@ protected:
         out.setVersion(QDataStream::Qt_4_6);
         out << package;
         socket->write(block);
-    }
+    }   
 
 protected slots:
     void readIncoming()
@@ -117,6 +122,10 @@ protected slots:
         }
 
         emit readyRead();
+    }
+    void ipcfault()
+    {
+        emit errorUnrecoverableIPCFault(QService::ErrorServiceNoLongerAvailable);
     }
 
 private:
@@ -175,11 +184,13 @@ void QRemoteServiceControlLocalSocketPrivate::processIncoming()
             qWarning("Credentials check unsupprted on this platform");
             return;
 #endif
+            qDebug() << "Security filter call";
             if(!getSecurityFilter()(reinterpret_cast<const void *>(&qcred))){
                 s->close();
                 return;
             }
         }
+        qDebug() << "Passed peercred";
         LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(s);
         ObjectEndPoint* endpoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
         Q_UNUSED(endpoint);
@@ -218,7 +229,7 @@ QRemoteServiceControlPrivate* QRemoteServiceControlPrivate::constructPrivateObje
 QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& location)
 {
     QLocalSocket* socket = new QLocalSocket();
-    socket->connectToServer(location);
+    socket->connectToServer(location);   
     if (!socket->isValid()) {
         qWarning() << "Cannot connect to remote service, trying to start service " << location;
         // try starting the service by hand
@@ -259,6 +270,8 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
 
     QObject *proxy = endPoint->constructProxy(typeIdent);
     QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
+    QObject::connect(ipcEndPoint, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
+                     proxy, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)));
     return proxy;
 }
 

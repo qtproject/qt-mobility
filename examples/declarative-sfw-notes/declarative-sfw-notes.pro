@@ -1,11 +1,8 @@
-include(deployment.pri)
 include(declarative-sfw-notes.pri)
+include(deployment.pri)
 
 QT += declarative network script
-TEMPLATE=app
-
 SOURCES += qmlnotes.cpp
-
 TARGET = qmlnotes
 
 symbian {

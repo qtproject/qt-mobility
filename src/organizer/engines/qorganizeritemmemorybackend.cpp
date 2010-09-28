@@ -741,6 +741,9 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
 
     // now order the contents of retn by date
     qSort(rdates);
+    if (qBinaryFind(rdates, initialDateTime) == rdates.end()) {
+        rdates.prepend(initialDateTime);
+    }
 
     // now for each rdate which isn't also an xdate
     foreach (const QDateTime& rdate, rdates) {

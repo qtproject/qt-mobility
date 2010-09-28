@@ -88,7 +88,13 @@ QTM_BEGIN_NAMESPACE
     \a geoMap and makes use of the functionality provided by \a engine.
 */
 QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
-        : d_ptr(new QGeoMapDataPrivate(this, engine, geoMap)) {}
+        : d_ptr(new QGeoMapDataPrivate(this, engine, geoMap))
+{
+    if (engine->supportedConnectivityModes().length() > 0)
+        setConnectivityMode(engine->supportedConnectivityModes().at(0));
+    else
+        setConnectivityMode(QGraphicsGeoMap::NoConnectivity);
+}
 
 /*!
   \internal
@@ -151,6 +157,7 @@ void QGeoMapData::setWindowSize(const QSizeF &size)
 }
 
 /*!
+    \property QGeoMapData::windowSize
     Returns the size of the map viewport.
 
     The size will be adjusted by the associated QGraphicsGeoMap as it resizes.
@@ -185,6 +192,8 @@ void QGeoMapData::setZoomLevel(qreal zoomLevel)
 }
 
 /*!
+    \property QGeoMapData::zoomLevel
+
     Returns the zoom level of the map.
 
     Larger values of the zoom level correspond to more detailed views of the
@@ -227,6 +236,8 @@ void QGeoMapData::setCenter(const QGeoCoordinate &center)
 }
 
 /*!
+    \property QGeoMapData::center
+
     Returns the coordinate of the point in the center of the map viewport.
 */
 QGeoCoordinate QGeoMapData::center() const
@@ -249,11 +260,37 @@ void QGeoMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 }
 
 /*!
+    \property QGeoMapData::mapType
+
     Returns the type of map data which is being displayed.
 */
 QGraphicsGeoMap::MapType QGeoMapData::mapType() const
 {
     return d_ptr->mapType;
+}
+
+/*!
+    Changes the connectivity mode of this map to \a connectivityMode
+*/
+void QGeoMapData::setConnectivityMode(QGraphicsGeoMap::ConnectivityMode connectivityMode)
+{
+    if (d_ptr->connectivityMode == connectivityMode)
+        return;
+
+    d_ptr->connectivityMode = connectivityMode;
+
+    if (!d_ptr->blockPropertyChangeSignals)
+        emit connectivityModeChanged(connectivityMode);
+}
+
+/*!
+    \property QGeoMapData::connectivityMode
+
+    Returns the connectivity mode for this map.
+*/
+QGraphicsGeoMap::ConnectivityMode QGeoMapData::connectivityMode() const
+{
+    return d_ptr->connectivityMode;
 }
 
 /*!
@@ -299,10 +336,10 @@ void QGeoMapData::clearMapObjects()
 
 /*!
     \fn QGeoBoundingBox QGeoMapData::viewport() const
-    Returns a bounding box corresponding to the physical area displayed 
+    Returns a bounding box corresponding to the physical area displayed
     in the viewport of the map.
 
-    The bounding box which is returned is defined by the upper left and 
+    The bounding box which is returned is defined by the upper left and
     lower right corners of the visible area of the map.
 */
 
@@ -311,11 +348,11 @@ void QGeoMapData::clearMapObjects()
 
     Attempts to fit the bounding box \a bounds into the viewport of the map.
 
-    This method will change the zoom level to the maximum zoom level such 
-    that all of \bounds is visible within the resulting viewport.
+    This method will change the zoom level to the maximum zoom level such
+    that all of \a bounds is visible within the resulting viewport.
 
-    If \a preserveViewportCenter is false the map will be centered on the 
-    bounding box \a bounds before the zoom level is changed, otherwise the 
+    If \a preserveViewportCenter is false the map will be centered on the
+    bounding box \a bounds before the zoom level is changed, otherwise the
     center of the map will not be changed.
 */
 
@@ -362,7 +399,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
 }
 
 /*!
-    Returns the list of visible map objects manager by this widget which 
+    Returns the list of visible map objects manager by this widget which
     are displayed at least partially within the viewport of the map.
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjectsInViewport() const

@@ -554,16 +554,19 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferO
 /*!
    \fn QStringList QLandmarkManagerEngine::landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
     Returns the list of attribute keys the landmarks will have.
-    If extended attributes are enabled (provided manager supported them),
-    landmarks will possess  extra keys in addition to the standard cross platform keys.
     Errors are stored in \a error and \a errorString.
 */
 
 /*!
     \fn QStringList QLandmarkManagerEngine::categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
     Returns the list of attribute keys the categories will have.
-    If extended attributes are enabled (provided manager supported them),
-    categories will possess  extra keys in addition to the standard cross platform keys.
+    Errors are stored in \a error and \a errorString.
+*/
+
+
+/*!
+   \fn QStringList QLandmarkManagerEngine::searchableLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+    Returns the list of landmark attribute keys that may be used in a QLandmarkAttributeFilter.
     Errors are stored in \a error and \a errorString.
 */
 

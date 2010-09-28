@@ -33,19 +33,21 @@ contains(mobility_modules,location) {
         SUBDIRS += landmarkbrowser
     }
 
-    contains(QT_MAJOR_VERSION, 4):greaterThan(QT_MINOR_VERSION, 6) {
-    	SUBDIRS += geoservicedemo \
-                    mapviewer
-
-    } else {
-        contains(mobility_modules,bearer) {
-    	    SUBDIRS += geoservicedemo \
-                       mapviewer
-        }
-    }
+#    contains(QT_MAJOR_VERSION, 4):greaterThan(QT_MINOR_VERSION, 6) {
+#    	SUBDIRS += geoservicedemo \
+#                    mapviewer
+#
+#    } else {
+#        contains(mobility_modules,bearer) {
+#    	    SUBDIRS += geoservicedemo \
+#                       mapviewer
+#        }
+#    }
 
     contains(mobility_modules,bearer) {
-    	SUBDIRS += flickrdemo
+    	SUBDIRS += flickrdemo \
+                    geoservicedemo \
+                    mapviewer
       }  
     contains(QT_CONFIG, declarative) {
         SUBDIRS += declarative-location
@@ -89,6 +91,10 @@ contains(mobility_modules,multimedia) {
         audiooutput \
         videographicsitem \
         videowidget
+
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative-camera
+    }
 }
 
 
@@ -133,10 +139,7 @@ contains(mobility_modules, organizer) {
 
 # Feedback API examples
 contains(mobility_modules, feedback) {
-    SUBDIRS += hapticsplayer # this not a good UI for mobile screens at the moment
-    contains(QT_CONFIG, declarative) {
-        SUBDIRS += hapticsquare
-    }
+    SUBDIRS += hapticsplayer hapticsquare # this not a good UI for mobile screens at the moment
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES

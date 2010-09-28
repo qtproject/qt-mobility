@@ -64,6 +64,7 @@ class Q_LOCATION_EXPORT QGraphicsGeoMap : public QGraphicsWidget
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
     Q_PROPERTY(MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
     Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(ConnectivityMode connectivityMode READ connectivityMode WRITE setConnectivityMode)
 
 public:
     enum MapType {
@@ -72,6 +73,13 @@ public:
         SatelliteMapDay,
         SatelliteMapNight,
         TerrainMap
+    };
+
+    enum ConnectivityMode {
+        NoConnectivity,
+        OfflineMode,
+        OnlineMode,
+        HybridMode
     };
 
     QGraphicsGeoMap(QGraphicsItem *parent = 0);
@@ -96,6 +104,10 @@ public:
     void setMapType(MapType mapType);
     MapType mapType() const;
 
+    QList<ConnectivityMode> supportedConnectivityModes() const;
+    void setConnectivityMode(ConnectivityMode connectivityMode);
+    ConnectivityMode connectivityMode() const;
+
     QList<QGeoMapObject*> mapObjects() const;
     void addMapObject(QGeoMapObject *mapObject);
     void removeMapObject(QGeoMapObject *mapObject);
@@ -113,7 +125,6 @@ public:
 
 public slots:
     void pan(int dx, int dy);
-    //void pan(const QPoint &offset);
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
@@ -122,7 +133,6 @@ Q_SIGNALS:
     void zoomLevelChanged(qreal zoomLevel);
     void centerChanged(const QGeoCoordinate &coordinate);
     void mapTypeChanged(QGraphicsGeoMap::MapType mapType);
-    void panned(const QPoint &offset);
 
 private:
     QGraphicsGeoMapPrivate *d_ptr;

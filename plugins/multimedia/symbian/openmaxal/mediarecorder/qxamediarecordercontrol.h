@@ -56,7 +56,6 @@ class QXARecordSession;
 class QXAMediaRecoderControl : public QMediaRecorderControl
 {
     Q_OBJECT
-    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
 
 public:
     QXAMediaRecoderControl(QXARecordSession *session, QObject *parent = 0);

@@ -382,13 +382,16 @@ void tst_SymbianOm::uniqueIds()
         QVERIFY(guids[i] == item.guid());
     }
     
-    // Save a new todo item with own localid. Should fail.
-    QOrganizerTodo todo;
-    QOrganizerItemId id;
-    // TODO: Disabled because of API change. REFACTOR!
-    //id.setLocalId(12345); 
-    //todo.setId(id);
-    //QVERIFY(!m_om->saveItem(&todo));
+    // Try saving a removed item without clearing local id. Should fail
+    QOrganizerTodo todo(items[0]);
+    QVERIFY(m_om->removeItem(todo.localId()));
+    QVERIFY(!m_om->saveItem(&todo));
+    
+    // Try saving a removed item without clearing local id and with own guid. Should fail.
+    todo = QOrganizerTodo(items[1]);
+    todo.setGuid("11111");
+    QVERIFY(m_om->removeItem(todo.localId()));
+    QVERIFY(!m_om->saveItem(&todo));
     
     // Save a new todo item with own guid. Should pass.
     todo = QOrganizerTodo();
@@ -404,19 +407,10 @@ void tst_SymbianOm::uniqueIds()
     QVERIFY(todo.localId() == localId); // local id should remain the same
     
     // Change manager uri and save again. Should fail.
-    id = todo.id();
+    QOrganizerItemId id = todo.id();
     id.setManagerUri("foobar");
     todo.setId(id);
     QVERIFY(!m_om->saveItem(&todo));    
-        
-    // Save a new todo item with own guid & localid. Should fail.
-    todo = QOrganizerTodo();
-    id = QOrganizerItemId();
-    // TODO: Disabled because of API change. REFACTOR!
-    //id.setLocalId(12345);
-    //todo.setId(id);
-    //todo.setGuid("11111");
-    //QVERIFY(!m_om->saveItem(&todo));
 }
 
 void tst_SymbianOm::timeStamp()
@@ -682,8 +676,9 @@ void tst_SymbianOm::addReminderToSingleInstance()
     
 	// Add the start and end time
 	QOrganizerEventTimeRange timeRange;
-    timeRange.setStartDateTime(QDateTime::currentDateTime());
-    timeRange.setEndDateTime(QDateTime::currentDateTime().addSecs(3000));
+	QDateTime startDateTime = QDateTime::currentDateTime();
+    timeRange.setStartDateTime(startDateTime);
+    timeRange.setEndDateTime(startDateTime.addSecs(3000));
     
 	// Create a daily recurrence rule
 	QOrganizerItemRecurrence recurrence;
@@ -700,7 +695,7 @@ void tst_SymbianOm::addReminderToSingleInstance()
     QVERIFY(m_om->saveItem(&repeatingEvent));
     
 	// Fetch the instances
-	QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
+	QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
     QVERIFY(itemInstances.count() == 3);
     
 	// Verify that reminder detail is empty
@@ -709,7 +704,7 @@ void tst_SymbianOm::addReminderToSingleInstance()
     QVERIFY(rptReminder.isEmpty());
     
 	// Add reminder detail to create an exceptional entry
-	rptReminder.setDateTime(QDateTime::currentDateTime().addSecs(-300));
+	rptReminder.setDateTime(startDateTime.addSecs(-300));
     instance1.saveDetail(&rptReminder);
     QVERIFY(m_om->saveItem(&instance1));
 	
@@ -719,7 +714,7 @@ void tst_SymbianOm::addReminderToSingleInstance()
     QVERIFY(!rptReminder.isEmpty());
 
 	// Verify that the other instances have not been modified
-    itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
+    itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
     QCOMPARE(itemInstances.count(), 3);
     QVERIFY(itemInstances.at(1).detail<QOrganizerItemReminder>().isEmpty());
 }
@@ -732,11 +727,12 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
 	// Repeating event with reminder
     QOrganizerItem repeatingEvent;
     repeatingEvent.setType(QOrganizerItemType::TypeEvent);
-	
+    
 	// Add the start and end time
     QOrganizerEventTimeRange timeRange;
-    timeRange.setStartDateTime(QDateTime::currentDateTime());
-    timeRange.setEndDateTime(QDateTime::currentDateTime().addSecs(3000));
+    QDateTime startDateTime = QDateTime::currentDateTime();
+    timeRange.setStartDateTime(startDateTime);
+    timeRange.setEndDateTime(startDateTime.addSecs(3000));
     
 	// Create a daily recurrence rule
 	QOrganizerItemRecurrence recurrence;
@@ -749,7 +745,7 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
     
 	// Add reminder detail
 	QOrganizerItemReminder repeatReminder;
-    repeatReminder.setDateTime(QDateTime::currentDateTime().addSecs(-300));
+    repeatReminder.setDateTime(startDateTime.addSecs(-300));
     
 	// Save the item
 	repeatingEvent.saveDetail(&timeRange);
@@ -758,7 +754,7 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
     QVERIFY(m_om->saveItem(&repeatingEvent));
     
 	// Fetch the instances
-	QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
+	QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
     QVERIFY(itemInstances.count() == 3);
     
 	// Modify first instance by removing reminder detail and save
@@ -774,7 +770,7 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
     QVERIFY(rptReminder.isEmpty());
 	
 	// Check if the other instances are intact
-	itemInstances = m_om->itemInstances(repeatingEvent, QDateTime::currentDateTime(), QDateTime(), 3);
+	itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
 	QCOMPARE(itemInstances.count(), 3);
     QVERIFY(!itemInstances.at(1).detail<QOrganizerItemReminder>().isEmpty());
 }
@@ -1197,6 +1193,24 @@ void tst_SymbianOm::addItem_dataTodoTimeRange(QString managerName, QString itemT
             << timeStart
             << timeDue
             << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusComplete));    
+
+    if (managerName != m_managerNameSymbian) {
+        QTest::newRow(testCaseName("item with progress percentage", managerName, itemType).toLatin1().constData())
+            << managerName
+            << (int) QOrganizerItemManager::NoError
+            << (QTstDetailFieldList(itemTypeDetails)
+                << timeStart
+                << timeDue
+                << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 50));
+    } else {
+        QTest::newRow(testCaseName("item with progress percentage", managerName, itemType).toLatin1().constData())
+            << managerName
+            << (int) QOrganizerItemManager::InvalidDetailError
+            << (QTstDetailFieldList(itemTypeDetails)
+                << timeStart
+                << timeDue
+                << QTstDetailField(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldPercentageComplete, 50));
+    }
 }
 
 /*!

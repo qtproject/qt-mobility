@@ -165,14 +165,14 @@ public:
     QGalleryMetaDataFilterPrivate(QGalleryFilter::Type type = QGalleryFilter::MetaData)
         : QGalleryFilterPrivate(type)
         , comparator(QGalleryFilter::Equals)
-        , inverted(false)
+        , negated(false)
     {
     }
 
     QGalleryMetaDataFilterPrivate(const QGalleryMetaDataFilterPrivate &other)
         : QGalleryFilterPrivate(other)
         , comparator(other.comparator)
-        , inverted(other.inverted)
+        , negated(other.negated)
         , property(other.property)
         , value(other.value)
     {
@@ -185,7 +185,7 @@ public:
                     = static_cast<const QGalleryMetaDataFilterPrivate &>(other);
 
             return o.comparator == comparator
-                    && o.inverted == inverted
+                    && o.negated == negated
                     && o.property == property
                     && o.value == value;
         } else {
@@ -196,7 +196,7 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     void printDebug(QDebug &debug) const
     {
-        if (inverted)
+        if (negated)
             debug << "!";
         debug << "QGalleryMetaDataFilter(";
         if (!property.isNull())
@@ -209,7 +209,7 @@ public:
 #endif
 
     QGalleryFilter::Comparator comparator;
-    bool inverted;
+    bool negated;
     QString property;
     QVariant value;
 };
@@ -846,31 +846,31 @@ void QGalleryMetaDataFilter::setComparator(QGalleryFilter::Comparator comparator
 }
 
 /*!
-    Returns whether the result of a meta-data filter should be inverted.
+    Returns whether the result of a meta-data filter should be negated.
 */
 
-bool QGalleryMetaDataFilter::isInverted() const
+bool QGalleryMetaDataFilter::isNegated() const
 {
-    return d->inverted;
+    return d->negated;
 }
 
 /*!
-    Sets whether the result of a meta-data filter should be \a inverted.
+    Sets whether the result of a meta-data filter should be \a negated.
 */
 
-void QGalleryMetaDataFilter::setInverted(bool inverted)
+void QGalleryMetaDataFilter::setNegated(bool negated)
 {
-    d->inverted = inverted;
+    d->negated = negated;
 }
 
 /*!
-    Returns a meta-data filter which tests the inverse of an existing filter.
+    Returns a meta-data filter which tests the negation of an existing filter.
 */
 
 QGalleryMetaDataFilter QGalleryMetaDataFilter::operator !() const
 {
     QGalleryMetaDataFilter filter(*this);
-    filter.setInverted(!d->inverted);
+    filter.setNegated(!d->negated);
     return filter;
 }
 

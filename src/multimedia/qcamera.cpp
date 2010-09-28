@@ -738,8 +738,6 @@ void QCamera::searchAndLock(QCamera::LockTypes locks)
 
 /*!
     Lock all the supported camera settings.
-
-    \sa QCamera::searchAndLock(QCamera::LockTypes)
  */
 void QCamera::searchAndLock()
 {
@@ -748,8 +746,6 @@ void QCamera::searchAndLock()
 
 /*!
     Unlocks the camera settings specified with \a locks or cancel the current locking if one is active.
-
-    \sa QCamera::searchAndLock(QCamera::LockTypes)
  */
 void QCamera::unlock(QCamera::LockTypes locks)
 {
@@ -773,8 +769,6 @@ void QCamera::unlock(QCamera::LockTypes locks)
 
 /*!
     Unlock all the requested camera locks.
-
-    \sa QCamera::searchAndLock(QCamera::LockTypes)
  */
 void QCamera::unlock()
 {

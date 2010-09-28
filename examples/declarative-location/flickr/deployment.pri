@@ -4,5 +4,9 @@ qmlflickr_src = $$PWD
 symbian {
     load(data_caging_paths)
 }
-qmlflickr_files.sources = $$qmlflickr_src/flickr.qml $$qmlflickr_src/common $$qmlflickr_src/mobile
-DEPLOYMENT += qmlflickr_files
+deployment_files.sources = $$qmlflickr_src/flickr.qml $$qmlflickr_src/flickrcommon $$qmlflickr_src/flickrmobile
+DEPLOYMENT += deployment_files
+install_files.files = $$qmlflickr_src/flickr.qml $$qmlflickr_src/flickrcommon $$qmlflickr_src/flickrmobile
+install_files.path = $$QT_MOBILITY_EXAMPLES
+INSTALLS += install_files
+

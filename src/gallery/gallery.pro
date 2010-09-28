@@ -25,7 +25,6 @@ PUBLIC_HEADERS = \
         qgalleryproperty.h \
         qgalleryquerymodel.h \
         qgalleryqueryrequest.h \
-        qgalleryremoverequest.h \
         qgalleryresource.h \
         qgalleryresultset.h \
         qgallerytype.h \
@@ -41,7 +40,6 @@ SOURCES = \
         qgalleryproperty.cpp \
         qgalleryquerymodel.cpp \
         qgalleryqueryrequest.cpp \
-        qgalleryremoverequest.cpp \
         qgalleryresource.cpp \
         qgalleryresultset.cpp \
         qgallerytype.cpp \

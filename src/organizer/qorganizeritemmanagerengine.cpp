@@ -1242,7 +1242,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     // instance origin
     d.setName(QOrganizerItemInstanceOrigin::DefinitionName);
     fields.clear();
-    f.setDataType(QVariant::Int);
+    f.setDataType(qMetaTypeId<QOrganizerItemLocalId>());
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
     f.setDataType(QVariant::Date);
@@ -1859,14 +1859,21 @@ bool QOrganizerItemManagerEngine::removeItems(const QList<QOrganizerItemLocalId>
 }
 
 /*!
-  XXX TODO
- */
+    Returns the default collegtion Id.
+    Any errors encountered during this operation should be stored to
+   \a error.
+*/
 QOrganizerCollectionLocalId QOrganizerItemManagerEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NotSupportedError;
     return QOrganizerCollectionLocalId();
 }
 
+/*!
+    Returns the collegtion Ids.
+    Any errors encountered during this operation should be stored to
+    \a error.
+ */
 QList<QOrganizerCollectionLocalId> QOrganizerItemManagerEngine::collectionIds(QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NotSupportedError;
@@ -1874,8 +1881,10 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemManagerEngine::collectionIds(QO
 }
 
 /*!
-  XXX TODO
- */
+    Returns the collegtions they matches one of the \a collectionIds.
+    Any errors encountered during this operation should be stored to
+    \a error.
+*/
 QList<QOrganizerCollection> QOrganizerItemManagerEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(collectionIds);
@@ -1885,8 +1894,10 @@ QList<QOrganizerCollection> QOrganizerItemManagerEngine::collections(const QList
 }
 
 /*!
-  XXX TODO
- */
+    Returns true if the saving of the \a collection was successfull otherwise false.
+    Any errors encountered during this operation should be stored to
+    \a error.
+*/
 bool QOrganizerItemManagerEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(collection);
@@ -1896,8 +1907,10 @@ bool QOrganizerItemManagerEngine::saveCollection(QOrganizerCollection* collectio
 }
 
 /*!
-  XXX TODO
- */
+    Returns true if the removing of the \a collectionId was successfull otherwise false.
+    Any errors encountered during this operation should be stored to
+    \a error.
+*/
 bool QOrganizerItemManagerEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(collectionId);

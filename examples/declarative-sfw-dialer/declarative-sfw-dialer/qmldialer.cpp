@@ -56,7 +56,6 @@ int main(int argc, char *argv[])
 #if defined(Q_OS_SYMBIAN)
     view.showFullScreen();
 #else // Q_OS_SYMBIAN
-    view.setGeometry(QRect(100, 100, 360, 640));
     view.show();
 #endif // Q_OS_SYMBIAN
     return application.exec();

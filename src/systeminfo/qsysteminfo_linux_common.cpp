@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include "qsysteminfo_linux_common_p.h"
+
 #include <QTimer>
 #include <QFile>
 #include <QDir>
@@ -80,6 +81,8 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
+#include <sys/inotify.h>
 
 //we cannot include iwlib.h as the platform may not have it installed
 //there we have to go via the kernel's wireless.h
@@ -517,7 +520,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
             const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
-                const QFileInfo fi(devFile + "/wireless");
+                const QFileInfo fi(devFile + "/phy80211");
                 if(fi.exists()) {
                     wlanInterface = dir;
                 }
@@ -563,6 +566,9 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
                 resFile.close();
             }
         }
+            if(netname.isEmpty()) {
+             netname = "Wired";
+            }
     }
     break;
         case QSystemNetworkInfo::BluetoothMode:
@@ -671,23 +677,25 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
-            QString result;
-            const QString baseSysDir = "/sys/class/net/";
-            const QDir wDir(baseSysDir);
-            const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
-            foreach(const QString dir, dirs) {
-                const QString devFile = baseSysDir + dir;
-                const QFileInfo fi(devFile + "/wireless/link");
-                if(fi.exists()) {
-                    QFile rx(fi.absoluteFilePath());
-                    if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                        QTextStream in(&rx);
-                        in >> result;
-                        rx.close();
-                        return result.toInt();
+            QString iface = interfaceForMode(QSystemNetworkInfo::WlanMode).name();
+            QFile file("/proc/net/wireless");
 
-                    }
+            if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+                return 0;
+            QTextStream in(&file);
+            QString line = in.readLine();
+            while (!line.isNull()) {
+                if(line.left(6).contains(iface)) {
+                    QString token = line.section(" ",4,5).simplified();
+                    token.chop(1);
+                    bool ok;
+                    int percent = (int)rint ((log (token.toInt(&ok)) / log (92)) * 100.0);
+                    if(ok)
+                        return percent;
+                    else
+                        return 0;
                 }
+                line = in.readLine();
             }
         }
         break;
@@ -955,58 +963,48 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
         foreach(const QString brightnessFileName, brightnessList) {
             float numLevels = 0.0;
             float curLevel = 0.0;
-            QFile curBrightnessFile(backlightPath+brightnessFileName+"/LCD/brightness");
-            if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qDebug()<<"File not opened";
-            } else {
-                const QString strvalue = curBrightnessFile.readAll().trimmed();
-                if(strvalue.contains("levels")) {
-                    QStringList list = strvalue.split(" ");
-                    numLevels = list.at(2).toFloat();
-                }
-                if(strvalue.contains("current")) {
-                    QStringList list = strvalue.split(": ");
-                    curLevel = list.at(list.count()-1).toFloat();
-                }
-                curBrightnessFile.close();
-                return curLevel / numLevels * 100;
-            }
-        }
-    }
-#if 0
-    QString backlightPath = "/sys/devices/virtual/backlight/";
-    QDir videoDir(backlightPath);
-    QStringList filters;
-    filters << "*";
-    QStringList brightnessList = videoDir.entryList(filters,
-                                                     QDir::Dirs
-                                                     | QDir::NoDotAndDotDot,
-                                                     QDir::Name);
-    foreach(QString brightnessFileName, brightnessList) {
-        float numLevels = 0.0;
-        float curLevel = 0.0;
-        QFile curBrightnessFile(backlightPath+brightnessFileName+"/brightness");
-        if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qDebug()<<"File not opened";
-        } else {
-            QString strvalue;
-            strvalue = curBrightnessFile.readLine().trimmed();
-            curBrightnessFile.close();
-            curLevel = strvalue.toFloat();
 
-            QFile maxBrightnessFile(backlightPath+brightnessFileName+"/max_brightness");
-            if(!maxBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qDebug()<<"File not opened";
-            } else {
-                QString strvalue;
-                strvalue = maxBrightnessFile.readLine().trimmed();
-                maxBrightnessFile.close();
-                numLevels = strvalue.toFloat();
+            const QDir videoSubDir(backlightPath+"/"+brightnessFileName);
+
+            const QStringList vidDirList = videoSubDir.entryList(filters,
+                                                              QDir::Dirs
+                                                              | QDir::NoDotAndDotDot,
+                                                              QDir::Name);
+            foreach(const QString vidFileName, vidDirList) {
+                QFile curBrightnessFile(backlightPath+brightnessFileName+"/"+vidFileName+"/brightness");
+                if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                    qDebug()<<"File not opened";
+                } else {
+                    QTextStream bri(&curBrightnessFile);
+                    QString line = bri.readLine();
+                    while(!line.isNull()) {
+                        if(!line.contains("not supported")) {
+                            if(line.contains("levels")) {
+                                QString level = line.section(" ",-1);
+                                bool ok;
+                                numLevels = level.toFloat(&ok);
+                                if(!ok)
+                                    numLevels = -1;
+                            }
+                            if(line.contains("current")) {
+                                QString level = line.section(": ",-1);
+                                bool ok;
+                                curLevel = level.toFloat(&ok);
+                                if(!ok)
+                                    curLevel = 0;
+                            }
+                            qDebug() << numLevels << curLevel;
+                            curBrightnessFile.close();
+                            if(curLevel > -1 && numLevels > 0) {
+                                return curLevel / numLevels * 100;
+                            }
+                        }
+                        line = bri.readLine();
+                    }
+                }
             }
-            return curLevel / numLevels * 100;
         }
     }
-#endif
     return -1;
 }
 
@@ -1115,22 +1113,21 @@ QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObje
 
 QSystemStorageInfoLinuxCommonPrivate::~QSystemStorageInfoLinuxCommonPrivate()
 {
+    ::close(inotifyFD);
 }
 
 void QSystemStorageInfoLinuxCommonPrivate::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
-        mtabWatcherA = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
-        connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
-                this,SLOT(deviceChanged(const QString &)));
-    }
 
-    if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
-        mtabWatcherB = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
-        connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
-                this,SLOT(deviceChanged(const QString &)));
+        inotifyFD = ::inotify_init();
+        mtabWatchA = ::inotify_add_watch(inotifyFD, "/etc/mtab", IN_MODIFY);
+        if(mtabWatchA > 0) {
+            QSocketNotifier *notifier = new QSocketNotifier
+                                        (inotifyFD, QSocketNotifier::Read, this);
+            connect(notifier, SIGNAL(activated(int)), this, SLOT(inotifyActivated()));
+        }
     }
 }
 
@@ -1138,20 +1135,26 @@ void QSystemStorageInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
 {
     if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageAdded())))) {
-        delete mtabWatcherA;
-        mtabWatcherA = 0;
-
+        ::inotify_rm_watch(inotifyFD, mtabWatchA);
     }
-    if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageRemoved())))) {
-        delete mtabWatcherB;
-        mtabWatcherB = 0;
+}
+void QSystemStorageInfoLinuxCommonPrivate::inotifyActivated()
+{
+    char buffer[1024];
+    struct inotify_event *event;
+    int len = ::read(inotifyFD, (void *)buffer, sizeof(buffer));
+    if (len > 0) {
+        event = (struct inotify_event *)buffer;
+        if (event->wd == mtabWatchA /*&& (event->mask & IN_IGNORED) == 0*/) {
+            ::inotify_rm_watch(inotifyFD, mtabWatchA);
+            QTimer::singleShot(1000,this,SLOT(deviceChanged()));//give this time to finish write
+            mtabWatchA = ::inotify_add_watch(inotifyFD, "/etc/mtab", IN_MODIFY);
+        }
     }
 }
 
-void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
+void QSystemStorageInfoLinuxCommonPrivate::deviceChanged()
 {
-    Q_UNUSED(path);
     QMap<QString, QString> oldDrives = mountEntriesMap;
     mountEntries();
 
@@ -1160,11 +1163,6 @@ void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
         while (i.hasNext()) {
             i.next();
             if(!mountEntriesMap.contains(i.key())) {
-                delete mtabWatcherA;
-                mtabWatcherA = 0;
-                mtabWatcherA = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
-                connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
-                        this,SLOT(deviceChanged(const QString &)));
                 emit logicalDriveChanged(false, i.key());
             }
         }
@@ -1175,11 +1173,6 @@ void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
 
             if(oldDrives.contains(i.key()))
                 continue;
-            delete mtabWatcherB;
-            mtabWatcherB = 0;
-            mtabWatcherB = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
-            connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
-                    this,SLOT(deviceChanged(false, const QString &)));
             emit logicalDriveChanged(true,i.key());
         }
     }
@@ -1327,8 +1320,6 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
     }
     endmntent(mntfp);
 }
-
-
 
 QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject *parent)
     : QObject(parent)
@@ -1617,11 +1608,15 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             QTextStream batinfo(&infofile);
             QString line = batinfo.readLine();
             while (!line.isNull()) {
-                if(line.contains("design capacity")) {
-                    levelWhenFull = line.split(" ").at(1).trimmed().toFloat();
+                if(line.contains("last full capacity")) {
+                    bool ok;
+                    line = line.simplified();
+                    QString levels = line.section(" ", 3,3);
+                    levelWhenFull = levels.toFloat(&ok);
                     infofile.close();
                     break;
                 }
+
                 line = batinfo.readLine();
             }
             infofile.close();
@@ -1635,7 +1630,10 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             QString line = batstate.readLine();
             while (!line.isNull()) {
                 if(line.contains("remaining capacity")) {
-                    level = line.split(" ").at(1).trimmed().toFloat();
+                    bool ok;
+                    line = line.simplified();
+                    QString levels = line.section(" ", 2,2);
+                    level = levels.toFloat(&ok);
                     statefile.close();
                     break;
                 }
@@ -1758,6 +1756,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 
 QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
+
 }
 
 QSystemScreenSaverLinuxCommonPrivate::~QSystemScreenSaverLinuxCommonPrivate()

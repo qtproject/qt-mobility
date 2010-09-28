@@ -593,33 +593,28 @@ void tst_QOrganizerItem::datastream()
 {
     QByteArray buffer;
     QDataStream stream1(&buffer, QIODevice::WriteOnly);
-    QOrganizerItem contactIn;
-    QOrganizerItemId id;
-    id.setManagerUri("manager");
-    id.setLocalId(makeId(1234));
-    contactIn.setId(id);
+    QOrganizerItem itemIn;
     QOrganizerItemLocation phone;
     phone.setAddress("5678");
-    contactIn.saveDetail(&phone);
-    stream1 << contactIn;
+    itemIn.saveDetail(&phone);
+    QOrganizerItemManager om("memory");
+    om.saveItem(&itemIn); // fill in its ID
+    stream1 << itemIn;
 
     QVERIFY(buffer.size() > 0);
 
     QDataStream stream2(buffer);
-    QOrganizerItem contactOut;
-    stream2 >> contactOut;
-    QEXPECT_FAIL("", "Bad test - we can only stream IDs that can be created by a QOrganizerItemManagerEngineFactory", Continue);
-    QCOMPARE(contactOut, contactIn);
+    QOrganizerItem itemOut;
+    stream2 >> itemOut;
+    QCOMPARE(itemOut, itemIn);
 }
 
 void tst_QOrganizerItem::traits()
 {
-    QEXPECT_FAIL("", "Not sure why this is failing - need to fix", Continue);
     QCOMPARE(sizeof(QOrganizerItem), sizeof(void *));
     QTypeInfo<QTM_PREPEND_NAMESPACE(QOrganizerItem)> ti;
     QVERIFY(ti.isComplex);
     QVERIFY(!ti.isStatic);
-    QEXPECT_FAIL("", "Not sure why this is failing - need to fix", Continue);
     QVERIFY(!ti.isLarge);
     QVERIFY(!ti.isPointer);
     QVERIFY(!ti.isDummy);
@@ -640,7 +635,8 @@ void tst_QOrganizerItem::localIdTraits()
 {
     QVERIFY(sizeof(QOrganizerItemId) == sizeof(void *));
     QTypeInfo<QTM_PREPEND_NAMESPACE(QOrganizerItemLocalId)> ti;
-    //QVERIFY(!ti.isComplex); // localId is no longer non-complex
+    QEXPECT_FAIL("", "Need to investigate this", Continue);
+    QVERIFY(!ti.isComplex);
     QVERIFY(!ti.isStatic);
     QVERIFY(!ti.isLarge);
     QVERIFY(!ti.isPointer);

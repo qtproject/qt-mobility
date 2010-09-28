@@ -64,7 +64,6 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_ENUMS(Scope)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
-    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames NOTIFY sortPropertyNamesChanged)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
@@ -104,8 +103,6 @@ public:
     Status status() const { return m_status; }
 
     qreal progress() const;
-
-    QString errorMessage() const { return m_errorMessage; }
 
     QStringList propertyNames() { return m_request.propertyNames(); }
     void setPropertyNames(const QStringList &names);
@@ -150,13 +147,12 @@ public:
 
 public Q_SLOTS:
     void reload();
-    void cancel() { m_request.cancel(); }
-    void clear() { m_request.clear(); }
+    void cancel();
+    void clear();
 
 Q_SIGNALS:
     void statusChanged();
     void progressChanged();
-    void errorMessageChanged();
     void propertyNamesChanged();
     void sortPropertyNamesChanged();
     void autoUpdateChanged();
@@ -181,7 +177,6 @@ protected:
     QWeakPointer<QDeclarativeGalleryFilterBase> m_filter;
     QGalleryResultSet *m_resultSet;
     QVector<QPair<int, QString> > m_propertyNames;
-    QString m_errorMessage;
     QBasicTimer m_executeTimer;
     Status m_status;
     int m_rowCount;

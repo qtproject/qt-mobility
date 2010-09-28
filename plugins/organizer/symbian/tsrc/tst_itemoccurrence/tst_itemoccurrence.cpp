@@ -303,14 +303,13 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     //Search without filtering and sorting.Full instanceList is returned
     instanceList.clear();
     sortList.clear();    
-    QOrganizerItemInvalidFilter invalidFilter;
-    instanceList = m_om->itemInstances(invalidFilter,sortList,fetchHint);
+    instanceList = m_om->itemInstances(f,sortList,fetchHint);
     QCOMPARE(instanceList.size(), 3);
     
     //Search full instance list in descending order without filtering
     instanceList.clear();
     sortList.append(sortOrder);
-    instanceList = m_om->itemInstances(invalidFilter,sortList,fetchHint);
+    instanceList = m_om->itemInstances(f,sortList,fetchHint);
     QCOMPARE(instanceList.size(), 3);
     QOrganizerItem thirdItem = instanceList.at(2);
     QCOMPARE(thirdItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
@@ -642,19 +641,21 @@ void tst_ItemOccurrence::editOccurrenceNegative()
     QCOMPARE(firstItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QOrganizerEventOccurrence firstInstance = static_cast<QOrganizerEventOccurrence>(firstItem);
     QString instanceGuid (firstInstance.guid());
-   
+
     //Try to save instance with invalid guid and parentlocalId fails
     // TODO: Disabled because of API change. REFACTOR!
     //firstInstance.setGuid(QString(""));
     //firstInstance.setParentLocalId(QOrganizerItemLocalId(-1));
     //QVERIFY(!m_om->saveItem(&firstInstance));
     //QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
-    
+
     //change to invalid original Date of the instance and save 
     firstInstance.setGuid(instanceGuid);
     firstInstance.setOriginalDate(QDate(1000,1,1));
     QVERIFY(!m_om->saveItem(&firstInstance));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    // Allow undefined error code, the engine should iterate through item instances to see if the
+    // original date is valid to be able to give a specific error code
+    QVERIFY(m_om->error() != QOrganizerItemManager::NoError);
     
     firstInstance = static_cast<QOrganizerEventOccurrence>(firstItem);
     firstInstance.setStartDateTime(startTime.addDays(-1));

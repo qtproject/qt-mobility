@@ -21,14 +21,14 @@ OTHER_FILES += \
         MusicBrowserCore/LineEdit.qml \
         MusicBrowserCore/MenuButton.qml \
         MusicBrowserCore/AlbumDelegate.qml \
-        MusicBrowserCore/SongDelegate.qml \ \
+        MusicBrowserCore/SongDelegate.qml \
         MusicBrowserCore/SongProperties.qml \
         MusicBrowserCore/SongView.qml \
         MusicBrowserCore/TypeDelegate.qml
 
 symbian: {
     load(data_caging_paths)
-    TARGET.CAPABILITY = ReadDeviceData
+    TARGET.CAPABILITY = ReadDeviceData WriteDeviceData
 }
 
 RESOURCES += \

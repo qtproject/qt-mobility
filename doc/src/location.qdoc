@@ -538,14 +538,14 @@ other services, the plugins are used to group the functionality per
 service provider.
 
 The plugins are accessed via QGeoServiceProvider, and a Nokia based plugin 
-is part of Qt Mobility.
+is part of Qt Mobility.  See the section \l{The Nokia plugin} for more details.
 
 \code
     QGeoMappingManager *mappingManager = 0;
     QGeoRoutingManager *routingManager = 0;
     QGeoSearchManager *searchManager = 0;
 
-    QGeoServiceProvider serviceProvider("nokia");
+    QGeoServiceProvider serviceProvider("plugin name");
 
     if (serviceProvider.error() == QGeoServiceProvider::NoError) {
         mappingManager = serviceProvider.mappingManager();
@@ -621,14 +621,14 @@ their personal offline landmarks store.
 
 \section2 The Nokia plugin
 
-Qt Mobility comes with a plugin which makes use of the Nokia services 
-relevant to the Maps and Navigation API.
+Qt Mobility ships with a Maps and Navigation API plugin which accesses 
+the relevant Ovi services provided Nokia.  The use of these services 
+is governed by the terms and conditions available in the file 
+plugins/geoservices/nokia/OVI_SERVICES_TERMS_AND_CONDITIONS.txt.
 
-The latest version has the plugin name "nokia" and has plugin version 1.
+The Ovi services plugin can be loaded by using the plugin key "nokia".
 
-From the beta release onwards, the use of this plugin will be subject 
-to terms and conditions that will be contained within or linked from this 
-documentation.
+Note that accepting the terms and conditions only applies those terms and conditions to the use of the Ovi Maps Services plugin and does not limit the use of the other maps and navigation API plugins that may be included with the Qt Mobility package.
 
 \section2 Implementing plugins
 
