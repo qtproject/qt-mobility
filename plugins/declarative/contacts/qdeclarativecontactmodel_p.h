@@ -38,32 +38,40 @@
 **
 ****************************************************************************/
 
-#ifndef QMLCONTACTMODEL_H
-#define QMLCONTACTMODEL_H
+#ifndef QDECLARATIVECONTACTMODEL_P_H
+#define QDECLARATIVECONTACTMODEL_P_H
 
 #include <QAbstractListModel>
-#include <QDeclarativePropertyMap>
+#include <QDeclarativeListProperty>
 #include "qcontact.h"
-#include "qcontactmanager.h"
-#include "qcontactfetchrequest.h"
-#include "qmlcontact.h"
+#include "qdeclarativecontact_p.h"
 #include "qversitreader.h"
 #include "qversitwriter.h"
 
+#include "qdeclarativecontactfetchhint_p.h"
+#include "qdeclarativecontactsortorder_p.h"
+#include "qdeclarativecontactfilter_p.h"
+
 QTM_USE_NAMESPACE;
-class QMLContactModel : public QAbstractListModel
+class QDeclarativeContactModelPrivate;
+class QDeclarativeContactModel : public QAbstractListModel
 {
-Q_OBJECT
-Q_PROPERTY(QStringList availableManagers READ availableManagers)
-Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
+    Q_OBJECT
+    Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
+    Q_PROPERTY(QStringList availableManagers READ availableManagers)
+    Q_PROPERTY(QDeclarativeContactFilter* filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(QDeclarativeContactFetchHint* fetchHint READ fetchHint WRITE setFetchHint NOTIFY fetchHintChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContact> contacts READ contacts NOTIFY contactsChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContactSortOrder> sortOrders READ sortOrders NOTIFY sortOrdersChanged)
+
 public:
-    explicit QMLContactModel(QObject *parent = 0);
+    explicit QDeclarativeContactModel(QObject *parent = 0);
 
     enum {
         InterestRole = Qt::UserRole + 500,
         InterestLabelRole,
-        ContactRole,
         ContactIdRole,
+        ContactRole,
         DetailsRole,
         AvatarRole,
         PresenceAvailableRole,
@@ -72,41 +80,57 @@ public:
         PresenceMessageRole
     };
 
-    QStringList availableManagers() const;
-
     QString manager() const;
     void setManager(const QString& manager);
+
+    QStringList availableManagers() const;
+
+    QDeclarativeContactFilter* filter() const;
+    void setFilter(QDeclarativeContactFilter* filter);
+
+    QDeclarativeContactFetchHint* fetchHint() const;
+    void setFetchHint(QDeclarativeContactFetchHint* fetchHint);
 
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
 
-    Q_INVOKABLE QList<QObject*> details(int id) const;
-    Q_INVOKABLE QList<QObject*> detailFields(int id) const;
-    Q_INVOKABLE QMLContact* detailModel(int id) const;
-    Q_INVOKABLE void importContacts(const QString& file);
-    Q_INVOKABLE void exportContacts(const QString& file);
+    QDeclarativeListProperty<QDeclarativeContact> contacts() ;
+    QDeclarativeListProperty<QDeclarativeContactSortOrder> sortOrders() ;
+
+    Q_INVOKABLE void removeContact(QContactLocalId id);
+    Q_INVOKABLE void removeContacts(const QList<QContactLocalId>& id);
+    Q_INVOKABLE void saveContact(QDeclarativeContact* dc);
+
+
 signals:
     void managerChanged();
-public slots:
+    void filterChanged();
+    void fetchHintChanged();
+    void contactsChanged();
+    void vcardChanged();
+    void sortOrdersChanged();
 
+public slots:
+    void exportContacts(const QString& file);
+    void importContacts(const QString& file);
 private slots:
-    void resultsReceived();
     void fetchAgain();
+    void contactFetched();
+
+    void saveContact();
+    void contactSaved();
+
+    void removeContact();
+    void contactRemoved();
+
     void startImport(QVersitReader::State state);
     void contactsExported(QVersitWriter::State state);
+
+
+
 private:
     QPair<QString, QString> interestingDetail(const QContact&c) const;
-    void exposeContactsToQML();
-
-
-    QMap<QContactLocalId, QMLContact*> m_contactMap;
-    QList<QContact> m_contacts;
-    QContactManager* m_manager;
-    QContactFetchHint m_fetchHint;
-    QContactSortOrder m_sortOrder;
-    QContactFetchRequest m_contactsRequest;
-    QVersitReader m_reader;
-    QVersitWriter m_writer;
+    QDeclarativeContactModelPrivate* d;
 };
 
-#endif // QMLCONTACTMODEL_H
+#endif // QDECLARATIVECONTACTMODEL_P_H

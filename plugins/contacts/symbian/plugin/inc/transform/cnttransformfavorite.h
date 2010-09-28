@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the demonstration applications of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,28 +38,24 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef TRANSFORMFAVORITE_H
+#define TRANSFORMFAVORITE_H
 
+#include "cnttransformcontactdata.h"
 
-#include <qdeclarativeimageprovider.h>
-#include <QMap>
-#include "qcontactmanager.h"
+QTM_USE_NAMESPACE
 
-
-
-
-QTM_USE_NAMESPACE;
-
-
-class ContactThumbnailImageProvider : public QDeclarativeImageProvider
+class CntTransformFavorite : public CntTransformContactData
 {
-public:
-    // This is run in a low priority thread.
-    QImage request(const QString &id, QSize *size, const QSize &req_size);
-
-    ~ContactThumbnailImageProvider();
-
-private:
-    QMap<QString, QContactManager*> m_managers;
-    QMap<QString, QImage> m_thumbnails;
+protected:
+	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
+	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
+	bool supportsDetail(QString detailName) const;
+	QList<TUid> supportedFields() const;
+	QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
+    bool supportsSubType(const QString& subType) const;
+    quint32 getIdForField(const QString& fieldName) const;
+    void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const;
 };
 
+#endif
