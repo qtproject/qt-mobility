@@ -924,6 +924,35 @@ QList< QPair<int,int> > CameraBinSession::supportedFrameRates(const QSize &frame
     return res;
 }
 
+//internal, only used by CameraBinSession::supportedResolutions
+//recursively find the supported resolutions range.
+static QPair<int,int> valueRange(const GValue *value, bool *continuous)
+{
+    int minValue = 0;
+    int maxValue = 0;
+
+    if (g_value_type_compatible(G_VALUE_TYPE(value), G_TYPE_INT)) {
+        minValue = maxValue = g_value_get_int(value);
+    } else if (GST_VALUE_HOLDS_INT_RANGE(value)) {
+        minValue = gst_value_get_int_range_min(value);
+        maxValue = gst_value_get_int_range_max(value);
+        *continuous = true;
+    } else if (GST_VALUE_HOLDS_LIST(value)) {
+        for (uint i=0; i<gst_value_list_get_size(value); i++) {
+            QPair<int,int> res = valueRange(gst_value_list_get_value(value, i), continuous);
+
+            if (res.first > 0 && minValue > 0)
+                minValue = qMin(minValue, res.first);
+            else //select non 0 valid value
+                minValue = qMax(minValue, res.first);
+
+            maxValue = qMax(maxValue, res.second);
+        }
+    }
+
+    return QPair<int,int>(minValue, maxValue);
+}
+
 static bool resolutionLessThan(const QSize &r1, const QSize &r2)
 {
      return r1.width() < r2.width() ||
@@ -995,24 +1024,19 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate,
         const GValue *wValue = gst_structure_get_value(structure, "width");
         const GValue *hValue = gst_structure_get_value(structure, "height");
 
-        if (g_value_type_compatible(G_VALUE_TYPE(wValue), G_TYPE_INT) &&
-            g_value_type_compatible(G_VALUE_TYPE(hValue), G_TYPE_INT)) {
-            int w = g_value_get_int(wValue);
-            int h = g_value_get_int(hValue);
-            res << QSize(w,h);
-        } else if (GST_VALUE_HOLDS_INT_RANGE(wValue)) {
-            int wMin = gst_value_get_int_range_min(wValue);
-            int wMax = gst_value_get_int_range_max(wValue);
-            int hMin = gst_value_get_int_range_min(hValue);
-            int hMax = gst_value_get_int_range_max(hValue);
+        QPair<int,int> wRange = valueRange(wValue, &isContinuous);
+        QPair<int,int> hRange = valueRange(hValue, &isContinuous);
 
-            isContinuous = true;
+        QSize minSize(wRange.first, hRange.first);
+        QSize maxSize(wRange.second, hRange.second);
 
-            res << QSize(wMin,hMin);
-            res << QSize(wMax,hMax);
-        } else if (GST_VALUE_HOLDS_LIST(wValue)) {
-        }
+        if (!minSize.isEmpty())
+            res << minSize;
+
+        if (minSize != maxSize && !maxSize.isEmpty())
+            res << maxSize;
     }
+
 
     qSort(res.begin(), res.end(), resolutionLessThan);
 
@@ -1040,10 +1064,12 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate,
         const QSize minSize = res.first();
         QSize maxSize = res.last();
 
-
 #ifdef Q_WS_MAEMO_5
         if (mode == QCamera::CaptureVideo)
             maxSize = QSize(848, 480);
+#elif defined(Q_WS_MAEMO_6)
+        if (mode == QCamera::CaptureStillImage)
+            maxSize = QSize(4000, 3000);
 #else
         Q_UNUSED(mode);
 #endif
