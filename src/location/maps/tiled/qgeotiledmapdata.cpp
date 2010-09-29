@@ -85,6 +85,72 @@ uint qHash(const QRectF& key)
 
 QTM_BEGIN_NAMESPACE
 
+class ZOrderCriterion
+{
+
+    QGraphicsItem ** list;
+
+    public:
+        ZOrderCriterion(QGraphicsItem ** list) : list(list) {}
+
+        bool operator()(int aIndex, int bIndex)
+        {
+            QGraphicsItem * a = list[aIndex];
+            QGraphicsItem * b = list[bIndex];
+
+            if (a->zValue() != b->zValue())
+                return a->zValue() < b->zValue();
+            
+            if (a->type() == QGraphicsPixmapItem::Type) {
+                if (b->type() == QGraphicsPixmapItem::Type) {
+                    return a->y() < b->y();
+                }
+                else {
+                    return false; // non-pixmaps are always behind pixmaps
+                }
+            }
+            else {
+                if (b->type() == QGraphicsPixmapItem::Type) {
+                    return true; // pixmaps are always on top of non-pixmaps
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+};
+
+
+class GeoGraphicsScene : public QGraphicsScene
+{
+    public:
+        GeoGraphicsScene(const QRectF &sceneRect, QObject *parent = 0) : QGraphicsScene(sceneRect, parent) {}
+
+    protected:
+        virtual void drawItems(QPainter *painter, int numItems, QGraphicsItem *items[], const QStyleOptionGraphicsItem options[], QWidget *widget = 0)
+        {
+            QVector<int> indices(numItems);
+            for (int i = 0; i < numItems; ++i)
+                indices[i] = i;
+
+            ZOrderCriterion criterion(items);
+
+            qStableSort(indices.begin(), indices.end(), criterion);
+
+            QGraphicsItem **newItems = new QGraphicsItem *[numItems];
+            QStyleOptionGraphicsItem *newOptions = new QStyleOptionGraphicsItem[numItems];
+
+            for (int i = 0; i < numItems; ++i) {
+                newItems[i] = items[indices[i]];
+                newOptions[i] = options[indices[i]];
+            }
+
+            QGraphicsScene::drawItems(painter, numItems, newItems, newOptions, widget);
+        }
+};
+
+
+
 /*!
     \class QGeoTiledMapData
     \brief The QGeoTiledMapData class is a subclass of QGeoMapData provided
@@ -131,8 +197,13 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGe
     d->scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
     // TODO get this from the engine, which should give different values depending on if this is running on a device or not
-    d->cache.setMaxCost(10 * 1024 * 1024);
-    d->zoomCache.setMaxCost(10 * 1024 * 1024);
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    d->cache.setMaxCost(5 * 1024 * 1024);
+    d->zoomCache.setMaxCost(5 * 1024 * 1024);
+#else
+     d->cache.setMaxCost(10 * 1024 * 1024);
+     d->zoomCache.setMaxCost(10 * 1024 * 1024);
+#endif
 }
 
 /*!
@@ -669,7 +740,8 @@ void QGeoTiledMapData::tileFinished()
         return;
     }
 
-    QPixmap *tile = new QPixmap();
+    //QPixmap *tile = new QPixmap();
+    QImage *tile = new QImage();
 
     if (!tile->loadFromData(reply->mapImageData(), reply->mapImageFormat().toAscii())) {
         delete tile;
@@ -941,7 +1013,8 @@ void QGeoTiledMapDataPrivate::paintMap(QPainter *painter, const QStyleOptionGrap
                                    int(t.height()) / zoomFactor);
 
             if (cache.contains(req)) {
-                painter->drawPixmap(target, *cache.object(req), source);
+                //painter->drawPixmap(target, *cache.object(req), source);
+                painter->drawImage(target, *cache.object(req), source);
             } else {
                 if (zoomCache.contains(req)) {
                     painter->drawPixmap(target, *zoomCache.object(req), source);
@@ -977,6 +1050,7 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
     if (worldRect.contains(worldReferenceViewportRect)) {
         // the screen is completely contained inside the map, which means we can just draw once and be done.
         scene->render(painter,
+        //scene->render(painter,
                       QRectF(targetX, targetY, targetW, targetH),
                       worldReferenceViewportRect,
                       Qt::IgnoreAspectRatio);
@@ -995,6 +1069,7 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
     westside.setHeight(worldReferenceViewportRect.height());
 
     scene->render(painter,
+    //scene->render(painter,
                   QRectF(targetX, targetY, westsideWidth, targetH),
                   westside,
                   Qt::IgnoreAspectRatio);
@@ -1007,6 +1082,7 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
                           worldReferenceViewportRect.height());
 
     scene->render(painter,
+    //scene->render(painter,
                   QRectF(targetX + targetW - eastsideWidth, targetY, eastsideWidth, targetH),
                   eastside,
                   Qt::IgnoreAspectRatio);
