@@ -2461,8 +2461,26 @@ void tst_QOrganizerItemManager::itemFetch()
     event.setDisplayLabel("event");
     event.setStartDateTime(QDateTime(QDate(2010, 9, 9), QTime(11, 0, 0)));
     event.setEndDateTime(QDateTime(QDate(2010, 9, 9), QTime(11, 30, 0)));
-
     QVERIFY(cm->saveItem(&event));
+
+    QOrganizerEvent recEvent;
+    recEvent.setDisplayLabel("rec event");
+    recEvent.setStartDateTime(QDateTime(QDate(2010, 9, 1), QTime(16, 0, 0)));
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrule.setEndDate(QDate(2010, 9, 10));
+    recEvent.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    QVERIFY(cm->saveItem(&recEvent));
+
+    //fetch all recurrences
+    QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2010, 9, 8)),
+                                            QDateTime(QDate(2010, 9, 12)));
+    QCOMPARE(items.count(), 3);
+
+    //fetch only the originating item
+    items = cm->items(QDateTime(QDate(2010, 9, 8)), QDateTime(QDate(2010, 9, 12)),
+                      QOrganizerItemFilter(), QList<QOrganizerItemSortOrder>(), QOrganizerItemFetchHint(), QOrganizerItemManager::FindParentOnly);
+    QCOMPARE(items.count(), 2);
 
     // TODO: make a recurrant event, fetch the items between an interval and verify the result
 }
