@@ -111,7 +111,7 @@ public:
     QList<QGeoTiledMapRequest> requests;
     QSet<QGeoTiledMapReply*> replies;
 
-    QCache<QGeoTiledMapRequest, QPixmap> cache;
+    QCache<QGeoTiledMapRequest, QImage> cache;
     QCache<QGeoTiledMapRequest, QPixmap> zoomCache;
 
     QGraphicsScene *scene;

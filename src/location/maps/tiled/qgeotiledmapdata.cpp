@@ -131,8 +131,13 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGe
     d->scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
     // TODO get this from the engine, which should give different values depending on if this is running on a device or not
-    d->cache.setMaxCost(10 * 1024 * 1024);
-    d->zoomCache.setMaxCost(10 * 1024 * 1024);
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    d->cache.setMaxCost(5 * 1024 * 1024);
+    d->zoomCache.setMaxCost(5 * 1024 * 1024);
+#else
+     d->cache.setMaxCost(10 * 1024 * 1024);
+     d->zoomCache.setMaxCost(10 * 1024 * 1024);
+#endif
 }
 
 /*!
@@ -669,7 +674,8 @@ void QGeoTiledMapData::tileFinished()
         return;
     }
 
-    QPixmap *tile = new QPixmap();
+    //QPixmap *tile = new QPixmap();
+    QImage *tile = new QImage();
 
     if (!tile->loadFromData(reply->mapImageData(), reply->mapImageFormat().toAscii())) {
         delete tile;
@@ -941,7 +947,8 @@ void QGeoTiledMapDataPrivate::paintMap(QPainter *painter, const QStyleOptionGrap
                                    int(t.height()) / zoomFactor);
 
             if (cache.contains(req)) {
-                painter->drawPixmap(target, *cache.object(req), source);
+                //painter->drawPixmap(target, *cache.object(req), source);
+                painter->drawImage(target, *cache.object(req), source);
             } else {
                 if (zoomCache.contains(req)) {
                     painter->drawPixmap(target, *zoomCache.object(req), source);
