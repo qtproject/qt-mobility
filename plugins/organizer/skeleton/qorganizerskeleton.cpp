@@ -67,13 +67,7 @@ QOrganizerCollectionEngineLocalId* QOrganizerItemSkeletonFactory::createCollecti
     return new QOrganizerCollectionSkeletonEngineLocalId;
 }
 
-
-QOrganizerItemSkeletonEngine::~QOrganizerItemSkeletonEngine()
-{
-    /* TODO clean up your stuff.  Perhaps a QScopedPointer or QSharedDataPointer would be in order */
-}
-
-QString QOrganizerItemSkeletonEngine::managerName() const
+QString QOrganizerItemSkeletonFactory::managerName() const
 {
     /* TODO - put your engine name here */
     return QLatin1String("skeleton");
@@ -466,6 +460,7 @@ QDataStream& QOrganizerCollectionSkeletonEngineLocalId::dataStreamOut(QDataStrea
       directive block in order to ensure compilation in environments where that
       directive is defined.
      */
+
     out << m_localCollectionId;
     return out;
 }
@@ -511,6 +506,19 @@ uint QOrganizerCollectionSkeletonEngineLocalId::hash() const
      */
 
     return QT_PREPEND_NAMESPACE(qHash)(m_localCollectionId);
+}
+
+
+
+QOrganizerItemSkeletonEngine::~QOrganizerItemSkeletonEngine()
+{
+    /* TODO clean up your stuff.  Perhaps a QScopedPointer or QSharedDataPointer would be in order */
+}
+
+QString QOrganizerItemSkeletonEngine::managerName() const
+{
+    /* TODO - put your engine name here */
+    return QLatin1String("skeleton");
 }
 
 QMap<QString, QString> QOrganizerItemSkeletonEngine::managerParameters() const
