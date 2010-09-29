@@ -111,7 +111,7 @@ void QGeoTiledMapTextObjectInfo::coordinateChanged(const QGeoCoordinate &coordin
 {
     updateValidity();
     if (text->coordinate().isValid())
-        textItem->setPos(tiledMapData->coordinateToWorldPixel(text->coordinate()));
+        textItem->setPos(tiledMapData->coordinateToWorldReferencePosition(text->coordinate()));
     if (valid())
         updateItem();
 }

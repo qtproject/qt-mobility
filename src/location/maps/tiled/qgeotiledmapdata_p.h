@@ -98,12 +98,12 @@ public:
 
     int zoomFactor;
 
-    QPoint maxZoomCenter;
-    QSize maxZoomSize;
-    QRect maxZoomScreenRect;
+    QPoint worldReferenceViewportCenter;
+    QSize worldReferenceSize;
+    QRect worldReferenceViewportRect;
 
-    QRect maxZoomScreenRectClippedLeft;
-    QRect maxZoomScreenRectClippedRight;
+    QRect worldReferenceViewportRectLeft;
+    QRect worldReferenceViewportRectRight;
 
     QSet<QRect> requestRects;
     QSet<QRect> replyRects;
