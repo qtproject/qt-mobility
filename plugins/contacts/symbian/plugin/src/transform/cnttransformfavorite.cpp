@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
+
 #include "cnttransformfavorite.h"
 
 QList<CContactItemField *> CntTransformFavorite::transformDetailL(const QContactDetail &detail)
@@ -151,3 +154,5 @@ void CntTransformFavorite::detailDefinitions(QMap<QString, QContactDetailDefinit
         definitions.insert(d.name(), d);
     }
 }
+
+#endif

@@ -41,6 +41,8 @@
 #ifndef TRANSFORMFAVORITE_H
 #define TRANSFORMFAVORITE_H
 
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
+
 #include "cnttransformcontactdata.h"
 
 QTM_USE_NAMESPACE
@@ -58,4 +60,5 @@ protected:
     void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const;
 };
 
+#endif
 #endif
