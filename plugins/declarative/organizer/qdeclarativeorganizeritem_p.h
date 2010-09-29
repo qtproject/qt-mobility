@@ -52,15 +52,17 @@
 QTM_USE_NAMESPACE;
 
 #define Q_DECLARATIVEORGANIZERITEMDETAIL_SET(detailType, propertyName, propertyValue)  \
-    QDeclarativeOrganizerItemDetail* detail = property(detailType::DetailName.latin1()).value<QDeclarativeOrganizerItemDetail*>(); \
+    QDeclarativeOrganizerItemDetail* detail = detailByDefinitionName(propertyName); \
     if (detail) \
-        detail->setProperty(propertyName, propertyValue);
+        detail->setValue(propertyName, propertyValue);
 
 #define Q_DECLARATIVEORGANIZERITEMDETAIL_GET(detailType, propertyName, returnValue) \
     QVariant returnValue; \
-    QDeclarativeOrganizerItemDetail* detail = property(detailType::DetailName.latin1()).value<QDeclarativeOrganizerItemDetail*>(); \
+    QDeclarativeOrganizerItemDetail* detail = detailByDefinitionName(propertyName); \
     if (detail) \
-        returnValue = detail->property(propertyName);
+        returnValue = detail->value(propertyName);
+
+
 
 class QDeclarativeOrganizerItemMetaObject;
 class QDeclarativeOrganizerItemDetail;
@@ -137,6 +139,8 @@ public:
 
 signals:
     void valueChanged();
+protected:
+    QDeclarativeOrganizerItemDetail* detailByDefinitionName(const QString& name) const;
 private:
     QDeclarativeOrganizerItemMetaObject* d;
     friend class QDeclarativeOrganizerItemMetaObject;

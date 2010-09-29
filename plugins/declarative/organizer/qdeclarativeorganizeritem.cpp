@@ -121,6 +121,10 @@ void QDeclarativeOrganizerItem::clearDetails()
     emit valueChanged();
 }
 
+QDeclarativeOrganizerItemDetail* QDeclarativeOrganizerItem::detailByDefinitionName(const QString& name) const
+{
+    return d->detailByDefinitionName(name);
+}
 
 Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEvent::ItemName, "event");
 Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEvent::ItemGroupName, "events");

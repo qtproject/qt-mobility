@@ -91,7 +91,6 @@ void QDeclarativeOrganizerItemMetaObject::setValue(int propId, void **a)
 
 int QDeclarativeOrganizerItemMetaObject::createProperty(const char * name,  const char *)
 {
-
     const int detailCount = sizeof(qt_organizerItemDetailNameMap)/sizeof(OrganizerItemDetailNameMap);
     OrganizerItemDetailNameMap* detailMetaData = 0;
 
@@ -115,6 +114,15 @@ int QDeclarativeOrganizerItemMetaObject::createProperty(const char * name,  cons
     return -1;
 }
 
+QDeclarativeOrganizerItemDetail* QDeclarativeOrganizerItemMetaObject::detailByDefinitionName(const QString& name)
+{
+    foreach(QDeclarativeOrganizerItemDetail* cd, m_details) {
+        if (cd->detail().definitionName() == name) {
+            return cd;
+        }
+    }
+    return 0;
+}
 
 QVariant QDeclarativeOrganizerItemMetaObject::detail(const QString& name)
 {
@@ -124,11 +132,9 @@ QVariant QDeclarativeOrganizerItemMetaObject::detail(const QString& name)
         return property(propId).read(object());
 
     //Assume it's a detail definition name
-    foreach(QDeclarativeOrganizerItemDetail* cd, m_details) {
-        if (cd->detail().definitionName() == name) {
-            return QVariant::fromValue(cd);
-        }
-    }
+    QDeclarativeOrganizerItemDetail* detailObject = detailByDefinitionName(name);
+    if (detailObject)
+       return QVariant::fromValue(detailObject);
     return QVariant();
 }
 
@@ -160,7 +166,7 @@ void QDeclarativeOrganizerItemMetaObject::setItem(const QOrganizerItem& contact)
     foreach (const QOrganizerItemDetail& detail, details) {
       QDeclarativeOrganizerItemDetail* cd = new QDeclarativeOrganizerItemDetail(object());
 
-      cd->connect(cd, SIGNAL(fieldsChanged()), object(), SIGNAL(detailsChanged()));
+      cd->connect(cd, SIGNAL(valueChanged()), object(), SIGNAL(valueChanged()));
 
       cd->setDetail(detail);
       m_details.append(cd);
@@ -194,7 +200,7 @@ void QDeclarativeOrganizerItemMetaObject::detail_append(QDeclarativeListProperty
     if (data) {
         QDeclarativeOrganizerItem* dc = qobject_cast<QDeclarativeOrganizerItem*>(p->object);
         if (dc && detail->detail().definitionName() == data->definitionName) {
-            detail->connect(detail, SIGNAL(fieldsChanged()), dc, SIGNAL(detailsChanged()));
+            detail->connect(detail, SIGNAL(valueChanged()), dc, SIGNAL(valueChanged()));
             dc->d->m_details.append(detail);
         }
     }
