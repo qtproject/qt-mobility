@@ -83,6 +83,7 @@ unix:!simulator {
                     HEADERS += qdevicekitservice_linux_p.h
                 } else {
                     DEFINES += QT_NO_UDISKS QT_NO_MEEGO
+                    LIBS += -lblkid -lX11 -lXrandr
                    }
                 contains(connman_enabled, yes): {
 
