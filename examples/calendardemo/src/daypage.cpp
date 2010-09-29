@@ -119,10 +119,7 @@ void DayPage::refresh()
     QList<QOrganizerItem> items = m_manager->items();
 
     // Today's item instances
-    QOrganizerItemDateTimePeriodFilter filter;
-    filter.setStartPeriod(QDateTime(m_day, QTime(0, 0, 0)));
-    filter.setEndPeriod(QDateTime(m_day, QTime(23, 59, 59)));
-    QList<QOrganizerItem> instances = m_manager->itemInstances(filter);
+    QList<QOrganizerItem> instances = m_manager->items(QDateTime(m_day, QTime(0, 0, 0)), QDateTime(m_day, QTime(23, 59, 59)));
 
     foreach (const QOrganizerItem &item, items)
     {
