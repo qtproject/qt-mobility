@@ -44,23 +44,30 @@
 QTM_BEGIN_NAMESPACE
 
 
+static bool defSecurityFilter(const void *)
+{
+    return true;
+}
+
+
 QRemoteServiceControlPrivate::QRemoteServiceControlPrivate(QObject* parent)
-    : QObject(parent), m_quit(true)
+    : QObject(parent), m_quit(true), iFilter(defSecurityFilter)
 {
 }
+
 QRemoteServiceControlPrivate::~QRemoteServiceControlPrivate()
 {  
 }
 
-void QRemoteServiceControlPrivate::publishServices( const QString& ident)
-{
-  qWarning("QRemoteServiceControlPrivate::publishServices has not been reimplemented");
-}
-
-void QRemoteServiceControlPrivate::processIncoming()
-{
-  qWarning("QRemoteServiceControlPrivate::processIncoming has not been reimplemented");
-}
+//void QRemoteServiceControlPrivate::publishServices( const QString& ident)
+//{
+//  qWarning("QRemoteServiceControlPrivate::publishServices has not been reimplemented");
+//}
+//
+//void QRemoteServiceControlPrivate::processIncoming()
+//{
+//  qWarning("QRemoteServiceControlPrivate::processIncoming has not been reimplemented");
+//}
 
 bool QRemoteServiceControlPrivate::quitOnLastInstanceClosed() const
 {

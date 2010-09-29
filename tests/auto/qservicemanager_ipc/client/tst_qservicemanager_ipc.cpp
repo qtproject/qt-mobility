@@ -49,6 +49,7 @@
 #include <QMetaMethod>
 #include <QtTest/QtTest>
 #include <qservice.h>
+#include <qremoteservicecontrol.h>
 
 #define QTRY_VERIFY(a)                       \
     for (int _i = 0; _i < 5000; _i += 100) {    \
@@ -102,6 +103,9 @@ private slots:
     void testInvokableFunctions();
     void testSlotInvokation();
     void testSignalling();
+
+    void verifyServiceClass();
+
     void testIpcFailure();
 
 private:
@@ -126,9 +130,14 @@ bool tst_QServiceManager_IPC::requiresLackey()
 // Temporarily commented out for initial development on Symbian
 #ifdef Q_OS_SYMBIAN
     return false; //service is started when requested
-#else
-    return true;
 #endif
+
+#ifdef QT_NO_DBUS
+    return false;
+#endif
+
+    return true;
+
 }
 
 void tst_QServiceManager_IPC::initTestCase()
@@ -138,7 +147,9 @@ void tst_QServiceManager_IPC::initTestCase()
     verbose = false;
     lackey = 0;
     serviceUnique = 0;
+    serviceSharedOther = 0;
     serviceShared = 0;
+    serviceSharedOther = 0;
     qRegisterMetaType<QServiceFilter>("QServiceFilter");
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
     qRegisterMetaType<QList<QString> >("QList<QString>");
@@ -146,12 +157,20 @@ void tst_QServiceManager_IPC::initTestCase()
 
     QServiceManager* manager = new QServiceManager(this);
 
+    // Symbian has auto registration
+#ifndef Q_OS_SYMBIAN
+    const QString path = QCoreApplication::applicationDirPath() + "/xmldata/ipcexampleservice.xml";    
+    bool r = manager->addService(path);
+    if (!r)
+        qWarning() << "Cannot register IPCExampleService" << path;
+#endif
+
     //start lackey that represents the service
     if (requiresLackey()) {
         lackey = new QProcess(this);
         if (verbose)
             lackey->setProcessChannelMode(QProcess::ForwardedChannels);
-        lackey->start("./qservicemanager_ipc_service");
+        lackey->start("./qt_sfw_example_ipc_unittest");
         qDebug() << lackey->error() << lackey->errorString();
         QVERIFY(lackey->waitForStarted());
         //Give the lackey some time to come up;
@@ -180,8 +199,7 @@ void tst_QServiceManager_IPC::initTestCase()
 }
 
 void tst_QServiceManager_IPC::ipcError(QService::UnrecoverableIPCError err)
-{
-  qDebug() << "Received error from IPC: " << err;
+{  
   ipcfailure = true;  
 }
 
@@ -194,7 +212,7 @@ void tst_QServiceManager_IPC::cleanupTestCase()
     if (serviceUniqueOther) {
         delete serviceUniqueOther;
     }
-    
+
     if (serviceShared) {
         delete serviceShared;
     }
@@ -202,8 +220,8 @@ void tst_QServiceManager_IPC::cleanupTestCase()
     if (serviceSharedOther) {
         delete serviceSharedOther;
     }
-    
-    if (requiresLackey()) {
+
+    if (requiresLackey() && lackey) {
         lackey->terminate();
        
         // terminate didnt cause process to exit
@@ -219,6 +237,9 @@ void tst_QServiceManager_IPC::cleanupTestCase()
             break;
         }
     }
+    // clean up the unit, don't leave it registered
+    QServiceManager m;
+    m.removeService("IPCExampleService");
 }
 
 void tst_QServiceManager_IPC::init()
@@ -967,15 +988,38 @@ void tst_QServiceManager_IPC::testSlotInvokation()
     QCOMPARE(hash, expectedHash);
 }
 
+void tst_QServiceManager_IPC::verifyServiceClass()
+{
+    QRemoteServiceControl *control = new QRemoteServiceControl();
+
+    QVERIFY2(control->quitOnLastInstanceClosed() == true, "should default to true, default is to shutdown");
+    control->setQuitOnLastInstanceClosed(false);
+    QVERIFY2(control->quitOnLastInstanceClosed() == false, "must transition to false");
+    control->setQuitOnLastInstanceClosed(true);
+    QVERIFY2(control->quitOnLastInstanceClosed() == true, "must transition back to true");
+
+    delete control;
+}
+
 void tst_QServiceManager_IPC::testIpcFailure()
     {
+
+    // test deleting an object doesn't trigger an IPC fault
+    ipcfailure = false;
+    delete serviceShared;
+    QVERIFY2(!ipcfailure, "Deleting an object should not cause an IPC failure message");
+    serviceShared = 0;
+
+    ipcfailure = false;   
     QMetaObject::invokeMethod(serviceUnique, "testIpcFailure");
     int i = 0;
     while (!ipcfailure && i++ < 50)
         QTest::qWait(50);
     
 #ifndef Q_OS_SYMBIAN
+#ifndef QT_NO_DBUS
     QEXPECT_FAIL("", "Serviceframework IPC Failure failed", Abort);
+#endif
 #endif
     QVERIFY(ipcfailure);
   
