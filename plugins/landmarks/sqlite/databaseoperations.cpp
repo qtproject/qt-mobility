@@ -424,7 +424,7 @@ bool removeLandmarkHelper(const QString &connectionName, const QLandmarkId &land
 {
     if (landmarkId.managerUri() != managerUri) {
         if (error)
-            *error = QLandmarkManager::BadArgumentError;
+            *error = QLandmarkManager::DoesNotExistError;
         if (errorString)
             *errorString = "Landmark id comes from different landmark manager.";
         return false;
@@ -2233,6 +2233,24 @@ bool DatabaseOperations::saveCategories(QList<QLandmarkCategory> * categories,
 }
 
 bool DatabaseOperations::removeCategory(const QLandmarkCategoryId &categoryId,
+                                      QLandmarkManager::Error *error, QString *errorString)
+{
+    QSqlDatabase db = QSqlDatabase::database(connectionName);
+    if (!db.transaction()) {
+        *error = QLandmarkManager::UnknownError;
+        *errorString = QString("Remove category: unable to begin transaction, reason: %1").arg(db.lastError().text());
+        return false;
+    }
+
+    bool result = removeCategoryHelper(categoryId, error, errorString);
+    if (result)
+        db.commit();
+    else
+        db.rollback();
+    return result;
+}
+
+bool DatabaseOperations::removeCategoryHelper(const QLandmarkCategoryId &categoryId,
                 QLandmarkManager::Error *error,
                 QString *errorString)
 {
@@ -2240,7 +2258,7 @@ bool DatabaseOperations::removeCategory(const QLandmarkCategoryId &categoryId,
     Q_ASSERT(errorString);
     if (categoryId.managerUri() != managerUri) {
         if (error)
-            *error = QLandmarkManager::BadArgumentError;
+            *error = QLandmarkManager::DoesNotExistError;
         if (errorString)
             *errorString = "Category id comes from different landmark manager.";
         return false;
@@ -2248,28 +2266,38 @@ bool DatabaseOperations::removeCategory(const QLandmarkCategoryId &categoryId,
 
     QSqlDatabase db = QSqlDatabase::database(connectionName);
 
-    if (!db.transaction()) {
-        *error = QLandmarkManager::UnknownError;
-        *errorString = QString("Save landmark: unable to begin transaction, reason: %1").arg(db.lastError().text());
-        return false;
-    }
-
     QMap<QString,QVariant> bindValues;
     bindValues.insert("catId", categoryId.localId());
     QString q0 = QString("SELECT 1 FROM category WHERE id = :catId");
 
     QSqlQuery query(db);
     if(!executeQuery(&query,q0,bindValues,error,errorString)) {
-        db.rollback();
         return false;
     }
 
     if (!query.next()) {
-        db.rollback();
         *error = QLandmarkManager::DoesNotExistError;
         *errorString = QString("Category with local id %1, does not exist in database")
                         .arg(categoryId.localId());
         return false;
+    }
+
+    if (!executeQuery(&query,"SELECT landmarkId FROM landmark_category WHERE categoryId = :catId",bindValues,error,errorString)) {
+        return false;
+    }
+
+    QSqlQuery query2(db);
+    QMap<QString,QVariant> bindValues2;
+
+    QString queryString2 = QString("INSERT INTO landmark_notification(timestamp, action, landmarkId) "
+                                   "VALUES((strftime(\"%f\", \"now\") - strftime(\"%S\", \"now\") + strftime(\"%s\"))*1000,'CHANGE', :lmId );");
+
+    while(query.next()) {
+        bindValues2.clear();
+        bindValues2.insert("lmId", query.value(0));
+        if (!executeQuery(&query2,queryString2, bindValues2,error,errorString)) {
+            return false;
+        }
     }
 
     QStringList queryStrings;
@@ -2279,12 +2307,10 @@ bool DatabaseOperations::removeCategory(const QLandmarkCategoryId &categoryId,
 
     foreach(const QString &queryString, queryStrings) {
         if (!executeQuery(&query, queryString, bindValues, error,errorString)) {
-            db.rollback();
             return false;
         }
     }
 
-     db.commit();
      *error = QLandmarkManager::NoError;
      *errorString = "";
 
@@ -2301,31 +2327,62 @@ bool DatabaseOperations::removeCategories(const QList<QLandmarkCategoryId> &cate
     if (errorMap)
         errorMap->clear();
 
-    QList<QLandmarkCategoryId> removedIds;
+    QSqlDatabase db = QSqlDatabase::database(connectionName);
+    if (!db.transaction()) {
+        *error = QLandmarkManager::UnknownError;
+        *errorString = QString("Remove category: unable to begin transaction, reason: %1").arg(db.lastError().text());
+
+        if (errorMap) {
+            for (int i=0; i < categoryIds.size(); ++i)
+                errorMap->insert(i, *error);
+        }
+        return false;
+    }
 
     bool noErrors = true;
     QLandmarkManager::Error lastError = QLandmarkManager::NoError;
     QString lastErrorString;
     QLandmarkManager::Error loopError;
     QString loopErrorString;
+    bool result;
     for (int i = 0; i < categoryIds.size(); ++i) {
         loopError = QLandmarkManager::NoError;
         loopErrorString.clear();
 
-        bool result = removeCategory(categoryIds.at(i), &loopError, &loopErrorString);
+        if (queryRun && queryRun->isCanceled) {
+            lastError = QLandmarkManager::CancelError;
+            lastErrorString = "Category remove was canceled";
+            if (errorMap) {
+                for (i; i < categoryIds.size(); ++i)
+                    errorMap->insert(i, lastError);
+            }
+            noErrors = false;
+            break;
+        }
 
-        if (errorMap)
-            errorMap->insert(i, loopError);
+        QSqlQuery query(db);
+        if (!query.exec("SAVEPOINT save")) {
+            loopError = QLandmarkManager::UnknownError;
+            loopErrorString = QString("Remove category: could not execute statement: %1\nReason:%2").arg(query.lastQuery()).arg(query.lastError().text());
+            result = false;
+        } else {
+            result = removeCategoryHelper(categoryIds.at(i), &loopError, &loopErrorString);
+        }
 
         if (!result) {
+            if (errorMap)
+                errorMap->insert(i, loopError);
+
             noErrors = false;
             lastError = loopError;
             lastErrorString = loopErrorString;
+            query.exec("ROLLBACK TO SAVEPOINT save");
+        } else {
+            query.exec("RELEASE SAVEPOINT save");
         }
-
-        if (result)
-            removedIds << categoryIds.at(i);
     }
+
+    db.commit();
 
     if (noErrors) {
         if (error)
@@ -2338,10 +2395,6 @@ bool DatabaseOperations::removeCategories(const QList<QLandmarkCategoryId> &cate
         if (errorString)
             *errorString = lastErrorString;
     }
-
-    //TODO: notifications
-    //if (removedIds.size() != 0)
-    //    emit landmarksRemoved(removedIds);
 
     return noErrors;
 }
