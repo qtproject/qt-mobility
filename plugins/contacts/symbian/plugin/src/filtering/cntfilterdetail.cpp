@@ -231,7 +231,11 @@ void CntFilterDetail::updateForMatchFlag(const QContactDetailFilter& filter,
             break;
         }
         case QContactFilter::MatchFixedString: {
-            *error = QContactManager::NotSupportedError;
+            // Pattern for MatchFixedString:
+            // " ='xyz' COLLATE NOCASE"
+            fieldToUpdate = " ='"
+                       + filter.value().toString() + '\'' + " COLLATE NOCASE";
+            *error = QContactManager::NoError;
             break;
         }
         case QContactFilter::MatchCaseSensitive: {
