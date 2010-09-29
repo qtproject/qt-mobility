@@ -193,7 +193,7 @@ private:
     QMessageFolderIdList folderIdsByAccountId(const QMessageAccountId &accountId) const;
     QMessageFolderIdList filterMessageFoldersL(const QMessageFolderFilter &filter, bool &filterHandled) const;
     QMessageFolderIdList allFolders() const;
-    bool fsFolderL(const QMessageFolderId &id, NmApiMailbox *mailbox, NmApiFolder *folder) const;
+    bool fsFolder(const QMessageFolderId &id, NmApiMailbox &mailbox, NmApiFolder &folder) const;
     QList<NmApiFolder> getFolderListByAccountId(const quint64 mailboxId) const;
     NmApiEmailFolderType standardFolderId(QMessage::StandardFolder standardFolder);
     
