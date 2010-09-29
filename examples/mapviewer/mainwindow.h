@@ -57,7 +57,7 @@
 #include <QList>
 #include <QTime>
 #include <qnetworksession.h>
-
+#define Q_OS_SYMBIAN
 class QSlider;
 class QRadioButton;
 class QLineEdit;
@@ -132,6 +132,7 @@ private:
     QGraphicsPathItem* m_fullScreenButton;
     QMenu* m_popupMenu;
     QPixmap m_markerIcon;
+    QPoint m_markerOffset;
     QPoint m_lastClicked;
     QList<QGeoMapPixmapObject*> m_markerObjects;
 
