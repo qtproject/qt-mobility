@@ -848,7 +848,8 @@ void QOrganizerItemMemoryEngine::addItemRecurrances(QList<QOrganizerItem>& sorte
     Q_UNUSED(recurrencePolicy);
 
     bool findAll = recurrencePolicy == QOrganizerItemManager::ExpandRecurrences;
-    QList<QOrganizerItem> recItems = internalItemInstances(c, startDate, endDate, findAll ? 50 : 1, recurrencePolicy, NULL);
+    QOrganizerItemManager::Error error = QOrganizerItemManager::NoError;
+    QList<QOrganizerItem> recItems = internalItemInstances(c, startDate, endDate, findAll ? 50 : 1, recurrencePolicy, &error);
 
     if (filter.type() == QOrganizerItemFilter::DefaultFilter) {
         foreach(const QOrganizerItem&oi, recItems) {
