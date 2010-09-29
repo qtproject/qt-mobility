@@ -157,7 +157,7 @@ private:
     friend class QOrganizerItem;
     friend class QOrganizerItemDetailPrivate;
 #ifndef QT_NO_DATASTREAM
-    friend QDataStream& operator>>(QDataStream& in, QOrganizerItemDetail& detail);
+    Q_ORGANIZER_EXPORT friend QDataStream& operator>>(QDataStream& in, QOrganizerItemDetail& detail);
 #endif
     QSharedDataPointer<QOrganizerItemDetailPrivate> d;
 };
