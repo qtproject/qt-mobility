@@ -57,7 +57,7 @@
 #include <QList>
 #include <QTime>
 #include <qnetworksession.h>
-#define Q_OS_SYMBIAN
+
 class QSlider;
 class QRadioButton;
 class QLineEdit;
