@@ -57,20 +57,26 @@ QOrganizerItemManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QS
 
 QOrganizerItemEngineLocalId* QOrganizerItemSkeletonFactory::createItemEngineLocalId() const
 {
-    /* TODO - return the localid specific to the engine */
-    return NULL;
+    /* TODO - instantiate your engine-specific item id in this function */
+    return new QOrganizerItemSkeletonEngineLocalId;
 }
 
 QOrganizerCollectionEngineLocalId* QOrganizerItemSkeletonFactory::createCollectionEngineLocalId() const
 {
-    /* TODO - return the localid specific to the engine */
-    return NULL;
+    /* TODO - instantiate your engine-specific collection id in this function */
+    return new QOrganizerCollectionSkeletonEngineLocalId;
 }
 
-QString QOrganizerItemSkeletonFactory::managerName() const
+
+QOrganizerItemSkeletonEngine::~QOrganizerItemSkeletonEngine()
+{
+    /* TODO clean up your stuff.  Perhaps a QScopedPointer or QSharedDataPointer would be in order */
+}
+
+QString QOrganizerItemSkeletonEngine::managerName() const
 {
     /* TODO - put your engine name here */
-    return QString("skeleton");
+    return QLatin1String("skeleton");
 }
 Q_EXPORT_PLUGIN2(qtorganizer_skeleton, QOrganizerItemSkeletonFactory);
 
@@ -282,12 +288,12 @@ uint QOrganizerItemSkeletonEngineLocalId::hash() const
       determined; however a better hash function will result in better performance
       because the ids will be distributed more randomly in a hash table.
 
-      In the example implementation below, we simply return the id, since the
+      In the example implementation below, we could simply return the id, since the
       id is a quint32.  In more complex id classes, however, you may need to
       qHash() individual data members and combine the results somehow.
      */
 
-    return m_localItemId;
+    return QT_PREPEND_NAMESPACE(qHash)(m_localItemId);
 }
 
 
@@ -499,47 +505,12 @@ uint QOrganizerCollectionSkeletonEngineLocalId::hash() const
       determined; however a better hash function will result in better performance
       because the ids will be distributed more randomly in a hash table.
 
-      In the example implementation below, we simply return the id, since the
+      In the example implementation below, we could simply return the id, since the
       id is a quint32.  In more complex id classes, however, you may need to
       qHash() individual data members and combine the results somehow.
      */
 
     return QT_PREPEND_NAMESPACE(qHash)(m_localCollectionId);
-}
-
-QOrganizerItemManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QString, QString> &parameters, QOrganizerItemManager::Error *error)
-{
-    /* TODO - instantiate your engine in this function. */
-
-    Q_UNUSED(parameters);
-    Q_UNUSED(error);
-
-    QOrganizerItemSkeletonEngine* retn = new QOrganizerItemSkeletonEngine(); // manager takes ownership and will clean up.
-    return retn;
-}
-
-QOrganizerItemEngineLocalId* QOrganizerItemSkeletonFactory::createItemEngineLocalId() const
-{
-    /* TODO - instantiate your engine-specific item id in this function */
-    return new QOrganizerItemSkeletonEngineLocalId;
-}
-
-QOrganizerCollectionEngineLocalId* QOrganizerItemSkeletonFactory::createCollectionEngineLocalId() const
-{
-    /* TODO - instantiate your engine-specific collection id in this function */
-    return new QOrganizerCollectionSkeletonEngineLocalId;
-}
-
-
-QOrganizerItemSkeletonEngine::~QOrganizerItemSkeletonEngine()
-{
-    /* TODO clean up your stuff.  Perhaps a QScopedPointer or QSharedDataPointer would be in order */
-}
-
-QString QOrganizerItemSkeletonEngine::managerName() const
-{
-    /* TODO - put your engine name here */
-    return QLatin1String("Skeleton");
 }
 
 QMap<QString, QString> QOrganizerItemSkeletonEngine::managerParameters() const
