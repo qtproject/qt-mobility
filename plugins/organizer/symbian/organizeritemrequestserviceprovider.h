@@ -96,19 +96,13 @@ private: // Worker functions
     // Fetch items/entries by local Ids
     void FetchItemsByLocalIdsL();
     // Fetch items/entries by details
-    void FetchItemsandFilterL(QOrganizerItemFilter& filter, 
-            QList<QOrganizerItemSortOrder>& sortOrder, 
-            QOrganizerItemFetchHint& fetchHint);
+    void FetchItemsandFilterL();
     // Fetch items ids
     void FetchItemIdsL();
     // Remove items/entries
     void RemoveItemL();
     // Fetch detail definition
     void FetchDetailDefinitionL();
-    // Remove detail definition
-    void RemoveDetailDefinitionL();
-    // Save detail definition
-    void SaveDetailDefinitionL();
     void CollectionIds();
     void FetchCollections();
     void SaveCollections();

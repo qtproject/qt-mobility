@@ -110,6 +110,12 @@ private slots:  // Test cases
     void modifyCollection();
     void removeCollection_data(){ addManagers(); };
     void removeCollection();
+    void detailDefinitionFetch_data(){ addManagers(); };
+    void detailDefinitionFetch();
+    void detailDefinitionSave_data(){ addManagers(); };
+    void detailDefinitionSave();
+    void detailDefinitionRemove_data(){ addManagers(); };
+    void detailDefinitionRemove();
 
 private: // util functions
     QOrganizerItem createItem(
@@ -677,6 +683,116 @@ void tst_SymbianOmAsync::removeCollection()
     QTRY_COMPARE(resultSpy.count(), 2);
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
     QCOMPARE(req.error(), QOrganizerItemManager::DoesNotExistError);
+}
+
+void tst_SymbianOmAsync::detailDefinitionFetch()
+{
+    // Create request
+    QOrganizerItemDetailDefinitionFetchRequest req;
+    req.setManager(m_om);
+    
+    // Setup signal spies
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+    
+    // Fetch by item type only
+    req.setItemType(QOrganizerItemType::TypeEvent);
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(resultSpy.count(), 1);
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req.errorMap().count(), 0);
+    QVERIFY(req.definitions().count() > 0);
+    stateSpy.clear();
+    resultSpy.clear();
+    
+    // Fetch by item type and detail definitions (some not supported) 
+    req.setItemType(QOrganizerItemType::TypeEvent);
+    QStringList names;
+    names << QOrganizerItemDisplayLabel::DefinitionName;
+    names << QOrganizerItemComment::DefinitionName; // not supported
+    req.setDefinitionNames(names);
+    QVERIFY(req.start());
+    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(resultSpy.count(), 1);
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(req.error(), QOrganizerItemManager::DoesNotExistError);
+    QCOMPARE(req.errorMap().count(), 1);
+    QCOMPARE(req.errorMap().value(1), QOrganizerItemManager::DoesNotExistError);
+    QVERIFY(req.definitions().count() == 1);    
+    stateSpy.clear();
+    resultSpy.clear();
+    
+    // Try fetching with no parameters
+    req.setItemType(QString());
+    req.setDefinitionNames(QStringList());
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(resultSpy.count(), 1);
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+    QCOMPARE(req.errorMap().count(), 0);
+    QVERIFY(req.definitions().count() == 0);
+    stateSpy.clear();
+    resultSpy.clear();
+        
+    // Fetch by not supported item type
+    req.setItemType(QOrganizerItemType::TypeJournal);
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(resultSpy.count(), 1);
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+    QCOMPARE(req.errorMap().count(), 0);
+    QVERIFY(req.definitions().count() == 0);
+    stateSpy.clear();
+    resultSpy.clear();   
+}
+
+void tst_SymbianOmAsync::detailDefinitionSave()
+{
+    // Create request
+    QOrganizerItemDetailDefinitionSaveRequest req;
+    req.setManager(m_om);
+    
+    // Setup signal spies
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+    
+    // Saving detail definitions is not supported so verify it cannot be started 
+    QVERIFY(!req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+    QCOMPARE(req.errorMap().count(), 0);
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(resultSpy.count(), 1);    
+}
+
+void tst_SymbianOmAsync::detailDefinitionRemove()
+{
+    // Create request
+    QOrganizerItemDetailDefinitionRemoveRequest req;
+    req.setManager(m_om);
+    
+    // Setup signal spies
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+    
+    // Removing detail definitions is not supported so verify it cannot be started 
+    QVERIFY(!req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+    QCOMPARE(req.errorMap().count(), 0);
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(resultSpy.count(), 1);   
 }
 
 /*!
