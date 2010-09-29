@@ -242,7 +242,7 @@ public:
 
     void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", priority)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", static_cast<int>(priority))
     }
 
     QDeclarativeOrganizerItemPriority::Priority priority() const
