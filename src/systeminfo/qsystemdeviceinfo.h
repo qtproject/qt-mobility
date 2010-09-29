@@ -54,7 +54,7 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(Profile currentProfile READ currentProfile NOTIFY currentProfileChanged)
-    Q_PROPERTY(PowerState currentPowerState READ currentPowerState NOTIFY powerStateChanged)
+    Q_PROPERTY(PowerState powerState READ currentPowerState NOTIFY powerStateChanged)
     Q_PROPERTY(SimStatus simStatus READ simStatus CONSTANT)
     Q_PROPERTY(BatteryStatus batteryStatus READ batteryStatus NOTIFY batteryStatusChanged)
     Q_PROPERTY(InputMethodFlags inputMethodType READ inputMethodType)
@@ -66,7 +66,7 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(QString productName READ productName CONSTANT)
     Q_PROPERTY(int batteryLevel READ batteryLevel NOTIFY batteryLevelChanged)
     Q_PROPERTY(bool isDeviceLocked READ isDeviceLocked)
-    Q_PROPERTY(bool currentBluetoothPowerState READ currentBluetoothPowerState)
+    Q_PROPERTY(bool currentBluetoothPowerState READ currentBluetoothPowerState NOTIFY bluetoothStateChanged)
 
     Q_PROPERTY(KeyboardTypeFlags keyboardType READ keyboardType)//1.2
     Q_PROPERTY(bool isWirelessKeyboardConnected READ isWirelessKeyboardConnected NOTIFY wirelessKeyboardConnected)//1.2
