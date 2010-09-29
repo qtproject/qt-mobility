@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the demonstration applications of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,27 +39,48 @@
 **
 ****************************************************************************/
 
+#ifndef QDECLARATIVECONTACTURL_H
+#define QDECLARATIVECONTACTURL_H
+#include <QUrl>
 
-#include <qdeclarativeimageprovider.h>
-#include <QMap>
-#include "qcontactmanager.h"
+#include "qdeclarativecontactdetail_p.h"
+#include "qcontacturl.h"
 
-
-
-
-QTM_USE_NAMESPACE;
-
-
-class ContactThumbnailImageProvider : public QDeclarativeImageProvider
+class QDeclarativeContactUrl : public QDeclarativeContactDetail
 {
+    Q_OBJECT
+
+    Q_PROPERTY(QString url READ url WRITE setUrl NOTIFY fieldsChanged)
+    Q_PROPERTY(QString subType READ subType WRITE setSubType NOTIFY fieldsChanged)
+
+    Q_ENUMS(FieldType);
+    Q_CLASSINFO("DefaultProperty", "url")
 public:
-    // This is run in a low priority thread.
-    QImage request(const QString &id, QSize *size, const QSize &req_size);
+    enum FieldType {
+        Url = 0,
+        SubType
+    };
 
-    ~ContactThumbnailImageProvider();
+    QDeclarativeContactUrl(QObject* parent = 0)
+        :QDeclarativeContactDetail(parent)
+    {
+        setDetail(QContactUrl());
+    }
+    ContactDetailType detailType() const
+    {
+        return QDeclarativeContactDetail::Url;
+    }
 
-private:
-    QMap<QString, QContactManager*> m_managers;
-    QMap<QString, QImage> m_thumbnails;
+    void setUrl(const QString& url) {detail().setValue(QContactUrl::FieldUrl, url);}
+    QString url() const {return detail().value(QContactUrl::FieldUrl);}
+
+    void setSubType(const QString& subType) {detail().setValue(QContactUrl::FieldSubType, subType);}
+    QString subType() const {return detail().value(QContactUrl::FieldSubType);}
+signals:
+    void fieldsChanged();
 };
+
+QML_DECLARE_TYPE(QDeclarativeContactUrl)
+
+#endif
 

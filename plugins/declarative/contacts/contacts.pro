@@ -16,6 +16,8 @@ CONFIG += plugin
 PLUGIN_TYPE = declarative
 
 include(../../../common.pri)
+include(details/details.pri)
+include(filters/filters.pri)
 
 QT += declarative script network
 
@@ -29,21 +31,32 @@ qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 
 # Input
-HEADERS += qmlcontactmodel.h \
-           qmlcontact.h \
-           qmlcontactdetail.h \
-           qmlcontactdetailfield.h
+HEADERS += qdeclarativecontactmodel_p.h \
+           qdeclarativecontact_p.h \
+           qdeclarativecontactdetail_p.h \
+           qdeclarativeopenmetaobject_p.h \
+           qmetaobjectbuilder_p.h \
+           qdeclarativecontactfilter_p.h \
+           qdeclarativecontactmetaobject_p.h \
+           qdeclarativecontactimageprovider_p.h \
+           qdeclarativecontactsortorder_p.h \
+           qdeclarativecontactfetchhint_p.h \
+           qdeclarativecontactrelationship_p.h \
+           qdeclarativecontactrelationshipmodel_p.h
 
 SOURCES += plugin.cpp \
-    qmlcontactmodel.cpp \
-    qmlcontact.cpp \
-    qmlcontactdetail.cpp \
-    qmlcontactdetailfield.cpp
-
-# Qt 4.7.0b2 and 4.7.0rc1 have a source break for declarativeimageprovider, so don't
-# compile them for now.
-# HEADERS += imageprovider.h
-# SOURCES += imageprovider.cpp
+    qdeclarativecontactmodel.cpp \
+    qdeclarativecontact.cpp \
+    qdeclarativecontactdetail.cpp \
+    qdeclarativeopenmetaobject.cpp \
+    qmetaobjectbuilder.cpp \
+    qdeclarativecontactfilter.cpp \
+    qdeclarativecontactmetaobject.cpp \
+    qdeclarativecontactimageprovider.cpp \
+    qdeclarativecontactsortorder.cpp \
+    qdeclarativecontactfetchhint.cpp \
+    qdeclarativecontactrelationship.cpp \
+    qdeclarativecontactrelationshipmodel.cpp
 
 INSTALLS += qmldir
 

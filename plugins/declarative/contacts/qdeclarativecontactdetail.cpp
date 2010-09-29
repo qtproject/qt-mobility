@@ -38,58 +38,86 @@
 **
 ****************************************************************************/
 
+#include "qdeclarativecontactdetail_p.h"
+#include "qcontactdetails.h"
 
-#include "qmlcontactdetailfield.h"
-#include <QDebug>
-
-QMLContactDetailField::QMLContactDetailField(QObject* parent)
-    :QObject(parent),
-    m_map(0)
+QDeclarativeContactDetail::QDeclarativeContactDetail(QObject* parent)
+    :QObject(parent)
 {
-
 }
 
-void QMLContactDetailField::setDetailPropertyMap(QDeclarativePropertyMap* map)
+QContactDetail& QDeclarativeContactDetail::detail()
 {
-    m_map = map;
+    return m_detail;
 }
 
-void QMLContactDetailField::setKey(const QString& key)
+const QContactDetail& QDeclarativeContactDetail::detail() const
 {
-    m_key = key;
+    return m_detail;
 }
 
-QString QMLContactDetailField::key() const
+void QDeclarativeContactDetail::setDetail(const QContactDetail& detail)
 {
-    return m_key;
+    m_detail = detail;
 }
 
-QVariant QMLContactDetailField::value() const
+QString QDeclarativeContactDetail::definitionName() const
 {
-    if (m_map) {
-        QVariant v =  m_map->value(m_key);
-        if (v.canConvert<QVariantList>()) {
-            return v.toStringList().join(",");
-        }
-        return v;
-    }
-    return QVariant();
+    return m_detail.definitionName();
 }
 
-void QMLContactDetailField::setValue(const QVariant& value)
+QStringList QDeclarativeContactDetail::contexts() const
 {
-    if (m_map && m_map->contains(m_key)) {
-        (*m_map)[m_key] = value;
-    }
+    return m_detail.contexts();
+}
+void QDeclarativeContactDetail::setContexts(const QStringList& contexts)
+{
+    m_detail.setContexts(contexts);
 }
 
-
-QString QMLContactDetailField::detailName() const
+QString QDeclarativeContactDetail::detailUri() const
 {
-    return m_detailName;
+    return m_detail.detailUri();
+}
+void QDeclarativeContactDetail::setDetailUri(const QString& detailUri)
+{
+    m_detail.setDetailUri(detailUri);
 }
 
-void QMLContactDetailField::setDetailName(const QString& name)
+QStringList QDeclarativeContactDetail::linkedDetailUris() const
 {
-    m_detailName = name;
+    return m_detail.linkedDetailUris();
 }
+void QDeclarativeContactDetail::setLinkedDetailUris(const QStringList& linkedDetailUris)
+{
+    m_detail.setLinkedDetailUris(linkedDetailUris);
+}
+
+QDeclarativeContactDetail::ContactDetailType QDeclarativeContactDetail::detailType() const
+{
+    return QDeclarativeContactDetail::Customized;
+}
+
+QStringList QDeclarativeContactDetail::fieldNames() const
+{
+    return m_detail.variantValues().keys();
+}
+
+QVariant QDeclarativeContactDetail::value(const QString& key) const
+{
+    return m_detail.variantValue(key);
+}
+
+bool QDeclarativeContactDetail::setValue(const QString& key, const QVariant& v)
+{
+    bool changed = false;
+
+    if (value(key) != v)
+         changed = m_detail.setValue(key, v);
+
+    if (changed)
+        emit fieldsChanged();
+
+    return changed;
+}
+

@@ -46,6 +46,7 @@
 #include "qversitcontactexporter_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
+#include "qcontactmanagerengine.h"
 #include <QString>
 #include <QStringList>
 #include <QList>
@@ -1157,7 +1158,8 @@ void tst_QVersitContactExporter::testEncodeDisplayLabel()
     contact.saveDetail(&contactName);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(document.properties().count(), 2);
+
+    QCOMPARE(document.properties().count(), 2); // FN and N
     QVersitProperty displayProperty = findPropertyByName(document, QLatin1String("FN"));
     QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
     QCOMPARE(displayProperty.value(), QString::fromAscii("First Last"));
@@ -1166,6 +1168,16 @@ void tst_QVersitContactExporter::testEncodeDisplayLabel()
     CHECK_VALUE(nameProperty, QVersitProperty::CompoundType, QStringList()
                 << QLatin1String("Last") << QLatin1String("First") << QLatin1String("Middle")
                 << QString() << QString());
+
+    // display label but no name set
+    contact.removeDetail(&contactName);
+    QContactManagerEngine::setContactDisplayLabel(&contact, "Bobby Tables");
+    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
+    document = mExporter->documents().first();
+    QCOMPARE(document.properties().count(), 1); // just FN
+    displayProperty = document.properties().first();
+    QCOMPARE(displayProperty.name(), QLatin1String("FN"));
+    QCOMPARE(displayProperty.value(), QLatin1String("Bobby Tables"));
 }
 
 void tst_QVersitContactExporter::testDefaultResourceHandler()
