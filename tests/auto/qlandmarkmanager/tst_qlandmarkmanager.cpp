@@ -772,7 +772,6 @@ private slots:
     /* TODO: restore
     void asyncLandmarkFetchCancel();
 */
-
     void saveCategory();
     void saveCategory_data();
 
