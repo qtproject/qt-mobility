@@ -71,6 +71,8 @@
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
+#include "qorganizeritemenginelocalid.h"
+#include "qorganizercollectionenginelocalid.h"
 
 QTM_USE_NAMESPACE
 
