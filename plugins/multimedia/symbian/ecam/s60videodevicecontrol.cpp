@@ -39,24 +39,29 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
 #include <QtGui/qicon.h>
 
 #include "s60videodevicecontrol.h"
 #include "s60cameracontrol.h"
+#include "s60cameraconstants.h"
 
 S60VideoDeviceControl::S60VideoDeviceControl(QObject *parent) :
-    QVideoDeviceControl(parent),
-    m_selectedDevice(-1)
+    QVideoDeviceControl(parent)
 {
 }
 
 S60VideoDeviceControl::S60VideoDeviceControl(S60CameraControl *control, QObject *parent) :
     QVideoDeviceControl(parent),
-    m_selectedDevice(0)
+    m_selectedDevice(KDefaultCameraDevice)
 {
-    m_control = control;
+    if (control)
+        m_control = control;
+    else
+        Q_ASSERT(true);
+    // From now on it's safe to assume control exists
+
+    connect(m_control, SIGNAL(devicesChanged()), this, SIGNAL(devicesChanged()));
 }
 
 S60VideoDeviceControl::~S60VideoDeviceControl()
@@ -86,10 +91,7 @@ QIcon S60VideoDeviceControl::deviceIcon(int index) const
 
 int S60VideoDeviceControl::defaultDevice() const
 {
-    if (m_control)
-        return m_control->defaultDevice();
-    else
-        return -1; // No devices available
+    return KDefaultCameraDevice;
 }
 
 int S60VideoDeviceControl::selectedDevice() const
@@ -100,11 +102,11 @@ int S60VideoDeviceControl::selectedDevice() const
 void S60VideoDeviceControl::setSelectedDevice(int index)
 {
     // Inform that we selected new device
-    if (m_selectedDevice != index && m_control) {
-        emit selectedDeviceChanged(index);
-        emit selectedDeviceChanged(deviceName(index));
+    if (m_selectedDevice != index) {
+        m_control->setSelectedDevice(index);
         m_selectedDevice = index;
-        m_control->setSelectedDevice(m_selectedDevice);
+        emit selectedDeviceChanged(m_selectedDevice);
+        emit selectedDeviceChanged(deviceName(m_selectedDevice));
     }
 }
 

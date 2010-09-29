@@ -42,7 +42,6 @@
 #ifndef S60CAMERAIMAGECAPTURECONTROL_H
 #define S60CAMERAIMAGECAPTURECONTROL_H
 
-#include <QtCore/qobject.h>
 #include "qcameraimagecapturecontrol.h"
 
 QT_USE_NAMESPACE
@@ -51,6 +50,9 @@ class S60CameraService;
 class S60ImageCaptureSession;
 class S60CameraControl;
 
+/*
+ * Control for image capture operations.
+ */
 class S60CameraImageCaptureControl : public QCameraImageCaptureControl
 {
     Q_OBJECT
@@ -83,10 +85,6 @@ Q_SIGNALS: // QCameraImageCaptureControl
 
     void error(int id, int error, const QString &errorString);
 */
-
-public Q_SLOTS:
-
-    void handleError(int error, const QString &errorString);
 
 private: // Data
 
