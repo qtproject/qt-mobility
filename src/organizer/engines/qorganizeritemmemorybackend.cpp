@@ -1441,8 +1441,12 @@ bool QOrganizerItemMemoryEngine::startRequest(QOrganizerItemAbstractRequest* req
 {
     if (!req)
         return false;
+
+    QWeakPointer<QOrganizerItemAbstractRequest> checkDeletion(req);
     updateRequestState(req, QOrganizerItemAbstractRequest::ActiveState);
-    performAsynchronousOperation(req);
+    if (!checkDeletion.isNull())
+        performAsynchronousOperation(req);
+
     return true;
 }
 
