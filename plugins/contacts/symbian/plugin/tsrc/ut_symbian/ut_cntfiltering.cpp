@@ -1639,6 +1639,40 @@ void TestFiltering::testFavoriteDetailFilter()
     QVERIFY(savedFav.index() == 100); 
     }
 
+void TestFiltering::testMatchFlags()
+{
+    QContactManager::Error err;
+    QContactFetchHint hint;
+    
+    //save a contact without favorite detail
+    QContact c1;
+    c1.setType(QContactType::TypeContact);
+    QContactName name1;
+    name1.setFirstName("somename");
+    c1.saveDetail(&name1);
+    QContactEmailAddress email;
+    email.setEmailAddress("EMAIL123");
+    c1.saveDetail(&email);
+    QVERIFY(m_engine->saveContact(&c1, &err));
+    QVERIFY(err == QContactManager::NoError);
+    
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
+    filter.setValue("email123");
+    filter.setMatchFlags(QContactFilter::MatchExactly);
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(filter, QList<QContactSortOrder>(), &err);
+    QVERIFY(cnt_ids.count() == 0);
+
+    filter.setMatchFlags(QContactFilter::MatchFixedString);
+    cnt_ids = m_engine->contactIds(filter, QList<QContactSortOrder>(), &err);
+    QVERIFY(cnt_ids.count() == 1);
+    
+    filter.setValue("EMAIL123");
+    filter.setMatchFlags(QContactFilter::MatchExactly);
+    cnt_ids = m_engine->contactIds(filter, QList<QContactSortOrder>(), &err);
+    QVERIFY(cnt_ids.count() == 1);
+}
+
 //QTEST_MAIN(TestFiltering);
 /*int main(int argc, char *argv[]) 
 {
