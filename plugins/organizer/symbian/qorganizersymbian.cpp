@@ -328,9 +328,6 @@ void QOrganizerItemSymbianEngine::initializeL()
 
 QOrganizerItemSymbianEngine::~QOrganizerItemSymbianEngine()
 {
-#ifdef SYMBIAN_CALENDAR_V2
-    m_defaultCollection.calSession()->StopFileChangeNotification();
-#endif
 	delete m_requestServiceProviderQueue;
 }
 
