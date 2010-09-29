@@ -208,13 +208,13 @@ QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganize
   list of \a sortOrders.  Depending on the backend, this filtering operation may involve retrieving
   all the organizer items.  Any error which occurs will be saved in \a error.
  */
-QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemManager::ItemFindMethod& findMethod, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::RecurrencePolicy recurrencePolicy, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(startDate);
     Q_UNUSED(endDate);
     Q_UNUSED(filter);
     Q_UNUSED(sortOrders);
-    Q_UNUSED(findMethod);
+    Q_UNUSED(recurrencePolicy);
 
     *error = QOrganizerItemManager::NotSupportedError;
     return QList<QOrganizerItemLocalId>();
@@ -241,14 +241,14 @@ QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QDateTim
 
   \sa QOrganizerItemFetchHint
  */
-QList<QOrganizerItem> QOrganizerItemManagerEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, const QOrganizerItemManager::ItemFindMethod& findMethod, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemManagerEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::RecurrencePolicy recurrencePolicy, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(startDate);
     Q_UNUSED(endDate);
     Q_UNUSED(filter);
     Q_UNUSED(sortOrders);
     Q_UNUSED(fetchHint);
-    Q_UNUSED(findMethod);
+    Q_UNUSED(recurrencePolicy);
     *error = QOrganizerItemManager::NotSupportedError;
     return QList<QOrganizerItem>();
 }

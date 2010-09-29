@@ -336,39 +336,39 @@ QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItem&
 /*!
   Return the list of organizer item ids, sorted according to the given list of \a sortOrders
  */
-QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QList<QOrganizerItemSortOrder>& sortOrders, const ItemFindMethod& findMethod) const
+QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QList<QOrganizerItemSortOrder>& sortOrders, RecurrencePolicy recurrencePolicy) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->itemIds(QDateTime(), QDateTime(), QOrganizerItemFilter(), sortOrders, findMethod, &d->m_error);
+    return d->m_engine->itemIds(QDateTime(), QDateTime(), QOrganizerItemFilter(), sortOrders, recurrencePolicy, &d->m_error);
 }
 
 /*!
   Returns a list of organizer item ids that match the given \a filter, sorted according to the given list of \a sortOrders.
   Depending on the backend, this filtering operation may involve retrieving all the organizeritems.
  */
-QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const ItemFindMethod& findMethod) const
+QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, RecurrencePolicy recurrencePolicy) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->itemIds(QDateTime(), QDateTime(), filter, sortOrders, findMethod, &d->m_error);
+    return d->m_engine->itemIds(QDateTime(), QDateTime(), filter, sortOrders, recurrencePolicy, &d->m_error);
 }
 
 /*!
   Return the list of organizer item ids, sorted according to the given list of \a sortOrders
  */
-QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QList<QOrganizerItemSortOrder>& sortOrders, const ItemFindMethod& findMethod) const
+QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QList<QOrganizerItemSortOrder>& sortOrders, RecurrencePolicy recurrencePolicy) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->itemIds(startDate, endDate, QOrganizerItemFilter(), sortOrders, findMethod, &d->m_error);
+    return d->m_engine->itemIds(startDate, endDate, QOrganizerItemFilter(), sortOrders, recurrencePolicy, &d->m_error);
 }
 
 /*!
   Returns a list of organizer item ids that match the given \a filter, sorted according to the given list of \a sortOrders.
   Depending on the backend, this filtering operation may involve retrieving all the organizeritems.
  */
-QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const ItemFindMethod& findMethod) const
+QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, RecurrencePolicy recurrencePolicy) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->itemIds(startDate, endDate, filter, sortOrders, findMethod, &d->m_error);
+    return d->m_engine->itemIds(startDate, endDate, filter, sortOrders, recurrencePolicy, &d->m_error);
 }
 
 /*!
@@ -383,10 +383,10 @@ QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QDateTime& sta
 
   \sa QOrganizerItemFetchHint
  */
-QList<QOrganizerItem> QOrganizerItemManager::items(const QDateTime& startDate, const QDateTime& endDate, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, const ItemFindMethod& findMethod) const
+QList<QOrganizerItem> QOrganizerItemManager::items(const QDateTime& startDate, const QDateTime& endDate, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, RecurrencePolicy recurrencePolicy) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->items(startDate, endDate, QOrganizerItemFilter(), sortOrders, fetchHint, findMethod, &d->m_error);
+    return d->m_engine->items(startDate, endDate, QOrganizerItemFilter(), sortOrders, fetchHint, recurrencePolicy, &d->m_error);
 }
 
 /*!
@@ -404,10 +404,10 @@ QList<QOrganizerItem> QOrganizerItemManager::items(const QDateTime& startDate, c
 
   \sa QOrganizerItemFetchHint
  */
-QList<QOrganizerItem> QOrganizerItemManager::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, const ItemFindMethod& findMethod) const
+QList<QOrganizerItem> QOrganizerItemManager::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, RecurrencePolicy recurrencePolicy) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->items(startDate, endDate, filter, sortOrders, fetchHint, findMethod, &d->m_error);
+    return d->m_engine->items(startDate, endDate, filter, sortOrders, fetchHint, recurrencePolicy, &d->m_error);
 }
 
 /*!

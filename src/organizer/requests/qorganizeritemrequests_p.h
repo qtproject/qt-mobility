@@ -113,7 +113,7 @@ public:
     QDateTime m_startDate;
     QDateTime m_endDate;
 
-    QOrganizerItemManager::ItemFindMethod m_findMethod;
+    QOrganizerItemManager::RecurrencePolicy m_recurrencePolicy;
 };
 
 class QOrganizerItemInstanceFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
@@ -186,7 +186,7 @@ public:
     QDateTime m_startDate;
     QDateTime m_endDate;
 
-    QOrganizerItemManager::ItemFindMethod m_findMethod;
+    QOrganizerItemManager::RecurrencePolicy m_recurrencePolicy;
 };
 
 class QOrganizerItemDetailDefinitionFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
