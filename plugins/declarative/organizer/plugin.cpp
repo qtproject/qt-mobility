@@ -65,7 +65,7 @@ public:
         qmlRegisterType<QDeclarativeOrganizerModel>(uri, 1, 1, "OrganizerModel");
         qmlRegisterType<QDeclarativeOrganizerItem>(uri, 1, 1, "OrganizerItem");
         qmlRegisterType<QDeclarativeOrganizerItemRecurrenceRule>(uri, 1, 1, "OrganizerItemRecurrenceRule");
-        qmlRegisterType<QDeclarativeOrganizerItemFetchHint>(uri, 1, 1, "fetchHint");
+        qmlRegisterType<QDeclarativeOrganizerItemFetchHint>(uri, 1, 1, "OrganizerItemFetchHint");
         qmlRegisterType<QDeclarativeOrganizerItemSortOrder>(uri, 1, 1, "OrganizerItemSortOrder");
         qmlRegisterType<QDeclarativeOrganizerCollection>(uri, 1, 1, "OrganizerCollection");
 
