@@ -183,22 +183,26 @@ isEmpty(QT_LIBINFIX):symbian {
 
             pluginstubs += \
                 "IF package(0x20022E6D)" \
-                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/openmaxal/mediarecorder/qmakepluginstubs/qtmultimediakit_openmaxalengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_openmaxalengine.qtplugin\"" \
+                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/openmaxal/qmakepluginstubs/qtmultimediakit_openmaxalengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_openmaxalengine.qtplugin\"" \
                 "ENDIF"
         }
 
         pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
             "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/qtmultimediakit_m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\qtmultimediakit_m3u.qtplugin\"" \
-	    
-	contains(QT_CONFIG, declarative): {
-            qtmobilitydeployment.sources += \
-            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_multimedia.dll
-            pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\multimedia\\qmakepluginstubs\\declarative_multimedia.qtplugin\"  - \"!:\\resource\\qt\\imports\\Qt\\multimedia\\declarative_multimedia.qtplugin\""
-            qmldirs += \
-            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\multimedia\\qmldir\"  - \"!:\\resource\\qt\\imports\\Qt\\multimedia\\qmldir\""
-        }
+
+
+# Disabled: Not supported until mobility 1.1
+# See also commit f1a30766
+#
+#	contains(QT_CONFIG, declarative): {
+#            qtmobilitydeployment.sources += \
+#            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_multimedia.dll
+#            pluginstubs += \
+#            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\multimedia\\qmakepluginstubs\\declarative_multimedia.qtplugin\"  - \"!:\\resource\\qt\\imports\\Qt\\multimedia\\declarative_multimedia.qtplugin\""
+#            qmldirs += \
+#            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\multimedia\\qmldir\"  - \"!:\\resource\\qt\\imports\\Qt\\multimedia\\qmldir\""
+#        }
     }
 
     contains(mobility_modules, sensors) {
