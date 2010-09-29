@@ -14,9 +14,7 @@ Rectangle {
 
     SystemPalette { id: activePalette }
 
-    QmlOrganizer {
-       id : organizer
-    }
+    OrganizerModel {id: organizerModelId; manager:'memory'; startPeriod:'2010-08-12T13:22:01'; endPeriod:'2010-09-12T13:22:01'}
 
     // Quick hack top menu bar to change views
     states: [
