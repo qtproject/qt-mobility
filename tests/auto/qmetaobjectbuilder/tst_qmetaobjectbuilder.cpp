@@ -935,10 +935,9 @@ void tst_QMetaObjectBuilder::relatedMetaObject()
 {
     QMetaObjectBuilder builder;
     
-    meta = &staticMetaObject;
-
     // Add two related meta objects and check their attributes.
 #ifdef Q_NO_DATA_RELOCATION
+    meta = &staticMetaObject;
     QCOMPARE(builder.addRelatedMetaObject(&staticMetaObjectGlobal), 0);    
     QCOMPARE(builder.addRelatedMetaObject(&staticMetaObjectLocal), 1);
 #else
