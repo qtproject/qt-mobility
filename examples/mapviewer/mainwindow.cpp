@@ -460,23 +460,24 @@ void MainWindow::setProvider(QString providerId)
     m_mapManager = m_serviceProvider->mappingManager();
     m_routingManager = m_serviceProvider->routingManager();
     m_searchManager = m_serviceProvider->searchManager();
-
-    QObject::connect(m_searchManager, SIGNAL(finished(QGeoSearchReply*)), this,
-                     SLOT(searchReplyFinished(QGeoSearchReply*)));
-    QObject::connect(m_searchManager,
-                     SIGNAL(error(QGeoSearchReply*, QGeoSearchReply::Error, QString)), this,
-                     SLOT(resultsError(QGeoSearchReply*, QGeoSearchReply::Error, QString)));
 }
 
 void MainWindow::searchClicked()
 {
-    m_searchManager->search(m_searchEdit->text());
+    QGeoSearchReply *reply = m_searchManager->search(m_searchEdit->text());
+
+    QObject::connect(reply, SIGNAL(finished()), this,
+                     SLOT(searchReplyFinished()));
+    QObject::connect(reply,
+                     SIGNAL(error(QGeoSearchReply::Error, QString)), this,
+                     SLOT(resultsError(QGeoSearchReply::Error, QString)));
+    
     m_qgv->setFocus();
 }
 
-void MainWindow::searchReplyFinished(QGeoSearchReply* reply)
+void MainWindow::searchReplyFinished()
 {
-    Q_ASSERT(reply);
+    QGeoSearchReply* reply = static_cast<QGeoSearchReply *>(sender());
 
     if (reply->error() != QGeoSearchReply::NoError) {
         // Errors are handled in a different slot (resultsError)
@@ -485,57 +486,80 @@ void MainWindow::searchReplyFinished(QGeoSearchReply* reply)
 
     QList<QGeoPlace> places = reply->places();
     if (places.length() == 0) {
-        QMessageBox::information(this, tr("Map Viewer Demo"), tr("Search did not find anything."));
-        reply->deleteLater();
-        return;
+        (new QMessageBox(
+                QMessageBox::Information,
+                tr("MapViewer Example"), 
+                tr("Search did not find anything."),
+                0,
+                this
+        ))->show();
     }
+    else {
 
-    for (int i = 0; i < places.length(); ++i) {
-        QGeoPlace & place = places[i];
-        QGeoMapPixmapObject *marker 
-            = new QGeoMapPixmapObject(place.coordinate(),
-                                      QPoint(-(MARKER_WIDTH / 2),
-                                      -MARKER_HEIGHT),
-                                      m_markerIcon);
-        m_mapWidget->addMapObject(marker);
-        m_markerObjects.append(marker); // TODO: add to different marker list, clear markers from list before searching
-    }
-
-    if (places.length() == 1) {
+        for (int i = 0; i < places.length(); ++i) {
+            QGeoPlace & place = places[i];
+            QGeoMapPixmapObject *marker 
+                = new QGeoMapPixmapObject(place.coordinate(),
+                                          QPoint(-(MARKER_WIDTH / 2),
+                                          -MARKER_HEIGHT),
+                                          m_markerIcon);
+            m_mapWidget->addMapObject(marker);
+            m_markerObjects.append(marker); // TODO: add to different marker list, clear markers from list before searching
+        }
+    
+        if (places.length() == 1) {
+            m_mapWidget->setCenter(places[0].coordinate());
+        } else {
+            QGeoBoundingBox bbox(places.at(0).coordinate(), places.at(0).coordinate());
+            for (int i = 1; i < places.length(); ++i) {
+                bbox |= QGeoBoundingBox(places.at(i).coordinate(), places.at(i).coordinate());
+            }
+            m_mapWidget->fitInViewport(bbox);
+        }
+    
+        /*
+        QGeoBoundingArea * viewport = reply->viewport();
+        if (viewport) {
+            if (viewport->type() == QGeoBoundingArea::BoxType) {
+                m_mapWidget->fitInViewport(*static_cast<QGeoBoundingBox *>(viewport));
+                reply->deleteLater();
+                return;
+            }
+            else if (viewport->type() == QGeoBoundingArea::CircleType) {
+                m_mapWidget->setCenter(static_cast<QGeoBoundingCircle *>(viewport)->center());
+                reply->deleteLater();
+                return;
+            }
+        }
         m_mapWidget->setCenter(places[0].coordinate());
-    } else {
-        QGeoBoundingBox bbox(places.at(0).coordinate(), places.at(0).coordinate());
-        for (int i = 1; i < places.length(); ++i) {
-            bbox |= QGeoBoundingBox(places.at(i).coordinate(), places.at(i).coordinate());
-        }
-        m_mapWidget->fitInViewport(bbox);
+        */
     }
-
-    /*
-    QGeoBoundingArea * viewport = reply->viewport();
-    if (viewport) {
-        if (viewport->type() == QGeoBoundingArea::BoxType) {
-            m_mapWidget->fitInViewport(*static_cast<QGeoBoundingBox *>(viewport));
-            reply->deleteLater();
-            return;
-        }
-        else if (viewport->type() == QGeoBoundingArea::CircleType) {
-            m_mapWidget->setCenter(static_cast<QGeoBoundingCircle *>(viewport)->center());
-            reply->deleteLater();
-            return;
-        }
-    }
-    m_mapWidget->setCenter(places[0].coordinate());
-    */
+    
+    disconnect(reply, SIGNAL(finished()), this,
+                     SLOT(searchReplyFinished()));
+    disconnect(reply,
+                     SIGNAL(error(QGeoSearchReply::Error, QString)), this,
+                     SLOT(resultsError(QGeoSearchReply::Error, QString)));
     reply->deleteLater();
 }
 
-void MainWindow::resultsError(QGeoSearchReply* reply, QGeoSearchReply::Error errorCode, QString errorString)
+void MainWindow::resultsError(QGeoSearchReply::Error errorCode, QString errorString)
 {
-    Q_UNUSED(reply)
-    QMessageBox::information(this, tr("MapViewer Example"), tr(
-                                 "Error #%1 while trying to process your search query.\n\"%2\"").arg(errorCode).arg(errorString));
-
+    QObject* reply = static_cast<QGeoSearchReply *>(sender());
+    
+    (new QMessageBox(
+            QMessageBox::Information,
+            tr("MapViewer Example"), 
+            tr("Error #%1 while trying to process your search query.\n\"%2\"").arg(errorCode).arg(errorString),
+            0,
+            this
+    ))->show();
+    
+    disconnect(reply, SIGNAL(finished()), this,
+                     SLOT(searchReplyFinished()));
+    disconnect(reply,
+                     SIGNAL(error(QGeoSearchReply::Error, QString)), this,
+                     SLOT(resultsError(QGeoSearchReply::Error, QString)));
     reply->deleteLater();
 }
 
