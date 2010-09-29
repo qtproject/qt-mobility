@@ -87,8 +87,6 @@ void QGeoMapReplyNokia::abort()
         return;
 
     m_reply->abort();
-    m_reply->deleteLater();
-    m_reply = 0;
 }
 
 void QGeoMapReplyNokia::replyDestroyed()

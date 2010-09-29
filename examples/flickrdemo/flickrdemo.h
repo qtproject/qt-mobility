@@ -63,7 +63,9 @@ QT_END_NAMESPACE
 #include "xqlistwidget.h"
 
 QTM_BEGIN_NAMESPACE
+#ifndef BEARER_IN_QTNETWORK
 class QNetworkSession;
+#endif
 class QGeoPositionInfoSource;
 class QGeoPositionInfo;
 class QGeoSatelliteInfoSource;
