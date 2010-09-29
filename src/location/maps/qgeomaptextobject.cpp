@@ -57,9 +57,6 @@ QTM_BEGIN_NAMESPACE
 
     The text object is drawn such that the rendered size of the text object is
     independent of the zoom level of the map.
-
-    \note Anchor and/or alignment options didn't make it into the beta release
-    but will be present in the final 1.1 release.
 */
 
 /*!

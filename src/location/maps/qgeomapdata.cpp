@@ -517,6 +517,7 @@ void QGeoMapData::addMapOverlay(QGeoMapOverlay *overlay)
     if (!overlay)
         return;
 
+    overlay->setMapData(this);
     d_ptr->overlays.append(overlay);
 }
 

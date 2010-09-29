@@ -40,6 +40,8 @@
 ****************************************************************************/
 
 #include "qgeomapoverlay.h"
+#include "qgeomapoverlay_p.h"
+
 #include "qgeomapdata.h"
 
 QTM_BEGIN_NAMESPACE
@@ -53,19 +55,51 @@ QTM_BEGIN_NAMESPACE
     \ingroup maps-mapping
 
     This allows for general drawing to occur in overlays above the map.
-
-    \note This class will be improved between the beta and final releases.
 */
+
+/*!
+*/
+QGeoMapOverlay::QGeoMapOverlay()
+    : d_ptr(new QGeoMapOverlayPrivate()) {}
 
 /*!
     Destroys this map overlay object.
 */
-QGeoMapOverlay::~QGeoMapOverlay() {}
+QGeoMapOverlay::~QGeoMapOverlay()
+{
+    delete d_ptr;
+}
 
 /*!
 \fn void QGeoMapOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
 
 Paints the overlay on \a painter, using the options \a option.
 */
+
+/*!
+*/
+void QGeoMapOverlay::setMapData(QGeoMapData * mapData)
+{
+    d_ptr->mapData = mapData;
+}
+
+/*!
+*/
+QGeoMapData const * QGeoMapOverlay::mapData() const
+{
+    return d_ptr->mapData;
+}
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoMapOverlayPrivate::QGeoMapOverlayPrivate()
+    : mapData(0) {}
+
+
+QGeoMapOverlayPrivate::~QGeoMapOverlayPrivate() {}
+
+/*******************************************************************************
+*******************************************************************************/
 
 QTM_END_NAMESPACE

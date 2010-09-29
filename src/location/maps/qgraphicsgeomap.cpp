@@ -45,6 +45,7 @@
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
 #include "qgeomapobject.h"
+#include "qgeomapoverlay.h"
 
 #include "qgeoserviceprovider.h"
 #include "qgeomappingmanager.h"
@@ -479,6 +480,62 @@ void QGraphicsGeoMap::clearMapObjects()
         return;
 
     d_ptr->mapData->clearMapObjects();
+}
+
+/*!
+    Returns the map overlays associated with this map.
+*/
+QList<QGeoMapOverlay*> QGraphicsGeoMap::mapOverlays() const
+{
+    if (!d_ptr->mapData)
+        return QList<QGeoMapOverlay*>();
+
+    return d_ptr->mapData->mapOverlays();
+}
+
+/*!
+    Adds \a overlay to the list of map overlays associated with this map.
+
+    The overlays will be drawn in the order in which they were added.
+
+    The map will take ownership of \a overlay.
+*/
+void QGraphicsGeoMap::addMapOverlay(QGeoMapOverlay *overlay)
+{
+    if (!overlay || !d_ptr->mapData)
+        return;
+
+    d_ptr->mapData->addMapOverlay(overlay);
+
+    this->update();
+}
+
+/*!
+    Removes \a overlay from the list of map overlays associated with this map.
+
+    The map will release ownership of \a overlay.
+*/
+void QGraphicsGeoMap::removeMapOverlay(QGeoMapOverlay *overlay)
+{
+    if (!overlay || !d_ptr->mapData)
+        return;
+
+    d_ptr->mapData->removeMapOverlay(overlay);
+
+    this->update();
+}
+
+/*!
+    Clears the map overlays associated with this map.
+
+    The map overlays will be deleted.
+*/
+void QGraphicsGeoMap::clearMapOverlays()
+{
+    if (!d_ptr->mapData)
+        return;
+
+    d_ptr->mapData->clearMapOverlays();
 }
 
 /*!
