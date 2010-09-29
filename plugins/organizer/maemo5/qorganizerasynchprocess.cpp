@@ -104,12 +104,15 @@ void OrganizerAsynchProcess::requestDestroyed(QOrganizerItemAbstractRequest *req
 {
     bool requestRemoved = false;
 
-    if (req->state() != QOrganizerItemAbstractRequest::ActiveState) {
-        m_mainMutex.lock();
+    m_mainMutex.lock();
+    if (m_requestQueue.contains(req)) {
+    //if (req->state() != QOrganizerItemAbstractRequest::ActiveState) {
+
         m_requestQueue.removeOne(req);
-        m_mainMutex.unlock();
+
         requestRemoved = true;
     }
+    m_mainMutex.unlock();
 
     if (!requestRemoved)
         waitForRequestFinished(req);
@@ -117,22 +120,25 @@ void OrganizerAsynchProcess::requestDestroyed(QOrganizerItemAbstractRequest *req
 
 bool OrganizerAsynchProcess::addRequest(QOrganizerItemAbstractRequest *req)
 {
-    QOrganizerItemManagerEngine::updateRequestState(req, QOrganizerItemAbstractRequest::InactiveState);
+    m_mainMutex.lock();
     m_requestQueue.enqueue(req);
+    m_mainMutex.unlock();
+    QOrganizerItemManagerEngine::updateRequestState(req, QOrganizerItemAbstractRequest::ActiveState);
     return true;
 }
 
 bool OrganizerAsynchProcess::cancelRequest(QOrganizerItemAbstractRequest *req)
 {
     m_mainMutex.lock();
-    if (req->state() != QOrganizerItemAbstractRequest::ActiveState) {
+
+    if (m_requestQueue.contains(req)) {
         QOrganizerItemManagerEngine::updateRequestState(req, QOrganizerItemAbstractRequest::CanceledState);
         m_requestQueue.removeOne(req);
         m_mainMutex.unlock();
         return true;
     }
     else {
-        // cannot cancel active requests
+        // cannot cancel request when processing has already begun
         m_mainMutex.unlock();
         return false;
     }
@@ -140,10 +146,13 @@ bool OrganizerAsynchProcess::cancelRequest(QOrganizerItemAbstractRequest *req)
 
 bool OrganizerAsynchProcess::waitForRequestFinished(QOrganizerItemAbstractRequest *req, int msecs)
 {
-    if (req->state() == QOrganizerItemAbstractRequest::FinishedState)
+    if (req->state() == QOrganizerItemAbstractRequest::FinishedState) {
         return true;
-    else if (req->state() == QOrganizerItemAbstractRequest::CanceledState)
+    }
+    else if (req->state() == QOrganizerItemAbstractRequest::CanceledState
+             || req->state() == req->state() == QOrganizerItemAbstractRequest::InactiveState) {
         return false;
+    }
 
     // Multiple timers are created to make this method thread safe.
     // There's a timer for each calling thread.
@@ -161,9 +170,7 @@ bool OrganizerAsynchProcess::waitForRequestFinished(QOrganizerItemAbstractReques
         yieldCurrentThread();
         // Process events to allow the timeout timers to work
         QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
-    } while(m_activeRequests.contains(req)
-            && (req->state() == QOrganizerItemAbstractRequest::InactiveState
-             || req->state() == QOrganizerItemAbstractRequest::ActiveState));
+    } while(m_activeRequests.contains(req) && req->state() == QOrganizerItemAbstractRequest::ActiveState);
 
     m_timeoutMutex.lock();
     if (!m_activeRequests.contains(req)) {
@@ -210,12 +217,10 @@ void OrganizerAsynchProcess::processRequest()
     }
 
     QOrganizerItemAbstractRequest *req = m_requestQueue.dequeue();
-    if (!req->state() == QOrganizerItemAbstractRequest::InactiveState) {
+    if (req->state() != QOrganizerItemAbstractRequest::ActiveState) {
         m_mainMutex.unlock();
         return;
     }
-
-    QOrganizerItemManagerEngine::updateRequestState(req, QOrganizerItemAbstractRequest::ActiveState);
 
     switch(req->type()) {
     case QOrganizerItemAbstractRequest::ItemInstanceFetchRequest:
