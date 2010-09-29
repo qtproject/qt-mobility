@@ -186,18 +186,27 @@ void tst_QDeclarativeOrganizer::construction_data()
     QTest::newRow("OrganizerModel: With filter") << "QDeclarativeOrganizerModel" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerModel {id: organizerModelId; filter: OrganizerItemDateTimePeriodFilter{id: filter;start:'2010-08-12T13:22:01';end:'2010-09-12T13:22:01'} }" << true;
     QTest::newRow("OrganizerModel: With fetchHint") << "QDeclarativeOrganizerModel" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerModel {id: organizerModelId; fetchHint:OrganizerItemFetchHint {id:hint; optimizationHints:OrganizerItemFetchHint.AllRequired} }" << true;
 
-    // Organizer Items
+    // OrganizerItem
     QTest::newRow("Base organizer item") << "QDeclarativeOrganizerItem" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerItem {}" << true;
     QTest::newRow("Base organizer item: only id") << "QDeclarativeOrganizerItem" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerItem {id:organizerItem}" << true;
     QTest::newRow("Base organizer item: Valuetype properties") << "QDeclarativeOrganizerItem" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerItem {id:organizerItem; displayLabel:'test item'; description:'item description'; guid:'1112232133'}" << true;
     QTest::newRow("Base organizer item: default property") << "QDeclarativeOrganizerItem" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerItem {id:organizerItem; OrganizerItemDisplayLabel {label:'test item'} OrganizerItemDescription { description:'item description'} OrganizerItemGuid{guid:'1112232133'} }" << true;
 
+    //OrganizerEvent
+    QTest::newRow("Organizer event") << "QDeclarativeOrganizerEvent" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerEvent {}" << true;
+    QTest::newRow("Organizer event: Valuetype properties") << "QDeclarativeOrganizerEvent"
+               << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n"
+                  "OrganizerEvent {id:organizerEvent; displayLabel:'meeting'; startDateTime:'2010-08-12T13:00:00'; endDateTime:'2010-08-12T15:00:00'; isTimeSpecified:false; locationName:'office'; locationAddress:'53 Brandl st'; locationGeoCoordinates:'-27.579570, 153.10031'; priority:OrganizerItemPriority.LowPriority;"
+                  "recurrenceRules:[OrganizerItemRecurrenceRule {}];  recurrenceDates:[]; exceptionDates:[]"
+                  "}"
+               << true;
+
+    //OrganizerEvent
     QTest::newRow("Organizer event") << "QDeclarativeOrganizerEvent" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerEvent {}" << true;
     QTest::newRow("Organizer event: Valuetype properties") << "QDeclarativeOrganizerEvent"
                << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n"
                   "OrganizerEvent {id:organizerEvent; displayLabel:'meeting'; startDateTime:'2010-08-12T13:00:00'; endDateTime:'2010-08-12T15:00:00'; isTimeSpecified:false; locationName:'office'; locationAddress:'53 Brandl st'; locationGeoCoordinates:'-27.579570, 153.10031'; priority:OrganizerItemPriority.LowPriority}"
                << true;
-
 }
 
 /*
