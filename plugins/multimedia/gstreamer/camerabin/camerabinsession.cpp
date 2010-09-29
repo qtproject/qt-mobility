@@ -222,7 +222,12 @@ bool CameraBinSession::setupCameraBin()
 
     if (m_videoInputHasChanged) {
         m_videoSrc = buildVideoSrc();
-        g_object_set(m_pipeline, VIDEO_SOURCE_PROPERTY, m_videoSrc, NULL);
+
+        if (m_videoSrc)
+            g_object_set(m_pipeline, VIDEO_SOURCE_PROPERTY, m_videoSrc, NULL);
+        else
+            g_object_get(m_pipeline, VIDEO_SOURCE_PROPERTY, &m_videoSrc, NULL);
+
         updateVideoSourceCaps();
         m_videoInputHasChanged = false;
     }
@@ -310,7 +315,10 @@ GstElement *CameraBinSession::buildVideoSrc()
     if (m_videoInputFactory) {
         videoSrc = m_videoInputFactory->buildElement();
     } else {
-        videoSrc = gst_element_factory_make("v4l2camsrc", "camera_source");
+        videoSrc = gst_element_factory_make("subdevsrc", "camera_source");
+
+        if (!videoSrc)
+            videoSrc = gst_element_factory_make("v4l2camsrc", "camera_source");
 
         if (!videoSrc)
             videoSrc = gst_element_factory_make("v4l2src", "camera_source");
