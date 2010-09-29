@@ -109,6 +109,16 @@ QString quoteString(const QString &s)
     return q;
 }
 
+bool isValidLat(double lat)
+{
+    return -90.0 <= lat && lat <=90.0;
+}
+
+bool isValidLong(double lng)
+{
+    return -180.0 <= lng && lng <= 180.0;
+}
+
 bool matchString(const QString &sourceString, const QString &matchString, QLandmarkFilter::MatchFlags matchFlags )
 {
     Qt::CaseSensitivity cs;
@@ -1446,15 +1456,20 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
 
     QGeoCoordinate coord;
     coord = landmark->coordinate();
-    if (!qIsNaN(coord.latitude()))
-        bindValues.insert("latitude", coord.latitude());
-    else
-        bindValues.insert("latitude", QVariant());
 
-    if (!qIsNaN(coord.longitude()))
-        bindValues.insert("longitude", coord.longitude());
-    else
+    if (qIsNaN(coord.latitude()) && qIsNaN(coord.longitude())) {
+        bindValues.insert("latitude", QVariant());
         bindValues.insert("longitude", QVariant());
+    } else if (!qIsNaN(coord.latitude()) && !qIsNaN(coord.longitude())
+        && isValidLat(coord.latitude()) && isValidLong(coord.longitude())) {
+        bindValues.insert("latitude", coord.latitude());
+        bindValues.insert("longitude", coord.longitude());
+    } else {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Landmark coordinate is not valid, latitude must between -90 and 90 and longitude must be between -180 and 180, or both "
+                       "latitude and longitude are NaN";
+        return false;
+    }
 
     if (!qIsNaN(coord.altitude()))
         bindValues.insert("altitude", coord.altitude());

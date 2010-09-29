@@ -2029,7 +2029,6 @@ void tst_QLandmarkManager::saveLandmark() {
     spyChange.clear();
 
     //try clearing one of the fields
-#ifdef RESTORE_INVALID_COORD
     lm1Changed.setPhoneNumber("");
     QVERIFY(doSingleLandmarkSave(type, &lm1Changed, QLandmarkManager::NoError));
     QVERIFY(checkLandmarkCount(newLandmarkCount));
@@ -2057,16 +2056,41 @@ void tst_QLandmarkManager::saveLandmark() {
     QVERIFY(checkLandmarkCount(newLandmarkCount));
     QCOMPARE(lmInvalidCoordinate, lmInvalidCoordinateInitial);
 
-    //try saving a landmark where a coordinate is out of range
+    //try saving a landmark where a coordinate is out of range(in constructor)
     QLandmark lmOutOfRange;
     lmOutOfRange.setName("lmOutOfRange");
     QGeoCoordinate outOfRangeCoord(91,45);
+    //QGeoCoordinate should set its latitude and longitude values to NaN
+    //meaning this is a 'valid' coordinate.
+    QVERIFY(qIsNaN(outOfRangeCoord.latitude()));
+    QVERIFY(qIsNaN(outOfRangeCoord.longitude()));
     lmOutOfRange.setCoordinate(outOfRangeCoord);
     QLandmark lmOutOfRangeInitial = lmOutOfRange;
-    QVERIFY(doSingleLandmarkSave(type, &lmOutOfRange,QLandmarkManager::BadArgumentError));
+    QVERIFY(doSingleLandmarkSave(type, &lmOutOfRange,QLandmarkManager::NoError));
+    newLandmarkCount +=1;
     QVERIFY(checkLandmarkCount(newLandmarkCount));
+    lmOutOfRangeInitial.setLandmarkId(lmOutOfRange.landmarkId());
     QCOMPARE(lmOutOfRange, lmOutOfRangeInitial);
-#endif
+
+    //try saving a landmark with an out of range latitude
+    QLandmark lmOutOfRange2;
+    outOfRangeCoord.setLatitude(91);
+    outOfRangeCoord.setLongitude(45);
+    lmOutOfRange2.setCoordinate(outOfRangeCoord);
+    QLandmark lmOutOfRange2Initial = lmOutOfRange2;
+    QVERIFY(doSingleLandmarkSave(type, &lmOutOfRange2,QLandmarkManager::BadArgumentError));
+    QVERIFY(checkLandmarkCount(newLandmarkCount));
+    QCOMPARE(lmOutOfRange2, lmOutOfRange2Initial);
+
+    //try saving a landmark with an out of range longitude
+    QLandmark lmOutOfRange3;
+    outOfRangeCoord.setLatitude(-60);
+    outOfRangeCoord.setLongitude(-180.1);
+    lmOutOfRange3.setCoordinate(outOfRangeCoord);
+    QLandmark lmOutOfRange3Initial = lmOutOfRange3;
+    QVERIFY(doSingleLandmarkSave(type, &lmOutOfRange3,QLandmarkManager::BadArgumentError));
+    QVERIFY(checkLandmarkCount(newLandmarkCount));
+    QCOMPARE(lmOutOfRange3, lmOutOfRange3Initial);
 
     //try saving a landmark with a category that doesn't exist
     QLandmarkCategoryId catIdNotExist;
@@ -2107,7 +2131,10 @@ void tst_QLandmarkManager::saveLandmark() {
     QCOMPARE(m_manager->landmark(lm2.landmarkId()).categoryIds().count(), 0);
 
     QTest::qWait(10);
-    QCOMPARE(spyAdd.count(), 1);
+    if (type == "sync")
+        QCOMPARE(spyAdd.count(), 1);
+    else if (type == "async")
+        QCOMPARE(spyAdd.count(), 2);
     QCOMPARE(spyChange.count(), 1);
     QCOMPARE(spyRemove.count(),0);
     spyAdd.clear();
