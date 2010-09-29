@@ -192,42 +192,13 @@ void tst_QDeclarativeOrganizer::construction_data()
     QTest::newRow("Base organizer item: Valuetype properties") << "QDeclarativeOrganizerItem" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerItem {id:organizerItem; displayLabel:'test item'; description:'item description'; guid:'1112232133'}" << true;
     QTest::newRow("Base organizer item: default property") << "QDeclarativeOrganizerItem" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerItem {id:organizerItem; OrganizerItemDisplayLabel {label:'test item'} OrganizerItemDescription { description:'item description'} OrganizerItemGuid{guid:'1112232133'} }" << true;
 
-    QTest::newRow("Organizer event") << "QDeclarativeOrganizerItem" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerEvent {}" << true;
-    QTest::newRow("Organizer event: Valuetype properties") << "QDeclarativeOrganizerItem"
+    QTest::newRow("Organizer event") << "QDeclarativeOrganizerEvent" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerEvent {}" << true;
+    QTest::newRow("Organizer event: Valuetype properties") << "QDeclarativeOrganizerEvent"
                << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n"
                   "OrganizerEvent {id:organizerEvent; displayLabel:'meeting'; startDateTime:'2010-08-12T13:00:00'; endDateTime:'2010-08-12T15:00:00'; isTimeSpecified:false; locationName:'office'; locationAddress:'53 Brandl st'; locationGeoCoordinates:'-27.579570, 153.10031'; priority:OrganizerItemPriority.LowPriority}"
                << true;
 
-    //    // LandmarkCategoryModel
-//    QTest::newRow("LandmarkCategoryModel: No properties") <<  "QDeclarativeOrganizerCategoryModel" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkCategoryModel {}" << true;
-//    QTest::newRow("LandmarkCategoryModel: Only id property") << "QDeclarativeOrganizerCategoryModel" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkCategoryModel {id: landmarkCategoryModelId}" << true;
-//    QTest::newRow("LandmarkCategoryModel: Valuetype properties") << "QDeclarativeOrganizerCategoryModel" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkCategoryModel {id: landmarkCategoryModelId; autoUpdate: false; }" << true;
-//    // LandmarkCategory
-//    QTest::newRow("LandmarkCategory: No properties") <<  "QDeclarativeOrganizerCategory" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkCategory {}" << true;
-//    QTest::newRow("LandmarkCategory: Only id property") << "QDeclarativeOrganizerCategory" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkCategory {id: landmarkCategory}" << true;
-//    QTest::newRow("LandmarkCategory: Valuetype properties") << "QDeclarativeOrganizerCategory" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkCategory {id: landmarkCategory; name: 'Franz plaza'; iconSource: 'www.fi' }" << true;
-//    // LandmarkNameFilter
-//    QTest::newRow("LandmarkNameFilter: No properties") << "QDeclarativeOrganizerNameFilter" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkNameFilter {}" << true;
-//    QTest::newRow("LandmarkNameFilter: Only id property") << "QDeclarativeOrganizerNameFilter" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkNameFilter {id: landmarkFilterId}" << true;
-//    QTest::newRow("LandmarkNameFilter: with name") << "QDeclarativeOrganizerNameFilter" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkNameFilter {name: \"landmarkName\" }" << true;
-//    // LandmarkProximityFilter
-//    QTest::newRow("LandmarkProximityFilter: No properties") << "QDeclarativeOrganizerProximityFilter" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkProximityFilter {}" << true;
-//    QTest::newRow("LandmarkProximityFilter: Only id property") << "QDeclarativeOrganizerProximityFilter" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkProximityFilter {id: landmarkFilterId}" << true;
-//    QTest::newRow("LandmarkProximityFilter: with coordinate") << "QDeclarativeOrganizerProximityFilter" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkProximityFilter {center: Coordinate {id: coordinate} radius: 20 }" << true;
-//    // LandmarkUnionFilter
-//    QTest::newRow("LandmarkUnionFilter: No properties") << "QDeclarativeOrganizerUnionFilter" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkUnionFilter {}" << true;
-//    QTest::newRow("LandmarkUnionFilter: Only id property") << "QDeclarativeOrganizerUnionFilter" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkUnionFilter {id: landmarkUnionFilterId}" << true;
-//    QTest::newRow("LandmarkUnionFilter: One plain filter") << "QDeclarativeOrganizerUnionFilter" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkUnionFilter {id: landmarkUnionFilterId; LandmarkNameFilter {id: filter} }" << true;
-//    QTest::newRow("LandmarkUnionFilter: Two plain filters") << "QDeclarativeOrganizerUnionFilter" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkUnionFilter {id: landmarkUnionFilterId; LandmarkNameFilter {id: filter_1} LandmarkProximityFilter{id: filter_2} }" << true;
-//    // LandmarkIntersectionFilter
-//    QTest::newRow("LandmarkIntersectionFilter: No properties") << "QDeclarativeOrganizerIntersectionFilter" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkIntersectionFilter {}" << true;
-//    QTest::newRow("LandmarkIntersectionFilter: Only id property") << "QDeclarativeOrganizerIntersectionFilter" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkIntersectionFilter {id: landmarkIntersectionFilterId}" << true;
-//    QTest::newRow("LandmarkIntersectionFilter: One plain filter") << "QDeclarativeOrganizerIntersectionFilter" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkIntersectionFilter {id: landmarkIntersectionFilterId; LandmarkNameFilter {id: filter} }" << true;
-//    QTest::newRow("LandmarkIntersectionFilter: Two plain filters") << "QDeclarativeOrganizerIntersectionFilter" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkIntersectionFilter {id: landmarkIntersectionFilterId; LandmarkNameFilter {id: filter_1} LandmarkProximityFilter{id: filter_2} }" << true;
-//    // Complex filter
-//    QTest::newRow("Intersection (Filter, Union(Filter,Filter) ") << "QDeclarativeOrganizerIntersectionFilter" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n LandmarkIntersectionFilter{LandmarkProximityFilter{} LandmarkUnionFilter{LandmarkProximityFilter{} LandmarkNameFilter{}}}" << true;
 }
-
 
 /*
     Helper function to create components from given string.

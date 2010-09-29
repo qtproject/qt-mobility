@@ -141,7 +141,6 @@ signals:
     void valueChanged();
 protected:
     QDeclarativeOrganizerItemDetail* detailByDefinitionName(const QString& name) const;
-private:
     QDeclarativeOrganizerItemMetaObject* d;
     friend class QDeclarativeOrganizerItemMetaObject;
 };
@@ -167,11 +166,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "event");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "events");
 
-    explicit QDeclarativeOrganizerEvent(QObject *parent = 0)
-        :QDeclarativeOrganizerItem(parent)
-    {
-
-    }
+    explicit QDeclarativeOrganizerEvent(QObject *parent = 0);
 
     void setStartDateTime(const QDateTime& startDateTime)
     {
@@ -307,11 +302,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "eventOccurrence");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "eventOccurrences");
 
-    explicit QDeclarativeOrganizerEventOccurrence(QObject *parent = 0)
-        :QDeclarativeOrganizerItem(parent)
-    {
-
-    }
+    explicit QDeclarativeOrganizerEventOccurrence(QObject *parent = 0);
 
     void setParentLocalId(uint parentId)
     {
@@ -424,11 +415,7 @@ class QDeclarativeOrganizerJournal : public QDeclarativeOrganizerItem
 public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "journal");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "journals");
-    explicit QDeclarativeOrganizerJournal(QObject *parent = 0)
-        :QDeclarativeOrganizerItem(parent)
-    {
-
-    }
+    explicit QDeclarativeOrganizerJournal(QObject *parent = 0);
     void setDateTime(const QDateTime& dateTime)
     {
         Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerJournalTimeRange, "entryDateTime", dateTime)
@@ -452,10 +439,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "note");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "notes");
 
-    explicit QDeclarativeOrganizerNote(QObject *parent = 0)
-        :QDeclarativeOrganizerItem(parent)
-    {
-    }
+    explicit QDeclarativeOrganizerNote(QObject *parent = 0);
 signals:
     void valueChanged();
 };
@@ -481,10 +465,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "todo");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "todos");
 
-    explicit QDeclarativeOrganizerTodo(QObject *parent = 0)
-        :QDeclarativeOrganizerItem(parent)
-    {
-    }
+    explicit QDeclarativeOrganizerTodo(QObject *parent = 0);
     void setStartDateTime(const QDateTime& startDateTime)
     {
         Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTimeRange, "startDateTime", startDateTime)
@@ -620,10 +601,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "todoOccurrence");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "todoOccurrences");
 
-    explicit QDeclarativeOrganizerTodoOccurrence(QObject *parent = 0)
-        :QDeclarativeOrganizerItem(parent)
-    {
-    }
+    explicit QDeclarativeOrganizerTodoOccurrence(QObject *parent = 0);
     void setStartDateTime(const QDateTime& startDateTime)
     {
         Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTimeRange, "startDateTime", startDateTime)

@@ -46,6 +46,7 @@ QDeclarativeOrganizerItem::QDeclarativeOrganizerItem(QObject *parent)
     :QObject(parent),
     d(new QDeclarativeOrganizerItemMetaObject(this, QOrganizerItem()))
 {
+    d->setMetaObject(QDeclarativeOrganizerItem::staticMetaObject);
 }
 
 
@@ -53,6 +54,7 @@ QDeclarativeOrganizerItem::QDeclarativeOrganizerItem(const QOrganizerItem& item,
     :QObject(parent),
     d(new QDeclarativeOrganizerItemMetaObject(this, item))
 {
+    d->setMetaObject(QDeclarativeOrganizerItem::staticMetaObject);
     setDetailDefinitions(defs);
 }
 
@@ -125,6 +127,43 @@ QDeclarativeOrganizerItemDetail* QDeclarativeOrganizerItem::detailByDefinitionNa
 {
     return d->detailByDefinitionName(name);
 }
+
+
+QDeclarativeOrganizerEvent::QDeclarativeOrganizerEvent(QObject *parent)
+    :QDeclarativeOrganizerItem(parent)
+{
+    d->setMetaObject(QDeclarativeOrganizerEvent::staticMetaObject);
+}
+
+QDeclarativeOrganizerEventOccurrence::QDeclarativeOrganizerEventOccurrence(QObject *parent)
+    :QDeclarativeOrganizerItem(parent)
+{
+    d->setMetaObject(QDeclarativeOrganizerEventOccurrence::staticMetaObject);
+}
+
+QDeclarativeOrganizerJournal::QDeclarativeOrganizerJournal(QObject *parent)
+    :QDeclarativeOrganizerItem(parent)
+{
+    d->setMetaObject(QDeclarativeOrganizerJournal::staticMetaObject);
+}
+
+QDeclarativeOrganizerNote::QDeclarativeOrganizerNote(QObject *parent)
+    :QDeclarativeOrganizerItem(parent)
+{
+    d->setMetaObject(QDeclarativeOrganizerNote::staticMetaObject);
+}
+QDeclarativeOrganizerTodo::QDeclarativeOrganizerTodo(QObject *parent)
+    :QDeclarativeOrganizerItem(parent)
+{
+    d->setMetaObject(QDeclarativeOrganizerTodo::staticMetaObject);
+}
+QDeclarativeOrganizerTodoOccurrence::QDeclarativeOrganizerTodoOccurrence(QObject *parent)
+    :QDeclarativeOrganizerItem(parent)
+{
+    d->setMetaObject(QDeclarativeOrganizerTodoOccurrence::staticMetaObject);
+}
+
+
 
 Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEvent::ItemName, "event");
 Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEvent::ItemGroupName, "events");
