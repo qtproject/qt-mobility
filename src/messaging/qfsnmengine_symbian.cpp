@@ -2551,19 +2551,29 @@ void CFSMessagesFindOperation::getFolderSpecificMessages(QMessageFolder& message
     FSSearchOperation operation;
     quint64 folderId = stripIdPrefix(messageFolder.id().toString()).toULongLong();
     quint64 mailboxId = stripIdPrefix(messageFolder.parentAccountId().toString()).toULongLong();    
-    operation.m_FolderSearch = new NmApiEnvelopeListing(0, folderId, mailboxId);
+    operation.m_MessageTask = new NmApiEnvelopeListing(0, folderId, mailboxId);
     operation.m_Type = FSSearchOperation::SearchFolder;
     m_searchOperations.append(operation);
-    connect(operation.m_FolderSearch, SIGNAL(envelopesListed(qint32)), this, SLOT(searchOperationCompleted()));
-    if (m_searchOperations.count() == 1)
-        operation.m_FolderSearch->start();
+    connect(operation.m_MessageTask, SIGNAL(envelopesListed(qint32)), this, SLOT(searchOperationCompleted()));
+    if (m_searchOperations.count() == 1) {
+        operation.m_Status = FSSearchOperation::SearchActive;
+        if (!operation.m_MessageTask->start()) {
+            delete operation.m_MessageTask;
+            QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
+        }
+    } else if (m_searchOperations.count() > 1) {
+        operation.m_Status = FSSearchOperation::SearchQueued;
+    } else {
+        delete operation.m_MessageTask;
+        QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
+    }
 }
 
 void CFSMessagesFindOperation::getAccountSpecificMessages(QMessageAccount& messageAccount, NmApiMailSortCriteria& sortCriteria)
 {
     quint64 mailboxId(stripIdPrefix(messageAccount.id().toString()).toULongLong());
     FSSearchOperation operation;
-    operation.m_AccountSearch = new NmApiMessageSearch(0, mailboxId);
+    NmApiMessageSearch *searchOperation = new NmApiMessageSearch(0, mailboxId);
     operation.m_Type = FSSearchOperation::SearchAccount;
     QList<QString> searchKeys;
     if (m_searchKey.isEmpty()) {
@@ -2571,16 +2581,26 @@ void CFSMessagesFindOperation::getAccountSpecificMessages(QMessageAccount& messa
     } else {
         searchKeys.append(m_searchKey);
     }
-    operation.m_AccountSearch->initialise(searchKeys, sortCriteria);
+    searchOperation->initialise(searchKeys, sortCriteria);
+    operation.m_MessageTask = searchOperation;
     m_searchOperations.append(operation);
     qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation.m_AccountSearch, SIGNAL(messageFound(EmailClientApi::NmApiMessage&)), this, SLOT(messageFound(EmailClientApi::NmApiMessage)));
-    connect(operation.m_AccountSearch, SIGNAL(searchComplete(int)), this, SLOT(searchOperationCompleted()));
-    if (m_searchOperations.count() == 1)
-        operation.m_AccountSearch->start();
+    connect(searchOperation, SIGNAL(messageFound(EmailClientApi::NmApiMessage&)), this, SLOT(messageFound(EmailClientApi::NmApiMessage&)));
+    connect(searchOperation, SIGNAL(searchComplete(int)), this, SLOT(searchOperationCompleted()));
+    if (m_searchOperations.count() == 1) {
+        if (!operation.m_MessageTask->start()) {
+            delete searchOperation;
+            QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
+        }
+    } else if (m_searchOperations.count() > 1) {
+        operation.m_Status = FSSearchOperation::SearchQueued;
+    } else {
+        delete searchOperation;
+        QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
+    }
 }
 
-void CFSMessagesFindOperation::messageFound(EmailClientApi::NmApiMessage message)
+void CFSMessagesFindOperation::messageFound(EmailClientApi::NmApiMessage &message)
 {
     QMessageId messageId(addIdPrefix(QString::number(message.envelope().id()), SymbianHelpers::EngineTypeFreestyle));
     if (!m_excludeIdList.contains(messageId)) {
@@ -2605,17 +2625,16 @@ void CFSMessagesFindOperation::searchOperationCompleted()
         if (operation.m_Status == FSSearchOperation::SearchActive) {
             if (operation.m_Type == FSSearchOperation::SearchFolder) {
                 QList<EmailClientApi::NmApiMessageEnvelope> envelopes;
-                operation.m_FolderSearch->getEnvelopes(envelopes);
+                NmApiEnvelopeListing* searchOperation = (NmApiEnvelopeListing*)operation.m_MessageTask;
+                searchOperation->getEnvelopes(envelopes);
                 foreach (NmApiMessageEnvelope envelope, envelopes) {
                     QMessageId messageId(addIdPrefix(QString::number(envelope.id()), SymbianHelpers::EngineTypeFreestyle));
                     if (!m_excludeIdList.contains(messageId)) {
                         m_idList.append(messageId);   
                     }
                 }
-                delete operation.m_FolderSearch;
-            } else {
-                delete operation.m_AccountSearch;
             }
+            delete operation.m_MessageTask;
             m_searchOperations.removeAt(i);
             break;
         }
@@ -2625,10 +2644,7 @@ void CFSMessagesFindOperation::searchOperationCompleted()
     if (m_searchOperations.count() > 0) {
         FSSearchOperation &operation = m_searchOperations[0]; 
         operation.m_Status = FSSearchOperation::SearchActive;
-        if (operation.m_Type == FSSearchOperation::SearchFolder)
-            operation.m_FolderSearch->start();
-        else // operation.m_Type == FSSearchOperation::SearchAccount
-            operation.m_AccountSearch->start();
+        operation.m_MessageTask->start();
     } else {
         QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
     }

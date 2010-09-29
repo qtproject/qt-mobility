@@ -108,8 +108,7 @@ struct FSSearchOperation
         SearchActive,
         SearchQueued
     };
-    NmApiEnvelopeListing* m_FolderSearch;
-    NmApiMessageSearch* m_AccountSearch;
+    NmApiMessageTask* m_MessageTask;
     FSSearchOperationType m_Type;
     FSSearchOperationStatus m_Status;
 };
@@ -276,7 +275,7 @@ public:
 public slots:
     void searchOperationCompleted();
     void searchCompleted();
-    void messageFound(EmailClientApi::NmApiMessage message);
+    void messageFound(EmailClientApi::NmApiMessage &message);
 
 private:
     //void getAllMessagesL();
