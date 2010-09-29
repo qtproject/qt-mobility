@@ -3,9 +3,9 @@ include(../staticconfig.pri)
 TEMPLATE = subdirs
 
 contains(mobility_modules,serviceframework) { 
-    SUBDIRS += servicedbgen servicefw servicexmlgen #SFW API
+    SUBDIRS += servicedbgen servicexmlgen icheck #SFW API
     !symbian {
-    	SUBDIRS += icheck # broken headers on tb10.1, temp disable
+    	SUBDIRS += servicefw # not needed for symbian
     }
 }
 
