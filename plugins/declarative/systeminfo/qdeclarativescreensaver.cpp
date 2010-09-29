@@ -39,47 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEDOCUMENTGALLERY_H
-#define QDECLARATIVEDOCUMENTGALLERY_H
 
-#include <qdocumentgallery.h>
+#include "qdeclarativescreensaver_p.h"
 
-#include <QtCore/qcoreevent.h>
+QT_BEGIN_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+/*!
+    \qmlclass ScreenSaver QDeclarativeScreenSaver
+    \brief The ScreenSaver element allows you to temporarily suppress the screensaver
+    from turning on or blanking the screen.
 
-class QDeclarativeDocumentGallery : public QObject
+    This element is part of the \bold{QtMobility.systeminfo 1.0} module.
+    It is a convience class to make QML usage easier.
+
+*/
+
+/*!
+    \internal
+    \class QDeclarativeScreenSaver
+    \brief The QDeclarativeScreenSaver class provides an ScreenSaver item that you can add to a QDeclarativeView.
+*/
+QDeclarativeScreenSaver::QDeclarativeScreenSaver(QObject *parent) :
+    QObject(parent),screensaverInfo(0),screenSaverDelay(0)
 {
-    Q_OBJECT
-    Q_ENUMS(ItemType)
-public:
+}
 
-    enum ItemType
-    {
-        InvalidType,
-        File,
-        Folder,
-        Document,
-        Text,
-        Audio,
-        Image,
-        Video,
-        Playlist,
-        Artist,
-        AlbumArtist,
-        Album,
-        AudioGenre,
-        PhotoAlbum,
-    };
+QDeclarativeScreenSaver::~QDeclarativeScreenSaver()
+{
+}
 
-    static QString toString(ItemType type);
-    static ItemType itemTypeFromString(const QString &string);
+void QDeclarativeScreenSaver::setScreenSaverDelayed(bool on)
+{
+    if(on && !screenSaverDelay) {
+        screensaverInfo = new QSystemScreenSaver(this);
+        screenSaverDelay = true;
+    } else if(screenSaverDelay) {
+        delete screensaverInfo;
+        screenSaverDelay = false;
+    }
+}
 
-    static QAbstractGallery *gallery(QObject *object);
-};
+/*!
+    \qmlproperty string ScreenSaver::screenSaverDelayed
 
-QTM_END_NAMESPACE
+    Returns whether the screensaver has been supressed, or not.
+*/
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QDeclarativeDocumentGallery::ItemType))
+bool QDeclarativeScreenSaver::screenSaverDelayed()
+{
+    return screenSaverDelay;
+}
 
-#endif

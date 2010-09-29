@@ -39,47 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEDOCUMENTGALLERY_H
-#define QDECLARATIVEDOCUMENTGALLERY_H
 
-#include <qdocumentgallery.h>
+#ifndef QDECLARATIVEDEVICEINFO_P_H
+#define QDECLARATIVEDEVICEINFO_P_H
+/*
 
-#include <QtCore/qcoreevent.h>
+ Many more issues can be raised;
+is it really "WallPower" not "MainsPowered"? shouldn't "BatteryNormal" be "BatteryGood"?
+*/
 
-QTM_BEGIN_NAMESPACE
+#include <QObject>
+#include "qsystemdeviceinfo.h"
+QT_BEGIN_HEADER
+QTM_USE_NAMESPACE
 
-class QDeclarativeDocumentGallery : public QObject
+class QDeclarativeDeviceInfo : public QSystemDeviceInfo
 {
     Q_OBJECT
-    Q_ENUMS(ItemType)
 public:
+    explicit QDeclarativeDeviceInfo(QObject *parent = 0);
 
-    enum ItemType
-    {
-        InvalidType,
-        File,
-        Folder,
-        Document,
-        Text,
-        Audio,
-        Image,
-        Video,
-        Playlist,
-        Artist,
-        AlbumArtist,
-        Album,
-        AudioGenre,
-        PhotoAlbum,
-    };
 
-    static QString toString(ItemType type);
-    static ItemType itemTypeFromString(const QString &string);
+public slots:
+    void startBatteryLevelChanged();
+    void startBatteryStatusChanged();
+    void startPowerStateChanged();
+    void startCurrentProfileChanged();
+    void startBluetoothStateChanged();
 
-    static QAbstractGallery *gallery(QObject *object);
+Q_SIGNALS:
+    void batteryLevelChanged(int level);
+    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);
+    void powerStateChanged(QSystemDeviceInfo::PowerState powerState);
+    void currentProfileChanged(QSystemDeviceInfo::Profile currentProfile);
+    void bluetoothStateChanged(bool on);
+
+private slots:
+    void declarativeBatteryLevelChanged(int level);
+    void declarativeBatteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);
+    void declarativePowerStateChanged(QSystemDeviceInfo::PowerState powerState);
+    void declarativeCurrentProfileChanged(QSystemDeviceInfo::Profile currentProfile);
+    void declarativeBluetoothStateChanged(bool on);
 };
 
-QTM_END_NAMESPACE
-
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QDeclarativeDocumentGallery::ItemType))
-
-#endif
+QT_END_NAMESPACE
+QT_END_HEADER
+#endif // QDECLARATIVEDEVICEINFO_P_H

@@ -54,7 +54,7 @@ QDeclarativeGalleryQueryModel::QDeclarativeGalleryQueryModel(QObject *parent)
     , m_resultSet(0)
     , m_status(Null)
     , m_rowCount(0)
-    , m_complete(false)
+    , m_updateStatus(Incomplete)
 {
     connect(&m_request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
             this, SLOT(_q_statusChanged()));
@@ -70,7 +70,7 @@ QDeclarativeGalleryQueryModel::~QDeclarativeGalleryQueryModel()
 
 void QDeclarativeGalleryQueryModel::componentComplete()
 {
-    m_complete = true;
+    m_updateStatus = NoUpdate;
 
     if (m_filter) {
         connect(m_filter.data(), SIGNAL(filterChanged()), this, SLOT(deferredExecute()));
@@ -89,7 +89,7 @@ qreal QDeclarativeGalleryQueryModel::progress() const
 
 void QDeclarativeGalleryQueryModel::setPropertyNames(const QStringList &names)
 {
-    if (!m_complete) {
+    if (m_updateStatus == Incomplete) {
         m_request.setPropertyNames(names);
 
         emit propertyNamesChanged();
@@ -112,7 +112,10 @@ void QDeclarativeGalleryQueryModel::setAutoUpdate(bool enabled)
     if (m_request.autoUpdate() != enabled) {
         m_request.setAutoUpdate(enabled);
 
-        deferredExecute();
+        if (enabled)
+            deferredExecute();
+        else if (m_status == Idle)
+            m_request.cancel();
 
         emit autoUpdateChanged();
     }
@@ -179,7 +182,8 @@ void QDeclarativeGalleryQueryModel::setLimit(int limit)
 
 void QDeclarativeGalleryQueryModel::reload()
 {
-    m_executeTimer.stop();
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
 
     m_request.setFilter(m_filter ? m_filter.data()->filter() : QGalleryFilter());
 
@@ -188,14 +192,16 @@ void QDeclarativeGalleryQueryModel::reload()
 
 void QDeclarativeGalleryQueryModel::cancel()
 {
-    m_executeTimer.stop();
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
 
     m_request.cancel();
 }
 
 void QDeclarativeGalleryQueryModel::clear()
 {
-    m_executeTimer.stop();
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
 
     m_request.clear();
 }
@@ -341,17 +347,29 @@ void QDeclarativeGalleryQueryModel::setProperty(
 
 void QDeclarativeGalleryQueryModel::deferredExecute()
 {
-    if (m_complete && !m_executeTimer.isActive())
-        m_executeTimer.start(0, this);
+    if (m_updateStatus == NoUpdate) {
+        m_updateStatus = PendingUpdate;
+
+        QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+    } else if (m_updateStatus == CancelledUpdate) {
+        m_updateStatus = PendingUpdate;
+    }
 }
 
-void QDeclarativeGalleryQueryModel::timerEvent(QTimerEvent *event) {
-    if (event->timerId() == m_executeTimer.timerId()) {
-        reload();
+bool QDeclarativeGalleryQueryModel::event(QEvent *event)
+{
+    if (event->type() == QEvent::UpdateRequest) {
+        UpdateStatus status = m_updateStatus;
+        m_updateStatus = NoUpdate;
 
-        event->accept();
+        if (status == PendingUpdate) {
+            m_request.setFilter(m_filter ? m_filter.data()->filter() : QGalleryFilter());
+            m_request.execute();
+        }
+
+        return true;
     } else {
-        QAbstractListModel::timerEvent(event);
+        return QAbstractListModel::event(event);
     }
 }
 
@@ -384,9 +402,12 @@ void QDeclarativeGalleryQueryModel::_q_statusChanged()
                 break;
             }
         }
+        emit statusChanged();
+    } else if (m_status == Idle && !m_request.autoUpdate()) {
+        m_request.cancel();
+    } else {
+        emit statusChanged();
     }
-
-    emit statusChanged();
 }
 
 void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet)
@@ -632,7 +653,7 @@ QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGalleryModel::rootType
 
 void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::ItemType itemType)
 {
-    if (!m_complete) {
+    if (m_updateStatus == Incomplete) {
         m_request.setRootType(QDeclarativeDocumentGallery::toString(itemType));
 
         emit rootTypeChanged();

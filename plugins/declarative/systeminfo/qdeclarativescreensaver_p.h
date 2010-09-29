@@ -39,47 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEDOCUMENTGALLERY_H
-#define QDECLARATIVEDOCUMENTGALLERY_H
 
-#include <qdocumentgallery.h>
+#ifndef QDECLARATIVESCREENSAVERINFO_H
+#define QDECLARATIVESCREENSAVERINFO_H
 
-#include <QtCore/qcoreevent.h>
+#include <QObject>
+#include <qsystemscreensaver.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_HEADER
+QTM_USE_NAMESPACE
 
-class QDeclarativeDocumentGallery : public QObject
+class QDeclarativeScreenSaver : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(ItemType)
+    Q_PROPERTY(bool screenSaverDelayed READ screenSaverDelayed WRITE setScreenSaverDelayed CONSTANT)
+
 public:
+    explicit QDeclarativeScreenSaver(QObject *parent = 0);
+    virtual ~QDeclarativeScreenSaver();
 
-    enum ItemType
-    {
-        InvalidType,
-        File,
-        Folder,
-        Document,
-        Text,
-        Audio,
-        Image,
-        Video,
-        Playlist,
-        Artist,
-        AlbumArtist,
-        Album,
-        AudioGenre,
-        PhotoAlbum,
-    };
+    bool screenSaverDelayed();
 
-    static QString toString(ItemType type);
-    static ItemType itemTypeFromString(const QString &string);
+signals:
 
-    static QAbstractGallery *gallery(QObject *object);
+public slots:
+    void setScreenSaverDelayed(bool on);
+
+private:
+    QSystemScreenSaver *screensaverInfo;
+    bool screenSaverDelay;
+
 };
+QT_END_NAMESPACE
+QT_END_HEADER
 
-QTM_END_NAMESPACE
-
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QDeclarativeDocumentGallery::ItemType))
-
-#endif
+#endif // QDECLARATIVESCREENSAVERINFO_H
