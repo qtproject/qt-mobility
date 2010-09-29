@@ -316,6 +316,7 @@ void MainWindow::setupUi()
     m_qgv->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(m_qgv, SIGNAL(customContextMenuRequested(const QPoint&)),
                      this, SLOT(customContextMenuRequest(const QPoint&)));
+    resizeEvent(0);
 }
 
 void MainWindow::sceneSelectionChanged()
@@ -387,8 +388,7 @@ void MainWindow::setControlsVisible(bool controlsVisible)
     m_layout->activate();
 
     // TODO: instead of copypasting from resizeEvent, trigger the resizing on layout changes/qgv size changes.
-    m_qgv->setSceneRect(QRectF(QPointF(0.0, 0.0), m_qgv->size()));
-    if (m_mapWidget) m_mapWidget->resize(m_qgv->size());
+    resizeEvent(0);
 }
 
 void MainWindow::sliderValueChanged(int zoomLevel)
@@ -568,9 +568,7 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 
 void MainWindow::showEvent(QShowEvent* event)
 {
-    m_qgv->setSceneRect(QRectF(QPointF(0.0, 0.0), m_qgv->size()));
-    if(m_mapWidget)
-        m_mapWidget->resize(m_qgv->size());
+    resizeEvent(0);
 }
 
 void MainWindow::createMenus()
