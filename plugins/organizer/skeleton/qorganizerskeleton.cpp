@@ -123,7 +123,7 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganiz
     return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, error);
 }
 
-QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemManager::ItemFindMethod& findMethod, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -136,13 +136,14 @@ QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QOrgani
         If you do have to fetch, consider setting a fetch hint that restricts the information to that needed for filtering/sorting.
     */
 
+    Q_UNUSED(findMethod);
     *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
 
     QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
     QList<QOrganizerItem> ret;
 
     foreach(const QOrganizerItem& item, partiallyFilteredItems) {
-        if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
+        if (QOrganizerItemManagerEngine::isItemBetweenDates(item, startDate, endDate) && QOrganizerItemManagerEngine::testFilter(filter, item)) {
             ret.append(item);
         }
     }
@@ -150,7 +151,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QOrgani
     return QOrganizerItemManagerEngine::sortItems(ret, sortOrders);
 }
 
-QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, const QOrganizerItemManager::ItemFindMethod& findMethod, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -165,13 +166,14 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QOrganizerItemFi
     */
 
     Q_UNUSED(fetchHint);
+    Q_UNUSED(findMethod);
     *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
 
     QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
     QList<QOrganizerItem> ret;
 
     foreach(const QOrganizerItem& item, partiallyFilteredItems) {
-        if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
+        if (QOrganizerItemManagerEngine::isItemBetweenDates(item, startDate, endDate) && QOrganizerItemManagerEngine::testFilter(filter, item)) {
             QOrganizerItemManagerEngine::addSorted(&ret, item, sortOrders);
         }
     }

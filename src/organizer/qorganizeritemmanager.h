@@ -111,22 +111,24 @@ public:
         InvalidOccurrenceError
     };
 
+    enum ItemFindMethod {
+        FindAllOccurances = 0,
+        FindParentOnly
+    };
+
     /* Error reporting */
     QOrganizerItemManager::Error error() const;
 
-    /* Item Instances - both items and item occurrences (occurrences either saved or generated) */
-    QList<QOrganizerItem> itemInstances(const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
     QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart = QDateTime(), const QDateTime& periodEnd = QDateTime(), int maxCount = -1) const;
-    // following two are unnecessary conveniences which might be expensive anyway.
-    //QList<QOrganizerItem> nextItemInstance(const QDateTime& fromDate, const QOrganizerItemFilter& filter, const QOrganizerItemFetchHint& fetchHint) const;
-    //QList<QOrganizerItem> nextItemInstance(const QDateTime& fromDate, const QOrganizerItem& recurrentItem, const QOrganizerItemFetchHint& fetchHint) const;
 
     /* Items - Accessors and Mutators */
-    QList<QOrganizerItemLocalId> itemIds(const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;
-    QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;
+    QList<QOrganizerItemLocalId> itemIds(const QList<QOrganizerItemSortOrder>& sortOrders, const ItemFindMethod& findMethod = FindAllOccurances) const;
+    QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const ItemFindMethod& findMethod = FindAllOccurances) const;
+    QList<QOrganizerItemLocalId> itemIds(const QDateTime& startDate = QDateTime(), const QDateTime& endDate = QDateTime(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const ItemFindMethod& findMethod = FindAllOccurances) const;
+    QList<QOrganizerItemLocalId> itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const ItemFindMethod& findMethod = FindAllOccurances) const;
 
-    QList<QOrganizerItem> items(const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
-    QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
+    QList<QOrganizerItem> items(const QDateTime& startDate = QDateTime(), const QDateTime& endDate = QDateTime(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint(), const ItemFindMethod& findMethod = FindAllOccurances) const;
+    QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint(), const ItemFindMethod& findMethod = FindAllOccurances) const;
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;  // retrieve an item
 
     bool saveItem(QOrganizerItem* item, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId());

@@ -170,37 +170,6 @@ QString QOrganizerItemManagerEngine::managerUri() const
 }
 
 /*!
-  Return the list of organizer item instances which match the given \a filter, sorted according to
-  the given \a sortOrders.  The client may instruct the manager that it does not require all
-  possible information about each instance by specifying a fetch hint \a fetchHint; the manager can
-  choose to ignore the fetch hint, but if it does so, it must return all possible information about
-  each instance.
-
-  Items of type QOrganizerItemType::TypeEvent or QOrganizerItemType::TypeTodo should NOT be included
-  in the list of returned items.  Instead, these items should be expanded according to their
-  recurrence specification and the resultant occurrence items (of type
-  QOrganizerItemType::TypeEventOccurrence and QOrganizerItemType::TypeTodoOccurrence) should be
-  returned.
-
-  The occurrence-typed returned items should have a QOrganizerItemInstanceOrigin detail that points
-  to the generator and the original instance that the event would have occurred on (if it is an
-  exception).  No returned item should contain a QOrganizerItemRecurrence detail.
-
-  If there are no instances matching the criteria, an empty list should be returned.
-  Any error which occurs should be saved to \a error.
-  */
-QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
-{
-    Q_UNUSED(filter);
-    Q_UNUSED(sortOrders);
-    Q_UNUSED(fetchHint);
-
-    *error = QOrganizerItemManager::NotSupportedError;
-    return QList<QOrganizerItem>();
-}
-
-
-/*!
   Return the list of a maximum of \a maxCount organizer item instances which are occurrences of the
   given \a generator recurring item, which occur between the given \a periodStart date and the given
   \a periodEnd date.
@@ -239,10 +208,13 @@ QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganize
   list of \a sortOrders.  Depending on the backend, this filtering operation may involve retrieving
   all the organizer items.  Any error which occurs will be saved in \a error.
  */
-QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemManager::ItemFindMethod& findMethod, QOrganizerItemManager::Error* error) const
 {
+    Q_UNUSED(startDate);
+    Q_UNUSED(endDate);
     Q_UNUSED(filter);
     Q_UNUSED(sortOrders);
+    Q_UNUSED(findMethod);
 
     *error = QOrganizerItemManager::NotSupportedError;
     return QList<QOrganizerItemLocalId>();
@@ -269,11 +241,14 @@ QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QOrganiz
 
   \sa QOrganizerItemFetchHint
  */
-QList<QOrganizerItem> QOrganizerItemManagerEngine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemManagerEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, const QOrganizerItemManager::ItemFindMethod& findMethod, QOrganizerItemManager::Error* error) const
 {
+    Q_UNUSED(startDate);
+    Q_UNUSED(endDate);
     Q_UNUSED(filter);
     Q_UNUSED(sortOrders);
     Q_UNUSED(fetchHint);
+    Q_UNUSED(findMethod);
     *error = QOrganizerItemManager::NotSupportedError;
     return QList<QOrganizerItem>();
 }
@@ -2149,43 +2124,7 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
             {
                 const QOrganizerItemDateTimePeriodFilter dpf(filter);
 
-                if (organizeritem.type() == QOrganizerItemType::TypeEvent) {
-                    QOrganizerEvent event = organizeritem;
-                    return (dpf.startPeriod().isNull() || event.startDateTime() >= dpf.startPeriod())
-                            &&
-                           (dpf.endPeriod().isNull() || event.endDateTime() <= dpf.endPeriod());
-                }
-                if (organizeritem.type() == QOrganizerItemType::TypeEventOccurrence) {
-                   QOrganizerEventOccurrence eo = organizeritem;
-                   return (dpf.startPeriod().isNull() || eo.startDateTime() >= dpf.startPeriod())
-                           &&
-                          (dpf.endPeriod().isNull() || eo.endDateTime() <= dpf.endPeriod());
-                }
-                if (organizeritem.type() == QOrganizerItemType::TypeTodo) {
-                   QOrganizerTodo todo = organizeritem;
-                   return (dpf.startPeriod().isNull() || todo.startDateTime() >= dpf.startPeriod())
-                           &&
-                          (dpf.endPeriod().isNull() || todo.dueDateTime() <= dpf.endPeriod());
-                }
-                if (organizeritem.type() == QOrganizerItemType::TypeTodoOccurrence) {
-                    QOrganizerTodoOccurrence tdo = organizeritem;
-                    return (dpf.startPeriod().isNull() || tdo.startDateTime() >= dpf.startPeriod())
-                            &&
-                           (dpf.endPeriod().isNull() || tdo.dueDateTime() <= dpf.endPeriod());
-                }
-                if (organizeritem.type() == QOrganizerItemType::TypeJournal) {
-                    QOrganizerJournal journal = organizeritem;
-                    return (dpf.startPeriod().isNull() || journal.dateTime() >= dpf.startPeriod())
-                            &&
-                           (dpf.endPeriod().isNull() || journal.dateTime() <= dpf.endPeriod());
-                }
-                if (organizeritem.type() == QOrganizerItemType::TypeNote) {
-                    //for note, there is no such start/end datetime to be used, so we use the timestamp detail.
-                    QOrganizerItemTimestamp timestamp = organizeritem.detail<QOrganizerItemTimestamp>();
-                    return (dpf.startPeriod().isNull() || timestamp.lastModified() >= dpf.startPeriod())
-                            &&
-                           (dpf.endPeriod().isNull() || timestamp.lastModified() <= dpf.endPeriod());
-                }
+                return isItemBetweenDates(organizeritem, dpf.startPeriod(), dpf.endPeriod());
             }
             break;
         case QOrganizerItemFilter::OrganizerItemDetailRangeFilter:
@@ -2347,6 +2286,48 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
     return false;
 }
 
+bool QOrganizerItemManagerEngine::isItemBetweenDates(const QOrganizerItem& item, const QDateTime& startPeriod, const QDateTime& endPeriod)
+{
+    if (item.type() == QOrganizerItemType::TypeEvent) {
+        QOrganizerEvent event = item;
+        return (startPeriod.isNull() || event.startDateTime() >= startPeriod)
+                &&
+               (endPeriod.isNull() || event.endDateTime() <= endPeriod);
+    }
+    if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
+        QOrganizerEventOccurrence eo = item;
+        return (startPeriod.isNull() || eo.startDateTime() >= startPeriod)
+                &&
+               (endPeriod.isNull() || eo.endDateTime() <= endPeriod);
+    }
+    if (item.type() == QOrganizerItemType::TypeTodo) {
+        QOrganizerTodo todo = item;
+        return (startPeriod.isNull() || todo.startDateTime() >= startPeriod)
+                &&
+               (endPeriod.isNull() || todo.dueDateTime() <= endPeriod);
+    }
+    if (item.type() == QOrganizerItemType::TypeTodoOccurrence) {
+        QOrganizerTodoOccurrence tdo = item;
+        return (startPeriod.isNull() || tdo.startDateTime() >= startPeriod)
+                &&
+               (endPeriod.isNull() || tdo.dueDateTime() <= endPeriod);
+    }
+    if (item.type() == QOrganizerItemType::TypeJournal) {
+        QOrganizerJournal journal = item;
+        return (startPeriod.isNull() || journal.dateTime() >= startPeriod)
+                &&
+               (endPeriod.isNull() || journal.dateTime() <= endPeriod);
+    }
+    if (item.type() == QOrganizerItemType::TypeNote) {
+        //for note, there is no such start/end datetime to be used, so we use the timestamp detail.
+        QOrganizerItemTimestamp timestamp = item.detail<QOrganizerItemTimestamp>();
+        return (startPeriod.isNull() || timestamp.lastModified() >= startPeriod)
+                &&
+               (endPeriod.isNull() || timestamp.lastModified() <= endPeriod);
+    }
+
+    return false;
+}
 
 /*!
   Compares two organizer items (\a a and \a b) using the given list of \a sortOrders.  Returns a negative number if \a a should appear

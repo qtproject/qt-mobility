@@ -92,6 +92,29 @@ void QOrganizerItemFetchRequest::setFetchHint(const QOrganizerItemFetchHint &fet
     d->m_fetchHint = fetchHint;
 }
 
+/*! Sets the start period of the request to \a date. Only has an effect if called prior to calling \c start() */
+void QOrganizerItemFetchRequest::setStartDate(const QDateTime &date)
+{
+    Q_D(QOrganizerItemFetchRequest);
+    d->m_startDate = date;
+}
+
+/*! Sets the end period of the request to \a date. Only has an effect if called prior to calling \c start() */
+void QOrganizerItemFetchRequest::setEndDate(const QDateTime &date)
+{
+    Q_D(QOrganizerItemFetchRequest);
+    d->m_endDate = date;
+}
+
+/*! Sets the method used in finding the items to \a findMethod. If it is QOrganizerItemManager::FindAllOccurances
+    then it will generate all the recurring items between the specified period, otherwise only the parent of the
+    recurrance will be included in the results. Only has an effect if called prior to calling \c start() */
+void QOrganizerItemFetchRequest::setFindMethod(const QOrganizerItemManager::ItemFindMethod& findMethod)
+{
+    Q_D(QOrganizerItemFetchRequest);
+    d->m_findMethod = findMethod;
+}
+
 /*! Returns the filter that will be used to select organizer items to be returned */
 QOrganizerItemFilter QOrganizerItemFetchRequest::filter() const
 {
@@ -118,6 +141,24 @@ QOrganizerItemFetchHint QOrganizerItemFetchRequest::fetchHint() const
 {
     Q_D(const QOrganizerItemFetchRequest);
     return d->m_fetchHint;
+}
+
+QDateTime QOrganizerItemFetchRequest::startDate() const
+{
+    Q_D(const QOrganizerItemFetchRequest);
+    return d->m_startDate;
+}
+
+QDateTime QOrganizerItemFetchRequest::endDate() const
+{
+    Q_D(const QOrganizerItemFetchRequest);
+    return d->m_endDate;
+}
+
+QOrganizerItemManager::ItemFindMethod QOrganizerItemFetchRequest::findMethod() const
+{
+    Q_D(const QOrganizerItemFetchRequest);
+    return d->m_findMethod;
 }
 
 /*! Returns the list of organizer items retrieved by this request */

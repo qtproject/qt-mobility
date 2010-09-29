@@ -63,8 +63,14 @@ public:
     /* Selection, restriction and sorting */
     void setFilter(const QOrganizerItemFilter& filter);
     void setSorting(const QList<QOrganizerItemSortOrder>& sorting);
+    void setStartDate(const QDateTime& date);
+    void setEndDate(const QDateTime& date);
+    void setFindMethod(const QOrganizerItemManager::ItemFindMethod& findMethod);
     QOrganizerItemFilter filter() const;
     QList<QOrganizerItemSortOrder> sorting() const;
+    QDateTime startDate() const;
+    QDateTime endDate() const;
+    QOrganizerItemManager::ItemFindMethod findMethod() const;
 
     /* Results */
     QList<QOrganizerItemLocalId> itemIds() const;

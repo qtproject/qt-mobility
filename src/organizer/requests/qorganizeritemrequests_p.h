@@ -109,6 +109,11 @@ public:
     QOrganizerItemFetchHint m_fetchHint;
 
     QList<QOrganizerItem> m_organizeritems;
+
+    QDateTime m_startDate;
+    QDateTime m_endDate;
+
+    QOrganizerItemManager::ItemFindMethod m_findMethod;
 };
 
 class QOrganizerItemInstanceFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
@@ -177,6 +182,11 @@ public:
     QList<QOrganizerItemSortOrder> m_sorting;
 
     QList<QOrganizerItemLocalId> m_ids;
+
+    QDateTime m_startDate;
+    QDateTime m_endDate;
+
+    QOrganizerItemManager::ItemFindMethod m_findMethod;
 };
 
 class QOrganizerItemDetailDefinitionFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate

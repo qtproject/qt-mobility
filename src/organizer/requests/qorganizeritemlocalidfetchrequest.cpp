@@ -79,6 +79,24 @@ void QOrganizerItemLocalIdFetchRequest::setSorting(const QList<QOrganizerItemSor
     d->m_sorting = sorting;
 }
 
+void QOrganizerItemLocalIdFetchRequest::setStartDate(const QDateTime &date)
+{
+    Q_D(QOrganizerItemLocalIdFetchRequest);
+    d->m_startDate = date;
+}
+
+void QOrganizerItemLocalIdFetchRequest::setEndDate(const QDateTime &date)
+{
+    Q_D(QOrganizerItemLocalIdFetchRequest);
+    d->m_endDate = date;
+}
+
+void QOrganizerItemLocalIdFetchRequest::setFindMethod(const QOrganizerItemManager::ItemFindMethod& findMethod)
+{
+    Q_D(QOrganizerItemLocalIdFetchRequest);
+    d->m_findMethod = findMethod;
+}
+
 /*! Returns the filter which will be used to select the organizer items whose ids will be returned */
 QOrganizerItemFilter QOrganizerItemLocalIdFetchRequest::filter() const
 {
@@ -91,6 +109,24 @@ QList<QOrganizerItemSortOrder> QOrganizerItemLocalIdFetchRequest::sorting() cons
 {
     Q_D(const QOrganizerItemLocalIdFetchRequest);
     return d->m_sorting;
+}
+
+QDateTime QOrganizerItemLocalIdFetchRequest::startDate() const
+{
+    Q_D(const QOrganizerItemLocalIdFetchRequest);
+    return d->m_startDate;
+}
+
+QDateTime QOrganizerItemLocalIdFetchRequest::endDate() const
+{
+    Q_D(const QOrganizerItemLocalIdFetchRequest);
+    return d->m_endDate;
+}
+
+QOrganizerItemManager::ItemFindMethod QOrganizerItemLocalIdFetchRequest::findMethod() const
+{
+    Q_D(const QOrganizerItemLocalIdFetchRequest);
+    return d->m_findMethod;
 }
 
 /*! Returns the list of ids of organizer items which matched the request */
