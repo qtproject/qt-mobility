@@ -2813,7 +2813,7 @@ void QOrganizerItemManagerEngine::updateDefinitionFetchRequest(QOrganizerItemDet
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
  */
-void QOrganizerItemManagerEngine::updateCollectionFetchRequest(QOrganizerCollectionFetchRequest* req, const QList<QOrganizerCollection>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
+void QOrganizerItemManagerEngine::updateCollectionFetchRequest(QOrganizerCollectionFetchRequest* req, const QList<QOrganizerCollection>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
 {
     if (req) {
         QWeakPointer<QOrganizerCollectionFetchRequest> ireq(req); // Take this in case the first emit deletes us
@@ -2821,6 +2821,7 @@ void QOrganizerItemManagerEngine::updateCollectionFetchRequest(QOrganizerCollect
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
         rd->m_collections = result;
+        rd->m_errors = errorMap;
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();

@@ -589,11 +589,14 @@ void COrganizerItemRequestsServiceProvider::FetchCollections()
     Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::CollectionFetchRequest);
     QOrganizerCollectionFetchRequest *fetchReq = (QOrganizerCollectionFetchRequest *) iReq;
 
+    QMap<int, QOrganizerItemManager::Error> errorMap;
     QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
+    QList<QOrganizerCollection> result = iOrganizerItemManagerEngine.collections(fetchReq->collectionIds(), &errorMap, &error);
     QOrganizerItemManagerEngine::updateCollectionFetchRequest(
         fetchReq,
-        iOrganizerItemManagerEngine.collections(fetchReq->collectionIds(), &error),
+        result,
         error,
+        errorMap,
         QOrganizerItemAbstractRequest::FinishedState);
 }
 

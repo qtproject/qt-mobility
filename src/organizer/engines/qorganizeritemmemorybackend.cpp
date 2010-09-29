@@ -1554,7 +1554,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             QList<QOrganizerCollection> requestedOrganizerCollections = collections(r->collectionIds(), &errorMap, &operationError);
 
             // update the request with the results.
-            updateCollectionFetchRequest(r, requestedOrganizerCollections, operationError, QOrganizerItemAbstractRequest::FinishedState);
+            updateCollectionFetchRequest(r, requestedOrganizerCollections, operationError, errorMap, QOrganizerItemAbstractRequest::FinishedState);
         }
         break;
 

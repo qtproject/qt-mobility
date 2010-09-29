@@ -223,7 +223,7 @@ private slots:
     void threadDelivery_data() { addManagers(QStringList(QString("maliciousplugin"))); }
 protected slots:
     void resultsAvailableReceived();
-    void deleteRequest();
+    void deleteRequest(QOrganizerItemAbstractRequest::State newState);
 
 private:
     bool compareItemLists(QList<QOrganizerItem> lista, QList<QOrganizerItem> listb);
@@ -380,10 +380,11 @@ void tst_QOrganizerItemAsync::testDestructor()
     delete cm2;
 }
 
-void tst_QOrganizerItemAsync::deleteRequest()
+void tst_QOrganizerItemAsync::deleteRequest(QOrganizerItemAbstractRequest::State newState)
 {
     // Delete the sender (request) - check that it doesn't crash in this common coding error
-    delete sender();
+    if (newState == QOrganizerItemAbstractRequest::FinishedState) // XXX TODO: remove this line!
+        delete sender();
 }
 
 void tst_QOrganizerItemAsync::itemFetch()
@@ -616,7 +617,7 @@ void tst_QOrganizerItemAsync::itemFetch()
     QOrganizerItemFetchRequest *ifr2 = new QOrganizerItemFetchRequest();
     QPointer<QObject> obj(ifr2);
     ifr2->setManager(oim.data());
-    connect(ifr2, SIGNAL(resultsAvailable()), this, SLOT(deleteRequest()));
+    connect(ifr2, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(deleteRequest(QOrganizerItemAbstractRequest::State)));
     QVERIFY(ifr2->start());
     int i = 100;
     // at this point we can't even call wait for finished..
@@ -1873,7 +1874,7 @@ void tst_QOrganizerItemAsync::collectionFetch()
     QOrganizerCollectionFetchRequest *cfr2 = new QOrganizerCollectionFetchRequest();
     QPointer<QObject> obj(cfr2);
     cfr2->setManager(oim.data());
-    connect(cfr2, SIGNAL(resultsAvailable()), this, SLOT(deleteRequest()));
+    connect(cfr2, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(deleteRequest(QOrganizerItemAbstractRequest::State)));
     QVERIFY(cfr2->start());
     int i = 100;
     // at this point we can't even call wait for finished..
