@@ -126,7 +126,7 @@ QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::addedItems() const
   Inserts the given organizer item id \a addedOrganizerItemId into the set of ids of organizer items
   which have been added to the database.
  */
-void QOrganizerItemChangeSet::insertAddedItem(QOrganizerItemLocalId addedOrganizerItemId)
+void QOrganizerItemChangeSet::insertAddedItem(const QOrganizerItemLocalId& addedOrganizerItemId)
 {
     d->m_addedItems.insert(addedOrganizerItemId);
 }
@@ -162,7 +162,7 @@ QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::changedItems() const
   Inserts the given organizer item id \a changedOrganizerItemId into the set of ids of organizer items
   which have been changed to the database.
  */
-void QOrganizerItemChangeSet::insertChangedItem(QOrganizerItemLocalId changedOrganizerItemId)
+void QOrganizerItemChangeSet::insertChangedItem(const QOrganizerItemLocalId& changedOrganizerItemId)
 {
     d->m_changedItems.insert(changedOrganizerItemId);
 }
@@ -198,7 +198,7 @@ QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::removedItems() const
   Inserts the given organizer item id \a removedOrganizerItemId into the set of ids of organizer items
   which have been removed to the database.
  */
-void QOrganizerItemChangeSet::insertRemovedItem(QOrganizerItemLocalId removedOrganizerItemId)
+void QOrganizerItemChangeSet::insertRemovedItem(const QOrganizerItemLocalId& removedOrganizerItemId)
 {
     d->m_removedItems.insert(removedOrganizerItemId);
 }

@@ -88,7 +88,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> QDeclarativeOrganizerI
 
 uint QDeclarativeOrganizerItem::itemId() const
 {
-    return d->localId();
+    return d->itemId();
 }
 
 
@@ -120,3 +120,21 @@ void QDeclarativeOrganizerItem::clearDetails()
     d->m_item.clearDetails();
     emit valueChanged();
 }
+
+QDeclarativeOrganizerItemDetail* QDeclarativeOrganizerItem::detailByDefinitionName(const QString& name) const
+{
+    return d->detailByDefinitionName(name);
+}
+
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEvent::ItemName, "event");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEvent::ItemGroupName, "events");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEventOccurrence::ItemName, "eventOccurrence");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEventOccurrence::ItemGroupName, "eventOccurrences");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerJournal::ItemName, "journal");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerJournal::ItemGroupName, "journals");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerNote::ItemName, "note");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerNote::ItemGroupName, "notes");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodo::ItemName, "todo");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodo::ItemGroupName, "todos");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoOccurrence::ItemName, "todoOccurrence");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoOccurrence::ItemGroupName, "todoOccurrences");

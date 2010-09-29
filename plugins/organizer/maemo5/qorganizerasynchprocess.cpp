@@ -322,8 +322,9 @@ void OrganizerAsynchProcess::handleDefinitionSaveRequest(QOrganizerItemDetailDef
 void OrganizerAsynchProcess::handleCollectionFetchRequest(QOrganizerCollectionFetchRequest *req)
 {
     QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
-    QList<QOrganizerCollection> collections = m_engine->collections(req->collectionIds(), &err);
-    QOrganizerItemManagerEngine::updateCollectionFetchRequest(req, collections, err, QOrganizerItemAbstractRequest::FinishedState);
+    QMap<int, QOrganizerItemManager::Error> errorMap;
+    QList<QOrganizerCollection> collections = m_engine->collections(req->collectionIds(), &errorMap, &err);
+    QOrganizerItemManagerEngine::updateCollectionFetchRequest(req, collections, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
 }
 
 void OrganizerAsynchProcess::handleCollectionLocalIdFetchRequest(QOrganizerCollectionLocalIdFetchRequest *req)
