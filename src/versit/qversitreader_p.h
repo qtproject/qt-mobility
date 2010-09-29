@@ -226,65 +226,65 @@ public: // New functions
     void setCanceling(bool cancelling);
     bool isCanceling();
 
-    bool parseVersitDocument(LineReader& device, QVersitDocument& document);
-    bool parseVersitDocumentBody(LineReader& device, QVersitDocument& document);
+    bool parseVersitDocument(LineReader* device, QVersitDocument* document);
+    bool parseVersitDocumentBody(LineReader* device, QVersitDocument* document);
 
     QVersitProperty parseNextVersitProperty(
         QVersitDocument::VersitType versitType,
-        LineReader& lineReader);
+        LineReader* lineReader);
 
     void parseVCard21Property(
-        LByteArray& text,
-        QVersitProperty& property,
-        LineReader& lineReader);
+        LByteArray* text,
+        QVersitProperty* property,
+        LineReader* lineReader);
 
     void parseVCard30Property(
         QVersitDocument::VersitType versitType,
-        LByteArray& text,
-        QVersitProperty& property,
-        LineReader& lineReader);
+        LByteArray* text,
+        QVersitProperty* property,
+        LineReader* lineReader);
 
     bool setVersionFromProperty(
-        QVersitDocument& document,
+        QVersitDocument* document,
         const QVersitProperty& property) const;
 
     bool unencode(
-        QByteArray& value,
-        QVersitProperty& property,
-        LineReader& lineReader) const;
+        QByteArray* value,
+        QVersitProperty* property,
+        LineReader* lineReader) const;
 
     QString decodeCharset(
         const QByteArray& value,
-        QVersitProperty& property,
+        QVersitProperty* property,
         QTextCodec* defaultCodec,
         QTextCodec** codec) const;
 
-    void decodeQuotedPrintable(QByteArray& text) const;
+    void decodeQuotedPrintable(QByteArray* text) const;
 
 
     /* These functions operate on a cursor describing a single line */
-    QPair<QStringList,QString> extractPropertyGroupsAndName(LByteArray& line, QTextCodec* codec)
+    QPair<QStringList,QString> extractPropertyGroupsAndName(LByteArray* line, QTextCodec* codec)
             const;
-    QMultiHash<QString,QString> extractVCard21PropertyParams(LByteArray& line, QTextCodec* codec)
+    QMultiHash<QString,QString> extractVCard21PropertyParams(LByteArray* line, QTextCodec* codec)
             const;
-    QMultiHash<QString,QString> extractVCard30PropertyParams(LByteArray& line, QTextCodec* codec)
+    QMultiHash<QString,QString> extractVCard30PropertyParams(LByteArray* line, QTextCodec* codec)
             const;
 
     // "Private" functions
-    QList<QByteArray> extractParams(LByteArray& line, QTextCodec *codec) const;
+    QList<QByteArray> extractParams(LByteArray* line, QTextCodec *codec) const;
     QList<QByteArray> extractParts(const QByteArray& text, const QByteArray& separator,
                                    QTextCodec *codec) const;
     QByteArray extractPart(const QByteArray& text, int startPosition, int length=-1) const;
     QString paramName(const QByteArray& parameter, QTextCodec* codec) const;
     QString paramValue(const QByteArray& parameter, QTextCodec* codec) const;
     template <class T> static bool containsAt(const T& text, const QByteArray& ba, int index);
-    bool splitStructuredValue(QVersitProperty& property,
+    bool splitStructuredValue(QVersitProperty* property,
                               bool hasEscapedBackslashes) const;
     static QStringList splitValue(const QString& string,
                                   const QChar& sep,
                                   QString::SplitBehavior behaviour,
                                   bool hasEscapedBackslashes);
-    static void removeBackSlashEscaping(QString& text);
+    static void removeBackSlashEscaping(QString* text);
 
 // Data
 public:
