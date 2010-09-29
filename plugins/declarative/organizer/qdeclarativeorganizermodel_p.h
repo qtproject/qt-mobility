@@ -57,7 +57,7 @@ class QDeclarativeOrganizerModelPrivate;
 class QDeclarativeOrganizerModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(QString manager READ manager NOTIFY managerChanged)
+    Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
     Q_PROPERTY(QStringList availableManagers READ availableManagers NOTIFY availableManagersChanged)
     Q_PROPERTY(QDateTime startPeriod READ startPeriod WRITE setStartPeriod NOTIFY startPeriodChanged)
     Q_PROPERTY(QDateTime endPeriod READ endPeriod WRITE setEndPeriod NOTIFY endPeriodChanged)
