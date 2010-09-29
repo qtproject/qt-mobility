@@ -120,8 +120,8 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
     TReal32 covRadius;
     symbianLandmark->GetCoverageRadius(covRadius);
     if (Math::IsNaN(covRadius)) {
-        qtLandmark->setRadius(qQNaN());
-    } else if (covRadius > 0) {
+        qtLandmark->setRadius(0.0);
+    } else if (covRadius >= 0.0) {
         qtLandmark->setRadius(covRadius);
     }
 
@@ -483,7 +483,7 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
 
     // set coverage radius
     qreal rad = qtLandmark->radius();
-    if (rad > 0) {
+    if (rad >= 0.0) {
         symbianLandmark->SetCoverageRadius(rad);
     }
 

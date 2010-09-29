@@ -91,14 +91,14 @@ private:
     QOrganizerItemEngineLocalId* d;
 
 #ifndef QT_NO_DEBUG_STREAM
-    friend QDebug operator<<(QDebug dbg, const QOrganizerItemLocalId& id);
+    Q_ORGANIZER_EXPORT friend QDebug operator<<(QDebug dbg, const QOrganizerItemLocalId& id);
 #endif
 #ifndef QT_NO_DATASTREAM
-    friend QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id);
-    friend QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id);
+    Q_ORGANIZER_EXPORT friend QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id);
+    Q_ORGANIZER_EXPORT friend QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id);
 #endif
-    friend uint qHash(const QOrganizerItemLocalId& key);
-    friend class QOrganizerItemManagerEngine;
+    Q_ORGANIZER_EXPORT friend uint qHash(const QOrganizerItemLocalId& key);
+    Q_ORGANIZER_EXPORT friend class QOrganizerItemManagerEngine;
 };
 
 class QOrganizerItemIdPrivate;

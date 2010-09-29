@@ -87,14 +87,14 @@ QLandmarkPrivate::QLandmarkPrivate()
         : QGeoPlacePrivate()
 {
     type = QGeoPlacePrivate::LandmarkType;
-    radius = qQNaN();
+    radius = 0.0;
 }
 
 QLandmarkPrivate::QLandmarkPrivate(const QGeoPlacePrivate &other)
         : QGeoPlacePrivate(other)
 {
     type = QGeoPlacePrivate::LandmarkType;
-    radius = qQNaN();
+    radius = 0.0;
 }
 
 QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
@@ -648,7 +648,7 @@ void QLandmark::clear()
     d->categoryIds.clear();
     d->description.clear();
     d->iconUrl.clear();
-    d->radius = qQNaN();
+    d->radius = 0.0;
     d->customAttributes.clear();
     d->phoneNumber.clear();
     d->url.clear();
