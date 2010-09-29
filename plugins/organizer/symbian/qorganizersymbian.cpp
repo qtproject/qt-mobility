@@ -273,7 +273,8 @@ Q_EXPORT_PLUGIN2(qtorganizer_symbian, QOrganizerItemSymbianFactory);
 
 QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
     QOrganizerItemManagerEngine(),
-    m_defaultCollection(this)
+    m_defaultCollection(this),
+    m_requestServiceProviderQueue(0)
 {
 
 }
