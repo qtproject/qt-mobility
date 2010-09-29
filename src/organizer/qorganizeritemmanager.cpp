@@ -334,15 +334,6 @@ QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItem&
 }
 
 /*!
-  Return the list of organizer item ids, sorted according to the given list of \a sortOrders
- */
-QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QList<QOrganizerItemSortOrder>& sortOrders, RecurrencePolicy recurrencePolicy) const
-{
-    d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->itemIds(QDateTime(), QDateTime(), QOrganizerItemFilter(), sortOrders, recurrencePolicy, &d->m_error);
-}
-
-/*!
   Returns a list of organizer item ids that match the given \a filter, sorted according to the given list of \a sortOrders.
   Depending on the backend, this filtering operation may involve retrieving all the organizeritems.
  */
@@ -350,15 +341,6 @@ QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QOrganizerItem
 {
     d->m_error = QOrganizerItemManager::NoError;
     return d->m_engine->itemIds(QDateTime(), QDateTime(), filter, sortOrders, recurrencePolicy, &d->m_error);
-}
-
-/*!
-  Return the list of organizer item ids, sorted according to the given list of \a sortOrders
- */
-QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QList<QOrganizerItemSortOrder>& sortOrders, RecurrencePolicy recurrencePolicy) const
-{
-    d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->itemIds(startDate, endDate, QOrganizerItemFilter(), sortOrders, recurrencePolicy, &d->m_error);
 }
 
 /*!
@@ -372,7 +354,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QDateTime& sta
 }
 
 /*!
-  Returns the list of organizeritems stored in the manager sorted according to the given list of \a sortOrders.
+  Returns a list of organizer items that match the given \a filter, sorted according to the given list of \a sortOrders.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
   If the \a fetchHint is the default constructed hint, all existing details and relationships
@@ -383,10 +365,10 @@ QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QDateTime& sta
 
   \sa QOrganizerItemFetchHint
  */
-QList<QOrganizerItem> QOrganizerItemManager::items(const QDateTime& startDate, const QDateTime& endDate, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, RecurrencePolicy recurrencePolicy) const
+QList<QOrganizerItem> QOrganizerItemManager::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, RecurrencePolicy recurrencePolicy) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->items(startDate, endDate, QOrganizerItemFilter(), sortOrders, fetchHint, recurrencePolicy, &d->m_error);
+    return d->m_engine->items(QDateTime(), QDateTime(), filter, sortOrders, fetchHint, recurrencePolicy, &d->m_error);
 }
 
 /*!

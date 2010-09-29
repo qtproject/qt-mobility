@@ -122,13 +122,12 @@ public:
     QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart = QDateTime(), const QDateTime& periodEnd = QDateTime(), int maxCount = -1) const;
 
     /* Items - Accessors and Mutators */
-    QList<QOrganizerItemLocalId> itemIds(const QList<QOrganizerItemSortOrder>& sortOrders, RecurrencePolicy recurrencePolicy = ExpandRecurrences) const;
-    QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), RecurrencePolicy recurrencePolicy = ExpandRecurrences) const;
-    QList<QOrganizerItemLocalId> itemIds(const QDateTime& startDate = QDateTime(), const QDateTime& endDate = QDateTime(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), RecurrencePolicy recurrencePolicy = ExpandRecurrences) const;
-    QList<QOrganizerItemLocalId> itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), RecurrencePolicy recurrencePolicy = ExpandRecurrences) const;
+    QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), RecurrencePolicy recurrencePolicy = ExpandRecurrences) const;
+    QList<QOrganizerItemLocalId> itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), RecurrencePolicy recurrencePolicy = ExpandRecurrences) const;
 
-    QList<QOrganizerItem> items(const QDateTime& startDate = QDateTime(), const QDateTime& endDate = QDateTime(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint(), RecurrencePolicy recurrencePolicy = ExpandRecurrences) const;
-    QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint(), RecurrencePolicy recurrencePolicy = ExpandRecurrences) const;
+    QList<QOrganizerItem> items(const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint(), RecurrencePolicy recurrencePolicy = ExpandRecurrences) const;
+    QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint(), RecurrencePolicy recurrencePolicy = ExpandRecurrences) const;
+
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;  // retrieve an item
 
     bool saveItem(QOrganizerItem* item, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId());

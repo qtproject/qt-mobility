@@ -473,7 +473,7 @@ void tst_QOrganizerItemAsync::itemFetch()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    itemIds = oim->itemIds(sorting);
+    itemIds = oim->itemIds(QOrganizerItemFilter(), sorting);
     items = ifr.items();
     QCOMPARE(itemIds.size(), items.size());
     for (int i = 0; i < itemIds.size(); i++) {
@@ -499,7 +499,7 @@ void tst_QOrganizerItemAsync::itemFetch()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    itemIds = oim->itemIds(sorting);
+    itemIds = oim->itemIds(QOrganizerItemFilter(), sorting);
     items = ifr.items();
     QCOMPARE(itemIds.size(), items.size());
     for (int i = 0; i < itemIds.size(); i++) {
@@ -760,7 +760,7 @@ void tst_QOrganizerItemAsync::itemIdFetch()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    itemIds = oim->itemIds(sorting);
+    itemIds = oim->itemIds(QOrganizerItemFilter(), sorting);
     result = ifr.itemIds();
     QCOMPARE(itemIds, result);
 
