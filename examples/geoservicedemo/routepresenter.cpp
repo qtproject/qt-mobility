@@ -123,7 +123,13 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
     wayPointsItem->setText(0, overviewLabel);
     showPoints(wayPointsItem, route.path());
 
-    QList<QGeoRouteSegment> segments = route.routeSegments();
+    QList<QGeoRouteSegment> segments;
+    QGeoRouteSegment segment = route.firstRouteSegment();
+    while (segment.isValid()) {
+        segments << segment;
+        segment = segment.nextRouteSegment();
+    }
+
     QTreeWidgetItem* segmentsItem = new QTreeWidgetItem(routeItem);
     QString segmentsLabel = "segments";
     if (segments.length() > 100)
