@@ -2532,8 +2532,9 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 #else
 #if !defined(QT_NO_MEEGO)
        QUPowerInterface power(this);
-       foreach(QDBusObjectPath objpath, power) {
-           QUPowerDeviceInterface powerDevice(objpath,this);
+       foreach(const QDBusObjectPath objpath, power.enumerateDevices()) {
+           QUPowerDeviceInterface powerDevice(objpath.path(),this);
+
            if(powerDevice.getType() == 2) {
                switch(powerDevice.getState()) {
                case 0:
@@ -2549,10 +2550,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                default:
                    return QSystemDeviceInfo::UnknownPower;
                };
-           } else {
-               return QSystemDeviceInfo::WallPower;
            }
        }
+       if(!power.onBattery())
+           return QSystemDeviceInfo::WallPower;
+
 #else
        QFile statefile("/proc/acpi/battery/BAT0/state");
        if (!statefile.open(QIODevice::ReadOnly)) {

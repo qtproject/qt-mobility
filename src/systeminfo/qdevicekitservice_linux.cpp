@@ -276,7 +276,6 @@ QUPowerInterface::QUPowerInterface(/*const QString &dbusPathName,*/QObject *pare
                                  UPOWER_SERVICE,
                                  QDBusConnection::systemBus(), parent)
 {
-    qDebug() << Q_FUNC_INFO;
 }
 
 QUPowerInterface::~QUPowerInterface()
@@ -293,16 +292,19 @@ QList<QDBusObjectPath> QUPowerInterface::enumerateDevices()
 
 QVariantMap QUPowerInterface::getProperties()
 {
-    QDBusReply<QVariantMap > reply = this->call(QLatin1String("Get"));
+    QDBusReply<QVariantMap > reply = this->call(QLatin1String("GetAll"));
     return reply.value();
 }
 
 QVariant QUPowerInterface::getProperty(const QString &property)
 {
     QVariant var;
-    QVariantMap map = getProperties();
-    if (map.contains(property)) {
-        var = map.value(property);
+    QDBusInterface *iface = new QDBusInterface(UPOWER_SERVICE, UPOWER_PATH,
+                                               "org.freedesktop.DBus.Properties",
+                                               QDBusConnection::systemBus());
+    if (iface && iface->isValid()) {
+        QDBusReply<QVariant> r = iface->call("Get", UPOWER_PATH, property);
+        var = r.value();
     }
     return var;
 }
@@ -340,12 +342,13 @@ bool QUPowerInterface::onBattery()
 
 
 QUPowerDeviceInterface::QUPowerDeviceInterface(const QString &dbusPathName,QObject *parent)
-      : QDBusAbstractInterface(QLatin1String(UPOWER_DEVICE_SERVICE),
+      : QDBusAbstractInterface(QLatin1String(UPOWER_SERVICE),
                                  dbusPathName,
                                  UPOWER_DEVICE_SERVICE,
                                  QDBusConnection::systemBus(), parent)
 {
-    qDebug() << Q_FUNC_INFO;
+    path = dbusPathName;
+
 }
 
 QUPowerDeviceInterface::~QUPowerDeviceInterface()
@@ -356,15 +359,21 @@ QUPowerDeviceInterface::~QUPowerDeviceInterface()
 QVariantMap QUPowerDeviceInterface::getProperties()
 {
     QDBusReply<QVariantMap > reply = this->call(QLatin1String("Get"));
+    if(!reply.isValid()) {
+        qDebug() << reply.error();
+    }
     return reply.value();
 }
 
 QVariant QUPowerDeviceInterface::getProperty(const QString &property)
 {
     QVariant var;
-    QVariantMap map = getProperties();
-    if (map.contains(property)) {
-        var = map.value(property);
+    QDBusInterface *iface = new QDBusInterface(UPOWER_SERVICE, path,
+                                               "org.freedesktop.DBus.Properties",
+                                               QDBusConnection::systemBus());
+    if (iface && iface->isValid()) {
+        QDBusReply<QVariant> r = iface->call("Get", path, property);
+        var = r.value();
     }
     return var;
 }
