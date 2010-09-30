@@ -350,6 +350,370 @@ void QDeclarativeAudio::componentComplete()
     information about the error.
 */
 
+/*!
+    \qmlproperty variant Audio::title
+
+    This property holds the tile of the media.
+
+    \sa {QtMultimediaKit::Title}
+*/
+
+/*!
+    \qmlproperty variant Audio::subTitle
+
+    This property holds the sub-title of the media.
+
+    \sa {QtMultimediaKit::SubTitle}
+*/
+
+/*!
+    \qmlproperty variant Audio::author
+
+    This property holds the author of the media.
+
+    \sa {QtMultimediaKit::Author}
+*/
+
+/*!
+    \qmlproperty variant Audio::comment
+
+    This property holds a user comment about the media.
+
+    \sa {QtMultimediaKit::Comment}
+*/
+
+/*!
+    \qmlproperty variant Audio::description
+
+    This property holds a description of the media.
+
+    \sa {QtMultimediaKit::Description}
+*/
+
+/*!
+    \qmlproperty variant Audio::category
+
+    This property holds the category of the media
+
+    \sa {QtMultimediaKit::Category}
+*/
+
+/*!
+    \qmlproperty variant Audio::genre
+
+    This property holds the genre of the media.
+
+    \sa {QtMultimediaKit::Genre}
+*/
+
+/*!
+    \qmlproperty variant Audio::year
+
+    This property holds the year of release of the media.
+
+    \sa {QtMultimediaKit::Year}
+*/
+
+/*!
+    \qmlproperty variant Audio::date
+
+    This property holds the date of the media.
+
+    \sa {QtMultimediaKit::Date}
+*/
+
+/*!
+    \qmlproperty variant Audio::userRating
+
+    This property holds a user rating of the media in the range of 0 to 100.
+
+    \sa {QtMultimediaKit::UserRating}
+*/
+
+/*!
+    \qmlproperty variant Audio::keywords
+
+    This property holds a list of keywords describing the media.
+
+    \sa {QtMultimediaKit::Keywords}
+*/
+
+/*!
+    \qmlproperty variant Audio::language
+
+    This property holds the language of the media, as an ISO 639-2 code.
+
+    \sa {QtMultimediaKit::Language}
+*/
+
+/*!
+    \qmlproperty variant Audio::publisher
+
+    This property holds the publisher of the media.
+
+    \sa {QtMultimediaKit::Publisher}
+*/
+
+/*!
+    \qmlproperty variant Audio::copyright
+
+    This property holds the media's copyright notice.
+
+    \sa {QtMultimediaKit::Copyright}
+*/
+
+/*!
+    \qmlproperty variant Audio::parentalRating
+
+    This property holds the parental rating of the media.
+
+    \sa {QtMultimediaKit::ParentalRating}
+*/
+
+/*!
+    \qmlproperty variant Audio::ratingOrganisation
+
+    This property holds the name of the rating organisation responsible for the
+    parental rating of the media.
+
+    \sa {QtMultimediaKit::RatingOrganisation}
+*/
+
+/*!
+    \qmlproperty variant Audio::size
+
+    This property property holds the size of the media in bytes.
+
+    \sa {QtMultimediaKit::Size}
+*/
+
+/*!
+    \qmlproperty variant Audio::mediaType
+
+    This property holds the type of the media.
+
+    \sa {QtMultimediaKit::MediaType}
+*/
+
+/*!
+    \qmlproperty variant Audio::audioBitRate
+
+    This property holds the bit rate of the media's audio stream ni bits per
+    second.
+
+    \sa {QtMultimediaKit::AudioBitRate}
+*/
+
+/*!
+    \qmlproperty variant Audio::audioCodec
+
+    This property holds the encoding of the media audio stream.
+
+    \sa {QtMultimediaKit::AudioCodec}
+*/
+
+/*!
+    \qmlproperty variant Audio::averageLevel
+
+    This property holds the average volume level of the media.
+
+    \sa {QtMultimediaKit::AverageLevel}
+*/
+
+/*!
+    \qmlproperty variant Audio::channelCount
+
+    This property holds the number of channels in the media's audio stream.
+
+    \sa {QtMultimediaKit::ChannelCount}
+*/
+
+/*!
+    \qmlproperty variant Audio::peakValue
+
+    This property holds the peak volume of media's audio stream.
+
+    \sa {QtMultimediaKit::PeakValue}
+*/
+
+/*!
+    \qmlproperty variant Audio::sampleRate
+
+    This property holds the sample rate of the media's audio stream in hertz.
+
+    \sa {QtMultimediaKit::SampleRate}
+*/
+
+/*!
+    \qmlproperty variant Audio::albumTitle
+
+    This property holds the title of the album the media belongs to.
+
+    \sa {QtMultimediaKit::AlbumTitle}
+*/
+
+/*!
+    \qmlproperty variant Audio::albumArtist
+
+    This property holds the name of the principal artist of the album the media
+    belongs to.
+
+    \sa {QtMultimediaKit::AlbumArtist}
+*/
+
+/*!
+    \qmlproperty variant Audio::contributingArtist
+
+    This property holds the names of artists contributing to the media.
+
+    \sa {QtMultimediaKit::ContributingArtist}
+*/
+
+/*!
+    \qmlproperty variant Audio::composer
+
+    This property holds the composer of the media.
+
+    \sa {QtMultimediaKit::Composer}
+*/
+
+/*!
+    \qmlproperty variant Audio::conductor
+
+    This property holds the conductor of the media.
+
+    \sa {QtMultimediaKit::Conductor}
+*/
+
+/*!
+    \qmlproperty variant Audio::lyrics
+
+    This property holds the lyrics to the media.
+
+    \sa {QtMultimediaKit::Lyrics}
+*/
+
+/*!
+    \qmlproperty variant Audio::mood
+
+    This property holds the mood of the media.
+
+    \sa {QtMultimediaKit::Mood}
+*/
+
+/*!
+    \qmlproperty variant Audio::trackNumber
+
+    This property holds the track number of the media.
+
+    \sa {QtMultimediaKit::TrackNumber}
+*/
+
+/*!
+    \qmlproperty variant Audio::trackCount
+
+    This property holds the number of track on the album containing the media.
+
+    \sa {QtMultimediaKit::TrackNumber}
+*/
+
+/*!
+    \qmlproperty variant Audio::coverArtUrlSmall
+
+    This property holds the URL of a small cover art image.
+
+    \sa {QtMultimediaKit::CoverArtUrlSmall}
+*/
+
+/*!
+    \qmlproperty variant Audio::coverArtUrlLarge
+
+    This property holds the URL of a large cover art image.
+
+    \sa {QtMultimediaKit::CoverArtUrlLarge}
+*/
+
+/*!
+    \qmlproperty variant Audio::resolution
+
+    This property holds the dimension of an image or video.
+
+    \sa {QtMultimediaKit::Resolution}
+*/
+
+/*!
+    \qmlproperty variant Audio::pixelAspectRatio
+
+    This property holds the pixel aspect ratio of an image or video.
+
+    \sa {QtMultimediaKit::PixelAspectRatio}
+*/
+
+/*!
+    \qmlproperty variant Audio::videoFrameRate
+
+    This property holds the frame rate of the media's video stream.
+
+    \sa {QtMultimediaKit::VideoFrameRate}
+*/
+
+/*!
+    \qmlproperty variant Audio::videoBitRate
+
+    This property holds the bit rate of the media's video stream in bits per
+    second.
+
+    \sa {QtMultimediaKit::VideoBitRate}
+*/
+
+/*!
+    \qmlproperty variant Audio::videoCodec
+
+    This property holds the encoding of the media's video stream.
+
+    \sa {QtMultimediaKit::VideoCodec}
+*/
+
+/*!
+    \qmlproperty variant Audio::posterUrl
+
+    This property holds the URL of a poster image.
+
+    \sa {QtMultimediaKit::PosterUrl}
+*/
+
+/*!
+    \qmlproperty variant Audio::chapterNumber
+
+    This property holds the chapter number of the media.
+
+    \sa {QtMultimediaKit::ChapterNumber}
+*/
+
+/*!
+    \qmlproperty variant Audio::director
+
+    This property holds the director of the media.
+
+    \sa {QtMultimediaKit::Director}
+*/
+
+/*!
+    \qmlproperty variant Audio::leadPerformer
+
+    This property holds the lead performer in the media.
+
+    \sa {QtMultimediaKit::LeadPerformer}
+*/
+
+/*!
+    \qmlproperty variant Audio::writer
+
+    This property holds the writer of the media.
+
+    \sa {QtMultimediaKit::Writer}
+*/
+
 QT_END_NAMESPACE
 
 #include "moc_qdeclarativeaudio_p.cpp"

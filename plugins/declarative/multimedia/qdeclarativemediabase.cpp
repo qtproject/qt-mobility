@@ -242,6 +242,7 @@ QDeclarativeMediaBase::QDeclarativeMediaBase()
     , m_metaDataControl(0)
     , m_metaObject(0)
     , m_animation(0)
+    , m_metaData(new QObject)
     , m_state(QMediaPlayer::StoppedState)
     , m_status(QMediaPlayer::NoMedia)
     , m_error(QMediaPlayer::ServiceMissingError)
@@ -307,7 +308,7 @@ void QDeclarativeMediaBase::setObject(QObject *object)
     }
 
     if (m_metaDataControl) {
-        m_metaObject = new QMetaDataControlMetaObject(m_metaDataControl, object);
+        m_metaObject = new QMetaDataControlMetaObject(m_metaDataControl, m_metaData.data());
 
         QObject::connect(m_metaDataControl, SIGNAL(metaDataChanged()),
                 object, SLOT(_q_metaDataChanged()));
@@ -527,6 +528,11 @@ void QDeclarativeMediaBase::setPlaybackRate(qreal rate)
 QString QDeclarativeMediaBase::errorString() const
 {
     return m_errorString;
+}
+
+QObject *QDeclarativeMediaBase::metaData() const
+{
+    return m_metaData.data();
 }
 
 QT_END_NAMESPACE
