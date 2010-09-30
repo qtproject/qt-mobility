@@ -731,8 +731,9 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemInstances(const QO
 
     // now order the contents of retn by date
     qSort(rdates);
-    if (qBinaryFind(rdates, initialDateTime) == rdates.end()) {
-        rdates.prepend(initialDateTime);
+    if (qBinaryFind(rdates, initialDateTime) == rdates.end() && !xdates.contains(initialDateTime.date()) &&
+        initialDateTime >= realPeriodStart && initialDateTime < realPeriodEnd) {
+        retn.append(generator);
     }
 
     // now for each rdate which isn't also an xdate

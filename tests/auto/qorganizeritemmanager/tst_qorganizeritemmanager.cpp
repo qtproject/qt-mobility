@@ -170,6 +170,7 @@ private slots:
     void itemType();
     void dataSerialization();
     void itemFetch();
+    void spanOverDays();
 
     /* Tests that take no data */
     void itemValidation();
@@ -199,6 +200,7 @@ private slots:
     void itemType_data() {addManagers();}
     void dataSerialization_data() {addManagers();}
     void itemFetch_data() {addManagers();}
+    void spanOverDays_data() {addManagers();}
 };
 
 tst_QOrganizerItemManager::tst_QOrganizerItemManager()
@@ -2484,6 +2486,38 @@ void tst_QOrganizerItemManager::itemFetch()
 
     // TODO: make a recurrant event, fetch the items between an interval and verify the result
 }
+
+void tst_QOrganizerItemManager::spanOverDays()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+
+    QOrganizerEvent event;
+    event.setDisplayLabel("event");
+    event.setStartDateTime(QDateTime(QDate(2010, 8, 9), QTime(11, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 8, 11), QTime(11, 30, 0)));
+    QVERIFY(cm->saveItem(&event));
+
+    QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2010, 8, 9)),
+                                            QDateTime(QDate(2010, 8, 9), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2010, 8, 10), QTime(0,0,0)), QDateTime(QDate(2010, 8, 10), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2010, 8, 11), QTime(0,0,0)), QDateTime(QDate(2010, 11, 10), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2010, 8, 5), QTime(0,0,0)), QDateTime(QDate(2010, 15, 10), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(), QDateTime(QDate(2010, 8, 10), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2010, 8, 10), QTime(0,0,0)), QDateTime());
+    QCOMPARE(items.count(), 1);
+}
+
 
 QList<QOrganizerItemDetail> tst_QOrganizerItemManager::removeAllDefaultDetails(const QList<QOrganizerItemDetail>& details)
 {

@@ -115,11 +115,8 @@ void DayPage::refresh()
     m_dateLabel->setText(m_day.toString());
     m_itemList->clear();
 
-    // Items
-    QList<QOrganizerItem> items = m_manager->items();
-
-    // Today's item instances
-    QList<QOrganizerItem> instances = m_manager->items(QDateTime(m_day, QTime(0, 0, 0)), QDateTime(m_day, QTime(23, 59, 59)));
+    // Today's item
+    QList<QOrganizerItem> items = m_manager->items(QDateTime(m_day), QDateTime(m_day, QTime(23, 59, 59)));
 
     foreach (const QOrganizerItem &item, items)
     {
@@ -127,19 +124,14 @@ void DayPage::refresh()
         if (!eventTimeRange.isEmpty()) {
             QOrganizerItemGuid itemGuid = item.detail<QOrganizerItemGuid>();
             QOrganizerEventTimeRange itemTimeRange = item.detail<QOrganizerEventTimeRange>();
-            bool instancesContainGuid = false;
-            foreach (QOrganizerItem instance, instances) {
-                if (instance.detail<QOrganizerItemGuid>() == itemGuid
-                    && instance.detail<QOrganizerEventTimeRange>().startDateTime() != itemTimeRange.startDateTime()) {
-                    instancesContainGuid = true;
-                    break;
-                }
-            }
 
-            if (eventTimeRange.startDateTime().date() == m_day && !instancesContainGuid) {
+            if (eventTimeRange.startDateTime().date() == m_day) {
                 QString time = eventTimeRange.startDateTime().time().toString("hh:mm");
                 QListWidgetItem* listItem = new QListWidgetItem();
-                listItem->setText(QString("Event:%1-%2").arg(time).arg(item.displayLabel()));
+                if (item.type() == QOrganizerItemType::TypeEventOccurrence)
+                    listItem->setText(QString("Event occurance:%1-%2").arg(time).arg(item.displayLabel()));
+                else
+                    listItem->setText(QString("Event:%1-%2").arg(time).arg(item.displayLabel()));
                 QVariant data = QVariant::fromValue<QOrganizerItem>(item);
                 listItem->setData(ORGANIZER_ITEM_ROLE, data);
                 m_itemList->addItem(listItem);
@@ -171,20 +163,6 @@ void DayPage::refresh()
         }
         
         // TODO: other item types
-    }
-
-    foreach (const QOrganizerItem &instance, instances)
-    {
-        QString type = instance.type();
-        if (type == QOrganizerItemType::TypeEventOccurrence) {
-            QOrganizerEventOccurrence occurrence = static_cast<QOrganizerEventOccurrence>(instance);
-            QString time = occurrence.startDateTime().time().toString("hh:mm");
-            QListWidgetItem* listItem = new QListWidgetItem();
-            listItem->setText(QString("Event occurrence:%1-%2").arg(time).arg(occurrence.displayLabel()));
-            QVariant data = QVariant::fromValue<QOrganizerItem>(instance);
-            listItem->setData(ORGANIZER_ITEM_ROLE, data);
-            m_itemList->addItem(listItem);
-        }
     }
 
     if (m_itemList->count() == 0)

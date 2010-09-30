@@ -2288,45 +2288,37 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
 
 bool QOrganizerItemManagerEngine::isItemBetweenDates(const QOrganizerItem& item, const QDateTime& startPeriod, const QDateTime& endPeriod)
 {
-    if (item.type() == QOrganizerItemType::TypeEvent) {
-        QOrganizerEvent event = item;
-        return (startPeriod.isNull() || event.startDateTime() >= startPeriod)
-                &&
-               (endPeriod.isNull() || event.endDateTime() <= endPeriod);
-    }
-    if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
-        QOrganizerEventOccurrence eo = item;
-        return (startPeriod.isNull() || eo.startDateTime() >= startPeriod)
-                &&
-               (endPeriod.isNull() || eo.endDateTime() <= endPeriod);
-    }
-    if (item.type() == QOrganizerItemType::TypeTodo) {
-        QOrganizerTodo todo = item;
-        return (startPeriod.isNull() || todo.startDateTime() >= startPeriod)
-                &&
-               (endPeriod.isNull() || todo.dueDateTime() <= endPeriod);
-    }
-    if (item.type() == QOrganizerItemType::TypeTodoOccurrence) {
-        QOrganizerTodoOccurrence tdo = item;
-        return (startPeriod.isNull() || tdo.startDateTime() >= startPeriod)
-                &&
-               (endPeriod.isNull() || tdo.dueDateTime() <= endPeriod);
-    }
-    if (item.type() == QOrganizerItemType::TypeJournal) {
-        QOrganizerJournal journal = item;
-        return (startPeriod.isNull() || journal.dateTime() >= startPeriod)
-                &&
-               (endPeriod.isNull() || journal.dateTime() <= endPeriod);
-    }
-    if (item.type() == QOrganizerItemType::TypeNote) {
-        //for note, there is no such start/end datetime to be used, so we use the timestamp detail.
-        QOrganizerItemTimestamp timestamp = item.detail<QOrganizerItemTimestamp>();
-        return (startPeriod.isNull() || timestamp.lastModified() >= startPeriod)
-                &&
-               (endPeriod.isNull() || timestamp.lastModified() <= endPeriod);
-    }
+    if (startPeriod.isNull() && endPeriod.isNull())
+        return true;
 
-    return false;
+    QDateTime itemDateStart;
+    QDateTime itemDateEnd;
+
+    if (item.type() == QOrganizerItemType::TypeEvent || item.type() == QOrganizerItemType::TypeEventOccurrence) {
+        QOrganizerEventTimeRange etr = item.detail<QOrganizerEventTimeRange>();
+        itemDateStart = etr.startDateTime();
+        itemDateEnd = etr.endDateTime();
+    } else
+        if (item.type() == QOrganizerItemType::TypeTodo || item.type() == QOrganizerItemType::TypeTodoOccurrence) {
+            QOrganizerTodoTimeRange ttr = item.detail<QOrganizerTodoTimeRange>();
+            itemDateStart = ttr.startDateTime();
+            itemDateEnd = ttr.dueDateTime();
+        } else
+            if (item.type() == QOrganizerItemType::TypeJournal) {
+                QOrganizerJournal journal = item;
+                itemDateStart = itemDateEnd = journal.dateTime();
+            } else
+                if (item.type() == QOrganizerItemType::TypeNote) {
+                    //for note, there is no such start/end datetime to be used, so we use the timestamp detail.
+                    QOrganizerItemTimestamp timestamp = item.detail<QOrganizerItemTimestamp>();
+                    itemDateStart = itemDateEnd = timestamp.lastModified();
+                }
+
+    return (startPeriod.isNull() && itemDateStart <= endPeriod) ||
+           (endPeriod.isNull() && itemDateEnd >= startPeriod) ||
+           (itemDateStart >= startPeriod && itemDateStart <= endPeriod) ||
+           (itemDateEnd >= startPeriod && itemDateEnd <= endPeriod) ||
+           (itemDateStart <= startPeriod && itemDateEnd >= endPeriod);
 }
 
 /*!
