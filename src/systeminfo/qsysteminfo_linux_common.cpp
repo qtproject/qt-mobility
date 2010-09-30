@@ -2501,7 +2501,7 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerState()
 {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_DBUS) && defined(QT_NO_MEEGO)
        QHalInterface iface;
        QStringList list = iface.findDeviceByCapability("battery");
        if(!list.isEmpty()) {
@@ -2537,13 +2537,15 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
            QString line = batstate.readLine();
            while (!line.isNull()) {
                if(line.contains("charging state")) {
-                   if(line.split(" ").at(1).trimmed() == "discharging") {
+                   QString batstate = (line.simplified()).split(" ").at(2);
+                   if(batstate == "discharging") {
                        return QSystemDeviceInfo::BatteryPower;
                    }
-                   if(line.split(" ").at(1).trimmed() == "charging") {
+                   if(batstate == "charging") {
                        return QSystemDeviceInfo::WallPowerChargingBattery;
                    }
                }
+               line = batstate.readLine();
            }
        }
 #endif
