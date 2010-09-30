@@ -111,7 +111,7 @@ QString QDeclarativeGeoAddress::countryCode() const
 /*!
   \qmlproperty string Address::countryCode
 
-  This property holds the countryCode of the address.
+  This property holds the country code of the address.
 
   */
 
@@ -231,7 +231,7 @@ QString QDeclarativeGeoAddress::postCode() const
 /*!
   \qmlproperty string Address::postCode
 
-  This property holds the postCode of the address.
+  This property holds the post code of the address.
 
   */
 

@@ -49,11 +49,9 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoBoundingBox class defines a rectangular geographic area.
     \ingroup qml-location
 
+    The BoundingBox class defines a rectangular geographic area.
     This element is part of the \bold{QtMobility.location 1.1} module.
-
-    The QGeoBoundingBox class defines a rectangular geographic area.
-
-    \snippet TODO
+    For behavioral details, please see \l QGeoBoundingBox.
 
     \sa Landmark, Place, Address, {QGeoBoundingBox}
 */
@@ -94,6 +92,10 @@ QGeoBoundingBox QDeclarativeGeoBoundingBox::box()
 
 QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::bottomLeft()
 {
+    // m_box performs calculations on its attributes (e.g. setting
+    // height impacts coordinates). Hence we need to always use
+    // internal m_box to provide these values.
+    m_declarativeBottomLeft.setCoordinate(m_box.bottomLeft());
     return &m_declarativeBottomLeft;
 }
 
@@ -110,14 +112,18 @@ QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::bottomLeft()
 
 void QDeclarativeGeoBoundingBox::setBottomLeft(QDeclarativeCoordinate *coordinate)
 {
-    if (m_declarativeBottomLeft.coordinate() == coordinate->coordinate())
+    if (m_box.bottomLeft() == coordinate->coordinate())
         return;
-    m_declarativeBottomLeft.setCoordinate(coordinate->coordinate());
+    m_box.setBottomLeft(coordinate->coordinate());
     emit bottomLeftChanged();
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::bottomRight()
 {
+    // m_box performs calculations on its attributes (e.g. setting
+    // height impacts coordinates). Hence we need to always use
+    // internal m_box to provide these values.
+    m_declarativeBottomRight.setCoordinate(m_box.bottomRight());
     return &m_declarativeBottomRight;
 }
 
@@ -134,14 +140,18 @@ QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::bottomRight()
 
 void QDeclarativeGeoBoundingBox::setBottomRight(QDeclarativeCoordinate *coordinate)
 {
-    if (m_declarativeBottomRight.coordinate() == coordinate->coordinate())
+    if (m_box.bottomRight() == coordinate->coordinate())
         return;
-    m_declarativeBottomRight.setCoordinate(coordinate->coordinate());
+    m_box.setBottomRight(coordinate->coordinate());
     emit bottomRightChanged();
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::topLeft()
 {
+    // m_box performs calculations on its attributes (e.g. setting
+    // height impacts coordinates). Hence we need to always use
+    // internal m_box to provide these values.
+    m_declarativeTopLeft.setCoordinate(m_box.topLeft());
     return &m_declarativeTopLeft;
 }
 
@@ -158,14 +168,18 @@ QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::topLeft()
 
 void QDeclarativeGeoBoundingBox::setTopLeft(QDeclarativeCoordinate *coordinate)
 {
-    if (m_declarativeTopLeft.coordinate() == coordinate->coordinate())
+    if (m_box.topLeft() == coordinate->coordinate())
         return;
-    m_declarativeTopLeft.setCoordinate(coordinate->coordinate());
+    m_box.setTopLeft(coordinate->coordinate());
     emit topLeftChanged();
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::topRight()
 {
+    // m_box performs calculations on its attributes (e.g. setting
+    // height impacts coordinates). Hence we need to always use
+    // internal m_box to provide these values.
+    m_declarativeTopRight.setCoordinate(m_box.topRight());
     return &m_declarativeTopRight;
 }
 
@@ -182,14 +196,18 @@ QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::topRight()
 
 void QDeclarativeGeoBoundingBox::setTopRight(QDeclarativeCoordinate *coordinate)
 {
-    if (m_declarativeTopRight.coordinate() == coordinate->coordinate())
+    if (m_box.topRight() == coordinate->coordinate())
         return;
-    m_declarativeTopRight.setCoordinate(coordinate->coordinate());
+    m_box.setTopRight(coordinate->coordinate());
     emit topRightChanged();
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::center()
 {
+    // m_box performs calculations on its attributes (e.g. setting
+    // height impacts coordinates). Hence we need to always use
+    // internal m_box to provide these values.
+    m_declarativeCenter.setCoordinate(m_box.center());
     return &m_declarativeCenter;
 }
 
@@ -207,15 +225,15 @@ QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::center()
 
 void QDeclarativeGeoBoundingBox::setCenter(QDeclarativeCoordinate *coordinate)
 {
-    if (m_declarativeCenter.coordinate() == coordinate->coordinate())
+    if (m_box.center() == coordinate->coordinate())
         return;
-    m_declarativeCenter.setCoordinate(coordinate->coordinate());
+    m_box.setCenter(coordinate->coordinate());
     emit centerChanged();
 }
 
 double QDeclarativeGeoBoundingBox::height()
 {
-    return m_height;
+    return m_box.height();
 }
 
 /*!
@@ -237,7 +255,7 @@ void QDeclarativeGeoBoundingBox::setHeight(const double height)
 
 double QDeclarativeGeoBoundingBox::width()
 {
-    return m_width;
+    return m_box.width();
 }
 
 /*!
