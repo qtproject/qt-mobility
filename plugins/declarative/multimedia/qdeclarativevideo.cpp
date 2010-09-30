@@ -71,7 +71,7 @@ void QDeclarativeVideo::_q_error(int errorCode, const QString &errorString)
     \brief The Video element allows you to add videos to a scene.
     \inherits Item
 
-    This element is part of the \bold{Qt.multimedia 1.0} module.
+    This element is part of the \bold{QtMultimediaKit 1.1} module.
 
     \qml
     import Qt 4.7

@@ -74,10 +74,12 @@ public: // Contructor & Destructor
     S60CameraService(QObject *parent = 0);
     ~S60CameraService();
 
-public: // Operations
+public: // QMediaService
 
     QMediaControl *requestControl(const char *name);
     void releaseControl(QMediaControl *control);
+
+public: // Static Device Info
 
     static int deviceCount();
     static QString deviceName(const int index);

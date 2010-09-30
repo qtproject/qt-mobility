@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtDeclarative module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,52 +39,41 @@
 **
 ****************************************************************************/
 
-import Qt 4.7
-import Qt.multimedia 4.7
+#ifndef XACOMMON_H
+#define XACOMMON_H
 
-Item {
-    id: wbMode
-    property int value : values[flickableList.index]
-    property variant values : [ Camera.WhiteBalanceAuto,
-                                Camera.WhiteBalanceSunlight,
-                                Camera.WhiteBalanceCloudy,
-                                Camera.WhiteBalanceIncandescent,
-                                Camera.WhiteBalanceFluorescent ]
+#ifdef PLUGIN_SYMBIAN_TRACE_ENABLED
+#   include <e32debug.h>
+#endif /* PLUGIN_SYMBIAN_TRACE_ENABLED */
 
-    signal clicked
+#ifdef PLUGIN_SYMBIAN_TRACE_ENABLED
+#   define TRACE_FUNCTION_ENTRY         RDebug::Printf( "%s >", __PRETTY_FUNCTION__)
+#   define TRACE_FUNCTION_EXIT          RDebug::Printf( "%s <", __PRETTY_FUNCTION__)
+#   define TRACE_FUNCTION_ENTRY_EXIT    RDebug::Printf( "%s ><", __PRETTY_FUNCTION__)
+#   define TRACE_LOG(s)                 RDebug::Print s
+#else
+#   define TRACE_FUNCTION_ENTRY
+#   define TRACE_FUNCTION_EXIT
+#   define TRACE_FUNCTION_ENTRY_EXIT
+#   define TRACE_LOG
+#endif /* PLUGIN_SYMBIAN_TRACE_ENABLED */
 
-    width : 144
-    height: 70
-
-    BorderImage {
-        id: buttonImage
-        source: "images/toolbutton.sci"
-        width: wbMode.width; height: wbMode.height
-    }
-
-    FlickableList {
-        anchors.fill: buttonImage
-        id: flickableList
-        index: 2
-        items: [
-            "images/camera_auto_mode.png",
-            "images/camera_white_balance_sunny.png",
-            "images/camera_white_balance_cloudy.png",
-            "images/camera_white_balance_incandescent.png",
-            "images/camera_white_balance_flourescent.png"
-        ]
-
-        onClicked: wbMode.clicked()
-
-        delegate: Item {
-            width: flickableList.width
-            height: flickableList.height
-
-            Image {
-                source: flickableList.items[index]
-                anchors.centerIn: parent
-            }
+#define RET_IF_FALSE(e) \
+    if (e == false) \
+        { \
+        return; \
         }
-    }
-}
 
+#define RET_BOOL_IF_FALSE(e) \
+    if (e == false) \
+        { \
+        return e; \
+        }
+
+#define RET_ERR_IF_ERR(e) \
+    if (e != 0) \
+        { \
+        return e; \
+        }
+
+#endif /* XACOMMON_H */

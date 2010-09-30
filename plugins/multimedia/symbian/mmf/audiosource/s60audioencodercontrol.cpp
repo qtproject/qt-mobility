@@ -53,10 +53,15 @@ S60AudioEncoderControl::S60AudioEncoderControl(QObject *session, QObject *parent
     QAudioFormat fmt = m_session->format();
     // medium, 22050Hz mono S16
     fmt.setSampleType(QAudioFormat::SignedInt);
-    fmt.setSampleSize(16);
-    fmt.setFrequency(22050);
+    if (fmt.codec().compare("PCM", Qt::CaseInsensitive) == 0) {
+        fmt.setSampleSize(16);
+        fmt.setFrequency(22050);
+    }
     fmt.setChannels(1);
     m_session->setFormat(fmt);
+    m_settings.setChannelCount(fmt.channels());
+    m_settings.setCodec(fmt.codec());
+    m_settings.setSampleRate(fmt.sampleRate());
 }
 
 S60AudioEncoderControl::~S60AudioEncoderControl()
