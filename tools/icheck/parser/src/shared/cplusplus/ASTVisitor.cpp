@@ -61,7 +61,7 @@
 #include "ASTVisitor.h"
 #include "AST.h"
 #include "TranslationUnit.h"
-#include "Control.h"
+#include "CppControl.h"
 
 using namespace CPlusPlus;
 

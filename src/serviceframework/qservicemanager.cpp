@@ -117,7 +117,7 @@ public:
     ~QServicePluginCleanup()
     {
         if (m_loader) {
-            m_loader->unload();
+            //m_loader->unload();
             delete m_loader;
         }
     }
@@ -465,7 +465,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
         }
     }
 
-    loader->unload();
+    //loader->unload();
     delete loader;
     d->setError(PluginLoadingFailed);
 
@@ -595,7 +595,7 @@ bool QServiceManager::addService(QIODevice *device)
             result = false;
             d->dbManager->unregisterService(data.name, scope);
         }
-        loader->unload();
+        //loader->unload();
         delete loader;
     } else {
         d->setError();
@@ -651,7 +651,7 @@ bool QServiceManager::removeService(const QString& serviceName)
             pluginIFace->uninstallService();
         else
             qWarning() << "QServiceManager: unable to invoke uninstallService() on removed service";
-        loader->unload();
+        //loader->unload();
         delete loader;
     }
 
