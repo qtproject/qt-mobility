@@ -171,7 +171,7 @@
  * error(QMediaPlayer::ServiceMissingError, tr("Service has not been started"));
  * and returns value 's' from function immediately.
  */
-#define RET_s_IF_p_IS_NULL_EMIT_RESOURCE_ERROR(p, s) \
+#define RET_s_IF_p_IS_NULL_EMIT_PLAYER_RESOURCE_ERROR(p, s) \
     if (p == NULL) { \
         emit error(QMediaPlayer::ServiceMissingError, tr("Service has not been started")); \
         SIGNAL_EMIT_TRACE1("emit error(QMediaPlayer::ServiceMissingError, tr(\"Service has not been started\"))"); \
@@ -182,7 +182,7 @@
  * error(QMediaPlayer::ServiceMissingError, tr("Service has not been started"));
  * and returns from function immediately.
  */
-#define RET_IF_p_IS_NULL_EMIT_RESOURCE_ERROR(p) \
+#define RET_IF_p_IS_NULL_EMIT_PLAYER_RESOURCE_ERROR(p) \
     if (p == NULL) { \
         emit error(QMediaPlayer::ServiceMissingError, tr("Service has not been started")); \
         SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::ServiceMissingError, tr(\"Service has not been started\"))"); \

@@ -40,14 +40,12 @@
 ****************************************************************************/
 
 import Qt 4.7
-import Qt.multimedia 4.7
+import QtMultimediaKit 1.1
 
 Item {
-    id: flashMode
-    property int value : values[flickableList.index]
-    property variant values : [ Camera.FlashAuto, Camera.FlashOff, Camera.FlashOn, Camera.FlashRedEyeReduction ]
-
-    signal clicked
+    id: propertyButton
+    property alias value : popup.currentValue
+    property alias model : popup.model
 
     width : 144
     height: 70
@@ -55,26 +53,55 @@ Item {
     BorderImage {
         id: buttonImage
         source: "images/toolbutton.sci"
-        width: flashMode.width; height: flashMode.height
+        width: propertyButton.width; height: propertyButton.height
     }
 
-    FlickableList {
-        anchors.fill: buttonImage
-        id: flickableList
-        index: 1
-        items: ["images/camera_flash_auto.png", "images/camera_flash_off.png",
-                "images/camera_flash_fill.png", "images/camera_flash_redeye.png"]
+    CameraButton {
+        anchors.fill: parent
+        Image {
+            anchors.centerIn: parent
+            source: popup.currentItem.icon
+        }
 
-        onClicked: flashMode.clicked()
+        onClicked: popup.toggle()
+    }
 
-        delegate: Item {
-            width: flickableList.width
-            height: flickableList.height
+    CameraPropertyPopup {
+        id: popup
+        anchors.right: parent.left
+        anchors.rightMargin: 16
+        anchors.top: parent.top
+        state: "invisible"
+        visible: opacity > 0
 
-            Image {
-                source: flickableList.items[index]
-                anchors.centerIn: parent
+        currentValue: propertyButton.value
+
+        states: [
+            State {
+                name: "invisible"
+                PropertyChanges { target: popup; opacity: 0 }
+                PropertyChanges { target: camera; focus: true }
+            },
+
+            State {
+                name: "visible"
+                PropertyChanges { target: popup; opacity: 1.0 }
             }
+        ]
+
+        transitions: Transition {
+            NumberAnimation { properties: "opacity"; duration: 100 }
+        }
+
+        function toggle() {
+            if (state == "visible")
+                state = "invisible";
+            else
+                state = "visible";
+        }
+
+        onSelected: {
+            popup.state = "invisible"
         }
     }
 }

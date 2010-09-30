@@ -60,11 +60,14 @@ class QMultimediaDeclarativeModule : public QDeclarativeExtensionPlugin
 public:
     virtual void registerTypes(const char *uri)
     {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("Qt.multimedia"));
+        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMultimediaKit"));
 
         qmlRegisterType<QSoundEffect>(uri, 1, 1, "SoundEffect");
         qmlRegisterType<QDeclarativeAudio>(uri, 1, 1, "Audio");
+        // Disable due to lack of QGraphicsVideoItem support on symbian
+#ifndef Q_OS_SYMBIAN
         qmlRegisterType<QDeclarativeVideo>(uri, 1, 1, "Video");
+#endif
         qmlRegisterType<QDeclarativeCamera>(uri, 1, 1, "Camera");
     }
 

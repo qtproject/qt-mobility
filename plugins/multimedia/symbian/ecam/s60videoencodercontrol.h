@@ -51,6 +51,9 @@ QT_USE_NAMESPACE
 
 class S60VideoCaptureSession;
 
+/*
+ * Control for video settings when recording video using QMediaRecorder.
+ */
 class S60VideoEncoderControl : public QVideoEncoderControl
 {
     Q_OBJECT
@@ -81,29 +84,6 @@ public: // QVideoEncoderControl
     QStringList supportedEncodingOptions(const QString &codec) const;
     QVariant encodingOption(const QString &codec, const QString &name) const;
     void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
-
-private: // Internal
-
-//    QString videoCodec() const;
-//    void setVideoCodec(const QString &codecName);
-
-//    int bitRate() const;
-//    void setBitRate(int);
-
-//    QtMultimediaKit::EncodingQuality quality() const;
-//    void setQuality(QtMultimediaKit::EncodingQuality);
-/*
-    qreal minimumFrameRate() const;
-    qreal maximumFrameRate() const;
-*/
-//    qreal frameRate() const;
-//    void setFrameRate(qreal frameRate);
-/*
-    QSize minimumResolution() const;
-    QSize maximumResolution() const;
-*/
-//    QSize videoResolution() const;
-//    void setResolution(const QSize resolution);
 
 private: // Data
 
