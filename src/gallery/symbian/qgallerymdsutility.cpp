@@ -392,9 +392,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EDuration:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KDurationProperty );
@@ -408,9 +407,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EPerformer:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                inputItem->Def().Name() != MdeConstants::Video::KVideoObject &&
+                inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
@@ -423,9 +422,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EAlbumTitle:
         {
-            if (inputItem->Def().Name() != MdeConstants::MediaObject::KMediaObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                inputItem->Def().Name() != MdeConstants::Video::KVideoObject &&
+                inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
                 break;
             }
             CMdEPropertyDef &propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumProperty);
@@ -438,9 +437,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EAlbumArtist:
         {
-            if (inputItem->Def().Name() != MdeConstants::MediaObject::KMediaObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
                 break;
             }
             CMdEPropertyDef &propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumArtistProperty);
@@ -453,9 +451,8 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EComposer:
         {
-            if (inputItem->Def().Name() != MdeConstants::MediaObject::KMediaObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
                 break;
             }
             CMdEPropertyDef &propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KComposerProperty);
@@ -467,27 +464,28 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
             break;
         }
     case ETrackNumber:
-            {
-                if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                        && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                        && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                    break;
-                }
-                CMdEPropertyDef &propDef = inputItem->Def().GetPropertyDefL(MdeConstants::MediaObject::KTrackProperty);
-                CMdEProperty* trackProp = NULL;
-                int foundIndex = inputItem->Property(propDef, trackProp);
-                if ( foundIndex != KErrNotFound && trackProp ) {
-                    unsigned long int value = trackProp->Uint32ValueL();
-                    output.setValue( value );
-                }
+        {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject)
                 break;
+
+    #ifdef MDS_25_92MCL_COMPILATION_ENABLED
+            CMdEPropertyDef &propDef = inputItem->Def().GetPropertyDefL(MdeConstants::MediaObject::KTrackProperty);
+    #else
+            CMdEPropertyDef &propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KTrackProperty);
+    #endif //MDS_25_92MCL_COMPILATION_ENABLED
+            CMdEProperty* trackProp = NULL;
+            int foundIndex = inputItem->Property(propDef, trackProp);
+            if ( foundIndex != KErrNotFound && trackProp ) {
+                unsigned long int value = trackProp->Uint32ValueL();
+                output.setValue( value );
             }
+            break;
+        }
 
     case EAudioCodec:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
                 break;
             }
 #ifdef MDS_25_92MCL_COMPILATION_ENABLED
@@ -584,9 +582,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EOrientation:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KOrientationProperty );
             CMdEProperty* orientationProp = NULL;
             int foundIndex = inputItem->Property( propDef, orientationProp );
@@ -598,9 +596,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EDateTaken:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KDateTimeOriginalProperty );
             CMdEProperty* dateProp = NULL;
             int foundIndex = inputItem->Property( propDef, dateProp );
@@ -611,9 +609,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case ECameraManufacturer:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KMakeProperty );
             CMdEProperty* makeProp = NULL;
             int foundIndex = inputItem->Property( propDef, makeProp );
@@ -624,9 +622,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case ECameraModel:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KModelProperty );
             CMdEProperty* modelProp = NULL;
             int foundIndex = inputItem->Property( propDef, modelProp );
@@ -637,9 +635,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EExposureProgram:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KExposureProgramProperty );
             CMdEProperty* exppProp = NULL;
             int foundIndex = inputItem->Property( propDef, exppProp );
@@ -651,9 +649,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EExposureTime:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KExposureTimeProperty );
             CMdEProperty* exptProp = NULL;
             int foundIndex = inputItem->Property( propDef, exptProp );
@@ -665,9 +663,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EFNumber:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KFNumberProperty );
             CMdEProperty* fnumProp = NULL;
             int foundIndex = inputItem->Property( propDef, fnumProp );
@@ -679,9 +677,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EFlashEnabled:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KFlashProperty );
             CMdEProperty* flashProp = NULL;
             int foundIndex = inputItem->Property( propDef, flashProp );
@@ -693,9 +691,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EFocalLength:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KFocalLengthIn35mmFilmProperty );
             CMdEProperty* focalProp = NULL;
             int foundIndex = inputItem->Property( propDef, focalProp );
@@ -707,9 +705,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EMeteringMode:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KMeteringModeProperty );
             CMdEProperty* metProp = NULL;
             int foundIndex = inputItem->Property( propDef, metProp );
@@ -721,9 +719,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EWhiteBalance:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KWhiteBalanceProperty );
             CMdEProperty* whiteProp = NULL;
             int foundIndex = inputItem->Property( propDef, whiteProp );
@@ -735,9 +733,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case ELanguage:
         {
-            if (inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
+            if (inputItem->Def().Name() != MdeConstants::Video::KVideoObject)
                 break;
-            }
+
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KAudioLanguageProperty );
             CMdEProperty* langProp = NULL;
             int foundIndex = inputItem->Property( propDef, langProp );
@@ -748,9 +746,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EFrameRate:
         {
-            if (inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
+            if (inputItem->Def().Name() != MdeConstants::Video::KVideoObject)
                 break;
-            }
+
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KFramerateProperty );
             CMdEProperty* framerProp = NULL;
             int foundIndex = inputItem->Property( propDef, framerProp );
@@ -762,9 +760,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS25L( CMdEObject *inputIte
         }
     case EResumePosition:
         {
-            if (inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
+            if (inputItem->Def().Name() != MdeConstants::Video::KVideoObject)
                 break;
-            }
+
             CMdEPropertyDef& propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KLastPlayPositionProperty );
             CMdEProperty* posProp = NULL;
             int foundIndex = inputItem->Property( propDef, posProp );
@@ -865,11 +863,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EAuthor:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                break;
-            }
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KAuthorProperty );
             if( !propDef )
                 return;
@@ -885,11 +878,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case ECopyright:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                break;
-            }
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KCopyrightProperty );
             if( !propDef )
                 return;
@@ -905,11 +893,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EDescription:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                break;
-            }
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KDescriptionProperty );
             if( !propDef )
                 return;
@@ -925,11 +908,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EComments:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                break;
-            }
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KCommentProperty );
             if( !propDef )
                 return;
@@ -945,11 +923,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case ERating:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                break;
-            }
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
             if( !propDef )
                 return;
@@ -966,11 +939,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EDuration:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                break;
-            }
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KDurationProperty );
             if( !propDef )
                 return;
@@ -987,11 +955,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EPerformer:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                break;
-            }
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
             if( !propDef )
                 return;
@@ -1007,11 +970,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EAlbumTitle:
         {
-            if (inputItem->Def().Name() != MdeConstants::MediaObject::KMediaObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                break;
-            }
             CMdEPropertyDef *propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumProperty);
             if( !propDef )
                 return;
@@ -1027,11 +985,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EAlbumArtist:
         {
-            if (inputItem->Def().Name() != MdeConstants::MediaObject::KMediaObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                break;
-            }
             CMdEPropertyDef *propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumArtistProperty);
             if( !propDef )
                 return;
@@ -1047,11 +1000,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EComposer:
         {
-            if (inputItem->Def().Name() != MdeConstants::MediaObject::KMediaObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                break;
-            }
             CMdEPropertyDef *propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KComposerProperty);
             if(!propDef)
                 return;
@@ -1066,33 +1014,23 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
             break;
         }
     case ETrackNumber:
-            {
-                if (inputItem->Def().Name() != MdeConstants::MediaObject::KMediaObject
-                        && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                        && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                    break;
-                }
-                CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KTrackProperty);
-                if( !propDef )
-                    return;
-
-                CMdEProperty* trackProp = NULL;
-                int foundIndex = inputItem->Property( *propDef, trackProp );
-                if ( foundIndex != KErrNotFound && trackProp ) {
-                    CMdEUint32Property*     uint32Property = NULL;
-                    uint32Property = ( CMdEUint32Property* )trackProp;
-                    unsigned long int value = uint32Property->Value();
-                    output.setValue( value );
-                }
-                break;
+        {
+            CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL(MdeConstants::Audio::KTrackProperty);
+            if( !propDef )
+                return;
+    
+            CMdEProperty* trackProp = NULL;
+            int foundIndex = inputItem->Property( *propDef, trackProp );
+            if ( foundIndex != KErrNotFound && trackProp ) {
+                CMdEUint32Property*     uint32Property = NULL;
+                uint32Property = ( CMdEUint32Property* )trackProp;
+                unsigned long int value = uint32Property->Value();
+                output.setValue( value );
             }
+            break;
+        }
     case EAudioCodec:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                break;
-            }
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KAudioFourCCProperty );
             if( !propDef )
                 return;
@@ -1110,11 +1048,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
     case EAudioBitrate:
     case EVideoBitrate:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                break;
-            }
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KBitrateProperty );
             if( !propDef )
                 return;
@@ -1131,11 +1064,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EPlayCount:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                break;
-            }
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
             if( !propDef )
                 return;
@@ -1152,9 +1080,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case ESampleRate:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject) {
-                break;
-            }
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Audio::KSamplingFrequencyProperty );
             if( !propDef )
                 return;
@@ -1171,11 +1096,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EWidth:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                break;
-            }
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KWidthProperty );
             if( !propDef )
                 return;
@@ -1192,11 +1112,6 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EHeight:
         {
-            if (inputItem->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && inputItem->Def().Name() != MdeConstants::Video::KVideoObject
-                    && inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
-                break;
-            }
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::MediaObject::KHeightProperty );
             if( !propDef )
                 return;
@@ -1213,9 +1128,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EOrientation:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KOrientationProperty );
             if( !propDef )
                 return;
@@ -1232,9 +1147,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EDateTaken:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KDateTimeOriginalProperty );
             if( !propDef )
                 return;
@@ -1250,9 +1165,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case ECameraManufacturer:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KMakeProperty );
             if( !propDef )
                 return;
@@ -1268,9 +1183,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case ECameraModel:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KModelProperty );
             if( !propDef )
                 return;
@@ -1286,9 +1201,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EExposureProgram:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KExposureProgramProperty );
             if( !propDef )
                 return;
@@ -1305,9 +1220,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EExposureTime:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KExposureTimeProperty );
             if( !propDef )
                 return;
@@ -1324,9 +1239,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EFNumber:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KFNumberProperty );
             if( !propDef )
                 return;
@@ -1343,9 +1258,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EFlashEnabled:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KFlashProperty );
             if( !propDef )
                 return;
@@ -1362,9 +1277,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EFocalLength:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KFocalLengthIn35mmFilmProperty );
             if( !propDef )
                 return;
@@ -1381,9 +1296,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EMeteringMode:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KMeteringModeProperty );
             if( !propDef )
                 return;
@@ -1400,9 +1315,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EWhiteBalance:
         {
-            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (inputItem->Def().Name() != MdeConstants::Image::KImageObject)
                 break;
-            }
+
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Image::KWhiteBalanceProperty );
             if( !propDef )
                 return;
@@ -1419,9 +1334,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EFrameRate:
         {
-            if (inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
+            if (inputItem->Def().Name() != MdeConstants::Video::KVideoObject)
                 break;
-            }
+
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KFramerateProperty );
             if( !propDef )
                 return;
@@ -1438,9 +1353,9 @@ void QDocumentGalleryMDSUtility::GetMetaDataFieldForMDS20L( CMdEObject *inputIte
         }
     case EResumePosition:
         {
-            if (inputItem->Def().Name() != MdeConstants::Video::KVideoObject) {
+            if (inputItem->Def().Name() != MdeConstants::Video::KVideoObject)
                 break;
-            }
+
             CMdEPropertyDef* propDef = inputItem->Def().GetPropertyDefL( MdeConstants::Video::KLastPlayPositionProperty );
             if( !propDef )
                 return;
@@ -1745,8 +1660,13 @@ CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefForMDS25L( const Q
         CMdEPropertyDef &propDef = def.GetPropertyDefL(MdeConstants::Audio::KAlbumArtistProperty);
         return &propDef;
     } else if (property == QDocumentGallery::trackNumber.name()) {
+#ifdef MDS_25_92MCL_COMPILATION_ENABLED
         CMdEObjectDef &def = defaultNameSpace.GetObjectDefL(MdeConstants::MediaObject::KMediaObject);
         CMdEPropertyDef& propDef = def.GetPropertyDefL(MdeConstants::MediaObject::KTrackProperty);
+#else
+        CMdEObjectDef &def = defaultNameSpace.GetObjectDefL(MdeConstants::Audio::KAudioObject);
+        CMdEPropertyDef& propDef = def.GetPropertyDefL(MdeConstants::Audio::KTrackProperty);
+#endif //MDS_25_92MCL_COMPILATION_ENABLED
         return &propDef;
     } else if (property == QDocumentGallery::composer.name()) {
         CMdEObjectDef &def = defaultNameSpace.GetObjectDefL(MdeConstants::Audio::KAudioObject);
@@ -2226,9 +2146,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         return false;
     case EAuthor:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KAuthorProperty );
@@ -2245,9 +2165,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case ECopyright:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject ) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KCopyrightProperty );
@@ -2264,9 +2184,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EDescription:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KDescriptionProperty );
@@ -2283,9 +2203,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EComments:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KCommentProperty );
@@ -2302,9 +2222,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case ERating:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
@@ -2320,9 +2240,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EDuration:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KDurationProperty );
@@ -2338,9 +2257,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EPerformer:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
@@ -2357,9 +2276,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EGenre:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef &propDef = item->Def().GetPropertyDefL(MdeConstants::MediaObject::KGenreProperty);
@@ -2376,9 +2295,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EComposer:
         {
-            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef &propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KComposerProperty);
@@ -2395,9 +2314,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EAlbumTitle:
         {
-            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef &propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumProperty);
@@ -2414,9 +2333,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EAlbumArtist:
         {
-            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef &propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumArtistProperty);
@@ -2433,12 +2352,14 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case ETrackNumber:
         {
-            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject)
                 return false;
-            }
+
+#ifdef MDS_25_92MCL_COMPILATION_ENABLED
             CMdEPropertyDef &propDef = item->Def().GetPropertyDefL(MdeConstants::MediaObject::KTrackProperty);
+#else            
+            CMdEPropertyDef &propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KTrackProperty);
+#endif //MDS_25_92MCL_COMPILATION_ENABLED
             CMdEProperty* trackProp = NULL;
             int foundIndex = item->Property(propDef, trackProp);
             if ( foundIndex != KErrNotFound && trackProp ) {
@@ -2451,9 +2372,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EAudioCodec:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
             }
 #ifdef MDS_25_92MCL_COMPILATION_ENABLED
@@ -2474,9 +2394,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
     case EAudioBitrate:
     case EVideoBitrate:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KBitrateProperty );
@@ -2492,9 +2412,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EPlayCount:
         {
-            if(item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
@@ -2510,9 +2430,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case ESampleRate:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject)
                 return false;
-            }
+
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Audio::KSamplingFrequencyProperty );
             CMdEProperty* samplingProp = NULL;
             int foundIndex = item->Property( propDef, samplingProp );
@@ -2526,9 +2446,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EWidth:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KWidthProperty );
@@ -2544,9 +2464,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EHeight:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KHeightProperty );
@@ -2562,9 +2482,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EOrientation:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject )
                 return false;
-            }
+
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KOrientationProperty );
             CMdEProperty* orientationProp = NULL;
             int foundIndex = item->Property( propDef, orientationProp );
@@ -2579,9 +2499,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EDateTaken:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KDateTimeOriginalProperty );
             CMdEProperty* dateProp = NULL;
             int foundIndex = item->Property( propDef, dateProp );
@@ -2595,9 +2515,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case ECameraManufacturer:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KMakeProperty );
             CMdEProperty* makeProp = NULL;
             int foundIndex = item->Property( propDef, makeProp );
@@ -2612,9 +2532,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case ECameraModel:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KModelProperty );
             CMdEProperty* modelProp = NULL;
             int foundIndex = item->Property( propDef, modelProp );
@@ -2629,9 +2549,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EExposureProgram:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KExposureProgramProperty );
             CMdEProperty* exppProp = NULL;
             int foundIndex = item->Property( propDef, exppProp );
@@ -2645,9 +2565,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EExposureTime:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KExposureTimeProperty );
             CMdEProperty* exptProp = NULL;
             int foundIndex = item->Property( propDef, exptProp );
@@ -2661,9 +2581,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EFNumber:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KFNumberProperty );
             CMdEProperty* fnumProp = NULL;
             int foundIndex = item->Property( propDef, fnumProp );
@@ -2677,9 +2597,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EFlashEnabled:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KFlashProperty );
             CMdEProperty* flashProp = NULL;
             int foundIndex = item->Property( propDef, flashProp );
@@ -2693,9 +2613,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EFocalLength:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KFocalLengthIn35mmFilmProperty );
             CMdEProperty* focalProp = NULL;
             int foundIndex = item->Property( propDef, focalProp );
@@ -2709,9 +2629,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EMeteringMode:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KMeteringModeProperty );
             CMdEProperty* metProp = NULL;
             int foundIndex = item->Property( propDef, metProp );
@@ -2725,9 +2645,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EWhiteBalance:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KWhiteBalanceProperty );
             CMdEProperty* whiteProp = NULL;
             int foundIndex = item->Property( propDef, whiteProp );
@@ -2742,9 +2662,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case ELanguage:
         {
-            if (item->Def().Name() != MdeConstants::Video::KVideoObject) {
+            if (item->Def().Name() != MdeConstants::Video::KVideoObject)
                 return false;
-            }
+
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KAudioLanguageProperty );
             CMdEProperty* langProp = NULL;
             int foundIndex = item->Property( propDef, langProp );
@@ -2760,9 +2680,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EFrameRate:
         {
-            if (item->Def().Name() != MdeConstants::Video::KVideoObject) {
+            if (item->Def().Name() != MdeConstants::Video::KVideoObject)
                 return false;
-            }
+
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KFramerateProperty );
             CMdEProperty* framerProp = NULL;
             int foundIndex = item->Property( propDef, framerProp );
@@ -2777,9 +2697,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS25L( CMdEObject *item, co
         }
     case EResumePosition:
         {
-            if (item->Def().Name() != MdeConstants::Video::KVideoObject) {
+            if (item->Def().Name() != MdeConstants::Video::KVideoObject)
                 return false;
-            }
+
             CMdEPropertyDef& propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KLastPlayPositionProperty );
             CMdEProperty* posProp = NULL;
             int foundIndex = item->Property( propDef, posProp );
@@ -2867,11 +2787,11 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         return false;
     case EAuthor:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
-            }
+            }            
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KAuthorProperty );
             if( !propDef )
                 return false;
@@ -2891,9 +2811,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case ECopyright:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KCopyrightProperty );
@@ -2915,9 +2835,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EDescription:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KDescriptionProperty );
@@ -2939,9 +2859,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EComments:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KCommentProperty );
@@ -2963,9 +2883,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case ERating:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KRatingProperty );
@@ -2986,9 +2906,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EDuration:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KDurationProperty );
@@ -3009,9 +2928,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EPerformer:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
@@ -3033,9 +2951,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EGenre:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL(MdeConstants::MediaObject::KGenreProperty);
@@ -3057,9 +2975,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EComposer:
         {
-            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KComposerProperty);
@@ -3081,9 +2999,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EAlbumTitle:
         {
-            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumProperty);
@@ -3105,9 +3023,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EAlbumArtist:
         {
-            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KAlbumArtistProperty);
@@ -3129,11 +3046,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case ETrackNumber:
         {
-            if (item->Def().Name() != MdeConstants::MediaObject::KMediaObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject)
                 return false;
-            }
+
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL(MdeConstants::Audio::KTrackProperty);
             if( !propDef )
                 return false;
@@ -3152,9 +3067,8 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EAudioCodec:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KAudioFourCCProperty );
@@ -3176,9 +3090,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
     case EAudioBitrate:
     case EVideoBitrate:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KBitrateProperty );
@@ -3199,9 +3113,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EPlayCount:
         {
-            if(item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KAccessCountProperty );
@@ -3222,9 +3136,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case ESampleRate:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject)
                 return false;
-            }
+
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Audio::KSamplingFrequencyProperty );
             if( !propDef )
                 return false;
@@ -3243,9 +3157,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EWidth:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KWidthProperty );
@@ -3266,9 +3180,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EHeight:
         {
-            if (item->Def().Name() != MdeConstants::Audio::KAudioObject
-                    && item->Def().Name() != MdeConstants::Video::KVideoObject
-                    && item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Audio::KAudioObject &&
+                item->Def().Name() != MdeConstants::Video::KVideoObject &&
+                item->Def().Name() != MdeConstants::Image::KImageObject) {
                 return false;
             }
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::MediaObject::KHeightProperty );
@@ -3289,9 +3203,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EOrientation:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject ) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KOrientationProperty );
             if( !propDef )
                 return false;
@@ -3311,9 +3225,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EDateTaken:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KDateTimeOriginalProperty );
             if( !propDef )
                 return false;
@@ -3332,9 +3246,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case ECameraManufacturer:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KMakeProperty );
             if( !propDef )
                 return false;
@@ -3354,9 +3268,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case ECameraModel:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KModelProperty );
             if( !propDef )
                 return false;
@@ -3376,9 +3290,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EExposureProgram:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KExposureProgramProperty );
             if( !propDef )
                 return false;
@@ -3397,9 +3311,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EExposureTime:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KExposureTimeProperty );
             if( !propDef )
                 return false;
@@ -3418,9 +3332,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EFNumber:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KFNumberProperty );
             if( !propDef )
                 return false;
@@ -3439,9 +3353,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EFlashEnabled:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KFlashProperty );
             if( !propDef )
                 return false;
@@ -3460,9 +3374,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EFocalLength:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KFocalLengthIn35mmFilmProperty );
             if( !propDef )
                 return false;
@@ -3481,9 +3395,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EMeteringMode:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KMeteringModeProperty );
             if( !propDef )
                 return false;
@@ -3502,9 +3416,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EWhiteBalance:
         {
-            if (item->Def().Name() != MdeConstants::Image::KImageObject) {
+            if (item->Def().Name() != MdeConstants::Image::KImageObject)
                 return false;
-            }
+
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Image::KWhiteBalanceProperty );
             if( !propDef )
                 return false;
@@ -3524,9 +3438,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EFrameRate:
         {
-            if (item->Def().Name() != MdeConstants::Video::KVideoObject) {
+            if (item->Def().Name() != MdeConstants::Video::KVideoObject)
                 return false;
-            }
+
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KFramerateProperty );
             if( !propDef )
                 return false;
@@ -3546,9 +3460,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldForMDS20L( CMdEObject *item, co
         }
     case EResumePosition:
         {
-            if (item->Def().Name() != MdeConstants::Video::KVideoObject) {
+            if (item->Def().Name() != MdeConstants::Video::KVideoObject)
                 return false;
-            }
+
             CMdEPropertyDef* propDef = item->Def().GetPropertyDefL( MdeConstants::Video::KLastPlayPositionProperty );
             if( !propDef )
                 return false;
