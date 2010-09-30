@@ -67,7 +67,7 @@
 #include "Names.h"
 #include "CoreTypes.h"
 #include "Symbols.h"
-#include "Control.h"
+#include "CppControl.h"
 #include "Scope.h"
 
 using namespace CPlusPlus;
