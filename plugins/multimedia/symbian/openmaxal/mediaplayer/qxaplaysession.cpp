@@ -214,7 +214,7 @@ bool QXAPlaySession::isMuted()
         TInt err = mImpl->getMute(bCurrMute);
         if(err == KErrNone)
             return bCurrMute;
-    }
+    }
     
     return EFalse;
 }
