@@ -62,6 +62,8 @@ unix:!simulator {
         contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
         SOURCES += qsysteminfo_linux_common.cpp
         HEADERS += qsysteminfo_linux_common_p.h
+
+        contains(blkid_enabled, yes):DEFINES += BLKID_SUPPORTED
     }
 
     !maemo5:!maemo6:linux-*: {

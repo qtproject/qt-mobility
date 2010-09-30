@@ -74,7 +74,7 @@
 #endif
 #endif
 
-#if defined(QT_NO_UDISKS)
+#if defined(BLKID_SUPPORTED)
 #include <blkid/blkid.h>
 #include <linux/fs.h>
 #endif
@@ -2072,6 +2072,7 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
         }
     }
 //last resort
+#if defined (BLKID_SUPPORTED)
     int fd;
     blkid_probe pr = NULL;
     uint64_t size;
@@ -2095,6 +2096,7 @@ QString QSystemStorageInfoLinuxCommonPrivate::uriForDrive(const QString &driveVo
         close(fd);
         return label;
     }
+#endif
 #endif
     return QString();
 }
