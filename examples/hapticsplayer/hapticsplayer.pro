@@ -12,9 +12,9 @@ INCLUDEPATH += . $$QT_MOBILITY_SOURCE_TREE/src/feedback
 # LIBS += -lQtFeedback
 
 # Input
-HEADERS += dialog.h
-SOURCES += dialog.cpp main.cpp
-FORMS += dialog.ui
+HEADERS += hapticsplayer.h
+SOURCES += hapticsplayer.cpp main.cpp
+FORMS += hapticsplayer.ui
 
 CONFIG += mobility
 MOBILITY = feedback

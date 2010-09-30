@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,54 +38,56 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QFEEDBACK_SYMBIAN_H
-#define QFEEDBACK_SYMBIA_H
 
 #include <qmobilityglobal.h>
 
-#include <qfeedbackplugininterfaces.h>
+#include "ui_hapticsplayer.h"
 
-#include <phonon/mediaobject.h>
+#include <qfeedbackactuator.h>
+#include <qfeedbackeffect.h>
 
-QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 
-class QFeedbackMediaObject;
+#ifndef HAPTICSPLAYER_H_
+#define HAPTICSPLAYER_H_
 
-class QFeedbackPhonon : public QObject, public QFeedbackFileInterface
+class HapticsPlayer : public QWidget
 {
     Q_OBJECT
-    Q_INTERFACES(QTM_NAMESPACE::QFeedbackFileInterface)
 public:
-    QFeedbackPhonon();
-    virtual ~QFeedbackPhonon();
-
-    virtual void setLoaded(QFeedbackFileEffect*, bool);
-    virtual void setEffectState(QFeedbackFileEffect *, QFeedbackEffect::State);
-    virtual QFeedbackEffect::State effectState(const QFeedbackFileEffect *);
-    virtual int effectDuration(const QFeedbackFileEffect*);
-    virtual QStringList supportedMimeTypes();
+    HapticsPlayer();
 
 private Q_SLOTS:
-    void mediaObjectStateChanged();
+    void actuatorChanged();
+    void enabledChanged(bool);
+    void playPauseClicked();
+    void durationChanged(int);
+    void intensityChanged(int);
+
+    void attackTimeChanged(int);
+    void attackIntensityChanged(int);
+    void fadeTimeChanged(int);
+    void fadeIntensityChanged(int);
+
+    void periodChanged(int value);
+    void periodToggled(bool on);
+
+    //High-level API
+    void instantPlayClicked();
+
+    //File API
+    void browseClicked();
+    void filePlayPauseClicked();
+
+protected:
+    void timerEvent(QTimerEvent *);
 
 private:
-    QHash<const QFeedbackFileEffect *, QFeedbackMediaObject*> audioPlayers;
+    QFeedbackActuator currentActuator() const;
+    Ui_HapticsPlayer ui;
+    QFeedbackHapticsEffect effect;
+    QFeedbackFileEffect fileEffect;
 };
-
-class QFeedbackMediaObject : public Phonon::MediaObject
-{
-    Q_OBJECT
-public:
-    QFeedbackMediaObject(QFeedbackPhonon *parent, QFeedbackFileEffect *effect) : Phonon::MediaObject(parent), effect(effect)
-    {
-        connect(this, SIGNAL(stateChanged(Phonon::State, Phonon::State)), parent, SLOT(mediaObjectStateChanged())); 
-        connect(this, SIGNAL(finished()), SLOT(stop())); 
-    }
-
-    QFeedbackFileEffect *effect;
-};
-
-QT_END_HEADER
 
 #endif
+
