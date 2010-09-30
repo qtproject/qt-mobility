@@ -160,6 +160,7 @@ contains(mobility_modules,multimedia) {
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
+        qsoundeffect \
         qcamera \
         qpaintervideosurface \
         qvideowidget \
