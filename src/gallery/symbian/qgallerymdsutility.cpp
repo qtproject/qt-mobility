@@ -1559,41 +1559,6 @@ HBufC* QDocumentGalleryMDSUtility::qStringToS60Desc(const QString& string)
     return str.Alloc();
 }
 
-/*!
- Converts \a desc a Symbian S60 8 bit descriptor (UTF8 string) to a QString.
- Returns the converted QString on success; otherwise returns null QString
- */
-QString QDocumentGalleryMDSUtility::s60Desc8ToQString(const TDesC8& desc)
-{
-    QString qtString;
-    HBufC* s60str;
-    TRAPD(error, s60str = CnvUtfConverter::ConvertToUnicodeFromUtf8L(desc));
-    if (error == KErrNone) {
-        qtString = QString::fromUtf16(s60str->Ptr(), s60str->Length());
-        delete s60str;
-    }
-    return qtString;
-}
-
-/*!
- Converts \a string , a QString, to a Symbian S60 8 bit descriptor (UTF8 string).
-
- Note: Ownership of the returned descriptor (string) is transferred to the caller
-
- Returns a pointer to a Symbian S60 descriptor containing the UTF8 string on success;
- otherwise returns NULL pointer
- */
-HBufC8* QDocumentGalleryMDSUtility::qStringToS60Desc8(const QString& string)
-{
-    TPtrC16 str(reinterpret_cast<const TUint16*>(string.utf16()));
-    HBufC8* s60str;
-    TRAPD(error, s60str = CnvUtfConverter::ConvertFromUnicodeToUtf8L(str));
-    if (error != KErrNone) {
-        return NULL;
-    }
-    return s60str;
-}
-
 QDateTime QDocumentGalleryMDSUtility::symbianTTimetoQDateTime(const TTime& time)
 {
     TDateTime dateTime = time.DateTime();
@@ -2086,9 +2051,9 @@ bool QDocumentGalleryMDSUtility::SetMetaDataFieldL( CMdEObject *item, const QVar
         return false;
     
 #ifdef MDS_25_COMPILATION_ENABLED
-    SetMetaDataFieldForMDS25L( item, value, key );
+    return SetMetaDataFieldForMDS25L( item, value, key );
 #else
-    SetMetaDataFieldForMDS20L( item, value, key );
+    return SetMetaDataFieldForMDS20L( item, value, key );
 #endif
 }
 
