@@ -97,7 +97,6 @@ private:
     QPushButton *m_updateBtn;
     QList<QGeoRoute> m_routes;
     QGeoRouteRequest::TravelModes m_requestTravelModes;
-    QGeoRouteRequest::AvoidFeatureTypes m_requestAvoidTypes;
     QGeoRouteRequest::RouteOptimizations m_requestRouteOptimizations;
 };
 #endif /* ROUTETAB_H_ */
