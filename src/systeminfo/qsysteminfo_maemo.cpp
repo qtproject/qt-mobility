@@ -818,6 +818,7 @@ void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar var1, ushort var
     }
     if (currentCellId != newCellId) {
         currentCellId = newCellId;
+        emit cellIdChanged(newCellId);
     }
     if (currentMCC != newMobileCountryCode) {
         currentMCC = newMobileCountryCode;
@@ -939,6 +940,53 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
     }
 
     return -1;
+}
+
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
+{
+    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+
+    return orientation;
+}
+
+
+float QSystemDisplayInfoPrivate::contrast(int screen)
+{
+    Q_UNUSED(screen);
+
+    return 0.0;
+}
+
+int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+        dpi = QDesktopWidget().screenGeometry().width() / (physicalWidth(0) / 25.4);
+    }
+    return dpi;
+}
+
+int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+        dpi = QDesktopWidget().screenGeometry().height() / (physicalHeight(0) / 25.4);
+    }
+    return dpi;
+}
+
+int QSystemDisplayInfoPrivate::physicalHeight(int screen)
+{
+    int height=0;
+
+    return height;
+}
+
+int QSystemDisplayInfoPrivate::physicalWidth(int screen)
+{
+    int width=0;
+
+    return width;
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)

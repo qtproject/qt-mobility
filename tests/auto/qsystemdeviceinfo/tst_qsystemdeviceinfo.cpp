@@ -52,6 +52,7 @@ Q_DECLARE_METATYPE(QSystemDeviceInfo::InputMethodFlags);
 Q_DECLARE_METATYPE(QSystemDeviceInfo::Profile);
 Q_DECLARE_METATYPE(QSystemDeviceInfo::SimStatus);
 
+Q_DECLARE_METATYPE(QSystemDeviceInfo::KeyboardTypeFlags);
 
 class tst_QSystemDeviceInfo : public QObject
 {
@@ -81,8 +82,9 @@ private slots:
 
     void tst_currentBluetoothPowerState();
 
-    //    void tst_powerState_data();
-//    void tst_powerState();
+    void tst_keyboardType();
+    void tst_isWirelessKeyboardConnected();
+    void tst_isKeyboardFlipOpen();
 
 };
 /*
@@ -102,6 +104,9 @@ void tst_QSystemDeviceInfo::initTestCase()
     qRegisterMetaType<QSystemDeviceInfo::Profile>("QSystemDeviceInfo::Profile");
 
     qRegisterMetaType<QSystemDeviceInfo::SimStatus>("QSystemDeviceInfo::SimStatus");
+
+    qRegisterMetaType<QSystemDeviceInfo::KeyboardTypeFlags>("QSystemDeviceInfo::KeyboardTypeFlags");
+
 }
 
 void tst_QSystemDeviceInfo::tst_inputMethodType()
@@ -237,6 +242,35 @@ void tst_QSystemDeviceInfo::tst_currentBluetoothPowerState()
     bool state = di.currentPowerState();
     QVERIFY(state || !state);
 }
+
+
+void tst_QSystemDeviceInfo::tst_keyboardType()
+{
+    QSystemDeviceInfo di;
+    QSystemDeviceInfo::KeyboardTypeFlags  flags = di.keyboardType();
+
+    QVERIFY( (flags && QSystemDeviceInfo::UnknownKeyboard == QSystemDeviceInfo::UnknownKeyboard)
+             || (flags && QSystemDeviceInfo::SoftwareKeyboard ==  QSystemDeviceInfo::SoftwareKeyboard)
+             || (flags && QSystemDeviceInfo::ITUKeypad ==  QSystemDeviceInfo::ITUKeypad)
+             || (flags && QSystemDeviceInfo::HalfQwertyKeyboard == QSystemDeviceInfo::HalfQwertyKeyboard)
+             || (flags && QSystemDeviceInfo::FullQwertyKeyboard == QSystemDeviceInfo::FullQwertyKeyboard)
+             || (flags && QSystemDeviceInfo::WirelessKeyboard ==  QSystemDeviceInfo::WirelessKeyboard));
+}
+
+void tst_QSystemDeviceInfo::tst_isWirelessKeyboardConnected()
+{
+    QSystemDeviceInfo di;
+   bool on = di.isWirelessKeyboardConnected();
+   QVERIFY(on || !on);
+}
+
+void tst_QSystemDeviceInfo::tst_isKeyboardFlipOpen()
+{
+    QSystemDeviceInfo di;
+   bool on = di.isKeyboardFlipOpen();
+   QVERIFY(on || !on);
+}
+
 
 QTEST_MAIN(tst_QSystemDeviceInfo)
 #include "tst_qsystemdeviceinfo.moc"

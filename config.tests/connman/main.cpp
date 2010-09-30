@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,49 +38,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSYSTEMDISPLAYINFO_H
-#define QSYSTEMDISPLAYINFO_H
+#if defined(QT_NO_DBUS)
+sjkp //error is no QtDBus
+#endif
+#include <connman/version.h>
 
-#include <QObject>
-#include "qmobilityglobal.h"
-
-QT_BEGIN_HEADER
-QTM_BEGIN_NAMESPACE
-
-class QSystemDisplayInfoPrivate;
-
-class  Q_SYSINFO_EXPORT QSystemDisplayInfo : public QObject
+int main(int argc, char** argv)
 {
-    Q_OBJECT
-    Q_ENUMS(DisplayOrientation)
-
-public:
-
-    explicit QSystemDisplayInfo(QObject *parent = 0);
-    ~QSystemDisplayInfo();
-
-    enum DisplayOrientation {
-        Unknown = 0,
-        Landscape,
-        Portrait,
-        InvertedLandscape,
-        InvertedPortrait
-    };
-
-    static int displayBrightness(int screen);
-    static int colorDepth(int screen);
-
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-    float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
-};
-
-
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QSYSTEMDISPLAYINFO_H
+    return 0;
+}
