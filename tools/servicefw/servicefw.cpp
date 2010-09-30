@@ -44,6 +44,7 @@
 #include <QtCore>
 #include <QTextStream>
 #include <qservicemanager.h>
+#include <servicemetadata_p.h>
 #include <QString>
 #include <QDir>
 
@@ -69,7 +70,7 @@ public slots:
     void search(const QStringList &args);
     void add(const QStringList &args);
     void remove(const QStringList &args);
-    void autostart(const QStringList &args);
+    void dbusservice(const QStringList &args);
 
 private:
     bool setOptions(const QStringList &options);
@@ -128,17 +129,17 @@ void CommandProcessor::showUsage(QTextStream *stream)
 {
     *stream << "Usage: servicefw [options] <command> [command parameters]\n\n"
             "Commands:\n"
-            "\tbrowse     List all registered services\n"
-            "\tsearch     Search for a service or interface\n"
-            "\tadd        Register a service\n"
-            "\tremove     Unregister a service\n"
-            "\tautostart  Generates a .service file for D-Bus service autostart\n"
+            "\tbrowse         List all registered services\n"
+            "\tsearch         Search for a service or interface\n"
+            "\tadd            Register a service\n"
+            "\tremove         Unregister a service\n"
+            "\tdbusservice    Generates a .service file for D-Bus service autostart\n"
             "\n"
             "Options:\n"
-            "\t--system   Use the system-wide services database instead of the\n"
-            "\t           user-specific database\n"
-            "\t--user     Use the user-specific services database for add/remove.\n"
-            "\t           This is the default\n"
+            "\t--system       Use the system-wide services database instead of the\n"
+            "\t               user-specific database\n"
+            "\t--user         Use the user-specific services database for add/remove.\n"
+            "\t               This is the default\n"
             "\n";
 }
 
@@ -221,11 +222,6 @@ void CommandProcessor::add(const QStringList &args)
     
         setErrorCode(error);
     }
-
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    // exit the event loop for maemo
-    QCoreApplication::exit(0);
-#endif
 }
 
 void CommandProcessor::remove(const QStringList &args)
@@ -242,17 +238,21 @@ void CommandProcessor::remove(const QStringList &args)
         *stdoutStream << "Error: cannot unregister service " << service << '\n';
 }
 
-void CommandProcessor::autostart(const QStringList &args)
+void CommandProcessor::dbusservice(const QStringList &args)
 {
     if (args.isEmpty() || args.size() == 1) {
-        *stdoutStream << "Usage:\n\tautostart <service-name> <service-file>\n";
+        *stdoutStream << "Usage:\n\tautostart <service-xml-file> <service-file>\n";
         return;
     }
-    
-    const QString &service = args[0];
-    QList<QServiceInterfaceDescriptor> list = serviceManager->findInterfaces(service);
-    if (list.size() == 0) {
-        *stdoutStream << "Error: cannot find any registered services for " << service << '\n';
+  
+#if defined(QT_NO_DBUS)
+    *stdoutStream << "Error: no D-Bus module found in Qt\n";
+    return;
+#endif
+
+    const QString &xmlPath = args[0];
+    if (!QFile::exists(xmlPath)) {
+        *stdoutStream << "Error: cannot find xml file at " << xmlPath << '\n';
         return;
     }
 
@@ -261,25 +261,61 @@ void CommandProcessor::autostart(const QStringList &args)
         *stdoutStream << "Error: cannot find service file " << servicePath << '\n';
         return;
     }
-
-    QDir dir(QDir::homePath());
-    bool bleh = dir.mkpath(".local/share/dbus-1/services/");
-
-    const QString &name = "com.nokia.qtmobility.sfw." + service;
-    const QString &exec = QFileInfo(args[1]).absoluteFilePath();
-    const QString &file = QDir::homePath() + "/.local/share/dbus-1/services/" + 
-                          list[0].interfaceName() + ".service";
     
-    QFile data(file);
-    if (data.open(QFile::WriteOnly)) {
-        QTextStream out(&data);
-        out << "[D-BUS Service]\n"
-            << "Name=" << name << '\n'
-            << "Exec=" << exec;
+    QFile *f = new QFile(xmlPath);
+    ServiceMetaData parser(f);
+    if (!parser.extractMetadata()) {
+        *stdoutStream << "Error: invalid service xml at " << xmlPath << '\n';
+        return;
     }
-    data.close();
 
-    *stdoutStream << "Generated D-Bus autostart file " << file << '\n';
+    const ServiceMetaDataResults results = parser.parseResults();
+    if (results.type != QService::InterProcess) {
+        *stdoutStream << "Error: not an inter-process service xml at " << xmlPath << '\n';
+        return;
+    }
+
+    QString path;
+    if (serviceManager->scope() == QService::UserScope) {
+        // the d-bus xdg environment variable for the local service paths
+        QString xdgPath = getenv("XDG_DATA_HOME");
+        if (xdgPath == "") {
+            // if not supplied generate in default
+            QDir dir(QDir::homePath());
+            dir.mkpath(".local/share/dbus-1/services/");
+            path = QDir::homePath() + "/.local/share/dbus-1/services/";    
+        } else {
+            path = xdgPath;
+        }
+    } else {
+        path = "/usr/share/dbus-1/services/";    
+    }
+
+    const QString &name = "com.nokia.qtmobility.sfw." + results.name;
+    const QString &exec = QFileInfo(args[1]).absoluteFilePath();
+
+    QStringList names;
+    foreach (const QServiceInterfaceDescriptor &interface, results.interfaces) {
+        names << interface.interfaceName();
+    }
+    names.removeDuplicates();
+
+    for (int i = 0; i < names.size(); i++) {
+        const QString &file = path + names.at(i) + ".service";
+        QFile data(file);
+        if (data.open(QFile::WriteOnly)) {
+            QTextStream out(&data);
+            out << "[D-BUS Service]\n"
+                << "Name=" << name << '\n'
+                << "Exec=" << exec;
+            data.close();
+        } else {
+            *stdoutStream << "Error: cannot write to " << file << " (insufficient permissions)" << '\n';
+            return;
+        }
+
+        *stdoutStream << "Generated D-Bus autostart file " << file << '\n';
+    }
 }
 
 bool CommandProcessor::setOptions(const QStringList &options)
