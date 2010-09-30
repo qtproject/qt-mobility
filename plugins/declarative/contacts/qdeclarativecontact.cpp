@@ -38,41 +38,71 @@
 **
 ****************************************************************************/
 
-#ifndef QMLCONTACTDETAILFIELD_H
-#define QMLCONTACTDETAILFIELD_H
+#include "qcontactdetails.h"
+#include "qcontactmanager.h"
+#include "qdeclarativecontact_p.h"
+#include "qdeclarativecontactdetail_p.h"
+#include "qdeclarativecontactmetaobject_p.h"
 
-#include <QDeclarativePropertyMap>
+#include <QDeclarativeListProperty>
 
 
-
-class QMLContactDetailField : public QObject
+QDeclarativeContact::QDeclarativeContact(QObject *parent)
+    :QObject(parent),
+    d(new QDeclarativeContactMetaObject(this, QContact()))
 {
-    Q_OBJECT
-public:
-    Q_PROPERTY(QString detailName READ detailName NOTIFY detailNameChanged)
-    Q_PROPERTY(QString key READ key NOTIFY keyChanged)
-    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
-    QMLContactDetailField(QObject* parent = 0);
-
-    void setDetailPropertyMap(QDeclarativePropertyMap* map);
-
-    void setKey(const QString& key);
-    QString key() const;
-
-    QVariant value() const;
-    void setValue(const QVariant& value);
-
-    QString detailName() const;
-    void setDetailName(const QString& name);
-signals:
-    void keyChanged();
-    void valueChanged();
-    void detailNameChanged();
-private:
-    QDeclarativePropertyMap* m_map;
-    QString m_key;
-    QString m_detailName;
-};
+}
 
 
-#endif // QMLCONTACTDETAILFIELD_H
+QDeclarativeContact::QDeclarativeContact(const QContact& contact, const QMap<QString, QContactDetailDefinition>& defs, QObject *parent)
+    :QObject(parent),
+    d(new QDeclarativeContactMetaObject(this, contact))
+{
+    setDetailDefinitions(defs);
+}
+
+QDeclarativeContact::~QDeclarativeContact()
+{
+    delete d;
+}
+
+void QDeclarativeContact::setDetailDefinitions(const QMap<QString, QContactDetailDefinition>& defs)
+{
+    d->m_defs = defs;
+}
+
+QMap<QString, QContactDetailDefinition> QDeclarativeContact::detailDefinitions() const
+{
+    return d->m_defs;
+}
+
+void QDeclarativeContact::setContact(const QContact& contact)
+{
+   d->setContact(contact);
+}
+
+QContact QDeclarativeContact::contact() const
+{
+    return d->contact();
+}
+
+QDeclarativeListProperty<QDeclarativeContactDetail> QDeclarativeContact::details()
+{
+    return d->details(QString()).value< QDeclarativeListProperty<QDeclarativeContactDetail> >();
+}
+
+QContactLocalId QDeclarativeContact::contactId() const
+{
+    return d->localId();
+}
+
+
+QVariant QDeclarativeContact::detail(const QString& name)
+{
+    return d->detail(name);
+}
+
+QVariant QDeclarativeContact::details(const QString& name)
+{
+    return d->details(name);
+}

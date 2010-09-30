@@ -65,6 +65,7 @@
 #include <QByteArray>
 #include <QIODevice>
 #include <QList>
+#include <QStack>
 #include <QPointer>
 #include <QScopedPointer>
 #include <QByteArray>
@@ -93,6 +94,7 @@ class QM_AUTOTEST_EXPORT LByteArray
 public:
     LByteArray() : mStart(0), mEnd(0) {}
     explicit LByteArray(const QByteArray& d) :mData(d), mStart(0), mEnd(d.size()) {}
+    LByteArray(const QByteArray& d, int start, int end) :mData(d), mStart(start), mEnd(end) {}
     bool isEmpty() const {
         return mEnd <= mStart;
     }
@@ -123,6 +125,15 @@ public:
     const char* constData() const {
         return mData.constData() + mStart;
     }
+    bool contains(const QByteArray& ba) const {
+        return mData.indexOf(ba, mStart) > 0;
+    }
+    bool endsWith(const QByteArray& ba) const {
+        // Loop backwards from ba and from mData (starting from index mEnd)
+        if (ba.size() > size())
+            return false;
+        return memcmp(mData.constData()+mEnd-ba.size(), ba.constData(), ba.size()) == 0;
+    }
     LByteArray& operator=(const QByteArray& ba) {
         mData = ba;
         mStart = 0;
@@ -145,6 +156,10 @@ private:
             mStart = 0;
         }
     }
+    void setBounds(int start, int end) {
+        mStart = start;
+        mEnd = end;
+    }
     QByteArray mData;
     int mStart;
     int mEnd;
@@ -155,23 +170,30 @@ class QM_AUTOTEST_EXPORT LineReader
 {
 public:
     LineReader(QIODevice* device, QTextCodec* codec, int chunkSize = 1000);
-    LByteArray readLine();
     void pushLine(const QByteArray& line);
     int odometer();
     bool atEnd();
     QTextCodec* codec();
+    LByteArray readLine();
 
 private:
-    bool tryReadLine(LByteArray& cursor, bool atEnd);
+    void readOneLine(LByteArray* cursor);
+    bool tryReadLine(LByteArray* cursor, bool atEnd);
 
-    QIODevice* mDevice;
-    QTextCodec* mCodec;
+    QIODevice* const mDevice;
+    QTextCodec* const mCodec;
     int mChunkSize; // How many bytes to read in one go.
     QList<QByteArrayMatcher> mCrlfList;
-    QByteArray mFirstLine; // Stores a line that has been "pushed" in front by pushLine
+    QStack<QByteArray> mPushedLines; // Stores a lines that has been "pushed" in front by pushLine
     LByteArray mBuffer;
     int mOdometer;
     int mSearchFrom;
+
+    // Cache of various characters encoded with mCodec
+    const QByteArray mColon;
+    const QByteArray mEquals;
+    const QByteArray mSpace;
+    const QByteArray mTab;
 };
 
 class QM_AUTOTEST_EXPORT QVersitReaderPrivate : public QThread
@@ -204,65 +226,65 @@ public: // New functions
     void setCanceling(bool cancelling);
     bool isCanceling();
 
-    bool parseVersitDocument(LineReader& device, QVersitDocument& document);
-    bool parseVersitDocumentBody(LineReader& device, QVersitDocument& document);
+    bool parseVersitDocument(LineReader* device, QVersitDocument* document);
+    bool parseVersitDocumentBody(LineReader* device, QVersitDocument* document);
 
     QVersitProperty parseNextVersitProperty(
         QVersitDocument::VersitType versitType,
-        LineReader& lineReader);
+        LineReader* lineReader);
 
     void parseVCard21Property(
-        LByteArray& text,
-        QVersitProperty& property,
-        LineReader& lineReader);
+        LByteArray* text,
+        QVersitProperty* property,
+        LineReader* lineReader);
 
     void parseVCard30Property(
         QVersitDocument::VersitType versitType,
-        LByteArray& text,
-        QVersitProperty& property,
-        LineReader& lineReader);
+        LByteArray* text,
+        QVersitProperty* property,
+        LineReader* lineReader);
 
     bool setVersionFromProperty(
-        QVersitDocument& document,
+        QVersitDocument* document,
         const QVersitProperty& property) const;
 
     bool unencode(
-        QByteArray& value,
-        QVersitProperty& property,
-        LineReader& lineReader) const;
+        QByteArray* value,
+        QVersitProperty* property,
+        LineReader* lineReader) const;
 
     QString decodeCharset(
         const QByteArray& value,
-        QVersitProperty& property,
+        QVersitProperty* property,
         QTextCodec* defaultCodec,
         QTextCodec** codec) const;
 
-    void decodeQuotedPrintable(QByteArray& text) const;
+    void decodeQuotedPrintable(QByteArray* text) const;
 
 
     /* These functions operate on a cursor describing a single line */
-    QPair<QStringList,QString> extractPropertyGroupsAndName(LByteArray& line, QTextCodec* codec)
+    QPair<QStringList,QString> extractPropertyGroupsAndName(LByteArray* line, QTextCodec* codec)
             const;
-    QMultiHash<QString,QString> extractVCard21PropertyParams(LByteArray& line, QTextCodec* codec)
+    QMultiHash<QString,QString> extractVCard21PropertyParams(LByteArray* line, QTextCodec* codec)
             const;
-    QMultiHash<QString,QString> extractVCard30PropertyParams(LByteArray& line, QTextCodec* codec)
+    QMultiHash<QString,QString> extractVCard30PropertyParams(LByteArray* line, QTextCodec* codec)
             const;
 
     // "Private" functions
-    QList<QByteArray> extractParams(LByteArray& line, QTextCodec *codec) const;
+    QList<QByteArray> extractParams(LByteArray* line, QTextCodec *codec) const;
     QList<QByteArray> extractParts(const QByteArray& text, const QByteArray& separator,
                                    QTextCodec *codec) const;
     QByteArray extractPart(const QByteArray& text, int startPosition, int length=-1) const;
     QString paramName(const QByteArray& parameter, QTextCodec* codec) const;
     QString paramValue(const QByteArray& parameter, QTextCodec* codec) const;
     template <class T> static bool containsAt(const T& text, const QByteArray& ba, int index);
-    bool splitStructuredValue(QVersitProperty& property,
+    bool splitStructuredValue(QVersitProperty* property,
                               bool hasEscapedBackslashes) const;
     static QStringList splitValue(const QString& string,
                                   const QChar& sep,
                                   QString::SplitBehavior behaviour,
                                   bool hasEscapedBackslashes);
-    static void removeBackSlashEscaping(QString& text);
+    static void removeBackSlashEscaping(QString* text);
 
 // Data
 public:

@@ -38,42 +38,86 @@
 **
 ****************************************************************************/
 
-#ifndef QMLCONTACTDETAIL_H
-#define QMLCONTACTDETAIL_H
+#include "qdeclarativecontactdetail_p.h"
+#include "qcontactdetails.h"
 
-#include <QDeclarativePropertyMap>
-#include "qcontact.h"
-#include "qcontactdetail.h"
-
-QTM_USE_NAMESPACE;
-
-class QMLContactDetail : public QObject
+QDeclarativeContactDetail::QDeclarativeContactDetail(QObject* parent)
+    :QObject(parent)
 {
-    Q_OBJECT
-public:
-    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
-    Q_PROPERTY(bool detailChanged READ detailChanged NOTIFY onDetailChanged)
+}
 
-    explicit QMLContactDetail(QObject* parent = 0);
-    void setDetailPropertyMap(QDeclarativePropertyMap* map);
-    QDeclarativePropertyMap* propertyMap() const;
-    Q_INVOKABLE QList<QObject*> fields() const;
-    bool detailChanged() const;
-    void setDetailChanged(bool changed);
-    QContactDetail detail() const;
-    QString name() const;
-    void setName(const QString& name);
+QContactDetail& QDeclarativeContactDetail::detail()
+{
+    return m_detail;
+}
 
-signals:
-    void nameChanged();
-    void onDetailChanged();
-private slots:
-    void detailChanged(const QString &key, const QVariant &value);
-private:
-    bool m_detailChanged;
-    QDeclarativePropertyMap* m_map;
-    QString m_detailName;
-    QList<QObject*> m_fields;
-};
+const QContactDetail& QDeclarativeContactDetail::detail() const
+{
+    return m_detail;
+}
 
-#endif // QMLCONTACTDETAIL_H
+void QDeclarativeContactDetail::setDetail(const QContactDetail& detail)
+{
+    m_detail = detail;
+}
+
+QString QDeclarativeContactDetail::definitionName() const
+{
+    return m_detail.definitionName();
+}
+
+QStringList QDeclarativeContactDetail::contexts() const
+{
+    return m_detail.contexts();
+}
+void QDeclarativeContactDetail::setContexts(const QStringList& contexts)
+{
+    m_detail.setContexts(contexts);
+}
+
+QString QDeclarativeContactDetail::detailUri() const
+{
+    return m_detail.detailUri();
+}
+void QDeclarativeContactDetail::setDetailUri(const QString& detailUri)
+{
+    m_detail.setDetailUri(detailUri);
+}
+
+QStringList QDeclarativeContactDetail::linkedDetailUris() const
+{
+    return m_detail.linkedDetailUris();
+}
+void QDeclarativeContactDetail::setLinkedDetailUris(const QStringList& linkedDetailUris)
+{
+    m_detail.setLinkedDetailUris(linkedDetailUris);
+}
+
+QDeclarativeContactDetail::ContactDetailType QDeclarativeContactDetail::detailType() const
+{
+    return QDeclarativeContactDetail::Customized;
+}
+
+QStringList QDeclarativeContactDetail::fieldNames() const
+{
+    return m_detail.variantValues().keys();
+}
+
+QVariant QDeclarativeContactDetail::value(const QString& key) const
+{
+    return m_detail.variantValue(key);
+}
+
+bool QDeclarativeContactDetail::setValue(const QString& key, const QVariant& v)
+{
+    bool changed = false;
+
+    if (value(key) != v)
+         changed = m_detail.setValue(key, v);
+
+    if (changed)
+        emit fieldsChanged();
+
+    return changed;
+}
+

@@ -46,13 +46,13 @@
 #include <qdeclarative.h>
 #include <qcontactmanager.h>
 #include <qcontactdetails.h>
-#include "imageprovider.h"
+#include "qdeclarativecontactimageprovider_p.h"
 
 
 QTM_USE_NAMESPACE
 
 // This is run in a low priority thread.
-QImage ContactThumbnailImageProvider::request(const QString &id, QSize *size, const QSize &req_size)
+QImage ContactThumbnailImageProvider::requestImage(const QString &id, QSize *size, const QSize &req_size)
 {
     if (m_thumbnails.contains(id)) {
         if (size)
@@ -97,6 +97,11 @@ QImage ContactThumbnailImageProvider::request(const QString &id, QSize *size, co
     m_thumbnails.insert(id, image);
 
     return image;
+}
+ContactThumbnailImageProvider::ContactThumbnailImageProvider()
+    :QDeclarativeImageProvider(QDeclarativeImageProvider::Image)
+{
+
 }
 
 ContactThumbnailImageProvider::~ContactThumbnailImageProvider()

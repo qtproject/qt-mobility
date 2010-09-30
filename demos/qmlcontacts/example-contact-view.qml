@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,58 +38,70 @@
 **
 ****************************************************************************/
 
+import Qt 4.7
+import QtMobility.contacts 1.1
+import "contents"
 
-#include "qmlcontactdetailfield.h"
-#include <QDebug>
+Rectangle {
+    id: topItem
+    width: 360
+    height: 640
+    x: 0
+    y: 0
 
-QMLContactDetailField::QMLContactDetailField(QObject* parent)
-    :QObject(parent),
-    m_map(0)
-{
+    Column {
+        spacing:4
 
-}
-
-void QMLContactDetailField::setDetailPropertyMap(QDeclarativePropertyMap* map)
-{
-    m_map = map;
-}
-
-void QMLContactDetailField::setKey(const QString& key)
-{
-    m_key = key;
-}
-
-QString QMLContactDetailField::key() const
-{
-    return m_key;
-}
-
-QVariant QMLContactDetailField::value() const
-{
-    if (m_map) {
-        QVariant v =  m_map->value(m_key);
-        if (v.canConvert<QVariantList>()) {
-            return v.toStringList().join(",");
-        }
-        return v;
+        Text { text:"Name:" + myContact.name.firstName + " " + myContact.name.lastName }
+        Text { text:"Address:" + myContact.address.street + " " + myContact.address.locality + " " + myContact.address.region + " " + myContact.address.postcode }
+        Text { text:"Email:" + myContact.email.emailAddress }
+        Text { text:"phone number[0]:" + myContact.phoneNumbers[0].number }
+        Text { text:"phone number[1]:" + myContact.phoneNumbers[1].number }
+        Text { text:"phone number[2]:" + myContact.phoneNumbers[2].number }
     }
-    return QVariant();
-}
 
-void QMLContactDetailField::setValue(const QVariant& value)
-{
-    if (m_map && m_map->contains(m_key)) {
-        (*m_map)[m_key] = value;
+
+    Contact {
+        id: myContact
+
+            ContactName {
+                firstName:"Charles"
+                lastName:"Yin"
+            }
+
+            ContactEmail {
+                emailAddress:"charles.yin@nokia.com"
+            }
+
+            ContactAddress {
+                street:"53 Brandl St"
+                locality: "Eight Mile Plains"
+                region: "QLD"
+                postcode:"4111"
+                country:"Australia"
+                subTypes:["Office"]
+                postOfficeBox:"1111"
+            }
+
+            ContactNickname {
+                nickname:"Charles"
+            }
+
+            ContactPhoneNumber {
+                number: "1111111111"
+                subTypes:["Office", "Mobile"]
+            }
+
+            ContactPhoneNumber {
+                number: "2222222222"
+                subTypes:["Home"]
+            }
+
+            ContactPhoneNumber {
+                number: "3333333333"
+                subTypes:["Mobile"]
+            }
     }
 }
 
-
-QString QMLContactDetailField::detailName() const
-{
-    return m_detailName;
-}
-
-void QMLContactDetailField::setDetailName(const QString& name)
-{
-    m_detailName = name;
-}
+// ![0]

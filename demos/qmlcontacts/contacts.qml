@@ -51,7 +51,7 @@ Rectangle {
 
     color: "#080808";
 
-    QmlContactModel {
+    ContactModel {
         id: contactModel 
     }
 
@@ -101,7 +101,6 @@ Rectangle {
                                 anchors.fill: parent;
                                 anchors.margins: 2;
 
-//                                pixmap: model.decoration;
                                 source: model.avatar;
                                 fillMode: Image.PreserveAspectFit
                             }
@@ -122,7 +121,7 @@ Rectangle {
                             Text {
                                 id: nameTxt
                                 y: 8;
-                                text: display
+                                text: model.display
                                 color: "white"
                             }
                         }
@@ -185,47 +184,55 @@ Rectangle {
                 }
                 ListView {
                     id: detailView
+                    snapMode:ListView.SnapToItem
                     width: wrapper.width;
                     focus: true
                     opacity: 0
                     keyNavigationWraps: true
 
 
-                    //detail section header
-                    section.property:  "detailName"
-                    section.criteria: ViewSection.FullString
-                    section.delegate: Rectangle {
-                        color: "lightsteelblue"
-                        width:detailView.width
-                        height: 20
-                        Text {
-                            x: 2; height: 20
-                            verticalAlignment: Text.AlignVCenter
-                            text: section
-                            font.bold: true
-                            color:"white"
-                        }
-                    }
-                    model:contactModel.detailModel(contactId)
+                    model:contact.details
                     delegate: Component {
                         Item {
                             width: detailView.width;
-                            height: 25;
+                            height:100;
 
-                            Row {
+
+                            Column {
                                 spacing: 5
                                 Text {
-                                   text:  key;
+                                   text:  definitionName;
                                    color:"white";
-                                   width: detailView.width * 0.5;
+                                   width: detailView.width;
                                    height: 20;
                                 }
-                                TextEdit {
-                                  width: detailView.width * 0.5;
-                                   height: 20;
-                                   text: field.value;
-                                   color:"yellow";
-                                   //onTextChanged: {field.value = text;}
+                                ListView {
+                                    id:fieldView
+                                    snapMode:ListView.SnapToItem
+                                    width: detailView.width;
+                                    height: 40
+
+                                    model: fieldNames
+                                    property ContactDetail detail: modelData
+
+                                    delegate: Item {
+                                        height: parent.height
+                                        width: parent.width
+                                        Row {
+                                            Text {
+                                                text: modelData
+                                                width: detailView.width * 0.5;
+                                                height: 20;
+                                            }
+                                            TextEdit {
+                                               width: detailView.width * 0.5;
+                                               height: 20;
+                                               text:fieldView.detail.value(modelData).toString();
+                                               color:"yellow";
+                                               //onTextChanged: {field.value = text;}
+                                            }
+                                        } //row
+                                    } //delegate
                                 }
                             }
                         }
