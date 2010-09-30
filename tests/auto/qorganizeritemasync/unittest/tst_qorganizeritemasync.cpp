@@ -616,10 +616,8 @@ void tst_QOrganizerItemAsync::itemFetch()
     QOrganizerItemFetchRequest *ifr2 = new QOrganizerItemFetchRequest();
     QPointer<QObject> obj(ifr2);
     ifr2->setManager(oim.data());
-    connect(ifr2, SIGNAL(resultsAvailable()), this, SLOT(deleteRequest()));
-qDebug() << "     fine";
+    connect(ifr2, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(deleteRequest()));
     QVERIFY(ifr2->start());
-qDebug() << "     still fine?";
     int i = 100;
     // at this point we can't even call wait for finished..
     while(obj && i > 0) {
@@ -1767,9 +1765,6 @@ void tst_QOrganizerItemAsync::definitionSave()
 void tst_QOrganizerItemAsync::collectionFetch()
 {
     QFETCH(QString, uri);
-    // TODO: Remove this condition after the collection handling is implemented in the memory backend
-    if (uri.contains(":memory:"))
-        QSKIP("Collections are not yet implemented for memory engine", SkipSingle);
     QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
 
     QOrganizerCollectionFetchRequest cfr;
@@ -1784,7 +1779,7 @@ void tst_QOrganizerItemAsync::collectionFetch()
 
     // collection retrieval by id.
     QList<QOrganizerCollectionLocalId> cids;
-    cids << QOrganizerCollectionLocalId();
+    cids << oim->collectionIds();
     cfr.setManager(oim.data());
     QCOMPARE(cfr.manager(), oim.data());
     QVERIFY(!cfr.isActive());
@@ -1806,13 +1801,14 @@ void tst_QOrganizerItemAsync::collectionFetch()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    QList<QOrganizerCollection> syncCols = oim->collections();
+    QList<QOrganizerCollection> syncCols = oim->collections(cids);
     QList<QOrganizerCollection> cols = cfr.collections();
     QCOMPARE(cols.size(), syncCols.size());
     for (int i = 0; i < cols.size(); i++) {
         QOrganizerCollection curr = cols.at(i);
         QVERIFY(syncCols.contains(curr));
     }
+    QVERIFY(cfr.errorMap().isEmpty()); // no error should have occurred.
 
     // cancelling
     cfr.setCollectionIds(cids);
@@ -1877,7 +1873,7 @@ void tst_QOrganizerItemAsync::collectionFetch()
     QOrganizerCollectionFetchRequest *cfr2 = new QOrganizerCollectionFetchRequest();
     QPointer<QObject> obj(cfr2);
     cfr2->setManager(oim.data());
-    connect(cfr2, SIGNAL(resultsAvailable()), this, SLOT(deleteRequest()));
+    connect(cfr2, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(deleteRequest()));
     QVERIFY(cfr2->start());
     int i = 100;
     // at this point we can't even call wait for finished..
@@ -1891,9 +1887,6 @@ void tst_QOrganizerItemAsync::collectionFetch()
 void tst_QOrganizerItemAsync::collectionIdFetch()
 {
     QFETCH(QString, uri);
-    // TODO: Remove this condition after the collection handling is implemented in the memory backend
-    if (uri.contains(":memory:"))
-        QSKIP("Collections are not yet implemented for memory engine", SkipSingle);
     QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
     QOrganizerCollectionLocalIdFetchRequest cifr;
     QVERIFY(cifr.type() == QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest);
@@ -1989,9 +1982,6 @@ void tst_QOrganizerItemAsync::collectionIdFetch()
 void tst_QOrganizerItemAsync::collectionRemove()
 {
     QFETCH(QString, uri);
-    // TODO: Remove this condition after the collection handling is implemented in the memory backend
-    if (uri.contains(":memory:"))
-        QSKIP("Collections are not yet implemented for memory engine", SkipSingle);
     QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
     QOrganizerCollectionRemoveRequest crr;
     QVERIFY(crr.type() == QOrganizerItemAbstractRequest::CollectionRemoveRequest);
@@ -2004,7 +1994,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
     QVERIFY(!crr.waitForFinished());
 
     // specific collection set
-    QOrganizerCollectionLocalId removeId; // XXX TODO: in prepare model. this should reference a particular collection!!!
+    QOrganizerCollectionLocalId removeId = oim->collectionIds().last();
     crr.setCollectionId(removeId);
     QVERIFY(crr.collectionIds() == QList<QOrganizerCollectionLocalId>() << removeId);
     int originalCount = oim->collectionIds().size();
@@ -2039,7 +2029,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
     QVERIFY(crr.waitForFinished());
     QVERIFY(crr.isFinished());
 
-    QCOMPARE(oim->collectionIds().size(), 0); // no collections should be left.
+    QVERIFY(oim->collectionIds().size() >= 1); // at least one collection must be left, since default collection cannot be removed.
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -2116,14 +2106,13 @@ void tst_QOrganizerItemAsync::collectionRemove()
         break;
     }
 
+    // now clean up our temp collection.
+    oim->removeCollection(temp.localId());
 }
 
 void tst_QOrganizerItemAsync::collectionSave()
 {
     QFETCH(QString, uri);
-    // TODO: Remove this condition after the collection handling is implemented in the memory backend
-    if (uri.contains(":memory:"))
-        QSKIP("Collections are not yet implemented for memory engine", SkipSingle);
     QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
     QOrganizerCollectionSaveRequest csr;
     QVERIFY(csr.type() == QOrganizerItemAbstractRequest::CollectionSaveRequest);
@@ -2136,7 +2125,7 @@ void tst_QOrganizerItemAsync::collectionSave()
     QVERIFY(!csr.waitForFinished());
 
     // save a new contact
-    int originalCount = oim->itemIds().size();
+    int originalCount = oim->collectionIds().size();
     QOrganizerCollection testCollection;
     testCollection.setMetaData("description", "test description");
     QList<QOrganizerCollection> saveList;
@@ -2163,7 +2152,7 @@ void tst_QOrganizerItemAsync::collectionSave()
 
     QList<QOrganizerCollection> expected = csr.collections();
     QCOMPARE(expected.size(), 1);
-    QList<QOrganizerCollection> result = oim->collections();
+    QList<QOrganizerCollection> result = oim->collections(QList<QOrganizerCollectionLocalId>() << csr.collections().at(0).localId());
     // find the saved one, compare.
     foreach (const QOrganizerCollection& col, result) {
         if (col.id() == expected.at(0).id()) {
@@ -2171,7 +2160,7 @@ void tst_QOrganizerItemAsync::collectionSave()
         }
     }
 
-    // update a previously saved contact
+    // update a previously saved collection
     testCollection = result.first();
     testCollection.setMetaData("name", "test name");
     saveList.clear();
@@ -2198,7 +2187,7 @@ void tst_QOrganizerItemAsync::collectionSave()
             QVERIFY(col == expected.at(0)); // XXX TODO: if we change the semantic so that save merely updates the id...?
         }
     }
-    QCOMPARE(oim->itemIds().size(), originalCount + 1); // ie shouldn't have added an extra one (would be +2)
+    QCOMPARE(oim->collectionIds().size(), originalCount + 1); // ie shouldn't have added an extra one (would be +2)
 
     // cancelling
     QOrganizerCollection temp = testCollection;

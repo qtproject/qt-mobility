@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the plugins of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,41 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERCOLLECTIONSAVEREQUEST_H
-#define QORGANIZERCOLLECTIONSAVEREQUEST_H
+#include "qdeclarativeorganizeritemfilter_p.h"
+#include "qdeclarativeorganizermodel_p.h"
+#include "qorganizeritemid.h"
+#include "qorganizercollectionid.h"
 
-#include "qtorganizerglobal.h"
-#include "qorganizeritemabstractrequest.h"
-#include "qorganizercollection.h"
-#include "qorganizeritemmanager.h"
-
-#include <QList>
-#include <QStringList>
-
-QTM_BEGIN_NAMESPACE
-
-class QOrganizerCollectionSaveRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerCollectionSaveRequest : public QOrganizerItemAbstractRequest
+QOrganizerItemFilter QDeclarativeOrganizerItemLocalIdFilter::filter() const
 {
-    Q_OBJECT
+    QOrganizerItemLocalIdFilter f;
+    QList<QOrganizerItemLocalId> ids;
 
-public:
-    QOrganizerCollectionSaveRequest(QObject* parent = 0);
+    foreach(const QVariant& id, m_ids) {
+        QOrganizerItemId itemId = QDeclarativeOrganizerModel::itemIdFromHash(id.value<uint>());
+        if (!itemId.localId().isNull())
+            ids << itemId.localId();
+    }
 
-    /* Selection */
-    void setCollection(const QOrganizerCollection& collection);
-    void setCollections(const QList<QOrganizerCollection>& collections);
+    f.setIds(ids);
+    return f;
+}
+QOrganizerItemFilter QDeclarativeOrganizerItemCollectionFilter::filter() const
+{
+    QOrganizerItemCollectionFilter f;
+    QSet<QOrganizerCollectionLocalId> ids;
 
-    /* Results */
-    QList<QOrganizerCollection> collections() const;
-    QMap<int, QOrganizerItemManager::Error> errorMap() const;
+    foreach(const QVariant& id, m_ids) {
+        QOrganizerCollectionId cId = QDeclarativeOrganizerModel::collectionIdFromHash(id.value<uint>());
+        if (!cId.localId().isNull())
+            ids << cId.localId();
+    }
 
-private:
-    Q_DISABLE_COPY(QOrganizerCollectionSaveRequest)
-    friend class QOrganizerItemManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerCollectionSaveRequest)
-};
-
-QTM_END_NAMESPACE
-
-#endif
+    f.setCollectionIds(ids);
+    return f;
+}

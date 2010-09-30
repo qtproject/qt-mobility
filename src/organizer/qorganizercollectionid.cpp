@@ -314,6 +314,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId)
                 localId.d->dataStreamIn(in);
             }
         }
+        collectionId.setLocalId(localId);
     } else {
         in.setStatus(QDataStream::ReadCorruptData);
     }
