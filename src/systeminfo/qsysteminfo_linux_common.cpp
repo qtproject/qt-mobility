@@ -2348,7 +2348,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
 {
     QSystemDeviceInfo::InputMethodFlags methods = 0;
     if(halIsAvailable) {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_DBUS) && defined(QT_NO_MEEGO)
         QHalInterface iface2;
         if (iface2.isValid()) {
             QStringList capList;
@@ -2417,7 +2417,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
                 if( (methods & QSystemDeviceInfo::Keypad) != QSystemDeviceInfo::Keypad) {
                     methods = (methods | QSystemDeviceInfo::Keys);
                 }
-            } else if(strvalue.contains("TouchScreen",Qt::CaseInsensitive)) {
+            } else if(strvalue.contains("Touch",Qt::CaseInsensitive)) {
                 if( (methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleTouch) {
                     methods = (methods | QSystemDeviceInfo::SingleTouch);
                 }
