@@ -132,7 +132,7 @@ namespace
         // Media
         { QtMultimediaKit::Size, "size" },
         { QtMultimediaKit::MediaType, "mediaType" },
-//        { QtMultimediaKit::Duration, "duration" },
+        { QtMultimediaKit::Duration, "duration" },
 
         // Audio
         { QtMultimediaKit::AudioBitRate, "audioBitRate" },
