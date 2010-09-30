@@ -263,7 +263,7 @@ int S60RadioTunerControl::signalStrength() const
 				if (maxSignalStrength == 0 || currentSignalStrength == 0) {
 					return 0;
 				}
-				m_signal = (currentSignalStrength/maxSignalStrength)*100; 
+                m_signal = ((TInt64)currentSignalStrength) * 100 / maxSignalStrength;
             }           
         }
     }

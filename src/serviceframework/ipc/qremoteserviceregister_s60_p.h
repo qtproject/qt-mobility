@@ -42,9 +42,11 @@
 #ifndef QREMOTESERVICEREGISTER_S60_P_H
 #define QREMOTESERVICEREGISTER_S60_P_H
 
-#define QT_SFW_SYMBIAN_IPC_DEBUG
+//#define QT_SFW_SYMBIAN_IPC_DEBUG
 
 #include "qremoteserviceregister.h"
+#include "qremoteserviceregister_p.h"
+//#include "qremoteserviceclassregister.h"
 #include "qservicepackage_p.h"
 #include "qservice.h"
 #include <e32base.h>
@@ -78,6 +80,7 @@ class CServiceProviderServerSession;
 class CServiceProviderServer;
 class SymbianServerEndPoint;
 class SymbianClientEndPoint;
+class QRemoteServiceRegisterSymbianPrivate;
 
 // Type definitions
 typedef TPckgBuf<TInt> TError; 
@@ -136,10 +139,10 @@ private:
 // needed for creating server thread.
 const TUint KDefaultHeapSize = 0x10000;
 
-class CServiceProviderServer : public CServer2
+class CServiceProviderServer : public CPolicyServer
     {
     public:
-        CServiceProviderServer(QRemoteServiceRegisterPrivate* aOwner);
+        CServiceProviderServer(QRemoteServiceRegisterSymbianPrivate* aOwner);
         CSession2* NewSessionL(const TVersion& aVersion, const RMessage2& aMessage) const;
 
     public:
@@ -147,10 +150,16 @@ class CServiceProviderServer : public CServer2
         void IncreaseSessions();
         void DecreaseSessions();
 
+        void setSecurityFilter(QRemoteServiceRegister::securityFilter filter);
+
+    protected:
+        virtual TCustomResult CustomSecurityCheckL(const RMessage2 &,TInt &,TSecurityInfo &);
+
     private:
 
         int iSessionCount;
-        QRemoteServiceRegisterPrivate* iOwner;
+        QRemoteServiceRegisterSymbianPrivate* iOwner;
+        QRemoteServiceRegister::securityFilter iFilter;
     };
 
 class CServiceProviderServerSession : public CSession2
@@ -183,15 +192,22 @@ class CServiceProviderServerSession : public CSession2
     };
 
 
-class QRemoteServiceRegisterPrivate: public QObject
+class QRemoteServiceRegisterSymbianPrivate: public QRemoteServiceRegisterPrivate
 {
     Q_OBJECT
 
 public:
-    QRemoteServiceRegisterPrivate(QObject* parent);
+    QRemoteServiceRegisterSymbianPrivate(QObject* parent);
     void publishServices(const QString& ident );
     static QObject* proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location);
     void processIncoming(CServiceProviderServerSession* session);
+
+    virtual QRemoteServiceRegister::securityFilter setSecurityFilter(QRemoteServiceRegister::securityFilter filter);
+
+    void closingLastInstance();
+
+private:
+    CServiceProviderServer *m_server;
 };
 
 // A helper class that actively listens for serviceprovider messages.

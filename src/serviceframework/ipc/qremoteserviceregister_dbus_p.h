@@ -43,6 +43,7 @@
 #define QREMOTESERVICEREGISTER_DBUS_P_H
 
 #include "qremoteserviceregister.h"
+#include "qremoteserviceregister_p.h"
 #include "instancemanager_p.h"
 #include "qserviceinterfacedescriptor.h"
 #include <QLocalServer>
@@ -53,11 +54,11 @@ QTM_BEGIN_NAMESPACE
 
 class ObjectEndPoint;
 
-class QRemoteServiceRegisterPrivate: public QObject
+class QRemoteServiceRegisterDbusPrivate: public QRemoteServiceRegisterPrivate
 {
     Q_OBJECT
 public:
-    QRemoteServiceRegisterPrivate(QObject* parent);
+    QRemoteServiceRegisterDbusPrivate(QObject* parent);
     void publishServices(const QString& ident );
 
 private:
@@ -65,9 +66,6 @@ private:
 
     QLocalServer* localServer;
     QList<ObjectEndPoint*> pendingConnections;
-
-public:
-    static QObject* proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location);
 };
 
 QTM_END_NAMESPACE

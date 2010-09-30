@@ -171,7 +171,7 @@
 #include <maps/tiled/qgeotiledmappingmanagerengine.h>
 #include <maps/tiled/qgeotiledmaprequest.h>
 #include <maps/qgeomaprectangleobject.h>
-#include <maps/qgeomapwidget.h>
+#include <maps/qgraphicsgeomap.h>
 #include <maps/qgeomapobject.h>
 #include <maps/qgeorouterequest.h>
 #include <maps/qgeosearchmanagerengine.h>
@@ -399,10 +399,6 @@
 #include <qsystemdeviceinfo.h>
 #include <qsystemscreensaver.h>
 #include <qsystemstorageinfo.h>
-
-//QtTelephony
-#include <qtelephonycallinfo.h>
-#include <qtelephonycalllist.h>
 
 //QtVersit
 #include <qversitcontacthandler.h>

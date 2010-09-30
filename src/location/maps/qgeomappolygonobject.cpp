@@ -47,70 +47,126 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
+    \class QGeoMapPolygonObject
+    \brief The QGeoMapPolygonObject class is a QGeoMapObject used to draw
+    a polygon on a map.
+
+    \inmodule QtLocation
+
+    \ingroup maps-mapping-objects
+
+    The polygon is specified by a set of at least 3 valid QGeoCoordinate
+    instances listed in the same order in which the coordinates would be
+    traversed when travelling aroudn the border of the polygon.
 */
-QGeoMapPolygonObject::QGeoMapPolygonObject(QGeoMapObject *parent)
-        : QGeoMapObject(new QGeoMapPolygonObjectPrivate(this, parent)) {}
 
 /*!
+    Constructs a new polygon object.
+*/
+QGeoMapPolygonObject::QGeoMapPolygonObject()
+        : d_ptr(new QGeoMapPolygonObjectPrivate()) {}
+
+/*!
+    Destroys this polygon object.
 */
 QGeoMapPolygonObject::~QGeoMapPolygonObject()
 {
+    delete d_ptr;
 }
 
+/*!
+    \reimp
+*/
+QGeoMapObject::Type QGeoMapPolygonObject::type() const
+{
+    return QGeoMapObject::PolygonType;
+}
+
+/*!
+    \property QGeoMapPolygonObject::path
+    \brief This property holds the ordered list of coordinates which define the
+    polygon to be drawn by this polygon object.
+
+    The default value of this property is an empty list of coordinates.
+
+    The coordinates should be listed in the order in which they would be
+    traversed when travelling around the border of the polygon.
+
+    Invalid coordinates in the list will be ignored, and if the list of
+    coordinates contains less than 3 valid coordinates then the polygon object
+    will not be displayed.
+
+*/
 void QGeoMapPolygonObject::setPath(const QList<QGeoCoordinate> &path)
 {
-    Q_D(QGeoMapPolygonObject);
-    if (d->path != path) {
-        d->path = path;
-        objectUpdate();
-        emit pathChanged(emit d->path);
+    if (d_ptr->path != path) {
+        d_ptr->path = path;
+        emit pathChanged(emit d_ptr->path);
     }
 }
 
 QList<QGeoCoordinate> QGeoMapPolygonObject::path() const
 {
-    Q_D(const QGeoMapPolygonObject);
-    return d->path;
+    return d_ptr->path;
 }
 
+/*!
+    \property QGeoMapPolygonObject::pen
+    \brief This property holds the pen that will be used to draw this object.
+
+    The pen is used to draw an outline around the polygon. The polygon is
+    filled using the QGeoMapPolygonObject::brush property.
+
+    The pen will be treated as a cosmetic pen, which means that the width
+    of the pen will be independent of the zoom level of the map.
+*/
 void QGeoMapPolygonObject::setPen(const QPen &pen)
 {
-    Q_D(QGeoMapPolygonObject);
-    if (d->pen != pen) {
-        d->pen = pen;
-        objectUpdate();
-        emit penChanged(emit d->pen);
-    }
+
+    QPen newPen = pen;
+    newPen.setCosmetic(true);
+
+    if (d_ptr->pen == newPen)
+        return;
+
+    d_ptr->pen = newPen;
+    emit penChanged(d_ptr->pen);
 }
 
 QPen QGeoMapPolygonObject::pen() const
 {
-    Q_D(const QGeoMapPolygonObject);
-    return d->pen;
+    return d_ptr->pen;
 }
 
+/*!
+    \property QGeoMapPolygonObject::brush
+    \brief This property holds the brush that will be used to draw this object.
 
+    The brush is used to fill in polygon.
+
+    The outline around the perimeter of the polygon is drawn using the
+    QGeoMapPolygonObject::pen property.
+*/
 void QGeoMapPolygonObject::setBrush(const QBrush &brush)
 {
-    Q_D(QGeoMapPolygonObject);
-    if (d->brush != brush) {
-        d->brush = brush;
-        objectUpdate();
-        emit brushChanged(d->brush);
+    if (d_ptr->brush != brush) {
+        d_ptr->brush = brush;
+        emit brushChanged(d_ptr->brush);
     }
 }
 
 QBrush QGeoMapPolygonObject::brush() const
 {
-    Q_D(const QGeoMapPolygonObject);
-    return d->brush;
+    return d_ptr->brush;
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapPolygonObjectPrivate::QGeoMapPolygonObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::PolygonType) {}
+QGeoMapPolygonObjectPrivate::QGeoMapPolygonObjectPrivate()
+{
+    pen.setCosmetic(true);
+}
 
 QGeoMapPolygonObjectPrivate::~QGeoMapPolygonObjectPrivate() {}
 

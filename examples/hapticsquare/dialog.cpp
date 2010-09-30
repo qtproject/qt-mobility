@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 #include "dialog.h"
+#include "hapticbutton.h"
 
-#include <QPushButton>
 #include <QGridLayout>
 #include <QDebug>
 
@@ -78,11 +78,11 @@ Dialog::Dialog()
     m_ocean.setPeriod(1500);
 
     // Third: Create our UI elements and lay them out.
-    m_btnRumble = new QPushButton(tr("Rumble!"));
-    m_btnOcean = new QPushButton(tr("Ocean"));
+    m_btnRumble = new HapticButton(tr("Rumble!"));
+    m_btnOcean = new HapticButton(tr("Ocean"));
     m_btnOcean->setCheckable(true);
-    m_btnButtonClick = new QPushButton(tr("Click"));
-    m_btnNegativeEffect = new QPushButton(tr("Oops!"));
+    m_btnButtonClick = new HapticButton(tr("Click"));
+    m_btnNegativeEffect = new HapticButton(tr("Oops!"));
     QGridLayout *topLayout = new QGridLayout(this);
     topLayout->addWidget(m_btnRumble, 0, 0);
     topLayout->addWidget(m_btnOcean, 0, 1);

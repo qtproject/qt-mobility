@@ -55,6 +55,7 @@ class QRemoteServiceRegisterPrivate;
 class Q_SERVICEFW_EXPORT QRemoteServiceRegister : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool quitOnLastInstanceClosed READ quitOnLastInstanceClosed WRITE setQuitOnLastInstanceClosed)
 public:
 
     enum InstanceType {
@@ -115,9 +116,25 @@ public:
 
     void publishEntries(const QString& ident );
 
+    bool quitOnLastInstanceClosed() const;
+    void setQuitOnLastInstanceClosed(const bool quit);
+
+    typedef bool (*securityFilter)(const void *message);
+    securityFilter setSecurityFilter(securityFilter filter);
+
+Q_SIGNALS:
+    void lastInstanceClosed();
 private:
     QRemoteServiceRegisterPrivate* d;
 };
+
+struct QRemoteServiceRegisterLocalSocketCred {
+    int fd;
+    int pid;
+    int uid;
+    int gid;
+};
+
 
 inline uint qHash(const QRemoteServiceRegister::Entry& e) {
     //Only consider version, iface and service name -> needs to sync with operator==

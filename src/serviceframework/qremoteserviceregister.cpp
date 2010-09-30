@@ -134,13 +134,18 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instanciatio
     object to other processes in the system.
 */
 
+/*! \typedef QRemoteServiceRegister::securityFilter
+    QRemoteServiceRegister -style synonym for bool (*securityFilter)(const void *message)
+*/
+
 /*!
     Creates a service register instance with the given \a parent.
 */
 QRemoteServiceRegister::QRemoteServiceRegister(QObject* parent)
     : QObject(parent)
 {
-    d = new QRemoteServiceRegisterPrivate(this);
+    d = QRemoteServiceRegisterPrivate::constructPrivateObject(this);
+    connect(d, SIGNAL(lastInstanceClosed()), this, SIGNAL(lastInstanceClosed()));
 }
 
 /*!
@@ -151,7 +156,7 @@ QRemoteServiceRegister::~QRemoteServiceRegister()
 }
 
 /*!
-    Publishes every service that has been registered using
+    Publishes every service entry that has been registered using
     \l registerService(). \a ident is the service specific
     IPC address under which the service can be reached. This address must match
     the address provided in the services xml descriptor (see <filepath> tag).
@@ -166,6 +171,25 @@ void QRemoteServiceRegister::registerEntry(const Entry& e)
     Q_ASSERT(InstanceManager::instance());
     InstanceManager::instance()->addType(e);
 }
+
+/*!
+    \property QRemoteServiceRegister::quitOnLastInstanceClosed
+*/
+bool QRemoteServiceRegister::quitOnLastInstanceClosed() const
+{
+    return d->quitOnLastInstanceClosed();
+}
+
+void QRemoteServiceRegister::setQuitOnLastInstanceClosed(bool quit)
+{
+    d->setQuitOnLastInstanceClosed(quit);
+}
+
+QRemoteServiceRegister::securityFilter QRemoteServiceRegister::setSecurityFilter(QRemoteServiceRegister::securityFilter filter)
+{
+    return d->setSecurityFilter(filter);
+}
+
 
 #include "moc_qremoteserviceregister.cpp"
 

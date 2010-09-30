@@ -98,7 +98,7 @@ public:
             if (cm) {
                 qDebug() << "Restoring items for" << mgrUri;
                 QList<QOrganizerItem> items = savedItems.value(mgrUri);
-                cm->saveItems(&items, 0);
+                cm->saveItems(&items);
                 // XXX this doesn't restore relationships..
                 delete cm;
             }

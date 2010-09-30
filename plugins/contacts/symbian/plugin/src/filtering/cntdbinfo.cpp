@@ -55,17 +55,15 @@ CntDbInfo::CntDbInfo(QContactManagerEngine* engine):
     commAddrTableIdColumNameMapping.insert(id.arg(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::FieldAccountUri), QPair<int,bool>(ESipAddress,false));
     commAddrTableIdColumNameMapping.insert(id.arg(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress), QPair<int,bool>(EEmailAddress,false));
     commAddrTableIdColumNameMapping.insert(id.arg(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldSubTypes), QPair<int,bool>(EPhoneNumber,true));
+    commAddrExtraInfoMap.insert(id.arg(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldSubTypes), EMobileNumber);
+
 }
 
 CntDbInfo::~CntDbInfo()
 {
     contactsTableIdColumNameMapping.clear();
     commAddrTableIdColumNameMapping.clear();
-}
-
-QContactManagerEngine* CntDbInfo::engine()
-{
-    return m_engine;
+    commAddrExtraInfoMap.clear();
 }
 
 bool CntDbInfo::SupportsDetail(QString definitionName, QString fieldName)
@@ -74,6 +72,8 @@ bool CntDbInfo::SupportsDetail(QString definitionName, QString fieldName)
     if (contactsTableIdColumNameMapping.contains(fieldId))
         return true;
     else if (commAddrTableIdColumNameMapping.contains(fieldId))
+        return true;
+    else if(commAddrExtraInfoMap.contains(fieldId))
         return true;
     else
         return false;
@@ -106,13 +106,19 @@ void CntDbInfo::getDbTableAndColumnName( const QString definitionName,
 
     if (columnName.isEmpty() || tableName.isEmpty()) {
         //Search comm Addr table
+        if (commAddrExtraInfoMap.contains(fieldId)){
+            int extraTypeInfo = commAddrExtraInfoMap.value(fieldId);
+            columnName +=  QString(" EXTRA_TYPE_INFO = %1").arg(extraTypeInfo);
+            columnName += " and" ;
+            tableName = "comm_addr";
+        }
         if (commAddrTableIdColumNameMapping.contains(fieldId)) {
             // communication address table has slightly differnt format, so we make the column name as
             //  "type = <type> and value "
             QPair<int,bool> val = commAddrTableIdColumNameMapping.value(fieldId);
             int typeval = val.first;
             isSubType = val.second;
-            columnName =  QString(" TYPE = %1").arg(typeval);
+            columnName +=  QString(" TYPE = %1").arg(typeval);
             columnName += " and value " ;
             tableName = "comm_addr";
         }

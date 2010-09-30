@@ -47,9 +47,10 @@
 #include "qdeclarativelandmarkmodel_p.h"
 #include "qdeclarativelandmarkcategorymodel_p.h"
 
+#include "qgeomapobject.h"
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegraphicsgeomap_p.h"
-#include "qgeomapobject.h"
+#include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativegeomapcircleobject_p.h"
 #include "qdeclarativegeomappixmapobject_p.h"
 #include "qdeclarativegeomappolygonobject_p.h"
@@ -75,15 +76,20 @@ public:
         qmlRegisterType<QDeclarativePositionSource>(uri, 1, 1, "PositionSource");
         qmlRegisterType<QDeclarativeLandmark>(uri, 1, 1, "Landmark");
         qmlRegisterType<QDeclarativeLandmarkModel>(uri, 1, 1, "LandmarkModel");
-        qmlRegisterType<QDeclarativeLandmarkFilter>(uri, 1, 1, "LandmarkFilter");
+        qmlRegisterType<QDeclarativeLandmarkNameFilter>(uri, 1, 1, "LandmarkNameFilter");
+        qmlRegisterType<QDeclarativeLandmarkCategoryFilter>(uri, 1, 1, "LandmarkCategoryFilter");
+        qmlRegisterType<QDeclarativeLandmarkBoxFilter>(uri, 1, 1, "LandmarkBoxFilter");
+        qmlRegisterType<QDeclarativeLandmarkProximityFilter>(uri, 1, 1, "LandmarkProximityFilter");
         qmlRegisterType<QDeclarativeLandmarkUnionFilter>(uri, 1, 1, "LandmarkUnionFilter");
         qmlRegisterType<QDeclarativeLandmarkIntersectionFilter>(uri, 1, 1, "LandmarkIntersectionFilter");
         qmlRegisterType<QDeclarativeLandmarkCategory>(uri, 1, 1, "LandmarkCategory");
         qmlRegisterType<QDeclarativeLandmarkCategoryModel>(uri, 1, 1, "LandmarkCategoryModel");
         qmlRegisterUncreatableType<QDeclarativeLandmarkFilterBase>(uri, 1, 1, "LandmarkFilterBase", QDeclarativeLandmarkFilterBase::tr("LandmarkFilterBase is an abstract class"));
+        qmlRegisterUncreatableType<QDeclarativeLandmarkAbstractModel>(uri, 1, 1, "LandmarkAbstractModel", QDeclarativeLandmarkAbstractModel::tr("LandmarkAbstractModel is an abstract class"));
         qmlRegisterType<QDeclarativeCoordinate>(uri, 1, 1, "Coordinate");
         qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 1, 1, "Map");
-        qmlRegisterType<QGeoMapObject>(uri, 1, 1, "MapObject");
+        qmlRegisterType<QGeoMapObject>(uri, 1, 1, "QGeoMapObject");
+        qmlRegisterType<QDeclarativeGeoMapObject>(uri, 1, 1, "MapObject");
         qmlRegisterType<QDeclarativeGeoMapCircleObject>(uri, 1, 1, "MapCircleObject");
         qmlRegisterType<QDeclarativeGeoMapPolygonObject>(uri, 1, 1, "MapPolygonObject");
         qmlRegisterType<QDeclarativeGeoMapPolylineObject>(uri, 1, 1, "MapPolylineObject");

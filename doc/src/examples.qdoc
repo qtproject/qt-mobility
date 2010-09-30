@@ -50,7 +50,7 @@
     \list
     \o \l{mediabrowser}{Media Browser}
     \o \l{documentproperties}{Document Properties}
-    \o \l{declarativemusicbrowser}{QML Music Browser}
+    \o \l{declarative-music-browser}{QML Music Browser}
     \endlist
 
     \section2 Feedback
@@ -119,6 +119,13 @@
 
     \list
     \o \l{sysinfo}{System Information}
+    \endlist
+
+    \section2 Sensors
+
+    \list
+    \o \l{sensors/grueplugin}{Grue Plugin}
+    \o \l{sensors/grueapp}{Grue Application}
     \endlist
 */
 

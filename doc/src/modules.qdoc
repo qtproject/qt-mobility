@@ -25,6 +25,7 @@
 **
 ****************************************************************************/
 
+
 /*!
     \group modules
     \title All Modules
@@ -42,13 +43,12 @@
     \row \o \l{QtLocation} \o Classes for geographical information support.
     \row \o \l{QtContacts} \o Classes for managing address books.
     \row \o \l{QtMessaging} \o Classes for managing messages and attachments.
-    \row \o \l{QtMultimediaKit} \o Classes to to play and record media, and manage a collection of media content.
+    \row \o \l{QtMultimediaKit Module}{QtMultimediaKit} \o Classes to to play and record media, and manage a collection of media content.
     \row \o \l{QtSystemInfo} \o Provides system information.
     \row \o \l{QtPublishSubscribe} \o Classes that enables applications to read item values, navigate through and subscribe to change notifications.
     \row \o \l{QtSensors} \o Classes to provide access to sensors.
     \row \o \l{QtOrganizer} \o Classes for managing calendar and to-do entries.
     \row \o \l{QtFeedback} \o Classes to allow tactile feedback and vibration.
-    \row \o \l{QtTelephony} \o Classes for observing telephony events.
     \row \o \l{QtGallery} \o Classes for managing document galleries.
     \row \o \l{QtVersit}  \o Classes for managing Versit documents.
 
@@ -62,6 +62,8 @@
 /*!
     \module QtNetwork
     \title QtNetwork Module
+    \ingroup modules
+    
     \brief The QtNetwork module controls the system's connectivity state.
 */
 
@@ -69,6 +71,7 @@
     \module QtContacts
 
     \title QtContacts Module
+    \ingroup modules
 
     \brief The QtContacts module offers classes that allow
     you to manage addressbook contacts.
@@ -79,6 +82,7 @@
     \module QtOrganizer
 
     \title QtOrganizer Module
+    \ingroup modules
 
     \brief The QtOrganizer module offers classes that allow
     you to manage calendar, scheduling and personal data.
@@ -88,6 +92,7 @@
 /*!
     \module QtFeedback
     \title QtFeedback Module
+    \ingroup modules
     \brief The QtFeedback module offers classes that allow
     you to manage tactile feedback and device vibration.
 */
@@ -95,6 +100,7 @@
 /*!
     \module QtSensors
     \title QtSensors Module
+    \ingroup modules
     \brief The QtSensors module offers classes that allow
     you to access sensor information like accelerometer and orientation.
 */
@@ -102,6 +108,7 @@
 /*!
     \module QtGallery
     \title QtGallery Module
+    \ingroup modules
     \brief The QtGallery module offers classes that allow
     you to access and manage documents within galleries.
 */
@@ -109,6 +116,7 @@
 /*!
     \module QtLocation
     \title  QtLocation Module
+    \ingroup modules
     \brief  The QtLocation module provides geographical support for position
     and map use.
 
@@ -118,6 +126,7 @@
 /*!
     \module QtMessaging
     \title  QtMessaging Module
+    \ingroup modules
     \brief  The QtMessaging module provides access to messaging services.
 
     The module enables access to messaging services to  search and sort
@@ -128,10 +137,12 @@
 
 
 /*!
+    \page   qtmultimediakit-module.html
     \module QtMultimediaKit
     \title  QtMultimediaKit Module
+    \ingroup modules
     \brief  The QtMultimediaKit module provides APIs to play and record media, and manage a collection of media content.
-    
+
     This module delivers an easy to use interface to multimedia functions. The
     developer is able to render images, video and sound and record sound in a
     variety of formats.
@@ -139,13 +150,26 @@
     QtMultimediaKit contains both the low level APIs previously found in Qt 4.6
     and also the High level Multimedia APIs that were introduced earlier in Qt
     Mobility.
+
+    \section2 Namespace
+    \table 80%
+        \row
+            \o \l {QtMultimediaKit}
+            \o APIs to play and record media, and manage a collection of media content.
+    \endtable
+
+    \section2 Classes
+    \generatelist {classesbymodule QtMultimediaKit}
+
+
 */
 
 
 /*!
-\module QtPublishSubscribe
-\title  QtPublishSubscribe Module
-\brief  The Publish and Subscribe API, containing Value Space, enables
+    \module QtPublishSubscribe
+    \title  QtPublishSubscribe Module
+    \ingroup modules
+    \brief  The Publish and Subscribe API, containing Value Space, enables
 applications to read item values, navigate through and subscribe
 to change notifications.
 
@@ -153,36 +177,33 @@ to change notifications.
 
 /*!
 
-\module QtServiceFramework
-\title  QtServiceFramework Module
-\brief  A set of Qt APIs to that allows clients to discover and instantiate
-arbitrary services.
+    \module QtServiceFramework
+    \title  QtServiceFramework Module
+    \ingroup modules
+    \brief  A set of Qt APIs to that allows clients to discover and instantiate
+    arbitrary services.
 
 */
 
 /*!
     \module QtSystemInfo
     \title System Information Classes
+    \ingroup modules
 
-    A set of APIs that supplies that supplies system information.
- */
-
-/*!
-    \module QtTelephony
-    \title Telephony Events Module
-
-    Enables access to the telephony event services.
+    \brief A set of APIs that supplies that supplies system information.
  */
 
 /*!
     \module QtGallery
     \title QtGallery Module
+    \ingroup modules
     \brief The QtGallery module provides access to a gallery of documents.
 */
 
 /*!
     \module QtVersit
     \title QtVersit Module
+    \ingroup modules
     \brief The QtVersit module allows the management of Versit documents
     including as vCards.
 */

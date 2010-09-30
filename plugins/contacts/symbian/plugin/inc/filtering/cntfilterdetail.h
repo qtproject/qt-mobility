@@ -50,8 +50,6 @@
 
 QTM_USE_NAMESPACE
 
-enum TNumberType { ENotInitialized, EUnknown, EDigit, EPlus, EOneZero, ETwoZeros };
-
 class CntFilterDetail : public CntAbstractContactFilter
 {
 private:
@@ -65,10 +63,6 @@ private:
             static void stripOutNonDigitChars(TDes& text);
             static TInt32 padOutPhoneMatchNumber(TInt32& phoneNumber,
                                                  TInt padOutLength);
-            static TBool validateBestMatchingRulesL(const TDesC& phoneNumber, const TDesC& matchNumber);
-            static TBool checkBestMatchingRules(const TDesC& numberA, TNumberType numberAType,
-                                         const TDesC& numberB, TNumberType numberBType);
-            static TInt formatAndCheckNumberType(TDes& number);
         public:
             TInt32 iLowerSevenDigits;
             TInt32 iUpperDigits;
@@ -95,6 +89,11 @@ public:
     void createMatchPhoneNumberQuery(const QContactFilter& filter,
                                      QString& sqlQuery,
                                      QContactManager::Error* error);
+	void fetchAllPhoneNumbers(QString& sqlQuery);
+    void bestMatchPhoneNumberQuery(const QContactFilter& filter,
+                                   QString& sqlQuery,
+                                   QContactManager::Error* error);
+    bool bestMatchingEnabled();
 #ifdef PBK_UNIT_TEST
     void emulateBestMatching();
 #endif //PBK_UNIT_TEST
@@ -115,11 +114,6 @@ private:
                                                    TInt upperMatchLength,
                                                    QContactManager::Error* error);
     bool getMatchLengthL(TInt& matchLength);
-    bool bestMatchingEnabled();
-    QList<QContactLocalId> getBestMatchPhoneNumbersL(const QString number,
-                                                     const QList<QContactLocalId>& idList,
-                                                     QContactManager::Error* error);
-    
     
 protected:
     CContactDatabase& m_contactdatabase;

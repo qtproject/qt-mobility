@@ -43,41 +43,71 @@
 
 #include "qgeotiledmapdata.h"
 #include "qgeotiledmapdata_p.h"
+#include "qgeoboundingbox.h"
 
 #include <QGraphicsScene>
 
 #include <QPolygonF>
 
+#include <QDebug>
+
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
         : QGeoMapObjectInfo(mapData, mapObject),
-        graphicsItem(0)
+        graphicsItem(0),
+        isValid(true),
+        isVisible(true)
 {
-    tiledMapData = static_cast<QGeoTiledMapData*>(mapData);
-    tiledMapDataPrivate = static_cast<QGeoTiledMapDataPrivate*>(tiledMapData->d_ptr);
+    tiledMapData = mapData;
+    tiledMapDataPrivate = static_cast<QGeoTiledMapDataPrivate*>(mapData->d_ptr);
 }
 
 QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()
 {
-    if (graphicsItem)
-        delete graphicsItem;
-}
-
-void QGeoTiledMapObjectInfo::addToParent()
-{
-    if (graphicsItem) {
-        tiledMapDataPrivate->scene->addItem(graphicsItem);
-        tiledMapDataPrivate->itemMap.insert(graphicsItem, mapObject());
-    }
-}
-
-void QGeoTiledMapObjectInfo::removeFromParent()
-{
     if (graphicsItem) {
         tiledMapDataPrivate->scene->removeItem(graphicsItem);
         tiledMapDataPrivate->itemMap.remove(graphicsItem);
+        delete graphicsItem;
     }
+}
+
+void QGeoTiledMapObjectInfo::setup()
+{
+    if (graphicsItem) {
+        if (!graphicsItem->scene())
+            tiledMapDataPrivate->scene->addItem(graphicsItem);
+
+        tiledMapDataPrivate->itemMap.insert(graphicsItem, mapObject());
+        graphicsItem->setVisible(mapObject()->isVisible() && isValid);
+        graphicsItem->setFlag(QGraphicsItem::ItemIsSelectable);
+    }
+}
+
+void QGeoTiledMapObjectInfo::zValueChanged(int zValue)
+{
+    if (graphicsItem) {
+        graphicsItem->setZValue(zValue);
+        updateItem();
+    }
+}
+
+void QGeoTiledMapObjectInfo::visibleChanged(bool visible)
+{
+    isVisible = visible;
+    if (graphicsItem) {
+        graphicsItem->setVisible((isVisible && isValid));
+        updateItem();
+    }
+}
+
+void QGeoTiledMapObjectInfo::selectedChanged(bool selected)
+{
+    // don't want to draw the selection box
+//    if (graphicsItem) {
+//        graphicsItem->setSelected(selected);
+//        updateItem();
+//    }
 }
 
 QGeoBoundingBox QGeoTiledMapObjectInfo::boundingBox() const
@@ -98,10 +128,24 @@ bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coord) const
 {
     QPoint point = tiledMapData->coordinateToWorldPixel(coord);
 
-    if (graphicsItem && graphicsItem->contains(point))
-        return true;
+    if (!graphicsItem)
+        return false;
 
-    return false;
+    return graphicsItem->mapToParent(graphicsItem->shape()).contains(point);
+}
+
+void QGeoTiledMapObjectInfo::setValid(bool valid)
+{
+    isValid = valid;
+    if (graphicsItem) {
+        graphicsItem->setVisible(isVisible && isValid);
+        updateItem();
+    }
+}
+
+bool QGeoTiledMapObjectInfo::valid() const
+{
+    return isValid;
 }
 
 void QGeoTiledMapObjectInfo::updateItem()
@@ -184,6 +228,8 @@ QPolygonF QGeoTiledMapObjectInfo::createPolygon(const QList<QGeoCoordinate> &pat
 
     return points;
 }
+
+#include "moc_qgeotiledmapobjectinfo_p.cpp"
 
 QTM_END_NAMESPACE
 

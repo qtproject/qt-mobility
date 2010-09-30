@@ -8,14 +8,6 @@ contains(mobility_modules,bearer) {
     symbian:SUBDIRS += bearerex
 }
 
-contains(mobility_modules,telephony) {
-    symbian:SUBDIRS += bearerex
-}
-
-contains(mobility_modules,telephony) {
-    linux-*:!maemo* {SUBDIRS += dialer}
-}
-
 symbian {
     contains(mobility_modules,messaging): SUBDIRS += messagingex
     contains(mobility_modules,publishsubscribe): SUBDIRS += publishsubscribeex

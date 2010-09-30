@@ -111,27 +111,33 @@ public:
         QGeoRouteReply *reply = routingManager->calculateRoute(request);
 
         if (reply->isFinished()) {
-            if (reply->error() != QGeoRouteReply::NoError) {
+            if (reply->error() == QGeoRouteReply::NoError) {
                 routeCalculated(reply);
             } else {
                 routeError(reply, reply->error(), reply->errorString());
             }
-        } else {
-            connect(routingManager,
-                    SIGNAL(finished(QGeoRouteReply*)),
-                    this,
-                    SLOT(routeCalculated(QGeoRouteReply*)));
-
-            connect(routingManager,
-                    SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
-                    this,
-                    SLOT(routeError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
+            return;
         }
+
+        connect(routingManager,
+                SIGNAL(finished(QGeoRouteReply*)),
+                this,
+                SLOT(routeCalculated(QGeoRouteReply*)));
+
+        connect(routingManager,
+                SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
+                this,
+                SLOT(routeError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
     }
 
 private slots:
     void routeCalculated(QGeoRouteReply *reply)
     {
+        if (reply->error() != QGeoRouteReply::NoError) {
+            reply->deleteLater();
+            return;
+        }
+
         // A route request can ask for several alternative routes ...
         if (reply->routes().size() != 0) {
 
@@ -363,18 +369,24 @@ QGeoRouteRequest::SegmentDetails QGeoRoutingManager::supportedSegmentDetails() c
 }
 
 /*!
-    Returns the levels of detail for navigation instructions which can be
+    Returns the levels of detail for navigation maneuvers which can be
     requested by this manager.
 */
-QGeoRouteRequest::InstructionDetails QGeoRoutingManager::supportedInstructionDetails() const
+QGeoRouteRequest::ManeuverDetails QGeoRoutingManager::supportedManeuverDetails() const
 {
 //    if (!d_ptr->engine)
 //        return QGeoRouteRequest::InstructionDetails();
 
-    return d_ptr->engine->supportedInstructionDetails();
+    return d_ptr->engine->supportedManeuverDetails();
 }
 
 /*!
+    Sets the locale to be used by the this manager to \a locale.
+
+    If this routing manager supports returning addresses and instructions
+    in different languages, they will be returned in the language of \a locale.
+
+    The locale used defaults to the system locale if this is not set.
 */
 void QGeoRoutingManager::setLocale(const QLocale &locale)
 {
@@ -382,6 +394,8 @@ void QGeoRoutingManager::setLocale(const QLocale &locale)
 }
 
 /*!
+    Returns the locale used to hint to this routing manager about what
+    language to use for addresses and instructions.
 */
 QLocale QGeoRoutingManager::locale() const
 {

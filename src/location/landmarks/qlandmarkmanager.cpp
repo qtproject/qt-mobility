@@ -112,11 +112,12 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
     The QLandmarkFilter defines the criteria for selecting landmarks e.g. a QLandmarkCategoryFilter may be used
     to choose landmarks that belong to a certain category or a QLandmarkProximityFilter to choose landmarks
     within a certain range from a given location.  A QLandmarkSortOrder order defines how the results should
-    be sorted.  The limit allows specification of the maximum number of items to
-    return and the offset defines the index of the first item.  The following demonstrates how to search for the 5 nearest
-    landmarks to a given coordinate.
+    be sorted.  (Note that if you wish to sort by distance, you must use a QLandmarkProximityFilter, usually
+    in conjunction with a QLandmarkIntersectionFilter).  The limit allows specification of the maximum number of items to
+    return and the offset defines the index of the first item.  The following demonstrates how to search for the first 100
+    landmarks belonging to a given category, sorted by name.
 
-    \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve landmarks by proximity synchronously
+    \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve landmarks by category synchronously
 
     The set of parameters described above are not always necessary as defaults are provided, if we wanted to retrieve
     all landmarks, then the appropriate call is:
@@ -144,8 +145,8 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
 
     \section1 Importing and exporting
     Import and exporting are potentially long operations, to perform these operations asynchronously
-    see QLandmarkImportRequest and QLandmarkExportRequest.  The simplest way to perform import and export
-    operations is to specify a filename:
+    see QLandmarkImportRequest and QLandmarkExportRequest.  The simplest way to perform an import
+    is to supply a filename while an export will need both a filename and format.
 
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp ImportExport landmark simple
 */
@@ -185,22 +186,18 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
 /*!
     \enum QLandmarkManager::LandmarkFeature
     Defines the possible features the landmark manager can support.
-    \value ExtendedAttributes The manager supports extra attributes above the standard cross platform attributes.
-                              These attributes are specific to the manager backend implementation.
-    \value CustomAttributes The manager supports applications associating arbitrary custom attributes to
-                            landmarks and categories.
-    \value ImportExport The manager supports import and/or export operations
-    \value Notifications The manager will emit notification signals when landmarks/categories have
+    \value ImportExportFeature The manager supports import and/or export operations
+    \value NotificationsFeature The manager will emit notification signals when landmarks/categories have
                          been added/modified/removed from the datastore it manages.
 */
 
 /*!
     \enum QLandmarkManager::SupportLevel
     Defines the possible support levels the manager can provide for a given filter or sort order list.
-    \value Native The manager natively supports the filter or sort order list.
-    \value Emulated The manager emulates the behaviour of the filter or sort order list.
+    \value NativeSupport The manager natively supports the filter or sort order list.
+    \value EmulatedSupport The manager emulates the behaviour of the filter or sort order list.
                      Emulated behaviour will inherently be slower than a natively supported implementation.
-    \value None The manager does not support the filter or sort order list at all.
+    \value NoSupport The manager does not support the filter or sort order list at all.
 */
 
 /*!
@@ -224,6 +221,7 @@ QLandmarkManager::QLandmarkManager(QObject *parent)
     QString managerName;
 
 #ifdef Q_OS_SYMBIAN
+    managerName = "com.nokia.qt.landmarks.engines.symbian";
 #else
     managerName = "com.nokia.qt.landmarks.engines.sqlite";
 #endif
@@ -429,8 +427,6 @@ bool QLandmarkManager::saveCategory(QLandmarkCategory *category)
 
 /*!
     Remove the category identified by \a categoryId from the database.
-    The categoryId is cleared(and becomes invalid) on successful
-    removal.  An unsuccessful removal will leave the identifer alone.
 
     Returns true if the category was removed successfully, otherwise
     returnse false.
@@ -746,8 +742,6 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
     returns false.  It may be possible that only a subset of
     landmarks are imported depending upon the backed implementation.
 
-    The current default managers for the maemo and desktop platforms
-    support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
 bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId &categoryId)
 {
@@ -783,9 +777,6 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format,
     Returns true if all landmarks could be imported, otherwise
     returns false.  It may be possible that only a subset of landmarks
     are imported.
-
-    The current default managers for the maemo and desktop platforms
-    support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
 bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId &categoryId)
 {
@@ -912,7 +903,7 @@ QLandmarkManager::SupportLevel QLandmarkManager::filterSupportLevel(const QLandm
      if (!d->engine) {
         d->errorCode = QLandmarkManager::InvalidManagerError;
         d->errorString = QString("Invalid Manager");
-        return QLandmarkManager::None;
+        return QLandmarkManager::NoSupport;
     }
 
     return d->engine->filterSupportLevel(filter, &(d->errorCode), &(d->errorString));
@@ -928,7 +919,7 @@ QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QLi
      if (!d->engine) {
         d->errorCode = QLandmarkManager::InvalidManagerError;
         d->errorString = QString("Invalid Manager");
-        return QLandmarkManager::None;
+        return QLandmarkManager::NoSupport;
     }
 
     return d->engine->sortOrderSupportLevel(sortOrders, &(d->errorCode), &(d->errorString));
@@ -990,15 +981,6 @@ bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
 
 /*!
     Returns the list of attribute keys the landmarks will have.
-    If extended attributes are enabled (provided manager supported them)
-    landmarks will possess  extra keys in addition to the standard cross platform keys.
-
-    Note: When saving a landark with extended attributes, all attributes much match
-    those of the manager otherwise a QLandmarkManager::BadArgumentError is set.
-    If the landmark does not have one of the extended attributes in its list,
-    then that particular attribute is ignored.  This differs from the semantics
-    for custom attributes where if a custom attribute is not present then it
-    is removed when the landmark is saved.
 */
 QStringList QLandmarkManager::landmarkAttributeKeys() const
 {
@@ -1012,10 +994,24 @@ QStringList QLandmarkManager::landmarkAttributeKeys() const
     return d->engine->landmarkAttributeKeys(&(d->errorCode), &(d->errorString));
 }
 
+
+/*!
+    Returns a list of landmark attribute keys that may be used in a
+    QLandmarkAttributeFilter.
+*/
+QStringList QLandmarkManager::searchableLandmarkAttributeKeys() const
+{
+    Q_D(const QLandmarkManager);
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+    }
+
+    return d->engine->searchableLandmarkAttributeKeys(&(d->errorCode), &(d->errorString));
+}
+
 /*!
     Returns the list of attribute keys the categories will have.
-    If extended attributes are enabled (provided the manager supports them),
-    categories will possess extra keys in addition to the standad cross platform keys.
 */
 QStringList QLandmarkManager::categoryAttributeKeys() const
 {
@@ -1026,76 +1022,6 @@ QStringList QLandmarkManager::categoryAttributeKeys() const
         d->errorString = QString("Invalid Manager");
     }
     return  d->engine->categoryAttributeKeys(&(d->errorCode), &(d->errorString));
-}
-
-/*!
-    Returns whether extended attributes specific to this manager are enabled or not.
-    If extended attributes are enabled, retrieved landmarks will have
-    extra attribute keys accessible through the QLandmark::attribute() function.
-    Extended attributes must be enabled to save any landmarks which possess
-    extended attributes.  This same behaviour will also apply to categories
-    if extended category attributes are supported.
-*/
-bool QLandmarkManager::isExtendedAttributesEnabled() const
-{
-    Q_D(const QLandmarkManager);
-
-    if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager");
-    }
-    return  d->engine->isExtendedAttributesEnabled(&(d->errorCode), &(d->errorString));
-}
-
-/*!
-    Sets whether extended attributes are \a enabled or not
-*/
-void QLandmarkManager::setExtendedAttributesEnabled(bool enabled)
-{
-    Q_D(QLandmarkManager);
-
-   if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager");
-    }
-
-    d->engine->setExtendedAttributesEnabled(enabled, &(d->errorCode), &(d->errorString));
-}
-
-/*!
-    Returns whether custom attributes are enabled or not. Custom attributes
-    are arbitrary attributes created by the application for a landmark or category.
-    If custom attributes are enabled (and the manager supports them),
-    retrieved landmarks and categories will have extra attributes accessible
-    using QLandmark::customAttributes().  Custom attributes must be enabled
-    to save any landmarks with possess custom attributes.  This same behaviour
-    applies to categories if custom category attributes are supported.
-*/
-bool QLandmarkManager::isCustomAttributesEnabled() const
-{
-    Q_D(const QLandmarkManager);
-
-    if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager");
-    }
-
-    return d->engine->isCustomAttributesEnabled(&(d->errorCode), &(d->errorString));
-}
-
-/*!
-    Sets whether custom attributes are \a enabled or not.
-*/
-void QLandmarkManager::setCustomAttributesEnabled(bool enabled)
-{
-    Q_D(QLandmarkManager);
-
-        if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager");
-    }
-
-    d->engine->setCustomAttributesEnabled(enabled, &(d->errorCode), &(d->errorString));
 }
 
 /*!

@@ -71,8 +71,7 @@ public:
 
     QVariant invokeRemote(int metaIndex, const QVariantList& args, int returnType);
     QVariant invokeRemoteProperty(int metaIndex, const QVariant& arg, int returnType, QMetaObject::Call c);
-
-
+    
 Q_SIGNALS:
     void pendingRequestFinished();
 

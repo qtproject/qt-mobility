@@ -61,7 +61,6 @@
 #include <EPos_CPosLmCategoryCriteria.h> 
 // user includes
 #include "qlandmarkdbeventhandler.h"
-#include "qlandmarkdbeventobserver.h"
 #include "qlandmarkrequesthandler.h"
 
 class CPosLandmarkDatabase;
@@ -79,7 +78,8 @@ QTM_USE_NAMESPACE
  * technology change should inherit from this class.
  */
 
-class LandmarkManagerEngineSymbianPrivate: public MLandmarkRequestObserver
+class LandmarkManagerEngineSymbianPrivate: public MLandmarkRequestObserver,
+    public MLandmarkDbEventObserver
 {
 public:
     LandmarkManagerEngineSymbianPrivate(LandmarkEventObserver& lmOpObserver,
@@ -161,14 +161,6 @@ public:
     bool isReadOnly(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error,
         QString *errorString) const;
 
-    bool isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
-    void setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error,
-        QString *errorString);
-
-    bool isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
-    void setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error,
-        QString *errorString);
-
     /* Asynchronous Request Support */
     void requestDestroyed(QLandmarkAbstractRequest* request);
     bool startRequest(QLandmarkAbstractRequest* request);
@@ -178,9 +170,6 @@ public:
     /* From MLandmarkRequestObserver */
     void HandleExecutionL(CLandmarkRequestData*, TRequestStatus&);
     void HandleCompletionL(CLandmarkRequestData*);
-
-    // to get keys defined by managerengine.
-    void setLandmarkAttributeKeys(QStringList landmarkKeys);
 
 private:
     bool saveLandmarkInternalL(QLandmark* landmark, QLandmarkManager::Error *error,
@@ -214,8 +203,8 @@ private:
         int maxMatches) const;
 
     bool sortFetchedLmIds(int limit, int offset, QList<QLandmarkSortOrder> sortOrders, QList<
-        QLandmarkId>& landmarkIds, bool isNearestFilter, QLandmarkManager::Error *error,
-        QString *errorString) const;
+        QLandmarkId>& landmarkIds, QLandmarkFilter::FilterType filterType,
+        QLandmarkManager::Error *error, QString *errorString) const;
 
     // to handle symbian errors to assign appropriate manager error and error description.
     void
@@ -224,8 +213,15 @@ private:
     // import export internal impl
     void exportLandmarksL(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds,
         QLandmarkManager::TransferOption option) const;
-    void importLandmarksL(QIODevice *device, const QString &format,
+    QList<QLandmarkId> importLandmarksL(QIODevice *device, const QString &format,
         QLandmarkManager::TransferOption option, const QLandmarkCategoryId& categoryId) const;
+
+private:
+    void handleDatabaseEvent(const TPosLmEvent& aEvent);
+
+public:
+    static CLandmarkDbEventHandler m_DbEventHandler;
+    static LandmarkRequestHandler m_RequestHandler;
 
 private:
     QString m_dbFilename;
@@ -233,15 +229,16 @@ private:
     CPosLandmarkDatabase* m_LandmarkDb;
     CPosLmCategoryManager* m_LandmarkCatMgr;
     LandmarkEventObserver& m_LmEventObserver;
-    QStringList m_LandmarkAttributeKeys;
 
-    bool m_isExtendedAttributesEnabled;
-    bool m_isCustomAttributesEnabled;
+    QStringList m_CreatedLmIds;
+    QStringList m_UpdatedLmIds;
+    QStringList m_DeletedLmIds;
 
-public:
-    static CLandmarkDbEventHandler m_DbEventHandler;
-    static LandmarkRequestHandler m_RequestHandler;
-    
+    QStringList m_CreatedCatIds;
+    QStringList m_UpdatedCatIds;
+    QStringList m_DeletedCatIds;
+
+    QStringList m_UnknownIds;
 
 private:
     friend class QLandmarkDbEventObserver;

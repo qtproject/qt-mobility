@@ -53,6 +53,10 @@ void OrganizerItemReminderTransform::modifyBaseSchemaDefinitions(QMap<QString, Q
 {
     // Find reminder details
     foreach (QString itemTypeName, schemaDefs.keys()) {
+        if (itemTypeName == QOrganizerItemType::TypeNote) {
+            schemaDefs[itemTypeName].remove(QOrganizerItemReminder::DefinitionName);
+            continue;
+        }
         QMap<QString, QOrganizerItemDetailDefinition> details = schemaDefs.value(itemTypeName);
         if (details.contains(QOrganizerItemReminder::DefinitionName)) {
             // Symbian alarm subsystem does not support setting the count or delay values
@@ -74,7 +78,7 @@ void OrganizerItemReminderTransform::transformToDetailL(const CCalEntry& entry, 
         int offsetSeconds = alarm->TimeOffset().Int() * 60;
         // Set both the offset and dateTime values for the reminder detail
         reminder.setTimeDelta(offsetSeconds);
-        QDateTime startTime = OrganizerItemDetailTransform::toQDateTimeL(entry.StartTimeL());
+        QDateTime startTime = toQDateTimeL(entry.StartTimeL());
         QDateTime reminderTime = startTime.addSecs(-offsetSeconds);
         reminder.setDateTime(reminderTime);
         item->saveDetail(&reminder);
@@ -84,15 +88,21 @@ void OrganizerItemReminderTransform::transformToDetailL(const CCalEntry& entry, 
 
 void OrganizerItemReminderTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
-    QOrganizerItemReminder reminder = item.detail<QOrganizerItemReminder>();
-    if (reminder.isEmpty()) {
+    if (QOrganizerItemType::TypeNote == item.type()) {
         return;
     }
+    QOrganizerItemReminder reminder = item.detail<QOrganizerItemReminder>();
+
+    if (reminder.isEmpty()) {
+		// Remove the alarm from the entry
+		entry->SetAlarmL(0);
+        return;
+	}
 
     QDateTime reminderDateTime = reminder.dateTime();
-    int offsetMinutes = 0;
+    int timeOffset(0);
 
-    // If the reminder detail has a valid time, use it
+    // If the reminder detail has a valid startDateTime, use it
     if (!reminderDateTime.isNull()) {
         QDateTime startDateTime;
         if(item.type() == QOrganizerItemType::TypeEvent ||
@@ -108,21 +118,27 @@ void OrganizerItemReminderTransform::transformToEntryL(const QOrganizerItem& ite
             // Reminder time must be less than or equal to the start time
             User::Leave(KErrArgument);
         }
-        // Get the time offset in seconds
-        offsetMinutes = reminderDateTime.secsTo(startDateTime) / 60;
-    } else {
-        // Get the offset from the timeDelta field
-        if (reminder.timeDelta() < 0) {
-            // Offset must be non-negative
-            User::Leave(KErrArgument);
+        // Get the time offset in minutes
+        timeOffset = reminderDateTime.secsTo(startDateTime) / 60;
+    }
+
+    // If there is a valid reminder delta, use it
+    if (reminder.variantValues().contains(QOrganizerItemReminder::FieldTimeDelta)) {
+
+        if (timeOffset) {
+            // If both startDateTime and delta are defined, they must match
+            if (timeOffset != reminder.timeDelta() / 60)
+                User::Leave(KErrArgument);
+        } else {
+            // Convert delta to minutes
+            timeOffset = reminder.timeDelta() / 60;
         }
-        offsetMinutes = reminder.timeDelta() / 60;
     }
 
     // Now add the alarm details in the entry
     CCalAlarm *alarm = CCalAlarm::NewL();
     CleanupStack::PushL(alarm);
-    alarm->SetTimeOffset(offsetMinutes);
+    alarm->SetTimeOffset(timeOffset);
     entry->SetAlarmL(alarm);
     CleanupStack::PopAndDestroy(alarm);
 }

@@ -55,9 +55,10 @@ class QGeoTiledMapRequestPrivate;
 class Q_LOCATION_EXPORT QGeoTiledMapRequest
 {
 public:
-    // TODO add isValid method, set to false for default constructor
     QGeoTiledMapRequest();
-    QGeoTiledMapRequest(QGeoTiledMapData *mapData,
+    QGeoTiledMapRequest(QGraphicsGeoMap::ConnectivityMode connectivityMode,
+                        QGraphicsGeoMap::MapType mapType,
+                        qreal zoomLevel,
                         int row,
                         int column,
                         const QRect &tileRect);
@@ -65,10 +66,12 @@ public:
     ~QGeoTiledMapRequest();
 
     QGeoTiledMapRequest& operator= (const QGeoTiledMapRequest &other);
+
     bool operator== (const QGeoTiledMapRequest &other) const;
 
-    QGeoTiledMapData *mapData() const;
+    //QGeoTiledMapData *mapData() const;
 
+    QGraphicsGeoMap::ConnectivityMode connectivityMode() const;
     QGraphicsGeoMap::MapType mapType() const;
     int zoomLevel() const;
 

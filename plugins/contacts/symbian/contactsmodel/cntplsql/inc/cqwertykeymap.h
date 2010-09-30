@@ -31,64 +31,12 @@ NONSHARABLE_CLASS(CQwertyKeyMap) : public CPcsKeyMap
 	public: // Enums
 		enum TQwertyKeyboard
 			{
-			// How many keys have mappings in the virtual QWERTY keypad.
-			// Most languages list 32 keys, some have 36 keys.
-			// 4x11 keyboard could have 44 keys.
-			EAmountOfKeysInQwertyKeypad = 44
-			};
+			// Max amount of mapped keys. Currently 6 bits are used to identify
+			// a key, and the last key is reserved, so it leaves 63 keys.
+			EMaxAmountOfKeysInQwertyKeypad = 63,
 
-		// These values are used to identify each key in the keyboard.
-		enum TKeyId
-			{
-			// first key at index 0 
-			EKeyQ = 0,
-			EKeyW,
-			EKeyE,
-			EKeyR,
-			EKeyT,
-			EKeyY,
-			EKeyU,
-			EKeyI,
-			EKeyO,
-			EKeyP,
-
-			EKeyA, // 10
-			EKeyS,
-			EKeyD,
-			EKeyF,
-			EKeyG,
-			EKeyH,
-			EKeyJ,
-			EKeyK,
-			EKeyL,
-
-			EKeyZ, // 19
-			EKeyX,
-			EKeyC,
-			EKeyV,
-			EKeyB,
-			EKeyN,
-			EKeyM,
-			EKeyColon,
-			EKeyDot,
-			EKeyDash,	// 28
-			EKeyAt,
-			EKeyQuote,
-			EKeyQuestionMark,
-
-			EKey32,
-			EKey33,
-			EKey34,
-			EKey35,
-			EKey36,
-			EKey37,
-			EKey38,
-			EKey39,
-			EKey40,
-			EKey41,
-			EKey42,
-			EKey43,
-
+			// Characters that are not recognized by the keymap, are mapped to
+			// this key id.
 			// Value is KBitsInKeyId amount of 1-bits (i.e. 111111 (binary))
 			KPadCharValue = 0x3f
 			};
@@ -111,11 +59,17 @@ NONSHARABLE_CLASS(CQwertyKeyMap) : public CPcsKeyMap
 		virtual TInt ComputeValue(QString aString,
 								  TBool aUpperLimit,
 								  QString& aValue) const;
+		virtual TInt ReadExtraCharacters(const HbInputLanguage& aLanguage);
 
 	public:
 		bool IsValidChar(const QChar aChar) const;
 
 		TInt MapKeyNameToValue(const QChar aKeyName) const;
+
+		/**
+         * Returns the amount of mapped keys (not characters).
+         */
+		TInt MappedKeyCount() const;
 
 	private: // Constructors
         /**
@@ -131,13 +85,17 @@ NONSHARABLE_CLASS(CQwertyKeyMap) : public CPcsKeyMap
 	private: // New functions
 		void ConstructKeyNameMap();
 
+		int FindNextFreeKey() const;
+
+		void SetActualNumberOfMappedKeys(int aAmountOfKeys);
+
     private: // Data
-		// Mapping between the virtual keys (TKeyId) of the keyboard, and the
-		// base character of that key (QChar).
+		// Mapping between the virtual keys of the keyboard, and the base
+		// character of that key (QChar).
 		//
-		// TODO: must place QMap's 1st arg the one that used more,
+		// Place QMap's first argument the one that used more,
 		// since reverse lookup (Qmap::key()) is slow
-		QMap<TKeyId, QChar> iKeyNames;
+		QMap<int, QChar> iKeyNames;
 
 		// List of the valid base characters of the keyboard. Obtained from
 		// iKeyNames.

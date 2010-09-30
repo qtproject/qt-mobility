@@ -142,15 +142,14 @@ ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* pa
 
 ObjectEndPoint::~ObjectEndPoint()
 {
-    if (d->endPointType == Service) {
-        InstanceManager::instance()->removeObjectInstance(d->entry, d->serviceInstanceId);
-    }
-
     delete d;
 }
 
 void ObjectEndPoint::disconnected()
 {
+    if (d->endPointType == Service) {
+        InstanceManager::instance()->removeObjectInstance(d->entry, d->serviceInstanceId);
+    }
     deleteLater();
 }
 

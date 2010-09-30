@@ -50,7 +50,7 @@
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QGalleryAbstractRequest::State)
+Q_DECLARE_METATYPE(QGalleryAbstractRequest::Status)
 
 class tst_QGalleryAbstractRequest : public QObject
 {
@@ -66,6 +66,7 @@ private Q_SLOTS:
     void executeUnsupported();
     void executeSync();
     void executeAsync();
+    void resume();
     void cancelActive();
     void cancelIdle();
     void clear();
@@ -78,19 +79,25 @@ private Q_SLOTS:
 
 class QtGalleryTestResponse : public QGalleryAbstractResponse
 {
+    Q_OBJECT
 public:
-    QtGalleryTestResponse(int result, bool idle)
+    QtGalleryTestResponse(
+            QGalleryAbstractRequest::Status status, int error, const QString &errorString)
         : m_ignoreCancel(false)
         , m_finishInWait(false)
     {
-        if (result != QGalleryAbstractRequest::NoResult)
-            finish(result, idle);
+        if (error != QGalleryAbstractRequest::NoError)
+            QGalleryAbstractResponse::error(error, errorString);
+        else if (status == QGalleryAbstractRequest::Finished)
+            finish();
+        else if (status == QGalleryAbstractRequest::Idle)
+            finish(true);
     }
 
     bool waitForFinished(int)
     {
         if (m_finishInWait) {
-            finish(QGalleryAbstractRequest::Succeeded, true);
+            finish(true);
             return true;
         } else {
             return false;
@@ -99,9 +106,14 @@ public:
 
     void cancel() { if (!m_ignoreCancel) QGalleryAbstractResponse::cancel(); }
 
-    void doFinish() { emit finished(); }
-    void doFinish(int result, bool idle) { finish(result, idle); }
-    void doProgressChanged(int current, int maximum) { emit progressChanged(current, maximum); }
+    using QGalleryAbstractResponse::finished;
+    using QGalleryAbstractResponse::finish;
+    using QGalleryAbstractResponse::error;
+    using QGalleryAbstractResponse::resume;
+    using QGalleryAbstractResponse::resumed;
+    using QGalleryAbstractResponse::cancelled;
+    using QGalleryAbstractResponse::progressChanged;
+
     void setIgnoreCancel(bool ignore) { m_ignoreCancel = ignore; }
     void setFinishInWait(bool finish) { m_finishInWait = finish; }
 
@@ -112,6 +124,7 @@ private:
 
 class QtGalleryTestRequest : public QGalleryAbstractRequest
 {
+    Q_OBJECT
 public:
     QtGalleryTestRequest(QGalleryAbstractRequest::RequestType type)
         : QGalleryAbstractRequest(type)
@@ -138,14 +151,19 @@ private:
 
 class QtTestGallery : public QAbstractGallery
 {
+    Q_OBJECT
 public:
-    QtTestGallery() : m_result(QGalleryAbstractRequest::NoResult), m_idle(false) {}
+    QtTestGallery()
+        : m_status(QGalleryAbstractRequest::Active)
+        , m_error(QGalleryAbstractRequest::NoError)
+    {}
 
     bool isRequestSupported(QGalleryAbstractRequest::RequestType type) const {
         return m_supportedRequests.contains(type); }
 
-    void setResult(int result) { m_result = result; }
-    void setIdle(bool idle) { m_idle = idle; }
+    void setStatus(QGalleryAbstractRequest::Status status) { m_status = status; }
+    void setError(int error, const QString &errorString) {
+        m_error = error; m_errorString = errorString; }
 
     void setSupportedRequests(const QList<QGalleryAbstractRequest::RequestType> &requests) {
         m_supportedRequests = requests; }
@@ -153,775 +171,836 @@ public:
 protected:
     QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request)
     {
-        if (m_supportedRequests.contains(request->type()))
-            return new QtGalleryTestResponse(m_result, m_idle);
+        if (m_supportedRequests.contains(request->type())) {
+            return new QtGalleryTestResponse(m_status, m_error, m_errorString);
+        }
         return 0;
     }
 
 private:
     QList<QGalleryAbstractRequest::RequestType> m_supportedRequests;
-    int m_result;
-    bool m_idle;
+    QGalleryAbstractRequest::Status m_status;
+    int m_error;
+    QString m_errorString;
 };
+
 
 void tst_QGalleryAbstractRequest::type()
 {
     QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::QueryRequest).type(),
              QGalleryAbstractRequest::QueryRequest);
 
-    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::RemoveRequest).type(),
-             QGalleryAbstractRequest::RemoveRequest);
+    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::ItemRequest).type(),
+             QGalleryAbstractRequest::ItemRequest);
 }
 
 void tst_QGalleryAbstractRequest::initTestCase()
 {
-    qRegisterMetaType<QGalleryAbstractRequest::State>();
+    qRegisterMetaType<QGalleryAbstractRequest::Status>();
 }
 
 void tst_QGalleryAbstractRequest::isSupported()
 {
     QtTestGallery gallery;
     gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
-            << QGalleryAbstractRequest::RemoveRequest);
+            << QGalleryAbstractRequest::ItemRequest);
 
     QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::QueryRequest).isSupported(), false);
-    QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::RemoveRequest).isSupported(), true);
+    QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::ItemRequest).isSupported(), true);
 }
 
 void tst_QGalleryAbstractRequest::executeNoGallery()
 {
-    QtGalleryTestRequest request(QGalleryAbstractRequest::RemoveRequest);
+    QtGalleryTestRequest request(QGalleryAbstractRequest::ItemRequest);
 
-    QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
+    QSignalSpy finishedSpy(&request, SIGNAL(finished()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
-    QSignalSpy failedSpy(&request, SIGNAL(failed(int)));
-    QSignalSpy finishedSpy(&request, SIGNAL(finished(int)));
-    QSignalSpy resultSpy(&request, SIGNAL(resultChanged()));
-    QSignalSpy stateSpy(&request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
+    QSignalSpy errorSpy(&request, SIGNAL(error(int,QString)));
+    QSignalSpy statusSpy(&request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)));
 
     request.execute();
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoGallery));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Error);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoGallery));
+    QCOMPARE(request.errorString(), QLatin1String("No gallery has been set on the QtGalleryTestRequest."));
+    QCOMPARE(finishedSpy.count(), 0);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 1);
-    QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 0);
-    QCOMPARE(failedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::NoGallery));
-    QCOMPARE(finishedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::NoGallery));
+    QCOMPARE(errorSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 1);
+    QCOMPARE(errorSpy.last().value(0).toInt(), request.error());
+    QCOMPARE(errorSpy.last().value(1).toString(), request.errorString());
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 }
 
 void tst_QGalleryAbstractRequest::executeUnsupported()
 {
     QtTestGallery gallery;
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::ItemRequest);
 
-    QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
+    QSignalSpy finishedSpy(&request, SIGNAL(finished()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
-    QSignalSpy failedSpy(&request, SIGNAL(failed(int)));
-    QSignalSpy finishedSpy(&request, SIGNAL(finished(int)));
-    QSignalSpy resultSpy(&request, SIGNAL(resultChanged()));
-    QSignalSpy stateSpy(&request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
+    QSignalSpy errorSpy(&request, SIGNAL(error(int,QString)));
+    QSignalSpy statusSpy(&request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)));
 
     request.execute();
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NotSupported));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Error);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NotSupported));
+    QCOMPARE(request.errorString(), QLatin1String("QtGalleryTestRequest is not supported by QtTestGallery."));
+    QCOMPARE(finishedSpy.count(), 0);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 1);
-    QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 0);
-    QCOMPARE(failedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::NotSupported));
-    QCOMPARE(finishedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::NotSupported));
+    QCOMPARE(errorSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 1);
+    QCOMPARE(errorSpy.last().value(0).toInt(), request.error());
+    QCOMPARE(errorSpy.last().value(1).toString(), request.errorString());
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 }
 
 void tst_QGalleryAbstractRequest::executeSync()
 {
     QtTestGallery gallery;
     gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
-            << QGalleryAbstractRequest::RemoveRequest);
+            << QGalleryAbstractRequest::ItemRequest);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::ItemRequest);
 
-    QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
+    QSignalSpy finishedSpy(&request, SIGNAL(finished()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
-    QSignalSpy failedSpy(&request, SIGNAL(failed(int)));
-    QSignalSpy finishedSpy(&request, SIGNAL(finished(int)));
-    QSignalSpy resultSpy(&request, SIGNAL(resultChanged()));
-    QSignalSpy stateSpy(&request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
+    QSignalSpy errorSpy(&request, SIGNAL(error(int,QString)));
+    QSignalSpy statusSpy(&request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)));
 
     // Successful execution.
-    gallery.setResult(QGalleryAbstractRequest::Succeeded);
+    gallery.setStatus(QGalleryAbstractRequest::Finished);
     request.execute();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 0);
-    QCOMPARE(finishedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     // Unsuccessful execution.
-    gallery.setResult(QGalleryAbstractRequest::RequestError);
+    gallery.setError(121, QLatin1String("bad input"));
     request.execute();
     QVERIFY(request.response() == 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::RequestError));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 1);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Error);
+    QCOMPARE(request.error(), 121);
+    QCOMPARE(request.errorString(), QLatin1String("bad input"));
+    QCOMPARE(finishedSpy.count(), 1);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 1);
-    QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 2);
-    QCOMPARE(stateSpy.count(), 0);
-    QCOMPARE(failedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::RequestError));
-    QCOMPARE(finishedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::RequestError));
+    QCOMPARE(errorSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 2);
+    QCOMPARE(errorSpy.last().value(0).toInt(), request.error());
+    QCOMPARE(errorSpy.last().value(1).toString(), request.errorString());
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
-    gallery.setResult(QGalleryAbstractRequest::RequestError);
+    gallery.setError(65, QLatin1String("bad connection"));
     request.execute();
     QVERIFY(request.response() == 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::RequestError));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 1);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Error);
+    QCOMPARE(request.error(), 65);
+    QCOMPARE(request.errorString(), QLatin1String("bad connection"));
+    QCOMPARE(finishedSpy.count(), 1);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 2);
-    QCOMPARE(finishedSpy.count(), 3);
-    QCOMPARE(resultSpy.count(), 2);
-    QCOMPARE(stateSpy.count(), 0);
-    QCOMPARE(failedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::RequestError));
-    QCOMPARE(finishedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::RequestError));
+    QCOMPARE(errorSpy.count(), 2);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(errorSpy.last().value(0).toInt(), request.error());
+    QCOMPARE(errorSpy.last().value(1).toString(), request.errorString());
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     // Successful execution, to idle.
-    gallery.setResult(QGalleryAbstractRequest::Succeeded);
-    gallery.setIdle(true);
+    gallery.setError(QGalleryAbstractRequest::NoError, QString());
+    gallery.setStatus(QGalleryAbstractRequest::Idle);
     request.execute();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Idle);
-    QCOMPARE(succeededSpy.count(), 2);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 2);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 2);
-    QCOMPARE(finishedSpy.count(), 4);
-    QCOMPARE(resultSpy.count(), 3);
-    QCOMPARE(stateSpy.count(), 1);
-    QCOMPARE(finishedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Idle);
+    QCOMPARE(errorSpy.count(), 2);
+    QCOMPARE(statusSpy.count(), 4);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     // Execute unsupported.
     gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>());
     request.execute();
     QVERIFY(request.response() == 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NotSupported));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 2);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Error);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NotSupported));
+    QCOMPARE(finishedSpy.count(), 2);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 3);
-    QCOMPARE(finishedSpy.count(), 5);
-    QCOMPARE(resultSpy.count(), 4);
-    QCOMPARE(stateSpy.count(), 2);
-    QCOMPARE(failedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::NotSupported));
-    QCOMPARE(finishedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::NotSupported));
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Inactive);
-
-
+    QCOMPARE(errorSpy.count(), 3);
+    QCOMPARE(statusSpy.count(), 5);
+    QCOMPARE(errorSpy.last().value(0).toInt(), request.error());
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 }
 void tst_QGalleryAbstractRequest::executeAsync()
 {
     QtTestGallery gallery;
     gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
-            << QGalleryAbstractRequest::RemoveRequest);
+            << QGalleryAbstractRequest::ItemRequest);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::ItemRequest);
 
-    QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
+    QSignalSpy finishedSpy(&request, SIGNAL(finished()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
-    QSignalSpy failedSpy(&request, SIGNAL(failed(int)));
-    QSignalSpy finishedSpy(&request, SIGNAL(finished(int)));
-    QSignalSpy resultSpy(&request, SIGNAL(resultChanged()));
-    QSignalSpy stateSpy(&request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
+    QSignalSpy errorSpy(&request, SIGNAL(error(int,QString)));
+    QSignalSpy statusSpy(&request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)));
 
     // Successful execution.
+    gallery.setStatus(QGalleryAbstractRequest::Active);
     request.execute();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
-    QCOMPARE(succeededSpy.count(), 0);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 0);
-    QCOMPARE(resultSpy.count(), 0);
-    QCOMPARE(stateSpy.count(), 1);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Active);
-
-    request.response()->doFinish(QGalleryAbstractRequest::Succeeded, false);
-    QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 1);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
+
+    request.response()->finish(false);
+    QVERIFY(request.response() != 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 2);
-    QCOMPARE(finishedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Inactive);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     // Unsuccessful execution.
     request.execute();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
-    QCOMPARE(succeededSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 2);
-    QCOMPARE(stateSpy.count(), 3);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Active);
-
-    request.response()->doFinish(QGalleryAbstractRequest::RequestError, false);
-    QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::RequestError));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 1);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 1);
-    QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 3);
-    QCOMPARE(stateSpy.count(), 4);
-    QCOMPARE(failedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::RequestError));
-    QCOMPARE(finishedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::RequestError));
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Inactive);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
-    // Successful execution, to idle.
+    request.response()->error(80, false);
+    QVERIFY(request.response() != 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Error);
+    QCOMPARE(request.error(), 80);
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 4);
+    QCOMPARE(errorSpy.last().value(0).toInt(), request.error());
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
+
+    // Successful execution, to active.
+    gallery.setError(QGalleryAbstractRequest::NoError, QString());
     request.execute();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
-    QCOMPARE(succeededSpy.count(), 1);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 1);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 1);
-    QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 4);
-    QCOMPARE(stateSpy.count(), 5);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Active);
+    QCOMPARE(errorSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 5);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
-    // Response emits finish without changing the result.
-    request.response()->doFinish();
+    // Response emits finish without changing the error.
+    request.response()->finished();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
-    QCOMPARE(succeededSpy.count(), 1);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 1);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 1);
-    QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 4);
-    QCOMPARE(stateSpy.count(), 5);
+    QCOMPARE(errorSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 5);
 
     // Response finishes correctly.
-    request.response()->doFinish(QGalleryAbstractRequest::Succeeded, true);
+    request.response()->finish(true);
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Idle);
-    QCOMPARE(succeededSpy.count(), 2);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 2);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 1);
-    QCOMPARE(finishedSpy.count(), 3);
-    QCOMPARE(resultSpy.count(), 5);
-    QCOMPARE(stateSpy.count(), 6);
-    QCOMPARE(finishedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Idle);
+    QCOMPARE(errorSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 6);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
-    // Response emits finish without changing the idle state.
-    request.response()->doFinish();
+    // Response emits finish without changing the idle status.
+    request.response()->finished();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Idle);
-    QCOMPARE(succeededSpy.count(), 2);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 2);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 1);
-    QCOMPARE(finishedSpy.count(), 3);
-    QCOMPARE(resultSpy.count(), 5);
-    QCOMPARE(stateSpy.count(), 6);
+    QCOMPARE(errorSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 6);
 
-    // Response exits idle state correctly.
-    request.response()->cancel();
+    // Response cancels itself.
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 2);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 2);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 1);
-    QCOMPARE(finishedSpy.count(), 3);
-    QCOMPARE(resultSpy.count(), 5);
-    QCOMPARE(stateSpy.count(), 7);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Inactive);
+    QCOMPARE(errorSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 6);
 
-    // Response emits finish from inactive state.
-    request.response()->doFinish();
+    // Response exits idle status correctly.
+    request.response()->finish(false);
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 2);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 2);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 1);
-    QCOMPARE(finishedSpy.count(), 3);
-    QCOMPARE(resultSpy.count(), 5);
-    QCOMPARE(stateSpy.count(), 7);
+    QCOMPARE(errorSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 7);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
+
+    // Response emits finish from finished status.
+    request.response()->finished();
+    QVERIFY(request.response() != 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 2);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 7);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
+}
+
+void tst_QGalleryAbstractRequest::resume()
+{
+    QtTestGallery gallery;
+    gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
+            << QGalleryAbstractRequest::ItemRequest);
+    gallery.setStatus(QGalleryAbstractRequest::Idle);
+
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::ItemRequest);
+
+    QSignalSpy finishedSpy(&request, SIGNAL(finished()));
+    QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
+    QSignalSpy errorSpy(&request, SIGNAL(error(int,QString)));
+    QSignalSpy statusSpy(&request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)));
+
+    request.execute();
+    QVERIFY(request.response() != 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
+
+    // Response emits resumed without changing idle.
+    request.response()->resumed();
+    QVERIFY(request.response() != 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
+
+    // Response resumes correctly.
+    request.response()->resume();
+    QVERIFY(request.response() != 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
+
+    // Resuming while active does nothing.
+    request.response()->resume();
+    QVERIFY(request.response() != 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
+
+    // Emitting resumed while active does nothing.
+    request.response()->resumed();
+    QVERIFY(request.response() != 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
+
+    // Returning to idle again doesn't emit finished.
+    request.response()->finish(true);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
+
+    // Finishing  doesn't emit finished.
+    request.response()->resume();
+    QVERIFY(request.response() != 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 4);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
+
+    request.response()->finish(false);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 5);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
+
+    // Emitting resumed when finished does nothing
+    request.response()->resumed();
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 5);
 }
 
 void tst_QGalleryAbstractRequest::cancelActive()
 {
     QtTestGallery gallery;
     gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
-            << QGalleryAbstractRequest::RemoveRequest);
+            << QGalleryAbstractRequest::ItemRequest);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::ItemRequest);
 
-    QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
+    QSignalSpy finishedSpy(&request, SIGNAL(finished()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
-    QSignalSpy failedSpy(&request, SIGNAL(failed(int)));
-    QSignalSpy finishedSpy(&request, SIGNAL(finished(int)));
-    QSignalSpy resultSpy(&request, SIGNAL(resultChanged()));
-    QSignalSpy stateSpy(&request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
+    QSignalSpy errorSpy(&request, SIGNAL(error(int,QString)));
+    QSignalSpy statusSpy(&request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)));
 
     // Cancel synchronously.
     request.execute();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
-    QCOMPARE(succeededSpy.count(), 0);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 0);
-    QCOMPARE(resultSpy.count(), 0);
-    QCOMPARE(stateSpy.count(), 1);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Active);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     request.cancel();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Cancelled));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Cancelled);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 0);
     QCOMPARE(cancelledSpy.count(), 1);
-    QCOMPARE(failedSpy.count(), 0);
-    QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 2);
-    QCOMPARE(finishedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::Cancelled));
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Inactive);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     // Cancel asynchronously.
     request.execute();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
-    QCOMPARE(succeededSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 0);
     QCOMPARE(cancelledSpy.count(), 1);
-    QCOMPARE(failedSpy.count(), 0);
-    QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 2);
-    QCOMPARE(stateSpy.count(), 3);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Active);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
+
+    // Response emits cancelled unprovoked.
+    request.response()->cancelled();
+    QVERIFY(request.response() != 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 1);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
 
     request.response()->setIgnoreCancel(true);
     request.cancel();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Cancelling);
-    QCOMPARE(succeededSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Cancelling);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 0);
     QCOMPARE(cancelledSpy.count(), 1);
-    QCOMPARE(failedSpy.count(), 0);
-    QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 2);
-    QCOMPARE(stateSpy.count(), 4);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Cancelling);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 4);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
-    // No state changes while cancel in pending
+    // No status changes while cancel in pending
     request.cancel();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Cancelling);
-    QCOMPARE(succeededSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Cancelling);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 0);
     QCOMPARE(cancelledSpy.count(), 1);
-    QCOMPARE(failedSpy.count(), 0);
-    QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 2);
-    QCOMPARE(stateSpy.count(), 4);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 4);
 
     request.response()->setIgnoreCancel(false);
     request.response()->cancel();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Cancelled));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Cancelled);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 0);
     QCOMPARE(cancelledSpy.count(), 2);
-    QCOMPARE(failedSpy.count(), 0);
-    QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 3);
-    QCOMPARE(stateSpy.count(), 5);
-    QCOMPARE(finishedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::Cancelled));
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Inactive);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 5);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
-    // No state changes after cancel is finished.
+    // No status changes after cancel is finished.
     request.cancel();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Cancelled));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Cancelled);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 0);
     QCOMPARE(cancelledSpy.count(), 2);
-    QCOMPARE(failedSpy.count(), 0);
-    QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 3);
-    QCOMPARE(stateSpy.count(), 5);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 5);
+
+    // Finish as normal if response finishes after being cancelled.
+    request.execute();
+    QVERIFY(request.response() != 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 2);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 6);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
+
+    request.response()->setIgnoreCancel(true);
+    request.cancel();
+    QVERIFY(request.response() != 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Cancelling);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 2);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 7);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
+
+    request.response()->finish(false);
+    QVERIFY(request.response() != 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 2);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 8);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 }
 
 void tst_QGalleryAbstractRequest::cancelIdle()
 {
     QtTestGallery gallery;
     gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
-            << QGalleryAbstractRequest::RemoveRequest);
-    gallery.setResult(QGalleryAbstractRequest::Succeeded);
-    gallery.setIdle(true);
+            << QGalleryAbstractRequest::ItemRequest);
+    gallery.setStatus(QGalleryAbstractRequest::Idle);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::ItemRequest);
 
-    QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
+    QSignalSpy finishedSpy(&request, SIGNAL(finished()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
-    QSignalSpy failedSpy(&request, SIGNAL(failed(int)));
-    QSignalSpy finishedSpy(&request, SIGNAL(finished(int)));
-    QSignalSpy resultSpy(&request, SIGNAL(resultChanged()));
-    QSignalSpy stateSpy(&request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
+    QSignalSpy errorSpy(&request, SIGNAL(error(int,QString)));
+    QSignalSpy statusSpy(&request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)));
 
     // Cancel synchronously.
     request.execute();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Idle);
-    QCOMPARE(succeededSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 1);
-    QCOMPARE(finishedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Idle);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     request.cancel();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 2);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Inactive);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     // Cancel asynchronously.
     request.execute();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Idle);
-    QCOMPARE(succeededSpy.count(), 2);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 3);
-    QCOMPARE(finishedSpy.last().value(0).toInt(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Idle);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     request.response()->setIgnoreCancel(true);
     request.cancel();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Idle);
-    QCOMPARE(succeededSpy.count(), 2);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Cancelling);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 3);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 4);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     request.response()->setIgnoreCancel(false);
     request.response()->cancel();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 2);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 4);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Inactive);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 5);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 }
 
 void tst_QGalleryAbstractRequest::clear()
 {
     QtTestGallery gallery;
     gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
-            << QGalleryAbstractRequest::RemoveRequest);
+            << QGalleryAbstractRequest::ItemRequest);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::ItemRequest);
 
-    QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
+    QSignalSpy finishedSpy(&request, SIGNAL(finished()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
-    QSignalSpy failedSpy(&request, SIGNAL(failed(int)));
-    QSignalSpy finishedSpy(&request, SIGNAL(finished(int)));
-    QSignalSpy resultSpy(&request, SIGNAL(resultChanged()));
-    QSignalSpy stateSpy(&request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
+    QSignalSpy errorSpy(&request, SIGNAL(error(int,QString)));
+    QSignalSpy statusSpy(&request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)));
     
     // Clear no response.
     request.clear();
     QVERIFY(request.response() == 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 0);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 0);
-    QCOMPARE(resultSpy.count(), 0);
-    QCOMPARE(stateSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
 
     // Clear finished response.
-    gallery.setResult(QGalleryAbstractRequest::Succeeded);
+    gallery.setStatus(QGalleryAbstractRequest::Finished);
     request.execute();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     request.clear();
     QVERIFY(request.response() == 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 2);
-    QCOMPARE(stateSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     // Clear idle response.
-    gallery.setIdle(true);
+    gallery.setStatus(QGalleryAbstractRequest::Idle);
     request.execute();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Idle);
-    QCOMPARE(succeededSpy.count(), 2);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 3);
-    QCOMPARE(stateSpy.count(), 1);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Idle);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     request.clear();
     QVERIFY(request.response() == 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 2);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 4);
-    QCOMPARE(stateSpy.count(), 2);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Inactive);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 4);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     // Clear active response.
-    gallery.setResult(QGalleryAbstractRequest::NoResult);
-    gallery.setIdle(false);
+    gallery.setStatus(QGalleryAbstractRequest::Active);
     request.execute();
     QVERIFY(request.response() != 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
-    QCOMPARE(succeededSpy.count(), 2);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 4);
-    QCOMPARE(stateSpy.count(), 3);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Active);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 5);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     request.clear();
     QVERIFY(request.response() == 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 2);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 4);
-    QCOMPARE(stateSpy.count(), 4);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Inactive);
-
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 6);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     // Clear error response.
-    gallery.setResult(QGalleryAbstractRequest::ConnectionError);
-    gallery.setIdle(false);
+    gallery.setError(65, QLatin1String("bad connection"));
     request.execute();
     QVERIFY(request.response() == 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::ConnectionError));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 2);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Error);
+    QCOMPARE(request.error(), 65);
+    QCOMPARE(request.errorString(), QLatin1String("bad connection"));
+    QCOMPARE(finishedSpy.count(), 2);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 1);
-    QCOMPARE(finishedSpy.count(), 3);
-    QCOMPARE(resultSpy.count(), 5);
-    QCOMPARE(stateSpy.count(), 4);
+    QCOMPARE(errorSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 7);
+    QCOMPARE(errorSpy.last().value(0).toInt(), request.error());
+    QCOMPARE(errorSpy.last().value(1).toString(), request.errorString());
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     request.clear();
     QVERIFY(request.response() == 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 2);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(request.errorString(), QString());
+    QCOMPARE(finishedSpy.count(), 2);
     QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 1);
-    QCOMPARE(finishedSpy.count(), 3);
-    QCOMPARE(resultSpy.count(), 6);
-    QCOMPARE(stateSpy.count(), 4);
+    QCOMPARE(errorSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 8);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 }
 
 void tst_QGalleryAbstractRequest::waitForFinished()
 {
     QtTestGallery gallery;
     gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
-            << QGalleryAbstractRequest::RemoveRequest);
+            << QGalleryAbstractRequest::ItemRequest);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::ItemRequest);
 
-    QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
+    QSignalSpy finishedSpy(&request, SIGNAL(finished()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
-    QSignalSpy failedSpy(&request, SIGNAL(failed(int)));
-    QSignalSpy finishedSpy(&request, SIGNAL(finished(int)));
-    QSignalSpy resultSpy(&request, SIGNAL(resultChanged()));
-    QSignalSpy stateSpy(&request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
+    QSignalSpy errorSpy(&request, SIGNAL(error(int,QString)));
+    QSignalSpy statusSpy(&request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)));
 
-    // Wait while inactive, no result.
+    // Wait while inactive, no error.
     QCOMPARE(request.waitForFinished(300), true);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 0);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 0);
-    QCOMPARE(resultSpy.count(), 0);
-    QCOMPARE(stateSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
 
     request.execute();
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
-    QCOMPARE(succeededSpy.count(), 0);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 0);
-    QCOMPARE(resultSpy.count(), 0);
-    QCOMPARE(stateSpy.count(), 1);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Active);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     // Timeout while waiting.
     QCOMPARE(request.waitForFinished(300), false);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
-    QCOMPARE(succeededSpy.count(), 0);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 0);
-    QCOMPARE(resultSpy.count(), 0);
-    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
 
     // Finish while waiting.
     request.response()->setFinishInWait(true);
     QCOMPARE(request.waitForFinished(300), true);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Idle);
-    QCOMPARE(succeededSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 2);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Idle);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     // Wait while idle.
     request.response()->setFinishInWait(false);
     QCOMPARE(request.waitForFinished(300), true);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Idle);
-    QCOMPARE(succeededSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
 
-    // Wait while inactive, with result.
-    request.cancel();
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    // Wait while finished.
+    request.response()->finish(false);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 3);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Inactive);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     QCOMPARE(request.waitForFinished(300), true);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 3);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+
+    // Wait while cancelled.
+    gallery.setStatus(QGalleryAbstractRequest::Active);
+    request.execute();
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 4);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
+
+    request.cancel();
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Cancelled);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 1);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 5);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
+
+    QCOMPARE(request.waitForFinished(300), true);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Cancelled);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 1);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 5);
 }
 
 void tst_QGalleryAbstractRequest::progress()
 {
     QtTestGallery gallery;
     gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
-            << QGalleryAbstractRequest::RemoveRequest);
+            << QGalleryAbstractRequest::ItemRequest);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::ItemRequest);
 
     QSignalSpy spy(&request, SIGNAL(progressChanged(int,int)));
 
@@ -932,14 +1011,14 @@ void tst_QGalleryAbstractRequest::progress()
     QCOMPARE(spy.count(), 0);
     QVERIFY(request.response() != 0);
 
-    request.response()->doProgressChanged(120, 1000);
+    request.response()->progressChanged(120, 1000);
     QCOMPARE(request.currentProgress(), 120);
     QCOMPARE(request.maximumProgress(), 1000);
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.last().value(0).toInt(), 120);
     QCOMPARE(spy.last().value(1).toInt(), 1000);
 
-    request.response()->doProgressChanged(5600, 95);
+    request.response()->progressChanged(5600, 95);
     QCOMPARE(request.currentProgress(), 5600);
     QCOMPARE(request.maximumProgress(), 95);
     QCOMPARE(spy.count(), 2);
@@ -958,7 +1037,7 @@ void tst_QGalleryAbstractRequest::progress()
     QCOMPARE(spy.last().value(0).toInt(), 0);
     QCOMPARE(spy.last().value(1).toInt(), 0);
 
-    request.response()->doProgressChanged(-2, 10);
+    request.response()->progressChanged(-2, 10);
     QCOMPARE(request.currentProgress(), -2);
     QCOMPARE(request.maximumProgress(), 10);
     QCOMPARE(spy.count(), 4);
@@ -977,7 +1056,7 @@ void tst_QGalleryAbstractRequest::progress()
     QCOMPARE(request.currentProgress(), 0);
     QCOMPARE(spy.count(), 5);
 
-    request.response()->doProgressChanged(0, 75);
+    request.response()->progressChanged(0, 75);
     QCOMPARE(request.currentProgress(), 0);
     QCOMPARE(request.maximumProgress(), 75);
     QCOMPARE(spy.count(), 6);
@@ -991,8 +1070,7 @@ void tst_QGalleryAbstractRequest::progress()
     QCOMPARE(spy.last().value(0).toInt(), 0);
     QCOMPARE(spy.last().value(1).toInt(), 0);
 
-
-    request.response()->doProgressChanged(0, -23);
+    request.response()->progressChanged(0, -23);
     QCOMPARE(request.currentProgress(), 0);
     QCOMPARE(request.maximumProgress(), -23);
     QCOMPARE(spy.count(), 8);
@@ -1011,13 +1089,13 @@ void tst_QGalleryAbstractRequest::setGallery()
 {
     QtTestGallery copyGallery;
     copyGallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
-            << QGalleryAbstractRequest::RemoveRequest);
+            << QGalleryAbstractRequest::ItemRequest);
 
     QtTestGallery moveGallery;
     moveGallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
             << QGalleryAbstractRequest::QueryRequest);
 
-    QtGalleryTestRequest copyRequest(QGalleryAbstractRequest::RemoveRequest);
+    QtGalleryTestRequest copyRequest(QGalleryAbstractRequest::ItemRequest);
     QtGalleryTestRequest moveRequest(QGalleryAbstractRequest::QueryRequest);
 
     QSignalSpy copySpy(&copyRequest, SIGNAL(supportedChanged()));
@@ -1070,212 +1148,206 @@ void tst_QGalleryAbstractRequest::clearGallery()
 {
     QtTestGallery gallery;
     gallery.setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
-            << QGalleryAbstractRequest::RemoveRequest);
+            << QGalleryAbstractRequest::ItemRequest);
 
-    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::RemoveRequest);
+    QtGalleryTestRequest request(&gallery, QGalleryAbstractRequest::ItemRequest);
 
-    QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
+    QSignalSpy finishedSpy(&request, SIGNAL(finished()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
-    QSignalSpy failedSpy(&request, SIGNAL(failed(int)));
-    QSignalSpy finishedSpy(&request, SIGNAL(finished(int)));
-    QSignalSpy resultSpy(&request, SIGNAL(resultChanged()));
-    QSignalSpy stateSpy(&request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
+    QSignalSpy errorSpy(&request, SIGNAL(error(int,QString)));
+    QSignalSpy statusSpy(&request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)));
 
     // Clear no response.
     request.setGallery(0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 0);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 0);
-    QCOMPARE(resultSpy.count(), 0);
-    QCOMPARE(stateSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
 
     // Clear finished response.
-    gallery.setResult(QGalleryAbstractRequest::Succeeded);
+    gallery.setStatus(QGalleryAbstractRequest::Finished);
     request.setGallery(&gallery);
     request.execute();
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     request.setGallery(0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
 
     // Clear idle response.
-    gallery.setIdle(true);
+    gallery.setStatus(QGalleryAbstractRequest::Idle);
     request.setGallery(&gallery);
     request.execute();
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Idle);
-    QCOMPARE(succeededSpy.count(), 2);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 1);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Idle);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     request.setGallery(0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Idle);
-    QCOMPARE(succeededSpy.count(), 2);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 1);
-    QCOMPARE(stateSpy.count(), 1);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Idle);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
 
     // Clear active response.
-    gallery.setResult(QGalleryAbstractRequest::NoResult);
-    gallery.setIdle(false);
+    gallery.setStatus(QGalleryAbstractRequest::Active);
     request.setGallery(&gallery);
     request.execute();
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
-    QCOMPARE(succeededSpy.count(), 2);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 2);
-    QCOMPARE(stateSpy.count(), 2);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Active);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     request.setGallery(0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
-    QCOMPARE(succeededSpy.count(), 2);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 2);
-    QCOMPARE(stateSpy.count(), 2);
-    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
-             QGalleryAbstractRequest::Active);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+
+    // execute after clearing gallery.
+    request.execute();
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Error);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoGallery));
+    QCOMPARE(finishedSpy.count(), 2);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 4);
+    QCOMPARE(errorSpy.last().value(0).toInt(), request.error());
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 }
 
 void tst_QGalleryAbstractRequest::deleteGallery()
 {
     QtTestGallery *gallery = 0;
 
-    QtGalleryTestRequest request(QGalleryAbstractRequest::RemoveRequest);
+    QtGalleryTestRequest request(QGalleryAbstractRequest::ItemRequest);
 
-    QSignalSpy succeededSpy(&request, SIGNAL(succeeded()));
+    QSignalSpy finishedSpy(&request, SIGNAL(finished()));
     QSignalSpy cancelledSpy(&request, SIGNAL(cancelled()));
-    QSignalSpy failedSpy(&request, SIGNAL(failed(int)));
-    QSignalSpy finishedSpy(&request, SIGNAL(finished(int)));
-    QSignalSpy resultSpy(&request, SIGNAL(resultChanged()));
+    QSignalSpy errorSpy(&request, SIGNAL(error(int,QString)));
+    QSignalSpy statusSpy(&request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)));
 
     // No response.
     gallery = new QtTestGallery;
     gallery->setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
-            << QGalleryAbstractRequest::RemoveRequest);
+            << QGalleryAbstractRequest::ItemRequest);
 
     request.setGallery(gallery);
     delete gallery;
     QVERIFY(request.gallery() == 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 0);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 0);
-    QCOMPARE(resultSpy.count(), 0);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
 
     // Finished response.
     gallery = new QtTestGallery;
     gallery->setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
-            << QGalleryAbstractRequest::RemoveRequest);
-    gallery->setResult(QGalleryAbstractRequest::Succeeded);
+            << QGalleryAbstractRequest::ItemRequest);
+    gallery->setStatus(QGalleryAbstractRequest::Finished);
 
     request.setGallery(gallery);
     request.execute();
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     delete gallery;
     QVERIFY(request.gallery() == 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
-    QCOMPARE(succeededSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(resultSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
 
     // Idle response.
     gallery = new QtTestGallery;
     gallery->setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
-            << QGalleryAbstractRequest::RemoveRequest);
-    gallery->setResult(QGalleryAbstractRequest::Succeeded);
-    gallery->setIdle(true);
+            << QGalleryAbstractRequest::ItemRequest);
+    gallery->setStatus(QGalleryAbstractRequest::Idle);
 
     request.setGallery(gallery);
     request.execute();
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Idle);
-    QCOMPARE(succeededSpy.count(), 2);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     delete gallery;
     QVERIFY(request.gallery() == 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Idle);
-    QCOMPARE(succeededSpy.count(), 2);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Idle);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
 
     // Clear active response.
     gallery = new QtTestGallery;
     gallery->setSupportedRequests(QList<QGalleryAbstractRequest::RequestType>()
-            << QGalleryAbstractRequest::RemoveRequest);
+            << QGalleryAbstractRequest::ItemRequest);
 
     request.setGallery(gallery);
     request.execute();
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
-    QCOMPARE(succeededSpy.count(), 2);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 2);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 
     delete gallery;
     QVERIFY(request.gallery() == 0);
-    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
-    QCOMPARE(succeededSpy.count(), 2);
-    QCOMPARE(cancelledSpy.count(), 0);
-    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
-    QCOMPARE(resultSpy.count(), 2);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+
+    // execute after deleting gallery.
+    request.execute();
+    QCOMPARE(request.status(), QGalleryAbstractRequest::Error);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoGallery));
+    QCOMPARE(finishedSpy.count(), 2);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 1);
+    QCOMPARE(statusSpy.count(), 4);
+    QCOMPARE(errorSpy.last().value(0).toInt(), request.error());
+    QCOMPARE(statusSpy.last().value(0).value<QGalleryAbstractRequest::Status>(), request.status());
 }
 
 QTEST_MAIN(tst_QGalleryAbstractRequest)

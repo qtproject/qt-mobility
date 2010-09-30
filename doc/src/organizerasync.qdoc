@@ -45,9 +45,10 @@ flexibility when requesting information from remote or slow local datastores.
 \section1 Using the API
 
 The asynchronous API offered by the Organizer module is available through classes
-derived from the QOrganizerAbstractRequest class.  It consists of two major sections:
+derived from the QOrganizerAbstractRequest class.  It consists of three major sections:
 \list
   \o Organizer Item Manipulation
+  \o Item Collection Manipulation
   \o Schema Manipulation
 \endlist
 
@@ -87,9 +88,40 @@ manipulation of organizer items consists of the following functions:
   \o itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const
   \o items(const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const
   \o items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const
-  \o saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap)
+  \o saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap)
   \o removeItems(QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap)
 \endlist
+
+
+\section2 Item Collection Manipulation
+
+Every item is saved in a collection in a manager.  Each collection has various
+properties which, if the manager supports such operations, may be modified
+by clients.
+
+There are four different types of operation which are supported by the asynchronous API:
+\list
+  \o Fetch collection ids
+  \o Fetch collections (that is, the object which defines the properties of a collection)
+  \o Save collections (create or update)
+  \o Remove collections
+\endlist
+
+These operations are supported via the QOrganizerCollectionLocalIdFetchRequest,
+QOrganizerCollectionFetchRequest, QOrganizerCollectionSaveRequest and
+QOrganizerCollectionRemoveRequest classes, respectively.
+
+The synchronous API offered by the QOrganizerItemManager class to allow
+manipulation of collections consists of the following functions:
+\list
+  \o QList<QOrganizerCollectionLocalId> collectionIds() const;
+  \o QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds = QList<QOrganizerCollectionLocalId>()) const;
+  \o bool saveCollection(QOrganizerCollection* collection);
+  \o bool removeCollection(const QOrganizerCollectionLocalId& collectionId);
+\endlist
+
+The synchronous API also offers a function which returns the id of the default
+collection of the manager.
 
 
 \section2 Schema Manipulation

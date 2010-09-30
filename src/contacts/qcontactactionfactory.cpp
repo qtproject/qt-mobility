@@ -62,13 +62,6 @@ QContactActionFactory::~QContactActionFactory()
  */
 
 /*!
-  \fn QContactActionFactory::instance() const
-  Returns a pointer to an instance of the implementation of the action.
-  The caller takes ownership of the action instance returned from this function, and must delete it when
-  they are finished using it in order to avoid a memory leak.
- */
-
-/*!
   \fn QContactActionFactory::supportedTargets(const QContact& contact, const QContactActionDescriptor& which) const
   Returns the targets which are supported by the action which may be instantiated by this factory
   for the given \a contact.  If there are no supported targets for the \a contact, then that
@@ -87,6 +80,10 @@ QContactActionFactory::~QContactActionFactory()
   The meta-data may vary depending on the \a targets of the action and any \a parameters to invocation which the client may specify.
  */
 
+/*!
+  \variable QContactActionFactory::InterfaceName
+  The name of the interface that action plugins should implement.
+ */
 Q_DEFINE_LATIN1_CONSTANT(QContactActionFactory::InterfaceName, "com.nokia.qt.mobility.contacts.action");
 
 bool QContactActionFactory::supportsContact(const QContact& contact, const QContactActionDescriptor& which) const
@@ -97,7 +94,13 @@ bool QContactActionFactory::supportsContact(const QContact& contact, const QCont
 
 QContactActionDescriptor QContactActionFactory::createDescriptor(const QString& actionName, const QString& serviceName, const QString& actionIdentifier, int implementationVersion) const
 {
-    return QContactActionDescriptor(actionName, serviceName, actionIdentifier, implementationVersion, this);
+    QContactActionDescriptor retn;
+    retn.d->m_actionName = actionName;
+    retn.d->m_serviceName = serviceName;
+    retn.d->m_identifier = actionIdentifier;
+    retn.d->m_implementationVersion = implementationVersion;
+    retn.d->m_factory = this;
+    return retn;
 }
 
 #include "moc_qcontactactionfactory.cpp"

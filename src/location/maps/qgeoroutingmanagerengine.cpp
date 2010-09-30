@@ -91,7 +91,10 @@ QTM_BEGIN_NAMESPACE
 */
 QGeoRoutingManagerEngine::QGeoRoutingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoRoutingManagerEnginePrivate()) {}
+        d_ptr(new QGeoRoutingManagerEnginePrivate())
+{
+    Q_UNUSED(parameters)
+}
 
 /*!
     Destroys this engine.
@@ -349,28 +352,34 @@ QGeoRouteRequest::SegmentDetails QGeoRoutingManagerEngine::supportedSegmentDetai
 }
 
 /*!
-    Sets the levels of detail for navigation instructions which can be
-    requested by this engine to \a instructionDetails.
+    Sets the levels of detail for navigation manuevers which can be
+    requested by this engine to \a maneuverDetails.
 
     It is important that subclasses use this method to ensure that the engine
     reports its capabilities correctly.  If this function is not used the
-    engine will report that it supports no instruction detail at all.
+    engine will report that it supports no maneuver details at all.
 */
-void QGeoRoutingManagerEngine::setSupportedInstructionDetails(QGeoRouteRequest::InstructionDetails instructionDetails)
+void QGeoRoutingManagerEngine::setSupportedManeuverDetails(QGeoRouteRequest::ManeuverDetails maneuverDetails)
 {
-    d_ptr->supportedInstructionDetails = instructionDetails;
+    d_ptr->supportedManeuverDetails = maneuverDetails;
 }
 
 /*!
-    Returns the levels of detail for navigation instructions which can be
+    Returns the levels of detail for navigation maneuvers which can be
     requested by this engine.
 */
-QGeoRouteRequest::InstructionDetails QGeoRoutingManagerEngine::supportedInstructionDetails() const
+QGeoRouteRequest::ManeuverDetails QGeoRoutingManagerEngine::supportedManeuverDetails() const
 {
-    return d_ptr->supportedInstructionDetails;
+    return d_ptr->supportedManeuverDetails;
 }
 
 /*!
+    Sets the locale to be used by the this manager to \a locale.
+
+    If this routing manager supports returning addresses and instructions
+    in different languages, they will be returned in the language of \a locale.
+
+    The locale used defaults to the system locale if this is not set.
 */
 void QGeoRoutingManagerEngine::setLocale(const QLocale &locale)
 {
@@ -378,6 +387,8 @@ void QGeoRoutingManagerEngine::setLocale(const QLocale &locale)
 }
 
 /*!
+    Returns the locale used to hint to this routing manager about what
+    language to use for addresses and instructions.
 */
 QLocale QGeoRoutingManagerEngine::locale() const
 {

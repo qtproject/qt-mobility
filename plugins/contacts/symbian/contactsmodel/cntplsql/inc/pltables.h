@@ -221,6 +221,17 @@ public:
 		ESipAddress
 		};
 
+	// defines extra_type_info of communication address.
+	// !! the values these represent are persisted in the database  !!
+	// !!  do not change the order -- add new ones to the bottom    !!
+	// !!   changing these values could break data compatibility    !!
+	enum TCommAddrExtraInfoType
+	    {
+	    ENonMobileNumber = 0,
+	    EMobileNumber
+	    };
+
+
 public:
 	static CPplCommAddrTable* NewL(RSqlDatabase& aDatabase, CLplContactProperties& aProperties);
 	static CPplCommAddrTable* NewLC(RSqlDatabase& aDatabase, CLplContactProperties& aProperties);
@@ -240,13 +251,15 @@ private:
 	void ConstructL();
 	CPplCommAddrTable(RSqlDatabase& aDatabase, CLplContactProperties& iProperties);
 	void RemoveNonUpdatedAddrsL(RArray<TMatch>& aNewPhones, RArray<TPtrC>& aNewEmails, RArray<TPtrC>& aNewSips, 
-							RArray<TInt>& aFreeCommAddrIds, const TInt aItemId);
+							RArray<TInt>& aFreeCommAddrIds, const TInt aItemId, 
+							CPplCommAddrTable::TCommAddrExtraInfoType aExtraInfoType);
 	void DoUpdateCommAddrsL(RArray<TMatch>& aNewPhones, RArray<TPtrC>& aNewEmails, RArray<TPtrC>& aNewSips, 
-						    RArray<TInt>& aFreeCommAddrIds, const TInt aItemId);
+						    RArray<TInt>& aFreeCommAddrIds, const TInt aItemId, 
+						    CPplCommAddrTable::TCommAddrExtraInfoType aExtraInfoType = ENonMobileNumber);
 	void DeleteSingleCommAddrL(TInt aCommAddrId, TBool& aLowDiskErrorOccurred);
 	void DoPhoneNumWriteOpL(const CPplCommAddrTable::TMatch& aPhoneNum, TCntSqlStatement aType, TInt aCntId);
-	void DoPhoneNumWriteOpL(const CPplCommAddrTable::TMatch& aPhoneNum, TCntSqlStatement aType, TInt aCntId, 
-							TInt aCommAddrId);
+	void DoPhoneNumWriteOpL(const CPplCommAddrTable::TMatch& aPhoneNum, TCntSqlStatement aType, TInt aCntId, TInt aCommAddrId,
+							CPplCommAddrTable::TCommAddrExtraInfoType aExtraInfoType = ENonMobileNumber);
 	void DoNonPhoneWriteOpL(const TDesC& aAddress, TCntSqlStatement aType, TInt aCntId, 
 							TCommAddrType aAddrType);
 	void DoNonPhoneWriteOpL(const TDesC& aAddress, TCntSqlStatement aType, TInt aCntId, 
@@ -333,7 +346,20 @@ private: // New pure virtual functions
 											 QStringList aTokens) = 0;
 
 private: // New virtual functions
-	virtual QStringList GetTableSpecificFields(const CContactItem& aItem) const;
+	/**
+	 * Obtain the table-specific fields from the contact data.
+	 *
+	 * aItem Contact's data
+	 * aRequiredFieldsExist OUT: true if contact contains the information
+	 *	that's mandatory for it to be stored into predictive search tables.
+	 * returns: list of table specific fields that could be mapped using the keymap.
+	 *  Note: even if list is empty, aRequiredFieldsExists can be true. E.g. in
+	 *  case of QWERTY table, all mail addresses begin by characters that are not
+	 *  recognized by the keymap.
+	 */
+	virtual QStringList
+		GetTableSpecificFields(const CContactItem& aItem,
+							   bool& aRequiredFieldsExist) const;
 
 public:
 	const CPcsKeyMap* KeyMap() const;

@@ -46,6 +46,7 @@
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qdeclarativecomponent.h>
 #include "qdeclarativepositionsource_p.h"
+#include "qdeclarativeposition_p.h"
 #include <QString>
 
 // Eventually these will make it into qtestcase.h
@@ -129,13 +130,10 @@ private slots:
 
     void construction();
     void construction_data();
-
     void defaultProperties();
-
     void basicNmeaSource();
     void basicNmeaSource_data();
     void changeNmeaSource();
-
     void activism();
 
 private:
@@ -221,7 +219,7 @@ void tst_QDeclarativePosition::construction_data()
     // Position
     QTest::newRow("Position: No properties") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Position {}" << true;
     QTest::newRow("Position: Only id property") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Position {id: position}" << true;
-    QTest::newRow("Position: All write properties") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Position {id: position; timestamp: \"2010-07-09\"; longitude: 61.373459; latitude: 21.611216; altitude: 325; speed: 15}" << true;
+    // QTest::newRow("Position: All write properties") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Position {id: position; timestamp: \"2010-07-09\"; longitude: 61.373459; latitude: 21.611216; altitude: 325; speed: 15}" << true;
 }
 
 /*
@@ -238,14 +236,14 @@ void tst_QDeclarativePosition::defaultProperties()
     QCOMPARE(source_obj->property("nmeaSource").toUrl(), QUrl());
     QCOMPARE(source_obj->property("updateInterval").toInt(), 0);
     // Get the position member variable
-    QObject* position_obj = source_obj->property("position").value<QObject*>();
+    QDeclarativePosition* position_obj = source_obj->property("position").value<QDeclarativePosition*>();
     QVERIFY(position_obj != 0);
+    // Get the coordinate member variable
+    // QObject* coordinate_obj = position_obj->property("coordinate").value<QObject*>();
+    QDeclarativeCoordinate* coordinate_obj = position_obj->property("coordinate").value<QDeclarativeCoordinate*>();
+    QVERIFY(coordinate_obj != 0);
     // Verify position default data
     QCOMPARE(position_obj->property("timestamp").toDateTime(), QDateTime());
-    QCOMPARE(position_obj->property("latitude").toDouble(), static_cast<double>(0));
-    QCOMPARE(position_obj->property("longitude").toDouble(), static_cast<double>(0));
-    QCOMPARE(position_obj->property("altitude").toDouble(), static_cast<double>(0));
-    QCOMPARE(position_obj->property("speed").toDouble(), static_cast<double>(0));
     QCOMPARE(position_obj->property("latitudeValid").toBool(), false);
     QCOMPARE(position_obj->property("longitudeValid").toBool(), false);
     QCOMPARE(position_obj->property("altitudeValid").toBool(), false);
@@ -270,13 +268,13 @@ void tst_QDeclarativePosition::basicNmeaSource()
     QObject* source_obj = component.create();
 
     QVERIFY(source_obj != 0);
-    QObject* position_obj = source_obj->property("position").value<QObject*>();
+    QDeclarativePosition* position_obj = source_obj->property("position").value<QDeclarativePosition*>();
     QVERIFY(position_obj != 0);
 
     qDebug() << "2. ----- Create spies and set NMEA source";
     bool methodShouldChange = false;
     QList<QSignalSpy*> spies = createSpies(source_obj);
-    QSignalSpy positionMethodChangedSpy(source_obj, SIGNAL(positioningMethodChanged(QDeclarativePositionSource::PositioningMethod)));
+    QSignalSpy positionMethodChangedSpy(source_obj, SIGNAL(positioningMethodChanged()));
     if (source_obj->property("positioningMethod").value<QDeclarativePositionSource::PositioningMethod>() == QDeclarativePositionSource::NoPositioningMethod) {
 	// If there was no positioning method to begin with, make sure its changed now
 	methodShouldChange = true;
@@ -301,6 +299,7 @@ void tst_QDeclarativePosition::basicNmeaSource()
             positionChangedSpy.clear();
         }
     }
+
     QVERIFY(spiesAreNotEmpty(spies));
 
     qDebug() << "4. ----- Stop updates and verify that signals are not received anymore.";
@@ -324,9 +323,9 @@ void tst_QDeclarativePosition::changeNmeaSource()
     // Create position source with nmea source
     QObject* source_obj = createPositionSource("import Qt 4.7 \n import QtMobility.location 1.1 \n PositionSource {id: positionSource; nmeaSource: \"/data/nmealog.txt\"}");
     QSignalSpy positionChangedSpy(source_obj, SIGNAL(positionChanged()));
-    QSignalSpy nmeaSourceChangedSpy(source_obj, SIGNAL(nmeaSourceChanged(QUrl)));
-    QSignalSpy positioningMethodChangedSpy(source_obj, SIGNAL(positioningMethodChanged(QDeclarativePositionSource::PositioningMethod)));
-    QSignalSpy activeChangedSpy(source_obj, SIGNAL(activeChanged(bool)));
+    QSignalSpy nmeaSourceChangedSpy(source_obj, SIGNAL(nmeaSourceChanged()));
+    QSignalSpy positioningMethodChangedSpy(source_obj, SIGNAL(positioningMethodChanged()));
+    QSignalSpy activeChangedSpy(source_obj, SIGNAL(activeChanged()));
     qDebug() << "1. ----- Change (nonactive) to same source";
     source_obj->setProperty("nmeaSource", "/data/nmealog.txt");
     QVERIFY(nmeaSourceChangedSpy.isEmpty());
@@ -334,8 +333,9 @@ void tst_QDeclarativePosition::changeNmeaSource()
 
     qDebug() << "2. ----- Change (nonactive) to different valid source";
     source_obj->setProperty("nmeaSource", "/data/nmealog2.txt");
-    QVERIFY(!nmeaSourceChangedSpy.isEmpty());
-    QVERIFY(nmeaSourceChangedSpy.first().at(0).toUrl().toLocalFile() == "/data/nmealog2.txt");
+    QTRY_VERIFY(!nmeaSourceChangedSpy.isEmpty());
+    QVERIFY(source_obj->property("nmeaSource").toUrl().toLocalFile() == "/data/nmealog2.txt");
+
     QVERIFY(positionChangedSpy.isEmpty());
     QVERIFY(source_obj->property("positioningMethod").value<QDeclarativePositionSource::PositioningMethod>() == QDeclarativePositionSource::SatellitePositioningMethod);
 
@@ -345,7 +345,7 @@ void tst_QDeclarativePosition::changeNmeaSource()
     qDebug() << "3. ----- Change (nonactive) to different invalid source";
     source_obj->setProperty("nmeaSource", "nonexistentlog.txt");
     QVERIFY(!nmeaSourceChangedSpy.isEmpty());
-    QVERIFY(nmeaSourceChangedSpy.first().at(0).toUrl().toLocalFile() == "nonexistentlog.txt");
+    QVERIFY(source_obj->property("nmeaSource").toUrl().toLocalFile() == "nonexistentlog.txt");
     QVERIFY(positionChangedSpy.isEmpty());
 
     QTRY_VERIFY(!positioningMethodChangedSpy.isEmpty());
@@ -356,7 +356,7 @@ void tst_QDeclarativePosition::changeNmeaSource()
     qDebug() << "4. ----- Change (nonactive) invalid back to valid source";
     source_obj->setProperty("nmeaSource", "/data/nmealog.txt");
     QVERIFY(!nmeaSourceChangedSpy.isEmpty());
-    QVERIFY(nmeaSourceChangedSpy.first().at(0).toUrl().toLocalFile() == "/data/nmealog.txt");
+    QVERIFY(source_obj->property("nmeaSource").toUrl().toLocalFile() == "/data/nmealog.txt");
     QVERIFY(positionChangedSpy.isEmpty());
     QVERIFY(!positioningMethodChangedSpy.isEmpty());
     QVERIFY(source_obj->property("positioningMethod").value<QDeclarativePositionSource::PositioningMethod>() == QDeclarativePositionSource::SatellitePositioningMethod);
@@ -368,7 +368,7 @@ void tst_QDeclarativePosition::changeNmeaSource()
     source_obj->setProperty("active", true);
     QTRY_VERIFY(!positionChangedSpy.isEmpty());
     QVERIFY(!activeChangedSpy.isEmpty());
-    QVERIFY(activeChangedSpy.first().at(0).toBool() == true);
+    QVERIFY(source_obj->property("active").toBool() == true);
     activeChangedSpy.clear();
     source_obj->setProperty("nmeaSource", "/data/nmealog2.txt");
     QTRY_VERIFY(!positionChangedSpy.isEmpty());
@@ -383,11 +383,10 @@ void tst_QDeclarativePosition::changeNmeaSource()
     qDebug() << "6. ----- Change (active) valid source to invalid source";
     source_obj->setProperty("nmeaSource", "nonexistentlog.txt");
     QTRY_VERIFY(!activeChangedSpy.isEmpty());
-    QVERIFY(activeChangedSpy.first().at(0).toBool() == false);
     QVERIFY(!positioningMethodChangedSpy.isEmpty());
     QVERIFY(source_obj->property("positioningMethod").value<QDeclarativePositionSource::PositioningMethod>() == QDeclarativePositionSource::NoPositioningMethod);
     QVERIFY(!nmeaSourceChangedSpy.isEmpty());
-    QVERIFY(nmeaSourceChangedSpy.first().at(0).toUrl().toLocalFile() == "nonexistentlog.txt");
+    QVERIFY(source_obj->property("nmeaSource").toUrl().toLocalFile() == "nonexistentlog.txt");
 
     delete source_obj;
 }
@@ -396,8 +395,8 @@ void tst_QDeclarativePosition::activism()
 {
     QObject* source_obj = createPositionSource("import Qt 4.7 \n import QtMobility.location 1.1 \n PositionSource {id: positionSource; nmeaSource: \"/data/nmealog.txt\"}");
     QSignalSpy positionChangedSpy(source_obj, SIGNAL(positionChanged()));
-    QSignalSpy positioningMethodChangedSpy(source_obj, SIGNAL(positioningMethodChanged(QDeclarativePositionSource::PositioningMethod)));
-    QSignalSpy activeChangedSpy(source_obj, SIGNAL(activeChanged(bool)));
+    QSignalSpy positioningMethodChangedSpy(source_obj, SIGNAL(positioningMethodChanged()));
+    QSignalSpy activeChangedSpy(source_obj, SIGNAL(activeChanged()));
 
     qDebug() << "1. ----- basic activity checks (setting on and off)";
     QVERIFY(source_obj->property("active").toBool() == false);
@@ -405,13 +404,11 @@ void tst_QDeclarativePosition::activism()
     QVERIFY(source_obj->property("active").toBool() == false);
     source_obj->setProperty("active", true);
     QTRY_VERIFY(!activeChangedSpy.isEmpty());
-    QVERIFY(activeChangedSpy.first().at(0).toBool() == true);
     QVERIFY(source_obj->property("active").toBool() == true);
     QTRY_VERIFY(!positionChangedSpy.isEmpty());
     activeChangedSpy.clear();
     source_obj->setProperty("active", false);
     QVERIFY(!activeChangedSpy.isEmpty());
-    QVERIFY(activeChangedSpy.first().at(0).toBool() == false);
     QVERIFY(source_obj->property("active").toBool() == false);
     QVERIFY(positioningMethodChangedSpy.isEmpty());
     activeChangedSpy.clear();
@@ -420,11 +417,9 @@ void tst_QDeclarativePosition::activism()
     qDebug() << "2. ----- stopping during single-shot update";
     source_obj->metaObject()->invokeMethod(source_obj, "update", Qt::DirectConnection);
     QTRY_VERIFY(!activeChangedSpy.isEmpty());
-    QVERIFY(activeChangedSpy.first().at(0).toBool() == true);
     activeChangedSpy.clear();
     source_obj->setProperty("active", false);
     QTRY_VERIFY(!activeChangedSpy.isEmpty());
-    QVERIFY(activeChangedSpy.first().at(0).toBool() == false);
     QVERIFY(positionChangedSpy.isEmpty());
     delete source_obj;
 }
@@ -440,31 +435,39 @@ QObject* tst_QDeclarativePosition::createPositionSource(const QString& component
 
 QList<QSignalSpy*> createSpies(QObject* source_obj)
 {
-    return createSourceSpies(source_obj) + createPositionSpies(source_obj->property("position").value<QObject*>());
+    Q_ASSERT(source_obj);
+    return createSourceSpies(source_obj) +
+            createPositionSpies(source_obj->property("position").value<QDeclarativePosition*>());
 }
 
 QList<QSignalSpy*> createSourceSpies(QObject* source_obj)
 {
+    Q_ASSERT(source_obj);
     QList<QSignalSpy*> spies;
     spies.append(new QSignalSpy(source_obj, SIGNAL(positionChanged()))); // 0
-    spies.append(new QSignalSpy(source_obj, SIGNAL(activeChanged(bool))));
-    spies.append(new QSignalSpy(source_obj, SIGNAL(updateIntervalChanged(int))));
-    spies.append(new QSignalSpy(source_obj, SIGNAL(nmeaSourceChanged(QUrl))));
+    spies.append(new QSignalSpy(source_obj, SIGNAL(activeChanged())));
+    spies.append(new QSignalSpy(source_obj, SIGNAL(updateIntervalChanged())));
+    spies.append(new QSignalSpy(source_obj, SIGNAL(nmeaSourceChanged())));
     return spies;
 }
 
 QList<QSignalSpy*> createPositionSpies(QObject* position_obj)
 {
+    Q_ASSERT(position_obj);
     QList<QSignalSpy*> spies;
-    spies.append(new QSignalSpy(position_obj, SIGNAL(latitudeChanged(double)))); //4
-    spies.append(new QSignalSpy(position_obj, SIGNAL(latitudeValidChanged(bool))));
-    spies.append(new QSignalSpy(position_obj, SIGNAL(longitudeChanged(double))));
-    spies.append(new QSignalSpy(position_obj, SIGNAL(longitudeValidChanged(bool))));
-    spies.append(new QSignalSpy(position_obj, SIGNAL(altitudeChanged(double))));
-    spies.append(new QSignalSpy(position_obj, SIGNAL(altitudeValidChanged(bool))));
-    spies.append(new QSignalSpy(position_obj, SIGNAL(speedChanged(double)))); // 10
-    spies.append(new QSignalSpy(position_obj, SIGNAL(speedValidChanged(bool))));
-    spies.append(new QSignalSpy(position_obj, SIGNAL(timestampChanged(QDateTime))));
+    QDeclarativeCoordinate* coordinate_obj = position_obj->property("coordinate").value<QDeclarativeCoordinate*>();
+
+    Q_ASSERT(coordinate_obj);
+
+    spies.append(new QSignalSpy(coordinate_obj, SIGNAL(latitudeChanged(double)))); //4
+    spies.append(new QSignalSpy(coordinate_obj, SIGNAL(longitudeChanged(double))));
+    spies.append(new QSignalSpy(coordinate_obj, SIGNAL(altitudeChanged(double))));
+    spies.append(new QSignalSpy(position_obj, SIGNAL(latitudeValidChanged())));
+    spies.append(new QSignalSpy(position_obj, SIGNAL(longitudeValidChanged())));
+    spies.append(new QSignalSpy(position_obj, SIGNAL(altitudeValidChanged())));
+    spies.append(new QSignalSpy(position_obj, SIGNAL(speedChanged()))); // 10
+    spies.append(new QSignalSpy(position_obj, SIGNAL(speedValidChanged())));
+    spies.append(new QSignalSpy(position_obj, SIGNAL(timestampChanged())));
     return spies;
 }
 

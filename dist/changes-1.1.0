@@ -1,0 +1,199 @@
+Qt Mobility 1.0.0-beta1 is a beta release. It contains a number of API
+improvements and bug fixes since the Qt Mobility 1.0.0-tp2 release. For
+more details, please refer to the online documentation included in this
+distribution. The documentation is also available online:
+
+  http://qt.nokia.com/doc/qtmobility-1.0
+
+Some of the changes listed in this file include issue tracking numbers
+corresponding to tasks in the Qt Bug Tracker or the Merge Request queue
+of the public source repository.
+
+Qt Bug Tracker: http://bugreports.qt.nokia.com
+Merge Request:  http://qt.gitorious.org
+
+
+****************************************************************************
+*                           General                                        *
+****************************************************************************
+
+New features
+------
+
+ - SomeClass, SomeOtherClass
+    * New classes for foo, bar and baz
+
+Optimizations
+------
+
+ - Optimized foo in QSomeClass
+    * See list of Important Behavior Changes below
+
+
+****************************************************************************
+*                   Important Behavior Changes                             *
+****************************************************************************
+
+ -
+
+
+****************************************************************************
+*                          Library                                         *
+****************************************************************************
+
+QtBearer
+------
+
+ - foo
+    * bar
+
+QtContacts
+------
+
+ - foo
+    * bar
+
+QtLandmarks
+------
+ - Import and export landmarks atomically for sqlite backend
+ - Add format constants for importing and exporting
+ - Add options to control how categories are treated
+   for importing and exporting operations
+ - Change QGeoAddress::thoroughfareName to street
+ - Add ability to report support levels for sort orders
+ - Landmark name filter now uses match flags
+ - Expand the API to now include the concept
+   of extended and custom attributes.  Modify
+   the QLandmarkAttributeFilter accordingly,
+   and also use match flags in the attribute filter.
+ - Common core filed such as name, street etc
+   are now available through the QLandmark::attributes() 
+   function
+ - Replace the QLandmarkFetchHint with limit and offset
+ - Remove QLandmarkDistanceSort
+ - QLandmark::phone renamed to QLandmark::phoneNumber
+ - QGeoAddress::postOfficeBox removed
+ - Add QLandmarkFetchById and QLandmarkCategoryFetchById
+   classes
+ - Refactoring of sqlite backend, in particular the
+   database schema to be more extensible
+ - Add symbian backend plugin
+ - Add in mutexes to improve thread safety
+   for the asynchronous request classes
+ - Implement signal notificiations in sqlite backend
+ - Implement auto detection of file formats in sqlite backend.
+ - Started adding in basic QML support for landmarks
+
+QtLocation
+------
+
+ - Maemo 5 backend now respects preferred positioning methods
+
+QtMapsAndNavigation
+------
+
+ - Added circle and text objects
+ - Made objects work across the dateline and in other edge cases
+ - Preliminary support for map overlays
+ - Various performance improvements for the map
+ - POI searching improved
+    * added optional limit and offset parameters for paging
+    * added code to combine results from plugin and landmark managers
+ - Added basic QML support for mapping functionality
+ - Improved the examples
+    * Cleaned up the UI
+    * Fixed some bugs which resulted in crashes
+
+QtMessaging
+------
+
+ - foo
+    * bar
+
+QtMultimediaKit
+------
+
+ - foo
+    * bar
+
+QtPublishSubscribe
+------
+
+ - foo
+    * bar
+
+QtSensors
+------
+
+ - Fix a packaging bug affecting S60 3.1 devices [QTMOBILITY-423]
+ - Document why sensor readings are not available after calling start() [QTMOBILITY-440]
+ - Document Sensors.conf [QTMOBILITY-441]
+ - Document output range meta-data [QTMOBILITY-469]
+ - Use prefixed includes from public headers [QTMOBILITY-476]
+
+Note that the above fixes are also in 1.0.3.
+
+ - Don't allow setting invalid values for enum types [QTMOBILITY-277]
+
+QtServiceFramework
+------
+
+ - foo
+    * bar
+
+QtSystemInfo
+------
+
+ - foo
+    * bar
+
+Qt Mobility Plugins
+------
+
+ - foo
+    * bar
+
+
+****************************************************************************
+*                      Platform Specific Changes                           *
+****************************************************************************
+
+Qt Mobility for Embedded Linux
+------
+
+ -
+
+Qt Mobility for Unix (X11 and Mac OS X)
+------
+
+ - 
+
+Qt Mobility for Linux/X11
+------
+
+ -
+
+Qt Mobility for Windows
+------
+
+ -
+
+Qt Mobility for Mac OS X
+------
+
+ -
+
+
+
+Qt Mobility for Windows CE
+------
+
+ -
+
+
+****************************************************************************
+*                          Tools                                           *
+****************************************************************************
+
+ - tool
+    * foo

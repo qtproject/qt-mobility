@@ -174,8 +174,10 @@ public slots:
         m_hash = 1;
     }
     
-    void testIpcFailure() {
-      qApp->exit(0); // exit to show failure
+    void testIpcFailure()
+    {
+        qDebug() << "Application exiting on request";
+        qApp->exit(0); // exit to show failure
     }
 
 private:
@@ -421,6 +423,8 @@ int main(int argc, char** argv)
     serviceRegister->publishEntries("qt_sfw_example_ipc_unittest");
     int res =  app.exec();
     delete serviceRegister;
+
+    // Do not unregister when done, otherwise autostart can't start the service
     unregisterExampleService();
     return res;
 }

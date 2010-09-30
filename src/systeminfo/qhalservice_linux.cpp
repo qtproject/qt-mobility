@@ -114,6 +114,7 @@ void QHalInterface::connectNotify(const char *signal)
 
 void QHalInterface::disconnectNotify(const char *signal)
 {
+    Q_UNUSED(signal);
 }
 
 bool QHalInterface::isValid()

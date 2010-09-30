@@ -81,7 +81,8 @@ public:
         DetailDefinitionSaveRequest,
         RelationshipFetchRequest,
         RelationshipRemoveRequest,
-        RelationshipSaveRequest
+        RelationshipSaveRequest,
+        ContactFetchByIdRequest
     };
 
     RequestType type() const;
@@ -110,6 +111,8 @@ private:
     QContactAbstractRequest(QObject* parent = 0) : QObject(parent), d_ptr(0) {}
     Q_DISABLE_COPY(QContactAbstractRequest)
     friend class QContactManagerEngine;
+    friend class QContactManagerEngineV2;
+    friend class QContactManagerEngineV2Wrapper;
     friend class QContactAbstractRequestPrivate;
 };
 

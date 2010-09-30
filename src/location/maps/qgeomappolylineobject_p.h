@@ -42,17 +42,17 @@
 #ifndef QGEOMAPPOLYLINEOBJECT_P_H
 #define QGEOMAPPOLYLINEOBJECT_P_H
 
-#include "qgeomapobject_p.h"
+#include "qgeocoordinate.h"
 
 #include <QList>
 #include <QPen>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapPolylineObjectPrivate : public QGeoMapObjectPrivate
+class QGeoMapPolylineObjectPrivate
 {
 public:
-    QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
+    QGeoMapPolylineObjectPrivate();
     ~QGeoMapPolylineObjectPrivate();
 
     QList<QGeoCoordinate> path;

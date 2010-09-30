@@ -78,7 +78,8 @@ public:
     QVersitOrganizerExporter();
     ~QVersitOrganizerExporter();
 
-    bool exportItems(const QList<QOrganizerItem>& items, QVersitDocument::VersitType versitType);
+    bool exportItems(const QList<QOrganizerItem>& items,
+            QVersitDocument::VersitType versitType = QVersitDocument::ICalendar20Type);
     QVersitDocument document() const;
     QMap<int, Error> errors() const;
 

@@ -40,171 +40,58 @@
 ****************************************************************************/
 
 #include "qremoteserviceregister_p.h"
-#include "ipcendpoint_p.h"
-#include "objectendpoint_p.h"
-
-#include <QLocalServer>
-#include <QLocalSocket>
-#include <QDataStream>
-#include <QTimer>
-#include <QProcess>
-
-#include <time.h>
-
-
-// Needed for ::Sleep, while we wait for a better solution
-#ifdef Q_OS_WIN
-#include <Windows.h>
-#include <Winbase.h>
-#endif
 
 QTM_BEGIN_NAMESPACE
 
-//IPC based on QLocalSocket
 
-class LocalSocketEndPoint : public QServiceIpcEndPoint
+static bool defSecurityFilter(const void *)
 {
-    Q_OBJECT
-public:
-    LocalSocketEndPoint(QLocalSocket* s, QObject* parent = 0)
-        : QServiceIpcEndPoint(parent), socket(s)
-    {
-        Q_ASSERT(socket);
-        socket->setParent(this);
-        connect(s, SIGNAL(readyRead()), this, SLOT(readIncoming()));
-        connect(s, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
-
-        if (socket->bytesAvailable())
-            QTimer::singleShot(0, this, SLOT(readIncoming()));
-    }
-
-    ~LocalSocketEndPoint() 
-    {
-    }
-
-
-protected:
-    void flushPackage(const QServicePackage& package)
-    {
-        QByteArray block;
-        QDataStream out(&block, QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_4_6);
-        out << package;
-        socket->write(block);
-    }
-
-protected slots:
-    void readIncoming()
-    {
-        QDataStream in(socket);
-        in.setVersion(QDataStream::Qt_4_6);
-
-        while(socket->bytesAvailable()) {
-            QServicePackage package;
-            in >> package;
-            incoming.enqueue(package);
-        }
-
-        emit readyRead();
-    }
-
-private:
-    QLocalSocket* socket;
-};
-
-QRemoteServiceRegisterPrivate::QRemoteServiceRegisterPrivate(QObject* parent)
-    : QObject(parent)
-{
-}
-
-void QRemoteServiceRegisterPrivate::publishServices( const QString& ident)
-{
-    createServiceEndPoint(ident) ;
-}
-
-void QRemoteServiceRegisterPrivate::processIncoming()
-{
-    qDebug() << "Processing incoming connect";
-    if (localServer->hasPendingConnections()) {
-        QLocalSocket* s = localServer->nextPendingConnection();
-        //LocalSocketEndPoint owns socket 
-        LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(s);
-        ObjectEndPoint* endpoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
-        Q_UNUSED(endpoint);
-    }
-}
-
-/*
-    Creates endpoint on service side.
-*/
-bool QRemoteServiceRegisterPrivate::createServiceEndPoint(const QString& ident)
-{
-    //other IPC mechanisms such as dbus may have to publish the
-    //meta object definition for all registered service types        
-    QLocalServer::removeServer(ident);
-    qDebug() << "Start listening for incoming connections";
-    localServer = new QLocalServer(this);
-    if ( !localServer->listen(ident) ) {
-        qWarning() << "Cannot create local socket endpoint";
-        return false;
-    }
-    connect(localServer, SIGNAL(newConnection()), this, SLOT(processIncoming()));
-    if (localServer->hasPendingConnections())
-        QTimer::singleShot(0, this, SLOT(processIncoming()));
-
     return true;
 }
 
-/*
-    Creates endpoint on client side.
-*/
-QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location)
-{
-    QLocalSocket* socket = new QLocalSocket();
-    socket->connectToServer(location);
-    if (!socket->isValid()) {
-        qWarning() << "Cannot connect to remote service, trying to start service " << location;
-        // try starting the service by hand
-        QProcess *service = new QProcess();
-        service->start(location);
-        service->waitForStarted();
-        if(service->error() != QProcess::UnknownError || service->state() != QProcess::Running) {
-            qWarning() << "Unable to start service " << location << service->error() << service->errorString() << service->state();
-            return false;
-        }
-        int i;
-        socket->connectToServer(location);
-        for(i = 0; !socket->isValid() && i < 100; i++){
-            if(service->state() != QProcess::Running){
-                qWarning() << "Service died on startup" << service->errorString();
-                return false;
-            }
-			// Temporary hack till we can improve startup signaling
-#ifdef Q_OS_WIN
-			::Sleep(10);
-#else
-            struct timespec tm;
-            tm.tv_sec = 0;
-            tm.tv_nsec = 1000000;
-            nanosleep(&tm, 0x0);
-#endif
-            socket->connectToServer(location);
-            // keep trying for a while
-        }
-        qDebug() << "Number of loops: "  << i;
-        if(!socket->isValid()){
-            qWarning() << "Server failed to start within waiting period";
-            return false;
-        }
-    }
-    LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(socket);
-    ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
 
-    QObject *proxy = endPoint->constructProxy(entry);
-    QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
-    return proxy;
+QRemoteServiceRegisterPrivate::QRemoteServiceRegisterPrivate(QObject* parent)
+    : QObject(parent), m_quit(true), iFilter(defSecurityFilter)
+{
 }
 
+QRemoteServiceRegisterPrivate::~QRemoteServiceRegisterPrivate()
+{
+}
+
+//void QRemoteServiceRegisterPrivate::publishServices( const QString& ident)
+//{
+//  qWarning("QRemoteServiceregisterPrivate::publishServices has not been reimplemented");
+//}
+//
+//void QRemoteServiceRegisterPrivate::processIncoming()
+//{
+//  qWarning("QRemoteServiceRegisterPrivate::processIncoming has not been reimplemented");
+//}
+
+bool QRemoteServiceRegisterPrivate::quitOnLastInstanceClosed() const
+{
+  return m_quit;
+}
+
+void QRemoteServiceRegisterPrivate::setQuitOnLastInstanceClosed(bool quit)
+{
+    m_quit = quit;
+}
+
+QRemoteServiceRegister::securityFilter QRemoteServiceRegisterPrivate::setSecurityFilter(QRemoteServiceRegister::securityFilter filter)
+{
+    QRemoteServiceRegister::securityFilter f;
+    f = filter;
+    iFilter = filter;
+    return f;
+}
+
+QRemoteServiceRegister::securityFilter QRemoteServiceRegisterPrivate::getSecurityFilter()
+{
+    return iFilter;
+}
+
+
 #include "moc_qremoteserviceregister_p.cpp"
-#include "qremoteserviceregister_p.moc"
 QTM_END_NAMESPACE

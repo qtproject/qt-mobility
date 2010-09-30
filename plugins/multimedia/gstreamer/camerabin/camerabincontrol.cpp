@@ -81,6 +81,8 @@ CameraBinControl::CameraBinControl(CameraBinSession *session)
             SLOT(reloadLater()));
     connect(m_session, SIGNAL(viewfinderChanged()),
             SLOT(reloadLater()));
+    connect(m_session, SIGNAL(readyChanged(bool)),
+            SLOT(reloadLater()));
 }
 
 CameraBinControl::~CameraBinControl()
@@ -105,7 +107,14 @@ void CameraBinControl::setState(QCamera::State state)
     qDebug() << Q_FUNC_INFO << state;
     if (m_state != state) {
         m_state = state;
-        m_session->setState(state);
+
+        //postpone changing to Active if the session is nor ready yet
+        if (state == QCamera::ActiveState) {
+            if (m_session->isReady())
+                m_session->setState(state);
+        } else
+            m_session->setState(state);
+
         emit stateChanged(m_state);
     }
 }
@@ -171,7 +180,7 @@ void CameraBinControl::delayedReload()
 #endif
     if (m_reloadPending) {
         m_reloadPending = false;
-        if (m_state == QCamera::ActiveState) {            
+        if (m_state == QCamera::ActiveState && m_session->isReady()) {
             m_session->setState(QCamera::ActiveState);
         }
     }

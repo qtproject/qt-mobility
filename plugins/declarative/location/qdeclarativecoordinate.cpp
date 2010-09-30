@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qdeclarativecoordinate_p.h"
+#include <qnumeric.h>
 #include "qdeclarative.h"
 
 QTM_BEGIN_NAMESPACE
@@ -53,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup qml-location
 
-    The Coordinate element is part of the \bold{QtMobility.location 1.0} module.
+    The Coordinate element is part of the \bold{QtMobility.location 1.1} module.
 */
 
 QDeclarativeCoordinate::QDeclarativeCoordinate(QObject* parent)
@@ -68,7 +69,22 @@ QDeclarativeCoordinate::~QDeclarativeCoordinate() {}
 
 void QDeclarativeCoordinate::setCoordinate(const QGeoCoordinate &coordinate)
 {
+    QGeoCoordinate previousCoordinate = m_coordinate;
     m_coordinate = coordinate;
+
+    // Comparing two NotANumbers is false which is not wanted here
+    if (coordinate.altitude() != previousCoordinate.altitude() &&
+        !(qIsNaN(coordinate.altitude()) && qIsNaN(previousCoordinate.altitude()))) {
+        emit altitudeChanged(m_coordinate.altitude());
+    }
+    if (coordinate.latitude() != previousCoordinate.latitude() &&
+        !(qIsNaN(coordinate.latitude()) && qIsNaN(previousCoordinate.latitude()))) {
+        emit latitudeChanged(m_coordinate.latitude());
+    }
+    if (coordinate.longitude() != previousCoordinate.longitude() &&
+        !(qIsNaN(coordinate.latitude()) && qIsNaN(previousCoordinate.latitude()))) {
+        emit longitudeChanged(m_coordinate.longitude());
+    }
 }
 
 QGeoCoordinate QDeclarativeCoordinate::coordinate() const
@@ -139,6 +155,12 @@ void QDeclarativeCoordinate::setLatitude(double latitude)
 double QDeclarativeCoordinate::latitude() const
 {
     return m_coordinate.latitude();
+}
+
+qreal QDeclarativeCoordinate::distanceTo(QObject* coordinate)
+{
+    QDeclarativeCoordinate* coord = static_cast<QDeclarativeCoordinate*>(coordinate);
+    return m_coordinate.distanceTo(coord->coordinate());
 }
 
 #include "moc_qdeclarativecoordinate_p.cpp"

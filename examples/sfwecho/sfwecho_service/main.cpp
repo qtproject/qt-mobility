@@ -83,12 +83,20 @@ void registerExampleService()
     const QString path = QCoreApplication::applicationDirPath() + "/xmldata/sfwechoservice.xml";
     if (!m.addService(path)) {
         qWarning() << "Cannot register EchoService" << path;
-    } else {
-        qDebug() << "Registered: " << path;
     }
 }
 
 Q_DECLARE_METATYPE(QMetaType::Type);
+
+/*bool check(const void *p)
+{
+    const QRemoteServiceregisterLocalSocketCred *cr = (const struct QRemoteServiceiRegisterLocalSocketCred *)p;
+    if(cr->pid%2) {
+           qDebug() << "Failing client: " << cr->pid;
+        return false;
+    }
+    return true;
+}*/
 
 int main(int argc, char** argv)
 {
@@ -97,6 +105,7 @@ int main(int argc, char** argv)
     registerExampleService();
 
     QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
+    //serviceRegister->setSecurityFilter(check);
 
     QRemoteServiceRegister::Entry shared = serviceRegister->createEntry<EchoService>(
         "EchoService", "com.nokia.qt.example.sfwecho", "1.1");

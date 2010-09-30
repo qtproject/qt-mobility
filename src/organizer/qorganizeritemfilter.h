@@ -113,8 +113,8 @@ protected:
 protected:
     friend class QOrganizerItemFilterPrivate;
 #ifndef QT_NO_DATASTREAM
-    friend QDataStream& operator<<(QDataStream& out, const QOrganizerItemFilter& filter);
-    friend QDataStream& operator>>(QDataStream& in, QOrganizerItemFilter& filter);
+    Q_ORGANIZER_EXPORT friend QDataStream& operator<<(QDataStream& out, const QOrganizerItemFilter& filter);
+    Q_ORGANIZER_EXPORT friend QDataStream& operator>>(QDataStream& in, QOrganizerItemFilter& filter);
 #endif
     QSharedDataPointer<QOrganizerItemFilterPrivate> d_ptr;
 };
@@ -125,5 +125,6 @@ const Q_ORGANIZER_EXPORT QOrganizerItemFilter operator|(const QOrganizerItemFilt
 QTM_END_NAMESPACE
 
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemFilter), Q_MOVABLE_TYPE);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QTM_PREPEND_NAMESPACE(QOrganizerItemFilter::MatchFlags));
 
 #endif

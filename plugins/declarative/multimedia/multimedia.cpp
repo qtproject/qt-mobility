@@ -41,12 +41,14 @@
 
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
+#include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qdeclarativecomponent.h>
 #include "qsoundeffect.h"
 
 #include "qdeclarativevideo_p.h"
 #include "qdeclarativeaudio_p.h"
 #include "qdeclarativecamera_p.h"
+#include "qdeclarativecamerapreviewprovider_p.h"
 
 QML_DECLARE_TYPE(QSoundEffect)
 
@@ -64,6 +66,12 @@ public:
         qmlRegisterType<QDeclarativeAudio>(uri, 1, 1, "Audio");
         qmlRegisterType<QDeclarativeVideo>(uri, 1, 1, "Video");
         qmlRegisterType<QDeclarativeCamera>(uri, 1, 1, "Camera");
+    }
+
+    void initializeEngine(QDeclarativeEngine *engine, const char *uri)
+    {
+        Q_UNUSED(uri);
+        engine->addImageProvider("camera", new QDeclarativeCameraPreviewProvider);
     }
 };
 

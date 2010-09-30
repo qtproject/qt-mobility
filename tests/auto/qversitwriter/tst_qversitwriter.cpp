@@ -125,8 +125,8 @@ void tst_QVersitWriter::testFold()
     list.append(document);
     mWriter->setDevice(mOutputDevice);
     mOutputDevice->open(QBuffer::ReadWrite);
-    QVERIFY(mWriter->startWriting(list));
-    QVERIFY(mWriter->waitForFinished());
+    QVERIFY2(mWriter->startWriting(list), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
@@ -168,8 +168,8 @@ END:VCARD\r\n");
 
     // Now open the device and it should work.
     mOutputDevice->open(QBuffer::ReadWrite);
-    QVERIFY(mWriter->startWriting(list));
-    QVERIFY(mWriter->waitForFinished());
+    QVERIFY2(mWriter->startWriting(list), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
@@ -183,8 +183,8 @@ END:VCARD\r\n");
     mWriter->setDevice(mOutputDevice);
     QTextCodec* utf16(QTextCodec::codecForName("UTF-16"));
     mWriter->setDefaultCodec(utf16);
-    QVERIFY(mWriter->startWriting(list));
-    QVERIFY(mWriter->waitForFinished());
+    QVERIFY2(mWriter->startWriting(list), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
@@ -215,8 +215,8 @@ END:VCARD\r\n");
     // Basic 3.0 test
     mOutputDevice->open(QBuffer::ReadWrite);
     mWriter->setDevice(mOutputDevice);
-    QVERIFY(mWriter->startWriting(list));
-    QVERIFY(mWriter->waitForFinished());
+    QVERIFY2(mWriter->startWriting(list), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
@@ -228,7 +228,7 @@ END:VCARD\r\n");
     // Asynchronous writing
     mOutputDevice->reset();
     mSignalCatcher->mReceived.clear();
-    QVERIFY(mWriter->startWriting(list));
+    QVERIFY2(mWriter->startWriting(list), QString::number(mWriter->error()).toAscii().data());
     QTRY_VERIFY(mSignalCatcher->mReceived.count() >= 2);
     QCOMPARE(mSignalCatcher->mReceived.at(0), QVersitWriter::ActiveState);
     QCOMPARE(mSignalCatcher->mReceived.at(1), QVersitWriter::FinishedState);
@@ -271,8 +271,8 @@ void tst_QVersitWriter::testByteArrayOutput()
     property.setName(QString(QString::fromAscii("FN")));
     property.setValue(QString::fromAscii("John"));
     document.addProperty(property);
-    QVERIFY(mWriter->startWriting(QList<QVersitDocument>() << document));
-    QVERIFY(mWriter->waitForFinished());
+    QVERIFY2(mWriter->startWriting(QList<QVersitDocument>() << document), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
     QCOMPARE(output, vCard30);
 }
 
@@ -283,11 +283,12 @@ void tst_QVersitWriter::testWritingDocument()
 
     mOutputDevice->open(QBuffer::ReadWrite);
     mWriter->setDevice(mOutputDevice);
-    QVERIFY(mWriter->startWriting(QList<QVersitDocument>() << document));
-    QVERIFY(mWriter->waitForFinished());
+    QVERIFY2(mWriter->startWriting(QList<QVersitDocument>() << document), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
     mOutputDevice->seek(0);
     QByteArray result(mOutputDevice->readAll());
 
+    if (result!=expected) qDebug() << result << expected;
     QCOMPARE(result, expected);
 }
 
@@ -326,36 +327,55 @@ void tst_QVersitWriter::testWritingDocument_data()
             "FN:Bob\r\n"
             "END:VCARD\r\n"
             );
+    
+    {
+        QVersitDocument document(QVersitDocument::ICalendar20Type);
+        document.setComponentType(QLatin1String("VCALENDAR"));
+        QVersitDocument subdocument(QVersitDocument::ICalendar20Type);
+        subdocument.setComponentType(QLatin1String("VEVENT"));
+        property.setValueType(QVersitProperty::PreformattedType);
+        property.setName(QLatin1String("RRULE"));
+        property.setValue(QLatin1String("FREQ=MONTHLY;BYMONTHDAY=1,3"));
+        subdocument.addProperty(property);
+        document.addSubDocument(subdocument);
+        QTest::newRow("basic iCalendar 2.0") << document << QByteArray(
+                "BEGIN:VCALENDAR\r\n"
+                "VERSION:2.0\r\n"
+                "BEGIN:VEVENT\r\n"
+                "RRULE:FREQ=MONTHLY;BYMONTHDAY=1,3\r\n"
+                "END:VEVENT\r\n"
+                "END:VCALENDAR\r\n");
+    }
 
     {
-    QVersitDocument document(QVersitDocument::ICalendar20Type);
-    document.setComponentType(QLatin1String("VCALENDAR"));
-    QVersitProperty property;
-    property.setName(QLatin1String("PRODID"));
-    property.setValue(QLatin1String("-//hacksw/handcal//NONSGML v1.0//EN"));
-    document.addProperty(property);
-    QVersitDocument nested(QVersitDocument::ICalendar20Type);
-    nested.setComponentType(QLatin1String("VEVENT"));
-    property.setName(QLatin1String("DTSTART"));
-    property.setValue(QLatin1String("19970714T170000Z"));
-    nested.addProperty(property);
-    property.setName(QLatin1String("DTEND"));
-    property.setValue(QLatin1String("19970715T035959Z"));
-    nested.addProperty(property);
-    property.setName(QLatin1String("SUMMARY"));
-    property.setValue(QLatin1String("Bastille Day Party"));
-    nested.addProperty(property);
-    document.addSubDocument(nested);
-    QTest::newRow("iCalendar 2.0 from spec") << document << QByteArray(
-                    "BEGIN:VCALENDAR\r\n"
-                    "VERSION:2.0\r\n"
-                    "PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n"
-                    "BEGIN:VEVENT\r\n"
-                    "DTSTART:19970714T170000Z\r\n"
-                    "DTEND:19970715T035959Z\r\n"
-                    "SUMMARY:Bastille Day Party\r\n"
-                    "END:VEVENT\r\n"
-                    "END:VCALENDAR\r\n");
+        QVersitDocument document(QVersitDocument::ICalendar20Type);
+        document.setComponentType(QLatin1String("VCALENDAR"));
+        QVersitProperty property;
+        property.setName(QLatin1String("PRODID"));
+        property.setValue(QLatin1String("-//hacksw/handcal//NONSGML v1.0//EN"));
+        document.addProperty(property);
+        QVersitDocument nested(QVersitDocument::ICalendar20Type);
+        nested.setComponentType(QLatin1String("VEVENT"));
+        property.setName(QLatin1String("DTSTART"));
+        property.setValue(QLatin1String("19970714T170000Z"));
+        nested.addProperty(property);
+        property.setName(QLatin1String("DTEND"));
+        property.setValue(QLatin1String("19970715T035959Z"));
+        nested.addProperty(property);
+        property.setName(QLatin1String("SUMMARY"));
+        property.setValue(QLatin1String("Bastille Day Party"));
+        nested.addProperty(property);
+        document.addSubDocument(nested);
+        QTest::newRow("iCalendar 2.0 from spec") << document << QByteArray(
+                        "BEGIN:VCALENDAR\r\n"
+                        "VERSION:2.0\r\n"
+                        "PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n"
+                        "BEGIN:VEVENT\r\n"
+                        "DTSTART:19970714T170000Z\r\n"
+                        "DTEND:19970715T035959Z\r\n"
+                        "SUMMARY:Bastille Day Party\r\n"
+                        "END:VEVENT\r\n"
+                        "END:VCALENDAR\r\n");
     }
 }
 

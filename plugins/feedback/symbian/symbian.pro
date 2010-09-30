@@ -20,12 +20,17 @@ symbian {
         DEFINES += NO_TACTILE_SUPPORT
     } else {
         LIBS += -ltouchfeedback
-        contains(S60_VERSION, 5.2): DEFINES += ADVANCED_TACTILE_SUPPORT
+    }
+
+    contains(advancedtouchfeedback_enabled, yes) {
+        DEFINES += ADVANCED_TACTILE_SUPPORT
     }
 
     TARGET.EPOCALLOWDLLDATA=1
     TARGET.CAPABILITY = All -Tcb
+    TARGET.UID3=0x200315FE
     TARGET = $${TARGET}$${QT_LIBINFIX}
+
     load(armcc_warnings)
 
     target.path = /sys/bin

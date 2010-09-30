@@ -43,7 +43,7 @@
 #include <qfeedbackeffect.h>
 
 #include <QDialog>
-class QPushButton;
+class HapticButton;
 
 QTM_USE_NAMESPACE
 
@@ -65,10 +65,10 @@ private Q_SLOTS:
     void playNegativeEffect();
 
 private:
-    QPushButton *m_btnRumble;
-    QPushButton *m_btnOcean;
-    QPushButton *m_btnButtonClick;
-    QPushButton *m_btnNegativeEffect;
+    HapticButton *m_btnRumble;
+    HapticButton *m_btnOcean;
+    HapticButton *m_btnButtonClick;
+    HapticButton *m_btnNegativeEffect;
 
     QFeedbackHapticsEffect m_rumble;
     QFeedbackHapticsEffect m_ocean;

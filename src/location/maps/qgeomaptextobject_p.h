@@ -42,8 +42,6 @@
 #ifndef QGEOMAPTEXTOBJECT_P_H
 #define QGEOMAPTEXTOBJECT_P_H
 
-#include "qgeomapobject_p.h"
-
 #include "qgeocoordinate.h"
 
 #include <QFont>
@@ -53,10 +51,10 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapTextObjectPrivate : public QGeoMapObjectPrivate
+class QGeoMapTextObjectPrivate
 {
 public:
-    QGeoMapTextObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
+    QGeoMapTextObjectPrivate();
     ~QGeoMapTextObjectPrivate();
 
     QGeoCoordinate coordinate;
@@ -64,6 +62,8 @@ public:
     QFont font;
     QPen pen;
     QBrush brush;
+    QPoint offset;
+    Qt::Alignment alignment;
 };
 
 QTM_END_NAMESPACE

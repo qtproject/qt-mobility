@@ -104,7 +104,7 @@ namespace
         QGalleryItemPropertyList dependencies;
         QGalleryTrackerCompositeColumn *(*createColumn)(const QVector<int> &columns);
         bool (*writeFilterCondition)(
-                int *error,
+                QDocumentGallery::Error *error,
                 QXmlStreamWriter *xml,
                 const QGalleryCompositeProperty &property,
                 const QGalleryMetaDataFilter &filter);
@@ -174,7 +174,7 @@ namespace
         QGalleryItemPropertyList properties;
         QGalleryAggregatePropertyList aggregateProperties;
         QGalleryCompositePropertyList compositeProperties;
-        void (*writeIdCondition)(int *error, QXmlStreamWriter *xml, const QStringRef &itemId);
+        void (*writeIdCondition)(QDocumentGallery::Error *error, QXmlStreamWriter *xml, const QStringRef &itemId);
         int updateMask;
     };
 
@@ -344,9 +344,11 @@ namespace
     UpdateMask \
 }
 
-template <typename T> bool qt_writeValue(int *error, QXmlStreamWriter *xml, const QVariant &value);
+template <typename T> bool qt_writeValue(
+        QDocumentGallery::Error *error, QXmlStreamWriter *xml, const QVariant &value);
 
-template <> bool qt_writeValue<QString>(int *, QXmlStreamWriter *xml, const QVariant &value)
+template <> bool qt_writeValue<QString>(
+        QDocumentGallery::Error *, QXmlStreamWriter *xml, const QVariant &value)
 {
     xml->writeStartElement(QLatin1String("rdf:String"));
     xml->writeCharacters(value.toString());
@@ -355,7 +357,8 @@ template <> bool qt_writeValue<QString>(int *, QXmlStreamWriter *xml, const QVar
     return true;
 }
 
-template <> bool qt_writeValue<int>(int *, QXmlStreamWriter *xml, const QVariant &value)
+template <> bool qt_writeValue<int>(
+        QDocumentGallery::Error *, QXmlStreamWriter *xml, const QVariant &value)
 {
     xml->writeStartElement(QLatin1String("rdf:Integer"));
     xml->writeCharacters(value.toString());
@@ -364,7 +367,8 @@ template <> bool qt_writeValue<int>(int *, QXmlStreamWriter *xml, const QVariant
     return true;
 }
 
-template <> bool qt_writeValue<qreal>(int *, QXmlStreamWriter *xml, const QVariant &value)
+template <> bool qt_writeValue<qreal>(
+        QDocumentGallery::Error *, QXmlStreamWriter *xml, const QVariant &value)
 {
     xml->writeStartElement(QLatin1String("rdf:Float"));
     xml->writeCharacters(value.toString());
@@ -373,7 +377,8 @@ template <> bool qt_writeValue<qreal>(int *, QXmlStreamWriter *xml, const QVaria
     return true;
 }
 
-template <> bool qt_writeValue<QDateTime>(int *, QXmlStreamWriter *xml, const QVariant &value)
+template <> bool qt_writeValue<QDateTime>(
+        QDocumentGallery::Error *, QXmlStreamWriter *xml, const QVariant &value)
 {
     xml->writeStartElement(QLatin1String("rdf:Date"));
     xml->writeCharacters(value.toDateTime().toString(Qt::ISODate));
@@ -382,7 +387,18 @@ template <> bool qt_writeValue<QDateTime>(int *, QXmlStreamWriter *xml, const QV
     return true;
 }
 
-template <> bool qt_writeValue<QVariant>(int *error, QXmlStreamWriter *xml, const QVariant &value)
+template <> bool qt_writeValue<QRegExp>(
+        QDocumentGallery::Error *, QXmlStreamWriter *xml, const QVariant &value)
+{
+    xml->writeStartElement(QLatin1String("rdf:String"));
+    xml->writeCharacters(value.toRegExp().pattern());
+    xml->writeEndElement();
+
+    return true;
+}
+
+template <> bool qt_writeValue<QVariant>(
+        QDocumentGallery::Error *error, QXmlStreamWriter *xml, const QVariant &value)
 {
     switch (value.type()) {
     case QVariant::Int:
@@ -396,11 +412,13 @@ template <> bool qt_writeValue<QVariant>(int *error, QXmlStreamWriter *xml, cons
     case QVariant::DateTime:
     case QVariant::Date:
         return qt_writeValue<QDateTime>(error, xml, value);
+    case QVariant::RegExp:
+        return qt_writeValue<QRegExp>(error, xml, value);
     default:
         if (value.canConvert<QString>()) {
             return qt_writeValue<QString>(error, xml, value);
         } else {
-            *error = QGalleryAbstractRequest::PropertyTypeError;
+            *error = QDocumentGallery::FilterError;
 
             return false;
         }
@@ -422,14 +440,14 @@ static bool qt_writeEqualsCondition(
 }
 
 static bool qt_writeCondition(
-        int *error,
+        QDocumentGallery::Error *error,
         QXmlStreamWriter *xml,
         const QGalleryFilter &filter,
         const QGalleryItemPropertyList &properties,
         const QGalleryCompositePropertyList &composites);
 
 static bool qt_writeCondition(
-        int *error,
+        QDocumentGallery::Error *error,
         QXmlStreamWriter *xml,
         const QGalleryIntersectionFilter &filter,
         const QGalleryItemPropertyList &properties,
@@ -455,7 +473,7 @@ static bool qt_writeCondition(
 }
 
 static bool qt_writeCondition(
-        int *error,
+        QDocumentGallery::Error *error,
         QXmlStreamWriter *xml,
         const QGalleryUnionFilter &filter,
         const QGalleryItemPropertyList &properties,
@@ -481,7 +499,7 @@ static bool qt_writeCondition(
 }
 
 static bool qt_writeCondition(
-        int *error,
+        QDocumentGallery::Error *error,
         QXmlStreamWriter *xml,
         const QGalleryMetaDataFilter &filter,
         const QGalleryItemPropertyList &properties,
@@ -489,7 +507,7 @@ static bool qt_writeCondition(
 {
     QXmlStackStreamWriter writer(xml);
 
-    if (filter.isInverted())
+    if (filter.isNegated())
         writer.writeStartElement("rdfq:not");
 
     const QString propertyName = filter.propertyName();
@@ -532,7 +550,7 @@ static bool qt_writeCondition(
             writer.writeStartElement("rdfq:regex");
             break;
         default:
-            *error = QGalleryAbstractRequest::UnsupportedFilterOptionError;
+            *error = QDocumentGallery::FilterError;
 
             return false;
         }
@@ -547,14 +565,14 @@ static bool qt_writeCondition(
             && composites[index].writeFilterCondition) {
         return composites[index].writeFilterCondition(error, xml, composites[index], filter);
     } else {
-        *error = QGalleryAbstractRequest::InvalidPropertyError;
+        *error = QDocumentGallery::FilterError;
 
         return false;
     }
 }
 
 static bool qt_writeCondition(
-        int *error,
+        QDocumentGallery::Error *error,
         QXmlStreamWriter *xml,
         const QGalleryFilter &filter,
         const QGalleryItemPropertyList &properties,
@@ -571,20 +589,20 @@ static bool qt_writeCondition(
     default:
         Q_ASSERT(filter.type() != QGalleryFilter::Invalid);
 
-        *error = QGalleryAbstractRequest::UnsupportedFilterTypeError;
+    *error = QDocumentGallery::FilterError;
 
         return false;
     }
 }
 
 static bool qt_writeFilePathCondition(
-        int *error,
+        QDocumentGallery::Error *error,
         QXmlStreamWriter *xml,
         const QGalleryCompositeProperty &,
         const QGalleryMetaDataFilter &filter)
 {
     if (filter.comparator() != QGalleryFilter::Equals) {
-        *error = QGalleryAbstractRequest::UnsupportedFilterOptionError;
+        *error = QDocumentGallery::FilterError;
 
         return false;
     } else {
@@ -612,17 +630,17 @@ static bool qt_writeFilePathCondition(
 }
 
 static bool qt_writeFileUrlCondition(
-        int *error,
+        QDocumentGallery::Error *error,
         QXmlStreamWriter *xml,
         const QGalleryCompositeProperty &,
         const QGalleryMetaDataFilter &filter)
 {
     if (filter.comparator() != QGalleryFilter::Equals) {
-        *error = QGalleryAbstractRequest::UnsupportedFilterOptionError;
+        *error = QDocumentGallery::FilterError;
 
         return false;
     } else if (!filter.value().canConvert<QUrl>()) {
-        *error = QGalleryAbstractRequest::PropertyTypeError;
+        *error = QDocumentGallery::FilterError;
 
         return false;
     } else {
@@ -706,7 +724,7 @@ static const QGalleryCompositeProperty qt_galleryFileCompositePropertyList[] =
 };
 
 
-static void qt_writeFileIdCondition(int *error, QXmlStreamWriter *xml, const QStringRef &itemId)
+static void qt_writeFileIdCondition(QDocumentGallery::Error *error, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     const int separatorIndex = itemId.string()->lastIndexOf(QLatin1Char('/'));
     
@@ -720,17 +738,17 @@ static void qt_writeFileIdCondition(int *error, QXmlStreamWriter *xml, const QSt
         qt_writeEqualsCondition(xml, QLatin1String("File:Name"), fileName);
         xml->writeEndElement();
     } else {
-        *error = QGalleryAbstractRequest::InvalidItemError;
+        *error = QDocumentGallery::ItemIdError;
     }
 }
 
 static void qt_writeFileContainerCondition(
-        int *, QXmlStreamWriter *xml, const QStringRef &itemId)
+        QDocumentGallery::Error *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     qt_writeEqualsCondition(xml, QLatin1String("File:Path"), itemId.toString());
 }
 
-static void qt_writeFileScopeCondition(int *, QXmlStreamWriter *xml, const QStringRef &itemId)
+static void qt_writeFileScopeCondition(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     xml->writeStartElement(QLatin1String("rdfq:or"));
 
@@ -800,7 +818,7 @@ static QStringList qt_trackerRootPaths()
     return paths;
 }
 
-static bool qt_writeFileRootContainerCondition(int *, QXmlStreamWriter *xml)
+static bool qt_writeFileRootContainerCondition(QDocumentGallery::Error *, QXmlStreamWriter *xml)
 {
     xml->writeStartElement(QLatin1String("rdfq:inSet"));
 
@@ -1008,7 +1026,7 @@ static const QGalleryAggregateProperty qt_galleryArtistAggregateList[] =
     QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , "COUNT", Int),
 };
 
-static void qt_writeArtistIdCondition(int *, QXmlStreamWriter *xml, const QStringRef &itemId)
+static void qt_writeArtistIdCondition(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     qt_writeEqualsCondition(xml, QLatin1String("Audio:Artist"), itemId.toString());
 }
@@ -1034,7 +1052,7 @@ static const QGalleryAggregateProperty qt_galleryAlbumArtistAggregateList[] =
     QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , "COUNT", Int),
 };
 
-static void qt_writeAlbumArtistIdCondition(int *, QXmlStreamWriter *xml, const QStringRef &itemId)
+static void qt_writeAlbumArtistIdCondition(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     qt_writeEqualsCondition(xml, QLatin1String("Audio:AlbumArtist"), itemId.toString());
 }
@@ -1064,7 +1082,7 @@ static const QGalleryAggregateProperty qt_galleryAlbumAggregateList[] =
 };
 
 static void qt_writeAlbumIdCondition(
-        int *error, QXmlStreamWriter *xml, const QStringRef &itemId)
+        QDocumentGallery::Error *error, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     const QLatin1Char separator('/');
 
@@ -1086,7 +1104,7 @@ static void qt_writeAlbumIdCondition(
         }
     }
 
-    *error = QGalleryAbstractRequest::InvalidItemError;
+    *error = QDocumentGallery::ItemIdError;
 }
 
 //////////////
@@ -1112,7 +1130,7 @@ static const QGalleryAggregateProperty qt_galleryAudioGenreAggregateList[] =
 
 
 
-static void qt_writeAudioGenreIdCondition(int *, QXmlStreamWriter *xml, const QStringRef &itemId)
+static void qt_writeAudioGenreIdCondition(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     qt_writeEqualsCondition(xml, QLatin1String("Audio:Genre"), itemId.toString());
 }
@@ -1136,7 +1154,7 @@ static const QGalleryAggregateProperty qt_galleryPhotoAlbumAggregateList[] =
     QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*", "COUNT", Int)
 };
 
-static void qt_writePhotoAlbumIdCondition(int *, QXmlStreamWriter *xml, const QStringRef &itemId)
+static void qt_writePhotoAlbumIdCondition(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     qt_writeEqualsCondition(xml, QLatin1String("Image:Album"), itemId.toString());
 }
@@ -1235,7 +1253,7 @@ QString QGalleryTrackerSchema::itemType() const
         return QString();
 }
 
-QString QGalleryTrackerSchema::uriFromItemId(int *error, const QVariant &itemId)
+QString QGalleryTrackerSchema::uriFromItemId(QDocumentGallery::Error *error, const QVariant &itemId)
 {
     QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
 
@@ -1246,7 +1264,7 @@ QString QGalleryTrackerSchema::uriFromItemId(int *error, const QVariant &itemId)
     if (index != -1) {
         return itemTypes[index].prefix.strip(idString).toString();
     } else {
-        *error = QGalleryAbstractRequest::InvalidItemError;
+        *error = QDocumentGallery::ItemIdError;
 
         return QString();
     }
@@ -1321,14 +1339,14 @@ QGalleryProperty::Attributes QGalleryTrackerSchema::propertyAttributes(
     return QGalleryProperty::Attributes();
 }
 
-int QGalleryTrackerSchema::prepareItemResponse(
+QDocumentGallery::Error QGalleryTrackerSchema::prepareItemResponse(
         QGalleryTrackerResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
         const QString &itemId,
         const QStringList &propertyNames) const
 {
     if (m_itemIndex >= 0) {
-        int result = QGalleryAbstractRequest::Succeeded;
+        QDocumentGallery::Error error = QDocumentGallery::NoError;
 
         QString query;
         {
@@ -1336,17 +1354,17 @@ int QGalleryTrackerSchema::prepareItemResponse(
             xml.writeStartElement(QLatin1String("rdfq:Condition"));
 
             qt_writeFileIdCondition(
-                    &result ,&xml, qt_galleryItemTypeList[m_itemIndex].prefix.strip(itemId));
+                    &error ,&xml, qt_galleryItemTypeList[m_itemIndex].prefix.strip(itemId));
 
             xml.writeEndElement();
         }
 
-        if (result == QGalleryAbstractRequest::Succeeded)
+        if (error == QDocumentGallery::NoError)
             populateItemArguments(arguments, dbus, query, propertyNames, QStringList());
 
-        return result;
+        return error;
     } else if (m_aggregateIndex >= 0) {
-        int result = QGalleryAbstractRequest::Succeeded;
+        QDocumentGallery::Error error = QDocumentGallery::NoError;
 
         QString query;
         {
@@ -1354,23 +1372,23 @@ int QGalleryTrackerSchema::prepareItemResponse(
             xml.writeStartElement(QLatin1String("rdfq:Condition"));
 
             qt_galleryAggregateTypeList[m_aggregateIndex].writeIdCondition(
-                    &result,
+                    &error,
                     &xml,
                     qt_galleryAggregateTypeList[m_aggregateIndex].prefix.strip(itemId));
 
             xml.writeEndElement();
         }
 
-        if (result == QGalleryAbstractRequest::Succeeded)
+        if (error == QDocumentGallery::NoError)
             populateAggregateArguments(arguments, dbus, query, propertyNames, QStringList());
 
-        return result;
+        return error;
     } else {
-        return QGalleryAbstractRequest::InvalidItemError;
+        return QDocumentGallery::ItemIdError;
     }
 }
 
-int QGalleryTrackerSchema::prepareQueryResponse(
+QDocumentGallery::Error QGalleryTrackerSchema::prepareQueryResponse(
         QGalleryTrackerResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
         QGalleryQueryRequest::Scope scope,
@@ -1379,32 +1397,32 @@ int QGalleryTrackerSchema::prepareQueryResponse(
         const QStringList &propertyNames,
         const QStringList &sortPropertyNames) const
 {
-    int result = QGalleryAbstractRequest::Succeeded;
+    QDocumentGallery::Error error = QDocumentGallery::NoError;
 
     QString query;
 
     if (!rootItemId.isEmpty()
             || filter.isValid()
             || (scope == QGalleryQueryRequest::DirectDescendants && m_itemIndex != -1)) {
-        result = buildFilterQuery(&query, scope, rootItemId, filter);
+        error = buildFilterQuery(&query, scope, rootItemId, filter);
     }
 
-    if (result != QGalleryAbstractRequest::Succeeded) {
-        return result;
+    if (error != QDocumentGallery::NoError) {
+        return error;
     } else if (m_itemIndex >= 0) {
         populateItemArguments(arguments, dbus, query, propertyNames, sortPropertyNames);
 
-        return QGalleryAbstractRequest::Succeeded;
+        return QDocumentGallery::NoError;
     } else if (m_aggregateIndex >= 0) {
         populateAggregateArguments(arguments, dbus, query, propertyNames, sortPropertyNames);
 
-        return QGalleryAbstractRequest::Succeeded;
+        return QDocumentGallery::NoError;
     } else {
-        return QGalleryAbstractRequest::ItemTypeError;
+        return QDocumentGallery::ItemTypeError;
     }
 }
 
-int QGalleryTrackerSchema::prepareTypeResponse(
+QDocumentGallery::Error QGalleryTrackerSchema::prepareTypeResponse(
         QGalleryTrackerTypeResultSetArguments *arguments, QGalleryDBusInterfaceFactory *dbus) const
 {
     QString query;
@@ -1419,7 +1437,7 @@ int QGalleryTrackerSchema::prepareTypeResponse(
                 << QLatin1String("*")
                 << query;
 
-        return QGalleryAbstractRequest::Succeeded;
+        return QDocumentGallery::NoError;
     } else if (m_aggregateIndex >= 0) {
         const QGalleryAggregateType &type = qt_galleryAggregateTypeList[m_aggregateIndex];
 
@@ -1453,13 +1471,13 @@ int QGalleryTrackerSchema::prepareTypeResponse(
                     << descending;
         }
 
-        return QGalleryAbstractRequest::Succeeded;
+        return QDocumentGallery::NoError;
     } else {
-        return QGalleryAbstractRequest::ItemTypeError;
+        return QDocumentGallery::ItemTypeError;
     }
 }
 
-int QGalleryTrackerSchema::buildFilterQuery(
+QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
         QString *query,
         QGalleryQueryRequest::Scope scope,
         const QString &rootItemId,
@@ -1468,7 +1486,7 @@ int QGalleryTrackerSchema::buildFilterQuery(
     const QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
     const QGalleryAggregateTypeList aggregateTypes(qt_galleryAggregateTypeList);
 
-    int result = QGalleryAbstractRequest::Succeeded;
+    QDocumentGallery::Error result = QDocumentGallery::NoError;
 
     QXmlStreamWriter xml(query);
     QXmlStackStreamWriter writer(&xml);
@@ -1493,7 +1511,7 @@ int QGalleryTrackerSchema::buildFilterQuery(
             aggregateTypes[index].writeIdCondition(
                     &result, &xml, aggregateTypes[index].prefix.strip(rootItemId));
         } else {
-            result = QGalleryAbstractRequest::InvalidItemError;
+            result = QDocumentGallery::ItemIdError;
         }
     } else if (scope == QGalleryQueryRequest::DirectDescendants && m_itemIndex != -1) {
         if (filter.isValid())
@@ -1518,7 +1536,7 @@ int QGalleryTrackerSchema::buildFilterQuery(
                     aggregateTypes[m_aggregateIndex].properties,
                     aggregateTypes[m_itemIndex].compositeProperties);
         } else {
-            result = QGalleryAbstractRequest::ItemTypeError;
+            result = QDocumentGallery::ItemTypeError;
         }
     }
 

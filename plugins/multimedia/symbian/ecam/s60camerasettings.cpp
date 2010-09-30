@@ -47,12 +47,12 @@
 #include <ecamadvancedsettings.h> // CCameraAdvancedSettings (inc. TValueInfo)
 #endif // S60 3.2
 
-// S60 5.0 or Symbian3 Platform
-#if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(SYMBIAN_3_PLATFORM))
+// S60 5.0 or later
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
 #define POST_31_PLATFORM
 #include <ecamadvsettings.h>    // CCameraAdvancedSettings
 #include <ecam/ecamconstants.h> // TValueInfo
-#endif // S60 5.0 or Symbian3
+#endif // S60 5.0 or later
 
 S60CameraSettings::S60CameraSettings(QObject *parent, CCameraEngine *engine) :
     QObject(parent)

@@ -80,12 +80,14 @@ class QueryThread : public QThread
 
 public:
     QueryThread();
-    void setArgs(EventLoggerEngine *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset);
+    void setArgs(QMessageServicePrivate* privateService, EventLoggerEngine *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset);
     void run();
 
  signals:
     void completed();
+
  public:
+    QMessageServicePrivate* _privateService;
     EventLoggerEngine *_parent;
     QMessageFilter _filter;
     QString _body;
@@ -114,14 +116,27 @@ public:
     static void new_event_cb(RTComEl *el,int event_id,
                              const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
                              const char *group_uid,const char *service,EventLoggerEngine *p);
+    static void event_updated_cb(RTComEl *el,int event_id,
+                          const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                             const char *group_uid,const char *service,EventLoggerEngine *p);
+    static void event_deleted_cb(RTComEl *el,int event_id,
+                             const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                             const char *group_uid,const char *service,EventLoggerEngine *p);
     void newEvent(int event_id,
                   const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
                   const char *group_uid,const char *service);
+    void deletedEvent(int event_id,
+                  const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                  const char *group_uid,const char *service);
+    void updatedEvent(int event_id,
+                  const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                  const char *group_uid,const char *service);
+
     QMessageIdList filterAndOrderMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
 				      QString body, QMessageDataComparator::MatchFlags matchFlags);
 
-    bool filterMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
-				      QString body, QMessageDataComparator::MatchFlags matchFlags);
+    bool filterMessages(QMessageServicePrivate* privateService, const QMessageFilter &filter,
+                        const QMessageSortOrder& sortOrder, QString body, QMessageDataComparator::MatchFlags matchFlags);
 
     void addEvent(QMessage &message);
     QMessageIdList m_ids;

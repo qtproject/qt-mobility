@@ -148,7 +148,7 @@ DBusSession::~DBusSession()
 class DBusSessionAdaptor: public QDBusAbstractAdaptor
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.qtmobility.DBus")
+    Q_CLASSINFO("D-Bus Interface", "com.nokia.qtmobility.sfw.DBusSession")
 
 public:
     DBusSessionAdaptor(QObject *parent);
@@ -179,12 +179,12 @@ DBusSessionAdaptor::~DBusSessionAdaptor()
 {
 }
 
-QRemoteServiceRegisterPrivate::QRemoteServiceRegisterPrivate(QObject* parent)
-    : QObject(parent)
+QRemoteServiceRegisterDbusPrivate::QRemoteServiceRegisterDbusPrivate(QObject* parent)
+    : QRemoteServiceRegisterPrivate(parent)
 {
 }
 
-void QRemoteServiceRegisterPrivate::publishServices(const QString& ident)
+void QRemoteServiceRegisterDbusPrivate::publishServices(const QString& ident)
 {
     createServiceEndPoint(ident);
 }
@@ -192,7 +192,7 @@ void QRemoteServiceRegisterPrivate::publishServices(const QString& ident)
 /*!
     Creates endpoint on service side.
 */
-bool QRemoteServiceRegisterPrivate::createServiceEndPoint(const QString& /*ident*/)
+bool QRemoteServiceRegisterDbusPrivate::createServiceEndPoint(const QString& /*ident*/)
 {
     InstanceManager *iManager = InstanceManager::instance();
     QList<QRemoteServiceRegister::Entry> list = iManager->allEntries();
@@ -239,12 +239,17 @@ bool QRemoteServiceRegisterPrivate::createServiceEndPoint(const QString& /*ident
     return false;
 }
 
+QRemoteServiceRegisterPrivate* QRemoteServiceRegisterPrivate::constructPrivateObject(QObject *parent)
+{
+  return new QRemoteServiceRegisterDbusPrivate(parent);
+}
+
 /*!
     Creates endpoint on client side.
 */
 QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& /*location*/)
 {
-    QString serviceName = "com.nokia.qtmobility.sfw." + entry.serviceName();
+    const QString serviceName = "com.nokia.qtmobility.sfw." + entry.serviceName();
     QString path = "/" + entry.interfaceName() + "/DBusSession";
     path.replace(QString("."), QString("/"));
 
@@ -253,7 +258,10 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
         qWarning() << "Cannot connect to DBus";
         return 0;
     }
-   
+
+    QDBusMessage msg = QDBusMessage::createMethodCall(serviceName, path, "", "autostart");
+    connection->call(msg);
+
     QDBusInterface *inface = new QDBusInterface(serviceName, path, "", QDBusConnection::sessionBus());
     if (!inface->isValid()) {
         qWarning() << "Cannot connect to remote service" << serviceName << path;

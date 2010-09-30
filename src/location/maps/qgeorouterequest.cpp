@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
     \ingroup maps-routing
 
     The default state of a QGeoRouteRequest instance will result in a request
-    for basic route segment and navigation instructions describing the fastest
+    for basic route segment and navigation maneuvers describing the fastest
     route by car which covers the given waypoints.
 
     There may be signifcant variation in the features supported by different
@@ -71,7 +71,6 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*
-
     DESIGN NOTE
 
     There are plans to make this extensible by allowing the user to set a
@@ -92,6 +91,10 @@ QTM_BEGIN_NAMESPACE
     options subclass (and the fact that user auth said that the user had
     support) would mean we could provide better values for the estimated
     travel times etc...
+
+    This all relies on at least one service making this data available to us,
+    which would probably be tied to token based authorization.  It could be
+    some time before this becomes available.
 */
 
 /*!
@@ -168,7 +171,7 @@ enum SegmentDetail {
         No segment data should be included with the route.  A route requested
         with this level of segment detail will initialise
         QGeoRouteSegment::path() as a straight line between the positions of
-        the previous and next QGeoInstructions.
+        the previous and next QGeoManeuver instances.
 
     \value BasicSegmentData
         Basic segment data will be included with the route.  This will include
@@ -176,17 +179,17 @@ enum SegmentDetail {
 */
 
 /*!
-    \enum QGeoRouteRequest::InstructionDetail
+    \enum QGeoRouteRequest::ManeuverDetail
 
-    Defines the amount of instruction information that should be included with
+    Defines the amount of maneuver information that should be included with
     the route.
 
-    \value NoInstructions
-        No instructions should be included with the route.
+    \value NoManeuvers
+        No maneuvers should be included with the route.
 
-    \value BasicInstructions
-        Basic instructions will be included with the route. This will
-        include QGeoInstruction::instructionText().
+    \value BasicManeuvers
+        Basic manevuers will be included with the route. This will
+        include QGeoManeuver::instructionText().
 */
 
 /*!
@@ -382,24 +385,24 @@ QGeoRouteRequest::SegmentDetail QGeoRouteRequest::segmentDetail() const
 }
 
 /*!
-    Sets the level of detail to use when representing routing instructions to
-    \a instructionDetail.
+    Sets the level of detail to use when representing routing maneuvers to
+    \a maneuverDetail.
 
-    The default value is QGeoRouteRequest::BasicInstructions.
+    The default value is QGeoRouteRequest::BasicManeuvers.
 */
 
-void QGeoRouteRequest::setInstructionDetail(QGeoRouteRequest::InstructionDetail instructionDetail)
+void QGeoRouteRequest::setManeuverDetail(QGeoRouteRequest::ManeuverDetail maneuverDetail)
 {
-    d_ptr->instructionDetail = instructionDetail;
+    d_ptr->maneuverDetail = maneuverDetail;
 }
 
 /*!
     Returns the level of detail which will be used in the representation of
-    routing instructions.
+    routing maneuvers.
 */
-QGeoRouteRequest::InstructionDetail QGeoRouteRequest::instructionDetail() const
+QGeoRouteRequest::ManeuverDetail QGeoRouteRequest::maneuverDetail() const
 {
-    return d_ptr->instructionDetail;
+    return d_ptr->maneuverDetail;
 }
 
 /*******************************************************************************
@@ -412,7 +415,7 @@ QGeoRouteRequestPrivate::QGeoRouteRequestPrivate()
         avoidFeatureTypes(QGeoRouteRequest::AvoidNothing),
         routeOptimization(QGeoRouteRequest::FastestRoute),
         segmentDetail(QGeoRouteRequest::BasicSegmentData),
-        instructionDetail(QGeoRouteRequest::BasicInstructions) {}
+        maneuverDetail(QGeoRouteRequest::BasicManeuvers) {}
 
 QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other)
         : QSharedData(other),
@@ -423,7 +426,7 @@ QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &
         avoidFeatureTypes(other.avoidFeatureTypes),
         routeOptimization(other.routeOptimization),
         segmentDetail(other.segmentDetail),
-        instructionDetail(other.instructionDetail) {}
+        maneuverDetail(other.maneuverDetail) {}
 
 QGeoRouteRequestPrivate::~QGeoRouteRequestPrivate() {}
 
@@ -436,7 +439,7 @@ bool QGeoRouteRequestPrivate::operator ==(const QGeoRouteRequestPrivate &other) 
             && (avoidFeatureTypes == other.avoidFeatureTypes)
             && (routeOptimization == other.routeOptimization)
             && (segmentDetail == other.segmentDetail)
-            && (instructionDetail == other.instructionDetail));
+            && (maneuverDetail == other.maneuverDetail));
 }
 
 QTM_END_NAMESPACE

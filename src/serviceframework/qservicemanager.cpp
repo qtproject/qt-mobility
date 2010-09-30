@@ -43,15 +43,19 @@
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
 #include "qserviceinterfacedescriptor_p.h"
-#include "qremoteserviceregister.h"
+#include "qremoteserviceregister_p.h"
 
-#if defined(Q_OS_SYMBIAN)
+/*#if defined(Q_OS_SYMBIAN)
     #include "qremoteserviceregister_s60_p.h"
 #elif defined(QT_NO_DBUS)
+<<<<<<< HEAD
     #include "qremoteserviceregister_p.h"
+=======
+    #include "qremoteservicecontrol_ls_p.h"
+>>>>>>> 1.1
 #else
     #include "qremoteserviceregister_dbus_p.h"
-#endif
+#endif*/
 
 #ifdef Q_OS_SYMBIAN
     #include "databasemanager_symbian_p.h"

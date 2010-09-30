@@ -263,6 +263,7 @@ the current location.
 
 \annotatedlist location
 
+\target Landmarks
 \section1 Landmarks
 The Landmarks portion of the Location API facilitates the creation,
 retrieval, updating and deletion of landmarks from arbitrary data stores.
@@ -285,9 +286,16 @@ It is generally recommended that the asynchronous \l {Asynchronous Landmark Requ
 a datastore contains a significantly large number of landmarks or if the datastore is being accessed over a network.
 
 
-\section2 Landmark Examples
+\section2 Landmark operation examples
 
-For more details see the \l {Landmark Examples} {Landmark Examples} page.
+For more details see the \l {Landmark Examples} {Landmark Examples} page for:
+\list
+    \o \l {Creating/Saving categories and landmarks}
+    \o \l {Retrieving categories and landmarks}
+    \o \l {Deleting categories and landmarks}
+    \o \l {Importing landmarks}
+    \o \l {Exporting landmarks}
+\endlist
 
 \section2 Landmark Attributes
 
@@ -373,10 +381,12 @@ For more details see the \l {Landmark Examples} {Landmark Examples} page.
     \o Extended attributes:  These are attributes that a particular manager provides
     above those of the core attributes.  The keys to be used are dependent upon the manager.
     The extended attributes may be accessed using the attribute() and setAttribute() functions,
-    just as the core attributes are.
+    just as the core attributes are.  (As of the Qt Mobility 1.1 beta, none of the supported
+    platforms have extended attributes).
     \o Custom attributes:  These are attributes that a client application can use to associate
     its own domain specific data with a landmark.  These are accessible through the customAttribute() and
-    setCustomAttribute() functions.
+    setCustomAttribute() functions.  (Only the sqlite backend which is used
+    on Maemo5, Windows and Linux platforms support custom attributes).
 \endlist
 
     The combination of core and extended attributes are regarded as \c manager
@@ -412,18 +422,8 @@ For more details see the \l {Landmark Examples} {Landmark Examples} page.
     or by ORing them.  The attribute filter may only be used to search one type of attributes,
     i.e. either manager attributes or custom attributes.  Not all attributes are searchable,
     and the ones that can be searched are backend specific.  The following set of attributes
-    are currently searchable for the following managers
-    \table
-    \header
-        \o Manager Name
-        \o Platform
-    \row
-        \o  com.nokia.qt.landmarks.engines.symbian
-        \o  Symbian
-    \row
-        \o com.nokia.qt.landmarks.engines.sqlite
-        \o Maemo 5, windows, linux
-    \endtable
+    are currently searchable.
+
 
     \table
     \header
@@ -445,6 +445,51 @@ For more details see the \l {Landmark Examples} {Landmark Examples} page.
         \o "postCode"
         \o
     \endtable
+
+\section3 Importing and Exporting Landmarks
+The landmarks API supports import and exporting of landmarks.  The file formats that are supported depends on the particular manager.
+The following table outline the formats that may be used for each manager.  You may also query the supported formats through the
+QLandmarkManager::supportedFormats() function.
+
+\table
+\header
+    \o Manager
+    \o Platform
+    \o Import formats
+    \o Export formats
+\row
+    \o  com.nokia.qt.landmarks.engines.symbian
+    \o  Symbian 3rd Edition
+    \o  Lmx
+    \o  Lmx
+\row
+    \o  com.nokia.qt.landmarks.engines.symbian
+    \o  Symbian 5th Edition
+    \o  Gpx, Lmx, Kml, Kmz
+    \o  Lmx
+\row
+    \o com.nokia.qt.landmarks.engines.sqlite
+    \o Maemo 5, windows, linux
+    \o Lmx, Gpx(version 1.1 only)
+    \o Lmx, Gpx(vesion 1.1)
+\endtable
+
+During an import operation, every landmark from the import source will result in the creation of a new landmark, however any categories
+defined in the import source will be mapped to existing categories if possible.  If a mappping cannot be found then a new category
+is created.
+
+During an import or export operation,the QLandmarkManager::TransferOption can be used to decide what to do with category data,
+provided the given format supports them.  (For formats such as gpx which do not support categories, the transfer option is ignored).
+Typically, any categories are included as is with QLandmarkManager::IncludeCategoryData being the default option.  You may choose
+to ignore any categories by providing using QLandmarkManager::ExcludeCategoryData.  For an import operation, you can use
+QLandmarkManager::AttachSingleCategory in conjunction with a QLandmarkCategoryId, to have all imported landmarks be assigned
+to that category(any exisiting category associations defined in the import source are ignored).
+
+The export operation by default exports all landmarks within the manager.  If you wish to export only a subset you can
+provide a list of landmark ids to do so.  One caveat with exporting landmarks to gpx format is that the gpx does not support
+landmarks which have NaN latitude and longitude values.  If you try to export all landmarks, then those landmarks with NaN values
+are skipped over.  However if you provide a list of ids of landmarks to export, the export operation will fail if any one
+of those landmarks have NaN latitude or longitude values.
 
 
 \section2 Landmark classes
@@ -493,14 +538,14 @@ other services, the plugins are used to group the functionality per
 service provider.
 
 The plugins are accessed via QGeoServiceProvider, and a Nokia based plugin 
-is part of Qt Mobility.
+is part of Qt Mobility.  See the section \l{The Nokia plugin} for more details.
 
 \code
     QGeoMappingManager *mappingManager = 0;
     QGeoRoutingManager *routingManager = 0;
     QGeoSearchManager *searchManager = 0;
 
-    QGeoServiceProvider serviceProvider("nokia");
+    QGeoServiceProvider serviceProvider("plugin name");
 
     if (serviceProvider.error() == QGeoServiceProvider::NoError) {
         mappingManager = serviceProvider.mappingManager();
@@ -515,16 +560,16 @@ is part of Qt Mobility.
 
 \section2 Mapping
 
-The QGeoMapWidget class is the main class used for displaying and interacting
+The QGraphicsGeoMap class is the main class used for displaying and interacting
 with maps. It is designed for use within the Graphics View Framework, and is
 a subclass of QGraphicsWidget.
 
 The QGeoMappingManager provides most of the functionality required by
-QGeoMapWidget.  The details of QGeoMappingManager are mostly only important
+QGraphicsGeoMap.  The details of QGeoMappingManager are mostly only important
 to plugin implementers, as regular users should not need to make use of
-QGeoMappingManager outside of the QGeoMapWidget constructor:
+QGeoMappingManager outside of the QGraphicsGeoMap constructor:
 \code
-    QGeoMapWidget *widget = new QGeoMapWidget(mappingManager);
+    QGraphicsGeoMap *map = new QGraphicsGeoMap(mappingManager);
 \endcode
 
 \annotatedlist maps-mapping
@@ -576,14 +621,14 @@ their personal offline landmarks store.
 
 \section2 The Nokia plugin
 
-Qt Mobility comes with a plugin which makes use of the Nokia services 
-relevant to the Maps and Navigation API.
+Qt Mobility ships with a Maps and Navigation API plugin which accesses 
+the relevant Ovi services provided Nokia.  The use of these services 
+is governed by the terms and conditions available in the file 
+plugins/geoservices/nokia/OVI_SERVICES_TERMS_AND_CONDITIONS.txt.
 
-The latest version has the plugin name "nokia" and has plugin version 1.
+The Ovi services plugin can be loaded by using the plugin key "nokia".
 
-From the beta release onwards, the use of this plugin will be subject 
-to terms and conditions that will be contained within or linked from this 
-documentation.
+Note that accepting the terms and conditions only applies those terms and conditions to the use of the Ovi Maps Services plugin and does not limit the use of the other maps and navigation API plugins that may be included with the Qt Mobility package.
 
 \section2 Implementing plugins
 
@@ -598,6 +643,16 @@ QGeoServiceProviderFactory::createMappingManagerEngine() and
 QGeoServiceProviderFactory::createRoutingManagerEngine() as appropriate.
 
 \annotatedlist maps-impl
+
+\section3 Tile-based map convenience classes
+
+Most of the current tile based mapping APIs are very similar, and so we 
+provide a number of classes intended to make writing tile based mapping 
+plugins much simpler.  
+
+If the Mercator projection and the most common tile addressing scheme is used this will mainly involve subclassing QGeoTiledMappingManagerEngine and providing an implementation of QGeoTiledMappingManagerEngine::getTileImage().
+
+\annotatedlist maps-impl-tiled
 
 */
 

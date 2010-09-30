@@ -64,6 +64,7 @@ QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemFilter;
 class QOrganizerItemSortOrder;
+class QOrganizerItemEngineLocalId;
 
 /* Forward decls, since these don't actually exist yet */
 class QOrganizerItemInstanceFetchRequest;
@@ -132,11 +133,11 @@ public:
     /* Capabilities reporting */
     virtual bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const;
     virtual bool isFilterSupported(const QOrganizerItemFilter& filter) const;
-    virtual QList<QVariant::Type> supportedDataTypes() const;
+    virtual QList<int> supportedDataTypes() const;
     virtual QStringList supportedItemTypes() const;
 
     /* Reports the built-in definitions from the schema */
-    static QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schemaDefinitions();
+    static QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schemaDefinitions(int version = 1);
 
 Q_SIGNALS:
     void dataChanged();
@@ -166,7 +167,9 @@ public:
 
     // Other protected area update functions
     static void setDetailAccessConstraints(QOrganizerItemDetail* detail, QOrganizerItemDetail::AccessConstraints constraints);
-    static void setItemCollectionId(QOrganizerItem* item, const QOrganizerCollectionId& collectionId); // XXX TODO: setting in QOrganizerItem instead?
+    static void setItemCollectionId(QOrganizerItem* item, const QOrganizerCollectionId& collectionId); // XXX TODO: setting in QOrganizerItem instead
+    static QOrganizerItemEngineLocalId* engineLocalItemId(const QOrganizerItemLocalId& localId);
+    static QOrganizerCollectionEngineLocalId* engineLocalCollectionId(const QOrganizerCollectionLocalId& localId);
 
     /* Helper functions */
     static int compareItem(const QOrganizerItem& a, const QOrganizerItem& b, const QList<QOrganizerItemSortOrder>& sortOrders);
@@ -180,6 +183,7 @@ public:
 private:
     /* QOrganizerItemChangeSet is a utility class used to emit the appropriate signals */
     friend class QOrganizerItemChangeSet;
+    friend class QOrganizerCollectionChangeSet;
 };
 
 QTM_END_NAMESPACE

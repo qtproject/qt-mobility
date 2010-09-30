@@ -73,15 +73,13 @@ public:
     QGeoMapData* createMapData(QGraphicsGeoMap *geoMap);
 
     QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
+    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
 
     QSize minimumImageSize() const;
     QSize maximumImageSize() const;
 
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
-
-    bool supportsTilt() const;
-    bool supportsHeading() const;
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;

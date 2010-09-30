@@ -51,11 +51,11 @@
 #include <QSharedDataPointer>
 
 #include "qtcontactsglobal.h"
-
 #include "qcontactdetail.h"
+#include "qcontactrelationship.h"
+
 #include "qcontactdetaildefinition.h"
 #include "qcontactdisplaylabel.h"
-#include "qcontactrelationship.h"
 #include "qcontactrelationshipfilter.h"
 #include "qcontacttype.h"
 
@@ -67,6 +67,7 @@ class QContactManager;
 class QContactData;
 class QContactName;
 class QContactAction;
+class QContactActionDescriptor;
 
 // MSVC needs the function declared before the friend declaration
 class QContact;
@@ -187,6 +188,7 @@ public:
     QMap<QString, QContactDetail> preferredDetails() const;
 
 private:
+    friend class QContactData;
     friend class QContactManager;
     friend class QContactManagerData;
     friend class QContactManagerEngine;
@@ -194,11 +196,6 @@ private:
     friend QDataStream& operator>>(QDataStream& in, QContact& contact);
 
     QSharedDataPointer<QContactData> d;
-
-#if defined(SIMULATOR_APPLICATION) || defined(QT_SIMULATOR)
-    friend QDataStream &operator<<(QDataStream &, const QContact &);
-    friend QDataStream &operator>>(QDataStream &, QContact &);
-#endif
 };
 
 Q_CONTACTS_EXPORT uint qHash(const QContact& key);

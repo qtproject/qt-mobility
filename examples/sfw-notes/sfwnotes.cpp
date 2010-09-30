@@ -54,7 +54,11 @@ ToDoTool::ToDoTool(QWidget *parent, Qt::WindowFlags flags)
 
     registerExampleServices();
 
-    setWindowTitle(tr("ToDoTool"));
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MEAMO_6)
+    titleLabel->setFont(QFont("Nimbus Roman No9 L", 40, QFont::Bold, true));
+    noteLabel->setFont(QFont("Comic Sans MS", 30, QFont::Normal, true));
+#endif
 
     init();
 }
@@ -82,26 +86,35 @@ void ToDoTool::init()
                                                   QLineEdit::Normal, "com.nokia.qt.examples.NotesManager", &ok);
     if (ok) {
         QServiceInterfaceDescriptor desc = serviceManager->interfaceDefault(interfaceName);
-        
+
         if (desc.isValid()) {
             QServiceManager mgr;
             notesManager = mgr.loadInterface(desc);
 
             if (notesManager)
                 notesManager->setParent(this);
+            
+            bool connect;
+            QMetaObject::invokeMethod(notesManager, "init", Q_RETURN_ARG(bool, connect));
+            if (connect) {
+                currentNote = 1;
+                searchWord = "";    
+                refreshList();
 
-            currentNote = 1;
-            searchWord = "";    
-            refreshList();
+                addButton->setEnabled(true);
+                deleteButton->setEnabled(true);
+                searchButton->setEnabled(true);
+                nextButton->setEnabled(true);
+                prevButton->setEnabled(true);
 
-            addButton->setEnabled(true);
-            deleteButton->setEnabled(true);
-            searchButton->setEnabled(true);
-            nextButton->setEnabled(true);
-            prevButton->setEnabled(true);
-
-            QObject::connect(notesManager, SIGNAL(soundAlarm(QDateTime)), 
-                            this, SLOT(soundAlarm(QDateTime)));
+                QObject::connect(notesManager, SIGNAL(soundAlarm(QDateTime)), 
+                        this, SLOT(soundAlarm(QDateTime))); 
+            } else {
+                QMessageBox msgBox;
+                msgBox.setWindowTitle(tr("ToDoTool"));
+                msgBox.setText("Unable to access notes manager database\n in current or home directory");
+                msgBox.exec();
+            }
         } else {
             QMessageBox msgBox;
             msgBox.setWindowTitle(tr("ToDoTool"));
@@ -113,11 +126,14 @@ void ToDoTool::init()
 
 void ToDoTool::registerExampleServices()
 {
+    unregisterExampleServices();
+    
     QStringList exampleXmlFiles;
     exampleXmlFiles << "notesmanagerservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
         const QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
-        serviceManager->addService(path);
+        if (!serviceManager->addService(path))
+            qDebug() << "Unable to register notes manager service";
     }
 }
 
@@ -126,7 +142,7 @@ void ToDoTool::unregisterExampleServices()
     serviceManager->removeService("NotesManagerService");
 }
 
-void ToDoTool::refreshList()
+void ToDoTool::refreshList(bool view)
 {
         QMetaObject::invokeMethod(notesManager, "getNotes", 
                                   Q_RETURN_ARG(QList<QObject*>, ret),
@@ -136,7 +152,10 @@ void ToDoTool::refreshList()
     
         if (totalNotes < 1) { currentNote = 0; }
         else if (totalNotes > 0 && currentNote == 0) { currentNote = 1; }
-        
+       
+        if (!view)
+            currentNote = totalNotes;    
+
         refreshNotes();
 }
 
@@ -146,7 +165,10 @@ void ToDoTool::refreshNotes()
     
     if (currentNote == 0) {
         dateLabel->setText("");
-        noteLabel->setText("Click + to add a note");
+        if (searchWord == "")
+            noteLabel->setText("Click + to add a note");
+        else
+            noteLabel->setText("No matching note for:\n'" + searchWord  + "'");
     }
     else {
         QDateTime alarm;
@@ -204,7 +226,8 @@ void ToDoTool::on_addButton_clicked()
                                           Q_ARG(QDateTime, QDateTime::currentDateTime()));
         }
 
-        refreshList();
+        searchWord = "";
+        refreshList(false);
     }
 }
 

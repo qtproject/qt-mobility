@@ -28,15 +28,29 @@ symbian|wince*|maemo*|win32|mac {
         PKGCONFIG += glib-2.0 gconf-2.0
         SOURCES += $$PWD/support_maemo5.cpp
     }
-    mac|maemo6 {
+    maemo6 {
+        CONFIG += link_pkgconfig
+        PKGCONFIG += qmfclient
+        SOURCES += $$PWD/support_maemo6.cpp
+    }	
+    mac {
          SOURCES += $$PWD/support_stub.cpp
     }
 } else {
+    QMF_INCLUDEDIR = $$(QMF_INCLUDEDIR)
+    QMF_LIBDIR = $$(QMF_LIBDIR)
+
     # QMF headers must be located at $QMF_INCLUDEDIR
-    INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
+    !isEmpty(QMF_INCLUDEDIR): INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
 
     # QMF libraries must be located at $QMF_LIBDIR
-    LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
+    macx {
+        !isEmpty(QMF_LIBDIR): LIBS += -F$$(QMF_LIBDIR)
+        LIBS += -framework qmfclient
+    } else {
+        !isEmpty(QMF_LIBDIR): LIBS += -L $$(QMF_LIBDIR)
+        LIBS += -lqmfclient
+    }
 
     SOURCES += $$PWD/support_qmf.cpp
 }

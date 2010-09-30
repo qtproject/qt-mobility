@@ -44,6 +44,7 @@
 
 #include "qdeclarativecoordinate_p.h"
 #include "qgraphicsgeomap.h"
+#include "qgeomapobject.h"
 
 class QGraphicsItem;
 
@@ -69,8 +70,12 @@ public:
     void setDeclarativeCenter(const QDeclarativeCoordinate *center);
     QDeclarativeCoordinate* declarativeCenter() const;
 
-    Q_INVOKABLE QPointF toScreenPosition(const QDeclarativeCoordinate *coordinate) const;
-    Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(QPointF screenPosition) const;
+
+    // TODO: the types need to be changed back to QDeclarativeCoordinate*
+    // when fix to QML is available
+    Q_INVOKABLE QObject* toCoordinate(QPointF screenPosition) const;
+    Q_INVOKABLE QPointF toScreenPosition(QObject *coordinate) const;
+    //Q_INVOKABLE QPointF toScreenPosition(const QDeclarativeCoordinate *coordinate) const;
 
 private slots:
     void memberCenterChanged(const QGeoCoordinate &coordinate);

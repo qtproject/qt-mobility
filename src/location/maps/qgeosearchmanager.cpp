@@ -69,16 +69,14 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-places
 
-    The geocode(QGeoAddress), geocode(QGeoCoordinate) and placeSearch()
-    functions return QGeoSearchReply objects, which manage these operations and
-    report on the result of the operations and any errors which may have
-    occurred.
+    The geocode(), reverseGeocode() and search() functions return
+    QGeoSearchReply objects, which manage these operations and report on the
+    result of the operations and any errors which may have occurred.
 
-    The geocode(QGeoAddress) and geocode(QGeoCoordinate) functions can be used
-    to convert QGeoAddress instances to QGeoCoordinate instances and
-    vice-versa.
+    The geocode() and reverseGeocode() functions can be used to convert
+    QGeoAddress instances to QGeoCoordinate instances and vice-versa.
 
-    The placeSearch() function allows a user to perform a free text search
+    The search() function allows a user to perform a free text search
     for place information.  If the string provided can be interpreted as
     an address it can be geocoded to coordinate information, and the string
     can also be used to search a landmarks database, depending on the level
@@ -86,12 +84,15 @@ QTM_BEGIN_NAMESPACE
 
     The defaultLandmarkManager() function will return a QLandmarkManager
     instance if access to the service providers landmark database is
-    available outside of the placeSearch() method.
+    available outside of the search() method.
 
     A user can supply other QLandmarkManager instances to be searched during
-    the execution of placeSearch() with setAdditionalLandmarkManagers(). This
+    the execution of search() with setAdditionalLandmarkManagers(). This
     means that a personal database store can be combined with a public source
     of database information with very little effort.
+
+    \note At present the additional landmark managers only search for the
+    search string in the name of the landmarks.
 
     Instances of QGeoSearchManager can be accessed with
     QGeoServiceProvider::searchManager().
@@ -106,40 +107,41 @@ class MySearchHandler : public QObject
 public:
     MySearchHandler(QGeoSearchManager *searchManager, QString searchString)
     {
-        QGeoSearchReply *reply = searchManager->placeSearch(searchString);
+        QGeoSearchReply *reply = searchManager->search(searchString);
 
         if (reply->isFinished()) {
-            if (reply->error() != QGeoSearchReply::NoError) {
+            if (reply->error() == QGeoSearchReply::NoError) {
                 searchResults(reply);
-            } else {
+            else
                 searchError(reply, reply->error(), reply->errorString());
-            }
-        } else {
-            connect(searchManager,
-                    SIGNAL(finished(QGeoSearchReply*)),
-                    this,
-                    SLOT(searchResults(QGeoSearchReply*)));
-
-            connect(searchManager,
-                    SIGNAL(error(QGeoSearchReply*,QGeoSearchReply::Error,QString)),
-                    this
-                    SLOT(searchError(QGeoSearchReply*,QGeoSearchReply::Error,QString)));
+            return;
         }
+
+        connect(searchManager,
+                SIGNAL(finished(QGeoSearchReply*)),
+                this,
+                SLOT(searchResults(QGeoSearchReply*)));
+
+        connect(searchManager,
+                SIGNAL(error(QGeoSearchReply*,QGeoSearchReply::Error,QString)),
+                this
+                SLOT(searchError(QGeoSearchReply*,QGeoSearchReply::Error,QString)));
     }
 
 private slots:
     void searchResults(QGeoSearchReply *reply)
     {
-        // We now have the results as QGeoPlace objects
-        QList<QGeoPlace> places = reply->places();
+        if (reply->error() != QGeoSearchReply::NoError) {
+            reply->deleteLater();
+            return;
+        }
 
         // The QLandmark results can be created from the simpler
         // QGeoPlace results if that is required.
         QList<QLandmark> landmarks;
-        for (int i = 0; i < places().size(); ++i) {
-            QGeoPlace place = places.at(i);
-            if (place.isLandmark())
-                landmarks.append(QLandmark(place));
+        for (int i = 0; i < reply->places().size(); ++i) {
+            if (reply->places().at(i).isLandmark())
+                landmarks.append(QLandmark(reply->places().at(i)));
         }
 
         // ... now we have to make use of the places and landmarks ...
@@ -157,7 +159,7 @@ private slots:
 /*!
 \enum QGeoSearchManager::SearchType
 
-Describes the type of search that should be performed by placeSearch().
+Describes the type of search that should be performed by search().
 
 \value SearchNone
     Do not use the search string.
@@ -259,10 +261,10 @@ int QGeoSearchManager::managerVersion() const
     This will usually occur if the geocoding service backend uses a different
     canonical form of addresses or if \a address was only partially filled out.
 
-    If \a bounds is a valid QGeoBoundingBox it will be used to limit the
-    results to thos that are contained within \a bounds. This is particularly
-    useful if \a address is only partially filled out, as the service will
-    attempt to geocode all matches for the specified data.
+    If \a bounds is non-null and valid QGeoBoundingArea it will be used to
+    limit the results to thos that are contained within \a bounds. This is
+    particularly useful if \a address is only partially filled out, as the
+    service will attempt to geocode all matches for the specified data.
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeoSearchManager::finished(),
@@ -288,7 +290,7 @@ QGeoSearchReply* QGeoSearchManager::geocode(const QGeoAddress &address, QGeoBoun
     This manager and the returned QGeoSearchReply object will emit signals
     indicating if the operation completes or if errors occur.
 
-    If supportsGeocoding() returns false an
+    If supportsReverseGeocoding() returns false an
     QGeoSearchReply::UnsupportedOptionError will occur.
 
     At that point QGeoSearchReply::places() can be used to retrieve the
@@ -306,8 +308,8 @@ QGeoSearchReply* QGeoSearchManager::geocode(const QGeoAddress &address, QGeoBoun
     As an example, some services will return address and coordinate pairs for
     the street address, the city, the state and the country.
 
-    If \a bounds is a valid QGeoBoundingBox it will be used to limit the
-    results to thos that are contained within \a bounds.
+    If \a bounds is non-null and a valid QGeoBoundingBox it will be used to
+    limit the results to thos that are contained within \a bounds.
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeoSearchManager::finished(),
@@ -342,7 +344,7 @@ QGeoSearchReply* QGeoSearchManager::reverseGeocode(const QGeoCoordinate &coordin
     These object represent a combination of coordinate and address data.
 
     If any of the QGeoPlace instances in the results have landmark associated
-    data, QGeoPlace::type() will return QGeoPlace::LandmarkType and
+    data, QGeoPlace::isLandmark() will return true and
     QLandmark::QLandmark(const QGeoPlace &place) can be used to convert the
     QGeoPlace instance into a QLandmark instance.
 
@@ -352,17 +354,29 @@ QGeoSearchReply* QGeoSearchManager::reverseGeocode(const QGeoCoordinate &coordin
     landmark search and the same free text search applied to each of the
     QLandmarkManager instances in additionalLandmarkManagers().
 
-    If \a bounds is a valid QGeoBoundingBox it will be used to limit the
-    results to thos that are contained within \a bounds.
+    \note At present the additional landmark managers only search for the
+    search string in the name of the landmarks.
+
+    If \a limit is -1 the entire result set will be returned, otherwise at most
+    \a limit results will be returned.
+
+    The \a offset parameter is used to ask the search service to not return the
+    first \a offset results.
+
+    The \a limit and \a offset results are used together to implement paging.
+
+    If additional landmark managers have been setup the number of results
+    returned will be at most (1 + number of additional landmark managers) *
+    \a limit.  This happens because the results are requested from all sources, combined, and returned once
+    all sources have responded.
+
+    If \a bounds is non-null and a valid QGeoBoundingArea it will be used to
+    limit the results to thos that are contained within \a bounds.
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeoSearchManager::finished(),
     QGeoSearchManager::error(), QGeoSearchReply::finished() or
     QGeoSearchReply::error() with deleteLater().
-
-    TODO udpate bounds doc
-    TODO doc resultCount, resultOffset
-    resultCount = -1 -> grab all results
 */
 QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
         QGeoSearchManager::SearchTypes searchTypes,
@@ -413,7 +427,6 @@ QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
                 if (circle->isValid() && !circle->isEmpty()) {
                     QLandmarkProximityFilter proximityFilter(circle->center(),
                             circle->radius());
-                    proximityFilter.setSelection(QLandmarkProximityFilter::SelectAll);
                     intersectFilter.append(proximityFilter);
                 }
                 break;
@@ -455,7 +468,7 @@ bool QGeoSearchManager::supportsReverseGeocoding() const
 }
 
 /*!
-    Returns the search types supported by the placeSearch() with this manager.
+    Returns the search types supported by the search() function with this manager.
 */
 QGeoSearchManager::SearchTypes QGeoSearchManager::supportedSearchTypes() const
 {
@@ -467,12 +480,12 @@ QGeoSearchManager::SearchTypes QGeoSearchManager::supportedSearchTypes() const
 
 /*!
     Returns the landmark manager provided by the service provider for
-    use with placeSearch().
+    use with search().
 
     Will return 0 if the no landmark manager is associated with the service
-    provider. This does not indicate that placeSearch() does not support
+    provider. This does not indicate that search() does not support
     landmark searching, only that any landmark searching which occurs within in
-    placeSearch() is done without the use of a QLandmarkManager.
+    search() is done without the use of a QLandmarkManager.
 */
 QLandmarkManager* QGeoSearchManager::defaultLandmarkManager() const
 {
@@ -483,7 +496,7 @@ QLandmarkManager* QGeoSearchManager::defaultLandmarkManager() const
 }
 
 /*!
-    Sets the landmark managers to be used with placeSearch() to \a landmarkManagers.
+    Sets the landmark managers to be used with search() to \a landmarkManagers.
 
     These landmark managers will be used along with the landmark manager returned
     by defaultLandmarkManager().
@@ -495,7 +508,7 @@ void QGeoSearchManager::setAdditionalLandmarkManagers(const QList<QLandmarkManag
 }
 
 /*!
-    Returns the landmark managers that will be used with placeSearch().
+    Returns the landmark managers that will be used with search().
 
     These landmark managers will be used along with the landmark manager returned
     by defaultLandmarkManager().
@@ -509,7 +522,8 @@ QList<QLandmarkManager *> QGeoSearchManager::additionalLandmarkManagers() const
 }
 
 /*!
-    Adds \a landmarkManager to the list of landmark managers that will be used with placeSearch().
+    Adds \a landmarkManager to the list of landmark managers that will be used
+    with search().
 
     These landmark managers will be used along with the landmark manager returned
     by defaultLandmarkManager().
@@ -522,6 +536,12 @@ void QGeoSearchManager::addAdditionalLandmarkManager(QLandmarkManager *landmarkM
 }
 
 /*!
+    Sets the locale to be used by the this manager to \a locale.
+
+    If this search manager supports returning the results
+    in different languages, they will be returned in the language of \a locale.
+
+    The locale used defaults to the system locale if this is not set.
 */
 void QGeoSearchManager::setLocale(const QLocale &locale)
 {
@@ -529,6 +549,8 @@ void QGeoSearchManager::setLocale(const QLocale &locale)
 }
 
 /*!
+    Returns the locale used to hint to this search manager about what
+    language to use for the results.
 */
 QLocale QGeoSearchManager::locale() const
 {

@@ -37,6 +37,13 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and 
+** Navigation API.  The use of these services, whether by use of the 
+** plugin or by other means, is governed by the terms and conditions 
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in 
+** this package, located in the directory containing the Ovi services 
+** plugin source code.
+**
 ****************************************************************************/
 
 #include "qgeoroutingmanagerengine_nokia.h"
@@ -78,9 +85,9 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
     avoidFeatures |= QGeoRouteRequest::AvoidDirtRoads;
     setSupportedAvoidFeatureTypes(avoidFeatures);
 
-    QGeoRouteRequest::InstructionDetails instructionDetails;
-    instructionDetails |= QGeoRouteRequest::BasicInstructions;
-    setSupportedInstructionDetails(instructionDetails);
+    QGeoRouteRequest::ManeuverDetails maneuverDetails;
+    maneuverDetails |= QGeoRouteRequest::BasicManeuvers;
+    setSupportedManeuverDetails(maneuverDetails);
 
     QGeoRouteRequest::RouteOptimizations optimizations;
     optimizations |= QGeoRouteRequest::ShortestRoute;
@@ -144,7 +151,9 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &rout
     }
 
     QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(QUrl(reqString)));
-    QGeoRouteReplyNokia *reply = new QGeoRouteReplyNokia(QGeoRouteRequest(), networkReply, this);
+    QGeoRouteRequest updateRequest(route.request());
+    updateRequest.setTravelModes(route.travelMode());
+    QGeoRouteReplyNokia *reply = new QGeoRouteReplyNokia(updateRequest, networkReply, this);
 
     connect(reply,
             SIGNAL(finished()),
@@ -166,7 +175,7 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
     if ((request.avoidFeatureTypes() & supportedAvoidFeatureTypes()) != request.avoidFeatureTypes())
         supported = false;
 
-    if ((request.instructionDetail() & supportedInstructionDetails()) != request.instructionDetail())
+    if ((request.maneuverDetail() & supportedManeuverDetails()) != request.maneuverDetail())
         supported = false;
 
     if ((request.segmentDetail() & supportedSegmentDetails()) != request.segmentDetail())
@@ -220,7 +229,7 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
     if ((route.request().avoidFeatureTypes() & supportedAvoidFeatureTypes()) != route.request().avoidFeatureTypes())
         supported = false;
 
-    if ((route.request().instructionDetail() & supportedInstructionDetails()) != route.request().instructionDetail())
+    if ((route.request().maneuverDetail() & supportedManeuverDetails()) != route.request().maneuverDetail())
         supported = false;
 
     if ((route.request().segmentDetail() & supportedSegmentDetails()) != route.request().segmentDetail())
@@ -263,45 +272,35 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::Rout
     QString requestString;
 
     QStringList types;
-    if ((optimization & QGeoRouteRequest::ShortestRoute) != 0)
-        types.append("directDrive");
-    if ((optimization & QGeoRouteRequest::FastestRoute) != 0)
+    if (optimization.testFlag(QGeoRouteRequest::ShortestRoute))
+        types.append("shortest");
+    if (optimization.testFlag(QGeoRouteRequest::FastestRoute))
         types.append("fastestNow");
-    if ((optimization & QGeoRouteRequest::MostEconomicRoute) != 0)
+    if (optimization.testFlag(QGeoRouteRequest::MostEconomicRoute))
         types.append("economic");
-    if ((optimization & QGeoRouteRequest::MostScenicRoute) != 0)
+    if (optimization.testFlag(QGeoRouteRequest::MostScenicRoute))
         types.append("scenic");
 
     QStringList modes;
-    if ((travelModes & QGeoRouteRequest::CarTravel) != 0)
+    if (travelModes.testFlag(QGeoRouteRequest::CarTravel))
         modes.append("car");
-    if ((travelModes & QGeoRouteRequest::PedestrianTravel) != 0)
+    if (travelModes.testFlag(QGeoRouteRequest::PedestrianTravel))
         modes.append("pedestrian");
-    if ((travelModes & QGeoRouteRequest::PublicTransitTravel) != 0)
+    if (travelModes.testFlag(QGeoRouteRequest::PublicTransitTravel))
         modes.append("publicTransport");
-    if ((travelModes & QGeoRouteRequest::BicycleTravel) != 0)
-        modes.append("bicycle");
-    if ((travelModes & QGeoRouteRequest::TruckTravel) != 0)
-        modes.append("truck");
 
     QStringList avoidTypes;
-    if (avoid != QGeoRouteRequest::AvoidNothing) {
-        if ((avoid & QGeoRouteRequest::AvoidTolls) != 0)
-            avoidTypes.append("disallowTollroads");
-        if ((avoid & QGeoRouteRequest::AvoidHighways) != 0)
-            avoidTypes.append("disallowMotorways");
-        if ((avoid & QGeoRouteRequest::AvoidFerries) != 0)
-            avoidTypes.append("disallowFerries");
-        if ((avoid & QGeoRouteRequest::AvoidTunnels) != 0)
-            avoidTypes.append("disallowTunnels");
-        if ((avoid & QGeoRouteRequest::AvoidDirtRoads) != 0)
-            avoidTypes.append("disallowDirtRoads");
-        if ((avoid & QGeoRouteRequest::AvoidPublicTransit) != 0)
-            avoidTypes.append("disallowPublicTransport");
-        if ((avoid & QGeoRouteRequest::AvoidPark) != 0)
-            avoidTypes.append("disallowPark");
-        if ((avoid & QGeoRouteRequest::AvoidMotorPoolLanes) != 0)
-            avoidTypes.append("allowHOVLanes");
+    if (!avoid.testFlag(QGeoRouteRequest::AvoidNothing)) {
+        if (avoid.testFlag(QGeoRouteRequest::AvoidTolls))
+            avoidTypes.append("tollroad:-2");
+        if (avoid.testFlag(QGeoRouteRequest::AvoidHighways))
+            avoidTypes.append("motorway:-2");
+        if (avoid.testFlag(QGeoRouteRequest::AvoidFerries))
+            avoidTypes.append("boatFerry:-2,railFerry:-2");
+        if (avoid.testFlag(QGeoRouteRequest::AvoidTunnels))
+            avoidTypes.append("tunnel:-2");
+        if (avoid.testFlag(QGeoRouteRequest::AvoidDirtRoads))
+            avoidTypes.append("dirtRoad:-2");
     }
 
     for (int i = 0;i < types.count();++i) {
@@ -333,16 +332,32 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
         }
     }
 
+//    TODO: work out what was going on here
+//    - segment and instruction/maneuever functions are mixed and matched
+//    - tried to implement sensible equivalents below
+//    QStringList legAttributes;
+//    if (request.instructionDetail() & QGeoRouteRequest::BasicSegmentData) {
+//        requestString += "&linkattributes=sh,le"; //shape,length
+//        legAttributes.append("links");
+//    }
+//
+//    if (request.instructionDetail() & QGeoRouteRequest::BasicInstructions) {
+//        legAttributes.append("maneuvers");
+//        requestString += "&maneuverattributes=po,tt,le,di"; //position,traveltime,length,direction
+//        if (!(request.instructionDetail() & QGeoRouteRequest::NoSegmentData))
+//            requestString += ",li"; //link
+//    }
+
     QStringList legAttributes;
-    if (request.instructionDetail() & QGeoRouteRequest::BasicSegmentData) {
+    if (request.segmentDetail() & QGeoRouteRequest::BasicSegmentData) {
         requestString += "&linkattributes=sh,le"; //shape,length
         legAttributes.append("links");
     }
 
-    if (request.instructionDetail() & QGeoRouteRequest::BasicInstructions) {
+    if (request.maneuverDetail() & QGeoRouteRequest::BasicManeuvers) {
         legAttributes.append("maneuvers");
         requestString += "&maneuverattributes=po,tt,le,di"; //position,traveltime,length,direction
-        if (!(request.instructionDetail() & QGeoRouteRequest::NoSegmentData))
+        if (!(request.segmentDetail() & QGeoRouteRequest::NoSegmentData))
             requestString += ",li"; //link
     }
 
@@ -357,7 +372,8 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
 
     requestString += "&instructionformat=text";
 
-    requestString += "&language=ENG";  // TODO locale / language handling
+    requestString += "&language=";
+    requestString += locale().name();
 
     return requestString;
 }

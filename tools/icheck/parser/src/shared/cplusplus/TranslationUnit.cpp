@@ -59,7 +59,7 @@
 // THE SOFTWARE.
 
 #include "TranslationUnit.h"
-#include "Control.h"
+#include "CppControl.h"
 #include "Parser.h"
 #include "Lexer.h"
 #include "MemoryPool.h"

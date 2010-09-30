@@ -104,6 +104,13 @@ private:
     void  testUnionFilter_3();
     void  testContactDetailFilter_1();
     void  testContactDetailFilter_2();
+    void  testContactDetailFilter_3();
+    void  testContactDetailFilter_4();
+    void  testContactDetailFilter_5();
+    void  testContactDetailFilter_6();
+    void  testContactDetailFilter_7();
+    void  testContactDetailFilter_8();
+    void  testContactDetailFilter_9();
 private:
     QHash<QContactFilter::FilterType, TFilter>  *mFilters;
     CContactDatabase *m_database;
