@@ -289,6 +289,26 @@ void CameraBinSession::setupCaptureResolution()
         GstCaps *previewCaps = gst_caps_from_string(previewCapsString.toLatin1());
         g_object_set(G_OBJECT(m_pipeline), PREVIEW_CAPS_PROPERTY, previewCaps, NULL);
         gst_caps_unref(previewCaps);
+
+#ifdef Q_WS_MAEMO_5
+        //it's also necessary to setup video resolution,
+        //which is used for viewfinder
+
+        QSize viewfinderResolution(640, 480);
+        int viewfinderRate = 2993;
+        if (!resolution.isEmpty() && resolution.width()*2 > resolution.height()*3) {
+            viewfinderResolution = QSize(800, 450);
+            viewfinderRate = 2988;
+        }
+
+        g_signal_emit_by_name(G_OBJECT(m_pipeline),
+                              SET_VIDEO_RESOLUTION_FPS,
+                              viewfinderResolution.width(),
+                              viewfinderResolution.height(),
+                              viewfinderRate,
+                              100, // framerate denom
+                              NULL);
+#endif
     }
 
     if (m_captureMode == QCamera::CaptureVideo) {
