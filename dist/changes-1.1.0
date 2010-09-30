@@ -1,9 +1,9 @@
-Qt Mobility 1.0.0-beta1 is a beta release. It contains a number of API
-improvements and bug fixes since the Qt Mobility 1.0.0-tp2 release. For
+Qt Mobility 1.1.0-beta1 is a beta release. It contains a number of API
+improvements and bug fixes since the Qt Mobility 1.1.0-tp release. For
 more details, please refer to the online documentation included in this
 distribution. The documentation is also available online:
 
-  http://qt.nokia.com/doc/qtmobility-1.0
+  http://qt.nokia.com/doc/qtmobility-1.1
 
 Some of the changes listed in this file include issue tracking numbers
 corresponding to tasks in the Qt Bug Tracker or the Merge Request queue
@@ -20,8 +20,11 @@ Merge Request:  http://qt.gitorious.org
 New features
 ------
 
- - SomeClass, SomeOtherClass
-    * New classes for foo, bar and baz
+ - Qt Organizer module
+    * Classes for calendar entries, todo tasks, journal entries and notes
+ - Qt Feedback module
+    * Classes for feedback (haptic/tactile feedback, general multimedia
+      feedback)
 
 Optimizations
 ------
@@ -50,8 +53,13 @@ QtBearer
 QtContacts
 ------
 
- - foo
-    * bar
+ - Added support for actions on contacts
+    * Provides a Qt Service FrameWork based way of invoking methods (call,
+      text etc) on contacts
+ - Extended the QContactManagerEngine interface to allow new features:
+    * Saving partial contacts
+    * Fetching a list of contacts by a list of ids
+ - Improved support for Symbian^3/^4
 
 QtGallery
 ------
@@ -176,6 +184,12 @@ QtMultimediaKit
  - QVideoWidget
     * Fixed flickering when resizing a video widget on Windows.
       [QTMOBILITY-407]
+
+QtOrganizer
+------
+
+ - API support for multiple collections (e.g. work calendar, home calendar etc)
+ - Other API polish and changes
 
 QtPublishSubscribe
 ------
