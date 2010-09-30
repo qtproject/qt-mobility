@@ -2431,8 +2431,8 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
 {
     float levelWhenFull = 0.0;
     float level = 0.0;
+#if !defined(QT_NO_DBUS) && defined(QT_NO_MEEGO)
     if(halIsAvailable) {
-#if !defined(QT_NO_DBUS)
         QHalInterface iface;
         const QStringList list = iface.findDeviceByCapability("battery");
         if(!list.isEmpty()) {
@@ -2450,8 +2450,17 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
                 }
             }
         }
-#endif
-    } else {
+    }
+#else
+#if !defined(QT_NO_MEEGO)
+    QUPowerInterface power;
+    foreach(const QDBusObjectPath objpath, power.enumerateDevices()) {
+        QUPowerDeviceInterface powerDevice(objpath.path());
+        if(powerDevice.getType() == 2) {
+            return powerDevice.percentLeft();
+        }
+    }
+#else
         QFile infofile("/proc/acpi/battery/BAT0/info");
         if (!infofile.open(QIODevice::ReadOnly)) {
             return QSystemDeviceInfo::NoBatteryLevel;
@@ -2496,6 +2505,8 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             return level;
         }
     }
+#endif
+#endif
     return 0;
 }
 
