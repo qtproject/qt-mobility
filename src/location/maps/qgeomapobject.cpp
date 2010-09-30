@@ -276,7 +276,7 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate()
         isVisible(true),
         isSelected(false),
         mapData(0),
-        info(0){}
+        info(0) {}
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate()
 {

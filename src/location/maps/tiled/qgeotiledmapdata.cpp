@@ -135,8 +135,8 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGe
     d->cache.setMaxCost(5 * 1024 * 1024);
     d->zoomCache.setMaxCost(5 * 1024 * 1024);
 #else
-     d->cache.setMaxCost(10 * 1024 * 1024);
-     d->zoomCache.setMaxCost(10 * 1024 * 1024);
+    d->cache.setMaxCost(10 * 1024 * 1024);
+    d->zoomCache.setMaxCost(10 * 1024 * 1024);
 #endif
 }
 
@@ -542,11 +542,11 @@ void QGeoTiledMapData::fitInViewport(const QGeoBoundingBox &bounds, bool preserv
     for (int i = minZoomLevel; i <= maxZoomLevel; ++i) {
         QRect rect = d->screenRectForZoomFactor(zoomFactor);
         QGeoBoundingBox viewport = QGeoBoundingBox(worldReferencePositionToCoordinate(rect.topLeft()),
-                                                   worldReferencePositionToCoordinate(rect.bottomRight()));
+                                   worldReferencePositionToCoordinate(rect.bottomRight()));
 
         qWarning() << i << zoomFactor
-                      << viewport.topLeft()
-                         << viewport.bottomRight();
+        << viewport.topLeft()
+        << viewport.bottomRight();
 
         if (!viewport.contains(bounds)) {
             setZoomLevel(qMax(minZoomLevel, i - 1));
@@ -597,7 +597,7 @@ void QGeoTiledMapData::processRequests()
     }
 
     QGeoTiledMappingManagerEngine *tiledEngine
-        = static_cast<QGeoTiledMappingManagerEngine*>(engine());
+    = static_cast<QGeoTiledMappingManagerEngine*>(engine());
 
     QMutableListIterator<QGeoTiledMapRequest> requestIter(d->requests);
     while (requestIter.hasNext()) {
@@ -976,8 +976,8 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
     Q_ASSERT(targetY >= 0.0); // This should not be possible
     targetY /= zoomFactor;
 
-    qreal targetW = qreal(worldReferenceViewportRect.width())/zoomFactor;
-    qreal targetH = qreal(worldReferenceViewportRect.height())/zoomFactor;
+    qreal targetW = qreal(worldReferenceViewportRect.width()) / zoomFactor;
+    qreal targetH = qreal(worldReferenceViewportRect.height()) / zoomFactor;
 
     QRect worldRect = QRect(QPoint(0.0, 0.0), worldReferenceSize);
 
@@ -1006,12 +1006,12 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
                   westside,
                   Qt::IgnoreAspectRatio);
 
-    qreal eastsideWidth = targetW-westsideWidth;
+    qreal eastsideWidth = targetW - westsideWidth;
 
     QRect eastside = QRect(0,
-                          worldReferenceViewportRect.y(),
-                          eastsideWidth*zoomFactor,
-                          worldReferenceViewportRect.height());
+                           worldReferenceViewportRect.y(),
+                           eastsideWidth * zoomFactor,
+                           worldReferenceViewportRect.height());
 
     scene->render(painter,
                   QRectF(targetX + targetW - eastsideWidth, targetY, eastsideWidth, targetH),
@@ -1036,9 +1036,9 @@ void QGeoTiledMapDataPrivate::cleanupCaches()
     QRectF cacheRect2;
 
     cacheRect1 = worldReferenceViewportRect.adjusted(-boundaryTiles * tileSize.width(),
-                                            -boundaryTiles * tileSize.height(),
-                                            boundaryTiles * tileSize.width(),
-                                            boundaryTiles * tileSize.height());
+                 -boundaryTiles * tileSize.height(),
+                 boundaryTiles * tileSize.width(),
+                 boundaryTiles * tileSize.height());
 
     if (cacheRect1.width() > worldReferenceSize.width()) {
         cacheRect1.setX(0);

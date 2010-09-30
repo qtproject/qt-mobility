@@ -64,16 +64,16 @@ QTM_BEGIN_NAMESPACE
     Constructs a route segment object.
 */
 QGeoRouteSegment::QGeoRouteSegment()
-    : d_ptr(new QGeoRouteSegmentPrivate()) {}
+        : d_ptr(new QGeoRouteSegmentPrivate()) {}
 
 /*!
     Constructs a route segment object from the contents of \a other.
 */
 QGeoRouteSegment::QGeoRouteSegment(const QGeoRouteSegment &other)
-    : d_ptr(other.d_ptr) {}
+        : d_ptr(other.d_ptr) {}
 
 QGeoRouteSegment::QGeoRouteSegment(QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &d_ptr)
-    : d_ptr(d_ptr) {}
+        : d_ptr(d_ptr) {}
 
 /*!
     Destroys this route segment object.

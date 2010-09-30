@@ -59,7 +59,7 @@ class RouteCoordinateInputDialog: public QDialog
 {
     Q_OBJECT
 public:
-    RouteCoordinateInputDialog(QGeoCoordinate& src,QGeoCoordinate& dst, QWidget *parent=0);
+    RouteCoordinateInputDialog(QGeoCoordinate& src, QGeoCoordinate& dst, QWidget *parent = 0);
 private slots:
     void accept();
 private:

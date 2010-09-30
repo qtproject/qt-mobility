@@ -60,7 +60,7 @@ QTM_BEGIN_NAMESPACE
 /*!
 */
 QGeoMapOverlay::QGeoMapOverlay()
-    : d_ptr(new QGeoMapOverlayPrivate()) {}
+        : d_ptr(new QGeoMapOverlayPrivate()) {}
 
 /*!
     Destroys this map overlay object.
@@ -94,7 +94,7 @@ QGeoMapData const * QGeoMapOverlay::mapData() const
 *******************************************************************************/
 
 QGeoMapOverlayPrivate::QGeoMapOverlayPrivate()
-    : mapData(0) {}
+        : mapData(0) {}
 
 
 QGeoMapOverlayPrivate::~QGeoMapOverlayPrivate() {}

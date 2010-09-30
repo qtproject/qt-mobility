@@ -207,9 +207,9 @@ void QGraphicsGeoMap::setMappingManager(QGeoMappingManager *manager)
     d_ptr->mapData->setWindowSize(QSizeF(300, 300));
 
     connect(d_ptr->mapData,
-           SIGNAL(zoomLevelChanged(qreal)),
-           this,
-           SIGNAL(zoomLevelChanged(qreal)));
+            SIGNAL(zoomLevelChanged(qreal)),
+            this,
+            SIGNAL(zoomLevelChanged(qreal)));
     connect(d_ptr->mapData,
             SIGNAL(mapTypeChanged(QGraphicsGeoMap::MapType)),
             this,
@@ -539,10 +539,10 @@ void QGraphicsGeoMap::clearMapOverlays()
 }
 
 /*!
-    Returns a bounding box corresponding to the physical area displayed 
+    Returns a bounding box corresponding to the physical area displayed
     in the viewport of the map.
 
-    The bounding box which is returned is defined by the upper left and 
+    The bounding box which is returned is defined by the upper left and
     lower right corners of the visible area of the map.
 */
 QGeoBoundingBox QGraphicsGeoMap::viewport() const
@@ -556,11 +556,11 @@ QGeoBoundingBox QGraphicsGeoMap::viewport() const
 /*!
     Attempts to fit the bounding box \a bounds into the viewport of the map.
 
-    This method will change the zoom level to the maximum zoom level such 
+    This method will change the zoom level to the maximum zoom level such
     that all of \a bounds is visible within the resulting viewport.
 
-    If \a preserveViewportCenter is false the map will be centered on the 
-    bounding box \a bounds before the zoom level is changed, otherwise the 
+    If \a preserveViewportCenter is false the map will be centered on the
+    bounding box \a bounds before the zoom level is changed, otherwise the
     center of the map will not be changed.
 */
 void QGraphicsGeoMap::fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
@@ -597,7 +597,7 @@ QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInScreenRect(const QRectF &scre
 }
 
 /*!
-    Returns the list of visible map objects manager by this widget which 
+    Returns the list of visible map objects manager by this widget which
     are displayed at least partially within the viewport of the map.
 */
 QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInViewport() const

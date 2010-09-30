@@ -81,7 +81,7 @@ QTM_BEGIN_NAMESPACE
 */
 QGeoMapObjectInfo::QGeoMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
         : QObject(mapObject),
-          d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
+        d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
 
 /*!
     Destroys this info object.

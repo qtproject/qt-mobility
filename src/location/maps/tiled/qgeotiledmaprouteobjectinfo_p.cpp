@@ -85,7 +85,7 @@ void QGeoTiledMapRouteObjectInfo::routeChanged(const QGeoRoute &route)
     //while (segIt.hasNext()) {
     //    QListIterator<QGeoCoordinate> coordIt(segIt.next().path());
     QGeoRouteSegment segment = this->route->route().firstRouteSegment();
-    while(segment.isValid()) {
+    while (segment.isValid()) {
         QListIterator<QGeoCoordinate> coordIt(segment.path());
         while (coordIt.hasNext()) {
             QGeoCoordinate coord = coordIt.next();

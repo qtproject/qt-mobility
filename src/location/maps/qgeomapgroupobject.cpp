@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
 */
 QGeoMapGroupObject::QGeoMapGroupObject(QGeoMapData *data)
         : QGeoMapObject(data),
-          d_ptr(new QGeoMapGroupObjectPrivate()) {}
+        d_ptr(new QGeoMapGroupObjectPrivate()) {}
 
 /*!
     Destroys this group object.
