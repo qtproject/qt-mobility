@@ -9,8 +9,6 @@ unix:!mac:!symbian {
         DEFINES += QT_MULTIMEDIA_PULSEAUDIO
         PRIVATE_HEADERS += effects/qsoundeffect_pulse_p.h
         SOURCES += effects/qsoundeffect_pulse_p.cpp
-        QMAKE_CXXFLAGS += $$QT_CFLAGS_PULSEAUDIO
-        LIBS += $$QT_LIBS_PULSEAUDIO
     } else {
         DEFINES += QT_MULTIMEDIA_QMEDIAPLAYER
         PRIVATE_HEADERS += effects/qsoundeffect_qmedia_p.h
