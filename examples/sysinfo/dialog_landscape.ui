@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>553</width>
-    <height>227</height>
+    <width>794</width>
+    <height>237</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1269,7 +1269,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Current MMC:</string>
+            <string>Current MCC:</string>
            </property>
           </widget>
          </item>
@@ -1303,7 +1303,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Home MMC:</string>
+            <string>Home MCC:</string>
            </property>
           </widget>
          </item>
