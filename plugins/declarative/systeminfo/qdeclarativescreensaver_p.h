@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtDeclarative module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,43 +39,38 @@
 **
 ****************************************************************************/
 
-import Qt 4.7
-import Qt.multimedia 4.7
 
-Item {
-    id: flashMode
-    property int value : values[flickableList.index]
-    property variant values : [ Camera.FlashAuto, Camera.FlashOff, Camera.FlashOn, Camera.FlashRedEyeReduction ]
+#ifndef QDECLARATIVESCREENSAVERINFO_H
+#define QDECLARATIVESCREENSAVERINFO_H
 
-    signal clicked
+#include <QObject>
+#include <qsystemscreensaver.h>
 
-    width : 144
-    height: 70
+QT_BEGIN_HEADER
+QTM_USE_NAMESPACE
 
-    BorderImage {
-        id: buttonImage
-        source: "images/toolbutton.sci"
-        width: flashMode.width; height: flashMode.height
-    }
+class QDeclarativeScreenSaver : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(bool screenSaverDelayed READ screenSaverDelayed WRITE setScreenSaverDelayed CONSTANT)
 
-    FlickableList {
-        anchors.fill: buttonImage
-        id: flickableList
-        index: 1
-        items: ["images/camera_flash_auto.png", "images/camera_flash_off.png",
-                "images/camera_flash_fill.png", "images/camera_flash_redeye.png"]
+public:
+    explicit QDeclarativeScreenSaver(QObject *parent = 0);
+    virtual ~QDeclarativeScreenSaver();
 
-        onClicked: flashMode.clicked()
+    bool screenSaverDelayed();
 
-        delegate: Item {
-            width: flickableList.width
-            height: flickableList.height
+signals:
 
-            Image {
-                source: flickableList.items[index]
-                anchors.centerIn: parent
-            }
-        }
-    }
-}
+public slots:
+    void setScreenSaverDelayed(bool on);
 
+private:
+    QSystemScreenSaver *screensaverInfo;
+    bool screenSaverDelay;
+
+};
+QT_END_NAMESPACE
+QT_END_HEADER
+
+#endif // QDECLARATIVESCREENSAVERINFO_H

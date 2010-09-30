@@ -42,8 +42,6 @@
 #ifndef S60CAMERAEXPOSURECONTROL_H
 #define S60CAMERAEXPOSURECONTROL_H
 
-#include <QtCore/qobject.h>
-
 #include <qcameraexposurecontrol.h>
 
 #include "s60camerasettings.h"
@@ -53,6 +51,9 @@ QT_USE_NAMESPACE
 class S60CameraService;
 class S60ImageCaptureSession;
 
+/*
+ * Control for exposure related camera operation.
+ */
 class S60CameraExposureControl : public QCameraExposureControl
 {
     Q_OBJECT
@@ -90,7 +91,7 @@ Q_SIGNALS: // QCameraExposureControl
     void exposureParameterRangeChanged(int parameter);
 */
 
-public Q_SLOTS: // Internal Slots
+private Q_SLOTS: // Internal Slots
 
     void resetAdvancedSetting();
     void apertureChanged();
