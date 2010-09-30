@@ -2530,6 +2530,30 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
        }
 
 #else
+#if !defined(QT_NO_MEEGO)
+       QUPowerInterface power(this);
+       foreach(QDBusObjectPath objpath, power) {
+           QUPowerDeviceInterface powerDevice(objpath,this);
+           if(powerDevice.getType() == 2) {
+               switch(powerDevice.getState()) {
+               case 0:
+                   break;
+               case 1:
+               case 5:
+                   return QSystemDeviceInfo::WallPowerChargingBattery;
+                   break;
+               case 2:
+               case 6:
+                   return QSystemDeviceInfo::BatteryPower;
+                   break;
+               default:
+                   return QSystemDeviceInfo::UnknownPower;
+               };
+           } else {
+               return QSystemDeviceInfo::WallPower;
+           }
+       }
+#else
        QFile statefile("/proc/acpi/battery/BAT0/state");
        if (!statefile.open(QIODevice::ReadOnly)) {
        } else {
@@ -2548,6 +2572,8 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                line = batstate.readLine();
            }
        }
+
+#endif
 #endif
        return QSystemDeviceInfo::WallPower;
 }

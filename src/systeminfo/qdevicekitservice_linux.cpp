@@ -268,3 +268,246 @@ QVariant QUDisksDeviceInterface::getProperty(const QString &property)
     }
     return var;
 }
+
+
+QUPowerInterface::QUPowerInterface(/*const QString &dbusPathName,*/QObject *parent)
+      : QDBusAbstractInterface(QLatin1String(UPOWER_SERVICE),
+                                 QLatin1String(UPOWER_PATH),
+                                 UPOWER_SERVICE,
+                                 QDBusConnection::systemBus(), parent)
+{
+    qDebug() << Q_FUNC_INFO;
+}
+
+QUPowerInterface::~QUPowerInterface()
+{
+}
+
+
+QList<QDBusObjectPath> QUPowerInterface::enumerateDevices()
+{
+    QDBusReply<QList<QDBusObjectPath> > reply = this->call(QLatin1String("EnumerateDevices"));
+
+    return reply.value();
+}
+
+QVariantMap QUPowerInterface::getProperties()
+{
+    QDBusReply<QVariantMap > reply = this->call(QLatin1String("Get"));
+    return reply.value();
+}
+
+QVariant QUPowerInterface::getProperty(const QString &property)
+{
+    QVariant var;
+    QVariantMap map = getProperties();
+    if (map.contains(property)) {
+        var = map.value(property);
+    }
+    return var;
+}
+void QUPowerInterface::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(changed())) {
+        if(!connection().connect(QLatin1String(UPOWER_SERVICE),
+                               UPOWER_PATH,
+                               UPOWER_SERVICE,
+                               QLatin1String("Changed"),
+                               this,SIGNAL(changed()))) {
+            qDebug() << "Error"<<connection().lastError().message();
+        }
+    }
+
+}
+void QUPowerInterface::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(changed(QString))) {
+        if(!connection().connect(QLatin1String(UPOWER_SERVICE),
+                               UPOWER_PATH,
+                               UPOWER_SERVICE,
+                               QLatin1String("Changed"),
+                               this,SIGNAL(changed()))) {
+            qDebug() << "Error"<<connection().lastError().message();
+        }
+    }
+
+}
+
+bool QUPowerInterface::onBattery()
+{
+        return this->getProperty("OnBattery").toBool();
+}
+
+
+QUPowerDeviceInterface::QUPowerDeviceInterface(const QString &dbusPathName,QObject *parent)
+      : QDBusAbstractInterface(QLatin1String(UPOWER_DEVICE_SERVICE),
+                                 dbusPathName,
+                                 UPOWER_DEVICE_SERVICE,
+                                 QDBusConnection::systemBus(), parent)
+{
+    qDebug() << Q_FUNC_INFO;
+}
+
+QUPowerDeviceInterface::~QUPowerDeviceInterface()
+{
+}
+
+
+QVariantMap QUPowerDeviceInterface::getProperties()
+{
+    QDBusReply<QVariantMap > reply = this->call(QLatin1String("Get"));
+    return reply.value();
+}
+
+QVariant QUPowerDeviceInterface::getProperty(const QString &property)
+{
+    QVariant var;
+    QVariantMap map = getProperties();
+    if (map.contains(property)) {
+        var = map.value(property);
+    }
+    return var;
+}
+
+void QUPowerDeviceInterface::refresh()
+{
+    this->call(QLatin1String("Refresh"));
+}
+
+quint16 QUPowerDeviceInterface::getType()
+{
+    return this->getProperty("Type").toUInt();
+}
+
+bool QUPowerDeviceInterface::isPowerSupply()
+{
+    return this->getProperty("PowerSupply").toBool();
+}
+
+bool QUPowerDeviceInterface::hasHistory()
+{
+    return this->getProperty("HasHistory").toBool();
+}
+
+bool QUPowerDeviceInterface::hasStatistics()
+{
+    return this->getProperty("HasStatistics").toBool();
+}
+
+bool QUPowerDeviceInterface::isOnline()
+{
+    return this->getProperty("Online").toBool();
+}
+
+double QUPowerDeviceInterface::currentEnergy()
+{
+    return this->getProperty("Energy").toDouble();
+}
+
+double QUPowerDeviceInterface::energyWhenEmpty()
+{
+    return this->getProperty("EnergyEmpty").toDouble();
+}
+
+double QUPowerDeviceInterface::energyWhenFull()
+{
+    return this->getProperty("EnergyFull").toDouble();
+}
+
+double QUPowerDeviceInterface::energyFullDesign()
+{
+    return this->getProperty("EnergyFullDesign").toDouble();
+}
+
+double QUPowerDeviceInterface::energyDischargeRate()
+{
+    return this->getProperty("EnergyRate").toDouble();
+}
+
+double QUPowerDeviceInterface::voltage()
+{
+    return this->getProperty("Voltage").toDouble();
+}
+
+qint64 QUPowerDeviceInterface::timeToEmpty()
+{
+    return this->getProperty("TimeToEmpty").toUInt();
+}
+
+qint64 QUPowerDeviceInterface::timeToFull()
+{
+    return this->getProperty("TimeToFull").toUInt();
+}
+
+double QUPowerDeviceInterface::percentLeft()
+{
+    return this->getProperty("Percentage").toDouble();
+}
+
+bool QUPowerDeviceInterface::isPresent()
+{
+    return this->getProperty("IsPresent").toBool();
+}
+
+quint16 QUPowerDeviceInterface::getState()
+{
+    return this->getProperty("State").toUInt();
+}
+
+bool QUPowerDeviceInterface::isRechargeable()
+{
+    return this->getProperty("IsRechargeable").toBool();
+}
+
+double QUPowerDeviceInterface::capacity()
+{
+    return this->getProperty("Capacity").toDouble();
+}
+
+quint16 QUPowerDeviceInterface::technology()
+{
+    return this->getProperty("Technology").toUInt();
+}
+
+bool QUPowerDeviceInterface::recallNotice()
+{
+    return this->getProperty("RecallNotice").toBool();
+}
+
+QString QUPowerDeviceInterface::recallVendor()
+{
+    return this->getProperty("RecallVendor").toString();
+
+}
+
+QString QUPowerDeviceInterface::recallUrl()
+{
+    return this->getProperty("RecallUrl").toString();
+}
+
+
+void QUPowerDeviceInterface::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(changed())) {
+        if(!connection().connect(QLatin1String(UPOWER_DEVICE_SERVICE),
+                               UPOWER_DEVICE_PATH,
+                               UPOWER_DEVICE_SERVICE,
+                               QLatin1String("Changed"),
+                               this,SIGNAL(changed()))) {
+            qDebug() << "Error"<<connection().lastError().message();
+        }
+    }
+}
+
+void QUPowerDeviceInterface::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(changed())) {
+        if(!connection().connect(QLatin1String(UPOWER_DEVICE_SERVICE),
+                               UPOWER_DEVICE_PATH,
+                               UPOWER_DEVICE_SERVICE,
+                               QLatin1String("Changed"),
+                               this,SIGNAL(changed()))) {
+            qDebug() << "Error"<<connection().lastError().message();
+        }
+    }
+}

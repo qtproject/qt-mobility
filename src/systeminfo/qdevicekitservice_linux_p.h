@@ -65,6 +65,12 @@
 #define	UDISKS_DEVICE_SERVICE     "org.freedesktop.UDisks.Device"
 #define	UDISKS_DEVICE_PATH        "/org/freedesktop/UDisks/Device"
 
+#define	UPOWER_SERVICE     "org.freedesktop.UPower"
+#define	UPOWER_PATH        "/org/freedesktop/UPower"
+
+#define	UPOWER_DEVICE_SERVICE     "org.freedesktop.UPower.Device"
+#define	UPOWER_DEVICE_PATH        "/org/freedesktop/UPower.Device"
+
 QT_BEGIN_NAMESPACE
 
 QT_END_NAMESPACE
@@ -133,6 +139,68 @@ Q_SIGNALS:
 protected:
     QString path;
     QVariant getProperty(const QString &);
+};
+
+
+class QUPowerInterface : public  QDBusAbstractInterface
+{
+    Q_OBJECT
+public:
+    QUPowerInterface(/*const QString &dbusPathName,*/QObject *parent = 0);
+    ~QUPowerInterface();
+
+    QList<QDBusObjectPath> enumerateDevices();
+    QVariantMap getProperties();
+    bool onBattery();
+
+Q_SIGNALS:
+    void changed();
+protected:
+    QString path;
+    QVariant getProperty(const QString &);
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+};
+
+class QUPowerDeviceInterface : public  QDBusAbstractInterface
+{
+    Q_OBJECT
+public:
+    QUPowerDeviceInterface(const QString &dbusPathName,QObject *parent = 0);
+    ~QUPowerDeviceInterface();
+    QVariantMap getProperties();
+    void refresh();
+
+    quint16 getType();
+    bool isPowerSupply();
+    bool hasHistory();
+    bool hasStatistics();
+    bool isOnline();
+    double currentEnergy();
+    double energyWhenEmpty();
+    double energyWhenFull();
+    double energyFullDesign();
+    double energyDischargeRate();
+    double voltage();
+    qint64 timeToEmpty();
+    qint64 timeToFull();
+    double percentLeft();
+    bool isPresent();
+    quint16 getState();
+    bool isRechargeable();
+    double capacity();
+    quint16 technology();
+    bool recallNotice();
+    QString recallVendor();
+    QString recallUrl();
+
+Q_SIGNALS:
+    void changed();
+protected:
+    QString path;
+    QVariant getProperty(const QString &);
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 };
 
 #endif
