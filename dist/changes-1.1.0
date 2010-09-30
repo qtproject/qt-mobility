@@ -108,7 +108,7 @@ QtMessaging
 ------
 
  - Harmattan backend implemented
- - Fix assigning an invalid QMessageId causes crash, QTMOBILITY-427
+ - Fix assigning an invalid QMessageId causes crash, QTMOBILITY-427, QTMOBILITY-434
  - Fix failure to compile with Qt 4.7, QTMOBILITY-390
  - Fix ORing with an empty filter results in empty filter MOBILITY-1241
     * Includes API documentation revision
