@@ -361,8 +361,6 @@ void CameraBinSession::captureImage(int requestId, const QString &fileName)
 
     m_requestId = requestId;
 
-    setupCaptureResolution();
-
     g_object_set(G_OBJECT(m_pipeline), FILENAME_PROPERTY, actualFileName.toLocal8Bit().constData(), NULL);
 
     g_signal_emit_by_name(G_OBJECT(m_pipeline), CAPTURE_START, NULL);
