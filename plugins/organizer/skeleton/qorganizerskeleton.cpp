@@ -55,6 +55,18 @@ QOrganizerItemManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QS
     return ret;
 }
 
+QOrganizerItemEngineLocalId* QOrganizerItemSkeletonFactory::createItemEngineLocalId() const
+{
+    /* TODO - return the localid specific to the engine */
+    return NULL;
+}
+
+QOrganizerCollectionEngineLocalId* QOrganizerItemSkeletonFactory::createCollectionEngineLocalId() const
+{
+    /* TODO - return the localid specific to the engine */
+    return NULL;
+}
+
 QString QOrganizerItemSkeletonFactory::managerName() const
 {
     /* TODO - put your engine name here */
@@ -443,9 +455,9 @@ bool QOrganizerItemSkeletonEngine::isFilterSupported(const QOrganizerItemFilter&
     return false;
 }
 
-QList<QVariant::Type> QOrganizerItemSkeletonEngine::supportedDataTypes() const
+QList<int> QOrganizerItemSkeletonEngine::supportedDataTypes() const
 {
-    QList<QVariant::Type> ret;
+    QList<int> ret;
     // TODO - tweak which data types this engine understands
     ret << QVariant::String;
     ret << QVariant::Date;

@@ -104,7 +104,8 @@ public:
      * set landmark attributes to existing symbian landmark object from 
      * qt landmark object.
      */
-    static void setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandmark* qtLandmark);
+    static void setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandmark* qtLandmark,
+        CPosLmCategoryManager* catMgr);
 
     /*
      * returns new qt landmark id object converted from symbian landmark id object.
@@ -181,7 +182,8 @@ public:
      * returns false, if invalid categories are associated with landmark object.
      * returns true, if no any category ids are associated with landmark object. 
      */
-    static bool validCategoriesExist(CPosLmCategoryManager* catMgr, QLandmark* qtLandmark);
+    static bool validCategoriesExist(CPosLmCategoryManager* catMgr, QLandmark* qtLandmark,
+        QString mgrUri);
 
     /*
      * checks the valid local id
@@ -236,6 +238,30 @@ public:
      *
      */
     static QStringList landmarkAttributeKeys();
+
+    /*
+     * Returns Category Attribute keys
+     *
+     * These are the symbian platform specific landmark attribute key list
+     * relative to qt mobility api support.
+     *
+     * This list may change from version to version without notice,
+     * or even be removed.
+     *
+     */
+    static QStringList categoryAttributeKeys();
+
+    /*
+     * Returns Landmark Searchable Attribute keys
+     * 
+     * These are the symbian platform specific searchable landmark attribute key list
+     * relative to qt mobility api support.
+     * 
+     * This list may change from version to version without notice, 
+     * or even be removed.
+     *
+     */
+    static QStringList searchableLandmarkAttributeKeys();
 
     /**
      * converts the attribute key string to symbian position field value. 

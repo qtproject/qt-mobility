@@ -58,15 +58,16 @@ class Q_GALLERY_EXPORT QGalleryQueryModel : public QAbstractItemModel
     Q_OBJECT
     Q_PROPERTY(QAbstractGallery *gallery READ gallery WRITE setGallery)
     Q_PROPERTY(QStringList sortPropertyNames READ sortPropertyNames WRITE setSortPropertyNames)
-    Q_PROPERTY(bool live READ isLive WRITE setLive)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate)
     Q_PROPERTY(int offset READ offset WRITE setOffset)
     Q_PROPERTY(int limit READ limit WRITE setLimit)
     Q_PROPERTY(QString rootType READ rootType WRITE setRootType)
     Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem)
     Q_PROPERTY(QGalleryQueryRequest::Scope scope READ scope WRITE setScope)
     Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter)
-    Q_PROPERTY(int result READ result NOTIFY resultChanged)
-    Q_PROPERTY(QGalleryAbstractRequest::State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(int error READ error NOTIFY errorChanged)
+    Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
+    Q_PROPERTY(QGalleryAbstractRequest::Status status READ status NOTIFY statusChanged)
 public:
     QGalleryQueryModel(QObject *parent = 0);
     QGalleryQueryModel(QAbstractGallery *gallery, QObject *parent = 0);
@@ -87,8 +88,8 @@ public:
     QStringList sortPropertyNames() const;
     void setSortPropertyNames(const QStringList &names);
 
-    bool isLive() const;
-    void setLive(bool live);
+    bool autoUpdate() const;
+    void setAutoUpdate(bool enabled);
 
     int offset() const;
     void setOffset(int offset);
@@ -112,8 +113,10 @@ public:
     void cancel();
     void clear();
 
-    int result() const;
-    QGalleryAbstractRequest::State state() const;
+    int error() const;
+    QString errorString() const;
+
+    QGalleryAbstractRequest::Status status() const;
 
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     QModelIndex parent(const QModelIndex &index) const;
@@ -138,12 +141,11 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
 Q_SIGNALS:
-    void succeeded();
+    void finished();
     void cancelled();
-    void failed(int result);
-    void finished(int result);
-    void stateChanged(QGalleryAbstractRequest::State state);
-    void resultChanged();
+    void error(int error, const QString &errorString);
+    void errorChanged();
+    void statusChanged(QGalleryAbstractRequest::Status status);
 
 private:
     QScopedPointer<QGalleryQueryModelPrivate> d_ptr;

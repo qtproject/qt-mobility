@@ -46,8 +46,15 @@
 #include <EPos_CPosLandmarkDatabase.h>
 #include <e32base.h>
 
-// Internal Includes
-#include "qlandmarkdbeventobserver.h"
+/*
+ * Observers that require notification of database events should derive from MLandmarkDbEventObserver
+ * and register with the Event Handler using CLandmarkDbEventHandler::AddObserver
+ */
+class MLandmarkDbEventObserver
+{
+public:
+    virtual void handleDatabaseEvent(const TPosLmEvent& aEvent) = 0;
+};
 
 /**
  * CLandmarkDbEventHandler class is used to observer the landmark database

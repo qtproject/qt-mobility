@@ -34,3 +34,8 @@ SOURCES = \
     photoview.cpp \
     songview.cpp \
     thumbnailmodel.cpp
+
+symbian: {
+    load(data_caging_paths)
+    TARGET.CAPABILITY = ReadDeviceData WriteDeviceData
+}

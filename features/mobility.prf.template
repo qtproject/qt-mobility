@@ -82,11 +82,6 @@ contains(MOBILITY, versit) {
     }
 }
 
-contains(MOBILITY, telephony) {
-    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtTelephony
-    qtAddLibrary(QtTelephony)
-}
-
 contains(MOBILITY, sensors) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtSensors
     qtAddLibrary(QtSensors)

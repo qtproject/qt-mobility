@@ -191,6 +191,38 @@ public:
         mutable Row row;
     };
 
+    struct const_row_iterator
+    {
+        const_row_iterator() {}
+        const_row_iterator(QVector<QVariant>::const_iterator begin, int width)
+            : begin(begin), width(width) {}
+
+        bool operator != (const const_row_iterator &other) const { return begin != other.begin; }
+        bool operator <(const const_row_iterator &other) const { return begin < other.begin; }
+
+        const_row_iterator &operator ++() { begin += width; return *this; }
+        const_row_iterator operator --(int) {
+            const_row_iterator n(*this); begin -= width; return n; }
+
+        int operator -(const const_row_iterator &other) const {
+            return (begin - other.begin) / width; }
+        int operator -(const QVector<QVariant>::const_iterator &iterator) const {
+            return (begin - iterator) / width; }
+
+        const_row_iterator operator +(int span) const {
+            return const_row_iterator(begin + (span * width), width); }
+
+        const_row_iterator &operator +=(int span) { begin += span * width; return *this; }
+
+        bool isEqual(const const_row_iterator &other, int count) const {
+            return qEqual(begin, begin + count, other.begin); }
+        bool isEqual(const const_row_iterator &other, int index, int count) {
+            return qEqual(begin + index, begin + count, other.begin + index); }
+
+        QVector<QVariant>::const_iterator begin;
+        int width;
+    };
+
     struct Cache
     {
         Cache() : count(0), cutoff(0) {}
@@ -221,7 +253,7 @@ public:
 
     QGalleryTrackerResultSetPrivate(
             QGalleryTrackerResultSetArguments *arguments,
-            bool live,
+            bool autoUpdate,
             int offset,
             int limit)
         : idColumn(arguments->idColumn.take())
@@ -254,7 +286,7 @@ public:
     {
         arguments->clear();
 
-        if (live)
+        if (autoUpdate)
             flags |= Live;
     }
 
@@ -303,9 +335,9 @@ public:
     QBasicTimer updateTimer;
     SyncEventQueue syncEvents;
 
-    inline int rCacheIndex(const row_iterator &iterator) const {
+    inline int rCacheIndex(const const_row_iterator &iterator) const {
         return iterator - rCache.values.begin(); }
-    inline int iCacheIndex(const row_iterator &iterator) const {
+    inline int iCacheIndex(const const_row_iterator &iterator) const {
         return iterator - iCache.values.begin(); }
     
     void update();

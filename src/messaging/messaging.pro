@@ -196,7 +196,7 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             gconf-2.0 \
             libosso \
             TelepathyQt4 \
-            qtopiamail \
+            qmfclient \
             commhistory \
             meegotouch \
             qttracker \
@@ -208,7 +208,7 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             gconf-2.0 \
             osso \            
             TelepathyQt4 \
-            qtopiamail \
+            qmfclient \
             commhistory \
             meegotouch \
             qttracker \
@@ -366,16 +366,27 @@ simulator {
 simulator|contains(qmf_enabled, yes):!maemo6 { 
     DEFINES += USE_QMF_IMPLEMENTATION
     
+    QMF_INCLUDEDIR = $$(QMF_INCLUDEDIR)
+    QMF_LIBDIR = $$(QMF_LIBDIR)
+
     # QMF headers must be located at $QMF_INCLUDEDIR
-    INCLUDEPATH += $$(QMF_INCLUDEDIR) \
-        $$(QMF_INCLUDEDIR)/support
-    
+    !isEmpty(QMF_INCLUDEDIR): INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
+
+    # QMF libraries must be located at $QMF_LIBDIR
+    macx {
+        !isEmpty(QMF_LIBDIR): QMAKE_LFLAGS += -F$$(QMF_LIBDIR)
+        LIBS += -framework qmfclient
+    } else {
+        !isEmpty(QMF_LIBDIR): LIBS += -L$$(QMF_LIBDIR)
+	LIBS += -l$$qtLibraryTarget(qmfclient)
+    }
+		
     # QMF libraries must be located at $QMF_LIBDIR
     mac {
         QMAKE_LFLAGS += -F$$(QMF_LIBDIR)
-            LIBS += -framework qtopiamail
+            LIBS += -framework qmfclient
     } else {
-        LIBS += -L$$(QMF_LIBDIR) -l$$qtLibraryTarget(qtopiamail)
+        LIBS += -L$$(QMF_LIBDIR) -l$$qtLibraryTarget(qmfclient)
     }
 
     PRIVATE_HEADERS += qmfhelpers_p.h \

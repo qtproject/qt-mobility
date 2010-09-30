@@ -64,6 +64,7 @@ EventEditPage::EventEditPage(QWidget *parent)
     m_endTimeEdit = new QDateTimeEdit(this);
     QLabel *repeatLabel = new QLabel("Repeat:", this);
     QLabel *alarmLabel = new QLabel("Alarm:", this);
+    QLabel *calendarLabel = new QLabel("Calendar:", this);
     m_alarmComboBox = new QComboBox(this);
     m_typeComboBox = new QComboBox(this);
     m_typeComboBox->addItem("None");
@@ -102,6 +103,9 @@ EventEditPage::EventEditPage(QWidget *parent)
     m_repeatUntilDate->setVisible(false);
     connect(m_repeatUntilDate, SIGNAL(dateChanged(QDate)), this, SLOT(untilChanged(QDate)));
 
+    m_calendarComboBox = new QComboBox(this);
+    // the calendar names are not know here, fill the combo box later...
+
 #ifndef Q_OS_SYMBIAN
     // Add push buttons for non-Symbian platforms as they do not support soft keys
     QHBoxLayout* hbLayout = new QHBoxLayout();
@@ -127,6 +131,8 @@ EventEditPage::EventEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_endConditionComboBox);
     scrollAreaLayout->addWidget(m_countSpinBox);
     scrollAreaLayout->addWidget(m_repeatUntilDate);
+    scrollAreaLayout->addWidget(calendarLabel);
+    scrollAreaLayout->addWidget(m_calendarComboBox);
     scrollAreaLayout->addStretch();
 
 #ifndef Q_OS_SYMBIAN
@@ -200,8 +206,47 @@ void EventEditPage::eventChanged(QOrganizerItemManager *manager, const QOrganize
     } else {
         m_typeComboBox->setCurrentIndex(0); // No repeat
     }
-}
 
+    // set calendar selection
+    m_calendarComboBox->clear();
+
+    // resolve metadata field that contains calendar name (if any)
+    QString calendarNameMetadataKey;
+    m_collections = m_manager->collections();
+    if (!m_collections.isEmpty()) {
+        QOrganizerCollection firstCollection = m_collections[0];
+        QVariantMap metadata = firstCollection.metaData();
+        QList<QString> metaDataKeys = metadata.keys();
+        foreach(QString key, metaDataKeys) {
+            if (key.indexOf("name", 0, Qt::CaseInsensitive) != -1) {
+                calendarNameMetadataKey = key;
+                break;
+            }
+        }
+    }
+    int index = 0;
+    int eventCalendarIndex = -1;
+    foreach(QOrganizerCollection collection, m_collections) {
+        // We currently have no way of stringifying ids
+        //QString visibleName = "Calendar id = " + QString::number(collection.id().localId());
+        QString visibleName = "Calendar " + QString::number(index);
+        if (!calendarNameMetadataKey.isNull())
+            visibleName = collection.metaData(calendarNameMetadataKey).toString();
+
+        m_calendarComboBox->addItem(visibleName);
+        if (collection.id().localId() == event.collectionId().localId())
+            eventCalendarIndex = index;
+        ++index;
+    }
+
+    if (eventCalendarIndex > -1) {
+        m_calendarComboBox->setCurrentIndex(eventCalendarIndex);
+        m_calendarComboBox->setEnabled(false); // when modifying existing events, the calendar can't be changed anymore
+    }
+    else {
+        m_calendarComboBox->setEnabled(true);
+    }
+}
 
 void EventEditPage::cancelClicked()
 {
@@ -221,7 +266,10 @@ void EventEditPage::saveClicked()
     m_organizerEvent.setStartDateTime(start);
     m_organizerEvent.setEndDateTime(end);
     m_listOfEvents.append(m_organizerEvent);
-    m_manager->saveItem(&m_organizerEvent);
+    if (m_calendarComboBox->currentIndex() > 0)
+        m_manager->saveItem(&m_organizerEvent, m_collections[m_calendarComboBox->currentIndex()].localId());
+    else
+        m_manager->saveItem(&m_organizerEvent);
     if (m_manager->error())
         QMessageBox::warning(this, "Failed!", QString("Failed to save event!\n(error code %1)").arg(m_manager->error()));
     else

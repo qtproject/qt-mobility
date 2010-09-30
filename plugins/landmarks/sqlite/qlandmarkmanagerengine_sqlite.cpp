@@ -55,6 +55,7 @@
 #include <QSettings>
 #include <QSqlDatabase>
 #include <QSqlError>
+#include <QSqlRecord>
 #include <QSqlQuery>
 #include <QThreadPool>
 #include <QUuid>
@@ -102,9 +103,8 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
         m_dbWatcher(NULL),
         m_latestLandmarkTimestamp(0),
         m_latestCategoryTimestamp(0),
-        m_isExtendedAttributesEnabled(false),
         m_isCustomAttributesEnabled(false),
-        m_databaseOperations(m_isExtendedAttributesEnabled, m_isCustomAttributesEnabled)
+        m_databaseOperations()
 {
     qRegisterMetaType<ERROR_MAP >();
     qRegisterMetaType<QList<QLandmarkCategoryId> >();
@@ -173,16 +173,7 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
         bool transacting = db.transaction();
 
         {//check for database with old schema
-            QSqlQuery query(db);
-            query.exec("SELECT name from sqlite_master WHERE name = 'landmark'");
-            if (query.next()) {
-                query.exec("SELECT name from sqlite_master WHERE name = 'landmark_custom_attribute'");
-                if (!query.next()) {
-                    qWarning() << "Old Database with incompatible schema from Qt Landmarks 1.1 tech preview detected, please delete this file and try again:" << this->m_dbFilename;
-                    db.rollback();
-                    return;
-                }
-            }
+            //TODO: database verion checking
         }
         for (int i = 0; i < queries.size(); ++i) {
             QString q = queries.at(i).trimmed();
@@ -409,12 +400,9 @@ bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::Landmark
     *errorString = "";
 
     switch(feature) {
-        case (QLandmarkManager::CustomAttributes):
-        case (QLandmarkManager::Notifications):
-        case (QLandmarkManager::ImportExport):
+        case (QLandmarkManager::NotificationsFeature):
+        case (QLandmarkManager::ImportExportFeature):
             return true;
-        case (QLandmarkManager::ExtendedAttributes):
-            return false;
         default:
             return false;
     }
@@ -426,8 +414,12 @@ QStringList QLandmarkManagerEngineSqlite::landmarkAttributeKeys(QLandmarkManager
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
+    //TODO: optimize
+    QStringList commonKeys = DatabaseOperations::coreAttributes +
+                             DatabaseOperations::coreGenericAttributes;
+    commonKeys.sort();
 
-    return QLandmarkManagerEngine::landmarkAttributeKeys(error, errorString);
+    return commonKeys;
 }
 
 QStringList QLandmarkManagerEngineSqlite::categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
@@ -437,7 +429,23 @@ QStringList QLandmarkManagerEngineSqlite::categoryAttributeKeys(QLandmarkManager
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    return QLandmarkManagerEngine::categoryAttributeKeys(error, errorString);
+    //TODO: optimize
+    QStringList commonKeys = DatabaseOperations::coreCategoryAttributes +
+                             DatabaseOperations::coreGenericCategoryAttributes;
+    commonKeys.clear();
+    return commonKeys;
+}
+
+QStringList QLandmarkManagerEngineSqlite::searchableLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString ="";
+    //TODO: optimize
+    QStringList commonKeys = DatabaseOperations::supportedSearchableAttributes;
+    commonKeys.sort();
+    return commonKeys;
 }
 
 bool QLandmarkManagerEngineSqlite::isReadOnly(QLandmarkManager::Error *error, QString *errorString) const
@@ -467,45 +475,6 @@ bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkCategoryId &categor
     *errorString = "";
 
     return false;
-}
-
-bool QLandmarkManagerEngineSqlite::isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Extended attributes are not supported";
-
-    return m_isExtendedAttributesEnabled;
-}
-
-void QLandmarkManagerEngineSqlite::setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Extended attributes are not supported";
-    return;
-}
-
-bool QLandmarkManagerEngineSqlite::isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString = "";
-
-    return m_isCustomAttributesEnabled;
-}
-
-void QLandmarkManagerEngineSqlite::setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString = "";
-
-    m_isCustomAttributesEnabled = enabled;
 }
 
 /* Asynchronous Request Support */

@@ -1,7 +1,7 @@
 EXPORTS
 	?tr@QValueSpacePublisher@QtMobility@@SA?AVQString@@PBD0@Z @ 1 NONAME ; class QString QtMobility::QValueSpacePublisher::tr(char const *, char const *)
 	?getLayers@QValueSpaceManager@QtMobility@@QAEABV?$QList@PAVQAbstractValueSpaceLayer@QtMobility@@@@XZ @ 2 NONAME ABSENT ; class QList<class QtMobility::QAbstractValueSpaceLayer *> const & QtMobility::QValueSpaceManager::getLayers(void)
-	?qt_metacast@QValueSpaceSubscriber@QtMobility@@UAEPAXPBD@Z @ 3 NONAME ABSENT ; void * QtMobility::QValueSpaceSubscriber::qt_metacast(char const *)
+	?qt_metacast@QValueSpaceSubscriber@QtMobility@@UAEPAXPBD@Z @ 3 NONAME ; void * QtMobility::QValueSpaceSubscriber::qt_metacast(char const *)
 	?emitInterestChanged@QAbstractValueSpaceLayer@QtMobility@@IAEXPAVQValueSpacePublisher@2@ABVQString@@_N@Z @ 4 NONAME ABSENT ; void QtMobility::QAbstractValueSpaceLayer::emitInterestChanged(class QtMobility::QValueSpacePublisher *, class QString const &, bool)
 	?staticMetaObject@QValueSpacePublisher@QtMobility@@2UQMetaObject@@B @ 5 NONAME ; struct QMetaObject const QtMobility::QValueSpacePublisher::staticMetaObject
 	??_EQValueSpacePublisher@QtMobility@@UAE@I@Z @ 6 NONAME ; QtMobility::QValueSpacePublisher::~QValueSpacePublisher(unsigned int)

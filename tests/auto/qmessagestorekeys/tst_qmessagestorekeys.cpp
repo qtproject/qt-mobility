@@ -82,6 +82,8 @@ private slots:
     void cleanup();
     void cleanupTestCase();
 
+    void testFilterOperations();
+
     void testAccountFilter_data();
     void testAccountFilter();
 
@@ -401,6 +403,36 @@ void tst_QMessageStoreKeys::cleanup()
 
 void tst_QMessageStoreKeys::cleanupTestCase()
 {
+}
+
+void tst_QMessageStoreKeys::testFilterOperations()
+{
+    QMessageFilter filter1;
+    QMessageFilter filter2 = QMessageFilter::byId(QMessageId("123"), QMessageDataComparator::Equal);
+
+    // AND
+    QMessageFilter combinedFilter = filter1 & filter2;
+    QCOMPARE(combinedFilter == filter1, false);
+    QCOMPARE(combinedFilter == filter2, true);
+    QCOMPARE(combinedFilter == QMessageFilter(), false);
+
+    combinedFilter = filter1;
+    combinedFilter &= filter2;
+    QCOMPARE(combinedFilter == filter1, false);
+    QCOMPARE(combinedFilter == filter2, true);
+    QCOMPARE(combinedFilter == QMessageFilter(), false);
+
+    // OR
+    combinedFilter = filter1 | filter2;
+    QCOMPARE(combinedFilter == filter1, true);
+    QCOMPARE(combinedFilter == filter2, false);
+    QCOMPARE(combinedFilter == QMessageFilter(), true);
+
+    combinedFilter = filter1;
+    combinedFilter |= filter2;
+    QCOMPARE(combinedFilter == filter1, true);
+    QCOMPARE(combinedFilter == filter2, false);
+    QCOMPARE(combinedFilter == QMessageFilter(), true);
 }
 
 void tst_QMessageStoreKeys::testAccountFilter_data()

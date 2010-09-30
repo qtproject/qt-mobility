@@ -40,7 +40,6 @@
 
 import Qt 4.7
 import QtMobility.gallery 1.1
-import "script/mediaart.js" as Script
 
 Package {
     property string state
@@ -113,18 +112,16 @@ Package {
 
         Image {
             id: albumImage
+
+            property url albumUrl: Utility.getAlbumArtThumbnailUrl(artist, title)
+
             width: 128
             height: 128
             fillMode: Image.PreserveAspectFit
             asynchronous: true
-            source: Script.getAlbumArtUrl(artist, title)
+            source: albumUrl != "" ? albumUrl : "images/nocover.png"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
-        }
-
-        Image {
-            anchors.fill: albumImage
-            source: albumImage.status == Image.Error ? "images/nocover.png" : ""
         }
 
         Text {
@@ -192,9 +189,8 @@ Package {
             id: songColumn
 
             Repeater {
-                model: GalleryQueryModel {
-                    gallery: documentGallery
-                    rootType: "Audio"
+                model: DocumentGalleryModel {
+                    rootType: DocumentGallery.Audio
                     rootItem: itemId
                     properties: [ "trackNumber", "title", "duration" ]
                     sortProperties: [ "trackNumber" ]
@@ -208,9 +204,8 @@ Package {
         id: fullScreenView
 
         ListView {
-            model: GalleryQueryModel {
-                gallery: documentGallery
-                rootType: "Audio"
+            model: DocumentGalleryModel {
+                rootType: DocumentGallery.Audio
                 rootItem: itemId
                 properties: [ "trackNumber", "title", "duration" ]
                 sortProperties: [ "trackNumber" ]

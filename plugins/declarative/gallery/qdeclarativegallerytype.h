@@ -49,6 +49,7 @@
 #include <QtDeclarative/qdeclarative.h>
 #include <QtDeclarative/qdeclarativepropertymap.h>
 
+#include "qdeclarativedocumentgallery.h"
 #include "qdeclarativegalleryfilter.h"
 
 QTM_BEGIN_NAMESPACE
@@ -57,110 +58,105 @@ class QDeclarativeGalleryType : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
     Q_INTERFACES(QDeclarativeParserStatus)
-    Q_ENUMS(State)
-    Q_ENUMS(Result)
-    Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery NOTIFY galleryChanged)
-    Q_PROPERTY(State state READ state NOTIFY stateChanged)
-    Q_PROPERTY(Result result READ result NOTIFY resultChanged)
+    Q_ENUMS(Status)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
-    Q_PROPERTY(bool live READ isLive WRITE setLive NOTIFY liveChanged)
-    Q_PROPERTY(QString itemType READ itemType WRITE setItemType NOTIFY itemTypeChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(bool available READ available NOTIFY availableChanged)
     Q_PROPERTY(QObject *metaData READ metaData NOTIFY metaDataChanged)
 public:
-    enum State
+    enum Status
     {
-        Inactive    = QGalleryAbstractRequest::Inactive,
+        Null        = QGalleryAbstractRequest::Inactive,
         Active      = QGalleryAbstractRequest::Active,
         Cancelling  = QGalleryAbstractRequest::Cancelling,
-        Idle        = QGalleryAbstractRequest::Idle
+        Cancelled   = QGalleryAbstractRequest::Cancelled,
+        Idle        = QGalleryAbstractRequest::Idle,
+        Finished    = QGalleryAbstractRequest::Finished,
+        Error       = QGalleryAbstractRequest::Error
     };
 
-    enum Result
-    {
-        NoResult                        = QGalleryAbstractRequest::NoResult,
-        Succeeded                       = QGalleryAbstractRequest::NoResult,
-        Cancelled                       = QGalleryAbstractRequest::NoResult,
-        NoGallery                       = QGalleryAbstractRequest::NoResult,
-        NotSupported                    = QGalleryAbstractRequest::NoResult,
-        ConnectionError                 = QGalleryAbstractRequest::NoResult,
-        InvalidItemError                = QGalleryAbstractRequest::NoResult
-    };
-
-    QDeclarativeGalleryType(QObject *parent = 0);
     ~QDeclarativeGalleryType();
 
-    QAbstractGallery *gallery() const { return m_request.gallery(); }
-    void setGallery(QAbstractGallery *gallery) {
-        if (!m_complete || !gallery) { m_request.setGallery(gallery); emit galleryChanged(); } }
+    Status status() const { return m_status; }
 
-    State state() const { return State(m_request.state()); }
-    Result result() const { return Result(m_request.result()); }
-
-    qreal progress() const
-    {
-        const int max = m_request.maximumProgress();
-        return max > 0 ? qreal(m_request.currentProgress()) / max : qreal(0.0);
-    }
+    qreal progress() const;
 
     QStringList propertyNames() { return m_request.propertyNames(); }
-    void setPropertyNames(const QStringList &names) {
-        if (!m_complete) m_request.setPropertyNames(names); emit propertyNamesChanged(); }
+    void setPropertyNames(const QStringList &names);
 
-    bool isLive() const { return m_request.isLive(); }
-    void setLive(bool live) { m_request.setLive(live); emit liveChanged(); }
-
-    QString itemType() const { return m_request.itemType(); }
-    void setItemType(const QString itemType)
-    {
-        m_request.setItemType(itemType);
-        if (m_complete)
-            m_request.execute();
-        emit itemTypeChanged();
-    }
+    bool autoUpdate() const { return m_request.autoUpdate(); }
+    void setAutoUpdate(bool enabled);
 
     bool available() const { return m_request.isValid(); }
 
     QObject *metaData() const { return m_metaData; }
 
-    void classBegin();
     void componentComplete();
 
 public Q_SLOTS:
-    void reload() { m_request.execute(); }
-    void cancel() { m_request.cancel(); }
-    void clear() { m_request.clear(); }
+    void reload();
+    void cancel();
+    void clear();
 
 Q_SIGNALS:
-    void succeeded();
-    void cancelled();
-    void failed(int result);
-    void finished(int result);
-    void stateChanged();
-    void resultChanged();
+    void statusChanged();
     void progressChanged();
     void availableChanged();
     void metaDataChanged();
 
     void galleryChanged();
     void propertyNamesChanged();
-    void liveChanged();
-    void itemTypeChanged();
+    void autoUpdateChanged();
 
-private Q_SLOTS:
-    void _q_typeChanged();
-    void _q_metaDataChanged(const QList<int> &keys);
+protected:
+    enum UpdateStatus
+    {
+        Incomplete,
+        NoUpdate,
+        PendingUpdate,
+        CancelledUpdate
+    };
 
-private:
+    explicit QDeclarativeGalleryType(QObject *parent = 0);
+
+    void deferredExecute();
+
+    bool event(QEvent *event);
+
     QGalleryTypeRequest m_request;
     QDeclarativePropertyMap *m_metaData;
     QHash<int, QString> m_propertyKeys;
-    bool m_complete;
+    Status m_status;
+    UpdateStatus m_updateStatus;
+
+private Q_SLOTS:
+    void _q_statusChanged();
+    void _q_typeChanged();
+    void _q_metaDataChanged(const QList<int> &keys);
+};
+
+class QDeclarativeDocumentGalleryType : public QDeclarativeGalleryType
+{
+    Q_OBJECT
+    Q_PROPERTY(QDeclarativeDocumentGallery::ItemType itemType READ itemType WRITE setItemType NOTIFY itemTypeChanged)
+public:
+    explicit QDeclarativeDocumentGalleryType(QObject *parent = 0);
+    ~QDeclarativeDocumentGalleryType();
+
+    void classBegin();
+
+    QDeclarativeDocumentGallery::ItemType itemType() const;
+    void setItemType(QDeclarativeDocumentGallery::ItemType itemType);
+
+Q_SIGNALS:
+    void itemTypeChanged();
+
 };
 
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryType))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeDocumentGalleryType))
 
 #endif

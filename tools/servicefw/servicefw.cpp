@@ -61,6 +61,7 @@ public:
     void execute(const QStringList &options, const QString &cmd, const QStringList &args);
     void showUsage();
     static void showUsage(QTextStream *stream);
+    int errorCode();
 
 public slots:
     void browse(const QStringList &args);
@@ -70,6 +71,7 @@ public slots:
 
 private:
     bool setOptions(const QStringList &options);
+    void setErrorCode(int error);
     void showAllEntries();
     void showInterfaceInfo(const QServiceFilter &filter);
     void showInterfaceInfo(QList<QServiceInterfaceDescriptor> descriptors);
@@ -77,12 +79,14 @@ private:
 
     QServiceManager *serviceManager;
     QTextStream *stdoutStream;
+    int m_error;
 };
 
 CommandProcessor::CommandProcessor(QObject *parent)
     : QObject(parent),
       serviceManager(0),
-      stdoutStream(new QTextStream(stdout))
+      stdoutStream(new QTextStream(stdout)),
+      m_error(0)
 {
 }
 
@@ -186,7 +190,7 @@ static const char * const errorTable[] = {
     "Loading of plug-in failed",
     "Service or interface not found",
     "Insufficient capabilities to access service",
-    "Unknown error"
+    "Unknown error",
 };
 
 void CommandProcessor::add(const QStringList &args)
@@ -199,6 +203,7 @@ void CommandProcessor::add(const QStringList &args)
     const QString &xmlPath = args[0];
     if (!QFile::exists(xmlPath)) {
         *stdoutStream << "Error: cannot find file " << xmlPath << '\n';
+        setErrorCode(11);
         return;
     }
 
@@ -206,11 +211,18 @@ void CommandProcessor::add(const QStringList &args)
         *stdoutStream << "Registered service at " << xmlPath << '\n';
     } else {
         int error = serviceManager->error();
-        if (error > 11) //map anything larger than 11 to 11
-            error = 11;
+        if (error > 10) //map anything larger than 10 to 10
+            error = 10;
         *stdoutStream << "Error: cannot register service at " << xmlPath
                 << " (" << errorTable[error] << ")" << '\n';
+    
+        setErrorCode(error);
     }
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    // exit the event loop for maemo
+    QCoreApplication::exit(0);
+#endif
 }
 
 void CommandProcessor::remove(const QStringList &args)
@@ -232,34 +244,28 @@ bool CommandProcessor::setOptions(const QStringList &options)
     if (serviceManager)
         delete serviceManager;
 
-    bool systemScope = false;
-    bool userScope = false;
+    QService::Scope scope = QService::UserScope;
 
     QStringList opts = options;
     QMutableListIterator<QString> i(opts);
     while (i.hasNext()) {
         QString option = i.next();
         if (option == "--system") {
-            systemScope = true;
+            scope = QService::SystemScope;
             i.remove();
         } else if (option == "--user") {
-            userScope = true;
+            scope = QService::UserScope;
             i.remove();
         }
     }
 
-    if (!userScope && systemScope)
-        serviceManager = new QServiceManager(QService::SystemScope, this);
-    
     if (!opts.isEmpty()) {
         *stdoutStream << "Bad options: " << opts.join(" ") << "\n\n";
         showUsage();
         return false;
     }
-
-    // other initialization, if not triggered by an option
-    if (!serviceManager)
-        serviceManager = new QServiceManager(this);
+    
+    serviceManager = new QServiceManager(scope, this);
 
     return true;
 }
@@ -367,6 +373,16 @@ void CommandProcessor::showInterfaceInfo(QList<QServiceInterfaceDescriptor> desc
     }
 }
 
+int CommandProcessor::errorCode()
+{
+    return m_error;
+}
+
+void CommandProcessor::setErrorCode(int error)
+{
+    m_error = error;
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
@@ -391,7 +407,7 @@ int main(int argc, char *argv[])
 
     CommandProcessor processor;
     processor.execute(options, args.value(options.count() + 1), args.mid(options.count() + 2));
-    return 0;
+    return processor.errorCode();
 }
 
 #include "servicefw.moc"

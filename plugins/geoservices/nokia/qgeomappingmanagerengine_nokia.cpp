@@ -37,6 +37,13 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and 
+** Navigation API.  The use of these services, whether by use of the 
+** plugin or by other means, is governed by the terms and conditions 
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in 
+** this package, located in the directory containing the Ovi services 
+** plugin source code.
+**
 ****************************************************************************/
 
 #include "qgeomappingmanagerengine_nokia.h"
@@ -55,10 +62,26 @@
 
 #define LARGE_TILE_DIMENSION 256
 
+// TODO: Tweak the max size or create something better
+#if defined(Q_OS_SYMBIAN)
+    #define DISK_CACHE_MAX_SIZE 10*1024*1024  //10MB
+#else
+    #define DISK_CACHE_MAX_SIZE 50*1024*1024  //50MB
+#endif
+
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    #undef DISK_CACHE_ENABLED
+#else
+    #define DISK_CACHE_ENABLED 1
+#endif
+
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
         m_host("maptile.maps.svc.ovi.com")
 {
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
+
     setTileSize(QSize(256, 256));
     setMinimumZoomLevel(0.0);
     setMaximumZoomLevel(18.0);
@@ -69,14 +92,11 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     types << QGraphicsGeoMap::TerrainMap;
     setSupportedMapTypes(types);
 
+    QList<QGraphicsGeoMap::ConnectivityMode> modes;
+    modes << QGraphicsGeoMap::OnlineMode;
+    setSupportedConnectivityModes(modes);
+
     m_nam = new QNetworkAccessManager(this);
-    m_cache = new QNetworkDiskCache(this);
-
-    QDir dir = QDir::temp();
-    dir.mkdir("maptiles");
-    dir.cd("maptiles");
-
-    m_cache->setCacheDirectory(dir.path());
 
     QList<QString> keys = parameters.keys();
 
@@ -92,6 +112,15 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
             m_host = host;
     }
 
+#ifdef DISK_CACHE_ENABLED
+    m_cache = new QNetworkDiskCache(this);
+
+    QDir dir = QDir::temp();
+    dir.mkdir("maptiles");
+    dir.cd("maptiles");
+
+    m_cache->setCacheDirectory(dir.path());
+
     if (keys.contains("mapping.cache.directory")) {
         QString cacheDir = parameters.value("mapping.cache.directory").toString();
         if (!cacheDir.isEmpty())
@@ -105,19 +134,37 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
             m_cache->setMaximumCacheSize(cacheSize);
     }
 
+    if (m_cache->maximumCacheSize() > DISK_CACHE_MAX_SIZE)
+        m_cache->setMaximumCacheSize(DISK_CACHE_MAX_SIZE);
+
     m_nam->setCache(m_cache);
+#endif
 }
 
 QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
 
+QGeoMapData* QGeoMappingManagerEngineNokia::createMapData(QGraphicsGeoMap *geoMap)
+{
+    QGeoMapData *data = QGeoTiledMappingManagerEngine::createMapData(geoMap);
+    if (!data)
+        return 0;
+
+    data->setConnectivityMode(QGraphicsGeoMap::OnlineMode);
+    return data;
+}
+
 QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMapRequest &request)
 {
+    // TODO add error detection for if request.connectivityMode() != QGraphicsGeoMap::OnlineMode
     QString rawRequest = getRequestString(request);
 
     QNetworkRequest netRequest((QUrl(rawRequest))); // The extra pair of parens disambiguates this from a function declaration
-    netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
     netRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+
+#ifdef DISK_CACHE_ENABLED
+    netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
     m_cache->metaData(netRequest.url()).setLastModified(QDateTime::currentDateTime());
+#endif
 
     QNetworkReply* netReply = m_nam->get(netRequest);
 
@@ -153,11 +200,11 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapReques
     requestString += QString::number(request.row());
     requestString += slash;
     requestString += sizeToStr(tileSize());
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+//#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     static const QString slashpng("/png8");
-#else
-    static const QString slashpng("/png");
-#endif
+//#else
+//    static const QString slashpng("/png");
+//#endif
     requestString += slashpng;
 
     if (!m_token.isEmpty()) {

@@ -46,6 +46,7 @@
 #include "qgeocoordinate.h"
 
 #include <QFont>
+#include <QPoint>
 
 QTM_BEGIN_NAMESPACE
 
@@ -59,11 +60,19 @@ class Q_LOCATION_EXPORT QGeoMapTextObject : public QGeoMapObject
     Q_PROPERTY(QFont font READ font WRITE setFont NOTIFY fontChanged)
     Q_PROPERTY(QPen pen READ pen WRITE setPen NOTIFY penChanged)
     Q_PROPERTY(QBrush brush READ brush WRITE setBrush NOTIFY brushChanged)
+    Q_PROPERTY(QPoint offset READ offset WRITE setOffset NOTIFY offsetChanged)
+    Q_PROPERTY(Qt::Alignment alignment READ alignment WRITE setAlignment NOTIFY alignmentChanged)
 
 public:
-    QGeoMapTextObject(QGeoMapObject *parent = 0);
-    QGeoMapTextObject(const QGeoCoordinate &coordinate, const QString &text = QString(), const QFont &font = QFont(), QGeoMapObject *parent = 0);
+    QGeoMapTextObject();
+    QGeoMapTextObject(const QGeoCoordinate &coordinate,
+                      const QString &text = QString(),
+                      const QFont &font = QFont(),
+                      const QPoint &offset = QPoint(),
+                      Qt::Alignment alignment = Qt::AlignCenter);
     ~QGeoMapTextObject();
+
+    QGeoMapObject::Type type() const;
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
@@ -80,14 +89,23 @@ public:
     QBrush brush() const;
     void setBrush(const QBrush &brush);
 
-signals:
+    QPoint offset() const;
+    void setOffset(const QPoint &offset);
+
+    Qt::Alignment alignment() const;
+    void setAlignment(Qt::Alignment alignment);
+
+Q_SIGNALS:
     void coordinateChanged(const QGeoCoordinate &coordinate);
     void textChanged(const QString &text);
     void fontChanged(const QFont &font);
     void penChanged(const QPen &pen);
     void brushChanged(const QBrush &brush);
+    void offsetChanged(const QPoint &offset);
+    void alignmentChanged(Qt::Alignment alignment);
 
 private:
+    QGeoMapTextObjectPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeoMapTextObject)
     Q_DISABLE_COPY(QGeoMapTextObject)
 };

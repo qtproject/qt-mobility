@@ -4,9 +4,10 @@ INCLUDEPATH += maps
 include(tiled/tiled.pri)
 
 PUBLIC_HEADERS += \
-                    maps/qgeoinstruction.h \
+                    maps/qgeomaneuver.h \
                     maps/qgeomapcircleobject.h \
                     maps/qgeomapdata.h \
+                    maps/qgeomapgroupobject.h \
                     maps/qgeomapobject.h \
                     maps/qgeomapobjectinfo.h \
                     maps/qgeomapoverlay.h \
@@ -32,9 +33,10 @@ PUBLIC_HEADERS += \
                     maps/qgraphicsgeomap.h
 
 PRIVATE_HEADERS += \
-                    maps/qgeoinstruction_p.h \
+                    maps/qgeomaneuver.h \
                     maps/qgeomapcircleobject_p.h \
                     maps/qgeomapdata_p.h \
+                    maps/qgeomapgroupobject_p.h \
                     maps/qgeomapobject_p.h \
                     maps/qgeomapobjectinfo_p.h \
                     maps/qgeomappingmanager_p.h \
@@ -58,9 +60,10 @@ PRIVATE_HEADERS += \
                     maps/qgraphicsgeomap_p.h
 
 SOURCES += \
-            maps/qgeoinstruction.cpp \
+            maps/qgeomaneuver.cpp \
             maps/qgeomapcircleobject.cpp \
             maps/qgeomapdata.cpp \
+            maps/qgeomapgroupobject.cpp \
             maps/qgeomapobject.cpp \
             maps/qgeomapobjectinfo.cpp \
             maps/qgeomapoverlay.cpp \

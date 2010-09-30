@@ -56,6 +56,8 @@
 #include "qgeotiledmapobjectinfo_p.h"
 
 #include <QPolygonF>
+#include <QPen>
+#include <QBrush>
 
 class QGraphicsPolygonItem;
 
@@ -65,17 +67,26 @@ class QGeoMapCircleObject;
 
 class QGeoTiledMapCircleObjectInfo : public QGeoTiledMapObjectInfo
 {
+    Q_OBJECT
 public:
-    QGeoTiledMapCircleObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    QGeoTiledMapCircleObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapCircleObjectInfo();
-
-    void objectUpdated();
-    void mapUpdated();
 
     QGeoMapCircleObject* circle;
     QGraphicsPolygonItem *polygonItem;
 
     QPolygonF points;
+
+    void updateValidity();
+
+public slots:
+    void centerChanged(const QGeoCoordinate &center);
+    void radiusChanged(qreal radius);
+    void penChanged(const QPen &pen);
+    void brushChanged(const QBrush &brush);
+
+private:
+    void update();
 };
 
 QTM_END_NAMESPACE

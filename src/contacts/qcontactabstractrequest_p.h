@@ -99,6 +99,9 @@ public:
     QContactManager::Error m_error;
     QContactAbstractRequest::State m_state;
     QPointer<QContactManager> m_manager;
+    // stored separately so (friend) QContactManagerEngineV2Wrapper can set it directly:
+    QPointer<QContactManagerEngine> m_engine;
+
     mutable QMutex m_mutex;
 };
 

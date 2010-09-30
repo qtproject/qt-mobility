@@ -86,6 +86,12 @@ public:
     QList<QContactDetail> m_details;
     QList<QContactRelationship> m_relationshipsCache;
     QMap<QString, int> m_preferences;
+
+    // Helper function
+    void removeOnly(const QSet<QString>& detailMask);
+
+    // Trampoline
+    static QSharedDataPointer<QContactData>& contactData(QContact& contact) {return contact.d;}
 };
 
 QTM_END_NAMESPACE

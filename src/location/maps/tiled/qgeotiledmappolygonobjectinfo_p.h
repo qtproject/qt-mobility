@@ -55,6 +55,8 @@
 
 #include "qgeotiledmapobjectinfo_p.h"
 
+#include <QPen>
+#include <QBrush>
 #include <QPolygonF>
 
 class QGraphicsPolygonItem;
@@ -65,17 +67,20 @@ class QGeoMapPolygonObject;
 
 class QGeoTiledMapPolygonObjectInfo : public QGeoTiledMapObjectInfo
 {
+    Q_OBJECT
 public:
-    QGeoTiledMapPolygonObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    QGeoTiledMapPolygonObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapPolygonObjectInfo();
-
-    void objectUpdated();
-    void mapUpdated();
 
     QGeoMapPolygonObject *polygon;
     QGraphicsPolygonItem *polygonItem;
 
     QPolygonF points;
+
+public slots:
+    void pathChanged(const QList<QGeoCoordinate> &path);
+    void penChanged(const QPen &pen);
+    void brushChanged(const QBrush &brush);
 };
 
 QTM_END_NAMESPACE

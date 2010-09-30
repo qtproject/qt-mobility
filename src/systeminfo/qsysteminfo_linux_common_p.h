@@ -206,16 +206,16 @@ Q_SIGNALS:
 private:
      QMap<QString, QString> mountEntriesMap;
      void mountEntries();
-     QFileSystemWatcher *mtabWatcherA;
-     QFileSystemWatcher *mtabWatcherB;
+     int mtabWatchA;
+     int inotifyFD;
 
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
 #endif
 private Q_SLOTS:
-    void deviceChanged(const QString &path);
-
+    void deviceChanged();
+    void inotifyActivated();
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
@@ -268,6 +268,9 @@ private Q_SLOTS:
     virtual void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
 #endif
+private:
+    QSystemDeviceInfo::BatteryStatus currentBatStatus;
+    void initBatteryStatus();
 };
 
 
@@ -279,10 +282,10 @@ public:
     QSystemScreenSaverLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemScreenSaverLinuxCommonPrivate();
 
-    bool screenSaverInhibited() {return false;}
-    bool setScreenSaverInhibit() {return false;}
-    bool isScreenLockEnabled() {return false;}
-    bool isScreenSaverActive() {return false;}
+//    bool screenSaverInhibited() {return false;}
+//    bool setScreenSaverInhibit() {return false;}
+//    bool isScreenLockEnabled() {return false;}
+//    bool isScreenSaverActive() {return false;}
 };
 
 QTM_END_NAMESPACE

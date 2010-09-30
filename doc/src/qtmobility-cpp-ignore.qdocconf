@@ -8,7 +8,6 @@ Cpp.ignoretokens        +=  \
                             Q_LOCATION_EXPORT \
                             Q_MULTIMEDIA_EXPORT \
                             Q_MESSAGING_EXPORT \
-                            Q_TELEPHONY_EXPORT \
                             Q_SERVICEFW_EXPORT \
                             Q_SYSINFO_EXPORT \
                             Q_SENSORS_EXPORT \

@@ -45,77 +45,20 @@
 
 #include <qgalleryresultset.h>
 
+#include <QtDeclarative/qdeclarativeinfo.h>
+
 QTM_BEGIN_NAMESPACE
-
-/*!
-    \qmlclass GalleryQueryModel QDeclarativeGalleryQueryModel
-
-    \inmodule QtGallery
-
-    \brief The GalleryQueryRequest element is used to specify a model containing
-    items from a gallery.
-    \ingroup qml-gallery
-
-    This element is part of the \bold {QtMobility.gallery 1.1} module.
-
-    The properties that should be returned for each item by the query are
-    specified in \l properties. In addition all queries return the following
-    properties:
-
-    \list
-    \o itemId The ID of an item.
-    \o itemType The type of an item.
-    \endlist
-
-    \qml
-    import Qt 4.7
-    import QtMobility.gallery 1.1
-
-    Rectangle {
-        width: 1024
-        height: 768
-
-        GridView {
-            anchors.fill: parent
-            cellWidth: 128
-            cellHeight: 128
-
-            model: GalleryQueryModel {
-                gallery: DocumentGallery {}
-
-                rootType: "Image"
-                properties: [ "url" ]
-                filter: GalleryFilter {
-                    property: "fileName";
-                    value: "*.jpg";
-                    comparator: GalleryFilter.Wildcard
-                }
-            }
-
-            delegate: Image {
-                source: url
-            }
-        }
-    }
-    \endqml
-
-    \sa GalleryItem, GalleryType
-*/
 
 QDeclarativeGalleryQueryModel::QDeclarativeGalleryQueryModel(QObject *parent)
     : QAbstractListModel(parent)
     , m_resultSet(0)
-    , m_complete(false)
+    , m_status(Null)
+    , m_rowCount(0)
+    , m_updateStatus(Incomplete)
 {
-    connect(&m_request, SIGNAL(succeeded()), this, SIGNAL(succeeded()));
-    connect(&m_request, SIGNAL(cancelled()), this, SIGNAL(cancelled()));
-    connect(&m_request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
-            this, SIGNAL(stateChanged()));
-    connect(&m_request, SIGNAL(resultChanged()), this, SIGNAL(resultChanged()));
+    connect(&m_request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
+            this, SLOT(_q_statusChanged()));
     connect(&m_request, SIGNAL(progressChanged(int,int)), this, SIGNAL(progressChanged()));
-    connect(&m_request, SIGNAL(resultChanged()), this, SIGNAL(resultChanged()));
-    connect(&m_request, SIGNAL(failed(int)), this, SIGNAL(failed(int)));
-    connect(&m_request, SIGNAL(finished(int)), this, SIGNAL(finished(int)));
 
     connect(&m_request, SIGNAL(resultSetChanged(QGalleryResultSet*)),
             this, SLOT(_q_setResultSet(QGalleryResultSet*)));
@@ -125,178 +68,142 @@ QDeclarativeGalleryQueryModel::~QDeclarativeGalleryQueryModel()
 {
 }
 
-void QDeclarativeGalleryQueryModel::classBegin()
-{
-}
-
 void QDeclarativeGalleryQueryModel::componentComplete()
 {
-    m_complete = true;
+    m_updateStatus = NoUpdate;
 
-    if (m_filter)
-        m_request.setFilter(m_filter->filter());
+    if (m_filter) {
+        connect(m_filter.data(), SIGNAL(filterChanged()), this, SLOT(deferredExecute()));
+
+        m_request.setFilter(m_filter.data()->filter());
+    }
     m_request.execute();
 }
 
-/*!
-    \qmlproperty QAbstractGallery GalleryQueryModel::gallery
+qreal QDeclarativeGalleryQueryModel::progress() const
+{
+    const int max = m_request.maximumProgress();
 
-    This property holds the gallery a query should return results from.
-*/
+    return max > 0 ? qreal(m_request.currentProgress()) / max : qreal(0.0);
+}
 
-/*!
-    \qmlproperty enum GalleryQueryModel::state
+void QDeclarativeGalleryQueryModel::setPropertyNames(const QStringList &names)
+{
+    if (m_updateStatus == Incomplete) {
+        m_request.setPropertyNames(names);
 
-    This property holds the state of a query.  It can be one of:
+        emit propertyNamesChanged();
+    }
+}
 
-    \list
-    \o Inactive The query has finished.
-    \o Active The query is currently executing.
-    \o Cancelling The query has been cancelled, but has yet reached the
-    Inactive state.
-    \o Idle The query has finished and is monitoring its result set for
-    changes.
-    \endlist
-*/
+void QDeclarativeGalleryQueryModel::setSortPropertyNames(const QStringList &names)
+{
+    if (m_request.sortPropertyNames() != names) {
+        m_request.setSortPropertyNames(names);
 
-/*!
-    \qmlproperty enum GalleryQueryModel::result
+        deferredExecute();
 
-    The property holds the result of a query. It can be one of:
+        emit sortPropertyNamesChanged();
+    }
+}
 
-    \list
-    \o NoResult The query is still executing.
-    \o Succeeded The query finished successfully.
-    \o Cancelled The query was cancelled.
-    \o NoGallery No gallery was set on the query.
-    \o NotSupported Queries are not supported by the \l gallery.
-    \o ConnectionError The query failed due to a connection error.
-    \o InvalidItemError The query failed because the value of \l rootItem
-    is not a valid item ID.
-    \o ItemTypeError The query failed because the value of \l rootType is not
-    a valid item type.
-    \o InvalidPropertyError The query failed because the \l filter refers to an
-    invalid property.
-    \o PropertyTypeError The query failed because the type of a value in the
-    \l filter is incompatible with the property.
-    \o UnsupportedFilterTypeError The query failed because the set \l filter
-    is not supported by the \l gallery.
-    \o UnsupportedFilterOptionError The query failed because an option of a
-    \l filter is not supported by the \l gallery.
-    \endlist
-*/
+void QDeclarativeGalleryQueryModel::setAutoUpdate(bool enabled)
+{
+    if (m_request.autoUpdate() != enabled) {
+        m_request.setAutoUpdate(enabled);
 
-/*!
-    \qmlproperty real GalleryQueryModel::progress
+        if (enabled)
+            deferredExecute();
+        else if (m_status == Idle)
+            m_request.cancel();
 
-    This property holds the current progress of the request, from 0.0 (started)
-    to 1.0 (finished).
-*/
+        emit autoUpdateChanged();
+    }
+}
 
-/*!
-    \qmlproperty QStringList GalleryQueryModel::properties
+void QDeclarativeGalleryQueryModel::setScope(Scope scope)
+{
+    if (m_request.scope() != QGalleryQueryRequest::Scope(scope)) {
+        m_request.setScope(QGalleryQueryRequest::Scope(scope));
 
-    This property holds the item properties a query should return values for.
-*/
+        deferredExecute();
 
-/*!
-    \qmlproperty QStringList GalleryQueryModel::sortProperties
+        emit scopeChanged();
+    }
+}
 
-    This property holds the properties the results of a query should be sorted
-    on.
-*/
+void QDeclarativeGalleryQueryModel::setRootItem(const QVariant &itemId)
+{
+    if (m_request.rootItem() != itemId) {
+        m_request.setRootItem(itemId);
 
-/*!
-    \qmlproperty bool GalleryQueryModel::live
+        deferredExecute();
 
-    This property holds whether a query should refresh its results
-    automatically.
-*/
+        emit rootItemChanged();
+    }
+}
 
-/*!
-    \qmlproperty int GalleryQueryModel::offset
+void QDeclarativeGalleryQueryModel::setFilter(QDeclarativeGalleryFilterBase *filter)
+{
+    if (m_filter)
+        disconnect(m_filter.data(), SIGNAL(filterChanged()), this, SLOT(deferredExecute()));
 
-    This property holds the offset of the first item returned by a query.
-*/
+    m_filter = filter;
 
-/*!
-    \qmlproperty int GalleryQueryModel::limit
+    if (m_filter)
+        connect(m_filter.data(), SIGNAL(filterChanged()), this, SLOT(deferredExecute()));
 
-    This property contains the maximum number of items returned by a query.
-*/
+    deferredExecute();
 
-/*!
-    \qmlproperty string GalleryQueryModel::rootType
+    emit filterChanged();
+}
 
-    This property contains the type of item a query should return.
-*/
+void QDeclarativeGalleryQueryModel::setOffset(int offset)
+{
+    if (m_request.offset() != offset) {
+        m_request.setOffset(offset);
 
-/*!
-    \qmlproperty GalleryFilter GalleryQueryModel::filter
+        deferredExecute();
 
-    This property contains criteria to used to filter the results of a query.
-*/
+        emit offsetChanged();
+    }
+}
 
-/*!
-    \qmlproperty variant GalleryQueryModel::rootItem
+void QDeclarativeGalleryQueryModel::setLimit(int limit)
+{
+    if (m_request.limit() != limit) {
+        m_request.setLimit(limit);
 
-    This property contains the id of an item that a query should return the
-    descendants of.
-*/
+        deferredExecute();
 
-/*!
-    \qmlproperty enum GalleryQueryModel::scope
-
-    The property contains whether a query should count the direct descendants
-    of the \l rootItem or all descendants.
-*/
-
-/*!
-    \qmlmethod GalleryQueryModel::reload()
-
-    Re-queries the gallery.
-*/
-
-/*!
-    \qmlmethod GalleryQueryModel::cancel()
-
-    Cancels an executing query.
-*/
-
-/*!
-    \qmlmethod GalleryQueryModel::clear()
-
-    Clears the results of a query.
-*/
-
-/*!
-    \qmlsignal GalleryQueryModel::onSucceeded()
-
-    Signals that a query has finished successfully.
-*/
-
-/*!
-    \qmlsignal GalleryQueryModel::onCancelled()
-
-    Signals that a query was cancelled.
-*/
-
-/*!
-    \qmlsignal GalleryQueryModel::onFailed(error)
-
-    Signals that a query failed with the given \a error.
-*/
-
-/*!
-    \qmlsignal GalleryQueryModel::onFinished(result)
-
-    Signals that a query finished with the given \a result.
-*/
+        emit limitChanged();
+    }
+}
 
 void QDeclarativeGalleryQueryModel::reload()
 {
-    m_request.setFilter(m_filter ? m_filter->filter() : QGalleryFilter());
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
+
+    m_request.setFilter(m_filter ? m_filter.data()->filter() : QGalleryFilter());
+
     m_request.execute();
+}
+
+void QDeclarativeGalleryQueryModel::cancel()
+{
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
+
+    m_request.cancel();
+}
+
+void QDeclarativeGalleryQueryModel::clear()
+{
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
+
+    m_request.clear();
 }
 
 
@@ -315,7 +222,7 @@ QVariant QDeclarativeGalleryQueryModel::data(const QModelIndex &index, int role)
         case ItemId:
             return m_resultSet->itemId();
         case ItemType:
-            return m_resultSet->itemType();
+            return itemType(m_resultSet->itemType());
         default:
             {
                 QVariant value = m_resultSet->metaData(role - MetaDataOffset);
@@ -330,9 +237,10 @@ QVariant QDeclarativeGalleryQueryModel::data(const QModelIndex &index, int role)
     }
 }
 
-bool QDeclarativeGalleryQueryModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool QDeclarativeGalleryQueryModel::setData(
+        const QModelIndex &index, const QVariant &value, int role)
 {
-    if (index.isValid() && (role -= MetaDataOffset) > 0) {
+    if (index.isValid() && (role -= MetaDataOffset) >= 0) {
         if (m_resultSet->currentIndex() != index.row() && !m_resultSet->fetch(index.row()))
             return false;
 
@@ -343,28 +251,13 @@ bool QDeclarativeGalleryQueryModel::setData(const QModelIndex &index, const QVar
 
 }
 
-/*!
-    \qmlproperty GalleryQueryModel::count
-
-    This property holds the number of results returned by a query.
-*/
-
-QModelIndex QDeclarativeGalleryQueryModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex QDeclarativeGalleryQueryModel::index(
+        int row, int column, const QModelIndex &parent) const
 {
     return !parent.isValid() && row >= 0 && row < m_rowCount && column == 0
             ? createIndex(row, column)
             : QModelIndex();
 }
-
-/*!
-    \qmlmethod GalleryQueryModel::get(int index)
-
-    Returns the result at \a index in a query model.
-
-    \code
-    query.get(0).title
-    \endcode
-*/
 
 QScriptValue QDeclarativeGalleryQueryModel::get(const QScriptValue &index) const
 {
@@ -400,16 +293,6 @@ QScriptValue QDeclarativeGalleryQueryModel::get(const QScriptValue &index) const
     return object;
 }
 
-/*!
-    \qmlmethod GalleryQueryModel::property(int index, string property)
-
-    Returns the value of \a property from the result at \a index.
-
-    \code
-    query.getProperty(0, "title")
-    \endcode
-*/
-
 QVariant QDeclarativeGalleryQueryModel::property(int index, const QString &property) const
 {
     if (index < 0
@@ -421,7 +304,7 @@ QVariant QDeclarativeGalleryQueryModel::property(int index, const QString &prope
     if (property == QLatin1String("itemId")) {
         return m_resultSet->itemId();
     } else if (property == QLatin1String("itemType")) {
-        return m_resultSet->itemType();
+        return itemType(m_resultSet->itemType());
     } else {
         const int propertyKey = m_resultSet->propertyKey(property);
 
@@ -432,13 +315,6 @@ QVariant QDeclarativeGalleryQueryModel::property(int index, const QString &prope
                 : value;
     }
 }
-
-/*!
-    \qmlmethod GalleryQueryModel::set(int index, jsobject dict)
-
-    Changes the item at \a index in the list model with the values in \a dict.
-    Properties not appearing in \a dict are left unchanged.
-*/
 
 void QDeclarativeGalleryQueryModel::set(int index, const QScriptValue &values)
 {
@@ -451,27 +327,13 @@ void QDeclarativeGalleryQueryModel::set(int index, const QScriptValue &values)
     QScriptValueIterator it(values);
     while (it.hasNext()) {
         it.next();
-        QScriptValue value = it.value();
-
-        if (value.isVariant())
-            m_resultSet->setMetaData(m_resultSet->propertyKey(it.name()), value.toVariant());
+        m_resultSet->setMetaData(m_resultSet->propertyKey(it.name()), it.value().toVariant());
     }
 }
-
-/*!
-    \qmlmethod GalleryQueryModel::setProperty(int index, string property, variant value)
-
-    Changes the \a property of the result at \a index in a model to \a value.
-
-    \code
-        model.setProperty(0, "rating", 4)
-    \endcode
-*/
 
 void QDeclarativeGalleryQueryModel::setProperty(
         int index, const QString &property, const QVariant &value)
 {
-
     if (index < 0
             || index >= m_rowCount
             || (m_resultSet->currentIndex() != index && !m_resultSet->fetch(index))) {
@@ -481,10 +343,77 @@ void QDeclarativeGalleryQueryModel::setProperty(
     m_resultSet->setMetaData(m_resultSet->propertyKey(property), value);
 }
 
+
+
+void QDeclarativeGalleryQueryModel::deferredExecute()
+{
+    if (m_updateStatus == NoUpdate) {
+        m_updateStatus = PendingUpdate;
+
+        QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+    } else if (m_updateStatus == CancelledUpdate) {
+        m_updateStatus = PendingUpdate;
+    }
+}
+
+bool QDeclarativeGalleryQueryModel::event(QEvent *event)
+{
+    if (event->type() == QEvent::UpdateRequest) {
+        UpdateStatus status = m_updateStatus;
+        m_updateStatus = NoUpdate;
+
+        if (status == PendingUpdate) {
+            m_request.setFilter(m_filter ? m_filter.data()->filter() : QGalleryFilter());
+            m_request.execute();
+        }
+
+        return true;
+    } else {
+        return QAbstractListModel::event(event);
+    }
+}
+
+void QDeclarativeGalleryQueryModel::_q_statusChanged()
+{
+    m_status = Status(m_request.status());
+
+    if (m_status == Error) {
+        const QString message = m_request.errorString();
+
+        if (!message.isEmpty()) {
+            qmlInfo(this) << message;
+        } else {
+            switch (m_request.error()) {
+            case QDocumentGallery::ConnectionError:
+                qmlInfo(this) << tr("An error was encountered connecting to the document gallery");
+                break;
+            case QDocumentGallery::ItemTypeError:
+                qmlInfo(this) << (m_request.rootType().isEmpty()
+                        ? tr("DocumentGallery.InvalidType is not a supported item type")
+                        : tr("DocumentGallery.%1 is not a supported item type")
+                                .arg(m_request.rootType()));
+                break;
+            case QDocumentGallery::ItemIdError:
+                qmlInfo(this) << tr("The value of rootItem is not a valid item ID");
+                break;
+            case QDocumentGallery::FilterError:
+                qmlInfo(this) << tr("The value of filter is unsupported");
+            default:
+                break;
+            }
+        }
+        emit statusChanged();
+    } else if (m_status == Idle && !m_request.autoUpdate()) {
+        m_request.cancel();
+    } else {
+        emit statusChanged();
+    }
+}
+
 void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet)
 {
     if (m_rowCount > 0) {
-        beginRemoveRows(QModelIndex(), 0, m_rowCount);
+        beginRemoveRows(QModelIndex(), 0, m_rowCount - 1);
         m_rowCount = 0;
         m_resultSet = resultSet;
         endRemoveRows();
@@ -504,8 +433,10 @@ void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet
                 ++it) {
             const int key = m_resultSet->propertyKey(*it);
 
-            roleNames.insert(key + MetaDataOffset, it->toLatin1());
-            m_propertyNames.append(qMakePair(key, *it));
+            if (key >= 0) {
+                roleNames.insert(key + MetaDataOffset, it->toLatin1());
+                m_propertyNames.append(qMakePair(key, *it));
+            }
         }
         roleNames.insert(ItemId, QByteArray("itemId"));
         roleNames.insert(ItemType, QByteArray("itemType"));
@@ -559,6 +490,284 @@ void QDeclarativeGalleryQueryModel::_q_itemsMoved(int from, int to, int count)
 void QDeclarativeGalleryQueryModel::_q_itemsChanged(int index, int count)
 {
     emit dataChanged(createIndex(index, 0), createIndex(index + count - 1, 0));
+}
+
+/*!
+    \qmlclass DocumentGalleryModel QDeclarativeDocumentGalleryModel
+
+    \inmodule QtGallery
+
+    \brief The GalleryQueryRequest element is used to specify a model
+    containing items from the document gallery.
+
+    \ingroup qml-gallery
+
+    This element is part of the \bold {QtMobility.gallery 1.1} module.
+
+    The properties that should be returned for each item by the query are
+    specified in \l properties. In addition all queries return the following
+    properties:
+
+    \list
+    \o itemId The ID of an item.
+    \o itemType The type of an item.
+    \endlist
+
+    \qml
+    import Qt 4.7
+    import QtMobility.gallery 1.1
+
+    Rectangle {
+        width: 1024
+        height: 768
+
+        GridView {
+            anchors.fill: parent
+            cellWidth: 128
+            cellHeight: 128
+
+            model: DocumentGalleryModel {
+                rootType: DocumentGallery.Image
+                properties: [ "url" ]
+                filter: GalleryWildcardFilter {
+                    property: "fileName";
+                    value: "*.jpg";
+                }
+            }
+
+            delegate: Image {
+                source: url
+                width: 128
+                height: 128
+            }
+        }
+    }
+    \endqml
+
+    \sa DocumentGalleryItem, DocumentGalleryType
+*/
+
+QDeclarativeDocumentGalleryModel::QDeclarativeDocumentGalleryModel(QObject *parent)
+    : QDeclarativeGalleryQueryModel(parent)
+{
+    m_request.setRootType(QDocumentGallery::File);
+}
+
+QDeclarativeDocumentGalleryModel::~QDeclarativeDocumentGalleryModel()
+{
+}
+
+void QDeclarativeDocumentGalleryModel::classBegin()
+{
+    m_request.setGallery(QDeclarativeDocumentGallery::gallery(this));
+}
+
+/*!
+    \qmlproperty enum DocumentGalleryModel::status
+
+    This property holds the status of a query.  It can be one of:
+
+    \list
+    \o Null No query parameters have been specified.
+    \o Active Items matching the query parameters are being fetched from the
+    gallery.
+    \o Finished The query has finished
+    \o Idle The query is finished and will be automatically updated as new
+    items become available.
+    \o Cancelling The query was cancelled but hasn't yet reached the
+    cancelled status.
+    \o Cancelled The query was cancelled.
+    \o Error Information about a type could not be retrieved due to an error.
+    \endlist
+*/
+
+/*!
+    \qmlproperty real DocumentGalleryModel::progress
+
+    This property holds the current progress of the request, from 0.0 (started)
+    to 1.0 (finished).
+*/
+
+/*!
+    \qmlproperty QStringList DocumentGalleryModel::properties
+
+    This property holds the item properties a query should return values for.
+*/
+
+/*!
+    \qmlproperty QStringList DocumentGalleryModel::sortProperties
+
+    This property holds the properties the results of a query should be sorted
+    on.
+*/
+
+/*!
+    \qmlproperty bool DocumentGalleryModel::autoUpdate
+
+    This property holds whether a query should refresh its results
+    automatically.
+*/
+
+/*!
+    \qmlproperty int DocumentGalleryModel::offset
+
+    This property holds the offset of the first item returned by a query.
+*/
+
+/*!
+    \qmlproperty int DocumentGalleryModel::limit
+
+    This property contains the maximum number of items returned by a query.
+*/
+
+/*!
+    \qmlproperty enum DocumentGalleryModel::rootType
+
+    This property contains the type of item a query should return.
+    It can be one of:
+
+    \list
+    \o DocumentGallery.InvalidType
+    \o DocumentGallery.File
+    \o DocumentGallery.Folder
+    \o DocumentGallery.Document
+    \o DocumentGallery.Text
+    \o DocumentGallery.Audio
+    \o DocumentGallery.Image
+    \o DocumentGallery.Video
+    \o DocumentGallery.Playlist
+    \o DocumentGallery.Artist
+    \o DocumentGallery.AlbumArtist
+    \o DocumentGallery.Album
+    \o DocumentGallery.AudioGenre
+    \o DocumentGallery.PhotoAlbum
+    \endlist
+
+    The default value is DocumentGallery.File
+*/
+
+QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGalleryModel::rootType() const
+{
+    return QDeclarativeDocumentGallery::itemTypeFromString(m_request.rootType());
+}
+
+void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::ItemType itemType)
+{
+    if (m_updateStatus == Incomplete) {
+        m_request.setRootType(QDeclarativeDocumentGallery::toString(itemType));
+
+        emit rootTypeChanged();
+    }
+}
+
+/*!
+    \qmlproperty GalleryFilter DocumentGalleryModel::filter
+
+    This property contains criteria to used to filter the results of a query.
+*/
+
+/*!
+    \qmlproperty variant DocumentGalleryModel::rootItem
+
+    This property contains the id of an item that a query should return the
+    descendants of.
+*/
+
+/*!
+    \qmlproperty enum DocumentGalleryModel::scope
+
+    The property contains whether a query should count the direct descendants
+    of the \l rootItem or all descendants.
+*/
+
+/*!
+    \qmlmethod DocumentGalleryModel::reload()
+
+    Re-queries the gallery.
+*/
+
+/*!
+    \qmlmethod DocumentGalleryModel::cancel()
+
+    Cancels an executing query.
+*/
+
+/*!
+    \qmlmethod DocumentGalleryModel::clear()
+
+    Clears the results of a query.
+*/
+
+/*!
+    \qmlsignal DocumentGalleryModel::onSucceeded()
+
+    Signals that a query has finished successfully.
+*/
+
+/*!
+    \qmlsignal DocumentGalleryModel::onCancelled()
+
+    Signals that a query was cancelled.
+*/
+
+/*!
+    \qmlsignal DocumentGalleryModel::onFailed(error)
+
+    Signals that a query failed with the given \a error.
+*/
+
+/*!
+    \qmlsignal DocumentGalleryModel::onFinished(result)
+
+    Signals that a query finished with the given \a result.
+*/
+
+/*!
+    \qmlproperty int DocumentGalleryModel::count
+
+    This property holds the number of results returned by a query.
+*/
+
+/*!
+    \qmlmethod DocumentGalleryModel::get(int index)
+
+    Returns the result at \a index in a query model.
+
+    \code
+    query.get(0).title
+    \endcode
+*/
+
+/*!
+    \qmlmethod DocumentGalleryModel::property(int index, string property)
+
+    Returns the value of \a property from the result at \a index.
+
+    \code
+    query.getProperty(0, "title")
+    \endcode
+*/
+
+/*!
+    \qmlmethod DocumentGalleryModel::set(int index, jsobject dict)
+
+    Changes the item at \a index in the list model with the values in \a dict.
+    Properties not appearing in \a dict are left unchanged.
+*/
+
+/*!
+    \qmlmethod DocumentGalleryModel::setProperty(int index, string property, variant value)
+
+    Changes the \a property of the result at \a index in a model to \a value.
+
+    \code
+        model.setProperty(0, "rating", 4)
+    \endcode
+*/
+
+QVariant QDeclarativeDocumentGalleryModel::itemType(const QString &type) const
+{
+    return QVariant::fromValue(QDeclarativeDocumentGallery::itemTypeFromString(type));
 }
 
 #include "moc_qdeclarativegalleryquerymodel.cpp"

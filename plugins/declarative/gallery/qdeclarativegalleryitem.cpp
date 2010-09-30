@@ -43,39 +43,21 @@
 
 #include <qgalleryresultset.h>
 
+#include <QtCore/qcoreapplication.h>
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include <QtDeclarative/qdeclarativepropertymap.h>
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \qmlclass GalleryItem QDeclarativeGalleryItem
-
-    \inmodule QtGallery
-    \ingroup qml-gallery
-
-    \brief The GalleryItem element allows you to request information about a
-    single item from a gallery
-
-    This element is part of the \bold {QtMobility.gallery 1.1} module.
-    
-
-    \sa GalleryQueryModel, GalleryType
-*/
-
 QDeclarativeGalleryItem::QDeclarativeGalleryItem(QObject *parent)
     : QObject(parent)
     , m_metaData(0)
-    , m_complete(false)
+    , m_status(Null)
+    , m_updateStatus(Incomplete)
 {
-    connect(&m_request, SIGNAL(succeeded()), this, SIGNAL(succeeded()));
-    connect(&m_request, SIGNAL(cancelled()), this, SIGNAL(cancelled()));
-    connect(&m_request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
-            this, SIGNAL(stateChanged()));
-    connect(&m_request, SIGNAL(resultChanged()), this, SIGNAL(resultChanged()));
+    connect(&m_request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
+            this, SLOT(_q_statusChanged()));
     connect(&m_request, SIGNAL(progressChanged(int,int)), this, SIGNAL(progressChanged()));
-    connect(&m_request, SIGNAL(resultChanged()), this, SIGNAL(resultChanged()));
-    connect(&m_request, SIGNAL(failed(int)), this, SIGNAL(failed(int)));
-    connect(&m_request, SIGNAL(finished(int)), this, SIGNAL(finished(int)));
 
     connect(&m_request, SIGNAL(itemChanged()),
             this, SLOT(_q_itemChanged()));
@@ -92,166 +74,139 @@ QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
 {
 }
 
-/*!
-    \qmlproperty QAbstractGallery GalleryItem::gallery
-
-    This property holds the gallery that an item should be requested from.
-*/
-
-/*!
-    \qmlproperty enum GalleryItem::state
-
-    This property holds the state of an item request.  It can be one of:
-
-    \list
-    \o Inactive The request has finished.
-    \o Active The request is currently executing.
-    \o Cancelling The request has been cancelled, but has yet reached the
-    Inactive state.
-    \o Idle The request has finished and is monitoring its result set for
-    changes.
-    \endlist
-*/
-
-/*!
-    \qmlproperty enum GalleryItem::result
-
-    The property holds the result of an item request. It can be one of:
-
-    \list
-    \o NoResult The request is still executing.
-    \o Succeeded The request finished successfully.
-    \o Cancelled The request was cancelled.
-    \o NoGallery No \l gallery was specified.
-    \o NotSupported Item requests are not supported by the \l gallery.
-    \o ConnectionError The request failed due to a connection error.
-    \o InvalidItemError The request failed because the value of \l item
-    is not a valid item ID.
-    \endlist
-*/
-
-/*!
-    \qmlproperty real GalleryItem::progress
-
-    This property holds the current progress of the request, from 0.0 (started)
-    to 1.0 (finished).
-*/
-
-/*!
-    \qmlproperty QStringList GalleryItem::properties
-
-    This property holds the item properties a request should return values for.
-*/
-
-/*!
-    \qmlproperty bool GalleryItem::live
-
-    This property holds whether a request should refresh its results
-    automatically.
-*/
-
-/*!
-    \qmlproperty variant GalleryItem::item
-
-    This property holds the id of the item to return information about.
-*/
-
-/*!
-    \qmlproperty bool GalleryItem::available
-
-    This property holds whether the meta-data of an item is available.
-*/
-
-/*!
-    \qmlproperty bool GalleryItem::reading
-
-    This property holds whether the meta-data of an item is currently being
-    read.
-*/
-
-/*!
-    \qmlproperty bool GalleryItem::writing
-
-    This property holds whether the meta-data of an item is currently being
-    written.
-*/
-
-/*!
-    \qmlproperty bool GalleryType::available
-
-    This property holds whether the meta-data of an item is available.
-*/
-
-/*!
-    \qmlproperty string GalleryItem::itemType
-
-    This property holds the type of a gallery item.
-*/
-
-/*!
-    \qmlproperty url GalleryItem::itemUrl
-
-    This property holds the URL of a gallery item.
-*/
-
-/*!
-    \qmlproperty object GalleryItem::metaData
-
-    This property holds the meta-data of a gallery item.
-*/
-
-/*!
-    \qmlmethod GalleryItem::reload()
-
-    Re-queries the gallery.
-*/
-
-/*!
-    \qmlmethod GalleryItem::cancel()
-
-    Cancels an executing request.
-*/
-
-/*!
-    \qmlmethod GalleryItem::clear()
-
-    Clears the results of a request.
-*/
-
-/*!
-    \qmlsignal GalleryItem::onSucceeded()
-
-    Signals that a request has finished successfully.
-*/
-
-/*!
-    \qmlsignal GalleryItem::onCancelled()
-
-    Signals that a request was cancelled.
-*/
-
-/*!
-    \qmlsignal GalleryItem::onFailed(error)
-
-    Signals that a request failed with the given \a error.
-*/
-
-/*!
-    \qmlsignal GalleryItem::onFinished(result)
-
-    Signals that a request finished with the given \a result.
-*/
-
-void QDeclarativeGalleryItem::classBegin()
+qreal QDeclarativeGalleryItem::progress() const
 {
+    const int max = m_request.maximumProgress();
+
+    return max > 0
+            ? qreal(m_request.currentProgress()) / max
+            : qreal(0.0);
+}
+
+void QDeclarativeGalleryItem::setPropertyNames(const QStringList &names)
+{
+    if (m_updateStatus == Incomplete) {
+        m_request.setPropertyNames(names);
+
+        emit propertyNamesChanged();
+    }
+}
+
+void QDeclarativeGalleryItem::setAutoUpdate(bool enabled)
+{
+    if (m_request.autoUpdate() != enabled) {
+        m_request.setAutoUpdate(enabled);
+
+        if (enabled)
+            deferredExecute();
+        else if (m_status == Idle)
+            m_request.cancel();
+
+        emit autoUpdateChanged();
+    }
+}
+
+void QDeclarativeGalleryItem::setItemId(const QVariant &itemId)
+{
+    if (m_request.itemId() != itemId) {
+        m_request.setItemId(itemId);
+
+        if (m_updateStatus != Incomplete) {
+            if (itemId.isValid())
+                m_request.execute();
+            else
+                m_request.clear();
+        }
+
+        emit itemIdChanged();
+    }
 }
 
 void QDeclarativeGalleryItem::componentComplete()
 {
-    m_complete = true;
+    m_updateStatus = NoUpdate;
 
     if (m_request.itemId().isValid())
         m_request.execute();
+}
+
+void QDeclarativeGalleryItem::reload()
+{
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
+
+    m_request.execute();
+}
+
+void QDeclarativeGalleryItem::cancel()
+{
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
+
+    m_request.cancel();
+}
+
+void QDeclarativeGalleryItem::clear()
+{
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
+
+    m_request.clear();
+}
+
+void QDeclarativeGalleryItem::deferredExecute()
+{
+    if (m_updateStatus == NoUpdate) {
+        m_updateStatus = PendingUpdate;
+
+        QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+    } else if (m_updateStatus == CancelledUpdate) {
+        m_updateStatus = PendingUpdate;
+    }
+}
+
+bool QDeclarativeGalleryItem::event(QEvent *event)
+{
+    if (event->type() == QEvent::UpdateRequest) {
+        UpdateStatus status = m_updateStatus;
+        m_updateStatus = NoUpdate;
+
+        if (status == PendingUpdate)
+            m_request.execute();
+
+        return true;
+    } else {
+        return QObject::event(event);
+    }
+}
+
+void QDeclarativeGalleryItem::_q_statusChanged()
+{
+    m_status = Status(m_request.status());
+
+    if (m_status == Error) {
+        const QString message = m_request.errorString();
+
+        if (!message.isEmpty()) {
+            qmlInfo(this) << message;
+        } else {
+            switch (m_request.error()) {
+            case QDocumentGallery::ConnectionError:
+                qmlInfo(this) << tr("An error was encountered connecting to the document gallery");
+                break;
+            case QDocumentGallery::ItemIdError:
+                qmlInfo(this) << tr("The value of item is not a valid item ID");
+                break;
+            default:
+                break;
+            }
+        }
+        emit statusChanged();
+    } else if (m_status == Idle && !m_request.autoUpdate()) {
+        m_request.cancel();
+    } else {
+        emit statusChanged();
+    }
 }
 
 void QDeclarativeGalleryItem::_q_itemChanged()
@@ -301,6 +256,144 @@ void QDeclarativeGalleryItem::_q_metaDataChanged(const QList<int> &keys)
                 : value);
     }
 }
+
+/*!
+    \qmlclass DocumentGalleryItem QDeclarativeDocumentGalleryItem
+
+    \inmodule QtGallery
+    \ingroup qml-gallery
+
+    \brief The DocumentGalleryItem element allows you to request information
+    about a single item from the document gallery
+
+    This element is part of the \bold {QtMobility.gallery 1.1} module.
+
+
+    \sa DocumentGalleryModel, DocumentGalleryType
+*/
+
+QDeclarativeDocumentGalleryItem::QDeclarativeDocumentGalleryItem(QObject *parent)
+    : QDeclarativeGalleryItem(parent)
+{
+    connect(this, SIGNAL(availableChanged()), this, SIGNAL(itemTypeChanged()));
+}
+
+QDeclarativeDocumentGalleryItem::~QDeclarativeDocumentGalleryItem()
+{
+}
+
+void QDeclarativeDocumentGalleryItem::classBegin()
+{
+    m_request.setGallery(QDeclarativeDocumentGallery::gallery(this));
+}
+
+/*!
+    \qmlproperty enum DocumentGalleryItem::status
+
+    This property holds the status of an item request.  It can be one of:
+
+    \list
+    \o Null No \l item has been specified.
+    \o Active Information about an \l item is being fetched from the gallery.
+    \o Finished Information about an \l item is available.
+    \o Idle Information about an \l item which will be automatically
+    updated is available.
+    \o Cancelling The query was cancelled but hasn't yet reached the
+    cancelled status.
+    \o Cancelled The query was cancelled.
+    \o Error Information about a type could not be retrieved due to an error.
+    \endlist
+*/
+
+/*!
+    \qmlproperty real DocumentGalleryItem::progress
+
+    This property holds the current progress of the request, from 0.0 (started)
+    to 1.0 (finished).
+*/
+
+/*!
+    \qmlproperty QStringList DocumentGalleryItem::properties
+
+    This property holds the item properties a request should return values for.
+*/
+
+/*!
+    \qmlproperty bool DocumentGalleryItem::autoUpdate
+
+    This property holds whether a request should refresh its results
+    automatically.
+*/
+
+/*!
+    \qmlproperty variant DocumentGalleryItem::item
+
+    This property holds the id of the item to return information about.
+*/
+
+/*!
+    \qmlproperty bool DocumentGalleryItem::available
+
+    This property holds whether the meta-data of an item is available.
+*/
+
+/*!
+    \qmlproperty enum DocumentGalleryItem::itemType
+
+    This property holds the type of a gallery item. It can be one of:
+
+    \list
+    \o DocumentGallery.InvalidType
+    \o DocumentGallery.File
+    \o DocumentGallery.Folder
+    \o DocumentGallery.Document
+    \o DocumentGallery.Text
+    \o DocumentGallery.Audio
+    \o DocumentGallery.Image
+    \o DocumentGallery.Video
+    \o DocumentGallery.Playlist
+    \o DocumentGallery.Artist
+    \o DocumentGallery.AlbumArtist
+    \o DocumentGallery.Album
+    \o DocumentGallery.AudioGenre
+    \o DocumentGallery.PhotoAlbum
+    \endlist
+*/
+
+QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGalleryItem::itemType() const
+{
+    return QDeclarativeDocumentGallery::itemTypeFromString(m_request.itemType());
+}
+
+/*!
+    \qmlproperty url DocumentGalleryItem::itemUrl
+
+    This property holds the URL of a gallery item.
+*/
+
+/*!
+    \qmlproperty object DocumentGalleryItem::metaData
+
+    This property holds the meta-data of a gallery item.
+*/
+
+/*!
+    \qmlmethod DocumentGalleryItem::reload()
+
+    Re-queries the gallery.
+*/
+
+/*!
+    \qmlmethod DocumentGalleryItem::cancel()
+
+    Cancels an executing request.
+*/
+
+/*!
+    \qmlmethod DocumentGalleryItem::clear()
+
+    Clears the results of a request.
+*/
 
 #include "moc_qdeclarativegalleryitem.cpp"
 

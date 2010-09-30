@@ -41,6 +41,7 @@
 
 #include "qlandmarkmanagerengine_symbian.h"
 #include "qlandmarkmanagerengine_symbian_p.h"
+#include "qlandmarkutility.h"
 
 #include <QDebug>
 
@@ -50,12 +51,6 @@
 QLandmarkManagerEngineSymbian::QLandmarkManagerEngineSymbian(const QString &filename)
 {
     d_ptr = new LandmarkManagerEngineSymbianPrivate(*this, filename);
-
-    QLandmarkManager::Error error = QLandmarkManager::NoError;
-    QString errorString = "";
-    QStringList attrKeys = landmarkAttributeKeys(&error, &errorString);
-    if (error == QLandmarkManager::NoError)
-        d_ptr->setLandmarkAttributeKeys(attrKeys);
 }
 
 /*!
@@ -405,57 +400,6 @@ bool QLandmarkManagerEngineSymbian::isReadOnly(const QLandmarkCategoryId &catego
 }
 
 /*!
- Returns whether extended attributes specific to this manager are enabled or not.
- If extended attributes are enabled, retrieved landmarks will have
- extra attribute keys accessible through the QLandmark::attribute() function.
- Extended attributes must be enabled to save any landmarks which possess
- extended attributes.  This same behaviour will also apply to categories
- if extended category attributes are supported.
- Errors are stored in \a error and \a errorString.
- */
-bool QLandmarkManagerEngineSymbian::isExtendedAttributesEnabled(QLandmarkManager::Error *error,
-    QString *errorString) const
-{
-    return d_ptr->isExtendedAttributesEnabled(error, errorString);
-}
-
-/*!
- Sets whether extended attributes are \a enabled or not.
- Errors are stored in \a error and \a errorString.
- */
-void QLandmarkManagerEngineSymbian::setExtendedAttributesEnabled(bool enabled,
-    QLandmarkManager::Error *error, QString *errorString)
-{
-    return d_ptr->setExtendedAttributesEnabled(enabled, error, errorString);
-}
-
-/*!
- Returns whether custom attributes are enabled or not. Custom attributes
- are arbitrary attributes created by the application for a landmark.
- If custom attributes are enabled (and the manager supports them),
- retrieved landmarks will have extra attributes accessible
- using QLandmark::customAttributes().  Custom attributes must be enabled
- to save any landmarks with possess custom attributes.  This same behaviour
- applies to categories if custom category attributes are supported.
- Errors are stored in \a error and \a errorString.
- */
-bool QLandmarkManagerEngineSymbian::isCustomAttributesEnabled(QLandmarkManager::Error *error,
-    QString *errorString) const
-{
-    return d_ptr->isCustomAttributesEnabled(error, errorString);
-}
-
-/*!
- Sets whether custom attributes are \a enabled or not.
- Errors are stored in \a error and \a errorString.
- */
-void QLandmarkManagerEngineSymbian::setCustomAttributesEnabled(bool enabled,
-    QLandmarkManager::Error *error, QString *errorString)
-{
-    return d_ptr->setCustomAttributesEnabled(enabled, error, errorString);
-}
-
-/*!
  Notifies the manager engine that the givan \a request has been destroyed.
  */
 void QLandmarkManagerEngineSymbian::requestDestroyed(QLandmarkAbstractRequest* request)
@@ -512,7 +456,7 @@ QStringList QLandmarkManagerEngineSymbian::landmarkAttributeKeys(QLandmarkManage
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
-    return QLandmarkManagerEngine::landmarkAttributeKeys(error, errorString);
+    return LandmarkUtility::landmarkAttributeKeys();
 }
 
 QStringList QLandmarkManagerEngineSymbian::categoryAttributeKeys(QLandmarkManager::Error *error,
@@ -522,7 +466,17 @@ QStringList QLandmarkManagerEngineSymbian::categoryAttributeKeys(QLandmarkManage
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
-    return QLandmarkManagerEngine::categoryAttributeKeys(error, errorString);
+    return LandmarkUtility::categoryAttributeKeys();
+}
+
+QStringList QLandmarkManagerEngineSymbian::searchableLandmarkAttributeKeys(
+    QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+    return LandmarkUtility::searchableLandmarkAttributeKeys();
 }
 
 //protected methods
@@ -671,10 +625,6 @@ void QLandmarkManagerEngineSymbian::handleLandmarkEvent(LandmarkEventObserver::l
     case LandmarkEventObserver::unknownChanges:
     {
         emit dataChanged();
-        break;
-    }
-    default:
-    {
         break;
     }
     } // switch closure

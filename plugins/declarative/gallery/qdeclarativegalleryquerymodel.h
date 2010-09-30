@@ -43,6 +43,8 @@
 #define GALLERYQUERYREQUEST_H
 
 #include <qgalleryqueryrequest.h>
+
+#include "qdeclarativedocumentgallery.h"
 #include "qdeclarativegalleryfilter.h"
 
 #include <QtCore/qabstractitemmodel.h>
@@ -58,17 +60,13 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
 {
     Q_OBJECT
     Q_INTERFACES(QDeclarativeParserStatus)
-    Q_ENUMS(State)
-    Q_ENUMS(Result)
+    Q_ENUMS(Status)
     Q_ENUMS(Scope)
-    Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery NOTIFY galleryChanged)
-    Q_PROPERTY(State state READ state NOTIFY stateChanged)
-    Q_PROPERTY(Result result READ result NOTIFY resultChanged)
-    Q_PROPERTY(int progress READ progress NOTIFY progressChanged)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
+    Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames NOTIFY sortPropertyNamesChanged)
-    Q_PROPERTY(bool live READ isLive WRITE setLive NOTIFY liveChanged)
-    Q_PROPERTY(QString rootType READ rootType WRITE setRootType NOTIFY rootTypeChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem NOTIFY rootItemChanged)
     Q_PROPERTY(Scope scope READ scope WRITE setScope NOTIFY scopeChanged)
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
@@ -76,28 +74,15 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(QDeclarativeGalleryFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
 public:
-    enum State
+    enum Status
     {
-        Inactive    = QGalleryAbstractRequest::Inactive,
+        Null        = QGalleryAbstractRequest::Inactive,
         Active      = QGalleryAbstractRequest::Active,
         Cancelling  = QGalleryAbstractRequest::Cancelling,
-        Idle        = QGalleryAbstractRequest::Idle
-    };
-
-    enum Result
-    {
-        NoResult                        = QGalleryAbstractRequest::NoResult,
-        Succeeded                       = QGalleryAbstractRequest::NoResult,
-        Cancelled                       = QGalleryAbstractRequest::NoResult,
-        NoGallery                       = QGalleryAbstractRequest::NoResult,
-        NotSupported                    = QGalleryAbstractRequest::NoResult,
-        ConnectionError                 = QGalleryAbstractRequest::NoResult,
-        InvalidItemError                = QGalleryAbstractRequest::NoResult,
-        ItemTypeError                   = QGalleryAbstractRequest::NoResult,
-        InvalidPropertyError            = QGalleryAbstractRequest::NoResult,
-        PropertyTypeError               = QGalleryAbstractRequest::NoResult,
-        UnsupportedFilterTypeError      = QGalleryAbstractRequest::NoResult,
-        UnsupportedFilterOptionError    = QGalleryAbstractRequest::NoResult
+        Cancelled   = QGalleryAbstractRequest::Cancelled,
+        Idle        = QGalleryAbstractRequest::Idle,
+        Finished    = QGalleryAbstractRequest::Finished,
+        Error       = QGalleryAbstractRequest::Error
     };
 
     enum Scope
@@ -113,53 +98,35 @@ public:
         MetaDataOffset
     };
 
-    QDeclarativeGalleryQueryModel(QObject *parent = 0);
     ~QDeclarativeGalleryQueryModel();
 
-    QAbstractGallery *gallery() const { return m_request.gallery(); }
-    void setGallery(QAbstractGallery *gallery) {
-        if (!m_complete || !gallery) { m_request.setGallery(gallery); emit galleryChanged(); } }
+    Status status() const { return m_status; }
 
-    State state() const { return State(m_request.state()); }
-    Result result() const { return Result(m_request.result()); }
-
-    qreal progress() const
-    {
-        const int max = m_request.maximumProgress();
-        return max > 0 ? qreal(m_request.currentProgress()) / max : qreal(0.0);
-    }
+    qreal progress() const;
 
     QStringList propertyNames() { return m_request.propertyNames(); }
-    void setPropertyNames(const QStringList &names) {
-        if (!m_complete) { m_request.setPropertyNames(names); emit propertyNamesChanged(); } }
+    void setPropertyNames(const QStringList &names);
 
     QStringList sortPropertyNames() const { return m_request.sortPropertyNames(); }
-    void setSortPropertyNames(const QStringList &names) {
-        if (!m_complete) m_request.setSortPropertyNames(names); emit sortPropertyNamesChanged(); }
+    void setSortPropertyNames(const QStringList &names);
 
-    bool isLive() const { return m_request.isLive(); }
-    void setLive(bool live) { m_request.setLive(live); emit liveChanged(); }
-
-    QString rootType() const { return m_request.rootType(); }
-    void setRootType(const QString &itemType) {
-        if (!m_complete) { m_request.setRootType(itemType); emit rootTypeChanged(); } }
+    bool autoUpdate() const { return m_request.autoUpdate(); }
+    void setAutoUpdate(bool enabled);
 
     Scope scope() const { return Scope(m_request.scope()); }
-    void setScope(Scope scope) {
-        m_request.setScope(QGalleryQueryRequest::Scope(scope)); emit scopeChanged(); }
+    void setScope(Scope scope);
 
     QVariant rootItem() const { return m_request.rootItem(); }
-    void setRootItem(const QVariant &itemId) {
-        m_request.setRootItem(itemId); emit rootItemChanged(); }
+    void setRootItem(const QVariant &itemId);
 
-    QDeclarativeGalleryFilterBase *filter() const { return m_filter; }
-    void setFilter(QDeclarativeGalleryFilterBase *filter) { m_filter = filter; filterChanged(); }
+    QDeclarativeGalleryFilterBase *filter() const { return m_filter.data(); }
+    void setFilter(QDeclarativeGalleryFilterBase *filter);
 
     int offset() const { return m_request.offset(); }
-    void setOffset(int offset) { m_request.setOffset(offset); emit offsetChanged(); }
+    void setOffset(int offset);
 
     int limit() const { return m_request.limit(); }
-    void setLimit(int limit) { m_request.setLimit(limit); emit limitChanged(); }
+    void setLimit(int limit);
 
     int rowCount(const QModelIndex &parent) const;
 
@@ -176,27 +143,19 @@ public:
     Q_INVOKABLE void set(int index, const QScriptValue &value);
     Q_INVOKABLE void setProperty(int index, const QString &property, const QVariant &value);
 
-    void classBegin();
     void componentComplete();
 
 public Q_SLOTS:
     void reload();
-    void cancel() { m_request.cancel(); }
-    void clear() { m_request.clear(); }
+    void cancel();
+    void clear();
 
 Q_SIGNALS:
-    void succeeded();
-    void cancelled();
-    void failed(int result);
-    void finished(int result);
-    void stateChanged();
-    void resultChanged();
+    void statusChanged();
     void progressChanged();
-    void galleryChanged();
     void propertyNamesChanged();
     void sortPropertyNamesChanged();
-    void liveChanged();
-    void rootTypeChanged();
+    void autoUpdateChanged();
     void rootItemChanged();
     void scopeChanged();
     void filterChanged();
@@ -204,25 +163,64 @@ Q_SIGNALS:
     void limitChanged();
     void countChanged();
 
+protected Q_SLOTS:
+    void deferredExecute();
+
+protected:
+    enum UpdateStatus
+    {
+        Incomplete,
+        NoUpdate,
+        PendingUpdate,
+        CancelledUpdate
+    };
+
+    explicit QDeclarativeGalleryQueryModel(QObject *parent = 0);
+
+    virtual QVariant itemType(const QString &type) const = 0;
+
+    bool event(QEvent *event);
+
+    QGalleryQueryRequest m_request;
+    QWeakPointer<QDeclarativeGalleryFilterBase> m_filter;
+    QGalleryResultSet *m_resultSet;
+    QVector<QPair<int, QString> > m_propertyNames;
+    Status m_status;
+    int m_rowCount;
+    UpdateStatus m_updateStatus;
+
 private Q_SLOTS:
+    void _q_statusChanged();
     void _q_setResultSet(QGalleryResultSet *resultSet);
     void _q_itemsInserted(int index, int count);
     void _q_itemsRemoved(int index, int count);
     void _q_itemsMoved(int from, int to, int count);
     void _q_itemsChanged(int index, int count);
+};
 
-private:
-    QGalleryQueryRequest m_request;
-    QPointer<QDeclarativeGalleryFilterBase> m_filter;
-    QGalleryResultSet *m_resultSet;
-    QVector<QPair<int, QString> > m_propertyNames;
-    int m_rowCount;
-    bool m_complete;
+class QDeclarativeDocumentGalleryModel : public QDeclarativeGalleryQueryModel
+{
+    Q_OBJECT
+    Q_PROPERTY(QDeclarativeDocumentGallery::ItemType rootType READ rootType WRITE setRootType NOTIFY rootTypeChanged)
+public:
+    explicit QDeclarativeDocumentGalleryModel(QObject *parent = 0);
+    ~QDeclarativeDocumentGalleryModel();
+
+    void classBegin();
+
+    QDeclarativeDocumentGallery::ItemType rootType() const;
+    void setRootType(QDeclarativeDocumentGallery::ItemType itemType);
+
+Q_SIGNALS:
+    void rootTypeChanged();
+
+protected:
+    QVariant itemType(const QString &type) const;
 };
 
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryQueryModel))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeDocumentGalleryModel))
 
 #endif
 

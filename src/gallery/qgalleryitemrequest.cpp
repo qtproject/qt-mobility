@@ -53,7 +53,7 @@ class QGalleryItemRequestPrivate : public QGalleryAbstractRequestPrivate
 public:
     QGalleryItemRequestPrivate(QAbstractGallery *gallery)
         : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::ItemRequest)
-        , live(false)
+        , autoUpdate(false)
         , resultSet(0)
         , internalResultSet(0)
     {
@@ -92,7 +92,7 @@ public:
             emit q_func()->metaDataChanged(keys);
     }
 
-    bool live;
+    bool autoUpdate;
     QGalleryResultSet *resultSet;
     QGalleryResultSet *internalResultSet;
     QGalleryNullResultSet nullResultSet;
@@ -160,7 +160,7 @@ void QGalleryItemRequest::setPropertyNames(const QStringList &names)
 }
 
 /*!
-    \property QGalleryItemRequest::live
+    \property QGalleryItemRequest::autoUpdate
 
     \brief Whether a the results of a request should be updated after a request
     has finished.
@@ -170,14 +170,14 @@ void QGalleryItemRequest::setPropertyNames(const QStringList &names)
 */
 
 
-bool QGalleryItemRequest::isLive() const
+bool QGalleryItemRequest::autoUpdate() const
 {
-    return d_func()->live;
+    return d_func()->autoUpdate;
 }
 
-void QGalleryItemRequest::setLive(bool live)
+void QGalleryItemRequest::setAutoUpdate(bool enabled)
 {
-    d_func()->live = live;
+    d_func()->autoUpdate = enabled;
 }
 
 /*!
