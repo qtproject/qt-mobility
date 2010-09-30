@@ -336,9 +336,8 @@ public:
     QOrganizerItemRequestQueue* requestQueue();
 
 private:
-    void collectionsL(
-        const QList<QOrganizerCollectionLocalId> &collectionIds,
-        QList<QOrganizerCollection> &collections) const;
+    QList<QOrganizerCollection> collectionsL(
+        const QList<QOrganizerCollectionLocalId> &collectionIds) const;
     void saveCollectionL(QOrganizerCollection* collection);
     void removeCollectionL(const QOrganizerCollectionLocalId& collectionId);
     CCalEntryView* entryViewL(const QOrganizerCollectionLocalId& collectionId) const;

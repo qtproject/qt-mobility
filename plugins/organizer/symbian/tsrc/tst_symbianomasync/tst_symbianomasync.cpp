@@ -580,8 +580,9 @@ void tst_SymbianOmAsync::addCollection()
     // Verify
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
-    QCOMPARE(m_om->collections().count(), 2); // the default plus the new one
-    QCOMPARE(m_om->collections().at(1).metaData().value("Name").toString(), QString("addCollection"));
+    QList<QOrganizerCollection> collections = m_om->collections(m_om->collectionIds());
+    QCOMPARE(collections.count(), 2); // the default plus the new one
+    QCOMPARE(collections.at(1).metaData().value("Name").toString(), QString("addCollection"));
     // Verify the signal emitted contains the id of the new collection
     QCOMPARE(addedSpy.last().count(), 1);
     QCOMPARE(addedSpy.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
@@ -627,9 +628,10 @@ void tst_SymbianOmAsync::modifyCollection()
     // Verify
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
-    QCOMPARE(m_om->collections().count(), 2); // the default plus the new one
-    QCOMPARE(m_om->collections().at(1).metaData().value("Name").toString(), QString("modifyCollection"));
-    QCOMPARE(m_om->collections().at(1).metaData().value("Description").toString(), QString("modifyCollection test2"));
+    QList<QOrganizerCollection> collections = m_om->collections(m_om->collectionIds());
+    QCOMPARE(collections.count(), 2); // the default plus the new one
+    QCOMPARE(collections.at(1).metaData().value("Name").toString(), QString("modifyCollection"));
+    QCOMPARE(collections.at(1).metaData().value("Description").toString(), QString("modifyCollection test2"));
 }
 
 void tst_SymbianOmAsync::removeCollection()
@@ -675,7 +677,7 @@ void tst_SymbianOmAsync::removeCollection()
     // Verify
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
-    QCOMPARE(m_om->collections().count(), 1); // the default
+    QCOMPARE(m_om->collectionIds().count(), 1); // the default
 
     // Try to remove again, should fail
     req.setCollectionId(collection.localId());
