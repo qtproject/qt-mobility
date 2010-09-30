@@ -153,6 +153,7 @@ protected:
     bool m_autoLoad;
     bool m_loaded;
     bool m_muted;
+    bool m_complete;
     int m_position;
     qreal m_vol;
     qreal m_playbackRate;

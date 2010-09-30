@@ -95,6 +95,7 @@ void QDeclarativeAudio::_q_error(int errorCode, const QString &errorString)
 QDeclarativeAudio::QDeclarativeAudio(QObject *parent)
     : QObject(parent)
 {
+    setObject(this);
 }
 
 QDeclarativeAudio::~QDeclarativeAudio()
@@ -112,7 +113,7 @@ QDeclarativeAudio::~QDeclarativeAudio()
 
 void QDeclarativeAudio::play()
 {
-    if (m_playerControl == 0)
+    if (!m_complete)
         return;
 
     setPaused(false);
@@ -129,7 +130,7 @@ void QDeclarativeAudio::play()
 
 void QDeclarativeAudio::pause()
 {
-    if (m_playerControl == 0)
+    if (!m_complete)
         return;
 
     setPaused(true);
@@ -146,7 +147,7 @@ void QDeclarativeAudio::pause()
 
 void QDeclarativeAudio::stop()
 {
-    if (m_playerControl == 0)
+    if (!m_complete)
         return;
 
     setPlaying(false);
@@ -331,7 +332,7 @@ QDeclarativeAudio::Error QDeclarativeAudio::error() const
 
 void QDeclarativeAudio::componentComplete()
 {
-    setObject(this);
+    QDeclarativeMediaBase::componentComplete();
 }
 
 

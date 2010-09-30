@@ -120,6 +120,17 @@ QDeclarativeVideo::QDeclarativeVideo(QDeclarativeItem *parent)
     m_graphicsItem = new QGraphicsVideoItem(this);
     connect(m_graphicsItem, SIGNAL(nativeSizeChanged(QSizeF)),
             this, SLOT(_q_nativeSizeChanged(QSizeF)));
+
+    setObject(this);
+
+    if (m_mediaService) {
+        connect(m_playerControl, SIGNAL(audioAvailableChanged(bool)),
+                this, SIGNAL(hasAudioChanged()));
+        connect(m_playerControl, SIGNAL(videoAvailableChanged(bool)),
+                this, SIGNAL(hasVideoChanged()));
+
+        m_mediaObject->bind(m_graphicsItem);
+    }
 }
 
 QDeclarativeVideo::~QDeclarativeVideo()
@@ -270,7 +281,7 @@ QDeclarativeVideo::Status QDeclarativeVideo::status() const
 
 bool QDeclarativeVideo::hasAudio() const
 {
-    return m_playerControl == 0 ? false : m_playerControl->isAudioAvailable();
+    return !m_complete ? false : m_playerControl->isAudioAvailable();
 }
 
 /*!
@@ -281,7 +292,7 @@ bool QDeclarativeVideo::hasAudio() const
 
 bool QDeclarativeVideo::hasVideo() const
 {
-    return m_playerControl == 0 ? false : m_playerControl->isVideoAvailable();
+    return !m_complete ? false : m_playerControl->isVideoAvailable();
 }
 
 /*!
@@ -373,7 +384,7 @@ void QDeclarativeVideo::setFillMode(FillMode mode)
 
 void QDeclarativeVideo::play()
 {
-    if (m_playerControl == 0)
+    if (!m_complete)
         return;
 
     setPaused(false);
@@ -390,7 +401,7 @@ void QDeclarativeVideo::play()
 
 void QDeclarativeVideo::pause()
 {
-    if (m_playerControl == 0)
+    if (!m_complete)
         return;
 
     setPaused(true);
@@ -407,7 +418,7 @@ void QDeclarativeVideo::pause()
 
 void QDeclarativeVideo::stop()
 {
-    if (m_playerControl == 0)
+    if (!m_complete)
         return;
 
     setPlaying(false);
@@ -427,16 +438,7 @@ void QDeclarativeVideo::geometryChanged(const QRectF &newGeometry, const QRectF 
 
 void QDeclarativeVideo::componentComplete()
 {
-    setObject(this);
-
-    if (m_mediaService) {
-        connect(m_playerControl, SIGNAL(audioAvailableChanged(bool)),
-                this, SIGNAL(hasAudioChanged()));
-        connect(m_playerControl, SIGNAL(videoAvailableChanged(bool)),
-                this, SIGNAL(hasVideoChanged()));
-
-        m_mediaObject->bind(m_graphicsItem);
-    }
+    QDeclarativeMediaBase::componentComplete();
 }
 
 QT_END_NAMESPACE
