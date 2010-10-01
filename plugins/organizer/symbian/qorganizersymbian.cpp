@@ -1165,23 +1165,24 @@ QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collections(
     // XXX TODO: please use errormap -- test for null ptr, if exists, perform "fine grained error reporting"
     // Note that the semantics of this function changed: if empty list of collectionIds given, return empty list of collections (NOT all collections).
 
+    // Get collections
     QList<QOrganizerCollection> collections;
-    TRAPD(err, collectionsL(collectionIds, collections));
+    TRAPD(err, collections = collectionsL(collectionIds));
     transformError(err, error);
     return collections;
 }
 
-void QOrganizerItemSymbianEngine::collectionsL(
-    const QList<QOrganizerCollectionLocalId> &collectionIds,
-    QList<QOrganizerCollection> &collections) const
+QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collectionsL(
+    const QList<QOrganizerCollectionLocalId> &collectionIds) const
 {
-    foreach (const OrganizerSymbianCollection &collection, m_collections) {
-        if (collectionIds.count() == 0 || collectionIds.contains(collection.localId()))
-            collections << collection.toQOrganizerCollectionL();
+    QList<QOrganizerCollection> collections;
+    foreach (const QOrganizerCollectionLocalId &id, collectionIds) {
+        if (m_collections.contains(id))
+            collections << m_collections[id].toQOrganizerCollectionL();
+        else
+            User::Leave(KErrNotFound);
     }
-
-    if (collections.isEmpty())
-        User::Leave(KErrNotFound);
+    return collections;
 }
 
 bool QOrganizerItemSymbianEngine::saveCollection(
