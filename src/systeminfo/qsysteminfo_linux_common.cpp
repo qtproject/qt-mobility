@@ -2577,7 +2577,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
         QUPowerInterface power(this);
         foreach(const QDBusObjectPath objpath, power.enumerateDevices()) {
             QUPowerDeviceInterface powerDevice(objpath.path(),this);
-
+qDebug() << powerDevice.getType() << powerDevice.getState();
             if(powerDevice.getType() == 2) {
                 switch(powerDevice.getState()) {
                 case 0:
@@ -2589,6 +2589,9 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                 case 2:
                 case 6:
                     return QSystemDeviceInfo::BatteryPower;
+                    break;
+                case 4:
+                    return QSystemDeviceInfo::WallPower;
                     break;
                 default:
                     return QSystemDeviceInfo::UnknownPower;
