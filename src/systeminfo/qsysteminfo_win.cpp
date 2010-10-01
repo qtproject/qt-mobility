@@ -80,7 +80,7 @@
 
 #if !defined( Q_CC_MINGW)
 #ifndef Q_OS_WINCE
-#include "qwmihelper_win_p.h"
+#include "windows/qwmihelper_win_p.h"
 
 
 
@@ -1318,9 +1318,9 @@ int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
     QVariant v = wHelper->getWMIData();
     return (quint8)v.toUInt();
 #else
-    // This could would detect the state of the backlight, which is as close as we're going to get 
+    // This could would detect the state of the backlight, which is as close as we're going to get
     // for WinCE.  Unfortunately, some devices don't honour the Microsoft power management API.
-    // This means that the following code is not portable across WinCE devices and so shouldn't 
+    // This means that the following code is not portable across WinCE devices and so shouldn't
     // be included.
 
     //CEDEVICE_POWER_STATE powerState;
@@ -1637,7 +1637,7 @@ QPowerNotificationThread::~QPowerNotificationThread() {
 
 void QPowerNotificationThread::run() {
 
-    const int MaxMessageSize = sizeof(POWER_BROADCAST) + sizeof(POWER_BROADCAST_POWER_INFO) 
+    const int MaxMessageSize = sizeof(POWER_BROADCAST) + sizeof(POWER_BROADCAST_POWER_INFO)
         + MAX_PATH;
 
     MSGQUEUEOPTIONS messageQueueOptions = { 0 };
@@ -1652,7 +1652,7 @@ void QPowerNotificationThread::run() {
     if (messageQueue == NULL)
         return;
 
-    HANDLE powerNotificationHandle = RequestPowerNotifications(messageQueue, PBT_TRANSITION 
+    HANDLE powerNotificationHandle = RequestPowerNotifications(messageQueue, PBT_TRANSITION
             | PBT_POWERINFOCHANGE);
 
     if (messageQueue == NULL)
@@ -1687,7 +1687,7 @@ void QPowerNotificationThread::run() {
             POWER_BROADCAST *broadcast = (POWER_BROADCAST*) (buffer);
 
             if (broadcast->Message == PBT_POWERINFOCHANGE) {
-                POWER_BROADCAST_POWER_INFO *info = (POWER_BROADCAST_POWER_INFO*) broadcast->SystemPowerState;                
+                POWER_BROADCAST_POWER_INFO *info = (POWER_BROADCAST_POWER_INFO*) broadcast->SystemPowerState;
                 parent->batteryLevel();
             }
 
@@ -1783,7 +1783,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
         }
     }
 # endif
-#else 
+#else
     // detect the presence of a mouse
     RECT rect;
     if (GetClipCursor(&rect)) {
@@ -1792,11 +1792,11 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
         }
     }
     // We could also try to detect the presence of a stylus / single touch input.
-    // A team from Microsoft was unable to do this in a way which scaled across multiple devices.    
+    // A team from Microsoft was unable to do this in a way which scaled across multiple devices.
     // For more details see:
     // http://blogs.msdn.com/netcfteam/archive/2006/10/02/Platform-detection-III_3A00_-How-to-detect-a-touch-screen-on-Windows-CE-in-.NET-CF.aspx
     // Since all non-Qt apps on non-compliant devices will be able to use the touch screen
-    // (by virtue of being written for one particular device) shipping a library which will cause 
+    // (by virtue of being written for one particular device) shipping a library which will cause
     // just the Qt apps to fail may not be the best move.
 #endif
     int keyboardType = GetKeyboardType(0);
