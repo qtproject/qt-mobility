@@ -1,3 +1,7 @@
+CREATE TABLE IF NOT EXISTS version (
+    versionNumber INTEGER
+);
+@@@
 CREATE TABLE IF NOT EXISTS landmark (
     id INTEGER PRIMARY KEY,
     name TEXT,
@@ -5,7 +9,7 @@ CREATE TABLE IF NOT EXISTS landmark (
     longitude REAL,
     altitude REAL
 );
-@@@ 
+@@@
 CREATE TABLE IF NOT EXISTS landmark_attribute(
     landmarkID INTEGER,
     key TEXT,
