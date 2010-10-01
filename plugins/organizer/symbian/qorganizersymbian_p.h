@@ -333,7 +333,6 @@ public:
     QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, 
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders) const;
-    QOrganizerItemRequestQueue* requestQueue();
 
 private:
     QList<QOrganizerCollection> collectionsL(
