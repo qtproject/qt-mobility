@@ -488,34 +488,28 @@
             <height>695</height>
            </rect>
           </property>
-          <widget class="QWidget" name="layoutWidget">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>10</y>
-             <width>221</width>
-             <height>92</height>
-            </rect>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_8">
-            <item>
-             <widget class="QComboBox" name="instantEffect"/>
-            </item>
-            <item>
-             <widget class="QPushButton" name="instantPlay">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_8">
+             <item>
+              <widget class="QComboBox" name="instantEffect"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="instantPlay">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
                <string>Play</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </widget>
         </widget>
        </item>
@@ -540,89 +534,83 @@
             <height>695</height>
            </rect>
           </property>
-          <widget class="QWidget" name="layoutWidget">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>10</y>
-             <width>281</width>
-             <height>341</height>
-            </rect>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
-            <item>
-             <widget class="QLineEdit" name="filename">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="browse">
-              <property name="text">
-               <string>...</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="fileStatus">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_6">
-              <item>
-               <widget class="QPushButton" name="filePlayPause">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
+          <layout class="QVBoxLayout" name="verticalLayout_9">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <item>
+              <widget class="QLineEdit" name="filename">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="browse">
+               <property name="text">
+                <string>...</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="fileStatus">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <item>
+                <widget class="QPushButton" name="filePlayPause">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
                  <string>Play/pause</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="fileStop">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="fileStop">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
                  <string>Stop</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="fileEffectState">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="fileEffectState">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </widget>
         </widget>
        </item>
