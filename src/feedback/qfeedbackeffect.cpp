@@ -56,7 +56,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtFeedback
 
     It represents a tactile feedback effect (i.e., an effect that
-    addect human senses). The technology available today usually only
+    affect human senses). The technology available today usually only
     provides haptic effects, which deal with the sense of touch. The
     QFeedbackHapticsEffect and QFeedbackFileEffect are implementations
     of haptic effects and can be used to control a mobile device's
@@ -71,7 +71,7 @@ QTM_BEGIN_NAMESPACE
     Loading, Stopped, Running, or Paused. See the
     \l{QFeedbackEffect::}{State} enum documentation for further
     details. Subclasses must reimplement state() to report which
-    state an effect is in, and setState() to recive state change
+    state an effect is in, and setState() to receive state change
     requests. The start(), pause(), and stop() slots calls
     setState() with the corresponding new \l{QFeedbackEffect::}{State}.
 
@@ -87,7 +87,7 @@ QTM_BEGIN_NAMESPACE
     \endcode
 
     The playThemeEffect() function returns true if the effect was
-    played sucessfully. An effect may not be played if the system does
+    played successfully. An effect may not be played if the system does
     not support it or if an error occurred.
 */
 
@@ -312,7 +312,7 @@ bool QFeedbackEffect::supportsThemeEffect()
     \l{QFeedbackEffect::}{Stopped}, \l{QFeedbackEffect::}{Paused},
     \l{QFeedbackEffect::}{Running}, or \l{QFeedbackEffect::}{Loading}.
     You can request a state change by calling start(), pause(), or
-    stop(). The state is quired with state().
+    stop(). The state is queried with state().
 
     The haptics effect also supports a fade-in of the effect. For
     vibration, this means that the vibration will grow (or sink) in
@@ -332,7 +332,7 @@ bool QFeedbackEffect::supportsThemeEffect()
         rumble.setFadeIntensity(0.0);
     \endcode
 
-    When using fade-in and fade-out the total duaration of the haptics
+    When using fade-in and fade-out the total duration of the haptics
     effect will be: attackTime() + duration() + fadeTime().
 
     A QFeedbackHatpicsEffect is played on an
@@ -573,7 +573,7 @@ QFeedbackEffect::State QFeedbackHapticsEffect::state() const
     start(), pause(), and stop().
 
     A QFileFeedbackEffect's actuator (the device that performs the
-    effect) is always the systems deafult actuator, which is usually a
+    effect) is always the systems default actuator, which is usually a
     vibrator on mobile devices.
 
     You can load() and unload() the file at will to free resources or
