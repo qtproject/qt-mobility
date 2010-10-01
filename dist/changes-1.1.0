@@ -53,6 +53,47 @@ QtContacts
  - foo
     * bar
 
+QtGallery
+------
+
+ - Added a QGalleryTypeRequest class.
+ - Replaced the QGalleryItemList class with QGalleryResultSet.
+ - Replaced the QGalleryItemListModel class with QGalleryQueryModel
+ - Removed the QGalleryCountRequest and QGalleryRemoveRequest classes.
+ - QGalleryAbstractRequest
+    * Replaced the result property with error and errorString properties.
+    * Added Cancelled, Finished, and Error to the Status enum.
+    * Moved the Scope enum to QGalleryQueryRequest.
+ - QDocumentGallery
+    * Removed the iconImage, iconPixmap, thumbnailImage, thumbnailPixmap,
+      previewImage, previewPixmap, and photoAlbum property definitions.
+    * Added Error enum.
+ - QGalleryQueryRequest
+    * Added meta-data accessor functions.
+    * Renamed the live property to autoUpdate.
+ - QGalleryItemRequest
+    * Added meta-data accessor functions.
+    * Renamed the live property to autoUpdate.
+ - QGalleryMetaDataFilter
+    * Removed the caseSensitivity property.
+    * Renamed the isInverted property to isNegated.
+ - QGalleryProperty
+    * Added contains(), startsWith(), endsWith(), wildcard(), and regExp()
+      functions for constructing meta-data filters.
+ - QML Elements
+    * Renamed GalleryQueryModel element to DocumentGalleryModel.
+    * Renamed GalleryItem to DocumentGalleryItem.
+    * Added a DocumentGalleryType element.
+    * Removed the gallery property from elements.
+    * Removed the DocumentGallery element.
+    * Removed the GalleryQueryCount element.
+    * Added Cancelled, Finished, and Error status values to
+      DocumentGalleryModel and DocumentGalleryItem.
+    * Spilt the GalleryFilter element into separate elements for each
+      filter comparator.
+    * Renamed the inverted filter property to negated.
+    * Removed the caseSensitivity filter property.
+
 QtLandmarks
 ------
  - Import and export landmarks atomically for sqlite backend
@@ -113,8 +154,14 @@ QtMessaging
 QtMultimediaKit
 ------
 
- - foo
-    * bar
+ - QAudioOutput
+    * Fix crash on Windows when initialized with an invalid format
+      [QTMOBILITY-438]
+ - QMediaImageViewer
+    * Added setVideoOutput functions.
+ - QVideoWidget
+    * Fixed flickering when resizing a video widget on Windows.
+      [QTMOBILITY-407]
 
 QtPublishSubscribe
 ------
