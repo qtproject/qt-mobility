@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "settingsmanager_global.h"
+#include "settingsmanager_global_p.h"
 
 #include <QList>
 

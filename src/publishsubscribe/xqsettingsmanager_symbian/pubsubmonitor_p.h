@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef CENREPMONITOR_H
-#define CENREPMONITOR_H
+#ifndef PUBSUBMONITOR_H
+#define PUBSUBMONITOR_H
 
 //
 //  W A R N I N G
@@ -54,19 +54,18 @@
 //
 
 #include <e32base.h>
+#include <e32property.h>
 
-#include "xqsettingskey.h"
+#include "xqsettingskey_p.h"
 #include "xqsettingsmanager.h"
 
 class MSettingsHandlerObserver;
 
-class CRepository;
-
-class CCenRepMonitor : public CActive
+class CPubSubMonitor : public CActive
     { 
     public:
-        CCenRepMonitor(CRepository& aRepository, const XQSettingsKey& aKey, XQSettingsManager::Type type, MSettingsHandlerObserver& aObserver);
-        ~CCenRepMonitor();
+        CPubSubMonitor(const XQSettingsKey& aKey, XQSettingsManager::Type type, MSettingsHandlerObserver& aObserver);
+        ~CPubSubMonitor();
         TInt StartMonitoring();
         
     private:
@@ -74,10 +73,10 @@ class CCenRepMonitor : public CActive
         void DoCancel();
               
     private:
-        CRepository& iRepository;
+        RProperty iProperty;
         XQSettingsKey iKey;
         XQSettingsManager::Type m_type;
         MSettingsHandlerObserver& iObserver;
     };
 
-#endif //CENREPMONITOR_H
+#endif //PUBSUBMONITOR_H

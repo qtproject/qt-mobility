@@ -54,7 +54,7 @@
 //
 
 #include <QVariant>
-#include "settingsmanager_global.h"
+#include "settingsmanager_global_p.h"
 
 class XQSETTINGSMANAGER_EXPORT XQCentralRepositorySearchCriteria
 {
