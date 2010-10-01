@@ -2291,6 +2291,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
             }
         }
     }
+#if !defined(Q_WS_MAEMO_6)
     if(uPowerAvailable()) {
         QUPowerInterface *power;
         power = new QUPowerInterface(this);
@@ -2305,7 +2306,7 @@ qDebug() << objpath.path() << powerDevice->getType();
             }
         }
     }
-
+#endif
 #endif
 }
 
@@ -2520,6 +2521,7 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             }
         }
     }
+#if !defined(Q_WS_MAEMO_6)
     if(uPowerAvailable()) {
         QUPowerInterface power;
         foreach(const QDBusObjectPath objpath, power.enumerateDevices()) {
@@ -2529,6 +2531,7 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             }
         }
     }
+#endif
 #endif
     QFile infofile("/proc/acpi/battery/BAT0/info");
     if (!infofile.open(QIODevice::ReadOnly)) {
@@ -2607,6 +2610,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
             }
         }
     }
+#if !defined(Q_WS_MAEMO_6)
     if(uPowerAvailable()) {
         QSystemDeviceInfo::PowerState pState = QSystemDeviceInfo::UnknownPower;
 
@@ -2639,6 +2643,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
             curPowerState = pState;
             Q_EMIT powerStateChanged(pState);
         }
+#endif
     return pState;    
 }
 #endif
