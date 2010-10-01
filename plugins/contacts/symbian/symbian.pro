@@ -7,7 +7,7 @@ include(../../../common.pri)
 ## quick platform check.
 IS_SYMBIAN_4 = no
 IS_SYMBIAN_3 = no
-exists($${EPOCROOT}epoc32/data/z/system/install/symbianv4.sis) {
+exists($${EPOCROOT}epoc32/data/z/system/install/Symbianv4.sis) {
     IS_SYMBIAN_4 = yes
     message(Building Symbian contacts plugin on S^4 or later platform)
 } else {
