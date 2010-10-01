@@ -43,7 +43,6 @@
 #include <cntfldst.h>
 
 #include "cntfilterdetail.h"
-#include "cntfilterdetaildisplaylabel.h" //todo rename class to follow naming pattern CntFilterDetailDisplayLabel
 #include "cntsymbianengine.h"
 #include "cnttransformphonenumber.h"
 
@@ -132,7 +131,7 @@ bool CntFilterDetail::filterSupported(const QContactFilter& filter)
         }
         if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName &&
             detailFilter.detailFieldName() == QContactPhoneNumber::FieldNumber) {
-            //cpecial case - phone number matching 
+            //special case - phone number matching 
             result = true;
         }
     }
@@ -149,13 +148,8 @@ void CntFilterDetail::createSelectQuery(const QContactFilter& filter,
       return;
     }
     QContactDetailFilter detailFilter(filter);
-    //display label
-    if (detailFilter.detailDefinitionName() == QContactDisplayLabel::DefinitionName) {
-      CntFilterDetailDisplayLabel displayLabelFilter;
-      displayLabelFilter.createSelectQuery(filter, sqlQuery, error);
-    }
     //type
-    else if (detailFilter.detailDefinitionName() == QContactType::DefinitionName) {
+    if (detailFilter.detailDefinitionName() == QContactType::DefinitionName) {
        if (detailFilter.value().toString() == QContactType::TypeContact)
            sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)=0";
        else if (detailFilter.value().toString() == QContactType::TypeGroup)
