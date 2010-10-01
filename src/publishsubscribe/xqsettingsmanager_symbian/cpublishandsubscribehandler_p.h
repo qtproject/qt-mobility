@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef CENTRALREPOSITORYHANDLER_H
-#define CENTRALREPOSITORYHANDLER_H
+#ifndef PUBLISHANDSUBSCRIBEHANDLER_H
+#define PUBLISHANDSUBSCRIBEHANDLER_H
 
 //
 //  W A R N I N G
@@ -54,47 +54,29 @@
 //
 
 #include <e32base.h>
-#include <centralrepository.h>
 
-#include "settingshandlerbase.h"
-#include "cenrepmonitor.h"
+#include "settingshandlerbase_p.h"
+#include "pubsubmonitor_p.h"
+#include "xqpublishandsubscribesecuritypolicy_p.h"
 
 class XQSettingsKey;
-class CRepository;
 
-class CCentralRepositoryHandler : public CBase, public SettingsHandlerBase
+class CPublishAndSubscribeHandler : public CBase, public SettingsHandlerBase
 {
 public:
-    static CCentralRepositoryHandler* NewL(TUid aUid);
-    ~CCentralRepositoryHandler();
+    static CPublishAndSubscribeHandler* NewL(TUid aUid);
+    ~CPublishAndSubscribeHandler();
 
-    TInt createKey(unsigned long key, const TInt& value);
-    TInt createKey(unsigned long key, const TReal& value);
-    TInt createKey(unsigned long key, const TDesC8& value);
-    TInt createKey(unsigned long key, const TDesC16& value);
-
-    TInt deleteKey(unsigned long key);
-
-    TInt resetKey(unsigned long key);
-    TInt resetRepository();
-
-    TInt findKeyL(unsigned long partialKey, TUint32 mask, RArray<TUint32>& aFoundKeys);
-    TInt findKeyL(unsigned long partialKey, TUint32 mask, const TInt& value, bool negative, RArray<TUint32>& aFoundKeys);
-    TInt findKeyL(unsigned long partialKey, TUint32 mask, const TReal& value, bool negative, RArray<TUint32>& aFoundKeys);
-    TInt findKeyL(unsigned long partialKey, TUint32 mask, const TDesC8& value, bool negative, RArray<TUint32>& aFoundKeys);
-    TInt findKeyL(unsigned long partialKey, TUint32 mask, const TDesC16& value, bool negative, RArray<TUint32>& aFoundKeys);
-
-    TInt startTransaction(CRepository::TTransactionMode transactionMode);
-    TInt commitTransaction();
-    void cancelTransaction();
-    void failTransaction();
-    TInt transactionState() const;
+    TInt defineProperty(unsigned long key, XQSettingsManager::Type type);
+    TInt defineProperty(unsigned long key, XQSettingsManager::Type type,
+        const XQPublishAndSubscribeSecurityPolicy& readPolicy, const XQPublishAndSubscribeSecurityPolicy& writePolicy);
+    TInt deleteProperty(unsigned long key);
 
 private:
-    CCentralRepositoryHandler(TUid aUid);
+    CPublishAndSubscribeHandler(TUid aUid);
     void ConstructL();
 
-protected:  //From SettingsHandlerBase
+protected:
     void setObserver(MSettingsHandlerObserver* observer);
     bool handleStartMonitoring(const XQSettingsKey& key, XQSettingsManager::Type type, MSettingsHandlerObserver& observer, TInt& error);
     bool handleStopMonitoring(const XQSettingsKey& key, TInt& error);
@@ -110,10 +92,12 @@ protected:  //From SettingsHandlerBase
     TInt setValue(unsigned long key, const TDesC16& value);
 
 private:
-    TUid m_uid;
-    CRepository* iRepository;
+    TSecurityPolicy symbianPolicy(const XQPublishAndSubscribeSecurityPolicy& policy);
+    TCapability symbianCapability(const XQPublishAndSubscribeSecurityPolicy::Capability& capability);
+private:
     MSettingsHandlerObserver* m_observer;
-    QHash<unsigned long int, CCenRepMonitor*> m_monitors;
+    TUid m_uid;
+    QHash<unsigned long int, CPubSubMonitor*> m_monitors;
 };
 
-#endif //CENTRALREPOSITORYHANDLER_H
+#endif //PUBLISHANDSUBSCRIBEHANDLER_H
