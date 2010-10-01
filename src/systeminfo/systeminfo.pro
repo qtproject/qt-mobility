@@ -63,7 +63,10 @@ unix:!simulator {
         SOURCES += linux/qsysteminfo_linux_common.cpp
         HEADERS += linux/qsysteminfo_linux_common_p.h
 
-        contains(blkid_enabled, yes):DEFINES += BLKID_SUPPORTED
+        contains(blkid_enabled, yes): {
+            DEFINES += BLKID_SUPPORTED
+            LIBS += -lblkid
+        }
     }
 
     !maemo5:!maemo6:linux-*: {
