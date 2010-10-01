@@ -132,7 +132,7 @@ namespace
         // Media
         { QtMultimediaKit::Size, "size" },
         { QtMultimediaKit::MediaType, "mediaType" },
-//        { QtMultimediaKit::Duration, "duration" },
+        { QtMultimediaKit::Duration, "duration" },
 
         // Audio
         { QtMultimediaKit::AudioBitRate, "audioBitRate" },
@@ -272,7 +272,7 @@ QMetaDataControlMetaObject::QMetaDataControlMetaObject(QMetaDataReaderControl *c
         m_data[18 + 3 * i] = stringIndex;                                       // Name.
         m_data[19 + 3 * i] = qvariantIndex;                                     // Type.
         m_data[20 + 3 * i] 
-                = Readable | Notify | Dynamic | (0xffffffff << 24);  // Flags.
+                = Readable | Notify | Dynamic | Scriptable | (0xffffffff << 24);  // Flags.
         m_data[18 + propertyCount * 3 + i] = 0;                                 // Notify signal.
 
         stringIndex += qstrlen(qt_metaDataKeys[i].name) + 1;
