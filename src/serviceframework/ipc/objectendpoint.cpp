@@ -48,6 +48,10 @@
 #include <QEventLoop>
 #include <QEvent>
 #include <QVarLengthArray>
+#ifdef Q_OS_WIN
+#  include <QCoreApplication>
+#  include <QTime>
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -231,6 +235,7 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
             service = reinterpret_cast<QServiceProxy* >(response->result);
     } else {
         qDebug() << "response passed but not finished";
+        return 0;
     }
 
     openRequests()->take(p.d->messageId);
@@ -313,8 +318,6 @@ void ObjectEndPoint::propertyCall(const QServicePackage& p)
     } else {
         //client side
         Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
-
-
         Response* response = openRequests()->value(p.d->messageId);
         response->isFinished = true;
         if (p.d->responseType == QServicePackage::Failed) {
@@ -537,10 +540,10 @@ QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg
         //create response and block for answer
         Response* response = new Response();
         openRequests()->insert(p.d->messageId, response);
-        
+
         dispatch->writePackage(p);
         waitForResponse(p.d->messageId);
-   
+
         QVariant result;
         if (response->isFinished) {
             if (response->result == 0) {
@@ -620,17 +623,26 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
 void ObjectEndPoint::waitForResponse(const QUuid& requestId)
 {
     Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
-
     if (openRequests()->contains(requestId) ) {
         Response* response = openRequests()->value(requestId);
+#ifdef Q_OS_WIN
+        QTime timer;
+        timer.start();
+        while(!response->isFinished) {
+            if(QCoreApplication::instance())
+                QCoreApplication::instance()->processEvents(QEventLoop::ExcludeUserInputEvents);
+            if(timer.elapsed() > 30000)
+                break;
+        }
+#else
         QEventLoop* loop = new QEventLoop( this );
         connect(this, SIGNAL(pendingRequestFinished()), loop, SLOT(quit())); 
 
         while(!response->isFinished) {
             loop->exec();
         }
- 
         delete loop;
+#endif
     }
 }
 

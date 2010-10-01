@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include "cpublishandsubscribehandler.h"
+#include "cpublishandsubscribehandler_p.h"
 #include <e32property.h>
 
-#include "xqsettingskey.h"
+#include "xqsettingskey_p.h"
 
 CPublishAndSubscribeHandler* CPublishAndSubscribeHandler::NewL(TUid aUid)
 {

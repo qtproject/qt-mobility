@@ -54,7 +54,7 @@
 //
 
 // INCLUDES
-#include "settingsmanager_global.h"
+#include "settingsmanager_global_p.h"
 
 // CLASS DECLARATION
 class XQSETTINGSMANAGER_EXPORT XQSettingsKey
