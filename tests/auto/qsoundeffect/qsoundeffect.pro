@@ -1,7 +1,8 @@
 TARGET = tst_qsoundeffect
 INCLUDEPATH += \
         ../../../src/multimedia \
-        ../../../src/multimedia/effects
+        ../../../src/multimedia/effects \
+        ../../../src/multimedia/audio
 
 DEPENDPATH += ../../src/multimedia
 CONFIG += testcase

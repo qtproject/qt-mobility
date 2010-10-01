@@ -160,7 +160,6 @@ contains(mobility_modules,multimedia) {
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
-        qsoundeffect \
         qcamera \
         qpaintervideosurface \
         qvideowidget \
@@ -174,6 +173,7 @@ contains(mobility_modules,multimedia) {
 
     contains (QT_CONFIG, declarative) {
         SUBDIRS += \
+                qsoundeffect \
                 qdeclarativeaudio \
                 qdeclarativevideo
     }
