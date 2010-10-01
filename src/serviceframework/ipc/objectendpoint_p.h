@@ -80,7 +80,7 @@ public Q_SLOTS:
     void disconnected();
 
 private:
-    void waitForResponse(const QUuid& requestId, int msecs = 30000);
+    void waitForResponse(const QUuid& requestId);
 
     QServiceIpcEndPoint* dispatch;
     QPointer<QObject> service;

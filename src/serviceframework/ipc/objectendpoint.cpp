@@ -620,7 +620,7 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
     return QVariant();
 }
 
-void ObjectEndPoint::waitForResponse(const QUuid& requestId, int msecs/* = 30000 */)
+void ObjectEndPoint::waitForResponse(const QUuid& requestId)
 {
     Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
     if (openRequests()->contains(requestId) ) {
