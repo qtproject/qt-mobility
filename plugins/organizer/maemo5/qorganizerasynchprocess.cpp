@@ -106,10 +106,7 @@ void OrganizerAsynchProcess::requestDestroyed(QOrganizerItemAbstractRequest *req
 
     m_mainMutex.lock();
     if (m_requestQueue.contains(req)) {
-    //if (req->state() != QOrganizerItemAbstractRequest::ActiveState) {
-
         m_requestQueue.removeOne(req);
-
         requestRemoved = true;
     }
     m_mainMutex.unlock();
@@ -308,20 +305,39 @@ void OrganizerAsynchProcess::handleSaveRequest(QOrganizerItemSaveRequest *req)
 
 void OrganizerAsynchProcess::handleDefinitionFetchRequest(QOrganizerItemDetailDefinitionFetchRequest *req)
 {
-    Q_UNUSED(req);
-    // TODO: Probably this is not needed as detail definitions are handled in API
+    QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
+    QMap<QString, QOrganizerItemDetailDefinition> definitions = m_engine->detailDefinitions(req->itemType(), &err);
+    QMap<int, QOrganizerItemManager::Error> errorMap;
+    int definitionsCount = definitions.count();
+    for (int i = 0; i < definitionsCount; ++i)
+        errorMap.insert(i, err);
+    QOrganizerItemManagerEngine::updateDefinitionFetchRequest(req, definitions, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
 }
 
 void OrganizerAsynchProcess::handleDefinitionRemoveRequest(QOrganizerItemDetailDefinitionRemoveRequest *req)
 {
-    Q_UNUSED(req);
-    // TODO: Probably this is not needed as detail definitions are handled in API
+    QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
+    QMap<int, QOrganizerItemManager::Error> errorMap;
+    QStringList definitionNames = req->definitionNames();
+    int nameCount = definitionNames.count();
+    for(int i = 0; i < nameCount; ++i) {
+        m_engine->removeDetailDefinition(definitionNames.at(i), req->itemType(), &err);
+        errorMap.insert(i, err);
+    }
+    QOrganizerItemManagerEngine::updateDefinitionRemoveRequest(req, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
 }
 
 void OrganizerAsynchProcess::handleDefinitionSaveRequest(QOrganizerItemDetailDefinitionSaveRequest *req)
 {
-    Q_UNUSED(req);
-    // TODO: Probably this is not needed as detail definitions are handled in API
+    QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
+    QMap<int, QOrganizerItemManager::Error> errorMap;
+    QList<QOrganizerItemDetailDefinition> definitions = req->definitions();
+    int definitionCount = definitions.count();
+    for (int i = 0; i < definitionCount; ++i) {
+        m_engine->saveDetailDefinition(definitions.at(i), req->itemType(), &err);
+        errorMap.insert(i, err);
+    }
+    QOrganizerItemManagerEngine::updateDefinitionSaveRequest(req, definitions, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
 }
 
 void OrganizerAsynchProcess::handleCollectionFetchRequest(QOrganizerCollectionFetchRequest *req)
@@ -358,6 +374,7 @@ void OrganizerAsynchProcess::handleCollectionSaveRequest(QOrganizerCollectionSav
     QMap<int, QOrganizerItemManager::Error> errorMap;
     QList<QOrganizerCollection> collections = req->collections();
     int i = 0;
+
     foreach (QOrganizerCollection collection, collections) {
         m_engine->saveCollection(&collection, &err);
         errorMap.insert(i, err);
