@@ -58,11 +58,11 @@
 #include <QSize>
 #include <QHash>
 
-#include "qsysteminfo_linux_common_p.h"
+#include "linux/qsysteminfo_linux_common_p.h"
 #include "qsysteminfo.h"
 #include <qmobilityglobal.h>
 #if !defined(QT_NO_DBUS)
-#include <qhalservice_linux_p.h>
+#include "linux/qhalservice_linux_p.h"
 
 typedef enum
 {

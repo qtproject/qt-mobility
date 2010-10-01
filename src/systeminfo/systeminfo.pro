@@ -109,8 +109,8 @@ unix:!simulator {
             #Qt GConf wrapper added here until a proper place is found for it.
             CONFIG += link_pkgconfig
             LIBS += -lblkid
-            SOURCES += linux/qsysteminfo_maemo.cpp linux/gconfitem.cpp
-            HEADERS += linux/qsysteminfo_maemo_p.h linux/gconfitem_p.h
+            SOURCES += qsysteminfo_maemo.cpp linux/gconfitem.cpp
+            HEADERS += qsysteminfo_maemo_p.h linux/gconfitem_p.h
             DEFINES += QT_NO_CONNMAN QT_NO_UDISKS  QT_NO_NETWORKMANAGER
         contains(QT_CONFIG,dbus): {
                 QT += dbus

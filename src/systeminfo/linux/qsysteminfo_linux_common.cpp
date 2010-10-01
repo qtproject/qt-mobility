@@ -2643,11 +2643,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
             curPowerState = pState;
             Q_EMIT powerStateChanged(pState);
         }
-#endif
     return pState;    
-}
+ }
 #endif
-       QFile statefile("/proc/acpi/battery/BAT0/state");
+#endif
+    QFile statefile("/proc/acpi/battery/BAT0/state");
        if (!statefile.open(QIODevice::ReadOnly)) {
        } else {
            QTextStream batstate(&statefile);

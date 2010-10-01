@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 #include "qsysteminfocommon_p.h"
-#include <qsysteminfo_maemo_p.h>
+#include "qsysteminfo_maemo_p.h"
 #include <QStringList>
 #include <QSize>
 #include <QFile>
@@ -55,7 +55,7 @@
 #include <QMapIterator>
 
 #if !defined(QT_NO_DBUS)
-#include "gconfitem_p.h" // Temporarily here.
+#include "linux/gconfitem_p.h" // Temporarily here.
 #endif
 
 #ifdef Q_WS_X11
