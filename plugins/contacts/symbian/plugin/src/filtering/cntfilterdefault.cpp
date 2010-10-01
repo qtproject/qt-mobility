@@ -41,7 +41,6 @@
 
 #include "cntfilterdefault.h"
 #include "cnttransformcontact.h"
-#include "cntfilterdetaildisplaylabel.h" 
 
 CntFilterDefault::CntFilterDefault(CContactDatabase& contactDatabase,CntSymbianSrvConnection &cntServer,CntDbInfo& dbInfo) 
                                         :m_contactdatabase(contactDatabase),
