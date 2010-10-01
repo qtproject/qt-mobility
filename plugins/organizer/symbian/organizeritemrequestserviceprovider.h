@@ -96,25 +96,17 @@ private: // Worker functions
     // Fetch items/entries by local Ids
     void FetchItemsByLocalIdsL();
     // Fetch items/entries by details
-    void FetchItemsandFilterL(QOrganizerItemFilter& filter, 
-            QList<QOrganizerItemSortOrder>& sortOrder, 
-            QOrganizerItemFetchHint& fetchHint);
+    void FetchItemsandFilterL();
     // Fetch items ids
     void FetchItemIdsL();
     // Remove items/entries
     void RemoveItemL();
     // Fetch detail definition
     void FetchDetailDefinitionL();
-    // Remove detail definition
-    void RemoveDetailDefinitionL();
-    // Save detail definition
-    void SaveDetailDefinitionL();
-#ifdef SYMBIAN_CALENDAR_V2
     void CollectionIds();
     void FetchCollections();
     void SaveCollections();
     void RemoveCollections();
-#endif
     
 private:
     QOrganizerItemSymbianEngine&            iOrganizerItemManagerEngine;
@@ -127,6 +119,7 @@ private:
     TInt                                    iNoOfItems;
     TInt                                    iIndex;
     QOrganizerItemChangeSet                 iChangeSet;
+    QOrganizerCollectionLocalId             iCollectionLocalId;
     };
 
 #endif /* CORGANIZERITEMREQUESTSSERVICEPROVIDER_H_ */

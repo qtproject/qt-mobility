@@ -44,10 +44,7 @@
 #include <qtorganizer.h>
 #include <QtTest/QtTest>
 #include <QDebug>
-
-#ifdef Q_OS_SYMBIAN
-    #include <calcommon.h> // for SYMBIAN_CALENDAR_V2
-#endif
+#include <calcommon.h> // for SYMBIAN_CALENDAR_V2
 
 QTM_USE_NAMESPACE
 
@@ -75,7 +72,10 @@ class tst_SymbianOmAsync : public QObject
 
 public:
     tst_SymbianOmAsync();
-
+    
+public slots:
+    void initTestCase();
+    
 private slots:  // Init & cleanup
     void init();
     void cleanup();
@@ -104,14 +104,18 @@ private slots:  // Test cases
     void modifyItems();
     void removeItems_data(){ addManagers(); };
     void removeItems();
-#ifdef SYMBIAN_CALENDAR_V2
     void addCollection_data(){ addManagers(); };
     void addCollection();
     void modifyCollection_data(){ addManagers(); };
     void modifyCollection();
     void removeCollection_data(){ addManagers(); };
     void removeCollection();
-#endif
+    void detailDefinitionFetch_data(){ addManagers(); };
+    void detailDefinitionFetch();
+    void detailDefinitionSave_data(){ addManagers(); };
+    void detailDefinitionSave();
+    void detailDefinitionRemove_data(){ addManagers(); };
+    void detailDefinitionRemove();
 
 private: // util functions
     QOrganizerItem createItem(
@@ -121,7 +125,10 @@ private: // util functions
 
 private:
     QOrganizerItemManager *m_om;
+    bool m_customCollectionsSupported;
 };
+
+Q_DECLARE_METATYPE(QList<QOrganizerCollectionLocalId>)
 
 tst_SymbianOmAsync::tst_SymbianOmAsync() :
     m_om(0)
@@ -129,6 +136,17 @@ tst_SymbianOmAsync::tst_SymbianOmAsync() :
     qRegisterMetaType<QOrganizerItemAbstractRequest::State>("QOrganizerItemAbstractRequest::State");
     qRegisterMetaType<QList<QOrganizerItemLocalId> >("QList<QOrganizerItemLocalId>");
     qRegisterMetaType<QList<QOrganizerCollectionLocalId> >("QList<QOrganizerCollectionLocalId>");
+}
+
+void tst_SymbianOmAsync::initTestCase()
+{
+    // TODO: How could this be done dynamically? 
+    // Some kind of manager feature flag would be nice.
+#ifdef SYMBIAN_CALENDAR_V2
+    m_customCollectionsSupported = true;
+#else
+    m_customCollectionsSupported = false;
+#endif
 }
 
 void tst_SymbianOmAsync::init()
@@ -166,6 +184,7 @@ void tst_SymbianOmAsync::addSimpleItem()
     QOrganizerItemSaveRequest saveItemRequest;
     saveItemRequest.setManager(m_om);
     saveItemRequest.setItem(item);
+    saveItemRequest.setCollectionId(QOrganizerCollectionLocalId());
 
     // Create signal spys for verification purposes
     QSignalSpy stateSpy(&saveItemRequest, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
@@ -521,7 +540,6 @@ void tst_SymbianOmAsync::removeItems()
     QCOMPARE(m_om->itemIds().count(), 0);
 }
 
-#ifdef SYMBIAN_CALENDAR_V2
 void tst_SymbianOmAsync::addCollection()
 {
     // Create the request
@@ -541,6 +559,16 @@ void tst_SymbianOmAsync::addCollection()
     collection.setMetaData("Color", QColor(Qt::red));
     collection.setMetaData("Enabled", true);
     req.setCollection(collection);
+    
+    // Not supported?
+    if (!m_customCollectionsSupported) {
+        QWARN("Saving collections not supported!");
+        QVERIFY(!req.start());
+        QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+        QCOMPARE(stateSpy.count(), 1);
+        QTRY_COMPARE(resultSpy.count(), 1);
+        return;
+    }
 
     // Start the request
     QVERIFY(req.start());
@@ -552,12 +580,20 @@ void tst_SymbianOmAsync::addCollection()
     // Verify
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
-    QCOMPARE(m_om->collections().count(), 2); // the default plus the new one
-    QCOMPARE(m_om->collections().at(1).metaData().value("Name").toString(), QString("addCollection"));
+    QList<QOrganizerCollection> collections = m_om->collections(m_om->collectionIds());
+    QCOMPARE(collections.count(), 2); // the default plus the new one
+    QCOMPARE(collections.at(1).metaData().value("Name").toString(), QString("addCollection"));
+    // Verify the signal emitted contains the id of the new collection
+    QCOMPARE(addedSpy.last().count(), 1);
+    QCOMPARE(addedSpy.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
+    QCOMPARE(addedSpy.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), req.collections().at(0).localId());
 }
 
 void tst_SymbianOmAsync::modifyCollection()
 {
+    if (!m_customCollectionsSupported)
+        QSKIP("Saving/modifying collections not supported!", SkipSingle);
+        
     // Create async request
     QOrganizerCollectionSaveRequest req;
     req.setManager(m_om);
@@ -571,7 +607,7 @@ void tst_SymbianOmAsync::modifyCollection()
     // Create new collection (synchronously)
     QOrganizerCollection collection;
     collection.setMetaData("Name", "modifyCollection");
-    collection.setMetaData("FileName", "c:modifycollection");
+    collection.setMetaData("FileName", "c:modifyCollection");
     collection.setMetaData("Description", "modifyCollection test");
     collection.setMetaData("Color", QColor(Qt::red));
     collection.setMetaData("Enabled", true);
@@ -592,9 +628,10 @@ void tst_SymbianOmAsync::modifyCollection()
     // Verify
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
-    QCOMPARE(m_om->collections().count(), 2); // the default plus the new one
-    QCOMPARE(m_om->collections().at(1).metaData().value("Name").toString(), QString("modifyCollection"));
-    QCOMPARE(m_om->collections().at(1).metaData().value("Description").toString(), QString("modifyCollection test2"));
+    QList<QOrganizerCollection> collections = m_om->collections(m_om->collectionIds());
+    QCOMPARE(collections.count(), 2); // the default plus the new one
+    QCOMPARE(collections.at(1).metaData().value("Name").toString(), QString("modifyCollection"));
+    QCOMPARE(collections.at(1).metaData().value("Description").toString(), QString("modifyCollection test2"));
 }
 
 void tst_SymbianOmAsync::removeCollection()
@@ -607,6 +644,16 @@ void tst_SymbianOmAsync::removeCollection()
     QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
     QSignalSpy removedSpy(m_om, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)));
+    
+    // Not supported?
+    if (!m_customCollectionsSupported) {
+        QWARN("Removing collections not supported!");
+        QVERIFY(!req.start());
+        QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+        QCOMPARE(stateSpy.count(), 1);
+        QTRY_COMPARE(resultSpy.count(), 1);
+        return;
+    }    
 
     // Create new collection (synchronously)
     QOrganizerCollection collection;
@@ -630,9 +677,125 @@ void tst_SymbianOmAsync::removeCollection()
     // Verify
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
-    QCOMPARE(m_om->collections().count(), 1); // the default
+    QCOMPARE(m_om->collectionIds().count(), 1); // the default
+
+    // Try to remove again, should fail
+    req.setCollectionId(collection.localId());
+    QVERIFY(req.start());
+    QTRY_COMPARE(resultSpy.count(), 2);
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerItemManager::DoesNotExistError);
 }
-#endif
+
+void tst_SymbianOmAsync::detailDefinitionFetch()
+{
+    // Create request
+    QOrganizerItemDetailDefinitionFetchRequest req;
+    req.setManager(m_om);
+    
+    // Setup signal spies
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+    
+    // Fetch by item type only
+    req.setItemType(QOrganizerItemType::TypeEvent);
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(resultSpy.count(), 1);
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req.errorMap().count(), 0);
+    QVERIFY(req.definitions().count() > 0);
+    stateSpy.clear();
+    resultSpy.clear();
+    
+    // Fetch by item type and detail definitions (some not supported) 
+    req.setItemType(QOrganizerItemType::TypeEvent);
+    QStringList names;
+    names << QOrganizerItemDisplayLabel::DefinitionName;
+    names << QOrganizerItemComment::DefinitionName; // not supported
+    req.setDefinitionNames(names);
+    QVERIFY(req.start());
+    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(resultSpy.count(), 1);
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(req.error(), QOrganizerItemManager::DoesNotExistError);
+    QCOMPARE(req.errorMap().count(), 1);
+    QCOMPARE(req.errorMap().value(1), QOrganizerItemManager::DoesNotExistError);
+    QVERIFY(req.definitions().count() == 1);    
+    stateSpy.clear();
+    resultSpy.clear();
+    
+    // Try fetching with no parameters
+    req.setItemType(QString());
+    req.setDefinitionNames(QStringList());
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(resultSpy.count(), 1);
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+    QCOMPARE(req.errorMap().count(), 0);
+    QVERIFY(req.definitions().count() == 0);
+    stateSpy.clear();
+    resultSpy.clear();
+        
+    // Fetch by not supported item type
+    req.setItemType(QOrganizerItemType::TypeJournal);
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(resultSpy.count(), 1);
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+    QCOMPARE(req.errorMap().count(), 0);
+    QVERIFY(req.definitions().count() == 0);
+    stateSpy.clear();
+    resultSpy.clear();   
+}
+
+void tst_SymbianOmAsync::detailDefinitionSave()
+{
+    // Create request
+    QOrganizerItemDetailDefinitionSaveRequest req;
+    req.setManager(m_om);
+    
+    // Setup signal spies
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+    
+    // Saving detail definitions is not supported so verify it cannot be started 
+    QVERIFY(!req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+    QCOMPARE(req.errorMap().count(), 0);
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(resultSpy.count(), 1);    
+}
+
+void tst_SymbianOmAsync::detailDefinitionRemove()
+{
+    // Create request
+    QOrganizerItemDetailDefinitionRemoveRequest req;
+    req.setManager(m_om);
+    
+    // Setup signal spies
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+    
+    // Removing detail definitions is not supported so verify it cannot be started 
+    QVERIFY(!req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+    QCOMPARE(req.errorMap().count(), 0);
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(resultSpy.count(), 1);   
+}
 
 /*!
  * A helper method for creating a QOrganizerItem instance.

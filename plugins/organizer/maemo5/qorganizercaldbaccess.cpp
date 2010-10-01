@@ -88,6 +88,8 @@ const QString selectComponentCalIdType = QString("select CalendarId, ComponentTy
 
 const QString selectInnerJoinBatchGuid = QString("select * from components left join componentdetails on components.Id = componentdetails.Id Left Join alarm on components.Id = alarm.Id Left Join Recursive on components.Id = Recursive.Id where Calendarid = :calId AND Components.ComponentType = :compType AND Components.Uid = :compUid");
 
+const QString cookieFixer = QString("update ALARM set CookieId = :newCookie where CookieId = :oldCookie");
+
 OrganizerCalendarDatabaseAccess::OrganizerCalendarDatabaseAccess(OrganizerDbCache* dbCache) : m_dbCache(dbCache)
 {
 }
@@ -991,6 +993,18 @@ void OrganizerCalendarDatabaseAccess::getIdList(CCalendar* cal, int compType, in
         result = cal->getIdList(compType, calError);
         m_dbCache->insertIds(cacheKey, result);
     }
+}
+
+void OrganizerCalendarDatabaseAccess::fixAlarmCookie(QPair<qint32, qint32> change)
+{
+    QSqlQuery query;
+    if (!query.prepare(cookieFixer))
+        return;
+    query.bindValue(":oldCookie", change.first);
+    query.bindValue(":newCookie", change.second);
+    query.exec();
+    if (m_dbCache)
+        m_dbCache->invalidate();
 }
 
 void OrganizerCalendarDatabaseAccess::sqliteErrorMapper(const QSqlError &sqlError, int& errorCode)

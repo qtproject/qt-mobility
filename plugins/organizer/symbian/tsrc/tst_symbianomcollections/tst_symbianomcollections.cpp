@@ -45,6 +45,7 @@
 #include <QtTest/QtTest>
 #include <QDebug>
 #include <QColor>
+#include <calcommon.h> // SYMBIAN_CALENDAR_V2 is defined here
 
 QTM_USE_NAMESPACE
 
@@ -83,6 +84,9 @@ Q_DECLARE_METATYPE(QList<QOrganizerCollectionLocalId>)
 class tst_symbianomcollections : public QObject
 {
     Q_OBJECT
+    
+public slots:
+    void initTestCase();
 
 private slots:  // Init & cleanup
     void init();
@@ -145,8 +149,19 @@ private: // util functions
 
 private:
     QOrganizerItemManager *m_om;
+    bool m_customCollectionsSupported;
 };
 
+void tst_symbianomcollections::initTestCase()
+{
+    // TODO: How could this be done dynamically? 
+    // Some kind of manager feature flag would be nice.
+#ifdef SYMBIAN_CALENDAR_V2
+    m_customCollectionsSupported = true;
+#else
+    m_customCollectionsSupported = false;
+#endif
+}
 
 void tst_symbianomcollections::init()
 {
@@ -193,8 +208,13 @@ void tst_symbianomcollections::fetchCollection()
     QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
     QVERIFY(!dId.isNull());
     
-    // Get all collections
+    // Get collections but do not provide id's
     QList<QOrganizerCollection> cs = m_om->collections();
+    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QVERIFY(cs.count() == 0);
+    
+    // Get all collections
+    cs = m_om->collections(m_om->collectionIds());
     QVERIFY(cs.count() >= 1); // default collection should always be present
     
     // Dump all to log
@@ -219,6 +239,10 @@ void tst_symbianomcollections::fetchCollection()
     cs = m_om->collections(QList<QOrganizerCollectionLocalId>() << nonId);
     QVERIFY(m_om->error() == QOrganizerItemManager::DoesNotExistError);
 
+    // Can we save collections? 
+    if (!m_customCollectionsSupported)
+        return;
+    
     // add a collection and fetch
     QOrganizerCollection c1;
     c1.setMetaData("Name", "testname");
@@ -229,7 +253,7 @@ void tst_symbianomcollections::fetchCollection()
     c1.setMetaData("Enabled", true);
     QVERIFY(m_om->saveCollection(&c1));
     cs.clear();
-    cs = m_om->collections();
+    cs = m_om->collections(m_om->collectionIds());
     QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
     QVERIFY(cs.count() == 2);
     
@@ -237,7 +261,7 @@ void tst_symbianomcollections::fetchCollection()
     QVERIFY(m_om->removeCollection(c1.id().localId()));
         
     cs.clear();
-    cs = m_om->collections();
+    cs = m_om->collections(m_om->collectionIds());
     QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
     QVERIFY(cs.count() == 1);
     
@@ -250,6 +274,16 @@ void tst_symbianomcollections::fetchCollection()
 
 void tst_symbianomcollections::saveCollection()
 {
+    // Can we save collections? 
+    if (!m_customCollectionsSupported) {
+        QWARN("Saving a collection not supported!");
+        // Verify it fails with correct error
+        QOrganizerCollection c1;
+        QVERIFY(!m_om->saveCollection(&c1));
+        QVERIFY(m_om->error() == QOrganizerItemManager::NotSupportedError);        
+        return;
+    }
+
     // Save a collection
     // TODO: keys should be defined somewhere
     QOrganizerCollection c1;
@@ -315,6 +349,15 @@ void tst_symbianomcollections::saveCollection()
 
 void tst_symbianomcollections::removeCollection()
 {
+    // Do we support removing collections?
+    if (!m_customCollectionsSupported) {    
+        QWARN("Removing a collection not supported!");
+        // Verify it fails with correct error code
+        QVERIFY(!m_om->removeCollection(m_om->defaultCollectionId()));
+        QVERIFY(m_om->error() == QOrganizerItemManager::NotSupportedError);
+        return;
+    }
+    
     // Save a collection
     QOrganizerCollection c;
     c.setMetaData("Name", "testremove");
@@ -369,11 +412,15 @@ void tst_symbianomcollections::removeCollection()
     // Try removing the same ones again 
     foreach (QOrganizerCollectionLocalId id, ids) {
         QVERIFY(!m_om->removeCollection(id));
-    }    
+    }
 }
 
 void tst_symbianomcollections::collectionSignalEmission()
 {
+    // Check we can test this
+    if (!m_customCollectionsSupported)
+        QSKIP("Collection signals not supported!", SkipSingle);
+    
     // Create a second manager
     QScopedPointer<QOrganizerItemManager> om2(new QOrganizerItemManager(m_om->managerName()));
     
@@ -436,8 +483,12 @@ void tst_symbianomcollections::collectionSignalEmission()
 
 void tst_symbianomcollections::itemSignalEmission()
 {
-    // NOTE: Default collection signals are already tested with tst_SymbianOm::signalEmission
-    
+    // Can we test this?
+    if (!m_customCollectionsSupported) {
+        QSKIP("Only default collection supported", SkipSingle);
+        // NOTE: Default collection already tested at tst_symbianom
+    }
+        
     // Save a new collection
     QOrganizerCollection c;
     c.setMetaData("Name", "testitemsignalemission");
@@ -513,6 +564,12 @@ void tst_symbianomcollections::itemSignalEmission()
 
 void tst_symbianomcollections::addItem()
 {
+    // Can we test this?
+    if (!m_customCollectionsSupported) {
+        QSKIP("Only default collection supported", SkipSingle);
+        // NOTE: Default collection already tested at tst_symbianom
+    }
+
     // Save a collection
     QOrganizerCollection c;
     c.setMetaData("Name", "addItem");
@@ -535,6 +592,12 @@ void tst_symbianomcollections::addItem()
 
 void tst_symbianomcollections::fetchItem()
 {
+    // Can we test this?
+    if (!m_customCollectionsSupported) {
+        QSKIP("Only default collection supported", SkipSingle);
+        // NOTE: Default collection already tested at tst_symbianom
+    }
+
     // Save a collection
     QOrganizerCollection c;
     c.setMetaData("Name", "fetchItem");
@@ -556,6 +619,12 @@ void tst_symbianomcollections::fetchItem()
 
 void tst_symbianomcollections::modifyItem()
 {
+    // Can we test this?
+    if (!m_customCollectionsSupported) {
+        QSKIP("Only default collection supported", SkipSingle);
+        // NOTE: Default collection already tested at tst_symbianom
+    }
+    
     // Save a collection
     QOrganizerCollection c;
     c.setMetaData("Name", "modifyItem");
@@ -579,6 +648,12 @@ void tst_symbianomcollections::modifyItem()
 
 void tst_symbianomcollections::removeItem()
 {
+    // Can we test this?
+    if (!m_customCollectionsSupported) {
+        QSKIP("Only default collection supported", SkipSingle);
+        // NOTE: Default collection already tested at tst_symbianom
+    }
+    
     // Save a collection
     QOrganizerCollection c;
     c.setMetaData("Name", "removeItem");
@@ -601,6 +676,12 @@ void tst_symbianomcollections::removeItem()
 
 void tst_symbianomcollections::fetchItems()
 {
+    // Can we test this?
+    if (!m_customCollectionsSupported) {
+        QSKIP("Only default collection supported", SkipSingle);
+        // NOTE: Default collection already tested at tst_symbianom
+    }
+    
     // Create a new collection
     QOrganizerCollection c;
     c.setMetaData("Name", "fetchItems");
@@ -636,6 +717,12 @@ void tst_symbianomcollections::fetchItems()
 
 void tst_symbianomcollections::removeItems()
 {
+    // Can we test this?
+    if (!m_customCollectionsSupported) {
+        QSKIP("Only default collection supported", SkipSingle);
+        // NOTE: Default collection already tested at tst_symbianom
+    }
+    
     // Create two new collections
     QOrganizerCollection c1;
     c1.setMetaData("Name", "removeItems1");
@@ -694,6 +781,12 @@ void tst_symbianomcollections::removeItems()
 
 void tst_symbianomcollections::fetchItemInstance()
 {
+    // Can we test this?
+    if (!m_customCollectionsSupported) {
+        QSKIP("Only default collection supported", SkipSingle);
+        // NOTE: Default collection already tested at tst_symbianom
+    }
+    
     // Save a collection
     QOrganizerCollection c;
     c.setMetaData("Name", "fetchItemInstance");
@@ -726,6 +819,12 @@ void tst_symbianomcollections::fetchItemInstance()
 
 void tst_symbianomcollections::modifyItemInstance()
 {
+    // Can we test this?
+    if (!m_customCollectionsSupported) {
+        QSKIP("Only default collection supported", SkipSingle);
+        // NOTE: Default collection already tested at tst_symbianom
+    }
+    
     // Save a collection
     QOrganizerCollection c;
     c.setMetaData("Name", "modifyItemInstance");
@@ -767,6 +866,12 @@ void tst_symbianomcollections::modifyItemInstance()
 
 void tst_symbianomcollections::itemsInDeletedCollection()
 {
+    // Can we test this?
+    if (!m_customCollectionsSupported) {
+        QSKIP("Only default collection supported", SkipSingle);
+        // NOTE: Default collection cannot be removed
+    }
+    
     // Save a collection
     QOrganizerCollection c;
     c.setMetaData("Name", "itemsInDeletedCollection");
