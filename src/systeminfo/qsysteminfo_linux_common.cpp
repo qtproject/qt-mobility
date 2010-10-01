@@ -567,7 +567,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
             }
         }
             if(netname.isEmpty()) {
-             netname = "Wired";
+                netname = "Wired";
             }
     }
     break;
