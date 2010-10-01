@@ -407,7 +407,7 @@ QOrganizerItemLocalId QOrganizerItemId::localId() const
  */
 void QOrganizerItemId::setManagerUri(const QString& uri)
 {
-    if (d->m_managerUri != uri)
+    if (!d->m_managerUri.isEmpty() && d->m_managerUri != uri)
         d->m_localId = QOrganizerItemLocalId();
     d->m_managerUri = uri;
 }

@@ -384,7 +384,7 @@ QOrganizerCollectionLocalId QOrganizerCollectionId::localId() const
  */
 void QOrganizerCollectionId::setManagerUri(const QString& uri)
 {
-    if (d->m_managerUri != uri)
+    if (!d->m_managerUri.isEmpty() && d->m_managerUri != uri)
         d->m_localId = QOrganizerCollectionLocalId();
     d->m_managerUri = uri;
 }
