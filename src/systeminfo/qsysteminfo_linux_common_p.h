@@ -342,10 +342,14 @@ protected:
 private Q_SLOTS:
     virtual void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
+    virtual void upowerChanged();
+    virtual void upowerDeviceChanged();
 #endif
 private:
     QSystemDeviceInfo::BatteryStatus currentBatStatus;
     void initBatteryStatus();
+    int currentBatLevel;
+    QSystemDeviceInfo::PowerState curPowerState;
 };
 
 

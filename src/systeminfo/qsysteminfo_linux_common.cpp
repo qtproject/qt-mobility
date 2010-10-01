@@ -2173,6 +2173,7 @@ QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject
     halIsAvailable = halAvailable();
     setConnection();
     setupBluetooth();
+    currentPowerState();
 #endif
     initBatteryStatus();
 }
@@ -2184,6 +2185,11 @@ QSystemDeviceInfoLinuxCommonPrivate::~QSystemDeviceInfoLinuxCommonPrivate()
 void QSystemDeviceInfoLinuxCommonPrivate::initBatteryStatus()
 {
     const int level = batteryLevel();
+    if(currentBatLevel != 0 && currentBatLevel != level) {
+        Q_EMIT batteryLevelChanged(level);
+    }
+    currentBatLevel = level;
+
     QSystemDeviceInfo::BatteryStatus stat = QSystemDeviceInfo::NoBatteryLevel;
 
     if(level < 4) {
@@ -2196,6 +2202,9 @@ void QSystemDeviceInfoLinuxCommonPrivate::initBatteryStatus()
          stat = QSystemDeviceInfo::BatteryNormal;
     }
     if(currentBatStatus != stat) {
+        if(currentBatStatus != QSystemDeviceInfo::NoBatteryLevel) {
+            Q_EMIT batteryStatusChanged(stat);
+        }
         currentBatStatus = stat;
     }
 }
@@ -2282,6 +2291,20 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
             }
         }
     }
+    if(uPowerAvailable()) {
+        QUPowerInterface *power;
+        power = new QUPowerInterface(this);
+        connect(power,SIGNAL(changed()),this,(SLOT(upowerChanged())));
+        foreach(const QDBusObjectPath objpath, power->enumerateDevices()) {
+            QUPowerDeviceInterface *powerDevice;
+            powerDevice = new QUPowerDeviceInterface(objpath.path(),this);
+qDebug() << objpath.path() << powerDevice->getType();
+            if(powerDevice->getType() == 2) {
+                connect(powerDevice,SIGNAL(changed()),this,SLOT(upowerDeviceChanged()));
+            //    return powerDevice.percentLeft();
+            }
+        }
+    }
 
 #endif
 }
@@ -2337,6 +2360,17 @@ void QSystemDeviceInfoLinuxCommonPrivate::halChanged(int,QVariantList map)
         } */
     } //end map
 }
+
+void QSystemDeviceInfoLinuxCommonPrivate::upowerChanged()
+{
+    currentPowerState();
+}
+
+void QSystemDeviceInfoLinuxCommonPrivate::upowerDeviceChanged()
+{
+    initBatteryStatus();
+}
+
 #endif
 
 QString QSystemDeviceInfoLinuxCommonPrivate::manufacturer()
@@ -2574,33 +2608,39 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
         }
     }
     if(uPowerAvailable()) {
+        QSystemDeviceInfo::PowerState pState = QSystemDeviceInfo::UnknownPower;
+
         QUPowerInterface power(this);
         foreach(const QDBusObjectPath objpath, power.enumerateDevices()) {
             QUPowerDeviceInterface powerDevice(objpath.path(),this);
-qDebug() << powerDevice.getType() << powerDevice.getState();
             if(powerDevice.getType() == 2) {
                 switch(powerDevice.getState()) {
                 case 0:
                     break;
                 case 1:
                 case 5:
-                    return QSystemDeviceInfo::WallPowerChargingBattery;
+                    pState = QSystemDeviceInfo::WallPowerChargingBattery;
                     break;
                 case 2:
                 case 6:
-                    return QSystemDeviceInfo::BatteryPower;
+                    pState = QSystemDeviceInfo::BatteryPower;
                     break;
                 case 4:
-                    return QSystemDeviceInfo::WallPower;
+                    pState = QSystemDeviceInfo::WallPower;
                     break;
                 default:
-                    return QSystemDeviceInfo::UnknownPower;
+                    pState = QSystemDeviceInfo::UnknownPower;
                 };
             }
         }
-        if(!power.onBattery())
-            return QSystemDeviceInfo::WallPower;
-    }
+        if(!power.onBattery() && pState == QSystemDeviceInfo::UnknownPower)
+            pState = QSystemDeviceInfo::WallPower;
+        if(curPowerState != pState) {
+            curPowerState = pState;
+            Q_EMIT powerStateChanged(pState);
+        }
+    return pState;    
+}
 #endif
        QFile statefile("/proc/acpi/battery/BAT0/state");
        if (!statefile.open(QIODevice::ReadOnly)) {

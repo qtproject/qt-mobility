@@ -498,8 +498,8 @@ QString QUPowerDeviceInterface::recallUrl()
 void QUPowerDeviceInterface::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(changed())) {
-        if(!connection().connect(QLatin1String(UPOWER_DEVICE_SERVICE),
-                               UPOWER_DEVICE_PATH,
+        if(!connection().connect(QLatin1String(UPOWER_SERVICE),
+                               path,
                                UPOWER_DEVICE_SERVICE,
                                QLatin1String("Changed"),
                                this,SIGNAL(changed()))) {
@@ -511,8 +511,8 @@ void QUPowerDeviceInterface::connectNotify(const char *signal)
 void QUPowerDeviceInterface::disconnectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(changed())) {
-        if(!connection().connect(QLatin1String(UPOWER_DEVICE_SERVICE),
-                               UPOWER_DEVICE_PATH,
+        if(!connection().connect(QLatin1String(UPOWER_SERVICE),
+                               path,
                                UPOWER_DEVICE_SERVICE,
                                QLatin1String("Changed"),
                                this,SIGNAL(changed()))) {

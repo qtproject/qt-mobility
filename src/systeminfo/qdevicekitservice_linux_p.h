@@ -69,7 +69,7 @@
 #define	UPOWER_PATH        "/org/freedesktop/UPower"
 
 #define	UPOWER_DEVICE_SERVICE     "org.freedesktop.UPower.Device"
-#define	UPOWER_DEVICE_PATH        "/org/freedesktop/UPower.Device"
+#define	UPOWER_DEVICE_PATH        "/org/freedesktop/UPower/Device"
 
 QT_BEGIN_NAMESPACE
 
