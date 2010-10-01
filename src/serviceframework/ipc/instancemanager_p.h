@@ -66,9 +66,12 @@ struct ServiceIdentDescriptor
     QObject* sharedInstance;
     QUuid sharedId;
     int sharedRefCount;
+
+    //TODO converge with QRemoteServiceRegister::Entry so that entry changes
+    //are reflected by instance manager
 };
 
-class QM_AUTOTEST_EXPORT InstanceManager
+class QM_AUTOTEST_EXPORT InstanceManager //TODO public QOBJECT
 {
 public:
     InstanceManager();

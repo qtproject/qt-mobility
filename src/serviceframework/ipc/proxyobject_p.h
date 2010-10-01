@@ -57,6 +57,7 @@ QTM_BEGIN_NAMESPACE
 class QServiceProxyPrivate;
 class QServiceProxy : public QObject
 {
+    //TODO make inherit from QRemoteService
     //Note: Do not put Q_OBJECT here
 public:
     QServiceProxy(const QByteArray& metadata, ObjectEndPoint* endpoint, QObject* parent = 0);

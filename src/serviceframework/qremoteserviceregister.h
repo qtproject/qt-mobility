@@ -59,6 +59,8 @@ class Q_SERVICEFW_EXPORT QRemoteServiceRegister : public QObject
 public:
 
     enum InstanceType {
+        //TODO SharedInstance -> GlobalInstance
+        //     UniqueInstance -> PrivateInstance
         SharedInstance = 0,  //every new request for service gets same service instance
         UniqueInstance       //every new request for service gets new service instance
     };
@@ -66,6 +68,7 @@ public:
     typedef QObject *(*CreateServiceFunc)();
 
     class Q_SERVICEFW_EXPORT Entry {
+        //TODO docs for Entry class
     public:
         Entry();
         Entry(const Entry &);
@@ -80,13 +83,14 @@ public:
         QString serviceName() const;
         QString version() const;
 
-        const QMetaObject* metaObject() const;
-        void setInstanciationType(QRemoteServiceRegister::InstanceType t);
-        QRemoteServiceRegister::InstanceType instanciationType() const;
+        //TODO remove metaObject()
+        const QMetaObject* metaObject() const; //TODO Private?
+        void setInstantiationType(QRemoteServiceRegister::InstanceType t);
+        QRemoteServiceRegister::InstanceType instantiationType() const;
 
 
     private:
-        //TODO do we need a private d-pointer?
+        //TODO we need an explicitly shared d-pointer
         QString iface;
         QString service;
         QString ifaceVersion;
@@ -111,6 +115,8 @@ public:
     template <typename T>
     Entry createEntry(const QString& serviceName,
                     const QString& interfaceName, const QString& version);
+
+    //TODO remove in favor of createEntry() only usage
     void registerEntry(const Entry& entry);
 
 
@@ -119,16 +125,21 @@ public:
     bool quitOnLastInstanceClosed() const;
     void setQuitOnLastInstanceClosed(const bool quit);
 
+    //TODO typedef bool (*SecurityFilter)(const void *message);
     typedef bool (*securityFilter)(const void *message);
     securityFilter setSecurityFilter(securityFilter filter);
 
 Q_SIGNALS:
+    // TODO void instanceDisconnected(const QRemoteServiceRegister::Entry&)
     void lastInstanceClosed();
 private:
     QRemoteServiceRegisterPrivate* d;
 };
 
-struct QRemoteServiceRegisterLocalSocketCred {
+//TODO rename (pending DBUS sec authentication investigation
+struct QRemoteServiceRegisterCredentials {
+    //d pointer for future additions
+    //subclassing?
     int fd;
     int pid;
     int uid;
