@@ -62,13 +62,13 @@ QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE
 
 
-class WaveDecoder : public QIODevice
+class QWaveDecoder : public QIODevice
 {
     Q_OBJECT
 
 public:
-    explicit WaveDecoder(QIODevice *source, QObject *parent = 0);
-    ~WaveDecoder();
+    explicit QWaveDecoder(QIODevice *source, QObject *parent = 0);
+    ~QWaveDecoder();
 
     QAudioFormat audioFormat() const;
     int duration() const;

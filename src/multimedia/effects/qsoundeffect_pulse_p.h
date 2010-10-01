@@ -68,7 +68,7 @@ QT_BEGIN_NAMESPACE
 
 class QNetworkReply;
 class QNetworkAccessManager;
-class WaveDecoder;
+class QWaveDecoder;
 
 class QSoundEffectPrivate : public QObject
 {
@@ -125,7 +125,7 @@ private:
     QTime  m_playbackTime;
     QByteArray m_name;
     QNetworkReply *m_reply;
-    WaveDecoder *m_waveDecoder;
+    QWaveDecoder *m_waveDecoder;
     QIODevice *m_stream;
     QNetworkAccessManager *m_networkAccessManager;
 };
