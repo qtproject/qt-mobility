@@ -1232,7 +1232,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="page_10">
-      <layout class="QGridLayout" name="gridLayout_11">
+      <layout class="QGridLayout" name="gridLayout_10">
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_92">
          <item>
@@ -1270,6 +1270,42 @@
         </layout>
        </item>
        <item row="1" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_89">
+         <item>
+          <widget class="QLabel" name="label_98">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Home MNC:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="homeMNCLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
+           <property name="text">
+            <string>.</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_90">
          <item>
           <widget class="QLabel" name="label_99">
@@ -1280,7 +1316,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Current MMC:</string>
+            <string>Current MCC:</string>
            </property>
           </widget>
          </item>
@@ -1305,7 +1341,7 @@
          </item>
         </layout>
        </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_91">
          <item>
           <widget class="QLabel" name="label_100">
@@ -1316,48 +1352,12 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Home MMC:</string>
+            <string>Home MCC:</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="homeMMCLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
-           </property>
-           <property name="text">
-            <string>.</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="3" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_89">
-         <item>
-          <widget class="QLabel" name="label_98">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Home MNC:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="homeMNCLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
