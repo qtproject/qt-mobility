@@ -148,7 +148,7 @@ DBusSession::~DBusSession()
 class DBusSessionAdaptor: public QDBusAbstractAdaptor
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.qtmobility.DBus")
+    Q_CLASSINFO("D-Bus Interface", "com.nokia.qtmobility.sfw.DBusSession")
 
 public:
     DBusSessionAdaptor(QObject *parent);
@@ -250,6 +250,7 @@ QRemoteServiceControlPrivate* QRemoteServiceControlPrivate::constructPrivateObje
 QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& /*location*/)
 {
     QString serviceName = "com.nokia.qtmobility.sfw." + typeIdent.name;
+    
     QString path = "/" + typeIdent.iface + "/DBusSession";
     path.replace(QString("."), QString("/"));
 
@@ -258,7 +259,10 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
         qWarning() << "Cannot connect to DBus";
         return 0;
     }
-   
+  
+    QDBusMessage msg = QDBusMessage::createMethodCall(serviceName, path, "", "autostart");
+    connection->call(msg);
+
     QDBusInterface *inface = new QDBusInterface(serviceName, path, "", QDBusConnection::sessionBus());
     if (!inface->isValid()) {
         qWarning() << "Cannot connect to remote service" << serviceName << path;
