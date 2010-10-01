@@ -62,11 +62,11 @@
     
 
 
-    <p>These Release Notes cover what's new, download and installation instructions and known issues for QtMobility 1.1.0 beta release. An up-to-date list of known issues with the release can be found via the <a href="http://bugreports.qt.nokia.com"> Qt Bug Tracker</a>  which provides additional information about known issues and tasks related to Qt and the QtMobility Projects. The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see <a href="index.html#platform-compatibility">Platform Compatibility</a>.</p>
+    <p>These Release Notes cover what's new, download and installation instructions and known issues for QtMobility 1.1.0 beta2 release. An up-to-date list of known issues with the release can be found via the <a href="http://bugreports.qt.nokia.com"> Qt Bug Tracker</a>  which provides additional information about known issues and tasks related to Qt and the QtMobility Projects. The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see <a href="index.html#platform-compatibility">Platform Compatibility</a>.</p>
 
     <a name="What's New in QtMobility 1.1.0"></a>
     <h2>What's New in QtMobility 1.1.0</h2>
-    <p>Qt Mobility 1.1.0 beta is part of our ongoing program providing new Qt APIs for mobile application development. This release contains a number of new APIs and also improvements and bug fixes since the Qt Mobility 1.0.2 release. For more details, please refer to the <a href="http://qt.nokia.com/doc/qtmobility-1.1.0-beta"> online documentation </a> included in this distribution and the change log file.</p>
+    <p>Qt Mobility 1.1.0 beta2 is part of our ongoing program providing new Qt APIs for mobile application development. This release contains a number of new APIs and also improvements and bug fixes since the Qt Mobility 1.0.2 release. For more details, please refer to the <a href="http://qt.nokia.com/doc/qtmobility-1.1.0-beta2"> online documentation </a> included in this distribution and the change log file.</p>
 
     <a name="contacts-api"></a>
   
