@@ -34,8 +34,8 @@ win32:!simulator {
     HEADERS += qsysteminfo_win_p.h 
 
     win32-msvc*: {
-        SOURCES += qwmihelper_win.cpp
-        HEADERS += qwmihelper_win_p.h
+        SOURCES += windows/qwmihelper_win.cpp
+        HEADERS += windows/qwmihelper_win_p.h
 
         LIBS += \
             -lOle32 \
@@ -60,29 +60,29 @@ unix:!simulator {
     QT += gui
     maemo5|maemo6|linux-*: {
         contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
-        SOURCES += qsysteminfo_linux_common.cpp
-        HEADERS += qsysteminfo_linux_common_p.h
+        SOURCES += linux/qsysteminfo_linux_common.cpp
+        HEADERS += linux/qsysteminfo_linux_common_p.h
 
         contains(blkid_enabled, yes):DEFINES += BLKID_SUPPORTED
     }
 
     !maemo5:!maemo6:linux-*: {
-            SOURCES += qsysteminfo_linux.cpp
-            HEADERS += qsysteminfo_linux_p.h
+            SOURCES += linux/qsysteminfo_linux.cpp
+            HEADERS += linux/qsysteminfo_linux_p.h
             contains(QT_CONFIG,dbus): {
                 QT += dbus
-                SOURCES += qhalservice_linux.cpp \
-                           qsysteminfodbushelper.cpp
+                SOURCES += linux/qhalservice_linux.cpp \
+                           linux/qsysteminfodbushelper.cpp
 
-                HEADERS += qhalservice_linux_p.h \
-                           qsysteminfodbushelper_p.h
+                HEADERS += linux/qhalservice_linux_p.h \
+                           linux/qsysteminfodbushelper_p.h
 
-                SOURCES += qdevicekitservice_linux.cpp
-                HEADERS += qdevicekitservice_linux_p.h
+                SOURCES += linux/qdevicekitservice_linux.cpp
+                HEADERS += linux/qdevicekitservice_linux_p.h
 
         contains(networkmanager_enabled, yes): {
-                    SOURCES += qnetworkmanagerservice_linux.cpp qnmdbushelper.cpp
-                    HEADERS += qnetworkmanagerservice_linux_p.h qnmdbushelper_p.h
+                    SOURCES += linux/qnetworkmanagerservice_linux.cpp linux/qnmdbushelper.cpp
+                    HEADERS += linux/qnetworkmanagerservice_linux_p.h linux/qnmdbushelper_p.h
                 } else {
                     DEFINES += QT_NO_NETWORKMANAGER
                 }
@@ -93,8 +93,8 @@ unix:!simulator {
                    }
                 contains(connman_enabled, yes): {
 
-                    SOURCES+= qconnmanservice_linux.cpp qofonoservice_linux.cpp
-                    HEADERS+= qconnmanservice_linux_p.h qofonoservice_linux_p.h
+                    SOURCES+= linux/qconnmanservice_linux.cpp linux/qofonoservice_linux.cpp
+                    HEADERS+= linux/qconnmanservice_linux_p.h linux/qofonoservice_linux_p.h
                 } else {
                     DEFINES += QT_NO_CONNMAN
                 }
@@ -109,13 +109,13 @@ unix:!simulator {
             #Qt GConf wrapper added here until a proper place is found for it.
             CONFIG += link_pkgconfig
             LIBS += -lblkid
-            SOURCES += qsysteminfo_maemo.cpp gconfitem.cpp
-            HEADERS += qsysteminfo_maemo_p.h gconfitem_p.h
+            SOURCES += linux/qsysteminfo_maemo.cpp linux/gconfitem.cpp
+            HEADERS += linux/qsysteminfo_maemo_p.h linux/gconfitem_p.h
             DEFINES += QT_NO_CONNMAN QT_NO_UDISKS  QT_NO_NETWORKMANAGER
         contains(QT_CONFIG,dbus): {
                 QT += dbus
-                SOURCES += qhalservice_linux.cpp
-                HEADERS += qhalservice_linux_p.h
+                SOURCES += linux/qhalservice_linux.cpp
+                HEADERS += linux/qhalservice_linux_p.h
        }
        PKGCONFIG += glib-2.0 gconf-2.0
        CONFIG += create_pc create_prl

@@ -51,9 +51,9 @@
 
 #ifdef Q_OS_LINUX
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-#include "qsysteminfo_maemo_p.h"
+#include "linux/qsysteminfo_maemo_p.h"
 #else
-#include "qsysteminfo_linux_p.h"
+#include "linux/qsysteminfo_linux_p.h"
 #endif //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
 #endif //Q_OS_LINUX
 

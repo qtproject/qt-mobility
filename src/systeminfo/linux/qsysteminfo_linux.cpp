@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 #include "qsysteminfocommon_p.h"
-#include <qsysteminfo_linux_p.h>
+#include "linux/qsysteminfo_linux_p.h"
 
 #include <unistd.h> // for getppid
 
@@ -57,7 +57,7 @@
 #include <QSettings>
 
 #ifndef QT_NO_NETWORKMANAGER
-#include <qnetworkmanagerservice_linux_p.h>
+#include "linux/qnetworkmanagerservice_linux_p.h"
 #include <QtDBus/QtDBus>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusError>
