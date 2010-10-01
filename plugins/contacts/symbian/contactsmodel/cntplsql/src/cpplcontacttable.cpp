@@ -106,6 +106,7 @@ void CPplContactTable::ConstructL()
 	iInsertStmnt->SetParamL(KContactFirstNamePrn, KContactFirstNamePrnParam);
 	iInsertStmnt->SetParamL(KContactLastNamePrn, KContactLastNamePrnParam);
 	iInsertStmnt->SetParamL(KContactCompanyNamePrn, KContactCompanyNamePrnParam);
+	iInsertStmnt->SetParamL(KContactFavoriteIndex, KContactFavoriteIndexParam);
 	iInsertStmnt->SetParamL(KContactTextFieldHeader, KContactTextFieldHeaderParam);
 	iInsertStmnt->SetParamL(KContactBinaryFieldHeader, KContactBinaryFieldHeaderParam);
 	iInsertStmnt->SetParamL(KContactTextFields, KContactTextFieldsParam);
@@ -152,6 +153,7 @@ void CPplContactTable::ConstructL()
 	iUpdateStmnt->SetParamL(KContactFirstNamePrn, KContactFirstNamePrnParam);
 	iUpdateStmnt->SetParamL(KContactLastNamePrn, KContactLastNamePrnParam);
 	iUpdateStmnt->SetParamL(KContactCompanyNamePrn, KContactCompanyNamePrnParam);
+	iUpdateStmnt->SetParamL(KContactFavoriteIndex, KContactFavoriteIndexParam);
 	iUpdateStmnt->SetParamL(KContactTextFieldHeader, KContactTextFieldHeaderParam);
 	iUpdateStmnt->SetParamL(KContactBinaryFieldHeader, KContactBinaryFieldHeaderParam);
 	iUpdateStmnt->SetParamL(KContactTextFields, KContactTextFieldsParam);
@@ -499,6 +501,19 @@ void CPplContactTable::WriteContactItemL(const CContactItem& aItem, TCntSqlState
 	User::LeaveIfError(stmnt.BindInt(
 		User::LeaveIfError(stmnt.ParameterIndex(KContactIdParam() ) ), aItem.Id() ) );
 
+	//bind favorite index
+	TInt indexFavField = aItem.CardFields().Find(KUidContactFieldFavourite);
+	if (indexFavField >= KErrNone)
+	    {
+	    const CContactItemField& field = aItem.CardFields()[indexFavField];
+	    if (field.StorageType() == KStorageTypeContactItemId)
+	        {
+	        User::LeaveIfError(stmnt.BindInt(
+	            User::LeaveIfError(stmnt.ParameterIndex(KContactFavoriteIndexParam() ) ),
+	                field.AgentStorage()->Value() ) );
+	        }
+	    }
+	
 	// build the clob/blob parts of the update statement
 	RSqlParamWriteStream textHeader;
 	User::LeaveIfError(textHeader.BindBinary(stmnt, 
