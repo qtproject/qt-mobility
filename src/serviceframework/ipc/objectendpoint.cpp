@@ -48,8 +48,10 @@
 #include <QEventLoop>
 #include <QEvent>
 #include <QVarLengthArray>
-#include <QCoreApplication>
-#include <QTime>
+#ifdef Q_OS_WIN
+#  include <QCoreApplication>
+#  include <QTime>
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -623,14 +625,24 @@ void ObjectEndPoint::waitForResponse(const QUuid& requestId, int msecs/* = 30000
     Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
     if (openRequests()->contains(requestId) ) {
         Response* response = openRequests()->value(requestId);
+#ifdef Q_OS_WIN
         QTime timer;
         timer.start();
         while(!response->isFinished) {
             if(QCoreApplication::instance())
                 QCoreApplication::instance()->processEvents(QEventLoop::ExcludeUserInputEvents);
-            if(timer.elapsed() > msecs)
+            if(timer.elapsed() > 30000)
                 break;
         }
+#else
+        QEventLoop* loop = new QEventLoop( this );
+        connect(this, SIGNAL(pendingRequestFinished()), loop, SLOT(quit())); 
+
+        while(!response->isFinished) {
+            loop->exec();
+        }
+        delete loop;
+#endif
     }
 }
 
