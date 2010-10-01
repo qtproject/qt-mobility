@@ -100,6 +100,8 @@ private slots:  // Test cases
     void fetchItemsSortOrder();
     void addItems_data(){ addManagers(); };
     void addItems();
+    void addItemsMultiReq_data(){ addManagers(); };
+    void addItemsMultiReq();
     void modifyItems_data(){ addManagers(); };
     void modifyItems();
     void removeItems_data(){ addManagers(); };
@@ -110,6 +112,8 @@ private slots:  // Test cases
     void modifyCollection();
     void removeCollection_data(){ addManagers(); };
     void removeCollection();
+    void addCollectionMultiManager_data(){ addManagers(); };
+    void addCollectionMultiManager();
     void detailDefinitionFetch_data(){ addManagers(); };
     void detailDefinitionFetch();
     void detailDefinitionSave_data(){ addManagers(); };
@@ -194,9 +198,9 @@ void tst_SymbianOmAsync::addSimpleItem()
     // Save
     QVERIFY(saveItemRequest.start());
     QCOMPARE(saveItemRequest.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(stateSpy.count(), 1);
-    QTRY_COMPARE(resultSpy.count(), 1);
-    QTRY_COMPARE(addedSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
+    QTRY_COMPARE(resultSpy.count(), 1); // one item saved
+    QTRY_COMPARE(addedSpy.count(), 1);  // one item saved
 
     // Verify
     QCOMPARE(m_om->itemIds().count(), 1);
@@ -230,8 +234,8 @@ void tst_SymbianOmAsync::fetchSimpleItem()
     // Fetch
     QVERIFY(fetchItemRequest.start());
     QCOMPARE(fetchItemRequest.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(stateSpy.count(), 1);
-    QTRY_COMPARE(resultSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
+    QTRY_COMPARE(resultSpy.count(), 1); // 1 item fetched
 
     // Verify
     QCOMPARE(fetchItemRequest.state(), QOrganizerItemAbstractRequest::FinishedState);
@@ -263,7 +267,7 @@ void tst_SymbianOmAsync::fetchWaitForFinished()
      // Fetch
      QVERIFY(fetchItemRequest.start());
      QCOMPARE(fetchItemRequest.state(), QOrganizerItemAbstractRequest::ActiveState);
-     QCOMPARE(stateSpy.count(), 1);
+     QCOMPARE(stateSpy.count(), 1);  // inactive > active
      QTime startTime = QTime::currentTime();
      QVERIFY(fetchItemRequest.waitForFinished(5000)); // 5 seconds time-out
 
@@ -292,9 +296,8 @@ void tst_SymbianOmAsync::fetchItems()
     // Fetch
     QVERIFY(req.start());
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(stateSpy.count(), 1);
-    QTRY_COMPARE(resultSpy.count(), 1);
-    QTRY_COMPARE(stateSpy.count(), 2);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
+    QVERIFY(resultSpy.count() > 1);
 
     // Verify
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
@@ -321,9 +324,8 @@ void tst_SymbianOmAsync::fetchItemIds()
     // Fetch
     QVERIFY(req.start());
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(stateSpy.count(), 1);
-    QTRY_COMPARE(resultSpy.count(), 1);
-    QTRY_COMPARE(stateSpy.count(), 2);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
+    QVERIFY(resultSpy.count() >= 1);   // allow one or more "resultsAvailable"
 
     // Verify
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
@@ -356,8 +358,8 @@ void tst_SymbianOmAsync::fetchItemsIdFilter()
     req.setFilter(localIdFilter);
     QVERIFY(req.start());
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(stateSpy.count(), 1);
-    QTRY_COMPARE(resultSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
+    QVERIFY(resultSpy.count() > 1);
 
     // Verify
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
@@ -387,8 +389,8 @@ void tst_SymbianOmAsync::fetchItemsDetailFilter()
     req.setFilter(detailFilter);
     QVERIFY(req.start());
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(stateSpy.count(), 1);
-    QTRY_COMPARE(resultSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
+    QVERIFY(resultSpy.count() > 1);
 
     // Verify
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
@@ -429,8 +431,8 @@ void tst_SymbianOmAsync::fetchItemsSortOrder()
     // Fetch
     QVERIFY(req.start());
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(stateSpy.count(), 1);
-    QTRY_COMPARE(resultSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
+    QVERIFY(resultSpy.count() > 1);
 
     // Verify
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
@@ -457,7 +459,7 @@ void tst_SymbianOmAsync::addItems()
     // Save
     QVERIFY(req.start());
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2); // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
 
     // Verify
@@ -475,6 +477,56 @@ void tst_SymbianOmAsync::addItems()
     }
 }
 
+void tst_SymbianOmAsync::addItemsMultiReq()
+{
+    // Create items
+    QOrganizerItem item1 = createItem(QOrganizerItemType::TypeEvent, "multireq1", QDateTime::currentDateTime());
+    QOrganizerItem item2 = createItem(QOrganizerItemType::TypeEvent, "multireq2", QDateTime::currentDateTime());
+    QOrganizerItem item3 = createItem(QOrganizerItemType::TypeEvent, "multireq3", QDateTime::currentDateTime());
+
+    // Create save requests
+    QOrganizerItemSaveRequest req1;
+    req1.setManager(m_om);
+    req1.setItem(item1);
+    QOrganizerItemSaveRequest req2;
+    req2.setManager(m_om);
+    req2.setItem(item2);
+    QOrganizerItemSaveRequest req3;
+    req3.setManager(m_om);
+    req3.setItem(item3);
+
+    // Create signal spys for verification purposes
+    QSignalSpy stateSpy1(&req1, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy1(&req1, SIGNAL(resultsAvailable()));
+    QSignalSpy stateSpy2(&req2, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy2(&req2, SIGNAL(resultsAvailable()));
+    QSignalSpy stateSpy3(&req3, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy3(&req3, SIGNAL(resultsAvailable()));
+    QSignalSpy addedSpy(m_om, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
+
+    // Save
+    QVERIFY(req1.start());
+    QVERIFY(req2.start());
+    QVERIFY(req3.start());
+    QCOMPARE(req1.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req2.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req3.state(), QOrganizerItemAbstractRequest::ActiveState);
+
+    // Verify
+    QTRY_COMPARE(stateSpy1.count(), 2); // inactive > active > finished
+    QTRY_COMPARE(stateSpy2.count(), 2); // inactive > active > finished
+    QTRY_COMPARE(stateSpy3.count(), 2); // inactive > active > finished
+    QTRY_COMPARE(resultSpy1.count(), 1);
+    QTRY_COMPARE(resultSpy2.count(), 1);
+    QTRY_COMPARE(resultSpy3.count(), 1);
+    QCOMPARE(addedSpy.count(), 3);
+    QCOMPARE(req1.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(req1.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(m_om->itemIds().count(), 3);
+    foreach (QOrganizerItemLocalId id, m_om->itemIds()) {
+        QVERIFY(!id.isNull());
+    }
+}
 void tst_SymbianOmAsync::modifyItems()
 {
     // Save items (synchronously)
@@ -498,7 +550,7 @@ void tst_SymbianOmAsync::modifyItems()
     // Save
     QVERIFY(req.start());
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
 
     // Verify
@@ -529,9 +581,8 @@ void tst_SymbianOmAsync::removeItems()
     req.setItemIds(m_om->itemIds());
     QVERIFY(req.start());
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
-    QTRY_COMPARE(stateSpy.count(), 2);
 
     // Verify
     QVERIFY(removedSpy.count() > 0);
@@ -573,7 +624,7 @@ void tst_SymbianOmAsync::addCollection()
     // Start the request
     QVERIFY(req.start());
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
     QTRY_COMPARE(addedSpy.count(), 1);
 
@@ -620,7 +671,7 @@ void tst_SymbianOmAsync::modifyCollection()
     // Start the request
     QVERIFY(req.start());
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
     QTRY_COMPARE(addedSpy.count(), 1);
     QTRY_COMPARE(changedSpy.count(), 1);
@@ -670,7 +721,7 @@ void tst_SymbianOmAsync::removeCollection()
     // Start the request
     QVERIFY(req.start());
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
     QTRY_COMPARE(removedSpy.count(), 1);
 
@@ -685,6 +736,61 @@ void tst_SymbianOmAsync::removeCollection()
     QTRY_COMPARE(resultSpy.count(), 2);
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
     QCOMPARE(req.error(), QOrganizerItemManager::DoesNotExistError);
+}
+
+void tst_SymbianOmAsync::addCollectionMultiManager()
+{
+    // Create a second manager
+    QScopedPointer<QOrganizerItemManager> om2(new QOrganizerItemManager(m_om->managerName()));
+
+    // Create request
+    QOrganizerCollectionSaveRequest req;
+    req.setManager(m_om);
+
+    // Setup signal spies
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+    QSignalSpy addedSpy1(m_om, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
+    QSignalSpy addedSpy2(om2.data(), SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
+
+    // Creating new collections is not supported on legacy symbian devices
+    if (!m_customCollectionsSupported) {
+        QWARN("Removing collections not supported!");
+        QVERIFY(!req.start());
+        QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+        QCOMPARE(stateSpy.count(), 1);
+        QTRY_COMPARE(resultSpy.count(), 1);
+        return;
+    }    
+
+    // Create a collection
+    QOrganizerCollection collection;
+    collection.setMetaData("Name", "saveEmission");
+    collection.setMetaData("FileName", "c:saveEmission");
+    collection.setMetaData("Description", "saveEmission test");
+    collection.setMetaData("Color", QColor(Qt::red));
+    collection.setMetaData("Enabled", true);
+    req.setCollection(collection);
+
+    // Start the request
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
+    QTRY_COMPARE(resultSpy.count(), 1);
+    QCOMPARE(req.collections().count(), 1);
+    QVERIFY(!req.collections().at(0).localId().isNull());
+    QVERIFY(!req.collections().at(0).id().managerUri().isEmpty());
+    // Verify the count of collectionsAdded signals on both managers
+    QTRY_COMPARE(addedSpy1.count(), 1);
+    QTRY_COMPARE(addedSpy2.count(), 1);
+    // Verify the argument counts of the collectionsAdded signals
+    QCOMPARE(addedSpy1.last().count(), 1);
+    QCOMPARE(addedSpy2.last().count(), 1);
+    // Verify the arguments contain the id of the new collection
+    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
+    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
+    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), req.collections().at(0).localId());
+    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), req.collections().at(0).localId());
 }
 
 void tst_SymbianOmAsync::detailDefinitionFetch()
@@ -718,7 +824,7 @@ void tst_SymbianOmAsync::detailDefinitionFetch()
     names << QOrganizerItemComment::DefinitionName; // not supported
     req.setDefinitionNames(names);
     QVERIFY(req.start());
-    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
     QCOMPARE(stateSpy.count(), 2);
@@ -734,10 +840,9 @@ void tst_SymbianOmAsync::detailDefinitionFetch()
     req.setDefinitionNames(QStringList());
     QVERIFY(req.start());
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(stateSpy.count(), 2);
     QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
     QCOMPARE(req.errorMap().count(), 0);
     QVERIFY(req.definitions().count() == 0);
@@ -748,10 +853,9 @@ void tst_SymbianOmAsync::detailDefinitionFetch()
     req.setItemType(QOrganizerItemType::TypeJournal);
     QVERIFY(req.start());
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(stateSpy.count(), 1);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(stateSpy.count(), 2);
     QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
     QCOMPARE(req.errorMap().count(), 0);
     QVERIFY(req.definitions().count() == 0);
