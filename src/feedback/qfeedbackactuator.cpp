@@ -74,7 +74,7 @@ QTM_BEGIN_NAMESPACE
     The QFeedbackActuator class gives access to information about the
     actuator it represents. You can query if the actuator isEnabled()
     and if it isValid(). Whether an actuator is ready to play an
-    effect can be queried by cheking the actuator's state(). The
+    effect can be queried by checking the actuator's state(). The
     \l{QFeedbackActuator::}{State} enum describes the states and
     actuator can be in, which is either Ready, Busy, or Unknown. You
     can also get a human readable name for the actuator with the
@@ -95,7 +95,7 @@ QTM_BEGIN_NAMESPACE
 
     \value Busy    The actuator is busy.
     \value Ready   The actuator is ready to play an effect.
-    \value Unknown The actuator is in an anknown state.
+    \value Unknown The actuator is in an known state.
 */
 
 
