@@ -63,9 +63,9 @@ private:
     void showRoute(QTreeWidgetItem* top, const QGeoRoute& route);
     void showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRouteSegment &segment);
     void showPoints(QTreeWidgetItem* pointsItem, const QList<QGeoCoordinate>& points);
-    void showModes(QTreeWidgetItem* top, QGeoRouteRequest::RouteOptimizations optimization,
-                   QGeoRouteRequest::TravelModes travelModes,
-                   QGeoRouteRequest::AvoidFeatureTypes avoid);
+    void showModes(QTreeWidgetItem* top,
+                   const QGeoRouteRequest &request,
+                   QGeoRouteRequest::TravelModes travelModes);
 
 private:
     const QGeoRouteReply* m_routeReply;

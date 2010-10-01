@@ -332,18 +332,34 @@ QGeoRouteRequest::TravelModes QGeoRouteRequest::travelModes() const
 
     The default value is QGeoRouteRequest::AvoidNothing.
 */
-void QGeoRouteRequest::setAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes)
-{
-    d_ptr->avoidFeatureTypes = avoidFeatureTypes;
-}
 
 /*!
     Returns the features which this request specifies should be avoided during
     the planning of the route.
 */
-QGeoRouteRequest::AvoidFeatureTypes QGeoRouteRequest::avoidFeatureTypes() const
+
+/*!
+*/
+void QGeoRouteRequest::setFeatureWeight(QGeoRouteRequest::FeatureType featureType, QGeoRouteRequest::FeatureWeight featureWeight)
 {
-    return d_ptr->avoidFeatureTypes;
+    if (featureWeight != QGeoRouteRequest::NeutralFeatureWeight)
+        d_ptr->featureWeights[featureType] = featureWeight;
+    else
+        d_ptr->featureWeights.remove(featureType);
+}
+
+/*!
+*/
+QGeoRouteRequest::FeatureWeight QGeoRouteRequest::featureWeight(QGeoRouteRequest::FeatureType featureType) const
+{
+    return d_ptr->featureWeights.value(featureType, QGeoRouteRequest::NeutralFeatureWeight);
+}
+
+/*!
+*/
+QList<QGeoRouteRequest::FeatureType> QGeoRouteRequest::featureTypes() const
+{
+    return d_ptr->featureWeights.keys();
 }
 
 /*!
@@ -412,7 +428,6 @@ QGeoRouteRequestPrivate::QGeoRouteRequestPrivate()
         : QSharedData(),
         numberAlternativeRoutes(0),
         travelModes(QGeoRouteRequest::CarTravel),
-        avoidFeatureTypes(QGeoRouteRequest::AvoidNothing),
         routeOptimization(QGeoRouteRequest::FastestRoute),
         segmentDetail(QGeoRouteRequest::BasicSegmentData),
         maneuverDetail(QGeoRouteRequest::BasicManeuvers) {}
@@ -423,7 +438,7 @@ QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &
         excludeAreas(other.excludeAreas),
         numberAlternativeRoutes(other.numberAlternativeRoutes),
         travelModes(other.travelModes),
-        avoidFeatureTypes(other.avoidFeatureTypes),
+        featureWeights(other.featureWeights),
         routeOptimization(other.routeOptimization),
         segmentDetail(other.segmentDetail),
         maneuverDetail(other.maneuverDetail) {}
@@ -436,7 +451,7 @@ bool QGeoRouteRequestPrivate::operator ==(const QGeoRouteRequestPrivate &other) 
             && (excludeAreas == other.excludeAreas)
             && (numberAlternativeRoutes == other.numberAlternativeRoutes)
             && (travelModes == other.travelModes)
-            && (avoidFeatureTypes == other.avoidFeatureTypes)
+            && (featureWeights == other.featureWeights)
             && (routeOptimization == other.routeOptimization)
             && (segmentDetail == other.segmentDetail)
             && (maneuverDetail == other.maneuverDetail));
