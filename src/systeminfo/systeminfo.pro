@@ -71,8 +71,11 @@ unix:!simulator {
             HEADERS += qsysteminfo_linux_p.h
             contains(QT_CONFIG,dbus): {
                 QT += dbus
-                SOURCES += qhalservice_linux.cpp
-                HEADERS += qhalservice_linux_p.h
+                SOURCES += qhalservice_linux.cpp \
+                           qsysteminfodbushelper.cpp
+
+                HEADERS += qhalservice_linux_p.h \
+                           qsysteminfodbushelper_p.h
 
                 SOURCES += qdevicekitservice_linux.cpp
                 HEADERS += qdevicekitservice_linux_p.h
@@ -227,3 +230,5 @@ simulator {
 HEADERS += $$PUBLIC_HEADERS
 CONFIG += middleware
 include (../../features/deploy.pri)
+
+

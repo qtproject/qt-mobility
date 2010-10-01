@@ -52,7 +52,7 @@
 #include <QtDBus/QDBusPendingCall>
 
 #include "qconnmanservice_linux_p.h"
-
+#include "qsysteminfodbushelper_p.h"
 
 QT_BEGIN_NAMESPACE
 static QDBusConnection dbusConnection = QDBusConnection::systemBus();
@@ -93,8 +93,8 @@ if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QDBusVariant))) {
         }
     }
     if (QLatin1String(signal) == SIGNAL(propertyChangedContext(QString,QString,QDBusVariant))) {
-        QConnmanDBusHelper *helper;
-        helper = new QConnmanDBusHelper(this);
+        QSystemInfoDBusHelper *helper;
+        helper = new QSystemInfoDBusHelper(this);
 
         dbusConnection.connect(QLatin1String(CONNMAN_SERVICE),
                                QLatin1String(CONNMAN_MANAGER_PATH),
@@ -361,8 +361,8 @@ void QConnmanNetworkInterface::connectNotify(const char *signal)
         }
     }
     if (QLatin1String(signal) == SIGNAL(propertyChangedContext(QString,QString,QDBusVariant))) {
-        QConnmanDBusHelper *helper;
-        helper = new QConnmanDBusHelper(this);
+        QSystemInfoDBusHelper *helper;
+        helper = new QSystemInfoDBusHelper(this);
 
         dbusConnection.connect(QLatin1String(CONNMAN_SERVICE),
                                this->path(),
@@ -550,8 +550,8 @@ void QConnmanServiceInterface::connectNotify(const char *signal)
                                this,SIGNAL(propertyChanged(QString,QDBusVariant)));
     }
     if (QLatin1String(signal) == SIGNAL(propertyChangedContext(QString,QString,QDBusVariant))) {
-        QConnmanDBusHelper *helper;
-        helper = new QConnmanDBusHelper(this);
+        QSystemInfoDBusHelper *helper;
+        helper = new QSystemInfoDBusHelper(this);
 
         dbusConnection.connect(QLatin1String(CONNMAN_SERVICE),
                                this->path(),
@@ -783,8 +783,8 @@ void QConnmanTechnologyInterface::connectNotify(const char *signal)
                                this,SIGNAL(propertyChanged(QString,QDBusVariant)));
     }
     if (QLatin1String(signal) == SIGNAL(propertyChangedContext(QString,QString,QDBusVariant))) {
-        QConnmanDBusHelper *helper;
-        helper = new QConnmanDBusHelper(this);
+        QSystemInfoDBusHelper *helper;
+        helper = new QSystemInfoDBusHelper(this);
 
         dbusConnection.connect(QLatin1String(CONNMAN_SERVICE),
                                this->path(),
@@ -943,8 +943,8 @@ void QConnmanDeviceInterface::connectNotify(const char *signal)
 
     }
     if (QLatin1String(signal) == SIGNAL(propertyChangedContext(QString,QString,QDBusVariant))) {
-        QConnmanDBusHelper *helper;
-        helper = new QConnmanDBusHelper(this);
+        QSystemInfoDBusHelper *helper;
+        helper = new QSystemInfoDBusHelper(this);
 
         dbusConnection.connect(QLatin1String(CONNMAN_SERVICE),
                                this->path(),
@@ -1067,20 +1067,5 @@ bool QConnmanDeviceInterface::setEnabled(bool powered)
     return true;
 }
 
-QConnmanDBusHelper::QConnmanDBusHelper(QObject * parent)
-        : QObject(parent)
-{
-}
-
-QConnmanDBusHelper::~QConnmanDBusHelper()
-{
-}
-
-void QConnmanDBusHelper::propertyChanged(const QString &item, const QDBusVariant &var)
-{
-    QDBusMessage msg = this->message();
-    Q_EMIT propertyChangedContext(msg.path() ,item, var);
-}
-
-/////////////////
+///////////////////
 QT_END_NAMESPACE

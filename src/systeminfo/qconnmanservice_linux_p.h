@@ -362,19 +362,19 @@ protected:
 
 };
 
-class QConnmanDBusHelper: public QObject, protected QDBusContext
- {
-     Q_OBJECT
- public:
-    QConnmanDBusHelper(QObject *parent = 0);
-    ~QConnmanDBusHelper();
+//class QConnmanDBusHelper: public QObject, protected QDBusContext
+// {
+//     Q_OBJECT
+// public:
+//    QConnmanDBusHelper(QObject *parent = 0);
+//    ~QConnmanDBusHelper();
 
- public slots:
-    void propertyChanged(const QString &, const QDBusVariant &);
+// public slots:
+//    void propertyChanged(const QString &, const QDBusVariant &);
 
-Q_SIGNALS:
-    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
-};
+//Q_SIGNALS:
+//    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
+//};
 
 QT_END_NAMESPACE
 
