@@ -17,8 +17,9 @@ unix:!mac:!symbian {
     SOURCES += effects/qsoundeffect_qsound_p.cpp
 }
 
-PRIVATE_HEADERS += effects/wavedecoder_p.h
-PUBLIC_HEADERS += effects/qsoundeffect.h
+PRIVATE_HEADERS += \
+        effects/qsoundeffect_p.h \
+        effects/wavedecoder_p.h
 
 SOURCES += \
     effects/qsoundeffect.cpp \

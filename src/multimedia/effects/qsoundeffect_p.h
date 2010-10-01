@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QSOUNDEFFECT_H
-#define QSOUNDEFFECT_H
+#ifndef QSOUNDEFFECT_P_H
+#define QSOUNDEFFECT_P_H
 
 //
 //  W A R N I N G
