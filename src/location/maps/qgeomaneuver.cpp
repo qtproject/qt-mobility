@@ -107,7 +107,6 @@ The instruction indicates that the direction of travel should bear to the left.
 QGeoManeuver::QGeoManeuver()
         : d_ptr(new QGeoManeuverPrivate()) {}
 
-
 /*!
     Constructs a navigation instruction object from the contents of \a other.
 */
@@ -144,12 +143,6 @@ bool QGeoManeuver::operator!= (const QGeoManeuver &other) const
 {
     return !(operator==(other));
 }
-
-/*
-bool QGeoManeuver::isValid() const
-{
-}
-*/
 
 /*!
     Sets the position where the instructions should be provided to \a position.
@@ -237,6 +230,20 @@ qreal QGeoManeuver::distanceToNextInstruction() const
     return d_ptr->distanceToNextInstruction;
 }
 
+/*!
+*/
+void QGeoManeuver::setWaypoint(const QGeoCoordinate &coordinate)
+{
+    d_ptr->waypoint = coordinate;
+}
+
+/*!
+*/
+QGeoCoordinate QGeoManeuver::waypoint() const
+{
+    return d_ptr->waypoint;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
@@ -251,7 +258,8 @@ QGeoManeuverPrivate::QGeoManeuverPrivate(const QGeoManeuverPrivate &other)
         text(other.text),
         direction(other.direction),
         timeToNextInstruction(other.timeToNextInstruction),
-        distanceToNextInstruction(other.distanceToNextInstruction) {}
+        distanceToNextInstruction(other.distanceToNextInstruction),
+        waypoint(other.waypoint) {}
 
 QGeoManeuverPrivate::~QGeoManeuverPrivate() {}
 
@@ -261,7 +269,8 @@ bool QGeoManeuverPrivate::operator ==(const QGeoManeuverPrivate &other) const
             && (text == other.text)
             && (direction == other.direction)
             && (timeToNextInstruction == other.timeToNextInstruction)
-            && (distanceToNextInstruction == other.distanceToNextInstruction));
+            && (distanceToNextInstruction == other.distanceToNextInstruction)
+            && (waypoint == other.waypoint));
 }
 
 QTM_END_NAMESPACE
