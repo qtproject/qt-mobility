@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include "qsysteminfo_linux_common_p.h"
+#include "qdevicekitservice_linux_p.h"
 
 #include <QTimer>
 #include <QFile>
@@ -181,6 +182,7 @@ static bool ofonoAvailable()
 
     return false;
 }
+#endif
 
 static bool uPowerAvailable()
 {
@@ -199,7 +201,7 @@ static bool uPowerAvailable()
 
     return false;
 }
-#endif
+//#endif
 
 bool halIsAvailable;
 bool udisksIsAvailable;
@@ -793,12 +795,12 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
                 if(fi.exists()) {
                     bool powered=false;
                     QFile linkmode(devFile+"/link_mode"); //check for dev power
-                    if(rxlinkmodeexists() && linkmode.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                    if(linkmode.exists() && linkmode.open(QIODevice::ReadOnly | QIODevice::Text)) {
                         QTextStream in(&linkmode);
                         in >> result;
                         if(result.contains("1"))
-                            ok = true;
-                        rx.close();
+                            powered = true;
+                        linkmode.close();
                     }
 
                     QFile rx(devFile + "/address");
@@ -806,7 +808,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
                         QTextStream in(&rx);
                         in >> result;
                         rx.close();
-                        if(ok)
+                        if(powered)
                             return result;
                     }
                 }
@@ -2575,7 +2577,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
         QUPowerInterface power(this);
         foreach(const QDBusObjectPath objpath, power.enumerateDevices()) {
             QUPowerDeviceInterface powerDevice(objpath.path(),this);
-
+qDebug() << powerDevice.getType() << powerDevice.getState();
             if(powerDevice.getType() == 2) {
                 switch(powerDevice.getState()) {
                 case 0:
@@ -2587,6 +2589,9 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                 case 2:
                 case 6:
                     return QSystemDeviceInfo::BatteryPower;
+                    break;
+                case 4:
+                    return QSystemDeviceInfo::WallPower;
                     break;
                 default:
                     return QSystemDeviceInfo::UnknownPower;

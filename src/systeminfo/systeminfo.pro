@@ -74,15 +74,16 @@ unix:!simulator {
                 SOURCES += qhalservice_linux.cpp
                 HEADERS += qhalservice_linux_p.h
 
-                contains(networkmanager_enabled, yes): {
+                SOURCES += qdevicekitservice_linux.cpp
+                HEADERS += qdevicekitservice_linux_p.h
+
+        contains(networkmanager_enabled, yes): {
                     SOURCES += qnetworkmanagerservice_linux.cpp qnmdbushelper.cpp
                     HEADERS += qnetworkmanagerservice_linux_p.h qnmdbushelper_p.h
                 } else {
                     DEFINES += QT_NO_NETWORKMANAGER
                 }
                 contains(CONFIG,meego): { #for now... udisks
-                    SOURCES += qdevicekitservice_linux.cpp
-                    HEADERS += qdevicekitservice_linux_p.h
                 } else {
                     DEFINES += QT_NO_UDISKS QT_NO_MEEGO
                     LIBS += -lblkid -lX11 -lXrandr
