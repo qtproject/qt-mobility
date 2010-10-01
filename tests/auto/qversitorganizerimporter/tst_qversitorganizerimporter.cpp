@@ -815,11 +815,11 @@ void tst_QVersitOrganizerImporter::testTimeZones_data()
     QVersitDocument vtimezone(QVersitDocument::ICalendar20Type);
     vtimezone.setComponentType(QLatin1String("VTIMEZONE"));
     QTest::newRow("utc") << QString() << QVersitDocument(QVersitDocument::ICalendar20Type)
-        << QString::fromAscii("20100102T030405Z")
+        << QLatin1String("20100102T030405Z")
         << QDateTime(QDate(2010, 1, 2), QTime(3, 4, 5), Qt::UTC);
 
     QTest::newRow("floating") << QString() << QVersitDocument(QVersitDocument::ICalendar20Type)
-        << QString::fromAscii("20100102T030405")
+        << QLatin1String("20100102T030405")
         << QDateTime(QDate(2010, 1, 2), QTime(3, 4, 5), Qt::LocalTime);
 
     {
@@ -850,8 +850,8 @@ void tst_QVersitOrganizerImporter::testTimeZones_data()
         standard.addProperty(property);
         vtimezone.addSubDocument(standard);
 
-        QTest::newRow("no dst") << QString::fromAscii("Asia/Singapore")
-            << vtimezone << QString::fromAscii("20100102T100405")
+        QTest::newRow("no dst") << QLatin1String("Asia/Singapore")
+            << vtimezone << QLatin1String("20100102T100405")
             << QDateTime(QDate(2010, 1, 2), QTime(2, 4, 5), Qt::UTC);
     }
 
@@ -905,12 +905,12 @@ void tst_QVersitOrganizerImporter::testTimeZones_data()
         daylight.addProperty(property);
         vtimezone.addSubDocument(daylight);
 
-        QTest::newRow("dst area in standard time") << QString::fromAscii("Australia/Sydney")
-            << vtimezone << QString::fromAscii("20100502T100405")
+        QTest::newRow("dst area in standard time") << QLatin1String("Australia/Sydney")
+            << vtimezone << QLatin1String("20100502T100405")
             << QDateTime(QDate(2010, 5, 2), QTime(0, 4, 5), Qt::UTC);
 
-        QTest::newRow("dst") << QString::fromAscii("Australia/Sydney")
-            << vtimezone << QString::fromAscii("20100102T100405")
+        QTest::newRow("dst") << QLatin1String("Australia/Sydney")
+            << vtimezone << QLatin1String("20100102T100405")
             << QDateTime(QDate(2010, 1, 1), QTime(23, 4, 5), Qt::UTC);
     }
     
@@ -955,12 +955,12 @@ void tst_QVersitOrganizerImporter::testTimeZones_data()
         daylight.addProperty(property);
         vtimezone.addSubDocument(daylight);
 
-        QTest::newRow("dst specified with rdate - daylight") << QString::fromAscii("US-Eastern")
-            << vtimezone << QString::fromAscii("19970615T100000")
+        QTest::newRow("dst specified with rdate - daylight") << QLatin1String("US-Eastern")
+            << vtimezone << QLatin1String("19970615T100000")
             << QDateTime(QDate(1997, 6, 15), QTime(14, 0, 0), Qt::UTC);
 
-        QTest::newRow("dst specified with rdate - standard") << QString::fromAscii("US-Eastern")
-            << vtimezone << QString::fromAscii("19971215T100000")
+        QTest::newRow("dst specified with rdate - standard") << QLatin1String("US-Eastern")
+            << vtimezone << QLatin1String("19971215T100000")
             << QDateTime(QDate(1997, 12, 15), QTime(15, 0, 0), Qt::UTC);
     }
 }
