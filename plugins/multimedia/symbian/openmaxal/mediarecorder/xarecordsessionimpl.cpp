@@ -1,56 +1,52 @@
 /****************************************************************************
-**
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
-** All rights reserved.
-** Contact: Nokia Corporation (qt-info@nokia.com)
-**
-** This file is part of the Qt Mobility Components.
-**
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
-
+ **
+ ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ ** All rights reserved.
+ ** Contact: Nokia Corporation (qt-info@nokia.com)
+ **
+ ** This file is part of the Qt Mobility Components.
+ **
+ ** $QT_BEGIN_LICENSE:LGPL$
+ ** No Commercial Usage
+ ** This file contains pre-release code and may not be distributed.
+ ** You may use this file in accordance with the terms and conditions
+ ** contained in the Technology Preview License Agreement accompanying
+ ** this package.
+ **
+ ** GNU Lesser General Public License Usage
+ ** Alternatively, this file may be used under the terms of the GNU Lesser
+ ** General Public License version 2.1 as published by the Free Software
+ ** Foundation and appearing in the file LICENSE.LGPL included in the
+ ** packaging of this file.  Please review the following information to
+ ** ensure the GNU Lesser General Public License version 2.1 requirements
+ ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+ **
+ ** In addition, as a special exception, Nokia gives you certain additional
+ ** rights.  These rights are described in the Nokia Qt LGPL Exception
+ ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+ **
+ ** If you have questions regarding the use of this file, please contact
+ ** Nokia at qt-info@nokia.com.
+ **
+ **
+ **
+ **
+ **
+ **
+ **
+ **
+ ** $QT_END_LICENSE$
+ **
+ ****************************************************************************/
 #include "xarecordsessionimpl.h"
 #include "xarecordsessioncommon.h"
-
 _LIT8(K8WAVMIMETYPE, "audio/x-wav");
-
 /*
  * These codec names are not part of AL. Hence we need to define names here.
  * */
 _LIT(KAUDIOCODECPCM, "pcm");
 _LIT(KAUDIOCODECAMR, "amr");
 _LIT(KAUDIOCODECAAC, "aac");
-
 _LIT(KCONTAINERWAV, "audio/wav");
 _LIT(KCONTAINERWAVDESC, "wav container");
 _LIT(KCONTAINERAMR, "audio/amr");
@@ -61,7 +57,6 @@ _LIT(KCONTAINERMP4DESC, "mpeg container");
 const TUint KRecordPosUpdatePeriod = 1000;
 const TUint KMilliToHz = 1000;
 const TUint KMaxNameLength = 256;
-
 
 /* Local functions for callback registation */
 void cbXAObjectItf(
@@ -84,24 +79,24 @@ void cbXAAvailableAudioInputsChanged(
             XAint32 numInputs,
             XAboolean isNew);
 
-XARecordSessionImpl::XARecordSessionImpl(XARecordObserver &parent)
-:m_Parent(parent),
-m_EOEngine(NULL),
-m_MORecorder(NULL),
-m_RecordItf(NULL),
-m_AudioEncItf(NULL),
-m_WAVMime(NULL),
-m_URIName(NULL),
-m_InputDeviceId(0),
-m_ContainerType(0),
-m_BitRate(0),
-m_RateControl(0),
-m_ChannelsOut(1),
-m_SampleRate(0),
-m_AudioIODevCapsItf(NULL),
-m_AudioInputDeviceNames(NULL),
-m_DefaultAudioInputDeviceNames(NULL),
-m_AudioEncCapsItf(NULL)
+XARecordSessionImpl::XARecordSessionImpl(XARecordObserver &parent) :
+    m_Parent(parent),
+	m_EOEngine(NULL),
+    m_MORecorder(NULL),
+    m_RecordItf(NULL),
+    m_AudioEncItf(NULL),
+    m_WAVMime(NULL),
+    m_URIName(NULL),
+    m_InputDeviceId(0),
+    m_ContainerType(0),
+    m_BitRate(0),
+    m_RateControl(0),
+    m_ChannelsOut(1),
+    m_SampleRate(0),
+    m_AudioIODevCapsItf(NULL),
+    m_AudioInputDeviceNames(NULL),
+    m_DefaultAudioInputDeviceNames(NULL),
+    m_AudioEncCapsItf(NULL)
 {
     TRACE_FUNCTION_ENTRY_EXIT;
 }
@@ -143,7 +138,7 @@ TInt32 XARecordSessionImpl::postConstruct()
 
     /* Create and realize Engine object */
     TRACE_LOG(_L("XARecordSessionImpl: Creating Engine..."));
-    XAresult xa_result = xaCreateEngine (&m_EOEngine, 1, engineOption, 0, NULL, NULL);
+    XAresult xa_result = xaCreateEngine(&m_EOEngine, 1, engineOption, 0, NULL, NULL);
     TInt returnValue = mapError(xa_result, ETrue);
     RET_ERR_IF_ERR(returnValue);
     TRACE_LOG(_L("XARecordSessionImpl: Realizing engine..."));
@@ -222,7 +217,7 @@ TInt32 XARecordSessionImpl::setURI(const TDesC &aURI)
     RET_ERR_IF_ERR(returnValue);
 
     TPtr8 uriPtr = m_URIName->Des();
-     /* copy uri name into local variable */
+    /* copy uri name into local variable */
     uriPtr.Copy(aURI);
 
     TRACE_FUNCTION_EXIT;
@@ -389,8 +384,8 @@ void XARecordSessionImpl::cbRecordItf(
         xa_result = (*m_RecordItf)->GetPosition(m_RecordItf, &milliSec);
         returnValue = mapError(xa_result, ETrue);
         if (returnValue == KErrNone)
-            m_Parent.cbDurationChanged((TInt64)milliSec);
-        }
+            m_Parent.cbDurationChanged((TInt64) milliSec);
+    }
         break;
     case XA_RECORDEVENT_HEADMOVING:
         TRACE_LOG(_L("XA_RECORDEVENT_HEADMOVING"));
@@ -415,7 +410,7 @@ void XARecordSessionImpl::getAudioInputDeviceNames(RArray<TPtrC> &aArray)
 {
     TRACE_FUNCTION_ENTRY;
 
-    for(TInt index = 0; index < m_AudioInputDeviceNames->MdcaCount(); index++)
+    for (TInt index = 0; index < m_AudioInputDeviceNames->MdcaCount(); index++)
         aArray.Append(m_AudioInputDeviceNames->MdcaPoint(index));
     TRACE_FUNCTION_EXIT;
 }
@@ -441,7 +436,7 @@ TInt32 XARecordSessionImpl::activeAudioInputDevice(TPtrC &endPoint)
     TInt32 returnValue(KErrGeneral);
     TBool found(EFalse);
     TInt index = 0;
-    for(; index < m_InputDeviceIDs.Count(); index++) {
+    for (; index < m_InputDeviceIDs.Count(); index++) {
         if (m_InputDeviceIDs[index] == m_InputDeviceId) {
             found = ETrue;
             break;
@@ -466,7 +461,7 @@ TBool XARecordSessionImpl::setAudioInputDevice(const TDesC &aDevice)
     TBool found(EFalse);
     m_InputDeviceId = 0;
     TInt index = 0;
-    for(; index < m_AudioInputDeviceNames->MdcaCount(); index++) {
+    for (; index < m_AudioInputDeviceNames->MdcaCount(); index++) {
         if (m_AudioInputDeviceNames->MdcaPoint(index).Compare(aDevice) == 0) {
             found = ETrue;
             break;
@@ -503,7 +498,8 @@ void XARecordSessionImpl::cbAvailableAudioInputsChanged(
             TUint8* inDevNamePtr = audioInputDescriptor.deviceName;
             TUint8* tempPtr = audioInputDescriptor.deviceName;
             TInt32 inDevNameLength = 0;
-            while (*tempPtr++) inDevNameLength++;
+            while (*tempPtr++)
+                inDevNameLength++;
             TPtrC8 ptr(inDevNamePtr, inDevNameLength);
             /* Convert 8 bit to 16 bit */
             TBuf16<KMaxNameLength> name;
@@ -561,7 +557,6 @@ TInt32 XARecordSessionImpl::getSampleRates(
         TBool &aIsContinuous)
 {
     TRACE_FUNCTION_ENTRY;
-
 
     aSampleRates.Reset();
     aIsContinuous = EFalse;
@@ -684,50 +679,111 @@ TBool XARecordSessionImpl::setCodec(const TDesC &aCodec)
     return returnValue;
 }
 
-void XARecordSessionImpl::setBitRate(TUint32 aBitRate) {
+TUint32 XARecordSessionImpl::getBitRate()
+{
+    return m_BitRate;
+}
+
+void XARecordSessionImpl::setBitRate(TUint32 aBitRate)
+{
     TRACE_FUNCTION_ENTRY;
-    m_BitRate = aBitRate;
+    RArray<TUint32> bitrates;
+    XAboolean isContinuous;
+    m_BitRate = 0;
+    if (getBitratesByAudioCodecID(m_AudioEncoderId, bitrates, isContinuous) == KErrNone) {
+        bitrates.SortUnsigned();
+        TInt loopIndex(0);
+        while (loopIndex < bitrates.Count()
+            && aBitRate <= bitrates[loopIndex]) {
+            m_BitRate = bitrates[loopIndex];
+            loopIndex++;
+        }
+        bitrates.Close();
+    }
     TRACE_LOG((_L("BitRate[%d]"), m_BitRate));
     TRACE_FUNCTION_EXIT;
 }
 
-void XARecordSessionImpl::setChannels(TUint32 aChannels) {
+TUint32 XARecordSessionImpl::getChannels()
+{
+    return m_ChannelsOut;
+}
+
+void XARecordSessionImpl::setChannels(TUint32 aChannels)
+{
     TRACE_FUNCTION_ENTRY;
-    m_ChannelsOut = aChannels;
+    switch (m_AudioEncoderId) {
+    case XA_AUDIOCODEC_PCM:
+    case XA_AUDIOCODEC_AAC:
+        m_ChannelsOut = 1;
+        if ((aChannels >= 1) && (aChannels <= 2))
+            m_ChannelsOut = aChannels;
+        break;
+    case XA_AUDIOCODEC_AMR:
+        m_ChannelsOut = 1;
+        break;
+    default:
+        break;
+    }
     TRACE_LOG((_L("ChannelCount[%d]"), m_ChannelsOut));
     TRACE_FUNCTION_EXIT;
 }
 
-void XARecordSessionImpl::setOptimalChannelCount() {
+void XARecordSessionImpl::setOptimalChannelCount()
+{
     TRACE_FUNCTION_ENTRY;
     m_ChannelsOut = 1;
     TRACE_FUNCTION_EXIT;
 }
 
-void XARecordSessionImpl::setSampleRate(TUint32 aSampleRate) {
+TUint32 XARecordSessionImpl::getSampleRate()
+{
+    return m_SampleRate;
+}
+
+void XARecordSessionImpl::setSampleRate(TUint32 aSampleRate)
+{
     TRACE_FUNCTION_ENTRY;
+
+    m_SampleRate = 0;
+
+    RArray<TInt32> samplerates;
+    if (getSampleRatesByAudioCodecID(m_AudioEncoderId, samplerates) == KErrNone) {
+        samplerates.SortUnsigned();
+        TInt loopIndex(0);
+        while (loopIndex < samplerates.Count()) {
+            m_SampleRate = samplerates[loopIndex];
+            if (samplerates[loopIndex] > aSampleRate)
+                break;
+            loopIndex++;
+        }
+        samplerates.Close();
+    }
+
     /* convert Hz to MilliHz */
-    m_SampleRate = aSampleRate * KMilliToHz;
-    TRACE_LOG((_L("SampleRate[%d]"), aSampleRate));
+    m_SampleRate *= KMilliToHz;
+    TRACE_LOG((_L("SampleRate[%d]"), m_SampleRate));
     TRACE_FUNCTION_EXIT;
 }
 
-void XARecordSessionImpl::setOptimalSampleRate() {
+void XARecordSessionImpl::setOptimalSampleRate()
+{
     TRACE_FUNCTION_ENTRY;
     m_SampleRate = 0;
 
     if (m_AudioEncoderId == XA_AUDIOCODEC_AAC) {
-            m_SampleRate = 32000 * KMilliToHz;
+        m_SampleRate = 32000 * KMilliToHz;
     }
     else if (m_AudioEncoderId == XA_AUDIOCODEC_AMR) {
         m_SampleRate = 8000 * KMilliToHz;
-    } else {
+    }
+    else {
         RArray<TInt32> sampleRates;
         TInt res = getSampleRatesByAudioCodecID(m_AudioEncoderId, sampleRates);
         if ((res == KErrNone) && (sampleRates.Count() > 0)) {
             /* Sort the array and pick the middle range sample rate */
             sampleRates.SortUnsigned();
-            m_SampleRate = sampleRates[sampleRates.Count()/2]  * KMilliToHz;
+            m_SampleRate = sampleRates[sampleRates.Count() / 2] * KMilliToHz;
         }
         sampleRates.Close();
     }
@@ -761,7 +817,7 @@ void XARecordSessionImpl::setVeryLowQuality()
     RArray<TUint32> bitrates;
     XAboolean continuous;
     TInt res = getBitratesByAudioCodecID(m_AudioEncoderId, bitrates, continuous);
-    if ((res == KErrNone) && (bitrates.Count() > 0) ) {
+    if ((res == KErrNone) && (bitrates.Count() > 0)) {
         /* Sort the array and pick the lowest bit rate */
         bitrates.SortUnsigned();
         m_BitRate = bitrates[0];
@@ -779,9 +835,9 @@ void XARecordSessionImpl::setLowQuality()
         /* Sort the array and pick the low quality bit rate */
         bitrates.SortUnsigned();
         if (continuous == XA_BOOLEAN_FALSE)
-            m_BitRate = bitrates[bitrates.Count()*1/4];
+            m_BitRate = bitrates[bitrates.Count() / 4];
         else
-            m_BitRate = (bitrates[1] - bitrates[0])/4;
+            m_BitRate = (bitrates[1] - bitrates[0]) / 4;
     }
     bitrates.Close();
 }
@@ -796,9 +852,9 @@ void XARecordSessionImpl::setNormalQuality()
         /* Sort the array and pick the middle range bit rate */
         bitrates.SortUnsigned();
         if (continuous == XA_BOOLEAN_FALSE)
-            m_BitRate = bitrates[bitrates.Count()/2];
+            m_BitRate = bitrates[bitrates.Count() / 2];
         else
-            m_BitRate = (bitrates[1] - bitrates[0])/2;
+            m_BitRate = (bitrates[1] - bitrates[0]) / 2;
     }
     bitrates.Close();
 }
@@ -813,9 +869,9 @@ void XARecordSessionImpl::setHighQuality()
         /* Sort the array and pick the high quality bit rate */
         bitrates.SortUnsigned();
         if (continuous == XA_BOOLEAN_FALSE)
-            m_BitRate = bitrates[bitrates.Count()*3/4];
+            m_BitRate = bitrates[bitrates.Count() * 3 / 4];
         else
-            m_BitRate = (bitrates[1] - bitrates[0])*3/4;
+            m_BitRate = (bitrates[1] - bitrates[0]) * 3 / 4;
     }
     bitrates.Close();
 }
@@ -829,7 +885,7 @@ void XARecordSessionImpl::setVeryHighQuality()
     if ((res == KErrNone) && (bitrates.Count() > 0)) {
         /* Sort the array and pick the highest bit rate */
         bitrates.SortUnsigned();
-        m_BitRate = bitrates[bitrates.Count()-1];
+        m_BitRate = bitrates[bitrates.Count() - 1];
     }
     bitrates.Close();
 }
@@ -849,23 +905,23 @@ TInt32 XARecordSessionImpl::createMediaRecorderObject()
 
         /* Setup the data source */
         m_LocatorMic.locatorType = XA_DATALOCATOR_IODEVICE;
-        m_LocatorMic.deviceType  = XA_IODEVICE_AUDIOINPUT;
-        m_LocatorMic.deviceID    = m_InputDeviceId;
-        m_LocatorMic.device      = NULL;
-        m_DataSource.pLocator    = (void*) &m_LocatorMic;
-        m_DataSource.pFormat     = NULL;
+        m_LocatorMic.deviceType = XA_IODEVICE_AUDIOINPUT;
+        m_LocatorMic.deviceID = m_InputDeviceId;
+        m_LocatorMic.device = NULL;
+        m_DataSource.pLocator = (void*) &m_LocatorMic;
+        m_DataSource.pFormat = NULL;
 
         /* Setup the data sink structure */
-        m_Uri.locatorType    = XA_DATALOCATOR_URI;
+        m_Uri.locatorType = XA_DATALOCATOR_URI;
         /* append zero terminator to end of URI */
         TPtr8 uriPtr = m_URIName->Des();
         m_Uri.URI = (XAchar*) uriPtr.PtrZ();
-        m_Mime.formatType    = XA_DATAFORMAT_MIME;
+        m_Mime.formatType = XA_DATAFORMAT_MIME;
         m_Mime.containerType = m_ContainerType;
         TPtr8 mimeTypePtr(m_WAVMime->Des());
-        m_Mime.mimeType = (XAchar*)mimeTypePtr.Ptr();
+        m_Mime.mimeType = (XAchar*) mimeTypePtr.Ptr();
         m_DataSink.pLocator = (void*) &m_Uri;
-        m_DataSink.pFormat  = (void*) &m_Mime;
+        m_DataSink.pFormat = (void*) &m_Mime;
 
         /* Init arrays required[] and iidArray[] */
         XAboolean required[MAX_NUMBER_INTERFACES];
@@ -908,7 +964,7 @@ TInt32 XARecordSessionImpl::createMediaRecorderObject()
         RET_ERR_IF_ERR(returnValue);
 
         TRACE_LOG(_L("XARecordSessionImpl::CreateMediaRecorderObject: Register Callback on recorder..."));
-        xa_result = (*m_MORecorder)->RegisterCallback(m_MORecorder, cbXAObjectItf, (void*)this);
+        xa_result = (*m_MORecorder)->RegisterCallback(m_MORecorder, cbXAObjectItf, (void*) this);
         returnValue = mapError(xa_result, ETrue);
         RET_ERR_IF_ERR(returnValue);
 
@@ -918,7 +974,7 @@ TInt32 XARecordSessionImpl::createMediaRecorderObject()
         RET_ERR_IF_ERR(returnValue);
 
         TRACE_LOG(_L("XARecordSessionImpl::CreateMediaRecorderObject: Registering Callback on record Interface..."));
-        xa_result = (*m_RecordItf)->RegisterCallback(m_RecordItf, cbXARecordItf, (void*)this);
+        xa_result = (*m_RecordItf)->RegisterCallback(m_RecordItf, cbXARecordItf, (void*) this);
         returnValue = mapError(xa_result, ETrue);
         RET_ERR_IF_ERR(returnValue);
 
@@ -947,7 +1003,7 @@ TInt32 XARecordSessionImpl::createMediaRecorderObject()
 TInt32 XARecordSessionImpl::mapError(XAresult xa_err, TBool debPrn)
 {
     TInt32 returnValue(KErrGeneral);
-    switch(xa_err) {
+    switch (xa_err) {
     case XA_RESULT_SUCCESS:
         returnValue = KErrNone;
         break;
@@ -957,7 +1013,7 @@ TInt32 XARecordSessionImpl::mapError(XAresult xa_err, TBool debPrn)
         break;
     case XA_RESULT_PARAMETER_INVALID:
         if (debPrn)
-             TRACE_LOG(_L("XA_RESULT_PARAMETER_INVALID"));
+            TRACE_LOG(_L("XA_RESULT_PARAMETER_INVALID"));
         break;
     case XA_RESULT_MEMORY_FAILURE:
         if (debPrn)
@@ -1051,7 +1107,7 @@ TInt32 XARecordSessionImpl::initAudioEncodersList()
 
     XAuint32 encoderIds[MAX_NUMBER_ENCODERS];
 
-    for(TInt index = 0; index < MAX_NUMBER_ENCODERS; index++)
+    for (TInt index = 0; index < MAX_NUMBER_ENCODERS; index++)
         encoderIds[index] = 0;
 
     XAuint32 numEncoders = MAX_NUMBER_ENCODERS;
@@ -1090,7 +1146,7 @@ TInt32 XARecordSessionImpl::initAudioInputDevicesList()
     m_InputDeviceIDs.Reset();
 
     XAuint32 deviceIds[MAX_NUMBER_INPUT_DEVICES];
-    for(TInt index = 0; index < MAX_NUMBER_INPUT_DEVICES; index++)
+    for (TInt index = 0; index < MAX_NUMBER_INPUT_DEVICES; index++)
         deviceIds[index] = 0;
 
     XAint32 numInputs = MAX_NUMBER_INPUT_DEVICES;
@@ -1114,7 +1170,8 @@ TInt32 XARecordSessionImpl::initAudioInputDevicesList()
         TUint8 * inDevNamePtr = audioInputDescriptor.deviceName;
         TUint8 * tempPtr = audioInputDescriptor.deviceName;
         TInt32 inDevNameLength = 0;
-        while (*tempPtr++) inDevNameLength++;
+        while (*tempPtr++)
+            inDevNameLength++;
         TPtrC8 ptr(inDevNamePtr, inDevNameLength);
         /* Convert 8 bit to 16 bit */
         TBuf16<KMaxNameLength> name;
@@ -1128,7 +1185,7 @@ TInt32 XARecordSessionImpl::initAudioInputDevicesList()
     }
 
     numInputs = MAX_NUMBER_INPUT_DEVICES;
-    for(TInt index = 0; index < MAX_NUMBER_INPUT_DEVICES; index++)
+    for (TInt index = 0; index < MAX_NUMBER_INPUT_DEVICES; index++)
         deviceIds[index] = 0;
     xa_result = (*m_AudioIODevCapsItf)->GetDefaultAudioDevices(
                                         m_AudioIODevCapsItf,
@@ -1149,7 +1206,8 @@ TInt32 XARecordSessionImpl::initAudioInputDevicesList()
         TUint8* inDevNamePtr = audioInputDescriptor.deviceName;
         TUint8* tempPtr = audioInputDescriptor.deviceName;
         TInt32 inDevNameLength = 0;
-        while (*tempPtr++) inDevNameLength++;
+        while (*tempPtr++)
+            inDevNameLength++;
         TPtrC8 ptr(inDevNamePtr, inDevNameLength);
         /* Convert 8 bit to 16 bit */
         TBuf16<KMaxNameLength> name;
@@ -1180,7 +1238,7 @@ TInt32 XARecordSessionImpl::setEncoderSettingsToMediaRecorder()
 
     settings.encoderId = m_AudioEncoderId;
     settings.channelsOut = m_ChannelsOut;
-    if (m_SampleRate != 0xffffffff)
+    if ((m_SampleRate != 0) && (m_SampleRate != 0xffffffff))
         settings.sampleRate = m_SampleRate;
     if ((m_BitRate != 0) && (m_BitRate != 0xffffffff))
         settings.bitRate = m_BitRate;
@@ -1235,7 +1293,7 @@ TInt32 XARecordSessionImpl::getBitratesByAudioCodecID(
 }
 
 TInt32 XARecordSessionImpl::getSampleRatesByAudioCodecID(XAuint32 encoderId,
-                      RArray<TInt32> &aSampleRates)
+    RArray<TInt32> &aSampleRates)
 {
     TRACE_FUNCTION_ENTRY;
 

@@ -231,7 +231,11 @@ void CntFilterDetail::updateForMatchFlag(const QContactDetailFilter& filter,
             break;
         }
         case QContactFilter::MatchFixedString: {
-            *error = QContactManager::NotSupportedError;
+            // Pattern for MatchFixedString:
+            // " ='xyz' COLLATE NOCASE"
+            fieldToUpdate = " ='"
+                       + filter.value().toString() + '\'' + " COLLATE NOCASE";
+            *error = QContactManager::NoError;
             break;
         }
         case QContactFilter::MatchCaseSensitive: {
@@ -270,6 +274,22 @@ void CntFilterDetail::getTableNameWhereClause(const QContactDetailFilter& detail
     else if (isSubType) {
         sqlWhereClause += columnName;
         sqlWhereClause += " NOT NULL ";
+    }
+    else if (detailfilter.detailDefinitionName() == QContactFavorite::DefinitionName) {
+        bool favoritesSearch = true;
+        if (detailfilter.value().canConvert(QVariant::Bool)) {
+            if (!detailfilter.value().toBool()) {
+                //filter to fetch non-favorite contacts
+                favoritesSearch = false;    
+            }
+        }
+        sqlWhereClause += columnName;
+        if (favoritesSearch) {
+            sqlWhereClause += " NOT NULL ";   
+        }
+        else {
+            sqlWhereClause += " IS NULL ";
+        }
     }
     else {
         sqlWhereClause += ' ' + columnName + ' ';

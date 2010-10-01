@@ -49,6 +49,9 @@ QT_USE_NAMESPACE
 
 class S60ImageCaptureSession;
 
+/*
+ * Control for setting encoding settings for the captured image.
+ */
 class S60ImageEncoderControl : public QImageEncoderControl
 {
     Q_OBJECT
@@ -76,8 +79,6 @@ public: // QImageEncoderControl
 private: // Data
 
     S60ImageCaptureSession  *m_session;
-    QImageEncoderSettings   m_imageEncoderSettings;
-
 };
 
 #endif // S60IMAGEENCODERCONTROL_H

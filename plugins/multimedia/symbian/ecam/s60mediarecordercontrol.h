@@ -42,7 +42,6 @@
 #ifndef S60MEDIARECORDERCONTROL_H
 #define S60MEDIARECORDERCONTROL_H
 
-#include <QtCore/qobject.h>
 #include <QtCore/qurl.h>
 #include <qmediarecorder.h>
 #include <qmediarecordercontrol.h>
@@ -55,12 +54,16 @@ class S60VideoCaptureSession;
 class S60CameraService;
 class S60CameraControl;
 
+/*
+ * Control for video recording operations.
+ */
 class S60MediaRecorderControl : public QMediaRecorderControl
 {
     Q_OBJECT
 
-public: // Contructor & Destructor
+public: // Contructors & Destructor
 
+    S60MediaRecorderControl(QObject *parent = 0);
     S60MediaRecorderControl(S60VideoCaptureSession *session, QObject *parent = 0);
     ~S60MediaRecorderControl();
 

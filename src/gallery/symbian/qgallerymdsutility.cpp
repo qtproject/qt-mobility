@@ -1621,10 +1621,8 @@ QVariant::Type QDocumentGalleryMDSUtility::GetPropertyType( int key )
 }
 
 /*!
- Converts a Symbian S60 descriptor (string) to a QString
-
- \param desc descriptor to be converted
- \return QString containing the converted string
+ Converts a Symbian S60 descriptor (string) to a QString.
+ The \a desc descriptor is converted and a QString returned.
  */
 QString QDocumentGalleryMDSUtility::s60DescToQString(const TDesC& desc)
 {
@@ -1636,8 +1634,8 @@ QString QDocumentGalleryMDSUtility::s60DescToQString(const TDesC& desc)
 
  Note: Ownership of the returned descriptor (string) is transferred to caller.
 
- \param string QString to be converted
- \return Pointer to a Symbian S60 descriptor on success;
+ The QString \a string is converted to the descriptor. The pointer to a
+ Symbian S60 descriptor is returned on success;
  otherwise returns NULL pointer
  */
 HBufC* QDocumentGalleryMDSUtility::qStringToS60Desc(const QString& string)
@@ -1647,10 +1645,8 @@ HBufC* QDocumentGalleryMDSUtility::qStringToS60Desc(const QString& string)
 }
 
 /*!
- Converts a Symbian S60 8 bit descriptor (UTF8 string) to a QString
-
- \param desc 8 bit descriptor to be converted
- \return Converted QString on success; otherwise returns null QString
+ Converts \a desc a Symbian S60 8 bit descriptor (UTF8 string) to a QString.
+ Returns the converted QString on success; otherwise returns null QString
  */
 QString QDocumentGalleryMDSUtility::s60Desc8ToQString(const TDesC8& desc)
 {
@@ -1665,12 +1661,11 @@ QString QDocumentGalleryMDSUtility::s60Desc8ToQString(const TDesC8& desc)
 }
 
 /*!
- Converts a QString to a Symbian S60 8 bit descriptor (UTF8 string).
+ Converts \a string , a QString, to a Symbian S60 8 bit descriptor (UTF8 string).
 
  Note: Ownership of the returned descriptor (string) is transferred to the caller
 
- \param string QString to be converted
- \return Pointer to a Symbian S60 descriptor containing the UTF8 string on success;
+ Returns a pointer to a Symbian S60 descriptor containing the UTF8 string on success;
  otherwise returns NULL pointer
  */
 HBufC8* QDocumentGalleryMDSUtility::qStringToS60Desc8(const QString& string)

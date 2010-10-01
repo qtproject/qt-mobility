@@ -45,9 +45,10 @@
 #include "qtorganizerglobal.h"
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizercollection.h"
+#include "qorganizeritemmanager.h"
 
 #include <QList>
-#include <QStringList>
+#include <QMap>
 
 QTM_BEGIN_NAMESPACE
 
@@ -65,6 +66,7 @@ public:
 
     /* Results */
     QList<QOrganizerCollection> collections() const;
+    QMap<int, QOrganizerItemManager::Error> errorMap() const;
 
 private:
     Q_DISABLE_COPY(QOrganizerCollectionFetchRequest)

@@ -105,6 +105,8 @@ public:
 
     QString errorString() const;
 
+    QObject *metaData() const;
+
     void _q_stateChanged(QMediaPlayer::State state);
     void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
 
@@ -153,6 +155,7 @@ protected:
     bool m_autoLoad;
     bool m_loaded;
     bool m_muted;
+    bool m_complete;
     int m_position;
     qreal m_vol;
     qreal m_playbackRate;
@@ -164,6 +167,7 @@ protected:
     QMetaDataReaderControl *m_metaDataControl;
     QMetaDataControlMetaObject *m_metaObject;
     QDeclarativeMediaBaseAnimation *m_animation;
+    QScopedPointer<QObject> m_metaData;
 
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_status;

@@ -43,6 +43,7 @@
 
 #include <qgalleryresultset.h>
 
+#include <QtCore/qcoreapplication.h>
 #include <QtDeclarative/qdeclarativeinfo.h>
 #include <QtDeclarative/qdeclarativepropertymap.h>
 
@@ -52,7 +53,7 @@ QDeclarativeGalleryItem::QDeclarativeGalleryItem(QObject *parent)
     : QObject(parent)
     , m_metaData(0)
     , m_status(Null)
-    , m_complete(false)
+    , m_updateStatus(Incomplete)
 {
     connect(&m_request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
             this, SLOT(_q_statusChanged()));
@@ -84,7 +85,7 @@ qreal QDeclarativeGalleryItem::progress() const
 
 void QDeclarativeGalleryItem::setPropertyNames(const QStringList &names)
 {
-    if (!m_complete) {
+    if (m_updateStatus == Incomplete) {
         m_request.setPropertyNames(names);
 
         emit propertyNamesChanged();
@@ -96,6 +97,11 @@ void QDeclarativeGalleryItem::setAutoUpdate(bool enabled)
     if (m_request.autoUpdate() != enabled) {
         m_request.setAutoUpdate(enabled);
 
+        if (enabled)
+            deferredExecute();
+        else if (m_status == Idle)
+            m_request.cancel();
+
         emit autoUpdateChanged();
     }
 }
@@ -105,8 +111,12 @@ void QDeclarativeGalleryItem::setItemId(const QVariant &itemId)
     if (m_request.itemId() != itemId) {
         m_request.setItemId(itemId);
 
-        if (m_complete)
-            m_request.execute();
+        if (m_updateStatus != Incomplete) {
+            if (itemId.isValid())
+                m_request.execute();
+            else
+                m_request.clear();
+        }
 
         emit itemIdChanged();
     }
@@ -114,10 +124,60 @@ void QDeclarativeGalleryItem::setItemId(const QVariant &itemId)
 
 void QDeclarativeGalleryItem::componentComplete()
 {
-    m_complete = true;
+    m_updateStatus = NoUpdate;
 
     if (m_request.itemId().isValid())
         m_request.execute();
+}
+
+void QDeclarativeGalleryItem::reload()
+{
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
+
+    m_request.execute();
+}
+
+void QDeclarativeGalleryItem::cancel()
+{
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
+
+    m_request.cancel();
+}
+
+void QDeclarativeGalleryItem::clear()
+{
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
+
+    m_request.clear();
+}
+
+void QDeclarativeGalleryItem::deferredExecute()
+{
+    if (m_updateStatus == NoUpdate) {
+        m_updateStatus = PendingUpdate;
+
+        QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+    } else if (m_updateStatus == CancelledUpdate) {
+        m_updateStatus = PendingUpdate;
+    }
+}
+
+bool QDeclarativeGalleryItem::event(QEvent *event)
+{
+    if (event->type() == QEvent::UpdateRequest) {
+        UpdateStatus status = m_updateStatus;
+        m_updateStatus = NoUpdate;
+
+        if (status == PendingUpdate)
+            m_request.execute();
+
+        return true;
+    } else {
+        return QObject::event(event);
+    }
 }
 
 void QDeclarativeGalleryItem::_q_statusChanged()
@@ -141,10 +201,12 @@ void QDeclarativeGalleryItem::_q_statusChanged()
                 break;
             }
         }
+        emit statusChanged();
+    } else if (m_status == Idle && !m_request.autoUpdate()) {
+        m_request.cancel();
+    } else {
+        emit statusChanged();
     }
-
-    emit statusChanged();
-
 }
 
 void QDeclarativeGalleryItem::_q_itemChanged()
