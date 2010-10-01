@@ -44,7 +44,7 @@ void QGeoPositionInfoSourceMeego::positionChanged(GeocluePosition      *position
 }
 
 QGeoPositionInfoSourceMeego::QGeoPositionInfoSourceMeego(QObject *parent)
-    : QGeoPositionInfoSource(parent)
+    : QGeoPositionInfoSource(parent), client(0), pos(0)
 {
 }
 
@@ -60,7 +60,7 @@ int QGeoPositionInfoSourceMeego::init()
     g_object_unref (master);
 
     if (!client) {
-        qCritical ("Geoclue error creating GeoclueMasterClient: %s\n", error->message);
+        qCritical ("QGeoPositionInfoSourceMeego error creating GeoclueMasterClient: %s\n", error->message);
         g_error_free (error);
         return -1;
     }
@@ -70,7 +70,7 @@ int QGeoPositionInfoSourceMeego::init()
                                                  0, TRUE,
                                                  GEOCLUE_RESOURCE_ALL,
                                                  &error)){
-        qCritical ("Geoclue set_requirements failed: %s", error->message);
+        qCritical ("QGeoPositionInfoSourceMeego geoclue set_requirements failed: %s", error->message);
         g_error_free (error);
         g_object_unref (client);
         return -1;
@@ -79,7 +79,7 @@ int QGeoPositionInfoSourceMeego::init()
 
     pos = geoclue_master_client_create_position (client, NULL);
     if (!pos) {
-        qCritical("Geoclue failed to get a position object");
+        qCritical("QGeoPositionInfoSourceMeego failed to get a position object");
         g_object_unref (client);
         return -1;
     }
@@ -126,7 +126,7 @@ void QGeoPositionInfoSourceMeego::requestUpdate(int /*timeout*/)
                                             &latitude, &longitude, &altitude,
                                             &accuracy, &error);
     if (error) {
-        qCritical ("Error in geoclue_position_get_position: %s.\n",
+        qCritical ("QGeoPositionInfoSourceMeego Error in geoclue_position_get_position: %s.\n",
                    error->message);
         g_error_free (error);
         error = NULL;
@@ -140,15 +140,17 @@ void QGeoPositionInfoSourceMeego::requestUpdate(int /*timeout*/)
             return;
 
         }
-        qCritical ("Invalid Longitude and latitude");
+        qCritical ("QGeoPositionInfoSourceMeego Invalid Longitude and latitude");
         emit updateTimeout();
     }
 }
 
 QGeoPositionInfoSourceMeego::~QGeoPositionInfoSourceMeego()
 {
-    g_object_unref (pos);
-    g_object_unref (client);
+    if (pos)
+        g_object_unref (pos);
+    if (client)
+        g_object_unref (client);
 }
 
 #include "moc_qgeopositioninfosource_meego_p.cpp"
