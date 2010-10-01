@@ -318,6 +318,11 @@ void QSystemNetworkInfo::connectNotify(const char *signal)
         connect(d,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
                 this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
     }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            cellIdChanged(int))))) {
+        connect(d,SIGNAL(cellIdChanged(int)),
+                this,SIGNAL(cellIdChanged(int)));
+    }
 }
 
 /*!
