@@ -1,6 +1,6 @@
 
 symbian: {
-    exists($${EPOCROOT}epoc32/data/z/system/install/symbianv4.sis) {
+    exists($${EPOCROOT}epoc32/data/z/system/install/Symbianv4.sis) {
         message("S^4 or later platform")
         DEFINES += SYMBIAN_BACKEND_USE_SQLITE
             
