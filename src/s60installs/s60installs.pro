@@ -134,12 +134,6 @@ isEmpty(QT_LIBINFIX):symbian {
                 "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\feedback\\immersion\\qmakepluginstubs\\qtfeedback_immersion.qtplugin\"  - \"!:\\resource\\qt\\plugins\\feedback\\qtfeedback_immersion.qtplugin\""
         }
 
-        contains(QT_CONFIG, phonon) {
-            qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtfeedback_phonon.dll
-            pluginstubs += \
-                "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\feedback\\phonon\\qmakepluginstubs\\qtfeedback_phonon.qtplugin\"  - \"!:\\resource\\qt\\plugins\\feedback\\qtfeedback_phonon.qtplugin\""
-        }
-
         feedback = \
             "IF package(0x1028315F)" \
             "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtfeedback_symbian.dll\" - \"!:\\sys\\bin\\qtfeedback_symbian.dll\"" \
