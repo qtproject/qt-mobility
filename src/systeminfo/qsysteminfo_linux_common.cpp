@@ -599,12 +599,12 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
                 if(fi.exists()) {
                     bool powered=false;
                     QFile linkmode(devFile+"/link_mode"); //check for dev power
-                    if(rxlinkmodeexists() && linkmode.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                    if(linkmode.exists() && linkmode.open(QIODevice::ReadOnly | QIODevice::Text)) {
                         QTextStream in(&linkmode);
                         in >> result;
                         if(result.contains("1"))
-                            ok = true;
-                        rx.close();
+                            powered = true;
+                        linkmode.close();
                     }
 
                     QFile rx(devFile + "/address");
@@ -612,7 +612,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
                         QTextStream in(&rx);
                         in >> result;
                         rx.close();
-                        if(ok)
+                        if(powered)
                             return result;
                     }
                 }
