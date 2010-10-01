@@ -495,6 +495,7 @@ private:
         knownTables << "landmark_attribute";
         knownTables << "landmark_category";
         knownTables << "landmark_notification";
+        knownTables << "version";
         return (tables == knownTables);
     }
 
