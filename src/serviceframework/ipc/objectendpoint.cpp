@@ -48,6 +48,8 @@
 #include <QEventLoop>
 #include <QEvent>
 #include <QVarLengthArray>
+#include <QCoreApplication>
+#include <QTime>
 
 QTM_BEGIN_NAMESPACE
 
@@ -231,6 +233,7 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
             service = reinterpret_cast<QServiceProxy* >(response->result);
     } else {
         qDebug() << "response passed but not finished";
+        return 0;
     }
 
     openRequests()->take(p.d->messageId);
@@ -313,8 +316,6 @@ void ObjectEndPoint::propertyCall(const QServicePackage& p)
     } else {
         //client side
         Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
-
-
         Response* response = openRequests()->value(p.d->messageId);
         response->isFinished = true;
         if (p.d->responseType == QServicePackage::Failed) {
@@ -537,10 +538,10 @@ QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg
         //create response and block for answer
         Response* response = new Response();
         openRequests()->insert(p.d->messageId, response);
-        
+
         dispatch->writePackage(p);
         waitForResponse(p.d->messageId);
-   
+
         QVariant result;
         if (response->isFinished) {
             if (response->result == 0) {
@@ -617,20 +618,19 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
     return QVariant();
 }
 
-void ObjectEndPoint::waitForResponse(const QUuid& requestId)
+void ObjectEndPoint::waitForResponse(const QUuid& requestId, int msecs/* = 30000 */)
 {
     Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
-
     if (openRequests()->contains(requestId) ) {
         Response* response = openRequests()->value(requestId);
-        QEventLoop* loop = new QEventLoop( this );
-        connect(this, SIGNAL(pendingRequestFinished()), loop, SLOT(quit())); 
-
+        QTime timer;
+        timer.start();
         while(!response->isFinished) {
-            loop->exec();
+            if(QCoreApplication::instance())
+                QCoreApplication::instance()->processEvents(QEventLoop::ExcludeUserInputEvents);
+            if(timer.elapsed() > msecs)
+                break;
         }
- 
-        delete loop;
     }
 }
 
