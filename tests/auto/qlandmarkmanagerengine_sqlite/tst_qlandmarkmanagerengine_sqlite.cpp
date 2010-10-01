@@ -3387,7 +3387,6 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksName() {
     QCOMPARE(m_manager->error(), QLandmarkManager::NotSupportedError);
     QCOMPARE(lms.count(),0);
 
-    //TODO:Async testing
 }
 
 /*
@@ -4983,8 +4982,6 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersection() {
     QCOMPARE(lms.at(2), lm9);
     QCOMPARE(lms.at(3), lm3);
     QCOMPARE(lms.at(4), lm1);
-
-    //TODO: combin async and sync into one test function
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksIntersection_data() {

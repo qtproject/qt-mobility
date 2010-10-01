@@ -282,7 +282,7 @@ QList<QLandmarkId> sortQueryByDistance(QSqlQuery *query, const QLandmarkProximit
         point.landmarkId.setManagerUri(managerUri);
         point.landmarkId.setLocalId(QString::number(query->value(0).toInt()));
 
-        if (radius == -1 || (point.coordinate.distanceTo(center) < radius)
+        if (radius < 0 || (point.coordinate.distanceTo(center) < radius)
             || qFuzzyCompare(point.coordinate.distanceTo(center), radius)) {
             addSortedPoint(&sortedPoints,point,center);
         }
@@ -303,10 +303,18 @@ bool executeQuery(QSqlQuery *query, const QString &statement, const QMap<QString
     bool success = false;
     enum {Prepare =0 , Execute=1};
     for(int stage=Prepare; stage <= Execute; ++stage) {
-        if ( stage == Prepare)
-            success = query->prepare(statement);
-        else // stage == Execute
-            success = query->exec();
+        if ( stage == Prepare) {
+            if (bindValues.count() != 0)
+                success = query->prepare(statement);
+            else
+                 success = true;
+        }
+        else { // stage == Execute
+            if (bindValues.count() != 0)
+                success = query->exec();
+            else
+                success = query->exec(statement);
+        }
 
         if (!success) {
             QString errorText;
@@ -345,7 +353,7 @@ bool executeQuery(QSqlQuery *query, const QString &statement, const QMap<QString
         }
 
         QStringList keys = bindValues.keys();
-        if (stage == Prepare) {
+        if (stage == Prepare && bindValues.count()!=0) {
             foreach(const QString &key, keys)
                 query->bindValue(QString(":") + key,bindValues.value(key));
         }
@@ -938,7 +946,14 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
             QString nameKey = "name";
             QString nameValue = nameFilter.name();
 
-            if (nameFilter.matchFlags() == QLandmarkFilter::MatchExactly) {
+            if (nameValue.isEmpty()) {
+                    if (nameFilter.matchFlags() == QLandmarkFilter::MatchExactly
+                        || nameFilter.matchFlags() == QLandmarkFilter::MatchFixedString) {
+                        queryString.append(nameKey + " IS NULL ");
+                    } else {
+                        queryString = "SELECT id from landmark ";
+                    }
+            } else if (nameFilter.matchFlags() == QLandmarkFilter::MatchExactly) {
                 queryString.append(nameKey + " = :" + nameKey + " ");
                 bindValues.insert(nameKey, nameValue);
             } else {
@@ -969,11 +984,31 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
         }
     case QLandmarkFilter::CategoryFilter: {
         QLandmarkCategoryFilter categoryFilter = filter;
+        QLandmarkCategoryId categoryId = categoryFilter.categoryId();
+        if (categoryId.managerUri() != managerUri) {
+            *error = QLandmarkManager::DoesNotExistError;
+            *errorString = "The category does not exist in the manager because the managers do not match";
+            return result;
+        } else if (categoryId.localId().isEmpty()) {
+            *error = QLandmarkManager::DoesNotExistError;
+            *errorString = "The category does not exist in the manager because the local id of the category is empty";
+            return result;
+        }
+
         queryString = landmarkIdsCategoryQueryString(categoryFilter);
         break;
         }
     case QLandmarkFilter::ProximityFilter: {
             QLandmarkProximityFilter proximityFilter = filter;
+            QGeoCoordinate center = proximityFilter.center();
+            if ( (qIsNaN(center.latitude()) || qIsNaN(center.longitude())
+                || !isValidLat(center.latitude()) || !isValidLong(center.longitude()))
+                ) {
+                *error = QLandmarkManager::BadArgumentError;
+                *errorString = "Center coordinate of proximity filter is invalid";
+                return result;
+            }
+
             if (proximityFilter.radius() < 0) {
                 queryString =  ::landmarkIdsDefaultQueryString();
                 break;
@@ -1816,6 +1851,11 @@ QList<QLandmarkCategoryId> DatabaseOperations::categoryIds(const QLandmarkNameSo
     QString queryString("SELECT id FROM category ORDER BY name ");
     if (nameSort.caseSensitivity() == Qt::CaseInsensitive)
         queryString.append("COLLATE NOCASE ");
+    else {
+        *error = QLandmarkManager::NotSupportedError;
+        *errorString = "Case sensitive name sorting of categories is not supported";
+        return QList<QLandmarkCategoryId>();
+    }
 
     if (nameSort.direction() == Qt::AscendingOrder)
         queryString.append("ASC;");
