@@ -1942,7 +1942,7 @@ QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::getStorageState(cons
 void QSystemStorageInfoPrivate::checkAvailableStorage()
 {
     QMap<QString, QString> oldDrives = mountEntriesMap;
-    foreach(const QString &vol, oldDrives.keys()) {
+    Q_FOREACH(const QString &vol, oldDrives.keys()) {
         QSystemStorageInfo::StorageState storState = getStorageState(vol);
         if(!stateMap.contains(vol)) {
             stateMap.insert(vol,storState);
