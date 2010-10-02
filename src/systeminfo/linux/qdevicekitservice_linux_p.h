@@ -127,7 +127,7 @@ public:
     bool deviceIsLinuxMd();
     bool deviceIsLinuxLvm2PV();
 
-    bool deviceIsRotational();
+    bool driveIsRotational();
     QString driveMediaCompatibility();
 
     qulonglong partitionSize();

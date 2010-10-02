@@ -1911,16 +1911,18 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
     if(udisksIsAvailable) {
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
-        QUDisksDeviceInterface devIface(/*"/org/freedesktop/UDisks/devices/"+*/mountEntriesMap.value(driveVolume)/*.section("/",-1)*/);
+        QString udiskdev = mountEntriesMap.value(driveVolume);
+        udiskdev.chop(1);
+        QUDisksDeviceInterface devIfaceParent(udiskdev);
+        QUDisksDeviceInterface devIface(mountEntriesMap.value(driveVolume));
 
         if(devIface.deviceIsMounted()) {
-
             QString chopper = devIface.deviceFile();
             QString mountp;
-            if(devIface.deviceIsRemovable()) {
+            if(devIfaceParent.deviceIsRemovable()) {
                 return QSystemStorageInfo::RemovableDrive;
-            } else if(devIface.deviceIsSystemInternal()) {
-                if(devIface.deviceIsRotational()) {
+            } else if(devIfaceParent.deviceIsSystemInternal()) {
+                if(devIfaceParent.driveIsRotational()) {
                     return QSystemStorageInfo::InternalDrive;
                 } else {
                     return QSystemStorageInfo::InternalFlashDrive;
