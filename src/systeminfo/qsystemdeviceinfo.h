@@ -68,12 +68,17 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(bool isDeviceLocked READ isDeviceLocked)
     Q_PROPERTY(bool currentBluetoothPowerState READ currentBluetoothPowerState NOTIFY bluetoothStateChanged)
 
+    Q_PROPERTY(KeyboardTypeFlags keyboardType READ keyboardType)//1.2
+    Q_PROPERTY(bool isWirelessKeyboardConnected READ isWirelessKeyboardConnected NOTIFY wirelessKeyboardConnected)//1.2
+    Q_PROPERTY(bool isKeyboardFlipOpen READ isKeyboardFlipOpen NOTIFY keyboardFlip)//1.2
 
     Q_ENUMS(BatteryStatus)
     Q_ENUMS(PowerState)
     Q_FLAGS(InputMethod InputMethodFlags)
     Q_ENUMS(SimStatus)
     Q_ENUMS(Profile)
+
+    Q_FLAGS(KeyboardType KeyboardTypeFlags) //1.2
 
 public:
 
@@ -105,10 +110,23 @@ public:
         MultiTouch = 0x0000010,
         Mouse = 0x0000020
     };
-
     Q_DECLARE_FLAGS(InputMethodFlags, InputMethod)
 
+    enum KeyboardType {
+        UnknownKeyboard = 0,
+        SoftwareKeyboard= 0x0000001,
+        ITUKeypad = 0x0000002,
+        HalfQwertyKeyboard = 0x0000004,
+        FullQwertyKeyboard = 0x0000008,
+        WirelessKeyboard = 0x0000010
+      };//1.2
+    Q_DECLARE_FLAGS(KeyboardTypeFlags, KeyboardType)//1.2
+
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
+
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+    bool isWirelessKeyboardConnected(); //1.2
+    bool isKeyboardFlipOpen();//1.2
 
     QString imei();
     QString imsi();
@@ -142,13 +160,15 @@ public:
     QSystemDeviceInfo::PowerState currentPowerState();
 
     bool currentBluetoothPowerState();
-
 Q_SIGNALS:
     void batteryLevelChanged(int level);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);
     void powerStateChanged(QSystemDeviceInfo::PowerState powerState);
     void currentProfileChanged(QSystemDeviceInfo::Profile currentProfile);
     void bluetoothStateChanged(bool on);
+
+    void wirelessKeyboardConnected(bool connected);//1.2
+    void keyboardFlip(bool open);//1.2
 
 private:
     QSystemDeviceInfoPrivate *d;
