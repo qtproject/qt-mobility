@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include "wavedecoder_p.h"
+#include "qwavedecoder_p.h"
 
 #include <QtCore/qtimer.h>
 #include <QtCore/qendian.h>
 
 QT_BEGIN_NAMESPACE
 
-WaveDecoder::WaveDecoder(QIODevice *s, QObject *parent):
+QWaveDecoder::QWaveDecoder(QIODevice *s, QObject *parent):
     QIODevice(parent),
     haveFormat(false),
     dataSize(0),
@@ -61,41 +61,41 @@ WaveDecoder::WaveDecoder(QIODevice *s, QObject *parent):
         connect(source, SIGNAL(readyRead()), SLOT(handleData()));
 }
 
-WaveDecoder::~WaveDecoder()
+QWaveDecoder::~QWaveDecoder()
 {
 }
 
-QAudioFormat WaveDecoder::audioFormat() const
+QAudioFormat QWaveDecoder::audioFormat() const
 {
     return format;
 }
 
-int WaveDecoder::duration() const
+int QWaveDecoder::duration() const
 {
     return size() * 1000 / (format.sampleSize() / 8) / format.channels() / format.frequency();
 }
 
-qint64 WaveDecoder::size() const
+qint64 QWaveDecoder::size() const
 {
     return haveFormat ? dataSize : 0;
 }
 
-bool WaveDecoder::isSequential() const
+bool QWaveDecoder::isSequential() const
 {
     return source->isSequential();
 }
 
-qint64 WaveDecoder::bytesAvailable() const
+qint64 QWaveDecoder::bytesAvailable() const
 {
     return haveFormat ? source->bytesAvailable() : 0;
 }
 
-qint64 WaveDecoder::readData(char *data, qint64 maxlen)
+qint64 QWaveDecoder::readData(char *data, qint64 maxlen)
 {
     return haveFormat ? source->read(data, maxlen) : 0;
 }
 
-qint64 WaveDecoder::writeData(const char *data, qint64 len)
+qint64 QWaveDecoder::writeData(const char *data, qint64 len)
 {
     Q_UNUSED(data);
     Q_UNUSED(len);
@@ -103,7 +103,7 @@ qint64 WaveDecoder::writeData(const char *data, qint64 len)
     return -1;
 }
 
-void WaveDecoder::handleData()
+void QWaveDecoder::handleData()
 {
     if (source->bytesAvailable() < qint64(sizeof(CombinedHeader) + sizeof(DATAHeader) + sizeof(quint16)))
         return;
@@ -150,4 +150,4 @@ void WaveDecoder::handleData()
 
 QT_END_NAMESPACE
 
-#include "moc_wavedecoder_p.cpp"
+#include "moc_qwavedecoder_p.cpp"
