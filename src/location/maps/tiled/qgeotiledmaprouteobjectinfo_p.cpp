@@ -81,10 +81,12 @@ QGeoTiledMapRouteObjectInfo::~QGeoTiledMapRouteObjectInfo() {}
 
 void QGeoTiledMapRouteObjectInfo::routeChanged(const QGeoRoute &route)
 {
-    QListIterator<QGeoRouteSegment> segIt(this->route->route().routeSegments());
-
-    while (segIt.hasNext()) {
-        QListIterator<QGeoCoordinate> coordIt(segIt.next().path());
+    //QListIterator<QGeoRouteSegment> segIt(this->route->route().routeSegments());
+    //while (segIt.hasNext()) {
+    //    QListIterator<QGeoCoordinate> coordIt(segIt.next().path());
+    QGeoRouteSegment segment = this->route->route().firstRouteSegment();
+    while(segment.isValid()) {
+        QListIterator<QGeoCoordinate> coordIt(segment.path());
         while (coordIt.hasNext()) {
             QGeoCoordinate coord = coordIt.next();
 
@@ -93,6 +95,7 @@ void QGeoTiledMapRouteObjectInfo::routeChanged(const QGeoRoute &route)
 
             points.append(tiledMapData->coordinateToWorldPixel(coord));
         }
+        segment = segment.nextRouteSegment();
     }
 
     updateData();

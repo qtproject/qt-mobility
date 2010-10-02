@@ -51,11 +51,13 @@ QT_BEGIN_NAMESPACE
 class QWidget;
 QT_END_NAMESPACE
 
+#ifndef BEARER_IN_QTNETWORK
 QTM_BEGIN_NAMESPACE
 class QNetworkSession;
 QTM_END_NAMESPACE
 // Use the QtMobility namespace
 QTM_USE_NAMESPACE
+#endif
 
 class ConnectivityHelper : public QObject
 {

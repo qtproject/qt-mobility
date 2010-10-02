@@ -87,14 +87,14 @@ QLandmarkPrivate::QLandmarkPrivate()
         : QGeoPlacePrivate()
 {
     type = QGeoPlacePrivate::LandmarkType;
-    radius = qQNaN();
+    radius = 0.0;
 }
 
 QLandmarkPrivate::QLandmarkPrivate(const QGeoPlacePrivate &other)
         : QGeoPlacePrivate(other)
 {
     type = QGeoPlacePrivate::LandmarkType;
-    radius = qQNaN();
+    radius = 0.0;
 }
 
 QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
@@ -451,7 +451,10 @@ qreal QLandmark::radius() const
 void QLandmark::setRadius(qreal radius)
 {
     Q_D(QLandmark);
-    d->radius = radius;
+    if (!qIsNaN(radius) && radius >= 0.0)
+        d->radius = radius;
+    else
+        d->radius = 0.0;
 }
 
 /*!
@@ -519,12 +522,7 @@ void QLandmark::setAttribute(const QString &key, const QVariant &value)
         setIconUrl(QUrl(value.toUrl()));
         return;
     } else if (key.compare("radius", Qt::CaseInsensitive) == 0) {
-        bool ok;
-        qreal radiusValue = value.toReal(&ok);
-        if (ok)
-            setRadius(radiusValue);
-        else
-            setRadius(qQNaN());
+        setRadius(value.toReal());
         return;
     } else if (key.compare("phoneNumber", Qt::CaseInsensitive) == 0) {
         setPhoneNumber(value.toString());
@@ -648,7 +646,7 @@ void QLandmark::clear()
     d->categoryIds.clear();
     d->description.clear();
     d->iconUrl.clear();
-    d->radius = qQNaN();
+    d->radius = 0.0;
     d->customAttributes.clear();
     d->phoneNumber.clear();
     d->url.clear();

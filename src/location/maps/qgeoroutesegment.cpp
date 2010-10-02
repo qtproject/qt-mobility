@@ -64,13 +64,16 @@ QTM_BEGIN_NAMESPACE
     Constructs a route segment object.
 */
 QGeoRouteSegment::QGeoRouteSegment()
-        : d_ptr(new QGeoRouteSegmentPrivate()) {}
+    : d_ptr(new QGeoRouteSegmentPrivate()) {}
 
 /*!
     Constructs a route segment object from the contents of \a other.
 */
 QGeoRouteSegment::QGeoRouteSegment(const QGeoRouteSegment &other)
-        : d_ptr(other.d_ptr) {}
+    : d_ptr(other.d_ptr) {}
+
+QGeoRouteSegment::QGeoRouteSegment(QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &d_ptr)
+    : d_ptr(d_ptr) {}
 
 /*!
     Destroys this route segment object.
@@ -101,22 +104,34 @@ bool QGeoRouteSegment::operator ==(const QGeoRouteSegment &other) const
 */
 bool QGeoRouteSegment::operator !=(const QGeoRouteSegment &other) const
 {
-    return (d_ptr.constData() != other.d_ptr.constData());
+    return !(operator==(other));
 }
 
-/*
+/*!
+*/
 bool QGeoRouteSegment::isValid() const
 {
+    return d_ptr->valid;
 }
 
+/*!
+*/
 void QGeoRouteSegment::setNextRouteSegment(const QGeoRouteSegment &routeSegment)
 {
+    d_ptr->nextSegment = routeSegment.d_ptr;
 }
 
+/*!
+*/
 QGeoRouteSegment QGeoRouteSegment::nextRouteSegment() const
 {
+    if (d_ptr->nextSegment)
+        return QGeoRouteSegment(d_ptr->nextSegment);
+
+    QGeoRouteSegment segment;
+    segment.d_ptr->valid = false;
+    return segment;
 }
-*/
 
 /*!
     Sets the estimated amount of time it will take to traverse this segment of
@@ -194,25 +209,35 @@ QGeoManeuver QGeoRouteSegment::maneuver() const
 *******************************************************************************/
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
-        : travelTime(0),
+        : valid(true),
+        travelTime(0),
         distance(0.0) {}
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other)
         : QSharedData(other),
+        valid(other.valid),
         travelTime(other.travelTime),
         distance(other.distance),
         path(other.path),
-        maneuver(other.maneuver) {}
+        maneuver(other.maneuver),
+        nextSegment(other.nextSegment) {}
 
-QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
+QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate()
+{
+    nextSegment.reset();
+}
 
 bool QGeoRouteSegmentPrivate::operator ==(const QGeoRouteSegmentPrivate &other) const
 {
-    return ((travelTime == other.travelTime)
+    return ((valid == other.valid)
+            && (travelTime == other.travelTime)
             && (distance == other.distance)
             && (path == other.path)
             && (maneuver == other.maneuver));
 }
+
+/*******************************************************************************
+*******************************************************************************/
 
 QTM_END_NAMESPACE
 
