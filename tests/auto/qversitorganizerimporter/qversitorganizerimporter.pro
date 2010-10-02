@@ -5,7 +5,6 @@ CONFIG+=testcase
 CONFIG+=parallel_test
 
 include(../../../common.pri)
-DEFINES += QT_ASCII_CAST_WARNINGS
 
 DEPENDPATH += .
 INCLUDEPATH += \
