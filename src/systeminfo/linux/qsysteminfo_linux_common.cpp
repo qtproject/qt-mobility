@@ -1662,8 +1662,8 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 {
     Q_UNUSED(screen);
 
-    if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
+    if(halIsAvailable) {
         QHalInterface iface;
         if (iface.isValid()) {
             const QStringList list = iface.findDeviceByCapability("laptop_panel");
@@ -1677,59 +1677,56 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
                 }
             }
         }
+    }
 #endif
-    } else {
-        const QString backlightPath = "/proc/acpi/video/";
-        const QDir videoDir(backlightPath);
-        QStringList filters;
-        filters << "*";
-        const QStringList brightnessList = videoDir.entryList(filters,
-                                                        QDir::Dirs
-                                                        | QDir::NoDotAndDotDot,
-                                                        QDir::Name);
-        foreach(const QString brightnessFileName, brightnessList) {
-            float numLevels = 0.0;
-            float curLevel = 0.0;
+    const QString backlightPath = "/proc/acpi/video/";
+    const QDir videoDir(backlightPath);
+    QStringList filters;
+    filters << "*";
+    const QStringList brightnessList = videoDir.entryList(filters,
+                                                          QDir::Dirs
+                                                          | QDir::NoDotAndDotDot,
+                                                          QDir::Name);
+    foreach(const QString brightnessFileName, brightnessList) {
+        float numLevels = 0.0;
+        float curLevel = 0.0;
 
-            const QDir videoSubDir(backlightPath+"/"+brightnessFileName);
+        const QDir videoSubDir(backlightPath+"/"+brightnessFileName);
 
-            const QStringList vidDirList = videoSubDir.entryList(filters,
-                                                              QDir::Dirs
-                                                              | QDir::NoDotAndDotDot,
-                                                              QDir::Name);
-            foreach(const QString vidFileName, vidDirList) {
-                QFile curBrightnessFile(backlightPath+brightnessFileName+"/"+vidFileName+"/brightness");
-                if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                    qDebug()<<"File not opened";
-                } else {
-                    QTextStream bri(&curBrightnessFile);
-                    QString line = bri.readLine();
-                    while(!line.isNull()) {
-                        if(!line.contains("not supported")) {
-                            if(line.contains("levels")) {
-                                QString level = line.section(" ",-1);
-                                bool ok;
-                                numLevels = level.toFloat(&ok);
-                                if(!ok)
-                                    numLevels = -1;
-                            }
-                            if(line.contains("current")) {
-                                QString level = line.section(": ",-1);
-                                bool ok;
-                                curLevel = level.toFloat(&ok);
-                                if(!ok)
-                                    curLevel = 0;
-                            }
-
-                            qDebug() << numLevels << curLevel;
-                            curBrightnessFile.close();
-                            if(curLevel > -1 && numLevels > 0) {
-                                return curLevel / numLevels * 100;
-                            }
+        const QStringList vidDirList = videoSubDir.entryList(filters,
+                                                             QDir::Dirs
+                                                             | QDir::NoDotAndDotDot,
+                                                             QDir::Name);
+        foreach(const QString vidFileName, vidDirList) {
+            QFile curBrightnessFile(backlightPath+brightnessFileName+"/"+vidFileName+"/brightness");
+            if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                qDebug()<<"File not opened";
+            } else {
+                QTextStream bri(&curBrightnessFile);
+                QString line = bri.readLine();
+                while(!line.isNull()) {
+                    if(!line.contains("not supported")) {
+                        if(line.contains("levels")) {
+                            QString level = line.section(" ",-1);
+                            bool ok;
+                            numLevels = level.toFloat(&ok);
+                            if(!ok)
+                                numLevels = -1;
+                        } else if(line.contains("current")) {
+                            QString level = line.section(": ",-1);
+                            bool ok;
+                            curLevel = level.toFloat(&ok);
+                            if(!ok)
+                                curLevel = 0;
                         }
-                        line = bri.readLine();
                     }
+                    line = bri.readLine();
                 }
+                curBrightnessFile.close();
+                if(curLevel > -1 && numLevels > 0) {
+                    return curLevel / numLevels * 100;
+                }
+
             }
         }
     }

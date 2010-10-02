@@ -73,7 +73,7 @@
 //#ifdef Q_WS_X11
 //#include <QX11Info>
 //#include <X11/Xlib.h>
-#if !defined(Q_WS_MAEMO_6) && defined(QT_NO_MEEGO)
+#if !defined(Q_WS_MAEMO_6)/* && defined(QT_NO_MEEGO)*/
 #ifdef Q_WS_X11
 #include <QX11Info>
 #include <X11/Xlib.h>
@@ -482,7 +482,7 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
 {
     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
-#if defined(Q_WS_X11) && defined(QT_NO_MEEGO)
+#if defined(Q_WS_X11)
     XRRScreenConfiguration *sc;
     Rotation cur_rotation;
     sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
@@ -542,7 +542,7 @@ int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
 int QSystemDisplayInfoPrivate::physicalHeight(int screen)
 {
     int height=0;
-#if defined(Q_WS_X11) && defined(QT_NO_MEEGO)
+#if defined(Q_WS_X11)
     XRRScreenResources *sr;
 
     sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
@@ -563,7 +563,7 @@ Q_UNUSED(screen)
 int QSystemDisplayInfoPrivate::physicalWidth(int screen)
 {
     int width=0;
-#if defined(Q_WS_X11) && defined(QT_NO_MEEGO)
+#if defined(Q_WS_X11)
     XRRScreenResources *sr;
 
     sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
