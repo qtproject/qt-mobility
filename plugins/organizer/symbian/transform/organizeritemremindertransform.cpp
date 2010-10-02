@@ -49,6 +49,8 @@
 #include "qorganizertodotimerange.h"
 #include "organizeritemremindertransform.h"
 
+const int secondsInOneMinute = 60;
+
 void OrganizerItemReminderTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
 {
     // Find reminder details
@@ -75,7 +77,7 @@ void OrganizerItemReminderTransform::transformToDetailL(const CCalEntry& entry, 
     if (alarm) {
         CleanupStack::PushL(alarm);
         QOrganizerItemReminder reminder;
-        int offsetSeconds = alarm->TimeOffset().Int() * 60;
+        int offsetSeconds = alarm->TimeOffset().Int() * secondsInOneMinute;
         // Set both the offset and dateTime values for the reminder detail
         reminder.setTimeDelta(offsetSeconds);
         QDateTime startTime = toQDateTimeL(entry.StartTimeL());
@@ -119,7 +121,7 @@ void OrganizerItemReminderTransform::transformToEntryL(const QOrganizerItem& ite
             User::Leave(KErrArgument);
         }
         // Get the time offset in minutes
-        timeOffset = reminderDateTime.secsTo(startDateTime) / 60;
+        timeOffset = reminderDateTime.secsTo(startDateTime) / secondsInOneMinute;
     }
 
     // If there is a valid reminder delta, use it
@@ -127,11 +129,11 @@ void OrganizerItemReminderTransform::transformToEntryL(const QOrganizerItem& ite
 
         if (timeOffset) {
             // If both startDateTime and delta are defined, they must match
-            if (timeOffset != reminder.timeDelta() / 60)
+            if (timeOffset != reminder.timeDelta() / secondsInOneMinute)
                 User::Leave(KErrArgument);
         } else {
             // Convert delta to minutes
-            timeOffset = reminder.timeDelta() / 60;
+            timeOffset = reminder.timeDelta() / secondsInOneMinute;
         }
     }
 
