@@ -92,7 +92,7 @@ public:
     double width() const;
 
     void setHeight(double degreesHeight);
-    double height();
+    double height() const;
 
     bool contains(const QGeoCoordinate &coordinate) const;
     bool contains(const QGeoBoundingBox &boundingBox) const;

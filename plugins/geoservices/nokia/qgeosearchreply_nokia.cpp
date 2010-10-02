@@ -37,11 +37,11 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and 
-** Navigation API.  The use of these services, whether by use of the 
-** plugin or by other means, is governed by the terms and conditions 
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in 
-** this package, located in the directory containing the Ovi services 
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
 ** plugin source code.
 **
 ****************************************************************************/
@@ -75,15 +75,25 @@ QGeoSearchReplyNokia::~QGeoSearchReplyNokia()
 
 void QGeoSearchReplyNokia::abort()
 {
+    if (!m_reply)
+        return;
+
     m_reply->abort();
+
     m_reply->deleteLater();
+    m_reply = 0;
 }
 
 void QGeoSearchReplyNokia::networkFinished()
 {
+    if (!m_reply)
+        return;
+
     if (m_reply->error() != QNetworkReply::NoError) {
-        setError(QGeoSearchReply::CommunicationError, m_reply->errorString());
-        m_reply->deleteLater();
+        // Removed because this is already done in networkError, which previously caused _two_ errors to be raised for every error.
+        //setError(QGeoSearchReply::CommunicationError, m_reply->errorString());
+        //m_reply->deleteLater();
+        //m_reply = 0;
         return;
     }
 
@@ -104,11 +114,18 @@ void QGeoSearchReplyNokia::networkFinished()
     }
 
     m_reply->deleteLater();
+    m_reply = 0;
 }
 
 void QGeoSearchReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
     Q_UNUSED(error)
+
+    if (!m_reply)
+        return;
+
     setError(QGeoSearchReply::CommunicationError, m_reply->errorString());
+
     m_reply->deleteLater();
+    m_reply = 0;
 }

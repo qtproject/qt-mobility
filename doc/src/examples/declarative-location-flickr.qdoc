@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,49 +39,15 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOROUTEREQUEST_P_H
-#define QGEOROUTEREQUEST_P_H
+/*!
+    \example declarative-location/flickr
+    \title Declarative Location Flickr
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+    This example illustrates the positioning elements of the declarative location.
+    
+    The basic idea is to fetch public images from Flickr service based on
+    your current location. In case there is no default positioning provider on the platform
+    the application is being ran on, the example defaults to use small NMEA log file
+    (recorded in Australia).
 
-#include "qgeorouterequest.h"
-
-#include <QList>
-#include <QSharedData>
-#include <QDateTime>
-#include <QMap>
-
-QTM_BEGIN_NAMESPACE
-
-class QGeoRouteRequestPrivate : public QSharedData
-{
-public:
-    QGeoRouteRequestPrivate();
-    QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other);
-    ~QGeoRouteRequestPrivate();
-
-    bool operator ==(const QGeoRouteRequestPrivate &other) const;
-
-    QList<QGeoCoordinate> waypoints;
-    QList<QGeoBoundingBox> excludeAreas;
-    int numberAlternativeRoutes;
-    QGeoRouteRequest::TravelModes travelModes;
-    QMap<QGeoRouteRequest::FeatureType,
-         QGeoRouteRequest::FeatureWeight> featureWeights;
-    QGeoRouteRequest::RouteOptimizations routeOptimization;
-    QGeoRouteRequest::SegmentDetail segmentDetail;
-    QGeoRouteRequest::ManeuverDetail maneuverDetail;
-};
-
-QTM_END_NAMESPACE
-
-#endif
+*/

@@ -82,7 +82,7 @@ void QDeclarativeCoordinate::setCoordinate(const QGeoCoordinate &coordinate)
         emit latitudeChanged(m_coordinate.latitude());
     }
     if (coordinate.longitude() != previousCoordinate.longitude() &&
-        !(qIsNaN(coordinate.latitude()) && qIsNaN(previousCoordinate.latitude()))) {
+        !(qIsNaN(coordinate.longitude()) && qIsNaN(previousCoordinate.longitude()))) {
         emit longitudeChanged(m_coordinate.longitude());
     }
 }
