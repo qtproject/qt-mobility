@@ -332,6 +332,9 @@ void MapWidget::applyPan(const Qt::KeyboardModifiers& modifiers)
 
 void MapWidget::wheelEvent(QGraphicsSceneWheelEvent* event)
 {
+    qreal panx = event->pos().x() - size().width() / 2.0;
+    qreal pany = event->pos().y() - size().height() / 2.0;
+    pan(panx, pany);
     if (event->delta() > 0) { //zoom in
         if (zoomLevel() < maximumZoomLevel()) {
             setZoomLevel(zoomLevel() + 1);
@@ -341,5 +344,6 @@ void MapWidget::wheelEvent(QGraphicsSceneWheelEvent* event)
             setZoomLevel(zoomLevel() - 1);
         }
     }
+    pan(-panx, -pany);
     event->accept();
 }

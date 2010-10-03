@@ -89,10 +89,6 @@ public:
     qreal radius() const;
     void setRadius(qreal radius);
 
-    QVariant attribute(const QString &key) const;
-    void setAttribute(const QString &key, const QVariant &value);
-    QStringList attributeKeys() const;
-
     QString phoneNumber() const;
     void setPhoneNumber(const QString &phoneNumber);
 
