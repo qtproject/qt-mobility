@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
 
 #include "s60cameraserviceplugin.h"
 #ifdef QMEDIA_SYMBIAN_CAMERA

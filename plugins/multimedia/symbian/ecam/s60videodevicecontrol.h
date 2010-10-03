@@ -50,6 +50,10 @@ class S60CameraControl;
 class QString;
 class QIcon;
 
+/*
+ * Control for providing information of the video device (r. camera) and to
+ * enable other camera device (e.g. secondary camera if one exists).
+ */
 class S60VideoDeviceControl : public QVideoDeviceControl
 {
     Q_OBJECT

@@ -168,6 +168,13 @@ contains(mobility_modules,multimedia) {
         qaudioformat \
         qvideoframe \
         qvideosurfaceformat
+
+    contains (QT_CONFIG, declarative) {
+        SUBDIRS += \
+                qsoundeffect \
+                qdeclarativeaudio \
+                qdeclarativevideo
+    }
 }
 #Messaging
 contains(mobility_modules,messaging) {

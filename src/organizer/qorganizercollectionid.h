@@ -113,6 +113,8 @@ public:
     bool operator!=(const QOrganizerCollectionId& other) const;
     bool operator<(const QOrganizerCollectionId& other) const;
 
+    bool isNull() const;
+
     QString managerUri() const;
     QOrganizerCollectionLocalId localId() const;
 

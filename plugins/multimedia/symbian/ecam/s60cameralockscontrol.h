@@ -52,6 +52,10 @@ class S60ImageCaptureSession;
 class S60CameraSettings;
 class S60CameraFocusControl;
 
+/*
+ * Control for searching and locking 3A algorithms (AutoFocus, AutoExposure
+ * and AutoWhitebalance).
+ */
 class S60CameraLocksControl : public QCameraLocksControl
 {
     Q_OBJECT
@@ -79,7 +83,7 @@ Q_SIGNALS: // QCameraLocksControl
                            QCamera::LockChangeReason reason);
 */
 
-public Q_SLOTS: // Internal Slots
+private Q_SLOTS: // Internal Slots
 
     void exposureStatusChanged(QCamera::LockStatus status, QCamera::LockChangeReason reason);
     void focusStatusChanged(QCamera::LockStatus status, QCamera::LockChangeReason reason);

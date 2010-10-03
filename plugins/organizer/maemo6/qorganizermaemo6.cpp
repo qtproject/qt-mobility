@@ -320,8 +320,11 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemMaemo6Engine::collectionIds(QOr
     return retn;
 }
 
-QList<QOrganizerCollection> QOrganizerItemMaemo6Engine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemMaemo6Engine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
 {
+    Q_UNUSED(errorMap);
+    // XXX TODO: use error map, and fix implementation as per docs.
+
     *error = QOrganizerItemManager::NoError;
     QOrganizerCollection defaultCollection;
     defaultCollection.setId(QOrganizerCollectionId());
