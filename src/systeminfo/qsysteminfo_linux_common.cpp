@@ -263,7 +263,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
              QHalInterface iface;
              if (iface.isValid()) {
                  QHalInterface halIface;
-                 const QStringList halDevices = halIface.getAllDevices();
+                 const QStringList halDevices = halIface.findDeviceByCapability("storage");
                  foreach(const QString device, halDevices) {
                      QHalDeviceInterface ifaceDevice(device);
                      if (ifaceDevice.isValid()) {
