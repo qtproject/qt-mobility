@@ -440,6 +440,9 @@ bool removeLandmarkHelper(const QString &connectionName, const QLandmarkId &land
         QString *errorString,
         const QString &managerUri)
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+
     if (landmarkId.managerUri() != managerUri) {
         if (error)
             *error = QLandmarkManager::DoesNotExistError;
@@ -485,6 +488,8 @@ bool removeLandmarkHelper(const QString &connectionName, const QLandmarkId &land
         }
 
     }
+    *error = QLandmarkManager::NoError;
+    *errorString ="";
     return true;
 }
 
@@ -514,8 +519,6 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString ="";
 
     //it is assumed the connection name is valid when this call is made.
     QSqlDatabase db = QSqlDatabase::database(connectionName,false);
@@ -642,6 +645,7 @@ QLandmark DatabaseOperations::retrieveLandmark(const QLandmarkId &landmarkId,
 
         query2.clear();
         query2.finish();
+
         QMap<QString,QVariant> bindValues;
         bindValues.insert("lmId", landmarkId.localId());
         if (!executeQuery(&query2,"SELECT key,value FROM landmark_attribute WHERE landmarkId = :lmId",bindValues,error,errorString)){
@@ -1443,8 +1447,6 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString="";
 
     if (!landmark->landmarkId().managerUri().isEmpty() && landmark->landmarkId().managerUri() != managerUri) {
         if (error)
@@ -1634,6 +1636,8 @@ bool DatabaseOperations::saveLandmarkHelper(QLandmark *landmark,
         }
     }
 
+    *error = QLandmarkManager::NoError;
+    *errorString="";
     return true;
 }
 
@@ -1949,9 +1953,7 @@ QLandmarkCategory DatabaseOperations::category(const QLandmarkCategoryId &landma
     }
 
     if (!found) {
-        if (error)
             *error = QLandmarkManager::DoesNotExistError;
-        if (errorString)
             *errorString = "None of the existing categories match the given category id.";
     } else {
         query.finish();
@@ -1971,10 +1973,9 @@ QLandmarkCategory DatabaseOperations::category(const QLandmarkCategoryId &landma
             }
         }
 
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            *errorString = "";
+
+        *error = QLandmarkManager::NoError;
+        *errorString = "";
     }
     return cat;
 }
@@ -2004,6 +2005,7 @@ QList<QLandmarkCategory> DatabaseOperations::categories(const QList<QLandmarkCat
     for (int i = 0; i < ids.size(); ++i) {
         *error = QLandmarkManager::NoError;
         (*errorString).clear();
+        if (errorString)
 
         if (queryRun && queryRun->isCanceled) {
             *error = QLandmarkManager::CancelError;
@@ -2178,10 +2180,9 @@ bool DatabaseOperations::saveCategoryHelper(QLandmarkCategory *category,
         }
     }
 
-    if (error)
-        *error = QLandmarkManager::NoError;
-    if (errorString)
-        *errorString = "";
+
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
 
     return true;
 }
