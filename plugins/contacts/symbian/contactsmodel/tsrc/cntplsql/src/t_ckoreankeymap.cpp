@@ -220,6 +220,20 @@ void UT_CKoreanKeyMap::UT_IsLanguageSupported_MixedTextL()
     EUNIT_ASSERT_EQUALS(ETrue, iKeyMap->IsLanguageSupported(mixed2));
     }
 
+
+// -----------------------------------------------------------------------------
+// UT_CKoreanKeyMap::UT_IsLanguageSupported_TextWithJamoL
+// Text includes Jamo characters.
+// -----------------------------------------------------------------------------
+//
+void UT_CKoreanKeyMap::UT_IsLanguageSupported_TextWithJamoL()
+    {
+    QChar textWithJamo[] = {0xac00, 0x1100, 0x11ff, 0xc14f, 0x1170};
+    QString jamoText(textWithJamo, sizeof(textWithJamo) / sizeof(QChar));
+    
+    EUNIT_ASSERT_EQUALS(ETrue, iKeyMap->IsLanguageSupported(jamoText));
+    }
+
 //  TEST TABLE
 
 EUNIT_BEGIN_TEST_TABLE(
@@ -269,6 +283,13 @@ EUNIT_TEST(
     "FUNCTIONALITY",
     SetupL, UT_IsLanguageSupported_MixedTextL, Teardown )
 
+EUNIT_TEST(
+    "IsLanguageSupported - test Jamo chars",
+    "UT_CKoreanKeyMap",
+    "IsLanguageSupported",
+    "FUNCTIONALITY",
+    SetupL, UT_IsLanguageSupported_TextWithJamoL, Teardown )
+    
 EUNIT_END_TEST_TABLE
 
 //  END OF FILE

@@ -42,7 +42,6 @@
 #ifndef S60VIDEOWIDGETCONTROL_H
 #define S60VIDEOWIDGETCONTROL_H
 
-#include <QtCore/qobject.h>
 #include <QtGui>
 #include <qvideowidgetcontrol.h>
 
@@ -50,7 +49,8 @@ QT_USE_NAMESPACE
 
 /*
  * This class implements the widget used for displaying DirectScreen
- * ViewFinder with QVideoWidget.
+ * ViewFinder with QVideoWidget on platforms that support it. Other platforms
+ * are using Bitmap ViewFinder.
  */
 class S60ViewFinderWidget : public QLabel
 {
@@ -70,7 +70,7 @@ Q_SIGNALS: // NativePaintEvent Signals
     void beginVideoWindowNativePaint();
     void endVideoWindowNativePaint();
 
-public Q_SLOTS: // Slots to receive NativePaintEvents
+private Q_SLOTS: // Slots to receive NativePaintEvents
 
     void beginNativePaintEvent(const QRect&);
     void endNativePaintEvent(const QRect&);
@@ -86,6 +86,9 @@ private: // Data
 
 //#############################################################################
 
+/*
+ * Control for QVideoWidget viewfinder output.
+ */
 class S60VideoWidgetControl : public QVideoWidgetControl
 {
     Q_OBJECT

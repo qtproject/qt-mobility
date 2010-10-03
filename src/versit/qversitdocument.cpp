@@ -244,6 +244,7 @@ void QVersitDocument::clear()
     d->mProperties.clear();
     d->mSubDocuments.clear();
     d->mVersitType = QVersitDocument::InvalidType;
+    d->mComponentType.clear();
 }
 
 /*!

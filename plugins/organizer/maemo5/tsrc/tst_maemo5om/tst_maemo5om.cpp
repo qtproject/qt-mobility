@@ -87,6 +87,8 @@ private slots:  // Test cases
     void consecutiveAsynchronousRequests();
     void deleteRequest();
 
+    void testReminders();
+
 private:
     QOrganizerItemManager *m_om;
 };
@@ -869,7 +871,7 @@ void tst_Maemo5Om::getCollections()
 {
     QOrganizerCollectionLocalId defaultCollectionId = m_om->defaultCollectionId();
     QList<QOrganizerCollectionLocalId> collectionIds = m_om->collectionIds();
-    QList<QOrganizerCollection> collections = m_om->collections();
+    QList<QOrganizerCollection> collections = m_om->collections(collectionIds);
 
     bool defaultCollectionExists = false;
     bool allCollectionIds = true;
@@ -1298,6 +1300,66 @@ void tst_Maemo5Om::deleteRequest()
     fetchRequest2 = 0;
 
     // (There are no explicit checks, the test just should not crash.)
+}
+
+void tst_Maemo5Om::testReminders()
+{
+    QDate date = QDateTime::currentDateTime().date().addDays(1);
+
+    // Create an event and set its details
+    QOrganizerEvent event;
+
+    event.setStartDateTime(QDateTime(date, QTime(13, 0, 0)));
+    event.setEndDateTime(QDateTime(date, QTime(14, 0, 0)));
+    event.setDisplayLabel("testReminders event");
+    event.setDescription("Test event reminder description");
+
+    QOrganizerItemVisualReminder eventReminder = event.detail<QOrganizerItemVisualReminder>();
+    eventReminder.setMessage("Event reminder message");
+    eventReminder.setDateTime(QDateTime(date, QTime(12, 0, 0)));
+    eventReminder.setRepetition(10, 60);
+    eventReminder.setTimeDelta(60 * 60);
+    event.saveDetail(&eventReminder);
+
+    // Save event
+    QVERIFY(m_om->saveItem(&event));
+
+    // Fetch event
+    QOrganizerItem fetchItem = m_om->item(event.localId());
+    QOrganizerItemVisualReminder fetchEventReminder = fetchItem.detail<QOrganizerItemVisualReminder>();
+    QCOMPARE(fetchEventReminder.dataUrl(), eventReminder.dataUrl());
+    QCOMPARE(fetchEventReminder.dateTime(), eventReminder.dateTime());
+    QCOMPARE(fetchEventReminder.message(), eventReminder.message());
+    QCOMPARE(fetchEventReminder.repetitionCount(), eventReminder.repetitionCount());
+    //QCOMPARE(reminder.repetitionDelay(), fetchEventReminder.repetitionDelay()); // Maemo5 does not support repetition delay
+    QCOMPARE(fetchEventReminder.timeDelta(), eventReminder.timeDelta());
+
+    // Create a todo and set its details
+    QOrganizerTodo todo;
+    todo.setDueDateTime(QDateTime(date, QTime(14, 0, 0)));
+    todo.setStartDateTime(QDateTime(date, QTime(13, 0, 0)));
+    todo.setDisplayLabel("testReminders todo");
+    todo.setDescription("Test todo reminder description");
+
+    QOrganizerItemVisualReminder todoReminder = todo.detail<QOrganizerItemVisualReminder>();
+    todoReminder.setMessage("Todo reminder message");
+    todoReminder.setDateTime(QDateTime(date, QTime(10, 0, 0)));
+    todoReminder.setRepetition(2, 10);
+    todoReminder.setTimeDelta(3 * 60 * 60);
+    todo.saveDetail(&todoReminder);
+
+    // Save todo
+    QVERIFY(m_om->saveItem(&todo));
+
+    // Fetch todo
+    QOrganizerItem fetchTodo = m_om->item(todo.localId());
+    QOrganizerItemVisualReminder fetchTodoReminder = fetchTodo.detail<QOrganizerItemVisualReminder>();
+    QCOMPARE(fetchTodoReminder.dataUrl(), todoReminder.dataUrl());
+    QCOMPARE(fetchTodoReminder.dateTime(), todoReminder.dateTime());
+    QCOMPARE(fetchTodoReminder.message(), todoReminder.message());
+    QCOMPARE(fetchTodoReminder.repetitionCount(), todoReminder.repetitionCount());
+    //QCOMPARE(reminder.repetitionDelay(), fetchEventReminder.repetitionDelay()); // Maemo5 does not support repetition delay
+    QCOMPARE(fetchTodoReminder.timeDelta(), todoReminder.timeDelta());
 }
 
 QTEST_MAIN(tst_Maemo5Om);
