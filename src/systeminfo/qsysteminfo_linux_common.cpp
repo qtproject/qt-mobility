@@ -263,7 +263,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
              QHalInterface iface;
              if (iface.isValid()) {
                  QHalInterface halIface;
-                 const QStringList halDevices = halIface.findDeviceByCapability("storage");
+                 const QStringList halDevices = halIface.findDeviceByCapability("mmc_host");
                  foreach(const QString device, halDevices) {
                      QHalDeviceInterface ifaceDevice(device);
                      if (ifaceDevice.isValid()) {
@@ -358,7 +358,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
  bool QSystemInfoLinuxCommonPrivate::hasHalUsbFeature(qint32 usbClass)
  {
      QHalInterface halIface;
-     const QStringList halDevices = halIface.getAllDevices();
+     const QStringList halDevices = halIface.findDeviceByCapability("usb_device");
      foreach(const QString device, halDevices) {
          QHalDeviceInterface ifaceDevice(device);
          if (ifaceDevice.isValid()) {
