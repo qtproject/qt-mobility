@@ -445,34 +445,6 @@ bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::Landmark
     }
 }
 
-QStringList QLandmarkManagerEngineSqlite::landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString = "";
-    //TODO: optimize
-    QStringList commonKeys = DatabaseOperations::coreAttributes +
-                             DatabaseOperations::coreGenericAttributes;
-    commonKeys.sort();
-
-    return commonKeys;
-}
-
-QStringList QLandmarkManagerEngineSqlite::categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString = "";
-
-    //TODO: optimize
-    QStringList commonKeys = DatabaseOperations::coreCategoryAttributes +
-                             DatabaseOperations::coreGenericCategoryAttributes;
-    commonKeys.clear();
-    return commonKeys;
-}
-
 QStringList QLandmarkManagerEngineSqlite::searchableLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);

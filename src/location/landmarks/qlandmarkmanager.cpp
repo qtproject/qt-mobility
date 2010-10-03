@@ -1093,24 +1093,6 @@ bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
 }
 
 /*!
-    Returns the list of attribute keys the landmarks will have.
-*/
-QStringList QLandmarkManager::landmarkAttributeKeys() const
-{
-    Q_D(const QLandmarkManager);
-
-    if (!d->engine) {
-        return QStringList();
-    }
-
-    d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
-
-    return d->engine->landmarkAttributeKeys(&(d->errorCode), &(d->errorString));
-}
-
-
-/*!
     Returns a list of landmark attribute keys that may be used in a
     QLandmarkAttributeFilter.
 */
@@ -1125,23 +1107,6 @@ QStringList QLandmarkManager::searchableLandmarkAttributeKeys() const
     d->errorString = "";
 
     return d->engine->searchableLandmarkAttributeKeys(&(d->errorCode), &(d->errorString));
-}
-
-/*!
-    Returns the list of attribute keys the categories will have.
-*/
-QStringList QLandmarkManager::categoryAttributeKeys() const
-{
-    Q_D(const QLandmarkManager);
-
-    if (!d->engine) {
-        return QStringList();
-    }
-
-    d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
-
-    return  d->engine->categoryAttributeKeys(&(d->errorCode), &(d->errorString));
 }
 
 /*!

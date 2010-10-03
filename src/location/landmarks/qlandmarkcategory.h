@@ -77,10 +77,6 @@ public:
     QLandmarkCategoryId categoryId() const;
     void setCategoryId(const QLandmarkCategoryId &id);
 
-    QVariant attribute(const QString &key) const;
-    void setAttribute(const QString &key, const QVariant &value);
-    QStringList attributeKeys() const;
-
     void clear();
 private:
     QSharedDataPointer<QLandmarkCategoryPrivate> d;

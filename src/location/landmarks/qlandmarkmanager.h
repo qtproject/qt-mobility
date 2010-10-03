@@ -179,9 +179,6 @@ public:
     bool isReadOnly(const QLandmarkId &id) const;
     bool isReadOnly(const QLandmarkCategoryId &id) const;
 
-    QStringList landmarkAttributeKeys() const;
-    QStringList categoryAttributeKeys() const;
-
     QStringList searchableLandmarkAttributeKeys() const;
 
     QString managerName() const;

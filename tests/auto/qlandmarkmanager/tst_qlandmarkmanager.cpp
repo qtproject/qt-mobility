@@ -1112,12 +1112,6 @@ void tst_QLandmarkManager::invalidManager()
     QCOMPARE(manager.searchableLandmarkAttributeKeys(), QStringList());
     QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
 
-    QCOMPARE(manager.landmarkAttributeKeys(), QStringList());
-    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
-
-    QCOMPARE(manager.categoryAttributeKeys(), QStringList());
-    QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
-
     QCOMPARE(manager.managerName(), QString());
     QCOMPARE(manager.error(), QLandmarkManager::InvalidManagerError);
 
