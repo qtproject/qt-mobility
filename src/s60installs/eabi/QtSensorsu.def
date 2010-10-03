@@ -286,6 +286,7 @@ EXPORTS
 	_ZTVN10QtMobility8QCompassE @ 285 NONAME
 	_ZN10QtMobility14QSensorReading14copyValuesFromEPS0_ @ 286 NONAME
 	_ZN10QtMobility14QSensorReadingC1EP7QObjectPNS_21QSensorReadingPrivateE @ 287 NONAME
-	_ZN10QtMobility7QSensor13activeChangedEv @ 288 NONAME
-	_ZN10QtMobility7QSensor9setActiveEb @ 289 NONAME
+	_ZN10QtMobility22sensors_unit_test_hookEi @ 288 NONAME
+	_ZN10QtMobility7QSensor13activeChangedEv @ 289 NONAME
+	_ZN10QtMobility7QSensor9setActiveEb @ 290 NONAME
 

@@ -60,7 +60,7 @@
 
 #include "Symbol.h"
 #include "Symbols.h"
-#include "Control.h"
+#include "CppControl.h"
 #include "Names.h"
 #include "TranslationUnit.h"
 #include "Literals.h"

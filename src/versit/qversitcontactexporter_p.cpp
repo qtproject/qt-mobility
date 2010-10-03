@@ -87,7 +87,8 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& prof
     // Detail mappings
     int versitPropertyCount =
         sizeof(versitContactDetailMappings)/sizeof(VersitDetailMapping);
-    for (int i=0; i < versitPropertyCount; i++) {
+    // Put them in in reverse order so the entries at the top of the list take precedence
+    for (int i=versitPropertyCount; i >= 0; i--) {
         mPropertyMappings.insert(
                 QLatin1String(versitContactDetailMappings[i].detailDefinitionName),
                 QLatin1String(versitContactDetailMappings[i].versitPropertyName));

@@ -109,12 +109,10 @@ private: // Worker functions
     void RemoveDetailDefinitionL();
     // Save detail definition
     void SaveDetailDefinitionL();
-#ifdef SYMBIAN_CALENDAR_V2
     void CollectionIds();
     void FetchCollections();
     void SaveCollections();
     void RemoveCollections();
-#endif
     
 private:
     QOrganizerItemSymbianEngine&            iOrganizerItemManagerEngine;
@@ -127,6 +125,7 @@ private:
     TInt                                    iNoOfItems;
     TInt                                    iIndex;
     QOrganizerItemChangeSet                 iChangeSet;
+    QOrganizerCollectionLocalId             iCollectionLocalId;
     };
 
 #endif /* CORGANIZERITEMREQUESTSSERVICEPROVIDER_H_ */

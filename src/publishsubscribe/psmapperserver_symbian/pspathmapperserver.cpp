@@ -38,9 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "pspathmapperserver.h"
+#include "pspathmapperserver_p.h"
 #include "clientservercommon.h"
-#include "pspathmappersession.h"
+#include "pspathmappersession_p.h"
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE

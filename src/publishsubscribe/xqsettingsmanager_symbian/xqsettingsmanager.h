@@ -56,8 +56,8 @@
 // INCLUDES
 #include <QObject>
 #include <QVariant>
-#include "xqsettingskey.h"
-#include "settingsmanager_global.h"
+#include "xqsettingskey_p.h"
+#include "settingsmanager_global_p.h"
 
 // FORWARD DECLARATIONS
 class XQSettingsManagerPrivate;

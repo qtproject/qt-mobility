@@ -249,10 +249,9 @@ void tst_QOrganizerCollection::idTraits()
 
 void tst_QOrganizerCollection::localIdTraits()
 {
-    QVERIFY(sizeof(QOrganizerCollectionId) == sizeof(void *));
+    QVERIFY(sizeof(QOrganizerCollectionLocalId) == sizeof(void *));
     QTypeInfo<QTM_PREPEND_NAMESPACE(QOrganizerCollectionLocalId)> ti;
-    QEXPECT_FAIL("", "Need to investigate this", Continue);
-    QVERIFY(!ti.isComplex);
+    QVERIFY(ti.isComplex); // unlike QContactLocalId (int typedef), we have a ctor
     QVERIFY(!ti.isStatic);
     QVERIFY(!ti.isLarge);
     QVERIFY(!ti.isPointer);
