@@ -2140,6 +2140,7 @@ void tst_QOrganizerItemAsync::collectionSave()
     int originalCount = oim->collectionIds().size();
     QOrganizerCollection testCollection;
     testCollection.setMetaData("description", "test description");
+    testCollection.setMetaData(QOrganizerCollection::KeyName, "New collection");
     QList<QOrganizerCollection> saveList;
     saveList << testCollection;
     csr.setManager(oim.data());
@@ -2429,6 +2430,16 @@ QOrganizerItemManager* tst_QOrganizerItemAsync::prepareModel(const QString& mana
     cDescriptionDetail.setDescription("C Description");
     c.saveDetail(&cDescriptionDetail);
 
+    QOrganizerItemType aTypeDetail;
+    aTypeDetail.setType(QOrganizerItemType::TypeEvent);
+    a.saveDetail(&aTypeDetail);
+    QOrganizerItemType bTypeDetail;
+    bTypeDetail.setType(QOrganizerItemType::TypeEvent);
+    b.saveDetail(&bTypeDetail);
+    QOrganizerItemType cTypeDetail;
+    cTypeDetail.setType(QOrganizerItemType::TypeEvent);
+    c.saveDetail(&cTypeDetail);
+
     QOrganizerItemPriority priority;
     priority.setPriority(QOrganizerItemPriority::HighestPriority);
     c.saveDetail(&priority);
@@ -2446,6 +2457,7 @@ QOrganizerItemManager* tst_QOrganizerItemAsync::prepareModel(const QString& mana
     oim->saveItem(&c);
 
     QOrganizerCollection testCollection;
+    testCollection.setMetaData(QOrganizerCollection::KeyName, "Test Collection");
     testCollection.setMetaData("testCollection", "test collection");
     oim->saveCollection(&testCollection);
 
