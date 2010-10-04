@@ -129,9 +129,19 @@ bool CntFilterDetail::filterSupported(const QContactFilter& filter)
                 detailFilter.detailFieldName())) {
             result = true;
         }
-        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName &&
+        else if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName &&
             detailFilter.detailFieldName() == QContactPhoneNumber::FieldNumber) {
             //special case - phone number matching 
+            result = true;
+        }
+        else if (detailFilter.detailDefinitionName() == QContactType::DefinitionName &&
+            detailFilter.detailFieldName() == QContactType::FieldType) {
+            //filtering by contact type is supported
+            result = true;
+        }
+        else if (detailFilter.detailDefinitionName() == QContactGuid::DefinitionName &&
+            detailFilter.detailFieldName() == QContactGuid::FieldGuid) {
+            //filtering by global Uid is supported
             result = true;
         }
     }
@@ -151,7 +161,7 @@ void CntFilterDetail::createSelectQuery(const QContactFilter& filter,
     //type
     if (detailFilter.detailDefinitionName() == QContactType::DefinitionName) {
        if (detailFilter.value().toString() == QContactType::TypeContact)
-           sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)=0";
+           sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)<=1";
        else if (detailFilter.value().toString() == QContactType::TypeGroup)
            sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)=3";
     }
