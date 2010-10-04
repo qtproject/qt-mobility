@@ -2643,7 +2643,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
             curPowerState = pState;
             Q_EMIT powerStateChanged(pState);
         }
-    return pState;    
+    return pState;
  }
 #endif
 #endif
@@ -2817,6 +2817,23 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
  {
      return false;
  }
+
+void QSystemDeviceInfoLinuxCommonPrivate::keyboardConnected(bool connect)
+{
+    if(connect != hasWirelessKeyboardConnected)
+        hasWirelessKeyboardConnected = connect;
+    Q_EMIT wirelessKeyboardConnected(connect);
+}
+
+bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn()
+{
+    return false;
+}
+
+bool QSystemDeviceInfoLinuxCommonPrivate::backLightOn()
+{
+    return false;
+}
 
 QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
