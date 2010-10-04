@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 
 struct ServiceIdentDescriptor
 {
-    ServiceIdentDescriptor() : sharedInstance(0), sharedRefCount(0)
+    ServiceIdentDescriptor() : globalInstance(0), globalRefCount(0)
     {
     }
 
@@ -63,9 +63,9 @@ struct ServiceIdentDescriptor
     QRemoteServiceRegister::CreateServiceFunc create;
     QRemoteServiceRegister::InstanceType instanceType;
     QHash<QUuid, QObject*> individualInstances;
-    QObject* sharedInstance;
-    QUuid sharedId;
-    int sharedRefCount;
+    QObject* globalInstance;
+    QUuid globalId;
+    int globalRefCount;
 
     //TODO converge with QRemoteServiceRegister::Entry so that entry changes
     //are reflected by instance manager

@@ -59,10 +59,10 @@ class Q_SERVICEFW_EXPORT QRemoteServiceRegister : public QObject
 public:
 
     enum InstanceType {
-        //TODO SharedInstance -> GlobalInstance
-        //     UniqueInstance -> PrivateInstance
-        SharedInstance = 0,  //every new request for service gets same service instance
-        UniqueInstance       //every new request for service gets new service instance
+        // SharedInstance -> GlobalInstance
+        // UniqueInstance -> PrivateInstance
+        GlobalInstance = 0,  //every new request for service gets same service instance
+        PrivateInstance       //every new request for service gets new service instance
     };
 
     typedef QObject *(*CreateServiceFunc)();

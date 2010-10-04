@@ -150,8 +150,8 @@ void QRemoteServiceRegisterLocalSocketPrivate::processIncoming()
         //LocalSocketEndPoint owns socket 
         int fd = s->socketDescriptor();
         if(getSecurityFilter()){
-            QRemoteServiceRegisterLocalSocketCred qcred;
-            memset(&qcred, 0, sizeof(QRemoteServiceRegisterLocalSocketCred));
+            QRemoteServiceRegisterCredentials qcred;
+            memset(&qcred, 0, sizeof(QRemoteServiceRegisterCredentials));
             qcred.fd = fd;
 
 #if defined(LOCAL_PEERCRED)

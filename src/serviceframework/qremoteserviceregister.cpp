@@ -52,7 +52,7 @@
 QTM_BEGIN_NAMESPACE
 
 QRemoteServiceRegister::Entry::Entry()
-    : meta(0), cptr(0), instanceType(QRemoteServiceRegister::UniqueInstance)
+    : meta(0), cptr(0), instanceType(QRemoteServiceRegister::PrivateInstance)
 {
 }
 
@@ -113,12 +113,12 @@ const QMetaObject * QRemoteServiceRegister::Entry::metaObject() const
     return meta;
 }
 
-void QRemoteServiceRegister::Entry::setInstanciationType(QRemoteServiceRegister::InstanceType t)
+void QRemoteServiceRegister::Entry::setInstantiationType(QRemoteServiceRegister::InstanceType t)
 {
     instanceType = t;
 }
 
-QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instanciationType() const
+QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiationType() const
 {
     return instanceType;
 }

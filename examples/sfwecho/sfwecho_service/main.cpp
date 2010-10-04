@@ -109,12 +109,12 @@ int main(int argc, char** argv)
 
     QRemoteServiceRegister::Entry shared = serviceRegister->createEntry<EchoService>(
         "EchoService", "com.nokia.qt.example.sfwecho", "1.1");
-    shared.setInstanciationType(QRemoteServiceRegister::SharedInstance);
+    shared.setInstantiationType(QRemoteServiceRegister::GlobalInstance);
     serviceRegister->registerEntry(shared);
 
     QRemoteServiceRegister::Entry unique = serviceRegister->createEntry<EchoService>(
         "EchoService", "com.nokia.qt.example.sfwecho", "1.0");
-    unique.setInstanciationType(QRemoteServiceRegister::UniqueInstance);
+    unique.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
     serviceRegister->registerEntry(unique);
 
     serviceRegister->publishEntries("sfwecho_service");
