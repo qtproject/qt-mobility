@@ -538,7 +538,7 @@ void AddressFinder::setupUi()
   foreach(QWidget* w, focusableWidgets)
        w->setContextMenuPolicy(Qt::NoContextMenu);
 
-    excludePeriod->setFocus();
+    includePeriod->setFocus();
 }
 
 void AddressFinder::setSearchActionEnabled(bool val)

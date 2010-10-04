@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include "ccentralrepositoryhandler.h"
+#include "ccentralrepositoryhandler_p.h"
 
-#include "xqsettingskey.h"
+#include "xqsettingskey_p.h"
 
 CCentralRepositoryHandler* CCentralRepositoryHandler::NewL(TUid aUid)
 {

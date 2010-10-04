@@ -104,6 +104,7 @@ private:
 		Family,
         Ringtone,
         Thumbnail,
+        Favorite,
 		Empty
 	};
 

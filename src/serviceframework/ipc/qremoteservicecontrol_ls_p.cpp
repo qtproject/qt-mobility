@@ -229,50 +229,55 @@ QRemoteServiceControlPrivate* QRemoteServiceControlPrivate::constructPrivateObje
 QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& location)
 {
     QLocalSocket* socket = new QLocalSocket();
-    socket->connectToServer(location);   
-    if (!socket->isValid()) {
-        qWarning() << "Cannot connect to remote service, trying to start service " << location;
-        // try starting the service by hand
-        QProcess *service = new QProcess();
-        service->start(location);
-        service->waitForStarted();
-        if(service->error() != QProcess::UnknownError || service->state() != QProcess::Running) {
-            qWarning() << "Unable to start service " << location << service->error() << service->errorString() << service->state();
-            return false;
-        }
-        int i;
-        socket->connectToServer(location);
-        for(i = 0; !socket->isValid() && i < 100; i++){
-            if(service->state() != QProcess::Running){
-                qWarning() << "Service died on startup" << service->errorString();
+    socket->connectToServer(location);
+    if(socket->waitForConnected()){
+        if (!socket->isValid()) {
+            qWarning() << "Cannot connect to remote service, trying to start service " << location;
+            // try starting the service by hand
+            QProcess *service = new QProcess();
+            service->start(location);
+            service->waitForStarted();
+            if(service->error() != QProcess::UnknownError || service->state() != QProcess::Running) {
+                qWarning() << "Unable to start service " << location << service->error() << service->errorString() << service->state();
                 return false;
             }
-			// Temporary hack till we can improve startup signaling
-#ifdef Q_OS_WIN
-			::Sleep(10);
-#else
-            struct timespec tm;
-            tm.tv_sec = 0;
-            tm.tv_nsec = 1000000;
-            nanosleep(&tm, 0x0);
-#endif
+            int i;
             socket->connectToServer(location);
-            // keep trying for a while
+            for(i = 0; !socket->isValid() && i < 100; i++){
+                if(service->state() != QProcess::Running){
+                    qWarning() << "Service died on startup" << service->errorString();
+                    return false;
+                }
+                // Temporary hack till we can improve startup signaling
+#ifdef Q_OS_WIN
+                ::Sleep(10);
+#else
+                struct timespec tm;
+                tm.tv_sec = 0;
+                tm.tv_nsec = 1000000;
+                nanosleep(&tm, 0x0);
+#endif
+                socket->connectToServer(location);
+                // keep trying for a while
+            }
+            qDebug() << "Number of loops: "  << i;
+            if(!socket->isValid()){
+                qWarning() << "Server failed to start within waiting period";
+                return false;
+            }
         }
-        qDebug() << "Number of loops: "  << i;
-        if(!socket->isValid()){
-            qWarning() << "Server failed to start within waiting period";
-            return false;
-        }
-    }
-    LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(socket);
-    ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
+        LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(socket);
+        ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
 
-    QObject *proxy = endPoint->constructProxy(typeIdent);
-    QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
-    QObject::connect(ipcEndPoint, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
-                     proxy, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)));
-    return proxy;
+        QObject *proxy = endPoint->constructProxy(typeIdent);
+        if(proxy){
+            QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
+            QObject::connect(ipcEndPoint, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
+                             proxy, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)));
+        }
+        return proxy;
+    }
+    return 0;
 }
 
 #include "moc_qremoteservicecontrol_ls_p.cpp"

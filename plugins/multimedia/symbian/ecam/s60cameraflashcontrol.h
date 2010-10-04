@@ -42,8 +42,6 @@
 #ifndef S60CAMERAFLASHCONTROL_H
 #define S60CAMERAFLASHCONTROL_H
 
-#include <QtCore/qobject.h>
-
 #include <qcameraflashcontrol.h>
 
 #include "s60camerasettings.h"
@@ -53,6 +51,9 @@ QT_USE_NAMESPACE
 class S60CameraService;
 class S60ImageCaptureSession;
 
+/*
+ * Control to setup Flash related camera settings.
+ */
 class S60CameraFlashControl : public QCameraFlashControl
 {
     Q_OBJECT
@@ -77,7 +78,7 @@ Q_SIGNALS: // QCameraExposureControl
     void flashReady(bool);
 */
 
-public Q_SLOTS: // Internal Slots
+private Q_SLOTS: // Internal Slots
 
     void resetAdvancedSetting();
 

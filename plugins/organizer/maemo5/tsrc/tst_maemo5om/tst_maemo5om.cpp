@@ -871,7 +871,7 @@ void tst_Maemo5Om::getCollections()
 {
     QOrganizerCollectionLocalId defaultCollectionId = m_om->defaultCollectionId();
     QList<QOrganizerCollectionLocalId> collectionIds = m_om->collectionIds();
-    QList<QOrganizerCollection> collections = m_om->collections();
+    QList<QOrganizerCollection> collections = m_om->collections(collectionIds);
 
     bool defaultCollectionExists = false;
     bool allCollectionIds = true;

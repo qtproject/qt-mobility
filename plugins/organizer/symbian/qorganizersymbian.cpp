@@ -273,7 +273,8 @@ Q_EXPORT_PLUGIN2(qtorganizer_symbian, QOrganizerItemSymbianFactory);
 
 QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
     QOrganizerItemManagerEngine(),
-    m_defaultCollection(this)
+    m_defaultCollection(this),
+    m_requestServiceProviderQueue(0)
 {
 
 }
@@ -327,9 +328,6 @@ void QOrganizerItemSymbianEngine::initializeL()
 
 QOrganizerItemSymbianEngine::~QOrganizerItemSymbianEngine()
 {
-#ifdef SYMBIAN_CALENDAR_V2
-    m_defaultCollection.calSession()->StopFileChangeNotification();
-#endif
 	delete m_requestServiceProviderQueue;
 }
 
