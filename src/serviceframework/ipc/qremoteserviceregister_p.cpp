@@ -72,15 +72,15 @@ void QRemoteServiceRegisterPrivate::setQuitOnLastInstanceClosed(bool quit)
     m_quit = quit;
 }
 
-QRemoteServiceRegister::securityFilter QRemoteServiceRegisterPrivate::setSecurityFilter(QRemoteServiceRegister::securityFilter filter)
+QRemoteServiceRegister::SecurityFilter QRemoteServiceRegisterPrivate::setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter)
 {
-    QRemoteServiceRegister::securityFilter f;
+    QRemoteServiceRegister::SecurityFilter f;
     f = filter;
     iFilter = filter;
     return f;
 }
 
-QRemoteServiceRegister::securityFilter QRemoteServiceRegisterPrivate::getSecurityFilter()
+QRemoteServiceRegister::SecurityFilter QRemoteServiceRegisterPrivate::getSecurityFilter()
 {
     return iFilter;
 }

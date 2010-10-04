@@ -183,7 +183,7 @@ void QRemoteServiceRegister::setQuitOnLastInstanceClosed(bool quit)
     d->setQuitOnLastInstanceClosed(quit);
 }
 
-QRemoteServiceRegister::securityFilter QRemoteServiceRegister::setSecurityFilter(QRemoteServiceRegister::securityFilter filter)
+QRemoteServiceRegister::SecurityFilter QRemoteServiceRegister::setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter)
 {
     return d->setSecurityFilter(filter);
 }
