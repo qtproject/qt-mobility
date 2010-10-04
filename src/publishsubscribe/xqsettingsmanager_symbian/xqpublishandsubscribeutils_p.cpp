@@ -40,10 +40,10 @@
 ****************************************************************************/
 
 #include "xqpublishandsubscribeutils_p.h"
-#include "xqsettingsmanager.h"
 #include "xqsettingsmanager_p.h"
-#include "cpublishandsubscribehandler.h"
-#include "xqpublishandsubscribesecuritypolicy.h"
+#include "xqsettingsmanager_p.h"
+#include "cpublishandsubscribehandler_p.h"
+#include "xqpublishandsubscribesecuritypolicy_p.h"
 
 XQPublishAndSubscribeUtilsPrivate::XQPublishAndSubscribeUtilsPrivate(XQSettingsManager& settingsManager)
     : m_settingsManagerPrivate(*settingsManager.d)

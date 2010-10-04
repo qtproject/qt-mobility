@@ -71,6 +71,8 @@
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
+#include "qorganizeritemenginelocalid.h"
+#include "qorganizercollectionenginelocalid.h"
 
 QTM_USE_NAMESPACE
 
@@ -83,6 +85,67 @@ class QOrganizerItemSkeletonFactory : public QObject, public QOrganizerItemManag
     QOrganizerItemEngineLocalId* createItemEngineLocalId() const;
     QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() const;
     QString managerName() const;
+};
+
+class QOrganizerCollectionSkeletonEngineLocalId : public QOrganizerCollectionEngineLocalId
+{
+public:
+    QOrganizerCollectionSkeletonEngineLocalId();
+    QOrganizerCollectionSkeletonEngineLocalId(quint32 collectionId);
+    ~QOrganizerCollectionSkeletonEngineLocalId();
+    QOrganizerCollectionSkeletonEngineLocalId(const QOrganizerCollectionSkeletonEngineLocalId& other);
+
+    bool isEqualTo(const QOrganizerCollectionEngineLocalId* other) const;
+    bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const;
+
+    uint engineLocalIdType() const;
+    QOrganizerCollectionEngineLocalId* clone() const;
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug debugStreamOut(QDebug dbg);
+#endif
+#ifndef QT_NO_DATASTREAM
+    QDataStream& dataStreamOut(QDataStream& out);
+    QDataStream& dataStreamIn(QDataStream& in);
+#endif
+    uint hash() const;
+
+    // data members:
+    // Your backend can use whatever it likes as an id internally.
+    // In this example, we use just a single quint32, but you can
+    // use any datatype you need to (filename string, etc).
+    quint32 m_localCollectionId;
+};
+
+class QOrganizerItemSkeletonEngineLocalId : public QOrganizerItemEngineLocalId
+{
+public:
+    QOrganizerItemSkeletonEngineLocalId();
+    QOrganizerItemSkeletonEngineLocalId(quint32 itemId);
+    ~QOrganizerItemSkeletonEngineLocalId();
+    QOrganizerItemSkeletonEngineLocalId(const QOrganizerItemSkeletonEngineLocalId& other);
+
+    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const;
+    bool isLessThan(const QOrganizerItemEngineLocalId* other) const;
+
+    uint engineLocalIdType() const;
+    QOrganizerItemEngineLocalId* clone() const;
+
+#ifndef QT_NO_DEBUG_STREAM
+    QDebug debugStreamOut(QDebug dbg);
+#endif
+#ifndef QT_NO_DATASTREAM
+    QDataStream& dataStreamOut(QDataStream& out);
+    QDataStream& dataStreamIn(QDataStream& in);
+#endif
+    uint hash() const;
+
+    // data members:
+    // Your backend can use whatever it likes as an id internally.
+    // In this example, we use just a single quint32, but you can
+    // use a pair of ints (one for collectionId, one for itemId)
+    // or any other information (uuid string, etc).
+    quint32 m_localItemId;
 };
 
 class QOrganizerItemSkeletonEngineData : public QSharedData
@@ -134,7 +197,7 @@ public:
     /* Collections - every item belongs to exactly one collection */
     QOrganizerCollectionLocalId defaultCollectionId(QOrganizerItemManager::Error* error) const;
     QList<QOrganizerCollectionLocalId> collectionIds(QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const;
     bool saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
 

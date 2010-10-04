@@ -630,24 +630,30 @@ void tst_QVersitContactImporter::testAnniversary()
     // Date : ISO 8601 extended format
     QVersitProperty property;
     property.setName(QString::fromAscii("X-ANNIVERSARY"));
-    QString dateValue(QString::fromAscii("1981-05-20"));
-    property.setValue(dateValue);
+    property.setValue(QString::fromAscii("1981-05-20"));
     QVersitDocument document = createDocumentWithProperty(property);
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     QContact contact = mImporter->contacts().first();
     QContactAnniversary anniversary = contact.detail<QContactAnniversary>();
-    QCOMPARE(anniversary.originalDate().toString(Qt::ISODate),dateValue);
+    QCOMPARE(anniversary.originalDate(), QDate(1981, 5, 20));
 
-    // Date : ISO 8601 in basic format
-    dateValue = QString::fromAscii("19810520");
-    property.setValue(dateValue);
+    // Evolution format
+    property.setName(QString::fromAscii("X-EVOLUTION-ANNIVERSARY"));
+    property.setValue(QString::fromAscii("1981-05-20"));
     document = createDocumentWithProperty(property);
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     anniversary = contact.detail<QContactAnniversary>();
-    QCOMPARE(anniversary.originalDate().toString(QString::fromAscii("yyyyMMdd")),
-             dateValue);
+    QCOMPARE(anniversary.originalDate(), QDate(1981, 5, 20));
 
+    // Date : ISO 8601 in basic format
+    property.setName(QString::fromAscii("X-ANNIVERSARY"));
+    property.setValue(QString::fromAscii("19810520"));
+    document = createDocumentWithProperty(property);
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    anniversary = contact.detail<QContactAnniversary>();
+    QCOMPARE(anniversary.originalDate(), QDate(1981, 5, 20));
 }
 
 void tst_QVersitContactImporter::testBirthday()

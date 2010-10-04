@@ -297,7 +297,7 @@ void tst_QVersitReader::testParseNextVersitProperty()
     QBuffer buffer(&input);
     buffer.open(QIODevice::ReadOnly);
     LineReader lineReader(&buffer, mAsciiCodec);
-    QVersitProperty property = mReaderPrivate->parseNextVersitProperty(documentType, lineReader);
+    QVersitProperty property = mReaderPrivate->parseNextVersitProperty(documentType, &lineReader);
     if (property != expectedProperty) {
         // compare each part of the property separately for easier debugging
         QCOMPARE(property.groups(), expectedProperty.groups());
@@ -658,7 +658,10 @@ void tst_QVersitReader::testParseVersitDocument_data()
                     "BEGIN:VCARD\r\n"
                     "VERSION:2.1\r\n"
                     "FN:John\r\n"
-                    "AGENT:BEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\n\r\n"
+                    "AGENT:BEGIN:VCARD\r\n"
+                    "FN:Jenny\r\n"
+                    "END:VCARD\r\n"
+                    "\r\n"
                     "EMAIL;ENCODING=QUOTED-PRINTABLE:john.citizen=40exam=\r\nple.com\r\n"
                     "END:VCARD\r\n")
             << true
@@ -830,7 +833,7 @@ void tst_QVersitReader::testDecodeQuotedPrintable()
     QFETCH(QByteArray, encoded);
 
     QFETCH(QByteArray, decoded);
-    mReaderPrivate->decodeQuotedPrintable(encoded);
+    mReaderPrivate->decodeQuotedPrintable(&encoded);
     QCOMPARE(encoded, decoded);
 #endif
 }
@@ -1067,42 +1070,42 @@ void tst_QVersitReader::testExtractPropertyGroupsAndName()
 
     // Empty string
     LByteArray cursor(QByteArray(" "));
-    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(cursor, mAsciiCodec);
+    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(&cursor, mAsciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString());
 
     // No value -> returns empty string and no groups
     QByteArray property("TEL");
     cursor = property;
-    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(cursor, mAsciiCodec);
+    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(&cursor, mAsciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString());
 
     // Simple name and value
     property = "TEL:123";
     cursor = property;
-    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(cursor, mAsciiCodec);
+    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(&cursor, mAsciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
     // One whitespace before colon
     property = "TEL :123";
     cursor = property;
-    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(cursor, mAsciiCodec);
+    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(&cursor, mAsciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
     // Several whitespaces before colon
     property = "TEL \t  :123";
     cursor = property;
-    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(cursor, mAsciiCodec);
+    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(&cursor, mAsciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
     // Name contains a group
     property = "group1.TEL:1234";
     cursor = property;
-    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(cursor, mAsciiCodec);
+    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(&cursor, mAsciiCodec);
     QCOMPARE(groupsAndName.first.count(),1);
     QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group1"));
     QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
@@ -1110,7 +1113,7 @@ void tst_QVersitReader::testExtractPropertyGroupsAndName()
     // Name contains more than one group
     property = "group1.group2.TEL:12345";
     cursor = property;
-    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(cursor, mAsciiCodec);
+    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(&cursor, mAsciiCodec);
     QCOMPARE(groupsAndName.first.count(),2);
     QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group1"));
     QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group2"));
@@ -1120,21 +1123,21 @@ void tst_QVersitReader::testExtractPropertyGroupsAndName()
     // Property contains one parameter
     property = "TEL;WORK:123";
     cursor = property;
-    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(cursor, mAsciiCodec);
+    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(&cursor, mAsciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
     // Property contains several parameters
     property = "EMAIL;INTERNET;ENCODING=QUOTED-PRINTABLE:user=40ovi.com";
     cursor = property;
-    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(cursor, mAsciiCodec);
+    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(&cursor, mAsciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString::fromAscii("EMAIL"));
 
     // Name contains an escaped semicolon
     property = "X-proper\\;ty:value";
     cursor = property;
-    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(cursor, mAsciiCodec);
+    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(&cursor, mAsciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString::fromAscii("X-proper\\;ty"));
 
@@ -1142,7 +1145,7 @@ void tst_QVersitReader::testExtractPropertyGroupsAndName()
     QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
     property = codec->fromUnicode(QString::fromAscii("group1.group2.TEL;WORK:123"));
     cursor = property;
-    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(cursor, codec);
+    groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(&cursor, codec);
     QCOMPARE(groupsAndName.first.count(),2);
     QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group1"));
     QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group2"));
@@ -1158,27 +1161,27 @@ void tst_QVersitReader::testExtractVCard21PropertyParams()
 #else
     // No parameters
     LByteArray cursor(QByteArray(":123"));
-    QCOMPARE(mReaderPrivate->extractVCard21PropertyParams(cursor, mAsciiCodec).count(), 0);
+    QCOMPARE(mReaderPrivate->extractVCard21PropertyParams(&cursor, mAsciiCodec).count(), 0);
 
     // "Empty" parameter
     cursor = QByteArray(";:123");
-    QCOMPARE(mReaderPrivate->extractVCard21PropertyParams(cursor, mAsciiCodec).count(), 0);
+    QCOMPARE(mReaderPrivate->extractVCard21PropertyParams(&cursor, mAsciiCodec).count(), 0);
 
     // Semicolon found, but no value for the property
     cursor = QByteArray(";TYPE=X-TYPE");
-    QCOMPARE(mReaderPrivate->extractVCard21PropertyParams(cursor, mAsciiCodec).count(), 0);
+    QCOMPARE(mReaderPrivate->extractVCard21PropertyParams(&cursor, mAsciiCodec).count(), 0);
 
     // The property name contains an escaped semicolon, no parameters
     cursor = QByteArray(":value");
-    QCOMPARE(mReaderPrivate->extractVCard21PropertyParams(cursor, mAsciiCodec).count(), 0);
+    QCOMPARE(mReaderPrivate->extractVCard21PropertyParams(&cursor, mAsciiCodec).count(), 0);
 
     // The property value contains a semicolon, no parameters
     cursor = QByteArray(":va;lue");
-    QCOMPARE(mReaderPrivate->extractVCard21PropertyParams(cursor, mAsciiCodec).count(), 0);
+    QCOMPARE(mReaderPrivate->extractVCard21PropertyParams(&cursor, mAsciiCodec).count(), 0);
 
     // One parameter
     cursor = QByteArray(";HOME:123");
-    QMultiHash<QString,QString> params = mReaderPrivate->extractVCard21PropertyParams(cursor,
+    QMultiHash<QString,QString> params = mReaderPrivate->extractVCard21PropertyParams(&cursor,
                                                                                    mAsciiCodec);
     QCOMPARE(1, params.count());
     QCOMPARE(1, params.values(QString::fromAscii("TYPE")).count());
@@ -1186,7 +1189,7 @@ void tst_QVersitReader::testExtractVCard21PropertyParams()
 
     // Two parameters of the same type
     cursor = QByteArray(";HOME;VOICE:123");
-    params = mReaderPrivate->extractVCard21PropertyParams(cursor, mAsciiCodec);
+    params = mReaderPrivate->extractVCard21PropertyParams(&cursor, mAsciiCodec);
     QCOMPARE(2, params.count());
     QCOMPARE(2, params.values(QString::fromAscii("TYPE")).count());
     QCOMPARE(params.values(QString::fromAscii("TYPE"))[0],QString::fromAscii("HOME"));
@@ -1194,7 +1197,7 @@ void tst_QVersitReader::testExtractVCard21PropertyParams()
 
     // Two parameters, several empty parameters (extra semicolons)
     cursor = QByteArray(";;;;HOME;;;;;VOICE;;;:123");
-    params = mReaderPrivate->extractVCard21PropertyParams(cursor, mAsciiCodec);
+    params = mReaderPrivate->extractVCard21PropertyParams(&cursor, mAsciiCodec);
     QCOMPARE(2, params.count());
     QCOMPARE(2, params.values(QString::fromAscii("TYPE")).count());
     QCOMPARE(params.values(QString::fromAscii("TYPE"))[0],QString::fromAscii("HOME"));
@@ -1203,7 +1206,7 @@ void tst_QVersitReader::testExtractVCard21PropertyParams()
     // Two parameters with different types
     cursor = QByteArray(";INTERNET;ENCODING=QUOTED-PRINTABLE:user=40ovi.com");
     params.clear();
-    params = mReaderPrivate->extractVCard21PropertyParams(cursor, mAsciiCodec);
+    params = mReaderPrivate->extractVCard21PropertyParams(&cursor, mAsciiCodec);
     QCOMPARE(2, params.count());
     QList<QString> typeParams = params.values(QString::fromAscii("TYPE"));
     QCOMPARE(1, typeParams.count());
@@ -1216,7 +1219,7 @@ void tst_QVersitReader::testExtractVCard21PropertyParams()
     QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
     QByteArray data = VersitUtils::encode(";HOME;CHARSET=UTF-16:123", codec);
     cursor = data;
-    params = mReaderPrivate->extractVCard21PropertyParams(cursor, codec);
+    params = mReaderPrivate->extractVCard21PropertyParams(&cursor, codec);
     QCOMPARE(2, params.count());
     typeParams = params.values(QString::fromAscii("TYPE"));
     QCOMPARE(1, typeParams.count());
@@ -1234,11 +1237,11 @@ void tst_QVersitReader::testExtractVCard30PropertyParams()
 #else
     // No parameters
     LByteArray cursor(QByteArray(":123"));
-    QCOMPARE(mReaderPrivate->extractVCard30PropertyParams(cursor, mAsciiCodec).count(), 0);
+    QCOMPARE(mReaderPrivate->extractVCard30PropertyParams(&cursor, mAsciiCodec).count(), 0);
 
     // One parameter
     cursor = QByteArray(";TYPE=HOME:123");
-    QMultiHash<QString,QString> params = mReaderPrivate->extractVCard30PropertyParams(cursor,
+    QMultiHash<QString,QString> params = mReaderPrivate->extractVCard30PropertyParams(&cursor,
                                                                                    mAsciiCodec);
     QCOMPARE(params.count(), 1);
     QCOMPARE(params.values(QString::fromAscii("TYPE")).count(), 1);
@@ -1246,21 +1249,21 @@ void tst_QVersitReader::testExtractVCard30PropertyParams()
 
     // One parameter with an escaped semicolon
     cursor = QByteArray(";para\\;meter:value");
-    params = mReaderPrivate->extractVCard30PropertyParams(cursor, mAsciiCodec);
+    params = mReaderPrivate->extractVCard30PropertyParams(&cursor, mAsciiCodec);
     QCOMPARE(params.count(), 1);
     QCOMPARE(params.values(QString::fromAscii("TYPE")).count(), 1);
     QCOMPARE(params.values(QString::fromAscii("TYPE"))[0], QString::fromAscii("para;meter"));
 
     // One parameter with and escaped comma in the name and the value
     cursor = QByteArray(";X-PA\\,RAM=VAL\\,UE:123");
-    params = mReaderPrivate->extractVCard30PropertyParams(cursor, mAsciiCodec);
+    params = mReaderPrivate->extractVCard30PropertyParams(&cursor, mAsciiCodec);
     QCOMPARE(params.count(), 1);
     QCOMPARE(params.values(QString::fromAscii("X-PA,RAM")).count(), 1);
     QCOMPARE(params.values(QString::fromAscii("X-PA,RAM"))[0], QString::fromAscii("VAL,UE"));
 
     // Two parameters of the same type
     cursor = QByteArray(";TYPE=HOME,VOICE:123");
-    params = mReaderPrivate->extractVCard30PropertyParams(cursor, mAsciiCodec);
+    params = mReaderPrivate->extractVCard30PropertyParams(&cursor, mAsciiCodec);
     QCOMPARE(params.count(), 2);
     QCOMPARE(params.values(QString::fromAscii("TYPE")).count(), 2);
     QVERIFY(params.values(QString::fromAscii("TYPE")).contains(QString::fromAscii("HOME")));
@@ -1268,7 +1271,7 @@ void tst_QVersitReader::testExtractVCard30PropertyParams()
 
     // Two parameters of the same type in separate name-values
     cursor = QByteArray(";TYPE=HOME;TYPE=VOICE:123");
-    params = mReaderPrivate->extractVCard30PropertyParams(cursor, mAsciiCodec);
+    params = mReaderPrivate->extractVCard30PropertyParams(&cursor, mAsciiCodec);
     QCOMPARE(params.count(), 2);
     QCOMPARE(params.values(QString::fromAscii("TYPE")).count(), 2);
     QVERIFY(params.values(QString::fromAscii("TYPE")).contains(QString::fromAscii("HOME")));
@@ -1276,7 +1279,7 @@ void tst_QVersitReader::testExtractVCard30PropertyParams()
 
     // Three parameters of the same type
     cursor = QByteArray(";TYPE=PREF,HOME,VOICE:123");
-    params = mReaderPrivate->extractVCard30PropertyParams(cursor, mAsciiCodec);
+    params = mReaderPrivate->extractVCard30PropertyParams(&cursor, mAsciiCodec);
     QCOMPARE(params.count(), 3);
     QCOMPARE(params.values(QString::fromAscii("TYPE")).count(), 3);
     QVERIFY(params.values(QString::fromAscii("TYPE")).contains(QString::fromAscii("PREF")));
@@ -1286,7 +1289,7 @@ void tst_QVersitReader::testExtractVCard30PropertyParams()
     // Two parameters with different types
     cursor = QByteArray(";TYPE=HOME;X-PARAM=X-VALUE:Home Street 1");
     params.clear();
-    params = mReaderPrivate->extractVCard30PropertyParams(cursor, mAsciiCodec);
+    params = mReaderPrivate->extractVCard30PropertyParams(&cursor, mAsciiCodec);
     QCOMPARE(params.count(), 2);
     QList<QString> typeParams = params.values(QString::fromAscii("TYPE"));
     QCOMPARE(typeParams.count(), 1);
@@ -1299,7 +1302,7 @@ void tst_QVersitReader::testExtractVCard30PropertyParams()
     QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
     QByteArray data = VersitUtils::encode(";TIPE=HOME,VOICE;CHARSET=UTF-16:123", codec);
     cursor = data;
-    params = mReaderPrivate->extractVCard30PropertyParams(cursor, codec);
+    params = mReaderPrivate->extractVCard30PropertyParams(&cursor, codec);
     QCOMPARE(params.count(), 3);
     typeParams = params.values(QString::fromAscii("TIPE"));
     QCOMPARE(params.values(QString::fromAscii("TIPE")).count(), 2);
@@ -1319,13 +1322,13 @@ void tst_QVersitReader::testExtractParams()
     LByteArray cursor;
     QByteArray data = ":123";
     cursor = data;
-    QList<QByteArray> params = mReaderPrivate->extractParams(cursor, mAsciiCodec);
+    QList<QByteArray> params = mReaderPrivate->extractParams(&cursor, mAsciiCodec);
     QCOMPARE(params.size(), 0);
     QVERIFY(cursor == QByteArray("123"));
 
     data = "a;b:123";
     cursor = data;
-    params = mReaderPrivate->extractParams(cursor, mAsciiCodec);
+    params = mReaderPrivate->extractParams(&cursor, mAsciiCodec);
     QCOMPARE(params.size(), 2);
     QVERIFY(cursor == QByteArray("123"));
     QCOMPARE(params.at(0), QByteArray("a"));
@@ -1334,13 +1337,13 @@ void tst_QVersitReader::testExtractParams()
     QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
     data = VersitUtils::encode(":123", codec);
     cursor = data;
-    params = mReaderPrivate->extractParams(cursor, codec);
+    params = mReaderPrivate->extractParams(&cursor, codec);
     QCOMPARE(params.size(), 0);
     QCOMPARE(cursor.size(), 6); // "123" takes up 6 bytes in UTF-16
 
     data = VersitUtils::encode("a;b:123", codec);
     cursor = data;
-    params = mReaderPrivate->extractParams(cursor, codec);
+    params = mReaderPrivate->extractParams(&cursor, codec);
     QCOMPARE(params.size(), 2);
     QCOMPARE(cursor.size(), 6); // "123" takes up 6 bytes in UTF-16
 #endif
@@ -1382,7 +1385,11 @@ void tst_QVersitReader::testReadLine()
         QByteArray expectedBytes(encoder->fromUnicode(expectedLine));
         QVERIFY(!lineReader.atEnd());
         line = lineReader.readLine();
-        QCOMPARE(line.toByteArray(), expectedBytes);
+        if(line.toByteArray() != expectedBytes) {
+            qDebug() << line.toByteArray();
+            qDebug() << expectedBytes;
+            QCOMPARE(line.toByteArray(), expectedBytes);
+        }
         QCOMPARE(line.size(), expectedBytes.length());
     }
 
@@ -1406,6 +1413,9 @@ void tst_QVersitReader::testReadLine_data()
 #ifdef QT_BUILD_INTERNAL
     // Note: for this test, we set mLineReader to read 10 bytes at a time.  Lines of multiples of
     // 10 bytes are hence border cases.
+    // Note: QVersitReaders' LineReader contains hacks that sniff for colons in the input to enable
+    // a workaround for malformed vCards with badly wrapped lines (see the last test case)
+    // For testing of normal wrapping behaviour, a colon must appear in every line.
     QTest::addColumn<QByteArray>("codecName");
     QTest::addColumn<QString>("data");
     QTest::addColumn<QList<QString> >("expectedLines");
@@ -1421,73 +1431,79 @@ void tst_QVersitReader::testReadLine_data()
 
         QTest::newRow("one line " + codecName)
                 << codecName
-                << "line"
-                << (QList<QString>() << QLatin1String("line"));
+                << "line:"
+                << (QList<QString>() << QLatin1String("line:"));
 
         QTest::newRow("one ten-byte line " + codecName)
                 << codecName
-                << "tenletters"
-                << (QList<QString>() << QLatin1String("tenletters"));
+                << "10letters:"
+                << (QList<QString>() << QLatin1String("10letters:"));
 
         QTest::newRow("one long line " + codecName)
                 << codecName
-                << "one line longer than ten characters"
-                << (QList<QString>() << QLatin1String("one line longer than ten characters"));
+                << "one:line longer than ten characters"
+                << (QList<QString>() << QLatin1String("one:line longer than ten characters"));
 
         QTest::newRow("one terminated line " + codecName)
                 << codecName
-                << "one line longer than ten characters\r\n"
-                << (QList<QString>() << QLatin1String("one line longer than ten characters"));
+                << "one:line longer than ten characters\r\n"
+                << (QList<QString>() << QLatin1String("one:line longer than ten characters"));
 
         QTest::newRow("two lines " + codecName)
                 << codecName
-                << "two\r\nlines"
-                << (QList<QString>() << QLatin1String("two") << QLatin1String("lines"));
+                << "two:\r\nlines:"
+                << (QList<QString>() << QLatin1String("two:") << QLatin1String("lines:"));
 
         QTest::newRow("two terminated lines " + codecName)
                 << codecName
-                << "two\r\nlines\r\n"
-                << (QList<QString>() << QLatin1String("two") << QLatin1String("lines"));
+                << "two:\r\nlines:\r\n"
+                << (QList<QString>() << QLatin1String("two:") << QLatin1String("lines:"));
 
         QTest::newRow("two long lines " + codecName)
                 << codecName
-                << "one line longer than ten characters\r\nanother line\r\n"
-                << (QList<QString>() << QLatin1String("one line longer than ten characters") << QLatin1String("another line"));
+                << "one:line longer than ten characters\r\nanother line:\r\n"
+                << (QList<QString>() << QLatin1String("one:line longer than ten characters") << QLatin1String("another line:"));
 
         QTest::newRow("two full lines " + codecName)
                 << codecName
-                << "tenletters\r\n8letters\r\n"
-                << (QList<QString>() << QLatin1String("tenletters") << QLatin1String("8letters"));
+                << "10letters:\r\n8letter:\r\n"
+                << (QList<QString>() << QLatin1String("10letters:") << QLatin1String("8letter:"));
 
         QTest::newRow("a nine-byte line " + codecName)
                 << codecName
-                << "9 letters\r\nanother line\r\n"
-                << (QList<QString>() << QLatin1String("9 letters") << QLatin1String("another line"));
+                << "9letters:\r\nanother:line\r\n"
+                << (QList<QString>() << QLatin1String("9letters:") << QLatin1String("another:line"));
 
         QTest::newRow("a blank line " + codecName)
                 << codecName
-                << "one\r\n\r\ntwo\r\n"
-                << (QList<QString>() << QLatin1String("one") << QLatin1String("two"));
+                << "one:\r\n\r\ntwo:\r\n"
+                << (QList<QString>() << QLatin1String("one:") << QLatin1String("two:"));
 
         QTest::newRow("folded lines " + codecName)
                 << codecName
-                << "folded\r\n  line\r\nsecond line\r\n"
-                << (QList<QString>() << QLatin1String("folded line") << QLatin1String("second line"));
+                << "fold:ed\r\n  line\r\nsecond: line\r\n"
+                << (QList<QString>() << QLatin1String("fold:ed line") << QLatin1String("second: line"));
 
         QTest::newRow("multiply folded lines " + codecName)
                 << codecName
-                << "fo\r\n lded\r\n  line\r\nseco\r\n\tnd l\r\n ine\r\n"
-                << (QList<QString>() << QLatin1String("folded line") << QLatin1String("second line"));
+                << "fo\r\n lded:\r\n  line\r\nseco\r\n\tnd:l\r\n ine\r\n"
+                << (QList<QString>() << QLatin1String("folded: line") << QLatin1String("second:line"));
 
         QTest::newRow("fold hidden after a chunk " + codecName)
                 << codecName
-                << "8letters\r\n  on one line\r\n"
-                << (QList<QString>() << QLatin1String("8letters on one line"));
+                << "8letter:\r\n  on one line\r\n"
+                << (QList<QString>() << QLatin1String("8letter: on one line"));
 
         QTest::newRow("three mac lines " + codecName)
                 << codecName
-                << "one\rtwo\rthree\r"
-                << (QList<QString>() << QLatin1String("one") << QLatin1String("two") << QLatin1String("three"));
+                << "one:\rtwo:\rthree:\r"
+                << (QList<QString>() << QLatin1String("one:") << QLatin1String("two:") << QLatin1String("three:"));
+
+        // Tests a workaround to parse a certain malformed vCard
+        QTest::newRow("badly wrapped lines " + codecName)
+                << codecName
+                << "one:line\r\ntwo\r\nthree\r\n"
+                << (QList<QString>() << QLatin1String("one:linetwothree"));
     }
 #endif
 }
@@ -1521,22 +1537,22 @@ void tst_QVersitReader::testRemoveBackSlashEscaping()
 #else
     // Empty string
     QString input;
-    QVersitReaderPrivate::removeBackSlashEscaping(input);
+    QVersitReaderPrivate::removeBackSlashEscaping(&input);
     QCOMPARE(input,QString());
 
     // Nothing to escape in the string
     input = QString::fromAscii("Nothing to escape");
-    QVersitReaderPrivate::removeBackSlashEscaping(input);
+    QVersitReaderPrivate::removeBackSlashEscaping(&input);
     QCOMPARE(input,QString::fromAscii("Nothing to escape"));
 
     // Line break, semicolon, backslash and comma in the string
     input = QString::fromAscii("These should be unescaped \\n \\N \\; \\, \\\\");
-    QVersitReaderPrivate::removeBackSlashEscaping(input);
+    QVersitReaderPrivate::removeBackSlashEscaping(&input);
     QCOMPARE(input, QString::fromAscii("These should be unescaped \r\n \r\n ; , \\"));
 
     // Don't remove escaping within quotes
     input = QString::fromAscii("\"Quoted \\n \\N \\; \\,\"");
-    QVersitReaderPrivate::removeBackSlashEscaping(input);
+    QVersitReaderPrivate::removeBackSlashEscaping(&input);
     QCOMPARE(input, QString::fromAscii("\"Quoted \\n \\N \\; \\,\""));
 #endif
 }

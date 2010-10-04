@@ -8,5 +8,4 @@ contains(immersion_enabled, yes) {
 }
 
 symbian:SUBDIRS += symbian
-contains(QT_CONFIG, phonon):SUBDIRS += phonon
 maemo6:SUBDIRS += meegotouch

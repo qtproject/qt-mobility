@@ -63,7 +63,10 @@ unix:!simulator {
         SOURCES += linux/qsysteminfo_linux_common.cpp
         HEADERS += linux/qsysteminfo_linux_common_p.h
 
-        contains(blkid_enabled, yes):DEFINES += BLKID_SUPPORTED
+        contains(blkid_enabled, yes): {
+            DEFINES += BLKID_SUPPORTED
+            LIBS += -lblkid
+        }
     }
 
     !maemo5:!maemo6:linux-*: {
@@ -90,7 +93,7 @@ unix:!simulator {
                 contains(CONFIG,meego): { #for now... udisks
                 } else {
                     DEFINES += QT_NO_UDISKS QT_NO_MEEGO
-                    LIBS += -lblkid -lX11 -lXrandr
+                    LIBS += -lX11 -lXrandr
                    }
                 contains(connman_enabled, yes): {
 
@@ -101,7 +104,7 @@ unix:!simulator {
                 }
             } else {
                 DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN QT_NO_MEEGO
-                LIBS += -lblkid -lX11 -lXrandr
+                LIBS += -lX11 -lXrandr
 
             }
         }
@@ -109,7 +112,6 @@ unix:!simulator {
     maemo5|maemo6: {
             #Qt GConf wrapper added here until a proper place is found for it.
             CONFIG += link_pkgconfig
-            LIBS += -lblkid
             SOURCES += qsysteminfo_maemo.cpp linux/gconfitem.cpp
             HEADERS += qsysteminfo_maemo_p.h linux/gconfitem_p.h
             DEFINES += QT_NO_CONNMAN QT_NO_UDISKS  QT_NO_NETWORKMANAGER

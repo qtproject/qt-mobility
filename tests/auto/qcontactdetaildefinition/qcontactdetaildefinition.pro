@@ -2,6 +2,7 @@ QT += testlib
 TEMPLATE=app
 TARGET=tst_qcontactdetaildefinition
 CONFIG+=testcase
+CONFIG+=parallel_test
 
 include(../../../common.pri)
 

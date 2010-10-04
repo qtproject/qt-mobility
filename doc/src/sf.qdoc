@@ -478,20 +478,44 @@ falls back on QLocalSocket for inter-process communication.
 \section2 D-Bus Services
 The QtDBus module is used to provide IPC in correspondance to the Qt Service 
 Framework architecture and provides access to signals, slots, invokable methods
-and properties.  A current known limitation for Qt Service Framework using QtDBus
-for IPC is that enumerators cannot be read due to lack of support on D-Bus.  This
-will be added in future versions once the QtDBus module enables enumerator support.
+and properties. 
+
+\section3 Limitations
+A current known limitation for Qt Service Framework using QtDBus for IPC is that
+enumerators cannot be read due to lack of support on D-Bus.  This will be added 
+in future versions once the QtDBus module enables enumerator support. Furthermore, 
+due to the nature of IPC, pointers to objects cannot be passed between services and
+clients. Unfortunately, this also means that anything wrapped in a typedef macro 
+cannot be communicated effectively between processes.
+
+\section3 Rendezvous
+D-Bus services inherit rendezvous support by providing .service files to the
+D-Bus daemon search paths. Aside from producing these files manually, the 
+servicefw tool provides an option to generate the corresponding files inside
+the local user D-Bus folder for convenience. This will allow all client
+requests to automatically startup the service if it isn't already running. 
+Consequently, once every client has been terminated the service will automatically
+shutdown accordingly.
+
+\code
+./servicefw autostart <service-name> <service-file>
+\endcode
 
 \section2 Symbian Client-Server Framework
 Symbian IPC services are automatically instantiated if the service is not already 
-running.  Rendezvous support allows server-side processes to be created upon
-client request and every service has a server of its own.
+running.  
+
+\section3
+Rendezvous support allows server-side processes to be created upon client request 
+and every service has a server of its own.
 
 \section2 Local Socket Services
 On platforms that do not provide D-Bus or the Symbian Client-Server Framework, the
-underlying IPC mechanism utilized is a local socket based protocol.  This mechanism
-doesn't currently support rendezvous and requires service processes to be started
-manually.
+underlying IPC mechanism utilized is a local socket based protocol.  
+
+\section3 Rendezvous
+This mechanism doesn't currently support rendezvous and requires service processes 
+to be started manually.
 
 \section2 Error handling
 

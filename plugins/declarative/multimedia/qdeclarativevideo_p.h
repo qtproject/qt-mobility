@@ -89,6 +89,7 @@ class QDeclarativeVideo : public QDeclarativeItem, public QDeclarativeMediaBase
     Q_PROPERTY(Error error READ error NOTIFY errorChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
     Q_PROPERTY(FillMode fillMode READ fillMode WRITE setFillMode)
+    Q_PROPERTY(QObject *metaData READ metaData CONSTANT)
     Q_ENUMS(FillMode)
     Q_ENUMS(Status)
     Q_ENUMS(Error)
