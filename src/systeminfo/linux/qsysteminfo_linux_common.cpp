@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 #include "qsysteminfo_linux_common_p.h"
-#if !defined(Q_WS_MAEMO_6) || !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
 #include "qdevicekitservice_linux_p.h"
 #endif
 #include <QTimer>
@@ -2291,7 +2291,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
             }
         }
     }
-#if !defined(Q_WS_MAEMO_6) || !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
     if(uPowerAvailable()) {
         QUPowerInterface *power;
         power = new QUPowerInterface(this);
@@ -2521,7 +2521,7 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             }
         }
     }
-#if !defined(Q_WS_MAEMO_6) || !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
     if(uPowerAvailable()) {
         QUPowerInterface power;
         foreach(const QDBusObjectPath objpath, power.enumerateDevices()) {
@@ -2610,7 +2610,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
             }
         }
     }
-#if !defined(Q_WS_MAEMO_6) || !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
     if(uPowerAvailable()) {
         QSystemDeviceInfo::PowerState pState = QSystemDeviceInfo::UnknownPower;
 
