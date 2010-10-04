@@ -59,7 +59,7 @@
 // THE SOFTWARE.
 
 #include "Lexer.h"
-#include "Control.h"
+#include "CppControl.h"
 #include "TranslationUnit.h"
 #include "Literals.h"
 #include <cctype>

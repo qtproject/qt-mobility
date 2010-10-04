@@ -49,11 +49,9 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoBoundingBox class defines a rectangular geographic area.
     \ingroup qml-location
 
+    The BoundingBox class defines a rectangular geographic area.
     This element is part of the \bold{QtMobility.location 1.1} module.
-
-    The QGeoBoundingBox class defines a rectangular geographic area.
-
-    \snippet TODO
+    For behavioral details, please see \l QGeoBoundingBox.
 
     \sa Landmark, Place, Address, {QGeoBoundingBox}
 */
@@ -70,20 +68,16 @@ QDeclarativeGeoBoundingBox::QDeclarativeGeoBoundingBox(const QGeoBoundingBox& bo
     m_declarativeTopLeft(box.topLeft()),
     m_declarativeTopRight(box.topRight()),
     m_declarativeCenter(box.center()),
-    m_box(box)
+    m_box(box),
+    m_height(box.height()),
+    m_width(box.width())
 {
 }
 
 void QDeclarativeGeoBoundingBox::setBox(const QGeoBoundingBox& box)
 {
-    m_declarativeBottomLeft.setCoordinate(box.bottomLeft());
-    m_declarativeBottomRight.setCoordinate(box.bottomRight());
-    m_declarativeTopLeft.setCoordinate(box.topLeft());
-    m_declarativeTopRight.setCoordinate(box.topRight());
-    m_declarativeCenter.setCoordinate(box.center());
-    setHeight(box.height());
-    setWidth(box.width());
     m_box = box;
+    synchronizeDeclarative();
 }
 
 QGeoBoundingBox QDeclarativeGeoBoundingBox::box()
@@ -110,9 +104,10 @@ QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::bottomLeft()
 
 void QDeclarativeGeoBoundingBox::setBottomLeft(QDeclarativeCoordinate *coordinate)
 {
-    if (m_declarativeBottomLeft.coordinate() == coordinate->coordinate())
+    if (m_box.bottomLeft() == coordinate->coordinate())
         return;
-    m_declarativeBottomLeft.setCoordinate(coordinate->coordinate());
+    m_box.setBottomLeft(coordinate->coordinate());
+    synchronizeDeclarative();
     emit bottomLeftChanged();
 }
 
@@ -134,9 +129,10 @@ QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::bottomRight()
 
 void QDeclarativeGeoBoundingBox::setBottomRight(QDeclarativeCoordinate *coordinate)
 {
-    if (m_declarativeBottomRight.coordinate() == coordinate->coordinate())
+    if (m_box.bottomRight() == coordinate->coordinate())
         return;
-    m_declarativeBottomRight.setCoordinate(coordinate->coordinate());
+    m_box.setBottomRight(coordinate->coordinate());
+    synchronizeDeclarative();
     emit bottomRightChanged();
 }
 
@@ -158,9 +154,10 @@ QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::topLeft()
 
 void QDeclarativeGeoBoundingBox::setTopLeft(QDeclarativeCoordinate *coordinate)
 {
-    if (m_declarativeTopLeft.coordinate() == coordinate->coordinate())
+    if (m_box.topLeft() == coordinate->coordinate())
         return;
-    m_declarativeTopLeft.setCoordinate(coordinate->coordinate());
+    m_box.setTopLeft(coordinate->coordinate());
+    synchronizeDeclarative();
     emit topLeftChanged();
 }
 
@@ -182,9 +179,10 @@ QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::topRight()
 
 void QDeclarativeGeoBoundingBox::setTopRight(QDeclarativeCoordinate *coordinate)
 {
-    if (m_declarativeTopRight.coordinate() == coordinate->coordinate())
+    if (m_box.topRight() == coordinate->coordinate())
         return;
-    m_declarativeTopRight.setCoordinate(coordinate->coordinate());
+    m_box.setTopRight(coordinate->coordinate());
+    synchronizeDeclarative();
     emit topRightChanged();
 }
 
@@ -207,9 +205,10 @@ QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::center()
 
 void QDeclarativeGeoBoundingBox::setCenter(QDeclarativeCoordinate *coordinate)
 {
-    if (m_declarativeCenter.coordinate() == coordinate->coordinate())
+    if (m_box.center() == coordinate->coordinate())
         return;
-    m_declarativeCenter.setCoordinate(coordinate->coordinate());
+    m_box.setCenter(coordinate->coordinate());
+    synchronizeDeclarative();
     emit centerChanged();
 }
 
@@ -228,11 +227,8 @@ double QDeclarativeGeoBoundingBox::height()
 
 void QDeclarativeGeoBoundingBox::setHeight(const double height)
 {
-    if ((!qIsNaN(height) || !qIsNaN(m_box.height())) &&
-            m_box.height() == height)
-        return;
     m_box.setHeight(height);
-    emit heightChanged();
+    synchronizeDeclarative();
 }
 
 double QDeclarativeGeoBoundingBox::width()
@@ -251,11 +247,26 @@ double QDeclarativeGeoBoundingBox::width()
 
 void QDeclarativeGeoBoundingBox::setWidth(const double width)
 {
-    if ((!qIsNaN(width) || !qIsNaN(m_box.width())) &&
-            m_box.width() == width)
-        return;
     m_box.setWidth(width);
-    emit widthChanged();
+    synchronizeDeclarative();
+}
+
+void QDeclarativeGeoBoundingBox::synchronizeDeclarative()
+{
+    m_declarativeBottomLeft.setCoordinate(m_box.bottomLeft());
+    m_declarativeBottomRight.setCoordinate(m_box.bottomRight());
+    m_declarativeTopLeft.setCoordinate(m_box.topLeft());
+    m_declarativeTopRight.setCoordinate(m_box.topRight());
+    m_declarativeCenter.setCoordinate(m_box.center());
+    // Check not to compare two Not a Numbers, which by definition is 'false'.
+    if ((!qIsNaN(m_width) || !qIsNaN(m_box.width())) && m_width != m_box.width()) {
+        m_width = m_box.width();
+        emit widthChanged();
+    }
+    if ((!qIsNaN(m_height) || !qIsNaN(m_box.height())) && m_height != m_box.height()) {
+        m_height = m_box.height();
+        emit heightChanged();
+    }
 }
 
 #include "moc_qdeclarativegeoboundingbox_p.cpp"

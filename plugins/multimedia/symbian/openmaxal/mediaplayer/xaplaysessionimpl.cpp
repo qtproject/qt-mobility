@@ -39,8 +39,6 @@
 **
 ****************************************************************************/
 
-#include <e32debug.h>
-
 #include <QString>
 #include <QVariant>
 #include <QList>
@@ -49,6 +47,7 @@
 
 #include "xaplaysessionimpl.h"
 #include "xaplaysessioncommon.h"
+#include "xacommon.h"
 
 #ifdef USE_VIDEOPLAYERUTILITY
 #include <COECNTRL.H>
@@ -172,13 +171,12 @@ TInt XAPlaySessionImpl::postConstruct()
       ptr.PtrZ(); // append zero terminator to end of URI
 
 #ifdef USE_VIDEOPLAYERUTILITY
-    TRAPD( err, mVideoPlayUtil = 
+    TRAP(retVal, mVideoPlayUtil = 
            CVideoPlayerUtility2::NewL( *this,
                                        EMdaPriorityNormal,
                                        EMdaPriorityPreferenceTimeAndQuality)
          );
     mActiveSchedulerWait = new CActiveSchedulerWait;
-    return 0;
 #endif
 
     return retVal;
@@ -224,14 +222,14 @@ TInt XAPlaySessionImpl::load(const TDesC& aURI)
     TPtr8 mimeTypePtr(0,0,0);
 
 #ifdef USE_VIDEOPLAYERUTILITY
-    TRAP(mVPError, mVideoPlayUtil->OpenFileL(_L("C:\\data\\test.3gp")));
-    if (mVPError)
+    TRAP(m_VPError, mVideoPlayUtil->OpenFileL(_L("C:\\data\\test.3gp")));
+    if (m_VPError)
         return 0;
 
     if(!mActiveSchedulerWait->IsStarted())
         mActiveSchedulerWait->Start();
 
-    if (mVPError)
+    if (m_VPError)
         return 0;
     
     mVideoPlayUtil->Prepare();
@@ -547,7 +545,7 @@ TInt XAPlaySessionImpl::duration(TInt64& aDur)
     TInt retVal(KErrGeneral);
 
 #ifdef USE_VIDEOPLAYERUTILITY
-    TTimeIntervalMicroSeconds dur;
+    TTimeIntervalMicroSeconds dur(0);
     TRAPD(err, mVideoPlayUtil->DurationL());
     if (!err)
         aDur = dur.Int64() / 1000;
@@ -563,7 +561,7 @@ TInt XAPlaySessionImpl::position(TInt64& aPos)
 {
     TInt retVal(KErrGeneral);
 #ifdef USE_VIDEOPLAYERUTILITY
-    TTimeIntervalMicroSeconds dur;
+    TTimeIntervalMicroSeconds dur(0);
     TRAPD(err, mVideoPlayUtil->PositionL());
     if (!err)
         aPos = dur.Int64() / 1000;
@@ -708,16 +706,17 @@ Qt::AspectRatioMode XAPlaySessionImpl::getAspectRatioMode()
 #ifdef USE_VIDEOPLAYERUTILITY
 void XAPlaySessionImpl::MvpuoOpenComplete(TInt aError)
 {
-    RDebug::Printf( "%s ><", __PRETTY_FUNCTION__);
-    mVPError = aError;
+    TRACE_FUNCTION_ENTRY;
+    m_VPError = aError;
     if (mActiveSchedulerWait->IsStarted())
         mActiveSchedulerWait->AsyncStop();
+    TRACE_FUNCTION_EXIT;
 }
 
 void XAPlaySessionImpl::MvpuoPrepareComplete(TInt aError)
 {
-    RDebug::Printf( "%s ><", __PRETTY_FUNCTION__);
-    mVPError = aError;
+    TRACE_FUNCTION_ENTRY;
+    m_VPError = aError;
     if (mActiveSchedulerWait->IsStarted())
         mActiveSchedulerWait->AsyncStop();
 
@@ -730,22 +729,24 @@ void XAPlaySessionImpl::MvpuoPrepareComplete(TInt aError)
         TRAP_IGNORE(mVideoPlayUtil->AddDisplayWindowL(*wssession, *(CCoeEnv::Static()->ScreenDevice()), *window, videoExtent, clipRect));
         TRAP_IGNORE(mVideoPlayUtil->SetAutoScaleL(*window, EAutoScaleBestFit));
     }
+    TRACE_FUNCTION_EXIT;
 }
 
 void XAPlaySessionImpl::MvpuoFrameReady(CFbsBitmap& /*aFrame*/,TInt /*aError*/)
 {
-    RDebug::Printf( "%s ><", __PRETTY_FUNCTION__);
+    TRACE_FUNCTION_ENTRY_EXIT;
 }
 
 void XAPlaySessionImpl::MvpuoPlayComplete(TInt /*aError*/)
 {
-    RDebug::Printf( "%s ><", __PRETTY_FUNCTION__);
+    TRACE_FUNCTION_ENTRY;
     mParent.cbPlaybackStopped_EOS();
+    TRACE_FUNCTION_EXIT;
 }
 
 void XAPlaySessionImpl::MvpuoEvent(const TMMFEvent& /*aEvent*/)
 {
-    RDebug::Printf( "%s ><", __PRETTY_FUNCTION__);
+    TRACE_FUNCTION_ENTRY_EXIT;
 }
 
 #endif

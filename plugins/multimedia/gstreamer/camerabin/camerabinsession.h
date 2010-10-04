@@ -86,7 +86,7 @@ public:
     GstElement *cameraBin() { return m_pipeline; }
 
     QList< QPair<int,int> > supportedFrameRates(const QSize &frameSize, bool *continuous) const;
-    QList<QSize> supportedResolutions( QPair<int,int> rate, bool *continuous) const;
+    QList<QSize> supportedResolutions( QPair<int,int> rate, bool *continuous, QCamera::CaptureMode mode) const;
 
     QCamera::CaptureMode captureMode() { return m_captureMode; }
     void setCaptureMode(QCamera::CaptureMode mode);

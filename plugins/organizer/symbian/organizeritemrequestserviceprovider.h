@@ -54,7 +54,7 @@ class QOrganizerItemSymbianEngine; // Symbian Plugin
 QTM_USE_NAMESPACE 
 
 class COrganizerItemRequestsServiceProvider : public CActive
-    {
+{
 public: 
     // Static two phase constructor
     static COrganizerItemRequestsServiceProvider* NewL(
@@ -62,18 +62,14 @@ public:
     // Destruction, cleanup
     ~COrganizerItemRequestsServiceProvider();
     // To start an asynchronous request aReq
-    TBool StartRequest(QOrganizerItemAbstractRequest* aReq);
+    bool StartRequest(QOrganizerItemAbstractRequest* aReq);
     // To cancel ongoing iReq request
-    TBool CancelRequest();
-    // Wait for request to complete 
-    TBool waitForRequestFinished(TTimeIntervalMicroSeconds32 aInterval);
+    bool CancelRequest();
     
 private:
     // Private first phase basic constructor
     COrganizerItemRequestsServiceProvider(
             QOrganizerItemSymbianEngine& aEntryView);
-    // Second phase constructor
-    void ConstructL();
     // From CActive
     void RunL();
     // From CActive
@@ -88,45 +84,32 @@ private:
     
 private: // Worker functions
     // Fetch itemInstance
-    void FetchInstanceL();
+    void FetchInstance();
     // Save item/entry in agenda server
-    void SaveItemL();
+    void SaveItem();
     // Fetch items/entries from agenda server
-    void FetchItemsL();
+    void FetchItems();
     // Fetch items/entries by local Ids
-    void FetchItemsByLocalIdsL();
+    void FetchItemsByLocalIds();
     // Fetch items/entries by details
-    void FetchItemsandFilterL(QOrganizerItemFilter& filter, 
-            QList<QOrganizerItemSortOrder>& sortOrder, 
-            QOrganizerItemFetchHint& fetchHint);
+    void FetchItemsandFilter();
     // Fetch items ids
-    void FetchItemIdsL();
+    void FetchItemIds();
     // Remove items/entries
-    void RemoveItemL();
+    void RemoveItem();
     // Fetch detail definition
-    void FetchDetailDefinitionL();
-    // Remove detail definition
-    void RemoveDetailDefinitionL();
-    // Save detail definition
-    void SaveDetailDefinitionL();
-#ifdef SYMBIAN_CALENDAR_V2
+    void FetchDetailDefinition();
     void CollectionIds();
     void FetchCollections();
     void SaveCollections();
     void RemoveCollections();
-#endif
     
 private:
     QOrganizerItemSymbianEngine&            iOrganizerItemManagerEngine;
     QOrganizerItemAbstractRequest*          iReq; // Request to be processed
-    QList<QOrganizerItem>                   iItemList;
-    QList<QOrganizerItem>                   iSuccessfullItems;
     QList<QOrganizerItemLocalId>            iItemIds;
     QMap<int, QOrganizerItemManager::Error> iErrorMap; // Error map
-    QOrganizerItemManager::Error            iError; // Error
-    TInt                                    iNoOfItems;
     TInt                                    iIndex;
-    QOrganizerItemChangeSet                 iChangeSet;
-    };
+};
 
 #endif /* CORGANIZERITEMREQUESTSSERVICEPROVIDER_H_ */

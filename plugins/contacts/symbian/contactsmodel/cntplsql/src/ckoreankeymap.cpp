@@ -32,13 +32,17 @@ const int KMibKorean = 36;
 const int KHangulSyllableLowerLimit = 0xAC00;
 const int KHangulSyllableUpperLimit = 0xD7A3;
 
+const int KJamoLowerLimit = 0x1100;
+const int KJamoUpperLimit = 0x11FF;
+
 const int KChoCount  = 19;
 const int KJungCount = 21;
 const int KJongCount = 28;
 
-const int KChoBase  = 0x1100;
+const int KChoBase  = KJamoLowerLimit;
 const int KJungBase = 0x1161;
 const int KJongBase = 0x11A7;
+
 
 
 // ============================== MEMBER FUNCTIONS ============================
@@ -64,7 +68,9 @@ CKoreanKeyMap::~CKoreanKeyMap()
 
 // ----------------------------------------------------------------------------
 // CKoreanKeyMap::IsLanguageSupported
-// TODO: how to handle strings with both latin and Korean chars?
+// Korean QTextCodec recognizes Hangul and Hangul compatibility Jamo characters,
+// but not the Hangul Jamo characters (U1100+). Hence the Jamo are handled here
+// and treated as Korean text.
 // ----------------------------------------------------------------------------
 TBool CKoreanKeyMap::IsLanguageSupported(QString aSource) const
 	{
@@ -72,9 +78,20 @@ TBool CKoreanKeyMap::IsLanguageSupported(QString aSource) const
 		{
 		return EFalse;
 		}
-	// Korean codec recognizes Hangul and Hangul compatibility Jamo characters,
-	// but not the Hangul Jamo characters (U1100+).
-	// It also recognizes latin characters.
+
+	int len = aSource.length();
+	for (int i = 0; i < len; ++i)
+		{
+		int unicode = aSource[i].unicode();
+		if (unicode >= KJamoLowerLimit && unicode <= KJamoUpperLimit)
+			{
+			// Replace the character in aSource local to this function, with (any)
+			// Hangul syllable that QTextCodec recognizes are Korean text.
+			// Does not modify the caller's version of aSource.
+			aSource[i] = KHangulSyllableLowerLimit;
+			}
+		}
+
     return iKoreanCodec && iKoreanCodec->canEncode(aSource);
 	}
 

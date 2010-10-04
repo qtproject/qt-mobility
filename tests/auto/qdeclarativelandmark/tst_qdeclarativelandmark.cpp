@@ -368,7 +368,6 @@ void tst_QDeclarativeLandmark::defaultProperties()
     QCOMPARE(source_obj->property("name").toString(), QString());
     QCOMPARE(source_obj->property("phoneNumber").toString(), QString());
     QCOMPARE(source_obj->property("description").toString(), QString());
-    QVERIFY(qIsNaN(source_obj->property("radius").toReal()));
     QCOMPARE(source_obj->property("iconSource").toUrl(), QUrl());
     QCOMPARE(source_obj->property("url").toUrl(), QUrl());
     delete source_obj;

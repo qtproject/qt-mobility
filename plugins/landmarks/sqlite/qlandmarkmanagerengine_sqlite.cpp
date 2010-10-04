@@ -445,34 +445,6 @@ bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::Landmark
     }
 }
 
-QStringList QLandmarkManagerEngineSqlite::landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString = "";
-    //TODO: optimize
-    QStringList commonKeys = DatabaseOperations::coreAttributes +
-                             DatabaseOperations::coreGenericAttributes;
-    commonKeys.sort();
-
-    return commonKeys;
-}
-
-QStringList QLandmarkManagerEngineSqlite::categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString = "";
-
-    //TODO: optimize
-    QStringList commonKeys = DatabaseOperations::coreCategoryAttributes +
-                             DatabaseOperations::coreGenericCategoryAttributes;
-    commonKeys.clear();
-    return commonKeys;
-}
-
 QStringList QLandmarkManagerEngineSqlite::searchableLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
@@ -581,7 +553,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
     QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
 
     QSqlQuery query(db);
-    if (!query.prepare("SELECT landmarkId,action, timestamp FROM landmark_notification WHERE timestamp > ?")) {
+    if (!query.prepare("SELECT landmarkId,action, timestamp FROM landmark_notification WHERE timestamp >= ?")) {
 #ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
         qWarning() << "Could not prepare statement: " << query.lastQuery() << " \nReason:" << query.lastError().text();
 #endif
@@ -635,7 +607,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
         emit landmarksRemoved(removedLandmarkIds);
 
     //now check for added/modified/removed categories
-    if (!query.prepare("SELECT categoryId,action, timestamp FROM category_notification WHERE timestamp > ?")) {
+    if (!query.prepare("SELECT categoryId,action, timestamp FROM category_notification WHERE timestamp >= ?")) {
 #ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
         qWarning() << "Could not prepare statement: " << query.lastQuery() << " \nReason:" << query.lastError().text();
 #endif
@@ -665,6 +637,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
 
         action = query.value(1).toString();
         categoryId.setLocalId(query.value(0).toString());
+
         if (action == "ADD") {
             addedCategoryIds << categoryId;
         } else if (action == "CHANGE") {
@@ -682,6 +655,9 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
 
     if (removedCategoryIds.count() > 0)
         emit categoriesRemoved(removedCategoryIds);
+
+    m_latestLandmarkTimestamp +=1;
+    m_latestCategoryTimestamp +=1;
 }
 
 void QLandmarkManagerEngineSqlite::setChangeNotificationsEnabled(bool enabled)

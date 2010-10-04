@@ -61,7 +61,7 @@
 #include "CheckName.h"
 #include "Semantic.h"
 #include "AST.h"
-#include "Control.h"
+#include "CppControl.h"
 #include "TranslationUnit.h"
 #include "Literals.h"
 #include "Names.h"
