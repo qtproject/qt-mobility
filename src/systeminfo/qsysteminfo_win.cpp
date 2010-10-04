@@ -2115,7 +2115,7 @@ bool QSystemDeviceInfoPrivate::backLightOn()
     return false;
 }
 
-quint64 QSystemDeviceInfoPrivate::hostId()
+QUuid QSystemDeviceInfoPrivate::hostId()
 {
     return 0;//gethostid();
 }

@@ -291,9 +291,8 @@ void tst_QSystemDeviceInfo::tst_backLightOn()
 void tst_QSystemDeviceInfo::tst_hostId()
 {
     QSystemDeviceInfo di;
-    quint64 id = di.hostId();
-    qDebug() << id;
-    QVERIFY(id == 0 || id > 0);
+    QUuid id = di.hostId();
+    QVERIFY(id.isNull()|| !id.isNull());
 }
 
 QTEST_MAIN(tst_QSystemDeviceInfo)

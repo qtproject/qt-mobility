@@ -2835,9 +2835,19 @@ bool QSystemDeviceInfoLinuxCommonPrivate::backLightOn()
     return false;
 }
 
-quint64 QSystemDeviceInfoLinuxCommonPrivate::hostId()
+QUuid QSystemDeviceInfoLinuxCommonPrivate::hostId()
 {
-    return gethostid();
+#if !defined(QT_NO_DBUS)
+    if(halIsAvailable) {
+        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
+        QString id;
+        if (iface.isValid()) {
+            id = iface.getPropertyString("system.hardware.uuid");
+            return QUuid(id);
+        }
+    }
+#endif
+    return QUuid(QString::number(gethostid()));
 }
 
 

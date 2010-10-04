@@ -43,6 +43,7 @@
 #define QSYSTEMDEVICEINFO_H
 
 #include <QObject>
+#include <QUuid>
 #include "qmobilityglobal.h"
 
 QT_BEGIN_HEADER
@@ -162,7 +163,7 @@ public:
     bool currentBluetoothPowerState();
     bool keypadLightOn(); //1.2
     bool backLightOn(); //1.2
-    quint64 hostId(); //1.2
+    QUuid hostId(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int level);

@@ -489,7 +489,7 @@ bool QSystemDeviceInfo::backLightOn()
   Depending on security enforcement on platform, this may return a non unique number, or 0.
 
   */
-quint64 QSystemDeviceInfo::hostId()
+QUuid QSystemDeviceInfo::hostId()
 {
     return deviceInfoPrivate()->hostId();
 }
