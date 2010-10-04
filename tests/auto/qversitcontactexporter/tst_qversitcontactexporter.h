@@ -93,7 +93,6 @@ private slots:
     void testEncodeFamily();
     void testEncodeAvatar();
     void testEncodeThumbnail();
-    void testEncodeDisplayLabel();
     void testDefaultResourceHandler();
 
 private:
