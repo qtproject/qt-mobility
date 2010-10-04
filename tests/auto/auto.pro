@@ -16,3 +16,4 @@ contains(mobility_modules,serviceframework):SUBDIRS+=serviceframework.pro
 contains(mobility_modules,systeminfo):      SUBDIRS+=systeminfo.pro
 contains(mobility_modules,versit):          SUBDIRS+=versit.pro
 
+!cross_compile: SUBDIRS+=host.pro
