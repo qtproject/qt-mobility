@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qremoteserviceregister.h"
+#include "qremoteserviceregisterentry_p.h"
 
 #if defined(Q_OS_SYMBIAN)
     #include "qremoteserviceregister_s60_p.h"
@@ -52,29 +53,31 @@
 QTM_BEGIN_NAMESPACE
 
 QRemoteServiceRegister::Entry::Entry()
-    : meta(0), cptr(0), instanceType(QRemoteServiceRegister::PrivateInstance)
 {
 }
 
 QRemoteServiceRegister::Entry::Entry(const Entry& other)
-    : iface(other.iface), service(other.service), ifaceVersion(other.ifaceVersion),
-      meta(other.meta), cptr(other.cptr), instanceType(other.instanceType)
+    : d(other.d)
+{
+}
+
+QRemoteServiceRegister::Entry::~Entry()
 {
 }
 
 bool QRemoteServiceRegister::Entry::isValid() const
 {
-    if (!iface.isEmpty() && !service.isEmpty() 
-            && !ifaceVersion.isEmpty() && cptr!=0 && meta!=0)
+    if (!d->iface.isEmpty() && !d->service.isEmpty()
+            && !d->ifaceVersion.isEmpty() && d->cptr!=0 && d->meta!=0)
         return true;
     return false;
 }
 
 bool QRemoteServiceRegister::Entry::operator==(const Entry& other) const
 {
-    return service == other.service &&
-           iface == other.iface &&
-           ifaceVersion == other.ifaceVersion;
+    return d->service == other.d->service &&
+           d->iface == other.d->iface &&
+           d->ifaceVersion == other.d->ifaceVersion;
 }
 
 bool QRemoteServiceRegister::Entry::operator!=(const Entry& other) const
@@ -84,43 +87,37 @@ bool QRemoteServiceRegister::Entry::operator!=(const Entry& other) const
 
 QRemoteServiceRegister::Entry &QRemoteServiceRegister::Entry::operator=(const Entry& other)
 {
-    service = other.service;
-    iface = other.iface;
-    ifaceVersion = other.ifaceVersion;
-    meta = other.meta;
-    cptr = other.cptr;
-    instanceType = other.instanceType;
-    return *this;
+    d = other.d;
 }
 
 QString QRemoteServiceRegister::Entry::interfaceName() const
 {
-    return iface;
+    return d->iface;
 }
 
 QString QRemoteServiceRegister::Entry::serviceName() const
 {
-    return service;
+    return d->service;
 }
 
 QString QRemoteServiceRegister::Entry::version() const
 {
-    return ifaceVersion;
+    return d->ifaceVersion;
 }
 
 const QMetaObject * QRemoteServiceRegister::Entry::metaObject() const
 {
-    return meta;
+    return d->meta;
 }
 
 void QRemoteServiceRegister::Entry::setInstantiationType(QRemoteServiceRegister::InstanceType t)
 {
-    instanceType = t;
+    d->instanceType = t;
 }
 
 QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiationType() const
 {
-    return instanceType;
+    return d->instanceType;
 }
 
 /*!
@@ -190,6 +187,60 @@ QRemoteServiceRegister::securityFilter QRemoteServiceRegister::setSecurityFilter
     return d->setSecurityFilter(filter);
 }
 
+#ifndef QT_NO_DATASTREAM
+QDataStream& operator>>(QDataStream& s, QRemoteServiceRegister::Entry& entry) {
+    //for now we only serialize version, iface and service name
+    //neds to sync with qHash and operator==
+    s >> entry.d->service >> entry.d->iface >> entry.d->ifaceVersion;
+    return s;
+}
+
+QDataStream& operator<<(QDataStream& s, const QRemoteServiceRegister::Entry& entry) {
+    //for now we only serialize version, iface and service name
+    //neds to sync with qHash and operator==
+    s << entry.d->service << entry.d->iface << entry.d->ifaceVersion;
+    return s;
+}
+#endif
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QRemoteServiceRegister::Entry& entry) {
+    dbg.nospace() << "QRemoteServiceRegister::Entry("
+                  << entry.serviceName() << ", "
+                  << entry.interfaceName() << ", "
+                  << entry.version() << ")";
+    return dbg.space();
+}
+#endif
+
+template <typename T>
+QObject* qServiceTypeConstructHelper()
+{
+    return new T;
+}
+
+
+template <typename T>
+QRemoteServiceRegister::Entry QRemoteServiceRegister::createEntry(const QString& serviceName, const QString& interfaceName, const QString& version)
+{
+    if (serviceName.isEmpty()
+            || interfaceName.isEmpty()
+            || version.isEmpty() ) {
+        qWarning() << "QRemoteServiceRegister::registerService: service name, interface name and version must be specified";
+        return Entry();
+    }
+
+    QRemoteServiceRegister::CreateServiceFunc cptr = qServiceTypeConstructHelper<T>;
+
+    Entry e;
+    e.d->service = serviceName;
+    e.d->iface = interfaceName;
+    e.d->ifaceVersion = version;
+    e.d->cptr = cptr;
+    e.d->meta = &T::staticMetaObject;
+
+    return e;
+}
 
 #include "moc_qremoteserviceregister.cpp"
 

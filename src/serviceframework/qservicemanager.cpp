@@ -44,6 +44,7 @@
 #include "qabstractsecuritysession.h"
 #include "qserviceinterfacedescriptor_p.h"
 #include "qremoteserviceregister_p.h"
+#include "qremoteserviceregisterentry_p.h"
 
 #ifdef Q_OS_SYMBIAN
     #include "databasemanager_symbian_p.h"
@@ -405,9 +406,9 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
                                                    .arg(descriptor.minorVersion()).toLatin1();
 
         QRemoteServiceRegister::Entry serviceEntry;
-        serviceEntry.iface = descriptor.interfaceName();
-        serviceEntry.service = descriptor.serviceName();
-        serviceEntry.ifaceVersion = version;
+        serviceEntry.d->iface = descriptor.interfaceName();
+        serviceEntry.d->service = descriptor.serviceName();
+        serviceEntry.d->ifaceVersion = version;
         QObject* service = QRemoteServiceRegisterPrivate::proxyForService(serviceEntry, location);
         if (!service)
             d->setError(InvalidServiceLocation);

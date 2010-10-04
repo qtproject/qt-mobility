@@ -41,6 +41,7 @@
 
 #include <qmobilityglobal.h>
 #include "instancemanager_p.h"
+#include "qremoteserviceregisterentry_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -84,7 +85,7 @@ bool InstanceManager::addType(const QRemoteServiceRegister::Entry& e)
     } else {
         ServiceIdentDescriptor d;
         d.meta = e.metaObject();
-        d.create = e.cptr;
+        d.create = e.d->cptr;
         d.instanceType = e.instantiationType();
         metaMap.insert(e, d);
         return true;

@@ -47,11 +47,13 @@
 #include <QQueue>
 #include <QHash>
 #include <QDebug>
-
+#include <QExplicitlySharedDataPointer>
 
 QTM_BEGIN_NAMESPACE
 
 class QRemoteServiceRegisterPrivate;
+class QRemoteServiceRegisterEntryPrivate;
+
 class Q_SERVICEFW_EXPORT QRemoteServiceRegister : public QObject
 {
     Q_OBJECT
@@ -66,13 +68,15 @@ public:
     };
 
     typedef QObject *(*CreateServiceFunc)();
-
+    
     class Q_SERVICEFW_EXPORT Entry {
         //TODO docs for Entry class
     public:
         Entry();
         Entry(const Entry &);
         Entry &operator=(const Entry &);
+
+        ~Entry();
 
         bool operator==(const Entry &) const;
         bool operator!=(const Entry &) const;
@@ -83,21 +87,14 @@ public:
         QString serviceName() const;
         QString version() const;
 
-        //TODO remove metaObject()
-        const QMetaObject* metaObject() const; //TODO Private?
         void setInstantiationType(QRemoteServiceRegister::InstanceType t);
         QRemoteServiceRegister::InstanceType instantiationType() const;
 
 
     private:
-        //TODO we need an explicitly shared d-pointer
-        QString iface;
-        QString service;
-        QString ifaceVersion;
-        const QMetaObject* meta;
-        QRemoteServiceRegister::CreateServiceFunc cptr;
-        QRemoteServiceRegister::InstanceType instanceType;
+        QExplicitlySharedDataPointer<QRemoteServiceRegisterEntryPrivate> d;
 
+        const QMetaObject* metaObject() const; //TODO Private?
 
         friend class QRemoteServiceRegister;
         friend class InstanceManager;
@@ -146,67 +143,20 @@ struct QRemoteServiceRegisterCredentials {
     int gid;
 };
 
-
 inline uint qHash(const QRemoteServiceRegister::Entry& e) {
     //Only consider version, iface and service name -> needs to sync with operator==
     return ( qHash(e.serviceName()) + qHash(e.interfaceName()) + qHash(e.version()) );
 }
 
-#ifndef QT_NO_DATASTREAM
-inline QDataStream& operator>>(QDataStream& s, QRemoteServiceRegister::Entry& entry) {
-    //for now we only serialize version, iface and service name
-    //neds to sync with qHash and operator==
-    s >> entry.service >> entry.iface >> entry.ifaceVersion;
-    return s;
-}
 
-inline QDataStream& operator<<(QDataStream& s, const QRemoteServiceRegister::Entry& entry) {
-    //for now we only serialize version, iface and service name
-    //neds to sync with qHash and operator==
-    s << entry.service << entry.iface << entry.ifaceVersion;
-    return s;
-}
+#ifndef QT_NO_DATASTREAM
+QDataStream& operator>>(QDataStream& s, QRemoteServiceRegister::Entry& entry);
+QDataStream& operator<<(QDataStream& s, const QRemoteServiceRegister::Entry& entry);
 #endif
 
 #ifndef QT_NO_DEBUG_STREAM
-inline QDebug operator<<(QDebug dbg, const QRemoteServiceRegister::Entry& entry) {
-    dbg.nospace() << "QRemoteServiceRegister::Entry("
-                  << entry.serviceName() << ", "
-                  << entry.interfaceName() << ", "
-                  << entry.version() << ")";
-    return dbg.space();
-}
+QDebug operator<<(QDebug dbg, const QRemoteServiceRegister::Entry& entry);
 #endif
-
-template <typename T>
-QObject* qServiceTypeConstructHelper()
-{
-    return new T;
-}
-
-
-template <typename T>
-QRemoteServiceRegister::Entry QRemoteServiceRegister::createEntry(const QString& serviceName, const QString& interfaceName, const QString& version)
-{
-    if (serviceName.isEmpty()
-            || interfaceName.isEmpty()
-            || version.isEmpty() ) {
-        qWarning() << "QRemoteServiceRegister::registerService: service name, interface name and version must be specified";
-        return Entry();
-    }
-
-    QRemoteServiceRegister::CreateServiceFunc cptr = qServiceTypeConstructHelper<T>;
-
-    Entry e;
-    e.service = serviceName;
-    e.iface = interfaceName;
-    e.ifaceVersion = version;
-    e.cptr = cptr;
-    e.meta = &T::staticMetaObject;
-
-    return e;
-}
-
 
 QTM_END_NAMESPACE
 #endif //QREMOTESERVICEREGISTER_H

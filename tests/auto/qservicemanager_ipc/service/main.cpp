@@ -45,6 +45,7 @@
 #include <QDebug>
 
 #include "qservicefilter.h" //only used to test custom metatype
+#include "qremoteserviceregister.h"
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QServiceFilter);
