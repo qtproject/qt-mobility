@@ -39,62 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QSERVICE_INSTANCE_MANAGER
-#define QSERVICE_INSTANCE_MANAGER
-
-#include <qmobilityglobal.h>
-#include "qremoteserviceregister.h"
-#include <QHash>
-#include <QMutexLocker>
-#include <QMetaObject>
-#include <QMetaClassInfo>
-#include <QUuid>
-#include <QDebug>
+#include "qremoteserviceregister_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-struct ServiceIdentDescriptor
+QRemoteServiceRegisterPrivate::QRemoteServiceRegisterPrivate(QObject* parent)
+    : QObject(parent), m_quit(true), iFilter(0)
 {
-    ServiceIdentDescriptor() : globalInstance(0), globalRefCount(0)
-    {
-    }
+}
 
-    const QMetaObject* meta;
-    QRemoteServiceRegister::CreateServiceFunc create;
-    QRemoteServiceRegister::InstanceType instanceType;
-    QHash<QUuid, QObject*> individualInstances;
-    QObject* globalInstance;
-    QUuid globalId;
-    int globalRefCount;
-
-    //TODO converge with QRemoteServiceRegister::Entry so that entry changes
-    //are reflected by instance manager
-};
-
-class QM_AUTOTEST_EXPORT InstanceManager //TODO public QOBJECT
+QRemoteServiceRegisterPrivate::~QRemoteServiceRegisterPrivate()
 {
-public:
-    InstanceManager();
-    ~InstanceManager();
+}
 
-    bool addType(const QRemoteServiceRegister::Entry& entry);
+//void QRemoteServiceRegisterPrivate::publishServices( const QString& ident)
+//{
+//  qWarning("QRemoteServiceregisterPrivate::publishServices has not been reimplemented");
+//}
+//
+//void QRemoteServiceRegisterPrivate::processIncoming()
+//{
+//  qWarning("QRemoteServiceRegisterPrivate::processIncoming has not been reimplemented");
+//}
 
-    const QMetaObject* metaObject(const QRemoteServiceRegister::Entry& ident) const;
-    QList<QRemoteServiceRegister::Entry> allEntries() const;
+bool QRemoteServiceRegisterPrivate::quitOnLastInstanceClosed() const
+{
+  return m_quit;
+}
 
-    QObject* createObjectInstance(const QRemoteServiceRegister::Entry& entry, QUuid& instanceId);
-    void removeObjectInstance(const QRemoteServiceRegister::Entry& entry, const QUuid& instanceId);
+void QRemoteServiceRegisterPrivate::setQuitOnLastInstanceClosed(bool quit)
+{
+    m_quit = quit;
+}
 
-    static InstanceManager* instance();
+QRemoteServiceRegister::securityFilter QRemoteServiceRegisterPrivate::setSecurityFilter(QRemoteServiceRegister::securityFilter filter)
+{
+    QRemoteServiceRegister::securityFilter f;
+    f = filter;
+    iFilter = filter;
+    return f;
+}
 
-private:
-    mutable QMutex lock;
-    QHash<QRemoteServiceRegister::Entry, ServiceIdentDescriptor> metaMap;
-};
+QRemoteServiceRegister::securityFilter QRemoteServiceRegisterPrivate::getSecurityFilter()
+{
+    return iFilter;
+}
 
 
-
+#include "moc_qremoteserviceregister_p.cpp"
 QTM_END_NAMESPACE
-
-
-#endif //QSERVICE_INSTANCE_MANAGER

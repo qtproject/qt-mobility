@@ -39,49 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICECONTROL_H
-#define QREMOTESERVICECONTROL_H
+#ifndef QREMOTESERVICEREGISTER_P_H
+#define QREMOTESERVICEREGISTER_P_H
 
-#include "qmobilityglobal.h"
-#include <QObject>
-#include <QQueue>
-
+#include "qremoteserviceregister.h"
+#include "instancemanager_p.h"
+#include "qserviceinterfacedescriptor.h"
 
 QTM_BEGIN_NAMESPACE
 
-
-class QRemoteServiceControlPrivate;
-class Q_SERVICEFW_EXPORT QRemoteServiceControl : public QObject
+class ObjectEndPoint;
+class QRemoteServiceRegisterPrivate: public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool quitOnLastInstanceClosed READ quitOnLastInstanceClosed WRITE setQuitOnLastInstanceClosed)
-
 public:
-    QRemoteServiceControl(QObject* parent = 0);
-    ~QRemoteServiceControl();
+    QRemoteServiceRegisterPrivate(QObject* parent);
+    virtual ~QRemoteServiceRegisterPrivate();
 
-    void publishServices(const QString& ident );
-    
-    bool quitOnLastInstanceClosed() const;
-    void setQuitOnLastInstanceClosed(const bool quit);
+    virtual void publishServices(const QString& ident ) = 0;
 
-    typedef bool (*securityFilter)(const void *message);
-    securityFilter setSecurityFilter(securityFilter filter);
+    virtual bool quitOnLastInstanceClosed() const;
+    virtual void setQuitOnLastInstanceClosed(const bool quit);
+
+    virtual QRemoteServiceRegister::securityFilter setSecurityFilter(QRemoteServiceRegister::securityFilter filter);
 
 Q_SIGNALS:
     void lastInstanceClosed();
 
+public slots:
+    // Must be implemented in the subclass
+    //void processIncoming();
+
+protected:
+    virtual QRemoteServiceRegister::securityFilter getSecurityFilter();
 
 private:
-    QRemoteServiceControlPrivate* d;
-};
+    bool m_quit;
+    QRemoteServiceRegister::securityFilter iFilter;
 
-struct QRemoteServiceControlLocalSocketCred {
-    int fd;
-    int pid;
-    int uid;
-    int gid;
+public:
+    static QObject* proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location);
+    static QRemoteServiceRegisterPrivate* constructPrivateObject(QObject *parent);
 };
 
 QTM_END_NAMESPACE
-#endif //QREMOTESERVICECONTROL_H
+
+#endif

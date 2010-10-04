@@ -160,13 +160,13 @@ public:
     ObjectEndPoint* parent;
 
     //used on service side
-    QRemoteServiceIdentifier typeIdent;
+    QRemoteServiceRegister::Entry entry;
     QUuid serviceInstanceId;
 };
 
 //TODO list:
 /*
-    - Why do we need typeIdent and serviceInstanceId on service side. The instance id should be sufficient.
+    - Why do we need entry and serviceInstanceId on service side. The instance id should be sufficient.
     - Consider merging invokeRemoteProperty() and invokeRemote()
     - QMetaClassInfo support
 
@@ -198,10 +198,10 @@ ObjectEndPoint::~ObjectEndPoint()
 
 void ObjectEndPoint::disconnected()
 {
-  if (d->endPointType == Service) {
-      InstanceManager::instance()->removeObjectInstance(d->typeIdent, d->serviceInstanceId);
-  }
-  deleteLater();
+    if (d->endPointType == Service) {
+        InstanceManager::instance()->removeObjectInstance(d->entry, d->serviceInstanceId);
+    }
+    deleteLater();
 }
 
 /*
@@ -209,7 +209,7 @@ void ObjectEndPoint::disconnected()
     code and this object must clean itself up upon destruction of
     proxy.
 */
-QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
+QObject* ObjectEndPoint::constructProxy(const QRemoteServiceRegister::Entry & entry)
 {
     //client side 
     Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
@@ -220,7 +220,7 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
     QServicePackage p;
     p.d = new QServicePackagePrivate();
     p.d->messageId = QUuid::createUuid();
-    p.d->typeId = ident;
+    p.d->entry = entry;
 
     Response* response = new Response();
     openRequests()->insert(p.d->messageId, response);
@@ -364,9 +364,9 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         InstanceManager* m = InstanceManager::instance();
 
         //get meta object from type register
-        const QMetaObject* meta = m->metaObject(p.d->typeId);
+        const QMetaObject* meta = m->metaObject(p.d->entry);
         if (!meta) {
-            qDebug() << "Unknown type" << p.d->typeId;
+            qDebug() << "Unknown type" << p.d->entry;
             dispatch->writePackage(response);
             return;
         }
@@ -378,7 +378,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         builder.serialize(stream);
 
         //instantiate service object from type register
-        service = m->createObjectInstance(p.d->typeId, d->serviceInstanceId);
+        service = m->createObjectInstance(p.d->entry, d->serviceInstanceId);
         if (!service) {
             qWarning() << "Cannot instanciate service object";
             dispatch->writePackage(response);
@@ -387,8 +387,8 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         d->setupSignalIntercepters(service);
 
         //send meta object 
-        d->typeIdent = p.d->typeId;
-        response.d->typeId = p.d->typeId;
+        d->entry = p.d->entry;
+        response.d->entry = p.d->entry;
         response.d->responseType = QServicePackage::Success;
         response.d->payload = QVariant(data);
         dispatch->writePackage(response);

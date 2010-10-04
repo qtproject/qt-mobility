@@ -41,6 +41,7 @@
 
 #include "proxyobject_p.h"
 #include "qmetaobjectbuilder_p.h"
+#include "qremoteserviceregisterentry_p.h"
 
 #include <QDebug>
 
