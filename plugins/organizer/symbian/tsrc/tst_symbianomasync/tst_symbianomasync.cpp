@@ -100,6 +100,8 @@ private slots:  // Test cases
     void fetchItemsDetailFilter();
     void fetchItemsSortOrder_data(){ addManagers(); };
     void fetchItemsSortOrder();
+    void fetchItemsDeleteRequest_data(){ addManagers(); };
+    void fetchItemsDeleteRequest();
     void addItems_data(){ addManagers(); };
     void addItems();
     void addItemsMultiReq_data(){ addManagers(); };
@@ -122,6 +124,11 @@ private slots:  // Test cases
     void detailDefinitionSave();
     void detailDefinitionRemove_data(){ addManagers(); };
     void detailDefinitionRemove();
+    void detailDefinitionRemoveDeleteRequest_data(){ addManagers(); };
+    void detailDefinitionRemoveDeleteRequest();
+
+protected slots:
+    void deleteRequest();
 
 private: // util functions
     QOrganizerItem createItem(
@@ -477,6 +484,27 @@ void tst_SymbianOmAsync::fetchItemsSortOrder()
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
     QCOMPARE(req.items().count(), itemCount);
     QVERIFY(req.items().at(0).localId() != QOrganizerItemLocalId());
+}
+
+void tst_SymbianOmAsync::fetchItemsDeleteRequest()
+{
+    // Save items (synchronously)
+    const int itemCount(100);
+    QList<QOrganizerItem> items = createItems(QString("fetchitems"), itemCount);
+    QVERIFY(m_om->saveItems(&items));
+
+    // Create fetch request
+    QOrganizerItemFetchRequest *req = new QOrganizerItemFetchRequest();
+    QWeakPointer<QObject> obj(req);
+    req->setManager(m_om);
+
+    // Connect "resultsAvailable" to a slot that deletes the sender
+    // That is, verify we don't crash when the request is deleted in the resultsAvailable slot function
+    connect(req, SIGNAL(resultsAvailable()), this, SLOT(deleteRequest()));
+
+    // Fetch
+    QVERIFY(req->start());
+    QTRY_COMPARE(obj.isNull(), true);
 }
 
 void tst_SymbianOmAsync::addItems()
@@ -938,6 +966,30 @@ void tst_SymbianOmAsync::detailDefinitionRemove()
     QCOMPARE(req.errorMap().count(), 0);
     QCOMPARE(stateSpy.count(), 1);
     QCOMPARE(resultSpy.count(), 1);   
+}
+
+void tst_SymbianOmAsync::detailDefinitionRemoveDeleteRequest()
+{
+    // Create request
+    QOrganizerItemDetailDefinitionRemoveRequest *req = new QOrganizerItemDetailDefinitionRemoveRequest();
+    QWeakPointer<QObject> obj(req);
+    req->setManager(m_om);
+
+    // Connect signals "resultsAvailable" to a slot that deletes the sender
+    // That is, verify we don't crash when the request is deleted in the slot function.
+    connect(req, SIGNAL(resultsAvailable()), this, SLOT(deleteRequest()));
+
+    // Removing detail definitions is not supported so verify it cannot be started
+    QVERIFY(!req->start());
+    QTRY_COMPARE(obj.isNull(), true);
+}
+
+/*!
+ * A slot function for deleting the sender.
+ */
+void tst_SymbianOmAsync::deleteRequest()
+{
+    delete sender();
 }
 
 /*!
