@@ -91,7 +91,7 @@ Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 
 private:
-    QString QLocaleToISO639_1(QLocale::Language language) const;  
+    QString QLocaleToISO639_1(QLocale::Language language) const;
     QString TLanguageToISO639_1(TLanguage language) const;
     QString S60Version() const;
 };
@@ -249,6 +249,9 @@ public:
     QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
     bool isWirelessKeyboardConnected(); //1.2
     bool isKeyboardFlipOpen();//1.2
+    void keyboardConnected(bool connect);//1.2
+    bool keypadLightOn(); //1.2
+    bool backLightOn(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);

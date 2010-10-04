@@ -314,6 +314,9 @@ public:
     bool isWirelessKeyboardConnected(); //1.2
     bool isKeyboardFlipOpen();//1.2
 
+    void keyboardConnected(bool connect);//1.2
+    bool keypadLightOn(); //1.2
+    bool backLightOn(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);

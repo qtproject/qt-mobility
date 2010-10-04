@@ -168,6 +168,7 @@ int QSystemDisplayInfo::physicalWidth(int screen)
 
 
 
+
 #include "moc_qsystemdisplayinfo.cpp"
 
 QTM_END_NAMESPACE

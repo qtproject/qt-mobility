@@ -76,6 +76,9 @@ public:
     int getDPIHeight(int screen);
     int physicalHeight(int screen);
     int physicalWidth(int screen);
+
+    bool backLightOn(); //1.2
+
 };
 
 

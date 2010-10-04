@@ -461,6 +461,25 @@ bool QSystemDeviceInfo::isKeyboardFlipOpen()
     return deviceInfoPrivate()->isKeyboardFlipOpen();
 }
 
+/*!
+  \brief Keypad light on.
+
+  Returns true if the key pad, or keyboard lights are on, otherwise false;
+  */
+bool QSystemDeviceInfo::keypadLightOn()
+{
+    return deviceInfoPrivate()->keypadLightOn();
+}
+
+/*!
+  \brief backlight on.
+
+  Returns true if the display backlight is on, otherwise false;
+  */
+bool QSystemDeviceInfo::backLightOn()
+{
+    return deviceInfoPrivate()->backLightOn();
+}
 
 #include "moc_qsystemdeviceinfo.cpp"
 

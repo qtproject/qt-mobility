@@ -94,7 +94,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QStringList languages;
     QList<HbInputLanguage> hblanguages = HbKeymapFactory::availableLanguages();
-    foreach(HbInputLanguage lang, hblanguages) {       
+    foreach(HbInputLanguage lang, hblanguages) {
         QString language = QLocaleToISO639_1(lang.language());
         if (!language.isEmpty()) {
             languages << language;
@@ -102,7 +102,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     }
     languages.removeDuplicates();
     return languages;
-}  
+}
 #else
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
@@ -126,7 +126,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 }
 #endif //HB_SUPPORTED
 
-QString QSystemInfoPrivate::QLocaleToISO639_1(QLocale::Language language) const    
+QString QSystemInfoPrivate::QLocaleToISO639_1(QLocale::Language language) const
 {
        switch(language) {
        case QLocale::English: return "en";
@@ -172,11 +172,11 @@ QString QSystemInfoPrivate::QLocaleToISO639_1(QLocale::Language language) const
        case QLocale::Galician: return "gl";
        case QLocale::Basque: return "eu";
        case QLocale::Marathi: return "mr";
-       case QLocale::Korean: return "ko";       
+       case QLocale::Korean: return "ko";
        default:
            break;
        }
-    return "";        
+    return "";
 }
 
 QString QSystemInfoPrivate::TLanguageToISO639_1(TLanguage language) const
@@ -1202,6 +1202,23 @@ bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
 }
 
 bool QSystemDeviceInfoPrivate::isKeyboardFlipOpen()
+{
+    return false;
+}
+
+void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
+{
+    if(connect != hasWirelessKeyboardConnected)
+        hasWirelessKeyboardConnected = connect;
+    Q_EMIT wirelessKeyboardConnected(connect);
+}
+
+bool QSystemDeviceInfoPrivate::keypadLightOn()
+{
+    return false;
+}
+
+bool QSystemDeviceInfoPrivate::backLightOn()
 {
     return false;
 }

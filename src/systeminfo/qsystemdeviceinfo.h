@@ -160,6 +160,9 @@ public:
     QSystemDeviceInfo::PowerState currentPowerState();
 
     bool currentBluetoothPowerState();
+    bool keypadLightOn(); //1.2
+    bool backLightOn(); //1.2
+
 Q_SIGNALS:
     void batteryLevelChanged(int level);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);
@@ -169,6 +172,7 @@ Q_SIGNALS:
 
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlip(bool open);//1.2
+
 
 private:
     QSystemDeviceInfoPrivate *d;

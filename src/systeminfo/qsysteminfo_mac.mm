@@ -2251,6 +2251,16 @@ void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
     Q_EMIT wirelessKeyboardConnected(connect);
 }
 
+bool QSystemDeviceInfoPrivate::keypadLightOn()
+{
+    return false;
+}
+
+bool QSystemDeviceInfoPrivate::backLightOn()
+{
+    return false;
+}
+
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         : QObject(parent), isInhibited(0)
 {
