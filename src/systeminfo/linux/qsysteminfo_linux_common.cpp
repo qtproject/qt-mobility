@@ -2835,9 +2835,9 @@ bool QSystemDeviceInfoLinuxCommonPrivate::backLightOn()
     return false;
 }
 
-quint64 QSystemDeviceInfo::hostId()
+quint64 QSystemDeviceInfoLinuxCommonPrivate::hostId()
 {
-    return deviceInfoPrivate()->hostId();
+    return gethostid();
 }
 
 
