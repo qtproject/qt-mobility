@@ -42,8 +42,7 @@
 #ifndef REMOTEDIALER_H
 #define REMOTEDIALER_H
 
-#include <qremoteserviceclassregister.h>
-#include <qremoteservicecontrol.h>
+#include <qremoteserviceregister.h>
 #include <QObject>
 #include <QtCore>
 
@@ -57,8 +56,6 @@ QTM_USE_NAMESPACE
 class RemoteDialer : public QObject
 {
     Q_OBJECT
-    Q_SERVICE(RemoteDialer, "VoipDialer", "com.nokia.qt.examples.Dialer", "1.1")
-
 public:
     RemoteDialer(QObject *parent = 0);
     

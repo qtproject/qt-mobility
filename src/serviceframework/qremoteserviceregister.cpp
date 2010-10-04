@@ -187,6 +187,26 @@ QRemoteServiceRegister::securityFilter QRemoteServiceRegister::setSecurityFilter
     return d->setSecurityFilter(filter);
 }
 
+QRemoteServiceRegister::Entry QRemoteServiceRegister::createEntry(const QString& serviceName, const QString& interfaceName, const QString& version, QRemoteServiceRegister::CreateServiceFunc cptr, const QMetaObject* meta)
+{
+    if (serviceName.isEmpty()
+            || interfaceName.isEmpty()
+            || version.isEmpty() ) {
+        qWarning() << "QRemoteServiceRegister::registerService: service name, interface name and version must be specified";
+        return Entry();
+    }
+
+    Entry e;
+    e.d->service = serviceName;
+    e.d->iface = interfaceName;
+    e.d->ifaceVersion = version;
+    e.d->cptr = cptr;
+    e.d->meta = meta;
+
+    return e;
+}
+
+
 #ifndef QT_NO_DATASTREAM
 QDataStream& operator>>(QDataStream& s, QRemoteServiceRegister::Entry& entry) {
     //for now we only serialize version, iface and service name
@@ -212,35 +232,6 @@ QDebug operator<<(QDebug dbg, const QRemoteServiceRegister::Entry& entry) {
     return dbg.space();
 }
 #endif
-
-template <typename T>
-QObject* qServiceTypeConstructHelper()
-{
-    return new T;
-}
-
-
-template <typename T>
-QRemoteServiceRegister::Entry QRemoteServiceRegister::createEntry(const QString& serviceName, const QString& interfaceName, const QString& version)
-{
-    if (serviceName.isEmpty()
-            || interfaceName.isEmpty()
-            || version.isEmpty() ) {
-        qWarning() << "QRemoteServiceRegister::registerService: service name, interface name and version must be specified";
-        return Entry();
-    }
-
-    QRemoteServiceRegister::CreateServiceFunc cptr = qServiceTypeConstructHelper<T>;
-
-    Entry e;
-    e.d->service = serviceName;
-    e.d->iface = interfaceName;
-    e.d->ifaceVersion = version;
-    e.d->cptr = cptr;
-    e.d->meta = &T::staticMetaObject;
-
-    return e;
-}
 
 #include "moc_qremoteserviceregister.cpp"
 

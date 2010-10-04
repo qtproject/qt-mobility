@@ -38,20 +38,24 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qremoteserviceclassregister.h>
-#include <qremoteservicecontrol.h>
+#include <qremoteserviceregister.h>
 #include <QCoreApplication>
 #include "remotedialer.h"
 
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
-
-    QRemoteServiceClassRegister::registerType<RemoteDialer>(QRemoteServiceClassRegister::UniqueInstance);
-    QRemoteServiceControl* control = new QRemoteServiceControl();
-    control->publishServices("dialer_service");
+    
+    //register the unique service
+    QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
+    QRemoteServiceRegister::Entry uniqueEntry =
+        serviceRegister->createEntry<RemoteDialer>(
+                "VoipDialer", "com.nokia.qt.examples.Dialer", "1.1");
+    uniqueEntry.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
+    serviceRegister->registerEntry(uniqueEntry);
+    serviceRegister->publishEntries("dialer_service");
     int res =  app.exec();
     
-    delete control;    
+    delete serviceRegister;    
     return res;
 }

@@ -130,6 +130,11 @@ Q_SIGNALS:
     // TODO void instanceDisconnected(const QRemoteServiceRegister::Entry&)
     void lastInstanceClosed();
 private:
+
+    Entry createEntry(const QString& serviceName,
+                    const QString& interfaceName, const QString& version,
+                    CreateServiceFunc cptr, const QMetaObject* meta);
+
     QRemoteServiceRegisterPrivate* d;
 };
 
@@ -157,6 +162,22 @@ QDataStream& operator<<(QDataStream& s, const QRemoteServiceRegister::Entry& ent
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QRemoteServiceRegister::Entry& entry);
 #endif
+
+template <typename T>
+QObject* qServiceTypeConstructHelper()
+{
+    return new T;
+}
+
+template <typename T>
+QRemoteServiceRegister::Entry QRemoteServiceRegister::createEntry(const QString& serviceName,
+                const QString& interfaceName, const QString& version)
+{
+
+    QRemoteServiceRegister::CreateServiceFunc cptr = qServiceTypeConstructHelper<T>;
+    return createEntry(serviceName, interfaceName, version, cptr, &T::staticMetaObject);
+}
+
 
 QTM_END_NAMESPACE
 #endif //QREMOTESERVICEREGISTER_H
