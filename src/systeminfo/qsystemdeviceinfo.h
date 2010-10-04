@@ -65,7 +65,7 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(QString model READ model CONSTANT)
     Q_PROPERTY(QString productName READ productName CONSTANT)
     Q_PROPERTY(int batteryLevel READ batteryLevel NOTIFY batteryLevelChanged)
-    Q_PROPERTY(bool isDeviceLocked READ isDeviceLocked)
+    Q_PROPERTY(bool isDeviceLocked READ isDeviceLocked NOTIFY deviceLocked)
     Q_PROPERTY(bool currentBluetoothPowerState READ currentBluetoothPowerState NOTIFY bluetoothStateChanged)
 
     Q_PROPERTY(KeyboardTypeFlags keyboardType READ keyboardType)//1.2
@@ -172,6 +172,7 @@ Q_SIGNALS:
 
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlip(bool open);//1.2
+    void deviceLocked(bool isLocked); // 1.2
 
 
 private:

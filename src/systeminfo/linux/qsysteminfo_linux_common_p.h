@@ -328,6 +328,7 @@ Q_SIGNALS:
 
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlip(bool open);//1.2
+    void deviceLocked(bool isLocked); // 1.2
 
 protected:
     bool btPowered;
