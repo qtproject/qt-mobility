@@ -48,6 +48,7 @@
 #include <QMetaType>
 #include <QHash>
 #include <QVariant>
+#include <qnumeric.h>
 
 QTM_USE_NAMESPACE
 
@@ -105,7 +106,24 @@ private slots:
 
         QCOMPARE(cat.name(), QString("CAT1"));
         QCOMPARE(cat.iconUrl(), QUrl("cat1 url"));
+    }
 
+    void radius()
+    {
+        QLandmark lm;
+        QVERIFY(lm.radius() == 0.0);
+        lm.setRadius(5000);
+        QVERIFY(lm.radius() == 5000);
+        lm.setRadius(-1);
+        QVERIFY(lm.radius() == 0.0);
+        lm.setRadius(100);
+        QVERIFY(lm.radius() == 100);
+        lm.setRadius(0);
+        QVERIFY(lm.radius() == 0.0);
+        lm.setRadius(1000);
+        QVERIFY(lm.radius() == 1000);
+        lm.setRadius(qQNaN());
+        QVERIFY(lm.radius() == 0.0);
     }
 
     /*/void settersAndGetters() {
