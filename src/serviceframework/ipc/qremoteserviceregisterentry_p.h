@@ -39,33 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICECONTROL_DBUS_P_H
-#define QREMOTESERVICECONTROL_DBUS_P_H
+#ifndef QREMOTESERVICEREGISTERENTRY_P_H
+#define QREMOTESERVICEREGISTERENTRY_P_H
 
-#include "qremoteservicecontrol.h"
-#include "qremoteservicecontrol_p.h"
-#include "instancemanager_p.h"
-#include "qserviceinterfacedescriptor.h"
-#include <QLocalServer>
-#include <QUuid>
-#include <QtDBus/QtDBus>
+#include <QExplicitlySharedDataPointer>
+#include <QString>
+
+#include "qremoteserviceregister.h"
+//#include "instancemanager_p.h"
+//#include "qserviceinterfacedescriptor.h"
 
 QTM_BEGIN_NAMESPACE
 
-class ObjectEndPoint;
-
-class QRemoteServiceControlDbusPrivate: public QRemoteServiceControlPrivate
+class QRemoteServiceRegisterEntryPrivate : public QSharedData
 {
-    Q_OBJECT
 public:
-    QRemoteServiceControlDbusPrivate(QObject* parent);
-    void publishServices(const QString& ident );
+    QRemoteServiceRegisterEntryPrivate()
+            : meta(0), cptr(0), instanceType(QRemoteServiceRegister::PrivateInstance)
+    {
+    }
 
-private:
-    bool createServiceEndPoint(const QString& ident);
+    QRemoteServiceRegisterEntryPrivate(QRemoteServiceRegisterEntryPrivate &other)
+        : QSharedData(other), iface(other.iface),
+          service(other.service), ifaceVersion(other.ifaceVersion),
+          meta(other.meta), cptr(other.cptr), instanceType(other.instanceType)
+    {
+    }
 
-    QLocalServer* localServer;
-    QList<ObjectEndPoint*> pendingConnections;   
+    QString iface;
+    QString service;
+    QString ifaceVersion;
+    const QMetaObject* meta;
+    QRemoteServiceRegister::CreateServiceFunc cptr;
+    QRemoteServiceRegister::InstanceType instanceType;
 };
 
 QTM_END_NAMESPACE
