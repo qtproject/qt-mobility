@@ -351,7 +351,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::title
+    \qmlproperty variant Audio::metaData.title
 
     This property holds the tile of the media.
 
@@ -359,7 +359,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::subTitle
+    \qmlproperty variant Audio::metaData.subTitle
 
     This property holds the sub-title of the media.
 
@@ -367,7 +367,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::author
+    \qmlproperty variant Audio::metaData.author
 
     This property holds the author of the media.
 
@@ -375,7 +375,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::comment
+    \qmlproperty variant Audio::metaData.comment
 
     This property holds a user comment about the media.
 
@@ -383,7 +383,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::description
+    \qmlproperty variant Audio::metaData.description
 
     This property holds a description of the media.
 
@@ -391,7 +391,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::category
+    \qmlproperty variant Audio::metaData.category
 
     This property holds the category of the media
 
@@ -399,7 +399,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::genre
+    \qmlproperty variant Audio::metaData.genre
 
     This property holds the genre of the media.
 
@@ -407,7 +407,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::year
+    \qmlproperty variant Audio::metaData.year
 
     This property holds the year of release of the media.
 
@@ -415,7 +415,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::date
+    \qmlproperty variant Audio::metaData.date
 
     This property holds the date of the media.
 
@@ -423,7 +423,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::userRating
+    \qmlproperty variant Audio::metaData.userRating
 
     This property holds a user rating of the media in the range of 0 to 100.
 
@@ -431,7 +431,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::keywords
+    \qmlproperty variant Audio::metaData.keywords
 
     This property holds a list of keywords describing the media.
 
@@ -439,7 +439,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::language
+    \qmlproperty variant Audio::metaData.language
 
     This property holds the language of the media, as an ISO 639-2 code.
 
@@ -447,7 +447,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::publisher
+    \qmlproperty variant Audio::metaData.publisher
 
     This property holds the publisher of the media.
 
@@ -455,7 +455,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::copyright
+    \qmlproperty variant Audio::metaData.copyright
 
     This property holds the media's copyright notice.
 
@@ -463,7 +463,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::parentalRating
+    \qmlproperty variant Audio::metaData.parentalRating
 
     This property holds the parental rating of the media.
 
@@ -471,7 +471,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::ratingOrganisation
+    \qmlproperty variant Audio::metaData.ratingOrganisation
 
     This property holds the name of the rating organisation responsible for the
     parental rating of the media.
@@ -480,7 +480,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::size
+    \qmlproperty variant Audio::metaData.size
 
     This property property holds the size of the media in bytes.
 
@@ -488,7 +488,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::mediaType
+    \qmlproperty variant Audio::metaData.mediaType
 
     This property holds the type of the media.
 
@@ -496,7 +496,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::audioBitRate
+    \qmlproperty variant Audio::metaData.audioBitRate
 
     This property holds the bit rate of the media's audio stream ni bits per
     second.
@@ -505,7 +505,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::audioCodec
+    \qmlproperty variant Audio::metaData.audioCodec
 
     This property holds the encoding of the media audio stream.
 
@@ -513,7 +513,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::averageLevel
+    \qmlproperty variant Audio::metaData.averageLevel
 
     This property holds the average volume level of the media.
 
@@ -521,7 +521,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::channelCount
+    \qmlproperty variant Audio::metaData.channelCount
 
     This property holds the number of channels in the media's audio stream.
 
@@ -529,7 +529,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::peakValue
+    \qmlproperty variant Audio::metaData.peakValue
 
     This property holds the peak volume of media's audio stream.
 
@@ -537,7 +537,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::sampleRate
+    \qmlproperty variant Audio::metaData.sampleRate
 
     This property holds the sample rate of the media's audio stream in hertz.
 
@@ -545,7 +545,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::albumTitle
+    \qmlproperty variant Audio::metaData.albumTitle
 
     This property holds the title of the album the media belongs to.
 
@@ -553,7 +553,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::albumArtist
+    \qmlproperty variant Audio::metaData.albumArtist
 
     This property holds the name of the principal artist of the album the media
     belongs to.
@@ -562,7 +562,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::contributingArtist
+    \qmlproperty variant Audio::metaData.contributingArtist
 
     This property holds the names of artists contributing to the media.
 
@@ -570,7 +570,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::composer
+    \qmlproperty variant Audio::metaData.composer
 
     This property holds the composer of the media.
 
@@ -578,7 +578,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::conductor
+    \qmlproperty variant Audio::metaData.conductor
 
     This property holds the conductor of the media.
 
@@ -586,7 +586,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::lyrics
+    \qmlproperty variant Audio::metaData.lyrics
 
     This property holds the lyrics to the media.
 
@@ -594,7 +594,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::mood
+    \qmlproperty variant Audio::metaData.mood
 
     This property holds the mood of the media.
 
@@ -602,7 +602,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::trackNumber
+    \qmlproperty variant Audio::metaData.trackNumber
 
     This property holds the track number of the media.
 
@@ -610,7 +610,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::trackCount
+    \qmlproperty variant Audio::metaData.trackCount
 
     This property holds the number of track on the album containing the media.
 
@@ -618,7 +618,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::coverArtUrlSmall
+    \qmlproperty variant Audio::metaData.coverArtUrlSmall
 
     This property holds the URL of a small cover art image.
 
@@ -626,7 +626,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::coverArtUrlLarge
+    \qmlproperty variant Audio::metaData.coverArtUrlLarge
 
     This property holds the URL of a large cover art image.
 
@@ -634,7 +634,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::resolution
+    \qmlproperty variant Audio::metaData.resolution
 
     This property holds the dimension of an image or video.
 
@@ -642,7 +642,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::pixelAspectRatio
+    \qmlproperty variant Audio::metaData.pixelAspectRatio
 
     This property holds the pixel aspect ratio of an image or video.
 
@@ -650,7 +650,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::videoFrameRate
+    \qmlproperty variant Audio::metaData.videoFrameRate
 
     This property holds the frame rate of the media's video stream.
 
@@ -658,7 +658,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::videoBitRate
+    \qmlproperty variant Audio::metaData.videoBitRate
 
     This property holds the bit rate of the media's video stream in bits per
     second.
@@ -667,7 +667,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::videoCodec
+    \qmlproperty variant Audio::metaData.videoCodec
 
     This property holds the encoding of the media's video stream.
 
@@ -675,7 +675,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::posterUrl
+    \qmlproperty variant Audio::metaData.posterUrl
 
     This property holds the URL of a poster image.
 
@@ -683,7 +683,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::chapterNumber
+    \qmlproperty variant Audio::metaData.chapterNumber
 
     This property holds the chapter number of the media.
 
@@ -691,7 +691,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::director
+    \qmlproperty variant Audio::metaData.director
 
     This property holds the director of the media.
 
@@ -699,7 +699,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::leadPerformer
+    \qmlproperty variant Audio::metaData.leadPerformer
 
     This property holds the lead performer in the media.
 
@@ -707,7 +707,7 @@ void QDeclarativeAudio::componentComplete()
 */
 
 /*!
-    \qmlproperty variant Audio::writer
+    \qmlproperty variant Audio::metaData.writer
 
     This property holds the writer of the media.
 
