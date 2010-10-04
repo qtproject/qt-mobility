@@ -635,17 +635,18 @@ QOrganizerItem QOrganizerItemSkeletonEngine::item(const QOrganizerItemLocalId& i
     return QOrganizerItemManagerEngine::item(itemId, fetchHint, error);
 }
 
-bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
     /*
         TODO
 
-        Save a list of items into the collection specified (or their current collection
+        Save a list of items into the collection specified in each (or their current collection
         if no collection is specified and they already exist, or the default collection
         if no collection is specified and they do not exist).
 
         For each item, convert it to your local type, assign an item id, and update the
         QOrganizerItem's ID (in the list above - e.g. *items[idx] = updated item).
+        Then, examine the collection id specified in each item and save the item in that collection.
 
         If you encounter an error (e.g. converting to local type, or saving), insert an entry into
         the map above at the corresponding index (e.g. errorMap->insert(idx, QOIM::InvalidDetailError).
@@ -653,7 +654,7 @@ bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, const
 
         The item passed in should be validated according to the schema.
     */
-    return QOrganizerItemManagerEngine::saveItems(items, collectionId, errorMap, error);
+    return QOrganizerItemManagerEngine::saveItems(items, errorMap, error);
 
 }
 
@@ -697,46 +698,44 @@ bool QOrganizerItemSkeletonEngine::removeDetailDefinition(const QString& definit
 }
 
 
-QOrganizerCollectionLocalId QOrganizerItemSkeletonEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
+QOrganizerCollection QOrganizerItemSkeletonEngine::defaultCollection(QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
 
         This allows clients to determine which collection an item will be saved,
         if the item is saved via saveItems() without specifying a collection id
-        of a collection in which to save the item.
-
-        If the backend does not support multiple collections (calendars) it may
-        return the default constructed collection id.
+        of a collection in which to save the item, via item->setCollectionId().
 
         There is always at least one collection in a manager, and all items are
         saved in exactly one collection.
      */
-    return QOrganizerItemManagerEngine::defaultCollectionId(error);
+    return QOrganizerItemManagerEngine::defaultCollection(error);
 }
 
-QList<QOrganizerCollectionLocalId> QOrganizerItemSkeletonEngine::collectionIds(QOrganizerItemManager::Error* error) const
+QOrganizerCollection QOrganizerItemSkeletonEngine::collection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
 
-        This allows clients to retrieve the ids of all collections currently
-        in this manager.  Some backends will have a prepopulated list of valid
-        collections, others will not.
+        This allows clients to retrieve a collection by (manager-local) id.
+        Prior to saving items, clients will set which collection the item will/should
+        be saved by calling item->setCollectionId().
      */
-    return QOrganizerItemManagerEngine::collectionIds(error);
+    return QOrganizerItemManagerEngine::collection(collectionId, error);
 }
 
-QList<QOrganizerCollection> QOrganizerItemSkeletonEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemSkeletonEngine::collections(QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
 
-        This allows clients to retrieve the collections which correspond
-        to the given collection ids.  A collection can have properties
+        This allows clients to retrieve a list of all of the collections currently
+        in this manager.  Some backends will have a prepopulated list of valid
+        collections, others will not.  A collection can have properties
         like colour, description, perhaps a priority, etc etc.
      */
-    return QOrganizerItemManagerEngine::collections(collectionIds, errorMap, error);
+    return QOrganizerItemManagerEngine::collections(error);
 }
 
 bool QOrganizerItemSkeletonEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)

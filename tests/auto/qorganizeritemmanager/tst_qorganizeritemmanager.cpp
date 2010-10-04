@@ -1194,7 +1194,7 @@ void tst_QOrganizerItemManager::batch()
     QMap<int, QOrganizerItemManager::Error> errorMap;
     // Add one dummy error to test if the errors are reset
     errorMap.insert(0, QOrganizerItemManager::NoError);
-    QVERIFY(cm->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap));
+    QVERIFY(cm->saveItems(&items, &errorMap));
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
     QVERIFY(errorMap.count() == 0);
 
@@ -1226,7 +1226,7 @@ void tst_QOrganizerItemManager::batch()
     descr.setDescription("This note is a terrible note");
     QVERIFY(items[2].saveDetail(&descr));
 
-    QVERIFY(cm->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap));
+    QVERIFY(cm->saveItems(&items, &errorMap));
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
     QVERIFY(errorMap.count() == 0);
 
@@ -1286,7 +1286,7 @@ void tst_QOrganizerItemManager::batch()
     b.saveDetail(&bad);
 
     items << a << b << c;
-    QVERIFY(!cm->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap));
+    QVERIFY(!cm->saveItems(&items, &errorMap)); // since we don't setCollectionId() in any of the items, they go in default collection.
     /* We can't really say what the error will be.. maybe bad argument, maybe invalid detail */
     QVERIFY(cm->error() != QOrganizerItemManager::NoError);
 
@@ -1316,7 +1316,7 @@ void tst_QOrganizerItemManager::batch()
 
     /* Fix up B and re save it */
     QVERIFY(items[1].removeDetail(&bad));
-    QVERIFY(cm->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap));
+    QVERIFY(cm->saveItems(&items, &errorMap));
     QVERIFY(errorMap.count() == 0);
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
     
@@ -1397,7 +1397,7 @@ void tst_QOrganizerItemManager::invalidManager()
 
     QMap<int, QOrganizerItemManager::Error> errorMap;
     errorMap.insert(0, QOrganizerItemManager::NoError);
-    QVERIFY(!manager.saveItems(0, QOrganizerCollectionLocalId(), &errorMap));
+    QVERIFY(!manager.saveItems(0, &errorMap));
     QVERIFY(errorMap.count() == 0);
     QVERIFY(manager.error() == QOrganizerItemManager::BadArgumentError);
 
@@ -1420,7 +1420,7 @@ void tst_QOrganizerItemManager::invalidManager()
     QList<QOrganizerItem> list;
     list << foo;
 
-    QVERIFY(!manager.saveItems(&list, QOrganizerCollectionLocalId(), &errorMap));
+    QVERIFY(!manager.saveItems(&list, &errorMap));
     QVERIFY(errorMap.count() == 0);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError);
 
@@ -2057,7 +2057,7 @@ void tst_QOrganizerItemManager::signalEmission()
     todo3.setId(QOrganizerItemId());
     batchAdd << todo << todo2 << todo3;
     QMap<int, QOrganizerItemManager::Error> errorMap;
-    QVERIFY(m1->saveItems(&batchAdd, QOrganizerCollectionLocalId(), &errorMap));
+    QVERIFY(m1->saveItems(&batchAdd, &errorMap));
 
     QVERIFY(batchAdd.count() == 3);
     todo = batchAdd.at(0);
@@ -2081,7 +2081,7 @@ void tst_QOrganizerItemManager::signalEmission()
 
     batchAdd.clear();
     batchAdd << todo << todo2 << todo3;
-    QVERIFY(m1->saveItems(&batchAdd, QOrganizerCollectionLocalId(), &errorMap));
+    QVERIFY(m1->saveItems(&batchAdd, &errorMap));
 
     sigids.clear();
     QTRY_WAIT( while(spyCM.size() > 0) {sigids += spyCM.takeFirst().at(0).value<QList<QOrganizerItemLocalId> >(); }, sigids.contains(todo.localId()) && sigids.contains(todo2.localId()) && sigids.contains(todo3.localId()));
@@ -2582,15 +2582,16 @@ void tst_QOrganizerItemManager::collections()
             QVERIFY(c1.id().isNull()); // should have a null id to start with.
             QVERIFY(oim->saveCollection(&c1));
             QVERIFY(!c1.id().isNull()); // should have been set by the save operation
-            QVERIFY(oim->collectionIds().contains(c1.localId()));
+            QVERIFY(oim->collections().contains(c1));
 
             // save an item in that collection
             QOrganizerItemCollectionFilter fil;
             fil.setCollectionId(c1.localId());
-            QVERIFY(oim->saveItem(&i1, c1.localId()));
+            i1.setCollectionId(c1.id());
+            QVERIFY(oim->saveItem(&i1));
             QVERIFY(i1.collectionId() == c1.id());
             QVERIFY(oim->items(fil).contains(i1)); // it should be in c1
-            fil.setCollectionId(oim->defaultCollectionId());
+            fil.setCollectionId(oim->defaultCollection().localId());
             QVERIFY(!oim->items(fil).contains(i1)); // it should not be in the default collection.
         }
     }
@@ -2606,25 +2607,28 @@ void tst_QOrganizerItemManager::collections()
             qDebug("Skipping second collection test; collection or items not compatible with manager!");
         } else {
             // save multiple collections. // XXX TODO: batch save for collections?
-            int originalColCount = oim->collectionIds().count();
+            int originalColCount = oim->collections().count();
             QVERIFY(oim->saveCollection(&c2));
             QVERIFY(oim->saveCollection(&c3));
-            QVERIFY(oim->collectionIds().count() == (originalColCount + 2));
+            QVERIFY(oim->collections().count() == (originalColCount + 2));
 
             // save i5 in c3 as a canary value.
-            QVERIFY(oim->saveItem(&i5, c3.localId()));
-            QVERIFY(oim->items().contains(i5));
+            i5.setCollectionId(c3.id());
 
-            // save multiple items in a collection
+            // save multiple items in collection c2
             QList<QOrganizerItem> saveList;
-            saveList << i2 << i3 << i4;
+            i2.setCollectionId(c2.id());
+            i3.setCollectionId(c2.id());
+            i4.setCollectionId(c2.id());
+            saveList << i2 << i3 << i4 << i5;
             int originalItemCount = oim->items().count();
-            QVERIFY(oim->saveItems(&saveList, c2.localId()));
+            QVERIFY(oim->saveItems(&saveList));
             i2 = saveList.at(0); // update from save list because manager might have added details / set ids etc.
             i3 = saveList.at(1);
             i4 = saveList.at(2);
+            i5 = saveList.at(3);
             QList<QOrganizerItem> fetchedItems = oim->items();
-            QVERIFY(fetchedItems.count() == (originalItemCount + 3));
+            QVERIFY(fetchedItems.count() == (originalItemCount + 4));
             QVERIFY(fetchedItems.contains(i2)); // these three should have been added
             QVERIFY(fetchedItems.contains(i3));
             QVERIFY(fetchedItems.contains(i4));
@@ -2642,7 +2646,7 @@ void tst_QOrganizerItemManager::collections()
             // remove a collection, removes its items.
             QVERIFY(oim->removeCollection(c2.localId()));
             fetchedItems = oim->items();
-            QVERIFY(fetchedItems.count() == originalItemCount);
+            QCOMPARE(fetchedItems.count(), originalItemCount + 1); // i5 should remain, i2->i4 should be removed.
             QVERIFY(!fetchedItems.contains(i2)); // these three should have been removed
             QVERIFY(!fetchedItems.contains(i3));
             QVERIFY(!fetchedItems.contains(i4));
@@ -2650,7 +2654,8 @@ void tst_QOrganizerItemManager::collections()
 
             // attempt to save an item in a non-existent collection should fail.
             i2.setId(QOrganizerItemId()); // reset Id so save can succeed...
-            QVERIFY(!oim->saveItem(&i2, c2.localId()));
+            i2.setCollectionId(c2.id());
+            QVERIFY(!oim->saveItem(&i2));
             fetchedItems = oim->items();
             QVERIFY(!fetchedItems.contains(i2)); // shouldn't have been added.
             QVERIFY(fetchedItems.contains(i5)); // i5 should not have been removed.

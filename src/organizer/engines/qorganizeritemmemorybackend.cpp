@@ -868,9 +868,9 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::items(const QOrganizerItemFilt
 
 /*! Saves the given organizeritem \a theOrganizerItem, storing any error to \a error and
     filling the \a changeSet with ids of changed organizeritems as required */
-bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
+bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
-    QOrganizerCollectionLocalId targetCollectionId = collectionId;
+    QOrganizerCollectionLocalId targetCollectionId = theOrganizerItem->collectionLocalId();
 
     // check that the collection exists (or is null :. default collection):
     if (!targetCollectionId.isNull() && !d->m_organizerCollectionIds.contains(targetCollectionId)) {
@@ -1031,7 +1031,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
         QOrganizerCollectionId targetCompleteCollectionId;
         targetCompleteCollectionId.setManagerUri(managerUri());
         targetCompleteCollectionId.setLocalId(targetCollectionId);
-        QOrganizerItemManagerEngine::setItemCollectionId(theOrganizerItem, targetCompleteCollectionId);
+        theOrganizerItem->setCollectionId(targetCompleteCollectionId);
         d->m_organizeritems.append(*theOrganizerItem);              // add organizer item to list
         d->m_organizeritemIds.append(theOrganizerItem->localId());  // track the organizer item id.
         d->m_itemsInCollections.insert(targetCollectionId, theOrganizerItem->localId());
@@ -1133,7 +1133,7 @@ bool QOrganizerItemMemoryEngine::typesAreRelated(const QString& occurrenceType, 
 }
 
 /*! \reimp */
-bool QOrganizerItemMemoryEngine::saveItems(QList<QOrganizerItem>* organizeritems, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemMemoryEngine::saveItems(QList<QOrganizerItem>* organizeritems, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
     if(errorMap) {
         errorMap->clear();
@@ -1149,7 +1149,7 @@ bool QOrganizerItemMemoryEngine::saveItems(QList<QOrganizerItem>* organizeritems
     QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
     for (int i = 0; i < organizeritems->count(); i++) {
         current = organizeritems->at(i);
-        if (!saveItem(&current, collectionId, changeSet, error)) {
+        if (!saveItem(&current, changeSet, error)) {
             operationError = *error;
             errorMap->insert(i, operationError);
         } else {
@@ -1213,47 +1213,36 @@ bool QOrganizerItemMemoryEngine::removeItems(const QList<QOrganizerItemLocalId>&
     return (*error == QOrganizerItemManager::NoError);
 }
 
-QOrganizerCollectionLocalId QOrganizerItemMemoryEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
+QOrganizerCollection QOrganizerItemMemoryEngine::defaultCollection(QOrganizerItemManager::Error* error) const
 {
     // default collection has id of 1.
     *error = QOrganizerItemManager::NoError;
-    return QOrganizerCollectionLocalId(new QOrganizerCollectionMemoryEngineLocalId(1));
-}
-
-QList<QOrganizerCollectionLocalId> QOrganizerItemMemoryEngine::collectionIds(QOrganizerItemManager::Error* error) const
-{
-    *error = QOrganizerItemManager::NoError;
-    return d->m_organizerCollectionIds;
-}
-
-QList<QOrganizerCollection> QOrganizerItemMemoryEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
-{
-    *error = QOrganizerItemManager::NoError;
-    QList<QOrganizerCollection> retn;
-    for (int i = 0; i < collectionIds.size(); ++i) {
-        QOrganizerCollectionLocalId currentInput = collectionIds.at(i);
-        bool foundThisId = false;
-        for (int j = 0; j < d->m_organizerCollectionIds.size(); ++j) {
-            QOrganizerCollectionLocalId currentComparison = d->m_organizerCollectionIds.at(j);
-            if (currentInput == currentComparison) {
-                // they want this collection to be returned.
-                retn.append(d->m_organizerCollections.at(j));
-                foundThisId = true;
-                break;
-            }
-        }
-
-        // check to see if we found this particular id in the given list.
-        if (!foundThisId) {
-            if (errorMap) {
-                errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
-                *error = QOrganizerItemManager::DoesNotExistError;
-            }
+    for (int i = 0; i < d->m_organizerCollections.size(); ++i) {
+        if (d->m_organizerCollections.at(i).localId() == QOrganizerCollectionLocalId(new QOrganizerCollectionMemoryEngineLocalId(1))) {
+            return d->m_organizerCollections.at(i);
         }
     }
 
-    // return the results.
-    return retn;
+    *error = QOrganizerItemManager::UnspecifiedError;
+    return QOrganizerCollection();
+}
+
+QOrganizerCollection QOrganizerItemMemoryEngine::collection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    for (int i = 0; i < d->m_organizerCollections.size(); ++i) {
+        if (d->m_organizerCollections.at(i).localId() == collectionId) {
+            return d->m_organizerCollections.at(i);
+        }
+    }
+
+    *error = QOrganizerItemManager::DoesNotExistError;
+    return QOrganizerCollection();
+}
+QList<QOrganizerCollection> QOrganizerItemMemoryEngine::collections(QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    return d->m_organizerCollections;
 }
 
 QOrganizerCollection QOrganizerItemMemoryEngine::compatibleCollection(const QOrganizerCollection& original, QOrganizerItemManager::Error* error) const
@@ -1520,7 +1509,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
 
             QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
             QMap<int, QOrganizerItemManager::Error> errorMap;
-            saveItems(&organizeritems, r->collectionId(), &errorMap, &operationError);
+            saveItems(&organizeritems, &errorMap, &operationError);
 
             updateItemSaveRequest(r, organizeritems, operationError, errorMap, QOrganizerItemAbstractRequest::FinishedState);
         }
@@ -1554,24 +1543,10 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
         {
             QOrganizerCollectionFetchRequest* r = static_cast<QOrganizerCollectionFetchRequest*>(currentRequest);
             QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
-            QMap<int, QOrganizerItemManager::Error> errorMap;
-            QList<QOrganizerCollection> requestedOrganizerCollections = collections(r->collectionIds(), &errorMap, &operationError);
+            QList<QOrganizerCollection> requestedOrganizerCollections = collections(&operationError);
 
             // update the request with the results.
-            updateCollectionFetchRequest(r, requestedOrganizerCollections, operationError, errorMap, QOrganizerItemAbstractRequest::FinishedState);
-        }
-        break;
-
-        case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest:
-        {
-            QOrganizerCollectionLocalIdFetchRequest* r = static_cast<QOrganizerCollectionLocalIdFetchRequest*>(currentRequest);
-            QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
-            QList<QOrganizerCollectionLocalId> requestedOrganizerCollectionIds = collectionIds(&operationError);
-
-            if (!requestedOrganizerCollectionIds.isEmpty() || operationError != QOrganizerItemManager::NoError)
-                updateCollectionLocalIdFetchRequest(r, requestedOrganizerCollectionIds, operationError, QOrganizerItemAbstractRequest::FinishedState);
-            else
-                updateRequestState(currentRequest, QOrganizerItemAbstractRequest::FinishedState);
+            updateCollectionFetchRequest(r, requestedOrganizerCollections, operationError, QOrganizerItemAbstractRequest::FinishedState);
         }
         break;
 

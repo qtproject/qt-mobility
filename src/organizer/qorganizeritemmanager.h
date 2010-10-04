@@ -91,7 +91,6 @@ public:
     static bool parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params); // replaces the above.
     static QString buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1);
 
-    /* The values of the Error enum are still to be decided! */
     enum Error {
         NoError = 0,
         DoesNotExistError,
@@ -107,7 +106,7 @@ public:
         VersionMismatchError,
         LimitReachedError,
         InvalidItemTypeError,
-        InvalidCollectionError, // maybe CollectionDoesNotExistError?
+        InvalidCollectionError,
         InvalidOccurrenceError
     };
 
@@ -117,9 +116,6 @@ public:
     /* Item Instances - both items and item occurrences (occurrences either saved or generated) */
     QList<QOrganizerItem> itemInstances(const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
     QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart = QDateTime(), const QDateTime& periodEnd = QDateTime(), int maxCount = -1) const;
-    // following two are unnecessary conveniences which might be expensive anyway.
-    //QList<QOrganizerItem> nextItemInstance(const QDateTime& fromDate, const QOrganizerItemFilter& filter, const QOrganizerItemFetchHint& fetchHint) const;
-    //QList<QOrganizerItem> nextItemInstance(const QDateTime& fromDate, const QOrganizerItem& recurrentItem, const QOrganizerItemFetchHint& fetchHint) const;
 
     /* Items - Accessors and Mutators */
     QList<QOrganizerItemLocalId> itemIds(const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;
@@ -129,17 +125,18 @@ public:
     QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;  // retrieve an item
 
-    bool saveItem(QOrganizerItem* item, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId());
-    bool saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId(), QMap<int, QOrganizerItemManager::Error>* errorMap = 0);
+    bool saveItem(QOrganizerItem* item);
+    bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap = 0);
     bool removeItem(const QOrganizerItemLocalId& itemId);
     bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap);
 
     /* Collections - every item belongs to one or more collections */
-    QOrganizerCollectionLocalId defaultCollectionId() const;
-    QList<QOrganizerCollectionLocalId> collectionIds() const;
-    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds = QList<QOrganizerCollectionLocalId>(), QMap<int, QOrganizerItemManager::Error>* errorMap = 0) const;
+    QOrganizerCollection defaultCollection() const;
+    QOrganizerCollection collection(const QOrganizerCollectionLocalId& collectionId) const;
+    QList<QOrganizerCollection> collections() const; // should this be replaced with collectionIds()?
     bool saveCollection(QOrganizerCollection* collection);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId);
+    bool removeCollection(const QOrganizerCollection& collection); // is this really necessary?
 
     /* Return a pruned or modified item which is valid and can be saved in the manager */
     QOrganizerItem compatibleItem(const QOrganizerItem& original);

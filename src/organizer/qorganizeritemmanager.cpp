@@ -462,11 +462,11 @@ QOrganizerItem QOrganizerItemManager::item(const QOrganizerItemLocalId& organize
 
   \sa managerUri()
  */
-bool QOrganizerItemManager::saveItem(QOrganizerItem* organizeritem, const QOrganizerCollectionLocalId& collectionId)
+bool QOrganizerItemManager::saveItem(QOrganizerItem* organizeritem)
 {
     if (organizeritem) {
         d->m_error = QOrganizerItemManager::NoError;
-        return d->m_engine->saveItem(organizeritem, collectionId, &d->m_error);
+        return d->m_engine->saveItem(organizeritem, &d->m_error);
     } else {
         d->m_error = QOrganizerItemManager::BadArgumentError;
         return false;
@@ -513,7 +513,7 @@ bool QOrganizerItemManager::removeItem(const QOrganizerItemLocalId& organizerite
 
   \sa QOrganizerItemManager::saveItem()
  */
-bool QOrganizerItemManager::saveItems(QList<QOrganizerItem>* organizeritems, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap)
+bool QOrganizerItemManager::saveItems(QList<QOrganizerItem>* organizeritems, QMap<int, QOrganizerItemManager::Error>* errorMap)
 {
     if (errorMap)
         errorMap->clear();
@@ -523,7 +523,7 @@ bool QOrganizerItemManager::saveItems(QList<QOrganizerItem>* organizeritems, con
     }
 
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->saveItems(organizeritems, collectionId, errorMap, &d->m_error);
+    return d->m_engine->saveItems(organizeritems, errorMap, &d->m_error);
 }
 
 /*!
@@ -564,37 +564,28 @@ bool QOrganizerItemManager::removeItems(const QList<QOrganizerItemLocalId>& orga
 /*!
   Returns the id of the default collection managed by this manager
  */
-QOrganizerCollectionLocalId QOrganizerItemManager::defaultCollectionId() const
+QOrganizerCollection QOrganizerItemManager::defaultCollection() const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->defaultCollectionId(&d->m_error);
+    return d->m_engine->defaultCollection(&d->m_error);
 }
 
 /*!
-  Returns the ids of collections managed by this manager.
+  Returns the collection identified by the given \a collectionId which is managed by this manager.
  */
-QList<QOrganizerCollectionLocalId> QOrganizerItemManager::collectionIds() const
+QOrganizerCollection QOrganizerItemManager::collection(const QOrganizerCollectionLocalId& collectionId) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->collectionIds(&d->m_error);
+    return d->m_engine->collection(collectionId, &d->m_error);
 }
 
 /*!
-  Returns the collections managed by this manager which
-  have an id contained in the list of collection ids \a collectionIds.
-  If the list of collection ids \a collectionIds is empty or
-  not specified, this function will return an empty list of collections.
-
-  If any of the ids in the given list of \a collectionIds is invalid (does not
-  exist in the manager), an error will be inserted into the \a errorMap at that
-  index.
-
-  XXX TODO: does the return list get filled with "blank" collections for errors?
+  Returns a list of all of the collections managed by this manager.
  */
-QList<QOrganizerCollection> QOrganizerItemManager::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap) const
+QList<QOrganizerCollection> QOrganizerItemManager::collections() const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->collections(collectionIds, errorMap, &d->m_error);
+    return d->m_engine->collections(&d->m_error);
 }
 
 /*!
@@ -636,6 +627,20 @@ bool QOrganizerItemManager::removeCollection(const QOrganizerCollectionLocalId& 
 {
     d->m_error = QOrganizerItemManager::NoError;
     return d->m_engine->removeCollection(collectionId, &d->m_error);
+}
+
+/*!
+  Removes the collection \a collection (and all items in the collection)
+  from the manager if the given \a collection exists in the manager.
+  Returns true on success, false on failure.
+
+  Attempting to remove the default collection will fail and calling \l error() will return
+  QOrganizerItemManager::PermissionsError.
+ */
+bool QOrganizerItemManager::removeCollection(const QOrganizerCollection& collection)
+{
+    d->m_error = QOrganizerItemManager::NoError;
+    return d->m_engine->removeCollection(collection.localId(), &d->m_error);
 }
 
 /*!

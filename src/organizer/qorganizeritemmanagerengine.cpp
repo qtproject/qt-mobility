@@ -54,6 +54,7 @@
 #include "qorganizeritem.h"
 #include "qorganizeritemfetchhint.h"
 
+#include "qorganizercollection_p.h"
 #include "qorganizeritem_p.h"
 #include "qorganizeritemdetail_p.h"
 
@@ -1710,12 +1711,12 @@ void QOrganizerItemManagerEngine::setDetailAccessConstraints(QOrganizerItemDetai
 }
 
 /*!
-  Sets the collection id of \a item to the supplied \a collectionId.
+  Sets the given \a collection to have its isDefault flag set to \a isDefault.
  */
-void QOrganizerItemManagerEngine::setItemCollectionId(QOrganizerItem* item, const QOrganizerCollectionId& collectionId)
+void QOrganizerItemManagerEngine::setCollectionIsDefault(QOrganizerCollection* collection, bool isDefault)
 {
-    if (item) {
-        QOrganizerItemData::setCollectionId(item, collectionId);
+    if (collection) {
+        collection->d->m_isDefault = isDefault;
     }
 }
 
@@ -1748,7 +1749,7 @@ void QOrganizerItemManagerEngine::setItemCollectionId(QOrganizerItem* item, cons
 
   \sa managerUri()
  */
-bool QOrganizerItemManagerEngine::saveItem(QOrganizerItem* organizeritem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
+bool QOrganizerItemManagerEngine::saveItem(QOrganizerItem* organizeritem, QOrganizerItemManager::Error* error)
 {
     // Convert to a list op
     if (organizeritem) {
@@ -1756,7 +1757,7 @@ bool QOrganizerItemManagerEngine::saveItem(QOrganizerItem* organizeritem, const 
         list.append(*organizeritem);
 
         QMap<int, QOrganizerItemManager::Error> errors;
-        bool ret = saveItems(&list, collectionId, &errors, error);
+        bool ret = saveItems(&list, &errors, error);
 
         if (errors.count() > 0)
             *error = errors.begin().value();
@@ -1827,10 +1828,9 @@ bool QOrganizerItemManagerEngine::removeItem(const QOrganizerItemLocalId& organi
 
   \sa QOrganizerItemManager::saveItem()
  */
-bool QOrganizerItemManagerEngine::saveItems(QList<QOrganizerItem>* organizeritems, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemManagerEngine::saveItems(QList<QOrganizerItem>* organizeritems, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(organizeritems);
-    Q_UNUSED(collectionId);
     Q_UNUSED(errorMap);
 
     *error = QOrganizerItemManager::NotSupportedError;
@@ -1872,41 +1872,36 @@ bool QOrganizerItemManagerEngine::removeItems(const QList<QOrganizerItemLocalId>
 }
 
 /*!
-    Returns the default collegtion Id.
+    Returns the default collection of the manager.
     Any errors encountered during this operation should be stored to
    \a error.
 */
-QOrganizerCollectionLocalId QOrganizerItemManagerEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
+QOrganizerCollection QOrganizerItemManagerEngine::defaultCollection(QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NotSupportedError;
-    return QOrganizerCollectionLocalId();
+    return QOrganizerCollection();
 }
 
 /*!
-    Returns the collegtion Ids.
+    Returns the collection identified by the given \a collectionId in the manager.
+    Any errors encountered during this operation should be stored to \a error.
+    If the given \a collectionId does not specify a valid collection, \a error will
+    be set to \c QOrganizerItemManager::DoesNotExistError.
+*/
+QOrganizerCollection QOrganizerItemManagerEngine::collection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
+{
+    Q_UNUSED(collectionId);
+    *error = QOrganizerItemManager::NotSupportedError;
+    return QOrganizerCollection();
+}
+
+/*!
+    Returns the list of all of the collections managed by this manager.
     Any errors encountered during this operation should be stored to
     \a error.
  */
-QList<QOrganizerCollectionLocalId> QOrganizerItemManagerEngine::collectionIds(QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemManagerEngine::collections(QOrganizerItemManager::Error* error) const
 {
-    *error = QOrganizerItemManager::NotSupportedError;
-    return QList<QOrganizerCollectionLocalId>();
-}
-
-/*!
-    Returns a list consisting of any collection whose id is contained in \a collectionIds.
-    Any errors encountered during this operation should be stored to \a error.
-    If \a collectionIds is empty, an empty list should be returned.
-    If any of the collection ids in \a collectionIds does not identify a valid collection in the manager,
-    an entry should be inserted into the \a errorMap for that index, with \c QOrganizerItemManager::DoesNotExistError specified.
-
-    XXX TODO: should it return a list of only the successful ones?  or fill the "empty" indices of the retn list with default constructed collections?
-*/
-QList<QOrganizerCollection> QOrganizerItemManagerEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
-{
-    Q_UNUSED(collectionIds);
-    Q_UNUSED(errorMap);
-
     *error = QOrganizerItemManager::NotSupportedError;
     return QList<QOrganizerCollection>();
 }
@@ -2813,7 +2808,7 @@ void QOrganizerItemManagerEngine::updateDefinitionFetchRequest(QOrganizerItemDet
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
  */
-void QOrganizerItemManagerEngine::updateCollectionFetchRequest(QOrganizerCollectionFetchRequest* req, const QList<QOrganizerCollection>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
+void QOrganizerItemManagerEngine::updateCollectionFetchRequest(QOrganizerCollectionFetchRequest* req, const QList<QOrganizerCollection>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
 {
     if (req) {
         QWeakPointer<QOrganizerCollectionFetchRequest> ireq(req); // Take this in case the first emit deletes us
@@ -2821,31 +2816,6 @@ void QOrganizerItemManagerEngine::updateCollectionFetchRequest(QOrganizerCollect
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
         rd->m_collections = result;
-        rd->m_errors = errorMap;
-        rd->m_error = error;
-        rd->m_state = newState;
-        ml.unlock();
-        emit ireq.data()->resultsAvailable();
-        if (emitState && ireq)
-            emit ireq.data()->stateChanged(newState);
-    }
-}
-
-/*!
-  Updates the given QOrganizerCollectionLocalIdFetchRequest \a req with the latest results \a result, and operation error \a error.
-  In addition, the state of the request will be changed to \a newState.
-
-  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
-  If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
- */
-void QOrganizerItemManagerEngine::updateCollectionLocalIdFetchRequest(QOrganizerCollectionLocalIdFetchRequest* req, const QList<QOrganizerCollectionLocalId>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
-{
-    if (req) {
-        QWeakPointer<QOrganizerCollectionLocalIdFetchRequest> ireq(req); // Take this in case the first emit deletes us
-        QOrganizerCollectionLocalIdFetchRequestPrivate* rd = static_cast<QOrganizerCollectionLocalIdFetchRequestPrivate*>(ireq.data()->d_ptr);
-        QMutexLocker ml(&rd->m_mutex);
-        bool emitState = rd->m_state != newState;
-        rd->m_collectionIds = result;
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();

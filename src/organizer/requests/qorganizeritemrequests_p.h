@@ -83,7 +83,6 @@ public:
     }
 
     QList<QOrganizerItem> m_organizeritems;
-    QOrganizerCollectionLocalId m_collectionId;
     QMap<int, QOrganizerItemManager::Error> m_errors;
 };
 
@@ -269,30 +268,7 @@ public:
         return QOrganizerItemAbstractRequest::CollectionFetchRequest;
     }
 
-    QList<QOrganizerCollectionLocalId> m_collectionIds;
-
     QList<QOrganizerCollection> m_collections;
-    QMap<int, QOrganizerItemManager::Error> m_errors;
-};
-
-class QOrganizerCollectionLocalIdFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
-{
-public:
-    QOrganizerCollectionLocalIdFetchRequestPrivate()
-        : QOrganizerItemAbstractRequestPrivate()
-    {
-    }
-
-    ~QOrganizerCollectionLocalIdFetchRequestPrivate()
-    {
-    }
-
-    QOrganizerItemAbstractRequest::RequestType type() const
-    {
-        return QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest;
-    }
-
-    QList<QOrganizerCollectionLocalId> m_collectionIds;
 };
 
 class QOrganizerCollectionRemoveRequestPrivate : public QOrganizerItemAbstractRequestPrivate

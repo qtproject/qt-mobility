@@ -53,6 +53,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QOrganizerItemManagerEngine;
 class QOrganizerCollectionData;
 class Q_ORGANIZER_EXPORT QOrganizerCollection
 {
@@ -72,6 +73,9 @@ public:
     void setId(const QOrganizerCollectionId& id);
     QOrganizerCollectionLocalId localId() const;
 
+    /* A collection may be the default collection in a manager */
+    bool isDefault() const;
+
     void setMetaData(const QVariantMap& metaData);
     QVariantMap metaData() const;
 
@@ -85,6 +89,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(KeyImage, "Image");
 
 private:
+    friend class QOrganizerItemManagerEngine;
     QSharedDataPointer<QOrganizerCollectionData> d;
 };
 
