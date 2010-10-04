@@ -1161,7 +1161,7 @@ void QSystemDeviceInfoPrivate::setupProfile()
         return;
     } else {
         QDBusReply<QString> deviceModeReply = mceConnectionInterface.call("get_device_mode");
-        flightMode = QString::compare(deviceModeReply.value(), "flight", Qt::CaseInsensitive) == 0;;
+        flightMode = QString::compare(deviceModeReply.value(), "flight", Qt::CaseInsensitive) == 0;
     }
 
     if (!systemDbusConnection.connect("com.nokia.mce",
