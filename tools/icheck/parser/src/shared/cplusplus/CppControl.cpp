@@ -58,7 +58,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "Control.h"
+#include "CppControl.h"
 #include "Literals.h"
 #include "LiteralTable.h"
 #include "TranslationUnit.h"

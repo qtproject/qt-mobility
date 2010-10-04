@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,35 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef CNTFILTERDETAILDISPLAYLABEL_H
-#define CNTFILTERDETAILDISPLAYLABEL_H
+#ifndef PUBSUBMONITOR_H
+#define PUBSUBMONITOR_H
 
-#include <qtcontactsglobal.h>
-#include <qcontactmanager.h>
-#include <qcontactdetailfilter.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include "cntabstractcontactfilter.h"
+#include <e32base.h>
+#include <e32property.h>
 
-QTM_USE_NAMESPACE
+#include "xqsettingskey_p.h"
+#include "xqsettingsmanager.h"
 
-class CntFilterDetailDisplayLabel 
-{
-public:
-    CntFilterDetailDisplayLabel();
-    virtual ~CntFilterDetailDisplayLabel();
-    
-public: 
-    QString createSelectQuery(const QContactFilter& filter,
-                                  const QList<QContactSortOrder>& sortOrders,
-                                  QContactManager::Error* error) const;
-    void createSelectQuery(const QContactFilter& detailFilter,
-                                  QString& sqlQuery,
-                                  QContactManager::Error* error);
-private: 
-    void createQuerySingleSearchValue(QString& sqlQuery, const QString &searchValue, const QStringList &columns) const;
-    void createQueryMultipleSearchValues(QString& sqlQuery, const QStringList &searchValues, const QStringList &columns) const;
-    QString createSubQuery(const QString &searchValue, const QString &column) const;
-    QString columnName(const QPair<QLatin1String, QLatin1String> &detail) const;
- };
+class MSettingsHandlerObserver;
 
-#endif /* CNTFILTERDETAILDISPLAYLABEL_H */
+class CPubSubMonitor : public CActive
+    { 
+    public:
+        CPubSubMonitor(const XQSettingsKey& aKey, XQSettingsManager::Type type, MSettingsHandlerObserver& aObserver);
+        ~CPubSubMonitor();
+        TInt StartMonitoring();
+        
+    private:
+        void RunL();
+        void DoCancel();
+              
+    private:
+        RProperty iProperty;
+        XQSettingsKey iKey;
+        XQSettingsManager::Type m_type;
+        MSettingsHandlerObserver& iObserver;
+    };
+
+#endif //PUBSUBMONITOR_H
