@@ -4,5 +4,6 @@ requires(!cross_compile)
 
 TEMPLATE = subdirs
 SUBDIRS = \
-    maketestselftest
+    maketestselftest \
+    # headers       # (seems unmaintained?)
 

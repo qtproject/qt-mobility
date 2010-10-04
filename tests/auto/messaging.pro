@@ -7,7 +7,9 @@ TEMPLATE = subdirs
 contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5|maemo6 {
     !win32-g++:SUBDIRS += \
         qmessagestore \
+        qmessagestorefiltercache \
         qmessagestorekeys \
         qmessage \
-        qmessageservice
+        qmessageservice \
+        # support   # this is a convenience library
 }
