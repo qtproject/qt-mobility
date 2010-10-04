@@ -70,7 +70,7 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
         */
 
         /*!
-           \fn void QSystemStorageInfo::logicalDriveChanged(bool added, const QString &vol)
+           \fn void QSystemStorageInfo::logicalDriveChanged(bool added,const QString &vol);
 
            This signal is emitted when the storage volume \a vol has been added to or removed from
            the system. If \a added is true, the volume has been added; if false, it has been
@@ -117,7 +117,7 @@ qlonglong QSystemStorageInfo::availableDiskSpace(const QString &volumeDrive)
  \property QSystemStorageInfo::logicalDrives
  \brief The logical drives.
 
-   Returns a QStringList of volumes or partitions.
+   Returns a QStringList of volumes or partitions, or an empty list if no drives are found.
 */
 QStringList QSystemStorageInfo::logicalDrives()
 {

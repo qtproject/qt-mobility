@@ -45,12 +45,10 @@
 
 #include "qgalleryitemrequest.h"
 #include "qgalleryqueryrequest.h"
-#include "qgalleryremoverequest.h"
 #include "qgallerytyperequest.h"
 
 #include "qgallerytrackerchangenotifier_p.h"
 #include "qgallerytrackereditableresultset_p.h"
-#include "qgallerytrackerremoveresponse_p.h"
 #include "qgallerytrackerschema_p.h"
 #include "qgallerytrackertyperesultset_p.h"
 
@@ -67,7 +65,6 @@ public:
     QGalleryAbstractResponse *createItemResponse(QGalleryItemRequest *request);
     QGalleryAbstractResponse *createTypeResponse(QGalleryTypeRequest *request);
     QGalleryAbstractResponse *createFilterResponse(QGalleryQueryRequest *request);
-    QGalleryAbstractResponse *createRemoveResponse(QGalleryRemoveRequest *request);
 
 private:
     QGalleryDBusInterfacePointer daemonInterface();
@@ -81,7 +78,7 @@ private:
             int offset,
             int limit,
             bool isItemType,
-            bool isAutoUpdate);
+            bool autoUpdate);
 
     QGalleryDBusInterfacePointer daemonService;
     QGalleryDBusInterfacePointer metaDataService;
@@ -154,7 +151,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     if (error != QDocumentGallery::NoError) {
         return new QGalleryAbstractResponse(error);
     } else {
-        return createItemListResponse(&arguments, 0, 1, schema.isItemType(), request->isAutoUpdate());
+        return createItemListResponse(&arguments, 0, 1, schema.isItemType(), request->autoUpdate());
     }
 }
 
@@ -171,7 +168,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createTypeResponse(QGalleryTy
     } else {
         QGalleryTrackerTypeResultSet *response = new QGalleryTrackerTypeResultSet(arguments);
 
-        if (request->isAutoUpdate()) {
+        if (request->autoUpdate()) {
             QObject::connect(
                     changeNotifier(), SIGNAL(itemsChanged(int)),
                     response, SLOT(refresh(int)));
@@ -186,18 +183,18 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
         int offset,
         int limit,
         bool isItemType,
-        bool isAutoUpdate)
+        bool autoUpdate)
 {
     QGalleryTrackerResultSet *response = 0;
 
     if (isItemType) {
         response = new QGalleryTrackerEditableResultSet(
-                arguments, metaDataInterface(), isAutoUpdate, offset, limit);
+                arguments, metaDataInterface(), autoUpdate, offset, limit);
     } else {
-        response = new QGalleryTrackerResultSet(arguments, isAutoUpdate, offset, limit);
+        response = new QGalleryTrackerResultSet(arguments, autoUpdate, offset, limit);
     }
 
-    if (isAutoUpdate) {
+    if (autoUpdate) {
         QObject::connect(
                 changeNotifier(), SIGNAL(itemsChanged(int)), response, SLOT(refresh(int)));
     }
@@ -231,24 +228,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
                 request->offset(),
                 request->limit(),
                 schema.isItemType(),
-                request->isAutoUpdate());
-    }
-}
-
-QGalleryAbstractResponse *QDocumentGalleryPrivate::createRemoveResponse(
-        QGalleryRemoveRequest *request)
-{
-    QDocumentGallery::Error error = QDocumentGallery::NoError;
-
-    QString fileName = QGalleryTrackerSchema::uriFromItemId(&error, request->itemId());
-
-    if (fileName.isNull()) {
-        if (error == QDocumentGallery::NoError)
-            error = QDocumentGallery::ItemIdError;
-
-        return new QGalleryAbstractResponse(error);
-    } else {
-        return new QGalleryTrackerRemoveResponse(fileInterface(), fileName);
+                request->autoUpdate());
     }
 }
 
@@ -268,7 +248,6 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::RequestType t
     case QGalleryAbstractRequest::QueryRequest:
     case QGalleryAbstractRequest::ItemRequest:
     case QGalleryAbstractRequest::TypeRequest:
-    case QGalleryAbstractRequest::RemoveRequest:
         return true;
     default:
         return false;
@@ -297,8 +276,6 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
         return d->createItemResponse(static_cast<QGalleryItemRequest *>(request));
     case QGalleryAbstractRequest::TypeRequest:
         return d->createTypeResponse(static_cast<QGalleryTypeRequest *>(request));
-    case QGalleryAbstractRequest::RemoveRequest:
-        return d->createRemoveResponse(static_cast<QGalleryRemoveRequest *>(request));
     default:
         return 0;
     }

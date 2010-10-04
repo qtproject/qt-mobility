@@ -43,47 +43,43 @@
 
 #include <qgalleryabstractrequest.h>
 
-QTM_BEGIN_NAMESPACE
+#include <QtCore/qmetaobject.h>
+#include <QtDeclarative/qdeclarativecontext.h>
+#include <QtDeclarative/qdeclarativeengine.h>
 
-static const char *qt_documentGalleryTypes[] =
-{
-    "File",
-    "Folder",
-    "Document",
-    "Text",
-    "Audio",
-    "Image",
-    "Video",
-    "Playlist",
-    "Artist",
-    "AlbumArtist",
-    "Album",
-    "AudioGenre",
-    "PhotoAlbum"
-};
+QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QDocumentGallery, qt_declarativeDocumentGalleryInstance);
 
 QString QDeclarativeDocumentGallery::toString(ItemType type)
 {
-    return type > InvalidType && type < NItemTypes
-            ? QLatin1String(qt_documentGalleryTypes[type - 1])
+    return type != InvalidType
+            ? QString::fromLatin1(staticMetaObject.enumerator(0).valueToKey(type))
             : QString();
 }
 
 QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGallery::itemTypeFromString(
         const QString &string)
 {
-    for (int i = InvalidType; i < NItemTypes; ++i) {
-        if (string == QLatin1String(qt_documentGalleryTypes[i]))
-            return ItemType(i);
-    }
+    const int key = staticMetaObject.enumerator(0).keyToValue(string.toLatin1().constData());
 
-    return QDeclarativeDocumentGallery::InvalidType;
+    return key != -1
+            ? ItemType(key)
+            : InvalidType;
 }
 
-QAbstractGallery *QDeclarativeDocumentGallery::gallery()
+QAbstractGallery *QDeclarativeDocumentGallery::gallery(QObject *object)
 {
+#ifndef QTM_BUILD_UNITTESTS
+    Q_UNUSED(object);
+#else
+    if  (QDeclarativeContext *context = QDeclarativeEngine::contextForObject(object)) {
+        if (QAbstractGallery *gallery = qobject_cast<QAbstractGallery *>(
+                context->contextProperty(QLatin1String("qt_testGallery")).value<QObject *>())) {
+            return gallery;
+        }
+    }
+#endif
     return qt_declarativeDocumentGalleryInstance();
 }
 

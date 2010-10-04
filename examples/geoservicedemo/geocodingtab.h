@@ -69,7 +69,6 @@ private:
     QLineEdit *m_city;
     QLineEdit *m_zip;
     QLineEdit *m_street;
-    QLineEdit *m_streetNumber;
 };
 
 class GeocodingTab: public QWidget

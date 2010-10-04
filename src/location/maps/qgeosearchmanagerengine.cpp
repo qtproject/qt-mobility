@@ -99,7 +99,10 @@ QTM_BEGIN_NAMESPACE
 */
 QGeoSearchManagerEngine::QGeoSearchManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoSearchManagerEnginePrivate()) {}
+        d_ptr(new QGeoSearchManagerEnginePrivate())
+{
+    Q_UNUSED(parameters)
+}
 
 /*!
     Destroys this engine.
@@ -303,6 +306,8 @@ QGeoSearchReply* QGeoSearchManagerEngine::search(const QString &searchString,
 {
     Q_UNUSED(searchString)
     Q_UNUSED(searchTypes)
+    Q_UNUSED(limit)
+    Q_UNUSED(offset)
     Q_UNUSED(bounds)
 
     return new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,

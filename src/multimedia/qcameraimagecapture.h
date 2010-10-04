@@ -72,12 +72,10 @@ public:
         FormatError
     };
 
-#ifndef Q_DOC
     enum DriveMode
     {
         SingleImageCapture
     };
-#endif
 
     QCameraImageCapture(QMediaObject *mediaObject, QObject *parent = 0);
     ~QCameraImageCapture();

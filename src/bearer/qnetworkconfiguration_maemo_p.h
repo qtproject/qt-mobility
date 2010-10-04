@@ -105,11 +105,11 @@ public:
         return iap_type;
     }
 
-    uint32_t network_attrs; /* network attributes for this IAP, this is the value returned by icd and passed to it when connecting */
+    quint32 network_attrs; /* network attributes for this IAP, this is the value returned by icd and passed to it when connecting */
 
     QString service_type;
     QString service_id;
-    uint32_t service_attrs;
+    quint32 service_attrs;
 
     QNetworkConfigurationManagerPrivate *manager;
 

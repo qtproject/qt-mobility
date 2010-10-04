@@ -43,6 +43,8 @@
 
 #include <qgalleryresultset.h>
 
+#include <QtCore/qcoreapplication.h>
+#include <QtDeclarative/qdeclarativeinfo.h>
 #include <QtDeclarative/qdeclarativepropertymap.h>
 
 QTM_BEGIN_NAMESPACE
@@ -51,7 +53,7 @@ QDeclarativeGalleryItem::QDeclarativeGalleryItem(QObject *parent)
     : QObject(parent)
     , m_metaData(0)
     , m_status(Null)
-    , m_complete(false)
+    , m_updateStatus(Incomplete)
 {
     connect(&m_request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
             this, SLOT(_q_statusChanged()));
@@ -72,35 +74,139 @@ QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
 {
 }
 
-void QDeclarativeGalleryItem::classBegin()
+qreal QDeclarativeGalleryItem::progress() const
 {
+    const int max = m_request.maximumProgress();
+
+    return max > 0
+            ? qreal(m_request.currentProgress()) / max
+            : qreal(0.0);
+}
+
+void QDeclarativeGalleryItem::setPropertyNames(const QStringList &names)
+{
+    if (m_updateStatus == Incomplete) {
+        m_request.setPropertyNames(names);
+
+        emit propertyNamesChanged();
+    }
+}
+
+void QDeclarativeGalleryItem::setAutoUpdate(bool enabled)
+{
+    if (m_request.autoUpdate() != enabled) {
+        m_request.setAutoUpdate(enabled);
+
+        if (enabled)
+            deferredExecute();
+        else if (m_status == Idle)
+            m_request.cancel();
+
+        emit autoUpdateChanged();
+    }
+}
+
+void QDeclarativeGalleryItem::setItemId(const QVariant &itemId)
+{
+    if (m_request.itemId() != itemId) {
+        m_request.setItemId(itemId);
+
+        if (m_updateStatus != Incomplete) {
+            if (itemId.isValid())
+                m_request.execute();
+            else
+                m_request.clear();
+        }
+
+        emit itemIdChanged();
+    }
 }
 
 void QDeclarativeGalleryItem::componentComplete()
 {
-    m_complete = true;
+    m_updateStatus = NoUpdate;
 
     if (m_request.itemId().isValid())
         m_request.execute();
 }
 
+void QDeclarativeGalleryItem::reload()
+{
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
+
+    m_request.execute();
+}
+
+void QDeclarativeGalleryItem::cancel()
+{
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
+
+    m_request.cancel();
+}
+
+void QDeclarativeGalleryItem::clear()
+{
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
+
+    m_request.clear();
+}
+
+void QDeclarativeGalleryItem::deferredExecute()
+{
+    if (m_updateStatus == NoUpdate) {
+        m_updateStatus = PendingUpdate;
+
+        QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+    } else if (m_updateStatus == CancelledUpdate) {
+        m_updateStatus = PendingUpdate;
+    }
+}
+
+bool QDeclarativeGalleryItem::event(QEvent *event)
+{
+    if (event->type() == QEvent::UpdateRequest) {
+        UpdateStatus status = m_updateStatus;
+        m_updateStatus = NoUpdate;
+
+        if (status == PendingUpdate)
+            m_request.execute();
+
+        return true;
+    } else {
+        return QObject::event(event);
+    }
+}
+
 void QDeclarativeGalleryItem::_q_statusChanged()
 {
-    Status status = m_status;
-    QString message = m_request.errorString();
-
     m_status = Status(m_request.status());
 
-    qSwap(message, m_errorMessage);
+    if (m_status == Error) {
+        const QString message = m_request.errorString();
 
-    if (m_status != status) {
-        m_status = status;
-
+        if (!message.isEmpty()) {
+            qmlInfo(this) << message;
+        } else {
+            switch (m_request.error()) {
+            case QDocumentGallery::ConnectionError:
+                qmlInfo(this) << tr("An error was encountered connecting to the document gallery");
+                break;
+            case QDocumentGallery::ItemIdError:
+                qmlInfo(this) << tr("The value of item is not a valid item ID");
+                break;
+            default:
+                break;
+            }
+        }
+        emit statusChanged();
+    } else if (m_status == Idle && !m_request.autoUpdate()) {
+        m_request.cancel();
+    } else {
         emit statusChanged();
     }
-
-    if (message != m_errorMessage)
-        emit errorMessageChanged();
 }
 
 void QDeclarativeGalleryItem::_q_itemChanged()
@@ -169,13 +275,16 @@ void QDeclarativeGalleryItem::_q_metaDataChanged(const QList<int> &keys)
 QDeclarativeDocumentGalleryItem::QDeclarativeDocumentGalleryItem(QObject *parent)
     : QDeclarativeGalleryItem(parent)
 {
-    m_request.setGallery(QDeclarativeDocumentGallery::gallery());
-
     connect(this, SIGNAL(availableChanged()), this, SIGNAL(itemTypeChanged()));
 }
 
 QDeclarativeDocumentGalleryItem::~QDeclarativeDocumentGalleryItem()
 {
+}
+
+void QDeclarativeDocumentGalleryItem::classBegin()
+{
+    m_request.setGallery(QDeclarativeDocumentGallery::gallery(this));
 }
 
 /*!

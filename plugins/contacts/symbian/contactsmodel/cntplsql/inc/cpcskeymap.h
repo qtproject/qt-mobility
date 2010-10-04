@@ -30,6 +30,13 @@
 class QString;
 class QChar;
 class HbKeymap;
+class MLanguageSpecificKeymap;
+
+// Code using the new API (wk32 onwards) is put here. Remove old API code
+// when wk30 is no longer used.
+// There seems to be a resource leak when using the new API. That's why the old
+// API is still being used.
+// #define NEW_KEYMAP_FACTORY_API
 
 
 // CLASS DECLARATION
@@ -85,13 +92,19 @@ NONSHARABLE_CLASS(CPcsKeyMap) : public CBase
 								  TBool aUpperLimit,
 								  QString& aValue) const = 0;
 
+		/**
+         * Read the keymap-specific extra characters from the keymap and append
+		 * them to the internal keymap (iKeyMapping).
+         * Returns they amount of characters appended.
+         */
+		virtual TInt ReadExtraCharacters(const HbInputLanguage& aLanguage) = 0;
+
 	protected: // Virtual functions
 		virtual QList<HbInputLanguage> SelectLanguages();
 
 	private: // Virtual functions
 		virtual void SetHardcodedCharacters();
 
-	private: // Virtual functions
 		/**
          * Returns ETrue if characters that are mapped to certain specific keys,
 		 * should be skipped.
@@ -99,6 +112,8 @@ NONSHARABLE_CLASS(CPcsKeyMap) : public CBase
 		virtual TBool DetermineSpecialCharBehaviour(QString aSource) const;
 
 		virtual TBool ShouldSkipChar(QChar aChar, TBool aSkipHashStar) const;
+
+		virtual MLanguageSpecificKeymap* CheckLanguage(QString aSource) const;
 
 	protected: // Constructors
 		/**
@@ -110,6 +125,11 @@ NONSHARABLE_CLASS(CPcsKeyMap) : public CBase
 		 * Second phase constructor
 		 */
 		void ConstructL(HbKeyboardType aKeyboardType);
+
+	protected: // New functions
+		TBool AddNewKeyToMap(TInt aKey, const QString aCharsForKey, TInt& aCount);
+
+		TBool IsCharAlreadyMapped(QChar aChar) const;
 
 	private: // New functions
 		void InitKeyMappings();
@@ -128,17 +148,17 @@ NONSHARABLE_CLASS(CPcsKeyMap) : public CBase
          * Returns the key into which the given character is mapped.
          */
 		const QChar MappedKeyForChar(const QChar aChar) const;
-		
+
 		/**
          * Read the keymap's keys and append them to the internal keymap
          * (iKeyMapping).
-         * Returns they amount of keys appended to the iKeyMapping.
+         * Returns they amount of characters appended.
          */
 		TInt ReadKeymapCharacters(HbKeyboardType aKeyboardType,
                                   const HbKeymap& aKeymap);
 
 	protected:
-		// One QString for each key of the keyboard.
+		// One QString for each mapped key.
 		// Each contains all the characters that can originate from that key,
         // considering the languages available on the device.
 		//
@@ -149,16 +169,18 @@ NONSHARABLE_CLASS(CPcsKeyMap) : public CBase
 		//
 		// Qwerty keymap has keys q, w, e, r, ...
 		//   iKeyMapping[0] has mappings for q-key, iKeyMapping[1] for w-key, ...
+		//   The decimal numbers (1-9,0) are located after the last key of the
+		//   virtual qwerty keyboard.
         QList<QString> iKeyMapping;
 
 		// Characters that have been hardcoded to certain keys, regardless of
 		// the actual keymaps.
 		QString iHardcodedChars;
 
-	private: // Data
-		// How many keys (not characters) the keymap has
-		const TInt iAmountOfKeys;
+		// How many keys (not characters) have been mapped
+		TInt iAmountOfKeys;
 
+	private: // Data
 		// Unmapped (unknown) characters are mapped to this
 		const QChar iPadChar;
 

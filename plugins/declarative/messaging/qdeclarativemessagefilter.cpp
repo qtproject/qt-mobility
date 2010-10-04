@@ -70,6 +70,8 @@ void QDeclarativeMessageFilterBase::setNegated(bool n)
     \qmlclass MessageIntersectionFilter QDeclarativeMessageIntersectionFilter
     \brief The MessageIntersectionFilter element specifies an insection of MessageFilter
 
+    \ingroup qml-messaging
+
     This element is part of the \bold{QtMobility.messaging 1.1} module.
 
     Logical AND combinations of MessageFilters can be formed using MessageIntersectionFilter.
@@ -142,6 +144,8 @@ QMessageFilter QDeclarativeMessageIntersectionFilter::filter()
 /*!
     \qmlclass MessageUnionFilter QDeclarativeMessageUnionFilter
     \brief The MessageUnionFilter element specifies a union of MessageFilter
+
+    \ingroup qml-messaging
 
     This element is part of the \bold{QtMobility.messaging 1.1} module.
 
@@ -229,6 +233,8 @@ public:
 /*!
     \qmlclass MessageFilter QDeclarativeMessageFilter
     \brief The MessageFilter element specifies a message filter for MessageModel
+
+    \ingroup qml-messaging
 
     This element is part of the \bold{QtMobility.messaging 1.1} module.
 

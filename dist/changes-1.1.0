@@ -53,6 +53,47 @@ QtContacts
  - foo
     * bar
 
+QtGallery
+------
+
+ - Added a QGalleryTypeRequest class.
+ - Replaced the QGalleryItemList class with QGalleryResultSet.
+ - Replaced the QGalleryItemListModel class with QGalleryQueryModel
+ - Removed the QGalleryCountRequest and QGalleryRemoveRequest classes.
+ - QGalleryAbstractRequest
+    * Replaced the result property with error and errorString properties.
+    * Added Cancelled, Finished, and Error to the Status enum.
+    * Moved the Scope enum to QGalleryQueryRequest.
+ - QDocumentGallery
+    * Removed the iconImage, iconPixmap, thumbnailImage, thumbnailPixmap,
+      previewImage, previewPixmap, and photoAlbum property definitions.
+    * Added Error enum.
+ - QGalleryQueryRequest
+    * Added meta-data accessor functions.
+    * Renamed the live property to autoUpdate.
+ - QGalleryItemRequest
+    * Added meta-data accessor functions.
+    * Renamed the live property to autoUpdate.
+ - QGalleryMetaDataFilter
+    * Removed the caseSensitivity property.
+    * Renamed the isInverted property to isNegated.
+ - QGalleryProperty
+    * Added contains(), startsWith(), endsWith(), wildcard(), and regExp()
+      functions for constructing meta-data filters.
+ - QML Elements
+    * Renamed GalleryQueryModel element to DocumentGalleryModel.
+    * Renamed GalleryItem to DocumentGalleryItem.
+    * Added a DocumentGalleryType element.
+    * Removed the gallery property from elements.
+    * Removed the DocumentGallery element.
+    * Removed the GalleryQueryCount element.
+    * Added Cancelled, Finished, and Error status values to
+      DocumentGalleryModel and DocumentGalleryItem.
+    * Spilt the GalleryFilter element into separate elements for each
+      filter comparator.
+    * Renamed the inverted filter property to negated.
+    * Removed the caseSensitivity filter property.
+
 QtLandmarks
 ------
  - Import and export landmarks atomically for sqlite backend
@@ -107,20 +148,53 @@ QtMapsAndNavigation
 QtMessaging
 ------
 
- - foo
-    * bar
+ - Harmattan backend implemented
+ - Fix assigning an invalid QMessageId causes crash, QTMOBILITY-427, QTMOBILITY-434
+ - Fix failure to compile with Qt 4.7, QTMOBILITY-390
+ - Fix ORing with an empty filter results in empty filter MOBILITY-1241
+    * Includes API documentation revision
+ - Fix writemessage example does not have a focused widget at start, MOBILITY-1229
+ - Fremantle, fix Scandinavian characters not correctly handled in SMS, MOBILITY-1362
+ - Fremantle, fix simultaneous SMS queries not possible, MOBILITY-1363
+ - Fremantle, Message caching, prefilter functionality and related tests implemented
+ - Fremantle, Modified and removed signals added for SMS messages
+ - Symbian, fix keepintouch searching doesn't stop, MOBILITY-1418
+ - Symbian, fix MMS message size limit not documented, MOBILITY-1224
+ - Symbian, fix unable to send Chinese language SMS, MOBILITY-1168, QTMOBILITY-433
+ - Symbian, MTM, send status signaling improved, MOBILITY-1148
+ - Symbian^3, FreeStyle, fix backend is not thread safe, MOBILITY-1349
+ - Symbian^3, fix keepintouch example crashes on exit, MOBILITY-1417
 
 QtMultimediaKit
 ------
 
- - foo
-    * bar
+ - QAudioOutput
+    * Fix crash on Windows when initialized with an invalid format
+      [QTMOBILITY-438]
+ - QMediaImageViewer
+    * Added setVideoOutput functions.
+ - QVideoWidget
+    * Fixed flickering when resizing a video widget on Windows.
+      [QTMOBILITY-407]
 
 QtPublishSubscribe
 ------
 
  - foo
     * bar
+
+QtSensors
+------
+
+ - Fix a packaging bug affecting S60 3.1 devices [QTMOBILITY-423]
+ - Document why sensor readings are not available after calling start() [QTMOBILITY-440]
+ - Document Sensors.conf [QTMOBILITY-441]
+ - Document output range meta-data [QTMOBILITY-469]
+ - Use prefixed includes from public headers [QTMOBILITY-476]
+
+Note that the above fixes are also in 1.0.3.
+
+ - Don't allow setting invalid values for enum types [QTMOBILITY-277]
 
 QtServiceFramework
 ------
@@ -133,6 +207,34 @@ QtSystemInfo
 
  - foo
     * bar
+
+QtVersit
+-----
+
+ - Added iCalendar import and export support.
+   * Added QVersitOrganizerImporter and QVersitOrganizerExporter classes
+ - Extended QVersitDocument to support iCalendar documents
+   * Added componentType(), setComponentType() Added subDocuments(),
+   * addSubDocuments(), setSubDocuments() Added ICalendar20Type (iCalendar
+     2.0) and VCard40Type (vCard 4.0) to VersitType enum
+   * Added PreformattedType to QVersitProperty::ValueType enum to support
+     the iCalendar RRULE property
+ - Added a plugin-based extension mechanism for import and export.
+   * Added QVersitContactExporterDetailHandlerV2, which supercedes
+     QVersitContactExporterDetailHandler
+   * Added QVersitContactImporterPropertyHandlerV2, which supercedes
+     QVersitContactImporterPropertyHandler
+   * Deprecated QVersitContactExporter::detailHandler() and
+     QVersitContactImporter::propertyHandler() getters
+   * Added a "profile" argument to the importer and exporter for plugin
+     selection.
+ - Added a "backup" plugin to try to preserve a contact as perfectly as
+   possible when stored and retrieved from vCard when the "Backup" profile is
+   selected.
+ - Fixed QTMOBILITY-478 QVersitContactExporter fails to export a contact
+   with no name
+ - Fixed QTMOBILITY-489 Multiple of the same Nickname should only be added
+   once
 
 Qt Mobility Plugins
 ------

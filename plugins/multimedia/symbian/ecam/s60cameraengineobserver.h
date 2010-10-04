@@ -59,14 +59,23 @@ enum TCameraEngineError
     EErrOptimisedFocusComplete,
 };
 
+/*
+ * CameraEngine Observer class towards Camera AdvancedSettings
+ */
 class MAdvancedSettingsObserver
-    {
+{
+
 public:
 
     virtual void HandleAdvancedEvent( const TECAMEvent &aEvent ) = 0;
 
-    };
+};
 
+//=============================================================================
+
+/*
+ * CameraEngine Observer class towards Camera Control
+ */
 class MCameraEngineObserver
 {
 public:
@@ -75,6 +84,24 @@ public:
      * Camera is ready to use for capturing images.
      */
     virtual void MceoCameraReady() = 0;
+
+    /**
+     * Notifies clients about errors in camera engine
+     * @param aErrorType type of error (see TCameraEngineError)
+     * @param aError Symbian system-wide error code
+     */
+    virtual void MceoHandleError( TCameraEngineError aErrorType, TInt aError ) = 0;
+
+};
+
+//=============================================================================
+
+/*
+ * CameraEngine Observer class towards Camera ImageCaptureSession
+ */
+class MCameraEngineImageCaptureObserver
+{
+public:
 
     /**
      * Camera AF lens has attained optimal focus
@@ -111,6 +138,11 @@ public:
     virtual void MceoHandleOtherEvent( const TECAMEvent& /*aEvent*/ ) {}
 };
 
+//=============================================================================
+
+/*
+ * CameraEngine Observer class towards Camera ViewFinderEngine
+ */
 class MCameraViewfinderObserver
 {
 public:

@@ -40,9 +40,9 @@
 ****************************************************************************/
 
 import Qt 4.7
-import Qt.multimedia 4.7
+import QtMultimediaKit 1.1
 
-Item {
+FocusScope {
     property Camera camera
     property bool previewAvailable : false
 
@@ -70,12 +70,63 @@ Item {
             onClicked: camera.captureImage()
         }
 
-        FlashModesButton {
+        CameraPropertyButton {
             id : flashModesButton
+            value: Camera.FlashOff
+            model: ListModel {
+                ListElement {
+                    icon: "images/camera_flash_auto.png"
+                    value: Camera.FlashAuto
+                    text: "Auto"
+                }
+                ListElement {
+                    icon: "images/camera_flash_off.png"
+                    value: Camera.FlashOff
+                    text: "Off"
+                }
+                ListElement {
+                    icon: "images/camera_flash_fill.png"
+                    value: Camera.FlashOn
+                    text: "On"
+                }
+                ListElement {
+                    icon: "images/camera_flash_redeye.png"
+                    value: Camera.FlashRedEyeReduction
+                    text: "Red Eye Reduction"
+                }
+            }
         }
 
-        WBModesButton {
+        CameraPropertyButton {
             id : wbModesButton
+            value: Camera.WhiteBalanceAuto
+            model: ListModel {
+                ListElement {
+                    icon: "images/camera_auto_mode.png"
+                    value: Camera.WhiteBalanceAuto
+                    text: "Auto"
+                }
+                ListElement {
+                    icon: "images/camera_white_balance_sunny.png"
+                    value: Camera.WhiteBalanceSunlight
+                    text: "Sunlight"
+                }
+                ListElement {
+                    icon: "images/camera_white_balance_cloudy.png"
+                    value: Camera.WhiteBalanceCloudy
+                    text: "Cloudy"
+                }
+                ListElement {
+                    icon: "images/camera_white_balance_incandescent.png"
+                    value: Camera.WhiteBalanceIncandescent
+                    text: "Incandescent"
+                }
+                ListElement {
+                    icon: "images/camera_white_balance_flourescent.png"
+                    value: Camera.WhiteBalanceFluorescent
+                    text: "Fluorescent"
+                }
+            }
         }
 
         ExposureCompensationButton {
@@ -87,6 +138,16 @@ Item {
             onClicked: captureControls.previewSelected()
             visible: captureControls.previewAvailable
         }
+    }
+
+    CameraButton {
+        id: quitButton
+        anchors.right : parent.right
+        anchors.rightMargin: 8
+        anchors.bottom : parent.bottom
+        anchors.bottomMargin: 8
+        text: "Quit"
+        onClicked: Qt.quit()
     }
 
     Item {
@@ -148,11 +209,11 @@ Item {
     ZoomControl {
         x : 0
         y : 0
-        width : parent.width/4
+        width : 100
         height: parent.height
 
         currentZoom: camera.digitalZoom
-        maximumZoom: Math.min(3.0, camera.maximumDigitalZoom)
+        maximumZoom: Math.min(4.0, camera.maximumDigitalZoom)
         onZoomTo: camera.setDigitalZoom(value)
     }
 }

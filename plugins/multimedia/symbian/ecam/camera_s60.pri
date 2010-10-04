@@ -3,13 +3,33 @@ INCLUDEPATH += $$PWD
 # Camera Service
 DEFINES += QMEDIA_SYMBIAN_CAMERA
 
-#3.1 Platform uses autofocusing from ForumNokia example
+#3.1 Platform
 contains(S60_VERSION, 3.1) {
     DEFINES += S60_31_PLATFORM
-    MMP_RULES += "MACRO S60_31_PLATFORM"
+}
+# S60 3.2 Platform:
+contains(S60_VERSION, 3.2) {
+    DEFINES += S60_32_PLATFORM
+}
 
+# Symbian3 Platform:
+exists($${EPOCROOT}epoc32\\include\\platform\\graphics\\surface.h) {
+    DEFINES += SYMBIAN_3_PLATFORM
+    DEFINES += USING_NGA
+}
+# S60 5.0 Platform:
+!contains(DEFINES, S60_31_PLATFORM) {
+    !contains(DEFINES, S60_32_PLATFORM) {
+        !contains(DEFINES, SYMBIAN_3_PLATFORM) {
+            DEFINES += S60_50_PLATFORM
+        }
+    }
+}
+
+# AutoFocusing (CamAutoFocus) from ForumNokia example
+contains(symbian_camera_camautofocus_enabled, yes) {
     exists($${EPOCROOT}epoc32\\include\\CCamAutoFocus.h) {
-        message ("Using S60 3.1 autofocusing")
+        message ("CameraBE: Using S60 3.1 autofocusing")
         MMP_RULES += \
             "$${LITERAL_HASH}ifdef WINSCW" \
             "LIBRARY camautofocus.lib" \
@@ -20,28 +40,50 @@ contains(S60_VERSION, 3.1) {
     }
 }
 
-# S60 3.2 Platform:
-exists($${EPOCROOT}epoc32\\include\\ecamadvancedsettings.h) {
-    MMP_RULES += \
-        "$${LITERAL_HASH}ifndef WINSCW" \
-        "LIBRARY ecamadvsettings.lib" \
-        "MACRO USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER" \
-        "$${LITERAL_HASH}endif"
-    message("Using from s60 3.2 CCameraAdvancedSettings header")
+# ECam AdvancedSettings
+contains(symbian_camera_ecamadvsettings_enabled, yes) {
+    exists($${EPOCROOT}epoc32\\include\\ecamadvancedsettings.h) {
+        MMP_RULES += \
+            "$${LITERAL_HASH}ifndef WINSCW" \
+            "LIBRARY ecamadvsettings.lib" \
+            "MACRO USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER" \
+            "$${LITERAL_HASH}endif"
+        message("CameraBE: Using from S60 3.2 CCameraAdvancedSettings header")
+    }
+    exists($${EPOCROOT}epoc32\\include\\ecamadvsettings.h) {
+        symbian:LIBS += -lecamadvsettings
+        DEFINES += USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
+        message("CameraBE: Using CCameraAdvancedSettings header from S60 5.0 or later")
+    }
 }
 
-# S60 5.0 Platform:
-exists($${EPOCROOT}epoc32\\include\\ecamadvsettings.h) {
-    symbian:LIBS += -lecamadvsettings
-    DEFINES += USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
-    message("Using CCameraAdvancedSettings header from S60 5.0")
+
+# DevVideo API Check (Requires both, DevVideoPlay and DevVideoRecord plugins):
+# DevVideoConstants has been problematic since not being included in SDK plugins
+# For S60 5.0 this has changed with plugin extension 1.1
+# But for S60 3.2 this is still a problem
+contains(symbian_camera_devvideorecord_enabled, yes) {
+    exists($${EPOCROOT}epoc32\\include\\mmf\\devvideo\\devvideorecord.h) {
+        exists($${EPOCROOT}epoc32\\include\\mmf\\devvideo\\devvideobase.h) {
+            exists($${EPOCROOT}epoc32\\include\\mmf\\devvideo\\devvideoconstants.h) {
+                symbian:LIBS += -ldevvideo
+                DEFINES += S60_DEVVIDEO_RECORDING_SUPPORTED
+                message("CameraBE: Devvideo API supported")
+            }
+        }
+    }
 }
 
-# DevVideo API Check:
-exists($${EPOCROOT}epoc32\\include\\mmf\\devvideo\\devvideoconstants.h) {
-    symbian:LIBS += -ldevvideo
-    DEFINES += S60_DEVVIDEO_RECORDING_SUPPORTED
-    message("Devvideo API supported")
+contains(S60_VERSION, 3.1) | contains(S60_VERSION, 3.2) {
+    DEFINES += S60_3X_PLATFORM
+}
+
+# Private QWidget methods for showing DirectScreen ViewFinder:
+contains(DEFINES, S60_32_PLATFORM) | \
+contains(DEFINES, S60_50_PLATFORM) | \
+contains(DEFINES, SYMBIAN_3_PLATFORM){
+    DEFINES += USE_PRIVATE_QWIDGET_METHODS
+    message("CameraBE: Using private QWidget methods")
 }
 
 # Libraries:

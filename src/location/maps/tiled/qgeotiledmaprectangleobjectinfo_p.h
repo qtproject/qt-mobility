@@ -55,6 +55,9 @@
 
 #include "qgeotiledmapobjectinfo_p.h"
 
+#include <QPen>
+#include <QBrush>
+
 class QGraphicsRectItem;
 
 QTM_BEGIN_NAMESPACE
@@ -63,16 +66,25 @@ class QGeoMapRectangleObject;
 
 class QGeoTiledMapRectangleObjectInfo : public QGeoTiledMapObjectInfo
 {
+    Q_OBJECT
 public:
-    QGeoTiledMapRectangleObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    QGeoTiledMapRectangleObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapRectangleObjectInfo();
-
-    void objectUpdated();
-    void mapUpdated();
 
     QGeoMapRectangleObject* rectangle;
     QGraphicsRectItem *rectangleItem1;
     QGraphicsRectItem *rectangleItem2;
+
+    void updateValidity();
+
+public slots:
+    void topLeftChanged(const QGeoCoordinate &topLeft);
+    void bottomRightChanged(const QGeoCoordinate &bottomRight);
+    void penChanged(const QPen &pen);
+    void brushChanged(const QBrush &brush);
+
+private:
+    void update();
 };
 
 QTM_END_NAMESPACE

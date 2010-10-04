@@ -199,7 +199,7 @@ void tst_QGalleryQueryRequest::properties()
 
     QCOMPARE(request.propertyNames(), QStringList());
     QCOMPARE(request.sortPropertyNames(), QStringList());
-    QCOMPARE(request.isAutoUpdate(), false);
+    QCOMPARE(request.autoUpdate(), false);
     QCOMPARE(request.offset(), 0);
     QCOMPARE(request.limit(), 0);
     QCOMPARE(request.rootType(), QString());
@@ -230,7 +230,7 @@ void tst_QGalleryQueryRequest::properties()
              << QLatin1String("title"));
 
     request.setAutoUpdate(true);
-    QCOMPARE(request.isAutoUpdate(), true);
+    QCOMPARE(request.autoUpdate(), true);
 
     request.setOffset(140);
     QCOMPARE(request.offset(), 140);

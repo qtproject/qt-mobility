@@ -50,6 +50,10 @@ QT_USE_NAMESPACE
 
 class S60VideoCaptureSession;
 
+/*
+ * Control for setting container (file format) for video recorded using
+ * QMediaRecorder.
+ */
 class S60MediaContainerControl : public QMediaContainerControl
 {
     Q_OBJECT
@@ -71,7 +75,6 @@ public: // QMediaContainerControl
 private: // Data
 
     S60VideoCaptureSession  *m_session;
-    QString                 m_containerMimeType;
     QStringList             m_supportedContainers;
     QMap<QString, QString>  m_containerDescriptions;
 };

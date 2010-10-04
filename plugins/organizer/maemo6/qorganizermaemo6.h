@@ -94,6 +94,8 @@ class QOrganizerItemMaemo6Factory : public QObject, public QOrganizerItemManager
   public:
     QOrganizerItemManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error*);
     QString managerName() const;
+    QOrganizerItemEngineLocalId* createItemEngineLocalId() const;
+    QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() const;
 };
 
 class QOrganizerItemMaemo6EngineData : public QSharedData
@@ -108,10 +110,6 @@ public:
     ~QOrganizerItemMaemo6EngineData()
     {
     }
-
-    // key = Incidence.uid();
-    // value = QOrganizerItemLocalId(qHash(key));
-    QMap<QOrganizerItemLocalId, QString> m_QIdToKId;
 
     // map of organizeritem type to map of definition name to definitions:
     mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definitions;
@@ -149,14 +147,14 @@ public:
     /* Collections - every item belongs to exactly one collection */
     QOrganizerCollectionLocalId defaultCollectionId(QOrganizerItemManager::Error* error) const;
     QList<QOrganizerCollectionLocalId> collectionIds(QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const;
     bool saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
 
     /* Capabilities reporting */
     bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const;
     bool isFilterSupported(const QOrganizerItemFilter& filter) const;
-    QList<QVariant::Type> supportedDataTypes() const;
+    QList<int> supportedDataTypes() const;
     QStringList supportedItemTypes() const;
 
     /* Asynchronous Request Support */

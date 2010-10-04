@@ -60,7 +60,7 @@ class Q_GALLERY_EXPORT QGalleryQueryRequest : public QGalleryAbstractRequest
     Q_DECLARE_PRIVATE(QGalleryQueryRequest)
     Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
     Q_PROPERTY(QStringList sortPropertyNames READ sortPropertyNames WRITE setSortPropertyNames)
-    Q_PROPERTY(bool autoUpdate READ isAutoUpdate WRITE setAutoUpdate)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate)
     Q_PROPERTY(int offset READ offset WRITE setOffset)
     Q_PROPERTY(int limit READ limit WRITE setLimit)
     Q_PROPERTY(QString rootType READ rootType WRITE setRootType)
@@ -91,7 +91,7 @@ public:
     QStringList sortPropertyNames() const;
     void setSortPropertyNames(const QStringList &names);
 
-    bool isAutoUpdate() const;
+    bool autoUpdate() const;
     void setAutoUpdate(bool enabled);
 
     int offset() const;

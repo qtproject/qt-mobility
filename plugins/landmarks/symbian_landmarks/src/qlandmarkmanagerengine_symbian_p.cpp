@@ -121,6 +121,10 @@ _LIT8( KPosMimeTypeLandmarkCollectionXml,"application/vnd.nokia.landmarkcollecti
 #define KDefaultIndex 0
 #define KExtrachars 3
 
+//#if(defined __SERIES60_31__ || defined __SERIES60_32__ || defined __SERIES60_50__ || defined __S60_31__ || defined __S60_32__ || defined __S60_50__)
+//#define SYMBIAN_OR_COMPOSITION_RESTRICTED
+//#endif 
+
 /**
  * Constructs CLandmarkDbEventHandler
  */
@@ -146,11 +150,11 @@ LandmarkManagerEngineSymbianPrivate::LandmarkManagerEngineSymbianPrivate(
         ExecuteAndDeleteLD(m_LandmarkDb->InitializeL());
         // create Category Manager
         m_LandmarkCatMgr = CPosLmCategoryManager::NewL(*m_LandmarkDb);
-    );
 
-    HBufC* dbName = m_LandmarkDb->DatabaseUriLC();
-    m_dbFilename = QString((QChar*) (dbName->Ptr()), dbName->Length());
-    CleanupStack::Pop(dbName);
+        HBufC* dbName = m_LandmarkDb->DatabaseUriLC();
+        m_dbFilename = QString((QChar*) (dbName->Ptr()), dbName->Length());
+        CleanupStack::PopAndDestroy(dbName);
+    );
 
     m_DbEventHandler.AddObsever(this);
 }
@@ -199,14 +203,6 @@ int LandmarkManagerEngineSymbianPrivate::managerVersion() const
 QString LandmarkManagerEngineSymbianPrivate::managerUri() const
 {
     return QLandmarkManager::buildUri(managerName(), managerParameters(), managerVersion());
-}
-
-/**
- * Sets the landmark attribute keys defined by QLandmarkManagerEngine 
- */
-void LandmarkManagerEngineSymbianPrivate::setLandmarkAttributeKeys(QStringList landmarkKeys)
-{
-    m_LandmarkAttributeKeys = landmarkKeys;
 }
 
 /*!
@@ -396,17 +392,7 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
         return QList<QLandmarkId> ();
     }
 
-    bool isNearestFilter = false;
-    // check for nearest
-    if (filter.type() == QLandmarkFilter::ProximityFilter) {
-        QLandmarkProximityFilter proximityFilter = filter;
-        if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-            isNearestFilter = true;
-        }
-    }
-
-    sortFetchedLmIds(limit, offset, sortOrders, result, isNearestFilter, filter.type(), error,
-        errorString);
+    sortFetchedLmIds(limit, offset, sortOrders, result, filter.type(), error, errorString);
 
     return result;
 }
@@ -478,6 +464,8 @@ QList<QLandmark> LandmarkManagerEngineSymbianPrivate::landmarks(
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
+    if (errorMap)
+        errorMap->clear();
 
     QList<QLandmark> result;
     if (&landmarkIds == 0 || landmarkIds.isEmpty()) {
@@ -498,11 +486,12 @@ QList<QLandmark> LandmarkManagerEngineSymbianPrivate::landmarks(
             if (errorMap)
                 errorMap->insert(i, lastError);
             result << QLandmark();
+
+            *error = lastError;
+            *errorString = lastErrorString;
         }
     }
 
-    *error = lastError;
-    *errorString = lastErrorString;
     return result;
 }
 
@@ -602,11 +591,11 @@ QList<QLandmarkCategory> LandmarkManagerEngineSymbianPrivate::categories(const Q
             if (errorMap)
                 errorMap->insert(i, lastError);
             result << QLandmarkCategory();
+
+            *error = lastError;
+            *errorString = lastErrorString;
         }
     }
-
-    *error = lastError;
-    *errorString = lastErrorString;
 
     return result;
 }
@@ -709,7 +698,7 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmark(QLandmark* landmark,
     }
 
     if (!result)
-        qDebug() << "\nError " << *error << "  \nErrorString = " << *errorString;
+        qDebug() << "Error " << *error << " = " << *errorString;
     return result;
 }
 
@@ -747,6 +736,8 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarks(QList<QLandmark> * landm
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
+    if (errorMap)
+        errorMap->clear();
 
     QList<QLandmarkId> addedIds;
     QList<QLandmarkId> changedIds;
@@ -788,16 +779,12 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarks(QList<QLandmark> * landm
     }
 
     if (noErrors) {
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            *errorString = "";
+        *error = QLandmarkManager::NoError;
+        *errorString = "";
     }
     else {
-        if (error)
-            *error = lastError;
-        if (errorString)
-            *errorString = lastErrorString;
+        *error = lastError;
+        *errorString = lastErrorString;
     }
 
     // handle to emit appropriate signal
@@ -880,6 +867,8 @@ bool LandmarkManagerEngineSymbianPrivate::removeLandmarks(const QList<QLandmarkI
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
+    if (errorMap)
+        errorMap->clear();
 
     QList<QLandmarkId> removedIds;
 
@@ -918,16 +907,12 @@ bool LandmarkManagerEngineSymbianPrivate::removeLandmarks(const QList<QLandmarkI
     }
 
     if (noErrors) {
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            *errorString = "";
+        *error = QLandmarkManager::NoError;
+        *errorString = "";
     }
     else {
-        if (error)
-            *error = lastError;
-        if (errorString)
-            *errorString = lastErrorString;
+        *error = lastError;
+        *errorString = lastErrorString;
     }
 
     // handle to emit appropriate signal
@@ -995,7 +980,7 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategory(QLandmarkCategory* catego
     }
 
     if (!result)
-        qDebug() << "\nError " << *error << "  \nErrorString = " << *errorString;
+        qDebug() << "Error " << *error << " = " << *errorString;
     return result;
 }
 
@@ -1065,6 +1050,12 @@ bool LandmarkManagerEngineSymbianPrivate::importLandmarks(QIODevice *device, con
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
+    if (!device) {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Invalid io device pointer";
+        return false;
+    }
+
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
@@ -1106,6 +1097,12 @@ bool LandmarkManagerEngineSymbianPrivate::exportLandmarks(QIODevice *device, con
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
+    if (!device) {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Invalid io device pointer";
+        return false;
+    }
+
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
@@ -1145,7 +1142,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::None;
+    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::NoSupport;
 
     switch (filter.type()) {
 
@@ -1169,7 +1166,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
     case QLandmarkFilter::ProximityFilter:
     case QLandmarkFilter::BoxFilter:
     {
-        supportLevel = QLandmarkManager::Native;
+        supportLevel = QLandmarkManager::NativeSupport;
         break;
     }
     case QLandmarkFilter::AttributeFilter:
@@ -1210,9 +1207,6 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
             }
             TInt found = 0;
 
-            // default landmark attributes
-            //QStringList lmkat = m_LandmarkAttributeKeys;
-
             // symbian platform supported attributes
             QStringList lmkat = LandmarkUtility::landmarkAttributeKeys();
 
@@ -1228,7 +1222,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
                 if (!found)
                     break;
             }
-            supportLevel = QLandmarkManager::Native;
+            supportLevel = QLandmarkManager::NativeSupport;
         }
         break;
     }
@@ -1236,7 +1230,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
     case QLandmarkFilter::IntersectionFilter:
     case QLandmarkFilter::UnionFilter:
     {
-        supportLevel = QLandmarkManager::Emulated;
+        supportLevel = QLandmarkManager::EmulatedSupport;
         break;
     }
     default:
@@ -1259,14 +1253,14 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::sortOrderSup
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::Native;
+    QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::NativeSupport;
 
     switch (sortOrders.at(0).type()) {
     case QLandmarkSortOrder::DefaultSort:
     case QLandmarkSortOrder::NameSort:
         break;
     default:
-        supportLevel = QLandmarkManager::None;
+        supportLevel = QLandmarkManager::NoSupport;
         break;
     }
 
@@ -1285,14 +1279,9 @@ bool LandmarkManagerEngineSymbianPrivate::isFeatureSupported(
     *errorString = "";
 
     switch (feature) {
-    case (QLandmarkManager::ImportExport):
-    case (QLandmarkManager::Notifications):
+    case (QLandmarkManager::ImportExportFeature):
+    case (QLandmarkManager::NotificationsFeature):
         return true;
-    case (QLandmarkManager::ExtendedAttributes):
-    case (QLandmarkManager::CustomAttributes):
-        *error = QLandmarkManager::NotSupportedError;
-        *errorString = "Not supported feature";
-        return false;
     default:
         *error = QLandmarkManager::BadArgumentError;
         *errorString = "Invalid feature";
@@ -1390,87 +1379,12 @@ QStringList LandmarkManagerEngineSymbianPrivate::supportedFormats(
         }
     }
     else if (operation == QLandmarkManager::ExportOperation) {
-        //TODO: Sqlite Plugin's GPX encoder can be used to support GPX export
+        //Sqlite Plugin's GPX encoder can be used to support GPX export
         //formats << QLandmarkManager::Gpx;
         formats << QLandmarkManager::Lmx;
     }
 
     return formats;
-}
-
-/*!
- Returns whether extended attributes specific to this manager are enabled or not.
- If extended attributes are enabled, retrieved landmarks will have
- extra attribute keys accessible through the QLandmark::attribute() function.
- Extended attributes must be enabled to save any landmarks which possess
- extended attributes.  This same behaviour will also apply to categories
- if extended category attributes are supported.
- Errors are stored in \a error and \a errorString.
- */
-bool LandmarkManagerEngineSymbianPrivate::isExtendedAttributesEnabled(
-    QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Symbian landmarks apis dont support extended attributes of landmarks";
-
-    //return m_isExtendedAttributesEnabled;
-    // Always returns false as Symbian landmarks apis dont support extended attributes of landmarks.
-    return false;
-}
-
-/*!
- Sets whether extended attributes are \a enabled or not.
- Errors are stored in \a error and \a errorString.
- */
-void LandmarkManagerEngineSymbianPrivate::setExtendedAttributesEnabled(bool enabled,
-    QLandmarkManager::Error *error, QString *errorString)
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Symbian landmarks apis dont support extended attributes of landmarks";
-
-    m_isExtendedAttributesEnabled = enabled;
-}
-
-/*!
- Returns whether custom attributes are enabled or not. Custom attributes
- are arbitrary attributes created by the application for a landmark.
- If custom attributes are enabled (and the manager supports them),
- retrieved landmarks will have extra attributes accessible
- using QLandmark::customAttributes().  Custom attributes must be enabled
- to save any landmarks with possess custom attributes.  This same behaviour
- applies to categories if custom category attributes are supported.
- Errors are stored in \a error and \a errorString.
- */
-bool LandmarkManagerEngineSymbianPrivate::isCustomAttributesEnabled(QLandmarkManager::Error *error,
-    QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Symbian landmarks apis dont support custom attributes of landmarks";
-
-    //return m_isCustomAttributesEnabled;
-    // Always false as symbian landmarks apis dont support custom attributes of landmarks.
-    return false;
-}
-
-/*!
- Sets whether custom attributes are \a enabled or not.
- Errors are stored in \a error and \a errorString.
- */
-void LandmarkManagerEngineSymbianPrivate::setCustomAttributesEnabled(bool enabled,
-    QLandmarkManager::Error *error, QString *errorString)
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Symbian landmarks apis dont support custom attributes of landmarks";
-
-    m_isCustomAttributesEnabled = enabled;
 }
 
 /*!
@@ -2068,6 +1982,20 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
     {
         QLandmarkExportRequest * exportRequest = static_cast<QLandmarkExportRequest*> (request);
 
+        QLandmarkManager::Error error;
+        QString errorString = "";
+        QStringList exportFormats = supportedFormats(QLandmarkManager::ExportOperation, &error,
+            &errorString);
+
+        if (exportRequest->format().isEmpty()) {
+            User::Leave(KErrArgument);
+        }
+
+        if (!exportFormats.contains(exportRequest->format(), Qt::CaseInsensitive)) {
+            qDebug() << "Not Supported Export Format Type = " << exportRequest->format();
+            User::Leave(KErrNotSupported);
+        }
+
         CPosLmOperation* exportOperation = NULL;
         QIODevice *outputdevice = 0;
         QList<QLandmarkId> exportedLandmarkIds;
@@ -2172,6 +2100,10 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             // Determine if the export path is a buffer
             outputdevice = dynamic_cast<QBuffer *> (exportRequest->device());
             if (outputdevice) {
+
+                if (exportRequest->format().isEmpty()) {
+                    User::Leave(KErrArgument);
+                }
 
                 // Set the encoder to write to a buffer
                 bufferPath = encoder->SetUseOutputBufferL();
@@ -2298,17 +2230,18 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
         return result;
     }
 
-    bool categoryExists = LandmarkUtility::validCategoriesExist(m_LandmarkCatMgr, landmark);
+    bool categoryExists = LandmarkUtility::validCategoriesExist(m_LandmarkCatMgr, landmark,
+        managerUri());
     if (!categoryExists) {
         *error = QLandmarkManager::BadArgumentError;
         *errorString = "Landmark contains a category id that does not exist";
         return result;
     }
 
-    if (landmark->customAttributeKeys().size() > 0) {
-        *error = QLandmarkManager::NotSupportedError;
+    if (landmark->iconUrl().toString().size() > KMaxFileName) {
+        *error = QLandmarkManager::BadArgumentError;
         *errorString
-            = "Landmark contains the different attributes, that this engines doesnt support";
+            = "Landmark Icon string is greater than its maxlength i.e. KMaxFileName = 256.";
         return result;
     }
 
@@ -2323,6 +2256,8 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
         QLandmarkId savedQtLmId = LandmarkUtility::convertToQtLandmarkId(managerUri(),
             savedsymbianLmId);
         landmark->setLandmarkId(savedQtLmId);
+
+        m_CreatedLmIds << savedQtLmId.localId();
 
         //        qDebug() << "Landmark = " << landmark->name() << "LandmarkId = " << savedQtLmId.localId()
         //            << " Saved Successfully!";
@@ -2344,10 +2279,13 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
         symbianLandmark = m_LandmarkDb->ReadLandmarkLC(symbianLmId);
         if (symbianLandmark) {
             // updating existing landmark
-            LandmarkUtility::setSymbianLandmarkL(*symbianLandmark, landmark);
+            LandmarkUtility::setSymbianLandmarkL(*symbianLandmark, landmark, m_LandmarkCatMgr);
             m_LandmarkDb->UpdateLandmarkL(*symbianLandmark);
-            CleanupStack::Pop(symbianLandmark);
+            CleanupStack::PopAndDestroy(symbianLandmark);
             *changed = true;
+
+            m_UpdatedLmIds << landmarkId.localId();
+
             result = true;
         }
     }
@@ -2388,6 +2326,8 @@ bool LandmarkManagerEngineSymbianPrivate::removeLandmarkInternalL(const QLandmar
 
     m_LandmarkDb->RemoveLandmarkL(symbianLmId);
 
+    m_DeletedLmIds << landmarkId.localId();
+
     //    qDebug() << "Landmark id = " << landmarkId.localId() << "removed successfully.";
 
     *removed = true;
@@ -2406,14 +2346,15 @@ QLandmark LandmarkManagerEngineSymbianPrivate::fetchLandmarkL(const QLandmarkId 
     Q_ASSERT(errorString);
 
     if (landmarkId.managerUri() != managerUri()) {
-        *error = QLandmarkManager::BadArgumentError;
-        *errorString = "Landmark id comes from different landmark manager.";
+        *error = QLandmarkManager::DoesNotExistError;
+        *errorString = "Landmark not found as landmark id comes from different landmark manager.";
         return QLandmark();
     }
     else if (!LandmarkUtility::validLocalId(landmarkId.localId())) {
-        *error = QLandmarkManager::BadArgumentError;
+        *error = QLandmarkManager::DoesNotExistError;
         *errorString
-            = "Bad LandmarkId : Invalid local id is assigned. Symbian Supports unsigned double type for Landmark Ids";
+            = "Landmark not found as local id is invalid. For symbian the local id is a string representation of "
+              "an unsigned double type";
         return QLandmark();
     }
 
@@ -2458,10 +2399,10 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
         return result;
     }
 
-    if (category->customAttributeKeys().size() > 0) {
-        *error = QLandmarkManager::NotSupportedError;
+    if (category->iconUrl().toString().size() > KMaxFileName) {
+        *error = QLandmarkManager::BadArgumentError;
         *errorString
-            = "LandmarkCategory contains the different attributes, that this engines doesnt support";
+            = "Category Icon string is greater than its maxlength i.e. KMaxFileName = 256.";
         return result;
     }
 
@@ -2476,6 +2417,8 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
             managerUri(), savedsymbianLmCatId);
         category->setCategoryId(savedQtCategoryId);
 
+        m_CreatedCatIds << savedQtCategoryId.localId();
+
         //        qDebug() << "category " << category->name() << " created successfully " << "cat Id ="
         //            << category->categoryId().localId();
 
@@ -2488,6 +2431,14 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
             = "Bad Local Id assigned, Symbian Database Supports only unsigned long values for Landmark Id.";
     }
     else {
+        
+        // check if category is global category 
+        if (LandmarkUtility::isGlobalCategoryId(m_LandmarkCatMgr, category->categoryId())) {
+            *error = QLandmarkManager::PermissionsError;
+            *errorString = "Category is readonly, cannot be updated.";
+            return result;
+        }        
+        
         // check for existing category with category id
         TPosLmItemId symbianCatId = LandmarkUtility::convertToSymbianLandmarkCategoryId(
             category->categoryId());
@@ -2499,7 +2450,10 @@ bool LandmarkManagerEngineSymbianPrivate::saveCategoryInternalL(QLandmarkCategor
             //            qDebug() << "category " << category->name() << " updated successfully " << "cat Id ="
             //                << category->categoryId().localId();
 
-            CleanupStack::Pop(symbiancat);
+            CleanupStack::PopAndDestroy(symbiancat);
+
+            m_UpdatedCatIds << categoryId.localId();
+
             *changed = true;
             result = true;
         }
@@ -2540,7 +2494,15 @@ bool LandmarkManagerEngineSymbianPrivate::removeCategoryInternalL(
     if (cat)
         CleanupStack::PopAndDestroy(cat);
 
+    if (LandmarkUtility::isGlobalCategoryId(m_LandmarkCatMgr, categoryId)) {
+        *error = QLandmarkManager::PermissionsError;
+        *errorString = "Category is readonly, cannot be deleted.";
+        return result;
+    }
+
     ExecuteAndDeleteLD(m_LandmarkCatMgr->RemoveCategoryL(symbianCategoryId));
+
+    m_DeletedCatIds << categoryId.localId();
 
     //    qDebug() << "category id = " << categoryId.localId() << " removed successfully";
 
@@ -2561,19 +2523,19 @@ QLandmarkCategory LandmarkManagerEngineSymbianPrivate::fetchCategoryL(
     Q_ASSERT(errorString);
 
     if (&landmarkCategoryId == 0) {
-        *error = QLandmarkManager::BadArgumentError;
-        *errorString = "Invalid category id or empty id.";
+        *error = QLandmarkManager::DoesNotExistError;
+        *errorString = "Category not found because the category id is invalid or empty";
         return QLandmarkCategory();
     }
     else if (landmarkCategoryId.managerUri() != managerUri()) {
-        *error = QLandmarkManager::BadArgumentError;
-        *errorString = "Category id comes from different landmark manager.";
+        *error = QLandmarkManager::DoesNotExistError;
+        *errorString = "Category not found because the id's manager uri refers to different manager";
         return QLandmarkCategory();
     }
     else if (!LandmarkUtility::validLocalId(landmarkCategoryId.localId())) {
-        *error = QLandmarkManager::BadArgumentError;
+        *error = QLandmarkManager::DoesNotExistError;
         *errorString
-            = "Bad CategoryId : Invalid local id is assigned. Symbian Supports unsigned double type for Category Ids";
+            = "Category not found because the local id is invalid.  For Symbian the local id must the string representation of an unsigned double type.";
         return QLandmarkCategory();
     }
 
@@ -2796,7 +2758,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
         // set the coordinate values
         TCoordinate symbianCoord;
 
-        QGeoCoordinate qCoord = proximityFilter.coordinate();
+        QGeoCoordinate qCoord = proximityFilter.center();
         if (LandmarkUtility::isValidLat(qCoord.latitude()) && LandmarkUtility::isValidLong(
             qCoord.longitude())) {
             symbianCoord.SetCoordinate(qCoord.latitude(), qCoord.longitude());
@@ -2936,7 +2898,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
          }
          if (keyList.contains("radius")) {
          if (attributeFilter.attribute("radius").isValid()) {
-         if (lmk.radius() == attributeFilter.attribute("radius").toDouble())
+         if (lmk.radius() == attributeFilter.attribute("radius").toReal())
          radlmkids.insert(lmk.landmarkId().localId());
          }
          else if (lmk.radius() > 0)
@@ -3011,6 +2973,8 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
         RArray<TUint> afieldArray;
         // Search with CPosLmTextCriteria fields only
         for (int i = 0; i < keyList.size(); ++i) {
+            
+            // skip not supported attributes
             if ((keyList.at(i) == "latitude") || (keyList.at(i) == "longitude") || (keyList.at(i)
                 == "altitude") || (keyList.at(i) == "radius") || (keyList.at(i) == "iconurl"))
                 continue;
@@ -3023,7 +2987,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
             TPtr filterName = filterbuf->Des();
 
             HBufC* filterbufcont = HBufC::NewL(keyValue.toString().size() + KExtrachars);
-            TPtr filterNamecont = filterbuf->Des();
+            TPtr filterNamecont = filterbufcont->Des();
 
             // If filter attribute value is valid then search for that specific text based on matchflags, else return all the landmarks
             // whose that attribute is set to some valid value.
@@ -3249,21 +3213,6 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
                     CleanupStack::Pop(textContainsStreet);
                 }
             }
-            else if (keyList.at(i) == "streetNumber") {
-                CPosLmTextCriteria* textStrNumCriteria = CPosLmTextCriteria::NewLC();
-                afieldArray.InsertInOrder(LandmarkUtility::positionFieldId(keyList.at(i)));
-                textStrNumCriteria->SetTextL(filterName);
-                textStrNumCriteria->SetPositionFieldsToSearchL(afieldArray);
-                compositeCriteria->AddArgument(textStrNumCriteria);
-                CleanupStack::Pop(textStrNumCriteria);
-                if (filterNamecont.Length() > 0) {
-                    CPosLmTextCriteria* textContainsStrNum = CPosLmTextCriteria::NewLC();
-                    textContainsStrNum->SetTextL(filterNamecont);
-                    textContainsStrNum->SetPositionFieldsToSearchL(afieldArray);
-                    compositeCriteria->AddArgument(textContainsStrNum);
-                    CleanupStack::Pop(textContainsStrNum);
-                }
-            }
             else if (keyList.at(i) == "postCode") {
                 CPosLmTextCriteria* textPostCodeCriteria = CPosLmTextCriteria::NewLC();
                 afieldArray.InsertInOrder(LandmarkUtility::positionFieldId(keyList.at(i)));
@@ -3279,6 +3228,12 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
                     CleanupStack::Pop(textContainsPostCode);
                 }
             }
+            else {
+                qDebug() << "Not supported attribute provided";
+                CleanupStack::PopAndDestroy(compositeCriteria);
+                User::Leave(KErrNotSupported);
+            }
+
         }
 
         // TODO : This check is required in case of emulation.
@@ -3407,6 +3362,12 @@ void LandmarkManagerEngineSymbianPrivate::handleSymbianError(TInt errorId,
         *errorString = "Invalid data provided";
         break;
     }
+    case KErrBadName:
+    {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Bad file name or bad file path";
+        break;
+    }
     case KErrPermissionDenied:
     {
         *error = QLandmarkManager::PermissionsError;
@@ -3415,9 +3376,8 @@ void LandmarkManagerEngineSymbianPrivate::handleSymbianError(TInt errorId,
     }
     case KErrAccessDenied:
     {
-        *error = QLandmarkManager::LockedError;
-        *errorString
-            = "Database is readonly/busy for other operation, so no addition/updation/removal possible.";
+        *error = QLandmarkManager::PermissionsError;
+        *errorString = "The database is read only, access is denied.";
         break;
     }
     case KErrLocked:
@@ -3457,6 +3417,7 @@ void LandmarkManagerEngineSymbianPrivate::handleSymbianError(TInt errorId,
     {
         *error = QLandmarkManager::UnknownError;
         *errorString = QString("Symbian Landmarks Error = %1").arg(errorId);
+        qDebug() << *errorString;
         break;
     }
     } // switch closure
@@ -3510,17 +3471,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                     symbianLmIds);
                 symbianLmIds.Close();
 
-                bool isNearestFilter = false;
-                // check for nearest
-                if (lmIdFetchRequest->filter().type() == QLandmarkFilter::ProximityFilter) {
-                    QLandmarkProximityFilter proximityFilter = lmIdFetchRequest->filter();
-                    if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-                        isNearestFilter = true;
-                    }
-                }
-
                 sortFetchedLmIds(lmIdFetchRequest->limit(), lmIdFetchRequest->offset(),
-                    lmIdFetchRequest->sorting(), aData->iLandmarkIds, isNearestFilter,
+                    lmIdFetchRequest->sorting(), aData->iLandmarkIds,
                     lmIdFetchRequest->filter().type(), &error, &errorString);
             }
         }
@@ -3578,17 +3530,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                     symbianLmIds);
                 symbianLmIds.Close();
 
-                bool isNearestFilter = false;
-                // check for nearest
-                if (lmfetchRequest->filter().type() == QLandmarkFilter::ProximityFilter) {
-                    QLandmarkProximityFilter proximityFilter = lmfetchRequest->filter();
-                    if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-                        isNearestFilter = true;
-                    }
-                }
-
                 if (sortFetchedLmIds(lmfetchRequest->limit(), lmfetchRequest->offset(),
-                    lmfetchRequest->sorting(), aData->iLandmarkIds, isNearestFilter,
+                    lmfetchRequest->sorting(), aData->iLandmarkIds,
                     lmfetchRequest->filter().type(), &error, &errorString)) {
 
                     // get all landmark data
@@ -3842,7 +3785,7 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                 HBufC8 *buffer = HBufC8::New(aData->iExportBuffer->Size() + 1);
                 CleanupStack::PushL(buffer);
                 TPtr8 ptr = buffer->Des();
-                aData->iExportBuffer->Read(0, ptr);
+                aData->iExportBuffer->Read(0, ptr, n);
                 char* str = new (ELeave) char[ptr.Size() + 1];
                 Mem::Copy(str, ptr.Ptr(), ptr.Size());
                 str[ptr.Size()] = '\0';
@@ -3923,7 +3866,7 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 aData->iErrorMap.insert(aData->iOpCount, error);
                 aData->error = error;
                 aData->errorString = errorString;
-                aData->iLandmarks.append(QLandmark());
+                aData->iLandmarks.append((lmSaveRequest->landmarks()).at(aData->iOpCount));
             }
 
             if (added)
@@ -4005,7 +3948,7 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 aData->iErrorMap.insert(aData->iOpCount, error);
                 aData->error = error;
                 aData->errorString = errorString;
-                aData->iCategories.append(QLandmarkCategory());
+                aData->iCategories.append((saveCategoryRequest->categories()).at(aData->iOpCount));
             }
 
             if (added)
@@ -4220,17 +4163,9 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
                 symbianLmIds.Close();
             }
 
-            bool isNearestFilter = false;
-            // check for nearest
-            if (filters.at(aData->iOpCount - 1).type() == QLandmarkFilter::ProximityFilter) {
-                QLandmarkProximityFilter proximityFilter = filters.at(aData->iOpCount);
-                if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
-                    isNearestFilter = true;
-                }
-            }
             // sort and fetch with offset if required.
-            sortFetchedLmIds(limit, offset, sortOrders, result, isNearestFilter, filters.at(
-                aData->iOpCount - 1).type(), &error, &errorString);
+            sortFetchedLmIds(limit, offset, sortOrders, result,
+                filters.at(aData->iOpCount - 1).type(), &error, &errorString);
 
             // update the first result
             if (aData->iOpCount == 1) {
@@ -4316,7 +4251,7 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
  * also filters the data with offset and limit
  */
 bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset, QList<
-    QLandmarkSortOrder> sortOrders, QList<QLandmarkId>& landmarkIds, bool isNearestFilter,
+    QLandmarkSortOrder> sortOrders, QList<QLandmarkId>& landmarkIds,
     QLandmarkFilter::FilterType filterType, QLandmarkManager::Error *error, QString *errorString) const
 {
     // if no search data found return empty list
@@ -4363,13 +4298,6 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
         landmarkIds = QLandmarkManagerEngineSymbian::sortLandmarks(landmarks, sortOrders);
     }
 
-    if (isNearestFilter) {
-        QLandmarkId nearestLmId = landmarkIds.at(0);
-        landmarkIds.clear();
-        landmarkIds.append(nearestLmId);
-        return true;
-    }
-
     int resultcount = landmarkIds.size();
     qDebug() << "result size = " << resultcount << " limit = " << limit << " offset = " << offset;
 
@@ -4405,9 +4333,19 @@ void LandmarkManagerEngineSymbianPrivate::exportLandmarksL(QIODevice *device,
     QIODevice *outputdevice = 0;
 
     // check for the format
+    QLandmarkManager::Error error;
+    QString errorString = "";
+    QStringList exportFormats = supportedFormats(QLandmarkManager::ExportOperation, &error,
+        &errorString);
+
     if (format.isEmpty()) {
-        qDebug() << "Invalid Format Type";
+        qDebug() << "Export Format Type is not provided ";
         User::Leave(KErrArgument);
+    }
+
+    if (!exportFormats.contains(format, Qt::CaseInsensitive)) {
+        qDebug() << "Not Supported Export Format Type = " << format;
+        User::Leave(KErrNotSupported);
     }
 
     // Encoder initialized with the supported landmark package format
@@ -4833,37 +4771,147 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::importLandmarksL(QIODevi
  */
 void LandmarkManagerEngineSymbianPrivate::handleDatabaseEvent(const TPosLmEvent& aEvent)
 {
-    qDebug() << "aEvent.iLandmarkItemId = " << aEvent.iLandmarkItemId;
-    qDebug() << "aEvent.iEventType = " << aEvent.iEventType;
+    //qDebug() << "aEvent.iLandmarkItemId = " << aEvent.iLandmarkItemId;
+    //qDebug() << "aEvent.iEventType = " << aEvent.iEventType;
+
+    TInt id = aEvent.iLandmarkItemId;
+    QString localId;
+    localId.append(QString("%1").arg(id));
 
     switch (aEvent.iEventType) {
     case EPosLmEventLandmarkCreated:
     {
+        if (m_CreatedLmIds.contains(localId, Qt::CaseInsensitive)) {
+
+            for (int i = 0; i < m_CreatedLmIds.size(); ++i) {
+                if (m_CreatedLmIds.at(i) == localId) {
+                    m_CreatedLmIds.removeAt(i);
+                    break;
+                }
+            }
+        }
+        else {
+            QLandmarkId lmid;
+            lmid.setLocalId(localId);
+            lmid.setManagerUri(managerUri());
+            QList<QLandmarkId> lmids;
+            lmids << lmid;
+            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkAdded, lmids);
+        }
+
         qDebug() << "landmark created";
         break;
     }
     case EPosLmEventLandmarkDeleted:
     {
+        if (m_DeletedLmIds.contains(localId, Qt::CaseInsensitive)) {
+
+            for (int i = 0; i < m_DeletedLmIds.size(); ++i) {
+                if (m_DeletedLmIds.at(i) == localId) {
+                    m_DeletedLmIds.removeAt(i);
+                    break;
+                }
+            }
+        }
+        else {
+            QLandmarkId lmid;
+            lmid.setLocalId(localId);
+            lmid.setManagerUri(managerUri());
+            QList<QLandmarkId> lmids;
+            lmids << lmid;
+            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkRemoved, lmids);
+        }
         qDebug() << "landmark deleted";
         break;
     }
     case EPosLmEventLandmarkUpdated:
     {
+        if (m_UpdatedLmIds.contains(localId, Qt::CaseInsensitive)) {
+
+            for (int i = 0; i < m_UpdatedLmIds.size(); ++i) {
+                if (m_UpdatedLmIds.at(i) == localId) {
+                    m_UpdatedLmIds.removeAt(i);
+                    break;
+                }
+            }
+        }
+        else {
+            QLandmarkId lmid;
+            lmid.setLocalId(localId);
+            lmid.setManagerUri(managerUri());
+            QList<QLandmarkId> lmids;
+            lmids << lmid;
+            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkUpdated, lmids);
+        }
         qDebug() << "landmark updated";
         break;
     }
     case EPosLmEventCategoryCreated:
     {
+        if (m_CreatedCatIds.contains(localId, Qt::CaseInsensitive)) {
+
+            for (int i = 0; i < m_CreatedCatIds.size(); ++i) {
+                if (m_CreatedCatIds.at(i) == localId) {
+                    m_CreatedCatIds.removeAt(i);
+                    break;
+                }
+            }
+        }
+        else {
+            QLandmarkCategoryId catid;
+            catid.setLocalId(localId);
+            catid.setManagerUri(managerUri());
+            QList<QLandmarkCategoryId> catids;
+            catids << catid;
+            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::categoryAdded, QList<
+                QLandmarkId> (), catids);
+        }
         qDebug() << "landmark category created";
         break;
     }
     case EPosLmEventCategoryDeleted:
     {
+        if (m_DeletedCatIds.contains(localId, Qt::CaseInsensitive)) {
+
+            for (int i = 0; i < m_DeletedCatIds.size(); ++i) {
+                if (m_DeletedCatIds.at(i) == localId) {
+                    m_DeletedCatIds.removeAt(i);
+                    break;
+                }
+            }
+        }
+        else {
+            QLandmarkCategoryId catid;
+            catid.setLocalId(localId);
+            catid.setManagerUri(managerUri());
+            QList<QLandmarkCategoryId> catids;
+            catids << catid;
+            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::categoryRemoved, QList<
+                QLandmarkId> (), catids);
+        }
         qDebug() << "landmark category deleted";
         break;
     }
     case EPosLmEventCategoryUpdated:
     {
+        if (m_UpdatedCatIds.contains(localId, Qt::CaseInsensitive)) {
+
+            for (int i = 0; i < m_UpdatedCatIds.size(); ++i) {
+                if (m_UpdatedCatIds.at(i) == localId) {
+                    m_UpdatedCatIds.removeAt(i);
+                    break;
+                }
+            }
+        }
+        else {
+            QLandmarkCategoryId catid;
+            catid.setLocalId(localId);
+            catid.setManagerUri(managerUri());
+            QList<QLandmarkCategoryId> catids;
+            catids << catid;
+            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::categoryUpdated, QList<
+                QLandmarkId> (), catids);
+        }
         qDebug() << "landmark category updated";
         break;
     }

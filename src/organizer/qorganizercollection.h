@@ -70,17 +70,19 @@ public:
     /* Every collection has an id */
     QOrganizerCollectionId id() const;
     void setId(const QOrganizerCollectionId& id);
+    QOrganizerCollectionLocalId localId() const;
 
-    /* Metadata?  Colour?  Icon?  Haptic Feel?  etc */
-    // DEFINE_LATIN1_CONSTANT(FieldName, "Name");
-    // DEFINE_LATIN1_CONSTANT(FieldDescription, "Description");
-    // DEFINE_LATIN1_CONSTANT(FieldColor, "Color");
-    // DEFINE_LATIN1_CONSTANT(FieldImage, "Image"); etc.
     void setMetaData(const QVariantMap& metaData);
     QVariantMap metaData() const;
 
     void setMetaData(const QString& key, const QVariant& value);
     QVariant metaData(const QString& key);
+
+    /* Default meta data keys */
+    Q_DECLARE_LATIN1_CONSTANT(KeyName, "Name");
+    Q_DECLARE_LATIN1_CONSTANT(KeyDescription, "Description");
+    Q_DECLARE_LATIN1_CONSTANT(KeyColor, "Color");
+    Q_DECLARE_LATIN1_CONSTANT(KeyImage, "Image");
 
 private:
     QSharedDataPointer<QOrganizerCollectionData> d;

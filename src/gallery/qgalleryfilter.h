@@ -226,8 +226,7 @@ public:
     QGalleryMetaDataFilter(
             const QString &propertyName,
             const QVariant &value,
-            QGalleryFilter::Comparator comparator = QGalleryFilter::Equals,
-            Qt::CaseSensitivity caseSensitivity = Qt::CaseSensitive);
+            QGalleryFilter::Comparator comparator = QGalleryFilter::Equals);
     QGalleryMetaDataFilter(const QGalleryMetaDataFilter &other);
     ~QGalleryMetaDataFilter();
 
@@ -244,11 +243,8 @@ public:
     QGalleryFilter::Comparator comparator() const;
     void setComparator(QGalleryFilter::Comparator comparator);
 
-    Qt::CaseSensitivity caseSensitivity() const;
-    void setCaseSensitivity(Qt::CaseSensitivity sensitivity);
-
-    bool isInverted() const;
-    void setInverted(bool inverted);
+    bool isNegated() const;
+    void setNegated(bool inverted);
 
     QGalleryMetaDataFilter operator !() const;
 

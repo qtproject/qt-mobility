@@ -260,28 +260,30 @@ void AddressFinder::searchMessages()
 //! [handle-search-result]
 void AddressFinder::stateChanged(QMessageService::State newState)
 {
-    if (newState == QMessageService::FinishedState) {
-        if (service.error() == QMessageManager::NoError) {
-            if (!inclusionFilter.isEmpty()) {
-                // Now find the included messages
-                service.queryMessages(inclusionFilter);
+    if (searchAction->isEnabled() == false) {
+        if (newState == QMessageService::FinishedState) {
+            if (service.error() == QMessageManager::NoError) {
+                if (!inclusionFilter.isEmpty()) {
+                    // Now find the included messages
+                    service.queryMessages(inclusionFilter);
 
-                // Clear the inclusion filter to indicate that we have searched for it
-                inclusionFilter = QMessageFilter();
-            } else {
-                // We have found the exclusion and inclusion message sets
-                if (!inclusionMessages.isEmpty()) {
-                    // Begin processing the message sets
-                    QTimer::singleShot(0, this, SLOT(continueSearch()));
-//! [handle-search-result]
+                    // Clear the inclusion filter to indicate that we have searched for it
+                    inclusionFilter = QMessageFilter();
                 } else {
-                    QMessageBox::information(0, tr("Empty"), tr("No messages found"));
-                    setSearchActionEnabled(true);
+                    // We have found the exclusion and inclusion message sets
+                    if (!inclusionMessages.isEmpty()) {
+                        // Begin processing the message sets
+                        QTimer::singleShot(0, this, SLOT(continueSearch()));
+//! [handle-search-result]
+                    } else {
+                        QMessageBox::information(0, tr("Empty"), tr("No messages found"));
+                        setSearchActionEnabled(true);
+                    }
                 }
+            } else {
+                QMessageBox::warning(0, tr("Failed"), tr("Unable to perform search"));
+                setSearchActionEnabled(true);
             }
-        } else {
-            QMessageBox::warning(0, tr("Failed"), tr("Unable to perform search"));
-            setSearchActionEnabled(true);
         }
     }
 }
@@ -536,7 +538,7 @@ void AddressFinder::setupUi()
   foreach(QWidget* w, focusableWidgets)
        w->setContextMenuPolicy(Qt::NoContextMenu);
 
-    excludePeriod->setFocus();
+    includePeriod->setFocus();
 }
 
 void AddressFinder::setSearchActionEnabled(bool val)

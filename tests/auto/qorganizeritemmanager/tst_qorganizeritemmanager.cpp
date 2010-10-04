@@ -42,6 +42,7 @@
 //TESTED_COMPONENT=src/organizer
 
 #include <QtTest/QtTest>
+#include <QUuid>
 
 #include "qtorganizer.h"
 #include "qorganizeritemchangeset.h"
@@ -49,6 +50,9 @@
 
 #include "qorganizernote.h"
 #include "qorganizerevent.h"
+
+#include "qorganizeritemmemorybackend_p.h"
+#include "qorganizeritemenginelocalid.h"
 
 QTM_USE_NAMESPACE
 // Eventually these will make it into qtestcase.h
@@ -165,6 +169,8 @@ private slots:
     void detailDefinitions();
     void detailOrders();
     void itemType();
+    void collections();
+    void dataSerialization();
 
     /* Tests that take no data */
     void itemValidation();
@@ -192,6 +198,8 @@ private slots:
     void detailDefinitions_data() {addManagers();}
     void detailOrders_data() {addManagers();}
     void itemType_data() {addManagers();}
+    void collections_data() {addManagers();}
+    void dataSerialization_data() {addManagers();}
 };
 
 tst_QOrganizerItemManager::tst_QOrganizerItemManager()
@@ -442,6 +450,62 @@ void tst_QOrganizerItemManager::nullIdOperations()
     QVERIFY(c.id() == QOrganizerItemId());
     QVERIFY(c.isEmpty());
     QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
+
+
+    // test that streaming null ids doesn't crash.
+    {
+        QOrganizerItemId nullId;
+        QByteArray buffer;
+        QDataStream outBufferStream(&buffer, QIODevice::WriteOnly);
+        outBufferStream << nullId;
+        QVERIFY(buffer.length() > 0);
+
+        QDataStream inBufferStream(buffer);
+        QOrganizerItemId id;
+        inBufferStream >> id;
+        QVERIFY(id == nullId);
+    }
+
+    {
+        QOrganizerItemLocalId nullLocalId;
+        QByteArray buffer;
+        QDataStream outBufferStream(&buffer, QIODevice::WriteOnly);
+        outBufferStream << nullLocalId;
+        QVERIFY(buffer.length() > 0);
+
+        // cannot stream in local ids; must stream in entire ids.
+        //QDataStream inBufferStream(buffer);
+        //QOrganizerItemLocalId id;
+        //inBufferStream >> id;
+        //QVERIFY(id == nullLocalId);
+    }
+
+    {
+        QOrganizerCollectionId nullId;
+        QByteArray buffer;
+        QDataStream outBufferStream(&buffer, QIODevice::WriteOnly);
+        outBufferStream << nullId;
+        QVERIFY(buffer.length() > 0);
+
+        QDataStream inBufferStream(buffer);
+        QOrganizerCollectionId id;
+        inBufferStream >> id;
+        QVERIFY(id == nullId);
+    }
+
+    {
+        QOrganizerCollectionLocalId nullLocalId;
+        QByteArray buffer;
+        QDataStream outBufferStream(&buffer, QIODevice::WriteOnly);
+        outBufferStream << nullLocalId;
+        QVERIFY(buffer.length() > 0);
+
+        // cannot stream in local ids; must stream in entire ids.
+        //QDataStream inBufferStream(buffer);
+        //QOrganizerCollectionLocalId id;
+        //inBufferStream >> id;
+        //QVERIFY(id == nullLocalId);
+    }
 }
 
 void tst_QOrganizerItemManager::uriParsing()
@@ -686,7 +750,7 @@ void tst_QOrganizerItemManager::add()
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
 
     QVERIFY(!item.id().managerUri().isEmpty());
-    QVERIFY(item.id().localId() != 0);
+    QVERIFY(!item.id().localId().isNull());
     QCOMPARE(cm->itemIds().count(), currCount+1);
 
     QOrganizerItem added = cm->item(item.id().localId());
@@ -748,34 +812,38 @@ void tst_QOrganizerItemManager::add()
                 // any value of the correct type will be accepted
                 bool savedSuccessfully = false;
                 QVariant dummyValue = QVariant(fieldKey); // try to get some unique string data
-                if (dummyValue.canConvert(currentField.dataType())) {
-                    savedSuccessfully = dummyValue.convert(currentField.dataType());
-                    if (savedSuccessfully) {
-                        // we have successfully created a (supposedly) valid field for this detail.
-                        det.setValue(fieldKey, dummyValue);
-                        continue;
+                if (currentField.dataType() < static_cast<int>(QVariant::UserType)) {
+                    QVariant::Type type = static_cast<QVariant::Type>(currentField.dataType());
+                    // It is not a user-defined type
+                    if (dummyValue.canConvert(type)) {
+                        savedSuccessfully = dummyValue.convert(type);
+                        if (savedSuccessfully) {
+                            // we have successfully created a (supposedly) valid field for this detail.
+                            det.setValue(fieldKey, dummyValue);
+                            continue;
+                        }
                     }
-                }
 
-                // nope, couldn't save the string value (test); try a date.
-                dummyValue = QVariant(QDate::currentDate());
-                if (dummyValue.canConvert(currentField.dataType())) {
-                    savedSuccessfully = dummyValue.convert(currentField.dataType());
-                    if (savedSuccessfully) {
-                        // we have successfully created a (supposedly) valid field for this detail.
-                        det.setValue(fieldKey, dummyValue);
-                        continue;
+                    // nope, couldn't save the string value (test); try a date.
+                    dummyValue = QVariant(QDate::currentDate());
+                    if (dummyValue.canConvert(type)) {
+                        savedSuccessfully = dummyValue.convert(type);
+                        if (savedSuccessfully) {
+                            // we have successfully created a (supposedly) valid field for this detail.
+                            det.setValue(fieldKey, dummyValue);
+                            continue;
+                        }
                     }
-                }
 
-                // nope, couldn't convert a string or a date - try the integer value (42)
-                dummyValue = QVariant(42);
-                if (dummyValue.canConvert(currentField.dataType())) {
-                    savedSuccessfully = dummyValue.convert(currentField.dataType());
-                    if (savedSuccessfully) {
-                        // we have successfully created a (supposedly) valid field for this detail.
-                        det.setValue(fieldKey, dummyValue);
-                        continue;
+                    // nope, couldn't convert a string or a date - try the integer value (42)
+                    dummyValue = QVariant(42);
+                    if (dummyValue.canConvert(type)) {
+                        savedSuccessfully = dummyValue.convert(type);
+                        if (savedSuccessfully) {
+                            // we have successfully created a (supposedly) valid field for this detail.
+                            det.setValue(fieldKey, dummyValue);
+                            continue;
+                        }
                     }
                 }
 
@@ -814,7 +882,7 @@ void tst_QOrganizerItemManager::addExceptions()
     rrule.setCount(3);
     event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
     QVERIFY(cm->saveItem(&event));
-    QVERIFY(event.localId() != 0);
+    QVERIFY(!event.localId().isNull());
     event = cm->item(event.localId());
     // the guid must be set so when it is exported to iCalendar, the relationship can be represented
     QVERIFY(!event.guid().isEmpty());
@@ -827,7 +895,7 @@ void tst_QOrganizerItemManager::addExceptions()
     QCOMPARE(secondItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QOrganizerEventOccurrence secondEvent = static_cast<QOrganizerEventOccurrence>(secondItem); // not sure this is the best way...
     QCOMPARE(secondEvent.startDateTime(), QDateTime(QDate(2010, 1, 8), QTime(11, 0, 0)));
-    QCOMPARE(secondEvent.localId(), (unsigned int)0);
+    QCOMPARE(secondEvent.localId(), QOrganizerItemLocalId());
     QCOMPARE(secondEvent.parentLocalId(), event.localId());
 
     // save a change to an occurrence's detail (ie. create an exception)
@@ -840,7 +908,7 @@ void tst_QOrganizerItemManager::addExceptions()
 
     // save a change to an occurrence's time
     QOrganizerEventOccurrence thirdEvent = static_cast<QOrganizerEventOccurrence>(items.at(2));
-    QCOMPARE(thirdEvent.localId(), (unsigned int)0);
+    QCOMPARE(thirdEvent.localId(), QOrganizerItemLocalId());
     QCOMPARE(thirdEvent.parentLocalId(), event.localId());
     thirdEvent.setStartDateTime(QDateTime(QDate(2010, 1, 15), QTime(13, 0, 0)));
     thirdEvent.setEndDateTime(QDateTime(QDate(2010, 1, 15), QTime(14, 0, 0)));
@@ -855,7 +923,7 @@ void tst_QOrganizerItemManager::addExceptions()
     bool foundSecond = false;
     bool foundThird = false;
     foreach (const QOrganizerItem& item, items) {
-        if (item.localId() == 0) {
+        if (item.localId().isNull()) {
             foundFirst = true;
             firstItem = item;
         }
@@ -875,18 +943,18 @@ void tst_QOrganizerItemManager::addExceptions()
     QVERIFY(foundFirst); // there should still be one "generated" occurrence
     QCOMPARE(firstItem.displayLabel(), QLatin1String("meeting")); // and it should have the original label.
     // item occurrences which are not exceptions should have zero localId
-    QVERIFY(firstItem.localId() == 0);
+    QVERIFY(firstItem.localId().isNull());
 
     // the exception's changes have been persisted
     QVERIFY(foundSecond);
     QCOMPARE(secondEvent.displayLabel(), QLatin1String("seminar"));
     // item occurrences which are persisted exceptions should have non-zero localId
-    QVERIFY(secondEvent.localId() != 0);
+    QVERIFY(!secondEvent.localId().isNull());
 
     QVERIFY(foundThird);
     QCOMPARE(thirdEvent.startDateTime(), QDateTime(QDate(2010, 1, 15), QTime(13, 0, 0)));
     QCOMPARE(thirdEvent.endDateTime(), QDateTime(QDate(2010, 1, 15), QTime(14, 0, 0)));
-    QVERIFY(thirdEvent.localId() != 0);
+    QVERIFY(!thirdEvent.localId().isNull());
 }
 
 void tst_QOrganizerItemManager::addExceptionsWithGuid()
@@ -910,7 +978,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     christmas.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
     QVERIFY(cm->saveItem(&christmas));
     QVERIFY(!christmas.id().managerUri().isEmpty());
-    QVERIFY(christmas.id().localId() != 0);
+    QVERIFY(!christmas.id().localId().isNull());
 
     QOrganizerEvent newYearsDay;
     newYearsDay.setGuid("newyear");
@@ -948,7 +1016,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     exception.setId(QOrganizerItemId());
     exception.setGuid(QLatin1String("christmas"));
     QVERIFY(cm->saveItem(&exception));
-    QVERIFY(exception.localId() != 0);
+    QVERIFY(!exception.localId().isNull());
     QOrganizerEventOccurrence savedException = cm->item(exception.localId());
     QCOMPARE(savedException.parentLocalId(), christmas.localId()); // parentLocalId should be set by manager
 
@@ -973,7 +1041,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
 
     // can't set guid to a non-event
     exception2.setGuid(QLatin1String("report"));
-    exception2.setParentLocalId(0);
+    exception2.setParentLocalId(QOrganizerItemLocalId());
     QVERIFY(!cm->saveItem(&exception2));
     QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
 
@@ -1006,7 +1074,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     // with original date, guid and parentId set and consistent, and localId=0, it should work
     exception3.setOriginalDate(QDate(2012, 12, 25));
     QVERIFY(cm->saveItem(&exception3));
-    QVERIFY(exception3.localId() != 0);
+    QVERIFY(!exception3.localId().isNull());
     savedException = cm->item(exception3.localId());
     QCOMPARE(savedException.parentLocalId(), christmas.localId());
 }
@@ -1085,7 +1153,7 @@ void tst_QOrganizerItemManager::batch()
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
 
     /* First test null pointer operations */
-    QVERIFY(!cm->saveItems(NULL, NULL));
+    QVERIFY(!cm->saveItems(NULL));
     QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
     QVERIFY(!cm->removeItems(QList<QOrganizerItemLocalId>(), NULL));
@@ -1914,7 +1982,7 @@ void tst_QOrganizerItemManager::signalEmission()
     QTRY_COMPARE(spyCA.count(), addSigCount);
     args = spyCA.takeFirst();
     addSigCount -= 1;
-    arg = args.first().value<QList<quint32> >();
+    arg = args.first().value<QList<QOrganizerItemLocalId> >();
     QVERIFY(arg.count() == 1);
     QCOMPARE(QOrganizerItemLocalId(arg.at(0)), cid);
 
@@ -1926,7 +1994,7 @@ void tst_QOrganizerItemManager::signalEmission()
     QTRY_COMPARE(spyCM.count(), modSigCount);
     args = spyCM.takeFirst();
     modSigCount -= 1;
-    arg = args.first().value<QList<quint32> >();
+    arg = args.first().value<QList<QOrganizerItemLocalId> >();
     QVERIFY(arg.count() == 1);
     QCOMPARE(QOrganizerItemLocalId(arg.at(0)), cid);
 
@@ -1936,7 +2004,7 @@ void tst_QOrganizerItemManager::signalEmission()
     QTRY_COMPARE(spyCR.count(), remSigCount);
     args = spyCR.takeFirst();
     remSigCount -= 1;
-    arg = args.first().value<QList<quint32> >();
+    arg = args.first().value<QList<QOrganizerItemLocalId> >();
     QVERIFY(arg.count() == 1);
     QCOMPARE(QOrganizerItemLocalId(arg.at(0)), cid);
 
@@ -2060,7 +2128,7 @@ void tst_QOrganizerItemManager::errorStayingPut()
     QVERIFY(m1.error() == QOrganizerItemManager::NoError);
 
     /* Remove an invalid item to get an error */
-    QVERIFY(m1.removeItem(0) == false);
+    QVERIFY(m1.removeItem(QOrganizerItemLocalId()) == false);
     QVERIFY(m1.error() == QOrganizerItemManager::DoesNotExistError);
 
     /* Create a new manager with hopefully the same backend */
@@ -2070,7 +2138,7 @@ void tst_QOrganizerItemManager::errorStayingPut()
     QVERIFY(m2.error() == QOrganizerItemManager::NoError);
 
     /* Cause an error on the other ones and check the first is not affected */
-    m2.saveItems(0, 0);
+    m2.saveItems(0);
     QVERIFY(m1.error() == QOrganizerItemManager::DoesNotExistError);
     QVERIFY(m2.error() == QOrganizerItemManager::BadArgumentError);
 
@@ -2138,18 +2206,18 @@ void tst_QOrganizerItemManager::detailDefinitions()
                         }
                         QVERIFY(var.type() == QVariant::String || var.type() == QVariant::StringList);
                     }
-                } else if (field.dataType() == QVariant::List || field.dataType() == QVariant::Map || field.dataType() == (QVariant::Type) qMetaTypeId<QVariant>()) {
+                } else if (field.dataType() == QVariant::List || field.dataType() == QVariant::Map || field.dataType() == qMetaTypeId<QVariant>()) {
                     // Well, anything goes
                 } else {
                     // The type of each allowed value must match the data type
                     foreach(QVariant var, field.allowableValues()) {
-                        if (var.type() != field.dataType()) {
+                        if (var.userType() != field.dataType()) {
                             QString foo;
                             QDebug dbg(&foo);
                             dbg.nospace() << var;
                             qDebug().nospace() << "Field " << QString("%1::%2").arg(def.name()).arg(def.fields().key(field)).toAscii().constData() << " allowable value '" << foo.simplified().toAscii().constData() << "' not supported for field type " << QMetaType::typeName(field.dataType());
                         }
-                        QVERIFY(var.type() == field.dataType());
+                        QVERIFY(var.userType() == field.dataType());
                     }
                 }
             }
@@ -2174,7 +2242,8 @@ void tst_QOrganizerItemManager::detailDefinitions()
 
     /* A detail definition with valid allowed values (or really just one) */
     QOrganizerItemDetailDefinition allowedDef = newDef;
-    field.setAllowableValues(field.allowableValues() << (QVariant(field.dataType())));
+    field.setAllowableValues(field.allowableValues() <<
+                             (QVariant(static_cast<QVariant::Type>(field.dataType()))));
     fields.clear();
     fields.insert("Restricted value", field);
     allowedDef.setFields(fields);
@@ -2196,7 +2265,7 @@ void tst_QOrganizerItemManager::detailDefinitions()
     invalidFieldTypeDef.setName("Invalid field type");
     badfields.clear();
     QOrganizerItemDetailFieldDefinition badfield;
-    badfield.setDataType((QVariant::Type) qMetaTypeId<UnsupportedMetatype>());
+    badfield.setDataType(qMetaTypeId<UnsupportedMetatype>());
     badfields.insert("Bad type", badfield);
     invalidFieldTypeDef.setFields(badfields);
 
@@ -2301,7 +2370,7 @@ void tst_QOrganizerItemManager::detailDefinitions()
 
 void tst_QOrganizerItemManager::changeSet()
 {
-    QOrganizerItemLocalId id(1);
+    QOrganizerItemLocalId id;
 
     QOrganizerItemChangeSet changeSet;
     QVERIFY(changeSet.addedItems().isEmpty());
@@ -2359,6 +2428,29 @@ void tst_QOrganizerItemManager::fetchHint()
     QOrganizerItemFetchHint hint;
     hint.setOptimizationHints(QOrganizerItemFetchHint::NoBinaryBlobs);
     QCOMPARE(hint.optimizationHints(), QOrganizerItemFetchHint::NoBinaryBlobs);
+}
+
+void tst_QOrganizerItemManager::dataSerialization()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+
+    QOrganizerEvent event;
+    event.setDisplayLabel("event");
+    event.setStartDateTime(QDateTime(QDate(2010, 9, 9), QTime(11, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 9, 9), QTime(11, 30, 0)));
+
+    if (cm->saveItem(&event)) {
+        QByteArray buffer;
+        QDataStream outBufferStream(&buffer, QIODevice::WriteOnly);
+        outBufferStream << event.id();
+        QVERIFY(buffer.length() > 0);
+
+        QDataStream inBufferStream(buffer);
+        QOrganizerItemId id;
+        inBufferStream >> id;
+        QVERIFY(id == event.id());
+    }
 }
 
 QList<QOrganizerItemDetail> tst_QOrganizerItemManager::removeAllDefaultDetails(const QList<QOrganizerItemDetail>& details)
@@ -2446,10 +2538,124 @@ void tst_QOrganizerItemManager::detailOrders()
 }
 
 
-
 void tst_QOrganizerItemManager::itemType()
 {
     // XXX TODO!
+}
+
+
+void tst_QOrganizerItemManager::collections()
+{
+    // XXX TODO: break test into smaller sub-tests (per operation).
+
+    QFETCH(QString, uri);
+    QScopedPointer<QOrganizerItemManager> oim(QOrganizerItemManager::fromUri(uri));
+
+    //if (!oim->hasFeature(QOrganizerItemManager::MutableCollections)) {
+    //    QSKIP("This manager does not support mutable collections!", SkipSingle);
+    //}
+
+    QOrganizerCollection c1, c2, c3;
+    c1.setMetaData(QOrganizerCollection::KeyName, "Test One");
+    c1.setMetaData(QOrganizerCollection::KeyDescription, "This collection is for testing purposes.");
+    c2.setMetaData(QOrganizerCollection::KeyName, "Test Two");
+    c2.setMetaData(QOrganizerCollection::KeyColor, Qt::blue);
+    // c3 doesn't have any meta-data, just an id.
+
+    QOrganizerEvent i1, i2, i3, i4, i5;
+    i1.setDisplayLabel("one");
+    i1.addComment("item one");
+    i2.setDisplayLabel("two");
+    i2.setDescription("this is the second item");
+    i3.setDisplayLabel("three");
+    i4.setDisplayLabel("four");
+    i4.setGuid(QUuid::createUuid().toString());
+    i5.setDisplayLabel("five");
+    i5.setLocationAddress("test location address");
+
+    // first test
+    {
+        if (oim->compatibleCollection(c1) != c1 || oim->compatibleItem(i1) != i1) {
+            qDebug("Skipping first collection test; collection or item not compatible with manager!");
+        } else {
+            // save a collection
+            QVERIFY(c1.id().isNull()); // should have a null id to start with.
+            QVERIFY(oim->saveCollection(&c1));
+            QVERIFY(!c1.id().isNull()); // should have been set by the save operation
+            QVERIFY(oim->collectionIds().contains(c1.localId()));
+
+            // save an item in that collection
+            QOrganizerItemCollectionFilter fil;
+            fil.setCollectionId(c1.localId());
+            QVERIFY(oim->saveItem(&i1, c1.localId()));
+            QVERIFY(i1.collectionId() == c1.id());
+            QVERIFY(oim->items(fil).contains(i1)); // it should be in c1
+            fil.setCollectionId(oim->defaultCollectionId());
+            QVERIFY(!oim->items(fil).contains(i1)); // it should not be in the default collection.
+        }
+    }
+
+    // second test
+    {
+        if (oim->compatibleCollection(c2) != c2
+                || oim->compatibleCollection(c3) != c3
+                || oim->compatibleItem(i2) != i2
+                || oim->compatibleItem(i3) != i3
+                || oim->compatibleItem(i4) != i4
+                || oim->compatibleItem(i5) != i5) {
+            qDebug("Skipping second collection test; collection or items not compatible with manager!");
+        } else {
+            // save multiple collections. // XXX TODO: batch save for collections?
+            int originalColCount = oim->collectionIds().count();
+            QVERIFY(oim->saveCollection(&c2));
+            QVERIFY(oim->saveCollection(&c3));
+            QVERIFY(oim->collectionIds().count() == (originalColCount + 2));
+
+            // save i5 in c3 as a canary value.
+            QVERIFY(oim->saveItem(&i5, c3.localId()));
+            QVERIFY(oim->items().contains(i5));
+
+            // save multiple items in a collection
+            QList<QOrganizerItem> saveList;
+            saveList << i2 << i3 << i4;
+            int originalItemCount = oim->items().count();
+            QVERIFY(oim->saveItems(&saveList, c2.localId()));
+            i2 = saveList.at(0); // update from save list because manager might have added details / set ids etc.
+            i3 = saveList.at(1);
+            i4 = saveList.at(2);
+            QList<QOrganizerItem> fetchedItems = oim->items();
+            QVERIFY(fetchedItems.count() == (originalItemCount + 3));
+            QVERIFY(fetchedItems.contains(i2)); // these three should have been added
+            QVERIFY(fetchedItems.contains(i3));
+            QVERIFY(fetchedItems.contains(i4));
+            QVERIFY(fetchedItems.contains(i5)); // i5 should not have been removed.
+
+            // update a collection shouldn't remove its items.
+            c2.setMetaData(QOrganizerCollection::KeyName, "Test Two Updated");
+            QVERIFY(oim->saveCollection(&c2));
+            fetchedItems = oim->items();
+            QVERIFY(fetchedItems.contains(i2)); // no items should have been removed
+            QVERIFY(fetchedItems.contains(i3)); // nor should they have changed collection.
+            QVERIFY(fetchedItems.contains(i4));
+            QVERIFY(fetchedItems.contains(i5));
+
+            // remove a collection, removes its items.
+            QVERIFY(oim->removeCollection(c2.localId()));
+            fetchedItems = oim->items();
+            QVERIFY(fetchedItems.count() == originalItemCount);
+            QVERIFY(!fetchedItems.contains(i2)); // these three should have been removed
+            QVERIFY(!fetchedItems.contains(i3));
+            QVERIFY(!fetchedItems.contains(i4));
+            QVERIFY(fetchedItems.contains(i5)); // i5 should not have been removed.
+
+            // attempt to save an item in a non-existent collection should fail.
+            i2.setId(QOrganizerItemId()); // reset Id so save can succeed...
+            QVERIFY(!oim->saveItem(&i2, c2.localId()));
+            fetchedItems = oim->items();
+            QVERIFY(!fetchedItems.contains(i2)); // shouldn't have been added.
+            QVERIFY(fetchedItems.contains(i5)); // i5 should not have been removed.
+        }
+    }
 }
 
 QTEST_MAIN(tst_QOrganizerItemManager)

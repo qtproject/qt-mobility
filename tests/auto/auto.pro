@@ -39,7 +39,8 @@ contains(mobility_modules,location) {
           #qlandmarkmanagerplugins \
           qlandmarkmanagerengine \
           qlandmark \
-          qlandmarkcategory
+          qlandmarkcategory \
+          qlandmarkmanager
 
      contains(QT_CONFIG, declarative) {
          SUBDIRS += qdeclarativeposition
@@ -112,7 +113,14 @@ contains(mobility_modules,contacts) {
 
 contains(mobility_modules,organizer) {
     # Organizer
-    SUBDIRS += qorganizeritemmanager
+    SUBDIRS += \
+        qorganizercollection \
+        qorganizeritem \
+        qorganizeritemasync \
+        qorganizeritemdetail \
+        qorganizeritemdetaildefinition \
+        qorganizeritemfilter \
+        qorganizeritemmanager
 }
 
 contains(mobility_modules,versit) {
@@ -133,11 +141,6 @@ contains(mobility_modules,versit) {
             qversitorganizerimporter \
             qversit
     }
-}
-
-contains(mobility_modules,telephony) {
-    # TODO change this when other backends are developed
-    linux-*: SUBDIRS += qtelephony
 }
 
 contains(mobility_modules,multimedia) {
@@ -167,6 +170,13 @@ contains(mobility_modules,multimedia) {
         qaudioformat \
         qvideoframe \
         qvideosurfaceformat
+
+    contains (QT_CONFIG, declarative) {
+        SUBDIRS += \
+                qsoundeffect \
+                qdeclarativeaudio \
+                qdeclarativevideo
+    }
 }
 #Messaging
 contains(mobility_modules,messaging) {
@@ -190,19 +200,24 @@ contains(mobility_modules,gallery) {
         qdocumentgallery \
         qgalleryabstractrequest \
         qgalleryabstractresponse \
+        qgalleryfilter \
         qgalleryitemrequest \
         qgalleryquerymodel \
         qgalleryqueryrequest \
-        qgalleryremoverequest \
         qgalleryresource \
         qgallerytyperequest
-
-    !unix: SUBDIRS += qgalleryfilter
 
     unix: contains(QT_CONFIG, dbus): {
         SUBDIRS += \
                 qgallerytrackerresultset_maemo5 \
                 qgallerytrackerschema_maemo5
+    }
+
+    contains (QT_CONFIG, declarative) {
+        SUBDIRS += \
+                qdeclarativedocumentgalleryitem \
+                qdeclarativedocumentgallerymodel \
+                qdeclarativedocumentgallerytype
     }
 }
 
@@ -210,6 +225,7 @@ contains(mobility_modules,gallery) {
 contains(mobility_modules,feedback) {
     SUBDIRS += \
         qfeedbackactuator \
-        qfeedbackhapticseffect
+        qfeedbackhapticseffect \
+        qfeedbackplugin
 }
 

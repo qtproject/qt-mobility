@@ -73,9 +73,13 @@ bool QOrganizerItemRequestQueue::startRequest(
         m_abstractRequestMap[req]);
     // asynchronous service provider does not exist, create a new one
     if (!requestServiceProvider) {
-        requestServiceProvider = 
+        TRAPD(err, requestServiceProvider = 
             COrganizerItemRequestsServiceProvider::NewL(
-                m_organizerItemManagerEngine);
+                m_organizerItemManagerEngine));
+        if (err) {
+            // Request service provider not instantiated successfully
+            return false;
+        }
         m_abstractRequestMap.insert(req, requestServiceProvider);
     }
     // Start the request
@@ -101,20 +105,24 @@ bool QOrganizerItemRequestQueue::cancelRequest(
 bool QOrganizerItemRequestQueue::waitForRequestFinished(
         QOrganizerItemAbstractRequest* req, int msecs)
 {
-    m_timer->start(msecs);
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(exitLoop()));
-    m_eventLoop->exec();
-    if (QOrganizerItemAbstractRequest::FinishedState == req->state()) {
-        return true;
-    } else {
+    if (!m_abstractRequestMap.keys().contains(req)) 
         return false;
-    }
-}
+    
+    if (req->state() != QOrganizerItemAbstractRequest::ActiveState)
+        return false;
+    
+    QEventLoop *loop = new QEventLoop(this);
+    QObject::connect(req, SIGNAL(resultsAvailable()), loop, SLOT(quit()));
 
-void QOrganizerItemRequestQueue::exitLoop()
-{
-    disconnect(m_timer, SIGNAL(timeout()), this, SLOT(exitLoop()));
-    m_eventLoop->exit();
+    // NOTE: zero means wait forever
+    if (msecs > 0)
+        QTimer::singleShot(msecs, loop, SLOT(quit()));
+
+    loop->exec();
+    loop->disconnect();
+    loop->deleteLater();
+
+    return (req->state() == QOrganizerItemAbstractRequest::FinishedState);
 }
 
 // Request is not more a valid request
@@ -138,6 +146,5 @@ QOrganizerItemRequestQueue::QOrganizerItemRequestQueue(
         QOrganizerItemSymbianEngine& aOrganizerItemManagerEngine) : 
         m_organizerItemManagerEngine(aOrganizerItemManagerEngine)
 {
-    m_eventLoop = new QEventLoop(this);
-    m_timer = new QTimer(this);
+
 }

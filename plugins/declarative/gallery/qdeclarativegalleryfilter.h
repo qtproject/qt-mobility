@@ -59,6 +59,9 @@ public:
     }
 
     virtual QGalleryFilter filter() const = 0;
+
+Q_SIGNALS:
+    void filterChanged();
 };
 
 enum Comparator
@@ -80,24 +83,23 @@ class QDeclarativeGalleryValueFilter : public QDeclarativeGalleryFilterBase
     Q_OBJECT
     Q_PROPERTY(QString property READ propertyName WRITE setPropertyName NOTIFY propertyNameChanged)
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
-    Q_PROPERTY(bool inverted READ isInverted WRITE setInverted NOTIFY invertedChanged)
+    Q_PROPERTY(bool negated READ isNegated WRITE setNegated NOTIFY negatedChanged)
 public:
     QString propertyName() const { return m_filter.propertyName(); }
-    void setPropertyName(const QString &name) {
-        m_filter.setPropertyName(name); emit propertyNameChanged(); }
+    void setPropertyName(const QString &name);
 
     QVariant value() const { return m_filter.value(); }
-    void setValue(const QVariant &value) { m_filter.setValue(value); emit valueChanged(); }
+    void setValue(const QVariant &value);
 
-    bool isInverted() const { return m_filter.isInverted(); }
-    void setInverted(bool inverted) { m_filter.setInverted(inverted); emit invertedChanged(); }
+    bool isNegated() const { return m_filter.isNegated(); }
+    void setNegated(bool negated);
 
     QGalleryFilter filter() const;
 
 Q_SIGNALS:
     void propertyNameChanged();
     void valueChanged();
-    void invertedChanged();
+    void negatedChanged();
 
 protected:
     explicit QDeclarativeGalleryValueFilter(
@@ -105,7 +107,6 @@ protected:
         : QDeclarativeGalleryFilterBase(parent)
     {
         m_filter.setComparator(comparator);
-        m_filter.setCaseSensitivity(Qt::CaseInsensitive);
     }
 
     QGalleryMetaDataFilter m_filter;
@@ -116,24 +117,23 @@ class QDeclarativeGalleryStringFilter : public QDeclarativeGalleryFilterBase
     Q_OBJECT
     Q_PROPERTY(QString property READ propertyName WRITE setPropertyName NOTIFY propertyNameChanged)
     Q_PROPERTY(QString value READ value WRITE setValue NOTIFY valueChanged)
-    Q_PROPERTY(bool inverted READ isInverted WRITE setInverted NOTIFY invertedChanged)
+    Q_PROPERTY(bool negated READ isNegated WRITE setNegated NOTIFY negatedChanged)
 public:
     QString propertyName() const { return m_filter.propertyName(); }
-    void setPropertyName(const QString &name) {
-        m_filter.setPropertyName(name); emit propertyNameChanged(); }
+    void setPropertyName(const QString &name);
 
     QString value() const { return m_filter.value().toString(); }
-    void setValue(const QString &value) { m_filter.setValue(value); emit valueChanged(); }
+    void setValue(const QString &value);
 
-    bool isInverted() const { return m_filter.isInverted(); }
-    void setInverted(bool inverted) { m_filter.setInverted(inverted); emit invertedChanged(); }
+    bool isNegated() const { return m_filter.isNegated(); }
+    void setNegated(bool negated);
 
     QGalleryFilter filter() const;
 
 Q_SIGNALS:
     void propertyNameChanged();
     void valueChanged();
-    void invertedChanged();
+    void negatedChanged();
 
 protected:
     explicit QDeclarativeGalleryStringFilter(
@@ -141,7 +141,6 @@ protected:
         : QDeclarativeGalleryFilterBase(parent)
     {
         m_filter.setComparator(comparator);
-        m_filter.setCaseSensitivity(Qt::CaseInsensitive);
     }
 
     QGalleryMetaDataFilter m_filter;
@@ -240,54 +239,63 @@ public:
     }
 };
 
-class QDeclarativeGalleryRegExpFilter : public QDeclarativeGalleryStringFilter
+class QDeclarativeGalleryFilterGroup
+    : public QDeclarativeGalleryFilterBase
+    , public QDeclarativeParserStatus
 {
     Q_OBJECT
-public:
-    explicit QDeclarativeGalleryRegExpFilter(QObject *parent = 0)
-        : QDeclarativeGalleryStringFilter(QGalleryFilter::RegExp, parent)
-    {
-    }
-};
-
-class QDeclarativeGalleryFilterUnion : public QDeclarativeGalleryFilterBase
-{
-    Q_OBJECT
+    Q_INTERFACES(QDeclarativeParserStatus)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGalleryFilterBase> filters READ filters)
     Q_CLASSINFO("DefaultProperty", "filters")
+public:
+    explicit QDeclarativeGalleryFilterGroup(QObject *parent = 0)
+        : QDeclarativeGalleryFilterBase(parent)
+        , m_complete(false)
+    {
+    }
+
+    void classBegin();
+    void componentComplete();
+
+    QDeclarativeListProperty<QDeclarativeGalleryFilterBase> filters();
+
+protected:
+    QList<QDeclarativeGalleryFilterBase *> m_filters;
+
+private:
+    bool m_complete;
+
+    static void append(
+            QDeclarativeListProperty<QDeclarativeGalleryFilterBase> *filters,
+            QDeclarativeGalleryFilterBase *filter);
+    static int count(QDeclarativeListProperty<QDeclarativeGalleryFilterBase> *filters);
+    static QDeclarativeGalleryFilterBase *at(
+            QDeclarativeListProperty<QDeclarativeGalleryFilterBase> *filters, int index);
+    static void clear(QDeclarativeListProperty<QDeclarativeGalleryFilterBase> *filters);
+};
+
+class QDeclarativeGalleryFilterUnion : public QDeclarativeGalleryFilterGroup
+{
+    Q_OBJECT
 public:
     explicit QDeclarativeGalleryFilterUnion(QObject *parent = 0)
-        : QDeclarativeGalleryFilterBase(parent)
+        : QDeclarativeGalleryFilterGroup(parent)
     {
     }
 
-    QDeclarativeListProperty<QDeclarativeGalleryFilterBase> filters() {
-        return QDeclarativeListProperty<QDeclarativeGalleryFilterBase>(this, m_filters); }
-
     QGalleryFilter filter() const;
-
-private:
-    QList<QDeclarativeGalleryFilterBase *> m_filters;
 };
 
-class QDeclarativeGalleryFilterIntersection : public QDeclarativeGalleryFilterBase
+class QDeclarativeGalleryFilterIntersection : public QDeclarativeGalleryFilterGroup
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGalleryFilterBase> filters READ filters)
-    Q_CLASSINFO("DefaultProperty", "filters")
 public:
     explicit QDeclarativeGalleryFilterIntersection(QObject *parent = 0)
-        : QDeclarativeGalleryFilterBase(parent)
+        : QDeclarativeGalleryFilterGroup(parent)
     {
     }
 
-    QDeclarativeListProperty<QDeclarativeGalleryFilterBase> filters() {
-        return QDeclarativeListProperty<QDeclarativeGalleryFilterBase>(this, m_filters); }
-
     QGalleryFilter filter() const;
-
-private:
-    QList<QDeclarativeGalleryFilterBase *> m_filters;
 };
 
 QTM_END_NAMESPACE
@@ -302,7 +310,6 @@ QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryContainsFilter))
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryStartsWithFilter))
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryEndsWithFilter))
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryWildcardFilter))
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryRegExpFilter))
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilterUnion))
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilterIntersection))
 

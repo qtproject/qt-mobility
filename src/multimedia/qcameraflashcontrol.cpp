@@ -61,7 +61,7 @@ the same level of review and testing as the rest of the APIs.
 The API exposed by the classes in this component are not stable, and will
 undergo modification or removal prior to the final release of Qt Mobility.
 
-    \sa QMediaService::control(), QCamera
+    \sa QCamera
 */
 
 /*!

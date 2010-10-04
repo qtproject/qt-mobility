@@ -78,9 +78,6 @@ GeoCodingInputDialog::GeoCodingInputDialog(QString &obloc, QGeoAddress &address,
     QLabel *streetlbl = new QLabel(tr("Street:"));
     m_street = new QLineEdit(address.street());
     m_street->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    QLabel *streetnumlbl = new QLabel(tr("Street number:"));
-    m_streetNumber = new QLineEdit(address.streetNumber());
-    m_streetNumber->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     QHBoxLayout *firstrow = new QHBoxLayout;
     firstrow->setSpacing(2);
@@ -97,9 +94,7 @@ GeoCodingInputDialog::GeoCodingInputDialog(QString &obloc, QGeoAddress &address,
     gridLayout->setContentsMargins(2, 1, 2, 1);
 
     gridLayout->addWidget(streetlbl, 1, 0);
-    gridLayout->addWidget(streetnumlbl, 1, 1);
-    gridLayout->addWidget(m_street, 2, 0);
-    gridLayout->addWidget(m_streetNumber, 2, 1);
+    gridLayout->addWidget(m_street, 2, 0,1,2);
 
     gridLayout->addWidget(ziplbl, 3, 0);
     gridLayout->addWidget(citylbl, 3, 1);
@@ -133,7 +128,6 @@ void GeoCodingInputDialog::accept()
     m_address.setCity(m_city->text());
     m_address.setPostCode(m_zip->text());
     m_address.setStreet(m_street->text());
-    m_address.setStreetNumber(m_streetNumber->text());
 
     QDialog::accept();
 }

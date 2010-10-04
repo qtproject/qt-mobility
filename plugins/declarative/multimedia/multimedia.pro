@@ -6,7 +6,7 @@ INCLUDEPATH += ../../../src/global
 TARGET  = $$qtLibraryTarget(declarative_multimedia)
 TEMPLATE = lib
 CONFIG += plugin
-TARGETPATH = Qt/multimedia
+TARGETPATH = QtMultimediaKit
 PLUGIN_TYPE = declarative
 include(../../../common.pri)
 
@@ -37,7 +37,7 @@ target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
-INSTALLS += target qmldir
+INSTALLS += qmldir
 
 symbian {
     # In Symbian, a library should enjoy _largest_ possible capability set.

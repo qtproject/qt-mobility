@@ -45,10 +45,68 @@
 
 QTM_BEGIN_NAMESPACE
 
+void QDeclarativeGalleryValueFilter::setValue(const QVariant &value)
+{
+    if (value != m_filter.value()) {
+        m_filter.setValue(value);
+
+        emit valueChanged();
+        emit filterChanged();
+    }
+}
+void QDeclarativeGalleryValueFilter::setPropertyName(const QString &name)
+{
+    if (name != m_filter.propertyName()) {
+        m_filter.setPropertyName(name);
+
+        emit propertyNameChanged();
+        emit filterChanged();
+    }
+}
+
+void QDeclarativeGalleryValueFilter::setNegated(bool negated)
+{
+    if (negated != m_filter.isNegated()) {
+        m_filter.setNegated(negated);
+
+        emit negatedChanged();
+        emit filterChanged();
+    }
+}
 
 QGalleryFilter QDeclarativeGalleryValueFilter::filter() const
 {
     return m_filter;
+}
+
+void QDeclarativeGalleryStringFilter::setPropertyName(const QString &name)
+{
+    if (name != m_filter.propertyName()) {
+        m_filter.setPropertyName(name);
+
+        emit propertyNameChanged();
+        emit filterChanged();
+    }
+}
+
+void QDeclarativeGalleryStringFilter::setValue(const QString &value)
+{
+    if (value != m_filter.value()) {
+        m_filter.setValue(value);
+
+        emit valueChanged();
+        emit filterChanged();
+    }
+}
+
+void QDeclarativeGalleryStringFilter::setNegated(bool negated)
+{
+    if (negated != m_filter.isNegated()) {
+        m_filter.setNegated(negated);
+
+        emit negatedChanged();
+        emit filterChanged();
+    }
 }
 
 QGalleryFilter QDeclarativeGalleryStringFilter::filter() const
@@ -63,6 +121,7 @@ QGalleryFilter QDeclarativeGalleryStringFilter::filter() const
     if a meta-data property is equal to a value.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
     
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -87,9 +146,9 @@ QGalleryFilter QDeclarativeGalleryStringFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryEqualsFilter::inverted
+    \qmlproperty bool GalleryEqualsFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
@@ -112,6 +171,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     if a meta-data property is less than a value.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -136,9 +196,9 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryLessThanFilter::inverted
+    \qmlproperty bool GalleryLessThanFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 
@@ -149,6 +209,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     if a meta-data property is less than or equal to a value.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -173,9 +234,9 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryLessThanEqualsFilter::inverted
+    \qmlproperty bool GalleryLessThanEqualsFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 
@@ -186,6 +247,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     if a meta-data property is greater than a value.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -210,9 +272,9 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryGreaterThanFilter::inverted
+    \qmlproperty bool GalleryGreaterThanFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 /*!
@@ -222,6 +284,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     tests if a meta-data property is greater than or equal to a value.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -246,9 +309,9 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryGreaterThanEqualsFilter::inverted
+    \qmlproperty bool GalleryGreaterThanEqualsFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 /*!
@@ -258,6 +321,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     a meta-data property contains a string.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -282,9 +346,9 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryContainsFilter::inverted
+    \qmlproperty bool GalleryContainsFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 /*!
@@ -294,6 +358,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     a meta-data property starts with a string.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -318,9 +383,9 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryStartsWithFilter::inverted
+    \qmlproperty bool GalleryStartsWithFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 /*!
@@ -330,6 +395,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     meta-data property ends with a string.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -354,9 +420,9 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryEndsWithFilter::inverted
+    \qmlproperty bool GalleryEndsWithFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
 
 /*!
@@ -366,6 +432,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     meta-data property against a value using wildcard matching.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
@@ -390,10 +457,76 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 */
 
 /*!
-    \qmlproperty bool GalleryWildcardFilter::inverted
+    \qmlproperty bool GalleryWildcardFilter::negated
 
-    This property holds whether the result of a filter should be inverted.
+    This property holds whether the result of a filter should be negated.
 */
+
+
+void QDeclarativeGalleryFilterGroup::classBegin()
+{
+}
+
+void QDeclarativeGalleryFilterGroup::componentComplete()
+{
+    m_complete = true;
+
+    typedef QList<QDeclarativeGalleryFilterBase *>::const_iterator iterator;
+    for (iterator it = m_filters.constBegin(), end = m_filters.constEnd(); it != end; ++it)
+        connect(*it, SIGNAL(filterChanged()), this, SIGNAL(filterChanged()));
+}
+
+QDeclarativeListProperty<QDeclarativeGalleryFilterBase> QDeclarativeGalleryFilterGroup::filters()
+{
+    return QDeclarativeListProperty<QDeclarativeGalleryFilterBase>(
+            this, &m_filters, append, count, at, clear);
+}
+
+void QDeclarativeGalleryFilterGroup::append(
+        QDeclarativeListProperty<QDeclarativeGalleryFilterBase> *filters,
+        QDeclarativeGalleryFilterBase *filter)
+{
+    QDeclarativeGalleryFilterGroup *filterGroup
+            = static_cast<QDeclarativeGalleryFilterGroup *>(filters->object);
+
+    static_cast<QList<QDeclarativeGalleryFilterBase *>*>(filters->data)->append(filter);
+
+    if (static_cast<QDeclarativeGalleryFilterGroup *>(filters->object)->m_complete) {
+        connect(filter, SIGNAL(filterChanged()), filterGroup, SIGNAL(filterChanged()));
+
+        emit filterGroup->filterChanged();
+    }
+}
+
+int QDeclarativeGalleryFilterGroup::count(
+        QDeclarativeListProperty<QDeclarativeGalleryFilterBase> *filters)
+{
+    return static_cast<QList<QDeclarativeGalleryFilterBase *>*>(filters->data)->count();
+}
+
+QDeclarativeGalleryFilterBase *QDeclarativeGalleryFilterGroup::at(
+        QDeclarativeListProperty<QDeclarativeGalleryFilterBase> *filters, int index)
+{
+    return static_cast<QList<QDeclarativeGalleryFilterBase *>*>(filters->data)->at(index);
+}
+
+void QDeclarativeGalleryFilterGroup::clear(
+        QDeclarativeListProperty<QDeclarativeGalleryFilterBase> *filters)
+{
+    QDeclarativeGalleryFilterGroup *filterGroup
+            = static_cast<QDeclarativeGalleryFilterGroup *>(filters->object);
+
+    QList<QDeclarativeGalleryFilterBase *> *list
+            = static_cast<QList<QDeclarativeGalleryFilterBase *>*>(filters->data);
+
+    typedef QList<QDeclarativeGalleryFilterBase *>::const_iterator iterator;
+    for (iterator it = list->constBegin(), end = list->constEnd(); it != end; ++it)
+        disconnect(*it, SIGNAL(filterChanged()), filterGroup, SIGNAL(filterChanged()));
+
+    list->clear();
+
+    emit filterGroup->filterChanged();
+}
 
 /*!
     \qmlclass GalleryFilterUnion GalleryFilterUnion
@@ -401,6 +534,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
     \brief The GalleryFilterUnion elements provides a union of gallery filters.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 */
@@ -442,6 +576,7 @@ QGalleryFilter QDeclarativeGalleryFilterUnion::filter() const
     gallery filters.
 
     \ingroup qml-gallery
+    \ingroup qml-gallery-filters
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 */

@@ -60,8 +60,10 @@ class Q_LOCATION_EXPORT QGeoMapPolygonObject : public QGeoMapObject
     Q_PROPERTY(QBrush brush READ brush WRITE setBrush NOTIFY brushChanged)
 
 public:
-    QGeoMapPolygonObject(QGeoMapObject *parent = 0);
+    QGeoMapPolygonObject();
     ~QGeoMapPolygonObject();
+
+    QGeoMapObject::Type type() const;
 
     void setPath(const QList<QGeoCoordinate> &path);
     QList<QGeoCoordinate> path() const;
@@ -72,12 +74,13 @@ public:
     void setBrush(const QBrush &brush);
     QBrush brush() const;
 
-signals:
+Q_SIGNALS:
     void pathChanged(const QList<QGeoCoordinate> &path);
     void penChanged(const QPen &pen);
     void brushChanged(const QBrush &brush);
 
 private:
+    QGeoMapPolygonObjectPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeoMapPolygonObject)
     Q_DISABLE_COPY(QGeoMapPolygonObject)
 };

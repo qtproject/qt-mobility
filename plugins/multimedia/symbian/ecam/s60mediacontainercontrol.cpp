@@ -41,6 +41,7 @@
 
 #include "s60mediacontainercontrol.h"
 #include "s60videocapturesession.h"
+#include "s60cameraconstants.h"
 
 S60MediaContainerControl::S60MediaContainerControl(QObject *parent):
     QMediaContainerControl(parent)
@@ -50,17 +51,31 @@ S60MediaContainerControl::S60MediaContainerControl(QObject *parent):
 S60MediaContainerControl::S60MediaContainerControl(S60VideoCaptureSession *session, QObject *parent):
     QMediaContainerControl(parent)
 {
-    m_session = session;
-
-    m_supportedContainers = m_session->supportedVideoContainers();
-    if (!m_supportedContainers.isEmpty())
-        setContainerMimeType(m_supportedContainers[0]);
+    if (session)
+        m_session = session;
     else
-        setContainerMimeType("video/mp4"); // Use as default
+        Q_ASSERT(true);
+    // From now on it is safe to assume session exists
+
+    // Set default video container
+    m_supportedContainers = m_session->supportedVideoContainers();
+
+    if (!m_supportedContainers.isEmpty()) {
+        // Check if default container is supported
+        if (m_supportedContainers.indexOf(KMimeTypeDefaultContainer) != -1)
+            setContainerMimeType(KMimeTypeDefaultContainer);
+        // Otherwise use first in the list
+        else
+            setContainerMimeType(m_supportedContainers[0]); // First as default
+    } else {
+        m_session->setError(KErrGeneral, QString("No supported video containers found."));
+    }
 }
 
 S60MediaContainerControl::~S60MediaContainerControl()
 {
+    m_supportedContainers.clear();
+    m_containerDescriptions.clear();
 }
 
 QStringList S60MediaContainerControl::supportedContainers() const

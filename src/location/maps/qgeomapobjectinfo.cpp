@@ -80,7 +80,8 @@ QTM_BEGIN_NAMESPACE
     \a mapObject which are specific to \a mapData.
 */
 QGeoMapObjectInfo::QGeoMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
+        : QObject(mapObject),
+          d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
 
 /*!
     Destroys this info object.
@@ -90,68 +91,85 @@ QGeoMapObjectInfo::~QGeoMapObjectInfo()
     delete d_ptr;
 }
 
-/*!
+/*
     Returns the QGeoMapObjectInfo instance associated with the parent of
     this object, or 0 if it has no parent or if there is no QGeoMapObjectInfo
     instance asssoicated with the parent object.
 */
-QGeoMapObjectInfo* QGeoMapObjectInfo::parentObjectInfo()
-{
-    if (!d_ptr->mapData)
-        return 0;
+//QGeoMapObjectInfo* QGeoMapObjectInfo::parentObjectInfo()
+//{
+//    if (!d_ptr->mapData)
+//        return 0;
 
-    return d_ptr->mapData->d_ptr->parentObjectInfo(d_ptr->mapObject);
+//    return d_ptr->mapData->d_ptr->parentObjectInfo(d_ptr->mapObject);
+//}
+
+/*!
+    This function is run after the constructor.
+
+    The default implementation does nothing.
+*/
+void QGeoMapObjectInfo::setup() {}
+
+/*!
+    This function is called when the window size of the map changes.
+
+    The default implementation does nothing.
+*/
+void QGeoMapObjectInfo::windowSizeChanged(const QSizeF &windowSize)
+{
+    Q_UNUSED(windowSize)
 }
 
 /*!
-    This function is run when a map object is made a child of another object.
+    This function is called when the zoom level of the map changes.
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::addToParent() {}
+void QGeoMapObjectInfo::zoomLevelChanged(qreal zoomLevel)
+{
+    Q_UNUSED(zoomLevel)
+}
 
 /*!
-    This function is run when a map object is removed from its parent object.
+    This function is called when the center of the map changes.
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::removeFromParent() {}
+void QGeoMapObjectInfo::centerChanged(const QGeoCoordinate &coordinate)
+{
+    Q_UNUSED(coordinate)
+}
 
 /*!
-    This function is run when an attribute of an object changes in a way
-    that might effect the rendering of an object.
-
-    An example of where this is useful is for when objects are moved or
-    when the pen or brush used to draw an object are changed.
+    This function is run when the z value of the object changes.
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::objectUpdated() {}
-
-/*!
-    This function is run when the map is updated in a way that might effect the
-    rendering of an object.
-
-    An example of where this is useful is for objects which need to be rendered
-    differently at different zoom levels for performance reasons.
-
-  The default implementation does nothing.
-*/
-void QGeoMapObjectInfo::mapUpdated() {}
+void QGeoMapObjectInfo::zValueChanged(int zValue)
+{
+    Q_UNUSED(zValue)
+}
 
 /*!
     This function is run when the visible state of the object changes.
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::visibleChanged(bool visible) {}
+void QGeoMapObjectInfo::visibleChanged(bool visible)
+{
+    Q_UNUSED(visible)
+}
 
 /*!
     This function is run when the selected state of the object changes.
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::selectedChanged(bool selected) {}
+void QGeoMapObjectInfo::selectedChanged(bool selected)
+{
+    Q_UNUSED(selected)
+}
 
 /*!
     Returns a bounding box which contains this map object.
@@ -171,6 +189,7 @@ QGeoBoundingBox QGeoMapObjectInfo::boundingBox() const
 */
 bool QGeoMapObjectInfo::contains(const QGeoCoordinate &coordinate) const
 {
+    Q_UNUSED(coordinate)
     return false;
 }
 
@@ -201,5 +220,7 @@ QGeoMapObjectInfoPrivate::~QGeoMapObjectInfoPrivate() {}
 
 /*******************************************************************************
 *******************************************************************************/
+
+#include "moc_qgeomapobjectinfo.cpp"
 
 QTM_END_NAMESPACE

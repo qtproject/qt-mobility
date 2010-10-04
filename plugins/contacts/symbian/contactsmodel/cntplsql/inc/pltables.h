@@ -346,7 +346,20 @@ private: // New pure virtual functions
 											 QStringList aTokens) = 0;
 
 private: // New virtual functions
-	virtual QStringList GetTableSpecificFields(const CContactItem& aItem) const;
+	/**
+	 * Obtain the table-specific fields from the contact data.
+	 *
+	 * aItem Contact's data
+	 * aRequiredFieldsExist OUT: true if contact contains the information
+	 *	that's mandatory for it to be stored into predictive search tables.
+	 * returns: list of table specific fields that could be mapped using the keymap.
+	 *  Note: even if list is empty, aRequiredFieldsExists can be true. E.g. in
+	 *  case of QWERTY table, all mail addresses begin by characters that are not
+	 *  recognized by the keymap.
+	 */
+	virtual QStringList
+		GetTableSpecificFields(const CContactItem& aItem,
+							   bool& aRequiredFieldsExist) const;
 
 public:
 	const CPcsKeyMap* KeyMap() const;

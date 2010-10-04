@@ -63,11 +63,10 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_ENUMS(Status)
     Q_ENUMS(Scope)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
-    Q_PROPERTY(int progress READ progress NOTIFY progressChanged)
-    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
+    Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames NOTIFY sortPropertyNamesChanged)
-    Q_PROPERTY(bool autoUpdate READ isAutoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem NOTIFY rootItemChanged)
     Q_PROPERTY(Scope scope READ scope WRITE setScope NOTIFY scopeChanged)
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
@@ -79,10 +78,10 @@ public:
     {
         Null        = QGalleryAbstractRequest::Inactive,
         Active      = QGalleryAbstractRequest::Active,
-        Finished    = QGalleryAbstractRequest::Finished,
-        Idle        = QGalleryAbstractRequest::Idle,
         Cancelling  = QGalleryAbstractRequest::Cancelling,
         Cancelled   = QGalleryAbstractRequest::Cancelled,
+        Idle        = QGalleryAbstractRequest::Idle,
+        Finished    = QGalleryAbstractRequest::Finished,
         Error       = QGalleryAbstractRequest::Error
     };
 
@@ -103,41 +102,31 @@ public:
 
     Status status() const { return m_status; }
 
-    qreal progress() const
-    {
-        const int max = m_request.maximumProgress();
-        return max > 0 ? qreal(m_request.currentProgress()) / max : qreal(0.0);
-    }
-
-    QString errorMessage() const { return m_errorMessage; }
+    qreal progress() const;
 
     QStringList propertyNames() { return m_request.propertyNames(); }
-    void setPropertyNames(const QStringList &names) {
-        if (!m_complete) { m_request.setPropertyNames(names); emit propertyNamesChanged(); } }
+    void setPropertyNames(const QStringList &names);
 
     QStringList sortPropertyNames() const { return m_request.sortPropertyNames(); }
-    void setSortPropertyNames(const QStringList &names) {
-        if (!m_complete) m_request.setSortPropertyNames(names); emit sortPropertyNamesChanged(); }
+    void setSortPropertyNames(const QStringList &names);
 
-    bool isAutoUpdate() const { return m_request.isAutoUpdate(); }
-    void setAutoUpdate(bool enabled) { m_request.setAutoUpdate(enabled); emit autoUpdateChanged(); }
+    bool autoUpdate() const { return m_request.autoUpdate(); }
+    void setAutoUpdate(bool enabled);
 
     Scope scope() const { return Scope(m_request.scope()); }
-    void setScope(Scope scope) {
-        m_request.setScope(QGalleryQueryRequest::Scope(scope)); emit scopeChanged(); }
+    void setScope(Scope scope);
 
     QVariant rootItem() const { return m_request.rootItem(); }
-    void setRootItem(const QVariant &itemId) {
-        m_request.setRootItem(itemId); emit rootItemChanged(); }
+    void setRootItem(const QVariant &itemId);
 
-    QDeclarativeGalleryFilterBase *filter() const { return m_filter; }
-    void setFilter(QDeclarativeGalleryFilterBase *filter) { m_filter = filter; filterChanged(); }
+    QDeclarativeGalleryFilterBase *filter() const { return m_filter.data(); }
+    void setFilter(QDeclarativeGalleryFilterBase *filter);
 
     int offset() const { return m_request.offset(); }
-    void setOffset(int offset) { m_request.setOffset(offset); emit offsetChanged(); }
+    void setOffset(int offset);
 
     int limit() const { return m_request.limit(); }
-    void setLimit(int limit) { m_request.setLimit(limit); emit limitChanged(); }
+    void setLimit(int limit);
 
     int rowCount(const QModelIndex &parent) const;
 
@@ -154,18 +143,16 @@ public:
     Q_INVOKABLE void set(int index, const QScriptValue &value);
     Q_INVOKABLE void setProperty(int index, const QString &property, const QVariant &value);
 
-    void classBegin();
     void componentComplete();
 
 public Q_SLOTS:
     void reload();
-    void cancel() { m_request.cancel(); }
-    void clear() { m_request.clear(); }
+    void cancel();
+    void clear();
 
 Q_SIGNALS:
     void statusChanged();
     void progressChanged();
-    void errorMessageChanged();
     void propertyNamesChanged();
     void sortPropertyNamesChanged();
     void autoUpdateChanged();
@@ -176,19 +163,31 @@ Q_SIGNALS:
     void limitChanged();
     void countChanged();
 
+protected Q_SLOTS:
+    void deferredExecute();
+
 protected:
+    enum UpdateStatus
+    {
+        Incomplete,
+        NoUpdate,
+        PendingUpdate,
+        CancelledUpdate
+    };
+
     explicit QDeclarativeGalleryQueryModel(QObject *parent = 0);
 
     virtual QVariant itemType(const QString &type) const = 0;
 
+    bool event(QEvent *event);
+
     QGalleryQueryRequest m_request;
-    QPointer<QDeclarativeGalleryFilterBase> m_filter;
+    QWeakPointer<QDeclarativeGalleryFilterBase> m_filter;
     QGalleryResultSet *m_resultSet;
     QVector<QPair<int, QString> > m_propertyNames;
-    QString m_errorMessage;
     Status m_status;
     int m_rowCount;
-    bool m_complete;
+    UpdateStatus m_updateStatus;
 
 private Q_SLOTS:
     void _q_statusChanged();
@@ -206,6 +205,8 @@ class QDeclarativeDocumentGalleryModel : public QDeclarativeGalleryQueryModel
 public:
     explicit QDeclarativeDocumentGalleryModel(QObject *parent = 0);
     ~QDeclarativeDocumentGalleryModel();
+
+    void classBegin();
 
     QDeclarativeDocumentGallery::ItemType rootType() const;
     void setRootType(QDeclarativeDocumentGallery::ItemType itemType);

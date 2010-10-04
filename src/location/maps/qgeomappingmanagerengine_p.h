@@ -71,6 +71,7 @@ public:
     int managerVersion;
 
     QList<QGraphicsGeoMap::MapType> supportedMapTypes;
+    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes;
     qreal minimumZoomLevel;
     qreal maximumZoomLevel;
     QSize minimumImageSize;

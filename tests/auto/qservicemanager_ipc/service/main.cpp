@@ -176,8 +176,10 @@ public slots:
         m_hash = 1;
     }
     
-    void testIpcFailure() {
-      qApp->exit(0); // exit to show failure
+    void testIpcFailure()
+    {
+        qDebug() << "Application exiting on request";
+        qApp->exit(0); // exit to show failure
     }
 
 private:
@@ -381,7 +383,7 @@ void registerExampleService()
 {
     unregisterExampleService();
     QServiceManager m;
-    const QString path = QCoreApplication::applicationDirPath() + "/xmldata/ipcexampleservice.xml";
+    const QString path = QCoreApplication::applicationDirPath() + "/xmldata/ipcexampleservice.xml";    
     bool r = m.addService(path);
     if (!r)
         qWarning() << "Cannot register IPCExampleService" << path;
@@ -412,6 +414,8 @@ int main(int argc, char** argv)
     control->publishServices("qt_sfw_example_ipc_unittest");
     int res =  app.exec();
     delete control;
+
+    // Do not unregister when done, otherwise autostart can't start the service
     unregisterExampleService();
     return res;
 }

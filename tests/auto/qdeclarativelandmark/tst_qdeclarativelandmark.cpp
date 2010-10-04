@@ -140,7 +140,6 @@ public slots:
 
 private slots:
 
-    void sort();
     void construction();
     void construction_data();
     void defaultProperties();
@@ -150,6 +149,7 @@ private slots:
     void basicFetch();
     void basicFetch_data();
     void databaseChanges();
+    void sort();
     void declarativeLandmarkList();
     void declarativeCategoryList();
     void updateCancel();
@@ -157,8 +157,11 @@ private slots:
     void robustness_data();
     void categoriesOfLandmarkFetch();
     void categoriesOfLandmarkFetch_data();
+    void landmarksOfCategoriesFetch();
+    void landmarksOfCategoriesFetch_data();
+    void boxFilter();
+    void boxFilter_data();
     void filterContentChange();
-
     void sort_data();
 
 private:
@@ -223,7 +226,11 @@ void tst_QDeclarativeLandmark::createDb(QString fileName)
         delete m_manager;
         m_manager = 0;
     }
+#ifdef Q_OS_SYMBIAN
+    m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.symbian", map);
+#else
     m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
+#endif
 }
 
 void tst_QDeclarativeLandmark::deleteDb(QString fileName)
@@ -243,6 +250,7 @@ void tst_QDeclarativeLandmark::construction()
     QFETCH(QString, componentString);
     QFETCH(QString, expectedClassName);
     QFETCH(bool, shouldSucceed);
+
     // Component encapsulates one component description
     QDeclarativeComponent component(&m_engine);
     component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
@@ -283,7 +291,7 @@ void tst_QDeclarativeLandmark::construction_data()
     QTest::addColumn<QString>("componentString");
     QTest::addColumn<bool>("shouldSucceed");
     // LandmarkModel
-    QTest::newRow("LandmarkModel: No properties") <<  "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {}" << true;
+    QTest::newRow("LandmarkModel: No properties auto update false") <<  "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate: false}" << true;
     QTest::newRow("LandmarkModel: Only id property") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId}" << true;
     QTest::newRow("LandmarkModel: Valuetype properties") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; autoUpdate:true; limit: 5; offset: 2; sortBy: LandmarkModel.NameSort; sortOrder: LandmarkModel.DescendingOrder}" << true;
     QTest::newRow("LandmarkModel: With filter") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; autoUpdate:true; limit: 5; offset: 2; filter: LandmarkNameFilter{id: filter} }" << true;
@@ -306,7 +314,7 @@ void tst_QDeclarativeLandmark::construction_data()
     // LandmarkProximityFilter
     QTest::newRow("LandmarkProximityFilter: No properties") << "QDeclarativeLandmarkProximityFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkProximityFilter {}" << true;
     QTest::newRow("LandmarkProximityFilter: Only id property") << "QDeclarativeLandmarkProximityFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkProximityFilter {id: landmarkFilterId}" << true;
-    QTest::newRow("LandmarkProximityFilter: with coordinate") << "QDeclarativeLandmarkProximityFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkProximityFilter {coordinate: Coordinate {id: coordinate} radius: 20 }" << true;
+    QTest::newRow("LandmarkProximityFilter: with coordinate") << "QDeclarativeLandmarkProximityFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkProximityFilter {center: Coordinate {id: coordinate} radius: 20 }" << true;
     // LandmarkUnionFilter
     QTest::newRow("LandmarkUnionFilter: No properties") << "QDeclarativeLandmarkUnionFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkUnionFilter {}" << true;
     QTest::newRow("LandmarkUnionFilter: Only id property") << "QDeclarativeLandmarkUnionFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkUnionFilter {id: landmarkUnionFilterId}" << true;
@@ -343,7 +351,7 @@ void tst_QDeclarativeLandmark::defaultProperties()
     QCOMPARE(source_obj->property("name").toString(), QString());
     QCOMPARE(source_obj->property("phoneNumber").toString(), QString());
     QCOMPARE(source_obj->property("description").toString(), QString());
-    QCOMPARE(source_obj->property("radius").toDouble(), -1.0);
+    QVERIFY(qIsNaN(source_obj->property("radius").toReal()));
     QCOMPARE(source_obj->property("iconSource").toUrl(), QUrl());
     QCOMPARE(source_obj->property("url").toUrl(), QUrl());
     delete source_obj;
@@ -551,21 +559,21 @@ void tst_QDeclarativeLandmark::basicFetch_data()
     QTest::newRow("All (no filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true;}" << -1;
     QTest::newRow("One match (name filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkNameFilter{name: \"Brisbane\"} }" << 1;
     QTest::newRow("Two match (name filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkNameFilter{name: \"Tower\"} }" << 2;
-    QTest::newRow("One match (proximity filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkProximityFilter {coordinate: Coordinate {longitude: 20; latitude: 20} } }" << 1;
-    QTest::newRow("Two match (proximity filter, no radius)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkProximityFilter{coordinate: Coordinate {longitude: 60; latitude: 60} } }" << 2;
+    QTest::newRow("One match (proximity filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkProximityFilter {center: Coordinate {longitude: 20; latitude: 20} } }" << 1;
+    QTest::newRow("Two match (proximity filter, no radius)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkProximityFilter{center: Coordinate {longitude: 60; latitude: 60} } }" << 2;
     QGeoCoordinate from(70,70);
     QGeoCoordinate to(71,71);
     QString distance = QString::number(from.distanceTo(to));
 
-    QTest::newRow("Two match (proximity filter, radius)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkProximityFilter{coordinate: Coordinate {longitude: 70; latitude: 70;} radius: " + distance + " } }" << 2;
-    QTest::newRow("One match (two, but offset'd)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {offset: 1; autoUpdate:true; filter: LandmarkProximityFilter{coordinate: Coordinate {longitude: 70; latitude: 70;} radius: " + distance + " } }" << 1;
+    QTest::newRow("Two match (proximity filter, radius)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkProximityFilter{center: Coordinate {longitude: 70; latitude: 70;} radius: " + distance + " } }" << 2;
+    QTest::newRow("One match (two, but offset'd)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {offset: 1; autoUpdate:true; filter: LandmarkProximityFilter{center: Coordinate {longitude: 70; latitude: 70;} radius: " + distance + " } }" << 1;
     QTest::newRow("Four match (all, but limit'd)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {limit: 4; autoUpdate:true;}" << 4;
     // Compound filters
     QTest::newRow("All (empty intersection filter i.e. no filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkIntersectionFilter{ id : filter; } }"  << -1;
     QTest::newRow("All (empty union filter i.e. no filter)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkUnionFilter{id: filter; } }"  << -1;
     QTest::newRow("Two matches (union of two names)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkUnionFilter{ LandmarkNameFilter{name: \"London\"} LandmarkNameFilter{name: \"Sydney\"} } }"  << 2;
-    QTest::newRow("Two matches (union of name and prox)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkUnionFilter{ LandmarkNameFilter{name: \"Brisbane\"} LandmarkProximityFilter{coordinate: Coordinate {longitude:20; latitude:20} } } }"  << 2;
-    QTest::newRow("One match (intersect of name and prox)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkIntersectionFilter{ LandmarkNameFilter{name: \"Tower\"} LandmarkProximityFilter {coordinate: Coordinate {longitude:71; latitude:71} } } }"  << 1;
+    QTest::newRow("Two matches (union of name and prox)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkUnionFilter{ LandmarkNameFilter{name: \"Brisbane\"} LandmarkProximityFilter{center: Coordinate {longitude:20; latitude:20} } } }"  << 2;
+    QTest::newRow("One match (intersect of name and prox)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel { autoUpdate:true; filter: LandmarkIntersectionFilter{ LandmarkNameFilter{name: \"Tower\"} LandmarkProximityFilter {center: Coordinate {longitude:71; latitude:71} } } }"  << 1;
     // Categories
     QTest::newRow("All categories") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:true;}" << -1;
     QTest::newRow("One match (all, but limit'd") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:true; limit: 1}" << 1;
@@ -605,7 +613,6 @@ void tst_QDeclarativeLandmark::categoriesOfLandmarkFetch()
     if (expectedMatches > 0)
         QTRY_VERIFY(!countChangedSpy.isEmpty());
     QTRY_COMPARE(categoryModel->property("count").toInt(), expectedMatches);
-
     delete categoryModel;
     delete landmarkModel;
 }
@@ -619,6 +626,129 @@ void tst_QDeclarativeLandmark::categoriesOfLandmarkFetch_data()
     QTest::newRow("no category") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:false;}" << "Alpha centauri" << 0;
     QTest::newRow("one category") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:false;}" << "London" << 1;
     QTest::newRow("two categories") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {autoUpdate:false;}" << "Brisbane" << 2;
+}
+
+void tst_QDeclarativeLandmark::landmarksOfCategoriesFetch()
+{
+    QFETCH(QString, componentString);
+    QFETCH(QStringList, categoryNames);
+    QFETCH(int, expectedMatches);
+    populateTypicalDb();
+
+    QObject* source_obj = createComponent(componentString);
+    QDeclarativeLandmarkModel* landmarkModel = static_cast<QDeclarativeLandmarkModel*>(source_obj);
+    landmarkModel->setDbFileName(DB_FILENAME);
+
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel { autoUpdate:true;}");
+    QDeclarativeLandmarkCategoryModel* categoryModel = static_cast<QDeclarativeLandmarkCategoryModel*>(source_obj);
+    categoryModel->setDbFileName(DB_FILENAME);
+    QTest::qWait(50);
+
+    // Iterate through categories in the category model. Match against interesting categorynames
+    // (the categories with which the landmarks should be filtered). Create filters based for those items
+    // and store them in a list. At the end, if there more than one filters in the list, form a union filter,
+    // otherwise use a single category filter (non-union/compound).
+    QDeclarativeLandmarkFilterBase* result_filter(0);
+    QList<QDeclarativeLandmarkFilterBase*> category_filters;
+    foreach (QString categoryName, categoryNames) {
+        QDeclarativeLandmarkCategory* category(0);
+        QDeclarativeListProperty<QDeclarativeLandmarkCategory> declarativeList = categoryModel->categories();
+        for (int i = 0; i < categoryModel->count(); i++) {
+            qDebug() << "Looping through: " <<  QDeclarativeLandmarkCategoryModel::categories_at(&declarativeList, i)->name();
+            qDebug() << "And comparing it with: " << categoryName;
+            if (QDeclarativeLandmarkCategoryModel::categories_at(&declarativeList, i)->name() == categoryName) {
+                category = QDeclarativeLandmarkCategoryModel::categories_at(&declarativeList, i);
+                break;
+            }
+        }
+        QVERIFY(category != 0);
+        QDeclarativeLandmarkCategoryFilter* category_filter = static_cast<QDeclarativeLandmarkCategoryFilter*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryFilter {}"));
+        category_filter->setCategory(category);
+        category_filters.append(category_filter);
+    }
+    QDeclarativeLandmarkUnionFilter* union_filter = static_cast<QDeclarativeLandmarkUnionFilter*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkUnionFilter {}"));
+    QDeclarativeListProperty<QDeclarativeLandmarkFilterBase> declarativeFilterList = union_filter->filters();
+    if (category_filters.count() > 1) {
+        for (int i = 0; i < category_filters.count(); i++) {
+            QDeclarativeLandmarkCompoundFilter::filters_append(&declarativeFilterList, category_filters.at(i));
+        }
+        result_filter = union_filter;
+    } else if (category_filters.count() == 1) {
+        result_filter = category_filters.at(0);
+    } else {
+        qWarning("No filters created");
+    }
+
+    QSignalSpy countChangedSpy(landmarkModel, SIGNAL(countChanged()));
+    landmarkModel->setFilter(result_filter);
+    landmarkModel->metaObject()->invokeMethod(landmarkModel, "update");
+    if (expectedMatches > 0)
+        QTRY_VERIFY(!countChangedSpy.isEmpty());
+    else
+        QTest::qWait(50); // Wait so that unexpected signals are detected
+    QTRY_COMPARE(landmarkModel->property("count").toInt(), expectedMatches);
+
+    qDeleteAll(category_filters);
+    delete union_filter;
+    delete categoryModel;
+    delete landmarkModel;
+}
+
+void tst_QDeclarativeLandmark::landmarksOfCategoriesFetch_data()
+{
+    QTest::addColumn<QString>("componentString");
+    QTest::addColumn<QStringList>("categoryNames");
+    QTest::addColumn<int>("expectedMatches");
+
+    QTest::newRow("empty category") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << (QStringList() << "Empty") << 0;
+    QTest::newRow("one category (many matches)") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << (QStringList() << "Cities") << 3;
+    QTest::newRow("two categories (many + many matches") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << (QStringList() << "Sights" << "Cities") << 6;
+}
+
+void tst_QDeclarativeLandmark::boxFilter()
+{
+    QFETCH(QString, componentString);
+    QFETCH(double, topLeftLatitude);
+    QFETCH(double, topLeftLongitude);
+    QFETCH(double, bottomRightLatitude);
+    QFETCH(double, bottomRightLongitude);
+    QFETCH(int, expectedMatches);
+    populateTypicalDb();
+
+    QObject* source_obj = createComponent(componentString);
+    QDeclarativeLandmarkModel* landmarkModel = static_cast<QDeclarativeLandmarkModel*>(source_obj);
+    landmarkModel->setDbFileName(DB_FILENAME);
+
+    QDeclarativeLandmarkBoxFilter* box_filter = static_cast<QDeclarativeLandmarkBoxFilter*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkBoxFilter {}"));
+    QDeclarativeCoordinate* top_left_coordinate = new QDeclarativeCoordinate(QGeoCoordinate(topLeftLatitude, topLeftLongitude));
+    QDeclarativeCoordinate* bottom_right_coordinate = new QDeclarativeCoordinate(QGeoCoordinate(bottomRightLatitude, bottomRightLongitude));
+    box_filter->setTopLeft(top_left_coordinate);
+    box_filter->setBottomRight(bottom_right_coordinate);
+    landmarkModel->setFilter(box_filter);
+    landmarkModel->metaObject()->invokeMethod(landmarkModel, "update");
+
+    if (expectedMatches == 0)
+        QTest::qWait(50);
+    QTRY_COMPARE(landmarkModel->count(), expectedMatches);
+
+    delete box_filter;
+    delete top_left_coordinate;
+    delete bottom_right_coordinate;
+
+}
+
+void tst_QDeclarativeLandmark::boxFilter_data()
+{
+    QTest::addColumn<QString>("componentString");
+    QTest::addColumn<double>("topLeftLatitude");
+    QTest::addColumn<double>("topLeftLongitude");
+    QTest::addColumn<double>("bottomRightLatitude");
+    QTest::addColumn<double>("bottomRightLongitude");
+    QTest::addColumn<int>("expectedMatches");
+
+    QTest::newRow("zero matches with zero box") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << double(0) << double(0) << double(0) << double(0) << 0;
+    QTest::newRow("one match with small box") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << double(21) << double(19) << double(19) << double(21) << 1;
+    QTest::newRow("two matches with larger box") << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {autoUpdate:false;}" << double(72) << double(69) << double(69) << double(72) << 2;
 }
 
 // Update database without autoUpdate with update() and verify signals are received an count updates
@@ -932,7 +1062,7 @@ void tst_QDeclarativeLandmark::filterContentChange()
     QTRY_COMPARE(source_obj->property("count").toInt(), 2);
 
     // Change filter to proximity filter which matches one landmark
-    QDeclarativeLandmarkProximityFilter* proximity_filter_obj = static_cast<QDeclarativeLandmarkProximityFilter*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkProximityFilter{coordinate: Coordinate {longitude: 70; latitude: 70} }"));
+    QDeclarativeLandmarkProximityFilter* proximity_filter_obj = static_cast<QDeclarativeLandmarkProximityFilter*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkProximityFilter{center: Coordinate {longitude: 70; latitude: 70} }"));
     model->setFilter(proximity_filter_obj);
     QTRY_COMPARE(source_obj->property("count").toInt(), 1);
     // Change filter so that it matches more than one landmark
@@ -940,7 +1070,7 @@ void tst_QDeclarativeLandmark::filterContentChange()
     QTRY_COMPARE(source_obj->property("count").toInt(), 2);
 
     // Change filter to a compound filter that matches only one filter
-    QDeclarativeLandmarkUnionFilter* union_filter_obj = static_cast<QDeclarativeLandmarkUnionFilter*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkUnionFilter{ LandmarkNameFilter{name: \"Im nothing im nobody i dont exist\"} LandmarkProximityFilter{coordinate: Coordinate {longitude:20; latitude:20} } }"));
+    QDeclarativeLandmarkUnionFilter* union_filter_obj = static_cast<QDeclarativeLandmarkUnionFilter*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkUnionFilter{ LandmarkNameFilter{name: \"Im nothing im nobody i dont exist\"} LandmarkProximityFilter{center: Coordinate {longitude:20; latitude:20} } }"));
     model->setFilter(union_filter_obj);
     QTRY_COMPARE(source_obj->property("count").toInt(), 1);
     // Append compound filter with one more filter (this filter matches)
@@ -958,13 +1088,14 @@ void tst_QDeclarativeLandmark::filterContentChange()
     QGeoCoordinate extra_coordinate(50,50);
     QDeclarativeCoordinate extra_declarative_coordinate;
     extra_declarative_coordinate.setCoordinate(extra_coordinate);
-    extra_proximity_filter_obj->setCoordinate(&extra_declarative_coordinate);
+    extra_proximity_filter_obj->setCenter(&extra_declarative_coordinate);
     QDeclarativeLandmarkCompoundFilter::filters_append(&declarativeList, extra_proximity_filter_obj);
     QTRY_COMPARE(source_obj->property("count").toInt(), 2);
     // Modify the coordinates of the last filter so that it no more matches
     extra_declarative_coordinate.setLongitude(1);
     extra_declarative_coordinate.setLatitude(1);
     QTRY_COMPARE(source_obj->property("count").toInt(), 1);
+    QDeclarativeLandmarkCompoundFilter::filters_clear(&declarativeList);
     delete source_obj;
 }
 

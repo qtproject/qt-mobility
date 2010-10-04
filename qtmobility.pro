@@ -182,12 +182,6 @@ contains(build_demos, yes):SUBDIRS+=demos
         INSTALLS += qtmheadersorganizer
     }
 
-    contains(mobility_modules,telephony) {
-        qtmheaderstelephony.path = $${QT_MOBILITY_INCLUDE}/QtTelephony
-        qtmheaderstelephony.files = $${QT_MOBILITY_BUILD_TREE}/include/QtTelephony/*
-        INSTALLS += qtmheaderstelephony
-    }
-
     contains(mobility_modules,feedback) {
         qtmheadersfeedback.path = $${QT_MOBILITY_INCLUDE}/QtFeedback
         qtmheadersfeedback.files = $${QT_MOBILITY_BUILD_TREE}/include/QtFeedback/*
@@ -227,7 +221,6 @@ contains(build_demos, yes):SUBDIRS+=demos
                        include/QtServiceFramework/* \
                        include/QtSystemInfo/* \
                        include/QtSensors/* \
-                       include/QtTelephony/* \
                        include/QtFeedback/* \
                        include/QtGallery/*
 
@@ -240,7 +233,7 @@ contains(build_demos, yes):SUBDIRS+=demos
 
             #files() uses windows path separator ('\')  but bld.inf requires '/'
             INCLUDEFILES=$$cleanedFiles
-            cleanedFiles=$$replace(INCLUDEFILES, \\\,/)
+            cleanedFiles=$$replace(INCLUDEFILES, \\\\,/)
 
             for(header, cleanedFiles) {
                 exists($$header):
@@ -249,7 +242,7 @@ contains(build_demos, yes):SUBDIRS+=demos
         }
     }
 
-    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|telephony|feedback|sensors|gallery) {
+    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|feedback|sensors|gallery) {
         for(api, qtmMwHeaders) {
             INCLUDEFILES=$$files($$api);
 
@@ -258,7 +251,7 @@ contains(build_demos, yes):SUBDIRS+=demos
 
             #files() uses windows path separator ('\')  but bld.inf requires '/'
             INCLUDEFILES=$$cleanedFiles
-            cleanedFiles=$$replace(INCLUDEFILES, \\\,/)
+            cleanedFiles=$$replace(INCLUDEFILES, \\\\,/)
 
             for(header, cleanedFiles) {
                 exists($$header):

@@ -344,9 +344,11 @@ namespace
     UpdateMask \
 }
 
-template <typename T> bool qt_writeValue(QDocumentGallery::Error *error, QXmlStreamWriter *xml, const QVariant &value);
+template <typename T> bool qt_writeValue(
+        QDocumentGallery::Error *error, QXmlStreamWriter *xml, const QVariant &value);
 
-template <> bool qt_writeValue<QString>(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QVariant &value)
+template <> bool qt_writeValue<QString>(
+        QDocumentGallery::Error *, QXmlStreamWriter *xml, const QVariant &value)
 {
     xml->writeStartElement(QLatin1String("rdf:String"));
     xml->writeCharacters(value.toString());
@@ -355,7 +357,8 @@ template <> bool qt_writeValue<QString>(QDocumentGallery::Error *, QXmlStreamWri
     return true;
 }
 
-template <> bool qt_writeValue<int>(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QVariant &value)
+template <> bool qt_writeValue<int>(
+        QDocumentGallery::Error *, QXmlStreamWriter *xml, const QVariant &value)
 {
     xml->writeStartElement(QLatin1String("rdf:Integer"));
     xml->writeCharacters(value.toString());
@@ -364,7 +367,8 @@ template <> bool qt_writeValue<int>(QDocumentGallery::Error *, QXmlStreamWriter 
     return true;
 }
 
-template <> bool qt_writeValue<qreal>(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QVariant &value)
+template <> bool qt_writeValue<qreal>(
+        QDocumentGallery::Error *, QXmlStreamWriter *xml, const QVariant &value)
 {
     xml->writeStartElement(QLatin1String("rdf:Float"));
     xml->writeCharacters(value.toString());
@@ -373,7 +377,8 @@ template <> bool qt_writeValue<qreal>(QDocumentGallery::Error *, QXmlStreamWrite
     return true;
 }
 
-template <> bool qt_writeValue<QDateTime>(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QVariant &value)
+template <> bool qt_writeValue<QDateTime>(
+        QDocumentGallery::Error *, QXmlStreamWriter *xml, const QVariant &value)
 {
     xml->writeStartElement(QLatin1String("rdf:Date"));
     xml->writeCharacters(value.toDateTime().toString(Qt::ISODate));
@@ -382,7 +387,18 @@ template <> bool qt_writeValue<QDateTime>(QDocumentGallery::Error *, QXmlStreamW
     return true;
 }
 
-template <> bool qt_writeValue<QVariant>(QDocumentGallery::Error *error, QXmlStreamWriter *xml, const QVariant &value)
+template <> bool qt_writeValue<QRegExp>(
+        QDocumentGallery::Error *, QXmlStreamWriter *xml, const QVariant &value)
+{
+    xml->writeStartElement(QLatin1String("rdf:String"));
+    xml->writeCharacters(value.toRegExp().pattern());
+    xml->writeEndElement();
+
+    return true;
+}
+
+template <> bool qt_writeValue<QVariant>(
+        QDocumentGallery::Error *error, QXmlStreamWriter *xml, const QVariant &value)
 {
     switch (value.type()) {
     case QVariant::Int:
@@ -396,6 +412,8 @@ template <> bool qt_writeValue<QVariant>(QDocumentGallery::Error *error, QXmlStr
     case QVariant::DateTime:
     case QVariant::Date:
         return qt_writeValue<QDateTime>(error, xml, value);
+    case QVariant::RegExp:
+        return qt_writeValue<QRegExp>(error, xml, value);
     default:
         if (value.canConvert<QString>()) {
             return qt_writeValue<QString>(error, xml, value);
@@ -489,7 +507,7 @@ static bool qt_writeCondition(
 {
     QXmlStackStreamWriter writer(xml);
 
-    if (filter.isInverted())
+    if (filter.isNegated())
         writer.writeStartElement("rdfq:not");
 
     const QString propertyName = filter.propertyName();

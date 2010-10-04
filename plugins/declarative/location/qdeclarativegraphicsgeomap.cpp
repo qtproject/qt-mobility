@@ -41,6 +41,7 @@
 ****************************************************************************/
 
 #include "qdeclarativegraphicsgeomap_p.h"
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -101,12 +102,13 @@ void QDeclarativeGraphicsGeoMap::object_clear(QDeclarativeListProperty<QGeoMapOb
     static_cast<QDeclarativeGraphicsGeoMap*>(prop->object)->clearMapObjects();
 }
 
-QPointF QDeclarativeGraphicsGeoMap::toScreenPosition(const QDeclarativeCoordinate *coordinate) const
+// TODO following two needs to be changed to use QDeclarativeCoordinate* when QML supports it
+QPointF QDeclarativeGraphicsGeoMap::toScreenPosition(QObject *coordinate) const
 {
-    return coordinateToScreenPosition(coordinate->coordinate());
+    return coordinateToScreenPosition(static_cast<QDeclarativeCoordinate*>(coordinate)->coordinate());
 }
 
-QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::toCoordinate(QPointF screenPosition) const
+QObject* QDeclarativeGraphicsGeoMap::toCoordinate(QPointF screenPosition) const
 {
     return new QDeclarativeCoordinate(screenPositionToCoordinate(screenPosition),
                                       const_cast<QDeclarativeGraphicsGeoMap *>(this));

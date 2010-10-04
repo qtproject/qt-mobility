@@ -65,8 +65,8 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldOriginalDate, "OriginalDate");
 #endif
 
-    void setParentLocalId(QOrganizerItemLocalId parentId) {setValue(FieldParentLocalId, static_cast<int>(parentId));}
-    QOrganizerItemLocalId parentLocalId() const {return static_cast<QOrganizerItemLocalId>(variantValue(FieldParentLocalId).toInt());}
+    void setParentLocalId(const QOrganizerItemLocalId& parentId) {setValue(FieldParentLocalId, QVariant::fromValue(parentId));}
+    QOrganizerItemLocalId parentLocalId() const {return variantValue(FieldParentLocalId).value<QOrganizerItemLocalId>();}
 
 
     void setOriginalDate(const QDate& date) {setValue(FieldOriginalDate, date);}

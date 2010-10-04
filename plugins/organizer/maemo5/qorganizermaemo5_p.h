@@ -69,6 +69,8 @@
 #include "qorganizeritemmanager.h"
 #include "qorganizeritemmanagerengine.h"
 #include "qorganizeritemmanagerenginefactory.h"
+#include "qorganizeritemenginelocalid.h"
+#include "qorganizercollectionenginelocalid.h"
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
@@ -87,7 +89,6 @@
 #include <CJournal.h>
 #include <CRecurrence.h>
 
-QTM_USE_NAMESPACE
 
 class QOrganizerItemMaemo5Factory : public QObject, public QOrganizerItemManagerEngineFactory
 {
@@ -95,6 +96,8 @@ class QOrganizerItemMaemo5Factory : public QObject, public QOrganizerItemManager
   Q_INTERFACES(QtMobility::QOrganizerItemManagerEngineFactory)
   public:
     QOrganizerItemManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error*);
+    QOrganizerItemEngineLocalId* createItemEngineLocalId() const;
+    QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() const;
     QString managerName() const;
 };
 
@@ -129,9 +132,11 @@ public:
     OrganizerAsynchProcess *m_asynchProcess;
 
     // calendar database accessor instance
-    OrganizerCalendarDatabaseAccess m_databaseAccess;
-};
+    OrganizerCalendarDatabaseAccess* m_dbAccess;
 
+    // calendar database cache instance
+    OrganizerDbCache* m_dbCache;
+};
 
 class QOrganizerItemMaemo5Engine : public QOrganizerItemManagerEngine
 {
@@ -158,14 +163,14 @@ public:
     /* Collections - every item belongs to exactly one collection */
     QOrganizerCollectionLocalId defaultCollectionId(QOrganizerItemManager::Error* error) const;
     QList<QOrganizerCollectionLocalId> collectionIds(QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const;
     bool saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
 
     /* Capabilities reporting */
     bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString &itemType) const;
     bool isFilterSupported(const QOrganizerItemFilter &filter) const;
-    QList<QVariant::Type> supportedDataTypes() const;
+    QList<int> supportedDataTypes() const;
     QStringList supportedItemTypes() const;
 
     /* Asynchronous Request Support */
@@ -178,6 +183,23 @@ public Q_SLOTS:
     void dataChanged();
 
 private:
+    QList<QOrganizerItem> internalItemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerItem> internalItemInstances(const QOrganizerItem &generator, const QDateTime &periodStart, const QDateTime &periodEnd, int maxCount, QOrganizerItemManager::Error *error) const;
+    QList<QOrganizerItemLocalId> internalItemIds(const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, QOrganizerItemManager::Error *error) const;
+
+    QList<QOrganizerItem> internalItems(const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const;
+    QOrganizerItem internalItem(const QOrganizerItemLocalId &itemId, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const;
+
+    bool internalSaveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    bool internalRemoveItems(const QList<QOrganizerItemLocalId> &itemIds, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
+
+    /* Collections - every item belongs to exactly one collection */
+    QOrganizerCollectionLocalId internalDefaultCollectionId(QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerCollectionLocalId> internalCollectionIds(QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerCollection> internalCollections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const;
+    bool internalSaveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
+    bool internalRemoveCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
+
     // single item saving implementation
     void checkItemIdValidity(CCalendar *cal, QOrganizerItem *checkItem, QOrganizerItemManager::Error *error);
     int doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemChangeSet &cs, QOrganizerItemManager::Error *error);
@@ -203,12 +225,20 @@ private:
     // calendar instance deletion helper
     void cleanupCal(CCalendar *cal) const;
 
+    // get calendar
+    CCalendar* getCalendar(QOrganizerCollectionLocalId collectionId, QOrganizerItemManager::Error *error) const;
+
+    // extract possible collection ids from the filters
+    QSet<QOrganizerCollectionId> extractCollectionIds(const QOrganizerItemFilter& filter) const;
+    QSet<QOrganizerCollectionLocalId> extractCollectionLocalIds(const QOrganizerItemFilter& filter) const;
+
     // ctor
     QOrganizerItemMaemo5Engine();
 
 private:
     QOrganizerItemMaemo5EngineData *d;
     QTimer m_waitTimer;
+    mutable QMutex m_operationMutex;
     friend class QOrganizerItemMaemo5Factory;
 };
 
