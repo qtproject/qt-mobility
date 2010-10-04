@@ -50,7 +50,7 @@ maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
     const QString sensorName = "tapsensor";
     initSensor<TapSensorChannelInterface>(sensorName, m_initDone);
 
-    addOutputRange(0, 4, 1); // axes only, no directions, statically this
+//    addOutputRange(0, 4, 1); // axes only, no direction
     sensor->setProperty("returnDoubleTapEvents", true); //by default doubles
 
     if (m_sensorInterface){
