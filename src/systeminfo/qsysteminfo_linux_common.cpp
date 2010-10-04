@@ -43,6 +43,7 @@
 #include <QTimer>
 #include <QFile>
 #include <QDir>
+#include <QSocketNotifier>
 
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
@@ -65,6 +66,7 @@
 #include <sys/vfs.h>
 #include <mntent.h>
 #include <sys/stat.h>
+#include <math.h>
 
 #if !defined(Q_WS_MAEMO_6)
 #ifdef Q_WS_X11
