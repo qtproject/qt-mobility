@@ -42,6 +42,17 @@
 #ifndef QGEOSATELLITEINFOSOURCE60_H_
 #define QGEOSATELLITEINFOSOURCE60_H_
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 // INCLUDES
 #include <e32std.h>
 #include <e32base.h>
@@ -49,7 +60,7 @@
 #include "qgeosatelliteinfosource.h"
 #include "notificationsatellitecallback_s60_p.h"
 
-#define MAX_SIZE 5
+#define MAX_SIZE 25
 
 QTM_BEGIN_NAMESPACE
 
