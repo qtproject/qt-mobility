@@ -13,3 +13,6 @@ SOURCES = \
     main.cpp \
     slideshow.cpp
 
+symbian {
+    TARGET.EPOCHEAPSIZE = 0x20000 0x3000000
+}
