@@ -158,19 +158,24 @@ bool COrganizerItemRequestsServiceProvider::StartRequest(
             // Unknown request
             return false;
         }
-        
-        // Process the request at RunL()
-        SelfComplete(); 
+
+        // QWeakPointer is aware if the request object (which is derived from QObject) is deleted.
+        QWeakPointer<QOrganizerItemAbstractRequest> req = aReq;
         
         // Change the state of the request and emit signal
         QOrganizerItemManagerEngine::updateRequestState(aReq, 
                 QOrganizerItemAbstractRequest::ActiveState);
+
+        // Client may delete the request object when state is updated. And because by default
+        // signals are synchronous we might not have a valid request anymore.
+        if (!req.isNull())
+            SelfComplete(); // Process the request at RunL() 
         
-        return ETrue;
+        return true;
     } else {
         // Another asynchronous request is already going on so this request can 
         // not be taken
-        return EFalse;
+        return false;
     }
 }
 
