@@ -2159,6 +2159,7 @@ void tst_QOrganizerItemAsync::collectionSave()
     }
 
     // update a previously saved collection
+    QVERIFY(!result.isEmpty()); // make sure that we were able to retrieve the required collection.
     testCollection = result.first();
     testCollection.setMetaData("name", "test name");
     saveList.clear();
