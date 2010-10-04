@@ -18,26 +18,10 @@ MOBILITY = systeminfo
 
 CONFIG += console
 
-win32 {
-    FORMS += dialog.ui
-}
-
-unix: {
-    linux-*: {
-        maemo* {
-            FORMS += dialog_landscape.ui
-        } else {
-            FORMS += dialog.ui
-        }
-    }
-    
-    mac: {
-        FORMS += dialog.ui
-    }
-}
+FORMS +=  dialog_small_landscape.ui
 
 symbian {
     TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location  ReadDeviceData
     TARGET.UID3 = 0x2002ac7e
-    FORMS    += dialog_s60.ui
 }
+

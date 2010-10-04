@@ -116,7 +116,7 @@ qlonglong QSystemStorageInfo::availableDiskSpace(const QString &volumeDrive)
  \property QSystemStorageInfo::logicalDrives
  \brief The logical drives.
 
-   Returns a QStringList of volumes or partitions.
+   Returns a QStringList of volumes or partitions, or an empty list if no drives are found.
 */
 QStringList QSystemStorageInfo::logicalDrives()
 {
