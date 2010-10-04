@@ -1052,7 +1052,7 @@ void tst_QOrganizerItemAsync::itemSave()
     QCOMPARE(oim->itemIds().size(), originalCount + 1);
 
     // update a previously saved item
-    QOrganizerItemPriority priority;
+    QOrganizerItemPriority priority = result.first().detail<QOrganizerItemPriority>();
     priority.setPriority(QOrganizerItemPriority::LowestPriority);
     testTodo = result.first();
     testTodo.saveDetail(&priority);
