@@ -297,6 +297,8 @@ private:    //data
 
     CRepository *m_bluetoothRepository;
     CCenRepNotifyHandler *m_bluetoothNotifyHandler;
+
+    bool hasWirelessKeyboardConnected;
 };
 
 //////// QSystemScreenSaver
