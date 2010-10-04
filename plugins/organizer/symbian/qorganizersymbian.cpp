@@ -889,12 +889,14 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(
 {
     CCalEntry * entry(NULL);
 
-    // Find the child entry corresponding to the item occurrence
-    if (!item.localId().isNull()) {
-        // The item has a local id, check the item is from this manager
+    // Check manager uri (if provided)
+    if (!item.id().managerUri().isEmpty()) {
         if (item.id().managerUri() != managerUri())
             User::Leave(KErrInvalidOccurrence);
+    }
 
+    // Find the child entry corresponding to the item occurrence
+    if (!item.localId().isNull()) {
         // Fetch the item (will return NULL if the localid is not found)
         entry = entryViewL(collectionId)->FetchL(toTCalLocalUid(item.localId()));
         if (!entry)
@@ -965,17 +967,18 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(
 {
     CCalEntry *entry(0);
 
+    // Check that manager uri match to this manager (if provided)
+    if (!manageruri.isEmpty()) {
+        if (manageruri != managerUri())
+            User::Leave(KErrArgument);
+    }
+
     // There must be an existing entry if local id is provided
     if (!localId.isNull()) {
-        // The item has a local id, check the item is from this manager
-        if (manageruri == managerUri()) {
-            // Fetch the item (will return NULL if the localid is not found)
-            entry = entryViewL(collectionId)->FetchL(toTCalLocalUid(localId));
-            if (!entry)
-                User::Leave(KErrNotFound);
-        } else {
-            User::Leave(KErrArgument);
-        }
+        // Fetch the item (will return NULL if the localid is not found)
+        entry = entryViewL(collectionId)->FetchL(toTCalLocalUid(localId));
+        if (!entry)
+            User::Leave(KErrNotFound);
     }
 
     // ownership transferred

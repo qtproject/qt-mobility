@@ -45,6 +45,7 @@
 #include <QTextStream>
 #include <qservicemanager.h>
 #include <QString>
+#include <QDir>
 
 QT_USE_NAMESPACE
 
@@ -68,6 +69,7 @@ public slots:
     void search(const QStringList &args);
     void add(const QStringList &args);
     void remove(const QStringList &args);
+    void autostart(const QStringList &args);
 
 private:
     bool setOptions(const QStringList &options);
@@ -130,6 +132,7 @@ void CommandProcessor::showUsage(QTextStream *stream)
             "\tsearch     Search for a service or interface\n"
             "\tadd        Register a service\n"
             "\tremove     Unregister a service\n"
+            "\tautostart  Generates a .service file for D-Bus service autostart\n"
             "\n"
             "Options:\n"
             "\t--system   Use the system-wide services database instead of the\n"
@@ -237,6 +240,46 @@ void CommandProcessor::remove(const QStringList &args)
         *stdoutStream << "Unregistered service " << service << '\n';
     else
         *stdoutStream << "Error: cannot unregister service " << service << '\n';
+}
+
+void CommandProcessor::autostart(const QStringList &args)
+{
+    if (args.isEmpty() || args.size() == 1) {
+        *stdoutStream << "Usage:\n\tautostart <service-name> <service-file>\n";
+        return;
+    }
+    
+    const QString &service = args[0];
+    QList<QServiceInterfaceDescriptor> list = serviceManager->findInterfaces(service);
+    if (list.size() == 0) {
+        *stdoutStream << "Error: cannot find any registered services for " << service << '\n';
+        return;
+    }
+
+    const QString &servicePath = args[1];
+    if (!QFile::exists(servicePath)) {
+        *stdoutStream << "Error: cannot find service file " << servicePath << '\n';
+        return;
+    }
+
+    QDir dir(QDir::homePath());
+    bool bleh = dir.mkpath(".local/share/dbus-1/services/");
+
+    const QString &name = "com.nokia.qtmobility.sfw." + service;
+    const QString &exec = QFileInfo(args[1]).absoluteFilePath();
+    const QString &file = QDir::homePath() + "/.local/share/dbus-1/services/" + 
+                          list[0].interfaceName() + ".service";
+    
+    QFile data(file);
+    if (data.open(QFile::WriteOnly)) {
+        QTextStream out(&data);
+        out << "[D-BUS Service]\n"
+            << "Name=" << name << '\n'
+            << "Exec=" << exec;
+    }
+    data.close();
+
+    *stdoutStream << "Generated D-Bus autostart file " << file << '\n';
 }
 
 bool CommandProcessor::setOptions(const QStringList &options)

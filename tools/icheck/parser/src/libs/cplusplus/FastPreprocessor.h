@@ -46,7 +46,7 @@
 #include "CppDocument.h"
 #include "pp.h"
 
-#include <Control.h>
+#include <CppControl.h>
 
 #include <QtCore/QSet>
 #include <QtCore/QString>
