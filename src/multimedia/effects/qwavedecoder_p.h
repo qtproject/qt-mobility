@@ -39,72 +39,95 @@
 **
 ****************************************************************************/
 
-#ifndef QSOUNDEFFECT_H
-#define QSOUNDEFFECT_H
+#ifndef WAVEDECODER_H
+#define WAVEDECODER_H
 
 //
 //  W A R N I N G
 //  -------------
 //
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
+// This file is not part of the Qt API.  It exists for the convenience
+// of other Qt classes.  This header file may change from version to
 // version without notice, or even be removed.
 //
 // We mean it.
 //
 
-#include <qmobilityglobal.h>
-#include <QtCore/qobject.h>
-#include <QtCore/qurl.h>
+#include <QtCore/qiodevice.h>
+#include <qaudioformat.h>
 
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QSoundEffectPrivate;
 
-class Q_MULTIMEDIA_EXPORT QSoundEffect : public QObject
+class QWaveDecoder : public QIODevice
 {
     Q_OBJECT
-    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
-    Q_PROPERTY(int loops READ loops WRITE setLoops NOTIFY loopsChanged)
-    Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
-    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
 
 public:
-    explicit QSoundEffect(QObject *parent = 0);
-    ~QSoundEffect();
+    explicit QWaveDecoder(QIODevice *source, QObject *parent = 0);
+    ~QWaveDecoder();
 
-    QUrl source() const;
-    void setSource(const QUrl &url);
+    QAudioFormat audioFormat() const;
+    int duration() const;
 
-    int loops() const;
-    void setLoops(int loopCount);
-
-    int volume() const;
-    void setVolume(int volume);
-
-    bool isMuted() const;
-    void setMuted(bool muted);
+    qint64 size() const;
+    bool isSequential() const;
+    qint64 bytesAvailable() const;
 
 Q_SIGNALS:
-    void sourceChanged();
-    void loopsChanged();
-    void volumeChanged();
-    void mutedChanged();
+    void formatKnown();
+    void invalidFormat();
 
-public Q_SLOTS:
-    void play();
+private Q_SLOTS:
+    void handleData();
 
 private:
-    Q_DISABLE_COPY(QSoundEffect)
-    QSoundEffectPrivate* d;
+    qint64 readData(char *data, qint64 maxlen);
+    qint64 writeData(const char *data, qint64 len);
+
+    struct chunk
+    {
+        char        id[4];
+        quint32     size;
+    };
+    struct RIFFHeader
+    {
+        chunk       descriptor;
+        char        type[4];
+    };
+    struct WAVEHeader
+    {
+        chunk       descriptor;
+        quint16     audioFormat;
+        quint16     numChannels;
+        quint32     sampleRate;
+        quint32     byteRate;
+        quint16     blockAlign;
+        quint16     bitsPerSample;
+    };
+    struct DATAHeader
+    {
+        chunk       descriptor;
+    };
+    struct CombinedHeader
+    {
+        RIFFHeader  riff;
+        WAVEHeader  wave;
+    };
+
+    bool haveFormat;
+    qint64 dataSize;
+    qint64 remaining;
+    QAudioFormat format;
+    QIODevice *source;
+    CombinedHeader header;
 };
 
 QT_END_NAMESPACE
 
 QT_END_HEADER
 
-
-#endif // QSOUNDEFFECT_H
+#endif // WAVEDECODER_H

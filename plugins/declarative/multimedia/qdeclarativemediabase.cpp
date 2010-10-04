@@ -129,66 +129,22 @@ private:
     QBasicTimer m_timer;
 };
 
-void QDeclarativeMediaBase::_q_stateChanged(QMediaPlayer::State state)
+void QDeclarativeMediaBase::_q_statusChanged()
 {
-    if (m_state == state)
-        return;
+    const QMediaPlayer::State state = m_state;
+    const QMediaPlayer::MediaStatus status = m_status;
+    const bool isPlaying = m_playing;
+    const bool isPaused = m_paused;
 
-    switch (state) {
-    case QMediaPlayer::StoppedState: {
-            emit stopped();
+    m_state = m_playerControl->state();
+    m_status = m_playerControl->mediaStatus();
 
-            if (m_playing) {
-                m_playing = false;
-                emit playingChanged();
-            }
-        }
-        break;
-    case QMediaPlayer::PausedState: {
-            emit paused();
+    m_playing = m_state != QMediaPlayer::StoppedState;
+    if (m_state == QMediaPlayer::PausedState)
+        m_paused = true;
 
-            if (!m_paused) {
-                m_paused = true;
-                emit pausedChanged();
-            }
-
-            if (m_state == QMediaPlayer::StoppedState)
-                emit started();
-        }
-        break;
-    case QMediaPlayer::PlayingState: {
-            if (m_state == QMediaPlayer::PausedState)
-                emit resumed();
-            else
-                emit started();
-
-           if (m_paused) {
-               m_paused = false;
-               emit pausedChanged();
-           }
-        }
-        break;
-    }
-
-    // Check
-    if (state == QMediaPlayer::PlayingState
-            || m_status == QMediaPlayer::BufferingMedia
-            || m_status == QMediaPlayer::StalledMedia) {
-        m_animation->start();
-    }
-    else {
-        m_animation->stop();
-    }
-
-    m_state = state;
-}
-
-void QDeclarativeMediaBase::_q_mediaStatusChanged(QMediaPlayer::MediaStatus status)
-{
-    if (status != m_status) {
-        m_status = status;
-
-        switch (status) {
+    if (m_status != status) {
+        switch (m_status) {
         case QMediaPlayer::LoadedMedia:
             emit loaded();
             break;
@@ -207,16 +163,51 @@ void QDeclarativeMediaBase::_q_mediaStatusChanged(QMediaPlayer::MediaStatus stat
         default:
             break;
         }
-
         emit statusChanged();
+    }
 
-        if (m_state == QMediaPlayer::PlayingState
-                || m_status == QMediaPlayer::BufferingMedia
-                || m_status == QMediaPlayer::StalledMedia) {
-            m_animation->start();
-        } else {
-            m_animation->stop();
+    if (m_state != state) {
+        switch (m_state) {
+        case QMediaPlayer::StoppedState:
+            emit stopped();
+
+            if (isPlaying && !m_playing)
+                emit playingChanged();
+
+            break;
+        case QMediaPlayer::PausedState:
+            if (state == QMediaPlayer::StoppedState)
+                emit started();
+            if (m_state = QMediaPlayer::PausedState)
+                emit paused();
+            
+            if (!isPaused && m_paused)
+                emit pausedChanged();
+            
+            break;
+            
+        case QMediaPlayer::PlayingState:
+            if (state == QMediaPlayer::PausedState)
+                emit resumed();
+            else
+                emit started();
+            break;
+
+            if (isPaused && !m_paused)
+                emit pausedChanged();
+            if (!isPlaying && m_playing)
+                emit playingChanged();
         }
+    }
+
+    // Check
+    if (m_state == QMediaPlayer::PlayingState
+            || m_status == QMediaPlayer::BufferingMedia
+            || m_status == QMediaPlayer::StalledMedia) {
+        m_animation->start();
+    }
+    else {
+        m_animation->stop();
     }
 }
 
@@ -279,9 +270,9 @@ void QDeclarativeMediaBase::setObject(QObject *object)
 
     if (m_playerControl) {
         QObject::connect(m_playerControl, SIGNAL(stateChanged(QMediaPlayer::State)),
-                object, SLOT(_q_stateChanged(QMediaPlayer::State)));
+                object, SLOT(_q_statusChanged()));
         QObject::connect(m_playerControl, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
-                object, SLOT(_q_mediaStatusChanged(QMediaPlayer::MediaStatus)));
+                object, SLOT(_q_statusChanged()));
         QObject::connect(m_playerControl, SIGNAL(mediaChanged(QMediaContent)),
                 object, SIGNAL(sourceChanged()));
         QObject::connect(m_playerControl, SIGNAL(durationChanged(qint64)),
