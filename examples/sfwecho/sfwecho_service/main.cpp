@@ -129,8 +129,12 @@ int main(int argc, char** argv)
 
     registerExampleService();
 
-    QRemoteServiceClassRegister::registerType<EchoSharedService>(QRemoteServiceClassRegister::SharedInstance);
-    QRemoteServiceClassRegister::registerType<EchoUniqueService>(QRemoteServiceClassRegister::UniqueInstance);
+    if(!QRemoteServiceClassRegister::registerType<EchoSharedService>(QRemoteServiceClassRegister::SharedInstance))
+        qWarning() << "Cannot register SharedInstance";
+
+    if(!QRemoteServiceClassRegister::registerType<EchoUniqueService>(QRemoteServiceClassRegister::UniqueInstance))
+        qWarning() << "Cannot register UniqueInstance";
+
     QRemoteServiceControl* control = new QRemoteServiceControl();
 /*    control->setSecurityFilter(check); */
     control->publishServices("sfwecho_service");

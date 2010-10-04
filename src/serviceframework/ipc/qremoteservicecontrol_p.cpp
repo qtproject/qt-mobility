@@ -43,15 +43,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-
-static bool defSecurityFilter(const void *)
-{
-    return true;
-}
-
-
 QRemoteServiceControlPrivate::QRemoteServiceControlPrivate(QObject* parent)
-    : QObject(parent), m_quit(true), iFilter(defSecurityFilter)
+    : QObject(parent), m_quit(true), iFilter(0)
 {
 }
 
