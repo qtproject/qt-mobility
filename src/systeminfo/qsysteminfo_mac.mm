@@ -2263,6 +2263,15 @@ bool QSystemDeviceInfoPrivate::backLightOn()
 
 QUuid QSystemDeviceInfoPrivate::hostId()
 {
+    CFStringRef uuidKey = CFSTR(kIOPlatformUUIDKey);
+    io_service_t ioService = IOServiceGetMatchingService(kIOMasterPortDefault,
+                                                         IOServiceMatching("IOPlatformExpertDevice"));
+
+    if (ioService) {
+        CFTypeRef cfStringKey = IORegistryEntryCreateCFProperty(ioService, uuidKey, kCFAllocatorDefault, 0);
+
+        return QUuid(stringFromCFString((const __CFString*)cfStringKey));
+    }
     return QUuid(QString::number(gethostid()));
 }
 
