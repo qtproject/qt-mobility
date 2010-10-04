@@ -205,9 +205,6 @@ QGeoRoutingManager::~QGeoRoutingManager()
 */
 QString QGeoRoutingManager::managerName() const
 {
-//    if (!d_ptr->engine)
-//        return QString();
-
     return d_ptr->engine->managerName();
 }
 
@@ -220,9 +217,6 @@ QString QGeoRoutingManager::managerName() const
 */
 int QGeoRoutingManager::managerVersion() const
 {
-//    if (!d_ptr->engine)
-//        return -1;
-
     return d_ptr->engine->managerVersion();
 }
 
@@ -249,9 +243,6 @@ int QGeoRoutingManager::managerVersion() const
 */
 QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& request)
 {
-//    if (!d_ptr->engine)
-//        return new QGeoRouteReply(QGeoRouteReply::EngineNotSetError, "The routing manager was not created with a valid engine.", this);
-
     return d_ptr->engine->calculateRoute(request);
 }
 
@@ -284,9 +275,6 @@ QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& reque
 */
 QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
-//    if (!d_ptr->engine)
-//        return new QGeoRouteReply(QGeoRouteReply::EngineNotSetError, "The routing manager was not created with a valid engine.", this);
-
     return d_ptr->engine->updateRoute(route, position);
 }
 
@@ -295,9 +283,6 @@ QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QG
 */
 bool QGeoRoutingManager::supportsRouteUpdates() const
 {
-//    if (!d_ptr->engine)
-//        return false;
-
     return d_ptr->engine->supportsRouteUpdates();
 }
 
@@ -306,9 +291,6 @@ bool QGeoRoutingManager::supportsRouteUpdates() const
 */
 bool QGeoRoutingManager::supportsAlternativeRoutes() const
 {
-//    if (!d_ptr->engine)
-//        return false;
-
     return d_ptr->engine->supportsAlternativeRoutes();
 }
 
@@ -317,9 +299,6 @@ bool QGeoRoutingManager::supportsAlternativeRoutes() const
 */
 bool QGeoRoutingManager::supportsExcludeAreas() const
 {
-//    if (!d_ptr->engine)
-//        return false;
-
     return d_ptr->engine->supportsExcludeAreas();
 }
 
@@ -328,21 +307,25 @@ bool QGeoRoutingManager::supportsExcludeAreas() const
 */
 QGeoRouteRequest::TravelModes QGeoRoutingManager::supportedTravelModes() const
 {
-//    if (!d_ptr->engine)
-//        return QGeoRouteRequest::TravelModes();
-
     return d_ptr->engine->supportedTravelModes();
 }
 
 /*!
     Returns the types of features that this manager can avoid during route planning.
 */
-QGeoRouteRequest::AvoidFeatureTypes QGeoRoutingManager::supportedAvoidFeatureTypes() const
-{
-//    if (!d_ptr->engine)
-//        return QGeoRouteRequest::AvoidFeatureTypes();
 
-    return d_ptr->engine->supportedAvoidFeatureTypes();
+/*!
+*/
+QGeoRouteRequest::FeatureTypes QGeoRoutingManager::supportedFeatureTypes() const
+{
+    return d_ptr->engine->supportedFeatureTypes();
+}
+
+/*!
+*/
+QGeoRouteRequest::FeatureWeights QGeoRoutingManager::supportedFeatureWeights() const
+{
+    return d_ptr->engine->supportedFeatureWeights();
 }
 
 /*!
@@ -350,9 +333,6 @@ QGeoRouteRequest::AvoidFeatureTypes QGeoRoutingManager::supportedAvoidFeatureTyp
 */
 QGeoRouteRequest::RouteOptimizations QGeoRoutingManager::supportedRouteOptimizations() const
 {
-//    if (!d_ptr->engine)
-//        return QGeoRouteRequest::RouteOptimizations();
-
     return d_ptr->engine->supportedRouteOptimizations();
 }
 
@@ -362,9 +342,6 @@ QGeoRouteRequest::RouteOptimizations QGeoRoutingManager::supportedRouteOptimizat
 */
 QGeoRouteRequest::SegmentDetails QGeoRoutingManager::supportedSegmentDetails() const
 {
-//    if (!d_ptr->engine)
-//        return QGeoRouteRequest::SegmentDetails();
-
     return d_ptr->engine->supportedSegmentDetails();
 }
 
@@ -374,9 +351,6 @@ QGeoRouteRequest::SegmentDetails QGeoRoutingManager::supportedSegmentDetails() c
 */
 QGeoRouteRequest::ManeuverDetails QGeoRoutingManager::supportedManeuverDetails() const
 {
-//    if (!d_ptr->engine)
-//        return QGeoRouteRequest::InstructionDetails();
-
     return d_ptr->engine->supportedManeuverDetails();
 }
 

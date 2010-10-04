@@ -83,8 +83,6 @@ public:
     bool operator== (const QGeoManeuver &other) const;
     bool operator!= (const QGeoManeuver &other) const;
 
-//    bool isValid() const;
-
     void setPosition(const QGeoCoordinate &position);
     QGeoCoordinate position() const;
 
@@ -99,6 +97,9 @@ public:
 
     void setDistanceToNextInstruction(qreal distance);
     qreal distanceToNextInstruction() const;
+
+    void setWaypoint(const QGeoCoordinate &coordinate);
+    QGeoCoordinate waypoint() const;
 
 private:
     QExplicitlySharedDataPointer<QGeoManeuverPrivate> d_ptr;

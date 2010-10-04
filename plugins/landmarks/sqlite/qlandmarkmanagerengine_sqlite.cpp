@@ -97,7 +97,8 @@ Q_DECLARE_METATYPE(QLandmarkImportRequest *)
 Q_DECLARE_METATYPE(QLandmarkExportRequest *)
 Q_DECLARE_METATYPE(ERROR_MAP)
 
-QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filename)
+QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filename, QLandmarkManager::Error * error,
+                                                           QString *errorString)
         : m_dbFilename(filename),
         m_dbConnectionName(QUuid::createUuid().toString()),
         m_dbWatcher(NULL),
@@ -106,6 +107,12 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
         m_isCustomAttributesEnabled(false),
         m_databaseOperations()
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+
+    *error = QLandmarkManager::NoError;
+    *errorString ="";
+
     qRegisterMetaType<ERROR_MAP >();
     qRegisterMetaType<QList<QLandmarkCategoryId> >();
     qRegisterMetaType<QList<QLandmarkId> >();
@@ -173,7 +180,19 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
         bool transacting = db.transaction();
 
         {//check for database with old schema
-            //TODO: database verion checking
+            QSqlQuery query(db);
+            query.exec("SELECT name from sqlite_master WHERE name = 'landmark'");
+            if (query.next()) {
+                query.exec("SELECT name from sqlite_master WHERE name = 'version'");
+                if (!query.next()) {
+                    *error = QLandmarkManager::VersionMismatchError;
+                    *errorString = QString("Old landmarks database with incompatible schema detected, please delete this file and try again:") +
+                                   this->m_dbFilename;
+                    qWarning() << *errorString;
+                    db.rollback();
+                    return;
+                }
+            }
         }
         for (int i = 0; i < queries.size(); ++i) {
             QString q = queries.at(i).trimmed();
@@ -184,6 +203,24 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
             QSqlQuery query(db);
             if (!query.exec(q)) {
                 qWarning() << QString("Statement %1: %2").arg(i + 1).arg(query.lastError().databaseText());
+            }
+        }
+
+        {
+            QSqlQuery query(db);
+            query.exec("SELECT verionNumber FROM version");
+            if (query.next()) {
+                int versionNumber = query.value(0).toInt();
+                if (versionNumber != 1) {
+                    *error =  QLandmarkManager::VersionMismatchError;
+                    *errorString = "Sqlite landmark plugin only operates with version 1 of QtLandmarks.db";
+                    db.rollback();
+                    return;
+                }
+            } else {
+                query.finish();
+                query.clear();
+                query.exec("INSERT INTO versionNumber VALUES(1)");
             }
         }
         if (transacting)
@@ -408,34 +445,6 @@ bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::Landmark
     }
 }
 
-QStringList QLandmarkManagerEngineSqlite::landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString = "";
-    //TODO: optimize
-    QStringList commonKeys = DatabaseOperations::coreAttributes +
-                             DatabaseOperations::coreGenericAttributes;
-    commonKeys.sort();
-
-    return commonKeys;
-}
-
-QStringList QLandmarkManagerEngineSqlite::categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString = "";
-
-    //TODO: optimize
-    QStringList commonKeys = DatabaseOperations::coreCategoryAttributes +
-                             DatabaseOperations::coreGenericCategoryAttributes;
-    commonKeys.clear();
-    return commonKeys;
-}
-
 QStringList QLandmarkManagerEngineSqlite::searchableLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
@@ -544,7 +553,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
     QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
 
     QSqlQuery query(db);
-    if (!query.prepare("SELECT landmarkId,action, timestamp FROM landmark_notification WHERE timestamp > ?")) {
+    if (!query.prepare("SELECT landmarkId,action, timestamp FROM landmark_notification WHERE timestamp >= ?")) {
 #ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
         qWarning() << "Could not prepare statement: " << query.lastQuery() << " \nReason:" << query.lastError().text();
 #endif
@@ -598,7 +607,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
         emit landmarksRemoved(removedLandmarkIds);
 
     //now check for added/modified/removed categories
-    if (!query.prepare("SELECT categoryId,action, timestamp FROM category_notification WHERE timestamp > ?")) {
+    if (!query.prepare("SELECT categoryId,action, timestamp FROM category_notification WHERE timestamp >= ?")) {
 #ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
         qWarning() << "Could not prepare statement: " << query.lastQuery() << " \nReason:" << query.lastError().text();
 #endif
@@ -628,6 +637,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
 
         action = query.value(1).toString();
         categoryId.setLocalId(query.value(0).toString());
+
         if (action == "ADD") {
             addedCategoryIds << categoryId;
         } else if (action == "CHANGE") {
@@ -645,6 +655,9 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
 
     if (removedCategoryIds.count() > 0)
         emit categoriesRemoved(removedCategoryIds);
+
+    m_latestLandmarkTimestamp +=1;
+    m_latestCategoryTimestamp +=1;
 }
 
 void QLandmarkManagerEngineSqlite::setChangeNotificationsEnabled(bool enabled)

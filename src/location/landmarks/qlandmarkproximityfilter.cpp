@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
     around a given coordinate.
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-filter
 
     In order to be a valid filter, the region covered by the proximity filter must not cover one of the poles.
@@ -67,7 +67,15 @@ Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkProximityFilter)
     a \a center coordinate.
 */
 QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoCoordinate &center, qreal radius)
-        : QLandmarkFilter(new QLandmarkProximityFilterPrivate(center, radius))
+        : QLandmarkFilter(new QLandmarkProximityFilterPrivate(QGeoBoundingCircle(center, radius)))
+{
+}
+
+/*!
+    Creates a filter that will select landmarks withiin a given bounding \a circle.
+ */
+QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoBoundingCircle &circle)
+        : QLandmarkFilter(new QLandmarkProximityFilterPrivate(circle))
 {
 }
 
@@ -90,7 +98,7 @@ QLandmarkProximityFilter::~QLandmarkProximityFilter()
 QGeoCoordinate QLandmarkProximityFilter::center() const
 {
     Q_D(const QLandmarkProximityFilter);
-    return d->center;
+    return d->circle.center();
 }
 
 /*!
@@ -99,7 +107,7 @@ QGeoCoordinate QLandmarkProximityFilter::center() const
 void QLandmarkProximityFilter::setCenter(const QGeoCoordinate &center)
 {
     Q_D(QLandmarkProximityFilter);
-    d->center = center;
+    d->circle.setCenter(center);
 }
 
 /*!
@@ -108,7 +116,7 @@ void QLandmarkProximityFilter::setCenter(const QGeoCoordinate &center)
 qreal QLandmarkProximityFilter::radius() const
 {
     Q_D(const QLandmarkProximityFilter);
-    return d->radius;
+    return d->circle.radius();
 }
 
 /*!
@@ -117,26 +125,43 @@ qreal QLandmarkProximityFilter::radius() const
 void QLandmarkProximityFilter::setRadius(qreal radius)
 {
     Q_D(QLandmarkProximityFilter);
-    d->radius = radius;
+    d->circle.setRadius(radius);
 }
 
+/*!
+    Sets the bounding circle for the proximity filter.
+*/
+QGeoBoundingCircle QLandmarkProximityFilter::boundingCircle()
+{
+    Q_D(const QLandmarkProximityFilter);
+    return d->circle;
+}
+
+/*!
+    Sets the bounding \a circle for the proximity filter
+*/
+void QLandmarkProximityFilter::setBoundingCircle(const QGeoBoundingCircle &circle)
+{
+    Q_D(QLandmarkProximityFilter);
+    d->circle = circle;
+}
 
 /*******************************************************************************
 *******************************************************************************/
 
-QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QGeoCoordinate &center, qreal radius)
+QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QGeoBoundingCircle &circle)
         : QLandmarkFilterPrivate(),
-        center(center),
-        radius(radius)
+        circle(circle)
 {
     type = QLandmarkFilter::ProximityFilter;
 }
 
 QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QLandmarkProximityFilterPrivate &other)
-        : QLandmarkFilterPrivate(other),
-        center(other.center),
-        radius(other.radius)
-        {}
+        : QLandmarkFilterPrivate(other)
+{
+    circle.setCenter(other.circle.center());
+    circle.setRadius(other.circle.radius());
+}
 
 QLandmarkProximityFilterPrivate::~QLandmarkProximityFilterPrivate() {}
 
