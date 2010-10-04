@@ -49,7 +49,7 @@ Dialog::Dialog() :
     setupUi(this);
     setupGeneral();
 
-    connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
+    connect(comboBox,SIGNAL(activated(int)),this,SLOT(tabChanged(int)));
     connect(versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
     connect(featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
     updateDeviceLockedState();
@@ -81,7 +81,6 @@ void Dialog::changeEvent(QEvent *e)
 
 void Dialog::tabChanged(int index)
 {
-#ifdef QTM_EXAMPLES_SMALL_SCREEN
     switch(index) {
     case 0:
         setupGeneral();
@@ -117,28 +116,7 @@ void Dialog::tabChanged(int index)
         setupSaver();
         break;
     };
-#else
-    switch(index) {
-    case 0:
-        setupGeneral();
-        break;
-    case 1:
-        setupDevice();
-        break;
-    case 2:
-        setupDisplay();
-        break;
-    case 3:
-        setupStorage();
-        break;
-    case 4:
-        setupNetwork();
-        break;
-    case 5:
-        setupSaver();
-        break;
-    };
-#endif
+
 }
 
 void Dialog::setupGeneral()
@@ -148,8 +126,8 @@ void Dialog::setupGeneral()
     systemInfo = new QSystemInfo(this);
     curLanguageLineEdit->setText( systemInfo->currentLanguage());
 //! [lang]
-    languagesComboBox->clear();
-    languagesComboBox->insertItems(0,systemInfo->availableLanguages());
+    languagesListWidget->clear();
+    languagesListWidget->insertItems(0,systemInfo->availableLanguages());
     countryCodeLabel->setText(systemInfo->currentCountryCode());
 }
 
@@ -160,7 +138,9 @@ void Dialog::setupDevice()
     di = new QSystemDeviceInfo(this);
 //! [createdi]
 //! [batteryLevel]
-    batteryLevelBar->setValue(di->batteryLevel());
+    int level = di->batteryLevel();
+    batteryLevelBar->setValue(level);
+    lcdNumber->display(level);
 //! [batteryLevel]
 
 //! [sig batteryLevelChanged]
@@ -502,6 +482,7 @@ void Dialog::setSaverEnabled(bool b)
 void Dialog::updateBatteryStatus(int level)
 {
     batteryLevelBar->setValue(level);
+    lcdNumber->display(level);
 }
 
 void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)

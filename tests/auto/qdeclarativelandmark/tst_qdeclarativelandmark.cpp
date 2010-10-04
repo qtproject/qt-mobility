@@ -44,6 +44,8 @@
 #include <QMetaObject>
 #include <QDateTime>
 #include <QMap>
+#include <QFile>
+#include <QDir>
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qdeclarativecomponent.h>
 #include <qlandmarkmanager.h>
@@ -53,6 +55,7 @@
 #include "qdeclarativelandmarkcategorymodel_p.h"
 #include "qdeclarativelandmarkfilters_p.h"
 #include "qlandmarkid.h"
+#include "qnumeric.h"
 #include "qlandmarkcategoryid.h"
 #include "qdeclarativelist.h"
 #include <QDeclarativeListProperty>
@@ -113,7 +116,7 @@
 #endif
 
 #define DB_FILENAME "test.db"
-#define LEAVE_DB_AFTER_TESTRUN true
+#define LEAVE_DB_AFTER_TESTRUN false
 
 QTM_USE_NAMESPACE
 
@@ -200,6 +203,22 @@ void tst_QDeclarativeLandmark::initTestCase()
         createDb("generatedExampleLandmarkDb.db");
         populateTypicalDb();
     }
+    // Delete possibly existing default database to avoid any problems
+#ifndef Q_OS_SYMBIAN
+    QString dbFileName;
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                       QLatin1String("Nokia"), QLatin1String("QtLandmarks"));
+    QFileInfo fi(settings.fileName());
+    QDir dir = fi.dir();
+    dir.mkpath(dir.path());
+    dbFileName = dir.path() + QDir::separator() + QString("QtLandmarks") +  QLatin1String(".db");
+    if (QFile::exists(dbFileName)) {
+        qDebug() << "FYI tst_qdeclarativelandmark::initTestCase() deleting default database: " << dbFileName;
+        QFile::remove(dbFileName);
+    }
+#else
+   // TODO clean Symbian default database
+#endif
 }
 
 void tst_QDeclarativeLandmark::cleanupTestCase()
@@ -295,10 +314,22 @@ void tst_QDeclarativeLandmark::construction_data()
     QTest::newRow("LandmarkModel: Only id property") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId}" << true;
     QTest::newRow("LandmarkModel: Valuetype properties") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; autoUpdate:true; limit: 5; offset: 2; sortBy: LandmarkModel.NameSort; sortOrder: LandmarkModel.DescendingOrder}" << true;
     QTest::newRow("LandmarkModel: With filter") << "QDeclarativeLandmarkModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkModel {id: landmarkModelId; autoUpdate:true; limit: 5; offset: 2; filter: LandmarkNameFilter{id: filter} }" << true;
+    // Address
+    QTest::newRow("Address: No properties") << "QDeclarativeGeoAddress" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Address {}" << true;
+    QTest::newRow("Address: Id property") << "QDeclarativeGeoAddress" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Address {id: exampleId}" << true;
+    QTest::newRow("Address: Writable properties") << "QDeclarativeGeoAddress" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Address {country: 'Australia'; countryCode: '61'; state: 'QLD'; county: 'dracula county'; city: 'Brisbane'; district: 'Runcorn'; street: 'Wonderstreet'; postCode: '3344'}" << true;
+    // BoundingBox
+    QTest::newRow("BoundingBox: No properties") << "QDeclarativeGeoBoundingBox" << "import Qt 4.7 \n import QtMobility.location 1.1 \n BoundingBox {}" << true;
+    QTest::newRow("BoundingBox: writable properties") << "QDeclarativeGeoBoundingBox" << "import Qt 4.7 \n import QtMobility.location 1.1 \n BoundingBox {bottomLeft: Coordinate{} bottomRight: Coordinate{} topLeft: Coordinate{} topRight: Coordinate{} center: Coordinate{} height: 3; width: 4}" << true;
+    // Place
+    QTest::newRow("Place: No properties") << "QDeclarativeGeoPlace" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Place {}" << true;
+    QTest::newRow("Place: Only id property") << "QDeclarativeGeoPlace" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Place {id: exampleId}" << true;
+    QTest::newRow("Place: All writable properties") << "QDeclarativeGeoPlace" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Place {viewport: BoundingBox{} coordinate: Coordinate{} address: Address{}}" << true;
     // Landmark
     QTest::newRow("Landmark: No properties") << "QDeclarativeLandmark" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Landmark {}" << true;
     QTest::newRow("Landmark: Only id property") << "QDeclarativeLandmark" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Landmark {id: landmark}" << true;
     QTest::newRow("Landmark: Valuetype properties") << "QDeclarativeLandmark" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Landmark {id: landmark; name: 'jeesbox'; phoneNumber:'555 999'; description: 'Planet town plaza';radius: 0.3; iconSource: 'www.com'; url: 'urlitus'}" << true;
+    QTest::newRow("Landmark: With place properties") << "QDeclarativeLandmark" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Landmark {id: landmark; description: 'Planet town plaza'; viewport: BoundingBox{} coordinate: Coordinate{} address: Address{} }" << true;
     // LandmarkCategoryModel
     QTest::newRow("LandmarkCategoryModel: No properties") <<  "QDeclarativeLandmarkCategoryModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {}" << true;
     QTest::newRow("LandmarkCategoryModel: Only id property") << "QDeclarativeLandmarkCategoryModel" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryModel {id: landmarkCategoryModelId}" << true;
@@ -315,6 +346,10 @@ void tst_QDeclarativeLandmark::construction_data()
     QTest::newRow("LandmarkProximityFilter: No properties") << "QDeclarativeLandmarkProximityFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkProximityFilter {}" << true;
     QTest::newRow("LandmarkProximityFilter: Only id property") << "QDeclarativeLandmarkProximityFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkProximityFilter {id: landmarkFilterId}" << true;
     QTest::newRow("LandmarkProximityFilter: with coordinate") << "QDeclarativeLandmarkProximityFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkProximityFilter {center: Coordinate {id: coordinate} radius: 20 }" << true;
+    // LandmarkBoxFilter
+    QTest::newRow("LandmarkBoxFilter: No properties") << "QDeclarativeLandmarkBoxFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkBoxFilter {}" << true;
+    // LandmarkCategoryFilter
+    QTest::newRow("LandmarkCategoryFilter: No properties") << "QDeclarativeLandmarkCategoryFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryFilter {}" << true;
     // LandmarkUnionFilter
     QTest::newRow("LandmarkUnionFilter: No properties") << "QDeclarativeLandmarkUnionFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkUnionFilter {}" << true;
     QTest::newRow("LandmarkUnionFilter: Only id property") << "QDeclarativeLandmarkUnionFilter" << "import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkUnionFilter {id: landmarkUnionFilterId}" << true;
@@ -351,7 +386,6 @@ void tst_QDeclarativeLandmark::defaultProperties()
     QCOMPARE(source_obj->property("name").toString(), QString());
     QCOMPARE(source_obj->property("phoneNumber").toString(), QString());
     QCOMPARE(source_obj->property("description").toString(), QString());
-    QVERIFY(qIsNaN(source_obj->property("radius").toReal()));
     QCOMPARE(source_obj->property("iconSource").toUrl(), QUrl());
     QCOMPARE(source_obj->property("url").toUrl(), QUrl());
     delete source_obj;
@@ -376,6 +410,42 @@ void tst_QDeclarativeLandmark::defaultProperties()
     source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkProximityFilter {}");
     QVERIFY(source_obj->property("filter").value<QObject*>() == 0);
     delete source_obj;
+
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n Address {}");
+    QCOMPARE(source_obj->property("country").toString(), QString());
+    QCOMPARE(source_obj->property("countryCode").toString(), QString());
+    QCOMPARE(source_obj->property("state").toString(), QString());
+    QCOMPARE(source_obj->property("county").toString(), QString());
+    QCOMPARE(source_obj->property("city").toString(), QString());
+    QCOMPARE(source_obj->property("district").toString(), QString());
+    QCOMPARE(source_obj->property("street").toString(), QString());
+    QCOMPARE(source_obj->property("postCode").toString(), QString());
+    delete source_obj;
+
+    //source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n BoundingBox {}");
+    //QVERIFY(source_obj->property("bottomLeft").value<QObject*>() == 0);
+    //QVERIFY(source_obj->property("bottomRight").value<QObject*>() == 0);
+    //QVERIFY(source_obj->property("topLeft").value<QObject*>() == 0);
+    //QVERIFY(source_obj->property("topRight").value<QObject*>() == 0);
+    //QVERIFY(source_obj->property("center").value<QObject*>() == 0);
+    //QVERIFY(qIsNaN(source_obj->property("height").toDouble()));
+    //QVERIFY(qIsNaN(source_obj->property("width").toDouble()));
+    //delete source_obj;
+
+    //source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n Place {}");
+    //QVERIFY(source_obj->property("viewport").value<QObject*>() == 0);
+    //QVERIFY(source_obj->property("coordinate").value<QObject*>() == 0);
+    //QVERIFY(source_obj->property("address").value<QObject*>() == 0);
+    //delete source_obj;
+
+    //source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkBoxFilter {}");
+    //QVERIFY(source_obj->property("topLeft").value<QObject*>() == 0);
+    //QVERIFY(source_obj->property("bottomRight").value<QObject*>() == 0);
+    //delete source_obj;
+
+    //source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryFilter {}");
+    //QVERIFY(source_obj->property("category").value<QObject*>() == 0);
+    //delete source_obj;
 }
 
 /*
@@ -526,6 +596,33 @@ void tst_QDeclarativeLandmark::basicSignals()
     QTest::qWait(10); // wait that signals propagate
     QTRY_VERIFY(radiusChangedSpy2.isEmpty());
     delete source_obj;
+
+    // Address
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n Address {}");
+    QSignalSpy countryChangedSpy(source_obj, SIGNAL(countryChanged()));
+    QSignalSpy countryCodeChangedSpy(source_obj, SIGNAL(countryCodeChanged()));
+    QSignalSpy stateChangedSpy(source_obj, SIGNAL(stateChanged()));
+    QSignalSpy countyChangedSpy(source_obj, SIGNAL(countyChanged()));
+    QSignalSpy cityChangedSpy(source_obj, SIGNAL(cityChanged()));
+    QSignalSpy districtChangedSpy(source_obj, SIGNAL(districtChanged()));
+    QSignalSpy streetChangedSpy(source_obj, SIGNAL(streetChanged()));
+    QSignalSpy postCodeChangedSpy(source_obj, SIGNAL(postCodeChanged()));
+    source_obj->setProperty("country", "new");
+    source_obj->setProperty("countryCode", "new");
+    source_obj->setProperty("state", "new");
+    source_obj->setProperty("county", "new");
+    source_obj->setProperty("city", "new");
+    source_obj->setProperty("district", "new");
+    source_obj->setProperty("street", "new");
+    source_obj->setProperty("postCode", "new");
+    QTRY_VERIFY(!countryChangedSpy.isEmpty());
+    QTRY_VERIFY(!countryCodeChangedSpy.isEmpty());
+    QTRY_VERIFY(!stateChangedSpy.isEmpty());
+    QTRY_VERIFY(!countyChangedSpy.isEmpty());
+    QTRY_VERIFY(!cityChangedSpy.isEmpty());
+    QTRY_VERIFY(!districtChangedSpy.isEmpty());
+    QTRY_VERIFY(!streetChangedSpy.isEmpty());
+    QTRY_VERIFY(!postCodeChangedSpy.isEmpty());
 }
 
 void tst_QDeclarativeLandmark::basicFetch()
@@ -942,8 +1039,9 @@ void tst_QDeclarativeLandmark::declarativeCategoryList()
     // Count()
     QTRY_COMPARE(QDeclarativeLandmarkCategoryModel::categories_count(&declarativeList), model->count());
     // At()
-    for (int i = 0; i < model->count(); i++) {
-        // TODO QCOMPARE(QDeclarativeLandmarkCategoryModel::categories_at(&declarativeList, i)->name(), model->categories().at(i)->name());
+    for (int i = 0; i < model->count(); i++) {        
+        // TODO make this a 'contains' check
+        //QCOMPARE(QDeclarativeLandmarkCategoryModel::categories_at(&declarativeList, i)->name(), model->categoryList().at(i).name());
     }
     // Append() (not supported but should not crash)
     qDebug("Following warning is OK (testing that unsupported feature does not crash).");
