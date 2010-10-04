@@ -368,6 +368,8 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         case QSystemInfo::FmradioFeature:   //Not available in public SDK
         case QSystemInfo::LedFeature:
         case QSystemInfo::VideoOutFeature:  //Accessory monitor available from S60 5.x onwards
+        case QSystemInfo::FmTransmitterFeature:
+
         default:
             return false;
     }
