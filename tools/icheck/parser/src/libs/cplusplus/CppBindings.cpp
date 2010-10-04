@@ -48,7 +48,7 @@
 #include <Literals.h>
 #include <Names.h>
 #include <Scope.h>
-#include <Control.h>
+#include <CppControl.h>
 #include <SymbolVisitor.h>
 
 #include <QtDebug>

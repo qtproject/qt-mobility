@@ -272,6 +272,9 @@ private Q_SLOTS:
     void autoUpdate();
     void autoUpdateAuto_data() { autoUpdate_data(); }
     void autoUpdateAuto();
+    void disableAutoUpdateFinished();
+    void disableAutoUpdateIdle();
+    void disableAutoUpdateActive();
     void rootItem_data();
     void rootItem();
     void rootItemAuto_data() { rootItem_data(); }
@@ -321,7 +324,10 @@ private Q_SLOTS:
     void asyncResponse();
     void cancelAsyncResponse();
     void cancelIdleResponse();
+    void cancelPendingResponse();
+    void deferExecuteCancelledResponse();
     void clear();
+    void clearPendingResponse();
     void error_data();
     void error();
 
@@ -779,6 +785,96 @@ void tst_QDeclarativeDocumentGalleryModel::autoUpdateAuto()
 
     QCoreApplication::processEvents();
     QCOMPARE(gallery.request()->autoUpdate(), autoUpdate);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::disableAutoUpdateFinished()
+{
+    const QByteArray qml(
+        "import Qt 4.7\n"
+        "import QtMobility.gallery 1.1\n"
+        "DocumentGalleryModel {\n"
+            "autoUpdate: true\n"
+        "}\n");
+
+    gallery.setStatus(QGalleryAbstractRequest::Finished);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+
+    QSignalSpy spy(object.data(), SIGNAL(statusChanged()));
+
+    QCOMPARE(object->property("autoUpdate"), QVariant(true));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Finished));
+
+    object->setProperty("autoUpdate", false);
+    QCOMPARE(object->property("autoUpdate"), QVariant(false));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Finished));
+    QCOMPARE(spy.count(), 0);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::disableAutoUpdateIdle()
+{
+    const QByteArray qml(
+        "import Qt 4.7\n"
+        "import QtMobility.gallery 1.1\n"
+        "DocumentGalleryModel {\n"
+            "autoUpdate: true\n"
+        "}\n");
+
+    gallery.setStatus(QGalleryAbstractRequest::Idle);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+
+    QSignalSpy spy(object.data(), SIGNAL(statusChanged()));
+
+    QCOMPARE(object->property("autoUpdate"), QVariant(true));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Idle));
+
+    object->setProperty("autoUpdate", false);
+    QCOMPARE(object->property("autoUpdate"), QVariant(false));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Finished));
+    QCOMPARE(spy.count(), 1);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::disableAutoUpdateActive()
+{
+    const QByteArray qml(
+        "import Qt 4.7\n"
+        "import QtMobility.gallery 1.1\n"
+        "DocumentGalleryModel {\n"
+            "autoUpdate: true\n"
+        "}\n");
+
+    gallery.setStatus(QGalleryAbstractRequest::Active);
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+
+    QSignalSpy spy(object.data(), SIGNAL(statusChanged()));
+
+    QCOMPARE(object->property("autoUpdate"), QVariant(true));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Active));
+
+    object->setProperty("autoUpdate", false);
+    QCOMPARE(object->property("autoUpdate"), QVariant(false));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Active));
+    QCOMPARE(spy.count(), 0);
+
+    QVERIFY(gallery.response());
+    gallery.response()->finish(true);
+    QCOMPARE(object->property("autoUpdate"), QVariant(false));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Finished));
+    QCOMPARE(spy.count(), 1);
 }
 
 void tst_QDeclarativeDocumentGalleryModel::rootItem_data()
@@ -2973,7 +3069,7 @@ void tst_QDeclarativeDocumentGalleryModel::cancelIdleResponse()
     const QByteArray qml(
             "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
-            "DocumentGalleryModel {}\n");
+            "DocumentGalleryModel { autoUpdate: true }\n");
 
     gallery.setStatus(QGalleryAbstractRequest::Idle);
 
@@ -2990,6 +3086,68 @@ void tst_QDeclarativeDocumentGalleryModel::cancelIdleResponse()
     QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Idle));
 
     QMetaObject::invokeMethod(object.data(), "cancel");
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Finished));
+    QCOMPARE(spy.count(), 1);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::cancelPendingResponse()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryModel {}\n");
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(statusChanged()));
+
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Finished));
+
+    object->setProperty("rootItem", 95);
+
+    QMetaObject::invokeMethod(object.data(), "cancel");
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Finished));
+    QCOMPARE(spy.count(), 0);
+
+    QCoreApplication::processEvents();
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Finished));
+    QCOMPARE(spy.count(), 0);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::deferExecuteCancelledResponse()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryModel {}\n");
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(statusChanged()));
+
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Finished));
+
+    object->setProperty("rootItem", 95);
+
+    QMetaObject::invokeMethod(object.data(), "cancel");
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Finished));
+    QCOMPARE(spy.count(), 0);
+
+    object->setProperty("rootItem", 21);
+
+    QCoreApplication::processEvents();
     QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Finished));
     QCOMPARE(spy.count(), 1);
 }
@@ -3024,6 +3182,36 @@ void tst_QDeclarativeDocumentGalleryModel::clear()
     QCOMPARE(removeSpy.count(), 1);
     QCOMPARE(removeSpy.last().value(1).toInt(), 0);
     QCOMPARE(removeSpy.last().value(2).toInt(), 2);
+}
+
+void tst_QDeclarativeDocumentGalleryModel::clearPendingResponse()
+{
+    const QByteArray qml(
+            "import Qt 4.7\n"
+            "import QtMobility.gallery 1.1\n"
+            "DocumentGalleryModel {}\n");
+
+    QDeclarativeComponent component(&engine);
+    component.setData(qml, QUrl());
+
+    QScopedPointer<QObject> object(component.create());
+    QVERIFY(object);
+    QVERIFY(gallery.request());
+    QVERIFY(gallery.response());
+
+    QSignalSpy spy(object.data(), SIGNAL(statusChanged()));
+
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Finished));
+
+    object->setProperty("rootItem", 95);
+
+    QMetaObject::invokeMethod(object.data(), "clear");
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Null));
+    QCOMPARE(spy.count(), 1);
+
+    QCoreApplication::processEvents();
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Null));
+    QCOMPARE(spy.count(), 1);
 }
 
 void tst_QDeclarativeDocumentGalleryModel::error_data()

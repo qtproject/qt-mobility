@@ -47,6 +47,7 @@
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qfile.h>
+#include <QtCore/qmetaobject.h>
 
 #include <linux/types.h>
 #include <sys/time.h>
@@ -60,7 +61,8 @@
 #include <sys/mman.h>
 #include <linux/videodev2.h>
 
-#define CAMEABIN_DEBUG
+//#define CAMEABIN_DEBUG 1
+#define ENUM_NAME(c,e,v) (c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(e)).valueToKey((v)))
 
 CameraBinControl::CameraBinControl(CameraBinSession *session)
     :QCameraControl(session),
@@ -104,14 +106,21 @@ void CameraBinControl::setCaptureMode(QCamera::CaptureMode mode)
 
 void CameraBinControl::setState(QCamera::State state)
 {
-    qDebug() << Q_FUNC_INFO << state;
+#ifdef CAMEABIN_DEBUG
+    qDebug() << Q_FUNC_INFO << ENUM_NAME(QCamera, "State", state);
+#endif
     if (m_state != state) {
         m_state = state;
 
         //postpone changing to Active if the session is nor ready yet
         if (state == QCamera::ActiveState) {
-            if (m_session->isReady())
+            if (m_session->isReady()) {
                 m_session->setState(state);
+            } else {
+#ifdef CAMEABIN_DEBUG
+                qDebug() << "Camera session is not ready yet, postpone activating";
+#endif
+            }
         } else
             m_session->setState(state);
 
@@ -155,7 +164,7 @@ void CameraBinControl::updateStatus()
 
     if (m_status != oldStatus) {
 #ifdef CAMEABIN_DEBUG
-        qDebug() << "Camera status changed" << m_status;
+        qDebug() << "Camera status changed" << ENUM_NAME(QCamera, "Status", m_status);
 #endif
         emit statusChanged(m_status);
     }
@@ -164,7 +173,7 @@ void CameraBinControl::updateStatus()
 void CameraBinControl::reloadLater()
 {
 #ifdef CAMEABIN_DEBUG
-    qDebug() << "reload pipeline requested" << m_state;
+    qDebug() << "CameraBinControl: reload pipeline requested" << ENUM_NAME(QCamera, "State", m_state);
 #endif
     if (!m_reloadPending && m_state == QCamera::ActiveState) {
         m_reloadPending = true;
@@ -176,7 +185,7 @@ void CameraBinControl::reloadLater()
 void CameraBinControl::delayedReload()
 {
 #ifdef CAMEABIN_DEBUG
-    qDebug() << "reload pipeline";
+    qDebug() << "CameraBinControl: reload pipeline";
 #endif
     if (m_reloadPending) {
         m_reloadPending = false;

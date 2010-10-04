@@ -37,6 +37,7 @@ SYMBIAN_HEADERS += \
         ../../inc/transform/cnttransformnote.h \
         ../../inc/transform/cnttransformfamily.h \
         ../../inc/transform/cnttransformempty.h \
+        ../../inc/transform/cnttransformfavorite.h \
         ../../inc/filtering/cntabstractcontactfilter.h \
         ../../inc/filtering/cntsymbianfilterdbms.h \
         ../../inc/filtering/cntsymbianfiltersql.h \
@@ -85,6 +86,7 @@ SYMBIAN_SOURCES += \
         ../../src/transform/cnttransformnote.cpp \
         ../../src/transform/cnttransformfamily.cpp \
         ../../src/transform/cnttransformempty.cpp \
+        ../../src/transform/cnttransformfavorite.cpp \
         ../../src/filtering/cntsymbianfilterdbms.cpp \
         ../../src/filtering/cntsymbiansorterdbms.cpp \
         ../../src/filtering/cntsymbianfiltersql.cpp \

@@ -44,6 +44,8 @@
 
 #include <qdocumentgallery.h>
 
+#include <QtCore/qcoreevent.h>
+
 QTM_BEGIN_NAMESPACE
 
 class QDeclarativeDocumentGallery : public QObject

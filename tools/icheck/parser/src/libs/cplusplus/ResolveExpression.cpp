@@ -44,7 +44,7 @@
 #include "Overview.h"
 #include "GenTemplateInstance.h"
 
-#include <Control.h>
+#include <CppControl.h>
 #include <AST.h>
 #include <Scope.h>
 #include <Names.h>

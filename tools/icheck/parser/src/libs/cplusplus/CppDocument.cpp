@@ -43,7 +43,7 @@
 #include "CppBindings.h"
 #include "FastPreprocessor.h"
 
-#include <Control.h>
+#include <CppControl.h>
 #include <TranslationUnit.h>
 #include <DiagnosticClient.h>
 #include <Semantic.h>

@@ -43,39 +43,7 @@
 #define XARECORDSESSIONCOMMON_H
 
 #include <e32base.h>
-#ifdef PLUGIN_SYMBIAN_TRACE_ENABLED
-#   include <e32debug.h>
-#endif /* PLUGIN_SYMBIAN_TRACE_ENABLED */
-
-#ifdef PLUGIN_SYMBIAN_TRACE_ENABLED
-#   define TRACE_FUNCTION_ENTRY RDebug::Printf( "%s >", __PRETTY_FUNCTION__)
-#   define TRACE_FUNCTION_EXIT RDebug::Printf( "%s <", __PRETTY_FUNCTION__)
-#   define TRACE_FUNCTION_ENTRY_EXIT RDebug::Printf( "%s ><", __PRETTY_FUNCTION__)
-#   define TRACE_LOG(s) RDebug::Print s
-#else
-#   define TRACE_FUNCTION_ENTRY
-#   define TRACE_FUNCTION_EXIT
-#   define TRACE_FUNCTION_ENTRY_EXIT
-#   define TRACE_LOG
-#endif /* PLUGIN_SYMBIAN_TRACE_ENABLED */
-
-#define RET_IF_FALSE(e) \
-    if (e == false) \
-        { \
-        return; \
-        }
-
-#define RET_BOOL_IF_FALSE(e) \
-    if (e == false) \
-        { \
-        return e; \
-        }
-
-#define RET_ERR_IF_ERR(e) \
-    if (e != 0) \
-        { \
-        return e; \
-        }
+#include "xacommon.h"
 
 #define MAX_NUMBER_INTERFACES 20
 #define MAX_NUMBER_INPUT_DEVICES 10
