@@ -2159,6 +2159,7 @@ void tst_QOrganizerItemAsync::collectionSave()
     }
 
     // update a previously saved collection
+    QVERIFY(!result.isEmpty()); // make sure that we were able to retrieve the required collection.
     testCollection = result.first();
     testCollection.setMetaData("name", "test name");
     saveList.clear();
@@ -2230,7 +2231,7 @@ void tst_QOrganizerItemAsync::collectionSave()
         expected.clear();
         QList<QOrganizerCollection> allCollections = oim->collections();
         QVERIFY(!allCollections.contains(temp)); // should NOT contain it since it was cancelled.
-        QCOMPARE(oim->itemIds().size(), originalCount + 1);
+        QCOMPARE(oim->collectionIds().size(), originalCount + 1);
         break;
     }
     // restart, and wait for progress after cancel.
@@ -2268,7 +2269,7 @@ void tst_QOrganizerItemAsync::collectionSave()
         expected.clear();
         QList<QOrganizerCollection> allCollections = oim->collections();
         QVERIFY(!allCollections.contains(temp));
-        QCOMPARE(oim->itemIds().size(), originalCount + 1);
+        QCOMPARE(oim->collectionIds().size(), originalCount + 1);
         break;
     }
 }
