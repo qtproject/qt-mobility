@@ -1982,7 +1982,7 @@ void tst_QLandmarkManager::saveCategory() {
        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
        catAlpha.setName("CAT-Alpha");
        QVERIFY(m_manager->saveCategory(&catAlpha));
-       QCOMPARE(m_manager->error(), QLandmarkManager::QLandmarkManager::NoError);
+       QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
    }
 }
 
