@@ -39,52 +39,41 @@
 **
 ****************************************************************************/
 
-#include "qremoteserviceregister_p.h"
+#ifndef QREMOTESERVICEREGISTERENTRY_P_H
+#define QREMOTESERVICEREGISTERENTRY_P_H
+
+#include <QExplicitlySharedDataPointer>
+#include <QString>
+
+#include "qremoteserviceregister.h"
+//#include "instancemanager_p.h"
+//#include "qserviceinterfacedescriptor.h"
 
 QTM_BEGIN_NAMESPACE
 
-QRemoteServiceRegisterPrivate::QRemoteServiceRegisterPrivate(QObject* parent)
-    : QObject(parent), m_quit(true), iFilter(0)
+class QRemoteServiceRegisterEntryPrivate : public QSharedData
 {
-}
+public:
+    QRemoteServiceRegisterEntryPrivate()
+            : meta(0), cptr(0), instanceType(QRemoteServiceRegister::PrivateInstance)
+    {
+    }
 
-QRemoteServiceRegisterPrivate::~QRemoteServiceRegisterPrivate()
-{
-}
+    QRemoteServiceRegisterEntryPrivate(QRemoteServiceRegisterEntryPrivate &other)
+        : QSharedData(other), iface(other.iface),
+          service(other.service), ifaceVersion(other.ifaceVersion),
+          meta(other.meta), cptr(other.cptr), instanceType(other.instanceType)
+    {
+    }
 
-//void QRemoteServiceRegisterPrivate::publishServices( const QString& ident)
-//{
-//  qWarning("QRemoteServiceregisterPrivate::publishServices has not been reimplemented");
-//}
-//
-//void QRemoteServiceRegisterPrivate::processIncoming()
-//{
-//  qWarning("QRemoteServiceRegisterPrivate::processIncoming has not been reimplemented");
-//}
+    QString iface;
+    QString service;
+    QString ifaceVersion;
+    const QMetaObject* meta;
+    QRemoteServiceRegister::CreateServiceFunc cptr;
+    QRemoteServiceRegister::InstanceType instanceType;
+};
 
-bool QRemoteServiceRegisterPrivate::quitOnLastInstanceClosed() const
-{
-  return m_quit;
-}
-
-void QRemoteServiceRegisterPrivate::setQuitOnLastInstanceClosed(bool quit)
-{
-    m_quit = quit;
-}
-
-QRemoteServiceRegister::securityFilter QRemoteServiceRegisterPrivate::setSecurityFilter(QRemoteServiceRegister::securityFilter filter)
-{
-    QRemoteServiceRegister::securityFilter f;
-    f = filter;
-    iFilter = filter;
-    return f;
-}
-
-QRemoteServiceRegister::securityFilter QRemoteServiceRegisterPrivate::getSecurityFilter()
-{
-    return iFilter;
-}
-
-
-#include "moc_qremoteserviceregister_p.cpp"
 QTM_END_NAMESPACE
+
+#endif

@@ -269,7 +269,7 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
         LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(socket);
         ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
 
-        QObject *proxy = endPoint->constructProxy(typeIdent);
+        QObject *proxy = endPoint->constructProxy(entry);
         if(proxy){
             QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
             QObject::connect(ipcEndPoint, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
