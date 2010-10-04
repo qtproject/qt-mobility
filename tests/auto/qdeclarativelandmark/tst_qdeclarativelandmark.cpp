@@ -44,6 +44,8 @@
 #include <QMetaObject>
 #include <QDateTime>
 #include <QMap>
+#include <QFile>
+#include <QDir>
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qdeclarativecomponent.h>
 #include <qlandmarkmanager.h>
@@ -114,7 +116,7 @@
 #endif
 
 #define DB_FILENAME "test.db"
-#define LEAVE_DB_AFTER_TESTRUN true
+#define LEAVE_DB_AFTER_TESTRUN false
 
 QTM_USE_NAMESPACE
 
@@ -201,6 +203,22 @@ void tst_QDeclarativeLandmark::initTestCase()
         createDb("generatedExampleLandmarkDb.db");
         populateTypicalDb();
     }
+    // Delete possibly existing default database to avoid any problems
+#ifndef Q_OS_SYMBIAN
+    QString dbFileName;
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                       QLatin1String("Nokia"), QLatin1String("QtLandmarks"));
+    QFileInfo fi(settings.fileName());
+    QDir dir = fi.dir();
+    dir.mkpath(dir.path());
+    dbFileName = dir.path() + QDir::separator() + QString("QtLandmarks") +  QLatin1String(".db");
+    if (QFile::exists(dbFileName)) {
+        qDebug() << "FYI tst_qdeclarativelandmark::initTestCase() deleting default database: " << dbFileName;
+        QFile::remove(dbFileName);
+    }
+#else
+   // TODO clean Symbian default database
+#endif
 }
 
 void tst_QDeclarativeLandmark::cleanupTestCase()
