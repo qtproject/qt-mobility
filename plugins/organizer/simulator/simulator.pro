@@ -6,10 +6,10 @@ PLUGIN_TYPE=organizer
 CONFIG += mobility
 MOBILITY = organizer
 
+include(../../../common.pri)
+
 INCLUDEPATH += ../../../src/mobilitysimulator
 qtAddLibrary(QtMobilitySimulator)
-
-include(../../../common.pri)
 
 INCLUDEPATH += ../../../src/organizer \
                 ../../../src/organizer/items \
