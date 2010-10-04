@@ -88,6 +88,7 @@ bool QRemoteServiceRegister::Entry::operator!=(const Entry& other) const
 QRemoteServiceRegister::Entry &QRemoteServiceRegister::Entry::operator=(const Entry& other)
 {
     d = other.d;
+    return *this;
 }
 
 QString QRemoteServiceRegister::Entry::interfaceName() const
