@@ -153,7 +153,7 @@ QList<QContactLocalId> CntSymbianSrvConnection::searchOnServer(const QString& sq
 QList<QContact> CntSymbianSrvConnection::searchAllContactNames(QContactManager::Error* error)
 {
     QList<QContact> list;
-    TRAPD(err, list = searchContactNamesL(_L("SELECT contact_id, first_name, last_name, company_name FROM contact WHERE (type_flags>>24)=0")));
+    TRAPD(err, list = searchContactNamesL(_L("SELECT contact_id, first_name, last_name, company_name FROM contact WHERE (type_flags>>24)<=1")));
     CntSymbianTransformError::transformError(err, error);
     return list;
 }
