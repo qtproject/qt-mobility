@@ -211,7 +211,9 @@ private slots:
             lm.setName(QString("LM%1").arg(i));
             lm.setUrl(QUrl("url"));
             lm.setCoordinate(QGeoCoordinate(54,23));
-            lm.setAttribute("street", "main street");
+            QGeoAddress address;
+            address.setStreet("main street");
+            lm.setAddress(address);
             lms.append(lm);
         }
 

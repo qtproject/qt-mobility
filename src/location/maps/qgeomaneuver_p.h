@@ -76,6 +76,7 @@ public:
     QGeoManeuver::InstructionDirection direction;
     int timeToNextInstruction;
     qreal distanceToNextInstruction;
+    QGeoCoordinate waypoint;
 };
 
 QTM_END_NAMESPACE

@@ -29,5 +29,3 @@ wince* {
 SUBDIRS +=  qlandmarkfilehandler_gpx \
             qlandmarkfilehandler_lmx
 
-SUBDIRS += qlandmarkmanagerengine_sqlite
-
