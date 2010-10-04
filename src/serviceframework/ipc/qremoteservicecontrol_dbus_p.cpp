@@ -210,8 +210,7 @@ bool QRemoteServiceControlDbusPrivate::createServiceEndPoint(const QString& /*id
         QString serviceName = "com.nokia.qtmobility.sfw." + list[0].name;
         connection->unregisterService(serviceName);
 
-        bool service = connection->registerService(serviceName);
-        if (!service) {
+        if (!connection->registerService(serviceName)) {
             qWarning() << "Cannot register service to DBus";
             return 0;
         }
@@ -222,7 +221,10 @@ bool QRemoteServiceControlDbusPrivate::createServiceEndPoint(const QString& /*id
 
         QString path = "/" + list[0].iface + "/DBusSession";
         path.replace(QString("."), QString("/"));
-        connection->registerObject(path, session);
+        if (!connection->registerObject(path, session)) {
+            qWarning() << "Cannot register service session to DBus";
+            return 0;
+        }
 
         QDBusInterface *iface = new QDBusInterface(serviceName, path, "", QDBusConnection::sessionBus());
         if (!iface->isValid()) {

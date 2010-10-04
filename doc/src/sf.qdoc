@@ -501,6 +501,11 @@ shutdown accordingly.
 ./servicefw autostart <service-name> <service-file>
 \endcode
 
+Note that this autostart feature will only work if the service is pre-registered
+to running the client, otherwise the QServiceManager will not be able to find the
+interfaces that invoke the D-Bus service files. This is usually done on deployment
+by adding services through the servicefw tool.
+
 \section2 Symbian Client-Server Framework
 Symbian IPC services are automatically instantiated if the service is not already 
 running.  
