@@ -58,7 +58,6 @@ tst_qservicecontext.exe
 tst_qmetaobjectbuilder.exe
 tst_icheck.exe
 tst_qservicemanager_ipc.exe
-tst_qremoteserviceclassregister.exe
 
 ::BearerManagement
 tst_qnetworkconfiguration.exe

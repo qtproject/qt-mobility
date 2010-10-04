@@ -39,51 +39,60 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICECONTROL_P_H
-#define QREMOTESERVICECONTROL_P_H
+#include "remotedialer.h"
 
-#include "qremoteservicecontrol.h"
-#include "instancemanager_p.h"
-#include "qserviceinterfacedescriptor.h"
-
-QTM_BEGIN_NAMESPACE
-
-class ObjectEndPoint;
-
-class QRemoteServiceControlPrivate: public QObject
+RemoteDialer::RemoteDialer(QObject *parent)
+    : QObject(parent), timerId(0), m_state(DISCONNECTED)
 {
-    Q_OBJECT
-    Q_PROPERTY(bool quitOnLastInstanceClosed READ quitOnLastInstanceClosed WRITE setQuitOnLastInstanceClosed)
-public:
-    QRemoteServiceControlPrivate(QObject* parent);
-    virtual ~QRemoteServiceControlPrivate();
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime())+QCoreApplication::applicationPid());
+}
 
-    virtual void publishServices(const QString& ident ) = 0;
+int RemoteDialer::state() const
+{
+    return m_state;
+}
 
-    virtual bool quitOnLastInstanceClosed() const;
-    virtual void setQuitOnLastInstanceClosed(const bool quit);
+void RemoteDialer::dialNumber(const QString& number)
+{
+    qDebug() << "Dialing Voip number: " << number;
+    if (m_state != DISCONNECTED)
+        return;
 
-    virtual QRemoteServiceControl::securityFilter setSecurityFilter(QRemoteServiceControl::securityFilter filter);
+    if (timerId)
+        killTimer(timerId);
+    timerId = startTimer(2000);
+    m_state = CONNECTING;
+    emit stateChanged();
+    qDebug() << "EMITTED";
+}
 
-Q_SIGNALS:
-    void lastInstanceClosed();
+void RemoteDialer::timerEvent(QTimerEvent* /*event*/)
+{
+    setNewState();
+}
 
-public slots:
-    // Must be implemented in the subclass
-    //void processIncoming();
+void RemoteDialer::hangup()
+{
+    qDebug() << "Hangup on VoipDialer";
+    if (timerId)
+        killTimer(timerId);
+    timerId = 0;
+    m_state = DISCONNECTED;
+    emit stateChanged();
+}
 
-protected:
-    virtual QRemoteServiceControl::securityFilter getSecurityFilter();
-
-private:
-    bool m_quit;    
-    QRemoteServiceControl::securityFilter iFilter;
-
-public:
-    static QObject* proxyForService(const QRemoteServiceIdentifier& typeId, const QString& location);
-    static QRemoteServiceControlPrivate* constructPrivateObject(QObject *parent);
-};
-
-QTM_END_NAMESPACE
-
-#endif
+void RemoteDialer::setNewState()
+{
+    switch(m_state) {
+        case DISCONNECTED:
+            break;
+        case CONNECTING:
+            m_state = CONNECTED;
+            emit stateChanged();
+            break;
+        case CONNECTED:
+            break;
+        case ENGAGED:
+            break;
+    }
+}

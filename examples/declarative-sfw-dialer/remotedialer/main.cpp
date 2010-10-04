@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,43 +38,24 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <qremoteserviceregister.h>
+#include <QCoreApplication>
+#include "remotedialer.h"
 
-#ifndef PROXY_OBJECT_H
-#define PROXY_OBJECT_H
-
-#include "qmobilityglobal.h"
-
-#ifdef QT_NO_DBUS
-    #include "objectendpoint_p.h"
-#else
-    #include "objectendpoint_dbus_p.h"
-#endif
-
-#include <QObject>
-
-QTM_BEGIN_NAMESPACE
-
-class QServiceProxyPrivate;
-class QServiceProxy : public QObject
+int main(int argc, char** argv)
 {
-    //TODO make inherit from QRemoteService
-    //Note: Do not put Q_OBJECT here
-public:
-    QServiceProxy(const QByteArray& metadata, ObjectEndPoint* endpoint, QObject* parent = 0);
-    virtual ~QServiceProxy();
-
-    //provide custom Q_OBJECT implementation
-    virtual const QMetaObject* metaObject() const;
-    int qt_metacall(QMetaObject::Call c, int id, void **a);
-    void *qt_metacast(const char* className);
-
-private:
-    QServiceProxyPrivate* d;
-    QVector<bool> localSignals;
-};
-
-
-
-QTM_END_NAMESPACE
-
-#endif //PROXY_OBJECT_H
+    QCoreApplication app(argc, argv);
+    
+    //register the unique service
+    QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
+    QRemoteServiceRegister::Entry uniqueEntry =
+        serviceRegister->createEntry<RemoteDialer>(
+                "VoipDialer", "com.nokia.qt.examples.Dialer", "1.1");
+    uniqueEntry.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
+    serviceRegister->registerEntry(uniqueEntry);
+    serviceRegister->publishEntries("dialer_service");
+    int res =  app.exec();
+    
+    delete serviceRegister;    
+    return res;
+}

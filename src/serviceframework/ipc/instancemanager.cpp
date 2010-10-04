@@ -41,6 +41,7 @@
 
 #include <qmobilityglobal.h>
 #include "instancemanager_p.h"
+#include "qremoteserviceregisterentry_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -57,13 +58,13 @@ InstanceManager::InstanceManager()
 
 InstanceManager::~InstanceManager()
 {
-    QList<QRemoteServiceIdentifier> allIdents = metaMap.keys();
-    while (!allIdents.isEmpty()) {
-        ServiceIdentDescriptor descr = metaMap.take(allIdents.takeFirst());
-        if (descr.instanceType == QRemoteServiceClassRegister::SharedInstance) {
-            if (descr.sharedInstance)
-               descr.sharedInstance->deleteLater();
-            descr.sharedInstance = 0;
+    QList<QRemoteServiceRegister::Entry> allEntries = metaMap.keys();
+    while (!allEntries.isEmpty()) {
+        ServiceIdentDescriptor descr = metaMap.take(allEntries.takeFirst());
+        if (descr.instanceType == QRemoteServiceRegister::GlobalInstance) {
+            if (descr.globalInstance)
+               descr.globalInstance->deleteLater();
+            descr.globalInstance = 0;
         } else {
             QList<QUuid> allUuids = descr.individualInstances.keys();
             while (!allUuids.isEmpty()) {
@@ -74,40 +75,36 @@ InstanceManager::~InstanceManager()
 
 }
 
-bool InstanceManager::addType(const QMetaObject* meta,
-        QRemoteServiceClassRegister::CreateServiceFunc func, 
-        QRemoteServiceClassRegister::TypeIdentFunc typeFunc,
-        QRemoteServiceClassRegister::InstanceType type)
+bool InstanceManager::addType(const QRemoteServiceRegister::Entry& e)
 {
-    QRemoteServiceIdentifier ident = (*typeFunc)();
-
     QMutexLocker ml(&lock);
 
-    if (metaMap.contains(ident)) {
-        qWarning() << "Service" << ident.name << "(" << ident.iface << ", " << ident.version << ")"
-            << "already registered";
+    if (metaMap.contains(e)) {
+        qWarning() << "Service" << e.serviceName() << "(" << e.interfaceName()
+            << ", " << e.version() << ")" << "already registered";
     } else {
         ServiceIdentDescriptor d;
-        d.meta = meta;
-        d.create = func;
-        d.instanceType = type;
-        metaMap.insert(ident, d);
+        d.meta = e.metaObject();
+        d.create = e.d->cptr;
+        d.instanceType = e.instantiationType();
+        metaMap.insert(e, d);
         return true;
     }
     return false;
 }
 
-const QMetaObject* InstanceManager::metaObject(const QRemoteServiceIdentifier& ident) const
+
+const QMetaObject* InstanceManager::metaObject(const QRemoteServiceRegister::Entry& entry) const
 {
     QMutexLocker ml(&lock);
-    if (metaMap.contains(ident)) {
-        return metaMap[ident].meta;
+    if (metaMap.contains(entry)) {
+        return metaMap[entry].meta;
     } else {
         return 0;
     }
 }
 
-QList<QRemoteServiceIdentifier> InstanceManager::allIdents() const
+QList<QRemoteServiceRegister::Entry> InstanceManager::allEntries() const
 {
     QMutexLocker ml(&lock);
     return metaMap.keys();
@@ -115,32 +112,32 @@ QList<QRemoteServiceIdentifier> InstanceManager::allIdents() const
 
 /*!
     Instance manager takes ownership of service instance. Returns a null pointer
-    if \a ident cannot be mapped to a known meta object. \a instanceId will
+    if \a entry cannot be mapped to a known meta object. \a instanceId will
     contain the id for the new service instance.
 */
-QObject* InstanceManager::createObjectInstance(const QRemoteServiceIdentifier& ident, QUuid& instanceId)
+QObject* InstanceManager::createObjectInstance(const QRemoteServiceRegister::Entry& entry, QUuid& instanceId)
 {
     instanceId = QUuid();
     QMutexLocker ml(&lock);
-    if (!metaMap.contains(ident))
+    if (!metaMap.contains(entry))
         return 0;
 
     QObject* service = 0;
-    ServiceIdentDescriptor& descr = metaMap[ident];
+    ServiceIdentDescriptor& descr = metaMap[entry];
 
-    if (descr.instanceType == QRemoteServiceClassRegister::SharedInstance) {
-        if (descr.sharedInstance) {
-            service = descr.sharedInstance;
-            instanceId = descr.sharedId;
-            descr.sharedRefCount++;
+    if (descr.instanceType == QRemoteServiceRegister::GlobalInstance) {
+        if (descr.globalInstance) {
+            service = descr.globalInstance;
+            instanceId = descr.globalId;
+            descr.globalRefCount++;
         } else {
             service = (*descr.create)();
             if (!service)
                 return 0;
 
-            descr.sharedInstance = service;
-            descr.sharedId = instanceId = QUuid::createUuid();
-            descr.sharedRefCount = 1;
+            descr.globalInstance = service;
+            descr.globalId = instanceId = QUuid::createUuid();
+            descr.globalRefCount = 1;
         }
     } else {
         service = (*descr.create)();
@@ -156,23 +153,25 @@ QObject* InstanceManager::createObjectInstance(const QRemoteServiceIdentifier& i
 /*!
     The associated service object will be deleted in the process.
 */
-void InstanceManager::removeObjectInstance(const QRemoteServiceIdentifier& ident, const QUuid& instanceId)
+void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& entry, const QUuid& instanceId)
 {
     QMutexLocker ml(&lock);
-    if (!metaMap.contains(ident))
+    if (!metaMap.contains(entry))
         return;
-    ServiceIdentDescriptor& descr = metaMap[ident];
-    if (descr.instanceType == QRemoteServiceClassRegister::SharedInstance) {
-        if (descr.sharedRefCount < 1)
+
+    ServiceIdentDescriptor& descr = metaMap[entry];
+    if (descr.instanceType == QRemoteServiceRegister::GlobalInstance) {
+        if (descr.globalRefCount < 1)
             return;
-        if (descr.sharedRefCount == 1) {
-            if (descr.sharedInstance)
-                descr.sharedInstance->deleteLater();
-            descr.sharedInstance = 0;
-            descr.sharedId = QUuid();
-            descr.sharedRefCount = 0;
+
+        if (descr.globalRefCount == 1) {
+            if (descr.globalInstance)
+                descr.globalInstance->deleteLater();
+            descr.globalInstance = 0;
+            descr.globalId = QUuid();
+            descr.globalRefCount = 0;
         } else {
-            descr.sharedRefCount--;
+            descr.globalRefCount--;
         }
     } else {
         QObject* service = descr.individualInstances.take(instanceId);

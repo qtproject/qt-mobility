@@ -39,59 +39,35 @@
 **
 ****************************************************************************/
 
-#include "qremoteservicecontrol_p.h"
+#ifndef QREMOTESERVICEREGISTER_DBUS_P_H
+#define QREMOTESERVICEREGISTER_DBUS_P_H
+
+#include "qremoteserviceregister.h"
+#include "qremoteserviceregister_p.h"
+#include "instancemanager_p.h"
+#include "qserviceinterfacedescriptor.h"
+#include <QLocalServer>
+#include <QUuid>
+#include <QtDBus/QtDBus>
 
 QTM_BEGIN_NAMESPACE
 
+class ObjectEndPoint;
 
-static bool defSecurityFilter(const void *)
+class QRemoteServiceRegisterDbusPrivate: public QRemoteServiceRegisterPrivate
 {
-    return true;
-}
+    Q_OBJECT
+public:
+    QRemoteServiceRegisterDbusPrivate(QObject* parent);
+    void publishServices(const QString& ident );
 
+private:
+    bool createServiceEndPoint(const QString& ident);
 
-QRemoteServiceControlPrivate::QRemoteServiceControlPrivate(QObject* parent)
-    : QObject(parent), m_quit(true), iFilter(defSecurityFilter)
-{
-}
+    QLocalServer* localServer;
+    QList<ObjectEndPoint*> pendingConnections;
+};
 
-QRemoteServiceControlPrivate::~QRemoteServiceControlPrivate()
-{  
-}
-
-//void QRemoteServiceControlPrivate::publishServices( const QString& ident)
-//{
-//  qWarning("QRemoteServiceControlPrivate::publishServices has not been reimplemented");
-//}
-//
-//void QRemoteServiceControlPrivate::processIncoming()
-//{
-//  qWarning("QRemoteServiceControlPrivate::processIncoming has not been reimplemented");
-//}
-
-bool QRemoteServiceControlPrivate::quitOnLastInstanceClosed() const
-{
-  return m_quit;
-}
-
-void QRemoteServiceControlPrivate::setQuitOnLastInstanceClosed(bool quit)
-{  
-  m_quit = quit;
-}
-
-QRemoteServiceControl::securityFilter QRemoteServiceControlPrivate::setSecurityFilter(QRemoteServiceControl::securityFilter filter)
-{
-    QRemoteServiceControl::securityFilter f;
-    f = filter;
-    iFilter = filter;
-    return f;
-}
-
-QRemoteServiceControl::securityFilter QRemoteServiceControlPrivate::getSecurityFilter()
-{
-    return iFilter;
-}
-
-
-#include "moc_qremoteservicecontrol_p.cpp"
 QTM_END_NAMESPACE
+
+#endif
