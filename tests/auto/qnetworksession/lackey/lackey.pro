@@ -5,8 +5,6 @@ DEPENDPATH += ../../../../src/bearer
 
 QT = core network
 
-CONFIG+= testcase
-
 include(../../../../common.pri)
 
 symbian {
