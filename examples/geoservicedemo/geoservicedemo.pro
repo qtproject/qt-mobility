@@ -22,7 +22,7 @@ HEADERS  += routepresenter.h \
         routetab.h \
         geocodingtab.h \
         revgeocodingtab.h \
-        servicestab.h 
+        servicestab.h
 
 include(../examples.pri)
 
@@ -32,7 +32,12 @@ MOBILITY = location bearer
 #    MOBILITY += bearer
 #    INCLUDEPATH += ../../src/bearer
 #}
-    
+
 symbian: {
-     TARGET.CAPABILITY = Location NetworkServices ReadUserData WriteUserData
+    TARGET.CAPABILITY = Location \
+                        NetworkServices \
+                        ReadUserData \
+                        WriteUserData \
+                        ReadDeviceData \
+                        WriteDeviceData
 }

@@ -44,6 +44,7 @@
 
 #include "qlandmarkfilter.h"
 #include "qgeocoordinate.h"
+#include "qgeoboundingcircle.h"
 
 QT_BEGIN_HEADER
 
@@ -54,6 +55,7 @@ class Q_LOCATION_EXPORT QLandmarkProximityFilter : public QLandmarkFilter
 {
 public:
     QLandmarkProximityFilter(const QGeoCoordinate &center = QGeoCoordinate(), qreal radius = -1);
+    QLandmarkProximityFilter(const QGeoBoundingCircle &circle);
     QLandmarkProximityFilter(const QLandmarkFilter &other);
     virtual ~QLandmarkProximityFilter();
 
@@ -62,6 +64,9 @@ public:
 
     qreal radius() const;
     void setRadius(qreal radius);
+
+    QGeoBoundingCircle boundingCircle();
+    void setBoundingCircle(const QGeoBoundingCircle &circle);
 
 private:
     Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkProximityFilter)
