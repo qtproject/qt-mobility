@@ -2230,7 +2230,7 @@ void tst_QOrganizerItemAsync::collectionSave()
         expected.clear();
         QList<QOrganizerCollection> allCollections = oim->collections();
         QVERIFY(!allCollections.contains(temp)); // should NOT contain it since it was cancelled.
-        QCOMPARE(oim->itemIds().size(), originalCount + 1);
+        QCOMPARE(oim->collectionIds().size(), originalCount + 1);
         break;
     }
     // restart, and wait for progress after cancel.
@@ -2268,7 +2268,7 @@ void tst_QOrganizerItemAsync::collectionSave()
         expected.clear();
         QList<QOrganizerCollection> allCollections = oim->collections();
         QVERIFY(!allCollections.contains(temp));
-        QCOMPARE(oim->itemIds().size(), originalCount + 1);
+        QCOMPARE(oim->collectionIds().size(), originalCount + 1);
         break;
     }
 }
