@@ -365,10 +365,10 @@ QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QDateTime& sta
 
   \sa QOrganizerItemFetchHint
  */
-QList<QOrganizerItem> QOrganizerItemManager::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, RecurrencePolicy recurrencePolicy) const
+QList<QOrganizerItem> QOrganizerItemManager::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->items(QDateTime(), QDateTime(), filter, sortOrders, fetchHint, recurrencePolicy, &d->m_error);
+    return d->m_engine->items(QDateTime(), QDateTime(), filter, sortOrders, fetchHint, &d->m_error);
 }
 
 /*!
@@ -386,10 +386,31 @@ QList<QOrganizerItem> QOrganizerItemManager::items(const QOrganizerItemFilter& f
 
   \sa QOrganizerItemFetchHint
  */
-QList<QOrganizerItem> QOrganizerItemManager::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, RecurrencePolicy recurrencePolicy) const
+QList<QOrganizerItem> QOrganizerItemManager::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->items(startDate, endDate, filter, sortOrders, fetchHint, recurrencePolicy, &d->m_error);
+    return d->m_engine->items(startDate, endDate, filter, sortOrders, fetchHint, &d->m_error);
+}
+
+/*!
+  Returns a list of organizeritems that match the given \a filter, sorted according to the given list of \a sortOrders.
+
+  Depending on the manager implementation, this filtering operation might be slow and involve retrieving all the
+  organizeritems and testing them against the supplied filter - see the \l isFilterSupported() function.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.
+  If the \a fetchHint is the default constructed hint, all existing details and relationships
+  in the matching organizeritems will be returned.  A client should not make changes to an organizer item which has
+  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
+  loss when saving the organizer item back to the manager (as the "new" restricted organizer item will
+  replace the previously saved organizer item in the backend).
+
+  \sa QOrganizerItemFetchHint
+ */
+QList<QOrganizerItem> QOrganizerItemManager::itemsForExport(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
+{
+    d->m_error = QOrganizerItemManager::NoError;
+    return d->m_engine->itemsForExport(startDate, endDate, filter, sortOrders, fetchHint, &d->m_error);
 }
 
 /*!

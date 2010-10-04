@@ -2480,8 +2480,8 @@ void tst_QOrganizerItemManager::itemFetch()
     QCOMPARE(items.count(), 3);
 
     //fetch only the originating item
-    items = cm->items(QDateTime(QDate(2010, 9, 8)), QDateTime(QDate(2010, 9, 12)),
-                      QOrganizerItemFilter(), QList<QOrganizerItemSortOrder>(), QOrganizerItemFetchHint(), QOrganizerItemManager::ParentAndExceptionsOnly);
+    items = cm->itemsForExport(QDateTime(QDate(2010, 9, 8)), QDateTime(QDate(2010, 9, 12)),
+                               QOrganizerItemFilter(), QList<QOrganizerItemSortOrder>(), QOrganizerItemFetchHint());
     QCOMPARE(items.count(), 2);
 
     // TODO: make a recurrant event, fetch the items between an interval and verify the result

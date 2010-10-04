@@ -241,14 +241,45 @@ QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QDateTim
 
   \sa QOrganizerItemFetchHint
  */
-QList<QOrganizerItem> QOrganizerItemManagerEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::RecurrencePolicy recurrencePolicy, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemManagerEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(startDate);
     Q_UNUSED(endDate);
     Q_UNUSED(filter);
     Q_UNUSED(sortOrders);
     Q_UNUSED(fetchHint);
-    Q_UNUSED(recurrencePolicy);
+    *error = QOrganizerItemManager::NotSupportedError;
+    return QList<QOrganizerItem>();
+}
+
+/*!
+  Returns the list of organizer items which match the given \a filter stored in the manager sorted according to the given list of \a sortOrders.
+
+  Any operation error which occurs will be saved in \a error.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.
+  If the \a fetchHint is the default constructed hint, all existing details and relationships
+  in the matching organizer items will be returned.  A client should not make changes to an item which has
+  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
+  loss when saving the item back to the manager (as the "new" restricted item will
+  replace the previously saved item in the backend).
+
+  Items of type EventOccurrence and TodoOccurrence should only be returned when they represent an
+  exceptional occurrence; ie. if the client has specifically saved the item occurrence in the
+  manager.  Occurrence-typed items that are generated purely from a recurrence specification of
+  another detail should not be returned in this list.
+
+  All items returned should have a non-zero local ID.
+
+  \sa QOrganizerItemFetchHint
+ */
+QList<QOrganizerItem> QOrganizerItemManagerEngine::itemsForExport(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+{
+    Q_UNUSED(startDate);
+    Q_UNUSED(endDate);
+    Q_UNUSED(filter);
+    Q_UNUSED(sortOrders);
+    Q_UNUSED(fetchHint);
     *error = QOrganizerItemManager::NotSupportedError;
     return QList<QOrganizerItem>();
 }
