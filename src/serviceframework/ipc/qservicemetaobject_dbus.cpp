@@ -558,16 +558,6 @@ void *QServiceMetaObjectDBus::qt_metacast(const char* className)
     return QObject::qt_metacast(className);
 }
 
-/*
-void QServiceMetaObjectDBus::connectNotify(const char* signal)
-{
-}
-
-void QServiceMetaObjectDBus::disconnectNotify(const char* signal)
-{
-}
-*/
-
 QDBusArgument &operator<<(QDBusArgument &argument, const QServiceUserTypeDBus &myType)
 {
     argument.beginStructure();

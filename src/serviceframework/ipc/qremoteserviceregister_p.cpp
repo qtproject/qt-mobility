@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qremoteservicecontrol_p.h"
+#include "qremoteserviceregister_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -48,43 +48,43 @@ QRemoteServiceControlPrivate::QRemoteServiceControlPrivate(QObject* parent)
 {
 }
 
-QRemoteServiceControlPrivate::~QRemoteServiceControlPrivate()
-{  
+QRemoteServiceRegisterPrivate::~QRemoteServiceRegisterPrivate()
+{
 }
 
-//void QRemoteServiceControlPrivate::publishServices( const QString& ident)
+//void QRemoteServiceRegisterPrivate::publishServices( const QString& ident)
 //{
-//  qWarning("QRemoteServiceControlPrivate::publishServices has not been reimplemented");
+//  qWarning("QRemoteServiceregisterPrivate::publishServices has not been reimplemented");
 //}
 //
-//void QRemoteServiceControlPrivate::processIncoming()
+//void QRemoteServiceRegisterPrivate::processIncoming()
 //{
-//  qWarning("QRemoteServiceControlPrivate::processIncoming has not been reimplemented");
+//  qWarning("QRemoteServiceRegisterPrivate::processIncoming has not been reimplemented");
 //}
 
-bool QRemoteServiceControlPrivate::quitOnLastInstanceClosed() const
+bool QRemoteServiceRegisterPrivate::quitOnLastInstanceClosed() const
 {
   return m_quit;
 }
 
-void QRemoteServiceControlPrivate::setQuitOnLastInstanceClosed(bool quit)
-{  
-  m_quit = quit;
+void QRemoteServiceRegisterPrivate::setQuitOnLastInstanceClosed(bool quit)
+{
+    m_quit = quit;
 }
 
-QRemoteServiceControl::securityFilter QRemoteServiceControlPrivate::setSecurityFilter(QRemoteServiceControl::securityFilter filter)
+QRemoteServiceRegister::securityFilter QRemoteServiceRegisterPrivate::setSecurityFilter(QRemoteServiceRegister::securityFilter filter)
 {
-    QRemoteServiceControl::securityFilter f;
+    QRemoteServiceRegister::securityFilter f;
     f = filter;
     iFilter = filter;
     return f;
 }
 
-QRemoteServiceControl::securityFilter QRemoteServiceControlPrivate::getSecurityFilter()
+QRemoteServiceRegister::securityFilter QRemoteServiceRegisterPrivate::getSecurityFilter()
 {
     return iFilter;
 }
 
 
-#include "moc_qremoteservicecontrol_p.cpp"
+#include "moc_qremoteserviceregister_p.cpp"
 QTM_END_NAMESPACE
