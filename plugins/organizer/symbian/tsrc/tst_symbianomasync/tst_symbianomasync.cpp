@@ -94,6 +94,8 @@ private slots:  // Test cases
     void fetchItemIds();
     void fetchItemsIdFilter_data(){ addManagers(); };
     void fetchItemsIdFilter();
+    void fetchItemsNonExistingIds_data(){ addManagers(); };
+    void fetchItemsNonExistingIds();
     void fetchItemsDetailFilter_data(){ addManagers(); };
     void fetchItemsDetailFilter();
     void fetchItemsSortOrder_data(){ addManagers(); };
@@ -366,6 +368,43 @@ void tst_SymbianOmAsync::fetchItemsIdFilter()
     QCOMPARE(req.items().count(), length);
     // Assuming the sort order is the same:
     QVERIFY(req.items().at(0).localId() == m_om->itemIds().at(pos));
+}
+
+void tst_SymbianOmAsync::fetchItemsNonExistingIds()
+{
+    // Save 3 items (synchronously)
+    const int itemCount(3);
+    QList<QOrganizerItem> items = createItems(QString("fetchitems"), itemCount);
+    QVERIFY(m_om->saveItems(&items));
+
+    // Remove the second one (synhcronously)
+    QVERIFY(m_om->removeItem(items[1].localId()));
+
+    // Create fetch request with id filter
+    QOrganizerItemFetchRequest req;
+    req.setManager(m_om);
+    QOrganizerItemLocalIdFilter localIdFilter;
+    QList<QOrganizerItemLocalId> ids;
+    foreach (QOrganizerItem item, items) {
+        ids.append(item.localId());
+    }
+    localIdFilter.setIds(ids);
+    req.setFilter(localIdFilter);
+
+    // Create signal spys for verification purposes
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+
+    // Fetch
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
+
+    // Verify
+    QVERIFY(resultSpy.count() > 1);
+    QCOMPARE(req.items().count(), itemCount - 1);
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerItemManager::DoesNotExistError);
 }
 
 void tst_SymbianOmAsync::fetchItemsDetailFilter()

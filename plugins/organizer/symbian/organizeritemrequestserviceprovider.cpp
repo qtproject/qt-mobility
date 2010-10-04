@@ -406,13 +406,17 @@ void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIds()
         items << item;
     }
 
+    // The first error will be reported
+    if (req->error() != QOrganizerItemManager::NoError)
+        error = req->error();
+
     iIndex++;
     if (iIndex < itemIds.count()) {
         // Continue until all items fetched; emit new result, no state change
         QOrganizerItemManagerEngine::updateItemFetchRequest(req, items, error, req->state());
         SelfComplete();
     } else {
-        // Emit state change
+        // Done, emit state change
         QOrganizerItemManagerEngine::updateItemFetchRequest(
             req, items, error, QOrganizerItemAbstractRequest::FinishedState);
     }
@@ -437,13 +441,17 @@ void COrganizerItemRequestsServiceProvider::FetchItemsandFilter()
     }
     items.append(req->items());
 
+    // The first error will be reported
+    if (req->error() != QOrganizerItemManager::NoError)
+        error = req->error();
+
     iIndex++;
     if (iIndex < iItemIds.count()) {
         // Continue until all items fetched; emit new result, no state change
         QOrganizerItemManagerEngine::updateItemFetchRequest(req, items, error, req->state());
         SelfComplete();
     } else {
-        // Emit state change
+        // Done, emit state change
         QOrganizerItemManagerEngine::updateItemFetchRequest(
             req, items, error, QOrganizerItemAbstractRequest::FinishedState);
     }
