@@ -117,7 +117,6 @@ RouteTab::RouteTab(QWidget *parent) :
     m_dst.setLongitude(9.733887);
 
     m_requestTravelModes = QGeoRouteRequest::CarTravel;
-    m_requestAvoidTypes = QGeoRouteRequest::AvoidNothing;
     m_requestRouteOptimizations = QGeoRouteRequest::FastestRoute;
 
     m_requestBtn = new QPushButton(tr("Request Route"));
@@ -186,7 +185,6 @@ void RouteTab::on_btnRequest_clicked()
             if ((m_routingManager->supportedManeuverDetails() & QGeoRouteRequest::BasicManeuvers) != 0)
                 request.setManeuverDetail(QGeoRouteRequest::BasicManeuvers);
             request.setTravelModes(m_requestTravelModes);
-            request.setAvoidFeatureTypes(m_requestAvoidTypes);
             request.setRouteOptimization(m_requestRouteOptimizations);
 
             m_routingManager->calculateRoute(request);

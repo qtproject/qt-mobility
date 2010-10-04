@@ -245,7 +245,12 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
             }
         }
     }
-    route->setRouteSegments(routesegments);
+
+    if (routesegments.size() > 0) {
+        route->setFirstRouteSegment(routesegments.at(0));
+        for (int i = 0; i < routesegments.size() - 1; ++i)
+            routesegments[i].setNextRouteSegment(routesegments.at(i + 1));
+    }
 
     maneuvers.clear();
     segments.clear();
