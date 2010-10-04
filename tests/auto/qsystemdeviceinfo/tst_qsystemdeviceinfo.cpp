@@ -85,6 +85,9 @@ private slots:
     void tst_keyboardType();
     void tst_isWirelessKeyboardConnected();
     void tst_isKeyboardFlipOpen();
+    void tst_keypadLightOn();
+    void tst_backLightOn();
+    void tst_hostId();
 
 };
 /*
@@ -267,10 +270,31 @@ void tst_QSystemDeviceInfo::tst_isWirelessKeyboardConnected()
 void tst_QSystemDeviceInfo::tst_isKeyboardFlipOpen()
 {
     QSystemDeviceInfo di;
-   bool on = di.isKeyboardFlipOpen();
-   QVERIFY(on || !on);
+    bool on = di.isKeyboardFlipOpen();
+    QVERIFY(on || !on);
 }
 
+void tst_QSystemDeviceInfo::tst_keypadLightOn()
+{
+    QSystemDeviceInfo di;
+    bool on = di.keypadLightOn();
+    QVERIFY(on || !on);
+}
+
+void tst_QSystemDeviceInfo::tst_backLightOn()
+{
+    QSystemDeviceInfo di;
+    bool on = di.backLightOn();
+    QVERIFY(on || !on);
+}
+
+void tst_QSystemDeviceInfo::tst_hostId()
+{
+    QSystemDeviceInfo di;
+    quint64 id = di.hostId();
+    qDebug() << id;
+    QVERIFY(id == 0 || id > 0);
+}
 
 QTEST_MAIN(tst_QSystemDeviceInfo)
 #include "tst_qsystemdeviceinfo.moc"
