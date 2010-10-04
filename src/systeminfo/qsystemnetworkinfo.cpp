@@ -90,7 +90,10 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
             \value EthernetMode            Wired Local Area network.
             \value BluetoothMode           Bluetooth network.
             \value WimaxMode               Wimax network.
-
+            \value GprsMode                GPRS mode
+            \value EdgeMode                Edge mode
+            \value HspaMode                HSPA mode
+            \value  LteMode                 LTE mode
           */
 
 
