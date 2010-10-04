@@ -10,7 +10,7 @@ QTM_USE_NAMESPACE
 class QDeclarativeHapticsEffect : public QFeedbackHapticsEffect
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeListProperty<QFeedbackActuator> actuators READ actuators)
+    Q_PROPERTY(QDeclarativeListProperty<QFeedbackActuator> actuators READ actuators NOTIFY actuatorsChanged)
     Q_PROPERTY(bool running READ isRunning WRITE setRunning NOTIFY runningChanged)
     Q_PROPERTY(bool paused READ isPaused WRITE setPaused NOTIFY pausedChanged)
     Q_PROPERTY(bool supportsThemeEffect READ themeEffectSupported)
@@ -59,6 +59,7 @@ public:
     static void actuator_append(QDeclarativeListProperty<QFeedbackActuator> *prop, QFeedbackActuator *actuator)
     {
         static_cast<QDeclarativeHapticsEffect*>(prop->object)->actuators_.append(actuator);
+        emit static_cast<QDeclarativeHapticsEffect*>(prop->object)->actuatorsChanged();
     }
     static int actuator_count(QDeclarativeListProperty<QFeedbackActuator> *prop)
     {
@@ -72,6 +73,7 @@ public:
 signals:
     void runningChanged();
     void pausedChanged();
+    void actuatorsChanged();
 public slots:
     void updateState() {
         bool running = state() == Running;
