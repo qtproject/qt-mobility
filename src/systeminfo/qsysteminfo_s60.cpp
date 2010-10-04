@@ -1223,6 +1223,11 @@ bool QSystemDeviceInfoPrivate::backLightOn()
     return false;
 }
 
+quint64 QSystemDeviceInfoPrivate::hostId()
+{
+    return 0;//gethostid();
+}
+
 
 DeviceInfo *DeviceInfo::m_instance = NULL;
 

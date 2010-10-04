@@ -2114,6 +2114,11 @@ bool QSystemDeviceInfoPrivate::backLightOn()
     return false;
 }
 
+quint64 QSystemDeviceInfoPrivate::hostId()
+{
+    return 0;//gethostid();
+}
+
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         : QObject(parent)
 {

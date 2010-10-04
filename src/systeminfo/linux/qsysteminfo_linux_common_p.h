@@ -317,6 +317,7 @@ public:
     void keyboardConnected(bool connect);//1.2
     bool keypadLightOn(); //1.2
     bool backLightOn(); //1.2
+    quint64 hostId(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);

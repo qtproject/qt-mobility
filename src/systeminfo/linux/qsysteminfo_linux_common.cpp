@@ -2835,6 +2835,12 @@ bool QSystemDeviceInfoLinuxCommonPrivate::backLightOn()
     return false;
 }
 
+quint64 QSystemDeviceInfo::hostId()
+{
+    return deviceInfoPrivate()->hostId();
+}
+
+
 QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
 

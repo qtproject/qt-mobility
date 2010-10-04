@@ -481,6 +481,19 @@ bool QSystemDeviceInfo::backLightOn()
     return deviceInfoPrivate()->backLightOn();
 }
 
+/*!
+  \brief unique host id.
+
+  Returns a unique identifier for the machine.
+
+  Depending on security enforcement on platform, this may return a non unique number, or 0.
+
+  */
+quint64 QSystemDeviceInfo::hostId()
+{
+    return deviceInfoPrivate()->hostId();
+}
+
 #include "moc_qsystemdeviceinfo.cpp"
 
 QTM_END_NAMESPACE

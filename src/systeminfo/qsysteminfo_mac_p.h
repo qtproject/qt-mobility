@@ -291,6 +291,7 @@ public:
     bool keypadLightOn(); //1.2
     bool backLightOn(); //1.2
     void deviceLocked(bool isLocked); // 1.2
+    quint64 hostId(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
