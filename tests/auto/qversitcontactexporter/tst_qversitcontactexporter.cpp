@@ -385,7 +385,7 @@ void tst_QVersitContactExporter::testEncodeName()
     nameProperty = findPropertyByName(document, QLatin1String("N"));
     QCOMPARE(nameProperty.name(), QLatin1String("N"));
     CHECK_VALUE(nameProperty, QVersitProperty::CompoundType, QStringList()
-                << QString() << QLatin1String("Nickname") << QString()
+                << QString() << QString() << QString()
                 << QString() << QString());
 
     // Test 5: Organization but no name or display label
@@ -402,7 +402,7 @@ void tst_QVersitContactExporter::testEncodeName()
     nameProperty = findPropertyByName(document, QLatin1String("N"));
     QCOMPARE(nameProperty.name(), QLatin1String("N"));
     CHECK_VALUE(nameProperty, QVersitProperty::CompoundType, QStringList()
-                << QString() << QLatin1String("Organization") << QString()
+                << QString() << QString() << QString()
                 << QString() << QString());
 
     // Test 6: Display label but no name set
@@ -417,7 +417,7 @@ void tst_QVersitContactExporter::testEncodeName()
     nameProperty = findPropertyByName(document, QLatin1String("N"));
     QCOMPARE(nameProperty.name(), QLatin1String("N"));
     CHECK_VALUE(nameProperty, QVersitProperty::CompoundType, QStringList()
-                << QString() << QLatin1String("Bobby Tables") << QString() << QString() << QString());
+                << QString() << QString() << QString() << QString() << QString());
 }
 
 void tst_QVersitContactExporter::testEncodePhoneNumber()

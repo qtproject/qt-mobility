@@ -256,7 +256,7 @@ void QVersitContactExporterPrivate::ensureDocumentContainsName(const QContact& c
         QVersitProperty nProperty;
         nProperty.setValueType(QVersitProperty::CompoundType);
         nProperty.setName(QLatin1String("N"));
-        nProperty.setValue(QStringList() << QString() << fnValue
+        nProperty.setValue(QStringList() << QString() << QString()
                            << QString() << QString() << QString());
         document->addProperty(nProperty);
     }
