@@ -321,6 +321,7 @@ QOrganizerItemMemoryEngine::QOrganizerItemMemoryEngine(QOrganizerItemMemoryEngin
         QOrganizerCollection defaultCollection;
         defaultCollection.setId(defaultId);
         defaultCollection.setMetaData(QOrganizerCollection::KeyName, QString(QLatin1String("Default Collection")));
+        QOrganizerItemManagerEngine::setCollectionIsDefault(&defaultCollection, true);
         d->m_organizerCollectionIds << defaultLocalId;
         d->m_organizerCollections << defaultCollection;
     }
@@ -1217,8 +1218,9 @@ QOrganizerCollection QOrganizerItemMemoryEngine::defaultCollection(QOrganizerIte
 {
     // default collection has id of 1.
     *error = QOrganizerItemManager::NoError;
+    QOrganizerCollectionLocalId defaultCollectionId = QOrganizerCollectionLocalId(new QOrganizerCollectionMemoryEngineLocalId(1));
     for (int i = 0; i < d->m_organizerCollections.size(); ++i) {
-        if (d->m_organizerCollections.at(i).localId() == QOrganizerCollectionLocalId(new QOrganizerCollectionMemoryEngineLocalId(1))) {
+        if (d->m_organizerCollections.at(i).localId() == defaultCollectionId) {
             return d->m_organizerCollections.at(i);
         }
     }
