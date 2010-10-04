@@ -39,62 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef QSERVICE_INSTANCE_MANAGER
-#define QSERVICE_INSTANCE_MANAGER
+#ifndef REMOTEDIALER_H
+#define REMOTEDIALER_H
 
-#include <qmobilityglobal.h>
-#include "qremoteserviceregister.h"
-#include <QHash>
-#include <QMutexLocker>
-#include <QMetaObject>
-#include <QMetaClassInfo>
-#include <QUuid>
-#include <QDebug>
+#include <qremoteserviceregister.h>
+#include <QObject>
+#include <QtCore>
 
-QTM_BEGIN_NAMESPACE
+#define DISCONNECTED 0
+#define CONNECTING 1
+#define CONNECTED 2
+#define ENGAGED 3
 
-struct ServiceIdentDescriptor
+QTM_USE_NAMESPACE
+
+class RemoteDialer : public QObject
 {
-    ServiceIdentDescriptor() : globalInstance(0), globalRefCount(0)
-    {
-    }
-
-    const QMetaObject* meta;
-    QRemoteServiceRegister::CreateServiceFunc create;
-    QRemoteServiceRegister::InstanceType instanceType;
-    QHash<QUuid, QObject*> individualInstances;
-    QObject* globalInstance;
-    QUuid globalId;
-    int globalRefCount;
-
-    //TODO converge with QRemoteServiceRegister::Entry so that entry changes
-    //are reflected by instance manager
-};
-
-class QM_AUTOTEST_EXPORT InstanceManager //TODO public QOBJECT
-{
+    Q_OBJECT
 public:
-    InstanceManager();
-    ~InstanceManager();
+    RemoteDialer(QObject *parent = 0);
+    
+    Q_PROPERTY(int state READ state NOTIFY stateChanged);
+    int state() const;
 
-    bool addType(const QRemoteServiceRegister::Entry& entry);
+public slots:
+    void dialNumber(const QString& number);
+    void hangup();
 
-    const QMetaObject* metaObject(const QRemoteServiceRegister::Entry& ident) const;
-    QList<QRemoteServiceRegister::Entry> allEntries() const;
+Q_SIGNALS:
+    void stateChanged();
 
-    QObject* createObjectInstance(const QRemoteServiceRegister::Entry& entry, QUuid& instanceId);
-    void removeObjectInstance(const QRemoteServiceRegister::Entry& entry, const QUuid& instanceId);
-
-    static InstanceManager* instance();
+protected:
+    void timerEvent(QTimerEvent* event);
 
 private:
-    mutable QMutex lock;
-    QHash<QRemoteServiceRegister::Entry, ServiceIdentDescriptor> metaMap;
+    void setNewState();
+    int timerId;
+    int m_state;
 };
 
-
-
-QTM_END_NAMESPACE
-
-
-#endif //QSERVICE_INSTANCE_MANAGER
+#endif
