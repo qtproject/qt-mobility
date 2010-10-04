@@ -57,8 +57,10 @@ Connection::Connection(MobilityConnection *mobilityCon)
     , mConnection(mobilityCon)
     , mRegisteredWithSimulator(false)
     , mInitialDataReceived(false)
+    , mManager(QLatin1String("simulator"))
 {
-//    qt_registerContactsTypes();
+    qRegisterMetaTypeStreamOperators<QOrganizerItem>("QtMobility::QOrganizerItem");
+
     mobilityCon->addMessageHandler(this);
 }
 
@@ -115,6 +117,47 @@ void Connection::getInitialData()
 void Connection::initialOrganizerDataSent()
 {
     mInitialDataReceived = true;
+}
+
+void Connection::clearOrganizerItems()
+{
+    mLocalToRemote.clear();
+    mRemoteToLocal.clear();
+    mManager.removeItems(mManager.itemIds(), 0);
+}
+
+void Connection::saveOrganizerItem(QOrganizerItem item)
+{
+    // map remote id -> local id
+    const QOrganizerItemLocalId remoteLocalId = item.localId();
+    QOrganizerItemId id;
+    if (mRemoteToLocal.contains(remoteLocalId)) {
+        id.setManagerUri(mManager.managerUri());
+        id.setLocalId(mRemoteToLocal.value(remoteLocalId));
+    }
+    item.setId(id);
+
+    qDebug() << "Saving" << item;
+    mManager.saveItem(&item);
+    if (mManager.error())
+        qDebug() << "Error saving:" << mManager.error();
+
+    // if this is a new item, save the new id in the maps
+    if (id.isNull()) {
+        mRemoteToLocal.insert(remoteLocalId, item.localId());
+        mLocalToRemote.insert(item.localId(), remoteLocalId);
+    }
+}
+
+void Connection::removeOrganizerItem(QOrganizerItemLocalId id)
+{
+    if (!mRemoteToLocal.contains(id))
+        return;
+
+    QOrganizerItemLocalId localId = mManager.item(mRemoteToLocal.value(id)).localId();
+    mRemoteToLocal.remove(id);
+    mLocalToRemote.remove(localId);
+    mManager.removeItem(localId);
 }
 
 #include "moc_connection_p.cpp"

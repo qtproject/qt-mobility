@@ -83,12 +83,10 @@ public:
 
 private slots:
     // called remotely
-//    void setContactData(const QtMobility::QContactSimulatorData &);
-//    void addContact(QtMobility::QContact);
-//    void changeContact(QtMobility::QContact);
-//    void removeContact(uint);
-//    void setRelationships(uint id, const QVariantList &relationships);
     void initialOrganizerDataSent();
+    void clearOrganizerItems();
+    void saveOrganizerItem(QtMobility::QOrganizerItem item);
+    void removeOrganizerItem(QOrganizerItemLocalId id);
 
 private:
     void getInitialData();
@@ -97,6 +95,9 @@ private:
     bool mRegisteredWithSimulator;
     bool mInitialDataReceived;
     QOrganizerItemSimulatorEngine *mEngine;
+    QOrganizerItemManager mManager;
+    QHash<QOrganizerItemLocalId, QOrganizerItemLocalId> mRemoteToLocal;
+    QHash<QOrganizerItemLocalId, QOrganizerItemLocalId> mLocalToRemote;
 };
 
 } // namespace Simulator
