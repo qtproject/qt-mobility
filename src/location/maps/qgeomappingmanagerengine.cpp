@@ -64,10 +64,8 @@ QTM_BEGIN_NAMESPACE
     The functions
     setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes),
     setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes),
-    setMinimumZoomLevel(qreal minimumZoom),
-    setMaximumZoomLevel(qreal maximumZoom),
-    setMinimumImageSize(const QSize &minimumSize) and
-    setMaximumImageSize(const QSize &maximumSize) should be used to
+    setMinimumZoomLevel(qreal minimumZoom) and
+    setMaximumZoomLevel(qreal maximumZoom)
     configure the reported capabilities of the engine.
 
     It is important that this is done before createMapData() or any of the
@@ -211,30 +209,6 @@ qreal QGeoMappingManagerEngine::maximumZoomLevel() const
 }
 
 /*!
-    Returns the size of the smallest map image which is supported by this engine.
-
-    An invalid size indicates that this QGeoMappingManagerEngine instance places
-    no restrictions on the minimum size of the map image.
-*/
-QSize QGeoMappingManagerEngine::minimumImageSize() const
-{
-    Q_D(const QGeoMappingManagerEngine);
-    return d->minimumImageSize;
-}
-
-/*!
-    Returns the size of the largest map image which is supported by this engine.
-
-    An invalid size indicates that this QGeoMappingManagerEngine instance places
-    no restrictions on the maximum size of the map image.
-*/
-QSize QGeoMappingManagerEngine::maximumImageSize() const
-{
-    Q_D(const QGeoMappingManagerEngine);
-    return d->maximumImageSize;
-}
-
-/*!
     Sets the list of map types supported by this engine to \a mapTypes.
 
     Subclasses of QGeoMappingManagerEngine should use this function to ensure
@@ -290,38 +264,6 @@ void QGeoMappingManagerEngine::setMaximumZoomLevel(qreal maximumZoom)
 {
     Q_D(QGeoMappingManagerEngine);
     d->maximumZoomLevel = maximumZoom;
-}
-
-/*!
-    Sets the size of the smallest map image which is supported by this
-    engine.
-
-    An invalid size indicates that this engine places
-    no restrictions on the minimum size of the map image.
-
-    Subclasses of QGeoMappingManagerEngine should use this function to ensure
-    minimumImageSize() provides accurate information.
-*/
-void QGeoMappingManagerEngine::setMinimumImageSize(const QSize &minimumImageSize)
-{
-    Q_D(QGeoMappingManagerEngine);
-    d->minimumImageSize = minimumImageSize;
-}
-
-/*!
-    Sets the size of the largest map image which is supported by this
-    engine.
-
-    An invalid size indicates that this engine places
-    no restrictions on the maximum size of the map image.
-
-    Subclasses of QGeoMappingManagerEngine should use this function to ensure
-    maximumImageSize() provides accurate information.
-*/
-void QGeoMappingManagerEngine::setMaximumImageSize(const QSize &maximumImageSize)
-{
-    Q_D(QGeoMappingManagerEngine);
-    d->maximumImageSize = maximumImageSize;
 }
 
 /*!
