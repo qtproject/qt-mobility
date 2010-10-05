@@ -247,9 +247,6 @@ void OrganizerAsynchProcess::processRequest()
     case QOrganizerItemAbstractRequest::CollectionFetchRequest:
         handleCollectionFetchRequest(static_cast<QOrganizerCollectionFetchRequest *>(req));
         break;
-    case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest:
-        handleCollectionLocalIdFetchRequest(static_cast<QOrganizerCollectionLocalIdFetchRequest *>(req));
-        break;
     case QOrganizerItemAbstractRequest::CollectionRemoveRequest:
         handleCollectionRemoveRequest(static_cast<QOrganizerCollectionRemoveRequest *>(req));
         break;
@@ -299,7 +296,7 @@ void OrganizerAsynchProcess::handleSaveRequest(QOrganizerItemSaveRequest *req)
     QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
     QMap<int, QOrganizerItemManager::Error> errorMap;
     QList<QOrganizerItem> items = req->items();
-    m_engine->saveItems(&items, req->collectionId(), &errorMap, &err);
+    m_engine->saveItems(&items, &errorMap, &err);
     QOrganizerItemManagerEngine::updateItemSaveRequest(req, items, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
 }
 
@@ -343,16 +340,8 @@ void OrganizerAsynchProcess::handleDefinitionSaveRequest(QOrganizerItemDetailDef
 void OrganizerAsynchProcess::handleCollectionFetchRequest(QOrganizerCollectionFetchRequest *req)
 {
     QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
-    QMap<int, QOrganizerItemManager::Error> errorMap;
-    QList<QOrganizerCollection> collections = m_engine->collections(req->collectionIds(), &errorMap, &err);
-    QOrganizerItemManagerEngine::updateCollectionFetchRequest(req, collections, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
-}
-
-void OrganizerAsynchProcess::handleCollectionLocalIdFetchRequest(QOrganizerCollectionLocalIdFetchRequest *req)
-{
-    QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
-    QList<QOrganizerCollectionLocalId> collectionIds = m_engine->collectionIds(&err);
-    QOrganizerItemManagerEngine::updateCollectionLocalIdFetchRequest(req, collectionIds, err, QOrganizerItemAbstractRequest::FinishedState);
+    QList<QOrganizerCollection> collections = m_engine->collections(&err);
+    QOrganizerItemManagerEngine::updateCollectionFetchRequest(req, collections, err, QOrganizerItemAbstractRequest::FinishedState);
 }
 
 void OrganizerAsynchProcess::handleCollectionRemoveRequest(QOrganizerCollectionRemoveRequest *req)

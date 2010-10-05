@@ -77,7 +77,7 @@ private slots:  // Test cases
     void getItemInstances();
     void setRecurrenceDates();
 
-    void getCollectionIds();
+    //void getCollectionIds(); // this function is no longer provided by the API.
     void getCollections();
     void saveCollection();
     void removeCollection();
@@ -147,7 +147,7 @@ void tst_Maemo5Om::addSimpleItem()
     // Save with list parameter
     QList<QOrganizerItem> items;
     items.append(event2);
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(m_om->saveItems(&items, 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     foreach (QOrganizerItem item, items) {
         QVERIFY(!item.id().localId().isNull());
@@ -166,7 +166,7 @@ void tst_Maemo5Om::addSimpleItem()
     QList<QOrganizerItem> items2;
     items2.append(event3);
     QMap<int, QOrganizerItemManager::Error> errorMap;
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap));
+    QVERIFY(m_om->saveItems(&items, &errorMap));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     QVERIFY(errorMap.count() == 0);
     foreach ( QOrganizerItem item2, items ) {
@@ -666,11 +666,11 @@ void tst_Maemo5Om::addWithIllegalParameters()
     QVERIFY(!m_om->saveItem(0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
-    QVERIFY(!m_om->saveItems(0, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(!m_om->saveItems(0, 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
     QList<QOrganizerItem> items;
-    QVERIFY(!m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(!m_om->saveItems(&items, 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 }
 
@@ -860,30 +860,37 @@ void tst_Maemo5Om::setRecurrenceDates()
     QCOMPARE(recurrenceDates, fetchedRecurrenceDates);
 }
 
-void tst_Maemo5Om::getCollectionIds()
-{
-    QOrganizerCollectionLocalId defaultCollectionId = m_om->defaultCollectionId();
-    QList<QOrganizerCollectionLocalId> collectionIds = m_om->collectionIds();
-    QVERIFY(collectionIds.contains(defaultCollectionId));
-}
+// the collectionIds function is no longer offered by the API
+//void tst_Maemo5Om::getCollectionIds()
+//{
+//    QOrganizerCollectionLocalId defaultCollectionId = m_om->defaultCollectionId();
+//    QList<QOrganizerCollectionLocalId> collectionIds = m_om->collectionIds();
+//    QVERIFY(collectionIds.contains(defaultCollectionId));
+//}
 
 void tst_Maemo5Om::getCollections()
 {
-    QOrganizerCollectionLocalId defaultCollectionId = m_om->defaultCollectionId();
-    QList<QOrganizerCollectionLocalId> collectionIds = m_om->collectionIds();
-    QList<QOrganizerCollection> collections = m_om->collections(collectionIds);
+// the API which provides this functionality has changed;
+// now takes no arguments, and returns all collections.
+//    QOrganizerCollectionLocalId defaultCollectionId = m_om->defaultCollectionId();
+//    QList<QOrganizerCollectionLocalId> collectionIds = m_om->collectionIds();
+//    QList<QOrganizerCollection> collections = m_om->collections(collectionIds);
+//
+//    bool defaultCollectionExists = false;
+//    bool allCollectionIds = true;
+//    foreach(QOrganizerCollection collection, collections) {
+//        if (collection.id().localId() == defaultCollectionId)
+//            defaultCollectionExists = true;
+//        if (!collectionIds.contains(collection.id().localId()))
+//            allCollectionIds = false;
+//    }
+//
+//    QVERIFY(defaultCollectionExists);
+//    QVERIFY(allCollectionIds);
 
-    bool defaultCollectionExists = false;
-    bool allCollectionIds = true;
-    foreach(QOrganizerCollection collection, collections) {
-        if (collection.id().localId() == defaultCollectionId)
-            defaultCollectionExists = true;
-        if (!collectionIds.contains(collection.id().localId()))
-            allCollectionIds = false;
-    }
-
-    QVERIFY(defaultCollectionExists);
-    QVERIFY(allCollectionIds);
+    QOrganizerCollection defaultCollection = m_om->defaultCollection();
+    QList<QOrganizerCollection> allCollections = m_om->collections();
+    QVERIFY(allCollections.contains(defaultCollection));
 }
 
 void tst_Maemo5Om::saveCollection()
@@ -903,10 +910,7 @@ void tst_Maemo5Om::saveCollection()
     QVERIFY(newCollectionId.managerUri() == m_om->managerUri());
     QVERIFY(!newCollectionId.localId().isNull());
 
-    QList<QOrganizerCollection> fetchCollectionList =
-            m_om->collections(QList<QOrganizerCollectionLocalId>() << newCollectionId.localId());
-    QCOMPARE(fetchCollectionList.count(), 1);
-    QOrganizerCollection fetchCollection = fetchCollectionList[0];
+    QOrganizerCollection fetchCollection = m_om->collection(newCollectionId.localId());
     QVERIFY(fetchCollection.id() == newCollection.id());
     QVERIFY(fetchCollection.metaData("Name") == newCollection.metaData("Name"));
     QVERIFY(fetchCollection.metaData("Color") == newCollection.metaData("Color"));
@@ -925,10 +929,23 @@ void tst_Maemo5Om::removeCollection()
 
     QVERIFY(m_om->saveCollection(&newCollection));
 
-    QVERIFY(m_om->collectionIds().contains(newCollection.id().localId()));
+    QVERIFY(m_om->collections().contains(newCollection));
 
     QVERIFY(m_om->removeCollection(newCollection.id().localId()));
-    QVERIFY(!m_om->collectionIds().contains(newCollection.id().localId()));
+    QVERIFY(!m_om->collections().contains(newCollection));
+
+    // Not possible to remove again
+    QVERIFY(!m_om->removeCollection(newCollection.id().localId()));
+
+    // now resave and try the other removeCollection() function
+    newCollection.setId(QOrganizerCollectionId());
+
+    QVERIFY(m_om->saveCollection(&newCollection));
+
+    QVERIFY(m_om->collections().contains(newCollection));
+
+    QVERIFY(m_om->removeCollection(newCollection)); // can pass the collection, rather than its id.
+    QVERIFY(!m_om->collections().contains(newCollection));
 
     // Not possible to remove again
     QVERIFY(!m_om->removeCollection(newCollection.id().localId()));
@@ -965,13 +982,19 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     event1.setEndDateTime(QDateTime(endDate1, endTime1));
     event1.setDisplayLabel("saveItemsToNewCollection, Event1");
     event1.setDescription("Simple test event description");
+    event1.setCollectionId(newCollection.id());
 
     // Save
-    QVERIFY(m_om->saveItem(&event1, collId));
+    QVERIFY(m_om->saveItem(&event1));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     QVERIFY(!event1.id().localId().isNull());
     QVERIFY(event1.id().managerUri().contains(managerName));
     QVERIFY(!event1.guid().isEmpty());
+
+    // create a collection id where we want to save some items
+    QOrganizerCollectionId saveItemCollectionId;
+    saveItemCollectionId.setManagerUri(m_om->managerUri());
+    saveItemCollectionId.setLocalId(collId);
 
     // Create another event
     QOrganizerEvent event2;
@@ -979,11 +1002,12 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     event2.setEndDateTime(QDateTime(endDate2, endTime2));
     event2.setDisplayLabel("saveItemsToNewCollection, Event2");
     event2.setDescription("Save with list parameter");
+    event2.setCollectionId(saveItemCollectionId);
 
     // Save with list parameter
     QList<QOrganizerItem> items;
     items.append(event2);
-    QVERIFY(m_om->saveItems(&items, collId, 0));
+    QVERIFY(m_om->saveItems(&items, 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     foreach (QOrganizerItem item, items) {
         QVERIFY(!item.id().localId().isNull());
@@ -997,12 +1021,13 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     event3.setEndDateTime(QDateTime(endDate3, endTime3));
     event3.setDisplayLabel("saveItemsToNewCollection, Event3");
     event3.setDescription("Save with list parameter and error map");
+    event3.setCollectionId(saveItemCollectionId);
 
     // Save with list parameter and error map parameter
     QList<QOrganizerItem> items2;
     items2.append(event3);
     QMap<int, QOrganizerItemManager::Error> errorMap;
-    QVERIFY(m_om->saveItems(&items2, collId, &errorMap));
+    QVERIFY(m_om->saveItems(&items2, &errorMap));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     QVERIFY(errorMap.count() == 0);
     foreach ( QOrganizerItem item2, items ) {
@@ -1017,6 +1042,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     recurrenceEvent.setEndDateTime(QDateTime(QDate(2010, 8, 22), QTime(13, 0, 0)));
     recurrenceEvent.setDisplayLabel("saveItemsToNewCollection, Weekly recurring event");
     recurrenceEvent.setDescription("A weekly recurring event");
+    recurrenceEvent.setCollectionId(newCollection.id());
 
     // Create recurrence
     QOrganizerItemRecurrenceRule recurrenceRule;
@@ -1030,7 +1056,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     recurrenceEvent.setRecurrenceRules(recurrenceRules);
 
     // Save event
-    QVERIFY(m_om->saveItem(&recurrenceEvent, collId));
+    QVERIFY(m_om->saveItem(&recurrenceEvent));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     QVERIFY(!recurrenceEvent.id().localId().isNull());
     QVERIFY(recurrenceEvent.id().managerUri().contains(managerName));
@@ -1045,9 +1071,10 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     recurrenceEventOccurrence.setDisplayLabel("saveItemsToNewCollection, Extra occurrence");
     recurrenceEventOccurrence.setDescription("Extra occurrence test");
 
-    // Save event occurrence
-    QVERIFY(m_om->saveItem(&recurrenceEventOccurrence, collId));
+    // Save event occurrence - NOTE should automatically be saved in the parent's collection
+    QVERIFY(m_om->saveItem(&recurrenceEventOccurrence));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(recurrenceEventOccurrence.collectionId(), newCollection.id());
 
     // Try to fetch items
     QOrganizerItem f1 = m_om->item(event1.localId());
@@ -1072,7 +1099,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
 
     // Define a collection filter for the default calendar
     QOrganizerItemCollectionFilter defaultCollectionFilter;
-    defaultCollectionFilter.setCollectionIds(QSet<QOrganizerCollectionLocalId>() << m_om->defaultCollectionId());
+    defaultCollectionFilter.setCollectionIds(QSet<QOrganizerCollectionLocalId>() << (m_om->defaultCollection().localId()));
 
     // Define a union filter of the previous two collections
     QOrganizerItemUnionFilter unionFilter;
@@ -1150,10 +1177,10 @@ void tst_Maemo5Om::asynchronousSaveAndFetch()
     event.setDisplayLabel("asynchronousSaveAndFetch");
     event.setDescription("Asynchronous save test");
     event.setGuid("asynchronous event guid");
+    event.setCollectionId(m_om->defaultCollection().id());
 
     // Create a save request
     QOrganizerItemSaveRequest saveRequest;
-    saveRequest.setCollectionId(m_om->defaultCollectionId());
     saveRequest.setItem(event);
     saveRequest.setManager(m_om);
 
@@ -1168,8 +1195,13 @@ void tst_Maemo5Om::asynchronousSaveAndFetch()
     QVERIFY(saveRequest.waitForFinished());
 
     // Try to fetch the saved item with an asynchronous request
+    QList<QOrganizerCollection> allCollections = m_om->collections();
+    QSet<QOrganizerCollectionLocalId> allCollectionsLocalIds;
+    foreach (const QOrganizerCollection& collection, allCollections) {
+        allCollectionsLocalIds.insert(collection.localId());
+    }
     QOrganizerItemCollectionFilter collectionFilter;
-    collectionFilter.setCollectionIds(m_om->collectionIds().toSet());
+    collectionFilter.setCollectionIds(allCollectionsLocalIds);
     QList<QOrganizerItemSortOrder> noSorting;
 
     QOrganizerItemFetchRequest fetchRequest;
@@ -1211,32 +1243,32 @@ void tst_Maemo5Om::consecutiveAsynchronousRequests()
     event1.setEndDateTime(QDateTime(QDate(2010,11,1),QTime(12, 0, 0)));
     event1.setDisplayLabel("consecutiveAsynchronousRequests");
     event1.setGuid("consecutiveAsynchronousRequests1");
+    event1.setCollectionId(m_om->defaultCollection().id());
 
     QOrganizerEvent event2;
     event2.setStartDateTime(QDateTime(QDate(2010,11,2), QTime(11, 0, 0)));
     event2.setEndDateTime(QDateTime(QDate(2010,11,2),QTime(12, 0, 0)));
     event2.setDisplayLabel("consecutiveAsynchronousRequests");
     event2.setGuid("consecutiveAsynchronousRequests2");
+    event2.setCollectionId(m_om->defaultCollection().id());
 
     QOrganizerEvent event3;
     event3.setStartDateTime(QDateTime(QDate(2010,11,3), QTime(11, 0, 0)));
     event3.setEndDateTime(QDateTime(QDate(2010,11,3),QTime(12, 0, 0)));
     event3.setDisplayLabel("consecutiveAsynchronousRequests");
     event3.setGuid("consecutiveAsynchronousRequests3");
+    event3.setCollectionId(m_om->defaultCollection().id());
 
     // Create three save requests
     QOrganizerItemSaveRequest saveRequest1;
-    saveRequest1.setCollectionId(m_om->defaultCollectionId());
     saveRequest1.setItem(event1);
     saveRequest1.setManager(m_om);
 
     QOrganizerItemSaveRequest saveRequest2;
-    saveRequest2.setCollectionId(m_om->defaultCollectionId());
     saveRequest2.setItem(event2);
     saveRequest2.setManager(m_om);
 
     QOrganizerItemSaveRequest saveRequest3;
-    saveRequest3.setCollectionId(m_om->defaultCollectionId());
     saveRequest3.setItem(event3);
     saveRequest3.setManager(m_om);
 
@@ -1272,7 +1304,12 @@ void tst_Maemo5Om::deleteRequest()
 {
     // Create two fetch requests
     QOrganizerItemCollectionFilter collectionFilter;
-    collectionFilter.setCollectionIds(m_om->collectionIds().toSet());
+    QList<QOrganizerCollection> allCollections = m_om->collections();
+    QSet<QOrganizerCollectionLocalId> allCollectionLocalIds;
+    foreach (const QOrganizerCollection& collection, allCollections) {
+        allCollectionLocalIds.insert(collection.localId());
+    }
+    collectionFilter.setCollectionIds(allCollectionLocalIds);
     QList<QOrganizerItemSortOrder> noSorting;
 
     QOrganizerItemFetchRequest *fetchRequest1 = new QOrganizerItemFetchRequest();

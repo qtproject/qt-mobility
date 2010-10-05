@@ -115,7 +115,6 @@ private:
     void handleDefinitionRemoveRequest(QOrganizerItemDetailDefinitionRemoveRequest *req);
     void handleDefinitionSaveRequest(QOrganizerItemDetailDefinitionSaveRequest *req);
     void handleCollectionFetchRequest(QOrganizerCollectionFetchRequest *req);
-    void handleCollectionLocalIdFetchRequest(QOrganizerCollectionLocalIdFetchRequest *req);
     void handleCollectionRemoveRequest(QOrganizerCollectionRemoveRequest *req);
     void handleCollectionSaveRequest(QOrganizerCollectionSaveRequest *req);
 
