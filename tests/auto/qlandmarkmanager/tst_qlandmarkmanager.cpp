@@ -92,7 +92,7 @@
 #include <QSqlError>
 #endif
 
-//defines to turn on and off tests
+//defines to turn on and off tests for symbian
 #define RETRIEVE_CATEGORY
 #define RETRIEVE_LANDMARK
 #define SAVE_CATEGORY
@@ -103,6 +103,7 @@
 #define FILTER_DEFAULT
 #define FILTER_NAME
 #define FILTER_PROXIMITY
+#define FILTER_CATEGORY
 
 #include <float.h>
 
@@ -954,11 +955,12 @@ private slots:
     void filterLandmarksProximityOrder_data();
 #endif
 
-#ifndef Q_OS_SYMBIAN
+#ifdef FILTER_CATEGORY
     void filterLandmarksCategory();
     void filterLandmarksCategory_data();
+#endif
 
-
+#ifndef Q_OS_SYMBIAN
     void filterLandmarksBox();
     void filterLandmarksBox_data();
 
@@ -3897,7 +3899,7 @@ void tst_QLandmarkManager::filterLandmarksProximityOrder_data() {
 }
 #endif
 
-#ifndef Q_OS_SYMBIAN
+#ifdef FILTER_CATEGORY
 void tst_QLandmarkManager::filterLandmarksCategory() {
     QFETCH(QString, type);
     QLandmarkCategory cat1;
@@ -3963,7 +3965,9 @@ void tst_QLandmarkManager::filterLandmarksCategory() {
     //try a default category id
     QLandmarkCategoryId idNotExist;
     filter.setCategoryId(idNotExist);
+    //TODO: Symbian, async request does not finish when category does not exist
     QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::DoesNotExistError));
+
 
    //try a category with an empty local id
     QLandmarkCategoryId idNotExist2;
@@ -3971,12 +3975,13 @@ void tst_QLandmarkManager::filterLandmarksCategory() {
     filter.setCategoryId(idNotExist2);
     QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::DoesNotExistError));
 
+
     //try a category with a valid manager uri but local id that does not exist
     QLandmarkCategoryId idNotExist3;
     idNotExist3.setManagerUri(m_manager->managerUri());
     idNotExist3.setLocalId("100");
     filter.setCategoryId(idNotExist3);
-    QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::NoError));
+    QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::DoesNotExistError));
 }
 
 void tst_QLandmarkManager::filterLandmarksCategory_data()
@@ -3986,7 +3991,9 @@ void tst_QLandmarkManager::filterLandmarksCategory_data()
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
+#endif
 
+#ifndef Q_OS_SYMBIAN
 void tst_QLandmarkManager::filterLandmarksBox() {
     QFETCH(QString, type);
     QList<QGeoCoordinate> outBox;

@@ -2799,6 +2799,21 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
     case QLandmarkFilter::CategoryFilter:
     {
         QLandmarkCategoryFilter categoryFilter = filter;
+
+        TPosLmItemId symbianCatId = LandmarkUtility::convertToSymbianLandmarkCategoryId(
+                                    categoryFilter.categoryId());
+        if (categoryFilter.categoryId().managerUri() != managerUri()) {
+            User::Leave(KErrNotFound);
+        }
+
+        CPosLandmarkCategory* symbiancat = NULL;
+        TRAPD(err, symbiancat = m_LandmarkCatMgr->ReadCategoryLC(symbianCatId);
+            if (symbiancat) CleanupStack::PopAndDestroy( symbiancat ) )
+
+        if (err != KErrNone) {
+                User::Leave(KErrNotFound);
+        }
+
         CPosLmCategoryCriteria* categorySearchCriteria = CPosLmCategoryCriteria::NewLC();
         categorySearchCriteria->SetCategoryItemId(
             LandmarkUtility::convertToSymbianLandmarkCategoryId(categoryFilter.categoryId()));
