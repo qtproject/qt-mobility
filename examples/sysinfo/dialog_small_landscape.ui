@@ -836,7 +836,6 @@
          </item>
         </layout>
        </item>
-<<<<<<< HEAD
        <item row="0" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_53">
          <item>
@@ -855,8 +854,6 @@
          </item>
         </layout>
        </item>
-=======
->>>>>>> 6661e93c236415a3594ff0731ce04920dbb9c0c2
        <item row="1" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_52">
          <item>
@@ -875,7 +872,6 @@
          </item>
         </layout>
        </item>
-<<<<<<< HEAD
        <item row="1" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_57">
          <item>
@@ -965,20 +961,6 @@
           </widget>
          </item>
         </layout>
-=======
-       <item row="2" column="0">
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>225</height>
-          </size>
-         </property>
-        </spacer>
->>>>>>> 6661e93c236415a3594ff0731ce04920dbb9c0c2
        </item>
       </layout>
      </widget>
@@ -1345,11 +1327,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="page_10">
-<<<<<<< HEAD
       <layout class="QGridLayout" name="gridLayout_11">
-=======
-      <layout class="QGridLayout" name="gridLayout_10">
->>>>>>> 6661e93c236415a3594ff0731ce04920dbb9c0c2
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_92">
          <item>
@@ -1387,15 +1365,9 @@
         </layout>
        </item>
        <item row="1" column="0">
-<<<<<<< HEAD
         <layout class="QHBoxLayout" name="horizontalLayout_90">
          <item>
           <widget class="QLabel" name="label_99">
-=======
-        <layout class="QHBoxLayout" name="horizontalLayout_89">
-         <item>
-          <widget class="QLabel" name="label_98">
->>>>>>> 6661e93c236415a3594ff0731ce04920dbb9c0c2
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1403,20 +1375,12 @@
             </sizepolicy>
            </property>
            <property name="text">
-<<<<<<< HEAD
             <string>Current MMC:</string>
-=======
-            <string>Home MNC:</string>
->>>>>>> 6661e93c236415a3594ff0731ce04920dbb9c0c2
            </property>
           </widget>
          </item>
          <item>
-<<<<<<< HEAD
           <widget class="QLabel" name="currentMNCLabel">
-=======
-          <widget class="QLabel" name="homeMNCLabel">
->>>>>>> 6661e93c236415a3594ff0731ce04920dbb9c0c2
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1437,15 +1401,9 @@
         </layout>
        </item>
        <item row="2" column="0">
-<<<<<<< HEAD
         <layout class="QHBoxLayout" name="horizontalLayout_91">
          <item>
           <widget class="QLabel" name="label_100">
-=======
-        <layout class="QHBoxLayout" name="horizontalLayout_90">
-         <item>
-          <widget class="QLabel" name="label_99">
->>>>>>> 6661e93c236415a3594ff0731ce04920dbb9c0c2
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1453,20 +1411,12 @@
             </sizepolicy>
            </property>
            <property name="text">
-<<<<<<< HEAD
             <string>Home MMC:</string>
-=======
-            <string>Current MCC:</string>
->>>>>>> 6661e93c236415a3594ff0731ce04920dbb9c0c2
            </property>
           </widget>
          </item>
          <item>
-<<<<<<< HEAD
           <widget class="QLabel" name="homeMMCLabel">
-=======
-          <widget class="QLabel" name="currentMNCLabel">
->>>>>>> 6661e93c236415a3594ff0731ce04920dbb9c0c2
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1487,15 +1437,9 @@
         </layout>
        </item>
        <item row="3" column="0">
-<<<<<<< HEAD
         <layout class="QHBoxLayout" name="horizontalLayout_89">
          <item>
           <widget class="QLabel" name="label_98">
-=======
-        <layout class="QHBoxLayout" name="horizontalLayout_91">
-         <item>
-          <widget class="QLabel" name="label_100">
->>>>>>> 6661e93c236415a3594ff0731ce04920dbb9c0c2
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1503,20 +1447,12 @@
             </sizepolicy>
            </property>
            <property name="text">
-<<<<<<< HEAD
             <string>Home MNC:</string>
-=======
-            <string>Home MCC:</string>
->>>>>>> 6661e93c236415a3594ff0731ce04920dbb9c0c2
            </property>
           </widget>
          </item>
          <item>
-<<<<<<< HEAD
           <widget class="QLabel" name="homeMNCLabel">
-=======
-          <widget class="QLabel" name="homeMMCLabel">
->>>>>>> 6661e93c236415a3594ff0731ce04920dbb9c0c2
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
