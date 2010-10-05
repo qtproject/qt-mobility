@@ -68,13 +68,11 @@ public:
     void setFetchHint(const QOrganizerItemFetchHint& fetchHint);
     void setStartDate(const QDateTime& date);
     void setEndDate(const QDateTime& date);
-    void setFindMethod(QOrganizerItemManager::RecurrencePolicy recurrencePolicy);
     QOrganizerItemFilter filter() const;
     QList<QOrganizerItemSortOrder> sorting() const;
     QOrganizerItemFetchHint fetchHint() const;
     QDateTime startDate() const;
     QDateTime endDate() const;
-    QOrganizerItemManager::RecurrencePolicy recurrencePolicy() const;
 
     /* Results */
     QList<QOrganizerItem> items() const;

@@ -1281,7 +1281,6 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             QOrganizerItemFetchHint fetchHint = r->fetchHint();
             QDateTime startDate = r->startDate();
             QDateTime endDate = r->endDate();
-            QOrganizerItemManager::RecurrencePolicy recurrencePolicy = r->recurrencePolicy();
 
             QOrganizerItemManager::Error operationError;
             QList<QOrganizerItem> requestedOrganizerItems = items(startDate, endDate, filter, sorting, fetchHint, &operationError);

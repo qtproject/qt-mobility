@@ -106,15 +106,6 @@ void QOrganizerItemFetchRequest::setEndDate(const QDateTime &date)
     d->m_endDate = date;
 }
 
-/*! Sets the method used in finding the items to \a recurrencePolicy. If it is QOrganizerItemManager::ExpandRecurrences
-    then it will generate all the recurring items between the specified period, otherwise only the parent of the
-    recurrance will be included in the results. Only has an effect if called prior to calling \c start() */
-void QOrganizerItemFetchRequest::setFindMethod(QOrganizerItemManager::RecurrencePolicy recurrencePolicy)
-{
-    Q_D(QOrganizerItemFetchRequest);
-    d->m_recurrencePolicy = recurrencePolicy;
-}
-
 /*! Returns the filter that will be used to select organizer items to be returned */
 QOrganizerItemFilter QOrganizerItemFetchRequest::filter() const
 {
@@ -153,12 +144,6 @@ QDateTime QOrganizerItemFetchRequest::endDate() const
 {
     Q_D(const QOrganizerItemFetchRequest);
     return d->m_endDate;
-}
-
-QOrganizerItemManager::RecurrencePolicy QOrganizerItemFetchRequest::recurrencePolicy() const
-{
-    Q_D(const QOrganizerItemFetchRequest);
-    return d->m_recurrencePolicy;
 }
 
 /*! Returns the list of organizer items retrieved by this request */
