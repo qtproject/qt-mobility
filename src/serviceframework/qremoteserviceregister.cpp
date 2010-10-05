@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
 
 QRemoteServiceRegister::Entry::Entry()
 {
+    d = new QRemoteServiceRegisterEntryPrivate;
 }
 
 QRemoteServiceRegister::Entry::Entry(const Entry& other)
@@ -88,6 +89,7 @@ bool QRemoteServiceRegister::Entry::operator!=(const Entry& other) const
 QRemoteServiceRegister::Entry &QRemoteServiceRegister::Entry::operator=(const Entry& other)
 {
     d = other.d;
+    return *this;
 }
 
 QString QRemoteServiceRegister::Entry::interfaceName() const
@@ -163,12 +165,6 @@ void QRemoteServiceRegister::publishEntries( const QString& ident)
     d->publishServices(ident);
 }
 
-void QRemoteServiceRegister::registerEntry(const Entry& e)
-{
-    Q_ASSERT(InstanceManager::instance());
-    InstanceManager::instance()->addType(e);
-}
-
 /*!
     \property QRemoteServiceRegister::quitOnLastInstanceClosed
 */
@@ -182,7 +178,7 @@ void QRemoteServiceRegister::setQuitOnLastInstanceClosed(bool quit)
     d->setQuitOnLastInstanceClosed(quit);
 }
 
-QRemoteServiceRegister::securityFilter QRemoteServiceRegister::setSecurityFilter(QRemoteServiceRegister::securityFilter filter)
+QRemoteServiceRegister::SecurityFilter QRemoteServiceRegister::setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter)
 {
     return d->setSecurityFilter(filter);
 }
@@ -202,6 +198,9 @@ QRemoteServiceRegister::Entry QRemoteServiceRegister::createEntry(const QString&
     e.d->ifaceVersion = version;
     e.d->cptr = cptr;
     e.d->meta = meta;
+
+    Q_ASSERT(InstanceManager::instance());
+    InstanceManager::instance()->addType(e);
 
     return e;
 }

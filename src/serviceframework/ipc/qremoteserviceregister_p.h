@@ -62,7 +62,7 @@ public:
     virtual bool quitOnLastInstanceClosed() const;
     virtual void setQuitOnLastInstanceClosed(const bool quit);
 
-    virtual QRemoteServiceRegister::securityFilter setSecurityFilter(QRemoteServiceRegister::securityFilter filter);
+    virtual QRemoteServiceRegister::SecurityFilter setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter);
 
 Q_SIGNALS:
     void lastInstanceClosed();
@@ -72,11 +72,11 @@ public slots:
     //void processIncoming();
 
 protected:
-    virtual QRemoteServiceRegister::securityFilter getSecurityFilter();
+    virtual QRemoteServiceRegister::SecurityFilter getSecurityFilter();
 
 private:
     bool m_quit;
-    QRemoteServiceRegister::securityFilter iFilter;
+    QRemoteServiceRegister::SecurityFilter iFilter;
 
 public:
     static QObject* proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location);
