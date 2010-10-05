@@ -69,7 +69,6 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldExceptionDates, "ExceptionDates");
 #endif
 
-
     void setRecurrenceRules(const QSet<QOrganizerItemRecurrenceRule>& rrules);
 
     QSet<QOrganizerItemRecurrenceRule> recurrenceRules() const;
@@ -85,6 +84,9 @@ public:
     void setExceptionDates(const QSet<QDate>& xdates);
 
     QSet<QDate> exceptionDates() const;
+
+    bool operator==(const QOrganizerItemRecurrence& other) const;
+    bool operator!=(const QOrganizerItemRecurrence& other) const {return !(other == *this);}
 };
 
 QTM_END_NAMESPACE

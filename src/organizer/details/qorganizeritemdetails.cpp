@@ -556,6 +556,20 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::FieldPriority, "Priority");
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::DefinitionName, "Recurrence");
 
+bool QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other) const
+{
+    return accessConstraints() == other.accessConstraints()
+            &&
+           recurrenceRules() == other.recurrenceRules()
+            &&
+           exceptionRules() == other.exceptionRules()
+            &&
+           recurrenceDates() == other.recurrenceDates()
+            &&
+           exceptionDates() == other.exceptionDates()
+           ;
+}
+
 /*!
    \variable QOrganizerItemRecurrence::FieldRecurrenceRules
 

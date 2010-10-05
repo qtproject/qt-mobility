@@ -42,6 +42,7 @@
 #include "qorganizeritemdetail.h"
 #include "qorganizeritemdetail_p.h"
 #include "qorganizeritemmanager.h"
+#include "qorganizeritemrecurrence.h" //customized operator==() for recurrence detail
 #include <QDebug>
 #include <QDataStream>
 
@@ -316,6 +317,11 @@ bool QOrganizerItemDetail::operator==(const QOrganizerItemDetail& other) const
 
     if (d.constData()->m_access != other.d.constData()->m_access)
         return false;
+
+    // QVariant doesn't support == on QOrganizerItemRecurrence - do it manually
+    if (d.constData()->m_definitionName == QOrganizerItemRecurrence::DefinitionName) {
+        return static_cast<QOrganizerItemRecurrence>(*this) == static_cast<QOrganizerItemRecurrence>(other);
+    }
 
     if (d.constData()->m_values != other.d.constData()->m_values)
         return false;
