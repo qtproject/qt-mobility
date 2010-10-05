@@ -368,6 +368,8 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         case QSystemInfo::FmradioFeature:   //Not available in public SDK
         case QSystemInfo::LedFeature:
         case QSystemInfo::VideoOutFeature:  //Accessory monitor available from S60 5.x onwards
+        case QSystemInfo::FmTransmitterFeature:
+
         default:
             return false;
     }
@@ -709,71 +711,71 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 }
 
 
-// QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
-// {
-//     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
+{
+    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
 
-//     if(screen < 16 && screen > -1) {
-//         int rotation = 0;
-//         switch(rotation) {
-//         case 0:
-//         case 360:
-//             orientation = QSystemDisplayInfo::Landscape;
-//             break;
-//         case 90:
-//             orientation = QSystemDisplayInfo::Portrait;
-//             break;
-//         case 180:
-//             orientation = QSystemDisplayInfo::InvertedLandscape;
-//             break;
-//         case 270:
-//             orientation = QSystemDisplayInfo::InvertedPortrait;
-//             break;
-//         };
-//     }
-//     return orientation;
-// }
-
-
-// float QSystemDisplayInfoPrivate::contrast(int screen)
-// {
-//     Q_UNUSED(screen);
-
-//     return 0.0;
-// }
-
-// int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
-// {
-//     int dpi=0;
-//     if(screen < 16 && screen > -1) {
-
-//         }
-//     return dpi;
-// }
-
-// int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
-// {
-//     int dpi=0;
-//     if(screen < 16 && screen > -1) {
-
-//     }
-//     return dpi;
-// }
+    if(screen < 16 && screen > -1) {
+        int rotation = 0;
+        switch(rotation) {
+        case 0:
+        case 360:
+            orientation = QSystemDisplayInfo::Landscape;
+            break;
+        case 90:
+            orientation = QSystemDisplayInfo::Portrait;
+            break;
+        case 180:
+            orientation = QSystemDisplayInfo::InvertedLandscape;
+            break;
+        case 270:
+            orientation = QSystemDisplayInfo::InvertedPortrait;
+            break;
+        };
+    }
+    return orientation;
+}
 
 
-// int QSystemDisplayInfoPrivate::physicalHeight(int screen)
-// {
-//     int height=0;
+float QSystemDisplayInfoPrivate::contrast(int screen)
+{
+    Q_UNUSED(screen);
 
-//     return height;
-// }
+    return 0.0;
+}
 
-// int QSystemDisplayInfoPrivate::physicalWidth(int screen)
-// {
-//     int width=0;
+int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
 
-//     return width;
-// }
+        }
+    return dpi;
+}
+
+int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+
+    }
+    return dpi;
+}
+
+
+int QSystemDisplayInfoPrivate::physicalHeight(int screen)
+{
+    int height=0;
+
+    return height;
+}
+
+int QSystemDisplayInfoPrivate::physicalWidth(int screen)
+{
+    int width=0;
+
+    return width;
+}
 
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
@@ -886,6 +888,17 @@ void QSystemStorageInfoPrivate::storageStatusChanged(bool added, const QString &
 {
     emit logicalDriveChanged(added, aDriveVolume);
 };
+
+QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
+{
+    return QString();
+}
+
+QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::getStorageState(const QString &driveVolume)
+{
+    QSystemStorageInfo::StorageState state = QSystemStorageInfo::UnknownStorageState;
+   return state;
+}
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     : QObject(parent), m_profileEngine(NULL), m_proEngNotifyHandler(NULL),
@@ -1168,6 +1181,58 @@ bool QSystemDeviceInfoPrivate::currentBluetoothPowerState()
     )
 
     return btPowerState == EBTPowerOn;
+}
+
+QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardType()
+{
+    QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
+
+    if((methods & QSystemDeviceInfo::Keyboard)) {
+        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::FullQwertyKeyboard);
+  }
+    if(isWirelessKeyboardConnected()) {
+        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::WirelessKeyboard);
+    }
+
+    return keyboardFlags;
+}
+
+bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
+{
+    return false;
+}
+
+bool QSystemDeviceInfoPrivate::isKeyboardFlipOpen()
+{
+    return false;
+}
+
+void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
+{
+    if(connect != hasWirelessKeyboardConnected)
+        hasWirelessKeyboardConnected = connect;
+    Q_EMIT wirelessKeyboardConnected(connect);
+}
+
+bool QSystemDeviceInfoPrivate::keypadLightOn()
+{
+    return false;
+}
+
+bool QSystemDeviceInfoPrivate::backLightOn()
+{
+    return false;
+}
+
+QUuid QSystemDeviceInfoPrivate::hostId()
+{
+    return 0;//gethostid();
+}
+
+QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::typeOfLock()
+{
+    return QSystemDeviceInfo::UnknownLock;
 }
 
 DeviceInfo *DeviceInfo::m_instance = NULL;
