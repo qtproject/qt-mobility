@@ -135,6 +135,7 @@ bool QGeoRouteSegment::isValid() const
 */
 void QGeoRouteSegment::setNextRouteSegment(const QGeoRouteSegment &routeSegment)
 {
+    d_ptr->valid = true;
     d_ptr->nextSegment = routeSegment.d_ptr;
 }
 
@@ -160,6 +161,7 @@ QGeoRouteSegment QGeoRouteSegment::nextRouteSegment() const
 */
 void QGeoRouteSegment::setTravelTime(int secs)
 {
+    d_ptr->valid = true;
     d_ptr->travelTime = secs;
 }
 
@@ -177,6 +179,7 @@ int QGeoRouteSegment::travelTime() const
 */
 void QGeoRouteSegment::setDistance(qreal distance)
 {
+    d_ptr->valid = true;
     d_ptr->distance = distance;
 }
 
@@ -196,6 +199,7 @@ qreal QGeoRouteSegment::distance() const
 */
 void QGeoRouteSegment::setPath(const QList<QGeoCoordinate> &path)
 {
+    d_ptr->valid = true;
     d_ptr->path = path;
 }
 
@@ -210,16 +214,21 @@ QList<QGeoCoordinate> QGeoRouteSegment::path() const
 {
     return d_ptr->path;
 }
+
 /*!
     Sets the maneuver for this route segement to \a maneuver.
 */
 void QGeoRouteSegment::setManeuver(const QGeoManeuver &maneuver)
 {
+    d_ptr->valid = true;
     d_ptr->maneuver = maneuver;
 }
 
 /*!
-    Returns the instruction for this route segment.
+    Returns the manevuer for this route segment.
+
+    Will return an invalid QGeoManeuver if no information has been attached 
+    to the endpoint of this route segment.
 */
 QGeoManeuver QGeoRouteSegment::maneuver() const
 {

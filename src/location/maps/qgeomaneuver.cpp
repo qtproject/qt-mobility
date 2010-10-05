@@ -112,7 +112,12 @@ The instruction indicates that the direction of travel should bear to the left.
 */
 
 /*!
-    Constructs a maneuver object.
+    Constructs a invalid maneuver object.
+
+    The maneuver will remain invalid until one of 
+    setPosition(), setInstructionText(), setDirection(), 
+    setTimeToNextInstruction(), setDistanceToNextInstruction() or
+    setWaypoint() is called.
 */
 QGeoManeuver::QGeoManeuver()
     : d_ptr(new QGeoManeuverPrivate()) {}
@@ -155,11 +160,23 @@ bool QGeoManeuver::operator!= (const QGeoManeuver &other) const
 }
 
 /*!
+    Returns whether this maneuver is valid or not.
+
+    Invalid maneuvers are used when there is no information 
+    that needs to be attached to the endpoint of a QGeoRouteSegment instance.
+*/
+bool QGeoManeuver::isValid() const
+{
+    return d_ptr->valid;
+}
+
+/*!
     Sets the position where instructionText() should be displayed to \a
     position.
 */
 void QGeoManeuver::setPosition(const QGeoCoordinate &position)
 {
+    d_ptr->valid = true;
     d_ptr->position = position;
 }
 
@@ -176,6 +193,7 @@ QGeoCoordinate QGeoManeuver::position() const
 */
 void QGeoManeuver::setInstructionText(const QString &instructionText)
 {
+    d_ptr->valid = true;
     d_ptr->text = instructionText;
 }
 
@@ -193,6 +211,7 @@ QString QGeoManeuver::instructionText() const
 */
 void QGeoManeuver::setDirection(QGeoManeuver::InstructionDirection direction)
 {
+    d_ptr->valid = true;
     d_ptr->direction = direction;
 }
 
@@ -211,6 +230,7 @@ QGeoManeuver::InstructionDirection QGeoManeuver::direction() const
 */
 void QGeoManeuver::setTimeToNextInstruction(int secs)
 {
+    d_ptr->valid = true;
     d_ptr->timeToNextInstruction = secs;
 }
 
@@ -231,6 +251,7 @@ int QGeoManeuver::timeToNextInstruction() const
 */
 void QGeoManeuver::setDistanceToNextInstruction(qreal distance)
 {
+    d_ptr->valid = true;
     d_ptr->distanceToNextInstruction = distance;
 }
 
@@ -249,6 +270,7 @@ qreal QGeoManeuver::distanceToNextInstruction() const
 */
 void QGeoManeuver::setWaypoint(const QGeoCoordinate &coordinate)
 {
+    d_ptr->valid = true;
     d_ptr->waypoint = coordinate;
 }
 
@@ -267,12 +289,14 @@ QGeoCoordinate QGeoManeuver::waypoint() const
 *******************************************************************************/
 
 QGeoManeuverPrivate::QGeoManeuverPrivate()
-    : direction(QGeoManeuver::NoDirection),
+    : valid(false),
+      direction(QGeoManeuver::NoDirection),
       timeToNextInstruction(0),
       distanceToNextInstruction(0.0) {}
 
 QGeoManeuverPrivate::QGeoManeuverPrivate(const QGeoManeuverPrivate &other)
     : QSharedData(other),
+      valid(other.valid),
       position(other.position),
       text(other.text),
       direction(other.direction),
@@ -284,7 +308,8 @@ QGeoManeuverPrivate::~QGeoManeuverPrivate() {}
 
 bool QGeoManeuverPrivate::operator ==(const QGeoManeuverPrivate &other) const
 {
-    return ((position == other.position)
+    return ((valid == other.valid)
+            && (position == other.position)
             && (text == other.text)
             && (direction == other.direction)
             && (timeToNextInstruction == other.timeToNextInstruction)
