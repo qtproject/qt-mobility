@@ -138,7 +138,8 @@ bool QVersitContactImporterPrivate::importContact(
         const QVersitDocument& document, int contactIndex, QContact* contact,
         QVersitContactImporter::Error* error)
 {
-    if (document.type() != QVersitDocument::VCard21Type
+    if (document.componentType() != QLatin1String("VCARD")
+        && document.type() != QVersitDocument::VCard21Type
         && document.type() != QVersitDocument::VCard30Type) {
         *error = QVersitContactImporter::InvalidDocumentError;
         return false;

@@ -129,25 +129,22 @@ QVersitOrganizerExporter::~QVersitOrganizerExporter()
 }
 
 /*!
- * Converts \a items into a QVersitDocument, using the format given by \a versitType.
+ * Converts \a items into a QVersitDocument.
  * Returns true on success.  If any of the items could not be exported, false is returned and
  * errors() will return a list describing the errors that occurred.  The successfully exported
  * components will still be available via document().
  */
 bool QVersitOrganizerExporter::exportItems(
-    const QList<QOrganizerItem>& items,
-    QVersitDocument::VersitType versitType)
+    const QList<QOrganizerItem>& items)
 {
     int itemIndex = 0;
     d->mErrors.clear();
     d->mResult.clear();
-    d->mResult.setType(versitType);
     d->mResult.setComponentType(QLatin1String("VCALENDAR"));
     bool ok = true;
     QList<QVersitDocument> results;
     foreach (const QOrganizerItem& item, items) {
         QVersitDocument document;
-        document.setType(versitType);
         QVersitOrganizerExporter::Error error;
         if (d->exportItem(item, &document, &error)) {
             results.append(document);

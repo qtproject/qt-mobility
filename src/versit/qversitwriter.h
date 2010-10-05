@@ -91,6 +91,7 @@ public:
     // writing:
 public Q_SLOTS:
     bool startWriting(const QList<QVersitDocument>& input);
+    bool startWriting(const QList<QVersitDocument>& input, QVersitDocument::VersitType type);
     void cancel();
 public:
     Q_INVOKABLE bool waitForFinished(int msec = -1);

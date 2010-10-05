@@ -162,7 +162,7 @@ uint qHash(const QVersitDocument &key)
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QVersitDocument& document)
 {
-    dbg.nospace() << "QVersitDocument(" << document.type() << ", " << document.componentType() << ')';
+    dbg.nospace() << "QVersitDocument(" << document.componentType() << ')';
     foreach (const QVersitProperty& property, document.properties()) {
         dbg.space() << '\n' << property;
     }
@@ -174,6 +174,11 @@ QDebug operator<<(QDebug dbg, const QVersitDocument& document)
 #endif
 
 /*!
+ * \obsolete
+ * The type of a document should no longer be relied on because it stores version information which
+ * is only a serialization concern for the QVersitReader and QVersitWriter.  It should not be
+ * relevant outside these contexts.  Instead, \l setComponentType() should be used where relevant.
+ *
  * Sets the versit document type to \a type.  This determines the format in which the document is
  * to be serialized.
  */
@@ -183,6 +188,11 @@ void QVersitDocument::setType(VersitType type)
 }
 
 /*!
+ * \obsolete
+ * The type of a document should no longer be relied on because it stores version information which
+ * is only a serialization concern for the QVersitReader and QVersitWriter.  It should not be
+ * relevant outside these contexts.  Instead, \l componentType() should be used where relevant.
+ *
  * Gets the versit document type.
  */
 QVersitDocument::VersitType QVersitDocument::type() const

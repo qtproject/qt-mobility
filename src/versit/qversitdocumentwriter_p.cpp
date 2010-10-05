@@ -60,8 +60,9 @@ QTM_USE_NAMESPACE
  * \a version is the version of the Versit format, as printed on the VERSION line of output.
  * eg. "2.1"
  */
-QVersitDocumentWriter::QVersitDocumentWriter()
-    : mDevice(0),
+QVersitDocumentWriter::QVersitDocumentWriter(QVersitDocument::VersitType type)
+    : mType(type),
+    mDevice(0),
     mCodec(0),
     mEncoder(0),
     mUtf8Encoder(QTextCodec::codecForName("UTF-8")->makeEncoder()),
@@ -106,14 +107,19 @@ void QVersitDocumentWriter::setDevice(QIODevice *device)
  * Encodes the \a document and writes it to the device.  A "VERSION:" line is added iff \a
  * encodeVersion is true.
  */
-void QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& document, bool encodeVersion)
+bool QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& document, bool encodeVersion)
 {
     mSuccessful = true;
 
-    writeString(QLatin1String("BEGIN:") + document.componentType());
+    if (document.componentType().isEmpty()) {
+        // for compatibility with code for Qt Mobility 1.0, which didn't have componentType
+        writeString(QLatin1String("BEGIN:VCARD"));
+    } else {
+        writeString(QLatin1String("BEGIN:") + document.componentType());
+    }
     writeCrlf();
     if (encodeVersion) {
-        switch (document.type()) {
+        switch (mType) {
         case QVersitDocument::VCard21Type:
             writeString(QLatin1String("VERSION:2.1"));
             writeCrlf();
@@ -145,6 +151,7 @@ void QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& document
 
     writeString(QLatin1String("END:") + document.componentType());
     writeCrlf();
+    return mSuccessful;
 }
 
 /*!

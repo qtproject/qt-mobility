@@ -65,8 +65,8 @@ public:
         InvalidType,
         VCard21Type,    // vCard version 2.1
         VCard30Type,    // vCard version 3.0 (RFC 2426)
-        ICalendar20Type,// iCalendar version 2.0 (RFC 2445)
         VCard40Type,    // vCard version 4.0
+        ICalendar20Type,// iCalendar version 2.0 (RFC 2445)
     };
 
     QVersitDocument();
