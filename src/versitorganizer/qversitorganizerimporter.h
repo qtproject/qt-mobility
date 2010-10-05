@@ -63,8 +63,9 @@ public:
                                    const QOrganizerItem& item,
                                    bool *alreadyProcessed,
                                    QList<QOrganizerItemDetail>* updatedDetails) = 0;
-    virtual void documentProcessed(const QVersitDocument& document,
-                                   QOrganizerItem* item) = 0;
+    virtual void subDocumentProcessed(const QVersitDocument& topLevel,
+                                      const QVersitDocument& subDocument,
+                                      QOrganizerItem* item) = 0;
 };
 
 class Q_VERSIT_ORGANIZER_EXPORT QVersitOrganizerImporter
