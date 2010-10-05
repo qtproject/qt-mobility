@@ -58,6 +58,9 @@ public:
     void setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds);
     void setCategoryId(const QLandmarkCategoryId &categoryId);
 
+    void setCategories(const QList<QLandmarkCategory> &categories);
+    void setCategory(const QLandmarkCategory &category);
+
     QMap<int, QLandmarkManager::Error> errorMap() const;
 private:
     Q_DISABLE_COPY(QLandmarkCategoryRemoveRequest)

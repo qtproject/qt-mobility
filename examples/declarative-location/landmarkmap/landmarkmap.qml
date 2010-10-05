@@ -147,7 +147,10 @@ Item {
         Image { source: "landmarkmapmobile/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 0.3 }
         MouseArea {
             anchors.fill: parent
-            onDoubleClicked: map.center = map.toCoordinate(Qt.point(mouse.x, mouse.y))
+            onDoubleClicked: {
+                page.state = "NoFollowing"
+                map.center = map.toCoordinate(Qt.point(mouse.x, mouse.y))
+            }
         }
 
         ListView {
@@ -180,6 +183,7 @@ Item {
             size.height: parent.height
             zoomLevel: 1
             center: Coordinate {latitude: -27; longitude: 153}
+            //center: myPositionSource.position.coordinate
             onZoomLevelChanged: {
                 console.log("Zoom changed")
                 updateFilters();
@@ -264,7 +268,7 @@ Item {
         height: 40; width: parent.width
         anchors.bottom: parent.bottom
         z: 6
-        button1Label: "nmealog.txt"; button2Label: "mylm.lmx"; button3Label: "show me"
+        button1Label: "nmealog.txt"; button2Label: "mylm.lmx"; button3Label: "follow me"
         button3FontColor: "pink"
         onButton1Clicked: {
             console.log("Clicked, setting nmea log as source");
@@ -276,8 +280,10 @@ Item {
             landmarkModel.importFile = "mylm.lmx"
         }
         onButton3Clicked: {
-            console.log("Clicked, setting map center to current location");
-            map.center = myPositionSource.position.coordinate
+            console.log("Clicked, setting map center to follow (rebind map center to myPosition");
+            //if (page.state == "" || page.state == "Following")
+                page.state = "Following"
+                //map.center = myPositionSource.position.coordinate
         }
     }
     // states of page
@@ -294,6 +300,15 @@ Item {
             PropertyChanges { target: sliderContainer; x: -dataArea.width}
             PropertyChanges { target: pinpointViewContainer; x: -dataArea.width - 20;}
             PropertyChanges { target: landmarkListView; x: 0 }
+        }, State {
+            name:  "Following"
+            PropertyChanges { target:  map; center: myPositionSource.position.coordinate}
+            PropertyChanges { target: toolbar2; button3FontColor: 'grey'}
+            PropertyChanges { target: toolbar2; button3Label: '(following)'}
+        }, State {
+            name : "NoFollowing"
+            PropertyChanges { target: toolbar2; button3FontColor: 'pink'}
+            PropertyChanges { target: toolbar2; button3Label: 'follow me'}
         }]
     // state-transition animations for page
     transitions: Transition {

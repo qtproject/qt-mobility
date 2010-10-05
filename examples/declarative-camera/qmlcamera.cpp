@@ -49,6 +49,22 @@
 
 int main(int argc, char *argv[])
 {
+
+#if defined (Q_WS_X11) || defined (Q_WS_MAC)
+    //### default to using raster graphics backend for now
+    bool gsSpecified = false;
+    for (int i = 0; i < argc; ++i) {
+        QString arg = argv[i];
+        if (arg == "-graphicssystem") {
+            gsSpecified = true;
+            break;
+        }
+    }
+
+    if (!gsSpecified)
+        QApplication::setGraphicsSystem("raster");
+#endif
+
     QApplication application(argc, argv);
     const QString mainQmlApp = QLatin1String("qrc:/declarative-camera.qml");
     QDeclarativeView view;

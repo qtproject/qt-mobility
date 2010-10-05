@@ -48,10 +48,10 @@
 #include <QMetaType>
 #include <QHash>
 #include <QVariant>
+#include <qnumeric.h>
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QLandmark);
 Q_DECLARE_METATYPE(QGeoCoordinate);
 Q_DECLARE_METATYPE(QList<QLandmarkCategory>);
 
@@ -63,49 +63,22 @@ public:
     typedef QHash<QString, QVariant> variantMap;
 
 private slots:
-    void setViaAttribute() {
+    void radius()
+    {
         QLandmark lm;
-        lm.setAttribute("name", "LM1");
-        lm.setAttribute("description", "LM1 description");
-        lm.setAttribute("iconUrl", "LM1 icon url");
-        lm.setAttribute("radius", 5.0);
-        lm.setAttribute("phoneNumber", "lm1 phoneNumber");
-        lm.setAttribute("url", QUrl("lm1 url"));
-        lm.setAttribute("country", "lm1 country");
-        lm.setAttribute("countryCode", "lm1 countryCode");
-        lm.setAttribute("state", "lm1 state");
-        lm.setAttribute("county", "lm1 county");
-        lm.setAttribute("city", "lm1 city");
-
-        QCOMPARE(lm.name(), QString("LM1"));
-        QCOMPARE(lm.description(), QString("LM1 description"));
-        QCOMPARE(lm.iconUrl().toString(), QString("LM1 icon url"));
-        QCOMPARE(lm.radius(), 5.0);
-        QCOMPARE(lm.phoneNumber(),QString("lm1 phoneNumber"));
-        QCOMPARE(lm.url(), QUrl("lm1 url"));
-
-        QCOMPARE(lm.attribute("name").toString(), QString("LM1"));
-        QCOMPARE(lm.attribute("description").toString(), QString("LM1 description"));
-        QCOMPARE(lm.attribute("iconUrl").toString(), QString("LM1 icon url"));
-        QCOMPARE(lm.attribute("radius").toReal(), 5.0);
-        QCOMPARE(lm.attribute("phoneNumber").toString(),QString("lm1 phoneNumber"));
-        QCOMPARE(lm.attribute("url").toUrl(), QUrl("lm1 url"));
-
-        QStringList keys = lm.attributeKeys();
-        QVERIFY(keys.contains("name"));
-        QVERIFY(keys.contains("description"));
-        QVERIFY(keys.contains("iconUrl"));
-        QVERIFY(keys.contains("radius"));
-        QVERIFY(keys.contains("phoneNumber"));
-        QVERIFY(keys.contains("url"));
-
-        QLandmarkCategory cat;
-        cat.setAttribute("name", "CAT1");
-        cat.setAttribute("iconUrl",QUrl("cat1 url"));
-
-        QCOMPARE(cat.name(), QString("CAT1"));
-        QCOMPARE(cat.iconUrl(), QUrl("cat1 url"));
-
+        QVERIFY(lm.radius() == 0.0);
+        lm.setRadius(5000);
+        QVERIFY(lm.radius() == 5000);
+        lm.setRadius(-1);
+        QVERIFY(lm.radius() == 0.0);
+        lm.setRadius(100);
+        QVERIFY(lm.radius() == 100);
+        lm.setRadius(0);
+        QVERIFY(lm.radius() == 0.0);
+        lm.setRadius(1000);
+        QVERIFY(lm.radius() == 1000);
+        lm.setRadius(qQNaN());
+        QVERIFY(lm.radius() == 0.0);
     }
 
     /*/void settersAndGetters() {
