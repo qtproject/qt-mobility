@@ -158,8 +158,6 @@ static bool connmanAvailable()
         QDBusReply<bool> reply = dbiface->isServiceRegistered("org.moblin.connman");
         if (reply.isValid() && reply.value()) {
             return reply.value();
-        } else {
-         qDebug() << "connman not available";
         }
     }
 #endif
@@ -175,8 +173,6 @@ static bool ofonoAvailable()
         QDBusReply<bool> reply = dbiface->isServiceRegistered("org.ofono");
         if (reply.isValid() && reply.value()) {
             return reply.value();
-        } else {
-         qDebug() << "ofono not available" << reply.value();
         }
     }
 #endif
@@ -194,8 +190,6 @@ static bool uPowerAvailable()
         QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.UPower");
         if (reply.isValid() && reply.value()) {
             return reply.value();
-        } else {
-         qDebug() << "UPower not available" << reply.value();
         }
     }
 #endif
@@ -1477,7 +1471,7 @@ void QSystemNetworkInfoLinuxCommonPrivate::ofonoPropertyChangedContext(const QSt
 
 void QSystemNetworkInfoLinuxCommonPrivate::ofonoNetworkPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
 {
-    qDebug() << __FUNCTION__ << path << item << value.variant();
+//    qDebug() << __FUNCTION__ << path << item << value.variant();
     QOfonoNetworkRegistrationInterface netiface(path);
 //    QOfonoNetworkOperatorInterface netop(path);
 //    qDebug() << netop.getTechnologies();
@@ -2133,7 +2127,7 @@ QSystemStorageInfo::StorageState QSystemStorageInfoLinuxCommonPrivate::getStorag
     if (statfs(driveVolume.toLocal8Bit(), &fs) == 0) {
         if( fs.f_bfree != 0) {
             long percent = 100 -(fs.f_blocks - fs.f_bfree) * 100 / fs.f_blocks;
-            qDebug()  << driveVolume << percent;
+            //       qDebug()  << driveVolume << percent;
 
             if(percent < 41 && percent > 10 ) {
                 storState = QSystemStorageInfo::LowStorageState;
@@ -2162,7 +2156,7 @@ void QSystemStorageInfoLinuxCommonPrivate::checkAvailableStorage()
         } else {
             if(stateMap.value(vol) != storState) {
                 stateMap[vol] = storState;
-                qDebug() << "storage state changed" << storState;
+                //      qDebug() << "storage state changed" << storState;
                 Q_EMIT storageStateChanged(vol, storState);
             }
         }
@@ -2279,7 +2273,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
             foreach(const QString btdev, btList) {
                 foreach(const QString dev, list) {
                     if(dev.contains(btdev.section("/",-1))) { //ugly, I know.
-                        qDebug() <<"Found wireless keyboard:"<< dev << btList;
+                        //         qDebug() <<"Found wireless keyboard:"<< dev << btList;
                      //   hasWirelessKeyboard = true;
                         halIfaceDevice = new QHalDeviceInterface(dev);
                         if (halIfaceDevice->isValid() && halIfaceDevice->setConnections()) {
@@ -2302,7 +2296,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
         foreach(const QDBusObjectPath objpath, power->enumerateDevices()) {
             QUPowerDeviceInterface *powerDevice;
             powerDevice = new QUPowerDeviceInterface(objpath.path(),this);
-qDebug() << objpath.path() << powerDevice->getType();
+//qDebug() << objpath.path() << powerDevice->getType();
             if(powerDevice->getType() == 2) {
                 connect(powerDevice,SIGNAL(changed()),this,SLOT(upowerDeviceChanged()));
             //    return powerDevice.percentLeft();
@@ -2709,7 +2703,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                  if (map.contains(property)) {
                      QList<QDBusObjectPath> devicesList = qdbus_cast<QList<QDBusObjectPath> >(map.value(property));
                      foreach(const QDBusObjectPath device, devicesList) {
-                         qDebug() << device.path();
+                         //      qDebug() << device.path();
                          QDBusInterface *devadapterInterface = new QDBusInterface("org.bluez",
                                                                                   device.path(),
                                                                                   "org.bluez.Device",
@@ -2731,7 +2725,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                              if((classId = 9536) &&  map.value("Connected").toBool()) {
                                  // keyboard"
                                  hasWirelessKeyboardConnected = true;
-                                 qDebug() <<map.value("Name").toString() << map.value(property);
+                                 //     qDebug() <<map.value("Name").toString() << map.value(property);
                              }
                          }
                      }
@@ -2782,7 +2776,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                  // keyboard"
                      hasWirelessKeyboardConnected = conn;
                      emit wirelessKeyboardConnected(conn);
-                 qDebug() <<map.value("Name").toString() << map.value(property);
+                     //          qDebug() <<map.value("Name").toString() << map.value(property);
              }
          }
      }

@@ -88,6 +88,7 @@ private slots:
     void tst_keypadLightOn();
     void tst_backLightOn();
     void tst_hostId();
+    void tst_typeOfLock();
 
 };
 /*
@@ -109,6 +110,7 @@ void tst_QSystemDeviceInfo::initTestCase()
     qRegisterMetaType<QSystemDeviceInfo::SimStatus>("QSystemDeviceInfo::SimStatus");
 
     qRegisterMetaType<QSystemDeviceInfo::KeyboardTypeFlags>("QSystemDeviceInfo::KeyboardTypeFlags");
+    qRegisterMetaType<QSystemDeviceInfo::LockType>("QSystemDeviceInfo::LockType");
 
 }
 
@@ -293,6 +295,18 @@ void tst_QSystemDeviceInfo::tst_hostId()
     QSystemDeviceInfo di;
     QUuid id = di.hostId();
     QVERIFY(id.isNull()|| !id.isNull());
+}
+
+void tst_QSystemDeviceInfo::tst_typeOfLock()
+{
+    QSystemDeviceInfo di;
+    QSystemDeviceInfo::LockType lock = di.typeOfLock();
+    if (di.isDeviceLocked()) {
+        QVERIFY((lock == QSystemDeviceInfo::DeviceLocked)
+                || (lock == QSystemDeviceInfo::TouchAndKeyboardLocked));
+    } else {
+        QVERIFY( lock == QSystemDeviceInfo::UnknownLock);
+    }
 }
 
 QTEST_MAIN(tst_QSystemDeviceInfo)
