@@ -73,9 +73,6 @@ public:
     void setId(const QOrganizerCollectionId& id);
     QOrganizerCollectionLocalId localId() const;
 
-    /* A collection may be the default collection in a manager */
-    bool isDefault() const;
-
     void setMetaData(const QVariantMap& metaData);
     QVariantMap metaData() const;
 

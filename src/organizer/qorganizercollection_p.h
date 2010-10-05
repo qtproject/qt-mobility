@@ -68,7 +68,7 @@ class QOrganizerCollectionData : public QSharedData
 {
 public:
     QOrganizerCollectionData()
-            : QSharedData(), m_isDefault(false)
+            : QSharedData()
     {
     }
 
@@ -77,8 +77,7 @@ public:
             m_metaData(other.m_metaData),
             m_id(other.m_id),
             m_datastore(other.m_datastore),
-            m_itemIds(other.m_itemIds),
-            m_isDefault(other.m_isDefault)
+            m_itemIds(other.m_itemIds)
     {
     }
 
@@ -90,8 +89,6 @@ public:
     QOrganizerCollectionId m_id;
     QString m_datastore;
     QList<QOrganizerItemId> m_itemIds;
-
-    bool m_isDefault;
 };
 
 QTM_END_NAMESPACE

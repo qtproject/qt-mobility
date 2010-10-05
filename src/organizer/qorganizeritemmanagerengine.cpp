@@ -1711,16 +1711,6 @@ void QOrganizerItemManagerEngine::setDetailAccessConstraints(QOrganizerItemDetai
 }
 
 /*!
-  Sets the given \a collection to have its isDefault flag set to \a isDefault.
- */
-void QOrganizerItemManagerEngine::setCollectionIsDefault(QOrganizerCollection* collection, bool isDefault)
-{
-    if (collection) {
-        collection->d->m_isDefault = isDefault;
-    }
-}
-
-/*!
   Adds the given \a organizeritem to the database if \a organizeritem has a
   default-constructed id, or an id with the manager URI set to the URI of
   this manager and a local id of zero, otherwise updates the organizer item in

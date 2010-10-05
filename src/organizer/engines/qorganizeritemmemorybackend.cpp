@@ -321,7 +321,6 @@ QOrganizerItemMemoryEngine::QOrganizerItemMemoryEngine(QOrganizerItemMemoryEngin
         QOrganizerCollection defaultCollection;
         defaultCollection.setId(defaultId);
         defaultCollection.setMetaData(QOrganizerCollection::KeyName, QString(QLatin1String("Default Collection")));
-        QOrganizerItemManagerEngine::setCollectionIsDefault(&defaultCollection, true);
         d->m_organizerCollectionIds << defaultLocalId;
         d->m_organizerCollections << defaultCollection;
     }

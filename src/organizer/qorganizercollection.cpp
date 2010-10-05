@@ -150,20 +150,7 @@ QOrganizerCollectionId QOrganizerCollection::id() const
  */
 void QOrganizerCollection::setId(const QOrganizerCollectionId& id)
 {
-    if (id != d->m_id)
-        d->m_isDefault = false;
     d->m_id = id;
-}
-
-/*!
-  Returns true if this collection is the default collection in the manager from which it was retrieved.
-  If this collection was not retrieved from a manager, or if the collection is not the default
-  collection in that manager, or if the id of the collection was set by the client after the collection
-  was retrieved, this function will return false.
- */
-bool QOrganizerCollection::isDefault() const
-{
-    return d->m_isDefault;
 }
 
 /*!
