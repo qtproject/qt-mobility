@@ -51,8 +51,8 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapRectangleObjectInfo::QGeoTiledMapRectangleObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-        rectangleItem2(0)
+    : QGeoTiledMapObjectInfo(mapData, mapObject),
+      rectangleItem2(0)
 {
     rectangle = static_cast<QGeoMapRectangleObject*>(mapObject);
 
@@ -136,8 +136,8 @@ void QGeoTiledMapRectangleObjectInfo::update()
     const bool goesEast = crossesDateline != (lng2 > lng1);
 
     // calculate base points
-    QPointF point1 = tiledMapData->coordinateToWorldPixel(coord1);
-    QPointF point2 = tiledMapData->coordinateToWorldPixel(coord2);
+    QPointF point1 = tiledMapData->coordinateToWorldReferencePosition(coord1);
+    QPointF point2 = tiledMapData->coordinateToWorldReferencePosition(coord2);
 
     QRectF bounds1 = QRectF(point1, point2).normalized();
     QRectF bounds2;
@@ -147,7 +147,7 @@ void QGeoTiledMapRectangleObjectInfo::update()
         // direction = positive if east, negative otherwise
         const qreal dir = goesEast ? 1 : -1;
 
-        int width = tiledMapData->maxZoomSize().width();
+        int width = tiledMapData->worldReferenceSize().width();
 
         // lastPoint on the other side
         QPointF point1_ = point1 - QPointF(width * dir, 0);

@@ -59,6 +59,9 @@ public:
 
     QGeoMapObject::Type type() const;
 
+    void setVisible(bool visible);
+    void setSelected(bool selected);
+
     QGeoBoundingBox boundingBox() const;
     bool contains(const QGeoCoordinate &coordinate) const;
 
@@ -68,6 +71,10 @@ public:
     void clearChildObjects();
 
     void setMapData(QGeoMapData *mapData);
+
+Q_SIGNALS:
+    void childAdded(QGeoMapObject *childObject);
+    void childRemoved(QGeoMapObject *childObject);
 
 private:
     QGeoMapGroupObjectPrivate *d_ptr;

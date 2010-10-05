@@ -9,7 +9,8 @@ symbian {
     SUBDIRS += symbian
     contains(build_unit_tests, yes):SUBDIRS += symbian/tsrc
 }
-maemo6:SUBDIRS += maemo6
+# Disable this for now
+# maemo6:SUBDIRS += maemo6
 maemo5 {
     contains(maemo5-calendar_enabled, yes) {
         SUBDIRS += maemo5

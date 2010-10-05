@@ -55,7 +55,7 @@
 #include <qgeoaddress.h>
 
 GeoCodingInputDialog::GeoCodingInputDialog(QString &obloc, QGeoAddress &address, QWidget *parent)
-    : QDialog(parent), m_oblocStr(obloc), m_address(address)
+        : QDialog(parent), m_oblocStr(obloc), m_address(address)
 {
     setWindowTitle(tr("Geocoding Parameters"));
     QLabel *obloclbl = new QLabel(tr("OneBox-Search:"));
@@ -84,9 +84,9 @@ GeoCodingInputDialog::GeoCodingInputDialog(QString &obloc, QGeoAddress &address,
     firstrow->setContentsMargins(2, 1, 2, 1);
     firstrow->addWidget(m_obloc);
 
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,Qt::Horizontal);
-    connect(buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
-    connect(buttonBox,SIGNAL(rejected()),this,SLOT(reject()));
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal);
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
     QGridLayout *gridLayout = new QGridLayout ;
     gridLayout->setSizeConstraint(QLayout::SetMinimumSize);
@@ -94,7 +94,7 @@ GeoCodingInputDialog::GeoCodingInputDialog(QString &obloc, QGeoAddress &address,
     gridLayout->setContentsMargins(2, 1, 2, 1);
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     gridLayout->addWidget(streetlbl, 1, 0);
-    gridLayout->addWidget(m_street, 1, 1,1,3);
+    gridLayout->addWidget(m_street, 1, 1, 1, 3);
 
     gridLayout->addWidget(ziplbl, 2, 0);
     gridLayout->addWidget(citylbl, 2, 2);
@@ -107,7 +107,7 @@ GeoCodingInputDialog::GeoCodingInputDialog(QString &obloc, QGeoAddress &address,
     gridLayout->addWidget(m_country, 3, 3);
 #else
     gridLayout->addWidget(streetlbl, 1, 0);
-    gridLayout->addWidget(m_street, 2, 0,1,2);
+    gridLayout->addWidget(m_street, 2, 0, 1, 2);
 
     gridLayout->addWidget(ziplbl, 3, 0);
     gridLayout->addWidget(citylbl, 3, 1);
@@ -151,7 +151,7 @@ GeocodingTab::GeocodingTab(QWidget *parent) :
         m_searchManager(NULL)
 {
 
-    m_oblocStr="Deutschland, München";
+    m_oblocStr = "Deutschland, München";
 
     m_requestBtn = new QPushButton(tr("Search By Address"));
     m_requestBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -202,8 +202,8 @@ void GeocodingTab::initialize(QGeoSearchManager *searchManager)
 void GeocodingTab::on_btnRequest_clicked()
 {
     if (m_searchManager) {
-        GeoCodingInputDialog dlg(m_oblocStr,m_address,this);
-        if(dlg.exec()==QDialog::Accepted) {
+        GeoCodingInputDialog dlg(m_oblocStr, m_address, this);
+        if (dlg.exec() == QDialog::Accepted) {
             m_resultTree->clear();
             QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
             top->setText(0, tr("Geocode"));

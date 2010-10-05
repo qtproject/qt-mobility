@@ -37,42 +37,40 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef QGEOMAPREPLY_NOKIA_H
-#define QGEOMAPREPLY_NOKIA_H
+#ifndef QGEOMAPOVERLAY_P_H
+#define QGEOMAPOVERLAY_P_H
 
-#include <qgeotiledmapreply.h>
-#include <QNetworkReply>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-QTM_USE_NAMESPACE
+#include "qmobilityglobal.h"
 
-class QGeoMapReplyNokia : public QGeoTiledMapReply
+QTM_BEGIN_NAMESPACE
+
+class QGeoMapData;
+
+class QGeoMapOverlayPrivate
 {
-    Q_OBJECT
-
 public:
-    QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTiledMapRequest &request, QObject *parent = 0);
-    ~QGeoMapReplyNokia();
+    QGeoMapOverlayPrivate();
+    virtual ~QGeoMapOverlayPrivate();
 
-    void abort();
-
-    QNetworkReply* networkReply() const;
-
-private slots:
-    void replyDestroyed();
-    void networkFinished();
-    void networkError(QNetworkReply::NetworkError error);
+    QGeoMapData *mapData;
 
 private:
-    QNetworkReply *m_reply;
+    Q_DISABLE_COPY(QGeoMapOverlayPrivate)
 };
+
+QTM_END_NAMESPACE
 
 #endif
