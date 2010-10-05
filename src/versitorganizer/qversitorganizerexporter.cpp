@@ -70,8 +70,6 @@ QTM_USE_NAMESPACE
   \ingroup versit-extension
   \inmodule QtVersit
 
-  This interface supercedes QVersitOrganizerImporterPropertyHandler.
-
   \sa QVersitOrganizerExporter
  */
 
@@ -116,13 +114,25 @@ QTM_USE_NAMESPACE
   QVersitOrganizerExporter.
 */
 
-/*! Constructs a new importer */
+/*! Constructs a new exporter */
 QVersitOrganizerExporter::QVersitOrganizerExporter()
     : d(new QVersitOrganizerExporterPrivate)
 {
 }
 
-/*! Frees the memory used by the importer */
+/*!
+ * Constructs a new exporter for the given \a profile.  The profile strings should be one of those
+ * defined by QVersitOrganizerHandlerFactory, or a value otherwise agreed to by a \l{Versit
+ * Plugins}{Versit plugin}.
+ *
+ * The profile determines which plugins will be loaded to supplement the exporter.
+ */
+QVersitOrganizerExporter::QVersitOrganizerExporter(const QString& profile)
+    : d(new QVersitOrganizerExporterPrivate(profile))
+{
+}
+
+/*! Frees the memory used by the exporter */
 QVersitOrganizerExporter::~QVersitOrganizerExporter()
 {
     delete d;

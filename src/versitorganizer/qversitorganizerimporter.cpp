@@ -199,7 +199,7 @@ QMap<int, QVersitOrganizerImporter::Error> QVersitOrganizerImporter::errorMap() 
  * Sets \a handler to be the handler for processing QVersitProperties, or 0 to have no handler.
  *
  * Does not take ownership of the handler.  The client should ensure the handler remains valid for
- * the lifetime of the exporter.
+ * the lifetime of the importer.
  */
 void QVersitOrganizerImporter::setPropertyHandler(QVersitOrganizerImporterPropertyHandler* handler)
 {

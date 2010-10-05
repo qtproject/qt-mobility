@@ -93,7 +93,7 @@ public:
     };
 
     QVersitContactImporter();
-    QVersitContactImporter(const QString& profile);
+    explicit QVersitContactImporter(const QString& profile);
     ~QVersitContactImporter();
 
     bool importDocuments(const QList<QVersitDocument>& documents);

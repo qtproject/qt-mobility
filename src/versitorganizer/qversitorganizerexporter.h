@@ -76,6 +76,7 @@ public:
     };
 
     QVersitOrganizerExporter();
+    explicit QVersitOrganizerExporter(const QString& profile);
     ~QVersitOrganizerExporter();
 
     bool exportItems(const QList<QOrganizerItem>& items,
