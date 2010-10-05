@@ -91,12 +91,6 @@ void QOrganizerItemLocalIdFetchRequest::setEndDate(const QDateTime &date)
     d->m_endDate = date;
 }
 
-void QOrganizerItemLocalIdFetchRequest::setFindMethod(QOrganizerItemManager::RecurrencePolicy recurrencePolicy)
-{
-    Q_D(QOrganizerItemLocalIdFetchRequest);
-    d->m_recurrencePolicy = recurrencePolicy;
-}
-
 /*! Returns the filter which will be used to select the organizer items whose ids will be returned */
 QOrganizerItemFilter QOrganizerItemLocalIdFetchRequest::filter() const
 {
@@ -121,12 +115,6 @@ QDateTime QOrganizerItemLocalIdFetchRequest::endDate() const
 {
     Q_D(const QOrganizerItemLocalIdFetchRequest);
     return d->m_endDate;
-}
-
-QOrganizerItemManager::RecurrencePolicy QOrganizerItemLocalIdFetchRequest::recurrencePolicy() const
-{
-    Q_D(const QOrganizerItemLocalIdFetchRequest);
-    return d->m_recurrencePolicy;
 }
 
 /*! Returns the list of ids of organizer items which matched the request */

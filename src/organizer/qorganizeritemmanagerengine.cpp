@@ -208,13 +208,12 @@ QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganize
   list of \a sortOrders.  Depending on the backend, this filtering operation may involve retrieving
   all the organizer items.  Any error which occurs will be saved in \a error.
  */
-QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::RecurrencePolicy recurrencePolicy, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(startDate);
     Q_UNUSED(endDate);
     Q_UNUSED(filter);
     Q_UNUSED(sortOrders);
-    Q_UNUSED(recurrencePolicy);
 
     *error = QOrganizerItemManager::NotSupportedError;
     return QList<QOrganizerItemLocalId>();

@@ -210,8 +210,6 @@ public:
 
     QDateTime m_startDate;
     QDateTime m_endDate;
-
-    QOrganizerItemManager::RecurrencePolicy m_recurrencePolicy;
 };
 
 class QOrganizerItemDetailDefinitionFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate

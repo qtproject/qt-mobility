@@ -123,7 +123,7 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganiz
     return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, error);
 }
 
-QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::RecurrencePolicy findMethod, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -136,7 +136,6 @@ QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QDateTi
         If you do have to fetch, consider setting a fetch hint that restricts the information to that needed for filtering/sorting.
     */
 
-    Q_UNUSED(findMethod);
     *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
 
     QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
@@ -151,7 +150,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QDateTi
     return QOrganizerItemManagerEngine::sortItems(ret, sortOrders);
 }
 
-QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::RecurrencePolicy findMethod, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -166,7 +165,6 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QDateTime& start
     */
 
     Q_UNUSED(fetchHint);
-    Q_UNUSED(findMethod);
     *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
 
     QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]

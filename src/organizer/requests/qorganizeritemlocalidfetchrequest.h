@@ -65,12 +65,10 @@ public:
     void setSorting(const QList<QOrganizerItemSortOrder>& sorting);
     void setStartDate(const QDateTime& date);
     void setEndDate(const QDateTime& date);
-    void setFindMethod(QOrganizerItemManager::RecurrencePolicy recurrencePolicy);
     QOrganizerItemFilter filter() const;
     QList<QOrganizerItemSortOrder> sorting() const;
     QDateTime startDate() const;
     QDateTime endDate() const;
-    QOrganizerItemManager::RecurrencePolicy recurrencePolicy() const;
 
     /* Results */
     QList<QOrganizerItemLocalId> itemIds() const;
