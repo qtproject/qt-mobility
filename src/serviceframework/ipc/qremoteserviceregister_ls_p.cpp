@@ -230,7 +230,7 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
 {
     QLocalSocket* socket = new QLocalSocket();
     socket->connectToServer(location);
-    if(socket->waitForConnected()){
+    if(!socket->waitForConnected()){
         if (!socket->isValid()) {
             qWarning() << "Cannot connect to remote service, trying to start service " << location;
             // try starting the service by hand
@@ -266,6 +266,8 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
                 return false;
             }
         }
+    }
+    if (socket->isValid()){
         LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(socket);
         ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
 

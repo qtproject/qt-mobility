@@ -132,10 +132,6 @@ bool tst_QServiceManager_IPC::requiresLackey()
     return false; //service is started when requested
 #endif
 
-#ifdef Q_OS_WIN
-    return true;
-#endif
-
 #ifdef QT_NO_DBUS
     return false;
 #endif
@@ -178,11 +174,7 @@ void tst_QServiceManager_IPC::initTestCase()
         lackey->setProcessEnvironment(env);
         if (verbose)
             lackey->setProcessChannelMode(QProcess::ForwardedChannels);
-#ifdef Q_OS_WIN
-        lackey->start("qt_sfw_example_ipc_unittest");
-#else
         lackey->start("./qt_sfw_example_ipc_unittest");
-#endif
         qDebug() << lackey->error() << lackey->errorString();
         QVERIFY(lackey->waitForStarted());
         //Give the lackey some time to come up;
