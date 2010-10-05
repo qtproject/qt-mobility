@@ -476,6 +476,7 @@ environments services are published using QtDBus if it is available otherwise
 falls back on QLocalSocket for inter-process communication.
 
 \section2 D-Bus Services
+
 The QtDBus module is used to provide IPC in correspondance to the Qt Service 
 Framework architecture and provides access to signals, slots, invokable methods
 and properties. 
@@ -515,6 +516,7 @@ done on deployment by adding services through the servicefw tool.
 
 
 \section2 Symbian Client-Server Framework
+
 Symbian IPC services are automatically instantiated if the service is not already 
 running.  
 
@@ -522,13 +524,16 @@ running.
 Rendezvous support allows server-side processes to be created upon client request 
 and every service has a server of its own.
 
+
 \section2 Local Socket Services
+
 On platforms that do not provide D-Bus or the Symbian Client-Server Framework, the
 underlying IPC mechanism utilized is a local socket based protocol.  
 
 \section3 Rendezvous
 This mechanism doesn't currently support rendezvous and requires service processes 
 to be started manually.
+
 
 \section2 Error handling
 
@@ -541,8 +546,20 @@ client must connect to.  If an error occurs the object must be
 destroyed; no further calls can be made.  The error recovery is left up to
 the client application.
 
-\section1 Examples
 
+\section1 Main Classes
+\annotatedlist servicefw
+
+
+\section1 QML Classes
+The Qt Service Framework offers discovery and selection of services through declarative
+UI by providing service and service list elements. Detailed information can be found 
+at \l{QML Service Framework Plugin}.
+
+\annotatedlist qml-serviceframework
+
+
+\section1 Examples
 \list
     \o \l{Service Browser Example}
     \o \l{File Manager Plugin Example}
@@ -550,12 +567,8 @@ the client application.
     \o \l{Notes Manager Plugin Example}
     \o \l{Notes Manager Example}
     \o \l{Echo Client Example}
-    \o \l{Declarative Notes Manager} 
-    \o \l{Declarative Serviceframework Dialer}
+    \o \l{declarative-sfw-notes}{Declarative Notes Manager} 
+    \o \l{declarative-sfw-dialer}{Declarative Serviceframework Dialer} 
 \endlist
-
-
-\section1 Main Classes
-\annotatedlist servicefw
 
 */
