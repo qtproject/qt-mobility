@@ -39,59 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef QSERVICE_INSTANCE_MANAGER
-#define QSERVICE_INSTANCE_MANAGER
+#ifndef QREMOTESERVICEREGISTERENTRY_P_H
+#define QREMOTESERVICEREGISTERENTRY_P_H
 
-#include <qmobilityglobal.h>
+#include <QExplicitlySharedDataPointer>
+#include <QString>
+
 #include "qremoteserviceregister.h"
-#include "qremoteserviceregisterentry_p.h"
-#include <QHash>
-#include <QMutexLocker>
-#include <QMetaObject>
-#include <QMetaClassInfo>
-#include <QUuid>
-#include <QDebug>
+//#include "instancemanager_p.h"
+//#include "qserviceinterfacedescriptor.h"
 
 QTM_BEGIN_NAMESPACE
 
-struct ServiceIdentDescriptor
+class QRemoteServiceRegisterEntryPrivate : public QSharedData
 {
-    ServiceIdentDescriptor() : globalInstance(0), globalRefCount(0)
+public:
+    QRemoteServiceRegisterEntryPrivate()
+            : meta(0), cptr(0), instanceType(QRemoteServiceRegister::PrivateInstance)
     {
     }
 
-    QExplicitlySharedDataPointer<QRemoteServiceRegisterEntryPrivate> entryData;
+    QRemoteServiceRegisterEntryPrivate(QRemoteServiceRegisterEntryPrivate &other)
+        : QSharedData(other), iface(other.iface),
+          service(other.service), ifaceVersion(other.ifaceVersion),
+          meta(other.meta), cptr(other.cptr), instanceType(other.instanceType)
+    {
+    }
 
-    QHash<QUuid, QObject*> individualInstances;
-    QObject* globalInstance;
-    QUuid globalId;
-    int globalRefCount;
+    QString iface;
+    QString service;
+    QString ifaceVersion;
+    const QMetaObject* meta;
+    QRemoteServiceRegister::CreateServiceFunc cptr;
+    QRemoteServiceRegister::InstanceType instanceType;
 };
-
-class QM_AUTOTEST_EXPORT InstanceManager //TODO public QOBJECT
-{
-public:
-    InstanceManager();
-    ~InstanceManager();
-
-    bool addType(const QRemoteServiceRegister::Entry& entry);
-
-    const QMetaObject* metaObject(const QRemoteServiceRegister::Entry& ident) const;
-    QList<QRemoteServiceRegister::Entry> allEntries() const;
-
-    QObject* createObjectInstance(const QRemoteServiceRegister::Entry& entry, QUuid& instanceId);
-    void removeObjectInstance(const QRemoteServiceRegister::Entry& entry, const QUuid& instanceId);
-
-    static InstanceManager* instance();
-
-private:
-    mutable QMutex lock;
-    QHash<QRemoteServiceRegister::Entry, ServiceIdentDescriptor> metaMap;
-};
-
-
 
 QTM_END_NAMESPACE
 
-
-#endif //QSERVICE_INSTANCE_MANAGER
+#endif

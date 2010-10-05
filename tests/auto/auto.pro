@@ -14,7 +14,6 @@ contains(mobility_modules,serviceframework) {
            qmetaobjectbuilder \
            icheck \
            qservicemanager_ipc \
-           qremoteserviceclassregister \
            servicedatabase
          # databasemanager # disabled from auto builds
 

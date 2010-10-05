@@ -39,31 +39,30 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICECONTROL_P_H
-#define QREMOTESERVICECONTROL_P_H
+#ifndef QREMOTESERVICEREGISTER_P_H
+#define QREMOTESERVICEREGISTER_P_H
 
-#include "qremoteservicecontrol.h"
+#include "qremoteserviceregister.h"
 #include "instancemanager_p.h"
 #include "qserviceinterfacedescriptor.h"
 
 QTM_BEGIN_NAMESPACE
 
 class ObjectEndPoint;
-
-class QRemoteServiceControlPrivate: public QObject
+class QRemoteServiceRegisterPrivate: public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool quitOnLastInstanceClosed READ quitOnLastInstanceClosed WRITE setQuitOnLastInstanceClosed)
 public:
-    QRemoteServiceControlPrivate(QObject* parent);
-    virtual ~QRemoteServiceControlPrivate();
+    QRemoteServiceRegisterPrivate(QObject* parent);
+    virtual ~QRemoteServiceRegisterPrivate();
 
     virtual void publishServices(const QString& ident ) = 0;
 
     virtual bool quitOnLastInstanceClosed() const;
     virtual void setQuitOnLastInstanceClosed(const bool quit);
 
-    virtual QRemoteServiceControl::securityFilter setSecurityFilter(QRemoteServiceControl::securityFilter filter);
+    virtual QRemoteServiceRegister::SecurityFilter setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter);
 
 Q_SIGNALS:
     void lastInstanceClosed();
@@ -73,15 +72,15 @@ public slots:
     //void processIncoming();
 
 protected:
-    virtual QRemoteServiceControl::securityFilter getSecurityFilter();
+    virtual QRemoteServiceRegister::SecurityFilter getSecurityFilter();
 
 private:
-    bool m_quit;    
-    QRemoteServiceControl::securityFilter iFilter;
+    bool m_quit;
+    QRemoteServiceRegister::SecurityFilter iFilter;
 
 public:
-    static QObject* proxyForService(const QRemoteServiceIdentifier& typeId, const QString& location);
-    static QRemoteServiceControlPrivate* constructPrivateObject(QObject *parent);
+    static QObject* proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location);
+    static QRemoteServiceRegisterPrivate* constructPrivateObject(QObject *parent);
 };
 
 QTM_END_NAMESPACE

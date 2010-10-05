@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qremoteservicecontrol_p.h"
-#include "qremoteservicecontrol_ls_p.h"
+#include "qremoteserviceregister_p.h"
+#include "qremoteserviceregister_ls_p.h"
 #include "ipcendpoint_p.h"
 #include "objectendpoint_p.h"
 
@@ -132,17 +132,17 @@ private:
     QLocalSocket* socket;
 };
 
-QRemoteServiceControlLocalSocketPrivate::QRemoteServiceControlLocalSocketPrivate(QObject* parent)
-    : QRemoteServiceControlPrivate(parent)
+QRemoteServiceRegisterLocalSocketPrivate::QRemoteServiceRegisterLocalSocketPrivate(QObject* parent)
+    : QRemoteServiceRegisterPrivate(parent)
 {
 }
 
-void QRemoteServiceControlLocalSocketPrivate::publishServices( const QString& ident)
+void QRemoteServiceRegisterLocalSocketPrivate::publishServices( const QString& ident)
 {
     createServiceEndPoint(ident) ;
 }
 
-void QRemoteServiceControlLocalSocketPrivate::processIncoming()
+void QRemoteServiceRegisterLocalSocketPrivate::processIncoming()
 {
     qDebug() << "Processing incoming connect";
     if (localServer->hasPendingConnections()) {
@@ -150,8 +150,8 @@ void QRemoteServiceControlLocalSocketPrivate::processIncoming()
         //LocalSocketEndPoint owns socket 
         int fd = s->socketDescriptor();
         if(getSecurityFilter()){
-            QRemoteServiceControlLocalSocketCred qcred;
-            memset(&qcred, 0, sizeof(QRemoteServiceControlLocalSocketCred));
+            QRemoteServiceRegisterCredentials qcred;
+            memset(&qcred, 0, sizeof(QRemoteServiceRegisterCredentials));
             qcred.fd = fd;
 
 #if defined(LOCAL_PEERCRED)
@@ -200,7 +200,7 @@ void QRemoteServiceControlLocalSocketPrivate::processIncoming()
 /*
     Creates endpoint on service side.
 */
-bool QRemoteServiceControlLocalSocketPrivate::createServiceEndPoint(const QString& ident)
+bool QRemoteServiceRegisterLocalSocketPrivate::createServiceEndPoint(const QString& ident)
 {
     //other IPC mechanisms such as dbus may have to publish the
     //meta object definition for all registered service types        
@@ -218,24 +218,28 @@ bool QRemoteServiceControlLocalSocketPrivate::createServiceEndPoint(const QStrin
     return true;
 }
 
-QRemoteServiceControlPrivate* QRemoteServiceControlPrivate::constructPrivateObject(QObject *parent)
+QRemoteServiceRegisterPrivate* QRemoteServiceRegisterPrivate::constructPrivateObject(QObject *parent)
 {
-  return new QRemoteServiceControlLocalSocketPrivate(parent);
+  return new QRemoteServiceRegisterLocalSocketPrivate(parent);
 }
 
 /*
     Creates endpoint on client side.
 */
-QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& location)
+QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location)
 {
     QLocalSocket* socket = new QLocalSocket();
     socket->connectToServer(location);
-    if(socket->waitForConnected()){
+    if(!socket->waitForConnected()){
         if (!socket->isValid()) {
             qWarning() << "Cannot connect to remote service, trying to start service " << location;
             // try starting the service by hand
             QProcess *service = new QProcess();
+#ifdef Q_OS_WIN
             service->start(location);
+#else
+            service->start("./" + location);
+#endif
             service->waitForStarted();
             if(service->error() != QProcess::UnknownError || service->state() != QProcess::Running) {
                 qWarning() << "Unable to start service " << location << service->error() << service->errorString() << service->state();
@@ -266,10 +270,12 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
                 return false;
             }
         }
+    }
+    if (socket->isValid()){
         LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(socket);
         ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
 
-        QObject *proxy = endPoint->constructProxy(typeIdent);
+        QObject *proxy = endPoint->constructProxy(entry);
         if(proxy){
             QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
             QObject::connect(ipcEndPoint, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
@@ -280,6 +286,6 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
     return 0;
 }
 
-#include "moc_qremoteservicecontrol_ls_p.cpp"
-#include "qremoteservicecontrol_ls_p.moc"
+#include "moc_qremoteserviceregister_ls_p.cpp"
+#include "qremoteserviceregister_ls_p.moc"
 QTM_END_NAMESPACE

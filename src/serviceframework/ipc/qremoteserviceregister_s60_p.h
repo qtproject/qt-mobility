@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICECONTROL_S60_P_H
-#define QREMOTESERVICECONTROL_S60_P_H
+#ifndef QREMOTESERVICEREGISTER_S60_P_H
+#define QREMOTESERVICEREGISTER_S60_P_H
 
 //#define QT_SFW_SYMBIAN_IPC_DEBUG
 
-#include "qremoteservicecontrol.h"
-#include "qremoteservicecontrol_p.h"
-#include "qremoteserviceclassregister.h"
+#include "qremoteserviceregister.h"
+#include "qremoteserviceregister_p.h"
+//#include "qremoteserviceclassregister.h"
 #include "qservicepackage_p.h"
 #include "qservice.h"
 #include <e32base.h>
@@ -80,7 +80,7 @@ class CServiceProviderServerSession;
 class CServiceProviderServer;
 class SymbianServerEndPoint;
 class SymbianClientEndPoint;
-class QRemoteServiceControlSymbianPrivate;
+class QRemoteServiceRegisterSymbianPrivate;
 
 // Type definitions
 typedef TPckgBuf<TInt> TError; 
@@ -142,7 +142,7 @@ const TUint KDefaultHeapSize = 0x10000;
 class CServiceProviderServer : public CPolicyServer
     {
     public:
-        CServiceProviderServer(QRemoteServiceControlSymbianPrivate* aOwner);
+        CServiceProviderServer(QRemoteServiceRegisterSymbianPrivate* aOwner);
         CSession2* NewSessionL(const TVersion& aVersion, const RMessage2& aMessage) const;
 
     public:
@@ -150,7 +150,7 @@ class CServiceProviderServer : public CPolicyServer
         void IncreaseSessions();
         void DecreaseSessions();
 
-        void setSecurityFilter(QRemoteServiceControl::securityFilter filter);
+        void setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter);
 
     protected:
         virtual TCustomResult CustomSecurityCheckL(const RMessage2 &,TInt &,TSecurityInfo &);
@@ -158,8 +158,8 @@ class CServiceProviderServer : public CPolicyServer
     private:
 
         int iSessionCount;
-        QRemoteServiceControlSymbianPrivate* iOwner;
-        QRemoteServiceControl::securityFilter iFilter;
+        QRemoteServiceRegisterSymbianPrivate* iOwner;
+        QRemoteServiceRegister::SecurityFilter iFilter;
     };
 
 class CServiceProviderServerSession : public CSession2
@@ -192,21 +192,21 @@ class CServiceProviderServerSession : public CSession2
     };
 
 
-class QRemoteServiceControlSymbianPrivate: public QRemoteServiceControlPrivate
+class QRemoteServiceRegisterSymbianPrivate: public QRemoteServiceRegisterPrivate
 {
     Q_OBJECT
 
 public:
-    QRemoteServiceControlSymbianPrivate(QObject* parent);
+    QRemoteServiceRegisterSymbianPrivate(QObject* parent);
     void publishServices(const QString& ident );
-    static QObject* proxyForService(const QRemoteServiceIdentifier& typeId, const QString& location);
+    static QObject* proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location);
     void processIncoming(CServiceProviderServerSession* session);
 
-    virtual QRemoteServiceControl::securityFilter setSecurityFilter(QRemoteServiceControl::securityFilter filter);
+    virtual QRemoteServiceRegister::SecurityFilter setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter);
 
     void closingLastInstance();
 
-private:    
+private:
     CServiceProviderServer *m_server;
 };
 
@@ -233,4 +233,4 @@ private:
 
 QTM_END_NAMESPACE
 
-#endif // QREMOTESERVICECONTROL_S60_P_H
+#endif // QREMOTESERVICEREGISTER_S60_P_H
