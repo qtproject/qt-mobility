@@ -52,7 +52,6 @@
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QLandmark);
 Q_DECLARE_METATYPE(QGeoCoordinate);
 Q_DECLARE_METATYPE(QList<QLandmarkCategory>);
 

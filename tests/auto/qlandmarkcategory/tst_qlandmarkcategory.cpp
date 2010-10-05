@@ -49,8 +49,6 @@
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QLandmarkCategory);
-
 class tst_QLandmarkCategory : public QObject
 {
     Q_OBJECT
