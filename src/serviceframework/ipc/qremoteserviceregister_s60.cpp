@@ -221,7 +221,7 @@ void QRemoteServiceRegisterSymbianPrivate::processIncoming(CServiceProviderServe
     ipcEndPoint->setObjectEndPoint(endPoint);
 }
 
-QRemoteServiceRegister::securityFilter QRemoteServiceRegisterSymbianPrivate::setSecurityFilter(QRemoteServiceRegister::securityFilter filter)
+QRemoteServiceRegister::SecurityFilter QRemoteServiceRegisterSymbianPrivate::setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter)
 {
   if(m_server)
     m_server->setSecurityFilter(filter);
@@ -550,7 +550,7 @@ void CServiceProviderServer::DecreaseSessions()
     }
 }
 
-void CServiceProviderServer::setSecurityFilter(QRemoteServiceRegister::securityFilter filter)
+void CServiceProviderServer::setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter)
 {
   iFilter = filter;
 }

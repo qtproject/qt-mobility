@@ -150,7 +150,7 @@ class CServiceProviderServer : public CPolicyServer
         void IncreaseSessions();
         void DecreaseSessions();
 
-        void setSecurityFilter(QRemoteServiceRegister::securityFilter filter);
+        void setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter);
 
     protected:
         virtual TCustomResult CustomSecurityCheckL(const RMessage2 &,TInt &,TSecurityInfo &);
@@ -159,7 +159,7 @@ class CServiceProviderServer : public CPolicyServer
 
         int iSessionCount;
         QRemoteServiceRegisterSymbianPrivate* iOwner;
-        QRemoteServiceRegister::securityFilter iFilter;
+        QRemoteServiceRegister::SecurityFilter iFilter;
     };
 
 class CServiceProviderServerSession : public CSession2
@@ -202,7 +202,7 @@ public:
     static QObject* proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location);
     void processIncoming(CServiceProviderServerSession* session);
 
-    virtual QRemoteServiceRegister::securityFilter setSecurityFilter(QRemoteServiceRegister::securityFilter filter);
+    virtual QRemoteServiceRegister::SecurityFilter setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter);
 
     void closingLastInstance();
 
