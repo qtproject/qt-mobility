@@ -52,7 +52,6 @@ int main(int argc, char** argv)
         serviceRegister->createEntry<RemoteDialer>(
                 "VoipDialer", "com.nokia.qt.examples.Dialer", "1.1");
     uniqueEntry.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
-    serviceRegister->registerEntry(uniqueEntry);
     serviceRegister->publishEntries("dialer_service");
     int res =  app.exec();
     

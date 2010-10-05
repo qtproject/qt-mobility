@@ -411,14 +411,12 @@ int main(int argc, char** argv)
         serviceRegister->createEntry<UniqueTestService>(
                 "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5");
     uniqueEntry.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
-    serviceRegister->registerEntry(uniqueEntry);
 
     //register the shared srevice
     QRemoteServiceRegister::Entry sharedEntry =
         serviceRegister->createEntry<SharedTestService>(
                 "IPCExampleService", "com.nokia.qt.ipcunittest", "3.4");
     sharedEntry.setInstantiationType(QRemoteServiceRegister::GlobalInstance);
-    serviceRegister->registerEntry(sharedEntry);
 
     //publish the registered services
     serviceRegister->publishEntries("qt_sfw_example_ipc_unittest");

@@ -61,7 +61,7 @@ InstanceManager::~InstanceManager()
     QList<QRemoteServiceRegister::Entry> allEntries = metaMap.keys();
     while (!allEntries.isEmpty()) {
         ServiceIdentDescriptor descr = metaMap.take(allEntries.takeFirst());
-        if (descr.instanceType == QRemoteServiceRegister::GlobalInstance) {
+        if (descr.entryData->instanceType == QRemoteServiceRegister::GlobalInstance) {
             if (descr.globalInstance)
                descr.globalInstance->deleteLater();
             descr.globalInstance = 0;
@@ -84,9 +84,7 @@ bool InstanceManager::addType(const QRemoteServiceRegister::Entry& e)
             << ", " << e.version() << ")" << "already registered";
     } else {
         ServiceIdentDescriptor d;
-        d.meta = e.metaObject();
-        d.create = e.d->cptr;
-        d.instanceType = e.instantiationType();
+        d.entryData = e.d;
         metaMap.insert(e, d);
         return true;
     }
@@ -98,7 +96,7 @@ const QMetaObject* InstanceManager::metaObject(const QRemoteServiceRegister::Ent
 {
     QMutexLocker ml(&lock);
     if (metaMap.contains(entry)) {
-        return metaMap[entry].meta;
+        return metaMap[entry].entryData->meta;
     } else {
         return 0;
     }
@@ -125,13 +123,13 @@ QObject* InstanceManager::createObjectInstance(const QRemoteServiceRegister::Ent
     QObject* service = 0;
     ServiceIdentDescriptor& descr = metaMap[entry];
 
-    if (descr.instanceType == QRemoteServiceRegister::GlobalInstance) {
+    if (descr.entryData->instanceType == QRemoteServiceRegister::GlobalInstance) {
         if (descr.globalInstance) {
             service = descr.globalInstance;
             instanceId = descr.globalId;
             descr.globalRefCount++;
         } else {
-            service = (*descr.create)();
+            service = (*descr.entryData->cptr)();
             if (!service)
                 return 0;
 
@@ -140,7 +138,7 @@ QObject* InstanceManager::createObjectInstance(const QRemoteServiceRegister::Ent
             descr.globalRefCount = 1;
         }
     } else {
-        service = (*descr.create)();
+        service = (*descr.entryData->cptr)();
         if (!service)
             return 0;
         instanceId = QUuid::createUuid();
@@ -160,7 +158,7 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& 
         return;
 
     ServiceIdentDescriptor& descr = metaMap[entry];
-    if (descr.instanceType == QRemoteServiceRegister::GlobalInstance) {
+    if (descr.entryData->instanceType == QRemoteServiceRegister::GlobalInstance) {
         if (descr.globalRefCount < 1)
             return;
 

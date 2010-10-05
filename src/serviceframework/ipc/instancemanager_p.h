@@ -44,6 +44,7 @@
 
 #include <qmobilityglobal.h>
 #include "qremoteserviceregister.h"
+#include "qremoteserviceregisterentry_p.h"
 #include <QHash>
 #include <QMutexLocker>
 #include <QMetaObject>
@@ -59,16 +60,12 @@ struct ServiceIdentDescriptor
     {
     }
 
-    const QMetaObject* meta;
-    QRemoteServiceRegister::CreateServiceFunc create;
-    QRemoteServiceRegister::InstanceType instanceType;
+    QExplicitlySharedDataPointer<QRemoteServiceRegisterEntryPrivate> entryData;
+
     QHash<QUuid, QObject*> individualInstances;
     QObject* globalInstance;
     QUuid globalId;
     int globalRefCount;
-
-    //TODO converge with QRemoteServiceRegister::Entry so that entry changes
-    //are reflected by instance manager
 };
 
 class QM_AUTOTEST_EXPORT InstanceManager //TODO public QOBJECT

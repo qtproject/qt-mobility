@@ -113,16 +113,11 @@ public:
     Entry createEntry(const QString& serviceName,
                     const QString& interfaceName, const QString& version);
 
-    //TODO remove in favor of createEntry() only usage
-    void registerEntry(const Entry& entry);
-
-
     void publishEntries(const QString& ident );
 
     bool quitOnLastInstanceClosed() const;
     void setQuitOnLastInstanceClosed(const bool quit);
 
-    //TODO typedef bool (*SecurityFilter)(const void *message);
     typedef bool (*SecurityFilter)(const void *message);
     SecurityFilter setSecurityFilter(SecurityFilter filter);
 
