@@ -136,7 +136,7 @@ private:
 
 class QOrganizerItemAbstractRequest;
 class QOrganizerItemManagerEngine;
-class QOrganizerItemMemoryEngineData : public QSharedData
+class Q_ORGANIZER_EXPORT QOrganizerItemMemoryEngineData : public QSharedData
 {
 public:
     QOrganizerItemMemoryEngineData();
