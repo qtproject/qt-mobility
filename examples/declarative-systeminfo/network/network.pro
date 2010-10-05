@@ -9,3 +9,4 @@ symbian {
     TARGET.CAPABILITY = ReadUserData
     TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
 }
+RESOURCES += declarative-network.qrc
