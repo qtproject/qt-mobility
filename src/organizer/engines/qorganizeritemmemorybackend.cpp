@@ -350,7 +350,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemMemoryEngine::itemIds(const QDateTime
     if (startDate.isNull() && endDate.isNull() && filter.type() == QOrganizerItemFilter::DefaultFilter && sortOrders.count() == 0) {
         return d->m_organizeritemIds;
     } else {
-        QList<QOrganizerItem> clist = items(startDate, endDate, filter, sortOrders, QOrganizerItemFetchHint(), error);
+        QList<QOrganizerItem> clist = itemsForExport(startDate, endDate, filter, sortOrders, QOrganizerItemFetchHint(), error);
 
         /* Extract the ids */
         QList<QOrganizerItemLocalId> ids;

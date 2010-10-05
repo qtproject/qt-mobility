@@ -2151,13 +2151,6 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
             }
             break;
 
-        case QOrganizerItemFilter::OrganizerItemDateTimePeriodFilter:
-            {
-                const QOrganizerItemDateTimePeriodFilter dpf(filter);
-
-                return isItemBetweenDates(organizeritem, dpf.startPeriod(), dpf.endPeriod());
-            }
-            break;
         case QOrganizerItemFilter::OrganizerItemDetailRangeFilter:
             {
                 const QOrganizerItemDetailRangeFilter cdf(filter);
