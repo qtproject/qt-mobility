@@ -59,7 +59,7 @@
 #endif
 
 QTM_USE_NAMESPACE
-class ServiceMetadataTest: public QObject
+class tst_ServiceMetadata: public QObject
 {
     Q_OBJECT
     
@@ -81,22 +81,22 @@ private:
 
 };
 
-void ServiceMetadataTest::initTestCase()
+void tst_ServiceMetadata::initTestCase()
 {
     dir = QDir(TESTDATA_DIR "/testdata");
 }
 
-void ServiceMetadataTest::cleanupTestCase()
+void tst_ServiceMetadata::cleanupTestCase()
 {
 }
 
-void ServiceMetadataTest::parseInvalidServiceXML_oldXml()
+void tst_ServiceMetadata::parseInvalidServiceXML_oldXml()
 {
     ServiceMetaData parser(dir.absoluteFilePath("ServiceTestOld.xml"));
     QCOMPARE(parser.extractMetadata(), false);
 }
 
-void ServiceMetadataTest::parseValidServiceXML()
+void tst_ServiceMetadata::parseValidServiceXML()
 {
     ServiceMetaData parser(dir.absoluteFilePath("ServiceTest.xml"));
     QCOMPARE(parser.extractMetadata(),true);
@@ -202,7 +202,7 @@ void ServiceMetadataTest::parseValidServiceXML()
     }
 }
 
-void ServiceMetadataTest::parseInvalidServiceXML_data()
+void tst_ServiceMetadata::parseInvalidServiceXML_data()
 {
     QTest::addColumn<QString>("fileName");
     QTest::addColumn<int>("expectedError");
@@ -271,7 +271,7 @@ void ServiceMetadataTest::parseInvalidServiceXML_data()
     QTest::newRow("Test38.xml") << "Test38.xml" << (int)ServiceMetaData::SFW_ERROR_UNSUPPORTED_IPC;
 }
 
-void ServiceMetadataTest::parseInvalidServiceXML()
+void tst_ServiceMetadata::parseInvalidServiceXML()
 {
     QFETCH(QString, fileName);
     QFETCH(int, expectedError);
@@ -281,13 +281,13 @@ void ServiceMetadataTest::parseInvalidServiceXML()
     QCOMPARE(parser.getLatestError(), expectedError);
 }
 
-void ServiceMetadataTest::noCapability()
+void tst_ServiceMetadata::noCapability()
 {
     ServiceMetaData parser(dir.absoluteFilePath("Test6.xml"));
     QVERIFY(parser.extractMetadata());
 }
 
-void ServiceMetadataTest::checkVersion_data()
+void tst_ServiceMetadata::checkVersion_data()
 {
     QTest::addColumn<QString>("version");
     QTest::addColumn<bool>("result");
@@ -335,7 +335,7 @@ void ServiceMetadataTest::checkVersion_data()
     QTest::newRow("checkVersion_data():Valid 7") << "10.10" << true << 10 << 10;
 }
 
-void ServiceMetadataTest::checkVersion()
+void tst_ServiceMetadata::checkVersion()
 {
     QFETCH(QString, version);
     QFETCH(bool, result);
@@ -351,7 +351,7 @@ void ServiceMetadataTest::checkVersion()
     QCOMPARE(minorVer, minor);
 }
 
-void ServiceMetadataTest::latestInterfaceVersion_data()
+void tst_ServiceMetadata::latestInterfaceVersion_data()
 {
     QTest::addColumn<QString>("fileName");
     QTest::addColumn<int>("major");
@@ -365,7 +365,7 @@ void ServiceMetadataTest::latestInterfaceVersion_data()
 
 }
 
-void ServiceMetadataTest::latestInterfaceVersion()
+void tst_ServiceMetadata::latestInterfaceVersion()
 {
     QFETCH(QString, fileName);
     QFETCH(int, major);
@@ -380,5 +380,5 @@ void ServiceMetadataTest::latestInterfaceVersion()
             QString("Contacts management service")); //make sure we're getting the right interface
 }
 
-QTEST_MAIN(ServiceMetadataTest)
+QTEST_MAIN(tst_ServiceMetadata)
 #include "tst_servicemetadata.moc"

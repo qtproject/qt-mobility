@@ -73,7 +73,7 @@ protected:
 Q_DECLARE_METATYPE(QList<QLandmark>);
 Q_DECLARE_METATYPE(QList<QList<QLandmark> >);
 
-class tst_QLandmarkGpxHandler : public QObject
+class tst_QLandmarkFileHandler_Gpx : public QObject
 {
     Q_OBJECT
 
@@ -501,5 +501,5 @@ private:
     }
 };
 
-QTEST_MAIN(tst_QLandmarkGpxHandler)
+QTEST_MAIN(tst_QLandmarkFileHandler_Gpx)
 #include "tst_qlandmarkfilehandler_gpx.moc"
