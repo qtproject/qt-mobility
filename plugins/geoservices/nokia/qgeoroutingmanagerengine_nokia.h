@@ -74,10 +74,11 @@ private slots:
 private:
     QString calculateRouteRequestString(const QGeoRouteRequest &request);
     QString updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position);
-    QString routeRequestString(const QGeoRouteRequest &request);
-    QString modesRequestString(QGeoRouteRequest::RouteOptimizations optimization,
-                               QGeoRouteRequest::TravelModes travelModes,
-                               QGeoRouteRequest::AvoidFeatureTypes avoid);
+    QString routeRequestString(const QGeoRouteRequest &request) const;
+    bool checkEngineSupport(const QGeoRouteRequest &request,
+                            QGeoRouteRequest::TravelModes travelModes) const;
+    QString modesRequestString(const QGeoRouteRequest &request,
+                               QGeoRouteRequest::TravelModes travelModes) const;
     static QString trimDouble(qreal degree, int decimalDigits = 10);
 
     QNetworkAccessManager *m_networkManager;

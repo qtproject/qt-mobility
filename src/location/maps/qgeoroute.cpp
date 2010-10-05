@@ -179,17 +179,19 @@ QGeoBoundingBox QGeoRoute::bounds() const
     return d_ptr->bounds;
 }
 
-/*
+/*!
+*/
 void QGeoRoute::setFirstRouteSegment(const QGeoRouteSegment &routeSegment)
 {
-
+    d_ptr->firstSegment = routeSegment;
 }
 
+/*!
+*/
 QGeoRouteSegment QGeoRoute::firstRouteSegment() const
 {
-
+    return d_ptr->firstSegment;
 }
-*/
 
 /*!
     Sets the list of route segements to \a routeSegments.
@@ -199,10 +201,10 @@ QGeoRouteSegment QGeoRoute::firstRouteSegment() const
     for the description of segments of the journey for those who are travelling
     by public transport, or by truck.
 */
-void QGeoRoute::setRouteSegments(const QList<QGeoRouteSegment> &routeSegments)
-{
-    d_ptr->routeSegments = routeSegments;
-}
+//void QGeoRoute::setRouteSegments(const QList<QGeoRouteSegment> &routeSegments)
+//{
+//    d_ptr->routeSegments = routeSegments;
+//}
 
 /*!
     Returns the route segments.
@@ -212,10 +214,10 @@ void QGeoRoute::setRouteSegments(const QList<QGeoRouteSegment> &routeSegments)
     for the description of segments of the journey for those who are travelling
     by public transport, or by truck.
 */
-QList<QGeoRouteSegment> QGeoRoute::routeSegments() const
-{
-    return d_ptr->routeSegments;
-}
+//QList<QGeoRouteSegment> QGeoRoute::routeSegments() const
+//{
+//    return d_ptr->routeSegments;
+//}
 
 /*
 void QGeoRoute::appendRouteSegment(const QGeoRouteSegment* routeSegment)
@@ -312,20 +314,35 @@ QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
         id(other.id),
         request(other.request),
         bounds(other.bounds),
-        routeSegments(other.routeSegments),
+        //routeSegments(other.routeSegments),
         travelTime(other.travelTime),
         distance(other.distance),
         travelMode(other.travelMode),
-        path(other.path) {}
+        path(other.path),
+        firstSegment(other.firstSegment) {}
 
 QGeoRoutePrivate::~QGeoRoutePrivate() {}
 
 bool QGeoRoutePrivate::operator ==(const QGeoRoutePrivate &other) const
 {
+    QGeoRouteSegment s1 = firstSegment;
+    QGeoRouteSegment s2 = other.firstSegment;
+
+    while (true) {
+        if (s1.isValid() != s2.isValid())
+            return false;
+        if (!s1.isValid())
+            break;
+        if (s1 != s2)
+            return false;
+        s1 = s1.nextRouteSegment();
+        s2 = s2.nextRouteSegment();
+    }
+
     return ((id == other.id)
             && (request == other.request)
             && (bounds == other.bounds)
-            && (routeSegments == other.routeSegments)
+            //&& (routeSegments == other.routeSegments)
             && (travelTime == other.travelTime)
             && (distance == other.distance)
             && (travelMode == other.travelMode)
