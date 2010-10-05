@@ -385,7 +385,7 @@ void QWmpPlayerControl::playStateChangeEvent(long state)
     case wmppsMediaEnded:
         if (m_status != QMediaPlayer::EndOfMedia && m_state != QMediaPlayer::StoppedState) {
             m_state = QMediaPlayer::StoppedState;
-            m_status = QMediaPlayer::StalledMedia;
+            m_status = QMediaPlayer::EndOfMedia;
 
             emit stateChanged(m_state);
             emit mediaStatusChanged(m_status);
