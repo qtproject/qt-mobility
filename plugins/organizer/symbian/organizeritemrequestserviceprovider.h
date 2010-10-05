@@ -99,7 +99,6 @@ private: // Worker functions
     void RemoveItem();
     // Fetch detail definition
     void FetchDetailDefinition();
-    void CollectionIds();
     void FetchCollections();
     void SaveCollections();
     void RemoveCollections();

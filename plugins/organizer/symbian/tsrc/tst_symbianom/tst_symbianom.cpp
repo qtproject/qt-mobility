@@ -228,7 +228,7 @@ void tst_SymbianOm::addSimpleItem()
     // Save with list parameter
     QList<QOrganizerItem> items;
     items.append(item);
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(m_om->saveItems(&items, 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     foreach (QOrganizerItem listitem, items) {
         QVERIFY(listitem.id().localId() != QOrganizerItemLocalId());
@@ -237,7 +237,7 @@ void tst_SymbianOm::addSimpleItem()
 
     // Save with list parameter and error map parameter
     QMap<int, QOrganizerItemManager::Error> errorMap;
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap));
+    QVERIFY(m_om->saveItems(&items, &errorMap));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     QVERIFY(errorMap.count() == 0);
     foreach (QOrganizerItem listitem2, items) {
@@ -465,11 +465,11 @@ void tst_SymbianOm::addNegative()
     QVERIFY(!m_om->saveItem(0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
-    QVERIFY(!m_om->saveItems(0, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(!m_om->saveItems(0, 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
     QList<QOrganizerItem> items;
-    QVERIFY(!m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(!m_om->saveItems(&items, 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
     // TODO: try to save an event with non-existing (non-zero) id and check that it fails
@@ -626,7 +626,7 @@ void tst_SymbianOm::signalEmission()
     QList<QOrganizerItem> items;
     items << todo;
     items << todo2;
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(m_om->saveItems(&items, 0));
     itemsAddedSignals++;
     itemsAdded = 2;
     QTRY_COMPARE_SIGNAL_COUNTS();
@@ -635,7 +635,7 @@ void tst_SymbianOm::signalEmission()
     // Change - batch
     items[0].setDescription("foobar1");
     items[1].setDescription("foobar2");
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(m_om->saveItems(&items, 0));
     itemsChangedSignals++;
     itemsChanged = 2;
     QTRY_COMPARE_SIGNAL_COUNTS();

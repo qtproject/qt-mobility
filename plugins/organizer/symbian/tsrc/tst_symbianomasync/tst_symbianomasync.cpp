@@ -160,9 +160,9 @@ void tst_SymbianOmAsync::init()
     // Remove items on all collections
     m_om->removeItems(m_om->itemIds(), 0);
     // Remove all collections (except the default)
-    foreach (QOrganizerCollectionLocalId id, m_om->collectionIds()) {
-        if (id != m_om->defaultCollectionId())
-            m_om->removeCollection(id);
+    foreach (const QOrganizerCollection& collection, m_om->collections()) {
+        if (collection != m_om->defaultCollection())
+            m_om->removeCollection(collection);
     }
 }
 
@@ -170,9 +170,9 @@ void tst_SymbianOmAsync::cleanup()
 {
     m_om->removeItems(m_om->itemIds(), 0);
     // Remove all collections (except the default)
-    foreach (QOrganizerCollectionLocalId id, m_om->collectionIds()) {
-        if (id != m_om->defaultCollectionId())
-            m_om->removeCollection(id);
+    foreach (const QOrganizerCollection& collection, m_om->collections()) {
+        if (collection != m_om->defaultCollection())
+            m_om->removeCollection(collection);
     }
     delete m_om;
     m_om = 0;
@@ -188,7 +188,6 @@ void tst_SymbianOmAsync::addSimpleItem()
     QOrganizerItemSaveRequest saveItemRequest;
     saveItemRequest.setManager(m_om);
     saveItemRequest.setItem(item);
-    saveItemRequest.setCollectionId(QOrganizerCollectionLocalId());
 
     // Create signal spys for verification purposes
     QSignalSpy stateSpy(&saveItemRequest, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
@@ -631,7 +630,7 @@ void tst_SymbianOmAsync::addCollection()
     // Verify
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
-    QList<QOrganizerCollection> collections = m_om->collections(m_om->collectionIds());
+    QList<QOrganizerCollection> collections = m_om->collections();
     QCOMPARE(collections.count(), 2); // the default plus the new one
     QCOMPARE(collections.at(1).metaData().value("Name").toString(), QString("addCollection"));
     // Verify the signal emitted contains the id of the new collection
@@ -679,7 +678,7 @@ void tst_SymbianOmAsync::modifyCollection()
     // Verify
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
-    QList<QOrganizerCollection> collections = m_om->collections(m_om->collectionIds());
+    QList<QOrganizerCollection> collections = m_om->collections();
     QCOMPARE(collections.count(), 2); // the default plus the new one
     QCOMPARE(collections.at(1).metaData().value("Name").toString(), QString("modifyCollection"));
     QCOMPARE(collections.at(1).metaData().value("Description").toString(), QString("modifyCollection test2"));
@@ -728,7 +727,7 @@ void tst_SymbianOmAsync::removeCollection()
     // Verify
     QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
-    QCOMPARE(m_om->collectionIds().count(), 1); // the default
+    QCOMPARE(m_om->collections().count(), 1); // the default
 
     // Try to remove again, should fail
     req.setCollectionId(collection.localId());

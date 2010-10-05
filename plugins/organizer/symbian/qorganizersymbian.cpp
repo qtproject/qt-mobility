@@ -517,7 +517,7 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
         QOrganizerCollectionId cid;
         cid.setLocalId(collectionLocalId);
         cid.setManagerUri(managerUri());
-        setItemCollectionId(&itemInstance, cid);
+        itemInstance.setCollectionId(cid);
 
         itemInstances.append(itemInstance);
     }
@@ -698,13 +698,12 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& i
     QOrganizerCollectionId cid;
     cid.setLocalId(collectionLocalId);
     cid.setManagerUri(managerUri());
-    setItemCollectionId(&item, cid);
+    item.setCollectionId(cid);
     
     return item;
 }
 
 bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, 
-    const QOrganizerCollectionLocalId& collectionId, 
     QMap<int, QOrganizerItemManager::Error> *errorMap, 
     QOrganizerItemManager::Error* error)
 {
@@ -720,7 +719,7 @@ bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items,
         // Validate & save
         QOrganizerItemManager::Error saveError;
         if (validateItem(item, &saveError)) {
-            TRAPD(err, saveItemL(&item, collectionId, &changeSet));
+            TRAPD(err, saveItemL(&item, &changeSet));
             transformError(err, &saveError);
         }
         
@@ -742,13 +741,12 @@ bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items,
 }
 
 bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem* item, 
-    const QOrganizerCollectionLocalId& collectionId, 
     QOrganizerItemManager::Error* error)
 {
     // Validate & save
     if (validateItem(*item, error)) {
         QOrganizerItemChangeSet changeSet;
-        TRAPD(err, saveItemL(item, collectionId, &changeSet));
+        TRAPD(err, saveItemL(item, &changeSet));
         transformError(err, error);
         changeSet.emitSignals(this);
     }
@@ -756,9 +754,14 @@ bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem* item,
 }
 
 void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, 
-    const QOrganizerCollectionLocalId& collectionId, 
     QOrganizerItemChangeSet *changeSet)
 {
+    QOrganizerCollectionId completeCollectionId;
+    QOrganizerCollectionLocalId collectionId;
+    if (item) {
+        completeCollectionId = item->collectionId();
+        collectionId = item->collectionLocalId();
+    }
     QOrganizerCollectionLocalId collectionLocalId = collectionLocalIdL(*item, 
         collectionId);
 
@@ -796,15 +799,15 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item,
     
     // Update local id
     QOrganizerItemId itemId;
-    itemId.setLocalId(toItemLocalId(m_collections[collectionLocalId].calCollectionId(), entry->LocalUidL()));
     itemId.setManagerUri(managerUri());
+    itemId.setLocalId(toItemLocalId(m_collections[collectionLocalId].calCollectionId(), entry->LocalUidL()));
     item->setId(itemId);
 
     // Set collection id
     QOrganizerCollectionId cid;
-    cid.setLocalId(collectionLocalId);
     cid.setManagerUri(managerUri());
-    setItemCollectionId(item, cid);
+    cid.setLocalId(collectionLocalId);
+    item->setCollectionId(cid);
 
     // Cleanup
     CleanupStack::PopAndDestroy(&entries);
@@ -1142,48 +1145,37 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(
     return filteredAndSorted;
 }
 
-QOrganizerCollectionLocalId QOrganizerItemSymbianEngine::defaultCollectionId(
+QOrganizerCollection QOrganizerItemSymbianEngine::defaultCollection(
     QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NoError;
-    return m_defaultCollection.localId();
-}
-
-QList<QOrganizerCollectionLocalId> QOrganizerItemSymbianEngine::collectionIds(
-    QOrganizerItemManager::Error* error) const
-{
-    *error = QOrganizerItemManager::NoError;
-    QList<QOrganizerCollectionLocalId> ids;
-    foreach (const OrganizerSymbianCollection &collection, m_collections)
-        ids.append(collection.localId());
-    return ids;
+    return m_defaultCollection.toQOrganizerCollectionL();
 }
 
 QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collections(
-    const QList<QOrganizerCollectionLocalId>& collectionIds, 
-    QMap<int, QOrganizerItemManager::Error>* errorMap,
     QOrganizerItemManager::Error* error) const
 {
-    Q_UNUSED(errorMap);
-    // XXX TODO: please use errormap -- test for null ptr, if exists, perform "fine grained error reporting"
-    // Note that the semantics of this function changed: if empty list of collectionIds given, return empty list of collections (NOT all collections).
-
     // Get collections
     QList<QOrganizerCollection> collections;
-    TRAPD(err, collections = collectionsL(collectionIds));
+    TRAPD(err, collections = collectionsL());
     transformError(err, error);
     return collections;
 }
 
-QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collectionsL(
-    const QList<QOrganizerCollectionLocalId> &collectionIds) const
+QOrganizerCollection QOrganizerItemSymbianEngine::collectionL(
+    const QOrganizerCollectionLocalId& collectionId) const
+{
+    if (m_collections.contains(collectionId))
+        return (m_collections[collectionId].toQOrganizerCollectionL());
+    User::Leave(KErrNotFound);
+}
+
+QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collectionsL() const
 {
     QList<QOrganizerCollection> collections;
+    QList<QOrganizerCollectionLocalId> collectionIds = m_collections.keys();
     foreach (const QOrganizerCollectionLocalId &id, collectionIds) {
-        if (m_collections.contains(id))
-            collections << m_collections[id].toQOrganizerCollectionL();
-        else
-            User::Leave(KErrNotFound);
+        collections << m_collections[id].toQOrganizerCollectionL();
     }
     return collections;
 }
