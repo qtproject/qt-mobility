@@ -2853,7 +2853,7 @@ QUuid QSystemDeviceInfoLinuxCommonPrivate::hostId()
     return QUuid(QString::number(gethostid()));
 }
 
-QSystemDeviceInfo::DeviceType QSystemDeviceInfoLinuxCommonPrivate::typeOfLock()
+QSystemDeviceInfo::LockType QSystemDeviceInfoLinuxCommonPrivate::typeOfLock()
 {
     return QSystemDeviceInfo::UnknownLock;
 }

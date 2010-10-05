@@ -2120,7 +2120,7 @@ QUuid QSystemDeviceInfoPrivate::hostId()
     return 0;//gethostid();
 }
 
-QSystemDeviceInfo::DeviceType QSystemDeviceInfoPrivate::typeOfLock()
+QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::typeOfLock()
 {
     return QSystemDeviceInfo::UnknownLock;
 }

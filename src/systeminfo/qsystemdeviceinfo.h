@@ -158,7 +158,8 @@ public:
     };
 
     enum LockType {
-        DeviceLocked = 0,
+        UnknownLock = 0,
+        DeviceLocked,
         TouchAndKeyboardLocked
     }; //1.2
 

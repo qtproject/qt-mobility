@@ -2276,7 +2276,7 @@ QUuid QSystemDeviceInfoPrivate::hostId()
     return QUuid(QString::number(gethostid()));
 }
 
-QSystemDeviceInfo::DeviceType QSystemDeviceInfoPrivate::typeOfLock()
+QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::typeOfLock()
 {
     return QSystemDeviceInfo::UnknownLock;
 }
