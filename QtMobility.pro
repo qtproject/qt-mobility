@@ -13,4 +13,4 @@ SUBDIRS+= \
     sys_telephony \
     sys_versit \
     sys_versitorganizer \
-
+    sys_crsysteminfo \
