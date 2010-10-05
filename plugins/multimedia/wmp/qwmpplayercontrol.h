@@ -120,7 +120,6 @@ private:
     IWMPNetwork *m_network;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_status;
-    qint64 m_duration;
     bool m_buffering;
     bool m_audioAvailable;
     bool m_videoAvailable;

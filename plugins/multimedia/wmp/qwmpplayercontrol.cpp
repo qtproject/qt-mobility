@@ -59,7 +59,6 @@ QWmpPlayerControl::QWmpPlayerControl(IWMPCore3 *player, QWmpEvents *events, QObj
     , m_controls(0)
     , m_settings(0)
     , m_state(QMediaPlayer::StoppedState)
-    , m_duration(0)
     , m_buffering(false)
     , m_audioAvailable(false)
     , m_videoAvailable(false)
@@ -108,11 +107,10 @@ qint64 QWmpPlayerControl::duration() const
     IWMPMedia *media = 0;
     if (m_controls && m_controls->get_currentItem(&media) == S_OK) {
         media->get_duration(&duration);
-
         media->Release();
     }
 
-    return m_duration * 1000;
+    return duration * 1000;
 }
 
 qint64 QWmpPlayerControl::position() const
