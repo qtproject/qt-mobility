@@ -53,7 +53,7 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapRouteObjectInfo::QGeoTiledMapRouteObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject)
+    : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
     route = static_cast<QGeoMapRouteObject*>(mapObject);
 

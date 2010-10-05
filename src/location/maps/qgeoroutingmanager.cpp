@@ -133,11 +133,6 @@ public:
 private slots:
     void routeCalculated(QGeoRouteReply *reply)
     {
-        if (reply->error() != QGeoRouteReply::NoError) {
-            reply->deleteLater();
-            return;
-        }
-
         // A route request can ask for several alternative routes ...
         if (reply->routes().size() != 0) {
 
@@ -153,6 +148,7 @@ private slots:
     void routeError(QGeoRouteReply *reply, QGeoRouteReply:Error error, const QString &errorString)
     {
         // ... inform the user that an error has occurred ...
+        reply->deleteLater();
     }
 };
     \endcode
@@ -167,8 +163,8 @@ private slots:
     QGeoServiceProvider::routingManager();
 */
 QGeoRoutingManager::QGeoRoutingManager(QGeoRoutingManagerEngine *engine, QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoRoutingManagerPrivate())
+    : QObject(parent),
+      d_ptr(new QGeoRoutingManagerPrivate())
 {
     d_ptr->engine = engine;
     if (d_ptr->engine) {
@@ -311,10 +307,8 @@ QGeoRouteRequest::TravelModes QGeoRoutingManager::supportedTravelModes() const
 }
 
 /*!
-    Returns the types of features that this manager can avoid during route planning.
-*/
-
-/*!
+    Returns the types of features that this manager can take into account
+    during route planning.
 */
 QGeoRouteRequest::FeatureTypes QGeoRoutingManager::supportedFeatureTypes() const
 {
@@ -322,6 +316,8 @@ QGeoRouteRequest::FeatureTypes QGeoRoutingManager::supportedFeatureTypes() const
 }
 
 /*!
+    Returns the weightings which this manager can apply to different features
+    during route planning.
 */
 QGeoRouteRequest::FeatureWeights QGeoRoutingManager::supportedFeatureWeights() const
 {
@@ -409,7 +405,7 @@ Use deleteLater() instead.
 *******************************************************************************/
 
 QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate()
-        : engine(0) {}
+    : engine(0) {}
 
 QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate()
 {

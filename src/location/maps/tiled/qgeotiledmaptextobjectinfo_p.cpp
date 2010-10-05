@@ -51,8 +51,8 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-        textItem(0)
+    : QGeoTiledMapObjectInfo(mapData, mapObject),
+      textItem(0)
 
 {
     text = static_cast<QGeoMapTextObject*>(mapObject);

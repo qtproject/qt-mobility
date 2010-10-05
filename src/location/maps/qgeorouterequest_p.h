@@ -76,7 +76,7 @@ public:
     int numberAlternativeRoutes;
     QGeoRouteRequest::TravelModes travelModes;
     QMap < QGeoRouteRequest::FeatureType,
-    QGeoRouteRequest::FeatureWeight > featureWeights;
+         QGeoRouteRequest::FeatureWeight > featureWeights;
     QGeoRouteRequest::RouteOptimizations routeOptimization;
     QGeoRouteRequest::SegmentDetail segmentDetail;
     QGeoRouteRequest::ManeuverDetail maneuverDetail;

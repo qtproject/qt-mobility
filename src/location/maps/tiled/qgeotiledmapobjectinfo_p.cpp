@@ -54,10 +54,10 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoMapObjectInfo(mapData, mapObject),
-        graphicsItem(0),
-        isValid(true),
-        isVisible(true)
+    : QGeoMapObjectInfo(mapData, mapObject),
+      graphicsItem(0),
+      isValid(true),
+      isVisible(true)
 {
     tiledMapData = mapData;
     tiledMapDataPrivate = static_cast<QGeoTiledMapDataPrivate*>(mapData->d_ptr);
@@ -72,7 +72,7 @@ QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()
     }
 }
 
-void QGeoTiledMapObjectInfo::setup()
+void QGeoTiledMapObjectInfo::init()
 {
     if (graphicsItem) {
         if (!graphicsItem->scene())

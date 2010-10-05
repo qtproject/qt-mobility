@@ -66,7 +66,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a new tiled map request.
 */
 QGeoTiledMapRequest::QGeoTiledMapRequest()
-        : d_ptr(new QGeoTiledMapRequestPrivate()) {}
+    : d_ptr(new QGeoTiledMapRequestPrivate()) {}
 
 /*!
     Constructs a new tiled map request.
@@ -87,7 +87,7 @@ QGeoTiledMapRequest::QGeoTiledMapRequest(QGraphicsGeoMap::ConnectivityMode conne
         int row,
         int column,
         const QRect &tileRect)
-        : d_ptr(new QGeoTiledMapRequestPrivate())
+    : d_ptr(new QGeoTiledMapRequestPrivate())
 {
     //d_ptr->mapData = mapData;
     d_ptr->row = row;
@@ -103,7 +103,7 @@ QGeoTiledMapRequest::QGeoTiledMapRequest(QGraphicsGeoMap::ConnectivityMode conne
     Constructs a tiled map request from the contents of \a other.
 */
 QGeoTiledMapRequest::QGeoTiledMapRequest(const QGeoTiledMapRequest &other)
-        : d_ptr(other.d_ptr) {}
+    : d_ptr(other.d_ptr) {}
 
 /*!
     Destroys this tiled map request.
@@ -223,18 +223,18 @@ uint qHash(const QGeoTiledMapRequest &key)
 *******************************************************************************/
 
 QGeoTiledMapRequestPrivate::QGeoTiledMapRequestPrivate()
-        : QSharedData() {}
+    : QSharedData() {}
 //mapData(0) {}
 
 QGeoTiledMapRequestPrivate::QGeoTiledMapRequestPrivate(const QGeoTiledMapRequestPrivate &other)
-        : QSharedData(other),
+    : QSharedData(other),
 //        mapData(other.mapData),
-        connectivityMode(other.connectivityMode),
-        mapType(other.mapType),
-        zoomLevel(other.zoomLevel),
-        row(other.row),
-        column(other.column),
-        tileRect(other.tileRect) {}
+      connectivityMode(other.connectivityMode),
+      mapType(other.mapType),
+      zoomLevel(other.zoomLevel),
+      row(other.row),
+      column(other.column),
+      tileRect(other.tileRect) {}
 
 QGeoTiledMapRequestPrivate::~QGeoTiledMapRequestPrivate() {}
 

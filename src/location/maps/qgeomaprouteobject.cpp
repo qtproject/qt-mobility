@@ -70,13 +70,13 @@ QTM_BEGIN_NAMESPACE
     Constructs a new route object.
 */
 QGeoMapRouteObject::QGeoMapRouteObject()
-        : d_ptr(new QGeoMapRouteObjectPrivate()) {}
+    : d_ptr(new QGeoMapRouteObjectPrivate()) {}
 
 /*!
     Constructs a new route object for the route \a route.
 */
 QGeoMapRouteObject::QGeoMapRouteObject(const QGeoRoute &route)
-        : d_ptr(new QGeoMapRouteObjectPrivate())
+    : d_ptr(new QGeoMapRouteObjectPrivate())
 {
     d_ptr->route = route;
 }

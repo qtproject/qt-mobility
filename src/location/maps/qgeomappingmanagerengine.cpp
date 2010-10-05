@@ -80,8 +80,8 @@ QTM_BEGIN_NAMESPACE
     to pass any implementation specific data to the engine.
 */
 QGeoMappingManagerEngine::QGeoMappingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoMappingManagerEnginePrivate())
+    : QObject(parent),
+      d_ptr(new QGeoMappingManagerEnginePrivate())
 {
     Q_UNUSED(parameters)
 }
@@ -90,8 +90,8 @@ QGeoMappingManagerEngine::QGeoMappingManagerEngine(const QMap<QString, QVariant>
   \internal
 */
 QGeoMappingManagerEngine::QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent)
-        : QObject(parent),
-        d_ptr(dd) {}
+    : QObject(parent),
+      d_ptr(dd) {}
 
 /*!
     Destroys this engine.
@@ -350,7 +350,7 @@ QLocale QGeoMappingManagerEngine::locale() const
 *******************************************************************************/
 
 QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
-        : managerVersion(-1) {}
+    : managerVersion(-1) {}
 
 QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() {}
 

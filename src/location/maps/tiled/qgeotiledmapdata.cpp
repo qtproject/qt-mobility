@@ -99,15 +99,15 @@ QTM_BEGIN_NAMESPACE
     back and forth between coordinate and positions on the map.
 
     Different projections can be provided by reimplementing
-    coordinateToWorldPixel() and worldPixelToCoordinate().
+    coordinateToWorldReferencePosition() and worldReferencePositionToCoordinate().
 
     Many of the internal calculations deal with positions as though they are
-    pixel positions on the map at the maximum zoom level. Several functions are
+    pixel positions on the map at the maximum zoom level.  Several functions are
     provided which expose information about the map and the viewport onto the
     map in these terms for use with custom QGeoMapObjectInfo subclasses.
 
-    These functions include maxZoomCenter(), maxZoomSize() and
-    maxZoomScreenRect().
+    These functions include worldReferenceViewportCenter(), worldReferenceSize() and
+    worldReferenceViewportRect().
 */
 
 /*!
@@ -115,7 +115,7 @@ QTM_BEGIN_NAMESPACE
     \a geoMap and makes use of the functionality provided by \a engine.
 */
 QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
-        : QGeoMapData(new QGeoTiledMapDataPrivate(this, engine, geoMap))
+    : QGeoMapData(new QGeoTiledMapDataPrivate(this, engine, geoMap))
 {
     Q_D(QGeoTiledMapData);
 
@@ -545,8 +545,8 @@ void QGeoTiledMapData::fitInViewport(const QGeoBoundingBox &bounds, bool preserv
                                    worldReferencePositionToCoordinate(rect.bottomRight()));
 
         qWarning() << i << zoomFactor
-        << viewport.topLeft()
-        << viewport.bottomRight();
+                   << viewport.topLeft()
+                   << viewport.bottomRight();
 
         if (!viewport.contains(bounds)) {
             setZoomLevel(qMax(minZoomLevel, i - 1));
@@ -853,11 +853,11 @@ int QGeoTiledMapData::zoomFactor() const
 *******************************************************************************/
 
 QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
-        : QGeoMapDataPrivate(parent, engine, geoMap) {}
+    : QGeoMapDataPrivate(parent, engine, geoMap) {}
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 {
-    foreach(QGeoTiledMapReply *reply, replies) {
+    foreach(QGeoTiledMapReply * reply, replies) {
         reply->abort();
         reply->deleteLater();
     }
@@ -998,7 +998,7 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
 
     qreal westsideWidth = floor(qreal(westside.width()) / zoomFactor);
 
-    westside.setWidth(westsideWidth*zoomFactor);
+    westside.setWidth(westsideWidth * zoomFactor);
     westside.setHeight(worldReferenceViewportRect.height());
 
     scene->render(painter,
@@ -1154,13 +1154,13 @@ QList<QPair<QRect, QRect> > QGeoTiledMapDataPrivate::intersectedScreen(const QRe
 *******************************************************************************/
 
 QGeoTileIterator::QGeoTileIterator(const QGeoTiledMapDataPrivate *mapDataPrivate)
-        : atEnd(false),
-        row(-1),
-        col(-1),
-        screenRect(mapDataPrivate->worldReferenceViewportRect),
-        mapType(mapDataPrivate->mapType),
-        connectivityMode(mapDataPrivate->connectivityMode),
-        zoomLevel(mapDataPrivate->zoomLevel)
+    : atEnd(false),
+      row(-1),
+      col(-1),
+      screenRect(mapDataPrivate->worldReferenceViewportRect),
+      mapType(mapDataPrivate->mapType),
+      connectivityMode(mapDataPrivate->connectivityMode),
+      zoomLevel(mapDataPrivate->zoomLevel)
 {
     QGeoTiledMappingManagerEngine *tiledEngine
     = static_cast<QGeoTiledMappingManagerEngine*>(mapDataPrivate->engine);
@@ -1181,15 +1181,15 @@ QGeoTileIterator::QGeoTileIterator(QGraphicsGeoMap::ConnectivityMode connectivit
                                    const QRect &screenRect,
                                    const QSize &tileSize,
                                    int zoomLevel)
-        : atEnd(false),
-        row(-1),
-        col(-1),
-        screenRect(screenRect),
-        tileSize(tileSize),
-        mapType(mapType),
-        connectivityMode(connectivityMode),
-        zoomLevel(zoomLevel),
-        tileRect(QPoint(0, 0), tileSize)
+    : atEnd(false),
+      row(-1),
+      col(-1),
+      screenRect(screenRect),
+      tileSize(tileSize),
+      mapType(mapType),
+      connectivityMode(connectivityMode),
+      zoomLevel(zoomLevel),
+      tileRect(QPoint(0, 0), tileSize)
 {
     qulonglong x = static_cast<qulonglong>(screenRect.topLeft().x() / tileSize.width());
     qulonglong y = static_cast<qulonglong>(screenRect.topLeft().y() / tileSize.height());

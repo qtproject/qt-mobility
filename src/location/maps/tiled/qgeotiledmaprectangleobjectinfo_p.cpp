@@ -51,8 +51,8 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapRectangleObjectInfo::QGeoTiledMapRectangleObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-        rectangleItem2(0)
+    : QGeoTiledMapObjectInfo(mapData, mapObject),
+      rectangleItem2(0)
 {
     rectangle = static_cast<QGeoMapRectangleObject*>(mapObject);
 

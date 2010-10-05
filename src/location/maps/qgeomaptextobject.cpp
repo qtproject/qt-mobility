@@ -63,7 +63,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a new text object.
 */
 QGeoMapTextObject::QGeoMapTextObject()
-        : d_ptr(new QGeoMapTextObjectPrivate()) {}
+    : d_ptr(new QGeoMapTextObjectPrivate()) {}
 
 /*!
     Constructs a new text object which will display the text \a text with font
@@ -74,7 +74,7 @@ QGeoMapTextObject::QGeoMapTextObject(const QGeoCoordinate &coordinate,
                                      const QFont &font,
                                      const QPoint &offset,
                                      Qt::Alignment alignment)
-        : d_ptr(new QGeoMapTextObjectPrivate())
+    : d_ptr(new QGeoMapTextObjectPrivate())
 {
     d_ptr->coordinate = coordinate;
     d_ptr->text = text;

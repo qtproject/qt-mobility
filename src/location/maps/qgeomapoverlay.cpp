@@ -58,9 +58,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    Constructs a new map overlay object.
 */
 QGeoMapOverlay::QGeoMapOverlay()
-        : d_ptr(new QGeoMapOverlayPrivate()) {}
+    : d_ptr(new QGeoMapOverlayPrivate()) {}
 
 /*!
     Destroys this map overlay object.
@@ -77,6 +78,7 @@ Paints the overlay on \a painter, using the options \a option.
 */
 
 /*!
+    \internal
 */
 void QGeoMapOverlay::setMapData(QGeoMapData * mapData)
 {
@@ -84,6 +86,12 @@ void QGeoMapOverlay::setMapData(QGeoMapData * mapData)
 }
 
 /*!
+    Returns the QGeoMapData instance that this overlay is associated, or 0
+    if there is not such instance.
+
+    The QGeoMapData instance provides access to information such as the
+    zoom level and viewport position as well as methods to convert
+    screen positions to coordinates and vice-versa.
 */
 QGeoMapData const * QGeoMapOverlay::mapData() const
 {
@@ -94,7 +102,7 @@ QGeoMapData const * QGeoMapOverlay::mapData() const
 *******************************************************************************/
 
 QGeoMapOverlayPrivate::QGeoMapOverlayPrivate()
-        : mapData(0) {}
+    : mapData(0) {}
 
 
 QGeoMapOverlayPrivate::~QGeoMapOverlayPrivate() {}

@@ -129,8 +129,8 @@ The map data will come from a combination of offline and online sources.
 // Temporary constructor, for use by QML bindings until we come up
 // with the right QML / service provider mapping
 QGraphicsGeoMap::QGraphicsGeoMap(QGraphicsItem *parent)
-        : QGraphicsWidget(parent),
-        d_ptr(new QGraphicsGeoMapPrivate())
+    : QGraphicsWidget(parent),
+      d_ptr(new QGraphicsGeoMapPrivate())
 {
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
@@ -163,8 +163,8 @@ QGraphicsGeoMap::QGraphicsGeoMap(QGraphicsItem *parent)
     \endcode
 */
 QGraphicsGeoMap::QGraphicsGeoMap(QGeoMappingManager *manager, QGraphicsItem *parent)
-        : QGraphicsWidget(parent),
-        d_ptr(new QGraphicsGeoMapPrivate(manager))
+    : QGraphicsWidget(parent),
+      d_ptr(new QGraphicsGeoMapPrivate(manager))
 {
     //d_ptr->mapData = d_ptr->manager->createMapData(this);
     //setMapType(QGraphicsGeoMap::StreetMap);
@@ -661,10 +661,10 @@ Indicates that the type of the map has been changed.
 *******************************************************************************/
 
 QGraphicsGeoMapPrivate::QGraphicsGeoMapPrivate(QGeoMappingManager *manager)
-        : serviceProvider(0),
-        manager(manager),
-        mapData(0),
-        panActive(false) {}
+    : serviceProvider(0),
+      manager(manager),
+      mapData(0),
+      panActive(false) {}
 
 QGraphicsGeoMapPrivate::~QGraphicsGeoMapPrivate()
 {
