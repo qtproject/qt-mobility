@@ -307,7 +307,7 @@ TInt CQGeoPositionInfoSourceS60::getMoreAccurateMethod(TInt aTimeout, TUint8 aBi
 
     for (TInt i = 0 ; i < mListSize; i++) {
         if (mList[i].mIsAvailable
-                //&& posMethods.testFlag(mList[i].mPosMethod)
+                && posMethods.testFlag(mList[i].mPosMethod)
                 && (mList[i].mStatus != TPositionModuleStatus::EDeviceUnknown)
                 && (mList[i].mStatus != TPositionModuleStatus::EDeviceError)
                 && (((aBits >> i) & 1))
@@ -328,7 +328,7 @@ TInt CQGeoPositionInfoSourceS60::getMoreAccurateMethod(TInt aTimeout, TUint8 aBi
 
     for (TInt i = 0 ; i < mListSize; i++) {
         if (mList[i].mIsAvailable
-                //&& posMethods.testFlag(mList[i].mPosMethod)
+                && posMethods.testFlag(mList[i].mPosMethod)
                 && (mList[i].mStatus != TPositionModuleStatus::EDeviceUnknown)
                 && (mList[i].mStatus != TPositionModuleStatus::EDeviceError)
                 && (((aBits >> i) & 1))) {
