@@ -71,6 +71,7 @@ private:
     QSystemNetworkInfo *ni;
     QSystemStorageInfo *sti;
     void updateStorage();
+    QSystemDeviceInfo::BatteryStatus currentBatStat;
     
 private slots:
     void tabChanged(int index);
