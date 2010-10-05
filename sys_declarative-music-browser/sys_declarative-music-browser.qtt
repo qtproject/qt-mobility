@@ -47,7 +47,7 @@ testcase = {
     {
         prompt(twiki('*List Albums*
 
-    1 Start application *qmlviewer* with the argument *examples/declarative-music-browser/declarative-music-browser.qml*
+    1 Start application *examples/declarative-music-browser*
     1 Click Albums icon
     1 Verify that the albums listed match what is seen via the native music/document browser
     1 Verify that albums have the expected cover thumbnail above the album title
@@ -63,7 +63,7 @@ testcase = {
     {
         prompt(twiki('*List Artists*
 
-    1 Start application *qmlviewer* with the argument *examples/declarative-music-browser/declarative-music-browser.qml*
+    1 Start application *examples/declarative-music-browser*
     1 Click Artists icon
     1 Verify that the artists listed match what is seen via the native music/document browser
     1 Click on an artist in view
@@ -79,7 +79,7 @@ testcase = {
     {
         prompt(twiki('*List Genres*
 
-    1 Start application *qmlviewer* with the argument *examples/declarative-music-browser/declarative-music-browser.qml*
+    1 Start application *examples/declarative-music-browser*
     1 Click Genres icon
     1 Verify that the genres listed match what is seen via the native music/document browser
     1 Click on an genre in view
@@ -95,7 +95,7 @@ testcase = {
     {
         prompt(twiki('*List Songs*
 
-    1 Start application *qmlviewer* with the argument *examples/declarative-music-browser/declarative-music-browser.qml*
+    1 Start application *examples/declarative-music-browser*
     1 Click Songs icon
     1 Verify that the song listed match what is seen via the native music/document browser
     1 Verify that two of the listed songs have the correct song length mentioned on right
