@@ -284,6 +284,7 @@ public:
     bool keypadLightOn(); //1.2
     bool backLightOn(); //1.2
     QUuid hostId(); //1.2
+    QSystemDeviceInfo::LockType typeOfLock(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -296,7 +297,7 @@ Q_SIGNALS:
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlip(bool open);//1.2
     void deviceLocked(bool isLocked); // 1.2
-
+    void lockChanged(QSystemDeviceInfo::LockType, bool); //1.2
 
 private:
     bool btPowered;

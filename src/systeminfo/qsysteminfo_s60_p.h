@@ -264,20 +264,18 @@ Q_SIGNALS:
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlip(bool open);//1.2
     void deviceLocked(bool isLocked); // 1.2
+    void lockChanged(QSystemDeviceInfo::LockType, bool); //1.2
 
-protected:  //From QObject
+protected:
+    //From QObject
     void connectNotify(const char *signal);
 
-protected: //From MProEngProfileActivationObserver
+//From MProEngProfileActivationObserver
     void HandleProfileActivatedL(TInt aProfileId);
 
-protected: //From MCenRepNotifyHandlerCallback
+    //From MCenRepNotifyHandlerCallback
     void HandleNotifyInt(TUint32 aId, TInt aNewValue);
-
-private:
-    QSystemDeviceInfo::Profile s60ProfileIdToProfile(TInt profileId) const;
-
-protected:  //from MTelephonyInfoObserver
+    //from MTelephonyInfoObserver
     void batteryLevelChanged();
 
     void countryCodeChanged(){};
@@ -288,10 +286,13 @@ protected:  //from MTelephonyInfoObserver
     void cellNetworkSignalStrengthChanged(){};
     void cellNetworkStatusChanged(){};
 
-protected:  //from MChargingStatusObserver
+    //from MChargingStatusObserver
     void chargingStatusChanged();
 
-private:    //data
+private:
+    QSystemDeviceInfo::Profile s60ProfileIdToProfile(TInt profileId) const;
+
+//data
     MProEngEngine *m_profileEngine;
     MProEngNotifyHandler* m_proEngNotifyHandler;
 
@@ -299,6 +300,8 @@ private:    //data
     CCenRepNotifyHandler *m_bluetoothNotifyHandler;
 
     bool hasWirelessKeyboardConnected;
+    QSystemDeviceInfo::LockType typeOfLock(); //1.2
+
 };
 
 //////// QSystemScreenSaver

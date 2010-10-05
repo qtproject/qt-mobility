@@ -2853,6 +2853,11 @@ QUuid QSystemDeviceInfoLinuxCommonPrivate::hostId()
     return QUuid(QString::number(gethostid()));
 }
 
+QSystemDeviceInfo::DeviceType QSystemDeviceInfoLinuxCommonPrivate::typeOfLock()
+{
+    return QSystemDeviceInfo::UnknownLock;
+}
+
 
 QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {

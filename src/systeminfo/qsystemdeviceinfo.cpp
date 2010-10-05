@@ -159,6 +159,15 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
             \value FullQwertyKeyboard          Standard qwerty type keyboard.
             \value WirelessKeyboard            Bluetooth or other wireless keyboard.
         */
+        /*!
+          \enum QSystemDeviceInfo::LockType
+          This enum describes the type of lock.
+
+          \value DeviceLocked                   Device lock.
+          \value TouchAndKeyboardLocked         Touch and/or keyboard lock.
+
+          */
+
 
         /*!
           \fn void QSystemDeviceInfo::bluetoothStateChanged(bool on)
@@ -177,7 +186,14 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
   This signal is emitted whenever a phone flips open, specified by \a open.
 */
 
-QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
+/*!
+    \fn void QSystemDeviceInfo::lockChanged(QSystemDeviceInfo::LockType type, bool on)
+
+     This signal is emitted whenever the lock state changes, with LockType \a type, and \a on, locked or unlocked.
+*/
+
+
+          QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     : QObject(parent), d(deviceInfoPrivate())
 {
     qRegisterMetaType<QSystemDeviceInfo::BatteryStatus>("QSystemDeviceInfo::BatteryStatus");
@@ -492,6 +508,16 @@ bool QSystemDeviceInfo::backLightOn()
 QUuid QSystemDeviceInfo::hostId()
 {
     return deviceInfoPrivate()->hostId();
+}
+
+/*
+ \brief Type of lock.
+
+ Returns the QSystemDeviceInfo::DeviceType type of lock the device might be in.
+ */
+QSystemDeviceInfo::DeviceType QSystemDeviceInfo::typeOfLock()
+{
+    return deviceInfoPrivate()->typeOfLock();
 }
 
 #include "moc_qsystemdeviceinfo.cpp"

@@ -2211,6 +2211,7 @@ bool QSystemDeviceInfoPrivate::currentBluetoothPowerState()
         return true;
     return false;
 }
+
 QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardType()
 {
     QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
@@ -2273,6 +2274,11 @@ QUuid QSystemDeviceInfoPrivate::hostId()
         return QUuid(stringFromCFString((const __CFString*)cfStringKey));
     }
     return QUuid(QString::number(gethostid()));
+}
+
+QSystemDeviceInfo::DeviceType QSystemDeviceInfoPrivate::typeOfLock()
+{
+    return QSystemDeviceInfo::UnknownLock;
 }
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)

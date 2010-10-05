@@ -2120,6 +2120,11 @@ QUuid QSystemDeviceInfoPrivate::hostId()
     return 0;//gethostid();
 }
 
+QSystemDeviceInfo::DeviceType QSystemDeviceInfoPrivate::typeOfLock()
+{
+    return QSystemDeviceInfo::UnknownLock;
+}
+
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         : QObject(parent)
 {
