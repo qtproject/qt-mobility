@@ -114,6 +114,11 @@ void Connection::getInitialData()
     }
 }
 
+void Connection::setOrganizerManagerUri(QString uri)
+{
+    mManagerUri = uri;
+}
+
 void Connection::initialOrganizerDataSent()
 {
     mInitialDataReceived = true;
@@ -123,7 +128,9 @@ void Connection::clearOrganizerItems()
 {
     mLocalToRemote.clear();
     mRemoteToLocal.clear();
+    mNotifySimulator = false;
     mManager.removeItems(mManager.itemIds(), 0);
+    mNotifySimulator = true;
 }
 
 void Connection::saveOrganizerItem(QOrganizerItem item)
@@ -137,8 +144,12 @@ void Connection::saveOrganizerItem(QOrganizerItem item)
     }
     item.setId(id);
 
-    qDebug() << "Saving" << item;
+    // ### *All* other local ids need to be translated too! Would it be
+    // possible to add an automatic translation to the engine?
+
+    mNotifySimulator = false;
     mManager.saveItem(&item);
+    mNotifySimulator = true;
     if (mManager.error())
         qDebug() << "Error saving:" << mManager.error();
 
@@ -157,7 +168,10 @@ void Connection::removeOrganizerItem(QOrganizerItemLocalId id)
     QOrganizerItemLocalId localId = mManager.item(mRemoteToLocal.value(id)).localId();
     mRemoteToLocal.remove(id);
     mLocalToRemote.remove(localId);
+
+    mNotifySimulator = false;
     mManager.removeItem(localId);
+    mNotifySimulator = true;
 }
 
 #include "moc_connection_p.cpp"

@@ -81,8 +81,15 @@ public:
 
     QLocalSocket *sendSocket();
 
+    // should live in the engine?
+    bool mNotifySimulator;
+    QHash<QOrganizerItemLocalId, QOrganizerItemLocalId> mRemoteToLocal;
+    QHash<QOrganizerItemLocalId, QOrganizerItemLocalId> mLocalToRemote;
+    QString mManagerUri;
+
 private slots:
     // called remotely
+    void setOrganizerManagerUri(QString uri);
     void initialOrganizerDataSent();
     void clearOrganizerItems();
     void saveOrganizerItem(QtMobility::QOrganizerItem item);
@@ -96,8 +103,6 @@ private:
     bool mInitialDataReceived;
     QOrganizerItemSimulatorEngine *mEngine;
     QOrganizerItemManager mManager;
-    QHash<QOrganizerItemLocalId, QOrganizerItemLocalId> mRemoteToLocal;
-    QHash<QOrganizerItemLocalId, QOrganizerItemLocalId> mLocalToRemote;
 };
 
 } // namespace Simulator
