@@ -96,6 +96,7 @@
     \list
     \o \l{calendardemo}{Calendar Demo}
     \o \l{timescape}{QML Time Scape Demo}
+    \o \l{todo}{ToDo Example}
     \endlist
 
     \section2 Publish and Subscribe
