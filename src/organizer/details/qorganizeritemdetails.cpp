@@ -769,6 +769,16 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
 */
 
 /*!
+  \fn QOrganizerItemReminder::QOrganizerItemReminder(const char*)
+  \internal
+*/
+
+/*!
+  \fn QOrganizerItemReminder::QOrganizerItemReminder(const QOrganizerItemDetail& detail, const char* definitionName)
+  \internal
+*/
+
+/*!
    \fn int QOrganizerItemReminder::repetitionDelay() const
 
    Returns the delay (in seconds) between each repetition of the reminder.
@@ -823,6 +833,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldDataUrl, "DataUrl")
    \fn QOrganizerItemAudibleReminder::setDataUrl(const QUrl& dataUrl)
 
    Sets the url of the audible data which should be played to \a dataUrl.
+*/
+
+/*!
+   \fn QOrganizerItemAudibleReminder::dataUrl() const
+
+   Returns the url of the audible data to play.
 */
 
 /* ==================== QOrganizerItemEmailReminder ======================= */
@@ -887,6 +903,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldRecipients, "Recipien
    \fn QString QOrganizerItemEmailReminder::body() const
 
    Returns the body of the email.
+*/
+
+/*!
+   \fn QVariantList QOrganizerItemEmailReminder::attachments() const
+
+   Returns the attachments of the email.
 */
 
 /*!

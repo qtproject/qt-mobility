@@ -54,6 +54,11 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileBackup, "Backup");
  */
 
 /*!
+  \fn QVersitContactHandler::~QVersitContactHandler()
+  This frees any memory used by the QVersitContactHandler.
+ */
+
+/*!
   \class QVersitContactHandlerFactory
   \brief The QVersitContactHandlerFactory class provides the interface for Versit plugins.
   \ingroup versit-extension
