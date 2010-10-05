@@ -218,6 +218,10 @@ void QGraphicsGeoMap::setMappingManager(QGeoMappingManager *manager)
             SIGNAL(centerChanged(QGeoCoordinate)),
             this,
             SIGNAL(centerChanged(QGeoCoordinate)));
+    connect(d_ptr->mapData,
+            SIGNAL(connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode)),
+            this,
+            SIGNAL(connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode)));
 }
 
 /*!
