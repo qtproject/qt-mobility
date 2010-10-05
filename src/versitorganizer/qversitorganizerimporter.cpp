@@ -133,10 +133,10 @@ QVersitOrganizerImporter::~QVersitOrganizerImporter()
  * Returns true on success.  The document should contain at least one subdocument.  In the
  * importing process, each subdocument roughly corresponds to a QOrganizerItem.  If any of the
  * subdocuments cannot be imported as organizer items (eg. they don't conform to the iCalendar
- * format), false is returned and errors() will return a list describing the errors that occurred.
+ * format), false is returned and errorMap() will return a list describing the errors that occurred.
  * The successfully imported items will still be available via items().
  *
- * \sa items(), errors()
+ * \sa items(), errorMap()
  */
 bool QVersitOrganizerImporter::importDocument(const QVersitDocument& document)
 {
@@ -190,7 +190,7 @@ QList<QOrganizerItem> QVersitOrganizerImporter::items() const
  *
  * \sa importDocuments()
  */
-QMap<int, QVersitOrganizerImporter::Error> QVersitOrganizerImporter::errors() const
+QMap<int, QVersitOrganizerImporter::Error> QVersitOrganizerImporter::errorMap() const
 {
     return d->mErrors;
 }

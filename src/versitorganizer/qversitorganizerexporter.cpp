@@ -131,8 +131,10 @@ QVersitOrganizerExporter::~QVersitOrganizerExporter()
 /*!
  * Converts \a items into a QVersitDocument, using the format given by \a versitType.
  * Returns true on success.  If any of the items could not be exported, false is returned and
- * errors() will return a list describing the errors that occurred.  The successfully exported
+ * errorMap() will return a list describing the errors that occurred.  The successfully exported
  * components will still be available via document().
+ *
+ * \sa document(), errorMap()
  */
 bool QVersitOrganizerExporter::exportItems(
     const QList<QOrganizerItem>& items,
@@ -179,7 +181,7 @@ QVersitDocument QVersitOrganizerExporter::document() const
  *
  * \sa exportItems()
  */
-QMap<int, QVersitOrganizerExporter::Error> QVersitOrganizerExporter::errors() const
+QMap<int, QVersitOrganizerExporter::Error> QVersitOrganizerExporter::errorMap() const
 {
     return d->mErrors;
 }

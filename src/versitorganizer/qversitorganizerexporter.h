@@ -81,7 +81,7 @@ public:
     bool exportItems(const QList<QOrganizerItem>& items,
             QVersitDocument::VersitType versitType = QVersitDocument::ICalendar20Type);
     QVersitDocument document() const;
-    QMap<int, Error> errors() const;
+    QMap<int, Error> errorMap() const;
 
     void setDetailHandler(QVersitOrganizerExporterDetailHandler* handler);
 

@@ -82,7 +82,7 @@ public:
 
     bool importDocument(const QVersitDocument& document);
     QList<QOrganizerItem> items() const;
-    QMap<int, Error> errors() const;
+    QMap<int, Error> errorMap() const;
 
     void setPropertyHandler(QVersitOrganizerImporterPropertyHandler* handler);
 

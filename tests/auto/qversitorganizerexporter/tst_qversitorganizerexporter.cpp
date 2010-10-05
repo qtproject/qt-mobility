@@ -57,7 +57,7 @@ void tst_QVersitOrganizerExporter::testExport()
 
     QVersitOrganizerExporter exporter;
     QVERIFY(exporter.exportItems(items, QVersitDocument::ICalendar20Type));
-    QVERIFY(exporter.errors().isEmpty());
+    QVERIFY(exporter.errorMap().isEmpty());
     QVersitDocument document = exporter.document();
     if (document != expectedDocument) {
         qDebug() << "Actual:" << document;
@@ -170,8 +170,8 @@ void tst_QVersitOrganizerExporter::testExportError()
 
     QVersitOrganizerExporter exporter;
     QVERIFY(!exporter.exportItems(items, QVersitDocument::ICalendar20Type));
-    QVERIFY(!exporter.errors().isEmpty());
-    QVERIFY(exporter.errors()[0] == expectedError);
+    QVERIFY(!exporter.errorMap().isEmpty());
+    QVERIFY(exporter.errorMap()[0] == expectedError);
     QVersitDocument document = exporter.document();
     if (document != expectedDocument) {
         qDebug() << "Actual:" << document;
@@ -211,7 +211,7 @@ void tst_QVersitOrganizerExporter::testExportEventDetails()
         item.saveDetail(&detail);
     }
     QVERIFY(exporter.exportItems(QList<QOrganizerItem>() << item, QVersitDocument::ICalendar20Type));
-    QVERIFY(exporter.errors().isEmpty());
+    QVERIFY(exporter.errorMap().isEmpty());
     QVersitDocument document = exporter.document();
     QList<QVersitDocument> subDocuments = document.subDocuments();
     QCOMPARE(subDocuments.size(), 1);
@@ -612,7 +612,7 @@ void tst_QVersitOrganizerExporter::testExportTodoDetails()
         item.saveDetail(&detail);
     }
     QVERIFY(exporter.exportItems(QList<QOrganizerItem>() << item, QVersitDocument::ICalendar20Type));
-    QVERIFY(exporter.errors().isEmpty());
+    QVERIFY(exporter.errorMap().isEmpty());
     QVersitDocument document = exporter.document();
     QList<QVersitDocument> subDocuments = document.subDocuments();
     QCOMPARE(subDocuments.size(), 1);
