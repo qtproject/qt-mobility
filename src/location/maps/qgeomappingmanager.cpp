@@ -85,8 +85,8 @@ QTM_BEGIN_NAMESPACE
     QGeoServiceProvider::mappingManager();
 */
 QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoMappingManagerPrivate)
+    : QObject(parent),
+      d_ptr(new QGeoMappingManagerPrivate)
 {
     d_ptr->engine = engine;
     if (d_ptr->engine) {
@@ -225,7 +225,7 @@ QLocale QGeoMappingManager::locale() const
 *******************************************************************************/
 
 QGeoMappingManagerPrivate::QGeoMappingManagerPrivate()
-        : engine(0) {}
+    : engine(0) {}
 
 QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate()
 {

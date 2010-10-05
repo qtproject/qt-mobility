@@ -39,6 +39,7 @@ PRIVATE_HEADERS += \
                     maps/qgeomapgroupobject_p.h \
                     maps/qgeomapobject_p.h \
                     maps/qgeomapobjectinfo_p.h \
+                    maps/qgeomapoverlay_p.h \
                     maps/qgeomappingmanager_p.h \
                     maps/qgeomappingmanagerengine_p.h \
                     maps/qgeomappixmapobject_p.h \

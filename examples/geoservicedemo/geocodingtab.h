@@ -57,7 +57,7 @@ class GeoCodingInputDialog: public QDialog
 {
     Q_OBJECT
 public:
-    GeoCodingInputDialog(QString &obloc, QGeoAddress &address, QWidget *parent=0);
+    GeoCodingInputDialog(QString &obloc, QGeoAddress &address, QWidget *parent = 0);
 private slots:
     void accept();
 private:

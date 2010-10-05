@@ -52,6 +52,7 @@ class QGeoCoordinate;
 class QGeoMappingManager;
 class QGeoBoundingBox;
 class QGeoMapObject;
+class QGeoMapOverlay;
 class QGraphicsGeoMapPrivate;
 
 class Q_LOCATION_EXPORT QGraphicsGeoMap : public QGraphicsWidget
@@ -112,6 +113,11 @@ public:
     void addMapObject(QGeoMapObject *mapObject);
     void removeMapObject(QGeoMapObject *mapObject);
     void clearMapObjects();
+
+    QList<QGeoMapOverlay*> mapOverlays() const;
+    void addMapOverlay(QGeoMapOverlay *overlay);
+    void removeMapOverlay(QGeoMapOverlay *overlay);
+    void clearMapOverlays();
 
     QGeoBoundingBox viewport() const;
     void fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false);

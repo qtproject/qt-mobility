@@ -97,8 +97,8 @@ QTM_BEGIN_NAMESPACE
     Constructs a tiled map reply object based on \a request,  with parent \a parent.
 */
 QGeoTiledMapReply::QGeoTiledMapReply(const QGeoTiledMapRequest &request, QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoTiledMapReplyPrivate(request))
+    : QObject(parent),
+      d_ptr(new QGeoTiledMapReplyPrivate(request))
 {
 }
 
@@ -106,8 +106,8 @@ QGeoTiledMapReply::QGeoTiledMapReply(const QGeoTiledMapRequest &request, QObject
     Constructs a tiled map reply object with a given \a error and \a errorString and the specified \a parent.
 */
 QGeoTiledMapReply::QGeoTiledMapReply(Error error, const QString &errorString, QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoTiledMapReplyPrivate(error, errorString)) {}
+    : QObject(parent),
+      d_ptr(new QGeoTiledMapReplyPrivate(error, errorString)) {}
 
 /*!
     Destroys this tiled map reply object.
@@ -308,17 +308,17 @@ void QGeoTiledMapReply::abort()
 *******************************************************************************/
 
 QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(const QGeoTiledMapRequest &request)
-        : error(QGeoTiledMapReply::NoError),
-        errorString(""),
-        isFinished(false),
-        isCached(false),
-        request(request) {}
+    : error(QGeoTiledMapReply::NoError),
+      errorString(""),
+      isFinished(false),
+      isCached(false),
+      request(request) {}
 
 QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(QGeoTiledMapReply::Error error, const QString &errorString)
-        : error(error),
-        errorString(errorString),
-        isFinished(true),
-        isCached(false) {}
+    : error(error),
+      errorString(errorString),
+      isFinished(true),
+      isCached(false) {}
 
 QGeoTiledMapReplyPrivate::~QGeoTiledMapReplyPrivate() {}
 
