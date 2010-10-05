@@ -2821,6 +2821,13 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
             User::Leave(KErrArgument);
         }
 
+        //check that proximity filer does not contain pole
+        if (proximityFilter.radius() >=0 &&
+            (proximityFilter.boundingCircle().contains(QGeoCoordinate(90,0))
+             || proximityFilter.boundingCircle().contains(QGeoCoordinate(-90,0)))) {
+            User::Leave(KErrArgument);
+        }
+
         // set the nearest criteria
         CPosLmNearestCriteria* nearestCriteria = CPosLmNearestCriteria::NewLC(symbianCoord);
 

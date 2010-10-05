@@ -102,6 +102,7 @@
 #define GET_ALL_CATEGORIES
 #define FILTER_DEFAULT
 #define FILTER_NAME
+#define FILTER_PROXIMITY
 
 #include <float.h>
 
@@ -945,13 +946,15 @@ private slots:
     void filterLandmarksName_data();
 #endif
 
-#ifndef Q_OS_SYMBIAN
+#ifdef FILTER_PROXIMITY
     void filterLandmarksProximity();
     void filterLandmarksProximity_data();
 
     void filterLandmarksProximityOrder();
     void filterLandmarksProximityOrder_data();
+#endif
 
+#ifndef Q_OS_SYMBIAN
     void filterLandmarksCategory();
     void filterLandmarksCategory_data();
 
@@ -3616,7 +3619,7 @@ void tst_QLandmarkManager::filterLandmarksName_data() {
 }
 #endif
 
-#ifndef Q_OS_SYMBIAN
+#ifdef FILTER_PROXIMITY
 void tst_QLandmarkManager::filterLandmarksProximity() {
     QFETCH(QString, type);
     QList<QGeoCoordinate> greenwhichFilterCoords;
@@ -3729,6 +3732,7 @@ void tst_QLandmarkManager::filterLandmarksProximity() {
 
 
             if (i ==2 || i ==3) { //we're in the testing the north and south poles which is invalid
+                //TODO: Symbian async fetch request does not finish if argument is invalid
                 QVERIFY(doFetch(type, filter,&lms, QLandmarkManager::BadArgumentError));
                 continue;
             } else {
@@ -3820,8 +3824,9 @@ void tst_QLandmarkManager::filterLandmarksProximityOrder()
 
     qreal radius = QGeoCoordinate(20,20).distanceTo(QGeoCoordinate(20,50));
     proximityFilter.setRadius(radius);
-    QVERIFY(doFetch(type, proximityFilter,&lms,QLandmarkManager::NoError));
+    //TODO: Symbian proximity filter not maching landmarks which exactly lie on the edge of the radius
 
+    QVERIFY(doFetch(type, proximityFilter,&lms,QLandmarkManager::NoError));
     QCOMPARE(lms.count(),4);
     QCOMPARE(lms.at(0), lm1);
     QCOMPARE(lms.at(1), lm3);
@@ -3849,6 +3854,7 @@ void tst_QLandmarkManager::filterLandmarksProximityOrder()
     //try a proximity filter with invalid center;
     proximityFilter.setCenter(QGeoCoordinate());
     proximityFilter.setRadius(5000);
+    //TODO: Symbian async request does not finish if argument is invalid
     QVERIFY(doFetch(type, proximityFilter,&lms,QLandmarkManager::BadArgumentError));
     QCOMPARE(lms.count(), 0);
 
@@ -3889,7 +3895,9 @@ void tst_QLandmarkManager::filterLandmarksProximityOrder_data() {
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
+#endif
 
+#ifndef Q_OS_SYMBIAN
 void tst_QLandmarkManager::filterLandmarksCategory() {
     QFETCH(QString, type);
     QLandmarkCategory cat1;
