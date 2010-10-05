@@ -811,9 +811,14 @@ CBufSeg* CPplContactItemManager::DetailsListL(const TDesC& aSearchQuery) const
     TInt columnCount = selectStatement.ColumnCount();
     while ((err = selectStatement.Next()) == KSqlAtRow)
         {
-        stream.WriteInt32L(selectStatement.ColumnInt(0));
-		for (TInt i = 1; i < columnCount; ++i)
-	        stream << selectStatement.ColumnTextL(i);
+        int contact_id = selectStatement.ColumnInt(0);
+        if (contact_id != 0)
+            {
+            //include only user contacts into search results (template contact is excluded)
+            stream.WriteInt32L(contact_id);
+            for (TInt i = 1; i < columnCount; ++i)
+                stream << selectStatement.ColumnTextL(i);
+            }
         }
     stream.WriteInt32L(0);
     stream.Close();

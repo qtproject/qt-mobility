@@ -44,27 +44,45 @@
 #include "s60cameracontrol.h"
 #include "s60videocapturesession.h"
 
+S60MediaRecorderControl::S60MediaRecorderControl(QObject *parent) :
+    QMediaRecorderControl(parent)
+{
+}
+
 S60MediaRecorderControl::S60MediaRecorderControl(S60VideoCaptureSession *session, QObject *parent) :
     QMediaRecorderControl(parent),
-    m_state(QMediaRecorder::StoppedState) // Default state
+    m_state(QMediaRecorder::StoppedState) // Default RecorderState
 {
-    m_session = session;
+    if (session)
+        m_session = session;
+    else
+        Q_ASSERT(true);
+    // From now on it is safe to assume session exists
 
+    // Check parent is of proper type (QCameraService)
     if (qstrcmp(parent->metaObject()->className(), "S60CameraService") == 0) {
         m_service = qobject_cast<S60CameraService*>(parent);
+    } else {
+        m_session->setError(KErrGeneral, QString("Unexpected camera error."));
     }
 
+    // Request handle to QCameraControl
     if (m_service)
         m_cameraControl = qobject_cast<S60CameraControl *>(m_service->requestControl(QCameraControl_iid));
 
+    // Connect signals
     connect(m_session, SIGNAL(stateChanged(S60VideoCaptureSession::TVideoCaptureState)),
         this, SLOT(updateState(S60VideoCaptureSession::TVideoCaptureState)));
     connect(m_session, SIGNAL(positionChanged(qint64)), this, SIGNAL(durationChanged(qint64)));
+    connect(m_session, SIGNAL(mutedChanged(bool)), this, SIGNAL(mutedChanged(bool)));
     connect(m_session, SIGNAL(error(int,const QString &)), this, SIGNAL(error(int,const QString &)));
 }
 
 S60MediaRecorderControl::~S60MediaRecorderControl()
 {
+    // Release requested control
+    if (m_cameraControl)
+        m_service->releaseControl(m_cameraControl);
 }
 
 QUrl S60MediaRecorderControl::outputLocation() const
@@ -78,6 +96,7 @@ bool S60MediaRecorderControl::setOutputLocation(const QUrl& sink)
     if (m_state == QMediaRecorder::StoppedState)
         return m_session->setOutputLocation(sink);
 
+    // Do not signal error, but notify that setting was not effective
     return false;
 }
 
@@ -98,6 +117,7 @@ QMediaRecorder::State S60MediaRecorderControl::convertInternalStateToQtState(S60
             state = QMediaRecorder::StoppedState;
             break;
     }
+
     return state;
 }
 
@@ -124,7 +144,8 @@ qint64 S60MediaRecorderControl::duration() const
 /*
 This method is called after encoder configuration is done.
 Encoder can load necessary resources at this point,
-to reduce delay before recording is started.
+to reduce delay before recording is started. Calling this method reduces the
+latency when calling record() to start video recording.
 */
 void S60MediaRecorderControl::applySettings()
 {
@@ -138,7 +159,7 @@ void S60MediaRecorderControl::record()
     }
 
     if (m_cameraControl && m_cameraControl->captureMode() != QCamera::CaptureVideo) {
-        emit error(QCamera::CameraError, tr("Camera is not started for video capture."));
+        emit error(QCamera::CameraError, tr("Video capture mode is not selected."));
         return;
     }
 
@@ -148,6 +169,7 @@ void S60MediaRecorderControl::record()
 void S60MediaRecorderControl::pause()
 {
     if (m_state != QMediaRecorder::RecordingState) {
+        // Discard
         return;
     }
 
@@ -157,7 +179,7 @@ void S60MediaRecorderControl::pause()
 void S60MediaRecorderControl::stop()
 {
     if (m_state == QMediaRecorder::StoppedState) {
-        // Ignore stop
+        // Ignore
         return;
     }
 
@@ -171,7 +193,7 @@ bool S60MediaRecorderControl::isMuted() const
 
 void S60MediaRecorderControl::setMuted(bool muted)
 {
-        m_session->setMuted(muted);
+    m_session->setMuted(muted);
 }
 
 // End of file

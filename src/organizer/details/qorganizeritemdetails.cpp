@@ -283,7 +283,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldOriginalDate, "Origi
  */
 
 /*!
-   \fn QOrganizerItemInstanceOrigin::setParentLocalId(QOrganizerItemLocalId parentId)
+   \fn QOrganizerItemInstanceOrigin::setParentLocalId(const QOrganizerItemLocalId& parentId)
     Sets the parent id of this instance origin item to \a parentId.
  */
 

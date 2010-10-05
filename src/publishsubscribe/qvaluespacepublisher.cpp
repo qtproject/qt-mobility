@@ -144,7 +144,7 @@ QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path,
     path = qAddSimulatorPrefix(path);
 #endif
 
-
+    // check filter for mutually exclusive options
     if ((filter & QValueSpace::PermanentLayer &&
          filter & QValueSpace::TransientLayer) ||
         (filter & QValueSpace::WritableLayer &&
@@ -155,8 +155,7 @@ QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path,
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
     for (int ii = 0; ii < layers.count(); ++ii) {
-        if (filter == QValueSpace::UnspecifiedLayer ||
-            layers.at(ii)->layerOptions() & filter) {
+        if ((layers.at(ii)->layerOptions() & filter) == filter) {
             QAbstractValueSpaceLayer::Handle h =
                     layers.at(ii)->item(QAbstractValueSpaceLayer::InvalidHandle, path);
 

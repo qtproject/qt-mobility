@@ -4,7 +4,6 @@ TARGET=tst_qversitreader
 CONFIG+=testcase
 
 include(../../../common.pri)
-DEFINES += QT_ASCII_CAST_WARNINGS
 
 DEPENDPATH += .
 INCLUDEPATH += \

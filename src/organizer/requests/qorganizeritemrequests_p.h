@@ -272,6 +272,7 @@ public:
     QList<QOrganizerCollectionLocalId> m_collectionIds;
 
     QList<QOrganizerCollection> m_collections;
+    QMap<int, QOrganizerItemManager::Error> m_errors;
 };
 
 class QOrganizerCollectionLocalIdFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate

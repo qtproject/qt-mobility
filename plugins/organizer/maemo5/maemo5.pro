@@ -8,6 +8,7 @@ MOBILITY = organizer
 
 CONFIG += link_pkgconfig
 PKGCONFIG += calendar-backend
+PKGCONFIG += alarm
 
 QT += sql
 

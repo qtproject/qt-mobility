@@ -883,7 +883,6 @@ void TestFiltering::testContactDetailFilter_9()
     QVERIFY(expectedCount == seachedcontactcount);
 }
 
-
 void TestFiltering::testRelationshipFilter()
 {
     // create a group contact
@@ -1606,6 +1605,40 @@ void TestFiltering::testCreateSelectQuery()
     QVERIFY(error == QContactManager::NotSupportedError);
     
     }
+
+void TestFiltering::testFavoriteDetailFilter()
+    {
+    QContactManager::Error err;
+    QContactFetchHint hint;
+    //save one contact with favorite detail
+    QContact c;
+    c.setType(QContactType::TypeContact);
+    QContactName name;
+    name.setFirstName("firstname");
+    c.saveDetail(&name);
+    QContactFavorite fav;
+    fav.setFavorite(true);
+    fav.setIndex(100);
+    c.saveDetail(&fav);
+    QVERIFY(m_engine->saveContact(&c, &err));
+    QVERIFY(err == QContactManager::NoError);
+    
+    // find all favorite contacts
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactFavorite::DefinitionName, QContactFavorite::FieldFavorite); 
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(filter, QList<QContactSortOrder>(), &err);
+    QVERIFY(err == QContactManager::NoError);
+    int ccc = cnt_ids.count();
+    QVERIFY(cnt_ids.count() == 1);
+    
+    //fetch found contact and check favorite detail
+    QContact savedContact = m_engine->contact(cnt_ids.at(0), hint, &err);
+    QVERIFY(err == QContactManager::NoError);
+    QContactFavorite savedFav = savedContact.detail<QContactFavorite>();
+    QVERIFY(savedFav.isFavorite());
+    QVERIFY(savedFav.index() == 100); 
+    }
+
 //QTEST_MAIN(TestFiltering);
 /*int main(int argc, char *argv[]) 
 {

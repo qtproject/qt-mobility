@@ -42,7 +42,7 @@
 #include "GenTemplateInstance.h"
 #include "Overview.h"
 
-#include <Control.h>
+#include <CppControl.h>
 #include <Scope.h>
 #include <Names.h>
 #include <Symbols.h>

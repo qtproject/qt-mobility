@@ -53,6 +53,7 @@
 #define STRING_r_cntui_new_field_defns13 "Sync target" 
 #define STRING_r_cntui_new_field_defns14 "Gender" 
 #define STRING_r_cntui_new_field_defns15 "Anniversary event"
+#define STRING_r_cntui_new_field_defns16 "Favorite"
 
 //d:Label text for "first name" memory entry item
 //l:list_single_graphic_pane_t1_cp2
