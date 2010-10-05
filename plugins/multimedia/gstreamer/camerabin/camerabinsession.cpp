@@ -765,7 +765,7 @@ void CameraBinSession::busMessage(const QGstreamerMessage &message)
         if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_WARNING) {
             GError *err;
             gchar *debug;
-            gst_message_parse_error (gm, &err, &debug);
+            gst_message_parse_warning (gm, &err, &debug);
             qWarning() << "CameraBin warning:" << QString::fromUtf8(err->message);
             g_error_free (err);
             g_free (debug);
