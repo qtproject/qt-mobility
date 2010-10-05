@@ -223,12 +223,18 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
         case Qt::Key_Minus:
+#ifdef Q_OS_SYMBIAN
+        case Qt::Key_VolumeDown:
+#endif
             if (zoomLevel() > minimumZoomLevel()) {
                 setZoomLevel(zoomLevel() - 1);
             }
             break;
 
         case Qt::Key_Plus:
+#ifdef Q_OS_SYMBIAN
+        case Qt::Key_VolumeUp:
+#endif
             if (zoomLevel() < maximumZoomLevel()) {
                 setZoomLevel(zoomLevel() + 1);
             }

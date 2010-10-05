@@ -64,14 +64,14 @@ QTM_BEGIN_NAMESPACE
     Constructs a new pixmap object.
 */
 QGeoMapPixmapObject::QGeoMapPixmapObject()
-        : d_ptr(new QGeoMapPixmapObjectPrivate()) {}
+    : d_ptr(new QGeoMapPixmapObjectPrivate()) {}
 
 /*!
     Constructs a new pixmap object which will draw the pixmap \a pixmap at an
     offset of \a offset pixels from the coordinate \a coordinate.
 */
 QGeoMapPixmapObject::QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset, const QPixmap &pixmap)
-        : d_ptr(new QGeoMapPixmapObjectPrivate())
+    : d_ptr(new QGeoMapPixmapObjectPrivate())
 {
     d_ptr->coordinate = coordinate;
     d_ptr->pixmap = pixmap;

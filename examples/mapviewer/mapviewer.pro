@@ -1,4 +1,4 @@
-QT += xml network
+QT += xml network svg
 TARGET = MapViewer
 TEMPLATE = app 
 INCLUDEPATH += ../../src/global \

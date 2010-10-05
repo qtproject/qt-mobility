@@ -45,6 +45,7 @@
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
 #include "qgeomapobject.h"
+#include "qgeomapoverlay.h"
 
 #include "qgeoserviceprovider.h"
 #include "qgeomappingmanager.h"
@@ -128,8 +129,8 @@ The map data will come from a combination of offline and online sources.
 // Temporary constructor, for use by QML bindings until we come up
 // with the right QML / service provider mapping
 QGraphicsGeoMap::QGraphicsGeoMap(QGraphicsItem *parent)
-        : QGraphicsWidget(parent),
-        d_ptr(new QGraphicsGeoMapPrivate())
+    : QGraphicsWidget(parent),
+      d_ptr(new QGraphicsGeoMapPrivate())
 {
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
@@ -162,8 +163,8 @@ QGraphicsGeoMap::QGraphicsGeoMap(QGraphicsItem *parent)
     \endcode
 */
 QGraphicsGeoMap::QGraphicsGeoMap(QGeoMappingManager *manager, QGraphicsItem *parent)
-        : QGraphicsWidget(parent),
-        d_ptr(new QGraphicsGeoMapPrivate(manager))
+    : QGraphicsWidget(parent),
+      d_ptr(new QGraphicsGeoMapPrivate(manager))
 {
     //d_ptr->mapData = d_ptr->manager->createMapData(this);
     //setMapType(QGraphicsGeoMap::StreetMap);
@@ -206,9 +207,9 @@ void QGraphicsGeoMap::setMappingManager(QGeoMappingManager *manager)
     d_ptr->mapData->setWindowSize(QSizeF(300, 300));
 
     connect(d_ptr->mapData,
-           SIGNAL(zoomLevelChanged(qreal)),
-           this,
-           SIGNAL(zoomLevelChanged(qreal)));
+            SIGNAL(zoomLevelChanged(qreal)),
+            this,
+            SIGNAL(zoomLevelChanged(qreal)));
     connect(d_ptr->mapData,
             SIGNAL(mapTypeChanged(QGraphicsGeoMap::MapType)),
             this,
@@ -217,6 +218,10 @@ void QGraphicsGeoMap::setMappingManager(QGeoMappingManager *manager)
             SIGNAL(centerChanged(QGeoCoordinate)),
             this,
             SIGNAL(centerChanged(QGeoCoordinate)));
+    connect(d_ptr->mapData,
+            SIGNAL(connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode)),
+            this,
+            SIGNAL(connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode)));
 }
 
 /*!
@@ -482,10 +487,66 @@ void QGraphicsGeoMap::clearMapObjects()
 }
 
 /*!
-    Returns a bounding box corresponding to the physical area displayed 
+    Returns the map overlays associated with this map.
+*/
+QList<QGeoMapOverlay*> QGraphicsGeoMap::mapOverlays() const
+{
+    if (!d_ptr->mapData)
+        return QList<QGeoMapOverlay*>();
+
+    return d_ptr->mapData->mapOverlays();
+}
+
+/*!
+    Adds \a overlay to the list of map overlays associated with this map.
+
+    The overlays will be drawn in the order in which they were added.
+
+    The map will take ownership of \a overlay.
+*/
+void QGraphicsGeoMap::addMapOverlay(QGeoMapOverlay *overlay)
+{
+    if (!overlay || !d_ptr->mapData)
+        return;
+
+    d_ptr->mapData->addMapOverlay(overlay);
+
+    this->update();
+}
+
+/*!
+    Removes \a overlay from the list of map overlays associated with this map.
+
+    The map will release ownership of \a overlay.
+*/
+void QGraphicsGeoMap::removeMapOverlay(QGeoMapOverlay *overlay)
+{
+    if (!overlay || !d_ptr->mapData)
+        return;
+
+    d_ptr->mapData->removeMapOverlay(overlay);
+
+    this->update();
+}
+
+/*!
+    Clears the map overlays associated with this map.
+
+    The map overlays will be deleted.
+*/
+void QGraphicsGeoMap::clearMapOverlays()
+{
+    if (!d_ptr->mapData)
+        return;
+
+    d_ptr->mapData->clearMapOverlays();
+}
+
+/*!
+    Returns a bounding box corresponding to the physical area displayed
     in the viewport of the map.
 
-    The bounding box which is returned is defined by the upper left and 
+    The bounding box which is returned is defined by the upper left and
     lower right corners of the visible area of the map.
 */
 QGeoBoundingBox QGraphicsGeoMap::viewport() const
@@ -499,11 +560,11 @@ QGeoBoundingBox QGraphicsGeoMap::viewport() const
 /*!
     Attempts to fit the bounding box \a bounds into the viewport of the map.
 
-    This method will change the zoom level to the maximum zoom level such 
+    This method will change the zoom level to the maximum zoom level such
     that all of \a bounds is visible within the resulting viewport.
 
-    If \a preserveViewportCenter is false the map will be centered on the 
-    bounding box \a bounds before the zoom level is changed, otherwise the 
+    If \a preserveViewportCenter is false the map will be centered on the
+    bounding box \a bounds before the zoom level is changed, otherwise the
     center of the map will not be changed.
 */
 void QGraphicsGeoMap::fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
@@ -540,7 +601,7 @@ QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInScreenRect(const QRectF &scre
 }
 
 /*!
-    Returns the list of visible map objects manager by this widget which 
+    Returns the list of visible map objects manager by this widget which
     are displayed at least partially within the viewport of the map.
 */
 QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInViewport() const
@@ -604,10 +665,10 @@ Indicates that the type of the map has been changed.
 *******************************************************************************/
 
 QGraphicsGeoMapPrivate::QGraphicsGeoMapPrivate(QGeoMappingManager *manager)
-        : serviceProvider(0),
-        manager(manager),
-        mapData(0),
-        panActive(false) {}
+    : serviceProvider(0),
+      manager(manager),
+      mapData(0),
+      panActive(false) {}
 
 QGraphicsGeoMapPrivate::~QGraphicsGeoMapPrivate()
 {
