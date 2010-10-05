@@ -126,7 +126,8 @@ public:
         return mData.constData() + mStart;
     }
     bool contains(const QByteArray& ba) const {
-        return mData.indexOf(ba, mStart) > 0;
+        int i = mData.indexOf(ba, mStart);
+        return i > 0 && i <= mEnd - ba.length();
     }
     bool endsWith(const QByteArray& ba) const {
         // Loop backwards from ba and from mData (starting from index mEnd)
