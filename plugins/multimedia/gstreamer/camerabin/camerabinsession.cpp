@@ -701,7 +701,10 @@ bool CameraBinSession::processSyncMessage(const QGstreamerMessage &message)
                         }
                         gst_caps_unref(caps);
 
-                        emit imageExposed(m_requestId);
+                        static int exposedSignalIndex = metaObject()->indexOfSignal("imageExposed(int)");
+                        metaObject()->method(exposedSignalIndex).invoke(this,
+                                                                 Qt::QueuedConnection,
+                                                                 Q_ARG(int,m_requestId));
 
                         static int signalIndex = metaObject()->indexOfSignal("imageCaptured(int,QImage)");
                         metaObject()->method(signalIndex).invoke(this,
