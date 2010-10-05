@@ -307,11 +307,11 @@ void RoutePresenter::showModes(QTreeWidgetItem* top,
     featuresItem->setText(0, "features");
 
     QList<QGeoRouteRequest::FeatureType> featureTypeList
-        = request.featureTypes();
+    = request.featureTypes();
 
     for (int i = 0; i < featureTypeList.size(); ++i) {
         QGeoRouteRequest::FeatureWeight weight
-            = request.featureWeight(featureTypeList.at(i));
+        = request.featureWeight(featureTypeList.at(i));
 
         if (weight == QGeoRouteRequest::NeutralFeatureWeight)
             continue;

@@ -207,6 +207,11 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     storage until the appropriate synchronization method is called
     on the QLandmarkManager(e.g. \l {QLandmarkManager::saveLandmark()} {saveLandmark()},
     \l {QLandmarkManager::removeLandmark()} {removeLandmark()}).
+
+
+    The following are restrictions of landmark details for the symbian platform:
+
+
 */
 
 /*!

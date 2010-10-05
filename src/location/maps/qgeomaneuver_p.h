@@ -70,6 +70,7 @@ public:
 
     bool operator== (const QGeoManeuverPrivate &other) const;
 
+    bool valid;
     QString id;
     QGeoCoordinate position;
     QString text;
