@@ -373,10 +373,9 @@ signals:
 private slots:
     void _saveRecurrenceRules()
     {
-
         QVariantList saveList;
-        for (int i=0; i < m_recurrenceRules.count(); i++) {
-            saveList << m_recurrenceRules.at(i)->rule().variantValues();
+        foreach (const QDeclarativeOrganizerItemRecurrenceRule* r, m_recurrenceRules) {
+            saveList << QVariant::fromValue(r->rule());
         }
         m_detail.setValue(QOrganizerItemRecurrence::FieldRecurrenceRules, saveList);
         emit valueChanged();
@@ -385,8 +384,8 @@ private slots:
     void _saveExceptionRules()
     {
         QVariantList saveList;
-        for (int i=0; i < m_exceptionRules.count(); i++) {
-            saveList << m_exceptionRules.at(i)->rule().variantValues();
+        foreach (const QDeclarativeOrganizerItemRecurrenceRule* r, m_exceptionRules) {
+            saveList << QVariant::fromValue(r->rule());
         }
         m_detail.setValue(QOrganizerItemRecurrence::FieldExceptionRules, saveList);
         emit valueChanged();

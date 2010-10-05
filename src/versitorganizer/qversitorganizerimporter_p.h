@@ -180,14 +180,14 @@ private:
     bool parseRecurRule(const QString& str, QOrganizerItemRecurrenceRule* rule) const;
     void parseRecurFragment(const QString& key, const QString& value,
                             QOrganizerItemRecurrenceRule* rule) const;
-    QList<int> parseIntList(const QString& str, int min, int max) const;
+    QSet<int> parseInts(const QString& str, int min, int max) const;
     int parseDayOfWeek(const QString& str) const;
 
     bool createRecurrenceDates(
             const QVersitProperty& property,
             QOrganizerItem* item,
             QList<QOrganizerItemDetail>* updatedDetails);
-    bool parseDateList(const QString& str, QList<QDate>* dates) const;
+    bool parseDates(const QString& str, QSet<QDate>* dates) const;
     QDate parseDate(QString str) const;
 
     bool createStatus(

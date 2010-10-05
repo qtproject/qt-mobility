@@ -519,7 +519,7 @@ void QVersitOrganizerImporterPrivate::parseRecurFragment(const QString& key, con
         bool ok;
         int count = value.toInt(&ok);
         if (ok && count >= 0) {
-            rule->setCount(count);
+            rule->setLimit(count);
         }
     } else if (key == QLatin1String("UNTIL")) {
         QDate date;
@@ -530,9 +530,9 @@ void QVersitOrganizerImporterPrivate::parseRecurFragment(const QString& key, con
             date = QDate::fromString(value, QLatin1String("yyyyMMdd"));
         }
         if (date.isValid())
-            rule->setEndDate(date);
+            rule->setLimit(date);
     } else if (key == QLatin1String("BYDAY")) {
-        QList<Qt::DayOfWeek> days;
+        QSet<Qt::DayOfWeek> days;
         QStringList dayParts = value.split(QLatin1Char(','));
         foreach (QString dayStr, dayParts) {
             if (dayStr.length() < 2) {
@@ -547,7 +547,7 @@ void QVersitOrganizerImporterPrivate::parseRecurFragment(const QString& key, con
                 int pos = posStr.toInt(&ok);
                 if (!ok)
                     continue;
-                rule->setPositions(QList<int>() << pos);
+                rule->setPositions(QSet<int>() << pos);
             }
             int day = parseDayOfWeek(dayStr);
             if (day != -1) {
@@ -558,17 +558,17 @@ void QVersitOrganizerImporterPrivate::parseRecurFragment(const QString& key, con
             rule->setDaysOfWeek(days);
         }
     } else if (key == QLatin1String("BYMONTHDAY")) {
-        QList<int> days = parseIntList(value, -31, 31);
+        QSet<int> days = parseInts(value, -31, 31);
         if (!days.isEmpty()) {
             rule->setDaysOfMonth(days);
         }
     } else if (key == QLatin1String("BYWEEKNO")) {
-        QList<int> weeks = parseIntList(value, -53, 53);
+        QSet<int> weeks = parseInts(value, -53, 53);
         if (!weeks.isEmpty()) {
             rule->setWeeksOfYear(weeks);
         }
     } else if (key == QLatin1String("BYMONTH")) {
-        QList<QOrganizerItemRecurrenceRule::Month> months;
+        QSet<QOrganizerItemRecurrenceRule::Month> months;
         QStringList monthParts = value.split(QLatin1Char(','));
         foreach (const QString& monthParts, monthParts) {
             bool ok;
@@ -578,22 +578,22 @@ void QVersitOrganizerImporterPrivate::parseRecurFragment(const QString& key, con
             }
         }
         if (!months.isEmpty()) {
-            rule->setMonths(months);
+            rule->setMonthsOfYear(months);
         }
     } else if (key == QLatin1String("BYYEARDAY")) {
-        QList<int> days = parseIntList(value, -366, 366);
+        QSet<int> days = parseInts(value, -366, 366);
         if (!days.isEmpty()) {
             rule->setDaysOfYear(days);
         }
     } else if (key == QLatin1String("BYSETPOS")) {
-        QList<int> poss = parseIntList(value, -366, 366);
+        QSet<int> poss = parseInts(value, -366, 366);
         if (!poss.isEmpty()) {
             rule->setPositions(poss);
         }
     } else if (key == QLatin1String("WKST")) {
         int day = parseDayOfWeek(value);
         if (day != -1) {
-            rule->setWeekStart((Qt::DayOfWeek)day);
+            rule->setFirstDayOfWeek((Qt::DayOfWeek)day);
         }
     }
 }
@@ -602,9 +602,9 @@ void QVersitOrganizerImporterPrivate::parseRecurFragment(const QString& key, con
  * Parses and returns a comma-separated list of integers.  Only non-zero values between \a min and
  * \a max (inclusive) are added
  */
-QList<int> QVersitOrganizerImporterPrivate::parseIntList(const QString& str, int min, int max) const
+QSet<int> QVersitOrganizerImporterPrivate::parseInts(const QString& str, int min, int max) const
 {
-    QList<int> values;
+    QSet<int> values;
     QStringList parts = str.split(QLatin1Char(','));
     foreach (const QString& part, parts) {
         bool ok;
@@ -652,14 +652,14 @@ bool QVersitOrganizerImporterPrivate::createRecurrenceDates(
 {
     if (property.value().isEmpty())
         return false;
-    QList<QDate> dates;
-    if (!parseDateList(property.value(), &dates))
+    QSet<QDate> dates;
+    if (!parseDates(property.value(), &dates))
         return false;
     QOrganizerItemRecurrence detail(item->detail<QOrganizerItemRecurrence>());
     if (property.name() == QLatin1String("RDATE")) {
-        detail.setRecurrenceDates(detail.recurrenceDates() << dates);
+        detail.setRecurrenceDates(detail.recurrenceDates() + dates);
     } else if (property.name() == QLatin1String("EXDATE")) {
-        detail.setExceptionDates(detail.exceptionDates() << dates);
+        detail.setExceptionDates(detail.exceptionDates() + dates);
     } 
     updatedDetails->append(detail);
     return true;
@@ -668,7 +668,7 @@ bool QVersitOrganizerImporterPrivate::createRecurrenceDates(
 /*!
  * Parses a string like "19970304,19970504,19970704" into a list of QDates
  */
-bool QVersitOrganizerImporterPrivate::parseDateList(const QString& str, QList<QDate>* dates) const
+bool QVersitOrganizerImporterPrivate::parseDates(const QString& str, QSet<QDate>* dates) const
 {
     QStringList parts = str.split(QLatin1Char(','));
     if (parts.size() == 0)
@@ -942,8 +942,8 @@ TimeZonePhase QVersitOrganizerImporterPrivate::importTimeZonePhase(const QVersit
                 phase.setRecurrenceRule(rrule);
             }
         } else if (property.name() == QLatin1String("RDATE")) {
-            QList<QDate> dates;
-            if (parseDateList(property.value(), &dates)) {
+            QSet<QDate> dates;
+            if (parseDates(property.value(), &dates)) {
                 phase.setRecurrenceDates(dates);
             }
         }

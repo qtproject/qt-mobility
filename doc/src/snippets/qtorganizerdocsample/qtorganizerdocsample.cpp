@@ -75,7 +75,7 @@ void snippets()
     QDate secondOccDate = startDateTime.date().addDays(14);
     QDate thirdOccDate = startDateTime.date().addDays(21);
     QDateTime endDateTime = startDateTime.addDays(28);
-    QList<QDate> rDates;
+    QSet<QDate> rDates;
     rDates << firstOccDate << secondOccDate << thirdOccDate;
 
     //! [Creating a recurrent event]

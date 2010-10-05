@@ -607,42 +607,110 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "Excepti
    \fn QOrganizerItemRecurrence::recurrenceDates() const
    Returns a list of recurrence dates.
  */
+QSet<QDate> QOrganizerItemRecurrence::recurrenceDates() const
+{
+    QSet<QDate> retn;
+    QVariantList loadList = variantValue(FieldRecurrenceDates).toList();
+    for (int i = 0; i < loadList.count(); i++) {
+        retn << loadList.at(i).toDate();
+    }
+    return retn;
+}
 
 /*!
    \fn QOrganizerItemRecurrence::setRecurrenceDates(const QList<QDate>& rdates)
    Sets a list of recurrence dates to \a rdates.
  */
+void QOrganizerItemRecurrence::setRecurrenceDates(const QSet<QDate>& rdates)
+{
+    QVariantList saveList;
+    foreach(const QDate& date, rdates) {
+        saveList << date;
+    }
+
+
+    setValue(FieldRecurrenceDates, saveList);
+}
 
 /*!
    \fn QOrganizerItemRecurrence::exceptionRules() const
    Returns a list of exception rules.
  */
-
+QSet<QOrganizerItemRecurrenceRule> QOrganizerItemRecurrence::exceptionRules() const
+{
+    QSet<QOrganizerItemRecurrenceRule> retn;
+    QVariantList loadList = variantValue(FieldExceptionRules).toList();
+    for(int i = 0; i < loadList.count(); i++) {
+        retn << loadList.at(i).value<QOrganizerItemRecurrenceRule>();
+    }
+    return retn;
+}
 /*!
    \fn QOrganizerItemRecurrence::setExceptionRules(const QList<QOrganizerItemRecurrenceRule>& xrules)
    Sets a list of exception rules to \a xrules.
  */
+void QOrganizerItemRecurrence::setExceptionRules(const QSet<QOrganizerItemRecurrenceRule>& xrules)
+{
+    QVariantList saveList;
+    foreach(const QOrganizerItemRecurrenceRule& rule, xrules) {
+        saveList << QVariant::fromValue(rule);
+    }
 
+    setValue(FieldExceptionRules, saveList);
+}
 /*!
    \fn QOrganizerItemRecurrence::recurrenceRules() const
    Returns a list of recurrence rules.
  */
+QSet<QOrganizerItemRecurrenceRule> QOrganizerItemRecurrence::recurrenceRules() const
+{
+    QSet<QOrganizerItemRecurrenceRule> retn;
+    QVariantList loadList = variantValue(FieldRecurrenceRules).toList();
+    for (int i = 0; i < loadList.count(); i++) {
+        retn << loadList.at(i).value<QOrganizerItemRecurrenceRule>();
+    }
+    return retn;
+}
+
 
 /*!
    \fn QOrganizerItemRecurrence::setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules)
    Sets a list of recurrence rules to \a rrules.
  */
-
+void QOrganizerItemRecurrence::setRecurrenceRules(const QSet<QOrganizerItemRecurrenceRule>& rrules)
+{
+    QVariantList saveList;
+    foreach(const QOrganizerItemRecurrenceRule& rule, rrules) {
+        saveList << QVariant::fromValue(rule);
+    }
+    setValue(FieldRecurrenceRules, saveList);
+}
 /*!
    \fn QOrganizerItemRecurrence::exceptionDates() const
    Returns a list of exception dates.
  */
+QSet<QDate> QOrganizerItemRecurrence::exceptionDates() const
+{
+    QSet<QDate> retn;
+    QVariantList loadList = variantValue(FieldExceptionDates).toList();
+    for( int i = 0; i < loadList.count(); i++) {
+        retn << loadList.at(i).toDate();
+    }
+    return retn;
+}
 
 /*!
    \fn QOrganizerItemRecurrence::setExceptionDates(const QList<QDate>& exdates)
    Sets a list of exception dates to \a exdates.
  */
-
+void QOrganizerItemRecurrence::setExceptionDates(const QSet<QDate>& xdates)
+{
+    QVariantList saveList;
+    foreach(const QDate& date, xdates) {
+        saveList << QVariant::fromValue(date);
+    }
+    setValue(FieldExceptionDates, saveList);
+}
 
 
 /* ==================== QOrganizerItemReminder ======================= */

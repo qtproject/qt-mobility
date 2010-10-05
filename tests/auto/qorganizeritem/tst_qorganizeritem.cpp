@@ -805,27 +805,27 @@ void tst_QOrganizerItem::event()
     testEvent.setPriority(QOrganizerItemPriority::VeryLowPriority);
     QCOMPARE(testEvent.priority(), QOrganizerItemPriority::VeryLowPriority);
 
-    QList<QDate> rdates;
+    QSet<QDate> rdates;
     rdates << QDate::currentDate() << QDate::currentDate().addDays(3) << QDate::currentDate().addDays(8);
     testEvent.setRecurrenceDates(rdates);
     QCOMPARE(testEvent.recurrenceDates(), rdates);
 
-    QList<QDate> exdates;
+    QSet<QDate> exdates;
     exdates << QDate::currentDate().addDays(3);
     testEvent.setExceptionDates(exdates);
     QCOMPARE(testEvent.exceptionDates(), exdates);
 
-    QList<QOrganizerItemRecurrenceRule> rrules;
+    QSet<QOrganizerItemRecurrenceRule> rrules;
     QOrganizerItemRecurrenceRule rrule;
-    rrule.setCount(2);
+    rrule.setLimit(2);
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
     rrules << rrule;
     testEvent.setRecurrenceRules(rrules);
     //QVERIFY(testEvent.recurrenceRules() == rrules); // XXX TODO: implement operator == for QOIRR.
 
-    QList<QOrganizerItemRecurrenceRule> exrules;
+    QSet<QOrganizerItemRecurrenceRule> exrules;
     QOrganizerItemRecurrenceRule exrule;
-    exrule.setCount(1);
+    exrule.setLimit(1);
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
     testEvent.setExceptionRules(exrules);
     //QVERIFY(testEvent.exceptionRules() == exrules); // XXX TODO: implement operator == for QOIRR.
@@ -856,27 +856,27 @@ void tst_QOrganizerItem::todo()
     testTodo.setPriority(QOrganizerItemPriority::VeryLowPriority);
     QCOMPARE(testTodo.priority(), QOrganizerItemPriority::VeryLowPriority);
 
-    QList<QDate> rdates;
+    QSet<QDate> rdates;
     rdates << QDate::currentDate() << QDate::currentDate().addDays(3) << QDate::currentDate().addDays(8);
     testTodo.setRecurrenceDates(rdates);
     QCOMPARE(testTodo.recurrenceDates(), rdates);
 
-    QList<QDate> exdates;
+    QSet<QDate> exdates;
     exdates << QDate::currentDate().addDays(3);
     testTodo.setExceptionDates(exdates);
     QCOMPARE(testTodo.exceptionDates(), exdates);
 
-    QList<QOrganizerItemRecurrenceRule> rrules;
+    QSet<QOrganizerItemRecurrenceRule> rrules;
     QOrganizerItemRecurrenceRule rrule;
-    rrule.setCount(2);
+    rrule.setLimit(2);
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
     rrules << rrule;
     testTodo.setRecurrenceRules(rrules);
     //QVERIFY(testTodo.recurrenceRules() == rrules); // XXX TODO: implement operator == for QOIRR.
 
-    QList<QOrganizerItemRecurrenceRule> exrules;
+    QSet<QOrganizerItemRecurrenceRule> exrules;
     QOrganizerItemRecurrenceRule exrule;
-    exrule.setCount(1);
+    exrule.setLimit(1);
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
     testTodo.setExceptionRules(exrules);
     //QVERIFY(testTodo.exceptionRules() == exrules); // XXX TODO: implement operator == for QOIRR.

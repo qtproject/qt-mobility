@@ -119,7 +119,6 @@ class UnsupportedMetatype {
 Q_DECLARE_METATYPE(UnsupportedMetatype)
 Q_DECLARE_METATYPE(QOrganizerItem)
 Q_DECLARE_METATYPE(QOrganizerItemManager::Error)
-Q_DECLARE_METATYPE(QOrganizerItemRecurrenceRule)
 Q_DECLARE_METATYPE(QList<QDate>)
 
 class tst_QOrganizerItemManager : public QObject
@@ -879,8 +878,8 @@ void tst_QOrganizerItemManager::addExceptions()
     event.setEndDateTime(QDateTime(QDate(2010, 1, 1), QTime(12, 0, 0)));
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
-    rrule.setCount(3);
-    event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    rrule.setLimit(3);
+    event.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rrule);
     QVERIFY(cm->saveItem(&event));
     QVERIFY(!event.localId().isNull());
     event = cm->item(event.localId());
@@ -975,7 +974,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     christmas.setDisplayLabel(QLatin1String("Christmas"));
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-    christmas.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    christmas.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rrule);
     QVERIFY(cm->saveItem(&christmas));
     QVERIFY(!christmas.id().managerUri().isEmpty());
     QVERIFY(!christmas.id().localId().isNull());
@@ -985,7 +984,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     newYearsDay.setStartDateTime(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)));
     newYearsDay.setEndDateTime(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 0)));
     newYearsDay.setDisplayLabel(QLatin1String("New Years Day"));
-    newYearsDay.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    newYearsDay.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rrule);
     QVERIFY(cm->saveItem(&newYearsDay));
 
     QOrganizerTodo report;
@@ -1624,7 +1623,7 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
-            rrule.setEndDate(QDate(2010, 1, 22));
+            rrule.setLimit(QDate(2010, 1, 22));
             QTest::newRow(QString("mgr=%1, weekly recurrence").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2010, 1, 20)
@@ -1639,21 +1638,21 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
                 << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15));
 
             // Now let's fiddle with the recurrence end date and see what happens
-            rrule.setEndDate(QDate(2010, 1, 23));
+            rrule.setLimit(QDate(2010, 1, 23));
             QTest::newRow(QString("mgr=%1, weekly recurrence, end date observed (+1)").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2010, 2, 1)
                 // now stop on the 22nd
                 << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15) << QDate(2010, 1, 22));
 
-            rrule.setEndDate(QDate(2010, 1, 21));
+            rrule.setLimit(QDate(2010, 1, 21));
             QTest::newRow(QString("mgr=%1, weekly recurrence, end date observed (-1)").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2010, 2, 1)
                 << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15));
 
-            rrule.setEndDate(QDate());
-            rrule.setCount(2);
+            rrule.setLimit(QDate());
+            rrule.setLimit(2);
             QTest::newRow(QString("mgr=%1, weekly recurrence, count").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2010, 2, 1)
@@ -1663,7 +1662,7 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-            rrule.setEndDate(QDate(2010, 1, 5));
+            rrule.setLimit(QDate(2010, 1, 5));
             QTest::newRow(QString("mgr=%1, daily").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1680,9 +1679,9 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
-            rrule.setWeekStart(Qt::Monday);
-            rrule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Friday << Qt::Saturday << Qt::Sunday);
-            rrule.setEndDate(QDate(2010, 1, 27));
+            rrule.setFirstDayOfWeek(Qt::Monday);
+            rrule.setDaysOfWeek(QSet<Qt::DayOfWeek>() << Qt::Friday << Qt::Saturday << Qt::Sunday);
+            rrule.setLimit(QDate(2010, 1, 27));
             QTest::newRow(QString("mgr=%1, weekly, days of week").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1702,8 +1701,8 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
-            rrule.setDaysOfMonth(QList<int>() << 1 << 10);
-            rrule.setEndDate(QDate(2010, 4, 15));
+            rrule.setDaysOfMonth(QSet<int>() << 1 << 10);
+            rrule.setLimit(QDate(2010, 4, 15));
             QTest::newRow(QString("mgr=%1, monthly recurrence").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1723,8 +1722,8 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-            rrule.setDaysOfYear(QList<int>() << 1 << 32);
-            rrule.setEndDate(QDate(2012, 3, 15));
+            rrule.setDaysOfYear(QSet<int>() << 1 << 32);
+            rrule.setLimit(QDate(2012, 3, 15));
             QTest::newRow(QString("mgr=%1, yearly recurrence").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1732,7 +1731,7 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
                                    << QDate(2011, 1, 1) << QDate(2011, 2, 1)
                                    << QDate(2012, 1, 1) << QDate(2012, 2, 1));
 
-            rrule.setEndDate(QDate(2013, 3, 15));
+            rrule.setLimit(QDate(2013, 3, 15));
             rrule.setInterval(3);
             QTest::newRow(QString("mgr=%1, yearly recurrence, interval").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
@@ -1744,10 +1743,10 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-            rrule.setMonths(QList<QOrganizerItemRecurrenceRule::Month>()
+            rrule.setMonthsOfYear(QSet<QOrganizerItemRecurrenceRule::Month>()
                     << QOrganizerItemRecurrenceRule::January
                     << QOrganizerItemRecurrenceRule::March);
-            rrule.setEndDate(QDate(2011, 3, 15));
+            rrule.setLimit(QDate(2011, 3, 15));
             QTest::newRow(QString("mgr=%1, yearly recurrence, by month").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1759,9 +1758,9 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-            rrule.setWeeksOfYear(QList<int>() << 1 << 4);
-            rrule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Thursday);
-            rrule.setEndDate(QDate(2011, 3, 15));
+            rrule.setWeeksOfYear(QSet<int>() << 1 << 4);
+            rrule.setDaysOfWeek(QSet<Qt::DayOfWeek>() << Qt::Thursday);
+            rrule.setLimit(QDate(2011, 3, 15));
             QTest::newRow(QString("mgr=%1, yearly recurrence, by week").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 7) << rrule // this is the first day of week 1
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1772,10 +1771,10 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-            rrule.setMonths(QList<QOrganizerItemRecurrenceRule::Month>()
+            rrule.setMonthsOfYear(QSet<QOrganizerItemRecurrenceRule::Month>()
                     << QOrganizerItemRecurrenceRule::April);
-            rrule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Sunday);
-            rrule.setPositions(QList<int>() << 1);
+            rrule.setDaysOfWeek(QSet<Qt::DayOfWeek>() << Qt::Sunday);
+            rrule.setPositions(QSet<int>() << 1);
             QTest::newRow(QString("mgr=%1, yearly recurrence, first Sunday of April").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 4, 4) << rrule // this is the first Sunday of April 2010
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1789,10 +1788,10 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-            rrule.setMonths(QList<QOrganizerItemRecurrenceRule::Month>()
+            rrule.setMonthsOfYear(QSet<QOrganizerItemRecurrenceRule::Month>()
                     << QOrganizerItemRecurrenceRule::October);
-            rrule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Sunday);
-            rrule.setPositions(QList<int>() << -1);
+            rrule.setDaysOfWeek(QSet<Qt::DayOfWeek>() << Qt::Sunday);
+            rrule.setPositions(QSet<int>() << -1);
             QTest::newRow(QString("mgr=%1, yearly recurrence, last Sunday of October").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 10, 31) << rrule // this is the last Sunday of October 2010
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1819,7 +1818,7 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator()
     event.setDisplayLabel("event");
     event.setStartDateTime(QDateTime(eventDate, QTime(11, 0, 0)));
     event.setEndDateTime(QDateTime(eventDate, QTime(11, 30, 0)));
-    event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+    event.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << recurrenceRule);
 
     if (cm->saveItem(&event)) {
         QList<QOrganizerItem> items = cm->itemInstances(event,

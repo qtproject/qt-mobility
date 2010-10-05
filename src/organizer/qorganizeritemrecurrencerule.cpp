@@ -49,18 +49,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldFrequency, "Frequency");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldCount, "Count");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldStartDate, "StartDate");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldEndDate, "EndDate");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldInterval, "Interval");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldDaysOfWeek, "DaysOfWeek");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldDaysOfMonth, "DaysOfMonth");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldDaysOfYear, "DaysOfYear");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldMonths, "Months");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeeksOfYear, "WeeksOfYear");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldPositions, "Positions");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeekStart, "WeekStart");
 
 /*!
  * \class QOrganizerItemRecurrenceRule
@@ -76,6 +64,42 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeekStart, "WeekStar
  * specifying which hour, minute or second of a day to recur on.  These types of rules are
  * unsupported because most calendaring backends don't support them, and it simplifies recurrences
  * by enforcing that there can be at most one occurrence of an item per day.
+ *
+ *
+ * The general rules for interaction between the fields when generating the occurence dates is as
+ * follows:
+ *
+ * When a criterion takes a list, the items in the list are unioned together.
+ * eg. with [dayOfWeek == Tuesday,Thursday], the event occurs if it is Tuesday or Thursday
+ *
+ * Frequency and specific criteria interact a bit more complicatedly.  For each criterion on a
+ * larger timespan than the frequency, the dates matching the criterion are intersected with the
+ * dates resulting from the frequency.
+ * eg. [frequency = Daily, month = January] means every day in January
+ * For each criterion on a shorter timespan than the frequency, the criterion is unioned.
+ * eg. [frequency = Weekly, dayOfWeek = Wednesday,Friday] means every Wednesday and Friday of
+ * every week.
+ * This makes the frequency field superfluous in many cases when other criteria are present.
+ * eg. all of the below mean the same thing:
+ * [frequency = Daily, dayOfWeek = Monday,Tuesday]
+ * [frequency = Weekly, dayOfWeek = Monday,Tuesday]
+ * [frequency = Monthly, dayOfWeek = Monday,Tuesday]
+ * [frequency = Yearly, dayOfWeek = Monday,Tuesday]
+ * However, the frequency field may start affecting the result differently when other fields are
+ * added like interval and positions.
+ *
+ * For the purpose of calculating occurrence dates, information not contained in the rule is in some
+ * cases derived from the startDateTime field of the event that the detail is associated with.
+ * There are three cases where such derivation is necessary.
+ * Case 1: frequency == Weekly.  If dayOfWeek is not specified, derive it from the week day that
+ * the startDateTime occurs on.
+ * Case 2: frequency == Monthly.  If neither dayOfWeek or dayOfMonth is specified, dayOfMonth should
+ * be derived from the startDateTime
+ * Case 3: frequency == Yearly.  If none of month, weekOfYear, dayOfYear, dayOfMonth or dayOfWeek
+ * are specified, derive month and dayOfMonth.  If month is specified but not weekOfYear, dayOfYear,
+ * dayOfMonth or dayOfWeek, then derive dayOfMonth.  If weekOfYear is specified but not dayOfYear,
+ * dayOfWeek or dayOfMonth, derive dayOfWeek from the startDateTime.
+ * For any cases not covered here, do not derive any of the fields.
  */
 
 /*!
@@ -134,6 +158,43 @@ QOrganizerItemRecurrenceRule& QOrganizerItemRecurrenceRule::operator=(const QOrg
     this->d = other.d;
     return *this;
 }
+/*!
+  Returns true if this recurrence rule is equal to the \a other; otherwise returns false.
+ */
+bool QOrganizerItemRecurrenceRule::operator==(const QOrganizerItemRecurrenceRule& other) const
+{
+    // if both ids are null then they are equal.
+    if (d == 0 && other.d == 0)
+        return true;
+
+    if (d && other.d) {
+        return  d->firstDayOfWeek == other.d->firstDayOfWeek
+                &&
+                d->frequency == other.d->frequency
+                &&
+                d->interval == other.d->interval
+                &&
+                d->limitCount == other.d->limitCount
+                &&
+                d->limitDate == other.d->limitDate
+                &&
+                d->limitType == other.d->limitType
+                &&
+                d->positions == other.d->positions
+                &&
+                d->daysOfMonth == other.d->daysOfMonth
+                &&
+                d->daysOfWeek == other.d->daysOfWeek
+                &&
+                d->daysOfYear == other.d->daysOfYear
+                &&
+                d->monthsOfYear == other.d->monthsOfYear
+                &&
+                d->weeksOfYear == other.d->weeksOfYear
+                ;
+    }
+    return false;
+}
 
 /*!
  * Sets the frequency with which the item recurs to \a freq.
@@ -142,7 +203,7 @@ QOrganizerItemRecurrenceRule& QOrganizerItemRecurrenceRule::operator=(const QOrg
  */
 void QOrganizerItemRecurrenceRule::setFrequency(Frequency freq)
 {
-    d->m_variantValues.insert(FieldFrequency, static_cast<int>(freq));
+    d->frequency = freq;
 }
 
 /*!
@@ -150,36 +211,25 @@ void QOrganizerItemRecurrenceRule::setFrequency(Frequency freq)
  */
 QOrganizerItemRecurrenceRule::Frequency QOrganizerItemRecurrenceRule::frequency() const
 {
-    if (d->m_variantValues.contains(FieldFrequency))
-        return static_cast<Frequency>(d->m_variantValues.value(FieldFrequency).toInt());
-    else
-        return Invalid;
+    return d->frequency;
 }
 
 /*! Sets the "count" condition of the recurrence rule to \a count.  If an end-date was previously
  * set, it is removed as count and endDate are mutually exclusive.
  *
  * The "count" condition is the maximum number of times the item should recur.  Setting this
- * to 0 or a negative value removes the count condition.
+ * to a negative value removes the count condition.
  *
  * This corresponds to the COUNT fragment in iCalendar's RRULE.
  */
-void QOrganizerItemRecurrenceRule::setCount(int count)
+void QOrganizerItemRecurrenceRule::setLimit(int count)
 {
-    if (count > 0)
-        d->m_variantValues.remove(FieldEndDate);
-    d->m_variantValues.insert(FieldCount, count);
+    d->limitType = QOrganizerItemRecurrenceRule::CountLimit;
+    d->limitCount = count;
+    d->limitDate = QDate();
 }
 
-/*! Returns the "count" condition specified by the recurrence rule.  The default count is 0 (ie.
- * unlimited)
- */
-int QOrganizerItemRecurrenceRule::count() const
-{
-    return d->m_variantValues.value(FieldCount).toInt();
-}
-
-/*! Sets the end-date condition of the recurrence rule to \a endDate.  If a "count" condition was
+/*! Sets the end-date condition of the recurrence rule to \a date.  If a "count" condition was
  * previously set, it is removed as count and endDate are mutually exclusive.
  *
  * The end-date condition is the date after which the item should not recur.  Setting this to
@@ -187,19 +237,49 @@ int QOrganizerItemRecurrenceRule::count() const
  *
  * This corresponds to the UNTIL fragment in iCalendar's RRULE.
  */
-void QOrganizerItemRecurrenceRule::setEndDate(const QDate& endDate)
+void QOrganizerItemRecurrenceRule::setLimit(const QDate& date)
 {
-    if (endDate.isValid())
-        d->m_variantValues.remove(FieldCount);
-    d->m_variantValues.insert(FieldEndDate, endDate);
+    d->limitType = QOrganizerItemRecurrenceRule::DateLimit;
+    d->limitDate = date;
+    d->limitCount = -1;
 }
+
+/*! Clear any recurrence rule limitation conditions.
+ */
+void QOrganizerItemRecurrenceRule::clearLimit()
+{
+    d->limitType = QOrganizerItemRecurrenceRule::NoLimit;
+    d->limitCount = -1;
+    d->limitDate = QDate();
+}
+
+/*! Returns the type of limitation specified by the recurrence rule.  The default limit type is NoLimit (ie.
+ * unlimited)
+ */
+QOrganizerItemRecurrenceRule::LimitType QOrganizerItemRecurrenceRule::limitType() const
+{
+    return d->limitType;
+}
+
+/*! Returns the "count" condition specified by the recurrence rule.  The default count is -1 (ie.
+ * unlimited)
+ */
+int QOrganizerItemRecurrenceRule::limitCount() const
+{
+    if (d->limitType == QOrganizerItemRecurrenceRule::CountLimit)
+        return d->limitCount;
+    return -1;
+}
+
 
 /*! Returns the end-date condition specified by the recurrence rule.  The default end date is the
  * null date (ie. no end date).
  */
-QDate QOrganizerItemRecurrenceRule::endDate() const
+QDate QOrganizerItemRecurrenceRule::limitDate() const
 {
-    return d->m_variantValues.value(FieldEndDate).toDate();
+    if (d->limitType == QOrganizerItemRecurrenceRule::DateLimit)
+        return d->limitDate;
+    return QDate();
 }
 
 /*!
@@ -213,7 +293,7 @@ QDate QOrganizerItemRecurrenceRule::endDate() const
  */
 void QOrganizerItemRecurrenceRule::setInterval(int interval)
 {
-    d->m_variantValues.insert(FieldInterval, interval);
+    d->interval = interval;
 }
 
 /*!
@@ -221,10 +301,7 @@ void QOrganizerItemRecurrenceRule::setInterval(int interval)
  */
 int QOrganizerItemRecurrenceRule::interval() const
 {
-    if (d->m_variantValues.contains(FieldInterval))
-        return d->m_variantValues.value(FieldInterval).toInt();
-    else
-        return 1;
+    return d->interval;
 }
 
 // Defaults for the below: empty
@@ -234,28 +311,18 @@ int QOrganizerItemRecurrenceRule::interval() const
  *
  * This corresponds to the BYDAY fragment in iCalendar's RRULE.
  */
-void QOrganizerItemRecurrenceRule::setDaysOfWeek(const QList<Qt::DayOfWeek>& days)
+void QOrganizerItemRecurrenceRule::setDaysOfWeek(const QSet<Qt::DayOfWeek>& days)
 {
-    QVariantList variantDays;
-    for (int i = 0; i < days.size(); ++i) {
-        variantDays << days.at(i);
-    }
-    d->m_variantValues.insert(FieldDaysOfWeek, variantDays);
+    d->daysOfWeek = days;
 }
 
 /*!
  * Returns a list of the days of week that the item should recur on.  If not set, this is the empty
  * list, which signifies that it should be implied, if necessary, by the day-of-week of the item.
  */
-QList<Qt::DayOfWeek> QOrganizerItemRecurrenceRule::daysOfWeek() const
+QSet<Qt::DayOfWeek> QOrganizerItemRecurrenceRule::daysOfWeek() const
 {
-    QList<Qt::DayOfWeek> retn;
-    QVariantList variantDays = d->m_variantValues.value(FieldDaysOfWeek).toList();
-    for (int i = 0; i < variantDays.size(); ++i) {
-        Qt::DayOfWeek curr = static_cast<Qt::DayOfWeek>(variantDays.at(i).toInt());
-        retn << curr;
-    }
-    return retn;
+    return d->daysOfWeek;
 }
 
 /*!
@@ -265,13 +332,9 @@ QList<Qt::DayOfWeek> QOrganizerItemRecurrenceRule::daysOfWeek() const
  *
  * This corresponds to the BYMONTHDAY fragment in iCalendar's RRULE.
  */
-void QOrganizerItemRecurrenceRule::setDaysOfMonth(const QList<int>& days)
+void QOrganizerItemRecurrenceRule::setDaysOfMonth(const QSet<int>& days)
 {
-    QVariantList saveList;
-    for (int i = 0; i < days.size(); ++i) {
-        saveList << days.at(i);
-    }
-    d->m_variantValues.insert(FieldDaysOfMonth, saveList);
+    d->daysOfMonth = days;
 }
 
 /*!
@@ -279,14 +342,9 @@ void QOrganizerItemRecurrenceRule::setDaysOfMonth(const QList<int>& days)
  * empty list, which signifies that it should be implied, if necessary, by the day-of-month of the
  * item.
  */
-QList<int> QOrganizerItemRecurrenceRule::daysOfMonth() const
+QSet<int> QOrganizerItemRecurrenceRule::daysOfMonth() const
 {
-    QList<int> retn;
-    QVariantList loadList = d->m_variantValues.value(FieldDaysOfMonth).toList();
-    for (int i = 0; i < loadList.size(); ++i) {
-        retn << loadList.at(i).toInt();
-    }
-    return retn;
+    return d->daysOfMonth;
 }
 
 /*!
@@ -296,13 +354,9 @@ QList<int> QOrganizerItemRecurrenceRule::daysOfMonth() const
  *
  * This corresponds to the BYYEARDAY fragment in iCalendar's RRULE.
  */
-void QOrganizerItemRecurrenceRule::setDaysOfYear(const QList<int>& days)
+void QOrganizerItemRecurrenceRule::setDaysOfYear(const QSet<int>& days)
 {
-    QVariantList saveList;
-    for (int i = 0; i < days.size(); ++i) {
-        saveList << days.at(i);
-    }
-    d->m_variantValues.insert(FieldDaysOfYear, saveList);
+    d->daysOfYear = days;
 }
 
 /*!
@@ -310,14 +364,9 @@ void QOrganizerItemRecurrenceRule::setDaysOfYear(const QList<int>& days)
  * empty list, which signifies that it should be implied, if necessary, by the day-of-year of the
  * item.
  */
-QList<int> QOrganizerItemRecurrenceRule::daysOfYear() const
+QSet<int> QOrganizerItemRecurrenceRule::daysOfYear() const
 {
-    QList<int> retn;
-    QVariantList loadList = d->m_variantValues.value(FieldDaysOfYear).toList();
-    for (int i = 0; i < loadList.size(); ++i) {
-        retn << loadList.at(i).toInt();
-    }
-    return retn;
+    return d->daysOfYear;
 }
 
 /*!
@@ -325,13 +374,9 @@ QList<int> QOrganizerItemRecurrenceRule::daysOfYear() const
  *
  * This corresponds to the BYMONTHDAY fragment in iCalendar's RRULE.
  */
-void QOrganizerItemRecurrenceRule::setMonths(const QList<Month>& months)
+void QOrganizerItemRecurrenceRule::setMonthsOfYear(const QSet<Month>& months)
 {
-    QVariantList saveList;
-    for (int i = 0; i < months.size(); ++i) {
-        saveList << static_cast<int>(months.at(i));
-    }
-    d->m_variantValues.insert(FieldMonths, saveList);
+    d->monthsOfYear = months;
 }
 
 /*!
@@ -339,14 +384,9 @@ void QOrganizerItemRecurrenceRule::setMonths(const QList<Month>& months)
  * empty list, which signifies that it should be implied, if necessary, by the month of the
  * item.
  */
-QList<QOrganizerItemRecurrenceRule::Month> QOrganizerItemRecurrenceRule::months() const
+QSet<QOrganizerItemRecurrenceRule::Month> QOrganizerItemRecurrenceRule::monthsOfYear() const
 {
-    QList<QOrganizerItemRecurrenceRule::Month> retn;
-    QVariantList loadList = d->m_variantValues.value(FieldMonths).toList();
-    for (int i = 0; i < loadList.size(); ++i) {
-        retn << static_cast<QOrganizerItemRecurrenceRule::Month>(loadList.at(i).toInt());
-    }
-    return retn;
+    return d->monthsOfYear;
 }
 
 /*!
@@ -356,13 +396,9 @@ QList<QOrganizerItemRecurrenceRule::Month> QOrganizerItemRecurrenceRule::months(
  *
  * This corresponds to the BYWEEK fragment in iCalendar's RRULE.
  */
-void QOrganizerItemRecurrenceRule::setWeeksOfYear(const QList<int>& weeks)
+void QOrganizerItemRecurrenceRule::setWeeksOfYear(const QSet<int>& weeks)
 {
-    QVariantList saveList;
-    for (int i = 0; i < weeks.size(); ++i) {
-        saveList << weeks.at(i);
-    }
-    d->m_variantValues.insert(FieldWeeksOfYear, saveList);
+    d->weeksOfYear = weeks;
 }
 
 /*!
@@ -370,14 +406,9 @@ void QOrganizerItemRecurrenceRule::setWeeksOfYear(const QList<int>& weeks)
  * empty list, which signifies that it should be implied, if necessary, by the week number of the
  * item.
  */
-QList<int> QOrganizerItemRecurrenceRule::weeksOfYear() const
+QSet<int> QOrganizerItemRecurrenceRule::weeksOfYear() const
 {
-    QList<int> retn;
-    QVariantList loadList = d->m_variantValues.value(FieldWeeksOfYear).toList();
-    for (int i = 0; i < loadList.size(); ++i) {
-        retn << loadList.at(i).toInt();
-    }
-    return retn;
+    return d->weeksOfYear;
 }
 
 /*!
@@ -393,27 +424,18 @@ QList<int> QOrganizerItemRecurrenceRule::weeksOfYear() const
  *
  * This corresponds to the BYSETPOS fragment in iCalendar's RRULE.
  */
-void QOrganizerItemRecurrenceRule::setPositions(const QList<int>& pos)
+void QOrganizerItemRecurrenceRule::setPositions(const QSet<int>& pos)
 {
-    QVariantList saveList;
-    for (int i = 0; i < pos.size(); ++i) {
-        saveList << pos.at(i);
-    }
-    d->m_variantValues.insert(FieldPositions, saveList);
+    d->positions = pos;
 }
 
 /*!
  * Returns the position-list of the recurrence rule.  If not set, this is the empty list, which
  * signifies that the recurrence dates should not be restricted by position.
  */
-QList<int> QOrganizerItemRecurrenceRule::positions() const
+QSet<int> QOrganizerItemRecurrenceRule::positions() const
 {
-    QList<int> retn;
-    QVariantList loadList = d->m_variantValues.value(FieldPositions).toList();
-    for (int i = 0; i < loadList.size(); ++i) {
-        retn << loadList.at(i).toInt();
-    }
-    return retn;
+    return d->positions;
 }
 
 /*! Sets the day that the week starts on to \a day, for the purposes of calculating recurrences.
@@ -422,63 +444,38 @@ QList<int> QOrganizerItemRecurrenceRule::positions() const
  *
  * This corresponds to the BYWKST fragment in iCalendar's RRULE.
  */
-void QOrganizerItemRecurrenceRule::setWeekStart(Qt::DayOfWeek day)
+void QOrganizerItemRecurrenceRule::setFirstDayOfWeek(Qt::DayOfWeek day)
 {
-    d->m_variantValues.insert(FieldWeekStart, static_cast<int>(day));
+    d->firstDayOfWeek = day;
 }
 
 /*!
  * Returns the day that the week starts on.  If not set, this is Monday.
  */
-Qt::DayOfWeek QOrganizerItemRecurrenceRule::weekStart() const
+Qt::DayOfWeek QOrganizerItemRecurrenceRule::firstDayOfWeek() const
 {
-    if (d->m_variantValues.contains(FieldWeekStart))
-        return static_cast<Qt::DayOfWeek>(d->m_variantValues.value(FieldWeekStart).toInt());
-    else
-        return Qt::Monday;
+    return d->firstDayOfWeek;
 }
 
-
-/*!
- * \internal
- * TODO: delete these functions
- */
-QVariantMap QOrganizerItemRecurrenceRule::variantValues() const
+uint qHash(const QOrganizerItemRecurrenceRule& r)
 {
-    return d->m_variantValues;
-}
+    uint hash(0);
 
-/*!
- * \internal
- */
-void QOrganizerItemRecurrenceRule::setVariantValues(const QVariantMap& variantValues)
-{
-    d->m_variantValues = variantValues;
-}
+    foreach(int day, r.daysOfMonth()) {hash += day;}
+    foreach(Qt::DayOfWeek day, r.daysOfWeek()) {hash += day;}
+    foreach(int day, r.daysOfYear()) {hash += day;}
+    foreach(QOrganizerItemRecurrenceRule::Month month, r.monthsOfYear()) {hash += month;}
+    foreach(int week, r.weeksOfYear()) {hash += week;}
+    foreach(int pos, r.positions()) {hash += pos;}
 
-/*!
- * \internal
- */
-QOrganizerItemRecurrenceRule QOrganizerItemRecurrenceRule::fromVariantValues(const QVariantMap& variantValues)
-{
-    // XXX TODO: make this more efficient... (conversion from qvariant functions go into the private class)
-    QOrganizerItemRecurrenceRule ret;
-    QOrganizerItemRecurrenceRule converter;
-    converter.setVariantValues(variantValues);
-
-    ret.setCount(converter.count());
-    ret.setDaysOfMonth(converter.daysOfMonth());
-    ret.setDaysOfWeek(converter.daysOfWeek());
-    ret.setDaysOfYear(converter.daysOfYear());
-    ret.setEndDate(converter.endDate());
-    ret.setFrequency(converter.frequency());
-    ret.setInterval(converter.interval());
-    ret.setMonths(converter.months());
-    ret.setPositions(converter.positions());
-    ret.setWeeksOfYear(converter.weeksOfYear());
-    ret.setWeekStart(converter.weekStart());
-
-    return ret;
+    hash += static_cast<uint>(r.firstDayOfWeek())+
+            static_cast<uint>(r.frequency()) +
+            r.interval() +
+            r.limitCount() +
+            qHash(r.limitDate()) +
+            static_cast<uint>(r.limitType());
+    return hash;
 }
 
 QTM_END_NAMESPACE
+
