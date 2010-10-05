@@ -92,6 +92,9 @@ signals:
     void widthChanged();
 
 private:
+    void synchronizeDeclarative();
+
+private:
     QDeclarativeCoordinate m_declarativeBottomLeft;
     QDeclarativeCoordinate m_declarativeBottomRight;
     QDeclarativeCoordinate m_declarativeTopLeft;
@@ -100,7 +103,6 @@ private:
     QGeoBoundingBox m_box;
     double m_height;
     double m_width;
-
 };
 
 QTM_END_NAMESPACE

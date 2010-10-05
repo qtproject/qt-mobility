@@ -286,6 +286,9 @@ bool QLandmarkManager::saveLandmark(QLandmark *landmark)
         return false;
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+
     return d->engine->saveLandmark(landmark,
                                    &(d->errorCode),
                                    &(d->errorString));
@@ -317,6 +320,11 @@ bool QLandmarkManager::saveLandmarks(QList<QLandmark> *landmarks,
         return false;
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+    if (errorMap)
+        errorMap->clear();
+
     return d->engine->saveLandmarks(landmarks,
                                     errorMap,
                                     &(d->errorCode),
@@ -337,9 +345,36 @@ bool QLandmarkManager::removeLandmark(const QLandmarkId &landmarkId)
         return false;
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+
     return d->engine->removeLandmark(landmarkId,
                                      &(d->errorCode),
                                      &(d->errorString));
+}
+
+
+/*!
+    Removes the \a landmark from the database.
+
+    Returns true if the landmark was removed successfully,
+    otherwise returns false.
+*/
+bool QLandmarkManager::removeLandmark(const QLandmark &landmark)
+{
+    Q_D(QLandmarkManager);
+
+    if (!d->engine) {
+        return false;
+    }
+
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+
+    return d->engine->removeLandmark(landmark.landmarkId(),
+                                     &(d->errorCode),
+                                     &(d->errorString));
+
 }
 
 /*!
@@ -347,10 +382,12 @@ bool QLandmarkManager::removeLandmark(const QLandmarkId &landmarkId)
     of \a landmarkIds.  Returns true if all landmarks were removed
     successfully, otherwise false.
 
-    The manager might populate \a errorMap (the map of indices of the
-    \a landmarkIds list to the error which occurred when saving the landmark
-    at that index) for every index for which the landmark could not be
-    removed.
+    The manager will fill in the \a errorMap only for those
+    landmarks which could not be removed.  e.g. A single error
+    removing the 3rd landmark will result in the \a errorMap only
+    being populated with a single entry with key of 2 and correspoonding
+    error value.
+
     The \l QLandmarkManager::error() function will only return
     \c QLandmarkManager::NoError if all landmarks were removed successfully.
 
@@ -365,11 +402,58 @@ bool QLandmarkManager::removeLandmarks(const QList<QLandmarkId> &landmarkIds,
         return false;
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+    if (errorMap)
+        errorMap->clear();
+
     return d->engine->removeLandmarks(landmarkIds,
                                       errorMap,
                                       &(d->errorCode),
                                       &(d->errorString));
 }
+
+/*!
+    Removes the given \a landmarks from the database.
+    Returns true if all landmarks were removed
+    successfully, otherwise false.
+
+    The manager will fill in the \a errorMap only for those
+    landmarks which could not be removed.  e.g. A single error
+    removing the 3rd landmark will result in the \a errorMap only
+    being populated with a single entry with key of 2 and correspoonding
+    error value.
+
+    The \l QLandmarkManager::error() function will only return
+    \c QLandmarkManager::NoError if all landmarks were removed successfully.
+
+    \sa QLandmarkManager::removeLandmark()
+*/
+bool QLandmarkManager::removeLandmarks(const QList<QLandmark> &landmarks,
+                                       QMap<int, QLandmarkManager::Error> *errorMap)
+{
+    Q_D(QLandmarkManager);
+
+    if (!d->engine) {
+        return false;
+    }
+
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+    if (errorMap)
+        errorMap->clear();
+
+    QList<QLandmarkId> landmarkIds;
+    for (int i=0; i < landmarks.count(); ++i) {
+        landmarkIds << landmarks.at(i).landmarkId();
+    }
+
+    return d->engine->removeLandmarks(landmarkIds,
+                                      errorMap,
+                                      &(d->errorCode),
+                                      &(d->errorString));
+}
+
 
 
 /*!
@@ -399,6 +483,9 @@ bool QLandmarkManager::saveCategory(QLandmarkCategory *category)
         return false;
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+
     return d->engine->saveCategory(category,
                                    &(d->errorCode),
                                    &(d->errorString));
@@ -418,7 +505,32 @@ bool QLandmarkManager::removeCategory(const QLandmarkCategoryId &categoryId)
         return false;
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+
     return d->engine->removeCategory(categoryId,
+                                     &(d->errorCode),
+                                     &(d->errorString));
+}
+
+/*!
+    Remove the given \a category from the database
+
+    Returns true if the category was removed successfully, otherwise
+    returnse false.
+*/
+bool QLandmarkManager::removeCategory(const QLandmarkCategory &category)
+{
+    Q_D(QLandmarkManager);
+
+    if (!d->engine) {
+        return false;
+    }
+
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+
+    return d->engine->removeCategory(category.categoryId(),
                                      &(d->errorCode),
                                      &(d->errorString));
 }
@@ -433,6 +545,9 @@ QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &category
     if (!d->engine) {
         return QLandmarkCategory();
     }
+
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
 
     QLandmarkCategory cat = d->engine->category(categoryId,
                             &(d->errorCode),
@@ -461,6 +576,11 @@ QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCateg
         return QList<QLandmarkCategory>();
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+    if (errorMap)
+        errorMap->clear();
+
     QList<QLandmarkCategory> cats = d->engine->categories(categoryIds,
                                     errorMap,
                                     &(d->errorCode),
@@ -482,6 +602,9 @@ QList<QLandmarkCategory> QLandmarkManager::categories(int limit, int offset, con
     if (!d->engine) {
         return QList<QLandmarkCategory>();
     }
+
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
 
     QList<QLandmarkCategory> cats = d->engine->categories(limit, offset, nameSort,
                                     &(d->errorCode),
@@ -507,6 +630,9 @@ QList<QLandmarkCategoryId> QLandmarkManager::categoryIds(int limit, int offset, 
         return QList<QLandmarkCategoryId>();
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+
     QList<QLandmarkCategoryId> ids = d->engine->categoryIds(limit, offset, nameSort,
                                                             &(d->errorCode),
                                                             &(d->errorString));
@@ -527,6 +653,9 @@ QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId) const
     if (!d->engine) {
         return QLandmark();
     }
+
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
 
     QLandmark lm = d->engine->landmark(landmarkId,
                                        &(d->errorCode),
@@ -551,6 +680,9 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int 
     if (!d->engine) {
         return QList<QLandmark>();
     }
+
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
 
     QList<QLandmark> lms = d->engine->landmarks(filter,
                            limit,
@@ -578,6 +710,9 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int 
      if (!d->engine) {
         return QList<QLandmark>();
     }
+
+     d->errorCode = QLandmarkManager::NoError;
+     d->errorString = "";
 
     QList<QLandmarkSortOrder> sortOrders;
     if (sortOrder.type() != QLandmarkSortOrder::DefaultSort)
@@ -613,6 +748,12 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
         return QList<QLandmark>();
     }
 
+     d->errorCode = QLandmarkManager::NoError;
+     d->errorString = "";
+
+     if (errorMap)
+         errorMap->clear();
+
     QList<QLandmark> lms = d->engine->landmarks(landmarkIds,
                                                 errorMap,
                                                 &(d->errorCode),
@@ -635,6 +776,9 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
      if (!d->engine) {
         return QList<QLandmarkId>();
     }
+
+     d->errorCode = QLandmarkManager::NoError;
+     d->errorString = "";
 
     QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
                              limit,
@@ -666,6 +810,9 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
      if (!d->engine) {
         return QList<QLandmarkId>();
     }
+
+     d->errorCode = QLandmarkManager::NoError;
+     d->errorString = "";
 
     QList<QLandmarkSortOrder> sortOrders;
     sortOrders.append(sortOrder);
@@ -707,6 +854,9 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format,
      if (!d->engine) {
         return false;
     }
+
+     d->errorCode = QLandmarkManager::NoError;
+     d->errorString = "";
 
     return d->engine->importLandmarks(device,
                                       format,
@@ -763,6 +913,9 @@ bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format,
         return false;
     }
 
+     d->errorCode = QLandmarkManager::NoError;
+     d->errorString = "";
+
     return d->engine->exportLandmarks(device,
                                       format,
                                       landmarkIds,
@@ -781,6 +934,9 @@ QStringList QLandmarkManager::supportedFormats(QLandmarkManager::TransferOperati
      if (!d->engine) {
         return QStringList();
     }
+
+     d->errorCode = QLandmarkManager::NoError;
+     d->errorString = "";
 
     return d->engine->supportedFormats(operation, &(d->errorCode), &(d->errorString));
 }
@@ -839,6 +995,9 @@ bool QLandmarkManager::isFeatureSupported(QLandmarkManager::LandmarkFeature feat
         return false;
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+
     return d->engine->isFeatureSupported(feature, &(d->errorCode), &(d->errorString));
 }
 
@@ -852,6 +1011,9 @@ QLandmarkManager::SupportLevel QLandmarkManager::filterSupportLevel(const QLandm
      if (!d->engine) {
         return QLandmarkManager::NoSupport;
     }
+
+     d->errorCode = QLandmarkManager::NoError;
+     d->errorString = "";
 
     return d->engine->filterSupportLevel(filter, &(d->errorCode), &(d->errorString));
 }
@@ -867,6 +1029,9 @@ QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QLi
         return QLandmarkManager::NoSupport;
     }
 
+     d->errorCode = QLandmarkManager::NoError;
+     d->errorString = "";
+
     return d->engine->sortOrderSupportLevel(sortOrders, &(d->errorCode), &(d->errorString));
 }
 
@@ -880,6 +1045,9 @@ bool QLandmarkManager::isReadOnly() const
     if (!d->engine) {
         return true;
     }
+
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
 
     return d->engine->isReadOnly(&(d->errorCode), &(d->errorString));
 }
@@ -898,6 +1066,9 @@ bool QLandmarkManager::isReadOnly(const QLandmarkId &landmarkId) const
         return true;
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+
     return d->engine->isReadOnly(landmarkId, &(d->errorCode), &(d->errorString));
 }
 
@@ -915,23 +1086,11 @@ bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
         return true;
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+
     return d->engine->isReadOnly(categoryId, &(d->errorCode), &(d->errorString));
 }
-
-/*!
-    Returns the list of attribute keys the landmarks will have.
-*/
-QStringList QLandmarkManager::landmarkAttributeKeys() const
-{
-    Q_D(const QLandmarkManager);
-
-    if (!d->engine) {
-        return QStringList();
-    }
-
-    return d->engine->landmarkAttributeKeys(&(d->errorCode), &(d->errorString));
-}
-
 
 /*!
     Returns a list of landmark attribute keys that may be used in a
@@ -944,20 +1103,10 @@ QStringList QLandmarkManager::searchableLandmarkAttributeKeys() const
         return QStringList();
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+
     return d->engine->searchableLandmarkAttributeKeys(&(d->errorCode), &(d->errorString));
-}
-
-/*!
-    Returns the list of attribute keys the categories will have.
-*/
-QStringList QLandmarkManager::categoryAttributeKeys() const
-{
-    Q_D(const QLandmarkManager);
-
-    if (!d->engine) {
-        return QStringList();
-    }
-    return  d->engine->categoryAttributeKeys(&(d->errorCode), &(d->errorString));
 }
 
 /*!

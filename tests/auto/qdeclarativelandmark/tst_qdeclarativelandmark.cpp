@@ -44,6 +44,8 @@
 #include <QMetaObject>
 #include <QDateTime>
 #include <QMap>
+#include <QFile>
+#include <QDir>
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qdeclarativecomponent.h>
 #include <qlandmarkmanager.h>
@@ -114,7 +116,7 @@
 #endif
 
 #define DB_FILENAME "test.db"
-#define LEAVE_DB_AFTER_TESTRUN true
+#define LEAVE_DB_AFTER_TESTRUN false
 
 QTM_USE_NAMESPACE
 
@@ -201,6 +203,22 @@ void tst_QDeclarativeLandmark::initTestCase()
         createDb("generatedExampleLandmarkDb.db");
         populateTypicalDb();
     }
+    // Delete possibly existing default database to avoid any problems
+#ifndef Q_OS_SYMBIAN
+    QString dbFileName;
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                       QLatin1String("Nokia"), QLatin1String("QtLandmarks"));
+    QFileInfo fi(settings.fileName());
+    QDir dir = fi.dir();
+    dir.mkpath(dir.path());
+    dbFileName = dir.path() + QDir::separator() + QString("QtLandmarks") +  QLatin1String(".db");
+    if (QFile::exists(dbFileName)) {
+        qDebug() << "FYI tst_qdeclarativelandmark::initTestCase() deleting default database: " << dbFileName;
+        QFile::remove(dbFileName);
+    }
+#else
+   // TODO clean Symbian default database
+#endif
 }
 
 void tst_QDeclarativeLandmark::cleanupTestCase()
@@ -236,10 +254,25 @@ void tst_QDeclarativeLandmark::createDb(QString fileName)
 
 void tst_QDeclarativeLandmark::deleteDb(QString fileName)
 {
-    delete m_manager;
-    m_manager = 0;
+#ifdef Q_OS_SYMBIAN
+    // On Symbian we can't just go about and delete the databasefile. Empty it manually instead.
+    if (m_manager) {
+        m_manager->removeLandmarks(m_manager->landmarkIds());
+        QList<QLandmarkCategoryId> catIds = m_manager->categoryIds();
+        for ( int i=0; i < catIds.count(); ++i) {
+            // Don't try to delete read-only global categories
+            if (!m_manager->isReadOnly(catIds.at(i)))
+                m_manager->removeCategory(catIds.at(i));
+        }
+    }
+#else
+    if (m_manager) {
+        delete m_manager;
+        m_manager = 0;
+    }
     QFile file(fileName);
     file.remove();
+#endif
 }
 
 /*
