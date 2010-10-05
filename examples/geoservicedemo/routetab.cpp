@@ -54,7 +54,7 @@
 #include <QDialogButtonBox>
 
 RouteCoordinateInputDialog::RouteCoordinateInputDialog(QGeoCoordinate& src, QGeoCoordinate& dst, QWidget *parent)
-    : QDialog(parent), m_src(src), m_dst(dst)
+        : QDialog(parent), m_src(src), m_dst(dst)
 {
     setWindowTitle(tr("Route End Points"));
 
@@ -82,9 +82,9 @@ RouteCoordinateInputDialog::RouteCoordinateInputDialog(QGeoCoordinate& src, QGeo
     secondrow->addWidget(m_destLat);
     secondrow->addWidget(m_destLong);
 
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,Qt::Horizontal);
-    connect(buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
-    connect(buttonBox,SIGNAL(rejected()),this,SLOT(reject()));
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal);
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSizeConstraint(QLayout::SetFixedSize);
@@ -171,8 +171,8 @@ void RouteTab::initialize(QGeoRoutingManager *routingManager)
 void RouteTab::on_btnRequest_clicked()
 {
     if (m_routingManager) {
-        RouteCoordinateInputDialog dlg(m_src,m_dst,this);
-        if(dlg.exec()==QDialog::Accepted) {
+        RouteCoordinateInputDialog dlg(m_src, m_dst, this);
+        if (dlg.exec() == QDialog::Accepted) {
             m_resultTree->clear();
             QTreeWidgetItem* waitInfoItem = new QTreeWidgetItem(m_resultTree);
             waitInfoItem->setText(0, tr("Route"));
