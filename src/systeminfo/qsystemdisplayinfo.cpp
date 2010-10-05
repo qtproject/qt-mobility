@@ -62,6 +62,9 @@ QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPri
    Constructs a QSystemDisplayInfo object with the given \a parent.
  */
 
+/*!
+    Constructs a QSystemDisplayInfo with the given \a parent.
+*/
 QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
     : QObject(parent)
 {
