@@ -100,6 +100,8 @@
 #define REMOVE_CATEGORY
 #define REMOVE_LANDMARK
 #define GET_ALL_CATEGORIES
+#define FILTER_DEFAULT
+#define FILTER_NAME
 
 #include <float.h>
 
@@ -305,7 +307,7 @@ private:
             QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
             fetchRequest.setFilter(filter);
             fetchRequest.start();
-            bool waitResult = waitForAsync(spy, &fetchRequest, error,100);
+            bool waitResult = waitForAsync(spy, &fetchRequest, error,500);
             if (!waitResult)
                     qWarning("Wait for async failed for landmark fetch");
             result = waitResult;
@@ -314,7 +316,7 @@ private:
             QSignalSpy spyId(&idFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
             idFetchRequest.setFilter(filter);
             idFetchRequest.start();
-            waitResult = waitForAsync(spyId, &idFetchRequest, error,100);
+            waitResult = waitForAsync(spyId, &idFetchRequest, error,500);
             if (!waitResult)
                 qWarning("Wait for async failed for landmark id fetch");
             QList<QLandmarkId> lmIds = idFetchRequest.landmarkIds();
@@ -932,13 +934,18 @@ private slots:
     void filterLandmarksLimitMatches();
     void filterLandmarksLimitMatchesAsync();
 */
-#ifndef Q_OS_SYMBIAN
+
+#ifdef FILTER_DEFAULT
     void filterLandmarksDefault();
     void filterLandmarksDefault_data();
+#endif FILTER_DEFAULT
 
+#ifdef FILTER_NAME
     void filterLandmarksName();
     void filterLandmarksName_data();
+#endif
 
+#ifndef Q_OS_SYMBIAN
     void filterLandmarksProximity();
     void filterLandmarksProximity_data();
 
@@ -3289,13 +3296,9 @@ void tst_QLandmarkManager::categories()
     //try with a limit of 0
     nameSort.setDirection(Qt::AscendingOrder);
     QVERIFY(doCategoryFetch(type, 0, 0, nameSort, &cats, QLandmarkManager::NoError));
-#ifdef Q_OS_SYMBIAN
-    removeGlobalCategories(&cats);
-    //TODO: Need to handle limit 0 for category in symbian
+
+    //TODO: Symbian Need to handle limit 0 for categories.
     QCOMPARE(cats.count(),0);
-#else
-    QCOMPARE(cats.count(),0);
-#endif
 
     //try a limit as large as the number of categories
     QVERIFY(doCategoryFetch(type, 5, 0, nameSort, &cats, QLandmarkManager::NoError));
@@ -3410,7 +3413,7 @@ void tst_QLandmarkManager::categories_data()
 }
 #endif
 
-#ifndef Q_OS_SYMBIAN
+#ifdef FILTER_DEFAULT
 void tst_QLandmarkManager::filterLandmarksDefault() {
     QFETCH(QString, type);
     QLandmark lm1;
@@ -3440,7 +3443,9 @@ void tst_QLandmarkManager::filterLandmarksDefault_data() {
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
+#endif
 
+#ifdef FILTER_NAME
 void tst_QLandmarkManager::filterLandmarksName() {
     QFETCH(QString, type);
     QLandmark lm1;
@@ -3509,6 +3514,9 @@ void tst_QLandmarkManager::filterLandmarksName() {
     QCOMPARE(lms.at(0), lm2);
     QCOMPARE(lms.at(1), lm9);
 
+
+    //TODO: symbian, when using Match exactly first do
+    //a matched fixed string search, then do QVariant comparison
     //test match exactly
     nameFilter.setName("Adel");
     nameFilter.setMatchFlags(QLandmarkFilter::MatchExactly);
@@ -3522,11 +3530,14 @@ void tst_QLandmarkManager::filterLandmarksName() {
     QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
     QCOMPARE(lms.count(),0);
 
+    //TODO: symbian change the state of the request to finished
+    //      if using a Case sensitive match which is not supported
     //test that can't support case sensitive matching
     nameFilter.setName("ADEL");
     nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
     QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NotSupportedError));
     QCOMPARE(lms.count(),0);
+
 
     nameFilter.setName("ADEL");
     nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchContains);
@@ -3541,12 +3552,8 @@ void tst_QLandmarkManager::filterLandmarksName() {
     QVERIFY(m_manager->saveLandmark(&lmNoName2));
     nameFilter.setName("");
     nameFilter.setMatchFlags(QLandmarkFilter::MatchFixedString);
-    QVERIFY(doFetch(type,nameFilter, &lms, QLandmarkManager::NoError));
-    QCOMPARE(lms.count(),2);
-    QCOMPARE(lms.at(0), lmNoName1);
-    QCOMPARE(lms.at(1), lmNoName2);
 
-    nameFilter.setMatchFlags(QLandmarkFilter::MatchFixedString);
+    //TODO: symbia matching landmarks with no name
     QVERIFY(doFetch(type,nameFilter, &lms, QLandmarkManager::NoError));
     QCOMPARE(lms.count(),2);
     QCOMPARE(lms.at(0), lmNoName1);
@@ -3607,7 +3614,9 @@ void tst_QLandmarkManager::filterLandmarksName_data() {
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
+#endif
 
+#ifndef Q_OS_SYMBIAN
 void tst_QLandmarkManager::filterLandmarksProximity() {
     QFETCH(QString, type);
     QList<QGeoCoordinate> greenwhichFilterCoords;
