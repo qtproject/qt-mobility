@@ -361,11 +361,8 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemMaemo5Engine::collectionIds(QOr
 
 QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
 {
-    Q_UNUSED(errorMap);
-    // XXX TODO: please use errormap -- test for null ptr, if exists, perform "fine grained error reporting"
-    // Note that the semantics of this function changed: if empty list of collectionIds given, return empty list of collections (NOT all collections).
     QMutexLocker locker(&m_operationMutex);
-    return internalCollections(collectionIds, error);
+    return internalCollections(collectionIds, errorMap, error);
 }
 
 bool QOrganizerItemMaemo5Engine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
@@ -382,6 +379,7 @@ bool QOrganizerItemMaemo5Engine::removeCollection(const QOrganizerCollectionLoca
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
+    Q_UNUSED(fetchHint); // there are never large binary blobs etc. attached to maemo5 calendar items
     QList<QOrganizerItem> retn;
 
     // Create a filter that reads all the items from all the calendars that are
@@ -556,7 +554,6 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItemInstances(const QO
     else if (generator.type() == QOrganizerItemType::TypeTodo)
     {
         CTodo* ctodo = d->m_dbAccess->getTodo(cal, nativeId, calError);
-        //CTodo* ctodo = cal->getTodo(nativeId, calError);
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         if (ctodo && *error == QOrganizerItemManager::NoError)
         {
@@ -854,31 +851,27 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemMaemo5Engine::internalCollectio
     return retn;
 }
 
-QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::internalCollections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::internalCollections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NoError;
     QList<QOrganizerCollection> retn;
 
-    // Fetch the available collection ids
-    QList<QOrganizerCollectionLocalId> fetchCollIds = this->internalCollectionIds(error);
+    // Fetch all the available collection ids
+    QList<QOrganizerCollectionLocalId> fetchCollIds = internalCollectionIds(error);
 
-    // Check that all the requested collections exist
-    foreach (QOrganizerCollectionLocalId collectionId, collectionIds)
-        if (!fetchCollIds.contains(collectionId))
-            *error = QOrganizerItemManager::DoesNotExistError;
-
-    if (*error != QOrganizerItemManager::NoError)
-        return retn;
-
-    foreach (QOrganizerCollectionLocalId collectionId, fetchCollIds) {
-        if (collectionIds.isEmpty() || collectionIds.contains(collectionId)) {
-            // Fetch calendar
+    int collectionIdsCount = collectionIds.count();
+    for (int i = 0; i < collectionIdsCount; ++i) {
+        QOrganizerCollectionLocalId collectionId = collectionIds.at(i);
+        if (fetchCollIds.contains(collectionId)) {
+           // Fetch calendar
             int calendarId = static_cast<int>(readCollectionLocalId(collectionId));
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
             CCalendar *cal = d->m_mcInstance->getCalendarById(calendarId, calError);
             if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
                 *error = d->m_itemTransformer.calErrorToManagerError(calError);
-                break;
+                if (errorMap)
+                    errorMap->insert(i, *error);
+                continue;
             }
 
             // Build collection id
@@ -896,11 +889,11 @@ QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::internalCollections(cons
             currCollection.setMetaData("Available colors", QVariant(availableColors));
 
             // Calendar color
-            currCollection.setMetaData("Color", QVariant(
+            currCollection.setMetaData(QOrganizerCollection::KeyColor, QVariant(
                     d->m_itemTransformer.fromCalendarColour(cal->getCalendarColor())));
 
             // Calendar name
-            currCollection.setMetaData("Name", QVariant(QString::fromStdString(cal->getCalendarName())));
+            currCollection.setMetaData(QOrganizerCollection::KeyName, QVariant(QString::fromStdString(cal->getCalendarName())));
 
             // Calendar version
             currCollection.setMetaData("Version", QVariant(QString::fromStdString(cal->getCalendarVersion())));
@@ -929,6 +922,11 @@ QList<QOrganizerCollection> QOrganizerItemMaemo5Engine::internalCollections(cons
             // Append to result
             retn << currCollection;
         }
+        else {
+            if (errorMap)
+                errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
+            *error = QOrganizerItemManager::DoesNotExistError;
+        }
     }
 
     return retn;
@@ -955,12 +953,12 @@ bool QOrganizerItemMaemo5Engine::internalSaveCollection(QOrganizerCollection* co
         return false;
 
     QString calName = ""; // default value
-    QVariant tmpData = collection->metaData("Name");
+    QVariant tmpData = collection->metaData(QOrganizerCollection::KeyName);
     if (tmpData.isValid())
         calName = tmpData.toString();
 
     CalendarColour calColor = COLOUR_NEXT_FREE; // default value
-    tmpData = collection->metaData("Color");
+    tmpData = collection->metaData(QOrganizerCollection::KeyColor);
     if (tmpData.isValid())
         calColor = d->m_itemTransformer.toCalendarColour(tmpData.toString());
 

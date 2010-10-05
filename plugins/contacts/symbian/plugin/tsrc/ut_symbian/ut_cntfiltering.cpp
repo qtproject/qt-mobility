@@ -883,7 +883,6 @@ void TestFiltering::testContactDetailFilter_9()
     QVERIFY(expectedCount == seachedcontactcount);
 }
 
-
 void TestFiltering::testRelationshipFilter()
 {
     // create a group contact
@@ -1606,6 +1605,126 @@ void TestFiltering::testCreateSelectQuery()
     QVERIFY(error == QContactManager::NotSupportedError);
     
     }
+
+void TestFiltering::testFavoriteDetailFilter()
+    {
+    QContactManager::Error err;
+    QContactFetchHint hint;
+    //save one contact with favorite detail
+    QContact c;
+    c.setType(QContactType::TypeContact);
+    QContactName name;
+    name.setFirstName("firstname");
+    c.saveDetail(&name);
+    QContactFavorite fav;
+    fav.setFavorite(true);
+    fav.setIndex(100);
+    c.saveDetail(&fav);
+    QVERIFY(m_engine->saveContact(&c, &err));
+    QVERIFY(err == QContactManager::NoError);
+    
+    // find all favorite contacts
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactFavorite::DefinitionName, QContactFavorite::FieldFavorite); 
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(filter, QList<QContactSortOrder>(), &err);
+    QVERIFY(err == QContactManager::NoError);
+    int ccc = cnt_ids.count();
+    QVERIFY(cnt_ids.count() == 1);
+    
+    //fetch found contact and check favorite detail
+    QContact savedContact = m_engine->contact(cnt_ids.at(0), hint, &err);
+    QVERIFY(err == QContactManager::NoError);
+    QContactFavorite savedFav = savedContact.detail<QContactFavorite>();
+    QVERIFY(savedFav.isFavorite());
+    QVERIFY(savedFav.index() == 100); 
+    }
+
+void TestFiltering::testMatchFlags()
+{
+    QContactManager::Error err;
+    QContactFetchHint hint;
+    
+    //save a contact without favorite detail
+    QContact c1;
+    c1.setType(QContactType::TypeContact);
+    QContactName name1;
+    name1.setFirstName("somename");
+    c1.saveDetail(&name1);
+    QContactEmailAddress email;
+    email.setEmailAddress("EMAIL123");
+    c1.saveDetail(&email);
+    QVERIFY(m_engine->saveContact(&c1, &err));
+    QVERIFY(err == QContactManager::NoError);
+    
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
+    filter.setValue("email123");
+    filter.setMatchFlags(QContactFilter::MatchExactly);
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(filter, QList<QContactSortOrder>(), &err);
+    QVERIFY(cnt_ids.count() == 0);
+
+    filter.setMatchFlags(QContactFilter::MatchFixedString);
+    cnt_ids = m_engine->contactIds(filter, QList<QContactSortOrder>(), &err);
+    QVERIFY(cnt_ids.count() == 1);
+    
+    filter.setValue("EMAIL123");
+    filter.setMatchFlags(QContactFilter::MatchExactly);
+    cnt_ids = m_engine->contactIds(filter, QList<QContactSortOrder>(), &err);
+    QVERIFY(cnt_ids.count() == 1);
+}
+
+void TestFiltering::testContactTypeFilter()
+{    
+    QContactManager::Error err;
+    
+    // Remove all contacts from the database
+    QList<QContactLocalId> contacts = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    QMap<int, QContactManager::Error> errorMap;
+    m_engine->removeContacts(contacts, &errorMap, &err);
+    
+    //check amount of contacts
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactType::DefinitionName, QContactType::FieldType);
+    filter.setValue(QContactType::TypeContact);
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(filter, QList<QContactSortOrder>(), &err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(cnt_ids.count() == 0);
+    
+    //save a new contact
+    QContact c;
+    c.setType(QContactType::TypeContact);
+    QContactName name;
+    name.setFirstName("somename");
+    c.saveDetail(&name);
+    QVERIFY(m_engine->saveContact(&c, &err));
+    QVERIFY(err == QContactManager::NoError);
+    
+    //check amount of contacts
+    cnt_ids = m_engine->contactIds(filter, QList<QContactSortOrder>(), &err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(cnt_ids.count() == 1);
+    
+    //check amount of groups
+    filter.setValue(QContactType::TypeGroup);
+    cnt_ids = m_engine->contactIds(filter, QList<QContactSortOrder>(), &err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(cnt_ids.count() == 0);
+    
+    //save a new group
+    QContact group;
+    group.setType(QContactType::TypeGroup);
+    QContactName groupName;
+    groupName.setCustomLabel("group1");
+    group.saveDetail(&groupName);
+    QVERIFY(m_engine->saveContact(&group, &err));
+    QVERIFY(err == QContactManager::NoError);
+    
+    //check amount of groups
+    cnt_ids = m_engine->contactIds(filter, QList<QContactSortOrder>(), &err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(cnt_ids.count() == 1);
+}
+
 //QTEST_MAIN(TestFiltering);
 /*int main(int argc, char *argv[]) 
 {

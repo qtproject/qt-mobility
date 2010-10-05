@@ -233,7 +233,7 @@ contains(build_demos, yes):SUBDIRS+=demos
 
             #files() uses windows path separator ('\')  but bld.inf requires '/'
             INCLUDEFILES=$$cleanedFiles
-            cleanedFiles=$$replace(INCLUDEFILES, \\\,/)
+            cleanedFiles=$$replace(INCLUDEFILES, \\\\,/)
 
             for(header, cleanedFiles) {
                 exists($$header):
@@ -251,7 +251,7 @@ contains(build_demos, yes):SUBDIRS+=demos
 
             #files() uses windows path separator ('\')  but bld.inf requires '/'
             INCLUDEFILES=$$cleanedFiles
-            cleanedFiles=$$replace(INCLUDEFILES, \\\,/)
+            cleanedFiles=$$replace(INCLUDEFILES, \\\\,/)
 
             for(header, cleanedFiles) {
                 exists($$header):

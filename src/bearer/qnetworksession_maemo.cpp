@@ -738,7 +738,7 @@ void QNetworkSessionPrivate::do_open()
             qDebug() << "connect to"<< publicConfig.identifier() << "failed, result is empty";
 #endif
             updateState(QNetworkSession::Disconnected);
-            emit q->error(QNetworkSession::InvalidConfigurationError);
+            emit q->error(QNetworkSession::SessionAbortedError);
             if (publicConfig.type() == QNetworkConfiguration::UserChoice)
                     copyConfig(publicConfig, activeConfig);
             return;
@@ -752,7 +752,7 @@ void QNetworkSessionPrivate::do_open()
         if ((publicConfig.type() != QNetworkConfiguration::UserChoice) &&
             (connected_iap != config.identifier())) {
             updateState(QNetworkSession::Disconnected);
-            emit q->error(QNetworkSession::InvalidConfigurationError);
+            emit q->error(QNetworkSession::UnknownSessionError);
             return;
         }
 
@@ -989,6 +989,9 @@ QString QNetworkSessionPrivate::errorString() const
         break;
     case QNetworkSession::SessionAbortedError:
         errorStr = QObject::tr("Session aborted by user or system");
+        break;
+    case QNetworkSession::InvalidConfigurationError:
+        errorStr = QObject::tr("The specified configuration cannot be used.");
         break;
     default:
     case QNetworkSession::UnknownSessionError:

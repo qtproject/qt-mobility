@@ -1272,7 +1272,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Current MMC:</string>
+            <string>Current MCC:</string>
            </property>
           </widget>
          </item>
@@ -1306,7 +1306,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Home MMC:</string>
+            <string>Home MCC:</string>
            </property>
           </widget>
          </item>
