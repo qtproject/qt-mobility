@@ -178,11 +178,6 @@ void tst_QVersitDocument::testEquality()
     QVERIFY(document1 == document2);
     QVERIFY(!(document1 != document2));
 
-    document2.setType(QVersitDocument::VCard21Type);
-    QVERIFY(!(document1 == document2));
-    QVERIFY(document1 != document2);
-    QVERIFY(!document2.isEmpty());
-
     document2 = document1;
     QVERIFY(document1 == document2);
 }
@@ -190,25 +185,21 @@ void tst_QVersitDocument::testEquality()
 void tst_QVersitDocument::testHash()
 {
     QVersitDocument document1;
-    document1.setType(QVersitDocument::VCard30Type);
     QVersitProperty property1;
     property1.setName(QLatin1String("name"));
     property1.setValue(QLatin1String("value"));
     document1.addProperty(property1);
 
     QVersitDocument document2;
-    document2.setType(QVersitDocument::VCard30Type);
     document2.addProperty(property1);
 
     QVersitDocument document3;
-    document3.setType(QVersitDocument::VCard30Type);
     QVersitProperty property3;
     property3.setName(QLatin1String("name"));
     property3.setValue(QLatin1String("another value"));
     document3.addProperty(property3);
 
     QVersitDocument document4; // no properties
-    document4.setType(QVersitDocument::VCard30Type);
 
     QVersitDocument document5 = document1;
     document5.addSubDocument(document4);
@@ -216,11 +207,15 @@ void tst_QVersitDocument::testHash()
     QVersitDocument document6 = document1;
     document6.setComponentType(QLatin1String("VEVENT"));
 
+    QVersitDocument document7 = document1;
+    document7.addProperty(QVersitProperty());
+
     QVERIFY(qHash(document1) == qHash(document2));
     QVERIFY(qHash(document1) != qHash(document3));
     QVERIFY(qHash(document1) != qHash(document4));
     QVERIFY(qHash(document1) != qHash(document5));
     QVERIFY(qHash(document1) != qHash(document6));
+    QVERIFY(qHash(document1) != qHash(document7));
 }
 
 QTEST_MAIN(tst_QVersitDocument)

@@ -133,8 +133,7 @@ QVersitDocument& QVersitDocument::operator=(const QVersitDocument& other)
 /*! Returns true if this is equal to \a other; false otherwise. */
 bool QVersitDocument::operator==(const QVersitDocument& other) const
 {
-    return d->mVersitType == other.d->mVersitType &&
-            d->mProperties == other.d->mProperties &&
+    return d->mProperties == other.d->mProperties &&
             d->mSubDocuments == other.d->mSubDocuments &&
             d->mComponentType == other.d->mComponentType;
 }
@@ -148,13 +147,14 @@ bool QVersitDocument::operator!=(const QVersitDocument& other) const
 /*! Returns the hash value for \a key. */
 uint qHash(const QVersitDocument &key)
 {
-    int hash = QT_PREPEND_NAMESPACE(qHash)(key.type());
-    hash += QT_PREPEND_NAMESPACE(qHash)(key.componentType());
+    int hash = QT_PREPEND_NAMESPACE(qHash)(key.componentType());
     foreach (const QVersitProperty& property, key.properties()) {
-        hash += qHash(property);
+        hash += 1 +             // ensure empty properties change the hash value
+                qHash(property);
     }
     foreach (const QVersitDocument& nested, key.subDocuments()) {
-        hash += qHash(nested);
+        hash += 1 +             // ensure empty subDocuments change the hash value
+                qHash(nested);
     }
     return hash;
 }
