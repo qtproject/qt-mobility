@@ -217,7 +217,17 @@ void tst_QDeclarativeLandmark::initTestCase()
         QFile::remove(dbFileName);
     }
 #else
-   // TODO clean Symbian default database
+    // On Symbian we can't just go about and delete the databasefile. Empty it manually instead.
+    m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.symbian");
+    if (m_manager) {
+        m_manager->removeLandmarks(m_manager->landmarkIds());
+        QList<QLandmarkCategoryId> catIds = m_manager->categoryIds();
+        for ( int i=0; i < catIds.count(); ++i) {
+            // Don't try to delete read-only global categories
+            if (!m_manager->isReadOnly(catIds.at(i)))
+                m_manager->removeCategory(catIds.at(i));
+        }
+    }
 #endif
 }
 
