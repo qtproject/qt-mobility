@@ -51,7 +51,14 @@ testcase = {
    1. Make sure appropriate backend is listed in the backend list for given device'));
     },
 
+  select_backends: function()
+  {
+     prompt(twiki('*Various backends can be selected*
 
+   1. Launch calendardemo application
+   1. For each item in the backend combo box
+   1. Choose as current backend
+   1. Verify that bBackend can be selected without any error or crash
 
   add_event: function()
   {
@@ -59,23 +66,23 @@ testcase = {
 
     1. Launch calendardemo application
     1. Verify the layout and UI of the application is apropriate for device
-    1. Verify the correct date and calendar is shown.
+    1. Verify the correct day and month is shown.
     1. Verify that todays date is higlighted
     1. Select appropriate backend
     1. In the application menu, select: Add event
-    1. Enter event detail: Subject, Start time, End time (eg: Event 1, today's date), select Alarm option, leave Repeat as: None. Click Save
+    1. Enter event detail: Subject, Start time, End time (eg: "Event 1", today's date), select Alarm option, leave Repeat as: None. Click Save
     1. Verify that you are presented with the day view for today and that Evenet 1 is listed with start time shown
     1. Click View Month
     1. Verify that you are in the Month View with todays date underlined.
-    1. As in previous steps, add Event Invalid with todays Start date, but Yesterdays End date
+    1. As in previous steps, add "Event Invalid" with todays Start date, but Yesterdays End date
     1. Verify that you are presented with an error: "Failed! Start date is not before due date". Click Done, click Cancel
-    1. Verify that Event Invalid is not listed in either Todays, or Yesterdays date.
-    1. As in previous steps, add Event 2 with same date as Event 1, but with different start time
-    1. Verify that Event 1 and Event 2 are listed for todays date in both Day View and Month View
-    1. Create Event 3 by clicking a date 2 days in the future, click Add Event, add Subject, Click OK
+    1. Verify that "Event Invalid" is not listed in either Todays, or Yesterdays date.
+    1. As in previous steps, add "Event 2" with same date as "Event 1", but with letter start time
+    1. Verify that "Event 1" and "Event 2" are listed for todays date in both Day View and Month View
+    1. Create "Event 3" by clicking a date 2 days in the future, click Add Event, add Subject, Click OK
     1. Close and reopen Calendardemo, and select the abovementoned backend again.
-    1. Verify that Today has Event 1 and Event 2 listed with correct details
-    1. Verify that Event 3 is listed for the day after tomorrow.'));
+    1. Verify that Today has "Event 1" and "Event 2" listed with correct details
+    1. Verify that "Event 3" is listed for the day after tomorrow.'));
   },
 
   delete_event: function()
@@ -85,13 +92,15 @@ testcase = {
     1. Re-launch calendardemo application
     1. Select appropriate backend
     1. Select todays date
-    1. Verify that Event 1 and Event 2 are listed
+    1. Verify that "Event 1" and "Event 2" are listed
     1. Without selecting any events (no events highlighted), click Remove
     1. Verify that no event has been removed from list.
     1. Return back to Month View, and reselect todays date.
-    1. Verify that Event 1 and Event 2 are still listed
-    1. Select Event 1, click Remove
-    1. Verify that Event 1 has been removed from list.'));
+    1. Verify that "Event 1" and "Event 2" are still listed
+    1. Select "Event 1", click Remove
+    1. Verify that "Event 1" has been removed from list.'));
+    1. Re-launch Calendardemo application
+    1. Verify that "Event 1" is not listed in the list of todays events
   },
 
   edit_event: function()
@@ -101,19 +110,19 @@ testcase = {
     1. Re-launch calendardemo application
     1. Select appropriate backend
     1. Select today's date
-    1. Verify that Event 2 is listed
-    1. Highlight Event 2 and click Edit
+    1. Verify that "Event 2" is listed
+    1. Highlight "Event 2" and click Edit
     1. Verify that all the listed details are correct
-    1. Edit the Event Subject to Event 2 Edited
-    1. Change date to tomorrows date for Start time and End time
-    1. Verify that Event 2 is now listed under tomorrow's date
-    1. Select Event 2 and click Edit
+    1. Edit the Event Subject to "Event 2 Edited"
+    1. Change date of "Event 2 Edited" to tomorrows date for Start time and End time
+    1. Verify that "Event 2 Edited" is now listed under tomorrow's date
+    1. Select "Event 2 Edited" and click Edit
     1. Change End time of event to todays date, leaving Start date to point to tomorrow's date
     1. Verify that you are presented with an error: "Failed! Start date is not before end date". Click Done then Cancel
-    1. Verify that Event 2 has not been edited
-    1. Highlight Event 2 and click Edit
+    1. Verify that "Event 2 Edited" has not been edited
+    1. Highlight "Event 2 Edited" and click Edit
     1. Change both Start time and End time to today's date with a valid range
-    1. Verify that Event 2 is now listed under events for today.'));
+    1. Verify that "Event 2 Edited" is now listed under events for today.'));
   },
 
   event_recurrence: function()
@@ -125,13 +134,20 @@ testcase = {
     1. Select today's date
     1. Select Add Event
     1. For Number of entries, accept default of 1
-    1. Enter subject: Recurring Event
+    1. Enter subject: "Recurring Event"
     1. Enter a time for the event (todays date, 30 min in the future, lasting 30 min)
     1. Select Repeat, and choose Weekly
     1. Select: Set count, select 5, and click OK
     1. Verify that created event is listed in event list
     1. Select date 7 days from today
-    1. Verify that Recurring event is listed on that day'));
+    1. Verify that "Recurring Event" is listed on that day
+    1. Select a date a futher 21 days in the future
+    1. Verify that "Reacurring Event" is listed on that day
+    1. Select a date a futher 14 days in the future
+    1. Verify that "Reacurring Event" is ont present on that day
+    1. Select a date 1 year in the future on the given day of the week for "Reacurring Event"
+    1. Verify that "Recurring Event" is not listed on that day
+'));
   },
 
   add_todo: function()
@@ -141,19 +157,19 @@ testcase = {
     1. Launch calendardemo application
     1. Select appropriate backend
     1. In the application menu, select: Add Todo
-    1. Enter Todo detail: Subject, Start time, End time (eg: Todo 1, tomorrows date), Priority, Status, select Alarm option. Click Save
+    1. Enter Todo detail: Subject, Start time, End time (eg: "Todo 1", tomorrows date), Priority, Status, select Alarm option. Click Save
     1. Verify that you are presented with the day view for tomorrow and that Todo 1 is listed with start time shown
     1. Click View Month
-    1. Verify that you are in the Month View with today's date underlined, and that tomorrows date is highlighted ingreen.
-    1. As in previous steps, add new Todo as: Todo Invalid with todays Start date, but Yesterdays End date
+    1. Verify that you are in the Month View with today's date underlined, and that tomorrows date is highlighted in green.
+    1. As in previous steps, add new Todo as: "Todo Invalid" with todays Start date, but Yesterdays End date
     1. Verify that you are presented with an error: "Failed! Start date is not before due date." Click Done, then Cancel.
-    1. Verify that Todo Invalid is not listed in either Todays, or Yesterdays date.
-    1. As in previous steps, add Todo 2 with same date as Todo 1, but with different start time
-    1. Verify that Todo 1 and Todo 2 are listed for today's date in Day View
-    1. Create Todo 3 by clicking a date 2 days in the future, select menu, Add Todo, add Subject, Click OK
+    1. Verify that "Todo Invalid" is not listed in either Todays, or Yesterdays date.
+    1. As in previous steps, add "Todo 2" with same date as "Todo 1", but with different start time
+    1. Verify that "Todo 1" and "Todo 2" are listed for today's date in Day View
+    1. Create "Todo 3" by clicking a date 2 days in the future, select menu, Add Todo, add Subject, Click OK
     1. Close and reopen Calendardemo, and select the abovementoned backend again.
-    1. Verify that Today has Todo 1 and Todo 2 listed with correct details
-    1. Verify that Event 3 is listed for the day after tomorrow.'));
+    1. Verify that Today has "Todo 1" and "Todo 2" listed with correct details
+    1. Verify that "Todo 3" is listed for the day after tomorrow.'));
   },
 
   search_items_by_time: function()
