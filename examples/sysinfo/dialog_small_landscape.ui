@@ -836,6 +836,24 @@
          </item>
         </layout>
        </item>
+       <item row="0" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_53">
+         <item>
+          <widget class="QLabel" name="label_144">
+           <property name="text">
+            <string>DPI Width</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="dpiWidthLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item row="1" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_52">
          <item>
@@ -854,18 +872,95 @@
          </item>
         </layout>
        </item>
+       <item row="1" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_57">
+         <item>
+          <widget class="QLabel" name="label_148">
+           <property name="text">
+            <string>DPI Height</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="dpiHeightLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item row="2" column="0">
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>225</height>
-          </size>
-         </property>
-        </spacer>
+        <layout class="QHBoxLayout" name="horizontalLayout_55">
+         <item>
+          <widget class="QLabel" name="label_146">
+           <property name="text">
+            <string>Orientation</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="orientationLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_54">
+         <item>
+          <widget class="QLabel" name="label_145">
+           <property name="text">
+            <string>Physical Width</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="physicalWidthLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_51">
+         <item>
+          <widget class="QLabel" name="label_138">
+           <property name="text">
+            <string>Contrast</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="contrastLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_56">
+         <item>
+          <widget class="QLabel" name="label_147">
+           <property name="text">
+            <string>Physical Height</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="physicalHeightLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -1232,7 +1327,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="page_10">
-      <layout class="QGridLayout" name="gridLayout_10">
+      <layout class="QGridLayout" name="gridLayout_11">
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_92">
          <item>
@@ -1270,42 +1365,6 @@
         </layout>
        </item>
        <item row="1" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_89">
-         <item>
-          <widget class="QLabel" name="label_98">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Home MNC:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="homeMNCLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
-           </property>
-           <property name="text">
-            <string>.</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="2" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_90">
          <item>
           <widget class="QLabel" name="label_99">
@@ -1316,7 +1375,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Current MCC:</string>
+            <string>Current MMC:</string>
            </property>
           </widget>
          </item>
@@ -1341,7 +1400,7 @@
          </item>
         </layout>
        </item>
-       <item row="3" column="0">
+       <item row="2" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_91">
          <item>
           <widget class="QLabel" name="label_100">
@@ -1352,12 +1411,48 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Home MCC:</string>
+            <string>Home MMC:</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="homeMMCLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
+           <property name="text">
+            <string>.</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_89">
+         <item>
+          <widget class="QLabel" name="label_98">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Home MNC:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="homeMNCLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
