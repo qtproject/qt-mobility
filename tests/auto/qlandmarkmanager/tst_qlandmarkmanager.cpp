@@ -176,12 +176,23 @@ private:
                     QLandmarkManager::Error error = QLandmarkManager::NoError,
                     int ms=1500, QLandmarkAbstractRequest::State state = QLandmarkAbstractRequest::FinishedState) {
         bool ret = true;
+        bool stateVerified = true;
         int msWaitedSoFar =0;
+
         while(msWaitedSoFar < ms) {
             QTest::qWait(100);
             msWaitedSoFar +=100;
             if (spy.count() ==2)
                 break;
+            if (!request->isActive())
+                stateVerified = false;
+        }
+        if (!stateVerified)
+            qWarning() << "The state was not verified to be active when it was supposed to be";
+
+        if (!request->isFinished()) {
+            stateVerified = false;
+            qWarning() << "The state was not verified to be finished when it was supposed to be";
         }
 
         QTest::qWait(ms);
@@ -208,7 +219,7 @@ private:
                                                << ", actual =" << request->state();
             ret = false;
         }
-        return ret;
+        return ret && stateVerified;
     }
 
     bool doCategoryFetch(const QString type, const QList<QLandmarkCategoryId> &ids, QList<QLandmarkCategory> *cats, QLandmarkManager::Error expectedError = QLandmarkManager::NoError) {
@@ -902,7 +913,7 @@ private slots:
 #ifdef RETRIEVE_LANDMARK
     void retrieveLandmark();
     void retrieveLandmark_data();
-#endif RETRIEVE_LANDMARK
+#endif
 
     /* TODO: restore
     void asyncLandmarkFetchCancel();
@@ -940,7 +951,12 @@ private slots:
 #ifdef FILTER_DEFAULT
     void filterLandmarksDefault();
     void filterLandmarksDefault_data();
-#endif FILTER_DEFAULT
+#endif
+
+#ifdef FILTER_ID
+    void filterLandmarksById();
+    void filterLandmarksById_data();
+#endif
 
 #ifdef FILTER_NAME
     void filterLandmarksName();
@@ -1707,6 +1723,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
        QSignalSpy spy(&fetchByIdRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
        QSignalSpy spyResult(&fetchByIdRequest, SIGNAL(resultsAvailable()));
        fetchByIdRequest.setLandmarkIds(lmIds);
+       QVERIFY(fetchByIdRequest.isInactive());
        fetchByIdRequest.start();
        QVERIFY(waitForAsync(spy, &fetchByIdRequest,QLandmarkManager::DoesNotExistError,1000));
        QCOMPARE(fetchByIdRequest.errorMap().count(),2);
@@ -3450,6 +3467,82 @@ void tst_QLandmarkManager::filterLandmarksDefault_data() {
 }
 #endif
 
+#ifdef FILTER_ID
+void tst_QLandmarkManager::filterLandmarksById()
+{
+
+    QFETCH(QString, type);
+    QLandmark lm1;
+    lm1.setName("LM1");
+    QVERIFY(m_manager->saveLandmark(&lm1));
+
+    QLandmark lm2;
+    lm2.setName("LM2");
+    QVERIFY(m_manager->saveLandmark(&lm2));
+
+    QLandmark lm3;
+    lm3.setName("LM3");
+    QVERIFY(m_manager->saveLandmark(&lm3));
+
+    QLandmarkId idNotExist;
+    idNotExist.setManagerUri(m_manager->managerUri());
+    idNotExist.setLocalId("42");
+
+
+    QLandmarkIdFilter idFilter;
+    idFilter.append(lm1.landmarkId());
+    idFilter.append(lm2.landmarkId());
+    idFilter.append(idNotExist);
+
+    QList<QLandmark> lms;
+    QVERIFY(doFetch(type,idFilter,&lms, QLandmarkManager::NoError));
+    QCOMPARE(lms.count(),2);
+    QVERIFY(lms.contains(lm1));
+    QVERIFY(lms.contains(lm2));
+
+    //try no existing matches
+    QLandmarkId idNotExist2;
+    idNotExist2.setManagerUri(m_manager->managerUri());
+    idNotExist2.setLocalId("43");
+
+    QLandmarkId idNotExist3;
+    idNotExist3.setManagerUri(m_manager->managerUri());
+    idNotExist3.setLocalId("44");
+
+    QList<QLandmarkId>lmIds;
+    lmIds << idNotExist << idNotExist2 << idNotExist3;
+    idFilter.setLandmarkIds(lmIds);
+    QVERIFY(doFetch(type,idFilter, &lms, QLandmarkManager::NoError));
+    QCOMPARE(lms.count(), 0);
+
+    //try remove and << operator
+    idFilter.remove(idNotExist);
+    idFilter.remove(idNotExist2);
+
+    idFilter << lm3.landmarkId();
+    QVERIFY(idFilter.landmarkIds().contains(idNotExist3));
+    QVERIFY(idFilter.landmarkIds().contains(lm3.landmarkId()));
+
+    QVERIFY(doFetch(type,idFilter, &lms, QLandmarkManager::NoError));
+    QCOMPARE(lms.count(), 1);
+    QVERIFY(lms.contains(lm3));
+
+    //try an empty id filter
+    idFilter.clear();
+    QCOMPARE(idFilter.landmarkIds().count(),0);
+    QVERIFY(doFetch(type,idFilter, &lms, QLandmarkManager::NoError));
+    QCOMPARE(lms.count(), 0);
+}
+
+void tst_QLandmarkManager::filterLandmarksById_data()
+{
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
+#endif
+
 #ifdef FILTER_NAME
 void tst_QLandmarkManager::filterLandmarksName() {
     QFETCH(QString, type);
@@ -3947,7 +4040,6 @@ void tst_QLandmarkManager::filterLandmarksCategory() {
 
     QList<QLandmark> lms;
     QVERIFY(doFetch(type,filter,&lms, QLandmarkManager::NoError));
-
     QCOMPARE(lms.size(), 3);
 
     QSet<QString> names;
@@ -4647,7 +4739,7 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QLandmarkIntersectionFilter intersectionFilter;
     intersectionFilter.append(boxFilter1);
     intersectionFilter.append(boxFilter2);
-    intersectionFilter.append(boxFilter3);
+    intersectionFilter << boxFilter3;
 
     //try all 3 box filters in an intersection
     QList<QLandmark> lms;
@@ -4674,9 +4766,10 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QVERIFY(lms.contains(lm5));
     QVERIFY(lms.contains(lm6));
 
+    QList<QLandmarkFilter> filters;
+    filters << boxFilter1 << boxFilter3;
     intersectionFilter.clear();
-    intersectionFilter.append(boxFilter1);
-    intersectionFilter.append(boxFilter3);
+    intersectionFilter.setFilters(filters);
 
     QVERIFY(doFetch(type,intersectionFilter,&lms));
     QCOMPARE(lms.count(), 2);
@@ -4695,7 +4788,7 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QCOMPARE(lms,m_manager->landmarks(boxFilter1));
 
     intersectionFilter.clear();
-    intersectionFilter.append(boxFilter2);
+    intersectionFilter << boxFilter2;
     QVERIFY(doFetch(type,intersectionFilter,&lms));
     QCOMPARE(lms.count(), 4);
     QVERIFY(lms.contains(lm2));
@@ -4732,9 +4825,9 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QVERIFY(lms.contains(lm8));
 
     //try combinations of 2 box filters
-    unionFilter.clear();
-    unionFilter.append(boxFilter1);
-    unionFilter.append(boxFilter2);
+    filters.clear();
+    filters << boxFilter1 << boxFilter2;
+    unionFilter.setFilters(filters);
     QVERIFY(doFetch(type,unionFilter, &lms));
     QCOMPARE(lms.count(), 6);
     QVERIFY(lms.contains(lm1));
@@ -4790,7 +4883,7 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox()
     QCOMPARE(lms,m_manager->landmarks(boxFilter2));
 
     unionFilter.clear();
-    unionFilter.append(boxFilter3);
+    unionFilter << boxFilter3;
     QVERIFY(doFetch(type, unionFilter, &lms));
     QCOMPARE(lms.count(), 4);
     QVERIFY(lms.contains(lm4));
@@ -4921,6 +5014,38 @@ void tst_QLandmarkManager::filterLandmarksUnion() {
             QCOMPARE(idSet.contains(lm.landmarkId().localId()), false);
         }
     }
+
+    //try one of the filters in the union filter is invalid
+    QLandmarkCategoryFilter catFilter1;
+    catFilter1.setCategory(cat1);
+
+    QLandmarkProximityFilter proximityFilter;
+    proximityFilter.setCenter(QGeoCoordinate(91,45));
+    proximityFilter.setRadius(5000);
+
+    QLandmarkCategoryFilter catFilter3;
+    catFilter3.setCategoryId(cat3.categoryId());
+
+    QLandmarkUnionFilter unionFilter;
+    unionFilter << catFilter1 << proximityFilter << catFilter3;
+    QVERIFY(doFetch(type,unionFilter, &lms, QLandmarkManager::BadArgumentError));
+
+    QLandmarkCategoryFilter catFilter2;
+    QLandmarkCategoryId catIdNotExist;
+    catIdNotExist.setManagerUri(m_manager->managerUri());
+    catIdNotExist.setLocalId("42");
+    catFilter2.setCategoryId(catIdNotExist);
+
+    unionFilter.clear();
+    unionFilter << catFilter1 << catFilter2 << catFilter3;
+    QVERIFY(doFetch(type,unionFilter, &lms, QLandmarkManager::DoesNotExistError));
+    QCOMPARE(lms.count(), 0);
+
+    QList<QLandmarkFilter> filters;
+    filters << catFilter1 << catFilter3;
+    unionFilter.setFilters(filters);
+    QVERIFY(doFetch(type,unionFilter, &lms, QLandmarkManager::NoError));
+    QCOMPARE(lms.count(), 18);
 }
 
 void tst_QLandmarkManager::filterLandmarksUnion_data()
