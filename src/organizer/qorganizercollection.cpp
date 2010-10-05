@@ -50,7 +50,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QOrganizerCollection
-  \brief A QOrganizerCollection represents a collection of items in a manager.
+  \brief The QOrganizerCollection class represents a collection of items in a manager.
   \inmodule QtOrganizer
   \ingroup organizer-main
 
@@ -126,6 +126,13 @@ bool QOrganizerCollection::operator==(const QOrganizerCollection &other) const
 {
     return d->m_id == other.d->m_id;
 }
+
+/*!
+  \fn QOrganizerCollection::operator!=(const QOrganizerCollection &other) const
+
+  Returns true if the id of the collection is different to that of the \a other collection.
+ */
+
 
 /*!
   Returns the manager-local id of the collection
