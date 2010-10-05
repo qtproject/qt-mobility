@@ -214,7 +214,7 @@ bool QGeoMapObject::operator>(const QGeoMapObject &other) const
 }
 
 /*!
-    Associates the QGeoMapData instance \mapData with this map object.
+    Associates the QGeoMapData instance \a mapData with this map object.
 
     This will create an appropriate QGeoMapObjectInfo instance for
     this QGeoMapObject and will connect the appropriate signals to it
