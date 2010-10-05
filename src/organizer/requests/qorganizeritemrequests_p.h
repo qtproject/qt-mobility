@@ -114,6 +114,33 @@ public:
     QDateTime m_endDate;
 };
 
+class QOrganizerItemFetchForExportRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+{
+public:
+    QOrganizerItemFetchForExportRequestPrivate()
+        : QOrganizerItemAbstractRequestPrivate()
+    {
+    }
+
+    ~QOrganizerItemFetchForExportRequestPrivate()
+    {
+    }
+
+    QOrganizerItemAbstractRequest::RequestType type() const
+    {
+        return QOrganizerItemAbstractRequest::ItemFetchForExportRequest;
+    }
+
+    QOrganizerItemFilter m_filter;
+    QList<QOrganizerItemSortOrder> m_sorting;
+    QOrganizerItemFetchHint m_fetchHint;
+
+    QList<QOrganizerItem> m_organizeritems;
+
+    QDateTime m_startDate;
+    QDateTime m_endDate;
+};
+
 class QOrganizerItemInstanceFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
 {
 public:

@@ -39,27 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMREQUESTS_H
-#define QORGANIZERITEMREQUESTS_H
+#ifndef QORGANIZERITEMFETCHFOREXPORTREQUEST_H
+#define QORGANIZERITEMFETCHFOREXPORTREQUEST_H
 
-// this file includes all of the asynchronous request
-// leaf classes that are included in the public API
+#include "qtorganizerglobal.h"
+#include "qorganizeritemabstractrequest.h"
+#include "qorganizeritemsortorder.h"
+#include "qorganizeritemfilter.h"
+#include "qorganizeritem.h"
+#include "qorganizeritemfetchhint.h"
 
-#include "qorganizeritemdetaildefinitionfetchrequest.h"
-#include "qorganizeritemdetaildefinitionremoverequest.h"
-#include "qorganizeritemdetaildefinitionsaverequest.h"
+#include <QList>
+#include <QStringList>
 
-#include "qorganizeriteminstancefetchrequest.h"
-#include "qorganizeritemfetchrequest.h"
-#include "qorganizeritemfetchforexportrequest.h"
-#include "qorganizeritemlocalidfetchrequest.h"
-#include "qorganizeritemremoverequest.h"
-#include "qorganizeritemsaverequest.h"
+QTM_BEGIN_NAMESPACE
 
-#include "qorganizercollectionfetchrequest.h"
-#include "qorganizercollectionlocalidfetchrequest.h"
-#include "qorganizercollectionremoverequest.h"
-#include "qorganizercollectionsaverequest.h"
+class QOrganizerItemFetchForExportRequestPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerItemFetchForExportRequest : public QOrganizerItemAbstractRequest
+{
+    Q_OBJECT
+
+public:
+    QOrganizerItemFetchForExportRequest(QObject* parent = 0);
+
+    /* Selection, restriction and sorting */
+    void setFilter(const QOrganizerItemFilter& filter);
+    void setSorting(const QList<QOrganizerItemSortOrder>& sorting);
+    void setFetchHint(const QOrganizerItemFetchHint& fetchHint);
+    void setStartDate(const QDateTime& date);
+    void setEndDate(const QDateTime& date);
+    QOrganizerItemFilter filter() const;
+    QList<QOrganizerItemSortOrder> sorting() const;
+    QOrganizerItemFetchHint fetchHint() const;
+    QDateTime startDate() const;
+    QDateTime endDate() const;
+
+    /* Results */
+    QList<QOrganizerItem> items() const;
+
+private:
+    Q_DISABLE_COPY(QOrganizerItemFetchForExportRequest)
+    friend class QOrganizerItemManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemFetchForExportRequest)
+};
+
+QTM_END_NAMESPACE
 
 #endif
-

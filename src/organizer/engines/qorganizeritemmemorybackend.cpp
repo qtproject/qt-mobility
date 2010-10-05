@@ -1293,6 +1293,26 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
         }
         break;
 
+        case QOrganizerItemAbstractRequest::ItemFetchForExportRequest:
+        {
+            QOrganizerItemFetchForExportRequest* r = static_cast<QOrganizerItemFetchForExportRequest*>(currentRequest);
+            QOrganizerItemFilter filter = r->filter();
+            QList<QOrganizerItemSortOrder> sorting = r->sorting();
+            QOrganizerItemFetchHint fetchHint = r->fetchHint();
+            QDateTime startDate = r->startDate();
+            QDateTime endDate = r->endDate();
+
+            QOrganizerItemManager::Error operationError;
+            QList<QOrganizerItem> requestedOrganizerItems = itemsForExport(startDate, endDate, filter, sorting, fetchHint, &operationError);
+
+            // update the request with the results.
+            if (!requestedOrganizerItems.isEmpty() || operationError != QOrganizerItemManager::NoError)
+                updateItemFetchForExportRequest(r, requestedOrganizerItems, operationError, QOrganizerItemAbstractRequest::FinishedState);
+            else
+                updateRequestState(currentRequest, QOrganizerItemAbstractRequest::FinishedState);
+        }
+        break;
+
         case QOrganizerItemAbstractRequest::ItemLocalIdFetchRequest:
         {
             QOrganizerItemLocalIdFetchRequest* r = static_cast<QOrganizerItemLocalIdFetchRequest*>(currentRequest);
