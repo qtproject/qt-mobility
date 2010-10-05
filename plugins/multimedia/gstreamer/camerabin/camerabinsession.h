@@ -156,6 +156,7 @@ public slots:
 
 private slots:
     void busMessage(const QGstreamerMessage &message);
+    void handleViewfinderChange();
 
 private:
     bool setupCameraBin();

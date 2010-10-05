@@ -122,7 +122,7 @@ void tst_QVersit::testImportVCardFiles()
     QFETCH(QByteArray, charset);
     QFETCH(QList<QContact>, expectedContacts);
 
-    filename = QString::fromAscii(TESTDATA_DIR "testdata_vcf/") + filename;
+    filename = QLatin1String(TESTDATA_DIR "testdata_vcf/") + filename;
     QVersitReader reader;
     QFile file(filename);
     QVERIFY2(file.open(QIODevice::ReadOnly), filename.toAscii());
@@ -410,7 +410,7 @@ void tst_QVersit::testImportICalFiles()
     QFETCH(QByteArray, charset);
     QFETCH(QList<QOrganizerItem>, expectedItems);
 
-    filename = QString::fromAscii(TESTDATA_DIR "testdata_ics/") + filename;
+    filename = QLatin1String(TESTDATA_DIR "testdata_ics/") + filename;
     QVersitReader reader;
     QFile file(filename);
     QVERIFY2(file.open(QIODevice::ReadOnly), filename.toAscii());

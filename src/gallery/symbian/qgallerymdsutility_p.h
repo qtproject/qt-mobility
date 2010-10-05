@@ -132,8 +132,6 @@ public:
 
     static QString s60DescToQString(const TDesC& desc);
     static HBufC *qStringToS60Desc(const QString& string);
-    static QString s60Desc8ToQString(const TDesC8& desc);
-    static HBufC8 *qStringToS60Desc8(const QString& string);
     static QDateTime symbianTTimetoQDateTime(const TTime& time);
     static TTime QDateTimetosymbianTTime(const QDateTime& time);
 

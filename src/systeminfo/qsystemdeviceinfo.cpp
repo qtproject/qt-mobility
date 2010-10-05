@@ -339,7 +339,7 @@ QString QSystemDeviceInfo::model()
   \property QSystemDeviceInfo::productName
   \brief The product name.
 
-    Returns the product name of the device. In the case where no product information is available,
+    Returns the product name of the device. In the case where no product information is available, an empty string will be returned.
 
 */
 QString QSystemDeviceInfo::productName()

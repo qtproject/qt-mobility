@@ -645,6 +645,9 @@ uint qHash(const QOrganizerItem &key)
 }
 
 #ifndef QT_NO_DEBUG_STREAM
+/*!
+  Streams the \a organizeritem to the given debug stream \a dbg, and returns the stream.
+ */
 QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem)
 {
     dbg.nospace() << "QOrganizerItem(" << organizeritem.id() << ")";
@@ -662,7 +665,10 @@ QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem)
 QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item)
 {
     quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItem
-    return out << formatVersion << item.id() << item.details();
+    out << formatVersion
+        << item.id()
+        << item.details();
+    return out;
 }
 
 /*!

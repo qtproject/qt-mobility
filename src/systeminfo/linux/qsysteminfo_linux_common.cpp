@@ -346,7 +346,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
              QHalInterface iface;
              if (iface.isValid()) {
                  QHalInterface halIface;
-                 const QStringList halDevices = halIface.getAllDevices();
+                 const QStringList halDevices = halIface.findDeviceByCapability("mmc_host");
                  foreach(const QString device, halDevices) {
                      QHalDeviceInterface ifaceDevice(device);
                      if (ifaceDevice.isValid()) {
@@ -441,8 +441,8 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
  bool QSystemInfoLinuxCommonPrivate::hasHalUsbFeature(qint32 usbClass)
  {
      QHalInterface halIface;
-     const QStringList halDevices = halIface.getAllDevices();
-     foreach(const QString device, halDevices) {
+      const QStringList halDevices = halIface.findDeviceByCapability("usb_device");
+      foreach(const QString device, halDevices) {
          QHalDeviceInterface ifaceDevice(device);
          if (ifaceDevice.isValid()) {
              if(ifaceDevice.getPropertyString("info.subsystem") == "usb_device") {
@@ -696,6 +696,9 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
+            if(networkStatus(mode) != QSystemNetworkInfo::Connected) {
+                return netname;
+            }
 
             QString wlanInterface;
             const QString baseSysDir = "/sys/class/net/";
