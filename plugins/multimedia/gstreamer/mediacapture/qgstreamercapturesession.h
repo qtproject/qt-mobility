@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -66,6 +60,7 @@ class QGstreamerVideoEncode;
 class QGstreamerImageEncode;
 class QGstreamerRecorderControl;
 class QGstreamerMediaContainerControl;
+class QGstreamerVideoRendererInterface;
 
 class QGstreamerElementFactory
 {
@@ -116,14 +111,16 @@ public:
     QGstreamerVideoInput *videoInput() const { return m_videoInputFactory; }
     void setVideoInput(QGstreamerVideoInput *videoInput);
 
-    QGstreamerElementFactory *videoPreview() const { return m_videoPreviewFactory; }
-    void setVideoPreview(QGstreamerElementFactory *videoPreview);
+    QObject *videoPreview() const { return m_viewfinder; }
+    void setVideoPreview(QObject *viewfinder);
 
     void captureImage(int requestId, const QString &fileName);
 
     State state() const;
     qint64 duration() const;
     bool isMuted() const { return m_muted; }
+
+    bool isReady() const;
 
     bool processSyncMessage(const QGstreamerMessage &message);
 
@@ -135,6 +132,8 @@ signals:
     void imageCaptured(int requestId, const QImage &img);
     void imageSaved(int requestId, const QString &path);
     void mutedChanged(bool);
+    void readyChanged(bool);
+    void viewfinderChanged();
 
 public slots:
     void setState(QGstreamerCaptureSession::State);
@@ -173,7 +172,8 @@ private:
     QGstreamerElementFactory *m_audioInputFactory;
     QGstreamerElementFactory *m_audioPreviewFactory;
     QGstreamerVideoInput *m_videoInputFactory;
-    QGstreamerElementFactory *m_videoPreviewFactory;
+    QObject *m_viewfinder;
+    QGstreamerVideoRendererInterface *m_viewfinderInterface;
 
     QGstreamerAudioEncode *m_audioEncodeControl;
     QGstreamerVideoEncode *m_videoEncodeControl;

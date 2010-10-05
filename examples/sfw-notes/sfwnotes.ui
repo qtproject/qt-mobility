@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>ToDoTool</class>
- <widget class="QWidget" name="ToDoTool" >
-  <property name="geometry" >
+ <widget class="QWidget" name="ToDoTool">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,17 +10,17 @@
     <height>265</height>
    </rect>
   </property>
-  <property name="contextMenuPolicy" >
+  <property name="contextMenuPolicy">
    <enum>Qt::DefaultContextMenu</enum>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>ToDoTool</string>
   </property>
-  <widget class="QPushButton" name="addButton" >
-   <property name="enabled" >
+  <widget class="QPushButton" name="addButton">
+   <property name="enabled">
     <bool>false</bool>
    </property>
-   <property name="geometry" >
+   <property name="geometry">
     <rect>
      <x>20</x>
      <y>40</y>
@@ -27,19 +28,19 @@
      <height>30</height>
     </rect>
    </property>
-   <property name="text" >
+   <property name="text">
     <string/>
    </property>
-   <property name="icon" >
-    <iconset resource="sfwnotes.qrc" >
+   <property name="icon">
+    <iconset resource="sfwnotes.qrc">
      <normaloff>:/icons/addIcon.png</normaloff>:/icons/addIcon.png</iconset>
    </property>
   </widget>
-  <widget class="QPushButton" name="deleteButton" >
-   <property name="enabled" >
+  <widget class="QPushButton" name="deleteButton">
+   <property name="enabled">
     <bool>false</bool>
    </property>
-   <property name="geometry" >
+   <property name="geometry">
     <rect>
      <x>80</x>
      <y>40</y>
@@ -47,19 +48,19 @@
      <height>30</height>
     </rect>
    </property>
-   <property name="text" >
+   <property name="text">
     <string/>
    </property>
-   <property name="icon" >
-    <iconset resource="sfwnotes.qrc" >
+   <property name="icon">
+    <iconset resource="sfwnotes.qrc">
      <normaloff>:/icons/deleteIcon.png</normaloff>:/icons/deleteIcon.png</iconset>
    </property>
   </widget>
-  <widget class="QPushButton" name="searchButton" >
-   <property name="enabled" >
+  <widget class="QPushButton" name="searchButton">
+   <property name="enabled">
     <bool>false</bool>
    </property>
-   <property name="geometry" >
+   <property name="geometry">
     <rect>
      <x>140</x>
      <y>40</y>
@@ -67,19 +68,19 @@
      <height>30</height>
     </rect>
    </property>
-   <property name="text" >
+   <property name="text">
     <string/>
    </property>
-   <property name="icon" >
-    <iconset resource="sfwnotes.qrc" >
+   <property name="icon">
+    <iconset resource="sfwnotes.qrc">
      <normaloff>:/icons/searchIcon.png</normaloff>:/icons/searchIcon.png</iconset>
    </property>
   </widget>
-  <widget class="QPushButton" name="prevButton" >
-   <property name="enabled" >
+  <widget class="QPushButton" name="prevButton">
+   <property name="enabled">
     <bool>false</bool>
    </property>
-   <property name="geometry" >
+   <property name="geometry">
     <rect>
      <x>50</x>
      <y>80</y>
@@ -87,19 +88,19 @@
      <height>30</height>
     </rect>
    </property>
-   <property name="text" >
+   <property name="text">
     <string/>
    </property>
-   <property name="icon" >
-    <iconset resource="sfwnotes.qrc" >
+   <property name="icon">
+    <iconset resource="sfwnotes.qrc">
      <normaloff>:/icons/prevIcon.png</normaloff>:/icons/prevIcon.png</iconset>
    </property>
   </widget>
-  <widget class="QPushButton" name="nextButton" >
-   <property name="enabled" >
+  <widget class="QPushButton" name="nextButton">
+   <property name="enabled">
     <bool>false</bool>
    </property>
-   <property name="geometry" >
+   <property name="geometry">
     <rect>
      <x>130</x>
      <y>80</y>
@@ -107,16 +108,16 @@
      <height>30</height>
     </rect>
    </property>
-   <property name="text" >
+   <property name="text">
     <string/>
    </property>
-   <property name="icon" >
-    <iconset resource="sfwnotes.qrc" >
+   <property name="icon">
+    <iconset resource="sfwnotes.qrc">
      <normaloff>:/icons/nextIcon.png</normaloff>:/icons/nextIcon.png</iconset>
    </property>
   </widget>
-  <widget class="QLabel" name="countLabel" >
-   <property name="geometry" >
+  <widget class="QLabel" name="countLabel">
+   <property name="geometry">
     <rect>
      <x>90</x>
      <y>80</y>
@@ -124,15 +125,15 @@
      <height>30</height>
     </rect>
    </property>
-   <property name="text" >
+   <property name="text">
     <string>0/0</string>
    </property>
-   <property name="alignment" >
+   <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QLabel" name="titleLabel" >
-   <property name="geometry" >
+  <widget class="QLabel" name="titleLabel">
+   <property name="geometry">
     <rect>
      <x>20</x>
      <y>10</y>
@@ -140,21 +141,21 @@
      <height>20</height>
     </rect>
    </property>
-   <property name="palette" >
+   <property name="palette">
     <palette>
      <active>
-      <colorrole role="WindowText" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="WindowText">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>0</red>
          <green>0</green>
          <blue>255</blue>
         </color>
        </brush>
       </colorrole>
-      <colorrole role="Text" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="Text">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>0</red>
          <green>0</green>
          <blue>0</blue>
@@ -163,18 +164,18 @@
       </colorrole>
      </active>
      <inactive>
-      <colorrole role="WindowText" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="WindowText">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>0</red>
          <green>0</green>
          <blue>255</blue>
         </color>
        </brush>
       </colorrole>
-      <colorrole role="Text" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="Text">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>0</red>
          <green>0</green>
          <blue>0</blue>
@@ -183,18 +184,18 @@
       </colorrole>
      </inactive>
      <disabled>
-      <colorrole role="WindowText" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="WindowText">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>126</red>
          <green>125</green>
          <blue>124</blue>
         </color>
        </brush>
       </colorrole>
-      <colorrole role="Text" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="Text">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>126</red>
          <green>125</green>
          <blue>124</blue>
@@ -204,7 +205,7 @@
      </disabled>
     </palette>
    </property>
-   <property name="font" >
+   <property name="font">
     <font>
      <family>Nimbus Roman No9 L</family>
      <pointsize>24</pointsize>
@@ -213,18 +214,18 @@
      <bold>true</bold>
     </font>
    </property>
-   <property name="text" >
+   <property name="text">
     <string>ToDoTool</string>
    </property>
-   <property name="textFormat" >
+   <property name="textFormat">
     <enum>Qt::AutoText</enum>
    </property>
-   <property name="alignment" >
+   <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QLabel" name="noteLabel" >
-   <property name="geometry" >
+  <widget class="QLabel" name="noteLabel">
+   <property name="geometry">
     <rect>
      <x>30</x>
      <y>140</y>
@@ -232,39 +233,39 @@
      <height>110</height>
     </rect>
    </property>
-   <property name="palette" >
+   <property name="palette">
     <palette>
      <active>
-      <colorrole role="WindowText" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="WindowText">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>0</red>
          <green>0</green>
          <blue>0</blue>
         </color>
        </brush>
       </colorrole>
-      <colorrole role="BrightText" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="BrightText">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>0</red>
          <green>0</green>
          <blue>0</blue>
         </color>
        </brush>
       </colorrole>
-      <colorrole role="Base" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>0</red>
          <green>0</green>
          <blue>0</blue>
         </color>
        </brush>
       </colorrole>
-      <colorrole role="Window" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>255</red>
          <green>255</green>
          <blue>127</blue>
@@ -273,36 +274,36 @@
       </colorrole>
      </active>
      <inactive>
-      <colorrole role="WindowText" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="WindowText">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>0</red>
          <green>0</green>
          <blue>0</blue>
         </color>
        </brush>
       </colorrole>
-      <colorrole role="BrightText" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="BrightText">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>0</red>
          <green>0</green>
          <blue>0</blue>
         </color>
        </brush>
       </colorrole>
-      <colorrole role="Base" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>0</red>
          <green>0</green>
          <blue>0</blue>
         </color>
        </brush>
       </colorrole>
-      <colorrole role="Window" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>255</red>
          <green>255</green>
          <blue>127</blue>
@@ -311,36 +312,36 @@
       </colorrole>
      </inactive>
      <disabled>
-      <colorrole role="WindowText" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="WindowText">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>146</red>
          <green>145</green>
          <blue>144</blue>
         </color>
        </brush>
       </colorrole>
-      <colorrole role="BrightText" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="BrightText">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>0</red>
          <green>0</green>
          <blue>0</blue>
         </color>
        </brush>
       </colorrole>
-      <colorrole role="Base" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>255</red>
          <green>255</green>
          <blue>127</blue>
         </color>
        </brush>
       </colorrole>
-      <colorrole role="Window" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>255</red>
          <green>255</green>
          <blue>127</blue>
@@ -350,28 +351,28 @@
      </disabled>
     </palette>
    </property>
-   <property name="font" >
+   <property name="font">
     <font>
      <family>Comic Sans MS</family>
      <pointsize>18</pointsize>
      <italic>true</italic>
     </font>
    </property>
-   <property name="autoFillBackground" >
+   <property name="autoFillBackground">
     <bool>true</bool>
    </property>
-   <property name="text" >
+   <property name="text">
     <string>Notes Manager service not found</string>
    </property>
-   <property name="alignment" >
+   <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
-   <property name="wordWrap" >
+   <property name="wordWrap">
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QLabel" name="dateLabel" >
-   <property name="geometry" >
+  <widget class="QLabel" name="dateLabel">
+   <property name="geometry">
     <rect>
      <x>30</x>
      <y>120</y>
@@ -379,21 +380,21 @@
      <height>20</height>
     </rect>
    </property>
-   <property name="palette" >
+   <property name="palette">
     <palette>
      <active>
-      <colorrole role="Base" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>255</red>
          <green>255</green>
          <blue>127</blue>
         </color>
        </brush>
       </colorrole>
-      <colorrole role="Window" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>255</red>
          <green>255</green>
          <blue>127</blue>
@@ -402,18 +403,18 @@
       </colorrole>
      </active>
      <inactive>
-      <colorrole role="Base" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>255</red>
          <green>255</green>
          <blue>127</blue>
         </color>
        </brush>
       </colorrole>
-      <colorrole role="Window" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>255</red>
          <green>255</green>
          <blue>127</blue>
@@ -422,18 +423,18 @@
       </colorrole>
      </inactive>
      <disabled>
-      <colorrole role="Base" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="Base">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>255</red>
          <green>255</green>
          <blue>127</blue>
         </color>
        </brush>
       </colorrole>
-      <colorrole role="Window" >
-       <brush brushstyle="SolidPattern" >
-        <color alpha="255" >
+      <colorrole role="Window">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
          <red>255</red>
          <green>255</green>
          <blue>127</blue>
@@ -443,24 +444,24 @@
      </disabled>
     </palette>
    </property>
-   <property name="font" >
+   <property name="font">
     <font>
      <pointsize>10</pointsize>
     </font>
    </property>
-   <property name="autoFillBackground" >
+   <property name="autoFillBackground">
     <bool>true</bool>
    </property>
-   <property name="text" >
+   <property name="text">
     <string/>
    </property>
-   <property name="alignment" >
+   <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
  </widget>
  <resources>
-  <include location="sfwnotes.qrc" />
+  <include location="sfwnotes.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -49,6 +43,7 @@
 #include "qgraphicsgeomap_p.h"
 
 #include "qgeocoordinate.h"
+#include "qgeoboundingbox.h"
 #include "qgeomapobject.h"
 
 #include "qgeoserviceprovider.h"
@@ -112,6 +107,24 @@ The map data is a graphical representation of terrain features.  This may also
 include some of the information provided by QGraphicsGeoMap::StreetMap.
 */
 
+/*!
+\enum QGraphicsGeoMap::ConnectivityMode
+
+Describes the method of obtaining the mapping data.
+
+\value NoConnectivity
+There is no map data.
+
+\value OfflineMode
+The map data will come from an offline source.
+
+\value OnlineMode
+The map data will come from an online source.
+
+\value HybridMode
+The map data will come from a combination of offline and online sources.
+*/
+
 // Temporary constructor, for use by QML bindings until we come up
 // with the right QML / service provider mapping
 QGraphicsGeoMap::QGraphicsGeoMap(QGraphicsItem *parent)
@@ -133,7 +146,7 @@ QGraphicsGeoMap::QGraphicsGeoMap(QGraphicsItem *parent)
 
     setMinimumSize(QSizeF(0, 0));
     setPreferredSize(QSizeF(500, 500));
-//    d_ptr->mapData->setViewportSize(QSizeF(300, 300));
+//    d_ptr->mapData->setWindowSize(QSizeF(300, 300));
 }
 
 /*!
@@ -161,7 +174,7 @@ QGraphicsGeoMap::QGraphicsGeoMap(QGeoMappingManager *manager, QGraphicsItem *par
 
     setMinimumSize(QSizeF(0, 0));
     setPreferredSize(QSizeF(500, 500));
-    //d_ptr->mapData->setViewportSize(QSizeF(300, 300));
+    //d_ptr->mapData->setWindowSize(QSizeF(300, 300));
 }
 
 /*!
@@ -187,8 +200,23 @@ void QGraphicsGeoMap::setMappingManager(QGeoMappingManager *manager)
     }
 
     d_ptr->mapData = d_ptr->manager->createMapData(this);
+    d_ptr->mapData->setup();
+
     setMapType(type);
-    d_ptr->mapData->setViewportSize(QSizeF(300, 300));
+    d_ptr->mapData->setWindowSize(QSizeF(300, 300));
+
+    connect(d_ptr->mapData,
+           SIGNAL(zoomLevelChanged(qreal)),
+           this,
+           SIGNAL(zoomLevelChanged(qreal)));
+    connect(d_ptr->mapData,
+            SIGNAL(mapTypeChanged(QGraphicsGeoMap::MapType)),
+            this,
+            SIGNAL(mapTypeChanged(QGraphicsGeoMap::MapType)));
+    connect(d_ptr->mapData,
+            SIGNAL(centerChanged(QGeoCoordinate)),
+            this,
+            SIGNAL(centerChanged(QGeoCoordinate)));
 }
 
 /*!
@@ -197,7 +225,7 @@ void QGraphicsGeoMap::setMappingManager(QGeoMappingManager *manager)
 void QGraphicsGeoMap::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     if (d_ptr->mapData) {
-        d_ptr->mapData->setViewportSize(event->newSize());
+        d_ptr->mapData->setWindowSize(event->newSize());
     }
 }
 
@@ -265,13 +293,8 @@ qreal QGraphicsGeoMap::maximumZoomLevel() const
 */
 void QGraphicsGeoMap::setZoomLevel(qreal zoomLevel)
 {
-    if (d_ptr->mapData) {
-        qreal oldZoom = d_ptr->mapData->zoomLevel();
+    if (d_ptr->mapData)
         d_ptr->mapData->setZoomLevel(zoomLevel);
-        qreal newZoom = d_ptr->mapData->zoomLevel();
-        if (oldZoom != newZoom)
-            emit zoomLevelChanged(newZoom);
-    }
 }
 
 qreal QGraphicsGeoMap::zoomLevel() const
@@ -290,13 +313,14 @@ qreal QGraphicsGeoMap::zoomLevel() const
     By default this will mean that positive values of \a dx move the
     viewed area to the right and that positive values of \a dy move the
     viewed area down.
+
+    After the panning has occured the centerChanged() signal will be emitted.
 */
 void QGraphicsGeoMap::pan(int dx, int dy)
 {
     if (d_ptr->mapData) {
         d_ptr->mapData->pan(dx, dy);
         update();
-        emit panned(QPoint(dx, dy));
     }
 }
 
@@ -309,12 +333,8 @@ void QGraphicsGeoMap::pan(int dx, int dy)
 */
 void QGraphicsGeoMap::setCenter(const QGeoCoordinate &center)
 {
-    if (d_ptr->mapData) {
-        if (d_ptr->mapData->center() != center) {
-            d_ptr->mapData->setCenter(center);
-            emit centerChanged(center);
-        }
-    }
+    if (d_ptr->mapData)
+        d_ptr->mapData->setCenter(center);
 }
 
 QGeoCoordinate QGraphicsGeoMap::center() const
@@ -350,11 +370,7 @@ void QGraphicsGeoMap::setMapType(QGraphicsGeoMap::MapType mapType)
         if (!d_ptr->manager->supportedMapTypes().contains(mapType))
             return;
 
-        if (d_ptr->mapData->mapType() == mapType)
-            return;
-
         d_ptr->mapData->setMapType(mapType);
-        emit mapTypeChanged(mapType);
     }
 }
 
@@ -364,6 +380,43 @@ QGraphicsGeoMap::MapType QGraphicsGeoMap::mapType() const
         return d_ptr->mapData->mapType();
 
     return QGraphicsGeoMap::NoMap;
+}
+
+/*!
+    Returns the connectivity modes supported by the QGeoMappingManager associated with
+    this widget.
+*/
+QList<QGraphicsGeoMap::ConnectivityMode> QGraphicsGeoMap::supportedConnectivityModes() const
+{
+    if (d_ptr->manager)
+        return d_ptr->manager->supportedConnectivityModes();
+
+    return QList<QGraphicsGeoMap::ConnectivityMode>();
+}
+
+/*!
+  \property QGraphicsGeoMap::connectivityMode
+  \brief This property holds the connectivity mode used to obtain the map data.
+
+  Setting connectivityMode to a mode not present in supportedConnectivityModes() will do
+  nothing.
+*/
+void QGraphicsGeoMap::setConnectivityMode(QGraphicsGeoMap::ConnectivityMode connectivityMode)
+{
+    if (d_ptr->mapData && d_ptr->manager) {
+        if (!d_ptr->manager->supportedConnectivityModes().contains(connectivityMode))
+            return;
+
+        d_ptr->mapData->setConnectivityMode(connectivityMode);
+    }
+}
+
+QGraphicsGeoMap::ConnectivityMode QGraphicsGeoMap::connectivityMode() const
+{
+    if (d_ptr->mapData)
+        return d_ptr->mapData->connectivityMode();
+
+    return QGraphicsGeoMap::NoConnectivity;
 }
 
 /*!
@@ -429,10 +482,43 @@ void QGraphicsGeoMap::clearMapObjects()
 }
 
 /*!
-    Returns the list of map objects managed by this widget which
+    Returns a bounding box corresponding to the physical area displayed 
+    in the viewport of the map.
+
+    The bounding box which is returned is defined by the upper left and 
+    lower right corners of the visible area of the map.
+*/
+QGeoBoundingBox QGraphicsGeoMap::viewport() const
+{
+    if (!d_ptr->mapData)
+        return QGeoBoundingBox();
+
+    return d_ptr->mapData->viewport();
+}
+
+/*!
+    Attempts to fit the bounding box \a bounds into the viewport of the map.
+
+    This method will change the zoom level to the maximum zoom level such 
+    that all of \a bounds is visible within the resulting viewport.
+
+    If \a preserveViewportCenter is false the map will be centered on the 
+    bounding box \a bounds before the zoom level is changed, otherwise the 
+    center of the map will not be changed.
+*/
+void QGraphicsGeoMap::fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
+{
+    if (!d_ptr->mapData)
+        return;
+
+    d_ptr->mapData->fitInViewport(bounds, preserveViewportCenter);
+}
+
+/*!
+    Returns the list of visible map objects managed by this widget which
     contain the point \a screenPosition within their boundaries.
 */
-QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsAtScreenPosition(const QPointF &screenPosition)
+QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsAtScreenPosition(const QPointF &screenPosition) const
 {
     if (d_ptr->mapData)
         return d_ptr->mapData->mapObjectsAtScreenPosition(screenPosition);
@@ -441,14 +527,26 @@ QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsAtScreenPosition(const QPointF 
 }
 
 /*!
-    Returns the list of map objects managed by this widget which are
+    Returns the list of visible map objects managed by this widget which are
     displayed at least partially within the on screen rectangle
     \a screenRect.
 */
-QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInScreenRect(const QRectF &screenRect)
+QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInScreenRect(const QRectF &screenRect) const
 {
     if (d_ptr->mapData)
         return d_ptr->mapData->mapObjectsInScreenRect(screenRect);
+
+    return QList<QGeoMapObject*>();
+}
+
+/*!
+    Returns the list of visible map objects manager by this widget which 
+    are displayed at least partially within the viewport of the map.
+*/
+QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInViewport() const
+{
+    if (d_ptr->mapData)
+        return d_ptr->mapData->mapObjectsInViewport();
 
     return QList<QGeoMapObject*>();
 }

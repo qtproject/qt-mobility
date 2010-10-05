@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,27 +25,22 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #include <QVariant>
+#include <QtCore/qdir.h>
 #include <qtmedianamespace.h>
 #include "qxarecordsession.h"
 #include "xarecordsessionimpl.h"
@@ -98,6 +93,8 @@ m_previousState(QMediaRecorder::StoppedState)
             m_audioencodersettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
             m_audioencodersettings.setQuality(QtMultimediaKit::NormalQuality);
             m_audioencodersettings.setSampleRate(-1);
+            setEncoderSettingsToImpl();
+            m_URItoImplSet = false;
             QT_TRACE1("Initialized implementation");
         }
         else {
@@ -131,55 +128,27 @@ bool QXARecordSession::setOutputLocation(const QUrl &location)
     RETURN_s_IF_m_impl_IS_NULL(false);
 
     // Location can be set only when recorder is in stopped state.
-    if (state() != QMediaRecorder::StoppedState) {
+    if (state() != QMediaRecorder::StoppedState)
         return false;
-    }
-    
+
     // Validate URL
     if (!location.isValid())
         return false;
 
     // If old and new locations are same, do nothing.
-    QString newUrlStr = (QUrl::fromUserInput(location.toString().toLower())).toString();
-
-    int index = newUrlStr.lastIndexOf('.');
-    if (index == -1) {
-        QString fileExtension;
-        
-        if ((m_containerMimeType.compare("audio/wav")) == KErrNone){
-            fileExtension = QString(".wav");
-        }
-        else if ((m_containerMimeType.compare("audio/amr")) == KErrNone){
-            fileExtension = QString(".amr");
-        }
-        else if ((m_containerMimeType.compare("audio/mpeg")) == KErrNone){
-            fileExtension = QString(".mp4");
-        }
-        
-        newUrlStr.append(fileExtension);     
-    }
-    
-
-    QString curUrlStr = (QUrl::fromUserInput(m_outputLocation.toString().toLower())).toString();
+    QString newUrlStr = (QUrl::fromUserInput(location.toString())).toString();
+    QString curUrlStr = (QUrl::fromUserInput(m_outputLocation.toString())).toString();
     if (curUrlStr.compare(newUrlStr) == KErrNone)
         return true;
 
-    bool retVal = false;
-    TPtrC16 tempPtr(reinterpret_cast<const TUint16 *>(newUrlStr.utf16()));
-    if (m_impl->setURI(tempPtr) == 0) {
-        QT_TRACE2("Location:", newUrlStr);
-        m_outputLocation = location;
-        /* New file, so user can set new settings */
-        m_previousState = QMediaRecorder::StoppedState;
-        retVal = true;
-    }
-    else {
-        emit error(QMediaRecorder::ResourceError, tr("Generic error"));
-        SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::ResourceError, tr(\"Generic error\"))");
-    }
+    QT_TRACE2("Location:", newUrlStr);
+    m_outputLocation = location;
+    /* New file, so user can set new settings */
+    m_previousState = QMediaRecorder::StoppedState;
+    m_URItoImplSet = false;
 
     QT_TRACE_FUNCTION_EXIT;
-    return retVal;
+    return true;
 }
 
 QMediaRecorder::State QXARecordSession::state()
@@ -229,7 +198,10 @@ void QXARecordSession::record()
     if (m_appliedaudioencodersettings != m_audioencodersettings)
         RET_IF_FALSE(setEncoderSettingsToImpl());
 
-    /* 2. Start recording...
+    /* 2. Set URI to impl */
+    RET_IF_FALSE(setURIToImpl());
+
+    /* 3. Start recording...
      * If successful, setRecorderState(QMediaRecorder::RecordingState);
      * will be called from the callback cbRecordingStarted()
      */
@@ -392,6 +364,9 @@ void QXARecordSession::setActiveEndpoint(const QString &name)
 
     RETURN_IF_m_impl_IS_NULL;
 
+    if (name.isNull() || name.isEmpty())
+        return;
+
     TPtrC16 tempPtr(reinterpret_cast<const TUint16*>(name.utf16()));
     if (m_impl->setAudioInputDevice(tempPtr) == true) {
         emit activeEndpointChanged(name);
@@ -414,7 +389,7 @@ QStringList QXARecordSession::supportedAudioCodecs()
 
 QString QXARecordSession::codecDescription(const QString &codecName)
 {
-    if (m_codecs.contains(codecName.toLower()))
+    if (m_codecs.contains(codecName))
         return QString(codecName);
     return QString();
 }
@@ -429,7 +404,9 @@ QList<int> QXARecordSession::supportedSampleRates(
 
     RETURN_s_IF_m_impl_IS_NULL(srList);
 
-    QString selectedCodec = settings.codec().toLower();
+    QString selectedCodec = settings.codec();
+    if (selectedCodec.isNull() || selectedCodec.isEmpty())
+        selectedCodec = QString("pcm");
 
     if (m_codecs.indexOf(selectedCodec) >= 0) {
         RArray<TInt32> sampleRates;
@@ -454,7 +431,7 @@ QList<int> QXARecordSession::supportedSampleRates(
 
 QAudioEncoderSettings QXARecordSession::audioSettings()
 {
-    return m_audioencodersettings;
+    return m_appliedaudioencodersettings;
 }
 
 void QXARecordSession::setAudioSettings(const QAudioEncoderSettings &settings)
@@ -462,6 +439,7 @@ void QXARecordSession::setAudioSettings(const QAudioEncoderSettings &settings)
     /* Settings can only be set when the recorder is in the stopped
      * state after creation. */
     if ((state() == QMediaRecorder::StoppedState) && (m_state == m_previousState)) {
+        /* Validate and ignore rest of the settings */
         m_audioencodersettings = settings;
     }
     else {
@@ -494,8 +472,8 @@ QVariant QXARecordSession::encodingOption(const QString &codec, const QString &n
     QMap<QString, QVariant> map;
     RETURN_s_IF_m_impl_IS_NULL(encodingOption);
 
-    if (name.toLower().compare("bitrate") == 0) {
-        TPtrC16 tempPtr(reinterpret_cast<const TUint16*>(codec.toLower().utf16()));
+    if (name.compare("bitrate") == 0) {
+        TPtrC16 tempPtr(reinterpret_cast<const TUint16*>(codec.utf16()));
         QList<uint> bitrateList;
         RArray<TUint32> bitrates;
         TBool continuous;
@@ -540,7 +518,9 @@ QString QXARecordSession::containerMimeType()
 
 void QXARecordSession::setContainerMimeType(const QString &formatMimeType)
 {
-    if (m_containers.indexOf(formatMimeType.toLower()) >= 0 )
+    if (formatMimeType.isNull() || formatMimeType.isEmpty())
+        return;
+    else if (m_containers.indexOf(formatMimeType) >= 0 )
         m_containerMimeType = formatMimeType;
     else {
         emit error(QMediaRecorder::FormatError, tr("Invalid container"));
@@ -550,7 +530,7 @@ void QXARecordSession::setContainerMimeType(const QString &formatMimeType)
 
 QString QXARecordSession::containerDescription(const QString &formatMimeType)
 {
-    int index = m_containers.indexOf(formatMimeType.toLower());
+    int index = m_containers.indexOf(formatMimeType);
     if (index >= 0) {
         return m_containersDesc.at(index);
         }
@@ -619,46 +599,41 @@ bool QXARecordSession::setEncoderSettingsToImpl()
 
     m_impl->resetEncoderAttributes();
 
-    QString tempStr = m_containerMimeType.toLower();
+    /* m_containerMimeType is alredy validated in ::setContainerMimeType() */
+    QString tempStr = m_containerMimeType;
     TPtrC16 tempPtr(reinterpret_cast<const TUint16 *>(tempStr.utf16()));
     m_impl->setContainerType(tempPtr);
 
-    /* Validate and set bitrate only if encoding mode is other than quality encoding and container type is not wav*/
-    if ((m_audioencodersettings.encodingMode() != QtMultimediaKit::ConstantQualityEncoding) && 
-        (m_containerMimeType.toLower().compare("audio/wav") != 0)) {
-        if (m_audioencodersettings.bitRate() < 0 ) {
-            emit error(QMediaRecorder::FormatError, tr("Invalid bitrate"));
-            SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Invalid bitrate\"))");
-            return false;
-        }
-        else {
-            m_impl->setBitRate(m_audioencodersettings.bitRate());
-        }
+    /* vaidate and assign codec */
+    if (m_audioencodersettings.codec().isNull() || m_audioencodersettings.codec().isEmpty()) {
+        m_audioencodersettings.setCodec(m_appliedaudioencodersettings.codec());
     }
-
-    if (m_audioencodersettings.channelCount() == -1) {
-        m_impl->setOptimalChannelCount();
-    }
-    else if (m_audioencodersettings.channelCount() <= 0) {
-        emit error(QMediaRecorder::FormatError, tr("Invalid channel count"));
-        SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Invalid channel count\"));");
-        return false;
-    }
-    else {
-        m_impl->setChannels(m_audioencodersettings.channelCount());
-    }
-
-    tempStr = m_audioencodersettings.codec().toLower();
+    tempStr = m_audioencodersettings.codec();
     if (m_codecs.indexOf(tempStr) >= 0) {
         tempPtr.Set(reinterpret_cast<const TUint16*>(tempStr.utf16()));
         /* We already did validation above, so function always returns true */
         m_impl->setCodec(tempPtr);
     }
     else {
-        QT_TRACE2("Codec selected is :", m_audioencodersettings.codec().toLower());
+        QT_TRACE2("Codec selected is :", m_audioencodersettings.codec());
         emit error(QMediaRecorder::FormatError, tr("Invalid codec"));
         SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Invalid codec\"));");
         return false;
+    }
+
+    /* Validate and set bitrate only if encoding mode is other than quality encoding and container type is not wav*/
+    if ((m_audioencodersettings.encodingMode() != QtMultimediaKit::ConstantQualityEncoding) &&
+        (m_containerMimeType.compare("audio/wav") != 0)) {
+            m_impl->setBitRate(m_audioencodersettings.bitRate());
+            m_audioencodersettings.setBitRate(m_impl->getBitRate());
+    }
+
+    if (m_audioencodersettings.channelCount() == -1) {
+        m_impl->setOptimalChannelCount();
+    }
+    else {
+        m_impl->setChannels(m_audioencodersettings.channelCount());
+        m_audioencodersettings.setChannelCount(m_impl->getChannels());
     }
 
     switch (m_audioencodersettings.encodingMode()) {
@@ -666,23 +641,26 @@ bool QXARecordSession::setEncoderSettingsToImpl()
             switch (m_audioencodersettings.quality()) {
             case QtMultimediaKit::VeryLowQuality:
                 m_impl->setVeryLowQuality();
+                m_audioencodersettings.setBitRate(m_impl->getBitRate());
                 break;
             case QtMultimediaKit::LowQuality:
                 m_impl->setLowQuality();
+                m_audioencodersettings.setBitRate(m_impl->getBitRate());
                 break;
             case QtMultimediaKit::NormalQuality:
                 m_impl->setNormalQuality();
+                m_audioencodersettings.setBitRate(m_impl->getBitRate());
                 break;
             case QtMultimediaKit::HighQuality:
                 m_impl->setHighQuality();
+                m_audioencodersettings.setBitRate(m_impl->getBitRate());
                 break;
             case QtMultimediaKit::VeryHighQuality:
                 m_impl->setVeryHighQuality();
+                m_audioencodersettings.setBitRate(m_impl->getBitRate());
                 break;
             default:
-                emit error(QMediaRecorder::FormatError, tr("Invalid encoding quality setting"));
-                SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Invalid encoding quality setting\"));");
-                return false;
+                break;
             }; /* end of switch (m_audioencodersettings.quality())*/
         }
         break;
@@ -726,15 +704,63 @@ bool QXARecordSession::setEncoderSettingsToImpl()
     if (m_audioencodersettings.sampleRate() == -1) {
         m_impl->setOptimalSampleRate();
     }
-    else if (m_audioencodersettings.sampleRate() <= 0) {
-        emit error(QMediaRecorder::FormatError, tr("Invalid sample rate"));
-        SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Invalid sample rate\"));");
-        return false;
-    }
     else {
         m_impl->setSampleRate(m_audioencodersettings.sampleRate());
+        m_audioencodersettings.setSampleRate(m_impl->getSampleRate());
     }
     m_appliedaudioencodersettings = m_audioencodersettings;
+
+    QT_TRACE_FUNCTION_EXIT;
+    return true;
+}
+
+bool QXARecordSession::setURIToImpl()
+{
+    QT_TRACE_FUNCTION_ENTRY;
+    if (m_URItoImplSet)
+        return true;
+
+    /* If m_outputLocation is null, set a default location */
+    if (m_outputLocation.isEmpty()) {
+        QDir outputDir(QDir::rootPath());
+
+        int lastImage = 0;
+        int fileCount = 0;
+        foreach(QString fileName, outputDir.entryList(QStringList() << "recordclip_*")) {
+            int imgNumber = fileName.mid(5, fileName.size() - 9).toInt();
+            lastImage = qMax(lastImage, imgNumber);
+            if (outputDir.exists(fileName))
+                fileCount += 1;
+        }
+        lastImage += fileCount;
+        m_outputLocation = QUrl(QDir::toNativeSeparators(outputDir.canonicalPath() + QString("/recordclip_%1").arg(lastImage + 1, 4, 10, QLatin1Char('0'))));
+    }
+
+    QString newUrlStr = (QUrl::fromUserInput(m_outputLocation.toString())).toString();
+    // append file prefix if required
+    if (newUrlStr.lastIndexOf('.') == -1) {
+        QString fileExtension;
+        if ((m_containerMimeType.compare("audio/wav")) == KErrNone) {
+            fileExtension = QString(".wav");
+        }
+        else if ((m_containerMimeType.compare("audio/amr")) == KErrNone) {
+            fileExtension = QString(".amr");
+        }
+        else if ((m_containerMimeType.compare("audio/mpeg")) == KErrNone) {
+            fileExtension = QString(".mp4");
+        }
+        newUrlStr.append(fileExtension);
+    }
+
+    QT_TRACE2("Filename selected is :", newUrlStr);
+    TPtrC16 tempPtr(reinterpret_cast<const TUint16 *>(newUrlStr.utf16()));
+    if (m_impl->setURI(tempPtr) != 0) {
+        emit error(QMediaRecorder::ResourceError, tr("Generic error"));
+        SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::ResourceError, tr(\"Generic error\"))");
+        return false;
+    }
+    m_URItoImplSet = true;
+    m_outputLocation = QUrl(newUrlStr);
     QT_TRACE_FUNCTION_EXIT;
     return true;
 }

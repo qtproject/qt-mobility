@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -105,7 +99,9 @@ void QContactSaveRequest::setContacts(const QList<QContact>& contacts)
 }
 
 /*! Returns the list of contacts which will be saved if called prior to calling \c start(),
-    otherwise returns the list of contacts as they were saved in the contacts store */
+    otherwise returns the list of contacts with their ids set appropriately (successfully
+    saved new contacts will have an id assigned).
+*/
 QList<QContact> QContactSaveRequest::contacts() const
 {
     Q_D(const QContactSaveRequest);
@@ -113,12 +109,53 @@ QList<QContact> QContactSaveRequest::contacts() const
     return d->m_contacts;
 }
 
-/*! Returns the map of input definition list indices to errors which occurred */
+/*! Returns the map of input contact list indices to errors which occurred */
 QMap<int, QContactManager::Error> QContactSaveRequest::errorMap() const
 {
     Q_D(const QContactSaveRequest);
     QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
+}
+
+/*!
+    Set the list of definitions to restrict saving to \a definitionMask.  This allows you to perform
+    partial save (and remove) operations on existing contacts.
+
+    If \a definitionMask is empty (the default), no restrictions will apply, and the passed
+    in contacts will be saved as is.  Otherwise, only details whose definitions are in
+    the list will be saved.  If a definition name is present in the list, but there are no
+    corresponding details in the contact passed into this request, any existing details in
+    the manager for that contact will be removed.
+
+    This is useful if you've used a fetch hint to fetch a partial contact from a manager
+    so that you can save changes to the details you actually fetched without removing
+    the details you didn't.
+
+    Additionally, when performing synchronization operations with other managers that don't
+    support the full range of details, you can restrict the update operation to only those
+    details so that you don't lose the extra details that are supported in this manager.
+
+    \note Some managers do not support partial updates natively, in which case the QtContacts
+    framework will emulate the functionality (fetching the whole contact, applying the
+    new restricted details, and saving the contact back).
+*/
+void QContactSaveRequest::setDefinitionMask(const QStringList &definitionMask)
+{
+    Q_D(QContactSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
+    d->m_definitionMask = definitionMask;
+}
+
+/*!
+    Returns the list of definitions that this request will operate on.
+
+    If the list is empty, the request will operate on all details.
+ */
+QStringList QContactSaveRequest::definitionMask() const
+{
+    Q_D(const QContactSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
+    return d->m_definitionMask;
 }
 
 #include "moc_qcontactsaverequest.cpp"

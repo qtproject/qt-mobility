@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -78,6 +72,7 @@ static const int maxCacheSize = 100000;
 class QMessageService;
 class QMessageServicePrivate;
 class QMessageStorePrivate;
+class MessageQueryThread;
 
 struct MessageQueryInfo
 {
@@ -96,6 +91,8 @@ struct MessageQueryInfo
     QString realAccountId;
     bool isQuery;
     bool returnWithSingleShot;
+    bool allMessagesQuery;
+    MessageQueryThread *queryThread;
 };
 
 struct ModestUnreadMessageDBusStruct
@@ -317,7 +314,7 @@ public:
     bool retrieveBody(QMessageService& messageService, const QMessageId &id);
     bool retrieve(QMessageService& messageService, const QMessageId &messageId, const QMessageContentContainerId &id, QMessage *msg = 0);
 
-    void clearHeaderCache();
+    bool retrieveMessageMimeInformation(QMessage& message);
 
 private:
     QFileInfoList localFolders() const;
@@ -397,6 +394,10 @@ private:
 
     bool accountExists(const QMessageAccountId& accountId) const;
 
+    void mimeInformationFromModestMessageToMessage(const MessagingModestMessage& modestMessage,
+                                                   QMessage& message) const;
+
+
 private slots:
     void searchMessagesHeadersReceivedSlot(QDBusMessage msg);
     void searchMessagesHeadersFetchedSlot(QDBusMessage msg);
@@ -411,6 +412,7 @@ private slots:
     void stateChanged(QMessageService::State newState);
     void returnQueryResultsSlot();
     void modestFolderContentsChangedSlot(QDBusMessage msg);
+    void messageQueryFinishedSlot(void* queryThread, QList<QtMobility::QMessageId> ids);
 
 private: //Data
     GConfClient *m_gconfclient;
@@ -423,7 +425,6 @@ private: //Data
     mutable QHash<QString, QMessageAccount> iAccounts;
     mutable QMessageAccountId iDefaultEmailAccountId;
 
-    mutable int m_queryIds;
     mutable QList<MessageQueryInfo> m_pendingMessageQueries;
 
     QMap<QMessageManager::NotificationFilterId, QMessageFilter> m_filters;
@@ -435,11 +436,12 @@ private: //Data
     mutable QStringList m_latestAddOrRemoveNotifications;
 
     mutable QMap<QString, MessagingModestFolder> m_folderCache;
-    mutable QMap<QString, QMessage> m_messageCache;
 
     mutable QMap<int, QMessageServicePrivate*> m_pending_downloads;
 
     mutable QMessageFolderIdList m_observed_folders;
+
+    mutable bool m_allEmailMessagesInCache;
 
     // Following variables are used for sync queries
     mutable QMessageService m_service;
@@ -448,6 +450,24 @@ private: //Data
     mutable int             m_count;
     mutable bool            m_isSorted;
     mutable bool            m_isFiltered;
+};
+
+class MessageQueryThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    MessageQueryThread(const QMessageFilter &filter, const QMessageSortOrder &sortOrder);
+    ~MessageQueryThread();
+
+    void run();
+
+signals:
+    void queryFinished(void* queryThread, QList<QtMobility::QMessageId> ids);
+
+private:
+    QMessageFilter    m_filter;
+    QMessageSortOrder m_sortOrder;
 };
 
 QTM_END_NAMESPACE
@@ -466,6 +486,7 @@ Q_DECLARE_METATYPE(QtMobility::ModestAccountsUnreadMessagesDBusStruct);
 Q_DECLARE_METATYPE(QtMobility::ModestMessage);
 Q_DECLARE_METATYPE(QtMobility::MessagingModestMimePart);
 Q_DECLARE_METATYPE(QtMobility::MessagingModestFolder);
+Q_DECLARE_METATYPE(QList<QtMobility::QMessageId>);
 
 #endif // MODESTENGINE_MAEMO_H
 

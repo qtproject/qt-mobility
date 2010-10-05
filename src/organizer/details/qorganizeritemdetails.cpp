@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -289,7 +283,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldOriginalDate, "Origi
  */
 
 /*!
-   \fn QOrganizerItemInstanceOrigin::setParentLocalId(QOrganizerItemLocalId parentId)
+   \fn QOrganizerItemInstanceOrigin::setParentLocalId(const QOrganizerItemLocalId& parentId)
     Sets the parent id of this instance origin item to \a parentId.
  */
 
@@ -668,7 +662,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "Excepti
    \value NoReminder This reminder is entirely unobtrusive
    \value AudibleReminder This reminder has an audible element
    \value VisualReminder This reminder has a visual element
-   \value TactileReminder This reminder has a tactile element
+   \value EmailReminder This reminder has a email element
 */
 
 /*!
@@ -767,27 +761,11 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
 */
 
 /*!
-   \fn QOrganizerItemReminder::setRepetitionCount(int count)
-
-   Sets the number of times the user should be reminded of the item to \a count.
-
-   \sa setRepetitionDelay()
-*/
-
-/*!
    \fn int QOrganizerItemReminder::repetitionCount() const
 
    Returns the number of times the user should be reminded of the item.
 
    \sa repetitionDelay()
-*/
-
-/*!
-   \fn QOrganizerItemReminder::setRepetitionDelay(int delay)
-
-   Sets the delay (in seconds) between each repetition of the reminder to \a delay.
-
-   \sa setRepetitionCount()
 */
 
 /*!
@@ -836,7 +814,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::DefinitionName, "AudibleReminder");
 
 /*!
-   \variable QOrganizerItemAudibleReminder::DataUrl
+   \variable QOrganizerItemAudibleReminder::FieldDataUrl
    The constant key for which the value of the sound data url is stored.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldDataUrl, "DataUrl");
@@ -845,12 +823,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldDataUrl, "DataUrl")
    \fn QOrganizerItemAudibleReminder::setDataUrl(const QUrl& dataUrl)
 
    Sets the url of the audible data which should be played to \a dataUrl.
-*/
-
-/*!
-   \fn QUrl QOrganizerItemAudibleReminder::dataUrl() const
-
-   Returns the url of the audible data which should be played.
 */
 
 /* ==================== QOrganizerItemEmailReminder ======================= */
@@ -915,12 +887,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldRecipients, "Recipien
    \fn QString QOrganizerItemEmailReminder::body() const
 
    Returns the body of the email.
-*/
-
-/*!
-   \fn QVariantList QOrganizerItemEmailReminder::attachments() const
-
-   Retruns the attachments of the email.
 */
 
 /*!

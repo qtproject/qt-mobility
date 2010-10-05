@@ -7,11 +7,11 @@
  ** This file is part of the Qt Mobility Components.
  **
  ** $QT_BEGIN_LICENSE:LGPL$
- ** Commercial Usage
- ** Licensees holding valid Qt Commercial licenses may use this file in
- ** accordance with the Qt Solutions Commercial License Agreement provided
- ** with the Software or, alternatively, in accordance with the terms
- ** contained in a written agreement between you and Nokia.
+ ** No Commercial Usage
+ ** This file contains pre-release code and may not be distributed.
+ ** You may use this file in accordance with the terms and conditions
+ ** contained in the Technology Preview License Agreement accompanying
+ ** this package.
  **
  ** GNU Lesser General Public License Usage
  ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
  ** rights.  These rights are described in the Nokia Qt LGPL Exception
  ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
  **
- ** GNU General Public License Usage
- ** Alternatively, this file may be used under the terms of the GNU
- ** General Public License version 3.0 as published by the Free Software
- ** Foundation and appearing in the file LICENSE.GPL included in the
- ** packaging of this file.  Please review the following information to
- ** ensure the GNU General Public License version 3.0 requirements will be
- ** met: http://www.gnu.org/copyleft/gpl.html.
+ ** If you have questions regarding the use of this file, please contact
+ ** Nokia at qt-info@nokia.com.
  **
- ** Please note Third Party Software included with Qt Solutions may impose
- ** additional restrictions and it is the user's responsibility to ensure
- ** that they have met the licensing requirements of the GPL, LGPL, or Qt
- ** Solutions Commercial license and the relevant license of the Third
- ** Party Software they are using.
  **
- ** If you are unsure which license is appropriate for your use, please
- ** contact the sales department at qt-sales@nokia.com.
+ **
+ **
+ **
+ **
+ **
+ **
  ** $QT_END_LICENSE$
  **
  ****************************************************************************/
@@ -56,9 +50,13 @@
 
 // FORWARD DECLARATIONS
 class MCameraEngineObserver;
+class MCameraEngineImageCaptureObserver;
 class MAdvancedSettingsObserver;
 class MCameraViewfinderObserver;
 
+/*
+ * CameraEngine handling ECam operations needed.
+ */
 NONSHARABLE_CLASS( CCameraEngine ) : public CBase,
                                      public MCameraObserver,
                                      public MCameraObserver2
@@ -71,12 +69,11 @@ public: // Enums
 
     enum TCameraEngineState
     {
-        EEngineNotReady,        // No resources reserved
-        EEngineInitializing,    // Reserving and Powering On
-        EEngineIdle,            // Reseved and Powered On
-        EEngineViewFinding,     // ViewFinder Active
-        EEngineCapturing,       // Capturing Still Image
-        EEngineFocusing         // Focusing
+        EEngineNotReady = 0,    // 0 - No resources reserved
+        EEngineInitializing,    // 1 - Reserving and Powering On
+        EEngineIdle,            // 2 - Reseved and Powered On
+        EEngineCapturing,       // 3 - Capturing Still Image
+        EEngineFocusing         // 4 - Focusing
     };
 
 public: // Constructor & Destructor
@@ -91,17 +88,17 @@ public:
     /**
      * External Advanced Settings callback observer.
      */
-    void SetAdvancedObserver(MAdvancedSettingsObserver* aAdvancedSettingsObserver);
+    void SetAdvancedObserver(MAdvancedSettingsObserver *aAdvancedSettingsObserver);
 
     /**
      * External Image Capture callback observer.
      */
-    void SetImageCaptureObserver(MCameraEngineObserver* aImageCaptureObserver);
+    void SetImageCaptureObserver(MCameraEngineImageCaptureObserver *aImageCaptureObserver);
 
     /**
      * External Viewfinder callback observer.
      */
-    void SetViewfinderObserver(MCameraViewfinderObserver* aViewfinderObserver);
+    void SetViewfinderObserver(MCameraViewfinderObserver *aViewfinderObserver);
 
     /**
      * Static function that returns the number of cameras on the device.
@@ -109,13 +106,15 @@ public:
     static TInt CamerasAvailable();
 
     /**
+     * Returns the index of the currently active camera device
+     */
+    TInt currentCameraIndex() const { return iCameraHandle; }
+
+    /**
      * Returns the current state (TCameraEngineState)
      * of the camera engine.
      */
-    TCameraEngineState State() const
-        {
-        return iEngineState;
-        }
+    TCameraEngineState State() const { return iEngineState; }
 
     /**
      * Returns true if the camera has been reserved and
@@ -124,9 +123,19 @@ public:
     TBool IsCameraReady() const;
 
     /**
+     * Returns whether DirectScreen ViewFinder is supported by the platform
+     */
+    TBool IsDirectViewFinderSupported() const;
+
+    /**
      * Returns true if the camera supports AutoFocus.
      */
     TBool IsAutoFocusSupported() const;
+
+    /**
+     * Returns camera info
+     */
+    TCameraInfo *cameraInfo();
 
     /**
      * Captures an image. When complete, observer will receive
@@ -136,6 +145,11 @@ public:
      * reserved or prepared for capture.
      */
     void CaptureL();
+
+    /**
+     * Cancels ongoing image capture
+     */
+    void cancelCapture();
 
     /**
      * Reserves and powers on the camera. When complete,
@@ -273,8 +287,7 @@ protected: // MCameraObserver
      * From MCameraObserver.
      * Video capture not implemented.
      */
-    virtual void FrameBufferReady( MFrameBuffer* /*aFrameBuffer*/,
-        TInt /*aError*/ ) {}
+    virtual void FrameBufferReady( MFrameBuffer* /*aFrameBuffer*/, TInt /*aError*/ ) {}
 
 protected: // MCameraObserver2
 
@@ -326,31 +339,30 @@ private:  // Internal functions
      * Internal function to handle ImageReady callbacks from
      * both observer (V1 & V2) interfaces
      */
-    void HandleImageReady( CFbsBitmap* aBitmap,
-        TDesC8* aData,
-        TInt aError );
+    void HandleImageReady(const TInt aError, const bool isBitmap);
 
 private:  // Data
 
-    CCamera                         *iCamera;
-    MCameraEngineObserver           *iObserver;
-    MCameraEngineObserver           *iImageCaptureObserver;
-    MAdvancedSettingsObserver       *iAdvancedSettingsObserver;
-    MCameraViewfinderObserver       *iViewfinderObserver;
-    MCameraBuffer                   *iViewFinderBuffer;
-    MCameraBuffer                   *iImageBuffer;
-    HBufC8                          *iImageData;
-    CFbsBitmap                      *iImageBitmap;
-    TInt                            iCameraHandle;
-    TInt                            iPriority;
-    TCameraEngineState              iEngineState;
-    TCameraInfo                     iCameraInfo;
+    CCamera                             *iCamera;
+    MCameraEngineObserver               *iObserver;
+    MCameraEngineImageCaptureObserver   *iImageCaptureObserver;
+    MAdvancedSettingsObserver           *iAdvancedSettingsObserver;
+    MCameraViewfinderObserver           *iViewfinderObserver;
+    MCameraBuffer                       *iViewFinderBuffer;
+    MCameraBuffer                       *iImageBuffer;
+    HBufC8                              *iImageData; // MCameraObserver
+    TDesC8                              *iImageData2; // MCameraObserver2
+    CFbsBitmap                          *iImageBitmap;
+    TInt                                iCameraHandle;
+    TInt                                iPriority;
+    TCameraEngineState                  iEngineState;
+    TCameraInfo                         iCameraInfo;
+    CCamera::TFormat                    iImageCaptureFormat;
+    bool                                iNew2LImplementation;
 #ifdef S60_CAM_AUTOFOCUS_SUPPORT
-    CCamAutoFocus*                  iAutoFocus;
-    CCamAutoFocus::TAutoFocusRange  iAFRange;
-#endif
-
-
+    CCamAutoFocus*                      iAutoFocus;
+    CCamAutoFocus::TAutoFocusRange      iAFRange;
+#endif // S60_CAM_AUTOFOCUS_SUPPORT
 };
 
 #endif // S60CCAMERAENGINE_H

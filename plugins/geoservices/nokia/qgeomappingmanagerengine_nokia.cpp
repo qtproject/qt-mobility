@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ** This file is part of the Ovi services plugin for the Maps and 
@@ -68,6 +62,19 @@
 
 #define LARGE_TILE_DIMENSION 256
 
+// TODO: Tweak the max size or create something better
+#if defined(Q_OS_SYMBIAN)
+    #define DISK_CACHE_MAX_SIZE 10*1024*1024  //10MB
+#else
+    #define DISK_CACHE_MAX_SIZE 50*1024*1024  //50MB
+#endif
+
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    #undef DISK_CACHE_ENABLED
+#else
+    #define DISK_CACHE_ENABLED 1
+#endif
+
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
         m_host("maptile.maps.svc.ovi.com")
@@ -85,14 +92,11 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     types << QGraphicsGeoMap::TerrainMap;
     setSupportedMapTypes(types);
 
+    QList<QGraphicsGeoMap::ConnectivityMode> modes;
+    modes << QGraphicsGeoMap::OnlineMode;
+    setSupportedConnectivityModes(modes);
+
     m_nam = new QNetworkAccessManager(this);
-    m_cache = new QNetworkDiskCache(this);
-
-    QDir dir = QDir::temp();
-    dir.mkdir("maptiles");
-    dir.cd("maptiles");
-
-    m_cache->setCacheDirectory(dir.path());
 
     QList<QString> keys = parameters.keys();
 
@@ -108,6 +112,15 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
             m_host = host;
     }
 
+#ifdef DISK_CACHE_ENABLED
+    m_cache = new QNetworkDiskCache(this);
+
+    QDir dir = QDir::temp();
+    dir.mkdir("maptiles");
+    dir.cd("maptiles");
+
+    m_cache->setCacheDirectory(dir.path());
+
     if (keys.contains("mapping.cache.directory")) {
         QString cacheDir = parameters.value("mapping.cache.directory").toString();
         if (!cacheDir.isEmpty())
@@ -121,19 +134,37 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
             m_cache->setMaximumCacheSize(cacheSize);
     }
 
+    if (m_cache->maximumCacheSize() > DISK_CACHE_MAX_SIZE)
+        m_cache->setMaximumCacheSize(DISK_CACHE_MAX_SIZE);
+
     m_nam->setCache(m_cache);
+#endif
 }
 
 QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
 
+QGeoMapData* QGeoMappingManagerEngineNokia::createMapData(QGraphicsGeoMap *geoMap)
+{
+    QGeoMapData *data = QGeoTiledMappingManagerEngine::createMapData(geoMap);
+    if (!data)
+        return 0;
+
+    data->setConnectivityMode(QGraphicsGeoMap::OnlineMode);
+    return data;
+}
+
 QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMapRequest &request)
 {
+    // TODO add error detection for if request.connectivityMode() != QGraphicsGeoMap::OnlineMode
     QString rawRequest = getRequestString(request);
 
     QNetworkRequest netRequest((QUrl(rawRequest))); // The extra pair of parens disambiguates this from a function declaration
-    netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
     netRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+
+#ifdef DISK_CACHE_ENABLED
+    netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
     m_cache->metaData(netRequest.url()).setLastModified(QDateTime::currentDateTime());
+#endif
 
     QNetworkReply* netReply = m_nam->get(netRequest);
 

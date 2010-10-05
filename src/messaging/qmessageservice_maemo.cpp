@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -65,10 +59,6 @@ QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
    _active(false), _actionId(-1),
    _pendingRequestCount(0)
 {
-#ifdef EVENTLOGGER_THREAD
-    connect(EventLoggerEngine::instance(),SIGNAL(messagesFound(const QMessageIdList &,bool,bool)),this,SLOT(messagesFound(const QMessageIdList &,bool,bool)));
-
-#endif
 }
 
 QMessageServicePrivate::~QMessageServicePrivate()
@@ -102,19 +92,29 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
 
     _pendingRequestCount = 0;
 
+    bool preFiltered = false;
+
     if (enginesToCall & EnginesToCallTelepathy) {
+        if (MessagingHelper::preFilter(_filter, QMessage::Sms)) {
 #ifndef EVENTLOGGER_THREAD
-      _ids = EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
-        QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
+            _ids = EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+            QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
 #else
-        EventLoggerEngine::instance()->filterMessages(_filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+            EventLoggerEngine::instance()->filterMessages(this, _filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
 #endif
-        _pendingRequestCount++;
+            _pendingRequestCount++;
+        } else {
+            preFiltered = true;
+        }
     }
 
     if (enginesToCall & EnginesToCallModest) {
-        if (ModestEngine::instance()->queryMessages(messageService, _filter, sortOrder, limit, offset)) {
-            _pendingRequestCount++;
+        if (MessagingHelper::preFilter(_filter, QMessage::Email)) {
+            if (ModestEngine::instance()->queryMessages(messageService, _filter, sortOrder, limit, offset)) {
+                _pendingRequestCount++;
+            }
+        } else {
+            preFiltered = true;
         }
     } 
 
@@ -126,7 +126,15 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
         stateChanged(QMessageService::ActiveState);
     } else {
         _filter = QMessageFilter();
-        setFinished(false);
+        if (preFiltered) {
+            stateChanged(QMessageService::ActiveState);
+            _pendingRequestCount = 1;
+            QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
+            QMetaObject::invokeMethod(this, "finishedSlot", Qt::QueuedConnection);
+            return true;
+        } else {
+            setFinished(false);
+        }
     }
 
     return _active;
@@ -156,20 +164,30 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
 
     _pendingRequestCount = 0;
 
+    bool preFiltered = false;
+
     if (enginesToCall & EnginesToCallTelepathy) {
+        if (MessagingHelper::preFilter(_filter, QMessage::Sms)) {
 #ifndef EVENTLOGGER_THREAD
-        _ids= EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,body,matchFlags); 
-        QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
+            _ids= EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,body,matchFlags);
+            QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
 #else
-        EventLoggerEngine::instance()->filterMessages(_filter,sortOrder,body,matchFlags);
+            EventLoggerEngine::instance()->filterMessages(this, _filter,sortOrder,body,matchFlags);
 #endif
-        _pendingRequestCount++;
+            _pendingRequestCount++;
+        } else {
+            preFiltered = true;
+        }
     }
 
     if (enginesToCall & EnginesToCallModest) {
-        if (ModestEngine::instance()->queryMessages(messageService, _filter, body, matchFlags,
-                                                    sortOrder, limit, offset)) {
-            _pendingRequestCount++;
+        if (MessagingHelper::preFilter(_filter, QMessage::Email)) {
+            if (ModestEngine::instance()->queryMessages(messageService, _filter, body, matchFlags,
+                                                        sortOrder, limit, offset)) {
+                _pendingRequestCount++;
+            }
+        } else {
+            preFiltered = true;
         }
     }
 
@@ -181,7 +199,15 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
         stateChanged(QMessageService::ActiveState);
     } else {
         _filter = QMessageFilter();
-        setFinished(false);
+        if (preFiltered) {
+            stateChanged(QMessageService::ActiveState);
+            _pendingRequestCount = 1;
+            QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
+            QMetaObject::invokeMethod(this, "finishedSlot", Qt::QueuedConnection);
+            return true;
+        } else {
+            setFinished(false);
+        }
     }
 
     return _active;
@@ -205,20 +231,35 @@ bool QMessageServicePrivate::countMessages(QMessageService &messageService,
 
     _pendingRequestCount = 0;
 
+    bool preFiltered = false;
+
     //TODO: SMS count support
     //if (enginesToCall & EnginesToCallTelepathy) {
     //}
 
     if (enginesToCall & EnginesToCallModest) {
-        if (ModestEngine::instance()->countMessages(messageService, handledFilter)) {
-            _pendingRequestCount++;
+        if (MessagingHelper::preFilter(handledFilter, QMessage::Email)) {
+            if (ModestEngine::instance()->countMessages(messageService, handledFilter)) {
+                _pendingRequestCount++;
+            }
+        } else {
+            preFiltered = true;
         }
     }
 
     if (_pendingRequestCount > 0) {
         stateChanged(QMessageService::ActiveState);
     } else {
-        setFinished(false);
+        _filter = QMessageFilter();
+        if (preFiltered) {
+            stateChanged(QMessageService::ActiveState);
+            _pendingRequestCount = 1;
+            QMetaObject::invokeMethod(this, "messagesCountedSlot", Qt::QueuedConnection);
+            QMetaObject::invokeMethod(this, "finishedSlot", Qt::QueuedConnection);
+            return true;
+        } else {
+            setFinished(false);
+        }
     }
 
     return _active;
@@ -237,13 +278,16 @@ void QMessageServicePrivate::setFinished(bool successful)
             _error = QMessageManager::RequestIncomplete;
         }
 
-        _active = false;
         stateChanged(QMessageService::FinishedState);
     }
 }
 
 void QMessageServicePrivate::stateChanged(QMessageService::State state)
 {
+    if (state == QMessageService::FinishedState) {
+        _active = false;
+    }
+
     _state = state;
     emit q_ptr->stateChanged(_state);
 }
@@ -275,8 +319,6 @@ void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFil
         }
         MessagingHelper::applyOffsetAndLimitToMessageIdList(_ids, _limit, _offset);
 
-        ModestEngine::instance()->clearHeaderCache();
-
         emit q_ptr->messagesFound(_ids);
 
         setFinished(true);
@@ -294,12 +336,11 @@ void QMessageServicePrivate::messagesCounted(int count)
     _count += count;
 
     if (_pendingRequestCount == 0) {
-        ModestEngine::instance()->clearHeaderCache();
-
         emit q_ptr->messagesCounted(_count);
 
         setFinished(true);
 
+        _filter = QMessageFilter();
         _count = 0;
     }
 }
@@ -319,6 +360,10 @@ void QMessageServicePrivate::messagesCountedSlot()
     messagesCounted(0);
 }
 
+void QMessageServicePrivate::finishedSlot(bool successful)
+{
+    setFinished(successful);
+}
 
 QMessageService::QMessageService(QObject *parent)
  : QObject(parent),
@@ -349,7 +394,6 @@ bool QMessageService::countMessages(const QMessageFilter &filter)
 
 bool QMessageService::send(QMessage &message)
 {
-   qDebug() << "QMessageService::send";
     if (d_ptr->_active) {
         return false;
     }
@@ -440,13 +484,11 @@ bool QMessageService::send(QMessage &message)
     }
 
     d_ptr->setFinished(retVal);
-    qDebug() << "send returns=" << retVal;
     return retVal;
 }
 
 bool QMessageService::compose(const QMessage &message)
 {
-  //  qDebug() << "qMessageService::compose";
     if (d_ptr->_active) {
         return false;
     }
@@ -457,12 +499,10 @@ bool QMessageService::compose(const QMessage &message)
     bool retVal=false;
     d_ptr->_state = QMessageService::ActiveState;
     emit stateChanged(d_ptr->_state);
-    qDebug() << "qMessageService::compose stateChanged";
 
     if (message.type() == QMessage::Sms && !message.to().isEmpty() && !message.to().first().addressee().isEmpty()) {
       QUrl smsUrl((QString("sms:%1").arg(message.to().first().addressee())));
       smsUrl.addQueryItem("body",message.textContent());
-      //      qDebug() << "compose SMS url=" << smsUrl.toString();
       hildon_uri_open(smsUrl.toString().toStdString().c_str(),NULL,NULL);
       retVal = true;
 
@@ -476,7 +516,6 @@ bool QMessageService::compose(const QMessage &message)
     }
 
     d_ptr->setFinished(retVal); 
-    //    qDebug() << "compose returns=" << retVal;
     return retVal;
 }
 

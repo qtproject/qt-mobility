@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -54,7 +48,6 @@
 #include <QUrl>
 #include <QList>
 #include <QHash>
-#include <QMap>
 #include "qaudioformat.h"
 #include <qmediarecorder.h>
 
@@ -63,9 +56,6 @@
 #include <Mda\Client\Utility.h>
 #include <MdaAudioSampleEditor.h>
 #include <mmf\common\mmfutilities.h>
-#ifdef AUDIOINPUT_ROUTING
-#include <AudioInput.h>
-#endif //AUDIOINPUT_ROUTING
 
 QT_BEGIN_NAMESPACE
 struct ControllerData
@@ -81,7 +71,6 @@ struct CodecData
     TFourCC fourCC;
     QString codecDescription;
 };
-
 QT_END_NAMESPACE
 
 QT_USE_NAMESPACE
@@ -96,7 +85,6 @@ public:
     enum TAudioCaptureState
     {
         ENotInitialized = 0,
-        EInitializing,
         EInitialized,
         EOpenCompelete,
         ERecording,
@@ -126,22 +114,12 @@ public:
     void stop();
     void mute(bool muted);
     bool muted();
-    QString activeEndpoint() const;
-    QString defaultEndpoint() const;
-    QList<QString> availableEndpoints() const;
-    QString endpointDescription(const QString& name) const;
-
-    static const QString defaultMic;
-    static const QString voiceCall;
-    static const QString fmRadio;
-    static const QString speaker;
-    static const QString lineIn;
 
 private:
     void initializeSessionL();
     void setError(TInt aError);
     QMediaRecorder::Error fromSymbianErrorToMultimediaError(int error);
-    QString initializeSinkL();
+    void prepareSinkL();
     void updateAudioContainersL();
     void populateAudioCodecsDataL();
     void retrieveSupportedAudioSampleRatesL();
@@ -153,24 +131,18 @@ private:
             TInt aCurrentState, TInt aErrorCode);
     void MoscoStateChangeEventL(CBase* aObject, TInt aPreviousState,
             TInt aCurrentState, TInt aErrorCode);
-    QUrl generateAudioFilePath();
-#ifdef AUDIOINPUT_ROUTING
-    QString qStringFromTAudioInputPreference(CAudioInput::TAudioInputPreference input) const;
-#endif //AUDIOINPUT_ROUTING
-    void doSetActiveEndpointL(const QString& name);
-    void initAudioInputs();
 
-public Q_SLOTS:
-    void setActiveEndpoint(const QString& audioEndpoint);
+public slots:
+    void setCaptureDevice(const QString &deviceName);
 
 Q_SIGNALS:
     void stateChanged(S60AudioCaptureSession::TAudioCaptureState);
     void positionChanged(qint64 position);
     void error(int error, const QString &errorString);
-    void activeEndpointChanged(const QString &audioEndpoint);
 
 private:
     QString m_container;
+    QString m_captureDevice;
     QUrl m_sink;
     TTimeIntervalMicroSeconds m_pausedPosition;
     CMdaAudioRecorderUtility *m_recorderUtility;
@@ -181,11 +153,7 @@ private:
     QList<int> m_supportedSampleRates;
     int m_error;
     bool m_isMuted;
-#ifdef AUDIOINPUT_ROUTING
-    CAudioInput *m_audioInput;
-#endif //AUDIOINPUT_ROUTING
-    QString m_audioEndpoint;
-    QMap<QString, QString> m_audioInputs;
+    RFs m_fsSession;
 };
 
 #endif // S60AUDIOCAPTURESESSION_H

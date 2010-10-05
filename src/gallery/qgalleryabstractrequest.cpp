@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -144,42 +138,20 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
     \value Active The request is currently executing.
     \value Cancelling The request was cancelled, but hasn't yet returned to the
     Inactive status.
+    \value Cancelled The request was cancelled.
     \value Idle The request has finished, and is monitoring its return values
     for changes.
+    \value Finished The request is finished.
+    \value Error The request runs into an error.
 */
 
 /*!
-    \enum QGalleryAbstractRequest::Result
+    \enum QGalleryAbstractRequest::RequestError
 
-    Identifies the result of a gallery request.
-
-    \value NoResult The request is still active and no result is available yet.
-    \value Succeeded The request succeeded sucessfully.
-    \value Cancelled The request was cancelled before it could finish.
-    \value NoGallery The request cannot be executed because no \l gallery is
-    set.
-    \value NotSupported The request isn't supported by the \l gallery.
-    \value ConnectionError The request could not be executed due to a problem
-    connecting to the gallery.
-    \value InvalidItemError The request could not be executed due to an invalid
-    item ID.
-    \value ItemTypeError The request could not be executed due to an invalid
-    item type.
-    \value InvalidPropertyError The request could not be executed because a
-    filter referenced an invalid property.
-    \value PropertyTypeError The request could not be executed because a filter
-    compared a property to an invalid variant type.
-    \value UnsupportedFilterTypeError The request could not be executed because
-    a filter is not supported by the gallery.
-    \value UnsupportedFilterOptionError The request could not be executed
-    because an option on a filter is not supported by the gallery.
-    \value PermissionsError The request could not be executed because the
-    user has insufficient permissions.
-    \value InvalidDestinationError  The request could not be executed because
-    the given destination ID is invalid.
-    \value InvalidUrlError The request could not be executed due to an invalid
-    URL.
-    \value RequestError A minimum value for request specific error results.
+    \value NoError No error.
+    \value NoGallery No gallery found.
+    \value NotSupported Request is not supported.
+    \value GalleryError The gallery is wrong or corrupt.
 */
 
 /*!
@@ -190,7 +162,6 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
     \value QueryRequest The request is a QGalleryQueryRequest.
     \value ItemRequest The request is a QGalleryItemRequest.
     \value TypeRequest The request is a QGalleryTypeRequest
-    \value RemoveRequest The request is a QGalleryRemoveRequest.
 */
 
 /*!
@@ -296,12 +267,6 @@ QGalleryAbstractRequest::Status QGalleryAbstractRequest::status() const
 {
     return d_ptr->status;
 }
-
-/*!
-    \fn QGalleryAbstractRequest::statusChanged(GalleryAbstractRequest::Status status)
-
-    Signals that the \a status of a request has changed.
-*/
 
 /*!
     \property QGalleryAbstractRequest::error
@@ -547,6 +512,12 @@ void QGalleryAbstractRequest::clear()
     \fn QGalleryAbstractRequest::cancelled()
 
     Signals that a request was cancelled before it could finish.
+*/
+
+/*!
+    \fn QGalleryAbstractRequest::statusChanged(QGalleryAbstractRequest::Status status)
+
+    Signals that the \a status of a request has changed.
 */
 
 /*!

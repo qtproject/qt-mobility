@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -97,7 +91,10 @@ QTM_BEGIN_NAMESPACE
 */
 QGeoRoutingManagerEngine::QGeoRoutingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoRoutingManagerEnginePrivate()) {}
+        d_ptr(new QGeoRoutingManagerEnginePrivate())
+{
+    Q_UNUSED(parameters)
+}
 
 /*!
     Destroys this engine.
@@ -299,18 +296,39 @@ QGeoRouteRequest::TravelModes QGeoRoutingManagerEngine::supportedTravelModes() c
     reports its capabilities correctly.  If this function is not used the
     engine will report that it does not support avoiding features.
 */
-void QGeoRoutingManagerEngine::setSupportedAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes)
-{
-    d_ptr->supportedAvoidFeatureTypes = avoidFeatureTypes;
-}
 
 /*!
     Returns the types of features that this engine can avoid during route planning.
 */
-QGeoRouteRequest::AvoidFeatureTypes QGeoRoutingManagerEngine::supportedAvoidFeatureTypes() const
+
+/*!
+*/
+void QGeoRoutingManagerEngine::setSupportedFeatureTypes(QGeoRouteRequest::FeatureTypes featureTypes)
 {
-    return d_ptr->supportedAvoidFeatureTypes;
+    d_ptr->supportedFeatureTypes = featureTypes;
 }
+
+/*!
+*/
+QGeoRouteRequest::FeatureTypes QGeoRoutingManagerEngine::supportedFeatureTypes() const
+{
+    return d_ptr->supportedFeatureTypes;
+}
+
+/*!
+*/
+void QGeoRoutingManagerEngine::setSupportedFeatureWeights(QGeoRouteRequest::FeatureWeights featureWeights)
+{
+    d_ptr->supportedFeatureWeights = featureWeights;
+}
+
+/*!
+*/
+QGeoRouteRequest::FeatureWeights QGeoRoutingManagerEngine::supportedFeatureWeights() const
+{
+    return d_ptr->supportedFeatureWeights;
+}
+
 
 /*!
     Sets the route optimizations supported by this engine to \a optimizations.
@@ -355,25 +373,25 @@ QGeoRouteRequest::SegmentDetails QGeoRoutingManagerEngine::supportedSegmentDetai
 }
 
 /*!
-    Sets the levels of detail for navigation instructions which can be
-    requested by this engine to \a instructionDetails.
+    Sets the levels of detail for navigation manuevers which can be
+    requested by this engine to \a maneuverDetails.
 
     It is important that subclasses use this method to ensure that the engine
     reports its capabilities correctly.  If this function is not used the
-    engine will report that it supports no instruction detail at all.
+    engine will report that it supports no maneuver details at all.
 */
-void QGeoRoutingManagerEngine::setSupportedInstructionDetails(QGeoRouteRequest::InstructionDetails instructionDetails)
+void QGeoRoutingManagerEngine::setSupportedManeuverDetails(QGeoRouteRequest::ManeuverDetails maneuverDetails)
 {
-    d_ptr->supportedInstructionDetails = instructionDetails;
+    d_ptr->supportedManeuverDetails = maneuverDetails;
 }
 
 /*!
-    Returns the levels of detail for navigation instructions which can be
+    Returns the levels of detail for navigation maneuvers which can be
     requested by this engine.
 */
-QGeoRouteRequest::InstructionDetails QGeoRoutingManagerEngine::supportedInstructionDetails() const
+QGeoRouteRequest::ManeuverDetails QGeoRoutingManagerEngine::supportedManeuverDetails() const
 {
-    return d_ptr->supportedInstructionDetails;
+    return d_ptr->supportedManeuverDetails;
 }
 
 /*!

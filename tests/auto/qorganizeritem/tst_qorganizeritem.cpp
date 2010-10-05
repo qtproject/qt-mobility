@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -49,6 +43,7 @@
 
 #include "qtorganizer.h"
 #include "qorganizeritemid.h"
+#include "qorganizeritemenginelocalid.h"
 #include <QSet>
 
 //TESTED_COMPONENT=src/organizer
@@ -77,6 +72,13 @@ private slots:
     void traits();
     void idTraits();
     void localIdTraits();
+
+    void event();
+    void todo();
+    void journal();
+    void note();
+    void eventOccurrence();
+    void todoOccurrence();
 };
 
 tst_QOrganizerItem::tst_QOrganizerItem()
@@ -468,24 +470,66 @@ void tst_QOrganizerItem::emptiness()
     QVERIFY(oi.isEmpty() == true); // type doesn't affect emptiness
 }
 
+class BasicItemLocalId : public QOrganizerItemEngineLocalId
+{
+public:
+    BasicItemLocalId(uint id) : m_id(id) {}
+    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const {
+        return m_id == static_cast<const BasicItemLocalId*>(other)->m_id;
+    }
+    bool isLessThan(const QOrganizerItemEngineLocalId* other) const {
+        return m_id < static_cast<const BasicItemLocalId*>(other)->m_id;
+    }
+    uint engineLocalIdType() const {
+        return 0;
+    }
+    QOrganizerItemEngineLocalId* clone() const {
+        BasicItemLocalId* cloned = new BasicItemLocalId(m_id);
+        return cloned;
+    }
+    QDebug debugStreamOut(QDebug dbg) {
+        return dbg << m_id;
+    }
+    QDataStream& dataStreamOut(QDataStream& out) {
+        return out << static_cast<quint32>(m_id);
+    }
+    QDataStream& dataStreamIn(QDataStream& in) {
+        quint32 id;
+        in >> id;
+        m_id = id;
+        return in;
+    }
+    uint hash() const {
+        return m_id;
+    }
+
+private:
+    uint m_id;
+};
+
+QOrganizerItemLocalId makeId(uint id)
+{
+    return QOrganizerItemLocalId(new BasicItemLocalId(id));
+}
+
 void tst_QOrganizerItem::idLessThan()
 {
     QOrganizerItemId id1;
     id1.setManagerUri("a");
-    id1.setLocalId(1);
+    id1.setLocalId(makeId(1));
     QOrganizerItemId id2;
     id2.setManagerUri("a");
-    id2.setLocalId(1);
+    id2.setLocalId(makeId(1));
     QVERIFY(!(id1 < id2));
     QVERIFY(!(id2 < id1));
     QOrganizerItemId id3;
     id3.setManagerUri("a");
-    id3.setLocalId(2);
+    id3.setLocalId(makeId(2));
     QOrganizerItemId id4;
     id4.setManagerUri("b");
-    id4.setLocalId(1);
+    id4.setLocalId(makeId(1));
     QOrganizerItemId id5; // no URI
-    id5.setLocalId(2);
+    id5.setLocalId(makeId(2));
     QVERIFY(id1 < id3);
     QVERIFY(!(id3 < id1));
     QVERIFY(id1 < id4);
@@ -500,13 +544,13 @@ void tst_QOrganizerItem::idHash()
 {
     QOrganizerItemId id1;
     id1.setManagerUri("a");
-    id1.setLocalId(1);
+    id1.setLocalId(makeId(1));
     QOrganizerItemId id2;
     id2.setManagerUri("a");
-    id2.setLocalId(1);
+    id2.setLocalId(makeId(1));
     QOrganizerItemId id3;
     id3.setManagerUri("b");
-    id3.setLocalId(1);
+    id3.setLocalId(makeId(1));
     QVERIFY(qHash(id1) == qHash(id2));
     QVERIFY(qHash(id1) != qHash(id3));
     QSet<QOrganizerItemId> set;
@@ -520,7 +564,7 @@ void tst_QOrganizerItem::hash()
 {
     QOrganizerItemId id;
     id.setManagerUri("a");
-    id.setLocalId(1);
+    id.setLocalId(makeId(1));
     QOrganizerItem oi1;
     oi1.setId(id);
     QOrganizerItemDetail detail1("definition");
@@ -547,29 +591,165 @@ void tst_QOrganizerItem::hash()
 
 void tst_QOrganizerItem::datastream()
 {
+    // item datastreaming
     QByteArray buffer;
-    QDataStream stream1(&buffer, QIODevice::WriteOnly);
-    QOrganizerItem contactIn;
-    QOrganizerItemId id;
-    id.setManagerUri("manager");
-    id.setLocalId(1234);
-    contactIn.setId(id);
-    QOrganizerItemLocation phone;
-    phone.setAddress("5678");
-    contactIn.saveDetail(&phone);
-    stream1 << contactIn;
+    QOrganizerItem itemIn;
+    itemIn.addComment("test comment");
+    QOrganizerItem itemOut;
+    QOrganizerItemId originalId;
 
-    QVERIFY(buffer.size() > 0);
+    // first, stream an item with a complete id
+    {
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        QOrganizerItemManager om("memory");
+        QVERIFY(om.saveItem(&itemIn)); // fill in its ID
+        originalId = itemIn.id();
+        stream1 << itemIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> itemOut;
+        //QCOMPARE(itemOut, itemIn); // can't do QCOMPARE because detail keys get changed.
+        QVERIFY(itemOut.details() == itemIn.details());
+        QVERIFY(itemOut.id() == itemIn.id());
+    }
 
-    QDataStream stream2(buffer);
-    QOrganizerItem contactOut;
-    stream2 >> contactOut;
-    QCOMPARE(contactOut, contactIn);
+    // second, stream an item with an id with the mgr uri set, local id null
+    {
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        QOrganizerItemId modifiedId = originalId;
+        modifiedId.setLocalId(QOrganizerItemLocalId());
+        itemIn.setId(modifiedId);
+        stream1 << itemIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> itemOut;
+        //QCOMPARE(itemOut, itemIn); // can't do QCOMPARE because detail keys get changed.
+        QVERIFY(itemOut.details() == itemIn.details());
+        QVERIFY(itemOut.id() == itemIn.id());
+    }
+
+    // third, stream an item with an id with the mgr uri null, local id set
+    {
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        QOrganizerItemId modifiedId = originalId;
+        modifiedId.setManagerUri(QString()); // this will clear the local id!
+        modifiedId.setLocalId(originalId.localId()); // so reset it and make sure things don't fall over.
+        itemIn.setId(modifiedId);
+        stream1 << itemIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> itemOut;
+        //QCOMPARE(itemOut, itemIn); // can't do QCOMPARE because detail keys get changed.
+        QVERIFY(itemOut.details() == itemIn.details());
+        QVERIFY(itemOut.id() != itemIn.id()); // in this case, with null mgr uri, the id doesn't get serialized.
+    }
+
+    // fourth, stream an item with a null id
+    {
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        itemIn.setId(QOrganizerItemId());
+        stream1 << itemIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> itemOut;
+        //QCOMPARE(itemOut, itemIn); // can't do QCOMPARE because detail keys get changed.
+        QVERIFY(itemOut.details() == itemIn.details());
+        QVERIFY(itemOut.id() == itemIn.id());
+    }
+
+    // id datastreaming
+    buffer.clear();
+    QOrganizerItemId inputId;
+    QOrganizerItemId outputId;
+
+    // first, stream the whole id (mgr uri set, local id set)
+    {
+        inputId = originalId;
+        buffer.clear();
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << inputId;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> outputId;
+        QCOMPARE(inputId, outputId);
+    }
+
+    // second, stream a partial id (mgr uri null, local id set)
+    {
+        inputId.setManagerUri(QString());
+        inputId.setLocalId(originalId.localId());
+        buffer.clear();
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << inputId;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> outputId;
+
+        // because the manager uri is null, we cannot stream it in.
+        QVERIFY(outputId.isNull());
+        QVERIFY(!inputId.isNull());
+    }
+
+    // third, stream a partial id (mgr uri set, local id null).
+    {
+        inputId.setManagerUri(originalId.managerUri());
+        inputId.setLocalId(QOrganizerItemLocalId());
+        buffer.clear();
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << inputId;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> outputId;
+        QCOMPARE(inputId, outputId);
+    }
+
+    // fourth, stream a null id
+    {
+        inputId = QOrganizerItemId();
+        buffer.clear();
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << inputId;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> outputId;
+        QCOMPARE(inputId, outputId);
+    }
+
+    // fifth, stream an id after changing it's manager uri string.
+    {
+        inputId.setManagerUri(originalId.managerUri());
+        inputId.setLocalId(originalId.localId());
+        inputId.setManagerUri("test manager uri"); // should clear the local id.
+        QVERIFY(inputId.localId() == QOrganizerItemLocalId());
+        buffer.clear();
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << inputId;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> outputId;
+        QCOMPARE(inputId, outputId);
+    }
+
+    // sixth, stream an id after changing it's manager uri string, and resetting the local id.
+    // this should cause great problems, because the manager doesn't exist so it shouldn't
+    // be able to deserialize.  Make sure it's handled gracefully.
+    {
+        inputId.setManagerUri(originalId.managerUri());
+        inputId.setManagerUri("test manager uri"); // should clear the local id.
+        inputId.setLocalId(originalId.localId());
+        buffer.clear();
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << inputId;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> outputId;
+        QVERIFY(outputId.isNull());
+    }
 }
 
 void tst_QOrganizerItem::traits()
 {
-    QVERIFY(sizeof(QOrganizerItem) == sizeof(void *));
+    QCOMPARE(sizeof(QOrganizerItem), sizeof(void *));
     QTypeInfo<QTM_PREPEND_NAMESPACE(QOrganizerItem)> ti;
     QVERIFY(ti.isComplex);
     QVERIFY(!ti.isStatic);
@@ -591,15 +771,185 @@ void tst_QOrganizerItem::idTraits()
 
 void tst_QOrganizerItem::localIdTraits()
 {
-    QVERIFY(sizeof(QOrganizerItemId) == sizeof(void *));
+    QVERIFY(sizeof(QOrganizerItemLocalId) == sizeof(void *));
     QTypeInfo<QTM_PREPEND_NAMESPACE(QOrganizerItemLocalId)> ti;
-    QVERIFY(!ti.isComplex);
+    QVERIFY(ti.isComplex); // unlike QContactLocalId (int typedef), we have a ctor
     QVERIFY(!ti.isStatic);
     QVERIFY(!ti.isLarge);
     QVERIFY(!ti.isPointer);
     QVERIFY(!ti.isDummy);
 }
 
+void tst_QOrganizerItem::event()
+{
+    QOrganizerEvent testEvent;
+    QCOMPARE(testEvent.type(), QString(QLatin1String(QOrganizerItemType::TypeEvent)));
+
+    testEvent.setLocationName("test location");
+    testEvent.setLocationAddress("test address");
+    testEvent.setLocationGeoCoordinates("0.73;0.57");
+    QCOMPARE(testEvent.locationName(), QString("test location"));
+    QCOMPARE(testEvent.locationAddress(), QString("test address"));
+    QCOMPARE(testEvent.locationGeoCoordinates(), QString("0.73;0.57"));
+
+    testEvent.setStartDateTime(QDateTime(QDate::currentDate()));
+    QCOMPARE(testEvent.startDateTime(), QDateTime(QDate::currentDate()));
+    testEvent.setEndDateTime(QDateTime(QDate::currentDate().addDays(1)));
+    QCOMPARE(testEvent.endDateTime(), QDateTime(QDate::currentDate().addDays(1)));
+    QVERIFY(!testEvent.isTimeSpecified()); // default is all day event.
+    testEvent.setTimeSpecified(true);
+    QVERIFY(testEvent.isTimeSpecified());
+
+    testEvent.setPriority(QOrganizerItemPriority::VeryHighPriority);
+    QCOMPARE(testEvent.priority(), QOrganizerItemPriority::VeryHighPriority);
+    testEvent.setPriority(QOrganizerItemPriority::VeryLowPriority);
+    QCOMPARE(testEvent.priority(), QOrganizerItemPriority::VeryLowPriority);
+
+    QList<QDate> rdates;
+    rdates << QDate::currentDate() << QDate::currentDate().addDays(3) << QDate::currentDate().addDays(8);
+    testEvent.setRecurrenceDates(rdates);
+    QCOMPARE(testEvent.recurrenceDates(), rdates);
+
+    QList<QDate> exdates;
+    exdates << QDate::currentDate().addDays(3);
+    testEvent.setExceptionDates(exdates);
+    QCOMPARE(testEvent.exceptionDates(), exdates);
+
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setCount(2);
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrules << rrule;
+    testEvent.setRecurrenceRules(rrules);
+    //QVERIFY(testEvent.recurrenceRules() == rrules); // XXX TODO: implement operator == for QOIRR.
+
+    QList<QOrganizerItemRecurrenceRule> exrules;
+    QOrganizerItemRecurrenceRule exrule;
+    exrule.setCount(1);
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    testEvent.setExceptionRules(exrules);
+    //QVERIFY(testEvent.exceptionRules() == exrules); // XXX TODO: implement operator == for QOIRR.
+}
+
+void tst_QOrganizerItem::todo()
+{
+    QOrganizerTodo testTodo;
+    QCOMPARE(testTodo.type(), QString(QLatin1String(QOrganizerItemType::TypeTodo)));
+
+    QCOMPARE(testTodo.status(), QOrganizerTodoProgress::StatusNotStarted);
+    testTodo.setStatus(QOrganizerTodoProgress::StatusInProgress);
+    QCOMPARE(testTodo.status(), QOrganizerTodoProgress::StatusInProgress);
+
+    QCOMPARE(testTodo.progressPercentage(), 0);
+    testTodo.setProgressPercentage(50);
+    QCOMPARE(testTodo.progressPercentage(), 50);
+    testTodo.setStatus(QOrganizerTodoProgress::StatusComplete);
+    QCOMPARE(testTodo.progressPercentage(), 50); // XXX TODO: should this update automatically?
+
+    testTodo.setDueDateTime(QDateTime(QDate::currentDate()));
+    QCOMPARE(testTodo.dueDateTime(), QDateTime(QDate::currentDate()));
+    testTodo.setFinishedDateTime(QDateTime(QDate::currentDate().addDays(1)));
+    QCOMPARE(testTodo.finishedDateTime(), QDateTime(QDate::currentDate().addDays(1)));
+
+    testTodo.setPriority(QOrganizerItemPriority::VeryHighPriority);
+    QCOMPARE(testTodo.priority(), QOrganizerItemPriority::VeryHighPriority);
+    testTodo.setPriority(QOrganizerItemPriority::VeryLowPriority);
+    QCOMPARE(testTodo.priority(), QOrganizerItemPriority::VeryLowPriority);
+
+    QList<QDate> rdates;
+    rdates << QDate::currentDate() << QDate::currentDate().addDays(3) << QDate::currentDate().addDays(8);
+    testTodo.setRecurrenceDates(rdates);
+    QCOMPARE(testTodo.recurrenceDates(), rdates);
+
+    QList<QDate> exdates;
+    exdates << QDate::currentDate().addDays(3);
+    testTodo.setExceptionDates(exdates);
+    QCOMPARE(testTodo.exceptionDates(), exdates);
+
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setCount(2);
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrules << rrule;
+    testTodo.setRecurrenceRules(rrules);
+    //QVERIFY(testTodo.recurrenceRules() == rrules); // XXX TODO: implement operator == for QOIRR.
+
+    QList<QOrganizerItemRecurrenceRule> exrules;
+    QOrganizerItemRecurrenceRule exrule;
+    exrule.setCount(1);
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    testTodo.setExceptionRules(exrules);
+    //QVERIFY(testTodo.exceptionRules() == exrules); // XXX TODO: implement operator == for QOIRR.
+}
+
+void tst_QOrganizerItem::journal()
+{
+    QOrganizerJournal testJournal;
+    QCOMPARE(testJournal.type(), QString(QLatin1String(QOrganizerItemType::TypeJournal)));
+
+    QDateTime currDateTime = QDateTime::currentDateTime();
+    testJournal.setDateTime(currDateTime);
+    QCOMPARE(testJournal.dateTime(), currDateTime);
+}
+
+void tst_QOrganizerItem::note()
+{
+    QOrganizerNote testNote;
+    QCOMPARE(testNote.type(), QString(QLatin1String(QOrganizerItemType::TypeNote)));
+}
+
+void tst_QOrganizerItem::eventOccurrence()
+{
+    QOrganizerEventOccurrence testEventOccurrence;
+    QCOMPARE(testEventOccurrence.type(), QString(QLatin1String(QOrganizerItemType::TypeEventOccurrence)));
+
+    testEventOccurrence.setLocationName("test location");
+    testEventOccurrence.setLocationAddress("test address");
+    testEventOccurrence.setLocationGeoCoordinates("0.73;0.57");
+    QCOMPARE(testEventOccurrence.locationName(), QString("test location"));
+    QCOMPARE(testEventOccurrence.locationAddress(), QString("test address"));
+    QCOMPARE(testEventOccurrence.locationGeoCoordinates(), QString("0.73;0.57"));
+
+    testEventOccurrence.setStartDateTime(QDateTime(QDate::currentDate()));
+    QCOMPARE(testEventOccurrence.startDateTime(), QDateTime(QDate::currentDate()));
+    testEventOccurrence.setEndDateTime(QDateTime(QDate::currentDate().addDays(1)));
+    QCOMPARE(testEventOccurrence.endDateTime(), QDateTime(QDate::currentDate().addDays(1)));
+
+    testEventOccurrence.setPriority(QOrganizerItemPriority::VeryHighPriority);
+    QCOMPARE(testEventOccurrence.priority(), QOrganizerItemPriority::VeryHighPriority);
+    testEventOccurrence.setPriority(QOrganizerItemPriority::VeryLowPriority);
+    QCOMPARE(testEventOccurrence.priority(), QOrganizerItemPriority::VeryLowPriority);
+
+    // the parent id and original date time must be tested in the manager unit test
+}
+
+void tst_QOrganizerItem::todoOccurrence()
+{
+    QOrganizerTodoOccurrence testTodoOccurrence;
+    QCOMPARE(testTodoOccurrence.type(), QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
+
+    QCOMPARE(testTodoOccurrence.status(), QOrganizerTodoProgress::StatusNotStarted);
+    testTodoOccurrence.setStatus(QOrganizerTodoProgress::StatusInProgress);
+    QCOMPARE(testTodoOccurrence.status(), QOrganizerTodoProgress::StatusInProgress);
+
+    QCOMPARE(testTodoOccurrence.progressPercentage(), 0);
+    testTodoOccurrence.setProgressPercentage(50);
+    QCOMPARE(testTodoOccurrence.progressPercentage(), 50);
+    testTodoOccurrence.setStatus(QOrganizerTodoProgress::StatusComplete);
+    QCOMPARE(testTodoOccurrence.progressPercentage(), 50); // XXX TODO: should this update automatically?
+
+    testTodoOccurrence.setDueDateTime(QDateTime(QDate::currentDate()));
+    QCOMPARE(testTodoOccurrence.dueDateTime(), QDateTime(QDate::currentDate()));
+    testTodoOccurrence.setFinishedDateTime(QDateTime(QDate::currentDate().addDays(1)));
+    QCOMPARE(testTodoOccurrence.finishedDateTime(), QDateTime(QDate::currentDate().addDays(1)));
+
+    testTodoOccurrence.setPriority(QOrganizerItemPriority::VeryHighPriority);
+    QCOMPARE(testTodoOccurrence.priority(), QOrganizerItemPriority::VeryHighPriority);
+    testTodoOccurrence.setPriority(QOrganizerItemPriority::VeryLowPriority);
+    QCOMPARE(testTodoOccurrence.priority(), QOrganizerItemPriority::VeryLowPriority);
+
+    // the parent id and original date time must be tested in the manager unit test
+}
 
 QTEST_MAIN(tst_QOrganizerItem)
 #include "tst_qorganizeritem.moc"

@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -65,70 +59,18 @@ QTM_BEGIN_NAMESPACE
     \ingroup qml-location
 
     The PositionSource element allows you to get information about your current position.
-    You can receive information about things such as \l Position::latitude,
-    \l Position::longitude, \l Position::speed, and
-    \l Position::altitude. This element is part of the \bold{QtMobility.location 1.0} module.
+    You can receive information about things such as latitude, longitude, altitude, and
+    speed. This element is part of the \bold{QtMobility.location 1.1} module.
 
     Support for location sources are platform dependant. When declaring a PositionSource element, a
     default PositionSource source shall be created. Supported positioning methods are held in
-    \l PositioningMethods. As a development convenience, one may also set data file as a source (NMEA format).
+    \l positioningMethod. As a development convenience, one may also set data file as a source (NMEA format).
     Location updates are not necessarily started automatically upon element declaration, see \l start \l stop \l active
     and \l update.
 
-    Here is very simple self-contained example QML to illustrate the usage:
+    Here is very simple example QML to illustrate the usage:
 
-    \qml
-    import Qt 4.7
-    import QtMobility.location 1.0
-
-    Rectangle {
-        id: page
-        width: 350
-        height: 350
-        color: "olive"
-
-        Text {
-            id: title
-            text: "Simple position test app"
-            font {pointSize: 12; bold: true}
-        }
-        PositionSource {
-            id: positionSource
-            active: true
-            updateInterval: 1000
-        }
-        Column {
-            id: data
-            anchors {top: title.bottom; left: title.left}
-            Text {text: "<==== PositionSource ====>"}
-            Text {text: "positioningMethod: "  + printableMethod(positionSource.positioningMethod)}
-            Text {text: "nmeaSource: "         + positionSource.nmeaSource}
-            Text {text: "updateInterval: "     + positionSource.updateInterval}
-            Text {text: "active: "     + positionSource.active}
-            Text {text: "<==== Position ====>"}
-            Text {text: "latitude: "   + positionSource.position.latitude}
-            Text {text: "longitude: "   + positionSource.position.longitude}
-            Text {text: "altitude: "   + positionSource.position.altitude}
-            Text {text: "speed: " + positionSource.position.speed}
-            Text {text: "timestamp: "  + positionSource.position.timestamp}
-            Text {text: "altitudeValid: "  + positionSource.position.altitudeValid}
-            Text {text: "longitudeValid: "  + positionSource.position.longitudeValid}
-            Text {text: "latitudeValid: "  + positionSource.position.latitudeValid}
-            Text {text: "speedValid: "     + positionSource.position.speedValid}
-        }
-        function printableMethod(method) {
-            if (method == PositionSource.SatellitePositioningMethod)
-                return "Satellite";
-            else if (method == PositionSource.NoPositioningMethod)
-                return "Not available"
-            else if (method == PositionSource.NonSatellitePositioningMethod)
-                return "Non-satellite"
-            else if (method == PositionSource.AllPositioningMethods)
-                return "All/multiple"
-            return "source error";
-        }
-    }
-    \endqml
+    \snippet doc/src/snippets/declarative/declarative-location.qml 0
 
     \sa {QGeoPositionInfoSource}, {QGeoPositionInfo}, {QNmeaPositionInfoSource}, {QGeoCoordinate}
 
@@ -241,15 +183,6 @@ void QDeclarativePositionSource::setUpdateInterval(int updateInterval)
 
     If nmeaSource has been set for a PositionSource element, there is no way to revert
     back to non-file sources.
-
-    For example if there is a file called "nmealog.txt" in the same folder as the .qml file:
-
-    \qml
-    PositionSource {
-        id: positionSource
-        nmeaSource: "nmealog.txt"
-    }
-    \endqml
 */
 
 QUrl QDeclarativePositionSource::nmeaSource() const
@@ -272,7 +205,7 @@ int QDeclarativePositionSource::updateInterval() const
 }
 
 /*!
-    \qmlproperty enumeration PositionSource::PositioningMethods
+    \qmlproperty enumeration PositionSource::positioningMethod
 
     This property holds the supported positioning methods of the
     current source.
@@ -376,8 +309,8 @@ void QDeclarativePositionSource::stop()
 
     This signal is sent when a position update has been received
     from the location source. Upon receiving this signal, at least
-    \l Position::latitude, \l Position::longitude, and \l Position::timestamp
-    members of the \l position have been update.
+    position::latitude, position::longitude, and position::timestamp
+    members of the \l position have been updated.
 
     \sa updateInterval
 
@@ -420,7 +353,7 @@ bool QDeclarativePositionSource::isActive() const
     (e.g. sometimes an update does not have speed or altitude data).
 
     However, whenever a \l positionChanged signal has been received, at least
-    \l Position::latitude, \l Position::longitude, and \l Position::timestamp can
+    position::coordinate::latitude, position::coordinate::longitude, and position::timestamp can
     be assumed to be valid.
 
     \sa start, stop, update

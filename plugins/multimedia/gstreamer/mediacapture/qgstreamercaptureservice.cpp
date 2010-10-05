@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -69,66 +63,6 @@
 #include <qmediaserviceprovider.h>
 
 
-class QGstreamerVideoRendererWrapper : public QGstreamerElementFactory
-{
-public:
-    QGstreamerVideoRendererWrapper(QGstreamerVideoRendererInterface *videoRenderer)
-        :m_videoRenderer(videoRenderer),
-         m_bin(0),
-         m_element(0),
-         m_colorspace(0)
-    {
-    }
-
-    virtual ~QGstreamerVideoRendererWrapper()
-    {
-        if (m_bin)
-            gst_object_unref(GST_OBJECT(m_bin));
-    }
-
-    GstElement *buildElement()
-    {
-#ifdef Q_WS_MAEMO_5
-        return m_element = m_videoRenderer->videoSink();
-#endif
-        if (m_bin == NULL) {
-            GstBin * bin = GST_BIN(gst_bin_new(NULL));
-
-            m_colorspace = gst_element_factory_make("ffmpegcolorspace", NULL);
-            m_element = m_videoRenderer->videoSink();
-
-            gst_bin_add(bin, m_colorspace);
-            gst_bin_add(bin, m_element);
-            gst_element_link(m_colorspace, m_element);
-
-            // add ghostpads
-            GstPad *pad = gst_element_get_static_pad(m_colorspace, "sink");
-            gst_element_add_pad(GST_ELEMENT(bin), gst_ghost_pad_new("sink", pad));
-            gst_object_unref(GST_OBJECT(pad));
-
-            m_bin = GST_ELEMENT(bin);
-        }
-
-        m_videoRenderer->precessNewStream();
-
-        gst_object_ref(GST_OBJECT(m_bin));
-        return m_bin;
-    }
-
-    void prepareWinId()
-    {
-        m_videoRenderer->precessNewStream();
-    }
-
-private:
-    QGstreamerVideoRendererInterface *m_videoRenderer;
-
-    GstElement *m_bin;
-    GstElement *m_element;
-    GstElement *m_colorspace;
-};
-
-
 QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObject *parent):
     QMediaService(parent)
 {
@@ -142,11 +76,8 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
 
     m_videoOutput = 0;
     m_videoRenderer = 0;
-    m_videoRendererFactory = 0;
     m_videoWindow = 0;
-    m_videoWindowFactory = 0;
     m_videoWidgetControl = 0;
-    m_videoWidgetFactory = 0;
     m_imageCaptureControl = 0;
 
     if (service == Q_MEDIASERVICE_AUDIOSOURCE) {
@@ -167,16 +98,10 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
             m_videoInput->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));
 
         m_videoRenderer = new QGstreamerVideoRenderer(this);
-        m_videoRendererFactory = new QGstreamerVideoRendererWrapper(m_videoRenderer);
 
 #if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
-        QGstreamerVideoOverlay *videoWindow = new QGstreamerVideoOverlay(this);
-        m_videoWindow = videoWindow;
-        m_videoWindowFactory = new QGstreamerVideoRendererWrapper(videoWindow);
-
-        QGstreamerVideoWidgetControl *videoWidget = new QGstreamerVideoWidgetControl(this);
-        m_videoWidgetControl = videoWidget;
-        m_videoWidgetFactory = new QGstreamerVideoRendererWrapper(videoWidget);
+        m_videoWindow = new QGstreamerVideoOverlay(this);
+        m_videoWidgetControl = new QGstreamerVideoWidgetControl(this);
 #endif    
         m_imageCaptureControl = new QGstreamerImageCaptureControl(m_captureSession);
     }
@@ -235,12 +160,12 @@ QMediaControl *QGstreamerCaptureService::requestControl(const char *name)
     if (!m_videoOutput) {
         if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
             m_videoOutput = m_videoRenderer;
-            m_captureSession->setVideoPreview(m_videoRendererFactory);
+            m_captureSession->setVideoPreview(m_videoRenderer);
         } else if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
             m_videoOutput = m_videoWindow;
-            m_captureSession->setVideoPreview(m_videoWindowFactory);
+            m_captureSession->setVideoPreview(m_videoWindow);
         } else if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
-            m_captureSession->setVideoPreview(m_videoWidgetFactory);
+            m_captureSession->setVideoPreview(m_videoWidgetControl);
             m_videoOutput = m_videoWidgetControl;
         }
 

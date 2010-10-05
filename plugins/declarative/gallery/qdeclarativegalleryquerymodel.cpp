@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -51,13 +45,16 @@
 
 #include <qgalleryresultset.h>
 
+#include <QtDeclarative/qdeclarativeinfo.h>
+
 QTM_BEGIN_NAMESPACE
 
 QDeclarativeGalleryQueryModel::QDeclarativeGalleryQueryModel(QObject *parent)
     : QAbstractListModel(parent)
     , m_resultSet(0)
     , m_status(Null)
-    , m_complete(false)
+    , m_rowCount(0)
+    , m_updateStatus(Incomplete)
 {
     connect(&m_request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
             this, SLOT(_q_statusChanged()));
@@ -73,17 +70,140 @@ QDeclarativeGalleryQueryModel::~QDeclarativeGalleryQueryModel()
 
 void QDeclarativeGalleryQueryModel::componentComplete()
 {
-    m_complete = true;
+    m_updateStatus = NoUpdate;
+
+    if (m_filter) {
+        connect(m_filter.data(), SIGNAL(filterChanged()), this, SLOT(deferredExecute()));
+
+        m_request.setFilter(m_filter.data()->filter());
+    }
+    m_request.execute();
+}
+
+qreal QDeclarativeGalleryQueryModel::progress() const
+{
+    const int max = m_request.maximumProgress();
+
+    return max > 0 ? qreal(m_request.currentProgress()) / max : qreal(0.0);
+}
+
+void QDeclarativeGalleryQueryModel::setPropertyNames(const QStringList &names)
+{
+    if (m_updateStatus == Incomplete) {
+        m_request.setPropertyNames(names);
+
+        emit propertyNamesChanged();
+    }
+}
+
+void QDeclarativeGalleryQueryModel::setSortPropertyNames(const QStringList &names)
+{
+    if (m_request.sortPropertyNames() != names) {
+        m_request.setSortPropertyNames(names);
+
+        deferredExecute();
+
+        emit sortPropertyNamesChanged();
+    }
+}
+
+void QDeclarativeGalleryQueryModel::setAutoUpdate(bool enabled)
+{
+    if (m_request.autoUpdate() != enabled) {
+        m_request.setAutoUpdate(enabled);
+
+        if (enabled)
+            deferredExecute();
+        else if (m_status == Idle)
+            m_request.cancel();
+
+        emit autoUpdateChanged();
+    }
+}
+
+void QDeclarativeGalleryQueryModel::setScope(Scope scope)
+{
+    if (m_request.scope() != QGalleryQueryRequest::Scope(scope)) {
+        m_request.setScope(QGalleryQueryRequest::Scope(scope));
+
+        deferredExecute();
+
+        emit scopeChanged();
+    }
+}
+
+void QDeclarativeGalleryQueryModel::setRootItem(const QVariant &itemId)
+{
+    if (m_request.rootItem() != itemId) {
+        m_request.setRootItem(itemId);
+
+        deferredExecute();
+
+        emit rootItemChanged();
+    }
+}
+
+void QDeclarativeGalleryQueryModel::setFilter(QDeclarativeGalleryFilterBase *filter)
+{
+    if (m_filter)
+        disconnect(m_filter.data(), SIGNAL(filterChanged()), this, SLOT(deferredExecute()));
+
+    m_filter = filter;
 
     if (m_filter)
-        m_request.setFilter(m_filter->filter());
-    m_request.execute();
+        connect(m_filter.data(), SIGNAL(filterChanged()), this, SLOT(deferredExecute()));
+
+    deferredExecute();
+
+    emit filterChanged();
+}
+
+void QDeclarativeGalleryQueryModel::setOffset(int offset)
+{
+    if (m_request.offset() != offset) {
+        m_request.setOffset(offset);
+
+        deferredExecute();
+
+        emit offsetChanged();
+    }
+}
+
+void QDeclarativeGalleryQueryModel::setLimit(int limit)
+{
+    if (m_request.limit() != limit) {
+        m_request.setLimit(limit);
+
+        deferredExecute();
+
+        emit limitChanged();
+    }
 }
 
 void QDeclarativeGalleryQueryModel::reload()
 {
-    m_request.setFilter(m_filter ? m_filter->filter() : QGalleryFilter());
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
+
+    m_request.setFilter(m_filter ? m_filter.data()->filter() : QGalleryFilter());
+
     m_request.execute();
+}
+
+void QDeclarativeGalleryQueryModel::cancel()
+{
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
+
+    m_request.cancel();
+}
+
+void QDeclarativeGalleryQueryModel::clear()
+{
+    if (m_updateStatus == PendingUpdate)
+        m_updateStatus = CancelledUpdate;
+
+    m_request.clear();
 }
 
 
@@ -117,9 +237,10 @@ QVariant QDeclarativeGalleryQueryModel::data(const QModelIndex &index, int role)
     }
 }
 
-bool QDeclarativeGalleryQueryModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool QDeclarativeGalleryQueryModel::setData(
+        const QModelIndex &index, const QVariant &value, int role)
 {
-    if (index.isValid() && (role -= MetaDataOffset) > 0) {
+    if (index.isValid() && (role -= MetaDataOffset) >= 0) {
         if (m_resultSet->currentIndex() != index.row() && !m_resultSet->fetch(index.row()))
             return false;
 
@@ -130,7 +251,8 @@ bool QDeclarativeGalleryQueryModel::setData(const QModelIndex &index, const QVar
 
 }
 
-QModelIndex QDeclarativeGalleryQueryModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex QDeclarativeGalleryQueryModel::index(
+        int row, int column, const QModelIndex &parent) const
 {
     return !parent.isValid() && row >= 0 && row < m_rowCount && column == 0
             ? createIndex(row, column)
@@ -182,7 +304,7 @@ QVariant QDeclarativeGalleryQueryModel::property(int index, const QString &prope
     if (property == QLatin1String("itemId")) {
         return m_resultSet->itemId();
     } else if (property == QLatin1String("itemType")) {
-        return m_resultSet->itemType();
+        return itemType(m_resultSet->itemType());
     } else {
         const int propertyKey = m_resultSet->propertyKey(property);
 
@@ -205,17 +327,13 @@ void QDeclarativeGalleryQueryModel::set(int index, const QScriptValue &values)
     QScriptValueIterator it(values);
     while (it.hasNext()) {
         it.next();
-        QScriptValue value = it.value();
-
-        if (value.isVariant())
-            m_resultSet->setMetaData(m_resultSet->propertyKey(it.name()), value.toVariant());
+        m_resultSet->setMetaData(m_resultSet->propertyKey(it.name()), it.value().toVariant());
     }
 }
 
 void QDeclarativeGalleryQueryModel::setProperty(
         int index, const QString &property, const QVariant &value)
 {
-
     if (index < 0
             || index >= m_rowCount
             || (m_resultSet->currentIndex() != index && !m_resultSet->fetch(index))) {
@@ -225,29 +343,77 @@ void QDeclarativeGalleryQueryModel::setProperty(
     m_resultSet->setMetaData(m_resultSet->propertyKey(property), value);
 }
 
+
+
+void QDeclarativeGalleryQueryModel::deferredExecute()
+{
+    if (m_updateStatus == NoUpdate) {
+        m_updateStatus = PendingUpdate;
+
+        QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+    } else if (m_updateStatus == CancelledUpdate) {
+        m_updateStatus = PendingUpdate;
+    }
+}
+
+bool QDeclarativeGalleryQueryModel::event(QEvent *event)
+{
+    if (event->type() == QEvent::UpdateRequest) {
+        UpdateStatus status = m_updateStatus;
+        m_updateStatus = NoUpdate;
+
+        if (status == PendingUpdate) {
+            m_request.setFilter(m_filter ? m_filter.data()->filter() : QGalleryFilter());
+            m_request.execute();
+        }
+
+        return true;
+    } else {
+        return QAbstractListModel::event(event);
+    }
+}
+
 void QDeclarativeGalleryQueryModel::_q_statusChanged()
 {
-    Status status = m_status;
-    QString message = m_request.errorString();
-
     m_status = Status(m_request.status());
 
-    qSwap(message, m_errorMessage);
+    if (m_status == Error) {
+        const QString message = m_request.errorString();
 
-    if (m_status != status) {
-        m_status = status;
-
+        if (!message.isEmpty()) {
+            qmlInfo(this) << message;
+        } else {
+            switch (m_request.error()) {
+            case QDocumentGallery::ConnectionError:
+                qmlInfo(this) << tr("An error was encountered connecting to the document gallery");
+                break;
+            case QDocumentGallery::ItemTypeError:
+                qmlInfo(this) << (m_request.rootType().isEmpty()
+                        ? tr("DocumentGallery.InvalidType is not a supported item type")
+                        : tr("DocumentGallery.%1 is not a supported item type")
+                                .arg(m_request.rootType()));
+                break;
+            case QDocumentGallery::ItemIdError:
+                qmlInfo(this) << tr("The value of rootItem is not a valid item ID");
+                break;
+            case QDocumentGallery::FilterError:
+                qmlInfo(this) << tr("The value of filter is unsupported");
+            default:
+                break;
+            }
+        }
+        emit statusChanged();
+    } else if (m_status == Idle && !m_request.autoUpdate()) {
+        m_request.cancel();
+    } else {
         emit statusChanged();
     }
-
-    if (message != m_errorMessage)
-        emit errorMessageChanged();
 }
 
 void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet)
 {
     if (m_rowCount > 0) {
-        beginRemoveRows(QModelIndex(), 0, m_rowCount);
+        beginRemoveRows(QModelIndex(), 0, m_rowCount - 1);
         m_rowCount = 0;
         m_resultSet = resultSet;
         endRemoveRows();
@@ -267,8 +433,10 @@ void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet
                 ++it) {
             const int key = m_resultSet->propertyKey(*it);
 
-            roleNames.insert(key + MetaDataOffset, it->toLatin1());
-            m_propertyNames.append(qMakePair(key, *it));
+            if (key >= 0) {
+                roleNames.insert(key + MetaDataOffset, it->toLatin1());
+                m_propertyNames.append(qMakePair(key, *it));
+            }
         }
         roleNames.insert(ItemId, QByteArray("itemId"));
         roleNames.insert(ItemType, QByteArray("itemType"));
@@ -485,7 +653,7 @@ QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGalleryModel::rootType
 
 void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::ItemType itemType)
 {
-    if (!m_complete) {
+    if (m_updateStatus == Incomplete) {
         m_request.setRootType(QDeclarativeDocumentGallery::toString(itemType));
 
         emit rootTypeChanged();
@@ -555,7 +723,7 @@ void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::
 */
 
 /*!
-    \qmlproperty DocumentGalleryModel::count
+    \qmlproperty int DocumentGalleryModel::count
 
     This property holds the number of results returned by a query.
 */

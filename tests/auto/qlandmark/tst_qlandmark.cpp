@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -54,10 +48,10 @@
 #include <QMetaType>
 #include <QHash>
 #include <QVariant>
+#include <qnumeric.h>
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QLandmark);
 Q_DECLARE_METATYPE(QGeoCoordinate);
 Q_DECLARE_METATYPE(QList<QLandmarkCategory>);
 
@@ -69,49 +63,22 @@ public:
     typedef QHash<QString, QVariant> variantMap;
 
 private slots:
-    void setViaAttribute() {
+    void radius()
+    {
         QLandmark lm;
-        lm.setAttribute("name", "LM1");
-        lm.setAttribute("description", "LM1 description");
-        lm.setAttribute("iconUrl", "LM1 icon url");
-        lm.setAttribute("radius", 5.0);
-        lm.setAttribute("phoneNumber", "lm1 phoneNumber");
-        lm.setAttribute("url", QUrl("lm1 url"));
-        lm.setAttribute("country", "lm1 country");
-        lm.setAttribute("countryCode", "lm1 countryCode");
-        lm.setAttribute("state", "lm1 state");
-        lm.setAttribute("county", "lm1 county");
-        lm.setAttribute("city", "lm1 city");
-
-        QCOMPARE(lm.name(), QString("LM1"));
-        QCOMPARE(lm.description(), QString("LM1 description"));
-        QCOMPARE(lm.iconUrl().toString(), QString("LM1 icon url"));
-        QCOMPARE(lm.radius(), 5.0);
-        QCOMPARE(lm.phoneNumber(),QString("lm1 phoneNumber"));
-        QCOMPARE(lm.url(), QUrl("lm1 url"));
-
-        QCOMPARE(lm.attribute("name").toString(), QString("LM1"));
-        QCOMPARE(lm.attribute("description").toString(), QString("LM1 description"));
-        QCOMPARE(lm.attribute("iconUrl").toString(), QString("LM1 icon url"));
-        QCOMPARE(lm.attribute("radius").toDouble(), 5.0);
-        QCOMPARE(lm.attribute("phoneNumber").toString(),QString("lm1 phoneNumber"));
-        QCOMPARE(lm.attribute("url").toUrl(), QUrl("lm1 url"));
-
-        QStringList keys = lm.attributeKeys();
-        QVERIFY(keys.contains("name"));
-        QVERIFY(keys.contains("description"));
-        QVERIFY(keys.contains("iconUrl"));
-        QVERIFY(keys.contains("radius"));
-        QVERIFY(keys.contains("phoneNumber"));
-        QVERIFY(keys.contains("url"));
-
-        QLandmarkCategory cat;
-        cat.setAttribute("name", "CAT1");
-        cat.setAttribute("iconUrl",QUrl("cat1 url"));
-
-        QCOMPARE(cat.name(), QString("CAT1"));
-        QCOMPARE(cat.iconUrl(), QUrl("cat1 url"));
-
+        QVERIFY(lm.radius() == 0.0);
+        lm.setRadius(5000);
+        QVERIFY(lm.radius() == 5000);
+        lm.setRadius(-1);
+        QVERIFY(lm.radius() == 0.0);
+        lm.setRadius(100);
+        QVERIFY(lm.radius() == 100);
+        lm.setRadius(0);
+        QVERIFY(lm.radius() == 0.0);
+        lm.setRadius(1000);
+        QVERIFY(lm.radius() == 1000);
+        lm.setRadius(qQNaN());
+        QVERIFY(lm.radius() == 0.0);
     }
 
     /*/void settersAndGetters() {
@@ -125,7 +92,7 @@ private slots:
         QFETCH(QString, postcode);
         QFETCH(QString, phone);
         QFETCH(QString, url);
-        QFETCH(double, radius);
+        QFETCH(qreal, radius);
         QFETCH(QGeoCoordinate, coordinate);
         QFETCH(QList<QLandmarkCategory>, categories);
         QFETCH(variantMap, attributes);
@@ -186,7 +153,7 @@ private slots:
         QFETCH(QString, postcode);
         QFETCH(QString, phone);
         QFETCH(QString, url);
-        QFETCH(double, radius);
+        QFETCH(real, radius);
         QFETCH(QGeoCoordinate, coordinate);
         QFETCH(QList<QLandmarkCategory>, categories);
         QFETCH(variantMap, attributes);
@@ -249,7 +216,7 @@ private slots:
         QFETCH(QString, postcode);
         QFETCH(QString, phone);
         QFETCH(QString, url);
-        QFETCH(double, radius);
+        QFETCH(qreal, radius);
         QFETCH(QGeoCoordinate, coordinate);
         QFETCH(QList<QLandmarkCategory>, categories);
         QFETCH(variantMap, attributes);
@@ -484,7 +451,7 @@ private:
         QTest::addColumn<QString>("name");
         QTest::addColumn<QString>("description");
         QTest::addColumn<QString>("iconurl");
-        QTest::addColumn<double>("radius");
+        QTest::addColumn<qreal>("radius");
         QTest::addColumn<QString>("phone");
         QTest::addColumn<QString>("url");
 

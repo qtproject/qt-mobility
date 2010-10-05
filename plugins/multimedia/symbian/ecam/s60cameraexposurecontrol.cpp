@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -64,7 +58,11 @@ S60CameraExposureControl::S60CameraExposureControl(S60ImageCaptureSession *sessi
     m_exposureMode(QCameraExposure::ExposureAuto),
     m_meteringMode(QCameraExposure::MeteringMatrix)
 {
-    m_session = session;
+    if (session)
+        m_session = session;
+    else
+        Q_ASSERT(true);
+    // From now on it is safe to assume session exists
 
     connect(m_session, SIGNAL(advancedSettingCreated()), this, SLOT(resetAdvancedSetting()));
     m_advancedSettings = m_session->advancedSettings();
@@ -121,7 +119,10 @@ void S60CameraExposureControl::setExposureMode(QCameraExposure::ExposureMode mod
     if (isExposureModeSupported(mode)) {
         m_exposureMode = mode;
         m_session->setExposureMode(m_exposureMode);
+        return;
     }
+
+    m_session->setError(KErrNotSupported, QString("Requested metering mode is not supported."));
 }
 
 bool S60CameraExposureControl::isExposureModeSupported(QCameraExposure::ExposureMode mode) const
@@ -148,8 +149,11 @@ void S60CameraExposureControl::setMeteringMode(QCameraExposure::MeteringMode mod
         if (isMeteringModeSupported(mode)) {
             m_meteringMode = mode;
             m_advancedSettings->setMeteringMode(mode);
+            return;
         }
     }
+
+    m_session->setError(KErrNotSupported, QString("Requested metering mode is not supported."));
 }
 
 bool S60CameraExposureControl::isMeteringModeSupported(QCameraExposure::MeteringMode mode) const
@@ -163,19 +167,24 @@ bool S60CameraExposureControl::isMeteringModeSupported(QCameraExposure::Metering
 
 bool S60CameraExposureControl::isParameterSupported(ExposureParameter parameter) const
 {
-    switch (parameter) {
-        case QCameraExposureControl::ISO:
-        case QCameraExposureControl::Aperture:
-        case QCameraExposureControl::ShutterSpeed:
-        case QCameraExposureControl::ExposureCompensation:
-            return true;
-        case QCameraExposureControl::FlashPower:
-        case QCameraExposureControl::FlashCompensation:
-            return false;
+    // Settings supported only if advanced settings available
+    if (m_advancedSettings) {
+        switch (parameter) {
+            case QCameraExposureControl::ISO:
+            case QCameraExposureControl::Aperture:
+            case QCameraExposureControl::ShutterSpeed:
+            case QCameraExposureControl::ExposureCompensation:
+                return true;
+            case QCameraExposureControl::FlashPower:
+            case QCameraExposureControl::FlashCompensation:
+                return false;
 
-        default:
-            return false;
+            default:
+                return false;
+        }
     }
+
+    return false;
 }
 
 QVariant S60CameraExposureControl::exposureParameter(ExposureParameter parameter) const
@@ -472,6 +481,7 @@ bool S60CameraExposureControl::setManualAperture(qreal aperture)
 
 void S60CameraExposureControl::setAutoAperture()
 {
+    // Not supported in Symbian
 }
 
 qreal S60CameraExposureControl::shutterSpeed() const
@@ -531,6 +541,7 @@ bool S60CameraExposureControl::setManualShutterSpeed(qreal seconds)
 
 void S60CameraExposureControl::setAutoShutterSpeed()
 {
+    // Not supported in Symbian
 }
 
 qreal S60CameraExposureControl::exposureCompensation() const
@@ -590,6 +601,7 @@ bool S60CameraExposureControl::setManualExposureCompensation(qreal ev)
 
 void S60CameraExposureControl::setAutoExposureCompensation()
 {
+    // Not supported in Symbian
 }
 
 // End of file

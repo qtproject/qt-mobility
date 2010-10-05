@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -150,7 +144,7 @@ QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path,
     path = qAddSimulatorPrefix(path);
 #endif
 
-
+    // check filter for mutually exclusive options
     if ((filter & QValueSpace::PermanentLayer &&
          filter & QValueSpace::TransientLayer) ||
         (filter & QValueSpace::WritableLayer &&
@@ -161,8 +155,7 @@ QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path,
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
     for (int ii = 0; ii < layers.count(); ++ii) {
-        if (filter == QValueSpace::UnspecifiedLayer ||
-            layers.at(ii)->layerOptions() & filter) {
+        if ((layers.at(ii)->layerOptions() & filter) == filter) {
             QAbstractValueSpaceLayer::Handle h =
                     layers.at(ii)->item(QAbstractValueSpaceLayer::InvalidHandle, path);
 
@@ -210,11 +203,11 @@ QValueSpacePublisher::QValueSpacePublisher(const QString &path, QObject *parent)
     \a path.  The \a filter parameter is used to limit which layer this QValueSpacePublisher will
     access.
 
-    The constructed Value Space publisher will access the \l {QAbstractValueSpaceLayer}{layer} with
-    the highest \l {QAbstractValueSpaceLayer::order()}{order} that matches \a filter and for which
+    The constructed Value Space publisher will access the QAbstractValueSpaceLayer layer with
+    the highest order (QAbstractValueSpaceLayer::order()) that matches \a filter and for which
     \a path is a valid path.
 
-    If no suitable \l {QAbstractValueSpaceLayer}{layer} is found, the constructed
+    If no suitable QAbstractValueSpaceLayer layer is found, the constructed
     QValueSpacePublisher will be unconnected.
 
     \sa isConnected()

@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -70,7 +64,6 @@ class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclara
     Q_ENUMS(Scope)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
-    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
     Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames NOTIFY sortPropertyNamesChanged)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
@@ -85,10 +78,10 @@ public:
     {
         Null        = QGalleryAbstractRequest::Inactive,
         Active      = QGalleryAbstractRequest::Active,
-        Finished    = QGalleryAbstractRequest::Finished,
-        Idle        = QGalleryAbstractRequest::Idle,
         Cancelling  = QGalleryAbstractRequest::Cancelling,
         Cancelled   = QGalleryAbstractRequest::Cancelled,
+        Idle        = QGalleryAbstractRequest::Idle,
+        Finished    = QGalleryAbstractRequest::Finished,
         Error       = QGalleryAbstractRequest::Error
     };
 
@@ -109,41 +102,31 @@ public:
 
     Status status() const { return m_status; }
 
-    qreal progress() const
-    {
-        const int max = m_request.maximumProgress();
-        return max > 0 ? qreal(m_request.currentProgress()) / max : qreal(0.0);
-    }
-
-    QString errorMessage() const { return m_errorMessage; }
+    qreal progress() const;
 
     QStringList propertyNames() { return m_request.propertyNames(); }
-    void setPropertyNames(const QStringList &names) {
-        if (!m_complete) { m_request.setPropertyNames(names); emit propertyNamesChanged(); } }
+    void setPropertyNames(const QStringList &names);
 
     QStringList sortPropertyNames() const { return m_request.sortPropertyNames(); }
-    void setSortPropertyNames(const QStringList &names) {
-        if (!m_complete) m_request.setSortPropertyNames(names); emit sortPropertyNamesChanged(); }
+    void setSortPropertyNames(const QStringList &names);
 
     bool autoUpdate() const { return m_request.autoUpdate(); }
-    void setAutoUpdate(bool enabled) { m_request.setAutoUpdate(enabled); emit autoUpdateChanged(); }
+    void setAutoUpdate(bool enabled);
 
     Scope scope() const { return Scope(m_request.scope()); }
-    void setScope(Scope scope) {
-        m_request.setScope(QGalleryQueryRequest::Scope(scope)); emit scopeChanged(); }
+    void setScope(Scope scope);
 
     QVariant rootItem() const { return m_request.rootItem(); }
-    void setRootItem(const QVariant &itemId) {
-        m_request.setRootItem(itemId); emit rootItemChanged(); }
+    void setRootItem(const QVariant &itemId);
 
-    QDeclarativeGalleryFilterBase *filter() const { return m_filter; }
-    void setFilter(QDeclarativeGalleryFilterBase *filter) { m_filter = filter; filterChanged(); }
+    QDeclarativeGalleryFilterBase *filter() const { return m_filter.data(); }
+    void setFilter(QDeclarativeGalleryFilterBase *filter);
 
     int offset() const { return m_request.offset(); }
-    void setOffset(int offset) { m_request.setOffset(offset); emit offsetChanged(); }
+    void setOffset(int offset);
 
     int limit() const { return m_request.limit(); }
-    void setLimit(int limit) { m_request.setLimit(limit); emit limitChanged(); }
+    void setLimit(int limit);
 
     int rowCount(const QModelIndex &parent) const;
 
@@ -164,13 +147,12 @@ public:
 
 public Q_SLOTS:
     void reload();
-    void cancel() { m_request.cancel(); }
-    void clear() { m_request.clear(); }
+    void cancel();
+    void clear();
 
 Q_SIGNALS:
     void statusChanged();
     void progressChanged();
-    void errorMessageChanged();
     void propertyNamesChanged();
     void sortPropertyNamesChanged();
     void autoUpdateChanged();
@@ -181,19 +163,31 @@ Q_SIGNALS:
     void limitChanged();
     void countChanged();
 
+protected Q_SLOTS:
+    void deferredExecute();
+
 protected:
+    enum UpdateStatus
+    {
+        Incomplete,
+        NoUpdate,
+        PendingUpdate,
+        CancelledUpdate
+    };
+
     explicit QDeclarativeGalleryQueryModel(QObject *parent = 0);
 
     virtual QVariant itemType(const QString &type) const = 0;
 
+    bool event(QEvent *event);
+
     QGalleryQueryRequest m_request;
-    QPointer<QDeclarativeGalleryFilterBase> m_filter;
+    QWeakPointer<QDeclarativeGalleryFilterBase> m_filter;
     QGalleryResultSet *m_resultSet;
     QVector<QPair<int, QString> > m_propertyNames;
-    QString m_errorMessage;
     Status m_status;
     int m_rowCount;
-    bool m_complete;
+    UpdateStatus m_updateStatus;
 
 private Q_SLOTS:
     void _q_statusChanged();

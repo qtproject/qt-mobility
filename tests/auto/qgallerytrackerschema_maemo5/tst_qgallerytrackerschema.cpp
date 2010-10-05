@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -2565,8 +2559,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:equals>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String("file."), QGalleryFilter::StartsWith);
+        QGalleryFilter filter = QDocumentGallery::fileName.startsWith(QLatin1String("file."));
 
         QTest::newRow("File.fileName.startsWith(file.)")
                 << QString::fromLatin1("File")
@@ -2583,8 +2576,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:startsWith>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String(".ext"), QGalleryFilter::EndsWith);
+        QGalleryFilter filter = QDocumentGallery::fileName.endsWith(QLatin1String(".ext"));
 
         QTest::newRow("File.fileName.endsWith(.ext)")
                 << QString::fromLatin1("File")
@@ -2601,8 +2593,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:equals>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String("ext"), QGalleryFilter::Contains);
+        QGalleryFilter filter = QDocumentGallery::fileName.contains(QLatin1String("ext"));
 
         QTest::newRow("File.fileName.contains(ext)")
                 << QString::fromLatin1("File")
@@ -2619,8 +2610,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:contains>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String("file*ext"), QGalleryFilter::Wildcard);
+        QGalleryFilter filter = QDocumentGallery::fileName.wildcard(QLatin1String("file*ext"));
 
         QTest::newRow("File.fileName.wildcard(file*ext")
                 << QString::fromLatin1("File")
@@ -2637,12 +2627,10 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:equals>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QGalleryMetaDataFilter(
-                QDocumentGallery::fileName,
-                QLatin1String("(file|document).ext"),
-                QGalleryFilter::RegExp);
+        QGalleryFilter filter
+                = QDocumentGallery::fileName.regExp(QLatin1String("(file|document).ext"));
 
-        QTest::newRow("File.fileName.regExp((file|document).ext")
+        QTest::newRow("File.fileName.regExp((file|document).ext)")
                 << QString::fromLatin1("File")
                 << QString()
                 << QGalleryQueryRequest::AllDescendants
@@ -2657,7 +2645,26 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:regex>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QDocumentGallery::description == QUrl(QLatin1String("http://example.com/index.html"));
+        QGalleryFilter filter
+                = QDocumentGallery::fileName.regExp(QRegExp(QLatin1String("(file|document).ext")));
+
+        QTest::newRow("File.fileName.regExp(QRegExp((file|document).ext))")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:regex>"
+                                "<rdfq:Property name=\"File:Name\"/>"
+                                "<rdf:String>(file|document).ext</rdf:String>"
+                            "</rdfq:regex>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter
+                = QDocumentGallery::description == QUrl(QLatin1String("http://example.com/index.html"));
 
         QTest::newRow("Image.description == http://example.com/index.html")
                 << QString::fromLatin1("Image")

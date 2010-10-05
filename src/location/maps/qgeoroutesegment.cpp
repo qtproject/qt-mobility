@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -70,13 +64,16 @@ QTM_BEGIN_NAMESPACE
     Constructs a route segment object.
 */
 QGeoRouteSegment::QGeoRouteSegment()
-        : d_ptr(new QGeoRouteSegmentPrivate()) {}
+    : d_ptr(new QGeoRouteSegmentPrivate()) {}
 
 /*!
     Constructs a route segment object from the contents of \a other.
 */
 QGeoRouteSegment::QGeoRouteSegment(const QGeoRouteSegment &other)
-        : d_ptr(other.d_ptr) {}
+    : d_ptr(other.d_ptr) {}
+
+QGeoRouteSegment::QGeoRouteSegment(QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &d_ptr)
+    : d_ptr(d_ptr) {}
 
 /*!
     Destroys this route segment object.
@@ -107,7 +104,33 @@ bool QGeoRouteSegment::operator ==(const QGeoRouteSegment &other) const
 */
 bool QGeoRouteSegment::operator !=(const QGeoRouteSegment &other) const
 {
-    return (d_ptr.constData() != other.d_ptr.constData());
+    return !(operator==(other));
+}
+
+/*!
+*/
+bool QGeoRouteSegment::isValid() const
+{
+    return d_ptr->valid;
+}
+
+/*!
+*/
+void QGeoRouteSegment::setNextRouteSegment(const QGeoRouteSegment &routeSegment)
+{
+    d_ptr->nextSegment = routeSegment.d_ptr;
+}
+
+/*!
+*/
+QGeoRouteSegment QGeoRouteSegment::nextRouteSegment() const
+{
+    if (d_ptr->nextSegment)
+        return QGeoRouteSegment(d_ptr->nextSegment);
+
+    QGeoRouteSegment segment;
+    segment.d_ptr->valid = false;
+    return segment;
 }
 
 /*!
@@ -167,44 +190,54 @@ QList<QGeoCoordinate> QGeoRouteSegment::path() const
     return d_ptr->path;
 }
 /*!
-    Sets the instruction for this route segement to \a instruction.
+    Sets the maneuver for this route segement to \a maneuver.
 */
-void QGeoRouteSegment::setInstruction(const QGeoInstruction &instruction)
+void QGeoRouteSegment::setManeuver(const QGeoManeuver &maneuver)
 {
-    d_ptr->instruction = instruction;
+    d_ptr->maneuver = maneuver;
 }
 
 /*!
     Returns the instruction for this route segment.
 */
-QGeoInstruction QGeoRouteSegment::instruction() const
+QGeoManeuver QGeoRouteSegment::maneuver() const
 {
-    return d_ptr->instruction;
+    return d_ptr->maneuver;
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
-        : travelTime(0),
+        : valid(true),
+        travelTime(0),
         distance(0.0) {}
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other)
         : QSharedData(other),
+        valid(other.valid),
         travelTime(other.travelTime),
         distance(other.distance),
         path(other.path),
-        instruction(other.instruction) {}
+        maneuver(other.maneuver),
+        nextSegment(other.nextSegment) {}
 
-QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
+QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate()
+{
+    nextSegment.reset();
+}
 
 bool QGeoRouteSegmentPrivate::operator ==(const QGeoRouteSegmentPrivate &other) const
 {
-    return ((travelTime == other.travelTime)
+    return ((valid == other.valid)
+            && (travelTime == other.travelTime)
             && (distance == other.distance)
             && (path == other.path)
-            && (instruction == other.instruction));
+            && (maneuver == other.maneuver));
 }
+
+/*******************************************************************************
+*******************************************************************************/
 
 QTM_END_NAMESPACE
 

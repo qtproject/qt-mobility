@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -131,8 +125,8 @@ void tst_QVersitWriter::testFold()
     list.append(document);
     mWriter->setDevice(mOutputDevice);
     mOutputDevice->open(QBuffer::ReadWrite);
-    QVERIFY(mWriter->startWriting(list));
-    QVERIFY(mWriter->waitForFinished());
+    QVERIFY2(mWriter->startWriting(list), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
@@ -151,8 +145,8 @@ END:VCARD\r\n");
     QVersitDocument document;
     document.setComponentType(QLatin1String("VCARD"));
     QVersitProperty property;
-    property.setName(QString(QString::fromAscii("FN")));
-    property.setValue(QString::fromAscii("John"));
+    property.setName(QString(QLatin1String("FN")));
+    property.setValue(QLatin1String("John"));
     document.addProperty(property);
     document.setType(QVersitDocument::VCard21Type);
     QList<QVersitDocument> list;
@@ -174,8 +168,8 @@ END:VCARD\r\n");
 
     // Now open the device and it should work.
     mOutputDevice->open(QBuffer::ReadWrite);
-    QVERIFY(mWriter->startWriting(list));
-    QVERIFY(mWriter->waitForFinished());
+    QVERIFY2(mWriter->startWriting(list), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
@@ -189,8 +183,8 @@ END:VCARD\r\n");
     mWriter->setDevice(mOutputDevice);
     QTextCodec* utf16(QTextCodec::codecForName("UTF-16"));
     mWriter->setDefaultCodec(utf16);
-    QVERIFY(mWriter->startWriting(list));
-    QVERIFY(mWriter->waitForFinished());
+    QVERIFY2(mWriter->startWriting(list), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
@@ -211,8 +205,8 @@ END:VCARD\r\n");
     QVersitDocument document;
     document.setComponentType(QLatin1String("VCARD"));
     QVersitProperty property;
-    property.setName(QString(QString::fromAscii("FN")));
-    property.setValue(QString::fromAscii("John"));
+    property.setName(QString(QLatin1String("FN")));
+    property.setValue(QLatin1String("John"));
     document.addProperty(property);
     document.setType(QVersitDocument::VCard30Type);
     QList<QVersitDocument> list;
@@ -221,8 +215,8 @@ END:VCARD\r\n");
     // Basic 3.0 test
     mOutputDevice->open(QBuffer::ReadWrite);
     mWriter->setDevice(mOutputDevice);
-    QVERIFY(mWriter->startWriting(list));
-    QVERIFY(mWriter->waitForFinished());
+    QVERIFY2(mWriter->startWriting(list), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
@@ -234,7 +228,7 @@ END:VCARD\r\n");
     // Asynchronous writing
     mOutputDevice->reset();
     mSignalCatcher->mReceived.clear();
-    QVERIFY(mWriter->startWriting(list));
+    QVERIFY2(mWriter->startWriting(list), QString::number(mWriter->error()).toAscii().data());
     QTRY_VERIFY(mSignalCatcher->mReceived.count() >= 2);
     QCOMPARE(mSignalCatcher->mReceived.at(0), QVersitWriter::ActiveState);
     QCOMPARE(mSignalCatcher->mReceived.at(1), QVersitWriter::FinishedState);
@@ -274,11 +268,11 @@ void tst_QVersitWriter::testByteArrayOutput()
     QVersitDocument document(QVersitDocument::VCard30Type);
     document.setComponentType(QLatin1String("VCARD"));
     QVersitProperty property;
-    property.setName(QString(QString::fromAscii("FN")));
-    property.setValue(QString::fromAscii("John"));
+    property.setName(QString(QLatin1String("FN")));
+    property.setValue(QLatin1String("John"));
     document.addProperty(property);
-    QVERIFY(mWriter->startWriting(QList<QVersitDocument>() << document));
-    QVERIFY(mWriter->waitForFinished());
+    QVERIFY2(mWriter->startWriting(QList<QVersitDocument>() << document), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
     QCOMPARE(output, vCard30);
 }
 
@@ -289,8 +283,8 @@ void tst_QVersitWriter::testWritingDocument()
 
     mOutputDevice->open(QBuffer::ReadWrite);
     mWriter->setDevice(mOutputDevice);
-    QVERIFY(mWriter->startWriting(QList<QVersitDocument>() << document));
-    QVERIFY(mWriter->waitForFinished());
+    QVERIFY2(mWriter->startWriting(QList<QVersitDocument>() << document), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
     mOutputDevice->seek(0);
     QByteArray result(mOutputDevice->readAll());
 
@@ -336,15 +330,21 @@ void tst_QVersitWriter::testWritingDocument_data()
     
     {
         QVersitDocument document(QVersitDocument::ICalendar20Type);
-        document.setComponentType(QLatin1String("VEVENT"));
+        document.setComponentType(QLatin1String("VCALENDAR"));
+        QVersitDocument subdocument(QVersitDocument::ICalendar20Type);
+        subdocument.setComponentType(QLatin1String("VEVENT"));
         property.setValueType(QVersitProperty::PreformattedType);
         property.setName(QLatin1String("RRULE"));
         property.setValue(QLatin1String("FREQ=MONTHLY;BYMONTHDAY=1,3"));
-        document.addProperty(property);
+        subdocument.addProperty(property);
+        document.addSubDocument(subdocument);
         QTest::newRow("basic iCalendar 2.0") << document << QByteArray(
+                "BEGIN:VCALENDAR\r\n"
+                "VERSION:2.0\r\n"
                 "BEGIN:VEVENT\r\n"
                 "RRULE:FREQ=MONTHLY;BYMONTHDAY=1,3\r\n"
-                "END:VEVENT\r\n");
+                "END:VEVENT\r\n"
+                "END:VCALENDAR\r\n");
     }
 
     {

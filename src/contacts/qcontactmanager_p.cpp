@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -49,6 +43,7 @@
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
+#include "qcontactmanagerenginev2wrapper_p.h"
 
 #include "qcontact_p.h"
 
@@ -118,10 +113,10 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
 
     QString builtManagerName = managerName.isEmpty() ? QContactManager::availableManagers().value(0) : managerName;
     if (builtManagerName == QLatin1String("memory")) {
-        m_engine = QContactMemoryEngine::createMemoryEngine(parameters);
+        m_engine = new QContactManagerEngineV2Wrapper(QContactMemoryEngine::createMemoryEngine(parameters));
 #ifdef QT_SIMULATOR
     } else if (builtManagerName == QLatin1String("simulator")) {
-        m_engine = QContactSimulatorEngine::createSimulatorEngine(parameters);
+        m_engine = new QContactManagerEngineV2Wrapper(QContactSimulatorEngine::createSimulatorEngine(parameters));
 #endif
     } else {
         int implementationVersion = parameterValue(parameters, QTCONTACTS_IMPLEMENTATION_VERSION_NAME, -1);
@@ -142,7 +137,13 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
                 if (implementationVersion == -1 ||//no given implementation version required
                         versions.isEmpty() || //the manager engine factory does not report any version
                         versions.contains(implementationVersion)) {
-                    m_engine = f->engine(parameters, &m_error);
+                    QContactManagerEngine* engine = f->engine(parameters, &m_error);
+                    // if it's a V2, use it
+                    m_engine = qobject_cast<QContactManagerEngineV2*>(engine);
+                    if (!m_engine && engine) {
+                        // Nope, v1, so wrap it
+                        m_engine = new QContactManagerEngineV2Wrapper(engine);
+                    }
                     found = true;
                     break;
                 }
@@ -292,7 +293,7 @@ void QContactManagerData::loadFactories()
 }
 
 // trampoline for private classes
-QContactManagerEngine* QContactManagerData::engine(const QContactManager* manager)
+QContactManagerEngineV2* QContactManagerData::engine(const QContactManager* manager)
 {
     if (manager)
         return manager->d->m_engine;

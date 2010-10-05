@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -65,6 +59,10 @@ QGstreamerCameraControl::QGstreamerCameraControl(QGstreamerCaptureSession *sessi
             this, SLOT(updateStatus()));
 
     connect(m_session->imageEncodeControl(), SIGNAL(settingsChanged()),
+            SLOT(reloadLater()));
+    connect(m_session, SIGNAL(viewfinderChanged()),
+            SLOT(reloadLater()));
+    connect(m_session, SIGNAL(readyChanged(bool)),
             SLOT(reloadLater()));
 }
 
@@ -102,8 +100,15 @@ void QGstreamerCameraControl::setState(QCamera::State state)
     case QCamera::LoadedState:
         m_session->setState(QGstreamerCaptureSession::StoppedState);
         break;
-    case QCamera::ActiveState:        
-        m_session->setState(QGstreamerCaptureSession::PreviewState);
+    case QCamera::ActiveState:
+        //postpone changing to Active if the session is nor ready yet
+        if (m_session->isReady()) {
+            m_session->setState(QGstreamerCaptureSession::PreviewState);
+        } else {
+#ifdef CAMEABIN_DEBUG
+            qDebug() << "Camera session is not ready yet, postpone activating";
+#endif
+        }
         break;
     default:
         emit error(QCamera::NotSupportedFeatureError, tr("State not supported."));
@@ -158,7 +163,7 @@ void QGstreamerCameraControl::reloadPipeline()
     //qDebug() << "reload pipeline";
     if (m_reloadPending) {
         m_reloadPending = false;
-        if (m_state == QCamera::ActiveState) {            
+        if (m_state == QCamera::ActiveState && m_session->isReady()) {
             m_session->setState(QGstreamerCaptureSession::PreviewState);
         }
     }

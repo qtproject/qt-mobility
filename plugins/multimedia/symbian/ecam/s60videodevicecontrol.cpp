@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,44 +25,43 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
-#include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
 #include <QtGui/qicon.h>
 
 #include "s60videodevicecontrol.h"
 #include "s60cameracontrol.h"
+#include "s60cameraconstants.h"
 
 S60VideoDeviceControl::S60VideoDeviceControl(QObject *parent) :
-    QVideoDeviceControl(parent),
-    m_selectedDevice(-1)
+    QVideoDeviceControl(parent)
 {
 }
 
 S60VideoDeviceControl::S60VideoDeviceControl(S60CameraControl *control, QObject *parent) :
     QVideoDeviceControl(parent),
-    m_selectedDevice(0)
+    m_selectedDevice(KDefaultCameraDevice)
 {
-    m_control = control;
+    if (control)
+        m_control = control;
+    else
+        Q_ASSERT(true);
+    // From now on it's safe to assume control exists
+
+    connect(m_control, SIGNAL(devicesChanged()), this, SIGNAL(devicesChanged()));
 }
 
 S60VideoDeviceControl::~S60VideoDeviceControl()
@@ -92,10 +91,7 @@ QIcon S60VideoDeviceControl::deviceIcon(int index) const
 
 int S60VideoDeviceControl::defaultDevice() const
 {
-    if (m_control)
-        return m_control->defaultDevice();
-    else
-        return -1; // No devices available
+    return KDefaultCameraDevice;
 }
 
 int S60VideoDeviceControl::selectedDevice() const
@@ -106,11 +102,11 @@ int S60VideoDeviceControl::selectedDevice() const
 void S60VideoDeviceControl::setSelectedDevice(int index)
 {
     // Inform that we selected new device
-    if (m_selectedDevice != index && m_control) {
-        emit selectedDeviceChanged(index);
-        emit selectedDeviceChanged(deviceName(index));
+    if (m_selectedDevice != index) {
+        m_control->setSelectedDevice(index);
         m_selectedDevice = index;
-        m_control->setSelectedDevice(m_selectedDevice);
+        emit selectedDeviceChanged(m_selectedDevice);
+        emit selectedDeviceChanged(deviceName(m_selectedDevice));
     }
 }
 

@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -86,7 +80,8 @@ QTM_BEGIN_NAMESPACE
     \a mapObject which are specific to \a mapData.
 */
 QGeoMapObjectInfo::QGeoMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
+        : QObject(mapObject),
+          d_ptr(new QGeoMapObjectInfoPrivate(mapData, mapObject)) {}
 
 /*!
     Destroys this info object.
@@ -96,68 +91,85 @@ QGeoMapObjectInfo::~QGeoMapObjectInfo()
     delete d_ptr;
 }
 
-/*!
+/*
     Returns the QGeoMapObjectInfo instance associated with the parent of
     this object, or 0 if it has no parent or if there is no QGeoMapObjectInfo
     instance asssoicated with the parent object.
 */
-QGeoMapObjectInfo* QGeoMapObjectInfo::parentObjectInfo()
-{
-    if (!d_ptr->mapData)
-        return 0;
+//QGeoMapObjectInfo* QGeoMapObjectInfo::parentObjectInfo()
+//{
+//    if (!d_ptr->mapData)
+//        return 0;
 
-    return d_ptr->mapData->d_ptr->parentObjectInfo(d_ptr->mapObject);
+//    return d_ptr->mapData->d_ptr->parentObjectInfo(d_ptr->mapObject);
+//}
+
+/*!
+    This function is run after the constructor.
+
+    The default implementation does nothing.
+*/
+void QGeoMapObjectInfo::setup() {}
+
+/*!
+    This function is called when the window size of the map changes.
+
+    The default implementation does nothing.
+*/
+void QGeoMapObjectInfo::windowSizeChanged(const QSizeF &windowSize)
+{
+    Q_UNUSED(windowSize)
 }
 
 /*!
-    This function is run when a map object is made a child of another object.
+    This function is called when the zoom level of the map changes.
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::addToParent() {}
+void QGeoMapObjectInfo::zoomLevelChanged(qreal zoomLevel)
+{
+    Q_UNUSED(zoomLevel)
+}
 
 /*!
-    This function is run when a map object is removed from its parent object.
+    This function is called when the center of the map changes.
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::removeFromParent() {}
+void QGeoMapObjectInfo::centerChanged(const QGeoCoordinate &coordinate)
+{
+    Q_UNUSED(coordinate)
+}
 
 /*!
-    This function is run when an attribute of an object changes in a way
-    that might effect the rendering of an object.
-
-    An example of where this is useful is for when objects are moved or
-    when the pen or brush used to draw an object are changed.
+    This function is run when the z value of the object changes.
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::objectUpdated() {}
-
-/*!
-    This function is run when the map is updated in a way that might effect the
-    rendering of an object.
-
-    An example of where this is useful is for objects which need to be rendered
-    differently at different zoom levels for performance reasons.
-
-  The default implementation does nothing.
-*/
-void QGeoMapObjectInfo::mapUpdated() {}
+void QGeoMapObjectInfo::zValueChanged(int zValue)
+{
+    Q_UNUSED(zValue)
+}
 
 /*!
     This function is run when the visible state of the object changes.
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::visibleChanged(bool visible) {}
+void QGeoMapObjectInfo::visibleChanged(bool visible)
+{
+    Q_UNUSED(visible)
+}
 
 /*!
     This function is run when the selected state of the object changes.
 
     The default implementation does nothing.
 */
-void QGeoMapObjectInfo::selectedChanged(bool selected) {}
+void QGeoMapObjectInfo::selectedChanged(bool selected)
+{
+    Q_UNUSED(selected)
+}
 
 /*!
     Returns a bounding box which contains this map object.
@@ -177,6 +189,7 @@ QGeoBoundingBox QGeoMapObjectInfo::boundingBox() const
 */
 bool QGeoMapObjectInfo::contains(const QGeoCoordinate &coordinate) const
 {
+    Q_UNUSED(coordinate)
     return false;
 }
 
@@ -207,5 +220,7 @@ QGeoMapObjectInfoPrivate::~QGeoMapObjectInfoPrivate() {}
 
 /*******************************************************************************
 *******************************************************************************/
+
+#include "moc_qgeomapobjectinfo.cpp"
 
 QTM_END_NAMESPACE

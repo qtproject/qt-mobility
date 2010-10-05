@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -87,6 +81,9 @@ QTM_BEGIN_NAMESPACE
   \inmodule QtContacts
   
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -126,6 +123,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
    \brief The QContactEmailAddress class contains an email address of
    a contact.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -158,6 +158,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactEmailAddress::FieldEmailAddress, "EmailAddress"
    \brief The QContactFamily class contains names of
    family members of a contact.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.1 of the Qt Mobility project.
  */
 
 /*!
@@ -208,6 +211,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactFamily::FieldChildren, "Children");
    \brief The QContactFavorite class indicates if a contact is a favorite contact as well as the
    position it should appear in an ordered list of favorites.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.1 of the Qt Mobility project.
  */
 
 /*!
@@ -258,6 +264,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::FieldIndex, "Index");
    \class QContactAnniversary
    \brief The QContactAnniversary class contains an anniversary of a contact.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -427,6 +436,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
    in a QContactAvatar detail is set by whoever owns the resource which
    the URL identifies.
 
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
+
    \sa QContactThumbnail
  */
 
@@ -483,6 +495,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::FieldVideoUrl, "VideoUrl");
    The fields in the QContactAddress class are based on the segments
    of the ADR property of a Versit vCard file.
    Versit \reg is a trademark of the Internet Mail Consortium.
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -674,6 +689,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::SubTypeInternational, "International")
    \brief The QContactUrl class contains a url associated with
    a contact.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -743,6 +761,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactUrl::SubTypeFavourite, "Favourite");
     \brief The QContactPhoneNumber class provides a phone number
     of a contact.
     \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
 */
 
 
@@ -908,6 +929,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeDtmfMenu, "DtmfMenu");
    \class QContactBirthday
    \brief The QContactBirthday class contains a birthday of a contact.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -959,6 +983,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::FieldBirthday, "Birthday");
    \class QContactGender
    \brief The QContactGender class contains the gender of a contact.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -1016,6 +1043,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGender::GenderUnspecified, "Unspecified");
    \brief The QContactGeoLocation class contains a global location
    coordinate associated with a contact.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
 */
 
 /*!
@@ -1227,6 +1257,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
    \brief The QContactGuid class contains a globally unique
    Id of a contact, for use in synchronization with other datastores.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -1255,12 +1288,52 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGuid::FieldGuid, "Guid");
    Sets the globally unique identifier which is stored in this detail to \a guid.
  */
 
+/* ==================== QContactHobby ======================= */
+
+/*!
+   \class QContactHobby
+   \brief The QContactHobby class contains a hobby of the contact.
+   \ingroup contacts-details
+
+   A contact may have one or more hobbies.  Each QContactHobby
+   detail contains information about a single hobby of the contact.
+ */
+
+/*!
+   \variable QContactHobby::DefinitionName
+   The string constant for the definition name of QContactHobby details.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactHobby::DefinitionName, "Hobby");
+
+/*!
+   \variable QContactHobby::FieldHobby
+
+    The field key constant for the value containing the name
+    of the hobby.
+   \sa hobby(), setHobby()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactHobby::FieldHobby, "Hobby");
+
+/*!
+   \fn QContactHobby::setHobby(const QString& hobby)
+   Sets the hobby associated with a contact which is stored in this detail to \a hobby.
+ */
+
+/*!
+   \fn QContactHobby::hobby() const
+   Returns the hobby associated with a contact which is stored in this detail.
+ */
+
+
 /* ==================== QContactName ======================= */
 
 /*!
    \class QContactName
    \brief The QContactName class contains a name of a contact.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -1387,6 +1460,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldCustomLabel, "CustomLabel");
    \class QContactNickname
    \brief The QContactNickname class contains a nickname of a contact.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -1420,6 +1496,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactNickname::FieldNickname, "Nickname");
    \brief The QContactNote class contains a note associated
    with a contact.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -1464,6 +1543,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactNote::FieldNote, "Note");
 
    Here is an example of checking for a specific tag value:
    \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Checking for a specific tag
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
 
  */
 
@@ -1518,6 +1600,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactTag::FieldTag, "Tag");
    a resource identified by a URL specified in a QContactAvatar detail
    is set by whoever owns the resource which the URL identifies.
 
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
+
    \sa QContactAvatar
  */
 
@@ -1552,6 +1637,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactThumbnail::FieldThumbnail, "Thumbnail");
    \brief The QContactTimestamp class contains the creation and
    last-modified timestamp associated with the contact.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -1602,6 +1690,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactTimestamp::FieldCreationTimestamp, "CreationTim
    \class QContactType
    \brief The QContactType class describes the type of the contact.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -1663,6 +1754,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactType::TypeGroup, "Group");
    \brief The QContactDisplayLabel class is the (possibly synthesized)
    display label of a contact.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -1703,6 +1797,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactDisplayLabel::FieldLabel, "Label");
    in a QContactPresence detail which is linked (via linkedDetailUris()) to the
    account detail.  This information is generally provided by the backend, and is
    not modifiable by clients.
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
 
    \sa QContactPresence
 
@@ -1850,6 +1947,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::SubTypeVideoShare, "VideoShare")
    \brief The QContactOrganization class provides details about an
    organization that the contact is either a part of, or stands for.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -2004,6 +2104,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldAssistantName, "AssistantNam
    \brief The QContactRingtone class provides a ringtone associated
    with a contact
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!
@@ -2091,6 +2194,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVibrationRingtoneUrl, "Vibration
    Presence information can include update timestamp, screen name,
    and the status icon, status value, and status text provided by
    the service provider, as well as user defined status message.
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
 
    \sa QContactOnlineAccount
 
@@ -2254,6 +2360,9 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
    \brief The QContactGlobalPresence class provides aggregated presence information
    for a contact, synthesized or supplied by the backend.
    \ingroup contacts-details
+
+   This leaf-class has been part of the default schema since version
+   1.0 of the Qt Mobility project.
  */
 
 /*!

@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -171,14 +165,14 @@ public:
     QGalleryMetaDataFilterPrivate(QGalleryFilter::Type type = QGalleryFilter::MetaData)
         : QGalleryFilterPrivate(type)
         , comparator(QGalleryFilter::Equals)
-        , inverted(false)
+        , negated(false)
     {
     }
 
     QGalleryMetaDataFilterPrivate(const QGalleryMetaDataFilterPrivate &other)
         : QGalleryFilterPrivate(other)
         , comparator(other.comparator)
-        , inverted(other.inverted)
+        , negated(other.negated)
         , property(other.property)
         , value(other.value)
     {
@@ -191,7 +185,7 @@ public:
                     = static_cast<const QGalleryMetaDataFilterPrivate &>(other);
 
             return o.comparator == comparator
-                    && o.inverted == inverted
+                    && o.negated == negated
                     && o.property == property
                     && o.value == value;
         } else {
@@ -202,7 +196,7 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     void printDebug(QDebug &debug) const
     {
-        if (inverted)
+        if (negated)
             debug << "!";
         debug << "QGalleryMetaDataFilter(";
         if (!property.isNull())
@@ -215,7 +209,7 @@ public:
 #endif
 
     QGalleryFilter::Comparator comparator;
-    bool inverted;
+    bool negated;
     QString property;
     QVariant value;
 };
@@ -852,31 +846,31 @@ void QGalleryMetaDataFilter::setComparator(QGalleryFilter::Comparator comparator
 }
 
 /*!
-    Returns whether the result of a meta-data filter should be inverted.
+    Returns whether the result of a meta-data filter should be negated.
 */
 
-bool QGalleryMetaDataFilter::isInverted() const
+bool QGalleryMetaDataFilter::isNegated() const
 {
-    return d->inverted;
+    return d->negated;
 }
 
 /*!
-    Sets whether the result of a meta-data filter should be \a inverted.
+    Sets whether the result of a meta-data filter should be \a negated.
 */
 
-void QGalleryMetaDataFilter::setInverted(bool inverted)
+void QGalleryMetaDataFilter::setNegated(bool negated)
 {
-    d->inverted = inverted;
+    d->negated = negated;
 }
 
 /*!
-    Returns a meta-data filter which tests the inverse of an existing filter.
+    Returns a meta-data filter which tests the negation of an existing filter.
 */
 
 QGalleryMetaDataFilter QGalleryMetaDataFilter::operator !() const
 {
     QGalleryMetaDataFilter filter(*this);
-    filter.setInverted(!d->inverted);
+    filter.setNegated(!d->negated);
     return filter;
 }
 

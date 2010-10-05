@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -550,6 +544,8 @@ void TestFiltering::testContactDetailFilter()
     testContactDetailFilter_5();
 	testContactDetailFilter_6();
 	testContactDetailFilter_7();
+	testContactDetailFilter_8();
+	testContactDetailFilter_9();
 }
 
 void TestFiltering::testContactDetailFilter_1()
@@ -635,7 +631,8 @@ void TestFiltering::testContactDetailFilter_2()
     expectedCount =1;  
     QVERIFY(expectedCount == seachedcontactcount);
     
-    // Test Not supported fields
+    // Test Not supported fields (by our SQL-based filtering, so it rolls
+    // back to slow filtering inside Qt Contacts Mobility)
     QContactDetailFilter cdf3;
     cdf3.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
     cdf3.setValue("aba");
@@ -645,7 +642,7 @@ void TestFiltering::testContactDetailFilter_2()
     seachedcontactcount = cnt_ids.count();
     expectedCount =0;  
     QVERIFY(expectedCount == seachedcontactcount);
-    QVERIFY(error == QContactManager::NotSupportedError);
+    QVERIFY(error == QContactManager::NoError);
     
     QContactDetailFilter cdf4;
     cdf4.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
@@ -656,7 +653,7 @@ void TestFiltering::testContactDetailFilter_2()
     seachedcontactcount = cnt_ids.count();
     expectedCount =0;  
     QVERIFY(expectedCount == seachedcontactcount);
-    QVERIFY(error == QContactManager::NotSupportedError);
+    QVERIFY(error == QContactManager::NoError);
 }   
 
 void TestFiltering::testContactDetailFilter_3()
@@ -847,6 +844,44 @@ void TestFiltering::testContactDetailFilter_7()
     QVERIFY(expectedCount == seachedcontactcount);
 }
 
+void TestFiltering::testContactDetailFilter_8()
+{    
+    // Fetch contacts list using display label
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
+        
+    QContactDetailFilter filter;
+    QString filterString("J");
+    QStringList searchList = filterString.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+    filter.setDetailDefinitionName(QContactDisplayLabel::DefinitionName,
+        QContactDisplayLabel::FieldLabel);
+    filter.setMatchFlags(QContactFilter::MatchStartsWith);
+    filter.setValue(searchList);
+    
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount =2;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
+
+void TestFiltering::testContactDetailFilter_9()
+{    
+    // Fetch all contacts having phonenumbers
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
+    
+    // Empty field name
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName); 
+    
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
+    // check counts 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount =9;  
+    QVERIFY(expectedCount == seachedcontactcount);
+}
 
 void TestFiltering::testRelationshipFilter()
 {
@@ -1500,10 +1535,6 @@ void TestFiltering::testFilterSupported()
     flag = filterDefault.filterSupported(QContactFilter());
     QVERIFY(flag ==true);
     
-    CntFilterDetail filterDetail(*m_database,srvConnection,dbInfo);
-    flag = filterDetail.filterSupported(QContactDetailFilter());
-    QVERIFY(flag ==true);
-        
     CntFilterRelationship filterRlationship(*m_database,srvConnection,dbInfo);
     QContactRelationshipFilter relationFilter;                   
     relationFilter.setRelationshipType(QContactRelationship::HasMember);
@@ -1519,6 +1550,10 @@ void TestFiltering::testFilterSupported()
     QVERIFY(flag ==true);
         
     //Not supported cases
+    CntFilterDetail filterDetail(*m_database,srvConnection,dbInfo);
+    flag = filterDetail.filterSupported(QContactDetailFilter());
+    QVERIFY(flag ==false);
+    
     flag = filterDefault.filterSupported(f1);
     QVERIFY(flag ==false);
         
@@ -1570,6 +1605,40 @@ void TestFiltering::testCreateSelectQuery()
     QVERIFY(error == QContactManager::NotSupportedError);
     
     }
+
+void TestFiltering::testFavoriteDetailFilter()
+    {
+    QContactManager::Error err;
+    QContactFetchHint hint;
+    //save one contact with favorite detail
+    QContact c;
+    c.setType(QContactType::TypeContact);
+    QContactName name;
+    name.setFirstName("firstname");
+    c.saveDetail(&name);
+    QContactFavorite fav;
+    fav.setFavorite(true);
+    fav.setIndex(100);
+    c.saveDetail(&fav);
+    QVERIFY(m_engine->saveContact(&c, &err));
+    QVERIFY(err == QContactManager::NoError);
+    
+    // find all favorite contacts
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactFavorite::DefinitionName, QContactFavorite::FieldFavorite); 
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(filter, QList<QContactSortOrder>(), &err);
+    QVERIFY(err == QContactManager::NoError);
+    int ccc = cnt_ids.count();
+    QVERIFY(cnt_ids.count() == 1);
+    
+    //fetch found contact and check favorite detail
+    QContact savedContact = m_engine->contact(cnt_ids.at(0), hint, &err);
+    QVERIFY(err == QContactManager::NoError);
+    QContactFavorite savedFav = savedContact.detail<QContactFavorite>();
+    QVERIFY(savedFav.isFavorite());
+    QVERIFY(savedFav.index() == 100); 
+    }
+
 //QTEST_MAIN(TestFiltering);
 /*int main(int argc, char *argv[]) 
 {

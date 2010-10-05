@@ -7,11 +7,11 @@
  ** This file is part of the Qt Mobility Components.
  **
  ** $QT_BEGIN_LICENSE:LGPL$
- ** Commercial Usage
- ** Licensees holding valid Qt Commercial licenses may use this file in
- ** accordance with the Qt Solutions Commercial License Agreement provided
- ** with the Software or, alternatively, in accordance with the terms
- ** contained in a written agreement between you and Nokia.
+ ** No Commercial Usage
+ ** This file contains pre-release code and may not be distributed.
+ ** You may use this file in accordance with the terms and conditions
+ ** contained in the Technology Preview License Agreement accompanying
+ ** this package.
  **
  ** GNU Lesser General Public License Usage
  ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
  ** rights.  These rights are described in the Nokia Qt LGPL Exception
  ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
  **
- ** GNU General Public License Usage
- ** Alternatively, this file may be used under the terms of the GNU
- ** General Public License version 3.0 as published by the Free Software
- ** Foundation and appearing in the file LICENSE.GPL included in the
- ** packaging of this file.  Please review the following information to
- ** ensure the GNU General Public License version 3.0 requirements will be
- ** met: http://www.gnu.org/copyleft/gpl.html.
+ ** If you have questions regarding the use of this file, please contact
+ ** Nokia at qt-info@nokia.com.
  **
- ** Please note Third Party Software included with Qt Solutions may impose
- ** additional restrictions and it is the user's responsibility to ensure
- ** that they have met the licensing requirements of the GPL, LGPL, or Qt
- ** Solutions Commercial license and the relevant license of the Third
- ** Party Software they are using.
  **
- ** If you are unsure which license is appropriate for your use, please
- ** contact the sales department at qt-sales@nokia.com.
+ **
+ **
+ **
+ **
+ **
+ **
  ** $QT_END_LICENSE$
  **
  ****************************************************************************/
@@ -167,14 +161,6 @@ public:
     bool isReadOnly(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error,
         QString *errorString) const;
 
-    bool isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
-    void setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error,
-        QString *errorString);
-
-    bool isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
-    void setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error,
-        QString *errorString);
-
     /* Asynchronous Request Support */
     void requestDestroyed(QLandmarkAbstractRequest* request);
     bool startRequest(QLandmarkAbstractRequest* request);
@@ -184,9 +170,6 @@ public:
     /* From MLandmarkRequestObserver */
     void HandleExecutionL(CLandmarkRequestData*, TRequestStatus&);
     void HandleCompletionL(CLandmarkRequestData*);
-
-    // to get keys defined by managerengine.
-    void setLandmarkAttributeKeys(QStringList landmarkKeys);
 
 private:
     bool saveLandmarkInternalL(QLandmark* landmark, QLandmarkManager::Error *error,
@@ -220,7 +203,7 @@ private:
         int maxMatches) const;
 
     bool sortFetchedLmIds(int limit, int offset, QList<QLandmarkSortOrder> sortOrders, QList<
-        QLandmarkId>& landmarkIds, bool isNearestFilter, QLandmarkFilter::FilterType filterType,
+        QLandmarkId>& landmarkIds, QLandmarkFilter::FilterType filterType,
         QLandmarkManager::Error *error, QString *errorString) const;
 
     // to handle symbian errors to assign appropriate manager error and error description.
@@ -246,10 +229,16 @@ private:
     CPosLandmarkDatabase* m_LandmarkDb;
     CPosLmCategoryManager* m_LandmarkCatMgr;
     LandmarkEventObserver& m_LmEventObserver;
-    QStringList m_LandmarkAttributeKeys;
 
-    bool m_isExtendedAttributesEnabled;
-    bool m_isCustomAttributesEnabled;
+    QStringList m_CreatedLmIds;
+    QStringList m_UpdatedLmIds;
+    QStringList m_DeletedLmIds;
+
+    QStringList m_CreatedCatIds;
+    QStringList m_UpdatedCatIds;
+    QStringList m_DeletedCatIds;
+
+    QStringList m_UnknownIds;
 
 private:
     friend class QLandmarkDbEventObserver;

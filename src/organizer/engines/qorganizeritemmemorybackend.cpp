@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -90,6 +84,197 @@ QTM_BEGIN_NAMESPACE
 QMap<QString, QOrganizerItemMemoryEngineData*> QOrganizerItemMemoryEngine::engineDatas;
 
 /*!
+  \class QOrganizerItemMemoryEngineLocalId
+  \brief The QOrganizerItemMemoryEngineLocalId class provides an id which uniquely identifies
+  a QOrganizerItem stored within a collection stored within a a QOrganizerItemMemoryEngine.
+
+  It may be used as a reference implementation, although since different platforms
+  have different semantics for ids (datastore-unique versus calendar-unique, etc),
+  the precise implementation required may differ.
+ */
+QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId()
+    : QOrganizerItemEngineLocalId(), m_localCollectionId(0), m_localItemId(0)
+{
+}
+
+QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId(quint32 collectionId, quint32 itemId)
+    : QOrganizerItemEngineLocalId(), m_localCollectionId(collectionId), m_localItemId(itemId)
+{
+}
+
+QOrganizerItemMemoryEngineLocalId::~QOrganizerItemMemoryEngineLocalId()
+{
+}
+
+QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId(const QOrganizerItemMemoryEngineLocalId& other)
+    : QOrganizerItemEngineLocalId(), m_localCollectionId(other.m_localCollectionId), m_localItemId(other.m_localItemId)
+{
+}
+
+bool QOrganizerItemMemoryEngineLocalId::isEqualTo(const QOrganizerItemEngineLocalId* other) const
+{
+    quint32 otherlocalCollectionId = static_cast<const QOrganizerItemMemoryEngineLocalId*>(other)->m_localCollectionId;
+    quint32 otherlocalItemId = static_cast<const QOrganizerItemMemoryEngineLocalId*>(other)->m_localItemId;
+    if (m_localCollectionId != otherlocalCollectionId)
+        return false;
+    if (m_localItemId != otherlocalItemId)
+        return false;
+    return true;
+}
+
+bool QOrganizerItemMemoryEngineLocalId::isLessThan(const QOrganizerItemEngineLocalId* other) const
+{
+    // order by collection, then by item in collection.
+    quint32 otherlocalCollectionId = static_cast<const QOrganizerItemMemoryEngineLocalId*>(other)->m_localCollectionId;
+    quint32 otherlocalItemId = static_cast<const QOrganizerItemMemoryEngineLocalId*>(other)->m_localItemId;
+    if (m_localCollectionId < otherlocalCollectionId)
+        return true;
+    if (m_localCollectionId == otherlocalCollectionId)
+        return (m_localItemId < otherlocalItemId);
+    return false;
+}
+
+uint QOrganizerItemMemoryEngineLocalId::engineLocalIdType() const
+{
+    // engines should embed the result of this as const read-only data (uint),
+    // instead of calculating it every time the function is called...
+    return qHash(QString(QLatin1String("memory")));
+}
+
+QOrganizerItemEngineLocalId* QOrganizerItemMemoryEngineLocalId::clone() const
+{
+    QOrganizerItemMemoryEngineLocalId *myClone = new QOrganizerItemMemoryEngineLocalId;
+    myClone->m_localCollectionId = m_localCollectionId;
+    myClone->m_localItemId = m_localItemId;
+    return myClone;
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug QOrganizerItemMemoryEngineLocalId::debugStreamOut(QDebug dbg)
+{
+    dbg.nospace() << "QOrganizerItemMemoryEngineLocalId(" << m_localCollectionId << ", " << m_localItemId << ")";
+    return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& QOrganizerItemMemoryEngineLocalId::dataStreamOut(QDataStream& out)
+{
+    return (out << m_localItemId << m_localCollectionId);
+}
+
+QDataStream& QOrganizerItemMemoryEngineLocalId::dataStreamIn(QDataStream& in)
+{
+    in >> m_localItemId >> m_localCollectionId;
+    return in;
+}
+#endif
+
+uint QOrganizerItemMemoryEngineLocalId::hash() const
+{
+    // Note: doesn't need to be unique, since == ensures difference.
+    // hash function merely determines distribution in a hash table.
+    quint64 combinedLocalId = m_localItemId;
+    combinedLocalId <<= 32;
+    combinedLocalId += m_localCollectionId;
+    return uint(((combinedLocalId >> (8 * sizeof(uint) - 1)) ^ combinedLocalId) & (~0U));
+}
+
+/*!
+  \class QOrganizerCollectionMemoryEngineLocalId
+  \brief The QOrganizerCollectionMemoryEngineLocalId class provides an id which uniquely identifies
+  a QOrganizerCollection stored within a collection stored within a a QOrganizerCollectionMemoryEngine.
+
+  It may be used as a reference implementation, although since different platforms
+  have different semantics for ids (datastore-unique versus calendar-unique, etc),
+  the precise implementation required may differ.
+ */
+QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId()
+    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(0)
+{
+}
+
+QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId(quint32 collectionId)
+    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(collectionId)
+{
+}
+
+QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId(const QOrganizerCollectionMemoryEngineLocalId& other)
+    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(other.m_localCollectionId)
+{
+}
+
+QOrganizerCollectionMemoryEngineLocalId::~QOrganizerCollectionMemoryEngineLocalId()
+{
+}
+
+bool QOrganizerCollectionMemoryEngineLocalId::isEqualTo(const QOrganizerCollectionEngineLocalId* other) const
+{
+    quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionMemoryEngineLocalId*>(other)->m_localCollectionId;
+    if (m_localCollectionId != otherlocalCollectionId)
+        return false;
+    return true;
+}
+
+bool QOrganizerCollectionMemoryEngineLocalId::isLessThan(const QOrganizerCollectionEngineLocalId* other) const
+{
+    // order by collection, then by item in collection.
+    quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionMemoryEngineLocalId*>(other)->m_localCollectionId;
+    if (m_localCollectionId < otherlocalCollectionId)
+        return true;
+    return false;
+}
+
+uint QOrganizerCollectionMemoryEngineLocalId::engineLocalIdType() const
+{
+    // engines should embed the result of this as const read-only data (uint),
+    // instead of calculating it every time the function is called...
+    return qHash(QString(QLatin1String("memory")));
+}
+
+QOrganizerCollectionEngineLocalId* QOrganizerCollectionMemoryEngineLocalId::clone() const
+{
+    QOrganizerCollectionMemoryEngineLocalId *myClone = new QOrganizerCollectionMemoryEngineLocalId;
+    myClone->m_localCollectionId = m_localCollectionId;
+    return myClone;
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug QOrganizerCollectionMemoryEngineLocalId::debugStreamOut(QDebug dbg)
+{
+    dbg.nospace() << "QOrganizerCollectionMemoryEngineLocalId(" << m_localCollectionId << ")";
+    return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& QOrganizerCollectionMemoryEngineLocalId::dataStreamOut(QDataStream& out)
+{
+    return (out << m_localCollectionId);
+}
+
+QDataStream& QOrganizerCollectionMemoryEngineLocalId::dataStreamIn(QDataStream& in)
+{
+    return (in >> m_localCollectionId);
+}
+#endif
+
+uint QOrganizerCollectionMemoryEngineLocalId::hash() const
+{
+    return QT_PREPEND_NAMESPACE(qHash)(m_localCollectionId);
+}
+
+QOrganizerItemMemoryEngineData::QOrganizerItemMemoryEngineData()
+    : QSharedData(),
+    m_refCount(QAtomicInt(1)),
+    m_nextOrganizerItemId(1),
+    m_nextOrganizerCollectionId(2),
+    m_anonymous(false)
+{
+
+}
+
+/*!
  * Factory function for creating a new in-memory backend, based
  * on the given \a parameters.
  *
@@ -126,6 +311,19 @@ QOrganizerItemMemoryEngine::QOrganizerItemMemoryEngine(QOrganizerItemMemoryEngin
     : d(data)
 {
     d->m_sharedEngines.append(this);
+
+    // the default collection always exists.
+    if (d->m_organizerCollectionIds.isEmpty()) {
+        QOrganizerCollectionLocalId defaultLocalId = QOrganizerCollectionLocalId(new QOrganizerCollectionMemoryEngineLocalId(1));
+        QOrganizerCollectionId defaultId;
+        defaultId.setManagerUri(managerUri());
+        defaultId.setLocalId(defaultLocalId);
+        QOrganizerCollection defaultCollection;
+        defaultCollection.setId(defaultId);
+        defaultCollection.setMetaData(QOrganizerCollection::KeyName, QString(QLatin1String("Default Collection")));
+        d->m_organizerCollectionIds << defaultLocalId;
+        d->m_organizerCollections << defaultCollection;
+    }
 }
 
 /*! Frees any memory used by this engine */
@@ -511,7 +709,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     // first, retrieve all persisted instances (exceptions) which occur between the specified datetimes.
     QOrganizerItemDetailFilter parentFilter;
     parentFilter.setDetailDefinitionName(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemInstanceOrigin::FieldParentLocalId);
-    parentFilter.setValue(generator.localId());
+    parentFilter.setValue(QVariant::fromValue(generator.localId()));
     QList<QOrganizerItem> persistedExceptions = items(parentFilter, QList<QOrganizerItemSortOrder>(), QOrganizerItemFetchHint(), error);
     foreach (const QOrganizerItem& currException, persistedExceptions) {
         QDateTime lowerBound;
@@ -552,7 +750,6 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
 
     // now generate a list of rdates (from the recurrenceDates and recurrenceRules)
     QList<QDateTime> rdates;
-    rdates += initialDateTime;
     foreach (const QDate& rdate, recur.recurrenceDates()) {
         rdates += QDateTime(rdate, initialDateTime.time());
     }
@@ -567,6 +764,9 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
 
     // now order the contents of retn by date
     qSort(rdates);
+    if (qBinaryFind(rdates, initialDateTime) == rdates.end()) {
+        rdates.prepend(initialDateTime);
+    }
 
     // now for each rdate which isn't also an xdate
     foreach (const QDateTime& rdate, rdates) {
@@ -670,8 +870,13 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::items(const QOrganizerItemFilt
     filling the \a changeSet with ids of changed organizeritems as required */
 bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
-    Q_UNUSED(collectionId);
-    // XXX TODO: save in in-memory collection.
+    QOrganizerCollectionLocalId targetCollectionId = collectionId;
+
+    // check that the collection exists (or is null :. default collection):
+    if (!targetCollectionId.isNull() && !d->m_organizerCollectionIds.contains(targetCollectionId)) {
+        *error = QOrganizerItemManager::InvalidCollectionError;
+        return false;
+    }
 
     // ensure that the organizer item's details conform to their definitions
     if (!validateItem(*theOrganizerItem, error)) {
@@ -686,6 +891,16 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
 
         if (oldOrganizerItem.type() != theOrganizerItem->type()) {
             *error = QOrganizerItemManager::AlreadyExistsError;
+            return false;
+        }
+
+        // check that the old and new collection is the same (ie, not attempting to save to a different collection)
+        if (targetCollectionId.isNull()) {
+            // it already exists, so save it where it already exists.
+            targetCollectionId = d->m_itemsInCollections.key(theOrganizerItem->localId());
+        } else if (!d->m_itemsInCollections.values(targetCollectionId).contains(theOrganizerItem->localId())) {
+            // the given collection id was non-null but doesn't already contain this item.  error.
+            *error = QOrganizerItemManager::InvalidCollectionError;
             return false;
         }
 
@@ -705,7 +920,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
         // id does not exist; if not zero, fail.
         QOrganizerItemId newId;
         newId.setManagerUri(managerUri());
-        if (theOrganizerItem->id() != QOrganizerItemId() && theOrganizerItem->id() != newId) {
+        if (!theOrganizerItem->id().isNull()) {
             // the ID is not empty, and it doesn't identify an existing organizer item in our database either.
             *error = QOrganizerItemManager::DoesNotExistError;
             return false;
@@ -718,9 +933,22 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
         setDetailAccessConstraints(&ts, QOrganizerItemDetail::ReadOnly | QOrganizerItemDetail::Irremovable);
         theOrganizerItem->saveDetail(&ts);
 
+        // now modify the target collection id; if null, set to default id.  BUT record whether we did that.
+        bool targetCollectionWasNull = false; // this determines for OCCURRENCES whether we ignore the default id.
+        if (targetCollectionId.isNull()) {
+            targetCollectionWasNull = true;
+            targetCollectionId = QOrganizerCollectionLocalId(new QOrganizerCollectionMemoryEngineLocalId(1));
+        }
+
         // update the organizer item - set its ID
-        newId.setLocalId(++d->m_nextOrganizerItemId);
+        quint32 nextOrganizerItemId = d->m_nextOrganizerItemId; // don't increment it until we're successful.
+        nextOrganizerItemId += 1;
+        QOrganizerItemMemoryEngineLocalId* newMemoryEngineLocalId = new QOrganizerItemMemoryEngineLocalId;
+        newMemoryEngineLocalId->m_localCollectionId = static_cast<QOrganizerCollectionMemoryEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalCollectionId(targetCollectionId))->m_localCollectionId;
+        newMemoryEngineLocalId->m_localItemId = nextOrganizerItemId;
+        newId.setLocalId(QOrganizerItemLocalId(newMemoryEngineLocalId));
         theOrganizerItem->setId(newId);
+        // note: do NOT delete the QOrganizerItemMemoryEngineLocalId -- the QOrganizerItemLocalId ctor takes ownership of it.
 
         if (!fixOccurrenceReferences(theOrganizerItem, error)) {
             return false;
@@ -735,6 +963,23 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
             QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
             QOrganizerItemInstanceOrigin origin = theOrganizerItem->detail<QOrganizerItemInstanceOrigin>();
             QOrganizerItemLocalId parentId = origin.parentLocalId();
+
+            // for occurrences, if given a null collection id, save it in the same collection as the parent.
+            // otherwise, ensure that the parent is in the same collection.  You cannot save an exception to a different collection than the parent.
+            if (targetCollectionWasNull) {
+                targetCollectionId = d->m_itemsInCollections.key(parentId);
+                if (targetCollectionId.isNull()) {
+                    *error = QOrganizerItemManager::UnspecifiedError; // this should never occur; parent should _always_ be in a collection.
+                    return false;
+                }
+                newId.setLocalId(QOrganizerItemLocalId(QOrganizerItemLocalId(new QOrganizerItemMemoryEngineLocalId(static_cast<QOrganizerCollectionMemoryEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalCollectionId(targetCollectionId))->m_localCollectionId, nextOrganizerItemId))));
+                theOrganizerItem->setId(newId);
+            } else if (!d->m_itemsInCollections.values(targetCollectionId).contains(parentId)) {
+                // nope, the specified collection doesn't contain the parent.  error.
+                *error = QOrganizerItemManager::InvalidCollectionError;
+                return false;
+            }
+
             QOrganizerEvent parentEvent = item(parentId, QOrganizerItemFetchHint(), &tempError);
             QDate originalDate = origin.originalDate();
             QList<QDate> currentExceptionDates = parentEvent.exceptionDates();
@@ -750,6 +995,23 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
             QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
             QOrganizerItemInstanceOrigin origin = theOrganizerItem->detail<QOrganizerItemInstanceOrigin>();
             QOrganizerItemLocalId parentId = origin.parentLocalId();
+
+            // for occurrences, if given a null collection id, save it in the same collection as the parent.
+            // otherwise, ensure that the parent is in the same collection.  You cannot save an exception to a different collection than the parent.
+            if (targetCollectionWasNull) {
+                targetCollectionId = d->m_itemsInCollections.key(parentId);
+                if (targetCollectionId.isNull()) {
+                    *error = QOrganizerItemManager::UnspecifiedError; // this should never occur; parent should _always_ be in a collection.
+                    return false;
+                }
+                newId.setLocalId(QOrganizerItemLocalId(QOrganizerItemLocalId(new QOrganizerItemMemoryEngineLocalId(static_cast<QOrganizerCollectionMemoryEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalCollectionId(targetCollectionId))->m_localCollectionId, nextOrganizerItemId))));
+                theOrganizerItem->setId(newId);
+            } else if (!d->m_itemsInCollections.values(targetCollectionId).contains(parentId)) {
+                // nope, the specified collection doesn't contain the parent.  error.
+                *error = QOrganizerItemManager::InvalidCollectionError;
+                return false;
+            }
+
             QOrganizerTodo parentTodo = item(parentId, QOrganizerItemFetchHint(), &tempError);
             QDate originalDate = origin.originalDate();
             QList<QDate> currentExceptionDates = parentTodo.exceptionDates();
@@ -762,9 +1024,17 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
             }
         }
 
+        // given that we were successful, now increment the persistent version of the next item id.
+        d->m_nextOrganizerItemId += 1;
+
         // finally, add the organizer item to our internal lists and return
+        QOrganizerCollectionId targetCompleteCollectionId;
+        targetCompleteCollectionId.setManagerUri(managerUri());
+        targetCompleteCollectionId.setLocalId(targetCollectionId);
+        QOrganizerItemManagerEngine::setItemCollectionId(theOrganizerItem, targetCompleteCollectionId);
         d->m_organizeritems.append(*theOrganizerItem);              // add organizer item to list
         d->m_organizeritemIds.append(theOrganizerItem->localId());  // track the organizer item id.
+        d->m_itemsInCollections.insert(targetCollectionId, theOrganizerItem->localId());
 
         changeSet.insertAddedItem(theOrganizerItem->localId());
 
@@ -796,7 +1066,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
         }
         QOrganizerItemLocalId parentId = instanceOrigin.parentLocalId();
         if (!guid.isEmpty()) {
-            if (parentId != 0) {
+            if (!parentId.isNull()) {
                 QOrganizerItemManager::Error tempError;
                 QOrganizerItem parentItem = item(parentId, QOrganizerItemFetchHint(), &tempError);
                 if (guid != parentItem.guid()
@@ -815,7 +1085,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
                         break;
                     }
                 }
-                if (parentId == 0) {
+                if (parentId.isNull()) {
                     // couldn't find an item with the given guid
                     *error = QOrganizerItemManager::InvalidOccurrenceError;
                     return false;
@@ -832,7 +1102,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
                 origin.setParentLocalId(parentId);
                 theItem->saveDetail(&origin);
             }
-        } else if (parentId != 0) {
+        } else if (!parentId.isNull()) {
             QOrganizerItemManager::Error tempError;
             QOrganizerItem parentItem = item(parentId, QOrganizerItemFetchHint(), &tempError);
             if (parentItem.guid().isEmpty()
@@ -911,6 +1181,7 @@ bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemLocalId& organiz
 
     d->m_organizeritems.removeAt(index);
     d->m_organizeritemIds.removeAt(index);
+    d->m_itemsInCollections.remove(d->m_itemsInCollections.key(organizeritemId), organizeritemId);
     *error = QOrganizerItemManager::NoError;
 
     changeSet.insertRemovedItem(organizeritemId);
@@ -940,6 +1211,148 @@ bool QOrganizerItemMemoryEngine::removeItems(const QList<QOrganizerItemLocalId>&
     d->emitSharedSignals(&changeSet);
     // return false if some errors occurred
     return (*error == QOrganizerItemManager::NoError);
+}
+
+QOrganizerCollectionLocalId QOrganizerItemMemoryEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
+{
+    // default collection has id of 1.
+    *error = QOrganizerItemManager::NoError;
+    return QOrganizerCollectionLocalId(new QOrganizerCollectionMemoryEngineLocalId(1));
+}
+
+QList<QOrganizerCollectionLocalId> QOrganizerItemMemoryEngine::collectionIds(QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    return d->m_organizerCollectionIds;
+}
+
+QList<QOrganizerCollection> QOrganizerItemMemoryEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    QList<QOrganizerCollection> retn;
+    for (int i = 0; i < collectionIds.size(); ++i) {
+        QOrganizerCollectionLocalId currentInput = collectionIds.at(i);
+        bool foundThisId = false;
+        for (int j = 0; j < d->m_organizerCollectionIds.size(); ++j) {
+            QOrganizerCollectionLocalId currentComparison = d->m_organizerCollectionIds.at(j);
+            if (currentInput == currentComparison) {
+                // they want this collection to be returned.
+                retn.append(d->m_organizerCollections.at(j));
+                foundThisId = true;
+                break;
+            }
+        }
+
+        // check to see if we found this particular id in the given list.
+        if (!foundThisId) {
+            if (errorMap) {
+                errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
+                *error = QOrganizerItemManager::DoesNotExistError;
+            }
+        }
+    }
+
+    // return the results.
+    return retn;
+}
+
+QOrganizerCollection QOrganizerItemMemoryEngine::compatibleCollection(const QOrganizerCollection& original, QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NoError;
+
+    // we don't allow people to change the default collection.
+    QOrganizerCollectionLocalId defaultCollectionLocalId = QOrganizerCollectionLocalId(new QOrganizerCollectionMemoryEngineLocalId(1));
+    if (original.localId() == defaultCollectionLocalId) {
+        for (int i = 0; i < d->m_organizerCollections.size(); ++i) {
+            QOrganizerCollection current = d->m_organizerCollections.at(i);
+            if (current.localId() == defaultCollectionLocalId) {
+                return current;
+            }
+        }
+    }
+
+    // if it isn't the default id, it's fine, since anything can be saved in the memory engine.
+    return original;
+}
+
+bool QOrganizerItemMemoryEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
+{
+    QOrganizerCollectionChangeSet cs; // for signal emission.
+
+    *error = QOrganizerItemManager::NoError;
+    QOrganizerCollectionLocalId colId = collection->localId();
+    if (colId == QOrganizerCollectionLocalId(new QOrganizerCollectionMemoryEngineLocalId(1))) {
+        // attempting to update the default collection.  this is not allowed in the memory engine.
+        *error = QOrganizerItemManager::PermissionsError;
+        return false;
+    }
+
+    // if it's not the default collection, they can do whatever they like.  A collection does not need any metadata to be valid.
+    for (int i = 0; i < d->m_organizerCollectionIds.size(); ++i) {
+        if (d->m_organizerCollectionIds.at(i) == colId) {
+            // this collection already exists.  update our internal list.
+            d->m_organizerCollections.replace(i, *collection);
+            cs.insertChangedCollection(colId);
+            cs.emitSignals(this);
+            return true;
+        }
+    }
+
+    // this must be a new collection.  check that the id is null.
+    if ((collection->id().managerUri() != managerUri() && !collection->id().managerUri().isEmpty()) || !colId.isNull()) {
+        // nope, this collection belongs in another manager, or has been deleted.
+        *error = QOrganizerItemManager::DoesNotExistError;
+        return false;
+    }
+
+    // this is a new collection with a null id; create a new id, add it to our list.
+    QOrganizerCollectionId newId;
+    QOrganizerCollectionLocalId newLocalId = QOrganizerCollectionLocalId(new QOrganizerCollectionMemoryEngineLocalId(d->m_nextOrganizerCollectionId++));
+    newId.setManagerUri(managerUri());
+    newId.setLocalId(newLocalId);
+    collection->setId(newId);
+    d->m_organizerCollections.append(*collection);
+    d->m_organizerCollectionIds.append(newLocalId);
+    cs.insertAddedCollection(newLocalId);
+    cs.emitSignals(this);
+    return true;
+}
+
+bool QOrganizerItemMemoryEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
+{
+    QOrganizerCollectionChangeSet cs; // for signal emission.
+    *error = QOrganizerItemManager::NoError;
+    if (collectionId == QOrganizerCollectionLocalId(new QOrganizerCollectionMemoryEngineLocalId(1))) {
+        // attempting to remove the default collection.  this is not allowed in the memory engine.
+        *error = QOrganizerItemManager::PermissionsError;
+        return false;
+    }
+
+    // try to find the collection to remove it (and the items it contains)
+    QList<QOrganizerItemLocalId> itemsToRemove = d->m_itemsInCollections.values(collectionId);
+    for (int i = 0; i < d->m_organizerCollectionIds.size(); ++i) {
+        if (d->m_organizerCollectionIds.at(i) == collectionId) {
+            // found the collection to remove.  remove the items in the collection.
+            if (!itemsToRemove.isEmpty()) {
+                if (!removeItems(itemsToRemove, 0, error)) {
+                    // without transaction support, we can't back out.  but the operation should fail.
+                    return false;
+                }
+            }
+
+            // now remove the collection from our lists.
+            d->m_organizerCollectionIds.removeAt(i);
+            d->m_organizerCollections.removeAt(i);
+            d->m_itemsInCollections.remove(collectionId);
+            cs.insertRemovedCollection(collectionId);
+            cs.emitSignals(this);
+            return true;
+        }
+    }
+
+    // the collection doesn't exist...
+    *error = QOrganizerItemManager::DoesNotExistError;
+    return false;
 }
 
 /*! \reimp */
@@ -1028,8 +1441,12 @@ bool QOrganizerItemMemoryEngine::startRequest(QOrganizerItemAbstractRequest* req
 {
     if (!req)
         return false;
+
+    QWeakPointer<QOrganizerItemAbstractRequest> checkDeletion(req);
     updateRequestState(req, QOrganizerItemAbstractRequest::ActiveState);
-    performAsynchronousOperation(req);
+    if (!checkDeletion.isNull())
+        performAsynchronousOperation(req);
+
     return true;
 }
 
@@ -1069,7 +1486,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             QList<QOrganizerItemSortOrder> sorting = r->sorting();
             QOrganizerItemFetchHint fetchHint = r->fetchHint();
 
-            QOrganizerItemManager::Error operationError;
+            QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
             QList<QOrganizerItem> requestedOrganizerItems = items(filter, sorting, fetchHint, &operationError);
 
             // update the request with the results.
@@ -1111,18 +1528,13 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
 
         case QOrganizerItemAbstractRequest::ItemRemoveRequest:
         {
-            // this implementation provides scant information to the user
-            // the operation either succeeds (all organizer items matching the filter were removed)
-            // or it fails (one or more organizer items matching the filter could not be removed)
-            // if a failure occurred, the request error will be set to the most recent
-            // error that occurred during the remove operation.
             QOrganizerItemRemoveRequest* r = static_cast<QOrganizerItemRemoveRequest*>(currentRequest);
             QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
             QList<QOrganizerItemLocalId> organizeritemsToRemove = r->itemIds();
             QMap<int, QOrganizerItemManager::Error> errorMap;
 
             for (int i = 0; i < organizeritemsToRemove.size(); i++) {
-                QOrganizerItemManager::Error tempError;
+                QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
                 removeItem(organizeritemsToRemove.at(i), changeSet, &tempError);
 
                 if (tempError != QOrganizerItemManager::NoError) {
@@ -1138,6 +1550,78 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
         }
         break;
 
+        case QOrganizerItemAbstractRequest::CollectionFetchRequest:
+        {
+            QOrganizerCollectionFetchRequest* r = static_cast<QOrganizerCollectionFetchRequest*>(currentRequest);
+            QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
+            QMap<int, QOrganizerItemManager::Error> errorMap;
+            QList<QOrganizerCollection> requestedOrganizerCollections = collections(r->collectionIds(), &errorMap, &operationError);
+
+            // update the request with the results.
+            updateCollectionFetchRequest(r, requestedOrganizerCollections, operationError, errorMap, QOrganizerItemAbstractRequest::FinishedState);
+        }
+        break;
+
+        case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest:
+        {
+            QOrganizerCollectionLocalIdFetchRequest* r = static_cast<QOrganizerCollectionLocalIdFetchRequest*>(currentRequest);
+            QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
+            QList<QOrganizerCollectionLocalId> requestedOrganizerCollectionIds = collectionIds(&operationError);
+
+            if (!requestedOrganizerCollectionIds.isEmpty() || operationError != QOrganizerItemManager::NoError)
+                updateCollectionLocalIdFetchRequest(r, requestedOrganizerCollectionIds, operationError, QOrganizerItemAbstractRequest::FinishedState);
+            else
+                updateRequestState(currentRequest, QOrganizerItemAbstractRequest::FinishedState);
+        }
+        break;
+
+        case QOrganizerItemAbstractRequest::CollectionSaveRequest:
+        {
+            QOrganizerCollectionSaveRequest* r = static_cast<QOrganizerCollectionSaveRequest*>(currentRequest);
+            QList<QOrganizerCollection> collections = r->collections();
+            QList<QOrganizerCollection> retn;
+
+            QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
+            QMap<int, QOrganizerItemManager::Error> errorMap;
+            for (int i = 0; i < collections.size(); ++i) {
+                QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
+                QOrganizerCollection curr = collections.at(i);
+                if (!saveCollection(&curr, &tempError)) {
+                    errorMap.insert(i, tempError);
+                    operationError = tempError;
+                }
+                retn.append(curr);
+            }
+
+            updateCollectionSaveRequest(r, retn, operationError, errorMap, QOrganizerItemAbstractRequest::FinishedState);
+        }
+        break;
+
+        case QOrganizerItemAbstractRequest::CollectionRemoveRequest:
+        {
+            // removes the collections identified in the list of ids.
+            QOrganizerCollectionRemoveRequest* r = static_cast<QOrganizerCollectionRemoveRequest*>(currentRequest);
+            QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
+            QList<QOrganizerCollectionLocalId> collectionsToRemove = r->collectionIds();
+            QMap<int, QOrganizerItemManager::Error> errorMap;
+
+            for (int i = 0; i < collectionsToRemove.size(); i++) {
+                QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
+                removeCollection(collectionsToRemove.at(i), &tempError);
+
+                if (tempError != QOrganizerItemManager::NoError) {
+                    errorMap.insert(i, tempError);
+                    operationError = tempError;
+                }
+            }
+
+            if (!errorMap.isEmpty() || operationError != QOrganizerItemManager::NoError)
+                updateCollectionRemoveRequest(r, operationError, errorMap, QOrganizerItemAbstractRequest::FinishedState);
+            else
+                updateRequestState(currentRequest, QOrganizerItemAbstractRequest::FinishedState);
+        }
+        break;
+
         case QOrganizerItemAbstractRequest::DetailDefinitionFetchRequest:
         {
             QOrganizerItemDetailDefinitionFetchRequest* r = static_cast<QOrganizerItemDetailDefinitionFetchRequest*>(currentRequest);
@@ -1148,7 +1632,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             if (names.isEmpty())
                 names = detailDefinitions(r->itemType(), &operationError).keys(); // all definitions.
 
-            QOrganizerItemManager::Error tempError;
+            QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
             for (int i = 0; i < names.size(); i++) {
                 QOrganizerItemDetailDefinition current = detailDefinition(names.at(i), r->itemType(), &tempError);
                 requestedDefinitions.insert(names.at(i), current);
@@ -1174,7 +1658,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             QList<QOrganizerItemDetailDefinition> definitions = r->definitions();
             QList<QOrganizerItemDetailDefinition> savedDefinitions;
 
-            QOrganizerItemManager::Error tempError;
+            QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
             for (int i = 0; i < definitions.size(); i++) {
                 QOrganizerItemDetailDefinition current = definitions.at(i);
                 saveDetailDefinition(current, r->itemType(), changeSet, &tempError);
@@ -1200,7 +1684,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             QMap<int, QOrganizerItemManager::Error> errorMap;
 
             for (int i = 0; i < names.size(); i++) {
-                QOrganizerItemManager::Error tempError;
+                QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
                 removeDetailDefinition(names.at(i), r->itemType(), changeSet, &tempError);
 
                 if (tempError != QOrganizerItemManager::NoError) {
@@ -1244,9 +1728,9 @@ bool QOrganizerItemMemoryEngine::hasFeature(QOrganizerItemManager::ManagerFeatur
 /*!
  * \reimp
  */
-QList<QVariant::Type> QOrganizerItemMemoryEngine::supportedDataTypes() const
+QList<int> QOrganizerItemMemoryEngine::supportedDataTypes() const
 {
-    QList<QVariant::Type> st;
+    QList<int> st;
     st.append(QVariant::String);
     st.append(QVariant::Date);
     st.append(QVariant::DateTime);

@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -74,18 +68,27 @@ public:
     };
     Q_DECLARE_FLAGS(TravelModes, TravelMode)
 
-    enum AvoidFeatureType {
-        AvoidNothing = 0x00000000,
-        AvoidTolls = 0x00000001,
-        AvoidHighways = 0x00000002,
-        AvoidPublicTransit = 0x00000004,
-        AvoidFerries = 0x00000008,
-        AvoidTunnels = 0x00000010,
-        AvoidDirtRoads = 0x00000020,
-        AvoidPark = 0x00000040,
-        AvoidMotorPoolLanes = 0x00000080
+    enum FeatureType {
+        NoFeature = 0x00000000,
+        TollFeature = 0x00000001,
+        HighwayFeature = 0x00000002,
+        PublicTransitFeature = 0x00000004,
+        FerryFeature = 0x00000008,
+        TunnelFeature = 0x00000010,
+        DirtRoadFeature = 0x00000020,
+        ParksFeature = 0x00000040,
+        MotorPoolLaneFeature = 0x00000080
     };
-    Q_DECLARE_FLAGS(AvoidFeatureTypes, AvoidFeatureType)
+    Q_DECLARE_FLAGS(FeatureTypes, FeatureType)
+
+    enum FeatureWeight {
+        NeutralFeatureWeight = 0x00000000,
+        PreferFeatureWeight = 0x00000001,
+        RequireFeatureWeight = 0x00000002,
+        AvoidFeatureWeight = 0x00000004,
+        DisallowFeatureWeight = 0x00000008
+    };
+    Q_DECLARE_FLAGS(FeatureWeights, FeatureWeight)
 
     enum RouteOptimization {
         ShortestRoute = 0x0001,
@@ -101,11 +104,11 @@ public:
     };
     Q_DECLARE_FLAGS(SegmentDetails, SegmentDetail)
 
-    enum InstructionDetail {
-        NoInstructions = 0x0000,
-        BasicInstructions = 0x0001
+    enum ManeuverDetail {
+        NoManeuvers = 0x0000,
+        BasicManeuvers = 0x0001
     };
-    Q_DECLARE_FLAGS(InstructionDetails, InstructionDetail)
+    Q_DECLARE_FLAGS(ManeuverDetails, ManeuverDetail)
 
     QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints = QList<QGeoCoordinate>());
     QGeoRouteRequest(const QGeoCoordinate &origin,
@@ -133,9 +136,9 @@ public:
     void setTravelModes(TravelModes travelModes);
     TravelModes travelModes() const;
 
-    // defaults to NoAvoidance
-    void setAvoidFeatureTypes(AvoidFeatureTypes avoidFeatureTypes);
-    AvoidFeatureTypes avoidFeatureTypes() const;
+    void setFeatureWeight(FeatureType featureType, FeatureWeight featureWeight);
+    FeatureWeight featureWeight(FeatureType featureType) const;
+    QList<FeatureType> featureTypes() const;
 
     // defaults to OptimizeFastest
     void setRouteOptimization(RouteOptimizations optimization);
@@ -145,19 +148,20 @@ public:
     void setSegmentDetail(SegmentDetail segmentDetail);
     SegmentDetail segmentDetail() const;
 
-    // defaults to BasicInstructions
-    void setInstructionDetail(InstructionDetail instructionDetail);
-    InstructionDetail instructionDetail() const;
+    // defaults to BasicManeuvers
+    void setManeuverDetail(ManeuverDetail maneuverDetail);
+    ManeuverDetail maneuverDetail() const;
 
 private:
     QExplicitlySharedDataPointer<QGeoRouteRequestPrivate> d_ptr;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::TravelModes)
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::AvoidFeatureTypes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::FeatureTypes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::FeatureWeights)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::RouteOptimizations)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::SegmentDetails)
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::InstructionDetails)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::ManeuverDetails)
 
 QTM_END_NAMESPACE
 

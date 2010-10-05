@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -69,15 +63,15 @@ void tst_QVersitProperty::cleanup()
 void tst_QVersitProperty::testGroup()
 {
     // One group
-    QStringList group(QString::fromAscii("GROUP_NAME"));
+    QStringList group(QLatin1String("GROUP_NAME"));
     mVersitProperty->setGroups(group);
     QCOMPARE(mVersitProperty->groups(), group);
 
     // Several groups
     QStringList groupList;
-    groupList.append(QString::fromAscii("GROUP1"));
-    groupList.append(QString::fromAscii("Group2"));
-    groupList.append(QString::fromAscii("group3"));
+    groupList.append(QLatin1String("GROUP1"));
+    groupList.append(QLatin1String("Group2"));
+    groupList.append(QLatin1String("group3"));
     mVersitProperty->setGroups(groupList);
     QCOMPARE(mVersitProperty->groups(), groupList);
 }
@@ -85,36 +79,36 @@ void tst_QVersitProperty::testGroup()
 void tst_QVersitProperty::testName()
 {
     // Name in upper case
-    QString name(QString::fromAscii("TEL"));
+    QString name(QLatin1String("TEL"));
     mVersitProperty->setName(name);
     QCOMPARE(mVersitProperty->name(), name);
 
     // Name in lower case, converted automatically to upper case
-    mVersitProperty->setName(QString::fromAscii("tel"));
+    mVersitProperty->setName(QLatin1String("tel"));
     QCOMPARE(mVersitProperty->name(), name);
 }
 
 void tst_QVersitProperty::testParameters()
 {
-    QString typeParameterName(QString::fromAscii("TYPE"));
+    QString typeParameterName(QLatin1String("TYPE"));
 
-    QString name(QString::fromAscii("type"));
-    QString value1(QString::fromAscii("home"));
+    QString name(QLatin1String("type"));
+    QString value1(QLatin1String("home"));
     mVersitProperty->insertParameter(name,value1);
     QMultiHash<QString,QString> parameters = mVersitProperty->parameters();
     QCOMPARE(parameters.count(), 1);
-    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("home")));
+    QVERIFY(parameters.contains(typeParameterName,QLatin1String("home")));
 
-    QString value2(QString::fromAscii("voice"));
+    QString value2(QLatin1String("voice"));
     mVersitProperty->insertParameter(name,value2);
     parameters = mVersitProperty->parameters();
     QCOMPARE(parameters.count(), 2);
-    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("home")));
-    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("voice")));
+    QVERIFY(parameters.contains(typeParameterName,QLatin1String("home")));
+    QVERIFY(parameters.contains(typeParameterName,QLatin1String("voice")));
 
     mVersitProperty->removeParameter(name,value1);
     QCOMPARE(mVersitProperty->parameters().count(), 1);
-    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("home")));
+    QVERIFY(parameters.contains(typeParameterName,QLatin1String("home")));
 
     mVersitProperty->removeParameter(name,value2);
     QCOMPARE(mVersitProperty->parameters().count(), 0);
@@ -128,7 +122,7 @@ void tst_QVersitProperty::testParameters()
 
 void tst_QVersitProperty::testValue()
 {
-    QString value(QString::fromAscii("050484747"));
+    QString value(QLatin1String("050484747"));
     mVersitProperty->setValue(value);
     QCOMPARE(mVersitProperty->value(), value);
 }
@@ -137,13 +131,13 @@ void tst_QVersitProperty::testEmbeddedDocument()
 {
     QVersitDocument document;
     QVersitProperty property;
-    property.setName(QString::fromAscii("X-tension"));
+    property.setName(QLatin1String("X-tension"));
     document.addProperty(property);
     mVersitProperty->setValue(QVariant::fromValue(document));
     QList<QVersitProperty> embeddedDocumentProperties =
         mVersitProperty->value<QVersitDocument>().properties();
     QCOMPARE(embeddedDocumentProperties.count(),1);
-    QCOMPARE(embeddedDocumentProperties[0].name(),QString::fromAscii("X-TENSION"));
+    QCOMPARE(embeddedDocumentProperties[0].name(),QLatin1String("X-TENSION"));
 }
 
 void tst_QVersitProperty::testEquality()

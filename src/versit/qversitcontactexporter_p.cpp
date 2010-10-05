@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,28 +25,23 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #include "qversitcontactexporter.h"
 #include "qversitcontactexporter_p.h"
+#include "qversitcontactimporter_p.h"
 #include "qversitcontactsdefs_p.h"
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
@@ -93,7 +88,8 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& prof
     // Detail mappings
     int versitPropertyCount =
         sizeof(versitContactDetailMappings)/sizeof(VersitDetailMapping);
-    for (int i=0; i < versitPropertyCount; i++) {
+    // Put them in in reverse order so the entries at the top of the list take precedence
+    for (int i=versitPropertyCount; i >= 0; i--) {
         mPropertyMappings.insert(
                 QLatin1String(versitContactDetailMappings[i].detailDefinitionName),
                 QLatin1String(versitContactDetailMappings[i].versitPropertyName));
@@ -226,28 +222,44 @@ bool QVersitContactExporterPrivate::exportContact(
         mDetailHandler2->contactProcessed(contact, &document);
     }
 
-    // Search through the document for FN or N properties.  This will find it even if it was added
-    // by a detail handler.
-    if (!documentContainsName(document)) {
-        QVersitProperty nameProperty;
-        nameProperty.setName(QLatin1String("FN"));
-        nameProperty.setValue(QString());
-        document.addProperty(nameProperty);
-    }
+    ensureDocumentContainsName(contact, &document);
     return true;
 }
 
 /*!
  * Returns true if and only if \a document has a "FN" or "N" property.
  */
-bool QVersitContactExporterPrivate::documentContainsName(const QVersitDocument &document)
+void QVersitContactExporterPrivate::ensureDocumentContainsName(const QContact& contact,
+                                                               QVersitDocument* document)
 {
-    foreach (const QVersitProperty& property, document.properties()) {
+    bool containsN = false;
+    bool containsFN = false;
+    QString fnValue;
+    foreach (const QVersitProperty& property, document->properties()) {
         const QString& name = property.name();
-        if (name == QLatin1String("FN") || name == QLatin1String("N"))
-            return true;
+        if (name == QLatin1String("FN")) {
+            containsFN = true;
+            fnValue = property.value();
+        } else if (name == QLatin1String("N")) {
+            containsN = true;
+        }
     }
-    return false;
+    if (!containsFN) {
+        QVersitProperty fnProperty;
+        fnProperty.setName(QLatin1String("FN"));
+        fnValue = QVersitContactImporterPrivate::synthesizedDisplayLabel(contact);
+        fnProperty.setValue(fnValue);
+        document->addProperty(fnProperty);
+    }
+
+    if (!containsN) {
+        QVersitProperty nProperty;
+        nProperty.setValueType(QVersitProperty::CompoundType);
+        nProperty.setName(QLatin1String("N"));
+        nProperty.setValue(QStringList() << QString() << QString()
+                           << QString() << QString() << QString());
+        document->addProperty(nProperty);
+    }
 }
 
 /*!
@@ -278,27 +290,6 @@ void QVersitContactExporterPrivate::encodeName(
         *generatedProperties << property;
     }
 
-    // Generate an FN field if none is already there
-    // Don't override previously exported FN properties (eg. exported by a DisplayLabel detail)
-    QVersitProperty fnProperty =
-        VersitUtils::takeProperty(document, QLatin1String("FN"), removedProperties);
-    if (fnProperty.value().isEmpty()) {
-        fnProperty.setName(QLatin1String("FN"));
-        if (!contactName.customLabel().isEmpty()) {
-            fnProperty.setValue(contactName.customLabel());
-        } else if (!contactName.firstName().isEmpty()) {
-            if (!contactName.lastName().isEmpty()) {
-                fnProperty.setValue(QString::fromAscii("%1 %2").arg(contactName.firstName(),
-                                                                    contactName.lastName()));
-            } else {
-                fnProperty.setValue(contactName.firstName());
-            }
-        } else if (!contactName.lastName().isEmpty()) {
-            fnProperty.setValue(contactName.lastName());
-        }
-    }
-
-    *generatedProperties << fnProperty;
     *processedFields << QContactName::FieldLastName
                      << QContactName::FieldFirstName
                      << QContactName::FieldMiddleName

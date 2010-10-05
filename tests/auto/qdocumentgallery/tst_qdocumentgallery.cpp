@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -71,7 +65,7 @@ private:
 
 void tst_QDocumentGallery::isRequestSupported()
 {
-#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS) || defined (Q_OS_SYMBIAN)
     const bool platformSupported = true;
 #else
     const bool platformSupported = false;
@@ -80,7 +74,6 @@ void tst_QDocumentGallery::isRequestSupported()
     QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::QueryRequest), platformSupported);
     QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::ItemRequest), platformSupported);
     QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::TypeRequest), platformSupported);
-    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::RemoveRequest), platformSupported);
     QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::RequestType(1000)), false);
 }
 
@@ -104,6 +97,19 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::lastAccessed
             << QDocumentGallery::lastModified
             << QDocumentGallery::mimeType;
+#elif defined (Q_OS_SYMBIAN)
+            << QDocumentGallery::url
+            << QDocumentGallery::fileName
+            << QDocumentGallery::filePath
+            << QDocumentGallery::fileSize                
+            << QDocumentGallery::lastModified
+            << QDocumentGallery::title
+            << QDocumentGallery::mimeType
+            << QDocumentGallery::author            
+            << QDocumentGallery::copyright
+            << QDocumentGallery::description
+            << QDocumentGallery::comments
+            << QDocumentGallery::rating
 #endif
             ;
     QTest::newRow("File") << QString(QDocumentGallery::File) << (QStringList(fileProperties)
@@ -136,8 +142,21 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::sampleRate
             << QDocumentGallery::title
             << QDocumentGallery::trackNumber
+#elif defined (Q_OS_SYMBIAN)
+            << QDocumentGallery::duration
+            << QDocumentGallery::performer
+            << QDocumentGallery::audioCodec
+            << QDocumentGallery::audioBitRate
+            << QDocumentGallery::playCount
+            << QDocumentGallery::sampleRate
+            << QDocumentGallery::albumTitle
+            << QDocumentGallery::trackNumber
+            << QDocumentGallery::albumArtist
+            << QDocumentGallery::artist
+            << QDocumentGallery::composer
+            << QDocumentGallery::genre 
 #endif
-        );
+    );
 
     QTest::newRow("Album") << QString(QDocumentGallery::Album) << (QStringList()
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
@@ -148,7 +167,52 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::title
             << QDocumentGallery::trackCount
 #endif
-        );
+    );
+    QTest::newRow("PhotoAlbum") << QString(QDocumentGallery::PhotoAlbum) << (QStringList()
+#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+                << QDocumentGallery::title
+                << QDocumentGallery::trackCount
+#elif defined (Q_OS_SYMBIAN)
+                << QDocumentGallery::url
+                << QDocumentGallery::fileSize
+                << QDocumentGallery::lastModified
+                << QDocumentGallery::title
+                << QDocumentGallery::mimeType
+#endif
+    );    
+
+#if defined (Q_OS_SYMBIAN)
+    QTest::newRow("Image") << QString(QDocumentGallery::Image) << (QStringList(fileProperties)
+            << QDocumentGallery::duration
+            << QDocumentGallery::performer
+            << QDocumentGallery::playCount
+            << QDocumentGallery::width
+            << QDocumentGallery::height
+            << QDocumentGallery::orientation
+            << QDocumentGallery::dateTaken
+            << QDocumentGallery::cameraManufacturer
+            << QDocumentGallery::cameraModel
+            << QDocumentGallery::exposureProgram
+            << QDocumentGallery::exposureTime
+            << QDocumentGallery::fNumber
+            << QDocumentGallery::flashEnabled
+            << QDocumentGallery::focalLength
+            << QDocumentGallery::meteringMode
+            << QDocumentGallery::whiteBalance
+    );
+    QTest::newRow("Video") << QString(QDocumentGallery::Video) << (QStringList(fileProperties)
+            << QDocumentGallery::duration
+            << QDocumentGallery::performer
+            << QDocumentGallery::videoBitRate
+            << QDocumentGallery::playCount
+            << QDocumentGallery::width
+            << QDocumentGallery::height
+            << QDocumentGallery::language
+            << QDocumentGallery::frameRate
+            << QDocumentGallery::resumePosition
+    );
+#endif
+
 }
 
 void tst_QDocumentGallery::itemTypeProperties()
@@ -196,7 +260,7 @@ void tst_QDocumentGallery::propertyAttributes_data()
     QTest::newRow("File.fileName")
             << QString(QDocumentGallery::File)
             << QString(QDocumentGallery::fileName)
-#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS) || defined (Q_OS_SYMBIAN)
             << (QGalleryProperty::CanRead
                     | QGalleryProperty::CanFilter
                     | QGalleryProperty::CanSort);
@@ -206,7 +270,7 @@ void tst_QDocumentGallery::propertyAttributes_data()
     QTest::newRow("File.filePath")
                     << QString(QDocumentGallery::File)
                     << QString(QDocumentGallery::filePath)
-#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS) || defined (Q_OS_SYMBIAN)
                     << (QGalleryProperty::CanRead | QGalleryProperty::CanFilter);
 #else
                     << QGalleryProperty::Attributes();
@@ -215,7 +279,7 @@ void tst_QDocumentGallery::propertyAttributes_data()
     QTest::newRow("Audio.albumTitle")
             << QString(QDocumentGallery::Audio)
             << QString(QDocumentGallery::albumTitle)
-#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS) || defined (Q_OS_SYMBIAN)
             << (QGalleryProperty::CanRead
                     | QGalleryProperty::CanWrite
                     | QGalleryProperty::CanFilter
@@ -229,7 +293,14 @@ void tst_QDocumentGallery::propertyAttributes_data()
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
             << QGalleryProperty::Attributes(QGalleryProperty::CanRead);
 #else
+#ifndef Q_OS_SYMBIAN
             << QGalleryProperty::Attributes();
+#else
+            << (QGalleryProperty::CanRead
+                | QGalleryProperty::CanWrite
+                | QGalleryProperty::CanFilter
+                | QGalleryProperty::CanSort);
+#endif        
 #endif
 }
 

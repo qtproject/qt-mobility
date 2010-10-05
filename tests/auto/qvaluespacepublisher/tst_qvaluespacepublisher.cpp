@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -113,6 +107,9 @@ private slots:
 
     void threads_data();
     void threads();
+
+    void testQtMobility400_data();
+    void testQtMobility400();
 
 private:
     int variantMetaTypeId;
@@ -725,6 +722,47 @@ void tst_QValueSpacePublisher::threads()
     // Delete writer threads.
     for (unsigned int i = 0; i < threads; ++i)
         delete writeThreads[i];
+}
+
+void tst_QValueSpacePublisher::testQtMobility400_data()
+{
+    QTest::addColumn<QUuid>("uuid");
+
+    QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
+
+    bool foundSupported = false;
+
+    for (int i = 0; i < layers.count(); ++i) {
+        QAbstractValueSpaceLayer *layer = layers.at(i);
+        if (layer->layerOptions() & QValueSpace::PermanentLayer) {
+            foundSupported = true;
+
+            QTest::newRow(layer->name().toAscii().constData()) << layer->id();
+        }
+    }
+
+    if (!foundSupported)
+        QSKIP("No layer with Permanent flag set.", SkipAll);
+}
+
+void tst_QValueSpacePublisher::testQtMobility400()
+{
+    QFETCH(QUuid, uuid);
+
+    QValueSpacePublisher publisher(uuid, QLatin1String("/Device"));
+    publisher.setValue(QLatin1String("State"), QLatin1String("Starting"));
+    publisher.setValue(QLatin1String("State/Memory"), 1000);
+    publisher.sync();
+
+    QCOMPARE(QValueSpaceSubscriber(QLatin1String("/Device/State")).value().toString(),
+             QLatin1String("Starting"));
+    QCOMPARE(QValueSpaceSubscriber(QLatin1String("/Device/State/Memory")).value().toInt(), 1000);
+
+    publisher.resetValue("State");
+    publisher.sync();
+
+    QVERIFY(!QValueSpaceSubscriber(QLatin1String("/Device/State")).value().isValid());
+    QVERIFY(!QValueSpaceSubscriber(QLatin1String("/Device/State/Memory")).value().isValid());
 }
 
 QTEST_MAIN(tst_QValueSpacePublisher)

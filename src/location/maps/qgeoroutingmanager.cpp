@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -211,9 +205,6 @@ QGeoRoutingManager::~QGeoRoutingManager()
 */
 QString QGeoRoutingManager::managerName() const
 {
-//    if (!d_ptr->engine)
-//        return QString();
-
     return d_ptr->engine->managerName();
 }
 
@@ -226,9 +217,6 @@ QString QGeoRoutingManager::managerName() const
 */
 int QGeoRoutingManager::managerVersion() const
 {
-//    if (!d_ptr->engine)
-//        return -1;
-
     return d_ptr->engine->managerVersion();
 }
 
@@ -255,9 +243,6 @@ int QGeoRoutingManager::managerVersion() const
 */
 QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& request)
 {
-//    if (!d_ptr->engine)
-//        return new QGeoRouteReply(QGeoRouteReply::EngineNotSetError, "The routing manager was not created with a valid engine.", this);
-
     return d_ptr->engine->calculateRoute(request);
 }
 
@@ -290,9 +275,6 @@ QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& reque
 */
 QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
-//    if (!d_ptr->engine)
-//        return new QGeoRouteReply(QGeoRouteReply::EngineNotSetError, "The routing manager was not created with a valid engine.", this);
-
     return d_ptr->engine->updateRoute(route, position);
 }
 
@@ -301,9 +283,6 @@ QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QG
 */
 bool QGeoRoutingManager::supportsRouteUpdates() const
 {
-//    if (!d_ptr->engine)
-//        return false;
-
     return d_ptr->engine->supportsRouteUpdates();
 }
 
@@ -312,9 +291,6 @@ bool QGeoRoutingManager::supportsRouteUpdates() const
 */
 bool QGeoRoutingManager::supportsAlternativeRoutes() const
 {
-//    if (!d_ptr->engine)
-//        return false;
-
     return d_ptr->engine->supportsAlternativeRoutes();
 }
 
@@ -323,9 +299,6 @@ bool QGeoRoutingManager::supportsAlternativeRoutes() const
 */
 bool QGeoRoutingManager::supportsExcludeAreas() const
 {
-//    if (!d_ptr->engine)
-//        return false;
-
     return d_ptr->engine->supportsExcludeAreas();
 }
 
@@ -334,21 +307,25 @@ bool QGeoRoutingManager::supportsExcludeAreas() const
 */
 QGeoRouteRequest::TravelModes QGeoRoutingManager::supportedTravelModes() const
 {
-//    if (!d_ptr->engine)
-//        return QGeoRouteRequest::TravelModes();
-
     return d_ptr->engine->supportedTravelModes();
 }
 
 /*!
     Returns the types of features that this manager can avoid during route planning.
 */
-QGeoRouteRequest::AvoidFeatureTypes QGeoRoutingManager::supportedAvoidFeatureTypes() const
-{
-//    if (!d_ptr->engine)
-//        return QGeoRouteRequest::AvoidFeatureTypes();
 
-    return d_ptr->engine->supportedAvoidFeatureTypes();
+/*!
+*/
+QGeoRouteRequest::FeatureTypes QGeoRoutingManager::supportedFeatureTypes() const
+{
+    return d_ptr->engine->supportedFeatureTypes();
+}
+
+/*!
+*/
+QGeoRouteRequest::FeatureWeights QGeoRoutingManager::supportedFeatureWeights() const
+{
+    return d_ptr->engine->supportedFeatureWeights();
 }
 
 /*!
@@ -356,9 +333,6 @@ QGeoRouteRequest::AvoidFeatureTypes QGeoRoutingManager::supportedAvoidFeatureTyp
 */
 QGeoRouteRequest::RouteOptimizations QGeoRoutingManager::supportedRouteOptimizations() const
 {
-//    if (!d_ptr->engine)
-//        return QGeoRouteRequest::RouteOptimizations();
-
     return d_ptr->engine->supportedRouteOptimizations();
 }
 
@@ -368,22 +342,16 @@ QGeoRouteRequest::RouteOptimizations QGeoRoutingManager::supportedRouteOptimizat
 */
 QGeoRouteRequest::SegmentDetails QGeoRoutingManager::supportedSegmentDetails() const
 {
-//    if (!d_ptr->engine)
-//        return QGeoRouteRequest::SegmentDetails();
-
     return d_ptr->engine->supportedSegmentDetails();
 }
 
 /*!
-    Returns the levels of detail for navigation instructions which can be
+    Returns the levels of detail for navigation maneuvers which can be
     requested by this manager.
 */
-QGeoRouteRequest::InstructionDetails QGeoRoutingManager::supportedInstructionDetails() const
+QGeoRouteRequest::ManeuverDetails QGeoRoutingManager::supportedManeuverDetails() const
 {
-//    if (!d_ptr->engine)
-//        return QGeoRouteRequest::InstructionDetails();
-
-    return d_ptr->engine->supportedInstructionDetails();
+    return d_ptr->engine->supportedManeuverDetails();
 }
 
 /*!

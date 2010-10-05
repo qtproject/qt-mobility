@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -197,6 +191,38 @@ public:
         mutable Row row;
     };
 
+    struct const_row_iterator
+    {
+        const_row_iterator() {}
+        const_row_iterator(QVector<QVariant>::const_iterator begin, int width)
+            : begin(begin), width(width) {}
+
+        bool operator != (const const_row_iterator &other) const { return begin != other.begin; }
+        bool operator <(const const_row_iterator &other) const { return begin < other.begin; }
+
+        const_row_iterator &operator ++() { begin += width; return *this; }
+        const_row_iterator operator --(int) {
+            const_row_iterator n(*this); begin -= width; return n; }
+
+        int operator -(const const_row_iterator &other) const {
+            return (begin - other.begin) / width; }
+        int operator -(const QVector<QVariant>::const_iterator &iterator) const {
+            return (begin - iterator) / width; }
+
+        const_row_iterator operator +(int span) const {
+            return const_row_iterator(begin + (span * width), width); }
+
+        const_row_iterator &operator +=(int span) { begin += span * width; return *this; }
+
+        bool isEqual(const const_row_iterator &other, int count) const {
+            return qEqual(begin, begin + count, other.begin); }
+        bool isEqual(const const_row_iterator &other, int index, int count) {
+            return qEqual(begin + index, begin + count, other.begin + index); }
+
+        QVector<QVariant>::const_iterator begin;
+        int width;
+    };
+
     struct Cache
     {
         Cache() : count(0), cutoff(0) {}
@@ -309,9 +335,9 @@ public:
     QBasicTimer updateTimer;
     SyncEventQueue syncEvents;
 
-    inline int rCacheIndex(const row_iterator &iterator) const {
+    inline int rCacheIndex(const const_row_iterator &iterator) const {
         return iterator - rCache.values.begin(); }
-    inline int iCacheIndex(const row_iterator &iterator) const {
+    inline int iCacheIndex(const const_row_iterator &iterator) const {
         return iterator - iCache.values.begin(); }
     
     void update();

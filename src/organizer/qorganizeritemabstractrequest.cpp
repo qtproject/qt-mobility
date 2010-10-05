@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -108,6 +102,10 @@ QTM_BEGIN_NAMESPACE
   \value DetailDefinitionFetchRequest A request to fetch a collection of detail definitions
   \value DetailDefinitionRemoveRequest A request to remove a list of detail definitions
   \value DetailDefinitionSaveRequest A request to save a list of detail definitions
+  \value CollectionFetchRequest A request to fetch a collection.
+  \value CollectionLocalIdFetchRequest A request to collect a local id.
+  \value CollectionRemoveRequest A request to remove a collection.
+  \value CollectionSaveRequest A request to save a collection.
  */
 
 /*!
@@ -154,6 +152,7 @@ QOrganizerItemAbstractRequest::~QOrganizerItemAbstractRequest()
  */
 bool QOrganizerItemAbstractRequest::isInactive() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return (d_ptr->m_state == QOrganizerItemAbstractRequest::InactiveState);
 }
 
@@ -164,6 +163,7 @@ bool QOrganizerItemAbstractRequest::isInactive() const
  */
 bool QOrganizerItemAbstractRequest::isActive() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return (d_ptr->m_state == QOrganizerItemAbstractRequest::ActiveState);
 }
 
@@ -174,6 +174,7 @@ bool QOrganizerItemAbstractRequest::isActive() const
  */
 bool QOrganizerItemAbstractRequest::isFinished() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return (d_ptr->m_state == QOrganizerItemAbstractRequest::FinishedState);
 }
 
@@ -184,12 +185,14 @@ bool QOrganizerItemAbstractRequest::isFinished() const
  */
 bool QOrganizerItemAbstractRequest::isCanceled() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return (d_ptr->m_state == QOrganizerItemAbstractRequest::CanceledState);
 }
 
 /*! Returns the overall error of the most recent asynchronous operation */
 QOrganizerItemManager::Error QOrganizerItemAbstractRequest::error() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->m_error;
 }
 
@@ -198,6 +201,7 @@ QOrganizerItemManager::Error QOrganizerItemAbstractRequest::error() const
  */
 QOrganizerItemAbstractRequest::RequestType QOrganizerItemAbstractRequest::type() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->type();
 }
 
@@ -206,30 +210,38 @@ QOrganizerItemAbstractRequest::RequestType QOrganizerItemAbstractRequest::type()
  */
 QOrganizerItemAbstractRequest::State QOrganizerItemAbstractRequest::state() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->m_state;
 }
 
 /*! Returns a pointer to the manager of which this request instance requests operations */
 QOrganizerItemManager* QOrganizerItemAbstractRequest::manager() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->m_manager;
 }
 
 /*! Sets the manager of which this request instance requests operations to \a manager */
 void QOrganizerItemAbstractRequest::setManager(QOrganizerItemManager* manager)
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
+    // In theory we might have been active and the manager didn't cancel/finish us
+    if (d_ptr->m_state == QOrganizerItemAbstractRequest::ActiveState && d_ptr->m_manager)
+        return;
     d_ptr->m_manager = manager;
+    d_ptr->m_engine = QOrganizerItemManagerData::engine(d_ptr->m_manager);
 }
 
 /*! Attempts to start the request.  Returns false if the request is not in the \c QOrganizerItemAbstractRequest::Inactive, \c QOrganizerItemAbstractRequest::Finished or \c QOrganizerItemAbstractRequest::Cancelled states,
     or if the request was unable to be performed by the manager engine; otherwise returns true. */
 bool QOrganizerItemAbstractRequest::start()
 {
-    QOrganizerItemManagerEngine *engine = QOrganizerItemManagerData::engine(d_ptr->m_manager);
-    if (engine && (d_ptr->m_state == QOrganizerItemAbstractRequest::CanceledState
+    QMutexLocker ml(&d_ptr->m_mutex);
+    if (d_ptr->m_engine && (d_ptr->m_state == QOrganizerItemAbstractRequest::CanceledState
                    || d_ptr->m_state == QOrganizerItemAbstractRequest::FinishedState
                    || d_ptr->m_state == QOrganizerItemAbstractRequest::InactiveState)) {
-        return engine->startRequest(this);
+        ml.unlock();
+        return d_ptr->m_engine->startRequest(this);
     }
 
     return false; // unable to start operation; another operation already in progress or no engine.
@@ -239,9 +251,10 @@ bool QOrganizerItemAbstractRequest::start()
     or if the request is unable to be cancelled by the manager engine; otherwise returns true. */
 bool QOrganizerItemAbstractRequest::cancel()
 {
-    QOrganizerItemManagerEngine *engine = QOrganizerItemManagerData::engine(d_ptr->m_manager);
-    if (engine && state() == QOrganizerItemAbstractRequest::ActiveState) {
-        return engine->cancelRequest(this);
+    QMutexLocker ml(&d_ptr->m_mutex);
+    if (d_ptr->m_engine && d_ptr->m_state == QOrganizerItemAbstractRequest::ActiveState) {
+        ml.unlock();
+        return d_ptr->m_engine->cancelRequest(this);
     }
 
     return false; // unable to cancel operation; not in progress or no engine.
@@ -254,11 +267,12 @@ bool QOrganizerItemAbstractRequest::cancel()
  */
 bool QOrganizerItemAbstractRequest::waitForFinished(int msecs)
 {
-    QOrganizerItemManagerEngine *engine = QOrganizerItemManagerData::engine(d_ptr->m_manager);
-    if (engine) {
+    QMutexLocker ml(&d_ptr->m_mutex);
+    if (d_ptr->m_engine) {
         switch (d_ptr->m_state) {
         case QOrganizerItemAbstractRequest::ActiveState:
-            return engine->waitForRequestFinished(this, msecs);
+            ml.unlock();
+            return d_ptr->m_engine->waitForRequestFinished(this, msecs);
         case QOrganizerItemAbstractRequest::CanceledState:
         case QOrganizerItemAbstractRequest::FinishedState:
             return true;
@@ -267,7 +281,7 @@ bool QOrganizerItemAbstractRequest::waitForFinished(int msecs)
         }
     }
 
-    return false; // unable to wait for operation; not in progress or no engine.
+    return false; // unable to wait for operation; not in progress or no engine
 }
 
 #include "moc_qorganizeritemabstractrequest.cpp"

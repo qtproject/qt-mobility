@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -93,39 +87,9 @@ QContactAction::~QContactAction()
  */
 
 /*!
-  \fn QContactAction::actionDescriptors(const QString& actionName) const
-  Returns the descriptor which uniquely identifies this action implementation.  A descriptor
-  consists of an action name, a vendor name and an implementation version.
-  The name of the action identifies the action provided; different implementations of an action
-  with the same name must provide the same functionality, but may differ in implementation semantics.
-  Hence, the action name includes the major version of the interface definition implemented.
-  The vendor name is the identification string of the vendor which has provided this implementation.
-  The implementation version is the (minor) version of the implementation, and is vendor-specific.
-
-  \sa QContactActionDescriptor
- */
-
-/*!
   \fn QContactAction::state() const
   Returns the current state of the action.
   \sa stateChanged()
- */
-
-/*!
-  \fn QContactAction::contactFilter() const
-  Returns a filter which may be used to filter contacts by the availability of this action implementation for them.
- */
-
-/*!
-  \fn QContactAction::isTargetSupported(const QContactActionTarget& target) const
-  Returns true if the provided \a target contains the information required for this action to be
-  performed on it; otherwise, returns false.
-  Some actions may require no details to be specified (e.g., serialize entire contact), some may require
-  exactly one detail (e.g., email this specific email account of the given contact), some may require
-  zero or one detail (e.g., email exactly on email account of the given contact, but the action can choose
-  which email account to email), some may require multiple details (e.g., email all specified email accounts
-  of the given contact).  In all cases, it is the action which decides how much information it needs.
-  If the target contains the required information, the function will return true; otherwise, returns false.
  */
 
 /*!

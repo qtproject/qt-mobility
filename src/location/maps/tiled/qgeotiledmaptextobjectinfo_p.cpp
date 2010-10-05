@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -56,36 +50,121 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
         : QGeoTiledMapObjectInfo(mapData, mapObject),
         textItem(0)
 
 {
     text = static_cast<QGeoMapTextObject*>(mapObject);
+
+    connect(text,
+            SIGNAL(coordinateChanged(QGeoCoordinate)),
+            this,
+            SLOT(coordinateChanged(QGeoCoordinate)));
+    connect(text,
+            SIGNAL(textChanged(QString)),
+            this,
+            SLOT(textChanged(QString)));
+    connect(text,
+            SIGNAL(fontChanged(QFont)),
+            this,
+            SLOT(fontChanged(QFont)));
+    connect(text,
+            SIGNAL(penChanged(QPen)),
+            this,
+            SLOT(penChanged(QPen)));
+    connect(text,
+            SIGNAL(brushChanged(QBrush)),
+            this,
+            SLOT(brushChanged(QBrush)));
+    connect(text,
+            SIGNAL(offsetChanged(QPoint)),
+            this,
+            SLOT(offsetChanged(QPoint)));
+    connect(text,
+            SIGNAL(alignmentChanged(Qt::Alignment)),
+            this,
+            SLOT(alignmentChanged(Qt::Alignment)));
+
+    textItem = new QGraphicsSimpleTextItem();
+    graphicsItem = textItem;
+
+    penChanged(text->pen());
+    brushChanged(text->brush());
+    coordinateChanged(text->coordinate());
+    fontChanged(text->font());
+    textChanged(text->text());
+
+    updateValidity();
+    if (valid())
+        update();
 }
 
 QGeoTiledMapTextObjectInfo::~QGeoTiledMapTextObjectInfo() {}
 
-void QGeoTiledMapTextObjectInfo::objectUpdated()
+void QGeoTiledMapTextObjectInfo::updateValidity()
 {
-    if (!text->coordinate().isValid()) {
-        if (textItem) {
-            delete textItem;
-            textItem = 0;
-            graphicsItem = 0;
-        }
-        return;
+    setValid((text->coordinate().isValid() && !text->text().isEmpty()));
+}
+
+void QGeoTiledMapTextObjectInfo::coordinateChanged(const QGeoCoordinate &coordinate)
+{
+    updateValidity();
+    if (text->coordinate().isValid())
+        textItem->setPos(tiledMapData->coordinateToWorldPixel(text->coordinate()));
+    if (valid())
+        updateItem();
+}
+
+void QGeoTiledMapTextObjectInfo::textChanged(const QString &text)
+{
+    updateValidity();
+    if (!this->text->text().isEmpty()) {
+        textItem->setText(this->text->text());
+        update();
     }
+    if (valid())
+        updateItem();
+}
 
-    if (!textItem)
-        textItem = new QGraphicsSimpleTextItem();
-
-    textItem->setText(text->text());
+void QGeoTiledMapTextObjectInfo::fontChanged(const QFont &font)
+{
     textItem->setFont(text->font());
-    textItem->setBrush(text->brush());
+    update();
+}
 
+void QGeoTiledMapTextObjectInfo::offsetChanged(const QPoint &offset)
+{
+    update();
+}
+
+void QGeoTiledMapTextObjectInfo::alignmentChanged(Qt::Alignment alignment)
+{
+    update();
+}
+
+void QGeoTiledMapTextObjectInfo::penChanged(const QPen &pen)
+{
+    textItem->setPen(text->pen());
+    updateItem();
+}
+
+void QGeoTiledMapTextObjectInfo::brushChanged(const QBrush &brush)
+{
+    textItem->setBrush(text->brush());
+    updateItem();
+}
+
+void QGeoTiledMapTextObjectInfo::zoomLevelChanged(qreal zoomLevel)
+{
+    update();
+}
+
+void QGeoTiledMapTextObjectInfo::update()
+{
     QFontMetrics metrics(text->font());
     QRect bounds = metrics.boundingRect(text->text());
+    QPointF alignmentOffset;
 
     if (text->alignment() & Qt::AlignLeft) {
         alignmentOffset.setX(0);
@@ -103,29 +182,19 @@ void QGeoTiledMapTextObjectInfo::objectUpdated()
         alignmentOffset.setY(-bounds.height());
     }
 
-    QPointF position = tiledMapData->coordinateToWorldPixel(text->coordinate());
-    textItem->setPos(position);
-
-    mapUpdated();
-
-    graphicsItem = textItem;
+    int zoomFactor = tiledMapData->zoomFactor();
+    textItem->resetTransform();
+    textItem->setScale(zoomFactor);
+    QPointF offset = text->offset();
+    offset += alignmentOffset;
+    textItem->setTransform(QTransform::fromTranslate(
+                               offset.x() * zoomFactor,
+                               offset.y() * zoomFactor));
 
     updateItem();
 }
 
-void QGeoTiledMapTextObjectInfo::mapUpdated()
-{
-    if (textItem) {
-        int zoomFactor = tiledMapData->zoomFactor();
-        textItem->resetTransform();
-        textItem->setScale(zoomFactor);
-        QPointF offset = text->offset();
-        offset += alignmentOffset;
-        textItem->setTransform(QTransform::fromTranslate(
-                                   offset.x() * zoomFactor,
-                                   offset.y() * zoomFactor));
-    }
-}
+#include "moc_qgeotiledmaptextobjectinfo_p.cpp"
 
 QTM_END_NAMESPACE
 

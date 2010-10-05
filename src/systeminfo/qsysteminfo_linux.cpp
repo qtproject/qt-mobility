@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -368,67 +362,6 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::deviceTypeToMode(quin
 
 #endif
 
-int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
-{
-    switch(mode) {
-    case QSystemNetworkInfo::WlanMode:
-        {
-            QString result;
-            const QString baseSysDir = QLatin1String("/sys/class/net/");
-            const QDir wDir(baseSysDir);
-            const QStringList dirs = wDir.entryList(QStringList() << QLatin1String("*"), QDir::AllDirs | QDir::NoDotAndDotDot);
-            foreach(const QString dir, dirs) {
-                QString devFile = baseSysDir + dir;
-                QFileInfo fi(devFile + QLatin1String("/wireless/link"));
-                if(fi.exists()) {
-                    QFile rx(fi.absoluteFilePath());
-                    if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                        QTextStream in(&rx);
-                        in >> result;
-                        rx.close();
-                        return result.toInt();
-
-                    }
-                }
-            }
-        }
-        break;
-    case QSystemNetworkInfo::EthernetMode:
-        {
-            QString result;
-            const QString baseSysDir = QLatin1String("/sys/class/net/");
-            const QDir eDir(baseSysDir);
-            const QStringList dirs = eDir.entryList(QStringList() << QLatin1String("eth*"), QDir::AllDirs | QDir::NoDotAndDotDot);
-            foreach(const QString dir, dirs) {
-                QString devFile = baseSysDir + dir;
-                QFileInfo fi(devFile + QLatin1String("/carrier"));
-                if(fi.exists()) {
-                    QFile rx(fi.absoluteFilePath());
-                    if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                        QTextStream in(&rx);
-                        in >> result;
-                        rx.close();
-                        return result.toInt() * 100;
-
-                    }
-                }
-            }
-        }
-        break;
-        case QSystemNetworkInfo::BluetoothMode:
-        {
-#if !defined(QT_NO_DBUS)
-            return getBluetoothRssi();
-#endif
-        }
-        break;
-    default:
-        break;
-    };
-
-    return -1;
-}
-
 int QSystemNetworkInfoPrivate::cellId()
 {
     return -1;
@@ -683,9 +616,13 @@ QString QSystemDeviceInfoPrivate::productName()
      int interval;
      int preferBlank;
      int allowExp;
-     XGetScreenSaver(QX11Info::display(), &ttime, &interval, &preferBlank, &allowExp);
-     int result = XSetScreenSaver(QX11Info::display(), timeout, interval, preferBlank, allowExp);
-     return result;
+     Display *dis = QX11Info::display();
+     if(dis) {
+         XGetScreenSaver(dis, &ttime, &interval, &preferBlank, &allowExp);
+         int result = XSetScreenSaver(QX11Info::display(), timeout, interval, preferBlank, allowExp);
+         return result;
+     }
+     return 0;
  }
 #endif
 

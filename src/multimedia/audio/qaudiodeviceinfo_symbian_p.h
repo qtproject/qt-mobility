@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -59,6 +53,7 @@
 #ifndef QAUDIODEVICEINFO_SYMBIAN_P_H
 #define QAUDIODEVICEINFO_SYMBIAN_P_H
 
+#include <QtCore/QMap>
 #include <qaudiosystem.h>
 #include <sounddevice.h>
 
@@ -87,24 +82,33 @@ public:
     static QByteArray defaultOutputDevice();
     static QList<QByteArray> availableDevices(QAudio::Mode);
 
+private slots:
+    void devsoundInitializeComplete(int err);
+
 private:
     void getSupportedFormats() const;
 
 private:
-    QScopedPointer<CMMFDevSound> m_devsound;
+    mutable bool m_initializing;
+    int m_intializationResult;
 
     QString m_deviceName;
     QAudio::Mode m_mode;
 
+    struct Capabilities
+    {
+        QList<int> m_frequencies;
+        QList<int> m_channels;
+        QList<int> m_sampleSizes;
+        QList<QAudioFormat::Endian> m_byteOrders;
+        QList<QAudioFormat::SampleType> m_sampleTypes;
+    };
+
     // Mutable to allow lazy initialization when called from const-qualified
     // public functions (isFormatSupported, nearestFormat)
     mutable bool m_updated;
-    mutable QStringList m_codecs;
-    mutable QList<int> m_frequencies;
-    mutable QList<int> m_channels;
-    mutable QList<int> m_sampleSizes;
-    mutable QList<QAudioFormat::Endian> m_byteOrders;
-    mutable QList<QAudioFormat::SampleType> m_sampleTypes;
+    mutable QMap<QString, Capabilities> m_capabilities;
+    mutable Capabilities m_unionCapabilities;
 };
 
 QT_END_NAMESPACE

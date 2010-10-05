@@ -1,8 +1,0 @@
-To import landmarks from a file, place the landmark file in the same folder with .qml
-(e.g. "myImportedLandmarks.gpx" or change the filename accordingly in .qml if needed).
-
-If you want to use NMEA log file, place the NMEA file in the same folder (e.g. 
-"nmealog.txt or  change the filename accordingly in .qml if needed").
-
-Note if you deploy for Symbian/WinCE, the filenames need to match with
-deployment.pri

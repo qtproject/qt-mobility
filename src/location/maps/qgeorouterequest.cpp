@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -63,7 +57,7 @@ QTM_BEGIN_NAMESPACE
     \ingroup maps-routing
 
     The default state of a QGeoRouteRequest instance will result in a request
-    for basic route segment and navigation instructions describing the fastest
+    for basic route segment and navigation maneuvers describing the fastest
     route by car which covers the given waypoints.
 
     There may be signifcant variation in the features supported by different
@@ -177,7 +171,7 @@ enum SegmentDetail {
         No segment data should be included with the route.  A route requested
         with this level of segment detail will initialise
         QGeoRouteSegment::path() as a straight line between the positions of
-        the previous and next QGeoInstruction instances.
+        the previous and next QGeoManeuver instances.
 
     \value BasicSegmentData
         Basic segment data will be included with the route.  This will include
@@ -185,17 +179,17 @@ enum SegmentDetail {
 */
 
 /*!
-    \enum QGeoRouteRequest::InstructionDetail
+    \enum QGeoRouteRequest::ManeuverDetail
 
-    Defines the amount of instruction information that should be included with
+    Defines the amount of maneuver information that should be included with
     the route.
 
-    \value NoInstructions
-        No instructions should be included with the route.
+    \value NoManeuvers
+        No maneuvers should be included with the route.
 
-    \value BasicInstructions
-        Basic instructions will be included with the route. This will
-        include QGeoInstruction::instructionText().
+    \value BasicManeuvers
+        Basic manevuers will be included with the route. This will
+        include QGeoManeuver::instructionText().
 */
 
 /*!
@@ -338,18 +332,34 @@ QGeoRouteRequest::TravelModes QGeoRouteRequest::travelModes() const
 
     The default value is QGeoRouteRequest::AvoidNothing.
 */
-void QGeoRouteRequest::setAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes)
-{
-    d_ptr->avoidFeatureTypes = avoidFeatureTypes;
-}
 
 /*!
     Returns the features which this request specifies should be avoided during
     the planning of the route.
 */
-QGeoRouteRequest::AvoidFeatureTypes QGeoRouteRequest::avoidFeatureTypes() const
+
+/*!
+*/
+void QGeoRouteRequest::setFeatureWeight(QGeoRouteRequest::FeatureType featureType, QGeoRouteRequest::FeatureWeight featureWeight)
 {
-    return d_ptr->avoidFeatureTypes;
+    if (featureWeight != QGeoRouteRequest::NeutralFeatureWeight)
+        d_ptr->featureWeights[featureType] = featureWeight;
+    else
+        d_ptr->featureWeights.remove(featureType);
+}
+
+/*!
+*/
+QGeoRouteRequest::FeatureWeight QGeoRouteRequest::featureWeight(QGeoRouteRequest::FeatureType featureType) const
+{
+    return d_ptr->featureWeights.value(featureType, QGeoRouteRequest::NeutralFeatureWeight);
+}
+
+/*!
+*/
+QList<QGeoRouteRequest::FeatureType> QGeoRouteRequest::featureTypes() const
+{
+    return d_ptr->featureWeights.keys();
 }
 
 /*!
@@ -391,24 +401,24 @@ QGeoRouteRequest::SegmentDetail QGeoRouteRequest::segmentDetail() const
 }
 
 /*!
-    Sets the level of detail to use when representing routing instructions to
-    \a instructionDetail.
+    Sets the level of detail to use when representing routing maneuvers to
+    \a maneuverDetail.
 
-    The default value is QGeoRouteRequest::BasicInstructions.
+    The default value is QGeoRouteRequest::BasicManeuvers.
 */
 
-void QGeoRouteRequest::setInstructionDetail(QGeoRouteRequest::InstructionDetail instructionDetail)
+void QGeoRouteRequest::setManeuverDetail(QGeoRouteRequest::ManeuverDetail maneuverDetail)
 {
-    d_ptr->instructionDetail = instructionDetail;
+    d_ptr->maneuverDetail = maneuverDetail;
 }
 
 /*!
     Returns the level of detail which will be used in the representation of
-    routing instructions.
+    routing maneuvers.
 */
-QGeoRouteRequest::InstructionDetail QGeoRouteRequest::instructionDetail() const
+QGeoRouteRequest::ManeuverDetail QGeoRouteRequest::maneuverDetail() const
 {
-    return d_ptr->instructionDetail;
+    return d_ptr->maneuverDetail;
 }
 
 /*******************************************************************************
@@ -418,10 +428,9 @@ QGeoRouteRequestPrivate::QGeoRouteRequestPrivate()
         : QSharedData(),
         numberAlternativeRoutes(0),
         travelModes(QGeoRouteRequest::CarTravel),
-        avoidFeatureTypes(QGeoRouteRequest::AvoidNothing),
         routeOptimization(QGeoRouteRequest::FastestRoute),
         segmentDetail(QGeoRouteRequest::BasicSegmentData),
-        instructionDetail(QGeoRouteRequest::BasicInstructions) {}
+        maneuverDetail(QGeoRouteRequest::BasicManeuvers) {}
 
 QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other)
         : QSharedData(other),
@@ -429,10 +438,10 @@ QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &
         excludeAreas(other.excludeAreas),
         numberAlternativeRoutes(other.numberAlternativeRoutes),
         travelModes(other.travelModes),
-        avoidFeatureTypes(other.avoidFeatureTypes),
+        featureWeights(other.featureWeights),
         routeOptimization(other.routeOptimization),
         segmentDetail(other.segmentDetail),
-        instructionDetail(other.instructionDetail) {}
+        maneuverDetail(other.maneuverDetail) {}
 
 QGeoRouteRequestPrivate::~QGeoRouteRequestPrivate() {}
 
@@ -442,10 +451,10 @@ bool QGeoRouteRequestPrivate::operator ==(const QGeoRouteRequestPrivate &other) 
             && (excludeAreas == other.excludeAreas)
             && (numberAlternativeRoutes == other.numberAlternativeRoutes)
             && (travelModes == other.travelModes)
-            && (avoidFeatureTypes == other.avoidFeatureTypes)
+            && (featureWeights == other.featureWeights)
             && (routeOptimization == other.routeOptimization)
             && (segmentDetail == other.segmentDetail)
-            && (instructionDetail == other.instructionDetail));
+            && (maneuverDetail == other.maneuverDetail));
 }
 
 QTM_END_NAMESPACE

@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -235,7 +229,7 @@ void TestTodoOccurrence::addSimpleOccurrenceDetail()
     QCOMPARE(todoItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
     QOrganizerTodoOccurrence thirdTodoOccurence = static_cast<QOrganizerTodoOccurrence>(todoItem);
     QCOMPARE(thirdTodoOccurence.dueDateTime(), thirdInstanceDueDateTime);
-    QCOMPARE(thirdTodoOccurence.localId(), (unsigned int)0);
+    QCOMPARE(thirdTodoOccurence.localId(), QOrganizerItemLocalId());
     QCOMPARE(thirdTodoOccurence.parentLocalId(), item.localId());
     
     // Fetch instances using maxcount only.
@@ -245,7 +239,7 @@ void TestTodoOccurrence::addSimpleOccurrenceDetail()
     todoItem = instanceList.at(0);
     QCOMPARE(todoItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
     QOrganizerTodoOccurrence firstTodoOccurrence = static_cast<QOrganizerTodoOccurrence>(todoItem);
-    QCOMPARE(firstTodoOccurrence.localId(), (unsigned int)0);
+    QCOMPARE(firstTodoOccurrence.localId(), QOrganizerItemLocalId());
     QCOMPARE(firstTodoOccurrence.dueDateTime(), firstInstanceDueDateTime);
     QCOMPARE(firstTodoOccurrence.parentLocalId(), item.localId());   
     QCOMPARE(firstTodoOccurrence.status(), QOrganizerTodoProgress::StatusNotStarted);
@@ -331,7 +325,7 @@ void TestTodoOccurrence::addOccurrencedata(QString itemType)
 	fourthInstanceDateTime.setDate(QDate(2010, 10,22));
 	fifthInstanceDateTime.setDate(QDate(2010, 11, 6));
 
-	QTest::newRow("weekly on monday and thursday for 3 weeks")
+	QTest::newRow("monthly on monday and thursday")
 		<< itemType
 		<< QDateTime(QDate(2010 , 9, 6))
 		<< monthlyRrule
@@ -353,7 +347,7 @@ void TestTodoOccurrence::addOccurrencedata(QString itemType)
 	fourthInstanceDateTime.setDate(QDate(2010, 10,14));
 	fifthInstanceDateTime.setDate(QDate(2010, 11, 10));
 	
-	QTest::newRow("weekly on monday and thursday for 3 weeks")
+	QTest::newRow("monthly on wednesday and thursday for 3 weeks")
 		<< itemType
 		<< QDateTime(QDate(2010 , 9, 6))
 		<< monthlyRruleUsingSetPosition
@@ -378,7 +372,7 @@ void TestTodoOccurrence::addOccurrencedata(QString itemType)
 	fourthInstanceDateTime.setDate(QDate(2013, 9,10));
 	fifthInstanceDateTime.setDate(QDate(2014, 9, 9));
 
-	QTest::newRow("weekly on monday and thursday for 3 weeks")
+	QTest::newRow("yearly on 2nd tuesday of every september")
 		<< itemType
 		<< QDateTime(QDate(2010 , 9, 6))
 		<< yearlyRrule
@@ -398,6 +392,8 @@ void TestTodoOccurrence::addOccurrenceDetail()
 	
 	// Set the item type
 	QOrganizerTodo item;
+	QString displayLabel = "check display";
+	item.setDisplayLabel(displayLabel);
 	item.setStartDateTime(startTime);
 	item.setDueDateTime(startTime);
 
@@ -416,6 +412,7 @@ void TestTodoOccurrence::addOccurrenceDetail()
 	item = m_om->item(item.localId());
 
 	QCOMPARE(item.type(), itemType);
+	QCOMPARE(item.displayLabel(), displayLabel);
 	QOrganizerItemPriority todoPriority = item.detail(QOrganizerItemPriority::DefinitionName);
 	QCOMPARE(todoPriority.priority(), priority.priority());
 	// Fetch the instances of the item.
@@ -427,7 +424,7 @@ void TestTodoOccurrence::addOccurrenceDetail()
 	QOrganizerTodoOccurrence fifthTodoOccurence = static_cast<QOrganizerTodoOccurrence>(todoItem);
 	QCOMPARE(fifthTodoOccurence.startDateTime(), fifthInstanceDateTime);
 	QCOMPARE(fifthTodoOccurence.dueDateTime(), fifthInstanceDateTime);
-	QCOMPARE(fifthTodoOccurence.localId(), (unsigned int)0);
+	QCOMPARE(fifthTodoOccurence.localId(), QOrganizerItemLocalId());
 	QCOMPARE(fifthTodoOccurence.parentLocalId(), item.localId());
 	
 	todoItem = instanceList.at(3);
@@ -478,6 +475,15 @@ void TestTodoOccurrence::editOccurrenceNegative()
     // Save item with recurrence rule.
     QVERIFY(m_om->saveItem(&item));    
     item = m_om->item(item.localId());
+    
+    // Add comment to the item and save.
+    QOrganizerItemComment comment;
+    comment.setComment("check comment");
+    // Comments are not supporeted.
+    QVERIFY(item.saveDetail(&comment));  
+    QVERIFY(!m_om->saveItem(&item));
+    QVERIFY(m_om->error() == QOrganizerItemManager::InvalidDetailError);
+    
 
     //Fetch first instance of the saved entry to modify
     QList<QOrganizerItem> instanceList = m_om->itemInstances(item,startTime,startTime);
@@ -488,10 +494,11 @@ void TestTodoOccurrence::editOccurrenceNegative()
     QString instanceGuid (firstInstance.guid());
    
     //Try to save instance with invalid guid and parentlocalId fails
-    firstInstance.setGuid(QString(""));
-    firstInstance.setParentLocalId(QOrganizerItemLocalId(-1));
-    QVERIFY(!m_om->saveItem(&firstInstance));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    // TODO: Disabled because of API change. REFACTOR!
+    //firstInstance.setGuid(QString(""));
+    //firstInstance.setParentLocalId(QOrganizerItemLocalId(-1));
+    //QVERIFY(!m_om->saveItem(&firstInstance));
+    //QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
     
     //change to invalid original Date of the instance and save 
     firstInstance.setGuid(instanceGuid);
@@ -500,11 +507,12 @@ void TestTodoOccurrence::editOccurrenceNegative()
     QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
     
     //Save the instance with invalid localid
-    QOrganizerItemId itemId;
-    itemId.setLocalId(1);
-    firstInstance.setId(itemId);
-    QVERIFY(!m_om->saveItem(&firstInstance));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    // TODO: Disabled because of API change. REFACTOR!
+    //QOrganizerItemId itemId;
+    //itemId.setLocalId(1);
+    //firstInstance.setId(itemId);
+    //QVERIFY(!m_om->saveItem(&firstInstance));
+    //QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
 }
 
 void TestTodoOccurrence::addOccurrenceWithException_data()

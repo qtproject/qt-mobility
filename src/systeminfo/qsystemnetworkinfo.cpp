@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -78,7 +72,7 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
             \value EmergencyOnly          Emergency calls only.
             \value Searching              Searching for or connecting with the network.
             \value Busy                   Network is busy.
-            \value Connected              Connected to newtwork.
+            \value Connected              Connected to network.
             \value HomeNetwork            On Home Network.
             \value Denied                 Network access denied.
             \value Roaming                On Roaming network.
@@ -175,7 +169,7 @@ int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mo
 /*!
  \property QSystemNetworkInfo::cellId
  \brief The devices Cell ID
-   Returns the Cell ID of the connected tower or based station.
+   Returns the Cell ID of the connected tower or based station, or 0 if not connected.
 */
 int QSystemNetworkInfo::cellId()
 {
@@ -186,7 +180,7 @@ int QSystemNetworkInfo::cellId()
  \property QSystemNetworkInfo::locationAreaCode
  \brief The LAC.
 
-   Returns the Location Area Code. In the case of none such as a Desktop, an empty string.
+   Returns the Location Area Code. In the case of a Desktop computer, 0 is returned.
 */
 int QSystemNetworkInfo::locationAreaCode()
 {
@@ -197,7 +191,7 @@ int QSystemNetworkInfo::locationAreaCode()
   \property QSystemNetworkInfo::currentMobileCountryCode
   \brief The current MCC.
 
-   Returns the current Mobile Country Code. In the case of none such as a Desktop, an empty string.
+   Returns the current Mobile Country Code. In the case of a Desktop computer, an empty string is returned.
 /*/
 QString QSystemNetworkInfo::currentMobileCountryCode()
 {
@@ -208,7 +202,7 @@ QString QSystemNetworkInfo::currentMobileCountryCode()
  \property QSystemNetworkInfo::currentMobileNetworkCode
  \brief The current MNC.
 
-   Returns the current Mobile Network Code. In the case of none such as a Desktop, an empty string.
+   Returns the current Mobile Network Code. In the case of a Desktop computer, an empty string is returned.
 */
 QString QSystemNetworkInfo::currentMobileNetworkCode()
 {
@@ -219,7 +213,7 @@ QString QSystemNetworkInfo::currentMobileNetworkCode()
  \property QSystemNetworkInfo::homeMobileCountryCode
  \brief The home MNC.
 
-   Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.
+   Returns the home Mobile Country Code. In the case of a Desktop computer, an empty string is returned.
 */
 QString QSystemNetworkInfo::homeMobileCountryCode()
 {
@@ -230,7 +224,7 @@ QString QSystemNetworkInfo::homeMobileCountryCode()
  \property QSystemNetworkInfo::homeMobileNetworkCode
  \brief The home MCC.
 
-   Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string.
+   Returns the home Mobile Network Code. In the case of a Desktop computer, an empty string is returned.
    Note: Some platforms don't support retrieving this info. In this case the Network Code is
    returned only when the device is registered on home network.
 */
@@ -241,7 +235,7 @@ QString QSystemNetworkInfo::homeMobileNetworkCode()
 
 /*!
  Returns the name of the operator for the network \a mode.  For wlan this returns the network's current SSID.
-In the case of no network such as a desktop, an empty string.
+In the case of a Desktop computer, an empty string is returned.
 */
 QString QSystemNetworkInfo::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -257,7 +251,7 @@ QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
 }
 
 /*!
- Returns the first found QNetworkInterface for type \a mode.
+ Returns the first found QNetworkInterface for type \a mode, or an invalid QNetworkInterface, if none is found.
 
  */
 QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
@@ -266,6 +260,8 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
 }
 
 /*!
+ \property QSystemNetworkInfo::currentMode
+
     Returns the current active mode. If more than one mode is active, returns the
      default or preferred mode. If no modes are active, returns UnknownMode.
 

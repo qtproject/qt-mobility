@@ -7,11 +7,11 @@
  ** This file is part of the Qt Mobility Components.
  **
  ** $QT_BEGIN_LICENSE:LGPL$
- ** Commercial Usage
- ** Licensees holding valid Qt Commercial licenses may use this file in
- ** accordance with the Qt Solutions Commercial License Agreement provided
- ** with the Software or, alternatively, in accordance with the terms
- ** contained in a written agreement between you and Nokia.
+ ** No Commercial Usage
+ ** This file contains pre-release code and may not be distributed.
+ ** You may use this file in accordance with the terms and conditions
+ ** contained in the Technology Preview License Agreement accompanying
+ ** this package.
  **
  ** GNU Lesser General Public License Usage
  ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,28 +25,23 @@
  ** rights.  These rights are described in the Nokia Qt LGPL Exception
  ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
  **
- ** GNU General Public License Usage
- ** Alternatively, this file may be used under the terms of the GNU
- ** General Public License version 3.0 as published by the Free Software
- ** Foundation and appearing in the file LICENSE.GPL included in the
- ** packaging of this file.  Please review the following information to
- ** ensure the GNU General Public License version 3.0 requirements will be
- ** met: http://www.gnu.org/copyleft/gpl.html.
+ ** If you have questions regarding the use of this file, please contact
+ ** Nokia at qt-info@nokia.com.
  **
- ** Please note Third Party Software included with Qt Solutions may impose
- ** additional restrictions and it is the user's responsibility to ensure
- ** that they have met the licensing requirements of the GPL, LGPL, or Qt
- ** Solutions Commercial license and the relevant license of the Third
- ** Party Software they are using.
  **
- ** If you are unsure which license is appropriate for your use, please
- ** contact the sales department at qt-sales@nokia.com.
+ **
+ **
+ **
+ **
+ **
+ **
  ** $QT_END_LICENSE$
  **
  ****************************************************************************/
 
 #include "qlandmarkmanagerengine_symbian.h"
 #include "qlandmarkmanagerengine_symbian_p.h"
+#include "qlandmarkutility.h"
 
 #include <QDebug>
 
@@ -56,12 +51,6 @@
 QLandmarkManagerEngineSymbian::QLandmarkManagerEngineSymbian(const QString &filename)
 {
     d_ptr = new LandmarkManagerEngineSymbianPrivate(*this, filename);
-
-    QLandmarkManager::Error error = QLandmarkManager::NoError;
-    QString errorString = "";
-    QStringList attrKeys = landmarkAttributeKeys(&error, &errorString);
-    if (error == QLandmarkManager::NoError)
-        d_ptr->setLandmarkAttributeKeys(attrKeys);
 }
 
 /*!
@@ -411,57 +400,6 @@ bool QLandmarkManagerEngineSymbian::isReadOnly(const QLandmarkCategoryId &catego
 }
 
 /*!
- Returns whether extended attributes specific to this manager are enabled or not.
- If extended attributes are enabled, retrieved landmarks will have
- extra attribute keys accessible through the QLandmark::attribute() function.
- Extended attributes must be enabled to save any landmarks which possess
- extended attributes.  This same behaviour will also apply to categories
- if extended category attributes are supported.
- Errors are stored in \a error and \a errorString.
- */
-bool QLandmarkManagerEngineSymbian::isExtendedAttributesEnabled(QLandmarkManager::Error *error,
-    QString *errorString) const
-{
-    return d_ptr->isExtendedAttributesEnabled(error, errorString);
-}
-
-/*!
- Sets whether extended attributes are \a enabled or not.
- Errors are stored in \a error and \a errorString.
- */
-void QLandmarkManagerEngineSymbian::setExtendedAttributesEnabled(bool enabled,
-    QLandmarkManager::Error *error, QString *errorString)
-{
-    return d_ptr->setExtendedAttributesEnabled(enabled, error, errorString);
-}
-
-/*!
- Returns whether custom attributes are enabled or not. Custom attributes
- are arbitrary attributes created by the application for a landmark.
- If custom attributes are enabled (and the manager supports them),
- retrieved landmarks will have extra attributes accessible
- using QLandmark::customAttributes().  Custom attributes must be enabled
- to save any landmarks with possess custom attributes.  This same behaviour
- applies to categories if custom category attributes are supported.
- Errors are stored in \a error and \a errorString.
- */
-bool QLandmarkManagerEngineSymbian::isCustomAttributesEnabled(QLandmarkManager::Error *error,
-    QString *errorString) const
-{
-    return d_ptr->isCustomAttributesEnabled(error, errorString);
-}
-
-/*!
- Sets whether custom attributes are \a enabled or not.
- Errors are stored in \a error and \a errorString.
- */
-void QLandmarkManagerEngineSymbian::setCustomAttributesEnabled(bool enabled,
-    QLandmarkManager::Error *error, QString *errorString)
-{
-    return d_ptr->setCustomAttributesEnabled(enabled, error, errorString);
-}
-
-/*!
  Notifies the manager engine that the givan \a request has been destroyed.
  */
 void QLandmarkManagerEngineSymbian::requestDestroyed(QLandmarkAbstractRequest* request)
@@ -518,7 +456,7 @@ QStringList QLandmarkManagerEngineSymbian::landmarkAttributeKeys(QLandmarkManage
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
-    return QLandmarkManagerEngine::landmarkAttributeKeys(error, errorString);
+    return LandmarkUtility::landmarkAttributeKeys();
 }
 
 QStringList QLandmarkManagerEngineSymbian::categoryAttributeKeys(QLandmarkManager::Error *error,
@@ -528,7 +466,17 @@ QStringList QLandmarkManagerEngineSymbian::categoryAttributeKeys(QLandmarkManage
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
-    return QLandmarkManagerEngine::categoryAttributeKeys(error, errorString);
+    return LandmarkUtility::categoryAttributeKeys();
+}
+
+QStringList QLandmarkManagerEngineSymbian::searchableLandmarkAttributeKeys(
+    QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+    return LandmarkUtility::searchableLandmarkAttributeKeys();
 }
 
 //protected methods
@@ -677,10 +625,6 @@ void QLandmarkManagerEngineSymbian::handleLandmarkEvent(LandmarkEventObserver::l
     case LandmarkEventObserver::unknownChanges:
     {
         emit dataChanged();
-        break;
-    }
-    default:
-    {
         break;
     }
     } // switch closure

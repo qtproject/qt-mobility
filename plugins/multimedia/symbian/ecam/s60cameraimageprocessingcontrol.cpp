@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -61,7 +55,11 @@ S60CameraImageProcessingControl::S60CameraImageProcessingControl(S60ImageCapture
     m_session(NULL),
     m_advancedSettings(NULL)
 {
-    m_session = session;
+    if (session)
+        m_session = session;
+    else
+        Q_ASSERT(true);
+    // From now on it is safe to assume session exists
 }
 
 S60CameraImageProcessingControl::~S60CameraImageProcessingControl()
@@ -81,9 +79,10 @@ QCameraImageProcessing::WhiteBalanceMode S60CameraImageProcessingControl::whiteB
 
 void S60CameraImageProcessingControl::setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode)
 {
-    if (isWhiteBalanceModeSupported(mode)) {
+    if (isWhiteBalanceModeSupported(mode))
         m_session->setWhiteBalanceMode(mode);
-    }
+    else
+        m_session->setError(KErrNotSupported, QString("Requested white balance mode is not supported."));
 }
 
 bool S60CameraImageProcessingControl::isWhiteBalanceModeSupported(
@@ -99,23 +98,31 @@ int S60CameraImageProcessingControl::manualWhiteBalance() const
 
 void S60CameraImageProcessingControl::setManualWhiteBalance(int colorTemperature)
 {
+    m_session->setError(KErrNotSupported, QString("Setting manual white balance is not supported."));
     Q_UNUSED(colorTemperature)
 }
 
 bool S60CameraImageProcessingControl::isProcessingParameterSupported(ProcessingParameter parameter) const
 {
+    // First check settings requiring Adv. Settings
+    if (m_advancedSettings) {
+        switch (parameter) {
+            case QCameraImageProcessingControl::Saturation:
+                return true;
+            case QCameraImageProcessingControl::Sharpening:
+                return isSharpeningSupported();
+            case QCameraImageProcessingControl::Denoising:
+                return isDenoisingSupported();
+            case QCameraImageProcessingControl::ColorTemperature:
+                return false;
+        }
+    }
+
+    // Then the rest
     switch (parameter) {
         case QCameraImageProcessingControl::Contrast:
-        case QCameraImageProcessingControl::Saturation:
-            return true;
-        case QCameraImageProcessingControl::Sharpening:
-            return isSharpeningSupported();
-        case QCameraImageProcessingControl::Denoising:
-            return isDenoisingSupported();
-        case QCameraImageProcessingControl::ColorTemperature:
-            return false;
         case QCameraImageProcessingControl::Brightness:
-            return false;
+            return true;
 
         default:
             return false;
@@ -131,7 +138,7 @@ QVariant S60CameraImageProcessingControl::processingParameter(
         case QCameraImageProcessingControl::Saturation:
             return QVariant(saturation());
         case QCameraImageProcessingControl::Brightness:
-            return QVariant();
+            return QVariant(brightness());
         case QCameraImageProcessingControl::Sharpening:
             return QVariant(sharpeningLevel());
         case QCameraImageProcessingControl::Denoising:
@@ -155,6 +162,7 @@ void S60CameraImageProcessingControl::setProcessingParameter(
             setSaturation(value.toInt());
             break;
         case QCameraImageProcessingControl::Brightness:
+            setBrightness(value.toInt());
             break;
         case QCameraImageProcessingControl::Sharpening:
             if (isSharpeningSupported())
@@ -183,10 +191,22 @@ int S60CameraImageProcessingControl::contrast() const
     return m_session->contrast();
 }
 
+void S60CameraImageProcessingControl::setBrightness(int value)
+{
+    m_session->setBrightness(value);
+}
+
+int S60CameraImageProcessingControl::brightness() const
+{
+    return m_session->brightness();
+}
+
 void S60CameraImageProcessingControl::setSaturation(int value)
 {
     if (m_advancedSettings)
         m_advancedSettings->setSaturation(value);
+    else
+        m_session->setError(KErrNotSupported, QString("Setting saturation is not supported."));
 }
 
 int S60CameraImageProcessingControl::saturation() const
@@ -198,6 +218,7 @@ int S60CameraImageProcessingControl::saturation() const
 
 void S60CameraImageProcessingControl::setDenoisingLevel(int value)
 {
+    m_session->setError(KErrNotSupported, QString("Setting denoising level is not supported."));
     Q_UNUSED(value); // Not supported for Symbian
 }
 
@@ -215,6 +236,8 @@ void S60CameraImageProcessingControl::setSharpeningLevel(int value)
 {
     if (m_advancedSettings)
         m_advancedSettings->setSharpeningLevel(value);
+    else
+        m_session->setError(KErrNotSupported, QString("Setting sharpening level is not supported."));
 }
 
 bool S60CameraImageProcessingControl::isSharpeningSupported() const

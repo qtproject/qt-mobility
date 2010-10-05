@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -51,41 +45,6 @@
 QT_BEGIN_NAMESPACE
 
 namespace SymbianAudio {
-
-DevSoundCapabilities::DevSoundCapabilities(CMMFDevSound &devsound,
-                                           QAudio::Mode mode)
-{
-    QT_TRAP_THROWING(constructL(devsound, mode));
-}
-
-DevSoundCapabilities::~DevSoundCapabilities()
-{
-    m_fourCC.Close();
-}
-
-void DevSoundCapabilities::constructL(CMMFDevSound &devsound,
-                                      QAudio::Mode mode)
-{
-    m_caps = devsound.Capabilities();
-
-    TMMFPrioritySettings settings;
-
-    switch (mode) {
-    case QAudio::AudioOutput:
-        settings.iState = EMMFStatePlaying;
-        devsound.GetSupportedInputDataTypesL(m_fourCC, settings);
-        break;
-
-    case QAudio::AudioInput:
-        settings.iState = EMMFStateRecording;
-        devsound.GetSupportedInputDataTypesL(m_fourCC, settings);
-        break;
-
-    default:
-        Q_ASSERT_X(false, Q_FUNC_INFO, "Invalid mode");
-    }
-}
-
 namespace Utils {
 
 //-----------------------------------------------------------------------------
@@ -280,11 +239,8 @@ bool sampleInfoQtToNative(int inputSampleSize,
     return found;
 }
 
-//-----------------------------------------------------------------------------
-// Public functions
-//-----------------------------------------------------------------------------
-
-void capabilitiesNativeToQt(const DevSoundCapabilities &caps,
+void capabilitiesNativeToQt(const TMMFCapabilities &caps,
+                            const TFourCC &fourcc,
                             QList<int> &frequencies,
                             QList<int> &channels,
                             QList<int> &sampleSizes,
@@ -298,37 +254,20 @@ void capabilitiesNativeToQt(const DevSoundCapabilities &caps,
     channels.clear();
 
     for (int i=0; i<SampleRateCount; ++i)
-        if (caps.caps().iRate & SampleRateListNative[i])
+        if (caps.iRate & SampleRateListNative[i])
             frequencies += SampleRateListQt[i];
 
     for (int i=0; i<ChannelsCount; ++i)
-        if (caps.caps().iChannels & ChannelsListNative[i])
+        if (caps.iChannels & ChannelsListNative[i])
             channels += ChannelsListQt[i];
 
     for (int i=0; i<EncodingCount; ++i) {
-        if (caps.fourCC().Find(EncodingFourCC[i]) != KErrNotFound) {
+        if (fourcc == EncodingFourCC[i]) {
             sampleSizes += EncodingSampleSize[i];
             byteOrders += EncodingByteOrder[i];
             sampleTypes += EncodingSampleType[i];
         }
     }
-
-}
-
-bool isFormatSupported(const QAudioFormat &formatQt,
-                       const DevSoundCapabilities &caps) {
-    TMMFCapabilities formatNative;
-    TUint32 fourCC;
-
-    bool result = false;
-    if (formatQt.codec() == QString::fromAscii("audio/pcm") &&
-        formatQtToNative(formatQt, fourCC, formatNative)) {
-        result =
-                (formatNative.iRate & caps.caps().iRate)
-            &&  (formatNative.iChannels & caps.caps().iChannels)
-            &&  (caps.fourCC().Find(fourCC) != KErrNotFound);
-    }
-    return result;
 }
 
 bool formatQtToNative(const QAudioFormat &inputFormat,
@@ -343,7 +282,7 @@ bool formatQtToNative(const QAudioFormat &inputFormat,
     TMMFMonoStereo outputChannels;
     TMMFSoundEncoding outputEncoding;
 
-    if (inputFormat.codec() == QString::fromAscii("audio/pcm")) {
+    if (inputFormat.codec() == QLatin1String("audio/pcm")) {
         result =
                 sampleRateQtToNative(inputFormat.frequency(), outputSampleRate)
             &&  channelsQtToNative(inputFormat.channels(), outputChannels)
@@ -363,19 +302,19 @@ bool formatQtToNative(const QAudioFormat &inputFormat,
     return result;
 }
 
-QAudio::State stateNativeToQt(State nativeState,
-                              QAudio::State initializingState)
+QAudio::State stateNativeToQt(State nativeState)
 {
     switch (nativeState) {
     case ClosedState:
         return QAudio::StoppedState;
     case InitializingState:
-        return initializingState;
+        return QAudio::StoppedState;
     case ActiveState:
         return QAudio::ActiveState;
     case IdleState:
         return QAudio::IdleState;
-    case SuspendedState:
+    case SuspendedPausedState:
+    case SuspendedStoppedState:
         return QAudio::SuspendedState;
     default:
         Q_ASSERT_X(false, Q_FUNC_INFO, "Invalid state");
@@ -394,6 +333,310 @@ qint64 samplesToBytes(const QAudioFormat &format, qint64 samples)
 }
 
 } // namespace Utils
+
+
+//-----------------------------------------------------------------------------
+// DevSoundWrapper
+//-----------------------------------------------------------------------------
+
+DevSoundWrapper::DevSoundWrapper(QAudio::Mode mode, QObject *parent)
+    :   QObject(parent)
+    ,   m_mode(mode)
+    ,   m_state(StateIdle)
+    ,   m_devsound(0)
+    ,   m_fourcc(0)
+{
+    QT_TRAP_THROWING(m_devsound = CMMFDevSound::NewL());
+
+    switch (mode) {
+    case QAudio::AudioOutput:
+        m_nativeMode = EMMFStatePlaying;
+        break;
+
+    case QAudio::AudioInput:
+        m_nativeMode = EMMFStateRecording;
+        break;
+
+    default:
+        Q_ASSERT_X(false, Q_FUNC_INFO, "Invalid mode");
+    }
+
+    getSupportedCodecs();
+}
+
+DevSoundWrapper::~DevSoundWrapper()
+{
+    delete m_devsound;
+}
+
+const QList<QString>& DevSoundWrapper::supportedCodecs() const
+{
+    return m_supportedCodecs;
+}
+
+void DevSoundWrapper::initialize(const QString& codec)
+{
+    Q_ASSERT(StateInitializing != m_state);
+    m_state = StateInitializing;
+    if (QLatin1String("audio/pcm") == codec) {
+        m_fourcc = KMMFFourCCCodePCM16;
+        TRAPD(err, m_devsound->InitializeL(*this, m_fourcc, m_nativeMode));
+        if (KErrNone != err) {
+            m_state = StateIdle;
+            emit initializeComplete(err);
+        }
+    } else {
+        emit initializeComplete(KErrNotSupported);
+    }
+}
+
+const QList<int>& DevSoundWrapper::supportedFrequencies() const
+{
+    Q_ASSERT(StateInitialized == m_state);
+    return m_supportedFrequencies;
+}
+
+const QList<int>& DevSoundWrapper::supportedChannels() const
+{
+    Q_ASSERT(StateInitialized == m_state);
+    return m_supportedChannels;
+}
+
+const QList<int>& DevSoundWrapper::supportedSampleSizes() const
+{
+    Q_ASSERT(StateInitialized == m_state);
+    return m_supportedSampleSizes;
+}
+
+const QList<QAudioFormat::Endian>& DevSoundWrapper::supportedByteOrders() const
+{
+    Q_ASSERT(StateInitialized == m_state);
+    return m_supportedByteOrders;
+}
+
+const QList<QAudioFormat::SampleType>& DevSoundWrapper::supportedSampleTypes() const
+{
+    Q_ASSERT(StateInitialized == m_state);
+    return m_supportedSampleTypes;
+}
+
+bool DevSoundWrapper::isFormatSupported(const QAudioFormat &format) const
+{
+    Q_ASSERT(StateInitialized == m_state);
+    return m_supportedCodecs.contains(format.codec())
+        && m_supportedFrequencies.contains(format.frequency())
+        && m_supportedChannels.contains(format.channels())
+        && m_supportedSampleSizes.contains(format.sampleSize())
+        && m_supportedSampleTypes.contains(format.sampleType())
+        && m_supportedByteOrders.contains(format.byteOrder());
+}
+
+int DevSoundWrapper::samplesProcessed() const
+{
+    int result = 0;
+    if (StateInitialized == m_state) {
+        switch (m_mode) {
+        case QAudio::AudioInput:
+            result = m_devsound->SamplesRecorded();
+            break;
+        case QAudio::AudioOutput:
+            result = m_devsound->SamplesPlayed();
+            break;
+        }
+    }
+    return result;
+}
+
+bool DevSoundWrapper::setFormat(const QAudioFormat &format)
+{
+    Q_ASSERT(StateInitialized == m_state);
+    bool result = false;
+    TUint32 fourcc;
+    TMMFCapabilities nativeFormat;
+    if (Utils::formatQtToNative(format, fourcc, nativeFormat)) {
+        TMMFCapabilities currentNativeFormat = m_devsound->Config();
+        nativeFormat.iBufferSize = currentNativeFormat.iBufferSize;
+        TRAPD(err, m_devsound->SetConfigL(nativeFormat));
+        result = (KErrNone == err);
+    }
+    return result;
+}
+
+bool DevSoundWrapper::start()
+{
+    Q_ASSERT(StateInitialized == m_state);
+    int err = KErrArgument;
+    switch (m_mode) {
+    case QAudio::AudioInput:
+        TRAP(err, m_devsound->RecordInitL());
+        break;
+    case QAudio::AudioOutput:
+        TRAP(err, m_devsound->PlayInitL());
+        break;
+    }
+    return (KErrNone == err);
+}
+
+bool DevSoundWrapper::pause()
+{
+    Q_ASSERT(StateInitialized == m_state);
+    const bool canPause = isResumeSupported();
+    if (canPause)
+        m_devsound->Pause();
+    else
+        stop();
+    return canPause;
+}
+
+void DevSoundWrapper::resume()
+{
+    Q_ASSERT(StateInitialized == m_state);
+    Q_ASSERT(isResumeSupported());
+    // TODO: QTBUG-13625
+}
+
+void DevSoundWrapper::stop()
+{
+    m_devsound->Stop();
+}
+
+void DevSoundWrapper::bufferProcessed()
+{
+    Q_ASSERT(StateInitialized == m_state);
+    switch (m_mode) {
+    case QAudio::AudioInput:
+        m_devsound->RecordData();
+        break;
+    case QAudio::AudioOutput:
+        m_devsound->PlayData();
+        break;
+    }
+}
+
+void DevSoundWrapper::getSupportedCodecs()
+{
+/*
+ * TODO: once we support formats other than PCM, this function should
+ * convert the array of FourCC codes into MIME types for each codec.
+ *
+    RArray<TFourCC> fourcc;
+    QT_TRAP_THROWING(CleanupClosePushL(&fourcc));
+
+    TMMFPrioritySettings settings;
+    switch (mode) {
+    case QAudio::AudioOutput:
+        settings.iState = EMMFStatePlaying;
+        m_devsound->GetSupportedInputDataTypesL(fourcc, settings);
+        break;
+
+    case QAudio::AudioInput:
+        settings.iState = EMMFStateRecording;
+        m_devsound->GetSupportedInputDataTypesL(fourcc, settings);
+        break;
+
+    default:
+        Q_ASSERT_X(false, Q_FUNC_INFO, "Invalid mode");
+    }
+
+    CleanupStack::PopAndDestroy(); // fourcc
+*/
+
+    m_supportedCodecs.append(QLatin1String("audio/pcm"));
+}
+
+void DevSoundWrapper::populateCapabilities()
+{
+    m_supportedFrequencies.clear();
+    m_supportedChannels.clear();
+    m_supportedSampleSizes.clear();
+    m_supportedByteOrders.clear();
+    m_supportedSampleTypes.clear();
+
+    const TMMFCapabilities caps = m_devsound->Capabilities();
+
+    for (int i=0; i<Utils::SampleRateCount; ++i)
+        if (caps.iRate & Utils::SampleRateListNative[i])
+            m_supportedFrequencies += Utils::SampleRateListQt[i];
+
+    for (int i=0; i<Utils::ChannelsCount; ++i)
+        if (caps.iChannels & Utils::ChannelsListNative[i])
+            m_supportedChannels += Utils::ChannelsListQt[i];
+
+    for (int i=0; i<Utils::EncodingCount; ++i) {
+        if (m_fourcc == Utils::EncodingFourCC[i]) {
+            m_supportedSampleSizes += Utils::EncodingSampleSize[i];
+            m_supportedByteOrders += Utils::EncodingByteOrder[i];
+            m_supportedSampleTypes += Utils::EncodingSampleType[i];
+        }
+    }
+}
+
+bool DevSoundWrapper::isResumeSupported() const
+{
+    // TODO: QTBUG-13625
+    return false;
+}
+
+void DevSoundWrapper::InitializeComplete(TInt aError)
+{
+    Q_ASSERT(StateInitializing == m_state);
+    if (KErrNone == aError) {
+        m_state = StateInitialized;
+        populateCapabilities();
+    } else {
+        m_state = StateIdle;
+    }
+    emit initializeComplete(aError);
+}
+
+void DevSoundWrapper::ToneFinished(TInt aError)
+{
+    Q_UNUSED(aError)
+    // This class doesn't use DevSound's tone playback functions, so should
+    // never receive this callback.
+    Q_ASSERT_X(false, Q_FUNC_INFO, "Unexpected callback");
+}
+
+void DevSoundWrapper::BufferToBeFilled(CMMFBuffer *aBuffer)
+{
+    Q_ASSERT(QAudio::AudioOutput == m_mode);
+    emit bufferToBeProcessed(aBuffer);
+}
+
+void DevSoundWrapper::PlayError(TInt aError)
+{
+    Q_ASSERT(QAudio::AudioOutput == m_mode);
+    emit processingError(aError);
+}
+
+void DevSoundWrapper::BufferToBeEmptied(CMMFBuffer *aBuffer)
+{
+    Q_ASSERT(QAudio::AudioInput == m_mode);
+    emit bufferToBeProcessed(aBuffer);
+}
+
+void DevSoundWrapper::RecordError(TInt aError)
+{
+    Q_ASSERT(QAudio::AudioInput == m_mode);
+    emit processingError(aError);
+}
+
+void DevSoundWrapper::ConvertError(TInt aError)
+{
+    Q_UNUSED(aError)
+    // This class doesn't use DevSound's format conversion functions, so
+    // should never receive this callback.
+    Q_ASSERT_X(false, Q_FUNC_INFO, "Unexpected callback");
+}
+
+void DevSoundWrapper::DeviceMessage(TUid aMessageType, const TDesC8 &aMsg)
+{
+    Q_UNUSED(aMessageType)
+    Q_UNUSED(aMsg)
+    // Ignore this callback.
+}
+
+
 } // namespace SymbianAudio
 
 QT_END_NAMESPACE

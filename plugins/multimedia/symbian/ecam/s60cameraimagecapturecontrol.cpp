@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -53,33 +47,44 @@
 #include "s60cameracontrol.h"
 
 S60CameraImageCaptureControl::S60CameraImageCaptureControl(QObject *parent) :
-    QCameraImageCaptureControl(parent),
-    m_driveMode(QCameraImageCapture::SingleImageCapture)
+    QCameraImageCaptureControl(parent)
 {
 }
 
 S60CameraImageCaptureControl::S60CameraImageCaptureControl(S60ImageCaptureSession *session, QObject *parent) :
     QCameraImageCaptureControl(parent),
-    m_driveMode(QCameraImageCapture::SingleImageCapture)
+    m_driveMode(QCameraImageCapture::SingleImageCapture) // Default DriveMode
 {
-    m_session = session;
+    if (session)
+        m_session = session;
+    else
+        Q_ASSERT(true);
+    // From now on it is safe to assume session exists
+
     if (qstrcmp(parent->metaObject()->className(), "S60CameraService") == 0) {
         m_service = qobject_cast<S60CameraService*>(parent);
+    } else {
+        Q_ASSERT(true);
     }
 
     if (m_service)
             m_cameraControl =
                 qobject_cast<S60CameraControl *>(m_service->requestControl(QCameraControl_iid));
 
+    if (!m_cameraControl)
+        m_session->setError(KErrGeneral, QString("Unexpected camera error."));
+
     // Chain these signals from session class
     connect(m_session, SIGNAL(imageCaptured(const int, QImage)),
         this, SIGNAL(imageCaptured(const int, QImage)));
     connect(m_session, SIGNAL(readyForCaptureChanged(bool)),
             this, SIGNAL(readyForCaptureChanged(bool)));
-    connect(m_session, SIGNAL(imageSaved(const int, const QString &)),
-            this, SIGNAL(imageSaved(const int, const QString &)));
-    connect(m_session, SIGNAL(error(int, const QString &)),
-            this, SLOT(handleError(int, const QString &)));
+    connect(m_session, SIGNAL(imageSaved(const int, const QString&)),
+            this, SIGNAL(imageSaved(const int, const QString&)));
+    connect(m_session, SIGNAL(imageExposed(int)),
+            this, SIGNAL(imageExposed(int)));
+    connect(m_session, SIGNAL(captureError(int, int, const QString&)),
+            this, SIGNAL(error(int, int, const QString&)));
 }
 
 S60CameraImageCaptureControl::~S60CameraImageCaptureControl()
@@ -92,11 +97,7 @@ bool S60CameraImageCaptureControl::isReadyForCapture() const
         return false;
     }
 
-    if (m_session) {
-        return m_session->isDeviceReady();
-    }
-
-    return false;
+    return m_session->isDeviceReady();
 }
 
 QCameraImageCapture::DriveMode S60CameraImageCaptureControl::driveMode() const
@@ -107,7 +108,7 @@ QCameraImageCapture::DriveMode S60CameraImageCaptureControl::driveMode() const
 void S60CameraImageCaptureControl::setDriveMode(QCameraImageCapture::DriveMode mode)
 {
     if (mode != QCameraImageCapture::SingleImageCapture) {
-        emit error(m_session->currentImageId(), QCamera::NotSupportedFeatureError, tr("DriveMode not supported."));
+        emit error((m_session->currentImageId() + 1), QCamera::NotSupportedFeatureError, tr("DriveMode not supported."));
         return;
     }
 
@@ -117,25 +118,18 @@ void S60CameraImageCaptureControl::setDriveMode(QCameraImageCapture::DriveMode m
 int S60CameraImageCaptureControl::capture(const QString &fileName)
 {
     if (m_cameraControl && m_cameraControl->captureMode() != QCamera::CaptureStillImage) {
-        emit error(m_session->currentImageId(), QCamera::CameraError, tr("Incorrect CaptureMode."));
+        emit error((m_session->currentImageId() + 1), QCameraImageCapture::NotReadyError, tr("Incorrect CaptureMode."));
         return 0;
     }
 
-    int reqId = m_session->capture(fileName);
+    int imageId = m_session->capture(fileName);
 
-    return reqId;
+    return imageId;
 }
 
 void S60CameraImageCaptureControl::cancelCapture()
 {
-    if (m_session)
-        m_session->cancelCapture();
-}
-
-void S60CameraImageCaptureControl::handleError(int error, const QString &errorString)
-{
-    // Emit forward
-    emit this->error(m_session->currentImageId(), error, errorString);
+    m_session->cancelCapture();
 }
 
 // End of file

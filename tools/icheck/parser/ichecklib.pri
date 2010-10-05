@@ -11,7 +11,7 @@ HEADERS += $$REL_PATH_TO_SRC/shared/cplusplus/Array.h \
     $$REL_PATH_TO_SRC/shared/cplusplus/CheckName.h \
     $$REL_PATH_TO_SRC/shared/cplusplus/CheckSpecifier.h \
     $$REL_PATH_TO_SRC/shared/cplusplus/CheckStatement.h \
-    $$REL_PATH_TO_SRC/shared/cplusplus/Control.h \
+    $$REL_PATH_TO_SRC/shared/cplusplus/CppControl.h \
     $$REL_PATH_TO_SRC/plugins/coreplugin/core_global.h \
     $$REL_PATH_TO_SRC/shared/cplusplus/CoreTypes.h \
     $$REL_PATH_TO_SRC/shared/cplusplus/CPlusPlusForwardDeclarations.h \
@@ -71,7 +71,7 @@ SOURCES += $$REL_PATH_TO_SRC/shared/cplusplus/Array.cpp \
     $$REL_PATH_TO_SRC/shared/cplusplus/CheckName.cpp \
     $$REL_PATH_TO_SRC/shared/cplusplus/CheckSpecifier.cpp \
     $$REL_PATH_TO_SRC/shared/cplusplus/CheckStatement.cpp \
-    $$REL_PATH_TO_SRC/shared/cplusplus/Control.cpp \
+    $$REL_PATH_TO_SRC/shared/cplusplus/CppControl.cpp \
     $$REL_PATH_TO_SRC/shared/cplusplus/CoreTypes.cpp \
     $$REL_PATH_TO_SRC/libs/cplusplus/CppBindings.cpp \
     $$REL_PATH_TO_SRC/libs/cplusplus/CppDocument.cpp \

@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -48,12 +42,53 @@
 #ifndef S60VIDEOWIDGETCONTROL_H
 #define S60VIDEOWIDGETCONTROL_H
 
-#include <QtCore/qobject.h>
 #include <QtGui>
 #include <qvideowidgetcontrol.h>
 
 QT_USE_NAMESPACE
 
+/*
+ * This class implements the widget used for displaying DirectScreen
+ * ViewFinder with QVideoWidget on platforms that support it. Other platforms
+ * are using Bitmap ViewFinder.
+ */
+class S60ViewFinderWidget : public QLabel
+{
+    Q_OBJECT
+
+public: // Constructor & Destructor
+
+    S60ViewFinderWidget(QWidget *parent = 0);
+    virtual ~S60ViewFinderWidget();
+
+public: // Methods
+
+    void reconfigureWidget(const bool isVFDirect);
+
+Q_SIGNALS: // NativePaintEvent Signals
+
+    void beginVideoWindowNativePaint();
+    void endVideoWindowNativePaint();
+
+private Q_SLOTS: // Slots to receive NativePaintEvents
+
+    void beginNativePaintEvent(const QRect&);
+    void endNativePaintEvent(const QRect&);
+
+protected: // Re-implement Paint operation to avoid drawing over viewfinder view
+
+    void paintEvent(QPaintEvent *event);
+
+private: // Data
+
+    bool m_isDirect;
+};
+
+//#############################################################################
+
+/*
+ * Control for QVideoWidget viewfinder output.
+ */
 class S60VideoWidgetControl : public QVideoWidgetControl
 {
     Q_OBJECT
@@ -94,6 +129,8 @@ public: // QVideoWidgetControl
 public: // Internal
     
     bool eventFilter(QObject *object, QEvent *event);
+    void reconfigureWidget(const bool directVF);
+    WId windowId();
     
 /*    
 Q_SIGNALS: // QVideoWidgetControl
@@ -109,13 +146,15 @@ Q_SIGNALS: // Internal Signals
 
     void widgetResized(QSize size);
     void widgetUpdated();
+    void widgetVisible(bool isVisible);
 
 private: // Data
 
-    QLabel              *m_widget;
+    S60ViewFinderWidget *m_widget;
     WId                 m_windowId;
     Qt::AspectRatioMode m_aspectRatioMode;
     bool                m_fullScreen;
+    bool                m_isViewFinderDirect;
 };
 
 #endif // S60VIDEOWIDGETCONTROL_H

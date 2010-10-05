@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,27 +25,22 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
 #include "mainwindow.h"
+#include "mapwidget.h"
 
 #include <QApplication>
 #include <QPointF>
@@ -57,7 +52,9 @@
 #include <QMenuBar>
 #include <QPainter>
 #include <QDesktopWidget>
-#include <QMessageBox>
+#include <QDialog>
+#include <QProcessEnvironment>
+#include <QUrl>
 
 #include <QGridLayout>
 #include <QFormLayout>
@@ -69,7 +66,10 @@
 #include <QToolButton>
 #include <QRadioButton>
 #include <QSlider>
+#include <QSignalMapper>
 
+#include <qnetworkconfigmanager.h>
+#include <qgeoboundingcircle.h>
 #include <qgeocoordinate.h>
 #include <qgeomaprectangleobject.h>
 #include <qgeomappixmapobject.h>
@@ -77,10 +77,9 @@
 #include <qgeomappolygonobject.h>
 #include <qgeomaprouteobject.h>
 #include <qgeomaptextobject.h>
+#include <qgeomapcircleobject.h>
 #include <qgeorouterequest.h>
-#include <qnetworkconfigmanager.h>
-
-#include <cmath>
+#include <qgeoboundingbox.h>
 
 #define MARKER_HEIGHT 36
 #define MARKER_WIDTH 25
@@ -88,314 +87,130 @@
 
 QTM_USE_NAMESPACE
 
-// TODO: Some of these could be exposed in a GUI and should probably be put elsewhere in that case (and made non-const)
-#ifdef Q_OS_SYMBIAN
-static const bool enableKineticPanning = true;
-static const qreal kineticPanningHalflife = 200.0; // time until kinetic panning speed slows down to 50%, in msec
-static const qreal panSpeedNormal = 0.3; // keyboard panning speed without modifiers, in pixels/msec
-static const qreal panSpeedFast = 1.0; // keyboard panning speed with shift, in pixels/msec
-static const qreal kineticPanSpeedThreshold = 0.02; // minimum panning speed, in pixels/msec
-static const int kineticPanningResolution = 75; // temporal resolution. Smaller values take more CPU but improve visual quality
-static const int holdTimeThreshold = 200; // maximum time between last mouse move and mouse release for kinetic panning to kick in
-#else
-static const bool enableKineticPanning = true;
-static const qreal kineticPanningHalflife = 300.0; // time until kinetic panning speed slows down to 50%, in msec
-static const qreal panSpeedNormal = 0.3; // keyboard panning speed without modifiers, in pixels/msec
-static const qreal panSpeedFast = 1.0; // keyboard panning speed with shift, in pixels/msec
-static const qreal kineticPanSpeedThreshold = 0.005; // minimum panning speed, in pixels/msec
-static const int kineticPanningResolution = 30; // temporal resolution. Smaller values take more CPU but improve visual quality
-static const int holdTimeThreshold = 100; // maximum time between last mouse move and mouse release for kinetic panning to kick in
-#endif
-
-MapWidget::MapWidget(QGeoMappingManager *manager) :
-        QGraphicsGeoMap(manager),
-        coordQueryState(false),
-        panActive(false),
-        kineticTimer(new QTimer),
-        lastCircle(0)
-{
-    for (int i = 0; i < 5; ++i) mouseHistory.append(MouseHistoryEntry());
-
-    connect(kineticTimer, SIGNAL(timeout()), this, SLOT(kineticTimerEvent()));
-    kineticTimer->setInterval(kineticPanningResolution);
-}
-
-MapWidget::~MapWidget() {}
-
-void MapWidget::setMouseClickCoordQuery(bool state)
-{
-    coordQueryState = state;
-}
-
-void MapWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
-{
-    setFocus();
-    if (event->button() == Qt::LeftButton) {
-        if (event->modifiers() & Qt::ControlModifier) {
-        } else {
-            if (coordQueryState) {
-                emit coordQueryResult(screenPositionToCoordinate(event->lastPos()));
-                return;
-            }
-
-            panActive = true;
-
-            // When pressing, stop the timer and stop all current kinetic panning
-            kineticTimer->stop();
-            kineticPanSpeed = QPointF();
-
-            lastMoveTime = QTime::currentTime();
-        }
-    }
-
-    event->accept();
-}
-
-void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
-{
-    if (event->button() == Qt::LeftButton) {
-        if (panActive) {
-            panActive = false;
-
-            if (!enableKineticPanning || lastMoveTime.msecsTo(QTime::currentTime()) > holdTimeThreshold) {
-                return;
-            }
-
-            kineticPanSpeed = QPointF();
-            int entries_considered = 0;
-
-            QTime currentTime = QTime::currentTime();
-            foreach(MouseHistoryEntry entry, mouseHistory) {
-                // first=speed, second=time
-                int deltaTime = entry.second.msecsTo(currentTime);
-                if (deltaTime < holdTimeThreshold) {
-                    kineticPanSpeed += entry.first;
-                    entries_considered++;
-                }
-            }
-            if (entries_considered > 0) kineticPanSpeed /= entries_considered;
-            lastMoveTime = currentTime;
-
-            // When releasing the mouse button/finger while moving, start the kinetic panning timer (which also takes care of calling stopPanning).
-            kineticTimer->start();
-            panDecellerate = true;
-        }
-    }
-
-    event->accept();
-}
-
-void MapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
-{
-    if (event->modifiers() & Qt::ControlModifier) {
-        if (lastCircle)
-            lastCircle->setCenter(this->screenPositionToCoordinate(event->pos()));
-    } else if (panActive) {
-        // Calculate time delta
-        QTime currentTime = QTime::currentTime();
-        int deltaTime = lastMoveTime.msecsTo(currentTime);
-        lastMoveTime = currentTime;
-
-        // Calculate position delta
-        QPointF delta = event->lastPos() - event->pos();
-
-        // Calculate and set speed (TODO: average over 3 events)
-        if (deltaTime > 0) {
-            kineticPanSpeed = delta / deltaTime;
-
-            mouseHistory.push_back(MouseHistoryEntry(kineticPanSpeed, currentTime));
-            mouseHistory.pop_front();
-        }
-
-        // Pan map
-        panFloatWrapper(delta);
-    }
-
-    event->accept();
-}
-
-void MapWidget::kineticTimerEvent()
-{
-    QTime currentTime = QTime::currentTime();
-    int deltaTime = lastMoveTime.msecsTo(currentTime);
-    lastMoveTime = currentTime;
-
-    if (panDecellerate)
-        kineticPanSpeed *= pow(qreal(0.5), qreal(deltaTime / kineticPanningHalflife));
-
-    QPointF scaledSpeed = kineticPanSpeed * deltaTime;
-
-    if (kineticPanSpeed.manhattanLength() < kineticPanSpeedThreshold) {
-        // Kinetic panning is almost halted -> stop it.
-        kineticTimer->stop();
-        return;
-    }
-    panFloatWrapper(scaledSpeed);
-}
-
-// Wraps the pan(int, int) method to achieve floating point accuracy, which is needed to scroll smoothly.
-void MapWidget::panFloatWrapper(const QPointF& delta)
-{
-    // Add to previously stored panning distance
-    remainingPan += delta;
-
-    // Convert to integers
-    QPoint move = remainingPan.toPoint();
-
-    // Commit mouse movement
-    pan(move.x(), move.y());
-
-    // Store committed mouse movement
-    remainingPan -= move;
-
-}
-
-void MapWidget::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
-{
-    setFocus();
-
-    pan(event->lastPos().x() -  size().width() / 2.0, event->lastPos().y() - size().height() / 2.0);
-    if (zoomLevel() < maximumZoomLevel())
-        setZoomLevel(zoomLevel() + 1);
-
-    event->accept();
-}
-
-void MapWidget::keyPressEvent(QKeyEvent *event)
-{
-    switch (event->key()) {
-        case Qt::Key_Minus:
-            if (zoomLevel() > minimumZoomLevel()) {
-                setZoomLevel(zoomLevel() - 1);
-            }
-            break;
-
-        case Qt::Key_Plus:
-            if (zoomLevel() < maximumZoomLevel()) {
-                setZoomLevel(zoomLevel() + 1);
-            }
-            break;
-
-        case Qt::Key_T:
-            if (mapType() == QGraphicsGeoMap::StreetMap)
-                setMapType(QGraphicsGeoMap::SatelliteMapDay);
-            else if (mapType() == QGraphicsGeoMap::SatelliteMapDay)
-                setMapType(QGraphicsGeoMap::StreetMap);
-            break;
-
-        case Qt::Key_Shift:
-            // If there's no current movement, we don't need to handle shift.
-            if (panDir.manhattanLength() == 0) break;
-        case Qt::Key_Left:
-        case Qt::Key_Right:
-        case Qt::Key_Up:
-        case Qt::Key_Down:
-            if (!event->isAutoRepeat()) {
-                switch (event->key()) {
-                    case Qt::Key_Left:
-                        panDir.setX(-1);
-                        break;
-
-                    case Qt::Key_Right:
-                        panDir.setX(1);
-                        break;
-
-                    case Qt::Key_Up:
-                        panDir.setY(-1);
-                        break;
-
-                    case Qt::Key_Down:
-                        panDir.setY(1);
-                        break;
-                }
-
-                lastMoveTime = QTime::currentTime();
-                kineticTimer->start();
-                panDecellerate = false;
-
-                applyPan(event->modifiers());
-            }
-            break;
-    }
-
-    event->accept();
-}
-
-void MapWidget::keyReleaseEvent(QKeyEvent* event)
-{
-    event->accept();
-
-    // Qt seems to have auto-repeated release events too...
-    if (event->isAutoRepeat()) return;
-
-    switch (event->key()) {
-        case Qt::Key_Left:
-        case Qt::Key_Right:
-            panDir.setX(0);
-            break;
-
-        case Qt::Key_Up:
-        case Qt::Key_Down:
-            panDir.setY(0);
-            break;
-
-        case Qt::Key_Shift:
-            if (panDir.manhattanLength() == 0) return;
-            break;
-
-        default:
-            return;
-    }
-
-    applyPan(event->modifiers());
-}
-
-// Evaluates the panDir field and sets kineticPanSpeed accordingly. Used in MapWidget::keyPressEvent and MapWidget::keyReleaseEvent
-void MapWidget::applyPan(const Qt::KeyboardModifiers& modifiers)
-{
-    Q_ASSERT(panDir.manhattanLength() <= 2);
-
-    if (panDir.manhattanLength() == 0) {
-        // If no more direction keys are held down, decellerate
-        panDecellerate = true;
-    } else {
-        // Otherwise, set new direction
-        qreal panspeed = (modifiers & Qt::ShiftModifier) ? panSpeedFast : panSpeedNormal;
-
-        if (panDir.manhattanLength() == 2) {
-            // If 2 keys are held down, adjust speed to achieve the same speed in all 8 possible directions
-            panspeed *= sqrt(0.5);
-        }
-
-        // Finally set the current panning speed
-        kineticPanSpeed = QPointF(panDir) * panspeed;
-    }
-}
-
-void MapWidget::wheelEvent(QGraphicsSceneWheelEvent* event)
-{
-    if (event->delta() > 0) { //zoom in
-        if (zoomLevel() < maximumZoomLevel()) {
-            setZoomLevel(zoomLevel() + 1);
-        }
-    } else { //zoom out
-        if (zoomLevel() > minimumZoomLevel()) {
-            setZoomLevel(zoomLevel() - 1);
-        }
-    }
-    event->accept();
-}
-
-/**************************************************************************************
-**************************************************************************************/
-
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
         m_serviceProvider(0),
+        m_mapWidget(0),
         m_popupMenu(0),
         m_controlsVisible(true)
 {
     setWindowTitle(tr("Map Viewer Demo"));
+
+    // initial ui setup
+    // setup graphics view containing map widget
+
+    QGraphicsScene* scene = new QGraphicsScene(this);
+    m_qgv = new QGraphicsView(scene, this);
+    m_qgv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_qgv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_qgv->setVisible(true);
+    m_qgv->setInteractive(true);
+
+    // setup slider control
+
+    m_slider = new QSlider(Qt::Vertical, this);
+    m_slider->setTickInterval(1);
+    m_slider->setTickPosition(QSlider::TicksBothSides);
+
+    // setup lat/lon control
+
+    m_latitudeEdit = new QLineEdit();
+    m_longitudeEdit = new QLineEdit();
+
+    QFormLayout *latitudeLayout = new QFormLayout();
+    QFormLayout *longitudeLayout = new QFormLayout();
+
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    latitudeLayout->addRow(tr("Lat:"), m_latitudeEdit);
+    longitudeLayout->addRow(tr("Lng:"), m_longitudeEdit);
+#else
+    latitudeLayout->addRow(tr("Latitude"), m_latitudeEdit);
+    longitudeLayout->addRow(tr("Longitude"), m_longitudeEdit);
+#endif
+
+    m_setCoordsButton = new QPushButton();
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    m_setCoordsButton->setText(tr("Goto coords"));
+#else
+    m_setCoordsButton->setText(tr("Go to coordinates"));
+#endif
+
+    m_searchEdit = new QLineEdit();
+
+    m_searchButton = new QPushButton();
+    m_searchButton->setText(tr("Search"));
+
+    QGridLayout *searchLayout = new QGridLayout();
+    searchLayout->setColumnStretch(0, 1);
+    searchLayout->setColumnStretch(1, 0);
+    searchLayout->addWidget(m_searchEdit, 0, 0);
+    searchLayout->addWidget(m_searchButton, 0, 1);
+
+    QGridLayout *coordControlLayout = new QGridLayout();
+    coordControlLayout->addLayout(latitudeLayout, 0, 0);
+    coordControlLayout->addLayout(longitudeLayout, 0, 1);
+    coordControlLayout->addWidget(m_setCoordsButton, 1, 1, 1, 2);
+
+    QMenu * coordsMenu = new QMenu(tr("Coordinates"), this);
+
+    m_captureCoordsAction = new QAction(tr("Capture"), this);
+    coordsMenu->addAction(m_captureCoordsAction);
+    m_captureCoordsAction->setCheckable(true);
+
+    // Build coordinates dialog
+
+    m_coordControlDialog = new QDialog(this);
+    m_coordControlDialog->setLayout(coordControlLayout);
+
+    QAction * setCoordsAction = new QAction(tr("Go to"), this);
+    coordsMenu->addAction(setCoordsAction);
+    connect(m_setCoordsButton, SIGNAL(clicked()), m_coordControlDialog, SLOT(hide()));
+    connect(setCoordsAction, SIGNAL(triggered(bool)), m_coordControlDialog, SLOT(show()));
+
+    // Setup map type controls
+
+    QVector<QString> mapTypeNames;
+
+    m_mapControlTypes.append(QGraphicsGeoMap::StreetMap);         mapTypeNames.append(tr("Street"));
+    m_mapControlTypes.append(QGraphicsGeoMap::SatelliteMapDay);   mapTypeNames.append(tr("Satellite"));
+    m_mapControlTypes.append(QGraphicsGeoMap::SatelliteMapNight); mapTypeNames.append(tr("Satellite - Night"));
+    m_mapControlTypes.append(QGraphicsGeoMap::TerrainMap);        mapTypeNames.append(tr("Terrain"));
+
+    QSignalMapper * mapper = new QSignalMapper(this);
+    connect(mapper, SIGNAL(mapped(int)), this, SLOT(mapTypeToggled(int)));
+
+    QMenu * mapTypeMenu = new QMenu(tr("Map type"), this);
+
+    for (int i = 0; i < m_mapControlTypes.size(); ++i) {
+        QAction* action = new QAction(mapTypeNames[i], this);
+        action->setCheckable(true);
+
+        mapTypeMenu->addAction(action);
+        m_mapControlActions.append(action);
+
+        connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
+        mapper->setMapping(action, m_mapControlTypes[i]);
+    }
+
+    QGridLayout *layout = new QGridLayout();
+    layout->setRowStretch(0, 1);
+    layout->setRowStretch(1, 0);
+
+    layout->setColumnStretch(0, 0);
+    layout->setColumnStretch(1, 1);
+
+    layout->addWidget(m_slider, 0, 0, 2, 1);
+    layout->addWidget(m_qgv, 0, 1);
+    layout->addLayout(searchLayout, 1, 1);
+
+    m_layout = layout;
+
+    QWidget *widget = new QWidget(this);
+    widget->setLayout(layout);
+    setCentralWidget(widget);
+
+    menuBar()->addMenu(mapTypeMenu);
+    menuBar()->addMenu(coordsMenu);
 
     // Set Internet Access Point
     QNetworkConfigurationManager manager;
@@ -417,11 +232,8 @@ MainWindow::MainWindow(QWidget *parent) :
             SLOT(error(QNetworkSession::SessionError)));
 
     m_session->open();
-    m_session->waitForOpened();
 
-    QNetworkProxyFactory::setUseSystemConfiguration(true);
-    setProvider("nokia");
-    setupUi();
+    resize(652, 519);
 }
 
 MainWindow::~MainWindow()
@@ -429,41 +241,84 @@ MainWindow::~MainWindow()
     delete m_serviceProvider;
 }
 
-void MainWindow::networkSessionOpened()
+void MainWindow::setupUi()
 {
-}
+    // setup exit menu for devices
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    QAction* exitAction = new QAction(tr("Exit"), this);
+    menuBar()->addAction(exitAction);
+    connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
+#endif
 
-void MainWindow::error(QNetworkSession::SessionError error)
-{
-    if (error == QNetworkSession::UnknownSessionError) {
-        if (m_session->state() == QNetworkSession::Connecting) {
-            QMessageBox msgBox(qobject_cast<QWidget *>(parent()));
-            msgBox.setText("This application requires network access to function.");
-            msgBox.setInformativeText("Press Cancel to quit the application.");
-            msgBox.setIcon(QMessageBox::Information);
-            msgBox.setStandardButtons(QMessageBox::Retry | QMessageBox::Cancel);
-            msgBox.setDefaultButton(QMessageBox::Retry);
-            int ret = msgBox.exec();
-            if (ret == QMessageBox::Retry) {
-                QTimer::singleShot(0, m_session, SLOT(open()));
-            } else if (ret == QMessageBox::Cancel) {
-                close();
-            }
+    createPixmapIcon();
+
+    m_mapWidget = new MapWidget(m_mapManager);
+    m_qgv->scene()->addItem(m_mapWidget);
+    //m_mapWidget->setCenter(QGeoCoordinate(52.5,13.0));
+    //temporary change for dateline testing
+    m_mapWidget->setCenter(QGeoCoordinate(-27.0, 152.0));
+    m_mapWidget->setZoomLevel(5);
+
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    // make full-screen button
+
+    QPainterPath path;
+    const int gaps = 3;
+    const int innerwidth = 20;
+    const int innerheight = 10;
+    const int smallbox = 6;
+    path.addRect(0, 0, innerwidth+smallbox+3*gaps, innerheight+smallbox+3*gaps);
+    path.addRect(smallbox+2*gaps, gaps, innerwidth, innerheight);
+    path.addRect(gaps, 2*gaps+innerheight, smallbox, smallbox);
+
+    m_fullScreenButton = new QGraphicsPathItem(path); // TODO: make member
+    QPen pen;
+    pen.setWidth(2);
+    pen.setColor(QColor(0,0,0,128));
+    pen.setJoinStyle(Qt::MiterJoin);
+    m_fullScreenButton->setPen(pen);
+    m_fullScreenButton->setFlag(QGraphicsItem::ItemIsSelectable);
+
+    connect(m_qgv->scene(), SIGNAL(selectionChanged()), this, SLOT(sceneSelectionChanged()));
+
+    m_qgv->scene()->addItem(m_fullScreenButton);
+#endif
+
+    m_slider->setMaximum(m_mapManager->maximumZoomLevel());
+    m_slider->setMinimum(m_mapManager->minimumZoomLevel());
+    m_slider->setSliderPosition(m_mapWidget->zoomLevel());
+
+    connect(m_slider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));
+    connect(m_mapWidget, SIGNAL(zoomLevelChanged(qreal)), this, SLOT(mapZoomLevelChanged(qreal)));
+
+    // setup map type control
+    connect(m_mapWidget, SIGNAL(mapTypeChanged(QGraphicsGeoMap::MapType)), this, SLOT(mapTypeChanged(QGraphicsGeoMap::MapType)));
+
+    QList<QGraphicsGeoMap::MapType> types = m_mapWidget->supportedMapTypes();
+    for (int controlIndex = 0; controlIndex < m_mapControlTypes.size(); ++controlIndex) {
+        QAction *action = m_mapControlActions.at(controlIndex);
+        int supportedTypeIndex = types.indexOf(m_mapControlTypes[controlIndex]);
+
+        if (supportedTypeIndex == -1) {
+            action->setEnabled(false);
         }
-    } else if (error == QNetworkSession::SessionAbortedError) {
-        QMessageBox msgBox(qobject_cast<QWidget *>(parent()));
-        msgBox.setText("Out of range of network.");
-        msgBox.setInformativeText("Move back into range and press Retry, or press Cancel to quit the application.");
-        msgBox.setIcon(QMessageBox::Warning);
-        msgBox.setStandardButtons(QMessageBox::Retry | QMessageBox::Cancel);
-        msgBox.setDefaultButton(QMessageBox::Retry);
-        int ret = msgBox.exec();
-        if (ret == QMessageBox::Retry) {
-            QTimer::singleShot(0, m_session, SLOT(open()));
-        } else if (ret == QMessageBox::Cancel) {
-            close();
+        else {
+            action->setEnabled(true);
+            action->setChecked(m_mapControlTypes[controlIndex] == m_mapWidget->mapType());
         }
+
     }
+
+    connect(m_captureCoordsAction, SIGNAL(toggled(bool)), m_mapWidget, SLOT(setMouseClickCoordQuery(bool)));
+    connect(m_mapWidget, SIGNAL(coordQueryResult(QGeoCoordinate)), this, SLOT(updateCoords(QGeoCoordinate)));
+    connect(m_mapWidget, SIGNAL(coordQueryResult(QGeoCoordinate)), m_coordControlDialog, SLOT(show()));
+    connect(m_setCoordsButton, SIGNAL(clicked()), this, SLOT(setCoordsClicked()));
+    connect(m_searchEdit, SIGNAL(returnPressed()), this, SLOT(searchClicked()));
+    connect(m_searchButton, SIGNAL(clicked()), this, SLOT(searchClicked()));
+
+    m_qgv->setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(m_qgv, SIGNAL(customContextMenuRequested(const QPoint&)),
+                     this, SLOT(customContextMenuRequest(const QPoint&)));
 }
 
 void MainWindow::sceneSelectionChanged()
@@ -539,192 +394,6 @@ void MainWindow::setControlsVisible(bool controlsVisible)
     m_mapWidget->resize(m_qgv->size());
 }
 
-void MainWindow::setupUi()
-{
-    // setup exit menu for devices
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    QAction* exitAction = new QAction(tr("Exit"), this);
-    menuBar()->addAction(exitAction);
-    connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
-#endif
-
-    // setup graphics view containing map widget
-
-    QGraphicsScene* scene = new QGraphicsScene(this);
-    m_qgv = new QGraphicsView(scene, this);
-    m_qgv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_qgv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_qgv->setVisible(true);
-    m_qgv->setInteractive(true);
-
-    createPixmapIcon();
-
-    m_mapWidget = new MapWidget(m_mapManager);
-    scene->addItem(m_mapWidget);
-    //m_mapWidget->setCenter(QGeoCoordinate(52.5,13.0));
-    //temporary change for dateline testing
-    m_mapWidget->setCenter(QGeoCoordinate(-27.0, 152.0));
-    m_mapWidget->setZoomLevel(5);
-
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    // make full-screen button
-
-    QPainterPath path;
-    const int gaps = 3;
-    const int innerwidth = 20;
-    const int innerheight = 10;
-    const int smallbox = 6;
-    path.addRect(0, 0, innerwidth+smallbox+3*gaps, innerheight+smallbox+3*gaps);
-    path.addRect(smallbox+2*gaps, gaps, innerwidth, innerheight);
-    path.addRect(gaps, 2*gaps+innerheight, smallbox, smallbox);
-
-    m_fullScreenButton = new QGraphicsPathItem(path); // TODO: make member
-    QPen pen;
-    pen.setWidth(2);
-    pen.setColor(QColor(0,0,0,128));
-    pen.setJoinStyle(Qt::MiterJoin);
-    m_fullScreenButton->setPen(pen);
-    m_fullScreenButton->setFlag(QGraphicsItem::ItemIsSelectable);
-
-    connect(scene, SIGNAL(selectionChanged()), this, SLOT(sceneSelectionChanged()));
-
-    scene->addItem(m_fullScreenButton);
-#endif
-
-    // setup slider control
-
-    m_slider = new QSlider(Qt::Vertical, this);
-    m_slider->setTickInterval(1);
-    m_slider->setTickPosition(QSlider::TicksBothSides);
-    m_slider->setMaximum(m_mapManager->maximumZoomLevel());
-    m_slider->setMinimum(m_mapManager->minimumZoomLevel());
-    m_slider->setSliderPosition(m_mapWidget->zoomLevel());
-
-    connect(m_slider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));
-    connect(m_mapWidget, SIGNAL(zoomLevelChanged(qreal)), this, SLOT(mapZoomLevelChanged(qreal)));
-
-    // setup map type control
-
-    QVBoxLayout *mapControlLayout = new QVBoxLayout();
-
-    connect(m_mapWidget, SIGNAL(mapTypeChanged(QGraphicsGeoMap::MapType)), this, SLOT(mapTypeChanged(QGraphicsGeoMap::MapType)));
-
-    QList<QGraphicsGeoMap::MapType> types = m_mapWidget->supportedMapTypes();
-    for (int i = 0; i < types.size(); ++i) {
-        QRadioButton *radio = new QRadioButton(this);
-
-        switch (types.at(i)) {
-            case QGraphicsGeoMap::StreetMap:
-                radio->setText("Street");
-                break;
-            case QGraphicsGeoMap::SatelliteMapDay:
-                radio->setText("Satellite");
-                break;
-            case QGraphicsGeoMap::SatelliteMapNight:
-                radio->setText("Satellite - Night");
-                break;
-            case QGraphicsGeoMap::TerrainMap:
-                radio->setText("Terrain");
-                break;
-            case QGraphicsGeoMap::NoMap:
-                break;
-        }
-
-        if (types.at(i) == m_mapWidget->mapType())
-            radio->setChecked(true);
-
-        connect(radio, SIGNAL(toggled(bool)), this, SLOT(mapTypeToggled(bool)));
-
-        m_mapControlButtons.append(radio);
-        m_mapControlTypes.append(types.at(i));
-
-        mapControlLayout->addWidget(radio);
-    }
-
-    // setup lat/lon control
-
-    m_latitudeEdit = new QLineEdit();
-    m_longitudeEdit = new QLineEdit();
-
-    QFormLayout *formLayout = new QFormLayout();
-    formLayout->addRow("Latitude", m_latitudeEdit);
-    formLayout->addRow("Longitude", m_longitudeEdit);
-
-    m_captureCoordsButton = new QToolButton();
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    m_captureCoordsButton->setText("Get coords");
-#else
-    m_captureCoordsButton->setText("Capture coordinates");
-#endif
-    m_captureCoordsButton->setCheckable(true);
-
-    connect(m_captureCoordsButton, SIGNAL(toggled(bool)), m_mapWidget, SLOT(setMouseClickCoordQuery(bool)));
-    connect(m_mapWidget, SIGNAL(coordQueryResult(QGeoCoordinate)), this, SLOT(updateCoords(QGeoCoordinate)));
-
-    m_setCoordsButton = new QPushButton();
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    m_setCoordsButton->setText("Set coords");
-#else
-    m_setCoordsButton->setText("Set coordinates");
-#endif
-
-    connect(m_setCoordsButton, SIGNAL(clicked()), this, SLOT(setCoordsClicked()));
-
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-
-    buttonLayout->addWidget(m_captureCoordsButton);
-    buttonLayout->addWidget(m_setCoordsButton);
-
-    QVBoxLayout *coordControlLayout = new QVBoxLayout();
-    coordControlLayout->addLayout(formLayout);
-    coordControlLayout->addLayout(buttonLayout);
-
-    QWidget *widget = new QWidget(this);
-
-    QGridLayout *layout = new QGridLayout();
-
-    layout->setRowStretch(0, 1);
-    layout->setRowStretch(1, 0);
-#if 1
-    QGridLayout *topLayout = new QGridLayout();
-    QGridLayout *bottomLayout = new QGridLayout();
-
-    topLayout->setColumnStretch(0, 0);
-    topLayout->setColumnStretch(1, 1);
-
-    bottomLayout->setColumnStretch(0, 0);
-    bottomLayout->setColumnStretch(1, 1);
-
-    topLayout->addWidget(m_slider, 0, 0);
-    topLayout->addWidget(m_qgv, 0, 1);
-
-    bottomLayout->addLayout(mapControlLayout, 0, 0);
-    bottomLayout->addLayout(coordControlLayout, 0, 1);
-
-    layout->addLayout(topLayout,0,0);
-    layout->addLayout(bottomLayout,1,0);
-#else
-    layout->setColumnStretch(0, 0);
-    layout->setColumnStretch(1, 1);
-
-    layout->addWidget(m_slider, 0, 0);
-    layout->addWidget(m_qgv, 0, 1);
-    layout->addLayout(mapControlLayout, 1, 0);
-    layout->addLayout(coordControlLayout, 1, 1);
-#endif
-
-    m_layout = layout;
-
-    widget->setLayout(layout);
-    setCentralWidget(widget);
-
-    m_qgv->setContextMenuPolicy(Qt::CustomContextMenu);
-    QObject::connect(m_qgv, SIGNAL(customContextMenuRequested(const QPoint&)),
-                     this, SLOT(customContextMenuRequest(const QPoint&)));
-
-    resize(652, 519);
-}
-
 void MainWindow::sliderValueChanged(int zoomLevel)
 {
     m_mapWidget->setZoomLevel(zoomLevel);
@@ -735,22 +404,17 @@ void MainWindow::mapZoomLevelChanged(qreal zoomLevel)
     m_slider->setSliderPosition(qRound(zoomLevel));
 }
 
-void MainWindow::mapTypeToggled(bool checked)
+void MainWindow::mapTypeToggled(int type)
 {
-    if (checked) {
-        QRadioButton *button = qobject_cast<QRadioButton*>(sender());
-        int index = m_mapControlButtons.indexOf(button);
-        if (index != -1)
-            m_mapWidget->setMapType(m_mapControlTypes.at(index));
-    }
-
+    m_mapWidget->setMapType((QGraphicsGeoMap::MapType)type);
 }
 
 void MainWindow::mapTypeChanged(QGraphicsGeoMap::MapType type)
 {
-    int index = m_mapControlTypes.indexOf(type);
-    if (index != -1)
-        m_mapControlButtons.at(index)->setChecked(true);
+    for (int i = 0; i < m_mapControlTypes.size(); ++i) {
+        QAction *action = m_mapControlActions[i];
+        action->setChecked(m_mapControlTypes[i] == type);
+    }
 }
 
 void MainWindow::setCoordsClicked()
@@ -778,13 +442,13 @@ void MainWindow::updateCoords(const QGeoCoordinate &coords)
     m_latitudeEdit->setText(QString::number(coords.latitude()));
     m_longitudeEdit->setText(QString::number(coords.longitude()));
 
-    m_captureCoordsButton->setChecked(false);
+    m_captureCoordsAction->setChecked(false);
 }
 
 void MainWindow::setProvider(QString providerId)
 {
     if (m_serviceProvider)
-        delete m_serviceProvider ;
+        delete m_serviceProvider;
     m_serviceProvider = new QGeoServiceProvider(providerId);
     if (m_serviceProvider->error() != QGeoServiceProvider::NoError) {
         QMessageBox::information(this, tr("MapViewer Example"), tr(
@@ -795,18 +459,122 @@ void MainWindow::setProvider(QString providerId)
 
     m_mapManager = m_serviceProvider->mappingManager();
     m_routingManager = m_serviceProvider->routingManager();
+    m_searchManager = m_serviceProvider->searchManager();
+}
+
+void MainWindow::searchClicked()
+{
+    QGeoSearchReply *reply = m_searchManager->search(m_searchEdit->text());
+
+    QObject::connect(reply, SIGNAL(finished()), this,
+                     SLOT(searchReplyFinished()));
+    QObject::connect(reply,
+                     SIGNAL(error(QGeoSearchReply::Error, QString)), this,
+                     SLOT(resultsError(QGeoSearchReply::Error, QString)));
+    
+    m_qgv->setFocus();
+}
+
+void MainWindow::searchReplyFinished()
+{
+    QGeoSearchReply* reply = static_cast<QGeoSearchReply *>(sender());
+
+    if (reply->error() != QGeoSearchReply::NoError) {
+        // Errors are handled in a different slot (resultsError)
+        return;
+    }
+
+    QList<QGeoPlace> places = reply->places();
+    if (places.length() == 0) {
+        (new QMessageBox(
+                QMessageBox::Information,
+                tr("MapViewer Example"), 
+                tr("Search did not find anything."),
+                0,
+                this
+        ))->show();
+    }
+    else {
+
+        for (int i = 0; i < places.length(); ++i) {
+            QGeoPlace & place = places[i];
+            QGeoMapPixmapObject *marker 
+                = new QGeoMapPixmapObject(place.coordinate(),
+                                          QPoint(-(MARKER_WIDTH / 2),
+                                          -MARKER_HEIGHT),
+                                          m_markerIcon);
+            m_mapWidget->addMapObject(marker);
+            m_markerObjects.append(marker); // TODO: add to different marker list, clear markers from list before searching
+        }
+    
+        if (places.length() == 1) {
+            m_mapWidget->setCenter(places[0].coordinate());
+        } else {
+            QGeoBoundingBox bbox(places.at(0).coordinate(), places.at(0).coordinate());
+            for (int i = 1; i < places.length(); ++i) {
+                bbox |= QGeoBoundingBox(places.at(i).coordinate(), places.at(i).coordinate());
+            }
+            m_mapWidget->fitInViewport(bbox);
+        }
+    
+        /*
+        QGeoBoundingArea * viewport = reply->viewport();
+        if (viewport) {
+            if (viewport->type() == QGeoBoundingArea::BoxType) {
+                m_mapWidget->fitInViewport(*static_cast<QGeoBoundingBox *>(viewport));
+                reply->deleteLater();
+                return;
+            }
+            else if (viewport->type() == QGeoBoundingArea::CircleType) {
+                m_mapWidget->setCenter(static_cast<QGeoBoundingCircle *>(viewport)->center());
+                reply->deleteLater();
+                return;
+            }
+        }
+        m_mapWidget->setCenter(places[0].coordinate());
+        */
+    }
+    
+    disconnect(reply, SIGNAL(finished()), this,
+                     SLOT(searchReplyFinished()));
+    disconnect(reply,
+                     SIGNAL(error(QGeoSearchReply::Error, QString)), this,
+                     SLOT(resultsError(QGeoSearchReply::Error, QString)));
+    reply->deleteLater();
+}
+
+void MainWindow::resultsError(QGeoSearchReply::Error errorCode, QString errorString)
+{
+    QObject* reply = static_cast<QGeoSearchReply *>(sender());
+    
+    (new QMessageBox(
+            QMessageBox::Information,
+            tr("MapViewer Example"), 
+            tr("Error #%1 while trying to process your search query.\n\"%2\"").arg(errorCode).arg(errorString),
+            0,
+            this
+    ))->show();
+    
+    disconnect(reply, SIGNAL(finished()), this,
+                     SLOT(searchReplyFinished()));
+    disconnect(reply,
+                     SIGNAL(error(QGeoSearchReply::Error, QString)), this,
+                     SLOT(resultsError(QGeoSearchReply::Error, QString)));
+    reply->deleteLater();
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
     m_qgv->setSceneRect(QRectF(QPointF(0.0, 0.0), m_qgv->size()));
-    m_mapWidget->resize(m_qgv->size());
+    if(m_mapWidget)
+        m_mapWidget->resize(m_qgv->size());
 }
 
 void MainWindow::showEvent(QShowEvent* event)
 {
     m_qgv->setSceneRect(QRectF(QPointF(0.0, 0.0), m_qgv->size()));
-    m_mapWidget->resize(m_qgv->size());
+    if(m_mapWidget)
+        m_mapWidget->resize(m_qgv->size());
 }
 
 void MainWindow::createMenus()
@@ -1054,12 +822,9 @@ void MainWindow::drawText(bool /*checked*/)
 
     QGeoMapTextObject *text = new QGeoMapTextObject(start, QString("text"));
 
-    QGeoMapObject *object = new QGeoMapObject();
-    object->addChildObject(text);
-
     QColor fill(Qt::black);
     text->setBrush(QBrush(fill));
-    m_mapWidget->addMapObject(object);
+    m_mapWidget->addMapObject(text);
 }
 
 void MainWindow::drawPixmap(bool /*checked*/)
@@ -1180,4 +945,55 @@ void MainWindow::selectObjects()
                                        );
     for (int i = 0; i < selectedObjects.size(); ++i)
         selectedObjects[i]->setSelected(true);
+}
+
+void MainWindow::networkSessionOpened()
+{
+    QString urlEnv = QProcessEnvironment::systemEnvironment().value("http_proxy");
+    if(!urlEnv.isEmpty()) {
+        QUrl url = QUrl(urlEnv, QUrl::TolerantMode);
+        QNetworkProxy proxy;
+        proxy.setType(QNetworkProxy::HttpProxy);
+        proxy.setHostName(url.host());
+        proxy.setPort(url.port(8080));
+        QNetworkProxy::setApplicationProxy(proxy);
+    } else
+        QNetworkProxyFactory::setUseSystemConfiguration(true);
+
+    setProvider("nokia");
+    // finalize ui setup
+    setupUi();
+}
+
+void MainWindow::error(QNetworkSession::SessionError error)
+{
+    if (error == QNetworkSession::UnknownSessionError) {
+        if (m_session->state() == QNetworkSession::Connecting) {
+            QMessageBox msgBox(qobject_cast<QWidget *>(parent()));
+            msgBox.setText("This application requires network access to function.");
+            msgBox.setInformativeText("Press Cancel to quit the application.");
+            msgBox.setIcon(QMessageBox::Information);
+            msgBox.setStandardButtons(QMessageBox::Retry | QMessageBox::Cancel);
+            msgBox.setDefaultButton(QMessageBox::Retry);
+            int ret = msgBox.exec();
+            if (ret == QMessageBox::Retry) {
+                QTimer::singleShot(0, m_session, SLOT(open()));
+            } else if (ret == QMessageBox::Cancel) {
+                close();
+            }
+        }
+    } else if (error == QNetworkSession::SessionAbortedError) {
+        QMessageBox msgBox(qobject_cast<QWidget *>(parent()));
+        msgBox.setText("Out of range of network.");
+        msgBox.setInformativeText("Move back into range and press Retry, or press Cancel to quit the application.");
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setStandardButtons(QMessageBox::Retry | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Retry);
+        int ret = msgBox.exec();
+        if (ret == QMessageBox::Retry) {
+            QTimer::singleShot(0, m_session, SLOT(open()));
+        } else if (ret == QMessageBox::Cancel) {
+            close();
+        }
+    }
 }

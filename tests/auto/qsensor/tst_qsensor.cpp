@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -56,6 +50,15 @@
 #include "qsensor.h"
 #include "test_sensor.h"
 #include "test_sensorimpl.h"
+#include "qambientlightsensor.h"
+#include "qorientationsensor.h"
+#include "qtapsensor.h"
+
+// The unit test needs to change the behaviour of the library. It does this
+// through an exported but undocumented function.
+QTM_BEGIN_NAMESPACE
+Q_SENSORS_EXPORT void sensors_unit_test_hook(int index);
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
@@ -77,6 +80,7 @@ class tst_QSensor : public QObject
 public:
     tst_QSensor()
     {
+        sensors_unit_test_hook(0); // change some flags the library uses
     }
 
 private slots:
@@ -90,6 +94,7 @@ private slots:
     {
         QSettings settings(QLatin1String("Nokia"), QLatin1String("Sensors"));
         settings.clear();
+
 #ifdef WAIT_AT_END
         QFile _stdin;
         _stdin.open(1, QIODevice::ReadOnly);
@@ -103,10 +108,7 @@ private slots:
         QList<QByteArray> expected;
         expected << "QAccelerometer" << TestSensor::type;
         QList<QByteArray> actual = QSensor::sensorTypes();
-
-        for (int i = 0; i < expected.size(); ++i) {
-            QVERIFY2(actual.contains(expected.at(i)),expected.at(i)+" not present");
-        }
+        QCOMPARE(actual, expected);
     }
 
     void testSensorRegistered()
@@ -324,6 +326,64 @@ private slots:
 
         QTest::ignoreMessage(QtWarningMsg, "setDataRate: rate 300 is not supported by the sensor. ");
         sensor.setDataRate(300);
+    }
+
+    void testEnumHandling()
+    {
+        {
+            QAmbientLightReading reading;
+            for (int i = 0; i <= 6; i++) {
+                QAmbientLightReading::LightLevel setting = static_cast<QAmbientLightReading::LightLevel>(i);
+                QAmbientLightReading::LightLevel expected = setting;
+                if (i == 6)
+                    expected = QAmbientLightReading::Undefined;
+                reading.setLightLevel(setting);
+                QCOMPARE(reading.lightLevel(), expected);
+            }
+        }
+
+        {
+            QOrientationReading reading;
+            for (int i = 0; i <= 7; i++) {
+                QOrientationReading::Orientation setting = static_cast<QOrientationReading::Orientation>(i);
+                QOrientationReading::Orientation expected = setting;
+                if (i == 7)
+                    expected = QOrientationReading::Undefined;
+                reading.setOrientation(setting);
+                QCOMPARE(reading.orientation(), expected);
+            }
+        }
+
+        {
+            QTapReading reading;
+            reading.setTapDirection(QTapReading::Undefined);
+            QCOMPARE(reading.tapDirection(), QTapReading::Undefined);
+            reading.setTapDirection(QTapReading::X_Pos);
+            QCOMPARE(reading.tapDirection(), QTapReading::X_Pos);
+            reading.setTapDirection(QTapReading::X_Neg);
+            QCOMPARE(reading.tapDirection(), QTapReading::X_Neg);
+            reading.setTapDirection(QTapReading::Y_Pos);
+            QCOMPARE(reading.tapDirection(), QTapReading::Y_Pos);
+            reading.setTapDirection(QTapReading::Y_Neg);
+            QCOMPARE(reading.tapDirection(), QTapReading::Y_Neg);
+            reading.setTapDirection(QTapReading::Z_Pos);
+            QCOMPARE(reading.tapDirection(), QTapReading::Z_Pos);
+            reading.setTapDirection(QTapReading::Z_Neg);
+            QCOMPARE(reading.tapDirection(), QTapReading::Z_Neg);
+            reading.setTapDirection(static_cast<QTapReading::TapDirection>(1000));
+            QCOMPARE(reading.tapDirection(), QTapReading::Undefined);
+        }
+    }
+
+    // This test must be LAST or it will interfere with the other tests
+    void testLoadingPlugins()
+    {
+        // Go ahead and load the actual plugins (as a test that plugin loading works)
+        sensors_unit_test_hook(1);
+
+        // Hmm... There's no real way to tell if this worked or not.
+        // If it doesn't work the unit test will probably crash.
+        // That's what it did on Symbian before plugin loading was fixed.
     }
 };
 

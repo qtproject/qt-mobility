@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -195,7 +189,7 @@ void tst_ItemOccurrence::addOccurrenceDetail()
     QCOMPARE(lastItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QOrganizerEventOccurrence thirdEvent = static_cast<QOrganizerEventOccurrence>(lastItem);
     QCOMPARE(thirdEvent.startDateTime(), QDateTime(QDate(QDate::currentDate().year() , 9, 15)));
-    QCOMPARE(thirdEvent.localId(), (unsigned int)0);
+    QCOMPARE(thirdEvent.localId(), QOrganizerItemLocalId());
     QCOMPARE(thirdEvent.parentLocalId(), item.localId());
     
     //Fetch instances using maxcount only.
@@ -206,7 +200,7 @@ void tst_ItemOccurrence::addOccurrenceDetail()
     QCOMPARE(secondItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QOrganizerEventOccurrence secondEvent = static_cast<QOrganizerEventOccurrence>(secondItem);
     QCOMPARE(secondEvent.startDateTime(), QDateTime(QDate(QDate::currentDate().year() , 9, 8)));
-    QCOMPARE(secondEvent.localId(), (unsigned int)0);
+    QCOMPARE(secondEvent.localId(), QOrganizerItemLocalId());
     QCOMPARE(secondEvent.parentLocalId(), item.localId());    
 }
 
@@ -271,6 +265,7 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     //fetch instances and modify displaylabel for second and third instance
     QList<QOrganizerItem> instanceList;
     instanceList = m_om->itemInstances(item,startTime,QDateTime(),10);
+    QCOMPARE(instanceList.count(), 3);
     instanceList[1].setDisplayLabel(modifiedLabel);
     instanceList[2].setDisplayLabel(modifiedLabel);
     QVERIFY(m_om->saveItem(&instanceList[1]));
@@ -308,14 +303,13 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     //Search without filtering and sorting.Full instanceList is returned
     instanceList.clear();
     sortList.clear();    
-    QOrganizerItemInvalidFilter invalidFilter;
-    instanceList = m_om->itemInstances(invalidFilter,sortList,fetchHint);
+    instanceList = m_om->itemInstances(f,sortList,fetchHint);
     QCOMPARE(instanceList.size(), 3);
     
     //Search full instance list in descending order without filtering
     instanceList.clear();
     sortList.append(sortOrder);
-    instanceList = m_om->itemInstances(invalidFilter,sortList,fetchHint);
+    instanceList = m_om->itemInstances(f,sortList,fetchHint);
     QCOMPARE(instanceList.size(), 3);
     QOrganizerItem thirdItem = instanceList.at(2);
     QCOMPARE(thirdItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
@@ -647,29 +641,33 @@ void tst_ItemOccurrence::editOccurrenceNegative()
     QCOMPARE(firstItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QOrganizerEventOccurrence firstInstance = static_cast<QOrganizerEventOccurrence>(firstItem);
     QString instanceGuid (firstInstance.guid());
-   
+
     //Try to save instance with invalid guid and parentlocalId fails
-    firstInstance.setGuid(QString(""));
-    firstInstance.setParentLocalId(QOrganizerItemLocalId(-1));
-    QVERIFY(!m_om->saveItem(&firstInstance));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
-    
+    // TODO: Disabled because of API change. REFACTOR!
+    //firstInstance.setGuid(QString(""));
+    //firstInstance.setParentLocalId(QOrganizerItemLocalId(-1));
+    //QVERIFY(!m_om->saveItem(&firstInstance));
+    //QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+
     //change to invalid original Date of the instance and save 
     firstInstance.setGuid(instanceGuid);
     firstInstance.setOriginalDate(QDate(1000,1,1));
     QVERIFY(!m_om->saveItem(&firstInstance));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    // Allow undefined error code, the engine should iterate through item instances to see if the
+    // original date is valid to be able to give a specific error code
+    QVERIFY(m_om->error() != QOrganizerItemManager::NoError);
     
     firstInstance = static_cast<QOrganizerEventOccurrence>(firstItem);
     firstInstance.setStartDateTime(startTime.addDays(-1));
     QVERIFY(m_om->saveItem(&firstInstance));
     
     //Save the instance with invalid localid
-    QOrganizerItemId itemId;
-    itemId.setLocalId(1);
-    firstInstance.setId(itemId);
-    QVERIFY(!m_om->saveItem(&firstInstance));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    // TODO: Disabled because of API change. REFACTOR!
+    //QOrganizerItemId itemId;
+    //itemId.setLocalId(1);
+    //firstInstance.setId(itemId);
+    //QVERIFY(!m_om->saveItem(&firstInstance));
+    //QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
 }
 
 void tst_ItemOccurrence::updateOccurrenceLocalId()
@@ -758,17 +756,20 @@ void tst_ItemOccurrence::fetchNegative()
     instanceList = m_om->itemInstances(invalidItem,startTime,endTime);
     QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidItemTypeError);
     
-    // Fetch the item instance with invalid count
-    instanceList = m_om->itemInstances(item,startTime,QDateTime(),-2);
-    QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
-    
-   // Fetch the item instance with invalid starttime
-   instanceList = m_om->itemInstances(item,QDateTime(),endTime);
-   QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
-   
-   // Fetch the item instance with invalid endtime
-   instanceList = m_om->itemInstances(item,startTime,QDateTime());
-   QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);   
+    // Fetch the item instance with negative count
+    instanceList = m_om->itemInstances(item, startTime, QDateTime(), -2);
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(instanceList.count(), 1);
+
+    // Fetch the item instance with undefined starttime
+    instanceList = m_om->itemInstances(item, QDateTime(), endTime);
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(instanceList.count(), 1);
+
+    // Fetch the item instance with undefined endtime
+    instanceList = m_om->itemInstances(item, startTime, QDateTime());
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(instanceList.count(), 1);
 }
 
 void tst_ItemOccurrence::daylightSavingTime()

@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -234,7 +228,9 @@ QList<QContact> QContactMemoryEngine::contacts(const QContactFilter& filter, con
 }
 
 /*! Saves the given contact \a theContact, storing any error to \a error and
-    filling the \a changeSet with ids of changed contacts as required */
+    filling the \a changeSet with ids of changed contacts as required 
+    Returns true if the operation was successful otherwise false.
+*/
 bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     // ensure that the contact's details conform to their definitions
@@ -242,8 +238,15 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         return false;
     }
 
+    QContactId id(theContact->id());
+    if (!id.managerUri().isEmpty() && id.managerUri() != managerUri()) {
+        // the contact doesn't belong to this manager
+        *error = QContactManager::DoesNotExistError;
+        return false;
+    }
+
     // check to see if this contact already exists
-    int index = d->m_contactIds.indexOf(theContact->id().localId());
+    int index = d->m_contactIds.indexOf(id.localId());
     if (index != -1) {
         /* We also need to check that there are no modified create only details */
         QContact oldContact = d->m_contacts.at(index);
@@ -328,7 +331,9 @@ bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QCo
 }
 
 /*! Removes the contact identified by the given \a contactId, storing any error to \a error and
-    filling the \a changeSet with ids of changed contacts and relationships as required */
+    filling the \a changeSet with ids of changed contacts and relationships as required.
+    Returns true if the operation was successful otherwise false.
+*/
 bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     int index = d->m_contactIds.indexOf(contactId);
@@ -428,7 +433,9 @@ QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& r
 }
 
 /*! Saves the given relationship \a relationship, storing any error to \a error and
-    filling the \a changeSet with ids of changed contacts and relationships as required */
+    filling the \a changeSet with ids of changed contacts and relationships as required 
+    Returns true if the operation was successful otherwise false.
+*/
 bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     // Attempt to validate the relationship.
@@ -518,7 +525,9 @@ bool QContactMemoryEngine::saveRelationships(QList<QContactRelationship>* relati
 }
 
 /*! Removes the given relationship \a relationship, storing any error to \a error and
-    filling the \a changeSet with ids of changed contacts and relationships as required */
+    filling the \a changeSet with ids of changed contacts and relationships as required 
+    Returns true if the operation was successful otherwise false.
+*/
 bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relationship, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     // attempt to remove it from our list of relationships.
@@ -583,7 +592,9 @@ QMap<QString, QContactDetailDefinition> QContactMemoryEngine::detailDefinitions(
 }
 
 /*! Saves the given detail definition \a def, storing any error to \a error and
-    filling the \a changeSet with ids of changed contacts as required */
+    filling the \a changeSet with ids of changed contacts as required 
+    Returns true if the operation was successful otherwise false.
+*/
 bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     // we should check for changes to the database in this function, and add ids of changed data to changeSet. TODO.
@@ -656,8 +667,12 @@ bool QContactMemoryEngine::startRequest(QContactAbstractRequest* req)
 {
     if (!req)
         return false;
+
+    QWeakPointer<QContactAbstractRequest> checkDeletion(req);
     updateRequestState(req, QContactAbstractRequest::ActiveState);
-    performAsynchronousOperation(req);
+    if (!checkDeletion.isNull())
+        performAsynchronousOperation(req);
+
     return true;
 }
 

@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -141,8 +135,12 @@ public:
     {
         Q_ASSERT(control);
 
-        if (control == rendererControl)
+        if (control == rendererControl) {
             rendererRef -= 1;
+
+            if (rendererRef == 0)
+                rendererControl->setSurface(0);
+        }
     }
 
     int rendererRef;
@@ -307,12 +305,21 @@ void tst_QGraphicsVideoItem::setMediaObject()
     object.bind(&item);
     QCOMPARE(item.mediaObject(), static_cast<QMediaObject *>(&object));
     QCOMPARE(object.testService->rendererRef, 1);
+    QVERIFY(object.testService->rendererControl->surface() == 0);
+
+    {   // Surface setup is deferred until after the first paint.
+        QImage image(320, 240, QImage::Format_RGB32);
+        QPainter painter(&image);
+
+        item.paint(&painter, 0);
+    }
     QVERIFY(object.testService->rendererControl->surface() != 0);
 
     object.unbind(&item);
     QCOMPARE(item.mediaObject(), nullObject);
 
     QCOMPARE(object.testService->rendererRef, 0);
+    QVERIFY(object.testService->rendererControl->surface() == 0);
 
     item.setVisible(false);
 
@@ -330,13 +337,21 @@ void tst_QGraphicsVideoItem::show()
 
     // Graphics items are visible by default
     QCOMPARE(object.testService->rendererRef, 1);
-    QVERIFY(object.testService->rendererControl->surface() != 0);
+    QVERIFY(object.testService->rendererControl->surface() == 0);
 
     item->hide();
     QCOMPARE(object.testService->rendererRef, 1);
 
     item->show();
     QCOMPARE(object.testService->rendererRef, 1);
+    QVERIFY(object.testService->rendererControl->surface() == 0);
+
+    QGraphicsScene graphicsScene;
+    graphicsScene.addItem(item);
+    QGraphicsView graphicsView(&graphicsScene);
+    graphicsView.show();
+
+    QVERIFY(item->paintCount() || item->waitForPaint(1));
     QVERIFY(object.testService->rendererControl->surface() != 0);
 
     QVERIFY(item->boundingRect().isEmpty());
@@ -345,13 +360,6 @@ void tst_QGraphicsVideoItem::show()
     QVERIFY(object.testService->rendererControl->surface()->start(format));
 
     QVERIFY(!item->boundingRect().isEmpty());
-
-    QGraphicsScene graphicsScene;
-    graphicsScene.addItem(item);
-    QGraphicsView graphicsView(&graphicsScene);
-    graphicsView.show();
-
-    QVERIFY(item->paintCount() || item->waitForPaint(1));
 }
 
 void tst_QGraphicsVideoItem::aspectRatioMode()
@@ -456,6 +464,13 @@ void tst_QGraphicsVideoItem::nativeSize()
     format.setViewport(viewport);
     format.setPixelAspectRatio(pixelAspectRatio);
 
+    {   // Surface setup is deferred until after the first paint.
+        QImage image(320, 240, QImage::Format_RGB32);
+        QPainter painter(&image);
+
+        item.paint(&painter, 0);
+    }
+    QVERIFY(object.testService->rendererControl->surface() != 0);
     QVERIFY(object.testService->rendererControl->surface()->start(format));
 
     QCOMPARE(item.nativeSize(), nativeSize);
@@ -588,6 +603,13 @@ void tst_QGraphicsVideoItem::boundingRect()
 
     QVideoSurfaceFormat format(frameSize, QVideoFrame::Format_ARGB32);
 
+    {   // Surface setup is deferred until after the first paint.
+        QImage image(320, 240, QImage::Format_RGB32);
+        QPainter painter(&image);
+
+        item.paint(&painter, 0);
+    }
+    QVERIFY(object.testService->rendererControl->surface() != 0);
     QVERIFY(object.testService->rendererControl->surface()->start(format));
 
     QCOMPARE(item.boundingRect(), expectedRect);
@@ -609,9 +631,11 @@ void tst_QGraphicsVideoItem::paint()
     graphicsScene.addItem(item);
     QGraphicsView graphicsView(&graphicsScene);
     graphicsView.show();
+    QVERIFY(item->waitForPaint(1));
 
     QPainterVideoSurface *surface = qobject_cast<QPainterVideoSurface *>(
             object.testService->rendererControl->surface());
+    QVERIFY(surface != 0);
 
     QVideoSurfaceFormat format(QSize(2, 2), QVideoFrame::Format_RGB32);
 

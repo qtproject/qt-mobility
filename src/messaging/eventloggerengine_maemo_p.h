@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -86,12 +80,14 @@ class QueryThread : public QThread
 
 public:
     QueryThread();
-    void setArgs(EventLoggerEngine *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset);
+    void setArgs(QMessageServicePrivate* privateService, EventLoggerEngine *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset);
     void run();
 
  signals:
     void completed();
+
  public:
+    QMessageServicePrivate* _privateService;
     EventLoggerEngine *_parent;
     QMessageFilter _filter;
     QString _body;
@@ -120,14 +116,27 @@ public:
     static void new_event_cb(RTComEl *el,int event_id,
                              const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
                              const char *group_uid,const char *service,EventLoggerEngine *p);
+    static void event_updated_cb(RTComEl *el,int event_id,
+                          const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                             const char *group_uid,const char *service,EventLoggerEngine *p);
+    static void event_deleted_cb(RTComEl *el,int event_id,
+                             const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                             const char *group_uid,const char *service,EventLoggerEngine *p);
     void newEvent(int event_id,
                   const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
                   const char *group_uid,const char *service);
+    void deletedEvent(int event_id,
+                  const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                  const char *group_uid,const char *service);
+    void updatedEvent(int event_id,
+                  const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                  const char *group_uid,const char *service);
+
     QMessageIdList filterAndOrderMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
 				      QString body, QMessageDataComparator::MatchFlags matchFlags);
 
-    bool filterMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
-				      QString body, QMessageDataComparator::MatchFlags matchFlags);
+    bool filterMessages(QMessageServicePrivate* privateService, const QMessageFilter &filter,
+                        const QMessageSortOrder& sortOrder, QString body, QMessageDataComparator::MatchFlags matchFlags);
 
     void addEvent(QMessage &message);
     QMessageIdList m_ids;

@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -57,6 +51,16 @@
 #include <QProcess>
 
 #include <time.h>
+#include <sys/types.h>          /* See NOTES */
+
+#ifndef Q_OS_WIN
+#include <sys/un.h>
+#include <sys/socket.h>
+#endif
+
+#ifdef LOCAL_PEERCRED /* from sys/un.h */
+#include <sys/ucred.h>
+#endif
 
 
 // Needed for ::Sleep, while we wait for a better solution
@@ -80,6 +84,7 @@ public:
         socket->setParent(this);
         connect(s, SIGNAL(readyRead()), this, SLOT(readIncoming()));
         connect(s, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
+        connect(s, SIGNAL(disconnected()), this, SLOT(ipcfault()));
 
         if (socket->bytesAvailable())
             QTimer::singleShot(0, this, SLOT(readIncoming()));
@@ -87,7 +92,11 @@ public:
 
     ~LocalSocketEndPoint() 
     {
+        disconnect(this, SLOT(ipcfault()));
     }
+
+Q_SIGNALS:
+    void errorUnrecoverableIPCFault(QService::UnrecoverableIPCError);
 
 
 protected:
@@ -98,7 +107,7 @@ protected:
         out.setVersion(QDataStream::Qt_4_6);
         out << package;
         socket->write(block);
-    }
+    }   
 
 protected slots:
     void readIncoming()
@@ -113,6 +122,10 @@ protected slots:
         }
 
         emit readyRead();
+    }
+    void ipcfault()
+    {
+        emit errorUnrecoverableIPCFault(QService::ErrorServiceNoLongerAvailable);
     }
 
 private:
@@ -135,6 +148,49 @@ void QRemoteServiceControlLocalSocketPrivate::processIncoming()
     if (localServer->hasPendingConnections()) {
         QLocalSocket* s = localServer->nextPendingConnection();
         //LocalSocketEndPoint owns socket 
+        int fd = s->socketDescriptor();
+        if(getSecurityFilter()){
+            QRemoteServiceControlLocalSocketCred qcred;
+            memset(&qcred, 0, sizeof(QRemoteServiceControlLocalSocketCred));
+            qcred.fd = fd;
+
+#if defined(LOCAL_PEERCRED)
+            struct xucred xuc;
+            socklen_t len = sizeof(struct xucred);
+
+            if(getsockopt(fd, SOL_SOCKET, LOCAL_PEERCRED, &xuc, &len) == 0) {
+                qcred.pid = -1; // No PID on bsd
+                qcred.uid = xuc.cr_uid;
+                qcred.gid = xuc.cr_gid;
+
+            }
+
+#elif defined(SO_PEERCRED)
+            struct ucred uc;
+            socklen_t len = sizeof(struct ucred);            
+
+            if(getsockopt(fd, SOL_SOCKET, SO_PEERCRED, &uc, &len) == 0) {
+                qcred.pid = uc.pid;
+                qcred.uid = uc.uid;
+                qcred.gid = uc.gid;
+            }
+            else {
+                s->close();
+                perror("Failed to get peer credential");
+                return;
+            }
+#else
+            s->close();
+            qWarning("Credentials check unsupprted on this platform");
+            return;
+#endif
+            qDebug() << "Security filter call";
+            if(!getSecurityFilter()(reinterpret_cast<const void *>(&qcred))){
+                s->close();
+                return;
+            }
+        }
+        qDebug() << "Passed peercred";
         LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(s);
         ObjectEndPoint* endpoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
         Q_UNUSED(endpoint);
@@ -173,7 +229,7 @@ QRemoteServiceControlPrivate* QRemoteServiceControlPrivate::constructPrivateObje
 QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& location)
 {
     QLocalSocket* socket = new QLocalSocket();
-    socket->connectToServer(location);
+    socket->connectToServer(location);   
     if (!socket->isValid()) {
         qWarning() << "Cannot connect to remote service, trying to start service " << location;
         // try starting the service by hand
@@ -214,6 +270,8 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
 
     QObject *proxy = endPoint->constructProxy(typeIdent);
     QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
+    QObject::connect(ipcEndPoint, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
+                     proxy, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)));
     return proxy;
 }
 

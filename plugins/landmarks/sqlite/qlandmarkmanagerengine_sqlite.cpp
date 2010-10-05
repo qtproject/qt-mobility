@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -61,6 +55,7 @@
 #include <QSettings>
 #include <QSqlDatabase>
 #include <QSqlError>
+#include <QSqlRecord>
 #include <QSqlQuery>
 #include <QThreadPool>
 #include <QUuid>
@@ -102,16 +97,22 @@ Q_DECLARE_METATYPE(QLandmarkImportRequest *)
 Q_DECLARE_METATYPE(QLandmarkExportRequest *)
 Q_DECLARE_METATYPE(ERROR_MAP)
 
-QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filename)
+QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filename, QLandmarkManager::Error * error,
+                                                           QString *errorString)
         : m_dbFilename(filename),
         m_dbConnectionName(QUuid::createUuid().toString()),
         m_dbWatcher(NULL),
         m_latestLandmarkTimestamp(0),
         m_latestCategoryTimestamp(0),
-        m_isExtendedAttributesEnabled(false),
         m_isCustomAttributesEnabled(false),
-        m_databaseOperations(m_isExtendedAttributesEnabled, m_isCustomAttributesEnabled)
+        m_databaseOperations()
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+
+    *error = QLandmarkManager::NoError;
+    *errorString ="";
+
     qRegisterMetaType<ERROR_MAP >();
     qRegisterMetaType<QList<QLandmarkCategoryId> >();
     qRegisterMetaType<QList<QLandmarkId> >();
@@ -182,9 +183,12 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
             QSqlQuery query(db);
             query.exec("SELECT name from sqlite_master WHERE name = 'landmark'");
             if (query.next()) {
-                query.exec("SELECT name from sqlite_master WHERE name = 'landmark_custom_attribute'");
+                query.exec("SELECT name from sqlite_master WHERE name = 'version'");
                 if (!query.next()) {
-                    qWarning() << "Old Database with incompatible schema from Qt Landmarks 1.1 tech preview detected, please delete this file and try again:" << this->m_dbFilename;
+                    *error = QLandmarkManager::VersionMismatchError;
+                    *errorString = QString("Old landmarks database with incompatible schema detected, please delete this file and try again:") +
+                                   this->m_dbFilename;
+                    qWarning() << *errorString;
                     db.rollback();
                     return;
                 }
@@ -199,6 +203,24 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
             QSqlQuery query(db);
             if (!query.exec(q)) {
                 qWarning() << QString("Statement %1: %2").arg(i + 1).arg(query.lastError().databaseText());
+            }
+        }
+
+        {
+            QSqlQuery query(db);
+            query.exec("SELECT verionNumber FROM version");
+            if (query.next()) {
+                int versionNumber = query.value(0).toInt();
+                if (versionNumber != 1) {
+                    *error =  QLandmarkManager::VersionMismatchError;
+                    *errorString = "Sqlite landmark plugin only operates with version 1 of QtLandmarks.db";
+                    db.rollback();
+                    return;
+                }
+            } else {
+                query.finish();
+                query.clear();
+                query.exec("INSERT INTO versionNumber VALUES(1)");
             }
         }
         if (transacting)
@@ -415,35 +437,24 @@ bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::Landmark
     *errorString = "";
 
     switch(feature) {
-        case (QLandmarkManager::CustomAttributes):
-        case (QLandmarkManager::Notifications):
-        case (QLandmarkManager::ImportExport):
+        case (QLandmarkManager::NotificationsFeature):
+        case (QLandmarkManager::ImportExportFeature):
             return true;
-        case (QLandmarkManager::ExtendedAttributes):
-            return false;
         default:
             return false;
     }
 }
 
-QStringList QLandmarkManagerEngineSqlite::landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+QStringList QLandmarkManagerEngineSqlite::searchableLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
-    *errorString = "";
-
-    return QLandmarkManagerEngine::landmarkAttributeKeys(error, errorString);
-}
-
-QStringList QLandmarkManagerEngineSqlite::categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString = "";
-
-    return QLandmarkManagerEngine::categoryAttributeKeys(error, errorString);
+    *errorString ="";
+    //TODO: optimize
+    QStringList commonKeys = DatabaseOperations::supportedSearchableAttributes;
+    commonKeys.sort();
+    return commonKeys;
 }
 
 bool QLandmarkManagerEngineSqlite::isReadOnly(QLandmarkManager::Error *error, QString *errorString) const
@@ -473,45 +484,6 @@ bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkCategoryId &categor
     *errorString = "";
 
     return false;
-}
-
-bool QLandmarkManagerEngineSqlite::isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Extended attributes are not supported";
-
-    return m_isExtendedAttributesEnabled;
-}
-
-void QLandmarkManagerEngineSqlite::setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Extended attributes are not supported";
-    return;
-}
-
-bool QLandmarkManagerEngineSqlite::isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString = "";
-
-    return m_isCustomAttributesEnabled;
-}
-
-void QLandmarkManagerEngineSqlite::setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-    *error = QLandmarkManager::NoError;
-    *errorString = "";
-
-    m_isCustomAttributesEnabled = enabled;
 }
 
 /* Asynchronous Request Support */
@@ -581,7 +553,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
     QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
 
     QSqlQuery query(db);
-    if (!query.prepare("SELECT landmarkId,action, timestamp FROM landmark_notification WHERE timestamp > ?")) {
+    if (!query.prepare("SELECT landmarkId,action, timestamp FROM landmark_notification WHERE timestamp >= ?")) {
 #ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
         qWarning() << "Could not prepare statement: " << query.lastQuery() << " \nReason:" << query.lastError().text();
 #endif
@@ -635,7 +607,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
         emit landmarksRemoved(removedLandmarkIds);
 
     //now check for added/modified/removed categories
-    if (!query.prepare("SELECT categoryId,action, timestamp FROM category_notification WHERE timestamp > ?")) {
+    if (!query.prepare("SELECT categoryId,action, timestamp FROM category_notification WHERE timestamp >= ?")) {
 #ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
         qWarning() << "Could not prepare statement: " << query.lastQuery() << " \nReason:" << query.lastError().text();
 #endif
@@ -665,6 +637,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
 
         action = query.value(1).toString();
         categoryId.setLocalId(query.value(0).toString());
+
         if (action == "ADD") {
             addedCategoryIds << categoryId;
         } else if (action == "CHANGE") {
@@ -682,6 +655,9 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
 
     if (removedCategoryIds.count() > 0)
         emit categoriesRemoved(removedCategoryIds);
+
+    m_latestLandmarkTimestamp +=1;
+    m_latestCategoryTimestamp +=1;
 }
 
 void QLandmarkManagerEngineSqlite::setChangeNotificationsEnabled(bool enabled)

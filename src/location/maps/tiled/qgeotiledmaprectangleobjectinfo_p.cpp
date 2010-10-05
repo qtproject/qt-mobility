@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -50,21 +44,84 @@
 #include "qgeotiledmapdata.h"
 #include "qgeotiledmapdata_p.h"
 
+#include "qgeoboundingbox.h"
+
 #include "qgeomaprectangleobject.h"
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapRectangleObjectInfo::QGeoTiledMapRectangleObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+QGeoTiledMapRectangleObjectInfo::QGeoTiledMapRectangleObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
         : QGeoTiledMapObjectInfo(mapData, mapObject),
-        rectangleItem1(0),
         rectangleItem2(0)
 {
     rectangle = static_cast<QGeoMapRectangleObject*>(mapObject);
+
+    connect(rectangle,
+            SIGNAL(topLeftChanged(QGeoCoordinate)),
+            this,
+            SLOT(topLeftChanged(QGeoCoordinate)));
+    connect(rectangle,
+            SIGNAL(bottomRightChanged(QGeoCoordinate)),
+            this,
+            SLOT(bottomRightChanged(QGeoCoordinate)));
+    connect(rectangle,
+            SIGNAL(penChanged(QPen)),
+            this,
+            SLOT(penChanged(QPen)));
+    connect(rectangle,
+            SIGNAL(brushChanged(QBrush)),
+            this,
+            SLOT(brushChanged(QBrush)));
+
+    rectangleItem1 = new QGraphicsRectItem();
+    graphicsItem = rectangleItem1;
+
+    penChanged(rectangle->pen());
+    brushChanged(rectangle->brush());
+
+    updateValidity();
+    if (valid())
+        update();
 }
 
 QGeoTiledMapRectangleObjectInfo::~QGeoTiledMapRectangleObjectInfo() {}
 
-void QGeoTiledMapRectangleObjectInfo::objectUpdated()
+void QGeoTiledMapRectangleObjectInfo::updateValidity()
+{
+    setValid((rectangle->topLeft().isValid() && rectangle->bottomRight().isValid()));
+}
+
+void QGeoTiledMapRectangleObjectInfo::topLeftChanged(const QGeoCoordinate &topLeft)
+{
+    updateValidity();
+    if (valid())
+        update();
+}
+
+void QGeoTiledMapRectangleObjectInfo::bottomRightChanged(const QGeoCoordinate &bottomRight)
+{
+    updateValidity();
+    if (valid())
+        update();
+}
+
+void QGeoTiledMapRectangleObjectInfo::penChanged(const QPen &pen)
+{
+    rectangleItem1->setPen(pen);
+    if (rectangleItem2)
+        rectangleItem2->setPen(pen);
+    updateItem();
+}
+
+void QGeoTiledMapRectangleObjectInfo::brushChanged(const QBrush &brush)
+{
+    rectangleItem1->setBrush(brush);
+    if (rectangleItem2)
+        rectangleItem2->setBrush(brush);
+    updateItem();
+}
+
+void QGeoTiledMapRectangleObjectInfo::update()
 {
 #if 1
     QGeoCoordinate coord1 = rectangle->bounds().topLeft();
@@ -118,9 +175,6 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdated()
     }
 #endif
 
-    if (!rectangleItem1)
-        rectangleItem1 = new QGraphicsRectItem();
-
     if (bounds2.isValid()) {
         if (!rectangleItem2)
             rectangleItem2 = new QGraphicsRectItem(rectangleItem1);
@@ -135,26 +189,10 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdated()
     if (rectangleItem2)
         rectangleItem2->setRect(bounds2);
 
-    rectangleItem1->setBrush(rectangle->brush());
-    if (rectangleItem2)
-        rectangleItem2->setBrush(rectangle->brush());
-
-    mapUpdated();
-
-    graphicsItem = rectangleItem1;
-
     updateItem();
 }
 
-void QGeoTiledMapRectangleObjectInfo::mapUpdated()
-{
-    if (rectangleItem1) {
-        QPen pen = rectangle->pen();
-        rectangleItem1->setPen(pen);
-        if (rectangleItem2)
-            rectangleItem2->setPen(pen);
-    }
-}
+#include "moc_qgeotiledmaprectangleobjectinfo_p.cpp"
 
 QTM_END_NAMESPACE
 

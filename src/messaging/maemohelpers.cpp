@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -55,6 +49,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+Q_GLOBAL_STATIC(MessageCache, messageCache);
 Q_GLOBAL_STATIC(MessagingHelper, messagingHelper);
 
 MessagingHelper* MessagingHelper::instance()
@@ -215,22 +210,33 @@ void MessagingHelper::filterMessages(QMessageIdList& messageIds, const QMessageF
             (pf->_filterList.count() == 0)) {
             if (pf->_notFilter) {
                 // There is only one filter: empty ~QMessageFilter()
-                // => accountIds must be cleared
+                // => messageIds must be cleared
                 messageIds.clear();
                 return;
             } else {
                 // There is only one filter: empty QMessageFilter()
-                // => accountIds list can remain intact
+                // => messageIds list can remain intact
                 return;
             }
         }
 
         if (pf->_valid) {
+            MessageCache* cache = MessageCache::instance();
             QMessageStore* store = QMessageStore::instance();
+            QMessage* msg;
             for (int i=messageIds.count()-1; i >= 0; i--) {
-                QMessage message = store->message(messageIds[i]);
-                if (!pf->filter(message)) {
-                    messageIds.removeAt(i);
+                cache->lock();
+                msg = cache->messageObject(messageIds[i]);
+                if (msg) {
+                    if (!pf->filter(*msg)) {
+                        messageIds.removeAt(i);
+                    }
+                    cache->unlock();
+                } else {
+                    cache->unlock();
+                    if (!pf->filter(store->message(messageIds[i]))) {
+                        messageIds.removeAt(i);
+                    }
                 }
             }
         }
@@ -239,10 +245,34 @@ void MessagingHelper::filterMessages(QMessageIdList& messageIds, const QMessageF
 
 bool MessagingHelper::messageLessThan(const QMessageId messageId1, const QMessageId messageId2)
 {
-    QMessageStore* store = QMessageStore::instance();
-    return QMessageSortOrderPrivate::lessThan(*messagingHelper()->m_MessageSortOrder,
-                                              store->message(messageId1),
-                                              store->message(messageId2));
+    bool retVal = false;
+
+    MessageCache* cache = MessageCache::instance();
+    cache->lock();
+    QMessage *msg1 = cache->messageObject(messageId1);
+    QMessage *msg2 = cache->messageObject(messageId2);
+
+    if (msg1 == 0 || msg2 == 0) {
+        QMessageStore* store = QMessageStore::instance();
+        if (msg1 != 0) {
+            retVal = QMessageSortOrderPrivate::lessThan(*messagingHelper()->m_MessageSortOrder,
+                                                        *msg1,
+                                                        store->message(messageId2));
+        } else if (msg2 != 0) {
+            retVal = QMessageSortOrderPrivate::lessThan(*messagingHelper()->m_MessageSortOrder,
+                                                        store->message(messageId1),
+                                                        *msg2);
+        } else {
+            retVal = QMessageSortOrderPrivate::lessThan(*messagingHelper()->m_MessageSortOrder,
+                                                      store->message(messageId1),
+                                                      store->message(messageId2));
+        }
+    } else {
+        retVal = QMessageSortOrderPrivate::lessThan(*messagingHelper()->m_MessageSortOrder, *msg1, *msg2);
+    }
+    cache->unlock();
+
+    return retVal;
 }
 
 void MessagingHelper::orderMessages(QMessageIdList& messageIds,  const QMessageSortOrder &sortOrder)
@@ -509,5 +539,141 @@ void MessagingHelper::handleNestedFiltersFromMessageFilter(QMessageFilter &filte
         }
     }
 }
+
+bool MessagingHelper::preFilter(QMessageFilter &filter, QMessage::Type type)
+{
+    QMessageFilterPrivate* pMFFilter = QMessageFilterPrivate::implementation(filter);
+
+    QString prefix;
+    if (type == QMessage::Email) {
+        prefix = "MO_";
+    } else if (type == QMessage::Sms) {
+        prefix = "el";
+    }
+
+    return pMFFilter->preFilter(type, prefix);
+}
+
+MessageCache* MessageCache::instance()
+{
+    return messageCache();
+}
+
+MessageCache::MessageCache()
+{
+    m_messageCache.setMaxCost(maxMessageCacheSize);
+}
+
+MessageCache::~MessageCache()
+{
+}
+
+bool MessageCache::insert(const QMessage &message)
+{
+    bool retVal;
+
+    m_mutex.lock();
+    QMessage *msg = new QMessage(message);
+    retVal = m_messageCache.insert(message.id().toString(), msg);
+    if (retVal == false) {
+        delete msg;
+    }
+    m_mutex.unlock();
+
+    return retVal;
+}
+
+bool MessageCache::update(const QMessage &message)
+{
+    bool retVal;
+
+    m_mutex.lock();
+    retVal = m_messageCache.remove(message.id().toString());
+    if (retVal) {
+        QMessage *msg = new QMessage(message);
+        m_messageCache.insert(message.id().toString(), msg);
+    }
+    m_mutex.unlock();
+
+    return retVal;
+}
+
+bool MessageCache::remove(const QMessageId &id)
+{
+    bool retVal;
+
+    m_mutex.lock();
+    retVal = m_messageCache.remove(id.toString());
+    m_mutex.unlock();
+
+    return retVal;
+}
+
+QMessage MessageCache::message(const QMessageId &id)
+{
+    QMessage message;
+
+    m_mutex.lock();
+    QMessage *msg = m_messageCache.object(id.toString());
+    if (msg) {
+        message = *msg;
+    }
+    m_mutex.unlock();
+
+    return message;
+}
+
+bool MessageCache::isFull() const
+{
+    if (m_messageCache.size() >= maxMessageCacheSize) {
+        return true;
+    }
+
+    return false;
+}
+
+bool MessageCache::insertObject(QMessage *message)
+{
+    bool retVal;
+
+    m_mutex.lock();
+    retVal = m_messageCache.insert(message->id().toString(), message);
+    m_mutex.unlock();
+
+    return retVal;
+}
+
+QMessage* MessageCache::messageObject(const QMessageId &id)
+{
+    return m_messageCache.object(id.toString());
+}
+
+QMessageIdList MessageCache::messageIds()
+{
+    QMessageIdList ids;
+
+    QStringList keys = m_messageCache.keys();
+    for (int i=0; i < keys.count(); i++) {
+        ids.append(QMessageId(keys[i]));
+    }
+
+    return ids;
+}
+
+int MessageCache::count() const
+{
+    return m_messageCache.count();
+}
+
+void MessageCache::lock()
+{
+    m_mutex.lock();
+}
+
+void MessageCache::unlock()
+{
+    m_mutex.unlock();
+}
+
 
 QTM_END_NAMESPACE

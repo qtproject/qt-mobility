@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -212,16 +206,16 @@ Q_SIGNALS:
 private:
      QMap<QString, QString> mountEntriesMap;
      void mountEntries();
-     QFileSystemWatcher *mtabWatcherA;
-     QFileSystemWatcher *mtabWatcherB;
+     int mtabWatchA;
+     int inotifyFD;
 
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
 #endif
 private Q_SLOTS:
-    void deviceChanged(const QString &path);
-
+    void deviceChanged();
+    void inotifyActivated();
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
@@ -274,6 +268,9 @@ private Q_SLOTS:
     virtual void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
 #endif
+private:
+    QSystemDeviceInfo::BatteryStatus currentBatStatus;
+    void initBatteryStatus();
 };
 
 
@@ -285,10 +282,10 @@ public:
     QSystemScreenSaverLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemScreenSaverLinuxCommonPrivate();
 
-    bool screenSaverInhibited() {return false;}
-    bool setScreenSaverInhibit() {return false;}
-    bool isScreenLockEnabled() {return false;}
-    bool isScreenSaverActive() {return false;}
+//    bool screenSaverInhibited() {return false;}
+//    bool setScreenSaverInhibit() {return false;}
+//    bool isScreenLockEnabled() {return false;}
+//    bool isScreenSaverActive() {return false;}
 };
 
 QTM_END_NAMESPACE

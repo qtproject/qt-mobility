@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -51,6 +45,8 @@
 #include <e32base.h>
 #include <qtorganizer.h>
 #include <calcommon.h>
+#include "qorganizeritemchangeset.h"
+#include "qorganizercollectionchangeset.h"
 
 // Forward declarations
 class QOrganizerItemSymbianEngine; // Symbian Plugin
@@ -58,7 +54,7 @@ class QOrganizerItemSymbianEngine; // Symbian Plugin
 QTM_USE_NAMESPACE 
 
 class COrganizerItemRequestsServiceProvider : public CActive
-    {
+{
 public: 
     // Static two phase constructor
     static COrganizerItemRequestsServiceProvider* NewL(
@@ -66,18 +62,14 @@ public:
     // Destruction, cleanup
     ~COrganizerItemRequestsServiceProvider();
     // To start an asynchronous request aReq
-    TBool StartRequest(QOrganizerItemAbstractRequest* aReq);
+    bool StartRequest(QOrganizerItemAbstractRequest* aReq);
     // To cancel ongoing iReq request
-    TBool CancelRequest();
-    // Wait for request to complete 
-    TBool waitForRequestFinished(TTimeIntervalMicroSeconds32 aInterval);
+    bool CancelRequest();
     
 private:
     // Private first phase basic constructor
     COrganizerItemRequestsServiceProvider(
             QOrganizerItemSymbianEngine& aEntryView);
-    // Second phase constructor
-    void ConstructL();
     // From CActive
     void RunL();
     // From CActive
@@ -88,56 +80,28 @@ private:
     void SelfComplete();
     // Initialize/reset member variables so that these 
 	// can be used by the next request
-    void Cleanup();
+    void Reset();
     
 private: // Worker functions
-    // Fetch itemInstance
-    void FetchInstanceL();
-    // Save item/entry in agenda server
-    void SaveItemL();
-    // Fetch items/entries from agenda server
-    void FetchItemsL();
-    // Fetch items/entries by local Ids
-    void FetchItemsByLocalIdsL();
-    // Fetch items/entries by details
-    void FetchItemsandFilterL(QOrganizerItemFilter& filter, 
-            QList<QOrganizerItemSortOrder>& sortOrder, 
-            QOrganizerItemFetchHint& fetchHint);
-    // Fetch items ids
-    void FetchItemIdsL();
-    // Remove items/entries
-    void RemoveItemL();
-    // Fetch detail definition
-    void FetchDetailDefinitionL();
-    // Remove detail definition
-    void RemoveDetailDefinitionL();
-    // Save detail definition
-    void SaveDetailDefinitionL();
-#ifdef SYMBIAN_CALENDAR_V2
-    // Fetch collection local Id
-    void CollectionIdL();
-    // Fetch collection
-    void CollectionL();
-    // Save collection
-    void SaveCollectionL();
-    // Remove collection
-    void RemoveCollectionL();
-#endif
+    void FetchInstance();
+    void SaveItem();
+    void FetchItems();
+    void FetchItemsByLocalIds();
+    void FetchItemsandFilter();
+    void FetchItemIds();
+    void RemoveItem();
+    void FetchDetailDefinition();
+    void CollectionIds();
+    void FetchCollections();
+    void SaveCollections();
+    void RemoveCollections();
     
 private:
     QOrganizerItemSymbianEngine&            iOrganizerItemManagerEngine;
     QOrganizerItemAbstractRequest*          iReq; // Request to be processed
-    QList<QOrganizerItem>                   iItemList;
-    QList<QOrganizerItem>                   iSuccessfullItems;
     QList<QOrganizerItemLocalId>            iItemIds;
     QMap<int, QOrganizerItemManager::Error> iErrorMap; // Error map
-    QOrganizerItemManager::Error            iError; // Error
-    TInt                                    iNoOfItems;
     TInt                                    iIndex;
-#ifdef SYMBIAN_CALENDAR_V2
-    QList<QOrganizerCollection>             iSuccessfullCollections;
-    QList<QOrganizerCollectionLocalId>      iCollectionLocalIds;
-#endif
-    };
+};
 
 #endif /* CORGANIZERITEMREQUESTSSERVICEPROVIDER_H_ */

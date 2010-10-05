@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -57,6 +51,7 @@
 #include <qcontactguid.h>
 #include <qcontactonlineaccount.h>
 #include <qcontacturl.h>
+#include <qcontactfavorite.h>
 #include <QtTest/QtTest>
 
 void TestSymbianEngine::initTestCase()
@@ -302,6 +297,82 @@ void TestSymbianEngine::saveContactWithPreferredDetails()
     QVERIFY(callDetail6.definitionName() == QContactPhoneNumber::DefinitionName);
     QContactPhoneNumber fetchedNumber6 = static_cast<QContactPhoneNumber>(callDetail6);
     QVERIFY(fetchedNumber6.number() == "123");
+}
+
+void TestSymbianEngine::saveContactWithFavoriteDetail()
+{
+    QContactManager::Error err;
+    QContactFetchHint hint;
+    
+    //save a contact without favorite detail
+    QContact c1;
+    c1.setType(QContactType::TypeContact);
+    QContactName name1;
+    name1.setFirstName("somename");
+    c1.saveDetail(&name1);
+    QVERIFY(m_engine->saveContact(&c1, &err));
+    QVERIFY(err == QContactManager::NoError);
+    //fetch contact and check there is no favorite detail
+    QContact savedContact1 = m_engine->contact(c1.localId(), hint, &err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(savedContact1.details<QContactFavorite>().count() == 0);
+    
+    //save a contact with a favorite detail
+    QContact c2;
+    c2.setType(QContactType::TypeContact);
+    QContactName name2;
+    name2.setFirstName("firstname");
+    c2.saveDetail(&name2);
+    QContactFavorite fav;
+    fav.setFavorite(true);
+    fav.setIndex(100);
+    c2.saveDetail(&fav);
+    QVERIFY(m_engine->saveContact(&c2, &err));
+    QVERIFY(err == QContactManager::NoError);
+    //fetch contact and check there is a preferred detail we saved
+    QContact savedContact2 = m_engine->contact(c2.localId(), hint, &err);
+    QVERIFY(err == QContactManager::NoError);
+    QContactFavorite savedFav = savedContact2.detail<QContactFavorite>();
+    QVERIFY(savedFav.isFavorite());
+    QVERIFY(savedFav.index() == 100);
+    
+    //remove favorite detail and save contact
+    savedContact2.removeDetail(&savedFav);
+    QVERIFY(m_engine->saveContact(&savedContact2, &err));
+    QVERIFY(err == QContactManager::NoError);
+    //fetch contact and check there is no favorite detail
+    QContact savedContact3 = m_engine->contact(savedContact2.localId(), hint, &err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(savedContact3.details<QContactFavorite>().count() == 0);
+    
+    //save a contact with a favorite detail, favorite index is 0
+    QContact c3;
+    c3.setType(QContactType::TypeContact);
+    QContactName name3;
+    name3.setFirstName("firstname3");
+    c3.saveDetail(&name3);
+    QContactFavorite fav3;
+    fav3.setFavorite(true);
+    fav3.setIndex(0);
+    c3.saveDetail(&fav3);
+    QVERIFY(m_engine->saveContact(&c3, &err));
+    QVERIFY(err == QContactManager::NoError);
+    //fetch contact and check there is a preferred detail we saved
+    QContact savedContact4 = m_engine->contact(c3.localId(), hint, &err);
+    QVERIFY(err == QContactManager::NoError);
+    QContactFavorite savedFav4 = savedContact4.detail<QContactFavorite>();
+    QVERIFY(savedFav4.isFavorite());
+    QVERIFY(savedFav4.index() == 0);
+    
+    //remove favorite detail by changing QContactFavorite detail and save contact
+    savedFav4.setFavorite(false);
+    savedContact4.saveDetail(&savedFav4);
+    QVERIFY(m_engine->saveContact(&savedContact4, &err));
+    QVERIFY(err == QContactManager::NoError);
+    //fetch contact and check there is no favorite detail
+    QContact savedContact5 = m_engine->contact(savedContact4.localId(), hint, &err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(savedContact5.details<QContactFavorite>().count() == 0);
 }
 
 void TestSymbianEngine::saveContacts()

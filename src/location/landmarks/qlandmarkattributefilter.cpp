@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -63,7 +57,6 @@ public:
         const QLandmarkAttributeFilterPrivate *od = static_cast<const QLandmarkAttributeFilterPrivate*>(other);
         return (attributes == od->attributes)
             && (flags == od->flags)
-            && (attributeType == od->attributeType)
             && (operationType == od->operationType);
     }
 
@@ -71,7 +64,6 @@ public:
 
     QHash<QString, QVariant> attributes;
     QHash<QString, QLandmarkFilter::MatchFlags> flags;
-    QLandmarkAttributeFilter::AttributeType attributeType;
     QLandmarkAttributeFilter::OperationType operationType;
 };
 
@@ -79,7 +71,6 @@ QLandmarkAttributeFilterPrivate::QLandmarkAttributeFilterPrivate()
     : QLandmarkFilterPrivate(),
     attributes(QHash<QString, QVariant>()),
     flags(QHash<QString, QLandmarkFilter::MatchFlags>()),
-    attributeType(QLandmarkAttributeFilter::ManagerAttributes),
     operationType(QLandmarkAttributeFilter::AndOperation)
 
 {
@@ -98,20 +89,37 @@ QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
 
     \ingroup landmarks-filter
 
-    The QLandmarkAttributeFilter class may be used to filter landmarks whose attributes match certain values.
-    If an invalid QVariant is provided as the value for an attribute, then any landmark that has that attribute is
-    considered a match, regardless of its value.  More than one attribute may be set in the filter and may be
-    combined using an AND or OR operation.  The filter may only be used to search through either manager attributes
-    (ie. common cross platform attributes and extended attributes specific to a manager) or custom attributes.
+    Filtering on various attributes is facilitated by the QLandmarkAttributeFilter.
+    You can provide various keys which describe the attribute(s) to search.
+    Precisely which keys may be used depends on the manager
+    and these can be retrieved by using QLandmarkManager::searchableLandmarkAttributeKeys().
+    The table below outlines some keys that may be used with the default managers on the
+    currently supported platforms.  The match flags may be used for attributes which are
+    of string type (typically most, if not all searchable attributes are string types).
+
+    \table
+    \header
+        \o {3,1} Searchable attributes
+    \row
+        \o "city"
+        \o "countryCode"
+        \o "country"
+    \row
+        \o "county"
+        \o "countryCode"
+        \o "description"
+
+    \row
+        \o "district"
+        \o "name"
+        \o "state"
+    \row
+        \o "phoneNumber"
+        \o "postCode"
+        \o "street"
+    \endtable
 */
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkAttributeFilter);
-
-/*!
-    \enum QLandmarkAttributeFilter::AttributeType
-    Defines type of landmark attributes this filter operates on.
-    \value ManagerAttributes The filter operates on standard cross platform attributes and extended attributes.
-    \value CustomAttributes The filter operates on custom attributes.
-*/
 
 /*!
     \enum QLandmarkAttributeFilter::OperationType
@@ -214,24 +222,6 @@ QStringList QLandmarkAttributeFilter::attributeKeys() const
 {
     Q_D(const QLandmarkAttributeFilter);
     return d->attributes.keys();
-}
-
-/*!
-    Returns the type of attribute this filter will operate on.
-*/
-QLandmarkAttributeFilter::AttributeType QLandmarkAttributeFilter::attributeType() const
-{
-    Q_D(const QLandmarkAttributeFilter);
-    return d->attributeType;
-}
-
-/*!
-    Sets the type of attribute this filter will operate on to \a attributeType.
-*/
-void QLandmarkAttributeFilter::setAttributeType(QLandmarkAttributeFilter::AttributeType attributeType)
-{
-    Q_D(QLandmarkAttributeFilter);
-    d->attributeType = attributeType;
 }
 
 /*!

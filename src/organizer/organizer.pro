@@ -18,6 +18,8 @@ include(engines/engines.pri)
 # Input
 PUBLIC_HEADERS += \
     qorganizercollection.h \
+    qorganizercollectionchangeset.h \
+    qorganizercollectionenginelocalid.h \
     qorganizercollectionid.h \
     qorganizeritemabstractrequest.h \
     qorganizeritemchangeset.h \
@@ -28,6 +30,7 @@ PUBLIC_HEADERS += \
     qorganizeritemfilter.h \
     qorganizeritem.h \
     qorganizeritemid.h \
+    qorganizeritemenginelocalid.h \
     qorganizeritemmanager.h \
     qorganizeritemmanagerengine.h \
     qorganizeritemmanagerenginefactory.h \
@@ -38,6 +41,7 @@ PUBLIC_HEADERS += \
 
 PRIVATE_HEADERS += \
     qorganizercollection_p.h \
+    qorganizercollectionchangeset_p.h \
     qorganizercollectionid_p.h \
     qorganizeritemabstractrequest_p.h \
     qorganizeritemchangeset_p.h \
@@ -54,6 +58,8 @@ PRIVATE_HEADERS += \
 
 SOURCES += \
     qorganizercollection.cpp \
+    qorganizercollectionchangeset.cpp \
+    qorganizercollectionenginelocalid.cpp \
     qorganizercollectionid.cpp \
     qorganizeritemabstractrequest.cpp \
     qorganizeritemchangeset.cpp \
@@ -64,6 +70,7 @@ SOURCES += \
     qorganizeritemfetchhint.cpp \
     qorganizeritemfilter.cpp \
     qorganizeritemid.cpp \
+    qorganizeritemenginelocalid.cpp \
     qorganizeritemmanager.cpp \
     qorganizeritemmanagerengine.cpp \
     qorganizeritemmanagerenginefactory.cpp \
@@ -97,12 +104,6 @@ symbian {
     ORGANIZER_DEPLOYMENT.sources = QtOrganizer.dll
     ORGANIZER_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += ORGANIZER_DEPLOYMENT
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
-    
-    # export headers into EPOCROOT
-    for(header, exportheaders.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
 }
 
 CONFIG += app

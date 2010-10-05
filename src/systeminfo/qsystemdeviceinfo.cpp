@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -67,16 +61,6 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
 
    Constructs a QSystemDeviceInfo with the given \a parent.
  */
-        /*!
-           \enum QSystemDisplayInfo::DisplayOrientation
-          This enum describes the current orientation of the display.
-
-             \value Unknown              Orientation could not be determined.
-             \value Landscape            Orientation is in landscape.
-             \value Portrait             Orientation is in portrait.
-             \value InvertedLandscape    Orientation is landscape inverted.
-             \value InvertedPortrait     Orientation is portrait inverted.
-        */
 
         /*!
           \fn void QSystemDeviceInfo::batteryLevelChanged(int level)
@@ -178,20 +162,7 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     qRegisterMetaType<QSystemDeviceInfo::Profile>("QSystemDeviceInfo::Profile");
     qRegisterMetaType<QSystemDeviceInfo::InputMethodFlags>("QSystemDeviceInfo::InputMethodFlags");
 
-    connect(d,SIGNAL(batteryLevelChanged(int)),
-            this,SIGNAL(batteryLevelChanged(int)));
 
-    connect(d,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
-            this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
-
-    connect(d,SIGNAL(bluetoothStateChanged(bool)),
-            this,SIGNAL(bluetoothStateChanged(bool)));
-
-    connect(d,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
-            this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)));
-
-    connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
-            this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
     }
 
 /*!
@@ -212,7 +183,31 @@ QSystemDeviceInfo::~QSystemDeviceInfo()
 
 void QSystemDeviceInfo::connectNotify(const char *signal)
 {
-    Q_UNUSED(signal);
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryLevelChanged(int))))) {
+        connect(d,SIGNAL(batteryLevelChanged(int)),
+                this,SIGNAL(batteryLevelChanged(int)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryStatusChanged(QSystemDeviceInfo::BatteryStatus))))) {
+        connect(d,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
+                this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            bluetoothStateChanged(bool))))) {
+        connect(d,SIGNAL(bluetoothStateChanged(bool)),
+                this,SIGNAL(bluetoothStateChanged(bool)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentProfileChanged(QSystemDeviceInfo::Profile))))) {
+        connect(d,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
+                this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            powerStateChanged(QSystemDeviceInfo::PowerState))))) {
+        connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
+                this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
+    }
 }
 
 /*!
@@ -314,7 +309,7 @@ QString QSystemDeviceInfo::model()
   \property QSystemDeviceInfo::productName
   \brief The product name.
 
-    Returns the product name of the device. In the case where no product information is available,
+    Returns the product name of the device. In the case where no product information is available, an empty string will be returned.
 
 */
 QString QSystemDeviceInfo::productName()

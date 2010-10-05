@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -80,6 +74,8 @@ private slots:  // Test cases
     void addRecurrenceRule();
     void removeRecurrenceRule_data();
     void removeRecurrenceRule();
+    void exceptionDates_data(){addManagers();};
+    void exceptionDates();
 
 private: // util functions
     void addManagers();
@@ -90,6 +86,7 @@ private: // util functions
     bool verifyRecurrenceRule(
         QOrganizerItemRecurrenceRule expectedRRule,
         QOrganizerItemRecurrenceRule actualRRule);
+    QOrganizerItem createItem(QString itemType, QString label, QDateTime startTime, QDateTime endTime = QDateTime());
 
 private:
     QOrganizerItemManager *m_om;
@@ -399,6 +396,59 @@ void tst_recurringItems::removeRecurrenceRule()
     QVERIFY(m_om->saveItem(&item));
     item = m_om->item(item.localId());
     QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 0);
+}
+
+void tst_recurringItems::exceptionDates()
+{
+    // Create item
+    QOrganizerItem item = createItem(
+        QOrganizerItemType::TypeEvent,
+        "itemWExceptions",
+        QDateTime(QDate(2010, 10, 1), QTime(10, 0, 0)));
+
+    // Add recurring item "weekly for 10 weeks"
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    rrule.setCount(10);
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    rrules.append(rrule);
+    QOrganizerItemRecurrence recurrence;
+    recurrence.setRecurrenceRules(rrules);
+    QVERIFY(item.saveDetail(&recurrence));
+    QVERIFY(m_om->saveItem(&item));
+
+    // Verify
+    QCOMPARE(m_om->itemInstances().count(), 10);
+    QCOMPARE(m_om->itemInstances(item).count(), 10);
+
+    // Delete the second instance; "weekly for 10 weeks, except on 2nd week"
+    QList<QDate> xdates;
+    xdates.append(QDate(2010, 10, 8));
+    recurrence.setExceptionDates(xdates);
+    QVERIFY(item.saveDetail(&recurrence));
+    QVERIFY(m_om->saveItem(&item));
+
+    // Verify
+    QCOMPARE(m_om->itemInstances().count(), 9);
+    QCOMPARE(m_om->itemInstances(item).count(), 9);
+    QCOMPARE(m_om->itemInstances().at(0).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QCOMPARE(QOrganizerEventOccurrence(m_om->itemInstances().at(0)).startDateTime().date(), QDate(2010, 10, 1));
+    QCOMPARE(m_om->itemInstances().at(1).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QCOMPARE(QOrganizerEventOccurrence(m_om->itemInstances().at(1)).startDateTime().date(), QDate(2010, 10, 15));
+
+    // Delete 1st instance; "weekly for 10 weeks, except on 1st and 2nd week"
+    xdates.append(QDate(2010, 10, 1));
+    recurrence.setExceptionDates(xdates);
+    QVERIFY(item.saveDetail(&recurrence));
+    QVERIFY(m_om->saveItem(&item));
+
+    // Verify
+    QCOMPARE(m_om->itemInstances().count(), 8);
+    QCOMPARE(m_om->itemInstances(item).count(), 8);
+    QCOMPARE(m_om->itemInstances().at(0).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QCOMPARE(QOrganizerEventOccurrence(m_om->itemInstances().at(0)).startDateTime().date(), QDate(2010, 10, 15));
+    QCOMPARE(m_om->itemInstances().at(1).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QCOMPARE(QOrganizerEventOccurrence(m_om->itemInstances().at(1)).startDateTime().date(), QDate(2010, 10, 22));
 }
 
 /*!
@@ -969,6 +1019,34 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
 */
+}
+
+/*!
+ * A helper method for creating a QOrganizerItem instance.
+ */
+QOrganizerItem tst_recurringItems::createItem(QString itemType, QString label, QDateTime startTime, QDateTime endTime)
+{
+    QOrganizerItem item;
+    item.setType(itemType);
+    item.setDisplayLabel(label);
+    if (itemType == QOrganizerItemType::TypeTodo) {
+        QOrganizerTodoTimeRange timeRange;
+        if (startTime.isValid())
+            timeRange.setStartDateTime(startTime);
+        if (endTime.isValid())
+            timeRange.setDueDateTime(endTime);
+        if (!timeRange.isEmpty())
+            item.saveDetail(&timeRange);
+    } else {
+        QOrganizerEventTimeRange timeRange;
+        if (startTime.isValid())
+            timeRange.setStartDateTime(startTime);
+        if (endTime.isValid())
+            timeRange.setEndDateTime(endTime);
+        if (!timeRange.isEmpty())
+            item.saveDetail(&timeRange);
+    }
+    return item;
 }
 
 QTEST_MAIN(tst_recurringItems);

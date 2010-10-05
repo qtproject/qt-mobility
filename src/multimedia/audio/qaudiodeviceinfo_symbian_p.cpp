@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,26 +25,21 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
+#include <QtCore/QCoreApplication>
 #include "qaudiodeviceinfo_symbian_p.h"
 #include "qaudio_symbian_p.h"
 
@@ -56,7 +51,7 @@ QAudioDeviceInfoInternal::QAudioDeviceInfoInternal(QByteArray device,
     ,   m_mode(mode)
     ,   m_updated(false)
 {
-    QT_TRAP_THROWING(m_devsound.reset(CMMFDevSound::NewL()));
+
 }
 
 QAudioDeviceInfoInternal::~QAudioDeviceInfoInternal()
@@ -91,16 +86,21 @@ QAudioFormat QAudioDeviceInfoInternal::preferredFormat() const
     }
 
     if (!isFormatSupported(format)) {
-        if (m_frequencies.size())
-            format.setFrequency(m_frequencies[0]);
-        if (m_channels.size())
-            format.setChannels(m_channels[0]);
-        if (m_sampleSizes.size())
-            format.setSampleSize(m_sampleSizes[0]);
-        if (m_byteOrders.size())
-            format.setByteOrder(m_byteOrders[0]);
-        if (m_sampleTypes.size())
-            format.setSampleType(m_sampleTypes[0]);
+        format = QAudioFormat();
+        format.setCodec(QLatin1String("audio/pcm"));
+        if (m_capabilities.contains(format.codec())) {
+            const Capabilities &codecCaps = m_capabilities[format.codec()];
+            if (codecCaps.m_frequencies.size())
+                format.setFrequency(codecCaps.m_frequencies[0]);
+            if (codecCaps.m_channels.size())
+                format.setChannels(codecCaps.m_channels[0]);
+            if (codecCaps.m_sampleSizes.size())
+                format.setSampleSize(codecCaps.m_sampleSizes[0]);
+            if (codecCaps.m_byteOrders.size())
+                format.setByteOrder(codecCaps.m_byteOrders[0]);
+            if (codecCaps.m_sampleTypes.size())
+                format.setSampleType(codecCaps.m_sampleTypes[0]);
+        }
     }
 
     return format;
@@ -110,14 +110,15 @@ bool QAudioDeviceInfoInternal::isFormatSupported(
                                  const QAudioFormat &format) const
 {
     getSupportedFormats();
-    const bool supported =
-            m_codecs.contains(format.codec())
-        &&  m_frequencies.contains(format.frequency())
-        &&  m_channels.contains(format.channels())
-        &&  m_sampleSizes.contains(format.sampleSize())
-        &&  m_byteOrders.contains(format.byteOrder())
-        &&  m_sampleTypes.contains(format.sampleType());
-
+    bool supported = false;
+    if (m_capabilities.contains(format.codec())) {
+        const Capabilities &codecCaps = m_capabilities[format.codec()];
+        supported = codecCaps.m_frequencies.contains(format.frequency())
+                &&  codecCaps.m_channels.contains(format.channels())
+                &&  codecCaps.m_sampleSizes.contains(format.sampleSize())
+                &&  codecCaps.m_byteOrders.contains(format.byteOrder())
+                &&  codecCaps.m_sampleTypes.contains(format.sampleType());
+    }
     return supported;
 }
 
@@ -129,37 +130,37 @@ QString QAudioDeviceInfoInternal::deviceName() const
 QStringList QAudioDeviceInfoInternal::supportedCodecs()
 {
     getSupportedFormats();
-    return m_codecs;
+    return m_capabilities.keys();
 }
 
 QList<int> QAudioDeviceInfoInternal::supportedSampleRates()
 {
     getSupportedFormats();
-    return m_frequencies;
+    return m_unionCapabilities.m_frequencies;
 }
 
 QList<int> QAudioDeviceInfoInternal::supportedChannelCounts()
 {
     getSupportedFormats();
-    return m_channels;
+    return m_unionCapabilities.m_channels;
 }
 
 QList<int> QAudioDeviceInfoInternal::supportedSampleSizes()
 {
     getSupportedFormats();
-    return m_sampleSizes;
+    return m_unionCapabilities.m_sampleSizes;
 }
 
 QList<QAudioFormat::Endian> QAudioDeviceInfoInternal::supportedByteOrders()
 {
     getSupportedFormats();
-    return m_byteOrders;
+    return m_unionCapabilities.m_byteOrders;
 }
 
 QList<QAudioFormat::SampleType> QAudioDeviceInfoInternal::supportedSampleTypes()
 {
     getSupportedFormats();
-    return m_sampleTypes;
+    return m_unionCapabilities. m_sampleTypes;
 }
 
 QByteArray QAudioDeviceInfoInternal::defaultInputDevice()
@@ -179,17 +180,50 @@ QList<QByteArray> QAudioDeviceInfoInternal::availableDevices(QAudio::Mode)
     return result;
 }
 
+void QAudioDeviceInfoInternal::devsoundInitializeComplete(int err)
+{
+    m_intializationResult = err;
+    m_initializing = false;
+}
+
+// Helper function
+template<typename T>
+void appendUnique(QList<T> &left, const QList<T> &right)
+{
+    foreach (const T &value, right)
+        if (!left.contains(value))
+            left += value;
+}
+
 void QAudioDeviceInfoInternal::getSupportedFormats() const
 {
     if (!m_updated) {
-        QScopedPointer<SymbianAudio::DevSoundCapabilities> caps(
-            new SymbianAudio::DevSoundCapabilities(*m_devsound, m_mode));
+        QScopedPointer<SymbianAudio::DevSoundWrapper> devsound(new SymbianAudio::DevSoundWrapper(m_mode));
+        connect(devsound.data(), SIGNAL(initializeComplete(int)),
+                this, SLOT(devsoundInitializeComplete(int)));
 
-        SymbianAudio::Utils::capabilitiesNativeToQt(*caps,
-            m_frequencies, m_channels, m_sampleSizes,
-            m_byteOrders, m_sampleTypes);
+        foreach (const QString& codec, devsound->supportedCodecs()) {
+            m_initializing = true;
+            devsound->initialize(codec);
+            while (m_initializing)
+                QCoreApplication::instance()->processEvents(QEventLoop::WaitForMoreEvents);
+            if (KErrNone == m_intializationResult) {
+                m_capabilities[codec].m_frequencies = devsound->supportedFrequencies();
+                appendUnique(m_unionCapabilities.m_frequencies, devsound->supportedFrequencies());
 
-        m_codecs.append(QLatin1String("audio/pcm"));
+                m_capabilities[codec].m_channels = devsound->supportedChannels();
+                appendUnique(m_unionCapabilities.m_channels, devsound->supportedChannels());
+
+                m_capabilities[codec].m_sampleSizes = devsound->supportedSampleSizes();
+                appendUnique(m_unionCapabilities.m_sampleSizes, devsound->supportedSampleSizes());
+
+                m_capabilities[codec].m_byteOrders = devsound->supportedByteOrders();
+                appendUnique(m_unionCapabilities.m_byteOrders, devsound->supportedByteOrders());
+
+                m_capabilities[codec].m_sampleTypes = devsound->supportedSampleTypes();
+                appendUnique(m_unionCapabilities.m_sampleTypes, devsound->supportedSampleTypes());
+            }
+        }
 
         m_updated = true;
     }

@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -105,6 +99,48 @@ bool matchString(const QString &sourceString, const QString &matchString, QLandm
         return QVariant(sourceString) == QVariant(matchString);
     }
 }
+
+QVariant getLandmarkAttribute(const QString key, const QLandmark &landmark)
+{
+    if (key == "name") {
+        return landmark.name();
+    } else if (key == "description") {
+        return landmark.description();
+    } else if (key == "countryCode") {
+        return landmark.address().countryCode();
+    } else if (key == "country") {
+        return landmark.address().country();
+    } else if (key == "state") {
+        return landmark.address().state();
+    } else if (key == "city") {
+        return landmark.address().city();
+    } else if (key == "district") {
+        return landmark.address().district();
+    }  else if (key == "district") {
+        return landmark.address().district();
+    } else if (key == "street") {
+        return landmark.address().street();
+    } else if (key == "postCode") {
+        return landmark.address().postCode();
+    } else if (key == "phoneNumber") {
+        return landmark.phoneNumber();
+    } else {
+        return QVariant(); // shouldn't be possible
+    }
+}
+
+QStringList commonLandmarkKeys = QStringList() << "name"
+                                << "description"
+                                << "countryCode"
+                                << "country"
+                                << "state"
+                                << "county"
+                                << "city"
+                                << "district"
+                                << "street"
+                                << "postCode"
+                                << "phoneNumber";
+
 /*!
     \class QLandmarkManagerEngine
     \brief The QLandmarkManagerEngine class provides the interface for all implementations
@@ -558,100 +594,9 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferO
 */
 
 /*!
-    Returns the list of attribute keys the landmarks will have.
-    If extended attributes are enabled (provided manager supported them),
-    landmarks will possess  extra keys in addition to the standard cross platform keys.
+   \fn QStringList QLandmarkManagerEngine::searchableLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+    Returns the list of landmark attribute keys that may be used in a QLandmarkAttributeFilter.
     Errors are stored in \a error and \a errorString.
-*/
-QStringList QLandmarkManagerEngine::landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-
-    *error = QLandmarkManager::NoError;
-    *errorString  = "";
-
-    //TODO: optimize
-    QStringList commonKeys = QStringList()
-                             << "name"
-                             << "description"
-                             << "iconUrl"
-                             << "radius"
-                             << "phoneNumber"
-                             << "url"
-                             << "latitude"
-                             << "longitude"
-                             << "altitude"
-                             << "country"
-                             << "countryCode"
-                             << "state"
-                             << "county"
-                             << "city"
-                             << "district"
-                             << "street"
-                             << "streetNumber"
-                             << "postCode";
-    return commonKeys;
-}
-
-/*!
-    Returns the list of attribute keys the categories will have.
-    If extended attributes are enabled (provided manager supported them),
-    categories will possess  extra keys in addition to the standard cross platform keys.
-    Errors are stored in \a error and \a errorString.
-*/
-QStringList QLandmarkManagerEngine::categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
-{
-    Q_ASSERT(error);
-    Q_ASSERT(errorString);
-
-    *error = QLandmarkManager::NoError;
-    *errorString  = "";
-
-
-    //TODO: Optimize
-    QStringList commonKeys = QStringList() << "name"
-                             << "iconUrl";
-    return commonKeys;
-}
-
-/*!
-    \fn bool QLandmarkManagerEngine::isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const
-
-    Returns whether extended attributes specific to this manager are enabled or not.
-    If extended attributes are enabled, retrieved landmarks will have
-    extra attribute keys accessible through the QLandmark::attribute() function.
-    Extended attributes must be enabled to save any landmarks which possess
-    extended attributes.  This same behaviour will also apply to categories
-    if extended category attributes are supported.
-    Errors are stored in \a error and \a errorString.
-*/
-
-/*!
-    \fn void QLandmarkManagerEngine::setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
-
-    Sets whether extended attributes are \a enabled or not.
-    Errors are stored in \a error and \a errorString.
-*/
-
-/*!
-    \fn bool QLandmarkManagerEngine::isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
-
-    Returns whether custom attributes are enabled or not. Custom attributes
-    are arbitrary attributes created by the application for a landmark.
-    If custom attributes are enabled (and the manager supports them),
-    retrieved landmarks will have extra attributes accessible
-    using QLandmark::customAttributes().  Custom attributes must be enabled
-    to save any landmarks with possess custom attributes.  This same behaviour
-    applies to categories if custom category attributes are supported.
-    Errors are stored in \a error and \a errorString.
-*/
-
-/*!
-    \fn void QLandmarkManagerEngine::setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
-
-     Sets whether custom attributes are \a enabled or not.
-     Errors are stored in \a error and \a errorString.
 */
 
 /*!
@@ -1277,24 +1222,12 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
             const QLandmarkAttributeFilter attribFilter(filter);
             QStringList filterKeys = attribFilter.attributeKeys();
 
-            QStringList landmarkKeys;
-            if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes)
-                landmarkKeys = landmark.attributeKeys();
-            else
-                landmarkKeys = landmark.customAttributeKeys();
-
             if (attribFilter.operationType() ==  QLandmarkAttributeFilter::AndOperation) {
                 QVariant lmAttributeValue;
                 foreach(const QString filterKey, filterKeys)
                 {
-                    if (landmarkKeys.contains(filterKey)) {
-                        if (!attribFilter.attribute(filterKey).isValid())
-                            continue;
-
-                        if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes)
-                            lmAttributeValue = landmark.attribute(filterKey);
-                        else
-                            lmAttributeValue = landmark.customAttribute(filterKey);
+                    if (commonLandmarkKeys.contains(filterKey)) {
+                        lmAttributeValue = getLandmarkAttribute(filterKey, landmark);
 
                         if (lmAttributeValue.type() == QVariant::String) {
                             QString lmString = lmAttributeValue.toString();
@@ -1314,14 +1247,9 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
             } else {//must be OR operation
                 QVariant lmAttributeValue;
                 foreach(const QString filterKey, filterKeys) {
-                    if (landmarkKeys.contains(filterKey)) {
-                        if (!(attribFilter.attribute(filterKey).isValid()))
-                            return true;
+                    if (commonLandmarkKeys.contains(filterKey)) {
 
-                        if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes)
-                            lmAttributeValue = landmark.attribute(filterKey);
-                        else
-                            lmAttributeValue = landmark.customAttribute(filterKey);
+                        lmAttributeValue = getLandmarkAttribute(filterKey, landmark);
 
                         if (lmAttributeValue.type() == QVariant::String) {
                             QString lmString = lmAttributeValue.toString();
@@ -1420,10 +1348,7 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
         {
             QLandmarkProximityFilter proximityFilter(filter);
 
-            if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly)
-                return true; // since we only have one landmark to use, is considered the nearest
-
-            double distance = proximityFilter.coordinate().distanceTo(landmark.coordinate());
+            qreal distance = proximityFilter.center().distanceTo(landmark.coordinate());
             if (distance < proximityFilter.radius() || qFuzzyCompare(distance, proximityFilter.radius()))
                 return true;
             else

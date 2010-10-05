@@ -7,11 +7,11 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial Usage
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,22 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+**
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -48,10 +42,19 @@
 #include "S60audioencodercontrol.h"
 #include "s60videocapturesession.h"
 
+S60AudioEncoderControl::S60AudioEncoderControl(QObject *parent) :
+    QAudioEncoderControl(parent)
+{
+}
+
 S60AudioEncoderControl::S60AudioEncoderControl(S60VideoCaptureSession *session, QObject *parent) :
     QAudioEncoderControl(parent)
 {
-    m_session = session;
+    if (session)
+        m_session = session;
+    else
+        Q_ASSERT(true);
+    // From now on it's safe to assume session exists
 }
 
 S60AudioEncoderControl::~S60AudioEncoderControl()
@@ -64,7 +67,7 @@ QStringList S60AudioEncoderControl::supportedAudioCodecs() const
 }
 
 QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
-{        
+{
     // According to ForumNokia MMF camcorder plugin supports AAC, AMR and QCELP
     // QCELP is speech codec and can be discarded
 	if(qstrcmp(codecName.toLocal8Bit().constData(), "audio/aac") == 0)
@@ -76,29 +79,27 @@ QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
 }
 
 QStringList S60AudioEncoderControl::supportedEncodingOptions(const QString &codec) const
-{    
-    // Possible settings: encodingMode, codec, bitrate, channelCount, sampleRate, quality
-    // Possible (codec specific) options: None
-    
+{
+    // Possible settings: EncodingMode, Codec, BitRate, ChannelCount, SampleRate, Quality
+    // Possible (codec specific) Options: None
     Q_UNUSED(codec);
-    
     return QStringList();
 }
 
 QVariant S60AudioEncoderControl::encodingOption(const QString &codec, const QString &name) const
 {
-    // Possible settings: encodingMode, codec, bitrate, channelCount, sampleRate, quality
-    // Possible (codec specific) options: None
-
+    // Possible settings: EncodingMode, Codec, BitRate, ChannelCount, SampleRate, Quality
+    // Possible (codec specific) Options: None
     Q_UNUSED(codec);
     Q_UNUSED(name);
-
     return QVariant();
 }
 
 void S60AudioEncoderControl::setEncodingOption(
     const QString &codec, const QString &name, const QVariant &value)
 {
+    m_session->setError(KErrNotSupported, QString("Audio encoding option is not supported"));
+
     // The audio settings can currently be set only using setAudioSettings() function
     Q_UNUSED(value)
     Q_UNUSED(codec)
@@ -121,7 +122,32 @@ QAudioEncoderSettings S60AudioEncoderControl::audioSettings() const
 
 void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &settings)
 {
-    m_session->setAudioEncoderSettings(settings);
+    // Quality defines SampleRate/BitRate combination if either or both are missing
+    if (settings.codec().isEmpty()) { // Empty settings
+        m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::EOnlyAudioQuality);
+
+    } else if (settings.bitRate() == -1 && settings.sampleRate() != -1) { // SampleRate set
+        m_session->setAudioCaptureCodec(settings.codec());
+        m_session->setAudioChannelCount(settings.channelCount());
+        m_session->setAudioSampleRate(settings.sampleRate());
+        m_session->setAudioEncodingMode(settings.encodingMode());
+        m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::EAudioQualityAndSampleRate);
+
+    } else if (settings.bitRate() != -1 && settings.sampleRate() == -1) { // BitRate set
+        m_session->setAudioCaptureCodec(settings.codec());
+        m_session->setAudioChannelCount(settings.channelCount());
+        m_session->setAudioBitRate(settings.bitRate());
+        m_session->setAudioEncodingMode(settings.encodingMode());
+        m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::EAudioQualityAndBitRate);
+
+    } else { // SampleRate and BitRate set
+        m_session->setAudioCaptureCodec(settings.codec());
+        m_session->setAudioChannelCount(settings.channelCount());
+        m_session->setAudioSampleRate(settings.sampleRate());
+        m_session->setAudioBitRate(settings.bitRate());
+        m_session->setAudioEncodingMode(settings.encodingMode());
+        m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::ENoAudioQuality);
+    }
 }
 
 // End of file
