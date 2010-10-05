@@ -39,68 +39,61 @@
 **
 ****************************************************************************/
 
-#include "tst_qvaluespacesubscribershared.h"
-
-#include <qvaluespace.h>
-
-#include <QObject>
-#include <QProcess>
 #include <QCoreApplication>
-#include <QTest>
+#include <QDir>
 #include <QFile>
-QTM_USE_NAMESPACE
+#include <QFileInfo>
+#include <QStringList>
 
-class ShutdownControl : public QObject
+#include <stdio.h>
+#include <stdlib.h>
+
+void fail(QString const& message)
 {
-    Q_OBJECT
+    printf("CHECKTEST FAIL: %s\n", qPrintable(message));
+    exit(0);
+}
 
-public:
-    ShutdownControl(QProcess* process)
-    {
-        connect(process,SIGNAL(finished(int,QProcess::ExitStatus)),
-                this, SLOT(shutDown(int, QProcess::ExitStatus)));
-    }
-
-private slots:
-    void shutDown(int, QProcess::ExitStatus)
-    {
-        qApp->quit();
-    }
-
-};
-
-class tst_QValueSpaceSubscriber_Oop : public tst_QValueSpaceSubscriber
+void pass(QString const& message)
 {
-    Q_OBJECT
-};
+    printf("CHECKTEST PASS: %s\n", qPrintable(message));
+    exit(0);
+}
 
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
+
     QStringList args = app.arguments();
+    args.removeFirst(); // ourself
 
-#if defined(QT_NO_PROCESS)
-    tst_QValueSpaceSubscriber_Oop test;
-    return QTest::qExec(&test, argc-1, argv);
-#else
-    if (args.contains("-vsClientMode")) {
-        tst_QValueSpaceSubscriber_Oop test;
-        return QTest::qExec(&test, argc-1, argv);
-    } else {
-#ifdef Q_OS_UNIX
-        QFile::remove("/tmp/qt/valuespace_shmlayer");
-#endif
-        QValueSpace::initValueSpaceServer();
-        QProcess process;
-        ShutdownControl control(&process);
-        process.setProcessChannelMode(QProcess::ForwardedChannels);
-        args.removeAt(0); //don't pass the binary name
-        process.start("tst_qvaluespacesubscriber_oop", args << "-vsClientMode");
+    QString args_quoted = QString("'%1'").arg(args.join("','"));
 
-        return app.exec();
+#ifdef Q_WS_QWS
+    {
+        // for QWS we expect tests to be run as the QWS server
+        QString qws = args.takeLast();
+        if (qws != "-qws") {
+            fail(QString("Expected test to be run with `-qws', but it wasn't; args: %1").arg(args_quoted));
+        }
     }
 #endif
-}
 
-#include "tst_qvaluespacesubscriber_oop.moc"
+    if (args.count() != 1) {
+        fail(QString("These arguments are not what I expected: %1").arg(args_quoted));
+    }
+
+    QString test = args.at(0);
+
+    QFileInfo testfile(test);
+    if (!testfile.exists()) {
+        fail(QString("File %1 does not exist (my working directory is: %2, my args are: %3)")
+            .arg(test)
+            .arg(QDir::currentPath())
+            .arg(args_quoted)
+        );
+    }
+
+    pass(args_quoted);
+}
 
