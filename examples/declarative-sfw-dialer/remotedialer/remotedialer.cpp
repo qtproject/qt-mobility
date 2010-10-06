@@ -39,35 +39,60 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICECONTROL_DBUS_P_H
-#define QREMOTESERVICECONTROL_DBUS_P_H
+#include "remotedialer.h"
 
-#include "qremoteservicecontrol.h"
-#include "qremoteservicecontrol_p.h"
-#include "instancemanager_p.h"
-#include "qserviceinterfacedescriptor.h"
-#include <QLocalServer>
-#include <QUuid>
-#include <QtDBus/QtDBus>
-
-QTM_BEGIN_NAMESPACE
-
-class ObjectEndPoint;
-
-class QRemoteServiceControlDbusPrivate: public QRemoteServiceControlPrivate
+RemoteDialer::RemoteDialer(QObject *parent)
+    : QObject(parent), timerId(0), m_state(DISCONNECTED)
 {
-    Q_OBJECT
-public:
-    QRemoteServiceControlDbusPrivate(QObject* parent);
-    void publishServices(const QString& ident );
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime())+QCoreApplication::applicationPid());
+}
 
-private:
-    bool createServiceEndPoint(const QString& ident);
+int RemoteDialer::state() const
+{
+    return m_state;
+}
 
-    QLocalServer* localServer;
-    QList<ObjectEndPoint*> pendingConnections;   
-};
+void RemoteDialer::dialNumber(const QString& number)
+{
+    qDebug() << "Dialing Voip number: " << number;
+    if (m_state != DISCONNECTED)
+        return;
 
-QTM_END_NAMESPACE
+    if (timerId)
+        killTimer(timerId);
+    timerId = startTimer(2000);
+    m_state = CONNECTING;
+    emit stateChanged();
+    qDebug() << "EMITTED";
+}
 
-#endif
+void RemoteDialer::timerEvent(QTimerEvent* /*event*/)
+{
+    setNewState();
+}
+
+void RemoteDialer::hangup()
+{
+    qDebug() << "Hangup on VoipDialer";
+    if (timerId)
+        killTimer(timerId);
+    timerId = 0;
+    m_state = DISCONNECTED;
+    emit stateChanged();
+}
+
+void RemoteDialer::setNewState()
+{
+    switch(m_state) {
+        case DISCONNECTED:
+            break;
+        case CONNECTING:
+            m_state = CONNECTED;
+            emit stateChanged();
+            break;
+        case CONNECTED:
+            break;
+        case ENGAGED:
+            break;
+    }
+}

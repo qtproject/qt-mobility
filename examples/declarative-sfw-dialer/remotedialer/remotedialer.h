@@ -39,31 +39,43 @@
 **
 ****************************************************************************/
 
-#include <qmobilityglobal.h>
-#include <QCoreApplication>
-#include <QFile>
-#include <QTextStream>
-#include "databasemanagerserver_p.h"
-#include "clientservercommon.h"
+#ifndef REMOTEDIALER_H
+#define REMOTEDIALER_H
+
+#include <qremoteserviceregister.h>
+#include <QObject>
+#include <QtCore>
+
+#define DISCONNECTED 0
+#define CONNECTING 1
+#define CONNECTED 2
+#define ENGAGED 3
 
 QTM_USE_NAMESPACE
 
-int main(int argc, char **argv)
+class RemoteDialer : public QObject
 {
-    QCoreApplication app(argc, argv);
+    Q_OBJECT
+public:
+    RemoteDialer(QObject *parent = 0);
     
-    CDatabaseManagerServer* server = new CDatabaseManagerServer;
-    TInt err = server->Start(KDatabaseManagerServerName);
-    if (err != KErrAlreadyExists)
-    {
-        if (err != KErrNone)
-        {
-            CDatabaseManagerServer::PanicServer(ESvrStartServer);
-        }
-        RProcess::Rendezvous(err);
+    Q_PROPERTY(int state READ state NOTIFY stateChanged);
+    int state() const;
 
-        return app.exec();
-    }
-    return 0;
-}
+public slots:
+    void dialNumber(const QString& number);
+    void hangup();
 
+Q_SIGNALS:
+    void stateChanged();
+
+protected:
+    void timerEvent(QTimerEvent* event);
+
+private:
+    void setNewState();
+    int timerId;
+    int m_state;
+};
+
+#endif

@@ -39,31 +39,47 @@
 **
 ****************************************************************************/
 
-#include <qmobilityglobal.h>
-#include <QCoreApplication>
-#include <QFile>
-#include <QTextStream>
-#include "databasemanagerserver_p.h"
-#include "clientservercommon.h"
+#ifndef QREMOTESERVICEREGISTER_P_H
+#define QREMOTESERVICEREGISTER_P_H
 
-QTM_USE_NAMESPACE
+#include "qremoteserviceregister.h"
+#include "instancemanager_p.h"
+#include "qserviceinterfacedescriptor.h"
 
-int main(int argc, char **argv)
+QTM_BEGIN_NAMESPACE
+
+class ObjectEndPoint;
+class QRemoteServiceRegisterPrivate: public QObject
 {
-    QCoreApplication app(argc, argv);
-    
-    CDatabaseManagerServer* server = new CDatabaseManagerServer;
-    TInt err = server->Start(KDatabaseManagerServerName);
-    if (err != KErrAlreadyExists)
-    {
-        if (err != KErrNone)
-        {
-            CDatabaseManagerServer::PanicServer(ESvrStartServer);
-        }
-        RProcess::Rendezvous(err);
+    Q_OBJECT
+    Q_PROPERTY(bool quitOnLastInstanceClosed READ quitOnLastInstanceClosed WRITE setQuitOnLastInstanceClosed)
+public:
+    QRemoteServiceRegisterPrivate(QObject* parent);
+    virtual ~QRemoteServiceRegisterPrivate();
 
-        return app.exec();
-    }
-    return 0;
-}
+    virtual void publishServices(const QString& ident ) = 0;
 
+    virtual bool quitOnLastInstanceClosed() const;
+    virtual void setQuitOnLastInstanceClosed(const bool quit);
+
+    virtual QRemoteServiceRegister::SecurityFilter setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter);
+
+public slots:
+    // Must be implemented in the subclass
+    //void processIncoming();
+
+protected:
+    virtual QRemoteServiceRegister::SecurityFilter getSecurityFilter();
+
+private:
+    bool m_quit;
+    QRemoteServiceRegister::SecurityFilter iFilter;
+
+public:
+    static QObject* proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location);
+    static QRemoteServiceRegisterPrivate* constructPrivateObject(QObject *parent);
+};
+
+QTM_END_NAMESPACE
+
+#endif

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,37 +38,23 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <qremoteserviceregister.h>
+#include <QCoreApplication>
+#include "remotedialer.h"
 
-#ifndef QREMOTESERVICECONTROL_LS_P_H
-#define QREMOTESERVICECONTROL_LS_P_H
-
-#include "qremoteservicecontrol.h"
-#include "instancemanager_p.h"
-#include "qserviceinterfacedescriptor.h"
-#include "qremoteservicecontrol_p.h"
-#include <QLocalServer>
-
-QTM_BEGIN_NAMESPACE
-
-class ObjectEndPoint;
-
-class QRemoteServiceControlLocalSocketPrivate: public QRemoteServiceControlPrivate
+int main(int argc, char** argv)
 {
-    Q_OBJECT
-public:
-    QRemoteServiceControlLocalSocketPrivate(QObject* parent);
-    void publishServices(const QString& ident );
-
-public slots:
-    void processIncoming();
+    QCoreApplication app(argc, argv);
     
-private:
-    bool createServiceEndPoint(const QString& ident);
-
-    QLocalServer* localServer;
-    QList<ObjectEndPoint*> pendingConnections;
-};
-
-QTM_END_NAMESPACE
-
-#endif
+    //register the unique service
+    QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
+    QRemoteServiceRegister::Entry uniqueEntry =
+        serviceRegister->createEntry<RemoteDialer>(
+                "VoipDialer", "com.nokia.qt.examples.Dialer", "1.1");
+    uniqueEntry.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
+    serviceRegister->publishEntries("dialer_service");
+    int res =  app.exec();
+    
+    delete serviceRegister;    
+    return res;
+}

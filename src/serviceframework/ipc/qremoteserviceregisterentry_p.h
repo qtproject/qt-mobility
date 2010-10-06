@@ -39,31 +39,41 @@
 **
 ****************************************************************************/
 
-#include <qmobilityglobal.h>
-#include <QCoreApplication>
-#include <QFile>
-#include <QTextStream>
-#include "databasemanagerserver_p.h"
-#include "clientservercommon.h"
+#ifndef QREMOTESERVICEREGISTERENTRY_P_H
+#define QREMOTESERVICEREGISTERENTRY_P_H
 
-QTM_USE_NAMESPACE
+#include <QExplicitlySharedDataPointer>
+#include <QString>
 
-int main(int argc, char **argv)
+#include "qremoteserviceregister.h"
+//#include "instancemanager_p.h"
+//#include "qserviceinterfacedescriptor.h"
+
+QTM_BEGIN_NAMESPACE
+
+class QRemoteServiceRegisterEntryPrivate : public QSharedData
 {
-    QCoreApplication app(argc, argv);
-    
-    CDatabaseManagerServer* server = new CDatabaseManagerServer;
-    TInt err = server->Start(KDatabaseManagerServerName);
-    if (err != KErrAlreadyExists)
+public:
+    QRemoteServiceRegisterEntryPrivate()
+            : meta(0), cptr(0), instanceType(QRemoteServiceRegister::PrivateInstance)
     {
-        if (err != KErrNone)
-        {
-            CDatabaseManagerServer::PanicServer(ESvrStartServer);
-        }
-        RProcess::Rendezvous(err);
-
-        return app.exec();
     }
-    return 0;
-}
 
+    QRemoteServiceRegisterEntryPrivate(QRemoteServiceRegisterEntryPrivate &other)
+        : QSharedData(other), iface(other.iface),
+          service(other.service), ifaceVersion(other.ifaceVersion),
+          meta(other.meta), cptr(other.cptr), instanceType(other.instanceType)
+    {
+    }
+
+    QString iface;
+    QString service;
+    QString ifaceVersion;
+    const QMetaObject* meta;
+    QRemoteServiceRegister::CreateServiceFunc cptr;
+    QRemoteServiceRegister::InstanceType instanceType;
+};
+
+QTM_END_NAMESPACE
+
+#endif

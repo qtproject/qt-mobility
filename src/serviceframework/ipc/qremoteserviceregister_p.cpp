@@ -39,31 +39,52 @@
 **
 ****************************************************************************/
 
-#include <qmobilityglobal.h>
-#include <QCoreApplication>
-#include <QFile>
-#include <QTextStream>
-#include "databasemanagerserver_p.h"
-#include "clientservercommon.h"
+#include "qremoteserviceregister_p.h"
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-int main(int argc, char **argv)
+QRemoteServiceRegisterPrivate::QRemoteServiceRegisterPrivate(QObject* parent)
+    : QObject(parent), m_quit(true), iFilter(0)
 {
-    QCoreApplication app(argc, argv);
-    
-    CDatabaseManagerServer* server = new CDatabaseManagerServer;
-    TInt err = server->Start(KDatabaseManagerServerName);
-    if (err != KErrAlreadyExists)
-    {
-        if (err != KErrNone)
-        {
-            CDatabaseManagerServer::PanicServer(ESvrStartServer);
-        }
-        RProcess::Rendezvous(err);
-
-        return app.exec();
-    }
-    return 0;
 }
 
+QRemoteServiceRegisterPrivate::~QRemoteServiceRegisterPrivate()
+{
+}
+
+//void QRemoteServiceRegisterPrivate::publishServices( const QString& ident)
+//{
+//  qWarning("QRemoteServiceregisterPrivate::publishServices has not been reimplemented");
+//}
+//
+//void QRemoteServiceRegisterPrivate::processIncoming()
+//{
+//  qWarning("QRemoteServiceRegisterPrivate::processIncoming has not been reimplemented");
+//}
+
+bool QRemoteServiceRegisterPrivate::quitOnLastInstanceClosed() const
+{
+  return m_quit;
+}
+
+void QRemoteServiceRegisterPrivate::setQuitOnLastInstanceClosed(bool quit)
+{
+    m_quit = quit;
+}
+
+QRemoteServiceRegister::SecurityFilter QRemoteServiceRegisterPrivate::setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter)
+{
+    QRemoteServiceRegister::SecurityFilter f;
+    f = filter;
+    iFilter = filter;
+    return f;
+}
+
+QRemoteServiceRegister::SecurityFilter QRemoteServiceRegisterPrivate::getSecurityFilter()
+{
+    return iFilter;
+}
+
+
+#include "moc_qremoteserviceregister_p.cpp"
+QTM_END_NAMESPACE
