@@ -214,7 +214,7 @@ bool QXAPlaySession::isMuted()
         TInt err = mImpl->getMute(bCurrMute);
         if(err == KErrNone)
             return bCurrMute;
-    }
+    }
     
     return EFalse;
 }
@@ -297,7 +297,7 @@ QMediaContent QXAPlaySession::media()
 void QXAPlaySession::setMedia(const QMediaContent& media)
 {
     QT_TRACE_FUNCTION_ENTRY;
-    RET_IF_p_IS_NULL_EMIT_RESOURCE_ERROR(mImpl);
+    RET_IF_p_IS_NULL_EMIT_PLAYER_RESOURCE_ERROR(mImpl);
 
     if (media.isNull() || 
         mMediaContent == media) {

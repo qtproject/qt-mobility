@@ -144,6 +144,27 @@ QTM_BEGIN_NAMESPACE
   \sa dataChanged()
  */
 
+/*!
+  \fn QOrganizerItemManagerEngine::collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal should be emitted at some point once the collections identified by \a collectionIds have been added to a datastore managed by this engine.
+  This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+ */
+
+/*!
+  \fn QOrganizerItemManagerEngine::collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal should be emitted at some point once the metadata for the collections identified by \a collectionIds have been modified in a datastore managed by this engine.
+  This signal is not emitted if one of the items in this collection has changed - itemsChanged() will be emitted instead.
+  This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+ */
+
+/*!
+  \fn QOrganizerItemManagerEngine::collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal should be emitted at some point once the collections identified by \a collectionIds have been removed from a datastore managed by this engine.
+  This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+ */
+
+
+
 /*! Returns the manager name for this QOrganizerItemManagerEngine */
 QString QOrganizerItemManagerEngine::managerName() const
 {
@@ -1561,6 +1582,19 @@ bool QOrganizerItemManagerEngine::validateItem(const QOrganizerItem& organizerit
 }
 
 /*!
+  Returns true if the \a collection is valid and can be saved in the engine.
+  By default, modifiable collections are not supported, so this function returns false,
+  and \a error is set to QOrganizerItemManager::NotSupportedError.
+  Engines which do implement mutable collections should reimplement this function.
+ */
+bool QOrganizerItemManagerEngine::validateCollection(const QOrganizerCollection& collection, QOrganizerItemManager::Error* error) const
+{
+    Q_UNUSED(collection);
+    *error = QOrganizerItemManager::NotSupportedError;
+    return false;
+}
+
+/*!
   Checks that the given detail definition \a definition seems valid,
   with a correct id, defined fields, and any specified value types
   are supported by this engine.  This function is called before
@@ -1864,14 +1898,21 @@ bool QOrganizerItemManagerEngine::removeItems(const QList<QOrganizerItemLocalId>
 }
 
 /*!
-  XXX TODO
- */
+    Returns the default collegtion Id.
+    Any errors encountered during this operation should be stored to
+   \a error.
+*/
 QOrganizerCollectionLocalId QOrganizerItemManagerEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NotSupportedError;
     return QOrganizerCollectionLocalId();
 }
 
+/*!
+    Returns the collegtion Ids.
+    Any errors encountered during this operation should be stored to
+    \a error.
+ */
 QList<QOrganizerCollectionLocalId> QOrganizerItemManagerEngine::collectionIds(QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NotSupportedError;
@@ -1879,19 +1920,28 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemManagerEngine::collectionIds(QO
 }
 
 /*!
-  XXX TODO
- */
-QList<QOrganizerCollection> QOrganizerItemManagerEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+    Returns a list consisting of any collection whose id is contained in \a collectionIds.
+    Any errors encountered during this operation should be stored to \a error.
+    If \a collectionIds is empty, an empty list should be returned.
+    If any of the collection ids in \a collectionIds does not identify a valid collection in the manager,
+    an entry should be inserted into the \a errorMap for that index, with \c QOrganizerItemManager::DoesNotExistError specified.
+
+    XXX TODO: should it return a list of only the successful ones?  or fill the "empty" indices of the retn list with default constructed collections?
+*/
+QList<QOrganizerCollection> QOrganizerItemManagerEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(collectionIds);
+    Q_UNUSED(errorMap);
 
     *error = QOrganizerItemManager::NotSupportedError;
     return QList<QOrganizerCollection>();
 }
 
 /*!
-  XXX TODO
- */
+    Returns true if the saving of the \a collection was successfull otherwise false.
+    Any errors encountered during this operation should be stored to
+    \a error.
+*/
 bool QOrganizerItemManagerEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(collection);
@@ -1901,8 +1951,10 @@ bool QOrganizerItemManagerEngine::saveCollection(QOrganizerCollection* collectio
 }
 
 /*!
-  XXX TODO
- */
+    Returns true if the removing of the \a collectionId was successfull otherwise false.
+    Any errors encountered during this operation should be stored to
+    \a error.
+*/
 bool QOrganizerItemManagerEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(collectionId);
@@ -1992,6 +2044,19 @@ QOrganizerItem QOrganizerItemManagerEngine::compatibleItem(const QOrganizerItem&
     if (conforming.isEmpty())
         *error = QOrganizerItemManager::DoesNotExistError;
     return conforming;
+}
+
+/*!
+  Returns a pruned or modified version of the \a original collection which is valid and can be saved in the manager.
+  The returned item might have meta data removed or arbitrarily changed.  Any error which occurs will be saved to \a error.
+  By default, modifiable collections are not supported, and so this function always returns false.
+  Any engine which supports mutable collections should reimplement this function.
+ */
+QOrganizerCollection QOrganizerItemManagerEngine::compatibleCollection(const QOrganizerCollection& original, QOrganizerItemManager::Error* error) const
+{
+    Q_UNUSED(original);
+    *error = QOrganizerItemManager::NotSupportedError;
+    return QOrganizerCollection();
 }
 
 /*!
@@ -2790,7 +2855,7 @@ void QOrganizerItemManagerEngine::updateDefinitionFetchRequest(QOrganizerItemDet
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
  */
-void QOrganizerItemManagerEngine::updateCollectionFetchRequest(QOrganizerCollectionFetchRequest* req, const QList<QOrganizerCollection>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
+void QOrganizerItemManagerEngine::updateCollectionFetchRequest(QOrganizerCollectionFetchRequest* req, const QList<QOrganizerCollection>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
 {
     if (req) {
         QWeakPointer<QOrganizerCollectionFetchRequest> ireq(req); // Take this in case the first emit deletes us
@@ -2798,6 +2863,7 @@ void QOrganizerItemManagerEngine::updateCollectionFetchRequest(QOrganizerCollect
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
         rd->m_collections = result;
+        rd->m_errors = errorMap;
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();

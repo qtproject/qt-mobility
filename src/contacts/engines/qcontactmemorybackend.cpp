@@ -64,6 +64,8 @@ QTM_BEGIN_NAMESPACE
   
   \brief The QContactMemoryEngine class provides an in-memory implementation
   of a contacts backend.
+
+  \internal
  
   It may be used as a reference implementation, or when persistent storage is not required.
  
@@ -228,7 +230,9 @@ QList<QContact> QContactMemoryEngine::contacts(const QContactFilter& filter, con
 }
 
 /*! Saves the given contact \a theContact, storing any error to \a error and
-    filling the \a changeSet with ids of changed contacts as required */
+    filling the \a changeSet with ids of changed contacts as required 
+    Returns true if the operation was successful otherwise false.
+*/
 bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     // ensure that the contact's details conform to their definitions
@@ -329,7 +333,9 @@ bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QCo
 }
 
 /*! Removes the contact identified by the given \a contactId, storing any error to \a error and
-    filling the \a changeSet with ids of changed contacts and relationships as required */
+    filling the \a changeSet with ids of changed contacts and relationships as required.
+    Returns true if the operation was successful otherwise false.
+*/
 bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     int index = d->m_contactIds.indexOf(contactId);
@@ -429,7 +435,9 @@ QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& r
 }
 
 /*! Saves the given relationship \a relationship, storing any error to \a error and
-    filling the \a changeSet with ids of changed contacts and relationships as required */
+    filling the \a changeSet with ids of changed contacts and relationships as required 
+    Returns true if the operation was successful otherwise false.
+*/
 bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     // Attempt to validate the relationship.
@@ -519,7 +527,9 @@ bool QContactMemoryEngine::saveRelationships(QList<QContactRelationship>* relati
 }
 
 /*! Removes the given relationship \a relationship, storing any error to \a error and
-    filling the \a changeSet with ids of changed contacts and relationships as required */
+    filling the \a changeSet with ids of changed contacts and relationships as required 
+    Returns true if the operation was successful otherwise false.
+*/
 bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relationship, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     // attempt to remove it from our list of relationships.
@@ -584,7 +594,9 @@ QMap<QString, QContactDetailDefinition> QContactMemoryEngine::detailDefinitions(
 }
 
 /*! Saves the given detail definition \a def, storing any error to \a error and
-    filling the \a changeSet with ids of changed contacts as required */
+    filling the \a changeSet with ids of changed contacts as required 
+    Returns true if the operation was successful otherwise false.
+*/
 bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     // we should check for changes to the database in this function, and add ids of changed data to changeSet. TODO.
@@ -657,8 +669,12 @@ bool QContactMemoryEngine::startRequest(QContactAbstractRequest* req)
 {
     if (!req)
         return false;
+
+    QWeakPointer<QContactAbstractRequest> checkDeletion(req);
     updateRequestState(req, QContactAbstractRequest::ActiveState);
-    performAsynchronousOperation(req);
+    if (!checkDeletion.isNull())
+        performAsynchronousOperation(req);
+
     return true;
 }
 

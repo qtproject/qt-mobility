@@ -98,12 +98,12 @@ public:
 
     int zoomFactor;
 
-    QPoint maxZoomCenter;
-    QSize maxZoomSize;
-    QRect maxZoomScreenRect;
+    QPoint worldReferenceViewportCenter;
+    QSize worldReferenceSize;
+    QRect worldReferenceViewportRect;
 
-    QRect maxZoomScreenRectClippedLeft;
-    QRect maxZoomScreenRectClippedRight;
+    QRect worldReferenceViewportRectLeft;
+    QRect worldReferenceViewportRectRight;
 
     QSet<QRect> requestRects;
     QSet<QRect> replyRects;
@@ -111,7 +111,7 @@ public:
     QList<QGeoTiledMapRequest> requests;
     QSet<QGeoTiledMapReply*> replies;
 
-    QCache<QGeoTiledMapRequest, QPixmap> cache;
+    QCache<QGeoTiledMapRequest, QImage> cache;
     QCache<QGeoTiledMapRequest, QPixmap> zoomCache;
 
     QGraphicsScene *scene;

@@ -48,9 +48,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapPixmapObjectInfo::QGeoTiledMapPixmapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-        pixmapItem(0)
+QGeoTiledMapPixmapObjectInfo::QGeoTiledMapPixmapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
+    : QGeoTiledMapObjectInfo(mapData, mapObject),
+      pixmapItem(0)
 
 {
     pixmap = static_cast<QGeoMapPixmapObject*>(mapObject);
@@ -73,7 +73,7 @@ QGeoTiledMapPixmapObjectInfo::QGeoTiledMapPixmapObjectInfo(QGeoMapData *mapData,
     if (!this->pixmap->pixmap().isNull())
         pixmapItem->setPixmap(pixmap->pixmap());
     if (pixmap->coordinate().isValid())
-        pixmapItem->setPos(tiledMapData->coordinateToWorldPixel(pixmap->coordinate()));
+        pixmapItem->setPos(tiledMapData->coordinateToWorldReferencePosition(pixmap->coordinate()));
     updateOffset();
 }
 
@@ -88,7 +88,7 @@ void QGeoTiledMapPixmapObjectInfo::coordinateChanged(const QGeoCoordinate &coord
 {
     updateValidity();
     if (pixmap->coordinate().isValid())
-        pixmapItem->setPos(tiledMapData->coordinateToWorldPixel(pixmap->coordinate()));
+        pixmapItem->setPos(tiledMapData->coordinateToWorldReferencePosition(pixmap->coordinate()));
     if (valid())
         updateItem();
 }

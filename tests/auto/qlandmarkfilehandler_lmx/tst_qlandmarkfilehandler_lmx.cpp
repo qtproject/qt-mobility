@@ -75,7 +75,6 @@ public:
     }
 };
 
-Q_DECLARE_METATYPE(QLandmarkCategoryId);
 Q_DECLARE_METATYPE(QList<QLandmark>);
 Q_DECLARE_METATYPE(QList<QLandmarkCategory>);
 
@@ -212,7 +211,9 @@ private slots:
             lm.setName(QString("LM%1").arg(i));
             lm.setUrl(QUrl("url"));
             lm.setCoordinate(QGeoCoordinate(54,23));
-            lm.setAttribute("street", "main street");
+            QGeoAddress address;
+            address.setStreet("main street");
+            lm.setAddress(address);
             lms.append(lm);
         }
 
@@ -276,7 +277,7 @@ private slots:
         << "The element \"landmarkCollection\" did not expect a child element named \"invalid\" at this point (unknown child element or child element out of order).";
         QTest::newRow("Non-double radius element")
         << "landmark/nondoubleradius.xml"
-        << "The element \"coverageRadius\" expected a value convertable to type double (value was \"twenty three\").";
+        << "The element \"coverageRadius\" expected a value convertable to type real (value was \"twenty three\").";
         QTest::newRow("Negative radius element")
         << "landmark/negativeradius.xml"
         << "The element \"coverageRadius\" is expected to have a non-negative value (value was \"-23.0\").";

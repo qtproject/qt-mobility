@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
     \ingroup maps-routing
 
     The default state of a QGeoRouteRequest instance will result in a request
-    for basic route segment and navigation instructions describing the fastest
+    for basic route segment and navigation maneuvers describing the fastest
     route by car which covers the given waypoints.
 
     There may be signifcant variation in the features supported by different
@@ -115,28 +115,57 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QGeoRouteRequest::AvoidFeatureType
+    \enum QGeoRouteRequest::FeatureType
 
-    Defines features to be avoided while planning a route.
+    Defines a feature which is important to the planning of a route.
 
-    \value AvoidNothing
-        The route can be planned without considering features to be avoided.
-    \value AvoidTolls
-        Avoid routes that require the use of tollways.
-    \value AvoidHighways
-        Avoid routes that require the use of highways.
-    \value AvoidPublicTransit
-        Avoid routes that require the use of public transit.
-    \value AvoidFerries
-        Avoid routes that require the use of ferries.
-    \value AvoidTunnels
-        Avoid routes that require the use of tunnels.
-    \value AvoidDirtRoads
-        Avoid routes that require the use of dirt roads.
-    \value AvoidPark
-        Avoid routes that require the travel through parks.
-    \value AvoidMotorPoolLanes
-        Avoid routes that require the use of motor pool lanes.
+    These values will be used in combination with
+    QGeoRouteRequest::FeatureWeight to determine if they should or should
+    not be part of the route.
+
+    \value TollFeature
+        Consdier tollways when planning the route.
+    \value HighwayFeature
+        Consider highways when planning the route.
+    \value PublicTransitFeature
+        Consider public transit when planning the route.
+    \value FerryFeature
+        Consider ferries when planning the route.
+    \value TunnelFeature
+        Consider tunnels when planning the route.
+    \value DirtRoadFeature
+        Consider dirt roads when planning the route.
+    \value ParksFeature
+        Consider parks when planning the route.
+    \value MotorPoolLaneFeature
+        Consider motor pool lanes when planning the route.
+*/
+
+/*!
+    \enum QGeoRouteRequest::FeatureWeight
+
+    Defines the weight to associate with a feature during  the
+    planning of a route.
+
+    These values will be used in combination with
+    QGeoRouteRequest::Feature to determine if they should or should
+    not be part of the route.
+
+    \value NeutralFeatureWeight
+        The presence or absence of a the feature will not affect the
+        planning of the route.
+    \value PreferFeatureWeight
+        Routes which contain the feature will be preferred over those that do
+        not.
+    \value RequireFeatureWeight
+        Only routes which contain the feature will be considered, otherwise
+        no route will be returned.
+    \value AvoidFeatureWeight
+        Routes which do not contain the feature will be preferred over those
+        that do.
+    \value DisallowFeatureWeight
+        Only routes which do not contain the feature will be considered,
+        otherwise no route will be returned.
 */
 
 // TODO improve description of MostScenicRoute
@@ -155,12 +184,6 @@ QTM_BEGIN_NAMESPACE
         Maximize the scenic potential of the journey.
 */
 
-enum SegmentDetail {
-    NoSegmentData = 0x0000,
-    BasicSegmentData = 0x0001,
-    DetailedSegmentData = 0x0002
-};
-
 /*!
     \enum QGeoRouteRequest::SegmentDetail
 
@@ -171,7 +194,7 @@ enum SegmentDetail {
         No segment data should be included with the route.  A route requested
         with this level of segment detail will initialise
         QGeoRouteSegment::path() as a straight line between the positions of
-        the previous and next QGeoInstruction instances.
+        the previous and next QGeoManeuver instances.
 
     \value BasicSegmentData
         Basic segment data will be included with the route.  This will include
@@ -179,17 +202,17 @@ enum SegmentDetail {
 */
 
 /*!
-    \enum QGeoRouteRequest::InstructionDetail
+    \enum QGeoRouteRequest::ManeuverDetail
 
-    Defines the amount of instruction information that should be included with
+    Defines the amount of maneuver information that should be included with
     the route.
 
-    \value NoInstructions
-        No instructions should be included with the route.
+    \value NoManeuvers
+        No maneuvers should be included with the route.
 
-    \value BasicInstructions
-        Basic instructions will be included with the route. This will
-        include QGeoInstruction::instructionText().
+    \value BasicManeuvers
+        Basic manevuers will be included with the route. This will
+        include QGeoManeuver::instructionText().
 */
 
 /*!
@@ -198,7 +221,7 @@ enum SegmentDetail {
     The route will traverse the elements of \a waypoints in order.
 */
 QGeoRouteRequest::QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints)
-        : d_ptr(new QGeoRouteRequestPrivate())
+    : d_ptr(new QGeoRouteRequestPrivate())
 {
     d_ptr->waypoints = waypoints;
 }
@@ -208,7 +231,7 @@ QGeoRouteRequest::QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints)
     \a destination.
 */
 QGeoRouteRequest::QGeoRouteRequest(const QGeoCoordinate &origin, const QGeoCoordinate &destination)
-        : d_ptr(new QGeoRouteRequestPrivate())
+    : d_ptr(new QGeoRouteRequestPrivate())
 {
     d_ptr->waypoints.append(origin);
     d_ptr->waypoints.append(destination);
@@ -218,7 +241,7 @@ QGeoRouteRequest::QGeoRouteRequest(const QGeoCoordinate &origin, const QGeoCoord
     Constructs a route request object from the contents of \a other.
 */
 QGeoRouteRequest::QGeoRouteRequest(const QGeoRouteRequest &other)
-        : d_ptr(other.d_ptr) {}
+    : d_ptr(other.d_ptr) {}
 
 /*!
     Destroys the request.
@@ -327,23 +350,37 @@ QGeoRouteRequest::TravelModes QGeoRouteRequest::travelModes() const
 }
 
 /*!
-    Sets the features to be avoided during the planning of the route to
-    \a avoidFeatureTypes.
+    Assigns the weight \a featureWeight to the feauture \a featureType during
+    the planning of the route.
 
-    The default value is QGeoRouteRequest::AvoidNothing.
+    By defaul all features are assigned a weight of NeutralFeatureWeight.
 */
-void QGeoRouteRequest::setAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes)
+void QGeoRouteRequest::setFeatureWeight(QGeoRouteRequest::FeatureType featureType, QGeoRouteRequest::FeatureWeight featureWeight)
 {
-    d_ptr->avoidFeatureTypes = avoidFeatureTypes;
+    if (featureWeight != QGeoRouteRequest::NeutralFeatureWeight)
+        d_ptr->featureWeights[featureType] = featureWeight;
+    else
+        d_ptr->featureWeights.remove(featureType);
 }
 
 /*!
-    Returns the features which this request specifies should be avoided during
-    the planning of the route.
+    Returns the weight assigned to \a featureType in the planning of the route.
+
+    If no feature weight has been specified for \a featureType then
+    NeutralFeatureWeight will be returned.
 */
-QGeoRouteRequest::AvoidFeatureTypes QGeoRouteRequest::avoidFeatureTypes() const
+QGeoRouteRequest::FeatureWeight QGeoRouteRequest::featureWeight(QGeoRouteRequest::FeatureType featureType) const
 {
-    return d_ptr->avoidFeatureTypes;
+    return d_ptr->featureWeights.value(featureType, QGeoRouteRequest::NeutralFeatureWeight);
+}
+
+/*!
+    Returns the list of features that will be considered when planning the
+    route.  Features with a weight of NeutralFeatureWeight will not be returned.
+*/
+QList<QGeoRouteRequest::FeatureType> QGeoRouteRequest::featureTypes() const
+{
+    return d_ptr->featureWeights.keys();
 }
 
 /*!
@@ -385,48 +422,46 @@ QGeoRouteRequest::SegmentDetail QGeoRouteRequest::segmentDetail() const
 }
 
 /*!
-    Sets the level of detail to use when representing routing instructions to
-    \a instructionDetail.
+    Sets the level of detail to use when representing routing maneuvers to
+    \a maneuverDetail.
 
-    The default value is QGeoRouteRequest::BasicInstructions.
+    The default value is QGeoRouteRequest::BasicManeuvers.
 */
-
-void QGeoRouteRequest::setInstructionDetail(QGeoRouteRequest::InstructionDetail instructionDetail)
+void QGeoRouteRequest::setManeuverDetail(QGeoRouteRequest::ManeuverDetail maneuverDetail)
 {
-    d_ptr->instructionDetail = instructionDetail;
+    d_ptr->maneuverDetail = maneuverDetail;
 }
 
 /*!
     Returns the level of detail which will be used in the representation of
-    routing instructions.
+    routing maneuvers.
 */
-QGeoRouteRequest::InstructionDetail QGeoRouteRequest::instructionDetail() const
+QGeoRouteRequest::ManeuverDetail QGeoRouteRequest::maneuverDetail() const
 {
-    return d_ptr->instructionDetail;
+    return d_ptr->maneuverDetail;
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoRouteRequestPrivate::QGeoRouteRequestPrivate()
-        : QSharedData(),
-        numberAlternativeRoutes(0),
-        travelModes(QGeoRouteRequest::CarTravel),
-        avoidFeatureTypes(QGeoRouteRequest::AvoidNothing),
-        routeOptimization(QGeoRouteRequest::FastestRoute),
-        segmentDetail(QGeoRouteRequest::BasicSegmentData),
-        instructionDetail(QGeoRouteRequest::BasicInstructions) {}
+    : QSharedData(),
+      numberAlternativeRoutes(0),
+      travelModes(QGeoRouteRequest::CarTravel),
+      routeOptimization(QGeoRouteRequest::FastestRoute),
+      segmentDetail(QGeoRouteRequest::BasicSegmentData),
+      maneuverDetail(QGeoRouteRequest::BasicManeuvers) {}
 
 QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other)
-        : QSharedData(other),
-        waypoints(other.waypoints),
-        excludeAreas(other.excludeAreas),
-        numberAlternativeRoutes(other.numberAlternativeRoutes),
-        travelModes(other.travelModes),
-        avoidFeatureTypes(other.avoidFeatureTypes),
-        routeOptimization(other.routeOptimization),
-        segmentDetail(other.segmentDetail),
-        instructionDetail(other.instructionDetail) {}
+    : QSharedData(other),
+      waypoints(other.waypoints),
+      excludeAreas(other.excludeAreas),
+      numberAlternativeRoutes(other.numberAlternativeRoutes),
+      travelModes(other.travelModes),
+      featureWeights(other.featureWeights),
+      routeOptimization(other.routeOptimization),
+      segmentDetail(other.segmentDetail),
+      maneuverDetail(other.maneuverDetail) {}
 
 QGeoRouteRequestPrivate::~QGeoRouteRequestPrivate() {}
 
@@ -436,10 +471,10 @@ bool QGeoRouteRequestPrivate::operator ==(const QGeoRouteRequestPrivate &other) 
             && (excludeAreas == other.excludeAreas)
             && (numberAlternativeRoutes == other.numberAlternativeRoutes)
             && (travelModes == other.travelModes)
-            && (avoidFeatureTypes == other.avoidFeatureTypes)
+            && (featureWeights == other.featureWeights)
             && (routeOptimization == other.routeOptimization)
             && (segmentDetail == other.segmentDetail)
-            && (instructionDetail == other.instructionDetail));
+            && (maneuverDetail == other.maneuverDetail));
 }
 
 QTM_END_NAMESPACE

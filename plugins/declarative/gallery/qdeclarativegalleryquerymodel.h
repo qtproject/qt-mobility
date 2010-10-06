@@ -78,10 +78,10 @@ public:
     {
         Null        = QGalleryAbstractRequest::Inactive,
         Active      = QGalleryAbstractRequest::Active,
-        Finished    = QGalleryAbstractRequest::Finished,
-        Idle        = QGalleryAbstractRequest::Idle,
         Cancelling  = QGalleryAbstractRequest::Cancelling,
         Cancelled   = QGalleryAbstractRequest::Cancelled,
+        Idle        = QGalleryAbstractRequest::Idle,
+        Finished    = QGalleryAbstractRequest::Finished,
         Error       = QGalleryAbstractRequest::Error
     };
 
@@ -167,20 +167,27 @@ protected Q_SLOTS:
     void deferredExecute();
 
 protected:
+    enum UpdateStatus
+    {
+        Incomplete,
+        NoUpdate,
+        PendingUpdate,
+        CancelledUpdate
+    };
+
     explicit QDeclarativeGalleryQueryModel(QObject *parent = 0);
 
     virtual QVariant itemType(const QString &type) const = 0;
 
-    void timerEvent(QTimerEvent *event);
+    bool event(QEvent *event);
 
     QGalleryQueryRequest m_request;
     QWeakPointer<QDeclarativeGalleryFilterBase> m_filter;
     QGalleryResultSet *m_resultSet;
     QVector<QPair<int, QString> > m_propertyNames;
-    QBasicTimer m_executeTimer;
     Status m_status;
     int m_rowCount;
-    bool m_complete;
+    UpdateStatus m_updateStatus;
 
 private Q_SLOTS:
     void _q_statusChanged();

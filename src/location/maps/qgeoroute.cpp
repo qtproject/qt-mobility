@@ -61,12 +61,8 @@ QTM_BEGIN_NAMESPACE
     as the length the route, the estimated travel time for the route,
     and enough information to render a basic image of the route on a map.
 
-    The QGeoRoute object also contains a list of QGeoRouteSegment objecs, or
-    objects derived from QGeoRouteSegment, which describe subsections of the
-    route in greater detail.  The subclasses of QGeoRouteSegment are used to
-    provide specific information for the subsection of the route for particular
-    cases, as may be needed when the segment is to be traversed via public
-    transport or in a truck.
+    The QGeoRoute object also contains a list of QGeoRouteSegment objecs which
+    describe subsections of the route in greater detail.
 
     Routing information is normally requested using
     QGeoRoutingManager::calculateRoute(), which returns a QGeoRouteReply
@@ -80,13 +76,13 @@ QTM_BEGIN_NAMESPACE
     Constructs a route object.
 */
 QGeoRoute::QGeoRoute()
-        : d_ptr(new QGeoRoutePrivate()) {}
+    : d_ptr(new QGeoRoutePrivate()) {}
 
 /*!
     Constructs a route object from the contents of \a other.
 */
 QGeoRoute::QGeoRoute(const QGeoRoute &other)
-        : d_ptr(other.d_ptr) {}
+    : d_ptr(other.d_ptr) {}
 
 /*!
     Destroys this route object.
@@ -180,37 +176,26 @@ QGeoBoundingBox QGeoRoute::bounds() const
 }
 
 /*!
-    Sets the list of route segements to \a routeSegments.
-
-    QGeoRouteSegment contains more detailed information than QGeoRoute
-    and can be subclasses to provide more specialized information, such as
-    for the description of segments of the journey for those who are travelling
-    by public transport, or by truck.
+    Sets the first route segment in the route to \a routeSegment.
 */
-void QGeoRoute::setRouteSegments(const QList<QGeoRouteSegment> &routeSegments)
+void QGeoRoute::setFirstRouteSegment(const QGeoRouteSegment &routeSegment)
 {
-    d_ptr->routeSegments = routeSegments;
+    d_ptr->firstSegment = routeSegment;
 }
 
 /*!
-    Returns the route segments.
+    Returns the first route segment in the route.
 
-    QGeoRouteSegment contains more detailed information than QGeoRoute
-    and can be subclasses to provide more specialized information, such as
-    for the description of segments of the journey for those who are travelling
-    by public transport, or by truck.
-*/
-QList<QGeoRouteSegment> QGeoRoute::routeSegments() const
-{
-    return d_ptr->routeSegments;
-}
+    Will return an invalid route segment if there are no route segments
+    associated with the route.
 
-/*
-void QGeoRoute::appendRouteSegment(const QGeoRouteSegment* routeSegment)
-{
-    d_ptr->routeSegments.append(routeSegment);
-}
+    The remaining route segments can be accessed sequentially with
+    QGeoRouteSegment::nextRouteSegment.
 */
+QGeoRouteSegment QGeoRoute::firstRouteSegment() const
+{
+    return d_ptr->firstSegment;
+}
 
 /*!
     Sets the estimated amount of time it will take to traverse this route,
@@ -292,28 +277,43 @@ QList<QGeoCoordinate> QGeoRoute::path() const
 *******************************************************************************/
 
 QGeoRoutePrivate::QGeoRoutePrivate()
-        : travelTime(0),
-        distance(0.0) {}
+    : travelTime(0),
+      distance(0.0) {}
 
 QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
-        : QSharedData(other),
-        id(other.id),
-        request(other.request),
-        bounds(other.bounds),
-        routeSegments(other.routeSegments),
-        travelTime(other.travelTime),
-        distance(other.distance),
-        travelMode(other.travelMode),
-        path(other.path) {}
+    : QSharedData(other),
+      id(other.id),
+      request(other.request),
+      bounds(other.bounds),
+      //routeSegments(other.routeSegments),
+      travelTime(other.travelTime),
+      distance(other.distance),
+      travelMode(other.travelMode),
+      path(other.path),
+      firstSegment(other.firstSegment) {}
 
 QGeoRoutePrivate::~QGeoRoutePrivate() {}
 
 bool QGeoRoutePrivate::operator ==(const QGeoRoutePrivate &other) const
 {
+    QGeoRouteSegment s1 = firstSegment;
+    QGeoRouteSegment s2 = other.firstSegment;
+
+    while (true) {
+        if (s1.isValid() != s2.isValid())
+            return false;
+        if (!s1.isValid())
+            break;
+        if (s1 != s2)
+            return false;
+        s1 = s1.nextRouteSegment();
+        s2 = s2.nextRouteSegment();
+    }
+
     return ((id == other.id)
             && (request == other.request)
             && (bounds == other.bounds)
-            && (routeSegments == other.routeSegments)
+            //&& (routeSegments == other.routeSegments)
             && (travelTime == other.travelTime)
             && (distance == other.distance)
             && (travelMode == other.travelMode)

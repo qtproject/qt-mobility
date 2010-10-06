@@ -46,18 +46,18 @@
 #include <QStringList>
 #include <QVariant>
 
+#ifdef CATEGORYPRIVATE_DEBUG
+#include <QDebug>
+#endif
+
 QTM_USE_NAMESPACE
 
 // ----- QLandmarkCategoryPrivate -----
-
-QStringList QLandmarkCategoryPrivate::commonKeys = QStringList() << "name"
-                                                                 << "iconUrl";
 
 QLandmarkCategoryPrivate::QLandmarkCategoryPrivate()
     : QSharedData(),
       name(QString()),
       iconUrl(QUrl()),
-      description(QString()),
       id(QLandmarkCategoryId())
 {
 }
@@ -66,7 +66,6 @@ QLandmarkCategoryPrivate::QLandmarkCategoryPrivate(const QLandmarkCategoryPrivat
     : QSharedData(other),
       name(other.name),
       iconUrl(other.iconUrl),
-      description(other.description),
       id(other.id)
 {
 }
@@ -79,7 +78,6 @@ QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCa
 {
     name = other.name;
     iconUrl = other.iconUrl;
-    description = other.description;
     id = other.id;
 
     return *this;
@@ -87,9 +85,13 @@ QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCa
 
 bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &other) const
 {
+
+#ifdef CATEGORYPRIVATE_DEBUG
+    qDebug() << "name: " << (name == other.name);
+    qDebug() << "id:" << (id == other.id);
+#endif
     return ((name == other.name)
             && (iconUrl == other.iconUrl)
-            && (description == other.description)
             && (id == other.id));
 }
 
@@ -237,53 +239,11 @@ void QLandmarkCategory::setCategoryId(const QLandmarkCategoryId &id)
 }
 
 /*!
-    Returns the value of the attribute corresponding to \a key.
-    If the key doest exist, an invalid QVariant is returned.
-*/
-QVariant QLandmarkCategory::attribute(const QString &key) const
-{
-
-    if (key.compare("name",Qt::CaseInsensitive) == 0) {
-        return name();
-    } else if (key.compare("iconUrl",Qt::CaseInsensitive) ==0) {
-        return iconUrl();
-    }
-    return QVariant();
-}
-
-/*!
-    Sets the \a value of the attribute corresponding to \a key.
-    If the \a key does not already exist this function has no effect.
-*/
-void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
-{
-
-    if (key.compare("name",Qt::CaseInsensitive) == 0) {
-        setName(value.toString());
-        return;
-    } else if (key.compare("iconUrl",Qt::CaseInsensitive) ==0) {
-        setIconUrl(QUrl(value.toUrl()));
-        return;
-    }
-}
-
-/*!
-    Returns a list of attribute keys.
-
-    \sa attribute(), setAttribute()
-*/
-QStringList QLandmarkCategory::attributeKeys() const
-{
-    return d->commonKeys;
-}
-
-/*!
     Clears all the data fields of the category.
 */
 void QLandmarkCategory::clear()
 {
     d->name.clear();
     d->iconUrl.clear();
-    d->description.clear();
     d->id = QLandmarkCategoryId();
 }

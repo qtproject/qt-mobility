@@ -91,7 +91,7 @@ QList<QLandmarkCategoryId> QLandmarkCategoryRemoveRequest::categoryIds() const
 /*!
     Sets the list of \a categoryIds of categories which will be removed.
 
-    \sa setCategoryId()
+    \sa setCategories(), setCategoryId()
 */
 void QLandmarkCategoryRemoveRequest::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
 {
@@ -103,7 +103,7 @@ void QLandmarkCategoryRemoveRequest::setCategoryIds(const QList<QLandmarkCategor
 /*!
     Convenience function to set the \a categoryId of a sisngle category to be removed.
 
-    \sa setCategoryIds()
+    \sa setCategory(), setCategoryIds()
 */
 void QLandmarkCategoryRemoveRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
 {
@@ -111,6 +111,33 @@ void QLandmarkCategoryRemoveRequest::setCategoryId(const QLandmarkCategoryId &ca
     QMutexLocker ml(&d->mutex);
     d->categoryIds.clear();
     d->categoryIds.append(categoryId);
+}
+
+/*!
+    Sets the list of \a categories which will be removed.
+
+    \sa setCategory(), setCategoryIds()
+*/
+void QLandmarkCategoryRemoveRequest::setCategories(const QList<QLandmarkCategory> &categories)
+{
+    Q_D(QLandmarkCategoryRemoveRequest);
+    QMutexLocker ml(&d->mutex);
+    d->categoryIds.clear();
+    for (int i=0; i < categories.count(); ++i)
+        d->categoryIds.append(categories.at(i).categoryId());
+}
+
+/*!
+    Sets a single \a category to be removed.
+
+    \sa setCategories, setCategoryId()
+*/
+void QLandmarkCategoryRemoveRequest::setCategory(const QLandmarkCategory &category)
+{
+    Q_D(QLandmarkCategoryRemoveRequest);
+    QMutexLocker ml(&d->mutex);
+    d->categoryIds.clear();
+    d->categoryIds.append(category.categoryId());
 }
 
 /*!

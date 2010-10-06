@@ -114,9 +114,9 @@ QLandmarkCategory QDeclarativeLandmarkCategory::category() const
 // Initializes this category from the given category
 void QDeclarativeLandmarkCategory::setCategory(const QLandmarkCategory& category)
 {
+    setName(category.name());
+    setIconSource(category.iconUrl());
     m_category = category;
-    emit nameChanged();
-    emit iconSourceChanged();
 }
 
 #include "moc_qdeclarativelandmarkcategory_p.cpp"

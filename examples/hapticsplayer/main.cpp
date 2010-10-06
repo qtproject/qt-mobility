@@ -40,20 +40,20 @@
 ****************************************************************************/
 
 #include <QtGui/QApplication>
-#include "dialog.h"
+#include "hapticsplayer.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     a.addLibraryPath("../../plugins"); //allows the plugins to be loaded
 
-    Dialog w;
+    HapticsPlayer w;
     
-//#ifdef Q_OS_SYMBIAN
-    w.showMaximized();
-//#else
-//    w.show();
-//#endif
+#if defined Q_OS_SYMBIAN || defined (Q_OS_WINCE)
+    w.setWindowState(Qt::WindowMaximized);
+#endif
+    w.show();
+
 
     return a.exec();
 }

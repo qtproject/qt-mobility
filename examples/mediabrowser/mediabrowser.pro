@@ -37,5 +37,5 @@ SOURCES = \
 
 symbian: {
     load(data_caging_paths)
-    TARGET.CAPABILITY = ReadDeviceData
+    TARGET.CAPABILITY = ReadDeviceData WriteDeviceData
 }

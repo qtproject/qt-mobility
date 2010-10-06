@@ -1,4 +1,4 @@
-QT += xml network
+QT += xml network svg
 TARGET = MapViewer
 TEMPLATE = app 
 INCLUDEPATH += ../../src/global \
@@ -6,8 +6,11 @@ INCLUDEPATH += ../../src/global \
                ../../src/location \
                ../../src/location/maps
 SOURCES += main.cpp \
+           mapwidget.cpp \
            mainwindow.cpp
-HEADERS += mainwindow.h
+           
+HEADERS += mapwidget.h \
+           mainwindow.h
 
 include(../examples.pri)
 
@@ -22,5 +25,7 @@ symbian: {
     TARGET.CAPABILITY = Location \
                         NetworkServices \
                         ReadUserData \
-                        WriteUserData
+                        WriteUserData \
+                        ReadDeviceData \
+                        WriteDeviceData
 }

@@ -57,8 +57,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapCircleObjectInfo::QGeoTiledMapCircleObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject)
+QGeoTiledMapCircleObjectInfo::QGeoTiledMapCircleObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
+    : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
     circle = static_cast<QGeoMapCircleObject*>(mapObject);
 
@@ -231,7 +231,7 @@ void QGeoTiledMapCircleObjectInfo::update()
         path.append(QGeoCoordinate(lat, lng));
     }
 
-    points = createPolygon(path, tiledMapData, true, center.latitude() > 0 ? -100 : tiledMapData->maxZoomSize().height() + 100); // 100px beyond the closest pole
+    points = createPolygon(path, tiledMapData, true, center.latitude() > 0 ? -100 : tiledMapData->worldReferenceSize().height() + 100); // 100px beyond the closest pole
     //makepoly(points, path, mapData, true, center.latitude() > 0 ? -100 : mapData->maxZoomSize.height()+100); // 100px beyond the closest pole
 
     polygonItem->setPolygon(points);
