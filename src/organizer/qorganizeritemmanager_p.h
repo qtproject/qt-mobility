@@ -88,6 +88,7 @@ public:
 
     QOrganizerItemManagerEngine* m_engine;
     QOrganizerItemManager::Error m_error;
+    QMap<int, QOrganizerItemManager::Error> m_errorMap;
 
     /* Manager plugins */
     static QHash<QString, QOrganizerItemManagerEngineFactory*> m_engines;
