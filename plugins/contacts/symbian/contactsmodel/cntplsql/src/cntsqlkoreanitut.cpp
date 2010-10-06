@@ -36,7 +36,7 @@ const QString KColumn = "nbr";
 /**
 CCntPplViewSession first phase constructor.
 */
-CntSqlKoreanItuT::CntSqlKoreanItuT(C12keyKeyMap* twelveKeyKeyMap)
+CntSqlKoreanItuT::CntSqlKoreanItuT(const C12keyKeyMap* twelveKeyKeyMap)
               :CntSqlSearchBase(twelveKeyKeyMap)
     {
     }

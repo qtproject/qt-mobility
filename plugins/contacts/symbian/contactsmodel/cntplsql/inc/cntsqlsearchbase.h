@@ -29,7 +29,7 @@ public:
     
     CntSqlSearchBase(){};
     
-    CntSqlSearchBase(C12keyKeyMap* twelveKeyKeyMap);
+    CntSqlSearchBase(const C12keyKeyMap* twelveKeyKeyMap);
     
     ~CntSqlSearchBase();
     

@@ -45,7 +45,7 @@ public:
                         };    
 
 public:
-    CntSqlKoreanItuT( C12keyKeyMap* twelveKeyKeyMap);
+    CntSqlKoreanItuT( const C12keyKeyMap* twelveKeyKeyMap);
     
     ~CntSqlKoreanItuT();
     
