@@ -115,6 +115,10 @@ public:
     virtual QList<QVariant::Type> supportedDataTypes() const {return m_engine->supportedDataTypes();}
     virtual QStringList supportedContactTypes() const {return m_engine->supportedContactTypes();}
 
+#ifdef SIMULATOR_APPLICATION
+    QContactManagerEngine *wrappee() {return m_engine;}
+#endif
+
 private Q_SLOTS:
     void requestStateChanged(QContactAbstractRequest::State state);
 

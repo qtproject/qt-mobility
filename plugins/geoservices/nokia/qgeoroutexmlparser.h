@@ -37,6 +37,13 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
+** plugin source code.
+**
 ****************************************************************************/
 
 #ifndef QROUTEXMLPARSER_H
@@ -54,14 +61,14 @@ class QIODevice;
 #include <qgeocoordinate.h>
 #include <qgeoboundingbox.h>
 #include <qgeorouterequest.h>
-#include <qgeoinstruction.h>
+#include <qgeomaneuver.h>
 
 QTM_USE_NAMESPACE
 
-class QGeoInstructionContainer
+class QGeoManeuverContainer
 {
 public:
-    QGeoInstruction instruction;
+    QGeoManeuver maneuver;
     QString id;
     QString toId;
 };
@@ -71,7 +78,7 @@ class QGeoRouteSegmentContainer
 public:
     QGeoRouteSegment segment;
     QString id;
-    QString instructionId;
+    QString maneuverId;
 };
 
 class QGeoRouteXmlParser
@@ -103,7 +110,7 @@ private:
     QXmlStreamReader *m_reader;
     QList<QGeoRoute> m_results;
     QString m_errorString;
-    QList<QGeoInstructionContainer> instructions;
+    QList<QGeoManeuverContainer> maneuvers;
     QList<QGeoRouteSegmentContainer> segments;
 };
 

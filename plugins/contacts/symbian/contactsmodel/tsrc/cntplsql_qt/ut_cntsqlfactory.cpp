@@ -23,7 +23,7 @@
 #include "ut_cntsqlfactory.h"
 #include "cntsqlfactory.h"
 #include "cntsqlsearchinterface.h"
-
+#include "c12keykeymap.h"
 
 #define WRITE_LOGS
 #define SQL_QT_TEST
@@ -57,11 +57,13 @@ void UT_CntSqlFactory::cleanupTestCase()
 
 void UT_CntSqlFactory::init()
 {   
-    mCntSqlFactory = new CntSqlFactory();
+    m12KeyKeyMap = C12keyKeyMap::NewL();
+    mCntSqlFactory = new CntSqlFactory(m12KeyKeyMap);
 }
 
 void UT_CntSqlFactory::cleanup()
 {
+    delete m12KeyKeyMap;
     delete mCntSqlFactory;    
 }
 void UT_CntSqlFactory::testGetSqlIinstance()
@@ -69,11 +71,14 @@ void UT_CntSqlFactory::testGetSqlIinstance()
     TEST_BEGIN_LOG("testGetSqlIinstance");
     
     QLocale language = QLocale ( QLocale::Korean, QLocale::RepublicOfKorea);
-    QString pattern;
+    QString pattern ="3";
     CntSqlSearchInterface* interface = mCntSqlFactory->getSqlIinstance(pattern, language);
-    //QVERIFY(interface != NULL);
+    //qDebug() << " -> result" << result;
     QVERIFY(interface->getQueryType() == CntSqlSearchInterface::KoreaITUT);
     delete interface;
+    language = QLocale ( QLocale::English, QLocale::UnitedKingdom);
+    interface = mCntSqlFactory->getSqlIinstance(pattern, language);
+    QVERIFY(interface == NULL);
     TEST_PASSED_LOG("testGetSqlIinstance");
 }
 

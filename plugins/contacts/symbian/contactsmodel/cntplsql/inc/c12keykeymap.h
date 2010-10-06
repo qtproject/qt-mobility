@@ -85,6 +85,8 @@ NONSHARABLE_CLASS(C12keyKeyMap) : public CPcsKeyMap
 
 		// For unit testing
 		friend class UT_CPcsKeyMap;
+		friend class UT_CntSqlSearchBase;
+		friend class UT_CntSqlKoreanItuT;
 	};
 
 #endif // __C12KEYKEYMAP_H__

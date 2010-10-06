@@ -591,22 +591,160 @@ void tst_QOrganizerItem::hash()
 
 void tst_QOrganizerItem::datastream()
 {
+    // item datastreaming
     QByteArray buffer;
-    QDataStream stream1(&buffer, QIODevice::WriteOnly);
     QOrganizerItem itemIn;
-    QOrganizerItemLocation phone;
-    phone.setAddress("5678");
-    itemIn.saveDetail(&phone);
-    QOrganizerItemManager om("memory");
-    om.saveItem(&itemIn); // fill in its ID
-    stream1 << itemIn;
-
-    QVERIFY(buffer.size() > 0);
-
-    QDataStream stream2(buffer);
+    itemIn.addComment("test comment");
     QOrganizerItem itemOut;
-    stream2 >> itemOut;
-    QCOMPARE(itemOut, itemIn);
+    QOrganizerItemId originalId;
+
+    // first, stream an item with a complete id
+    {
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        QOrganizerItemManager om("memory");
+        QVERIFY(om.saveItem(&itemIn)); // fill in its ID
+        originalId = itemIn.id();
+        stream1 << itemIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> itemOut;
+        //QCOMPARE(itemOut, itemIn); // can't do QCOMPARE because detail keys get changed.
+        QVERIFY(itemOut.details() == itemIn.details());
+        QVERIFY(itemOut.id() == itemIn.id());
+    }
+
+    // second, stream an item with an id with the mgr uri set, local id null
+    {
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        QOrganizerItemId modifiedId = originalId;
+        modifiedId.setLocalId(QOrganizerItemLocalId());
+        itemIn.setId(modifiedId);
+        stream1 << itemIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> itemOut;
+        //QCOMPARE(itemOut, itemIn); // can't do QCOMPARE because detail keys get changed.
+        QVERIFY(itemOut.details() == itemIn.details());
+        QVERIFY(itemOut.id() == itemIn.id());
+    }
+
+    // third, stream an item with an id with the mgr uri null, local id set
+    {
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        QOrganizerItemId modifiedId = originalId;
+        modifiedId.setManagerUri(QString()); // this will clear the local id!
+        modifiedId.setLocalId(originalId.localId()); // so reset it and make sure things don't fall over.
+        itemIn.setId(modifiedId);
+        stream1 << itemIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> itemOut;
+        //QCOMPARE(itemOut, itemIn); // can't do QCOMPARE because detail keys get changed.
+        QVERIFY(itemOut.details() == itemIn.details());
+        QVERIFY(itemOut.id() != itemIn.id()); // in this case, with null mgr uri, the id doesn't get serialized.
+    }
+
+    // fourth, stream an item with a null id
+    {
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        itemIn.setId(QOrganizerItemId());
+        stream1 << itemIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> itemOut;
+        //QCOMPARE(itemOut, itemIn); // can't do QCOMPARE because detail keys get changed.
+        QVERIFY(itemOut.details() == itemIn.details());
+        QVERIFY(itemOut.id() == itemIn.id());
+    }
+
+    // id datastreaming
+    buffer.clear();
+    QOrganizerItemId inputId;
+    QOrganizerItemId outputId;
+
+    // first, stream the whole id (mgr uri set, local id set)
+    {
+        inputId = originalId;
+        buffer.clear();
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << inputId;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> outputId;
+        QCOMPARE(inputId, outputId);
+    }
+
+    // second, stream a partial id (mgr uri null, local id set)
+    {
+        inputId.setManagerUri(QString());
+        inputId.setLocalId(originalId.localId());
+        buffer.clear();
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << inputId;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> outputId;
+
+        // because the manager uri is null, we cannot stream it in.
+        QVERIFY(outputId.isNull());
+        QVERIFY(!inputId.isNull());
+    }
+
+    // third, stream a partial id (mgr uri set, local id null).
+    {
+        inputId.setManagerUri(originalId.managerUri());
+        inputId.setLocalId(QOrganizerItemLocalId());
+        buffer.clear();
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << inputId;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> outputId;
+        QCOMPARE(inputId, outputId);
+    }
+
+    // fourth, stream a null id
+    {
+        inputId = QOrganizerItemId();
+        buffer.clear();
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << inputId;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> outputId;
+        QCOMPARE(inputId, outputId);
+    }
+
+    // fifth, stream an id after changing it's manager uri string.
+    {
+        inputId.setManagerUri(originalId.managerUri());
+        inputId.setLocalId(originalId.localId());
+        inputId.setManagerUri("test manager uri"); // should clear the local id.
+        QVERIFY(inputId.localId() == QOrganizerItemLocalId());
+        buffer.clear();
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << inputId;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> outputId;
+        QCOMPARE(inputId, outputId);
+    }
+
+    // sixth, stream an id after changing it's manager uri string, and resetting the local id.
+    // this should cause great problems, because the manager doesn't exist so it shouldn't
+    // be able to deserialize.  Make sure it's handled gracefully.
+    {
+        inputId.setManagerUri(originalId.managerUri());
+        inputId.setManagerUri("test manager uri"); // should clear the local id.
+        inputId.setLocalId(originalId.localId());
+        buffer.clear();
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << inputId;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> outputId;
+        QVERIFY(outputId.isNull());
+    }
 }
 
 void tst_QOrganizerItem::traits()
@@ -633,10 +771,9 @@ void tst_QOrganizerItem::idTraits()
 
 void tst_QOrganizerItem::localIdTraits()
 {
-    QVERIFY(sizeof(QOrganizerItemId) == sizeof(void *));
+    QVERIFY(sizeof(QOrganizerItemLocalId) == sizeof(void *));
     QTypeInfo<QTM_PREPEND_NAMESPACE(QOrganizerItemLocalId)> ti;
-    QEXPECT_FAIL("", "Need to investigate this", Continue);
-    QVERIFY(!ti.isComplex);
+    QVERIFY(ti.isComplex); // unlike QContactLocalId (int typedef), we have a ctor
     QVERIFY(!ti.isStatic);
     QVERIFY(!ti.isLarge);
     QVERIFY(!ti.isPointer);

@@ -144,7 +144,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
             \value Keypad             Device has keypad (1,2,3, etc).
             \value Keyboard           Device has qwerty keyboard.
             \value SingleTouch        Device has single touch screen.
-            \value MultiTouch         Device has muti touch screen.
+            \value MultiTouch         Device has multi-point touch screen.
             \value Mouse              Device has a mouse.
         */
         /*!
@@ -153,6 +153,10 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
           This signal is emitted whenever bluetooth state changes, specified by \a on.
         */
 
+
+/*!
+    Constructs a QSystemDeviceInfo with the given \a parent.
+*/
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     : QObject(parent), d(deviceInfoPrivate())
 {
@@ -309,7 +313,7 @@ QString QSystemDeviceInfo::model()
   \property QSystemDeviceInfo::productName
   \brief The product name.
 
-    Returns the product name of the device. In the case where no product information is available,
+    Returns the product name of the device. In the case where no product information is available, an empty string will be returned.
 
 */
 QString QSystemDeviceInfo::productName()
@@ -380,7 +384,7 @@ QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
 }
 
 /*!
-  \property QSystemDeviceInfo::currentPowerState
+  \property QSystemDeviceInfo::powerState
   \brief the power state.
 
   Gets the current QSystemDeviceInfo::currentPowerState state.

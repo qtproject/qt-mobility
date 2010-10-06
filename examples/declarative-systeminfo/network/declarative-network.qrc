@@ -1,0 +1,11 @@
+<!DOCTYPE RCC>
+ <RCC version="1.0">
+
+ <qresource prefix="/">
+     <file>wifi.qml</file>
+     <file>images/lan-noavail.svg</file>
+     <file>images/lan.svg</file>
+     <file>images/wlan-noavail.svg</file>
+     <file>images/wlan.svg</file>
+ </qresource>
+ </RCC>

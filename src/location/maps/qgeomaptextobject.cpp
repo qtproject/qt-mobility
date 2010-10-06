@@ -57,28 +57,24 @@ QTM_BEGIN_NAMESPACE
 
     The text object is drawn such that the rendered size of the text object is
     independent of the zoom level of the map.
-
-    \note Anchor and/or alignment options didn't make it into the beta release
-    but will be present in the final 1.1 release.
 */
 
 /*!
     Constructs a new text object.
 */
 QGeoMapTextObject::QGeoMapTextObject()
-        : d_ptr(new QGeoMapTextObjectPrivate()) {}
+    : d_ptr(new QGeoMapTextObjectPrivate()) {}
 
 /*!
     Constructs a new text object which will display the text \a text with font
-    \a font at the coordinate \a coordinate on the map, with the parent \a
-    parent.
+    \a font at the coordinate \a coordinate on the map.
 */
 QGeoMapTextObject::QGeoMapTextObject(const QGeoCoordinate &coordinate,
                                      const QString &text,
                                      const QFont &font,
                                      const QPoint &offset,
                                      Qt::Alignment alignment)
-        : d_ptr(new QGeoMapTextObjectPrivate())
+    : d_ptr(new QGeoMapTextObjectPrivate())
 {
     d_ptr->coordinate = coordinate;
     d_ptr->text = text;

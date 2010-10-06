@@ -71,10 +71,11 @@ public:
     bool supportsAlternativeRoutes() const;
     bool supportsExcludeAreas() const;
     QGeoRouteRequest::TravelModes supportedTravelModes() const;
-    QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes() const;
+    QGeoRouteRequest::FeatureTypes supportedFeatureTypes() const;
+    QGeoRouteRequest::FeatureWeights supportedFeatureWeights() const;
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations() const;
     QGeoRouteRequest::SegmentDetails supportedSegmentDetails() const;
-    QGeoRouteRequest::InstructionDetails supportedInstructionDetails() const;
+    QGeoRouteRequest::ManeuverDetails supportedManeuverDetails() const;
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;

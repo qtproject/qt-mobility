@@ -59,7 +59,7 @@ QList<QSize> CameraBinImageEncoder::supportedResolutions(const QImageEncoderSett
     if (continuous)
         *continuous = false;
 
-    return m_session->supportedResolutions(qMakePair<int,int>(0,0),  continuous);
+    return m_session->supportedResolutions(qMakePair<int,int>(0,0), continuous, QCamera::CaptureStillImage);
 }
 
 QStringList CameraBinImageEncoder::supportedImageCodecs() const

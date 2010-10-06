@@ -72,7 +72,7 @@ class QGeoTiledMapObjectInfo : public QGeoMapObjectInfo
 {
     Q_OBJECT
 public:
-    QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapObjectInfo();
 
     static QPolygonF createPolygon(const QList<QGeoCoordinate> & path,
@@ -80,7 +80,7 @@ public:
                                    bool closedPath,
                                    qreal ypole = -100);
 
-    virtual void setup();
+    virtual void init();
 
     QGeoBoundingBox boundingBox() const;
     bool contains(const QGeoCoordinate &coord) const;
@@ -103,7 +103,7 @@ public slots:
     virtual void visibleChanged(bool visible);
     virtual void selectedChanged(bool selected);
 
-private:
+protected:
     QGeoTiledMapDataPrivate *tiledMapDataPrivate;
 };
 

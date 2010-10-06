@@ -30,6 +30,7 @@ SOURCES += 		$$SYMBIAN_HEADERS \
 				ut_cntsqlsearch.cpp\
 				ut_cntsqlfactory.cpp\
 				ut_cntsqlkoreanitut.cpp\
+				ut_cntsqlsearchbase.cpp\
 				main.cpp\			
         		../../cntplsql/src/cntsqlsearch.cpp\
 				../../cntplsql/src/cpcskeymap.cpp\
@@ -45,6 +46,7 @@ HEADERS += 		$$SYMBIAN_SOURCES \
 				ut_cntsqlsearch.h\
 				ut_cntsqlfactory.h\
 				ut_cntsqlkoreanitut.h\
+				ut_cntsqlsearchbase.h\
         		../../cntplsql/inc/cntsqlsearch.h\
         		../../cntplsql/inc/cpcskeymap.h\
         		../../cntplsql/inc/cqwertykeymap.h\
