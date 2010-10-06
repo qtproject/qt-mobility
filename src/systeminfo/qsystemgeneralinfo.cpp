@@ -120,6 +120,7 @@ is a reliable way to gather such information.
     \value LocationFeature        Global Positioning System (GPS) and/or other location feature available.
     \value VideoOutFeature        Video out feature available.
     \value HapticsFeature         Haptics feature available.
+    \value FmTransmitterFeature   FM Radio transmitter available.
   */
 
 

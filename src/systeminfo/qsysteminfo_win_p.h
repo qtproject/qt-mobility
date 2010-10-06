@@ -65,6 +65,7 @@
 
 #include <winsock2.h>
 #include <mswsock.h>
+#include <qt_windows.h>
 
 #include <QBasicTimer>
 
@@ -147,6 +148,8 @@ Q_SIGNALS:
    void currentMobileNetworkCodeChanged(const QString &);
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+   void cellIdChanged(int);//1.2
+
 private Q_SLOTS:
    void networkStrengthTimeout();
    void networkStatusTimeout();
@@ -159,6 +162,7 @@ private:
    bool isDefaultMode(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode) mode);
    void startWifiCallback();
    bool wlanCallbackInitialized;
+
 
 };
 
@@ -175,12 +179,17 @@ public:
     int displayBrightness(int screen);
     int colorDepth(int screen);
 
-//     QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-//     float contrast(int screen);
-//     int getDPIWidth(int screen);
-//     int getDPIHeight(int screen);
-//     int physicalHeight(int screen);
-//     int physicalWidth(int screen);
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
+
+private:
+    HDC deviceContextHandle;
+    int getMonitorCaps(int caps, int screen);
+
 };
 
 class QSystemStorageInfoPrivate : public QObject
@@ -197,6 +206,9 @@ public:
     QStringList logicalDrives();
     QTM_PREPEND_NAMESPACE(QSystemStorageInfo::DriveType) typeForDrive(const QString &driveVolume);
 
+    QString uriForDrive(const QString &driveVolume);//1.2
+    QSystemStorageInfo::StorageState getStorageState(const QString &volume);//1.2
+
 public Q_SLOTS:
     void notificationArrived();
 
@@ -206,6 +218,7 @@ private:
 
 Q_SIGNALS:
     void logicalDriveChanged(bool,const QString&);
+    void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state); //1.2
 
 };
 
@@ -263,6 +276,16 @@ public:
 
     bool currentBluetoothPowerState();
 
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+    bool isWirelessKeyboardConnected(); //1.2
+    bool isKeyboardFlipOpen();//1.2
+
+    void keyboardConnected(bool connect);//1.2
+    bool keypadLightOn(); //1.2
+    bool backLightOn(); //1.2
+    QUuid hostId(); //1.2
+    QSystemDeviceInfo::LockType typeOfLock(); //1.2
+
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
@@ -271,7 +294,15 @@ Q_SIGNALS:
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 
+    void wirelessKeyboardConnected(bool connected);//1.2
+    void keyboardFlip(bool open);//1.2
+    void deviceLocked(bool isLocked); // 1.2
+    void lockChanged(QSystemDeviceInfo::LockType, bool); //1.2
+
 private:
+    bool btPowered;
+    bool hasWirelessKeyboardConnected;
+
     int batteryLevelCache;
     QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::PowerState) currentPowerStateCache;
     QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::BatteryStatus) batteryStatusCache;

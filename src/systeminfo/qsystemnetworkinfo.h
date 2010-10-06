@@ -57,7 +57,7 @@ class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
     Q_OBJECT
     Q_ENUMS(NetworkStatus)
     Q_ENUMS(NetworkMode)
-    Q_PROPERTY(int cellId READ cellId)
+    Q_PROPERTY(int cellId READ cellId NOTIFY cellIdChanged)
     Q_PROPERTY(int locationAreaCode READ locationAreaCode)
     Q_PROPERTY(QString currentMobileCountryCode READ currentMobileCountryCode NOTIFY currentMobileCountryCodeChanged)
     Q_PROPERTY(QString currentMobileNetworkCode READ currentMobileNetworkCode NOTIFY currentMobileNetworkCodeChanged)
@@ -86,11 +86,15 @@ public:
         UnknownMode=0,
         GsmMode,
         CdmaMode,
-        WcdmaMode,
+        WcdmaMode, //umts
         WlanMode,
         EthernetMode,
         BluetoothMode,
-        WimaxMode
+        WimaxMode,
+        GprsMode, //1.2
+        EdgeMode, //1.2
+        HspaMode, //1.2
+        LteMode //1.2
     };
 
     Q_INVOKABLE QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
@@ -116,6 +120,8 @@ Q_SIGNALS:
    void currentMobileNetworkCodeChanged(const QString &);
    void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+
+   void cellIdChanged(int); //1.2
 
 protected:
     virtual void connectNotify(const char *signal);

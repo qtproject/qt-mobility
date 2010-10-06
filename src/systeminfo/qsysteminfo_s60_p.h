@@ -130,6 +130,7 @@ Q_SIGNALS:
     void currentMobileNetworkCodeChanged(const QString &);
     void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
     void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+    void cellIdChanged(int);//1.2
 
 protected:  //from MTelephonyInfoObserver
     void batteryLevelChanged(){};
@@ -161,14 +162,13 @@ public:
     static int displayBrightness(int screen);
     static int colorDepth(int screen);
 
-//     QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-//     float contrast(int screen);
-//     int getDPIWidth(int screen);
-//     int getDPIHeight(int screen);
-//     int physicalHeight(int screen);
-//     int physicalWidth(int screen);
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);};
 
-};
 
 //////// QSystemStorageInfo
 class QSystemStorageInfoPrivate : public QObject,
@@ -184,6 +184,9 @@ public:
     static QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
+    QString uriForDrive(const QString &driveVolume);//1.2
+    QSystemStorageInfo::StorageState getStorageState(const QString &volume);//1.2
+
 protected: // from MStorageStatusObserver
     void storageStatusChanged(bool, const QString &);
 
@@ -193,6 +196,7 @@ private:
 
 Q_SIGNALS:
     void logicalDriveChanged(bool, const QString &);
+    void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state); //1.2
 };
 
 //////// QSystemDeviceInfo
@@ -242,6 +246,15 @@ public:
 
     bool currentBluetoothPowerState();
 
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+    bool isWirelessKeyboardConnected(); //1.2
+    bool isKeyboardFlipOpen();//1.2
+    void keyboardConnected(bool connect);//1.2
+    bool keypadLightOn(); //1.2
+    bool backLightOn(); //1.2
+    QUuid hostId(); //1.2
+    QSystemDeviceInfo::LockType typeOfLock(); //1.2
+
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus);
@@ -249,19 +262,21 @@ Q_SIGNALS:
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void powerStateChanged(QSystemDeviceInfo::PowerState);
 
-protected:  //From QObject
+    void wirelessKeyboardConnected(bool connected);//1.2
+    void keyboardFlip(bool open);//1.2
+    void deviceLocked(bool isLocked); // 1.2
+    void lockChanged(QSystemDeviceInfo::LockType, bool); //1.2
+
+protected:
+    //From QObject
     void connectNotify(const char *signal);
 
-protected: //From MProEngProfileActivationObserver
+//From MProEngProfileActivationObserver
     void HandleProfileActivatedL(TInt aProfileId);
 
-protected: //From MCenRepNotifyHandlerCallback
+    //From MCenRepNotifyHandlerCallback
     void HandleNotifyInt(TUint32 aId, TInt aNewValue);
-
-private:
-    QSystemDeviceInfo::Profile s60ProfileIdToProfile(TInt profileId) const;
-
-protected:  //from MTelephonyInfoObserver
+    //from MTelephonyInfoObserver
     void batteryLevelChanged();
 
     void countryCodeChanged(){};
@@ -272,15 +287,21 @@ protected:  //from MTelephonyInfoObserver
     void cellNetworkSignalStrengthChanged(){};
     void cellNetworkStatusChanged(){};
 
-protected:  //from MChargingStatusObserver
+    //from MChargingStatusObserver
     void chargingStatusChanged();
 
-private:    //data
+private:
+    QSystemDeviceInfo::Profile s60ProfileIdToProfile(TInt profileId) const;
+
+//data
     MProEngEngine *m_profileEngine;
     MProEngNotifyHandler* m_proEngNotifyHandler;
 
     CRepository *m_bluetoothRepository;
     CCenRepNotifyHandler *m_bluetoothNotifyHandler;
+
+    bool hasWirelessKeyboardConnected;
+
 };
 
 //////// QSystemScreenSaver

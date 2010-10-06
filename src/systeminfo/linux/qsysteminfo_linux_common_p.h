@@ -57,6 +57,7 @@
 #include <QObject>
 #include <QSize>
 #include <QHash>
+#include <QTimer>
 
 #include "qsysteminfo.h"
 #include "qsystemdeviceinfo.h"
@@ -66,8 +67,15 @@
 #include "qsystemstorageinfo.h"
 
 #include <qmobilityglobal.h>
+
 #if !defined(QT_NO_DBUS)
-#include <qhalservice_linux_p.h>
+#include "qhalservice_linux_p.h"
+#include "qdevicekitservice_linux_p.h"
+
+#if !defined(QT_NO_CONNMAN)
+#include "qconnmanservice_linux_p.h"
+#include "qofonoservice_linux_p.h"
+#endif
 #endif
 
 QT_BEGIN_HEADER
@@ -130,21 +138,24 @@ public:
 
     virtual QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
-    int cellId() {return 0;}
-    int locationAreaCode() {return 0;}
+    virtual qint32 cellId();
+    virtual int locationAreaCode();
 
-    QString currentMobileCountryCode() {return QString();}
-    QString currentMobileNetworkCode() {return QString();}
+    virtual QString currentMobileCountryCode();
+    virtual QString currentMobileNetworkCode();
 
-    QString homeMobileCountryCode() {return QString();}
-    QString homeMobileNetworkCode() {return QString();}
+    virtual QString homeMobileCountryCode();
+    virtual QString homeMobileNetworkCode();
 
     virtual QString networkName(QSystemNetworkInfo::NetworkMode mode);
     virtual QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     virtual QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
-   // virtual QSystemNetworkInfo::NetworkMode currentMode();
+    virtual QSystemNetworkInfo::NetworkMode currentMode();
 
+#if !defined(QT_NO_CONNMAN)
+    QSystemNetworkInfo::NetworkStatus getOfonoStatus(QSystemNetworkInfo::NetworkMode mode);
+#endif
 //public Q_SLOTS:
 //    void getPrimaryMode();
 
@@ -156,14 +167,47 @@ Q_SIGNALS:
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
+   void cellIdChanged(int); //1.2
+
 protected:
 #if !defined(QT_NO_DBUS)
     int getBluetoothRssi();
     QString getBluetoothInfo(const QString &file);
     bool isDefaultInterface(const QString &device);
+
+#if !defined(QT_NO_CONNMAN)
+    QConnmanManagerInterface *connmanManager;
+    QOfonoManagerInterface *ofonoManager;
+    void initConnman();
+    void initOfono();
+    void initModem(const QString &path);
+    QString modeToTechnology(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkStatus stateToStatus(const QString &state);
+    QSystemNetworkInfo::NetworkMode typeToMode(const QString &type);
+    QSystemNetworkInfo::NetworkMode ofonoTechToMode(const QString &tech);
+    QSystemNetworkInfo::NetworkStatus ofonoStatusToStatus(const QString &state);
+
+    QStringList knownModems;
 #endif
+
+#endif
+
+private Q_SLOTS:
+#if !defined(QT_NO_CONNMAN)
+    void connmanPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+    void connmanTechnologyPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+    void connmanDevicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+    void connmanServicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+
+    void ofonoPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+    void ofonoNetworkPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+    void ofonoModemPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+#endif
+
     QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 };
 
 class QSystemDisplayInfoLinuxCommonPrivate : public QObject
@@ -179,12 +223,12 @@ public:
     int colorDepth(int screen);
 
 
-//     QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-//     float contrast(int screen);
-//     int getDPIWidth(int screen);
-//     int getDPIHeight(int screen);
-//     int physicalHeight(int screen);
-//     int physicalWidth(int screen);
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int /*screen*/) {return QSystemDisplayInfo::Unknown;};
+    float contrast(int /*screen*/) {return 0.0;};
+    int getDPIWidth(int /*screen*/){return 0;};
+    int getDPIHeight(int /*screen*/){return 0;};
+    int physicalHeight(int /*screen*/){return 0;};
+    int physicalWidth(int /*screen*/){return 0;};
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject
@@ -200,19 +244,36 @@ public:
     qint64 totalDiskSpace(const QString &driveVolume);
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
+
+    QString uriForDrive(const QString &driveVolume);//1.2
+    QSystemStorageInfo::StorageState getStorageState(const QString &volume);//1.2
+
 Q_SIGNALS:
     void logicalDriveChanged(bool, const QString &);
+    void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state); //1.2
 
 private:
+    bool storageChanged;
      QMap<QString, QString> mountEntriesMap;
+     QMap<QString, QSystemStorageInfo::StorageState> stateMap;
      void mountEntries();
      int mtabWatchA;
      int inotifyFD;
+     void checkAvailableStorage();
+
+     QTimer *storageTimer;
 
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
+
+    QUDisksInterface *udisksIface;
+    QUDisksDeviceInterface *udisksDeviceIface;
+
+private Q_SLOTS:
+    void udisksDeviceChanged(const QDBusObjectPath &);
 #endif
+
 private Q_SLOTS:
     void deviceChanged();
     void inotifyActivated();
@@ -249,6 +310,16 @@ public:
     void setConnection();
     bool currentBluetoothPowerState();
 
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+    bool isWirelessKeyboardConnected(); //1.2
+    bool isKeyboardFlipOpen();//1.2
+
+    void keyboardConnected(bool connect);//1.2
+    bool keypadLightOn(); //1.2
+    bool backLightOn(); //1.2
+    QUuid hostId(); //1.2
+    QSystemDeviceInfo::LockType typeOfLock(); //1.2
+
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
@@ -256,21 +327,37 @@ Q_SIGNALS:
     void powerStateChanged(QSystemDeviceInfo::PowerState);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
+
+    void wirelessKeyboardConnected(bool connected);//1.2
+    void keyboardFlip(bool open);//1.2
+    void deviceLocked(bool isLocked); // 1.2
+    void lockChanged(QSystemDeviceInfo::LockType, bool); //1.2
+
+
 protected:
     bool btPowered;
 
 #if !defined(QT_NO_DBUS)
-    QHalInterface *halIface;
-    QHalDeviceInterface *halIfaceDevice;
     void setupBluetooth();
 
+//#if defined(QT_NO_CONNMAN)
+    QHalInterface *halIface;
+    QHalDeviceInterface *halIfaceDevice;
+//#else
+    QUDisksInterface *udisksIface;
+//#endif
+    bool hasWirelessKeyboardConnected;
 private Q_SLOTS:
     virtual void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
+    virtual void upowerChanged();
+    virtual void upowerDeviceChanged();
 #endif
 private:
     QSystemDeviceInfo::BatteryStatus currentBatStatus;
     void initBatteryStatus();
+    int currentBatLevel;
+    QSystemDeviceInfo::PowerState curPowerState;
 };
 
 
