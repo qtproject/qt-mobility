@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
 
     \qml
     import Qt 4.7
-    import Qt.multimedia 1.0
+    import QtMultimediaKit 1.1
 
     Text {
         text: "Click Me!";

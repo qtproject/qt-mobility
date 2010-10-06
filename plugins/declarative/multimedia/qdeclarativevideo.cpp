@@ -75,7 +75,7 @@ void QDeclarativeVideo::_q_error(int errorCode, const QString &errorString)
 
     \qml
     import Qt 4.7
-    import Qt.multimedia 1.0
+    import QtMultimediaKit 1.1
 
     Video {
         id: video
