@@ -129,7 +129,7 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
         */
 
 /*!
-  Constructs a QSystemNetworkInfo object with the given \a parent.
+    Constructs a QSystemNetworkInfo with the given \a parent.
 */
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
    : QObject(parent), d(netInfoPrivate())

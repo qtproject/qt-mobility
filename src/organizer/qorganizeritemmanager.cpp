@@ -80,23 +80,41 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerItemManager::itemsAdded(const QList<QOrganizerItemLocalId>& organizeritemIds)
-  This signal is emitted at some point once the organizeritems identified by \a organizeritemIds have been added to a datastore managed by this manager.
-  This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+  \fn QOrganizerItemManager::itemsAdded(const QList<QOrganizerItemLocalId>& itemIds)
+  This signal is emitted at some point once the items identified by \a itemIds have been added to a datastore managed by this manager.
+  This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerItemManager::itemsChanged(const QList<QOrganizerItemLocalId>& organizeritemIds)
-  This signal is emitted at some point once the organizeritems identified by \a organizeritemIds have been modified in a datastore managed by this manager.
-  This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+  \fn QOrganizerItemManager::itemsChanged(const QList<QOrganizerItemLocalId>& itemIds)
+  This signal is emitted at some point once the items identified by \a itemIds have been modified in a datastore managed by this manager.
+  This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerItemManager::itemsRemoved(const QList<QOrganizerItemLocalId>& organizeritemIds)
-  This signal is emitted at some point once the organizeritems identified by \a organizeritemIds have been removed from a datastore managed by this manager.
-  This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+  \fn QOrganizerItemManager::itemsRemoved(const QList<QOrganizerItemLocalId>& itemIds)
+  This signal is emitted at some point once the items identified by \a itemIds have been removed from a datastore managed by this manager.
+  This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
+/*!
+  \fn QOrganizerItemManager::collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal is emitted at some point once the collections identified by \a collectionIds have been added to a datastore managed by this manager.
+  This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
+ */
+
+/*!
+  \fn QOrganizerItemManager::collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal is emitted at some point once the metadata for the collections identified by \a collectionIds have been modified in a datastore managed by this manager.
+  This signal is not emitted if one of the items in this collection has changed - itemsChanged() will be emitted instead.
+  This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
+ */
+
+/*!
+  \fn QOrganizerItemManager::collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal is emitted at some point once the collections identified by \a collectionIds have been removed from a datastore managed by this manager.
+  This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
+ */
 
 
 #define makestr(x) (#x)

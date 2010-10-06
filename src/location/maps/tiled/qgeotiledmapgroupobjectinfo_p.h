@@ -72,8 +72,8 @@ public:
     QGraphicsPathItem *pathItem;
 
 public slots:
-    void visibleChanged(bool visible);
-    void selectedChanged(bool selected);
+    void childAdded(QGeoMapObject *childObject);
+    void childRemoved(QGeoMapObject *childObject);
 };
 
 QTM_END_NAMESPACE

@@ -49,44 +49,22 @@
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QLandmarkCategory);
-
 class tst_QLandmarkCategory : public QObject
 {
     Q_OBJECT
 
 private slots:
-    void setViaAttribute() {
-        QLandmarkCategory cat;
-        cat.setAttribute("name", "CAT1");
-        cat.setAttribute("iconurl", "CAT1 icon url");
-
-        QCOMPARE(cat.name(), QString("CAT1"));
-        QCOMPARE(cat.iconUrl().toString(), QString("CAT1 icon url"));
-
-
-        QCOMPARE(cat.attribute("name").toString(), QString("CAT1"));
-        QCOMPARE(cat.attribute("iconurl").toString(), QString("CAT1 icon url"));
-
-        QStringList keys = cat.attributeKeys();
-        QVERIFY(keys.contains("name"));
-        QVERIFY(keys.contains("iconurl"));
-    }
-
- /* void settersAndGetters() {
+  void settersAndGetters() {
         QFETCH(QString, name);
-        QFETCH(QString, icon);
-        QFETCH(QString, description);
+        QFETCH(QUrl, iconUrl);
 
         QLandmarkCategory cat;
 
         cat.setName(name);
-        cat.setIcon(icon);
-        cat.setDescription(description);
+        cat.setIconUrl(iconUrl);
 
         QCOMPARE(cat.name(), name);
-        QCOMPARE(cat.icon(), icon);
-        QCOMPARE(cat.description(), description);
+        QCOMPARE(cat.iconUrl(), iconUrl);
     }
 
     void settersAndGetters_data() {
@@ -95,20 +73,17 @@ private slots:
 
     void copyConstructor() {
         QFETCH(QString, name);
-        QFETCH(QString, icon);
-        QFETCH(QString, description);
+        QFETCH(QUrl, iconUrl);
 
         QLandmarkCategory cat1;
 
         cat1.setName(name);
-        cat1.setIcon(icon);
-        cat1.setDescription(description);
+        cat1.setIconUrl(iconUrl);
 
         QLandmarkCategory cat2(cat1);
 
         QCOMPARE(cat2.name(), name);
-        QCOMPARE(cat2.icon(), icon);
-        QCOMPARE(cat2.description(), description);
+        QCOMPARE(cat2.iconUrl(), iconUrl);
     }
 
     void copyConstructor_data() {
@@ -117,8 +92,7 @@ private slots:
 
     void assignment() {
         QFETCH(QString, name);
-        QFETCH(QString, icon);
-        QFETCH(QString, description);
+        QFETCH(QUrl, iconUrl);
 
         QLandmarkCategory cat1;
         QLandmarkCategory cat2;
@@ -126,14 +100,11 @@ private slots:
         cat2.setName("test");
 
         cat1.setName(name);
-        cat1.setIcon(icon);
-        cat1.setDescription(description);
-
+        cat1.setIconUrl(iconUrl);
         cat2 = cat1;
 
         QCOMPARE(cat2.name(), name);
-        QCOMPARE(cat2.icon(), icon);
-        QCOMPARE(cat2.description(), description);
+        QCOMPARE(cat2.iconUrl(), iconUrl);
     }
 
     void assignment_data() {
@@ -155,13 +126,11 @@ private slots:
 
         QLandmarkCategory cat0;
         cat0.setName("equalName");
-        cat0.setIcon("equalIcon");
-        cat0.setDescription("equalDescription");
+        cat0.setIconUrl(QUrl("equalIcon"));
 
         QLandmarkCategory cat1;
         cat1.setName("unequalName");
-        cat1.setIcon("unequalIcon");
-        cat1.setDescription("unequalDescription");
+        cat1.setIconUrl(QUrl("unequalIcon"));
         QTest::newRow("allUnequal") << cat0 << cat1 << false;
 
         QLandmarkCategory cat2(cat0);
@@ -169,12 +138,8 @@ private slots:
         QTest::newRow("nameUnequal") << cat0 << cat2 << false;
 
         QLandmarkCategory cat3(cat0);
-        cat3.setIcon("unequalIcon");
+        cat3.setIconUrl(QUrl("unequalIcon"));
         QTest::newRow("iconUnequal") << cat0 << cat3 << false;
-
-        QLandmarkCategory cat4(cat0);
-        cat4.setDescription("unequalDescription");
-        QTest::newRow("descriptionUnequal") << cat0 << cat4 << false;
 
         QLandmarkCategory cat5(cat0);
         QTest::newRow("allEqual") << cat0 << cat5 << true;
@@ -183,18 +148,17 @@ private slots:
 private:
     void genericData() {
         QTest::addColumn<QString>("name");
-        QTest::addColumn<QString>("icon");
-        QTest::addColumn<QString>("description");
+        QTest::addColumn<QUrl>("iconUrl");
 
-        QTest::newRow("Row0") << "" << "" << "";
-        QTest::newRow("Row1") << "categoryName" << "" << "";
-        QTest::newRow("Row2") << "" << "categoryIcon" << "";
-        QTest::newRow("Row3") << "categoryName" << "categoryIcon" << "";
-        QTest::newRow("Row4") << "" << "" << "categoryDescription";
-        QTest::newRow("Row5") << "categoryName" << "" << "categoryDescription";
-        QTest::newRow("Row6") << "" << "categoryIcon" << "categoryDescription";
-        QTest::newRow("Row7") << "categoryName" << "categoryIcon" << "categoryDescription";
-    }*/
+        QTest::newRow("Row0") << "" << QUrl("");
+        QTest::newRow("Row1") << "categoryName" << QUrl("");
+        QTest::newRow("Row2") << "" << QUrl("categoryIcon");
+        QTest::newRow("Row3") << "categoryName" << QUrl("categoryIcon");
+        QTest::newRow("Row4") << "" << QUrl("");
+        QTest::newRow("Row5") << "categoryName" << QUrl("") ;
+        QTest::newRow("Row6") << "" << QUrl("categoryIcon");
+        QTest::newRow("Row7") << "categoryName" << QUrl("categoryIcon");
+    }
 };
 
 QTEST_MAIN(tst_QLandmarkCategory)

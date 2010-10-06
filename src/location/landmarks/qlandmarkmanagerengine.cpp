@@ -99,6 +99,48 @@ bool matchString(const QString &sourceString, const QString &matchString, QLandm
         return QVariant(sourceString) == QVariant(matchString);
     }
 }
+
+QVariant getLandmarkAttribute(const QString key, const QLandmark &landmark)
+{
+    if (key == "name") {
+        return landmark.name();
+    } else if (key == "description") {
+        return landmark.description();
+    } else if (key == "countryCode") {
+        return landmark.address().countryCode();
+    } else if (key == "country") {
+        return landmark.address().country();
+    } else if (key == "state") {
+        return landmark.address().state();
+    } else if (key == "city") {
+        return landmark.address().city();
+    } else if (key == "district") {
+        return landmark.address().district();
+    }  else if (key == "district") {
+        return landmark.address().district();
+    } else if (key == "street") {
+        return landmark.address().street();
+    } else if (key == "postCode") {
+        return landmark.address().postCode();
+    } else if (key == "phoneNumber") {
+        return landmark.phoneNumber();
+    } else {
+        return QVariant(); // shouldn't be possible
+    }
+}
+
+QStringList commonLandmarkKeys = QStringList() << "name"
+                                << "description"
+                                << "countryCode"
+                                << "country"
+                                << "state"
+                                << "county"
+                                << "city"
+                                << "district"
+                                << "street"
+                                << "postCode"
+                                << "phoneNumber";
+
 /*!
     \class QLandmarkManagerEngine
     \brief The QLandmarkManagerEngine class provides the interface for all implementations
@@ -550,19 +592,6 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferO
     it is considered writable unless the manager engine is exclusively read-only.
     Errors are stored in \a error and \a errorString.
 */
-
-/*!
-   \fn QStringList QLandmarkManagerEngine::landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
-    Returns the list of attribute keys the landmarks will have.
-    Errors are stored in \a error and \a errorString.
-*/
-
-/*!
-    \fn QStringList QLandmarkManagerEngine::categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
-    Returns the list of attribute keys the categories will have.
-    Errors are stored in \a error and \a errorString.
-*/
-
 
 /*!
    \fn QStringList QLandmarkManagerEngine::searchableLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
@@ -1193,19 +1222,12 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
             const QLandmarkAttributeFilter attribFilter(filter);
             QStringList filterKeys = attribFilter.attributeKeys();
 
-            QStringList landmarkKeys;
-                landmarkKeys = landmark.attributeKeys();
-
-
             if (attribFilter.operationType() ==  QLandmarkAttributeFilter::AndOperation) {
                 QVariant lmAttributeValue;
                 foreach(const QString filterKey, filterKeys)
                 {
-                    if (landmarkKeys.contains(filterKey)) {
-                        if (!attribFilter.attribute(filterKey).isValid())
-                            continue;
-
-                            lmAttributeValue = landmark.attribute(filterKey);
+                    if (commonLandmarkKeys.contains(filterKey)) {
+                        lmAttributeValue = getLandmarkAttribute(filterKey, landmark);
 
                         if (lmAttributeValue.type() == QVariant::String) {
                             QString lmString = lmAttributeValue.toString();
@@ -1225,11 +1247,9 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
             } else {//must be OR operation
                 QVariant lmAttributeValue;
                 foreach(const QString filterKey, filterKeys) {
-                    if (landmarkKeys.contains(filterKey)) {
-                        if (!(attribFilter.attribute(filterKey).isValid()))
-                            return true;
+                    if (commonLandmarkKeys.contains(filterKey)) {
 
-                        lmAttributeValue = landmark.attribute(filterKey);
+                        lmAttributeValue = getLandmarkAttribute(filterKey, landmark);
 
                         if (lmAttributeValue.type() == QVariant::String) {
                             QString lmString = lmAttributeValue.toString();

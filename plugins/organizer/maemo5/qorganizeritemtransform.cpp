@@ -525,7 +525,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
 
         // Location (Geo location is not set here as it's not a general CComponent detail)
         QOrganizerItemLocation location = item->detail(QOrganizerItemLocation::DefinitionName);
-        if (!location.isEmpty()) {
+        if (!location.isEmpty() && (!location.locationName().isEmpty() || !location.address().isEmpty())) {
             QString locationString = location.locationName() + "\n" + location.address();
             retn->setLocation(locationString.toStdString());
         }

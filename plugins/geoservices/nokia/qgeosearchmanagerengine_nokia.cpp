@@ -37,11 +37,11 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and 
-** Navigation API.  The use of these services, whether by use of the 
-** plugin or by other means, is governed by the terms and conditions 
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in 
-** this package, located in the directory containing the Ovi services 
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
 ** plugin source code.
 **
 ****************************************************************************/
@@ -146,7 +146,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
         requestString += address.street();
     }
 
-    // TODO? 
+    // TODO?
     // street number has been removed from QGeoAddress
     // do we need to try to split it out from QGeoAddress::street
     // in order to geocode properly
@@ -182,7 +182,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordina
     requestString += "&lg=";
     requestString += languageToMarc(locale().language());
 
-    return search(requestString,bounds);
+    return search(requestString, bounds);
 }
 
 QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString,
@@ -228,9 +228,9 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
 }
 
 QGeoSearchReply* QGeoSearchManagerEngineNokia::search(QString requestString,
-    QGeoBoundingArea *bounds,
-    int limit,
-    int offset)
+        QGeoBoundingArea *bounds,
+        int limit,
+        int offset)
 {
     QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(QUrl(requestString)));
     QGeoSearchReplyNokia *reply = new QGeoSearchReplyNokia(networkReply, limit, offset, bounds, this);
@@ -292,8 +292,8 @@ void QGeoSearchManagerEngineNokia::placesError(QGeoSearchReply::Error error, con
 
 QString QGeoSearchManagerEngineNokia::languageToMarc(QLocale::Language language)
 {
-    uint offset = 3*(uint(language));
-    if (language == QLocale::C || offset+2 > sizeof(marc_language_code_list))
+    uint offset = 3 * (uint(language));
+    if (language == QLocale::C || offset + 2 > sizeof(marc_language_code_list))
         return QLatin1String("eng");
 
     const unsigned char *c = marc_language_code_list + offset;

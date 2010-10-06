@@ -56,8 +56,8 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  Constructs a QSystemScreenSaver object with the given \a parent.
- */
+    Constructs a QSystemScreenSaver with the given \a parent.
+*/
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
     : QObject(parent)
 {
