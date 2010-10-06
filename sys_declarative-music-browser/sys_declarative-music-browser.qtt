@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-//TESTED_COMPONENT=examples/declarative-music-browser
+//TESTED_COMPONENT=src/gallery
 
 testcase = {
 
