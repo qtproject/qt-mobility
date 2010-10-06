@@ -523,20 +523,20 @@ float QSystemDisplayInfoPrivate::contrast(int screen)
 
 int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
 {
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        dpi = QDesktopWidget().screenGeometry().width() / (physicalWidth(0) / 25.4);
-    }
-    return dpi;
+#if defined(Q_WS_X11)
+    return QX11Info::appDpiY(screen);
+#else
+    return 0;
+#endif
 }
 
 int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
 {
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        dpi = QDesktopWidget().screenGeometry().height() / (physicalHeight(0) / 25.4);
-    }
-    return dpi;
+#if defined(Q_WS_X11)
+    return QX11Info::appDpiX(screen);
+#else
+    return 0;
+#endif
 }
 
 int QSystemDisplayInfoPrivate::physicalHeight(int screen)
