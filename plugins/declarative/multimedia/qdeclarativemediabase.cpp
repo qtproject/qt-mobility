@@ -299,7 +299,7 @@ void QDeclarativeMediaBase::setObject(QObject *object)
     }
 
     if (m_metaDataControl) {
-        m_metaObject = new QMetaDataControlMetaObject(m_metaDataControl, m_metaData.data());
+        m_metaObject = new QMetaDataControlMetaObject(m_metaDataControl, object);
 
         QObject::connect(m_metaDataControl, SIGNAL(metaDataChanged()),
                 object, SLOT(_q_metaDataChanged()));
