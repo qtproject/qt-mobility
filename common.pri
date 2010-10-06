@@ -139,6 +139,9 @@ maemo6 {
 maemo5 {
     DEFINES+= Q_WS_MAEMO_5
 }
+meego {
+    DEFINES+= Q_WS_MEEGO
+}
 
 wince* {
     ### Bearer Management
