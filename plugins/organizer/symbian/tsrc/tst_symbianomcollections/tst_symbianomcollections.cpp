@@ -907,7 +907,11 @@ void tst_symbianomcollections::itemsInDeletedCollection()
     QVERIFY(m_om->item(itemFetch.localId()).isEmpty());
 
     // Try to fetch item instances from the deleted collection
-    QVERIFY(m_om->itemInstances(itemFetch).count() == 0);
+    QOrganizerItemCollectionFilter fil;
+    QSet<QOrganizerCollectionLocalId> filterCollectionIds;
+    filterCollectionIds.insert(c.localId());
+    fil.setCollectionIds(filterCollectionIds);
+    QVERIFY(m_om->items(fil).count() == 0);
 }
 
 /*!
