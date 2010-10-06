@@ -96,8 +96,8 @@ QTM_BEGIN_NAMESPACE
     to pass any implementation specific data to the engine.
 */
 QGeoRoutingManagerEngine::QGeoRoutingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoRoutingManagerEnginePrivate())
+    : QObject(parent),
+      d_ptr(new QGeoRoutingManagerEnginePrivate())
 {
     Q_UNUSED(parameters)
 }
@@ -296,18 +296,12 @@ QGeoRouteRequest::TravelModes QGeoRoutingManagerEngine::supportedTravelModes() c
 }
 
 /*!
-    Sets the types of features that this engine can avoid during route planning to \a avoidFeatureTypes.
+    Sets the types of features that this engine can take into account
+    during route planning to \a featureTypes.
 
     It is important that subclasses use this method to ensure that the engine
     reports its capabilities correctly.  If this function is not used the
-    engine will report that it does not support avoiding features.
-*/
-
-/*!
-    Returns the types of features that this engine can avoid during route planning.
-*/
-
-/*!
+    engine will report that it supports no feature types at all.
 */
 void QGeoRoutingManagerEngine::setSupportedFeatureTypes(QGeoRouteRequest::FeatureTypes featureTypes)
 {
@@ -315,6 +309,8 @@ void QGeoRoutingManagerEngine::setSupportedFeatureTypes(QGeoRouteRequest::Featur
 }
 
 /*!
+    Returns the types of features that this engine can take into account
+    during route planning.
 */
 QGeoRouteRequest::FeatureTypes QGeoRoutingManagerEngine::supportedFeatureTypes() const
 {
@@ -322,19 +318,27 @@ QGeoRouteRequest::FeatureTypes QGeoRoutingManagerEngine::supportedFeatureTypes()
 }
 
 /*!
+    Sets the weightings which this engine can apply to different features
+    during route planning to \a featureWeights.
+
+    It is important that subclasses use this method to ensure that the engine
+    reports its capabilities correctly.  If this function is not used the
+    engine will report that it supports no feaure weights at all.
 */
 void QGeoRoutingManagerEngine::setSupportedFeatureWeights(QGeoRouteRequest::FeatureWeights featureWeights)
 {
     d_ptr->supportedFeatureWeights = featureWeights;
+    d_ptr->supportedFeatureWeights |= QGeoRouteRequest::NeutralFeatureWeight;
 }
 
 /*!
+    Returns the weightings which this engine can apply to different features
+    during route planning.
 */
 QGeoRouteRequest::FeatureWeights QGeoRoutingManagerEngine::supportedFeatureWeights() const
 {
     return d_ptr->supportedFeatureWeights;
 }
-
 
 /*!
     Sets the route optimizations supported by this engine to \a optimizations.
@@ -455,10 +459,13 @@ Use deleteLater() instead.
 *******************************************************************************/
 
 QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate()
-        : managerVersion(-1),
-        supportsRouteUpdates(false),
-        supportsAlternativeRoutes(false),
-        supportsExcludeAreas(false) {}
+    : managerVersion(-1),
+      supportsRouteUpdates(false),
+      supportsAlternativeRoutes(false),
+      supportsExcludeAreas(false)
+{
+    supportedFeatureWeights |= QGeoRouteRequest::NeutralFeatureWeight;
+}
 
 QGeoRoutingManagerEnginePrivate::~QGeoRoutingManagerEnginePrivate() {}
 

@@ -43,11 +43,11 @@
 ** contact the sales department at qt-sales@nokia.com.
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and 
-** Navigation API.  The use of these services, whether by use of the 
-** plugin or by other means, is governed by the terms and conditions 
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in 
-** this package, located in the directory containing the Ovi services 
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
 ** plugin source code.
 **
 ****************************************************************************/
@@ -179,7 +179,7 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &rout
 }
 
 bool QGeoRoutingManagerEngineNokia::checkEngineSupport(const QGeoRouteRequest &request,
-                                                       QGeoRouteRequest::TravelModes travelModes) const
+        QGeoRouteRequest::TravelModes travelModes) const
 {
     QList<QGeoRouteRequest::FeatureType> featureTypeList = request.featureTypes();
     QGeoRouteRequest::FeatureTypes featureTypeFlag = QGeoRouteRequest::NoFeature;
@@ -275,7 +275,7 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
 }
 
 QString QGeoRoutingManagerEngineNokia::modesRequestString(const QGeoRouteRequest &request,
-                                                          QGeoRouteRequest::TravelModes travelModes) const
+        QGeoRouteRequest::TravelModes travelModes) const
 {
     QString requestString;
 

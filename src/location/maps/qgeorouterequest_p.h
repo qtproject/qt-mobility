@@ -81,8 +81,8 @@ public:
     QList<QGeoBoundingBox> excludeAreas;
     int numberAlternativeRoutes;
     QGeoRouteRequest::TravelModes travelModes;
-    QMap<QGeoRouteRequest::FeatureType,
-         QGeoRouteRequest::FeatureWeight> featureWeights;
+    QMap < QGeoRouteRequest::FeatureType,
+         QGeoRouteRequest::FeatureWeight > featureWeights;
     QGeoRouteRequest::RouteOptimizations routeOptimization;
     QGeoRouteRequest::SegmentDetail segmentDetail;
     QGeoRouteRequest::ManeuverDetail maneuverDetail;

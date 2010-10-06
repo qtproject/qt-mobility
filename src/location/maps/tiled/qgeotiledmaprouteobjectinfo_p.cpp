@@ -59,7 +59,7 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapRouteObjectInfo::QGeoTiledMapRouteObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject)
+    : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
     route = static_cast<QGeoMapRouteObject*>(mapObject);
 
@@ -91,7 +91,7 @@ void QGeoTiledMapRouteObjectInfo::routeChanged(const QGeoRoute &route)
     //while (segIt.hasNext()) {
     //    QListIterator<QGeoCoordinate> coordIt(segIt.next().path());
     QGeoRouteSegment segment = this->route->route().firstRouteSegment();
-    while(segment.isValid()) {
+    while (segment.isValid()) {
         QListIterator<QGeoCoordinate> coordIt(segment.path());
         while (coordIt.hasNext()) {
             QGeoCoordinate coord = coordIt.next();
@@ -99,7 +99,7 @@ void QGeoTiledMapRouteObjectInfo::routeChanged(const QGeoRoute &route)
             if (!coord.isValid())
                 continue;
 
-            points.append(tiledMapData->coordinateToWorldPixel(coord));
+            points.append(tiledMapData->coordinateToWorldReferencePosition(coord));
         }
         segment = segment.nextRouteSegment();
     }
@@ -172,7 +172,7 @@ void QGeoTiledMapRouteObjectInfo::updateVisible()
         QPointF point2 = distanceFilteredPoints.at(i + 1 < distanceFilteredPoints.size() ? i + 1 : i);
         QPointF midpoint = (point1 + point2) / 2.0;
 
-        QRect maxZoomScreenRect = tiledMapData->maxZoomScreenRect();
+        QRect maxZoomScreenRect = tiledMapData->worldReferenceViewportRect();
 
         offScreen = !(maxZoomScreenRect.contains(point1.toPoint())
                       || maxZoomScreenRect.contains(point2.toPoint())

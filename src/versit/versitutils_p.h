@@ -83,6 +83,7 @@ public:
     static QVersitProperty takeProperty(const QVersitDocument& document,
                                         const QString& propertyName,
                                         QList<QVersitProperty>* toBeRemoved);
+    static bool isValidUtf8(const QByteArray& bytes);
 
 private:
     // These are caches for performance:

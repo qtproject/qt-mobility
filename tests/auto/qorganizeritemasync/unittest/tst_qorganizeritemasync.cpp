@@ -1328,8 +1328,8 @@ void tst_QOrganizerItemAsync::definitionFetch()
     QOrganizerItemDetailDefinitionFetchRequest dfr;
     QVERIFY(dfr.type() == QOrganizerItemAbstractRequest::DetailDefinitionFetchRequest);
     QVERIFY(dfr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeNote))); // ensure ctor sets item type correctly.
-    dfr.setItemType(QOrganizerItemType::TypeNote);
-    QVERIFY(dfr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeNote)));
+    dfr.setItemType(QOrganizerItemType::TypeEvent);
+    QVERIFY(dfr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeEvent)));
 
     // initial state - not started, no manager.
     QVERIFY(!dfr.isActive());
@@ -1358,7 +1358,7 @@ void tst_QOrganizerItemAsync::definitionFetch()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    QMap<QString, QOrganizerItemDetailDefinition> defs = oim->detailDefinitions(QOrganizerItemType::TypeNote);
+    QMap<QString, QOrganizerItemDetailDefinition> defs = oim->detailDefinitions(QOrganizerItemType::TypeEvent);
     QMap<QString, QOrganizerItemDetailDefinition> result = dfr.definitions();
     QCOMPARE(defs, result);
 

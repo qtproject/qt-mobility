@@ -150,6 +150,27 @@ QTM_BEGIN_NAMESPACE
   \sa dataChanged()
  */
 
+/*!
+  \fn QOrganizerItemManagerEngine::collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal should be emitted at some point once the collections identified by \a collectionIds have been added to a datastore managed by this engine.
+  This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+ */
+
+/*!
+  \fn QOrganizerItemManagerEngine::collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal should be emitted at some point once the metadata for the collections identified by \a collectionIds have been modified in a datastore managed by this engine.
+  This signal is not emitted if one of the items in this collection has changed - itemsChanged() will be emitted instead.
+  This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+ */
+
+/*!
+  \fn QOrganizerItemManagerEngine::collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal should be emitted at some point once the collections identified by \a collectionIds have been removed from a datastore managed by this engine.
+  This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+ */
+
+
+
 /*! Returns the manager name for this QOrganizerItemManagerEngine */
 QString QOrganizerItemManagerEngine::managerName() const
 {

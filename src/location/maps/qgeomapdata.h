@@ -101,7 +101,7 @@ public:
     void addMapObject(QGeoMapObject *mapObject);
     void removeMapObject(QGeoMapObject *mapObject);
     void clearMapObjects();
-    
+
     virtual QGeoBoundingBox viewport() const = 0;
     virtual void fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false) = 0;
 

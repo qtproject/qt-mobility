@@ -60,18 +60,18 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapGroupObjectInfo::QGeoTiledMapGroupObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject)
+    : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
     group = static_cast<QGeoMapGroupObject*>(mapObject);
 
     connect(group,
-            SIGNAL(visibleChanged(bool)),
+            SIGNAL(childAdded(QGeoMapObject*)),
             this,
-            SLOT(visibleChanged(bool)));
+            SLOT(childAdded(QGeoMapObject*)));
     connect(group,
-            SIGNAL(selectedChanged(bool)),
+            SIGNAL(childRemoved(QGeoMapObject*)),
             this,
-            SLOT(selectedChanged(bool)));
+            SLOT(childRemoved(QGeoMapObject*)));
 
     pathItem = new QGraphicsPathItem();
     graphicsItem = pathItem;
@@ -81,18 +81,18 @@ QGeoTiledMapGroupObjectInfo::QGeoTiledMapGroupObjectInfo(QGeoTiledMapData *mapDa
 
 QGeoTiledMapGroupObjectInfo::~QGeoTiledMapGroupObjectInfo() {}
 
-void QGeoTiledMapGroupObjectInfo::visibleChanged(bool visible)
+void QGeoTiledMapGroupObjectInfo::childAdded(QGeoMapObject *childObject)
 {
-    QList<QGeoMapObject*> objects = group->childObjects();
-    for (int i = 0; i < objects.size(); ++i)
-        objects[i]->setVisible(visible);
+    QGeoTiledMapObjectInfo* info = static_cast<QGeoTiledMapObjectInfo*>(childObject->info());
+    if (info)
+        info->graphicsItem->setParentItem(graphicsItem);
 }
 
-void QGeoTiledMapGroupObjectInfo::selectedChanged(bool selected)
+void QGeoTiledMapGroupObjectInfo::childRemoved(QGeoMapObject *childObject)
 {
-    QList<QGeoMapObject*> objects = group->childObjects();
-    for (int i = 0; i < objects.size(); ++i)
-        objects[i]->setSelected(selected);
+    QGeoTiledMapObjectInfo* info = static_cast<QGeoTiledMapObjectInfo*>(childObject->info());
+    if (info)
+        info->graphicsItem->setParentItem(0);
 }
 
 #include "moc_qgeotiledmapgroupobjectinfo_p.cpp"

@@ -137,11 +137,6 @@ public:
 private slots:
     void searchResults(QGeoSearchReply *reply)
     {
-        if (reply->error() != QGeoSearchReply::NoError) {
-            reply->deleteLater();
-            return;
-        }
-
         // The QLandmark results can be created from the simpler
         // QGeoPlace results if that is required.
         QList<QLandmark> landmarks;
@@ -157,6 +152,7 @@ private slots:
     void searchError(QGeoSearchReply *reply, QGeoSearchReply::Error error, const QString &errorString)
     {
         // ... inform the user that an error has occurred ...
+        reply->deleteLater();
     }
 };
     \endcode
@@ -187,8 +183,8 @@ Describes the type of search that should be performed by search().
     QGeoServiceProvider::searchManager();
 */
 QGeoSearchManager::QGeoSearchManager(QGeoSearchManagerEngine *engine, QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoSearchManagerPrivate())
+    : QObject(parent),
+      d_ptr(new QGeoSearchManagerPrivate())
 {
     d_ptr->engine = engine;
     if (d_ptr->engine) {
@@ -597,7 +593,7 @@ QLocale QGeoSearchManager::locale() const
 *******************************************************************************/
 
 QGeoSearchManagerPrivate::QGeoSearchManagerPrivate()
-        : engine(0) {}
+    : engine(0) {}
 
 QGeoSearchManagerPrivate::~QGeoSearchManagerPrivate()
 {
@@ -612,9 +608,9 @@ QGeoSearchManagerPrivate::~QGeoSearchManagerPrivate()
 QGeoCombiningSearchReply::QGeoCombiningSearchReply(QGeoSearchReply* searchReply,
         QList<QLandmarkFetchRequest*> fetchRequests,
         QObject *parent)
-        : QGeoSearchReply(parent),
-        searchReply(searchReply),
-        fetchRequests(fetchRequests)
+    : QGeoSearchReply(parent),
+      searchReply(searchReply),
+      fetchRequests(fetchRequests)
 {
     connect(searchReply,
             SIGNAL(finished()),

@@ -80,8 +80,6 @@ public:
     QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes;
     qreal minimumZoomLevel;
     qreal maximumZoomLevel;
-    QSize minimumImageSize;
-    QSize maximumImageSize;
 
     QLocale locale;
 

@@ -278,6 +278,8 @@ void QVersitContactExporterPrivate::encodeName(
     QList<QVersitProperty>* generatedProperties,
     QSet<QString>* processedFields)
 {
+    Q_UNUSED(document);
+    Q_UNUSED(removedProperties);
     QContactName contactName = static_cast<QContactName>(detail);
     if (!contactName.lastName().isEmpty()
         || !contactName.firstName().isEmpty()

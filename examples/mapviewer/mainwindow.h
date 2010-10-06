@@ -138,6 +138,7 @@ private:
     QGraphicsPathItem* m_fullScreenButton;
     QMenu* m_popupMenu;
     QPixmap m_markerIcon;
+    QPoint m_markerOffset;
     QPoint m_lastClicked;
     QList<QGeoMapPixmapObject*> m_markerObjects;
 

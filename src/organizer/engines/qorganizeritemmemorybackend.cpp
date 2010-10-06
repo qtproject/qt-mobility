@@ -72,6 +72,7 @@ QTM_BEGIN_NAMESPACE
   \brief The QOrganizerItemMemoryEngine class provides an in-memory implementation
   of an organizer item backend.
   \inmodule QtOrganizer
+  \internal
  
   It may be used as a reference implementation, or when persistent storage is not required.
  
@@ -94,6 +95,7 @@ QMap<QString, QOrganizerItemMemoryEngineData*> QOrganizerItemMemoryEngine::engin
   \brief The QOrganizerItemMemoryEngineLocalId class provides an id which uniquely identifies
   a QOrganizerItem stored within a collection stored within a a QOrganizerItemMemoryEngine.
 
+  \internal
   It may be used as a reference implementation, although since different platforms
   have different semantics for ids (datastore-unique versus calendar-unique, etc),
   the precise implementation required may differ.
@@ -190,6 +192,7 @@ uint QOrganizerItemMemoryEngineLocalId::hash() const
   \class QOrganizerCollectionMemoryEngineLocalId
   \brief The QOrganizerCollectionMemoryEngineLocalId class provides an id which uniquely identifies
   a QOrganizerCollection stored within a collection stored within a a QOrganizerCollectionMemoryEngine.
+  \internal
 
   It may be used as a reference implementation, although since different platforms
   have different semantics for ids (datastore-unique versus calendar-unique, etc),

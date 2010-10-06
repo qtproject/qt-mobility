@@ -2358,7 +2358,7 @@ bool LandmarkManagerEngineSymbianPrivate::removeLandmarkInternalL(const QLandmar
     *removed = false;
 
     if (landmarkId.managerUri() != managerUri()) {
-        *error = QLandmarkManager::BadArgumentError;
+        *error = QLandmarkManager::DoesNotExistError;
         *errorString = "Landmark id comes from different landmark manager.";
         return result;
     }
@@ -2805,6 +2805,21 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
     case QLandmarkFilter::CategoryFilter:
     {
         QLandmarkCategoryFilter categoryFilter = filter;
+
+        TPosLmItemId symbianCatId = LandmarkUtility::convertToSymbianLandmarkCategoryId(
+                                    categoryFilter.categoryId());
+        if (categoryFilter.categoryId().managerUri() != managerUri()) {
+            User::Leave(KErrNotFound);
+        }
+
+        CPosLandmarkCategory* symbiancat = NULL;
+        TRAPD(err, symbiancat = m_LandmarkCatMgr->ReadCategoryLC(symbianCatId);
+            if (symbiancat) CleanupStack::PopAndDestroy( symbiancat ) )
+
+        if (err != KErrNone) {
+                User::Leave(KErrNotFound);
+        }
+
         CPosLmCategoryCriteria* categorySearchCriteria = CPosLmCategoryCriteria::NewLC();
         categorySearchCriteria->SetCategoryItemId(
             LandmarkUtility::convertToSymbianLandmarkCategoryId(categoryFilter.categoryId()));
@@ -2824,6 +2839,13 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
             symbianCoord.SetCoordinate(qCoord.latitude(), qCoord.longitude());
         }
         else {
+            User::Leave(KErrArgument);
+        }
+
+        //check that proximity filer does not contain pole
+        if (proximityFilter.radius() >=0 &&
+            (proximityFilter.boundingCircle().contains(QGeoCoordinate(90,0))
+             || proximityFilter.boundingCircle().contains(QGeoCoordinate(-90,0)))) {
             User::Leave(KErrArgument);
         }
 

@@ -70,7 +70,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a new polyline object.
 */
 QGeoMapPolylineObject::QGeoMapPolylineObject()
-        : d_ptr(new QGeoMapPolylineObjectPrivate()) {}
+    : d_ptr(new QGeoMapPolylineObjectPrivate()) {}
 
 /*!
     Destroys this polyline object.

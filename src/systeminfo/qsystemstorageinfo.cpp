@@ -79,12 +79,16 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
         */
 
         /*!
-           \fn void QSystemStorageInfo::logicalDriveChanged(bool added,const QString &vol);
+           \fn void QSystemStorageInfo::logicalDriveChanged(bool added,const QString &volumeName);
 
-           This signal gets emitted when new storage has been added or removed from the system.
+           This signal gets emitted when new storage has been added or removed from the system,
+           specified by \a added, with the name \a volumeName.
         */
 
 
+/*!
+    Constructs a QSystemStorageInfo with the given \a parent.
+*/
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
    : QObject(parent), d(storageInfoPrivate())
 {

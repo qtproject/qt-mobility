@@ -72,6 +72,7 @@ using namespace Simulator;
 /*!
  * \class QContactSimulatorEngine
  * \brief This class provides a simulator-managed in-memory backend.
+ * \internal
  */
 
 /* static data for manager class */

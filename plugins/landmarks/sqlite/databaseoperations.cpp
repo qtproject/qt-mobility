@@ -1128,19 +1128,16 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
         }
     case QLandmarkFilter::LandmarkIdFilter: {
             QLandmarkIdFilter idFilter = filter;
-            if (sortOrders.length() == 1
-                && sortOrders.at(0).type() == QLandmarkSortOrder::NameSort) {
                 //provide a query string exeecute so to that sqlite can handle sorting by name
                 queryString = landmarkIdsQueryString(idFilter.landmarkIds());
-            } else {
-                result = idFilter.landmarkIds();
-                idsFound = true;
-            }
             break;
         }
     case QLandmarkFilter::CategoryFilter: {
+        QSqlQuery query(db);
+        QMap<QString, QVariant> bindValues;
         QLandmarkCategoryFilter categoryFilter = filter;
         QLandmarkCategoryId categoryId = categoryFilter.categoryId();
+
         if (categoryId.managerUri() != managerUri) {
             *error = QLandmarkManager::DoesNotExistError;
             *errorString = "The category does not exist in the manager because the managers do not match";
@@ -1148,6 +1145,18 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
         } else if (categoryId.localId().isEmpty()) {
             *error = QLandmarkManager::DoesNotExistError;
             *errorString = "The category does not exist in the manager because the local id of the category is empty";
+            return result;
+        }
+        bindValues.clear();
+        bindValues.insert("catId",categoryId.localId());
+        if (!executeQuery(&query,"SELECT * from category WHERE id = :catId", bindValues, error, errorString)){
+            return result;
+        }
+
+        if (!query.next()) {
+            *error = QLandmarkManager::DoesNotExistError;
+            *errorString = QString("Category with local id %1, does not exist in database")
+                            .arg(categoryId.localId());
             return result;
         }
 

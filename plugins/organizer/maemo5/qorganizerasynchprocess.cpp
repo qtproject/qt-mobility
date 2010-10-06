@@ -314,9 +314,14 @@ void OrganizerAsynchProcess::handleDefinitionFetchRequest(QOrganizerItemDetailDe
     QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
     QMap<QString, QOrganizerItemDetailDefinition> definitions = m_engine->detailDefinitions(req->itemType(), &err);
     QMap<int, QOrganizerItemManager::Error> errorMap;
-    int definitionsCount = definitions.count();
-    for (int i = 0; i < definitionsCount; ++i)
-        errorMap.insert(i, err);
+    QStringList keys = req->definitionNames();
+    int definitionsCount = keys.count();
+    for (int i = 0; i < definitionsCount; ++i) {
+        QOrganizerItemDetailDefinition definition = m_engine->detailDefinition(keys.at(i), req->itemType(), &err);
+        definitions.insert(keys.at(i), definition);
+        if (err != QOrganizerItemManager::NoError)
+            errorMap.insert(i, err);
+    }
     QOrganizerItemManagerEngine::updateDefinitionFetchRequest(req, definitions, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
 }
 

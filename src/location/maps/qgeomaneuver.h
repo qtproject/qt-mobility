@@ -89,6 +89,8 @@ public:
     bool operator== (const QGeoManeuver &other) const;
     bool operator!= (const QGeoManeuver &other) const;
 
+    bool isValid() const;
+
     void setPosition(const QGeoCoordinate &position);
     QGeoCoordinate position() const;
 

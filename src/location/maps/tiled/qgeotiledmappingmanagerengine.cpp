@@ -78,7 +78,7 @@ QTM_BEGIN_NAMESPACE
     and the parent \a parent.
 */
 QGeoTiledMappingManagerEngine::QGeoTiledMappingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
-        : QGeoMappingManagerEngine(new QGeoTiledMappingManagerEnginePrivate(), parent)
+    : QGeoMappingManagerEngine(new QGeoTiledMappingManagerEnginePrivate(), parent)
 {
     Q_UNUSED(parameters)
 }
@@ -176,7 +176,7 @@ void QGeoTiledMappingManagerEngine::setTileSize(const QSize &tileSize)
 *******************************************************************************/
 
 QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate()
-        : QGeoMappingManagerEnginePrivate() {}
+    : QGeoMappingManagerEnginePrivate() {}
 
 QGeoTiledMappingManagerEnginePrivate::~QGeoTiledMappingManagerEnginePrivate() {}
 

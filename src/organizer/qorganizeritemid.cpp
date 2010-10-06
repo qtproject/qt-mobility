@@ -73,7 +73,7 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemLocalId
   \relates QOrganizerItemId
-  \brief The QOrganizerItemLocalId type represents the unique id of an organizer item within its manager.
+  \brief The QOrganizerItemLocalId class represents the unique id of an organizer item within its manager.
 
   Most operations within a \l QOrganizerItemManager accept a QOrganizerItemLocalId.  Some operations
   (involving links to organizer items outside a particular manager) also accept a manager URI - this

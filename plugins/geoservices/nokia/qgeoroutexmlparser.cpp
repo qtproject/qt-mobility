@@ -43,11 +43,11 @@
 ** contact the sales department at qt-sales@nokia.com.
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and 
-** Navigation API.  The use of these services, whether by use of the 
-** plugin or by other means, is governed by the terms and conditions 
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in 
-** this package, located in the directory containing the Ovi services 
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
 ** plugin source code.
 **
 ****************************************************************************/
@@ -104,12 +104,11 @@ bool QGeoRouteXmlParser::parseRootElement()
         return false;
     }
 
-    bool updateroute=false;
+    bool updateroute = false;
     if (m_reader->name() != "CalculateRoute" && m_reader->name() != "GetRoute")  {
         m_reader->raiseError(QString("The root element is expected to have the name \"CalculateRoute\" or \"GetRoute\" (root element was named \"%1\").").arg(m_reader->name().toString()));
         return false;
-    }
-    else if (m_reader->name() == "GetRoute") {
+    } else if (m_reader->name() == "GetRoute") {
         updateroute = true;
     }
 
@@ -126,7 +125,7 @@ bool QGeoRouteXmlParser::parseRootElement()
         } else if (m_reader->name() == "Route") {
             QGeoRoute route;
             route.setRequest(m_request);
-            if(updateroute)
+            if (updateroute)
                 route.setTravelMode(QGeoRouteRequest::TravelMode(int(m_request.travelModes())));
             if (!parseRoute(&route))
                 continue; //route parsing failed move on to the next
@@ -216,7 +215,7 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
     QList<QGeoRouteSegment> routesegments;
 
     //Add the first instruction as starting point
-    if(maneuvers.count()>0) {
+    if (maneuvers.count() > 0) {
         QGeoRouteSegment segment;
         segment.setManeuver(maneuvers[0].maneuver);
         QList<QGeoCoordinate> path; // use instruction position as one point segment path
@@ -227,12 +226,12 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
     }
 
     for (int i = 0; i < segments.count(); ++i) {
-        if(segments[i].maneuverId.isEmpty()) {
+        if (segments[i].maneuverId.isEmpty()) {
             routesegments.append(segments[i].segment);
         } else {
             for (int j = 0; j < maneuvers.count(); ++j) {
                 if (maneuvers[j].id == segments[i].maneuverId
-                    && segments[i].segment.maneuver().instructionText().isEmpty()) {
+                        && segments[i].segment.maneuver().instructionText().isEmpty()) {
                     segments[i].segment.setManeuver(maneuvers[j].maneuver);
                     routesegments.append(segments[i].segment);
                     maneuvers.removeAt(j);

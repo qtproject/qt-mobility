@@ -62,6 +62,7 @@ class QGeoCoordinate;
 class QGeoBoundingBox;
 class QGeoMapObjectPrivate;
 class QGeoMapContainer;
+class QGeoMapObjectInfo;
 
 class QGeoMapData;
 
@@ -107,6 +108,8 @@ public:
 
     virtual void setMapData(QGeoMapData *mapData);
     virtual QGeoMapData* mapData() const;
+
+    QGeoMapObjectInfo* info() const;
 
 Q_SIGNALS:
     void zValueChanged(int zValue);

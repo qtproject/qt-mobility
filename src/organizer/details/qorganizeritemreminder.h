@@ -65,12 +65,12 @@ class Q_ORGANIZER_EXPORT QOrganizerItemReminder : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldReminderType;
-    const char* FieldDateTime;
-    const char* FieldTimeDelta;
-    const char* FieldRepetitionCount;
-    const char* FieldRepetitionDelay;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldReminderType;
+    static const QLatin1Constant FieldDateTime;
+    static const QLatin1Constant FieldTimeDelta;
+    static const QLatin1Constant FieldRepetitionCount;
+    static const QLatin1Constant FieldRepetitionDelay;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemReminder, "Reminder")
     Q_DECLARE_LATIN1_CONSTANT(FieldReminderType, "ReminderType");
