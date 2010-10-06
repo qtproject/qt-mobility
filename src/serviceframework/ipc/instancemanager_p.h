@@ -68,10 +68,11 @@ struct ServiceIdentDescriptor
     int globalRefCount;
 };
 
-class QM_AUTOTEST_EXPORT InstanceManager //TODO public QOBJECT
+class QM_AUTOTEST_EXPORT InstanceManager : public QObject
 {
+    Q_OBJECT
 public:
-    InstanceManager();
+    InstanceManager(QObject *parent = 0);
     ~InstanceManager();
 
     bool addType(const QRemoteServiceRegister::Entry& entry);
@@ -83,6 +84,10 @@ public:
     void removeObjectInstance(const QRemoteServiceRegister::Entry& entry, const QUuid& instanceId);
 
     static InstanceManager* instance();
+
+Q_SIGNALS:
+    void allInstancesClosed();
+    void instanceClosed(const QRemoteServiceRegister::Entry&);
 
 private:
     mutable QMutex lock;

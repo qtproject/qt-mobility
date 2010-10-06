@@ -179,11 +179,6 @@ QRemoteServiceRegisterSymbianPrivate::QRemoteServiceRegisterSymbianPrivate(QObje
 {
 }
 
-void QRemoteServiceRegisterSymbianPrivate::closingLastInstance()
-{
-  emit lastInstanceClosed();
-}
-
 void QRemoteServiceRegisterSymbianPrivate::publishServices(const QString &ident)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
@@ -544,7 +539,6 @@ void CServiceProviderServer::DecreaseSessions()
 #endif
     if(iSessionCount == 0){
         Cancel();
-        iOwner->closingLastInstance();
         if(iOwner->quitOnLastInstanceClosed())
           QCoreApplication::exit();
     }
