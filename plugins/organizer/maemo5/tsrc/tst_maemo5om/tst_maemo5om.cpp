@@ -96,7 +96,7 @@ void tst_Maemo5Om::init()
 {
     m_om = new QOrganizerItemManager(managerName);
     // Remove all organizer items first (Note: ignores possible errors)
-    //m_om->removeItems(m_om->itemIds(), 0);
+    // m_om->removeItems(m_om->itemIds(), 0);
 }
 
 void tst_Maemo5Om::cleanup()
@@ -676,6 +676,9 @@ void tst_Maemo5Om::getItemIds()
 {
     QList<QOrganizerItemLocalId> generatedIds;
 
+    // Remove all the items in the test interval
+    QList<QOrganizerItemSortOrder> sortOrders;
+
     // Create a set of items
     for (int i = 1; i < 11; ++i) {
         QOrganizerEvent event;
@@ -705,8 +708,7 @@ void tst_Maemo5Om::getItemIds()
     }
 
     // Get items ids
-    QList<QOrganizerItemSortOrder> sortOrders;
-    QList<QOrganizerItemLocalId> ids = m_om->itemIds(QOrganizerItemFilter(), sortOrders);
+    QList<QOrganizerItemLocalId> ids = m_om->itemIds(QDateTime(QDate(2010,3,1)), QDateTime(QDate(2010,3,11)), QOrganizerItemFilter(), sortOrders);
 
     // Check that all the item ids exist in result
     foreach(QOrganizerItemLocalId id, generatedIds) {
