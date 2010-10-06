@@ -79,10 +79,7 @@ void OrganizerItemReminderTransform::transformToDetailL(const CCalEntry& entry, 
         QOrganizerItemReminder reminder;
         int offsetSeconds = alarm->TimeOffset().Int() * secondsInOneMinute;
         // Set both the offset and dateTime values for the reminder detail
-        reminder.setTimeDelta(offsetSeconds);
-        QDateTime startTime = toQDateTimeL(entry.StartTimeL());
-        QDateTime reminderTime = startTime.addSecs(-offsetSeconds);
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(offsetSeconds);
         item->saveDetail(&reminder);
         CleanupStack::PopAndDestroy(alarm);
     }
@@ -125,15 +122,15 @@ void OrganizerItemReminderTransform::transformToEntryL(const QOrganizerItem& ite
     }
 
     // If there is a valid reminder delta, use it
-    if (reminder.variantValues().contains(QOrganizerItemReminder::FieldTimeDelta)) {
+    if (reminder.variantValues().contains(QOrganizerItemReminder::FieldSecondsBeforeStart)) {
 
         if (timeOffset) {
             // If both startDateTime and delta are defined, they must match
-            if (timeOffset != reminder.timeDelta() / secondsInOneMinute)
+            if (timeOffset != reminder.secondsBeforeStart() / secondsInOneMinute)
                 User::Leave(KErrArgument);
         } else {
             // Convert delta to minutes
-            timeOffset = reminder.timeDelta() / secondsInOneMinute;
+            timeOffset = reminder.secondsBeforeStart() / secondsInOneMinute;
         }
     }
 

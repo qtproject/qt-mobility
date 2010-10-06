@@ -362,12 +362,11 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
                     QString message = QString::fromStdString(alarm_event_get_title(eve));
                     reminder.setMessage(message);
                     time_t alarmTime = alarm_event_get_trigger(eve);
-                    reminder.setDateTime(QDateTime::fromTime_t(alarmTime));
                     alarm_event_delete(eve);
 
                     QDateTime sTime = QDateTime::fromTime_t(component->getDateStart());
                     QDateTime aTime = QDateTime::fromTime_t(alarmTime);
-                    reminder.setTimeDelta(aTime.secsTo(sTime));
+                    reminder.setSecondsBeforeStart(aTime.secsTo(sTime));
                 }
             }
 
@@ -556,8 +555,8 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         QOrganizerItemVisualReminder reminder = item->detail<QOrganizerItemVisualReminder>();
         QDateTime reminderDateTime = reminder.dateTime();
         QDateTime deltaDateTime;
-        if (reminder.variantValues().contains(QOrganizerItemReminder::FieldTimeDelta))
-            deltaDateTime = dateStartForAlarm.addSecs(-reminder.timeDelta());
+        if (reminder.variantValues().contains(QOrganizerItemReminder::FieldSecondsBeforeStart))
+            deltaDateTime = dateStartForAlarm.addSecs(-reminder.secondsBeforeStart());
 
         if (!reminderDateTime.isNull() || !deltaDateTime.isNull()) {
             if (!reminderDateTime.isNull() && !deltaDateTime.isNull()) {
@@ -662,7 +661,7 @@ QPair<qint32, qint32> OrganizerItemTransform::modifyAlarmEvent(CCalendar *cal, Q
                     startDateTime = item->detail<QOrganizerJournalTimeRange>().entryDateTime();
                 }
 
-                reminderDateTime = startDateTime.addSecs(-reminder.timeDelta());
+                reminderDateTime = startDateTime.addSecs(-reminder.secondsBeforeStart());
             }
 
             int ignoreErrors = 0;

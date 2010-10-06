@@ -403,8 +403,7 @@ class QDeclarativeOrganizerItemReminder : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
     Q_PROPERTY(ReminderType reminderType READ reminderType NOTIFY valueChanged)
-    Q_PROPERTY(QDateTime dateTime READ dateTime WRITE setDateTime NOTIFY valueChanged)
-    Q_PROPERTY(int timeDelta READ timeDelta WRITE setTimeDelta NOTIFY valueChanged)
+    Q_PROPERTY(int secondsBeforeStart READ secondsBeforeStart WRITE setSecondsBeforeStart NOTIFY valueChanged)
     Q_PROPERTY(int repetitionCount READ repetitionCount WRITE setRepetitionCount NOTIFY valueChanged)
     Q_PROPERTY(int repetitionDelay READ repetitionDelay WRITE setRepetitionDelay NOTIFY valueChanged)
     Q_ENUMS(ReminderType)
@@ -428,10 +427,8 @@ public:
         return  static_cast<ReminderType>(m_detail.value<int>(QOrganizerItemReminder::FieldReminderType));
     }
 
-    void setDateTime(const QDateTime& dateTime) {m_detail.setValue(QOrganizerItemReminder::FieldDateTime, dateTime);}
-    QDateTime dateTime() const {return m_detail.value<QDateTime>(QOrganizerItemReminder::FieldDateTime);}
-    void setTimeDelta(int secondsBefore) {m_detail.setValue(QOrganizerItemReminder::FieldTimeDelta, secondsBefore);}
-    int timeDelta() const {return m_detail.value<int>(QOrganizerItemReminder::FieldTimeDelta);}
+    void setSecondsBeforeStart(int seconds) {m_detail.setValue(QOrganizerItemReminder::FieldSecondsBeforeStart, seconds);}
+    int secondsBeforeStart() const {return m_detail.value<int>(QOrganizerItemReminder::FieldSecondsBeforeStart);}
 
     void setRepetitionDelay(int delaySeconds) {m_detail.setValue(QOrganizerItemReminder::FieldRepetitionDelay, delaySeconds);}
     void setRepetitionCount(int count) {m_detail.setValue(QOrganizerItemReminder::FieldRepetitionCount, count); }

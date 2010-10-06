@@ -677,20 +677,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::DefinitionName, "Reminder");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldReminderType, "ReminderType");
 
 /*!
-   \variable QOrganizerItemReminder::FieldTimeDelta
+   \variable QOrganizerItemReminder::FieldSecondsBeforeStart
 
    The constant key for which time delta (in seconds prior to the item activation time)
    at which the user should be reminded of the item is stored in details of the QOrganizerItemReminder type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldTimeDelta, "TimeDelta");
-
-/*!
-   \variable QOrganizerItemReminder::FieldDateTime
-
-   The constant key for which the date time at which the user should be reminded of the item
-   is stored in details of the QOrganizerItemReminder type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldDateTime, "DateTime");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldSecondsBeforeStart, "SecondsBeforeStart");
 
 /*!
    \variable QOrganizerItemReminder::FieldRepetitionCount
@@ -715,22 +707,20 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
  */
 
 /*!
-   \fn QOrganizerItemReminder::setTimeDelta(int secondsBefore)
+   \fn QOrganizerItemReminder::setSecondsBeforeStart(int seconds)
 
    Sets the number of seconds prior to the activation of the item
-   at which the user wants to be reminded of the item to \a secondsBefore.
+   at which the user wants to be reminded of the item to \a seconds.
    The exact datetime of activation of the item depends on the type of
    item: for a QOrganizerTodo or QOrganizerTodoOccurrence it is the
    due date time; for a QOrganizerEvent or QOrganizerEventOccurrence
    it is the start date time.
 
    Calling this function will clear the absolute date time, if set.
-
-   \sa setDateTime()
  */
 
 /*!
-   \fn int QOrganizerItemReminder::timeDelta() const
+   \fn int QOrganizerItemReminder::secondsBeforeStart() const
 
    Returns the number of seconds prior to the activation of the item
    at which the user wants to be reminded of the item.
@@ -739,23 +729,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
    due date time; for a QOrganizerEvent or QOrganizerEventOccurrence
    it is the start date time.
  */
-
-/*!
-   \fn QOrganizerItemReminder::setDateTime(const QDateTime& dateTime)
-
-   Sets the date time at which the user should be reminded of the item
-   to \a dateTime.
-
-   Calling this function will clear the time delta, if set.
-
-   \sa setTimeDelta()
-*/
-
-/*!
-   \fn QDateTime QOrganizerItemReminder::dateTime() const
-
-   Returns the date time at which the user should be reminded of the item.
-*/
 
 /*!
    \fn int QOrganizerItemReminder::repetitionCount() const

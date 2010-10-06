@@ -641,11 +641,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     d.setFields(fields);
     d.setUnique(false); // can have multiple alarms at different times for the same event
     retn.insert(d.name(), d);
@@ -656,11 +654,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::Url);
     fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
     d.setFields(fields);
@@ -673,11 +669,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::String);
     fields.insert(QOrganizerItemEmailReminder::FieldBody, f);
     fields.insert(QOrganizerItemEmailReminder::FieldSubject, f);
@@ -695,11 +689,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::String);
     fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
     f.setDataType(QVariant::Url);
@@ -892,11 +884,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     d.setFields(fields);
     d.setUnique(false); // can have multiple alarms at different times for the same event occurrence
     retn.insert(d.name(), d);
@@ -907,11 +897,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::Url);
     fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
     d.setFields(fields);
@@ -924,11 +912,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::String);
     fields.insert(QOrganizerItemEmailReminder::FieldBody, f);
     fields.insert(QOrganizerItemEmailReminder::FieldSubject, f);
@@ -946,11 +932,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::String);
     fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
     f.setDataType(QVariant::Url);
@@ -1050,11 +1034,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     d.setFields(fields);
     d.setUnique(false); // can have multiple alarms at different times for the same todo
     retn.insert(d.name(), d);
@@ -1065,11 +1047,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::Url);
     fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
     d.setFields(fields);
@@ -1082,11 +1062,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::String);
     fields.insert(QOrganizerItemEmailReminder::FieldBody, f);
     fields.insert(QOrganizerItemEmailReminder::FieldSubject, f);
@@ -1104,11 +1082,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::String);
     fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
     f.setDataType(QVariant::Url);
@@ -1266,11 +1242,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     d.setFields(fields);
     d.setUnique(false); // can have multiple alarms at different times for the same todo occurrence
     retn.insert(d.name(), d);
@@ -1281,11 +1255,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::Url);
     fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
     d.setFields(fields);
@@ -1298,11 +1270,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::String);
     fields.insert(QOrganizerItemEmailReminder::FieldBody, f);
     fields.insert(QOrganizerItemEmailReminder::FieldSubject, f);
@@ -1320,11 +1290,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemReminder::FieldReminderType, f);
-    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    fields.insert(QOrganizerItemReminder::FieldSecondsBeforeStart, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionCount, f);
     fields.insert(QOrganizerItemReminder::FieldRepetitionDelay, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::String);
     fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
     f.setDataType(QVariant::Url);

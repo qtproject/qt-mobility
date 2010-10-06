@@ -1316,9 +1316,8 @@ void tst_Maemo5Om::testReminders()
 
     QOrganizerItemVisualReminder eventReminder = event.detail<QOrganizerItemVisualReminder>();
     eventReminder.setMessage("Event reminder message");
-    eventReminder.setDateTime(QDateTime(date, QTime(12, 0, 0)));
     eventReminder.setRepetition(10, 60);
-    eventReminder.setTimeDelta(60 * 60);
+    eventReminder.setSecondsBeforeStart(60 * 60);
     event.saveDetail(&eventReminder);
 
     // Save event
@@ -1332,7 +1331,7 @@ void tst_Maemo5Om::testReminders()
     QCOMPARE(fetchEventReminder.message(), eventReminder.message());
     QCOMPARE(fetchEventReminder.repetitionCount(), eventReminder.repetitionCount());
     //QCOMPARE(reminder.repetitionDelay(), fetchEventReminder.repetitionDelay()); // Maemo5 does not support repetition delay
-    QCOMPARE(fetchEventReminder.timeDelta(), eventReminder.timeDelta());
+    QCOMPARE(fetchEventReminder.secondsBeforeStart(), eventReminder.secondsBeforeStart());
 
     // Create a todo and set its details
     QOrganizerTodo todo;
@@ -1343,9 +1342,8 @@ void tst_Maemo5Om::testReminders()
 
     QOrganizerItemVisualReminder todoReminder = todo.detail<QOrganizerItemVisualReminder>();
     todoReminder.setMessage("Todo reminder message");
-    todoReminder.setDateTime(QDateTime(date, QTime(10, 0, 0)));
     todoReminder.setRepetition(2, 10);
-    todoReminder.setTimeDelta(3 * 60 * 60);
+    todoReminder.setSecondsBeforeStart(3 * 60 * 60);
     todo.saveDetail(&todoReminder);
 
     // Save todo
@@ -1355,11 +1353,10 @@ void tst_Maemo5Om::testReminders()
     QOrganizerItem fetchTodo = m_om->item(todo.localId());
     QOrganizerItemVisualReminder fetchTodoReminder = fetchTodo.detail<QOrganizerItemVisualReminder>();
     QCOMPARE(fetchTodoReminder.dataUrl(), todoReminder.dataUrl());
-    QCOMPARE(fetchTodoReminder.dateTime(), todoReminder.dateTime());
     QCOMPARE(fetchTodoReminder.message(), todoReminder.message());
     QCOMPARE(fetchTodoReminder.repetitionCount(), todoReminder.repetitionCount());
     //QCOMPARE(reminder.repetitionDelay(), fetchEventReminder.repetitionDelay()); // Maemo5 does not support repetition delay
-    QCOMPARE(fetchTodoReminder.timeDelta(), todoReminder.timeDelta());
+    QCOMPARE(fetchTodoReminder.secondsBeforeStart(), todoReminder.secondsBeforeStart());
 }
 
 QTEST_MAIN(tst_Maemo5Om);
