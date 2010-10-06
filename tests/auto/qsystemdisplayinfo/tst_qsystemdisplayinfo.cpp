@@ -111,7 +111,7 @@ void tst_QSystemDisplayInfo::tst_contrast()
 {
     QSystemDisplayInfo di;
     QVERIFY(di.getDPIWidth(0) >= 0
-            && di.getDPIWidth(0)> 1.0 );
+            && di.getDPIWidth(0)< 1.0 );
     // contrast levels are between 0 and 1.0
 }
 
