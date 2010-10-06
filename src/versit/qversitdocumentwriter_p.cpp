@@ -151,6 +151,8 @@ bool QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& document
 
     writeString(QLatin1String("END:") + document.componentType());
     writeCrlf();
+
+    // This has been set by the methods called from this function
     return mSuccessful;
 }
 

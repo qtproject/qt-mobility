@@ -148,13 +148,13 @@ bool QVersitDocument::operator!=(const QVersitDocument& other) const
 uint qHash(const QVersitDocument &key)
 {
     int hash = QT_PREPEND_NAMESPACE(qHash)(key.componentType());
+    // ensure empty properties change the hash value
+    hash += key.properties().length() + key.subDocuments().length();
     foreach (const QVersitProperty& property, key.properties()) {
-        hash += 1 +             // ensure empty properties change the hash value
-                qHash(property);
+        hash += qHash(property);
     }
     foreach (const QVersitDocument& nested, key.subDocuments()) {
-        hash += 1 +             // ensure empty subDocuments change the hash value
-                qHash(nested);
+        hash += qHash(nested);
     }
     return hash;
 }
