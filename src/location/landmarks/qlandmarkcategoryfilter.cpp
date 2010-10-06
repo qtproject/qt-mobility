@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
     belong to a certain category.
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-filter
 */
 
@@ -96,6 +96,15 @@ void QLandmarkCategoryFilter::setCategoryId(const QLandmarkCategoryId &categoryI
 {
     Q_D(QLandmarkCategoryFilter);
     d->id = categoryId;
+}
+
+/*!
+    Sets the \a category that this filter matches by
+*/
+void QLandmarkCategoryFilter::setCategory(const QLandmarkCategory &category)
+{
+    Q_D(QLandmarkCategoryFilter);
+    d->id = category.categoryId();
 }
 
 /*******************************************************************************

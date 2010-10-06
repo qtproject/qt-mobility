@@ -391,64 +391,89 @@ void CommandProcessor::showServiceInfo(const QString &service)
         return;
     }
    
-    QList<QServiceInterfaceDescriptor> pluginDesc;
-    QList<QServiceInterfaceDescriptor> ipcDesc;
+    QList<QServiceInterfaceDescriptor> pluginDescs;
+    QList<QServiceInterfaceDescriptor> ipcDescs;
     foreach (const QServiceInterfaceDescriptor &desc, descriptors) {
         int serviceType = desc.attribute(QServiceInterfaceDescriptor::ServiceType).toInt();
         if (serviceType == QService::Plugin)
-            pluginDesc.append(desc);
+            pluginDescs.append(desc);
         else
-            ipcDesc.append(desc);
+            ipcDescs.append(desc);
     }
 
-    if (pluginDesc.size() > 0) {
+    if (pluginDescs.size() > 0) {
         *stdoutStream << service;
-        if (ipcDesc.size() > 0)
+        if (ipcDescs.size() > 0)
             *stdoutStream << " (Plugin):\n";
         else 
             *stdoutStream << ":\n";
 
-        QString description = pluginDesc[0].attribute(
+        QString description = pluginDescs[0].attribute(
                 QServiceInterfaceDescriptor::ServiceDescription).toString();
         if (!description.isEmpty())
             *stdoutStream << '\t' << description << '\n';
         
         *stdoutStream << "\tPlugin Library: ";
-        showInterfaceInfo(pluginDesc);
+        showInterfaceInfo(pluginDescs);
     }
    
-    if (ipcDesc.size() > 0) {
+    if (ipcDescs.size() > 0) {
         *stdoutStream << service;
-        if (pluginDesc.size() > 0)
+        if (pluginDescs.size() > 0)
             *stdoutStream << " (IPC):\n";
         else 
             *stdoutStream << ":\n";
         
-        QString description = ipcDesc[0].attribute(
+        QString description = ipcDescs[0].attribute(
                 QServiceInterfaceDescriptor::ServiceDescription).toString();
         if (!description.isEmpty())
             *stdoutStream << '\t' << description << '\n';
     
         *stdoutStream << "\tIPC Address: ";
-        showInterfaceInfo(ipcDesc);
+        showInterfaceInfo(ipcDescs);
     }
 }
 
 void CommandProcessor::showInterfaceInfo(QList<QServiceInterfaceDescriptor> descriptors)
 {
-    QService::Scope scope = descriptors[0].scope();
-
-    *stdoutStream << descriptors[0].attribute(QServiceInterfaceDescriptor::Location).toString() << '\n'
-                  << "\tScope: " << (scope == QService::SystemScope ? "All users" : "Current User") << '\n'
-                  << "\tImplements:\n";
+    QList<QServiceInterfaceDescriptor> systemList;
+    QList<QServiceInterfaceDescriptor> userList;
     
     foreach (const QServiceInterfaceDescriptor &desc, descriptors) {
-        QStringList capabilities = desc.attribute(
-            QServiceInterfaceDescriptor::Capabilities).toStringList();
-        
-        *stdoutStream << "\t    " << desc.interfaceName() << ' '
-                      << desc.majorVersion() << '.' << desc.minorVersion()
-                      << (capabilities.isEmpty() ? "" : "\t{" + capabilities.join(", ") + "}") << "\n";
+        if (desc.scope() == QService::SystemScope)
+            systemList.append(desc);
+        else
+            userList.append(desc);
+    }
+    
+    if (userList.size() > 0) {
+        *stdoutStream << userList[0].attribute(QServiceInterfaceDescriptor::Location).toString() << '\n'
+                      << "\tUser Implements:\n";
+
+        foreach (const QServiceInterfaceDescriptor &desc, userList) {
+            QStringList capabilities = desc.attribute(
+                    QServiceInterfaceDescriptor::Capabilities).toStringList();
+
+            *stdoutStream << "\t    " << desc.interfaceName() << ' '
+                << desc.majorVersion() << '.' << desc.minorVersion()
+                << (capabilities.isEmpty() ? "" : "\t{" + capabilities.join(", ") + "}") << "\n";
+        }
+    }
+    
+    if (systemList.size() > 0) {
+        if (userList.size() < 1)
+            *stdoutStream << systemList[0].attribute(QServiceInterfaceDescriptor::Location).toString() << '\n';
+            
+        *stdoutStream << "\tSystem Implements:\n";
+
+        foreach (const QServiceInterfaceDescriptor &desc, systemList) {
+            QStringList capabilities = desc.attribute(
+                    QServiceInterfaceDescriptor::Capabilities).toStringList();
+
+            *stdoutStream << "\t    " << desc.interfaceName() << ' '
+                << desc.majorVersion() << '.' << desc.minorVersion()
+                << (capabilities.isEmpty() ? "" : "\t{" + capabilities.join(", ") + "}") << "\n";
+        }
     }
 }
 

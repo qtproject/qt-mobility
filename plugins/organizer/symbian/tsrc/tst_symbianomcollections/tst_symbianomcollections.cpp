@@ -208,8 +208,13 @@ void tst_symbianomcollections::fetchCollection()
     QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
     QVERIFY(!dId.isNull());
     
-    // Get all collections
+    // Get collections but do not provide id's
     QList<QOrganizerCollection> cs = m_om->collections();
+    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QVERIFY(cs.count() == 0);
+    
+    // Get all collections
+    cs = m_om->collections(m_om->collectionIds());
     QVERIFY(cs.count() >= 1); // default collection should always be present
     
     // Dump all to log
@@ -248,7 +253,7 @@ void tst_symbianomcollections::fetchCollection()
     c1.setMetaData("Enabled", true);
     QVERIFY(m_om->saveCollection(&c1));
     cs.clear();
-    cs = m_om->collections();
+    cs = m_om->collections(m_om->collectionIds());
     QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
     QVERIFY(cs.count() == 2);
     
@@ -256,7 +261,7 @@ void tst_symbianomcollections::fetchCollection()
     QVERIFY(m_om->removeCollection(c1.id().localId()));
         
     cs.clear();
-    cs = m_om->collections();
+    cs = m_om->collections(m_om->collectionIds());
     QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
     QVERIFY(cs.count() == 1);
     

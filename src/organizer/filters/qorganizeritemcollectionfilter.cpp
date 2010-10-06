@@ -71,6 +71,17 @@ QOrganizerItemCollectionFilter::QOrganizerItemCollectionFilter()
 }
 
 /*!
+ * Clears the list which contains the ids of possible matching organizeritems, and sets it to the list
+ * which contains a single id \a id.
+ */
+void QOrganizerItemCollectionFilter::setCollectionId(const QOrganizerCollectionLocalId &id)
+{
+    Q_D(QOrganizerItemCollectionFilter);
+    d->m_ids.clear();
+    d->m_ids.insert(id);
+}
+
+/*!
  * Sets the list which contains the ids of possible matching organizeritems to \a ids
  */
 void QOrganizerItemCollectionFilter::setCollectionIds(const QSet<QOrganizerCollectionLocalId> &ids)

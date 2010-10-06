@@ -63,15 +63,15 @@ void tst_QVersitProperty::cleanup()
 void tst_QVersitProperty::testGroup()
 {
     // One group
-    QStringList group(QString::fromAscii("GROUP_NAME"));
+    QStringList group(QLatin1String("GROUP_NAME"));
     mVersitProperty->setGroups(group);
     QCOMPARE(mVersitProperty->groups(), group);
 
     // Several groups
     QStringList groupList;
-    groupList.append(QString::fromAscii("GROUP1"));
-    groupList.append(QString::fromAscii("Group2"));
-    groupList.append(QString::fromAscii("group3"));
+    groupList.append(QLatin1String("GROUP1"));
+    groupList.append(QLatin1String("Group2"));
+    groupList.append(QLatin1String("group3"));
     mVersitProperty->setGroups(groupList);
     QCOMPARE(mVersitProperty->groups(), groupList);
 }
@@ -79,36 +79,36 @@ void tst_QVersitProperty::testGroup()
 void tst_QVersitProperty::testName()
 {
     // Name in upper case
-    QString name(QString::fromAscii("TEL"));
+    QString name(QLatin1String("TEL"));
     mVersitProperty->setName(name);
     QCOMPARE(mVersitProperty->name(), name);
 
     // Name in lower case, converted automatically to upper case
-    mVersitProperty->setName(QString::fromAscii("tel"));
+    mVersitProperty->setName(QLatin1String("tel"));
     QCOMPARE(mVersitProperty->name(), name);
 }
 
 void tst_QVersitProperty::testParameters()
 {
-    QString typeParameterName(QString::fromAscii("TYPE"));
+    QString typeParameterName(QLatin1String("TYPE"));
 
-    QString name(QString::fromAscii("type"));
-    QString value1(QString::fromAscii("home"));
+    QString name(QLatin1String("type"));
+    QString value1(QLatin1String("home"));
     mVersitProperty->insertParameter(name,value1);
     QMultiHash<QString,QString> parameters = mVersitProperty->parameters();
     QCOMPARE(parameters.count(), 1);
-    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("home")));
+    QVERIFY(parameters.contains(typeParameterName,QLatin1String("home")));
 
-    QString value2(QString::fromAscii("voice"));
+    QString value2(QLatin1String("voice"));
     mVersitProperty->insertParameter(name,value2);
     parameters = mVersitProperty->parameters();
     QCOMPARE(parameters.count(), 2);
-    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("home")));
-    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("voice")));
+    QVERIFY(parameters.contains(typeParameterName,QLatin1String("home")));
+    QVERIFY(parameters.contains(typeParameterName,QLatin1String("voice")));
 
     mVersitProperty->removeParameter(name,value1);
     QCOMPARE(mVersitProperty->parameters().count(), 1);
-    QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("home")));
+    QVERIFY(parameters.contains(typeParameterName,QLatin1String("home")));
 
     mVersitProperty->removeParameter(name,value2);
     QCOMPARE(mVersitProperty->parameters().count(), 0);
@@ -122,7 +122,7 @@ void tst_QVersitProperty::testParameters()
 
 void tst_QVersitProperty::testValue()
 {
-    QString value(QString::fromAscii("050484747"));
+    QString value(QLatin1String("050484747"));
     mVersitProperty->setValue(value);
     QCOMPARE(mVersitProperty->value(), value);
 }
@@ -131,13 +131,13 @@ void tst_QVersitProperty::testEmbeddedDocument()
 {
     QVersitDocument document;
     QVersitProperty property;
-    property.setName(QString::fromAscii("X-tension"));
+    property.setName(QLatin1String("X-tension"));
     document.addProperty(property);
     mVersitProperty->setValue(QVariant::fromValue(document));
     QList<QVersitProperty> embeddedDocumentProperties =
         mVersitProperty->value<QVersitDocument>().properties();
     QCOMPARE(embeddedDocumentProperties.count(),1);
-    QCOMPARE(embeddedDocumentProperties[0].name(),QString::fromAscii("X-TENSION"));
+    QCOMPARE(embeddedDocumentProperties[0].name(),QLatin1String("X-TENSION"));
 }
 
 void tst_QVersitProperty::testEquality()

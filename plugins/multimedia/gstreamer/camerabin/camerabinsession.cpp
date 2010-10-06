@@ -138,10 +138,11 @@ CameraBinSession::CameraBinSession(QObject *parent)
      m_audioInputFactory(0),
      m_videoInputFactory(0),
      m_viewfinder(0),
+     m_viewfinderInterface(0),
      m_pipeline(0),
      m_videoSrc(0),
-     m_viewfinderHasChanged(false),
-     m_videoInputHasChanged(false),
+     m_viewfinderHasChanged(true),
+     m_videoInputHasChanged(true),
      m_sourceCaps(0),
      m_audioSrc(0),
      m_audioConvert(0),
@@ -233,12 +234,19 @@ bool CameraBinSession::setupCameraBin()
     }
 
     if (m_viewfinderInterface) {
-        GstElement *preview = m_viewfinderInterface->videoSink();
-        if (!preview) {
-            qWarning() << "Staring camera without viewfinder available";
-            preview = gst_element_factory_make("fakesink", NULL);
+        if (m_viewfinderHasChanged) {
+            GstElement *preview = m_viewfinderInterface->videoSink();
+#if CAMERABIN_DEBUG
+            qDebug() << Q_FUNC_INFO << "Viewfinder changed, reconfigure.";
+#endif
+            m_viewfinderHasChanged = false;
+            if (!preview) {
+                qWarning() << "Staring camera without viewfinder available";
+                preview = gst_element_factory_make("fakesink", NULL);
+            }
+            gst_element_set_state(m_pipeline, GST_STATE_NULL);
+            g_object_set(G_OBJECT(m_pipeline), VIEWFINDER_SINK_PROPERTY, preview, NULL);
         }
-        g_object_set(G_OBJECT(m_pipeline), VIEWFINDER_SINK_PROPERTY, preview, NULL);
     }
 
     GstCaps *previewCaps = gst_caps_from_string(PREVIEW_CAPS_4_3);
@@ -481,7 +489,7 @@ void CameraBinSession::setViewfinder(QObject *viewfinder)
 
         if (m_viewfinder) {
             disconnect(m_viewfinder, SIGNAL(sinkChanged()),
-                       this, SIGNAL(viewfinderChanged()));
+                       this, SLOT(handleViewfinderChange()));
             disconnect(m_viewfinder, SIGNAL(readyChanged(bool)),
                        this, SIGNAL(readyChanged(bool)));
         }
@@ -491,7 +499,7 @@ void CameraBinSession::setViewfinder(QObject *viewfinder)
 
         if (m_viewfinder) {
             connect(m_viewfinder, SIGNAL(sinkChanged()),
-                       this, SIGNAL(viewfinderChanged()));
+                       this, SLOT(handleViewfinderChange()));
             connect(m_viewfinder, SIGNAL(readyChanged(bool)),
                     this, SIGNAL(readyChanged(bool)));
         }
@@ -500,6 +508,14 @@ void CameraBinSession::setViewfinder(QObject *viewfinder)
         if (oldReady != isReady())
             emit readyChanged(isReady());
     }
+}
+
+void CameraBinSession::handleViewfinderChange()
+{
+    //the viewfinder will be reloaded
+    //shortly when the pipeline is started
+    m_viewfinderHasChanged = true;
+    emit viewfinderChanged();
 }
 
 QCamera::State CameraBinSession::state() const
@@ -520,25 +536,44 @@ void CameraBinSession::setState(QCamera::State newState)
 
     switch (newState) {
     case QCamera::UnloadedState:
-    case QCamera::LoadedState:
         //focus is lost at least on n900 when the state is changed from Active to Idle
         if (m_state == QCamera::ActiveState)
             emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
 
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
         m_state = newState;
-        if (m_state == QCamera::LoadedState && m_videoInputHasChanged) {
+        emit stateChanged(m_state);
+        break;
+    case QCamera::LoadedState:
+        //focus is lost at least on n900 when the state is changed from Active to Idle
+        if (m_state == QCamera::ActiveState)
+            emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
+
+        if (m_videoInputHasChanged) {
+            gst_element_set_state(m_pipeline, GST_STATE_NULL);
             m_videoSrc = buildVideoSrc();
             g_object_set(m_pipeline, VIDEO_SOURCE_PROPERTY, m_videoSrc, NULL);
             updateVideoSourceCaps();
             m_videoInputHasChanged = false;
         }
-        emit stateChanged(m_state);
+        gst_element_set_state(m_pipeline, GST_STATE_READY);
         break;
     case QCamera::ActiveState:
         if (setupCameraBin()) {
-            m_pendingResolutionUpdate = true;
-            gst_element_set_state(m_pipeline, GST_STATE_READY);
+            GstState binState = GST_STATE_NULL;
+            GstState pending = GST_STATE_NULL;
+            gst_element_get_state(m_pipeline, &binState, &pending, 0);
+
+            if (pending == GST_STATE_READY ||
+               (pending == GST_STATE_VOID_PENDING && binState == GST_STATE_READY))
+            {
+                m_pendingResolutionUpdate = false;
+                setupCaptureResolution();
+                gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
+            } else {
+                m_pendingResolutionUpdate = true;
+                gst_element_set_state(m_pipeline, GST_STATE_READY);
+            }
         }
     }
 }
