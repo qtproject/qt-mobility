@@ -94,7 +94,8 @@ public:
         SimFeature,
         LocationFeature,
         VideoOutFeature,
-        HapticsFeature
+        HapticsFeature,
+        FmTransmitterFeature
 	};
 
     bool hasFeatureSupported(QSystemInfo::Feature feature);

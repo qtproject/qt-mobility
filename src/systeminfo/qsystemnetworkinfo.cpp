@@ -90,7 +90,10 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
             \value EthernetMode            Wired Local Area network.
             \value BluetoothMode           Bluetooth network.
             \value WimaxMode               Wimax network.
-
+            \value GprsMode                GPRS mode
+            \value EdgeMode                Edge mode
+            \value HspaMode                HSPA mode
+            \value  LteMode                 LTE mode
           */
 
 
@@ -317,6 +320,11 @@ void QSystemNetworkInfo::connectNotify(const char *signal)
             networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus))))) {
         connect(d,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
                 this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            cellIdChanged(int))))) {
+        connect(d,SIGNAL(cellIdChanged(int)),
+                this,SIGNAL(cellIdChanged(int)));
     }
 }
 

@@ -230,35 +230,35 @@ void Dialog::setupDisplay()
     brightnessLabel->setText(QString::number(di.displayBrightness(0)));
     colorDepthLabel->setText(QString::number(di.colorDepth((0))));
 
-    // QSystemDisplayInfo::DisplayOrientation orientation = di.getOrientation(0);
-    // QString orientStr;
-    // switch(orientation) {
-    // case QSystemDisplayInfo::Landscape:
-    //     orientStr="Landscape";
-    //     break;
-    // case QSystemDisplayInfo::Portrait:
-    //     orientStr="Portrait";
-    //     break;
-    // case QSystemDisplayInfo::InvertedLandscape:
-    //     orientStr="Inverted Landscape";
-    //     break;
-    // case QSystemDisplayInfo::InvertedPortrait:
-    //     orientStr="Inverted Portrait";
-    //     break;
-    // default:
-    //     orientStr="Orientation unknown";
-    //     break;
-    // }
+    QSystemDisplayInfo::DisplayOrientation orientation = di.getOrientation(0);
+    QString orientStr;
+    switch(orientation) {
+    case QSystemDisplayInfo::Landscape:
+        orientStr="Landscape";
+        break;
+    case QSystemDisplayInfo::Portrait:
+        orientStr="Portrait";
+        break;
+    case QSystemDisplayInfo::InvertedLandscape:
+        orientStr="Inverted Landscape";
+        break;
+    case QSystemDisplayInfo::InvertedPortrait:
+        orientStr="Inverted Portrait";
+        break;
+    default:
+        orientStr="Orientation unknown";
+        break;
+    }
 
-    // orientationLabel->setText(orientStr);
+    orientationLabel->setText(orientStr);
 
-    // contrastLabel->setText(QString::number(di.contrast((0))));
+    contrastLabel->setText(QString::number(di.contrast((0))));
 
-    // dpiWidthLabel->setText(QString::number(di.getDPIWidth(0)));
-    // dpiHeightLabel->setText(QString::number(di.getDPIHeight((0))));
+    dpiWidthLabel->setText(QString::number(di.getDPIWidth(0)));
+    dpiHeightLabel->setText(QString::number(di.getDPIHeight((0))));
 
-    // physicalHeightLabel->setText(QString::number(di.physicalHeight(0)));
-    // physicalWidthLabel->setText(QString::number(di.physicalWidth((0))));
+    physicalHeightLabel->setText(QString::number(di.physicalHeight(0)));
+    physicalWidthLabel->setText(QString::number(di.physicalWidth((0))));
 }
 
 void Dialog::setupStorage()
@@ -330,16 +330,9 @@ void Dialog::setupNetwork()
     connect(ni,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
             this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
 
-    cellIdLabel->setText(QString::number(ni->cellId()));
-    locationAreaCodeLabel->setText(QString::number(ni->locationAreaCode()));
-    currentMMCLabel->setText(ni->currentMobileCountryCode());
-    currentMNCLabel->setText(ni->currentMobileNetworkCode());
-
-    homeMMCLabel->setText(ni->homeMobileCountryCode());
-    homeMNCLabel->setText(ni->homeMobileNetworkCode());
-
     networkModeChanged(ni->currentMode());
-
+    netStatusComboBox->setCurrentIndex((int)ni->currentMode());
+    netStatusComboActivated((int)ni->currentMode());
 }
 void Dialog::netStatusComboActivated(int index)
 {
@@ -358,6 +351,26 @@ void Dialog::netStatusComboActivated(int index)
     InterfaceLabel->setText(ni->interfaceForMode((QSystemNetworkInfo::NetworkMode)reIndex).humanReadableName());
 
     operatorNameLabel->setText(ni->networkName((QSystemNetworkInfo::NetworkMode)reIndex));
+
+    if((index == 1 || index == 2 || index == 3)
+        && ni->networkStatus((QSystemNetworkInfo::NetworkMode)reIndex)
+                             != QSystemNetworkInfo::UndefinedStatus) {
+
+        cellIdLabel->setText(QString::number(ni->cellId()));
+        locationAreaCodeLabel->setText(QString::number(ni->locationAreaCode()));
+        currentMMCLabel->setText(ni->currentMobileCountryCode());
+        currentMNCLabel->setText(ni->currentMobileNetworkCode());
+
+        homeMMCLabel->setText(ni->homeMobileCountryCode());
+        homeMNCLabel->setText(ni->homeMobileNetworkCode());
+    } else {
+        cellIdLabel->setText("");
+        locationAreaCodeLabel->setText("");
+        currentMMCLabel->setText("");
+        currentMNCLabel->setText("");
+        homeMMCLabel->setText("");
+        homeMNCLabel->setText("");
+    }
 }
 
 void Dialog::getVersion(int index)

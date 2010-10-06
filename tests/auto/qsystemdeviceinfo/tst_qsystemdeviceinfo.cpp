@@ -52,6 +52,7 @@ Q_DECLARE_METATYPE(QSystemDeviceInfo::InputMethodFlags);
 Q_DECLARE_METATYPE(QSystemDeviceInfo::Profile);
 Q_DECLARE_METATYPE(QSystemDeviceInfo::SimStatus);
 
+Q_DECLARE_METATYPE(QSystemDeviceInfo::KeyboardTypeFlags);
 
 class tst_QSystemDeviceInfo : public QObject
 {
@@ -81,8 +82,13 @@ private slots:
 
     void tst_currentBluetoothPowerState();
 
-    //    void tst_powerState_data();
-//    void tst_powerState();
+    void tst_keyboardType();
+    void tst_isWirelessKeyboardConnected();
+    void tst_isKeyboardFlipOpen();
+    void tst_keypadLightOn();
+    void tst_backLightOn();
+    void tst_hostId();
+    void tst_typeOfLock();
 
 };
 /*
@@ -102,6 +108,10 @@ void tst_QSystemDeviceInfo::initTestCase()
     qRegisterMetaType<QSystemDeviceInfo::Profile>("QSystemDeviceInfo::Profile");
 
     qRegisterMetaType<QSystemDeviceInfo::SimStatus>("QSystemDeviceInfo::SimStatus");
+
+    qRegisterMetaType<QSystemDeviceInfo::KeyboardTypeFlags>("QSystemDeviceInfo::KeyboardTypeFlags");
+    qRegisterMetaType<QSystemDeviceInfo::LockType>("QSystemDeviceInfo::LockType");
+
 }
 
 void tst_QSystemDeviceInfo::tst_inputMethodType()
@@ -236,6 +246,67 @@ void tst_QSystemDeviceInfo::tst_currentBluetoothPowerState()
     QSystemDeviceInfo di;
     bool state = di.currentPowerState();
     QVERIFY(state || !state);
+}
+
+
+void tst_QSystemDeviceInfo::tst_keyboardType()
+{
+    QSystemDeviceInfo di;
+    QSystemDeviceInfo::KeyboardTypeFlags  flags = di.keyboardType();
+
+    QVERIFY( (flags && QSystemDeviceInfo::UnknownKeyboard == QSystemDeviceInfo::UnknownKeyboard)
+             || (flags && QSystemDeviceInfo::SoftwareKeyboard ==  QSystemDeviceInfo::SoftwareKeyboard)
+             || (flags && QSystemDeviceInfo::ITUKeypad ==  QSystemDeviceInfo::ITUKeypad)
+             || (flags && QSystemDeviceInfo::HalfQwertyKeyboard == QSystemDeviceInfo::HalfQwertyKeyboard)
+             || (flags && QSystemDeviceInfo::FullQwertyKeyboard == QSystemDeviceInfo::FullQwertyKeyboard)
+             || (flags && QSystemDeviceInfo::WirelessKeyboard ==  QSystemDeviceInfo::WirelessKeyboard));
+}
+
+void tst_QSystemDeviceInfo::tst_isWirelessKeyboardConnected()
+{
+    QSystemDeviceInfo di;
+   bool on = di.isWirelessKeyboardConnected();
+   QVERIFY(on || !on);
+}
+
+void tst_QSystemDeviceInfo::tst_isKeyboardFlipOpen()
+{
+    QSystemDeviceInfo di;
+    bool on = di.isKeyboardFlipOpen();
+    QVERIFY(on || !on);
+}
+
+void tst_QSystemDeviceInfo::tst_keypadLightOn()
+{
+    QSystemDeviceInfo di;
+    bool on = di.keypadLightOn();
+    QVERIFY(on || !on);
+}
+
+void tst_QSystemDeviceInfo::tst_backLightOn()
+{
+    QSystemDeviceInfo di;
+    bool on = di.backLightOn();
+    QVERIFY(on || !on);
+}
+
+void tst_QSystemDeviceInfo::tst_hostId()
+{
+    QSystemDeviceInfo di;
+    QUuid id = di.hostId();
+    QVERIFY(id.isNull()|| !id.isNull());
+}
+
+void tst_QSystemDeviceInfo::tst_typeOfLock()
+{
+    QSystemDeviceInfo di;
+    QSystemDeviceInfo::LockType lock = di.typeOfLock();
+    if (di.isDeviceLocked()) {
+        QVERIFY((lock == QSystemDeviceInfo::DeviceLocked)
+                || (lock == QSystemDeviceInfo::TouchAndKeyboardLocked));
+    } else {
+        QVERIFY( lock == QSystemDeviceInfo::UnknownLock);
+    }
 }
 
 QTEST_MAIN(tst_QSystemDeviceInfo)

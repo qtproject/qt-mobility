@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the plugins of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,34 +39,26 @@
 **
 ****************************************************************************/
 
-#ifndef QSYSTEMINFOCOMMON_H
-#define QSYSTEMINFOCOMMON_H
+#ifndef QSYSTEMINFODBUSHELPER_P_H
+#define QSYSTEMINFODBUSHELPER_P_H
 
-#include "qmobilityglobal.h"
+#include <QObject>
+#include <QtDBus/QtDBus>
+#include <QtDBus/QDBusContext>
 
-#if defined(QT_SIMULATOR) || defined(SIMULATOR_APPLICATION)
-#define SIMULATOR
-#include "qsysteminfo_simulator_p.h"
-#else
+class QSystemInfoDBusHelper : public QObject, protected QDBusContext
+{
+    Q_OBJECT
+public:
+    explicit QSystemInfoDBusHelper(QObject *parent = 0);
+    ~QSystemInfoDBusHelper();
 
-#ifdef Q_OS_LINUX
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-#include "qsysteminfo_maemo_p.h"
-#else
-#include "linux/qsysteminfo_linux_p.h"
-#endif //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
-#endif //Q_OS_LINUX
+public slots:
+   void propertyChanged(const QString &, const QDBusVariant &);
 
-#ifdef Q_OS_WIN
-#include "qsysteminfo_win_p.h"
-#endif
-#ifdef Q_OS_MAC
-#include "qsysteminfo_mac_p.h"
-#endif
-#ifdef Q_OS_SYMBIAN
-#include "qsysteminfo_s60_p.h"
-#endif
+Q_SIGNALS:
+   void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
 
-#endif // QT_SIMULATOR
+};
 
-#endif // QSYSTEMINFOCOMMON_H
+#endif // QSYSTEMINFODBUSHELPER_P_H

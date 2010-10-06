@@ -162,6 +162,7 @@ Q_SIGNALS:
    void currentMobileNetworkCodeChanged(const QString &);
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+   void cellIdChanged(int);//1.2
 
 public Q_SLOTS:
    void primaryInterface();
@@ -176,6 +177,7 @@ private:
 
 private Q_SLOTS:
     void rssiTimeout();
+
 protected:
     void startNetworkChangeLoop();
     bool isInterfaceActive(const char* netInterface);
@@ -199,12 +201,12 @@ public:
     int displayBrightness(int screen);
     int colorDepth(int screen);
 
-//     QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-//     float contrast(int screen);
-//     int getDPIWidth(int screen);
-//     int getDPIHeight(int screen);
-//     int physicalHeight(int screen);
-//     int physicalWidth(int screen);
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
 };
 
 class QDASessionThread;
@@ -222,17 +224,26 @@ public:
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
+    QString uriForDrive(const QString &driveVolume);//1.2
+    QSystemStorageInfo::StorageState getStorageState(const QString &volume);//1.2
+
 public Q_SLOTS:
     void storageChanged( bool added,const QString &vol);
 
 Q_SIGNALS:
     void logicalDriveChanged(bool added,const QString &vol);
+    void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state); //1.2
 
 private:
-    QHash<QString, QString> mountEntriesHash;
+    QMap<QString, QString> mountEntriesMap;
     bool updateVolumesMap();
     void mountEntries();
     bool sessionThread();
+    QMap<QString, QSystemStorageInfo::StorageState> stateMap;
+    QTimer *storageTimer;
+
+private Q_SLOTS:
+    void checkAvailableStorage();
 
 protected:
     void connectNotify(const char *signal);
@@ -272,6 +283,18 @@ public:
     bool currentBluetoothPowerState();
     bool btThreadOk;
 
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+    bool isWirelessKeyboardConnected(); //1.2
+    bool isKeyboardFlipOpen();//1.2
+
+    void keyboardConnected(bool connect);//1.2
+    bool keypadLightOn(); //1.2
+    bool backLightOn(); //1.2
+    void deviceLocked(bool isLocked); // 1.2
+    QUuid hostId(); //1.2
+    QSystemDeviceInfo::LockType typeOfLock(); //1.2
+
+
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
@@ -280,6 +303,11 @@ Q_SIGNALS:
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 
+    void wirelessKeyboardConnected(bool connected);//1.2
+    void keyboardFlip(bool open);//1.2
+    void lockChanged(QSystemDeviceInfo::LockType, bool); //1.2
+
+
 private:
     int batteryLevelCache;
     QSystemDeviceInfo::PowerState currentPowerStateCache;
@@ -287,6 +315,7 @@ private:
     static QSystemDeviceInfoPrivate *self;
     QBluetoothListenerThread *btThread;
 
+    bool hasWirelessKeyboardConnected;
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
@@ -391,6 +420,7 @@ public:
     ~QBluetoothListenerThread();
     bool keepRunning;
     QThread t;
+    void setupConnectNotify();
 
 public Q_SLOTS:
     void emitBtPower(bool);
