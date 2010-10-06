@@ -1,6 +1,6 @@
 import QtMobility.feedback 1.1
 
-FeedbackHapticsEffect {
+HapticsEffect {
     id: rumbleEffect
     attackIntensity: 0.0
     attackTime: 250
@@ -8,5 +8,5 @@ FeedbackHapticsEffect {
     duration: 100
     fadeTime: 250
     fadeIntensity: 0.0
-    actuator: FeedbackActuator {}
+    actuator: Actuator {}
 }

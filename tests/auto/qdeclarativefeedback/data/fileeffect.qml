@@ -1,6 +1,6 @@
 import QtMobility.feedback 1.1
 
-FeedbackFileEffect {
+FileEffect {
     loaded: false
     fileName: "nonexistingfile.haptic"
 }

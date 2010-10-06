@@ -1,5 +1,5 @@
 import QtMobility.feedback 1.1
 
-FeedbackActuator {
+Actuator {
     enabled: false
 }
