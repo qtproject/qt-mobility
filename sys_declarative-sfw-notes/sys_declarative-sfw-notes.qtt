@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-//TESTED_COMPONENT=examples/declarative-sfw-notes
+//TESTED_COMPONENT=src/serviceframework
 
 testcase = {
 
