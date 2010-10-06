@@ -132,11 +132,14 @@ bool QOrganizerItemSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, c
     // translate local id -> remote id
     QOrganizerItem item = *theOrganizerItem;
     con->translateIds(&item, con->mManagerUri, con->mLocalToRemote);
+    bool newItem = item.id().isNull();
 
     // ### we should get a return value!
     RemoteMetacall<void>::call(sendSocket, TimeoutSync, "requestSaveOrganizerItem", item);
 
-    // ### if we just created a new remote item, add it to the map
+    if (newItem) {
+        // ### add it to the map, needs return value
+    }
 
     return QOrganizerItemMemoryEngine::saveItem(theOrganizerItem, collectionId, changeSet, error);
 }

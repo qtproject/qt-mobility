@@ -19,7 +19,9 @@ INCLUDEPATH += ../../../src/organizer \
 
 HEADERS += \
         qorganizersimulator_p.h \
-        connection_p.h
+        connection_p.h \
+        qorganizerdata_simulator_p.h
 SOURCES += \
         qorganizersimulator.cpp \
-        connection.cpp
+        connection.cpp \
+        qorganizerdata_simulator.cpp

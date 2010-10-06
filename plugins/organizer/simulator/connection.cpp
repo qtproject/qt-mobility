@@ -41,6 +41,7 @@
 
 #include "connection_p.h"
 
+#include "qorganizerdata_simulator_p.h"
 #include "qorganizersimulator_p.h"
 
 #include <mobilityconnection_p.h>
@@ -59,7 +60,7 @@ Connection::Connection(MobilityConnection *mobilityCon)
     , mInitialDataReceived(false)
     , mManager(QLatin1String("simulator"))
 {
-    qRegisterMetaTypeStreamOperators<QOrganizerItem>("QtMobility::QOrganizerItem");
+    qt_registerOrganizerTypes();
 
     mobilityCon->addMessageHandler(this);
 }
