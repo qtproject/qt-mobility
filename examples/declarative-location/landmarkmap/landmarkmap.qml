@@ -71,7 +71,7 @@ Item {
     Component {
         id: landmarkListDelegate
         Item {
-            width: 200; height: 50
+            width: 200; height: 80
             Text {
                 color: "white"; font.bold: true; style: Text.Raised; styleColor: "black"
                 id: nameField; text: landmark.name
@@ -145,11 +145,39 @@ Item {
         color: "#343434"
         //height: toolbar1.y - titleBar.height
         Image { source: "landmarkmapmobile/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 0.3 }
+
         MouseArea {
             anchors.fill: parent
+
+            property bool mouseDown : false
+            property int lastX : -1
+            property int lastY : -1
+
+            onPressed : {
+                mouseDown = true
+                lastX = mouse.x
+                lastY = mouse.y
+            }
+            onReleased : {
+                mouseDown = false
+                lastX = -1
+                lastY = -1
+            }
+            onPositionChanged: {
+                if (mouseDown) {
+                    var dx = mouse.x - lastX
+                    var dy = mouse.y - lastY
+                    map.pan(-dx, -dy)
+                    page.state = "NoFollowing"
+                    lastX = mouse.x
+                    lastY = mouse.y
+                }
+            }
             onDoubleClicked: {
                 page.state = "NoFollowing"
                 map.center = map.toCoordinate(Qt.point(mouse.x, mouse.y))
+                if (map.zoomLevel < map.maximumZoomLevel)
+                    map.zoomLevel += 1
             }
         }
 
@@ -202,6 +230,7 @@ Item {
                 boxFilter.bottomRight = bottomRightCoordinate;
             }
         } // map
+
 
         Item {
             id: pinpointViewContainer

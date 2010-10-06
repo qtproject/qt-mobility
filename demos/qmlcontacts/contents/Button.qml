@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,35 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICECONTROL_DBUS_P_H
-#define QREMOTESERVICECONTROL_DBUS_P_H
+import Qt 4.7
 
-#include "qremoteservicecontrol.h"
-#include "qremoteservicecontrol_p.h"
-#include "instancemanager_p.h"
-#include "qserviceinterfacedescriptor.h"
-#include <QLocalServer>
-#include <QUuid>
-#include <QtDBus/QtDBus>
+Item {
+    id: container
 
-QTM_BEGIN_NAMESPACE
+    signal clicked
 
-class ObjectEndPoint;
+    property string text
 
-class QRemoteServiceControlDbusPrivate: public QRemoteServiceControlPrivate
-{
-    Q_OBJECT
-public:
-    QRemoteServiceControlDbusPrivate(QObject* parent);
-    void publishServices(const QString& ident );
-
-private:
-    bool createServiceEndPoint(const QString& ident);
-
-    QLocalServer* localServer;
-    QList<ObjectEndPoint*> pendingConnections;   
-};
-
-QTM_END_NAMESPACE
-
-#endif
+    BorderImage {
+        id: buttonImage
+        source: "images/toolbutton.sci"
+        width: container.width; height: container.height
+    }
+    BorderImage {
+        id: pressed
+        opacity: 0
+        source: "images/toolbutton.sci"
+        width: container.width; height: container.height
+    }
+    MouseArea {
+        id: mouseRegion
+        anchors.fill: buttonImage
+        onClicked: { container.clicked(); }
+    }
+    Text {
+        color: "white"
+        anchors.centerIn: buttonImage; font.bold: true; font.pixelSize: 15
+        text: container.text; style: Text.Raised; styleColor: "black"
+    }
+    states: [
+        State {
+            name: "Pressed"
+            when: mouseRegion.pressed == true
+            PropertyChanges { target: pressed; opacity: 1 }
+        }
+    ]
+}

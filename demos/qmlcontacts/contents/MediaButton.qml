@@ -47,12 +47,12 @@ Item {
     id: container
     Image {
         id: normal
-        source: "pics/button.png"
+        source: "images/button.png"
     }
     Image {
         id: pressed
         opacity: 0
-        source: "pics/button-pressed.png"
+        source: "images/button-pressed.png"
     }
     MouseArea {
         id: clickRegion

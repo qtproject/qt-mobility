@@ -39,49 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICECONTROL_P_H
-#define QREMOTESERVICECONTROL_P_H
+#ifndef QREMOTESERVICEREGISTER_LS_P_H
+#define QREMOTESERVICEREGISTER_LS_P_H
 
-#include "qremoteservicecontrol.h"
+#include "qremoteserviceregister.h"
 #include "instancemanager_p.h"
 #include "qserviceinterfacedescriptor.h"
+#include "qremoteserviceregister_p.h"
+#include <QLocalServer>
 
 QTM_BEGIN_NAMESPACE
 
 class ObjectEndPoint;
 
-class QRemoteServiceControlPrivate: public QObject
+class QRemoteServiceRegisterLocalSocketPrivate: public QRemoteServiceRegisterPrivate
 {
     Q_OBJECT
-    Q_PROPERTY(bool quitOnLastInstanceClosed READ quitOnLastInstanceClosed WRITE setQuitOnLastInstanceClosed)
 public:
-    QRemoteServiceControlPrivate(QObject* parent);
-    virtual ~QRemoteServiceControlPrivate();
-
-    virtual void publishServices(const QString& ident ) = 0;
-
-    virtual bool quitOnLastInstanceClosed() const;
-    virtual void setQuitOnLastInstanceClosed(const bool quit);
-
-    virtual QRemoteServiceControl::securityFilter setSecurityFilter(QRemoteServiceControl::securityFilter filter);
-
-Q_SIGNALS:
-    void lastInstanceClosed();
+    QRemoteServiceRegisterLocalSocketPrivate(QObject* parent);
+    void publishServices(const QString& ident );
 
 public slots:
-    // Must be implemented in the subclass
-    //void processIncoming();
-
-protected:
-    virtual QRemoteServiceControl::securityFilter getSecurityFilter();
-
+    void processIncoming();
+    
 private:
-    bool m_quit;    
-    QRemoteServiceControl::securityFilter iFilter;
+    bool createServiceEndPoint(const QString& ident);
 
-public:
-    static QObject* proxyForService(const QRemoteServiceIdentifier& typeId, const QString& location);
-    static QRemoteServiceControlPrivate* constructPrivateObject(QObject *parent);
+    QLocalServer* localServer;
+    QList<ObjectEndPoint*> pendingConnections;
 };
 
 QTM_END_NAMESPACE

@@ -39,49 +39,60 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICECONTROL_H
-#define QREMOTESERVICECONTROL_H
+#include "remotedialer.h"
 
-#include "qmobilityglobal.h"
-#include <QObject>
-#include <QQueue>
-
-
-QTM_BEGIN_NAMESPACE
-
-
-class QRemoteServiceControlPrivate;
-class Q_SERVICEFW_EXPORT QRemoteServiceControl : public QObject
+RemoteDialer::RemoteDialer(QObject *parent)
+    : QObject(parent), timerId(0), m_state(DISCONNECTED)
 {
-    Q_OBJECT
-    Q_PROPERTY(bool quitOnLastInstanceClosed READ quitOnLastInstanceClosed WRITE setQuitOnLastInstanceClosed)
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime())+QCoreApplication::applicationPid());
+}
 
-public:
-    QRemoteServiceControl(QObject* parent = 0);
-    ~QRemoteServiceControl();
+int RemoteDialer::state() const
+{
+    return m_state;
+}
 
-    void publishServices(const QString& ident );
-    
-    bool quitOnLastInstanceClosed() const;
-    void setQuitOnLastInstanceClosed(const bool quit);
+void RemoteDialer::dialNumber(const QString& number)
+{
+    qDebug() << "Dialing Voip number: " << number;
+    if (m_state != DISCONNECTED)
+        return;
 
-    typedef bool (*securityFilter)(const void *message);
-    securityFilter setSecurityFilter(securityFilter filter);
+    if (timerId)
+        killTimer(timerId);
+    timerId = startTimer(2000);
+    m_state = CONNECTING;
+    emit stateChanged();
+    qDebug() << "EMITTED";
+}
 
-Q_SIGNALS:
-    void lastInstanceClosed();
+void RemoteDialer::timerEvent(QTimerEvent* /*event*/)
+{
+    setNewState();
+}
 
+void RemoteDialer::hangup()
+{
+    qDebug() << "Hangup on VoipDialer";
+    if (timerId)
+        killTimer(timerId);
+    timerId = 0;
+    m_state = DISCONNECTED;
+    emit stateChanged();
+}
 
-private:
-    QRemoteServiceControlPrivate* d;
-};
-
-struct QRemoteServiceControlLocalSocketCred {
-    int fd;
-    int pid;
-    int uid;
-    int gid;
-};
-
-QTM_END_NAMESPACE
-#endif //QREMOTESERVICECONTROL_H
+void RemoteDialer::setNewState()
+{
+    switch(m_state) {
+        case DISCONNECTED:
+            break;
+        case CONNECTING:
+            m_state = CONNECTED;
+            emit stateChanged();
+            break;
+        case CONNECTED:
+            break;
+        case ENGAGED:
+            break;
+    }
+}

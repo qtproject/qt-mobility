@@ -7,14 +7,11 @@ include(../../../common.pri)
 ## quick platform check.
 IS_SYMBIAN_4 = no
 IS_SYMBIAN_3 = no
-exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
-    exists($${EPOCROOT}epoc32/release/winscw/udeb/VPbkEng.dll) \
-    | exists($${EPOCROOT}epoc32/release/armv5/urel/VPbkEng.dll) {
-        message(Building Symbian contacts plugin on S^3)
-    } else {
-        message(Building Symbian contacts plugin on S^4 or later platform)
-        IS_SYMBIAN_4 = yes
-    }
+exists($${EPOCROOT}epoc32/data/z/system/install/Symbianv4.sis) {
+    IS_SYMBIAN_4 = yes
+    message(Building Symbian contacts plugin on S^4 or later platform)
+} else {
+    message(Building Symbian contacts plugin on S^3 or older platform)     
 }
 
 contains(IS_SYMBIAN_4, yes) {

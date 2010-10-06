@@ -56,7 +56,7 @@
 #endif
 
 QTM_USE_NAMESPACE
-class tst_ServiceDatabase: public QObject
+class ServiceDatabaseUnitTest: public QObject
 {
     Q_OBJECT
 
@@ -108,7 +108,7 @@ private:
     ServiceDatabase database;
 };
 
-void tst_ServiceDatabase::initTestCase()
+void ServiceDatabaseUnitTest::initTestCase()
 {
 #if defined(Q_OS_SYMBIAN)
     database.m_databasePath = QDir::toNativeSeparators(QDir::currentPath().append("/services.db"));
@@ -120,7 +120,7 @@ void tst_ServiceDatabase::initTestCase()
 static const QString securityTokenOwner("SecurityTokenOwner");
 static const QString securityTokenStranger("SecurityTokenStranger");
 
-void tst_ServiceDatabase::testRegistration()
+void ServiceDatabaseUnitTest::testRegistration()
 {
     QDir testdir = QDir(TESTDATA_DIR "/testdata" );
 
@@ -206,7 +206,7 @@ void tst_ServiceDatabase::testRegistration()
                                 //without side effects
 }
 
-void tst_ServiceDatabase::getInterfaces()
+void ServiceDatabaseUnitTest::getInterfaces()
 {
     QServiceFilter filter;
     QList<QServiceInterfaceDescriptor> interfaces;
@@ -274,7 +274,7 @@ void tst_ServiceDatabase::getInterfaces()
     QVERIFY(database.close());
 }
 
-void tst_ServiceDatabase::searchByInterfaceName()
+void ServiceDatabaseUnitTest::searchByInterfaceName()
 {
     QServiceFilter filter;
     QList<QServiceInterfaceDescriptor> interfaces;
@@ -386,7 +386,7 @@ void tst_ServiceDatabase::searchByInterfaceName()
     QVERIFY(database.close());
 }
 
-void tst_ServiceDatabase::searchByInterfaceAndService()
+void ServiceDatabaseUnitTest::searchByInterfaceAndService()
 {
     QServiceFilter filter;
     QList<QServiceInterfaceDescriptor> interfaces;
@@ -533,7 +533,7 @@ void tst_ServiceDatabase::searchByInterfaceAndService()
     QVERIFY(database.close());
 }
 
-void tst_ServiceDatabase::searchByCapability()
+void ServiceDatabaseUnitTest::searchByCapability()
 {
     QServiceFilter filter;
     QList<QServiceInterfaceDescriptor> interfaces;
@@ -620,7 +620,7 @@ void tst_ServiceDatabase::searchByCapability()
     QCOMPARE(interfaces.count(), 14); //show all services which don't require any caps
 }
 
-void tst_ServiceDatabase::searchByCustomAttribute()
+void ServiceDatabaseUnitTest::searchByCustomAttribute()
 {
     QServiceFilter filter;
     QList<QServiceInterfaceDescriptor> interfaces;
@@ -769,7 +769,7 @@ void tst_ServiceDatabase::searchByCustomAttribute()
     QVERIFY(database.close());
 }
 
-void tst_ServiceDatabase::attributes()
+void ServiceDatabaseUnitTest::attributes()
 {
     QVERIFY(database.open());
 
@@ -854,7 +854,7 @@ void tst_ServiceDatabase::attributes()
     QVERIFY(database.close());
 }
 
-void tst_ServiceDatabase::getServiceNames()
+void ServiceDatabaseUnitTest::getServiceNames()
 {
     QStringList services;
     services = database.getServiceNames("com.acme.device.sysinfo");
@@ -903,7 +903,7 @@ void tst_ServiceDatabase::getServiceNames()
     QVERIFY(database.close());
 }
 
-bool tst_ServiceDatabase::compareDescriptor(QServiceInterfaceDescriptor interface,
+bool ServiceDatabaseUnitTest::compareDescriptor(QServiceInterfaceDescriptor interface,
     QString interfaceName, QString serviceName, int majorVersion, int minorVersion)
 {
     interface.d->attributes[QServiceInterfaceDescriptor::Capabilities] = QStringList();
@@ -913,7 +913,7 @@ bool tst_ServiceDatabase::compareDescriptor(QServiceInterfaceDescriptor interfac
             QStringList(), customs);
 }
 
-bool tst_ServiceDatabase::compareDescriptor(QServiceInterfaceDescriptor interface,
+bool ServiceDatabaseUnitTest::compareDescriptor(QServiceInterfaceDescriptor interface,
     QString interfaceName, QString serviceName, int majorVersion, int minorVersion,
     QStringList capabilities, const QHash<QString,QString> customProps, QString filePath, QString serviceDescription,
     QString interfaceDescription)
@@ -1006,7 +1006,7 @@ bool tst_ServiceDatabase::compareDescriptor(QServiceInterfaceDescriptor interfac
     return true;
 }
 
-void tst_ServiceDatabase::defaultExternalIfaceIDs()
+void ServiceDatabaseUnitTest::defaultExternalIfaceIDs()
 {
     database.open();
     QServiceInterfaceDescriptor interface;
@@ -1051,7 +1051,7 @@ void tst_ServiceDatabase::defaultExternalIfaceIDs()
     database.close();
 }
 
-void tst_ServiceDatabase::interfaceDefault()
+void ServiceDatabaseUnitTest::interfaceDefault()
 {
     QServiceInterfaceDescriptor interface;
     bool ok;
@@ -1121,7 +1121,7 @@ void tst_ServiceDatabase::interfaceDefault()
     QVERIFY(database.close());
 }
 
-void tst_ServiceDatabase::setInterfaceDefault()
+void ServiceDatabaseUnitTest::setInterfaceDefault()
 {
     QServiceInterfaceDescriptor interface;
     interface.d = new QServiceInterfaceDescriptorPrivate;
@@ -1230,7 +1230,7 @@ void tst_ServiceDatabase::setInterfaceDefault()
     QVERIFY(database.close());
 }
 
-void tst_ServiceDatabase::unregister()
+void ServiceDatabaseUnitTest::unregister()
 {
     QVERIFY(!unregisterService("acme"));
     QCOMPARE(database.lastError().code(), DBError::DatabaseNotOpen);
@@ -1405,7 +1405,7 @@ void tst_ServiceDatabase::unregister()
                     "DharmaInitiative", 16, 0, capabilities, customs, "C:/island/flame.dll"));
 }
 
-QStringList tst_ServiceDatabase::getInterfaceIDs(const QString &serviceName) {
+QStringList ServiceDatabaseUnitTest::getInterfaceIDs(const QString &serviceName) {
     QSqlDatabase sqlDatabase  = QSqlDatabase::database(database.m_connectionName);
     QSqlQuery query(sqlDatabase);
     QString statement("Select Interface.ID FROM Interface, Service "
@@ -1422,7 +1422,7 @@ QStringList tst_ServiceDatabase::getInterfaceIDs(const QString &serviceName) {
     return ids;
 }
 
-QStringList tst_ServiceDatabase::getServiceIDs(const QString &serviceName) {
+QStringList ServiceDatabaseUnitTest::getServiceIDs(const QString &serviceName) {
     QSqlDatabase sqlDatabase = QSqlDatabase::database(database.m_connectionName);
     QSqlQuery query(sqlDatabase);
     QString statement("SELECT Service.ID from Service "
@@ -1438,7 +1438,7 @@ QStringList tst_ServiceDatabase::getServiceIDs(const QString &serviceName) {
     return ids;
 }
 
-bool tst_ServiceDatabase::existsInInterfacePropertyTable(const QString &interfaceID)
+bool ServiceDatabaseUnitTest::existsInInterfacePropertyTable(const QString &interfaceID)
 {
     QSqlDatabase sqlDatabase  = QSqlDatabase::database(database.m_connectionName);
     QSqlQuery query(sqlDatabase);
@@ -1454,7 +1454,7 @@ bool tst_ServiceDatabase::existsInInterfacePropertyTable(const QString &interfac
         return false;
 }
 
-bool tst_ServiceDatabase::existsInServicePropertyTable(const QString &serviceID)
+bool ServiceDatabaseUnitTest::existsInServicePropertyTable(const QString &serviceID)
 {
     QSqlDatabase sqlDatabase  = QSqlDatabase::database(database.m_connectionName);
     QSqlQuery query(sqlDatabase);
@@ -1470,7 +1470,7 @@ bool tst_ServiceDatabase::existsInServicePropertyTable(const QString &serviceID)
         return false;
 }
 
-bool tst_ServiceDatabase::existsInDefaultsTable(const QString &interfaceID)
+bool ServiceDatabaseUnitTest::existsInDefaultsTable(const QString &interfaceID)
 {
     QSqlDatabase sqlDatabase = QSqlDatabase::database(database.m_connectionName);
     QSqlQuery query(sqlDatabase);
@@ -1489,7 +1489,7 @@ bool tst_ServiceDatabase::existsInDefaultsTable(const QString &interfaceID)
 // Two small helper functions to assist with passing the security token to the servicedatabase.
 // Do not use this function if you intentionally want to provide emtpy securityToken,
 // but rather call database directly.
-bool tst_ServiceDatabase::registerService(const ServiceMetaDataResults &service, const QString &securityToken)
+bool ServiceDatabaseUnitTest::registerService(const ServiceMetaDataResults &service, const QString &securityToken)
 {
 #ifdef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
     if (securityToken.isEmpty()) {
@@ -1503,7 +1503,7 @@ bool tst_ServiceDatabase::registerService(const ServiceMetaDataResults &service,
 #endif
 }
 
-bool tst_ServiceDatabase::unregisterService(const QString &serviceName, const QString &securityToken)
+bool ServiceDatabaseUnitTest::unregisterService(const QString &serviceName, const QString &securityToken)
 {
 #ifdef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
     if (securityToken.isEmpty()) {
@@ -1517,7 +1517,7 @@ bool tst_ServiceDatabase::unregisterService(const QString &serviceName, const QS
 #endif
 }
 
-void tst_ServiceDatabase::securityTokens() {
+void ServiceDatabaseUnitTest::securityTokens() {
 #ifndef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
     QSKIP("Security tokens are not enabled (currently only enabled on Symbian).", SkipAll);
 #endif
@@ -1572,11 +1572,11 @@ void tst_ServiceDatabase::securityTokens() {
     QVERIFY(unregisterService("DharmaInitiative", securityTokenOwner));
 }
 
-void tst_ServiceDatabase::cleanupTestCase()
+void ServiceDatabaseUnitTest::cleanupTestCase()
 {
     database.close();
     QFile::remove(database.databasePath());
 }
-QTEST_MAIN(tst_ServiceDatabase)
+QTEST_MAIN(ServiceDatabaseUnitTest)
 
 #include "tst_servicedatabase.moc"

@@ -96,6 +96,8 @@ private slots:  // Test cases
     void testFilterSupported();
     void testCreateSelectQuery();
     void testFavoriteDetailFilter();
+    void testMatchFlags();
+    void testContactTypeFilter();
 private:
     void  testIntersectionFilter_1();
     void  testIntersectionFilter_2();
