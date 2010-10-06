@@ -607,16 +607,12 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItems(const QDateTime&
     foreach(const QOrganizerItemLocalId& id, localIds) {
         QOrganizerItem item = internalFetchItem(id, fetchHint, error, true);
         if (*error == QOrganizerItemManager::NoError) {
-            if (QOrganizerItemManagerEngine::testFilter(filter, item) && QOrganizerItemManagerEngine::isItemBetweenDates(item, startDate, endDate)) {
-                QOrganizerItemManagerEngine::addSorted(&filteredAndSorted, item, sortOrders);
-                if (forExport)
-                    continue;
-            }
-
-            // FIXME: call it only if we know for sure that the item has recurrences
             if (item.type() == QOrganizerItemType::TypeEvent) {
                 internalAddOccurances(&filteredAndSorted, item, startDate, endDate, filter, sortOrders, forExport, error);
-            }
+            } else
+                if (QOrganizerItemManagerEngine::testFilter(filter, item) && QOrganizerItemManagerEngine::isItemBetweenDates(item, startDate, endDate)) {
+                    QOrganizerItemManagerEngine::addSorted(&filteredAndSorted, item, sortOrders);
+                }
         } else
             return QList<QOrganizerItem>();
     }
@@ -633,25 +629,23 @@ void QOrganizerItemMaemo5Engine::internalAddOccurances(QList<QOrganizerItem>* so
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     if (cevent && *error == QOrganizerItemManager::NoError)
     {
-        // Get event instance times
-        std::vector< std::time_t > eventInstanceDates;
-        cevent->generateInstanceTimes(startDate.toTime_t(), endDate.toTime_t(), eventInstanceDates);
+        if (containsRecurrenceInformation(cevent)) {
+            // Get event instance times
+            std::vector< std::time_t > eventInstanceDates;
+            cevent->generateInstanceTimes(startDate.toTime_t(), endDate.toTime_t(), eventInstanceDates);
 
-        if (eventInstanceDates.size() > 0) {
-            if (forExport) {
-                if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
-                    QOrganizerItemManagerEngine::addSorted(sorted, item, sortOrders);
-                }
-            } else {
-                time_t dateStart = cevent->getDateStart();
-                time_t generatorDuration = cevent->getDateEnd() - dateStart;
+            if (eventInstanceDates.size() > 0) {
+                if (forExport) {
+                    if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
+                        QOrganizerItemManagerEngine::addSorted(sorted, item, sortOrders);
+                    }
+                } else {
+                    time_t generatorDuration = cevent->getDateEnd() - cevent->getDateStart();
 
-                // Generate the event occurrences
-                std::vector< std::time_t >::const_iterator i;
-                for (i = eventInstanceDates.begin(); i != eventInstanceDates.end(); ++i)
-                {
-                    //If generating event is in the interval don't add it to the results
-                    if (dateStart != *i) {
+                    // Generate the event occurrences
+                    std::vector< std::time_t >::const_iterator i;
+                    for (i = eventInstanceDates.begin(); i != eventInstanceDates.end(); ++i)
+                    {
                         QDateTime instanceStartDate = QDateTime::fromTime_t(*i);
                         QDateTime instanceEndDate = QDateTime::fromTime_t(*i + generatorDuration);
                         QOrganizerEventOccurrence eventOcc =
@@ -666,6 +660,9 @@ void QOrganizerItemMaemo5Engine::internalAddOccurances(QList<QOrganizerItem>* so
                     }
                 }
             }
+        } else {
+            if (QOrganizerItemManagerEngine::testFilter(filter, item) && QOrganizerItemManagerEngine::isItemBetweenDates(item, startDate, endDate))
+                QOrganizerItemManagerEngine::addSorted(sorted, item, sortOrders);
         }
     }
 }
