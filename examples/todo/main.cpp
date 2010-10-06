@@ -38,39 +38,18 @@
 **
 ****************************************************************************/
 
-import Qt 4.7
+#include <QtGui>
 
-Item {
-    property string text
-    signal clicked
+#include "window.h"
 
-    id: container
-    Image {
-        id: normal
-        source: "images/button.png"
-    }
-    Image {
-        id: pressed
-        opacity: 0
-        source: "images/button-pressed.png"
-    }
-    MouseArea {
-        id: clickRegion
-        anchors.fill: normal
-        onClicked: { container.clicked();}
-    }
-    Text {
-        font.bold: true
-        color: "white"
-        anchors.centerIn: normal
-        text: container.text
-    }
-    width: normal.width
-    height: childrenRect.height
+int main(int argv, char **args)
+{
+    QApplication app(argv, args);
 
-    states: State {
-        name: "Pressed"
-        when: clickRegion.pressed == true
-        PropertyChanges { target: pressed; opacity: 1 }
-    }
+    Window window;
+    qDebug() << "About to show";
+    window.show();
+
+    return app.exec();
 }
+

@@ -38,39 +38,60 @@
 **
 ****************************************************************************/
 
-import Qt 4.7
+#ifndef TODOEDITOR_H
+#define TODOEDITOR_H
 
-Item {
-    property string text
-    signal clicked
+#include <QWidget>
 
-    id: container
-    Image {
-        id: normal
-        source: "images/button.png"
-    }
-    Image {
-        id: pressed
-        opacity: 0
-        source: "images/button-pressed.png"
-    }
-    MouseArea {
-        id: clickRegion
-        anchors.fill: normal
-        onClicked: { container.clicked();}
-    }
-    Text {
-        font.bold: true
-        color: "white"
-        anchors.centerIn: normal
-        text: container.text
-    }
-    width: normal.width
-    height: childrenRect.height
+#include <qorganizertodo.h>
 
-    states: State {
-        name: "Pressed"
-        when: clickRegion.pressed == true
-        PropertyChanges { target: pressed; opacity: 1 }
-    }
-}
+QTM_USE_NAMESPACE
+
+class QDateTimeEdit;
+class QComboBox;
+class QLineEdit;
+class QTextEdit;
+class QPushButton;
+
+//! [0]
+class TodoEditor : public QWidget
+{
+    Q_OBJECT
+
+public:
+    TodoEditor();
+
+signals:
+    void editingFinished(QOrganizerTodo &todo);
+
+public slots:
+    void editTodo(const QOrganizerTodo &todo);
+
+private slots:
+    void updateSubject();
+    void updateDescription();
+    void updateDates();
+    void updateStatus(int index);
+    void updatePriority(int index);
+    void updateAlarm(int index);
+    void finishEditing();
+
+private:
+    void setupGui();
+    void setupCombos();
+
+    QOrganizerTodo todo;
+
+    QDateTimeEdit *startDateEdit;
+    QDateTimeEdit *dueDateEdit;
+    QComboBox *statusCombo;
+    QComboBox *priorityCombo;
+    QComboBox *alarmCombo;
+    QLineEdit *subjectLineEdit;
+    QTextEdit *descriptionTextEdit;
+    QPushButton *doneButton; 
+};
+//! [0]
+
+#endif
+

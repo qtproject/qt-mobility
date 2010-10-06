@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,35 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef CNTFILTERDETAILDISPLAYLABEL_H
-#define CNTFILTERDETAILDISPLAYLABEL_H
+import Qt 4.7
 
-#include <qtcontactsglobal.h>
-#include <qcontactmanager.h>
-#include <qcontactdetailfilter.h>
+Item {
+    id: titleBar
+    property string managerName: ""
+    property int contactsCount: 0
+    property string statusString: ""
 
-#include "cntabstractcontactfilter.h"
 
-QTM_USE_NAMESPACE
+    BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
 
-class CntFilterDetailDisplayLabel 
-{
-public:
-    CntFilterDetailDisplayLabel();
-    virtual ~CntFilterDetailDisplayLabel();
-    
-public: 
-    QString createSelectQuery(const QContactFilter& filter,
-                                  const QList<QContactSortOrder>& sortOrders,
-                                  QContactManager::Error* error) const;
-    void createSelectQuery(const QContactFilter& detailFilter,
-                                  QString& sqlQuery,
-                                  QContactManager::Error* error);
-private: 
-    void createQuerySingleSearchValue(QString& sqlQuery, const QString &searchValue, const QStringList &columns) const;
-    void createQueryMultipleSearchValues(QString& sqlQuery, const QStringList &searchValues, const QStringList &columns) const;
-    QString createSubQuery(const QString &searchValue, const QString &column) const;
-    QString columnName(const QPair<QLatin1String, QLatin1String> &detail) const;
- };
+    Item {
+        id: container
+        width: (parent.width * 2) - 55 ; height: parent.height
 
-#endif /* CNTFILTERDETAILDISPLAYLABEL_H */
+        Image {
+            id: quitButton
+            anchors.left: parent.left//; anchors.leftMargin: 0
+            anchors.verticalCenter: parent.verticalCenter
+            source: "images/quit.png"
+            MouseArea {
+                anchors.fill: parent
+                onClicked: Qt.quit()
+            }
+        }
+
+        Text {
+            id: categoryText
+            anchors {
+                left: quitButton.right; right: parent.right; //leftMargin: 10; rightMargin: 10
+                verticalCenter: parent.verticalCenter
+            }
+            elide: Text.ElideLeft
+            text: "[" + managerName + "] Total:" + contactsCount + " " + statusString
+            font.bold: true; font.pixelSize: 15; color: "White"; style: Text.Raised; styleColor: "Black"
+        }
+
+    }
+
+}

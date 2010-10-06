@@ -38,39 +38,56 @@
 **
 ****************************************************************************/
 
-import Qt 4.7
+#ifndef WINDOW_H
+#define WINDOW_H
 
-Item {
-    property string text
-    signal clicked
+#include <QWidget>
+#include <qmobilityglobal.h>
 
-    id: container
-    Image {
-        id: normal
-        source: "images/button.png"
-    }
-    Image {
-        id: pressed
-        opacity: 0
-        source: "images/button-pressed.png"
-    }
-    MouseArea {
-        id: clickRegion
-        anchors.fill: normal
-        onClicked: { container.clicked();}
-    }
-    Text {
-        font.bold: true
-        color: "white"
-        anchors.centerIn: normal
-        text: container.text
-    }
-    width: normal.width
-    height: childrenRect.height
+QTM_BEGIN_NAMESPACE
+class QOrganizerItemManager;
+class QOrganizerTodo;
+QTM_END_NAMESPACE
 
-    states: State {
-        name: "Pressed"
-        when: clickRegion.pressed == true
-        PropertyChanges { target: pressed; opacity: 1 }
-    }
-}
+QTM_USE_NAMESPACE
+
+class TodoEditor;
+class QListWidget;
+class QStackedWidget;
+class QPushButton;
+class QListWidgetItem;
+class QCalendarWidget;
+
+//![0]
+class Window : public QWidget
+{
+    Q_OBJECT
+
+public:
+    Window();
+    ~Window();
+
+private slots:
+    void editNewTodo();
+    void editTodo(QListWidgetItem *item);
+    void saveTodo(QOrganizerTodo &todo);
+    void refreshList();
+    void deleteTodo();
+
+private:
+    void setupGui();
+
+    QOrganizerItemManager *manager;
+    
+    TodoEditor *todoEditor;
+
+    QListWidget *listWidget;
+    QStackedWidget *stackedWidget;
+    QPushButton *newTodoButton;
+    QPushButton *deletTodoButton;
+    QCalendarWidget *calendarWidget;
+};
+//![0]
+
+#endif
+
