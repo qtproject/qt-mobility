@@ -448,14 +448,6 @@ bool QOrganizerItemManagerEngine::isFilterSupported(const QOrganizerItemFilter& 
 }
 
 /*!
-  Returns the list of data types supported by this engine.
- */
-QList<int> QOrganizerItemManagerEngine::supportedDataTypes() const
-{
-    return QList<int>();
-}
-
-/*!
   Returns the list of item types which are supported by this engine.
   This is a convenience function, equivalent to retrieving the allowable values
   for the \c QOrganizerItemType::FieldType field of the QOrganizerItemType definition
@@ -752,11 +744,13 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     // location
     d.setName(QOrganizerItemLocation::DefinitionName);
     fields.clear();
+    f.setDataType(QVariant::Double);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemLocation::FieldLatitude, f);
+    fields.insert(QOrganizerItemLocation::FieldLongitude, f);
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemLocation::FieldAddress, f);
-    fields.insert(QOrganizerItemLocation::FieldGeoLocation, f);
-    fields.insert(QOrganizerItemLocation::FieldLocationName, f);
+    fields.insert(QOrganizerItemLocation::FieldLabel, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -881,11 +875,13 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     // location
     d.setName(QOrganizerItemLocation::DefinitionName);
     fields.clear();
+    f.setDataType(QVariant::Double);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemLocation::FieldLatitude, f);
+    fields.insert(QOrganizerItemLocation::FieldLongitude, f);
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemLocation::FieldAddress, f);
-    fields.insert(QOrganizerItemLocation::FieldGeoLocation, f);
-    fields.insert(QOrganizerItemLocation::FieldLocationName, f);
+    fields.insert(QOrganizerItemLocation::FieldLabel, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -1593,16 +1589,10 @@ bool QOrganizerItemManagerEngine::validateDefinition(const QOrganizerItemDetailD
     }
 
     // Check each field now
-    QList<int> types = supportedDataTypes();
     QMapIterator<QString, QOrganizerItemDetailFieldDefinition> it(definition.fields());
     while(it.hasNext()) {
         it.next();
         if (it.key().isEmpty()) {
-            *error = QOrganizerItemManager::BadArgumentError;
-            return false;
-        }
-
-        if (!types.contains(it.value().dataType())) {
             *error = QOrganizerItemManager::BadArgumentError;
             return false;
         }

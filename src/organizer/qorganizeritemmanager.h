@@ -146,10 +146,10 @@ public:
     QOrganizerCollection compatibleCollection(const QOrganizerCollection& original);
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType = QOrganizerItemType::TypeEvent) const;
-    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionName, const QString& itemType = QOrganizerItemType::TypeEvent) const;
-    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType = QOrganizerItemType::TypeEvent);
-    bool removeDetailDefinition(const QString& definitionName, const QString& itemType = QOrganizerItemType::TypeEvent);
+    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType) const;
+    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionName, const QString& itemType) const;
+    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType);
+    bool removeDetailDefinition(const QString& definitionName, const QString& itemType);
 
     /* Functionality reporting */
     enum ManagerFeature {
@@ -158,7 +158,6 @@ public:
         ChangeLogs
     };
     bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType = QOrganizerItemType::TypeEvent) const;
-    QList<int> supportedDataTypes() const;
     bool isFilterSupported(const QOrganizerItemFilter& filter) const;
     QStringList supportedItemTypes() const;
 

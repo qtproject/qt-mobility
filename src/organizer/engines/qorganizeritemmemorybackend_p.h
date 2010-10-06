@@ -243,7 +243,6 @@ public:
     /* Capabilities reporting */
     virtual bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizeritemType) const;
     virtual bool isFilterSupported(const QOrganizerItemFilter& filter) const;
-    virtual QList<int> supportedDataTypes() const;
     /*! \reimp */
     virtual QStringList supportedItemTypes() const
     {

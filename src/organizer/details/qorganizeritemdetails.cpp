@@ -336,9 +336,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTimeRange::FieldEntryDateTime, "EntryD
  */
 
 /* ==================== QOrganizerItemLocation ======================= */
-// XXX TODO: do we include all three pieces of data into a single detail
-// ie, street address + geolocation + location string
-// Or, do we have three separate detail types?
 /*!
    \class QOrganizerItemLocation
 
@@ -350,14 +347,14 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTimeRange::FieldEntryDateTime, "EntryD
 
 /*!
     Returns a filter suitable for finding items whose location matches the specified \a substring.
-    This filter matches location names only.  If you wish to match against address or geolocation
+    This filter matches location labels only.  If you wish to match against latitude or longitude
     co-ordinates, use a QContactDetailFilter instead.
 */
 QOrganizerItemFilter QOrganizerItemLocation::match(const QString &substring)
 {
     QOrganizerItemDetailFilter f;
     f.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName,
-                              QOrganizerItemLocation::FieldLocationName);
+                              QOrganizerItemLocation::FieldLabel);
     f.setValue(substring);
     f.setMatchFlags(QOrganizerItemFilter::MatchContains);
 
@@ -373,28 +370,28 @@ which describe a location associated with an organizer item.
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::DefinitionName, "Location");
 
 /*!
-   \variable QOrganizerItemLocation::FieldGeoLocation
+   \variable QOrganizerItemLocation::FieldLatitude
 
-   The constant key for which the geolocation value is
+   The constant key for which the location latitude value is
    stored in details of the QOrganizerItemLocation type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldGeoLocation, "GeoLocation");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLatitude, "Latitude");
 
 /*!
-   \variable QOrganizerItemLocation::FieldAddress
+   \variable QOrganizerItemLocation::FieldLongitude
 
-   The constant key for which the location address value is
+   The constant key for which the location longitude value is
    stored in details of the QOrganizerItemLocation type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldAddress, "Address");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLongitude, "Longitude");
 
 /*!
-   \variable QOrganizerItemLocation::FieldLocationName
+   \variable QOrganizerItemLocation::FieldLabel
 
    The constant key for which the location label value is
    stored in details of the QOrganizerItemLocation type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLocationName, "LocationName");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLabel, "Label");
 
 /*!
     \fn QOrganizerItemLocation::geoLocation() const
