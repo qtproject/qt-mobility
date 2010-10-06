@@ -559,15 +559,10 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::DefinitionName, "Recurrence")
 bool QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other) const
 {
     return accessConstraints() == other.accessConstraints()
-            &&
-           recurrenceRules() == other.recurrenceRules()
-            &&
-           exceptionRules() == other.exceptionRules()
-            &&
-           recurrenceDates() == other.recurrenceDates()
-            &&
-           exceptionDates() == other.exceptionDates()
-           ;
+        && recurrenceRules() == other.recurrenceRules()
+        && exceptionRules() == other.exceptionRules()
+        && recurrenceDates() == other.recurrenceDates()
+        && exceptionDates() == other.exceptionDates();
 }
 
 /*!

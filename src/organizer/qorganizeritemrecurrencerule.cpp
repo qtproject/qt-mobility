@@ -169,29 +169,17 @@ bool QOrganizerItemRecurrenceRule::operator==(const QOrganizerItemRecurrenceRule
 
     if (d && other.d) {
         return  d->firstDayOfWeek == other.d->firstDayOfWeek
-                &&
-                d->frequency == other.d->frequency
-                &&
-                d->interval == other.d->interval
-                &&
-                d->limitCount == other.d->limitCount
-                &&
-                d->limitDate == other.d->limitDate
-                &&
-                d->limitType == other.d->limitType
-                &&
-                d->positions == other.d->positions
-                &&
-                d->daysOfMonth == other.d->daysOfMonth
-                &&
-                d->daysOfWeek == other.d->daysOfWeek
-                &&
-                d->daysOfYear == other.d->daysOfYear
-                &&
-                d->monthsOfYear == other.d->monthsOfYear
-                &&
-                d->weeksOfYear == other.d->weeksOfYear
-                ;
+             && d->frequency == other.d->frequency
+             && d->interval == other.d->interval
+             && d->limitCount == other.d->limitCount
+             && d->limitDate == other.d->limitDate
+             && d->limitType == other.d->limitType
+             && d->positions == other.d->positions
+             && d->daysOfMonth == other.d->daysOfMonth
+             && d->daysOfWeek == other.d->daysOfWeek
+             && d->daysOfYear == other.d->daysOfYear
+             && d->monthsOfYear == other.d->monthsOfYear
+             && d->weeksOfYear == other.d->weeksOfYear;
     }
     return false;
 }
@@ -487,19 +475,31 @@ uint qHash(const QOrganizerItemRecurrenceRule& r)
 {
     uint hash(0);
 
-    foreach(int day, r.daysOfMonth()) {hash += day;}
-    foreach(Qt::DayOfWeek day, r.daysOfWeek()) {hash += day;}
-    foreach(int day, r.daysOfYear()) {hash += day;}
-    foreach(QOrganizerItemRecurrenceRule::Month month, r.monthsOfYear()) {hash += month;}
-    foreach(int week, r.weeksOfYear()) {hash += week;}
-    foreach(int pos, r.positions()) {hash += pos;}
+    foreach(int day, r.daysOfMonth()){
+        hash += day;
+    }
+    foreach(Qt::DayOfWeek day, r.daysOfWeek()){
+        hash += day;
+    }
+    foreach(int day, r.daysOfYear()){
+        hash += day;
+    }
+    foreach(QOrganizerItemRecurrenceRule::Month month, r.monthsOfYear()){
+        hash += month;
+    }
+    foreach(int week, r.weeksOfYear()){
+        hash += week;
+    }
+    foreach(int pos, r.positions()){
+        hash += pos;
+    }
 
-    hash += static_cast<uint>(r.firstDayOfWeek())+
-            static_cast<uint>(r.frequency()) +
-            r.interval() +
-            r.limitCount() +
-            qHash(r.limitDate()) +
-            static_cast<uint>(r.limitType());
+    hash += static_cast<uint>(r.firstDayOfWeek())
+          + static_cast<uint>(r.frequency())
+          + r.interval()
+          + r.limitCount()
+          + qHash(r.limitDate())
+          + static_cast<uint>(r.limitType());
     return hash;
 }
 
