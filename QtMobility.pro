@@ -3,7 +3,9 @@ SUBDIRS+= \
     sys_bearer \
     sys_calendar \
     sys_contacts \
+    sys_crsysteminfo \
     sys_declarative-music-browser \
+    sys_declarative-sfw-notes \
     sys_location \
     sys_messaging \
     sys_multimedia \
@@ -13,4 +15,4 @@ SUBDIRS+= \
     sys_telephony \
     sys_versit \
     sys_versitorganizer \
-    sys_crsysteminfo \
+
