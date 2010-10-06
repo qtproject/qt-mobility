@@ -68,6 +68,8 @@ public:
 
     bool operator==(const QNdefMessage &other) const;
 
+    QByteArray toByteArray() const;
+
 private:
     QList<QNdefRecord> m_records;
 };

@@ -155,6 +155,55 @@ QNdefMessage::QNdefMessage(const QByteArray &message)
     }
 }
 
+QByteArray QNdefMessage::toByteArray() const
+{
+    QByteArray m;
+
+    foreach (const QNdefRecord &record, m_records) {
+        quint8 flags = record.userTypeNameFormat();
+
+        if (record.d->messageBegin)
+            flags |= 0x80;
+        if (record.d->messageEnd)
+            flags |= 0x40;
+
+        // cf (chunked records) not supported yet
+
+        if (record.payload().length() < 255)
+            flags |= 0x10;
+
+        if (!record.id().isEmpty())
+            flags |= 0x08;
+
+        m.append(flags);
+        m.append(record.type().length());
+
+        if (flags & 0x10) {
+            m.append(quint8(record.payload().length()));
+        } else {
+            quint32 length = record.payload().length();
+            m.append(length >> 24);
+            m.append(length >> 16);
+            m.append(length >> 8);
+            m.append(length & 0x000000ff);
+        }
+
+        if (flags & 0x08)
+            m.append(record.id().length());
+
+        if (!record.type().isEmpty())
+            m.append(record.type());
+
+        if (!record.id().isEmpty())
+            m.append(record.id());
+
+        if (!record.payload().isEmpty())
+            m.append(record.payload());
+    }
+
+    return m;
+}
+
 /*!
     Destroys the NDEF message.
 */
