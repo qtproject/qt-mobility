@@ -879,7 +879,7 @@ void tst_QOrganizerItemManager::addExceptions()
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
     rrule.setLimit(3);
-    event.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rrule);
+    event.setRecurrenceRule(rrule);
     QVERIFY(cm->saveItem(&event));
     QVERIFY(!event.localId().isNull());
     event = cm->item(event.localId());
@@ -974,7 +974,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     christmas.setDisplayLabel(QLatin1String("Christmas"));
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-    christmas.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rrule);
+    christmas.setRecurrenceRule(rrule);
     QVERIFY(cm->saveItem(&christmas));
     QVERIFY(!christmas.id().managerUri().isEmpty());
     QVERIFY(!christmas.id().localId().isNull());
@@ -984,7 +984,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     newYearsDay.setStartDateTime(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)));
     newYearsDay.setEndDateTime(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 0)));
     newYearsDay.setDisplayLabel(QLatin1String("New Years Day"));
-    newYearsDay.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rrule);
+    newYearsDay.setRecurrenceRule(rrule);
     QVERIFY(cm->saveItem(&newYearsDay));
 
     QOrganizerTodo report;
@@ -1818,7 +1818,7 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator()
     event.setDisplayLabel("event");
     event.setStartDateTime(QDateTime(eventDate, QTime(11, 0, 0)));
     event.setEndDateTime(QDateTime(eventDate, QTime(11, 30, 0)));
-    event.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+    event.setRecurrenceRule(recurrenceRule);
 
     if (cm->saveItem(&event)) {
         QList<QOrganizerItem> items = cm->itemInstances(event,

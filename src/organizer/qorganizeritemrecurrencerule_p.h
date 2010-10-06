@@ -66,7 +66,6 @@ public:
             : QSharedData(),
             frequency(QOrganizerItemRecurrenceRule::Invalid),
             limitCount(-1),
-            limitDate(QDate()),
             limitType(QOrganizerItemRecurrenceRule::NoLimit),
             interval(1),
             firstDayOfWeek(Qt::Monday)

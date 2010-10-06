@@ -101,6 +101,8 @@ public:
     void clearLimit();
 
     LimitType limitType() const;
+    bool isDateLimit() const;
+    bool isCountLimit() const;
     int limitCount() const;
     QDate limitDate() const;
 
@@ -153,17 +155,14 @@ QTM_END_NAMESPACE
 
 inline uint qHash(const QDate &date)
 {
-    return date.year()+ date.month()+ date.day();
+    return date.year() * 10000 + date.month() * 100 + date.day();
 }
 
-inline uint qHash(Qt::DayOfWeek day)
-{
-    return static_cast<uint>(day);
-}
 
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemRecurrenceRule), Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerItemRecurrenceRule));
-
+Q_DECLARE_METATYPE(QSet<QTM_PREPEND_NAMESPACE(QOrganizerItemRecurrenceRule)>);
+Q_DECLARE_METATYPE(QSet<QDate>);
 
 
 #endif

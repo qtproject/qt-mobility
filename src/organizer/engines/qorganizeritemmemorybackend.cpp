@@ -400,12 +400,11 @@ QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QDateTime& 
 
     if (periodEnd.isValid() || maxCount <= 0)
         maxCount = INT_MAX; // count of returned items is unlimited
-    if (rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit)
+    if (rrule.isCountLimit())
         maxCount = qMin(maxCount, rrule.limitCount());
 
     QDateTime realPeriodEnd(periodEnd);
-    if (rrule.limitType() == QOrganizerItemRecurrenceRule::DateLimit
-        && rrule.limitDate().isValid()
+    if (rrule.isDateLimit()
         && rrule.limitDate() < realPeriodEnd.date()) {
         realPeriodEnd.setDate(rrule.limitDate());
     }
@@ -742,7 +741,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     QSet<QOrganizerItemRecurrenceRule> xrules = recur.exceptionRules();
     foreach (const QOrganizerItemRecurrenceRule& xrule, xrules) {
         if (xrule.frequency() != QOrganizerItemRecurrenceRule::Invalid
-                && ((xrule.limitDate().isNull()) || (xrule.limitDate() >= realPeriodStart.date()))) {
+                && ((xrule.isDateLimit()) || (xrule.limitDate() >= realPeriodStart.date()))) {
             // we cannot skip it, since it applies in the given time period.
             QList<QDateTime> xdatetimes = generateDateTimes(initialDateTime, xrule, realPeriodStart, realPeriodEnd, 50); // max count of 50 is arbitrary...
             foreach (const QDateTime& xdatetime, xdatetimes) {
@@ -759,7 +758,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     QSet<QOrganizerItemRecurrenceRule> rrules = recur.recurrenceRules();
     foreach (const QOrganizerItemRecurrenceRule& rrule, rrules) {
         if (rrule.frequency() != QOrganizerItemRecurrenceRule::Invalid
-                && ((rrule.limitDate().isNull()) || (rrule.limitDate() >= realPeriodStart.date()))) {
+                && ((rrule.isDateLimit()) || (rrule.limitDate() >= realPeriodStart.date()))) {
             // we cannot skip it, since it applies in the given time period.
             rdates += generateDateTimes(initialDateTime, rrule, realPeriodStart, realPeriodEnd, 50); // max count of 50 is arbitrary...
         }
@@ -870,7 +869,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::items(const QOrganizerItemFilt
 }
 
 /*! Saves the given organizeritem \a theOrganizerItem, storing any error to \a error and
-    filling the \a changeSet with ids of changed organizeriteengines/qorganizeritemmemorybackend.cpp:989:ms as required */
+    filling the \a changeSet with ids of changed organizeritems as required */
 bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
     QOrganizerCollectionLocalId targetCollectionId = collectionId;
@@ -987,7 +986,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
             QDate originalDate = origin.originalDate();
             QSet<QDate> currentExceptionDates = parentEvent.exceptionDates();
             if (!currentExceptionDates.contains(originalDate)) {
-                currentExceptionDates <<originalDate;
+                currentExceptionDates << originalDate;
                 parentEvent.setExceptionDates(currentExceptionDates);
                 int parentEventIndex = d->m_organizeritemIds.indexOf(parentEvent.localId());
                 d->m_organizeritems.replace(parentEventIndex, parentEvent);

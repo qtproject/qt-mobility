@@ -805,6 +805,7 @@ void tst_QOrganizerItem::event()
     testEvent.setPriority(QOrganizerItemPriority::VeryLowPriority);
     QCOMPARE(testEvent.priority(), QOrganizerItemPriority::VeryLowPriority);
 
+
     QSet<QDate> rdates;
     rdates << QDate::currentDate() << QDate::currentDate().addDays(3) << QDate::currentDate().addDays(8);
     testEvent.setRecurrenceDates(rdates);
@@ -817,18 +818,75 @@ void tst_QOrganizerItem::event()
 
     QSet<QOrganizerItemRecurrenceRule> rrules;
     QOrganizerItemRecurrenceRule rrule;
+
+    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::NoLimit);
+    QVERIFY(!rrule.isCountLimit());
+    QVERIFY(!rrule.isDateLimit());
+    QVERIFY(rrule.limitCount() == -1);
+    QVERIFY(rrule.limitDate().isNull());
+
+    rrule.setLimit(1);
+    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit);
+    QVERIFY(rrule.isCountLimit());
+    QVERIFY(!rrule.isDateLimit());
+    QVERIFY(rrule.limitCount() == 1);
+    QVERIFY(rrule.limitDate().isNull());
+
+    rrule.setLimit(-1);
+    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::NoLimit);
+    QVERIFY(!rrule.isCountLimit());
+    QVERIFY(!rrule.isDateLimit());
+    QVERIFY(rrule.limitCount() == -1);
+    QVERIFY(rrule.limitDate().isNull());
+
+    rrule.setLimit(0);
+    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit);
+    QVERIFY(rrule.isCountLimit());
+    QVERIFY(!rrule.isDateLimit());
+    QVERIFY(rrule.limitCount() == 0);
+    QVERIFY(rrule.limitDate().isNull());
+
+    rrule.setLimit(-100);
+    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::NoLimit);
+    QVERIFY(!rrule.isCountLimit());
+    QVERIFY(!rrule.isDateLimit());
+    QVERIFY(rrule.limitCount() == -1);
+    QVERIFY(rrule.limitDate().isNull());
+
+    rrule.setLimit(QDate());
+    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::NoLimit);
+    QVERIFY(!rrule.isCountLimit());
+    QVERIFY(!rrule.isDateLimit());
+    QVERIFY(rrule.limitCount() == -1);
+    QVERIFY(rrule.limitDate().isNull());
+
+    rrule.setLimit(QDate(2010, 10, 6));
+    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::DateLimit);
+    QVERIFY(!rrule.isCountLimit());
+    QVERIFY(rrule.isDateLimit());
+    QVERIFY(rrule.limitCount() == -1);
+    QVERIFY(rrule.limitDate() == QDate(2010, 10, 6));
+
+    rrule.setLimit(QDate(2010, 13, 34));
+    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::NoLimit);
+    QVERIFY(!rrule.isCountLimit());
+    QVERIFY(!rrule.isDateLimit());
+    QVERIFY(rrule.limitCount() == -1);
+    QVERIFY(rrule.limitDate() == QDate());
+
+
     rrule.setLimit(2);
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
     rrules << rrule;
-    testEvent.setRecurrenceRules(rrules);
-    //QVERIFY(testEvent.recurrenceRules() == rrules); // XXX TODO: implement operator == for QOIRR.
+    testEvent.setRecurrenceRule(rrule);
+    QVERIFY(testEvent.recurrenceRules() == rrules);
 
     QSet<QOrganizerItemRecurrenceRule> exrules;
     QOrganizerItemRecurrenceRule exrule;
     exrule.setLimit(1);
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
     testEvent.setExceptionRules(exrules);
-    //QVERIFY(testEvent.exceptionRules() == exrules); // XXX TODO: implement operator == for QOIRR.
+    QVERIFY(testEvent.exceptionRules() == exrules);
 }
 
 void tst_QOrganizerItem::todo()
@@ -872,14 +930,14 @@ void tst_QOrganizerItem::todo()
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
     rrules << rrule;
     testTodo.setRecurrenceRules(rrules);
-    //QVERIFY(testTodo.recurrenceRules() == rrules); // XXX TODO: implement operator == for QOIRR.
+    QVERIFY(testTodo.recurrenceRules() == rrules);
 
     QSet<QOrganizerItemRecurrenceRule> exrules;
     QOrganizerItemRecurrenceRule exrule;
     exrule.setLimit(1);
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
     testTodo.setExceptionRules(exrules);
-    //QVERIFY(testTodo.exceptionRules() == exrules); // XXX TODO: implement operator == for QOIRR.
+    QVERIFY(testTodo.exceptionRules() == exrules);
 }
 
 void tst_QOrganizerItem::journal()

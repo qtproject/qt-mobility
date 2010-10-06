@@ -217,31 +217,41 @@ QOrganizerItemRecurrenceRule::Frequency QOrganizerItemRecurrenceRule::frequency(
 /*! Sets the "count" condition of the recurrence rule to \a count.  If an end-date was previously
  * set, it is removed as count and endDate are mutually exclusive.
  *
- * The "count" condition is the maximum number of times the item should recur.  Setting this
+ * The "count" condition is the maximum number of times the item should recur.  Calling clearLimit() or setting this
  * to a negative value removes the count condition.
  *
  * This corresponds to the COUNT fragment in iCalendar's RRULE.
+ * \sa clearLimit()
  */
 void QOrganizerItemRecurrenceRule::setLimit(int count)
 {
-    d->limitType = QOrganizerItemRecurrenceRule::CountLimit;
-    d->limitCount = count;
-    d->limitDate = QDate();
+    if (count < 0) {
+        clearLimit();
+    } else {
+        d->limitType = QOrganizerItemRecurrenceRule::CountLimit;
+        d->limitCount = count;
+        d->limitDate = QDate();
+    }
 }
 
 /*! Sets the end-date condition of the recurrence rule to \a date.  If a "count" condition was
  * previously set, it is removed as count and endDate are mutually exclusive.
  *
- * The end-date condition is the date after which the item should not recur.  Setting this to
+ * The end-date condition is the date after which the item should not recur.  Calling clearLimit() or setting this to
  * the null date removes the end-date condition.
  *
  * This corresponds to the UNTIL fragment in iCalendar's RRULE.
+ * \sa clearLimit()
  */
 void QOrganizerItemRecurrenceRule::setLimit(const QDate& date)
 {
-    d->limitType = QOrganizerItemRecurrenceRule::DateLimit;
-    d->limitDate = date;
-    d->limitCount = -1;
+    if (!date.isValid()) {
+        clearLimit();
+    } else {
+        d->limitType = QOrganizerItemRecurrenceRule::DateLimit;
+        d->limitDate = date;
+        d->limitCount = -1;
+    }
 }
 
 /*! Clear any recurrence rule limitation conditions.
@@ -259,6 +269,20 @@ void QOrganizerItemRecurrenceRule::clearLimit()
 QOrganizerItemRecurrenceRule::LimitType QOrganizerItemRecurrenceRule::limitType() const
 {
     return d->limitType;
+}
+
+/*! Returns true if the type of limitation is CountLimit, otherwise returns false.
+ */
+bool QOrganizerItemRecurrenceRule::isCountLimit() const
+{
+    return d->limitType == QOrganizerItemRecurrenceRule::CountLimit;
+}
+
+/*! Returns true if the type of limitation is DateLimit, otherwise returns false.
+ */
+bool QOrganizerItemRecurrenceRule::isDateLimit() const
+{
+    return d->limitType == QOrganizerItemRecurrenceRule::DateLimit;
 }
 
 /*! Returns the "count" condition specified by the recurrence rule.  The default count is -1 (ie.
@@ -293,7 +317,8 @@ QDate QOrganizerItemRecurrenceRule::limitDate() const
  */
 void QOrganizerItemRecurrenceRule::setInterval(int interval)
 {
-    d->interval = interval;
+    if (interval > 0)
+        d->interval = interval;
 }
 
 /*!
@@ -456,6 +481,7 @@ Qt::DayOfWeek QOrganizerItemRecurrenceRule::firstDayOfWeek() const
 {
     return d->firstDayOfWeek;
 }
+
 
 uint qHash(const QOrganizerItemRecurrenceRule& r)
 {

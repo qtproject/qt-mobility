@@ -196,10 +196,10 @@ void EventEditPage::eventChanged(QOrganizerItemManager *manager, const QOrganize
             m_typeComboBox->setCurrentIndex(0); // No repeat
             return;
         }
-        if (rrule.limitType() == QOrganizerItemRecurrenceRule::DateLimit && rrule.limitDate().isValid()) {
+        if (rrule.isDateLimit()) {
             m_endConditionComboBox->setCurrentIndex(1); // End date specified
             m_repeatUntilDate->setDate(rrule.limitDate());
-        } else if (rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit && rrule.limitCount() > 0) {
+        } else if (rrule.isCountLimit() && rrule.limitCount() > 0) {
             m_endConditionComboBox->setCurrentIndex(2); // Count specified
             m_countSpinBox->setValue(rrule.limitCount());
         }
@@ -279,8 +279,7 @@ void EventEditPage::saveClicked()
 void EventEditPage::frequencyChanged(const QString& frequency)
 {
     QOrganizerItemRecurrenceRule rrule;
-    QSet<QOrganizerItemRecurrenceRule> rrules;
-    rrules.clear();
+
     if (frequency != "None") {
         m_endConditionComboBox->setVisible(true);
 
@@ -293,8 +292,7 @@ void EventEditPage::frequencyChanged(const QString& frequency)
         } else if (frequency == "Yearly") {
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
         }
-        rrules << rrule;
-        m_organizerEvent.setRecurrenceRules(rrules);
+        m_organizerEvent.setRecurrenceRule(rrule);
     } else {
         m_endConditionComboBox->setCurrentIndex(0);
         m_endConditionComboBox->setVisible(false);
@@ -338,23 +336,17 @@ void EventEditPage::showEvent(QShowEvent *event)
 void EventEditPage::countChanged(int i)
 {
     QOrganizerItemRecurrenceRule rrule;
-    QSet<QOrganizerItemRecurrenceRule> rrules;
-    rrules.clear();
     rrule.setFrequency(m_organizerEvent.recurrenceRules().values().at(0).frequency());
     rrule.setLimit(i);
-    rrules << rrule;
-    m_organizerEvent.setRecurrenceRules(rrules);
+    m_organizerEvent.setRecurrenceRule(rrule);
 }
 
 void EventEditPage::untilChanged(QDate date)
 {
     QOrganizerItemRecurrenceRule rrule;
-    QSet<QOrganizerItemRecurrenceRule> rrules;
-    rrules.clear();
     rrule.setFrequency(m_organizerEvent.recurrenceRules().values().at(0).frequency());
     rrule.setLimit(date);
-    rrules << rrule;
-    m_organizerEvent.setRecurrenceRules(rrules);
+    m_organizerEvent.setRecurrenceRule(rrule);
 }
 
 void EventEditPage::endConditionChanged(const QString& endCondition) {
