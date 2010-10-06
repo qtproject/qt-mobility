@@ -114,5 +114,31 @@ QUrl QNdefNfcUriRecord::uri() const
     return QUrl(QLatin1String(abbreviations[code]) + QString::fromUtf8(p.mid(1), p.length() - 1));
 }
 
+/*!
+    Sets the URI of this URI record to \a uri.
+*/
+void QNdefNfcUriRecord::setUri(const QUrl &uri)
+{
+    int abbrevs = sizeof(abbreviations) / sizeof(*abbreviations);
+
+    for (int i = 1; i < abbrevs; ++i) {
+        if (uri.toString().startsWith(QLatin1String(abbreviations[i]))) {
+            QByteArray p;
+
+            p[0] = i;
+            p += uri.toString().mid(qstrlen(abbreviations[i])).toUtf8();
+
+            setPayload(p);
+
+            return;
+        }
+    }
+
+    QByteArray p;
+    p[0] = 0;
+    p += uri.toString().toUtf8();
+
+    setPayload(p);
+}
 
 QTM_END_NAMESPACE

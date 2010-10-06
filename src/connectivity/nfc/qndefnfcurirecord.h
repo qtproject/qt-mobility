@@ -58,6 +58,7 @@ public:
     Q_DECLARE_NDEF_RECORD(QNdefNfcUriRecord, QNdefRecord::NfcRtd, "U")
 
     QUrl uri() const;
+    void setUri(const QUrl &uri);
 };
 
 Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(QNdefNfcUriRecord, QNdefRecord::NfcRtd, "U")

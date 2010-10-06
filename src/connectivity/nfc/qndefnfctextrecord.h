@@ -58,7 +58,18 @@ public:
     Q_DECLARE_NDEF_RECORD(QNdefNfcTextRecord, QNdefRecord::NfcRtd, "T")
 
     QLocale locale() const;
+    void setLocale(const QLocale &locale);
+
     QString text() const;
+    void setText(const QString text);
+
+    enum Encoding {
+        Utf8,
+        Utf16
+    };
+
+    Encoding encoding() const;
+    void setEncoding(Encoding encoding);
 };
 
 Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(QNdefNfcTextRecord, QNdefRecord::NfcRtd, "T")

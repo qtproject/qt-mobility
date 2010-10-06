@@ -73,6 +73,25 @@ QLocale QNdefNfcTextRecord::locale() const
 }
 
 /*!
+    Sets the locale of the text record to \a locale.
+*/
+void QNdefNfcTextRecord::setLocale(const QLocale &locale)
+{
+    QByteArray p = payload();
+
+    quint8 status = p.isEmpty() ? 0 : p.at(0);
+
+    quint8 codeLength = status & 0x3f;
+
+    quint8 newStatus = (status & 0xd0) | locale.name().length();
+
+    p[0] = newStatus;
+    p.replace(1, codeLength, locale.name().toAscii());
+
+    setPayload(p);
+}
+
+/*!
     Returns the contents of the text record as a string.
 */
 QString QNdefNfcTextRecord::text() const
@@ -93,6 +112,74 @@ QString QNdefNfcTextRecord::text() const
     } else {
         return QString::fromUtf8(p.constData() + 1 + codeLength, p.length() - 1 - codeLength);
     }
+}
+
+/*!
+    Sets the contents of the text record to \a text.
+*/
+void QNdefNfcTextRecord::setText(const QString text)
+{
+    if (payload().isEmpty())
+        setLocale(QLocale::system());
+
+    QByteArray p = payload();
+
+    quint8 status = p.at(0);
+
+    bool utf16 = status & 0x80;
+    quint8 codeLength = status & 0x3f;
+
+    p.truncate(1 + codeLength);
+
+    if (utf16)
+        p += reinterpret_cast<const char *>(text.utf16());
+    else
+        p += text.toUtf8();
+
+    setPayload(p);
+}
+
+/*!
+    Returns the encoding of the contents.
+*/
+QNdefNfcTextRecord::Encoding QNdefNfcTextRecord::encoding() const
+{
+    if (payload().isEmpty())
+        return Utf8;
+
+    QByteArray p = payload();
+
+    quint8 status = p.at(0);
+
+    bool utf16 = status & 0x80;
+
+    if (utf16)
+        return Utf16;
+    else
+        return Utf8;
+}
+
+/*!
+    Sets the enconding of the contents to \a encoding.
+*/
+void QNdefNfcTextRecord::setEncoding(Encoding encoding)
+{
+    QByteArray p = payload();
+
+    quint8 status = p.isEmpty() ? 0 : p.at(0);
+
+    QString string = text();
+
+    if (encoding == Utf8)
+        status &= ~0x80;
+    else
+        status |= 0x80;
+
+    p[0] = status;
+
+    setPayload(p);
+
+    setText(string);
 }
 
 QTM_END_NAMESPACE
