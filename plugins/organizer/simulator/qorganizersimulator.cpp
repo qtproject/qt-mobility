@@ -43,13 +43,11 @@
 #include "qorganizeritem.h"
 #include "qtorganizer.h"
 #include "connection_p.h"
+#include "qorganizerdata_simulator_p.h"
 
 #include <private/qsimulatordata_p.h>
 
 //QTM_USE_NAMESPACE
-
-// shared with simulator?
-Q_DECLARE_METATYPE(QtMobility::QOrganizerItem)
 
 using namespace Simulator;
 using namespace QtSimulatorPrivate;
@@ -134,14 +132,25 @@ bool QOrganizerItemSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, c
     con->translateIds(&item, con->mManagerUri, con->mLocalToRemote);
     bool newItem = item.id().isNull();
 
-    // ### we should get a return value!
-    RemoteMetacall<void>::call(sendSocket, TimeoutSync, "requestSaveOrganizerItem", item);
+    // save remotely
+    Simulator::SaveOrganizerItemReply reply = RemoteMetacall<Simulator::SaveOrganizerItemReply>::call(
+                sendSocket, TimeoutSync, "requestSaveOrganizerItem", item);
+    *error = reply.error;
+
+    // if it failed, stop
+    if (reply.error != QOrganizerItemManager::NoError)
+        return false;
+
+    // save locally
+    if (!QOrganizerItemMemoryEngine::saveItem(theOrganizerItem, collectionId, changeSet, error))
+        return false; // it's already saved remotely - revert?
 
     if (newItem) {
-        // ### add it to the map, needs return value
+        con->mRemoteToLocal.insert(reply.savedItem.localId(), theOrganizerItem->localId());
+        con->mLocalToRemote.insert(theOrganizerItem->localId(), reply.savedItem.localId());
     }
 
-    return QOrganizerItemMemoryEngine::saveItem(theOrganizerItem, collectionId, changeSet, error);
+    return true;
 }
 
 bool QOrganizerItemSimulatorEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
