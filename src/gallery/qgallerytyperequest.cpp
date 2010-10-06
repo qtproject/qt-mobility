@@ -157,8 +157,18 @@ QStringList QGalleryTypeRequest::propertyNames() const
 
 void QGalleryTypeRequest::setPropertyNames(const QStringList &names)
 {
-    d_func()->propertyNames = names;
+    if (d_func()->propertyNames != names) {
+        d_func()->propertyNames = names;
+
+        emit propertyNamesChanged();
+    }
 }
+
+/*!
+    \fn QGalleryTypeRequest::propertyNamesChanged()
+
+    Signals that the value of \l propertyNames has changed.
+*/
 
 /*!
     \property QGalleryTypeRequest::autoUpdate
@@ -178,8 +188,18 @@ bool QGalleryTypeRequest::autoUpdate() const
 
 void QGalleryTypeRequest::setAutoUpdate(bool enabled)
 {
-    d_func()->autoUpdate = enabled;
+    if (d_func()->autoUpdate != enabled) {
+        d_func()->autoUpdate = enabled;
+
+        emit autoUpdateChanged();
+    }
 }
+
+/*!
+    \fn QGalleryTypeRequest::autoUpdateChanged()
+
+    Signals that the value of \l autoUpdate has changed.
+*/
 
 /*!
     \property QGalleryTypeRequest::itemType
@@ -195,9 +215,11 @@ QString QGalleryTypeRequest::itemType() const
 
 void QGalleryTypeRequest::setItemType(const QString &itemType)
 {
-    d_func()->itemType = itemType;
+    if (d_func()->itemType != itemType) {
+        d_func()->itemType = itemType;
 
-    emit itemTypeChanged();
+        emit itemTypeChanged();
+    }
 }
 
 /*!
