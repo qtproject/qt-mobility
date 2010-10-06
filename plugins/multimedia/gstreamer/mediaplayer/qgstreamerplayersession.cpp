@@ -710,13 +710,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                                 m_playbackRate = 1.0;
                                 setPlaybackRate(rate);
                             }
-
-                            if (m_renderer)
-                                m_renderer->precessNewStream();
-
                         }
-
-
                         break;
                     case GST_STATE_PLAYING:
                         if (oldState == GST_STATE_PAUSED)
@@ -804,6 +798,16 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             case GST_MESSAGE_ANY:
                 break;
             }
+        } else if (m_videoSink
+                   && m_renderer
+                   && GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_videoSink)
+                   && GST_MESSAGE_TYPE(gm) == GST_MESSAGE_STATE_CHANGED) {
+            GstState oldState;
+            GstState newState;
+            gst_message_parse_state_changed(gm, &oldState, &newState, 0);
+
+            if (oldState == GST_STATE_READY && newState == GST_STATE_PAUSED)
+                m_renderer->precessNewStream();
         }
     }
 }
