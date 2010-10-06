@@ -50,6 +50,20 @@
 
 using namespace OrganizerSymbianUtils;
 
+// Custom metadata keys for a collection
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyIsValid, "IsValid");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyFileName, "FileName");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyEnabled, "Enabled");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyFolderLUID, "FolderLUID");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyCreationTime, "CreationTime");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyModificationTime, "ModificationTime");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeySyncStatus, "SyncStatus");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyIsSharedFolder, "IsSharedFolder");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyGlobalUUID, "GlobalUUID");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyDeviceSyncServiceOwner, "DeviceSyncServiceOwner");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyOwnerName, "OwnerName");
+Q_DEFINE_LATIN1_CONSTANT(OrganizerSymbianCollection::KeyMarkAsDelete, "MarkAsDelete");
+
 OrganizerSymbianCollectionPrivate::OrganizerSymbianCollectionPrivate()
     :QSharedData(), 
     m_engine(0),
@@ -317,7 +331,7 @@ QOrganizerCollection OrganizerSymbianCollection::toQOrganizerCollectionL() const
     collection.setMetaData(toMetaDataL(*calInfo));       
     CleanupStack::PopAndDestroy(calInfo);
 #else
-    collection.setMetaData("FileName", d->m_fileName);
+    collection.setMetaData(OrganizerSymbianCollection::KeyFileName, d->m_fileName);
 #endif
 
     // Set id
