@@ -269,6 +269,17 @@ QByteArray QNdefRecord::payload() const
 }
 
 /*!
+    Returns true if the NDEF record contains an empty payload; otherwise return false.
+*/
+bool QNdefRecord::isEmpty() const
+{
+    if (!d)
+        return true;
+
+    return d->payload.isEmpty();
+}
+
+/*!
     Returns true if \a other and this NDEF record are the same.
 */
 bool QNdefRecord::operator==(const QNdefRecord &other) const

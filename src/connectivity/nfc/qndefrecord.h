@@ -85,6 +85,8 @@ public:
     void setPayload(const QByteArray &payload);
     QByteArray payload() const;
 
+    bool isEmpty() const;
+
     bool operator==(const QNdefRecord &other) const;
     inline bool operator!=(const QNdefRecord &other) const { return !operator==(other); }
 
