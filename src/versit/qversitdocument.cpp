@@ -296,8 +296,7 @@ bool QVersitDocument::isEmpty() const
 }
 
 /*!
- * Clears the document, removing all properties and metadata
- * and resetting the codec to the default.
+ * Clears the document, removing all properties, sub-documents and metadata.
  */
 void QVersitDocument::clear()
 {
