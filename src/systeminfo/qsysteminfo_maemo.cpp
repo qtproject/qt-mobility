@@ -223,6 +223,12 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::WcdmaMode:
         {
+            // radioAccessTechnology: 1 = GSM, 2 = WCDMA
+            if((radioAccessTechnology == 1 && mode != QSystemNetworkInfo::GsmMode) ||
+               (radioAccessTechnology == 2 && mode != QSystemNetworkInfo::WcdmaMode)) {
+                return QSystemNetworkInfo::NoNetworkAvailable;
+            }
+
             switch(currentCellNetworkStatus) {
                 case 0: return QSystemNetworkInfo::HomeNetwork; // CS is registered to home network
                 case 1: return QSystemNetworkInfo::Roaming; // CS is registered to some other network than home network
@@ -267,6 +273,12 @@ qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Netw
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::WcdmaMode:
     {
+            // radioAccessTechnology: 1 = GSM, 2 = WCDMA
+            if((radioAccessTechnology == 1 && mode != QSystemNetworkInfo::GsmMode) ||
+               (radioAccessTechnology == 2 && mode != QSystemNetworkInfo::WcdmaMode)) {
+                return -1;
+            }
+
             return cellSignalStrength;
     }
     case QSystemNetworkInfo::EthernetMode: {
@@ -393,9 +405,16 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::GsmMode:
-    case QSystemNetworkInfo::WcdmaMode:
+    case QSystemNetworkInfo::WcdmaMode: {
+        // radioAccessTechnology: 1 = GSM, 2 = WCDMA
+        if((radioAccessTechnology == 1 && mode != QSystemNetworkInfo::GsmMode) ||
+           (radioAccessTechnology == 2 && mode != QSystemNetworkInfo::WcdmaMode)) {
+            break;
+        }
+
         return currentOperatorName;
         break;
+    }
     case QSystemNetworkInfo::WimaxMode:
         break;
     default:
