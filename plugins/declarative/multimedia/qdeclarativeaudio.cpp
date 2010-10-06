@@ -95,7 +95,6 @@ void QDeclarativeAudio::_q_error(int errorCode, const QString &errorString)
 QDeclarativeAudio::QDeclarativeAudio(QObject *parent)
     : QObject(parent)
 {
-    setObject(this);
 }
 
 QDeclarativeAudio::~QDeclarativeAudio()
@@ -328,6 +327,11 @@ QDeclarativeAudio::Status QDeclarativeAudio::status() const
 QDeclarativeAudio::Error QDeclarativeAudio::error() const
 {
     return Error(m_error);
+}
+
+void QDeclarativeAudio::classBegin()
+{
+    setObject(this);
 }
 
 void QDeclarativeAudio::componentComplete()

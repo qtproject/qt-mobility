@@ -213,6 +213,7 @@ namespace
 QMetaDataControlMetaObject::QMetaDataControlMetaObject(QMetaDataReaderControl *control, QObject *object)
     : m_control(control)
     , m_object(object)
+    , m_parent(0)
     , m_string(0)
     , m_data(0)
     , m_propertyOffset(0)
@@ -316,7 +317,9 @@ QMetaDataControlMetaObject::QMetaDataControlMetaObject(QMetaDataReaderControl *c
     d.data = m_data;
     d.extradata = 0;
 
-    static_cast<QMetaDataControlObject *>(m_object)->data()->metaObject = this;
+    QObjectData *objectData = static_cast<QMetaDataControlObject *>(m_object)->data();
+    m_parent = static_cast<QAbstractDynamicMetaObject *>(objectData->metaObject);
+    objectData->metaObject = this;
 
     m_propertyOffset = propertyOffset();
     m_signalOffset = methodOffset();
@@ -325,7 +328,7 @@ QMetaDataControlMetaObject::QMetaDataControlMetaObject(QMetaDataReaderControl *c
 QMetaDataControlMetaObject::~QMetaDataControlMetaObject()
 {
     static_cast<QMetaDataControlObject *>(m_object)->data()->metaObject = 0;
-
+    delete m_parent;
     qFree(m_data);
     qFree(m_string);
 }
@@ -338,6 +341,8 @@ int QMetaDataControlMetaObject::metaCall(QMetaObject::Call c, int id, void **a)
         *reinterpret_cast<QVariant *>(a[0]) = m_control->metaData(qt_metaDataKeys[propId].key);
 
         return -1;
+    } else if (m_parent) {
+        return m_parent->metaCall(c, id, a);
     } else {
         return m_object->qt_metacall(c, id, a);
     }
