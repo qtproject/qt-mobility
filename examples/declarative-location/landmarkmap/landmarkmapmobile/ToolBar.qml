@@ -58,19 +58,19 @@ Item {
 
     Button {
         id: button1
-        anchors.left: parent.left; anchors.leftMargin: 5; y: 3; width: 100; height: 32
+        anchors.left: parent.left; y: 3; width: parent.width/3; height: 32
         onClicked: toolbar.button1Clicked()
     }
 
     Button {
         id: button2
-        anchors.right: button3.left; anchors.rightMargin: 5; y: 3; width: 100; height: 32
+        anchors.left: button1.right; anchors.leftMargin: 5; y: 3; width: parent.width/3 - anchors.leftMargin; height: 32
         onClicked: toolbar.button2Clicked()
     }
 
     Button {
         id: button3
-        anchors.right: parent.right; anchors.rightMargin: 5; y: 3; width: 100; height: 32
+        anchors.left: button2.right; anchors.leftMargin: 5; y: 3; width: parent.width/3 - anchors.leftMargin; height: 32
         onClicked: toolbar.button3Clicked()
     }
 }
