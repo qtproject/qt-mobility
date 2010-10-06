@@ -173,7 +173,6 @@ symbian|win32|maemo6|maemo5|mac {
             qmessage_symbian_p.h \
             maemohelpers_p.h
         contains(CONFIG, FREESTYLEMAIL):HEADERS += qfsengine_symbian_p.h
-        contains(CONFIG, FREESTYLENMAIL):HEADERS += qfsnmengine_symbian_p.h
         SOURCES += qmtmengine_symbian.cpp \
             qmessageid_symbian.cpp \
             qmessagecontentcontainerid_symbian.cpp \
@@ -193,7 +192,12 @@ symbian|win32|maemo6|maemo5|mac {
             qmessageservice_symbian.cpp \
             maemohelpers.cpp
         contains(CONFIG, FREESTYLEMAIL):SOURCES += qfsengine_symbian.cpp
-        contains(CONFIG, FREESTYLENMAIL):SOURCES += qfsnmengine_symbian.cpp
+        contains(CONFIG, FREESTYLENMAIL) {
+            HEADERS += qfsnmengine_symbian_p.h \
+                qfsnmasyncoperations_symbian.h
+            SOURCES += qfsnmengine_symbian.cpp \
+                qfsnmasyncoperations_symbian.cpp
+        }
         contains(CONFIG, FREESTYLENMAIL):LIBS += -lnmailclientapi
         contains(CONFIG, QTHIGHWAY):LIBS += -lxqservice \
             -lxqserviceutil

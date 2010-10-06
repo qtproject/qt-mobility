@@ -314,7 +314,7 @@ bool QMessageServicePrivate::exportUpdates(const QMessageAccountId &id)
     switch (idType(id)) {
             case EngineTypeFreestyle:
 #if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-                return CFSEngine::instance()->exportUpdates(id);
+                return CFSEngine::instance()->exportUpdates(*this, id);
 #else
                 return false;
 #endif

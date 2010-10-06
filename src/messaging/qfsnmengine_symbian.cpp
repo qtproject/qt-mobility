@@ -57,6 +57,7 @@
 #include "qmessagestore_symbian_p.h"
 #include "qmessagefoldersortorder_p.h"
 #include "qmessagesortorder_p.h"
+#include "qfsnmasyncoperations_symbian.h"
 
 #include <nmapifolderlisting.h>
 #include <nmapiemailaddress.h>
@@ -81,143 +82,6 @@ using namespace SymbianHelpers;
 
 Q_GLOBAL_STATIC(CFSEngine,fsEngine);
 
-void createFSMessage(QMessage &message, NmApiMessage &fsMessage)
-{      
-    NmApiMessageEnvelope envelope = fsMessage.envelope();
-
-    switch (message.priority()) {
-        case QMessage::HighPriority:
-            envelope.setPriority(EmailClientApi::NmApiMessagePriorityHigh);
-            break;
-        case QMessage::NormalPriority:
-            envelope.setPriority(EmailClientApi::NmApiMessagePriorityNormal);
-            break;
-        case QMessage::LowPriority:
-            envelope.setPriority(EmailClientApi::NmApiMessagePriorityLow);
-            break;            
-        }
-    
-    if (message.status() & QMessage::Read)
-        envelope.setIsRead(true);
-    else
-        envelope.setIsRead(false);
-           
-    NmApiEmailAddress sender;
-    sender.setAddress(message.from().addressee());
-    
-    envelope.setSender(sender);
-        
-    QList<QMessageAddress> toList(message.to());
-    if (toList.count() > 0) {
-        QList<EmailClientApi::NmApiEmailAddress> toRecipients;
-        for (int i = 0; i < toList.size(); ++i) {
-            NmApiEmailAddress address;
-            address.setAddress(toList.at(i).addressee());
-            address.setDisplayName(toList.at(i).addressee());
-            toRecipients.append(address);
-        }
-        envelope.setToRecipients(toRecipients);
-    }
-    
-    QList<QMessageAddress> ccList(message.cc());
-    if (ccList.count() > 0) {
-        QList<EmailClientApi::NmApiEmailAddress> ccRecipients;
-        for (int i = 0; i < ccList.size(); ++i) {
-            NmApiEmailAddress address;
-            address.setAddress(ccList.at(i).addressee());
-            address.setDisplayName(ccList.at(i).addressee());
-            ccRecipients.append(address);
-        }
-        envelope.setCcRecipients(ccRecipients);
-    }
-        
-    QList<QMessageAddress> bccList(message.bcc());
-    if (bccList.count() > 0) {
-        QList<EmailClientApi::NmApiEmailAddress> bccRecipients;
-        for (int i = 0; i < bccList.size(); ++i) {
-            NmApiEmailAddress address;
-            address.setAddress(bccList.at(i).addressee());
-            address.setDisplayName(bccList.at(i).addressee());
-            bccRecipients.append(address);
-        }
-        envelope.setBccRecipients(bccRecipients);
-    }
-    
-    if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
-        // Message contains only body (not attachments)
-        QString messageBody = message.textContent();
-        if (!messageBody.isEmpty()) {
-            QByteArray type = message.contentType();
-            QByteArray subType = message.contentSubType();
-            NmApiTextContent content;
-            content.setContent(message.textContent());
-            if (type == "text" && subType == "plain")
-                fsMessage.setPlainTextContent(content);
-            else if (type == "text" && subType == "html")
-                fsMessage.setHtmlContent(content);
-            else
-                envelope.setPlainText(messageBody);
-        }
-    } else {
-        QMessageContentContainerIdList contentIds = message.contentIds();
-        foreach (QMessageContentContainerId id, contentIds){
-            QMessageContentContainer container = message.find(id);
-            QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
-            if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
-                // Message contains only body (not attachments)
-                QString messageBody = message.textContent();
-                if (!messageBody.isEmpty()) {
-                    QByteArray type = message.contentType();
-                    QByteArray subType = message.contentSubType();
-                    NmApiTextContent content;
-                    content.setContent(message.textContent());
-                    if (type == "text" && subType == "plain")
-                        fsMessage.setPlainTextContent(content);
-                    else if (type == "text" && subType == "html")
-                        fsMessage.setHtmlContent(content);
-                    else
-                        envelope.setPlainText(messageBody);
-                }
-            } else {
-                // Message contains body and attachments
-                QMessageContentContainerIdList contentIds = message.contentIds();
-                foreach (QMessageContentContainerId id, contentIds){
-                    QMessageContentContainer container = message.find(id);
-                    QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
-                    if (pPrivateContainer->_id == message.bodyId()) {
-                        // ContentContainer is body
-                        if (!container.textContent().isEmpty()) {               
-                        QByteArray type = message.contentType();
-                        QByteArray subType = message.contentSubType();
-                        NmApiTextContent content;
-                        content.setContent(container.textContent());
-                        if (type == "text" && subType == "plain")
-                            fsMessage.setPlainTextContent(content);
-                        else if (type == "text" && subType == "html")
-                            fsMessage.setHtmlContent(content);
-                        else
-                            envelope.setPlainText(container.textContent());
-                        }
-                    } else {
-                        // ContentContainer is attachment
-                        // TODO: use messagemanager->createAttachment()
-                        QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
-                        NmApiAttachment attachment;
-                        QString temp_path = QString(filePath);
-                        attachment.setFileName(temp_path);
-                        fsMessage.addAttachment(attachment);
-                    }        
-                }
-            }
-        }
-    }
-    
-    envelope.setSubject(message.subject());   
-    fsMessage.setEnvelope(envelope);
-    
-    QMessagePrivate *privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_id = QMessageId(addIdPrefix(QString::number(envelope.id()), SymbianHelpers::EngineTypeFreestyle));
-}
 
 CFSEngine::CFSEngine()
 {
@@ -229,11 +93,8 @@ CFSEngine::CFSEngine()
 
 CFSEngine::~CFSEngine()
 {
-    while (!m_sendList.isEmpty())
-        delete m_sendList.takeFirst();
-    
-    while (!m_addList.isEmpty())
-        delete m_addList.takeFirst();
+    while (!m_operationList.isEmpty())
+        delete m_operationList.takeFirst();
     
     if (m_emailServiceInitialized)
         m_emailService->uninitialise();
@@ -588,22 +449,22 @@ bool CFSEngine::sendEmail(QMessageServicePrivate &privateService, QMessage &mess
 {
     CFSAsynchronousSendOperation *sendOperation = NULL;
     try{
-        sendOperation = new CFSAsynchronousSendOperation();
+        sendOperation = new CFSAsynchronousSendOperation(privateService);
     }
     catch(...){
         return false;
     }
     connect(sendOperation, SIGNAL(messageSend(int, CFSAsynchronousSendOperation*)), this, 
             SLOT(sendCompleted(int, CFSAsynchronousSendOperation*)));
-    m_sendList.append(sendOperation);
-    sendOperation->sendMessage(privateService, message);
+    m_operationList.append(sendOperation);
+    sendOperation->sendMessage(message);
 
     return true;
 }
 
 void CFSEngine::sendCompleted(int success, CFSAsynchronousSendOperation *operation)
 {
-    m_sendList.removeAt(m_sendList.indexOf(operation));
+    m_operationList.removeAt(m_operationList.indexOf(operation));
     delete operation;   
 }
 
@@ -620,7 +481,7 @@ bool CFSEngine::addMessage(QMessage *message)
     QEventLoop* eventloop = new QEventLoop();
     connect(addOperation, SIGNAL(messageAdded(int, CFSAsynchronousAddOperation*)), this, 
                 SLOT(addMessageCompleted(int, CFSAsynchronousAddOperation*)));
-    m_addList.append(addOperation); 
+    m_operationList.append(addOperation); 
     connect(this, SIGNAL(addMessageCompleted()), eventloop, SLOT(quit()));
     addOperation->addMessage(*message);
     eventloop->exec();
@@ -635,7 +496,7 @@ bool CFSEngine::addMessage(QMessage *message)
 
 void CFSEngine::addMessageCompleted(int success, CFSAsynchronousAddOperation *operation)
 {
-    m_addList.removeAt(m_addList.indexOf(operation));
+    m_operationList.removeAt(m_operationList.indexOf(operation));
     delete operation; 
     if (success == 0)
         m_addMessageError = false;
@@ -962,15 +823,27 @@ bool CFSEngine::retrieveHeader(QMessageServicePrivate &privateService, const QMe
     return false;
 }
 
-bool CFSEngine::exportUpdates(const QMessageAccountId &id)
+bool CFSEngine::exportUpdates(QMessageServicePrivate &privateService, const QMessageAccountId &id)
 {
- /* TODO: ?  
-    quint64 mailboxId = stripIdPrefix(id.toString()).toULongLong();
-    if (m_emailServiceInitialized){
-        m_emailService->synchroniseMailbox(mailboxId);
-        return true;
-    } else
-        return false;*/
+    CFSAsynchronousSynchronizeOperation *syncOperation = NULL;
+    try{
+        syncOperation = new CFSAsynchronousSynchronizeOperation(m_emailService, privateService);
+    }
+    catch(...){
+        return false;
+    }
+    connect(syncOperation, SIGNAL(syncronized(int, CFSAsynchronousSynchronizeOperation*)), this, 
+            SLOT(exportCompleted(int, CFSAsynchronousSynchronizeOperation*)));
+    m_operationList.append(syncOperation);
+    syncOperation->syncronizeMailbox(id);
+    
+    return true;
+}
+
+void CFSEngine::exportCompleted(int success, CFSAsynchronousSynchronizeOperation *operation)
+{
+    m_operationList.removeAt(m_operationList.indexOf(operation));
+    delete operation;   
 }
 
 bool CFSEngine::removeMessages(const QMessageFilter& /*filter*/, QMessageManager::RemovalOption /*option*/)
@@ -2690,153 +2563,6 @@ bool CFSMessagesFindOperation::fillsSearchKeyCriteria(QMessageId& messageId)
         break;
     }
     return false;
-}
-
-CFSAsynchronousSendOperation::CFSAsynchronousSendOperation()
-{
-    
-}
-
-CFSAsynchronousSendOperation::~CFSAsynchronousSendOperation()
-{
-    
-}
-
-void CFSAsynchronousSendOperation::sendMessage(QMessageServicePrivate& privateService, QMessage &message)
-{
-    m_privateService = &privateService;
-    m_qMessage = message;
-    quint64 mailboxId = stripIdPrefix(m_qMessage.parentAccountId().toString()).toULongLong();
-    m_manager = new NmApiMessageManager(this, mailboxId);
-    createDraftMessage();
-}
-    
-void CFSAsynchronousSendOperation::createDraftMessageCompleted(int success, QVariant message)
-{
-    if (success == 0) {
-        if (message.canConvert<NmApiMessage>()) {
-            m_fsMessage = qvariant_cast<NmApiMessage>(message);
-        }
-        createFSMessage(m_qMessage, m_fsMessage);
-        saveMessage();
-    }
-    else
-        emit messageSend(success, this);
-}
-
-void CFSAsynchronousSendOperation::saveCompleted(int success)
-{
-    if (success == 0)
-        sendMessage();
-    else
-        emit messageSend(success, this);
-}
-    
-void CFSAsynchronousSendOperation::sendCompleted(int success)
-{
-    m_privateService->setFinished(success);
-    emit messageSend(success, this);
-}
-    
-void CFSAsynchronousSendOperation::saveMessage()
-{
-    QPointer<NmApiOperation> operation = m_manager->saveMessage(m_fsMessage);
-    qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation, SIGNAL(operationComplete(int)), this, SLOT(saveCompleted(int)));
-}
-    
-void CFSAsynchronousSendOperation::createDraftMessage()
-{
-    QPointer<NmApiOperation> operation = m_manager->createDraftMessage(NULL);
-    qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(createDraftMessageCompleted(int, QVariant)));
-}
-    
-void CFSAsynchronousSendOperation::sendMessage()
-{
-    QPointer<NmApiOperation> operation = m_manager->sendMessage(m_fsMessage);
-    qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation, SIGNAL(operationComplete(int)), this, SLOT(sendCompleted(int)));
-}
-
-CFSAsynchronousAddOperation::CFSAsynchronousAddOperation()
-{
-    
-}
-
-CFSAsynchronousAddOperation::~CFSAsynchronousAddOperation()
-{
-    m_manager = NULL;
-}
-
-void CFSAsynchronousAddOperation::addMessage(QMessage &message)
-{
-    m_qMessage = message;
-    quint64 mailboxId = stripIdPrefix(m_qMessage.parentAccountId().toString()).toULongLong();
-    m_manager = new NmApiMessageManager(this, mailboxId);
-    createDraftMessage();
-}
-    
-void CFSAsynchronousAddOperation::createDraftMessageCompleted(int success, QVariant message)
-{
-    if (success == 0) {
-        if (message.canConvert<NmApiMessage>()) {
-            m_fsMessage = qvariant_cast<NmApiMessage>(message);
-        }
-        createFSMessage(m_qMessage, m_fsMessage);
-        saveMessage();
-    }
-    else
-        emit messageAdded(success, this);
-}
-
-void CFSAsynchronousAddOperation::saveCompleted(int success)
-{
-    emit messageAdded(success, this);
-}
-    
-void CFSAsynchronousAddOperation::saveMessage()
-{
-    QPointer<NmApiOperation> operation = m_manager->saveMessage(m_fsMessage);
-    qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation, SIGNAL(operationComplete(int)), this, SLOT(saveCompleted(int)));
-}
-    
-void CFSAsynchronousAddOperation::createDraftMessage()
-{
-    QPointer<NmApiOperation> operation = m_manager->createDraftMessage(NULL);
-    qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(operation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(createDraftMessageCompleted(int, QVariant)));    
-}
-
-CFSAsynchronousRetrieveBodyOperation::CFSAsynchronousRetrieveBodyOperation()
-{
-    
-}
-
-CFSAsynchronousRetrieveBodyOperation::~CFSAsynchronousRetrieveBodyOperation()
-{
-
-}
-
-void CFSAsynchronousRetrieveBodyOperation::retrieveBody(QMessageId &messageId, QMessageServicePrivate &privateService)
-{
-    m_privateService = &privateService;
-}
-
-CFSAsynchronousRetrieveAttachmentOperation::CFSAsynchronousRetrieveAttachmentOperation()
-{
-    
-}
-
-CFSAsynchronousRetrieveAttachmentOperation::~CFSAsynchronousRetrieveAttachmentOperation()
-{
-
-}
-
-void CFSAsynchronousRetrieveAttachmentOperation::retrieveAttachment(QMessageId &messageId, QMessageServicePrivate &privateService)
-{
-    m_privateService = &privateService;
 }
 
 #include "moc_qfsnmengine_symbian_p.cpp";

@@ -77,6 +77,8 @@ QTM_BEGIN_NAMESPACE
 class CFSMessagesFindOperation;
 class CFSAsynchronousSendOperation;
 class CFSAsynchronousAddOperation;
+class CFSAsynchronousSynchronizeOperation;
+class CFSAsynchronousOperation;
 class QMessageId;
 class QMessageAccount;
 
@@ -148,7 +150,7 @@ public:
     bool retrieve(QMessageServicePrivate &privateService, const QMessageId &messageId, const QMessageContentContainerId &id);
     bool retrieveBody(QMessageServicePrivate &privateService, const QMessageId &id);
     bool retrieveHeader(QMessageServicePrivate &privateService, const QMessageId &id);
-    bool exportUpdates(const QMessageAccountId &id);
+    bool exportUpdates(QMessageServicePrivate &privateService, const QMessageAccountId &id);
     
     QMessageManager::NotificationFilterId registerNotificationFilter(QMessageStorePrivate &aPrivateStore,
                                         const QMessageFilter &filter, QMessageManager::NotificationFilterId aId);
@@ -165,6 +167,7 @@ public slots:
     void messageEvent(EmailClientApi::NmApiMessageEvent event, quint64 mailboxId, quint64 folderId, QList<quint64> envelopeIdList);
     void sendCompleted(int success, CFSAsynchronousSendOperation *operation);
     void addMessageCompleted(int success, CFSAsynchronousAddOperation *operation);
+    void exportCompleted(int success, CFSAsynchronousSynchronizeOperation *operation);
     void saveCompleted(QVariant variant, int success);
     void deleteCompleted(QVariant variant, int success);
 
@@ -234,8 +237,7 @@ private:
     QMap<QMessageManager::NotificationFilterId, QMessageFilter> m_filters;
     QMessageAccount m_account;
     QMessageServicePrivate *m_privateService;
-    QList<CFSAsynchronousSendOperation*> m_sendList;
-    QList<CFSAsynchronousAddOperation*> m_addList;
+    QList<CFSAsynchronousOperation*> m_operationList;
     bool m_createMessageError;
     bool m_updateMessageError;
     bool m_addMessageError;
@@ -305,96 +307,6 @@ private: // Data
     QMessageDataComparator::MatchFlags m_matchFlags;
     QString m_searchKey;
 };
-
-class CFSAsynchronousSendOperation : public QObject
-{
-    Q_OBJECT
-    
-public:
-    CFSAsynchronousSendOperation(); 
-    ~CFSAsynchronousSendOperation();
-
-    void sendMessage(QMessageServicePrivate &privateService, QMessage &message);
-    
-public slots:
-    void createDraftMessageCompleted(int success, QVariant message);
-    void saveCompleted(int success);
-    void sendCompleted(int success);
-    
-signals:    
-    void messageSend(int success, CFSAsynchronousSendOperation *operation);
-    
-private:
-    void saveMessage();
-    void createDraftMessage();
-    void sendMessage();
-    
-private:
-    NmApiMessage m_fsMessage;
-    QMessageServicePrivate *m_privateService;
-    QMessage m_qMessage;
-    NmApiMessageManager* m_manager;
-
-};
-
-class CFSAsynchronousAddOperation : public QObject
-{
-    Q_OBJECT
-    
-public:
-    CFSAsynchronousAddOperation(); 
-    ~CFSAsynchronousAddOperation();
-
-    void addMessage(QMessage &message);
-    
-public slots:
-    void createDraftMessageCompleted(int success, QVariant message);
-    void saveCompleted(int success);
-    
-signals:    
-    void messageAdded(int success, CFSAsynchronousAddOperation *operation);
-    
-private:
-    void saveMessage();
-    void createDraftMessage();
-    
-private:
-    NmApiMessage m_fsMessage;
-    QMessage m_qMessage;
-    NmApiMessageManager* m_manager;
-
-};
-
-class CFSAsynchronousRetrieveBodyOperation : public QObject
-
-{
-    Q_OBJECT
-  
-public:
-    CFSAsynchronousRetrieveBodyOperation();
-    ~CFSAsynchronousRetrieveBodyOperation();
-    
-    void retrieveBody(QMessageId &messageId, QMessageServicePrivate &privateService);
-    
-private:
-    QMessageServicePrivate *m_privateService;
-};
-
-class CFSAsynchronousRetrieveAttachmentOperation : public QObject
-
-{
-    Q_OBJECT
-  
-public:
-    CFSAsynchronousRetrieveAttachmentOperation();
-    ~CFSAsynchronousRetrieveAttachmentOperation();
-    
-    void retrieveAttachment(QMessageId &messageId, QMessageServicePrivate &privateService);
-    
-private:
-    QMessageServicePrivate *m_privateService;
-};
-
 
 QTM_END_NAMESPACE
 

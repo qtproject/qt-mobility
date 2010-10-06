@@ -140,7 +140,7 @@ public:
     bool retrieve(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id);
     bool retrieveBody(QMessageServicePrivate& privateService, const QMessageId& id);
     bool retrieveHeader(QMessageServicePrivate& privateService, const QMessageId& id);
-    bool exportUpdates(const QMessageAccountId &id);
+    bool exportUpdates(QMessageServicePrivate& privateService, const QMessageAccountId &id);
     
     QMessageManager::NotificationFilterId registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
                                         const QMessageFilter& filter, QMessageManager::NotificationFilterId aId);
