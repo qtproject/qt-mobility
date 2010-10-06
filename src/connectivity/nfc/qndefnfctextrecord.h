@@ -61,6 +61,8 @@ public:
     QString text() const;
 };
 
+Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(QNdefNfcTextRecord, QNdefRecord::NfcRtd, "T")
+
 QTM_END_NAMESPACE
 
 QT_END_HEADER

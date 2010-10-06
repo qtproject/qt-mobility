@@ -87,6 +87,9 @@ public:
 
     bool isEmpty() const;
 
+    template <typename T>
+    bool isRecordType() const { return false; }
+
     bool operator==(const QNdefRecord &other) const;
     inline bool operator!=(const QNdefRecord &other) const { return !operator==(other); }
 
@@ -103,6 +106,12 @@ private:
 #define Q_DECLARE_NDEF_RECORD(className, typeNameFormat, type) \
     className() : QNdefRecord(quint8(typeNameFormat), type) { } \
     className(const QNdefRecord &other) : QNdefRecord(other, quint8(typeNameFormat), type) { }
+
+#define Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(className, typeNameFormat, type_) \
+    template<> bool QNdefRecord::isRecordType<className>() const\
+    { \
+        return (userTypeNameFormat() == typeNameFormat && type() == type_); \
+    }
 
 QTM_END_NAMESPACE
 

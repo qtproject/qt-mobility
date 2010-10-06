@@ -60,6 +60,8 @@ public:
     QUrl uri() const;
 };
 
+Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(QNdefNfcUriRecord, QNdefRecord::NfcRtd, "U")
+
 QTM_END_NAMESPACE
 
 QT_END_HEADER
