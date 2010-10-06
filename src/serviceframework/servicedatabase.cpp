@@ -138,7 +138,9 @@ bool ServiceDatabase::open()
     path = m_databasePath;
     QFileInfo dbFileInfo(path);
     if (!dbFileInfo.dir().exists()) {
-       if(!QDir::root().mkpath(dbFileInfo.path())) {
+       // Create the path with QFile, avoids problems with S60 3.2/3.1
+       QFile file(path);
+       if(!file.open(QIODevice::ReadWrite)) {
            QString errorText("Could not create database directory: %1");
            m_lastError.setError(DBError::CannotCreateDbDir, errorText.arg(dbFileInfo.path()));
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
@@ -148,6 +150,7 @@ bool ServiceDatabase::open()
            close();
            return false;
         }
+        file.close();
     }
 
     m_connectionName = dbFileInfo.completeBaseName();
