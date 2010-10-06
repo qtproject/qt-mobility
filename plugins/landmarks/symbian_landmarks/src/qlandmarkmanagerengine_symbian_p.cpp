@@ -81,6 +81,7 @@
 #include <QBuffer>
 #include <qnumeric.h>
 #include <QSysInfo>
+#include <qglobal.h>
 // symbian landmarks apis includes
 #include <EPos_Landmarks.h>
 #include <EPos_CPosLandmark.h>
@@ -120,6 +121,59 @@ _LIT8( KPosMimeTypeLandmarkCollectionXml,"application/vnd.nokia.landmarkcollecti
 #define KAllLandmarks -1
 #define KDefaultIndex 0
 #define KExtrachars 3
+
+QTM_BEGIN_NAMESPACE
+uint qHash(const QLandmarkId& key) {
+    return qHash(key.localId());
+}
+QTM_END_NAMESPACE
+
+int compareDistance(const QGeoCoordinate &a, const QGeoCoordinate &b, const QGeoCoordinate &c)
+{
+    int result = 0;
+
+
+    if (a.isValid()) {
+        if (b.isValid()) {
+            qreal da = c.distanceTo(a);
+            qreal db = c.distanceTo(b);
+
+            if (qFuzzyCompare(da,db)) {
+                result = 0;
+            } else if (da < db) {
+                result = -1;
+            } else if (da > db) {
+                result = 1;
+            }
+        } else {
+            result = -1;
+        }
+    } else {
+        if (b.isValid()) {
+            result = 1;
+        } else {
+            result = 0;
+        }
+    }
+
+    return result;
+}
+
+void addSortedPoint(QList<QLandmark>* sorted, const QLandmark& landmark, const QGeoCoordinate &center)
+{
+
+        for (int i = 0; i < sorted->size(); i++) {
+            // check to see if the new landmark should be inserted here
+            int comparison = compareDistance(sorted->at(i).coordinate(), landmark.coordinate(),center);
+            if (comparison > 0) {
+                sorted->insert(i, landmark);
+                return;
+            }
+        }
+
+    // hasn't been inserted yet?  append to the list.
+    sorted->append(landmark);
+}
 
 /**
  * Constructs CLandmarkDbEventHandler
@@ -273,7 +327,6 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
     {
         QLandmarkIntersectionFilter intersectionFilter = filter;
         QList<QLandmarkFilter> filters = intersectionFilter.filters();
-
         if (filters.size() == 0) {
             //do nothing
         }
@@ -286,7 +339,19 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
             }
         }
         else {
-            QSet<QString> ids;
+            bool haveProximityFilter = false;
+            QLandmarkProximityFilter proximityFilter;
+            int originalFilterCount = filters.count();
+            for (int i=0; i < originalFilterCount ; ++i) {
+                if (filters.at(i).type() == QLandmarkFilter::ProximityFilter) {
+                    proximityFilter = filters.takeAt(i);
+                    haveProximityFilter = true;
+
+                    break;
+                }
+            }
+
+            QSet<QLandmarkId> ids;
             QList<QLandmarkId> firstResult = landmarkIds(filters.at(0), limit, offset, QList<
                 QLandmarkSortOrder> (), error, errorString);
 
@@ -295,10 +360,7 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
                 return result;
             }
 
-            for (int j = 0; j < firstResult.size(); ++j) {
-                if (firstResult.at(j).isValid())
-                    ids.insert(firstResult.at(j).localId());
-            }
+            ids = firstResult.toSet();
 
             for (int i = 1; i < filters.size(); ++i) {
                 QList<QLandmarkId> subResult = landmarkIds(filters.at(i), limit, offset, QList<
@@ -308,22 +370,35 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
                     result.clear();
                     return result;
                 }
-                QSet<QString> subIds;
-                for (int j = 0; j < subResult.size(); ++j) {
-                    if (subResult.at(j).isValid()) {
-                        // add if not already exists
-                        subIds.insert(subResult.at(j).localId());
-                    }
-                }
-                ids &= subIds;
+
+                ids &= subResult.toSet();
             }
 
-            QList<QString> idList = ids.toList();
-            for (int i = 0; i < idList.size(); ++i) {
-                QLandmarkId id;
-                id.setManagerUri(managerUri());
-                id.setLocalId(idList.at(i));
-                result << id;
+            QList<QLandmarkId> idList = ids.toList();
+            if (haveProximityFilter) {
+                QMap<int, QLandmarkManager::Error> errorMap;
+                QList<QLandmark> lms = landmarks(idList,&errorMap, error,errorString);
+                if (*error != QLandmarkManager::NoError) {
+                    result.clear();
+                    return result;
+                }
+
+                QList<QLandmark> sortedLandmarks;
+
+                qreal radius = proximityFilter.radius();
+                QGeoCoordinate center = proximityFilter.center();
+
+                for (int i=0; i < lms.count(); ++i) {
+                    if (radius < 0 || (lms.at(i).coordinate().distanceTo(center) < radius)
+                        || qFuzzyCompare(lms.at(i).coordinate().distanceTo(center), radius)) {
+                        addSortedPoint(&sortedLandmarks,lms.at(i),center);
+                    }
+                }
+                for (int i=0; i < sortedLandmarks.count(); ++i) {
+                    result << sortedLandmarks.at(i).landmarkId();
+                }
+            } else {
+                    result << idList;
             }
         }
         break;
@@ -468,9 +543,15 @@ QList<QLandmark> LandmarkManagerEngineSymbianPrivate::landmarks(
         errorMap->clear();
 
     QList<QLandmark> result;
-    if (&landmarkIds == 0 || landmarkIds.isEmpty()) {
+    if (&landmarkIds == 0) {
         *error = QLandmarkManager::BadArgumentError;
-        *errorString = "Invalid landmark ids or empty ids";
+        *errorString = "Invalid landmark ids";
+        return result;
+    }
+
+    if (landmarkIds.isEmpty()) {
+        *error =  QLandmarkManager::NoError;
+        *errorString = "";
         return result;
     }
 

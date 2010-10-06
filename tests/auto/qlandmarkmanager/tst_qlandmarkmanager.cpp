@@ -105,6 +105,8 @@
 #define FILTER_PROXIMITY
 #define FILTER_CATEGORY
 #define FILTER_BOX
+#define FILTER_INTERSECTION
+//#define LANDMARK_FETCH_CANCEL
 
 #include <float.h>
 
@@ -662,7 +664,7 @@ private:
         if (lms.count() != lmIds.count())
             return false;
         for (int i=0; i < lms.count(); ++i) {
-            if (lms.at(i).landmarkId() != lmIds.at(i)) {
+            if (!lmIds.contains(lms.at(i).landmarkId())) {
                 return false;
             }
         }
@@ -982,10 +984,16 @@ private slots:
     void filterLandmarksBox_data();
 #endif
 
-#ifndef Q_OS_SYMBIAN
+#ifdef LANDMARK_FETCH_CANCEL
+    void asyncLandmarkFetchCancel();
+#endif
+
+#ifdef FILTER_INTERSECTION
     void filterLandmarksIntersection();
     void filterLandmarksIntersection_data();
+#endif
 
+#ifndef Q_OS_SYMBIAN
     void filterLandmarksMultipleBox();
     void filterLandmarksMultipleBox_data();
 
@@ -4334,7 +4342,86 @@ void tst_QLandmarkManager::filterLandmarksBox_data()
 }
 #endif
 
-#ifndef Q_OS_SYMBIAN
+#ifdef LANDMARK_FETCH_CANCEL
+void tst_QLandmarkManager::asyncLandmarkFetchCancel() {
+     //test that we can cancel a fetch for landmarks
+     QLandmark lm;
+     for(int i =0; i < 75; ++i) {
+         lm.clear();
+         lm.setName(QString("LM") + QString::number(i));
+         lm.setCoordinate(QGeoCoordinate(5.0, 5.0));
+         QVERIFY(m_manager->saveLandmark(&lm));
+     }
+
+     QLandmarkFetchRequest fetchRequest(m_manager);
+     QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+
+     //we use a lot of intersection and union filters to try slow down the fetching
+     //enough so that we can cancel the fetching operation.
+     QLandmarkProximityFilter proximityFilter(QGeoCoordinate(5.0,5.0), 1000);
+
+     QLandmarkIntersectionFilter intersectionFilter;
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+
+     QLandmarkUnionFilter unionFilter;
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+
+     //test canceling of a landmark fetch
+     fetchRequest.setFilter(unionFilter);
+     fetchRequest.start();
+     QTest::qWait(75);
+     QCOMPARE(spy.count(),1);
+     QCOMPARE(qvariant_cast<QLandmarkAbstractRequest::State>(spy.at(0).at(0)), QLandmarkAbstractRequest::ActiveState);
+     fetchRequest.cancel();
+     QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::CancelError));
+     QCOMPARE(fetchRequest.landmarks().count(), 0);
+
+     //test canceling of a landmark id fetch
+     QLandmarkIdFetchRequest idFetchRequest(m_manager);
+     idFetchRequest.setFilter(unionFilter);
+     QSignalSpy spy2(&idFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+     idFetchRequest.start();
+     QTest::qWait(50);
+     idFetchRequest.cancel();
+     QVERIFY(waitForAsync(spy2, &idFetchRequest, QLandmarkManager::CancelError));
+     QCOMPARE(idFetchRequest.landmarkIds().count(), 0);
+
+     //check that we can delete an request halfway during an operation.
+     QLandmarkFetchRequest *fetchRequestPointer = new QLandmarkFetchRequest(m_manager);
+     QSignalSpy spy3(fetchRequestPointer, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+     fetchRequestPointer->setFilter(unionFilter);
+     fetchRequestPointer->start();
+     QTest::qWait(75);
+     QCOMPARE(spy3.count(),1);
+     QCOMPARE(qvariant_cast<QLandmarkAbstractRequest::State>(spy3.at(0).at(0)), QLandmarkAbstractRequest::ActiveState);
+     delete fetchRequestPointer; //failure to delete usually results in a segfault
+     QTest::qWait(100);
+ }
+#endif
+
+#ifdef FILTER_INTERSECTION
 void tst_QLandmarkManager::filterLandmarksIntersection() {
     QFETCH(QString, type);
     QLandmarkCategory cat1;
@@ -4624,10 +4711,7 @@ void tst_QLandmarkManager::filterLandmarksIntersection() {
     QCOMPARE(lms.at(0), lm5);
     QCOMPARE(lms.at(1), lm9);
 
-    //try a proximity but with two categories t    QTest::addColumn<QString>("type");
-
-    QTest::newRow("sync") << "sync";
-    QTest::newRow("async") << "async";
+    //try a proximity but with two categories
     intersectionFilter.clear();
     intersectionFilter.append(cat1Filter);
     intersectionFilter.append(proximityFilter);
@@ -4697,7 +4781,9 @@ void tst_QLandmarkManager::filterLandmarksIntersection_data() {
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
+#endif
 
+#ifndef Q_OS_SYMBIAN
 void tst_QLandmarkManager::filterLandmarksMultipleBox()
 {
     QFETCH(QString, type);
