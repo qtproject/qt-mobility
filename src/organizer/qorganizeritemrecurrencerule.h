@@ -101,8 +101,6 @@ public:
     void clearLimit();
 
     LimitType limitType() const;
-    bool isDateLimit() const;
-    bool isCountLimit() const;
     int limitCount() const;
     QDate limitDate() const;
 
@@ -155,7 +153,7 @@ QTM_END_NAMESPACE
 
 inline uint qHash(const QDate &date)
 {
-    return date.year() * 10000 + date.month() * 100 + date.day();
+    return date.toJulianDay();
 }
 
 

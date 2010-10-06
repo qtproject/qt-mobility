@@ -309,11 +309,11 @@ void QVersitOrganizerExporterPrivate::encodeRecurRule(
         default:
             return;
     }
-    if (rule.isCountLimit()) {
+    if (rule.limitType() == QOrganizerItemRecurrenceRule::CountLimit) {
         value.append(QLatin1String(";COUNT="));
         value.append(QString::number(rule.limitCount()));
     }
-    if (rule.isDateLimit()) {
+    if (rule.limitType() == QOrganizerItemRecurrenceRule::DateLimit) {
         value.append(QLatin1String(";UNTIL="));
         value.append(rule.limitDate().toString(QLatin1String("yyyyMMdd")));
     }

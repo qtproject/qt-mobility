@@ -820,57 +820,57 @@ void tst_QOrganizerItem::event()
     QOrganizerItemRecurrenceRule rrule;
 
     QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::NoLimit);
-    QVERIFY(!rrule.isCountLimit());
-    QVERIFY(!rrule.isDateLimit());
+    QVERIFY(!rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit);
+    QVERIFY(!rrule.limitType() == QOrganizerItemRecurrenceRule::DateLimit);
     QVERIFY(rrule.limitCount() == -1);
     QVERIFY(rrule.limitDate().isNull());
 
     rrule.setLimit(1);
     QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit);
-    QVERIFY(rrule.isCountLimit());
-    QVERIFY(!rrule.isDateLimit());
+    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit);
+    QVERIFY(!rrule.limitType() == QOrganizerItemRecurrenceRule::DateLimit);
     QVERIFY(rrule.limitCount() == 1);
     QVERIFY(rrule.limitDate().isNull());
 
     rrule.setLimit(-1);
     QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::NoLimit);
-    QVERIFY(!rrule.isCountLimit());
-    QVERIFY(!rrule.isDateLimit());
+    QVERIFY(!rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit);
+    QVERIFY(!rrule.limitType() == QOrganizerItemRecurrenceRule::DateLimit);
     QVERIFY(rrule.limitCount() == -1);
     QVERIFY(rrule.limitDate().isNull());
 
     rrule.setLimit(0);
     QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit);
-    QVERIFY(rrule.isCountLimit());
-    QVERIFY(!rrule.isDateLimit());
+    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit);
+    QVERIFY(!rrule.limitType() == QOrganizerItemRecurrenceRule::DateLimit);
     QVERIFY(rrule.limitCount() == 0);
     QVERIFY(rrule.limitDate().isNull());
 
     rrule.setLimit(-100);
     QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::NoLimit);
-    QVERIFY(!rrule.isCountLimit());
-    QVERIFY(!rrule.isDateLimit());
+    QVERIFY(!rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit);
+    QVERIFY(!rrule.limitType() == QOrganizerItemRecurrenceRule::DateLimit);
     QVERIFY(rrule.limitCount() == -1);
     QVERIFY(rrule.limitDate().isNull());
 
     rrule.setLimit(QDate());
     QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::NoLimit);
-    QVERIFY(!rrule.isCountLimit());
-    QVERIFY(!rrule.isDateLimit());
+    QVERIFY(!rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit);
+    QVERIFY(!rrule.limitType() == QOrganizerItemRecurrenceRule::DateLimit);
     QVERIFY(rrule.limitCount() == -1);
     QVERIFY(rrule.limitDate().isNull());
 
     rrule.setLimit(QDate(2010, 10, 6));
     QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::DateLimit);
-    QVERIFY(!rrule.isCountLimit());
-    QVERIFY(rrule.isDateLimit());
+    QVERIFY(!rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit);
+    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::DateLimit);
     QVERIFY(rrule.limitCount() == -1);
     QVERIFY(rrule.limitDate() == QDate(2010, 10, 6));
 
     rrule.setLimit(QDate(2010, 13, 34));
     QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::NoLimit);
-    QVERIFY(!rrule.isCountLimit());
-    QVERIFY(!rrule.isDateLimit());
+    QVERIFY(!rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit);
+    QVERIFY(!rrule.limitType() == QOrganizerItemRecurrenceRule::DateLimit);
     QVERIFY(rrule.limitCount() == -1);
     QVERIFY(rrule.limitDate() == QDate());
 

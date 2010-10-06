@@ -259,20 +259,6 @@ QOrganizerItemRecurrenceRule::LimitType QOrganizerItemRecurrenceRule::limitType(
     return d->limitType;
 }
 
-/*! Returns true if the type of limitation is CountLimit, otherwise returns false.
- */
-bool QOrganizerItemRecurrenceRule::isCountLimit() const
-{
-    return d->limitType == QOrganizerItemRecurrenceRule::CountLimit;
-}
-
-/*! Returns true if the type of limitation is DateLimit, otherwise returns false.
- */
-bool QOrganizerItemRecurrenceRule::isDateLimit() const
-{
-    return d->limitType == QOrganizerItemRecurrenceRule::DateLimit;
-}
-
 /*! Returns the "count" condition specified by the recurrence rule.  The default count is -1 (ie.
  * unlimited)
  */
@@ -314,7 +300,7 @@ void QOrganizerItemRecurrenceRule::setInterval(int interval)
  */
 int QOrganizerItemRecurrenceRule::interval() const
 {
-    return d->interval;
+    return d->interval > 0 ? d->interval : 1;
 }
 
 // Defaults for the below: empty
@@ -474,25 +460,39 @@ Qt::DayOfWeek QOrganizerItemRecurrenceRule::firstDayOfWeek() const
 uint qHash(const QOrganizerItemRecurrenceRule& r)
 {
     uint hash(0);
+    static const unsigned int prime1 = 11;
+    static const unsigned int prime2 = 31;
+    static const unsigned int prime3 = 47;
 
     foreach(int day, r.daysOfMonth()){
         hash += day;
     }
+    hash *= prime1;
+
     foreach(Qt::DayOfWeek day, r.daysOfWeek()){
         hash += day;
     }
+    hash *= prime2;
+
     foreach(int day, r.daysOfYear()){
         hash += day;
     }
+    hash *= prime3;
+
     foreach(QOrganizerItemRecurrenceRule::Month month, r.monthsOfYear()){
         hash += month;
     }
+    hash *= prime1;
+
     foreach(int week, r.weeksOfYear()){
         hash += week;
     }
+    hash *= prime2;
+
     foreach(int pos, r.positions()){
         hash += pos;
     }
+    hash *= prime3;
 
     hash += static_cast<uint>(r.firstDayOfWeek())
           + static_cast<uint>(r.frequency())
@@ -500,7 +500,8 @@ uint qHash(const QOrganizerItemRecurrenceRule& r)
           + r.limitCount()
           + qHash(r.limitDate())
           + static_cast<uint>(r.limitType());
-    return hash;
+
+    return hash * prime1;
 }
 
 QTM_END_NAMESPACE

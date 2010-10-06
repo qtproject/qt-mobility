@@ -196,10 +196,10 @@ void EventEditPage::eventChanged(QOrganizerItemManager *manager, const QOrganize
             m_typeComboBox->setCurrentIndex(0); // No repeat
             return;
         }
-        if (rrule.isDateLimit()) {
+        if (rrule.limitType() == QOrganizerItemRecurrenceRule::DateLimit) {
             m_endConditionComboBox->setCurrentIndex(1); // End date specified
             m_repeatUntilDate->setDate(rrule.limitDate());
-        } else if (rrule.isCountLimit() && rrule.limitCount() > 0) {
+        } else if (rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit) {
             m_endConditionComboBox->setCurrentIndex(2); // Count specified
             m_countSpinBox->setValue(rrule.limitCount());
         }

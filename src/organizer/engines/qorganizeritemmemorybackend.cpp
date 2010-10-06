@@ -400,11 +400,11 @@ QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QDateTime& 
 
     if (periodEnd.isValid() || maxCount <= 0)
         maxCount = INT_MAX; // count of returned items is unlimited
-    if (rrule.isCountLimit())
+    if (rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit)
         maxCount = qMin(maxCount, rrule.limitCount());
 
     QDateTime realPeriodEnd(periodEnd);
-    if (rrule.isDateLimit()
+    if (rrule.limitType() == QOrganizerItemRecurrenceRule::DateLimit
         && rrule.limitDate() < realPeriodEnd.date()) {
         realPeriodEnd.setDate(rrule.limitDate());
     }
@@ -741,7 +741,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     QSet<QOrganizerItemRecurrenceRule> xrules = recur.exceptionRules();
     foreach (const QOrganizerItemRecurrenceRule& xrule, xrules) {
         if (xrule.frequency() != QOrganizerItemRecurrenceRule::Invalid
-                && ((xrule.isDateLimit()) || (xrule.limitDate() >= realPeriodStart.date()))) {
+                && ((xrule.limitType() != QOrganizerItemRecurrenceRule::DateLimit) || (xrule.limitDate() >= realPeriodStart.date()))) {
             // we cannot skip it, since it applies in the given time period.
             QList<QDateTime> xdatetimes = generateDateTimes(initialDateTime, xrule, realPeriodStart, realPeriodEnd, 50); // max count of 50 is arbitrary...
             foreach (const QDateTime& xdatetime, xdatetimes) {
@@ -758,7 +758,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     QSet<QOrganizerItemRecurrenceRule> rrules = recur.recurrenceRules();
     foreach (const QOrganizerItemRecurrenceRule& rrule, rrules) {
         if (rrule.frequency() != QOrganizerItemRecurrenceRule::Invalid
-                && ((rrule.isDateLimit()) || (rrule.limitDate() >= realPeriodStart.date()))) {
+                && ((rrule.limitType() != QOrganizerItemRecurrenceRule::DateLimit) || (rrule.limitDate() >= realPeriodStart.date()))) {
             // we cannot skip it, since it applies in the given time period.
             rdates += generateDateTimes(initialDateTime, rrule, realPeriodStart, realPeriodEnd, 50); // max count of 50 is arbitrary...
         }
