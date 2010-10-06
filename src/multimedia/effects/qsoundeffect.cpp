@@ -168,6 +168,8 @@ int QSoundEffect::loops() const
 
 void QSoundEffect::setLoops(int loopCount)
 {
+    if (loopCount == 0)
+        loopCount = 1;
     if (d->loopCount() == loopCount)
         return;
 
@@ -206,6 +208,11 @@ void QSoundEffect::setMuted(bool muted)
 void QSoundEffect::play()
 {
     d->play();
+}
+
+void QSoundEffect::stop()
+{
+    d->stop();
 }
 
 QT_END_NAMESPACE

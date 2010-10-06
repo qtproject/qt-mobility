@@ -88,6 +88,7 @@ public:
 
 public Q_SLOTS:
     void play();
+    void stop();
 
 Q_SIGNALS:
     void volumeChanged();
@@ -111,6 +112,7 @@ private:
     static void play_callback(pa_context *c, int success, void *userdata);
 
     pa_stream *m_pulseStream;
+    int m_timerID;
 
     bool    m_retry;
     bool    m_muted;

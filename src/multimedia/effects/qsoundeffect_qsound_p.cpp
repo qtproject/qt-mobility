@@ -128,6 +128,11 @@ void QSoundEffectPrivate::play()
     m_sound->play();
 }
 
+void QSoundEffectPrivate::stop()
+{
+    m_sound->stop();
+}
+
 QT_END_NAMESPACE
 
 #include "moc_qsoundeffect_qsound_p.cpp"

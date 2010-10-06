@@ -71,8 +71,14 @@ class Q_MULTIMEDIA_EXPORT QSoundEffect : public QObject
     Q_PROPERTY(int loops READ loops WRITE setLoops NOTIFY loopsChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
+    Q_ENUMS(Loop)
 
 public:
+    enum Loop
+    {
+        Infinite = -1,
+    };
+
     explicit QSoundEffect(QObject *parent = 0);
     ~QSoundEffect();
 
@@ -96,6 +102,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void play();
+    void stop();
 
 private:
     Q_DISABLE_COPY(QSoundEffect)

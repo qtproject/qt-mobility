@@ -1,12 +1,16 @@
 INCLUDEPATH += effects
 
 unix:!mac:!symbian {
-   contains(QT_CONFIG, pulseaudio) {
+   contains(pulseaudio_enabled, yes) {
         DEFINES += QT_MULTIMEDIA_PULSEAUDIO
         PRIVATE_HEADERS += effects/qsoundeffect_pulse_p.h
         SOURCES += effects/qsoundeffect_pulse_p.cpp
-        QMAKE_CXXFLAGS += $$QT_CFLAGS_PULSEAUDIO
-        LIBS += $$QT_LIBS_PULSEAUDIO
+
+        CONFIG += link_pkgconfig
+
+        PKGCONFIG += \
+                libpulse \
+                libpulse-mainloop-glib
     } else {
         DEFINES += QT_MULTIMEDIA_QMEDIAPLAYER
         PRIVATE_HEADERS += effects/qsoundeffect_qmedia_p.h
