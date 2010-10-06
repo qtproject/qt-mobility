@@ -131,15 +131,7 @@ bool QOrganizerItemSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, c
 
     // translate local id -> remote id
     QOrganizerItem item = *theOrganizerItem;
-    const QOrganizerItemLocalId localId = item.localId();
-    QOrganizerItemId id;
-    if (con->mLocalToRemote.contains(localId)) {
-        id.setManagerUri(con->mManagerUri);
-        id.setLocalId(con->mLocalToRemote.value(localId));
-    }
-    item.setId(id);
-
-    // ### translate all other ids too!
+    con->translateIds(&item, con->mManagerUri, con->mLocalToRemote);
 
     // ### we should get a return value!
     RemoteMetacall<void>::call(sendSocket, TimeoutSync, "requestSaveOrganizerItem", item);

@@ -83,8 +83,10 @@ public:
 
     // should live in the engine?
     bool mNotifySimulator;
-    QHash<QOrganizerItemLocalId, QOrganizerItemLocalId> mRemoteToLocal;
-    QHash<QOrganizerItemLocalId, QOrganizerItemLocalId> mLocalToRemote;
+    typedef QHash<QOrganizerItemLocalId, QOrganizerItemLocalId> IdToId;
+    void translateIds(QOrganizerItem *item, const QString &managerUri, const IdToId &idTranslation);
+    IdToId mRemoteToLocal;
+    IdToId mLocalToRemote;
     QString mManagerUri;
 
 private slots:

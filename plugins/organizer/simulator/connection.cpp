@@ -90,6 +90,19 @@ QLocalSocket *Connection::sendSocket()
     return mConnection->sendSocket();
 }
 
+void Connection::translateIds(QOrganizerItem *item, const QString &managerUri, const IdToId &idTranslation)
+{
+    const QOrganizerItemLocalId previousLocalId = item->localId();
+    QOrganizerItemId id;
+    if (idTranslation.contains(previousLocalId)) {
+        id.setManagerUri(managerUri);
+        id.setLocalId(idTranslation.value(previousLocalId));
+    }
+    item->setId(id);
+
+    // ### Translate all other ids!
+}
+
 void Connection::getInitialData()
 {
     mInitialDataReceived = false;
@@ -135,17 +148,9 @@ void Connection::clearOrganizerItems()
 
 void Connection::saveOrganizerItem(QOrganizerItem item)
 {
-    // map remote id -> local id
     const QOrganizerItemLocalId remoteLocalId = item.localId();
-    QOrganizerItemId id;
-    if (mRemoteToLocal.contains(remoteLocalId)) {
-        id.setManagerUri(mManager.managerUri());
-        id.setLocalId(mRemoteToLocal.value(remoteLocalId));
-    }
-    item.setId(id);
-
-    // ### *All* other local ids need to be translated too! Would it be
-    // possible to add an automatic translation to the engine?
+    translateIds(&item, mManager.managerUri(), mRemoteToLocal);
+    bool newItem = item.id().isNull();
 
     mNotifySimulator = false;
     mManager.saveItem(&item);
@@ -154,7 +159,7 @@ void Connection::saveOrganizerItem(QOrganizerItem item)
         qDebug() << "Error saving:" << mManager.error();
 
     // if this is a new item, save the new id in the maps
-    if (id.isNull()) {
+    if (newItem) {
         mRemoteToLocal.insert(remoteLocalId, item.localId());
         mLocalToRemote.insert(item.localId(), remoteLocalId);
     }
