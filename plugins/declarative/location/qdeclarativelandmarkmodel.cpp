@@ -586,6 +586,7 @@ int QDeclarativeLandmarkModel::landmarks_count(QDeclarativeListProperty<QDeclara
 
 QDeclarativeLandmark* QDeclarativeLandmarkModel::landmarks_at(QDeclarativeListProperty<QDeclarativeLandmark>* prop, int index)
 {
+    //qDebug() << "landmarks_at returning index" << index;
     return static_cast<QDeclarativeLandmarkModel*>(prop->object)->m_landmarkMap.values().at(index);
 }
 
@@ -605,8 +606,7 @@ void QDeclarativeLandmarkModel::convertLandmarksToDeclarative()
 
     foreach(const QLandmark& landmark, m_landmarks) {
         if (!m_landmarkMap.contains(landmark.landmarkId().localId())) {
-            QDeclarativeLandmark* declarativeLandmark = new QDeclarativeLandmark(this);
-            declarativeLandmark->setLandmark(landmark);
+            QDeclarativeLandmark* declarativeLandmark = new QDeclarativeLandmark(landmark, this);
             m_landmarkMap.insert(landmark.landmarkId().localId(), declarativeLandmark);
         } else {
             // The landmark exists already, update it

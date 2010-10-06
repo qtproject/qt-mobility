@@ -263,7 +263,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
              QHalInterface iface;
              if (iface.isValid()) {
                  QHalInterface halIface;
-                 const QStringList halDevices = halIface.getAllDevices();
+                 const QStringList halDevices = halIface.findDeviceByCapability("mmc_host");
                  foreach(const QString device, halDevices) {
                      QHalDeviceInterface ifaceDevice(device);
                      if (ifaceDevice.isValid()) {
@@ -358,7 +358,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
  bool QSystemInfoLinuxCommonPrivate::hasHalUsbFeature(qint32 usbClass)
  {
      QHalInterface halIface;
-     const QStringList halDevices = halIface.getAllDevices();
+     const QStringList halDevices = halIface.findDeviceByCapability("usb_device");
      foreach(const QString device, halDevices) {
          QHalDeviceInterface ifaceDevice(device);
          if (ifaceDevice.isValid()) {
@@ -567,7 +567,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
             }
         }
             if(netname.isEmpty()) {
-             netname = "Wired";
+                netname = "Wired";
             }
     }
     break;
@@ -597,12 +597,23 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/phy80211");
                 if(fi.exists()) {
+                    bool powered=false;
+                    QFile linkmode(devFile+"/link_mode"); //check for dev power
+                    if(linkmode.exists() && linkmode.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                        QTextStream in(&linkmode);
+                        in >> result;
+                        if(result.contains("1"))
+                            powered = true;
+                        linkmode.close();
+                    }
+
                     QFile rx(devFile + "/address");
                     if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
                         QTextStream in(&rx);
                         in >> result;
                         rx.close();
-                        return result;
+                        if(powered)
+                            return result;
                     }
                 }
             }

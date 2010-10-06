@@ -110,7 +110,7 @@ void CntFilterDefault::createSelectQuery(const QContactFilter& filter,
             *error =  QContactManager::NotSupportedError;
             }
    //For default filter, just return the below query
-    sqlQuery = "SELECT DISTINCT contact_id FROM  contact WHERE (type_flags>>24)=0 OR (type_flags>>24)=3";
+    sqlQuery = "SELECT DISTINCT contact_id FROM  contact WHERE (type_flags>>24)<=1 OR (type_flags>>24)=3";
 
     
 }

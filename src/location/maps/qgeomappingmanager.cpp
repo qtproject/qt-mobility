@@ -85,8 +85,8 @@ QTM_BEGIN_NAMESPACE
     QGeoServiceProvider::mappingManager();
 */
 QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoMappingManagerPrivate)
+    : QObject(parent),
+      d_ptr(new QGeoMappingManagerPrivate)
 {
     d_ptr->engine = engine;
     if (d_ptr->engine) {
@@ -176,30 +176,6 @@ qreal QGeoMappingManager::maximumZoomLevel() const
 }
 
 /*!
-    Returns the size of the smallest map image which is supported by this
-    manager.
-
-    An invalid size indicates that this manager places
-    no restrictions on the minimum size of the map image.
-*/
-QSize QGeoMappingManager::minimumImageSize() const
-{
-    return d_ptr->engine->minimumImageSize();
-}
-
-/*!
-    Returns the size of the largest map image which is supported by this
-    manager.
-
-    An invalid size indicates that this manager places
-    no restrictions on the maximum size of the map image.
-*/
-QSize QGeoMappingManager::maximumImageSize() const
-{
-    return d_ptr->engine->maximumImageSize();
-}
-
-/*!
     Sets the locale to be used by the this manager to \a locale.
 
     If this mapping manager supports returning map labels
@@ -225,7 +201,7 @@ QLocale QGeoMappingManager::locale() const
 *******************************************************************************/
 
 QGeoMappingManagerPrivate::QGeoMappingManagerPrivate()
-        : engine(0) {}
+    : engine(0) {}
 
 QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate()
 {

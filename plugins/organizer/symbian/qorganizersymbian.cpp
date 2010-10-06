@@ -889,12 +889,14 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(
 {
     CCalEntry * entry(NULL);
 
-    // Find the child entry corresponding to the item occurrence
-    if (!item.localId().isNull()) {
-        // The item has a local id, check the item is from this manager
+    // Check manager uri (if provided)
+    if (!item.id().managerUri().isEmpty()) {
         if (item.id().managerUri() != managerUri())
             User::Leave(KErrInvalidOccurrence);
+    }
 
+    // Find the child entry corresponding to the item occurrence
+    if (!item.localId().isNull()) {
         // Fetch the item (will return NULL if the localid is not found)
         entry = entryViewL(collectionId)->FetchL(toTCalLocalUid(item.localId()));
         if (!entry)
@@ -965,17 +967,18 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(
 {
     CCalEntry *entry(0);
 
+    // Check that manager uri match to this manager (if provided)
+    if (!manageruri.isEmpty()) {
+        if (manageruri != managerUri())
+            User::Leave(KErrArgument);
+    }
+
     // There must be an existing entry if local id is provided
     if (!localId.isNull()) {
-        // The item has a local id, check the item is from this manager
-        if (manageruri == managerUri()) {
-            // Fetch the item (will return NULL if the localid is not found)
-            entry = entryViewL(collectionId)->FetchL(toTCalLocalUid(localId));
-            if (!entry)
-                User::Leave(KErrNotFound);
-        } else {
-            User::Leave(KErrArgument);
-        }
+        // Fetch the item (will return NULL if the localid is not found)
+        entry = entryViewL(collectionId)->FetchL(toTCalLocalUid(localId));
+        if (!entry)
+            User::Leave(KErrNotFound);
     }
 
     // ownership transferred
@@ -1165,23 +1168,24 @@ QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collections(
     // XXX TODO: please use errormap -- test for null ptr, if exists, perform "fine grained error reporting"
     // Note that the semantics of this function changed: if empty list of collectionIds given, return empty list of collections (NOT all collections).
 
+    // Get collections
     QList<QOrganizerCollection> collections;
-    TRAPD(err, collectionsL(collectionIds, collections));
+    TRAPD(err, collections = collectionsL(collectionIds));
     transformError(err, error);
     return collections;
 }
 
-void QOrganizerItemSymbianEngine::collectionsL(
-    const QList<QOrganizerCollectionLocalId> &collectionIds,
-    QList<QOrganizerCollection> &collections) const
+QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collectionsL(
+    const QList<QOrganizerCollectionLocalId> &collectionIds) const
 {
-    foreach (const OrganizerSymbianCollection &collection, m_collections) {
-        if (collectionIds.count() == 0 || collectionIds.contains(collection.localId()))
-            collections << collection.toQOrganizerCollectionL();
+    QList<QOrganizerCollection> collections;
+    foreach (const QOrganizerCollectionLocalId &id, collectionIds) {
+        if (m_collections.contains(id))
+            collections << m_collections[id].toQOrganizerCollectionL();
+        else
+            User::Leave(KErrNotFound);
     }
-
-    if (collections.isEmpty())
-        User::Leave(KErrNotFound);
+    return collections;
 }
 
 bool QOrganizerItemSymbianEngine::saveCollection(
@@ -1694,7 +1698,3 @@ bool QOrganizerItemSymbianEngine::transformError(TInt symbianError, QOrganizerIt
     return *qtError == QOrganizerItemManager::NoError;
 }
 
-QOrganizerItemRequestQueue* QOrganizerItemSymbianEngine::requestQueue()
-{
-    return m_requestServiceProviderQueue;
-}

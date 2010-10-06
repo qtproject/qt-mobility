@@ -47,6 +47,7 @@ QTM_BEGIN_NAMESPACE
     \qmlclass Landmark QDeclarativeLandmark
     \brief The Landmark element presents one landmark.
     \ingroup qml-location
+    \inherits Place
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
@@ -58,11 +59,16 @@ QTM_BEGIN_NAMESPACE
 
     \snippet doc/src/snippets/declarative/declarative-landmark.qml User declared landmark
 
-    \sa LandmarkCategory, LandmarkModel, LandmarkCategoryModel, {QLandmark}
+    \sa Place, LandmarkCategory, LandmarkModel, LandmarkCategoryModel, {QLandmark}
 */
 
 QDeclarativeLandmark::QDeclarativeLandmark(QObject* parent) :
-        QObject(parent)
+        QDeclarativeGeoPlace(parent)
+{
+}
+
+QDeclarativeLandmark::QDeclarativeLandmark(const QLandmark& landmark, QObject* parent) :
+    QDeclarativeGeoPlace(landmark, parent), m_landmark(landmark)
 {
 }
 
@@ -84,24 +90,6 @@ void QDeclarativeLandmark::setName(const QString& name)
         return;
     m_landmark.setName(name);
     emit nameChanged();
-}
-
-/*!
-  \qmlproperty Coordinate Landmark::coordinate
-
-  This property holds the coordinate of the landmark.
-
-  */
-
-void QDeclarativeLandmark::setCoordinate(QDeclarativeCoordinate* coordinate)
-{
-    m_coordinate.setCoordinate(coordinate->coordinate());
-    emit coordinateChanged();
-}
-
-QDeclarativeCoordinate* QDeclarativeLandmark::coordinate()
-{
-    return &m_coordinate;
 }
 
 QString QDeclarativeLandmark::phoneNumber()
@@ -210,9 +198,16 @@ void QDeclarativeLandmark::setUrl(const QUrl& url)
 // Initializes this landmark from the given landmark
 void QDeclarativeLandmark::setLandmark(const QLandmark& landmark)
 {
+    // Elaborate but makes sure appropriate signals are sent
+    // (this function is called when landmark updates).
+    setPlace(landmark); // viewport, address, coordinate etc.
+    setName(landmark.name());
+    setPhoneNumber(landmark.phoneNumber());
+    setDescription(landmark.description());
+    setRadius(landmark.radius());
+    setIconSource(landmark.iconUrl());
+    setUrl(landmark.url());
     m_landmark = landmark;
-    m_coordinate.setCoordinate(m_landmark.coordinate());
-    emit coordinateChanged();
 }
 
 QList<QLandmarkCategoryId> QDeclarativeLandmark::categoryIds () const

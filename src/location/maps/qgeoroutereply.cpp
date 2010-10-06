@@ -99,8 +99,8 @@ QTM_BEGIN_NAMESPACE
     Constructs a route reply object based on \a request, with the specified \a parent.
 */
 QGeoRouteReply::QGeoRouteReply(const QGeoRouteRequest &request, QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoRouteReplyPrivate(request))
+    : QObject(parent),
+      d_ptr(new QGeoRouteReplyPrivate(request))
 {
 }
 
@@ -108,8 +108,8 @@ QGeoRouteReply::QGeoRouteReply(const QGeoRouteRequest &request, QObject *parent)
     Constructs a route reply with a given \a error and \a errorString and the specified \a parent.
 */
 QGeoRouteReply::QGeoRouteReply(Error error, const QString &errorString, QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoRouteReplyPrivate(error, errorString)) {}
+    : QObject(parent),
+      d_ptr(new QGeoRouteReplyPrivate(error, errorString)) {}
 
 /*!
     Destroys this route reply object.
@@ -253,15 +253,15 @@ void QGeoRouteReply::abort()
 *******************************************************************************/
 
 QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(const QGeoRouteRequest &request)
-        : error(QGeoRouteReply::NoError),
-        errorString(""),
-        isFinished(false),
-        request(request) {}
+    : error(QGeoRouteReply::NoError),
+      errorString(""),
+      isFinished(false),
+      request(request) {}
 
 QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(QGeoRouteReply::Error error, QString errorString)
-        : error(error),
-        errorString(errorString),
-        isFinished(true) {}
+    : error(error),
+      errorString(errorString),
+      isFinished(true) {}
 
 QGeoRouteReplyPrivate::~QGeoRouteReplyPrivate() {}
 

@@ -48,23 +48,33 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoManeuver
-    \brief The QGeoManeuver class represents a navigation instruction.
+    \brief The QGeoManeuver class represents the information relevant to the
+    point at which two QGeoRouteSegments meet.
 
     \inmodule QtLocation
 
     \ingroup maps-routing
 
-    A QGeoManeuver instance has a position at which the
-    instruction applies and a textual instruction to provide at that position.
+    QGeoRouteSegment instances can be thought of as edges on a routing
+    graph, with QGeoManeuver instances as optional labels attached to the
+    vertices of the graph.
+
+    The most interesting information help in a QGeoManeuver instance is
+    normally the textual navigation to provide and the position at which to
+    provide it, accessible by instructionText() and position() respectively.
+
+    It is also possible to determine if a routing waypoint has been passed by
+    checking if waypoint() returns a valid QGeoCoordinate.
 */
 
 /*!
 \enum QGeoManeuver::InstructionDirection
 
-Describes the change in direction associated with an instruction.
+Describes the change in direction associated with the instruction text
+that is associated with a QGeoManaeuver.
 
 \value NoDirection
-There is no direction associated with the instruction.
+There is no direction associated with the instruction text.
 
 \value DirectionForward
 The instruction indicates that the direction of travel does not need to change.
@@ -102,26 +112,30 @@ The instruction indicates that the direction of travel should bear to the left.
 */
 
 /*!
-    Constructs a navigation instruction object.
+    Constructs a invalid maneuver object.
+
+    The maneuver will remain invalid until one of 
+    setPosition(), setInstructionText(), setDirection(), 
+    setTimeToNextInstruction(), setDistanceToNextInstruction() or
+    setWaypoint() is called.
 */
 QGeoManeuver::QGeoManeuver()
-        : d_ptr(new QGeoManeuverPrivate()) {}
-
+    : d_ptr(new QGeoManeuverPrivate()) {}
 
 /*!
-    Constructs a navigation instruction object from the contents of \a other.
+    Constructs a maneuver object from the contents of \a other.
 */
 QGeoManeuver::QGeoManeuver(const QGeoManeuver &other)
-        : d_ptr(other.d_ptr) {}
+    : d_ptr(other.d_ptr) {}
 
 /*!
-    Destroys this navigation instruction object.
+    Destroys this manevuer object.
 */
 QGeoManeuver::~QGeoManeuver() {}
 
 /*!
-    Assigns \a other to this navigation instruction object and then returns
-    a reference to this navigation instruction object.
+    Assigns \a other to this maneuver object and then returns
+    a reference to this maneuver object.
 */
 QGeoManeuver& QGeoManeuver::operator= (const QGeoManeuver & other)
 {
@@ -130,7 +144,7 @@ QGeoManeuver& QGeoManeuver::operator= (const QGeoManeuver & other)
 }
 
 /*!
-    Returns whether this navigation instruction is equal to \a other.
+    Returns whether this maneuver is equal to \a other.
 */
 bool QGeoManeuver::operator== (const QGeoManeuver &other) const
 {
@@ -138,29 +152,36 @@ bool QGeoManeuver::operator== (const QGeoManeuver &other) const
 }
 
 /*!
-    Returns whether this navigation instruction is not equal to \a other.
+    Returns whether this maneuver is not equal to \a other.
 */
 bool QGeoManeuver::operator!= (const QGeoManeuver &other) const
 {
     return !(operator==(other));
 }
 
-/*
+/*!
+    Returns whether this maneuver is valid or not.
+
+    Invalid maneuvers are used when there is no information 
+    that needs to be attached to the endpoint of a QGeoRouteSegment instance.
+*/
 bool QGeoManeuver::isValid() const
 {
+    return d_ptr->valid;
 }
-*/
 
 /*!
-    Sets the position where the instructions should be provided to \a position.
+    Sets the position where instructionText() should be displayed to \a
+    position.
 */
 void QGeoManeuver::setPosition(const QGeoCoordinate &position)
 {
+    d_ptr->valid = true;
     d_ptr->position = position;
 }
 
 /*!
-    Returns the position where the instructions should be provided.
+    Returns the position where instructionText() should be displayed.
 */
 QGeoCoordinate QGeoManeuver::position() const
 {
@@ -172,6 +193,7 @@ QGeoCoordinate QGeoManeuver::position() const
 */
 void QGeoManeuver::setInstructionText(const QString &instructionText)
 {
+    d_ptr->valid = true;
     d_ptr->text = instructionText;
 }
 
@@ -184,15 +206,17 @@ QString QGeoManeuver::instructionText() const
 }
 
 /*!
-    Sets the direction associated with this instruction to \a direction.
+    Sets the direction associated with the associated instruction to \a
+    direction.
 */
 void QGeoManeuver::setDirection(QGeoManeuver::InstructionDirection direction)
 {
+    d_ptr->valid = true;
     d_ptr->direction = direction;
 }
 
 /*!
-    Returns the direction associated with this instruction.
+    Returns the direction associated with the associated instruction.
 */
 QGeoManeuver::InstructionDirection QGeoManeuver::direction() const
 {
@@ -200,19 +224,20 @@ QGeoManeuver::InstructionDirection QGeoManeuver::direction() const
 }
 
 /*!
-    Sets the estimated time it will take to travel from the point at which this
-    instruction was issued and the point that the next instruction should be
-    issued, in seconds, to \a secs.
+    Sets the estimated time it will take to travel from the point at which the
+    associated instruction was issued and the point that the next instruction
+    should be issued, in seconds, to \a secs.
 */
 void QGeoManeuver::setTimeToNextInstruction(int secs)
 {
+    d_ptr->valid = true;
     d_ptr->timeToNextInstruction = secs;
 }
 
 /*!
     Returns the estimated time it will take to travel from the point at which
-    this instruction was issued and the point that the next instruction should
-    be issued, in seconds.
+    the associated instruction was issued and the point that the next
+    instruction should be issued, in seconds.
 */
 int QGeoManeuver::timeToNextInstruction() const
 {
@@ -220,48 +245,76 @@ int QGeoManeuver::timeToNextInstruction() const
 }
 
 /*!
-    Sets the distance, in metres, between the point at which this instruction was issued
-    and the point that the next instruction should be issued to \a distance.
+    Sets the distance, in metres, between the point at which the associated
+    instruction was issued and the point that the next instruction should be
+    issued to \a distance.
 */
 void QGeoManeuver::setDistanceToNextInstruction(qreal distance)
 {
+    d_ptr->valid = true;
     d_ptr->distanceToNextInstruction = distance;
 }
 
 /*!
-    Returns the distance, in metres, between the point at which this instruction was issued
-    and the point that the next instruction should be issued.
+    Returns the distance, in metres, between the point at which the associated
+    instruction was issued and the point that the next instruction should be
+    issued.
 */
 qreal QGeoManeuver::distanceToNextInstruction() const
 {
     return d_ptr->distanceToNextInstruction;
 }
 
+/*!
+    Sets the waypoint associated with this maneuver to \a coordinate.
+*/
+void QGeoManeuver::setWaypoint(const QGeoCoordinate &coordinate)
+{
+    d_ptr->valid = true;
+    d_ptr->waypoint = coordinate;
+}
+
+/*!
+    Returns the waypoint associated with this maneuver.
+
+    If there is not waypoint associated with this maneuver an invalid
+    QGeoCoordinate will be returned.
+*/
+QGeoCoordinate QGeoManeuver::waypoint() const
+{
+    return d_ptr->waypoint;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoManeuverPrivate::QGeoManeuverPrivate()
-        : direction(QGeoManeuver::NoDirection),
-        timeToNextInstruction(0),
-        distanceToNextInstruction(0.0) {}
+    : valid(false),
+      direction(QGeoManeuver::NoDirection),
+      timeToNextInstruction(0),
+      distanceToNextInstruction(0.0) {}
 
 QGeoManeuverPrivate::QGeoManeuverPrivate(const QGeoManeuverPrivate &other)
-        : QSharedData(other),
-        position(other.position),
-        text(other.text),
-        direction(other.direction),
-        timeToNextInstruction(other.timeToNextInstruction),
-        distanceToNextInstruction(other.distanceToNextInstruction) {}
+    : QSharedData(other),
+      valid(other.valid),
+      position(other.position),
+      text(other.text),
+      direction(other.direction),
+      timeToNextInstruction(other.timeToNextInstruction),
+      distanceToNextInstruction(other.distanceToNextInstruction),
+      waypoint(other.waypoint) {}
 
 QGeoManeuverPrivate::~QGeoManeuverPrivate() {}
 
 bool QGeoManeuverPrivate::operator ==(const QGeoManeuverPrivate &other) const
 {
-    return ((position == other.position)
+    return ((valid == other.valid)
+            && (position == other.position)
             && (text == other.text)
             && (direction == other.direction)
             && (timeToNextInstruction == other.timeToNextInstruction)
-            && (distanceToNextInstruction == other.distanceToNextInstruction));
+            && (distanceToNextInstruction == other.distanceToNextInstruction)
+            && (waypoint == other.waypoint));
 }
 
 QTM_END_NAMESPACE

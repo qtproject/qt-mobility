@@ -74,13 +74,13 @@ QTM_BEGIN_NAMESPACE
     coordinateToScreenPosition(const QGeoCoordinate &coordinate) and
     QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition).
 
-     The other virtual functions can be overriden.  If the screen position to
-     coordinate tranformations are expensive then overriding these functions
-     may allow optimizations based on caching parts of the geometry information.
+    The other virtual functions can be overriden. If the screen position to
+    coordinate tranformations are expensive then overriding these functions may
+    allow optimizations based on caching parts of the geometry information.
 
-     Subclasses should override createMapObjecInfo() so that QGeoMapObjectInfo
-     instances will be created for each QGeoMapObject type in order to
-     provide the QGeoMapData subclass specific behaviours for the map objects.
+    Subclasses should override createMapObjectInfo() so that QGeoMapObjectInfo
+    instances will be created for each QGeoMapObject type in order to provide
+    the QGeoMapData subclass specific behaviours for the map objects.
  */
 
 /*!
@@ -88,7 +88,7 @@ QTM_BEGIN_NAMESPACE
     \a geoMap and makes use of the functionality provided by \a engine.
 */
 QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
-        : d_ptr(new QGeoMapDataPrivate(this, engine, geoMap))
+    : d_ptr(new QGeoMapDataPrivate(this, engine, geoMap))
 {
     if (engine->supportedConnectivityModes().length() > 0)
         setConnectivityMode(engine->supportedConnectivityModes().at(0));
@@ -517,6 +517,7 @@ void QGeoMapData::addMapOverlay(QGeoMapOverlay *overlay)
     if (!overlay)
         return;
 
+    overlay->setMapData(this);
     d_ptr->overlays.append(overlay);
 }
 
@@ -556,6 +557,19 @@ QGeoMapObjectInfo* QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
     return 0;
 }
 
+/*!
+    Sets whether changes to properties will trigger their corresponding signals to \a block.
+
+    By default the QGeoMapData implementations of the property functions are used
+    which cause the property notification signals to be emitted immediately.
+
+    Calling this function with \a block set to false will prevent these
+    signals from being called, which will allow a subclass to defer the
+    emission of the signal until a later time.
+
+    If this function needs to be called it should be used as soon as possible,
+    preferably in the constructor of the QGeoMapData subclass.
+*/
 void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 {
     d_ptr->blockPropertyChangeSignals = block;
@@ -565,12 +579,12 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 *******************************************************************************/
 
 QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
-        : q_ptr(parent),
-        engine(engine),
-        geoMap(geoMap),
-        containerObject(0),
-        zoomLevel(-1.0),
-        blockPropertyChangeSignals(false) {}
+    : q_ptr(parent),
+      engine(engine),
+      geoMap(geoMap),
+      containerObject(0),
+      zoomLevel(-1.0),
+      blockPropertyChangeSignals(false) {}
 
 QGeoMapDataPrivate::~QGeoMapDataPrivate()
 {

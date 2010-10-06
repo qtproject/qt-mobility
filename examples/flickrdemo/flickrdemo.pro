@@ -20,7 +20,14 @@ INCLUDEPATH += . ../../src/global \
 include(../examples.pri)
 
 CONFIG += mobility
-MOBILITY = location bearer
+MOBILITY = location
+
+equals(QT_MAJOR_VERSION, 4) : greaterThan(QT_MINOR_VERSION, 6) {
+    # use Bearer Management classes in QtNetwork module
+    DEFINES += BEARER_IN_QTNETWORK
+} else {
+    MOBILITY += bearer
+}
 
 ICON = flickr_icon.svg
 
