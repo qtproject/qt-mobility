@@ -220,25 +220,35 @@ public:
     QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, 
         const QDateTime& periodStart, const QDateTime& periodEnd, 
         int maxCount, QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerItem> itemInstances(const QOrganizerItemFilter& filter, 
+    QList<QOrganizerItem> items(const QDateTime& periodStart,
+        const QDateTime& periodEnd,
+        const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders, 
         const QOrganizerItemFetchHint& fetchHint, 
         QOrganizerItemManager::Error* error) const;
 
-    QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, 
+    QList<QOrganizerItemLocalId> itemIds(const QDateTime& periodStart,
+        const QDateTime& periodEnd,
+        const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders, 
         QOrganizerItemManager::Error* error) const;
     QList<QOrganizerItemLocalId> getIdsModifiedSinceDateL(
         const QOrganizerItemFilter& filter) const;
     void itemIdsL(
         QList<QOrganizerItemLocalId>& ids, 
+        const QDateTime& periodStart,
+        const QDateTime& periodEnd,
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders) const;
-    QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, 
+    QList<QOrganizerItem> itemsForExport(const QDateTime& periodStart,
+        const QDateTime& periodEnd,
+        const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders, 
         const QOrganizerItemFetchHint& fetchHint, 
         QOrganizerItemManager::Error* error) const;
-    void itemsL(QList<QOrganizerItem>& itemsList, 
+    void itemsForExportL(QList<QOrganizerItem>& itemsList, 
+        const QDateTime& periodStart,
+        const QDateTime& periodEnd,
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders, 
         const QOrganizerItemFetchHint& fetchHint) const;
@@ -313,8 +323,10 @@ public:
         const QDateTime &periodStart,
         const QDateTime &periodEnd,
         int maxCount) const;
-    QList<QOrganizerItem> itemInstancesL(
+    QList<QOrganizerItem> itemsL(
         QList<QOrganizerItem> &itemInstances,
+        const QDateTime& periodStart,
+        const QDateTime& periodEnd,
         const QOrganizerItemFilter &filter,
         const QList<QOrganizerItemSortOrder> &sortOrders,
         const QOrganizerItemFetchHint &fetchHint) const;

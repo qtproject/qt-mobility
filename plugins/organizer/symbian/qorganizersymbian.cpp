@@ -413,23 +413,27 @@ void QOrganizerItemSymbianEngine::itemInstancesL(
     }
 }
 
-QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(
+QList<QOrganizerItem> QOrganizerItemSymbianEngine::items(
+    const QDateTime& periodStart,
+    const QDateTime& periodEnd,
     const QOrganizerItemFilter& filter,
     const QList<QOrganizerItemSortOrder>& sortOrders,
     const QOrganizerItemFetchHint& fetchHint,
     QOrganizerItemManager::Error* error) const
 {
-    QList<QOrganizerItem> itemInstances;
-    TRAPD(err, itemInstancesL(itemInstances, filter, sortOrders, fetchHint));
+    QList<QOrganizerItem> items;
+    TRAPD(err, itemsL(items, periodStart, periodEnd, filter, sortOrders, fetchHint));
     if (err != KErrNone) {
         transformError(err, error);
         return QList<QOrganizerItem>();
     }
-    return itemInstances;
+    return items;
 }
 
-QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstancesL(
-    QList<QOrganizerItem> &itemInstances,
+QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemsL(
+    QList<QOrganizerItem> &items,
+    const QDateTime& periodStart,
+    const QDateTime& periodEnd,
     const QOrganizerItemFilter &filter,
     const QList<QOrganizerItemSortOrder> &sortOrders,
     const QOrganizerItemFetchHint &fetchHint) const
@@ -437,10 +441,8 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstancesL(
     // TODO: It might be possible to optimize by using fetch hint
     Q_UNUSED(fetchHint);
 
-    TCalTime startTime;
-    startTime.SetTimeUtcL(TCalTime::MinTime());
-    TCalTime endTime;
-    endTime.SetTimeUtcL(TCalTime::MaxTime());
+    TCalTime startTime(toTCalTimeL(periodStart));
+    TCalTime endTime(toTCalTimeL(periodEnd));
 
     // Loop through all the instance views and fetch the item instances
     foreach(QOrganizerCollectionLocalId collectionId, m_collections.keys()) {
@@ -450,14 +452,14 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstancesL(
             instanceList, CalCommon::EIncludeAll,
             CalCommon::TCalTimeRange(startTime, endTime));
         // Transform CCalInstances to QOrganizerItems
-        toItemInstancesL(instanceList, QOrganizerItem(), -1, collectionId, itemInstances);
+        toItemInstancesL(instanceList, QOrganizerItem(), -1, collectionId, items);
         CleanupStack::PopAndDestroy(&instanceList);
     }
 
     // Use the general implementation to filter and sort items
-    itemInstances = slowFilter(itemInstances, filter, sortOrders);
+    items = slowFilter(items, filter, sortOrders);
 
-    return itemInstances;
+    return items;
 }
 
 void QOrganizerItemSymbianEngine::toItemInstancesL(
@@ -524,12 +526,14 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
 }
 
 QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(
+        const QDateTime& periodStart,
+        const QDateTime& periodEnd,
         const QOrganizerItemFilter& filter,
         const QList<QOrganizerItemSortOrder>& sortOrders,
         QOrganizerItemManager::Error* error) const
 {
     QList<QOrganizerItemLocalId> ids;
-    TRAPD(err, itemIdsL(ids, filter, sortOrders))
+    TRAPD(err, itemIdsL(ids, periodStart, periodEnd, filter, sortOrders))
     transformError(err, error);
     if (*error != QOrganizerItemManager::NoError) {
         return QList<QOrganizerItemLocalId>();
@@ -540,9 +544,12 @@ QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(
 
 void QOrganizerItemSymbianEngine::itemIdsL(
     QList<QOrganizerItemLocalId>& itemLocalids, 
+    const QDateTime& periodStart,
+    const QDateTime& periodEnd,
     const QOrganizerItemFilter& filter, 
     const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
+    // TODO filter by periodStart, periodEnd
     // Get item ids
     QList<QOrganizerItemLocalId> itemIds = getIdsModifiedSinceDateL(filter);
 
@@ -597,14 +604,16 @@ QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::getIdsModifiedSinceDat
     return itemLocalIds;
 }
     
-QList<QOrganizerItem> QOrganizerItemSymbianEngine::items(
+QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemsForExport(
+    const QDateTime& periodStart,
+    const QDateTime& periodEnd,
     const QOrganizerItemFilter& filter, 
     const QList<QOrganizerItemSortOrder>& sortOrders, 
     const QOrganizerItemFetchHint& fetchHint, 
     QOrganizerItemManager::Error* error) const
 {
     QList<QOrganizerItem> itemsList;
-    TRAPD(err, itemsL(itemsList, filter, sortOrders, fetchHint));
+    TRAPD(err, itemsForExportL(itemsList, periodStart, periodEnd, filter, sortOrders, fetchHint));
     transformError(err, error);
     if (*error != QOrganizerItemManager::NoError) {
         return QList<QOrganizerItem>();
@@ -613,11 +622,14 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::items(
     }
 }
 
-void QOrganizerItemSymbianEngine::itemsL(QList<QOrganizerItem>& itemsList, 
+void QOrganizerItemSymbianEngine::itemsForExportL(QList<QOrganizerItem>& itemsList, 
+    const QDateTime& periodStart,
+    const QDateTime& periodEnd,
     const QOrganizerItemFilter& filter, 
     const QList<QOrganizerItemSortOrder>& sortOrders, 
     const QOrganizerItemFetchHint& fetchHint) const
 {
+    // TODO filter by periodStart and periodEnd
     // Get item ids
     QList<QOrganizerItemLocalId> itemIds = getIdsModifiedSinceDateL(filter);
 
