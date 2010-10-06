@@ -253,7 +253,8 @@ QOrganizerItemManager* QOrganizerItemManager::fromUri(const QString& storeUri, Q
   The default implementation for the platform will be created.
  */
 QOrganizerItemManager::QOrganizerItemManager(QObject* parent)
-    : QObject(parent)
+    : QObject(parent),
+    d(new QOrganizerItemManagerData)
 {
     createEngine(QString(), QMap<QString, QString>());
 }
