@@ -291,7 +291,7 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     sortList.append(sortOrder);
     instanceList.clear();
     QOrganizerItemFetchHint fetchHint;
-    instanceList = m_om->itemInstances(df,sortList,fetchHint);
+    instanceList = m_om->items(df,sortList,fetchHint);
     QCOMPARE(instanceList.size(), 2);
     
     QOrganizerItem firstItem = instanceList.at(0);
@@ -303,13 +303,13 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     //Search without filtering and sorting.Full instanceList is returned
     instanceList.clear();
     sortList.clear();    
-    instanceList = m_om->itemInstances(f,sortList,fetchHint);
+    instanceList = m_om->items(f,sortList,fetchHint);
     QCOMPARE(instanceList.size(), 3);
     
     //Search full instance list in descending order without filtering
     instanceList.clear();
     sortList.append(sortOrder);
-    instanceList = m_om->itemInstances(f,sortList,fetchHint);
+    instanceList = m_om->items(f,sortList,fetchHint);
     QCOMPARE(instanceList.size(), 3);
     QOrganizerItem thirdItem = instanceList.at(2);
     QCOMPARE(thirdItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
@@ -325,7 +325,7 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     QVERIFY(m_om->saveItem(&secondItem));
     
     instanceList.clear();
-    instanceList = m_om->itemInstances(df,sortList,fetchHint);
+    instanceList = m_om->items(df,sortList,fetchHint);
     QCOMPARE(instanceList.size(), 5);    
 }
 
