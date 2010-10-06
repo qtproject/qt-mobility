@@ -33,11 +33,11 @@ class CntSqlFactory
 
 public: 
 
-    CntSqlFactory(C12keyKeyMap* twelveKeyKeyMap);
+    CntSqlFactory(const C12keyKeyMap* twelveKeyKeyMap);
     
     ~CntSqlFactory();
     
-    CntSqlSearchInterface* getSqlIinstance(const QString &pattern, QLocale& language);
+    CntSqlSearchInterface* getSqlIinstance( QLocale& language);
 
 private:
     
@@ -47,7 +47,7 @@ private:
     
 private:
     
-    C12keyKeyMap* mTwelveKeyKeyMap;
+    const C12keyKeyMap* mTwelveKeyKeyMap;
     
 };
 
