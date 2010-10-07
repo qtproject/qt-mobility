@@ -93,11 +93,12 @@
 #endif
 
 //defines to turn on and off tests for symbian
-//#define INVALID_MANAGER
+#define INVALID_MANAGER
 #define RETRIEVE_CATEGORY
 #define RETRIEVE_LANDMARK
 #define SAVE_CATEGORY
 #define SAVE_LANDMARK
+#define SIMPLE_REMOVE_CATEGORY
 #define REMOVE_CATEGORY
 #define REMOVE_LANDMARK
 #define GET_ALL_CATEGORIES
@@ -107,7 +108,7 @@
 #define FILTER_CATEGORY
 #define FILTER_BOX
 #define FILTER_INTERSECTION
-#define LANDMARK_FETCH_CANCEL
+//#define LANDMARK_FETCH_CANCEL
 
 //#define EXPECT_FAIL
 
@@ -942,6 +943,10 @@ private slots:
 #ifdef SAVE_LANDMARK
     void saveLandmark();
     void saveLandmark_data();
+#endif
+
+#ifdef SIMPLE_REMOVE_CATEGORY
+    void simpleRemoveCategory();
 #endif
 
 #ifdef REMOVE_CATEGORY
@@ -2523,6 +2528,75 @@ void tst_QLandmarkManager::saveLandmark_data() {
 }
 #endif
 
+#ifdef SIMPLE_REMOVE_CATEGORY
+void tst_QLandmarkManager::simpleRemoveCategory()
+{
+    QSignalSpy spyLmAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+    QSignalSpy spyLmChange(m_manager, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+    QSignalSpy spyLmRemove(m_manager, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+    QSignalSpy spyCatAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+    QSignalSpy spyCatChange(m_manager, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
+    QSignalSpy spyCatRemove(m_manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+
+    QLandmarkCategory cat1;
+    cat1.setName("CAT1");
+    QVERIFY(m_manager->saveCategory(&cat1));
+
+    QLandmarkCategory cat2;
+    cat2.setName("CAT2");
+    QVERIFY(m_manager->saveCategory(&cat2));
+
+    QLandmarkCategory cat3;
+    cat3.setName("CAT3");
+    QVERIFY(m_manager->saveCategory(&cat3));
+
+    QLandmark lm1;
+    lm1.setName("LM1");
+    lm1.addCategoryId(cat1.categoryId());
+    QVERIFY(m_manager->saveLandmark(&lm1));
+
+    QLandmark lm2;
+    lm2.setName("LM2");
+    lm2.addCategoryId(cat2.categoryId());
+    lm2.addCategoryId(cat1.categoryId());
+    QVERIFY(m_manager->saveLandmark(&lm2));
+
+    QLandmark lm3;
+    lm3.setName("LM3");
+    lm3.addCategoryId(cat2.categoryId());
+    QVERIFY(m_manager->saveLandmark(&lm3));
+
+    QLandmark lm4;
+    lm4.setName("LM4");
+    QVERIFY(m_manager->saveLandmark(&lm4));
+
+    QTest::qWait(10);
+    spyLmAdd.clear();
+    spyLmChange.clear();
+    spyLmRemove.clear();
+    spyCatAdd.clear();
+    spyCatChange.clear();
+    spyCatRemove.clear();
+
+    QVERIFY(m_manager->removeCategory(cat2.categoryId()));
+    QTest::qWait(10);
+
+    QCOMPARE(spyCatAdd.count(), 0);
+    QCOMPARE(spyCatChange.count(), 0);
+    QCOMPARE(spyCatRemove.count(), 1);
+
+    QCOMPARE(spyLmAdd.count(), 0);
+    QCOMPARE(spyLmChange.count(), 1);
+    QCOMPARE(spyLmRemove.count(), 0);
+
+    QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().count(), 3);
+    QVERIFY(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().contains(lm1.landmarkId()));
+    QVERIFY(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().contains(lm2.landmarkId()));
+    QVERIFY(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().contains(lm3.landmarkId()));
+}
+#endif
+
+
 #ifdef REMOVE_CATEGORY
 void tst_QLandmarkManager::removeCategory() {
     QFETCH(QString, type);
@@ -2620,10 +2694,10 @@ void tst_QLandmarkManager::removeCategory() {
 #ifdef EXPECT_FAIL
         //TODO: symbian needs to handle adding landmarks to a category as landmark changed notification
         //(the order of the signals for symbian may not necessarily be how they are shown here)
-        QCOMPARE(spyLmChange.count(), 3);
+        QCOMPARE(spyLmChange.count(), 2);
         QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-        QCOMPARE(spyLmChange.at(1).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-        QCOMPARE(spyLmChange.at(2).at(0).value<QList<QLandmarkId> >().at(0), lm2.landmarkId());
+        QVERIFY(spyLmChange.at(1).at(0).value<QList<QLandmarkId> >().contains(lm1.landmarkId()));
+        QVERIFY(spyLmChange.at(1).at(0).value<QList<QLandmarkId> >().contains(lm2.landmarkId()));
 #endif
 #else
         QCOMPARE(spyLmChange.count(), 1);
