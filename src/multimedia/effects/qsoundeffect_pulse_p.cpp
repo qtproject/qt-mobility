@@ -280,7 +280,8 @@ QSoundEffectPrivate::~QSoundEffectPrivate()
     if (m_timerID != 0)
         killTimer(m_timerID);
     m_timerID = 0;
-    m_reply->deleteLater();
+    if (m_reply)
+        m_reply->deleteLater();
     unloadSample();
 }
 
