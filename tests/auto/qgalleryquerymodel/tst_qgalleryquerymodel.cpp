@@ -418,7 +418,7 @@ void tst_QGalleryQueryModel::sortPropertyNames()
     QCOMPARE(spy.count(), 2);
 }
 
-void tst_QGalleryItemListModel::autoUpdate()
+void tst_QGalleryQueryModel::autoUpdate()
 {
     QGalleryQueryModel model;
 
@@ -443,7 +443,7 @@ void tst_QGalleryItemListModel::autoUpdate()
     QCOMPARE(spy.count(), 2);
 }
 
-void tst_QGalleryItemListModel::offset()
+void tst_QGalleryQueryModel::offset()
 {
     QGalleryQueryModel model;
 
@@ -472,7 +472,7 @@ void tst_QGalleryItemListModel::offset()
     QCOMPARE(spy.count(), 2);
 }
 
-void tst_QGalleryItemListModel::limit()
+void tst_QGalleryQueryModel::limit()
 {
     QGalleryQueryModel model;
 
@@ -501,7 +501,7 @@ void tst_QGalleryItemListModel::limit()
     QCOMPARE(spy.count(), 2);
 }
 
-void tst_QGalleryItemListModel::rootType()
+void tst_QGalleryQueryModel::rootType()
 {
     const QString itemType = QLatin1String("Audio");
 
@@ -528,7 +528,7 @@ void tst_QGalleryItemListModel::rootType()
     QCOMPARE(spy.count(), 2);
 }
 
-void tst_QGalleryItemListModel::rootItem()
+void tst_QGalleryQueryModel::rootItem()
 {
     QGalleryQueryModel model;
 
@@ -561,7 +561,7 @@ void tst_QGalleryItemListModel::rootItem()
     QCOMPARE(spy.count(), 3);
 }
 
-void tst_QGalleryItemListModel::scope()
+void tst_QGalleryQueryModel::scope()
 {
     QGalleryQueryModel model;
 
@@ -586,7 +586,7 @@ void tst_QGalleryItemListModel::scope()
     QCOMPARE(spy.count(), 2);
 }
 
-void tst_QGalleryItemListModel::filter()
+void tst_QGalleryQueryModel::filter()
 {
     const QGalleryFilter filter = QGalleryMetaDataFilter(
             QLatin1String("rating"), 3, QGalleryFilter::GreaterThan);
