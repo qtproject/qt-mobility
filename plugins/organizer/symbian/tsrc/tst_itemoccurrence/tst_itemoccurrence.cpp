@@ -326,7 +326,7 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     
     instanceList.clear();
     instanceList = m_om->items(df,sortList,fetchHint);
-    QCOMPARE(instanceList.size(), 5);    
+    QCOMPARE(instanceList.size(), 4);
 }
 
 void tst_ItemOccurrence::addOccurrenceWithException_data()

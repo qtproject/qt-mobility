@@ -319,7 +319,7 @@ void tst_itemSortFilter::sortItems()
     QFETCH(int, mgrIndex);
     QFETCH(QString, matchingItemsStr);
 
-    QList<QOrganizerItem>actualItems = m_managers.at(mgrIndex)->items(QOrganizerItemFilter(), sortOrderList);
+    QList<QOrganizerItem> actualItems = m_managers.at(mgrIndex)->items(QOrganizerItemFilter(), sortOrderList);
     QList<QOrganizerItemLocalId> actualIds;
     QString actualItemsStr;
 
