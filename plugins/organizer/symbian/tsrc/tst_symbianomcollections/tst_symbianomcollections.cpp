@@ -164,7 +164,7 @@ void tst_symbianomcollections::init()
     QFETCH(QString, managerName);
     m_om = new QOrganizerItemManager(managerName);
     // Remove items on all collections
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
     // Remove all collections (except the default)
     foreach (QOrganizerCollectionLocalId id, m_om->collectionIds()) {
         if (id != m_om->defaultCollectionId())
@@ -174,7 +174,7 @@ void tst_symbianomcollections::init()
 
 void tst_symbianomcollections::cleanup()
 {
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
     // Remove all collections (except the default)
     foreach (QOrganizerCollectionLocalId id, m_om->collectionIds()) {
         if (id != m_om->defaultCollectionId())
@@ -584,7 +584,7 @@ void tst_symbianomcollections::itemSignalEmission()
     // Remove items - batch api
     QList<QOrganizerItemLocalId> ids;
     ids << items[0].localId() << items[1].localId();
-    QVERIFY(m_om->removeItems(ids, 0));
+    QVERIFY(m_om->removeItems(ids));
     removedCount++;
     QTRY_COMPARE_SIGNAL_COUNTS();
     QCOMPARE(removedSpy1.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), 2);
@@ -785,19 +785,19 @@ void tst_symbianomcollections::removeItems()
     filter2.setCollectionIds(collectionIds2);
 
     // Remove from the first new collection and verify
-    QVERIFY(m_om->removeItems(m_om->itemIds(filter1), 0));
+    QVERIFY(m_om->removeItems(m_om->itemIds(filter1)));
     QCOMPARE(m_om->itemIds(filter1).count(), 0);
     QCOMPARE(m_om->itemIds(filter2).count(), itemCount);
     QCOMPARE(m_om->itemIds().count(), itemCount * 2);
 
     // Remove from the second new collection and verify
-    QVERIFY(m_om->removeItems(m_om->itemIds(filter2), 0));
+    QVERIFY(m_om->removeItems(m_om->itemIds(filter2)));
     QCOMPARE(m_om->itemIds(filter1).count(), 0);
     QCOMPARE(m_om->itemIds(filter2).count(), 0);
     QCOMPARE(m_om->itemIds().count(), itemCount);
 
     // Remove from all collections and verify
-    QVERIFY(m_om->removeItems(m_om->itemIds(), 0));
+    QVERIFY(m_om->removeItems(m_om->itemIds()));
     QCOMPARE(m_om->itemIds().count(), 0);
 }
 

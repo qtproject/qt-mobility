@@ -193,7 +193,7 @@ void tst_SymbianOm::init()
     m_om = new QOrganizerItemManager(managerName);
 
     // Remove all organizer items first (Note: ignores possible errors)
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
 	
     // Save UTC offset
     m_UTCOffset = User::UTCOffset();
@@ -202,7 +202,7 @@ void tst_SymbianOm::init()
 void tst_SymbianOm::cleanup()
 {
     // Remove all organizer items first (Note: ignores possible errors)
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
     delete m_om;
     m_om = 0;
 	
@@ -228,7 +228,7 @@ void tst_SymbianOm::addSimpleItem()
     // Save with list parameter
     QList<QOrganizerItem> items;
     items.append(item);
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId()));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     foreach (QOrganizerItem listitem, items) {
         QVERIFY(listitem.id().localId() != QOrganizerItemLocalId());
@@ -236,10 +236,9 @@ void tst_SymbianOm::addSimpleItem()
     }
 
     // Save with list parameter and error map parameter
-    QMap<int, QOrganizerItemManager::Error> errorMap;
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap));
+    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId()));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
-    QVERIFY(errorMap.count() == 0);
+    QVERIFY(m_om->errorMap().count() == 0);
     foreach (QOrganizerItem listitem2, items) {
         QVERIFY(listitem2.id().localId() != QOrganizerItemLocalId());
         QVERIFY(item.id().managerUri().contains(m_om->managerName()));
@@ -291,8 +290,7 @@ void tst_SymbianOm::removeSimpleItem()
     QList<QOrganizerItemLocalId> itemIds;
     itemIds.append(item2.localId());
     itemIds.append(item3.localId());
-    QMap<int, QOrganizerItemManager::Error> errorMap;
-    QVERIFY(m_om->removeItems(itemIds, &errorMap));
+    QVERIFY(m_om->removeItems(itemIds));
 
     // Remove with itemIds
     QOrganizerItem item4;
@@ -301,7 +299,7 @@ void tst_SymbianOm::removeSimpleItem()
     item5.setType(QOrganizerItemType::TypeTodo);
     QVERIFY(m_om->saveItem(&item4));
     QVERIFY(m_om->saveItem(&item5));
-    QVERIFY(m_om->removeItems(m_om->itemIds(), 0));
+    QVERIFY(m_om->removeItems(m_om->itemIds()));
 }
 
 void tst_SymbianOm::fetchItems()
@@ -465,11 +463,11 @@ void tst_SymbianOm::addNegative()
     QVERIFY(!m_om->saveItem(0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
-    QVERIFY(!m_om->saveItems(0, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(!m_om->saveItems(0, QOrganizerCollectionLocalId()));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
     QList<QOrganizerItem> items;
-    QVERIFY(!m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(!m_om->saveItems(&items, QOrganizerCollectionLocalId()));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
     // TODO: try to save an event with non-existing (non-zero) id and check that it fails
@@ -626,7 +624,7 @@ void tst_SymbianOm::signalEmission()
     QList<QOrganizerItem> items;
     items << todo;
     items << todo2;
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId()));
     itemsAddedSignals++;
     itemsAdded = 2;
     QTRY_COMPARE_SIGNAL_COUNTS();
@@ -635,7 +633,7 @@ void tst_SymbianOm::signalEmission()
     // Change - batch
     items[0].setDescription("foobar1");
     items[1].setDescription("foobar2");
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId()));
     itemsChangedSignals++;
     itemsChanged = 2;
     QTRY_COMPARE_SIGNAL_COUNTS();
@@ -645,7 +643,7 @@ void tst_SymbianOm::signalEmission()
     QList<QOrganizerItemLocalId> itemIds;
     itemIds << items[0].localId();
     itemIds << items[1].localId();
-    QVERIFY(m_om->removeItems(itemIds, 0));
+    QVERIFY(m_om->removeItems(itemIds));
     itemsRemovedSignals++;
     itemsRemoved = 2;
     QTRY_COMPARE_SIGNAL_COUNTS();

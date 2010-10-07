@@ -167,7 +167,7 @@ void tst_SymbianOmAsync::init()
     QFETCH(QString, managerName);
     m_om = new QOrganizerItemManager(managerName);
     // Remove items on all collections
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
     // Remove all collections (except the default)
     foreach (QOrganizerCollectionLocalId id, m_om->collectionIds()) {
         if (id != m_om->defaultCollectionId())
@@ -177,7 +177,7 @@ void tst_SymbianOmAsync::init()
 
 void tst_SymbianOmAsync::cleanup()
 {
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
     // Remove all collections (except the default)
     foreach (QOrganizerCollectionLocalId id, m_om->collectionIds()) {
         if (id != m_om->defaultCollectionId())
