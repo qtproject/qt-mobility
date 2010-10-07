@@ -110,6 +110,9 @@
 #define FILTER_NAME
 #define FILTER_PROXIMITY
 #define FILTER_CATEGORY
+#define FILTER_BOX
+#define FILTER_INTERSECTION
+//#define LANDMARK_FETCH_CANCEL
 
 #include <float.h>
 
@@ -225,7 +228,7 @@ private:
                                                << ", actual =" << request->state();
             ret = false;
         }
-        return ret;
+        return ret && stateVerified;
     }
 
     bool doCategoryFetch(const QString type, const QList<QLandmarkCategoryId> &ids, QList<QLandmarkCategory> *cats, QLandmarkManager::Error expectedError = QLandmarkManager::NoError) {
@@ -667,7 +670,7 @@ private:
         if (lms.count() != lmIds.count())
             return false;
         for (int i=0; i < lms.count(); ++i) {
-            if (lms.at(i).landmarkId() != lmIds.at(i)) {
+            if (!lmIds.contains(lms.at(i).landmarkId())) {
                 return false;
             }
         }
@@ -982,14 +985,21 @@ private slots:
     void filterLandmarksCategory_data();
 #endif
 
-#ifndef Q_OS_SYMBIAN
+#ifdef FILTER_BOX
     void filterLandmarksBox();
     void filterLandmarksBox_data();
+#endif
 
+#ifdef LANDMARK_FETCH_CANCEL
+    void asyncLandmarkFetchCancel();
+#endif
 
+#ifdef FILTER_INTERSECTION
     void filterLandmarksIntersection();
     void filterLandmarksIntersection_data();
+#endif
 
+#ifndef Q_OS_SYMBIAN
     void filterLandmarksMultipleBox();
     void filterLandmarksMultipleBox_data();
 
@@ -3610,6 +3620,7 @@ void tst_QLandmarkManager::filterLandmarksName() {
     QCOMPARE(lms.at(1), lm6);
     QCOMPARE(lms.at(2), lm8);
 
+#ifdef TODO_RESTORE
        //test fixed string
     nameFilter.setName("adel");
     nameFilter.setMatchFlags(QLandmarkFilter::MatchFixedString);
@@ -3617,10 +3628,9 @@ void tst_QLandmarkManager::filterLandmarksName() {
     QCOMPARE(lms.count(), 2);
     QCOMPARE(lms.at(0), lm2);
     QCOMPARE(lms.at(1), lm9);
-
+#endif
 
     //TODO: symbian, when using Match exactly first do
-#ifndef Q_OS_SYMBIAN
     //a matched fixed string search, then do QVariant comparison
     //test match exactly
     nameFilter.setName("Adel");
@@ -3634,7 +3644,7 @@ void tst_QLandmarkManager::filterLandmarksName() {
     nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
     QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
     QCOMPARE(lms.count(),0);
-#endif
+
     //TODO: symbian change the state of the request to finished
     //      if using a Case sensitive match which is not supported
     //test that can't support case sensitive matching
@@ -3658,13 +3668,11 @@ void tst_QLandmarkManager::filterLandmarksName() {
     nameFilter.setName("");
     nameFilter.setMatchFlags(QLandmarkFilter::MatchFixedString);
 
-#ifndef Q_OS_SYMBIAN
     //TODO: symbia matching landmarks with no name
     QVERIFY(doFetch(type,nameFilter, &lms, QLandmarkManager::NoError));
     QCOMPARE(lms.count(),2);
     QCOMPARE(lms.at(0), lmNoName1);
     QCOMPARE(lms.at(1), lmNoName2);
-#endif
 
     //try starts with an empty string
     nameFilter.setMatchFlags(QLandmarkFilter::MatchStartsWith);
@@ -4094,7 +4102,7 @@ void tst_QLandmarkManager::filterLandmarksCategory_data()
 }
 #endif
 
-#ifndef Q_OS_SYMBIAN
+#ifdef FILTER_BOX
 void tst_QLandmarkManager::filterLandmarksBox() {
     QFETCH(QString, type);
     QList<QGeoCoordinate> outBox;
@@ -4285,12 +4293,21 @@ void tst_QLandmarkManager::filterLandmarksBox() {
     QCOMPARE(lms5.size(), inBox5.size());
 
     QSet<QString> testSet5;
-    for (int i = 0; i < lms5.size(); ++i)
+    for (int i = 0; i < lms5.size(); ++i) {
+        if (lms5.at(i).coordinate().longitude() == -180.0) {
+            lms5[i].setCoordinate(QGeoCoordinate(lms5.at(i).coordinate().latitude(), 180.0));
+        }
+
         testSet5.insert(lms5.at(i).coordinate().toString());
+    }
 
     QSet<QString> inBoxSet5;
-    for (int i = 0; i < inBox5.size(); ++i)
+    for (int i = 0; i < inBox5.size(); ++i) {
+        if (inBox5.at(i).longitude() == -180.0) {
+            inBox5[i].setLongitude(180.0);
+        }
         inBoxSet5.insert(inBox5.at(i).toString());
+    }
 
     QCOMPARE(testSet5, inBoxSet5);
 
@@ -4329,7 +4346,88 @@ void tst_QLandmarkManager::filterLandmarksBox_data()
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
+#endif
 
+#ifdef LANDMARK_FETCH_CANCEL
+void tst_QLandmarkManager::asyncLandmarkFetchCancel() {
+     //test that we can cancel a fetch for landmarks
+     QLandmark lm;
+     for(int i =0; i < 75; ++i) {
+         lm.clear();
+         lm.setName(QString("LM") + QString::number(i));
+         lm.setCoordinate(QGeoCoordinate(5.0, 5.0));
+         QVERIFY(m_manager->saveLandmark(&lm));
+     }
+
+     QLandmarkFetchRequest fetchRequest(m_manager);
+     QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+
+     //we use a lot of intersection and union filters to try slow down the fetching
+     //enough so that we can cancel the fetching operation.
+     QLandmarkProximityFilter proximityFilter(QGeoCoordinate(5.0,5.0), 1000);
+
+     QLandmarkIntersectionFilter intersectionFilter;
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+     intersectionFilter.append(proximityFilter);
+
+     QLandmarkUnionFilter unionFilter;
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+     unionFilter.append(intersectionFilter);
+
+     //test canceling of a landmark fetch
+     fetchRequest.setFilter(unionFilter);
+     fetchRequest.start();
+     QTest::qWait(75);
+     QCOMPARE(spy.count(),1);
+     QCOMPARE(qvariant_cast<QLandmarkAbstractRequest::State>(spy.at(0).at(0)), QLandmarkAbstractRequest::ActiveState);
+     fetchRequest.cancel();
+     QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::CancelError));
+     QCOMPARE(fetchRequest.landmarks().count(), 0);
+
+     //test canceling of a landmark id fetch
+     QLandmarkIdFetchRequest idFetchRequest(m_manager);
+     idFetchRequest.setFilter(unionFilter);
+     QSignalSpy spy2(&idFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+     idFetchRequest.start();
+     QTest::qWait(50);
+     idFetchRequest.cancel();
+     QVERIFY(waitForAsync(spy2, &idFetchRequest, QLandmarkManager::CancelError));
+     QCOMPARE(idFetchRequest.landmarkIds().count(), 0);
+
+     //check that we can delete an request halfway during an operation.
+     QLandmarkFetchRequest *fetchRequestPointer = new QLandmarkFetchRequest(m_manager);
+     QSignalSpy spy3(fetchRequestPointer, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+     fetchRequestPointer->setFilter(unionFilter);
+     fetchRequestPointer->start();
+     QTest::qWait(75);
+     QCOMPARE(spy3.count(),1);
+     QCOMPARE(qvariant_cast<QLandmarkAbstractRequest::State>(spy3.at(0).at(0)), QLandmarkAbstractRequest::ActiveState);
+     delete fetchRequestPointer; //failure to delete usually results in a segfault
+     QTest::qWait(100);
+ }
+#endif
+
+#ifdef FILTER_INTERSECTION
 void tst_QLandmarkManager::filterLandmarksIntersection() {
     QFETCH(QString, type);
     QLandmarkCategory cat1;
@@ -4619,10 +4717,7 @@ void tst_QLandmarkManager::filterLandmarksIntersection() {
     QCOMPARE(lms.at(0), lm5);
     QCOMPARE(lms.at(1), lm9);
 
-    //try a proximity but with two categories t    QTest::addColumn<QString>("type");
-
-    QTest::newRow("sync") << "sync";
-    QTest::newRow("async") << "async";
+    //try a proximity but with two categories
     intersectionFilter.clear();
     intersectionFilter.append(cat1Filter);
     intersectionFilter.append(proximityFilter);
@@ -4692,7 +4787,9 @@ void tst_QLandmarkManager::filterLandmarksIntersection_data() {
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
 }
+#endif
 
+#ifndef Q_OS_SYMBIAN
 void tst_QLandmarkManager::filterLandmarksMultipleBox()
 {
     QFETCH(QString, type);

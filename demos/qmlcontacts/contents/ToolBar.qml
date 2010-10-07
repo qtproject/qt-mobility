@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial Usage
@@ -45,35 +45,28 @@
 **
 ****************************************************************************/
 
-#ifndef CNTFILTERDETAILDISPLAYLABEL_H
-#define CNTFILTERDETAILDISPLAYLABEL_H
+import Qt 4.7
 
-#include <qtcontactsglobal.h>
-#include <qcontactmanager.h>
-#include <qcontactdetailfilter.h>
+Item {
+    id: toolbar
 
-#include "cntabstractcontactfilter.h"
+    property alias button1Label: button1.text
+    property alias button2Label: button2.text
+    signal button1Clicked
+    signal button2Clicked
 
-QTM_USE_NAMESPACE
+    BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
 
-class CntFilterDetailDisplayLabel 
-{
-public:
-    CntFilterDetailDisplayLabel();
-    virtual ~CntFilterDetailDisplayLabel();
-    
-public: 
-    QString createSelectQuery(const QContactFilter& filter,
-                                  const QList<QContactSortOrder>& sortOrders,
-                                  QContactManager::Error* error) const;
-    void createSelectQuery(const QContactFilter& detailFilter,
-                                  QString& sqlQuery,
-                                  QContactManager::Error* error);
-private: 
-    void createQuerySingleSearchValue(QString& sqlQuery, const QString &searchValue, const QStringList &columns) const;
-    void createQueryMultipleSearchValues(QString& sqlQuery, const QStringList &searchValues, const QStringList &columns) const;
-    QString createSubQuery(const QString &searchValue, const QString &column) const;
-    QString columnName(const QPair<QLatin1String, QLatin1String> &detail) const;
- };
+    Button {
+        id: button1
+        anchors.left: parent.left; anchors.leftMargin: 5; y: 3; width: 140; height: 32
+        onClicked: toolbar.button1Clicked()
+    }
 
-#endif /* CNTFILTERDETAILDISPLAYLABEL_H */
+    Button {
+        id: button2
+        anchors.right: parent.right; anchors.rightMargin: 5; y: 3; width: 140; height: 32
+        onClicked: toolbar.button2Clicked()
+    }
+
+}

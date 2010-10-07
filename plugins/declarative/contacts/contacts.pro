@@ -58,6 +58,8 @@ SOURCES += plugin.cpp \
     qdeclarativecontactrelationship.cpp \
     qdeclarativecontactrelationshipmodel.cpp
 
+RESOURCES += contacts.qrc
+
 INSTALLS += qmldir
 
 symbian {
@@ -72,3 +74,5 @@ symbian {
     importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH
     DEPLOYMENT = importFiles
  }
+
+
