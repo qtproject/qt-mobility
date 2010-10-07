@@ -75,7 +75,7 @@ void QDeclarativeVideo::_q_error(int errorCode, const QString &errorString)
 
     \qml
     import Qt 4.7
-    import Qt.multimedia 1.0
+    import QtMultimediaKit 1.1
 
     Video {
         id: video
@@ -117,20 +117,6 @@ QDeclarativeVideo::QDeclarativeVideo(QDeclarativeItem *parent)
     , m_graphicsItem(0)
 
 {
-    m_graphicsItem = new QGraphicsVideoItem(this);
-    connect(m_graphicsItem, SIGNAL(nativeSizeChanged(QSizeF)),
-            this, SLOT(_q_nativeSizeChanged(QSizeF)));
-
-    setObject(this);
-
-    if (m_mediaService) {
-        connect(m_playerControl, SIGNAL(audioAvailableChanged(bool)),
-                this, SIGNAL(hasAudioChanged()));
-        connect(m_playerControl, SIGNAL(videoAvailableChanged(bool)),
-                this, SIGNAL(hasVideoChanged()));
-
-        m_mediaObject->bind(m_graphicsItem);
-    }
 }
 
 QDeclarativeVideo::~QDeclarativeVideo()
@@ -434,6 +420,24 @@ void QDeclarativeVideo::geometryChanged(const QRectF &newGeometry, const QRectF 
     m_graphicsItem->setSize(newGeometry.size());
 
     QDeclarativeItem::geometryChanged(newGeometry, oldGeometry);
+}
+
+void QDeclarativeVideo::classBegin()
+{
+    m_graphicsItem = new QGraphicsVideoItem(this);
+    connect(m_graphicsItem, SIGNAL(nativeSizeChanged(QSizeF)),
+            this, SLOT(_q_nativeSizeChanged(QSizeF)));
+
+    setObject(this);
+
+    if (m_mediaService) {
+        connect(m_playerControl, SIGNAL(audioAvailableChanged(bool)),
+                this, SIGNAL(hasAudioChanged()));
+        connect(m_playerControl, SIGNAL(videoAvailableChanged(bool)),
+                this, SIGNAL(hasVideoChanged()));
+
+        m_mediaObject->bind(m_graphicsItem);
+    }
 }
 
 void QDeclarativeVideo::componentComplete()

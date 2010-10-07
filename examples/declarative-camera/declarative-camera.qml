@@ -58,7 +58,6 @@ Rectangle {
                     camera.focus = true
                     stillControls.visible = true
                     photoPreview.visible = false
-                    camera.start()
                 }
             }
         },
@@ -70,7 +69,6 @@ Rectangle {
                     stillControls.visible = false
                     photoPreview.visible = true
                     photoPreview.focus = true
-                    camera.stop()
                 }
             }
         }

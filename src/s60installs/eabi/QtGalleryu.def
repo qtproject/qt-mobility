@@ -545,4 +545,27 @@ EXPORTS
 	_ZNK10QtMobility16QGalleryProperty8containsERK7QString @ 544 NONAME
 	_ZNK10QtMobility16QGalleryProperty8endsWithERK7QString @ 545 NONAME
 	_ZNK10QtMobility16QGalleryProperty8wildcardERK7QString @ 546 NONAME
+	_ZN10QtMobility18QGalleryQueryModel12limitChangedEv @ 547 NONAME
+	_ZN10QtMobility18QGalleryQueryModel12scopeChangedEv @ 548 NONAME
+	_ZN10QtMobility18QGalleryQueryModel13filterChangedEv @ 549 NONAME
+	_ZN10QtMobility18QGalleryQueryModel13offsetChangedEv @ 550 NONAME
+	_ZN10QtMobility18QGalleryQueryModel14galleryChangedEv @ 551 NONAME
+	_ZN10QtMobility18QGalleryQueryModel15rootItemChangedEv @ 552 NONAME
+	_ZN10QtMobility18QGalleryQueryModel15rootTypeChangedEv @ 553 NONAME
+	_ZN10QtMobility18QGalleryQueryModel17autoUpdateChangedEv @ 554 NONAME
+	_ZN10QtMobility18QGalleryQueryModel24sortPropertyNamesChangedEv @ 555 NONAME
+	_ZN10QtMobility19QGalleryItemRequest17autoUpdateChangedEv @ 556 NONAME
+	_ZN10QtMobility19QGalleryItemRequest20propertyNamesChangedEv @ 557 NONAME
+	_ZN10QtMobility19QGalleryTypeRequest17autoUpdateChangedEv @ 558 NONAME
+	_ZN10QtMobility19QGalleryTypeRequest20propertyNamesChangedEv @ 559 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest12limitChangedEv @ 560 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest12scopeChangedEv @ 561 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest13filterChangedEv @ 562 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest13offsetChangedEv @ 563 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest15rootItemChangedEv @ 564 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest15rootTypeChangedEv @ 565 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest17autoUpdateChangedEv @ 566 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest20propertyNamesChangedEv @ 567 NONAME
+	_ZN10QtMobility20QGalleryQueryRequest24sortPropertyNamesChangedEv @ 568 NONAME
+	_ZN10QtMobility23QGalleryAbstractRequest14galleryChangedEv @ 569 NONAME
 
