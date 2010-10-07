@@ -88,15 +88,19 @@ void registerExampleService()
 
 Q_DECLARE_METATYPE(QMetaType::Type);
 
-/*bool check(const void *p)
+/*
+bool check(const void *p)
 {
-    const QRemoteServiceregisterLocalSocketCred *cr = (const struct QRemoteServiceiRegisterLocalSocketCred *)p;
+    // Denies clients who have odd processs Ids
+    const QRemoteServiceRegisterCredentials *cr = (const struct QRemoteServiceRegisterCredentials *)p;
     if(cr->pid%2) {
            qDebug() << "Failing client: " << cr->pid;
         return false;
     }
+
     return true;
-}*/
+}
+*/
 
 int main(int argc, char** argv)
 {
