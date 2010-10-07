@@ -112,7 +112,7 @@ QTM_BEGIN_NAMESPACE
 class QContactlessTargetPrivate
 {
 public:
-    QString uid;
+    QByteArray uid;
     QUrl url;
     QContactlessTarget::Type tagType;
     QContactlessTarget::AccessMethods accessMethods;
@@ -128,7 +128,7 @@ QContactlessTarget::QContactlessTarget()
 /*!
     Returns the UID of the contactless target.
 */
-QString QContactlessTarget::uid() const
+QByteArray QContactlessTarget::uid() const
 {
     return d->uid;
 }

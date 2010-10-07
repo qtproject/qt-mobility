@@ -81,7 +81,7 @@ public:
 
     QContactlessTarget();
 
-    QString uid() const;
+    QByteArray uid() const;
     QUrl url() const;
 
     Type type() const;
