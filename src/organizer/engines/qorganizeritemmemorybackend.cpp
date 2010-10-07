@@ -405,7 +405,7 @@ QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QDateTime& 
 
     while (nextDate <= realPeriodEnd.date()) {
         // Skip nextDate if it is not the right multiple of intervals away from initialDateTime.
-        if (inIntervaledPeriod(nextDate, initialDateTime.date(), rrule.frequency(), rrule.interval(), rrule.weekStart(), rrule.count())) {
+        if (inMultipleOfInterval(nextDate, initialDateTime.date(), rrule.frequency(), rrule.interval(), rrule.weekStart(), rrule.count())) {
             // Calculate the inclusive start and exclusive end of nextDate's week/month/year
             QDate subPeriodStart = firstDateInPeriod(nextDate, rrule.frequency(), rrule.weekStart());
             QDate subPeriodEnd = firstDateInNextPeriod(nextDate, rrule.frequency(), rrule.weekStart());
@@ -504,22 +504,25 @@ void QOrganizerItemMemoryEngine::inferMissingCriteria(QOrganizerItemRecurrenceRu
 
 /*!
  * Returns true iff the calendar period (specified by \a frequency) of \a date is an \a
- * interval-multiple of periods ahead of the calendar period of \a initialDate.  For Weekly
- * frequencies, \a firstDayOfWeek is used to determine when the week boundary is.
+ * interval-multiple of periods ahead of the calendar period of \a initialDate. If the recurrence
+ * have a \a maxCount then take it into account. For Weekly frequencies, \a firstDayOfWeek is used
+ * to determine when the week boundary is.
  * eg. If \a frequency is Monthly and \a interval is 3, then true is returned iff \a date is in the
  * same month as \a initialDate, in a month 3 months ahead, 6 months ahead, etc.
  */
-bool QOrganizerItemMemoryEngine::inIntervaledPeriod(const QDate& date, const QDate& initialDate, QOrganizerItemRecurrenceRule::Frequency frequency, int interval, Qt::DayOfWeek firstDayOfWeek, int maxCount) const
+bool QOrganizerItemMemoryEngine::inMultipleOfInterval(const QDate& date, const QDate& initialDate, QOrganizerItemRecurrenceRule::Frequency frequency, int interval, Qt::DayOfWeek firstDayOfWeek, int maxCount) const
 {
     switch (frequency) {
         case QOrganizerItemRecurrenceRule::Yearly: {
             int yearsDelta = date.year() - initialDate.year();
-            if (maxCount && maxCount <= yearsDelta) return false;
+            if (maxCount && maxCount * interval <= yearsDelta)
+                return false;
             return (yearsDelta % interval == 0);
         }
         case QOrganizerItemRecurrenceRule::Monthly: {
             int monthsDelta = date.month() - initialDate.month() + (12 * (date.year() - initialDate.year()));
-            if (maxCount && maxCount <= monthsDelta) return false;
+            if (maxCount && maxCount * interval <= monthsDelta)
+                return false;
             return (monthsDelta % interval == 0);
         }
         case QOrganizerItemRecurrenceRule::Weekly: {
@@ -533,12 +536,14 @@ bool QOrganizerItemMemoryEngine::inIntervaledPeriod(const QDate& date, const QDa
                     weekCount += 1;
                 }
             }
-            if (maxCount && maxCount <= weekCount) return false;
+            if (maxCount && maxCount * interval <= weekCount)
+                return false;
             return (weekCount % interval == 0);
         }
         case QOrganizerItemRecurrenceRule::Daily: {
             int daysDelta = initialDate.daysTo(date);
-            if (maxCount && maxCount <= daysDelta) return false;
+            if (maxCount && maxCount * interval <= daysDelta)
+                return false;
             return (daysDelta % interval == 0);
         }
         case QOrganizerItemRecurrenceRule::Invalid:
@@ -663,7 +668,7 @@ QList<QDate> QOrganizerItemMemoryEngine::filterByPosition(const QList<QDate>& da
     }
 }
 
-bool QOrganizerItemMemoryEngine::itemHasReccurance(const QOrganizerItem& oi) const
+bool QOrganizerItemMemoryEngine::itemHasReccurence(const QOrganizerItem& oi) const
 {
     if (oi.type() == QOrganizerItemType::TypeEvent || oi.type() == QOrganizerItemType::TypeTodo) {
         QOrganizerItemRecurrence recur = oi.detail(QOrganizerItemRecurrence::DefinitionName);
@@ -876,8 +881,8 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItems(const QDateTime&
     bool isDefFilter = filter.type() == QOrganizerItemFilter::DefaultFilter;
 
     foreach(const QOrganizerItem&c, d->m_organizeritems) {
-        if (itemHasReccurance(c)) {
-            addItemRecurrances(sorted, c, startDate, endDate, filter, sortOrders, forExport);
+        if (itemHasReccurence(c)) {
+            addItemRecurrences(sorted, c, startDate, endDate, filter, sortOrders, forExport);
         } else {
             if ((isDefFilter || QOrganizerItemManagerEngine::testFilter(filter, c)) && QOrganizerItemManagerEngine::isItemBetweenDates(c, startDate, endDate))
                 QOrganizerItemManagerEngine::addSorted(&sorted,c, sortOrders);
@@ -887,7 +892,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItems(const QDateTime&
     return sorted;
 }
 
-void QOrganizerItemMemoryEngine::addItemRecurrances(QList<QOrganizerItem>& sorted, const QOrganizerItem& c, const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, bool forExport) const
+void QOrganizerItemMemoryEngine::addItemRecurrences(QList<QOrganizerItem>& sorted, const QOrganizerItem& c, const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, bool forExport) const
 {
     QOrganizerItemManager::Error error = QOrganizerItemManager::NoError;
     QList<QOrganizerItem> recItems = internalItemInstances(c, startDate, endDate, forExport ? 1 : 50, forExport, &error);

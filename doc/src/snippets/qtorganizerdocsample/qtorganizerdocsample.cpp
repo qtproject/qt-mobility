@@ -131,7 +131,7 @@ void snippets()
     QOrganizerItemDetailFilter locationFilter;
     locationFilter.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLocationName);
     locationFilter.setValue("Meeting Room 8");
-    QList<QOrganizerItem> entries = defaultManager.items(QDateTime(), QDateTime(), locationFilter);
+    QList<QOrganizerItem> entries = defaultManager.items(locationFilter);
     //! [Retrieving any entry (not occurrence) which matches a search criteria]
 
     //! [Creating an exception to a particular recurrent event]

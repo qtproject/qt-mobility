@@ -9,7 +9,7 @@ PUBLIC_HEADERS += filters/qorganizeritemfilters.h \
     filters/qorganizeriteminvalidfilter.h \
     filters/qorganizeritemlocalidfilter.h \
     filters/qorganizeritemcollectionfilter.h \
-    filters/qorganizeritemunionfilter.h 
+    filters/qorganizeritemunionfilter.h
 PRIVATE_HEADERS += \
     filters/qorganizeritemchangelogfilter_p.h \
     filters/qorganizeritemdetailfilter_p.h \
@@ -17,7 +17,7 @@ PRIVATE_HEADERS += \
     filters/qorganizeritemintersectionfilter_p.h \
     filters/qorganizeritemlocalidfilter_p.h \
     filters/qorganizeritemcollectionfilter_p.h \
-    filters/qorganizeritemunionfilter_p.h 
+    filters/qorganizeritemunionfilter_p.h
 SOURCES += \
     filters/qorganizeritemchangelogfilter.cpp \
     filters/qorganizeritemdetailfilter.cpp \
@@ -26,4 +26,4 @@ SOURCES += \
     filters/qorganizeriteminvalidfilter.cpp \
     filters/qorganizeritemlocalidfilter.cpp \
     filters/qorganizeritemcollectionfilter.cpp \
-    filters/qorganizeritemunionfilter.cpp 
+    filters/qorganizeritemunionfilter.cpp

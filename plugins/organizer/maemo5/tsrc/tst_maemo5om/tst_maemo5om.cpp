@@ -678,9 +678,6 @@ void tst_Maemo5Om::getItemIds()
 {
     QList<QOrganizerItemLocalId> generatedIds;
 
-    // Remove all the items in the test interval
-    QList<QOrganizerItemSortOrder> sortOrders;
-
     // Create a set of items
     for (int i = 1; i < 11; ++i) {
         QOrganizerEvent event;
@@ -710,7 +707,7 @@ void tst_Maemo5Om::getItemIds()
     }
 
     // Get items ids
-    QList<QOrganizerItemLocalId> ids = m_om->itemIds(QDateTime(QDate(2010,3,1)), QDateTime(QDate(2010,3,11)), QOrganizerItemFilter(), sortOrders);
+    QList<QOrganizerItemLocalId> ids = m_om->itemIds(QDateTime(QDate(2010,3,1)), QDateTime(QDate(2010,3,11)), QOrganizerItemFilter());
 
     // Check that all the item ids exist in result
     foreach(QOrganizerItemLocalId id, generatedIds) {
@@ -751,9 +748,7 @@ void tst_Maemo5Om::getItems()
     }
 
     // Get items
-    QList<QOrganizerItemSortOrder> sortOrders;
-    QOrganizerItemFetchHint fetchHint;
-    QList<QOrganizerItem> items = m_om->items(QOrganizerItemFilter(), sortOrders, fetchHint);
+    QList<QOrganizerItem> items = m_om->items(QOrganizerItemFilter());
 
     // Check that all the items exist in result
     foreach(QOrganizerItem item, generatedItems) {
@@ -812,14 +807,8 @@ void tst_Maemo5Om::getItemInstances()
         QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     }
 
-    // Create empty sortorder list
-    QList<QOrganizerItemSortOrder> sortOrders;
-
-    // Create empty fetch hint
-    QOrganizerItemFetchHint fetchHint;
-
     // Get all the instances occurring in January 2010
-    QList<QOrganizerItem> januaryInstances = m_om->items(QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,2,1), QTime(0,0,0)), QOrganizerItemFilter(), sortOrders, fetchHint);
+    QList<QOrganizerItem> januaryInstances = m_om->items(QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,2,1), QTime(0,0,0)), QOrganizerItemFilter());
 
     int instancesWithRightGuidCount = 0;
     foreach(QOrganizerItem instance, januaryInstances) {

@@ -2471,7 +2471,7 @@ void tst_QOrganizerItemManager::itemFetch()
     QVERIFY(cm->saveItem(&event));
 
     QOrganizerEvent recEvent;
-    recEvent.setDisplayLabel("rec event");
+    recEvent.setDisplayLabel("daily event");
     recEvent.setStartDateTime(QDateTime(QDate(2010, 9, 1), QTime(16, 0, 0)));
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
@@ -2484,12 +2484,10 @@ void tst_QOrganizerItemManager::itemFetch()
                                             QDateTime(QDate(2010, 9, 12)));
     QCOMPARE(items.count(), 3);
 
-    //fetch only the originating item
+    //fetch only the originating items
     items = cm->itemsForExport(QDateTime(QDate(2010, 9, 8)), QDateTime(QDate(2010, 9, 12)),
                                QOrganizerItemFilter(), QList<QOrganizerItemSortOrder>(), QOrganizerItemFetchHint());
     QCOMPARE(items.count(), 2);
-
-    // TODO: make a recurrant event, fetch the items between an interval and verify the result
 }
 
 void tst_QOrganizerItemManager::spanOverDays()

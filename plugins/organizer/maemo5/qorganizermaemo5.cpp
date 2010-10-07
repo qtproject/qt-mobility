@@ -576,7 +576,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItems(const QDateTime&
         if (*error != QOrganizerItemManager::NoError)
             return QList<QOrganizerItem>();
         for (id = eventIds.begin(); id != eventIds.end(); ++id)
-        localIds << QOrganizerItemLocalId(new QOrganizerItemMaemo5EngineLocalId(QString::fromStdString(*id).toUInt()));
+            localIds << QOrganizerItemLocalId(new QOrganizerItemMaemo5EngineLocalId(QString::fromStdString(*id).toUInt()));
 
         // Append todo ids
         std::vector<std::string> todoIds;
@@ -586,7 +586,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItems(const QDateTime&
         if (*error != QOrganizerItemManager::NoError)
             return QList<QOrganizerItem>();
         for (id = todoIds.begin(); id != todoIds.end(); ++id)
-        localIds << QOrganizerItemLocalId(new QOrganizerItemMaemo5EngineLocalId(QString::fromStdString(*id).toUInt()));
+            localIds << QOrganizerItemLocalId(new QOrganizerItemMaemo5EngineLocalId(QString::fromStdString(*id).toUInt()));
 
         // Append journal ids
         std::vector<std::string> journalIds;
@@ -596,7 +596,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItems(const QDateTime&
         if (*error != QOrganizerItemManager::NoError)
             return QList<QOrganizerItem>();
         for (id = journalIds.begin(); id != journalIds.end(); ++id)
-        localIds << QOrganizerItemLocalId(new QOrganizerItemMaemo5EngineLocalId(QString::fromStdString(*id).toUInt()));
+            localIds << QOrganizerItemLocalId(new QOrganizerItemMaemo5EngineLocalId(QString::fromStdString(*id).toUInt()));
 
         // Cleanup calendar
         cleanupCal(cal);
