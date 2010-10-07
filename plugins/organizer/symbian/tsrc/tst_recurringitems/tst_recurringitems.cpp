@@ -264,7 +264,7 @@ bool tst_recurringItems::verifyRecurrenceRule(
         // start date in this case. The end result from Qt Organizer API client
         // point of view is that the days of week will appear during saving.
         if (expectedRRule.daysOfWeek().isEmpty()
-            && actualRRule.daysOfWeek().limitCount() == 1) {
+            && actualRRule.daysOfWeek().size() == 1) {
             qWarning() << "Non-empty days-of-week";
         } else {
             qDebug() << "expected daysOfWeek" << expectedRRule.daysOfWeek();
@@ -281,7 +281,7 @@ bool tst_recurringItems::verifyRecurrenceRule(
         // days-of-week. 
         if (expectedRRule.frequency() == QOrganizerItemRecurrenceRule::Monthly
             && expectedRRule.daysOfMonth().isEmpty()
-            && actualRRule.daysOfMonth().limitCount() == 1) {
+            && actualRRule.daysOfMonth().size() == 1) {
             qWarning() << "Non-empty days-of-month";
         } else {
             qDebug() << "expected daysOfMonth" << expectedRRule.daysOfMonth();
