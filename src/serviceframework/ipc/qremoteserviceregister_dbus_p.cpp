@@ -248,6 +248,11 @@ void QRemoteServiceRegisterDBusPrivate::processIncoming(int pid, int uid)
         
         if(!getSecurityFilter()(reinterpret_cast<const void *>(&cred))){
             session->acceptIncoming(false);
+
+            // Close service if only client
+            if (instanceCount == 0)
+                QCoreApplication::exit();
+
             return;
         }
     }
