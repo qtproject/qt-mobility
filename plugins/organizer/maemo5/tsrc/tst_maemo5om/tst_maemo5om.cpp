@@ -231,9 +231,7 @@ void tst_Maemo5Om::addEvent() {
     event.setDisplayLabel("addEvent");
     event.setDescription("Test event description");
     event.setGuid("custom event GUID");
-    event.setLocationAddress("Event location address");
-    event.setLocationGeoCoordinates("Location geo coordinates");
-    event.setLocationName("Location name");
+    event.setLocation("Event location address");
     event.setPriority(QOrganizerItemPriority::HighPriority);
 
     // Save event
@@ -253,9 +251,7 @@ void tst_Maemo5Om::addEvent() {
     QCOMPARE(fetchEvent.displayLabel(), event.displayLabel());
     QCOMPARE(fetchEvent.description(), event.description());
     QCOMPARE(fetchEvent.guid(), event.guid());
-    QCOMPARE(fetchEvent.locationAddress(), event.locationAddress());
-    QCOMPARE(fetchEvent.locationGeoCoordinates(), event.locationGeoCoordinates());
-    QCOMPARE(fetchEvent.locationName(), event.locationName());
+    QCOMPARE(fetchEvent.location(), event.location());
     QCOMPARE(fetchEvent.priority(), event.priority());
 }
 
@@ -1327,7 +1323,6 @@ void tst_Maemo5Om::testReminders()
     QOrganizerItem fetchItem = m_om->item(event.localId());
     QOrganizerItemVisualReminder fetchEventReminder = fetchItem.detail<QOrganizerItemVisualReminder>();
     QCOMPARE(fetchEventReminder.dataUrl(), eventReminder.dataUrl());
-    QCOMPARE(fetchEventReminder.dateTime(), eventReminder.dateTime());
     QCOMPARE(fetchEventReminder.message(), eventReminder.message());
     QCOMPARE(fetchEventReminder.repetitionCount(), eventReminder.repetitionCount());
     //QCOMPARE(reminder.repetitionDelay(), fetchEventReminder.repetitionDelay()); // Maemo5 does not support repetition delay

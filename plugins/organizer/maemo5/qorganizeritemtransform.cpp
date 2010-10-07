@@ -89,8 +89,19 @@ QOrganizerEvent OrganizerItemTransform::convertCEventToQEvent(CEvent *cevent)
 
     // Location geo coordinates
     QString tempstr = QString::fromStdString(cevent->getGeo());
-    if (!tempstr.isNull())
-        retn.setLocationGeoCoordinates(tempstr);
+    if (!tempstr.isNull()) {
+        // tempstr is in format "xx.xxx;yy.yyy" or some variation thereof.
+        int indexOfSemi = tempstr.indexOf(";");
+        if (indexOfSemi != -1) {
+            QString latstr = tempstr.mid(0, (indexOfSemi+1));
+            QString longstr = tempstr.mid((indexOfSemi+1), (tempstr.length() - (indexOfSemi+1)));
+qDebug() << "tempstr =" << tempstr << ", latstr =" << latstr << ", longstr =" << longstr;
+            QOrganizerItemLocation loc = retn.detail<QOrganizerItemLocation>();
+            loc.setLatitude(latstr.toDouble());
+            loc.setLongitude(longstr.toDouble());
+            retn.saveDetail(&loc);
+        }
+    }
 
     // Start time
     QDateTime tempdt = QDateTime::fromTime_t(cevent->getDateStart());
@@ -131,8 +142,19 @@ QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrenc
 
     // Location geo coordinates
     QString tempstr = QString::fromStdString(cevent->getGeo());
-    if (!tempstr.isNull())
-        retn.setLocationGeoCoordinates(tempstr);
+    if (!tempstr.isNull()) {
+        // tempstr is in format "xx.xxx;yy.yyy" or some variation thereof.
+        int indexOfSemi = tempstr.indexOf(";");
+        if (indexOfSemi != -1) {
+            QString latstr = tempstr.mid(0, (indexOfSemi+1));
+            QString longstr = tempstr.mid((indexOfSemi+1), (tempstr.length() - (indexOfSemi+1)));
+qDebug() << "tempstr =" << tempstr << ", latstr =" << latstr << ", longstr =" << longstr;
+            QOrganizerItemLocation loc = retn.detail<QOrganizerItemLocation>();
+            loc.setLatitude(latstr.toDouble());
+            loc.setLongitude(longstr.toDouble());
+            retn.saveDetail(&loc);
+        }
+    }
 
     // Start time
     if (!instanceStartDate.isNull())
@@ -195,9 +217,17 @@ QOrganizerTodo OrganizerItemTransform::convertCTodoToQTodo(CTodo *ctodo)
     // Location geo coordinates
     QString tempstr = QString::fromStdString(ctodo->getGeo());
     if (!tempstr.isNull()) {
-        QOrganizerItemLocation il = retn.detail<QOrganizerItemLocation>();
-        il.setGeoLocation(tempstr);
-        retn.saveDetail(&il);
+        // tempstr is in format "xx.xxx;yy.yyy" or some variation thereof.
+        int indexOfSemi = tempstr.indexOf(";");
+        if (indexOfSemi != -1) {
+            QString latstr = tempstr.mid(0, (indexOfSemi+1));
+            QString longstr = tempstr.mid((indexOfSemi+1), (tempstr.length() - (indexOfSemi+1)));
+qDebug() << "tempstr =" << tempstr << ", latstr =" << latstr << ", longstr =" << longstr;
+            QOrganizerItemLocation loc = retn.detail<QOrganizerItemLocation>();
+            loc.setLatitude(latstr.toDouble());
+            loc.setLongitude(longstr.toDouble());
+            retn.saveDetail(&loc);
+        }
     }
 
     return retn;
@@ -240,9 +270,17 @@ QOrganizerTodoOccurrence OrganizerItemTransform::convertCTodoToQTodoOccurrence(C
     // Location geo coordinates
     QString tempstr = QString::fromStdString(ctodo->getGeo());
     if (!tempstr.isNull()) {
-        QOrganizerItemLocation il = retn.detail<QOrganizerItemLocation>();
-        il.setGeoLocation(tempstr);
-        retn.saveDetail(&il);
+        // tempstr is in format "xx.xxx;yy.yyy" or some variation thereof.
+        int indexOfSemi = tempstr.indexOf(";");
+        if (indexOfSemi != -1) {
+            QString latstr = tempstr.mid(0, (indexOfSemi+1));
+            QString longstr = tempstr.mid((indexOfSemi+1), (tempstr.length() - (indexOfSemi+1)));
+qDebug() << "tempstr =" << tempstr << ", latstr =" << latstr << ", longstr =" << longstr;
+            QOrganizerItemLocation loc = retn.detail<QOrganizerItemLocation>();
+            loc.setLatitude(latstr.toDouble());
+            loc.setLongitude(longstr.toDouble());
+            retn.saveDetail(&loc);
+        }
     }
 
     // Only the following are occurrence specific details:
@@ -284,20 +322,9 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
         // Location
         tempstr = QString::fromStdString(component->getLocation());
         if(!tempstr.isEmpty()) {
-            int lastCr = tempstr.lastIndexOf("\n");
-            if (lastCr == -1) {
-                QOrganizerItemLocation il = item->detail<QOrganizerItemLocation>();
-                il.setLocationName(tempstr);
-                item->saveDetail(&il);
-            }
-            else {
-                QString locationName = tempstr.left(lastCr);
-                QString locationAddress = tempstr.mid(lastCr + 1);
-                QOrganizerItemLocation il = item->detail<QOrganizerItemLocation>();
-                il.setLocationName(locationName);
-                il.setAddress(locationAddress);
-                item->saveDetail(&il);
-            }
+            QOrganizerItemLocation il = item->detail<QOrganizerItemLocation>();
+            il.setLabel(tempstr);
+            item->saveDetail(&il);
         }
 
         // Timestamps
@@ -411,8 +438,12 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         const QOrganizerEvent *event = static_cast<const QOrganizerEvent *>(item);
 
         // Location geo coordinates
-        if (!event->locationGeoCoordinates().isEmpty())
-            cevent->setGeo(event->locationGeoCoordinates().toStdString());
+        QOrganizerItemLocation loc = event->detail<QOrganizerItemLocation>();
+        if (!loc.isEmpty()) {
+            QString tempstr = QString::number(loc.latitude(), 'g', 20) + QString(QLatin1String(";")) + QString::number(loc.longitude(), 'g', 20);
+qDebug() << "8: tempstr =" << tempstr;
+            cevent->setGeo(tempstr.toStdString());
+        }
 
         // Priority
         cevent->setPriority(static_cast<int>(event->priority()));
@@ -483,8 +514,12 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         ctodo->setStatus(todo->status());
 
         // Location geo coordinates
-        if (!todo->detail("QOrganizerItemLocation::DefinitionName").isEmpty())
-            ctodo->setGeo(todo->detail<QOrganizerItemLocation>().geoLocation().toStdString());
+        QOrganizerItemLocation loc = todo->detail<QOrganizerItemLocation>();
+        if (!loc.isEmpty()) {
+            QString tempstr = QString::number(loc.latitude(), 'g', 20) + QString(QLatin1String(";")) + QString::number(loc.longitude(), 'g', 20);
+qDebug() << "9: tempstr =" << tempstr;
+            ctodo->setGeo(tempstr.toStdString());
+        }
 
         // Recurrence is not set as todos can't contain any recurrence information in Maemo5
 
@@ -525,7 +560,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         // Location (Geo location is not set here as it's not a general CComponent detail)
         QOrganizerItemLocation location = item->detail(QOrganizerItemLocation::DefinitionName);
         if (!location.isEmpty()) {
-            QString locationString = location.locationName() + "\n" + location.address();
+            QString locationString = location.label();
             retn->setLocation(locationString.toStdString());
         }
 
@@ -553,28 +588,17 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
 
         // Visual reminder (alarm)
         QOrganizerItemVisualReminder reminder = item->detail<QOrganizerItemVisualReminder>();
-        QDateTime reminderDateTime = reminder.dateTime();
         QDateTime deltaDateTime;
         if (reminder.variantValues().contains(QOrganizerItemReminder::FieldSecondsBeforeStart))
             deltaDateTime = dateStartForAlarm.addSecs(-reminder.secondsBeforeStart());
 
-        if (!reminderDateTime.isNull() || !deltaDateTime.isNull()) {
-            if (!reminderDateTime.isNull() && !deltaDateTime.isNull()) {
-                if (reminderDateTime != deltaDateTime) {
-                    // reminder date time and the set delta do not match
-                    *error = QOrganizerItemManager::BadArgumentError;
-                    return 0;
-                }
-            }
-
-            QDateTime resolvedDateTime = !reminderDateTime.isNull() ? reminderDateTime : deltaDateTime;
-
+        if (!deltaDateTime.isNull()) {
             // Set alarm for the ccomponent
             CAlarm alarm;
 
             alarm.setRepeat(reminder.repetitionCount());
-            alarm.setDuration(E_AM_EXACTDATETIME);
-            alarm.setTrigger(resolvedDateTime.toTime_t());
+            alarm.setDuration(E_AM_EXACTDATETIME); // TODO: repetitionDelay()?
+            alarm.setTrigger(deltaDateTime.toTime_t());
 
             retn->setAlarm(&alarm); // makes a copy
         }
@@ -646,23 +670,18 @@ QPair<qint32, qint32> OrganizerItemTransform::modifyAlarmEvent(CCalendar *cal, Q
             oldCookie = cookies[0];
 
             QOrganizerItemVisualReminder reminder = item->detail<QOrganizerItemVisualReminder>();
-
-            QDateTime reminderDateTime = reminder.dateTime();
-            if (reminderDateTime.isNull()) {
-                // use time delta instead
-                QDateTime startDateTime;
-                if (item->type() == QOrganizerItemType::TypeEvent || item->type() == QOrganizerItemType::TypeEventOccurrence) {
-                    startDateTime = item->detail<QOrganizerEventTimeRange>().startDateTime();
-                }
-                else if (item->type() == QOrganizerItemType::TypeTodo || item->type() == QOrganizerItemType::TypeTodoOccurrence) {
-                    startDateTime = item->detail<QOrganizerTodoTimeRange>().startDateTime();
-                }
-                else if (item->type() == QOrganizerItemType::TypeJournal) {
-                    startDateTime = item->detail<QOrganizerJournalTimeRange>().entryDateTime();
-                }
-
-                reminderDateTime = startDateTime.addSecs(-reminder.secondsBeforeStart());
+            QDateTime reminderDateTime, startDateTime;
+            if (item->type() == QOrganizerItemType::TypeEvent || item->type() == QOrganizerItemType::TypeEventOccurrence) {
+                startDateTime = item->detail<QOrganizerEventTimeRange>().startDateTime();
             }
+            else if (item->type() == QOrganizerItemType::TypeTodo || item->type() == QOrganizerItemType::TypeTodoOccurrence) {
+                startDateTime = item->detail<QOrganizerTodoTimeRange>().startDateTime();
+            }
+            else if (item->type() == QOrganizerItemType::TypeJournal) {
+                startDateTime = item->detail<QOrganizerJournalTimeRange>().entryDateTime();
+            }
+
+            reminderDateTime = startDateTime.addSecs(-reminder.secondsBeforeStart());
 
             int ignoreErrors = 0;
             newCookie = alarm->modifyAlarmEvent(oldCookie, reminderDateTime.toTime_t(), reminder.message().toStdString(),
