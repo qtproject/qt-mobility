@@ -235,6 +235,19 @@ bool QVersitWriter::startWriting(const QList<QVersitDocument>& input, QVersitDoc
 }
 
 /*!
+ * Starts writing \a input to device() asynchronously.  The serialization format is determined based
+ * on the contents of the input documents.
+ *
+ * Returns false if the output device has not been set or opened or if there is another asynchronous
+ * write operation already pending.  Signal \l stateChanged() is emitted with parameter
+ * FinishedState when the writing has finished.
+ */
+bool QVersitWriter::startWriting(const QVersitDocument& input)
+{
+    return startWriting(QList<QVersitDocument>() << input, QVersitDocument::InvalidType);
+}
+
+/*!
  * Starts writing \a input to device() asynchronously using the serialization format specified by \a
  * type.  If \a type is QVersitDocument::InvalidType, the format will be determined based on the
  * contents of the input documents.
@@ -245,7 +258,7 @@ bool QVersitWriter::startWriting(const QList<QVersitDocument>& input, QVersitDoc
  */
 bool QVersitWriter::startWriting(const QVersitDocument& input, QVersitDocument::VersitType type)
 {
-    startWriting(QList<QVersitDocument>() << input, type);
+    return startWriting(QList<QVersitDocument>() << input, type);
 }
 
 /*!

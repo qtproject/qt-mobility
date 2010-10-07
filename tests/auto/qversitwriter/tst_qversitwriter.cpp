@@ -157,7 +157,7 @@ void tst_QVersitWriter::testWritingVersions()
         "END:VCARD\r\n");
 
     // Given no type or componentType, it should be vCard 3.0
-    mWriter->startWriting(document);
+    QVERIFY(mWriter->startWriting(document));
     mWriter->waitForFinished();
     QCOMPARE(mOutputDevice->buffer(), vCard30);
 
@@ -165,14 +165,14 @@ void tst_QVersitWriter::testWritingVersions()
     document.setType(QVersitDocument::VCard21Type);
     mOutputDevice->buffer().clear();
     mOutputDevice->seek(0);
-    mWriter->startWriting(document);
+    QVERIFY(mWriter->startWriting(document));
     mWriter->waitForFinished();
     QCOMPARE(mOutputDevice->buffer(), vCard21);
 
     // param to startWriting should override document type
     mOutputDevice->buffer().clear();
     mOutputDevice->seek(0);
-    mWriter->startWriting(document, QVersitDocument::VCard30Type);
+    QVERIFY(mWriter->startWriting(document, QVersitDocument::VCard30Type));
     mWriter->waitForFinished();
     QCOMPARE(mOutputDevice->buffer(), vCard30);
 }
