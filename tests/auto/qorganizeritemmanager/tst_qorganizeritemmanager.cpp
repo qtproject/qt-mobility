@@ -2513,7 +2513,13 @@ void tst_QOrganizerItemManager::spanOverDays()
     items = cm->items(QDateTime(QDate(2010, 8, 11), QTime(0,0,0)), QDateTime(QDate(2010, 11, 10), QTime(23,59,59)));
     QCOMPARE(items.count(), 1);
 
-    items = cm->items(QDateTime(QDate(2010, 8, 5), QTime(0,0,0)), QDateTime(QDate(2010, 15, 10), QTime(23,59,59)));
+    items = cm->items(QDateTime(QDate(2010, 8, 5), QTime(0,0,0)), QDateTime());
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(), QDateTime(QDate(2010, 12, 10), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2010, 8, 5), QTime(0,0,0)), QDateTime(QDate(2010, 12, 10), QTime(23,59,59)));
     QCOMPARE(items.count(), 1);
 
     items = cm->items(QDateTime(), QDateTime(QDate(2010, 8, 10), QTime(23,59,59)));
