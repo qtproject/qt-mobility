@@ -351,8 +351,7 @@ void tst_ItemOccurrence::addOccurrenceWithException_data()
     QOrganizerItemPriority priority;
     priority.setPriority(QOrganizerItemPriority::HighestPriority);
     QOrganizerItemLocation location;
-    location.setLocationName("checkLocationName");
-    //location.setGeoLocation("20.176876;15.988765");
+    location.setLabel("checkLocationName");
     QString description("checkoccurrence");
     QString newDescription("modifyOccurrence");
     
@@ -482,8 +481,7 @@ void tst_ItemOccurrence::addOccurrenceWithException()
     QOrganizerItemPriority itemPriority = item.detail(QOrganizerItemPriority::DefinitionName);
     QCOMPARE(lastEvent.priority(),priority.priority());
     QOrganizerItemLocation itemLocation = item.detail(QOrganizerItemLocation::DefinitionName);
-    QCOMPARE(lastEvent.locationName(),itemLocation.locationName());
-    QCOMPARE(lastEvent.locationGeoCoordinates(),itemLocation.geoLocation());
+    QCOMPARE(lastEvent.location(),itemLocation.label());
     
     //Fetch instance on 1\9\2011.Since interval is 2 the insatnceList size should be 0.
     instanceList.clear();
@@ -567,7 +565,7 @@ void tst_ItemOccurrence::editOccurrence()
     QCOMPARE(changedFirstInstance.startDateTime(),firstInstance.startDateTime());
     QCOMPARE(changedFirstInstance.description(),firstInstance.description());
     QCOMPARE(changedFirstInstance.priority(),firstInstance.priority());
-    QCOMPARE(changedFirstInstance.locationName(),firstInstance.locationName());
+    QCOMPARE(changedFirstInstance.location(),firstInstance.location());
     
     //Check for the modified third instance and verify
     QOrganizerItem modifiedThirdItem = instanceList.at(0);

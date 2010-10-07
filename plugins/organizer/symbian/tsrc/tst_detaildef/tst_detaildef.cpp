@@ -89,7 +89,23 @@ void TestDetailDef::cleanup()
 
 void TestDetailDef::fetchDetailDef()
 {
-    QMap<QString, QOrganizerItemDetailDefinition> detailDef = m_om->detailDefinitions();
+    QMap<QString, QOrganizerItemDetailDefinition> detailDef;
+    detailDef = m_om->detailDefinitions(QOrganizerItemType::TypeEvent);
+    QVERIFY(!detailDef.isEmpty());
+
+    detailDef = m_om->detailDefinitions(QOrganizerItemType::TypeEventOccurrence);
+    QVERIFY(!detailDef.isEmpty());
+
+    detailDef = m_om->detailDefinitions(QOrganizerItemType::TypeJournal);
+    QVERIFY(!detailDef.isEmpty());
+
+    detailDef = m_om->detailDefinitions(QOrganizerItemType::TypeNote);
+    QVERIFY(!detailDef.isEmpty());
+
+    detailDef = m_om->detailDefinitions(QOrganizerItemType::TypeTodo);
+    QVERIFY(!detailDef.isEmpty());
+
+    detailDef = m_om->detailDefinitions(QOrganizerItemType::TypeTodoOccurrence);
     QVERIFY(!detailDef.isEmpty());
 }
 

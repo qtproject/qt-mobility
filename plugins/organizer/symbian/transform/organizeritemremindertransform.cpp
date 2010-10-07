@@ -98,41 +98,8 @@ void OrganizerItemReminderTransform::transformToEntryL(const QOrganizerItem& ite
         return;
 	}
 
-    QDateTime reminderDateTime = reminder.dateTime();
-    int timeOffset(0);
-
-    // If the reminder detail has a valid startDateTime, use it
-    if (!reminderDateTime.isNull()) {
-        QDateTime startDateTime;
-        if(item.type() == QOrganizerItemType::TypeEvent ||
-           item.type() == QOrganizerItemType::TypeEventOccurrence) {
-            QOrganizerEventTimeRange timeRange = item.detail<QOrganizerEventTimeRange>();
-            startDateTime = timeRange.startDateTime();
-        } else if (item.type() == QOrganizerItemType::TypeTodo ||
-                   item.type() == QOrganizerItemType::TypeTodoOccurrence) {
-            QOrganizerTodoTimeRange timeRange = item.detail<QOrganizerTodoTimeRange>();
-            startDateTime = timeRange.startDateTime();
-        }
-        if (reminderDateTime > startDateTime) {
-            // Reminder time must be less than or equal to the start time
-            User::Leave(KErrArgument);
-        }
-        // Get the time offset in minutes
-        timeOffset = reminderDateTime.secsTo(startDateTime) / secondsInOneMinute;
-    }
-
-    // If there is a valid reminder delta, use it
-    if (reminder.variantValues().contains(QOrganizerItemReminder::FieldSecondsBeforeStart)) {
-
-        if (timeOffset) {
-            // If both startDateTime and delta are defined, they must match
-            if (timeOffset != reminder.secondsBeforeStart() / secondsInOneMinute)
-                User::Leave(KErrArgument);
-        } else {
-            // Convert delta to minutes
-            timeOffset = reminder.secondsBeforeStart() / secondsInOneMinute;
-        }
-    }
+    // Get the time offset in minutes
+    int timeOffset = reminder.secondsBeforeStart() / secondsInOneMinute;
 
     // Now add the alarm details in the entry
     CCalAlarm *alarm = CCalAlarm::NewL();

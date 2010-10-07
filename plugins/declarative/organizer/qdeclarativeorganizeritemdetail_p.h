@@ -263,9 +263,9 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemInstanceOrigin)
 class QDeclarativeOrganizerItemLocation : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
-    Q_PROPERTY(QString geoLocation READ geoLocation WRITE setGeoLocation NOTIFY valueChanged)
-    Q_PROPERTY(QString address READ address WRITE setAddress NOTIFY valueChanged)
-    Q_PROPERTY(QString locationName READ locationName WRITE setLocationName NOTIFY valueChanged)
+    Q_PROPERTY(double latitude READ latitude WRITE setLatitude NOTIFY valueChanged)
+    Q_PROPERTY(double longitude READ longitude WRITE setLongitude NOTIFY valueChanged)
+    Q_PROPERTY(QString location READ location WRITE setLocation NOTIFY valueChanged)
 
 public:
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "location");
@@ -273,12 +273,13 @@ public:
         :QDeclarativeOrganizerItemDetail(parent)
     {
     }
-    void setGeoLocation(const QString& stringCoords) {m_detail.setValue(QOrganizerItemLocation::FieldGeoLocation, stringCoords);}
-    QString geoLocation() const {return m_detail.value(QOrganizerItemLocation::FieldGeoLocation);}
-    void setAddress(const QString& address) {m_detail.setValue(QOrganizerItemLocation::FieldAddress, address);}
-    QString address() const {return m_detail.value(QOrganizerItemLocation::FieldAddress);}
-    void setLocationName(const QString& locationName) {m_detail.setValue(QOrganizerItemLocation::FieldLocationName, locationName);}
-    QString locationName() const {return m_detail.value(QOrganizerItemLocation::FieldLocationName);}
+    void setLocation(const QString& location) {m_detail.setValue(QOrganizerItemLocation::FieldLabel, location);}
+    QString location() const {return m_detail.value(QOrganizerItemLocation::FieldLabel);}
+
+    void setLatitude(double latitude) {m_detail.setValue(QOrganizerItemLocation::FieldLatitude, latitude);}
+    double latitude() const {return m_detail.value<double>(QOrganizerItemLocation::FieldLatitude);}
+    void setLongitude(double longitude) {m_detail.setValue(QOrganizerItemLocation::FieldLongitude, longitude);}
+    double longitude() const {return m_detail.value<double>(QOrganizerItemLocation::FieldLongitude);}
 
 signals:
     void valueChanged();
