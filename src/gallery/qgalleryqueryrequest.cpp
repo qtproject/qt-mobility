@@ -143,8 +143,18 @@ QStringList QGalleryQueryRequest::propertyNames() const
 
 void QGalleryQueryRequest::setPropertyNames(const QStringList &names)
 {
-    d_func()->propertyNames = names;
+    if (d_func()->propertyNames != names) {
+        d_func()->propertyNames = names;
+
+        emit propertyNamesChanged();
+    }
 }
+
+/*!
+    \fn QGalleryQueryRequest::propertyNamesChanged();
+
+    Signals that the value of \l propertyNames has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::sortPropertyNames
@@ -164,8 +174,18 @@ QStringList QGalleryQueryRequest::sortPropertyNames() const
 
 void QGalleryQueryRequest::setSortPropertyNames(const QStringList &names)
 {
-    d_func()->sortPropertyNames = names;
+    if (d_func()->sortPropertyNames != names) {
+        d_func()->sortPropertyNames = names;
+
+        emit sortPropertyNamesChanged();
+    }
 }
+
+/*!
+    \fn QGalleryQueryRequest::sortPropertyNamesChanged()
+
+    Signals that the value of \l sortPropertyNames has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::autoUpdate
@@ -185,8 +205,18 @@ bool QGalleryQueryRequest::autoUpdate() const
 
 void QGalleryQueryRequest::setAutoUpdate(bool enabled)
 {
-    d_func()->autoUpdate = enabled;
+    if (d_func()->autoUpdate != enabled) {
+        d_func()->autoUpdate = enabled;
+
+        emit autoUpdateChanged();
+    }
 }
+
+/*!
+    \fn QGalleryQueryRequest::autoUpdateChanged()
+
+    Signals that the value of \l autoUpdate has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::offset
@@ -201,8 +231,19 @@ int QGalleryQueryRequest::offset() const
 
 void QGalleryQueryRequest::setOffset(int offset)
 {
-    d_func()->offset = qMax(0, offset);
+    const int boundedOffset = qMax(0, offset);
+    if (d_func()->offset != boundedOffset) {
+        d_func()->offset = boundedOffset;
+
+        emit offsetChanged();
+    }
 }
+
+/*!
+    \fn QGalleryQueryRequest::offsetChanged()
+
+    Signals that the value of offset has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::limit
@@ -217,9 +258,19 @@ int QGalleryQueryRequest::limit() const
 
 void QGalleryQueryRequest::setLimit(int limit)
 {
-    d_func()->limit = qMax(0, limit);
+    const int boundedLimit = qMax(0, limit);
+    if (d_func()->limit != boundedLimit) {
+        d_func()->limit = boundedLimit;
+
+        emit limitChanged();
+    }
 }
 
+/*!
+    \property QGalleryQueryRequest::limitChanged()
+
+    Signals that the value of \l limit has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::rootType
@@ -235,8 +286,18 @@ QString QGalleryQueryRequest::rootType() const
 
 void QGalleryQueryRequest::setRootType(const QString &itemType)
 {
-    d_func()->rootType = itemType;
+    if (d_func()->rootType != itemType) {
+        d_func()->rootType = itemType;
+
+        emit rootTypeChanged();
+    }
 }
+
+/*!
+    \fn QGalleryQueryRequest::rootTypeChanged()
+
+    Signals that the value of \l rootType has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::rootItem
@@ -251,9 +312,18 @@ QVariant QGalleryQueryRequest::rootItem() const
 
 void QGalleryQueryRequest::setRootItem(const QVariant &itemId)
 {
-    d_func()->rootItem = itemId;
+    if (d_func()->rootItem != itemId) {
+        d_func()->rootItem = itemId;
+
+        emit rootItemChanged();
+    }
 }
 
+/*!
+    \fn QGalleryQueryRequest::rootItemChanged()
+
+    Signals that the value of \l rootItem has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::scope
@@ -269,8 +339,18 @@ QGalleryQueryRequest::Scope QGalleryQueryRequest::scope() const
 
 void QGalleryQueryRequest::setScope(QGalleryQueryRequest::Scope scope)
 {
-    d_func()->scope = scope;
+    if (d_func()->scope != scope) {
+        d_func()->scope = scope;
+
+        emit scopeChanged();
+    }
 }
+
+/*!
+    \fn QGalleryQueryRequest::scopeChanged()
+
+    Signals that the value of \l scope has changed.
+*/
 
 /*!
     \property QGalleryQueryRequest::filter
@@ -288,8 +368,19 @@ QGalleryFilter QGalleryQueryRequest::filter() const
 
 void QGalleryQueryRequest::setFilter(const QGalleryFilter &filter)
 {
-    d_func()->filter = filter;
+    if (d_func()->filter != filter) {
+        d_func()->filter = filter;
+
+        emit filterChanged();
+    }
 }
+
+/*!
+    \fn QGalleryQueryRequest::filterChanged()
+
+    Signals that the value of \l filter has changed.
+*/
+
 
 /*!
     Returns the result set containing the results of a query.
