@@ -1558,10 +1558,10 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
                 QDate periodStart = originalOccurrence.startDateTime().date();
                 QDate periodEnd = originalOccurrence.endDateTime().date();
 
-                QList<QDate> newExceptionDates = parent->exceptionDates();
+                QSet<QDate> newExceptionDates = parent->exceptionDates();
                 QDate exceptionDate = periodStart;
                 while (exceptionDate <= periodEnd) {
-                    if (newExceptionDates.indexOf(exceptionDate) == -1)
+                    if (!newExceptionDates.contains(exceptionDate))
                         newExceptionDates << exceptionDate;
                     exceptionDate = exceptionDate.addDays(1);
                 }
@@ -1575,10 +1575,10 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
             QDate periodStart = occurrence->startDateTime().date();
             QDate periodEnd = occurrence->endDateTime().date();
 
-            QList<QDate> newExceptionDates = parent->exceptionDates();
+            QSet<QDate> newExceptionDates = parent->exceptionDates();
             QDate exceptionDate = periodStart;
             while (exceptionDate <= periodEnd) {
-                if (newExceptionDates.indexOf(exceptionDate) == -1)
+                if (!newExceptionDates.contains(exceptionDate))
                     newExceptionDates << exceptionDate;
                 exceptionDate = exceptionDate.addDays(1);
             }

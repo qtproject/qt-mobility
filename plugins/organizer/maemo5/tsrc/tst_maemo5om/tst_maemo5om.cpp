@@ -329,10 +329,10 @@ void tst_Maemo5Om::addEventWithRecurrence()
 
     // Create recurrence
     QOrganizerItemRecurrenceRule recurrenceRule;
-    recurrenceRule.setCount(10);
+    recurrenceRule.setLimit(10);
     recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
 
-    QList<QOrganizerItemRecurrenceRule> recurrenceRules;
+    QSet<QOrganizerItemRecurrenceRule> recurrenceRules;
     recurrenceRules << recurrenceRule;
 
     // Set recurrence
@@ -370,8 +370,8 @@ void tst_Maemo5Om::addEventExceptions()
     event.setEndDateTime(QDateTime(QDate(2010, 1, 1), QTime(12, 0, 0)));
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
-    rrule.setCount(3);
-    event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    rrule.setLimit(3);
+    event.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rrule);
     QVERIFY(m_om->saveItem(&event));
     QVERIFY(!event.localId().isNull());
     event = m_om->item(event.localId());
@@ -426,7 +426,7 @@ void tst_Maemo5Om::addEventExceptionWithGuid()
     christmas.setDisplayLabel(QLatin1String("Christmas"));
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-    christmas.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    christmas.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rrule);
     QVERIFY(m_om->saveItem(&christmas));
     QVERIFY(!christmas.id().managerUri().isEmpty());
     QVERIFY(!christmas.id().localId().isNull());
@@ -436,7 +436,7 @@ void tst_Maemo5Om::addEventExceptionWithGuid()
     newYearsDay.setStartDateTime(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)));
     newYearsDay.setEndDateTime(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 0)));
     newYearsDay.setDisplayLabel(QLatin1String("New Years Day"));
-    newYearsDay.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    newYearsDay.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rrule);
     QVERIFY(m_om->saveItem(&newYearsDay));
 
     QOrganizerTodo report;
@@ -539,10 +539,10 @@ void tst_Maemo5Om::removeEventWithRecurrence()
 
     // Create recurrence
     QOrganizerItemRecurrenceRule recurrenceRule;
-    recurrenceRule.setCount(20);
+    recurrenceRule.setLimit(20);
     recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
 
-    QList<QOrganizerItemRecurrenceRule> recurrenceRules;
+    QSet<QOrganizerItemRecurrenceRule> recurrenceRules;
     recurrenceRules << recurrenceRule;
 
     // Set recurrence
@@ -594,10 +594,10 @@ void tst_Maemo5Om::removeEventExceptions()
 
     // Create recurrence
     QOrganizerItemRecurrenceRule recurrenceRule;
-    recurrenceRule.setCount(10);
+    recurrenceRule.setLimit(10);
     recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
 
-    QList<QOrganizerItemRecurrenceRule> recurrenceRules;
+    QSet<QOrganizerItemRecurrenceRule> recurrenceRules;
     recurrenceRules << recurrenceRule;
 
     // Set recurrence
@@ -781,10 +781,10 @@ void tst_Maemo5Om::getItemInstances()
 
     // Create recurrence
     QOrganizerItemRecurrenceRule recurrenceRule;
-    recurrenceRule.setCount(15);
+    recurrenceRule.setLimit(15);
     recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
 
-    QList<QOrganizerItemRecurrenceRule> recurrenceRules;
+    QSet<QOrganizerItemRecurrenceRule> recurrenceRules;
     recurrenceRules << recurrenceRule;
 
     // Set recurrence
@@ -841,7 +841,7 @@ void tst_Maemo5Om::setRecurrenceDates()
     event.setDisplayLabel("setRecurrenceDates");
     event.setDescription("Recurrence date test event");
 
-    QList<QDate> recurrenceDates;
+    QSet<QDate> recurrenceDates;
     recurrenceDates << QDate(2010, 8, 30);
     recurrenceDates << QDate(2010, 9, 7);
 
@@ -855,7 +855,7 @@ void tst_Maemo5Om::setRecurrenceDates()
     QVERIFY(!event.guid().isEmpty());
 
     QOrganizerEvent fetchedEvent = static_cast<QOrganizerEvent>(m_om->item(event.id().localId()));
-    QList<QDate> fetchedRecurrenceDates = fetchedEvent.recurrenceDates();
+    QSet<QDate> fetchedRecurrenceDates = fetchedEvent.recurrenceDates();
 
     QCOMPARE(recurrenceDates, fetchedRecurrenceDates);
 }
@@ -1020,10 +1020,10 @@ void tst_Maemo5Om::saveItemsToNewCollection()
 
     // Create recurrence
     QOrganizerItemRecurrenceRule recurrenceRule;
-    recurrenceRule.setCount(10);
+    recurrenceRule.setLimit(10);
     recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
 
-    QList<QOrganizerItemRecurrenceRule> recurrenceRules;
+    QSet<QOrganizerItemRecurrenceRule> recurrenceRules;
     recurrenceRules << recurrenceRule;
 
     // Set recurrence

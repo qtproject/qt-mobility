@@ -594,18 +594,18 @@ CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* ite
         const QOrganizerEvent *event = static_cast<const QOrganizerEvent *>(item);
 
         // Add recurrence rules
-        QList<QOrganizerItemRecurrenceRule> recurrenceRules = event->recurrenceRules();
+        QSet<QOrganizerItemRecurrenceRule> recurrenceRules = event->recurrenceRules();
         foreach (QOrganizerItemRecurrenceRule rule, recurrenceRules)
             m_recTransformer.addQOrganizerItemRecurrenceRule(rule);
 
         // Add exception rules
-        QList<QOrganizerItemRecurrenceRule> exceptionRules = event->exceptionRules();
+        QSet<QOrganizerItemRecurrenceRule> exceptionRules = event->exceptionRules();
         foreach (QOrganizerItemRecurrenceRule rule, exceptionRules)
             m_recTransformer.addQOrganizerItemExceptionRule(rule);
 
         // Add recurrence dates
         QDate dateLimit = event->startDateTime().date().addYears(6);
-        QList<QDate> recurrenceDates = event->recurrenceDates();
+        QSet<QDate> recurrenceDates = event->recurrenceDates();
         foreach (QDate recDate, recurrenceDates) {
             // Because recurrence dates are simulated with setting an appropriate
             // recurrence rule, no date must be set 6 years or more after
@@ -618,7 +618,7 @@ CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* ite
         }
 
         // Add exception dates
-        QList<QDate> exceptionDates = event->exceptionDates();
+        QSet<QDate> exceptionDates = event->exceptionDates();
         foreach (QDate exceptionDate, exceptionDates) {
             // Because exception dates are simulated with setting an appropriate
             // exception rule, no date must be set 6 years or more after

@@ -178,42 +178,41 @@ QString OrganizerRecurrenceTransform::qrecurrenceRuleToIcalRecurrenceRule(const 
 
     icalRule << qfrequencyToIcalFrequency(rule.frequency());
 
-    if (rule.count() > 0)
-        icalRule << qcountToIcalCount(rule.count());
-    else if (rule.endDate() != QDate())
-        icalRule << qendDateToIcalUntil(rule.endDate().addDays(-1)); // in Maemo5 the end date is inclusive
+    if (rule.limitCount() > 0)
+        icalRule << qcountToIcalCount(rule.limitCount());
+    else if (rule.limitDate() != QDate())
+        icalRule << qendDateToIcalUntil(rule.limitDate().addDays(-1)); // in Maemo5 the end date is inclusive
 
     icalRule << qintervalToIcalInterval(rule.interval());
 
-    QList<QOrganizerItemRecurrenceRule::Month> months(rule.months());
+    QSet<QOrganizerItemRecurrenceRule::Month> months(rule.monthsOfYear());
     if (!months.isEmpty())
         icalRule << qmonthsToIcalByMonth(months);
 
-    QList<Qt::DayOfWeek> daysOfWeek(rule.daysOfWeek());
+    QSet<Qt::DayOfWeek> daysOfWeek(rule.daysOfWeek());
     if (!daysOfWeek.isEmpty())
         icalRule << qdaysOfWeekToIcalByDay(daysOfWeek);
 
-    QList<int> daysOfMonth(rule.daysOfMonth());
+    QSet<int> daysOfMonth(rule.daysOfMonth());
     if (!daysOfMonth.isEmpty())
         icalRule << qdaysOfMonthToIcalByMonthDay(daysOfMonth);
 
-    QList<int> daysOfYear(rule.daysOfYear());
+    QSet<int> daysOfYear(rule.daysOfYear());
     if (!daysOfYear.isEmpty())
         icalRule << qdaysOfYearToIcalByYearDay(daysOfYear);
 
-    QList<int> weeksOfYear(rule.weeksOfYear());
-    QList<int>::iterator weekOfYear;
-    for (weekOfYear = weeksOfYear.begin(); weekOfYear != weeksOfYear.end(); ++weekOfYear)
-        --(*weekOfYear); // in Maemo5 the week numbers start from zero
+    QSet<int> weeksOfYear;
+    foreach(int w, rule.weeksOfYear())
+        weeksOfYear.insert(w-1);// in Maemo5 the week numbers start from zero
 
     if (!weeksOfYear.isEmpty())
         icalRule << qweeksOfYearToIcalByWeekNo(weeksOfYear);
 
-    QList<int> positions(rule.positions());
+    QSet<int> positions(rule.positions());
     if (!positions.isEmpty())
         icalRule << qpositionsToIcalBySetPos(positions);
 
-    icalRule << qweekStartToIcalWkst(rule.weekStart());
+    icalRule << qweekStartToIcalWkst(rule.firstDayOfWeek());
 
     return icalRule.join(";");
 }
@@ -245,7 +244,7 @@ QString OrganizerRecurrenceTransform::qendDateToIcalUntil(QDate endDate) const
     return QString("UNTIL=") + endDate.toString("yyyyMMdd") + "T235959Z";
 }
 
-QString OrganizerRecurrenceTransform::qdaysOfWeekToIcalByDay(const QList<Qt::DayOfWeek> &daysOfWeek) const
+QString OrganizerRecurrenceTransform::qdaysOfWeekToIcalByDay(const QSet<Qt::DayOfWeek> &daysOfWeek) const
 {
     QStringList slist;
     foreach (Qt::DayOfWeek day, daysOfWeek)
@@ -267,38 +266,38 @@ QString OrganizerRecurrenceTransform::qweekdayToIcalWeekday(Qt::DayOfWeek dayOfW
     return mapping.key(dayOfWeek);
 }
 
-QString OrganizerRecurrenceTransform::qdaysOfMonthToIcalByMonthDay(const QList<int> &daysOfMonth) const
+QString OrganizerRecurrenceTransform::qdaysOfMonthToIcalByMonthDay(const QSet<int> &daysOfMonth) const
 {
     return QString("BYMONTHDAY=") + listOfNumbers(daysOfMonth);
 }
 
-QString OrganizerRecurrenceTransform::qdaysOfYearToIcalByYearDay(const QList<int> &daysOfYear) const
+QString OrganizerRecurrenceTransform::qdaysOfYearToIcalByYearDay(const QSet<int> &daysOfYear) const
 {
     return QString("BYYEARDAY=") + listOfNumbers(daysOfYear);
 }
 
-QString OrganizerRecurrenceTransform::qmonthsToIcalByMonth(const QList<QOrganizerItemRecurrenceRule::Month> &months) const
+QString OrganizerRecurrenceTransform::qmonthsToIcalByMonth(const QSet<QOrganizerItemRecurrenceRule::Month> &months) const
 {
-    QList<int> monthList;
+    QSet<int> monthList;
     foreach (QOrganizerItemRecurrenceRule::Month month, months)
         monthList << static_cast<int>(month);
     return QString("BYMONTH=") + listOfNumbers(monthList);
 }
 
-QString OrganizerRecurrenceTransform::qweeksOfYearToIcalByWeekNo(const QList<int>& weeksOfYear) const
+QString OrganizerRecurrenceTransform::qweeksOfYearToIcalByWeekNo(const QSet<int>& weeksOfYear) const
 {
     return QString("BYWEEKNO=") + listOfNumbers(weeksOfYear);
 }
 
-QString OrganizerRecurrenceTransform::qpositionsToIcalBySetPos(const QList<int>& positions) const
+QString OrganizerRecurrenceTransform::qpositionsToIcalBySetPos(const QSet<int>& positions) const
 {
     return QString("BYSETPOS=") + listOfNumbers(positions);
 }
 
-QString OrganizerRecurrenceTransform::listOfNumbers(const QList<int> &list) const
+QString OrganizerRecurrenceTransform::listOfNumbers(const QSet<int> &list) const
 {
     // The calendar backend wants the lists to be sorted
-    QList<int> sortedList = list;
+    QList<int> sortedList = list.toList();
     qSort(sortedList.begin(), sortedList.end());
 
     // Return a list of numbers, separated by comma
@@ -366,22 +365,22 @@ void OrganizerRecurrenceTransform::transformToQrecurrence(CRecurrence *crecurren
         m_lExceptionDates << QDateTime::fromTime_t(QString::fromStdString(*exceptionDate).toInt()).date();
 }
 
-QList<QOrganizerItemRecurrenceRule> OrganizerRecurrenceTransform::recurrenceRules() const
+QSet<QOrganizerItemRecurrenceRule> OrganizerRecurrenceTransform::recurrenceRules() const
 {
     return m_lRecurrenceRules;
 }
 
-QList<QOrganizerItemRecurrenceRule> OrganizerRecurrenceTransform::exceptionRules() const
+QSet<QOrganizerItemRecurrenceRule> OrganizerRecurrenceTransform::exceptionRules() const
 {
     return m_lExceptionRules;
 }
 
-QList<QDate> OrganizerRecurrenceTransform::recurrenceDates() const
+QSet<QDate> OrganizerRecurrenceTransform::recurrenceDates() const
 {
     return m_lRecurrenceDates;
 }
 
-QList<QDate> OrganizerRecurrenceTransform::exceptionDates() const
+QSet<QDate> OrganizerRecurrenceTransform::exceptionDates() const
 {
     return m_lExceptionDates;
 }
@@ -399,51 +398,51 @@ QOrganizerItemRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQ
     time_t until = rule->getUntil();
     if (until > 0) {
         QDateTime endDate(QDateTime::fromTime_t(until));
-        retn.setEndDate(endDate.date().addDays(1)); // in Maemo5 the end date is inclusive
+        retn.setLimit(endDate.date().addDays(1)); // in Maemo5 the end date is inclusive
     }
 
     int count = rule->getCount();
     if (count > 0)
-        retn.setCount(count);
+        retn.setLimit(count);
 
     retn.setInterval(rule->getInterval());
 
-    QList<QOrganizerItemRecurrenceRule::Month> qMonths;
+    QSet<QOrganizerItemRecurrenceRule::Month> qMonths;
     std::vector< short > months = rule->getMonth();
     std::vector< short >::const_iterator month;
     for (month = months.begin(); month != months.end(); ++month)
         qMonths << static_cast<QOrganizerItemRecurrenceRule::Month>(*month);
-    retn.setMonths(qMonths);
+    retn.setMonthsOfYear(qMonths);
 
-    QList<Qt::DayOfWeek> qDaysOfWeek;
+    QSet<Qt::DayOfWeek> qDaysOfWeek;
     std::vector< short > daysOfWeek = rule->getWeekDay();
     std::vector< short >::const_iterator dayOfWeek;
     for (dayOfWeek = daysOfWeek.begin(); dayOfWeek != daysOfWeek.end(); ++dayOfWeek)
         qDaysOfWeek << icalWeekdayToQdayOfWeek(*dayOfWeek);
     retn.setDaysOfWeek(qDaysOfWeek);
 
-    QList<int> qDaysOfMonth;
+    QSet<int> qDaysOfMonth;
     std::vector< short > daysOfMonth = rule->getMonthDay();
     std::vector< short >::const_iterator dayOfMonth;
     for (dayOfMonth = daysOfMonth.begin(); dayOfMonth != daysOfMonth.end(); ++dayOfMonth)
         qDaysOfMonth << static_cast<int>(*dayOfMonth);
     retn.setDaysOfMonth(qDaysOfMonth);
 
-    QList<int> qDaysOfYear;
+    QSet<int> qDaysOfYear;
     std::vector< short > daysOfYear = rule->getYearDay();
     std::vector< short >::const_iterator dayOfYear;
     for (dayOfYear = daysOfYear.begin(); dayOfYear != daysOfYear.end(); ++dayOfYear)
         qDaysOfYear << static_cast<int>(*dayOfYear);
     retn.setDaysOfYear(qDaysOfYear);
 
-    QList<int> qWeeksOfYear;
+    QSet<int> qWeeksOfYear;
     std::vector< short > weekNumbers = rule->getWeekNumber();
     std::vector< short >::const_iterator weekNumber;
     for (weekNumber = weekNumbers.begin(); weekNumber != weekNumbers.end(); ++weekNumber)
         qWeeksOfYear << static_cast<int>(*weekNumber + 1); // in Maemo5 the week numbers start from zero
     retn.setWeeksOfYear(qWeeksOfYear);
 
-    QList<int> qPositions;
+    QSet<int> qPositions;
     std::vector< short > positions = rule->getPos();
     std::vector< short >::const_iterator position;
     for (position = positions.begin(); position != positions.end(); ++position)
@@ -458,7 +457,7 @@ QOrganizerItemRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQ
     QString weekday;
     if (weekstartAt>=0)
         weekday = qrule.mid(weekstartAt + weekstartField.length(), 2);
-    retn.setWeekStart(icalRecurrenceTypeWeekdayToQdayOfWeek(weekday));
+    retn.setFirstDayOfWeek(icalRecurrenceTypeWeekdayToQdayOfWeek(weekday));
 
     return retn;
 }
