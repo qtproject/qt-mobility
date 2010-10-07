@@ -706,7 +706,7 @@ void CServiceProviderServerSession::SendServicePackageL(const QServicePackage& a
           size = iMsg.GetDesMaxLength(0);
           // enequeue the package so we send the  next chunk
           // when the next request comes through
-          iPendingPackageQueue.enqueue(aPackage); 
+          iPendingPackageQueue.prepend(aPackage); 
         }
         TPtrC8 ptr8((TUint8*)(iBlockData.constData()), size);      
         iMsg.WriteL(0, ptr8);
