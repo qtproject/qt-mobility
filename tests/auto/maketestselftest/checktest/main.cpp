@@ -39,36 +39,61 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICECONTROL_LS_P_H
-#define QREMOTESERVICECONTROL_LS_P_H
+#include <QCoreApplication>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QStringList>
 
-#include "qremoteservicecontrol.h"
-#include "instancemanager_p.h"
-#include "qserviceinterfacedescriptor.h"
-#include "qremoteservicecontrol_p.h"
-#include <QLocalServer>
+#include <stdio.h>
+#include <stdlib.h>
 
-QTM_BEGIN_NAMESPACE
-
-class ObjectEndPoint;
-
-class QRemoteServiceControlLocalSocketPrivate: public QRemoteServiceControlPrivate
+void fail(QString const& message)
 {
-    Q_OBJECT
-public:
-    QRemoteServiceControlLocalSocketPrivate(QObject* parent);
-    void publishServices(const QString& ident );
+    printf("CHECKTEST FAIL: %s\n", qPrintable(message));
+    exit(0);
+}
 
-public slots:
-    void processIncoming();
-    
-private:
-    bool createServiceEndPoint(const QString& ident);
+void pass(QString const& message)
+{
+    printf("CHECKTEST PASS: %s\n", qPrintable(message));
+    exit(0);
+}
 
-    QLocalServer* localServer;
-    QList<ObjectEndPoint*> pendingConnections;
-};
+int main(int argc, char** argv)
+{
+    QCoreApplication app(argc, argv);
 
-QTM_END_NAMESPACE
+    QStringList args = app.arguments();
+    args.removeFirst(); // ourself
 
+    QString args_quoted = QString("'%1'").arg(args.join("','"));
+
+#ifdef Q_WS_QWS
+    {
+        // for QWS we expect tests to be run as the QWS server
+        QString qws = args.takeLast();
+        if (qws != "-qws") {
+            fail(QString("Expected test to be run with `-qws', but it wasn't; args: %1").arg(args_quoted));
+        }
+    }
 #endif
+
+    if (args.count() != 1) {
+        fail(QString("These arguments are not what I expected: %1").arg(args_quoted));
+    }
+
+    QString test = args.at(0);
+
+    QFileInfo testfile(test);
+    if (!testfile.exists()) {
+        fail(QString("File %1 does not exist (my working directory is: %2, my args are: %3)")
+            .arg(test)
+            .arg(QDir::currentPath())
+            .arg(args_quoted)
+        );
+    }
+
+    pass(args_quoted);
+}
+

@@ -38,31 +38,36 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef DATABASEMANAGERSIGNALHANDLER_H
-#define DATABASEMANAGERSIGNALHANDLER_H
 
-#include <QObject>
-#include "databasemanagersession.h"
+#ifndef QREMOTESERVICEREGISTER_DBUS_P_H
+#define QREMOTESERVICEREGISTER_DBUS_P_H
+
+#include "qremoteserviceregister.h"
+#include "qremoteserviceregister_p.h"
+#include "instancemanager_p.h"
+#include "qserviceinterfacedescriptor.h"
+#include <QLocalServer>
+#include <QUuid>
+#include <QtDBus/QtDBus>
 
 QTM_BEGIN_NAMESPACE
 
-class DatabaseManagerSignalHandler : public QObject
-    {
-    Q_OBJECT
-    
-    public:
-        DatabaseManagerSignalHandler(CDatabaseManagerServerSession& databaseManagerServerSession);
+class ObjectEndPoint;
 
-    public Q_SLOTS:
-        void databaseChanged(const QString &path);
-        
-    public:
-        CDatabaseManagerServerSession& iDatabaseManagerServerSession;
-    };
+class QRemoteServiceRegisterDbusPrivate: public QRemoteServiceRegisterPrivate
+{
+    Q_OBJECT
+public:
+    QRemoteServiceRegisterDbusPrivate(QObject* parent);
+    void publishServices(const QString& ident );
+
+private:
+    bool createServiceEndPoint(const QString& ident);
+
+    QLocalServer* localServer;
+    QList<ObjectEndPoint*> pendingConnections;
+};
 
 QTM_END_NAMESPACE
 
 #endif
-
-// End of File
-

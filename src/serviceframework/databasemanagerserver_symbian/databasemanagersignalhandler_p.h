@@ -38,60 +38,31 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef DATABASEMANAGERSIGNALHANDLER_H
+#define DATABASEMANAGERSIGNALHANDLER_H
 
-#include "qremoteservicecontrol_p.h"
+#include <QObject>
+#include "databasemanagersession_p.h"
 
 QTM_BEGIN_NAMESPACE
 
+class DatabaseManagerSignalHandler : public QObject
+    {
+    Q_OBJECT
+    
+    public:
+        DatabaseManagerSignalHandler(CDatabaseManagerServerSession& databaseManagerServerSession);
 
-static bool defSecurityFilter(const void *)
-{
-    return true;
-}
+    public Q_SLOTS:
+        void databaseChanged(const QString &path);
+        
+    public:
+        CDatabaseManagerServerSession& iDatabaseManagerServerSession;
+    };
 
-
-QRemoteServiceControlPrivate::QRemoteServiceControlPrivate(QObject* parent)
-    : QObject(parent), m_quit(true), iFilter(defSecurityFilter)
-{
-}
-
-QRemoteServiceControlPrivate::~QRemoteServiceControlPrivate()
-{  
-}
-
-//void QRemoteServiceControlPrivate::publishServices( const QString& ident)
-//{
-//  qWarning("QRemoteServiceControlPrivate::publishServices has not been reimplemented");
-//}
-//
-//void QRemoteServiceControlPrivate::processIncoming()
-//{
-//  qWarning("QRemoteServiceControlPrivate::processIncoming has not been reimplemented");
-//}
-
-bool QRemoteServiceControlPrivate::quitOnLastInstanceClosed() const
-{
-  return m_quit;
-}
-
-void QRemoteServiceControlPrivate::setQuitOnLastInstanceClosed(bool quit)
-{  
-  m_quit = quit;
-}
-
-QRemoteServiceControl::securityFilter QRemoteServiceControlPrivate::setSecurityFilter(QRemoteServiceControl::securityFilter filter)
-{
-    QRemoteServiceControl::securityFilter f;
-    f = filter;
-    iFilter = filter;
-    return f;
-}
-
-QRemoteServiceControl::securityFilter QRemoteServiceControlPrivate::getSecurityFilter()
-{
-    return iFilter;
-}
-
-
-#include "moc_qremoteservicecontrol_p.cpp"
 QTM_END_NAMESPACE
+
+#endif
+
+// End of File
+

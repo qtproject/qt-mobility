@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,52 +38,23 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <qremoteserviceregister.h>
+#include <QCoreApplication>
+#include "remotedialer.h"
 
-#ifndef QREMOTESERVICECONTROL_P_H
-#define QREMOTESERVICECONTROL_P_H
-
-#include "qremoteservicecontrol.h"
-#include "instancemanager_p.h"
-#include "qserviceinterfacedescriptor.h"
-
-QTM_BEGIN_NAMESPACE
-
-class ObjectEndPoint;
-
-class QRemoteServiceControlPrivate: public QObject
+int main(int argc, char** argv)
 {
-    Q_OBJECT
-    Q_PROPERTY(bool quitOnLastInstanceClosed READ quitOnLastInstanceClosed WRITE setQuitOnLastInstanceClosed)
-public:
-    QRemoteServiceControlPrivate(QObject* parent);
-    virtual ~QRemoteServiceControlPrivate();
-
-    virtual void publishServices(const QString& ident ) = 0;
-
-    virtual bool quitOnLastInstanceClosed() const;
-    virtual void setQuitOnLastInstanceClosed(const bool quit);
-
-    virtual QRemoteServiceControl::securityFilter setSecurityFilter(QRemoteServiceControl::securityFilter filter);
-
-Q_SIGNALS:
-    void lastInstanceClosed();
-
-public slots:
-    // Must be implemented in the subclass
-    //void processIncoming();
-
-protected:
-    virtual QRemoteServiceControl::securityFilter getSecurityFilter();
-
-private:
-    bool m_quit;    
-    QRemoteServiceControl::securityFilter iFilter;
-
-public:
-    static QObject* proxyForService(const QRemoteServiceIdentifier& typeId, const QString& location);
-    static QRemoteServiceControlPrivate* constructPrivateObject(QObject *parent);
-};
-
-QTM_END_NAMESPACE
-
-#endif
+    QCoreApplication app(argc, argv);
+    
+    //register the unique service
+    QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
+    QRemoteServiceRegister::Entry uniqueEntry =
+        serviceRegister->createEntry<RemoteDialer>(
+                "VoipDialer", "com.nokia.qt.examples.Dialer", "1.1");
+    uniqueEntry.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
+    serviceRegister->publishEntries("dialer_service");
+    int res =  app.exec();
+    
+    delete serviceRegister;    
+    return res;
+}
