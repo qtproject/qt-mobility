@@ -128,7 +128,6 @@ private slots:  // Init & cleanup
     void cleanup();
 
 private slots:  // Test cases
-
     void addSimpleItem_data(){ addManagers(); };
     void addSimpleItem();
     void fetchSimpleItem_data(){ addManagers(); };
@@ -147,14 +146,16 @@ private slots:  // Test cases
     void addItem();
     void signalEmission_data(){ addManagers(); };
     void signalEmission();
-    void invalidDetail();
     void invalidDetail_data(){ addManagers(); };
+    void invalidDetail();
+    void addReminderToSingleInstance_data(){ addManagers(); };
 	void addReminderToSingleInstance();
-	void addReminderToSingleInstance_data(){ addManagers(); };
-	void removeReminderFromSingleInstance();
 	void removeReminderFromSingleInstance_data(){ addManagers(); };
-	void timezone();
+	void removeReminderFromSingleInstance();
 	void timezone_data() { addManagers(); };
+	void timezone();
+    void supportedItemTypes_data() { addManagers(); };
+    void supportedItemTypes();
 
 private:
     // TODO: enable the following test cases by moving them to "private slots"
@@ -799,6 +800,17 @@ void tst_SymbianOm::timezone()
     event = m_om->item(event.localId());
     QVERIFY(event.startDateTime() == startDateTime);
     QVERIFY(event.endDateTime() == endDateTime);
+}
+
+void tst_SymbianOm::supportedItemTypes()
+{
+    // Verify item type support
+    QVERIFY(m_om->supportedItemTypes().count() > 0);
+    foreach (QString itemType, m_om->supportedItemTypes()) {
+        QVERIFY(!m_om->detailDefinitions(itemType).isEmpty());
+        // TODO: Try saving an item with the given type.
+        // This would require some logic though.
+    }
 }
 
 /*!

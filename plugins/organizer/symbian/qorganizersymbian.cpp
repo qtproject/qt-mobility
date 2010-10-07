@@ -1519,17 +1519,13 @@ QList<int> QOrganizerItemSymbianEngine::supportedDataTypes() const
 
 QStringList QOrganizerItemSymbianEngine::supportedItemTypes() const
 {
-    // TODO - return which [predefined] types this engine supports
-    QStringList ret;
-
-    ret << QOrganizerItemType::TypeEvent;
-    ret << QOrganizerItemType::TypeEventOccurrence;
-    ret << QOrganizerItemType::TypeJournal;
-    ret << QOrganizerItemType::TypeNote;
-    ret << QOrganizerItemType::TypeTodo;
-    ret << QOrganizerItemType::TypeTodoOccurrence;
-
-    return ret;
+    // Lazy initialization
+    if (m_definition.isEmpty()) {
+        m_definition = QOrganizerItemManagerEngine::schemaDefinitions();
+        m_itemTransform.modifyBaseSchemaDefinitions(m_definition);
+    }
+    
+    return m_definition.keys();
 }
 
 #ifdef SYMBIAN_CALENDAR_V2
