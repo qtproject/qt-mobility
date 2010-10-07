@@ -307,6 +307,11 @@ void QAbstractVideoSurface::setNativeResolution(const QSize &resolution)
         emit nativeResolutionChanged(resolution);
     }
 }
+/*!
+    \fn QAbstractVideoSurface::nativeResolutionChanged(const QSize &resolution);
+
+    Signals the native \a resolution of video surface has changed.
+*/
 
 QT_END_NAMESPACE
 
