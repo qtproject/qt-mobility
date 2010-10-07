@@ -271,6 +271,12 @@ void CCameraEngine::HandleEvent(const TECAMEvent &aEvent)
         return;
     }
 
+    if (aEvent.iEventType == KUidECamEventCameraNoLongerReserved) {
+        // All camera related operations need to be stopped
+        iObserver->MceoHandleError(EErrReserve, KErrHardwareNotAvailable);
+        return;
+    }
+
 #if !defined(Q_CC_NOKIAX86) // Not Emulator
     // Other events; Exposure, Zoom, etc. (See ecamadvancedsettings.h)
     if (iAdvancedSettingsObserver)

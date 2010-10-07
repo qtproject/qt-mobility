@@ -58,6 +58,7 @@ class S60VideoCaptureSession;
 class S60CameraSettings;
 class CCameraEngine;
 class S60CameraViewfinderEngine;
+class QTimer;
 
 /*
  * Control for controlling camera base operations (e.g. start/stop and capture
@@ -122,7 +123,7 @@ public: // Internal
     void setSelectedDevice(const int index);
 
     void setVideoOutput(QObject *output, ViewfinderOutputType type);
-    
+
 private Q_SLOTS: // Internal Slots
 
     void videoStateChanged(const S60VideoCaptureSession::TVideoCaptureState state);
@@ -143,6 +144,12 @@ private: // Internal
     void stopCamera();
     
     void resetCamera();
+	/*
+     * This method moves the camera to the StandBy status:
+     *    - If camera access was lost
+     *    - If camera has been inactive in LoadedStatus for a long time
+     */
+    void toStandByStatus();
     void setCameraHandles();
 
 Q_SIGNALS: // Internal Signals
@@ -158,6 +165,7 @@ private: // Data
     S60VideoCaptureSession      *m_videoSession;
     S60CameraSettings           *m_advancedSettings;
     QObject                     *m_videoOutput;
+    QTimer                      *m_inactivityTimer;
     QCamera::CaptureMode        m_captureMode;
     QCamera::CaptureMode        m_requestedCaptureMode;
     QCamera::Status             m_internalState;
