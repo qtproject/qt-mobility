@@ -168,7 +168,7 @@ QFeedbackActuator::State QFeedbackActuator::state() const
 /*!
     \fn QFeedbackActuator::isCapabilitySupported(Capability capability) const
 
-    returns if the actuator supports the capability capability.
+    returns if the actuator supports the supplied \a capability.
 */
 bool QFeedbackActuator::isCapabilitySupported(Capability capability) const
 {
@@ -208,7 +208,7 @@ QList<QFeedbackActuator> QFeedbackActuator::actuators()
 /*!
     \fn QFeedbackActuator::operator==(const QFeedbackActuator &other) const
 
-    returns true if the actuators are the same
+    Returns true if this actuator is equal to \a other.
 */
 bool QFeedbackActuator::operator==(const QFeedbackActuator &other) const
 {
