@@ -91,7 +91,7 @@ QLocalSocket *Connection::sendSocket()
     return mConnection->sendSocket();
 }
 
-void Connection::translateIds(QOrganizerItem *item, const QString &managerUri, const IdToId &idTranslation)
+void Connection::translateItemIds(QOrganizerItem *item, const QString &managerUri, const ItemIdTranslation &idTranslation)
 {
     // translate the main id
     const QOrganizerItemLocalId previousLocalId = item->localId();
@@ -168,8 +168,8 @@ void Connection::initialOrganizerDataSent()
 
 void Connection::clearOrganizerItems()
 {
-    mLocalToRemote.clear();
-    mRemoteToLocal.clear();
+    mLocalToRemoteItemIds.clear();
+    mRemoteToLocalItemIds.clear();
     mNotifySimulator = false;
     mManager.removeItems(mManager.itemIds(), 0);
     mNotifySimulator = true;
@@ -178,7 +178,7 @@ void Connection::clearOrganizerItems()
 void Connection::saveOrganizerItem(QOrganizerItem item)
 {
     const QOrganizerItemLocalId remoteLocalId = item.localId();
-    translateIds(&item, mManager.managerUri(), mRemoteToLocal);
+    translateItemIds(&item, mManager.managerUri(), mRemoteToLocalItemIds);
     bool newItem = item.id().isNull();
 
     mNotifySimulator = false;
@@ -189,19 +189,19 @@ void Connection::saveOrganizerItem(QOrganizerItem item)
 
     // if this is a new item, save the new id in the maps
     if (newItem) {
-        mRemoteToLocal.insert(remoteLocalId, item.localId());
-        mLocalToRemote.insert(item.localId(), remoteLocalId);
+        mRemoteToLocalItemIds.insert(remoteLocalId, item.localId());
+        mLocalToRemoteItemIds.insert(item.localId(), remoteLocalId);
     }
 }
 
 void Connection::removeOrganizerItem(QOrganizerItemLocalId id)
 {
-    if (!mRemoteToLocal.contains(id))
+    if (!mRemoteToLocalItemIds.contains(id))
         return;
 
-    QOrganizerItemLocalId localId = mManager.item(mRemoteToLocal.value(id)).localId();
-    mRemoteToLocal.remove(id);
-    mLocalToRemote.remove(localId);
+    QOrganizerItemLocalId localId = mManager.item(mRemoteToLocalItemIds.value(id)).localId();
+    mRemoteToLocalItemIds.remove(id);
+    mLocalToRemoteItemIds.remove(localId);
 
     mNotifySimulator = false;
     mManager.removeItem(localId);

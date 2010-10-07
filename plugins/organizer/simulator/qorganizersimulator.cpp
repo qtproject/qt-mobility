@@ -129,7 +129,7 @@ bool QOrganizerItemSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, c
 
     // translate local id -> remote id
     QOrganizerItem item = *theOrganizerItem;
-    con->translateIds(&item, con->mManagerUri, con->mLocalToRemote);
+    con->translateItemIds(&item, con->mManagerUri, con->mLocalToRemoteItemIds);
     bool newItem = item.id().isNull();
 
     // save remotely
@@ -146,8 +146,8 @@ bool QOrganizerItemSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, c
         return false; // it's already saved remotely - revert?
 
     if (newItem) {
-        con->mRemoteToLocal.insert(reply.savedItem.localId(), theOrganizerItem->localId());
-        con->mLocalToRemote.insert(theOrganizerItem->localId(), reply.savedItem.localId());
+        con->mRemoteToLocalItemIds.insert(reply.savedItem.localId(), theOrganizerItem->localId());
+        con->mLocalToRemoteItemIds.insert(theOrganizerItem->localId(), reply.savedItem.localId());
     }
 
     return true;
