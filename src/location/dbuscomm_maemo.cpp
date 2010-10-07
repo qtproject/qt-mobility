@@ -168,9 +168,6 @@ bool DBusComm::sendDBusRegister()
         quint32 m = values.takeFirst().toUInt();
         availablePositioningMethods = (QGeoPositionInfoSource::PositioningMethod) m;
         minimumUpdateInterval = values.takeFirst().toUInt();
-        cout << "Register client ID: " << clientId << endl;
-        cout << "Methods available: " << hex << availablePositioningMethods << dec;
-        cout  << " minInterval: " << minimumUpdateInterval << "\n"; 
     } else {
         cerr << endl << "DBus error:\n";
         cerr << reply.errorName().toAscii().constData() << endl;
@@ -205,7 +202,6 @@ bool DBusComm::sendConfigRequest(Command command, QGeoPositionInfoSource::Positi
     
     if (reply.isValid()) {
         int n = reply.value();
-        cout << "sessionConfigRequest:Reply: " << n << endl;
     } else {
         cerr << endl << "DBus error:\n";
         cerr << reply.error().name().toAscii().constData() << endl;

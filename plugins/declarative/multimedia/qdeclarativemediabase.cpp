@@ -178,7 +178,7 @@ void QDeclarativeMediaBase::_q_statusChanged()
         case QMediaPlayer::PausedState:
             if (state == QMediaPlayer::StoppedState)
                 emit started();
-            if (m_state = QMediaPlayer::PausedState)
+            if (m_state == QMediaPlayer::PausedState)
                 emit paused();
             
             if (!isPaused && m_paused)
@@ -299,7 +299,7 @@ void QDeclarativeMediaBase::setObject(QObject *object)
     }
 
     if (m_metaDataControl) {
-        m_metaObject = new QMetaDataControlMetaObject(m_metaDataControl, object);
+        m_metaObject = new QMetaDataControlMetaObject(m_metaDataControl, m_metaData.data());
 
         QObject::connect(m_metaDataControl, SIGNAL(metaDataChanged()),
                 object, SLOT(_q_metaDataChanged()));
