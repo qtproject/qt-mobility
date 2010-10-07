@@ -90,4 +90,7 @@ QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerE
     return new QGeoRoutingManagerEngineNokia(parameters, error, errorString);
 }
 
+const QString QGeoServiceProviderFactoryNokia::defaultToken("152022572f0e44e07489c35cd46fa246");
+const QString QGeoServiceProviderFactoryNokia::defaultReferer("qtlocationapi");
+
 Q_EXPORT_PLUGIN2(qtgeoservices_nokia, QGeoServiceProviderFactoryNokia)
