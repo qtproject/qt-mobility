@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtConnectivity
 
     The QNdefFilter encapsulates the structure of an NDEF message and is used by
-    QContactlessManager::registerTargetDetectHandler() to match NDEF message that have a particular
+    QNearFieldManager::registerTargetDetectHandler() to match NDEF message that have a particular
     structure.
 
     The following filter matches NDEF messages that contain a single smart poster record:

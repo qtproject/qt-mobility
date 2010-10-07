@@ -39,23 +39,22 @@
 **
 ****************************************************************************/
 
-
-#ifndef QCONTACTLESSSOCKET_H
-#define QCONTACTLESSSOCKET_H
+#ifndef QLLCPSOCKET_H
+#define QLLCPSOCKET_H
 
 #include <QtCore/QIODevice>
 
-class QContactlessTarget;
+class QNearFieldTarget;
 
-class QContactlessSocket : public QIODevice
+class QLlcpSocket : public QIODevice
 {
     Q_OBJECT
 
 public:
-    explicit QContactlessSocket(QObject *parent = 0);
-    ~QContactlessSocket();
+    explicit QLlcpSocket(QObject *parent = 0);
+    ~QLlcpSocket();
 
-    void connectToService(const QContactlessTarget &target, const QString &serviceUri);
+    void connectToService(const QNearFieldTarget &target, const QString &serviceUri);
     void disconnectFromService();
 
     bool hasPendingDatagrams() const;
@@ -65,15 +64,15 @@ public:
     qint64 writeDatagram(const QByteArray &datagram);
 
     qint64 readDatagram(char *data, qint64 maxSize,
-                        QContactlessTarget *target = 0, QString *serviceUri = 0);
+                        QNearFieldTarget *target = 0, QString *serviceUri = 0);
     qint64 writeDatagram(const char *data, qint64 size,
-                         const QContactlessTarget &target, const QString &serviceUri);
+                         const QNearFieldTarget &target, const QString &serviceUri);
     qint64 writeDatagram(const QByteArray &datagram,
-                         const QContactlessTarget &target, const QString &serviceUri);
+                         const QNearFieldTarget &target, const QString &serviceUri);
 
 protected:
     qint64 readData(char *data, qint64 maxlen);
     qint64 writeData(const char *data, qint64 len);
 };
 
-#endif // QCONTACTLESSSOCKET_H
+#endif // QLLCPSOCKET_H

@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTLESSTARGET_H
-#define QCONTACTLESSTARGET_H
+#ifndef QNEARFIELDTARGET_H
+#define QNEARFIELDTARGET_H
 
 #include "qmobilityglobal.h"
 
@@ -55,10 +55,10 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QContactlessTargetPrivate;
+class QNearFieldTargetPrivate;
 class QNdefMessage;
 
-class Q_CONNECTIVITY_EXPORT QContactlessTarget
+class Q_CONNECTIVITY_EXPORT QNearFieldTarget
 {
 public:
     enum Type {
@@ -79,7 +79,7 @@ public:
     };
     Q_DECLARE_FLAGS(AccessMethods, AccessMethod)
 
-    QContactlessTarget();
+    QNearFieldTarget();
 
     QByteArray uid() const;
     QUrl url() const;
@@ -101,11 +101,11 @@ public:
     virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
 
 protected:
-    QSharedDataPointer<QContactlessTargetPrivate> d;
+    QSharedDataPointer<QNearFieldTargetPrivate> d;
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QCONTACTLESSTARGET_H
+#endif // QNEARFIELDTARGET_H

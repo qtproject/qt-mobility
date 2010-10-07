@@ -40,11 +40,11 @@
 ****************************************************************************/
 
 
-#include "qcontactlesssocket.h"
+#include "qllcpsocket.h"
 
 /*!
-    \class QContactlessSocket
-    \brief The QContactlessSocket class provides an NFC LLCP socket.
+    \class QLlcpSocket
+    \brief The QLlcpSocket class provides an NFC LLCP socket.
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
@@ -53,25 +53,24 @@
 */
 
 /*!
-    Construct a new unconnected contactless socket with \a parent.
+    Construct a new unconnected LLCP socket with \a parent.
 */
-QContactlessSocket::QContactlessSocket(QObject *parent)
+QLlcpSocket::QLlcpSocket(QObject *parent)
 :   QIODevice(parent)
 {
 }
 
 /*!
-    Destroys the contactless socket.
+    Destroys the LLCP socket.
 */
-QContactlessSocket::~QContactlessSocket()
+QLlcpSocket::~QLlcpSocket()
 {
 }
 
 /*!
     Connects to the service identified by the URI \a serviceUri on \a target.
 */
-void QContactlessSocket::connectToService(const QContactlessTarget &target,
-                                          const QString &serviceUri)
+void QLlcpSocket::connectToService(const QNearFieldTarget &target, const QString &serviceUri)
 {
     Q_UNUSED(target);
     Q_UNUSED(serviceUri);
@@ -80,7 +79,7 @@ void QContactlessSocket::connectToService(const QContactlessTarget &target,
 /*!
     Disconnects the socket.
 */
-void QContactlessSocket::disconnectFromService()
+void QLlcpSocket::disconnectFromService()
 {
 }
 
@@ -90,7 +89,7 @@ void QContactlessSocket::disconnectFromService()
 
     \sa pendingDatagramSize(), readDatagram()
 */
-bool QContactlessSocket::hasPendingDatagrams() const
+bool QLlcpSocket::hasPendingDatagrams() const
 {
     return false;
 }
@@ -101,7 +100,7 @@ bool QContactlessSocket::hasPendingDatagrams() const
 
     \sa hasPendingDatagrams(), readDatagram()
 */
-qint64 QContactlessSocket::pendingDatagramSize() const
+qint64 QLlcpSocket::pendingDatagramSize() const
 {
     return -1;
 }
@@ -110,7 +109,7 @@ qint64 QContactlessSocket::pendingDatagramSize() const
     Sends the datagram at \a data of size \a size to the service that this socket is connected to.
     Returns the number of bytes sent on success; otherwise return -1;
 */
-qint64 QContactlessSocket::writeDatagram(const char *data, qint64 size)
+qint64 QLlcpSocket::writeDatagram(const char *data, qint64 size)
 {
     Q_UNUSED(data);
     Q_UNUSED(size);
@@ -123,7 +122,7 @@ qint64 QContactlessSocket::writeDatagram(const char *data, qint64 size)
 
     Sends the datagram \a datagram to the service that this socket is connected to.
 */
-qint64 QContactlessSocket::writeDatagram(const QByteArray &datagram)
+qint64 QLlcpSocket::writeDatagram(const QByteArray &datagram)
 {
     Q_UNUSED(datagram);
 
@@ -142,8 +141,8 @@ qint64 QContactlessSocket::writeDatagram(const QByteArray &datagram)
 
     \sa writeDatagram(), hasPendingDatagrams(), pendingDatagramSize()
 */
-qint64 QContactlessSocket::readDatagram(char *data, qint64 maxSize,
-                                        QContactlessTarget *target, QString *serviceUri)
+qint64 QLlcpSocket::readDatagram(char *data, qint64 maxSize, QNearFieldTarget *target,
+                                 QString *serviceUri)
 {
     Q_UNUSED(data);
     Q_UNUSED(maxSize);
@@ -159,9 +158,8 @@ qint64 QContactlessSocket::readDatagram(char *data, qint64 maxSize,
 
     \sa readDatagram()
 */
-qint64 QContactlessSocket::writeDatagram(const char *data, qint64 size,
-                                         const QContactlessTarget &target,
-                                         const QString &serviceUri)
+qint64 QLlcpSocket::writeDatagram(const char *data, qint64 size, const QNearFieldTarget &target,
+                                  const QString &serviceUri)
 {
     Q_UNUSED(data);
     Q_UNUSED(size);
@@ -176,9 +174,8 @@ qint64 QContactlessSocket::writeDatagram(const char *data, qint64 size,
 
     Sends the datagram \a datagram to the service identified by the URI \a serviceUri on \a target.
 */
-qint64 QContactlessSocket::writeDatagram(const QByteArray &datagram,
-                                         const QContactlessTarget &target,
-                                         const QString &serviceUri)
+qint64 QLlcpSocket::writeDatagram(const QByteArray &datagram, const QNearFieldTarget &target,
+                                  const QString &serviceUri)
 {
     Q_UNUSED(datagram);
     Q_UNUSED(target);
@@ -190,7 +187,7 @@ qint64 QContactlessSocket::writeDatagram(const QByteArray &datagram,
 /*!
     \internal
 */
-qint64 QContactlessSocket::readData(char *data, qint64 maxlen)
+qint64 QLlcpSocket::readData(char *data, qint64 maxlen)
 {
     Q_UNUSED(data);
     Q_UNUSED(maxlen);
@@ -201,7 +198,7 @@ qint64 QContactlessSocket::readData(char *data, qint64 maxlen)
 /*!
     \internal
 */
-qint64 QContactlessSocket::writeData(const char *data, qint64 len)
+qint64 QLlcpSocket::writeData(const char *data, qint64 len)
 {
     Q_UNUSED(data);
     Q_UNUSED(len);

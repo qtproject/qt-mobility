@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qcontactlesstarget.h"
-#include "qcontactlesstarget_p.h"
+#include "qnearfieldtarget.h"
+#include "qnearfieldtarget_p.h"
 #include "qndefmessage.h"
 
 #include <QtCore/QString>
@@ -49,14 +49,14 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QContactlessTarget
-    \brief The QContactlessTarget class provides an interface for communicating with a target
+    \class QNearFieldTarget
+    \brief The QNearFieldTarget class provides an interface for communicating with a target
            device.
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
 
-    QContactlessTarget provides a generic interface for communicating with an NFC target device.
+    QNearFieldTarget provides a generic interface for communicating with an NFC target device.
     Both NFC Forum devices and NFC Forum Tag targets are supported by this class.  All target
     specific classes subclass this class.
 
@@ -77,12 +77,12 @@ QTM_BEGIN_NAMESPACE
     proprietary command to the target and retrieve the response.  sendCommands() can be used to
     send multiple proprietary commands to the target and retrieve all of the responses.
 
-    If the target supports LlcpAccess, the QContactlessSocket class can be used to connected to a
+    If the target supports LlcpAccess, the QLlcpSocket class can be used to connected to a
     service provided by the target.
 */
 
 /*!
-    \enum QContactlessTarget::Type
+    \enum QNearFieldTarget::Type
 
     This enum describes the type of tag the target is detected as.
 
@@ -97,9 +97,9 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QContactlessTarget::AccessMethod
+    \enum QNearFieldTarget::AccessMethod
 
-    This enum describes the access methods a contactless target supports.
+    This enum describes the access methods a near field target supports.
 
     \value NdefAccess               The target supports NDEF records using ndefMessage() and
                                     setNdefMessage().
@@ -111,76 +111,76 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a new contactless target.
+    Constructs a new near field target.
 */
-QContactlessTarget::QContactlessTarget()
-:   d(new QContactlessTargetPrivate)
+QNearFieldTarget::QNearFieldTarget()
+:   d(new QNearFieldTargetPrivate)
 {
 }
 
 /*!
-    Returns the UID of the contactless target.
+    Returns the UID of the near field target.
 */
-QByteArray QContactlessTarget::uid() const
+QByteArray QNearFieldTarget::uid() const
 {
     return d->uid;
 }
 
 /*!
-    Returns the URL of the contactless target.
+    Returns the URL of the near field target.
 */
-QUrl QContactlessTarget::url() const
+QUrl QNearFieldTarget::url() const
 {
-    if (!(d->accessMethods & QContactlessTarget::NdefAccess))
+    if (!(d->accessMethods & QNearFieldTarget::NdefAccess))
         return QUrl();
 
     return d->url;
 }
 
 /*!
-    Returns the type of tag type of this contactless target.
+    Returns the type of tag type of this near field target.
 */
-QContactlessTarget::Type QContactlessTarget::type() const
+QNearFieldTarget::Type QNearFieldTarget::type() const
 {
     return d->tagType;
 }
 
 /*!
-    Returns the access methods support by this contactless target.
+    Returns the access methods support by this near field target.
 */
-QContactlessTarget::AccessMethods QContactlessTarget::accessMethods() const
+QNearFieldTarget::AccessMethods QNearFieldTarget::accessMethods() const
 {
     return d->accessMethods;
 }
 
 /*!
-    Returns true if an NDEF message is stored on the contactless target; otherwise returns false.
+    Returns true if an NDEF message is stored on the near field target; otherwise returns false.
 */
-bool QContactlessTarget::hasNdefMessage() const
+bool QNearFieldTarget::hasNdefMessage() const
 {
     return false;
 }
 
 /*!
-    Returns the NDEF message stored on the contactless target.
+    Returns the NDEF message stored on the near field target.
 */
-QNdefMessage QContactlessTarget::ndefMessage() const
+QNdefMessage QNearFieldTarget::ndefMessage() const
 {
     return QNdefMessage();
 }
 
 /*!
-    Sets the NDEF message on the contactless target to \a message.
+    Sets the NDEF message on the near field target to \a message.
 */
-void QContactlessTarget::setNdefMessage(const QNdefMessage &message)
+void QNearFieldTarget::setNdefMessage(const QNdefMessage &message)
 {
     Q_UNUSED(message);
 }
 
 /*!
-    Sends the APDU \a command to the contactless target and returns the result.
+    Sends the APDU \a command to the near field target and returns the result.
 */
-QByteArray QContactlessTarget::sendApduCommand(const QByteArray &command)
+QByteArray QNearFieldTarget::sendApduCommand(const QByteArray &command)
 {
     Q_UNUSED(command);
 
@@ -188,9 +188,9 @@ QByteArray QContactlessTarget::sendApduCommand(const QByteArray &command)
 }
 
 /*!
-    Sends multiple APDU \a commands to the contactless target and returns the results.
+    Sends multiple APDU \a commands to the near field target and returns the results.
 */
-QList<QByteArray> QContactlessTarget::sendApduCommands(const QList<QByteArray> &commands)
+QList<QByteArray> QNearFieldTarget::sendApduCommands(const QList<QByteArray> &commands)
 {
     Q_UNUSED(commands);
 
@@ -198,9 +198,9 @@ QList<QByteArray> QContactlessTarget::sendApduCommands(const QList<QByteArray> &
 }
 
 /*!
-    Sends \a command to the contactless target and returns the result.
+    Sends \a command to the near field target and returns the result.
 */
-QByteArray QContactlessTarget::sendCommand(const QByteArray &command)
+QByteArray QNearFieldTarget::sendCommand(const QByteArray &command)
 {
     Q_UNUSED(command);
 
@@ -208,9 +208,9 @@ QByteArray QContactlessTarget::sendCommand(const QByteArray &command)
 }
 
 /*!
-    Sends multiple \a commands to the contactless target and returns the result.
+    Sends multiple \a commands to the near field target and returns the result.
 */
-QList<QByteArray> QContactlessTarget::sendCommands(const QList<QByteArray> &commands)
+QList<QByteArray> QNearFieldTarget::sendCommands(const QList<QByteArray> &commands)
 {
     Q_UNUSED(commands);
 

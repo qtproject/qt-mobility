@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include "qcontactlessmanager.h"
+#include "qnearfieldmanager.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QContactlessManager
-    \brief The QContactlessManager class provides access to notifications for NFC events.
+    \class QNearFieldManager
+    \brief The QNearFieldManager class provides access to notifications for NFC events.
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
@@ -71,7 +71,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QContactlessManager::targetDetected(const QContactlessTarget &target)
+    \fn void QNearFieldManager::targetDetected(const QNearFieldTarget &target)
 
     This signal is emitted whenever a target is detected. The \a target parameter represents the
     detected target.
@@ -80,7 +80,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QContactlessManager::transactionDetected(const QByteArray &applicationIdentifier)
+    \fn void QNearFieldManager::transactionDetected(const QByteArray &applicationIdentifier)
 
     This signal is emitted when ever a transaction is performed with the application identified by
     \a applicationIdentifier.
@@ -91,30 +91,30 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::Type targetType,
+    \fn int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
                                                                const QObject *object, const char *slot)
 
     Registers \a object to receive notifications on \a slot when a tag with a tag type of
     \a targetType has been detected and has an NDEF record that matches template argument.  The
     \a slot method on \a object should have the prototype
-    'void targetDetected(const QNdefMessage &message, const QContactlessTarget &target)'.
+    'void targetDetected(const QNdefMessage &message, const QNearFieldTarget &target)'.
 
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
 */
 
 /*!
-    Constructs a new contactless manager with \a parent.
+    Constructs a new near field manager with \a parent.
 */
-QContactlessManager::QContactlessManager(QObject *parent)
+QNearFieldManager::QNearFieldManager(QObject *parent)
 :   QObject(parent)
 {
 }
 
 /*!
-    Destroys the contactless manager.
+    Destroys the near field manager.
 */
-QContactlessManager::~QContactlessManager()
+QNearFieldManager::~QNearFieldManager()
 {
 }
 
@@ -122,16 +122,16 @@ QContactlessManager::~QContactlessManager()
     Registers \a object to receive notifications on \a slot when a tag with a tag type of
     \a targetType has been detected and has an NDEF record that matchings \a typeNameFormat and
     \a type.  The \a slot method on \a object should have the prototype
-    'void targetDetected(const QNdefMessage &message, const QContactlessTarget &target)'.
+    'void targetDetected(const QNdefMessage &message, const QNearFieldTarget &target)'.
 
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
 */
 
-int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::Type targetType,
-                                                        QNdefRecord::TypeNameFormat typeNameFormat,
-                                                        const QByteArray &type,
-                                                        const QObject *object, const char *slot)
+int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
+                                                     QNdefRecord::TypeNameFormat typeNameFormat,
+                                                     const QByteArray &type,
+                                                     const QObject *object, const char *slot)
 {
     return registerTargetDetectedHandler(targetType, quint8(typeNameFormat), type, object, slot);
 }
@@ -140,17 +140,16 @@ int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::Type 
     Registers \a object to receive notifications on \a slot when a tag with a tag type of
     \a targetType has been detected and has an NDEF record that matchings \a typeNameFormat and
     \a type.  The \a slot method on \a object should have the prototype
-    'void targetDetected(const QNdefMessage &message, const QContactlessTarget &target)'.
+    'void targetDetected(const QNdefMessage &message, const QNearFieldTarget &target)'.
 
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
 */
-int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::Type targetType,
-                                                        quint8 typeNameFormat,
-                                                        const QByteArray &type,
-                                                        const QObject *object, const char *slot)
+int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
+                                                     quint8 typeNameFormat, const QByteArray &type,
+                                                     const QObject *object, const char *slot)
 {
-    if (!QMetaObject::checkConnectArgs(SIGNAL(targetDetected(QNdefMessage,QContactlessTarget)),
+    if (!QMetaObject::checkConnectArgs(SIGNAL(targetDetected(QNdefMessage,QNearFieldTarget)),
                                        QMetaObject::normalizedSignature(slot))) {
         qWarning("Signatures do not match: %s:%d\n", __FILE__, __LINE__);
         return -1;
@@ -168,16 +167,16 @@ int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::Type 
     Registers \a object to receive notifications on \a slot when a tag with a tag type of
     \a targetType has been detected and has an NDEF message that matches \a filter is detected. The
     \a slot method on \a object should have the prototype
-    'void targetDetected(const QNdefMessage &message, const QContactlessTarget &target)'.
+    'void targetDetected(const QNdefMessage &message, const QNearFieldTarget &target)'.
 
     Returns an identifier, which can be used to unregister the handler, on success; otherwise
     returns -1.
 */
-int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::Type targetType,
-                                                       const QNdefFilter &filter,
-                                                       const QObject *object, const char *slot)
+int QNearFieldManager::registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
+                                                     const QNdefFilter &filter,
+                                                     const QObject *object, const char *slot)
 {
-    if (!QMetaObject::checkConnectArgs(SIGNAL(targetDetected(QNdefMessage,QContactlessTarget)),
+    if (!QMetaObject::checkConnectArgs(SIGNAL(targetDetected(QNdefMessage,QNearFieldTarget)),
                                        QMetaObject::normalizedSignature(slot))) {
         qWarning("Signatures do not match: %s:%d\n", __FILE__, __LINE__);
         return -1;
@@ -195,13 +194,13 @@ int QContactlessManager::registerTargetDetectedHandler(QContactlessTarget::Type 
 
     Returns true on success; otherwise returns false.
 */
-bool QContactlessManager::unregisterTargetDetectedHandler(int handlerId)
+bool QNearFieldManager::unregisterTargetDetectedHandler(int handlerId)
 {
     Q_UNUSED(handlerId);
 
     return false;
 }
 
-#include "moc_qcontactlessmanager.cpp"
+#include "moc_qnearfieldmanager.cpp"
 
 QTM_END_NAMESPACE

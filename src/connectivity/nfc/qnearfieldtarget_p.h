@@ -39,24 +39,24 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTLESSTARGET_P_H
-#define QCONTACTLESSTARGET_P_H
+#ifndef QNEARFIELDTARGET_P_H
+#define QNEARFIELDTARGET_P_H
 
-#include "qcontactlesstarget.h"
+#include "qnearfieldtarget.h"
 
 #include <QtCore/QUrl>
 
 QTM_BEGIN_NAMESPACE
 
-class QContactlessTargetPrivate : public QSharedData
+class QNearFieldTargetPrivate : public QSharedData
 {
 public:
     QByteArray uid;
     QUrl url;
-    QContactlessTarget::Type tagType;
-    QContactlessTarget::AccessMethods accessMethods;
+    QNearFieldTarget::Type tagType;
+    QNearFieldTarget::AccessMethods accessMethods;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QCONTACTLESSTARGET_P_H
+#endif // QNEARFIELDTARGET_P_H
