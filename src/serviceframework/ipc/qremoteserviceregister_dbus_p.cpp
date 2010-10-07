@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include "qremoteserviceregister_p.h"
 #include "qremoteserviceregister_dbus_p.h"
 #include "ipcendpoint_p.h"
 #include "objectendpoint_dbus_p.h"
@@ -116,34 +117,9 @@ protected slots:
 
 private:
     QDBusInterface* interface;
-    int endType;
     QString packageId;
+    int endType;
 };
-
-class DBusSession: public QObject
-{
-    Q_OBJECT
-public:
-    DBusSession(); 
-    ~DBusSession();
-
-public slots:
-    QByteArray writePackage(const QByteArray &package, int type, const QString &id) {
-        emit packageReceived(package, type, id); 
-        return package; 
-    }
-
-signals:
-    void packageReceived(const QByteArray &package, int type, const QString &id);
-};
-
-DBusSession::DBusSession() 
-{
-}
-
-DBusSession::~DBusSession() 
-{
-}
 
 class DBusSessionAdaptor: public QDBusAbstractAdaptor
 {
@@ -152,7 +128,7 @@ class DBusSessionAdaptor: public QDBusAbstractAdaptor
 
 public:
     DBusSessionAdaptor(QObject *parent);
-    ~DBusSessionAdaptor();
+    ~DBusSessionAdaptor() {}
 
 public slots:
     QByteArray writePackage(const QByteArray &package, int type, const QString &id) { 
@@ -165,8 +141,26 @@ public slots:
         return ret;
     }
 
+    bool processIncoming() {
+        bool ret;
+        QMetaObject::invokeMethod(parent(), "processIncoming",
+                                  Q_RETURN_ARG(bool, ret));
+        return ret;
+    }
+
+    void acceptIncoming(bool accept) {
+        QMetaObject::invokeMethod(parent(), "acceptIncoming",
+                                  Q_ARG(bool, accept));
+    }
+
+    void closeIncoming() {
+        QMetaObject::invokeMethod(parent(), "closeIncoming");
+    }
+
 signals:
     void packageReceived(const QByteArray &package, int type, const QString &id);
+    void newConnection(int pid, int uid);
+    void closeConnection();
 };
 
 DBusSessionAdaptor::DBusSessionAdaptor(QObject *parent)
@@ -175,16 +169,16 @@ DBusSessionAdaptor::DBusSessionAdaptor(QObject *parent)
     setAutoRelaySignals(true);
 }
 
-DBusSessionAdaptor::~DBusSessionAdaptor()
+QRemoteServiceRegisterDBusPrivate::QRemoteServiceRegisterDBusPrivate(QObject* parent)
+    : QRemoteServiceRegisterPrivate(parent), instanceCount(0)
 {
 }
 
-QRemoteServiceRegisterDbusPrivate::QRemoteServiceRegisterDbusPrivate(QObject* parent)
-    : QRemoteServiceRegisterPrivate(parent)
+QRemoteServiceRegisterDBusPrivate::~QRemoteServiceRegisterDBusPrivate()
 {
 }
 
-void QRemoteServiceRegisterDbusPrivate::publishServices(const QString& ident)
+void QRemoteServiceRegisterDBusPrivate::publishServices(const QString& ident)
 {
     createServiceEndPoint(ident);
 }
@@ -192,7 +186,7 @@ void QRemoteServiceRegisterDbusPrivate::publishServices(const QString& ident)
 /*!
     Creates endpoint on service side.
 */
-bool QRemoteServiceRegisterDbusPrivate::createServiceEndPoint(const QString& /*ident*/)
+bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& /*ident*/)
 {
     InstanceManager *iManager = InstanceManager::instance();
     QList<QRemoteServiceRegister::Entry> list = iManager->allEntries();
@@ -215,9 +209,11 @@ bool QRemoteServiceRegisterDbusPrivate::createServiceEndPoint(const QString& /*i
             return 0;
         }
 
-        // Register our DBusSession server/client
-        DBusSession *session = new DBusSession();
+        // Create and register our DBusSession server/client
+        session = new DBusSession();
         new DBusSessionAdaptor(session);
+        QObject::connect(session, SIGNAL(newConnection(int,int)), this, SLOT(processIncoming(int,int)));
+        QObject::connect(session, SIGNAL(closeConnection()), this, SLOT(processClosing()));
 
         QString path = "/" + list[0].interfaceName() + "/DBusSession";
         path.replace(QString("."), QString("/"));
@@ -226,12 +222,12 @@ bool QRemoteServiceRegisterDbusPrivate::createServiceEndPoint(const QString& /*i
             return 0;
         }
 
-        QDBusInterface *iface = new QDBusInterface(serviceName, path, "", QDBusConnection::sessionBus());
+        iface = new QDBusInterface(serviceName, path, "", QDBusConnection::sessionBus());
         if (!iface->isValid()) {
             qWarning() << "Cannot connect to remote service" << serviceName << path;;
             return 0;
         }
-    
+
         DBusEndPoint* ipcEndPoint = new DBusEndPoint(iface, SERVER);
         ObjectEndPoint* endpoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
         Q_UNUSED(endpoint);
@@ -241,9 +237,36 @@ bool QRemoteServiceRegisterDbusPrivate::createServiceEndPoint(const QString& /*i
     return false;
 }
 
+void QRemoteServiceRegisterDBusPrivate::processIncoming(int pid, int uid)
+{
+    if (getSecurityFilter()) {
+        QRemoteServiceRegisterCredentials cred;
+        cred.fd = -1;
+        cred.pid = pid;
+        cred.uid = uid;
+        cred.gid = -1;
+        
+        if(!getSecurityFilter()(reinterpret_cast<const void *>(&cred))){
+            session->acceptIncoming(false);
+            return;
+        }
+    }
+    
+    session->acceptIncoming(true);
+    instanceCount++;
+}
+
+void QRemoteServiceRegisterDBusPrivate::processClosing()
+{
+    instanceCount--;
+
+    if (instanceCount <= 0 && quitOnLastInstanceClosed())
+        QCoreApplication::exit();
+}
+
 QRemoteServiceRegisterPrivate* QRemoteServiceRegisterPrivate::constructPrivateObject(QObject *parent)
 {
-  return new QRemoteServiceRegisterDbusPrivate(parent);
+    return new QRemoteServiceRegisterDBusPrivate(parent);
 }
 
 /*!
@@ -261,22 +284,29 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
         return 0;
     }
 
-    QDBusMessage msg = QDBusMessage::createMethodCall(serviceName, path, "", "autostart");
-    connection->call(msg);
+    // Dummy call to autostart the service if not running
+    connection->call(QDBusMessage::createMethodCall(serviceName, path, "", "q_autostart"));
 
-    QDBusInterface *inface = new QDBusInterface(serviceName, path, "", QDBusConnection::sessionBus());
-    if (!inface->isValid()) {
+    QDBusInterface *iface = new QDBusInterface(serviceName, path, "", QDBusConnection::sessionBus());
+    if (!iface->isValid()) {
         qWarning() << "Cannot connect to remote service" << serviceName << path;
         return 0;
     }
-    
-    DBusEndPoint* ipcEndPoint = new DBusEndPoint(inface, CLIENT);
-    ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
-   
-    QObject *proxy = endPoint->constructProxy(entry);
-     
-    QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
-    return proxy;
+
+    QDBusReply<bool> reply = iface->call("processIncoming");
+    if (reply.value()) {
+        DBusEndPoint* ipcEndPoint = new DBusEndPoint(iface, CLIENT);
+        ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
+
+        QObject *proxy = endPoint->constructProxy(entry);
+
+        QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
+        QObject::connect(proxy, SIGNAL(destroyed()), iface, SLOT(closeIncoming()));
+        return proxy;
+    }
+
+    qDebug() << "Insufficient credentials to load a service instance";
+    return 0;
 }
 
 #include "moc_qremoteserviceregister_dbus_p.cpp"

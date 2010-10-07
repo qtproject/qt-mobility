@@ -64,7 +64,7 @@ QRemoteServiceRegisterPrivate::~QRemoteServiceRegisterPrivate()
 
 bool QRemoteServiceRegisterPrivate::quitOnLastInstanceClosed() const
 {
-  return m_quit;
+    return m_quit;
 }
 
 void QRemoteServiceRegisterPrivate::setQuitOnLastInstanceClosed(bool quit)
