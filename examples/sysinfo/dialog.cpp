@@ -154,6 +154,8 @@ void Dialog::setupDevice()
     connect(di,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
             this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
 
+    currentBatStat = di->batteryStatus();
+
     ImeiLabel->setText(di->imei());
     imsiLabel->setText(di->imsi());
 //! [manuf-id]
@@ -514,9 +516,9 @@ void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
 
 void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
 {
-    // this wont annoy users will it?
+    if(currentBatStat == status)
+        return;
     QString msg;
-//    if(di->isBatteryCharging()) {
         switch(status) {
         case QSystemDeviceInfo::BatteryCritical:
             {
@@ -549,8 +551,7 @@ void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
             }
             break;
         };
-  //  }
-
+        currentBatStat = status;
 }
 
 void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode , int strength)
