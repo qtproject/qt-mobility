@@ -146,7 +146,7 @@ class QOrganizerItemInstanceFetchRequestPrivate : public QOrganizerItemAbstractR
 public:
     QOrganizerItemInstanceFetchRequestPrivate()
         : QOrganizerItemAbstractRequestPrivate(),
-          m_countLimit(-1)
+          m_maxOccurrences(-1)
     {
     }
 
@@ -162,7 +162,7 @@ public:
     QOrganizerItem m_generator;
     QDateTime m_startDate;
     QDateTime m_endDate;
-    int m_countLimit;
+    int m_maxOccurrences;
     QOrganizerItemFetchHint m_fetchHint;
 
     QList<QOrganizerItem> m_organizeritems;

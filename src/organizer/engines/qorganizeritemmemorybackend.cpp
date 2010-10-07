@@ -1569,7 +1569,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             QOrganizerItem generator(r->generator());
             QDateTime startDate(r->startDate());
             QDateTime endDate(r->endDate());
-            int countLimit = r->countLimit();
+            int countLimit = r->maxOccurrences();
             QOrganizerItemFetchHint fetchHint = r->fetchHint();
 
             QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;

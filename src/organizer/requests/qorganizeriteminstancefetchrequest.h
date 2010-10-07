@@ -65,13 +65,13 @@ public:
     void setGenerator(const QOrganizerItem& item);
     void setStartDate(const QDateTime& date);
     void setEndDate(const QDateTime& date);
-    void setCountLimit(int maxCount);
+    void setMaxOccurrences(int maxCount);
     void setFetchHint(const QOrganizerItemFetchHint& hint);
 
     QOrganizerItem generator() const;
     QDateTime startDate() const;
     QDateTime endDate() const;
-    int countLimit() const;
+    int maxOccurrences() const;
     QOrganizerItemFetchHint fetchHint() const;
 
     /* Results */

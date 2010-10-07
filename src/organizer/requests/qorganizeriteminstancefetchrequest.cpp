@@ -87,10 +87,10 @@ void QOrganizerItemInstanceFetchRequest::setEndDate(const QDateTime &date)
 }
 
 /*! Sets the maximum number of items to fetch to \a maxCount. */
-void QOrganizerItemInstanceFetchRequest::setCountLimit(int maxCount)
+void QOrganizerItemInstanceFetchRequest::setMaxOccurrences(int maxCount)
 {
     Q_D(QOrganizerItemInstanceFetchRequest);
-    d->m_countLimit = maxCount;
+    d->m_maxOccurrences = maxCount;
 }
 
 void QOrganizerItemInstanceFetchRequest::setFetchHint(const QOrganizerItemFetchHint& hint)
@@ -121,10 +121,10 @@ QDateTime QOrganizerItemInstanceFetchRequest::endDate() const
 }
 
 /*! Returns the maximum number of items to fetch. */
-int QOrganizerItemInstanceFetchRequest::countLimit() const
+int QOrganizerItemInstanceFetchRequest::maxOccurrences() const
 {
     Q_D(const QOrganizerItemInstanceFetchRequest);
-    return d->m_countLimit;
+    return d->m_maxOccurrences;
 }
 
 /*! Returns the list of organizer items retrieved by this request */
