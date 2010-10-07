@@ -46,20 +46,45 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QRemoteServiceRegister::Entry
+    \brief This class represents a remote service entry to be published on QRemoteServiceRegister.
+
+    This class is created using QRemoteServiceRegister::createEntry to supply remote service
+    details matching a valid QServiceInterfaceDescriptor. 
+    
+    A registration entry can then be published for discovery by remote clients.
+*/
+
+/*!
+    Constructs a null registration entry.
+*/
 QRemoteServiceRegister::Entry::Entry()
 {
     d = new QRemoteServiceRegisterEntryPrivate;
 }
 
+/*!
+    Constructs the registration entry that is a copy of \a other.
+*/
 QRemoteServiceRegister::Entry::Entry(const Entry& other)
     : d(other.d)
 {
 }
 
+/*!
+    Destroys the registration entry.
+*/
 QRemoteServiceRegister::Entry::~Entry()
 {
 }
 
+/*!
+    Checks if the registration entry is currently a valid remote service entry
+
+    Returns true if the \a serviceName, \a interfaceName and \version point to
+    a valid QServiceInterfaceDescriptor, otherwise false. 
+*/
 bool QRemoteServiceRegister::Entry::isValid() const
 {
     if (!d->iface.isEmpty() && !d->service.isEmpty()
@@ -68,6 +93,9 @@ bool QRemoteServiceRegister::Entry::isValid() const
     return false;
 }
 
+/*!
+    Returns true if this font is equal to \a other; otherwise false.
+*/
 bool QRemoteServiceRegister::Entry::operator==(const Entry& other) const
 {
     return d->service == other.d->service &&
@@ -75,27 +103,54 @@ bool QRemoteServiceRegister::Entry::operator==(const Entry& other) const
            d->ifaceVersion == other.d->ifaceVersion;
 }
 
+/*!
+    Returns true if this font is different from \a other; otherwise false.
+*/
 bool QRemoteServiceRegister::Entry::operator!=(const Entry& other) const
 {
     return !(other == *this);
 }
 
+/*!
+    Assigns \a other to this registration entry and returns a reference to it.
+*/
 QRemoteServiceRegister::Entry &QRemoteServiceRegister::Entry::operator=(const Entry& other)
 {
     d = other.d;
     return *this;
 }
 
+/*! 
+    Returns the interface name of the registration entry.
+
+    This should correspond to the interface name from the service XML description.
+
+    \sa serviceName(), version()
+*/
 QString QRemoteServiceRegister::Entry::interfaceName() const
 {
     return d->iface;
 }
 
+/*! 
+    Returns the service  name of the registration entry.
+
+    This should correspond to the service name from the service XML description.
+
+    \sa interfaceName(), version()
+*/
 QString QRemoteServiceRegister::Entry::serviceName() const
 {
     return d->service;
 }
 
+/*! 
+    Returns the version of the registration entry in format x.y.
+
+    This should correspond to the interface version from the service XML description.
+
+    \sa interfaceName(), serviceName()
+*/
 QString QRemoteServiceRegister::Entry::version() const
 {
     return d->ifaceVersion;
@@ -107,13 +162,19 @@ const QMetaObject * QRemoteServiceRegister::Entry::metaObject() const
 }
 
 /*!
-    Sets the instance type of the QRemoteServiceRegister::Entry Entry
+    Sets the QRemoteServiceRegister::InstanceType of the registration entry.
+
+    If this is not explicitly called, the default instance type for the registration entry 
+    is QRemoteServiceRegister::GlobalInstance.
 */
 void QRemoteServiceRegister::Entry::setInstantiationType(QRemoteServiceRegister::InstanceType t)
 {
     d->instanceType = t;
 }
 
+/*! 
+    Returns the QRemoteServiceRegister::InstanceType of the registration entry.
+*/
 QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiationType() const
 {
     return d->instanceType;
@@ -129,8 +190,10 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiatio
     object instance and ensures that the platform specific IPC mechanism publishes the required
     service object to other processes in the system. 
 
-    Note that in order for the remote services to be discoverable by QServiceManager each \l Entry
-    must be registered with the information reflecting the service XML description.
+    Note that in order for the remote services to be discoverable by QServiceManager each
+    QRemoteServiceRegister::Entry must be registered with the information reflecting the 
+    service XML description, otherwise no corresponding QServiceInterfaceDescriptor can be
+    found.
     
     The following XML descriptor is used for subsequent examples. 
 
@@ -159,7 +222,7 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiatio
     {
         QCoreApplication app(argc, argv);
 
-        QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
+        QRemoteServiceRegister *serviceRegister = new QRemoteServiceRegister();
 
         QRemoteServiceRegister::Entry myService;
         myService = serviceRegister->createEntry<MyClass>(
@@ -172,11 +235,12 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiatio
     }
     \endcode
 
-    By default all entries are created as \l GlobalInstance types but this can be set 
-    by \l Entry. Once service entries are published to instance manager
-    the register is no longer needed and can be removed.
+    By default all entries are created as \l QRemoteServiceRegister::GlobalInstance 
+    types but this can be set by calling QRemoteServiceRegister::Entry::setInstantiationType()
+    on the entry. Once service entries are published to the instance manager the register 
+    is no longer needed and can be removed.
 
-    \sa Entry
+    \sa QRemoteServiceRegister::Entry
 */
 
 /*!
@@ -192,8 +256,8 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiatio
     This signal is emitted whenever a created instance has been closed. This indicates
     that a connected client has either shutdown or released the loaded service object.
     
-    The \l Entry is supplied to identify which registered service entry the closed 
-    instance belonged to.
+    The QRemoteServiceRegister::Entry is supplied to identify which registered service 
+    entry the closed instance belonged to.
 
     \sa allInstancesClosed()
 */
@@ -203,7 +267,7 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiatio
 
     This signal is emitted whenever all service instances have been closed. This indicates
     that the last connected client has either shutdown or released the loaded service object.
-    
+   
     \sa instanceClosed()
 */
 
@@ -241,8 +305,9 @@ QRemoteServiceRegister::~QRemoteServiceRegister()
 }
 
 /*!
-    Publishes every service entry that has been created using \l createEntry(). The \a ident 
-    is the service specific IPC address under which the service can be reached. 
+    Publishes every service QRemoteServiceRegister::Entry that has been created using 
+    \l createEntry(). The \a ident is the service specific IPC address under which 
+    the service can be reached. 
     
     This address must match the address provided in the services XML descriptor, otherwise 
     the service will not be discoverable.
@@ -271,7 +336,9 @@ void QRemoteServiceRegister::setQuitOnLastInstanceClosed(bool quit)
 }
 
 /*! 
-    Allows a security filter to be set which can access \l QRemoteServiceRegisterCredentials.
+    Allows a security filter to be set which can access 
+    QRemoteServiceRegister::QRemoteServiceRegisterCredentials.
+    
     The \l SecurityFilter takes a function pointer where the function code implements possible
     permission checks and returns true or false. If a connecting client fails the security
     filter it will be denied access and unable to obtain a valid service instance. 
@@ -342,14 +409,14 @@ QRemoteServiceRegister::Entry QRemoteServiceRegister::createEntry(const QString&
 #ifndef QT_NO_DATASTREAM
 QDataStream& operator>>(QDataStream& s, QRemoteServiceRegister::Entry& entry) {
     //for now we only serialize version, iface and service name
-    //neds to sync with qHash and operator==
+    //needs to sync with qHash and operator==
     s >> entry.d->service >> entry.d->iface >> entry.d->ifaceVersion;
     return s;
 }
 
 QDataStream& operator<<(QDataStream& s, const QRemoteServiceRegister::Entry& entry) {
     //for now we only serialize version, iface and service name
-    //neds to sync with qHash and operator==
+    //needs to sync with qHash and operator==
     s << entry.d->service << entry.d->iface << entry.d->ifaceVersion;
     return s;
 }
