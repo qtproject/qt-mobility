@@ -8,7 +8,8 @@ HEADERS += \
     nfc/qndefmessage.h \
     nfc/qcontactlesssocket.h \
     nfc/qndeffilter.h \
-    nfc/qndefnfcurirecord.h
+    nfc/qndefnfcurirecord.h \
+    nfc/qcontactlesstarget_p.h
 
 PRIVATE_HEADERS +=
 

@@ -39,73 +39,24 @@
 **
 ****************************************************************************/
 
+#ifndef QCONTACTLESSTARGET_P_H
+#define QCONTACTLESSTARGET_P_H
 
-#ifndef QCONTACTLESSTARGET_H
-#define QCONTACTLESSTARGET_H
+#include "qcontactlesstarget.h"
 
-#include "qmobilityglobal.h"
-
-#include <QtCore/QList>
-#include <QtCore/QSharedDataPointer>
-
-class QString;
-class QUrl;
-
-QT_BEGIN_HEADER
+#include <QtCore/QUrl>
 
 QTM_BEGIN_NAMESPACE
 
-class QContactlessTargetPrivate;
-class QNdefMessage;
-
-class Q_CONNECTIVITY_EXPORT QContactlessTarget
+class QContactlessTargetPrivate : public QSharedData
 {
 public:
-    enum Type {
-        AnyTarget,
-        ProprietaryTag,
-        NfcTagType1,
-        NfcTagType2,
-        NfcTagType3,
-        NfcTagType4,
-        MifareTag
-    };
-
-    enum AccessMethod {
-        NdefAccess,
-        ApduAccess,
-        TagTypeSpecificAccess,
-        LlcpAccess
-    };
-    Q_DECLARE_FLAGS(AccessMethods, AccessMethod)
-
-    QContactlessTarget();
-
-    QByteArray uid() const;
-    QUrl url() const;
-
-    Type type() const;
-    AccessMethods accessMethods() const;
-
-    // NdefAccess
-    virtual bool hasNdefMessage() const;
-    virtual QNdefMessage ndefMessage() const;
-    virtual void setNdefMessage(const QNdefMessage &message);
-
-    // ApduAccess
-    virtual QByteArray sendApduCommand(const QByteArray &command);
-    virtual QList<QByteArray> sendApduCommands(const QList<QByteArray> &commands);
-
-    // TagTypeSpecificAccess
-    virtual QByteArray sendCommand(const QByteArray &command);
-    virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
-
-protected:
-    QSharedDataPointer<QContactlessTargetPrivate> d;
+    QByteArray uid;
+    QUrl url;
+    QContactlessTarget::Type tagType;
+    QContactlessTarget::AccessMethods accessMethods;
 };
 
 QTM_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif // QCONTACTLESSTARGET_H
+#endif // QCONTACTLESSTARGET_P_H

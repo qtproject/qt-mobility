@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qcontactlesstarget.h"
+#include "qcontactlesstarget_p.h"
 #include "qndefmessage.h"
 
 #include <QtCore/QString>
@@ -109,19 +110,11 @@ QTM_BEGIN_NAMESPACE
     \value LlcpAccess               The target supports peer-to-peer LLCP communication.
 */
 
-class QContactlessTargetPrivate
-{
-public:
-    QByteArray uid;
-    QUrl url;
-    QContactlessTarget::Type tagType;
-    QContactlessTarget::AccessMethods accessMethods;
-};
-
 /*!
     Constructs a new contactless target.
 */
 QContactlessTarget::QContactlessTarget()
+:   d(new QContactlessTargetPrivate)
 {
 }
 
