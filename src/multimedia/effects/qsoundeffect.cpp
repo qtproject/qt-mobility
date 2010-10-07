@@ -210,6 +210,14 @@ void QSoundEffect::play()
     d->play();
 }
 
+/*!
+  \qmlmethod SoundEffect::stop()
+
+  Stop current playback.
+  Note that if the backend is PulseAudio, due to the limitation of the underlying API,
+  tis stop will only prevent next looping but will not be able to stop current playback immediately.
+
+ */
 void QSoundEffect::stop()
 {
     d->stop();
