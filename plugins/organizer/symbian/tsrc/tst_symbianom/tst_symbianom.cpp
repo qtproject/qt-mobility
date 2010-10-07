@@ -1069,28 +1069,6 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
             << QTstDetailField(timeRangeDefinition, fieldEndDateTime, QDateTime::currentDateTime().addDays(1))
             // delta reminder half an hour before
             << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldSecondsBeforeStart, int(-1800)));
-
-    QTest::newRow(testCaseName("item with reminder datetime and delta", managerName, itemType).toLatin1().constData())
-        << managerName
-        << (int) QOrganizerItemManager::NoError
-        << (QTstDetailFieldList(itemTypeDetails)
-            << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president"))
-            // start tomorrow
-            << QTstDetailField(timeRangeDefinition, fieldStartDateTime, QDateTime::currentDateTime().addDays(1))
-            << QTstDetailField(timeRangeDefinition, fieldEndDateTime, QDateTime::currentDateTime().addDays(2))
-            // delta reminder half an hour before
-            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldSecondsBeforeStart, int(1800)));
-
-    QTest::newRow(testCaseName("item with conflicting reminder datetime and delta", managerName, itemType).toLatin1().constData())
-        << managerName
-        << (int) QOrganizerItemManager::BadArgumentError
-        << (QTstDetailFieldList(itemTypeDetails)
-            << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president"))
-            // start tomorrow
-            << QTstDetailField(timeRangeDefinition, fieldStartDateTime, QDateTime::currentDateTime().addDays(1))
-            << QTstDetailField(timeRangeDefinition, fieldEndDateTime, QDateTime::currentDateTime().addDays(2))
-            // delta reminder 15 minutes before
-            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldSecondsBeforeStart, int(900)));
 }
 
 /*!

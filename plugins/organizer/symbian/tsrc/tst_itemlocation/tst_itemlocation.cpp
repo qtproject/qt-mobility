@@ -152,17 +152,7 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
     
         loc.setLabel("TestLocationName");
         loc.setLatitude(20.356784);
-        loc.setLongitude(76.276748);
-        QTest::newRow(QString("[%1] LocationName=%2 Latitude=%3 Longitude=%4").arg(managerName).arg(loc.label()).arg(loc.latitude()).arg(loc.longitude()).toLatin1().constData())
-                << managerName
-		<< itemType
-		<< QDateTime::currentDateTime().addDays(1)
-		<< loc
-		<< QOrganizerItemManager::NoError;
-	
-        loc.setLabel("TestLocationName");
-        loc.setLatitude(20.356784);
-        loc.setLongitude(76.276748);
+        loc.setLongitude(-76.276748);
         QTest::newRow(QString("[%1] LocationName=%2 Latitude=%3 Longitude=%4").arg(managerName).arg(loc.label()).arg(loc.latitude()).arg(loc.longitude()).toLatin1().constData())
         << managerName
         << itemType
@@ -171,18 +161,8 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
         << QOrganizerItemManager::NoError;
 
         loc.setLabel("TestLocationName");
-        loc.setLatitude(20.356784);
-        loc.setLongitude(76.276748);
-        QTest::newRow(QString("[%1] LocationName=%2 Latitude=%3 Longitude=%4").arg(managerName).arg(loc.label()).arg(loc.latitude()).arg(loc.longitude()).toLatin1().constData())
-                << managerName
-		<< itemType
-		<< QDateTime::currentDateTime().addDays(1)
-		<< loc
-		<< QOrganizerItemManager::NoError;
-	
-        loc.setLabel("TestLocationName");
-        loc.setLatitude(20.356784);
-        loc.setLongitude(76.276748);
+        loc.setLatitude(200.356784);
+        loc.setLongitude(-716.276748);
         QTest::newRow(QString("[%1] LocationName=%2 Latitude=%3 Longitude=%4").arg(managerName).arg(loc.label()).arg(loc.latitude()).arg(loc.longitude()).toLatin1().constData())
                 << managerName
 		<< itemType
@@ -191,8 +171,8 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
 		<< QOrganizerItemManager::BadArgumentError;
 	
         loc.setLabel("TestLocationName");
-        loc.setLatitude(20.356784);
-        loc.setLongitude(76.276748);
+        loc.setLatitude(20);
+        loc.setLongitude(-716.276748);
         QTest::newRow(QString("[%1] LocationName=%2 Latitude=%3 Longitude=%4").arg(managerName).arg(loc.label()).arg(loc.latitude()).arg(loc.longitude()).toLatin1().constData())
                 << managerName
 		<< itemType
