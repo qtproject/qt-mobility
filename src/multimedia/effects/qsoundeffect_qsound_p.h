@@ -82,6 +82,7 @@ public:
 
 public Q_SLOTS:
     void play();
+    void stop();
 
 Q_SIGNALS:
     void volumeChanged();
@@ -93,6 +94,10 @@ private:
     int m_volume;
     QSound *m_sound;
     QUrl m_source;
+    int m_timerID;
+    int m_nextRunningCount;
+
+    void timerEvent(QTimerEvent *event);
 };
 
 QT_END_NAMESPACE
