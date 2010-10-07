@@ -62,11 +62,13 @@ QString OrganizerItemDisplayLabelTransform::detailDefinitionName()
     return QOrganizerItemDisplayLabel::DefinitionName;    
 }
 
-// Modify base schema to remove display label support for notes
 void OrganizerItemDisplayLabelTransform::modifyBaseSchemaDefinitions(
     QMap<QString, QMap<QString, 
     QOrganizerItemDetailDefinition> > &schemaDefs) const
 {
-    schemaDefs[QOrganizerItemType::TypeNote].remove(
-        QOrganizerItemDisplayLabel::DefinitionName);
+    // Modify base schema to remove display label support for notes
+    if (schemaDefs.contains(QOrganizerItemType::TypeNote)) {
+        schemaDefs[QOrganizerItemType::TypeNote].remove(
+            QOrganizerItemDisplayLabel::DefinitionName);
+    }
 }

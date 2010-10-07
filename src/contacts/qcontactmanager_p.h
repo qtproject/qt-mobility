@@ -88,6 +88,7 @@ public:
 
     QContactManagerEngineV2* m_engine;
     QContactManager::Error m_error;
+    QMap<int, QContactManager::Error> m_errorMap;
 
     /* Manager plugins */
     static QHash<QString, QContactManagerEngineFactory*> m_engines;

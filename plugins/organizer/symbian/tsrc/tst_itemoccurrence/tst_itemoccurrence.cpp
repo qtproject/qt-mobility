@@ -98,13 +98,13 @@ void tst_ItemOccurrence::init()
     m_om = new QOrganizerItemManager(managerName);
     
     // Cleanup by deleting all items
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
 }
 
 void tst_ItemOccurrence::cleanup()
 {
     // Cleanup by deleting all items
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
 
     if (m_om) {
         delete m_om;

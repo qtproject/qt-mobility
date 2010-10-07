@@ -1233,26 +1233,33 @@ void QOrganizerItemSymbianEngine::saveCollectionL(
         if (m_collections.contains(localId))
             symbianCollection = m_collections[localId];
         else
-            // collection id was defined but was not found
-            User::Leave(KErrArgument); 
+            User::Leave(KErrArgument); // collection id was defined but was not found 
     }
+    
+    // Name key is the only mandatory metadata parameter
+    if (collection->metaData(QOrganizerCollection::KeyName).toString().isEmpty())
+        User::Leave(KErrArgument);
     
     // Convert metadata to cal info
     CCalCalendarInfo *calInfo = toCalInfoLC(collection->metaData());
     
     // Update modification time
     TTime currentTime;
-    currentTime.HomeTime();
+    currentTime.UniversalTime();
     setCalInfoPropertyL(calInfo, EModificationTime, currentTime);
     
     // Get filename from collection to be saved
-    QString fileName = collection->metaData("FileName").toString();
+    QString fileName = collection->metaData(OrganizerSymbianCollection::KeyFileName).toString();
     
     // Did we found an existing collection?
     if (!symbianCollection.isValid()) {
 
         // Set creation time
-        setCalInfoPropertyL(calInfo, ECreationTime, currentTime);       
+        setCalInfoPropertyL(calInfo, ECreationTime, currentTime);
+        
+        // If filename is not provided use collection name as a filename
+        if (fileName.isEmpty())
+            fileName = collection->metaData(QOrganizerCollection::KeyName).toString();
                 
         // Create a new collection
         symbianCollection.openL(toPtrC16(fileName), calInfo);
@@ -1264,21 +1271,20 @@ void QOrganizerItemSymbianEngine::saveCollectionL(
         if (symbianCollection.fileName() != fileName)
             User::Leave(KErrArgument);
 
+        // Preserve creation time by copying it from the old cal info
+        TTime creationTime = Time::NullTTime();
+        CCalCalendarInfo *calInfoOld = symbianCollection.calSession()->CalendarInfoL();
+        TRAP_IGNORE(creationTime = getCalInfoPropertyL<TTime>(*calInfoOld, ECreationTime));
+        delete calInfoOld;
+        setCalInfoPropertyL(calInfo, ECreationTime, creationTime);
+        
         // Update the existing collection
         symbianCollection.calSession()->SetCalendarInfoL(*calInfo);
     }
-
-    // Refresh meta data (it may have changed during save)
-    CCalCalendarInfo* calInfoNew = symbianCollection.calSession()->CalendarInfoL();
-    CleanupStack::PushL(calInfoNew);
-    collection->setMetaData(toMetaDataL(*calInfoNew));
-    CleanupStack::PopAndDestroy(calInfoNew);
-
-    // Update id to the collection object
-    collection->setId(symbianCollection.id());
-
     CleanupStack::PopAndDestroy(calInfo);
 
+    // Update collection information for client
+    *collection = symbianCollection.toQOrganizerCollectionL();
 #endif //SYMBIAN_CALENDAR_V2
 }
 
@@ -1513,17 +1519,13 @@ QList<int> QOrganizerItemSymbianEngine::supportedDataTypes() const
 
 QStringList QOrganizerItemSymbianEngine::supportedItemTypes() const
 {
-    // TODO - return which [predefined] types this engine supports
-    QStringList ret;
-
-    ret << QOrganizerItemType::TypeEvent;
-    ret << QOrganizerItemType::TypeEventOccurrence;
-    ret << QOrganizerItemType::TypeJournal;
-    ret << QOrganizerItemType::TypeNote;
-    ret << QOrganizerItemType::TypeTodo;
-    ret << QOrganizerItemType::TypeTodoOccurrence;
-
-    return ret;
+    // Lazy initialization
+    if (m_definition.isEmpty()) {
+        m_definition = QOrganizerItemManagerEngine::schemaDefinitions();
+        m_itemTransform.modifyBaseSchemaDefinitions(m_definition);
+    }
+    
+    return m_definition.keys();
 }
 
 #ifdef SYMBIAN_CALENDAR_V2

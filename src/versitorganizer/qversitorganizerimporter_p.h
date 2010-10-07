@@ -107,7 +107,8 @@ class QM_AUTOTEST_EXPORT QVersitOrganizerImporterPrivate
 public:
     QVersitOrganizerImporterPrivate(const QString& profile = QString());
     ~QVersitOrganizerImporterPrivate();
-    bool importDocument(const QVersitDocument& versitDocument,
+    bool importDocument(const QVersitDocument& topLevel,
+                        const QVersitDocument& subDocument,
                         QOrganizerItem* item,
                         QVersitOrganizerImporter::Error* error);
     void importProperty(const QVersitDocument& document,
