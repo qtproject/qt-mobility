@@ -74,8 +74,17 @@ namespace SymbianHelpers {
     QMessageAccountId stripIdPrefix(const QMessageAccountId& id);
     QMessageFolderId stripIdPrefix(const QMessageFolderId& id);
 
+    QMessageId buildQMessageId(
+        const quint64 mailboxId,
+        const quint64 folderId,
+        const quint64 messageId,
+        const EngineType& type = EngineDefault);
+    void splitQMessageId(const QMessageId& id, quint64 mailboxId, quint64 folderId, quint64 messageId);
+
     static const char* mtmPrefix = "MTM_";
     static const char* freestylePrefix = "FS_";
+    static const char* idDelimiter = "_";
+
 }
 
 namespace MessagingUtil

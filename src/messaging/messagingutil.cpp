@@ -204,6 +204,22 @@ namespace SymbianHelpers {
         else
             return QMessageFolderId(id);
     }
+    
+    QMessageId buildQMessageId(const quint64 mailboxId, const quint64 folderId, const quint64 messageId, const EngineType& type)
+    {
+        QString id = QString::number(mailboxId) + QString(idDelimiter)
+            + QString::number(folderId) + QString(idDelimiter)
+            + QString::number(messageId);
+        return QMessageId(addIdPrefix(id, type));
+    }
+
+    void splitQMessageId(const QMessageId& id, quint64 mailboxId, quint64 folderId, quint64 messageId)
+    {
+        QStringList list = stripIdPrefix(id.toString()).split(idDelimiter);
+        mailboxId = list[0].toULongLong();
+        folderId = list[1].toULongLong();
+        messageId = list[2].toULongLong();
+    }
 
 }
 

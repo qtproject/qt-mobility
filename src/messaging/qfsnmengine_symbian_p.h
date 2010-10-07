@@ -82,6 +82,7 @@ class CFSAsynchronousOperation;
 class QMessageId;
 class QMessageAccount;
 
+
 struct FSMessageQueryInfo
 {
     int operationId;

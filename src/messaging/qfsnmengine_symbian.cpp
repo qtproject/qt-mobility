@@ -196,7 +196,12 @@ void CFSEngine::notification(quint64 mailboxId, quint64 envelopeId, quint64 fold
     QMap<int, QMessageFilter> filters(m_filters);
     QMap<int, QMessageFilter>::const_iterator it = filters.begin(), end = filters.end();
     QMessage message;
-    QMessageId realMessageId = QMessageId(addIdPrefix(QString::number(mailboxId), SymbianHelpers::EngineTypeFreestyle));
+
+    QMessageId realMessageId = QMessageId(buildQMessageId(
+        mailboxId, 
+        folderId, 
+        envelopeId,
+        SymbianHelpers::EngineTypeFreestyle));
     bool messageRetrieved = false;    
     // TODO: convert mailboxId
     QString idAsString = QString::number(mailboxId);
@@ -689,18 +694,16 @@ QMessage CFSEngine::message(const QMessageId &id) const
 {
     QMessage message = QMessage();
     NmApiMessage fsMessage;
-    foreach (QMessageAccount account, m_accounts) {
-        quint64 mailboxId(stripIdPrefix(account.id().toString()).toLongLong());
-        quint64 messageId(stripIdPrefix(id.toString()).toLongLong());
-        NmApiMessage fsMessage;
-        if (m_emailServiceInitialized) {
-            m_emailService->getMessage(mailboxId, 0, messageId, fsMessage);       
-            message = CreateQMessage(&fsMessage);            
-            QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-            privateMessage->_id = id; 
-            privateMessage->_modified = false;
-            return message;
-        }
+    quint64 mailboxId;
+    quint64 folderId;
+    quint64 messageId;
+    splitQMessageId(id, mailboxId, folderId, messageId);
+    if (m_emailServiceInitialized) {
+        m_emailService->getMessage(mailboxId, 0, messageId, fsMessage);       
+        message = CreateQMessage(&fsMessage);            
+        QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
+        privateMessage->_id = id; 
+        privateMessage->_modified = false;
     }
     return message;
 }
@@ -709,11 +712,12 @@ bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOpti
 {
     m_deleteMessageError = false;
     QList<quint64> messageIds;
-    quint64 messageId = stripIdPrefix(id.toString()).toULongLong();
+    quint64 mailboxId;
+    quint64 folderId;
+    quint64 messageId;
+    splitQMessageId(id, mailboxId, folderId, messageId);
     messageIds.append(messageId);
 
-    QMessage qmessage = message(id);
-    quint64 mailboxId = stripIdPrefix(qmessage.parentAccountId().toString()).toULongLong();
     NmApiMessageManager* manager = new NmApiMessageManager(this, mailboxId);
     QPointer<NmApiOperation> deleteOperation = manager->deleteMessages(messageIds);
     QEventLoop* eventloop = new QEventLoop();
@@ -747,12 +751,15 @@ bool CFSEngine::showMessage(const QMessageId &id)
             XQOP_EMAIL_MESSAGE_VIEW,
                 syncronous);
   
-    QMessage qmessage = message(id);
-   
+    quint64 mailboxId;
+    quint64 folderId;
+    quint64 messageId;
+    splitQMessageId(id, mailboxId, folderId, messageId);
+
     QList<QVariant> list;
-    list.append(stripIdPrefix(qmessage.parentAccountId().toString()).toLongLong());
-    list.append(stripIdPrefix(qmessage.parentFolderId().toString()).toLongLong());
-    list.append(stripIdPrefix(qmessage.id().toString()).toLongLong());
+    list.append(mailboxId);
+    list.append(folderId);
+    list.append(messageId);
     request->setArguments(list);
 
     QVariant returnValue;
@@ -2449,7 +2456,11 @@ void CFSMessagesFindOperation::getAccountSpecificMessages(QMessageAccount& messa
 
 void CFSMessagesFindOperation::messageFound(EmailClientApi::NmApiMessage &message)
 {
-    QMessageId messageId(addIdPrefix(QString::number(message.envelope().id()), SymbianHelpers::EngineTypeFreestyle));
+    QMessageId messageId = buildQMessageId(
+        message.envelope().mailboxId(),
+        message.envelope().parentFolder(),
+        message.envelope().id(),
+        SymbianHelpers::EngineTypeFreestyle);
     if (!m_excludeIdList.contains(messageId)) {
         m_idList.append(messageId);   
     }
@@ -2475,7 +2486,11 @@ void CFSMessagesFindOperation::searchOperationCompleted()
                 NmApiEnvelopeListing* searchOperation = (NmApiEnvelopeListing*)operation.m_MessageTask;
                 searchOperation->getEnvelopes(envelopes);
                 foreach (NmApiMessageEnvelope envelope, envelopes) {
-                    QMessageId messageId(addIdPrefix(QString::number(envelope.id()), SymbianHelpers::EngineTypeFreestyle));
+                    QMessageId messageId = buildQMessageId(
+                        envelope.mailboxId(),
+                        envelope.parentFolder(),
+                        envelope.id(),
+                        SymbianHelpers::EngineTypeFreestyle);
                     if (!m_excludeIdList.contains(messageId)) {
                         m_idList.append(messageId);   
                     }
