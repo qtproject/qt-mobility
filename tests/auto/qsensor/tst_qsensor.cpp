@@ -381,12 +381,18 @@ private slots:
 
         // Register a bogus backend
         sensor.sensorsChangedEmitted = false;
-        QSensorManager::registerBackend(TestSensor::type, "a random id", 0);
+        QSensorManager::registerBackend("a random type", "a random id", 0);
         QVERIFY(sensor.sensorsChangedEmitted);
+
+        // Register it again (creates a warning)
+        sensor.sensorsChangedEmitted = false;
+        QTest::ignoreMessage(QtWarningMsg, "A backend with type \"a random type\" and identifier \"a random id\" has already been registered! ");
+        QSensorManager::registerBackend("a random type", "a random id", 0);
+        QVERIFY(!sensor.sensorsChangedEmitted);
 
         // Unregister a bogus backend
         sensor.sensorsChangedEmitted = false;
-        QSensorManager::unregisterBackend(TestSensor::type, "a random id");
+        QSensorManager::unregisterBackend("a random type", "a random id");
         QVERIFY(sensor.sensorsChangedEmitted);
 
         // Unregister an unknown identifier
@@ -400,11 +406,20 @@ private slots:
         QTest::ignoreMessage(QtWarningMsg, "No backends of type \"foo\" are registered ");
         QSensorManager::unregisterBackend("foo", "bar");
         QVERIFY(!sensor.sensorsChangedEmitted);
+
+        // Make sure we've cleaned up the list of available types
+        QList<QByteArray> expected;
+        expected << "QAccelerometer" << TestSensor::type;
+        QList<QByteArray> actual = QSensor::sensorTypes();
+        QCOMPARE(actual, expected);
     }
 
     // This test must be LAST or it will interfere with the other tests
     void testLoadingPlugins()
     {
+        // Unregister this one we did before... otherwise we may get a duplicate registration warning
+        QSensorManager::unregisterBackend("QAccelerometer", "dummy.accelerometer");
+
         // Go ahead and load the actual plugins (as a test that plugin loading works)
         sensors_unit_test_hook(1);
 

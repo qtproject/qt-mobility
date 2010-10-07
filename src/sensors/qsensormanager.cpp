@@ -150,14 +150,22 @@ void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &i
         (void)d->backendsByType[type];
         d->firstIdentifierForType[type] = identifier;
     }
-    SENSORLOG() << "registering backend for type" << type << "identifier" << identifier;// << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
     FactoryForIdentifierMap &factoryByIdentifier = d->backendsByType[type];
+    if (factoryByIdentifier.contains(identifier)) {
+        qWarning() << "A backend with type" << type << "and identifier" << identifier << "has already been registered!";
+        return;
+    }
+    SENSORLOG() << "registering backend for type" << type << "identifier" << identifier;// << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
     factoryByIdentifier[identifier] = factory;
     Q_EMIT d->availableSensorsChanged();
 }
 
 /*!
     Unregister the backend for \a type with \a identifier.
+
+    Note that this only prevents new instance of the backend from being created. It does not
+    invalidate the existing instances of the backend. The backend code should handle the
+    dissappearance of the underlying hardware itself.
 */
 void QSensorManager::unregisterBackend(const QByteArray &type, const QByteArray &identifier)
 {
