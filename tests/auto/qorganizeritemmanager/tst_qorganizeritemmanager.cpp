@@ -173,6 +173,7 @@ private slots:
     void dataSerialization();
     void itemFetch();
     void spanOverDays();
+    void recurrence();
 
     /* Tests that take no data */
     void itemValidation();
@@ -204,6 +205,7 @@ private slots:
     void dataSerialization_data() {addManagers();}
     void itemFetch_data() {addManagers();}
     void spanOverDays_data() {addManagers();}
+    void recurrence_data() {addManagers();}
 };
 
 tst_QOrganizerItemManager::tst_QOrganizerItemManager()
@@ -2520,6 +2522,36 @@ void tst_QOrganizerItemManager::spanOverDays()
     items = cm->items(QDateTime(QDate(2010, 8, 10), QTime(0,0,0)), QDateTime());
     QCOMPARE(items.count(), 1);
 }
+
+void tst_QOrganizerItemManager::recurrence()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+
+    QOrganizerEvent event;
+    event.setDisplayLabel("event");
+    event.setStartDateTime(QDateTime(QDate(2012, 8, 9), QTime(11, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2012, 8, 9), QTime(11, 30, 0)));
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrule.setCount(3);
+    event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    QVERIFY(cm->saveItem(&event));
+
+    QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2012, 8, 9)),
+                                            QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
+    QCOMPARE(items.count(), 3);
+
+    items = cm->items(QDateTime(QDate(2012, 8, 9), QTime(0,0,0)), QDateTime(QDate(2012, 8, 9), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2012, 8, 10), QTime(0,0,0)), QDateTime(QDate(2012, 8, 10), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2012, 8, 12), QTime(0,0,0)), QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
+    QCOMPARE(items.count(), 0);
+}
+
 
 
 QList<QOrganizerItemDetail> tst_QOrganizerItemManager::removeAllDefaultDetails(const QList<QOrganizerItemDetail>& details)
