@@ -187,6 +187,9 @@ void CCameraEngine::StartViewFinderL(TSize& aSize)
     }
 
     if (!iCamera->ViewFinderActive()) {
+        if (iCameraHandle != 0) {
+            iCamera->SetViewFinderMirrorL(true);
+        }
         iCamera->StartViewFinderBitmapsL(aSize);
     }
 }
@@ -212,6 +215,9 @@ void CCameraEngine::StartDirectViewFinderL(RWsSession& aSession,
     }
 
     if (!iCamera->ViewFinderActive()) {
+        if (iCameraHandle != 0) {
+            iCamera->SetViewFinderMirrorL(true);
+        }
         iCamera->StartViewFinderDirectL(aSession, aScreenDevice, aWindow, aSize);
     }
 }
@@ -330,9 +336,13 @@ void CCameraEngine::ViewFinderReady(MCameraBuffer &aCameraBuffer, TInt aError)
     iViewFinderBuffer = &aCameraBuffer;
 
     if (aError == KErrNone) {
-        TRAPD(err, iViewfinderObserver->MceoViewFinderFrameReady(aCameraBuffer.BitmapL(0)));
-        if (err)
-            iObserver->MceoHandleError(EErrViewFinderReady, err);
+        if (iViewfinderObserver) {
+            TRAPD(err, iViewfinderObserver->MceoViewFinderFrameReady(aCameraBuffer.BitmapL(0)));
+            if (err)
+                iObserver->MceoHandleError(EErrViewFinderReady, err);
+        } else {
+            iObserver->MceoHandleError(EErrViewFinderReady, KErrNotReady);
+        }
     }
     else {
         iObserver->MceoHandleError(EErrViewFinderReady, aError);
@@ -345,14 +355,19 @@ void CCameraEngine::ViewFinderReady(MCameraBuffer &aCameraBuffer, TInt aError)
  */
 void CCameraEngine::ViewFinderFrameReady(CFbsBitmap& aFrame)
 {
-    iViewfinderObserver->MceoViewFinderFrameReady(aFrame);
+    if (iViewfinderObserver)
+        iViewfinderObserver->MceoViewFinderFrameReady(aFrame);
+    else
+        iObserver->MceoHandleError(EErrViewFinderReady, KErrNotReady);
 }
 
 void CCameraEngine::ReleaseViewFinderBuffer()
 {
-    if (iViewFinderBuffer) {
-        iViewFinderBuffer->Release();
-        iViewFinderBuffer = NULL;
+    if (iNew2LImplementation) { // NewL Implementation does not use MCameraBuffer
+        if (iViewFinderBuffer) {
+            iViewFinderBuffer->Release();
+            iViewFinderBuffer = NULL;
+        }
     }
 }
 

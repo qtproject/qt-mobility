@@ -167,9 +167,6 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
  */
 void S60VideoWidgetControl::reconfigureWidget(const bool directVF)
 {
-    if (m_isViewFinderDirect == directVF)
-        return;
-
     if (directVF) { // DirectScreen ViewFinder
         m_isViewFinderDirect = true;
 

@@ -112,7 +112,7 @@ Q_SIGNALS:
 public: // Internal
     
     void setError(const TInt error, const QString &description);
-    CCameraEngine *resetCameraOrientation();
+    void resetCameraOrientation();
     
     // To provide QVideoDeviceControl info
     static int deviceCount();

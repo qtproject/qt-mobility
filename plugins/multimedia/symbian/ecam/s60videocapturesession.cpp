@@ -1043,7 +1043,7 @@ void S60VideoCaptureSession::pauseRecording()
     }
 }
 
-void S60VideoCaptureSession::stopRecording()
+void S60VideoCaptureSession::stopRecording(const bool reInitialize)
 {
     if (m_captureState != ERecording && m_captureState != EPaused)
         return; // Ignore
@@ -1055,8 +1055,11 @@ void S60VideoCaptureSession::stopRecording()
         m_captureState = ENotInitialized;
         emit stateChanged(m_captureState);
 
-        if (m_cameraEngine->IsCameraReady()) {
-            initializeVideoRecording();
+        // VideoRecording will be re-initialized unless explicitly requested not to do so
+        if (reInitialize) {
+            if (m_cameraEngine->IsCameraReady()) {
+                initializeVideoRecording();
+            }
         }
     }
     else

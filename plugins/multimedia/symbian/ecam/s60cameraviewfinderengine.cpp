@@ -69,7 +69,8 @@ S60CameraViewfinderEngine::S60CameraViewfinderEngine(QObject *parent, CCameraEng
     m_viewfinderType(OutputTypeNotSet),
     m_viewfinderNativeType(EBitmapViewFinder), // Default type
     m_isViewFinderVisible(true), // True as default (only QVideoWidgetControl supports being hidden)
-    m_uiLandscape(true)
+    m_uiLandscape(true),
+    m_vfErrorsSignalled(0)
 {
     if (parent) {
         // Check parent is of proper type (S60CameraControl)
@@ -116,6 +117,11 @@ S60CameraViewfinderEngine::~S60CameraViewfinderEngine()
     m_viewfinderSurface = NULL;
 }
 
+void S60CameraViewfinderEngine::setNewCameraEngine(CCameraEngine *engine)
+{
+    m_cameraEngine = engine;
+}
+
 void S60CameraViewfinderEngine::setVideoWidgetControl(QObject *viewfinderOutput)
 {
     if (m_viewfinderOutput) {
@@ -125,10 +131,23 @@ void S60CameraViewfinderEngine::setVideoWidgetControl(QObject *viewfinderOutput)
         }
     }
 
+    // Rotate Camera if UI has rotated
+    checkAndRotateCamera();
+
     S60VideoWidgetControl* viewFinderWidgetControl =
             qobject_cast<S60VideoWidgetControl*>(viewfinderOutput);
 
     if (viewFinderWidgetControl) {
+        // Check whether platform supports DirectScreen ViewFinder
+        if (m_cameraEngine) {
+            if (m_cameraEngine->IsDirectViewFinderSupported())
+                m_viewfinderNativeType = EDirectScreenViewFinder;
+            else
+                m_viewfinderNativeType = EBitmapViewFinder;
+        }
+        else
+            return;
+
         QLabel *widget = qobject_cast<QLabel *>(viewFinderWidgetControl->videoWidget());
 
         if (m_viewfinderNativeType == EDirectScreenViewFinder) {
@@ -180,6 +199,9 @@ void S60CameraViewfinderEngine::setVideoRendererControl(QObject *viewfinderOutpu
             disconnect(this, SIGNAL(viewFinderFrameReady(const QPixmap &)), widget, SLOT(setPixmap(const QPixmap &)));
         }
     }
+
+    // Rotate Camera if UI has rotated
+    checkAndRotateCamera();
 
     S60VideoRendererControl* viewFinderRenderControl =
         qobject_cast<S60VideoRendererControl*>(viewfinderOutput);
@@ -304,6 +326,9 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
     // Start viewfinder
     if (m_vfState == EVFIsConnectedIsStartedIsVisible) {
 
+        if (!m_cameraEngine)
+            return;
+
         if (m_viewfinderNativeType == EDirectScreenViewFinder) {
 
             S60VideoWidgetControl* viewFinderWidgetControl =
@@ -407,7 +432,8 @@ void S60CameraViewfinderEngine::stopViewfinder(const bool internalStop)
             }
         }
 
-        m_cameraEngine->StopViewFinder();
+        if (m_cameraEngine)
+            m_cameraEngine->StopViewFinder();
     }
 
     // Update state
@@ -436,11 +462,15 @@ void S60CameraViewfinderEngine::MceoViewFinderFrameReady(CFbsBitmap& aFrame)
     QPixmap pixmap = QPixmap::fromSymbianCFbsBitmap(&aFrame);
 
     emit viewFinderFrameReady(pixmap);
-    m_cameraEngine->ReleaseViewFinderBuffer();
+    if (m_cameraEngine)
+        m_cameraEngine->ReleaseViewFinderBuffer();
 }
 
 void S60CameraViewfinderEngine::resetViewfinderSize(QSize size)
 {
+    // Rotate Camera if UI has rotated
+    checkAndRotateCamera();
+
     if (m_viewfinderSize == size) {
         return;
     }
@@ -452,25 +482,6 @@ void S60CameraViewfinderEngine::resetViewfinderSize(QSize size)
     }
 
     stopViewfinder(true);
-
-    bool isUiNowLandscape = false;
-    QDesktopWidget* desktopWidget = QApplication::desktop();
-    QRect screenRect = desktopWidget->screenGeometry();
-    if (screenRect.width() > screenRect.height())
-        isUiNowLandscape = true;
-    else
-        isUiNowLandscape = false;
-    // Rotate camera if possible
-    if (isUiNowLandscape != m_uiLandscape) {
-        if (m_cameraEngine->IsCameraReady()) {
-            m_cameraEngine = m_cameraControl->resetCameraOrientation();
-            if (m_cameraEngine == NULL) {
-                m_cameraControl->setError(KErrGeneral, tr("Camera rotation failed."));
-                return;
-            }
-        }
-    }
-    m_uiLandscape = isUiNowLandscape;
 
     startViewfinder(true);
 }
@@ -575,16 +586,24 @@ void S60CameraViewfinderEngine::viewFinderBitmapReady(const QPixmap &pixmap)
             if (!m_viewfinderSurface->present(newFrame)) {
                 // Presenting may fail even if there are no errors (e.g. busy)
                 if (m_viewfinderSurface->error()) {
-                    emit error(QCamera::CameraError, tr("Presenting viewfinder frame failed."));
-                }
+                    if (m_vfErrorsSignalled < KMaxVFErrorsSignalled) {
+                        emit error(QCamera::CameraError, tr("Presenting viewfinder frame failed."));
+                        ++m_vfErrorsSignalled;
+                    }
 
             }
         } else {
-            emit error(QCamera::CameraError, tr("Invalid viewfinder frame was received."));
+            if (m_vfErrorsSignalled < KMaxVFErrorsSignalled) {
+                emit error(QCamera::CameraError, tr("Invalid viewfinder frame was received."));
+                ++m_vfErrorsSignalled;
+            }
         }
 
     } else {
-        emit error(QCamera::CameraError, tr("Failed to convert viewfinder frame to presentable image."));
+        if (m_vfErrorsSignalled < KMaxVFErrorsSignalled) {
+            emit error(QCamera::CameraError, tr("Failed to convert viewfinder frame to presentable image."));
+            ++m_vfErrorsSignalled;
+        }
     }
 }
 
@@ -611,6 +630,35 @@ void S60CameraViewfinderEngine::handleVisibilityChange(const bool isVisible)
     }
     else
         stopViewfinder(true);
+}
+
+void S60CameraViewfinderEngine::checkAndRotateCamera()
+{
+    bool isUiNowLandscape = false;
+    QDesktopWidget* desktopWidget = QApplication::desktop();
+    QRect screenRect = desktopWidget->screenGeometry();
+
+    if (screenRect.width() > screenRect.height())
+        isUiNowLandscape = true;
+    else
+        isUiNowLandscape = false;
+
+    // Rotate camera if possible
+    if (isUiNowLandscape != m_uiLandscape) {
+        stopViewfinder(true);
+
+        // Check if the camera can be rotated, and Rotate it
+        if (m_cameraEngine &&
+            (m_cameraEngine->IsCameraReady() || m_cameraControl->status() == QCamera::UnloadedStatus)) {
+            // Request orientation reset
+            m_cameraControl->resetCameraOrientation();
+
+            // And set observer to the new CameraEngine
+            MCameraViewfinderObserver *vfObserver = this;
+            m_cameraEngine->SetViewfinderObserver(vfObserver);
+        }
+    }
+    m_uiLandscape = isUiNowLandscape;
 }
 
 // End of file

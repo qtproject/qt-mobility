@@ -81,9 +81,16 @@ public: // Methods
     void startViewfinder(const bool internalStart = false);
     void stopViewfinder(const bool internalStop = false);
 
+    // Start using new CameraEngine
+    void setNewCameraEngine(CCameraEngine *engine);
+
 protected: // MCameraViewfinderObserver (Bitmap ViewFinder)
 
     void MceoViewFinderFrameReady(CFbsBitmap& aFrame);
+
+private: // Internal operation
+
+    void checkAndRotateCamera();
 
 Q_SIGNALS:
 

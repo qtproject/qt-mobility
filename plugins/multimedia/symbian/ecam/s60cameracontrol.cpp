@@ -736,6 +736,7 @@ void S60CameraControl::resetCamera()
 
     TRAPD(err, m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));
     if (err) {
+        m_cameraEngine = NULL;
         setError(err, QString("Camera device creation failed."));
         return;
     }
@@ -769,20 +770,20 @@ void S60CameraControl::resetCamera()
 /*
  * Reset everything else than viewfinder engine and errors.
  */
-CCameraEngine *S60CameraControl::resetCameraOrientation()
+void S60CameraControl::resetCameraOrientation()
 {
     // Check if video is recording
     if (m_videoCaptureState == S60VideoCaptureSession::ERecording ||
         m_videoCaptureState == S60VideoCaptureSession::EPaused) {
         // ViewfinderEngine expects CameraEngine, so return the current one
-        return m_cameraEngine;
+        return;
     }
 
     QCamera::State originalState = m_requestedState;
 
     // Cancel ongoing activity
     m_imageSession->cancelCapture();
-    m_videoSession->stopRecording();
+    m_videoSession->stopRecording(false); // Don't re-initialize video
 
     // Advanced settings must be destructed before the camera
     m_imageSession->deleteAdvancedSettings();
@@ -791,6 +792,8 @@ CCameraEngine *S60CameraControl::resetCameraOrientation()
     stopCamera();
     unloadCamera();
 
+    // Unset CameraEngine to ViewfinderEngine
+    m_viewfinderEngine->setNewCameraEngine(NULL);
     if (m_cameraEngine) {
         delete m_cameraEngine;
         m_cameraEngine = NULL;
@@ -799,8 +802,10 @@ CCameraEngine *S60CameraControl::resetCameraOrientation()
     TRAPD(err, m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));
     if (err) {
         setError(err, QString("Camera device creation failed."));
-        return NULL;
+        return;
     }
+    // Reset CameraEngine to ViewfinderEngine
+    m_viewfinderEngine->setNewCameraEngine(m_cameraEngine);
 
     // Notify list of available camera devices has been updated
     emit devicesChanged();
