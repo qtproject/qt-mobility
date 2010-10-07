@@ -42,35 +42,38 @@
 import Qt 4.7
 
 Item {
-    id: toolbar
+    id: container
 
-    property alias button1Label: button1.text
-    property alias button2Label: button2.text
-    property alias button3Label: button3.text
-    property alias button1FontColor: button1.textColor
-    property alias button2FontColor: button2.textColor
-    property alias button3FontColor: button3.textColor
-    signal button1Clicked
-    signal button2Clicked
-    signal button3Clicked
+    signal clicked
 
-    BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
+    property string text
 
-    Button {
-        id: button1
-        anchors.left: parent.left; y: 3; width: parent.width/3; height: 32
-        onClicked: toolbar.button1Clicked()
+    BorderImage {
+        id: buttonImage
+        source: "images/toolbutton.sci"
+        width: container.width; height: container.height
     }
-
-    Button {
-        id: button2
-        anchors.left: button1.right; anchors.leftMargin: 5; y: 3; width: parent.width/3 - anchors.leftMargin; height: 32
-        onClicked: toolbar.button2Clicked()
+    BorderImage {
+        id: pressed
+        opacity: 0
+        source: "images/toolbutton.sci"
+        width: container.width; height: container.height
     }
-
-    Button {
-        id: button3
-        anchors.left: button2.right; anchors.leftMargin: 5; y: 3; width: parent.width/3 - anchors.leftMargin; height: 32
-        onClicked: toolbar.button3Clicked()
+    MouseArea {
+        id: mouseRegion
+        anchors.fill: buttonImage
+        onClicked: { container.clicked(); }
     }
+    Text {
+        color: "white"
+        anchors.centerIn: buttonImage; font.bold: true; font.pixelSize: 15
+        text: container.text; style: Text.Raised; styleColor: "black"
+    }
+    states: [
+        State {
+            name: "Pressed"
+            when: mouseRegion.pressed == true
+            PropertyChanges { target: pressed; opacity: 1 }
+        }
+    ]
 }
