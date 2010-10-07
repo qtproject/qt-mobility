@@ -40,8 +40,26 @@
 ****************************************************************************/
 
 #include "qorganizerdata_simulator_p.h"
+#include "qorganizeritemenginelocalid.h"
+#include "engines/qorganizeritemmemorybackend_p.h"
 
 #include <QtCore/QDataStream>
+
+// ### hack!
+// A correct implementation is impossible, since you need to know the managerUri to create
+// a QOrganizerItemManagerEngineLocalId for the manager. This one should work for the Simulator's
+// needs.
+QDataStream& operator>>(QDataStream& in, QtMobility::QOrganizerItemLocalId& id)
+{
+    quint8 marker;
+    in >> marker;
+    if (marker) {
+        QtMobility::QOrganizerItemEngineLocalId *d = new QtMobility::QOrganizerItemMemoryEngineLocalId;
+        d->dataStreamIn(in);
+        id = QtMobility::QOrganizerItemLocalId(d);
+    }
+    return in;
+}
 
 QDataStream &operator<<(QDataStream &out, const QtMobility::Simulator::SaveOrganizerItemReply &s)
 {
@@ -62,6 +80,7 @@ QTM_BEGIN_NAMESPACE
 void qt_registerOrganizerTypes()
 {
     qRegisterMetaTypeStreamOperators<QOrganizerItem>("QtMobility::QOrganizerItem");
+    qRegisterMetaTypeStreamOperators<QOrganizerItemLocalId>("QtMobility::QOrganizerItemLocalId");
     qRegisterMetaTypeStreamOperators<Simulator::SaveOrganizerItemReply>("QtMobility::Simulator::SaveOrganizerItemReply");
 }
 
