@@ -93,7 +93,7 @@
 #endif
 
 //defines to turn on and off tests for symbian
-#define INVALID_MANAGER
+//#define INVALID_MANAGER
 #define RETRIEVE_CATEGORY
 #define RETRIEVE_LANDMARK
 #define SAVE_CATEGORY
@@ -1102,6 +1102,7 @@ void tst_QLandmarkManager::createDbExists() {
 }
 #endif
 
+#ifdef INVALID_MANAGER
 void tst_QLandmarkManager::invalidManager()
 {
     QLandmarkManager manager("does.not.exist");
@@ -1222,6 +1223,7 @@ void tst_QLandmarkManager::invalidManager()
     QFile::remove("test2.db");
 #endif
 }
+#endif
 
 #ifdef RETRIEVE_CATEGORY
 void tst_QLandmarkManager::retrieveCategory() {

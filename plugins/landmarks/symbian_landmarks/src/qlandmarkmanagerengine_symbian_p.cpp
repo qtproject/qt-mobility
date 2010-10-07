@@ -2957,7 +2957,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
         TPosLmItemId symbianCatId = LandmarkUtility::convertToSymbianLandmarkCategoryId(
             categoryFilter.categoryId());
         if (categoryFilter.categoryId().managerUri() != managerUri()) {
-            User::Leave(KErrNotFound);
+            User::Leave(-20001); //reuse EHttpCannotFindServer to mean category does not exist
         }
 
         CPosLandmarkCategory* symbiancat = NULL;
@@ -2965,7 +2965,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
             if (symbiancat) CleanupStack::PopAndDestroy( symbiancat ) )
 
         if (err != KErrNone) {
-            User::Leave(KErrNotFound);
+                User::Leave(-20001); //reuse EHttpCannotFindServer to mean category does not exist
         }
 
         CPosLmCategoryCriteria* categorySearchCriteria = CPosLmCategoryCriteria::NewLC();
@@ -3503,6 +3503,12 @@ void LandmarkManagerEngineSymbianPrivate::handleSymbianError(TInt errorId,
     {
         *error = QLandmarkManager::InvalidManagerError;
         *errorString = "Mangager is not constructed and initialized properly.";
+        break;
+    }
+    case -20001: //reuse EHttpCannotFindServer to mean category does not exist
+    {
+        *error = QLandmarkManager::CategoryDoesNotExistError;
+        *errorString = "The specified category does not exist";
         break;
     }
     default:
