@@ -172,6 +172,8 @@ QVersitDocumentWriter* QVersitWriterPrivate::writerForType(QVersitDocument::Vers
                     || componentType == QLatin1String("VTIMEZONE")
                     || componentType == QLatin1String("VALARM")) {
                 return new QVCard30Writer(QVersitDocument::ICalendar20Type);
+            } else {
+                return new QVCard30Writer(QVersitDocument::VCard30Type);
             }
         }
         case QVersitDocument::VCard21Type:

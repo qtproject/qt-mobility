@@ -149,7 +149,11 @@ bool QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& document
         encodeVersitDocument(document, false);
     }
 
-    writeString(QLatin1String("END:") + document.componentType());
+    if (document.componentType().isEmpty()) {
+        writeString(QLatin1String("END:VCARD"));
+    } else {
+        writeString(QLatin1String("END:") + document.componentType());
+    }
     writeCrlf();
 
     // This has been set by the methods called from this function
