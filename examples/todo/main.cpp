@@ -47,7 +47,6 @@ int main(int argv, char **args)
     QApplication app(argv, args);
 
     Window window;
-    qDebug() << "About to show";
     window.show();
 
     return app.exec();

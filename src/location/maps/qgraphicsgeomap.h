@@ -129,7 +129,7 @@ public:
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
     QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
 
-public slots:
+public Q_SLOTS:
     void pan(int dx, int dy);
 
 protected:

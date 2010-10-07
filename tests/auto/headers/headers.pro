@@ -11,7 +11,7 @@ INCLUDEPATH += ../../../src/contacts \
                 ../../../src/location/maps \
                 ../../../src/location/maps/tiled \
                 ../../../src/location/landmarks \
-                ../../../src/messaging\ 
+                ../../../src/messaging \
                 ../../../src/multimedia \
                 ../../../src/multimedia/audio \
                 ../../../src/multimedia/video \
@@ -23,7 +23,8 @@ INCLUDEPATH += ../../../src/contacts \
                 ../../../src/sensors \
                 ../../../src/serviceframework \
                 ../../../src/systeminfo \
-                ../../../src/versit
+                ../../../src/versit \
+                ../../../src/versitorganizer
 
 CONFIG += testcase
 
