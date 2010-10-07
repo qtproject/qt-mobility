@@ -93,6 +93,7 @@ QLocalSocket *Connection::sendSocket()
 
 void Connection::translateIds(QOrganizerItem *item, const QString &managerUri, const IdToId &idTranslation)
 {
+    // translate the main id
     const QOrganizerItemLocalId previousLocalId = item->localId();
     QOrganizerItemId id;
     if (idTranslation.contains(previousLocalId)) {
@@ -101,7 +102,34 @@ void Connection::translateIds(QOrganizerItem *item, const QString &managerUri, c
     }
     item->setId(id);
 
-    // ### Translate all other ids!
+    // translate any ids and localids appearing in details
+    foreach (const QOrganizerItemDetail &detail, item->details()) {
+        QOrganizerItemDetail detailCopy(detail);
+        QMapIterator<QString, QVariant> it(detail.variantValues());
+        bool modified = false;
+        while (it.hasNext()) {
+            it.next();
+            const QVariant &value = it.value();
+            const int type = value.userType();
+            if (type == qMetaTypeId<QOrganizerItemLocalId>()) {
+                QOrganizerItemLocalId oldId = value.value<QOrganizerItemLocalId>();
+                detailCopy.setValue(it.key(), QVariant::fromValue(idTranslation.value(oldId)));
+                modified = true;
+            }
+            if (type == qMetaTypeId<QOrganizerItemId>()) {
+                QOrganizerItemId id = value.value<QOrganizerItemId>();
+                id.setManagerUri(managerUri);
+                id.setLocalId(idTranslation.value(id.localId()));
+                detailCopy.setValue(it.key(), QVariant::fromValue(id));
+                modified = true;
+            }
+        }
+        if (modified) {
+            item->saveDetail(&detailCopy);
+        }
+    }
+
+    // ### Any other ids in an item?
 }
 
 void Connection::getInitialData()
