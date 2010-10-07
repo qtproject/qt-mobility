@@ -1,7 +1,7 @@
 INCLUDEPATH += effects
 
 unix:!mac:!symbian {
-   contains(QT_CONFIG, pulseaudio) {
+   contains(pulseaudio_enabled, yes) {
         CONFIG += link_pkgconfig
         PKGCONFIG += libpulse
 
