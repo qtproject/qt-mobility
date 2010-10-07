@@ -666,6 +666,7 @@ echo.
 echo configure failed.
 goto errorTag
 
+REM Unset the internal variables
 :errorTag
 set BUILD_PATH=
 set CURRENTDIR=
