@@ -57,38 +57,41 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \fn QNdefMessage::QNdefMessage()
+
     Constructs a new empty NDEF message.
 */
-QNdefMessage::QNdefMessage()
-{
-}
 
 /*!
-    Constructs a new NDEF message that is a copy of \a other.
+    \fn QNdefMessage::QNdefMessage(const QNdefRecord &record)
+
+    Constructs a new NDEF message containing a single record \a record.
 */
-QNdefMessage::QNdefMessage(const QNdefMessage &other)
-    :   m_records(other.m_records)
-{
-}
 
 /*!
-    Constructs a new NDEF message that contains a copy of \a records.
+    \fn QNdefMessage::QNdefMessage(const QNdefMessage &message)
+
+    Constructs a new NDEF message that is a copy of \a message.
 */
-QNdefMessage::QNdefMessage(const QList<QNdefRecord> &records)
-    :   m_records(records)
-{
-    m_records[0].d->messageBegin = true;
-    m_records[m_records.count() - 1].d->messageEnd = true;
-}
 
 /*!
-    Constructs a new NDEF message based on the contents of \a message.  The \a message paramater is
-    interpreted as the raw message format defined in the NFC Specifications.
+    \fn QNdefMessage::QNdefMessage(const QList<QNdefRecord> &records)
+
+    Constructs a new NDEF message that contains all of the records in \a records.
 */
-QNdefMessage::QNdefMessage(const QByteArray &message)
+
+/*!
+    Returns an NDEF message parsed from the contents of \a message.
+
+    The \a message paramater is interpreted as the raw message format defined in the NFC
+    Specifications.
+*/
+QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
 {
-    bool messageBegin = false;
-    bool messageEnd = false;
+    QNdefMessage result;
+
+    bool seenMessageBegin = false;
+    bool seenMessageEnd = false;
 
     QByteArray::const_iterator i = message.begin();
     while (i != message.end()) {
@@ -98,16 +101,16 @@ QNdefMessage::QNdefMessage(const QByteArray &message)
 
         record.setUserTypeNameFormat(flags & 0x07);
 
-        record.d->messageBegin = flags & 0x80;
-        record.d->messageEnd = flags & 0x40;
+        bool messageBegin = flags & 0x80;
+        bool messageEnd = flags & 0x40;
 
         bool cf = flags & 0x20;
         bool sr = flags & 0x10;
         bool il = flags & 0x08;
 
-        if (record.d->messageBegin && messageBegin)
+        if (messageBegin && seenMessageBegin)
             qDebug() << "Got message begin but already parsed some records";
-        if (record.d->messageEnd && messageEnd)
+        if (messageEnd && seenMessageEnd)
             qDebug() << "Got message end but already parsed final record";
         if (cf)
             qDebug() << "Chunked records not supported, yet";
@@ -148,23 +151,60 @@ QNdefMessage::QNdefMessage(const QByteArray &message)
             i += payloadLength - 1;
         }
 
-        m_records.append(record);
+        result.append(record);
 
         // move to start of next record
         ++i;
     }
+
+    return result;
 }
 
+/*!
+    Returns true if this NDEF message is equivalent to \a other; otherwise returns false.
+*/
+bool QNdefMessage::operator==(const QNdefMessage &other) const
+{
+    // both records are empty
+    if (isEmpty() && other.isEmpty())
+        return true;
+
+    // compare empty to really empty
+    if (isEmpty() && other.count() == 1 &&
+        other.first().d->typeNameFormat == 0) {
+        return true;
+    }
+    if (other.isEmpty() && count() == 1 &&
+        first().d->typeNameFormat == 0) {
+        return true;
+    }
+
+    if (count() != other.count())
+        return false;
+
+    for (int i = 0; i < count(); ++i) {
+        if (at(i) != other.at(i))
+            return false;
+    }
+
+    return true;
+}
+
+/*!
+    Returns the NDEF message as a byte array.
+*/
 QByteArray QNdefMessage::toByteArray() const
 {
     QByteArray m;
 
-    foreach (const QNdefRecord &record, m_records) {
+    for (int i = 0; i < count(); ++i) {
+        const QNdefRecord &record = at(i);
+
         quint8 flags = record.userTypeNameFormat();
 
-        if (record.d->messageBegin)
+        if (i == 0)
             flags |= 0x80;
-        if (record.d->messageEnd)
+        if (i == count() - 1)
             flags |= 0x40;
 
         // cf (chunked records) not supported yet
@@ -202,60 +242,6 @@ QByteArray QNdefMessage::toByteArray() const
     }
 
     return m;
-}
-
-/*!
-    Destroys the NDEF message.
-*/
-QNdefMessage::~QNdefMessage()
-{
-}
-
-/*!
-    Returns true if this NDEF message is equivalent to \a other; otherwise returns false.
-*/
-bool QNdefMessage::operator==(const QNdefMessage &other) const
-{
-    // both records are empty
-    if (m_records.isEmpty() && other.m_records.isEmpty())
-        return true;
-
-    // compare empty to really empty
-    if (m_records.isEmpty() && other.m_records.count() == 1 &&
-        other.m_records.first().d->typeNameFormat == 0) {
-        return true;
-    }
-    if (other.m_records.isEmpty() && m_records.count() == 1 &&
-        m_records.first().d->typeNameFormat == 0) {
-        return true;
-    }
-
-    if (m_records.count() != other.m_records.count())
-        return false;
-
-    for (int i = 0; i < m_records.count(); ++i) {
-        if (m_records.at(i) != other.m_records.at(i))
-            return false;
-    }
-
-    return true;
-}
-
-/*!
-    Returns the list of NDEF records in the NDEF message.
-*/
-const QList<QNdefRecord> &QNdefMessage::records() const
-{
-    return m_records;
-}
-
-
-/*!
-    Appends \a record onto the end of the NDEF message.
-*/
-void QNdefMessage::append(const QNdefRecord &record)
-{
-    m_records.append(record);
 }
 
 QTM_END_NAMESPACE

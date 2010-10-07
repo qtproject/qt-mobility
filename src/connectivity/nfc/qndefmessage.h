@@ -53,25 +53,19 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class Q_CONNECTIVITY_EXPORT QNdefMessage
+class Q_CONNECTIVITY_EXPORT QNdefMessage : public QList<QNdefRecord>
 {
 public:
-    QNdefMessage();
-    QNdefMessage(const QNdefMessage &other);
-    explicit QNdefMessage(const QList<QNdefRecord> &records);
-    explicit QNdefMessage(const QByteArray &message);
-    ~QNdefMessage();
-
-    void append(const QNdefRecord &record);
-
-    const QList<QNdefRecord> &records() const;
+    inline QNdefMessage() { }
+    inline explicit QNdefMessage(const QNdefRecord &record) { append(record); }
+    inline QNdefMessage(const QNdefMessage &message) : QList<QNdefRecord>(message) { }
+    inline QNdefMessage(const QList<QNdefRecord> &records) : QList<QNdefRecord>(records) { }
 
     bool operator==(const QNdefMessage &other) const;
 
     QByteArray toByteArray() const;
 
-private:
-    QList<QNdefRecord> m_records;
+    static QNdefMessage fromByteArray(const QByteArray &message);
 };
 
 QTM_END_NAMESPACE

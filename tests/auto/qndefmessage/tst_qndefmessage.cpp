@@ -290,17 +290,14 @@ void tst_QNdefMessage::tst_parse()
     QFETCH(QNdefMessage, message);
     QFETCH(QVariantList, expectedData);
 
-    QNdefMessage parsedMessage(data);
+    QNdefMessage parsedMessage = QNdefMessage::fromByteArray(data);
 
     QVERIFY(parsedMessage == message);
     QVERIFY(message == parsedMessage);
 
-    const QList<QNdefRecord> &records = message.records();
-    const QList<QNdefRecord> &parsedRecords = parsedMessage.records();
-
-    for (int i = 0; i < records.count(); ++i) {
-        const QNdefRecord &record = records.at(i);
-        const QNdefRecord &parsedRecord = parsedRecords.at(i);
+    for (int i = 0; i < message.count(); ++i) {
+        const QNdefRecord &record = message.at(i);
+        const QNdefRecord &parsedRecord = parsedMessage.at(i);
 
         // Test NDEF NFC Text
         {
