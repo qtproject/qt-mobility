@@ -554,6 +554,7 @@ compileTest "Maemo5 contacts dependencies" maemo5-contacts
 compileTest "Maemo5 organizer dependencies" maemo5-calendar
 compileTest "Bluez" bluez
 compileTest "Gstreamer Photography" gstreamer-photography
+compileTest "Pulse Audio" pulseaudio
 if [ "$LINUX_TARGET" = maemo6 ]; then
     compileTest sensord sensord
 else
