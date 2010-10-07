@@ -472,6 +472,11 @@ bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkId &landmarkId, QLa
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
+    QList<QLandmarkId> landmarkIds;
+    landmarkIds << landmarkId;
+    QMap<int, QLandmarkManager::Error> errorMap;
+    QList<QLandmark> lms = m_databaseOperations.landmarks(landmarkIds, &errorMap, error, errorString);
+    Q_ASSERT(lms.count() == 1);
 
     return false;
 }
@@ -483,6 +488,11 @@ bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkCategoryId &categor
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
+    QList<QLandmarkCategoryId> categoryIds;
+    categoryIds << categoryId;
+    QMap<int, QLandmarkManager::Error> errorMap;
+    QList<QLandmarkCategory> cats = m_databaseOperations.categories(categoryIds, &errorMap, error, errorString);
+    Q_ASSERT(cats.count() == 1);
     return false;
 }
 
