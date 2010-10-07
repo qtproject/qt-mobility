@@ -116,7 +116,7 @@ public:
     Status status() const;
     Error error() const;
 
-    void classBegin() {};
+    void classBegin();
     void componentComplete();
 
 public Q_SLOTS:

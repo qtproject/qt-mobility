@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,24 +39,20 @@
 **
 ****************************************************************************/
 
-#include "camera.h"
+#include <pulse/pulseaudio.h>
+#include <pulse/glib-mainloop.h>
 
-#include <QtGui>
+#if !defined(PA_API_VERSION) || PA_API_VERSION-0 != 12
+# error "Incompatible PulseAudio API version"
+#endif
+#if !PA_CHECK_VERSION(0,9,0)
+# error "PulseAudio version too old"
+#endif
 
-int main(int argc, char *argv[])
+int main(int, char **)
 {
-#if defined (Q_OS_SYMBIAN)
-    QApplication::setGraphicsSystem("raster");
-#endif
-
-    QApplication app(argc, argv);
-
-    Camera camera;
-#ifdef Q_OS_SYMBIAN
-    camera.showMaximized();
-#else
-    camera.show();
-#endif
-    
-    return app.exec();
-};
+    const char *headers = pa_get_headers_version();
+    const char *library = pa_get_library_version();
+    pa_glib_mainloop_new(0);
+    return (headers - library) * 0;
+}
