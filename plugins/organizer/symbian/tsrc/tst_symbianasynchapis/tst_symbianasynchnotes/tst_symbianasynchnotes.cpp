@@ -646,10 +646,10 @@ QList<QOrganizerItem> TestNoteItems::createItems_Negative(int noOfItems)
         // Cretae a rule
         QOrganizerItemRecurrenceRule rrule;
         rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-        rrule.setCount(2);
+        rrule.setLimit(2);
         // Set rule
-        QList<QOrganizerItemRecurrenceRule> rrules;
-        rrules.append(rrule);
+        QSet<QOrganizerItemRecurrenceRule> rrules;
+        rrules.insert(rrule);
         QOrganizerItemRecurrence recurrence;
         recurrence.setRecurrenceRules(rrules);
         QVERIFY(organizerItem.saveDetail(&recurrence));

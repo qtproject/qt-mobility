@@ -799,9 +799,9 @@ void tst_symbianomcollections::fetchItemInstance()
                                       QDateTime::currentDateTime().addMSecs(3600));
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
-    rrule.setCount(5);
-    QList<QOrganizerItemRecurrenceRule> rrules;
-    rrules.append(rrule);
+    rrule.setLimit(5);
+    QSet<QOrganizerItemRecurrenceRule> rrules;
+    rrules.insert(rrule);
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
     QVERIFY(item.saveDetail(&recurrence));
@@ -837,9 +837,9 @@ void tst_symbianomcollections::modifyItemInstance()
                                       QDateTime::currentDateTime().addMSecs(3600));
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
-    rrule.setCount(5);
-    QList<QOrganizerItemRecurrenceRule> rrules;
-    rrules.append(rrule);
+    rrule.setLimit(5);
+    QSet<QOrganizerItemRecurrenceRule> rrules;
+    rrules.insert(rrule);
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
     QVERIFY(item.saveDetail(&recurrence));

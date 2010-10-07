@@ -165,11 +165,11 @@ QList<QOrganizerItem> TestFetchItemInstances::createItems(int noOfItems)
         
         QOrganizerItemRecurrenceRule rrule;
         rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-        rrule.setCount(KNumberOfOccurrences);
+        rrule.setLimit(KNumberOfOccurrences);
  
         // Add recurrence rules to the item
-        QList<QOrganizerItemRecurrenceRule> rrules;
-        rrules.append(rrule);
+        QSet<QOrganizerItemRecurrenceRule> rrules;
+        rrules.insert(rrule);
         QOrganizerItemRecurrence recurrence;
         recurrence.setRecurrenceRules(rrules);
         QVERIFY(organizerItem.saveDetail(&recurrence));

@@ -684,9 +684,9 @@ void tst_SymbianOm::addReminderToSingleInstance()
 	QOrganizerItemRecurrence recurrence;
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-    rrule.setCount(3);
-    QList<QOrganizerItemRecurrenceRule> list;
-    list.append(rrule);
+    rrule.setLimit(3);
+    QSet<QOrganizerItemRecurrenceRule> list;
+    list.insert(rrule);
     recurrence.setRecurrenceRules(list);
     
 	// Save the item
@@ -738,9 +738,9 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
 	QOrganizerItemRecurrence recurrence;
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-    rrule.setCount(3);
-    QList<QOrganizerItemRecurrenceRule> list;
-    list.append(rrule);
+    rrule.setLimit(3);
+    QSet<QOrganizerItemRecurrenceRule> list;
+    list.insert(rrule);
     recurrence.setRecurrenceRules(list);
     
 	// Add reminder detail
