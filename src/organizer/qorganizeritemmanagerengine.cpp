@@ -633,10 +633,11 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     // recurrence information
     d.setName(QOrganizerItemRecurrence::DefinitionName);
     fields.clear();
-    f.setDataType(QVariant::List);
+    f.setDataType(qMetaTypeId< QSet<QDate> >());
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemRecurrence::FieldExceptionDates, f);
     fields.insert(QOrganizerItemRecurrence::FieldRecurrenceDates, f);
+    f.setDataType(qMetaTypeId< QSet<QOrganizerItemRecurrenceRule> >());
     fields.insert(QOrganizerItemRecurrence::FieldExceptionRules, f);
     fields.insert(QOrganizerItemRecurrence::FieldRecurrenceRules, f);
     d.setFields(fields);
@@ -1038,10 +1039,11 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     // recurrence information
     d.setName(QOrganizerItemRecurrence::DefinitionName);
     fields.clear();
-    f.setDataType(QVariant::List);
+    f.setDataType(qMetaTypeId< QSet<QDate> >());
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemRecurrence::FieldExceptionDates, f);
     fields.insert(QOrganizerItemRecurrence::FieldRecurrenceDates, f);
+    f.setDataType(qMetaTypeId< QSet<QOrganizerItemRecurrenceRule> >());
     fields.insert(QOrganizerItemRecurrence::FieldExceptionRules, f);
     fields.insert(QOrganizerItemRecurrence::FieldRecurrenceRules, f);
     d.setFields(fields);

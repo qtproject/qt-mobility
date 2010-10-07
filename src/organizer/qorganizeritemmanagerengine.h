@@ -45,7 +45,7 @@
 
 #include <QSharedData>
 #include <QMap>
-#include <QList>
+#include <QSet>
 #include <QString>
 #include <QDateTime>
 #include <QVariant>
