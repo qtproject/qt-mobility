@@ -76,17 +76,21 @@ void QGeoPositionInfoSourceMaemo::onServiceDisconnect()
     //
 }
 
-
 void QGeoPositionInfoSourceMaemo::onServiceConnect()
 {
-    DBusComm::Command command = (DBusComm::Command)( int(DBusComm::CommandStart) 
-                                                     | int(DBusComm::CommandSetInterval) 
-                                                     | int(DBusComm::CommandSetMethods) );
+    DBusComm::Command command = 
+        (DBusComm::Command)
+        ( DBusComm::CommandSetInterval | 
+          DBusComm::CommandSetMethods );
+
     int interval = QGeoPositionInfoSource::updateInterval();
     QGeoPositionInfoSource::PositioningMethods method;
     method = QGeoPositionInfoSource::preferredPositioningMethods();
 
     if (locationOngoing) {
+        command = (DBusComm::Command) ( command | DBusComm::CommandStart );
+        dbusComm->sendConfigRequest(command, method, interval);
+    } else {
         dbusComm->sendConfigRequest(command, method, interval);
     }
 }
