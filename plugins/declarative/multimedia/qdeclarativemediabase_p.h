@@ -64,62 +64,8 @@ class QMediaPlayerControl;
 class QMediaService;
 class QMediaServiceProvider;
 class QMetaDataReaderControl;
-class QMetaDataControlMetaObject;
 class QDeclarativeMediaBaseAnimation;
-
-#if defined(Q_QDOC)
-class QDeclarativeMediaMetaData : public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(QVariant title READ title NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant subTitle READ subTitle NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant author READ author NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant comment READ comment NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant description READ description NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant category READ category NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant genre READ genre NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant year READ year NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant date READ date NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant userRating READ userRating NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant keywords READ keywords NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant language READ language NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant publisher READ publisher NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant copyright READ copyright NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant parentalRating READ parentalRating NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant ratingOrganisation READ ratingOrganisation NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant size READ size NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant mediaType READ mediaType NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant duration READ duration NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant audioBitRate READ audioBitRate NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant audioCodec READ audioCodec NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant averageLevel READ averageLevel NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant channelCount READ channelCount NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant peakValue READ peakValue NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant sampleRate READ sampleRate NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant albumTitle READ albumTitle NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant albumArtist READ albumArtist NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant contributingArtist READ contributingArtist NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant composer READ composer NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant conductor READ conductor NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant lyrics READ lyrics NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant mood READ mood NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant trackNumber READ trackNumber NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant trackCount READ trackCount NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant coverArtUrlSmall READ coverArtUrlSmall NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant coverArtUrlLarge READ coverArtUrlLarge NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant resolution READ resolution NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant pixelAspectRatio READ pixelAspectRatio NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant videoFrameRate READ videoFrameRate NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant videoBitRate READ videoBitRate NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant videoCodec READ videoCodec NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant posterUrl READ posterUrl NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant chapterNumber READ chapterNumber NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant director READ director NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant leadPerformer READ leadPerformer NOTIFY metaDataChanged)
-    Q_PROPERTY(QVariant writer READ writer NOTIFY metaDataChanged)
-public:
-};
-#endif
+class QDeclarativeMediaMetaData;
 
 class QDeclarativeMediaBase
 {
@@ -159,7 +105,7 @@ public:
 
     QString errorString() const;
 
-    QObject *metaData() const;
+    QDeclarativeMediaMetaData *metaData() const;
 
     void _q_statusChanged();
 
@@ -218,9 +164,8 @@ protected:
     QMediaObject *m_mediaObject;
     QMediaServiceProvider *m_mediaProvider;
     QMetaDataReaderControl *m_metaDataControl;
-    QMetaDataControlMetaObject *m_metaObject;
     QDeclarativeMediaBaseAnimation *m_animation;
-    QScopedPointer<QObject> m_metaData;
+    QScopedPointer<QDeclarativeMediaMetaData> m_metaData;
 
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_status;
