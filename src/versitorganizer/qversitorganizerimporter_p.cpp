@@ -77,40 +77,41 @@ QVersitOrganizerImporterPrivate::~QVersitOrganizerImporterPrivate()
 }
 
 bool QVersitOrganizerImporterPrivate::importDocument(
-        const QVersitDocument& document,
+        const QVersitDocument& topLevel,
+        const QVersitDocument& subDocument,
         QOrganizerItem* item,
         QVersitOrganizerImporter::Error* error)
 {
-    if (document.componentType() == QLatin1String("VEVENT")) {
+    if (subDocument.componentType() == QLatin1String("VEVENT")) {
         item->setType(QOrganizerItemType::TypeEvent);
-    } else if (document.componentType() == QLatin1String("VTODO")) {
+    } else if (subDocument.componentType() == QLatin1String("VTODO")) {
         item->setType(QOrganizerItemType::TypeTodo);
-    } else if (document.componentType() == QLatin1String("VJOURNAL")) {
+    } else if (subDocument.componentType() == QLatin1String("VJOURNAL")) {
         item->setType(QOrganizerItemType::TypeJournal);
-    } else if (document.componentType() == QLatin1String("VTIMEZONE")) {
-        mTimeZones.addTimeZone(importTimeZone(document));
+    } else if (subDocument.componentType() == QLatin1String("VTIMEZONE")) {
+        mTimeZones.addTimeZone(importTimeZone(subDocument));
         *error = QVersitOrganizerImporter::NoError;
         return false;
     } else {
         *error = QVersitOrganizerImporter::InvalidDocumentError;
         return false;
     }
-    const QList<QVersitProperty> properties = document.properties();
+    const QList<QVersitProperty> properties = subDocument.properties();
     if (properties.isEmpty()) {
         *error = QVersitOrganizerImporter::EmptyDocumentError;
         return false;
     }
 
     foreach (const QVersitProperty& property, properties) {
-        importProperty(document, property, item);
+        importProperty(subDocument, property, item);
     }
     // run plugin handlers
     foreach (QVersitOrganizerImporterPropertyHandler* handler, mPluginPropertyHandlers) {
-        handler->documentProcessed(document, item);
+        handler->subDocumentProcessed(topLevel, subDocument, item);
     }
     // run property handlers
     if (mPropertyHandler) {
-        mPropertyHandler->documentProcessed(document, item);
+        mPropertyHandler->subDocumentProcessed(topLevel, subDocument, item);
     }
     return true;
 }

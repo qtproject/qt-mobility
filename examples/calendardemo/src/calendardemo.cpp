@@ -353,7 +353,7 @@ void CalendarDemo::importItems()
     QVersitOrganizerImporter importer;
     foreach (const QVersitDocument& document, reader.results()) {
         if (!importer.importDocument(document)) {
-            qWarning() << "Import failed, " << importer.errors();
+            qWarning() << "Import failed, " << importer.errorMap();
             continue;
         }
         QList<QOrganizerItem> items = importer.items();
@@ -389,7 +389,7 @@ void CalendarDemo::exportItems()
     QList<QOrganizerItem> items(m_manager->items());
     QVersitOrganizerExporter exporter;
     if (!exporter.exportItems(items, QVersitDocument::ICalendar20Type)) {
-        qWarning() << "Export failed, " << exporter.errors();
+        qWarning() << "Export failed, " << exporter.errorMap();
         return;
     }
     QVersitDocument document = exporter.document();

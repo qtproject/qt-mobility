@@ -91,9 +91,11 @@ public:
     void addProperty(const QVersitProperty& property);
     void removeProperty(const QVersitProperty& property);
     void removeProperties(const QString& name);
+    void setProperties(const QList<QVersitProperty>& properties);
     QList<QVersitProperty> properties() const;
 
     void addSubDocument(const QVersitDocument& subdocument);
+    void removeSubDocument(const QVersitDocument& subdocument);
     void setSubDocuments(const QList<QVersitDocument>& documents);
     QList<QVersitDocument> subDocuments() const;
 
