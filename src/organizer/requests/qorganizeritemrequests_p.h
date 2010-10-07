@@ -145,7 +145,8 @@ class QOrganizerItemInstanceFetchRequestPrivate : public QOrganizerItemAbstractR
 {
 public:
     QOrganizerItemInstanceFetchRequestPrivate()
-        : QOrganizerItemAbstractRequestPrivate()
+        : QOrganizerItemAbstractRequestPrivate(),
+          m_countLimit(-1)
     {
     }
 
@@ -158,9 +159,10 @@ public:
         return QOrganizerItemAbstractRequest::ItemInstanceFetchRequest;
     }
 
-    QOrganizerItemFilter m_filter;
-    QList<QOrganizerItemSortOrder> m_sorting;
-    QOrganizerItemFetchHint m_fetchHint;
+    QOrganizerItem m_generator;
+    QDateTime m_startDate;
+    QDateTime m_endDate;
+    int m_countLimit;
 
     QList<QOrganizerItem> m_organizeritems;
 };

@@ -1557,6 +1557,26 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
         }
         break;
 
+        case QOrganizerItemAbstractRequest::ItemInstanceFetchRequest:
+        {
+            QOrganizerItemInstanceFetchRequest* r = static_cast<QOrganizerItemInstanceFetchRequest*>(currentRequest);
+            QOrganizerItem generator(r->generator());
+            QDateTime startDate(r->startDate());
+            QDateTime endDate(r->endDate());
+            int countLimit = r->countLimit();
+
+            QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
+            QList<QOrganizerItem> requestedOrganizerItems = itemInstances(generator, startDate, endDate, countLimit, &operationError);
+
+            // update the request with the results.
+            if (!requestedOrganizerItems.isEmpty() || operationError != QOrganizerItemManager::NoError)
+                updateItemInstanceFetchRequest(r, requestedOrganizerItems, operationError, QOrganizerItemAbstractRequest::FinishedState);
+            else
+                updateRequestState(currentRequest, QOrganizerItemAbstractRequest::FinishedState);
+        }
+        break;
+
+
         case QOrganizerItemAbstractRequest::ItemLocalIdFetchRequest:
         {
             QOrganizerItemLocalIdFetchRequest* r = static_cast<QOrganizerItemLocalIdFetchRequest*>(currentRequest);
