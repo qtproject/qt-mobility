@@ -101,7 +101,8 @@ QDeclarativeContactModel::QDeclarativeContactModel(QObject *parent) :
     connect(this, SIGNAL(filterChanged()), SLOT(fetchAgain()));
     connect(this, SIGNAL(fetchHintChanged()), SLOT(fetchAgain()));
     connect(this, SIGNAL(sortOrdersChanged()), SLOT(fetchAgain()));
-
+    
+    d->m_manager = new QContactManager();
     //import vcard
     connect(&d->m_reader, SIGNAL(stateChanged(QVersitReader::State)), this, SLOT(startImport(QVersitReader::State)));
 }
@@ -109,6 +110,44 @@ QDeclarativeContactModel::QDeclarativeContactModel(QObject *parent) :
 QString QDeclarativeContactModel::manager() const
 {
     return d->m_manager->managerName();
+}
+
+
+QString QDeclarativeContactModel::error() const
+{
+    switch (d->m_manager->error()) {
+    case QContactManager::DoesNotExistError:
+        return QLatin1String("Not exist");
+    case QContactManager::AlreadyExistsError:
+        return QLatin1String("Already exist");
+    case QContactManager::InvalidDetailError:
+        return QLatin1String("Invalid detail");
+    case QContactManager::InvalidRelationshipError:
+        return QLatin1String("Invalid relationship");
+    case QContactManager::LockedError:
+        return QLatin1String("Locked error");
+    case QContactManager::DetailAccessError:
+        return QLatin1String("Detail access error");
+    case QContactManager::PermissionsError:
+        return QLatin1String("Permissions error");
+    case QContactManager::OutOfMemoryError:
+        return QLatin1String("Out of memory");
+    case QContactManager::NotSupportedError:
+        return QLatin1String("Not supported");
+    case QContactManager::BadArgumentError:
+        return QLatin1String("Bad argument");
+    case QContactManager::UnspecifiedError:
+        return QLatin1String("Unspecified error");
+    case QContactManager::VersionMismatchError:
+        return QLatin1String("Version mismatch");
+    case QContactManager::LimitReachedError:
+        return QLatin1String("Limit reached");
+    case QContactManager::InvalidContactTypeError:
+        return QLatin1String("Invalid contact type");
+    default:
+        break;
+    }
+    return QLatin1String("Status ok");
 }
 
 QStringList QDeclarativeContactModel::availableManagers() const
