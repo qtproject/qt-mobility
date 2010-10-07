@@ -250,7 +250,7 @@ void QRemoteServiceRegisterDBusPrivate::processIncoming(int pid, int uid)
             session->acceptIncoming(false);
 
             // Close service if only client
-            if (instanceCount == 0)
+            if (instanceCount <= 0 && quitOnLastInstanceClosed())
                 QCoreApplication::exit();
 
             return;

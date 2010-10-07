@@ -106,6 +106,9 @@ const QMetaObject * QRemoteServiceRegister::Entry::metaObject() const
     return d->meta;
 }
 
+/*!
+    Sets the instance type of the QRemoteServiceRegister::Entry Entry
+*/
 void QRemoteServiceRegister::Entry::setInstantiationType(QRemoteServiceRegister::InstanceType t)
 {
     d->instanceType = t;
@@ -122,13 +125,96 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiatio
     \ingroup servicefw
     \brief The QRemoteServiceRegister class manages instances of remote service objects.
 
-    This class registers and publishes IPC based service objects. It owns each created service object instance and
-    ensures that the platform specific IPC mechanism publishes the required service
-    object to other processes in the system.
+    This class registers and publishes IPC based service objects. It owns each created service
+    object instance and ensures that the platform specific IPC mechanism publishes the required
+    service object to other processes in the system. 
+
+    Note that in order for the remote services to be discoverable by QServiceManager each \l Entry
+    must be registered with the information reflecting the service XML description.
+    
+    The following XML descriptor is used for subsequent examples. 
+
+    \code
+    <SFW version="1.1">
+    <service>
+        <name>MyService</name>
+        <ipcaddress>my_service</ipcaddress>
+        <description>My service example</description>
+        <interface>
+            <name>com.nokia.qt.example.myService</name>
+            <version>1.0</version>
+            <description>My private service</description>
+            <capabilities></capabilities>
+        </interface>
+    </service>
+    </SFW>
+    \endcode
+
+    The snippet belows demonstrates how an application can register the class \a MyClass 
+    as a remote service, which is published and accessible to clients who wish to load 
+    service object instances.
+
+    \code
+    int main(int argc, char** argv)
+    {
+        QCoreApplication app(argc, argv);
+
+        QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
+
+        QRemoteServiceRegister::Entry myService;
+        myService = serviceRegister->createEntry<MyClass>(
+            "MyService", "com.nokia.qt.example.myservice", "1.0");
+        
+        serviceRegister->publishEntries("my_service");
+
+        delete serviceRegister;
+        return app.exec();
+    }
+    \endcode
+
+    By default all entries are created as \l GlobalInstance types but this can be set 
+    by \l Entry. Once service entries are published to instance manager
+    the register is no longer needed and can be removed.
+
+    \sa Entry
 */
 
-/*! \typedef QRemoteServiceRegister::securityFilter
-    QRemoteServiceRegister -style synonym for bool (*securityFilter)(const void *message)
+/*!
+    \enum QRemoteServiceRegister::InstanceType
+    Defines the two types of instances for a registration entry
+    \value GlobalInstance     New requests for a service gets the same service instance
+    \value PrivateInstance    New requests for a service gets a new service instance
+*/
+
+/*!
+    \fn void QRemoteServiceRegister::instanceClosed(const QRemoteServiceRegister::Entry&)
+
+    This signal is emitted whenever a created instance has been closed. This indicates
+    that a connected client has either shutdown or released the loaded service object.
+    
+    The \l Entry is supplied to identify which registered service entry the closed 
+    instance belonged to.
+
+    \sa allInstancesClosed()
+*/
+
+/*!
+    \fn void QRemoteServiceRegister::allInstancesClosed()
+
+    This signal is emitted whenever all service instances have been closed. This indicates
+    that the last connected client has either shutdown or released the loaded service object.
+    
+    \sa instanceClosed()
+*/
+
+/*! 
+    \typedef QRemoteServiceRegister::CreateServiceFunc
+    TODO: QObject* (*CreateServiceFunc)()
+*/
+
+/*! 
+    \typedef QRemoteServiceRegister::SecurityFilter
+    TODO: bool (*SecurityFilter)(const void *message)
 */
 
 /*!
@@ -153,18 +239,24 @@ QRemoteServiceRegister::~QRemoteServiceRegister()
 }
 
 /*!
-    Publishes every service entry that has been registered using
-    \l registerService(). \a ident is the service specific
-    IPC address under which the service can be reached. This address must match
-    the address provided in the services xml descriptor (see <filepath> tag).
+    Publishes every service entry that has been created using \l createEntry(). The \a ident 
+    is the service specific IPC address under which the service can be reached. 
+    
+    This address must match the address provided in the services XML descriptor, otherwise 
+    the service will not be discoverable.
+
+    \sa createEntry()
 */
-void QRemoteServiceRegister::publishEntries( const QString& ident)
+void QRemoteServiceRegister::publishEntries(const QString& ident)
 {
     d->publishServices(ident);
 }
 
 /*!
     \property QRemoteServiceRegister::quitOnLastInstanceClosed
+
+    Holds the value for automatically exiting services if connected clients have closed their
+    instances. By default this value is set to true.
 */
 bool QRemoteServiceRegister::quitOnLastInstanceClosed() const
 {
@@ -176,11 +268,52 @@ void QRemoteServiceRegister::setQuitOnLastInstanceClosed(bool quit)
     d->setQuitOnLastInstanceClosed(quit);
 }
 
+/*! 
+    Allows a security filter to be set which can access \l QRemoteServiceRegisterCredentials.
+    The \l SecurityFilter takes a function pointer where the function code implements possible
+    permission checks and returns true or false. If a connecting client fails the security
+    filter it will be denied access and unable to obtain a valid service instance. 
+    
+    The following snippet is an example of how to use the security filter feature.
+    
+    \code
+    bool myFunction(const void *p)
+    {
+        const QRemoteServiceRegisterCredentials *cred = 
+            (const struct QRemoteServiceRegisterCredentials *)p;
+
+        // deny the superuser
+        if (cred->uid == 0)
+            return false;
+
+        return true;
+    }
+        
+    int main(int argc, char** argv)
+    {
+        ...
+
+        QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
+        service->setSecurityFilter(myFunction);
+
+        ...
+    }
+    \endcode
+*/
 QRemoteServiceRegister::SecurityFilter QRemoteServiceRegister::setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter)
 {
     return d->setSecurityFilter(filter);
 }
 
+/*!
+    \fn QRemoteServiceRegister::createEntry(const QString& serviceName, const QString& interfaceName, const QString& version)
+
+    Creates an entry on our remote instance manager. The \a serviceName, \a interfaceName and 
+    \a version must match the service XML descriptor in order for the remote service to be 
+    discoverable.
+
+    \sa publishEntries()
+*/
 QRemoteServiceRegister::Entry QRemoteServiceRegister::createEntry(const QString& serviceName, const QString& interfaceName, const QString& version, QRemoteServiceRegister::CreateServiceFunc cptr, const QMetaObject* meta)
 {
     if (serviceName.isEmpty()
