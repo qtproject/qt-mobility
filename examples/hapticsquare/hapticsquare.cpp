@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include "dialog.h"
+#include "hapticsquare.h"
 #include "hapticbutton.h"
 
 #include <QGridLayout>
 #include <QDebug>
 
-Dialog::Dialog()
+HapticSquare::HapticSquare()
 {
     // First: Define a generic "rumble" custom effect.
     // we start with an intensity of zero (nothing).
@@ -96,7 +96,7 @@ Dialog::Dialog()
     connect(m_btnNegativeEffect, SIGNAL(clicked()), this, SLOT(playNegativeEffect()));
 }
 
-Dialog::~Dialog()
+HapticSquare::~HapticSquare()
 {
     delete m_btnRumble;
     delete m_btnOcean;
@@ -104,12 +104,12 @@ Dialog::~Dialog()
     delete m_btnNegativeEffect;
 }
 
-void Dialog::playRumble()
+void HapticSquare::playRumble()
 {
     m_rumble.start();
 }
 
-void Dialog::playOcean(bool toggleState)
+void HapticSquare::playOcean(bool toggleState)
 {
     if (toggleState)
         m_ocean.start();
@@ -117,14 +117,14 @@ void Dialog::playOcean(bool toggleState)
         m_ocean.stop();
 }
 
-void Dialog::playButtonClick()
+void HapticSquare::playButtonClick()
 {
     QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeBasicButton);
 }
 
-void Dialog::playNegativeEffect()
+void HapticSquare::playNegativeEffect()
 {
     QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeNegativeTacticon);
 }
 
-#include "moc_dialog.cpp"
+#include "moc_hapticsquare.cpp"
