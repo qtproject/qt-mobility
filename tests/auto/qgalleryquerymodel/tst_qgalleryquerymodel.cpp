@@ -66,7 +66,14 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void execute();
-    void properties();
+    void sortPropertyNames();
+    void autoUpdate();
+    void offset();
+    void limit();
+    void rootType();
+    void rootItem();
+    void scope();
+    void filter();
     void indexes();
     void data();
     void flags();
@@ -382,86 +389,229 @@ void tst_QGalleryItemListModel::execute()
     QCOMPARE(statusSpy.count(), 5);
 }
 
-void tst_QGalleryItemListModel::properties()
+void tst_QGalleryItemListModel::sortPropertyNames()
 {
-    const QStringList sortPropertyNames = QStringList()
-            << QLatin1String("rating") << QLatin1String("duration");
-    const bool autoUpdate = true;
-    const int offset = 90;
-    const int limit = 12;
-    const QString rootType = QLatin1String("Document");
-    const QVariant rootItem = 35;
-    const QGalleryQueryRequest::Scope scope = QGalleryQueryRequest::DirectDescendants;
+    const QStringList propertyNames = QStringList()
+            << QLatin1String("-rating")
+            << QLatin1String("+duration");
+
+    QGalleryQueryModel model;
+
+    QSignalSpy spy(&model, SIGNAL(sortPropertyNamesChanged()));
+
+    QCOMPARE(model.sortPropertyNames(), QStringList());
+
+    model.setSortPropertyNames(QStringList());
+    QCOMPARE(model.sortPropertyNames(), QStringList());
+    QCOMPARE(spy.count(), 0);
+
+    model.setSortPropertyNames(propertyNames);
+    QCOMPARE(model.sortPropertyNames(), propertyNames);
+    QCOMPARE(spy.count(), 1);
+
+    model.setSortPropertyNames(propertyNames);
+    QCOMPARE(model.sortPropertyNames(), propertyNames);
+    QCOMPARE(spy.count(), 1);
+
+    model.setSortPropertyNames(QStringList());
+    QCOMPARE(model.sortPropertyNames(), QStringList());
+    QCOMPARE(spy.count(), 2);
+}
+
+void tst_QGalleryItemListModel::autoUpdate()
+{
+    QGalleryQueryModel model;
+
+    QSignalSpy spy(&model, SIGNAL(autoUpdateChanged()));
+
+    QCOMPARE(model.autoUpdate(), false);
+
+    model.setAutoUpdate(false);
+    QCOMPARE(model.autoUpdate(), false);
+    QCOMPARE(spy.count(), 0);
+
+    model.setAutoUpdate(true);
+    QCOMPARE(model.autoUpdate(), true);
+    QCOMPARE(spy.count(), 1);
+
+    model.setAutoUpdate(true);
+    QCOMPARE(model.autoUpdate(), true);
+    QCOMPARE(spy.count(), 1);
+
+    model.setAutoUpdate(false);
+    QCOMPARE(model.autoUpdate(), false);
+    QCOMPARE(spy.count(), 2);
+}
+
+void tst_QGalleryItemListModel::offset()
+{
+    QGalleryQueryModel model;
+
+    QSignalSpy spy(&model, SIGNAL(offsetChanged()));
+
+    QCOMPARE(model.offset(), 0);
+
+    model.setOffset(0);
+    QCOMPARE(model.offset(), 0);
+    QCOMPARE(spy.count(), 0);
+
+    model.setOffset(-45);
+    QCOMPARE(model.offset(), 0);
+    QCOMPARE(spy.count(), 0);
+
+    model.setOffset(32);
+    QCOMPARE(model.offset(), 32);
+    QCOMPARE(spy.count(), 1);
+
+    model.setOffset(32);
+    QCOMPARE(model.offset(), 32);
+    QCOMPARE(spy.count(), 1);
+
+    model.setOffset(-45);
+    QCOMPARE(model.offset(), 0);
+    QCOMPARE(spy.count(), 2);
+}
+
+void tst_QGalleryItemListModel::limit()
+{
+    QGalleryQueryModel model;
+
+    QSignalSpy spy(&model, SIGNAL(limitChanged()));
+
+    QCOMPARE(model.limit(), 0);
+
+    model.setLimit(0);
+    QCOMPARE(model.limit(), 0);
+    QCOMPARE(spy.count(), 0);
+
+    model.setLimit(-21);
+    QCOMPARE(model.limit(), 0);
+    QCOMPARE(spy.count(), 0);
+
+    model.setLimit(102);
+    QCOMPARE(model.limit(), 102);
+    QCOMPARE(spy.count(), 1);
+
+    model.setLimit(102);
+    QCOMPARE(model.limit(), 102);
+    QCOMPARE(spy.count(), 1);
+
+    model.setLimit(-21);
+    QCOMPARE(model.limit(), 0);
+    QCOMPARE(spy.count(), 2);
+}
+
+void tst_QGalleryItemListModel::rootType()
+{
+    const QString itemType = QLatin1String("Audio");
+
+    QGalleryQueryModel model;
+
+    QSignalSpy spy(&model, SIGNAL(rootTypeChanged()));
+
+    QCOMPARE(model.rootType(), QString());
+
+    model.setRootType(QString());
+    QCOMPARE(model.rootType(), QString());
+    QCOMPARE(spy.count(), 0);
+
+    model.setRootType(itemType);
+    QCOMPARE(model.rootType(), itemType);
+    QCOMPARE(spy.count(), 1);
+
+    model.setRootType(itemType);
+    QCOMPARE(model.rootType(), itemType);
+    QCOMPARE(spy.count(), 1);
+
+    model.setRootType(QString());
+    QCOMPARE(model.rootType(), QString());
+    QCOMPARE(spy.count(), 2);
+}
+
+void tst_QGalleryItemListModel::rootItem()
+{
+    QGalleryQueryModel model;
+
+    QSignalSpy spy(&model, SIGNAL(rootItemChanged()));
+
+    QCOMPARE(model.rootItem(), QVariant());
+
+    model.setRootItem(QVariant());
+    QCOMPARE(model.rootItem(), QVariant());
+    QCOMPARE(spy.count(), 0);
+
+    model.setRootItem(76);
+    QCOMPARE(model.rootItem(), QVariant(76));
+    QCOMPARE(spy.count(), 1);
+
+    model.setRootItem(76);
+    QCOMPARE(model.rootItem(), QVariant(76));
+    QCOMPARE(spy.count(), 1);
+
+    model.setRootItem(QLatin1String("65"));
+    QCOMPARE(model.rootItem(), QVariant(QLatin1String("65")));
+    QCOMPARE(spy.count(), 2);
+
+    model.setRootItem(QLatin1String("65"));
+    QCOMPARE(model.rootItem(), QVariant(QLatin1String("65")));
+    QCOMPARE(spy.count(), 2);
+
+    model.setRootItem(QVariant());
+    QCOMPARE(model.rootItem(), QVariant());
+    QCOMPARE(spy.count(), 3);
+}
+
+void tst_QGalleryItemListModel::scope()
+{
+    QGalleryQueryModel model;
+
+    QSignalSpy spy(&model, SIGNAL(scopeChanged()));
+
+    QCOMPARE(model.scope(), QGalleryQueryRequest::AllDescendants);
+
+    model.setScope(QGalleryQueryRequest::AllDescendants);
+    QCOMPARE(model.scope(), QGalleryQueryRequest::AllDescendants);
+    QCOMPARE(spy.count(), 0);
+
+    model.setScope(QGalleryQueryRequest::DirectDescendants);
+    QCOMPARE(model.scope(), QGalleryQueryRequest::DirectDescendants);
+    QCOMPARE(spy.count(), 1);
+
+    model.setScope(QGalleryQueryRequest::DirectDescendants);
+    QCOMPARE(model.scope(), QGalleryQueryRequest::DirectDescendants);
+    QCOMPARE(spy.count(), 1);
+
+    model.setScope(QGalleryQueryRequest::AllDescendants);
+    QCOMPARE(model.scope(), QGalleryQueryRequest::AllDescendants);
+    QCOMPARE(spy.count(), 2);
+}
+
+void tst_QGalleryItemListModel::filter()
+{
     const QGalleryFilter filter = QGalleryMetaDataFilter(
             QLatin1String("rating"), 3, QGalleryFilter::GreaterThan);
 
-    QtTestGallery gallery;
-
     QGalleryQueryModel model;
-    QVERIFY(model.gallery() == 0);
 
-    model.setGallery(&gallery);
-    QVERIFY(model.gallery() == &gallery);
+    QSignalSpy spy(&model, SIGNAL(filterChanged()));
 
-    QCOMPARE(model.sortPropertyNames(), QStringList());
-    QCOMPARE(model.autoUpdate(), false);
-    QCOMPARE(model.offset(), 0);
-    QCOMPARE(model.limit(), 0);
-    QCOMPARE(model.rootType(), QString());
-    QCOMPARE(model.rootItem(), QVariant());
-    QCOMPARE(model.scope(), QGalleryQueryRequest::AllDescendants);
     QCOMPARE(model.filter(), QGalleryFilter());
 
-    model.setSortPropertyNames(sortPropertyNames);
-    QCOMPARE(model.sortPropertyNames(), sortPropertyNames);
-
-    model.setAutoUpdate(autoUpdate);
-    QCOMPARE(model.autoUpdate(), autoUpdate);
-
-    model.setOffset(offset);
-    QCOMPARE(model.offset(), offset);
-
-    model.setLimit(limit);
-    QCOMPARE(model.limit(), limit);
-
-    model.setRootType(rootType);
-    QCOMPARE(model.rootType(), rootType);
-
-    model.setRootItem(rootItem);
-    QCOMPARE(model.rootItem(), rootItem);
-
-    model.setScope(scope);
-    QCOMPARE(model.scope(), scope);
+    model.setFilter(QGalleryFilter());
+    QCOMPARE(model.filter(), QGalleryFilter());
+    QCOMPARE(spy.count(), 0);
 
     model.setFilter(filter);
     QCOMPARE(model.filter(), filter);
+    QCOMPARE(spy.count(), 1);
 
-    model.addColumn(albumProperties);
-    model.addColumn(titleProperties);
-    model.addColumn(QLatin1String("duration"), Qt::DisplayRole);
-    model.addColumn(QLatin1String("rating"), Qt::DisplayRole);
-    model.addColumn(QLatin1String("turtle"), Qt::DisplayRole);
-    model.execute();
-    QVERIFY(gallery.request() != 0);
+    model.setFilter(filter);
+    QCOMPARE(model.filter(), filter);
+    QCOMPARE(spy.count(), 1);
 
-    const QStringList propertyNames = gallery.request()->propertyNames();
-    QVERIFY(propertyNames.contains("albumTitle"));
-    QVERIFY(propertyNames.contains("albumArtist"));
-    QVERIFY(propertyNames.contains("albumId"));
-    QVERIFY(propertyNames.contains("displayName"));
-    QVERIFY(propertyNames.contains("title"));
-    QVERIFY(propertyNames.contains("duration"));
-    QVERIFY(propertyNames.contains("rating"));
-    QVERIFY(propertyNames.contains("turtle"));
-
-    QCOMPARE(gallery.request()->sortPropertyNames(), sortPropertyNames);
-    QCOMPARE(gallery.request()->autoUpdate(), autoUpdate);
-    QCOMPARE(gallery.request()->offset(), offset);
-    QCOMPARE(gallery.request()->limit(), limit);
-    QCOMPARE(gallery.request()->rootType(), rootType);
-    QCOMPARE(gallery.request()->rootItem(), rootItem);
-    QCOMPARE(gallery.request()->scope(), scope);
-    QCOMPARE(gallery.request()->filter(), filter);
+    model.setFilter(QGalleryFilter());
+    QCOMPARE(model.filter(), QGalleryFilter());
+    QCOMPARE(spy.count(), 2);
 }
 
 void tst_QGalleryItemListModel::indexes()

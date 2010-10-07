@@ -56,7 +56,6 @@ SYMBIAN_HEADERS += \
         ../../inc/filtering/cntfilterintersection.h \
         ../../inc/filtering/cntfilterunion.h \
         ../../inc/filtering/cntfilterrelationship.h \
-        ../../inc/filtering/cntfilterdetaildisplaylabel.h \
         
 
 SYMBIAN_SOURCES += \
@@ -103,7 +102,6 @@ SYMBIAN_SOURCES += \
         ../../src/filtering/cntfilterintersection.cpp \
         ../../src/filtering/cntfilterunion.cpp \
         ../../src/filtering/cntfilterrelationship.cpp \
-        ../../src/filtering/cntfilterdetaildisplaylabel.cpp \
  
 SYMBIAN_LIBS += \
         -lcntmodel \

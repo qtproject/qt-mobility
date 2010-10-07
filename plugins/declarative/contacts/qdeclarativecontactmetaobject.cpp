@@ -76,11 +76,9 @@ QDeclarativeContactMetaObject::~QDeclarativeContactMetaObject()
 
 void QDeclarativeContactMetaObject::getValue(int propId, void **a)
 {
-    qDebug() << "value for propId:" << propId;
     ContactDetailNameMap* detailMetaData = m_properties.value(propId);
     if (detailMetaData) {
         if (detailMetaData->group) {
-            qDebug() << "name:" << detailMetaData->name;
             *reinterpret_cast< QDeclarativeListProperty<QDeclarativeContactDetail>* >(a[0]) =
                     QDeclarativeListProperty<QDeclarativeContactDetail>(object(), detailMetaData, detail_append, detail_count, detail_at, detail_clear);
 
@@ -133,7 +131,6 @@ int QDeclarativeContactMetaObject::createProperty(const char * name,  const char
         else
             propId = QDeclarativeOpenMetaObject::createProperty(name, "QVariant");
         m_properties.insert(propId, detailMetaData);
-        qDebug() << "createProperty:" << name << " propId:" << propId;
         return propId;
     }
     return -1;
