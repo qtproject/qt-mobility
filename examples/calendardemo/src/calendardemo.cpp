@@ -357,13 +357,12 @@ void CalendarDemo::importItems()
             continue;
         }
         QList<QOrganizerItem> items = importer.items();
-        QMap<int, QOrganizerItemManager::Error> errorMap;
         QList<QOrganizerItem>::iterator it = items.begin();
         while (it != items.end()) {
             *it = m_manager->compatibleItem(*it);
             it++;
         }
-        m_manager->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap);
+        m_manager->saveItems(&items);
     }
     m_monthPage->refresh();
     m_dayPage->refresh();
