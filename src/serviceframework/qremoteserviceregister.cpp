@@ -209,12 +209,14 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiatio
 
 /*! 
     \typedef QRemoteServiceRegister::CreateServiceFunc
-    TODO: QObject* (*CreateServiceFunc)()
+    \internal
+    Denotes a function pointer returning a service instance
 */
 
 /*! 
     \typedef QRemoteServiceRegister::SecurityFilter
-    TODO: bool (*SecurityFilter)(const void *message)
+    \internal
+    Denotes a function pointer used for the security filter feature
 */
 
 /*!
