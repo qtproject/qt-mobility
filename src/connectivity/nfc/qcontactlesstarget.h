@@ -97,8 +97,8 @@ public:
     virtual QList<QByteArray> sendApduCommands(const QList<QByteArray> &commands);
 
     // TagTypeSpecificAccess
-    virtual QVariant sendCommand(const QVariant &command);
-    virtual QVariantList sendCommands(const QVariantList &commands);
+    virtual QByteArray sendCommand(const QByteArray &command);
+    virtual QList<QByteArray> sendCommands(const QList<QByteArray> &commands);
 
 private:
     QContactlessTargetPrivate *d;

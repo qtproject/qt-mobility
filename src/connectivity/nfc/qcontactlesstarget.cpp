@@ -207,21 +207,21 @@ QList<QByteArray> QContactlessTarget::sendApduCommands(const QList<QByteArray> &
 /*!
     Sends \a command to the contactless target and returns the result.
 */
-QVariant QContactlessTarget::sendCommand(const QVariant &command)
+QByteArray QContactlessTarget::sendCommand(const QByteArray &command)
 {
     Q_UNUSED(command);
 
-    return QVariant();
+    return QByteArray();
 }
 
 /*!
     Sends multiple \a commands to the contactless target and returns the result.
 */
-QVariantList QContactlessTarget::sendCommands(const QVariantList &commands)
+QList<QByteArray> QContactlessTarget::sendCommands(const QList<QByteArray> &commands)
 {
     Q_UNUSED(commands);
 
-    return QVariantList();
+    return QList<QByteArray>();
 }
 
 QTM_END_NAMESPACE
