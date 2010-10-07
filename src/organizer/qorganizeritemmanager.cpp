@@ -340,6 +340,20 @@ QOrganizerItemManager::Error QOrganizerItemManager::error() const
 }
 
 /*!
+  Returns per-input error codes for the most recent operation.
+  This function only returns meaningful information if the most
+  recent operation was a batch operation.
+  Each key in the map is the index of the element in the input list
+  for which the error (whose error code is stored in the value for
+  that key in the map) occurred during the batch operation.
+  \sa error(), saveItems(), removeItems()
+ */
+QMap<int, QOrganizerItemManager::Error> QOrganizerItemManager::errorMap() const
+{
+    return d->m_errorMap;
+}
+
+/*!
   Return the list of organizer item instances which match the given \a filter, sorted according to the given \a sortOrders.
   The client may instruct the manager that it does not require all possible information about each instance by specifying a fetch hint \a fetchHint;
   the manager can choose to ignore the fetch hint, but if it does so, it must return all possible information about each instance.
@@ -347,6 +361,7 @@ QOrganizerItemManager::Error QOrganizerItemManager::error() const
 QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerItemManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->itemInstances(filter, sortOrders, fetchHint, &d->m_error);
 }
 
@@ -361,6 +376,7 @@ QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItemF
 QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount) const
 {
     d->m_error = QOrganizerItemManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->itemInstances(generator, periodStart, periodEnd, maxCount, &d->m_error);
 }
 
@@ -371,6 +387,7 @@ QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItem&
 QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
     d->m_error = QOrganizerItemManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->itemIds(QOrganizerItemFilter(), sortOrders, &d->m_error);
 }
 
@@ -381,6 +398,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QList<QOrganiz
 QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
     d->m_error = QOrganizerItemManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->itemIds(filter, sortOrders, &d->m_error);
 }
 
@@ -399,6 +417,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QOrganizerItem
 QList<QOrganizerItem> QOrganizerItemManager::items(const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerItemManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->items(QOrganizerItemFilter(), sortOrders, fetchHint, &d->m_error);
 }
 
@@ -420,6 +439,7 @@ QList<QOrganizerItem> QOrganizerItemManager::items(const QList<QOrganizerItemSor
 QList<QOrganizerItem> QOrganizerItemManager::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerItemManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->items(filter, sortOrders, fetchHint, &d->m_error);
 }
 
@@ -441,6 +461,7 @@ QList<QOrganizerItem> QOrganizerItemManager::items(const QOrganizerItemFilter& f
 QOrganizerItem QOrganizerItemManager::item(const QOrganizerItemLocalId& organizeritemId, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerItemManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->item(organizeritemId, fetchHint, &d->m_error);
 }
 
@@ -483,6 +504,7 @@ QOrganizerItem QOrganizerItemManager::item(const QOrganizerItemLocalId& organize
  */
 bool QOrganizerItemManager::saveItem(QOrganizerItem* organizeritem, const QOrganizerCollectionLocalId& collectionId)
 {
+    d->m_errorMap.clear();
     if (organizeritem) {
         d->m_error = QOrganizerItemManager::NoError;
         return d->m_engine->saveItem(organizeritem, collectionId, &d->m_error);
@@ -500,6 +522,7 @@ bool QOrganizerItemManager::saveItem(QOrganizerItem* organizeritem, const QOrgan
 bool QOrganizerItemManager::removeItem(const QOrganizerItemLocalId& organizeritemId)
 {
     d->m_error = QOrganizerItemManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->removeItem(organizeritemId, &d->m_error);
 }
 
@@ -520,9 +543,7 @@ bool QOrganizerItemManager::removeItem(const QOrganizerItemLocalId& organizerite
   An item which is valid in one collection may be invalid in another collection, in the
   same manager.
 
-  The manager might populate \a errorMap (the map of indices of the \a organizeritems list to
-  the error which occurred when saving the organizer item at that index) for
-  every index for which the organizer item could not be saved, if it is able.
+  Calling \l errorMap() will return the per-input errors for the latest batch function.
   The \l QOrganizerItemManager::error() function will only return \c QOrganizerItemManager::NoError
   if all organizeritems were saved successfully.
 
@@ -532,17 +553,16 @@ bool QOrganizerItemManager::removeItem(const QOrganizerItemLocalId& organizerite
 
   \sa QOrganizerItemManager::saveItem()
  */
-bool QOrganizerItemManager::saveItems(QList<QOrganizerItem>* organizeritems, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap)
+bool QOrganizerItemManager::saveItems(QList<QOrganizerItem>* organizeritems, const QOrganizerCollectionLocalId& collectionId)
 {
-    if (errorMap)
-        errorMap->clear();
+    d->m_errorMap.clear();
     if (!organizeritems) {
         d->m_error = QOrganizerItemManager::BadArgumentError;
         return false;
     }
 
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->saveItems(organizeritems, collectionId, errorMap, &d->m_error);
+    return d->m_engine->saveItems(organizeritems, collectionId, &d->m_errorMap, &d->m_error);
 }
 
 /*!
@@ -550,9 +570,7 @@ bool QOrganizerItemManager::saveItems(QList<QOrganizerItem>* organizeritems, con
   \a organizeritemIds.  Returns true if all organizeritems were removed successfully,
   otherwise false.
 
-  The manager might populate \a errorMap (the map of indices of the \a organizeritemIds list to
-  the error which occurred when saving the organizer item at that index) for every
-  index for which the organizer item could not be removed, if it is able.
+  Calling \l errorMap() will return the per-input errors for the latest batch function.
   The \l QOrganizerItemManager::error() function will
   only return \c QOrganizerItemManager::NoError if all organizeritems were removed
   successfully.
@@ -561,23 +579,22 @@ bool QOrganizerItemManager::saveItems(QList<QOrganizerItem>* organizeritems, con
   and calling error() will return \c QOrganizerItemManager::BadArgumentError.  If the list is non-empty
   and contains ids which do not identify a valid organizer item in the manager, the function will
   remove any organizeritems which are identified by ids in the \a organizeritemIds list, insert
-  \c QOrganizerItemManager::DoesNotExist entries into the \a errorMap for the indices of invalid ids
+  \c QOrganizerItemManager::DoesNotExist entries into the error map for the indices of invalid ids
   in the \a organizeritemIds list, return false, and set the overall operation error to
   \c QOrganizerItemManager::DoesNotExistError.
 
   \sa QOrganizerItemManager::removeItem()
  */
-bool QOrganizerItemManager::removeItems(const QList<QOrganizerItemLocalId>& organizeritemIds, QMap<int, QOrganizerItemManager::Error>* errorMap)
+bool QOrganizerItemManager::removeItems(const QList<QOrganizerItemLocalId>& organizeritemIds)
 {
-    if (errorMap)
-        errorMap->clear();
+    d->m_errorMap.clear();
     if (organizeritemIds.isEmpty()) {
         d->m_error = QOrganizerItemManager::BadArgumentError;
         return false;
     }
 
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->removeItems(organizeritemIds, errorMap, &d->m_error);
+    return d->m_engine->removeItems(organizeritemIds, &d->m_errorMap, &d->m_error);
 }
 
 /*!
@@ -586,6 +603,7 @@ bool QOrganizerItemManager::removeItems(const QList<QOrganizerItemLocalId>& orga
 QOrganizerCollectionLocalId QOrganizerItemManager::defaultCollectionId() const
 {
     d->m_error = QOrganizerItemManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->defaultCollectionId(&d->m_error);
 }
 
@@ -595,6 +613,7 @@ QOrganizerCollectionLocalId QOrganizerItemManager::defaultCollectionId() const
 QList<QOrganizerCollectionLocalId> QOrganizerItemManager::collectionIds() const
 {
     d->m_error = QOrganizerItemManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->collectionIds(&d->m_error);
 }
 
@@ -605,15 +624,17 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemManager::collectionIds() const
   not specified, this function will return an empty list of collections.
 
   If any of the ids in the given list of \a collectionIds is invalid (does not
-  exist in the manager), an error will be inserted into the \a errorMap at that
-  index.
+  exist in the manager), an error will be inserted into the \a error map at that
+  index.  Calling \l errorMap() will return the per-input errors for the latest
+  batch function.
 
   XXX TODO: does the return list get filled with "blank" collections for errors?
  */
-QList<QOrganizerCollection> QOrganizerItemManager::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap) const
+QList<QOrganizerCollection> QOrganizerItemManager::collections(const QList<QOrganizerCollectionLocalId>& collectionIds) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->collections(collectionIds, errorMap, &d->m_error);
+    d->m_errorMap.clear();
+    return d->m_engine->collections(collectionIds, &d->m_errorMap, &d->m_error);
 }
 
 /*!
@@ -634,6 +655,7 @@ QList<QOrganizerCollection> QOrganizerItemManager::collections(const QList<QOrga
  */
 bool QOrganizerItemManager::saveCollection(QOrganizerCollection* collection)
 {
+    d->m_errorMap.clear();
     if (collection) {
         d->m_error = QOrganizerItemManager::NoError;
         return d->m_engine->saveCollection(collection, &d->m_error);
@@ -654,6 +676,7 @@ bool QOrganizerItemManager::saveCollection(QOrganizerCollection* collection)
 bool QOrganizerItemManager::removeCollection(const QOrganizerCollectionLocalId& collectionId)
 {
     d->m_error = QOrganizerItemManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->removeCollection(collectionId, &d->m_error);
 }
 
@@ -664,6 +687,7 @@ bool QOrganizerItemManager::removeCollection(const QOrganizerCollectionLocalId& 
 QOrganizerItem QOrganizerItemManager::compatibleItem(const QOrganizerItem& original)
 {
     d->m_error = QOrganizerItemManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->compatibleItem(original, &d->m_error);
 }
 
@@ -674,6 +698,7 @@ QOrganizerItem QOrganizerItemManager::compatibleItem(const QOrganizerItem& origi
 QOrganizerCollection QOrganizerItemManager::compatibleCollection(const QOrganizerCollection& original)
 {
     d->m_error = QOrganizerItemManager::NoError;
+    d->m_errorMap.clear();
     return d->m_engine->compatibleCollection(original, &d->m_error);
 }
 
@@ -683,6 +708,7 @@ QOrganizerCollection QOrganizerItemManager::compatibleCollection(const QOrganize
  */
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemManager::detailDefinitions(const QString& organizeritemType) const
 {
+    d->m_errorMap.clear();
     if (!supportedItemTypes().contains(organizeritemType)) {
         d->m_error = QOrganizerItemManager::InvalidItemTypeError;
         return QMap<QString, QOrganizerItemDetailDefinition>();
@@ -695,6 +721,7 @@ QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemManager::detailDefin
 /*! Returns the definition identified by the given \a definitionName that is valid for the organizeritems whose type is the given \a organizeritemType in this store, or a default-constructed QOrganizerItemDetailDefinition if no such definition exists */
 QOrganizerItemDetailDefinition QOrganizerItemManager::detailDefinition(const QString& definitionName, const QString& organizeritemType) const
 {
+    d->m_errorMap.clear();
     if (!supportedItemTypes().contains(organizeritemType)) {
         d->m_error = QOrganizerItemManager::InvalidItemTypeError;
         return QOrganizerItemDetailDefinition();
@@ -707,6 +734,7 @@ QOrganizerItemDetailDefinition QOrganizerItemManager::detailDefinition(const QSt
 /*! Persists the given definition \a def in the database, which is valid for organizeritems whose type is the given \a organizeritemType.  Returns true if the definition was saved successfully, otherwise returns false */
 bool QOrganizerItemManager::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType)
 {
+    d->m_errorMap.clear();
     if (!supportedItemTypes().contains(organizeritemType)) {
         d->m_error = QOrganizerItemManager::InvalidItemTypeError;
         return false;
@@ -719,6 +747,7 @@ bool QOrganizerItemManager::saveDetailDefinition(const QOrganizerItemDetailDefin
 /*! Removes the detail definition identified by \a definitionName from the database, which is valid for organizeritems whose type is the given \a organizeritemType.  Returns true if the definition was removed successfully, otherwise returns false */
 bool QOrganizerItemManager::removeDetailDefinition(const QString& definitionName, const QString& organizeritemType)
 {
+    d->m_errorMap.clear();
     if (!supportedItemTypes().contains(organizeritemType)) {
         d->m_error = QOrganizerItemManager::InvalidItemTypeError;
         return false;
