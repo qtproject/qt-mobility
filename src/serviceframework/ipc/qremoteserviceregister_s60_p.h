@@ -204,8 +204,6 @@ public:
 
     virtual QRemoteServiceRegister::SecurityFilter setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter);
 
-    void closingLastInstance();
-
 private:
     CServiceProviderServer *m_server;
 };

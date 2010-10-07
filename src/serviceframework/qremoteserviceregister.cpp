@@ -41,14 +41,8 @@
 
 #include "qremoteserviceregister.h"
 #include "qremoteserviceregisterentry_p.h"
-
-#if defined(Q_OS_SYMBIAN)
-    #include "qremoteserviceregister_s60_p.h"
-#elif defined(QT_NO_DBUS)
-    #include "qremoteserviceregister_p.h"
-#else
-    #include "qremoteserviceregister_dbus_p.h"
-#endif
+#include "ipc/instancemanager_p.h"
+#include "qremoteserviceregister_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -144,7 +138,11 @@ QRemoteServiceRegister::QRemoteServiceRegister(QObject* parent)
     : QObject(parent)
 {
     d = QRemoteServiceRegisterPrivate::constructPrivateObject(this);
-    connect(d, SIGNAL(lastInstanceClosed()), this, SIGNAL(lastInstanceClosed()));
+
+    connect(InstanceManager::instance(), SIGNAL(allInstancesClosed()),
+            this, SIGNAL(allInstancesClosed()));
+    connect(InstanceManager::instance(), SIGNAL(instanceClosed(QRemoteServiceRegister::Entry)),
+            this, SIGNAL(instanceClosed(QRemoteServiceRegister::Entry)));
 }
 
 /*!

@@ -14,15 +14,15 @@
 * Description: Retrieves the character map for each of the numeric keys.
 */
 
-#ifndef UT_CNTSQLKOREANITUT_H_
-#define UT_CNTSQLKOREANITUT_H_
+#ifndef UT_CNTSQLSEARCHBASE_H_
+#define UT_CNTSQLSEARCHBASE_H_
 
 #include <QObject>
 
-class CntSqlKoreanItuT;
+class CntSqlSearchBase;
 class C12keyKeyMap;
 
-class UT_CntSqlKoreanItuT : public QObject                 
+class UT_CntSqlSearchBase : public QObject                 
 {
      Q_OBJECT
     
@@ -45,17 +45,18 @@ private slots:
 
 private slots: //test methods
 
-    void testCreateInputSpecificSearch();     
-    void testGetSQLQueryType();
-    void testBasicKoreanSearch();
-    void testCompareColumnsInOrder();
-    void testGetSearchColumns();
-    void testGetSearchPattern();
+    void testExactMatchSearch();
+    
+    void testExactMatch();
+
+    void testReturnAllcontacts();
+
+    void testSelectTable();
     
 private:
  
-    CntSqlKoreanItuT* mSqlKoreanItuT;
+    CntSqlSearchBase* mSqlSearchBase;
     C12keyKeyMap* mTwelveKeyMap;
- 
+
 };
-#endif /* UT_CNTSQLKOREANITUT_H_ */
+#endif /* UT_CNTSQLSEARCHBASE_H_ */
