@@ -217,9 +217,10 @@ public:
     QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
-    QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, 
-        const QDateTime& periodStart, const QDateTime& periodEnd, 
-        int maxCount, QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator,
+        const QDateTime& periodStart, const QDateTime& periodEnd,
+        int maxCount, const QOrganizerItemFetchHint& fetchHint,
+        QOrganizerItemManager::Error* error) const;
     QList<QOrganizerItem> items(const QDateTime& periodStart,
         const QDateTime& periodEnd,
         const QOrganizerItemFilter& filter, 
@@ -322,7 +323,8 @@ public:
         const QOrganizerItem &generator,
         const QDateTime &periodStart,
         const QDateTime &periodEnd,
-        int maxCount) const;
+        int maxCount,
+        const QOrganizerItemFetchHint &fetchHint) const;
     QList<QOrganizerItem> itemsL(
         QList<QOrganizerItem> &itemInstances,
         const QDateTime& periodStart,

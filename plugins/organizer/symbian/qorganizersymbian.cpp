@@ -353,10 +353,11 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(
     const QDateTime& periodStart,
     const QDateTime& periodEnd,
     int maxCount,
+    const QOrganizerItemFetchHint& fetchHint,
     QOrganizerItemManager::Error* error) const
 {
     QList<QOrganizerItem> itemInstances; 
-    TRAPD(err, itemInstancesL(itemInstances, generator, periodStart, periodEnd, maxCount));
+    TRAPD(err, itemInstancesL(itemInstances, generator, periodStart, periodEnd, maxCount, fetchHint));
     if (err != KErrNone) {
         transformError(err, error);
         return QList<QOrganizerItem>();
@@ -369,8 +370,11 @@ void QOrganizerItemSymbianEngine::itemInstancesL(
     const QOrganizerItem &generator,
     const QDateTime &periodStart,
     const QDateTime &periodEnd,
-    int maxCount) const
+    int maxCount,
+    const QOrganizerItemFetchHint& fetchHint) const
 {
+    Q_UNUSED(fetchHint)
+
     // Check parameters
     if (periodStart.isValid() && periodEnd.isValid() && periodEnd < periodStart) {
         User::Leave(KErrArgument);
