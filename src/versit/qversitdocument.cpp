@@ -150,6 +150,7 @@ uint qHash(const QVersitDocument &key)
 {
     int hash = QT_PREPEND_NAMESPACE(qHash)(key.type());
     hash += QT_PREPEND_NAMESPACE(qHash)(key.componentType());
+    hash += key.properties().length() + key.subDocuments().length();
     foreach (const QVersitProperty& property, key.properties()) {
         hash += qHash(property);
     }

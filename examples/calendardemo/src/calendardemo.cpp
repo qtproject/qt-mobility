@@ -388,7 +388,7 @@ void CalendarDemo::exportItems()
     }
     QList<QOrganizerItem> items(m_manager->items());
     QVersitOrganizerExporter exporter;
-    if (!exporter.exportItems(items, QVersitDocument::ICalendar20Type)) {
+    if (!exporter.exportItems(items)) {
         qWarning() << "Export failed, " << exporter.errorMap();
         return;
     }
