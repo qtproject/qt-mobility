@@ -54,7 +54,7 @@
 #include <QDialogButtonBox>
 
 RouteCoordinateInputDialog::RouteCoordinateInputDialog(QGeoCoordinate& src, QGeoCoordinate& dst, QWidget *parent)
-    : QDialog(parent), m_src(src), m_dst(dst)
+        : QDialog(parent), m_src(src), m_dst(dst)
 {
     setWindowTitle(tr("Route End Points"));
 
@@ -82,9 +82,9 @@ RouteCoordinateInputDialog::RouteCoordinateInputDialog(QGeoCoordinate& src, QGeo
     secondrow->addWidget(m_destLat);
     secondrow->addWidget(m_destLong);
 
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,Qt::Horizontal);
-    connect(buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
-    connect(buttonBox,SIGNAL(rejected()),this,SLOT(reject()));
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal);
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSizeConstraint(QLayout::SetFixedSize);
@@ -117,7 +117,6 @@ RouteTab::RouteTab(QWidget *parent) :
     m_dst.setLongitude(9.733887);
 
     m_requestTravelModes = QGeoRouteRequest::CarTravel;
-    m_requestAvoidTypes = QGeoRouteRequest::AvoidNothing;
     m_requestRouteOptimizations = QGeoRouteRequest::FastestRoute;
 
     m_requestBtn = new QPushButton(tr("Request Route"));
@@ -172,8 +171,8 @@ void RouteTab::initialize(QGeoRoutingManager *routingManager)
 void RouteTab::on_btnRequest_clicked()
 {
     if (m_routingManager) {
-        RouteCoordinateInputDialog dlg(m_src,m_dst,this);
-        if(dlg.exec()==QDialog::Accepted) {
+        RouteCoordinateInputDialog dlg(m_src, m_dst, this);
+        if (dlg.exec() == QDialog::Accepted) {
             m_resultTree->clear();
             QTreeWidgetItem* waitInfoItem = new QTreeWidgetItem(m_resultTree);
             waitInfoItem->setText(0, tr("Route"));
@@ -186,7 +185,6 @@ void RouteTab::on_btnRequest_clicked()
             if ((m_routingManager->supportedManeuverDetails() & QGeoRouteRequest::BasicManeuvers) != 0)
                 request.setManeuverDetail(QGeoRouteRequest::BasicManeuvers);
             request.setTravelModes(m_requestTravelModes);
-            request.setAvoidFeatureTypes(m_requestAvoidTypes);
             request.setRouteOptimization(m_requestRouteOptimizations);
 
             m_routingManager->calculateRoute(request);

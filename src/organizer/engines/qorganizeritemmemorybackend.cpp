@@ -316,8 +316,8 @@ QOrganizerItemMemoryEngine::QOrganizerItemMemoryEngine(QOrganizerItemMemoryEngin
     if (d->m_organizerCollectionIds.isEmpty()) {
         QOrganizerCollectionLocalId defaultLocalId = QOrganizerCollectionLocalId(new QOrganizerCollectionMemoryEngineLocalId(1));
         QOrganizerCollectionId defaultId;
-        defaultId.setLocalId(defaultLocalId);
         defaultId.setManagerUri(managerUri());
+        defaultId.setLocalId(defaultLocalId);
         QOrganizerCollection defaultCollection;
         defaultCollection.setId(defaultId);
         defaultCollection.setMetaData(QOrganizerCollection::KeyName, QString(QLatin1String("Default Collection")));
@@ -1029,8 +1029,8 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, cons
 
         // finally, add the organizer item to our internal lists and return
         QOrganizerCollectionId targetCompleteCollectionId;
-        targetCompleteCollectionId.setLocalId(targetCollectionId);
         targetCompleteCollectionId.setManagerUri(managerUri());
+        targetCompleteCollectionId.setLocalId(targetCollectionId);
         QOrganizerItemManagerEngine::setItemCollectionId(theOrganizerItem, targetCompleteCollectionId);
         d->m_organizeritems.append(*theOrganizerItem);              // add organizer item to list
         d->m_organizeritemIds.append(theOrganizerItem->localId());  // track the organizer item id.
@@ -1308,8 +1308,8 @@ bool QOrganizerItemMemoryEngine::saveCollection(QOrganizerCollection* collection
     // this is a new collection with a null id; create a new id, add it to our list.
     QOrganizerCollectionId newId;
     QOrganizerCollectionLocalId newLocalId = QOrganizerCollectionLocalId(new QOrganizerCollectionMemoryEngineLocalId(d->m_nextOrganizerCollectionId++));
-    newId.setLocalId(newLocalId);
     newId.setManagerUri(managerUri());
+    newId.setLocalId(newLocalId);
     collection->setId(newId);
     d->m_organizerCollections.append(*collection);
     d->m_organizerCollectionIds.append(newLocalId);

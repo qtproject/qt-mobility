@@ -149,7 +149,7 @@ QtMessaging
 ------
 
  - Harmattan backend implemented
- - Fix assigning an invalid QMessageId causes crash, QTMOBILITY-427
+ - Fix assigning an invalid QMessageId causes crash, QTMOBILITY-427, QTMOBILITY-434
  - Fix failure to compile with Qt 4.7, QTMOBILITY-390
  - Fix ORing with an empty filter results in empty filter MOBILITY-1241
     * Includes API documentation revision
@@ -207,6 +207,34 @@ QtSystemInfo
 
  - foo
     * bar
+
+QtVersit
+-----
+
+ - Added iCalendar import and export support.
+   * Added QVersitOrganizerImporter and QVersitOrganizerExporter classes
+ - Extended QVersitDocument to support iCalendar documents
+   * Added componentType(), setComponentType() Added subDocuments(),
+   * addSubDocuments(), setSubDocuments() Added ICalendar20Type (iCalendar
+     2.0) and VCard40Type (vCard 4.0) to VersitType enum
+   * Added PreformattedType to QVersitProperty::ValueType enum to support
+     the iCalendar RRULE property
+ - Added a plugin-based extension mechanism for import and export.
+   * Added QVersitContactExporterDetailHandlerV2, which supercedes
+     QVersitContactExporterDetailHandler
+   * Added QVersitContactImporterPropertyHandlerV2, which supercedes
+     QVersitContactImporterPropertyHandler
+   * Deprecated QVersitContactExporter::detailHandler() and
+     QVersitContactImporter::propertyHandler() getters
+   * Added a "profile" argument to the importer and exporter for plugin
+     selection.
+ - Added a "backup" plugin to try to preserve a contact as perfectly as
+   possible when stored and retrieved from vCard when the "Backup" profile is
+   selected.
+ - Fixed QTMOBILITY-478 QVersitContactExporter fails to export a contact
+   with no name
+ - Fixed QTMOBILITY-489 Multiple of the same Nickname should only be added
+   once
 
 Qt Mobility Plugins
 ------

@@ -114,8 +114,7 @@ public:
 
     QObject *metaData() const;
 
-    void _q_stateChanged(QMediaPlayer::State state);
-    void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
+    void _q_statusChanged();
 
     void _q_metaDataChanged();
 

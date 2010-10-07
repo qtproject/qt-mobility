@@ -194,8 +194,7 @@ private:
 
     QGraphicsVideoItem *m_graphicsItem;
 
-    Q_PRIVATE_SLOT(mediaBase(), void _q_stateChanged(QMediaPlayer::State))
-    Q_PRIVATE_SLOT(mediaBase(), void _q_mediaStatusChanged(QMediaPlayer::MediaStatus))
+    Q_PRIVATE_SLOT(mediaBase(), void _q_statusChanged())
     Q_PRIVATE_SLOT(mediaBase(), void _q_metaDataChanged())
 
     inline QDeclarativeMediaBase *mediaBase() { return this; }

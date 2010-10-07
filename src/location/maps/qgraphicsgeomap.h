@@ -52,6 +52,7 @@ class QGeoCoordinate;
 class QGeoMappingManager;
 class QGeoBoundingBox;
 class QGeoMapObject;
+class QGeoMapOverlay;
 class QGraphicsGeoMapPrivate;
 
 class Q_LOCATION_EXPORT QGraphicsGeoMap : public QGraphicsWidget
@@ -59,12 +60,12 @@ class Q_LOCATION_EXPORT QGraphicsGeoMap : public QGraphicsWidget
     Q_OBJECT
     Q_ENUMS(MapType)
 
-    Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel)
-    Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel)
+    Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel CONSTANT)
+    Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel CONSTANT)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
     Q_PROPERTY(MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
     Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
-    Q_PROPERTY(ConnectivityMode connectivityMode READ connectivityMode WRITE setConnectivityMode)
+    Q_PROPERTY(ConnectivityMode connectivityMode READ connectivityMode WRITE setConnectivityMode NOTIFY connectivityModeChanged)
 
 public:
     enum MapType {
@@ -113,6 +114,11 @@ public:
     void removeMapObject(QGeoMapObject *mapObject);
     void clearMapObjects();
 
+    QList<QGeoMapOverlay*> mapOverlays() const;
+    void addMapOverlay(QGeoMapOverlay *overlay);
+    void removeMapOverlay(QGeoMapOverlay *overlay);
+    void clearMapOverlays();
+
     QGeoBoundingBox viewport() const;
     void fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false);
 
@@ -133,6 +139,7 @@ Q_SIGNALS:
     void zoomLevelChanged(qreal zoomLevel);
     void centerChanged(const QGeoCoordinate &coordinate);
     void mapTypeChanged(QGraphicsGeoMap::MapType mapType);
+    void connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode);
 
 private:
     QGraphicsGeoMapPrivate *d_ptr;

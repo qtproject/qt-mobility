@@ -55,9 +55,7 @@
 #include <QtNetwork>
 #include <QTime>
 
-#include <QtDebug>
-
-#include "wavedecoder_p.h"
+#include "qwavedecoder_p.h"
 
 #include "qsoundeffect_pulse_p.h"
 
@@ -414,7 +412,7 @@ void QSoundEffectPrivate::loadSample()
 {
     m_sampleLoaded = false;
     m_dataUploaded = 0;
-    m_waveDecoder = new WaveDecoder(m_stream);
+    m_waveDecoder = new QWaveDecoder(m_stream);
     connect(m_waveDecoder, SIGNAL(formatKnown()), SLOT(decoderReady()));
     connect(m_waveDecoder, SIGNAL(invalidFormat()), SLOT(decoderError()));
 }
