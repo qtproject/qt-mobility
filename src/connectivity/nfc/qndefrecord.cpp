@@ -69,6 +69,12 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \fn bool QNdefRecord::isRecordType() const
+
+    Returns true if the NDEF record is of the specified record type; otherwise returns false.
+*/
+
+/*!
     \fn bool QNdefRecord::operator!=(const QNdefRecord &other) const
 
     Returns true if this NDEF record does not equal \a other; otherwise return false.
