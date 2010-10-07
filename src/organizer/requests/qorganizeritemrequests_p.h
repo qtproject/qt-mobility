@@ -163,6 +163,7 @@ public:
     QDateTime m_startDate;
     QDateTime m_endDate;
     int m_countLimit;
+    QOrganizerItemFetchHint m_fetchHint;
 
     QList<QOrganizerItem> m_organizeritems;
 };

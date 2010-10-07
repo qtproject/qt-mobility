@@ -305,8 +305,9 @@ int QOrganizerItemMaemo5Engine::managerVersion() const
     return 1;
 }
 
-QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizerItem &generator, const QDateTime &periodStart, const QDateTime &periodEnd, int maxCount, QOrganizerItemManager::Error *error) const
+QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
+    Q_UNUSED(fetchHint);
     QMutexLocker locker(&m_operationMutex);
     return internalItemInstances(generator, periodStart, periodEnd, maxCount, error);
 }

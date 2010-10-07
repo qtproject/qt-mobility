@@ -93,6 +93,12 @@ void QOrganizerItemInstanceFetchRequest::setCountLimit(int maxCount)
     d->m_countLimit = maxCount;
 }
 
+void QOrganizerItemInstanceFetchRequest::setFetchHint(const QOrganizerItemFetchHint& hint)
+{
+    Q_D(QOrganizerItemInstanceFetchRequest);
+    d->m_fetchHint = hint;
+}
+
 /*! Returns the generator item, whose occurrences are to be fetched. */
 QOrganizerItem QOrganizerItemInstanceFetchRequest::generator() const
 {
@@ -127,6 +133,13 @@ QList<QOrganizerItem> QOrganizerItemInstanceFetchRequest::items() const
     // XXX TODO: this should be "itemInstances()" instead
     Q_D(const QOrganizerItemInstanceFetchRequest);
     return d->m_organizeritems;
+}
+
+/*! Returns the fetch hint associated with the request */
+QOrganizerItemFetchHint QOrganizerItemInstanceFetchRequest::fetchHint() const
+{
+    Q_D(const QOrganizerItemInstanceFetchRequest);
+    return d->m_fetchHint;
 }
 
 #include "moc_qorganizeriteminstancefetchrequest.cpp"

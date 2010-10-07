@@ -793,8 +793,9 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemInstances(const QO
 }
 
 /*! \reimp */
-QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
+    Q_UNUSED(fetchHint);
     return internalItemInstances(generator, periodStart, periodEnd, maxCount, false, error);
 }
 
@@ -1569,9 +1570,10 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             QDateTime startDate(r->startDate());
             QDateTime endDate(r->endDate());
             int countLimit = r->countLimit();
+            QOrganizerItemFetchHint fetchHint = r->fetchHint();
 
             QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
-            QList<QOrganizerItem> requestedOrganizerItems = itemInstances(generator, startDate, endDate, countLimit, &operationError);
+            QList<QOrganizerItem> requestedOrganizerItems = itemInstances(generator, startDate, endDate, countLimit, fetchHint, &operationError);
 
             // update the request with the results.
             if (!requestedOrganizerItems.isEmpty() || operationError != QOrganizerItemManager::NoError)

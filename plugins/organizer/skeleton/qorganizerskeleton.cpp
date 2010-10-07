@@ -533,7 +533,7 @@ int QOrganizerItemSkeletonEngine::managerVersion() const
     return 1;
 }
 
-QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -555,7 +555,7 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganiz
         We might change the signature to split up the periodStart + periodEnd / periodStart + maxCount cases.
     */
 
-    return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, error);
+    return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, fetchHint, error);
 }
 
 QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const

@@ -114,7 +114,7 @@ public:
     /* Error reporting */
     QOrganizerItemManager::Error error() const;
 
-    QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart = QDateTime(), const QDateTime& periodEnd = QDateTime(), int maxCount = -1) const;
+    QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart = QDateTime(), const QDateTime& periodEnd = QDateTime(), int maxCount = -1, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
 
     /* Items - Accessors and Mutators */
     QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;

@@ -213,12 +213,13 @@ QString QOrganizerItemManagerEngine::managerUri() const
   If the \a generator does not exist in the backend, or if there are no instances matching the
   criteria, an empty list should be returned.
   */
-QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(generator);
     Q_UNUSED(periodStart);
     Q_UNUSED(periodEnd);
     Q_UNUSED(maxCount);
+    Q_UNUSED(fetchHint);
 
     *error = QOrganizerItemManager::NotSupportedError;
     return QList<QOrganizerItem>();

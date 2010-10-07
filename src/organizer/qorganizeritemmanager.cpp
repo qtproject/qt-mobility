@@ -346,10 +346,10 @@ QOrganizerItemManager::Error QOrganizerItemManager::error() const
   If \a maxCount is negative, it is backend specific as to how many occurrences will be returned.
   Some backends may return no instances, others may return some limited number of occurrences.
   */
-QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount) const
+QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->itemInstances(generator, periodStart, periodEnd, maxCount, &d->m_error);
+    return d->m_engine->itemInstances(generator, periodStart, periodEnd, maxCount, fetchHint, &d->m_error);
 }
 
 /*!
