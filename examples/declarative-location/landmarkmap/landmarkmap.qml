@@ -54,7 +54,7 @@ Item {
         id: myPositionSource
         active: true
         updateInterval: 1000
-        onPositionChanged: console.log("Position changed")
+        onPositionChanged: console.log("Position changed in PositionSource")
     }
     LandmarkBoxFilter {
         id: boxFilter
@@ -155,11 +155,19 @@ Item {
 
             onPressed : {
                 mouseDown = true
+                // While panning, its better not to actively udpate the model
+                // as it results in poor performance. Instead set opacity to make
+                // it more obvious that the landmark positions are not valid.
+                landmarkModel.autoUpdate = false
+                pinpointViewContainer.opacity = 0.3
                 lastX = mouse.x
                 lastY = mouse.y
             }
             onReleased : {
                 mouseDown = false
+                pinpointViewContainer.opacity = 1.0
+		landmarkModel.autoUpdate = true
+                landmarkModel.update()
                 lastX = -1
                 lastY = -1
             }
