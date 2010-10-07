@@ -538,10 +538,12 @@ QList<QContact> QContactManager::contacts(const QList<QContactLocalId>& localIds
 {
     d->m_error = QContactManager::NoError;
     d->m_errorMap.clear();
+
     QList<QContact> retn = d->m_engine->contacts(localIds, fetchHint, &d->m_errorMap, &d->m_error);
-    if (errorMap) {
+
+    if (errorMap)
         *errorMap = d->m_errorMap;
-    }
+
     return retn;
 }
 
@@ -623,17 +625,19 @@ bool QContactManager::removeContact(const QContactLocalId& contactId)
  */
 bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap)
 {
+    bool retn = false;
     d->m_errorMap.clear();
-    if (!contacts) {
+
+    if (contacts) {
+        d->m_error = QContactManager::NoError;
+        retn = d->m_engine->saveContacts(contacts, &d->m_errorMap, &d->m_error);
+    } else {
         d->m_error =QContactManager::BadArgumentError;
-        return false;
     }
 
-    d->m_error = QContactManager::NoError;
-    bool retn = d->m_engine->saveContacts(contacts, &d->m_errorMap, &d->m_error);
-    if (errorMap) {
+    if (errorMap)
         *errorMap = d->m_errorMap;
-    }
+
     return retn;
 }
 
@@ -658,17 +662,19 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
  */
 bool QContactManager::saveContacts(QList<QContact>* contacts, const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap)
 {
+    bool retn = false;
     d->m_errorMap.clear();
-    if (!contacts) {
+
+    if (contacts) {
+        d->m_error = QContactManager::NoError;
+        retn = d->m_engine->saveContacts(contacts, definitionMask, &d->m_errorMap, &d->m_error);
+    } else {
         d->m_error =QContactManager::BadArgumentError;
-        return false;
     }
 
-    d->m_error = QContactManager::NoError;
-    bool retn = d->m_engine->saveContacts(contacts, definitionMask, &d->m_errorMap, &d->m_error);
-    if (errorMap) {
+    if (errorMap)
         *errorMap = d->m_errorMap;
-    }
+
     return retn;
 }
 
@@ -698,17 +704,19 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, const QStringList&
  */
 bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap)
 {
+    bool retn = false;
     d->m_errorMap.clear();
-    if (contactIds.isEmpty()) {
+
+    if (!contactIds.isEmpty()) {
+        d->m_error = QContactManager::NoError;
+        retn = d->m_engine->removeContacts(contactIds, &d->m_errorMap, &d->m_error);
+    } else {
         d->m_error = QContactManager::BadArgumentError;
-        return false;
     }
 
-    d->m_error = QContactManager::NoError;
-    bool retn = d->m_engine->removeContacts(contactIds, &d->m_errorMap, &d->m_error);
-    if (errorMap) {
+    if (errorMap)
         *errorMap = d->m_errorMap;
-    }
+
     return retn;
 }
 
@@ -857,17 +865,19 @@ bool QContactManager::saveRelationship(QContactRelationship* relationship)
  */
 bool QContactManager::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap)
 {
+    bool retn = false;
     d->m_errorMap.clear();
-    if (!relationships) {
+
+    if (relationships) {
+        d->m_error = QContactManager::NoError;
+        retn = d->m_engine->saveRelationships(relationships, &d->m_errorMap, &d->m_error);
+    } else {
         d->m_error =QContactManager::BadArgumentError;
-        return false;
     }
 
-    d->m_error = QContactManager::NoError;
-    bool retn = d->m_engine->saveRelationships(relationships, &d->m_errorMap, &d->m_error);
-    if (errorMap) {
+    if (errorMap)
         *errorMap = d->m_errorMap;
-    }
+
     return retn;
 }
 
@@ -895,9 +905,10 @@ bool QContactManager::removeRelationships(const QList<QContactRelationship>& rel
     d->m_error = QContactManager::NoError;
     d->m_errorMap.clear();
     bool retn = d->m_engine->removeRelationships(relationships, &d->m_errorMap, &d->m_error);
-    if (errorMap) {
+
+    if (errorMap)
         *errorMap = d->m_errorMap;
-    }
+
     return retn;
 }
 

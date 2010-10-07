@@ -1471,6 +1471,7 @@ void tst_QContactManager::invalidManager()
     QMap<int, QContactManager::Error> errorMap;
     errorMap.insert(0, QContactManager::NoError);
     QVERIFY(!manager.saveContacts(0, &errorMap));
+    QVERIFY(manager.errorMap().count() == 0);
     QVERIFY(errorMap.count() == 0);
     QVERIFY(manager.error() == QContactManager::BadArgumentError);
 
