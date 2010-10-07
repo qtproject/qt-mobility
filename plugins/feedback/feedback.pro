@@ -8,4 +8,5 @@ contains(immersion_enabled, yes) {
 }
 
 symbian:SUBDIRS += symbian
+contains(mobility_modules,multimedia):SUBDIRS += mmk
 maemo6:SUBDIRS += meegotouch
