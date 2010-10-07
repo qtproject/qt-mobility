@@ -86,7 +86,6 @@ QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
         description(other.description),
         iconUrl(other.iconUrl),
         radius(other.radius),
-        customAttributes(other.customAttributes),
         phoneNumber(other.phoneNumber),
         url(other.url),
         id(other.id)
@@ -105,7 +104,6 @@ QLandmarkPrivate& QLandmarkPrivate::operator= (const QLandmarkPrivate & other)
     phoneNumber = other.phoneNumber;
     url = other.url;
     categoryIds = other.categoryIds;
-    customAttributes = other.customAttributes;
     id = other.id;
 
     return *this;
@@ -156,7 +154,6 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     qDebug() << "phoneNumber:" << (phoneNumber == other.phoneNumber);
     qDebug() << "url:" << (url == other.url);
     qDebug() << "categoryIds:" << (categoryIdsMatch);
-    qDebug() << "customAttributes:" << (customAttributes == other.customAttributes);
     qDebug() << "id" << (id == other.id);
 #endif
 
@@ -168,7 +165,6 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
             && (phoneNumber == other.phoneNumber)
             && (url == other.url)
             && (categoryIdsMatch)
-            && (customAttributes == other.customAttributes)
            && (id == other.id));
 }
 
@@ -514,7 +510,6 @@ void QLandmark::clear()
     d->description.clear();
     d->iconUrl.clear();
     d->radius = 0.0;
-    d->customAttributes.clear();
     d->phoneNumber.clear();
     d->url.clear();
     d->id = QLandmarkId();

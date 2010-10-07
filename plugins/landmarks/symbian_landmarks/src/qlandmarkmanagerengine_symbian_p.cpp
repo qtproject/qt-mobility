@@ -1206,6 +1206,14 @@ bool LandmarkManagerEngineSymbianPrivate::importLandmarks(QIODevice *device, con
     *errorString = "";
 
     bool status = false;
+
+    if (option == QLandmarkManager::AttachSingleCategory) {
+        category(categoryId,error,errorString);
+        if (*error != QLandmarkManager::NoError) {
+            return false;
+        }
+    }
+
     QList<QLandmarkId> importedIds;
     TRAPD(err,importedIds = importLandmarksL(device,format,option,categoryId));
     if (err == KErrNone) {
@@ -1982,10 +1990,18 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
         if ((catId == KPosLmNullItemId
             || (managerUri() != importRequest->categoryId().managerUri()))
             && (importRequest->transferOption() == QLandmarkManager::AttachSingleCategory))
-            User::Leave(KErrArgument);
+            User::Leave(-20001);
+
 
         // check availability of category from provided category id.
         if (importRequest->transferOption() == QLandmarkManager::AttachSingleCategory) {
+            QLandmarkManager::Error error;
+            QString errorString = "";
+
+            this->category(importRequest->categoryId(), &error, &errorString);
+            if (error != QLandmarkManager::NoError)
+                User::Leave(-20001);
+
             CPosLandmarkCategory *tempCategory = m_LandmarkCatMgr->ReadCategoryLC(catId);
             CleanupStack::PopAndDestroy(tempCategory);
         }
@@ -2250,7 +2266,7 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
                 sortOrders, &error, &errorString);
 
             if (exportedLandmarkIds.isEmpty() || error != QLandmarkManager::NoError)
-                User::Leave(KErrNotFound); // can use errorId for QLandmarkManager::LandmarksNotExist
+                User::Leave(-20002); // errorId for QLandmarkManager::LandmarksNotExist
 
             foreach(const QLandmarkId& id,exportRequest->landmarkIds())
                     selectedLandmarks.AppendL(LandmarkUtility::convertToSymbianLandmarkId(id));
@@ -4724,7 +4740,6 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::importLandmarksL(QIODevi
     //Check if the import is from a file
     outputdevice = dynamic_cast<QFile *> (device);
     if (outputdevice) {
-
         //Create a Qfile object to obtain the file from which to import
         QFile *filePath = (QFile *) device;
 
