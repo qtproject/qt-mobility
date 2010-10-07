@@ -52,7 +52,7 @@ Item {
     PositionSource {
         id: myPositionSource
         active: true
-        updateInterval: 1000
+        updateInterval: 2000
         onPositionChanged: console.log("Position changed in PositionSource")
     }
     LandmarkBoxFilter {
@@ -63,7 +63,10 @@ Item {
     LandmarkModel {
         id: landmarkModel
         autoUpdate: true
-        onModelChanged: console.log("Landmark model changed, landmark count: " + count)
+        onModelChanged: {
+            console.log("Landmark model changed, landmark count: " + count)
+            pinpointViewContainer.opacity = 1.0
+        }
         filter: boxFilter
         limit: 50
     }
@@ -164,7 +167,7 @@ Item {
             }
             onReleased : {
                 mouseDown = false
-                pinpointViewContainer.opacity = 1.0
+                //pinpointViewContainer.opacity = 1.0
 		landmarkModel.autoUpdate = true
                 landmarkModel.update()
                 lastX = -1
