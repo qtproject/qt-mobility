@@ -2398,9 +2398,8 @@ bool QOrganizerItemManagerEngine::isItemBetweenDates(const QOrganizerItem& item,
                 itemDateStart = itemDateEnd = journal.dateTime();
             } else
                 if (item.type() == QOrganizerItemType::TypeNote) {
-                    //for note, there is no such start/end datetime to be used, so we use the timestamp detail.
-                    QOrganizerItemTimestamp timestamp = item.detail<QOrganizerItemTimestamp>();
-                    itemDateStart = itemDateEnd = timestamp.lastModified();
+                    //for note, there is no such start/end datetime so we always return true
+                    return true;
                 }
 
     return (startPeriod.isNull() && itemDateStart <= endPeriod) ||
