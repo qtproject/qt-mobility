@@ -198,9 +198,7 @@ bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& /*i
             return 0;
         }
 
-        // MAYBE A FOR-LOOP FOR EACH SERVICENAME (ie DBUSExample, IPCExample)
-
-        // TODO: do we want to always re-register services to dbus?
+        // Grab the first entry service name for the session
         QString serviceName = "com.nokia.qtmobility.sfw." + list[0].serviceName();
         connection->unregisterService(serviceName);
 

@@ -310,13 +310,9 @@ const QMetaObject* QServiceMetaObjectDBus::dbusMetaObject(bool signalsObject) co
             property.setUser(mp.isUser());
             property.setStdCppSet(mp.hasStdCppSet());
             property.setEnumOrFlag(mp.isEnumType());
-
-            if (mp.hasNotifySignal()) {
-                //TODO: signal notify for property
-            }
         }
 
-        // TODO: Need Enumerators??
+        // Needs Enumerators support when QtDBus supports
 
         mo = mo->superClass();
     }

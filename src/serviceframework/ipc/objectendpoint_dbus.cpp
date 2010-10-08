@@ -113,10 +113,6 @@ public:
     Client to service communication only used for establishing an object request since the returned
     proxy is an interface to that object registered on QtDBus. Client communicates directly to QtDBus
     for method and property access. Signals are automatically relayed from QtDBus to the proxy object.
-
-    TODO:
-    - Consider merging invokeRemoteProperty() and invokeRemote()
-    - QMetaClassInfo support
 */
 ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent)
     : QObject(parent), dispatch(comm), service(0)
@@ -189,7 +185,6 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceRegister::Entry& ent
     delete response;
         
     // Connect all DBus interface signals to the proxy slots
-    // TODO: Implement custom arguments and function this code
     const QMetaObject *mo = service->metaObject();
     for (int i = mo->methodOffset(); i < mo->methodCount(); i++) {
         const QMetaMethod mm = mo->method(i);

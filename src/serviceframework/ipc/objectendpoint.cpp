@@ -164,14 +164,6 @@ public:
     QUuid serviceInstanceId;
 };
 
-//TODO list:
-/*
-    - Why do we need entry and serviceInstanceId on service side. The instance id should be sufficient.
-    - Consider merging invokeRemoteProperty() and invokeRemote()
-    - QMetaClassInfo support
-
-*/
-
 ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent)
     : QObject(parent), dispatch(comm), service(0)
 {
