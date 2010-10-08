@@ -243,10 +243,11 @@ void TodoEditPage::saveClicked()
     m_organizerTodo.setStatus(currentStatus);
 
     // Save
-    if (m_calendarComboBox->currentIndex() > -1)
-        m_manager->saveItem(&m_organizerTodo, m_collections[m_calendarComboBox->currentIndex()].localId());
-    else
-        m_manager->saveItem(&m_organizerTodo);
+    if (m_calendarComboBox->currentIndex() > -1) {
+        m_organizerTodo.setCollectionId(m_collections[m_calendarComboBox->currentIndex()].id());
+    }
+
+    m_manager->saveItem(&m_organizerTodo);
     if (m_manager->error())
         QMessageBox::warning(this, "Failed!", QString("Failed to save todo!\n(error code %1)").arg(m_manager->error()));
     else

@@ -189,10 +189,10 @@ void JournalEditPage::saveClicked()
     m_organizerJournal.setDateTime(m_timeEdit->dateTime());
 
     // Save
-    if (m_calendarComboBox->currentIndex() > -1)
-        m_manager->saveItem(&m_organizerJournal, m_collections[m_calendarComboBox->currentIndex()].localId());
-    else
-        m_manager->saveItem(&m_organizerJournal);
+    if (m_calendarComboBox->currentIndex() > -1) {
+        m_organizerJournal.setCollectionId(m_collections[m_calendarComboBox->currentIndex()].id());
+    }
+    m_manager->saveItem(&m_organizerJournal);
     if (m_manager->error())
         QMessageBox::warning(this, "Failed!", QString("Failed to save journal!\n(error code %1)").arg(m_manager->error()));
     else
