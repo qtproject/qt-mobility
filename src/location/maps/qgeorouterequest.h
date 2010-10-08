@@ -68,18 +68,27 @@ public:
     };
     Q_DECLARE_FLAGS(TravelModes, TravelMode)
 
-    enum AvoidFeatureType {
-        AvoidNothing = 0x00000000,
-        AvoidTolls = 0x00000001,
-        AvoidHighways = 0x00000002,
-        AvoidPublicTransit = 0x00000004,
-        AvoidFerries = 0x00000008,
-        AvoidTunnels = 0x00000010,
-        AvoidDirtRoads = 0x00000020,
-        AvoidPark = 0x00000040,
-        AvoidMotorPoolLanes = 0x00000080
+    enum FeatureType {
+        NoFeature = 0x00000000,
+        TollFeature = 0x00000001,
+        HighwayFeature = 0x00000002,
+        PublicTransitFeature = 0x00000004,
+        FerryFeature = 0x00000008,
+        TunnelFeature = 0x00000010,
+        DirtRoadFeature = 0x00000020,
+        ParksFeature = 0x00000040,
+        MotorPoolLaneFeature = 0x00000080
     };
-    Q_DECLARE_FLAGS(AvoidFeatureTypes, AvoidFeatureType)
+    Q_DECLARE_FLAGS(FeatureTypes, FeatureType)
+
+    enum FeatureWeight {
+        NeutralFeatureWeight = 0x00000000,
+        PreferFeatureWeight = 0x00000001,
+        RequireFeatureWeight = 0x00000002,
+        AvoidFeatureWeight = 0x00000004,
+        DisallowFeatureWeight = 0x00000008
+    };
+    Q_DECLARE_FLAGS(FeatureWeights, FeatureWeight)
 
     enum RouteOptimization {
         ShortestRoute = 0x0001,
@@ -127,9 +136,9 @@ public:
     void setTravelModes(TravelModes travelModes);
     TravelModes travelModes() const;
 
-    // defaults to NoAvoidance
-    void setAvoidFeatureTypes(AvoidFeatureTypes avoidFeatureTypes);
-    AvoidFeatureTypes avoidFeatureTypes() const;
+    void setFeatureWeight(FeatureType featureType, FeatureWeight featureWeight);
+    FeatureWeight featureWeight(FeatureType featureType) const;
+    QList<FeatureType> featureTypes() const;
 
     // defaults to OptimizeFastest
     void setRouteOptimization(RouteOptimizations optimization);
@@ -148,7 +157,8 @@ private:
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::TravelModes)
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::AvoidFeatureTypes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::FeatureTypes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::FeatureWeights)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::RouteOptimizations)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::SegmentDetails)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::ManeuverDetails)

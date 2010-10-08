@@ -84,6 +84,7 @@ public:
 private:
     QMetaDataReaderControl *m_control;
     QObject *m_object;
+    QAbstractDynamicMetaObject *m_parent;
     char *m_string;
     uint *m_data;
 

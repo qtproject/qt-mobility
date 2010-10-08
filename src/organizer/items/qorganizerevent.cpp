@@ -230,52 +230,17 @@ QOrganizerItemPriority::Priority QOrganizerEvent::priority() const
     return pd.priority();
 }
 
-/*! Returns the name of the location at which the event occurs, if known */
-QString QOrganizerEvent::locationName() const
+/*! Returns the label of the location at which the event occurs, if known */
+QString QOrganizerEvent::location() const
 {
     QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    return ld.locationName();
+    return ld.label();
 }
 
-/*! Sets the name of the location at which the event occurs to \a locationName */
-void QOrganizerEvent::setLocationName(const QString& locationName)
+/*! Sets the label of the location at which the event occurs to \a location */
+void QOrganizerEvent::setLocation(const QString& location)
 {
     QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    ld.setLocationName(locationName);
-    saveDetail(&ld);
-}
-
-/*! Returns the address of the location at which the event occurs, if known */
-QString QOrganizerEvent::locationAddress() const
-{
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    return ld.address();
-}
-
-/*! Sets the address of the location at which the event occurs to \a locationAddress */
-void QOrganizerEvent::setLocationAddress(const QString& locationAddress)
-{
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    ld.setAddress(locationAddress);
-    saveDetail(&ld);
-}
-
-/*! Returns the geo-coordinates of the location at which the event occurs, if known */
-QString QOrganizerEvent::locationGeoCoordinates() const
-{
-    // XXX TODO: consistency with QOILocation API ?
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    return ld.geoLocation();
-}
-
-/*!
-    \preliminary
-    Sets the geo-coordinates of the location at which the event occurs to \a locationCoordinates.
-    The coordinates should be in the format "latitude;longitude"
- */
-void QOrganizerEvent::setLocationGeoCoordinates(const QString& locationCoordinates)
-{
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    ld.setGeoLocation(locationCoordinates);
+    ld.setLabel(location);
     saveDetail(&ld);
 }

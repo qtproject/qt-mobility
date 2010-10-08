@@ -56,7 +56,7 @@ void tst_QVersitOrganizerImporter::testImport()
 
     QVersitOrganizerImporter importer;
     QVERIFY(importer.importDocument(document));
-    QVERIFY(importer.errors().isEmpty());
+    QVERIFY(importer.errorMap().isEmpty());
     QList<QOrganizerItem> items = importer.items();
     if (items != expectedItems) {
         qDebug() << "Actual:" << items;
@@ -201,7 +201,7 @@ void tst_QVersitOrganizerImporter::testImportEventProperties()
 
     QVersitOrganizerImporter importer;
     QVERIFY(importer.importDocument(document));
-    QVERIFY(importer.errors().isEmpty());
+    QVERIFY(importer.errorMap().isEmpty());
     QList<QOrganizerItem> items = importer.items();
     QCOMPARE(items.size(), 1);
 
@@ -704,7 +704,7 @@ void tst_QVersitOrganizerImporter::testImportTodoProperties()
 
     QVersitOrganizerImporter importer;
     QVERIFY(importer.importDocument(document));
-    QVERIFY(importer.errors().isEmpty());
+    QVERIFY(importer.errorMap().isEmpty());
     QList<QOrganizerItem> items = importer.items();
     QCOMPARE(items.size(), 1);
 
@@ -794,7 +794,7 @@ void tst_QVersitOrganizerImporter::testTimeZones()
 
     QVersitOrganizerImporter importer;
     QVERIFY(importer.importDocument(document));
-    QVERIFY(importer.errors().isEmpty());
+    QVERIFY(importer.errorMap().isEmpty());
     QList<QOrganizerItem> items = importer.items();
     QCOMPARE(items.size(), 1);
 

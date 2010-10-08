@@ -94,10 +94,14 @@ private slots:  // Test cases
     void fetchItemIds();
     void fetchItemsIdFilter_data(){ addManagers(); };
     void fetchItemsIdFilter();
+    void fetchItemsNonExistingIds_data(){ addManagers(); };
+    void fetchItemsNonExistingIds();
     void fetchItemsDetailFilter_data(){ addManagers(); };
     void fetchItemsDetailFilter();
     void fetchItemsSortOrder_data(){ addManagers(); };
     void fetchItemsSortOrder();
+    void fetchItemsDeleteRequest_data(){ addManagers(); };
+    void fetchItemsDeleteRequest();
     void addItems_data(){ addManagers(); };
     void addItems();
     void addItemsMultiReq_data(){ addManagers(); };
@@ -120,6 +124,11 @@ private slots:  // Test cases
     void detailDefinitionSave();
     void detailDefinitionRemove_data(){ addManagers(); };
     void detailDefinitionRemove();
+    void detailDefinitionRemoveDeleteRequest_data(){ addManagers(); };
+    void detailDefinitionRemoveDeleteRequest();
+
+protected slots:
+    void deleteRequest();
 
 private: // util functions
     QOrganizerItem createItem(
@@ -158,7 +167,7 @@ void tst_SymbianOmAsync::init()
     QFETCH(QString, managerName);
     m_om = new QOrganizerItemManager(managerName);
     // Remove items on all collections
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
     // Remove all collections (except the default)
     foreach (QOrganizerCollectionLocalId id, m_om->collectionIds()) {
         if (id != m_om->defaultCollectionId())
@@ -168,7 +177,7 @@ void tst_SymbianOmAsync::init()
 
 void tst_SymbianOmAsync::cleanup()
 {
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
     // Remove all collections (except the default)
     foreach (QOrganizerCollectionLocalId id, m_om->collectionIds()) {
         if (id != m_om->defaultCollectionId())
@@ -368,6 +377,43 @@ void tst_SymbianOmAsync::fetchItemsIdFilter()
     QVERIFY(req.items().at(0).localId() == m_om->itemIds().at(pos));
 }
 
+void tst_SymbianOmAsync::fetchItemsNonExistingIds()
+{
+    // Save 3 items (synchronously)
+    const int itemCount(3);
+    QList<QOrganizerItem> items = createItems(QString("fetchitems"), itemCount);
+    QVERIFY(m_om->saveItems(&items));
+
+    // Remove the second one (synhcronously)
+    QVERIFY(m_om->removeItem(items[1].localId()));
+
+    // Create fetch request with id filter
+    QOrganizerItemFetchRequest req;
+    req.setManager(m_om);
+    QOrganizerItemLocalIdFilter localIdFilter;
+    QList<QOrganizerItemLocalId> ids;
+    foreach (QOrganizerItem item, items) {
+        ids.append(item.localId());
+    }
+    localIdFilter.setIds(ids);
+    req.setFilter(localIdFilter);
+
+    // Create signal spys for verification purposes
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
+
+    // Fetch
+    QVERIFY(req.start());
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
+
+    // Verify
+    QVERIFY(resultSpy.count() > 1);
+    QCOMPARE(req.items().count(), itemCount - 1);
+    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerItemManager::DoesNotExistError);
+}
+
 void tst_SymbianOmAsync::fetchItemsDetailFilter()
 {
     // Save items (synchronously)
@@ -438,6 +484,27 @@ void tst_SymbianOmAsync::fetchItemsSortOrder()
     QCOMPARE(req.error(), QOrganizerItemManager::NoError);
     QCOMPARE(req.items().count(), itemCount);
     QVERIFY(req.items().at(0).localId() != QOrganizerItemLocalId());
+}
+
+void tst_SymbianOmAsync::fetchItemsDeleteRequest()
+{
+    // Save items (synchronously)
+    const int itemCount(100);
+    QList<QOrganizerItem> items = createItems(QString("fetchitems"), itemCount);
+    QVERIFY(m_om->saveItems(&items));
+
+    // Create fetch request
+    QOrganizerItemFetchRequest *req = new QOrganizerItemFetchRequest();
+    QWeakPointer<QObject> obj(req);
+    req->setManager(m_om);
+
+    // Connect "resultsAvailable" to a slot that deletes the sender
+    // That is, verify we don't crash when the request is deleted in the resultsAvailable slot function
+    connect(req, SIGNAL(resultsAvailable()), this, SLOT(deleteRequest()));
+
+    // Fetch
+    QVERIFY(req->start());
+    QTRY_COMPARE(obj.isNull(), true);
 }
 
 void tst_SymbianOmAsync::addItems()
@@ -899,6 +966,30 @@ void tst_SymbianOmAsync::detailDefinitionRemove()
     QCOMPARE(req.errorMap().count(), 0);
     QCOMPARE(stateSpy.count(), 1);
     QCOMPARE(resultSpy.count(), 1);   
+}
+
+void tst_SymbianOmAsync::detailDefinitionRemoveDeleteRequest()
+{
+    // Create request
+    QOrganizerItemDetailDefinitionRemoveRequest *req = new QOrganizerItemDetailDefinitionRemoveRequest();
+    QWeakPointer<QObject> obj(req);
+    req->setManager(m_om);
+
+    // Connect signals "resultsAvailable" to a slot that deletes the sender
+    // That is, verify we don't crash when the request is deleted in the slot function.
+    connect(req, SIGNAL(resultsAvailable()), this, SLOT(deleteRequest()));
+
+    // Removing detail definitions is not supported so verify it cannot be started
+    QVERIFY(!req->start());
+    QTRY_COMPARE(obj.isNull(), true);
+}
+
+/*!
+ * A slot function for deleting the sender.
+ */
+void tst_SymbianOmAsync::deleteRequest()
+{
+    delete sender();
 }
 
 /*!

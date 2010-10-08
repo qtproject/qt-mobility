@@ -135,6 +135,7 @@ contains(mobility_modules,gallery) {
 # Organizer API examples
 contains(mobility_modules, organizer) {
     SUBDIRS += calendardemo
+	SUBDIRS += todo
 }
 
 # Feedback API examples

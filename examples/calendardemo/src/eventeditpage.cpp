@@ -309,19 +309,15 @@ void EventEditPage::alarmIndexChanged(const QString time)
          m_organizerEvent.removeDetail(&fetchedReminder);
         return;
     } else if (time == "0 minutes before") {
-        reminder.setDateTime(m_startTimeEdit->dateTime());
+        reminder.setSecondsBeforeStart(0);
     } else if (time == "5 minutes before") {
-        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(5*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(5*60);
     } else if (time == "15 minutes before") {
-        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(15*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(15*60);
     } else if (time == "30 minutes before") {
-        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(30*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(30*60);
     } else if (time == "1 hour before") {
-        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(60*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(60*60);
     }
 
     m_organizerEvent.saveDetail(&reminder);

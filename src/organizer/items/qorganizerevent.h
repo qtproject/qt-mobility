@@ -51,7 +51,9 @@ QTM_BEGIN_NAMESPACE
 class Q_ORGANIZER_EXPORT QOrganizerEvent : public QOrganizerItem
 {
 public:
+#if !Q_QDOC
     Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerEvent, QOrganizerItemType::TypeEvent)
+#endif
 
     void setStartDateTime(const QDateTime& startDateTime);
     QDateTime startDateTime() const;
@@ -88,12 +90,8 @@ public:
     void setPriority(QOrganizerItemPriority::Priority);
     QOrganizerItemPriority::Priority priority() const;
 
-    QString locationName() const;
-    void setLocationName(const QString& locationName);
-    QString locationAddress() const;
-    void setLocationAddress(const QString& locationAddress);
-    QString locationGeoCoordinates() const;
-    void setLocationGeoCoordinates(const QString& locationCoordinates);
+    QString location() const;
+    void setLocation(const QString& location);
 
     // TODO attendees?  How to handle non-unique details?
 };

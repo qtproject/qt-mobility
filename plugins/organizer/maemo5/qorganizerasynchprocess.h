@@ -106,8 +106,9 @@ protected:
 private:
     bool waitForRequestFinished(QOrganizerItemAbstractRequest *req);
 
-    void handleItemInstanceFetchRequest(QOrganizerItemInstanceFetchRequest *req);
     void handleItemFetchRequest(QOrganizerItemFetchRequest *req);
+    void handleItemFetchForExportRequest(QOrganizerItemFetchForExportRequest *req);
+    void handleItemInstanceFetchRequest(QOrganizerItemInstanceFetchRequest *req);
     void handleLocalIdFetchRequest(QOrganizerItemLocalIdFetchRequest *req);
     void handleItemRemoveRequest(QOrganizerItemRemoveRequest *req);
     void handleSaveRequest(QOrganizerItemSaveRequest *req);

@@ -230,6 +230,7 @@ private:
     bool compareItems(QOrganizerItem ca, QOrganizerItem cb);
     bool containsIgnoringTimestamps(const QList<QOrganizerItem>& list, const QOrganizerItem& c);
     bool compareIgnoringTimestamps(const QOrganizerItem& ca, const QOrganizerItem& cb);
+    bool containsAllCollectionIds(const QList<QOrganizerCollectionLocalId>& target, const QList<QOrganizerCollectionLocalId>& ids);
     QOrganizerItemManager* prepareModel(const QString& uri);
 
     Qt::HANDLE m_mainThreadId;
@@ -360,6 +361,18 @@ bool tst_QOrganizerItemAsync::compareIgnoringTimestamps(const QOrganizerItem& ca
     return false;
 }
 
+bool tst_QOrganizerItemAsync::containsAllCollectionIds(const QList<QOrganizerCollectionLocalId>& target, const QList<QOrganizerCollectionLocalId>& ids)
+{
+    bool containsAllIds = true;
+    foreach(QOrganizerCollectionLocalId id, ids) {
+        if (!target.contains(id)) {
+            containsAllIds = false;
+            break;
+        }
+    }
+    return containsAllIds;
+}
+
 void tst_QOrganizerItemAsync::testDestructor()
 {
     QFETCH(QString, uri);
@@ -434,7 +447,7 @@ void tst_QOrganizerItemAsync::itemFetch()
 
     // asynchronous detail filtering
     QOrganizerItemDetailFilter dfil;
-    dfil.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLocationName);
+    dfil.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
     ifr.setFilter(dfil);
     QVERIFY(ifr.filter() == dfil);
     QVERIFY(!ifr.cancel()); // not started
@@ -473,7 +486,7 @@ void tst_QOrganizerItemAsync::itemFetch()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    itemIds = oim->itemIds(sorting);
+    itemIds = oim->itemIds(QOrganizerItemFilter(), sorting);
     items = ifr.items();
     QCOMPARE(itemIds.size(), items.size());
     for (int i = 0; i < itemIds.size(); i++) {
@@ -499,7 +512,7 @@ void tst_QOrganizerItemAsync::itemFetch()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    itemIds = oim->itemIds(sorting);
+    itemIds = oim->itemIds(QOrganizerItemFilter(), sorting);
     items = ifr.items();
     QCOMPARE(itemIds.size(), items.size());
     for (int i = 0; i < itemIds.size(); i++) {
@@ -721,7 +734,7 @@ void tst_QOrganizerItemAsync::itemIdFetch()
 
     // asynchronous detail filtering
     QOrganizerItemDetailFilter dfil;
-    dfil.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLocationName);
+    dfil.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
     ifr.setFilter(dfil);
     QVERIFY(ifr.filter() == dfil);
     QVERIFY(!ifr.cancel()); // not started
@@ -757,7 +770,7 @@ void tst_QOrganizerItemAsync::itemIdFetch()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    itemIds = oim->itemIds(sorting);
+    itemIds = oim->itemIds(QOrganizerItemFilter(), sorting);
     result = ifr.itemIds();
     QCOMPARE(itemIds, result);
 
@@ -1039,7 +1052,7 @@ void tst_QOrganizerItemAsync::itemSave()
     QCOMPARE(oim->itemIds().size(), originalCount + 1);
 
     // update a previously saved item
-    QOrganizerItemPriority priority;
+    QOrganizerItemPriority priority = result.first().detail<QOrganizerItemPriority>();
     priority.setPriority(QOrganizerItemPriority::LowestPriority);
     testTodo = result.first();
     testTodo.saveDetail(&priority);
@@ -1309,8 +1322,8 @@ void tst_QOrganizerItemAsync::definitionFetch()
     QOrganizerItemDetailDefinitionFetchRequest dfr;
     QVERIFY(dfr.type() == QOrganizerItemAbstractRequest::DetailDefinitionFetchRequest);
     QVERIFY(dfr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeNote))); // ensure ctor sets item type correctly.
-    dfr.setItemType(QOrganizerItemType::TypeNote);
-    QVERIFY(dfr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeNote)));
+    dfr.setItemType(QOrganizerItemType::TypeEvent);
+    QVERIFY(dfr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeEvent)));
 
     // initial state - not started, no manager.
     QVERIFY(!dfr.isActive());
@@ -1339,7 +1352,7 @@ void tst_QOrganizerItemAsync::definitionFetch()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    QMap<QString, QOrganizerItemDetailDefinition> defs = oim->detailDefinitions(QOrganizerItemType::TypeNote);
+    QMap<QString, QOrganizerItemDetailDefinition> defs = oim->detailDefinitions(QOrganizerItemType::TypeEvent);
     QMap<QString, QOrganizerItemDetailDefinition> result = dfr.definitions();
     QCOMPARE(defs, result);
 
@@ -1361,7 +1374,7 @@ void tst_QOrganizerItemAsync::definitionFetch()
     spy.clear();
 
     defs.clear();
-    defs.insert(QOrganizerItemLocation::DefinitionName, oim->detailDefinition(QOrganizerItemLocation::DefinitionName));
+    defs.insert(QOrganizerItemLocation::DefinitionName, oim->detailDefinition(QOrganizerItemLocation::DefinitionName, QOrganizerItemType::TypeEvent));
     result = dfr.definitions();
     QCOMPARE(defs, result);
 
@@ -1447,11 +1460,11 @@ void tst_QOrganizerItemAsync::definitionRemove()
     QVERIFY(!drr.cancel());
     QVERIFY(!drr.waitForFinished());
 
-    // specific group removal
-    int originalCount = oim->detailDefinitions().keys().size();
+    // specific definition removal
+    int originalCount = oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().size();
     QStringList removeIds;
-    removeIds << oim->detailDefinitions().keys().first();
-    drr.setDefinitionName(oim->detailDefinitions().keys().first());
+    removeIds << oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().first();
+    drr.setDefinitionName(oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().first());
     drr.setManager(oim.data());
     QCOMPARE(drr.manager(), oim.data());
     QVERIFY(!drr.isActive());
@@ -1471,8 +1484,8 @@ void tst_QOrganizerItemAsync::definitionRemove()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    QCOMPARE(oim->detailDefinitions().keys().size(), originalCount - 1);
-    oim->detailDefinition(removeIds.first()); // check that it has already been removed.
+    QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().size(), originalCount - 1);
+    oim->detailDefinition(removeIds.first(), QOrganizerItemType::TypeEvent); // check that it has already been removed.
     QCOMPARE(oim->error(), QOrganizerItemManager::DoesNotExistError);
 
     // remove (asynchronously) a nonexistent group - should fail.
@@ -1487,11 +1500,11 @@ void tst_QOrganizerItemAsync::definitionRemove()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    QCOMPARE(oim->detailDefinitions().keys().size(), originalCount - 1); // hasn't changed
+    QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().size(), originalCount - 1); // hasn't changed
     QCOMPARE(drr.error(), QOrganizerItemManager::DoesNotExistError);
 
     // remove with list containing one valid and one invalid id.
-    removeIds << oim->detailDefinitions().keys().first();
+    removeIds << oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().first();
     drr.setDefinitionNames(removeIds);
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
@@ -1503,7 +1516,7 @@ void tst_QOrganizerItemAsync::definitionRemove()
     QVERIFY(spy.count() >= 1); // active + finished signals
     spy.clear();
 
-    QCOMPARE(oim->detailDefinitions().keys().size(), originalCount - 2); // only one more has been removed
+    QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().size(), originalCount - 2); // only one more has been removed
     QVERIFY(drr.errorMap().count() == 1);
     QVERIFY(drr.errorMap().keys().contains(0));
     QCOMPARE(drr.errorMap().value(0), QOrganizerItemManager::DoesNotExistError);
@@ -1522,12 +1535,12 @@ void tst_QOrganizerItemAsync::definitionRemove()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    QCOMPARE(oim->detailDefinitions().keys().size(), originalCount - 2); // hasn't changed
+    QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().size(), originalCount - 2); // hasn't changed
     QCOMPARE(drr.error(), QOrganizerItemManager::NoError);  // no error but no effect.
 
     // cancelling
     removeIds.clear();
-    removeIds << oim->detailDefinitions().keys().first();
+    removeIds << oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().first();
     drr.setDefinitionNames(removeIds);
 
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
@@ -1541,7 +1554,7 @@ void tst_QOrganizerItemAsync::definitionRemove()
             drr.waitForFinished();
             drr.setDefinitionNames(removeIds);
 
-            QCOMPARE(oim->detailDefinitions().keys().size(), originalCount - 3); // finished
+            QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().size(), originalCount - 3); // finished
             bailoutCount -= 1;
             if (!bailoutCount) {
 //                qWarning("Unable to test cancelling due to thread scheduling!");
@@ -1559,7 +1572,7 @@ void tst_QOrganizerItemAsync::definitionRemove()
         QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
 
-        QCOMPARE(oim->detailDefinitions().keys().size(), originalCount - 2); // hasn't changed
+        QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().size(), originalCount - 2); // hasn't changed
         break;
     }
 
@@ -1587,7 +1600,7 @@ void tst_QOrganizerItemAsync::definitionRemove()
         QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
 
-        QCOMPARE(oim->detailDefinitions().keys().size(), originalCount - 3); // hasn't changed
+        QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().size(), originalCount - 3); // hasn't changed
         break;
     }
 
@@ -1618,7 +1631,7 @@ void tst_QOrganizerItemAsync::definitionSave()
     QVERIFY(!dsr.waitForFinished());
 
     // save a new detail definition
-    int originalCount = oim->detailDefinitions().keys().size();
+    int originalCount = oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().size();
     QOrganizerItemDetailDefinition testDef;
     testDef.setName("TestDefinitionId");
     QMap<QString, QOrganizerItemDetailFieldDefinition> fields;
@@ -1649,11 +1662,11 @@ void tst_QOrganizerItemAsync::definitionSave()
     spy.clear();
 
     QList<QOrganizerItemDetailDefinition> expected;
-    expected << oim->detailDefinition("TestDefinitionId");
+    expected << oim->detailDefinition("TestDefinitionId", QOrganizerItemType::TypeEvent);
     QList<QOrganizerItemDetailDefinition> result = dsr.definitions();
     QCOMPARE(expected, result);
     QVERIFY(expected.contains(testDef));
-    QCOMPARE(oim->detailDefinitions().values().size(), originalCount + 1);
+    QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).values().size(), originalCount + 1);
 
     // update a previously saved group
     fields.insert("TestDefinitionFieldTwo", f);
@@ -1673,11 +1686,11 @@ void tst_QOrganizerItemAsync::definitionSave()
     spy.clear();
 
     expected.clear();
-    expected << oim->detailDefinition("TestDefinitionId");
+    expected << oim->detailDefinition("TestDefinitionId", QOrganizerItemType::TypeEvent);
     result = dsr.definitions();
     QCOMPARE(expected, result);
     QVERIFY(expected.contains(testDef));
-    QCOMPARE(oim->detailDefinitions().values().size(), originalCount + 1);
+    QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).values().size(), originalCount + 1);
 
     // cancelling
     fields.insert("TestDefinitionFieldThree - shouldn't get saved", f);
@@ -1698,7 +1711,7 @@ void tst_QOrganizerItemAsync::definitionSave()
             saveList.clear();
             saveList << testDef;
             dsr.setDefinitions(saveList);
-            oim->removeDetailDefinition(testDef.name());
+            oim->removeDetailDefinition(testDef.name(), QOrganizerItemType::TypeEvent);
             bailoutCount -= 1;
             if (!bailoutCount) {
 //                qWarning("Unable to test cancelling due to thread scheduling!");
@@ -1716,9 +1729,9 @@ void tst_QOrganizerItemAsync::definitionSave()
         spy.clear();
 
         // verify that the changes were not saved
-        QList<QOrganizerItemDetailDefinition> allDefs = oim->detailDefinitions().values();
+        QList<QOrganizerItemDetailDefinition> allDefs = oim->detailDefinitions(QOrganizerItemType::TypeEvent).values();
         QVERIFY(!allDefs.contains(testDef));
-        QCOMPARE(oim->detailDefinitions().values().size(), originalCount + 1);
+        QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).values().size(), originalCount + 1);
 
         break;
     }
@@ -1735,7 +1748,7 @@ void tst_QOrganizerItemAsync::definitionSave()
             saveList.clear();
             saveList << testDef;
             dsr.setDefinitions(saveList);
-            oim->removeDetailDefinition(testDef.name());
+            oim->removeDetailDefinition(testDef.name(), QOrganizerItemType::TypeEvent);
             bailoutCount -= 1;
             if (!bailoutCount) {
 //                qWarning("Unable to test cancelling due to thread scheduling!");
@@ -1751,9 +1764,9 @@ void tst_QOrganizerItemAsync::definitionSave()
         spy.clear();
 
         // verify that the changes were not saved
-        QList<QOrganizerItemDetailDefinition> allDefs = oim->detailDefinitions().values();
+        QList<QOrganizerItemDetailDefinition> allDefs = oim->detailDefinitions(QOrganizerItemType::TypeEvent).values();
         QVERIFY(!allDefs.contains(testDef));
-        QCOMPARE(oim->detailDefinitions().values().size(), originalCount + 1);
+        QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).values().size(), originalCount + 1);
 
         break;
     }
@@ -2037,6 +2050,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
     oim->saveCollection(&temp);
     crr.setCollectionId(temp.id().localId());
 
+    int collectionCount = oim->collections().size();
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!crr.cancel()); // not started
@@ -2065,8 +2079,8 @@ void tst_QOrganizerItemAsync::collectionRemove()
         // if we get here, then we are cancelling the request.
         QVERIFY(crr.waitForFinished());
         QVERIFY(crr.isCanceled());
-        QCOMPARE(oim->collectionIds().size(), 1);
-        QCOMPARE(oim->collectionIds(), crr.collectionIds());
+        QCOMPARE(oim->collections().size(), collectionCount); // temp collection should not have been removed
+        QVERIFY(containsAllCollectionIds(oim->collectionIds(), crr.collectionIds())); // oim contains all the collections set to crr
         QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         break;
@@ -2097,8 +2111,8 @@ void tst_QOrganizerItemAsync::collectionRemove()
         }
         crr.waitForFinished();
         QVERIFY(crr.isCanceled());
-        QCOMPARE(oim->collectionIds().size(), 1);
-        QCOMPARE(oim->collectionIds(), crr.collectionIds());
+        QCOMPARE(oim->collections().size(), collectionCount); // temp collection should not have been removed
+        QVERIFY(containsAllCollectionIds(oim->collectionIds(), crr.collectionIds())); // oim contains all the collections set to crr
         QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         break;
@@ -2126,6 +2140,7 @@ void tst_QOrganizerItemAsync::collectionSave()
     int originalCount = oim->collectionIds().size();
     QOrganizerCollection testCollection;
     testCollection.setMetaData("description", "test description");
+    testCollection.setMetaData(QOrganizerCollection::KeyName, "New collection");
     QList<QOrganizerCollection> saveList;
     saveList << testCollection;
     csr.setManager(oim.data());
@@ -2415,6 +2430,16 @@ QOrganizerItemManager* tst_QOrganizerItemAsync::prepareModel(const QString& mana
     cDescriptionDetail.setDescription("C Description");
     c.saveDetail(&cDescriptionDetail);
 
+    QOrganizerItemType aTypeDetail;
+    aTypeDetail.setType(QOrganizerItemType::TypeEvent);
+    a.saveDetail(&aTypeDetail);
+    QOrganizerItemType bTypeDetail;
+    bTypeDetail.setType(QOrganizerItemType::TypeEvent);
+    b.saveDetail(&bTypeDetail);
+    QOrganizerItemType cTypeDetail;
+    cTypeDetail.setType(QOrganizerItemType::TypeEvent);
+    c.saveDetail(&cTypeDetail);
+
     QOrganizerItemPriority priority;
     priority.setPriority(QOrganizerItemPriority::HighestPriority);
     c.saveDetail(&priority);
@@ -2424,7 +2449,7 @@ QOrganizerItemManager* tst_QOrganizerItemAsync::prepareModel(const QString& mana
     a.saveDetail(&priority);
 
     QOrganizerItemLocation loc;
-    loc.setLocationName("http://test.nokia.com");
+    loc.setLabel("test location label");
     a.saveDetail(&loc);
 
     oim->saveItem(&a);
@@ -2432,6 +2457,7 @@ QOrganizerItemManager* tst_QOrganizerItemAsync::prepareModel(const QString& mana
     oim->saveItem(&c);
 
     QOrganizerCollection testCollection;
+    testCollection.setMetaData(QOrganizerCollection::KeyName, "Test Collection");
     testCollection.setMetaData("testCollection", "test collection");
     oim->saveCollection(&testCollection);
 

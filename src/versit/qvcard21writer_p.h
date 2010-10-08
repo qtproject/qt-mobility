@@ -61,7 +61,7 @@ QTM_BEGIN_NAMESPACE
 class QM_AUTOTEST_EXPORT QVCard21Writer : public QVersitDocumentWriter
 {
 public:
-    QVCard21Writer();
+    QVCard21Writer(QVersitDocument::VersitType type);
     ~QVCard21Writer();
 
     void encodeVersitProperty(const QVersitProperty& property);

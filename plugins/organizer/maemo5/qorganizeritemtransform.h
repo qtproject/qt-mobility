@@ -106,6 +106,8 @@ public: // transform functions
     CalendarType toCalendarType(QString calendarType);
     QMap<CalendarType, QString> calendarTypeMap() const;
 
+    bool addGeoToQOIL(const QString& src, QOrganizerItemLocation* detail) const;
+
 private:
     // random GUID generation
     QString randomGuid() const;

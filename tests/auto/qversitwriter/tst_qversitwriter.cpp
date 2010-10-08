@@ -134,6 +134,49 @@ void tst_QVersitWriter::testFold()
     QCOMPARE(result, expected);
 }
 
+void tst_QVersitWriter::testWritingVersions()
+{
+    mWriter->setDevice(mOutputDevice);
+    mOutputDevice->open(QBuffer::ReadWrite);
+
+    QVersitDocument document;
+    QVersitProperty property;
+    property.setName(QString(QString::fromAscii("FN")));
+    property.setValue(QString::fromAscii("John"));
+    document.addProperty(property);
+
+    QByteArray vCard30(
+        "BEGIN:VCARD\r\n"
+        "VERSION:3.0\r\n"
+        "FN:John\r\n"
+        "END:VCARD\r\n");
+    QByteArray vCard21(
+        "BEGIN:VCARD\r\n"
+        "VERSION:2.1\r\n"
+        "FN:John\r\n"
+        "END:VCARD\r\n");
+
+    // Given no type or componentType, it should be vCard 3.0
+    QVERIFY(mWriter->startWriting(document));
+    mWriter->waitForFinished();
+    QCOMPARE(mOutputDevice->buffer(), vCard30);
+
+    // document type should override the guess
+    document.setType(QVersitDocument::VCard21Type);
+    mOutputDevice->buffer().clear();
+    mOutputDevice->seek(0);
+    QVERIFY(mWriter->startWriting(document));
+    mWriter->waitForFinished();
+    QCOMPARE(mOutputDevice->buffer(), vCard21);
+
+    // param to startWriting should override document type
+    mOutputDevice->buffer().clear();
+    mOutputDevice->seek(0);
+    QVERIFY(mWriter->startWriting(document, QVersitDocument::VCard30Type));
+    mWriter->waitForFinished();
+    QCOMPARE(mOutputDevice->buffer(), vCard30);
+}
+
 void tst_QVersitWriter::testWriting21()
 {
     // vCard 2.1
@@ -145,8 +188,8 @@ END:VCARD\r\n");
     QVersitDocument document;
     document.setComponentType(QLatin1String("VCARD"));
     QVersitProperty property;
-    property.setName(QString(QString::fromAscii("FN")));
-    property.setValue(QString::fromAscii("John"));
+    property.setName(QString(QLatin1String("FN")));
+    property.setValue(QLatin1String("John"));
     document.addProperty(property);
     document.setType(QVersitDocument::VCard21Type);
     QList<QVersitDocument> list;
@@ -205,8 +248,8 @@ END:VCARD\r\n");
     QVersitDocument document;
     document.setComponentType(QLatin1String("VCARD"));
     QVersitProperty property;
-    property.setName(QString(QString::fromAscii("FN")));
-    property.setValue(QString::fromAscii("John"));
+    property.setName(QString(QLatin1String("FN")));
+    property.setValue(QLatin1String("John"));
     document.addProperty(property);
     document.setType(QVersitDocument::VCard30Type);
     QList<QVersitDocument> list;
@@ -268,8 +311,8 @@ void tst_QVersitWriter::testByteArrayOutput()
     QVersitDocument document(QVersitDocument::VCard30Type);
     document.setComponentType(QLatin1String("VCARD"));
     QVersitProperty property;
-    property.setName(QString(QString::fromAscii("FN")));
-    property.setValue(QString::fromAscii("John"));
+    property.setName(QString(QLatin1String("FN")));
+    property.setValue(QLatin1String("John"));
     document.addProperty(property);
     QVERIFY2(mWriter->startWriting(QList<QVersitDocument>() << document), QString::number(mWriter->error()).toAscii().data());
     QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());

@@ -33,12 +33,13 @@ PUBLIC_HEADERS += \
                     maps/qgraphicsgeomap.h
 
 PRIVATE_HEADERS += \
-                    maps/qgeomaneuver.h \
+                    maps/qgeomaneuver_p.h \
                     maps/qgeomapcircleobject_p.h \
                     maps/qgeomapdata_p.h \
                     maps/qgeomapgroupobject_p.h \
                     maps/qgeomapobject_p.h \
                     maps/qgeomapobjectinfo_p.h \
+                    maps/qgeomapoverlay_p.h \
                     maps/qgeomappingmanager_p.h \
                     maps/qgeomappingmanagerengine_p.h \
                     maps/qgeomappixmapobject_p.h \

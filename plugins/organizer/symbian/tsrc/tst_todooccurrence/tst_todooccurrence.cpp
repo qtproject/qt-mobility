@@ -93,7 +93,7 @@ void TestTodoOccurrence::init()
     m_om = new QOrganizerItemManager(managerNameSymbian);
     
     // Cleanup by deleting all items
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
 }
 
 void TestTodoOccurrence::cleanup()

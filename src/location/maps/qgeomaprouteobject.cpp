@@ -76,7 +76,7 @@ QGeoMapRouteObject::QGeoMapRouteObject()
     Constructs a new route object for the route \a route.
 */
 QGeoMapRouteObject::QGeoMapRouteObject(const QGeoRoute &route)
-        : d_ptr(new QGeoMapRouteObjectPrivate())
+    : d_ptr(new QGeoMapRouteObjectPrivate())
 {
     d_ptr->route = route;
 }

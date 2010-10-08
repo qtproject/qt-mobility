@@ -54,7 +54,7 @@ Rectangle {
 
         Text { text:"Name:" + myContact.name.firstName + " " + myContact.name.lastName }
         Text { text:"Address:" + myContact.address.street + " " + myContact.address.locality + " " + myContact.address.region + " " + myContact.address.postcode }
-        Text { text:"Email:" + myContact.email.email }
+        Text { text:"Email:" + myContact.email.emailAddress }
         Text { text:"phone number[0]:" + myContact.phoneNumbers[0].number }
         Text { text:"phone number[1]:" + myContact.phoneNumbers[1].number }
         Text { text:"phone number[2]:" + myContact.phoneNumbers[2].number }
@@ -70,7 +70,7 @@ Rectangle {
             }
 
             ContactEmail {
-                email:"charles.yin@nokia.com"
+                emailAddress:"charles.yin@nokia.com"
             }
 
             ContactAddress {

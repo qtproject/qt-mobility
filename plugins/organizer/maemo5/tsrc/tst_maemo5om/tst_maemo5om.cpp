@@ -98,7 +98,7 @@ void tst_Maemo5Om::init()
 {
     m_om = new QOrganizerItemManager(managerName);
     // Remove all organizer items first (Note: ignores possible errors)
-    //m_om->removeItems(m_om->itemIds(), 0);
+    // m_om->removeItems(m_om->itemIds(), 0);
 }
 
 void tst_Maemo5Om::cleanup()
@@ -147,7 +147,7 @@ void tst_Maemo5Om::addSimpleItem()
     // Save with list parameter
     QList<QOrganizerItem> items;
     items.append(event2);
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId()));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     foreach (QOrganizerItem item, items) {
         QVERIFY(!item.id().localId().isNull());
@@ -165,10 +165,9 @@ void tst_Maemo5Om::addSimpleItem()
     // Save with list parameter and error map parameter
     QList<QOrganizerItem> items2;
     items2.append(event3);
-    QMap<int, QOrganizerItemManager::Error> errorMap;
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap));
+    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId()));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
-    QVERIFY(errorMap.count() == 0);
+    QVERIFY(m_om->errorMap().count() == 0);
     foreach ( QOrganizerItem item2, items ) {
         QVERIFY(!item2.id().localId().isNull());
         QVERIFY(item2.id().managerUri().contains(managerName));
@@ -217,9 +216,8 @@ void tst_Maemo5Om::removeSimpleItem()
     QList<QOrganizerItemLocalId> itemIds;
     itemIds.append(item2.localId());
     itemIds.append(item3.localId());
-    QMap<int, QOrganizerItemManager::Error> errorMap;
-    QVERIFY(m_om->removeItems(itemIds, &errorMap));
-    QVERIFY(errorMap.count() == 0);
+    QVERIFY(m_om->removeItems(itemIds));
+    QVERIFY(m_om->errorMap().count() == 0);
 }
 
 void tst_Maemo5Om::addEvent() {
@@ -231,10 +229,13 @@ void tst_Maemo5Om::addEvent() {
     event.setDisplayLabel("addEvent");
     event.setDescription("Test event description");
     event.setGuid("custom event GUID");
-    event.setLocationAddress("Event location address");
-    event.setLocationGeoCoordinates("Location geo coordinates");
-    event.setLocationName("Location name");
     event.setPriority(QOrganizerItemPriority::HighPriority);
+
+    QOrganizerItemLocation loc = event.detail<QOrganizerItemLocation>();
+    loc.setLatitude(45.0);
+    loc.setLongitude(-179.0);
+    loc.setLabel("Event location address");
+    event.saveDetail(&loc);
 
     // Save event
     QVERIFY(m_om->saveItem(&event));
@@ -253,10 +254,9 @@ void tst_Maemo5Om::addEvent() {
     QCOMPARE(fetchEvent.displayLabel(), event.displayLabel());
     QCOMPARE(fetchEvent.description(), event.description());
     QCOMPARE(fetchEvent.guid(), event.guid());
-    QCOMPARE(fetchEvent.locationAddress(), event.locationAddress());
-    QCOMPARE(fetchEvent.locationGeoCoordinates(), event.locationGeoCoordinates());
-    QCOMPARE(fetchEvent.locationName(), event.locationName());
+    QCOMPARE(fetchEvent.location(), event.location());
     QCOMPARE(fetchEvent.priority(), event.priority());
+    QCOMPARE(fetchEvent.detail<QOrganizerItemLocation>(), event.detail<QOrganizerItemLocation>());
 }
 
 void tst_Maemo5Om::addTodo() {
@@ -270,6 +270,12 @@ void tst_Maemo5Om::addTodo() {
     todo.setPriority(QOrganizerItemPriority::LowestPriority);
     todo.setProgressPercentage(53);
     todo.setStatus(QOrganizerTodoProgress::StatusInProgress);
+    QOrganizerItemLocation loc = todo.detail<QOrganizerItemLocation>();
+    loc.setLatitude(54.0);
+    loc.setLongitude(-139.0);
+    loc.setLabel("Todo location address");
+    todo.saveDetail(&loc);
+
 
     // Save todo
     QVERIFY(m_om->saveItem(&todo));
@@ -289,6 +295,7 @@ void tst_Maemo5Om::addTodo() {
     QCOMPARE(fetchTodo.priority(), todo.priority());
     QCOMPARE(fetchTodo.progressPercentage(), todo.progressPercentage());
     QCOMPARE(fetchTodo.status(), todo.status());
+    QCOMPARE(fetchTodo.detail<QOrganizerItemLocation>(), todo.detail<QOrganizerItemLocation>());
 }
 
 void tst_Maemo5Om::addJournal() {
@@ -666,11 +673,11 @@ void tst_Maemo5Om::addWithIllegalParameters()
     QVERIFY(!m_om->saveItem(0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
-    QVERIFY(!m_om->saveItems(0, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(!m_om->saveItems(0, QOrganizerCollectionLocalId()));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
     QList<QOrganizerItem> items;
-    QVERIFY(!m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(!m_om->saveItems(&items, QOrganizerCollectionLocalId()));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 }
 
@@ -707,8 +714,7 @@ void tst_Maemo5Om::getItemIds()
     }
 
     // Get items ids
-    QList<QOrganizerItemSortOrder> sortOrders;
-    QList<QOrganizerItemLocalId> ids = m_om->itemIds(sortOrders);
+    QList<QOrganizerItemLocalId> ids = m_om->itemIds(QDateTime(QDate(2010,3,1)), QDateTime(QDate(2010,3,11)), QOrganizerItemFilter());
 
     // Check that all the item ids exist in result
     foreach(QOrganizerItemLocalId id, generatedIds) {
@@ -749,9 +755,7 @@ void tst_Maemo5Om::getItems()
     }
 
     // Get items
-    QList<QOrganizerItemSortOrder> sortOrders;
-    QOrganizerItemFetchHint fetchHint;
-    QList<QOrganizerItem> items = m_om->items(sortOrders, fetchHint);
+    QList<QOrganizerItem> items = m_om->items(QOrganizerItemFilter());
 
     // Check that all the items exist in result
     foreach(QOrganizerItem item, generatedItems) {
@@ -810,19 +814,8 @@ void tst_Maemo5Om::getItemInstances()
         QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     }
 
-    // Create a filter for fetching instances of January 2010
-    QOrganizerItemDateTimePeriodFilter filter;
-    filter.setStartPeriod(QDateTime(QDate(2010,1,1), QTime(0,0,0)));
-    filter.setEndPeriod(QDateTime(QDate(2010,2,1), QTime(0,0,0)));
-
-    // Create empty sortorder list
-    QList<QOrganizerItemSortOrder> sortOrders;
-
-    // Create empty fetch hint
-    QOrganizerItemFetchHint fetchHint;
-
     // Get all the instances occurring in January 2010
-    QList<QOrganizerItem> januaryInstances = m_om->itemInstances(filter, sortOrders, fetchHint);
+    QList<QOrganizerItem> januaryInstances = m_om->items(QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,2,1), QTime(0,0,0)), QOrganizerItemFilter());
 
     int instancesWithRightGuidCount = 0;
     foreach(QOrganizerItem instance, januaryInstances) {
@@ -983,7 +976,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     // Save with list parameter
     QList<QOrganizerItem> items;
     items.append(event2);
-    QVERIFY(m_om->saveItems(&items, collId, 0));
+    QVERIFY(m_om->saveItems(&items, collId));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     foreach (QOrganizerItem item, items) {
         QVERIFY(!item.id().localId().isNull());
@@ -1001,10 +994,9 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     // Save with list parameter and error map parameter
     QList<QOrganizerItem> items2;
     items2.append(event3);
-    QMap<int, QOrganizerItemManager::Error> errorMap;
-    QVERIFY(m_om->saveItems(&items2, collId, &errorMap));
+    QVERIFY(m_om->saveItems(&items2, collId));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
-    QVERIFY(errorMap.count() == 0);
+    QVERIFY(m_om->errorMap().count() == 0);
     foreach ( QOrganizerItem item2, items ) {
         QVERIFY(!item2.id().localId().isNull());
         QVERIFY(item2.id().managerUri().contains(managerName));
@@ -1115,7 +1107,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     QCOMPARE(noFilteringItemIds.count(), unionItemIds.count());
 
     // Get all items of the new collection
-    QList<QOrganizerItem> newCollectionItems = m_om->items(newCollectionFilter, noSort);
+    QList<QOrganizerItem> newCollectionItems = m_om->itemsForExport(QDateTime(), QDateTime(), newCollectionFilter, noSort);
     QCOMPARE(newCollectionItems.count(), 5);
 
     // The collection ids should match
@@ -1123,20 +1115,20 @@ void tst_Maemo5Om::saveItemsToNewCollection()
         QCOMPARE(newCollectionItem.collectionId().localId(), collId);
 
     // Get all the instances of the new collection
-    QList<QOrganizerItem> newCollectionInstances = m_om->itemInstances(newCollectionFilter, noSort);
+    QList<QOrganizerItem> newCollectionInstances = m_om->items(newCollectionFilter, noSort);
 
     // The count should be 11 (10 instances are generated with the recurrence rule and one is added later)
     QCOMPARE(newCollectionInstances.count(), 11);
 
     // Get all the instances of the default collection
-    QList<QOrganizerItem> defaultCollectionInstances = m_om->itemInstances(defaultCollectionFilter, noSort);
+    QList<QOrganizerItem> defaultCollectionInstances = m_om->items(defaultCollectionFilter, noSort);
 
     // Get all the instances with the union filter
-    QList<QOrganizerItem> unionInstances = m_om->itemInstances(unionFilter, noSort);
+    QList<QOrganizerItem> unionInstances = m_om->items(unionFilter, noSort);
     QCOMPARE(newCollectionInstances.count() + defaultCollectionInstances.count(), unionInstances.count());
 
     // Get all the instances with the intersection filter
-    QList<QOrganizerItem> intersectionInstances = m_om->itemInstances(intersectionFilter, noSort);
+    QList<QOrganizerItem> intersectionInstances = m_om->items(intersectionFilter, noSort);
     QCOMPARE(intersectionInstances.count(), 0);
 }
 
@@ -1316,9 +1308,8 @@ void tst_Maemo5Om::testReminders()
 
     QOrganizerItemVisualReminder eventReminder = event.detail<QOrganizerItemVisualReminder>();
     eventReminder.setMessage("Event reminder message");
-    eventReminder.setDateTime(QDateTime(date, QTime(12, 0, 0)));
     eventReminder.setRepetition(10, 60);
-    eventReminder.setTimeDelta(60 * 60);
+    eventReminder.setSecondsBeforeStart(60 * 60);
     event.saveDetail(&eventReminder);
 
     // Save event
@@ -1328,11 +1319,10 @@ void tst_Maemo5Om::testReminders()
     QOrganizerItem fetchItem = m_om->item(event.localId());
     QOrganizerItemVisualReminder fetchEventReminder = fetchItem.detail<QOrganizerItemVisualReminder>();
     QCOMPARE(fetchEventReminder.dataUrl(), eventReminder.dataUrl());
-    QCOMPARE(fetchEventReminder.dateTime(), eventReminder.dateTime());
     QCOMPARE(fetchEventReminder.message(), eventReminder.message());
     QCOMPARE(fetchEventReminder.repetitionCount(), eventReminder.repetitionCount());
     //QCOMPARE(reminder.repetitionDelay(), fetchEventReminder.repetitionDelay()); // Maemo5 does not support repetition delay
-    QCOMPARE(fetchEventReminder.timeDelta(), eventReminder.timeDelta());
+    QCOMPARE(fetchEventReminder.secondsBeforeStart(), eventReminder.secondsBeforeStart());
 
     // Create a todo and set its details
     QOrganizerTodo todo;
@@ -1343,9 +1333,8 @@ void tst_Maemo5Om::testReminders()
 
     QOrganizerItemVisualReminder todoReminder = todo.detail<QOrganizerItemVisualReminder>();
     todoReminder.setMessage("Todo reminder message");
-    todoReminder.setDateTime(QDateTime(date, QTime(10, 0, 0)));
     todoReminder.setRepetition(2, 10);
-    todoReminder.setTimeDelta(3 * 60 * 60);
+    todoReminder.setSecondsBeforeStart(3 * 60 * 60);
     todo.saveDetail(&todoReminder);
 
     // Save todo
@@ -1355,11 +1344,10 @@ void tst_Maemo5Om::testReminders()
     QOrganizerItem fetchTodo = m_om->item(todo.localId());
     QOrganizerItemVisualReminder fetchTodoReminder = fetchTodo.detail<QOrganizerItemVisualReminder>();
     QCOMPARE(fetchTodoReminder.dataUrl(), todoReminder.dataUrl());
-    QCOMPARE(fetchTodoReminder.dateTime(), todoReminder.dateTime());
     QCOMPARE(fetchTodoReminder.message(), todoReminder.message());
     QCOMPARE(fetchTodoReminder.repetitionCount(), todoReminder.repetitionCount());
     //QCOMPARE(reminder.repetitionDelay(), fetchEventReminder.repetitionDelay()); // Maemo5 does not support repetition delay
-    QCOMPARE(fetchTodoReminder.timeDelta(), todoReminder.timeDelta());
+    QCOMPARE(fetchTodoReminder.secondsBeforeStart(), todoReminder.secondsBeforeStart());
 }
 
 QTEST_MAIN(tst_Maemo5Om);
