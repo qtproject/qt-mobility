@@ -209,13 +209,14 @@ class CFSAsynchronousRetrieveAttachmentOperation : public CFSAsynchronousOperati
     Q_OBJECT
   
 public:
-    CFSAsynchronousRetrieveAttachmentOperation(QMessageServicePrivate &privateService);
+    CFSAsynchronousRetrieveAttachmentOperation(NmApiEmailService *emailService, QMessageServicePrivate &privateService);
     ~CFSAsynchronousRetrieveAttachmentOperation();
     
-    void retrieveAttachment(const QMessageId &messageId);
+    void retrieveAttachment(const QMessageId &messageId, const QMessageContentContainerId &containerId);
     
 private:
-
+    NmApiMessageManager* m_manager;
+    NmApiEmailService *m_emailService;
 };
 
 /*

@@ -214,7 +214,6 @@ void CFSEngine::notification(quint64 mailboxId, quint64 envelopeId, quint64 fold
         const QMessageFilter &filter(it.value());
         if (!messageRetrieved) {
             NmApiMessage fsMessage;
-            int err;
             if (m_emailServiceInitialized)
                 m_emailService->getMessage(mailboxId, folderId, envelopeId, fsMessage);
                
@@ -532,9 +531,9 @@ QMessage CFSEngine::message(const QMessageId &id) const
 {
     QMessage message = QMessage();
     NmApiMessage fsMessage;
-    quint64 mailboxId;
-    quint64 folderId;
-    quint64 messageId;
+    quint64 mailboxId = 0;
+    quint64 folderId = 0;
+    quint64 messageId = 0;
     splitQMessageId(id, mailboxId, folderId, messageId);
     if (m_emailServiceInitialized) {
         m_emailService->getMessage(mailboxId, 0, messageId, fsMessage);       
@@ -575,15 +574,15 @@ bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOpti
 
 bool CFSEngine::showMessage(const QMessageId &id)
 {
-    bool syncronous;
+    bool syncronous = true;
     
     XQAiwRequest* request = m_applicationManager.create(XQI_EMAIL_MESSAGE_VIEW,
             XQOP_EMAIL_MESSAGE_VIEW,
                 syncronous);
   
-    quint64 mailboxId;
-    quint64 folderId;
-    quint64 messageId;
+    quint64 mailboxId = 0;
+    quint64 folderId = 0;
+    quint64 messageId = 0;
     splitQMessageId(id, mailboxId, folderId, messageId);
 
     QList<QVariant> list;
@@ -640,9 +639,16 @@ bool CFSEngine::composeMessage(const QMessage &message)
 
 bool CFSEngine::retrieve(QMessageServicePrivate &privateService, const QMessageId &messageId, const QMessageContentContainerId &id)
 {
-    Q_UNUSED(id);
-    m_privateService = &privateService;
     bool retVal = false;
+    m_privateService = &privateService;
+    QMessage msg = message(messageId);
+    
+    if (msg.bodyId() == id) {
+        retVal = retrieveBody(privateService, messageId);
+    } else if (msg.attachmentIds().contains(id)) {
+        retVal = retrieveAttachment(privateService, messageId, id);
+    }
+    
     return retVal;
 }
 
@@ -659,6 +665,23 @@ bool CFSEngine::retrieveBody(QMessageServicePrivate &privateService, const QMess
             SLOT(asyncronousOperationCompleted(int, CFSAsynchronousOperation*)));
     m_operationList.append(retrieveOperation);
     retrieveOperation->retrieveBody(id);
+    
+    return true;
+}
+
+bool CFSEngine::retrieveAttachment(QMessageServicePrivate &privateService, const QMessageId &messageId, const QMessageContentContainerId &containerId)
+{
+    CFSAsynchronousRetrieveAttachmentOperation *retrieveOperation = NULL;
+    try{
+        retrieveOperation = new CFSAsynchronousRetrieveAttachmentOperation(m_emailService, privateService);
+    }
+    catch(...){
+        return false;
+    }
+    connect(retrieveOperation, SIGNAL(operationCompleted(int, CFSAsynchronousOperation*)), this, 
+            SLOT(asyncronousOperationCompleted(int, CFSAsynchronousOperation*)));
+    m_operationList.append(retrieveOperation);
+    retrieveOperation->retrieveAttachment(messageId, containerId);
     
     return true;
 }

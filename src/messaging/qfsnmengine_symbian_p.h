@@ -150,6 +150,7 @@ public:
    
     bool retrieve(QMessageServicePrivate &privateService, const QMessageId &messageId, const QMessageContentContainerId &id);
     bool retrieveBody(QMessageServicePrivate &privateService, const QMessageId &id);
+    bool retrieveAttachment(QMessageServicePrivate &privateService, const QMessageId &messageId, const QMessageContentContainerId &containerId);
     bool retrieveHeader(QMessageServicePrivate &privateService, const QMessageId &id);
     bool exportUpdates(QMessageServicePrivate &privateService, const QMessageAccountId &id);
     

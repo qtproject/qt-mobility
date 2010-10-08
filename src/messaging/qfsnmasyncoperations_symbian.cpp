@@ -357,17 +357,18 @@ CFSAsynchronousRetrieveBodyOperation::~CFSAsynchronousRetrieveBodyOperation()
 
 void CFSAsynchronousRetrieveBodyOperation::retrieveBody(const QMessageId &messageId)
 {
-    quint64 mailboxId;
-    quint64 folderId;
-    quint64 msgId;
+    quint64 mailboxId = 0;
+    quint64 folderId = 0;
+    quint64 msgId = 0;
     splitQMessageId(messageId, mailboxId, folderId, msgId);
     m_manager = new NmApiMessageManager(this, mailboxId);
     QPointer<NmApiOperation> operation = m_manager->fetchMessage(msgId);
     connect(operation, SIGNAL(operationComplete(int)), this, SLOT(operationCompleted(int)));
 }
 
-CFSAsynchronousRetrieveAttachmentOperation::CFSAsynchronousRetrieveAttachmentOperation(QMessageServicePrivate &privateService):
-    CFSAsynchronousOperation(retrieveAttachmentOperation, privateService)
+CFSAsynchronousRetrieveAttachmentOperation::CFSAsynchronousRetrieveAttachmentOperation(NmApiEmailService *emailService, QMessageServicePrivate &privateService):
+    CFSAsynchronousOperation(retrieveAttachmentOperation, privateService),
+    m_emailService(emailService)
 {
     
 }
@@ -377,9 +378,18 @@ CFSAsynchronousRetrieveAttachmentOperation::~CFSAsynchronousRetrieveAttachmentOp
 
 }
 
-void CFSAsynchronousRetrieveAttachmentOperation::retrieveAttachment(const QMessageId &messageId)
+void CFSAsynchronousRetrieveAttachmentOperation::retrieveAttachment(const QMessageId &messageId, const QMessageContentContainerId &containerId)
 {
-    Q_UNUSED(messageId);
+    quint64 mailboxId = 0;
+    quint64 folderId = 0;
+    quint64 msgId = 0;
+    quint64 attachmentId = containerId.toString().toULongLong();
+    splitQMessageId(messageId, mailboxId, folderId, msgId);
+    NmApiMessage apiMessage;
+    m_emailService->getMessage(mailboxId, folderId, msgId, apiMessage);
+    m_manager = new NmApiMessageManager(this, mailboxId);
+    QPointer<NmApiOperation> operation = m_manager->fetchAttachment(apiMessage, attachmentId);
+    connect(operation, SIGNAL(operationComplete(int)), this, SLOT(operationCompleted(int)));
 }
 
 
@@ -590,9 +600,9 @@ CFSAsynchronousRemoveOperation::~CFSAsynchronousRemoveOperation()
 void CFSAsynchronousRemoveOperation::removeMessage(const QMessageId &messageId)
 {
     QList<quint64> messageIds;
-    quint64 mailboxId;
-    quint64 folderId;
-    quint64 msgId;
+    quint64 mailboxId = 0;
+    quint64 folderId = 0;
+    quint64 msgId = 0;
     splitQMessageId(messageId, mailboxId, folderId, msgId);
     messageIds.append(msgId);
 
