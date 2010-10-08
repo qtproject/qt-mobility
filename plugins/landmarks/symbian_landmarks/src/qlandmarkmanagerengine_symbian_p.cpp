@@ -2558,9 +2558,8 @@ bool LandmarkManagerEngineSymbianPrivate::removeLandmarkInternalL(const QLandmar
 
     if (!LandmarkUtility::validLocalId(landmarkId.localId())) {
         *error = QLandmarkManager::LandmarkDoesNotExistError;
-*    errorString
-    = "LandmarkId not found because it is invalid. For Symbian the local id must be a string
-    representing an unsigned long type.";
+*errorString = "LandmarkId not found because it is invalid. For Symbian the local id must be a string "
+    "representing an unsigned long type.";
     return result;
 }
 
@@ -2600,7 +2599,7 @@ QLandmark LandmarkManagerEngineSymbianPrivate::fetchLandmarkL(const QLandmarkId 
         *error = QLandmarkManager::LandmarkDoesNotExistError;
         *errorString
             = "Landmark not found as local id is invalid. For symbian the local id is a string representation of "
-                "an unsigned long type";
+                " an unsigned long type";
         return QLandmark();
     }
 
