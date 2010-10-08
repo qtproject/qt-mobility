@@ -44,6 +44,7 @@
 #include <QtTest/QtTest>
 
 #include "../../../plugins/declarative/multimedia/qdeclarativeaudio_p.h"
+#include "../../../plugins/declarative/multimedia/qdeclarativemediametadata_p.h"
 
 #include <qmediaplayercontrol.h>
 #include <qmediaservice.h>
@@ -347,10 +348,9 @@ void tst_QDeclarativeAudio::nullMetaDataControl()
 
     QDeclarativeAudio audio;
     audio.classBegin();
+    audio.componentComplete();
 
-    QCOMPARE(audio.metaData()->metaObject()->indexOfProperty("title"), -1);
-    QCOMPARE(audio.metaData()->metaObject()->indexOfProperty("genre"), -1);
-    QCOMPARE(audio.metaData()->metaObject()->indexOfProperty("description"), -1);
+    QVERIFY(audio.metaData());
 }
 
 void tst_QDeclarativeAudio::nullService()
@@ -401,9 +401,7 @@ void tst_QDeclarativeAudio::nullService()
 
     QCOMPARE(audio.error(), QDeclarativeAudio::ServiceMissing);
 
-    QCOMPARE(audio.metaData()->metaObject()->indexOfProperty("title"), -1);
-    QCOMPARE(audio.metaData()->metaObject()->indexOfProperty("genre"), -1);
-    QCOMPARE(audio.metaData()->metaObject()->indexOfProperty("description"), -1);
+    QVERIFY(audio.metaData());
 }
 
 void tst_QDeclarativeAudio::source()
@@ -1196,7 +1194,7 @@ void tst_QDeclarativeAudio::metaData()
     audio.classBegin();
     audio.componentComplete();
 
-    QSignalSpy spy(audio.metaData(), SIGNAL(__metaDataChanged()));
+    QSignalSpy spy(audio.metaData(), SIGNAL(metaDataChanged()));
 
     const int index = audio.metaData()->metaObject()->indexOfProperty(propertyName.constData());
     QVERIFY(index != -1);
