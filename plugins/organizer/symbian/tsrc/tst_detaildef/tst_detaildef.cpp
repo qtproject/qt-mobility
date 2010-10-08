@@ -58,7 +58,6 @@ private slots:
     void cleanup();
     
 private slots:
-    void fetchDetailDef();
     void fetchEventDetailDef();
     void fetchEventOccDetailDef();
     void fetchTodoDetailDef();
@@ -85,12 +84,6 @@ void TestDetailDef::cleanup()
         delete m_om;
         m_om = 0;
     }
-}
-
-void TestDetailDef::fetchDetailDef()
-{
-    QMap<QString, QOrganizerItemDetailDefinition> detailDef = m_om->detailDefinitions();
-    QVERIFY(!detailDef.isEmpty());
 }
 
 void TestDetailDef::fetchEventDetailDef()

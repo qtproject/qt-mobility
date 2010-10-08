@@ -45,96 +45,27 @@
 
 #include <QString>
 #include <QDateTime>
-#include <QList>
-
+#include <QSet>
+#include <QHash>
 #include "qtorganizerglobal.h"
 
-class QOrganizerItemRecurrenceRulePrivate;
+
+
 
 QTM_BEGIN_NAMESPACE
-
-/*
- * This is based on RRULE in iCalendar.
- * An item can have multiple QOIRecurrence details, in which case the dates are calculated
- * separately for each and then unioned.
- *
- * The fields of this class all correspond to RRULE fragments.
- * 
- * The general rules for interaction between the fields when generating the occurence dates is as
- * follows:
- *
- * When a criterion takes a list, the items in the list are unioned together.
- * eg. with [dayOfWeek == Tuesday,Thursday], the event occurs if it is Tuesday or Thursday
- *
- * Frequency and specific criteria interact a bit more complicatedly.  For each criterion on a
- * larger timespan than the frequncy, the dates matching the criterion are intersected with the
- * dates resulting from the frequency.
- * eg. [frequency = Daily, month = January] means every day in January
- * For each criterion on a shorter timespan than the frequency, the criterion is unioned.
- * eg. [frequency = Weekly, dayOfWeek = Wednesday,Friday] means every Wednesday and Friday of
- * every week.
- * This makes the frequency field superfluous in many cases when other criteria are present.
- * eg. all of the below mean the same thing:
- * [frequency = Daily, dayOfWeek = Monday,Tuesday]
- * [frequency = Weekly, dayOfWeek = Monday,Tuesday]
- * [frequency = Monthly, dayOfWeek = Monday,Tuesday]
- * [frequency = Yearly, dayOfWeek = Monday,Tuesday]
- * However, the frequency field may start affecting the result differently when other fields are
- * added like interval and positions.
- *
- * For the purpose of calculating occurrence dates, information not contained in the rule is in some
- * cases derived from the startDateTime field of the event that the detail is associated with.
- * There are three cases where such derivation is necessary.
- * Case 1: frequency == Weekly.  If dayOfWeek is not specified, derive it from the week day that
- * the startDateTime occurs on.
- * Case 2: frequency == Monthly.  If neither dayOfWeek or dayOfMonth is specified, dayOfMonth should
- * be derived from the startDateTime
- * Case 3: frequency == Yearly.  If none of month, weekOfYear, dayOfYear, dayOfMonth or dayOfWeek
- * are specified, derive month and dayOfMonth.  If month is specified but not weekOfYear, dayOfYear,
- * dayOfMonth or dayOfWeek, then derive dayOfMonth.  If weekOfYear is specified but not dayOfYear,
- * dayOfWeek or dayOfMonth, derive dayOfWeek from the startDateTime.
- * For any cases not covered here, do not derive any of the fields.
- */
+class QOrganizerItemRecurrenceRulePrivate;
 
 class Q_ORGANIZER_EXPORT QOrganizerItemRecurrenceRule
 {
 public:
-#ifdef Q_QDOC
-    static const QLatin1Constant FieldFrequency;
-    static const QLatin1Constant FieldCount;
-    static const QLatin1Constant FieldStartDate;
-    static const QLatin1Constant FieldEndDate;
-    static const QLatin1Constant FieldInterval;
-    static const QLatin1Constant FieldDaysOfWeek;
-    static const QLatin1Constant FieldDaysOfMonth;
-    static const QLatin1Constant FieldDaysOfYear;
-    static const QLatin1Constant FieldMonths;
-    static const QLatin1Constant FieldWeeksOfYear;
-    static const QLatin1Constant FieldPositions;
-    static const QLatin1Constant FieldWeekStart;
-#else
-    Q_DECLARE_LATIN1_CONSTANT(FieldFrequency, "Frequency");
-    Q_DECLARE_LATIN1_CONSTANT(FieldCount, "Count");
-    Q_DECLARE_LATIN1_CONSTANT(FieldStartDate, "StartDate");
-    Q_DECLARE_LATIN1_CONSTANT(FieldEndDate, "EndDate");
-    Q_DECLARE_LATIN1_CONSTANT(FieldInterval, "Interval");
-    Q_DECLARE_LATIN1_CONSTANT(FieldDaysOfWeek, "DaysOfWeek");
-    Q_DECLARE_LATIN1_CONSTANT(FieldDaysOfMonth, "DaysOfMonth");
-    Q_DECLARE_LATIN1_CONSTANT(FieldDaysOfYear, "DaysOfYear");
-    Q_DECLARE_LATIN1_CONSTANT(FieldMonths, "Months");
-    Q_DECLARE_LATIN1_CONSTANT(FieldWeeksOfYear, "WeeksOfYear");
-    Q_DECLARE_LATIN1_CONSTANT(FieldPositions, "Positions");
-    Q_DECLARE_LATIN1_CONSTANT(FieldWeekStart, "WeekStart");
-#endif
-
     QOrganizerItemRecurrenceRule();
     ~QOrganizerItemRecurrenceRule();
     QOrganizerItemRecurrenceRule(const QOrganizerItemRecurrenceRule& other);
     QOrganizerItemRecurrenceRule& operator=(const QOrganizerItemRecurrenceRule& other);
-
+    bool operator==(const QOrganizerItemRecurrenceRule& other) const;
     // enums
     enum Frequency {
-        Invalid,
+        Invalid = 0,
         Daily,
         Weekly,
         Monthly,
@@ -156,63 +87,80 @@ public:
         December
     };
 
-    // Default: Weekly
+    enum LimitType {
+        NoLimit = 0,
+        CountLimit,
+        DateLimit
+    };
+
     void setFrequency(Frequency freq);
     Frequency frequency() const;
 
-    /* end critieria: count and endDate are mutually exclusive.  Setting one unsets the other.  */
-    // eg: 10 means ten times, 0 means not set.
-    // Default: 0
-    void setCount(int count);
-    int count() const;
-    // invalid means not set.
-    // Default: null
-    void setEndDate(const QDate& endDate);
-    QDate endDate() const;
+    void setLimit(int count);
+    void setLimit(const QDate& date);
+    void clearLimit();
 
-    // eg. if frequency = Daily and interval = 2, every second day
-    // Default: 1
+    LimitType limitType() const;
+    int limitCount() const;
+    QDate limitDate() const;
+
     void setInterval(int interval);
-    int interval() const;
+    int interval() const; // units of frequency
 
     // Defaults for the below: empty
     // eg: Monday,Wednesday,Thursday == every Mon, Wed and Thurs.
-    void setDaysOfWeek(const QList<Qt::DayOfWeek>& days);
-    QList<Qt::DayOfWeek> daysOfWeek() const;
+    void setDaysOfWeek(const QSet<Qt::DayOfWeek>& days);
+    QSet<Qt::DayOfWeek> daysOfWeek() const;
     // eg: 31,-3 == 31st day of month (if it exists) and 3rd-last day of month
-    void setDaysOfMonth(const QList<int>& days);
-    QList<int> daysOfMonth() const;
+    void setDaysOfMonth(const QSet<int>& days);
+    QSet<int> daysOfMonth() const;
     // eg: 47th,-5 == 47th and 5th-last day of year
-    void setDaysOfYear(const QList<int>& days);
-    QList<int> daysOfYear() const;
+    void setDaysOfYear(const QSet<int>& days);
+    QSet<int> daysOfYear() const;
     // eg: January,February == during Jan and Feb
-    void setMonths(const QList<Month>& months);
-    QList<Month> months() const;
+    void setMonthsOfYear(const QSet<Month>& months);
+    QSet<Month> monthsOfYear() const;
     // eg. 13,53,-3 == weeks 13 and 53 (if it exists) and the 3rd-last week of the year
-    void setWeeksOfYear(const QList<int>& weeks);
-    QList<int> weeksOfYear() const;
+    void setWeeksOfYear(const QSet<int>& weeks);
+    QSet<int> weeksOfYear() const;
+
+    // Default: Monday
+    // sets the day that the week starts on (significant for Weekly with interval > 1, and for weekOfYear)
+    void setFirstDayOfWeek(Qt::DayOfWeek day);
+    Qt::DayOfWeek firstDayOfWeek() const;
 
     // eg. frequency = Monthly, dayOfWeek = Tuesday, positions = 1,-1 means first and last Tuesday
     // of every month.
     // All other criteria are applied first, then for each time period as specified by frequency,
     // dates are selected via the 1-based indices specified by position.
-    void setPositions(const QList<int>& pos);
-    QList<int> positions() const;
-
-    // Default: Monday
-    // sets the day that the week starts on (significant for Weekly with interval > 1, and for weekOfYear)
-    void setWeekStart(Qt::DayOfWeek day);
-    Qt::DayOfWeek weekStart() const;
-
-    QVariantMap variantValues() const;
-
-    static QOrganizerItemRecurrenceRule fromVariantValues(const QVariantMap& variantValues);
+    void setPositions(const QSet<int>& pos);
+    QSet<int> positions() const;
 
 private:
-    void setVariantValues(const QVariantMap& variantValues);
     QSharedDataPointer<QOrganizerItemRecurrenceRulePrivate> d;
 };
 
+//hash functions
+Q_ORGANIZER_EXPORT uint qHash(const QOrganizerItemRecurrenceRule& rule);
+
+
+inline uint qHash(QOrganizerItemRecurrenceRule::Month month)
+{
+    return static_cast<uint>(month);
+}
+
 QTM_END_NAMESPACE
+
+inline uint qHash(const QDate &date)
+{
+    return date.toJulianDay();
+}
+
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemRecurrenceRule), Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerItemRecurrenceRule));
+Q_DECLARE_METATYPE(QSet<QTM_PREPEND_NAMESPACE(QOrganizerItemRecurrenceRule)>);
+Q_DECLARE_METATYPE(QSet<QDate>);
+
 
 #endif

@@ -98,7 +98,7 @@ void tst_Maemo5Om::init()
 {
     m_om = new QOrganizerItemManager(managerName);
     // Remove all organizer items first (Note: ignores possible errors)
-    //m_om->removeItems(m_om->itemIds(), 0);
+    // m_om->removeItems(m_om->itemIds(), 0);
 }
 
 void tst_Maemo5Om::cleanup()
@@ -229,10 +229,13 @@ void tst_Maemo5Om::addEvent() {
     event.setDisplayLabel("addEvent");
     event.setDescription("Test event description");
     event.setGuid("custom event GUID");
-    event.setLocationAddress("Event location address");
-    event.setLocationGeoCoordinates("Location geo coordinates");
-    event.setLocationName("Location name");
     event.setPriority(QOrganizerItemPriority::HighPriority);
+
+    QOrganizerItemLocation loc = event.detail<QOrganizerItemLocation>();
+    loc.setLatitude(45.0);
+    loc.setLongitude(-179.0);
+    loc.setLabel("Event location address");
+    event.saveDetail(&loc);
 
     // Save event
     QVERIFY(m_om->saveItem(&event));
@@ -251,10 +254,9 @@ void tst_Maemo5Om::addEvent() {
     QCOMPARE(fetchEvent.displayLabel(), event.displayLabel());
     QCOMPARE(fetchEvent.description(), event.description());
     QCOMPARE(fetchEvent.guid(), event.guid());
-    QCOMPARE(fetchEvent.locationAddress(), event.locationAddress());
-    QCOMPARE(fetchEvent.locationGeoCoordinates(), event.locationGeoCoordinates());
-    QCOMPARE(fetchEvent.locationName(), event.locationName());
+    QCOMPARE(fetchEvent.location(), event.location());
     QCOMPARE(fetchEvent.priority(), event.priority());
+    QCOMPARE(fetchEvent.detail<QOrganizerItemLocation>(), event.detail<QOrganizerItemLocation>());
 }
 
 void tst_Maemo5Om::addTodo() {
@@ -268,6 +270,12 @@ void tst_Maemo5Om::addTodo() {
     todo.setPriority(QOrganizerItemPriority::LowestPriority);
     todo.setProgressPercentage(53);
     todo.setStatus(QOrganizerTodoProgress::StatusInProgress);
+    QOrganizerItemLocation loc = todo.detail<QOrganizerItemLocation>();
+    loc.setLatitude(54.0);
+    loc.setLongitude(-139.0);
+    loc.setLabel("Todo location address");
+    todo.saveDetail(&loc);
+
 
     // Save todo
     QVERIFY(m_om->saveItem(&todo));
@@ -287,6 +295,7 @@ void tst_Maemo5Om::addTodo() {
     QCOMPARE(fetchTodo.priority(), todo.priority());
     QCOMPARE(fetchTodo.progressPercentage(), todo.progressPercentage());
     QCOMPARE(fetchTodo.status(), todo.status());
+    QCOMPARE(fetchTodo.detail<QOrganizerItemLocation>(), todo.detail<QOrganizerItemLocation>());
 }
 
 void tst_Maemo5Om::addJournal() {
@@ -327,10 +336,10 @@ void tst_Maemo5Om::addEventWithRecurrence()
 
     // Create recurrence
     QOrganizerItemRecurrenceRule recurrenceRule;
-    recurrenceRule.setCount(10);
+    recurrenceRule.setLimit(10);
     recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
 
-    QList<QOrganizerItemRecurrenceRule> recurrenceRules;
+    QSet<QOrganizerItemRecurrenceRule> recurrenceRules;
     recurrenceRules << recurrenceRule;
 
     // Set recurrence
@@ -368,8 +377,8 @@ void tst_Maemo5Om::addEventExceptions()
     event.setEndDateTime(QDateTime(QDate(2010, 1, 1), QTime(12, 0, 0)));
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
-    rrule.setCount(3);
-    event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    rrule.setLimit(3);
+    event.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rrule);
     QVERIFY(m_om->saveItem(&event));
     QVERIFY(!event.localId().isNull());
     event = m_om->item(event.localId());
@@ -424,7 +433,7 @@ void tst_Maemo5Om::addEventExceptionWithGuid()
     christmas.setDisplayLabel(QLatin1String("Christmas"));
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-    christmas.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    christmas.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rrule);
     QVERIFY(m_om->saveItem(&christmas));
     QVERIFY(!christmas.id().managerUri().isEmpty());
     QVERIFY(!christmas.id().localId().isNull());
@@ -434,7 +443,7 @@ void tst_Maemo5Om::addEventExceptionWithGuid()
     newYearsDay.setStartDateTime(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)));
     newYearsDay.setEndDateTime(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 0)));
     newYearsDay.setDisplayLabel(QLatin1String("New Years Day"));
-    newYearsDay.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    newYearsDay.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rrule);
     QVERIFY(m_om->saveItem(&newYearsDay));
 
     QOrganizerTodo report;
@@ -537,10 +546,10 @@ void tst_Maemo5Om::removeEventWithRecurrence()
 
     // Create recurrence
     QOrganizerItemRecurrenceRule recurrenceRule;
-    recurrenceRule.setCount(20);
+    recurrenceRule.setLimit(20);
     recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
 
-    QList<QOrganizerItemRecurrenceRule> recurrenceRules;
+    QSet<QOrganizerItemRecurrenceRule> recurrenceRules;
     recurrenceRules << recurrenceRule;
 
     // Set recurrence
@@ -592,10 +601,10 @@ void tst_Maemo5Om::removeEventExceptions()
 
     // Create recurrence
     QOrganizerItemRecurrenceRule recurrenceRule;
-    recurrenceRule.setCount(10);
+    recurrenceRule.setLimit(10);
     recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
 
-    QList<QOrganizerItemRecurrenceRule> recurrenceRules;
+    QSet<QOrganizerItemRecurrenceRule> recurrenceRules;
     recurrenceRules << recurrenceRule;
 
     // Set recurrence
@@ -705,8 +714,7 @@ void tst_Maemo5Om::getItemIds()
     }
 
     // Get items ids
-    QList<QOrganizerItemSortOrder> sortOrders;
-    QList<QOrganizerItemLocalId> ids = m_om->itemIds(sortOrders);
+    QList<QOrganizerItemLocalId> ids = m_om->itemIds(QDateTime(QDate(2010,3,1)), QDateTime(QDate(2010,3,11)), QOrganizerItemFilter());
 
     // Check that all the item ids exist in result
     foreach(QOrganizerItemLocalId id, generatedIds) {
@@ -747,9 +755,7 @@ void tst_Maemo5Om::getItems()
     }
 
     // Get items
-    QList<QOrganizerItemSortOrder> sortOrders;
-    QOrganizerItemFetchHint fetchHint;
-    QList<QOrganizerItem> items = m_om->items(sortOrders, fetchHint);
+    QList<QOrganizerItem> items = m_om->items(QOrganizerItemFilter());
 
     // Check that all the items exist in result
     foreach(QOrganizerItem item, generatedItems) {
@@ -779,10 +785,10 @@ void tst_Maemo5Om::getItemInstances()
 
     // Create recurrence
     QOrganizerItemRecurrenceRule recurrenceRule;
-    recurrenceRule.setCount(15);
+    recurrenceRule.setLimit(15);
     recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
 
-    QList<QOrganizerItemRecurrenceRule> recurrenceRules;
+    QSet<QOrganizerItemRecurrenceRule> recurrenceRules;
     recurrenceRules << recurrenceRule;
 
     // Set recurrence
@@ -808,19 +814,8 @@ void tst_Maemo5Om::getItemInstances()
         QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     }
 
-    // Create a filter for fetching instances of January 2010
-    QOrganizerItemDateTimePeriodFilter filter;
-    filter.setStartPeriod(QDateTime(QDate(2010,1,1), QTime(0,0,0)));
-    filter.setEndPeriod(QDateTime(QDate(2010,2,1), QTime(0,0,0)));
-
-    // Create empty sortorder list
-    QList<QOrganizerItemSortOrder> sortOrders;
-
-    // Create empty fetch hint
-    QOrganizerItemFetchHint fetchHint;
-
     // Get all the instances occurring in January 2010
-    QList<QOrganizerItem> januaryInstances = m_om->itemInstances(filter, sortOrders, fetchHint);
+    QList<QOrganizerItem> januaryInstances = m_om->items(QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,2,1), QTime(0,0,0)), QOrganizerItemFilter());
 
     int instancesWithRightGuidCount = 0;
     foreach(QOrganizerItem instance, januaryInstances) {
@@ -839,7 +834,7 @@ void tst_Maemo5Om::setRecurrenceDates()
     event.setDisplayLabel("setRecurrenceDates");
     event.setDescription("Recurrence date test event");
 
-    QList<QDate> recurrenceDates;
+    QSet<QDate> recurrenceDates;
     recurrenceDates << QDate(2010, 8, 30);
     recurrenceDates << QDate(2010, 9, 7);
 
@@ -853,7 +848,7 @@ void tst_Maemo5Om::setRecurrenceDates()
     QVERIFY(!event.guid().isEmpty());
 
     QOrganizerEvent fetchedEvent = static_cast<QOrganizerEvent>(m_om->item(event.id().localId()));
-    QList<QDate> fetchedRecurrenceDates = fetchedEvent.recurrenceDates();
+    QSet<QDate> fetchedRecurrenceDates = fetchedEvent.recurrenceDates();
 
     QCOMPARE(recurrenceDates, fetchedRecurrenceDates);
 }
@@ -1043,10 +1038,10 @@ void tst_Maemo5Om::saveItemsToNewCollection()
 
     // Create recurrence
     QOrganizerItemRecurrenceRule recurrenceRule;
-    recurrenceRule.setCount(10);
+    recurrenceRule.setLimit(10);
     recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
 
-    QList<QOrganizerItemRecurrenceRule> recurrenceRules;
+    QSet<QOrganizerItemRecurrenceRule> recurrenceRules;
     recurrenceRules << recurrenceRule;
 
     // Set recurrence
@@ -1139,7 +1134,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     QCOMPARE(noFilteringItemIds.count(), unionItemIds.count());
 
     // Get all items of the new collection
-    QList<QOrganizerItem> newCollectionItems = m_om->items(newCollectionFilter, noSort);
+    QList<QOrganizerItem> newCollectionItems = m_om->itemsForExport(QDateTime(), QDateTime(), newCollectionFilter, noSort);
     QCOMPARE(newCollectionItems.count(), 5);
 
     // The collection ids should match
@@ -1147,20 +1142,20 @@ void tst_Maemo5Om::saveItemsToNewCollection()
         QCOMPARE(newCollectionItem.collectionId().localId(), collId);
 
     // Get all the instances of the new collection
-    QList<QOrganizerItem> newCollectionInstances = m_om->itemInstances(newCollectionFilter, noSort);
+    QList<QOrganizerItem> newCollectionInstances = m_om->items(newCollectionFilter, noSort);
 
     // The count should be 11 (10 instances are generated with the recurrence rule and one is added later)
     QCOMPARE(newCollectionInstances.count(), 11);
 
     // Get all the instances of the default collection
-    QList<QOrganizerItem> defaultCollectionInstances = m_om->itemInstances(defaultCollectionFilter, noSort);
+    QList<QOrganizerItem> defaultCollectionInstances = m_om->items(defaultCollectionFilter, noSort);
 
     // Get all the instances with the union filter
-    QList<QOrganizerItem> unionInstances = m_om->itemInstances(unionFilter, noSort);
+    QList<QOrganizerItem> unionInstances = m_om->items(unionFilter, noSort);
     QCOMPARE(newCollectionInstances.count() + defaultCollectionInstances.count(), unionInstances.count());
 
     // Get all the instances with the intersection filter
-    QList<QOrganizerItem> intersectionInstances = m_om->itemInstances(intersectionFilter, noSort);
+    QList<QOrganizerItem> intersectionInstances = m_om->items(intersectionFilter, noSort);
     QCOMPARE(intersectionInstances.count(), 0);
 }
 
@@ -1350,9 +1345,8 @@ void tst_Maemo5Om::testReminders()
 
     QOrganizerItemVisualReminder eventReminder = event.detail<QOrganizerItemVisualReminder>();
     eventReminder.setMessage("Event reminder message");
-    eventReminder.setDateTime(QDateTime(date, QTime(12, 0, 0)));
     eventReminder.setRepetition(10, 60);
-    eventReminder.setTimeDelta(60 * 60);
+    eventReminder.setSecondsBeforeStart(60 * 60);
     event.saveDetail(&eventReminder);
 
     // Save event
@@ -1362,11 +1356,10 @@ void tst_Maemo5Om::testReminders()
     QOrganizerItem fetchItem = m_om->item(event.localId());
     QOrganizerItemVisualReminder fetchEventReminder = fetchItem.detail<QOrganizerItemVisualReminder>();
     QCOMPARE(fetchEventReminder.dataUrl(), eventReminder.dataUrl());
-    QCOMPARE(fetchEventReminder.dateTime(), eventReminder.dateTime());
     QCOMPARE(fetchEventReminder.message(), eventReminder.message());
     QCOMPARE(fetchEventReminder.repetitionCount(), eventReminder.repetitionCount());
     //QCOMPARE(reminder.repetitionDelay(), fetchEventReminder.repetitionDelay()); // Maemo5 does not support repetition delay
-    QCOMPARE(fetchEventReminder.timeDelta(), eventReminder.timeDelta());
+    QCOMPARE(fetchEventReminder.secondsBeforeStart(), eventReminder.secondsBeforeStart());
 
     // Create a todo and set its details
     QOrganizerTodo todo;
@@ -1377,9 +1370,8 @@ void tst_Maemo5Om::testReminders()
 
     QOrganizerItemVisualReminder todoReminder = todo.detail<QOrganizerItemVisualReminder>();
     todoReminder.setMessage("Todo reminder message");
-    todoReminder.setDateTime(QDateTime(date, QTime(10, 0, 0)));
     todoReminder.setRepetition(2, 10);
-    todoReminder.setTimeDelta(3 * 60 * 60);
+    todoReminder.setSecondsBeforeStart(3 * 60 * 60);
     todo.saveDetail(&todoReminder);
 
     // Save todo
@@ -1389,11 +1381,10 @@ void tst_Maemo5Om::testReminders()
     QOrganizerItem fetchTodo = m_om->item(todo.localId());
     QOrganizerItemVisualReminder fetchTodoReminder = fetchTodo.detail<QOrganizerItemVisualReminder>();
     QCOMPARE(fetchTodoReminder.dataUrl(), todoReminder.dataUrl());
-    QCOMPARE(fetchTodoReminder.dateTime(), todoReminder.dateTime());
     QCOMPARE(fetchTodoReminder.message(), todoReminder.message());
     QCOMPARE(fetchTodoReminder.repetitionCount(), todoReminder.repetitionCount());
     //QCOMPARE(reminder.repetitionDelay(), fetchEventReminder.repetitionDelay()); // Maemo5 does not support repetition delay
-    QCOMPARE(fetchTodoReminder.timeDelta(), todoReminder.timeDelta());
+    QCOMPARE(fetchTodoReminder.secondsBeforeStart(), todoReminder.secondsBeforeStart());
 }
 
 QTEST_MAIN(tst_Maemo5Om);

@@ -76,6 +76,7 @@ public:
         InvalidRequest = 0,
         ItemInstanceFetchRequest,
         ItemFetchRequest,
+        ItemFetchForExportRequest,
         ItemLocalIdFetchRequest,
         ItemRemoveRequest,
         ItemSaveRequest,

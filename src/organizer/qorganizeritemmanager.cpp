@@ -354,18 +354,6 @@ QMap<int, QOrganizerItemManager::Error> QOrganizerItemManager::errorMap() const
 }
 
 /*!
-  Return the list of organizer item instances which match the given \a filter, sorted according to the given \a sortOrders.
-  The client may instruct the manager that it does not require all possible information about each instance by specifying a fetch hint \a fetchHint;
-  the manager can choose to ignore the fetch hint, but if it does so, it must return all possible information about each instance.
-  */
-QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
-{
-    d->m_error = QOrganizerItemManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->itemInstances(filter, sortOrders, fetchHint, &d->m_error);
-}
-
-/*!
   Return the list of a maximum of \a maxCount organizer item instances which are occurrences of the given \a generator recurring item, which
   occur between the given \a periodStart date and the given \a periodEnd date.
 
@@ -373,22 +361,11 @@ QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItemF
   If \a maxCount is negative, it is backend specific as to how many occurrences will be returned.
   Some backends may return no instances, others may return some limited number of occurrences.
   */
-QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount) const
+QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerItemManager::NoError;
     d->m_errorMap.clear();
-    return d->m_engine->itemInstances(generator, periodStart, periodEnd, maxCount, &d->m_error);
-}
-
-
-/*!
-  Return the list of organizer item ids, sorted according to the given list of \a sortOrders
- */
-QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QList<QOrganizerItemSortOrder>& sortOrders) const
-{
-    d->m_error = QOrganizerItemManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->itemIds(QOrganizerItemFilter(), sortOrders, &d->m_error);
+    return d->m_engine->itemInstances(generator, periodStart, periodEnd, maxCount, fetchHint, &d->m_error);
 }
 
 /*!
@@ -398,12 +375,22 @@ QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QList<QOrganiz
 QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->itemIds(filter, sortOrders, &d->m_error);
+    return d->m_engine->itemIds(QDateTime(), QDateTime(), filter, sortOrders, &d->m_error);
 }
 
 /*!
-  Returns the list of organizeritems stored in the manager sorted according to the given list of \a sortOrders.
+  Returns a list of organizer item ids that match the given \a filter, sorted according to the given list of \a sortOrders.
+  Depending on the backend, this filtering operation may involve retrieving all the organizeritems.
+ */
+QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
+{
+    d->m_error = QOrganizerItemManager::NoError;
+    d->m_errorMap.clear();
+    return d->m_engine->itemIds(startDate, endDate, filter, sortOrders, &d->m_error);
+}
+
+/*!
+  Returns a list of organizer items that match the given \a filter, sorted according to the given list of \a sortOrders.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
   If the \a fetchHint is the default constructed hint, all existing details and relationships
@@ -414,11 +401,11 @@ QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QOrganizerItem
 
   \sa QOrganizerItemFetchHint
  */
-QList<QOrganizerItem> QOrganizerItemManager::items(const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
+QList<QOrganizerItem> QOrganizerItemManager::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerItemManager::NoError;
     d->m_errorMap.clear();
-    return d->m_engine->items(QOrganizerItemFilter(), sortOrders, fetchHint, &d->m_error);
+    return d->m_engine->items(QDateTime(), QDateTime(), filter, sortOrders, fetchHint, &d->m_error);
 }
 
 /*!
@@ -436,11 +423,33 @@ QList<QOrganizerItem> QOrganizerItemManager::items(const QList<QOrganizerItemSor
 
   \sa QOrganizerItemFetchHint
  */
-QList<QOrganizerItem> QOrganizerItemManager::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
+QList<QOrganizerItem> QOrganizerItemManager::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerItemManager::NoError;
     d->m_errorMap.clear();
-    return d->m_engine->items(filter, sortOrders, fetchHint, &d->m_error);
+    return d->m_engine->items(startDate, endDate, filter, sortOrders, fetchHint, &d->m_error);
+}
+
+/*!
+  Returns a list of organizeritems that match the given \a filter, sorted according to the given list of \a sortOrders.
+
+  Depending on the manager implementation, this filtering operation might be slow and involve retrieving all the
+  organizeritems and testing them against the supplied filter - see the \l isFilterSupported() function.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.
+  If the \a fetchHint is the default constructed hint, all existing details and relationships
+  in the matching organizeritems will be returned.  A client should not make changes to an organizer item which has
+  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
+  loss when saving the organizer item back to the manager (as the "new" restricted organizer item will
+  replace the previously saved organizer item in the backend).
+
+  \sa QOrganizerItemFetchHint
+ */
+QList<QOrganizerItem> QOrganizerItemManager::itemsForExport(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
+{
+    d->m_error = QOrganizerItemManager::NoError;
+    d->m_errorMap.clear();
+    return d->m_engine->itemsForExport(startDate, endDate, filter, sortOrders, fetchHint, &d->m_error);
 }
 
 /*!
@@ -775,14 +784,6 @@ bool QOrganizerItemManager::removeDetailDefinition(const QString& definitionName
 bool QOrganizerItemManager::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizeritemType) const
 {
     return d->m_engine->hasFeature(feature, organizeritemType);
-}
-
-/*!
-  Returns the list of data types supported by the manager
- */
-QList<int> QOrganizerItemManager::supportedDataTypes() const
-{
-    return d->m_engine->supportedDataTypes();
 }
 
 /*!

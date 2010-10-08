@@ -119,7 +119,6 @@ class UnsupportedMetatype {
 Q_DECLARE_METATYPE(UnsupportedMetatype)
 Q_DECLARE_METATYPE(QOrganizerItem)
 Q_DECLARE_METATYPE(QOrganizerItemManager::Error)
-Q_DECLARE_METATYPE(QOrganizerItemRecurrenceRule)
 Q_DECLARE_METATYPE(QList<QDate>)
 
 class tst_QOrganizerItemManager : public QObject
@@ -171,6 +170,9 @@ private slots:
     void itemType();
     void collections();
     void dataSerialization();
+    void itemFetch();
+    void spanOverDays();
+    void recurrence();
 
     /* Tests that take no data */
     void itemValidation();
@@ -200,6 +202,9 @@ private slots:
     void itemType_data() {addManagers();}
     void collections_data() {addManagers();}
     void dataSerialization_data() {addManagers();}
+    void itemFetch_data() {addManagers();}
+    void spanOverDays_data() {addManagers();}
+    void recurrence_data() {addManagers();}
 };
 
 tst_QOrganizerItemManager::tst_QOrganizerItemManager()
@@ -783,7 +788,7 @@ void tst_QOrganizerItemManager::add()
     // - read it back
     // - ensure that it's the same.
     QOrganizerEvent megaevent;
-    QMap<QString, QOrganizerItemDetailDefinition> defmap = cm->detailDefinitions();
+    QMap<QString, QOrganizerItemDetailDefinition> defmap = cm->detailDefinitions(QOrganizerItemType::TypeEvent);
     QList<QOrganizerItemDetailDefinition> defs = defmap.values();
     foreach (const QOrganizerItemDetailDefinition def, defs) {
 
@@ -879,8 +884,8 @@ void tst_QOrganizerItemManager::addExceptions()
     event.setEndDateTime(QDateTime(QDate(2010, 1, 1), QTime(12, 0, 0)));
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
-    rrule.setCount(3);
-    event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    rrule.setLimit(3);
+    event.setRecurrenceRule(rrule);
     QVERIFY(cm->saveItem(&event));
     QVERIFY(!event.localId().isNull());
     event = cm->item(event.localId());
@@ -975,7 +980,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     christmas.setDisplayLabel(QLatin1String("Christmas"));
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-    christmas.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    christmas.setRecurrenceRule(rrule);
     QVERIFY(cm->saveItem(&christmas));
     QVERIFY(!christmas.id().managerUri().isEmpty());
     QVERIFY(!christmas.id().localId().isNull());
@@ -985,7 +990,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     newYearsDay.setStartDateTime(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)));
     newYearsDay.setEndDateTime(QDateTime(QDate(2010, 1, 2), QTime(0, 0, 0)));
     newYearsDay.setDisplayLabel(QLatin1String("New Years Day"));
-    newYearsDay.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    newYearsDay.setRecurrenceRule(rrule);
     QVERIFY(cm->saveItem(&newYearsDay));
 
     QOrganizerTodo report;
@@ -1446,7 +1451,7 @@ void tst_QOrganizerItemManager::invalidManager()
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError);
 
     /* Detail definitions */
-    QVERIFY(manager.detailDefinitions().count() == 0);
+    QVERIFY(manager.detailDefinitions(QOrganizerItemType::TypeEvent).count() == 0);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
 
     QOrganizerItemDetailDefinition def;
@@ -1460,22 +1465,21 @@ void tst_QOrganizerItemManager::invalidManager()
 
     QVERIFY(manager.saveDetailDefinition(def, QOrganizerItemType::TypeNote) == false);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
-    QVERIFY(manager.saveDetailDefinition(def) == false);
+    QVERIFY(manager.saveDetailDefinition(def, QOrganizerItemType::TypeEvent) == false);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
-    QVERIFY(manager.detailDefinitions().count(QOrganizerItemType::TypeNote) == 0);
+    QVERIFY(manager.detailDefinitions(QOrganizerItemType::TypeEvent).count(QOrganizerItemType::TypeNote) == 0);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
-    QVERIFY(manager.detailDefinitions().count() == 0);
+    QVERIFY(manager.detailDefinitions(QOrganizerItemType::TypeEvent).count() == 0);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
-    QVERIFY(manager.detailDefinition("new field").name() == QString());
+    QVERIFY(manager.detailDefinition("new field", QOrganizerItemType::TypeEvent).name() == QString());
     QVERIFY(manager.removeDetailDefinition(def.name(), QOrganizerItemType::TypeNote) == false);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
-    QVERIFY(manager.removeDetailDefinition(def.name()) == false);
+    QVERIFY(manager.removeDetailDefinition(def.name(), QOrganizerItemType::TypeEvent) == false);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
-    QVERIFY(manager.detailDefinitions().count() == 0);
+    QVERIFY(manager.detailDefinitions(QOrganizerItemType::TypeEvent).count() == 0);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
 
      /* Capabilities */
-    QVERIFY(manager.supportedDataTypes().count() == 0);
     QVERIFY(!manager.hasFeature(QOrganizerItemManager::MutableDefinitions));
 }
 
@@ -1635,7 +1639,7 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
-            rrule.setEndDate(QDate(2010, 1, 22));
+            rrule.setLimit(QDate(2010, 1, 22));
             QTest::newRow(QString("mgr=%1, weekly recurrence").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2010, 1, 20)
@@ -1650,21 +1654,21 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
                 << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15));
 
             // Now let's fiddle with the recurrence end date and see what happens
-            rrule.setEndDate(QDate(2010, 1, 23));
+            rrule.setLimit(QDate(2010, 1, 23));
             QTest::newRow(QString("mgr=%1, weekly recurrence, end date observed (+1)").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2010, 2, 1)
                 // now stop on the 22nd
                 << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15) << QDate(2010, 1, 22));
 
-            rrule.setEndDate(QDate(2010, 1, 21));
+            rrule.setLimit(QDate(2010, 1, 21));
             QTest::newRow(QString("mgr=%1, weekly recurrence, end date observed (-1)").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2010, 2, 1)
                 << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15));
 
-            rrule.setEndDate(QDate());
-            rrule.setCount(2);
+            rrule.setLimit(QDate());
+            rrule.setLimit(2);
             QTest::newRow(QString("mgr=%1, weekly recurrence, count").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2010, 2, 1)
@@ -1674,7 +1678,7 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-            rrule.setEndDate(QDate(2010, 1, 5));
+            rrule.setLimit(QDate(2010, 1, 5));
             QTest::newRow(QString("mgr=%1, daily").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1691,9 +1695,9 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
-            rrule.setWeekStart(Qt::Monday);
-            rrule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Friday << Qt::Saturday << Qt::Sunday);
-            rrule.setEndDate(QDate(2010, 1, 27));
+            rrule.setFirstDayOfWeek(Qt::Monday);
+            rrule.setDaysOfWeek(QSet<Qt::DayOfWeek>() << Qt::Friday << Qt::Saturday << Qt::Sunday);
+            rrule.setLimit(QDate(2010, 1, 27));
             QTest::newRow(QString("mgr=%1, weekly, days of week").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1713,8 +1717,8 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
-            rrule.setDaysOfMonth(QList<int>() << 1 << 10);
-            rrule.setEndDate(QDate(2010, 4, 15));
+            rrule.setDaysOfMonth(QSet<int>() << 1 << 10);
+            rrule.setLimit(QDate(2010, 4, 15));
             QTest::newRow(QString("mgr=%1, monthly recurrence").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1734,8 +1738,8 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-            rrule.setDaysOfYear(QList<int>() << 1 << 32);
-            rrule.setEndDate(QDate(2012, 3, 15));
+            rrule.setDaysOfYear(QSet<int>() << 1 << 32);
+            rrule.setLimit(QDate(2012, 3, 15));
             QTest::newRow(QString("mgr=%1, yearly recurrence").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1743,7 +1747,7 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
                                    << QDate(2011, 1, 1) << QDate(2011, 2, 1)
                                    << QDate(2012, 1, 1) << QDate(2012, 2, 1));
 
-            rrule.setEndDate(QDate(2013, 3, 15));
+            rrule.setLimit(QDate(2013, 3, 15));
             rrule.setInterval(3);
             QTest::newRow(QString("mgr=%1, yearly recurrence, interval").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
@@ -1755,10 +1759,10 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-            rrule.setMonths(QList<QOrganizerItemRecurrenceRule::Month>()
+            rrule.setMonthsOfYear(QSet<QOrganizerItemRecurrenceRule::Month>()
                     << QOrganizerItemRecurrenceRule::January
                     << QOrganizerItemRecurrenceRule::March);
-            rrule.setEndDate(QDate(2011, 3, 15));
+            rrule.setLimit(QDate(2011, 3, 15));
             QTest::newRow(QString("mgr=%1, yearly recurrence, by month").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1770,9 +1774,9 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-            rrule.setWeeksOfYear(QList<int>() << 1 << 4);
-            rrule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Thursday);
-            rrule.setEndDate(QDate(2011, 3, 15));
+            rrule.setWeeksOfYear(QSet<int>() << 1 << 4);
+            rrule.setDaysOfWeek(QSet<Qt::DayOfWeek>() << Qt::Thursday);
+            rrule.setLimit(QDate(2011, 3, 15));
             QTest::newRow(QString("mgr=%1, yearly recurrence, by week").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 7) << rrule // this is the first day of week 1
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1783,10 +1787,10 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-            rrule.setMonths(QList<QOrganizerItemRecurrenceRule::Month>()
+            rrule.setMonthsOfYear(QSet<QOrganizerItemRecurrenceRule::Month>()
                     << QOrganizerItemRecurrenceRule::April);
-            rrule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Sunday);
-            rrule.setPositions(QList<int>() << 1);
+            rrule.setDaysOfWeek(QSet<Qt::DayOfWeek>() << Qt::Sunday);
+            rrule.setPositions(QSet<int>() << 1);
             QTest::newRow(QString("mgr=%1, yearly recurrence, first Sunday of April").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 4, 4) << rrule // this is the first Sunday of April 2010
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1800,10 +1804,10 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-            rrule.setMonths(QList<QOrganizerItemRecurrenceRule::Month>()
+            rrule.setMonthsOfYear(QSet<QOrganizerItemRecurrenceRule::Month>()
                     << QOrganizerItemRecurrenceRule::October);
-            rrule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Sunday);
-            rrule.setPositions(QList<int>() << -1);
+            rrule.setDaysOfWeek(QSet<Qt::DayOfWeek>() << Qt::Sunday);
+            rrule.setPositions(QSet<int>() << -1);
             QTest::newRow(QString("mgr=%1, yearly recurrence, last Sunday of October").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 10, 31) << rrule // this is the last Sunday of October 2010
                 << QDate(2010, 1, 1) << QDate(2015, 1, 1)
@@ -1830,7 +1834,7 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator()
     event.setDisplayLabel("event");
     event.setStartDateTime(QDateTime(eventDate, QTime(11, 0, 0)));
     event.setEndDateTime(QDateTime(eventDate, QTime(11, 30, 0)));
-    event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+    event.setRecurrenceRule(recurrenceRule);
 
     if (cm->saveItem(&event)) {
         QList<QOrganizerItem> items = cm->itemInstances(event,
@@ -2170,7 +2174,7 @@ void tst_QOrganizerItemManager::detailDefinitions()
 {
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
-    QMap<QString, QOrganizerItemDetailDefinition> defs = cm->detailDefinitions();
+    QMap<QString, QOrganizerItemDetailDefinition> defs = cm->detailDefinitions(QOrganizerItemType::TypeEvent);
     QVERIFY(defs.size() > 0);
 
     /* Validate the existing definitions */
@@ -2243,7 +2247,7 @@ void tst_QOrganizerItemManager::detailDefinitions()
     QOrganizerItemDetailDefinition newDef;
     QOrganizerItemDetailFieldDefinition field;
     QMap<QString, QOrganizerItemDetailFieldDefinition> fields;
-    field.setDataType(cm->supportedDataTypes().value(0));
+    field.setDataType(QVariant::String);
     fields.insert("New Value", field);
     newDef.setName("New Definition");
     newDef.setFields(fields);
@@ -2297,41 +2301,42 @@ void tst_QOrganizerItemManager::detailDefinitions()
         /* First do some negative testing */
 
         /* Bad add class */
-        QVERIFY(cm->saveDetailDefinition(QOrganizerItemDetailDefinition()) == false);
+        QVERIFY(cm->saveDetailDefinition(QOrganizerItemDetailDefinition(), QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
         /* Bad remove string */
-        QVERIFY(cm->removeDetailDefinition(QString()) == false);
+        QVERIFY(cm->removeDetailDefinition(QString(), QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
-        QVERIFY(cm->saveDetailDefinition(noIdDef) == false);
+        QVERIFY(cm->saveDetailDefinition(noIdDef, QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
-        QVERIFY(cm->saveDetailDefinition(noFieldsDef) == false);
+        QVERIFY(cm->saveDetailDefinition(noFieldsDef, QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
-        QVERIFY(cm->saveDetailDefinition(invalidFieldKeyDef) == false);
+        QVERIFY(cm->saveDetailDefinition(invalidFieldKeyDef, QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
-        QVERIFY(cm->saveDetailDefinition(invalidFieldTypeDef) == false);
-        QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
+        // the manager can no longer report supportedDataTypes(), so the default validateDefinition() function passes.
+        //QVERIFY(cm->saveDetailDefinition(invalidFieldTypeDef, QOrganizerItemType::TypeEvent) == false);
+        //QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
-        QVERIFY(cm->saveDetailDefinition(invalidAllowedValuesDef) == false);
+        QVERIFY(cm->saveDetailDefinition(invalidAllowedValuesDef, QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
         /* Check that our new definition doesn't already exist */
-        QVERIFY(cm->detailDefinition(newDef.name()).isEmpty());
+        QVERIFY(cm->detailDefinition(newDef.name(),QOrganizerItemType::TypeEvent).isEmpty());
         QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
 
-        QVERIFY(cm->removeDetailDefinition(newDef.name()) == false);
+        QVERIFY(cm->removeDetailDefinition(newDef.name(), QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
 
         /* Add a new definition */
-        QVERIFY(cm->saveDetailDefinition(newDef) == true);
+        QVERIFY(cm->saveDetailDefinition(newDef, QOrganizerItemType::TypeEvent) == true);
         QVERIFY(cm->error() == QOrganizerItemManager::NoError);
 
         /* Now retrieve it */
-        QOrganizerItemDetailDefinition def = cm->detailDefinition(newDef.name());
+        QOrganizerItemDetailDefinition def = cm->detailDefinition(newDef.name(), QOrganizerItemType::TypeEvent);
         QVERIFY(def == newDef);
 
         /* Update it */
@@ -2339,45 +2344,45 @@ void tst_QOrganizerItemManager::detailDefinitions()
         newFields.insert("Another new value", field);
         newDef.setFields(newFields);
 
-        QVERIFY(cm->saveDetailDefinition(newDef) == true);
+        QVERIFY(cm->saveDetailDefinition(newDef, QOrganizerItemType::TypeEvent) == true);
         QVERIFY(cm->error() == QOrganizerItemManager::NoError);
 
-        QVERIFY(cm->detailDefinition(newDef.name()) == newDef);
+        QVERIFY(cm->detailDefinition(newDef.name(), QOrganizerItemType::TypeEvent) == newDef);
 
         /* Remove it */
-        QVERIFY(cm->removeDetailDefinition(newDef.name()) == true);
+        QVERIFY(cm->removeDetailDefinition(newDef.name(), QOrganizerItemType::TypeEvent) == true);
         QVERIFY(cm->error() == QOrganizerItemManager::NoError);
 
         /* and make sure it does not exist any more */
-        QVERIFY(cm->detailDefinition(newDef.name()) == QOrganizerItemDetailDefinition());
+        QVERIFY(cm->detailDefinition(newDef.name(), QOrganizerItemType::TypeEvent) == QOrganizerItemDetailDefinition());
         QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
 
         /* Add the other good one */
-        QVERIFY(cm->saveDetailDefinition(allowedDef) == true);
+        QVERIFY(cm->saveDetailDefinition(allowedDef, QOrganizerItemType::TypeEvent) == true);
         QVERIFY(cm->error() == QOrganizerItemManager::NoError);
 
-        QVERIFY(allowedDef == cm->detailDefinition(allowedDef.name()));
+        QVERIFY(allowedDef == cm->detailDefinition(allowedDef.name(), QOrganizerItemType::TypeEvent));
 
         /* and remove it */
-        QVERIFY(cm->removeDetailDefinition(allowedDef.name()) == true);
-        QVERIFY(cm->detailDefinition(allowedDef.name()) == QOrganizerItemDetailDefinition());
+        QVERIFY(cm->removeDetailDefinition(allowedDef.name(), QOrganizerItemType::TypeEvent) == true);
+        QVERIFY(cm->detailDefinition(allowedDef.name(), QOrganizerItemType::TypeEvent) == QOrganizerItemDetailDefinition());
         QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
 
     } else {
         /* Bad add class */
-        QVERIFY(cm->saveDetailDefinition(QOrganizerItemDetailDefinition()) == false);
+        QVERIFY(cm->saveDetailDefinition(QOrganizerItemDetailDefinition(), QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::NotSupportedError);
 
         /* Make sure we can't add/remove/modify detail definitions */
-        QVERIFY(cm->removeDetailDefinition(QString()) == false);
+        QVERIFY(cm->removeDetailDefinition(QString(), QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::NotSupportedError);
 
         /* Try updating an existing definition */
-        QVERIFY(cm->saveDetailDefinition(updatedDef) == false);
+        QVERIFY(cm->saveDetailDefinition(updatedDef, QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::NotSupportedError);
 
         /* Try removing an existing definition */
-        QVERIFY(cm->removeDetailDefinition(updatedDef.name()) == false);
+        QVERIFY(cm->removeDetailDefinition(updatedDef.name(), QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::NotSupportedError);
     }
 }
@@ -2467,6 +2472,105 @@ void tst_QOrganizerItemManager::dataSerialization()
     }
 }
 
+void tst_QOrganizerItemManager::itemFetch()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+
+    QOrganizerEvent event;
+    event.setDisplayLabel("event");
+    event.setStartDateTime(QDateTime(QDate(2010, 9, 9), QTime(11, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 9, 9), QTime(11, 30, 0)));
+    QVERIFY(cm->saveItem(&event));
+
+    QOrganizerEvent recEvent;
+    recEvent.setDisplayLabel("daily event");
+    recEvent.setStartDateTime(QDateTime(QDate(2010, 9, 1), QTime(16, 0, 0)));
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrule.setLimit(QDate(2010, 9, 10));
+    recEvent.setRecurrenceRule(rrule);
+    QVERIFY(cm->saveItem(&recEvent));
+
+    //fetch all recurrences
+    QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2010, 9, 8)),
+                                            QDateTime(QDate(2010, 9, 12)));
+    QCOMPARE(items.count(), 3);
+
+    //fetch only the originating items
+    items = cm->itemsForExport(QDateTime(QDate(2010, 9, 8)), QDateTime(QDate(2010, 9, 12)),
+                               QOrganizerItemFilter(), QList<QOrganizerItemSortOrder>(), QOrganizerItemFetchHint());
+    QCOMPARE(items.count(), 2);
+}
+
+void tst_QOrganizerItemManager::spanOverDays()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+
+    QOrganizerEvent event;
+    event.setDisplayLabel("event");
+    event.setStartDateTime(QDateTime(QDate(2010, 8, 9), QTime(11, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 8, 11), QTime(11, 30, 0)));
+    QVERIFY(cm->saveItem(&event));
+
+    QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2010, 8, 9)),
+                                            QDateTime(QDate(2010, 8, 9), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2010, 8, 10), QTime(0,0,0)), QDateTime(QDate(2010, 8, 10), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2010, 8, 11), QTime(0,0,0)), QDateTime(QDate(2010, 11, 10), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2010, 8, 5), QTime(0,0,0)), QDateTime());
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(), QDateTime(QDate(2010, 12, 10), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2010, 8, 5), QTime(0,0,0)), QDateTime(QDate(2010, 12, 10), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(), QDateTime(QDate(2010, 8, 10), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2010, 8, 10), QTime(0,0,0)), QDateTime());
+    QCOMPARE(items.count(), 1);
+}
+
+void tst_QOrganizerItemManager::recurrence()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+
+    QOrganizerEvent event;
+    event.setDisplayLabel("event");
+    event.setStartDateTime(QDateTime(QDate(2012, 8, 9), QTime(11, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2012, 8, 9), QTime(11, 30, 0)));
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrule.setLimit(3);
+    event.setRecurrenceRule(rrule);
+    QVERIFY(cm->saveItem(&event));
+
+    QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2012, 8, 9)),
+                                            QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
+    QCOMPARE(items.count(), 3);
+
+    items = cm->items(QDateTime(QDate(2012, 8, 9), QTime(0,0,0)), QDateTime(QDate(2012, 8, 9), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2012, 8, 10), QTime(0,0,0)), QDateTime(QDate(2012, 8, 10), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+
+    items = cm->items(QDateTime(QDate(2012, 8, 12), QTime(0,0,0)), QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
+    QCOMPARE(items.count(), 0);
+}
+
+
+
 QList<QOrganizerItemDetail> tst_QOrganizerItemManager::removeAllDefaultDetails(const QList<QOrganizerItemDetail>& details)
 {
     QList<QOrganizerItemDetail> newlist;
@@ -2524,7 +2628,7 @@ void tst_QOrganizerItemManager::detailOrders()
 
     QOrganizerItemLocation address1, address2, address3;
     
-    address1.setLocationName("Brandl St");
+    address1.setLabel("Brandl St");
     address3 = address2 = address1;
 
     a.saveDetail(&address1);
@@ -2585,7 +2689,7 @@ void tst_QOrganizerItemManager::collections()
     i4.setDisplayLabel("four");
     i4.setGuid(QUuid::createUuid().toString());
     i5.setDisplayLabel("five");
-    i5.setLocationAddress("test location address");
+    i5.setLocation("test location address");
 
     // first test
     {
