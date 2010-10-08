@@ -63,8 +63,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemAction;
-
 class QOrganizerItemManagerData;
 class Q_ORGANIZER_EXPORT QOrganizerItemManager : public QObject
 {

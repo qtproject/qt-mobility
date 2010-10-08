@@ -52,6 +52,11 @@ void OrganizerItemLocationTransform::modifyBaseSchemaDefinitions(QMap<QString, Q
     QMap<QString, QOrganizerItemDetailFieldDefinition> fields;
 
     fields.insert(QOrganizerItemLocation::FieldLabel, f);
+#ifdef SYMBIAN_CALENDAR_V2
+    f.setDataType(QVariant::Double);
+    fields.insert(QOrganizerItemLocation::FieldLatitude, f);
+    fields.insert(QOrganizerItemLocation::FieldLongitude, f);
+#endif
     d.setFields(fields);
     d.setUnique(true);
 
@@ -65,32 +70,30 @@ void OrganizerItemLocationTransform::modifyBaseSchemaDefinitions(QMap<QString, Q
 
 void OrganizerItemLocationTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
-        QString label = toQString(entry.LocationL());
+    QString label = toQString(entry.LocationL());
 	QOrganizerItemLocation location;
-        if (!label.isEmpty()) {
-                location.setLabel(label);
-		item->saveDetail(&location);
-	}	
-#ifdef SYMBIAN_CALENDAR_V2
-	double latitude;
-	double longitude;
-	CCalGeoValue *geoValue = entry.GeoValueL();
-	if (geoValue) {
-		bool latLongValueSet = false;
-		latLongValueSet = geoValue->GetLatLong(latitude, longitude);
+    if (!label.isEmpty())
+        location.setLabel(label);
 
-                location.setLatitude(latitude);
-                location.setLongitude(longitude);
-		item->saveDetail(&location);
-	}
+#ifdef SYMBIAN_CALENDAR_V2
+    double latitude;
+    double longitude;
+    CCalGeoValue *geoValue = entry.GeoValueL();
+    if (geoValue) {
+        if (geoValue->GetLatLong(latitude, longitude)) {
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+        }
+    }
 #endif
+    if (!location.isEmpty())
+        item->saveDetail(&location);
 }
 
 void OrganizerItemLocationTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
     QOrganizerItemLocation loc = item.detail<QOrganizerItemLocation>();
-    if (!loc.isEmpty()) {
-        // NOTE: what about geoLocation & address?
+    if (!loc.label().isEmpty()) {
         entry->SetLocationL(toPtrC16(loc.label()));
     }
     if(loc.hasValue(QOrganizerItemLocation::FieldLatitude) && loc.hasValue(QOrganizerItemLocation::FieldLongitude))

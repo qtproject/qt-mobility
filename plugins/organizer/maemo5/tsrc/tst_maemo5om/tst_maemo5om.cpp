@@ -231,8 +231,13 @@ void tst_Maemo5Om::addEvent() {
     event.setDisplayLabel("addEvent");
     event.setDescription("Test event description");
     event.setGuid("custom event GUID");
-    event.setLocation("Event location address");
     event.setPriority(QOrganizerItemPriority::HighPriority);
+
+    QOrganizerItemLocation loc = event.detail<QOrganizerItemLocation>();
+    loc.setLatitude(45.0);
+    loc.setLongitude(-179.0);
+    loc.setLabel("Event location address");
+    event.saveDetail(&loc);
 
     // Save event
     QVERIFY(m_om->saveItem(&event));
@@ -253,6 +258,7 @@ void tst_Maemo5Om::addEvent() {
     QCOMPARE(fetchEvent.guid(), event.guid());
     QCOMPARE(fetchEvent.location(), event.location());
     QCOMPARE(fetchEvent.priority(), event.priority());
+    QCOMPARE(fetchEvent.detail<QOrganizerItemLocation>(), event.detail<QOrganizerItemLocation>());
 }
 
 void tst_Maemo5Om::addTodo() {
@@ -266,6 +272,12 @@ void tst_Maemo5Om::addTodo() {
     todo.setPriority(QOrganizerItemPriority::LowestPriority);
     todo.setProgressPercentage(53);
     todo.setStatus(QOrganizerTodoProgress::StatusInProgress);
+    QOrganizerItemLocation loc = event.detail<QOrganizerItemLocation>();
+    loc.setLatitude(54.0);
+    loc.setLongitude(-139.0);
+    loc.setLabel("Todo location address");
+    todo.saveDetail(&loc);
+
 
     // Save todo
     QVERIFY(m_om->saveItem(&todo));
@@ -285,6 +297,7 @@ void tst_Maemo5Om::addTodo() {
     QCOMPARE(fetchTodo.priority(), todo.priority());
     QCOMPARE(fetchTodo.progressPercentage(), todo.progressPercentage());
     QCOMPARE(fetchTodo.status(), todo.status());
+    QCOMPARE(fetchTodo.detail<QOrganizerItemLocation>(), todo.detail<QOrganizerItemLocation>());
 }
 
 void tst_Maemo5Om::addJournal() {

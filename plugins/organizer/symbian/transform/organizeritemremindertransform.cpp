@@ -98,6 +98,11 @@ void OrganizerItemReminderTransform::transformToEntryL(const QOrganizerItem& ite
         return;
 	}
 
+    if (reminder.secondsBeforeStart() < 0) {
+        // Reminder time must be earlier than or equal to the start time
+        User::Leave(KErrArgument);
+    }
+
     // Get the time offset in minutes
     int timeOffset = reminder.secondsBeforeStart() / secondsInOneMinute;
 
