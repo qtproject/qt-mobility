@@ -47,7 +47,7 @@ QTM_BEGIN_NAMESPACE
 
 
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QGraphicsItem *parent)
-        : QGraphicsGeoMap(parent)
+        : QGraphicsGeoMap(0, parent)
 {
     connect(this,
             SIGNAL(centerChanged(QGeoCoordinate)),
