@@ -459,18 +459,12 @@ bool CFSEngine::sendEmail(QMessageServicePrivate &privateService, QMessage &mess
     catch(...){
         return false;
     }
-    connect(sendOperation, SIGNAL(messageSend(int, CFSAsynchronousSendOperation*)), this, 
-            SLOT(sendCompleted(int, CFSAsynchronousSendOperation*)));
+    connect(sendOperation, SIGNAL(operationCompleted(int, CFSAsynchronousOperation*)), this, 
+            SLOT(asyncronousOperationCompleted(int, CFSAsynchronousOperation*)));
     m_operationList.append(sendOperation);
     sendOperation->sendMessage(message);
 
     return true;
-}
-
-void CFSEngine::sendCompleted(int success, CFSAsynchronousSendOperation *operation)
-{
-    m_operationList.removeAt(m_operationList.indexOf(operation));
-    delete operation;   
 }
 
 bool CFSEngine::addMessage(QMessage *message)
@@ -484,10 +478,10 @@ bool CFSEngine::addMessage(QMessage *message)
         return false;
     }
     QEventLoop* eventloop = new QEventLoop();
-    connect(addOperation, SIGNAL(messageAdded(int, CFSAsynchronousAddOperation*)), this, 
-                SLOT(addMessageCompleted(int, CFSAsynchronousAddOperation*)));
+    connect(addOperation, SIGNAL(operationCompleted(int, CFSAsynchronousOperation*)), this, 
+                SLOT(asyncronousOperationCompleted(int, CFSAsynchronousOperation*)));
     m_operationList.append(addOperation); 
-    connect(this, SIGNAL(addMessageCompleted()), eventloop, SLOT(quit()));
+    connect(this, SIGNAL(operationCompleted()), eventloop, SLOT(quit()));
     addOperation->addMessage(*message);
     eventloop->exec();
     
@@ -499,187 +493,31 @@ bool CFSEngine::addMessage(QMessage *message)
         return false;
 }
 
-void CFSEngine::addMessageCompleted(int success, CFSAsynchronousAddOperation *operation)
-{
-    m_operationList.removeAt(m_operationList.indexOf(operation));
-    delete operation; 
-    if (success == 0)
-        m_addMessageError = false;
-    else
-        m_addMessageError = true;
-    
-    emit addMessageCompleted();
-}
-
 bool CFSEngine::updateMessage(QMessage *message)
 {
-    NmApiMessage fsMessage = updateFsMessage(message);
-    quint64 mailboxId = stripIdPrefix(message->parentAccountId().toString()).toULongLong();
-    NmApiMessageManager* manager = new NmApiMessageManager(0, mailboxId);
-    QPointer<NmApiOperation> saveOperation = manager->saveMessage(fsMessage);
+    m_updateMessageError = false;
+    CFSAsynchronousUpdateOperation *updateOperation = NULL;
+    try{
+        updateOperation = new CFSAsynchronousUpdateOperation(m_emailService);
+    }
+    catch(...){
+        return false;
+    }
+
     QEventLoop* eventloop = new QEventLoop();
-    qRegisterMetaType<EmailClientApi::NmApiMessage>("EmailClientApi::NmApiMessage");
-    connect(saveOperation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(saveCompleted(QVariant, int)));
-    connect(saveOperation, SIGNAL(operationComplete(int, QVariant)), eventloop, SLOT(quit()));
+    connect(updateOperation, SIGNAL(operationCompleted(int, CFSAsynchronousOperation*)), this, 
+                SLOT(asyncronousOperationCompleted(int, CFSAsynchronousOperation*)));
+    m_operationList.append(updateOperation); 
+    connect(this, SIGNAL(operationCompleted()), eventloop, SLOT(quit()));
+    updateOperation->updateMessage(*message);
     eventloop->exec();
     
-    delete manager;
     delete eventloop;
-    
+
     if (m_updateMessageError)
         return false;
     else 
         return true;
-}
-
-NmApiMessage CFSEngine::updateFsMessage(QMessage *message)
-{
-    m_updateMessageError = false;
-    quint64 messageId = stripIdPrefix(message->id().toString()).toULongLong();
-    quint64 mailboxId = stripIdPrefix(message->parentAccountId().toString()).toLongLong();
-    quint64 folderId = stripIdPrefix(message->parentFolderId().toString()).toLongLong();
-    NmApiMessage fsMessage = this->message(mailboxId, folderId, messageId);
-    NmApiMessageEnvelope envelope = fsMessage.envelope();
-    
-    switch (message->priority()) {
-        case QMessage::HighPriority:
-            envelope.setPriority(EmailClientApi::NmApiMessagePriorityHigh);
-            break;
-        case QMessage::NormalPriority:
-            envelope.setPriority(EmailClientApi::NmApiMessagePriorityNormal);
-            break;
-        case QMessage::LowPriority:
-            envelope.setPriority(EmailClientApi::NmApiMessagePriorityLow);
-            break;            
-        }
-    if (message->status() & QMessage::Read) {
-        envelope.setIsRead(true);
-    } else {
-        envelope.setIsRead(false);
-    }
-        
-    NmApiEmailAddress sender;
-    sender.setAddress(message->from().addressee());
-
-    envelope.setSender(sender);
-    
-    QList<QMessageAddress> toList(message->to());
-    if (toList.count() > 0) {
-        QList<EmailClientApi::NmApiEmailAddress> toRecipients;
-        for (int i = 0; i < toList.size(); ++i) {
-            NmApiEmailAddress address;
-            address.setAddress(toList.at(i).addressee());
-            address.setDisplayName(toList.at(i).addressee());
-            toRecipients.append(address);
-        }
-        envelope.setToRecipients(toRecipients);
-    }
-    
-    QList<QMessageAddress> ccList(message->cc());
-    if (ccList.count() > 0) {
-        QList<EmailClientApi::NmApiEmailAddress> ccRecipients;
-        for (int i = 0; i < ccList.size(); ++i) {
-            NmApiEmailAddress address;
-            address.setAddress(ccList.at(i).addressee());
-            address.setDisplayName(ccList.at(i).addressee());
-            ccRecipients.append(address);
-        }
-        envelope.setCcRecipients(ccRecipients);
-    }
-        
-    QList<QMessageAddress> bccList(message->bcc());
-    if (bccList.count() > 0) {
-        QList<EmailClientApi::NmApiEmailAddress> bccRecipients;
-        for (int i = 0; i < bccList.size(); ++i) {
-            NmApiEmailAddress address;
-            address.setAddress(bccList.at(i).addressee());
-            address.setDisplayName(bccList.at(i).addressee());
-            bccRecipients.append(address);
-        }
-        envelope.setBccRecipients(bccRecipients);
-    }
-    
-    if (message->bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
-        // Message contains only body (not attachments)
-        QString messageBody = message->textContent();
-        if (!messageBody.isEmpty()) {
-            QByteArray type = message->contentType();
-            QByteArray subType = message->contentSubType();
-            NmApiTextContent content;
-            content.setContent(message->textContent());
-            if (type == "text" && subType == "plain")
-                fsMessage.setPlainTextContent(content);
-            else if (type == "text" && subType == "html")
-                fsMessage.setHtmlContent(content);
-            else
-                envelope.setPlainText(messageBody);
-        }
-    } else {
-        QMessageContentContainerIdList contentIds = message->contentIds();
-        foreach (QMessageContentContainerId id, contentIds){
-            QMessageContentContainer container = message->find(id);
-            QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
-            if (message->bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
-                // Message contains only body (not attachments)
-                QString messageBody = message->textContent();
-                if (!messageBody.isEmpty()) {
-                    QByteArray type = message->contentType();
-                    QByteArray subType = message->contentSubType();
-                    NmApiTextContent content;
-                    content.setContent(message->textContent());
-                    if (type == "text" && subType == "plain")
-                        fsMessage.setPlainTextContent(content);
-                    else if (type == "text" && subType == "html")
-                        fsMessage.setHtmlContent(content);
-                    else
-                        envelope.setPlainText(messageBody);
-                }
-            } else {
-                // Message contains body and attachments
-                QMessageContentContainerIdList contentIds = message->contentIds();
-                foreach (QMessageContentContainerId id, contentIds){
-                    QMessageContentContainer container = message->find(id);
-                    QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
-                    if (pPrivateContainer->_id == message->bodyId()) {
-                        // ContentContainer is body
-                        if (!container.textContent().isEmpty()) {               
-                        QByteArray type = message->contentType();
-                        QByteArray subType = message->contentSubType();
-                        NmApiTextContent content;
-                        content.setContent(container.textContent());
-                        if (type == "text" && subType == "plain")
-                            fsMessage.setPlainTextContent(content);
-                        else if (type == "text" && subType == "html")
-                            fsMessage.setHtmlContent(content);
-                        else
-                            envelope.setPlainText(container.textContent());
-                        }
-                    } else {
-                        // ContentContainer is attachment
-                        // TODO: use messagemanager->createAttachment()
-                        QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
-                        NmApiAttachment attachment;
-                        QString temp_path = QString(filePath);
-                        attachment.setFileName(temp_path);
-                        fsMessage.addAttachment(attachment);
-                    }        
-                }
-            }
-        }
-    }
-    envelope.setSubject(message->subject());
-    
-    //fsMessage.setEnvelope(envelope); is this needed?
-    
-    return fsMessage;
-}
-
-void CFSEngine::saveCompleted(QVariant variant, int success)
-{
-    if (success == 0)
-        m_updateMessageError = false;
-    else
-        m_updateMessageError = true;
 }
 
 NmApiMessage CFSEngine::message(const quint64 mailboxId, const quint64 folderId, const quint64 messageId) const
@@ -711,36 +549,28 @@ QMessage CFSEngine::message(const QMessageId &id) const
 bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOption /*option*/)
 {
     m_deleteMessageError = false;
-    QList<quint64> messageIds;
-    quint64 mailboxId;
-    quint64 folderId;
-    quint64 messageId;
-    splitQMessageId(id, mailboxId, folderId, messageId);
-    messageIds.append(messageId);
+    CFSAsynchronousRemoveOperation *removeOperation = NULL;
+    try{
+        removeOperation = new CFSAsynchronousRemoveOperation(m_emailService);
+    }
+    catch(...){
+        return false;
+    }
 
-    NmApiMessageManager* manager = new NmApiMessageManager(this, mailboxId);
-    QPointer<NmApiOperation> deleteOperation = manager->deleteMessages(messageIds);
     QEventLoop* eventloop = new QEventLoop();
-
-    connect(deleteOperation, SIGNAL(operationComplete(int, QVariant)), this, SLOT(deleteCompleted(QVariant, int)));
-    connect(deleteOperation, SIGNAL(operationComplete(int, QVariant)), eventloop, SLOT(quit()));
+    connect(removeOperation, SIGNAL(operationCompleted(int, CFSAsynchronousOperation*)), this, 
+                SLOT(asyncronousOperationCompleted(int, CFSAsynchronousOperation*)));
+    m_operationList.append(removeOperation); 
+    connect(this, SIGNAL(operationCompleted()), eventloop, SLOT(quit()));
+    removeOperation->removeMessage(id);
     eventloop->exec();
-    
-    delete manager;
+
     delete eventloop;
     
     if (m_deleteMessageError)
         return false;
     else 
         return true;
-}
-
-void CFSEngine::deleteCompleted(QVariant variant, int success)
-{
-    if (success == 0)
-        m_deleteMessageError = false;
-    else
-        m_deleteMessageError = true;
 }
 
 bool CFSEngine::showMessage(const QMessageId &id)
@@ -818,9 +648,19 @@ bool CFSEngine::retrieve(QMessageServicePrivate &privateService, const QMessageI
 
 bool CFSEngine::retrieveBody(QMessageServicePrivate &privateService, const QMessageId &id)
 {
-    bool retVal = false;
-    m_privateService = &privateService;
-    return retVal;
+    CFSAsynchronousRetrieveBodyOperation *retrieveOperation = NULL;
+    try{
+        retrieveOperation = new CFSAsynchronousRetrieveBodyOperation(privateService);
+    }
+    catch(...){
+        return false;
+    }
+    connect(retrieveOperation, SIGNAL(operationCompleted(int, CFSAsynchronousOperation*)), this, 
+            SLOT(asyncronousOperationCompleted(int, CFSAsynchronousOperation*)));
+    m_operationList.append(retrieveOperation);
+    retrieveOperation->retrieveBody(id);
+    
+    return true;
 }
 
 bool CFSEngine::retrieveHeader(QMessageServicePrivate &privateService, const QMessageId &id)
@@ -839,18 +679,34 @@ bool CFSEngine::exportUpdates(QMessageServicePrivate &privateService, const QMes
     catch(...){
         return false;
     }
-    connect(syncOperation, SIGNAL(syncronized(int, CFSAsynchronousSynchronizeOperation*)), this, 
-            SLOT(exportCompleted(int, CFSAsynchronousSynchronizeOperation*)));
+    connect(syncOperation, SIGNAL(operationCompleted(int, CFSAsynchronousOperation*)), this, 
+            SLOT(asyncronousOperationCompleted(int, CFSAsynchronousOperation*)));
     m_operationList.append(syncOperation);
     syncOperation->syncronizeMailbox(id);
     
     return true;
 }
 
-void CFSEngine::exportCompleted(int success, CFSAsynchronousSynchronizeOperation *operation)
+void CFSEngine::asyncronousOperationCompleted(int success, CFSAsynchronousOperation *operation)
 {
+    AsynchronousOperationType opType = operation->operationType();
     m_operationList.removeAt(m_operationList.indexOf(operation));
     delete operation;   
+
+    switch (opType) {
+        case addOperation:
+            m_addMessageError = success == 0?false:true;
+            break;
+        case updateOperation:
+            m_updateMessageError = success == 0?false:true;
+            break;
+        case removeOperation:
+            m_deleteMessageError = success == 0?false:true;
+            break;
+        default:
+            break;
+    }
+    emit operationCompleted();
 }
 
 bool CFSEngine::removeMessages(const QMessageFilter& /*filter*/, QMessageManager::RemovalOption /*option*/)

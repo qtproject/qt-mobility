@@ -57,25 +57,50 @@ using namespace EmailClientApi;
 
 QTM_BEGIN_NAMESPACE
 
+enum AsynchronousOperationType {
+    sendOperation,
+    addOperation,
+    updateOperation,
+    retrieveBodyOperation,
+    retrieveAttachmentOperation,
+    synchronizeOperation,
+    removeOperation
+};
+
+/*
+ * 
+ */
+
 class CFSAsynchronousOperation : public QObject
 {
     Q_OBJECT
-    
-protected:
-    CFSAsynchronousOperation(); 
-    CFSAsynchronousOperation(QMessageServicePrivate &privateService); 
 
+protected:
+    CFSAsynchronousOperation(AsynchronousOperationType opType); 
+    CFSAsynchronousOperation(AsynchronousOperationType opType, QMessageServicePrivate &privateService); 
+    
 public:
     virtual ~CFSAsynchronousOperation();
     
     void createFSMessage(QMessage &message, NmApiMessage &fsMessage);
+    AsynchronousOperationType operationType();
 
+public slots:
+    void operationCompleted(int success);
+
+signals:    
+    void operationCompleted(int success, CFSAsynchronousOperation *operation);
+    
 protected:
     QMessageServicePrivate *m_privateService;
 
+private:
+    AsynchronousOperationType m_operationType;
 };
 
-
+/*
+ * 
+ */
 
 class CFSAsynchronousSendOperation : public CFSAsynchronousOperation
 {
@@ -90,10 +115,6 @@ public:
 public slots:
     void createDraftMessageCompleted(int success, QVariant message);
     void saveCompleted(int success);
-    void sendCompleted(int success);
-    
-signals:    
-    void messageSend(int success, CFSAsynchronousSendOperation *operation);
     
 private:
     void saveMessage();
@@ -107,6 +128,10 @@ private:
 
 };
 
+/*
+ * 
+ */
+
 class CFSAsynchronousAddOperation : public CFSAsynchronousOperation
 {
     Q_OBJECT
@@ -119,10 +144,6 @@ public:
     
 public slots:
     void createDraftMessageCompleted(int success, QVariant message);
-    void saveCompleted(int success);
-    
-signals:    
-    void messageAdded(int success, CFSAsynchronousAddOperation *operation);
     
 private:
     void saveMessage();
@@ -135,6 +156,33 @@ private:
 
 };
 
+/*
+ * 
+ */
+
+class CFSAsynchronousUpdateOperation : public CFSAsynchronousOperation
+{
+    Q_OBJECT
+    
+public:
+    CFSAsynchronousUpdateOperation(NmApiEmailService *emailService); 
+    ~CFSAsynchronousUpdateOperation();
+
+    void updateMessage(QMessage &message);
+
+private:
+    NmApiMessage updateFsMessage(QMessage *message);
+
+private:
+    NmApiMessageManager* m_manager;
+    NmApiEmailService *m_emailService;
+
+};
+
+/*
+ * 
+ */
+
 class CFSAsynchronousRetrieveBodyOperation : public CFSAsynchronousOperation
 
 {
@@ -144,11 +192,16 @@ public:
     CFSAsynchronousRetrieveBodyOperation(QMessageServicePrivate &privateService);
     ~CFSAsynchronousRetrieveBodyOperation();
     
-    void retrieveBody(QMessageId &messageId);
+    void retrieveBody(const QMessageId &messageId);
     
 private:
+    NmApiMessageManager* m_manager;
 
 };
+
+/*
+ * 
+ */
 
 class CFSAsynchronousRetrieveAttachmentOperation : public CFSAsynchronousOperation
 
@@ -159,11 +212,15 @@ public:
     CFSAsynchronousRetrieveAttachmentOperation(QMessageServicePrivate &privateService);
     ~CFSAsynchronousRetrieveAttachmentOperation();
     
-    void retrieveAttachment(QMessageId &messageId);
+    void retrieveAttachment(const QMessageId &messageId);
     
 private:
 
 };
+
+/*
+ * 
+ */
 
 class CFSAsynchronousSynchronizeOperation : public CFSAsynchronousOperation
 {
@@ -175,15 +232,30 @@ public:
 
     void syncronizeMailbox(const QMessageAccountId &id);
     
-public slots:
-    void syncronizeCompleted(int success);
-    
-signals:    
-    void syncronized(int success, CFSAsynchronousSynchronizeOperation *operation);
-    
 private:
     NmApiEmailService *m_emailService;
 };
+
+/*
+ * 
+ */
+
+class CFSAsynchronousRemoveOperation : public CFSAsynchronousOperation
+{
+    Q_OBJECT
+    
+public:
+    CFSAsynchronousRemoveOperation(NmApiEmailService *emailService); 
+    ~CFSAsynchronousRemoveOperation();
+
+    void removeMessage(const QMessageId &messageId);
+
+private:
+    NmApiMessageManager* m_manager;
+    NmApiEmailService *m_emailService;
+
+};
+
 
 QTM_END_NAMESPACE
 

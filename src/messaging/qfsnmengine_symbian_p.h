@@ -166,14 +166,10 @@ public:
 public slots:
     void emailServiceInitialized(bool initialized);
     void messageEvent(EmailClientApi::NmApiMessageEvent event, quint64 mailboxId, quint64 folderId, QList<quint64> envelopeIdList);
-    void sendCompleted(int success, CFSAsynchronousSendOperation *operation);
-    void addMessageCompleted(int success, CFSAsynchronousAddOperation *operation);
-    void exportCompleted(int success, CFSAsynchronousSynchronizeOperation *operation);
-    void saveCompleted(QVariant variant, int success);
-    void deleteCompleted(QVariant variant, int success);
+    void asyncronousOperationCompleted(int success, CFSAsynchronousOperation *operation);
 
 signals: 
-    void addMessageCompleted();    
+    void operationCompleted();    
     
 private:
 
@@ -191,7 +187,6 @@ private:
     
     QMessageAccountIdList accountsByType(QMessage::Type type) const;
     void updateEmailAccounts() const;
-    NmApiMessage updateFsMessage(QMessage *message);
     NmApiMessage message(const quint64 mailboxId, const quint64 folderId, const quint64 messageId) const;
     
     QMessageFolderIdList folderIdsByAccountId(const QMessageAccountId &accountId) const;
