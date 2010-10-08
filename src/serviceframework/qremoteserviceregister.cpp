@@ -82,7 +82,7 @@ QRemoteServiceRegister::Entry::~Entry()
 /*!
     Checks if the registration entry is currently a valid remote service entry
 
-    Returns true if the \a serviceName, \a interfaceName and \version point to
+    Returns true if the serviceName(), interfaceName() and version() point to
     a valid QServiceInterfaceDescriptor, otherwise false. 
 */
 bool QRemoteServiceRegister::Entry::isValid() const
@@ -164,12 +164,12 @@ const QMetaObject * QRemoteServiceRegister::Entry::metaObject() const
 /*!
     Sets the QRemoteServiceRegister::InstanceType of the registration entry.
 
-    If this is not explicitly called, the default instance type for the registration entry 
+    If this is not explicitly called, the default instance \a type for the registration entry 
     is QRemoteServiceRegister::GlobalInstance.
 */
-void QRemoteServiceRegister::Entry::setInstantiationType(QRemoteServiceRegister::InstanceType t)
+void QRemoteServiceRegister::Entry::setInstantiationType(QRemoteServiceRegister::InstanceType type)
 {
-    d->instanceType = t;
+    d->instanceType = type;
 }
 
 /*! 
@@ -251,7 +251,7 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiatio
 */
 
 /*!
-    \fn void QRemoteServiceRegister::instanceClosed(const QRemoteServiceRegister::Entry&)
+    \fn void QRemoteServiceRegister::instanceClosed(const QRemoteServiceRegister::Entry& entry)
 
     This signal is emitted whenever a created instance has been closed. This indicates
     that a connected client has either shutdown or released the loaded service object.
@@ -339,7 +339,7 @@ void QRemoteServiceRegister::setQuitOnLastInstanceClosed(bool quit)
     Allows a security filter to be set which can access 
     QRemoteServiceRegister::QRemoteServiceRegisterCredentials.
     
-    The \l SecurityFilter takes a function pointer where the function code implements possible
+    The \a filter is a function pointer where the function code implements possible
     permission checks and returns true or false. If a connecting client fails the security
     filter it will be denied access and unable to obtain a valid service instance. 
     

@@ -84,7 +84,7 @@ public:
         QString serviceName() const;
         QString version() const;
 
-        void setInstantiationType(QRemoteServiceRegister::InstanceType t);
+        void setInstantiationType(QRemoteServiceRegister::InstanceType type);
         QRemoteServiceRegister::InstanceType instantiationType() const;
 
     private:
@@ -118,7 +118,7 @@ public:
 
 Q_SIGNALS:
     void allInstancesClosed();
-    void instanceClosed(const QRemoteServiceRegister::Entry&);
+    void instanceClosed(const QRemoteServiceRegister::Entry& entry);
 
 private:
 
