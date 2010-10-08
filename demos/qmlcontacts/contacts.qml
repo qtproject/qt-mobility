@@ -56,8 +56,7 @@ Item {
             id: contactModel
             Component.onCompleted : {
                 if (manager == "memory")
-                    contactModel.importContacts("./contents/example.vcf"); //if runs in qmlviewer mode
-                    contactModel.importContacts(":/contents/example.vcf");//if runs in application mode
+                    contactModel.importContacts(Qt.resolvedUrl("contents/example.vcf"));
             }
         }
         TitleBar { id: titleBar; width: parent.width; height: 40; opacity: 0.9
