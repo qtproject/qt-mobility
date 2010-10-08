@@ -92,18 +92,9 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QFeedbackEffect::error(QFeedbackEffect::ErrorType) const
+    \fn void QFeedbackEffect::error(QFeedbackEffect::ErrorType error) const
 
-    This signal is emitted by subclasses if an error occurred during
-    playback of an effect. The \l{QFeedbackEffect::}{ErrorType} enum
-    describes the errors that can be reported.
-
-*/
-
-/*!
-    \fn void QFeedbackEffect::error(QFeedbackEffect::ErrorType) const
-
-    This signal is emitted by subclasses if an error occurred during
+    This signal is emitted by subclasses if an \a error occurred during
     playback of an effect. The \l{QFeedbackEffect::}{ErrorType} enum
     describes the errors that can be reported.
 
@@ -232,7 +223,7 @@ void QFeedbackEffect::start()
     Stops a playing effect. If an error occurs there the
     error signal will be emitted.
 
-    \sa play(), pause(), setState()
+    \sa start(), pause(), setState()
 */
 void QFeedbackEffect::stop()
 {
@@ -348,9 +339,9 @@ bool QFeedbackEffect::supportsThemeEffect()
 */
 
 /*!
-    \fn virtual void QFeedbackEffect::setState(State) = 0
+    \fn virtual void QFeedbackEffect::setState(State state) = 0
 
-    Requests the effect's State to change to the specified state.
+    Requests the effect's State to change to the specified \a state.
 
     Subclasses reimplement this function to handle state changes
     for the effect.

@@ -66,7 +66,7 @@ static int qClearAllocatedStringHash()
     QOrganizerItemStringHolder::s_qstrings.clear();
     return 1;
 }
-Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
+Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash)
 
 /*!
   \class QOrganizerItemDetail
