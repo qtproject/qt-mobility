@@ -125,8 +125,6 @@ bool QOrganizerItemSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, c
     if (!con->mNotifySimulator)
         return QOrganizerItemMemoryEngine::saveItem(theOrganizerItem, collectionId, changeSet, error);
 
-    QLocalSocket *sendSocket = con->sendSocket();
-
     // translate local id -> remote id
     QOrganizerItem item = *theOrganizerItem;
     con->translateItemIds(&item, con->mManagerUri, con->mLocalToRemote);
@@ -138,6 +136,7 @@ bool QOrganizerItemSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, c
     remoteCollectionId.setLocalId(con->mLocalToRemote.collections.value(collectionId));
 
     // save remotely
+    QLocalSocket *sendSocket = con->sendSocket();
     Simulator::SaveOrganizerItemReply reply = RemoteMetacall<Simulator::SaveOrganizerItemReply>::call(
                 sendSocket, TimeoutSync, "requestSaveOrganizerItem", item, remoteCollectionId);
     *error = reply.error;
@@ -164,7 +163,26 @@ bool QOrganizerItemSimulatorEngine::removeItem(const QOrganizerItemLocalId& orga
 
     if (!con->mNotifySimulator)
         return QOrganizerItemMemoryEngine::removeItem(organizeritemId, changeSet, error);
-    return QOrganizerItemMemoryEngine::removeItem(organizeritemId, changeSet, error);
+
+    QOrganizerItemId remoteId;
+    remoteId.setManagerUri(con->mManagerUri);
+    remoteId.setLocalId(con->mLocalToRemote.items.value(organizeritemId));
+
+    QLocalSocket *sendSocket = con->sendSocket();
+    int errorInt = RemoteMetacall<int>::call(
+                sendSocket, TimeoutSync, "requestRemoveOrganizerItem", remoteId);
+    *error = static_cast<QOrganizerItemManager::Error>(errorInt);
+
+    if (*error != QOrganizerItemManager::NoError)
+        return false;
+
+    if (!QOrganizerItemMemoryEngine::removeItem(organizeritemId, changeSet, error))
+        return false; // it's already removed remotely - revert?
+
+    con->mRemoteToLocal.items.remove(remoteId.localId());
+    con->mLocalToRemote.items.remove(organizeritemId);
+
+    return true;
 }
 
 bool QOrganizerItemSimulatorEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
