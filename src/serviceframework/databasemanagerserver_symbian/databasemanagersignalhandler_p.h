@@ -42,7 +42,7 @@
 #define DATABASEMANAGERSIGNALHANDLER_H
 
 #include <QObject>
-#include "databasemanagersession.h"
+#include "databasemanagersession_p.h"
 
 QTM_BEGIN_NAMESPACE
 

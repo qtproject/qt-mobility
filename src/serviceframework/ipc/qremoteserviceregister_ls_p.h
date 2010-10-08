@@ -39,49 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICECONTROL_H
-#define QREMOTESERVICECONTROL_H
+#ifndef QREMOTESERVICEREGISTER_LS_P_H
+#define QREMOTESERVICEREGISTER_LS_P_H
 
-#include "qmobilityglobal.h"
-#include <QObject>
-#include <QQueue>
-
+#include "qremoteserviceregister.h"
+#include "instancemanager_p.h"
+#include "qserviceinterfacedescriptor.h"
+#include "qremoteserviceregister_p.h"
+#include <QLocalServer>
 
 QTM_BEGIN_NAMESPACE
 
+class ObjectEndPoint;
 
-class QRemoteServiceControlPrivate;
-class Q_SERVICEFW_EXPORT QRemoteServiceControl : public QObject
+class QRemoteServiceRegisterLocalSocketPrivate: public QRemoteServiceRegisterPrivate
 {
     Q_OBJECT
-    Q_PROPERTY(bool quitOnLastInstanceClosed READ quitOnLastInstanceClosed WRITE setQuitOnLastInstanceClosed)
-
 public:
-    QRemoteServiceControl(QObject* parent = 0);
-    ~QRemoteServiceControl();
-
+    QRemoteServiceRegisterLocalSocketPrivate(QObject* parent);
     void publishServices(const QString& ident );
+
+public slots:
+    void processIncoming();
     
-    bool quitOnLastInstanceClosed() const;
-    void setQuitOnLastInstanceClosed(const bool quit);
-
-    typedef bool (*securityFilter)(const void *message);
-    securityFilter setSecurityFilter(securityFilter filter);
-
-Q_SIGNALS:
-    void lastInstanceClosed();
-
-
 private:
-    QRemoteServiceControlPrivate* d;
-};
+    bool createServiceEndPoint(const QString& ident);
 
-struct QRemoteServiceControlLocalSocketCred {
-    int fd;
-    int pid;
-    int uid;
-    int gid;
+    QLocalServer* localServer;
+    QList<ObjectEndPoint*> pendingConnections;
 };
 
 QTM_END_NAMESPACE
-#endif //QREMOTESERVICECONTROL_H
+
+#endif
