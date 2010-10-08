@@ -113,10 +113,6 @@ public:
     Client to service communication only used for establishing an object request since the returned
     proxy is an interface to that object registered on QtDBus. Client communicates directly to QtDBus
     for method and property access. Signals are automatically relayed from QtDBus to the proxy object.
-
-    TODO:
-    - Consider merging invokeRemoteProperty() and invokeRemote()
-    - QMetaClassInfo support
 */
 ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent)
     : QObject(parent), dispatch(comm), service(0)
@@ -128,7 +124,7 @@ ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* pa
 
     dispatch->setParent(this);
     connect(dispatch, SIGNAL(readyRead()), this, SLOT(newPackageReady()));
-    connect(dispatch, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    //connect(dispatch, SIGNAL(disconnected()), this, SLOT(disconnected()));
     if (type == Client) {
         // client waiting for construct proxy and registers DBus custom type
         qDBusRegisterMetaType<QTM_PREPEND_NAMESPACE(QServiceUserTypeDBus)>();
@@ -189,41 +185,43 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceRegister::Entry& ent
     delete response;
         
     // Connect all DBus interface signals to the proxy slots
-    // TODO: Implement custom arguments and function this code
     const QMetaObject *mo = service->metaObject();
-    for (int i = mo->methodOffset(); i < mo->methodCount(); i++) {
-        const QMetaMethod mm = mo->method(i);
-        if (mm.methodType() == QMetaMethod::Signal) {
-            QByteArray sig(mm.signature());
+    while (mo && strcmp(mo->className(), "QObject")) {
+        for (int i = mo->methodOffset(); i < mo->methodCount(); i++) {
+            const QMetaMethod mm = mo->method(i);
+            if (mm.methodType() == QMetaMethod::Signal) {
+                QByteArray sig(mm.signature());
 
-            bool customType = false;
+                bool customType = false;
 
-            QList<QByteArray> params = mm.parameterTypes();
-            for (int arg = 0; arg < params.size(); arg++) {
-                const QByteArray& type = params[arg];
-                int variantType = QVariant::nameToType(type);
-                if (variantType == QVariant::UserType) {
-                    sig.replace(QByteArray(type), QByteArray("QDBusVariant")); 
-                    customType = true;
+                QList<QByteArray> params = mm.parameterTypes();
+                for (int arg = 0; arg < params.size(); arg++) {
+                    const QByteArray& type = params[arg];
+                    int variantType = QVariant::nameToType(type);
+                    if (variantType == QVariant::UserType) {
+                        sig.replace(QByteArray(type), QByteArray("QDBusVariant")); 
+                        customType = true;
+                    }
                 }
-            }
 
-            int serviceIndex = iface->metaObject()->indexOfSignal(sig);
-            QByteArray signal = QByteArray("2").append(sig);
-            QByteArray method = QByteArray("1").append(sig);
+                int serviceIndex = iface->metaObject()->indexOfSignal(sig);
+                QByteArray signal = QByteArray("2").append(sig);
+                QByteArray method = QByteArray("1").append(sig);
 
-            if (serviceIndex > 0) {
-                if (customType) {
-                    QObject::connect(iface, signal.constData(), signalsObject, signal.constData());
-                    
-                    ServiceSignalIntercepter *intercept = 
-                        new ServiceSignalIntercepter((QObject*)signalsObject, signal, this);
-                    intercept->setMetaIndex(i);
-                } else {
-                    QObject::connect(iface, signal.constData(), service, method.constData());
+                if (serviceIndex > 0) {
+                    if (customType) {
+                        QObject::connect(iface, signal.constData(), signalsObject, signal.constData());
+
+                        ServiceSignalIntercepter *intercept = 
+                            new ServiceSignalIntercepter((QObject*)signalsObject, signal, this);
+                        intercept->setMetaIndex(i);
+                    } else {
+                        QObject::connect(iface, signal.constData(), service, method.constData());
+                    }
                 }
             }
         }
+        mo = mo->superClass();
     }
 
     return service;
