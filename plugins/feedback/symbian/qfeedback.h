@@ -96,7 +96,7 @@ public:
 private:
     CHWRMVibra *vibra();
 
-    QList<QFeedbackActuator*> actuators_;
+    QList<QFeedbackActuator*> m_actuators;
     CCoeControl *defaultWidget();
 
     CHWRMVibra *m_vibra;

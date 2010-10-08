@@ -62,7 +62,7 @@ QFeedbackImmersion::QFeedbackImmersion() : QObject(qApp)
     } else {
         const int nbDev = ImmVibeGetDeviceCount();
         for (int i = 0; i < nbDev; ++i) {
-            actuators_ << createFeedbackActuator(this, i);
+            actuatorList << createFeedbackActuator(this, i);
         }
     }
 }
@@ -83,7 +83,7 @@ QFeedbackInterface::PluginPriority QFeedbackImmersion::pluginPriority()
 
 QList<QFeedbackActuator*> QFeedbackImmersion::actuators()
 {
-    return actuators_;
+    return actuatorList;
 }
 
 void QFeedbackImmersion::setActuatorProperty(const QFeedbackActuator &actuator, ActuatorProperty prop, const QVariant &value)

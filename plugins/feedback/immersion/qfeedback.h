@@ -91,7 +91,7 @@ private:
 
     QMutex mutex;
     QVector<VibeInt32> actuatorHandles;
-    QList<QFeedbackActuator*> actuators_;
+    QList<QFeedbackActuator*> actuatorList;
     QHash<const QFeedbackEffect*, VibeInt32> effectHandles;
 
     struct FileContent {

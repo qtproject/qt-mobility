@@ -204,10 +204,10 @@ QFeedbackSymbian::QFeedbackSymbian() : m_vibra(0), m_vibraActive(true)
 #ifndef NO_TACTILE_SUPPORT
     //if we don't have advanced tactile support then the MTouchFeedback doesn't really support custom effects
     if (touchInstance()->TouchFeedbackSupported()) {
-        actuators_ << createFeedbackActuator(this, TOUCH_DEVICE);
+        m_actuators << createFeedbackActuator(this, TOUCH_DEVICE);
     }
 #endif //NO_TACTILE_SUPPORT
-    actuators_ << createFeedbackActuator(this, VIBRA_DEVICE);
+    m_actuators << createFeedbackActuator(this, VIBRA_DEVICE);
 }
 
 QFeedbackSymbian::~QFeedbackSymbian()
@@ -225,7 +225,7 @@ CHWRMVibra *QFeedbackSymbian::vibra()
 
 QList<QFeedbackActuator*> QFeedbackSymbian::actuators()
 {
-    return actuators_;
+    return m_actuators;
 }
 
 void QFeedbackSymbian::setActuatorProperty(const QFeedbackActuator &actuator, ActuatorProperty prop, const QVariant &value)
