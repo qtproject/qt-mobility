@@ -99,8 +99,6 @@ QServiceMetaObjectDBus::QServiceMetaObjectDBus(QObject* service, bool signalsObj
 
 QServiceMetaObjectDBus::~QServiceMetaObjectDBus()
 {
-    if (d->serviceMeta)
-        delete d->serviceMeta;
     if (d->dbusMeta)
         delete d->dbusMeta;
     delete d;
@@ -119,12 +117,19 @@ void QServiceMetaObjectDBus::connectMetaSignals(bool signalsObject) {
         int methodCount = d->serviceMeta->methodCount();
         for (int i = 0; i < methodCount; i++) {
             QMetaMethod mm = d->serviceMeta->method(i);
+        
 
             if (mm.methodType() == QMetaMethod::Signal) {
                 QByteArray sig(mm.signature());
                 bool customType = false;
                 const QList<QByteArray> pTypes = mm.parameterTypes();
                 const int pTypesCount = pTypes.count();
+            
+                // Ignore all QObject calls
+                const QMetaObject *mo = QObject::metaObject();
+                int qobjectIndex = mo->indexOfMethod(sig);
+                if (qobjectIndex >= 0)
+                    continue;
 
                 // Detects custom types as passed arguments
                 for (int arg = 0; arg < pTypesCount; arg++) {
@@ -139,6 +144,7 @@ void QServiceMetaObjectDBus::connectMetaSignals(bool signalsObject) {
                 // Connects the service signal to the corresponding DBus service signal
                 if (customType) {
                     QByteArray signal = mm.signature();
+                    qDebug() << "CONNECTING" << signal;
                     ServiceMetaSignalIntercepter *intercept =
                         new ServiceMetaSignalIntercepter(d->service, "2"+signal, this);
                     intercept->setMetaIndex(i);
@@ -162,6 +168,7 @@ void QServiceMetaObjectDBus::activateMetaSignal(int id, const QVariantList& args
     QVariantList convertedList = args;
     QByteArray sig(method.signature());
     QList<QByteArray> params = method.parameterTypes();
+    
     for (int i = 0; i < params.size(); i++) {
         QVariant dbusVariant = args[i];
        
@@ -342,7 +349,7 @@ int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
     if (c == QMetaObject::InvokeMetaMethod) {
         // METHOD CALL
         QMetaMethod method = d->dbusMeta->method(id);
-        
+    
         const bool isSignal = (method.methodType() == QMetaMethod::Signal);
 
         ///////////////////// CHECK SPECIAL PROPERTY ///////////////////////
