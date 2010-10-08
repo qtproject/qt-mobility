@@ -379,7 +379,8 @@ protected:
 	// aLastName ownership is not transferred
 	QStringList GetTokens(QStringList aNonTokenizedFields,
 						  HBufC* aFirstName,
-						  HBufC* aLastName) const;
+						  HBufC* aLastName,
+						  bool aIsKorea) const;
 
 private:
 	void WriteToDbL(const CContactItem& aItem);
@@ -392,11 +393,13 @@ private:
 	//			  	   pushed to cleanupstack. Ownership is transferred.
 	// aLastName OUT: Pointer to the first N characters of last name,
 	//			  	  pushed to cleanupstack. Ownership is transferred.
+	// aIsKorea OUT: true if contact contains Korean text
 	void GetFieldsLC(const CContactItem& aItem,
 					 HBufC** aFirstNameAsNbr,
 					 HBufC** aLastNameAsNbr,
 					 HBufC** aFirstName,
-					 HBufC** aLastName) const;
+					 HBufC** aLastName,
+					 bool& aIsKorea) const;
 
 	// aString ownership is not transferred
 	void AddTokens(HBufC* aString, QStringList& aTokens) const;
@@ -420,6 +423,10 @@ protected:
 
 	// Max length of a single token that can be stored into predictive search table
 	const TInt		  iMaxTokenLength;
+
+
+	// For unit testing
+	friend class UT_CPplPredictiveSearchTable;
 	};
 
 
