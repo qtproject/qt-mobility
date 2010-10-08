@@ -4,7 +4,7 @@
 #include <QDebug>
 #endif
 
-#include "qgeopositioninfosource_meego_p.h"
+#include "qgeopositioninfosource_geocluemaster_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -21,11 +21,11 @@ static void position_changed (GeocluePosition      *position,
 #ifdef Q_LOCATION_GEOCLUE_DEBUG
     qDebug() << "Position update from GeoClue, lat, lon, alt, time: " << latitude << longitude << altitude << time;
 #endif
-    ((QGeoPositionInfoSourceMeego*)userdata)->positionChanged(
+    ((QGeoPositionInfoSourceGeoclueMaster*)userdata)->positionChanged(
                 position, fields, timestamp, latitude, longitude, altitude, accuracy);
 }
 
-void QGeoPositionInfoSourceMeego::positionChanged(GeocluePosition      *position,
+void QGeoPositionInfoSourceGeoclueMaster::positionChanged(GeocluePosition      *position,
                                                   GeocluePositionFields fields,
                                                   int                   timestamp,
                                                   double                latitude,
@@ -43,15 +43,15 @@ void QGeoPositionInfoSourceMeego::positionChanged(GeocluePosition      *position
     }
 }
 
-QGeoPositionInfoSourceMeego::QGeoPositionInfoSourceMeego(QObject *parent)
+QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject *parent)
     : QGeoPositionInfoSource(parent), client(0), pos(0)
 {
 }
 
-int QGeoPositionInfoSourceMeego::init()
+int QGeoPositionInfoSourceGeoclueMaster::init()
 {
-    GeoclueMaster *master;
-    GError *error = NULL;
+    GeoclueMaster *master(0);
+    GError *error = 0;
 
     g_type_init ();
 
@@ -60,7 +60,7 @@ int QGeoPositionInfoSourceMeego::init()
     g_object_unref (master);
 
     if (!client) {
-        qCritical ("QGeoPositionInfoSourceMeego error creating GeoclueMasterClient: %s\n", error->message);
+        qCritical ("QGeoPositionInfoSourceGeoclueMaster error creating GeoclueMasterClient: %s\n", error->message);
         g_error_free (error);
         return -1;
     }
@@ -70,7 +70,7 @@ int QGeoPositionInfoSourceMeego::init()
                                                  0, TRUE,
                                                  GEOCLUE_RESOURCE_ALL,
                                                  &error)){
-        qCritical ("QGeoPositionInfoSourceMeego geoclue set_requirements failed: %s", error->message);
+        qCritical ("QGeoPositionInfoSourceGeoclueMaster geoclue set_requirements failed: %s", error->message);
         g_error_free (error);
         g_object_unref (client);
         return -1;
@@ -79,7 +79,7 @@ int QGeoPositionInfoSourceMeego::init()
 
     pos = geoclue_master_client_create_position (client, NULL);
     if (!pos) {
-        qCritical("QGeoPositionInfoSourceMeego failed to get a position object");
+        qCritical("QGeoPositionInfoSourceGeoclueMaster failed to get a position object");
         g_object_unref (client);
         return -1;
     }
@@ -87,33 +87,33 @@ int QGeoPositionInfoSourceMeego::init()
     return 0;
 }
 
-QGeoPositionInfo QGeoPositionInfoSourceMeego::lastKnownPosition
+QGeoPositionInfo QGeoPositionInfoSourceGeoclueMaster::lastKnownPosition
 (bool /*fromSatellitePositioningMethodsOnly*/) const
 {
     return lastPosition;
 }
 
-QGeoPositionInfoSourceMeego::PositioningMethods QGeoPositionInfoSourceMeego::supportedPositioningMethods() const
+QGeoPositionInfoSourceGeoclueMaster::PositioningMethods QGeoPositionInfoSourceGeoclueMaster::supportedPositioningMethods() const
 {
     return AllPositioningMethods;
 }
 
-void QGeoPositionInfoSourceMeego::startUpdates()
+void QGeoPositionInfoSourceGeoclueMaster::startUpdates()
 {
     g_signal_connect (G_OBJECT (pos), "position-changed",
                       G_CALLBACK (position_changed),this);
 
 }
-int QGeoPositionInfoSourceMeego::minimumUpdateInterval() const{
+int QGeoPositionInfoSourceGeoclueMaster::minimumUpdateInterval() const{
     return 0;
 }
-void QGeoPositionInfoSourceMeego::stopUpdates()
+void QGeoPositionInfoSourceGeoclueMaster::stopUpdates()
 {
     g_signal_handlers_disconnect_by_func(G_OBJECT(pos), (void*)position_changed,
                                          NULL);
 }
 
-void QGeoPositionInfoSourceMeego::requestUpdate(int /*timeout*/)
+void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int /*timeout*/)
 {
     GeocluePositionFields fields;
     int              timestamp;
@@ -126,7 +126,7 @@ void QGeoPositionInfoSourceMeego::requestUpdate(int /*timeout*/)
                                             &latitude, &longitude, &altitude,
                                             &accuracy, &error);
     if (error) {
-        qCritical ("QGeoPositionInfoSourceMeego Error in geoclue_position_get_position: %s.\n",
+        qCritical ("QGeoPositionInfoSourceGeoclueMaster Error in geoclue_position_get_position: %s.\n",
                    error->message);
         g_error_free (error);
         error = NULL;
@@ -140,12 +140,12 @@ void QGeoPositionInfoSourceMeego::requestUpdate(int /*timeout*/)
             return;
 
         }
-        qCritical ("QGeoPositionInfoSourceMeego Invalid Longitude and latitude");
+        qCritical ("QGeoPositionInfoSourceGeoclueMaster Invalid Longitude and latitude");
         emit updateTimeout();
     }
 }
 
-QGeoPositionInfoSourceMeego::~QGeoPositionInfoSourceMeego()
+QGeoPositionInfoSourceGeoclueMaster::~QGeoPositionInfoSourceGeoclueMaster()
 {
     if (pos)
         g_object_unref (pos);
@@ -153,5 +153,5 @@ QGeoPositionInfoSourceMeego::~QGeoPositionInfoSourceMeego()
         g_object_unref (client);
 }
 
-#include "moc_qgeopositioninfosource_meego_p.cpp"
+#include "moc_qgeopositioninfosource_geocluemaster_p.cpp"
 QTM_END_NAMESPACE

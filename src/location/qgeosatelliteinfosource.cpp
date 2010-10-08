@@ -51,7 +51,7 @@
 #elif defined(Q_WS_MAEMO_5)
 #   include "qgeosatelliteinfosource_maemo5_p.h"
 #elif defined(Q_WS_MEEGO)
-#   include "qgeosatelliteinfosource_meego_p.h"
+#   include "qgeosatelliteinfosource_gypsy_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -115,7 +115,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
 #elif defined(QT_SIMULATOR)
     return new QGeoSatelliteInfoSourceSimulator(parent);
 #elif defined(Q_WS_MEEGO)
-    QGeoSatelliteInfoSourceMeego *source = new QGeoSatelliteInfoSourceMeego(parent);
+    QGeoSatelliteInfoSourceGypsy *source = new QGeoSatelliteInfoSourceGypsy(parent);
     int status = source->init();
     if (status == -1) {
         delete source;

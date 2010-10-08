@@ -1,5 +1,5 @@
-#ifndef QGEOPOSITIONINFOSOURCEMEEGO_H
-#define QGEOPOSITIONINFOSOURCEMEEGO_H
+#ifndef QGEOPOSITIONINFOSOURCE_GEOCLUEMASTER_H
+#define QGEOPOSITIONINFOSOURCE_GEOCLUEMASTER_H
 
 //
 //  W A R N I N G
@@ -19,7 +19,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoPositionInfoSourceMeego : public QGeoPositionInfoSource
+class QGeoPositionInfoSourceGeoclueMaster : public QGeoPositionInfoSource
 {
     Q_OBJECT
 public:
@@ -30,8 +30,8 @@ public:
                          double                longitude,
                          double                altitude,
                          GeoclueAccuracy      *accuracy);
-    QGeoPositionInfoSourceMeego(QObject *parent = 0);
-    ~QGeoPositionInfoSourceMeego();
+    QGeoPositionInfoSourceGeoclueMaster(QObject *parent = 0);
+    ~QGeoPositionInfoSourceGeoclueMaster();
 
     QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     PositioningMethods supportedPositioningMethods() const;
@@ -51,4 +51,4 @@ private:
 
 QTM_END_NAMESPACE
 
-#endif // QGEOPOSITIONINFOSOURCEMEEGO_H
+#endif // QGEOPOSITIONINFOSOURCE_GEOCLUEMASTER_H

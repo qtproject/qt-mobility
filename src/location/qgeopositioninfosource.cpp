@@ -51,7 +51,7 @@
 #elif defined(Q_WS_MAEMO_5)
 #   include "qgeopositioninfosource_maemo5_p.h"
 #elif defined(Q_WS_MEEGO)
-#   include "qgeopositioninfosource_meego_p.h"
+#   include "qgeopositioninfosource_geocluemaster_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -225,7 +225,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     }
     return source;
 #elif (defined(Q_WS_MEEGO))
-    QGeoPositionInfoSourceMeego *source = new QGeoPositionInfoSourceMeego(parent);
+    QGeoPositionInfoSourceGeoclueMaster *source = new QGeoPositionInfoSourceGeoclueMaster(parent);
     int status = source->init();
     if (status == -1) {
        delete source;

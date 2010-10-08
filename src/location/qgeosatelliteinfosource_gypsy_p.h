@@ -1,5 +1,5 @@
-#ifndef QGEOSATELLITEINFOSOURCE_MEEGO_H
-#define QGEOSATELLITEINFOSOURCE_MEEGO_H
+#ifndef QGEOSATELLITEINFOSOURCE_GYPSY_H
+#define QGEOSATELLITEINFOSOURCE_GYPSY_H
 
 //
 //  W A R N I N G
@@ -14,16 +14,16 @@
 
 #include "qgeosatelliteinfosource.h"
 #include "qgeosatelliteinfo.h"
-
 #include <gypsy/gypsy-satellite.h>
+
 QTM_BEGIN_NAMESPACE
 
-class QGeoSatelliteInfoSourceMeego : public QGeoSatelliteInfoSource
+class QGeoSatelliteInfoSourceGypsy : public QGeoSatelliteInfoSource
   {
       Q_OBJECT
 
 public:
-      explicit QGeoSatelliteInfoSourceMeego(QObject *parent = 0);
+      explicit QGeoSatelliteInfoSourceGypsy(QObject *parent = 0);
       int init();
 
 public slots:
@@ -38,11 +38,11 @@ signals:
       void requestTimeout();
 
 private:
-      Q_DISABLE_COPY(QGeoSatelliteInfoSourceMeego)
+      Q_DISABLE_COPY(QGeoSatelliteInfoSourceGypsy)
       GypsySatellite *satellite;
   };
 
 QTM_END_NAMESPACE
 
-#endif // QGEOSATELLITEINFOSOURCE_MEEGO_H
+#endif // QGEOSATELLITEINFOSOURCE_GYPSY_H
 

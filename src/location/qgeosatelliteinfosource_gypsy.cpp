@@ -1,4 +1,4 @@
-#include "qgeosatelliteinfosource_meego_p.h"
+#include "qgeosatelliteinfosource_gypsy_p.h"
 #include <gypsy/gypsy-control.h>
 #include <gypsy/gypsy-device.h>
 #include <gconf/gconf-client.h>
@@ -17,14 +17,14 @@ static void satellites_changed (GypsySatellite *satellite,
 #ifdef Q_LOCATION_GYPSY_DEBUG
     qDebug() << "Gypsy satellites-changed -signal received.";
 #endif
-    ((QGeoSatelliteInfoSourceMeego*)userdata)->satellitesChanged(satellite, satellites);
+    ((QGeoSatelliteInfoSourceGypsy*)userdata)->satellitesChanged(satellite, satellites);
 }
 
-QGeoSatelliteInfoSourceMeego::QGeoSatelliteInfoSourceMeego(QObject *parent) : QGeoSatelliteInfoSource(parent)
+QGeoSatelliteInfoSourceGypsy::QGeoSatelliteInfoSourceGypsy(QObject *parent) : QGeoSatelliteInfoSource(parent)
 {
 }
 
-void QGeoSatelliteInfoSourceMeego::satellitesChanged(GypsySatellite* satellite,
+void QGeoSatelliteInfoSourceGypsy::satellitesChanged(GypsySatellite* satellite,
                                                      GPtrArray* satellites)
 {
     Q_UNUSED(satellite)
@@ -46,7 +46,7 @@ void QGeoSatelliteInfoSourceMeego::satellitesChanged(GypsySatellite* satellite,
     emit satellitesInViewUpdated(satellites_in_view);
 }
 
-int QGeoSatelliteInfoSourceMeego::init()
+int QGeoSatelliteInfoSourceGypsy::init()
 {
     GypsyDevice *device;
     GError *error = NULL;
@@ -83,14 +83,14 @@ int QGeoSatelliteInfoSourceMeego::init()
 }
 
 
-void QGeoSatelliteInfoSourceMeego::startUpdates()
+void QGeoSatelliteInfoSourceGypsy::startUpdates()
 {
     g_signal_connect (satellite, "satellites-changed",
                       G_CALLBACK (satellites_changed), this);
 }
 
 
-void QGeoSatelliteInfoSourceMeego::stopUpdates()
+void QGeoSatelliteInfoSourceGypsy::stopUpdates()
 {
 
     g_signal_handlers_disconnect_by_func(G_OBJECT(satellite), (void*)satellites_changed,
@@ -98,11 +98,11 @@ void QGeoSatelliteInfoSourceMeego::stopUpdates()
 
 }
 
-void QGeoSatelliteInfoSourceMeego::requestUpdate(int timeout)
+void QGeoSatelliteInfoSourceGypsy::requestUpdate(int timeout)
 {
     Q_UNUSED(timeout)
 }
 
-#include "moc_qgeosatelliteinfosource_meego_p.cpp"
+#include "moc_qgeosatelliteinfosource_gypsy_p.cpp"
 QTM_END_NAMESPACE
 

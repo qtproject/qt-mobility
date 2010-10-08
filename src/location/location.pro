@@ -113,11 +113,11 @@ maemo5 {
 meego {
     CONFIG += qdbus link_pkgconfig
     PKGCONFIG += geoclue gypsy gconf-2.0
-    SOURCES += qgeopositioninfosource_meego.cpp \
-               qgeosatelliteinfosource_meego.cpp \
+    SOURCES += qgeopositioninfosource_geocluemaster.cpp \
+               qgeosatelliteinfosource_gypsy.cpp \
 
-    HEADERS += qgeopositioninfosource_meego_p.h \
-               qgeosatelliteinfosource_meego_p.h
+    HEADERS += qgeopositioninfosource_geocluemaster_p.h \
+               qgeosatelliteinfosource_gypsy_p.h
 
     QMAKE_PKGCONFIG_REQUIRES = glib-2.0 gconf-2.0 gypsy
     pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
