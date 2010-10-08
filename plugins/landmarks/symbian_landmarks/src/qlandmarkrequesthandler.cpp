@@ -69,6 +69,8 @@ void CLandmarkRequestAO::RunL()
     if (iCancelRequest) {
         // Dont make a next call to NextStep
         // All processing is cancelled now. 
+        //qDebug() << "RunL : request is canceled";
+
         return;
     }
     else if (iOperation) {
@@ -93,6 +95,7 @@ void CLandmarkRequestAO::RunL()
             iParent->iErrorId = iStatus.Int();
             iObserver->HandleCompletionL(iParent);
             WakeupThreads(iStatus.Int());
+            iIsRequestRunning = EFalse;
         }
     }
     // if operation object is not defined.
@@ -101,6 +104,7 @@ void CLandmarkRequestAO::RunL()
         if (err != KErrNone) {
             iStatus = err;
         }
+
         // prepare next request.
         if (iStatus == KPosLmOperationNotComplete || iStatus == KErrLocked || iStatus
             == KErrAccessDenied) {
@@ -126,6 +130,7 @@ void CLandmarkRequestAO::RunL()
             // All processing is done now. Notify observer.
             iObserver->HandleCompletionL(iParent);
             WakeupThreads(iStatus.Int());
+            iIsRequestRunning = EFalse;
         }
     }
 }
@@ -144,6 +149,7 @@ TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
             // All processing is cancelled now. Notify observer.
             iObserver->HandleCompletionL(iParent);
             WakeupThreads(KErrCancel);
+            iIsRequestRunning = EFalse;
             return EFalse;
         }
         // Wait for the first request.
@@ -178,6 +184,7 @@ TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
                 // All processing is done now. Notify observer.
                 iObserver->HandleCompletionL(iParent);
                 WakeupThreads(iStatus.Int());
+                iIsRequestRunning = EFalse;
             }
         }
         // if operation object is not defined.
@@ -208,6 +215,7 @@ TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
                 // All processing is done now. Notify observer.
                 iObserver->HandleCompletionL(iParent);
                 WakeupThreads(iStatus.Int());
+                iIsRequestRunning = EFalse;
             }
         }
     }
@@ -216,6 +224,7 @@ TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
 
 void CLandmarkRequestAO::DoCancel()
 {
+    //qDebug() << "DoCancel : request is canceled";
     if (iOperation) {
         // Only way to cancel the operation is to delete the CPosLmOperation object.
         // Will also take care of cancelling any request which may be pending.
@@ -231,9 +240,10 @@ void CLandmarkRequestAO::DoCancel()
     iParent->iErrorId = KErrCancel;
     TRAPD(err,iObserver->HandleCompletionL(iParent);)
     if (err != KErrNone) {
-        qDebug() << "DoCancel failed with = " << err;
+        //qDebug() << "DoCancel failed with = " << err;
     }
     WakeupThreads(KErrCancel);
+    iIsRequestRunning = EFalse;
 }
 
 CLandmarkRequestAO * CLandmarkRequestAO::NewL(MLandmarkRequestObserver *aObserver,
@@ -252,6 +262,8 @@ CLandmarkRequestAO::~CLandmarkRequestAO()
 
 TBool CLandmarkRequestAO::StartRequest(CPosLandmarkSearch *aLandmarkSearch)
 {
+    //qDebug() << "CLandmarkRequestAO::StartRequest -> Request Started";
+
     if (aLandmarkSearch)
         iParent->iLandmarkSearch = aLandmarkSearch;
 
@@ -265,6 +277,9 @@ TBool CLandmarkRequestAO::StartRequest(CPosLandmarkSearch *aLandmarkSearch)
     // Case where manually do operation on single item out of a list.
     else {
         TRAPD(err, iObserver->HandleExecutionL(iParent, iStatus);)
+
+        //qDebug() << "iObserver->HandleExecutionL";
+
         if (err == KErrNone) {
             iStatus = KRequestPending;
             SetActive();
@@ -277,13 +292,24 @@ TBool CLandmarkRequestAO::StartRequest(CPosLandmarkSearch *aLandmarkSearch)
             //qDebug() << "StartRequest failed with = " << err;
         }
     }
+
+    iIsRequestRunning = ETrue;
+
     return ETrue;
 }
 
 TBool CLandmarkRequestAO::CancelRequest()
 {
+    //qDebug() << "Cancel : request is canceled";
+
     iCancelRequest = ETrue;
+
     Cancel();
+    if (iIsRequestRunning) {
+        //qDebug() << "Cancelling request forcefully";
+        DoCancel();
+    }
+
     if (iParent->iErrorId == KErrCancel)
         return ETrue;
     else
@@ -342,6 +368,9 @@ TBool CLandmarkRequestAO::WaitForFinished(TInt aTime)
         timer.Cancel();
     }
     timer.Close();
+
+    iIsRequestRunning = EFalse;
+
     return IsOperationComplete;
 }
 
