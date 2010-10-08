@@ -109,7 +109,9 @@ QDeclarativeContactModel::QDeclarativeContactModel(QObject *parent) :
 
 QString QDeclarativeContactModel::manager() const
 {
-    return d->m_manager->managerName();
+    if (d->m_manager)
+    	return d->m_manager->managerName();
+    return QString();
 }
 
 

@@ -142,12 +142,12 @@ QGalleryItemRequest::QGalleryItemRequest(QAbstractGallery *gallery, QObject *par
 QGalleryItemRequest::~QGalleryItemRequest()
 {
 }
+
 /*!
     \property QGalleryItemRequest::propertyNames
 
     \brief A list of names of meta-data properties a request should return values for.
 */
-
 
 QStringList QGalleryItemRequest::propertyNames() const
 {
@@ -156,8 +156,18 @@ QStringList QGalleryItemRequest::propertyNames() const
 
 void QGalleryItemRequest::setPropertyNames(const QStringList &names)
 {
-    d_func()->propertyNames = names;
+    if (d_func()->propertyNames != names) {
+        d_func()->propertyNames = names;
+
+        emit propertyNamesChanged();
+    }
 }
+
+/*!
+    \fn QGalleryItemRequest::propertyNamesChanged()
+
+    Signals that the value of \l propertyNames has changed.
+*/
 
 /*!
     \property QGalleryItemRequest::autoUpdate
@@ -169,7 +179,6 @@ void QGalleryItemRequest::setPropertyNames(const QStringList &names)
     finished rather than returning to Inactive.
 */
 
-
 bool QGalleryItemRequest::autoUpdate() const
 {
     return d_func()->autoUpdate;
@@ -177,8 +186,18 @@ bool QGalleryItemRequest::autoUpdate() const
 
 void QGalleryItemRequest::setAutoUpdate(bool enabled)
 {
-    d_func()->autoUpdate = enabled;
+    if (d_func()->autoUpdate != enabled) {
+        d_func()->autoUpdate = enabled;
+
+        emit autoUpdateChanged();
+    }
 }
+
+/*!
+    \fn QGalleryItemRequest::autoUpdateChanged()
+
+    Signals that the value of \l autoUpdate has changed.
+*/
 
 /*!
     \property QGalleryItemRequest::itemId
@@ -193,9 +212,11 @@ QVariant QGalleryItemRequest::itemId() const
 
 void QGalleryItemRequest::setItemId(const QVariant &itemId)
 {
-    d_func()->itemId = itemId;
+    if (d_func()->itemId != itemId) {
+        d_func()->itemId = itemId;
 
-    emit itemIdChanged();
+        emit itemIdChanged();
+    }
 }
 
 /*!

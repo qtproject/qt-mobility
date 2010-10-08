@@ -178,7 +178,7 @@ void QDeclarativeMediaBase::_q_statusChanged()
         case QMediaPlayer::PausedState:
             if (state == QMediaPlayer::StoppedState)
                 emit started();
-            if (m_state = QMediaPlayer::PausedState)
+            if (m_state == QMediaPlayer::PausedState)
                 emit paused();
             
             if (!isPaused && m_paused)

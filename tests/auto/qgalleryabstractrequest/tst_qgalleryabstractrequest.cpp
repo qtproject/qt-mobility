@@ -1098,8 +1098,10 @@ void tst_QGalleryAbstractRequest::setGallery()
     QtGalleryTestRequest copyRequest(QGalleryAbstractRequest::ItemRequest);
     QtGalleryTestRequest moveRequest(QGalleryAbstractRequest::QueryRequest);
 
-    QSignalSpy copySpy(&copyRequest, SIGNAL(supportedChanged()));
-    QSignalSpy moveSpy(&moveRequest, SIGNAL(supportedChanged()));
+    QSignalSpy copyGallerySpy(&copyRequest, SIGNAL(galleryChanged()));
+    QSignalSpy moveGallerySpy(&moveRequest, SIGNAL(galleryChanged()));
+    QSignalSpy copySupportedSpy(&copyRequest, SIGNAL(supportedChanged()));
+    QSignalSpy moveSupportedSpy(&moveRequest, SIGNAL(supportedChanged()));
 
     QVERIFY(copyRequest.gallery() == 0);
     QVERIFY(moveRequest.gallery() == 0);
@@ -1113,15 +1115,19 @@ void tst_QGalleryAbstractRequest::setGallery()
     QVERIFY(moveRequest.gallery()  == &moveGallery);
     QCOMPARE(copyRequest.isSupported(), true);
     QCOMPARE(moveRequest.isSupported(), true);
-    QCOMPARE(copySpy.count(), 1);
-    QCOMPARE(moveSpy.count(), 1);
+    QCOMPARE(copyGallerySpy.count(), 1);
+    QCOMPARE(moveGallerySpy.count(), 1);
+    QCOMPARE(copySupportedSpy.count(), 1);
+    QCOMPARE(moveSupportedSpy.count(), 1);
 
     copyRequest.setGallery(&copyGallery);
     moveRequest.setGallery(&moveGallery);
     QVERIFY(copyRequest.gallery()  == &copyGallery);
     QVERIFY(moveRequest.gallery()  == &moveGallery);
-    QCOMPARE(copySpy.count(), 1);
-    QCOMPARE(moveSpy.count(), 1);
+    QCOMPARE(copyGallerySpy.count(), 1);
+    QCOMPARE(moveGallerySpy.count(), 1);
+    QCOMPARE(copySupportedSpy.count(), 1);
+    QCOMPARE(moveSupportedSpy.count(), 1);
 
     copyRequest.setGallery(&moveGallery);
     moveRequest.setGallery(&copyGallery);
@@ -1130,8 +1136,10 @@ void tst_QGalleryAbstractRequest::setGallery()
     QVERIFY(moveRequest.gallery()  == &copyGallery);
     QCOMPARE(copyRequest.isSupported(), false);
     QCOMPARE(moveRequest.isSupported(), false);
-    QCOMPARE(copySpy.count(), 2);
-    QCOMPARE(moveSpy.count(), 2);
+    QCOMPARE(copyGallerySpy.count(), 2);
+    QCOMPARE(moveGallerySpy.count(), 2);
+    QCOMPARE(copySupportedSpy.count(), 2);
+    QCOMPARE(moveSupportedSpy.count(), 2);
 
     copyRequest.setGallery(0);
     moveRequest.setGallery(0);
@@ -1140,8 +1148,10 @@ void tst_QGalleryAbstractRequest::setGallery()
     QVERIFY(moveRequest.gallery()  == 0);
     QCOMPARE(copyRequest.isSupported(), false);
     QCOMPARE(moveRequest.isSupported(), false);
-    QCOMPARE(copySpy.count(), 3);
-    QCOMPARE(moveSpy.count(), 3);
+    QCOMPARE(copyGallerySpy.count(), 3);
+    QCOMPARE(moveGallerySpy.count(), 3);
+    QCOMPARE(copySupportedSpy.count(), 3);
+    QCOMPARE(moveSupportedSpy.count(), 3);
 }
 
 void tst_QGalleryAbstractRequest::clearGallery()

@@ -63,7 +63,9 @@ public Q_SLOTS:
     void initTestCase();
 
 private Q_SLOTS:
-    void properties();
+    void propertyNames();
+    void autoUpdate();
+    void itemType();
     void executeSynchronous();
     void executeAsynchronous();
     void noResponse();
@@ -189,41 +191,90 @@ void tst_QGalleryTypeRequest::initTestCase()
     qRegisterMetaType<QList<int> >();
 }
 
-void tst_QGalleryTypeRequest::properties()
+void tst_QGalleryTypeRequest::propertyNames()
 {
     const QGalleryProperty titleProperty("title");
     const QGalleryProperty artistProperty("artist");
 
-    const QGalleryType audioType("Audio");
-    const QGalleryType videoType("Video");
-
-    const QGalleryFilter filter = QGalleryMetaDataFilter(QLatin1String("trackNumber"), 12);
-
-    QGalleryTypeRequest request;
-
-    QCOMPARE(request.propertyNames(), QStringList());
-    QCOMPARE(request.autoUpdate(), false);
-    QCOMPARE(request.itemType(), QString());
-
-    request.setPropertyNames(QStringList()
+    const QStringList propertyNames = QStringList()
             << titleProperty
             << artistProperty.name()
             << QLatin1String("album")
-            << QString::fromLatin1("trackNumber"));
-    QCOMPARE(request.propertyNames(), QStringList()
-            << QLatin1String("title")
-            << QLatin1String("artist")
-            << QLatin1String("album")
-            << QLatin1String("trackNumber"));
+            << QLatin1String("trackNumber");
+
+    QGalleryTypeRequest request;
+
+    QSignalSpy spy(&request, SIGNAL(propertyNamesChanged()));
+
+    QCOMPARE(request.propertyNames(), QStringList());
+
+    request.setPropertyNames(QStringList());
+    QCOMPARE(request.propertyNames(), QStringList());
+    QCOMPARE(spy.count(), 0);
+
+    request.setPropertyNames(propertyNames);
+    QCOMPARE(request.propertyNames(), propertyNames);
+    QCOMPARE(spy.count(), 1);
+
+    request.setPropertyNames(propertyNames);
+    QCOMPARE(request.propertyNames(), propertyNames);
+    QCOMPARE(spy.count(), 1);
+
+    request.setPropertyNames(QStringList());
+    QCOMPARE(request.propertyNames(), QStringList());
+    QCOMPARE(spy.count(), 2);
+}
+
+void tst_QGalleryTypeRequest::autoUpdate()
+{
+    QGalleryTypeRequest request;
+
+    QSignalSpy spy(&request, SIGNAL(autoUpdateChanged()));
+
+    QCOMPARE(request.autoUpdate(), false);
+
+    request.setAutoUpdate(false);
+    QCOMPARE(request.autoUpdate(), false);
+    QCOMPARE(spy.count(), 0);
 
     request.setAutoUpdate(true);
     QCOMPARE(request.autoUpdate(), true);
+    QCOMPARE(spy.count(), 1);
 
-    request.setItemType(audioType);
-    QCOMPARE(request.itemType(), QString::fromLatin1("Audio"));
+    request.setAutoUpdate(true);
+    QCOMPARE(request.autoUpdate(), true);
+    QCOMPARE(spy.count(), 1);
 
-    request.setItemType(videoType.name());
-    QCOMPARE(request.itemType(), QString::fromLatin1("Video"));
+    request.setAutoUpdate(false);
+    QCOMPARE(request.autoUpdate(), false);
+    QCOMPARE(spy.count(), 2);
+}
+
+void tst_QGalleryTypeRequest::itemType()
+{
+    const QString itemType = QLatin1String("Audio");
+
+    QGalleryTypeRequest request;
+
+    QSignalSpy spy(&request, SIGNAL(itemTypeChanged()));
+
+    QCOMPARE(request.itemType(), QString());
+
+    request.setItemType(QString());
+    QCOMPARE(request.itemType(), QString());
+    QCOMPARE(spy.count(), 0);
+
+    request.setItemType(itemType);
+    QCOMPARE(request.itemType(), itemType);
+    QCOMPARE(spy.count(), 1);
+
+    request.setItemType(itemType);
+    QCOMPARE(request.itemType(), itemType);
+    QCOMPARE(spy.count(), 1);
+
+    request.setItemType(QString());
+    QCOMPARE(request.itemType(), QString());
+    QCOMPARE(spy.count(), 2);
 }
 
 void tst_QGalleryTypeRequest::executeSynchronous()
