@@ -79,6 +79,7 @@ public:
 
     const QMetaObject* metaObject(const QRemoteServiceRegister::Entry& ident) const;
     QList<QRemoteServiceRegister::Entry> allEntries() const;
+    int totalInstances() const;
 
     QObject* createObjectInstance(const QRemoteServiceRegister::Entry& entry, QUuid& instanceId);
     void removeObjectInstance(const QRemoteServiceRegister::Entry& entry, const QUuid& instanceId);

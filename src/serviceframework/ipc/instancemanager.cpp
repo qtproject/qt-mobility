@@ -158,8 +158,6 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& 
     if (!metaMap.contains(entry))
         return;
 
-    emit instanceClosed(entry);
-
     ServiceIdentDescriptor& descr = metaMap[entry];
     if (descr.entryData->instanceType == QRemoteServiceRegister::GlobalInstance) {        
         if (descr.globalRefCount < 1)
@@ -180,11 +178,29 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& 
         if (service) {
             service->deleteLater();
         }
-        metaMap.remove(entry);
-    }
-    if(metaMap.empty())
-        emit allInstancesClosed();
 
+        if (descr.individualInstances.size() < 1)
+            metaMap.remove(entry);
+    }
+    emit instanceClosed(entry);
+   
+    // Check that no instances are open
+    if (totalInstances() < 1)
+        emit allInstancesClosed();
+}
+
+int InstanceManager::totalInstances() const
+{
+    int total = 0;
+
+    QList<QRemoteServiceRegister::Entry> allEntries = metaMap.keys();
+    foreach (const QRemoteServiceRegister::Entry& entry, allEntries) {
+        ServiceIdentDescriptor descr = metaMap[entry];
+        total += descr.globalRefCount;
+        total += descr.individualInstances.size();
+    }
+
+    return total;
 }
 
 #include "moc_instancemanager_p.cpp"
