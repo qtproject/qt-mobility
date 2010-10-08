@@ -903,6 +903,7 @@ void tst_QDeclarativeVideo::geometry()
     QVideoSurfaceFormat format(QSize(640, 480), QVideoFrame::Format_RGB32);
 
     QVERIFY(surface->start(format));
+    QCoreApplication::processEvents();
 
     QCOMPARE(video.implicitWidth(), qreal(640));
     QCOMPARE(video.implicitHeight(), qreal(480));
