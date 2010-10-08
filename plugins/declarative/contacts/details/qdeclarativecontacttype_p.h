@@ -49,7 +49,7 @@ class QDeclarativeContactType : public QDeclarativeContactDetail
 {
     Q_OBJECT
     Q_PROPERTY(QString type READ type WRITE setType NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "type")
 public:
     enum FieldType {

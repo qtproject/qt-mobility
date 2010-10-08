@@ -50,7 +50,7 @@ class QDeclarativeContactGuid : public QDeclarativeContactDetail
 {
     Q_OBJECT
     Q_PROPERTY(QString guid READ guid WRITE setGuid NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "guid")
 public:
     enum FieldType {

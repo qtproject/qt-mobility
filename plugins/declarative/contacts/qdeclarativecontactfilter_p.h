@@ -54,8 +54,8 @@ class QDeclarativeContactFilter : public QObject
 
     Q_PROPERTY(FilterType type READ type NOTIFY typeChanged)
 
-    Q_ENUMS(FilterType);
-    Q_FLAGS(MatchFlags);
+    Q_ENUMS(FilterType)
+    Q_FLAGS(MatchFlags)
 public:
     QDeclarativeContactFilter(QObject *parent=0)
         :QObject(parent)

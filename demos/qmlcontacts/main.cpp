@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 
     QmlApplicationViewer viewer;
     viewer.setOrientation(QmlApplicationViewer::Auto);
-    viewer.setMainQmlFile(QLatin1String("contacts.qml"));
+    viewer.setMainQmlFile(QLatin1String("qrc:/contacts.qml"));
     viewer.show();
 
     return app.exec();

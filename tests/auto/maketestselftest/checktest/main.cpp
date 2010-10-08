@@ -39,59 +39,61 @@
 **
 ****************************************************************************/
 
-#include "qremoteservicecontrol_p.h"
+#include <QCoreApplication>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QStringList>
 
-QTM_BEGIN_NAMESPACE
+#include <stdio.h>
+#include <stdlib.h>
 
-
-static bool defSecurityFilter(const void *)
+void fail(QString const& message)
 {
-    return true;
+    printf("CHECKTEST FAIL: %s\n", qPrintable(message));
+    exit(0);
 }
 
-
-QRemoteServiceControlPrivate::QRemoteServiceControlPrivate(QObject* parent)
-    : QObject(parent), m_quit(true), iFilter(defSecurityFilter)
+void pass(QString const& message)
 {
+    printf("CHECKTEST PASS: %s\n", qPrintable(message));
+    exit(0);
 }
 
-QRemoteServiceControlPrivate::~QRemoteServiceControlPrivate()
-{  
-}
-
-//void QRemoteServiceControlPrivate::publishServices( const QString& ident)
-//{
-//  qWarning("QRemoteServiceControlPrivate::publishServices has not been reimplemented");
-//}
-//
-//void QRemoteServiceControlPrivate::processIncoming()
-//{
-//  qWarning("QRemoteServiceControlPrivate::processIncoming has not been reimplemented");
-//}
-
-bool QRemoteServiceControlPrivate::quitOnLastInstanceClosed() const
+int main(int argc, char** argv)
 {
-  return m_quit;
+    QCoreApplication app(argc, argv);
+
+    QStringList args = app.arguments();
+    args.removeFirst(); // ourself
+
+    QString args_quoted = QString("'%1'").arg(args.join("','"));
+
+#ifdef Q_WS_QWS
+    {
+        // for QWS we expect tests to be run as the QWS server
+        QString qws = args.takeLast();
+        if (qws != "-qws") {
+            fail(QString("Expected test to be run with `-qws', but it wasn't; args: %1").arg(args_quoted));
+        }
+    }
+#endif
+
+    if (args.count() != 1) {
+        fail(QString("These arguments are not what I expected: %1").arg(args_quoted));
+    }
+
+    QString test = args.at(0);
+
+    QFileInfo testfile(test);
+    if (!testfile.exists()) {
+        fail(QString("File %1 does not exist (my working directory is: %2, my args are: %3)")
+            .arg(test)
+            .arg(QDir::currentPath())
+            .arg(args_quoted)
+        );
+    }
+
+    pass(args_quoted);
 }
 
-void QRemoteServiceControlPrivate::setQuitOnLastInstanceClosed(bool quit)
-{  
-  m_quit = quit;
-}
-
-QRemoteServiceControl::securityFilter QRemoteServiceControlPrivate::setSecurityFilter(QRemoteServiceControl::securityFilter filter)
-{
-    QRemoteServiceControl::securityFilter f;
-    f = filter;
-    iFilter = filter;
-    return f;
-}
-
-QRemoteServiceControl::securityFilter QRemoteServiceControlPrivate::getSecurityFilter()
-{
-    return iFilter;
-}
-
-
-#include "moc_qremoteservicecontrol_p.cpp"
-QTM_END_NAMESPACE
