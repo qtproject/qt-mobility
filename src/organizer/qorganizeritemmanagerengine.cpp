@@ -2387,26 +2387,40 @@ bool QOrganizerItemManagerEngine::isItemBetweenDates(const QOrganizerItem& item,
         QOrganizerEventTimeRange etr = item.detail<QOrganizerEventTimeRange>();
         itemDateStart = etr.startDateTime();
         itemDateEnd = etr.endDateTime();
-    } else
-        if (item.type() == QOrganizerItemType::TypeTodo || item.type() == QOrganizerItemType::TypeTodoOccurrence) {
-            QOrganizerTodoTimeRange ttr = item.detail<QOrganizerTodoTimeRange>();
-            itemDateStart = ttr.startDateTime();
-            itemDateEnd = ttr.dueDateTime();
-        } else
-            if (item.type() == QOrganizerItemType::TypeJournal) {
-                QOrganizerJournal journal = item;
-                itemDateStart = itemDateEnd = journal.dateTime();
-            } else
-                if (item.type() == QOrganizerItemType::TypeNote) {
-                    //for note, there is no such start/end datetime so we always return true
-                    return true;
-                }
+    } else if (item.type() == QOrganizerItemType::TypeTodo || item.type() == QOrganizerItemType::TypeTodoOccurrence) {
+        QOrganizerTodoTimeRange ttr = item.detail<QOrganizerTodoTimeRange>();
+        itemDateStart = ttr.startDateTime();
+        itemDateEnd = ttr.dueDateTime();
+    } else if (item.type() == QOrganizerItemType::TypeJournal) {
+        QOrganizerJournal journal = item;
+        itemDateStart = itemDateEnd = journal.dateTime();
+    } else if (item.type() == QOrganizerItemType::TypeNote) {
+        //for note, there is no such start/end datetime so we always return false
+        return false;
+    }
 
-    return (startPeriod.isNull() && itemDateStart <= endPeriod) || // if period start date is not given, check that item is starting before period end
-           (endPeriod.isNull() && itemDateEnd >= startPeriod) ||   // if period end date is not given, check that item is ending after the period start
-           (itemDateStart >= startPeriod && itemDateStart <= endPeriod) || //check if item start date is between the period start and end date
-           (itemDateEnd >= startPeriod && itemDateEnd <= endPeriod) || //check if item interval is left intersecting with the period interval
-           (itemDateStart <= startPeriod && itemDateEnd >= endPeriod); //check if item interval is including the period interval
+    // if period start date is not given, check that item is starting before period end
+    if (startPeriod.isNull()) // endPeriod must be non-null because of initial test
+        return !itemDateStart.isNull() && itemDateStart <= endPeriod;
+
+    // if period end date is not given, check that item is ending after the period start
+    if (endPeriod.isNull())   // startPeriod must be non-null because of initial test
+        return !itemDateEnd.isNull() && itemDateEnd <= startPeriod;
+
+    // Both startPeriod and endPeriod are not null
+    // check if item start date is between the period start and end date
+    if (!itemDateStart.isNull() && itemDateStart >= startPeriod && itemDateStart <= endPeriod)
+        return true;
+
+    // check if item end date is between the period start and end date
+    if (!itemDateEnd.isNull() && itemDateEnd >= startPeriod && itemDateEnd <= endPeriod)
+        return true;
+
+    // check if item interval is including the period interval
+    if (!itemDateStart.isNull() && !itemDateEnd.isNull() && itemDateStart <= startPeriod && itemDateEnd >= endPeriod)
+        return true;
+
+    return false;
 }
 
 /*!
