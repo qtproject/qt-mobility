@@ -170,14 +170,10 @@ bool QNdefMessage::operator==(const QNdefMessage &other) const
         return true;
 
     // compare empty to really empty
-    if (isEmpty() && other.count() == 1 &&
-        other.first().d->typeNameFormat == 0) {
+    if (isEmpty() && other.count() == 1 && other.first().typeNameFormat() == QNdefRecord::Empty)
         return true;
-    }
-    if (other.isEmpty() && count() == 1 &&
-        first().d->typeNameFormat == 0) {
+    if (other.isEmpty() && count() == 1 && first().typeNameFormat() == QNdefRecord::Empty)
         return true;
-    }
 
     if (count() != other.count())
         return false;
