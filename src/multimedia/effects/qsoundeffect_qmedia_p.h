@@ -70,6 +70,8 @@ public:
     explicit QSoundEffectPrivate(QObject* parent);
     ~QSoundEffectPrivate();
 
+    static QStringList supportedMimeTypes();
+
     QUrl source() const;
     void setSource(const QUrl &url);
     int loopCount() const;

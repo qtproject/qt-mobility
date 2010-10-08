@@ -82,6 +82,8 @@ public:
     explicit QSoundEffect(QObject *parent = 0);
     ~QSoundEffect();
 
+    static QStringList supportedMimeTypes();
+
     QUrl source() const;
     void setSource(const QUrl &url);
 

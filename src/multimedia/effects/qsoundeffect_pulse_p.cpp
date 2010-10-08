@@ -276,6 +276,13 @@ QSoundEffectPrivate::~QSoundEffectPrivate()
     clearTasks();
 }
 
+QStringList QSoundEffectPrivate::supportedMimeTypes()
+{
+    QStringList supportedTypes;
+    supportedTypes << QLatin1String("audio/x-wav") << QLatin1String("audio/vnd.wave") ;
+    return supportedTypes;
+}
+
 QUrl QSoundEffectPrivate::source() const
 {
     return m_source;

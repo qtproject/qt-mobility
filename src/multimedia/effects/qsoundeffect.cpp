@@ -155,6 +155,11 @@ QSoundEffect::~QSoundEffect()
     d->deleteLater();
 }
 
+QStringList QSoundEffect::supportedMimeTypes()
+{
+    return QSoundEffectPrivate::supportedMimeTypes();
+}
+
 QUrl QSoundEffect::source() const
 {
     return d->source();

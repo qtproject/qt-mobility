@@ -75,6 +75,11 @@ QSoundEffectPrivate::~QSoundEffectPrivate()
 {
 }
 
+QStringList QSoundEffectPrivate::supportedMimeTypes()
+{
+    return QMediaPlayer::supportedMimeTypes();
+}
+
 QUrl QSoundEffectPrivate::source() const
 {
     return m_player->media().canonicalUrl();

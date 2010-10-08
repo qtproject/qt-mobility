@@ -54,6 +54,7 @@
 
 #include <QtCore/qcoreapplication.h>
 #include <QtGui/qsound.h>
+#include <QtCore/qstringlist.h>
 
 
 QT_BEGIN_NAMESPACE
@@ -71,6 +72,13 @@ QSoundEffectPrivate::QSoundEffectPrivate(QObject* parent):
 
 QSoundEffectPrivate::~QSoundEffectPrivate()
 {
+}
+
+QStringList QSoundEffectPrivate::supportedMimeTypes()
+{
+    QStringList supportedTypes;
+    supportedTypes << QLatin1String("audio/x-wav") << QLatin1String("audio/vnd.wave") ;
+    return supportedTypes;
 }
 
 QUrl QSoundEffectPrivate::source() const
