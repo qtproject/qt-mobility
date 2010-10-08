@@ -102,16 +102,20 @@ QAbstractVideoSurface::QAbstractVideoSurface(QObject *parent)
 }
 
 
-#if 0
-// Since we need to build without access to Qt's private headers we can't reliably inherit
-// from QObjectPrivate.  Binary compatability means we can't remove this constructor or
-// add a d pointer to QAbstractVideoSurface.  What we can remove is the definition of
-// QAbstractVideoSurfacePrivate, without which there is no need to implement this constructor.
-QAbstractVideoSurface::QAbstractVideoSurface(QAbstractVideoSurfacePrivate &dd, QObject *parent)
-    : QObject(dd, parent)
+/*!
+    \internal
+
+    This is deprecated.
+
+    Since we need to build without access to Qt's private headers we can't reliably inherit
+    from QObjectPrivate.  Binary compatability means we can't remove this constructor or
+    add a d pointer to QAbstractVideoSurface.
+*/
+
+QAbstractVideoSurface::QAbstractVideoSurface(QAbstractVideoSurfacePrivate &, QObject *parent)
+    : QObject(parent)
 {
 }
-#endif
 
 /*!
     Destroys a video surface.
