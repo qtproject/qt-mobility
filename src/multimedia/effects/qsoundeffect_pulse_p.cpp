@@ -97,10 +97,11 @@ inline pa_sample_spec audioFormatToSampleSpec(const QAudioFormat &format)
     return spec;
 }
 
-class PulseDaemon
+class PulseDaemon : public QObject
 {
+    Q_OBJECT
 public:
-    PulseDaemon():m_prepared(false)
+    PulseDaemon(): m_prepared(false)
     {
         prepare();
     }
@@ -131,6 +132,9 @@ public:
         return m_vol;
     }
 
+Q_SIGNALS:
+    void contextReady();
+
 private:
     void prepare()
     {
@@ -153,9 +157,8 @@ private:
         lock();
         m_context = pa_context_new(m_mainLoopApi, QString(QLatin1String("QtPulseAudio:%1")).arg(::getpid()).toAscii().constData());
 
-#if defined(Q_WS_MAEMO_5)
         pa_context_set_state_callback(m_context, context_state_callback, this);
-#endif
+
         if (m_context == 0) {
             qWarning("PulseAudioService: Unable to create new pulseaudio context");
             pa_threaded_mainloop_free(m_mainLoop);
@@ -181,7 +184,6 @@ private:
         m_prepared = false;
     }
 
-#if defined(Q_WS_MAEMO_5)
     static void context_state_callback(pa_context *c, void *userdata)
     {
         PulseDaemon *self = reinterpret_cast<PulseDaemon*>(userdata);
@@ -191,19 +193,26 @@ private:
             case PA_CONTEXT_SETTING_NAME:
                 break;
             case PA_CONTEXT_READY:
+    #if defined(Q_WS_MAEMO_5)
                 pa_ext_stream_restore_set_subscribe_cb(c, &stream_restore_monitor_callback, self);
                 pa_ext_stream_restore_subscribe(c, 1, NULL, self);
+    #endif
+                QMetaObject::invokeMethod(self, "contextReady", Qt::QueuedConnection);
                 break;
             default:
                 break;
         }
     }
-    static void stream_restore_monitor_callback(pa_context *c, void *userdata)
+
+#if defined(Q_WS_MAEMO_5)
+
+    void stream_restore_monitor_callback(pa_context *c, void *userdata)
     {
         PulseDaemon *self = reinterpret_cast<PulseDaemon*>(userdata);
         pa_ext_stream_restore2_read(c, &stream_restore_info_callback, self);
     }
-    static void stream_restore_info_callback(pa_context *c, const pa_ext_stream_restore2_info *info,
+
+    void stream_restore_info_callback(pa_context *c, const pa_ext_stream_restore2_info *info,
             int eol, void *userdata)
     {
         Q_UNUSED(c)
@@ -227,6 +236,7 @@ private:
     pa_threaded_mainloop *m_mainLoop;
     pa_mainloop_api *m_mainLoopApi;
 };
+
 }
 
 Q_GLOBAL_STATIC(PulseDaemon, daemon)
@@ -248,7 +258,6 @@ QSoundEffectPrivate::QSoundEffectPrivate(QObject* parent):
     m_pulseStream(0),
     m_timerID(0),
     m_waveDecoder(0),
-    m_contextCheckTimerID(0),
     m_writeCallbackPulseStream(0),
     m_networkAccessManager(0)
 {
@@ -363,12 +372,10 @@ void QSoundEffectPrivate::decoderReady()
     if (m_name.isNull())
         m_name = QString(QLatin1String("QtPulseSample-%1-%2")).arg(::getpid()).arg(quintptr(this)).toUtf8();
 
-    Q_ASSERT(m_contextCheckTimerID == 0);
-
     daemon()->lock();
 
     if (pa_context_get_state(daemon()->context()) != PA_CONTEXT_READY) {
-        m_contextCheckTimerID = startTimer(100);
+        connect(daemon(), SIGNAL(contextReady()), SLOT(contextReady()));
         daemon()->unlock();
         return;
     }
@@ -519,25 +526,21 @@ void QSoundEffectPrivate::createPulseStream()
 
 void QSoundEffectPrivate::timerEvent(QTimerEvent *event)
 {
-    int timerID = event->timerId();
-    if (timerID == m_contextCheckTimerID) {
-        daemon()->lock();
-        if (pa_context_get_state(daemon()->context()) != PA_CONTEXT_READY) {
-            daemon()->unlock();
-            return;
-        }
-        createPulseStream();
-        daemon()->unlock();
-        m_contextCheckTimerID = 0;
-    } else {
-        Q_ASSERT(m_runningCount != 0);
-        if (m_runningCount < 0)
-            playSample();
-        else if (--m_runningCount > 0)
-            playSample();
-        m_timerID = 0;
-    }
-    killTimer(timerID);
+    Q_ASSERT(m_runningCount != 0);
+    if (m_runningCount < 0)
+        playSample();
+    else if (--m_runningCount > 0)
+        playSample();
+    m_timerID = 0;
+    killTimer(event->timerId());
+}
+
+void QSoundEffectPrivate::contextReady()
+{
+    qWarning("context ready callback");
+    daemon()->lock();
+    createPulseStream();
+    daemon()->unlock();
 }
 
 void QSoundEffectPrivate::clearTasks()
@@ -553,9 +556,7 @@ void QSoundEffectPrivate::clearTasks()
         m_stream->deleteLater();
     m_stream = 0;
 
-    if (m_contextCheckTimerID != 0)
-        killTimer(m_contextCheckTimerID);
-    m_contextCheckTimerID = 0;
+    disconnect(daemon(), SIGNAL(contextReady()), this, SLOT(contextReady()));
 
     if (m_pulseStream) {
         daemon()->lock();
@@ -604,3 +605,4 @@ void QSoundEffectPrivate::play_callback(pa_context *c, int success, void *userda
 QT_END_NAMESPACE
 
 #include "moc_qsoundeffect_pulse_p.cpp"
+#include "qsoundeffect_pulse_p.moc"

@@ -100,6 +100,7 @@ private Q_SLOTS:
     void decoderError();
     void checkPlayTime();
     void uploadSample();
+    void contextReady();
 
 private:
     void loadSample();
@@ -117,7 +118,6 @@ private:
 
     pa_stream *m_pulseStream;
     pa_stream *m_writeCallbackPulseStream;
-    int     m_contextCheckTimerID;
     int     m_timerID;
 
     bool    m_retry;
