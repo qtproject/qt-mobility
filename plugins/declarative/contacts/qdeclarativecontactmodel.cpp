@@ -314,6 +314,7 @@ void QDeclarativeContactModel::contactFetched()
         QList<QDeclarativeContact*> dcs;
         foreach(QContact c, contacts) {
             dcs.append(new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()), this));
+            qDebug() << "id: " << c.localId() << " label:" << c.displayLabel();
         }
 
         reset();
@@ -412,6 +413,7 @@ QVariant QDeclarativeContactModel::data(const QModelIndex &index, int role) cons
 {
     QDeclarativeContact* dc = d->m_contacts.value(index.row());
     QContact c = dc->contact();
+    qDebug() << "id: " << c.localId() << " label:" << c.displayLabel();
     switch(role) {
         case Qt::DisplayRole:
             return c.displayLabel();

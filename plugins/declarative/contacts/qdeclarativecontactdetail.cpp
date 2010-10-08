@@ -40,7 +40,7 @@
 
 #include "qdeclarativecontactdetail_p.h"
 #include "qcontactdetails.h"
-
+#include <QDebug>
 QDeclarativeContactDetail::QDeclarativeContactDetail(QObject* parent)
     :QObject(parent)
 {
