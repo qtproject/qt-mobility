@@ -39,34 +39,76 @@
 **
 ****************************************************************************/
 
-#ifndef QREMOTESERVICECONTROL_LS_P_H
-#define QREMOTESERVICECONTROL_LS_P_H
+#ifndef QREMOTESERVICEREGISTER_DBUS_P_H
+#define QREMOTESERVICEREGISTER_DBUS_P_H
 
-#include "qremoteservicecontrol.h"
+#include "qremoteserviceregister.h"
 #include "instancemanager_p.h"
 #include "qserviceinterfacedescriptor.h"
-#include "qremoteservicecontrol_p.h"
-#include <QLocalServer>
+#include <QUuid>
+#include <QtDBus/QtDBus>
 
 QTM_BEGIN_NAMESPACE
 
 class ObjectEndPoint;
 
-class QRemoteServiceControlLocalSocketPrivate: public QRemoteServiceControlPrivate
+class DBusSession: public QObject, protected QDBusContext
 {
     Q_OBJECT
 public:
-    QRemoteServiceControlLocalSocketPrivate(QObject* parent);
+    DBusSession() {} 
+    ~DBusSession() {}
+
+public slots:
+    QByteArray writePackage(const QByteArray &package, int type, const QString &id) {
+        emit packageReceived(package, type, id); 
+        return package; 
+    }
+
+    bool processIncoming() { 
+        int pid = connection().interface()->servicePid(message().service());
+        int uid = connection().interface()->serviceUid(message().service());
+        emit newConnection(pid, uid);
+        return m_accept;
+    }
+
+    void acceptIncoming(bool accept) {
+        m_accept = accept;
+    }
+
+    void closeIncoming() {
+        emit closeConnection();
+    }
+
+Q_SIGNALS:
+    void packageReceived(const QByteArray &package, int type, const QString &id);
+    void newConnection(int pid, int uid);
+    void closeConnection();
+
+private:
+    bool m_accept;
+};
+
+
+class QRemoteServiceRegisterDBusPrivate: public QRemoteServiceRegisterPrivate
+{
+    Q_OBJECT
+public:
+    QRemoteServiceRegisterDBusPrivate(QObject* parent);
+    ~QRemoteServiceRegisterDBusPrivate();
     void publishServices(const QString& ident );
 
 public slots:
-    void processIncoming();
-    
+    void processIncoming(int pid, int uid);
+    void processClosing();
+
 private:
     bool createServiceEndPoint(const QString& ident);
 
-    QLocalServer* localServer;
     QList<ObjectEndPoint*> pendingConnections;
+    QDBusInterface *iface;
+    DBusSession *session;
+    int instanceCount;
 };
 
 QTM_END_NAMESPACE

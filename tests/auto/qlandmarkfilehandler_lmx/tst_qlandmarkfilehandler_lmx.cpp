@@ -78,7 +78,7 @@ public:
 Q_DECLARE_METATYPE(QList<QLandmark>);
 Q_DECLARE_METATYPE(QList<QLandmarkCategory>);
 
-class tst_QLandmarkLmxHandler : public QObject
+class tst_QLandmarkFileHandler_Lmx : public QObject
 {
     Q_OBJECT
 
@@ -614,5 +614,5 @@ private:
     }
 };
 
-QTEST_MAIN(tst_QLandmarkLmxHandler)
+QTEST_MAIN(tst_QLandmarkFileHandler_Lmx)
 #include "tst_qlandmarkfilehandler_lmx.moc"
