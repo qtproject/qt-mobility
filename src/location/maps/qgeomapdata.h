@@ -72,7 +72,7 @@ public:
     QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
     virtual ~QGeoMapData();
 
-    virtual void setup();
+    virtual void init();
 
     virtual void setWindowSize(const QSizeF &size);
     virtual QSizeF windowSize() const;

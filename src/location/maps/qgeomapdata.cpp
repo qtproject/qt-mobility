@@ -110,7 +110,14 @@ QGeoMapData::~QGeoMapData()
     delete d;
 }
 
-void QGeoMapData::setup()
+/*!
+    This function is run after the QGeoMapData instance has been 
+    constructed.
+
+    Any subclasses which override this function should make sure that
+    QGeoMapData::init() is called within the body of the overridding function.
+*/
+void QGeoMapData::init()
 {
     d_ptr->containerObject = new QGeoMapGroupObject(this);
 }
