@@ -599,11 +599,14 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
         landmarkId.setLocalId((query.value(0).toString()));
 
         if (action == "ADD") {
-            addedLandmarkIds << landmarkId;
+            if (!addedLandmarkIds.contains(landmarkId))
+                addedLandmarkIds << landmarkId;
         } else if (action == "CHANGE") {
-            changedLandmarkIds << landmarkId;
+            if (!changedLandmarkIds.contains(landmarkId))
+                changedLandmarkIds << landmarkId;
         } else if (action == "REMOVE") {
-            removedLandmarkIds << landmarkId;
+            if (!removedLandmarkIds.contains(landmarkId))
+                removedLandmarkIds << landmarkId;
         }
     }
 
@@ -649,11 +652,14 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
         categoryId.setLocalId(query.value(0).toString());
 
         if (action == "ADD") {
-            addedCategoryIds << categoryId;
+            if (!addedCategoryIds.contains(categoryId))
+                addedCategoryIds << categoryId;
         } else if (action == "CHANGE") {
+            if (!changedCategoryIds.contains(categoryId))
             changedCategoryIds << categoryId;
         } else if (action == "REMOVE") {
-            removedCategoryIds << categoryId;
+            if (!removedCategoryIds.contains(categoryId))
+                removedCategoryIds << categoryId;
         }
     }
 

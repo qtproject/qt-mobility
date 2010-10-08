@@ -2593,9 +2593,8 @@ void tst_QLandmarkManager::simpleRemoveCategory()
     QCOMPARE(spyLmAdd.count(), 0);
     QCOMPARE(spyLmChange.count(), 1);
     QCOMPARE(spyLmRemove.count(), 0);
+    QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().count(), 2);
 
-    QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().count(), 3);
-    QVERIFY(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().contains(lm1.landmarkId()));
     QVERIFY(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().contains(lm2.landmarkId()));
     QVERIFY(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().contains(lm3.landmarkId()));
 }
@@ -2706,10 +2705,9 @@ void tst_QLandmarkManager::removeCategory() {
 #endif
 #else
         QCOMPARE(spyLmChange.count(), 1);
-        QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().count(), 3);
-        QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-        QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm1.landmarkId());
-        QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().at(2), lm2.landmarkId());
+        QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().count(), 2);
+        QVERIFY(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().contains(lm1.landmarkId()));
+        QVERIFY(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().contains(lm2.landmarkId()));
 #endif
     }
     else if (type == "async") {
@@ -4889,7 +4887,7 @@ void tst_QLandmarkManager::importGpx() {
 #ifdef Q_OS_SYMBIAN
     prefix = "";
 #else
-    prefix = ":"
+    prefix = ":";
 #endif
      int originalCategoryCount = m_manager->categoryIds().count();
 
@@ -5156,7 +5154,7 @@ void tst_QLandmarkManager::importGpx() {
 #ifndef Q_OS_SYMBIAN //skip cancel on symbian
     if (type == "async") {
         int originalLandmarksCount = m_manager->landmarks().count();
-        spy.clear();?
+        spy.clear();
         importRequest.setFileName(":data/AUS-PublicToilet-NewSouthWales.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
@@ -5560,7 +5558,7 @@ void tst_QLandmarkManager::filterLandmarksUnion() {
 
     unionFilter.clear();
     unionFilter << catFilter1 << catFilter2 << catFilter3;
-    QVERIFY(doFetch(type,unionFilter, &lms, QLandmarkManager::DoesNotExistError));
+    QVERIFY(doFetch(type,unionFilter, &lms, QLandmarkManager::CategoryDoesNotExistError));
     QCOMPARE(lms.count(), 0);
 
     QList<QLandmarkFilter> filters;
