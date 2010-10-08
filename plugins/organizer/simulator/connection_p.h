@@ -84,10 +84,18 @@ public:
     // should live in the engine?
     bool mNotifySimulator;
 
-    typedef QHash<QOrganizerItemLocalId, QOrganizerItemLocalId> ItemIdTranslation;
-    void translateItemIds(QOrganizerItem *item, const QString &managerUri, const ItemIdTranslation &idTranslation);
-    ItemIdTranslation mRemoteToLocalItemIds;
-    ItemIdTranslation mLocalToRemoteItemIds;
+    class LocalIdTranslation
+    {
+    public:
+        QHash<QOrganizerItemLocalId, QOrganizerItemLocalId> items;
+        QHash<QOrganizerCollectionLocalId, QOrganizerCollectionLocalId> collections;
+    };
+
+    void translateItemIds(QOrganizerItem *item, const QString &managerUri, const LocalIdTranslation &idTranslation);
+    void translateCollectionIds(QOrganizerCollection *collection, const QString &managerUri, const LocalIdTranslation &idTranslation);
+
+    LocalIdTranslation mRemoteToLocal;
+    LocalIdTranslation mLocalToRemote;
 
     QString mManagerUri;
 
@@ -95,9 +103,13 @@ private slots:
     // called remotely
     void setOrganizerManagerUri(QString uri);
     void initialOrganizerDataSent();
-    void clearOrganizerItems();
-    void saveOrganizerItem(QtMobility::QOrganizerItem item);
-    void removeOrganizerItem(QOrganizerItemLocalId id);
+    void clearOrganizerData();
+
+    void saveOrganizerItem(QtMobility::QOrganizerItem item, QtMobility::QOrganizerCollectionId collectionId);
+    void removeOrganizerItem(QtMobility::QOrganizerItemLocalId id);
+
+    void saveOrganizerCollection(QtMobility::QOrganizerCollection collection);
+    void removeOrganizerCollection(QtMobility::QOrganizerCollectionLocalId id);
 
 private:
     void getInitialData();

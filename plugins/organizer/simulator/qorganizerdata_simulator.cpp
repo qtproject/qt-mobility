@@ -80,7 +80,9 @@ QTM_BEGIN_NAMESPACE
 void qt_registerOrganizerTypes()
 {
     qRegisterMetaTypeStreamOperators<QOrganizerItem>("QtMobility::QOrganizerItem");
+    qRegisterMetaTypeStreamOperators<QOrganizerCollection>("QtMobility::QOrganizerCollection");
     qRegisterMetaTypeStreamOperators<QOrganizerItemLocalId>("QtMobility::QOrganizerItemLocalId");
+    qRegisterMetaTypeStreamOperators<QOrganizerCollectionId>("QtMobility::QOrganizerCollectionId");
     qRegisterMetaTypeStreamOperators<Simulator::SaveOrganizerItemReply>("QtMobility::Simulator::SaveOrganizerItemReply");
 }
 
