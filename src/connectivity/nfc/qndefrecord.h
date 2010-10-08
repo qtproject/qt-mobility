@@ -98,8 +98,6 @@ protected:
     QNdefRecord(quint8 typeNameFormat, const QByteArray &type);
 
 private:
-    friend class QNdefMessage;
-
     QSharedDataPointer<QNdefRecordPrivate> d;
 };
 
