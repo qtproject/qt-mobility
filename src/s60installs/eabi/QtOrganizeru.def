@@ -910,20 +910,18 @@ EXPORTS
 	_ZTVN10QtMobility21QOrganizerItemManagerE @ 909 NONAME
 	_ZTVN10QtMobility25QOrganizerItemSaveRequestE @ 910 NONAME
 	_ZTVN10QtMobility26QOrganizerItemFetchRequestE @ 911 NONAME
-	_ZTVN10QtMobility27QOrganizerItemEngineLocalIdE @ 912 NONAME
-	_ZTVN10QtMobility27QOrganizerItemManagerEngineE @ 913 NONAME
-	_ZTVN10QtMobility27QOrganizerItemRemoveRequestE @ 914 NONAME
-	_ZTVN10QtMobility29QOrganizerItemAbstractRequestE @ 915 NONAME
-	_ZTVN10QtMobility31QOrganizerCollectionSaveRequestE @ 916 NONAME
-	_ZTVN10QtMobility32QOrganizerCollectionFetchRequestE @ 917 NONAME
-	_ZTVN10QtMobility33QOrganizerCollectionEngineLocalIdE @ 918 NONAME
-	_ZTVN10QtMobility33QOrganizerCollectionRemoveRequestE @ 919 NONAME
-	_ZTVN10QtMobility33QOrganizerItemLocalIdFetchRequestE @ 920 NONAME
-	_ZTVN10QtMobility34QOrganizerItemInstanceFetchRequestE @ 921 NONAME
-	_ZTVN10QtMobility34QOrganizerItemManagerEngineFactoryE @ 922 NONAME
-	_ZTVN10QtMobility35QOrganizerItemFetchForExportRequestE @ 923 NONAME
-	_ZTVN10QtMobility39QOrganizerCollectionLocalIdFetchRequestE @ 924 NONAME
-	_ZTVN10QtMobility41QOrganizerItemDetailDefinitionSaveRequestE @ 925 NONAME
-	_ZTVN10QtMobility42QOrganizerItemDetailDefinitionFetchRequestE @ 926 NONAME
-	_ZTVN10QtMobility43QOrganizerItemDetailDefinitionRemoveRequestE @ 927 NONAME
+	_ZTVN10QtMobility27QOrganizerItemManagerEngineE @ 912 NONAME
+	_ZTVN10QtMobility27QOrganizerItemRemoveRequestE @ 913 NONAME
+	_ZTVN10QtMobility29QOrganizerItemAbstractRequestE @ 914 NONAME
+	_ZTVN10QtMobility31QOrganizerCollectionSaveRequestE @ 915 NONAME
+	_ZTVN10QtMobility32QOrganizerCollectionFetchRequestE @ 916 NONAME
+	_ZTVN10QtMobility33QOrganizerCollectionRemoveRequestE @ 917 NONAME
+	_ZTVN10QtMobility33QOrganizerItemLocalIdFetchRequestE @ 918 NONAME
+	_ZTVN10QtMobility34QOrganizerItemInstanceFetchRequestE @ 919 NONAME
+	_ZTVN10QtMobility34QOrganizerItemManagerEngineFactoryE @ 920 NONAME
+	_ZTVN10QtMobility35QOrganizerItemFetchForExportRequestE @ 921 NONAME
+	_ZTVN10QtMobility39QOrganizerCollectionLocalIdFetchRequestE @ 922 NONAME
+	_ZTVN10QtMobility41QOrganizerItemDetailDefinitionSaveRequestE @ 923 NONAME
+	_ZTVN10QtMobility42QOrganizerItemDetailDefinitionFetchRequestE @ 924 NONAME
+	_ZTVN10QtMobility43QOrganizerItemDetailDefinitionRemoveRequestE @ 925 NONAME
 
