@@ -128,6 +128,13 @@ bool QOrganizerCollection::operator==(const QOrganizerCollection &other) const
 }
 
 /*!
+  \fn QOrganizerCollection::operator!=(const QOrganizerCollection &other) const
+
+  Returns true if the id of the collection is not the same as that of the \a other collection.
+  Does not check that the metadata of the collections is not equal.
+ */
+
+/*!
   Returns the manager-local id of the collection
  */
 QOrganizerCollectionLocalId QOrganizerCollection::localId() const

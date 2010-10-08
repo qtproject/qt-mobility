@@ -67,7 +67,7 @@ public:
         PrivateInstance       //every new request for service gets new service instance
     };
 
-    typedef QObject *(*CreateServiceFunc)();
+    typedef (QObject *)(*CreateServiceFunc)();
     
     class Q_SERVICEFW_EXPORT Entry {
         //TODO docs for Entry class

@@ -97,6 +97,21 @@ QTM_BEGIN_NAMESPACE
   This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
+ /*!
+  \fn QOrganizerItemManager::collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal is emitted at some point once some collections identified by \a collectionIds have been added from a datastore managed by this manager.
+ */
+
+ /*!
+  \fn QOrganizerItemManager::collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal is emitted at some point once some collections identified by \a collectionIds have been changed from a datastore managed by this manager.
+ */
+
+ /*!
+  \fn QOrganizerItemManager::collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal is emitted at some point once some collections identified by \a collectionIds have been removed from a datastore managed by this manager.
+ */
+
 
 
 #define makestr(x) (#x)

@@ -144,6 +144,22 @@ QTM_BEGIN_NAMESPACE
   \sa dataChanged()
  */
 
+
+  /*!
+  \fn QOrganizerItemManagerEngine::collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal is emitted at some point once some collections identified by \a collectionIds have been added from a datastore managed by this manager.
+ */
+
+ /*!
+  \fn QOrganizerItemManagerEngine::collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal is emitted at some point once some collections identified by \a collectionIds have been changed from a datastore managed by this manager.
+ */
+
+ /*!
+  \fn QOrganizerItemManagerEngine::collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal is emitted at some point once some collections identified by \a collectionIds have been removed from a datastore managed by this manager.
+ */
+
 /*! Returns the manager name for this QOrganizerItemManagerEngine */
 QString QOrganizerItemManagerEngine::managerName() const
 {
@@ -2807,7 +2823,7 @@ void QOrganizerItemManagerEngine::updateDefinitionFetchRequest(QOrganizerItemDet
 }
 
 /*!
-  Updates the given QOrganizerCollectionFetchRequest \a req with the latest results \a result, and operation error \a error.
+  Updates the given QOrganizerCollectionFetchRequest \a req with the latest results \a result, operation error \a error, and a error map list \a errorMap.
   In addition, the state of the request will be changed to \a newState.
 
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
