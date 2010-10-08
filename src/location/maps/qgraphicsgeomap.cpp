@@ -143,8 +143,13 @@ QGraphicsGeoMap::QGraphicsGeoMap(QGeoMappingManager *manager, QGraphicsItem *par
     Q_ASSERT(manager != 0);
     d_ptr->manager = manager;
 
-    d_ptr->mapData = d_ptr->manager->createMapData(this);
+    d_ptr->mapData = d_ptr->manager->createMapData();
     d_ptr->mapData->init();
+
+    connect(d_ptr->mapData,
+            SIGNAL(updateMapDisplay(QRectF)),
+            this,
+            SLOT(updateMapDisplay(QRectF)));
 
     setMapType(QGraphicsGeoMap::StreetMap);
     d_ptr->mapData->setWindowSize(size());
@@ -208,6 +213,11 @@ void QGraphicsGeoMap::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 {
     if (d_ptr->mapData)
         d_ptr->mapData->paint(painter, option);
+}
+
+void QGraphicsGeoMap::updateMapDisplay(const QRectF &target)
+{
+    update(target);
 }
 
 /*!
