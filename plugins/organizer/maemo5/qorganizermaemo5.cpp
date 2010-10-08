@@ -633,9 +633,14 @@ void QOrganizerItemMaemo5Engine::internalAddOccurances(QList<QOrganizerItem>* so
         if (containsRecurrenceInformation(cevent)) {
             // Get event instance times
             std::vector< std::time_t > eventInstanceDates;
-            cevent->generateInstanceTimes(startDate.toTime_t(), endDate.toTime_t(), eventInstanceDates);
+            bool dontGenerateOccurrences = startDate.isNull() && endDate.isNull() && forExport;
+            if (!dontGenerateOccurrences) {
+                time_t realStartDate = startDate.isNull() ? cevent->getDateStart() : startDate.toTime_t();
+                time_t realEndDate = endDate.isNull() ? realStartDate + 157680000 : endDate.toTime_t();
+                cevent->generateInstanceTimes(realStartDate, realEndDate, eventInstanceDates);
+            }
 
-            if (eventInstanceDates.size() > 0) {
+            if (dontGenerateOccurrences || eventInstanceDates.size() > 0) {
                 if (forExport) {
                     if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
                         QOrganizerItemManagerEngine::addSorted(sorted, item, sortOrders);

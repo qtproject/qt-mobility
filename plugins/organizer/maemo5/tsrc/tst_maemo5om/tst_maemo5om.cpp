@@ -98,7 +98,7 @@ void tst_Maemo5Om::init()
 {
     m_om = new QOrganizerItemManager(managerName);
     // Remove all organizer items first (Note: ignores possible errors)
-    // m_om->removeItems(m_om->itemIds(), 0);
+    // m_om->removeItems(m_om->itemIds());
 }
 
 void tst_Maemo5Om::cleanup()
@@ -416,6 +416,9 @@ void tst_Maemo5Om::addEventExceptions()
 
 void tst_Maemo5Om::addEventExceptionWithGuid()
 {
+    // remove old items otherwise test will fail
+    m_om->removeItems(m_om->itemIds(QDateTime(QDate(2009, 12, 24)), QDateTime(QDate(2009, 12, 27)), QOrganizerItemFilter()));
+
     // Set up some recurring items
     QOrganizerEvent christmas;
     christmas.setGuid("christmas");
@@ -872,6 +875,14 @@ void tst_Maemo5Om::getCollections()
 
 void tst_Maemo5Om::saveCollection()
 {
+    //remove old collections with the same name if exists
+    QList<QOrganizerCollection> colls = m_om->collections(m_om->collectionIds());
+    foreach (QOrganizerCollection c, colls) {
+        if (c.metaData("Name") == "New calendar") {
+            m_om->removeCollection(c.localId());
+            break;
+        }
+    }
     QOrganizerCollection newCollection;
     // These metadata fields are Maemo5 specific:
     newCollection.setMetaData("Name", "New calendar");
@@ -920,6 +931,14 @@ void tst_Maemo5Om::removeCollection()
 
 void tst_Maemo5Om::saveItemsToNewCollection()
 {
+    //remove old collections with the same name if exists
+    QList<QOrganizerCollection> colls = m_om->collections(m_om->collectionIds());
+    foreach (QOrganizerCollection c, colls) {
+        if (c.metaData("Name") == "New items") {
+            m_om->removeCollection(c.localId());
+            break;
+        }
+    }
     QOrganizerCollection newCollection;
     newCollection.setMetaData("Name", "New items");
     newCollection.setMetaData("Color", "White");
@@ -1108,8 +1127,8 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     // Get all the instances of the new collection
     QList<QOrganizerItem> newCollectionInstances = m_om->items(newCollectionFilter, noSort);
 
-    // The count should be 11 (10 instances are generated with the recurrence rule and one is added later)
-    QCOMPARE(newCollectionInstances.count(), 11);
+    // The count should be 14 (10 instances are generated with the recurrence rule and one is added later + the 3 static ones)
+    QCOMPARE(newCollectionInstances.count(), 14);
 
     // Get all the instances of the default collection
     QList<QOrganizerItem> defaultCollectionInstances = m_om->items(defaultCollectionFilter, noSort);
