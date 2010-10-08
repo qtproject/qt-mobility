@@ -95,26 +95,26 @@ void tst_QFeedbackPlugin::cleanup()
 void tst_QFeedbackPlugin::testPlugin()
 {
     // first get the actuators.  we want to use the test plugin actuator.
-    QFeedbackActuator testActuator;
-    QList<QFeedbackActuator> actuators = QFeedbackActuator::actuators();
-    foreach (const QFeedbackActuator& temp, actuators) {
-        if (temp.name() == "test plugin") {
+    QFeedbackActuator* testActuator;
+    QList<QFeedbackActuator*> actuators = QFeedbackActuator::actuators();
+    foreach (QFeedbackActuator* temp, actuators) {
+        if (temp->name() == "test plugin") {
             testActuator = temp;
             break;
         }
     }
 
     // make sure we found the test actuator...
-    QCOMPARE(testActuator.name(), QString("test plugin"));
-    QCOMPARE(testActuator.id(), 7357); // test
-    QVERIFY(testActuator.isCapabilitySupported(QFeedbackActuator::Period));
-    testActuator.setEnabled(true);
-    QVERIFY(!testActuator.isEnabled()); // the test plugin always returns enabled = false.
-    testActuator.setEnabled(false);
-    QVERIFY(!testActuator.isEnabled()); // the test plugin always returns enabled = false.
-    testActuator.setEnabled(true);
-    QVERIFY(!testActuator.isEnabled()); // the test plugin always returns enabled = false.
-    QCOMPARE(testActuator.state(), QFeedbackActuator::Unknown); // and it always returns state = unknown.
+    QCOMPARE(testActuator->name(), QString("test plugin"));
+    QCOMPARE(testActuator->id(), 7357); // test
+    QVERIFY(testActuator->isCapabilitySupported(QFeedbackActuator::Period));
+    testActuator->setEnabled(true);
+    QVERIFY(!testActuator->isEnabled()); // the test plugin always returns enabled = false.
+    testActuator->setEnabled(false);
+    QVERIFY(!testActuator->isEnabled()); // the test plugin always returns enabled = false.
+    testActuator->setEnabled(true);
+    QVERIFY(!testActuator->isEnabled()); // the test plugin always returns enabled = false.
+    QCOMPARE(testActuator->state(), QFeedbackActuator::Unknown); // and it always returns state = unknown.
     // XXX TODO: ensure that a "working" plugin returns real values..
 
 #if 0

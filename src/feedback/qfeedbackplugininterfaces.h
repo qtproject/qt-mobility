@@ -87,7 +87,7 @@ public:
     };
 
     //static members for actuators management
-    virtual QList<QFeedbackActuator> actuators() = 0;
+    virtual QList<QFeedbackActuator*> actuators() = 0;
     virtual ~QFeedbackHapticsInterface() {}
 
     virtual PluginPriority pluginPriority() = 0;
@@ -106,7 +106,7 @@ public:
 
 protected:
     //utility function for the backends
-    QFeedbackActuator createFeedbackActuator(int id);
+    QFeedbackActuator* createFeedbackActuator(QObject* parent, int id);
 };
 
 class QFeedbackThemeInterface : public QFeedbackInterface
