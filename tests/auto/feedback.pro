@@ -8,3 +8,6 @@ SUBDIRS += \
     qfeedbackhapticseffect \
     qfeedbackplugin
 
+contains(QT_CONFIG, declarative) {
+    SUBDIRS += qdeclarativefeedback
+}
