@@ -39,9 +39,18 @@
 **
 ****************************************************************************/
 
-#include "qabstractvideosurface_p.h"
+//TESTED_COMPONENT=src/multimedia
+
+#include "qabstractvideosurface.h"
+
+#include "qvideosurfaceformat.h"
+
+#include <QtCore/qvariant.h>
 
 QT_BEGIN_NAMESPACE
+
+Q_DECLARE_METATYPE(QVideoSurfaceFormat)
+Q_DECLARE_METATYPE(QAbstractVideoSurface::Error)
 
 /*!
     \class QAbstractVideoSurface
@@ -84,16 +93,27 @@ QT_BEGIN_NAMESPACE
 */
 
 QAbstractVideoSurface::QAbstractVideoSurface(QObject *parent)
-    : QObject(*new QAbstractVideoSurfacePrivate, parent)
+    : QObject(parent)
 {
+    setProperty("_q_surfaceFormat", QVariant::fromValue(QVideoSurfaceFormat()));
+    setProperty("_q_active", false);
+    setProperty("_q_error", QVariant::fromValue(QAbstractVideoSurface::NoError));
+    setProperty("_q_nativeResolution", QSize());
 }
+
 
 /*!
     \internal
+
+    This is deprecated.
+
+    Since we need to build without access to Qt's private headers we can't reliably inherit
+    from QObjectPrivate.  Binary compatability means we can't remove this constructor or
+    add a d pointer to QAbstractVideoSurface.
 */
 
-QAbstractVideoSurface::QAbstractVideoSurface(QAbstractVideoSurfacePrivate &dd, QObject *parent)
-    : QObject(dd, parent)
+QAbstractVideoSurface::QAbstractVideoSurface(QAbstractVideoSurfacePrivate &, QObject *parent)
+    : QObject(parent)
 {
 }
 
@@ -161,7 +181,7 @@ QVideoSurfaceFormat QAbstractVideoSurface::nearestFormat(const QVideoSurfaceForm
 
 QVideoSurfaceFormat QAbstractVideoSurface::surfaceFormat() const
 {
-    return d_func()->format;
+    return property("_q_format").value<QVideoSurfaceFormat>();
 }
 
 /*!
@@ -182,15 +202,13 @@ QVideoSurfaceFormat QAbstractVideoSurface::surfaceFormat() const
 
 bool QAbstractVideoSurface::start(const QVideoSurfaceFormat &format)
 {
-    Q_D(QAbstractVideoSurface);
+    bool wasActive  = property("_q_active").toBool();
 
-    bool wasActive  = d->active;
+    setProperty("_q_active", true);
+    setProperty("_q_format", QVariant::fromValue(format));
+    setProperty("_q_error", QVariant::fromValue(NoError));
 
-    d->active = true;
-    d->format = format;
-    d->error = NoError;
-
-    emit surfaceFormatChanged(d->format);
+    emit surfaceFormatChanged(format);
 
     if (!wasActive)
         emit activeChanged(true);
@@ -206,14 +224,12 @@ bool QAbstractVideoSurface::start(const QVideoSurfaceFormat &format)
 
 void QAbstractVideoSurface::stop()
 {
-    Q_D(QAbstractVideoSurface);
-
-    if (d->active) {
-        d->format = QVideoSurfaceFormat();
-        d->active = false;
+    if (property("_q_active").toBool()) {
+        setProperty("_q_format", QVariant::fromValue(QVideoSurfaceFormat()));
+        setProperty("_q_active", false);
 
         emit activeChanged(false);
-        emit surfaceFormatChanged(d->format);
+        emit surfaceFormatChanged(surfaceFormat());
     }
 }
 
@@ -225,7 +241,7 @@ void QAbstractVideoSurface::stop()
 
 bool QAbstractVideoSurface::isActive() const
 {
-    return d_func()->active;
+    return property("_q_active").toBool();
 }
 
 /*!
@@ -266,7 +282,7 @@ bool QAbstractVideoSurface::isActive() const
 
 QAbstractVideoSurface::Error QAbstractVideoSurface::error() const
 {
-    return d_func()->error;
+    return property("_q_error").value<QAbstractVideoSurface::Error>();
 }
 
 /*!
@@ -275,9 +291,9 @@ QAbstractVideoSurface::Error QAbstractVideoSurface::error() const
 
 void QAbstractVideoSurface::setError(Error error)
 {
-    Q_D(QAbstractVideoSurface);
-
-    d->error = error;
+    setProperty("_q_error", QVariant::fromValue(error));
 }
 
 QT_END_NAMESPACE
+
+#include "moc_qabstractvideosurface.cpp"
