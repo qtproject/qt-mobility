@@ -569,7 +569,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         // Visual reminder (alarm)
         QOrganizerItemVisualReminder reminder = item->detail<QOrganizerItemVisualReminder>();
 
-        if (!reminder.isEmpty()) {
+        if (!reminder.isEmpty() && dateStartForAlarm.isValid()) {
             QDateTime deltaDateTime = dateStartForAlarm.addSecs(-reminder.secondsBeforeStart());
 
             // Set alarm for the ccomponent
