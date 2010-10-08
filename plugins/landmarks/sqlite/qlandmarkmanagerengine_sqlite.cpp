@@ -472,6 +472,11 @@ bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkId &landmarkId, QLa
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
+    QList<QLandmarkId> landmarkIds;
+    landmarkIds << landmarkId;
+    QMap<int, QLandmarkManager::Error> errorMap;
+    QList<QLandmark> lms = m_databaseOperations.landmarks(landmarkIds, &errorMap, error, errorString);
+    Q_ASSERT(lms.count() == 1);
 
     return false;
 }
@@ -483,6 +488,11 @@ bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkCategoryId &categor
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
+    QList<QLandmarkCategoryId> categoryIds;
+    categoryIds << categoryId;
+    QMap<int, QLandmarkManager::Error> errorMap;
+    QList<QLandmarkCategory> cats = m_databaseOperations.categories(categoryIds, &errorMap, error, errorString);
+    Q_ASSERT(cats.count() == 1);
     return false;
 }
 
@@ -589,11 +599,14 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
         landmarkId.setLocalId((query.value(0).toString()));
 
         if (action == "ADD") {
-            addedLandmarkIds << landmarkId;
+            if (!addedLandmarkIds.contains(landmarkId))
+                addedLandmarkIds << landmarkId;
         } else if (action == "CHANGE") {
-            changedLandmarkIds << landmarkId;
+            if (!changedLandmarkIds.contains(landmarkId))
+                changedLandmarkIds << landmarkId;
         } else if (action == "REMOVE") {
-            removedLandmarkIds << landmarkId;
+            if (!removedLandmarkIds.contains(landmarkId))
+                removedLandmarkIds << landmarkId;
         }
     }
 
@@ -639,11 +652,14 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
         categoryId.setLocalId(query.value(0).toString());
 
         if (action == "ADD") {
-            addedCategoryIds << categoryId;
+            if (!addedCategoryIds.contains(categoryId))
+                addedCategoryIds << categoryId;
         } else if (action == "CHANGE") {
+            if (!changedCategoryIds.contains(categoryId))
             changedCategoryIds << categoryId;
         } else if (action == "REMOVE") {
-            removedCategoryIds << categoryId;
+            if (!removedCategoryIds.contains(categoryId))
+                removedCategoryIds << categoryId;
         }
     }
 

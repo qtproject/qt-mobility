@@ -59,6 +59,7 @@ class Q_LOCATION_EXPORT QGraphicsGeoMap : public QGraphicsWidget
 {
     Q_OBJECT
     Q_ENUMS(MapType)
+    Q_ENUMS(ConnectivityMode)
 
     Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel CONSTANT)
     Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel CONSTANT)
@@ -83,11 +84,8 @@ public:
         HybridMode
     };
 
-    QGraphicsGeoMap(QGraphicsItem *parent = 0);
     QGraphicsGeoMap(QGeoMappingManager *manager, QGraphicsItem *parent = 0);
     virtual ~QGraphicsGeoMap();
-
-    void setMappingManager(QGeoMappingManager *manager);
 
     QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *parent);
