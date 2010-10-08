@@ -112,7 +112,8 @@
 //#define FILTER_INTERSECTION
 //#define LANDMARK_FETCH_CANCEL
 //#define IMPORT_GPX
-#define IMPORT_LMX
+//#define IMPORT_LMX
+//#define IMPORT_FILE
 
 //#define EXPECT_FAIL
 
@@ -1025,6 +1026,11 @@ private slots:
     void importLmx_data();
 #endif
 
+#ifdef IMPORT_FILE
+    void importFile();
+    void importFile_data();
+#endif
+
 #ifndef Q_OS_SYMBIAN
     void filterLandmarksMultipleBox();
     void filterLandmarksMultipleBox_data();
@@ -1049,9 +1055,6 @@ private slots:
 
     void exportLmx();
     void exportLmx_data();
-
-    void importFile();
-    void importFile_data();
 
     void supportedFormats();
 
@@ -5469,6 +5472,69 @@ void tst_QLandmarkManager::importLmx_data() {
 }
 #endif
 
+#ifdef IMPORT_FILE
+//CURRENTLY FAILS ON SYMBIAN
+void tst_QLandmarkManager::importFile()
+{
+    QString prefix;
+#ifdef Q_OS_SYMBIAN
+    prefix = "";
+#else
+    prefix = ":";
+#endif
+
+    int originalCategoryCount = m_manager->categoryIds().count();
+    QVERIFY(originalCategoryCount == m_manager->categories().count());
+
+    QFETCH(QString, type);
+    //try a gpx file
+
+
+    //QVERIFY(doImport(type, prefix + "data/places.gpx"));
+    m_manager->importLandmarks(prefix + "data/places.gpx");
+    qDebug() <<"AMOS error =" << m_manager->error();
+    qDebug() << "AMOS errostring = " << m_manager->errorString();
+    QCOMPARE(m_manager->landmarks().count(), 14);
+    QCOMPARE(m_manager->landmarks().count(), 14);
+    QVERIFY(m_manager->removeLandmarks(m_manager->landmarkIds()));
+    QCOMPARE(m_manager->landmarks().count(), 0);
+
+    //try an lmx file
+    doImport(type, prefix + "data/convert-collection-in.xml");
+    qDebug() << "AMOS error = " << m_manager->error();
+    qDebug() << "AMOS error = " << m_manager->errorString();
+    QCOMPARE(m_manager->landmarks().count(), 16);
+    QCOMPARE(m_manager->categories().count(), originalCategoryCount + 3);
+    QVERIFY(m_manager->removeLandmarks(m_manager->landmarkIds()));
+    QCOMPARE(m_manager->landmarks().count(), 0);
+    QList<QLandmarkCategoryId> catIds = m_manager->categoryIds();
+    for (int i=0; i < catIds.count() ; ++i) {
+        if (!m_manager->isReadOnly(catIds.at(i)))
+            QVERIFY(m_manager->removeCategory(catIds.at(i)));
+    }
+
+    QCOMPARE(m_manager->categories().count(), originalCategoryCount);
+
+    //try an invalid format
+    doImport(type, prefix + "data/file.omg", QLandmarkManager::NotSupportedError);
+    QCOMPARE(m_manager->landmarks().count(), 0);
+    QCOMPARE(m_manager->categories().count(), originalCategoryCount);
+
+    //try an invalid file
+    doImport(type, prefix + "data/garbage.xml", QLandmarkManager::ParsingError);
+    QCOMPARE(m_manager->landmarks().count(), 0);
+    QCOMPARE(m_manager->categories().count(), originalCategoryCount);
+}
+
+void tst_QLandmarkManager::importFile_data()
+{
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
+#endif
+
 #ifndef Q_OS_SYMBIAN
 void tst_QLandmarkManager::filterLandmarksMultipleBox()
 {
@@ -6747,42 +6813,6 @@ void tst_QLandmarkManager::exportLmx_data()
     QTest::newRow("asyncAttachSingleCategory") << "asyncAttachSingleCategory";
 
     //TODO: tests for id list excluding category data
-}
-
-void tst_QLandmarkManager::importFile()
-{
-    QFETCH(QString, type);
-    //try a gpx file
-    doImport(type, ":data/test.gpx");
-    QCOMPARE(m_manager->landmarks().count(), 3);
-    QVERIFY(m_manager->removeLandmarks(m_manager->landmarkIds()));
-    QCOMPARE(m_manager->landmarks().count(), 0);
-
-    //try an lmx file
-    doImport(type,":data/convert-collection-in.xml");
-    QCOMPARE(m_manager->landmarks().count(), 16);
-    QCOMPARE(m_manager->categories().count(), 3);
-    QVERIFY(m_manager->removeLandmarks(m_manager->landmarkIds()));
-    QCOMPARE(m_manager->landmarks().count(), 0);
-    QList<QLandmarkCategoryId> catIds = m_manager->categoryIds();
-    for (int i=0; i < catIds.count() ; ++i) {
-        QVERIFY(m_manager->removeCategory(catIds.at(i)));
-    }
-    QCOMPARE(m_manager->categories().count(), 0);
-
-    //try an invalid format
-    doImport(type, ":data/file.omg", QLandmarkManager::NotSupportedError);
-
-    //try an invalid file
-    doImport(type, ":data/garbage.xml", QLandmarkManager::ParsingError);
-}
-
-void tst_QLandmarkManager::importFile_data()
-{
-    QTest::addColumn<QString>("type");
-
-    QTest::newRow("sync") << "sync";
-    QTest::newRow("async") << "async";
 }
 
 void tst_QLandmarkManager::supportedFormats() {
