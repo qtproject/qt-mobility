@@ -126,6 +126,12 @@
 #define PREVIEW_CAPS_4_3 \
     "video/x-raw-rgb, width = (int) 640, height = (int) 480"
 
+//using GST_STATE_READY for QCamera::LoadedState
+//doesn't work reliably at least with some webcams.
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_5)
+#define USE_READY_STATE_ON_LOADED
+#endif
+
 static gboolean imgCaptured(GstElement *camera, const gchar *filename, gpointer user_data);
 
 CameraBinSession::CameraBinSession(QObject *parent)
@@ -138,10 +144,11 @@ CameraBinSession::CameraBinSession(QObject *parent)
      m_audioInputFactory(0),
      m_videoInputFactory(0),
      m_viewfinder(0),
+     m_viewfinderInterface(0),
      m_pipeline(0),
      m_videoSrc(0),
-     m_viewfinderHasChanged(false),
-     m_videoInputHasChanged(false),
+     m_viewfinderHasChanged(true),
+     m_videoInputHasChanged(true),
      m_sourceCaps(0),
      m_audioSrc(0),
      m_audioConvert(0),
@@ -233,12 +240,19 @@ bool CameraBinSession::setupCameraBin()
     }
 
     if (m_viewfinderInterface) {
-        GstElement *preview = m_viewfinderInterface->videoSink();
-        if (!preview) {
-            qWarning() << "Staring camera without viewfinder available";
-            preview = gst_element_factory_make("fakesink", NULL);
+        if (m_viewfinderHasChanged) {
+            GstElement *preview = m_viewfinderInterface->videoSink();
+#if CAMERABIN_DEBUG
+            qDebug() << Q_FUNC_INFO << "Viewfinder changed, reconfigure.";
+#endif
+            m_viewfinderHasChanged = false;
+            if (!preview) {
+                qWarning() << "Staring camera without viewfinder available";
+                preview = gst_element_factory_make("fakesink", NULL);
+            }
+            gst_element_set_state(m_pipeline, GST_STATE_NULL);
+            g_object_set(G_OBJECT(m_pipeline), VIEWFINDER_SINK_PROPERTY, preview, NULL);
         }
-        g_object_set(G_OBJECT(m_pipeline), VIEWFINDER_SINK_PROPERTY, preview, NULL);
     }
 
     GstCaps *previewCaps = gst_caps_from_string(PREVIEW_CAPS_4_3);
@@ -289,6 +303,26 @@ void CameraBinSession::setupCaptureResolution()
         GstCaps *previewCaps = gst_caps_from_string(previewCapsString.toLatin1());
         g_object_set(G_OBJECT(m_pipeline), PREVIEW_CAPS_PROPERTY, previewCaps, NULL);
         gst_caps_unref(previewCaps);
+
+#ifdef Q_WS_MAEMO_5
+        //it's also necessary to setup video resolution,
+        //which is used for viewfinder
+
+        QSize viewfinderResolution(640, 480);
+        int viewfinderRate = 2993;
+        if (!resolution.isEmpty() && resolution.width()*2 > resolution.height()*3) {
+            viewfinderResolution = QSize(800, 450);
+            viewfinderRate = 2988;
+        }
+
+        g_signal_emit_by_name(G_OBJECT(m_pipeline),
+                              SET_VIDEO_RESOLUTION_FPS,
+                              viewfinderResolution.width(),
+                              viewfinderResolution.height(),
+                              viewfinderRate,
+                              100, // framerate denom
+                              NULL);
+#endif
     }
 
     if (m_captureMode == QCamera::CaptureVideo) {
@@ -340,8 +374,6 @@ void CameraBinSession::captureImage(int requestId, const QString &fileName)
         actualFileName = generateFileName("img_", defaultDir(QCamera::CaptureStillImage), "jpg");
 
     m_requestId = requestId;
-
-    setupCaptureResolution();
 
     g_object_set(G_OBJECT(m_pipeline), FILENAME_PROPERTY, actualFileName.toLocal8Bit().constData(), NULL);
 
@@ -463,7 +495,7 @@ void CameraBinSession::setViewfinder(QObject *viewfinder)
 
         if (m_viewfinder) {
             disconnect(m_viewfinder, SIGNAL(sinkChanged()),
-                       this, SIGNAL(viewfinderChanged()));
+                       this, SLOT(handleViewfinderChange()));
             disconnect(m_viewfinder, SIGNAL(readyChanged(bool)),
                        this, SIGNAL(readyChanged(bool)));
         }
@@ -473,7 +505,7 @@ void CameraBinSession::setViewfinder(QObject *viewfinder)
 
         if (m_viewfinder) {
             connect(m_viewfinder, SIGNAL(sinkChanged()),
-                       this, SIGNAL(viewfinderChanged()));
+                       this, SLOT(handleViewfinderChange()));
             connect(m_viewfinder, SIGNAL(readyChanged(bool)),
                     this, SIGNAL(readyChanged(bool)));
         }
@@ -482,6 +514,14 @@ void CameraBinSession::setViewfinder(QObject *viewfinder)
         if (oldReady != isReady())
             emit readyChanged(isReady());
     }
+}
+
+void CameraBinSession::handleViewfinderChange()
+{
+    //the viewfinder will be reloaded
+    //shortly when the pipeline is started
+    m_viewfinderHasChanged = true;
+    emit viewfinderChanged();
 }
 
 QCamera::State CameraBinSession::state() const
@@ -502,25 +542,48 @@ void CameraBinSession::setState(QCamera::State newState)
 
     switch (newState) {
     case QCamera::UnloadedState:
-    case QCamera::LoadedState:
         //focus is lost at least on n900 when the state is changed from Active to Idle
         if (m_state == QCamera::ActiveState)
             emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
 
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
         m_state = newState;
-        if (m_state == QCamera::LoadedState && m_videoInputHasChanged) {
+        emit stateChanged(m_state);
+        break;
+    case QCamera::LoadedState:
+        //focus is lost at least on n900 when the state is changed from Active to Idle
+        if (m_state == QCamera::ActiveState)
+            emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
+
+        if (m_videoInputHasChanged) {
+            gst_element_set_state(m_pipeline, GST_STATE_NULL);
             m_videoSrc = buildVideoSrc();
             g_object_set(m_pipeline, VIDEO_SOURCE_PROPERTY, m_videoSrc, NULL);
             updateVideoSourceCaps();
             m_videoInputHasChanged = false;
         }
+#ifdef USE_READY_STATE_ON_LOADED
+        gst_element_set_state(m_pipeline, GST_STATE_READY);
+#else
+        m_state = QCamera::LoadedState;
+        gst_element_set_state(m_pipeline, GST_STATE_NULL);
         emit stateChanged(m_state);
+#endif
         break;
     case QCamera::ActiveState:
         if (setupCameraBin()) {
-            m_pendingResolutionUpdate = true;
-            gst_element_set_state(m_pipeline, GST_STATE_READY);
+            GstState binState = GST_STATE_NULL;
+            GstState pending = GST_STATE_NULL;
+            gst_element_get_state(m_pipeline, &binState, &pending, 0);
+
+            if (pending == GST_STATE_VOID_PENDING && binState == GST_STATE_READY) {
+                m_pendingResolutionUpdate = false;
+                setupCaptureResolution();
+                gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
+            } else {
+                m_pendingResolutionUpdate = true;
+                gst_element_set_state(m_pipeline, GST_STATE_READY);
+            }
         }
     }
 }
@@ -648,7 +711,10 @@ bool CameraBinSession::processSyncMessage(const QGstreamerMessage &message)
                         }
                         gst_caps_unref(caps);
 
-                        emit imageExposed(m_requestId);
+                        static int exposedSignalIndex = metaObject()->indexOfSignal("imageExposed(int)");
+                        metaObject()->method(exposedSignalIndex).invoke(this,
+                                                                 Qt::QueuedConnection,
+                                                                 Q_ARG(int,m_requestId));
 
                         static int signalIndex = metaObject()->indexOfSignal("imageCaptured(int,QImage)");
                         metaObject()->method(signalIndex).invoke(this,
@@ -703,19 +769,38 @@ void CameraBinSession::busMessage(const QGstreamerMessage &message)
             GError *err;
             gchar *debug;
             gst_message_parse_error (gm, &err, &debug);
-            emit error(int(QMediaRecorder::ResourceError), QString::fromUtf8(err->message));
-            qWarning() << "CameraBin error:" << QString::fromUtf8(err->message);
-            g_error_free (err);
-            g_free (debug);
+
+            QString message;
+
+            if (err && err->message) {
+                message = QString::fromUtf8(err->message);
+                qWarning() << "CameraBin error:" << message;
+            }
+
+            if (message.isEmpty())
+                message = tr("Camera error");
+
+            emit error(int(QMediaRecorder::ResourceError), message);
+
+            if (err)
+                g_error_free (err);
+
+            if (debug)
+                g_free (debug);
         }
 
         if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_WARNING) {
             GError *err;
             gchar *debug;
-            gst_message_parse_error (gm, &err, &debug);
-            qWarning() << "CameraBin warning:" << QString::fromUtf8(err->message);
-            g_error_free (err);
-            g_free (debug);
+            gst_message_parse_warning (gm, &err, &debug);
+
+            if (err && err->message)
+                qWarning() << "CameraBin warning:" << QString::fromUtf8(err->message);
+
+            if (err)
+                g_error_free (err);
+            if (debug)
+                g_free (debug);
         }
 
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_pipeline)) {

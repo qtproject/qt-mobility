@@ -80,24 +80,16 @@ private:
     void SelfComplete();
     // Initialize/reset member variables so that these 
 	// can be used by the next request
-    void Cleanup();
+    void Reset();
     
 private: // Worker functions
-    // Fetch itemInstance
     void FetchInstance();
-    // Save item/entry in agenda server
     void SaveItem();
-    // Fetch items/entries from agenda server
     void FetchItems();
-    // Fetch items/entries by local Ids
     void FetchItemsByLocalIds();
-    // Fetch items/entries by details
     void FetchItemsandFilter();
-    // Fetch items ids
     void FetchItemIds();
-    // Remove items/entries
     void RemoveItem();
-    // Fetch detail definition
     void FetchDetailDefinition();
     void FetchCollections();
     void SaveCollections();

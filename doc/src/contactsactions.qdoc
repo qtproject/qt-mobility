@@ -98,10 +98,10 @@ you must do four things:
 \endlist
 
 For more information on the QServicePluginInterface and the format of the service description
-xml, please see the \l{Service Framework}{Qt Mobility Service Framework} documentation.
+xml, please see the \l{Qt Service Framework}{Qt Mobility Service Framework} documentation.
 An example action plugin is provided later in this document.
 
-Note that while the plugins are loaded by the \l{Service Framework}{Qt Mobility Service Framework},
+Note that while the plugins are loaded by the \l{Qt Service Framework}{Qt Mobility Service Framework},
 clients of the Qt Contacts Action API are entirely shielded from this implementation detail.
 
 The QContactActionDescriptor class is actually a client-facing interface to an action factory,
@@ -115,7 +115,7 @@ icons and labels) documented in QContactActionDescriptor, to allow client applic
 provide meaningful user interface elements to represent the action.
 
 We recommend that action implementors read the documentation of the
-\l{Service Framework}{Qt Mobility Service Framework} carefully, to better understand
+\l{Qt Service Framework}{Qt Mobility Service Framework} carefully, to better understand
 how their implementation plugin may be updated with patch releases or major releases,
 and how these considerations affect the implementation of the plugin.
 

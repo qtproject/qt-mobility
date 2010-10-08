@@ -48,7 +48,7 @@
 QTM_USE_NAMESPACE
 
 /*! Constructs a writer. */
-QVCard30Writer::QVCard30Writer() : QVersitDocumentWriter()
+QVCard30Writer::QVCard30Writer(QVersitDocument::VersitType type) : QVersitDocumentWriter(type)
 {
     mPropertyNameMappings.insert(
         QLatin1String("X-NICKNAME"),QLatin1String("NICKNAME"));
@@ -84,7 +84,7 @@ void QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
         QByteArray data;
         QBuffer buffer(&data);
         buffer.open(QIODevice::WriteOnly);
-        QVCard30Writer subWriter;
+        QVCard30Writer subWriter(mType);
         subWriter.setCodec(mCodec);
         subWriter.setDevice(&buffer);
         subWriter.encodeVersitDocument(embeddedDocument);

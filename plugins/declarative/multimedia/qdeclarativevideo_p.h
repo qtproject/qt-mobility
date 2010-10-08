@@ -138,7 +138,7 @@ public:
 
     void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *);
 
-    void classBegin() {}
+    void classBegin();
     void componentComplete();
 
 public Q_SLOTS:

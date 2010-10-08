@@ -70,12 +70,14 @@ public:
 
     bool operator== (const QGeoManeuverPrivate &other) const;
 
+    bool valid;
     QString id;
     QGeoCoordinate position;
     QString text;
     QGeoManeuver::InstructionDirection direction;
     int timeToNextInstruction;
     qreal distanceToNextInstruction;
+    QGeoCoordinate waypoint;
 };
 
 QTM_END_NAMESPACE

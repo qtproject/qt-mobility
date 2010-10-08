@@ -702,4 +702,27 @@ EXPORTS
 	?contains@QGalleryProperty@QtMobility@@QBE?AVQGalleryMetaDataFilter@2@ABVQString@@@Z @ 701 NONAME ; class QtMobility::QGalleryMetaDataFilter QtMobility::QGalleryProperty::contains(class QString const &) const
 	?regExp@QGalleryProperty@QtMobility@@QBE?AVQGalleryMetaDataFilter@2@ABVQString@@@Z @ 702 NONAME ; class QtMobility::QGalleryMetaDataFilter QtMobility::QGalleryProperty::regExp(class QString const &) const
 	?regExp@QGalleryProperty@QtMobility@@QBE?AVQGalleryMetaDataFilter@2@ABVQRegExp@@@Z @ 703 NONAME ; class QtMobility::QGalleryMetaDataFilter QtMobility::QGalleryProperty::regExp(class QRegExp const &) const
+	?scopeChanged@QGalleryQueryModel@QtMobility@@IAEXXZ @ 704 NONAME ; void QtMobility::QGalleryQueryModel::scopeChanged(void)
+	?rootItemChanged@QGalleryQueryRequest@QtMobility@@IAEXXZ @ 705 NONAME ; void QtMobility::QGalleryQueryRequest::rootItemChanged(void)
+	?sortPropertyNamesChanged@QGalleryQueryRequest@QtMobility@@IAEXXZ @ 706 NONAME ; void QtMobility::QGalleryQueryRequest::sortPropertyNamesChanged(void)
+	?autoUpdateChanged@QGalleryTypeRequest@QtMobility@@IAEXXZ @ 707 NONAME ; void QtMobility::QGalleryTypeRequest::autoUpdateChanged(void)
+	?rootTypeChanged@QGalleryQueryModel@QtMobility@@IAEXXZ @ 708 NONAME ; void QtMobility::QGalleryQueryModel::rootTypeChanged(void)
+	?offsetChanged@QGalleryQueryRequest@QtMobility@@IAEXXZ @ 709 NONAME ; void QtMobility::QGalleryQueryRequest::offsetChanged(void)
+	?galleryChanged@QGalleryQueryModel@QtMobility@@IAEXXZ @ 710 NONAME ; void QtMobility::QGalleryQueryModel::galleryChanged(void)
+	?galleryChanged@QGalleryAbstractRequest@QtMobility@@IAEXXZ @ 711 NONAME ; void QtMobility::QGalleryAbstractRequest::galleryChanged(void)
+	?autoUpdateChanged@QGalleryQueryModel@QtMobility@@IAEXXZ @ 712 NONAME ; void QtMobility::QGalleryQueryModel::autoUpdateChanged(void)
+	?autoUpdateChanged@QGalleryItemRequest@QtMobility@@IAEXXZ @ 713 NONAME ; void QtMobility::QGalleryItemRequest::autoUpdateChanged(void)
+	?sortPropertyNamesChanged@QGalleryQueryModel@QtMobility@@IAEXXZ @ 714 NONAME ; void QtMobility::QGalleryQueryModel::sortPropertyNamesChanged(void)
+	?autoUpdateChanged@QGalleryQueryRequest@QtMobility@@IAEXXZ @ 715 NONAME ; void QtMobility::QGalleryQueryRequest::autoUpdateChanged(void)
+	?filterChanged@QGalleryQueryRequest@QtMobility@@IAEXXZ @ 716 NONAME ; void QtMobility::QGalleryQueryRequest::filterChanged(void)
+	?propertyNamesChanged@QGalleryTypeRequest@QtMobility@@IAEXXZ @ 717 NONAME ; void QtMobility::QGalleryTypeRequest::propertyNamesChanged(void)
+	?scopeChanged@QGalleryQueryRequest@QtMobility@@IAEXXZ @ 718 NONAME ; void QtMobility::QGalleryQueryRequest::scopeChanged(void)
+	?offsetChanged@QGalleryQueryModel@QtMobility@@IAEXXZ @ 719 NONAME ; void QtMobility::QGalleryQueryModel::offsetChanged(void)
+	?propertyNamesChanged@QGalleryQueryRequest@QtMobility@@IAEXXZ @ 720 NONAME ; void QtMobility::QGalleryQueryRequest::propertyNamesChanged(void)
+	?limitChanged@QGalleryQueryRequest@QtMobility@@IAEXXZ @ 721 NONAME ; void QtMobility::QGalleryQueryRequest::limitChanged(void)
+	?rootItemChanged@QGalleryQueryModel@QtMobility@@IAEXXZ @ 722 NONAME ; void QtMobility::QGalleryQueryModel::rootItemChanged(void)
+	?propertyNamesChanged@QGalleryItemRequest@QtMobility@@IAEXXZ @ 723 NONAME ; void QtMobility::QGalleryItemRequest::propertyNamesChanged(void)
+	?rootTypeChanged@QGalleryQueryRequest@QtMobility@@IAEXXZ @ 724 NONAME ; void QtMobility::QGalleryQueryRequest::rootTypeChanged(void)
+	?limitChanged@QGalleryQueryModel@QtMobility@@IAEXXZ @ 725 NONAME ; void QtMobility::QGalleryQueryModel::limitChanged(void)
+	?filterChanged@QGalleryQueryModel@QtMobility@@IAEXXZ @ 726 NONAME ; void QtMobility::QGalleryQueryModel::filterChanged(void)
 

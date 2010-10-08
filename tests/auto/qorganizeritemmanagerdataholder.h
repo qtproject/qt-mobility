@@ -85,7 +85,7 @@ public:
                 QList<QOrganizerItemLocalId> ids;
                 foreach(const QOrganizerItem& item, items)
                     ids.append(item.localId());
-                cm->removeItems(ids, 0);
+                cm->removeItems(ids);
                 delete cm;
             }
         }

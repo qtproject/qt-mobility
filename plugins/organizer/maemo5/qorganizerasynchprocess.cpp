@@ -111,7 +111,7 @@ void OrganizerAsynchProcess::requestDestroyed(QOrganizerItemAbstractRequest *req
     }
     m_mainMutex.unlock();
 
-    if (!requestRemoved)
+    if (!requestRemoved && req->state() != QOrganizerItemAbstractRequest::FinishedState)
         waitForRequestFinished(req);
 }
 
@@ -305,9 +305,14 @@ void OrganizerAsynchProcess::handleDefinitionFetchRequest(QOrganizerItemDetailDe
     QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
     QMap<QString, QOrganizerItemDetailDefinition> definitions = m_engine->detailDefinitions(req->itemType(), &err);
     QMap<int, QOrganizerItemManager::Error> errorMap;
-    int definitionsCount = definitions.count();
-    for (int i = 0; i < definitionsCount; ++i)
-        errorMap.insert(i, err);
+    QStringList keys = req->definitionNames();
+    int definitionsCount = keys.count();
+    for (int i = 0; i < definitionsCount; ++i) {
+        QOrganizerItemDetailDefinition definition = m_engine->detailDefinition(keys.at(i), req->itemType(), &err);
+        definitions.insert(keys.at(i), definition);
+        if (err != QOrganizerItemManager::NoError)
+            errorMap.insert(i, err);
+    }
     QOrganizerItemManagerEngine::updateDefinitionFetchRequest(req, definitions, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
 }
 
@@ -362,12 +367,13 @@ void OrganizerAsynchProcess::handleCollectionSaveRequest(QOrganizerCollectionSav
     QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
     QMap<int, QOrganizerItemManager::Error> errorMap;
     QList<QOrganizerCollection> collections = req->collections();
-    int i = 0;
-
-    foreach (QOrganizerCollection collection, collections) {
+    QList<QOrganizerCollection> retn;
+    int collectionsCount = collections.count();
+    for (int i = 0; i < collectionsCount; ++i) {
+        QOrganizerCollection collection = collections.at(i);
         m_engine->saveCollection(&collection, &err);
+        retn << collection;
         errorMap.insert(i, err);
-        i++;
     }
-    QOrganizerItemManagerEngine::updateCollectionSaveRequest(req, collections, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
+    QOrganizerItemManagerEngine::updateCollectionSaveRequest(req, retn, err, errorMap, QOrganizerItemAbstractRequest::FinishedState);
 }

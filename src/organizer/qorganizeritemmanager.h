@@ -112,6 +112,7 @@ public:
 
     /* Error reporting */
     QOrganizerItemManager::Error error() const;
+    QMap<int, QOrganizerItemManager::Error> errorMap() const;
 
     /* Item Instances - both items and item occurrences (occurrences either saved or generated) */
     QList<QOrganizerItem> itemInstances(const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
@@ -126,9 +127,9 @@ public:
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;  // retrieve an item
 
     bool saveItem(QOrganizerItem* item);
-    bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap = 0);
+    bool saveItems(QList<QOrganizerItem>* items);
     bool removeItem(const QOrganizerItemLocalId& itemId);
-    bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap);
+    bool removeItems(const QList<QOrganizerItemLocalId>& itemIds);
 
     /* Collections - every item belongs to one or more collections */
     QOrganizerCollection defaultCollection() const;

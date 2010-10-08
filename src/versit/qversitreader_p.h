@@ -126,7 +126,8 @@ public:
         return mData.constData() + mStart;
     }
     bool contains(const QByteArray& ba) const {
-        return mData.indexOf(ba, mStart) > 0;
+        int i = mData.indexOf(ba, mStart);
+        return i > 0 && i <= mEnd - ba.length();
     }
     bool endsWith(const QByteArray& ba) const {
         // Loop backwards from ba and from mData (starting from index mEnd)
@@ -169,11 +170,17 @@ private:
 class QM_AUTOTEST_EXPORT LineReader
 {
 public:
-    LineReader(QIODevice* device, QTextCodec* codec, int chunkSize = 1000);
+    LineReader(QIODevice* device, QTextCodec* codec);
+    LineReader(QIODevice* device);
+    LineReader(QIODevice* device, QTextCodec* codec, int chunkSize);
+    void init();
     void pushLine(const QByteArray& line);
-    int odometer();
-    bool atEnd();
-    QTextCodec* codec();
+    int odometer() const;
+    bool atEnd() const;
+    QTextCodec* codec() const;
+    bool isCodecCertain() const;
+    bool isCodecUtf8Compatible() const;
+    void setCodecUtf8Incompatible();
     LByteArray readLine();
 
 private:
@@ -181,19 +188,15 @@ private:
     bool tryReadLine(LByteArray* cursor, bool atEnd);
 
     QIODevice* const mDevice;
-    QTextCodec* const mCodec;
+    QTextCodec* mCodec;
+    bool mIsCodecCertain;
+    bool mIsCodecUtf8Compatible;
     int mChunkSize; // How many bytes to read in one go.
     QList<QByteArrayMatcher> mCrlfList;
     QStack<QByteArray> mPushedLines; // Stores a lines that has been "pushed" in front by pushLine
     LByteArray mBuffer;
     int mOdometer;
     int mSearchFrom;
-
-    // Cache of various characters encoded with mCodec
-    const QByteArray mColon;
-    const QByteArray mEquals;
-    const QByteArray mSpace;
-    const QByteArray mTab;
 };
 
 class QM_AUTOTEST_EXPORT QVersitReaderPrivate : public QThread
@@ -226,8 +229,8 @@ public: // New functions
     void setCanceling(bool cancelling);
     bool isCanceling();
 
-    bool parseVersitDocument(LineReader* device, QVersitDocument* document);
-    bool parseVersitDocumentBody(LineReader* device, QVersitDocument* document);
+    bool parseVersitDocument(LineReader* lineReader, QVersitDocument* document);
+    bool parseVersitDocumentBody(LineReader* lineReader, QVersitDocument* document);
 
     QVersitProperty parseNextVersitProperty(
         QVersitDocument::VersitType versitType,
@@ -256,7 +259,7 @@ public: // New functions
     QString decodeCharset(
         const QByteArray& value,
         QVersitProperty* property,
-        QTextCodec* defaultCodec,
+        LineReader* lineReader,
         QTextCodec** codec) const;
 
     void decodeQuotedPrintable(QByteArray* text) const;

@@ -180,6 +180,12 @@ Set the metering mode to \a mode.
   Returns the exposure \a parameter value, or invalid QVariant() if the value is unknown or not supported.
 */
 
+/*!
+  \fn QCameraExposureControl::exposureParameterFlags(ExposureParameter parameter) const
+
+  Returns the properties of exposure \a parameter.
+*/
+
 
 /*!
   \fn QCameraExposureControl::supportedParameterRange(ExposureParameter parameter) const
