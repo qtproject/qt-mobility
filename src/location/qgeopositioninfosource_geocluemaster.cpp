@@ -8,6 +8,8 @@
 
 QTM_BEGIN_NAMESPACE
 
+#define MINIMUM_UPDATE_INTERVAL 1000
+
 // Callback for position-changed -signal
 static void position_changed (GeocluePosition      *position,
                               GeocluePositionFields fields,
@@ -38,13 +40,13 @@ void QGeoPositionInfoSourceGeoclueMaster::positionChanged(GeocluePosition      *
     dateTime.setTime_t(timestamp);
     QGeoPositionInfo info(coordinate, dateTime);
     if (info.isValid()) {
-        lastPosition = info;
+        m_lastPosition = info;
         emit positionUpdated(info);
     }
 }
 
 QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject *parent)
-    : QGeoPositionInfoSource(parent), client(0), pos(0)
+    : QGeoPositionInfoSource(parent), m_updateInterval(0), m_client(0), m_pos(0)
 {
 }
 
@@ -56,41 +58,47 @@ int QGeoPositionInfoSourceGeoclueMaster::init()
     g_type_init ();
 
     master = geoclue_master_get_default ();
-    client = geoclue_master_create_client (master, NULL, &error);
+    m_client = geoclue_master_create_client (master, NULL, &error);
     g_object_unref (master);
 
-    if (!client) {
+    if (!m_client) {
         qCritical ("QGeoPositionInfoSourceGeoclueMaster error creating GeoclueMasterClient: %s\n", error->message);
         g_error_free (error);
         return -1;
     }
 
-    if (!geoclue_master_client_set_requirements (client,
+    if (!geoclue_master_client_set_requirements (m_client,
                                                  GEOCLUE_ACCURACY_LEVEL_NONE,
                                                  0, TRUE,
                                                  GEOCLUE_RESOURCE_ALL,
                                                  &error)){
         qCritical ("QGeoPositionInfoSourceGeoclueMaster geoclue set_requirements failed: %s", error->message);
         g_error_free (error);
-        g_object_unref (client);
+        g_object_unref (m_client);
         return -1;
 
     }
 
-    pos = geoclue_master_client_create_position (client, NULL);
-    if (!pos) {
+    m_pos = geoclue_master_client_create_position (m_client, NULL);
+    if (!m_pos) {
         qCritical("QGeoPositionInfoSourceGeoclueMaster failed to get a position object");
-        g_object_unref (client);
+        g_object_unref (m_client);
         return -1;
     }
 
     return 0;
 }
 
-QGeoPositionInfo QGeoPositionInfoSourceGeoclueMaster::lastKnownPosition
-(bool /*fromSatellitePositioningMethodsOnly*/) const
+void QGeoPositionInfoSourceGeoclueMaster::setUpdateInterval(int msec)
 {
-    return lastPosition;
+    msec = (((msec > 0) && (msec < minimumUpdateInterval())) || msec < 0)? minimumUpdateInterval() : msec;
+    QGeoPositionInfoSource::setUpdateInterval(msec);
+    m_updateInterval = msec;
+}
+
+QGeoPositionInfo QGeoPositionInfoSourceGeoclueMaster::lastKnownPosition(bool /*fromSatellitePositioningMethodsOnly*/) const
+{
+    return m_lastPosition;
 }
 
 QGeoPositionInfoSourceGeoclueMaster::PositioningMethods QGeoPositionInfoSourceGeoclueMaster::supportedPositioningMethods() const
@@ -100,16 +108,16 @@ QGeoPositionInfoSourceGeoclueMaster::PositioningMethods QGeoPositionInfoSourceGe
 
 void QGeoPositionInfoSourceGeoclueMaster::startUpdates()
 {
-    g_signal_connect (G_OBJECT (pos), "position-changed",
+    g_signal_connect (G_OBJECT (m_pos), "position-changed",
                       G_CALLBACK (position_changed),this);
 
 }
-int QGeoPositionInfoSourceGeoclueMaster::minimumUpdateInterval() const{
-    return 0;
+int QGeoPositionInfoSourceGeoclueMaster::minimumUpdateInterval() const {
+    return MINIMUM_UPDATE_INTERVAL;
 }
 void QGeoPositionInfoSourceGeoclueMaster::stopUpdates()
 {
-    g_signal_handlers_disconnect_by_func(G_OBJECT(pos), (void*)position_changed,
+    g_signal_handlers_disconnect_by_func(G_OBJECT(m_pos), (void*)position_changed,
                                          NULL);
 }
 
@@ -122,7 +130,7 @@ void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int /*timeout*/)
     double           altitude;
     GeoclueAccuracy *accuracy;
     GError *error = NULL;
-    fields = geoclue_position_get_position (pos, &timestamp,
+    fields = geoclue_position_get_position (m_pos, &timestamp,
                                             &latitude, &longitude, &altitude,
                                             &accuracy, &error);
     if (error) {
@@ -135,7 +143,7 @@ void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int /*timeout*/)
         if (fields & GEOCLUE_POSITION_FIELDS_LATITUDE &&
                 fields & GEOCLUE_POSITION_FIELDS_LONGITUDE) {
             qDebug ("We're at %.3f, %.3f.\n", latitude, longitude);
-            positionChanged(pos, fields, timestamp, latitude, longitude, altitude,
+            positionChanged(m_pos, fields, timestamp, latitude, longitude, altitude,
                             accuracy);
             return;
 
@@ -147,10 +155,10 @@ void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int /*timeout*/)
 
 QGeoPositionInfoSourceGeoclueMaster::~QGeoPositionInfoSourceGeoclueMaster()
 {
-    if (pos)
-        g_object_unref (pos);
-    if (client)
-        g_object_unref (client);
+    if (m_pos)
+        g_object_unref (m_pos);
+    if (m_client)
+        g_object_unref (m_client);
 }
 
 #include "moc_qgeopositioninfosource_geocluemaster_p.cpp"
