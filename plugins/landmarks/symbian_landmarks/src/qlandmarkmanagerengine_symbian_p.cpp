@@ -2020,8 +2020,7 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             transferOption = CPosLandmarkDatabase::EDefaultOptions;
             break;
         case QLandmarkManager::ExcludeCategoryData:
-            transferOption = CPosLandmarkDatabase::EIncludeCategories
-                | CPosLandmarkDatabase::ESupressCategoryCreation;
+            transferOption = CPosLandmarkDatabase::EDefaultOptions;
             break;
         default:
             break;
@@ -4728,8 +4727,7 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::importLandmarksL(QIODevi
         addSinglecategoryrequired = true;
         break;
     case QLandmarkManager::ExcludeCategoryData:
-        transferOption = CPosLandmarkDatabase::EIncludeCategories
-            | CPosLandmarkDatabase::ESupressCategoryCreation;
+        transferOption = CPosLandmarkDatabase::EDefaultOptions;
         break;
     default:
         break;
