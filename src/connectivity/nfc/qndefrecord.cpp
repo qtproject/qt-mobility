@@ -51,12 +51,44 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
+
+    QNdefRecord and derived classes are used to parse the contents of
+    \l {QNdefMessage}{NDEF messages} and create new NDEF messages.
+
+    Use typeNameFormat(), userTypeNameFormat(), setTypeNameFormat() and setUserTypeNameFormat() to
+    get and set the type name format of the NDEF record.
+
+    Use type() and setType() to get and set the type of the NDEF record.
+
+    Use id() and setId() to get and set the id of the NDEF record.
+
+    Use payload() and setPayload() to get and set the NDEF record payload.  isEmpty() can be used
+    to test if the payload is empty.
+
+    QNdefRecord is an implicitly shared class.  This means you can efficiently convert between
+    QNdefRecord and specialized record classes.  The isRecordType() template function can be used
+    to test if a conversion is possible.  The following example shows how to test if a QNdefRecord
+    is an NFC RTD Text record and extract the text information from it.
+
+    \snippet snippets/connectivity/nfc.cpp Record conversion
+
+    \section1 Creating specialized NDEF record classes
+
+    Specialized NDEF record classes can be easily created with the Q_DECLARE_NDEF_RECORD() and
+    Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD() macros.  The following example shows the class
+    declaration of the hypothetical \i {example.com:f} record type that encapsulates a single int
+    property foo.
+
+    \snippet snippets/connectivity/nfc.cpp Specialized class definition
+
+    The developer only needs to provide implementations for the \c {foo()} and \c {setFoo()}
+    functions that parse and set the contents of the NDEF record's payload.
 */
 
 /*!
     \enum QNdefRecord::TypeNameFormat
 
-    This enum describe the type name format of an NDEF record.
+    This enum describes the type name format of an NDEF record.
 
     \value Empty        An empty NDEF record, the record does not contain a payload
     \value NfcRtd       The NDEF record type is defined by an NFC RTD Specification
@@ -78,6 +110,39 @@ QTM_BEGIN_NAMESPACE
     \fn bool QNdefRecord::operator!=(const QNdefRecord &other) const
 
     Returns true if this NDEF record does not equal \a other; otherwise return false.
+*/
+
+/*!
+    \macro Q_DECLARE_NDEF_RECORD(className, typeNameFormat, type)
+    \relates QNdefRecord
+
+    This macro declares default and copy constructors for specialized NDEF record classes.
+
+    \a className is the name of the specialized class, \a typeNameFormat is the appropriate
+    QNdefRecord::TypeNameFormat for the custom type and \a type is the type without the NID or NSS
+    prefixes.  That is \i {example.com:f} not \i {urn:nfc:ext:example.com:f}.
+
+    See the section on \l {Creating specialized NDEF record classes} for details.
+
+    \sa Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD()
+*/
+
+/*!
+    \macro Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(className, typeNameFormat, type)
+    \relates QNdefRecord
+
+    This macro declares a template specialization for the QNdefRecord::isRecordType() function.
+
+    This macro should be used in the header file directly after the definition of a specialized
+    NDEF record class.
+
+    \a className is the name of the specialized class, \a typeNameFormat is the appropriate
+    QNdefRecord::TypeNameFormat for the custom type and \a type is the type without the NID or NSS
+    prefixes.  That is \i {example.com:f} not \i {urn:nfc:ext:example.com:f}.
+
+    See the secton on \l {Creating specialized NDEF record classes} for details.
+
+    \sa Q_DECLARE_NDEF_RECORD()
 */
 
 /*!
@@ -276,6 +341,8 @@ QByteArray QNdefRecord::payload() const
 
 /*!
     Returns true if the NDEF record contains an empty payload; otherwise return false.
+
+    This is equivalent to calling \c {payload().isEmpty()}.
 */
 bool QNdefRecord::isEmpty() const
 {

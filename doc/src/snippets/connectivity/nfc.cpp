@@ -39,43 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QNDEFNFCTEXTRECORD_H
-#define QNDEFNFCTEXTRECORD_H
-
-#include <qmobilityglobal.h>
-
 #include <qndefrecord.h>
+#include <qndefnfctextrecord.h>
 
-#include <QtCore/QLocale>
+#include <QtCore/QDebug>
 
-QT_BEGIN_HEADER
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+void snippet_recordConversion()
+{
+    QNdefRecord record;
 
-class Q_CONNECTIVITY_EXPORT QNdefNfcTextRecord : public QNdefRecord
+    //! [Record conversion]
+    if (record.isRecordType<QNdefNfcTextRecord>()) {
+        QNdefNfcTextRecord textRecord(record);
+
+        qDebug() << textRecord.text();
+    }
+    //! [Record conversion]
+}
+
+//! [Specialized class definition]
+class ExampleComF : public QNdefRecord
 {
 public:
-    Q_DECLARE_NDEF_RECORD(QNdefNfcTextRecord, QNdefRecord::NfcRtd, "T")
+    Q_DECLARE_NDEF_RECORD(ExampleComF, QNdefRecord::ExternalRtd, "example.com:f")
 
-    QLocale locale() const;
-    void setLocale(const QLocale &locale);
-
-    QString text() const;
-    void setText(const QString text);
-
-    enum Encoding {
-        Utf8,
-        Utf16
-    };
-
-    Encoding encoding() const;
-    void setEncoding(Encoding encoding);
+    int foo() const;
+    void setFoo(int v);
 };
 
-QTM_END_NAMESPACE
-
-Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(QNdefNfcTextRecord, QNdefRecord::NfcRtd, "T")
-
-QT_END_HEADER
-
-#endif // QNDEFNFCTEXTRECORD_H
+Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(ExampleComF, QNdefRecord::ExternalRtd, "example.com:f")
+//! [Specialized class definition]

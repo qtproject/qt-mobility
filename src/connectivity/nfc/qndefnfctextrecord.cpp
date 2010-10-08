@@ -56,6 +56,15 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \enum QNdefNfcTextRecord::Encoding
+
+    This enum describes the text encoding standard used.
+
+    \value Utf8     The text is encoded with UTF-8.
+    \value Utf16    The text is encoding with UTF-16.
+*/
+
+/*!
     Returns the locale of the text record.
 */
 QLocale QNdefNfcTextRecord::locale() const

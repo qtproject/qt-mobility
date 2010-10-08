@@ -61,9 +61,9 @@ public:
     void setUri(const QUrl &uri);
 };
 
-Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(QNdefNfcUriRecord, QNdefRecord::NfcRtd, "U")
-
 QTM_END_NAMESPACE
+
+Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(QNdefNfcUriRecord, QNdefRecord::NfcRtd, "U")
 
 QT_END_HEADER
 

@@ -106,10 +106,12 @@ private:
     className(const QNdefRecord &other) : QNdefRecord(other, quint8(typeNameFormat), type) { }
 
 #define Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(className, typeNameFormat, type_) \
+    QTM_BEGIN_NAMESPACE \
     template<> bool QNdefRecord::isRecordType<className>() const\
     { \
         return (userTypeNameFormat() == typeNameFormat && type() == type_); \
-    }
+    } \
+    QTM_END_NAMESPACE
 
 QTM_END_NAMESPACE
 
