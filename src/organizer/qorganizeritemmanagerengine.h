@@ -75,6 +75,7 @@ class QOrganizerItemSaveRequest;
 class QOrganizerItemDetailDefinitionSaveRequest;
 class QOrganizerItemDetailDefinitionRemoveRequest;
 class QOrganizerItemDetailDefinitionFetchRequest;
+class QOrganizerItemFetchForExportRequest;
 
 class Q_ORGANIZER_EXPORT QOrganizerItemManagerEngine : public QObject
 {
