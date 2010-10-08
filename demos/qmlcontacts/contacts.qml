@@ -50,13 +50,14 @@ Item {
         anchors.fill: parent;
 
         color: "#343434";
-        Image { source: "./contents/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 1 }
+        Image { source: "contents/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 1 }
 
         ContactModel {
             id: contactModel
             Component.onCompleted : {
                 if (manager == "memory")
-                    contactModel.importContacts("./contents/example.vcf");
+                    contactModel.importContacts("./contents/example.vcf"); //if runs in qmlviewer mode
+                    contactModel.importContacts(":/contents/example.vcf");//if runs in application mode
             }
         }
         TitleBar { id: titleBar; width: parent.width; height: 40; opacity: 0.9
@@ -142,7 +143,7 @@ Item {
                                 Image {
                                     anchors.fill: parent;
                                     anchors.margins: 2;
-                                    source: "./contents/images/default.svg";
+                                    source: "contents/images/default.svg";
                                     opacity: avatar.status == Image.Ready ? 0 : 1;
                                 }
                             }
