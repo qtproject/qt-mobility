@@ -353,6 +353,12 @@ bool QFeedbackEffect::supportsThemeEffect()
 */
 QFeedbackHapticsEffect::QFeedbackHapticsEffect(QObject *parent) : QFeedbackEffect(parent), priv(new QFeedbackHapticsEffectPrivate)
 {
+    QList<QFeedbackActuator*> list = QFeedbackActuator::actuators();
+    if  (!list.isEmpty()) {
+        priv->actuator = list.first();
+    } else {
+        priv->actuator = new QFeedbackActuator(this);
+    }
 }
 
 
@@ -481,11 +487,11 @@ void QFeedbackHapticsEffect::setFadeIntensity(qreal intensity)
 
     This property defines the actuator on which the effect operates.
 */
-QFeedbackActuator QFeedbackHapticsEffect::actuator() const
+QFeedbackActuator* QFeedbackHapticsEffect::actuator() const
 {
     return priv->actuator;
 }
-void QFeedbackHapticsEffect::setActuator(const QFeedbackActuator &actuator)
+void QFeedbackHapticsEffect::setActuator(QFeedbackActuator *actuator)
 {
     if (state() != Stopped) {
         qWarning("QFeedbackHapticsEffect::setActuator: The effect is not stopped");
@@ -521,7 +527,11 @@ void QFeedbackHapticsEffect::setPeriod(int msecs)
 */
 void QFeedbackHapticsEffect::setState(State state)
 {
-    QFeedbackHapticsInterface::instance()->setEffectState(this, state);
+    State oldState = this->state();
+    if (oldState != state) {
+        QFeedbackHapticsInterface::instance()->setEffectState(this, state);
+        emit stateChanged();
+    }
 }
 
 /*!
@@ -697,9 +707,13 @@ QStringList QFeedbackFileEffect::supportedMimeTypes()
 */
 void QFeedbackFileEffect::setState(State newState)
 {
-    if (newState != Stopped && state() == Stopped)
-        load(); // makes sure the file is loaded
-    QFeedbackFileInterface::instance()->setEffectState(this, newState);
+    State oldState = state();
+    if (oldState != newState) {
+        if (newState != Stopped && state() == Stopped)
+            load(); // makes sure the file is loaded
+        QFeedbackFileInterface::instance()->setEffectState(this, newState);
+        emit stateChanged();
+    }
 }
 
 /*!

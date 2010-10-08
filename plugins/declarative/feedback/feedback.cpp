@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the plugins of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,42 +39,27 @@
 **
 ****************************************************************************/
 
-#include <qmobilityglobal.h>
-#include <qfeedbackeffect.h>
+#include <QtDeclarative/qdeclarativeextensionplugin.h>
+#include <QtDeclarative/qdeclarative.h>
 
-#include <QDialog>
-class HapticButton;
+#include "qdeclarativehapticseffect.h"
+#include "qdeclarativefileeffect.h"
 
-QTM_USE_NAMESPACE
-
-#ifndef DIALOG_H_
-#define DIALOG_H_
-
-//! [0]
-class Dialog : public QDialog
+class QFeedbackDeclarativeModule : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT
-
 public:
-    Dialog();
-    ~Dialog();
-
-private Q_SLOTS:
-    void playRumble();
-    void playOcean(bool toggleState);
-    void playButtonClick();
-    void playNegativeEffect();
-
-private:
-    HapticButton *m_btnRumble;
-    HapticButton *m_btnOcean;
-    HapticButton *m_btnButtonClick;
-    HapticButton *m_btnNegativeEffect;
-
-    QFeedbackHapticsEffect m_rumble;
-    QFeedbackHapticsEffect m_ocean;
+    virtual void registerTypes(const char *uri)
+    {
+        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.feedback"));
+        qmlRegisterUncreatableType<QFeedbackEffect>("QtMobility.feedback", 1, 1, "Effect", "FeedbackEffect is an abstract class");
+        qmlRegisterType<QFeedbackActuator>("QtMobility.feedback", 1, 1, "Actuator");
+        qmlRegisterType<QDeclarativeFileEffect>("QtMobility.feedback", 1, 1, "FileEffect");
+        qmlRegisterType<QDeclarativeHapticsEffect>("QtMobility.feedback", 1, 1, "HapticsEffect");
+    }
 };
-//! [0]
 
-#endif
+#include "feedback.moc"
+
+Q_EXPORT_PLUGIN2(declarative_feedback, QT_PREPEND_NAMESPACE(QFeedbackDeclarativeModule));
 

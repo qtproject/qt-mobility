@@ -87,10 +87,10 @@ void completeExample()
 //! [Query the state of a custom haptic effect]
 
 //! [Set the actuator which should play the custom effect]
-    QFeedbackActuator actuator; // default system actuator
-    QList<QFeedbackActuator> actuators = QFeedbackActuator::actuators();
-    foreach (const QFeedbackActuator& temp, actuators) {
-        if (temp.name() == "ExampleActuatorName") {
+    QFeedbackActuator *actuator = 0; // default system actuator
+    QList<QFeedbackActuator*> actuators = QFeedbackActuator::actuators();
+    foreach (QFeedbackActuator* temp, actuators) {
+        if (temp->name() == "ExampleActuatorName") {
             actuator = temp;
         }
     }
