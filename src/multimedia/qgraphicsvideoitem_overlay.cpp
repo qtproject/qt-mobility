@@ -325,7 +325,7 @@ void QGraphicsVideoItem::paint(
 
     QColor colorKey = Qt::black;
 
-    if (d->windowControl) {
+    if (d->windowControl != 0 && widget != 0) {
         d->windowControl->setWinId(widget->winId());
 
         QTransform transform = painter->combinedTransform();
