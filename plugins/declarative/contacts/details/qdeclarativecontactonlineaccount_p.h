@@ -54,7 +54,7 @@ class QDeclarativeContactOnlineAccount : public QDeclarativeContactDetail
     Q_PROPERTY(QStringList capabilities READ capabilities WRITE  setCapabilities NOTIFY fieldsChanged)
     Q_PROPERTY(QStringList subTypes READ subTypes WRITE  setSubTypes NOTIFY fieldsChanged)
     Q_CLASSINFO("DefaultProperty", "accountUri")
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
 public:
     enum FieldType {
         AccountUri = 0,

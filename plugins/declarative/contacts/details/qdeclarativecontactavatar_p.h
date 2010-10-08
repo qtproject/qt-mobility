@@ -50,7 +50,7 @@ class  QDeclarativeContactAvatar : public QDeclarativeContactDetail
     Q_OBJECT
     Q_PROPERTY(QUrl imageUrl READ imageUrl WRITE setImageUrl NOTIFY fieldsChanged)
     Q_PROPERTY(QUrl videoUrl READ videoUrl WRITE setVideoUrl NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
 public:
     enum FieldType {
         ImageUrl = 0,

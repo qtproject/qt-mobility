@@ -50,7 +50,7 @@ class QDeclarativeContactTag : public QDeclarativeContactDetail
 {
     Q_OBJECT
     Q_PROPERTY(QString tag READ tag WRITE setTag NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "tag")
 public:
     enum FieldType {
