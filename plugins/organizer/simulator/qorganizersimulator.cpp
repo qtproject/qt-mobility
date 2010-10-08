@@ -185,6 +185,46 @@ bool QOrganizerItemSimulatorEngine::removeItem(const QOrganizerItemLocalId& orga
     return true;
 }
 
+bool QOrganizerItemSimulatorEngine::saveCollection(QOrganizerCollection *collection, QOrganizerItemManager::Error *error)
+{
+    Connection *con = Connection::instance();
+
+    if (!con->mNotifySimulator)
+        return QOrganizerItemMemoryEngine::saveCollection(collection, error);
+
+    // translate local id -> remote id
+    QOrganizerCollection remoteCollection = *collection;
+    con->translateCollectionIds(&remoteCollection, con->mManagerUri, con->mLocalToRemote);
+    bool newCollection = remoteCollection.id().isNull();
+
+    // save remotely
+    QLocalSocket *sendSocket = con->sendSocket();
+    Simulator::SaveOrganizerCollectionReply reply =
+            RemoteMetacall<Simulator::SaveOrganizerCollectionReply>::call(
+                sendSocket, TimeoutSync, "requestSaveOrganizerCollection", remoteCollection);
+    *error = reply.error;
+
+    // if it failed, stop
+    if (reply.error != QOrganizerItemManager::NoError)
+        return false;
+
+    // save locally
+    if (!QOrganizerItemMemoryEngine::saveCollection(collection, error))
+        return false; // it's already saved remotely - revert?
+
+    if (newCollection) {
+        con->mRemoteToLocal.collections.insert(reply.savedCollection.localId(), collection->localId());
+        con->mLocalToRemote.collections.insert(collection->localId(), reply.savedCollection.localId());
+    }
+
+    return true;
+}
+
+bool QOrganizerItemSimulatorEngine::removeCollection(const QOrganizerCollectionLocalId &collectionId, QOrganizerItemManager::Error *error)
+{
+    return QOrganizerItemManagerEngine::removeCollection(collectionId, error);
+}
+
 bool QOrganizerItemSimulatorEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
     Connection *con = Connection::instance();

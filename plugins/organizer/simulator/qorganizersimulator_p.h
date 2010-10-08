@@ -97,6 +97,9 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
+    bool saveCollection(QOrganizerCollection *collection, QOrganizerItemManager::Error *error);
+    bool removeCollection(const QOrganizerCollectionLocalId &collectionId, QOrganizerItemManager::Error *error);
+
 protected:
     QOrganizerItemSimulatorEngine(QOrganizerItemMemoryEngineData* data);
 

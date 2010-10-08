@@ -72,6 +72,13 @@ public:
     QOrganizerItemManager::Error error;
 };
 
+class SaveOrganizerCollectionReply
+{
+public:
+    QOrganizerCollection savedCollection;
+    QOrganizerItemManager::Error error;
+};
+
 } // namespace Simulator
 
 void qt_registerOrganizerTypes();
@@ -81,6 +88,7 @@ QTM_END_NAMESPACE
 Q_DECLARE_METATYPE(QtMobility::QOrganizerItem)
 Q_DECLARE_METATYPE(QtMobility::QOrganizerCollection)
 Q_DECLARE_METATYPE(QtMobility::Simulator::SaveOrganizerItemReply)
+Q_DECLARE_METATYPE(QtMobility::Simulator::SaveOrganizerCollectionReply)
 
 QT_END_HEADER
 
