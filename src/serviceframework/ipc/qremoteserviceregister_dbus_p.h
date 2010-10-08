@@ -108,7 +108,6 @@ private:
     QList<ObjectEndPoint*> pendingConnections;
     QDBusInterface *iface;
     DBusSession *session;
-    int instanceCount;
 };
 
 QTM_END_NAMESPACE

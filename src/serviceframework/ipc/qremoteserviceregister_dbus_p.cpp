@@ -170,7 +170,7 @@ DBusSessionAdaptor::DBusSessionAdaptor(QObject *parent)
 }
 
 QRemoteServiceRegisterDBusPrivate::QRemoteServiceRegisterDBusPrivate(QObject* parent)
-    : QRemoteServiceRegisterPrivate(parent), instanceCount(0)
+    : QRemoteServiceRegisterPrivate(parent)
 {
 }
 
@@ -198,9 +198,7 @@ bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& /*i
             return 0;
         }
 
-        // MAYBE A FOR-LOOP FOR EACH SERVICENAME (ie DBUSExample, IPCExample)
-
-        // TODO: do we want to always re-register services to dbus?
+        // Grab the first entry service name for the session
         QString serviceName = "com.nokia.qtmobility.sfw." + list[0].serviceName();
         connection->unregisterService(serviceName);
 
@@ -213,7 +211,7 @@ bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& /*i
         session = new DBusSession();
         new DBusSessionAdaptor(session);
         QObject::connect(session, SIGNAL(newConnection(int,int)), this, SLOT(processIncoming(int,int)));
-        QObject::connect(session, SIGNAL(closeConnection()), this, SLOT(processClosing()));
+        //QObject::connect(session, SIGNAL(closeConnection()), this, SLOT(processClosing()));
 
         QString path = "/" + list[0].interfaceName() + "/DBusSession";
         path.replace(QString("."), QString("/"));
@@ -229,8 +227,12 @@ bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& /*i
         }
 
         DBusEndPoint* ipcEndPoint = new DBusEndPoint(iface, SERVER);
-        ObjectEndPoint* endpoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
-        Q_UNUSED(endpoint);
+        ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
+      
+        // Connect session process disconnections
+        QObject::connect(session, SIGNAL(closeConnection()), endPoint, SLOT(disconnected()));
+        QObject::connect(iManager, SIGNAL(allInstancesClosed()), this, SLOT(processClosing()));
+        
         return true;
     }
 
@@ -249,8 +251,9 @@ void QRemoteServiceRegisterDBusPrivate::processIncoming(int pid, int uid)
         if(!getSecurityFilter()(reinterpret_cast<const void *>(&cred))){
             session->acceptIncoming(false);
 
-            // Close service if only client
-            if (instanceCount <= 0 && quitOnLastInstanceClosed())
+            // Close service if no instances
+            if (quitOnLastInstanceClosed() && 
+                    InstanceManager::instance()->totalInstances() < 1)
                 QCoreApplication::exit();
 
             return;
@@ -258,14 +261,11 @@ void QRemoteServiceRegisterDBusPrivate::processIncoming(int pid, int uid)
     }
     
     session->acceptIncoming(true);
-    instanceCount++;
 }
 
 void QRemoteServiceRegisterDBusPrivate::processClosing()
 {
-    instanceCount--;
-
-    if (instanceCount <= 0 && quitOnLastInstanceClosed())
+    if (quitOnLastInstanceClosed())
         QCoreApplication::exit();
 }
 
