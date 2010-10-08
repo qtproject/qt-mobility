@@ -129,6 +129,14 @@ QT_BEGIN_NAMESPACE
     This handler is called when the mute state has changed.
 */
 
+
+/*!
+    \qmlsignal SoundEffect::loaded()
+
+    This handler is called when the audio source is loaded and ready for play.
+*/
+
+
 /*!
     \internal
 */
@@ -139,6 +147,7 @@ QSoundEffect::QSoundEffect(QObject *parent) :
     d = new QSoundEffectPrivate(this);
     connect(d, SIGNAL(volumeChanged()), SIGNAL(volumeChanged()));
     connect(d, SIGNAL(mutedChanged()), SIGNAL(mutedChanged()));
+    connect(d, SIGNAL(loaded()), SIGNAL(loaded()));
 }
 
 QSoundEffect::~QSoundEffect()

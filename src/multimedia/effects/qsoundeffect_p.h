@@ -99,6 +99,7 @@ Q_SIGNALS:
     void loopsChanged();
     void volumeChanged();
     void mutedChanged();
+    void loaded();
 
 public Q_SLOTS:
     void play();

@@ -86,9 +86,11 @@ public Q_SLOTS:
 Q_SIGNALS:
     void volumeChanged();
     void mutedChanged();
+    void loaded();
 
 private Q_SLOTS:
     void stateChanged(QMediaPlayer::State);
+    void mediaStatusChanged(QMediaPlayer::MediaStatus);
 
 private:
     int m_loopCount;

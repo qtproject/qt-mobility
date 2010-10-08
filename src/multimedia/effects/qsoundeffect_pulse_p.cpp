@@ -468,6 +468,8 @@ void QSoundEffectPrivate::uploadSample()
         }
     }
     daemon()->unlock();
+
+    emit loaded();
 }
 
 void QSoundEffectPrivate::playSample()

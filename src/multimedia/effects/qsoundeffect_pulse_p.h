@@ -93,6 +93,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void volumeChanged();
     void mutedChanged();
+    void loaded();
 
 private Q_SLOTS:
     void decoderReady();
