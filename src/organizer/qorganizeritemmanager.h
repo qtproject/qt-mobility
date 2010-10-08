@@ -113,6 +113,7 @@ public:
 
     /* Error reporting */
     QOrganizerItemManager::Error error() const;
+    QMap<int, QOrganizerItemManager::Error> errorMap() const;
 
     QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart = QDateTime(), const QDateTime& periodEnd = QDateTime(), int maxCount = -1, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
 
@@ -127,14 +128,14 @@ public:
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;  // retrieve an item
 
     bool saveItem(QOrganizerItem* item, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId());
-    bool saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId(), QMap<int, QOrganizerItemManager::Error>* errorMap = 0);
+    bool saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId = QOrganizerCollectionLocalId());
     bool removeItem(const QOrganizerItemLocalId& itemId);
-    bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap);
+    bool removeItems(const QList<QOrganizerItemLocalId>& itemIds);
 
     /* Collections - every item belongs to one or more collections */
     QOrganizerCollectionLocalId defaultCollectionId() const;
     QList<QOrganizerCollectionLocalId> collectionIds() const;
-    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds = QList<QOrganizerCollectionLocalId>(), QMap<int, QOrganizerItemManager::Error>* errorMap = 0) const;
+    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds = QList<QOrganizerCollectionLocalId>()) const;
     bool saveCollection(QOrganizerCollection* collection);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId);
 

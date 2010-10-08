@@ -76,7 +76,7 @@ void TestDetailDef::init()
     m_om = new QOrganizerItemManager(m_managerNameSymbian);
     
     // Cleanup by deleting all items
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
 }
 
 void TestDetailDef::cleanup()

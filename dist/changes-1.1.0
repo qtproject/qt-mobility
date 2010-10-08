@@ -176,6 +176,8 @@ QtMessaging
 QtMultimediaKit
 ------
 
+ - Added QCamera API
+    * Includes Linux, maemo and symbian backends.
  - QAudioOutput
     * Fix crash on Windows when initialized with an invalid format
       [QTMOBILITY-438]

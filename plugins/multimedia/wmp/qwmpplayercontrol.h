@@ -103,6 +103,8 @@ public:
     QUrl url() const;
     void setUrl(const QUrl &url);
 
+    bool event(QEvent *event);
+
     using QMediaPlayerControl::positionChanged;
 
 private Q_SLOTS:
@@ -114,13 +116,23 @@ private Q_SLOTS:
     void playStateChangeEvent(long state);
 
 private:
+    enum Change
+    {
+        StateChanged = 0x01,
+        StatusChanged = 0x02,
+        PositionChanged = 0x04,
+        DurationChanged = 0x08
+    };
+
+    void scheduleUpdate(int change);
+
     IWMPCore3 *m_player;
     IWMPControls *m_controls;
     IWMPSettings *m_settings;
     IWMPNetwork *m_network;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_status;
-    qint64 m_duration;
+    int m_changes;
     bool m_buffering;
     bool m_audioAvailable;
     bool m_videoAvailable;

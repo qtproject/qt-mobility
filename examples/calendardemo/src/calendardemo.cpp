@@ -353,17 +353,16 @@ void CalendarDemo::importItems()
     QVersitOrganizerImporter importer;
     foreach (const QVersitDocument& document, reader.results()) {
         if (!importer.importDocument(document)) {
-            qWarning() << "Import failed, " << importer.errors();
+            qWarning() << "Import failed, " << importer.errorMap();
             continue;
         }
         QList<QOrganizerItem> items = importer.items();
-        QMap<int, QOrganizerItemManager::Error> errorMap;
         QList<QOrganizerItem>::iterator it = items.begin();
         while (it != items.end()) {
             *it = m_manager->compatibleItem(*it);
             it++;
         }
-        m_manager->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap);
+        m_manager->saveItems(&items);
     }
     m_monthPage->refresh();
     m_dayPage->refresh();
@@ -388,8 +387,8 @@ void CalendarDemo::exportItems()
     }
     QList<QOrganizerItem> items(m_manager->items());
     QVersitOrganizerExporter exporter;
-    if (!exporter.exportItems(items, QVersitDocument::ICalendar20Type)) {
-        qWarning() << "Export failed, " << exporter.errors();
+    if (!exporter.exportItems(items)) {
+        qWarning() << "Export failed, " << exporter.errorMap();
         return;
     }
     QVersitDocument document = exporter.document();

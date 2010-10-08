@@ -79,7 +79,7 @@ void TestItemLocation::init()
     m_om = new QOrganizerItemManager(managerName);
     
     // Cleanup by deleting all items
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
 }
 
 void TestItemLocation::cleanup()

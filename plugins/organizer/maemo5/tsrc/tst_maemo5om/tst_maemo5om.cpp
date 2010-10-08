@@ -147,7 +147,7 @@ void tst_Maemo5Om::addSimpleItem()
     // Save with list parameter
     QList<QOrganizerItem> items;
     items.append(event2);
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId()));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     foreach (QOrganizerItem item, items) {
         QVERIFY(!item.id().localId().isNull());
@@ -165,10 +165,9 @@ void tst_Maemo5Om::addSimpleItem()
     // Save with list parameter and error map parameter
     QList<QOrganizerItem> items2;
     items2.append(event3);
-    QMap<int, QOrganizerItemManager::Error> errorMap;
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap));
+    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId()));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
-    QVERIFY(errorMap.count() == 0);
+    QVERIFY(m_om->errorMap().count() == 0);
     foreach ( QOrganizerItem item2, items ) {
         QVERIFY(!item2.id().localId().isNull());
         QVERIFY(item2.id().managerUri().contains(managerName));
@@ -217,9 +216,8 @@ void tst_Maemo5Om::removeSimpleItem()
     QList<QOrganizerItemLocalId> itemIds;
     itemIds.append(item2.localId());
     itemIds.append(item3.localId());
-    QMap<int, QOrganizerItemManager::Error> errorMap;
-    QVERIFY(m_om->removeItems(itemIds, &errorMap));
-    QVERIFY(errorMap.count() == 0);
+    QVERIFY(m_om->removeItems(itemIds));
+    QVERIFY(m_om->errorMap().count() == 0);
 }
 
 void tst_Maemo5Om::addEvent() {
@@ -666,11 +664,11 @@ void tst_Maemo5Om::addWithIllegalParameters()
     QVERIFY(!m_om->saveItem(0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
-    QVERIFY(!m_om->saveItems(0, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(!m_om->saveItems(0, QOrganizerCollectionLocalId()));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
     QList<QOrganizerItem> items;
-    QVERIFY(!m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(!m_om->saveItems(&items, QOrganizerCollectionLocalId()));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 }
 
@@ -969,7 +967,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     // Save with list parameter
     QList<QOrganizerItem> items;
     items.append(event2);
-    QVERIFY(m_om->saveItems(&items, collId, 0));
+    QVERIFY(m_om->saveItems(&items, collId));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     foreach (QOrganizerItem item, items) {
         QVERIFY(!item.id().localId().isNull());
@@ -987,10 +985,9 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     // Save with list parameter and error map parameter
     QList<QOrganizerItem> items2;
     items2.append(event3);
-    QMap<int, QOrganizerItemManager::Error> errorMap;
-    QVERIFY(m_om->saveItems(&items2, collId, &errorMap));
+    QVERIFY(m_om->saveItems(&items2, collId));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
-    QVERIFY(errorMap.count() == 0);
+    QVERIFY(m_om->errorMap().count() == 0);
     foreach ( QOrganizerItem item2, items ) {
         QVERIFY(!item2.id().localId().isNull());
         QVERIFY(item2.id().managerUri().contains(managerName));

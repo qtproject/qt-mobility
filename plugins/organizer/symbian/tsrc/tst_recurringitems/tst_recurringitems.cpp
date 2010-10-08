@@ -101,7 +101,7 @@ void tst_recurringItems::initTestCase()
     managerNames.removeAll("memory");
     foreach (QString managerName, managerNames) {
         m_om = new QOrganizerItemManager(managerName);
-        m_om->removeItems(m_om->itemIds(), 0);
+        m_om->removeItems(m_om->itemIds());
     }
 }
 
@@ -111,13 +111,13 @@ void tst_recurringItems::init()
     m_om = new QOrganizerItemManager(managerName);
 
     // Remove all organizer items first (Note: ignores possible errors)
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
 }
 
 void tst_recurringItems::cleanup()
 {
     // Remove all organizer items first (Note: ignores possible errors)
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
     delete m_om;
     m_om = 0;
 }

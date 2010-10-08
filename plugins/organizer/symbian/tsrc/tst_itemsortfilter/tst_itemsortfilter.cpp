@@ -144,7 +144,7 @@ tst_itemSortFilter::tst_itemSortFilter()
 tst_itemSortFilter::~tst_itemSortFilter()
 {
     foreach (QOrganizerItemManager* manager, m_managers) {
-        manager->removeItems(manager->itemIds(), 0);
+        manager->removeItems(manager->itemIds());
         delete manager;
         manager = 0;
     }
