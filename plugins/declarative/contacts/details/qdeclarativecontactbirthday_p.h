@@ -51,7 +51,7 @@ class  QDeclarativeContactBirthday : public QDeclarativeContactDetail
 
     Q_PROPERTY(QDate date READ date WRITE setDate NOTIFY fieldsChanged);
     Q_PROPERTY(QDateTime dateTime READ dateTime WRITE setDateTime NOTIFY fieldsChanged);
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "date")
 public:
     enum FieldType {

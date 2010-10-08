@@ -57,7 +57,7 @@ class QDeclarativeContactAddress : public QDeclarativeContactDetail
     Q_PROPERTY(QString country READ country WRITE setCountry  NOTIFY fieldsChanged)
     Q_PROPERTY(QStringList subTypes READ subTypes WRITE setSubTypes NOTIFY fieldsChanged)
     Q_PROPERTY(QString postOfficeBox READ postOfficeBox WRITE setPostOfficeBox  NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
 public:
     enum FieldType {
         Street = 0,
