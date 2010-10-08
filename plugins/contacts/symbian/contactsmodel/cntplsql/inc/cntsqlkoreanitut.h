@@ -61,6 +61,8 @@ private:
     
     QString compareColumnsInOrder( QStringList &tokens) const;
     
+    QString compareColumnsFromMidleInOrder( QStringList &tokens) const;
+    
     QString getSearchColumns(const QString& token, int position) const;
     
     QStringList getSearchPattern(const QString &pattern);
