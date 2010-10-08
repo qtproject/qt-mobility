@@ -120,6 +120,7 @@ int main(int argc, char** argv)
     unique.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
 
     serviceRegister->publishEntries("sfwecho_service");
+    serviceRegister->setQuitOnLastInstanceClosed(true);
 
     int res =  app.exec();
 
