@@ -198,8 +198,8 @@ QVariant getLandmarkAttribute(QLandmark *landmark, const QString &key) {
         return landmark->address().district();
     } else if (key.compare("street", Qt::CaseSensitive) ==0 ){
         return landmark->address().street();
-    } else if (key.compare("postCode", Qt::CaseSensitive) ==0 ){
-        return landmark->address().postCode();
+    } else if (key.compare("postcode", Qt::CaseSensitive) ==0 ){
+        return landmark->address().postcode();
     }
     Q_ASSERT(false);//It shouldn't be possible to get here
     return QVariant();
@@ -275,9 +275,9 @@ void setLandmarkAttribute(QLandmark *landmark, const QString &key, const QVarian
         address.setStreet(value.toString());
         landmark->setAddress(address);
         return;
-    } else if (key.compare("postCode", Qt::CaseSensitive) ==0 ){
+    } else if (key.compare("postcode", Qt::CaseSensitive) ==0 ){
         QGeoAddress address = landmark->address();
-        address.setPostCode(value.toString());
+        address.setPostcode(value.toString());
         landmark->setAddress(address);
         return;
     }
@@ -3613,7 +3613,7 @@ const QStringList DatabaseOperations::coreGenericAttributes = QStringList()
                                                               << "city"
                                                               << "district"
                                                               << "street"
-                                                              << "postCode"
+                                                              << "postcode"
                                                               << "phoneNumber"
                                                               << "url";
 
@@ -3626,7 +3626,7 @@ const QStringList DatabaseOperations::supportedSearchableAttributes = QStringLis
                                                          << "city"
                                                          << "district"
                                                          << "street"
-                                                         << "postCode"
+                                                         << "postcode"
                                                          << "phoneNumber";
 
 const QStringList DatabaseOperations::coreCategoryAttributes = QStringList()

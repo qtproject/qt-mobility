@@ -139,7 +139,7 @@ EXPORTS
 	_ZTVN10QtMobility23QNmeaPositionInfoSourceE @ 138 NONAME ; #<VT>#
 	_ZN10QtMobility11QGeoAddress10setCountryERK7QString @ 139 NONAME
 	_ZN10QtMobility11QGeoAddress11setDistrictERK7QString @ 140 NONAME
-	_ZN10QtMobility11QGeoAddress11setPostCodeERK7QString @ 141 NONAME
+	_ZN10QtMobility11QGeoAddress11setPostcodeERK7QString @ 141 NONAME
 	_ZN10QtMobility11QGeoAddress14setCountryCodeERK7QString @ 142 NONAME
 	_ZN10QtMobility11QGeoAddress5clearEv @ 143 NONAME
 	_ZN10QtMobility11QGeoAddress7setCityERK7QString @ 144 NONAME
@@ -1157,7 +1157,7 @@ EXPORTS
 	_ZNK10QtMobility11QGeoAddress7countryEv @ 1156 NONAME
 	_ZNK10QtMobility11QGeoAddress7isEmptyEv @ 1157 NONAME
 	_ZNK10QtMobility11QGeoAddress8districtEv @ 1158 NONAME
-	_ZNK10QtMobility11QGeoAddress8postCodeEv @ 1159 NONAME
+	_ZNK10QtMobility11QGeoAddress8postcodeEv @ 1159 NONAME
 	_ZNK10QtMobility11QGeoAddresseqERKS0_ @ 1160 NONAME
 	_ZNK10QtMobility11QGeoMapData10mapObjectsEv @ 1161 NONAME
 	_ZNK10QtMobility11QGeoMapData10metaObjectEv @ 1162 NONAME

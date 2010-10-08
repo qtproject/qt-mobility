@@ -3358,7 +3358,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
                     CleanupStack::Pop(textContainsStreet);
                 }
             }
-            else if (keyList.at(i) == "postCode") {
+            else if (keyList.at(i) == "postcode") {
                 CPosLmTextCriteria* textPostCodeCriteria = CPosLmTextCriteria::NewLC();
                 afieldArray.InsertInOrder(LandmarkUtility::positionFieldId(keyList.at(i)));
                 textPostCodeCriteria->SetTextL(filterName);

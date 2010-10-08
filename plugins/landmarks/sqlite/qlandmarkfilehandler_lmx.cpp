@@ -588,7 +588,7 @@ bool QLandmarkFileHandlerLmx::readAddressInfo(QLandmark &landmark)
             } else if (name == "district") {
                 address.setDistrict(m_reader->readElementText());
             } else if (name == "postalCode") {
-                address.setPostCode(m_reader->readElementText());
+                address.setPostcode(m_reader->readElementText());
             } else if (name == "street") {
                 QString street = m_reader->readElementText();
                 address.setStreet(street);
@@ -855,7 +855,7 @@ bool QLandmarkFileHandlerLmx::writeAddressInfo(const QLandmark &landmark)
             && address.city().isEmpty()
             && address.state().isEmpty()
             && address.country().isEmpty()
-            && address.postCode().isEmpty()
+            && address.postcode().isEmpty()
             && landmark.phoneNumber().isEmpty())
         return true;
 
@@ -876,8 +876,8 @@ bool QLandmarkFileHandlerLmx::writeAddressInfo(const QLandmark &landmark)
     if (!address.district().isEmpty())
         m_writer->writeTextElement(m_ns, "district", address.district());
 
-    if (!address.postCode().isEmpty())
-        m_writer->writeTextElement(m_ns, "postalCode", address.postCode());
+    if (!address.postcode().isEmpty())
+        m_writer->writeTextElement(m_ns, "postalCode", address.postcode());
 
     QString street;
 

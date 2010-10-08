@@ -135,9 +135,9 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
         requestString += address.city();
     }
 
-    if (!address.postCode().isEmpty()) {
+    if (!address.postcode().isEmpty()) {
         requestString += "&zip=";
-        requestString += address.postCode();
+        requestString += address.postcode();
     }
 
     if (!address.street().isEmpty()) {

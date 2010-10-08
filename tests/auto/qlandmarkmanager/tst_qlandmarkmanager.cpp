@@ -1516,7 +1516,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
     address.setState("LM2 State");
     address.setCountry("LM2 Country");
     address.setCountryCode("LM2CountryCode");
-    address.setPostCode("LM2 post code");
+    address.setPostcode("LM2 post code");
     lm2.setAddress(address);
     QGeoCoordinate coordinate(10,20);
     lm2.setCoordinate(coordinate);
@@ -1671,7 +1671,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
     address.setState("LMA State");
     address.setCountry("LMA Country");
     address.setCountryCode("LMACountryCode");
-    address.setPostCode("LMA post code");
+    address.setPostcode("LMA post code");
     lmA.setAddress(address);
     coordinate.setLatitude(50);
     coordinate.setLongitude(24);
@@ -1691,7 +1691,7 @@ void tst_QLandmarkManager::retrieveLandmark() {
     address.setState("LMB State");
     address.setCountry("LMB Country");
     address.setCountryCode("LMBCountryCode");
-    address.setPostCode("LMB post code");
+    address.setPostcode("LMB post code");
     lmB.setAddress(address);
     coordinate.setLatitude(-43);
     coordinate.setLongitude(-10);
@@ -2129,7 +2129,7 @@ void tst_QLandmarkManager::saveLandmark() {
     address.setState("LM1 State");
     address.setCountry("LM1 Country");
     address.setCountryCode("LM1CountryCode");
-    address.setPostCode("LM1 post code");
+    address.setPostcode("LM1 post code");
     lm1.setAddress(address);
     QGeoCoordinate coordinate(10,20);
     lm1.setCoordinate(coordinate);
@@ -2165,7 +2165,7 @@ void tst_QLandmarkManager::saveLandmark() {
     address.setState("LM1Changed State");
     address.setCountry("LM1Changed Country");
     address.setCountryCode("LM1Changed CountryCode");
-    address.setPostCode("LM1Changed Post code");
+    address.setPostcode("LM1Changed Post code");
     lm1Changed.setAddress(address);
     coordinate.setLatitude(11);
     coordinate.setLongitude(21);
@@ -6384,7 +6384,7 @@ void tst_QLandmarkManager::exportLmx() {
     lm1Address.setCity("lm1 city");
     lm1Address.setDistrict("lm1 district");
     lm1Address.setStreet("lm1 street");
-    lm1Address.setPostCode("lm1 postCode");
+    lm1Address.setPostcode("lm1 postCode");
     QLandmark lm1;
     lm1.setName(lm1Name);
     lm1.setDescription(lm1Description);
@@ -6407,7 +6407,7 @@ void tst_QLandmarkManager::exportLmx() {
     lm2Address.setCity("lm2 city");
     lm2Address.setDistrict("lm2 district");
     lm2Address.setStreet("lm2 street");
-    lm2Address.setPostCode("lm2 postCode");
+    lm2Address.setPostcode("lm2 postCode");
     QLandmark lm2;
     lm2.setName(lm2Name);
     lm2.setDescription(lm2Description);
@@ -6430,7 +6430,7 @@ void tst_QLandmarkManager::exportLmx() {
     lm3Address.setCity("lm3 city");
     lm3Address.setDistrict("lm3 district");
     lm3Address.setStreet("lm3 street");
-    lm3Address.setPostCode("lm3 postCode");
+    lm3Address.setPostcode("lm3 postCode");
     QLandmark lm3;
     lm3.setName(lm3Name);
     lm3.setDescription(lm3Description);
@@ -6644,7 +6644,7 @@ void tst_QLandmarkManager::exportLmx() {
     QCOMPARE(lm1New.address().city(), lm1Address.city());
     QCOMPARE(lm1New.address().district(), lm1Address.district());
     QCOMPARE(lm1New.address().street(), lm1Address.street());
-    QCOMPARE(lm1New.address().postCode(), lm1Address.postCode());
+    QCOMPARE(lm1New.address().postcode(), lm1Address.postcode());
 
     if (includeCategoryData) {
         QCOMPARE(lm1.categoryIds().count(),3);

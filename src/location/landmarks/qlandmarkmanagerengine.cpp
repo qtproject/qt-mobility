@@ -120,8 +120,8 @@ QVariant getLandmarkAttribute(const QString key, const QLandmark &landmark)
         return landmark.address().district();
     } else if (key == "street") {
         return landmark.address().street();
-    } else if (key == "postCode") {
-        return landmark.address().postCode();
+    } else if (key == "postcode") {
+        return landmark.address().postcode();
     } else if (key == "phoneNumber") {
         return landmark.phoneNumber();
     } else {
@@ -138,7 +138,7 @@ QStringList commonLandmarkKeys = QStringList() << "name"
                                 << "city"
                                 << "district"
                                 << "street"
-                                << "postCode"
+                                << "postcode"
                                 << "phoneNumber";
 
 /*!
