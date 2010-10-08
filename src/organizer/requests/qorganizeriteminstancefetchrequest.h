@@ -62,12 +62,16 @@ class Q_ORGANIZER_EXPORT QOrganizerItemInstanceFetchRequest : public QOrganizerI
 public:
     QOrganizerItemInstanceFetchRequest(QObject* parent = 0);
 
-    /* Selection, restriction and sorting */
-    void setFilter(const QOrganizerItemFilter& filter);
-    void setSorting(const QList<QOrganizerItemSortOrder>& sorting);
-    void setFetchHint(const QOrganizerItemFetchHint& fetchHint);
-    QOrganizerItemFilter filter() const;
-    QList<QOrganizerItemSortOrder> sorting() const;
+    void setGenerator(const QOrganizerItem& item);
+    void setStartDate(const QDateTime& date);
+    void setEndDate(const QDateTime& date);
+    void setMaxOccurrences(int maxCount);
+    void setFetchHint(const QOrganizerItemFetchHint& hint);
+
+    QOrganizerItem generator() const;
+    QDateTime startDate() const;
+    QDateTime endDate() const;
+    int maxOccurrences() const;
     QOrganizerItemFetchHint fetchHint() const;
 
     /* Results */

@@ -39,19 +39,19 @@
 **
 ****************************************************************************/
 
-#include "qorganizeritemfetchrequest.h"
+#include "qorganizeritemfetchforexportrequest.h"
 #include "qorganizeritemrequests_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QOrganizerItemFetchRequest
-  \brief The QOrganizerItemFetchRequest class allows a client to asynchronously
+  \class QOrganizerItemFetchForExportRequest
+  \brief The QOrganizerItemFetchForExportRequest class allows a client to asynchronously
     request organizer items from an organizer item store manager.
   \inmodule QtOrganizer
 
 
-  For a QOrganizerItemFetchRequest, the resultsAvailable() signal will be emitted when the resultant
+  For a QOrganizerItemFetchForExportRequest, the resultsAvailable() signal will be emitted when the resultant
   organizer item (which may be retrieved by calling items()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
@@ -59,22 +59,22 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*! Constructs a new organizer item fetch request whose parent is the specified \a parent */
-QOrganizerItemFetchRequest::QOrganizerItemFetchRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerItemFetchRequestPrivate, parent)
+QOrganizerItemFetchForExportRequest::QOrganizerItemFetchForExportRequest(QObject* parent)
+    : QOrganizerItemAbstractRequest(new QOrganizerItemFetchForExportRequestPrivate, parent)
 {
 }
 
 /*! Sets the organizer item filter used to determine which organizer items will be retrieved to \a filter */
-void QOrganizerItemFetchRequest::setFilter(const QOrganizerItemFilter& filter)
+void QOrganizerItemFetchForExportRequest::setFilter(const QOrganizerItemFilter& filter)
 {
-    Q_D(QOrganizerItemFetchRequest);
+    Q_D(QOrganizerItemFetchForExportRequest);
     d->m_filter = filter;
 }
 
 /*! Sets the sort order of the result to \a sorting.  Only has an effect if called prior to calling \c start() */
-void QOrganizerItemFetchRequest::setSorting(const QList<QOrganizerItemSortOrder>& sorting)
+void QOrganizerItemFetchForExportRequest::setSorting(const QList<QOrganizerItemSortOrder>& sorting)
 {
-    Q_D(QOrganizerItemFetchRequest);
+    Q_D(QOrganizerItemFetchForExportRequest);
     d->m_sorting = sorting;
 }
 
@@ -86,37 +86,37 @@ void QOrganizerItemFetchRequest::setSorting(const QList<QOrganizerItemSortOrder>
   replace the previously saved organizer item in the backend).
   \sa QOrganizerItemFetchHint
  */
-void QOrganizerItemFetchRequest::setFetchHint(const QOrganizerItemFetchHint &fetchHint)
+void QOrganizerItemFetchForExportRequest::setFetchHint(const QOrganizerItemFetchHint &fetchHint)
 {
-    Q_D(QOrganizerItemFetchRequest);
+    Q_D(QOrganizerItemFetchForExportRequest);
     d->m_fetchHint = fetchHint;
 }
 
 /*! Sets the start period of the request to \a date. Only has an effect if called prior to calling \c start() */
-void QOrganizerItemFetchRequest::setStartDate(const QDateTime &date)
+void QOrganizerItemFetchForExportRequest::setStartDate(const QDateTime &date)
 {
-    Q_D(QOrganizerItemFetchRequest);
+    Q_D(QOrganizerItemFetchForExportRequest);
     d->m_startDate = date;
 }
 
 /*! Sets the end period of the request to \a date. Only has an effect if called prior to calling \c start() */
-void QOrganizerItemFetchRequest::setEndDate(const QDateTime &date)
+void QOrganizerItemFetchForExportRequest::setEndDate(const QDateTime &date)
 {
-    Q_D(QOrganizerItemFetchRequest);
+    Q_D(QOrganizerItemFetchForExportRequest);
     d->m_endDate = date;
 }
 
 /*! Returns the filter that will be used to select organizer items to be returned */
-QOrganizerItemFilter QOrganizerItemFetchRequest::filter() const
+QOrganizerItemFilter QOrganizerItemFetchForExportRequest::filter() const
 {
-    Q_D(const QOrganizerItemFetchRequest);
+    Q_D(const QOrganizerItemFetchForExportRequest);
     return d->m_filter;
 }
 
 /*! Returns the sort ordering that will be used sort the results of this request */
-QList<QOrganizerItemSortOrder> QOrganizerItemFetchRequest::sorting() const
+QList<QOrganizerItemSortOrder> QOrganizerItemFetchForExportRequest::sorting() const
 {
-    Q_D(const QOrganizerItemFetchRequest);
+    Q_D(const QOrganizerItemFetchForExportRequest);
     return d->m_sorting;
 }
 
@@ -128,31 +128,31 @@ QList<QOrganizerItemSortOrder> QOrganizerItemFetchRequest::sorting() const
   replace the previously saved organizer item in the backend).
   \sa QOrganizerItemFetchHint
  */
-QOrganizerItemFetchHint QOrganizerItemFetchRequest::fetchHint() const
+QOrganizerItemFetchHint QOrganizerItemFetchForExportRequest::fetchHint() const
 {
-    Q_D(const QOrganizerItemFetchRequest);
+    Q_D(const QOrganizerItemFetchForExportRequest);
     return d->m_fetchHint;
 }
 
-QDateTime QOrganizerItemFetchRequest::startDate() const
+QDateTime QOrganizerItemFetchForExportRequest::startDate() const
 {
-    Q_D(const QOrganizerItemFetchRequest);
+    Q_D(const QOrganizerItemFetchForExportRequest);
     return d->m_startDate;
 }
 
-QDateTime QOrganizerItemFetchRequest::endDate() const
+QDateTime QOrganizerItemFetchForExportRequest::endDate() const
 {
-    Q_D(const QOrganizerItemFetchRequest);
+    Q_D(const QOrganizerItemFetchForExportRequest);
     return d->m_endDate;
 }
 
 /*! Returns the list of organizer items retrieved by this request */
-QList<QOrganizerItem> QOrganizerItemFetchRequest::items() const
+QList<QOrganizerItem> QOrganizerItemFetchForExportRequest::items() const
 {
-    Q_D(const QOrganizerItemFetchRequest);
+    Q_D(const QOrganizerItemFetchForExportRequest);
     return d->m_organizeritems;
 }
 
-#include "moc_qorganizeritemfetchrequest.cpp"
+#include "moc_qorganizeritemfetchforexportrequest.cpp"
 
 QTM_END_NAMESPACE

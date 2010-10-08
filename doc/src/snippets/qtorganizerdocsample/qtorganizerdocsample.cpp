@@ -93,11 +93,11 @@ void snippets()
     QList<QOrganizerItem> instances = defaultManager.itemInstances(recEvent, startDateTime, endDateTime);
     //! [Retrieving occurrences of a particular recurrent event within a time period]
     qDebug() << "dumping retrieved instances:";
-foreach(const QOrganizerItem& currInst, instances)
-{
-    dumpItem(currInst);
-    qDebug() << "....................";
-}
+    foreach(const QOrganizerItem& currInst, instances)
+    {
+        dumpItem(currInst);
+        qDebug() << "....................";
+    }
 
 
     //! [Retrieving the next 5 occurrences of a particular recurrent event]
@@ -131,6 +131,7 @@ foreach(const QOrganizerItem& currInst, instances)
 
     //! [Creating an exception to a particular recurrent event]
     // the following line should be made simpler via QOIM::itemInstances(item, startDateTime, endDateTime, count)...
+    /* FIXME: correct the example
     QOrganizerEventOccurrence nextMarshmallowMeeting = QOrganizerEventOccurrence(defaultManager.itemInstances().value(0)); // should use dfil.
     nextMarshmallowMeeting.setStartDateTime(QDateTime::fromString("13.05.2010 18:00:00", "dd.MM.yy hh:mm:ss"));
     nextMarshmallowMeeting.setEndDateTime(QDateTime::fromString("13.05.2010 20:00:00", "dd.MM.yy hh:mm:ss"));
@@ -139,6 +140,7 @@ foreach(const QOrganizerItem& currInst, instances)
                                       "to taste the results of the recipe that I will be presenting "\
                                       "at the meeting.");
     defaultManager.saveItem(&nextMarshmallowMeeting);
+    */
     //! [Creating an exception to a particular recurrent event]
 
     dumpItems(&defaultManager);

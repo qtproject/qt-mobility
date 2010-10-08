@@ -39,30 +39,48 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDATETIMEPERIODFILTER_H
-#define QORGANIZERITEMDATETIMEPERIODFILTER_H
+#ifndef QORGANIZERITEMFETCHFOREXPORTREQUEST_H
+#define QORGANIZERITEMFETCHFOREXPORTREQUEST_H
 
-#include <QDateTime>
+#include "qtorganizerglobal.h"
+#include "qorganizeritemabstractrequest.h"
+#include "qorganizeritemsortorder.h"
 #include "qorganizeritemfilter.h"
+#include "qorganizeritem.h"
+#include "qorganizeritemfetchhint.h"
+
+#include <QList>
+#include <QStringList>
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemDateTimePeriodFilterPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemDateTimePeriodFilter : public QOrganizerItemFilter
+class QOrganizerItemFetchForExportRequestPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerItemFetchForExportRequest : public QOrganizerItemAbstractRequest
 {
+    Q_OBJECT
+
 public:
-    QOrganizerItemDateTimePeriodFilter();
-    QOrganizerItemDateTimePeriodFilter(const QOrganizerItemFilter& other);
+    QOrganizerItemFetchForExportRequest(QObject* parent = 0);
 
-    void setStartPeriod(const QDateTime& start);
-    void setEndPeriod(const QDateTime& end) ;
+    /* Selection, restriction and sorting */
+    void setFilter(const QOrganizerItemFilter& filter);
+    void setSorting(const QList<QOrganizerItemSortOrder>& sorting);
+    void setFetchHint(const QOrganizerItemFetchHint& fetchHint);
+    void setStartDate(const QDateTime& date);
+    void setEndDate(const QDateTime& date);
+    QOrganizerItemFilter filter() const;
+    QList<QOrganizerItemSortOrder> sorting() const;
+    QOrganizerItemFetchHint fetchHint() const;
+    QDateTime startDate() const;
+    QDateTime endDate() const;
 
-    /* Accessors */
-    QDateTime startPeriod() const;
-    QDateTime endPeriod() const;
+    /* Results */
+    QList<QOrganizerItem> items() const;
 
 private:
-    Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemDateTimePeriodFilter)
+    Q_DISABLE_COPY(QOrganizerItemFetchForExportRequest)
+    friend class QOrganizerItemManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemFetchForExportRequest)
 };
 
 QTM_END_NAMESPACE

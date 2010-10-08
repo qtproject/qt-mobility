@@ -418,7 +418,7 @@ void tst_recurringItems::exceptionDates()
     QVERIFY(m_om->saveItem(&item));
 
     // Verify
-    QCOMPARE(m_om->itemInstances().count(), 10);
+    QCOMPARE(m_om->items().count(), 10);
     QCOMPARE(m_om->itemInstances(item).count(), 10);
 
     // Delete the second instance; "weekly for 10 weeks, except on 2nd week"
@@ -429,12 +429,12 @@ void tst_recurringItems::exceptionDates()
     QVERIFY(m_om->saveItem(&item));
 
     // Verify
-    QCOMPARE(m_om->itemInstances().count(), 9);
+    QCOMPARE(m_om->items().count(), 9);
     QCOMPARE(m_om->itemInstances(item).count(), 9);
-    QCOMPARE(m_om->itemInstances().at(0).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
-    QCOMPARE(QOrganizerEventOccurrence(m_om->itemInstances().at(0)).startDateTime().date(), QDate(2010, 10, 1));
-    QCOMPARE(m_om->itemInstances().at(1).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
-    QCOMPARE(QOrganizerEventOccurrence(m_om->itemInstances().at(1)).startDateTime().date(), QDate(2010, 10, 15));
+    QCOMPARE(m_om->items().at(0).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QCOMPARE(QOrganizerEventOccurrence(m_om->items().at(0)).startDateTime().date(), QDate(2010, 10, 1));
+    QCOMPARE(m_om->items().at(1).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QCOMPARE(QOrganizerEventOccurrence(m_om->items().at(1)).startDateTime().date(), QDate(2010, 10, 15));
 
     // Delete 1st instance; "weekly for 10 weeks, except on 1st and 2nd week"
     xdates.append(QDate(2010, 10, 1));
@@ -443,12 +443,12 @@ void tst_recurringItems::exceptionDates()
     QVERIFY(m_om->saveItem(&item));
 
     // Verify
-    QCOMPARE(m_om->itemInstances().count(), 8);
+    QCOMPARE(m_om->items().count(), 8);
     QCOMPARE(m_om->itemInstances(item).count(), 8);
-    QCOMPARE(m_om->itemInstances().at(0).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
-    QCOMPARE(QOrganizerEventOccurrence(m_om->itemInstances().at(0)).startDateTime().date(), QDate(2010, 10, 15));
-    QCOMPARE(m_om->itemInstances().at(1).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
-    QCOMPARE(QOrganizerEventOccurrence(m_om->itemInstances().at(1)).startDateTime().date(), QDate(2010, 10, 22));
+    QCOMPARE(m_om->items().at(0).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QCOMPARE(QOrganizerEventOccurrence(m_om->items().at(0)).startDateTime().date(), QDate(2010, 10, 15));
+    QCOMPARE(m_om->items().at(1).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QCOMPARE(QOrganizerEventOccurrence(m_om->items().at(1)).startDateTime().date(), QDate(2010, 10, 22));
 }
 
 /*!

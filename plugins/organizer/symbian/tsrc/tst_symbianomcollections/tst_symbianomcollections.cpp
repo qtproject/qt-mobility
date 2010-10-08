@@ -726,7 +726,7 @@ void tst_symbianomcollections::fetchItems()
 
     // Verify
     QCOMPARE(m_om->itemIds().count(), itemCount * 2);
-    QCOMPARE(m_om->items().count(), itemCount * 2);
+    QCOMPARE(m_om->itemsForExport().count(), itemCount * 2);
 
     // Verify there are no duplicates in the list
     bool noduplicates(true);
@@ -829,13 +829,13 @@ void tst_symbianomcollections::fetchItemInstance()
     QVERIFY(m_om->saveItem(&item, c.id().localId()));
 
     // Verify
-    QCOMPARE(m_om->items().count(), 1);
-    QCOMPARE(m_om->items().at(0).collectionId(), c.id());
-    QCOMPARE(m_om->itemInstances().count(), 5);
-    QVERIFY(m_om->itemInstances().at(0).localId().isNull());
-    QVERIFY(m_om->itemInstances().at(1).localId().isNull());
-    QCOMPARE(m_om->itemInstances().at(0).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
-    QCOMPARE(m_om->itemInstances().at(1).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QCOMPARE(m_om->itemsForExport().count(), 1);
+    QCOMPARE(m_om->itemsForExport().at(0).collectionId(), c.id());
+    QCOMPARE(m_om->items().count(), 5);
+    QVERIFY(m_om->items().at(0).localId().isNull());
+    QVERIFY(m_om->items().at(1).localId().isNull());
+    QCOMPARE(m_om->items().at(0).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QCOMPARE(m_om->items().at(1).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
 }
 
 void tst_symbianomcollections::modifyItemInstance()
@@ -864,24 +864,24 @@ void tst_symbianomcollections::modifyItemInstance()
     recurrence.setRecurrenceRules(rrules);
     QVERIFY(item.saveDetail(&recurrence));
     QVERIFY(m_om->saveItem(&item, c.id().localId()));
-    QCOMPARE(m_om->itemInstances().count(), 5);
+    QCOMPARE(m_om->items().count(), 5);
 
     // Modify the second instance
-    QOrganizerItem secondInstance = m_om->itemInstances().at(1);
+    QOrganizerItem secondInstance = m_om->items().at(1);
     secondInstance.setDisplayLabel("secondinstance");
     QVERIFY(m_om->saveItem(&secondInstance));
 
     // Verify
-    QCOMPARE(m_om->itemInstances().count(), 5);
-    QCOMPARE(m_om->itemInstances().at(0).collectionId(), c.id());
-    QCOMPARE(m_om->itemInstances().at(1).collectionId(), c.id());
-    QCOMPARE(m_om->itemInstances().at(2).collectionId(), c.id());
-    QVERIFY(m_om->itemInstances().at(0).localId().isNull());
-    QVERIFY(!m_om->itemInstances().at(1).localId().isNull());
-    QVERIFY(m_om->itemInstances().at(2).localId().isNull());
-    QCOMPARE(m_om->itemInstances().at(0).displayLabel(), QString("modifyiteminstance"));
-    QCOMPARE(m_om->itemInstances().at(1).displayLabel(), QString("secondinstance"));
-    QCOMPARE(m_om->itemInstances().at(2).displayLabel(), QString("modifyiteminstance"));
+    QCOMPARE(m_om->items().count(), 5);
+    QCOMPARE(m_om->items().at(0).collectionId(), c.id());
+    QCOMPARE(m_om->items().at(1).collectionId(), c.id());
+    QCOMPARE(m_om->items().at(2).collectionId(), c.id());
+    QVERIFY(m_om->items().at(0).localId().isNull());
+    QVERIFY(!m_om->items().at(1).localId().isNull());
+    QVERIFY(m_om->items().at(2).localId().isNull());
+    QCOMPARE(m_om->items().at(0).displayLabel(), QString("modifyiteminstance"));
+    QCOMPARE(m_om->items().at(1).displayLabel(), QString("secondinstance"));
+    QCOMPARE(m_om->items().at(2).displayLabel(), QString("modifyiteminstance"));
 }
 
 void tst_symbianomcollections::itemsInDeletedCollection()
@@ -926,7 +926,11 @@ void tst_symbianomcollections::itemsInDeletedCollection()
     QVERIFY(m_om->item(itemFetch.localId()).isEmpty());
 
     // Try to fetch item instances from the deleted collection
-    QVERIFY(m_om->itemInstances(itemFetch).count() == 0);
+    QOrganizerItemCollectionFilter fil;
+    QSet<QOrganizerCollectionLocalId> filterCollectionIds;
+    filterCollectionIds.insert(c.localId());
+    fil.setCollectionIds(filterCollectionIds);
+    QVERIFY(m_om->items(fil).count() == 0);
 }
 
 /*!

@@ -98,7 +98,7 @@ void tst_Maemo5Om::init()
 {
     m_om = new QOrganizerItemManager(managerName);
     // Remove all organizer items first (Note: ignores possible errors)
-    //m_om->removeItems(m_om->itemIds(), 0);
+    // m_om->removeItems(m_om->itemIds(), 0);
 }
 
 void tst_Maemo5Om::cleanup()
@@ -714,8 +714,7 @@ void tst_Maemo5Om::getItemIds()
     }
 
     // Get items ids
-    QList<QOrganizerItemSortOrder> sortOrders;
-    QList<QOrganizerItemLocalId> ids = m_om->itemIds(sortOrders);
+    QList<QOrganizerItemLocalId> ids = m_om->itemIds(QDateTime(QDate(2010,3,1)), QDateTime(QDate(2010,3,11)), QOrganizerItemFilter());
 
     // Check that all the item ids exist in result
     foreach(QOrganizerItemLocalId id, generatedIds) {
@@ -756,9 +755,7 @@ void tst_Maemo5Om::getItems()
     }
 
     // Get items
-    QList<QOrganizerItemSortOrder> sortOrders;
-    QOrganizerItemFetchHint fetchHint;
-    QList<QOrganizerItem> items = m_om->items(sortOrders, fetchHint);
+    QList<QOrganizerItem> items = m_om->items(QOrganizerItemFilter());
 
     // Check that all the items exist in result
     foreach(QOrganizerItem item, generatedItems) {
@@ -817,19 +814,8 @@ void tst_Maemo5Om::getItemInstances()
         QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     }
 
-    // Create a filter for fetching instances of January 2010
-    QOrganizerItemDateTimePeriodFilter filter;
-    filter.setStartPeriod(QDateTime(QDate(2010,1,1), QTime(0,0,0)));
-    filter.setEndPeriod(QDateTime(QDate(2010,2,1), QTime(0,0,0)));
-
-    // Create empty sortorder list
-    QList<QOrganizerItemSortOrder> sortOrders;
-
-    // Create empty fetch hint
-    QOrganizerItemFetchHint fetchHint;
-
     // Get all the instances occurring in January 2010
-    QList<QOrganizerItem> januaryInstances = m_om->itemInstances(filter, sortOrders, fetchHint);
+    QList<QOrganizerItem> januaryInstances = m_om->items(QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,2,1), QTime(0,0,0)), QOrganizerItemFilter());
 
     int instancesWithRightGuidCount = 0;
     foreach(QOrganizerItem instance, januaryInstances) {
@@ -1121,7 +1107,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     QCOMPARE(noFilteringItemIds.count(), unionItemIds.count());
 
     // Get all items of the new collection
-    QList<QOrganizerItem> newCollectionItems = m_om->items(newCollectionFilter, noSort);
+    QList<QOrganizerItem> newCollectionItems = m_om->itemsForExport(QDateTime(), QDateTime(), newCollectionFilter, noSort);
     QCOMPARE(newCollectionItems.count(), 5);
 
     // The collection ids should match
@@ -1129,20 +1115,20 @@ void tst_Maemo5Om::saveItemsToNewCollection()
         QCOMPARE(newCollectionItem.collectionId().localId(), collId);
 
     // Get all the instances of the new collection
-    QList<QOrganizerItem> newCollectionInstances = m_om->itemInstances(newCollectionFilter, noSort);
+    QList<QOrganizerItem> newCollectionInstances = m_om->items(newCollectionFilter, noSort);
 
     // The count should be 11 (10 instances are generated with the recurrence rule and one is added later)
     QCOMPARE(newCollectionInstances.count(), 11);
 
     // Get all the instances of the default collection
-    QList<QOrganizerItem> defaultCollectionInstances = m_om->itemInstances(defaultCollectionFilter, noSort);
+    QList<QOrganizerItem> defaultCollectionInstances = m_om->items(defaultCollectionFilter, noSort);
 
     // Get all the instances with the union filter
-    QList<QOrganizerItem> unionInstances = m_om->itemInstances(unionFilter, noSort);
+    QList<QOrganizerItem> unionInstances = m_om->items(unionFilter, noSort);
     QCOMPARE(newCollectionInstances.count() + defaultCollectionInstances.count(), unionInstances.count());
 
     // Get all the instances with the intersection filter
-    QList<QOrganizerItem> intersectionInstances = m_om->itemInstances(intersectionFilter, noSort);
+    QList<QOrganizerItem> intersectionInstances = m_om->items(intersectionFilter, noSort);
     QCOMPARE(intersectionInstances.count(), 0);
 }
 

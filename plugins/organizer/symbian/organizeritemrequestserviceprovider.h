@@ -83,9 +83,9 @@ private:
     void Reset();
     
 private: // Worker functions
-    void FetchInstance();
-    void SaveItem();
     void FetchItems();
+    void SaveItem();
+    void FetchItemsForExport();
     void FetchItemsByLocalIds();
     void FetchItemsandFilter();
     void FetchItemIds();
