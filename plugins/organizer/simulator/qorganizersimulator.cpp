@@ -222,7 +222,30 @@ bool QOrganizerItemSimulatorEngine::saveCollection(QOrganizerCollection *collect
 
 bool QOrganizerItemSimulatorEngine::removeCollection(const QOrganizerCollectionLocalId &collectionId, QOrganizerItemManager::Error *error)
 {
-    return QOrganizerItemManagerEngine::removeCollection(collectionId, error);
+    Connection *con = Connection::instance();
+
+    if (!con->mNotifySimulator)
+        return QOrganizerItemMemoryEngine::removeCollection(collectionId, error);
+
+    QOrganizerCollectionId remoteId;
+    remoteId.setManagerUri(con->mManagerUri);
+    remoteId.setLocalId(con->mLocalToRemote.collections.value(collectionId));
+
+    QLocalSocket *sendSocket = con->sendSocket();
+    int errorInt = RemoteMetacall<int>::call(
+                sendSocket, TimeoutSync, "requestRemoveOrganizerCollection", remoteId);
+    *error = static_cast<QOrganizerItemManager::Error>(errorInt);
+
+    if (*error != QOrganizerItemManager::NoError)
+        return false;
+
+    if (!QOrganizerItemMemoryEngine::removeCollection(collectionId, error))
+        return false; // it's already removed remotely - revert?
+
+    con->mRemoteToLocal.collections.remove(remoteId.localId());
+    con->mLocalToRemote.collections.remove(collectionId);
+
+    return true;
 }
 
 bool QOrganizerItemSimulatorEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
