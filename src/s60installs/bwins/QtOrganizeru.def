@@ -1100,4 +1100,3 @@ EXPORTS
 	??5QtMobility@@YAAAVQDataStream@@AAV1@AAVQOrganizerItemSortOrder@0@@Z @ 1099 NONAME ; class QDataStream & QtMobility::operator>>(class QDataStream &, class QtMobility::QOrganizerItemSortOrder &)
 	?variantValues@QOrganizerItemDetail@QtMobility@@QBE?AV?$QMap@VQString@@VQVariant@@@@XZ @ 1100 NONAME ; class QMap<class QString, class QVariant> QtMobility::QOrganizerItemDetail::variantValues(void) const
 	?setDateTime@QOrganizerJournal@QtMobility@@QAEXABVQDateTime@@@Z @ 1101 NONAME ; void QtMobility::QOrganizerJournal::setDateTime(class QDateTime const &)
-

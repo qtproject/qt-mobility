@@ -234,6 +234,8 @@ public:
         const QList<QOrganizerItemSortOrder>& sortOrders, 
         QOrganizerItemManager::Error* error) const;
     QList<QOrganizerItemLocalId> getIdsModifiedSinceDateL(
+        const QDateTime& periodStart,
+        const QDateTime& periodEnd,
         const QOrganizerItemFilter& filter) const;
     void itemIdsL(
         QList<QOrganizerItemLocalId>& ids, 

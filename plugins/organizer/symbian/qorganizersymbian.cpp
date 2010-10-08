@@ -553,9 +553,8 @@ void QOrganizerItemSymbianEngine::itemIdsL(
     const QOrganizerItemFilter& filter, 
     const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
-    // TODO filter by periodStart, periodEnd
     // Get item ids
-    QList<QOrganizerItemLocalId> itemIds = getIdsModifiedSinceDateL(filter);
+    QList<QOrganizerItemLocalId> itemIds = getIdsModifiedSinceDateL(periodStart, periodEnd, filter);
 
     // No filtering and sorting needed?
     if (filter.type() == QOrganizerItemFilter::DefaultFilter &&
@@ -579,10 +578,14 @@ void QOrganizerItemSymbianEngine::itemIdsL(
 }
 
 QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::getIdsModifiedSinceDateL(
+    const QDateTime& periodStart,
+    const QDateTime& periodEnd,
     const QOrganizerItemFilter& filter) const
 {
+    Q_UNUSED(periodStart)
+    Q_UNUSED(periodEnd)
     Q_UNUSED(filter)
-    // TODO: get minumum time from filter
+    // TODO filter by periodStart, periodEnd
     // TODO: implement collection filter
 
     // Set minumum time for id fetch
@@ -633,9 +636,8 @@ void QOrganizerItemSymbianEngine::itemsForExportL(QList<QOrganizerItem>& itemsLi
     const QList<QOrganizerItemSortOrder>& sortOrders, 
     const QOrganizerItemFetchHint& fetchHint) const
 {
-    // TODO filter by periodStart and periodEnd
     // Get item ids
-    QList<QOrganizerItemLocalId> itemIds = getIdsModifiedSinceDateL(filter);
+    QList<QOrganizerItemLocalId> itemIds = getIdsModifiedSinceDateL(periodStart, periodEnd, filter);
 
     // Get items
     QList<QOrganizerItem> items;
