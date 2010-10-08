@@ -2238,7 +2238,7 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
         else {
 
             bool status = false;
-            // Using QLandmarkIdFilter to determine wether all the told landmarks exists
+            // Using QLandmarkIdFilter to determine whether all the told landmarks exists
             QLandmarkIdFilter filter;
             filter.setLandmarkIds(exportedLandmarkIds);
 
@@ -2246,18 +2246,15 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             QLandmarkNameSort nameSort;
             sortOrders.append(nameSort);
 
-            exportedLandmarkIds = this->landmarkIds(filter, KAllLandmarks, KDefaultIndex,
+            QList<QLandmarkId> checkedLms = this->landmarkIds(filter, KAllLandmarks, KDefaultIndex,
                 sortOrders, &error, &errorString);
 
-            if (exportedLandmarkIds.isEmpty() || error != QLandmarkManager::NoError)
+            if (checkedLms.isEmpty() || error != QLandmarkManager::NoError)
                 User::Leave(KErrNotFound); // can use errorId for QLandmarkManager::LandmarksNotExist
 
-            foreach(const QLandmarkId& id,exportRequest->landmarkIds())
+            foreach(const QLandmarkId& id,checkedLms)
                     selectedLandmarks.AppendL(LandmarkUtility::convertToSymbianLandmarkId(id));
         }
-
-        exportedLandmarkIds = LandmarkUtility::convertToQtLandmarkIds(managerUri(),
-            selectedLandmarks);
 
         TInt transferOption = CPosLandmarkDatabase::EDefaultOptions;
         switch (exportRequest->transferOption()) {
@@ -3606,6 +3603,49 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
             }
         }
 
+        if (lmIdFetchRequest->filter().type() == QLandmarkFilter::IntersectionFilter
+            && !aData->iLandmarkIds.isEmpty()) {
+
+            bool haveProximityFilter = false;
+            QLandmarkProximityFilter proximityFilter;
+            QLandmarkIntersectionFilter intersectionFilter = lmIdFetchRequest->filter();
+            int originalFilterCount = intersectionFilter.filters().count();
+            for (int i = 0; i < originalFilterCount; ++i) {
+                if (intersectionFilter.filters().at(i).type() == QLandmarkFilter::ProximityFilter) {
+                    proximityFilter = intersectionFilter.filters().takeAt(i);
+                    haveProximityFilter = true;
+
+                    break;
+                }
+            }
+
+            if (haveProximityFilter) {
+                QMap<int, QLandmarkManager::Error> errorMap;
+                QList<QLandmark> lms = landmarks(aData->iLandmarkIds, &errorMap, &error,
+                    &errorString);
+                if (error != QLandmarkManager::NoError) {
+                    aData->iLandmarkIds.clear();
+                }
+
+                QList<QLandmark> sortedLandmarks;
+
+                qreal radius = proximityFilter.radius();
+                QGeoCoordinate center = proximityFilter.center();
+
+                for (int i = 0; i < lms.count(); ++i) {
+                    if (radius < 0 || (lms.at(i).coordinate().distanceTo(center) < radius)
+                        || qFuzzyCompare(lms.at(i).coordinate().distanceTo(center), radius)) {
+                        addSortedPoint(&sortedLandmarks, lms.at(i), center);
+                    }
+                }
+                aData->iLandmarkIds.clear();
+                for (int i = 0; i < sortedLandmarks.count(); ++i) {
+                    aData->iLandmarkIds << sortedLandmarks.at(i).landmarkId();
+                }
+            }
+
+        }
+
         // for resultsAvailable signal
         QLandmarkManagerEngineSymbian::updateLandmarkIdFetchRequest(lmIdFetchRequest,
             aData->iLandmarkIds, error, errorString, QLandmarkAbstractRequest::FinishedState);
@@ -3678,6 +3718,42 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                         }
                 }
             }
+        }
+
+        if (lmfetchRequest->filter().type() == QLandmarkFilter::IntersectionFilter
+            && !aData->iLandmarks.isEmpty()) {
+
+            bool haveProximityFilter = false;
+            QLandmarkProximityFilter proximityFilter;
+            QLandmarkIntersectionFilter intersectionFilter = lmfetchRequest->filter();
+            int originalFilterCount = intersectionFilter.filters().count();
+            for (int i = 0; i < originalFilterCount; ++i) {
+                if (intersectionFilter.filters().at(i).type() == QLandmarkFilter::ProximityFilter) {
+                    proximityFilter = intersectionFilter.filters().takeAt(i);
+                    haveProximityFilter = true;
+
+                    break;
+                }
+            }
+
+            if (haveProximityFilter) {
+
+                QList<QLandmark> lms = aData->iLandmarks;
+                QList<QLandmark> sortedLandmarks;
+
+                qreal radius = proximityFilter.radius();
+                QGeoCoordinate center = proximityFilter.center();
+
+                for (int i = 0; i < lms.count(); ++i) {
+                    if (radius < 0 || (lms.at(i).coordinate().distanceTo(center) < radius)
+                        || qFuzzyCompare(lms.at(i).coordinate().distanceTo(center), radius)) {
+                        addSortedPoint(&sortedLandmarks, lms.at(i), center);
+                    }
+                }
+
+                aData->iLandmarks = sortedLandmarks;
+            }
+
         }
 
         // for resultsAvailable signal
@@ -3966,6 +4042,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
 void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData* aData,
     TRequestStatus& aRequest)
 {
+    //qDebug() << "LandmarkManagerEngineSymbianPrivate::HandleExecutionL Started";
+
     QLandmarkManager::Error error = QLandmarkManager::NoError;
     QString errorString = 0;
     aRequest = KPosLmOperationNotComplete;
@@ -4401,7 +4479,8 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
         break;
     }
     }// switch closure
-
+    
+    //qDebug() << "LandmarkManagerEngineSymbianPrivate::HandleExecutionL end";
 }
 
 /**
