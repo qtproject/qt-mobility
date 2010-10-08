@@ -6,6 +6,8 @@ MOBILITY += feedback
 
 SOURCES += tst_qdeclarativefeedback.cpp
 
+INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/src/feedback
+
 symbian: {
     importFiles.sources = data
     importFiles.path = .
