@@ -127,11 +127,11 @@ private:
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerCollectionLocalId), Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerCollectionId), Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QtMobility::QOrganizerCollectionLocalId, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QtMobility::QOrganizerCollectionId, Q_MOVABLE_TYPE);
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerCollectionLocalId));
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerCollectionId));
+Q_DECLARE_METATYPE(QtMobility::QOrganizerCollectionLocalId);
+Q_DECLARE_METATYPE(QtMobility::QOrganizerCollectionId);
 
 #endif
 
