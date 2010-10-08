@@ -843,6 +843,9 @@ void tst_QOrganizerItemAsync::itemRemove()
 {
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
+
+    qRegisterMetaType<QList<QOrganizerItemLocalId> >("QList<QOrganizerItemLocalId>");
+
     QOrganizerItemRemoveRequest irr;
     QVERIFY(irr.type() == QOrganizerItemAbstractRequest::ItemRemoveRequest);
 
@@ -1982,7 +1985,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
         QList<QOrganizerCollection> removeCollections = oim->collections();
         for (int i = 0; i < removeCollections.size(); ++i)
             removeCollectionIds << removeCollections.at(i).localId();
-        QCOMPARE(removeCollectionIds, crr.collectionIds());
+        QVERIFY(containsAllCollectionIds(removeCollectionIds, crr.collectionIds()));
         QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         break;
@@ -2018,7 +2021,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
         QList<QOrganizerCollection> removeCollections = oim->collections();
         for (int i = 0; i < removeCollections.size(); ++i)
             removeCollectionIds << removeCollections.at(i).localId();
-        QCOMPARE(removeCollectionIds, crr.collectionIds());
+        QVERIFY(containsAllCollectionIds(removeCollectionIds, crr.collectionIds()));
         QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         break;
@@ -2153,7 +2156,7 @@ void tst_QOrganizerItemAsync::collectionSave()
         expected.clear();
         QList<QOrganizerCollection> allCollections = oim->collections();
         QVERIFY(!allCollections.contains(temp)); // should NOT contain it since it was cancelled.
-        QCOMPARE(oim->collections().size(), originalCount + 1);
+        QCOMPARE(allCollections.size(), originalCount + 1);
         break;
     }
     // restart, and wait for progress after cancel.
