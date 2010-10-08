@@ -92,25 +92,37 @@ QMap<QString, QOrganizerItemMemoryEngineData*> QOrganizerItemMemoryEngine::engin
   have different semantics for ids (datastore-unique versus calendar-unique, etc),
   the precise implementation required may differ.
  */
+
+
+/*!
+   Constructor of a QOrganizerItemMemoryEngineLocalId.
+ */
 QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId()
     : QOrganizerItemEngineLocalId(), m_localCollectionId(0), m_localItemId(0)
 {
 }
 
+
+/*! Constructs a new QOrganizerItemMemoryEngineLocalId of \a collectionId and \a itemId */
 QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId(quint32 collectionId, quint32 itemId)
     : QOrganizerItemEngineLocalId(), m_localCollectionId(collectionId), m_localItemId(itemId)
 {
 }
 
+/*!
+   Desstructor of a QOrganizerItemMemoryEngineLocalId.
+ */
 QOrganizerItemMemoryEngineLocalId::~QOrganizerItemMemoryEngineLocalId()
 {
 }
 
+/*! Constructs a new QOrganizerItemMemoryEngineLocalId of QOrganizerItemMemoryEngineLocalId \a other */
 QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId(const QOrganizerItemMemoryEngineLocalId& other)
     : QOrganizerItemEngineLocalId(), m_localCollectionId(other.m_localCollectionId), m_localItemId(other.m_localItemId)
 {
 }
 
+/*! Returns true if the QOrganizerItemMemoryEngineLocalId equals a QOrganizerItemEngineLocalId \a other */
 bool QOrganizerItemMemoryEngineLocalId::isEqualTo(const QOrganizerItemEngineLocalId* other) const
 {
     quint32 otherlocalCollectionId = static_cast<const QOrganizerItemMemoryEngineLocalId*>(other)->m_localCollectionId;
@@ -122,6 +134,7 @@ bool QOrganizerItemMemoryEngineLocalId::isEqualTo(const QOrganizerItemEngineLoca
     return true;
 }
 
+/*! Returns true if the QOrganizerItemMemoryEngineLocalId is less then a QOrganizerItemEngineLocalId \a other */
 bool QOrganizerItemMemoryEngineLocalId::isLessThan(const QOrganizerItemEngineLocalId* other) const
 {
     // order by collection, then by item in collection.
@@ -134,6 +147,7 @@ bool QOrganizerItemMemoryEngineLocalId::isLessThan(const QOrganizerItemEngineLoc
     return false;
 }
 
+/*! Returns the local type id of a QOrganizerItemMemoryEngineLocalId object. */
 uint QOrganizerItemMemoryEngineLocalId::engineLocalIdType() const
 {
     // engines should embed the result of this as const read-only data (uint),
@@ -141,6 +155,7 @@ uint QOrganizerItemMemoryEngineLocalId::engineLocalIdType() const
     return qHash(QString(QLatin1String("memory")));
 }
 
+/*! Returns a clone of a QOrganizerItemMemoryEngineLocalId object. */
 QOrganizerItemEngineLocalId* QOrganizerItemMemoryEngineLocalId::clone() const
 {
     QOrganizerItemMemoryEngineLocalId *myClone = new QOrganizerItemMemoryEngineLocalId;
@@ -150,6 +165,7 @@ QOrganizerItemEngineLocalId* QOrganizerItemMemoryEngineLocalId::clone() const
 }
 
 #ifndef QT_NO_DEBUG_STREAM
+/*! Returns a QDebug object and steams out a debug information about this QOrganizerItemMemoryEngineLocalId object in the QDebug \a dbg object. */
 QDebug QOrganizerItemMemoryEngineLocalId::debugStreamOut(QDebug dbg)
 {
     dbg.nospace() << "QOrganizerItemMemoryEngineLocalId(" << m_localCollectionId << ", " << m_localItemId << ")";
@@ -158,11 +174,13 @@ QDebug QOrganizerItemMemoryEngineLocalId::debugStreamOut(QDebug dbg)
 #endif
 
 #ifndef QT_NO_DATASTREAM
+/*! Returns a QDataStream object and steams out the setting about this QOrganizerItemMemoryEngineLocalId object in the QDataStream \a out object. */
 QDataStream& QOrganizerItemMemoryEngineLocalId::dataStreamOut(QDataStream& out)
 {
     return (out << m_localItemId << m_localCollectionId);
 }
 
+/*! Returns a QDataStream object and reads the setting about this QOrganizerItemMemoryEngineLocalId object from the QDataStream \a in object. */
 QDataStream& QOrganizerItemMemoryEngineLocalId::dataStreamIn(QDataStream& in)
 {
     in >> m_localItemId >> m_localCollectionId;
@@ -170,6 +188,7 @@ QDataStream& QOrganizerItemMemoryEngineLocalId::dataStreamIn(QDataStream& in)
 }
 #endif
 
+/*! Returns the Hash id of a QOrganizerItemMemoryEngineLocalId object */
 uint QOrganizerItemMemoryEngineLocalId::hash() const
 {
     // Note: doesn't need to be unique, since == ensures difference.
@@ -189,25 +208,31 @@ uint QOrganizerItemMemoryEngineLocalId::hash() const
   have different semantics for ids (datastore-unique versus calendar-unique, etc),
   the precise implementation required may differ.
  */
+
+/*! Constructor of a QOrganizerCollectionMemoryEngineLocalId object. */
 QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId()
     : QOrganizerCollectionEngineLocalId(), m_localCollectionId(0)
 {
 }
 
+/*! Constructor of a QOrganizerCollectionMemoryEngineLocalId object and uses the collection id \a collectionId for initialisation*/
 QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId(quint32 collectionId)
     : QOrganizerCollectionEngineLocalId(), m_localCollectionId(collectionId)
 {
 }
 
+/*! Constructs a new QOrganizerItemMemoryEngineLocalId of QOrganizerItemMemoryEngineLocalId \a other */
 QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId(const QOrganizerCollectionMemoryEngineLocalId& other)
     : QOrganizerCollectionEngineLocalId(), m_localCollectionId(other.m_localCollectionId)
 {
 }
 
+/*! Destructor of a QOrganizerCollectionMemoryEngineLocalId object. */
 QOrganizerCollectionMemoryEngineLocalId::~QOrganizerCollectionMemoryEngineLocalId()
 {
 }
 
+/*! Returns true if the QOrganizerCollectionMemoryEngineLocalId equals a QOrganizerCollectionEngineLocalId \a other */
 bool QOrganizerCollectionMemoryEngineLocalId::isEqualTo(const QOrganizerCollectionEngineLocalId* other) const
 {
     quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionMemoryEngineLocalId*>(other)->m_localCollectionId;
@@ -216,6 +241,7 @@ bool QOrganizerCollectionMemoryEngineLocalId::isEqualTo(const QOrganizerCollecti
     return true;
 }
 
+/*! Returns true if the QOrganizerCollectionMemoryEngineLocalId is less then a QOrganizerCollectionEngineLocalId \a other */
 bool QOrganizerCollectionMemoryEngineLocalId::isLessThan(const QOrganizerCollectionEngineLocalId* other) const
 {
     // order by collection, then by item in collection.
@@ -225,6 +251,7 @@ bool QOrganizerCollectionMemoryEngineLocalId::isLessThan(const QOrganizerCollect
     return false;
 }
 
+/*! Returns the local type id of a QOrganizerCollectionMemoryEngineLocalId object. */
 uint QOrganizerCollectionMemoryEngineLocalId::engineLocalIdType() const
 {
     // engines should embed the result of this as const read-only data (uint),
@@ -232,6 +259,7 @@ uint QOrganizerCollectionMemoryEngineLocalId::engineLocalIdType() const
     return qHash(QString(QLatin1String("memory")));
 }
 
+/*! Returns a clone of a QOrganizerCollectionMemoryEngineLocalId object. */
 QOrganizerCollectionEngineLocalId* QOrganizerCollectionMemoryEngineLocalId::clone() const
 {
     QOrganizerCollectionMemoryEngineLocalId *myClone = new QOrganizerCollectionMemoryEngineLocalId;
@@ -240,6 +268,7 @@ QOrganizerCollectionEngineLocalId* QOrganizerCollectionMemoryEngineLocalId::clon
 }
 
 #ifndef QT_NO_DEBUG_STREAM
+/*! Returns a QDebug object and steams out a debug information about this QOrganizerCollectionMemoryEngineLocalId object in the QDebug \a dbg object. */
 QDebug QOrganizerCollectionMemoryEngineLocalId::debugStreamOut(QDebug dbg)
 {
     dbg.nospace() << "QOrganizerCollectionMemoryEngineLocalId(" << m_localCollectionId << ")";
@@ -248,22 +277,26 @@ QDebug QOrganizerCollectionMemoryEngineLocalId::debugStreamOut(QDebug dbg)
 #endif
 
 #ifndef QT_NO_DATASTREAM
+/*! Returns a QDataStream object and steams out the setting about this QOrganizerCollectionMemoryEngineLocalId object in the QDataStream \a out object. */
 QDataStream& QOrganizerCollectionMemoryEngineLocalId::dataStreamOut(QDataStream& out)
 {
     return (out << m_localCollectionId);
 }
 
+/*! Returns a QDataStream object and reads the setting about this QOrganizerCollectionMemoryEngineLocalId object from the QDataStream \a in object. */
 QDataStream& QOrganizerCollectionMemoryEngineLocalId::dataStreamIn(QDataStream& in)
 {
     return (in >> m_localCollectionId);
 }
 #endif
 
+/*! Returns the Hash id of a QOrganizerCollectionMemoryEngineLocalId object */
 uint QOrganizerCollectionMemoryEngineLocalId::hash() const
 {
     return QT_PREPEND_NAMESPACE(qHash)(m_localCollectionId);
 }
 
+/*! Constructor of a QOrganizerItemMemoryEngineData object */
 QOrganizerItemMemoryEngineData::QOrganizerItemMemoryEngineData()
     : QSharedData(),
     m_refCount(QAtomicInt(1)),
@@ -1213,6 +1246,7 @@ bool QOrganizerItemMemoryEngine::removeItems(const QList<QOrganizerItemLocalId>&
     return (*error == QOrganizerItemManager::NoError);
 }
 
+/*! Returns the default collectionLocal Id and uses \a error if an error ocurred. */
 QOrganizerCollectionLocalId QOrganizerItemMemoryEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
 {
     // default collection has id of 1.
@@ -1220,12 +1254,16 @@ QOrganizerCollectionLocalId QOrganizerItemMemoryEngine::defaultCollectionId(QOrg
     return QOrganizerCollectionLocalId(new QOrganizerCollectionMemoryEngineLocalId(1));
 }
 
+/*! Returns a list of collection ids and uses \a error if an error ocurred. */
 QList<QOrganizerCollectionLocalId> QOrganizerItemMemoryEngine::collectionIds(QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NoError;
     return d->m_organizerCollectionIds;
 }
 
+/*! Returns a list all collections that matches an entry of the local id list \a collectionIds. 
+  The engine might populate \a errorMap (the map of indices of the organizercollections list to
+  the error which occurred. Any error which occurs will be saved in \a error. */
 QList<QOrganizerCollection> QOrganizerItemMemoryEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NoError;
@@ -1256,6 +1294,7 @@ QList<QOrganizerCollection> QOrganizerItemMemoryEngine::collections(const QList<
     return retn;
 }
 
+/*! Returns a collection which is compatible to the given collection \a original. Any error which occurs will be saved in \a error.*/
 QOrganizerCollection QOrganizerItemMemoryEngine::compatibleCollection(const QOrganizerCollection& original, QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NoError;
@@ -1275,6 +1314,7 @@ QOrganizerCollection QOrganizerItemMemoryEngine::compatibleCollection(const QOrg
     return original;
 }
 
+/*! Returns true if the saving of a \a collection was successful. Any error which occurs will be saved in \a error.*/
 bool QOrganizerItemMemoryEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
 {
     QOrganizerCollectionChangeSet cs; // for signal emission.
@@ -1318,6 +1358,7 @@ bool QOrganizerItemMemoryEngine::saveCollection(QOrganizerCollection* collection
     return true;
 }
 
+/*! Returns true if the removing of a collection with the \a collectionId was successful. Any error which occurs will be saved in \a error.*/
 bool QOrganizerItemMemoryEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
     QOrganizerCollectionChangeSet cs; // for signal emission.

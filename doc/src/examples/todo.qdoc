@@ -171,7 +171,7 @@
     Here we fetch the selected list widget item from the list. To
     delete the item in the manager, we send the items
     \l{QOrganizerItem::localId()}{local id} to the manager's
-    \l{QOrganizerItemManager::}{deleteItem()} function. An item's
+    \l{QOrganizerItemManager::}{removeItem()} function. An item's
     local id uniquely identifies it in its manager.
 
     We now move on to the \c refreshList() function, which set's up
