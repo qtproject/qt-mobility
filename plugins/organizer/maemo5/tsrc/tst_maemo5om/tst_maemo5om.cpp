@@ -270,7 +270,7 @@ void tst_Maemo5Om::addTodo() {
     todo.setPriority(QOrganizerItemPriority::LowestPriority);
     todo.setProgressPercentage(53);
     todo.setStatus(QOrganizerTodoProgress::StatusInProgress);
-    QOrganizerItemLocation loc = event.detail<QOrganizerItemLocation>();
+    QOrganizerItemLocation loc = todo.detail<QOrganizerItemLocation>();
     loc.setLatitude(54.0);
     loc.setLongitude(-139.0);
     loc.setLabel("Todo location address");
