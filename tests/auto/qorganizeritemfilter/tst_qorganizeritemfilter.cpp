@@ -1131,7 +1131,7 @@ void tst_QOrganizerItemFilter::testFilter_data()
     {
         QOrganizerItem item;
         QOrganizerItemLocation name;
-        name.setLabel("test address");
+        name.setLabel("test location");
         item.saveDetail(&name);
 
         QTest::newRow("QOrganizerItemLocation::match location")
