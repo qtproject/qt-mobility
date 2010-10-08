@@ -50,7 +50,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QOrganizerCollection
-  \brief A QOrganizerCollection represents a collection of items in a manager.
+  \brief The QOrganizerCollection class represents a collection of items in a manager.
   \inmodule QtOrganizer
   \ingroup organizer-main
 
