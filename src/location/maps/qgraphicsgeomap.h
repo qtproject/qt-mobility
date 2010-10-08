@@ -139,6 +139,9 @@ Q_SIGNALS:
     void mapTypeChanged(QGraphicsGeoMap::MapType mapType);
     void connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode);
 
+private Q_SLOTS:
+    void updateMapDisplay(const QRectF& target);
+
 private:
     QGraphicsGeoMapPrivate *d_ptr;
     Q_DISABLE_COPY(QGraphicsGeoMap)

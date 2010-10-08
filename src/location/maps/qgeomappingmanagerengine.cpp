@@ -147,9 +147,9 @@ int QGeoMappingManagerEngine::managerVersion() const
 }
 
 /*!
-\fn QGeoMapData* QGeoMappingManagerEngine::createMapData(QGraphicsGeoMap *geoMap)
+\fn QGeoMapData* QGeoMappingManagerEngine::createMapData()
 
-    Returns a new QGeoMapData instance for \a geoMap, which will be managed by
+    Returns a new QGeoMapData instance which will be managed by
     this manager.
 
     A QGeoMapData instance contains and manages the information about

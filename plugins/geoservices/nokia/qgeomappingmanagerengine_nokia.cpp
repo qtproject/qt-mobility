@@ -155,9 +155,9 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
 
 QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
 
-QGeoMapData* QGeoMappingManagerEngineNokia::createMapData(QGraphicsGeoMap *geoMap)
+QGeoMapData* QGeoMappingManagerEngineNokia::createMapData()
 {
-    QGeoMapData *data = QGeoTiledMappingManagerEngine::createMapData(geoMap);
+    QGeoMapData *data = QGeoTiledMappingManagerEngine::createMapData();
     if (!data)
         return 0;
 
