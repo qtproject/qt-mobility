@@ -2488,8 +2488,8 @@ void tst_QOrganizerItemManager::itemFetch()
     recEvent.setStartDateTime(QDateTime(QDate(2010, 9, 1), QTime(16, 0, 0)));
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-    rrule.setEndDate(QDate(2010, 9, 10));
-    recEvent.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    rrule.setLimit(QDate(2010, 9, 10));
+    recEvent.setRecurrenceRule(rrule);
     QVERIFY(cm->saveItem(&recEvent));
 
     //fetch all recurrences
@@ -2551,8 +2551,8 @@ void tst_QOrganizerItemManager::recurrence()
     event.setEndDateTime(QDateTime(QDate(2012, 8, 9), QTime(11, 30, 0)));
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-    rrule.setCount(3);
-    event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    rrule.setLimit(3);
+    event.setRecurrenceRule(rrule);
     QVERIFY(cm->saveItem(&event));
 
     QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2012, 8, 9)),

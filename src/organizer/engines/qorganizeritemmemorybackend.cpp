@@ -407,7 +407,7 @@ QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QDateTime& 
 
     while (nextDate <= realPeriodEnd.date()) {
         // Skip nextDate if it is not the right multiple of intervals away from initialDateTime.
-        if (inMultipleOfInterval(nextDate, initialDateTime.date(), rrule.frequency(), rrule.interval(), rrule.firstDayOfWeek(), rrule.count())) {
+        if (inMultipleOfInterval(nextDate, initialDateTime.date(), rrule.frequency(), rrule.interval(), rrule.firstDayOfWeek(), maxCount)) {
             // Calculate the inclusive start and exclusive end of nextDate's week/month/year
             QDate subPeriodStart = firstDateInPeriod(nextDate, rrule.frequency(), rrule.firstDayOfWeek());
             QDate subPeriodEnd = firstDateInNextPeriod(nextDate, rrule.frequency(), rrule.firstDayOfWeek());
