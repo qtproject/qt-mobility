@@ -263,9 +263,9 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemInstanceOrigin)
 class QDeclarativeOrganizerItemLocation : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
-    Q_PROPERTY(QString geoLocation READ geoLocation WRITE setGeoLocation NOTIFY valueChanged)
-    Q_PROPERTY(QString address READ address WRITE setAddress NOTIFY valueChanged)
-    Q_PROPERTY(QString locationName READ locationName WRITE setLocationName NOTIFY valueChanged)
+    Q_PROPERTY(double latitude READ latitude WRITE setLatitude NOTIFY valueChanged)
+    Q_PROPERTY(double longitude READ longitude WRITE setLongitude NOTIFY valueChanged)
+    Q_PROPERTY(QString location READ location WRITE setLocation NOTIFY valueChanged)
 
 public:
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "location");
@@ -273,12 +273,13 @@ public:
         :QDeclarativeOrganizerItemDetail(parent)
     {
     }
-    void setGeoLocation(const QString& stringCoords) {m_detail.setValue(QOrganizerItemLocation::FieldGeoLocation, stringCoords);}
-    QString geoLocation() const {return m_detail.value(QOrganizerItemLocation::FieldGeoLocation);}
-    void setAddress(const QString& address) {m_detail.setValue(QOrganizerItemLocation::FieldAddress, address);}
-    QString address() const {return m_detail.value(QOrganizerItemLocation::FieldAddress);}
-    void setLocationName(const QString& locationName) {m_detail.setValue(QOrganizerItemLocation::FieldLocationName, locationName);}
-    QString locationName() const {return m_detail.value(QOrganizerItemLocation::FieldLocationName);}
+    void setLocation(const QString& location) {m_detail.setValue(QOrganizerItemLocation::FieldLabel, location);}
+    QString location() const {return m_detail.value(QOrganizerItemLocation::FieldLabel);}
+
+    void setLatitude(double latitude) {m_detail.setValue(QOrganizerItemLocation::FieldLatitude, latitude);}
+    double latitude() const {return m_detail.value<double>(QOrganizerItemLocation::FieldLatitude);}
+    void setLongitude(double longitude) {m_detail.setValue(QOrganizerItemLocation::FieldLongitude, longitude);}
+    double longitude() const {return m_detail.value<double>(QOrganizerItemLocation::FieldLongitude);}
 
 signals:
     void valueChanged();
@@ -403,8 +404,7 @@ class QDeclarativeOrganizerItemReminder : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
     Q_PROPERTY(ReminderType reminderType READ reminderType NOTIFY valueChanged)
-    Q_PROPERTY(QDateTime dateTime READ dateTime WRITE setDateTime NOTIFY valueChanged)
-    Q_PROPERTY(int timeDelta READ timeDelta WRITE setTimeDelta NOTIFY valueChanged)
+    Q_PROPERTY(int secondsBeforeStart READ secondsBeforeStart WRITE setSecondsBeforeStart NOTIFY valueChanged)
     Q_PROPERTY(int repetitionCount READ repetitionCount WRITE setRepetitionCount NOTIFY valueChanged)
     Q_PROPERTY(int repetitionDelay READ repetitionDelay WRITE setRepetitionDelay NOTIFY valueChanged)
     Q_ENUMS(ReminderType)
@@ -428,10 +428,8 @@ public:
         return  static_cast<ReminderType>(m_detail.value<int>(QOrganizerItemReminder::FieldReminderType));
     }
 
-    void setDateTime(const QDateTime& dateTime) {m_detail.setValue(QOrganizerItemReminder::FieldDateTime, dateTime);}
-    QDateTime dateTime() const {return m_detail.value<QDateTime>(QOrganizerItemReminder::FieldDateTime);}
-    void setTimeDelta(int secondsBefore) {m_detail.setValue(QOrganizerItemReminder::FieldTimeDelta, secondsBefore);}
-    int timeDelta() const {return m_detail.value<int>(QOrganizerItemReminder::FieldTimeDelta);}
+    void setSecondsBeforeStart(int seconds) {m_detail.setValue(QOrganizerItemReminder::FieldSecondsBeforeStart, seconds);}
+    int secondsBeforeStart() const {return m_detail.value<int>(QOrganizerItemReminder::FieldSecondsBeforeStart);}
 
     void setRepetitionDelay(int delaySeconds) {m_detail.setValue(QOrganizerItemReminder::FieldRepetitionDelay, delaySeconds);}
     void setRepetitionCount(int count) {m_detail.setValue(QOrganizerItemReminder::FieldRepetitionCount, count); }

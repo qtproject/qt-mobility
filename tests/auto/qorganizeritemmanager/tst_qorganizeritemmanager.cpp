@@ -783,7 +783,7 @@ void tst_QOrganizerItemManager::add()
     // - read it back
     // - ensure that it's the same.
     QOrganizerEvent megaevent;
-    QMap<QString, QOrganizerItemDetailDefinition> defmap = cm->detailDefinitions();
+    QMap<QString, QOrganizerItemDetailDefinition> defmap = cm->detailDefinitions(QOrganizerItemType::TypeEvent);
     QList<QOrganizerItemDetailDefinition> defs = defmap.values();
     foreach (const QOrganizerItemDetailDefinition def, defs) {
 
@@ -1446,7 +1446,7 @@ void tst_QOrganizerItemManager::invalidManager()
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError);
 
     /* Detail definitions */
-    QVERIFY(manager.detailDefinitions().count() == 0);
+    QVERIFY(manager.detailDefinitions(QOrganizerItemType::TypeEvent).count() == 0);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
 
     QOrganizerItemDetailDefinition def;
@@ -1460,22 +1460,21 @@ void tst_QOrganizerItemManager::invalidManager()
 
     QVERIFY(manager.saveDetailDefinition(def, QOrganizerItemType::TypeNote) == false);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
-    QVERIFY(manager.saveDetailDefinition(def) == false);
+    QVERIFY(manager.saveDetailDefinition(def, QOrganizerItemType::TypeEvent) == false);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
-    QVERIFY(manager.detailDefinitions().count(QOrganizerItemType::TypeNote) == 0);
+    QVERIFY(manager.detailDefinitions(QOrganizerItemType::TypeEvent).count(QOrganizerItemType::TypeNote) == 0);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
-    QVERIFY(manager.detailDefinitions().count() == 0);
+    QVERIFY(manager.detailDefinitions(QOrganizerItemType::TypeEvent).count() == 0);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
-    QVERIFY(manager.detailDefinition("new field").name() == QString());
+    QVERIFY(manager.detailDefinition("new field", QOrganizerItemType::TypeEvent).name() == QString());
     QVERIFY(manager.removeDetailDefinition(def.name(), QOrganizerItemType::TypeNote) == false);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
-    QVERIFY(manager.removeDetailDefinition(def.name()) == false);
+    QVERIFY(manager.removeDetailDefinition(def.name(), QOrganizerItemType::TypeEvent) == false);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
-    QVERIFY(manager.detailDefinitions().count() == 0);
+    QVERIFY(manager.detailDefinitions(QOrganizerItemType::TypeEvent).count() == 0);
     QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
 
      /* Capabilities */
-    QVERIFY(manager.supportedDataTypes().count() == 0);
     QVERIFY(!manager.hasFeature(QOrganizerItemManager::MutableDefinitions));
 }
 
@@ -2170,7 +2169,7 @@ void tst_QOrganizerItemManager::detailDefinitions()
 {
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
-    QMap<QString, QOrganizerItemDetailDefinition> defs = cm->detailDefinitions();
+    QMap<QString, QOrganizerItemDetailDefinition> defs = cm->detailDefinitions(QOrganizerItemType::TypeEvent);
     QVERIFY(defs.size() > 0);
 
     /* Validate the existing definitions */
@@ -2243,7 +2242,7 @@ void tst_QOrganizerItemManager::detailDefinitions()
     QOrganizerItemDetailDefinition newDef;
     QOrganizerItemDetailFieldDefinition field;
     QMap<QString, QOrganizerItemDetailFieldDefinition> fields;
-    field.setDataType(cm->supportedDataTypes().value(0));
+    field.setDataType(QVariant::String);
     fields.insert("New Value", field);
     newDef.setName("New Definition");
     newDef.setFields(fields);
@@ -2297,41 +2296,42 @@ void tst_QOrganizerItemManager::detailDefinitions()
         /* First do some negative testing */
 
         /* Bad add class */
-        QVERIFY(cm->saveDetailDefinition(QOrganizerItemDetailDefinition()) == false);
+        QVERIFY(cm->saveDetailDefinition(QOrganizerItemDetailDefinition(), QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
         /* Bad remove string */
-        QVERIFY(cm->removeDetailDefinition(QString()) == false);
+        QVERIFY(cm->removeDetailDefinition(QString(), QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
-        QVERIFY(cm->saveDetailDefinition(noIdDef) == false);
+        QVERIFY(cm->saveDetailDefinition(noIdDef, QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
-        QVERIFY(cm->saveDetailDefinition(noFieldsDef) == false);
+        QVERIFY(cm->saveDetailDefinition(noFieldsDef, QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
-        QVERIFY(cm->saveDetailDefinition(invalidFieldKeyDef) == false);
+        QVERIFY(cm->saveDetailDefinition(invalidFieldKeyDef, QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
-        QVERIFY(cm->saveDetailDefinition(invalidFieldTypeDef) == false);
-        QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
+        // the manager can no longer report supportedDataTypes(), so the default validateDefinition() function passes.
+        //QVERIFY(cm->saveDetailDefinition(invalidFieldTypeDef, QOrganizerItemType::TypeEvent) == false);
+        //QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
-        QVERIFY(cm->saveDetailDefinition(invalidAllowedValuesDef) == false);
+        QVERIFY(cm->saveDetailDefinition(invalidAllowedValuesDef, QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
 
         /* Check that our new definition doesn't already exist */
-        QVERIFY(cm->detailDefinition(newDef.name()).isEmpty());
+        QVERIFY(cm->detailDefinition(newDef.name(),QOrganizerItemType::TypeEvent).isEmpty());
         QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
 
-        QVERIFY(cm->removeDetailDefinition(newDef.name()) == false);
+        QVERIFY(cm->removeDetailDefinition(newDef.name(), QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
 
         /* Add a new definition */
-        QVERIFY(cm->saveDetailDefinition(newDef) == true);
+        QVERIFY(cm->saveDetailDefinition(newDef, QOrganizerItemType::TypeEvent) == true);
         QVERIFY(cm->error() == QOrganizerItemManager::NoError);
 
         /* Now retrieve it */
-        QOrganizerItemDetailDefinition def = cm->detailDefinition(newDef.name());
+        QOrganizerItemDetailDefinition def = cm->detailDefinition(newDef.name(), QOrganizerItemType::TypeEvent);
         QVERIFY(def == newDef);
 
         /* Update it */
@@ -2339,45 +2339,45 @@ void tst_QOrganizerItemManager::detailDefinitions()
         newFields.insert("Another new value", field);
         newDef.setFields(newFields);
 
-        QVERIFY(cm->saveDetailDefinition(newDef) == true);
+        QVERIFY(cm->saveDetailDefinition(newDef, QOrganizerItemType::TypeEvent) == true);
         QVERIFY(cm->error() == QOrganizerItemManager::NoError);
 
-        QVERIFY(cm->detailDefinition(newDef.name()) == newDef);
+        QVERIFY(cm->detailDefinition(newDef.name(), QOrganizerItemType::TypeEvent) == newDef);
 
         /* Remove it */
-        QVERIFY(cm->removeDetailDefinition(newDef.name()) == true);
+        QVERIFY(cm->removeDetailDefinition(newDef.name(), QOrganizerItemType::TypeEvent) == true);
         QVERIFY(cm->error() == QOrganizerItemManager::NoError);
 
         /* and make sure it does not exist any more */
-        QVERIFY(cm->detailDefinition(newDef.name()) == QOrganizerItemDetailDefinition());
+        QVERIFY(cm->detailDefinition(newDef.name(), QOrganizerItemType::TypeEvent) == QOrganizerItemDetailDefinition());
         QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
 
         /* Add the other good one */
-        QVERIFY(cm->saveDetailDefinition(allowedDef) == true);
+        QVERIFY(cm->saveDetailDefinition(allowedDef, QOrganizerItemType::TypeEvent) == true);
         QVERIFY(cm->error() == QOrganizerItemManager::NoError);
 
-        QVERIFY(allowedDef == cm->detailDefinition(allowedDef.name()));
+        QVERIFY(allowedDef == cm->detailDefinition(allowedDef.name(), QOrganizerItemType::TypeEvent));
 
         /* and remove it */
-        QVERIFY(cm->removeDetailDefinition(allowedDef.name()) == true);
-        QVERIFY(cm->detailDefinition(allowedDef.name()) == QOrganizerItemDetailDefinition());
+        QVERIFY(cm->removeDetailDefinition(allowedDef.name(), QOrganizerItemType::TypeEvent) == true);
+        QVERIFY(cm->detailDefinition(allowedDef.name(), QOrganizerItemType::TypeEvent) == QOrganizerItemDetailDefinition());
         QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
 
     } else {
         /* Bad add class */
-        QVERIFY(cm->saveDetailDefinition(QOrganizerItemDetailDefinition()) == false);
+        QVERIFY(cm->saveDetailDefinition(QOrganizerItemDetailDefinition(), QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::NotSupportedError);
 
         /* Make sure we can't add/remove/modify detail definitions */
-        QVERIFY(cm->removeDetailDefinition(QString()) == false);
+        QVERIFY(cm->removeDetailDefinition(QString(), QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::NotSupportedError);
 
         /* Try updating an existing definition */
-        QVERIFY(cm->saveDetailDefinition(updatedDef) == false);
+        QVERIFY(cm->saveDetailDefinition(updatedDef, QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::NotSupportedError);
 
         /* Try removing an existing definition */
-        QVERIFY(cm->removeDetailDefinition(updatedDef.name()) == false);
+        QVERIFY(cm->removeDetailDefinition(updatedDef.name(), QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerItemManager::NotSupportedError);
     }
 }
@@ -2524,7 +2524,7 @@ void tst_QOrganizerItemManager::detailOrders()
 
     QOrganizerItemLocation address1, address2, address3;
     
-    address1.setLocationName("Brandl St");
+    address1.setLabel("Brandl St");
     address3 = address2 = address1;
 
     a.saveDetail(&address1);
@@ -2585,7 +2585,7 @@ void tst_QOrganizerItemManager::collections()
     i4.setDisplayLabel("four");
     i4.setGuid(QUuid::createUuid().toString());
     i5.setDisplayLabel("five");
-    i5.setLocationAddress("test location address");
+    i5.setLocation("test location address");
 
     // first test
     {

@@ -774,14 +774,6 @@ bool QOrganizerItemManager::hasFeature(QOrganizerItemManager::ManagerFeature fea
 }
 
 /*!
-  Returns the list of data types supported by the manager
- */
-QList<int> QOrganizerItemManager::supportedDataTypes() const
-{
-    return d->m_engine->supportedDataTypes();
-}
-
-/*!
   Returns true if the given \a filter is supported natively by the
   manager, and false if the filter behaviour would be emulated.
 

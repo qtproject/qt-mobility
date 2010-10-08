@@ -157,62 +157,20 @@ QOrganizerItemPriority::Priority QOrganizerEventOccurrence::priority() const
 }
 
 /*!
-  Returns the name of the location at which the event occurrence is held, if known
+  Returns the label of the location at which the event occurrence is held, if known
  */
-QString QOrganizerEventOccurrence::locationName() const
+QString QOrganizerEventOccurrence::location() const
 {
     QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    return ld.locationName();
+    return ld.label();
 }
 
 /*!
-  Sets the name of the location at which the event occurrence is held to \a locationName
+  Sets the label of the location at which the event occurrence is held to \a location
  */
-void QOrganizerEventOccurrence::setLocationName(const QString& locationName)
+void QOrganizerEventOccurrence::setLocation(const QString& location)
 {
     QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    ld.setLocationName(locationName);
+    ld.setLabel(location);
     saveDetail(&ld);
 }
-
-/*!
-  Returns the address of the location at which the event occurrence is held, if known
- */
-QString QOrganizerEventOccurrence::locationAddress() const
-{
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    return ld.address();
-}
-
-/*!
-  Sets the address of the location at which the event occurrence is held to \a locationAddress
- */
-void QOrganizerEventOccurrence::setLocationAddress(const QString& locationAddress)
-{
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    ld.setAddress(locationAddress);
-    saveDetail(&ld);
-}
-
-/*!
-  Returns the geo-coordinates of the location at which the event occurrence is held, if known
- */
-QString QOrganizerEventOccurrence::locationGeoCoordinates() const
-{
-    // XXX TODO: consistency with QOILocation API ?
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    return ld.geoLocation();
-}
-
-/*!
-  \preliminary
-  Sets the geo-coordinates of the location at which the event occurrence is held to \a locationCoordinates.
-  The coordinates must be in the form "latitude;longitude".
- */
-void QOrganizerEventOccurrence::setLocationGeoCoordinates(const QString& locationCoordinates)
-{
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    ld.setGeoLocation(locationCoordinates);
-    saveDetail(&ld);
-}
-

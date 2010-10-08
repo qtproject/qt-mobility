@@ -229,10 +229,13 @@ void tst_Maemo5Om::addEvent() {
     event.setDisplayLabel("addEvent");
     event.setDescription("Test event description");
     event.setGuid("custom event GUID");
-    event.setLocationAddress("Event location address");
-    event.setLocationGeoCoordinates("Location geo coordinates");
-    event.setLocationName("Location name");
     event.setPriority(QOrganizerItemPriority::HighPriority);
+
+    QOrganizerItemLocation loc = event.detail<QOrganizerItemLocation>();
+    loc.setLatitude(45.0);
+    loc.setLongitude(-179.0);
+    loc.setLabel("Event location address");
+    event.saveDetail(&loc);
 
     // Save event
     QVERIFY(m_om->saveItem(&event));
@@ -251,10 +254,9 @@ void tst_Maemo5Om::addEvent() {
     QCOMPARE(fetchEvent.displayLabel(), event.displayLabel());
     QCOMPARE(fetchEvent.description(), event.description());
     QCOMPARE(fetchEvent.guid(), event.guid());
-    QCOMPARE(fetchEvent.locationAddress(), event.locationAddress());
-    QCOMPARE(fetchEvent.locationGeoCoordinates(), event.locationGeoCoordinates());
-    QCOMPARE(fetchEvent.locationName(), event.locationName());
+    QCOMPARE(fetchEvent.location(), event.location());
     QCOMPARE(fetchEvent.priority(), event.priority());
+    QCOMPARE(fetchEvent.detail<QOrganizerItemLocation>(), event.detail<QOrganizerItemLocation>());
 }
 
 void tst_Maemo5Om::addTodo() {
@@ -268,6 +270,12 @@ void tst_Maemo5Om::addTodo() {
     todo.setPriority(QOrganizerItemPriority::LowestPriority);
     todo.setProgressPercentage(53);
     todo.setStatus(QOrganizerTodoProgress::StatusInProgress);
+    QOrganizerItemLocation loc = event.detail<QOrganizerItemLocation>();
+    loc.setLatitude(54.0);
+    loc.setLongitude(-139.0);
+    loc.setLabel("Todo location address");
+    todo.saveDetail(&loc);
+
 
     // Save todo
     QVERIFY(m_om->saveItem(&todo));
@@ -287,6 +295,7 @@ void tst_Maemo5Om::addTodo() {
     QCOMPARE(fetchTodo.priority(), todo.priority());
     QCOMPARE(fetchTodo.progressPercentage(), todo.progressPercentage());
     QCOMPARE(fetchTodo.status(), todo.status());
+    QCOMPARE(fetchTodo.detail<QOrganizerItemLocation>(), todo.detail<QOrganizerItemLocation>());
 }
 
 void tst_Maemo5Om::addJournal() {
@@ -1313,9 +1322,8 @@ void tst_Maemo5Om::testReminders()
 
     QOrganizerItemVisualReminder eventReminder = event.detail<QOrganizerItemVisualReminder>();
     eventReminder.setMessage("Event reminder message");
-    eventReminder.setDateTime(QDateTime(date, QTime(12, 0, 0)));
     eventReminder.setRepetition(10, 60);
-    eventReminder.setTimeDelta(60 * 60);
+    eventReminder.setSecondsBeforeStart(60 * 60);
     event.saveDetail(&eventReminder);
 
     // Save event
@@ -1325,11 +1333,10 @@ void tst_Maemo5Om::testReminders()
     QOrganizerItem fetchItem = m_om->item(event.localId());
     QOrganizerItemVisualReminder fetchEventReminder = fetchItem.detail<QOrganizerItemVisualReminder>();
     QCOMPARE(fetchEventReminder.dataUrl(), eventReminder.dataUrl());
-    QCOMPARE(fetchEventReminder.dateTime(), eventReminder.dateTime());
     QCOMPARE(fetchEventReminder.message(), eventReminder.message());
     QCOMPARE(fetchEventReminder.repetitionCount(), eventReminder.repetitionCount());
     //QCOMPARE(reminder.repetitionDelay(), fetchEventReminder.repetitionDelay()); // Maemo5 does not support repetition delay
-    QCOMPARE(fetchEventReminder.timeDelta(), eventReminder.timeDelta());
+    QCOMPARE(fetchEventReminder.secondsBeforeStart(), eventReminder.secondsBeforeStart());
 
     // Create a todo and set its details
     QOrganizerTodo todo;
@@ -1340,9 +1347,8 @@ void tst_Maemo5Om::testReminders()
 
     QOrganizerItemVisualReminder todoReminder = todo.detail<QOrganizerItemVisualReminder>();
     todoReminder.setMessage("Todo reminder message");
-    todoReminder.setDateTime(QDateTime(date, QTime(10, 0, 0)));
     todoReminder.setRepetition(2, 10);
-    todoReminder.setTimeDelta(3 * 60 * 60);
+    todoReminder.setSecondsBeforeStart(3 * 60 * 60);
     todo.saveDetail(&todoReminder);
 
     // Save todo
@@ -1352,11 +1358,10 @@ void tst_Maemo5Om::testReminders()
     QOrganizerItem fetchTodo = m_om->item(todo.localId());
     QOrganizerItemVisualReminder fetchTodoReminder = fetchTodo.detail<QOrganizerItemVisualReminder>();
     QCOMPARE(fetchTodoReminder.dataUrl(), todoReminder.dataUrl());
-    QCOMPARE(fetchTodoReminder.dateTime(), todoReminder.dateTime());
     QCOMPARE(fetchTodoReminder.message(), todoReminder.message());
     QCOMPARE(fetchTodoReminder.repetitionCount(), todoReminder.repetitionCount());
     //QCOMPARE(reminder.repetitionDelay(), fetchEventReminder.repetitionDelay()); // Maemo5 does not support repetition delay
-    QCOMPARE(fetchTodoReminder.timeDelta(), todoReminder.timeDelta());
+    QCOMPARE(fetchTodoReminder.secondsBeforeStart(), todoReminder.secondsBeforeStart());
 }
 
 QTEST_MAIN(tst_Maemo5Om);

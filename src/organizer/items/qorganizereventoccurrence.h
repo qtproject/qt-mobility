@@ -67,12 +67,8 @@ public:
     void setPriority(QOrganizerItemPriority::Priority);
     QOrganizerItemPriority::Priority priority() const;
 
-    QString locationName() const;
-    void setLocationName(const QString& locationName);
-    QString locationAddress() const;
-    void setLocationAddress(const QString& locationAddress);
-    QString locationGeoCoordinates() const;
-    void setLocationGeoCoordinates(const QString& locationCoordinates);
+    QString location() const;
+    void setLocation(const QString& location);
 };
 
 QTM_END_NAMESPACE

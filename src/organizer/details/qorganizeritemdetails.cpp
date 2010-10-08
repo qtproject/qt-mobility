@@ -336,9 +336,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTimeRange::FieldEntryDateTime, "EntryD
  */
 
 /* ==================== QOrganizerItemLocation ======================= */
-// XXX TODO: do we include all three pieces of data into a single detail
-// ie, street address + geolocation + location string
-// Or, do we have three separate detail types?
 /*!
    \class QOrganizerItemLocation
 
@@ -350,14 +347,14 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTimeRange::FieldEntryDateTime, "EntryD
 
 /*!
     Returns a filter suitable for finding items whose location matches the specified \a substring.
-    This filter matches location names only.  If you wish to match against address or geolocation
+    This filter matches location labels only.  If you wish to match against latitude or longitude
     co-ordinates, use a QContactDetailFilter instead.
 */
 QOrganizerItemFilter QOrganizerItemLocation::match(const QString &substring)
 {
     QOrganizerItemDetailFilter f;
     f.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName,
-                              QOrganizerItemLocation::FieldLocationName);
+                              QOrganizerItemLocation::FieldLabel);
     f.setValue(substring);
     f.setMatchFlags(QOrganizerItemFilter::MatchContains);
 
@@ -373,28 +370,28 @@ which describe a location associated with an organizer item.
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::DefinitionName, "Location");
 
 /*!
-   \variable QOrganizerItemLocation::FieldGeoLocation
+   \variable QOrganizerItemLocation::FieldLatitude
 
-   The constant key for which the geolocation value is
+   The constant key for which the location latitude value is
    stored in details of the QOrganizerItemLocation type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldGeoLocation, "GeoLocation");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLatitude, "Latitude");
 
 /*!
-   \variable QOrganizerItemLocation::FieldAddress
+   \variable QOrganizerItemLocation::FieldLongitude
 
-   The constant key for which the location address value is
+   The constant key for which the location longitude value is
    stored in details of the QOrganizerItemLocation type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldAddress, "Address");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLongitude, "Longitude");
 
 /*!
-   \variable QOrganizerItemLocation::FieldLocationName
+   \variable QOrganizerItemLocation::FieldLabel
 
    The constant key for which the location label value is
    stored in details of the QOrganizerItemLocation type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLocationName, "LocationName");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLabel, "Label");
 
 /*!
     \fn QOrganizerItemLocation::geoLocation() const
@@ -680,20 +677,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::DefinitionName, "Reminder");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldReminderType, "ReminderType");
 
 /*!
-   \variable QOrganizerItemReminder::FieldTimeDelta
+   \variable QOrganizerItemReminder::FieldSecondsBeforeStart
 
    The constant key for which time delta (in seconds prior to the item activation time)
    at which the user should be reminded of the item is stored in details of the QOrganizerItemReminder type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldTimeDelta, "TimeDelta");
-
-/*!
-   \variable QOrganizerItemReminder::FieldDateTime
-
-   The constant key for which the date time at which the user should be reminded of the item
-   is stored in details of the QOrganizerItemReminder type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldDateTime, "DateTime");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldSecondsBeforeStart, "SecondsBeforeStart");
 
 /*!
    \variable QOrganizerItemReminder::FieldRepetitionCount
@@ -718,22 +707,20 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
  */
 
 /*!
-   \fn QOrganizerItemReminder::setTimeDelta(int secondsBefore)
+   \fn QOrganizerItemReminder::setSecondsBeforeStart(int seconds)
 
    Sets the number of seconds prior to the activation of the item
-   at which the user wants to be reminded of the item to \a secondsBefore.
+   at which the user wants to be reminded of the item to \a seconds.
    The exact datetime of activation of the item depends on the type of
    item: for a QOrganizerTodo or QOrganizerTodoOccurrence it is the
    due date time; for a QOrganizerEvent or QOrganizerEventOccurrence
    it is the start date time.
 
    Calling this function will clear the absolute date time, if set.
-
-   \sa setDateTime()
  */
 
 /*!
-   \fn int QOrganizerItemReminder::timeDelta() const
+   \fn int QOrganizerItemReminder::secondsBeforeStart() const
 
    Returns the number of seconds prior to the activation of the item
    at which the user wants to be reminded of the item.
@@ -742,23 +729,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
    due date time; for a QOrganizerEvent or QOrganizerEventOccurrence
    it is the start date time.
  */
-
-/*!
-   \fn QOrganizerItemReminder::setDateTime(const QDateTime& dateTime)
-
-   Sets the date time at which the user should be reminded of the item
-   to \a dateTime.
-
-   Calling this function will clear the time delta, if set.
-
-   \sa setTimeDelta()
-*/
-
-/*!
-   \fn QDateTime QOrganizerItemReminder::dateTime() const
-
-   Returns the date time at which the user should be reminded of the item.
-*/
 
 /*!
    \fn int QOrganizerItemReminder::repetitionCount() const

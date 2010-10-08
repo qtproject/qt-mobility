@@ -1729,27 +1729,6 @@ bool QOrganizerItemMemoryEngine::hasFeature(QOrganizerItemManager::ManagerFeatur
 }
 
 /*!
- * \reimp
- */
-QList<int> QOrganizerItemMemoryEngine::supportedDataTypes() const
-{
-    QList<int> st;
-    st.append(QVariant::String);
-    st.append(QVariant::Date);
-    st.append(QVariant::DateTime);
-    st.append(QVariant::Time);
-    st.append(QVariant::Bool);
-    st.append(QVariant::Char);
-    st.append(QVariant::Int);
-    st.append(QVariant::UInt);
-    st.append(QVariant::LongLong);
-    st.append(QVariant::ULongLong);
-    st.append(QVariant::Double);
-
-    return st;
-}
-
-/*!
  * The function returns true if the backend natively supports the given filter \a filter, otherwise false.
  */
 bool QOrganizerItemMemoryEngine::isFilterSupported(const QOrganizerItemFilter& filter) const
