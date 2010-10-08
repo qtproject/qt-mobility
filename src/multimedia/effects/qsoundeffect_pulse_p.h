@@ -107,12 +107,17 @@ private:
 
     void timerEvent(QTimerEvent *event);
 
+    void clearTasks();
+    void createPulseStream();
+
     static void stream_write_callback(pa_stream *s, size_t length, void *userdata);
     static void stream_state_callback(pa_stream *s, void *userdata);
     static void play_callback(pa_context *c, int success, void *userdata);
 
     pa_stream *m_pulseStream;
-    int m_timerID;
+    pa_stream *m_writeCallbackPulseStream;
+    int     m_contextCheckTimerID;
+    int     m_timerID;
 
     bool    m_retry;
     bool    m_muted;
