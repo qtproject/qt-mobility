@@ -111,7 +111,7 @@
 //#define FILTER_BOX
 #define FILTER_INTERSECTION
 //#define LANDMARK_FETCH_CANCEL
-#define IMPORT_GPX
+//#define IMPORT_GPX
 
 //#define EXPECT_FAIL
 
@@ -1068,6 +1068,15 @@ private slots:
 #endif
 
     void failingImportTest() {
+
+        QSignalSpy spyLmAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+        QSignalSpy spyLmChange(m_manager, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+        QSignalSpy spyLmRemove(m_manager, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+        QSignalSpy spyCatAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+        QSignalSpy spyCatChange(m_manager, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
+        QSignalSpy spyCatRemove(m_manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+        QSignalSpy dataChanged(m_manager, SIGNAL(dataChanged()));
+
         QString prefix;
 #ifdef Q_OS_SYMBIAN
         prefix = "";
@@ -1080,11 +1089,26 @@ private slots:
         QList<QLandmark> lms = m_manager->landmarks(nameFilter);
         QCOMPARE(lms.count(),1);
         QLandmark lm = lms.at(0);
+        QTest::qWait(10);
+
+        //Note:sometimes radius comes out as some kind of really small number, sometimes not...
         qWarning() << "landmark radius after import = " << QString::number(lm.radius()) << " expected=" << QString::number(0.0);
         qWarning() << "landmark url after import =" << lm.url().toString()  << " expected = " << QString();
+        qWarning() << "dataChanged count = " << dataChanged.count() << "expected = 1";
+        qWarning() << "landmarksAdded() count = " << spyLmAdd.count() << "expected = 0";
 
         QCOMPARE(lm.url().toString(), QUrl().toString());
         QVERIFY(lm.radius() == 0.0);
+
+        //Note: we only expect a single dataChanged signal for an import operation.
+        QCOMPARE(dataChanged.count(), 1);
+        QCOMPARE(spyLmAdd.count(), 0);
+        QCOMPARE(spyLmChange.count(), 0);
+        QCOMPARE(spyLmRemove.count(), 0);
+        QCOMPARE(spyCatAdd.count(), 0);
+        QCOMPARE(spyCatChange.count(), 0);
+        QCOMPARE(spyCatRemove.count(), 0);
+
     }
 };
 
