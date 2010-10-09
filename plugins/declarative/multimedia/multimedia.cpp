@@ -47,6 +47,7 @@
 
 #include "qdeclarativevideo_p.h"
 #include "qdeclarativeaudio_p.h"
+#include "qdeclarativemediametadata_p.h"
 #include "qdeclarativecamera_p.h"
 #include "qdeclarativecamerapreviewprovider_p.h"
 
@@ -66,6 +67,7 @@ public:
         qmlRegisterType<QDeclarativeAudio>(uri, 1, 1, "Audio");
         qmlRegisterType<QDeclarativeVideo>(uri, 1, 1, "Video");
         qmlRegisterType<QDeclarativeCamera>(uri, 1, 1, "Camera");
+        qmlRegisterType<QDeclarativeMediaMetaData>();
     }
 
     void initializeEngine(QDeclarativeEngine *engine, const char *uri)

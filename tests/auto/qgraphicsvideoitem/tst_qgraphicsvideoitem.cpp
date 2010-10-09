@@ -359,6 +359,7 @@ void tst_QGraphicsVideoItem::show()
     QVideoSurfaceFormat format(QSize(320,240),QVideoFrame::Format_RGB32);
     QVERIFY(object.testService->rendererControl->surface()->start(format));
 
+    QCoreApplication::processEvents();
     QVERIFY(!item->boundingRect().isEmpty());
 }
 
@@ -473,12 +474,14 @@ void tst_QGraphicsVideoItem::nativeSize()
     QVERIFY(object.testService->rendererControl->surface() != 0);
     QVERIFY(object.testService->rendererControl->surface()->start(format));
 
+    QCoreApplication::processEvents();
     QCOMPARE(item.nativeSize(), nativeSize);
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.last().first().toSizeF(), nativeSize);
 
     object.testService->rendererControl->surface()->stop();
 
+    QCoreApplication::processEvents();
     QCOMPARE(item.nativeSize(), QSizeF(0, 0));
     QCOMPARE(spy.count(), 2);
     QCOMPARE(spy.last().first().toSizeF(), QSizeF(0, 0));
@@ -612,6 +615,7 @@ void tst_QGraphicsVideoItem::boundingRect()
     QVERIFY(object.testService->rendererControl->surface() != 0);
     QVERIFY(object.testService->rendererControl->surface()->start(format));
 
+    QCoreApplication::processEvents();
     QCOMPARE(item.boundingRect(), expectedRect);
 }
 

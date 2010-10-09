@@ -53,7 +53,7 @@ class  QDeclarativeContactPhoneNumber : public QDeclarativeContactDetail
     Q_PROPERTY(QString number READ number WRITE setNumber NOTIFY fieldsChanged)
     Q_PROPERTY(QStringList subTypes READ subTypes WRITE setSubTypes NOTIFY fieldsChanged)
     Q_CLASSINFO("DefaultProperty", "number")
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
 public:
     enum FieldType {
         Number = 0,

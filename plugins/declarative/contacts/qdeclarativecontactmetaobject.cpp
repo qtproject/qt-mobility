@@ -176,6 +176,7 @@ QVariant QDeclarativeContactMetaObject::details(const QString& name)
 void QDeclarativeContactMetaObject::setContact(const QContact& contact)
 {
     m_contact = contact;
+
     QList<QContactDetail> details = m_contact.details();
     m_details.clear();
     foreach (const QContactDetail& detail, details) {
@@ -190,11 +191,13 @@ void QDeclarativeContactMetaObject::setContact(const QContact& contact)
 
 QContact QDeclarativeContactMetaObject::contact()
 {
-    m_contact.clearDetails();
+    //m_contact.clearDetails();
     foreach (const QDeclarativeContactDetail* cd, m_details) {
        QContactDetail detail = cd->detail();
-       m_contact.saveDetail(&detail);
+       if (!m_contact.saveDetail(&detail))
+           qDebug() << "save detail error:" << detail.definitionName();
     }
+
     return m_contact;
 }
 

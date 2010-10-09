@@ -105,7 +105,7 @@ public:
     ObjectEndPoint* parent;
 
     // Used for calculate the registered paths on DBus
-    QRemoteServiceIdentifier typeIdent;
+    QRemoteServiceRegister::Entry entry;
     QUuid serviceInstanceId;
 };
 
@@ -113,10 +113,6 @@ public:
     Client to service communication only used for establishing an object request since the returned
     proxy is an interface to that object registered on QtDBus. Client communicates directly to QtDBus
     for method and property access. Signals are automatically relayed from QtDBus to the proxy object.
-
-    TODO:
-    - Consider merging invokeRemoteProperty() and invokeRemote()
-    - QMetaClassInfo support
 */
 ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent)
     : QObject(parent), dispatch(comm), service(0)
@@ -128,7 +124,7 @@ ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* pa
 
     dispatch->setParent(this);
     connect(dispatch, SIGNAL(readyRead()), this, SLOT(newPackageReady()));
-    connect(dispatch, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    //connect(dispatch, SIGNAL(disconnected()), this, SLOT(disconnected()));
     if (type == Client) {
         // client waiting for construct proxy and registers DBus custom type
         qDBusRegisterMetaType<QTM_PREPEND_NAMESPACE(QServiceUserTypeDBus)>();
@@ -142,15 +138,14 @@ ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* pa
 
 ObjectEndPoint::~ObjectEndPoint()
 {
-    if (d->endPointType == Service) {
-        InstanceManager::instance()->removeObjectInstance(d->typeIdent, d->serviceInstanceId);
-    }
-
     delete d;
 }
 
 void ObjectEndPoint::disconnected()
 {
+    if (d->endPointType == Service) {
+        InstanceManager::instance()->removeObjectInstance(d->entry, d->serviceInstanceId);
+    }
     deleteLater();
 }
 
@@ -159,7 +154,7 @@ void ObjectEndPoint::disconnected()
     code and this object must clean itself up upon destruction of
     proxy.
 */
-QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
+QObject* ObjectEndPoint::constructProxy(const QRemoteServiceRegister::Entry& entry)
 {
     // Client side 
     Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
@@ -168,7 +163,7 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
     QServicePackage p;
     p.d = new QServicePackagePrivate();
     p.d->messageId = QUuid::createUuid();
-    p.d->typeId = ident;
+    p.d->entry = entry;
 
     Response* response = new Response();
     openRequests()->insert(p.d->messageId, response);
@@ -190,41 +185,43 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
     delete response;
         
     // Connect all DBus interface signals to the proxy slots
-    // TODO: Implement custom arguments and function this code
     const QMetaObject *mo = service->metaObject();
-    for (int i = mo->methodOffset(); i < mo->methodCount(); i++) {
-        const QMetaMethod mm = mo->method(i);
-        if (mm.methodType() == QMetaMethod::Signal) {
-            QByteArray sig(mm.signature());
+    while (mo && strcmp(mo->className(), "QObject")) {
+        for (int i = mo->methodOffset(); i < mo->methodCount(); i++) {
+            const QMetaMethod mm = mo->method(i);
+            if (mm.methodType() == QMetaMethod::Signal) {
+                QByteArray sig(mm.signature());
 
-            bool customType = false;
+                bool customType = false;
 
-            QList<QByteArray> params = mm.parameterTypes();
-            for (int arg = 0; arg < params.size(); arg++) {
-                const QByteArray& type = params[arg];
-                int variantType = QVariant::nameToType(type);
-                if (variantType == QVariant::UserType) {
-                    sig.replace(QByteArray(type), QByteArray("QDBusVariant")); 
-                    customType = true;
+                QList<QByteArray> params = mm.parameterTypes();
+                for (int arg = 0; arg < params.size(); arg++) {
+                    const QByteArray& type = params[arg];
+                    int variantType = QVariant::nameToType(type);
+                    if (variantType == QVariant::UserType) {
+                        sig.replace(QByteArray(type), QByteArray("QDBusVariant")); 
+                        customType = true;
+                    }
                 }
-            }
 
-            int serviceIndex = iface->metaObject()->indexOfSignal(sig);
-            QByteArray signal = QByteArray("2").append(sig);
-            QByteArray method = QByteArray("1").append(sig);
+                int serviceIndex = iface->metaObject()->indexOfSignal(sig);
+                QByteArray signal = QByteArray("2").append(sig);
+                QByteArray method = QByteArray("1").append(sig);
 
-            if (serviceIndex > 0) {
-                if (customType) {
-                    QObject::connect(iface, signal.constData(), signalsObject, signal.constData());
-                    
-                    ServiceSignalIntercepter *intercept = 
-                        new ServiceSignalIntercepter((QObject*)signalsObject, signal, this);
-                    intercept->setMetaIndex(i);
-                } else {
-                    QObject::connect(iface, signal.constData(), service, method.constData());
+                if (serviceIndex > 0) {
+                    if (customType) {
+                        QObject::connect(iface, signal.constData(), signalsObject, signal.constData());
+
+                        ServiceSignalIntercepter *intercept = 
+                            new ServiceSignalIntercepter((QObject*)signalsObject, signal, this);
+                        intercept->setMetaIndex(i);
+                    } else {
+                        QObject::connect(iface, signal.constData(), service, method.constData());
+                    }
                 }
             }
         }
+        mo = mo->superClass();
     }
 
     return service;
@@ -267,7 +264,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
 
         d->serviceInstanceId = p.d->instanceId;
-        d->typeIdent = p.d->typeId;
+        d->entry = p.d->entry;
 
         Response* response = openRequests()->value(p.d->messageId);
         if (p.d->responseType == QServicePackage::Failed) {
@@ -284,9 +281,9 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         response->isFinished = true;
 
         // Create DBUS interface by using a hash of the service instance ID
-        QString serviceName = "com.nokia.qtmobility.sfw." + p.d->typeId.name; 
+        QString serviceName = "com.nokia.qtmobility.sfw." + p.d->entry.serviceName();
         uint hash = qHash(d->serviceInstanceId.toString());
-        QString objPath = "/" + p.d->typeId.iface + "/" + p.d->typeId.version + "/" + QString::number(hash);
+        QString objPath = "/" + p.d->entry.interfaceName() + "/" + p.d->entry.version() + "/" + QString::number(hash);
         objPath.replace(QString("."), QString("/"));
      
 #ifdef DEBUG
@@ -307,7 +304,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         InstanceManager* iManager = InstanceManager::instance();
 
         // Instantiate service object from type register
-        service = iManager->createObjectInstance(p.d->typeId, d->serviceInstanceId);
+        service = iManager->createObjectInstance(p.d->entry, d->serviceInstanceId);
         if (!service) {
             qWarning() << "Cannot instanciate service object";
             dispatch->writePackage(response);
@@ -321,9 +318,9 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         }
 
         // DBus registration path uses a hash of the service instance ID
-        QString serviceName = "com.nokia.qtmobility.sfw." + p.d->typeId.name; 
+        QString serviceName = "com.nokia.qtmobility.sfw." + p.d->entry.serviceName();
         uint hash = qHash(d->serviceInstanceId.toString());
-        QString objPath = "/" + p.d->typeId.iface + "/" + p.d->typeId.version + "/" + QString::number(hash);
+        QString objPath = "/" + p.d->entry.interfaceName() + "/" + p.d->entry.version() + "/" + QString::number(hash);
         objPath.replace(QString("."), QString("/"));
 
         QServiceMetaObjectDBus *serviceDBus = new QServiceMetaObjectDBus(service);
@@ -393,9 +390,9 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 #endif
         
         // Get meta object from type register
-        const QMetaObject* meta = iManager->metaObject(p.d->typeId);
+        const QMetaObject* meta = iManager->metaObject(p.d->entry);
         if (!meta) {
-            qDebug() << "Unknown type" << p.d->typeId;
+            qDebug() << "Unknown type" << p.d->entry;
             dispatch->writePackage(response);
             return;
         }
@@ -407,9 +404,9 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         builder.serialize(stream);
         
         // Send meta object and instance ID to the client for processing 
-        d->typeIdent = p.d->typeId;
+        d->entry = p.d->entry;
         response.d->instanceId = d->serviceInstanceId;
-        response.d->typeId = p.d->typeId;
+        response.d->entry = p.d->entry;
         response.d->responseType = QServicePackage::Success;
         response.d->payload = QVariant(data);
         dispatch->writePackage(response);

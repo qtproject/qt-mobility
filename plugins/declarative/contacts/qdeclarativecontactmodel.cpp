@@ -156,11 +156,22 @@ QStringList QDeclarativeContactModel::availableManagers() const
 {
     return QContactManager::availableManagers();
 }
+static QString urlToLocalFileName(const QString& str)
+{
+   QUrl url(str);
+   if (!url.isValid()) {
+      return str;
+   } else if (url.scheme() == "qrc") {
+      return url.toString().remove(0, 5).prepend(':');
+   } else {
+      return url.toString(QUrl::RemoveScheme);
+   }
 
+}
 void QDeclarativeContactModel::importContacts(const QString& fileName)
 {
    qWarning() << "importing contacts from:" << fileName;
-   QFile*  file = new QFile(fileName);
+   QFile*  file = new QFile(urlToLocalFileName(fileName));
    bool ok = file->open(QIODevice::ReadOnly);
    if (ok) {
       d->m_reader.setDevice(file);
@@ -170,6 +181,7 @@ void QDeclarativeContactModel::importContacts(const QString& fileName)
 
 void QDeclarativeContactModel::exportContacts(const QString& fileName)
 {
+   qWarning() << "exporting contacts into:" << fileName;
    QVersitContactExporter exporter;
    QList<QContact> contacts;
    foreach (QDeclarativeContact* dc, d->m_contacts) {
@@ -178,7 +190,7 @@ void QDeclarativeContactModel::exportContacts(const QString& fileName)
 
    exporter.exportContacts(contacts, QVersitDocument::VCard30Type);
    QList<QVersitDocument> documents = exporter.documents();
-   QFile* file = new QFile(fileName);
+   QFile* file = new QFile(urlToLocalFileName(fileName));
    bool ok = file->open(QIODevice::ReadWrite);
    if (ok) {
       d->m_writer.setDevice(file);
@@ -302,6 +314,7 @@ void QDeclarativeContactModel::contactFetched()
         QList<QDeclarativeContact*> dcs;
         foreach(QContact c, contacts) {
             dcs.append(new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()), this));
+            qDebug() << "id: " << c.localId() << " label:" << c.displayLabel();
         }
 
         reset();
@@ -400,6 +413,7 @@ QVariant QDeclarativeContactModel::data(const QModelIndex &index, int role) cons
 {
     QDeclarativeContact* dc = d->m_contacts.value(index.row());
     QContact c = dc->contact();
+    qDebug() << "id: " << c.localId() << " label:" << c.displayLabel();
     switch(role) {
         case Qt::DisplayRole:
             return c.displayLabel();

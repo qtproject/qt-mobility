@@ -18,7 +18,7 @@ MOBILITY = serviceframework
 
 symbian {
     load(data_caging_paths)
-    pluginDep.sources = serviceframework_notesmanagerplugin.dll
+    pluginDep.sources = serviceframework_voipdialerservice.dll
     pluginDep.path = $$QT_PLUGINS_BASE_DIR
     DEPLOYMENT += pluginDep
 

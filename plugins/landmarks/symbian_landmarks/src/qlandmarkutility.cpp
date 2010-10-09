@@ -228,7 +228,7 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
             if (posField.Length() > 0) {
                 lmBuf.Copy(posField);
                 QString lmPosField((QChar*) (lmBuf.Ptr()), lmBuf.Length());
-                address.setPostCode(lmPosField);
+                address.setPostcode(lmPosField);
             }
         }
 
@@ -409,7 +409,7 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
     }
 
     // set postcode
-    QString lmPostalCode = qtLandmark->address().postCode();
+    QString lmPostalCode = qtLandmark->address().postcode();
     if (lmPostalCode.length() > 0) {
         TPtrC symbianLmPosField(reinterpret_cast<const TText*> (lmPostalCode.constData()),
             lmPostalCode.length());
@@ -579,7 +579,7 @@ CPosLandmark* LandmarkUtility::convertToSymbianLandmarkL(QLandmark* qtLandmark)
     }
 
     // set postcode
-    QString lmPostalCode = qtLandmark->address().postCode();
+    QString lmPostalCode = qtLandmark->address().postcode();
     if (lmPostalCode.length() > 0) {
         TPtrC symbianLmPosField(reinterpret_cast<const TText*> (lmPostalCode.constData()),
             lmPostalCode.length());
@@ -1008,7 +1008,7 @@ QStringList LandmarkUtility::landmarkAttributeKeys()
     commonKeys << "city";
     commonKeys << "district";
     commonKeys << "street";
-    commonKeys << "postCode";
+    commonKeys << "postcode";
     return commonKeys;
 }
 
@@ -1042,7 +1042,7 @@ QStringList LandmarkUtility::searchableLandmarkAttributeKeys()
     commonKeys << "city";
     commonKeys << "district";
     commonKeys << "street";
-    commonKeys << "postCode";
+    commonKeys << "postcode";
     return commonKeys;
 }
 
@@ -1069,7 +1069,7 @@ TPositionFieldId LandmarkUtility::positionFieldId(QString keyValue)
         fieldId = EPositionFieldCountry;
     else if (keyValue == "countryCode")
         fieldId = EPositionFieldCountryCode;
-    else if (keyValue == "postCode")
+    else if (keyValue == "postcode")
         fieldId = EPositionFieldPostalCode;
 
     return fieldId;

@@ -151,7 +151,7 @@ void PlacePresenter::showAddress(QTreeWidgetItem* addrItem, const QGeoAddress& a
         }
     */
 
-    s = address.postCode();
+    s = address.postcode();
 
     if (!s.isEmpty()) {
         QTreeWidgetItem* postCodeItem = new QTreeWidgetItem(addrItem);

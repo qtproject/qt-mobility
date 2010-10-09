@@ -47,13 +47,13 @@
 #include <QtGui>
 
 SlideShow::SlideShow(QWidget *parent)
-    : QWidget(parent)
+    : QMainWindow(parent)
     , imageViewer(0)
     , playlist(0)
     , statusLabel(0)
-    , countdownLabel(0)
-    , playButton(0)
-    , stopButton(0)
+    , countdownAction(0)
+    , playAction(0)
+    , stopAction(0)
     , viewerLayout(0)
 {
     imageViewer = new QMediaImageViewer(this);
@@ -92,61 +92,40 @@ SlideShow::SlideShow(QWidget *parent)
     viewerLayout->addWidget(videoWidget);
     viewerLayout->addWidget(statusLabel);
 
-    QMenu *openMenu = new QMenu(this);
-    openMenu->addAction(tr("Directory..."), this, SLOT(openDirectory()));
-    openMenu->addAction(tr("Playlist..."), this, SLOT(openPlaylist()));
+    menuBar()->addAction(tr("Open Directory..."), this, SLOT(openDirectory()));
+    menuBar()->addAction(tr("Open Playlist..."), this, SLOT(openPlaylist()));
 
-    QToolButton *openButton = new QToolButton;
-    openButton->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
-    openButton->setMenu(openMenu);
-    openButton->setPopupMode(QToolButton::InstantPopup);
+    toolBar = new QToolBar;
+    toolBar->setMovable(false);
+    toolBar->setFloatable(false);
+    toolBar->setEnabled(false);
 
-    playButton = new QToolButton;
-    playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
-    playButton->setEnabled(false);
+    toolBar->addAction(
+            style()->standardIcon(QStyle::SP_MediaSkipBackward),
+            tr("Previous"),
+            playlist,
+            SLOT(previous()));
+    stopAction = toolBar->addAction(
+            style()->standardIcon(QStyle::SP_MediaStop), tr("Stop"), imageViewer, SLOT(stop()));
+    playAction = toolBar->addAction(
+            style()->standardIcon(QStyle::SP_MediaPlay), tr("Play"), this, SLOT(play()));
+    toolBar->addAction(
+            style()->standardIcon(QStyle::SP_MediaSkipForward), tr("Next"), playlist, SLOT(next()));
 
-    connect(playButton, SIGNAL(clicked()), this, SLOT(play()));
-    connect(this, SIGNAL(enableButtons(bool)), playButton, SLOT(setEnabled(bool)));
+    QToolBar *countdownToolBar = new QToolBar;
+    countdownToolBar->setMovable(false);
+    countdownToolBar->setFloatable(false);
+    countdownToolBar->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    countdownAction = countdownToolBar->addAction(QString());
 
-    stopButton = new QToolButton;
-    stopButton->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
-    stopButton->setEnabled(false);
 
-    connect(stopButton, SIGNAL(clicked()), imageViewer, SLOT(stop()));
+    addToolBar(Qt::BottomToolBarArea, toolBar);
+    addToolBar(Qt::BottomToolBarArea, countdownToolBar);
 
-    QAbstractButton *nextButton = new QToolButton;
-    nextButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
-    nextButton->setEnabled(false);
+    QWidget *centralWidget = new QWidget;
+    centralWidget->setLayout(viewerLayout);
 
-    connect(nextButton, SIGNAL(clicked()), playlist, SLOT(next()));
-    connect(this, SIGNAL(enableButtons(bool)), nextButton, SLOT(setEnabled(bool)));
-
-    QAbstractButton *previousButton = new QToolButton;
-    previousButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
-    previousButton->setEnabled(false);
-
-    connect(previousButton, SIGNAL(clicked()), playlist, SLOT(previous()));
-    connect(this, SIGNAL(enableButtons(bool)), previousButton, SLOT(setEnabled(bool)));
-
-    countdownLabel = new QLabel;
-
-    QBoxLayout *controlLayout = new QHBoxLayout;
-    controlLayout->setMargin(0);
-    controlLayout->addWidget(openButton);
-    controlLayout->addStretch(1);
-    controlLayout->addWidget(previousButton);
-    controlLayout->addWidget(stopButton);
-    controlLayout->addWidget(playButton);
-    controlLayout->addWidget(nextButton);
-    controlLayout->addStretch(1);
-    controlLayout->addWidget(countdownLabel);
-
-    QBoxLayout *layout = new QVBoxLayout;
-    layout->addLayout(viewerLayout);
-    layout->addLayout(controlLayout);
-
-    setLayout(layout);
-
+    setCentralWidget(centralWidget);
 }
 
 void SlideShow::openPlaylist()
@@ -173,7 +152,7 @@ void SlideShow::openDirectory()
 
         statusChanged(imageViewer->mediaStatus());
 
-        emit enableButtons(playlist->mediaCount() > 0);
+        toolBar->setEnabled(playlist->mediaCount() > 0);
     }
 }
 
@@ -194,16 +173,16 @@ void SlideShow::stateChanged(QMediaImageViewer::State state)
 {
     switch (state) {
     case QMediaImageViewer::StoppedState:
-        stopButton->setEnabled(false);
-        playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+        stopAction->setEnabled(false);
+        playAction->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
         break;
     case QMediaImageViewer::PlayingState:
-        stopButton->setEnabled(true);
-        playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+        stopAction->setEnabled(true);
+        playAction->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
         break;
     case QMediaImageViewer::PausedState:
-        stopButton->setEnabled(true);
-        playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+        stopAction->setEnabled(true);
+        playAction->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
         break;
     }
 }
@@ -242,7 +221,7 @@ void SlideShow::playlistLoaded()
 {
     statusChanged(imageViewer->mediaStatus());
 
-    emit enableButtons(playlist->mediaCount() > 0);
+    toolBar->setEnabled(playlist->mediaCount() > 0);
 }
 
 void SlideShow::playlistLoadFailed()
@@ -250,14 +229,14 @@ void SlideShow::playlistLoadFailed()
     statusLabel->setText(playlist->errorString());
     viewerLayout->setCurrentIndex(1);
 
-    emit enableButtons(false);
+    toolBar->setEnabled(false);
 }
 
 void SlideShow::elapsedTimeChanged(int time)
 {
     const int remaining = (imageViewer->timeout() - time) / 1000;
 
-    countdownLabel->setText(tr("%1:%2")
+    countdownAction->setText(tr("%1:%2")
             .arg(remaining / 60, 2, 10, QLatin1Char('0'))
             .arg(remaining % 60, 2, 10, QLatin1Char('0')));
 }

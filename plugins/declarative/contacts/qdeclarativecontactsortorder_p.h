@@ -57,9 +57,9 @@ class QDeclarativeContactSortOrder :public QObject
     Q_PROPERTY(SortOrder direction READ direction WRITE setDirection NOTIFY sortOrderChanged)
     Q_PROPERTY(BlankPolicy blankPolicy READ blankPolicy WRITE setBlankPolicy NOTIFY sortOrderChanged)
     Q_PROPERTY(CaseSensitivity caseSensitivity READ caseSensitivity WRITE setCaseSensitivity NOTIFY sortOrderChanged)
-    Q_ENUMS(BlankPolicy);
-    Q_ENUMS(SortOrder);
-    Q_ENUMS(CaseSensitivity);
+    Q_ENUMS(BlankPolicy)
+    Q_ENUMS(SortOrder)
+    Q_ENUMS(CaseSensitivity)
 public:
 
     enum BlankPolicy {
