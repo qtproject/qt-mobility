@@ -1182,8 +1182,13 @@ private slots:
         QCOMPARE(m_manager->categoryIds().count(), originalCategoryCount + 1);
         //the category name appears to be empty...
         QCOMPARE(m_manager->category(lm.categoryIds().at(0)).name(), cat.name());
+    }
 
-
+    void failingAutoDetectImport()
+    {
+        QVERIFY(m_manager->importLandmarks("data/convert-collection-in.xml"));
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+        QVERIFY(m_manager->landmarks().count() > 0);
     }
 };
 
