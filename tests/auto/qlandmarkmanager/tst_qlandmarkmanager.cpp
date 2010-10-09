@@ -95,22 +95,22 @@
 #endif
 
 //defines to turn on and off tests for symbian
-#define INVALID_MANAGER
-#define RETRIEVE_CATEGORY
-#define RETRIEVE_LANDMARK
-#define SAVE_CATEGORY
-#define SAVE_LANDMARK
-#define SIMPLE_REMOVE_CATEGORY
-#define REMOVE_CATEGORY
-#define REMOVE_LANDMARK
-#define GET_ALL_CATEGORIES
-#define FILTER_DEFAULT
-#define FILTER_NAME
-#define FILTER_PROXIMITY
-#define FILTER_CATEGORY
-#define FILTER_BOX
+//#define INVALID_MANAGER
+//#define RETRIEVE_CATEGORY
+//#define RETRIEVE_LANDMARK
+//#define SAVE_CATEGORY
+//#define SAVE_LANDMARK
+//#define SIMPLE_REMOVE_CATEGORY
+//#define REMOVE_CATEGORY
+//#define REMOVE_LANDMARK
+//#define GET_ALL_CATEGORIES
+//#define FILTER_DEFAULT
+//#define FILTER_NAME
+//#define FILTER_PROXIMITY
+//#define FILTER_CATEGORY
+//#define FILTER_BOX
 #define FILTER_INTERSECTION
-#define LANDMARK_FETCH_CANCEL
+//#define LANDMARK_FETCH_CANCEL
 #define IMPORT_GPX
 
 //#define EXPECT_FAIL
@@ -1066,6 +1066,26 @@ private slots:
     void notificationCheck();
     void testConvenienceFunctions();
 #endif
+
+    void failingImportTest() {
+        QString prefix;
+#ifdef Q_OS_SYMBIAN
+        prefix = "";
+#else
+        prefix = ":";
+#endif
+        QVERIFY(m_manager->importLandmarks( prefix  + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx", QLandmarkManager::Gpx));
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+        QLandmarkNameFilter nameFilter("Public Toilet, AUS-Kowen Forest - Playground Block");
+        QList<QLandmark> lms = m_manager->landmarks(nameFilter);
+        QCOMPARE(lms.count(),1);
+        QLandmark lm = lms.at(0);
+        qWarning() << "landmark radius after import = " << QString::number(lm.radius()) << " expected=" << QString::number(0.0);
+        qWarning() << "landmark url after import =" << lm.url().toString()  << " expected = " << QString();
+
+        QCOMPARE(lm.url().toString(), QUrl().toString());
+        QVERIFY(lm.radius() == 0.0);
+    }
 };
 
 
