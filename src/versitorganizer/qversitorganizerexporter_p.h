@@ -105,12 +105,12 @@ private:
             const QString& propertyName,
             const QOrganizerItemRecurrenceRule& rule,
             QList<QVersitProperty>* generatedProperties);
-    void appendIntList(QString* str, const QList<int>& list);
+    void appendInts(QString* str, const QSet<int>& ints);
     QString weekString(Qt::DayOfWeek day);
     void encodeRecurDates(
             const QString& propertyName,
             const QOrganizerItem& item,
-            const QList<QDate>& dates,
+            const QSet<QDate>& dates,
             const QVersitDocument& document,
             QList<QVersitProperty>* removedProperties,
             QList<QVersitProperty>* generatedProperties);

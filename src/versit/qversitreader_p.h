@@ -229,8 +229,8 @@ public: // New functions
     void setCanceling(bool cancelling);
     bool isCanceling();
 
-    bool parseVersitDocument(LineReader* device, QVersitDocument* document);
-    bool parseVersitDocumentBody(LineReader* device, QVersitDocument* document);
+    bool parseVersitDocument(LineReader* lineReader, QVersitDocument* document);
+    bool parseVersitDocumentBody(LineReader* lineReader, QVersitDocument* document);
 
     QVersitProperty parseNextVersitProperty(
         QVersitDocument::VersitType versitType,

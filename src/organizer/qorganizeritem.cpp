@@ -284,12 +284,58 @@ QOrganizerItemLocalId QOrganizerItem::localId() const
 }
 
 /*!
-  Note: only returns meaningful id if it has been saved in a manager.
-      An item always belongs to exactly one collection (default, if not set).
+  Returns the id of the collection which this item is part of, in the manager
+  in which the item has been saved, if the item has previously been saved in
+  a manager.  If the item has not previously been saved in a manager, this function
+  will return the id of the collection into which the client wishes the item to be
+  saved when \l QOrganizerItemManager::saveItem() is called, which is set by calling
+  \l setId(); otherwise, returns a null id.
+
+  An item always belongs to exactly one collection in a particular manager after it
+  has been saved in the manager.  If the item has previously been saved in the manager,
+  in a particular collection, and the client sets the collection id of the item to
+  the id of a different collection within that manager and then resaves the item,
+  the item will be moved from its original collection into the specified collection
+  if the move operation is supported by the manager; otherwise, the
+  \l QOrganizerItemManager::saveItem() operation will fail and calling
+  \l QOrganizerItemManager::error() will return \c QOrganizerItemManager::NotSupportedError.
  */
 QOrganizerCollectionId QOrganizerItem::collectionId() const
 {
     return d->m_collectionId;
+}
+
+/*!
+  Sets the id of the collection into which the client wishes the item to be saved
+  to the given \a collectionId.
+
+  If the given \a collectionId is the null collection id, the client is specifying
+  that the item should be saved into the collection in which the item is already
+  saved (if the item has previously been saved in the manager, without having been
+  removed since), or into the default collection of the manager (if the item has
+  not previously been saved in the manager, or has been removed since the last time
+  it was saved).
+
+  If the item has previously been saved in a particular manager, and the given
+  \a collectionId is the id of a different collection than the one which the
+  item is currently a part of in that manager, saving the item with
+  \l QOrganizerItemManager::saveItem() will move the item from its original
+  collection to the collection whose id is \a collectionId, if \a collectionId
+  identifies a valid collection and the operation is supported by the manager.
+ */
+void QOrganizerItem::setCollectionId(const QOrganizerCollectionId& collectionId)
+{
+    d->m_collectionId = collectionId;
+}
+
+/*!
+  Returns the manager-local id portion of the collection id of the item.
+  A collection id consists of a manager-local id and the URI of the manager
+  in which the collection can be found.
+ */
+QOrganizerCollectionLocalId QOrganizerItem::collectionLocalId() const
+{
+    return d->m_collectionId.localId();
 }
 
 /*!

@@ -39,37 +39,50 @@
 **
 ****************************************************************************/
 
-#include "qorganizercollectionlocalidfetchrequest.h"
-#include "qorganizeritemrequests_p.h"
+#ifndef QORGANIZERITEMFETCHFOREXPORTREQUEST_H
+#define QORGANIZERITEMFETCHFOREXPORTREQUEST_H
+
+#include "qtorganizerglobal.h"
+#include "qorganizeritemabstractrequest.h"
+#include "qorganizeritemsortorder.h"
+#include "qorganizeritemfilter.h"
+#include "qorganizeritem.h"
+#include "qorganizeritemfetchhint.h"
+
+#include <QList>
+#include <QStringList>
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-  \class QOrganizerCollectionLocalIdFetchRequest
-  \brief The QOrganizerCollectionLocalIdFetchRequest class allows a client to asynchronously
-    request collection ids from an organizer manager.
-
-
-  For a QOrganizerCollectionLocalIdFetchRequest, the resultsAvailable() signal will be emitted when the resultant
-  collection ids (which may be retrieved by calling collectionIds()), are updated, as well as if
-  the overall operation error (which may be retrieved by calling error()) is updated.
-
-  \ingroup organizeritems-requests
- */
-
-/*! Constructs a new organizeritem fetch request whose parent is the specified \a parent */
-QOrganizerCollectionLocalIdFetchRequest::QOrganizerCollectionLocalIdFetchRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerCollectionLocalIdFetchRequestPrivate, parent)
+class QOrganizerItemFetchForExportRequestPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerItemFetchForExportRequest : public QOrganizerItemAbstractRequest
 {
-}
+    Q_OBJECT
 
-/*! Returns the list of collection ids retrieved by this request */
-QList<QOrganizerCollectionLocalId> QOrganizerCollectionLocalIdFetchRequest::collectionIds() const
-{
-    Q_D(const QOrganizerCollectionLocalIdFetchRequest);
-    return d->m_collectionIds;
-}
+public:
+    QOrganizerItemFetchForExportRequest(QObject* parent = 0);
 
-#include "moc_qorganizercollectionlocalidfetchrequest.cpp"
+    /* Selection, restriction and sorting */
+    void setFilter(const QOrganizerItemFilter& filter);
+    void setSorting(const QList<QOrganizerItemSortOrder>& sorting);
+    void setFetchHint(const QOrganizerItemFetchHint& fetchHint);
+    void setStartDate(const QDateTime& date);
+    void setEndDate(const QDateTime& date);
+    QOrganizerItemFilter filter() const;
+    QList<QOrganizerItemSortOrder> sorting() const;
+    QOrganizerItemFetchHint fetchHint() const;
+    QDateTime startDate() const;
+    QDateTime endDate() const;
+
+    /* Results */
+    QList<QOrganizerItem> items() const;
+
+private:
+    Q_DISABLE_COPY(QOrganizerItemFetchForExportRequest)
+    friend class QOrganizerItemManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemFetchForExportRequest)
+};
 
 QTM_END_NAMESPACE
+
+#endif

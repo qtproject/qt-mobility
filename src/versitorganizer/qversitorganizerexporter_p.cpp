@@ -257,10 +257,10 @@ void QVersitOrganizerExporterPrivate::encodeRecurrence(
         QSet<QString>* processedFields)
 {
     QOrganizerItemRecurrence recurrence = static_cast<QOrganizerItemRecurrence>(detail);
-    QList<QOrganizerItemRecurrenceRule> rrules = recurrence.recurrenceRules();
-    QList<QOrganizerItemRecurrenceRule> exrules = recurrence.exceptionRules();
-    QList<QDate> rdates = recurrence.recurrenceDates();
-    QList<QDate> exdates = recurrence.exceptionDates();
+    QSet<QOrganizerItemRecurrenceRule> rrules = recurrence.recurrenceRules();
+    QSet<QOrganizerItemRecurrenceRule> exrules = recurrence.exceptionRules();
+    QSet<QDate> rdates = recurrence.recurrenceDates();
+    QSet<QDate> exdates = recurrence.exceptionDates();
     if (!rrules.isEmpty()) {
         foreach (const QOrganizerItemRecurrenceRule& rrule, rrules) {
             encodeRecurRule(QLatin1String("RRULE"), rrule, generatedProperties);
@@ -309,13 +309,13 @@ void QVersitOrganizerExporterPrivate::encodeRecurRule(
         default:
             return;
     }
-    if (rule.count() > 0) {
+    if (rule.limitType() == QOrganizerItemRecurrenceRule::CountLimit) {
         value.append(QLatin1String(";COUNT="));
-        value.append(QString::number(rule.count()));
+        value.append(QString::number(rule.limitCount()));
     }
-    if (rule.endDate().isValid()) {
+    if (rule.limitType() == QOrganizerItemRecurrenceRule::DateLimit) {
         value.append(QLatin1String(";UNTIL="));
-        value.append(rule.endDate().toString(QLatin1String("yyyyMMdd")));
+        value.append(rule.limitDate().toString(QLatin1String("yyyyMMdd")));
     }
     if (rule.interval() > 1) {
         value.append(QLatin1String(";INTERVAL="));
@@ -324,7 +324,9 @@ void QVersitOrganizerExporterPrivate::encodeRecurRule(
     if (!rule.daysOfWeek().isEmpty()) {
         value.append(QLatin1String(";BYDAY="));
         bool first = true;
-        foreach (Qt::DayOfWeek day, rule.daysOfWeek()) {
+        QList<Qt::DayOfWeek> daysOfWeek(QList<Qt::DayOfWeek>::fromSet(rule.daysOfWeek()));
+        qSort(daysOfWeek);
+        foreach (Qt::DayOfWeek day, daysOfWeek) {
             if (!first)
                 value.append(QLatin1String(","));
             first = false;
@@ -333,20 +335,23 @@ void QVersitOrganizerExporterPrivate::encodeRecurRule(
     }
     if (!rule.daysOfMonth().isEmpty()) {
         value.append(QLatin1String(";BYMONTHDAY="));
-        appendIntList(&value, rule.daysOfMonth());
+        appendInts(&value, rule.daysOfMonth());
     }
     if (!rule.daysOfYear().isEmpty()) {
         value.append(QLatin1String(";BYYEARDAY="));
-        appendIntList(&value, rule.daysOfYear());
+        appendInts(&value, rule.daysOfYear());
     }
     if (!rule.weeksOfYear().isEmpty()) {
         value.append(QLatin1String(";BYWEEKNO="));
-        appendIntList(&value, rule.weeksOfYear());
+        appendInts(&value, rule.weeksOfYear());
     }
-    if (!rule.months().isEmpty()) {
+    if (!rule.monthsOfYear().isEmpty()) {
         value.append(QLatin1String(";BYMONTH="));
         bool first = true;
-        foreach (QOrganizerItemRecurrenceRule::Month month, rule.months()) {
+        QList<QOrganizerItemRecurrenceRule::Month> months(
+                QList<QOrganizerItemRecurrenceRule::Month>::fromSet(rule.monthsOfYear()));
+        qSort(months);
+        foreach (QOrganizerItemRecurrenceRule::Month month, months) {
             if (!first)
                 value.append(QLatin1String(","));
             first = false;
@@ -355,11 +360,11 @@ void QVersitOrganizerExporterPrivate::encodeRecurRule(
     }
     if (!rule.positions().isEmpty()) {
         value.append(QLatin1String(";BYSETPOS="));
-        appendIntList(&value, rule.positions());
+        appendInts(&value, rule.positions());
     }
-    if (rule.weekStart() != Qt::Monday && rule.weekStart() > 0) {
+    if (rule.firstDayOfWeek() != Qt::Monday && rule.firstDayOfWeek() > 0) {
         value.append(QLatin1String(";WKST="));
-        value.append(weekString(rule.weekStart()));
+        value.append(weekString(rule.firstDayOfWeek()));
     }
     property.setValue(value);
     property.setValueType(QVersitProperty::PreformattedType);
@@ -368,9 +373,11 @@ void QVersitOrganizerExporterPrivate::encodeRecurRule(
 
 /*! Joins \a list together with commas and appends the result to \a str.
  */
-void QVersitOrganizerExporterPrivate::appendIntList(QString* str, const QList<int>& list) {
+void QVersitOrganizerExporterPrivate::appendInts(QString* str, const QSet<int>& ints) {
     bool first = true;
-    foreach (int n, list) {
+    QList<int> intList(QList<int>::fromSet(ints));
+    qSort(intList);
+    foreach (int n, intList) {
         if (!first)
             str->append(QLatin1String(","));
         first = false;
@@ -403,7 +410,7 @@ QString QVersitOrganizerExporterPrivate::weekString(Qt::DayOfWeek day) {
 void QVersitOrganizerExporterPrivate::encodeRecurDates(
         const QString& propertyName,
         const QOrganizerItem& item,
-        const QList<QDate>& dates,
+        const QSet<QDate>& dates,
         const QVersitDocument& document,
         QList<QVersitProperty>* removedProperties,
         QList<QVersitProperty>* generatedProperties)
@@ -415,7 +422,9 @@ void QVersitOrganizerExporterPrivate::encodeRecurDates(
     QString value = property.value();
     bool valueIsEmpty = value.isEmpty();
 
-    foreach (const QDate& dt, dates) {
+    QList<QDate> dateList(QList<QDate>::fromSet(dates));
+    qSort(dateList);
+    foreach (const QDate& dt, dateList) {
         QString str;
         QTime eventTime = static_cast<QOrganizerEvent>(item).startDateTime().time();
         if (dt.isValid()) {

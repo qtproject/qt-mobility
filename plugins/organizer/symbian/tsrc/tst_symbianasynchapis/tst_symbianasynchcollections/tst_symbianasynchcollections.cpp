@@ -88,7 +88,6 @@ private slots:
 
 private slots:
     void saveCollection();
-    void collectionIds();
     void fetchCollection();    
         
 private slots:
@@ -126,35 +125,6 @@ void tst_symbianasynchcollections::cleanupTestCase()
     }
 }
 
-void tst_symbianasynchcollections::collectionIds()
-{
-    // Make sure to delete the old request, if any
-    delete m_itemRequest;
-    // Create new request
-    m_itemRequest = new QOrganizerCollectionLocalIdFetchRequest(this);
-    // Set manager
-    m_itemRequest->setManager(m_om);
-
-    // Connect for the state change signal 
-    connect(m_itemRequest, 
-        SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
-        this, 
-        SLOT(requestStateChanged(QOrganizerItemAbstractRequest::State)));
-    connect(m_itemRequest, SIGNAL(resultsAvailable()), 
-        this, SLOT(requestResultsAvailable()));
-
-    // Type cast the new request to appropriate type
-    QOrganizerCollectionLocalIdFetchRequest * collectionLocalIdFetchRequest(
-        (QOrganizerCollectionLocalIdFetchRequest*)m_itemRequest);
-
-    // Start the request
-    collectionLocalIdFetchRequest->start();
-    // Wait for KTimeToWait millisecs or until request is finished
-    collectionLocalIdFetchRequest->waitForFinished(KTimeToWait);
-    // Verify if the request is finished
-    QVERIFY(collectionLocalIdFetchRequest->isFinished());
-}
-
 void tst_symbianasynchcollections::fetchCollection()
 {
     // Make sure to delete the old request, if any
@@ -175,9 +145,6 @@ void tst_symbianasynchcollections::fetchCollection()
     // Type cast the new request to appropriate type
     QOrganizerCollectionFetchRequest * collectionFetchRequest(
         (QOrganizerCollectionFetchRequest*)m_itemRequest);
-    // Set collections
-    QList<QOrganizerCollectionLocalId> collectionIds;
-    collectionFetchRequest->setCollectionIds(m_collectionIds);
 
     // Start the request
     collectionFetchRequest->start();
@@ -283,9 +250,6 @@ void tst_symbianasynchcollections::saveItem()
         (QOrganizerItemSaveRequest*)m_itemRequest);
 
     itemSaveRequest->setItems(createItems(KNumberOfEntries));
-    if (m_collectionIds.count()) {
-    itemSaveRequest->setCollectionId(m_collectionIds.at(0));
-    }
     itemSaveRequest->start();
     itemSaveRequest->waitForFinished(KTimeToWait);
 }
@@ -384,18 +348,6 @@ void tst_symbianasynchcollections::requestResultsAvailable()
         // of all the items
         int count(collections.count());
         QCOMPARE(count, 1);
-    }
-    break;
-    case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest : {
-        // Get all collection ids
-        QList<QOrganizerCollectionLocalId> collectionsLocalId(
-        ((QOrganizerCollectionLocalIdFetchRequest*)(m_itemRequest))
-        ->collectionIds());
-        
-        int count(collectionsLocalId.count());
-        QVERIFY(m_itemRequest->error() == QOrganizerItemManager::NoError);
-
-        qWarning() << collectionsLocalId.count() << "calendar/s are present currently";
     }
     break;
     case QOrganizerItemAbstractRequest::CollectionSaveRequest : {
@@ -501,10 +453,8 @@ void tst_symbianasynchcollections::modifyCollectionSignals()
     QSignalSpy changedSpy2(om2.data(), SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)));
 
      
-     //Fetch the saved collection
-     QList<QOrganizerCollectionLocalId> collectionIds = m_om->collectionIds();
-     QOrganizerCollection savedCollection = m_om->collections(collectionIds).at(1);
-     QOrganizerCollection collection;
+    //Fetch the saved collection
+    QOrganizerCollection savedCollection = m_om->collections().at(1);
     
     savedCollection.setMetaData("Name", "modifyEmission");
     req->setCollection(savedCollection);
@@ -556,8 +506,8 @@ void tst_symbianasynchcollections::deleteCollectionSignals()
     QSignalSpy removedSpy2(om2.data(), SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)));
      
      //Fetch the saved collection
-     QOrganizerCollectionLocalId savedCollectionLocalId = m_om->collectionIds().at(1);
-     int countBeforeDeletion = m_om->collectionIds().count();
+     QOrganizerCollectionLocalId savedCollectionLocalId = m_om->collections().at(1).localId();
+     int countBeforeDeletion = m_om->collections().count();
      qWarning() << countBeforeDeletion << "calendar/s are present currently for deletion";
     
     deleteReq->setCollectionId(savedCollectionLocalId);
@@ -579,7 +529,7 @@ void tst_symbianasynchcollections::deleteCollectionSignals()
     QCOMPARE(removedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
     QCOMPARE(removedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), savedCollectionLocalId);
     QCOMPARE(removedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), savedCollectionLocalId);
-    QCOMPARE(m_om->collectionIds().count(), 1);
+    QCOMPARE(m_om->collections().count(), 1);
     delete deleteReq;
 }
 

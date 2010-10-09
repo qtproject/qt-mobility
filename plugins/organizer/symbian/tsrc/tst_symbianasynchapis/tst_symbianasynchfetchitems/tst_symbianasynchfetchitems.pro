@@ -3,7 +3,7 @@
 
 
 TEMPLATE = app
-TARGET = tst_symbianasynchfetchiteminstance
+TARGET = tst_symbianasynchfetchitems
 QT += testlib
 CONFIG += qtestlib
 
@@ -12,7 +12,7 @@ symbian:
 	INCLUDEPATH += ./inc
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
-    SOURCES += tst_symbianasynchfetchiteminstance.cpp
+    SOURCES += tst_symbianasynchfetchitems.cpp
 
     CONFIG += mobility
     MOBILITY = organizer

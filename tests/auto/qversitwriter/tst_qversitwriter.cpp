@@ -134,6 +134,49 @@ void tst_QVersitWriter::testFold()
     QCOMPARE(result, expected);
 }
 
+void tst_QVersitWriter::testWritingVersions()
+{
+    mWriter->setDevice(mOutputDevice);
+    mOutputDevice->open(QBuffer::ReadWrite);
+
+    QVersitDocument document;
+    QVersitProperty property;
+    property.setName(QString(QString::fromAscii("FN")));
+    property.setValue(QString::fromAscii("John"));
+    document.addProperty(property);
+
+    QByteArray vCard30(
+        "BEGIN:VCARD\r\n"
+        "VERSION:3.0\r\n"
+        "FN:John\r\n"
+        "END:VCARD\r\n");
+    QByteArray vCard21(
+        "BEGIN:VCARD\r\n"
+        "VERSION:2.1\r\n"
+        "FN:John\r\n"
+        "END:VCARD\r\n");
+
+    // Given no type or componentType, it should be vCard 3.0
+    QVERIFY(mWriter->startWriting(document));
+    mWriter->waitForFinished();
+    QCOMPARE(mOutputDevice->buffer(), vCard30);
+
+    // document type should override the guess
+    document.setType(QVersitDocument::VCard21Type);
+    mOutputDevice->buffer().clear();
+    mOutputDevice->seek(0);
+    QVERIFY(mWriter->startWriting(document));
+    mWriter->waitForFinished();
+    QCOMPARE(mOutputDevice->buffer(), vCard21);
+
+    // param to startWriting should override document type
+    mOutputDevice->buffer().clear();
+    mOutputDevice->seek(0);
+    QVERIFY(mWriter->startWriting(document, QVersitDocument::VCard30Type));
+    mWriter->waitForFinished();
+    QCOMPARE(mOutputDevice->buffer(), vCard30);
+}
+
 void tst_QVersitWriter::testWriting21()
 {
     // vCard 2.1
