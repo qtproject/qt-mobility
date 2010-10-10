@@ -279,6 +279,19 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
     // This will hold the landmark Ids that will be returned to calling function
     QList<QLandmarkId> result;
 
+    if (sortOrders.count() > 0) {
+        for (int i=0; i < sortOrders.count(); ++i) {
+            if (sortOrders.at(i).type() == QLandmarkSortOrder::NameSort) {
+                QLandmarkNameSort nameSort = sortOrders.at(i);
+                if (nameSort.caseSensitivity() == Qt::CaseSensitive) {
+                    *error = QLandmarkManager::NotSupportedError;
+                    *errorString = "Case Sensitive sorting is not supported";
+                    return result;
+                }
+            }
+        }
+    }
+
     //fetchRequired will prevent multiple fetches from database
     bool sortRequired = false;
 
@@ -603,7 +616,6 @@ QList<QLandmark> LandmarkManagerEngineSymbianPrivate::landmarks(const QLandmarkF
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
-
     QList<QLandmark> result;
 
     QList<QLandmarkId> ids = landmarkIds(filter, limit, offset, sortOrders, error, errorString);
@@ -1854,12 +1866,13 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
 
             filter = lmIdFetchRequest->filter();
             if (!lmIdFetchRequest->sorting().isEmpty()) {
-
-                if (lmIdFetchRequest->sorting().at(0).type() == QLandmarkSortOrder::NameSort) {
-                    QLandmarkNameSort nameSort = QLandmarkNameSort(
-                        lmIdFetchRequest->sorting().at(0));
-                    if (nameSort.caseSensitivity() == Qt::CaseSensitive)
-                        User::Leave(KErrNotSupported);
+                for (int i=0; i < lmIdFetchRequest->sorting().count(); ++i) {
+                    if (lmIdFetchRequest->sorting().at(i).type() == QLandmarkSortOrder::NameSort) {
+                        QLandmarkNameSort nameSort = QLandmarkNameSort(
+                                lmIdFetchRequest->sorting().at(i));
+                        if (nameSort.caseSensitivity() == Qt::CaseSensitive)
+                            User::Leave(KErrNotSupported);
+                    }
                 }
                 sortOrders = lmIdFetchRequest->sorting();
             }

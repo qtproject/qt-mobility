@@ -111,7 +111,9 @@
 //#define FILTER_BOX
 //#define FILTER_INTERSECTION
 //#define FILTER_MULTIBOX
-#define FILTER_UNION
+//#define FILTER_UNION
+//#define FILTER_ATTRIBUTE
+#define SORT_LANDMARKS
 //#define LANDMARK_FETCH_CANCEL
 //#define IMPORT_GPX
 //#define IMPORT_LMX
@@ -315,15 +317,15 @@ private:
     }
 
     bool doFetch(const QString type, const QLandmarkFilter &filter, QList<QLandmark> *lms,
-                 QLandmarkManager::Error error = QLandmarkManager::NoError){
+                 QLandmarkManager::Error error = QLandmarkManager::NoError, int limit = -1, int offset =0, const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder()){
         bool result =false;
         if (type== "sync") {
-            *lms = m_manager->landmarks(filter);
+            *lms = m_manager->landmarks(filter,limit, offset, sortOrder);
             bool syncResult = (m_manager->error() == error);
             if (!syncResult)
                 qWarning() << "sync landmark fetch error code did not match expected error = " << error << "Actual =" << m_manager->error();
 
-            QList<QLandmarkId> lmIds = m_manager->landmarkIds(filter);
+            QList<QLandmarkId> lmIds = m_manager->landmarkIds(filter, limit, offset, sortOrder);
             bool syncIdResult = (m_manager->error() == error);
             if (!syncIdResult)
                 qWarning() << "sync landmark id fetch error code did not match expected error = " << error << "Actual =" << m_manager->error();
@@ -336,6 +338,9 @@ private:
             QLandmarkFetchRequest fetchRequest(m_manager);
             QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
             fetchRequest.setFilter(filter);
+            fetchRequest.setLimit(limit);
+            fetchRequest.setOffset(offset);
+            fetchRequest.setSorting(sortOrder);
             fetchRequest.start();
             bool waitResult = waitForAsync(spy, &fetchRequest, error,500);
             if (!waitResult)
@@ -345,6 +350,9 @@ private:
             QLandmarkIdFetchRequest idFetchRequest(m_manager);
             QSignalSpy spyId(&idFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
             idFetchRequest.setFilter(filter);
+            idFetchRequest.setLimit(limit);
+            idFetchRequest.setOffset(offset);
+            idFetchRequest.setSorting(sortOrder);
             idFetchRequest.start();
             waitResult = waitForAsync(spyId, &idFetchRequest, error,500);
             if (!waitResult)
@@ -1030,6 +1038,11 @@ private slots:
     void filterLandmarksUnion_data();
 #endif
 
+#ifdef FILTER_ATTRIBUTE
+    void filterAttribute();
+    void filterAttribute_data();
+#endif
+
 #ifdef IMPORT_GPX
     void importGpx();
     void importGpx_data();
@@ -1050,16 +1063,13 @@ private slots:
     void exportLmx_data();
 #endif
 
-#ifndef Q_OS_SYMBIAN
-    void filterAttribute();
-    void filterAttribute_data();
-
-
+#ifdef SORT_LANDMARKS
     void sortLandmarksNull();
-
     void sortLandmarksName();
-    void sortLandmarksNameAsync();
+    void sortLandmarksName_data();
+#endif
 
+#ifndef Q_OS_SYMBIAN
     void exportGpx();
     void exportGpx_data();
 
@@ -1080,7 +1090,6 @@ private slots:
     void testConvenienceFunctions();
 #endif
 
-#ifndef WORKAROUND
     void failingImportTest() {
 
         QSignalSpy spyLmAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
@@ -1195,7 +1204,7 @@ private slots:
 
         QCOMPARE(m_manager->categoryIds().count(), originalCategoryCount + 1);
         //the category name appears to be empty...
-        QCOMPARE(m_manager->category(lm.categoryIds().at(0)).name(), cat.name());
+        QCOMPARE(m_manager->category(lmImported.categoryIds().at(0)).name(), cat.name());
     }
 
     void failingAutoDetectImport()
@@ -1204,7 +1213,6 @@ private slots:
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
         QVERIFY(m_manager->landmarks().count() > 0);
     }
-#endif
 };
 
 
@@ -5396,6 +5404,380 @@ void tst_QLandmarkManager::filterLandmarksUnion_data()
 }
 #endif
 
+#ifdef FILTER_ATTRIBUTE
+void tst_QLandmarkManager::filterAttribute() {
+    QLandmark lm1;
+    lm1.setName("Adelaide");
+    lm1.setDescription("The description of adelaide");
+
+    QVERIFY(m_manager->saveLandmark(&lm1));
+
+    QLandmark lm2;
+    lm2.setName("Adel");
+    lm2.setDescription("The description of adel");
+    QVERIFY(m_manager->saveLandmark(&lm2));
+
+    QLandmark lm3;
+    lm3.setName("Brisbane");
+    lm3.setDescription("The chronicles of brisbane");
+    QVERIFY(m_manager->saveLandmark(&lm3));
+
+    QLandmark lm4;
+    lm4.setName("Perth");
+    lm4.setDescription("The summary of perth");
+    QVERIFY(m_manager->saveLandmark(&lm4));
+
+    QLandmark lm5;
+    lm5.setName("Canberra");
+    lm5.setDescription("The chronicles of canberra");
+    QVERIFY(m_manager->saveLandmark(&lm5));
+
+    QLandmark lm6;
+    lm6.setName("Tinberra");
+    lm6.setDescription("The chronicles of tinberra");
+    QVERIFY(m_manager->saveLandmark(&lm6));
+
+    QLandmark lm7;
+    lm7.setName("Madelaide");
+    lm7.setDescription("The summary of madelaide");
+    QVERIFY(m_manager->saveLandmark(&lm7));
+
+    QLandmark lm8;
+    lm8.setName("Terran");
+    lm8.setDescription("Summary of terran");
+    QVERIFY(m_manager->saveLandmark(&lm8));
+
+    QLandmark lm9;
+    lm9.setName("ADEL");
+    lm9.setDescription("The summary of ADEL");
+    QVERIFY(m_manager->saveLandmark(&lm9));
+
+    QList<QLandmark> lms;
+    QFETCH(QString, type);
+
+    //test starts with
+    QLandmarkAttributeFilter attributeFilter;
+    attributeFilter.setAttribute("name", "adel",QLandmarkFilter::MatchStartsWith);
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QCOMPARE(lms.count(), 3);
+
+    QCOMPARE(lms.at(0), lm1);
+    QCOMPARE(lms.at(1), lm2);
+    QCOMPARE(lms.at(2), lm9);
+
+    //test contains
+    attributeFilter.setAttribute("name", "err", QLandmarkFilter::MatchContains);
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QCOMPARE(lms.count(),3);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm6);
+    QCOMPARE(lms.at(2), lm8);
+
+     //test ends with
+    attributeFilter.setAttribute("name", "ra", QLandmarkFilter::MatchEndsWith);
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QCOMPARE(lms.count(),2);
+    QCOMPARE(lms.at(0), lm5);
+    QCOMPARE(lms.at(1), lm6);
+
+    //test fixed string
+    attributeFilter.setAttribute("name", "adel", QLandmarkFilter::MatchFixedString);
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QCOMPARE(lms.count(), 2);
+    QCOMPARE(lms.at(0), lm2);
+    QCOMPARE(lms.at(1), lm9);
+#ifndef WORKAROUND
+    //test match exactly
+    attributeFilter.setAttribute("name", "Adel", QLandmarkFilter::MatchExactly);
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QCOMPARE(lms.count(), 1);
+    QCOMPARE(lms.at(0), lm2);
+#endif
+    /*
+    //try ANDing multiple criteria
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+    attributeFilter.setAttribute("name", "adel", QLandmarkFilter::MatchStartsWith);
+    attributeFilter.setAttribute("description", "descript", QLandmarkFilter::MatchContains);
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QCOMPARE(lms.count(),2);
+    QCOMPARE(lms.at(0), lm1);
+    QCOMPARE(lms.at(1), lm2);
+
+    //try ORing multiple criteria
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+    attributeFilter.setAttribute("name", "adel", QLandmarkFilter::MatchFixedString);
+    attributeFilter.setAttribute("description", "the summary", QLandmarkFilter::MatchStartsWith);
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QCOMPARE(lms.count(), 4);
+
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm7));
+    QVERIFY(lms.contains(lm9));
+
+    //try an single empty qvariant for and and or
+    //should return all landmarks since all landmark will the values
+    attributeFilter.clearAttributes();
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+    attributeFilter.setAttribute("street");
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QCOMPARE(lms.count(), 0);
+
+    attributeFilter.clearAttributes();
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+    attributeFilter.setAttribute("street");
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QCOMPARE(lms.count(), 0);
+
+    //try  with an empty qvariant, AND operation with multiple attributes
+    attributeFilter.clearAttributes();
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+    attributeFilter.setAttribute("street");
+    attributeFilter.setAttribute("name", "Adelaide");
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QCOMPARE(lms.count(),1);
+
+    //try to return with an empty qvariant, OR operation with multiple attribute
+    attributeFilter.clearAttributes();
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+    attributeFilter.setAttribute("street");
+    attributeFilter.setAttribute("name", "Adelaide");
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QCOMPARE(lms.count(),9);
+
+    //try all empty qvariatns AND operation with multiple attributes
+    attributeFilter.clearAttributes();
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+    attributeFilter.setAttribute("street");
+    attributeFilter.setAttribute("description");
+    attributeFilter.setAttribute("country");
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QCOMPARE(lms.count(), 9);
+    */
+
+    QLandmark lm10;
+
+    lm10.setDescription("10 description");
+    QGeoAddress address;
+    address.setCountry("10 Country");
+    address.setStreet("10 street");
+    lm10.setAddress(address);
+    QVERIFY(m_manager->saveLandmark(&lm10));
+
+    attributeFilter.clearAttributes();
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+    attributeFilter.setAttribute("street");
+    attributeFilter.setAttribute("description");
+    attributeFilter.setAttribute("country");
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QCOMPARE(lms.count(), 10);
+
+    //try searching with empty strings
+    attributeFilter.clearAttributes();
+    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+    attributeFilter.setAttribute("street", "10", QLandmarkFilter::MatchStartsWith);
+    attributeFilter.setAttribute("description" "10", QLandmarkFilter::MatchStartsWith);
+    attributeFilter.setAttribute("country", "10", QLandmarkFilter::MatchStartsWith);
+    QVERIFY(doFetch(type,attributeFilter,&lms));
+    QCOMPARE(lms.count(), 1);
+
+
+    //todo: try filtering with an empty qvariant.
+}
+
+void tst_QLandmarkManager::filterAttribute_data()
+{
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
+#endif
+
+#ifdef SORT_LANDMARKS
+void tst_QLandmarkManager::sortLandmarksNull() {
+    QLandmark lm1;
+    lm1.setName("b");
+    QVERIFY(m_manager->saveLandmark(&lm1));
+
+    QLandmark lm2;
+    lm2.setName("a");
+    QVERIFY(m_manager->saveLandmark(&lm2));
+
+    QLandmark lm3;
+    lm3.setName("c");
+    QVERIFY(m_manager->saveLandmark(&lm3));
+
+    QList<QLandmark> expected;
+    expected << lm1;
+    expected << lm2;
+    expected << lm3;
+
+    QLandmarkFilter filter;
+    QLandmarkSortOrder sortOrder;
+    QList<QLandmarkSortOrder> sortOrders;
+
+    QList<QLandmark> lms = m_manager->landmarks(filter);
+    QCOMPARE(lms, expected);
+
+    lms = m_manager->landmarks(filter, -1, 0, sortOrder);
+    QCOMPARE(lms, expected);
+
+    lms = m_manager->landmarks(filter, -1, 0, sortOrders);
+    QCOMPARE(lms, expected);
+
+    sortOrders << sortOrder;
+    lms = m_manager->landmarks(filter, -1, 0, sortOrders);
+    QCOMPARE(lms, expected);
+
+    sortOrders << sortOrder;
+    lms = m_manager->landmarks(filter, -1, 0, sortOrders);
+    QCOMPARE(lms, expected);
+}
+
+void tst_QLandmarkManager::sortLandmarksName() {
+    QFETCH(QString, type);
+    QLandmark lmA;
+    QGeoCoordinate coord;
+    coord.setLatitude(0);
+    coord.setLongitude(3);
+    lmA.setCoordinate(coord);
+    lmA.setName("A");
+
+    QLandmark lmB;
+    coord.setLongitude(1);
+    lmB.setCoordinate(coord);
+    lmB.setName("B");
+
+    QLandmark lmC;
+    coord.setLongitude(2);
+    lmC.setCoordinate(coord);
+    lmC.setName("C");
+
+    QLandmark lmD;
+    coord.setLongitude(5);
+    lmD.setCoordinate(coord);
+    lmD.setName("D");
+
+    QLandmark lmE;
+    coord.setLongitude(4);
+    lmE.setCoordinate(coord);
+    lmE.setName("E");
+
+    QVERIFY(m_manager->saveLandmark(&lmE));
+    QVERIFY(m_manager->saveLandmark(&lmD));
+    QVERIFY(m_manager->saveLandmark(&lmA));
+    QVERIFY(m_manager->saveLandmark(&lmC));
+    QVERIFY(m_manager->saveLandmark(&lmB));
+
+    QList<QLandmark> expectedAscending;
+    expectedAscending << lmA;
+    expectedAscending << lmB;
+    expectedAscending << lmC;
+    expectedAscending << lmD;
+    expectedAscending << lmE;
+
+    QList<QLandmark> expectedDescending;
+    expectedDescending << lmE;
+    expectedDescending << lmD;
+    expectedDescending << lmC;
+    expectedDescending << lmB;
+    expectedDescending << lmA;
+
+    //test case insensitive ascending order
+    QLandmarkFilter filter;
+    QLandmarkNameSort sortAscending(Qt::AscendingOrder);
+    QList<QLandmark> lms;
+    QVERIFY(doFetch(type,filter,&lms, QLandmarkManager::NoError,-1,0,sortAscending));
+    QCOMPARE(lms.at(0), lmA);
+    QCOMPARE(lms.at(1), lmB);
+    QCOMPARE(lms.at(2), lmC);
+    QCOMPARE(lms.at(3), lmD);
+    QCOMPARE(lms.at(4), lmE);
+
+    QCOMPARE(lms, expectedAscending);
+
+    //test case insensitive descending order
+    QLandmarkNameSort sortDescending(Qt::DescendingOrder);
+    QVERIFY(doFetch(type,filter,&lms, QLandmarkManager::NoError,-1,0,sortDescending));
+    QCOMPARE(lms, expectedDescending);    
+
+    //try a limit larger than the number of landmarks
+    QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NoError,60,0,sortAscending));
+    QCOMPARE(lms.at(0), lmA);
+    QCOMPARE(lms.at(1), lmB);
+    QCOMPARE(lms.at(2), lmC);
+    QCOMPARE(lms.at(3), lmD);
+    QCOMPARE(lms.at(4), lmE);
+
+    //try a limit of 0
+    QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NoError,0,0,sortAscending));
+    QCOMPARE(lms.count(), 0);
+
+    QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NoError,0,0,QLandmarkNameSort()));
+    QCOMPARE(lms.count(), 0);
+
+    //try a a negative offset
+    QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NoError,-1,-1,sortAscending));
+    QCOMPARE(lms.at(0), lmA);
+    QCOMPARE(lms.at(1), lmB);
+    QCOMPARE(lms.at(2), lmC);
+    QCOMPARE(lms.at(3), lmD);
+    QCOMPARE(lms.at(4), lmE);
+
+    //try a valid offset
+    QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NoError,-1,3,sortAscending));
+    QCOMPARE(lms.count(), 2);
+    QCOMPARE(lms.at(0), lmD);
+    QCOMPARE(lms.at(1), lmE);
+
+    QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NoError,-1,3,QLandmarkSortOrder()));
+    QCOMPARE(lms.count(), 2);
+
+    //try an offset larger than the number of landmarks
+    QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NoError,-1,10,sortAscending));
+    QCOMPARE(lms.count(), 0);
+    QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NoError,-1,10, QLandmarkSortOrder()));
+    QCOMPARE(lms.count(), 0);
+
+    //try a combination of non-default limit and offset values
+    QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NoError,2,2,sortAscending));
+    QCOMPARE(lms.count(),2);
+    QCOMPARE(lms.at(0), lmC);
+    QCOMPARE(lms.at(1), lmD);
+
+    QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NoError,2,2,sortDescending));
+    QCOMPARE(lms.count(),2);
+    QCOMPARE(lms.at(0),lmC);
+    QCOMPARE(lms.at(1), lmB);
+
+    //check that case sensitive name sort is not supported.
+    QLandmarkNameSort nameSort;
+    nameSort.setDirection(Qt::AscendingOrder);
+    nameSort.setCaseSensitivity(Qt::CaseSensitive);
+    QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NotSupportedError,-1,0,nameSort));
+
+    //try limit and offset with a proximityFilter
+    QLandmarkProximityFilter proximityFilter;
+    proximityFilter.setCenter(QGeoCoordinate(0,0));
+    proximityFilter.setRadius(555976);
+
+    QVERIFY(doFetch(type, filter, &lms, QLandmarkManager::NoError,2,2, QLandmarkSortOrder()));
+    QCOMPARE(lms.count(), 2);
+    QCOMPARE(lms.at(0), lmA);
+    QCOMPARE(lms.at(1), lmE);
+}
+
+void tst_QLandmarkManager::sortLandmarksName_data() {
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
+
+#endif
+
 #ifdef IMPORT_GPX
 void tst_QLandmarkManager::importGpx() {
     QString prefix;
@@ -6454,344 +6836,6 @@ void tst_QLandmarkManager::exportLmx_data()
 #endif
 
 #ifndef Q_OS_SYMBIAN
-void tst_QLandmarkManager::filterAttribute() {
-    QLandmark lm1;
-    lm1.setName("Adelaide");
-    lm1.setDescription("The description of adelaide");
-    QVERIFY(m_manager->saveLandmark(&lm1));
-
-    QLandmark lm2;
-    lm2.setName("Adel");
-    lm2.setDescription("The description of adel");
-    QVERIFY(m_manager->saveLandmark(&lm2));
-
-    QLandmark lm3;
-    lm3.setName("Brisbane");
-    lm3.setDescription("The chronicles of brisbane");
-    QVERIFY(m_manager->saveLandmark(&lm3));
-
-    QLandmark lm4;
-    lm4.setName("Perth");
-    lm4.setDescription("The summary of perth");
-    QVERIFY(m_manager->saveLandmark(&lm4));
-
-    QLandmark lm5;
-    lm5.setName("Canberra");
-    lm5.setDescription("The chronicles of canberra");
-    QVERIFY(m_manager->saveLandmark(&lm5));
-
-    QLandmark lm6;
-    lm6.setName("Tinberra");
-    lm6.setDescription("The chronicles of tinberra");
-    QVERIFY(m_manager->saveLandmark(&lm6));
-
-    QLandmark lm7;
-    lm7.setName("Madelaide");
-    lm7.setDescription("The summary of madelaide");
-    QVERIFY(m_manager->saveLandmark(&lm7));
-
-    QLandmark lm8;
-    lm8.setName("Terran");
-    lm8.setDescription("Summary of terran");
-    QVERIFY(m_manager->saveLandmark(&lm8));
-
-    QLandmark lm9;
-    lm9.setName("ADEL");
-    lm9.setDescription("The summary of ADEL");
-    QVERIFY(m_manager->saveLandmark(&lm9));
-
-    QList<QLandmark> lms;
-    QFETCH(QString, type);
-
-    //test starts with
-    QLandmarkAttributeFilter attributeFilter;
-    attributeFilter.setAttribute("name", "adel",QLandmarkFilter::MatchStartsWith);
-    QVERIFY(doFetch(type,attributeFilter,&lms));
-    QCOMPARE(lms.count(), 3);
-
-    QCOMPARE(lms.at(0), lm1);
-    QCOMPARE(lms.at(1), lm2);
-    QCOMPARE(lms.at(2), lm9);
-
-    //test contains
-    attributeFilter.setAttribute("name", "err", QLandmarkFilter::MatchContains);
-    QVERIFY(doFetch(type,attributeFilter,&lms));
-    QCOMPARE(lms.count(),3);
-    QCOMPARE(lms.at(0), lm5);
-    QCOMPARE(lms.at(1), lm6);
-    QCOMPARE(lms.at(2), lm8);
-
-     //test ends with
-    attributeFilter.setAttribute("name", "ra", QLandmarkFilter::MatchEndsWith);
-    QVERIFY(doFetch(type,attributeFilter,&lms));
-    QCOMPARE(lms.count(),2);
-    QCOMPARE(lms.at(0), lm5);
-    QCOMPARE(lms.at(1), lm6);
-
-    //test fixed string
-    attributeFilter.setAttribute("name", "adel", QLandmarkFilter::MatchFixedString);
-    QVERIFY(doFetch(type,attributeFilter,&lms));
-    QCOMPARE(lms.count(), 2);
-    QCOMPARE(lms.at(0), lm2);
-    QCOMPARE(lms.at(1), lm9);
-
-    //test match exactly
-    attributeFilter.setAttribute("name", "Adel", QLandmarkFilter::MatchExactly);
-    QVERIFY(doFetch(type,attributeFilter,&lms));
-    QCOMPARE(lms.count(), 1);
-    QCOMPARE(lms.at(0), lm2);
-
-    //try ANDing multiple criteria
-    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
-    attributeFilter.setAttribute("name", "adel", QLandmarkFilter::MatchStartsWith);
-    attributeFilter.setAttribute("description", "descript", QLandmarkFilter::MatchContains);
-    QVERIFY(doFetch(type,attributeFilter,&lms));
-    QCOMPARE(lms.count(),2);
-    QCOMPARE(lms.at(0), lm1);
-    QCOMPARE(lms.at(1), lm2);
-
-    //try ORing multiple criteria
-    attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
-    attributeFilter.setAttribute("name", "adel", QLandmarkFilter::MatchFixedString);
-    attributeFilter.setAttribute("description", "the summary", QLandmarkFilter::MatchStartsWith);
-    QVERIFY(doFetch(type,attributeFilter,&lms));
-    QCOMPARE(lms.count(), 4);
-
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm4));
-    QVERIFY(lms.contains(lm7));
-    QVERIFY(lms.contains(lm9));
-
-    //try an single empty qvariant for and and or
-    //should return all landmarks since all landmark will the values
-    attributeFilter.clearAttributes();
-    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
-    attributeFilter.setAttribute("street");
-    QVERIFY(doFetch(type,attributeFilter,&lms));
-    QCOMPARE(lms.count(), 9);
-
-    attributeFilter.clearAttributes();
-    attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
-    attributeFilter.setAttribute("street");
-    QVERIFY(doFetch(type,attributeFilter,&lms));
-    QCOMPARE(lms.count(), 9);
-
-    //try  with an empty qvariant, AND operation with multiple attributes
-    attributeFilter.clearAttributes();
-    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
-    attributeFilter.setAttribute("street");
-    attributeFilter.setAttribute("name", "Adelaide");
-    QVERIFY(doFetch(type,attributeFilter,&lms));
-    QCOMPARE(lms.count(),1);
-
-    //try to return with an empty qvariant, OR operation with multiple attribute
-    attributeFilter.clearAttributes();
-    attributeFilter.setOperationType(QLandmarkAttributeFilter::OrOperation);
-    attributeFilter.setAttribute("street");
-    attributeFilter.setAttribute("name", "Adelaide");
-    QVERIFY(doFetch(type,attributeFilter,&lms));
-    QCOMPARE(lms.count(),9);
-
-    //try all empty qvariatns AND operation with multiple attributes
-    attributeFilter.clearAttributes();
-    attributeFilter.setOperationType(QLandmarkAttributeFilter::AndOperation);
-    attributeFilter.setAttribute("street");
-    attributeFilter.setAttribute("description");
-    attributeFilter.setAttribute("country");
-    QVERIFY(doFetch(type,attributeFilter,&lms));
-    QCOMPARE(lms.count(), 9);
-
-    //todo: try filtering with an empty qvariant.
-}
-
-void tst_QLandmarkManager::filterAttribute_data()
-{
-    QTest::addColumn<QString>("type");
-
-    QTest::newRow("sync") << "sync";
-    QTest::newRow("async") << "async";
-}
-
-void tst_QLandmarkManager::sortLandmarksNull() {
-    QLandmark lm1;
-    lm1.setName("b");
-    QVERIFY(m_manager->saveLandmark(&lm1));
-
-    QLandmark lm2;
-    lm2.setName("a");
-    QVERIFY(m_manager->saveLandmark(&lm2));
-
-    QLandmark lm3;
-    lm3.setName("c");
-    QVERIFY(m_manager->saveLandmark(&lm3));
-
-    QList<QLandmark> expected;
-    expected << lm1;
-    expected << lm2;
-    expected << lm3;
-
-    QLandmarkFilter filter;
-    QLandmarkSortOrder sortOrder;
-    QList<QLandmarkSortOrder> sortOrders;
-
-    QList<QLandmark> lms = m_manager->landmarks(filter);
-    QCOMPARE(lms, expected);
-
-    lms = m_manager->landmarks(filter, -1, 0, sortOrder);
-    QCOMPARE(lms, expected);
-
-    lms = m_manager->landmarks(filter, -1, 0, sortOrders);
-    QCOMPARE(lms, expected);
-
-    sortOrders << sortOrder;
-    lms = m_manager->landmarks(filter, -1, 0, sortOrders);
-    QCOMPARE(lms, expected);
-
-    sortOrders << sortOrder;
-    lms = m_manager->landmarks(filter, -1, 0, sortOrders);
-    QCOMPARE(lms, expected);
-}
-
-void tst_QLandmarkManager::sortLandmarksName() {
-    QLandmark lm1;
-    lm1.setName("b");
-    QVERIFY(m_manager->saveLandmark(&lm1));
-
-    QLandmark lm2;
-    lm2.setName("a");
-    QVERIFY(m_manager->saveLandmark(&lm2));
-
-    QLandmark lm3;
-    lm3.setName("c");
-    QVERIFY(m_manager->saveLandmark(&lm3));
-
-    QList<QLandmark> expectedAscending;
-    expectedAscending << lm2;
-    expectedAscending << lm1;
-    expectedAscending << lm3;
-
-    QList<QLandmark> expectedDescending;
-    expectedDescending << lm3;
-    expectedDescending << lm1;
-    expectedDescending << lm2;
-
-    QLandmarkFilter filter;
-    QLandmarkNameSort sortAscending(Qt::AscendingOrder);
-
-    QList<QLandmark> lms = m_manager->landmarks(filter, -1, 0, sortAscending);
-    QCOMPARE(lms, expectedAscending);
-
-    QLandmarkNameSort sortDescending(Qt::DescendingOrder);
-
-    lms = m_manager->landmarks(filter, -1, 0, sortDescending);
-    QCOMPARE(lms, expectedDescending);
-}
-
-void tst_QLandmarkManager::sortLandmarksNameAsync() {
-    QLandmark lm1;
-    lm1.setName("b");
-    QVERIFY(m_manager->saveLandmark(&lm1));
-
-    QLandmark lm2;
-    lm2.setName("a");
-    QVERIFY(m_manager->saveLandmark(&lm2));
-
-    QLandmark lm3;
-    lm3.setName("c");
-    QVERIFY(m_manager->saveLandmark(&lm3));
-
-    QLandmark lm4;
-    lm4.setName("C");
-    QVERIFY(m_manager->saveLandmark(&lm4));
-
-    QLandmark lm5;
-    lm5.setName("A");
-    QVERIFY(m_manager->saveLandmark(&lm5));
-
-    QLandmark lm6;
-    lm6.setName("B");
-    QVERIFY(m_manager->saveLandmark(&lm6));
-
-    QList<QLandmark> expectedAscending;
-    expectedAscending << lm2;
-    expectedAscending << lm5;
-    expectedAscending << lm1;
-    expectedAscending << lm6;
-    expectedAscending << lm3;
-    expectedAscending << lm4;
-
-    QList<QLandmark> expectedDescending;
-    expectedDescending << lm3;
-    expectedDescending << lm4;
-    expectedDescending << lm1;
-    expectedDescending << lm6;
-    expectedDescending << lm2;
-    expectedDescending << lm5;
-
-    //test case insensitive ascending order
-    QLandmarkFilter filter;
-    QLandmarkNameSort sortAscending(Qt::AscendingOrder);
-    QLandmarkFetchRequest fetchRequest(m_manager);
-    fetchRequest.setSorting(sortAscending);
-    QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
-    fetchRequest.start();
-
-    QVERIFY(waitForAsync(spy,&fetchRequest));
-    QList<QLandmark> lms = fetchRequest.landmarks();
-    QVERIFY(checkIdFetchRequest(lms,filter, sortAscending));
-
-    QCOMPARE(lms, expectedAscending);
-
-    //test case insensitive descending order
-    QLandmarkNameSort sortDescending(Qt::DescendingOrder);
-    fetchRequest.setSorting(sortDescending);
-    fetchRequest.start();
-
-    QVERIFY(waitForAsync(spy, &fetchRequest));
-    lms = fetchRequest.landmarks();
-    QVERIFY(checkIdFetchRequest(lms, filter, sortDescending));
-
-    QCOMPARE(lms, expectedDescending);
-
-    //test case sensitive ascending order
-    expectedAscending.clear();
-    expectedAscending << lm5;
-    expectedAscending << lm6;
-    expectedAscending << lm4;
-    expectedAscending << lm2;
-    expectedAscending << lm1;
-    expectedAscending << lm3;
-
-    sortAscending.setCaseSensitivity(Qt::CaseSensitive);
-    fetchRequest.setSorting(sortAscending);
-    fetchRequest.start();
-
-    QVERIFY(waitForAsync(spy, &fetchRequest));
-    lms = fetchRequest.landmarks();
-    QVERIFY(checkIdFetchRequest(lms,filter,sortAscending));
-
-    QCOMPARE(lms, expectedAscending);
-
-    //test case sensitive descending order
-    expectedDescending.clear();
-    expectedDescending << lm3;
-    expectedDescending << lm1;
-    expectedDescending << lm2;
-    expectedDescending << lm4;
-    expectedDescending << lm6;
-    expectedDescending << lm5;
-
-    sortDescending.setCaseSensitivity(Qt::CaseSensitive);
-    fetchRequest.setSorting(sortDescending);
-    fetchRequest.start();
-
-    QVERIFY(waitForAsync(spy, &fetchRequest));
-    lms = fetchRequest.landmarks();
-    QVERIFY(checkIdFetchRequest(lms,filter,sortDescending));
-
-    QCOMPARE(lms, expectedDescending);
-}
-
 void tst_QLandmarkManager::exportGpx() {
     QLandmarkExportRequest exportRequest(m_manager);
     QSignalSpy spy(&exportRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
