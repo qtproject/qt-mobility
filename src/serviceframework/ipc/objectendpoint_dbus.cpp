@@ -108,6 +108,7 @@ public:
     QRemoteServiceRegister::Entry entry;
     QUuid serviceInstanceId;
 
+    // Local client ownership list
     QList<QPair<QString, QPair<QRemoteServiceRegister::Entry, QUuid> > > clientList; 
 };
 
@@ -148,18 +149,20 @@ void ObjectEndPoint::disconnected(QString clientId)
     if (d->endPointType == Service) {
         for (int i=d->clientList.size()-1; i>=0; i--) {
             if (d->clientList[i].first == clientId) {
+                // Remove the entry from the InstanceManager and local list
                 QRemoteServiceRegister::Entry entry = d->clientList[i].second.first;
                 QUuid instance = d->clientList[i].second.second;
                 InstanceManager::instance()->removeObjectInstance(entry, instance);
                 d->clientList.removeAt(i);
+                
+                // Unregister object from D-Bus
+                uint hash = qHash(instance.toString());
+                QString objPath = "/" + entry.interfaceName() + "/" + entry.version() + "/" + QString::number(hash);
+                objPath.replace(QString("."), QString("/"));
+                connection->unregisterObject(objPath, QDBusConnection::UnregisterTree);
             }
         }
-
-        //if (d->clientList.size() < 1)
-        //    deleteLater();
     }
-   
-    //TODO: UnregisterService
 }
 
 /*!
