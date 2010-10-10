@@ -81,7 +81,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void newPackageReady();
-    void disconnected();
+    void disconnected(QString clientId);
 
 private:
     void waitForResponse(const QUuid& requestId);

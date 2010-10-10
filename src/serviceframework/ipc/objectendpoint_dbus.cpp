@@ -107,6 +107,8 @@ public:
     // Used for calculate the registered paths on DBus
     QRemoteServiceRegister::Entry entry;
     QUuid serviceInstanceId;
+
+    QList<QPair<QString, QPair<QRemoteServiceRegister::Entry, QUuid> > > clientList; 
 };
 
 /*!
@@ -141,12 +143,23 @@ ObjectEndPoint::~ObjectEndPoint()
     delete d;
 }
 
-void ObjectEndPoint::disconnected()
+void ObjectEndPoint::disconnected(QString clientId)
 {
     if (d->endPointType == Service) {
-        InstanceManager::instance()->removeObjectInstance(d->entry, d->serviceInstanceId);
+        for (int i=d->clientList.size()-1; i>=0; i--) {
+            if (d->clientList[i].first == clientId) {
+                QRemoteServiceRegister::Entry entry = d->clientList[i].second.first;
+                QUuid instance = d->clientList[i].second.second;
+                InstanceManager::instance()->removeObjectInstance(entry, instance);
+                d->clientList.removeAt(i);
+            }
+        }
+
+        //if (d->clientList.size() < 1)
+        //    deleteLater();
     }
-    deleteLater();
+   
+    //TODO: UnregisterService
 }
 
 /*!
@@ -300,13 +313,14 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         // Service side
         Q_ASSERT(d->endPointType == ObjectEndPoint::Service);
 
+
         QServicePackage response = p.createResponse();
         InstanceManager* iManager = InstanceManager::instance();
 
         // Instantiate service object from type register
         service = iManager->createObjectInstance(p.d->entry, d->serviceInstanceId);
         if (!service) {
-            qWarning() << "Cannot instanciate service object";
+            qWarning() << "Cannot instantiate service object";
             dispatch->writePackage(response);
             return;
         }
@@ -325,7 +339,15 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 
         QServiceMetaObjectDBus *serviceDBus = new QServiceMetaObjectDBus(service);
         connection->registerObject(objPath, serviceDBus, QDBusConnection::ExportAllContents);
-        
+       
+        // Add new instance to client ownership list
+        QString clientId = p.d->payload.toString();
+        QPair<QString, QPair<QRemoteServiceRegister::Entry, QUuid> > client;
+        client.first = clientId;
+        client.second.first = p.d->entry;
+        client.second.second = d->serviceInstanceId;
+        d->clientList << client;
+
 #ifdef DEBUG
         qDebug() << "Service Interface ObjectPath:" << objPath;
         
