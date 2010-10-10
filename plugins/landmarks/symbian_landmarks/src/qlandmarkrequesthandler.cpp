@@ -83,9 +83,18 @@ void CLandmarkRequestAO::RunL()
         }
         else if (iStatus == KErrNone && IsMultiOperationRequest()) {
             iObserver->HandleExecutionL(iParent, iStatus);
-            SetActive();
-            TRequestStatus *Ptr = &iStatus;
-            User::RequestComplete(Ptr, 0);
+            iStatus = KRequestPending;
+            if (iOperation) {
+                iOperation->NextStep(iStatus, iProgress);
+                SetActive();
+            }
+            else {
+                SetActive();
+                // Only for the Landmark save and Category save. These dont have async operations.
+                // Self completing ative object.
+                TRequestStatus *Ptr = &iStatus;
+                User::RequestComplete(Ptr, KErrNone);
+            }
         }
         // if request is complete or any error occured 
         // then complete the request with appropriate error code
@@ -278,19 +287,38 @@ TBool CLandmarkRequestAO::StartRequest(CPosLandmarkSearch *aLandmarkSearch)
     else {
         TRAPD(err, iObserver->HandleExecutionL(iParent, iStatus);)
 
-        //qDebug() << "iObserver->HandleExecutionL";
+        if (err != KErrNone) {
+            iStatus = err;
+        }
 
-        if (err == KErrNone) {
+        // prepare next request.
+        if (iStatus == KPosLmOperationNotComplete || iStatus == KErrLocked || iStatus
+            == KErrAccessDenied) {
+
             iStatus = KRequestPending;
-            SetActive();
-            // Only for the Landmark save and Category save. 
-            // Use a self completing AO
-            TRequestStatus* Ptr = &iStatus;
-            User::RequestComplete(Ptr, 0);
+            if (iOperation) {
+                iOperation->NextStep(iStatus, iProgress);
+                SetActive();
+            }
+            else {
+                SetActive();
+                // Only for the Landmark save and Category save. These dont have async operations.
+                // Self completing ative object.
+                TRequestStatus *Ptr = &iStatus;
+                User::RequestComplete(Ptr, KErrNone);
+            }
         }
+        // if request is complete or any error occured 
+        // then complete the request with appropriate error code
         else {
-            //qDebug() << "StartRequest failed with = " << err;
+            iIsComplete = ETrue;
+            iParent->iErrorId = iStatus.Int();
+            // All processing is done now. Notify observer.
+            iObserver->HandleCompletionL(iParent);
+            WakeupThreads(iStatus.Int());
+            iIsRequestRunning = EFalse;
         }
+
     }
 
     iIsRequestRunning = ETrue;
@@ -432,7 +460,8 @@ void CLandmarkRequestAO::WakeupThreads(TInt aCompletion)
 
 TBool CLandmarkRequestAO::IsMultiOperationRequest()
 {
-    if (iParent->iQtRequest->type() == QLandmarkAbstractRequest::LandmarkIdFetchRequest) {
+    if (iParent->iQtRequest->type() == QLandmarkAbstractRequest::LandmarkIdFetchRequest
+        || iParent->iQtRequest->type() == QLandmarkAbstractRequest::LandmarkFetchRequest) {
 
         QLandmarkIdFetchRequest *fetchRequest =
             static_cast<QLandmarkIdFetchRequest *> (iParent->iQtRequest);
