@@ -2478,24 +2478,6 @@ bool DatabaseOperations::removeCategoryHelper(const QLandmarkCategoryId &categor
         return false;
     }
 
-    if (!executeQuery(&query,"SELECT landmarkId FROM landmark_category WHERE categoryId = :catId",bindValues,error,errorString)) {
-        return false;
-    }
-
-    QSqlQuery query2(db);
-    QMap<QString,QVariant> bindValues2;
-
-    QString queryString2 = QString("INSERT INTO landmark_notification(timestamp, action, landmarkId) "
-                                   "VALUES((strftime(\"%f\", \"now\") - strftime(\"%S\", \"now\") + strftime(\"%s\"))*1000,'CHANGE', :lmId );");
-
-    while(query.next()) {
-        bindValues2.clear();
-        bindValues2.insert("lmId", query.value(0));
-        if (!executeQuery(&query2,queryString2, bindValues2,error,errorString)) {
-            return false;
-        }
-    }
-
     QStringList queryStrings;
     queryStrings << "DELETE FROM category WHERE id = :catId";
     queryStrings << "DELETE FROM landmark_category WHERE categoryId = :catId";

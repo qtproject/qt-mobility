@@ -2838,30 +2838,9 @@ void tst_QLandmarkManager::removeCategory() {
     QCOMPARE(spyLmAdd.count(), 1);
 #endif
 
-    if (type == "sync") {
-#ifdef Q_OS_SYMBIAN
-        QCOMPARE(spyLmChange.count(), 1);
-        QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-
-#else
-        QCOMPARE(spyLmChange.count(), 1);
-        QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().count(), 2);
-        QVERIFY(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().contains(lm1.landmarkId()));
-        QVERIFY(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().contains(lm2.landmarkId()));
-#endif
-    }
-    else if (type == "async") {
-#ifdef Q_OS_SYMBIAN
-        QCOMPARE(spyLmChange.count(), 1);
-        QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-#else
-        QCOMPARE(spyLmChange.count(), 2);
-        QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-        QCOMPARE(spyLmChange.at(1).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-        QCOMPARE(spyLmChange.at(1).at(0).value<QList<QLandmarkId> >().at(1), lm2.landmarkId());
-#endif
-    }
-
+    QCOMPARE(spyLmChange.count(), 1);
+    QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().count(), 1);
+    QCOMPARE(spyLmChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
     QCOMPARE(spyLmRemove.count(), 0);
 #ifdef Q_OS_SYMBIAN
     QCOMPARE(spyCatAdd.count(), 3);
@@ -5694,7 +5673,7 @@ void tst_QLandmarkManager::sortLandmarksName() {
     //test case insensitive descending order
     QLandmarkNameSort sortDescending(Qt::DescendingOrder);
     QVERIFY(doFetch(type,filter,&lms, QLandmarkManager::NoError,-1,0,sortDescending));
-    QCOMPARE(lms, expectedDescending);    
+    QCOMPARE(lms, expectedDescending);
 
     //try a limit larger than the number of landmarks
     QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NoError,60,0,sortAscending));
@@ -5826,8 +5805,6 @@ void tst_QLandmarkManager::importGpx() {
         QVERIFY(m_manager->importLandmarks( prefix  + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx", QLandmarkManager::Gpx));
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     } else if (type == "syncExcludeCategoryData") {
-            m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx", QLandmarkManager::Gpx,
-                                            QLandmarkManager::ExcludeCategoryData);
             QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx", QLandmarkManager::Gpx,
                                                 QLandmarkManager::ExcludeCategoryData));
             QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
@@ -5923,19 +5900,15 @@ void tst_QLandmarkManager::importGpx() {
     QCOMPARE(spyChange.count(), 0);
 
     QList<QLandmarkId> ids;
-#ifdef Q_OS_SYMBIAN
-#ifdef WORKAROUND /
+
+#ifdef WORKAROUND
     //REMOVE WORKAROUND
-#else
     QCOMPARE(spyAdd.count(), 0);
-    QCOMPARE(dataChanged.count(),1);
-#endif
-#else
-    QCOMPARE(spyAdd.count(0));
     QCOMPARE(dataChanged.count(),1);
 #endif
 
     spyAdd.clear();
+    dataChanged.clear();
 
     QLandmark lmFirst;
     lmFirst.setName("Public Toilet, AUS-Wetlands Toilets");
@@ -5946,6 +5919,7 @@ void tst_QLandmarkManager::importGpx() {
     QLandmarkNameFilter nameFilter;
     nameFilter.setName("Public Toilet, AUS-Wetlands Toilets");
     QList<QLandmark> lms = m_manager->landmarks(nameFilter);
+
     QCOMPARE(lms.count(),1);
     retrievedFirst = lms.at(0);
 
@@ -6022,9 +5996,12 @@ void tst_QLandmarkManager::importGpx() {
     } else {
         qFatal("Unknown test row type");
     }
+
     QTest::qWait(10);
     QCOMPARE(spyRemove.count(), 0);
     QCOMPARE(spyChange.count(), 0);
+
+        QStringList lmNames;
 
 #ifdef Q_OS_SYMBIAN
 #ifdef WORKAROUND
@@ -6033,7 +6010,6 @@ void tst_QLandmarkManager::importGpx() {
     QCOMPARE(dataChanged.count(),1);
 #endif
 
-    QStringList lmNames;
 #else
     QCOMPARE(spyAdd.count(), 1);
     ids = spyAdd.at(0).at(0).value<QList<QLandmarkId> >();
@@ -6054,9 +6030,13 @@ void tst_QLandmarkManager::importGpx() {
     QVERIFY(lmNames.contains("test3"));
 #endif
 
-    lms = m_manager->landmarks();
-    foreach(const QLandmark &lm, lms) {
+    QList<QLandmark> tempLms = m_manager->landmarks();
+
+    lms.clear();
+    foreach(const QLandmark &lm, tempLms) {
         lmNames  << lm.name();
+        if (lm.name() == "test1" || lm.name() == "test2" || lm.name() == "test3")
+            lms << lm;
     }
 
     QVERIFY(lmNames.contains("test1"));
@@ -6102,8 +6082,8 @@ void tst_QLandmarkManager::importGpx() {
         QCOMPARE(spyRemove.count(), 0);
         QCOMPARE(spyChange.count(), 0);
 
-        QCOMPARE(spyAdd.count(), 1);
-        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().count(), 187);
+        QCOMPARE(spyAdd.count(), 0);
+        QCOMPARE(dataChanged.count(), 1);
     }
 #endif
 }
@@ -6262,7 +6242,7 @@ void tst_QLandmarkManager::importLmx() {
     QCOMPARE(spyCatRemove.count(), 0);
     QCOMPARE(spyCatChange.count(), 0);
     QCOMPARE(spyCatAdd.count(), 0);
-    QCOMPARE(dataChanged(), 0);
+    QCOMPARE(spyDataChanged.count(), 0);
     QList<QLandmarkId> ids = spyAdd.at(0).at(0).value<QList<QLandmarkId> >();
     QCOMPARE(ids.count(), 16);
 #endif
