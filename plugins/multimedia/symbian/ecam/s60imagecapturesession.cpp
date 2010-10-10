@@ -49,34 +49,70 @@
 
 #include <fbs.h>        // CFbsBitmap
 #include <pathinfo.h>
+#include <ImageConversion.h> // ICL Decoder for SnapShot
 
 S60ImageCaptureSession::S60ImageCaptureSession(QObject *parent) :
     QObject(parent),
+    CActive(CActive::EPriorityStandard),
     m_cameraEngine(NULL),
     m_advancedSettings(NULL),
     m_cameraInfo(NULL),
+    m_imageDecoder(NULL),
+    m_previewBitmap(NULL),
+    m_activeScheduler(NULL),
+    m_fileSystemAccess(NULL),
     m_error(KErrNone),
     m_activeDeviceIndex(KDefaultCameraDevice),
     m_cameraStarted(false),
     m_icState(EImageCaptureNotPrepared),
     m_currentCodec(QString()),
     m_captureSize(QSize()),
-    m_symbianImageQuality(QtMultimediaKit::VeryHighQuality * KSymbianImageQualityCoefficient),
+    m_symbianImageQuality(QtMultimediaKit::HighQuality * KSymbianImageQualityCoefficient),
     m_stillCaptureFileName(QString()),
     m_currentImageId(0),
-    m_captureWhenReady(false)
+    m_captureWhenReady(false),
+    m_previewDecodingOngoing(false),
+    m_previewInWaitLoop(false)
 {
     // Define supported image codecs
 	m_supportedImageCodecs << "image/jpg";
+
+    // Install ActiveScheduler if needed
+    if (!CActiveScheduler::Current()) {
+        m_activeScheduler = new CActiveScheduler;
+        CActiveScheduler::Install(m_activeScheduler);
+    }
+
+    CActiveScheduler::Add(this);
 }
 
 S60ImageCaptureSession::~S60ImageCaptureSession()
 {
-    // Delete AdvancedSettings
+    // Cancel ongoing Preview decoding
+    Cancel();
+
+    // Delete AdvancedSettings (Should already be destroyed by CameraControl)
     deleteAdvancedSettings();
 
     m_formats.clear();
     m_supportedImageCodecs.clear();
+
+    if (m_imageDecoder) {
+        delete m_imageDecoder;
+        m_imageDecoder = NULL;
+    }
+
+    if (m_previewBitmap) {
+        delete m_previewBitmap;
+        m_previewBitmap = NULL;
+    }
+
+    // Uninstall ActiveScheduler if needed
+    if (m_activeScheduler) {
+        CActiveScheduler::Install(NULL);
+        delete m_activeScheduler;
+        m_activeScheduler = NULL;
+    }
 }
 
 CCamera::TFormat S60ImageCaptureSession::defaultImageFormat()
@@ -221,7 +257,7 @@ void S60ImageCaptureSession::initializeImageCaptureSettings()
     if (resolutions.size() > 0)
         m_captureSize = resolutions[0]; // First is the maximum
 
-    m_symbianImageQuality = 100; // Best quality
+    m_symbianImageQuality = KDefaultImageQuality;
 }
 
 /*
@@ -270,6 +306,10 @@ int S60ImageCaptureSession::prepareImageCapture()
         if (!symbianError)
             m_icState = EImageCapturePrepared;
 
+        // Check if CaptureSize was modified
+        if (captureSize.iWidth != m_captureSize.width() || captureSize.iHeight != m_captureSize.height()) {
+            m_captureSize = QSize(captureSize.iWidth, captureSize.iHeight);
+        }
         return symbianError;
     }
 
@@ -403,32 +443,22 @@ void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
 
     m_icState = EImageCaptureWritingImage;
 
-    // Create SnapShot from ImageData
-    QImage snapImage;
-    snapImage.loadFromData((const uchar *)aData->Ptr(), aData->Length(), "JPG");
-
-    if (!snapImage.isNull()) {
-        emit imageCaptured(m_currentImageId, snapImage);
-    } else {
-        setError(KErrNotSupported, QString("Failed to create snapshot from captured data."));
-    }
-
     TFileName path = convertImagePath();
 
     // Try to save image and inform if it was succcesful
     TRAPD(err, saveImageL(aData, path));
     if (err) {
+        if (m_previewDecodingOngoing)
+            m_previewDecodingOngoing = false; // Reset
+
         setError(err, QString("Writing captured image to a file failed."), true);
         m_icState = EImageCapturePrepared;
         return;
-    } else {
-        emit imageSaved(m_currentImageId, m_stillCaptureFileName);
     }
 
     m_icState = EImageCapturePrepared;
 
-    // Release image resources
-    releaseImageBuffer();
+
 }
 
 void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
@@ -439,66 +469,87 @@ void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
 
     if(aBitmap)
     {
-        TSize size = aBitmap->SizeInPixels();
-        TUint scanLineLength = CFbsBitmap::ScanLineLength(size.iWidth, aBitmap->DisplayMode());
-        TUint32 sizeInWords = size.iHeight * scanLineLength / sizeof( TUint32 );
-        TUint32 *pixelData = new TUint32[sizeInWords];
-
-        if (!pixelData)
-            return;
-
-        // Convert to QImage
-        aBitmap->LockHeap();
-        TUint32 *dataPtr = aBitmap->DataAddress();
-        memcpy(pixelData, dataPtr, sizeof(TUint32) * sizeInWords);
-        aBitmap->UnlockHeap();
-
-        TDisplayMode displayMode = aBitmap->DisplayMode();
-
-        QImage::Format format = QImage::Format_Invalid;
-        switch(displayMode)
-        {
-            case EColor256:
-                format = QImage::Format_Indexed8;
-                break;
-            case EColor4K:
-                format = QImage::Format_RGB444;
-                break;
-            case EColor64K:
-                format = QImage::Format_RGB16;
-                break;
-            case EColor16M:
-                format = QImage::Format_RGB666;
-                break;
-            case EColor16MU:
-                format = QImage::Format_RGB32;
-                break;
-            case EColor16MA:
-                format = QImage::Format_ARGB32;
-                break;
-            default:
-                setError(KErrNotSupported, QString("Image format is not supported."), true);
-                break;
-        }
-
-        // Create SnapShot
-        QImage *snapImage = new QImage(
-                (uchar*)pixelData,
-                size.iWidth,
-                size.iHeight,
-                CFbsBitmap::ScanLineLength(size.iWidth, aBitmap->DisplayMode()),
-                format);
-        emit imageCaptured(m_currentImageId, *snapImage);
-
+        TInt saveError = KErrNone;
         TFileName path = convertImagePath();
-        TInt saveError = aBitmap->Save(path);
-        if (saveError == saveError)
+        saveError = aBitmap->Save(path);
+        if (saveError == KErrNone)
             emit imageSaved(m_currentImageId, m_stillCaptureFileName);
         else {
             setError(saveError, QString("Saving captured image failed."), true);
         }
+
+        if (m_previewDecodingOngoing) {
+            m_previewInWaitLoop = true;
+            CActiveScheduler::Start(); // Wait for the completion of the previous Preview generation
+        }
+
+        // Delete old instances if needed
+        if (m_imageDecoder) {
+            delete m_imageDecoder;
+            m_imageDecoder = NULL;
+        }
+        if (m_fileSystemAccess) {
+            m_fileSystemAccess->Close();
+            delete m_fileSystemAccess;
+            m_fileSystemAccess = NULL;
+        }
+        if (m_previewBitmap) {
+            delete m_previewBitmap;
+            m_previewBitmap = NULL;
+        }
+
+        // Create FileSystem access
+        m_fileSystemAccess = new RFs;
+        if (!m_fileSystemAccess) {
+            setError(KErrNoMemory, QString("Failed to write captured image to a file."));
+            return;
+        }
+        saveError = m_fileSystemAccess->Connect();
+        if (saveError) {
+            setError(saveError, QString("Failed to write captured image to a file."));
+            return;
+        }
+
+        // Generate Thumbnail to be used as Preview
+        TRAP(saveError, m_imageDecoder = CImageDecoder::FileNewL(*m_fileSystemAccess, path));
+        if (saveError) {
+            setError(saveError, QString("Failed to create preview image."));
+            return;
+        }
+
+        // Set proper Preview Size
+        TSize scaledSize((m_captureSize.width() / KSnapshotDownScaleFactor), (m_captureSize.height() / KSnapshotDownScaleFactor));
+        if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
+            scaledSize.SetSize((m_captureSize.width() / (KSnapshotDownScaleFactor/2)), (m_captureSize.height() / (KSnapshotDownScaleFactor/2)));
+        if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
+            scaledSize.SetSize((m_captureSize.width() / (KSnapshotDownScaleFactor/4)), (m_captureSize.height() / (KSnapshotDownScaleFactor/4)));
+        if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
+            scaledSize.SetSize(m_captureSize.width(), m_captureSize.height());
+
+        TFrameInfo info = m_imageDecoder->FrameInfo();
+
+        m_previewBitmap = new CFbsBitmap;
+        if (!m_previewBitmap) {
+            setError(KErrNoMemory, QString("Failed to create preview image."));
+            return;
+        }
+        saveError = m_previewBitmap->Create(scaledSize, info.iFrameDisplayMode);
+        if (saveError) {
+            setError(saveError, QString("Preview creation failed."));
+            return;
+        }
+
+        // Jpeg conversion completes in RunL
+        m_previewDecodingOngoing = true;
+        m_imageDecoder->Convert(&iStatus, *m_previewBitmap, 0); // 0 = Frame number
+        SetActive();
+
         aBitmap = NULL;
+        // Buffer can be released since Preview is created from file
         releaseImageBuffer();
+
+        // Inform that we can continue taking more pictures
+        emit readyForCaptureChanged(true);
 
     } else {
         setError(KErrBadHandle, QString("Unexpected camera error."), true);
@@ -527,24 +578,102 @@ TFileName S60ImageCaptureSession::convertImagePath()
     return path;
 }
 
-void S60ImageCaptureSession::saveImageL(TDesC8* aData, TFileName aPath)
+/*
+ * Creates (asynchronously) Preview Image from Jpeg ImageBuffer and also
+ * writes Jpeg (synchronously) to a file.
+ */
+void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
 {
     if (aData == NULL) {
         setError(KErrGeneral, QString("Captured image data is not available."), true);
     }
 
     if (aPath.Size() > 0) {
-        RFs fs;
-        User::LeaveIfError(fs.Connect());
-        CleanupClosePushL(fs);
+        if (m_previewDecodingOngoing) {
+            m_previewInWaitLoop = true;
+            CActiveScheduler::Start(); // Wait for the completion of the previous Preview generation
+        }
+
+        // Delete old instances if needed
+        if (m_imageDecoder) {
+            delete m_imageDecoder;
+            m_imageDecoder = NULL;
+        }
+        if (m_fileSystemAccess) {
+            m_fileSystemAccess->Close();
+            delete m_fileSystemAccess;
+            m_fileSystemAccess = NULL;
+        }
+        if (m_previewBitmap) {
+            delete m_previewBitmap;
+            m_previewBitmap = NULL;
+        }
+
+        RFs *fileSystemAccess = new (ELeave) RFs;
+        User::LeaveIfError(fileSystemAccess->Connect());
+        CleanupClosePushL(*fileSystemAccess);
+
+        // Generate Thumbnail to be used as Preview
+        CImageDecoder *imageDecoder = CImageDecoder::DataNewL(*fileSystemAccess, *aData);
+        CleanupStack::PushL(imageDecoder);
+
+        // Set proper Preview Size
+        TSize scaledSize((m_captureSize.width() / KSnapshotDownScaleFactor), (m_captureSize.height() / KSnapshotDownScaleFactor));
+        if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
+            scaledSize.SetSize((m_captureSize.width() / (KSnapshotDownScaleFactor/2)), (m_captureSize.height() / (KSnapshotDownScaleFactor/2)));
+        if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
+            scaledSize.SetSize((m_captureSize.width() / (KSnapshotDownScaleFactor/4)), (m_captureSize.height() / (KSnapshotDownScaleFactor/4)));
+        if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
+            scaledSize.SetSize(m_captureSize.width(), m_captureSize.height());
+
+        TFrameInfo info = imageDecoder->FrameInfo();
+
+        CFbsBitmap *previewBitmap = new (ELeave) CFbsBitmap;
+        CleanupStack::PushL(previewBitmap);
+        TInt bitmapCreationErr = previewBitmap->Create(scaledSize, info.iFrameDisplayMode);
+        if (bitmapCreationErr) {
+            setError(bitmapCreationErr, QString("Preview creation failed."));
+            return;
+        }
+
+        // Jpeg conversion completes in RunL
+        m_previewDecodingOngoing = true;
+        imageDecoder->Convert(&iStatus, *previewBitmap, 0); // 0 = Frame number
+        SetActive();
 
         RFile file;
-        User::LeaveIfError(file.Replace(fs, aPath, EFileWrite));
-        CleanupClosePushL(file);
-        User::LeaveIfError(file.Write(*aData));
+        TInt fileWriteErr = KErrNone;
+        fileWriteErr = file.Replace(*fileSystemAccess, aPath, EFileWrite);
+        if (fileWriteErr) {
+            Cancel(); // Cancel ongoing decoding
+            User::Leave(fileWriteErr);
+        }
+        CleanupClosePushL(file); // Close if Leaves
+
+        fileWriteErr = file.Write(*aData);
+        if (fileWriteErr) {
+            Cancel(); // Cancel ongoing decoding
+            User::Leave(fileWriteErr);
+        }
 
         CleanupStack::PopAndDestroy(&file);
-        CleanupStack::PopAndDestroy(&fs);
+        // Delete when Image is decoded
+        CleanupStack::Pop(previewBitmap);
+        CleanupStack::Pop(imageDecoder);
+        CleanupStack::Pop(fileSystemAccess);
+
+        // Set member variables (Cannot leave any more)
+        m_previewBitmap = previewBitmap;
+        m_imageDecoder = imageDecoder;
+        m_fileSystemAccess = fileSystemAccess;
+
+        emit imageSaved(m_currentImageId, m_stillCaptureFileName);
+
+        // Inform that we can continue taking more pictures
+        emit readyForCaptureChanged(true);
+
+        // ImageBuffer gets released in RunL
+
     } else {
         setError(KErrPathNotFound, QString("Invalid path given."), true);
     }
@@ -556,9 +685,6 @@ void S60ImageCaptureSession::releaseImageBuffer()
         m_cameraEngine->ReleaseImageBuffer();
     else
         setError(KErrNotReady, QString("Unexpected camera error."), true);
-
-    // Inform that we can continue taking more pictures
-    emit readyForCaptureChanged(true);
 }
 
 /*
@@ -739,19 +865,44 @@ QString S60ImageCaptureSession::imageCaptureCodecDescription(const QString &code
 
 QtMultimediaKit::EncodingQuality S60ImageCaptureSession::captureQuality() const
 {
-    if (m_symbianImageQuality <= 1) {
-        return QtMultimediaKit::VeryLowQuality;
-    }
+    switch (m_symbianImageQuality) {
+        case KJpegQualityVeryLow:
+            return QtMultimediaKit::VeryLowQuality;
+        case KJpegQualityLow:
+            return QtMultimediaKit::LowQuality;
+        case KJpegQualityNormal:
+            return QtMultimediaKit::NormalQuality;
+        case KJpegQualityHigh:
+            return QtMultimediaKit::HighQuality;
+        case KJpegQualityVeryHigh:
+            return QtMultimediaKit::VeryHighQuality;
 
-    return static_cast<QtMultimediaKit::EncodingQuality> (m_symbianImageQuality / KSymbianImageQualityCoefficient);
+        default:
+            // Return normal as default
+            return QtMultimediaKit::NormalQuality;
+    }
 }
 
 void S60ImageCaptureSession::setCaptureQuality(const QtMultimediaKit::EncodingQuality &quality)
 {
+    // Use sensible presets
     switch (quality) {
         case QtMultimediaKit::VeryLowQuality:
-            m_symbianImageQuality = 1;
+            m_symbianImageQuality = KJpegQualityVeryLow;
             break;
+        case QtMultimediaKit::LowQuality:
+            m_symbianImageQuality = KJpegQualityLow;
+            break;
+        case QtMultimediaKit::NormalQuality:
+            m_symbianImageQuality = KJpegQualityNormal;
+            break;
+        case QtMultimediaKit::HighQuality:
+            m_symbianImageQuality = KJpegQualityHigh;
+            break;
+        case QtMultimediaKit::VeryHighQuality:
+            m_symbianImageQuality = KJpegQualityVeryHigh;
+            break;
+
         default:
             m_symbianImageQuality = quality * KSymbianImageQualityCoefficient;
             break;
@@ -1367,6 +1518,80 @@ void S60ImageCaptureSession::cancelFocus()
     }
     else
         setError(KErrNotReady, QString("Unexpected camera error."));
+}
+
+void S60ImageCaptureSession::RunL()
+{
+    // Delete unneeded objects
+    if (m_imageDecoder) {
+        delete m_imageDecoder;
+        m_imageDecoder = NULL;
+    }
+    if (m_fileSystemAccess) {
+        m_fileSystemAccess->Close();
+        delete m_fileSystemAccess;
+        m_fileSystemAccess = NULL;
+    }
+
+    // Check status of decoding
+    if (iStatus.Int() != KErrNone) {
+        if (m_previewBitmap) {
+            m_previewBitmap->Reset();
+            delete m_previewBitmap;
+            m_previewBitmap = NULL;
+        }
+        releaseImageBuffer();
+        if (m_previewInWaitLoop) {
+            CActiveScheduler::Stop(); // Notify to continue execution of next Preview Image generation
+            m_previewInWaitLoop = false; // Reset
+        }
+        setError(iStatus.Int(), QString("Preview creation failed."));
+        return;
+    }
+
+    m_previewDecodingOngoing = false;
+
+    QPixmap prevPixmap = QPixmap::fromSymbianCFbsBitmap(m_previewBitmap);
+    QImage preview = prevPixmap.toImage();
+
+    if (m_previewBitmap) {
+        m_previewBitmap->Reset();
+        delete m_previewBitmap;
+        m_previewBitmap = NULL;
+    }
+
+    emit imageCaptured(m_currentImageId, preview);
+
+    // Release image resources (if not already done)
+    releaseImageBuffer();
+
+    if (m_previewInWaitLoop) {
+        CActiveScheduler::Stop(); // Notify to continue execution of next Preview Image generation
+        m_previewInWaitLoop = false; // Reset
+    }
+}
+
+void S60ImageCaptureSession::DoCancel()
+{
+    if (m_imageDecoder) {
+        if (m_previewDecodingOngoing) {
+            m_imageDecoder->Cancel();
+            if (iStatus.Int() != KErrCancel)
+                setError(KErrGeneral, QString("Unexpected camera error."));
+        }
+    }
+}
+
+TInt S60ImageCaptureSession::RunError(TInt aError)
+{
+    if (m_previewInWaitLoop) {
+        CActiveScheduler::Stop();
+        m_previewInWaitLoop = false; // Reset
+    }
+
+    setError(aError, QString("Preview creation failed."));
+
+    return KErrNone;
 }
 
 // End of file

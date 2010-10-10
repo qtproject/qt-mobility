@@ -159,6 +159,7 @@ private: // Data
     QVideoSurfaceFormat     m_surfaceFormat; // Used only by QVideoRendererControl
     bool                    m_isViewFinderVisible;
     bool                    m_uiLandscape; // For detecting UI rotation
+    int                     m_vfErrorsSignalled;
 };
 
 #endif // S60CAMERAVIEWFINDERENGINE_H

@@ -61,11 +61,15 @@
 QT_USE_NAMESPACE
 
 class S60CameraService;
+class CImageDecoder;
+class RFs;
 
 /*
  * Session handling all image capture activities.
  */
-class S60ImageCaptureSession : public QObject, public MCameraEngineImageCaptureObserver
+class S60ImageCaptureSession : public QObject,
+                               public MCameraEngineImageCaptureObserver,
+                               public CActive // For using ICL Decoder
 {
     Q_OBJECT
 
@@ -162,6 +166,12 @@ protected: // MCameraEngineObserver
     void MceoCapturedBitmapReady(CFbsBitmap* aBitmap);
     void MceoHandleError(TCameraEngineError aErrorType, TInt aError);
 
+protected: // CActive
+
+    void RunL();
+    void DoCancel();
+    TInt RunError(TInt aError);
+
 private: // Internal
 
     QCameraImageCapture::Error fromSymbianErrorToQtMultimediaError(int aError);
@@ -181,7 +191,7 @@ private: // Internal
     void doSetFlashModeL(QCameraExposure::FlashModes mode);
     void doSetExposureModeL(QCameraExposure::ExposureMode mode);
 
-    void saveImageL(TDesC8* aData, TFileName aPath);
+    void saveImageL(TDesC8 *aData, TFileName &aPath);
     void processFileName(const QString &fileName);
     TFileName convertImagePath();
 
@@ -212,6 +222,10 @@ private: // Data
     CCameraEngine       *m_cameraEngine;
     S60CameraSettings   *m_advancedSettings;
     mutable TCameraInfo *m_cameraInfo;
+    CImageDecoder       *m_imageDecoder;
+    CFbsBitmap          *m_previewBitmap;
+    CActiveScheduler    *m_activeScheduler;
+    RFs                 *m_fileSystemAccess;
     mutable int         m_error; // Symbian ErrorCode
     TInt                m_activeDeviceIndex;
     bool                m_cameraStarted;
@@ -227,6 +241,8 @@ private: // Data
     // This indicates that image capture should be triggered right after
     // camera and image setting initialization has completed
     bool                m_captureWhenReady;
+    bool                m_previewDecodingOngoing;
+    bool                m_previewInWaitLoop;
 };
 
 #endif // S60IMAGECAPTURESESSION_H

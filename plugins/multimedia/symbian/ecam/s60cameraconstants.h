@@ -69,6 +69,16 @@
 #define KDefaultImageFormatPrimaryCam   CCamera::EFormatExif
 #define KDefaultImageFormatSecondaryCam CCamera::EFormatFbsBitmapColor64K
 #define KSymbianImageQualityCoefficient 25
+// This must be divisible by 4 and creater or equal to 8
+#define KSnapshotDownScaleFactor        8
+#define KSnapshotMinWidth               640
+#define KSnapshotMinHeight              360
+#define KJpegQualityVeryLow             40
+#define KJpegQualityLow                 50
+#define KJpegQualityNormal              75
+#define KJpegQualityHigh                85
+#define KJpegQualityVeryHigh            95
+#define KDefaultImageQuality            KJpegQualityHigh
 
 //=============================================================================
 
