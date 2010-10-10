@@ -127,6 +127,12 @@ public: // Internal
 private Q_SLOTS: // Internal Slots
 
     void videoStateChanged(const S60VideoCaptureSession::TVideoCaptureState state);
+    /*
+     * This method moves the camera to the StandBy status:
+     *    - If camera access was lost
+     *    - If camera has been inactive in LoadedStatus for a long time
+     */
+    void toStandByStatus();
     void advancedSettingsCreated();
     
 protected: // MCameraEngineObserver
@@ -144,12 +150,6 @@ private: // Internal
     void stopCamera();
     
     void resetCamera();
-	/*
-     * This method moves the camera to the StandBy status:
-     *    - If camera access was lost
-     *    - If camera has been inactive in LoadedStatus for a long time
-     */
-    void toStandByStatus();
     void setCameraHandles();
 
 Q_SIGNALS: // Internal Signals

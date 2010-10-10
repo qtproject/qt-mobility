@@ -87,10 +87,8 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
     // From now on it's safe to assume ImageSession and VideoSession exist
     
     m_inactivityTimer = new QTimer;
-    if (m_inactivityTimer) {
+    if (m_inactivityTimer)
         m_inactivityTimer->setSingleShot(true);
-        m_inactivityTimer->setInterval(KInactivityTimerTimeout);
-    }
 
     TRAPD(err, m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, KECamCameraPriority, this));
     if (err) {
@@ -195,7 +193,7 @@ void S60CameraControl::setState(QCamera::State state)
                     // Stop when ready  (setting state handles this)
                     return;
                 case QCamera::LoadedStatus:
-                    m_inactivityTimer->start();
+                    m_inactivityTimer->start(KInactivityTimerTimeout);
                     break;
                 case QCamera::ActiveStatus:
                     // Stop
@@ -280,7 +278,7 @@ void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
         setError(KErrNotSupported, QString("Requested capture mode is not supported."));
         return;
     }
-    
+
     if (m_inactivityTimer->isActive())
         m_inactivityTimer->stop();
 
@@ -294,7 +292,7 @@ void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
                     m_requestedCaptureMode = QCamera::CaptureStillImage;
                     m_captureMode = QCamera::CaptureStillImage;
                     if (m_internalState == QCamera::LoadedStatus) {
-                        m_inactivityTimer->start();
+                        m_inactivityTimer->start(KInactivityTimerTimeout);
                     }
                     else if (m_internalState == QCamera::StandbyStatus)
                         loadCamera();
@@ -457,7 +455,7 @@ void S60CameraControl::stopCamera()
     m_internalState = QCamera::LoadedStatus;
     emit statusChanged(m_internalState);
 
-    m_inactivityTimer->start();
+    m_inactivityTimer->start(KInactivityTimerTimeout);
 }
 
 void S60CameraControl::videoStateChanged(const S60VideoCaptureSession::TVideoCaptureState state)
@@ -494,7 +492,7 @@ void S60CameraControl::videoStateChanged(const S60VideoCaptureSession::TVideoCap
                     setCaptureMode(m_requestedCaptureMode);
                     m_changeCaptureModeWhenReady = false; // Reset
                 }
-                m_inactivityTimer->start();
+                m_inactivityTimer->start(KInactivityTimerTimeout);
                 break;
             case QCamera::ActiveState:
                 if (m_changeCaptureModeWhenReady) {
@@ -555,7 +553,7 @@ void S60CameraControl::MceoCameraReady()
                     m_changeCaptureModeWhenReady = false; // Reset
                 }
 
-                m_inactivityTimer->start();
+                m_inactivityTimer->start(KInactivityTimerTimeout);
                 break;
 
             case QCamera::ActiveState:
