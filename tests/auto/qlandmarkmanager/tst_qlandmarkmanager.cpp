@@ -6252,7 +6252,7 @@ void tst_QLandmarkManager::importLmx() {
         QCOMPARE(spyCatRemove.count(), 0);
         QCOMPARE(spyCatChange.count(), 0);
         QCOMPARE(spyCatAdd.count(), 0);
-        QCOMPARE(spyDataChanged(), 1);
+        QCOMPARE(spyDataChanged.count(), 1);
 
 #endif
 #else
