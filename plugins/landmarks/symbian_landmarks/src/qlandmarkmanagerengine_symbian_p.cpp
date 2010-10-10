@@ -1280,6 +1280,13 @@ bool LandmarkManagerEngineSymbianPrivate::exportLandmarks(QIODevice *device, con
 
     if (fetchedLandmarkId.isEmpty() || *error != QLandmarkManager::NoError)
         return status;
+
+    if (landmarkIds.count() !=0 && landmarkIds.count() != fetchedLandmarkId.count()) {
+        *error = QLandmarkManager::LandmarkDoesNotExistError;
+        *errorString = "All of the specified landmarks could not be found";
+        return false;
+    }
+
     TRAPD(err,exportLandmarksL(device,format,landmarkIds,option));
     if (err == KErrNone)
         status = true;
@@ -2264,8 +2271,10 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             exportedLandmarkIds = this->landmarkIds(filter, KAllLandmarks, KDefaultIndex,
                 sortOrders, &error, &errorString);
 
-            if (exportedLandmarkIds.isEmpty() || error != QLandmarkManager::NoError)
-                User::Leave(-20002); // errorId for QLandmarkManager::LandmarksNotExist
+            if (exportRequest->landmarkIds().count() !=0
+                && exportRequest->landmarkIds().count() != exportedLandmarkIds.count()) {
+                User::Leave(-20002); //errorId for QLandmarkManager::LandmarkDoesNotExistError
+            }
 
             foreach(const QLandmarkId& id,exportRequest->landmarkIds())
                     selectedLandmarks.AppendL(LandmarkUtility::convertToSymbianLandmarkId(id));
@@ -3553,6 +3562,12 @@ void LandmarkManagerEngineSymbianPrivate::handleSymbianError(TInt errorId,
     {
         *error = QLandmarkManager::CategoryDoesNotExistError;
         *errorString = "The specified category does not exist";
+        break;
+    }
+    case -20002:
+    {
+        *error = QLandmarkManager::LandmarkDoesNotExistError;
+        *errorString = "The specified landmark does not exist";
         break;
     }
     default:

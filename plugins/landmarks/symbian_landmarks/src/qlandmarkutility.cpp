@@ -652,8 +652,9 @@ RArray<TPosLmItemId> LandmarkUtility::getSymbianLandmarkIds(QList<QLandmarkId>& 
     for (int i = 0; i < qtLandmarkIds.size(); ++i) {
         TPosLmItemId lmId = convertToSymbianLandmarkId(qtLandmarkIds.at(i));
         if (lmId == KPosLmNullItemId) {
-            symbianLandmarkIds.Reset();
-            return symbianLandmarkIds;
+            //if one of the ids is invalid we ignore it
+            //and not return it in the list
+            //this is to let the id filter find a subset of matches
         }
         else
             symbianLandmarkIds.Append(lmId);

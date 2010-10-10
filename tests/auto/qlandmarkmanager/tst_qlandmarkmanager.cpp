@@ -114,6 +114,7 @@
 //#define IMPORT_GPX
 //#define IMPORT_LMX
 //#define IMPORT_FILE
+#define EXPORT_LMX
 
 //#define EXPECT_FAIL
 
@@ -1031,6 +1032,11 @@ private slots:
     void importFile_data();
 #endif
 
+#ifdef EXPORT_LMX
+    void exportLmx();
+    void exportLmx_data();
+#endif
+
 #ifndef Q_OS_SYMBIAN
     void filterLandmarksMultipleBox();
     void filterLandmarksMultipleBox_data();
@@ -1051,10 +1057,6 @@ private slots:
 
     void exportGpx();
     void exportGpx_data();
-
-
-    void exportLmx();
-    void exportLmx_data();
 
     void supportedFormats();
 
@@ -5488,21 +5490,14 @@ void tst_QLandmarkManager::importFile()
 
     QFETCH(QString, type);
     //try a gpx file
-
-
-    //QVERIFY(doImport(type, prefix + "data/places.gpx"));
-    m_manager->importLandmarks(prefix + "data/places.gpx");
-    qDebug() <<"AMOS error =" << m_manager->error();
-    qDebug() << "AMOS errostring = " << m_manager->errorString();
+    QVERIFY(doImport(type, prefix + "data/places.gpx"));
     QCOMPARE(m_manager->landmarks().count(), 14);
     QCOMPARE(m_manager->landmarks().count(), 14);
     QVERIFY(m_manager->removeLandmarks(m_manager->landmarkIds()));
     QCOMPARE(m_manager->landmarks().count(), 0);
 
     //try an lmx file
-    doImport(type, prefix + "data/convert-collection-in.xml");
-    qDebug() << "AMOS error = " << m_manager->error();
-    qDebug() << "AMOS error = " << m_manager->errorString();
+    QVERIFY(doImport(type, prefix + "data/convert-collection-in.xml"));
     QCOMPARE(m_manager->landmarks().count(), 16);
     QCOMPARE(m_manager->categories().count(), originalCategoryCount + 3);
     QVERIFY(m_manager->removeLandmarks(m_manager->landmarkIds()));
@@ -5532,6 +5527,422 @@ void tst_QLandmarkManager::importFile_data()
 
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
+}
+#endif
+
+#ifdef EXPORT_LMX
+void tst_QLandmarkManager::exportLmx() {
+    int originalCategoryCount = m_manager->categoryIds().count();
+    QVERIFY(originalCategoryCount == m_manager->categories().count());
+
+    //Note: lmx does not support iconUrl, countryCode, streetNumber
+    QString lm1Name("lm1 name");
+    QString lm1Description("lm1 Description");
+    qreal lm1Radius(5);
+    QString lm1PhoneNumber("lm1 phoneNumber");
+    QUrl lm1Url("lm1 URL");
+    QGeoCoordinate lm1Coordinate(1,2,3);
+    QGeoAddress lm1Address;
+    lm1Address.setCountry("lm1 country");
+    lm1Address.setState("lm1 state");
+    lm1Address.setCounty("lm1 county");
+    lm1Address.setCity("lm1 city");
+    lm1Address.setDistrict("lm1 district");
+    lm1Address.setStreet("lm1 street");
+    lm1Address.setPostcode("lm1 postCode");
+    QLandmark lm1;
+    lm1.setName(lm1Name);
+    lm1.setDescription(lm1Description);
+    lm1.setRadius(lm1Radius);
+    lm1.setPhoneNumber(lm1PhoneNumber);
+    lm1.setUrl(lm1Url);
+    lm1.setCoordinate(lm1Coordinate);
+    lm1.setAddress(lm1Address);
+
+    QString lm2Name("lm2 name");
+    QString lm2Description("lm2 Description");
+    qreal lm2Radius(6);
+    QString lm2PhoneNumber("lm2 phoneNumber");
+    QUrl lm2Url("lm2 URL");
+    QGeoCoordinate lm2Coordinate(4,5,6);
+    QGeoAddress lm2Address;
+    lm2Address.setCountry("lm2 country");
+    lm2Address.setState("lm2 state");
+    lm2Address.setCounty("lm2 county");
+    lm2Address.setCity("lm2 city");
+    lm2Address.setDistrict("lm2 district");
+    lm2Address.setStreet("lm2 street");
+    lm2Address.setPostcode("lm2 postCode");
+    QLandmark lm2;
+    lm2.setName(lm2Name);
+    lm2.setDescription(lm2Description);
+    lm2.setRadius(lm2Radius);
+    lm2.setPhoneNumber(lm2PhoneNumber);
+    lm2.setUrl(lm2Url);
+    lm2.setCoordinate(lm2Coordinate);
+    lm2.setAddress(lm2Address);
+
+    QString lm3Name("lm3 name");
+    QString lm3Description("lm3 Description");
+    qreal lm3Radius(6);
+    QString lm3PhoneNumber("lm3 phoneNumber");
+    QUrl lm3Url("lm3 URL");
+    QGeoCoordinate lm3Coordinate(4,5,6);
+    QGeoAddress lm3Address;
+    lm3Address.setCountry("lm3 country");
+    lm3Address.setState("lm3 state");
+    lm3Address.setCounty("lm3 county");
+    lm3Address.setCity("lm3 city");
+    lm3Address.setDistrict("lm3 district");
+    lm3Address.setStreet("lm3 street");
+    lm3Address.setPostcode("lm3 postCode");
+    QLandmark lm3;
+    lm3.setName(lm3Name);
+    lm3.setDescription(lm3Description);
+    lm3.setRadius(lm3Radius);
+    lm3.setPhoneNumber(lm3PhoneNumber);
+    lm3.setUrl(lm3Url);
+    lm3.setCoordinate(lm3Coordinate);
+    lm3.setAddress(lm3Address);
+
+    QString cat1Name("cat1 name");
+    QString cat1IconUrl("cat1 iconUrl");
+    QLandmarkCategory cat1;
+    cat1.setName(cat1Name);
+    cat1.setIconUrl(cat1IconUrl);
+
+    QString cat2Name("cat2 name");
+    QString cat2IconUrl("cat2 iconUrl");
+    QLandmarkCategory cat2;
+    cat2.setName(cat2Name);
+    cat2.setIconUrl(cat2IconUrl);
+
+    QString cat3Name("cat3 name");
+    QString cat3IconUrl("cat3 iconUrl");
+    QLandmarkCategory cat3;
+    cat3.setName(cat3Name);
+    cat3.setIconUrl(cat3IconUrl);
+
+    QVERIFY(m_manager->saveCategory(&cat1));
+    QVERIFY(m_manager->saveCategory(&cat2));
+    QVERIFY(m_manager->saveCategory(&cat3));
+
+    lm1.addCategoryId(cat1.categoryId());
+    lm1.addCategoryId(cat2.categoryId());
+    lm1.addCategoryId(cat3.categoryId());
+    lm2.addCategoryId(cat2.categoryId());
+
+    QVERIFY(m_manager->saveLandmark(&lm1));
+    QVERIFY(m_manager->saveLandmark(&lm2));
+    QVERIFY(m_manager->saveLandmark(&lm3));
+
+    QLandmarkExportRequest exportRequest(m_manager);
+    QSignalSpy spy(&exportRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+    QFETCH(QString, type);
+
+    bool includeCategoryData = true;
+    bool idList = false;
+    if (type== "sync") {
+        QVERIFY(!m_manager->exportLandmarks(NULL,QLandmarkManager::Lmx)); //no iodevice set
+        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+
+        QVERIFY(!m_manager->exportLandmarks(exportFile, ""));
+        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError); //no format
+
+        QFile *noPermFile = new QFile("nopermfile");
+        noPermFile->open(QIODevice::WriteOnly);
+        noPermFile->setPermissions(QFile::ReadOwner);
+        noPermFile->close();
+
+        QVERIFY(!m_manager->exportLandmarks(noPermFile, QLandmarkManager::Lmx));
+        QCOMPARE(m_manager->error(), QLandmarkManager::PermissionsError); // no permissions
+        noPermFile->remove();
+
+        QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx));
+    } else if (type == "syncIdList") {
+        QList<QLandmarkId> lmIds;
+
+         //try an empty local id
+        QLandmarkId fakeId;
+        fakeId.setManagerUri(lm1.landmarkId().managerUri());
+        lmIds << lm1.landmarkId() << lm2.landmarkId() << fakeId << lm3.landmarkId();
+        QVERIFY(!m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx, lmIds));
+        QCOMPARE(m_manager->error(), QLandmarkManager::LandmarkDoesNotExistError);//Local id is emtpy
+
+        //try a non-existent id
+        lmIds.clear();
+        fakeId.setLocalId("1000");
+        lmIds << lm1.landmarkId() << lm2.landmarkId() << fakeId << lm3.landmarkId();
+        QVERIFY(!m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx, lmIds));
+        QCOMPARE(m_manager->error(), QLandmarkManager::LandmarkDoesNotExistError);//id does not exist
+
+        lmIds.clear();
+        lmIds << lm1.landmarkId() << lm3.landmarkId();
+
+        QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx, lmIds));
+        idList = true;
+    } else if (type == "syncExcludeCategoryData") {
+        QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx, QList<QLandmarkId>(), QLandmarkManager::ExcludeCategoryData));
+        includeCategoryData = false;
+    } else if (type == "syncAttachSingleCategory") {
+        QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx,QList<QLandmarkId>(),QLandmarkManager::AttachSingleCategory));
+    } else if (type == "async") {
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest,QLandmarkManager::BadArgumentError));//no iodevice set
+        exportRequest.setFileName(exportFile);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::BadArgumentError)); //no format
+
+        QFile *noPermFile = new QFile("nopermfile");
+        noPermFile->open(QIODevice::WriteOnly);
+        noPermFile->setPermissions(QFile::ReadOwner);
+        noPermFile->close();
+
+        exportRequest.setDevice(noPermFile);
+        exportRequest.setFormat(QLandmarkManager::Lmx);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::PermissionsError));
+        noPermFile->remove();
+
+        exportRequest.setFormat(QLandmarkManager::Lmx);
+        exportRequest.setFileName(exportFile);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest));
+    } else if (type == "asyncIdList") {
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest,QLandmarkManager::BadArgumentError));//no iodevice set
+
+        exportRequest.setFileName(exportFile);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::BadArgumentError)); //no format
+
+        QList<QLandmarkId> lmIds;
+
+        //try an empty local id
+        QLandmarkId fakeId;
+        fakeId.setManagerUri(lm1.landmarkId().managerUri());
+        lmIds << lm1.landmarkId() << lm2.landmarkId() << fakeId << lm3.landmarkId();
+        exportRequest.setFormat(QLandmarkManager::Lmx);
+        exportRequest.setLandmarkIds(lmIds);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::LandmarkDoesNotExistError)); //local id is empty
+
+        //try a non existent id
+        lmIds.clear();
+        fakeId.setLocalId("1000");
+        lmIds << lm1.landmarkId() << lm2.landmarkId() << fakeId << lm3.landmarkId();
+        exportRequest.setFormat(QLandmarkManager::Lmx);
+        exportRequest.setLandmarkIds(lmIds);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::LandmarkDoesNotExistError)); //local id is empty
+
+        lmIds.clear();
+        lmIds << lm1.landmarkId() << lm3.landmarkId();
+        exportRequest.setFormat(QLandmarkManager::Lmx);
+        exportRequest.setLandmarkIds(lmIds);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest));
+        idList = true;
+    } else if (type == "asyncExcludeCategoryData") {
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest,QLandmarkManager::BadArgumentError));//no iodevice set
+        exportRequest.setFileName(exportFile);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::BadArgumentError)); //no format
+        exportRequest.setFormat(QLandmarkManager::Lmx);
+        exportRequest.setTransferOption(QLandmarkManager::ExcludeCategoryData);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest));
+        includeCategoryData = false;
+    } else if (type == "asyncAttachSingleCategory") {
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest,QLandmarkManager::BadArgumentError));//no iodevice set
+        exportRequest.setFileName(exportFile);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::BadArgumentError)); //no format
+        exportRequest.setFormat(QLandmarkManager::Lmx);
+        exportRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest));
+    } else {
+        qFatal("Unrecognised test row");
+    }
+
+    QVERIFY(m_manager->removeLandmarks(m_manager->landmarkIds()));
+    QList<QLandmarkCategoryId> catIds = m_manager->categoryIds();
+    foreach(const QLandmarkCategoryId &catId, catIds) {
+        m_manager->removeCategory(catId);
+    }
+
+    QVERIFY(m_manager->landmarks().isEmpty());
+    QCOMPARE(m_manager->categories().count(), originalCategoryCount);
+
+    QVERIFY(m_manager->importLandmarks(exportFile, QLandmarkManager::Lmx));
+
+    QList<QLandmark> lms = m_manager->landmarks();
+
+    QLandmark lm1New;
+    QLandmark lm2New;
+    QLandmark lm3New;
+
+    if (!idList) {
+        QCOMPARE(lms.count(), 3);
+        lm1New = lms.at(0);
+        lm2New = lms.at(1);
+        lm3New = lms.at(2);
+    } else {
+        QCOMPARE(lms.count(), 2);
+        QLandmarkNameFilter nameFilter;
+        nameFilter.setName(lm1.name());
+        QList<QLandmark> lms;
+        lms = m_manager->landmarks(nameFilter);
+        QCOMPARE(lms.count(), 1);
+        lm1New = lms.at(0);
+
+        nameFilter.setName(lm3.name());
+        lms = m_manager->landmarks(nameFilter);
+        QCOMPARE(lms.count(), 1);
+        lm3New = lms.at(0);
+    }
+
+    QCOMPARE(lm1New.name(), lm1Name);
+    QCOMPARE(lm1New.description(), lm1Description);
+    QCOMPARE(lm1New.iconUrl(), QUrl());
+    QCOMPARE(lm1New.radius(), lm1Radius);
+    QCOMPARE(lm1New.phoneNumber(), lm1PhoneNumber);
+#ifndef Q_OS_SYMBIAN
+    //REMOVE WORKAROUND
+    QCOMPARE(lm1New.url(),lm1Url);
+#endif
+    QCOMPARE(lm1New.coordinate(),lm1Coordinate);
+    QCOMPARE(lm1New.address().country(), lm1Address.country());
+    QCOMPARE(lm1New.address().state(),lm1Address.state());
+    QCOMPARE(lm1New.address().county(), lm1Address.county());
+    QCOMPARE(lm1New.address().city(), lm1Address.city());
+    QCOMPARE(lm1New.address().district(), lm1Address.district());
+    QCOMPARE(lm1New.address().street(), lm1Address.street());
+    QCOMPARE(lm1New.address().postcode(), lm1Address.postcode());
+
+    if (includeCategoryData) {
+        QCOMPARE(lm1.categoryIds().count(),3);
+        QList<QLandmarkCategory> cats = m_manager->categories(lm1.categoryIds());
+        QCOMPARE(cats.count(),3);
+        QLandmarkCategory cat1New = cats.at(0);
+        QLandmarkCategory cat2New = cats.at(1);
+        QLandmarkCategory cat3New = cats.at(2);
+#ifndef Q_OS_SYMBIAN
+        //REMOVE WORKAROUND
+        QCOMPARE(cat1New.name(), cat1.name());
+        QCOMPARE(cat2New.name(), cat2.name());
+        QCOMPARE(cat3New.name(), cat3.name());
+#endif
+    } else {
+        lm1.setCategoryIds(QList<QLandmarkCategoryId>());
+        lm2.setCategoryIds(QList<QLandmarkCategoryId>());
+        lm3.setCategoryIds(QList<QLandmarkCategoryId>());
+        QList<QLandmarkCategory> cats = m_manager->categories(lm1.categoryIds());
+        QCOMPARE(cats.count(),0);
+    }
+
+    if ( type != "syncExcludeCategoryData" && type != "asyncExcludeCategoryData" ) {
+        //compare the categories first then clear them to do the landmark comparison
+        //because on some platforms removed category ids are not reused.
+        QList<QLandmarkCategory> lm1NewCats = m_manager->categories(lm1New.categoryIds());
+        QCOMPARE(lm1NewCats.count(),3);
+        QStringList lm1NewCatsNames;
+        for(int i =0; i < lm1NewCats.count(); ++i) {
+            lm1NewCatsNames << lm1NewCats.at(i).name();
+        }
+        QVERIFY(lm1NewCatsNames.contains(cat1.name()));
+        QVERIFY(lm1NewCatsNames.contains(cat2.name()));
+        QVERIFY(lm1NewCatsNames.contains(cat3.name()));
+    } else {
+        QCOMPARE(lm1New.categoryIds().count(),0);
+    }
+#ifdef Q_OS_SYMBIAN
+    //REMOVE WORKAROUND
+    lm1New.setUrl(QUrl());
+    lm1.setUrl(QUrl());
+    lm2New.setUrl(QUrl());
+    lm2.setUrl(QUrl());
+    lm3New.setUrl(QUrl());
+    lm3.setUrl(QUrl());
+#endif
+
+    if (!idList) {
+        //compare the categories first then clear them to do the landmark comparison
+        //because on some platforms removed category ids are not reused.
+        if ( type != "syncExcludeCategoryData" && type != "asyncExcludeCategoryData" ) {
+            QList<QLandmarkCategory> lm2NewCats = m_manager->categories(lm2New.categoryIds());
+            QCOMPARE(lm2NewCats.count(),1);
+            QCOMPARE(lm2NewCats.at(0).name(), cat2.name());
+            //clear ids because they might not necessarily be the same
+            lm2New.setCategoryIds(QList<QLandmarkCategoryId>());
+            lm2.setCategoryIds(QList<QLandmarkCategoryId>());
+        } else {
+            QCOMPARE(lm2New.categoryIds().count(),0);
+            lm2.setCategoryIds(QList<QLandmarkCategoryId>());
+        }
+
+        lm2New.setLandmarkId(QLandmarkId());
+        lm2.setLandmarkId(QLandmarkId());
+
+        QCOMPARE(lm2New, lm2);
+    }
+
+    //clear ids because they might not necessarily be the same
+    lm1New.setLandmarkId(QLandmarkId());
+    lm1.setLandmarkId(QLandmarkId());
+    lm3New.setLandmarkId(QLandmarkId());
+    lm3.setLandmarkId(QLandmarkId());
+
+    lm1New.setCategoryIds(QList<QLandmarkCategoryId>());
+    lm1.setCategoryIds(QList<QLandmarkCategoryId>());
+    lm3New.setCategoryIds(QList<QLandmarkCategoryId>());
+    lm3.setCategoryIds(QList<QLandmarkCategoryId>());
+
+    QCOMPARE(lm1New, lm1);
+    QCOMPARE(lm3New, lm3);
+
+#ifndef Q_OS_SYMBIAN
+    //SKIP canceling of request for Symbian
+    if (type == "async") {
+        QFile::remove(exportFile);
+        QLandmark lm;
+        lms.clear();
+        for (int i=0; i < 600; ++i) {
+            lm.setName(QString("LM%1").arg(0));
+            lms.append(lm);
+        }
+
+        QVERIFY(m_manager->saveLandmarks(&lms));
+        exportRequest.setFormat(QLandmarkManager::Lmx);
+        exportRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
+        exportRequest.setFileName(exportFile);
+        exportRequest.setLandmarkIds(QList<QLandmarkId>());
+        exportRequest.start();
+        QTest::qWait(50);
+        exportRequest.cancel();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::CancelError,2500));
+    }
+#endif
+    QFile::remove(exportFile);
+}
+
+
+void tst_QLandmarkManager::exportLmx_data()
+{
+    QTest::addColumn<QString>("type");
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("syncIdList") << "syncIdList";
+    QTest::newRow("syncExcludeCategoryData") << "syncExcludeCategoryData";
+    QTest::newRow("syncAttachSingleCategory") << "syncAttachSingleCategory";
+    QTest::newRow("async") << "async";
+    QTest::newRow("asyncIdList") << "asyncIdList";
+    QTest::newRow("asyncExcludeCategoryData") << "asyncExcludeCategoryData";
+    QTest::newRow("asyncAttachSingleCategory") << "asyncAttachSingleCategory";
+
+    //TODO: tests for id list excluding category data
 }
 #endif
 
@@ -6438,6 +6849,8 @@ void tst_QLandmarkManager::exportGpx() {
         QCOMPARE(m_manager->landmarks(nameFilter).count(),1);
     }
 
+#ifdef Q_OS_SYMBIAN
+    //SKIP CANCEL ASYNC REQUEST ON SYMBIAN
     if (type == "async") {
         QFile::remove(exportFile);
         QLandmark lm;
@@ -6457,6 +6870,7 @@ void tst_QLandmarkManager::exportGpx() {
         exportRequest.cancel();
         QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::CancelError,2000));
     }
+#endif
 
 }
 
@@ -6470,349 +6884,6 @@ void tst_QLandmarkManager::exportGpx_data()
     QTest::newRow("async") << "async";
     QTest::newRow("asyncIdList") << "asyncIdList";
     QTest::newRow("asyncExcludeCategoryData") << "asyncExcludeCategoryData";
-}
-
-void tst_QLandmarkManager::exportLmx() {
-    //Note: lmx does not support iconUrl, countryCode, streetNumber
-    QString lm1Name("lm1 name");
-    QString lm1Description("lm1 Description");
-    qreal lm1Radius(5);
-    QString lm1PhoneNumber("lm1 phoneNumber");
-    QUrl lm1Url("lm1 URL");
-    QGeoCoordinate lm1Coordinate(1,2,3);
-    QGeoAddress lm1Address;
-    lm1Address.setCountry("lm1 country");
-    lm1Address.setState("lm1 state");
-    lm1Address.setCounty("lm1 county");
-    lm1Address.setCity("lm1 city");
-    lm1Address.setDistrict("lm1 district");
-    lm1Address.setStreet("lm1 street");
-    lm1Address.setPostcode("lm1 postCode");
-    QLandmark lm1;
-    lm1.setName(lm1Name);
-    lm1.setDescription(lm1Description);
-    lm1.setRadius(lm1Radius);
-    lm1.setPhoneNumber(lm1PhoneNumber);
-    lm1.setUrl(lm1Url);
-    lm1.setCoordinate(lm1Coordinate);
-    lm1.setAddress(lm1Address);
-
-    QString lm2Name("lm2 name");
-    QString lm2Description("lm2 Description");
-    qreal lm2Radius(6);
-    QString lm2PhoneNumber("lm2 phoneNumber");
-    QUrl lm2Url("lm2 URL");
-    QGeoCoordinate lm2Coordinate(4,5,6);
-    QGeoAddress lm2Address;
-    lm2Address.setCountry("lm2 country");
-    lm2Address.setState("lm2 state");
-    lm2Address.setCounty("lm2 county");
-    lm2Address.setCity("lm2 city");
-    lm2Address.setDistrict("lm2 district");
-    lm2Address.setStreet("lm2 street");
-    lm2Address.setPostcode("lm2 postCode");
-    QLandmark lm2;
-    lm2.setName(lm2Name);
-    lm2.setDescription(lm2Description);
-    lm2.setRadius(lm2Radius);
-    lm2.setPhoneNumber(lm2PhoneNumber);
-    lm2.setUrl(lm2Url);
-    lm2.setCoordinate(lm2Coordinate);
-    lm2.setAddress(lm2Address);
-
-    QString lm3Name("lm3 name");
-    QString lm3Description("lm3 Description");
-    qreal lm3Radius(6);
-    QString lm3PhoneNumber("lm3 phoneNumber");
-    QUrl lm3Url("lm3 URL");
-    QGeoCoordinate lm3Coordinate(4,5,6);
-    QGeoAddress lm3Address;
-    lm3Address.setCountry("lm3 country");
-    lm3Address.setState("lm3 state");
-    lm3Address.setCounty("lm3 county");
-    lm3Address.setCity("lm3 city");
-    lm3Address.setDistrict("lm3 district");
-    lm3Address.setStreet("lm3 street");
-    lm3Address.setPostcode("lm3 postCode");
-    QLandmark lm3;
-    lm3.setName(lm3Name);
-    lm3.setDescription(lm3Description);
-    lm3.setRadius(lm3Radius);
-    lm3.setPhoneNumber(lm3PhoneNumber);
-    lm3.setUrl(lm3Url);
-    lm3.setCoordinate(lm3Coordinate);
-    lm3.setAddress(lm3Address);
-
-    QString cat1Name("cat1 name");
-    QString cat1IconUrl("cat1 iconUrl");
-    QLandmarkCategory cat1;
-    cat1.setName(cat1Name);
-    cat1.setIconUrl(cat1IconUrl);
-
-    QString cat2Name("cat2 name");
-    QString cat2IconUrl("cat2 iconUrl");
-    QLandmarkCategory cat2;
-    cat2.setName(cat2Name);
-    cat2.setIconUrl(cat2IconUrl);
-
-    QString cat3Name("cat3 name");
-    QString cat3IconUrl("cat3 iconUrl");
-    QLandmarkCategory cat3;
-    cat3.setName(cat3Name);
-    cat3.setIconUrl(cat3IconUrl);
-
-    QVERIFY(m_manager->saveCategory(&cat1));
-    QVERIFY(m_manager->saveCategory(&cat2));
-    QVERIFY(m_manager->saveCategory(&cat3));
-
-    lm1.addCategoryId(cat1.categoryId());
-    lm1.addCategoryId(cat2.categoryId());
-    lm1.addCategoryId(cat3.categoryId());
-    lm2.addCategoryId(cat2.categoryId());
-
-    QVERIFY(m_manager->saveLandmark(&lm1));
-    QVERIFY(m_manager->saveLandmark(&lm2));
-    QVERIFY(m_manager->saveLandmark(&lm3));
-
-    QLandmarkExportRequest exportRequest(m_manager);
-    QSignalSpy spy(&exportRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
-    QFETCH(QString, type);
-
-    bool includeCategoryData = true;
-    bool idList = false;
-    if (type== "sync") {
-        QVERIFY(!m_manager->exportLandmarks(NULL,QLandmarkManager::Lmx)); //no iodevice set
-        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
-
-        QVERIFY(!m_manager->exportLandmarks(exportFile, ""));
-        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError); //no format
-
-        QFile *noPermFile = new QFile("nopermfile");
-        noPermFile->open(QIODevice::WriteOnly);
-        noPermFile->setPermissions(QFile::ReadOwner);
-        noPermFile->close();
-
-        QVERIFY(!m_manager->exportLandmarks(noPermFile, QLandmarkManager::Lmx));
-        QCOMPARE(m_manager->error(), QLandmarkManager::PermissionsError); // no permissions
-        noPermFile->remove();
-
-        QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx));
-    } else if (type == "syncIdList") {
-        QList<QLandmarkId> lmIds;
-
-         //try an empty local id
-        QLandmarkId fakeId;
-        fakeId.setManagerUri(lm1.landmarkId().managerUri());
-        lmIds << lm1.landmarkId() << lm2.landmarkId() << fakeId << lm3.landmarkId();
-        QVERIFY(!m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx, lmIds));
-        QCOMPARE(m_manager->error(), QLandmarkManager::LandmarkDoesNotExistError);//Local id is emtpy
-
-        //try a non-existent id
-        lmIds.clear();
-        fakeId.setLocalId("1000");
-        lmIds << lm1.landmarkId() << lm2.landmarkId() << fakeId << lm3.landmarkId();
-        QVERIFY(!m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx, lmIds));
-        QCOMPARE(m_manager->error(), QLandmarkManager::LandmarkDoesNotExistError);//id does not exist
-
-        lmIds.clear();
-        lmIds << lm1.landmarkId() << lm3.landmarkId();
-        QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx, lmIds));
-        idList = true;
-    } else if (type == "syncExcludeCategoryData") {
-        QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx, QList<QLandmarkId>(), QLandmarkManager::ExcludeCategoryData));
-        includeCategoryData = false;
-    } else if (type == "syncAttachSingleCategory") {
-        QVERIFY(m_manager->exportLandmarks(exportFile, QLandmarkManager::Lmx,QList<QLandmarkId>(),QLandmarkManager::AttachSingleCategory));
-    } else if (type == "async") {
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest,QLandmarkManager::BadArgumentError));//no iodevice set
-        exportRequest.setFileName(exportFile);
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::BadArgumentError)); //no format
-
-        QFile *noPermFile = new QFile("nopermfile");
-        noPermFile->open(QIODevice::WriteOnly);
-        noPermFile->setPermissions(QFile::ReadOwner);
-        noPermFile->close();
-
-        exportRequest.setDevice(noPermFile);
-        exportRequest.setFormat(QLandmarkManager::Lmx);
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::PermissionsError));
-        noPermFile->remove();
-
-        exportRequest.setFormat(QLandmarkManager::Lmx);
-        exportRequest.setFileName(exportFile);
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest));
-    } else if (type == "asyncIdList") {
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest,QLandmarkManager::BadArgumentError));//no iodevice set
-
-        exportRequest.setFileName(exportFile);
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::BadArgumentError)); //no format
-
-        QList<QLandmarkId> lmIds;
-
-        //try an empty local id
-        QLandmarkId fakeId;
-        fakeId.setManagerUri(lm1.landmarkId().managerUri());
-        lmIds << lm1.landmarkId() << lm2.landmarkId() << fakeId << lm3.landmarkId();
-        exportRequest.setFormat(QLandmarkManager::Lmx);
-        exportRequest.setLandmarkIds(lmIds);
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::LandmarkDoesNotExistError)); //local id is empty
-
-        //try a non existent id
-        lmIds.clear();
-        fakeId.setLocalId("1000");
-        lmIds << lm1.landmarkId() << lm2.landmarkId() << fakeId << lm3.landmarkId();
-        exportRequest.setFormat(QLandmarkManager::Lmx);
-        exportRequest.setLandmarkIds(lmIds);
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::LandmarkDoesNotExistError)); //local id is empty
-
-        lmIds.clear();
-        lmIds << lm1.landmarkId() << lm3.landmarkId();
-        exportRequest.setFormat(QLandmarkManager::Lmx);
-        exportRequest.setLandmarkIds(lmIds);
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest));
-        idList = true;
-    } else if (type == "asyncExcludeCategoryData") {
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest,QLandmarkManager::BadArgumentError));//no iodevice set
-        exportRequest.setFileName(exportFile);
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::BadArgumentError)); //no format
-        exportRequest.setFormat(QLandmarkManager::Lmx);
-        exportRequest.setTransferOption(QLandmarkManager::ExcludeCategoryData);
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest));
-        includeCategoryData = false;
-    } else if (type == "asyncAttachSingleCategory") {
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest,QLandmarkManager::BadArgumentError));//no iodevice set
-        exportRequest.setFileName(exportFile);
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::BadArgumentError)); //no format
-        exportRequest.setFormat(QLandmarkManager::Lmx);
-        exportRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
-        exportRequest.start();
-        QVERIFY(waitForAsync(spy, &exportRequest));
-    } else {
-        qFatal("Unrecognised test row");
-    }
-
-    QVERIFY(m_manager->removeLandmarks(m_manager->landmarkIds()));
-    QList<QLandmarkCategoryId> catIds = m_manager->categoryIds();
-    foreach(const QLandmarkCategoryId &catId, catIds) {
-        m_manager->removeCategory(catId);
-    }
-
-    QVERIFY(m_manager->landmarks().isEmpty());
-    QVERIFY(m_manager->categories().isEmpty());
-
-    QVERIFY(m_manager->importLandmarks(exportFile, QLandmarkManager::Lmx));
-
-
-    QList<QLandmark> lms = m_manager->landmarks();
-
-    QLandmark lm1New;
-    QLandmark lm2New;
-    QLandmark lm3New;
-
-    if (!idList) {
-        QCOMPARE(lms.count(), 3);
-        lm1New = lms.at(0);
-        lm2New = lms.at(1);
-        lm3New = lms.at(2);
-    } else {
-        QCOMPARE(lms.count(), 2);
-        lm1New = lms.at(0);
-        lm3New = lms.at(1);
-    }
-
-    QCOMPARE(lm1New.name(), lm1Name);
-    QCOMPARE(lm1New.description(), lm1Description);
-    QCOMPARE(lm1New.iconUrl(), QUrl());
-    QCOMPARE(lm1New.radius(), lm1Radius);
-    QCOMPARE(lm1New.phoneNumber(), lm1PhoneNumber);
-    QCOMPARE(lm1New.url(),lm1Url);
-    QCOMPARE(lm1New.coordinate(),lm1Coordinate);
-    QCOMPARE(lm1New.address().country(), lm1Address.country());
-    QCOMPARE(lm1New.address().state(),lm1Address.state());
-    QCOMPARE(lm1New.address().county(), lm1Address.county());
-    QCOMPARE(lm1New.address().city(), lm1Address.city());
-    QCOMPARE(lm1New.address().district(), lm1Address.district());
-    QCOMPARE(lm1New.address().street(), lm1Address.street());
-    QCOMPARE(lm1New.address().postcode(), lm1Address.postcode());
-
-    if (includeCategoryData) {
-        QCOMPARE(lm1.categoryIds().count(),3);
-        QList<QLandmarkCategory> cats = m_manager->categories(lm1.categoryIds());
-        QCOMPARE(cats.count(),3);
-        QLandmarkCategory cat1New = cats.at(0);
-        QLandmarkCategory cat2New = cats.at(1);
-        QLandmarkCategory cat3New = cats.at(2);
-        QCOMPARE(cat1New.name(), cat1.name());
-        QCOMPARE(cat2New.name(), cat2.name());
-        QCOMPARE(cat3New.name(), cat3.name());
-    } else {
-        lm1.setCategoryIds(QList<QLandmarkCategoryId>());
-        lm2.setCategoryIds(QList<QLandmarkCategoryId>());
-        lm3.setCategoryIds(QList<QLandmarkCategoryId>());
-        QList<QLandmarkCategory> cats = m_manager->categories(lm1.categoryIds());
-        QCOMPARE(cats.count(),0);
-    }
-
-    if (!idList) {
-        QCOMPARE(lm1New, lm1);
-        QCOMPARE(lm2New, lm2);
-        QCOMPARE(lm3New, lm3);
-    } else {
-        QCOMPARE(lm1New, lm1);
-        lm3.setLandmarkId(lm2.landmarkId());  //3 will get assigned the same id as 2
-        QCOMPARE(lm3New, lm3);
-    }
-
-    if (type == "async") {
-        QFile::remove(exportFile);
-        QLandmark lm;
-        lms.clear();
-        for (int i=0; i < 600; ++i) {
-            lm.setName(QString("LM%1").arg(0));
-            lms.append(lm);
-        }
-
-        QVERIFY(m_manager->saveLandmarks(&lms));
-        exportRequest.setFormat(QLandmarkManager::Lmx);
-        exportRequest.setTransferOption(QLandmarkManager::IncludeCategoryData);
-        exportRequest.setFileName(exportFile);
-        exportRequest.setLandmarkIds(QList<QLandmarkId>());
-        exportRequest.start();
-        QTest::qWait(50);
-        exportRequest.cancel();
-        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::CancelError,2500));
-    }
-    QFile::remove(exportFile);
-}
-
-void tst_QLandmarkManager::exportLmx_data()
-{
-    QTest::addColumn<QString>("type");
-
-    QTest::newRow("sync") << "sync";
-    QTest::newRow("syncIdList") << "syncIdList";
-    QTest::newRow("syncExcludeCategoryData") << "syncExcludeCategoryData";
-    QTest::newRow("syncAttachSingleCategory") << "syncAttachSingleCategory";
-    QTest::newRow("async") << "async";
-    QTest::newRow("asyncIdList") << "asyncIdList";
-    QTest::newRow("asyncExcludeCategoryData") << "asyncExcludeCategoryData";
-    QTest::newRow("asyncAttachSingleCategory") << "asyncAttachSingleCategory";
-
-    //TODO: tests for id list excluding category data
 }
 
 void tst_QLandmarkManager::supportedFormats() {
