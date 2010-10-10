@@ -110,7 +110,8 @@
 //#define FILTER_CATEGORY
 //#define FILTER_BOX
 //#define FILTER_INTERSECTION
-#define FILTER_MULTIBOX
+//#define FILTER_MULTIBOX
+#define FILTER_UNION
 //#define LANDMARK_FETCH_CANCEL
 //#define IMPORT_GPX
 //#define IMPORT_LMX
@@ -1024,6 +1025,11 @@ private slots:
     void filterLandmarksMultipleBox_data();
 #endif
 
+#ifdef FILTER_UNION
+    void filterLandmarksUnion();
+    void filterLandmarksUnion_data();
+#endif
+
 #ifdef IMPORT_GPX
     void importGpx();
     void importGpx_data();
@@ -1045,10 +1051,6 @@ private slots:
 #endif
 
 #ifndef Q_OS_SYMBIAN
-    void filterLandmarksUnion();
-    void filterLandmarksUnion_data();
-
-
     void filterAttribute();
     void filterAttribute_data();
 
@@ -5239,6 +5241,161 @@ void tst_QLandmarkManager::filterLandmarksMultipleBox_data()
 }
 #endif
 
+#ifdef FILTER_UNION
+void tst_QLandmarkManager::filterLandmarksUnion() {
+    QFETCH(QString, type);
+    QLandmarkCategory cat1;
+    cat1.setName("CAT1");
+    QVERIFY(m_manager->saveCategory(&cat1));
+
+    QLandmarkCategory cat2;
+    cat2.setName("CAT2");
+    QVERIFY(m_manager->saveCategory(&cat2));
+
+    QLandmarkCategory cat3;
+    cat3.setName("CAT3");
+    QVERIFY(m_manager->saveCategory(&cat3));
+
+    QList<QLandmarkCategoryId> ids;
+    ids << cat1.categoryId();
+    ids << cat2.categoryId();
+    ids << cat3.categoryId();
+
+    QList<QString> names;
+    names << "LM1";
+    names << "LM2";
+    names << "LM3";
+
+    QList<QGeoCoordinate> coords;
+    coords << QGeoCoordinate(0.0, 0.0);
+    coords << QGeoCoordinate(25.0, 25.0);
+    coords << QGeoCoordinate(50.0, 50.0);
+
+    QList<QLandmark> lmPool;
+
+    for (int i = 0; i < ids.size(); ++i) {
+        for (int j = 0; j < names.size(); ++j) {
+            for (int k = 0; k < coords.size(); ++k) {
+                QLandmark lm;
+                lm.addCategoryId(ids.at(i));
+                lm.setName(names.at(j));
+                lm.setCoordinate(coords.at(k));
+                QVERIFY(m_manager->saveLandmark(&lm));
+                lmPool << lm;
+            }
+        }
+    }
+
+    QLandmarkCategoryFilter f1(cat2.categoryId());
+    QLandmarkNameFilter f2("LM2");
+    QLandmarkProximityFilter f3(QGeoCoordinate(25.0, 25.0), 5.0);
+
+    QLandmarkUnionFilter filter;
+    filter << f1 << f2 << f3;
+
+    QList<QLandmark> lms;
+    QVERIFY(doFetch(type, filter, &lms, QLandmarkManager::NoError));
+
+    QCOMPARE(lms.size(), 19);
+
+    QSet<QString> idSet;
+    for (int i = 0; i < lms.size(); ++i)
+        idSet.insert(lms.at(i).landmarkId().localId());
+
+    for (int i = 0; i < lmPool.size(); ++i) {
+        QLandmark lm = lmPool.at(i);
+        if ((lm.categoryIds().at(0) == cat2.categoryId())
+            || (lm.name() == "LM2")
+            || (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
+            QCOMPARE(idSet.contains(lm.landmarkId().localId()), true);
+        } else {
+            QCOMPARE(idSet.contains(lm.landmarkId().localId()), false);
+        }
+    }
+
+    filter.remove(f2);
+
+    QVERIFY(doFetch(type, filter, &lms, QLandmarkManager::NoError));
+
+    QCOMPARE(lms.size(), 15);
+
+    idSet.clear();
+    for (int i = 0; i < lms.size(); ++i)
+        idSet.insert(lms.at(i).landmarkId().localId());
+
+    for (int i = 0; i < lmPool.size(); ++i) {
+        QLandmark lm = lmPool.at(i);
+        if ((lm.categoryIds().at(0) == cat2.categoryId())
+            || (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
+            QCOMPARE(idSet.contains(lm.landmarkId().localId()), true);
+        } else {
+            QCOMPARE(idSet.contains(lm.landmarkId().localId()), false);
+        }
+    }
+
+    filter.prepend(f2);
+
+    QVERIFY(doFetch(type, filter, &lms, QLandmarkManager::NoError));
+
+    QCOMPARE(lms.size(), 19);
+
+    idSet.clear();
+    for (int i = 0; i < lms.size(); ++i)
+        idSet.insert(lms.at(i).landmarkId().localId());
+
+    for (int i = 0; i < lmPool.size(); ++i) {
+        QLandmark lm = lmPool.at(i);
+        if ((lm.categoryIds().at(0) == cat2.categoryId())
+            || (lm.name() == "LM2")
+            || (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
+            QCOMPARE(idSet.contains(lm.landmarkId().localId()), true);
+        } else {
+            QCOMPARE(idSet.contains(lm.landmarkId().localId()), false);
+        }
+    }
+
+    //try one of the filters in the union filter is invalid
+    QLandmarkCategoryFilter catFilter1;
+    catFilter1.setCategory(cat1);
+
+    QLandmarkProximityFilter proximityFilter;
+    proximityFilter.setCenter(QGeoCoordinate(91,45));
+    proximityFilter.setRadius(5000);
+
+    QLandmarkCategoryFilter catFilter3;
+    catFilter3.setCategoryId(cat3.categoryId());
+
+    QLandmarkUnionFilter unionFilter;
+    unionFilter << catFilter1 << proximityFilter << catFilter3;
+    QVERIFY(doFetch(type,unionFilter, &lms, QLandmarkManager::BadArgumentError));
+
+    QLandmarkCategoryFilter catFilter2;
+    QLandmarkCategoryId catIdNotExist;
+    catIdNotExist.setManagerUri(m_manager->managerUri());
+    catIdNotExist.setLocalId("42");
+    catFilter2.setCategoryId(catIdNotExist);
+
+    unionFilter.clear();
+    unionFilter << catFilter1 << catFilter2 << catFilter3;
+    QVERIFY(doFetch(type,unionFilter, &lms, QLandmarkManager::CategoryDoesNotExistError));
+    QCOMPARE(lms.count(), 0);
+
+    QList<QLandmarkFilter> filters;
+    filters << catFilter1 << catFilter3;
+    unionFilter.setFilters(filters);
+    QVERIFY(doFetch(type,unionFilter, &lms, QLandmarkManager::NoError));
+    QCOMPARE(lms.count(), 18);
+}
+
+void tst_QLandmarkManager::filterLandmarksUnion_data()
+{
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
+#endif
+
 #ifdef IMPORT_GPX
 void tst_QLandmarkManager::importGpx() {
     QString prefix;
@@ -6297,159 +6454,6 @@ void tst_QLandmarkManager::exportLmx_data()
 #endif
 
 #ifndef Q_OS_SYMBIAN
-void tst_QLandmarkManager::filterLandmarksUnion() {
-    QFETCH(QString, type);
-    QLandmarkCategory cat1;
-    cat1.setName("CAT1");
-    QVERIFY(m_manager->saveCategory(&cat1));
-
-    QLandmarkCategory cat2;
-    cat2.setName("CAT2");
-    QVERIFY(m_manager->saveCategory(&cat2));
-
-    QLandmarkCategory cat3;
-    cat3.setName("CAT3");
-    QVERIFY(m_manager->saveCategory(&cat3));
-
-    QList<QLandmarkCategoryId> ids;
-    ids << cat1.categoryId();
-    ids << cat2.categoryId();
-    ids << cat3.categoryId();
-
-    QList<QString> names;
-    names << "LM1";
-    names << "LM2";
-    names << "LM3";
-
-    QList<QGeoCoordinate> coords;
-    coords << QGeoCoordinate(0.0, 0.0);
-    coords << QGeoCoordinate(25.0, 25.0);
-    coords << QGeoCoordinate(50.0, 50.0);
-
-    QList<QLandmark> lmPool;
-
-    for (int i = 0; i < ids.size(); ++i) {
-        for (int j = 0; j < names.size(); ++j) {
-            for (int k = 0; k < coords.size(); ++k) {
-                QLandmark lm;
-                lm.addCategoryId(ids.at(i));
-                lm.setName(names.at(j));
-                lm.setCoordinate(coords.at(k));
-                QVERIFY(m_manager->saveLandmark(&lm));
-                lmPool << lm;
-            }
-        }
-    }
-
-    QLandmarkCategoryFilter f1(cat2.categoryId());
-    QLandmarkNameFilter f2("LM2");
-    QLandmarkProximityFilter f3(QGeoCoordinate(25.0, 25.0), 5.0);
-
-    QLandmarkUnionFilter filter;
-    filter << f1 << f2 << f3;
-
-    QList<QLandmark> lms;
-    QVERIFY(doFetch(type, filter, &lms, QLandmarkManager::NoError));
-
-    QCOMPARE(lms.size(), 19);
-
-    QSet<QString> idSet;
-    for (int i = 0; i < lms.size(); ++i)
-        idSet.insert(lms.at(i).landmarkId().localId());
-
-    for (int i = 0; i < lmPool.size(); ++i) {
-        QLandmark lm = lmPool.at(i);
-        if ((lm.categoryIds().at(0) == cat2.categoryId())
-            || (lm.name() == "LM2")
-            || (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
-            QCOMPARE(idSet.contains(lm.landmarkId().localId()), true);
-        } else {
-            QCOMPARE(idSet.contains(lm.landmarkId().localId()), false);
-        }
-    }
-
-    filter.remove(f2);
-
-    QVERIFY(doFetch(type, filter, &lms, QLandmarkManager::NoError));
-
-    QCOMPARE(lms.size(), 15);
-
-    idSet.clear();
-    for (int i = 0; i < lms.size(); ++i)
-        idSet.insert(lms.at(i).landmarkId().localId());
-
-    for (int i = 0; i < lmPool.size(); ++i) {
-        QLandmark lm = lmPool.at(i);
-        if ((lm.categoryIds().at(0) == cat2.categoryId())
-            || (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
-            QCOMPARE(idSet.contains(lm.landmarkId().localId()), true);
-        } else {
-            QCOMPARE(idSet.contains(lm.landmarkId().localId()), false);
-        }
-    }
-
-    filter.prepend(f2);
-
-    QVERIFY(doFetch(type, filter, &lms, QLandmarkManager::NoError));
-
-    QCOMPARE(lms.size(), 19);
-
-    idSet.clear();
-    for (int i = 0; i < lms.size(); ++i)
-        idSet.insert(lms.at(i).landmarkId().localId());
-
-    for (int i = 0; i < lmPool.size(); ++i) {
-        QLandmark lm = lmPool.at(i);
-        if ((lm.categoryIds().at(0) == cat2.categoryId())
-            || (lm.name() == "LM2")
-            || (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
-            QCOMPARE(idSet.contains(lm.landmarkId().localId()), true);
-        } else {
-            QCOMPARE(idSet.contains(lm.landmarkId().localId()), false);
-        }
-    }
-
-    //try one of the filters in the union filter is invalid
-    QLandmarkCategoryFilter catFilter1;
-    catFilter1.setCategory(cat1);
-
-    QLandmarkProximityFilter proximityFilter;
-    proximityFilter.setCenter(QGeoCoordinate(91,45));
-    proximityFilter.setRadius(5000);
-
-    QLandmarkCategoryFilter catFilter3;
-    catFilter3.setCategoryId(cat3.categoryId());
-
-    QLandmarkUnionFilter unionFilter;
-    unionFilter << catFilter1 << proximityFilter << catFilter3;
-    QVERIFY(doFetch(type,unionFilter, &lms, QLandmarkManager::BadArgumentError));
-
-    QLandmarkCategoryFilter catFilter2;
-    QLandmarkCategoryId catIdNotExist;
-    catIdNotExist.setManagerUri(m_manager->managerUri());
-    catIdNotExist.setLocalId("42");
-    catFilter2.setCategoryId(catIdNotExist);
-
-    unionFilter.clear();
-    unionFilter << catFilter1 << catFilter2 << catFilter3;
-    QVERIFY(doFetch(type,unionFilter, &lms, QLandmarkManager::CategoryDoesNotExistError));
-    QCOMPARE(lms.count(), 0);
-
-    QList<QLandmarkFilter> filters;
-    filters << catFilter1 << catFilter3;
-    unionFilter.setFilters(filters);
-    QVERIFY(doFetch(type,unionFilter, &lms, QLandmarkManager::NoError));
-    QCOMPARE(lms.count(), 18);
-}
-
-void tst_QLandmarkManager::filterLandmarksUnion_data()
-{
-    QTest::addColumn<QString>("type");
-
-    QTest::newRow("sync") << "sync";
-    QTest::newRow("async") << "async";
-}
-
 void tst_QLandmarkManager::filterAttribute() {
     QLandmark lm1;
     lm1.setName("Adelaide");
