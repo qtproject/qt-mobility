@@ -1362,42 +1362,35 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
         if (keyList.size() > 0) {
 
             //if any of the attribute matchflag is set to MatchCaseSensitive, then return KErrNotSupported 
+            bool isSupported = true;
             for (int i = 0; i < keyList.size(); ++i) {
                 if (attributeFilter.matchFlags(keyList.at(i)) & QLandmarkFilter::MatchCaseSensitive) {
+                    isSupported = false;
                     break;
                 }
                 // if any of the attribute matchflag is set to MatchContains & operation type is AndOperation, 
                 // then return KErrNotSupported
                 if ((opType == QLandmarkAttributeFilter::AndOperation)
                     && attributeFilter.matchFlags(keyList.at(i)) & QLandmarkFilter::MatchContains) {
+                    isSupported = false;
                     break;
                 }
             }
 
-            // the attributes search which cannot be used in CPosLmTextCriteria
-            if (keyList.contains("longitude") || keyList.contains("latitude") || keyList.contains(
-                "radius") || keyList.contains("altitude") || keyList.contains("radius")
-                || keyList.contains("iconurl")) {
-
+            if(!isSupported)
                 break;
-            }
-            TInt found = 0;
 
             // symbian platform supported attributes
-            QStringList lmkat = LandmarkUtility::landmarkAttributeKeys();
+            QStringList lmkat = LandmarkUtility::searchableLandmarkAttributeKeys();
 
-            // if any of the attribute matchflag is set to MatchContains & operation type is AndOperation, 
-            // then return KErrNotSupported 
             for (int i = 0; i < keyList.size(); ++i) {
-                foreach(QString att, lmkat)
-                    {
-                        if (keyList.at(i) == att) {
-                            found = 1;
-                        }
-                    }
-                if (!found)
-                    break;
+                if (!lmkat.contains(keyList.at(i))) {
+                    isSupported = false;
+                }
             }
+            if (!isSupported)
+                break;
+
             supportLevel = QLandmarkManager::NativeSupport;
         }
         break;
@@ -1474,9 +1467,8 @@ bool LandmarkManagerEngineSymbianPrivate::isReadOnly(QLandmarkManager::Error *er
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString
-        = "Symbian Landmark Datastore doesnt support readonly. But it can restict any updation if already any updation is happening in background";
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
     return false;
 }
 
@@ -1488,13 +1480,13 @@ bool LandmarkManagerEngineSymbianPrivate::isReadOnly(QLandmarkManager::Error *er
  it is considered writable unless the manager engine. is exclusively read-only.
 
  */
-bool LandmarkManagerEngineSymbianPrivate::isReadOnly(const QLandmarkId &/*landmarkId*/,
+bool LandmarkManagerEngineSymbianPrivate::isReadOnly(const QLandmarkId &landmarkId,
     QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
-    *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Symbian landmarks apis dont support readonly landmarks";
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
     return false;
 }
 
@@ -1515,7 +1507,7 @@ bool LandmarkManagerEngineSymbianPrivate::isReadOnly(const QLandmarkCategoryId &
 
     bool result = false;
     if (LandmarkUtility::validLocalId(categoryId.localId())) {
-        result = LandmarkUtility::isGlobalCategoryId(m_LandmarkCatMgr, categoryId);
+        result = LandmarkUtility::isGlobalCategoryId(m_LandmarkCatMgr,categoryId);
     }
     return result;
 }
