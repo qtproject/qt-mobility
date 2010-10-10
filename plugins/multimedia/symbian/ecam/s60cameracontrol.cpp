@@ -108,7 +108,7 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
         m_videoSession, SLOT(cameraStatusChanged(QCamera::Status)));
     connect(m_videoSession, SIGNAL(stateChanged(S60VideoCaptureSession::TVideoCaptureState)),
         this, SLOT(videoStateChanged(S60VideoCaptureSession::TVideoCaptureState)));
-    connect(m_imageSession, SIGNAL(advancedSettingCreated()), this, SLOT(advancedSettingsCreated()));
+    connect(m_imageSession, SIGNAL(advancedSettingChanged()), this, SLOT(advancedSettingsCreated()));
     connect(this, SIGNAL(cameraReadyChanged(bool)), m_imageSession, SIGNAL(readyForCaptureChanged(bool)));
     connect(m_viewfinderEngine, SIGNAL(error(int, const QString&)), this, SIGNAL(error(int,const QString&)));
     connect(m_imageSession, SIGNAL(cameraError(int, const QString&)), this, SIGNAL(error(int, const QString&)));
@@ -124,6 +124,9 @@ S60CameraControl::~S60CameraControl()
         delete m_viewfinderEngine;
         m_viewfinderEngine = NULL;
     }
+
+    // Make sure AdvancedSettings are destructed
+    m_imageSession->deleteAdvancedSettings();
 
     if (m_cameraEngine) {
         delete m_cameraEngine;

@@ -64,13 +64,15 @@ S60CameraExposureControl::S60CameraExposureControl(S60ImageCaptureSession *sessi
         Q_ASSERT(true);
     // From now on it is safe to assume session exists
 
-    connect(m_session, SIGNAL(advancedSettingCreated()), this, SLOT(resetAdvancedSetting()));
+    connect(m_session, SIGNAL(advancedSettingChanged()), this, SLOT(resetAdvancedSetting()));
     m_advancedSettings = m_session->advancedSettings();
 
-    connect(m_advancedSettings, SIGNAL(apertureChanged()), this, SLOT(apertureChanged()));
-    connect(m_advancedSettings, SIGNAL(apertureRangeChanged()), this, SLOT(apertureRangeChanged()));
-    connect(m_advancedSettings, SIGNAL(shutterSpeedChanged()), this, SLOT(shutterSpeedChanged()));
-    connect(m_advancedSettings, SIGNAL(isoSensitivityChanged()), this, SLOT(isoSensitivityChanged()));
+    if (m_advancedSettings) {
+        connect(m_advancedSettings, SIGNAL(apertureChanged()), this, SLOT(apertureChanged()));
+        connect(m_advancedSettings, SIGNAL(apertureRangeChanged()), this, SLOT(apertureRangeChanged()));
+        connect(m_advancedSettings, SIGNAL(shutterSpeedChanged()), this, SLOT(shutterSpeedChanged()));
+        connect(m_advancedSettings, SIGNAL(isoSensitivityChanged()), this, SLOT(isoSensitivityChanged()));
+    }
 }
 
 S60CameraExposureControl::~S60CameraExposureControl()

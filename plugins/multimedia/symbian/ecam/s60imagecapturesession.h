@@ -198,7 +198,7 @@ private: // Internal
 Q_SIGNALS: // Notifications
 
     void stateChanged(QCamera::State);
-    void advancedSettingCreated();
+    void advancedSettingChanged();
 
     // Error signals
     void cameraError(int, const QString&);          // For QCamera::error

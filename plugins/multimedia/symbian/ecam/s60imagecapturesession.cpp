@@ -143,6 +143,7 @@ void S60ImageCaptureSession::deleteAdvancedSettings()
     if (m_advancedSettings) {
         delete m_advancedSettings;
         m_advancedSettings = NULL;
+        emit advancedSettingChanged();
     }
 }
 
@@ -169,14 +170,21 @@ void S60ImageCaptureSession::resetSession()
 
     m_error = KErrNone;
     m_currentFormat = defaultImageFormat();
-    TRAPD(err, m_advancedSettings = S60CameraSettings::NewL(this, m_cameraEngine));
+
+    int err = KErrNone;
+    m_advancedSettings = S60CameraSettings::New(err, this, m_cameraEngine);
     if (err == KErrNotSupported) {
+        m_advancedSettings = NULL;
+#ifndef S60_31_PLATFORM // Post S60 3.1 Platform
         // Adv. settings may not be supported for other than the Primary Camera
         if (m_cameraEngine->currentCameraIndex() == 0)
             setError(err, QString("Unexpected camera error."));
+#endif // !S60_31_PLATFORM
     }
-    else
+    else if (err != KErrNone) { // Other errors
+        m_advancedSettings = NULL;
         setError(err, QString("Unexpected camera error."));
+    }
 
     if (m_advancedSettings) {
         if (m_cameraEngine)
@@ -187,8 +195,7 @@ void S60ImageCaptureSession::resetSession()
 
     updateImageCaptureFormats();
 
-    if (m_advancedSettings)
-        emit advancedSettingCreated();
+    emit advancedSettingChanged();
 }
 
 S60CameraSettings* S60ImageCaptureSession::advancedSettings()
@@ -975,7 +982,10 @@ void S60ImageCaptureSession::doSetZoomFactorL(qreal optical, qreal digital)
             if (optical != opticalZoomFactor()) {
                 if (optical >= m_cameraInfo->iMinZoomFactor && optical <= m_cameraInfo->iMaxZoomFactor) {
 #if defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER) | defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER)
-                    m_advancedSettings->setOpticalZoomFactorL(optical); // Using Zoom Factor
+                    if (m_advancedSettings)
+                        m_advancedSettings->setOpticalZoomFactorL(optical); // Using Zoom Factor
+                    else
+                        setError(KErrNotReady, QString("Zooming failed."));
 #else // No advanced settigns
                     camera->SetZoomFactorL(opticalSymbian); // Using Zoom Value
 #endif // USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
@@ -989,33 +999,37 @@ void S60ImageCaptureSession::doSetZoomFactorL(qreal optical, qreal digital)
             if (digital != digitalZoomFactor()) {
                 if (digital >= 1 && digital <= m_cameraInfo->iMaxDigitalZoomFactor) {
 #if defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER) | defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER)
-                    qreal currentZoomFactor = m_advancedSettings->digitalZoomFactorL();
+                    if (m_advancedSettings) {
+                        qreal currentZoomFactor = m_advancedSettings->digitalZoomFactorL();
 
-                    QList<qreal> smoothZoomSetValues;
-                    QList<qreal> *factors = m_advancedSettings->supportedDigitalZoomFactors();
-                    if (currentZoomFactor < digital) {
-                        for (int i = 0; i < factors->count(); ++i) {
-                            if (factors->at(i) > currentZoomFactor && factors->at(i) < digital)
-                                smoothZoomSetValues << factors->at(i);
+                        QList<qreal> smoothZoomSetValues;
+                        QList<qreal> *factors = m_advancedSettings->supportedDigitalZoomFactors();
+                        if (currentZoomFactor < digital) {
+                            for (int i = 0; i < factors->count(); ++i) {
+                                if (factors->at(i) > currentZoomFactor && factors->at(i) < digital)
+                                    smoothZoomSetValues << factors->at(i);
+                            }
+
+                            for (int i = 0; i < smoothZoomSetValues.count(); i = i + KSmoothZoomStep) {
+                                m_advancedSettings->setDigitalZoomFactorL(smoothZoomSetValues[i]); // Using Zoom Factor
+                            }
+
+                        } else {
+                            for (int i = 0; i < factors->count(); ++i) {
+                                if (factors->at(i) < currentZoomFactor && factors->at(i) > digital)
+                                    smoothZoomSetValues << factors->at(i);
+                            }
+
+                            for (int i = (smoothZoomSetValues.count() - 1); i >= 0; i = i - KSmoothZoomStep) {
+                                m_advancedSettings->setDigitalZoomFactorL(smoothZoomSetValues[i]); // Using Zoom Factor
+                            }
                         }
 
-                        for (int i = 0; i < smoothZoomSetValues.count(); i = i + KSmoothZoomStep) {
-                            m_advancedSettings->setDigitalZoomFactorL(smoothZoomSetValues[i]); // Using Zoom Factor
-                        }
-
-                    } else {
-                        for (int i = 0; i < factors->count(); ++i) {
-                            if (factors->at(i) < currentZoomFactor && factors->at(i) > digital)
-                                smoothZoomSetValues << factors->at(i);
-                        }
-
-                        for (int i = (smoothZoomSetValues.count() - 1); i >= 0; i = i - KSmoothZoomStep) {
-                            m_advancedSettings->setDigitalZoomFactorL(smoothZoomSetValues[i]); // Using Zoom Factor
-                        }
+                        // Set final value - Find closest supported factor
+                        m_advancedSettings->setDigitalZoomFactorL(digital); // Using Zoom Factor
                     }
-
-                    // Set final value
-                    m_advancedSettings->setDigitalZoomFactorL(digital); // Using Zoom Factor
+                    else
+                        setError(KErrNotReady, QString("Zooming failed."));
 #else // No advanced settigns
                     // Define zoom steps
                     int currentZoomFactor = camera->DigitalZoomFactor();

@@ -63,10 +63,11 @@ S60CameraFlashControl::S60CameraFlashControl(S60ImageCaptureSession *session, QO
         Q_ASSERT(true);
     // From now on it is safe to assume session exists
     
-    connect(m_session, SIGNAL(advancedSettingCreated()), this, SLOT(resetAdvancedSetting()));
+    connect(m_session, SIGNAL(advancedSettingChanged()), this, SLOT(resetAdvancedSetting()));
     m_advancedSettings = m_session->advancedSettings();
 
-    connect(m_advancedSettings, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
+    if (m_advancedSettings)
+        connect(m_advancedSettings, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
 }
 
 S60CameraFlashControl::~S60CameraFlashControl()

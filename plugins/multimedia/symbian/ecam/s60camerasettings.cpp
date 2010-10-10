@@ -57,10 +57,10 @@
 
 S60CameraSettings::S60CameraSettings(QObject *parent, CCameraEngine *engine) :
     QObject(parent),
-#ifndef S60_CAM_AUTOFOCUS_SUPPORT // Post S60 3.1 Platforms
+#ifndef S60_31_PLATFORM // Post S60 3.1 Platforms
     m_advancedSettings(NULL),
     m_imageProcessingSettings(NULL),
-#endif // S60_CAM_AUTOFOCUS_SUPPORT
+#endif // S60_31_PLATFORM
     m_cameraEngine(engine)
 {
 }
@@ -82,37 +82,83 @@ S60CameraSettings::~S60CameraSettings()
     m_supportedDigitalZoomFactors.clear();
 }
 
-S60CameraSettings* S60CameraSettings::NewL(QObject *parent, CCameraEngine *engine)
+/*
+ * This is Symbian NewL kind of consructor, but unlike Symbian version this
+ * constructor will not leave, but instead it will return possible errors in
+ * the error variable. This is to be able to write the class without deriving
+ * it form CBase. Also CleanupStack is cleaned here if the ConstructL leaves.
+ */
+S60CameraSettings* S60CameraSettings::New(int &error, QObject *parent, CCameraEngine *engine)
 {
-    S60CameraSettings* self = new (ELeave) S60CameraSettings(parent, engine);
-    CleanupStack::PushL(self);
-    self->ConstructL();
-    CleanupStack::Pop(self);
+    S60CameraSettings* self = new S60CameraSettings(parent, engine);
+    if (!self) {
+        error = KErrNoMemory;
+        return NULL;
+    }
+
+    TRAPD(err, self->ConstructL());
+    if (err) {
+        // Clean created object
+        delete self;
+        self = NULL;
+        error = err;
+        return NULL;
+    }
+
     return self;
 }
 
 void S60CameraSettings::ConstructL()
 {
+#ifdef POST_31_PLATFORM
     if (!m_cameraEngine)
         User::Leave(KErrGeneral);
     // From now on it is safe to assume engine exists
 
-#ifdef POST_31_PLATFORM
+    // If no AdvancedSettings is available, there's no benefit of S60CameraSettings
+    // Leave if creation fails
     m_advancedSettings = CCamera::CCameraAdvancedSettings::NewL(*m_cameraEngine->Camera());
-    m_imageProcessingSettings = CCamera::CCameraImageProcessing::NewL(*m_cameraEngine->Camera());
+    CleanupStack::PushL(m_advancedSettings);
 
-    RArray<TInt> digitalZoomFactors;
-    CleanupClosePushL(digitalZoomFactors);
-    TValueInfo info = ENotActive;
-    if (m_advancedSettings)
-        m_advancedSettings->GetDigitalZoomStepsL(digitalZoomFactors, info);
-
-    for (int i = 0; i < digitalZoomFactors.Count(); ++i) {
-        qreal factor = digitalZoomFactors[i];
-        m_supportedDigitalZoomFactors << ((factor / 100.0));
+    // ImageProcessing module may not be supported, don't Leave
+    TRAPD(err, m_imageProcessingSettings = CCamera::CCameraImageProcessing::NewL(*m_cameraEngine->Camera()));
+    if (err == KErrNone && m_imageProcessingSettings) {
+        CleanupStack::PushL(m_imageProcessingSettings);
+    } else {
+        if (err == KErrNotSupported)
+            m_imageProcessingSettings = NULL;
+        else {
+            // Leave with error
+            if (!m_imageProcessingSettings)
+                User::Leave(KErrNoMemory);
+            else
+                User::Leave(err);
+        }
     }
 
-    CleanupStack::PopAndDestroy(); // RArray<TInt> digitalZoomFactors
+    if (m_advancedSettings) {
+        RArray<TInt> digitalZoomFactors;
+        CleanupClosePushL(digitalZoomFactors);
+
+        TValueInfo info = ENotActive;
+        m_advancedSettings->GetDigitalZoomStepsL(digitalZoomFactors, info);
+
+        for (int i = 0; i < digitalZoomFactors.Count(); ++i) {
+            qreal factor = digitalZoomFactors[i];
+            m_supportedDigitalZoomFactors << ((factor / 100.0));
+        }
+
+        CleanupStack::PopAndDestroy(); // RArray<TInt> digitalZoomFactors
+    }
+
+    // Pop objects from CleanupStack
+    if (m_imageProcessingSettings)
+        CleanupStack::Pop(m_imageProcessingSettings);
+    CleanupStack::Pop(m_advancedSettings);
+
+#else // S60 3.1
+    // AdvancedSettings are not suppoted on S60 3.1 (There's no use for S60CameraSettings)
+    User::Leave(KErrNotSupported);
 #endif // POST_31_PLATFORM
 }
 
@@ -202,7 +248,6 @@ QCameraFocus::FocusMode S60CameraSettings::focusMode()
     else
         emit error(QCamera::CameraError, QString("Unexpected camera error."));
 #endif // POST_31_PLATFORM
-    
     return QCameraFocus::AutoFocus; // Return automatic focusing
 }
 
@@ -360,6 +405,12 @@ void S60CameraSettings::HandleAdvancedEvent(const TECAMEvent& aEvent)
             else
                 emit error(QCamera::CameraError, QString("Setting aperture value failed."));
             return;
+        } else if (aEvent.iEventType == KUidECamEventCameraSettingExposureCompensation) {
+            if (aEvent.iErrorCode == KErrNotSupported)
+                emit error(QCamera::NotSupportedFeatureError, QString("Requested exposure compensation is not supported."));
+            else
+                emit error(QCamera::CameraError, QString("Setting exposure compensation failed."));
+            return;
         } else if (aEvent.iEventType == KUidECamEventCameraSettingOpticalZoom ||
                    aEvent.iEventType == KUidECamEventCameraSettingDigitalZoom) {
             if (aEvent.iErrorCode == KErrNotSupported)
@@ -368,6 +419,15 @@ void S60CameraSettings::HandleAdvancedEvent(const TECAMEvent& aEvent)
                 emit error(QCamera::CameraError, QString("Setting zoom factor failed."));
                 return;
             }
+        } else if (aEvent.iEventType == KUidECamEventCameraSettingFocusMode) {
+            if (aEvent.iErrorCode == KErrNotSupported)
+                if (m_cameraEngine && m_cameraEngine->currentCameraIndex() != 0)
+                    emit error(QCamera::NotSupportedFeatureError, QString("Focusing is not supported with this camera."));
+                else
+                    emit error(QCamera::NotSupportedFeatureError, QString("Requested focus mode is not supported."));
+            else
+                emit error(QCamera::CameraError, QString("Setting focus mode failed."));
+            return;
         } else {
             emit error(QCamera::CameraError, QString("Unexpected camera error."));
             return;
@@ -375,8 +435,12 @@ void S60CameraSettings::HandleAdvancedEvent(const TECAMEvent& aEvent)
     }
 
     if (aEvent.iEventType == KUidECamEventCameraSettingExposureLock) {
-        if (m_advancedSettings->ExposureLockOn())
-            emit exposureStatusChanged(QCamera::Locked, QCamera::LockAcquired);
+        if (m_advancedSettings) {
+            if (m_advancedSettings->ExposureLockOn())
+                emit exposureStatusChanged(QCamera::Locked, QCamera::LockAcquired);
+            else
+                emit exposureStatusChanged(QCamera::Unlocked, QCamera::LockLost);
+        }
         else
             emit exposureStatusChanged(QCamera::Unlocked, QCamera::LockLost);
     }
@@ -403,6 +467,8 @@ void S60CameraSettings::HandleAdvancedEvent(const TECAMEvent& aEvent)
         
     } else if (aEvent.iEventType == KUidECamEventCameraSettingFocusMode)
         emit focusStatusChanged(QCamera::Searching, QCamera::UserRequest);
+#else // S60 3.1 Platform
+    Q_UNUSED(aEvent);
 #endif // POST_31_PLATFORM
 }
 
