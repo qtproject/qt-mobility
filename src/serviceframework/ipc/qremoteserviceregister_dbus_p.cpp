@@ -179,7 +179,7 @@ void QRemoteServiceRegisterDBusPrivate::publishServices(const QString& ident)
 /*!
     Creates endpoint on service side.
 */
-bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& /*ident*/)
+bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& ident)
 {
     InstanceManager *iManager = InstanceManager::instance();
     QList<QRemoteServiceRegister::Entry> list = iManager->allEntries();
@@ -205,7 +205,7 @@ bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& /*i
         new DBusSessionAdaptor(session);
         QObject::connect(session, SIGNAL(newConnection(int,int)), this, SLOT(processIncoming(int,int)));
 
-        QString path = "/" + list[0].interfaceName() + "/DBusSession";
+        QString path = "/" + list[0].interfaceName() + "/" + ident;
         path.replace(QString("."), QString("/"));
         if (!connection->registerObject(path, session)) {
             qWarning() << "Cannot register service session to DBus";
@@ -262,10 +262,10 @@ QRemoteServiceRegisterPrivate* QRemoteServiceRegisterPrivate::constructPrivateOb
 /*!
     Creates endpoint on client side.
 */
-QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& /*location*/)
+QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location)
 {
     const QString serviceName = "com.nokia.qtmobility.sfw." + entry.serviceName();
-    QString path = "/" + entry.interfaceName() + "/DBusSession";
+    QString path = "/" + entry.interfaceName() + "/" + location;
     path.replace(QString("."), QString("/"));
 
     QDBusConnection *connection = new QDBusConnection(QDBusConnection::sessionBus());
