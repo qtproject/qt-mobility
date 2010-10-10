@@ -464,10 +464,12 @@ way for the new service implementation.
 Qt Service Framework provides a mechanism for out of process services
 so that clients can remotely load interfaces.  These inter-process 
 services are deployed similarly to local services, using the IPC address
-tag for the XMl description and calling QRemoteServiceClassRegister::registerType()
-to add the service to the remote services manager.  Clients access services
-via the metaobject similarly to in-process services.  The \l{Echo Client Example}
-demonstrates how remote services can be instantiated and used.
+tag from the XML description and calling QRemoteServiceRegister::publishEntries()
+to add the service to the remote services manager. Clients access services
+via the metaobject similarly to in-process services and each remote service 
+is represented as a QRemoteServiceRegister::Entry by using 
+QRemoteServiceRegister::createEntry(). The \l{Echo Client Example} demonstrates 
+how remote services can be instantiated and used.
 
 Inter-process services are deployed using a variety of different IPC mechanisms
 available on the current platform and as such may inherit several limitations.  For
@@ -476,6 +478,7 @@ environments services are published using QtDBus if it is available otherwise
 falls back on QLocalSocket for inter-process communication.
 
 \section2 D-Bus Services
+
 The QtDBus module is used to provide IPC in correspondance to the Qt Service 
 Framework architecture and provides access to signals, slots, invokable methods
 and properties. 
@@ -483,10 +486,12 @@ and properties.
 \section3 Limitations
 A current known limitation for Qt Service Framework using QtDBus for IPC is that
 enumerators cannot be read due to lack of support on D-Bus.  This will be added 
-in future versions once the QtDBus module enables enumerator support. Furthermore, 
-due to the nature of IPC, pointers to objects cannot be passed between services and
-clients. Unfortunately, this also means that anything wrapped in a typedef macro 
-cannot be communicated effectively between processes.
+in future versions once the QtDBus module enables enumerator support. A current
+known workaround is to manually define and use integers as demonstrated in the
+\l{dialer}{Declarative Serviceframework Dialer} example. Furthermore, due to the
+nature of IPC, pointers to objects cannot be passed between services and clients. 
+Unfortunately, this also means that anything wrapped in a typedef macro cannot be 
+communicated effectively between processes.
 
 \section3 Rendezvous
 D-Bus services inherit rendezvous support by providing .service files to the
@@ -494,28 +499,54 @@ D-Bus daemon search paths. Aside from producing these files manually, the
 servicefw tool provides an option to generate the corresponding files inside
 the local user D-Bus folder for convenience. This will allow all client
 requests to automatically startup the service if it isn't already running. 
-Consequently, once every client has been terminated the service will automatically
-shutdown accordingly.
+Consequently, once every client has closed its service instance the service will
+be automatically terminated after invoking any slots connected to notification signals.
+
+Running the following command will enable rendezvous for D-Bus IPC.
 
 \code
-./servicefw autostart <service-name> <service-file>
+./servicefw dbusservice <service-xml-file> <service-file>
 \endcode
 
+The .service files will typically be generated in the $home/.local/share/dbus-1/services
+directory unless the $$XDG_DATA_HOME environment variable is set. If the --system 
+option is used the tool will generate the file inside /usr/share/dbus-1/services if 
+the user permissions are met.
+
+Note that in order for the autostart feature to function correctly, the service 
+needs to be either pre-registered or registered at run-time so that clients can use
+a QServiceManager to discover the IPC interfaces that invoke the D-Bus service files. 
+This is usually done on deployment by adding services through the servicefw tool. 
+
+
 \section2 Symbian Client-Server Framework
+
 Symbian IPC services are automatically instantiated if the service is not already 
 running.  
 
-\section3
-Rendezvous support allows server-side processes to be created upon client request 
-and every service has a server of its own.
+\section3 Rendezvous 
+Symbian IPC support allows server-side processes to be created upon client request 
+and every service has a server of its own. Automatic shutdown also occurs when
+the remote services manager no longer holds requested service instances.
 
-\section2 Local Socket Services
+\section2 Local Socket
+
 On platforms that do not provide D-Bus or the Symbian Client-Server Framework, the
 underlying IPC mechanism utilized is a local socket based protocol.  
 
+\section3 Limitations
+Similar to the other IPC mechanisms, passing object pointers or typedefs will not
+work on local socket. 
+
 \section3 Rendezvous
-This mechanism doesn't currently support rendezvous and requires service processes 
-to be started manually.
+This mechanism provides automatic service startup by supplying the <ipcaddress> tag
+with the path to the service executable file, which is also used as the listening
+server name. Client's that request local socket IPC service objects will attempt
+to start the service process before accessing it; otherwise a timeout will notify
+the client that the service process is not running. Note that this feature requires
+that the service is published with a matching file location path through the
+QRemoteServiceRegister.
+
 
 \section2 Error handling
 
@@ -528,8 +559,20 @@ client must connect to.  If an error occurs the object must be
 destroyed; no further calls can be made.  The error recovery is left up to
 the client application.
 
-\section1 Examples
 
+\section1 Main Classes
+\annotatedlist servicefw
+
+
+\section1 QML Classes
+The Qt Service Framework offers discovery and selection of services through declarative
+UI by providing service and service list elements. Detailed information can be found 
+at \l{QML Service Framework Plugin}.
+
+\annotatedlist qml-serviceframework
+
+
+\section1 Examples
 \list
     \o \l{Service Browser Example}
     \o \l{File Manager Plugin Example}
@@ -537,10 +580,8 @@ the client application.
     \o \l{Notes Manager Plugin Example}
     \o \l{Notes Manager Example}
     \o \l{Echo Client Example}
+    \o \l{declarative-sfw-notes}{Declarative Notes Manager} 
+    \o \l{declarative-sfw-dialer}{Declarative Serviceframework Dialer} 
 \endlist
-
-
-\section1 Main Classes
-\annotatedlist servicefw
 
 */
