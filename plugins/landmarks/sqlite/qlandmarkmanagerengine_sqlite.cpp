@@ -610,15 +610,6 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
         }
     }
 
-    if (addedLandmarkIds.count() > 0)
-        emit landmarksAdded(addedLandmarkIds);
-
-    if (changedLandmarkIds.count() > 0)
-        emit landmarksChanged(changedLandmarkIds);
-
-    if (removedLandmarkIds.count() > 0)
-        emit landmarksRemoved(removedLandmarkIds);
-
     //now check for added/modified/removed categories
     if (!query.prepare("SELECT categoryId,action, timestamp FROM category_notification WHERE timestamp >= ?")) {
 #ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
@@ -663,14 +654,29 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
         }
     }
 
-    if (addedCategoryIds.count() > 0)
-        emit categoriesAdded(addedCategoryIds);
+    int totalChangeCount = addedCategoryIds.count() + changedCategoryIds.count() + removedCategoryIds.count()
+                           + addedLandmarkIds.count() + changedLandmarkIds.count() + removedLandmarkIds.count();
+    if (totalChangeCount > 50 ) {
+        emit dataChanged();
+    } else {
+        if (addedCategoryIds.count() > 0)
+            emit categoriesAdded(addedCategoryIds);
 
-    if (changedCategoryIds.count() > 0)
-        emit categoriesChanged(changedCategoryIds);
+        if (changedCategoryIds.count() > 0)
+            emit categoriesChanged(changedCategoryIds);
 
-    if (removedCategoryIds.count() > 0)
-        emit categoriesRemoved(removedCategoryIds);
+        if (removedCategoryIds.count() > 0)
+            emit categoriesRemoved(removedCategoryIds);
+
+        if (addedLandmarkIds.count() > 0)
+            emit landmarksAdded(addedLandmarkIds);
+
+        if (changedLandmarkIds.count() > 0)
+            emit landmarksChanged(changedLandmarkIds);
+
+        if (removedLandmarkIds.count() > 0)
+            emit landmarksRemoved(removedLandmarkIds);
+    }
 
     m_latestLandmarkTimestamp +=1;
     m_latestCategoryTimestamp +=1;

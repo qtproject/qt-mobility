@@ -33,6 +33,7 @@ symbian {
         addFiles.sources += data/AUS-PublicToilet-NewSouthWales.lmx
         addFiles.sources += data/AUS-PublicToilet-NewSouthWales.gpx
         addFiles.sources += data/AUS-PublicToilet-AustralianCapitalTerritory.gpx
+        addFiles.sources += data/places.gpx
         addFiles.path = data
         DEPLOYMENT += addFiles
 }
