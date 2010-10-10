@@ -95,7 +95,7 @@
 #endif
 
 //defines to turn on and off tests for symbian
-//define INVALID_MANAGER
+//#define INVALID_MANAGER
 //#define RETRIEVE_CATEGORY
 //#define RETRIEVE_LANDMARK
 //#define SAVE_CATEGORY
@@ -1074,6 +1074,130 @@ private slots:
     void notificationCheck();
     void testConvenienceFunctions();
 #endif
+
+    void failingImportTest() {
+
+        QSignalSpy spyLmAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+        QSignalSpy spyLmChange(m_manager, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+        QSignalSpy spyLmRemove(m_manager, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+        QSignalSpy spyCatAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+        QSignalSpy spyCatChange(m_manager, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
+        QSignalSpy spyCatRemove(m_manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+        QSignalSpy dataChanged(m_manager, SIGNAL(dataChanged()));
+
+        QString prefix;
+#ifdef Q_OS_SYMBIAN
+        prefix = "";
+#else
+        prefix = ":";
+#endif
+        QVERIFY(m_manager->importLandmarks( prefix  + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx", QLandmarkManager::Gpx));
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+        QLandmarkNameFilter nameFilter("Public Toilet, AUS-Kowen Forest - Playground Block");
+        QList<QLandmark> lms = m_manager->landmarks(nameFilter);
+        QCOMPARE(lms.count(),1);
+        QLandmark lm = lms.at(0);
+        QTest::qWait(10);
+
+        //Note:sometimes radius comes out as some kind of really small number, sometimes not...
+        qWarning() << "landmark radius after import = " << QString::number(lm.radius()) << " expected=" << QString::number(0.0);
+        qWarning() << "landmark url after import =" << lm.url().toString()  << " expected = " << QString();
+        qWarning() << "dataChanged count = " << dataChanged.count() << "expected = 1";
+        qWarning() << "landmarksAdded() count = " << spyLmAdd.count() << "expected = 0";
+
+        QCOMPARE(lm.url().toString(), QUrl().toString());
+        QVERIFY(lm.radius() == 0.0);
+
+        //Note: we only expect a single dataChanged signal for an import operation.
+        QCOMPARE(dataChanged.count(), 1);
+        QCOMPARE(spyLmAdd.count(), 0);
+        QCOMPARE(spyLmChange.count(), 0);
+        QCOMPARE(spyLmRemove.count(), 0);
+        QCOMPARE(spyCatAdd.count(), 0);
+        QCOMPARE(spyCatChange.count(), 0);
+        QCOMPARE(spyCatRemove.count(), 0);
+    }
+
+    void failingExportTest()
+    {
+        QSignalSpy spyLmAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+        QSignalSpy spyLmChange(m_manager, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+        QSignalSpy spyLmRemove(m_manager, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+        QSignalSpy spyCatAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+        QSignalSpy spyCatChange(m_manager, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
+        QSignalSpy spyCatRemove(m_manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+        QSignalSpy dataChanged(m_manager, SIGNAL(dataChanged()));
+
+        int originalCategoryCount = m_manager->categoryIds().count();
+        QCOMPARE(m_manager->categories().count(), m_manager->categoryIds().count());
+        QLandmarkCategory cat;
+        cat.setName("custom category");
+        QVERIFY(m_manager->saveCategory(&cat));
+
+        QLandmark lm;
+        lm.setName("landmark 1");
+        lm.addCategoryId(cat.categoryId());
+
+        QVERIFY(m_manager->saveLandmark(&lm));
+        QTest::qWait(10);
+        spyLmAdd.clear();
+        spyCatAdd.clear();
+
+
+        QVERIFY(m_manager->exportLandmarks("testfile.lmx",QLandmarkManager::Lmx));
+
+        QTest::qWait(10);
+        QCOMPARE(dataChanged.count(), 0);
+        QCOMPARE(spyLmAdd.count(), 0);
+        QCOMPARE(spyLmChange.count(), 0);
+        QCOMPARE(spyLmRemove.count(), 0);
+        QCOMPARE(spyCatAdd.count(), 0);
+        QCOMPARE(spyCatChange.count(), 0);
+        QCOMPARE(spyCatRemove.count(), 0);
+
+        QVERIFY(m_manager->removeLandmark(lm.landmarkId()));
+        QVERIFY(m_manager->removeCategory(cat.categoryId()));
+        QCOMPARE(m_manager->categoryIds().count(), originalCategoryCount);
+
+        QVERIFY(m_manager->importLandmarks("testfile.lmx", QLandmarkManager::Lmx));
+        QLandmarkNameFilter nameFilter(lm.name());
+        QList<QLandmark> lms = m_manager->landmarks(nameFilter);
+        QCOMPARE(lms.count(), 1);
+        QLandmark lmImported = lms.at(0);
+        qWarning() << "original category count = " << originalCategoryCount << " new cateogory count = " << m_manager->categoryIds().count();
+        qWarning()<< "lmImported category count = " << lmImported.categoryIds().count();
+        qWarning() << "imported category name=" << m_manager->category(lm.categoryIds().at(0)).name();
+
+/*
+        qWarning() << lmImported.name();
+        qWarning() << lmImported.description();
+        qWarning() << lmImported.iconUrl();
+        qWarning() << lmImported.radius();
+        qWarning() << lmImported.phoneNumber();
+        qWarning() << lmImported.url();
+        qWarning() << QString::number(lmImported.coordinate().latitude());
+        qWarning() << QString::number(lmImported.coordinate().longitude());
+        qWarning() << QString::number(lmImported.coordinate().altitude());
+        qWarning() << lmImported.address().countryCode();
+        qWarning() << lmImported.address().state();
+        qWarning() << lmImported.address().county();
+        qWarning() << lmImported.address().city();
+        qWarning() << lmImported.address().district();
+        qWarning() << lmImported.address().street();
+        qWarning() << lmImported.address().postcode();
+*/
+
+        QCOMPARE(m_manager->categoryIds().count(), originalCategoryCount + 1);
+        //the category name appears to be empty...
+        QCOMPARE(m_manager->category(lm.categoryIds().at(0)).name(), cat.name());
+    }
+
+    void failingAutoDetectImport()
+    {
+        QVERIFY(m_manager->importLandmarks("data/convert-collection-in.xml"));
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+        QVERIFY(m_manager->landmarks().count() > 0);
+    }
 };
 
 
