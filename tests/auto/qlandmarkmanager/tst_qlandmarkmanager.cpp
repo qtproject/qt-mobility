@@ -110,12 +110,14 @@
 //#define FILTER_CATEGORY
 //#define FILTER_BOX
 //#define FILTER_INTERSECTION
+#define FILTER_MULTIBOX
 //#define LANDMARK_FETCH_CANCEL
 //#define IMPORT_GPX
 //#define IMPORT_LMX
 //#define IMPORT_FILE
-#define EXPORT_LMX
+//#define EXPORT_LMX
 
+#define WORKAROUND
 //#define EXPECT_FAIL
 
 #include <float.h>
@@ -1017,6 +1019,11 @@ private slots:
     void filterLandmarksIntersection_data();
 #endif
 
+#ifdef FILTER_MULTIBOX
+    void filterLandmarksMultipleBox();
+    void filterLandmarksMultipleBox_data();
+#endif
+
 #ifdef IMPORT_GPX
     void importGpx();
     void importGpx_data();
@@ -1038,10 +1045,6 @@ private slots:
 #endif
 
 #ifndef Q_OS_SYMBIAN
-    void filterLandmarksMultipleBox();
-    void filterLandmarksMultipleBox_data();
-
-
     void filterLandmarksUnion();
     void filterLandmarksUnion_data();
 
@@ -1075,6 +1078,7 @@ private slots:
     void testConvenienceFunctions();
 #endif
 
+#ifndef WORKAROUND
     void failingImportTest() {
 
         QSignalSpy spyLmAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
@@ -1198,6 +1202,7 @@ private slots:
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
         QVERIFY(m_manager->landmarks().count() > 0);
     }
+#endif
 };
 
 
@@ -5013,6 +5018,227 @@ void tst_QLandmarkManager::filterLandmarksIntersection_data() {
 }
 #endif
 
+#ifdef FILTER_MULTIBOX
+void tst_QLandmarkManager::filterLandmarksMultipleBox()
+{
+    QFETCH(QString, type);
+    QLandmarkBoxFilter boxFilter1(QGeoCoordinate(20,10), QGeoCoordinate(10,20));
+    QLandmarkBoxFilter boxFilter2(QGeoCoordinate(20,15), QGeoCoordinate(10,25));
+    QLandmarkBoxFilter boxFilter3(QGeoCoordinate(15,12.5), QGeoCoordinate(5,22.5));
+
+    QLandmark lm1;
+    lm1.setName("LM1");
+    lm1.setCoordinate(QGeoCoordinate(17.5, 12.5));
+    QVERIFY(m_manager->saveLandmark(&lm1));
+
+    QLandmark lm2;
+    lm2.setName("LM2");
+    lm2.setCoordinate(QGeoCoordinate(17.5, 17.5));
+    QVERIFY(m_manager->saveLandmark(&lm2));
+
+    QLandmark lm3;
+    lm3.setName("LM3");
+    lm3.setCoordinate(QGeoCoordinate(17.5, 22.5));
+    QVERIFY(m_manager->saveLandmark(&lm3));
+
+    QLandmark lm4;
+    lm4.setName("LM4");
+    lm4.setCoordinate(QGeoCoordinate(12.5, 13.25));
+    QVERIFY(m_manager->saveLandmark(&lm4));
+
+    QLandmark lm5;
+    lm5.setName("LM5");
+    lm5.setCoordinate(QGeoCoordinate(12.5, 17.5));
+    QVERIFY(m_manager->saveLandmark(&lm5));
+
+    QLandmark lm6;
+    lm6.setName("LM6");
+    lm6.setCoordinate(QGeoCoordinate(12.5, 21.25));
+    QVERIFY(m_manager->saveLandmark(&lm6));
+
+    QLandmark lm7;
+    lm7.setName("LM7");
+    lm7.setCoordinate(QGeoCoordinate(5, 11.25));
+    QVERIFY(m_manager->saveLandmark(&lm7));
+
+    QLandmark lm8;
+    lm8.setName("LM8");
+    lm8.setCoordinate(QGeoCoordinate(7.5, 17.5));
+    QVERIFY(m_manager->saveLandmark(&lm8));
+
+    QLandmark lm9;
+    lm9.setName("LM9");
+    lm9.setCoordinate(QGeoCoordinate(5, 23.25));
+    QVERIFY(m_manager->saveLandmark(&lm9));
+
+    QLandmarkIntersectionFilter intersectionFilter;
+    intersectionFilter.append(boxFilter1);
+    intersectionFilter.append(boxFilter2);
+    intersectionFilter << boxFilter3;
+
+    //try all 3 box filters in an intersection
+    QList<QLandmark> lms;
+    QVERIFY(doFetch(type,intersectionFilter,&lms));
+    QCOMPARE(lms.count(),1);
+    QCOMPARE(lms.at(0).landmarkId(), lm5.landmarkId());
+
+    //try combinations of 2 box filters
+    intersectionFilter.clear();
+    intersectionFilter.append(boxFilter1);
+    intersectionFilter.append(boxFilter2);
+
+    QVERIFY(doFetch(type,intersectionFilter,&lms));
+    QCOMPARE(lms.count(), 2);
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm5));
+
+    intersectionFilter.clear();
+    intersectionFilter.append(boxFilter2);
+    intersectionFilter.append(boxFilter3);
+
+    QVERIFY(doFetch(type,intersectionFilter,&lms));
+    QCOMPARE(lms.count(), 2);
+    QVERIFY(lms.contains(lm5));
+    QVERIFY(lms.contains(lm6));
+
+    QList<QLandmarkFilter> filters;
+    filters << boxFilter1 << boxFilter3;
+    intersectionFilter.clear();
+    intersectionFilter.setFilters(filters);
+
+    QVERIFY(doFetch(type,intersectionFilter,&lms));
+    QCOMPARE(lms.count(), 2);
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm5));
+
+    //try intersection filter with only 1 box filter
+    intersectionFilter.clear();
+    intersectionFilter.append(boxFilter1);
+    QVERIFY(doFetch(type,intersectionFilter,&lms));
+    QCOMPARE(lms.count(), 4);
+    QVERIFY(lms.contains(lm1));
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm5));
+    QCOMPARE(lms,m_manager->landmarks(boxFilter1));
+
+    intersectionFilter.clear();
+    intersectionFilter << boxFilter2;
+    QVERIFY(doFetch(type,intersectionFilter,&lms));
+    QCOMPARE(lms.count(), 4);
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm3));
+    QVERIFY(lms.contains(lm5));
+    QVERIFY(lms.contains(lm6));
+    QCOMPARE(lms,m_manager->landmarks(boxFilter2));
+
+    intersectionFilter.clear();
+    intersectionFilter.append(boxFilter3);
+    QVERIFY(doFetch(type,intersectionFilter,&lms));
+    QCOMPARE(lms.count(), 4);
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm5));
+    QVERIFY(lms.contains(lm6));
+    QVERIFY(lms.contains(lm8));
+    QCOMPARE(lms,m_manager->landmarks(boxFilter3));
+
+    //try different combinations of union filter
+    //try union filter with all 3 box filters
+    QLandmarkUnionFilter unionFilter;
+    unionFilter.append(boxFilter1);
+    unionFilter.append(boxFilter2);
+    unionFilter.append(boxFilter3);
+
+    QVERIFY(doFetch(type,unionFilter, &lms));
+    QCOMPARE(lms.count(), 7);
+    QVERIFY(lms.contains(lm1));
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm3));
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm5));
+    QVERIFY(lms.contains(lm6));
+    QVERIFY(lms.contains(lm8));
+
+    //try combinations of 2 box filters
+    filters.clear();
+    filters << boxFilter1 << boxFilter2;
+    unionFilter.setFilters(filters);
+    QVERIFY(doFetch(type,unionFilter, &lms));
+    QCOMPARE(lms.count(), 6);
+    QVERIFY(lms.contains(lm1));
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm3));
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm5));
+    QVERIFY(lms.contains(lm6));
+
+    unionFilter.clear();
+    unionFilter.append(boxFilter2);
+    unionFilter.append(boxFilter3);
+    QVERIFY(doFetch(type,unionFilter, &lms));
+    QCOMPARE(lms.count(), 6);
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm3));
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm5));
+    QVERIFY(lms.contains(lm6));
+    QVERIFY(lms.contains(lm8));
+
+    unionFilter.clear();
+    unionFilter.append(boxFilter1);
+    unionFilter.append(boxFilter3);
+    QVERIFY(doFetch(type,unionFilter, &lms));
+    QCOMPARE(lms.count(), 6);
+    QVERIFY(lms.contains(lm1));
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm5));
+    QVERIFY(lms.contains(lm6));
+    QVERIFY(lms.contains(lm8));
+
+    //try a single filter in the union filter
+    unionFilter.clear();
+    unionFilter.append(boxFilter1);
+    QVERIFY(doFetch(type, unionFilter, &lms));
+    QCOMPARE(lms.count(), 4);
+    QVERIFY(lms.contains(lm1));
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm5));
+    QCOMPARE(lms,m_manager->landmarks(boxFilter1));
+
+    unionFilter.clear();
+    unionFilter.append(boxFilter2);
+    QVERIFY(doFetch(type, unionFilter, &lms));
+    QCOMPARE(lms.count(), 4);
+    QVERIFY(lms.contains(lm2));
+    QVERIFY(lms.contains(lm3));
+    QVERIFY(lms.contains(lm5));
+    QVERIFY(lms.contains(lm6));
+    QCOMPARE(lms,m_manager->landmarks(boxFilter2));
+
+    unionFilter.clear();
+    unionFilter << boxFilter3;
+    QVERIFY(doFetch(type, unionFilter, &lms));
+    QCOMPARE(lms.count(), 4);
+    QVERIFY(lms.contains(lm4));
+    QVERIFY(lms.contains(lm5));
+    QVERIFY(lms.contains(lm6));
+    QVERIFY(lms.contains(lm8));
+    QCOMPARE(lms,m_manager->landmarks(boxFilter3));
+
+    //TODO: test cases with errors
+}
+
+void tst_QLandmarkManager::filterLandmarksMultipleBox_data()
+{
+    QTest::addColumn<QString>("type");
+
+    QTest::newRow("sync") << "sync";
+    QTest::newRow("async") << "async";
+}
+#endif
+
 #ifdef IMPORT_GPX
 void tst_QLandmarkManager::importGpx() {
     QString prefix;
@@ -6071,225 +6297,6 @@ void tst_QLandmarkManager::exportLmx_data()
 #endif
 
 #ifndef Q_OS_SYMBIAN
-void tst_QLandmarkManager::filterLandmarksMultipleBox()
-{
-    QFETCH(QString, type);
-    QLandmarkBoxFilter boxFilter1(QGeoCoordinate(20,10), QGeoCoordinate(10,20));
-    QLandmarkBoxFilter boxFilter2(QGeoCoordinate(20,15), QGeoCoordinate(10,25));
-    QLandmarkBoxFilter boxFilter3(QGeoCoordinate(15,12.5), QGeoCoordinate(5,22.5));
-
-    QLandmark lm1;
-    lm1.setName("LM1");
-    lm1.setCoordinate(QGeoCoordinate(17.5, 12.5));
-    QVERIFY(m_manager->saveLandmark(&lm1));
-
-    QLandmark lm2;
-    lm2.setName("LM2");
-    lm2.setCoordinate(QGeoCoordinate(17.5, 17.5));
-    QVERIFY(m_manager->saveLandmark(&lm2));
-
-    QLandmark lm3;
-    lm3.setName("LM3");
-    lm3.setCoordinate(QGeoCoordinate(17.5, 22.5));
-    QVERIFY(m_manager->saveLandmark(&lm3));
-
-    QLandmark lm4;
-    lm4.setName("LM4");
-    lm4.setCoordinate(QGeoCoordinate(12.5, 13.25));
-    QVERIFY(m_manager->saveLandmark(&lm4));
-
-    QLandmark lm5;
-    lm5.setName("LM5");
-    lm5.setCoordinate(QGeoCoordinate(12.5, 17.5));
-    QVERIFY(m_manager->saveLandmark(&lm5));
-
-    QLandmark lm6;
-    lm6.setName("LM6");
-    lm6.setCoordinate(QGeoCoordinate(12.5, 21.25));
-    QVERIFY(m_manager->saveLandmark(&lm6));
-
-    QLandmark lm7;
-    lm7.setName("LM7");
-    lm7.setCoordinate(QGeoCoordinate(5, 11.25));
-    QVERIFY(m_manager->saveLandmark(&lm7));
-
-    QLandmark lm8;
-    lm8.setName("LM8");
-    lm8.setCoordinate(QGeoCoordinate(7.5, 17.5));
-    QVERIFY(m_manager->saveLandmark(&lm8));
-
-    QLandmark lm9;
-    lm9.setName("LM9");
-    lm9.setCoordinate(QGeoCoordinate(5, 23.25));
-    QVERIFY(m_manager->saveLandmark(&lm9));
-
-    QLandmarkIntersectionFilter intersectionFilter;
-    intersectionFilter.append(boxFilter1);
-    intersectionFilter.append(boxFilter2);
-    intersectionFilter << boxFilter3;
-
-    //try all 3 box filters in an intersection
-    QList<QLandmark> lms;
-    QVERIFY(doFetch(type,intersectionFilter,&lms));
-    QCOMPARE(lms.count(),1);
-    QCOMPARE(lms.at(0).landmarkId(), lm5.landmarkId());
-
-    //try combinations of 2 box filters
-    intersectionFilter.clear();
-    intersectionFilter.append(boxFilter1);
-    intersectionFilter.append(boxFilter2);
-
-    QVERIFY(doFetch(type,intersectionFilter,&lms));
-    QCOMPARE(lms.count(), 2);
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm5));
-
-    intersectionFilter.clear();
-    intersectionFilter.append(boxFilter2);
-    intersectionFilter.append(boxFilter3);
-
-    QVERIFY(doFetch(type,intersectionFilter,&lms));
-    QCOMPARE(lms.count(), 2);
-    QVERIFY(lms.contains(lm5));
-    QVERIFY(lms.contains(lm6));
-
-    QList<QLandmarkFilter> filters;
-    filters << boxFilter1 << boxFilter3;
-    intersectionFilter.clear();
-    intersectionFilter.setFilters(filters);
-
-    QVERIFY(doFetch(type,intersectionFilter,&lms));
-    QCOMPARE(lms.count(), 2);
-    QVERIFY(lms.contains(lm4));
-    QVERIFY(lms.contains(lm5));
-
-    //try intersection filter with only 1 box filter
-    intersectionFilter.clear();
-    intersectionFilter.append(boxFilter1);
-    QVERIFY(doFetch(type,intersectionFilter,&lms));
-    QCOMPARE(lms.count(), 4);
-    QVERIFY(lms.contains(lm1));
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm4));
-    QVERIFY(lms.contains(lm5));
-    QCOMPARE(lms,m_manager->landmarks(boxFilter1));
-
-    intersectionFilter.clear();
-    intersectionFilter << boxFilter2;
-    QVERIFY(doFetch(type,intersectionFilter,&lms));
-    QCOMPARE(lms.count(), 4);
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm3));
-    QVERIFY(lms.contains(lm5));
-    QVERIFY(lms.contains(lm6));
-    QCOMPARE(lms,m_manager->landmarks(boxFilter2));
-
-    intersectionFilter.clear();
-    intersectionFilter.append(boxFilter3);
-    QVERIFY(doFetch(type,intersectionFilter,&lms));
-    QCOMPARE(lms.count(), 4);
-    QVERIFY(lms.contains(lm4));
-    QVERIFY(lms.contains(lm5));
-    QVERIFY(lms.contains(lm6));
-    QVERIFY(lms.contains(lm8));
-    QCOMPARE(lms,m_manager->landmarks(boxFilter3));
-
-    //try different combinations of union filter
-    //try union filter with all 3 box filters
-    QLandmarkUnionFilter unionFilter;
-    unionFilter.append(boxFilter1);
-    unionFilter.append(boxFilter2);
-    unionFilter.append(boxFilter3);
-
-    QVERIFY(doFetch(type,unionFilter, &lms));
-    QCOMPARE(lms.count(), 7);
-    QVERIFY(lms.contains(lm1));
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm3));
-    QVERIFY(lms.contains(lm4));
-    QVERIFY(lms.contains(lm5));
-    QVERIFY(lms.contains(lm6));
-    QVERIFY(lms.contains(lm8));
-
-    //try combinations of 2 box filters
-    filters.clear();
-    filters << boxFilter1 << boxFilter2;
-    unionFilter.setFilters(filters);
-    QVERIFY(doFetch(type,unionFilter, &lms));
-    QCOMPARE(lms.count(), 6);
-    QVERIFY(lms.contains(lm1));
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm3));
-    QVERIFY(lms.contains(lm4));
-    QVERIFY(lms.contains(lm5));
-    QVERIFY(lms.contains(lm6));
-
-    unionFilter.clear();
-    unionFilter.append(boxFilter2);
-    unionFilter.append(boxFilter3);
-    QVERIFY(doFetch(type,unionFilter, &lms));
-    QCOMPARE(lms.count(), 6);
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm3));
-    QVERIFY(lms.contains(lm4));
-    QVERIFY(lms.contains(lm5));
-    QVERIFY(lms.contains(lm6));
-    QVERIFY(lms.contains(lm8));
-
-    unionFilter.clear();
-    unionFilter.append(boxFilter1);
-    unionFilter.append(boxFilter3);
-    QVERIFY(doFetch(type,unionFilter, &lms));
-    QCOMPARE(lms.count(), 6);
-    QVERIFY(lms.contains(lm1));
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm4));
-    QVERIFY(lms.contains(lm5));
-    QVERIFY(lms.contains(lm6));
-    QVERIFY(lms.contains(lm8));
-
-    //try a single filter in the union filter
-    unionFilter.clear();
-    unionFilter.append(boxFilter1);
-    QVERIFY(doFetch(type, unionFilter, &lms));
-    QCOMPARE(lms.count(), 4);
-    QVERIFY(lms.contains(lm1));
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm4));
-    QVERIFY(lms.contains(lm5));
-    QCOMPARE(lms,m_manager->landmarks(boxFilter1));
-
-    unionFilter.clear();
-    unionFilter.append(boxFilter2);
-    QVERIFY(doFetch(type, unionFilter, &lms));
-    QCOMPARE(lms.count(), 4);
-    QVERIFY(lms.contains(lm2));
-    QVERIFY(lms.contains(lm3));
-    QVERIFY(lms.contains(lm5));
-    QVERIFY(lms.contains(lm6));
-    QCOMPARE(lms,m_manager->landmarks(boxFilter2));
-
-    unionFilter.clear();
-    unionFilter << boxFilter3;
-    QVERIFY(doFetch(type, unionFilter, &lms));
-    QCOMPARE(lms.count(), 4);
-    QVERIFY(lms.contains(lm4));
-    QVERIFY(lms.contains(lm5));
-    QVERIFY(lms.contains(lm6));
-    QVERIFY(lms.contains(lm8));
-    QCOMPARE(lms,m_manager->landmarks(boxFilter3));
-
-    //TODO: test cases with errors
-}
-
-void tst_QLandmarkManager::filterLandmarksMultipleBox_data()
-{
-    QTest::addColumn<QString>("type");
-
-    QTest::newRow("sync") << "sync";
-    QTest::newRow("async") << "async";
-}
-
 void tst_QLandmarkManager::filterLandmarksUnion() {
     QFETCH(QString, type);
     QLandmarkCategory cat1;
