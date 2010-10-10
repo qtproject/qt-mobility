@@ -122,6 +122,7 @@ void CCameraEngine::ConstructL()
 #endif // S60_31_PLATFORM
 
 #ifdef S60_CAM_AUTOFOCUS_SUPPORT
+    // Might not be supported for secondary camera, discard errors
     TRAP(err, iAutoFocus = CCamAutoFocus::NewL(iCamera));
 #endif // S60_CAM_AUTOFOCUS_SUPPORT
 
@@ -158,6 +159,7 @@ void CCameraEngine::ReserveAndPowerOn()
 void CCameraEngine::ReleaseAndPowerOff()
 {
     if (iEngineState >= EEngineIdle) {
+        cancelCapture();
         StopViewFinder();
         FocusCancel();
         iCamera->PowerOff();
@@ -251,8 +253,10 @@ void CCameraEngine::CaptureL()
 
 void CCameraEngine::cancelCapture()
 {
-    iCamera->CancelCaptureImage();
-    iEngineState = EEngineIdle;
+    if (iEngineState == EEngineCapturing) {
+        iCamera->CancelCaptureImage();
+        iEngineState = EEngineIdle;
+    }
 }
 
 void CCameraEngine::HandleEvent(const TECAMEvent &aEvent)
@@ -278,7 +282,8 @@ void CCameraEngine::HandleEvent(const TECAMEvent &aEvent)
     if (iAdvancedSettingsObserver)
         iAdvancedSettingsObserver->HandleAdvancedEvent(aEvent);
 
-    iImageCaptureObserver->MceoHandleOtherEvent(aEvent);
+    if (iImageCaptureObserver)
+        iImageCaptureObserver->MceoHandleOtherEvent(aEvent);
 #endif // !Q_CC_NOKIAX86
 
 }
@@ -287,6 +292,11 @@ void CCameraEngine::ReserveComplete(TInt aError)
 {
     if (aError == KErrNone) {
         iCamera->PowerOn();
+#ifdef S60_31_PLATFORM
+    } else if (aError == KErrAlreadyExists) { // Known Issue on some S60 3.1 devices
+        User::After(500000); // Wait for 0,5 second and try again
+        iCamera->Reserve();
+#endif // S60_31_PLATFORM
     } else {
         iObserver->MceoHandleError(EErrReserve, aError);
     }

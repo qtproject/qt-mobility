@@ -123,19 +123,9 @@ S60CameraService::~S60CameraService()
     if (m_locksControl)
         delete m_locksControl;
 
-    // Delete sessions
-    if (m_videosession)
-        delete m_videosession;
-    // ImageSession deletes:
-    //    * S60CameraSettings
-    if (m_imagesession)
-        delete m_imagesession;
-
-    // Delete CameraControl to get CCamera destructed after
-    // CCameraAdvancedSettings (destroyed by ImageSession)
-    // CameraControl deletes:
-    //    * CCameraEngine
-    //    * S60CameraViewfinderEngine
+    // CameraControl destroys:
+    // * ViewfinderEngine
+    // * CameraEngine
     if (m_control)
         delete m_control;
 
@@ -145,6 +135,12 @@ S60CameraService::~S60CameraService()
         delete m_viewFinderWidget;
     if (m_rendererControl)
         delete m_rendererControl;
+
+    // Delete sessions
+    if (m_videosession)
+        delete m_videosession;
+    if (m_imagesession)
+        delete m_imagesession;
 }
 
 QMediaControl *S60CameraService::requestControl(const char *name)

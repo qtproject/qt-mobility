@@ -1680,7 +1680,6 @@ void S60VideoCaptureSession::MvruoRecordComplete(TInt aError)
 
     if((aError == KErrNone || aError == KErrCompletion)) {
         m_videoRecorder->Stop();
-        m_videoRecorder->Close();
 
         // Reset state
         if (m_captureState != ENotInitialized) {
@@ -1692,8 +1691,12 @@ void S60VideoCaptureSession::MvruoRecordComplete(TInt aError)
             initializeVideoRecording();
         }
     }
+    m_videoRecorder->Close();
 
-    setError(aError, QString("Unexpected error during video recording."));
+    if (aError == KErrDiskFull)
+        setError(aError, QString("Not enough space for video, recording stopped."));
+    else
+        setError(aError, QString("Recording stopped due to unexpected error."));
 }
 
 void S60VideoCaptureSession::MvruoEvent(const TMMFEvent& aEvent)

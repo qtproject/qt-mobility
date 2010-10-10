@@ -824,8 +824,6 @@ void S60CameraControl::resetCameraOrientation()
     }
 
     setState(originalState);
-
-    return m_cameraEngine;
 }
 
 void S60CameraControl::setCameraHandles()

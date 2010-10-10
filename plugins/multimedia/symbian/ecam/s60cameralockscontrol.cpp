@@ -212,9 +212,13 @@ void S60CameraLocksControl::startFocusing()
         emit lockStatusChanged(QCamera::LockFocus, QCamera::Unlocked, QCamera::LockFailed);
 
 #else // S60 3.1
-    m_session->startFocus();
-    m_focusStatus = QCamera::Searching;
-    emit lockStatusChanged(QCamera::LockFocus, QCamera::Searching, QCamera::UserRequest);
+    if (m_focusControl && m_focusControl->focusMode() == QCameraFocus::AutoFocus) {
+        m_session->startFocus();
+        m_focusStatus = QCamera::Searching;
+        emit lockStatusChanged(QCamera::LockFocus, QCamera::Searching, QCamera::UserRequest);
+    }
+    else
+        emit lockStatusChanged(QCamera::LockFocus, QCamera::Unlocked, QCamera::LockFailed);
 #endif // S60_CAM_AUTOFOCUS_SUPPORT
 }
 

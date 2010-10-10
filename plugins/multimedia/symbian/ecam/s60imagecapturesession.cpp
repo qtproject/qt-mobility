@@ -168,6 +168,12 @@ void S60ImageCaptureSession::resetSession()
     // Delete old AdvancedSettings
     deleteAdvancedSettings();
 
+    m_captureWhenReady = false;
+    m_previewDecodingOngoing = false;
+    m_previewInWaitLoop = false;
+    m_stillCaptureFileName = QString();
+    m_icState = EImageCaptureNotPrepared;
+
     m_error = KErrNone;
     m_currentFormat = defaultImageFormat();
 
@@ -1026,7 +1032,21 @@ void S60ImageCaptureSession::doSetZoomFactorL(qreal optical, qreal digital)
                         }
 
                         // Set final value - Find closest supported factor
-                        m_advancedSettings->setDigitalZoomFactorL(digital); // Using Zoom Factor
+                        int closestIndex = -1;
+                        int closestDiff = 1000000; // Sensible maximum
+                        for (int i = 0; i < factors->count(); ++i) {
+                            int diff = abs((factors->at(i)*100) - (digital*100));
+                            if (diff < closestDiff) {
+                                closestDiff = diff;
+                                closestIndex = i;
+                            }
+                        }
+                        if (closestIndex != -1)
+                            m_advancedSettings->setDigitalZoomFactorL(factors->at(closestIndex)); // Using Zoom Factor
+                        else {
+                            setError(KErrNotSupported, QString("Requested digital zoom factor is not supported."));
+                            return;
+                        }
                     }
                     else
                         setError(KErrNotReady, QString("Zooming failed."));

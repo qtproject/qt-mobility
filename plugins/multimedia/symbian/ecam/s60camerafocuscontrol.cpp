@@ -101,6 +101,10 @@ bool S60CameraFocusControl::isFocusModeSupported(QCameraFocus::FocusMode mode) c
 {
     if (m_advancedSettings) {
         return m_advancedSettings->supportedFocusModes() & mode;
+    } else {
+        if (mode == QCameraFocus::AutoFocus) {
+            return m_session->isFocusSupported();
+        }
     }
 
     return false;

@@ -126,21 +126,21 @@ void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &setti
     if (settings.codec().isEmpty()) { // Empty settings
         m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::EOnlyAudioQuality);
 
-    } else if (settings.bitRate() == -1 && settings.sampleRate() != -1) { // SampleRate set
+    } else if (settings.bitRate() == -1 && settings.sampleRate() != -1) { // Only SampleRate set
         m_session->setAudioCaptureCodec(settings.codec());
         m_session->setAudioChannelCount(settings.channelCount());
         m_session->setAudioSampleRate(settings.sampleRate());
         m_session->setAudioEncodingMode(settings.encodingMode());
         m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::EAudioQualityAndSampleRate);
 
-    } else if (settings.bitRate() != -1 && settings.sampleRate() == -1) { // BitRate set
+    } else if (settings.bitRate() != -1 && settings.sampleRate() == -1) { // Only BitRate set
         m_session->setAudioCaptureCodec(settings.codec());
         m_session->setAudioChannelCount(settings.channelCount());
         m_session->setAudioBitRate(settings.bitRate());
         m_session->setAudioEncodingMode(settings.encodingMode());
         m_session->setAudioCaptureQuality(settings.quality(), S60VideoCaptureSession::EAudioQualityAndBitRate);
 
-    } else { // SampleRate and BitRate set
+    } else { // Both SampleRate and BitRate set
         m_session->setAudioCaptureCodec(settings.codec());
         m_session->setAudioChannelCount(settings.channelCount());
         m_session->setAudioSampleRate(settings.sampleRate());
