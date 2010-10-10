@@ -41,19 +41,12 @@
 
 #include "qremoteserviceregister_p.h"
 #include "qremoteserviceregister_dbus_p.h"
-#include "ipcendpoint_p.h"
-#include "objectendpoint_dbus_p.h"
 
 #include <QDataStream>
 #include <QTimer>
 
 
 QTM_BEGIN_NAMESPACE
-
-//IPC based on QDBus
-
-#define SERVER 0
-#define CLIENT 1
 
 class DBusEndPoint : public QServiceIpcEndPoint
 {
@@ -79,12 +72,12 @@ protected:
         if (!connection->isConnected()) {
             qWarning() << "Cannot connect to DBus";
         }
-       
+        
         QByteArray block;
         QDataStream out(&block, QIODevice::WriteOnly);
         out.setVersion(QDataStream::Qt_4_6);
         out << package;
-
+        
         packageId = package.d->messageId;
         interface->asyncCall("writePackage", block, endType, packageId);
     }
@@ -119,6 +112,7 @@ private:
     QDBusInterface* interface;
     QString packageId;
     int endType;
+    QUuid clientId;
 };
 
 class DBusSessionAdaptor: public QDBusAbstractAdaptor
@@ -160,7 +154,6 @@ public slots:
 signals:
     void packageReceived(const QByteArray &package, int type, const QString &id);
     void newConnection(int pid, int uid);
-    void closeConnection();
 };
 
 DBusSessionAdaptor::DBusSessionAdaptor(QObject *parent)
@@ -211,7 +204,6 @@ bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& /*i
         session = new DBusSession();
         new DBusSessionAdaptor(session);
         QObject::connect(session, SIGNAL(newConnection(int,int)), this, SLOT(processIncoming(int,int)));
-        //QObject::connect(session, SIGNAL(closeConnection()), this, SLOT(processClosing()));
 
         QString path = "/" + list[0].interfaceName() + "/DBusSession";
         path.replace(QString("."), QString("/"));
@@ -230,8 +222,7 @@ bool QRemoteServiceRegisterDBusPrivate::createServiceEndPoint(const QString& /*i
         ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
       
         // Connect session process disconnections
-        QObject::connect(session, SIGNAL(closeConnection()), endPoint, SLOT(disconnected()));
-        QObject::connect(iManager, SIGNAL(allInstancesClosed()), this, SLOT(processClosing()));
+        QObject::connect(session, SIGNAL(closeConnection(QString)), endPoint, SLOT(disconnected(QString)));
         
         return true;
     }
@@ -261,12 +252,6 @@ void QRemoteServiceRegisterDBusPrivate::processIncoming(int pid, int uid)
     }
     
     session->acceptIncoming(true);
-}
-
-void QRemoteServiceRegisterDBusPrivate::processClosing()
-{
-    if (quitOnLastInstanceClosed())
-        QCoreApplication::exit();
 }
 
 QRemoteServiceRegisterPrivate* QRemoteServiceRegisterPrivate::constructPrivateObject(QObject *parent)

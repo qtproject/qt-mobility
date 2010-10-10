@@ -150,7 +150,7 @@ QObject* InstanceManager::createObjectInstance(const QRemoteServiceRegister::Ent
 }
 
 /*!
-    The associated service object will be deleted in the process.
+    The associated service object will be deleted in the process. 
 */
 void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& entry, const QUuid& instanceId)
 {
@@ -169,7 +169,6 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& 
             descr.globalInstance = 0;
             descr.globalId = QUuid();
             descr.globalRefCount = 0;
-            metaMap.remove(entry);
         } else {
             descr.globalRefCount--;
         }
@@ -178,10 +177,8 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& 
         if (service) {
             service->deleteLater();
         }
-
-        if (descr.individualInstances.size() < 1)
-            metaMap.remove(entry);
     }
+    
     emit instanceClosed(entry);
    
     // Check that no instances are open
@@ -199,7 +196,7 @@ int InstanceManager::totalInstances() const
         total += descr.globalRefCount;
         total += descr.individualInstances.size();
     }
-
+    
     return total;
 }
 
