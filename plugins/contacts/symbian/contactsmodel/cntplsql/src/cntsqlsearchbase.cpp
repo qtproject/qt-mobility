@@ -40,7 +40,7 @@ const QString KColumn4 = "nbr4";
 /**
 CCntPplViewSession first phase constructor.
 */
-CntSqlSearchBase::CntSqlSearchBase(C12keyKeyMap* twelveKeyKeyMap)
+CntSqlSearchBase::CntSqlSearchBase(const C12keyKeyMap* twelveKeyKeyMap)
 : mTwelveKeyMap(twelveKeyKeyMap), 
   CntSqlSearchInterface()
     {

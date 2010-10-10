@@ -64,9 +64,6 @@ public:
 
     virtual QRemoteServiceRegister::SecurityFilter setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter);
 
-Q_SIGNALS:
-    void lastInstanceClosed();
-
 public slots:
     // Must be implemented in the subclass
     //void processIncoming();

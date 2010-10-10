@@ -52,7 +52,8 @@ InstanceManager* InstanceManager::instance()
     return typeRegister();
 }
 
-InstanceManager::InstanceManager()
+InstanceManager::InstanceManager(QObject *parent)
+    : QObject(parent)
 {
 }
 
@@ -157,17 +158,20 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& 
     if (!metaMap.contains(entry))
         return;
 
+    emit instanceClosed(entry);
+
     ServiceIdentDescriptor& descr = metaMap[entry];
-    if (descr.entryData->instanceType == QRemoteServiceRegister::GlobalInstance) {
+    if (descr.entryData->instanceType == QRemoteServiceRegister::GlobalInstance) {        
         if (descr.globalRefCount < 1)
             return;
 
-        if (descr.globalRefCount == 1) {
+        if (descr.globalRefCount == 1) {            
             if (descr.globalInstance)
                 descr.globalInstance->deleteLater();
             descr.globalInstance = 0;
             descr.globalId = QUuid();
             descr.globalRefCount = 0;
+            metaMap.remove(entry);
         } else {
             descr.globalRefCount--;
         }
@@ -176,8 +180,13 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& 
         if (service) {
             service->deleteLater();
         }
+        metaMap.remove(entry);
     }
+    if(metaMap.empty())
+        emit allInstancesClosed();
+
 }
 
+#include "moc_instancemanager_p.cpp"
 
 QTM_END_NAMESPACE

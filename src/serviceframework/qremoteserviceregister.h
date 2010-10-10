@@ -94,7 +94,7 @@ public:
     private:
         QExplicitlySharedDataPointer<QRemoteServiceRegisterEntryPrivate> d;
 
-        const QMetaObject* metaObject() const; //TODO Private?
+        const QMetaObject* metaObject() const;
 
         friend class QRemoteServiceRegister;
         friend class InstanceManager;
@@ -122,8 +122,9 @@ public:
     SecurityFilter setSecurityFilter(SecurityFilter filter);
 
 Q_SIGNALS:
-    // TODO void instanceDisconnected(const QRemoteServiceRegister::Entry&)
-    void lastInstanceClosed();
+    void allInstancesClosed();
+    void instanceClosed(const QRemoteServiceRegister::Entry&);
+
 private:
 
     Entry createEntry(const QString& serviceName,
