@@ -168,6 +168,8 @@ int QSoundEffect::loops() const
 
 void QSoundEffect::setLoops(int loopCount)
 {
+    if (loopCount == 0)
+        loopCount = 1;
     if (d->loopCount() == loopCount)
         return;
 
@@ -206,6 +208,19 @@ void QSoundEffect::setMuted(bool muted)
 void QSoundEffect::play()
 {
     d->play();
+}
+
+/*!
+  \qmlmethod SoundEffect::stop()
+
+  Stop current playback.
+  Note that if the backend is PulseAudio, due to the limitation of the underlying API,
+  tis stop will only prevent next looping but will not be able to stop current playback immediately.
+
+ */
+void QSoundEffect::stop()
+{
+    d->stop();
 }
 
 QT_END_NAMESPACE

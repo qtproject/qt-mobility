@@ -706,7 +706,7 @@ QStringList QFeedbackFileEffect::supportedMimeTypes()
 */
 void QFeedbackFileEffect::setState(State newState)
 {
-    if (newState != Stopped && state() == Stopped)
+    if (newState != Stopped && state() == Stopped && !isLoaded())
         load(); // makes sure the file is loaded
     QFeedbackFileInterface::instance()->setEffectState(this, newState);
 }

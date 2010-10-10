@@ -24,7 +24,7 @@
 #include "mlanguagespecifickeymap.h"
 #include "predictivesearchkeymapdefs.h"
 // This macro suppresses log writes
-// #define NO_PRED_SEARCH_LOGS
+//#define NO_PRED_SEARCH_LOGS
 #include "predictivesearchlog.h"
 
 
@@ -141,6 +141,15 @@ QChar CPcsKeyMap::Separator() const
     }
 
 // ----------------------------------------------------------------------------
+// CPcsKeyMap::CheckLanguage
+// Default implementation
+// ----------------------------------------------------------------------------
+MLanguageSpecificKeymap* CPcsKeyMap::CheckLanguage(QString /*aSource*/) const
+	{
+	return NULL;
+	}
+
+// ----------------------------------------------------------------------------
 // CPcsKeyMap::SelectLanguages
 // Default implementation selects only the current default language.
 // ----------------------------------------------------------------------------
@@ -176,15 +185,6 @@ TBool CPcsKeyMap::DetermineSpecialCharBehaviour(QString /*aSource*/) const
 TBool CPcsKeyMap::ShouldSkipChar(QChar /*aChar*/, TBool /*aSkipHashStar*/) const
 	{
 	return EFalse;
-	}
-
-// ----------------------------------------------------------------------------
-// CPcsKeyMap::CheckLanguage
-// Default implementation
-// ----------------------------------------------------------------------------
-MLanguageSpecificKeymap* CPcsKeyMap::CheckLanguage(QString /*aSource*/) const
-	{
-	return NULL;
 	}
 
 // ----------------------------------------------------------------------------

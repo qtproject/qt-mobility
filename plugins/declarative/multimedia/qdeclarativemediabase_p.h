@@ -70,6 +70,10 @@ class QDeclarativeMediaBaseAnimation;
 class QDeclarativeMediaBase
 {
 public:
+    enum Loop {
+        INFINITE = -1
+    };
+
     QDeclarativeMediaBase();
     virtual ~QDeclarativeMediaBase();
 
@@ -78,6 +82,9 @@ public:
 
     bool isAutoLoad() const;
     void setAutoLoad(bool autoLoad);
+
+    int loops() const;
+    void setLoops(int loopCount);
 
     bool isPlaying() const;
     void setPlaying(bool playing);
@@ -122,6 +129,7 @@ protected:
     virtual void autoLoadChanged() = 0;
     virtual void playingChanged() = 0;
     virtual void pausedChanged() = 0;
+    virtual void loopsChanged() = 0;
 
     virtual void started() = 0;
     virtual void resumed() = 0;
@@ -150,6 +158,8 @@ protected:
     virtual void errorChanged() = 0;
 
     bool m_paused;
+    int m_loopCount;
+    int m_runningCount;
     bool m_playing;
     bool m_autoLoad;
     bool m_loaded;

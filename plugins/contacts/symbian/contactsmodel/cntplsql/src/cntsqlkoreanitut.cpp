@@ -31,6 +31,7 @@
 
 const int KMinimumSearchPatternLength = 1;
 const QString KColumn = "nbr";
+const int KColumnLimit = 4;
 
 
 /**
@@ -82,7 +83,8 @@ QString CntSqlKoreanItuT::basicKoreanSearch(const QString &pattern)
         {
         return "SELECT contact_id FROM " + selectTable(tokens.at(0)) +
                 " WHERE (" + compareColumnsInOrder(tokens) + 
-                ") ORDER BY first_name, last_name ASC;";
+                ") OR " + compareColumnsFromMidleInOrder(tokens) +
+                " ORDER BY first_name, last_name ASC;";
         }
     else
         {
@@ -100,7 +102,7 @@ QString CntSqlKoreanItuT::compareColumnsInOrder(QStringList &tokens) const
     if( count > 1 )
         {
         //Curent column limitation is 4.
-        for( int i = 0; i < count && i < 4; i++ )
+        for( int i = 0; i < count && i < KColumnLimit; i++ )
             {
             columns = getSearchColumns(tokens.at(i),i );
             if (!columns.isEmpty())
@@ -117,6 +119,72 @@ QString CntSqlKoreanItuT::compareColumnsInOrder(QStringList &tokens) const
     return query;
     }
 
+QString CntSqlKoreanItuT::compareColumnsFromMidleInOrder( QStringList &tokens) const
+    {
+    int count = tokens.count();
+    int andSatement = 0;
+    int i = 0;
+    QString query = QString();
+    QString columns = QString();
+    //At least two columns to compare.
+    if( count > 1 )
+        {
+        query.append("(");
+        //Curent column limitation is 4.
+        for( ; i < count && i < KColumnLimit; i++ )
+            {
+            if(count > KColumnLimit -1)
+                {
+                count = KColumnLimit -1;
+                }
+            columns = getSearchColumns(tokens.at(i),(i + 1));
+            if (!columns.isEmpty())
+                {
+                ++andSatement;
+                query.append(columns);
+                if(andSatement < count && i < 3)
+                    {
+                    query.append(" AND ");
+                    }
+                else{
+                    query.append(")");
+                    }
+                }
+            }
+        query.append(" OR (");
+        //Curent column limitation is 4.
+        i = 0;
+        andSatement = 0;
+        if(count > KColumnLimit - 2)
+            {
+            count = KColumnLimit - 2;
+            }
+        for( ; i < count && i < KColumnLimit; i++ )
+            {
+            columns = getSearchColumns(tokens.at(i),(i + 2) );
+            if (!columns.isEmpty())
+                {
+                ++andSatement;
+                query.append(columns);
+                if(andSatement < count && i < 3)
+                    {
+                    query.append(" AND ");
+                    }
+                else{
+                    query.append(")");
+                    }
+                }
+            }
+        query.append(" OR ");
+        columns = getSearchColumns(tokens.at(0),3 );
+        if (!columns.isEmpty())
+            {
+            query.append(columns);
+            }
+        }
+    return query;
+    }
+
 QString CntSqlKoreanItuT::getSearchColumns(const QString& token, int position) const
     {
     QString statement = QString();
@@ -125,7 +193,7 @@ QString CntSqlKoreanItuT::getSearchColumns(const QString& token, int position) c
     QString upper;
     QString num;
     
-    if(position < 4 )
+    if(position < KColumnLimit )
         {
         int err = mTwelveKeyMap->GetNumericLimits(token, lower, upper);
         if(err)

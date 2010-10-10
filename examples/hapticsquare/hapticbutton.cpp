@@ -21,7 +21,7 @@ void HapticButton::paintEvent(QPaintEvent *)
 {
     QPainter paint(this);
 
-    QRect r(0, 0, width()-1, height()-1);
+    QRect r(1, 1, width()-2, height()-2);
     paint.drawRoundedRect(r, 10, 10);
     paint.drawText(r, Qt::AlignCenter, m_label);
 }
