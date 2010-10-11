@@ -720,7 +720,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemInstances(const QO
     if (!forExport) {
         // first, retrieve all persisted instances (exceptions) which occur between the specified datetimes.
         QOrganizerItemDetailFilter parentFilter;
-        parentFilter.setDetailDefinitionName(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemInstanceOrigin::FieldParentLocalId);
+        parentFilter.setDetailDefinitionName(QOrganizerItemParent::DefinitionName, QOrganizerItemParent::FieldParentLocalId);
         parentFilter.setValue(QVariant::fromValue(generator.localId()));
         foreach(const QOrganizerItem&currException, d->m_organizeritems) {
             if (QOrganizerItemManagerEngine::testFilter(parentFilter, currException)) {
@@ -823,7 +823,7 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem
     }
 
     // add the detail which identifies exactly which instance this item is.
-    QOrganizerItemInstanceOrigin currOrigin;
+    QOrganizerItemParent currOrigin;
     currOrigin.setParentLocalId(generator.localId());
     currOrigin.setOriginalDate(rdate.date());
     occDets.append(currOrigin);
@@ -1007,7 +1007,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         if (theOrganizerItem->type() == QOrganizerItemType::TypeEventOccurrence) {
             // update the event by adding an EX-DATE which corresponds to the original date of the occurrence being saved.
             QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
-            QOrganizerItemInstanceOrigin origin = theOrganizerItem->detail<QOrganizerItemInstanceOrigin>();
+            QOrganizerItemParent origin = theOrganizerItem->detail<QOrganizerItemParent>();
             QOrganizerItemLocalId parentId = origin.parentLocalId();
 
             // for occurrences, if given a null collection id, save it in the same collection as the parent.
@@ -1039,7 +1039,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         } else if (theOrganizerItem->type() == QOrganizerItemType::TypeTodoOccurrence) {
             // update the todo by adding an EX-DATE which corresponds to the original date of the occurrence being saved.
             QOrganizerItemManager::Error tempError = QOrganizerItemManager::NoError;
-            QOrganizerItemInstanceOrigin origin = theOrganizerItem->detail<QOrganizerItemInstanceOrigin>();
+            QOrganizerItemParent origin = theOrganizerItem->detail<QOrganizerItemParent>();
             QOrganizerItemLocalId parentId = origin.parentLocalId();
 
             // for occurrences, if given a null collection id, save it in the same collection as the parent.
@@ -1105,7 +1105,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
     if (theItem->type() == QOrganizerItemType::TypeEventOccurrence
             || theItem->type() == QOrganizerItemType::TypeTodoOccurrence) {
         const QString guid = theItem->guid();
-        QOrganizerItemInstanceOrigin instanceOrigin = theItem->detail<QOrganizerItemInstanceOrigin>();
+        QOrganizerItemParent instanceOrigin = theItem->detail<QOrganizerItemParent>();
         if (!instanceOrigin.originalDate().isValid()) {
             *error = QOrganizerItemManager::InvalidOccurrenceError;
             return false;
@@ -1144,7 +1144,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
                     return false;
                 }
                 // found a matching item - set the parentId of the occurrence
-                QOrganizerItemInstanceOrigin origin = theItem->detail<QOrganizerItemInstanceOrigin>();
+                QOrganizerItemParent origin = theItem->detail<QOrganizerItemParent>();
                 origin.setParentLocalId(parentId);
                 theItem->saveDetail(&origin);
             }

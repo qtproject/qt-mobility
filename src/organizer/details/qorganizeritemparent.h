@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef QORGANIZERITEMINSTANCEORIGIN_H
-#define QORGANIZERITEMINSTANCEORIGIN_H
+#ifndef QORGANIZERITEMPARENT_H
+#define QORGANIZERITEMPARENT_H
 
 #include <QString>
 
@@ -52,7 +52,7 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_ORGANIZER_EXPORT QOrganizerItemInstanceOrigin : public QOrganizerItemDetail
+class Q_ORGANIZER_EXPORT QOrganizerItemParent : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
@@ -60,7 +60,7 @@ public:
     static const QLatin1Constant FieldParentLocalId;
     static const QLatin1Constant FieldOriginalDate;
 #else
-    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemInstanceOrigin, "InstanceOrigin")
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemParent, "Parent")
     Q_DECLARE_LATIN1_CONSTANT(FieldParentLocalId, "ParentLocalId");
     Q_DECLARE_LATIN1_CONSTANT(FieldOriginalDate, "OriginalDate");
 #endif

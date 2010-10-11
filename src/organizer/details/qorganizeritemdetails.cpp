@@ -245,55 +245,55 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGuid::FieldGuid, "Guid");
 
 
 
-/* ==================== QOrganizerItemInstanceOrigin.h ======================= */
+/* ==================== QOrganizerItemParent.h ======================= */
 /*!
-   \class QOrganizerItemInstanceOrigin
-   \brief The QOrganizerItemInstanceOrigin class contains information about when and from where or whom the organizer item originated.
+   \class QOrganizerItemParent
+   \brief The QOrganizerItemParent class contains information about the event or todo that generated this item.
    \inmodule QtOrganizer
    \ingroup organizer-details
  */
 
 /*!
-   \variable QOrganizerItemInstanceOrigin::DefinitionName
+   \variable QOrganizerItemParent::DefinitionName
    The constant string which identifies the definition of details which contain information which identifies
    the recurrent event of which the organizer item is a particular instance or exception of.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::DefinitionName, "InstanceOrigin");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::DefinitionName, "Parent");
 
 /*!
-   \variable QOrganizerItemInstanceOrigin::FieldParentLocalId
+   \variable QOrganizerItemParent::FieldParentLocalId
 
    The constant key for the field in which the local id of the parent recurrent event
-   is stored in details of the QOrganizerItemInstanceOrigin type.
+   is stored in details of the QOrganizerItemParent type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldParentLocalId, "ParentLocalId");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::FieldParentLocalId, "ParentLocalId");
 
 
 /*!
-   \variable QOrganizerItemInstanceOrigin::FieldOriginalDate
+   \variable QOrganizerItemParent::FieldOriginalDate
 
    The constant key for the field in which the original date of this instance
    or exception according to the recurrent series of the parent item is stored.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldOriginalDate, "OriginalDate");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::FieldOriginalDate, "OriginalDate");
 
 /*!
-   \fn QOrganizerItemInstanceOrigin::parentLocalId() const
+   \fn QOrganizerItemParent::parentLocalId() const
     Returns the local id of the item instance origin's parent item.
  */
 
 /*!
-   \fn QOrganizerItemInstanceOrigin::setParentLocalId(const QOrganizerItemLocalId& parentId)
+   \fn QOrganizerItemParent::setParentLocalId(const QOrganizerItemLocalId& parentId)
     Sets the parent id of this instance origin item to \a parentId.
  */
 
 /*!
-   \fn QOrganizerItemInstanceOrigin::originalDate() const
+   \fn QOrganizerItemParent::originalDate() const
     Returns the original date of this instance origin item.
  */
 
 /*!
-   \fn QOrganizerItemInstanceOrigin::setOriginalDate(const QDate& date)
+   \fn QOrganizerItemParent::setOriginalDate(const QDate& date)
     Sets the origin date to \a date.
  */
 

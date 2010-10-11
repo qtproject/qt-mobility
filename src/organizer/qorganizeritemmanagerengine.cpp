@@ -207,7 +207,7 @@ QString QOrganizerItemManagerEngine::managerUri() const
   QOrganizerItemType::TypeTodo will result in a list of QOrganizerItemType::TypeTodoOccurrence
   items.  If the \a generator is of any other type, it is returned by itself from the backend.
 
-  The occurrence-typed items returned should have a QOrganizerItemInstanceOrigin detail that refers
+  The occurrence-typed items returned should have a QOrganizerItemParent detail that refers
   to the generator and the original instance that the event would have occurred on (if it is an
   exception).  No returned item should contain a QOrganizerItemRecurrence detail.
 
@@ -849,13 +849,13 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     retn.insert(d.name(), d);
 
     // instance origin
-    d.setName(QOrganizerItemInstanceOrigin::DefinitionName);
+    d.setName(QOrganizerItemParent::DefinitionName);
     fields.clear();
     f.setDataType(qMetaTypeId<QOrganizerItemLocalId>());
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
+    fields.insert(QOrganizerItemParent::FieldParentLocalId, f);
     f.setDataType(QVariant::Date);
-    fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalDate, f);
+    fields.insert(QOrganizerItemParent::FieldOriginalDate, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -1242,13 +1242,13 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     retn.insert(d.name(), d);
 
     // instance origin
-    d.setName(QOrganizerItemInstanceOrigin::DefinitionName);
+    d.setName(QOrganizerItemParent::DefinitionName);
     fields.clear();
     f.setDataType(qMetaTypeId<QOrganizerItemLocalId>());
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
+    fields.insert(QOrganizerItemParent::FieldParentLocalId, f);
     f.setDataType(QVariant::Date);
-    fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalDate, f);
+    fields.insert(QOrganizerItemParent::FieldOriginalDate, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);

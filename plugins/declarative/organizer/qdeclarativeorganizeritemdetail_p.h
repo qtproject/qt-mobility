@@ -227,37 +227,37 @@ signals:
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemGuid)
 
-//instance origin detail
-class QDeclarativeOrganizerItemInstanceOrigin : public QDeclarativeOrganizerItemDetail
+//parent detail
+class QDeclarativeOrganizerItemParent : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
     Q_PROPERTY(uint parentLocalId READ parentLocalId WRITE setParentLocalId NOTIFY valueChanged)
     Q_PROPERTY(QDate originalDate READ originalDate WRITE setOriginalDate NOTIFY valueChanged)
 
 public:
-    Q_DECLARE_LATIN1_CONSTANT(DetailName, "instanceOrigin");
-    QDeclarativeOrganizerItemInstanceOrigin(QObject* parent = 0)
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "parent");
+    QDeclarativeOrganizerItemParent(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
     }
 
     void setParentLocalId(uint parentId)
     {
-        m_detail.setValue(QOrganizerItemInstanceOrigin::FieldParentLocalId, parentId);
+        m_detail.setValue(QOrganizerItemParent::FieldParentLocalId, parentId);
     }
     uint parentLocalId() const
     {
-        return m_detail.variantValue(QOrganizerItemInstanceOrigin::FieldParentLocalId).toInt();
+        return m_detail.variantValue(QOrganizerItemParent::FieldParentLocalId).toInt();
     }
 
 
-    void setOriginalDate(const QDate& date) {m_detail.setValue(QOrganizerItemInstanceOrigin::FieldOriginalDate, date);}
-    QDate originalDate() const {return m_detail.variantValue(QOrganizerItemInstanceOrigin::FieldOriginalDate).toDate();}
+    void setOriginalDate(const QDate& date) {m_detail.setValue(QOrganizerItemParent::FieldOriginalDate, date);}
+    QDate originalDate() const {return m_detail.variantValue(QOrganizerItemParent::FieldOriginalDate).toDate();}
 
 signals:
     void valueChanged();
 };
-QML_DECLARE_TYPE(QDeclarativeOrganizerItemInstanceOrigin)
+QML_DECLARE_TYPE(QDeclarativeOrganizerItemParent)
 
 //location detail
 class QDeclarativeOrganizerItemLocation : public QDeclarativeOrganizerItemDetail
