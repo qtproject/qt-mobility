@@ -100,6 +100,8 @@ private:
 	TInt NameFieldIndex(const CContactItemField& aNameField) const;
 	void DeleteInLowDiskConditionL(CPplTableBase* aTable, CContactItem* aContactItem);
 
+	bool CheckPredictiveSearchSetting() const;
+
 private:
 	RSqlDatabase&				  iDatabase; // CPplContactItemManager does not own the RSqlDatabase object
 	MLplTransactionManager& 	  iTransactionManager;
@@ -117,6 +119,8 @@ private:
 	RPplIccContactStore&          iIccContactStore;
 	//RColumboSession             iColSession;
 	CPredictiveSearchSynchronizer* iPredictiveSearchSynchronizer; // Owned
+	// If false, then predictive search can't used.
+	bool						  iPredictiveSearchInUse;
 
 	// For unit testing
 	friend class UT_CPplPredictiveSearchTable;
