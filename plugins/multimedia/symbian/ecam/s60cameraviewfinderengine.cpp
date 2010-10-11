@@ -590,7 +590,7 @@ void S60CameraViewfinderEngine::viewFinderBitmapReady(const QPixmap &pixmap)
                         emit error(QCamera::CameraError, tr("Presenting viewfinder frame failed."));
                         ++m_vfErrorsSignalled;
                     }
-
+                }
             }
         } else {
             if (m_vfErrorsSignalled < KMaxVFErrorsSignalled) {
