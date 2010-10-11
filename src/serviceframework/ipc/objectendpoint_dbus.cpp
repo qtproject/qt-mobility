@@ -108,6 +108,7 @@ public:
     QRemoteServiceRegister::Entry entry;
     QUuid serviceInstanceId;
 
+    // Local client ownership list
     QList<QPair<QString, QPair<QRemoteServiceRegister::Entry, QUuid> > > clientList; 
 };
 
@@ -143,23 +144,31 @@ ObjectEndPoint::~ObjectEndPoint()
     delete d;
 }
 
-void ObjectEndPoint::disconnected(QString clientId)
+void ObjectEndPoint::disconnected(const QString& clientId, const QString& instanceId)
 {
+    // Service Side
     if (d->endPointType == Service) {
         for (int i=d->clientList.size()-1; i>=0; i--) {
+            // Find right client process
             if (d->clientList[i].first == clientId) {
                 QRemoteServiceRegister::Entry entry = d->clientList[i].second.first;
                 QUuid instance = d->clientList[i].second.second;
-                InstanceManager::instance()->removeObjectInstance(entry, instance);
-                d->clientList.removeAt(i);
+
+                if (instance.toString() == instanceId) {
+                    // Remove an instance from the InstanceManager and local list
+                    InstanceManager::instance()->removeObjectInstance(entry, instance);
+                    d->clientList.removeAt(i);
+
+                    // Unregister object from D-Bus
+                    uint hash = qHash(instance.toString());
+                    QString objPath = "/" + entry.interfaceName() + "/" + entry.version() +
+                                      "/" + QString::number(hash);
+                    objPath.replace(QString("."), QString("/"));
+                    connection->unregisterObject(objPath, QDBusConnection::UnregisterTree);
+                }
             }
         }
-
-        //if (d->clientList.size() < 1)
-        //    deleteLater();
     }
-   
-    //TODO: UnregisterService
 }
 
 /*!
@@ -433,6 +442,16 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         response.d->payload = QVariant(data);
         dispatch->writePackage(response);
     }
+}
+
+/*!
+    Returns the created service instance Id
+*/
+QString ObjectEndPoint::getInstanceId() const
+{
+    Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
+   
+    return d->serviceInstanceId.toString();
 }
 
 /*!

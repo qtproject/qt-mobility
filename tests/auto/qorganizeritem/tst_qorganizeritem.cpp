@@ -597,6 +597,7 @@ void tst_QOrganizerItem::datastream()
     itemIn.addComment("test comment");
     QOrganizerItem itemOut;
     QOrganizerItemId originalId;
+    QOrganizerCollectionId originalCollectionId;
 
     // first, stream an item with a complete id
     {
@@ -604,6 +605,7 @@ void tst_QOrganizerItem::datastream()
         QOrganizerItemManager om("memory");
         QVERIFY(om.saveItem(&itemIn)); // fill in its ID
         originalId = itemIn.id();
+        originalCollectionId = itemIn.collectionId();
         stream1 << itemIn;
         QVERIFY(buffer.size() > 0);
         QDataStream stream2(buffer);
@@ -644,16 +646,32 @@ void tst_QOrganizerItem::datastream()
         QVERIFY(itemOut.id() != itemIn.id()); // in this case, with null mgr uri, the id doesn't get serialized.
     }
 
-    // fourth, stream an item with a null id
+    // fourth, stream an item with null ids
     {
         QDataStream stream1(&buffer, QIODevice::WriteOnly);
         itemIn.setId(QOrganizerItemId());
+        itemIn.setCollectionId(QOrganizerCollectionId());
         stream1 << itemIn;
         QVERIFY(buffer.size() > 0);
         QDataStream stream2(buffer);
         stream2 >> itemOut;
         //QCOMPARE(itemOut, itemIn); // can't do QCOMPARE because detail keys get changed.
         QVERIFY(itemOut.details() == itemIn.details());
+        QVERIFY(itemOut.id() == itemIn.id());
+    }
+
+    // fifth, stream an item with a collection id
+    {
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        itemIn.setId(QOrganizerItemId());
+        itemIn.setCollectionId(originalCollectionId);
+        stream1 << itemIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> itemOut;
+        //QCOMPARE(itemOut, itemIn); // can't do QCOMPARE because detail keys get changed.
+        QVERIFY(itemOut.details() == itemIn.details());
+        QVERIFY(itemOut.collectionId() == itemIn.collectionId());
         QVERIFY(itemOut.id() == itemIn.id());
     }
 

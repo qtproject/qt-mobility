@@ -144,7 +144,6 @@ void QServiceMetaObjectDBus::connectMetaSignals(bool signalsObject) {
                 // Connects the service signal to the corresponding DBus service signal
                 if (customType) {
                     QByteArray signal = mm.signature();
-                    qDebug() << "CONNECTING" << signal;
                     ServiceMetaSignalIntercepter *intercept =
                         new ServiceMetaSignalIntercepter(d->service, "2"+signal, this);
                     intercept->setMetaIndex(i);
