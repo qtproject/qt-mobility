@@ -67,6 +67,8 @@ class Q_FEEDBACK_EXPORT QFeedbackEffect : public QObject
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
 
 public:
+
+    // Make sure these are kept up to date with the declarative version
     enum ThemeEffect {
         ThemeBasic, ThemeSensitive, ThemeBasicButton, ThemeSensitiveButton,
         ThemeBasicKeypad, ThemeSensitiveKeypad, ThemeBasicSlider, ThemeSensitiveSlider,

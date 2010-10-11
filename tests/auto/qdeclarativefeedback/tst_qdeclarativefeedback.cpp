@@ -149,6 +149,7 @@ void tst_qdeclarativefeedback::themeEffect()
 
     // We don't export this class, but we're just poking at properties anyway
     QObject *dte = component.create();
+    QCOMPARE(component.errorString(), QString());
     QVERIFY(dte != 0);
 
     // Test the effect property gets assigned
@@ -160,6 +161,8 @@ void tst_qdeclarativefeedback::themeEffect()
     component.loadUrl(QUrl::fromLocalFile(SRCDIR "/data/themeeffect2.qml"));
 
     dte = component.create();
+    QCOMPARE(component.errorString(), QString());
+
     QVERIFY(dte != 0);
     // Effect property as a string
     p = dte->metaObject()->property(dte->metaObject()->indexOfProperty("effect"));
@@ -171,6 +174,7 @@ void tst_qdeclarativefeedback::themeEffect()
     component.loadUrl(QUrl::fromLocalFile(SRCDIR "/data/themeeffect3.qml"));
 
     dte = component.create();
+    QCOMPARE(component.errorString(), QString());
     QVERIFY(dte != 0);
 
     // Well, we can only verify that through a dummy plugin (TODO). verified through qdebug atm :)

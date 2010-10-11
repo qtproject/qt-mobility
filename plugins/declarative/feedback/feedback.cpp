@@ -45,6 +45,7 @@
 #include "qdeclarativehapticseffect.h"
 #include "qdeclarativefileeffect.h"
 #include "qdeclarativethemeeffect.h"
+#include "qdeclarativefeedback.h"
 
 class QFeedbackDeclarativeModule : public QDeclarativeExtensionPlugin
 {
@@ -53,7 +54,7 @@ public:
     virtual void registerTypes(const char *uri)
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.feedback"));
-        qmlRegisterUncreatableType<QFeedbackEffect>("QtMobility.feedback", 1, 1, "Feedback", "FeedbackEffect is an abstract class");
+        qmlRegisterUncreatableType<QDeclarativeFeedbackEffect>("QtMobility.feedback", 1, 1, "Feedback", "FeedbackEffect is an abstract class"); // It's not really
         qmlRegisterType<QFeedbackActuator>("QtMobility.feedback", 1, 1, "Actuator");
         qmlRegisterType<QDeclarativeFileEffect>("QtMobility.feedback", 1, 1, "FileEffect");
         qmlRegisterType<QDeclarativeHapticsEffect>("QtMobility.feedback", 1, 1, "HapticsEffect");
@@ -62,6 +63,7 @@ public:
 };
 
 #include "moc_qdeclarativethemeeffect.cpp"
+#include "moc_qdeclarativefeedback.cpp"
 #include "feedback.moc"
 
 Q_EXPORT_PLUGIN2(declarative_feedback, QT_PREPEND_NAMESPACE(QFeedbackDeclarativeModule));

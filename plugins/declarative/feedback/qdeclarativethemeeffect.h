@@ -43,6 +43,7 @@
 
 #include <QtDeclarative/qdeclarative.h>
 #include <qfeedbackeffect.h>
+#include "qdeclarativefeedback.h"
 
 QTM_USE_NAMESPACE
 
@@ -51,14 +52,14 @@ class QDeclarativeThemeEffect : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool supportsEffect READ effectSupported)
-    Q_PROPERTY(QFeedbackEffect::ThemeEffect effect READ effect WRITE setEffect NOTIFY effectChanged)
+    Q_PROPERTY(QDeclarativeFeedbackEffect::ThemeEffect effect READ effect WRITE setEffect NOTIFY effectChanged)
     Q_CLASSINFO("DefaultMethod", "play()")
 
 public:
 
     QDeclarativeThemeEffect(QObject *parent = 0)
         : QObject(parent),
-        m_effect(QFeedbackEffect::ThemeBasic)
+        m_effect(QDeclarativeFeedbackEffect::Basic)
     {
     }
 
@@ -66,7 +67,7 @@ public:
         return QFeedbackEffect::supportsThemeEffect();
     }
 
-    void setEffect(QFeedbackEffect::ThemeEffect effect)
+    void setEffect(QDeclarativeFeedbackEffect::ThemeEffect effect)
     {
         if (m_effect != effect) {
             m_effect = effect;
@@ -74,20 +75,20 @@ public:
         }
     }
 
-    QFeedbackEffect::ThemeEffect effect() const
+    QDeclarativeFeedbackEffect::ThemeEffect effect() const
     {
         return m_effect;
     }
 
     Q_INVOKABLE void play() {
-        QFeedbackEffect::playThemeEffect(m_effect);
+        QFeedbackEffect::playThemeEffect(static_cast<QFeedbackEffect::ThemeEffect>(m_effect));
     }
 
 signals:
     void effectChanged();
 
 public:
-    QFeedbackEffect::ThemeEffect m_effect;
+    QDeclarativeFeedbackEffect::ThemeEffect m_effect;
 };
 
 QML_DECLARE_TYPE(QDeclarativeThemeEffect);

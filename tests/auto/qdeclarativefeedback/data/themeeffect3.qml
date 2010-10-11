@@ -3,5 +3,5 @@ import QtMobility.feedback 1.1;
 
 // Test default method
 Item {
-    Component.onCompleted: ThemeEffect {effect: "ThemeItemMoveOver"}
+    Component.onCompleted: ThemeEffect {effect: "ItemMoveOver"}
 }
