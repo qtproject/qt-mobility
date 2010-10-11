@@ -118,27 +118,22 @@ int QOrganizerItemSimulatorEngine::managerVersion() const
     return 1;
 }
 
-bool QOrganizerItemSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
     Connection *con = Connection::instance();
 
     if (!con->mNotifySimulator)
-        return QOrganizerItemMemoryEngine::saveItem(theOrganizerItem, collectionId, changeSet, error);
+        return QOrganizerItemMemoryEngine::saveItem(theOrganizerItem, changeSet, error);
 
     // translate local id -> remote id
     QOrganizerItem item = *theOrganizerItem;
     con->translateItemIds(&item, con->mManagerUri, con->mLocalToRemote);
     bool newItem = item.id().isNull();
 
-    // translate collection id
-    QOrganizerCollectionId remoteCollectionId;
-    remoteCollectionId.setManagerUri(con->mManagerUri);
-    remoteCollectionId.setLocalId(con->mLocalToRemote.collections.value(collectionId));
-
     // save remotely
     QLocalSocket *sendSocket = con->sendSocket();
     Simulator::SaveOrganizerItemReply reply = RemoteMetacall<Simulator::SaveOrganizerItemReply>::call(
-                sendSocket, TimeoutSync, "requestSaveOrganizerItem", item, remoteCollectionId);
+                sendSocket, TimeoutSync, "requestSaveOrganizerItem", item);
     *error = reply.error;
 
     // if it failed, stop
@@ -146,7 +141,7 @@ bool QOrganizerItemSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, c
         return false;
 
     // save locally
-    if (!QOrganizerItemMemoryEngine::saveItem(theOrganizerItem, collectionId, changeSet, error))
+    if (!QOrganizerItemMemoryEngine::saveItem(theOrganizerItem, changeSet, error))
         return false; // it's already saved remotely - revert?
 
     if (newItem) {

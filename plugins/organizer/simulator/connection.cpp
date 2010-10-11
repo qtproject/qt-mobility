@@ -112,7 +112,7 @@ void Connection::translateItemIds(QOrganizerItem *item, const QString &managerUr
             id.setManagerUri(managerUri);
             id.setLocalId(idTranslation.collections.value(previousLocalId));
         }
-        QOrganizerItemManagerEngine::setItemCollectionId(item, id);
+        item->setCollectionId(id);
     }
 
     // translate any ids and localids appearing in details
@@ -201,32 +201,26 @@ void Connection::clearOrganizerData()
     mRemoteToLocal.collections.clear();
 
     // map default collections to each other
-    QOrganizerCollectionLocalId defaultCollectionId = mManager.defaultCollectionId();
+    QOrganizerCollectionLocalId defaultCollectionId = mManager.defaultCollection().localId();
     mLocalToRemote.collections.insert(defaultCollectionId, defaultCollectionId);
     mRemoteToLocal.collections.insert(defaultCollectionId, defaultCollectionId);
 
     mNotifySimulator = false;
-    mManager.removeItems(mManager.itemIds(), 0);
-    foreach (QOrganizerCollectionLocalId collectionId, mManager.collectionIds())
-        mManager.removeCollection(collectionId);
+    mManager.removeItems(mManager.itemIds());
+    foreach (const QOrganizerCollection &collection, mManager.collections())
+        mManager.removeCollection(collection);
     mNotifySimulator = true;
 }
 
-void Connection::saveOrganizerItem(QtMobility::QOrganizerItem item, QtMobility::QOrganizerCollectionId collectionId)
+void Connection::saveOrganizerItem(QtMobility::QOrganizerItem item)
 {
     const QOrganizerItemLocalId remoteLocalId = item.localId();
     translateItemIds(&item, mManager.managerUri(), mRemoteToLocal);
     bool newItem = item.id().isNull();
 
-    if (!mRemoteToLocal.collections.contains(collectionId.localId())) {
-        qDebug() << "Error saving item: No such collection";
-        return;
-    }
-    QOrganizerCollectionLocalId localCollection = mRemoteToLocal.collections.value(collectionId.localId());
-
     mNotifySimulator = false;
     //qDebug() << "Saving item" << item << " to collection " << localCollection;
-    mManager.saveItem(&item, localCollection);
+    mManager.saveItem(&item);
     mNotifySimulator = true;
     if (mManager.error()) {
         qDebug() << "Error saving item:" << mManager.error();
