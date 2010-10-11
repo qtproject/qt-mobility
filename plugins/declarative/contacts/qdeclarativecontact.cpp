@@ -106,3 +106,86 @@ QVariant QDeclarativeContact::details(const QString& name)
 {
     return d->details(name);
 }
+
+void QDeclarativeContact::clearDetails()
+{
+    d->m_details.clear();
+    emit detailsChanged();
+}
+
+QDeclarativeContactAddress* QDeclarativeContact::address()
+{
+    if (d->m_defs.isEmpty())
+}
+QDeclarativeContactAnniversary* QDeclarativeContact::anniversary()
+{
+}
+QDeclarativeContactAvatar* QDeclarativeContact::avatar()
+{
+}
+QDeclarativeContactBirthday*  QDeclarativeContact::birthday()
+{
+}
+QDeclarativeContactDisplayLabel*  QDeclarativeContact::displayLabel()
+{
+}
+QDeclarativeContactEmailAddress*  QDeclarativeContact::email()
+{
+}
+QDeclarativeContactFamily*  QDeclarativeContact::family()
+{
+}
+QDeclarativeContactFavorite*  QDeclarativeContact::favorite()
+{
+}
+QDeclarativeContactGender*  QDeclarativeContact::gender()
+{
+}
+QDeclarativeContactGeoLocation*  QDeclarativeContact::geolocation()
+{
+}
+QDeclarativeContactGlobalPresence*  QDeclarativeContact::globalPresence()
+{
+}
+QDeclarativeContactGuid*  QDeclarativeContact::guid()
+{
+}
+QDeclarativeContactName*  QDeclarativeContact::name()
+{
+}
+QDeclarativeContactNickname*  QDeclarativeContact::nickname()
+{
+}
+QDeclarativeContactNote*  QDeclarativeContact::note()
+{
+}
+QDeclarativeContactOnlineAccount*  QDeclarativeContact::onlineAccount()
+{
+}
+QDeclarativeContactOrganization*  QDeclarativeContact::organization()
+{
+}
+QDeclarativeContactPhoneNumber*  QDeclarativeContact::phoneNumber()
+{
+}
+QDeclarativeContactPresence*  QDeclarativeContact::presence()
+{
+}
+QDeclarativeContactRingtone*  QDeclarativeContact::ringtone()
+{
+}
+QDeclarativeContactSyncTarget*  QDeclarativeContact::syncTarget()
+{
+}
+QDeclarativeContactTag*  QDeclarativeContact::tag()
+{
+}
+QDeclarativeContactThumbnail*  QDeclarativeContact::thumbnail()
+{
+}
+QDeclarativeContactType*  QDeclarativeContact::type()
+{
+}
+QDeclarativeContactUrl*  QDeclarativeContact::url()
+{
+}

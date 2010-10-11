@@ -126,10 +126,16 @@ int QDeclarativeContactMetaObject::createProperty(const char * name,  const char
 
     if (detailMetaData) {
         int propId = -1;
-        if (detailMetaData->group)
-            propId = QDeclarativeOpenMetaObject::createProperty(name, "QDeclarativeListProperty<QDeclarativeContactDetail>");
-        else
+        if (detailMetaData->group) {
+            QContactDetailDefinition def = m_defs.value(detailMetaData->definitionName);
+
+            //do not allow multiple details property for non unique details
+            if (def.isEmpty() || !def.isUnique())
+                propId = QDeclarativeOpenMetaObject::createProperty(name, "QDeclarativeListProperty<QDeclarativeContactDetail>");
+        }
+        else {
             propId = QDeclarativeOpenMetaObject::createProperty(name, "QVariant");
+        }
         m_properties.insert(propId, detailMetaData);
         return propId;
     }
