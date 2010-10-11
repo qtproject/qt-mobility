@@ -53,7 +53,6 @@ class QDeclarativeHapticsEffect : public QFeedbackHapticsEffect
     Q_PROPERTY(QDeclarativeListProperty<QFeedbackActuator> actuators READ actuators NOTIFY actuatorsChanged)
     Q_PROPERTY(bool running READ isRunning WRITE setRunning NOTIFY runningChanged)
     Q_PROPERTY(bool paused READ isPaused WRITE setPaused NOTIFY pausedChanged)
-    Q_PROPERTY(bool supportsThemeEffect READ themeEffectSupported)
 
 public:
     QDeclarativeHapticsEffect(QObject *parent = 0) : QFeedbackHapticsEffect(parent), running_(false), paused_(false) {
@@ -79,13 +78,6 @@ public:
         } else if (currentState == Running && paused) {
             pause();
         }
-    }
-
-    bool themeEffectSupported() {
-        return supportsThemeEffect();
-    }
-    Q_INVOKABLE void playEffect(ThemeEffect effect) {
-        playThemeEffect(effect);
     }
 
     QDeclarativeListProperty<QFeedbackActuator> actuators() {

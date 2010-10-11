@@ -38,31 +38,58 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QDECLARATIVETHEMEEFFECT_H
+#define QDECLARATIVETHEMEEFFECT_H
 
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
+#include <qfeedbackeffect.h>
 
-#include "qdeclarativehapticseffect.h"
-#include "qdeclarativefileeffect.h"
-#include "qdeclarativethemeeffect.h"
+QTM_USE_NAMESPACE
 
-class QFeedbackDeclarativeModule : public QDeclarativeExtensionPlugin
+// Wrapper for theme effects
+class QDeclarativeThemeEffect : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool supportsEffect READ effectSupported)
+    Q_PROPERTY(QFeedbackEffect::ThemeEffect effect READ effect WRITE setEffect NOTIFY effectChanged)
+    Q_CLASSINFO("DefaultMethod", "play()")
+
 public:
-    virtual void registerTypes(const char *uri)
+
+    QDeclarativeThemeEffect(QObject *parent = 0)
+        : QObject(parent),
+        m_effect(QFeedbackEffect::ThemeBasic)
     {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.feedback"));
-        qmlRegisterUncreatableType<QFeedbackEffect>("QtMobility.feedback", 1, 1, "Feedback", "FeedbackEffect is an abstract class");
-        qmlRegisterType<QFeedbackActuator>("QtMobility.feedback", 1, 1, "Actuator");
-        qmlRegisterType<QDeclarativeFileEffect>("QtMobility.feedback", 1, 1, "FileEffect");
-        qmlRegisterType<QDeclarativeHapticsEffect>("QtMobility.feedback", 1, 1, "HapticsEffect");
-        qmlRegisterType<QDeclarativeThemeEffect>("QtMobility.feedback", 1, 1, "ThemeEffect");
     }
+
+    bool effectSupported() {
+        return QFeedbackEffect::supportsThemeEffect();
+    }
+
+    void setEffect(QFeedbackEffect::ThemeEffect effect)
+    {
+        if (m_effect != effect) {
+            m_effect = effect;
+            emit effectChanged();
+        }
+    }
+
+    QFeedbackEffect::ThemeEffect effect() const
+    {
+        return m_effect;
+    }
+
+    Q_INVOKABLE void play() {
+        QFeedbackEffect::playThemeEffect(m_effect);
+    }
+
+signals:
+    void effectChanged();
+
+public:
+    QFeedbackEffect::ThemeEffect m_effect;
 };
 
-#include "moc_qdeclarativethemeeffect.cpp"
-#include "feedback.moc"
+QML_DECLARE_TYPE(QDeclarativeThemeEffect);
 
-Q_EXPORT_PLUGIN2(declarative_feedback, QT_PREPEND_NAMESPACE(QFeedbackDeclarativeModule));
-
+#endif // QDECLARATIVETHEMEEFFECT_H

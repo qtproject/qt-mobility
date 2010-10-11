@@ -11,7 +11,8 @@ include(../../../common.pri)
 QT += declarative
 
 HEADERS += qdeclarativehapticseffect.h \
-    qdeclarativefileeffect.h
+    qdeclarativefileeffect.h \
+    qdeclarativethemeeffect.h
 SOURCES += feedback.cpp
 
 CONFIG += mobility
