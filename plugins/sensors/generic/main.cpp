@@ -56,26 +56,18 @@ public:
     void registerSensors()
     {
         qDebug() << "loaded the Generic plugin";
-        QSensorManager::registerBackend(QOrientationSensor::type, genericorientationsensor::id, this);
-        QSensorManager::registerBackend(QRotationSensor::type, genericrotationsensor::id, this);
-        QSensorManager::registerBackend(QAmbientLightSensor::type, genericalssensor::id, this);
+        checkSensorRegistration();
+        QSensor *sensor = new QSensor(QByteArray(), this);
+        connect(sensor, SIGNAL(availableSensorsChanged()), this, SLOT(checkSensorRegistration()));
     }
 
     QSensorBackend *createBackend(QSensor *sensor)
     {
-        if (sensor->identifier() == genericorientationsensor::id) {
-            // Can't make this unless we have an accelerometer
-            if (!QSensor::defaultSensorForType(QAccelerometer::type).isEmpty())
-                return new genericorientationsensor(sensor);
-            qDebug() << "can't make" << sensor->identifier() << "because no" << QAccelerometer::type << "sensors exist";
-        }
+        if (sensor->identifier() == genericorientationsensor::id)
+            return new genericorientationsensor(sensor);
 
-        if (sensor->identifier() == genericrotationsensor::id) {
-            // Can't make this unless we have an accelerometer
-            if (!QSensor::defaultSensorForType(QAccelerometer::type).isEmpty())
-                return new genericrotationsensor(sensor);
-            qDebug() << "can't make" << sensor->identifier() << "because no" << QAccelerometer::type << "sensors exist";
-        }
+        if (sensor->identifier() == genericrotationsensor::id)
+            return new genericrotationsensor(sensor);
 
         if (sensor->identifier() == genericalssensor::id) {
             // Can't make this unless we have a light sensor
@@ -85,6 +77,27 @@ public:
         }
 
         return 0;
+    }
+
+public Q_SLOTS:
+    void checkSensorRegistration()
+    {
+        qWarning() << "checkSensorRegistration";
+        if (!QSensor::defaultSensorForType(QAccelerometer::type).isEmpty()) {
+            if (!QSensorManager::isBackendRegistered(QOrientationSensor::type, genericorientationsensor::id))
+                QSensorManager::registerBackend(QOrientationSensor::type, genericorientationsensor::id, this);
+            if (!QSensorManager::isBackendRegistered(QRotationSensor::type, genericrotationsensor::id))
+                QSensorManager::registerBackend(QRotationSensor::type, genericrotationsensor::id, this);
+            if (!QSensorManager::isBackendRegistered(QAmbientLightSensor::type, genericalssensor::id))
+                QSensorManager::registerBackend(QAmbientLightSensor::type, genericalssensor::id, this);
+        } else {
+            if (QSensorManager::isBackendRegistered(QOrientationSensor::type, genericorientationsensor::id))
+                QSensorManager::unregisterBackend(QOrientationSensor::type, genericorientationsensor::id);
+            if (QSensorManager::isBackendRegistered(QRotationSensor::type, genericrotationsensor::id))
+                QSensorManager::unregisterBackend(QRotationSensor::type, genericrotationsensor::id);
+            if (QSensorManager::isBackendRegistered(QAmbientLightSensor::type, genericalssensor::id))
+                QSensorManager::unregisterBackend(QAmbientLightSensor::type, genericalssensor::id);
+        }
     }
 };
 
