@@ -206,9 +206,23 @@ void Connection::clearOrganizerData()
     mRemoteToLocal.collections.insert(defaultCollectionId, defaultCollectionId);
 
     mNotifySimulator = false;
+
+    // items
     mManager.removeItems(mManager.itemIds());
+
+    // collections
     foreach (const QOrganizerCollection &collection, mManager.collections())
         mManager.removeCollection(collection);
+
+    // detail definitions
+    foreach (const QString &itemType, mManager.supportedItemTypes()) {
+        foreach (const QOrganizerItemDetailDefinition &def, mManager.detailDefinitions(itemType)) {
+            // never remove the Name definition - supportedItemTypes() relies on it
+            if (def.name() != QOrganizerItemType::DefinitionName)
+                mManager.removeDetailDefinition(def.name(), itemType);
+        }
+    }
+
     mNotifySimulator = true;
 }
 
@@ -219,7 +233,7 @@ void Connection::saveOrganizerItem(QtMobility::QOrganizerItem item)
     bool newItem = item.id().isNull();
 
     mNotifySimulator = false;
-    //qDebug() << "Saving item" << item << " to collection " << localCollection;
+    //qDebug() << "Saving item" << item << " to collection " << item.collectionId();
     mManager.saveItem(&item);
     mNotifySimulator = true;
     if (mManager.error()) {
@@ -255,7 +269,7 @@ void Connection::saveOrganizerCollection(QtMobility::QOrganizerCollection collec
     bool newItem = collection.id().isNull();
 
     mNotifySimulator = false;
-    //qDebug() << "Saving collection" << collection << " original id " << remoteLocalId;
+    qDebug() << "Saving collection" << collection << " original id " << remoteLocalId;
     mManager.saveCollection(&collection);
     mNotifySimulator = true;
     if (mManager.error())
@@ -279,6 +293,24 @@ void Connection::removeOrganizerCollection(QOrganizerCollectionLocalId id)
 
     mNotifySimulator = false;
     mManager.removeCollection(localId);
+    mNotifySimulator = true;
+}
+
+void Connection::saveOrganizerDetailDefinition(QtMobility::QOrganizerItemDetailDefinition definition, QString itemType)
+{
+    QOrganizerItemDetailDefinition existing = mManager.detailDefinition(definition.name(), itemType);
+    if (existing != definition) {
+        mNotifySimulator = false;
+        //qDebug() << "Saving" << definition.name() << itemType;
+        mManager.saveDetailDefinition(definition, itemType);
+        mNotifySimulator = true;
+    }
+}
+
+void Connection::removeOrganizerDetailDefinition(QString definitionName, QString itemType)
+{
+    mNotifySimulator = false;
+    mManager.removeDetailDefinition(definitionName, itemType);
     mNotifySimulator = true;
 }
 

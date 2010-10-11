@@ -57,6 +57,7 @@
 // needed to make imports work from Simulator and Mobility
 #include "qorganizeritem.h"
 #include "qorganizercollection.h"
+#include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemmanager.h"
 #include <QtCore/QMetaType>
 
@@ -87,6 +88,7 @@ QTM_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QtMobility::QOrganizerItem)
 Q_DECLARE_METATYPE(QtMobility::QOrganizerCollection)
+Q_DECLARE_METATYPE(QtMobility::QOrganizerItemDetailDefinition)
 Q_DECLARE_METATYPE(QtMobility::Simulator::SaveOrganizerItemReply)
 Q_DECLARE_METATYPE(QtMobility::Simulator::SaveOrganizerCollectionReply)
 

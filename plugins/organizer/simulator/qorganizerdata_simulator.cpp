@@ -98,6 +98,7 @@ void qt_registerOrganizerTypes()
     qRegisterMetaTypeStreamOperators<QOrganizerItemId>("QtMobility::QOrganizerItemId");
     qRegisterMetaTypeStreamOperators<QOrganizerItemLocalId>("QtMobility::QOrganizerItemLocalId");
     qRegisterMetaTypeStreamOperators<QOrganizerCollectionId>("QtMobility::QOrganizerCollectionId");
+    qRegisterMetaTypeStreamOperators<QOrganizerItemDetailDefinition>("QtMobility::QOrganizerItemDetailDefinition");
     qRegisterMetaTypeStreamOperators<Simulator::SaveOrganizerItemReply>("QtMobility::Simulator::SaveOrganizerItemReply");
     qRegisterMetaTypeStreamOperators<Simulator::SaveOrganizerCollectionReply>("QtMobility::Simulator::SaveOrganizerCollectionReply");
 }

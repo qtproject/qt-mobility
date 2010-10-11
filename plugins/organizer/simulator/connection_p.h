@@ -111,6 +111,10 @@ private slots:
     void saveOrganizerCollection(QtMobility::QOrganizerCollection collection);
     void removeOrganizerCollection(QtMobility::QOrganizerCollectionLocalId id);
 
+    void saveOrganizerDetailDefinition(QtMobility::QOrganizerItemDetailDefinition definition,
+                                       QString itemType);
+    void removeOrganizerDetailDefinition(QString definitionName, QString itemType);
+
 private:
     void getInitialData();
 
