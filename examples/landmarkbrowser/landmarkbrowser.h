@@ -84,11 +84,24 @@ private slots:
    void doFetchAll();
    void cancel();
 
+   void landmarksAdded(QList<QLandmarkId> landmarkIds);
+   void landmarksChanged();
+   void landmarksRemoved();
+
+   void categoriesAdded();
+   void categoriesChanged();
+   void categoriesRemoved();
+
+   void dataChanged();
+
 private:
     void updateRowLabels();
     void updateCategoryRowLabels();
     void updateTable(const QList<QLandmark> &lms);
     void updateCategoryTable(const QList<QLandmarkCategory> &cats);
+
+    void reloadingLandmarks();
+    void reloadingCategories();
 
     QLandmarkFetchRequest *landmarkFetch;
     QLandmarkImportRequest *landmarkImport;

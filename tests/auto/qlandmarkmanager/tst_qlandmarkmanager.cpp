@@ -1248,7 +1248,7 @@ void tst_QLandmarkManager::invalidManager()
     QMap<QString,QString> parameters;
     parameters.insert("filename", "test2.db");
     QLandmarkManager manager2 ("com.nokia.qt.landmarks.engines.sqlite",parameters);
-    QVERIFY(manager2.error() == QLandmarkManager::VersionMismatchError);
+    QVERIFY(manager2.error() == QLandmarkManager::InvalidManagerError);
     QFile::remove("test2.db");
 #endif
 }
