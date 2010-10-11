@@ -39,7 +39,8 @@ SOURCES += 		$$SYMBIAN_HEADERS \
 				../../cntplsql/src/c12keykeymap.cpp\
 				../../cntplsql/src/cntsqlkoreanitut.cpp\
 				../../cntplsql/src/cntsqlsearchbase.cpp\
-				../../cntplsql/src/cntsqlfactory.cpp
+				../../cntplsql/src/cntsqlfactory.cpp\
+				../../cntplsql/src/koreaninput.cpp
 
 # Input
 HEADERS += 		$$SYMBIAN_SOURCES \
@@ -55,7 +56,8 @@ HEADERS += 		$$SYMBIAN_SOURCES \
         		../../cntplsql/inc/cntsqlsearchinterface.h\
         		../../cntplsql/inc/cntsqlkoreanitut.h\
 				../../cntplsql/inc/cntsqlsearchbase.h\
-				../../cntplsql/inc/cntsqlfactory.h
+				../../cntplsql/inc/cntsqlfactory.h\
+				../../cntplsql/inc/koreaninput.h
 				
         		
 symbian: {
