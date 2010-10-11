@@ -892,7 +892,7 @@ void tst_Maemo5Om::getCollections()
 void tst_Maemo5Om::saveCollection()
 {
     //remove old collections with the same name if exists
-    QList<QOrganizerCollection> colls = m_om->collections(m_om->collectionIds());
+    QList<QOrganizerCollection> colls = m_om->collections();
     foreach (QOrganizerCollection c, colls) {
         if (c.metaData("Name") == "New calendar") {
             m_om->removeCollection(c.localId());
@@ -958,7 +958,7 @@ void tst_Maemo5Om::removeCollection()
 void tst_Maemo5Om::saveItemsToNewCollection()
 {
     //remove old collections with the same name if exists
-    QList<QOrganizerCollection> colls = m_om->collections(m_om->collectionIds());
+    QList<QOrganizerCollection> colls = m_om->collections();
     foreach (QOrganizerCollection c, colls) {
         if (c.metaData("Name") == "New items") {
             m_om->removeCollection(c.localId());

@@ -659,7 +659,7 @@ void QOrganizerItemMaemo5Engine::internalAddOccurances(QList<QOrganizerItem>* so
                         d->m_itemTransformer.fillInCommonCComponentDetails(&eventOcc, cevent, false); // false = do not set local ids
 
                         // Set the collection id
-                        QOrganizerItemManagerEngine::setItemCollectionId(&eventOcc, item.collectionId());
+                        eventOcc.setCollectionId(item.collectionId());
 
                         if (QOrganizerItemManagerEngine::testFilter(filter, eventOcc) && QOrganizerItemManagerEngine::isItemBetweenDates(eventOcc, startDate, endDate))
                             QOrganizerItemManagerEngine::addSorted(sorted, eventOcc, sortOrders);
