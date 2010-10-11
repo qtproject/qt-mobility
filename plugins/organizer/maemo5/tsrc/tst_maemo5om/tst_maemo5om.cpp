@@ -98,7 +98,7 @@ void tst_Maemo5Om::init()
 {
     m_om = new QOrganizerItemManager(managerName);
     // Remove all organizer items first (Note: ignores possible errors)
-    // m_om->removeItems(m_om->itemIds());
+    m_om->removeItems(m_om->itemIds());
 }
 
 void tst_Maemo5Om::cleanup()
