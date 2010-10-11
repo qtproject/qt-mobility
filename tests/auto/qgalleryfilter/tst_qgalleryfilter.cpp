@@ -228,8 +228,8 @@ void tst_QGalleryFilter::unionFilter()
     QCOMPARE(filters.at(4).type(), QGalleryFilter::Intersection);
     QCOMPARE(filters.at(5).type(), QGalleryFilter::MetaData);
 
-    unionFilter.removeAt(0);
-    unionFilter.removeAt(3);
+    unionFilter.remove(0);
+    unionFilter.remove(3);
     QCOMPARE(unionFilter.isEmpty(), false);
     QCOMPARE(unionFilter.filterCount(), 10);
 
@@ -339,8 +339,8 @@ void tst_QGalleryFilter::intersectionFilter()
     QCOMPARE(filters.at(4).type(), QGalleryFilter::Union);
     QCOMPARE(filters.at(5).type(), QGalleryFilter::MetaData);
 
-    intersectionFilter.removeAt(0);
-    intersectionFilter.removeAt(3);
+    intersectionFilter.remove(0);
+    intersectionFilter.remove(3);
     QCOMPARE(intersectionFilter.isEmpty(), false);
     QCOMPARE(intersectionFilter.filterCount(), 10);
 
@@ -458,7 +458,7 @@ void tst_QGalleryFilter::copyOnWrite()
         QGalleryUnionFilter filterCopy(filter);
         filter.append(QGalleryIntersectionFilter());
         filter.append(filterCopy);
-        filter.removeAt(0);
+        filter.remove(0);
 
         filters = filterCopy.filters();
         QCOMPARE(filters.count(), 1);
@@ -477,7 +477,7 @@ void tst_QGalleryFilter::copyOnWrite()
         QGalleryIntersectionFilter filterCopy(filter);
         filter.append(QGalleryUnionFilter());
         filter.append(filterCopy);
-        filter.removeAt(0);
+        filter.remove(0);
 
         filters = filterCopy.filters();
         QCOMPARE(filters.count(), 1);

@@ -452,7 +452,7 @@ void QGalleryIntersectionFilter::replace(int index, const QGalleryUnionFilter &f
     Removes the filter at \a index from an intersection.
 */
 
-void QGalleryIntersectionFilter::removeAt(int index)
+void QGalleryIntersectionFilter::remove(int index)
 {
     d->filters.removeAt(index);
 }
@@ -715,7 +715,7 @@ void QGalleryUnionFilter::replace(int index, const QGalleryIntersectionFilter &f
     Removes the filter at \a index from a union.
 */
 
-void QGalleryUnionFilter::removeAt(int index)
+void QGalleryUnionFilter::remove(int index)
 {
     d->filters.removeAt(index);
 }

@@ -160,7 +160,7 @@ public:
     void replace(int index, const QGalleryMetaDataFilter &filter);
     void replace(int index, const QGalleryUnionFilter &filter);
 
-    void removeAt(int index);
+    void remove(int index);
     void clear();
 
 private:
@@ -210,7 +210,7 @@ public:
     void replace(int index, const QGalleryMetaDataFilter &filter);
     void replace(int index, const QGalleryIntersectionFilter &filter);
 
-    void removeAt(int index);
+    void remove(int index);
     void clear();
 
 private:
