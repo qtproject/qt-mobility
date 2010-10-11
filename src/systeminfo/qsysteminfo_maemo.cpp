@@ -223,6 +223,12 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::WcdmaMode:
         {
+            // radioAccessTechnology: 1 = GSM, 2 = WCDMA
+            if((radioAccessTechnology == 1 && mode != QSystemNetworkInfo::GsmMode) ||
+               (radioAccessTechnology == 2 && mode != QSystemNetworkInfo::WcdmaMode)) {
+                return QSystemNetworkInfo::NoNetworkAvailable;
+            }
+
             switch(currentCellNetworkStatus) {
                 case 0: return QSystemNetworkInfo::HomeNetwork; // CS is registered to home network
                 case 1: return QSystemNetworkInfo::Roaming; // CS is registered to some other network than home network
@@ -267,6 +273,12 @@ qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Netw
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::WcdmaMode:
     {
+            // radioAccessTechnology: 1 = GSM, 2 = WCDMA
+            if((radioAccessTechnology == 1 && mode != QSystemNetworkInfo::GsmMode) ||
+               (radioAccessTechnology == 2 && mode != QSystemNetworkInfo::WcdmaMode)) {
+                return -1;
+            }
+
             return cellSignalStrength;
     }
     case QSystemNetworkInfo::EthernetMode: {
@@ -393,9 +405,16 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::GsmMode:
-    case QSystemNetworkInfo::WcdmaMode:
+    case QSystemNetworkInfo::WcdmaMode: {
+        // radioAccessTechnology: 1 = GSM, 2 = WCDMA
+        if((radioAccessTechnology == 1 && mode != QSystemNetworkInfo::GsmMode) ||
+           (radioAccessTechnology == 2 && mode != QSystemNetworkInfo::WcdmaMode)) {
+            break;
+        }
+
         return currentOperatorName;
         break;
+    }
     case QSystemNetworkInfo::WimaxMode:
         break;
     default:
@@ -1161,7 +1180,7 @@ void QSystemDeviceInfoPrivate::setupProfile()
         return;
     } else {
         QDBusReply<QString> deviceModeReply = mceConnectionInterface.call("get_device_mode");
-        flightMode = deviceModeReply.value() == "flight";
+        flightMode = QString::compare(deviceModeReply.value(), "flight", Qt::CaseInsensitive) == 0;
     }
 
     if (!systemDbusConnection.connect("com.nokia.mce",
@@ -1188,11 +1207,11 @@ void QSystemDeviceInfoPrivate::setupProfile()
 
     QDBusReply<QString> ringingAlertTypeReply = connectionInterface.call("get_value", profileName, "ringing.alert.type");
     if (ringingAlertTypeReply.isValid())
-        silentProfile = ringingAlertTypeReply.value() == "silent";
+        silentProfile = QString::compare(ringingAlertTypeReply.value(), "silent", Qt::CaseInsensitive) == 0;
 
     QDBusReply<QString> vibratingAlertEnabledReply = connectionInterface.call("get_value", profileName, "vibrating.alert.enabled");
     if (vibratingAlertEnabledReply.isValid())
-        vibratingAlertEnabled = vibratingAlertEnabledReply.value() == "On";
+        vibratingAlertEnabled = QString::compare(vibratingAlertEnabledReply.value(), "On", Qt::CaseInsensitive) == 0;
 
     QDBusReply<QString> ringingAlertVolumeReply = connectionInterface.call("get_value", profileName, "ringing.alert.volume");
     if (ringingAlertVolumeReply.isValid())
@@ -1226,9 +1245,9 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
         profileName = profile;
         foreach (const ProfileDataValue value, values) {
             if (value.key == "ringing.alert.type")
-                silentProfile = value.val == "silent";
+                silentProfile = QString::compare(value.val, "silent", Qt::CaseInsensitive) == 0;
             else if (value.key == "vibrating.alert.enabled")
-                vibratingAlertEnabled = value.val == "On";
+                vibratingAlertEnabled = QString::compare(value.val, "On", Qt::CaseInsensitive) == 0;
             else if (value.key == "ringing.alert.volume")
                 ringingAlertVolume = value.val.toInt();
         }
