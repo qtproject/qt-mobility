@@ -66,7 +66,7 @@ QTM_BEGIN_NAMESPACE
     target.
 
     If the target supports NdefAccess, hasNdefMessage() can be called to test if the target has a
-    stored NDEF message, ndefMessage() and setNdefMessage() functions can be used to get and set
+    stored NDEF message, ndefMessages() and setNdefMessages() functions can be used to get and set
     the NDEF message.
 
     If the target supports ApduAccess, sendApduCommand() can be used to send a single APDU command
@@ -101,8 +101,8 @@ QTM_BEGIN_NAMESPACE
 
     This enum describes the access methods a near field target supports.
 
-    \value NdefAccess               The target supports NDEF records using ndefMessage() and
-                                    setNdefMessage().
+    \value NdefAccess               The target supports NDEF records using ndefMessages() and
+                                    setNdefMessages().
     \value ApduAccess               The target supports APDU access using sendApduCommand() and
                                     sendApduCommands().
     \value TagTypeSpecificAccess    The target supports sending tag type specific commands using
@@ -154,7 +154,8 @@ QNearFieldTarget::AccessMethods QNearFieldTarget::accessMethods() const
 }
 
 /*!
-    Returns true if an NDEF message is stored on the near field target; otherwise returns false.
+    Returns true if at least one NDEF message is stored on the near field target; otherwise returns
+    false.
 */
 bool QNearFieldTarget::hasNdefMessage() const
 {
@@ -162,19 +163,19 @@ bool QNearFieldTarget::hasNdefMessage() const
 }
 
 /*!
-    Returns the NDEF message stored on the near field target.
+    Returns a list of all NDEF messages stored on the near field target.
 */
-QNdefMessage QNearFieldTarget::ndefMessage() const
+QList<QNdefMessage> QNearFieldTarget::ndefMessages() const
 {
-    return QNdefMessage();
+    return QList<QNdefMessage>();
 }
 
 /*!
-    Sets the NDEF message on the near field target to \a message.
+    Sets the NDEF messages stored on the near field target to \a messages.
 */
-void QNearFieldTarget::setNdefMessage(const QNdefMessage &message)
+void QNearFieldTarget::setNdefMessages(const QList<QNdefMessage> &messages)
 {
-    Q_UNUSED(message);
+    Q_UNUSED(messages);
 }
 
 /*!
