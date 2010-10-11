@@ -58,7 +58,7 @@ class Q_GALLERY_EXPORT QGalleryAbstractRequest : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryAbstractRequest)
-    Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery)
+    Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery NOTIFY galleryChanged)
     Q_PROPERTY(bool supported READ isSupported NOTIFY supportedChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(int error READ error NOTIFY errorChanged)
@@ -121,6 +121,7 @@ public Q_SLOTS:
     void clear();
 
 Q_SIGNALS:
+    void galleryChanged();
     void supportedChanged();
     void finished();
     void cancelled();

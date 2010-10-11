@@ -20,10 +20,103 @@
     </message>
 </context>
 <context>
+    <name>CCameraViewfinderEngine</name>
+    <message>
+        <source>General viewfinder error.</source>
+        <translation>Загальна помилка видошукача.</translation>
+    </message>
+    <message>
+        <source>Viewfinder output not supported.</source>
+        <translation>Виведення видошукача не підтримується.</translation>
+    </message>
+    <message>
+        <source>Starting viewfinder failed.</source>
+        <translation>Збій запуску видошукача.</translation>
+    </message>
+    <message>
+        <source>Viewfinder format not supported.</source>
+        <translation>Формат видошукача не підтримується.</translation>
+    </message>
+</context>
+<context>
+    <name>CameraBinAudioEncoder</name>
+    <message>
+        <source>Raw PCM audio</source>
+        <translation>Сире аудіо PCM</translation>
+    </message>
+</context>
+<context>
+    <name>CameraBinImageEncoder</name>
+    <message>
+        <source>JPEG image</source>
+        <translation>Зображення JPEG</translation>
+    </message>
+</context>
+<context>
+    <name>CameraBinRecorder</name>
+    <message>
+        <source>Service has not been started</source>
+        <translation>Сервіс не було запущено</translation>
+    </message>
+    <message>
+        <source>Not compatible codecs and container format.</source>
+        <translation>Несумісні кодеки та формат контейнера.</translation>
+    </message>
+</context>
+<context>
+    <name>QCamera</name>
+    <message>
+        <source>The camera service is missing</source>
+        <translation>Відсутній сервіс камери</translation>
+    </message>
+</context>
+<context>
+    <name>QCameraImageCapture</name>
+    <message>
+        <source>Device does not support images capture.</source>
+        <translation>Пристрій не підтримує захоплення зображень.</translation>
+    </message>
+</context>
+<context>
+    <name>QCameraPrivate</name>
+    <message>
+        <source>The camera service is missing</source>
+        <translation>Відсутній сервіс камери</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeDocumentGallery</name>
+    <message>
+        <source>DocumentGallery is a namespace class</source>
+        <translation>DocumentGallery є класом простору імен</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeLandmarkFilterBase</name>
+    <message>
+        <source>LandmarkFilterBase is an abstract class</source>
+        <translation>LandmarkFilterBase - абстрактний клас</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeMessageFilterBase</name>
+    <message>
+        <source>MessageFilterBase is an abstract class</source>
+        <translation>MessageFilterBase - абстрактний клас</translation>
+    </message>
+</context>
+<context>
     <name>QGstreamerAudioEncode</name>
     <message>
         <source>Raw PCM audio</source>
         <translation>Сире аудіо PCM</translation>
+    </message>
+</context>
+<context>
+    <name>QGstreamerCameraControl</name>
+    <message>
+        <source>State not supported.</source>
+        <translation>Стан не підтримується.</translation>
     </message>
 </context>
 <context>
@@ -35,6 +128,13 @@
     <message>
         <source>Failed to build media capture pipeline.</source>
         <translation>Збій побудови конвеєру захоплення медіа.</translation>
+    </message>
+</context>
+<context>
+    <name>QGstreamerImageEncode</name>
+    <message>
+        <source>JPEG image encoder</source>
+        <translation>Кодувальник зображень JPEG</translation>
     </message>
 </context>
 <context>
@@ -255,6 +355,17 @@
     </message>
 </context>
 <context>
+    <name>QXAPlaySession</name>
+    <message>
+        <source>Service has not been started</source>
+        <translation>Сервіс не було запущено</translation>
+    </message>
+    <message>
+        <source>Unable to load media</source>
+        <translation>Неможливо завантажити медіа</translation>
+    </message>
+</context>
+<context>
     <name>QXARecordSession</name>
     <message>
         <source>Service has not been started</source>
@@ -322,10 +433,95 @@
     </message>
 </context>
 <context>
+    <name>S60CameraControl</name>
+    <message>
+        <source>Unexpected error.</source>
+        <translation>Неочікувана помилка.</translation>
+    </message>
+    <message>
+        <source>State not supported.</source>
+        <translation>Стан не підтримується.</translation>
+    </message>
+    <message>
+        <source>CaptureMode not supported.</source>
+        <translation>Режим захоплення не підтримується.</translation>
+    </message>
+</context>
+<context>
+    <name>S60CameraImageCaptureControl</name>
+    <message>
+        <source>DriveMode not supported.</source>
+        <translation>Режим драйвера не підтримується.</translation>
+    </message>
+    <message>
+        <source>Incorrect CaptureMode.</source>
+        <translation>Неправильний режим захоплення.</translation>
+    </message>
+</context>
+<context>
     <name>S60MediaPlayerControl</name>
     <message>
         <source>Media couldn&apos;t be resolved</source>
         <translation>Не вдалось розв&apos;язати медіа</translation>
+    </message>
+</context>
+<context>
+    <name>S60MediaRecorderControl</name>
+    <message>
+        <source>Camera is not started for video capture.</source>
+        <translation>Камеру не запущено для захоплення відео.</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeGalleryItem</name>
+    <message>
+        <source>An error was encountered connecting to the document gallery</source>
+        <translation>Під час підключення до галереї документів сталась помилка</translation>
+    </message>
+    <message>
+        <source>The value of item is not a valid item ID</source>
+        <translation>Значення елемента не є правильним ідентифікатором елемента</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeGalleryQueryModel</name>
+    <message>
+        <source>An error was encountered connecting to the document gallery</source>
+        <translation>Під час підключення до галереї документів сталась помилка</translation>
+    </message>
+    <message>
+        <source>DocumentGallery.InvalidType is not a supported item type</source>
+        <translation>DocumentGallery.InvalidType не є підтримуваним типом елемента</translation>
+    </message>
+    <message>
+        <source>DocumentGallery.%1 is not a supported item type</source>
+        <translation>DocumentGallery.%1 не є підтримуваним типом елемента</translation>
+    </message>
+    <message>
+        <source>The value of rootItem is not a valid item ID</source>
+        <translation>Значення rootItem не є правильним ідентифікатором елемента</translation>
+    </message>
+    <message>
+        <source>The value of filter is unsupported</source>
+        <translation>Значення фільтра не підтримується</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeGalleryType</name>
+    <message>
+        <source>An error was encountered connecting to the document gallery</source>
+        <translation>Під час підключення до галереї документів сталась помилка</translation>
+    </message>
+    <message>
+        <source>DocumentGallery.%1 is not a supported item type</source>
+        <translation>DocumentGallery.%1 не є підтримуваним типом елемента</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeLandmarkAbstractModel</name>
+    <message>
+        <source>LandmarkAbstractModel is an abstract class</source>
+        <translation>LandmarkAbstractModel - абстрактний клас</translation>
     </message>
 </context>
 </TS>

@@ -49,7 +49,7 @@ class QDeclarativeContactNickname : public QDeclarativeContactDetail
 {
     Q_OBJECT
     Q_PROPERTY(QString nickname READ nickname WRITE setNickname NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "nickname")
 public:
     enum FieldType {

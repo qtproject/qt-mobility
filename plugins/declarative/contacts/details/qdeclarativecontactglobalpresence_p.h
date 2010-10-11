@@ -56,7 +56,7 @@ class QDeclarativeContactGlobalPresence : public QDeclarativeContactDetail
     Q_PROPERTY(QUrl imageUrl READ presenceStateImageUrl WRITE setPresenceStateImageUrl NOTIFY fieldsChanged)
     Q_PROPERTY(QString customMessage READ customMessage WRITE setCustomMessage NOTIFY fieldsChanged)
     Q_CLASSINFO("DefaultProperty", "state")
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
 public:
     enum FieldType {
         Timestamp = 0,

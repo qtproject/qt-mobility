@@ -59,11 +59,13 @@ class Q_FEEDBACK_EXPORT QFeedbackEffect : public QObject
 {
     Q_OBJECT
     Q_ENUMS(ThemeEffect)
-    Q_ENUMS(ErrorType)
+    Q_ENUMS(Duration)
     Q_ENUMS(State)
+    Q_ENUMS(ErrorType)
 
     Q_PROPERTY(int duration READ duration)
-    Q_PROPERTY(State state READ state)
+    Q_PROPERTY(State state READ state NOTIFY stateChanged)
+
 public:
     enum ThemeEffect {
         ThemeBasic, ThemeSensitive, ThemeBasicButton, ThemeSensitiveButton,
@@ -79,7 +81,7 @@ public:
     };
 
     enum Duration {
-        INFINITE = -1
+        Infinite = -1
     };
 
     enum State {
@@ -113,7 +115,7 @@ protected:
 
 Q_SIGNALS:
     void error(QFeedbackEffect::ErrorType) const; //when an error occurs
-
+    void stateChanged();
 private:
     friend class QFeedbackInterface;
 };
@@ -129,7 +131,7 @@ public:
     Q_PROPERTY(int fadeTime READ fadeTime WRITE setFadeTime)
     Q_PROPERTY(int fadeIntensity READ fadeIntensity WRITE setFadeIntensity)
     Q_PROPERTY(int period READ period WRITE setPeriod)
-    Q_PROPERTY(QFeedbackActuator actuator READ actuator WRITE setActuator)
+    Q_PROPERTY(QFeedbackActuator* actuator READ actuator WRITE setActuator)
 
     explicit QFeedbackHapticsEffect(QObject *parent = 0);
     ~QFeedbackHapticsEffect();
@@ -156,8 +158,8 @@ public:
     void setPeriod(int msecs);
     int period() const;
 
-    void setActuator(const QFeedbackActuator &actuator);
-    QFeedbackActuator actuator() const;
+    void setActuator(QFeedbackActuator *actuator);
+    QFeedbackActuator* actuator() const;
 
     //reimplementations from QFeedbackEffect
     virtual State state() const;

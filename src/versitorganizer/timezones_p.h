@@ -73,8 +73,8 @@ class TimeZonePhase {
         QDateTime startDateTime() const { return mStartDateTime; }
         void setRecurrenceRule(const QOrganizerItemRecurrenceRule& rrule) { mRecurrenceRule = rrule; }
         QOrganizerItemRecurrenceRule recurrenceRule() const { return mRecurrenceRule; }
-        void setRecurrenceDates(const QList<QDate>& rdates) { mRecurrenceDates = rdates; }
-        QList<QDate> recurrenceDates() const { return mRecurrenceDates; }
+        void setRecurrenceDates(const QSet<QDate>& rdates) { mRecurrenceDates = rdates; }
+        QSet<QDate> recurrenceDates() const { return mRecurrenceDates; }
         bool isValid() const {
             // offset must be within -24 hours to +24 hours
             return mStartDateTime.isValid() && mUtcOffset < 86400 && mUtcOffset > -86400;
@@ -84,7 +84,7 @@ class TimeZonePhase {
         int mUtcOffset; // in seconds, the offset to apply after mStartDateTime
         QDateTime mStartDateTime; // local time, when the phase comes into effect
         QOrganizerItemRecurrenceRule mRecurrenceRule;
-        QList<QDate> mRecurrenceDates;
+        QSet<QDate> mRecurrenceDates;
 };
 
 class TimeZone {

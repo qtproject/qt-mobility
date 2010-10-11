@@ -63,8 +63,12 @@ public:
     /* Selection, restriction and sorting */
     void setFilter(const QOrganizerItemFilter& filter);
     void setSorting(const QList<QOrganizerItemSortOrder>& sorting);
+    void setStartDate(const QDateTime& date);
+    void setEndDate(const QDateTime& date);
     QOrganizerItemFilter filter() const;
     QList<QOrganizerItemSortOrder> sorting() const;
+    QDateTime startDate() const;
+    QDateTime endDate() const;
 
     /* Results */
     QList<QOrganizerItemLocalId> itemIds() const;

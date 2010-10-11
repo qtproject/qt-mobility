@@ -225,10 +225,10 @@ QVersitContactImporter::~QVersitContactImporter()
  * Converts \a documents into a corresponding list of QContacts.  After calling this, the converted
  * contacts can be retrieved by calling contacts().
  * Returns true on success.  If any of the documents cannot be imported as contacts (eg. they aren't
- * vCards), false is returned and errors() will return a list describing the errors that occurred.
+ * vCards), false is returned and errorMap() will return a list describing the errors that occurred.
  * The successfully imported documents will still be available via contacts().
  *
- * \sa contacts(), errors()
+ * \sa contacts(), errorMap()
  */
 bool QVersitContactImporter::importDocuments(const QList<QVersitDocument>& documents)
 {
@@ -264,13 +264,23 @@ QList<QContact> QVersitContactImporter::contacts() const
 }
 
 /*!
+ * \obsolete
+ *
+ * Use \l errorMap() instead.
+ */
+QMap<int, QVersitContactImporter::Error> QVersitContactImporter::errors() const
+{
+    return d->mErrors;
+}
+
+/*!
  * Returns the map of errors encountered in the most recent call to importDocuments().  The key is
  * the index into the input list of documents and the value is the error that occurred on that
  * document.
  *
  * \sa importDocuments()
  */
-QMap<int, QVersitContactImporter::Error> QVersitContactImporter::errors() const
+QMap<int, QVersitContactImporter::Error> QVersitContactImporter::errorMap() const
 {
     return d->mErrors;
 }

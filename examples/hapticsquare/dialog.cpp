@@ -45,39 +45,28 @@
 #include <QGridLayout>
 #include <QDebug>
 
+//! [0]
 Dialog::Dialog()
 {
-    // First: Define a generic "rumble" custom effect.
-    // we start with an intensity of zero (nothing).
     m_rumble.setAttackIntensity(0.0);
-    // over 250 msec, it ramps up to the peak intensity.
     m_rumble.setAttackTime(250);
-    // it has a peak intensity of one (maximum).
     m_rumble.setIntensity(1.0);
-    // and stays at peak intensity for 100 msec.
     m_rumble.setDuration(100);
-    // over 250 msec, it ramps back down to the fade intensity.
     m_rumble.setFadeTime(250);
-    // it has a fade intensity of zero (nothing).
     m_rumble.setFadeIntensity(0.0);
+//! [0]
 
-    // Second: Define a generic, periodic "ocean waves" effect.
-    // we start with an intensity of zero (nothing).
+//! [1]
     m_ocean.setAttackIntensity(0.0);
-    // over 450 msec, it ramps up to the peak intensity.
     m_ocean.setAttackTime(450);
-    // it has a peak intensity of 0.80 (close to maximum)
     m_ocean.setIntensity(0.8);
-    // and it stays at peak intensity for 150 msec
     m_ocean.setDuration(150);
-    // over 900 milliseconds, it ramps down to the fade intensity.
     m_ocean.setFadeTime(900);
-    // it has a fade intensity of 0.05 (slight)
     m_ocean.setFadeIntensity(0.05);
-    // it is a periodic effect, with a period of 1.5 seconds
     m_ocean.setPeriod(1500);
+//! [1]
 
-    // Third: Create our UI elements and lay them out.
+//! [2]
     m_btnRumble = new HapticButton(tr("Rumble!"));
     m_btnOcean = new HapticButton(tr("Ocean"));
     m_btnOcean->setCheckable(true);
@@ -89,12 +78,12 @@ Dialog::Dialog()
     topLayout->addWidget(m_btnButtonClick, 1, 0);
     topLayout->addWidget(m_btnNegativeEffect, 1, 1);
 
-    // Finally: Connect our UI elements to slots which control haptic effects
     connect(m_btnRumble, SIGNAL(clicked()), this, SLOT(playRumble()));
     connect(m_btnOcean, SIGNAL(toggled(bool)), this, SLOT(playOcean(bool)));
     connect(m_btnButtonClick, SIGNAL(clicked()), this, SLOT(playButtonClick()));
     connect(m_btnNegativeEffect, SIGNAL(clicked()), this, SLOT(playNegativeEffect()));
 }
+//! [2]
 
 Dialog::~Dialog()
 {
@@ -104,6 +93,7 @@ Dialog::~Dialog()
     delete m_btnNegativeEffect;
 }
 
+//! [3]
 void Dialog::playRumble()
 {
     m_rumble.start();
@@ -116,7 +106,9 @@ void Dialog::playOcean(bool toggleState)
     else
         m_ocean.stop();
 }
+//! [3]
 
+//! [4]
 void Dialog::playButtonClick()
 {
     QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeBasicButton);
@@ -126,5 +118,7 @@ void Dialog::playNegativeEffect()
 {
     QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeNegativeTacticon);
 }
+//! [4]
 
 #include "moc_dialog.cpp"
+

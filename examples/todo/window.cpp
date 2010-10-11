@@ -129,7 +129,7 @@ void Window::refreshList()
         QOrganizerTodoTimeRange::FieldDueDateTime);
 
     QList<QOrganizerItem> items =
-        manager->items(QList<QOrganizerItemSortOrder>() << sortOrder);
+        manager->items(QOrganizerItemFilter(), QList<QOrganizerItemSortOrder>() << sortOrder);
 //! [5]
     if (items.isEmpty()) {
        new QListWidgetItem("<No Todos>", listWidget);

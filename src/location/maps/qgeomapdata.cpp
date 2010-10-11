@@ -84,11 +84,10 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-    Constructs a new map data object, which stores the map data required by
-    \a geoMap and makes use of the functionality provided by \a engine.
+    Constructs a new map data object, which makes use of the functionality provided by \a engine.
 */
-QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
-    : d_ptr(new QGeoMapDataPrivate(this, engine, geoMap))
+QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine)
+    : d_ptr(new QGeoMapDataPrivate(this, engine))
 {
     if (engine->supportedConnectivityModes().length() > 0)
         setConnectivityMode(engine->supportedConnectivityModes().at(0));
@@ -110,17 +109,16 @@ QGeoMapData::~QGeoMapData()
     delete d;
 }
 
-void QGeoMapData::setup()
+/*!
+    This function is run after the QGeoMapData instance has been 
+    constructed.
+
+    Any subclasses which override this function should make sure that
+    QGeoMapData::init() is called within the body of the overridding function.
+*/
+void QGeoMapData::init()
 {
     d_ptr->containerObject = new QGeoMapGroupObject(this);
-}
-
-/*!
-    Returns the QGraphicsGeoMap instance that this map data object is associated with.
-*/
-QGraphicsGeoMap* QGeoMapData::geoMap() const
-{
-    return d_ptr->geoMap;
 }
 
 /*!
@@ -578,10 +576,9 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
+QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine)
     : q_ptr(parent),
       engine(engine),
-      geoMap(geoMap),
       containerObject(0),
       zoomLevel(-1.0),
       blockPropertyChangeSignals(false) {}

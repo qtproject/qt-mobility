@@ -308,6 +308,7 @@ void CalendarDemo::addEvents()
     QList<QOrganizerItem> items;
     
     // Create a large number of events asynchronously
+    QOrganizerCollectionId defaultCollectionId = m_manager->defaultCollection().id();
     for(int index=0 ; index <  100 ; index++) {
         QOrganizerItem item;
         item.setType(QOrganizerItemType::TypeEvent);
@@ -319,6 +320,8 @@ void CalendarDemo::addEvents()
         timeRange.setStartDateTime(QDateTime::currentDateTime().addDays(index));
         timeRange.setEndDateTime(QDateTime::currentDateTime().addDays(index).addSecs(60 * 60));
         item.saveDetail(&timeRange);
+
+        item.setCollectionId(defaultCollectionId);
         
         items.append(item);
     }
@@ -326,7 +329,6 @@ void CalendarDemo::addEvents()
     // Now create a save request and execute it
     m_saveReq.setItems(items);
     m_saveReq.setManager(m_manager);
-    m_saveReq.setCollectionId(m_manager->defaultCollectionId());
     m_saveReq.start();
 }
 
@@ -353,17 +355,16 @@ void CalendarDemo::importItems()
     QVersitOrganizerImporter importer;
     foreach (const QVersitDocument& document, reader.results()) {
         if (!importer.importDocument(document)) {
-            qWarning() << "Import failed, " << importer.errors();
+            qWarning() << "Import failed, " << importer.errorMap();
             continue;
         }
         QList<QOrganizerItem> items = importer.items();
-        QMap<int, QOrganizerItemManager::Error> errorMap;
         QList<QOrganizerItem>::iterator it = items.begin();
         while (it != items.end()) {
             *it = m_manager->compatibleItem(*it);
             it++;
         }
-        m_manager->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap);
+        m_manager->saveItems(&items);
     }
     m_monthPage->refresh();
     m_dayPage->refresh();
@@ -388,8 +389,8 @@ void CalendarDemo::exportItems()
     }
     QList<QOrganizerItem> items(m_manager->items());
     QVersitOrganizerExporter exporter;
-    if (!exporter.exportItems(items, QVersitDocument::ICalendar20Type)) {
-        qWarning() << "Export failed, " << exporter.errors();
+    if (!exporter.exportItems(items)) {
+        qWarning() << "Export failed, " << exporter.errorMap();
         return;
     }
     QVersitDocument document = exporter.document();
@@ -417,17 +418,13 @@ void CalendarDemo::deleteAllEntries()
 void CalendarDemo::addCalendar()
 {
     // Get default collection
-    QList<QOrganizerCollection> defaultCollection = m_manager->collections(
-            QList<QOrganizerCollectionLocalId>() << m_manager->defaultCollectionId());
+    QOrganizerCollection defaultCollection = m_manager->defaultCollection();
 
-    QOrganizerCollection newCollection;
-    if (!defaultCollection.isEmpty()) {
-        newCollection = defaultCollection.at(0);
-        newCollection.setId(QOrganizerCollectionId()); // reset collection id
+    QOrganizerCollection newCollection = defaultCollection;
+    newCollection.setId(QOrganizerCollectionId()); // reset collection id
 #if defined(Q_WS_MAEMO_5)
-        newCollection.setMetaData("Name", "New calendar");
+    newCollection.setMetaData("Name", "New calendar");
 #endif
-    }
     m_addCalendarPage->calendarChanged(m_manager, newCollection);
 
     m_previousPage = m_stackedWidget->currentIndex();

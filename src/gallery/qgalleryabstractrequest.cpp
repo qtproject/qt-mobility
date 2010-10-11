@@ -227,9 +227,16 @@ void QGalleryAbstractRequest::setGallery(QAbstractGallery *gallery)
     if (d_ptr->gallery.data() != gallery) {
         d_ptr->gallery = gallery;
 
+        emit galleryChanged();
         emit supportedChanged();
     }
 }
+
+/*!
+    \fn QGalleryAbstractRequest::galleryChanged()
+
+    Signals that the value of \l gallery has changed.
+*/
 
 /*!
     \property QGalleryAbstractRequest::supported

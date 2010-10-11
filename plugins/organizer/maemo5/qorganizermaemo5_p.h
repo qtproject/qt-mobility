@@ -150,20 +150,20 @@ public:
     QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
-    QList<QOrganizerItem> itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerItem> itemInstances(const QOrganizerItem &generator, const QDateTime &periodStart, const QDateTime &periodEnd, int maxCount, QOrganizerItemManager::Error *error) const;
-    QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, QOrganizerItemManager::Error *error) const;
+    QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerItemLocalId> itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, QOrganizerItemManager::Error *error) const;
 
-    QList<QOrganizerItem> items(const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const;
+    QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const;
+    QList<QOrganizerItem> itemsForExport(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const;
     QOrganizerItem item(const QOrganizerItemLocalId &itemId, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const;
 
-    bool saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
     bool removeItems(const QList<QOrganizerItemLocalId> &itemIds, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
 
     /* Collections - every item belongs to exactly one collection */
-    QOrganizerCollectionLocalId defaultCollectionId(QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerCollectionLocalId> collectionIds(QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerCollection> collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const;
+    QOrganizerCollection defaultCollection(QOrganizerItemManager::Error* error) const;
+    QOrganizerCollection collection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerCollection> collections(QOrganizerItemManager::Error* error) const;
     bool saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
 
@@ -183,22 +183,24 @@ public Q_SLOTS:
     void dataChanged();
 
 private:
-    QList<QOrganizerItem> internalItemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
     QList<QOrganizerItem> internalItemInstances(const QOrganizerItem &generator, const QDateTime &periodStart, const QDateTime &periodEnd, int maxCount, QOrganizerItemManager::Error *error) const;
-    QList<QOrganizerItemLocalId> internalItemIds(const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, QOrganizerItemManager::Error *error) const;
+    QList<QOrganizerItemLocalId> internalItemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, QOrganizerItemManager::Error *error) const;
 
-    QList<QOrganizerItem> internalItems(const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const;
+    QList<QOrganizerItem> internalItems(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, const QOrganizerItemFetchHint &fetchHint, bool forExport, QOrganizerItemManager::Error *error) const;
+    void internalAddOccurances(QList<QOrganizerItem>* sorted, QOrganizerItem& item, const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, bool forExport, QOrganizerItemManager::Error *error) const;
     QOrganizerItem internalItem(const QOrganizerItemLocalId &itemId, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const;
 
-    bool internalSaveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    bool internalSaveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
     bool internalRemoveItems(const QList<QOrganizerItemLocalId> &itemIds, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
 
     /* Collections - every item belongs to exactly one collection */
-    QOrganizerCollectionLocalId internalDefaultCollectionId(QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerCollectionLocalId> internalCollectionIds(QOrganizerItemManager::Error* error) const;
-    QList<QOrganizerCollection> internalCollections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const;
+    QOrganizerCollection internalDefaultCollection(QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerCollection> internalCollections(QOrganizerItemManager::Error* error) const;
+    QOrganizerCollection internalCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const;
     bool internalSaveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
     bool internalRemoveCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
+    // helper function
+    QList<QOrganizerCollectionLocalId> internalCollectionIds(QOrganizerItemManager::Error* error) const;
 
     // single item saving implementation
     void checkItemIdValidity(CCalendar *cal, QOrganizerItem *checkItem, QOrganizerItemManager::Error *error);

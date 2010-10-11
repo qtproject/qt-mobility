@@ -203,9 +203,6 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemFilter& filter)
             case QOrganizerItemFilter::LocalIdFilter:
                 filter = QOrganizerItemLocalIdFilter();
                 break;
-            case QOrganizerItemFilter::OrganizerItemDateTimePeriodFilter:
-                filter = QOrganizerItemDateTimePeriodFilter();
-                break;
             case QOrganizerItemFilter::DefaultFilter:
                 filter = QOrganizerItemFilter();
                 break;

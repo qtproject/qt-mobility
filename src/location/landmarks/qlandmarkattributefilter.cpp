@@ -115,7 +115,7 @@ QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
         \o "state"
     \row
         \o "phoneNumber"
-        \o "postCode"
+        \o "postcode"
         \o "street"
     \endtable
 */
