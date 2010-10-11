@@ -45,6 +45,7 @@
 #include <qmobilityglobal.h>
 #include <QtCore/QObject>
 #include <QtCore/QStringList>
+#include <QtCore/QUrl>
 
 QT_BEGIN_HEADER
     
@@ -72,7 +73,7 @@ public:
         ThemeBasicItem, ThemeSensitiveItem, ThemeItemScroll, ThemeItemPick, ThemeItemDrop,
         ThemeItemMoveOver, ThemeBounceEffect, ThemeCheckBox, ThemeMultipleCheckBox, ThemeEditor,
         ThemeTextSelection, ThemeBlankSelection, ThemeLineSelection, ThemeEmptyLineSelection,
-        ThemePopUp, ThemePopupOpen, ThemePopupClose, ThemeFlick, ThemeStopFlick, // XXX PopUp -> Popup
+        ThemePopUp, ThemePopupOpen, ThemePopupClose, ThemeFlick, ThemeStopFlick,
         ThemeMultiPointTouchActivate, ThemeRotateStep, ThemeLongPress, ThemePositiveTacticon,
         ThemeNeutralTacticon, ThemeNegativeTacticon,
         NumberOfThemeEffects,
@@ -176,7 +177,7 @@ class Q_FEEDBACK_EXPORT QFeedbackFileEffect : public QFeedbackEffect
 {
     Q_OBJECT
     Q_PROPERTY(bool loaded READ isLoaded WRITE setLoaded)
-    Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
+    Q_PROPERTY(QUrl source READ source WRITE setSource)
 
 public:
     explicit QFeedbackFileEffect(QObject *parent = 0);
@@ -190,8 +191,8 @@ public:
     void unload();
     void setLoaded(bool);
 
-    QString fileName() const;
-    void setFileName(const QString &);
+    QUrl source() const;
+    void setSource(const QUrl &);
 
     static QStringList supportedMimeTypes();
 

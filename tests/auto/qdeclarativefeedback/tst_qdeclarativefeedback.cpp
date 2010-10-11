@@ -114,7 +114,7 @@ void tst_qdeclarativefeedback::fileEffect()
     QFeedbackFileEffect *fileEffect = qobject_cast<QFeedbackFileEffect*>(component.create());
     QVERIFY(fileEffect != 0);
 
-    QCOMPARE(fileEffect->fileName(), QString("nonexistingfile.haptic"));
+    QCOMPARE(fileEffect->source(), QUrl("qrc:nonexistingfile.haptic"));
     QCOMPARE(fileEffect->isLoaded(), false);
     QCOMPARE(fileEffect->state(), QFeedbackEffect::Stopped);
 
