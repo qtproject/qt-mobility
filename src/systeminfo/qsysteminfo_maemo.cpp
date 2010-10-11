@@ -206,7 +206,7 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxComm
     csStatusMaemo6["Rejected"]   = 11;  // Offline because SIM was rejected by the network.
 
     QTimer::singleShot(0,this,SLOT(setupNetworkInfo()));
-
+    QCoreApplication::processEvents();//this needs to be called otherwise this timer never fires
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
