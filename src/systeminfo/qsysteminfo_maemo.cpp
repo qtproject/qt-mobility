@@ -1169,6 +1169,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
 void QSystemDeviceInfoPrivate::setupProfile()
 {
+    qDebug() << Q_FUNC_INFO;
     QDBusConnection systemDbusConnection = QDBusConnection::systemBus();
 
     QDBusInterface mceConnectionInterface("com.nokia.mce",
@@ -1204,8 +1205,11 @@ void QSystemDeviceInfoPrivate::setupProfile()
     QDBusReply<QString> profileNameReply = connectionInterface.call("get_profile");
     if (profileNameReply.isValid())
         profileName = profileNameReply.value();
+qDebug() << Q_FUNC_INFO << profileName;
 
     QDBusReply<QString> ringingAlertTypeReply = connectionInterface.call("get_value", profileName, "ringing.alert.type");
+    qDebug() << ringingAlertTypeReply.value();
+
     if (ringingAlertTypeReply.isValid())
         silentProfile = QString::compare(ringingAlertTypeReply.value(), "silent", Qt::CaseInsensitive) == 0;
 
@@ -1241,9 +1245,11 @@ void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
 
 void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
 {
+    qDebug() << __FUNCTION__;
     if (active) {
         profileName = profile;
         foreach (const ProfileDataValue value, values) {
+            qDebug() << value.key << value.val;
             if (value.key == "ringing.alert.type")
                 silentProfile = QString::compare(value.val, "silent", Qt::CaseInsensitive) == 0;
             else if (value.key == "vibrating.alert.enabled")
