@@ -515,7 +515,7 @@ bool QLandmarkManagerEngine::importLandmarks(QIODevice* /*device*/, const QStrin
     Overall operation errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::exportLandmarks(QIODevice * /*device*/, const QString& /*format*/, QList<QLandmarkId> /*landmarkIds*/, QLandmarkManager::TransferOption /*option*/,
+bool QLandmarkManagerEngine::exportLandmarks(QIODevice * /*device*/, const QString& /*format*/, const QList<QLandmarkId> &/*landmarkIds*/, QLandmarkManager::TransferOption /*option*/,
         QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
@@ -547,10 +547,10 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferO
 */
 
 /*!
-    \fn QLandmarkManager::SupportLevel QLandmarkManagerEngine::sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders,
+    \fn QLandmarkManager::SupportLevel QLandmarkManagerEngine::sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder,
                                                             QLandmarkManager::Error *error, QString *errorString) const
 
-    Returns the support level the manager engine provides for the given \a sortOrders.  Errors are stored in \a error
+    Returns the support level the manager engine provides for the given \a sortOrder.  Errors are stored in \a error
     and \a errorString.
 */
 
