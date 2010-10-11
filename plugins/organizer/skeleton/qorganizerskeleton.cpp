@@ -547,7 +547,7 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganiz
 
         If there are no instances, return an empty list.
 
-        The returned items should have a QOrganizerItemInstanceOrigin detail that points to the generator and the
+        The returned items should have a QOrganizerItemParent detail that points to the generator and the
         original instance that the event would have occurred on (e.g. with an exception).
 
         They should not have recurrence information details in them.

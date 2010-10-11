@@ -378,7 +378,7 @@ void TestNoteItems::fetchDetails()
     m_definitionNames.append(QOrganizerItemAudibleReminder::DefinitionName);
 
     // Instance origin - Not supported
-    m_definitionNames.append(QOrganizerItemInstanceOrigin::DefinitionName);
+    m_definitionNames.append(QOrganizerItemParent::DefinitionName);
     // To-do progress - Not supported
     m_definitionNames.append(QOrganizerTodoProgress::DefinitionName);
     // To-do time range - Not supported

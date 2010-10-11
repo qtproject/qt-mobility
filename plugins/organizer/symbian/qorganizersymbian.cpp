@@ -514,7 +514,7 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
 
         // Set instance origin, the detail is set here because the corresponding transform class
         // does not know the required values
-        QOrganizerItemInstanceOrigin origin(itemInstance.detail<QOrganizerItemInstanceOrigin>());
+        QOrganizerItemParent origin(itemInstance.detail<QOrganizerItemParent>());
         origin.setParentLocalId(toItemLocalId(localCollectionIdValue, parentLocalUid));
         origin.setOriginalDate(toQDateTimeL(calInstance->StartTimeL()).date());
         itemInstance.saveDetail(&origin);
@@ -696,7 +696,7 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& i
 
         // Set instance origin, the detail is set here because the corresponding transform class
         // does not know the required values
-        QOrganizerItemInstanceOrigin origin(item.detail<QOrganizerItemInstanceOrigin>());
+        QOrganizerItemParent origin(item.detail<QOrganizerItemParent>());
         origin.setParentLocalId(toItemLocalId(localCollectionIdValue, parentEntry->LocalUidL()));
         origin.setOriginalDate(toQDateTimeL(calEntry->StartTimeL()).date());
         item.saveDetail(&origin);
@@ -931,8 +931,8 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(
         findParentEntryLC(collectionId, item, *parentGlobalUid));
 
     // Get the parameters for the new child entry
-    QOrganizerItemInstanceOrigin origin(
-        item.detail<QOrganizerItemInstanceOrigin>());
+    QOrganizerItemParent origin(
+        item.detail<QOrganizerItemParent>());
     if (!origin.originalDate().isValid()) {
         User::Leave(KErrInvalidOccurrence);
     }
@@ -1036,7 +1036,7 @@ CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(
     CCalEntry *parent(0);
 
     // Try to find with parent's local id
-    QOrganizerItemInstanceOrigin origin = item.detail<QOrganizerItemInstanceOrigin>();
+    QOrganizerItemParent origin = item.detail<QOrganizerItemParent>();
     if (!origin.parentLocalId().isNull()) {
         // Fetch the item (will return NULL if the localid is not found)
         parent = entryViewL(collectionId)->FetchL(toTCalLocalUid(origin.parentLocalId())); // ownership transferred

@@ -165,9 +165,9 @@ void TestDetailDef::fetchEventDetailDef()
     QCOMPARE(def, def1);
     
     // Instance origin - Not supported
-    def = detailDef.value(QOrganizerItemInstanceOrigin::DefinitionName);
+    def = detailDef.value(QOrganizerItemParent::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemType::TypeEvent);
+    def1 = m_om->detailDefinition(QOrganizerItemParent::DefinitionName, QOrganizerItemType::TypeEvent);
     QCOMPARE(def, def1);
     
     // To-do progress - Not supported
@@ -267,10 +267,10 @@ void TestDetailDef::fetchEventOccDetailDef()
     QCOMPARE(def, def1);
     
     // Instance origin
-    def = detailDef.value(QOrganizerItemInstanceOrigin::DefinitionName);
+    def = detailDef.value(QOrganizerItemParent::DefinitionName);
     QVERIFY(!def.isEmpty());
     QVERIFY(def.isUnique());
-    def1 = m_om->detailDefinition(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemType::TypeEventOccurrence);
+    def1 = m_om->detailDefinition(QOrganizerItemParent::DefinitionName, QOrganizerItemType::TypeEventOccurrence);
     QCOMPARE(def, def1);
     
     // To-do progress - Not supported
@@ -369,9 +369,9 @@ void TestDetailDef::fetchTodoDetailDef()
     QCOMPARE(def, def1);
     
     // Instance origin - Not supported
-    def = detailDef.value(QOrganizerItemInstanceOrigin::DefinitionName);
+    def = detailDef.value(QOrganizerItemParent::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemType::TypeTodo);
+    def1 = m_om->detailDefinition(QOrganizerItemParent::DefinitionName, QOrganizerItemType::TypeTodo);
     QCOMPARE(def, def1);
     
     // To-do progress
@@ -471,10 +471,10 @@ void TestDetailDef::fetchTodoOccDetailDef()
     QCOMPARE(def, def1);
     
     // Instance origin
-    def = detailDef.value(QOrganizerItemInstanceOrigin::DefinitionName);
+    def = detailDef.value(QOrganizerItemParent::DefinitionName);
     QVERIFY(!def.isEmpty());
     QVERIFY(def.isUnique());
-    def1 = m_om->detailDefinition(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemType::TypeTodoOccurrence);
+    def1 = m_om->detailDefinition(QOrganizerItemParent::DefinitionName, QOrganizerItemType::TypeTodoOccurrence);
     QCOMPARE(def, def1);
     
     // To-do progress
@@ -575,9 +575,9 @@ void TestDetailDef::fetchNoteDetailDef()
     QCOMPARE(def, def1);
     
     // Instance origin - Not supported
-    def = detailDef.value(QOrganizerItemInstanceOrigin::DefinitionName);
+    def = detailDef.value(QOrganizerItemParent::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemType::TypeNote);
+    def1 = m_om->detailDefinition(QOrganizerItemParent::DefinitionName, QOrganizerItemType::TypeNote);
     QCOMPARE(def, def1);
     
     // To-do progress - Not supported

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 #include "organizeriteminstanceorigintransform.h"
-#include "qorganizeriteminstanceorigin.h"
+#include "qorganizeritemparent.h"
 
 void OrganizerItemInstanceOriginTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
@@ -63,5 +63,5 @@ QString OrganizerItemInstanceOriginTransform::detailDefinitionName()
 {
     // Note: the conversions are done elsewhere, this class exists only to
     // indicate that we support instance origin detail
-    return QOrganizerItemInstanceOrigin::DefinitionName;    
+    return QOrganizerItemParent::DefinitionName;
 }
