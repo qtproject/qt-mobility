@@ -321,7 +321,7 @@ bool QLandmarkManagerEngineSymbian::importLandmarks(QIODevice *device, const QSt
 }
 
 bool QLandmarkManagerEngineSymbian::exportLandmarks(QIODevice *device, const QString& format,
-    QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option,
+    const QList<QLandmarkId> &landmarkIds, QLandmarkManager::TransferOption option,
     QLandmarkManager::Error *error, QString *errorString) const
 {
     return d_ptr->exportLandmarks(device, format, landmarkIds, option, error, errorString);
@@ -345,19 +345,19 @@ QLandmarkManager::SupportLevel QLandmarkManagerEngineSymbian::filterSupportLevel
     return d_ptr->filterSupportLevel(filter, error, errorString);
 }
 
-/*! Returns the support level the manager engine provides for the given \a sort oders.
+/*! Returns the support level the manager engine provides for the given \a sort order.
  */
-QLandmarkManager::SupportLevel QLandmarkManagerEngineSymbian::sortOrderSupportLevel(const QList<
-    QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error *error, QString *errorString) const
+QLandmarkManager::SupportLevel QLandmarkManagerEngineSymbian::sortOrderSupportLevel(const
+    QLandmarkSortOrder &sortOrder, QLandmarkManager::Error *error, QString *errorString) const
 {
-    return d_ptr->sortOrderSupportLevel(sortOrders, error, errorString);
+    return d_ptr->sortOrderSupportLevel(sortOrder, error, errorString);
 }
 
 /*!
  Returns true if the manager engine supports the given \a feature, otherwise returns false;
  */
 
-bool QLandmarkManagerEngineSymbian::isFeatureSupported(QLandmarkManager::LandmarkFeature feature,
+bool QLandmarkManagerEngineSymbian::isFeatureSupported(QLandmarkManager::ManagerFeature feature,
     QLandmarkManager::Error *error, QString *errorString) const
 {
     return d_ptr->isFeatureSupported(feature, error, errorString);

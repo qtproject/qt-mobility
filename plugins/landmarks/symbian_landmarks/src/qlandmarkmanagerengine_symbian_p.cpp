@@ -1258,7 +1258,7 @@ bool LandmarkManagerEngineSymbianPrivate::importLandmarks(QIODevice *device, con
  \a errorString.
  */
 bool LandmarkManagerEngineSymbianPrivate::exportLandmarks(QIODevice *device, const QString &format,
-    QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option,
+    const QList<QLandmarkId> &landmarkIds, QLandmarkManager::TransferOption option,
     QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
@@ -1414,7 +1414,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::filterSuppor
 /*! Returns the support level the manager engine provides for the given \a sort orders.
  */
 QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::sortOrderSupportLevel(
-    const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error *error,
+    const QLandmarkSortOrder &sortOrder, QLandmarkManager::Error *error,
     QString *errorString) const
 {
     Q_ASSERT(error);
@@ -1424,10 +1424,14 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::sortOrderSup
 
     QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::NativeSupport;
 
-    switch (sortOrders.at(0).type()) {
+    switch (sortOrder.type()) {
     case QLandmarkSortOrder::DefaultSort:
-    case QLandmarkSortOrder::NameSort:
+    case QLandmarkSortOrder::NameSort: {
+            QLandmarkNameSort nameSort = sortOrder;
+            if (nameSort.caseSensitivity() == Qt::CaseSensitive)
+                supportLevel = QLandmarkManager::NoSupport;
         break;
+    }
     default:
         supportLevel = QLandmarkManager::NoSupport;
         break;
@@ -1440,7 +1444,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::sortOrderSup
  Returns true if the manager engine supports the given \a feature, otherwise returns false;
  */
 bool LandmarkManagerEngineSymbianPrivate::isFeatureSupported(
-    QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const
+    QLandmarkManager::ManagerFeature feature, QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -4654,7 +4658,7 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
  * export landmarks
  */
 void LandmarkManagerEngineSymbianPrivate::exportLandmarksL(QIODevice *device,
-    const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option) const
+    const QString &format, const QList<QLandmarkId> &landmarkIds, QLandmarkManager::TransferOption option) const
 {
     QIODevice *outputdevice = 0;
 
