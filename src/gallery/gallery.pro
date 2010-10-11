@@ -47,7 +47,8 @@ SOURCES = \
 
 
 unix:contains(QT_CONFIG, dbus) {
-    include (maemo5/maemo5.pri)
+    maemo5:include (maemo5/maemo5.pri)
+    maemo6:include (maemo6/maemo6.pri)
 } else:symbian:contains(mds_enabled, yes) {
      include (symbian/symbian.pri)
 } else {
