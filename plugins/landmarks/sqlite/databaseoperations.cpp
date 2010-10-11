@@ -836,6 +836,18 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
     QList<QLandmarkId> result;
     bool alreadySorted = false;
 
+    for (int i=0; i < sortOrders.count(); ++i) {
+        if (sortOrders.at(i).type() == QLandmarkSortOrder::NameSort) {
+            QLandmarkNameSort nameSort = sortOrders.at(i);
+            if (nameSort.caseSensitivity() == Qt::CaseSensitive) {
+                *error = QLandmarkManager::NotSupportedError;
+                *errorString = "Case sensitive sorting is not supported";
+                return QList<QLandmarkId>();
+            }
+
+        }
+    }
+
     QSqlDatabase db = QSqlDatabase::database(connectionName, false);
     if (!db.isValid()) {
         if(error)
