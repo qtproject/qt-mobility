@@ -35,7 +35,6 @@ const int KHangulSyllableUpperLimit = 0xD7A3;
 const int KJamoLowerLimit = 0x1100;
 const int KJamoUpperLimit = 0x11FF;
 
-const int KChoCount  = 19;
 const int KJungCount = 21;
 const int KJongCount = 28;
 

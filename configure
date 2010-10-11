@@ -151,7 +151,7 @@ usage()
     echo "                    those modules (and their dependencies) will automatically be enabled."
     echo "-maemo6 ........... Build Qt Mobility for Maemo6 (Harmattan)."
     echo "-maemo5 ........... Build Qt Mobility for Maemo5 (Fremantle)."
-    echo "-meego ............ Build Qt Mobility for Meego."
+    echo "-meego  ........... Build Qt Mobility for MeeGo."
     echo "-sdk <sdk> ........ Build using Apple provided SDK <path/to/sdk>."
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
     echo "-qmake-exec <name>  Sets custom binary name for qmake binary"
@@ -555,6 +555,7 @@ compileTest "Maemo5 organizer dependencies" maemo5-calendar
 compileTest "Bluez" bluez
 compileTest "Gstreamer Photography" gstreamer-photography
 compileTest "Blkid" blkid
+compileTest "Pulse Audio" pulseaudio
 
 if [ "$LINUX_TARGET" = maemo6 ]; then
     compileTest sensord sensord

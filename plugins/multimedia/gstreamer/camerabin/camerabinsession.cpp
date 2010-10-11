@@ -756,19 +756,38 @@ void CameraBinSession::busMessage(const QGstreamerMessage &message)
             GError *err;
             gchar *debug;
             gst_message_parse_error (gm, &err, &debug);
-            emit error(int(QMediaRecorder::ResourceError), QString::fromUtf8(err->message));
-            qWarning() << "CameraBin error:" << QString::fromUtf8(err->message);
-            g_error_free (err);
-            g_free (debug);
+
+            QString message;
+
+            if (err && err->message) {
+                message = QString::fromUtf8(err->message);
+                qWarning() << "CameraBin error:" << message;
+            }
+
+            if (message.isEmpty())
+                message = tr("Camera error");
+
+            emit error(int(QMediaRecorder::ResourceError), message);
+
+            if (err)
+                g_error_free (err);
+
+            if (debug)
+                g_free (debug);
         }
 
         if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_WARNING) {
             GError *err;
             gchar *debug;
-            gst_message_parse_error (gm, &err, &debug);
-            qWarning() << "CameraBin warning:" << QString::fromUtf8(err->message);
-            g_error_free (err);
-            g_free (debug);
+            gst_message_parse_warning (gm, &err, &debug);
+
+            if (err && err->message)
+                qWarning() << "CameraBin warning:" << QString::fromUtf8(err->message);
+
+            if (err)
+                g_error_free (err);
+            if (debug)
+                g_free (debug);
         }
 
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_pipeline)) {

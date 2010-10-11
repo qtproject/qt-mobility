@@ -98,6 +98,7 @@ source		cpplpresencetable.cpp
 source    	cntsqlsearch.cpp
 source 		cntsqlkoreanitut.cpp
 source		cntsqlsearchbase.cpp
+source		cntsqlfactory.cpp
 
 LIBRARY         euser.lib 
 LIBRARY         efsrv.lib 

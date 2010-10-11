@@ -115,30 +115,6 @@ public:
     };
     Q_DECLARE_FLAGS(InputMethodFlags, InputMethod)
 
-    enum KeyboardType {
-        UnknownKeyboard = 0,
-        SoftwareKeyboard= 0x0000001,
-        ITUKeypad = 0x0000002,
-        HalfQwertyKeyboard = 0x0000004,
-        FullQwertyKeyboard = 0x0000008,
-        WirelessKeyboard = 0x0000010
-      };//1.2
-    Q_DECLARE_FLAGS(KeyboardTypeFlags, KeyboardType)//1.2
-
-    QSystemDeviceInfo::InputMethodFlags inputMethodType();
-
-    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
-    bool isWirelessKeyboardConnected(); //1.2
-    bool isKeyboardFlipOpen();//1.2
-
-    QString imei();
-    QString imsi();
-    QString manufacturer();
-    QString model();
-    QString productName();
-    int batteryLevel() const;
-   QSystemDeviceInfo::BatteryStatus batteryStatus();
-
     enum Profile {
         UnknownProfile = 0,
         SilentProfile,
@@ -157,12 +133,31 @@ public:
         SimLocked
     };
 
+    enum KeyboardType {
+        UnknownKeyboard = 0,
+        SoftwareKeyboard= 0x0000001,
+        ITUKeypad = 0x0000002,
+        HalfQwertyKeyboard = 0x0000004,
+        FullQwertyKeyboard = 0x0000008,
+        WirelessKeyboard = 0x0000010
+      };//1.2
+    Q_DECLARE_FLAGS(KeyboardTypeFlags, KeyboardType)//1.2
+
     enum LockType {
         UnknownLock = 0,
         DeviceLocked,
         TouchAndKeyboardLocked
     }; //1.2
 
+    QSystemDeviceInfo::InputMethodFlags inputMethodType();
+
+    QString imei();
+    QString imsi();
+    QString manufacturer();
+    QString model();
+    QString productName();
+    int batteryLevel() const;
+    QSystemDeviceInfo::BatteryStatus batteryStatus();
 
     bool isDeviceLocked();
     QSystemDeviceInfo::SimStatus simStatus();
@@ -170,6 +165,11 @@ public:
     QSystemDeviceInfo::PowerState currentPowerState();
 
     bool currentBluetoothPowerState();
+
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+    bool isWirelessKeyboardConnected(); //1.2
+    bool isKeyboardFlipOpen();//1.2
+
     bool keypadLightOn(); //1.2
     bool backLightOn(); //1.2
     QUuid hostId(); //1.2

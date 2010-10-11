@@ -127,8 +127,8 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiatio
     object to other processes in the system.
 */
 
-/*! \typedef QRemoteServiceRegister::securityFilter
-    QRemoteServiceRegister -style synonym for bool (*securityFilter)(const void *message)
+/*! \typedef QRemoteServiceRegister::SecurityFilter
+    QRemoteServiceRegister -style synonym for bool (*SecurityFilter)(const void *message)
 */
 
 /*!

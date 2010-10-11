@@ -110,33 +110,33 @@ void tst_QSystemDisplayInfo::tst_getOrientation()
 void tst_QSystemDisplayInfo::tst_contrast()
 {
     QSystemDisplayInfo di;
-    QVERIFY(di.getDPIWidth(0) >= 0
-            && di.getDPIWidth(0)> 1.0 );
+    QVERIFY(di.contrast(0) >= 0
+            && di.contrast(0)< 1.0 );
     // contrast levels are between 0 and 1.0
 }
 
 void tst_QSystemDisplayInfo::tst_getDPIWidth()
 {
     QSystemDisplayInfo di;
-    QVERIFY(di.getDPIWidth(0) > 0);
+    QVERIFY(di.getDPIWidth(0) > -1);
 }
 
 void tst_QSystemDisplayInfo::tst_getDPIHeight()
 {
     QSystemDisplayInfo di;
-    QVERIFY(di.getDPIHeight(0) > 0);
+    QVERIFY(di.getDPIHeight(0) > -1);
 }
 
 void tst_QSystemDisplayInfo::tst_physicalHeight()
 {
     QSystemDisplayInfo di;
-    QVERIFY(di.physicalHeight(0) > 0);
+    QVERIFY(di.physicalHeight(0) > -1);
 }
 
 void tst_QSystemDisplayInfo::tst_physicalWidth()
 {
     QSystemDisplayInfo di;
-    QVERIFY(di.physicalWidth(0) > 0);
+    QVERIFY(di.physicalWidth(0) > -1);
 }
 
 
