@@ -45,6 +45,7 @@
 #include "qsensorplugin.h"
 #include <QSettings>
 #include "sensorlog_p.h"
+#include <QTimer>
 
 QTM_BEGIN_NAMESPACE
 
@@ -74,8 +75,20 @@ public:
     // Holds the first identifier for each type
     QHash<QByteArray, QByteArray> firstIdentifierForType;
 
+    enum {
+        IDLE,
+        REGISTERED,
+        NOTIFYING
+    } registrationState;
+
 Q_SIGNALS:
     void availableSensorsChanged();
+
+public Q_SLOTS:
+    void emitSensorsChanged()
+    {
+        Q_EMIT availableSensorsChanged();
+    }
 };
 
 Q_GLOBAL_STATIC(QSensorManagerPrivate, sensorManagerPrivate)
@@ -157,7 +170,16 @@ void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &i
     }
     SENSORLOG() << "registering backend for type" << type << "identifier" << identifier;// << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
     factoryByIdentifier[identifier] = factory;
-    Q_EMIT d->availableSensorsChanged();
+
+    switch (d->registrationState) {
+    case QSensorManagerPrivate::IDLE: /* fall through */
+    case QSensorManagerPrivate::NOTIFYING:
+        d->registrationState = QSensorManagerPrivate::REGISTERED;
+        QTimer::singleShot(0, d, SLOT(emitSensorsChanged()));
+        break;
+    case QSensorManagerPrivate::REGISTERED:
+        break;
+    }
 }
 
 /*!
@@ -189,7 +211,16 @@ void QSensorManager::unregisterBackend(const QByteArray &type, const QByteArray 
     }
     if (!factoryByIdentifier.count())
         (void)d->backendsByType.take(type);
-    Q_EMIT d->availableSensorsChanged();
+
+    switch (d->registrationState) {
+    case QSensorManagerPrivate::IDLE: /* fall through */
+    case QSensorManagerPrivate::NOTIFYING:
+        d->registrationState = QSensorManagerPrivate::REGISTERED;
+        QTimer::singleShot(0, d, SLOT(emitSensorsChanged()));
+        break;
+    case QSensorManagerPrivate::REGISTERED:
+        break;
+    }
 }
 
 /*!
