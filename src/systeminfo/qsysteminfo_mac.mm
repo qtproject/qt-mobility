@@ -311,7 +311,37 @@ bool hasIOServiceMatching(const QString &classstr)
 #endif
 NSObject* delegate;
 
+@interface QtBtConnectListener : NSObject
+{
+}
+@end
+
+@implementation QtBtConnectListener
+- (id) init
+{
+    [super init];
+    [IOBluetoothDevice registerForConnectNotifications:self selector:@selector(bluetoothDeviceConnected:device:)];
+    return self;
+}
+
+- (void)bluetoothDeviceConnected:(IOBluetoothUserNotification *)notification device:(IOBluetoothDevice *)device
+{
+    if([ device getClassOfDevice ] == 9536) {
+        QTM_NAMESPACE::QSystemDeviceInfoPrivate::instance()->keyboardConnected(true);
+        [device registerForDisconnectNotification:self selector:@selector(bluetoothDeviceDisconnected:device:)];
+    }
+}
+
+- (void)bluetoothDeviceDisconnected:(IOBluetoothUserNotification *)notification device:(IOBluetoothDevice *)device
+{
+    if([ device getClassOfDevice ] == 9536) {
+        QTM_NAMESPACE::QSystemDeviceInfoPrivate::instance()->keyboardConnected(false);
+    }
+}
+@end
+
 QTM_BEGIN_NAMESPACE
+QtBtConnectListener *btConnListener;
 
 Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, qsystemDeviceInfoPrivate)
 
@@ -796,6 +826,7 @@ void btPowerStateChange(void *ref, io_service_t /*service*/, natural_t messageTy
 }
 
 
+
 QBluetoothListenerThread::QBluetoothListenerThread(QObject *parent)
     :QObject(parent)
 {
@@ -812,6 +843,7 @@ void QBluetoothListenerThread::stop()
     mutex.lock();
     keepRunning = false;
     mutex.unlock();
+    [btConnListener release];
     t.quit();
     t.wait();
 }
@@ -826,7 +858,9 @@ void QBluetoothListenerThread::doWork()
         mutex.lock();
         keepRunning = true;
         mutex.unlock();
+
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
         io_object_t notifyObject;
         io_service_t bluetoothservice;
 
@@ -890,6 +924,12 @@ void QBluetoothListenerThread::doWork()
         [pool release];
     }
 #endif
+}
+
+void QBluetoothListenerThread::setupConnectNotify()
+{
+    qDebug() << Q_FUNC_INFO;
+    btConnListener = [[QtBtConnectListener alloc] init];
 }
 
 void QBluetoothListenerThread::emitBtPower(bool b)
@@ -1455,125 +1495,125 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     return (int)bitsPerPixel;
 }
 
-// QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
-// {
-//     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
+{
+    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
 
-//     if(screen < 16 && screen > -1) {
-//         int rotation = (int)CGDisplayRotation(getCGId(screen));
-//         switch(rotation) {
-//         case 0:
-//         case 360:
-//             orientation = QSystemDisplayInfo::Landscape;
-//             break;
-//         case 90:
-//             orientation = QSystemDisplayInfo::Portrait;
-//             break;
-//         case 180:
-//             orientation = QSystemDisplayInfo::InvertedLandscape;
-//             break;
-//         case 270:
-//             orientation = QSystemDisplayInfo::InvertedPortrait;
-//             break;
-//         };
-//     }
-//     return orientation;
-// }
-
-
-// float QSystemDisplayInfoPrivate::contrast(int screen)
-// {
-//     Q_UNUSED(screen);
-//     QString accessplist = QDir::homePath() + "/Library/Preferences/com.apple.universalaccess.plist";
-//     QSettings accessSettings(accessplist, QSettings::NativeFormat);
-//     accessSettings.value("contrast").toFloat();
-//     return accessSettings.value("contrast").toFloat();
-// }
-
-// static int GetIntFromDictionaryForKey(CFDictionaryRef desc, CFStringRef key)
-// {
-//     CFNumberRef value;
-//     int resultNumber = 0;
-//     if ((value = (const __CFNumber*)CFDictionaryGetValue(desc,key)) == NULL
-//             || CFGetTypeID(value) != CFNumberGetTypeID())
-//         return 0;
-//     CFNumberGetValue(value, kCFNumberIntType, &resultNumber);
-//     return resultNumber;
-// }
-
-// CGDisplayErr GetDisplayDPI(CFDictionaryRef displayModeDict,CGDirectDisplayID displayID,
-//     double *horizontalDPI, double *verticalDPI)
-// {
-//     CGDisplayErr displayError = kCGErrorFailure;
-//     io_connect_t ioPort;
-//     CFDictionaryRef displayDict;
-
-//     ioPort = CGDisplayIOServicePort(displayID);
-//     if (ioPort != MACH_PORT_NULL) {
-//         displayDict = IOCreateDisplayInfoDictionary(ioPort, 0);
-//         if (displayDict != NULL) {
-//             const double mmPerInch = 25.4;
-//             double horizontalSizeInInches = (double)GetIntFromDictionaryForKey(displayDict, CFSTR(kDisplayHorizontalImageSize)) / mmPerInch;
-//             double verticalSizeInInches = (double)GetIntFromDictionaryForKey(displayDict, CFSTR(kDisplayVerticalImageSize)) / mmPerInch;
-
-//             CFRelease(displayDict);
-
-//             *horizontalDPI = (double)GetIntFromDictionaryForKey(displayModeDict, kCGDisplayWidth) / horizontalSizeInInches;
-//             *verticalDPI = (double)GetIntFromDictionaryForKey(displayModeDict, kCGDisplayHeight) / verticalSizeInInches;
-//             displayError = CGDisplayNoErr;
-//         }
-//     }
-//     return displayError;
-// }
-
-// int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
-// {
-//     int dpi=0;
-//     if(screen < 16 && screen > -1) {
-//         double horizontalDPI, verticalDPI;
-
-//         CGDisplayErr displayError = GetDisplayDPI(CGDisplayCurrentMode(kCGDirectMainDisplay), kCGDirectMainDisplay, &horizontalDPI, &verticalDPI);
-//         if (displayError == CGDisplayNoErr) {
-//             dpi = horizontalDPI;
-//         }
-//     }
-//     return dpi;
-// }
-
-// int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
-// {
-//     int dpi=0;
-//     if(screen < 16 && screen > -1) {
-//         double horizontalDPI, verticalDPI;
-
-//         CGDisplayErr displayError = GetDisplayDPI(CGDisplayCurrentMode(kCGDirectMainDisplay),  kCGDirectMainDisplay, &horizontalDPI, &verticalDPI);
-//         if (displayError == CGDisplayNoErr) {
-//             dpi = verticalDPI;
-//         }
-//     }
-//     return dpi;
-// }
+    if(screen < 16 && screen > -1) {
+        int rotation = (int)CGDisplayRotation(getCGId(screen));
+        switch(rotation) {
+        case 0:
+        case 360:
+            orientation = QSystemDisplayInfo::Landscape;
+            break;
+        case 90:
+            orientation = QSystemDisplayInfo::Portrait;
+            break;
+        case 180:
+            orientation = QSystemDisplayInfo::InvertedLandscape;
+            break;
+        case 270:
+            orientation = QSystemDisplayInfo::InvertedPortrait;
+            break;
+        };
+    }
+    return orientation;
+}
 
 
-// int QSystemDisplayInfoPrivate::physicalHeight(int screen)
-// {
-//     int height=0;
-//     if(screen < 16 && screen > -1) {
-//         CGSize size = CGDisplayScreenSize(getCGId(screen));
-//         height = size.height;
-//     }
-//     return height;
-// }
+float QSystemDisplayInfoPrivate::contrast(int screen)
+{
+    Q_UNUSED(screen);
+    QString accessplist = QDir::homePath() + "/Library/Preferences/com.apple.universalaccess.plist";
+    QSettings accessSettings(accessplist, QSettings::NativeFormat);
+    accessSettings.value("contrast").toFloat();
+    return accessSettings.value("contrast").toFloat();
+}
 
-// int QSystemDisplayInfoPrivate::physicalWidth(int screen)
-// {
-//     int width=0;
-//     if(screen < 16 && screen > -1) {
-//         CGSize size = CGDisplayScreenSize(getCGId(screen));
-//         width = size.width;
-//     }
-//     return width;
-// }
+static int GetIntFromDictionaryForKey(CFDictionaryRef desc, CFStringRef key)
+{
+    CFNumberRef value;
+    int resultNumber = 0;
+    if ((value = (const __CFNumber*)CFDictionaryGetValue(desc,key)) == NULL
+            || CFGetTypeID(value) != CFNumberGetTypeID())
+        return 0;
+    CFNumberGetValue(value, kCFNumberIntType, &resultNumber);
+    return resultNumber;
+}
+
+CGDisplayErr GetDisplayDPI(CFDictionaryRef displayModeDict,CGDirectDisplayID displayID,
+    double *horizontalDPI, double *verticalDPI)
+{
+    CGDisplayErr displayError = kCGErrorFailure;
+    io_connect_t ioPort;
+    CFDictionaryRef displayDict;
+
+    ioPort = CGDisplayIOServicePort(displayID);
+    if (ioPort != MACH_PORT_NULL) {
+        displayDict = IOCreateDisplayInfoDictionary(ioPort, 0);
+        if (displayDict != NULL) {
+            const double mmPerInch = 25.4;
+            double horizontalSizeInInches = (double)GetIntFromDictionaryForKey(displayDict, CFSTR(kDisplayHorizontalImageSize)) / mmPerInch;
+            double verticalSizeInInches = (double)GetIntFromDictionaryForKey(displayDict, CFSTR(kDisplayVerticalImageSize)) / mmPerInch;
+
+            CFRelease(displayDict);
+
+            *horizontalDPI = (double)GetIntFromDictionaryForKey(displayModeDict, kCGDisplayWidth) / horizontalSizeInInches;
+            *verticalDPI = (double)GetIntFromDictionaryForKey(displayModeDict, kCGDisplayHeight) / verticalSizeInInches;
+            displayError = CGDisplayNoErr;
+        }
+    }
+    return displayError;
+}
+
+int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+        double horizontalDPI, verticalDPI;
+
+        CGDisplayErr displayError = GetDisplayDPI(CGDisplayCurrentMode(kCGDirectMainDisplay), kCGDirectMainDisplay, &horizontalDPI, &verticalDPI);
+        if (displayError == CGDisplayNoErr) {
+            dpi = horizontalDPI;
+        }
+    }
+    return dpi;
+}
+
+int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+        double horizontalDPI, verticalDPI;
+
+        CGDisplayErr displayError = GetDisplayDPI(CGDisplayCurrentMode(kCGDirectMainDisplay),  kCGDirectMainDisplay, &horizontalDPI, &verticalDPI);
+        if (displayError == CGDisplayNoErr) {
+            dpi = verticalDPI;
+        }
+    }
+    return dpi;
+}
+
+
+int QSystemDisplayInfoPrivate::physicalHeight(int screen)
+{
+    int height=0;
+    if(screen < 16 && screen > -1) {
+        CGSize size = CGDisplayScreenSize(getCGId(screen));
+        height = size.height;
+    }
+    return height;
+}
+
+int QSystemDisplayInfoPrivate::physicalWidth(int screen)
+{
+    int width=0;
+    if(screen < 16 && screen > -1) {
+        CGSize size = CGDisplayScreenSize(getCGId(screen));
+        width = size.width;
+    }
+    return width;
+}
 
 
 DAApprovalSessionRef session = NULL;
@@ -1631,6 +1671,8 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
         : QObject(parent), daSessionThread(0)
 {
     updateVolumesMap();
+
+    checkAvailableStorage();
 }
 
 
@@ -1645,7 +1687,7 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 void QSystemStorageInfoPrivate::storageChanged( bool added, const QString &vol)
 {
     if(!vol.isEmpty()) {
-        QHashIterator<QString, QString> it(mountEntriesHash);
+        QMapIterator<QString, QString> it(mountEntriesMap);
         QString foundKey;
         bool seen = false;
         while (it.hasNext()) {
@@ -1661,7 +1703,7 @@ void QSystemStorageInfoPrivate::storageChanged( bool added, const QString &vol)
             updateVolumesMap();
         }
         if(!added && seen) {
-            mountEntriesHash.remove(foundKey);
+            mountEntriesMap.remove(foundKey);
             Q_EMIT logicalDriveChanged(added,vol);
         }
 
@@ -1672,12 +1714,12 @@ void QSystemStorageInfoPrivate::storageChanged( bool added, const QString &vol)
         } else { //removed
             // cdroms unmounting seem to not have a volume name with the notification here, so
             // we need to manually deal with it
-            QHash <QString,QString> oldDrives = mountEntriesHash;
+            QMap <QString,QString> oldDrives = mountEntriesMap;
             updateVolumesMap();
-            QStringList newDrives = mountEntriesHash.keys();
+            QStringList newDrives = mountEntriesMap.keys();
             QString foundDrive;
 
-            QHashIterator<QString, QString> it(oldDrives);
+            QMapIterator<QString, QString> it(oldDrives);
             while (it.hasNext()) {
                 it.next();
                 if(!newDrives.contains(it.key())) {
@@ -1693,15 +1735,15 @@ bool QSystemStorageInfoPrivate::updateVolumesMap()
     struct statfs64 *buf = NULL;
     unsigned i, count = 0;
 
-    mountEntriesHash.clear();
+    mountEntriesMap.clear();
 
     count = getmntinfo64(&buf, 0);
     for (i=0; i<count; i++) {
         char *volName = buf[i].f_mntonname;
         if(buf[i].f_type != 19
            && buf[i].f_type != 20
-           && !mountEntriesHash.contains(volName)) {
-            mountEntriesHash.insert(buf[i].f_mntfromname,volName);
+           && !mountEntriesMap.contains(volName)) {
+            mountEntriesMap.insert(buf[i].f_mntfromname,volName);
         }
     }
     return true;
@@ -1721,6 +1763,8 @@ qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 
 qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
+    getStorageState(driveVolume);
+
     qint64 totalBytes=0;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSDictionary *attr = [ [NSFileManager defaultManager] attributesOfFileSystemForPath:qstringToNSString(driveVolume) error:nil];
@@ -1745,7 +1789,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
         return QSystemStorageInfo::NoDrive;
     }
 
-    diskRef = DADiskCreateFromBSDName(NULL, sessionRef, mountEntriesHash.key(driveVolume).toLatin1());
+    diskRef = DADiskCreateFromBSDName(NULL, sessionRef, mountEntriesMap.key(driveVolume).toLatin1());
     if (diskRef == NULL) {
         CFRelease(sessionRef);
         return QSystemStorageInfo::NoDrive;
@@ -1806,7 +1850,7 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
     updateVolumesMap();
     QStringList drivesList;
-    QHashIterator<QString, QString> it(mountEntriesHash);
+    QMapIterator<QString, QString> it(mountEntriesMap);
      while (it.hasNext()) {
          it.next();
          drivesList << it.value();
@@ -1835,6 +1879,16 @@ void QSystemStorageInfoPrivate::connectNotify(const char *signal)
         DARegisterDiskAppearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback2,this);
         DARegisterDiskDisappearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,unmountCallback,this);
     }
+
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageStateChanged(const QString &, QSystemStorageInfo::StorageState))))) {
+        if(!storageTimer) {
+            storageTimer = new QTimer(this);
+        }
+        connect(storageTimer,SIGNAL(timeout()),this,SLOT(checkAvailableStorage()));
+        if(!storageTimer->isActive())
+            storageTimer->start(60 * 1000);
+    }
 }
 
 
@@ -1849,8 +1903,58 @@ void QSystemStorageInfoPrivate::disconnectNotify(const char *signal)
        // DAUnregisterApprovalCallback((__DAApprovalSession *)daSessionThread->session,(void*)unmountCallback,NULL);
 #endif
     }
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageStateChanged(const QString &, QSystemStorageInfo::StorageState))))) {
+        disconnect(storageTimer,SIGNAL(timeout()),this,SLOT(checkAvailableStorage()));
+    }
 }
 
+QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
+{
+    return QString();
+}
+
+QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::getStorageState(const QString &driveVolume)
+{
+    QSystemStorageInfo::StorageState storState = QSystemStorageInfo::UnknownStorageState;
+
+    struct statfs fs;
+    if (statfs(driveVolume.toLocal8Bit(), &fs) == 0) {
+        if( fs.f_bfree != 0) {
+            long percent = 100 -(fs.f_blocks - fs.f_bfree) * 100 / fs.f_blocks;
+            qDebug()  << driveVolume << percent;
+
+
+            if(percent < 41 && percent > 10 ) {
+                storState = QSystemStorageInfo::LowStorageState;
+            } else if(percent < 11 && percent > 2 ) {
+                storState =  QSystemStorageInfo::VeryLowStorageState;
+            } else if(percent < 3  ) {
+                storState =  QSystemStorageInfo::CriticalStorageState;
+            } else {
+                storState =  QSystemStorageInfo::NormalStorageState;
+            }
+        }
+    }
+    return storState;
+}
+
+void QSystemStorageInfoPrivate::checkAvailableStorage()
+{
+    QMap<QString, QString> oldDrives = mountEntriesMap;
+    Q_FOREACH(const QString &vol, oldDrives.keys()) {
+        QSystemStorageInfo::StorageState storState = getStorageState(vol);
+        if(!stateMap.contains(vol)) {
+            stateMap.insert(vol,storState);
+        } else {
+            if(stateMap.value(vol) != storState) {
+                stateMap[vol] = storState;
+                qDebug() << "storage state changed" << storState;
+                Q_EMIT storageStateChanged(vol, storState);
+            }
+        }
+    }
+}
 
 void powerInfoChanged(void* context)
 {
@@ -1860,11 +1964,12 @@ void powerInfoChanged(void* context)
 }
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
-        : QObject(parent), btThreadOk(0) ,btThread(0)
+        : QObject(parent), btThreadOk(0) ,btThread(0),hasWirelessKeyboardConnected(0)
 {
     batteryLevelCache = 0;
     currentPowerStateCache = QSystemDeviceInfo::UnknownPower;
     batteryStatusCache = QSystemDeviceInfo::NoBatteryLevel;
+    hasWirelessKeyboardConnected = isWirelessKeyboardConnected();
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
@@ -1881,12 +1986,18 @@ QSystemDeviceInfoPrivate *QSystemDeviceInfoPrivate::instance()
 
 void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
 {
-    if (QLatin1String(signal) == SIGNAL(bluetoothStateChanged(bool))) {
+    if (QLatin1String(signal) == SIGNAL(bluetoothStateChanged(bool))
+        || QLatin1String(signal) == SIGNAL(wirelessKeyboardConnected(bool))) {
         if(!btThread) {
             btThread = new QBluetoothListenerThread();
+            btThreadOk = true;
+        }
+        if (QLatin1String(signal) == SIGNAL(bluetoothStateChanged(bool))) {
             connect(btThread,SIGNAL(bluetoothPower(bool)), this, SIGNAL(bluetoothStateChanged(bool)));
             btThread->doWork();
-             btThreadOk = true;
+        }
+        if( QLatin1String(signal) == SIGNAL(wirelessKeyboardConnected(bool))) {
+            btThread->setupConnectNotify();
         }
     }
 
@@ -1911,12 +2022,10 @@ void QSystemDeviceInfoPrivate::disconnectNotify(const char *signal)
     }
 }
 
-
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
     return QSystemDeviceInfo::UnknownProfile;
 }
-
 
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 {
@@ -1936,7 +2045,6 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
     }
     return methods;
 }
-
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
@@ -2102,6 +2210,75 @@ bool QSystemDeviceInfoPrivate::currentBluetoothPowerState()
     if(isBtPowerOn())
         return true;
     return false;
+}
+
+QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardType()
+{
+    QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags = QSystemDeviceInfo::UnknownKeyboard;
+
+    if((methods & QSystemDeviceInfo::Keyboard)) {
+        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::FullQwertyKeyboard);
+  }
+    if(isWirelessKeyboardConnected()) {
+        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::WirelessKeyboard);
+    }
+// how to check softkeys on desktop?
+    return keyboardFlags;
+}
+
+bool QSystemDeviceInfoPrivate::isWirelessKeyboardConnected()
+{
+    NSArray *pairedDevices = [ IOBluetoothDevice pairedDevices];
+
+    for (IOBluetoothDevice *currentBtDevice in pairedDevices) {
+        if([ currentBtDevice getClassOfDevice ] == 9536
+           && [currentBtDevice isConnected]) {
+            hasWirelessKeyboardConnected = true;
+        }
+    }
+    return hasWirelessKeyboardConnected;
+}
+
+bool QSystemDeviceInfoPrivate::isKeyboardFlipOpen()
+{
+    return false;
+}
+
+void QSystemDeviceInfoPrivate::keyboardConnected(bool connect)
+{
+    if(connect != hasWirelessKeyboardConnected)
+        hasWirelessKeyboardConnected = connect;
+    Q_EMIT wirelessKeyboardConnected(connect);
+}
+
+bool QSystemDeviceInfoPrivate::keypadLightOn()
+{
+    return false;
+}
+
+bool QSystemDeviceInfoPrivate::backLightOn()
+{
+    return false;
+}
+
+QUuid QSystemDeviceInfoPrivate::hostId()
+{
+    CFStringRef uuidKey = CFSTR(kIOPlatformUUIDKey);
+    io_service_t ioService = IOServiceGetMatchingService(kIOMasterPortDefault,
+                                                         IOServiceMatching("IOPlatformExpertDevice"));
+
+    if (ioService) {
+        CFTypeRef cfStringKey = IORegistryEntryCreateCFProperty(ioService, uuidKey, kCFAllocatorDefault, 0);
+
+        return QUuid(stringFromCFString((const __CFString*)cfStringKey));
+    }
+    return QUuid(QString::number(gethostid()));
+}
+
+QSystemDeviceInfo::LockType QSystemDeviceInfoPrivate::typeOfLock()
+{
+    return QSystemDeviceInfo::UnknownLock;
 }
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)

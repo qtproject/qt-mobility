@@ -130,14 +130,11 @@ private:
 
     void setupNmConnections();
     bool isDefaultConnectionPath(const QString &path);
-
     QMap <QString, QString> activePaths;
     void updateActivePaths();
-    
-
     inline QSystemNetworkInfo::NetworkMode deviceTypeToMode(quint32 type);
-
 #endif
+
     QString getSysNetName(QSystemNetworkInfo::NetworkMode mode);
 
 private Q_SLOTS:
@@ -152,6 +149,12 @@ class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
 
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
@@ -184,6 +187,11 @@ public:
     void setConnection();
     QString model();
     QString productName();
+
+//    QSystemDeviceInfo::KeyboardTypeFlags keyboardType(); //1.2
+//    bool isWirelessKeyboardConnected(); //1.2
+//    bool isKeyboardFlipOpen();//1.2
+
 
 private:
 #if !defined(QT_NO_DBUS)

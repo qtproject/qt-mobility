@@ -59,23 +59,26 @@ public:
     explicit QSystemDisplayInfo(QObject *parent = 0);
     ~QSystemDisplayInfo();
 
- //   enum DisplayOrientation {
- //       Unknown = 0,
- //       Landscape,
- //       Portrait,
- //       InvertedLandscape,
- //       InvertedPortrait
- //   };
+    enum DisplayOrientation {
+        Unknown = 0,
+        Landscape,
+        Portrait,
+        InvertedLandscape,
+        InvertedPortrait
+    };
 
     static int displayBrightness(int screen);
     static int colorDepth(int screen);
 
-//    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-//    float contrast(int screen);
-//    int getDPIWidth(int screen);
-//    int getDPIHeight(int screen);
-//    int physicalHeight(int screen);
-//    int physicalWidth(int screen);
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
+
+    bool backLightOn(); //1.2
+
 };
 
 
