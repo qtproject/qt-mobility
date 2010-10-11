@@ -905,7 +905,7 @@ bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &f
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option) const
+bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format, const QList<QLandmarkId> &landmarkIds, QLandmarkManager::TransferOption option) const
 {
     Q_D(const QLandmarkManager);
 
@@ -957,7 +957,7 @@ QStringList QLandmarkManager::supportedFormats(QLandmarkManager::TransferOperati
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(const QString &fileName, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option) const
+bool QLandmarkManager::exportLandmarks(const QString &fileName, const QString &format, const QList<QLandmarkId> &landmarkIds, QLandmarkManager::TransferOption option) const
 {
     QFile file(fileName);
 
@@ -1019,9 +1019,9 @@ QLandmarkManager::SupportLevel QLandmarkManager::filterSupportLevel(const QLandm
 }
 
 /*!
-    Returns the support level the manager provides for the given list of \a sortOrders.
+    Returns the support level the manager provides for the given \a sortOrder.
 */
-QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QList<QLandmarkSortOrder>& sortOrders) const
+QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder) const
 {
     Q_D(const QLandmarkManager);
 
@@ -1032,7 +1032,7 @@ QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QLi
      d->errorCode = QLandmarkManager::NoError;
      d->errorString = "";
 
-    return d->engine->sortOrderSupportLevel(sortOrders, &(d->errorCode), &(d->errorString));
+    return d->engine->sortOrderSupportLevel(sortOrder, &(d->errorCode), &(d->errorString));
 }
 
 /*!

@@ -2703,7 +2703,7 @@ bool DatabaseOperations::importLandmarks(QIODevice *device,
 
 bool DatabaseOperations::exportLandmarks( QIODevice *device,
                      const QString &format,
-                     QList<QLandmarkId> landmarkIds,
+                     const QList<QLandmarkId> &landmarkIds,
                      QLandmarkManager::TransferOption option,
                      QLandmarkManager::Error *error,
                      QString *errorString) const
@@ -2903,7 +2903,7 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
 }
 
 bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
-                        QList<QLandmarkId> landmarkIds,
+                        const QList<QLandmarkId> &landmarkIds,
                         QLandmarkManager::TransferOption option,
                         QLandmarkManager::Error *error,
                         QString *errorString) const
@@ -2953,7 +2953,7 @@ bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
 }
 
 bool DatabaseOperations::exportLandmarksGpx(QIODevice *device,
-                        QList<QLandmarkId> landmarkIds,
+                        const QList<QLandmarkId> &landmarkIds,
                         QLandmarkManager::Error *error,
                         QString *errorString) const
 {
@@ -3080,19 +3080,23 @@ QLandmarkManager::SupportLevel DatabaseOperations::filterSupportLevel(const QLan
     return QLandmarkManager::NoSupport;
 }
 
-QLandmarkManager::SupportLevel DatabaseOperations::sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders) const
+QLandmarkManager::SupportLevel DatabaseOperations::sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder) const
 {
     QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::NativeSupport;
-    foreach(const QLandmarkSortOrder &sortOrder, sortOrders){
-        switch(sortOrder.type()) {
-            case (QLandmarkSortOrder::DefaultSort):
-                continue;
-            case (QLandmarkSortOrder::NameSort):
-                continue;
-            default:
-                currentLevel = QLandmarkManager::NoSupport;
-        }
+
+    switch(sortOrder.type()) {
+    case (QLandmarkSortOrder::DefaultSort):
+        break;
+    case (QLandmarkSortOrder::NameSort): {
+        QLandmarkNameSort  nameSort = sortOrder;
+        if (nameSort.caseSensitivity() == Qt::CaseSensitive)
+            currentLevel = QLandmarkManager::NoSupport;
+        break;
     }
+    default:
+        currentLevel = QLandmarkManager::NoSupport;
+    }
+
     return currentLevel;
 }
 

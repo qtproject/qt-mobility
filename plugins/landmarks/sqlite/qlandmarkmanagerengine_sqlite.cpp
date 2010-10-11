@@ -387,7 +387,7 @@ bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
 
 bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
                                                    const QString &format,
-                                                   QList<QLandmarkId> landmarkIds,
+                                                   const QList<QLandmarkId> &landmarkIds,
                                                    QLandmarkManager::TransferOption option,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString) const
@@ -418,7 +418,7 @@ QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::filterSupportLevel(
     return m_databaseOperations.filterSupportLevel(filter);
 }
 
-QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders,
+QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder,
                                                             QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
@@ -426,7 +426,7 @@ QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::sortOrderSupportLev
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    return m_databaseOperations.sortOrderSupportLevel(sortOrders);
+    return m_databaseOperations.sortOrderSupportLevel(sortOrder);
 }
 
 bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const
