@@ -167,7 +167,7 @@ QTM_BEGIN_NAMESPACE
     \value ThemePopupOpen
     \value ThemePopupClose
     \value ThemeFlick
-    \value ThemeStopFlick  PopUp -> Popup
+    \value ThemeStopFlick
     \value ThemeMultiPointTouchActivate
     \value ThemeRotateStep
     \value ThemeLongPress
