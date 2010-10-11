@@ -933,12 +933,10 @@ QSystemDisplayInfoLinuxCommonPrivate::~QSystemDisplayInfoLinuxCommonPrivate()
 
 int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 {
-#if !defined(Q_WS_MAEMO_6)
-#ifdef Q_WS_X11
+#if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)
     QDesktopWidget wid;
     return wid.screen(screen)->x11Info().depth();
 #else
-#endif
 #endif
     return QPixmap::defaultDepth();
 }
