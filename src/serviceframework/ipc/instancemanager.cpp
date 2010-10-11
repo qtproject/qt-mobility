@@ -207,7 +207,7 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& 
     }
     
     emit instanceClosed(entry);
-   
+
     // Check that no instances are open
     if (totalInstances() < 1)
         emit allInstancesClosed();
@@ -228,7 +228,7 @@ int InstanceManager::totalInstances() const
         total += descr.globalRefCount;
         total += descr.individualInstances.size();
     }
-    
+   
     return total;
 }
 
