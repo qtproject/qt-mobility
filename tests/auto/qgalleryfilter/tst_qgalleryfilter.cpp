@@ -68,6 +68,8 @@ private Q_SLOTS:
     void cast();
     void intersectionOperator();
     void unionOperator();
+    void intersectionStreamOperator();
+    void unionStreamOperator();
     void propertyOperators_data();
     void propertyOperators();
     void equality_data();
@@ -630,6 +632,51 @@ void tst_QGalleryFilter::unionOperator()
     QCOMPARE(filters.at(0).type(), QGalleryFilter::Intersection);
     QCOMPARE(filters.at(1).type(), QGalleryFilter::MetaData);
     QCOMPARE(filters.at(2).type(), QGalleryFilter::MetaData);
+}
+
+void tst_QGalleryFilter::intersectionStreamOperator()
+{
+    QGalleryMetaDataFilter metaDataFilter;
+    QGalleryUnionFilter unionFilter;
+
+    QGalleryIntersectionFilter intersectionFilter = QGalleryIntersectionFilter()
+            << metaDataFilter
+            << metaDataFilter
+            << unionFilter
+            << metaDataFilter;
+
+    QCOMPARE(intersectionFilter.isEmpty(), false);
+    QCOMPARE(intersectionFilter.filterCount(), 4);
+
+    QList<QGalleryFilter> filters = intersectionFilter.filters();
+    QCOMPARE(filters.count(), 4);
+    QCOMPARE(filters.at(0).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(1).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(2).type(), QGalleryFilter::Union);
+    QCOMPARE(filters.at(3).type(), QGalleryFilter::MetaData);
+}
+
+void tst_QGalleryFilter::unionStreamOperator()
+{
+    QGalleryMetaDataFilter metaDataFilter;
+    QGalleryIntersectionFilter intersectionFilter;
+
+    QGalleryUnionFilter unionFilter = QGalleryUnionFilter()
+            <<metaDataFilter
+            <<metaDataFilter
+            <<intersectionFilter
+            <<metaDataFilter;
+
+    QCOMPARE(unionFilter.isEmpty(), false);
+    QCOMPARE(unionFilter.filterCount(), 4);
+
+    QList<QGalleryFilter> filters = unionFilter.filters();
+    QCOMPARE(filters.count(), 4);
+
+    QCOMPARE(filters.at(0).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(1).type(), QGalleryFilter::MetaData);
+    QCOMPARE(filters.at(2).type(), QGalleryFilter::Intersection);
+    QCOMPARE(filters.at(3).type(), QGalleryFilter::MetaData);
 }
 
 void tst_QGalleryFilter::propertyOperators_data()

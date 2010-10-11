@@ -163,6 +163,8 @@ public:
     void remove(int index);
     void clear();
 
+    QGalleryIntersectionFilter &operator <<(const QGalleryIntersectionFilter &filter);
+
 private:
     explicit inline QGalleryIntersectionFilter(QGalleryFilterPrivate *d);
     explicit inline QGalleryIntersectionFilter(QGalleryFilter::Type type);
@@ -212,6 +214,8 @@ public:
 
     void remove(int index);
     void clear();
+
+    QGalleryUnionFilter &operator <<(const QGalleryUnionFilter &filter);
 
 private:
     explicit inline QGalleryUnionFilter(QGalleryFilterPrivate *d);

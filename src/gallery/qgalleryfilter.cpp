@@ -467,6 +467,18 @@ void QGalleryIntersectionFilter::clear()
 }
 
 /*!
+    Appends a \a filter to an intersection.
+*/
+
+QGalleryIntersectionFilter &QGalleryIntersectionFilter::operator <<(
+        const QGalleryIntersectionFilter &filter)
+{
+    d->filters.append(filter.d->filters);
+
+    return *this;
+}
+
+/*!
     \fn QGalleryIntersectionFilter operator &&(const QGalleryIntersectionFilter &filter1, const QGalleryIntersectionFilter &filter2)
 
     Returns a gallery filter matches the intersection of \a filter1 and
@@ -727,6 +739,17 @@ void QGalleryUnionFilter::remove(int index)
 void QGalleryUnionFilter::clear()
 {
     d->filters.clear();
+}
+
+/*!
+    Appends a \a filter to a union.
+*/
+
+QGalleryUnionFilter &QGalleryUnionFilter::operator <<(const QGalleryUnionFilter &filter)
+{
+    d->filters.append(filter.d->filters);
+
+    return *this;
 }
 
 /*!
