@@ -56,8 +56,8 @@ QDeclarativeGalleryType::QDeclarativeGalleryType(QObject *parent)
     , m_status(Null)
     , m_updateStatus(Incomplete)
 {
-    connect(&m_request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
-            this, SLOT(_q_statusChanged()));
+    connect(&m_request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
+            this, SLOT(_q_stateChanged()));
     connect(&m_request, SIGNAL(progressChanged(int,int)), this, SIGNAL(progressChanged()));
 
     connect(&m_request, SIGNAL(typeChanged()),
@@ -162,9 +162,9 @@ bool QDeclarativeGalleryType::event(QEvent *event)
     }
 }
 
-void QDeclarativeGalleryType::_q_statusChanged()
+void QDeclarativeGalleryType::_q_stateChanged()
 {
-    m_status = Status(m_request.status());
+    m_status = Status(m_request.state());
 
     if (m_status == Error) {
         const QString message = m_request.errorString();

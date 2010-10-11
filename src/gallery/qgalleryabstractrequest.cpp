@@ -47,26 +47,26 @@ QTM_BEGIN_NAMESPACE
 
 void QGalleryAbstractRequestPrivate::_q_finished()
 {
-    if (status == QGalleryAbstractRequest::Active
-            || status == QGalleryAbstractRequest::Cancelling
-            || status == QGalleryAbstractRequest::Idle) {
+    if (state == QGalleryAbstractRequest::Active
+            || state == QGalleryAbstractRequest::Cancelling
+            || state == QGalleryAbstractRequest::Idle) {
         if (response->error() != QGalleryAbstractRequest::NoError) {
             error = response->error();
             errorString = response->errorString();
 
-            status = QGalleryAbstractRequest::Error;
+            state = QGalleryAbstractRequest::Error;
 
             emit q_func()->error(error, errorString);
             emit q_func()->errorChanged();
-            emit q_func()->statusChanged(status);
-        } else if (status == QGalleryAbstractRequest::Idle) {
+            emit q_func()->stateChanged(state);
+        } else if (state == QGalleryAbstractRequest::Idle) {
             if (!response->isIdle()) {
-                status = QGalleryAbstractRequest::Finished;
+                state = QGalleryAbstractRequest::Finished;
 
-                emit q_func()->statusChanged(status);
+                emit q_func()->stateChanged(state);
             }
         } else if (response->isIdle()) {
-            status = QGalleryAbstractRequest::Idle;
+            state = QGalleryAbstractRequest::Idle;
 
             if (!wasIdle) {
                 wasIdle = true;
@@ -74,38 +74,38 @@ void QGalleryAbstractRequestPrivate::_q_finished()
                 emit q_func()->finished();
             }
 
-            emit q_func()->statusChanged(status);
+            emit q_func()->stateChanged(state);
         } else if (!response->isActive()) {
-            status = QGalleryAbstractRequest::Finished;
+            state = QGalleryAbstractRequest::Finished;
 
             if (!wasIdle)
                 emit q_func()->finished();
 
-            emit q_func()->statusChanged(status);
+            emit q_func()->stateChanged(state);
         }
     }
 }
 
 void QGalleryAbstractRequestPrivate::_q_cancelled()
 {
-    if (status == QGalleryAbstractRequest::Cancelling) {
+    if (state == QGalleryAbstractRequest::Cancelling) {
         if (!wasIdle) {
-            status = QGalleryAbstractRequest::Cancelled;
+            state = QGalleryAbstractRequest::Cancelled;
 
             emit q_func()->cancelled();
         } else {
-            status = QGalleryAbstractRequest::Finished;
+            state = QGalleryAbstractRequest::Finished;
         }
-        emit q_func()->statusChanged(status);
+        emit q_func()->stateChanged(state);
     }
 }
 
 void QGalleryAbstractRequestPrivate::_q_resumed()
 {
-    if (status == QGalleryAbstractRequest::Idle && !response->isIdle()) {
-        status = QGalleryAbstractRequest::Active;
+    if (state == QGalleryAbstractRequest::Idle && !response->isIdle()) {
+        state = QGalleryAbstractRequest::Active;
 
-        emit q_func()->statusChanged(status);
+        emit q_func()->stateChanged(state);
     }
 }
 
@@ -130,14 +130,14 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
 */
 
 /*!
-    \enum QGalleryAbstractRequest::Status
+    \enum QGalleryAbstractRequest::State
 
-    Identifies the status of a gallery request.
+    Identifies the state of a gallery request.
 
     \value Inactive The request has not been executed, or has finished.
     \value Active The request is currently executing.
     \value Cancelling The request was cancelled, but hasn't yet returned to the
-    Inactive status.
+    Inactive state.
     \value Cancelled The request was cancelled.
     \value Idle The request has finished, and is monitoring its return values
     for changes.
@@ -265,14 +265,14 @@ QGalleryAbstractRequest::RequestType QGalleryAbstractRequest::type() const
 }
 
 /*!
-    \property QGalleryAbstractRequest::status
+    \property QGalleryAbstractRequest::state
 
-    \brief The status of a request.
+    \brief The state of a request.
 */
 
-QGalleryAbstractRequest::Status QGalleryAbstractRequest::status() const
+QGalleryAbstractRequest::State QGalleryAbstractRequest::state() const
 {
-    return d_ptr->status;
+    return d_ptr->state;
 }
 
 /*!
@@ -344,7 +344,7 @@ int QGalleryAbstractRequest::maximumProgress() const
 */
 bool QGalleryAbstractRequest::waitForFinished(int msecs)
 {
-    return d_ptr->response && d_ptr->status == Active
+    return d_ptr->response && d_ptr->state == Active
             ? d_ptr->response->waitForFinished(msecs)
             : true;
 }
@@ -364,7 +364,7 @@ void QGalleryAbstractRequest::execute()
     d_ptr->errorString = QString();
 
     if (!d_ptr->gallery) {
-        d_ptr->status = Error;
+        d_ptr->state = Error;
         d_ptr->error = NoGallery;
         d_ptr->errorString = tr("No gallery has been set on the %1.", "%1 = class name")
                 .arg(QString::fromLatin1(metaObject()->className()));
@@ -389,7 +389,7 @@ void QGalleryAbstractRequest::execute()
 
             if (d_ptr->error != NoError) {
                 d_ptr->errorString = d_ptr->response->errorString();
-                d_ptr->status = Error;
+                d_ptr->state = Error;
 
                 d_ptr->response.reset();
 
@@ -400,13 +400,13 @@ void QGalleryAbstractRequest::execute()
                 emit errorChanged();
             } else {
                 if (d_ptr->response->isActive()) {
-                    d_ptr->status = Active;
+                    d_ptr->state = Active;
                     d_ptr->wasIdle = false;
                 } else if (d_ptr->response->isIdle()) {
-                    d_ptr->status = Idle;
+                    d_ptr->state = Idle;
                     d_ptr->wasIdle = true;
                 } else {
-                    d_ptr->status = Finished;
+                    d_ptr->state = Finished;
                 }
 
                 connect(d_ptr->response.data(), SIGNAL(finished()), this, SLOT(_q_finished()));
@@ -420,7 +420,7 @@ void QGalleryAbstractRequest::execute()
 
             oldResponse.reset();
         } else {
-            d_ptr->status = Error;
+            d_ptr->state = Error;
             d_ptr->error = NotSupported;
             d_ptr->errorString = tr(
                     "%1 is not supported by %2.", "%1 = interface, %2 = gallery implementation")
@@ -443,14 +443,14 @@ void QGalleryAbstractRequest::execute()
             emit progressChanged(0, 0);
         }
 
-        if (d_ptr->status == Finished || d_ptr->status == Idle)
+        if (d_ptr->state == Finished || d_ptr->state == Idle)
             emit finished();
     }
 
     if (oldError != NoError && d_ptr->error == NoError)
         emit errorChanged();
 
-    emit statusChanged(d_ptr->status);
+    emit stateChanged(d_ptr->state);
 }
 
 /*!
@@ -460,12 +460,12 @@ void QGalleryAbstractRequest::execute()
 
 void QGalleryAbstractRequest::cancel()
 {
-    if (d_ptr->status == Active || d_ptr->status == Idle) {
-        d_ptr->status = Cancelling;
+    if (d_ptr->state == Active || d_ptr->state == Idle) {
+        d_ptr->state = Cancelling;
         d_ptr->response->cancel();
 
-        if (d_ptr->status == Cancelling)
-            emit statusChanged(d_ptr->status);
+        if (d_ptr->state == Cancelling)
+            emit stateChanged(d_ptr->state);
     }
 }
 
@@ -485,7 +485,7 @@ void QGalleryAbstractRequest::clear()
     if (d_ptr->response) {
         QScopedPointer<QGalleryAbstractResponse> oldResponse(d_ptr->response.take());
 
-        d_ptr->status = Inactive;
+        d_ptr->state = Inactive;
 
         setResponse(0);
 
@@ -498,11 +498,11 @@ void QGalleryAbstractRequest::clear()
             emit progressChanged(0, 0);
         }
 
-        emit statusChanged(d_ptr->status);
-    } else if (d_ptr->status == Error) {
-        d_ptr->status = Inactive;
+        emit stateChanged(d_ptr->state);
+    } else if (d_ptr->state == Error) {
+        d_ptr->state = Inactive;
 
-        emit statusChanged(d_ptr->status);
+        emit stateChanged(d_ptr->state);
     }
 
     if (oldError != NoError)
@@ -522,9 +522,9 @@ void QGalleryAbstractRequest::clear()
 */
 
 /*!
-    \fn QGalleryAbstractRequest::statusChanged(QGalleryAbstractRequest::Status status)
+    \fn QGalleryAbstractRequest::stateChanged(QGalleryAbstractRequest::State state)
 
-    Signals that the \a status of a request has changed.
+    Signals that the \a state of a request has changed.
 */
 
 /*!

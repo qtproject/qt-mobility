@@ -139,7 +139,7 @@ protected:
     UpdateStatus m_updateStatus;
 
 private Q_SLOTS:
-    void _q_statusChanged();
+    void _q_stateChanged();
     void _q_itemChanged();
     void _q_metaDataChanged(const QList<int> &keys);
     void _q_valueChanged(const QString &key, const QVariant &value) {

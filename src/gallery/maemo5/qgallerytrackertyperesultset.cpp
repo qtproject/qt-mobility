@@ -290,7 +290,7 @@ bool QGalleryTrackerTypeResultSet::waitForFinished(int msecs)
 
             delete watcher;
 
-            if (d->status != QGalleryAbstractRequest::Active)
+            if (d->state != QGalleryAbstractRequest::Active)
                 return true;
         } else {
             return true;
