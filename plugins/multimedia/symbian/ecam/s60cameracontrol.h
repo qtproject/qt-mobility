@@ -67,7 +67,7 @@ class QTimer;
 class S60CameraControl : public QCameraControl, public MCameraEngineObserver
 {
     Q_OBJECT
-    
+
 public: // Enums
 
     enum ViewfinderOutputType {
@@ -75,29 +75,29 @@ public: // Enums
         VideoRendererOutput,
         VideoWindowOutput
     };
-    
+
 public: // Constructors & Destructor
-    
+
     S60CameraControl(QObject *parent = 0);
-    S60CameraControl(S60VideoCaptureSession *videosession, 
-                     S60ImageCaptureSession *imagesession, 
+    S60CameraControl(S60VideoCaptureSession *videosession,
+                     S60ImageCaptureSession *imagesession,
                      QObject *parent = 0);
     ~S60CameraControl();
-    
+
 public: // QCameraControl
-    
+
     // State
     QCamera::State state() const;
     void setState(QCamera::State state);
 
     // Status
     QCamera::Status status() const;
-    
+
     // Capture Mode
     QCamera::CaptureMode captureMode() const;
     void setCaptureMode(QCamera::CaptureMode);
     bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
-    
+
     // Property Setting
     bool canChangeProperty(QCameraControl::PropertyChangeType changeType, QCamera::Status status) const;
 
@@ -110,10 +110,10 @@ Q_SIGNALS:
 */
 
 public: // Internal
-    
+
     void setError(const TInt error, const QString &description);
     void resetCameraOrientation();
-    
+
     // To provide QVideoDeviceControl info
     static int deviceCount();
     static QString name(const int index);
@@ -134,21 +134,21 @@ private Q_SLOTS: // Internal Slots
      */
     void toStandByStatus();
     void advancedSettingsCreated();
-    
+
 protected: // MCameraEngineObserver
 
     void MceoCameraReady();
     void MceoHandleError(TCameraEngineError aErrorType, TInt aError);
 
 private: // Internal
-    
+
     QCamera::Error fromSymbianErrorToQtMultimediaError(int aError);
-    
+
     void loadCamera();
     void unloadCamera();
     void startCamera();
     void stopCamera();
-    
+
     void resetCamera();
     void setCameraHandles();
 
@@ -158,7 +158,7 @@ Q_SIGNALS: // Internal Signals
     void devicesChanged();
 
 private: // Data
-    
+
     CCameraEngine               *m_cameraEngine;
     S60CameraViewfinderEngine   *m_viewfinderEngine;
     S60ImageCaptureSession      *m_imageSession;

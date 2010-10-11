@@ -72,7 +72,7 @@ S60CameraSettings::~S60CameraSettings()
         delete m_advancedSettings;
         m_advancedSettings = NULL;
     }
-    
+
     if (m_imageProcessingSettings) {
         delete m_imageProcessingSettings;
         m_imageProcessingSettings = NULL;
@@ -240,7 +240,7 @@ QCameraFocus::FocusMode S60CameraSettings::focusMode()
                     return QCameraFocus::ContinuousFocus;
                 else
                     return QCameraFocus::AutoFocus;
-                
+
             default:
                 return QCameraFocus::AutoFocus;; // Return automatic focusing
         }
@@ -254,7 +254,7 @@ QCameraFocus::FocusMode S60CameraSettings::focusMode()
 QCameraFocus::FocusModes S60CameraSettings::supportedFocusModes()
 {
     QCameraFocus::FocusModes modes = 0;
-    
+
 #ifdef POST_31_PLATFORM
     TInt supportedModes = 0;
     TInt autoFocusTypes = 0;
@@ -448,25 +448,25 @@ void S60CameraSettings::HandleAdvancedEvent(const TECAMEvent& aEvent)
     }
     else if (aEvent.iEventType == KUidECamEventCameraSettingAperture)
         emit apertureChanged();
-        
+
     else if (aEvent.iEventType == KUidECamEventCameraSettingApertureRange)
         emit apertureRangeChanged();
-        
+
     else if (aEvent.iEventType == KUidECamEventCameraSettingIsoRate)
         emit isoSensitivityChanged();
-        
+
     else if (aEvent.iEventType == KUidECamEventCameraSettingShutterSpeed)
         emit shutterSpeedChanged();
-        
+
     else if (aEvent.iEventType == KUidECamEventFlashReady)
         emit flashReady(true);
-        
+
     else if (aEvent.iEventType == KUidECamEventFlashNotReady)
         emit flashReady(false);
-        
+
     else if (aEvent.iEventType.iUid == KUidECamEventCameraSettingsOptimalFocusUidValue) {
         emit focusStatusChanged(QCamera::Locked, QCamera::LockAcquired);
-        
+
     } else if (aEvent.iEventType == KUidECamEventCameraSettingFocusMode)
         emit focusStatusChanged(QCamera::Searching, QCamera::UserRequest);
 #else // S60 3.1 Platform
@@ -504,7 +504,7 @@ QCameraExposure::MeteringMode S60CameraSettings::meteringMode()
                 return QCameraExposure::MeteringMatrix;
             case CCamera::CCameraAdvancedSettings::EMeteringModeSpot:
                 return QCameraExposure::MeteringSpot;
-                
+
             default:
                 return QCameraExposure::MeteringAverage;
         }
@@ -547,7 +547,7 @@ bool S60CameraSettings::isMeteringModeSupported(QCameraExposure::MeteringMode mo
 {
 #ifdef POST_31_PLATFORM
     TInt supportedModes = 0;
-    
+
     if (m_advancedSettings) {
         supportedModes = m_advancedSettings->SupportedMeteringModes();
         if (supportedModes == 0)
@@ -569,7 +569,7 @@ bool S60CameraSettings::isMeteringModeSupported(QCameraExposure::MeteringMode mo
                     return true;
                 else
                     return false;
-                
+
             default:
                 return false;
         }
@@ -579,7 +579,7 @@ bool S60CameraSettings::isMeteringModeSupported(QCameraExposure::MeteringMode mo
 #else // S60 3.1
     Q_UNUSED(mode);
 #endif // POST_31_PLATFORM
-    
+
     return false;
 }
 
@@ -600,10 +600,10 @@ QList<int> S60CameraSettings::supportedIsoSensitivities()
 {
     QList<int> isoSentitivities;
 #ifdef POST_31_PLATFORM
-    
+
     if (m_advancedSettings) {
         RArray<TInt> supportedIsoRates;
-        
+
         TRAPD(err, m_advancedSettings->GetSupportedIsoRatesL(supportedIsoRates));
         if (err != KErrNone)
             if (err != KErrNotSupported)
@@ -673,12 +673,12 @@ qreal S60CameraSettings::aperture()
 QList<qreal> S60CameraSettings::supportedApertures()
 {
     QList<qreal> apertures;
-    
+
 #ifdef POST_31_PLATFORM
     if (m_advancedSettings) {
         RArray<TInt> supportedApertures;
         TValueInfo info = ENotActive;
-        
+
         TRAPD(err, m_advancedSettings->GetAperturesL(supportedApertures, info));
         if (err != KErrNone)
             if (err != KErrNotSupported)
@@ -756,12 +756,12 @@ TInt S60CameraSettings::shutterSpeed()
 QList<qreal> S60CameraSettings::supportedShutterSpeeds()
 {
     QList<qreal> speeds;
-    
+
 #ifdef POST_31_PLATFORM
     if (m_advancedSettings) {
         RArray<TInt> supportedSpeeds;
         TValueInfo info = ENotActive;
-        
+
         TRAPD(err, m_advancedSettings->GetShutterSpeedsL(supportedSpeeds, info));
         if (err != KErrNone)
             if (err != KErrNotSupported)

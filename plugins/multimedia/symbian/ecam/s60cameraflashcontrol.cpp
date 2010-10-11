@@ -51,7 +51,7 @@ S60CameraFlashControl::S60CameraFlashControl(QObject *parent) :
 }
 
 S60CameraFlashControl::S60CameraFlashControl(S60ImageCaptureSession *session, QObject *parent) :
-    QCameraFlashControl(parent), 
+    QCameraFlashControl(parent),
     m_session(NULL),
     m_service(NULL),
     m_advancedSettings(NULL),
@@ -62,7 +62,7 @@ S60CameraFlashControl::S60CameraFlashControl(S60ImageCaptureSession *session, QO
     else
         Q_ASSERT(true);
     // From now on it is safe to assume session exists
-    
+
     connect(m_session, SIGNAL(advancedSettingChanged()), this, SLOT(resetAdvancedSetting()));
     m_advancedSettings = m_session->advancedSettings();
 

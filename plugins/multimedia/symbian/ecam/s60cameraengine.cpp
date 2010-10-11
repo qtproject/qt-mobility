@@ -48,8 +48,8 @@ CCameraEngine::CCameraEngine()
 {
 }
 
-CCameraEngine::CCameraEngine(TInt aCameraHandle, 
-                             TInt aPriority, 
+CCameraEngine::CCameraEngine(TInt aCameraHandle,
+                             TInt aPriority,
                              MCameraEngineObserver* aObserver) :
     // CBase initializes member variables to NULL
     iObserver(aObserver),
@@ -74,7 +74,7 @@ CCameraEngine::~CCameraEngine()
     iImageCaptureObserver = NULL;
     iViewfinderObserver = NULL;
 
-#ifdef S60_CAM_AUTOFOCUS_SUPPORT   
+#ifdef S60_CAM_AUTOFOCUS_SUPPORT
     delete iAutoFocus;
 #endif // S60_CAM_AUTOFOCUS_SUPPORT
 

@@ -57,22 +57,22 @@ class S60ImageCaptureSession;
 class S60CameraFlashControl : public QCameraFlashControl
 {
     Q_OBJECT
-    
+
 public: // Constructors & Destructor
-    
+
     S60CameraFlashControl(QObject *parent = 0);
     S60CameraFlashControl(S60ImageCaptureSession *session, QObject *parent = 0);
     ~S60CameraFlashControl();
 
 public: // QCameraExposureControl
-    
+
     // Flash Mode
     QCameraExposure::FlashModes flashMode() const;
     void setFlashMode(QCameraExposure::FlashModes mode);
     bool isFlashModeSupported(QCameraExposure::FlashModes mode) const;
-    
+
     bool isFlashReady() const;
-    
+
 /*
 Q_SIGNALS: // QCameraExposureControl
     void flashReady(bool);
@@ -83,7 +83,7 @@ private Q_SLOTS: // Internal Slots
     void resetAdvancedSetting();
 
 private: // Data
-    
+
     S60ImageCaptureSession          *m_session;
     S60CameraService                *m_service;
     S60CameraSettings               *m_advancedSettings;

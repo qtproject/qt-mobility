@@ -55,8 +55,8 @@ S60CameraControl::S60CameraControl(QObject *parent) :
 {
 }
 
-S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession, 
-                                   S60ImageCaptureSession *imagesession, 
+S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
+                                   S60ImageCaptureSession *imagesession,
                                    QObject *parent):
     QCameraControl(parent),
     m_cameraEngine(NULL),
@@ -79,13 +79,13 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
         m_videoSession = videosession;
     else
         Q_ASSERT(true);
-    
+
     if (imagesession)
         m_imageSession = imagesession;
     else
         Q_ASSERT(true);
     // From now on it's safe to assume ImageSession and VideoSession exist
-    
+
     m_inactivityTimer = new QTimer;
     if (m_inactivityTimer)
         m_inactivityTimer->setSingleShot(true);
@@ -112,7 +112,7 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
     connect(this, SIGNAL(cameraReadyChanged(bool)), m_imageSession, SIGNAL(readyForCaptureChanged(bool)));
     connect(m_viewfinderEngine, SIGNAL(error(int, const QString&)), this, SIGNAL(error(int,const QString&)));
     connect(m_imageSession, SIGNAL(cameraError(int, const QString&)), this, SIGNAL(error(int, const QString&)));
-    
+
     setCameraHandles();
 }
 
@@ -173,7 +173,7 @@ void S60CameraControl::setState(QCamera::State state)
                     stopCamera();
                     unloadCamera();
                     break;
-                    
+
                 default:
                     // Unrecognized internal state (Status)
                     setError(KErrGeneral, QString("Unexpected camera error."));
@@ -181,7 +181,7 @@ void S60CameraControl::setState(QCamera::State state)
             }
             m_requestedState = QCamera::UnloadedState;
             break;
-            
+
         case QCamera::LoadedState: // To LoadedState - Reserve resources OR Stop ViewFinder and Cancel Capture
             switch (m_internalState) {
                 case QCamera::UnloadedStatus:
@@ -202,7 +202,7 @@ void S60CameraControl::setState(QCamera::State state)
                     // Stop
                     stopCamera();
                     break;
-                    
+
                 default:
                     // Unregocnized internal state (Status)
                     setError(KErrGeneral, QString("Unexpected camera error."));
@@ -210,7 +210,7 @@ void S60CameraControl::setState(QCamera::State state)
             }
             m_requestedState = QCamera::LoadedState;
             break;
-            
+
         case QCamera::ActiveState: // To ActiveState - (Reserve Resources and) Start ViewFinder
             switch (m_internalState) {
                 case QCamera::UnloadedStatus:
@@ -231,7 +231,7 @@ void S60CameraControl::setState(QCamera::State state)
                 case QCamera::ActiveStatus:
                     // Do nothing
                     break;
-                    
+
                 default:
                     // Unregocnized internal state (Status)
                     setError(KErrGeneral, QString("Unexpected camera error."));
@@ -239,13 +239,13 @@ void S60CameraControl::setState(QCamera::State state)
             }
             m_requestedState = QCamera::ActiveState;
             break;
-            
+
         default:
             setError(KErrNotSupported, QString("Requested state is not supported."));
             return;
     }
-    
-    emit stateChanged(m_requestedState);    
+
+    emit stateChanged(m_requestedState);
 }
 
 QCamera::State S60CameraControl::state() const
@@ -264,7 +264,7 @@ QCamera::CaptureMode S60CameraControl::captureMode() const
 }
 
 void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
-{    
+{
     if (m_error) { // Most probably failure in contructor
         setError(m_error, QString("Unexpected camera error."));
         return;
@@ -276,7 +276,7 @@ void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
     if (m_requestedCaptureMode == mode && !m_changeCaptureModeWhenReady) {
         return;
     }
-    
+
     if (!isCaptureModeSupported(mode)) {
         setError(KErrNotSupported, QString("Requested capture mode is not supported."));
         return;

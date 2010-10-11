@@ -58,7 +58,7 @@ class S60CameraSettings : public QObject,
                           public MAdvancedSettingsObserver
 {
     Q_OBJECT
- 
+
 public: // Static Contructor & Destructor
 
     static S60CameraSettings* New(int &error, QObject *parent = 0, CCameraEngine *engine = 0);
@@ -85,7 +85,7 @@ public: // Methods
     // Exposure
     void setExposureMode(QCameraExposure::ExposureMode mode);
     void lockExposure(bool lock);
-    bool isExposureLocked(); 
+    bool isExposureLocked();
 
     // Metering Mode
     QCameraExposure::MeteringMode meteringMode();
@@ -130,11 +130,11 @@ Q_SIGNALS: // Notifications
     void apertureRangeChanged();
     void shutterSpeedChanged();
     void isoSensitivityChanged();
-    
+
     // For QCameraLocksControl
     void exposureStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
     void focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
-    
+
     // Errors
     void error(int, const QString&);
 

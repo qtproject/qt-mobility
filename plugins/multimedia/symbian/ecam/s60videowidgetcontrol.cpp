@@ -97,7 +97,7 @@ void S60ViewFinderWidget::beginNativePaintEvent(const QRect& /*controlRect*/)
 {
     emit beginVideoWindowNativePaint();
 }
-    
+
 void S60ViewFinderWidget::endNativePaintEvent(const QRect& /*controlRect*/)
 {
     CCoeEnv::Static()->WsSession().Flush();
@@ -136,7 +136,7 @@ S60VideoWidgetControl::~S60VideoWidgetControl()
 bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 {
     if (object == m_widget) {
-        
+
         switch (e->type()) {
             case QEvent::ParentChange:
             case QEvent::WinIdChange:
@@ -152,7 +152,7 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
             case QEvent::Hide:
                 emit widgetVisible(false);
                 break;
-            
+
             default:
                 // Do nothing
                 break;
