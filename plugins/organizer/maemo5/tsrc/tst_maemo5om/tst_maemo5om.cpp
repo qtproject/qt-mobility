@@ -1053,7 +1053,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     recurrenceEvent.setEndDateTime(QDateTime(QDate(2010, 8, 22), QTime(13, 0, 0)));
     recurrenceEvent.setDisplayLabel("saveItemsToNewCollection, Weekly recurring event");
     recurrenceEvent.setDescription("A weekly recurring event");
-    recurrenceEvent.setCollectionId(newCollection.id());
+    recurrenceEvent.setCollectionId(saveItemCollectionId);
 
     // Create recurrence
     QOrganizerItemRecurrenceRule recurrenceRule;
@@ -1104,7 +1104,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     // Get items with no filtering
     QOrganizerItemFilter noFilter;
 
-    // Define a collection filter for the next collection
+    // Define a collection filter for the new collection
     QOrganizerItemCollectionFilter newCollectionFilter;
     newCollectionFilter.setCollectionIds(QSet<QOrganizerCollectionLocalId>() << collId);
 
@@ -1145,7 +1145,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     // Get all item ids of the intersection collection
     QList<QOrganizerItemLocalId> intersectionItemIds = m_om->itemIds(intersectionFilter, noSort);
 
-    // There should be items that exist in both collections
+    // There should be no items that exist in both collections
     QCOMPARE(intersectionItemIds.count(), 0);
 
     // When no filtering is set, all the item ids should be returned ( = equal to number of ids with union filtering)
