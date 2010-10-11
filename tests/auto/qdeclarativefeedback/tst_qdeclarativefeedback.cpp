@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the test suite of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include <qtest.h>
 #include <QtDeclarative/qdeclarativecomponent.h>
 #include <QtDeclarative/qdeclarativeengine.h>
@@ -51,6 +52,8 @@
 
 QTM_USE_NAMESPACE
 
+Q_DECLARE_METATYPE(QFeedbackEffect::ThemeEffect);
+
 class tst_qdeclarativefeedback : public QObject
 
 {
@@ -62,6 +65,7 @@ private slots:
     void hapticsEffect();
     void fileEffect();
     void actuator();
+    void themeEffect();
 
 private:
     QDeclarativeEngine engine;
@@ -110,7 +114,7 @@ void tst_qdeclarativefeedback::fileEffect()
     QFeedbackFileEffect *fileEffect = qobject_cast<QFeedbackFileEffect*>(component.create());
     QVERIFY(fileEffect != 0);
 
-    QCOMPARE(fileEffect->fileName(), QString("nonexistingfile.haptic"));
+    QCOMPARE(fileEffect->source(), QUrl("qrc:nonexistingfile.haptic"));
     QCOMPARE(fileEffect->isLoaded(), false);
     QCOMPARE(fileEffect->state(), QFeedbackEffect::Stopped);
 
@@ -136,6 +140,46 @@ void tst_qdeclarativefeedback::actuator()
     QCOMPARE(actuator->isEnabled(), false);
 
     delete actuator;
+}
+
+void tst_qdeclarativefeedback::themeEffect()
+{
+    QDeclarativeComponent component(&engine);
+    component.loadUrl(QUrl::fromLocalFile(SRCDIR "/data/themeeffect.qml"));
+
+    // We don't export this class, but we're just poking at properties anyway
+    QObject *dte = component.create();
+    QCOMPARE(component.errorString(), QString());
+    QVERIFY(dte != 0);
+
+    // Test the effect property gets assigned
+    QMetaProperty p = dte->metaObject()->property(dte->metaObject()->indexOfProperty("effect"));
+    QCOMPARE(p.read(dte).value<int>(), (int)QFeedbackEffect::ThemeBasicButton);
+
+    delete dte;
+
+    component.loadUrl(QUrl::fromLocalFile(SRCDIR "/data/themeeffect2.qml"));
+
+    dte = component.create();
+    QCOMPARE(component.errorString(), QString());
+
+    QVERIFY(dte != 0);
+    // Effect property as a string
+    p = dte->metaObject()->property(dte->metaObject()->indexOfProperty("effect"));
+    QCOMPARE(p.read(dte).value<int>(), (int)QFeedbackEffect::ThemeRotateStep);
+
+    delete dte;
+
+    // Now test the default method
+    component.loadUrl(QUrl::fromLocalFile(SRCDIR "/data/themeeffect3.qml"));
+
+    dte = component.create();
+    QCOMPARE(component.errorString(), QString());
+    QVERIFY(dte != 0);
+
+    // Well, we can only verify that through a dummy plugin (TODO). verified through qdebug atm :)
+
+    delete dte;
 }
 
 QTEST_MAIN(tst_qdeclarativefeedback)
