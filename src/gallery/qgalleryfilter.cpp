@@ -371,6 +371,33 @@ void QGalleryIntersectionFilter::append(const QGalleryIntersectionFilter &filter
 }
 
 /*!
+    Prepends a meta-data \a filter to an intersection.
+*/
+
+void QGalleryIntersectionFilter::prepend(const QGalleryMetaDataFilter &filter)
+{
+    d->filters.prepend(filter);
+}
+
+/*!
+    Prepends a union \a filter to an intersection.
+*/
+
+void QGalleryIntersectionFilter::prepend(const QGalleryUnionFilter &filter)
+{
+    d->filters.prepend(filter);
+}
+
+/*!
+    Prepends the contents of an intersection \a filter to an intersection.
+*/
+
+void QGalleryIntersectionFilter::prepend(const QGalleryIntersectionFilter &filter)
+{
+    d->filters += filter.d->filters;
+}
+
+/*!
     Inserts a meta-data \a filter into an intersection at \a index.
 */
 
@@ -605,6 +632,33 @@ void QGalleryUnionFilter::append(const QGalleryIntersectionFilter &filter)
 */
 
 void QGalleryUnionFilter::append(const QGalleryUnionFilter &filter)
+{
+    d->filters += filter.d->filters;
+}
+
+/*!
+    Prepends a meta-data \a filter to a union.
+*/
+
+void QGalleryUnionFilter::prepend(const QGalleryMetaDataFilter &filter)
+{
+    d->filters.prepend(filter);
+}
+
+/*!
+    Prepends an intersection \a filter to a union.
+*/
+
+void QGalleryUnionFilter::prepend(const QGalleryIntersectionFilter &filter)
+{
+    d->filters.prepend(filter);
+}
+
+/*!
+    Prepends the contents of a union \a filter to a union.
+*/
+
+void QGalleryUnionFilter::prepend(const QGalleryUnionFilter &filter)
 {
     d->filters += filter.d->filters;
 }

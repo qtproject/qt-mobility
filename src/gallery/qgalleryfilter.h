@@ -149,6 +149,10 @@ public:
     void append(const QGalleryUnionFilter &filter);
     void append(const QGalleryIntersectionFilter &filter);
 
+    void prepend(const QGalleryMetaDataFilter &filter);
+    void prepend(const QGalleryUnionFilter &filter);
+    void prepend(const QGalleryIntersectionFilter &filter);
+
     void insert(int index, const QGalleryMetaDataFilter &filter);
     void insert(int index, const QGalleryUnionFilter &filter);
     void insert(int index, const QGalleryIntersectionFilter &filter);
@@ -194,6 +198,10 @@ public:
     void append(const QGalleryMetaDataFilter &filter);
     void append(const QGalleryIntersectionFilter &filter);
     void append(const QGalleryUnionFilter &filter);
+
+    void prepend(const QGalleryMetaDataFilter &filter);
+    void prepend(const QGalleryIntersectionFilter &filter);
+    void prepend(const QGalleryUnionFilter &filter);
 
     void insert(int index, const QGalleryMetaDataFilter &filter);
     void insert(int index, const QGalleryIntersectionFilter &filter);
