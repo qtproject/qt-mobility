@@ -58,7 +58,6 @@ private slots:
     void cleanup();
     
 private slots:
-    void fetchDetailDef();
     void fetchEventDetailDef();
     void fetchEventOccDetailDef();
     void fetchTodoDetailDef();
@@ -76,7 +75,7 @@ void TestDetailDef::init()
     m_om = new QOrganizerItemManager(m_managerNameSymbian);
     
     // Cleanup by deleting all items
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
 }
 
 void TestDetailDef::cleanup()
@@ -85,12 +84,6 @@ void TestDetailDef::cleanup()
         delete m_om;
         m_om = 0;
     }
-}
-
-void TestDetailDef::fetchDetailDef()
-{
-    QMap<QString, QOrganizerItemDetailDefinition> detailDef = m_om->detailDefinitions();
-    QVERIFY(!detailDef.isEmpty());
 }
 
 void TestDetailDef::fetchEventDetailDef()

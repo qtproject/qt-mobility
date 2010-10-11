@@ -53,6 +53,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QOrganizerItemManagerEngine;
 class QOrganizerCollectionData;
 class Q_ORGANIZER_EXPORT QOrganizerCollection
 {
@@ -79,12 +80,20 @@ public:
     QVariant metaData(const QString& key);
 
     /* Default meta data keys */
+#ifdef Q_QDOC
+    static const QLatin1Constant KeyName;
+    static const QLatin1Constant KeyDescription;
+    static const QLatin1Constant KeyColor;
+    static const QLatin1Constant KeyImage;
+#else
     Q_DECLARE_LATIN1_CONSTANT(KeyName, "Name");
     Q_DECLARE_LATIN1_CONSTANT(KeyDescription, "Description");
     Q_DECLARE_LATIN1_CONSTANT(KeyColor, "Color");
     Q_DECLARE_LATIN1_CONSTANT(KeyImage, "Image");
+#endif
 
 private:
+    friend class QOrganizerItemManagerEngine;
     QSharedDataPointer<QOrganizerCollectionData> d;
 };
 

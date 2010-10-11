@@ -243,7 +243,7 @@ void QDeclarativeOrganizerModel::startImport(QVersitReader::State state)
             d->m_reader.setDevice(0);
 
             if (d->m_manager) {
-                if (d->m_manager->saveItems(&items, QOrganizerCollectionLocalId()))//TODO..
+                if (d->m_manager->saveItems(&items))
                     qWarning() << "items imported.";
                     fetchAgain();
             }

@@ -50,7 +50,7 @@ class QDeclarativeContactTimestamp : public QDeclarativeContactDetail
     Q_OBJECT
     Q_PROPERTY(QDateTime lastModified READ lastModified WRITE setLastModified NOTIFY fieldsChanged)
     Q_PROPERTY(QDateTime created READ created WRITE setCreated NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "lastModified")
 public:
     enum FieldType {

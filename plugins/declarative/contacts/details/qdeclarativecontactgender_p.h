@@ -49,7 +49,7 @@ class QDeclarativeContactGender : public QDeclarativeContactDetail
 {
     Q_OBJECT
     Q_PROPERTY(QString gender READ gender WRITE setGender NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "gender")
 public:
     enum FieldType {

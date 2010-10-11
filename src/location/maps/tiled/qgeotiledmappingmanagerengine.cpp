@@ -72,7 +72,7 @@ QTM_BEGIN_NAMESPACE
     and the parent \a parent.
 */
 QGeoTiledMappingManagerEngine::QGeoTiledMappingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
-        : QGeoMappingManagerEngine(new QGeoTiledMappingManagerEnginePrivate(), parent)
+    : QGeoMappingManagerEngine(new QGeoTiledMappingManagerEnginePrivate(), parent)
 {
     Q_UNUSED(parameters)
 }
@@ -123,7 +123,7 @@ QGeoTiledMappingManagerEngine::~QGeoTiledMappingManagerEngine()
 */
 
 /*!
-    Returns a new QGeoMapData instance for \a geoMap, which will be managed by
+    Returns a new QGeoMapData instance which will be managed by
     this manager.
 
     A QGeoMapData instance contains and manages the information about
@@ -139,9 +139,9 @@ QGeoTiledMappingManagerEngine::~QGeoTiledMappingManagerEngine()
     free to override this function to return subclasses of QGeoTiledMapData in
     order to customize the map.
 */
-QGeoMapData* QGeoTiledMappingManagerEngine::createMapData(QGraphicsGeoMap *geoMap)
+QGeoMapData* QGeoTiledMappingManagerEngine::createMapData()
 {
-    return new QGeoTiledMapData(this, geoMap);
+    return new QGeoTiledMapData(this);
 }
 
 /*!
@@ -170,7 +170,7 @@ void QGeoTiledMappingManagerEngine::setTileSize(const QSize &tileSize)
 *******************************************************************************/
 
 QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate()
-        : QGeoMappingManagerEnginePrivate() {}
+    : QGeoMappingManagerEnginePrivate() {}
 
 QGeoTiledMappingManagerEnginePrivate::~QGeoTiledMappingManagerEnginePrivate() {}
 

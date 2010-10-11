@@ -93,13 +93,13 @@ public:
     };
 
     QVersitContactExporter();
-    QVersitContactExporter(const QString& profile);
+    explicit QVersitContactExporter(const QString& profile);
     ~QVersitContactExporter();
 
     bool exportContacts(const QList<QContact>& contacts,
             QVersitDocument::VersitType versitType = QVersitDocument::VCard30Type);
     QList<QVersitDocument> documents() const;
-    QMap<int, Error> errors() const;
+    QMap<int, Error> errorMap() const;
 
     void setDetailHandler(QVersitContactExporterDetailHandlerV2* handler);
 
@@ -107,6 +107,7 @@ public:
     QVersitResourceHandler* resourceHandler() const;
 
     /* deprecated */
+    QMap<int, Error> errors() const;
     void setDetailHandler(QVersitContactExporterDetailHandler* handler);
     QVersitContactExporterDetailHandler* detailHandler() const;
 

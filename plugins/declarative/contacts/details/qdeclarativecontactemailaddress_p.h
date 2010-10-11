@@ -49,9 +49,8 @@
 class QDeclarativeContactEmailAddress : public QDeclarativeContactDetail
 {
     Q_OBJECT
-    Q_PROPERTY(QString email READ emailAddress WRITE setEmailAddress NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
-    Q_CLASSINFO("DefaultProperty", "email")
+    Q_PROPERTY(QString emailAddress READ emailAddress WRITE setEmailAddress NOTIFY fieldsChanged)
+    Q_ENUMS(FieldType)
 public:
     enum FieldType {
         Email = 0

@@ -51,12 +51,12 @@
 
 #include "qorganizeriteminstancefetchrequest.h"
 #include "qorganizeritemfetchrequest.h"
+#include "qorganizeritemfetchforexportrequest.h"
 #include "qorganizeritemlocalidfetchrequest.h"
 #include "qorganizeritemremoverequest.h"
 #include "qorganizeritemsaverequest.h"
 
 #include "qorganizercollectionfetchrequest.h"
-#include "qorganizercollectionlocalidfetchrequest.h"
 #include "qorganizercollectionremoverequest.h"
 #include "qorganizercollectionsaverequest.h"
 

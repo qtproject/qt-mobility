@@ -80,7 +80,7 @@ public:
                                    bool closedPath,
                                    qreal ypole = -100);
 
-    virtual void setup();
+    virtual void init();
 
     QGeoBoundingBox boundingBox() const;
     bool contains(const QGeoCoordinate &coord) const;
@@ -88,7 +88,7 @@ public:
     void setValid(bool valid);
     bool valid() const;
 
-    void updateItem();
+    void updateItem(const QRectF &target = QRectF());
 
     QRectF bounds;
 
@@ -103,7 +103,7 @@ public slots:
     virtual void visibleChanged(bool visible);
     virtual void selectedChanged(bool selected);
 
-private:
+protected:
     QGeoTiledMapDataPrivate *tiledMapDataPrivate;
 };
 

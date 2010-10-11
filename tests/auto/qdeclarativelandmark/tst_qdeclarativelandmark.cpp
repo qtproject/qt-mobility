@@ -142,7 +142,6 @@ public slots:
     void init();
 
 private slots:
-
     void construction();
     void construction_data();
     void defaultProperties();
@@ -151,8 +150,10 @@ private slots:
     void update_data();
     void basicFetch();
     void basicFetch_data();
+    void boundingBox();
     void databaseChanges();
     void sort();
+    void sort_data();
     void declarativeLandmarkList();
     void declarativeCategoryList();
     void updateCancel();
@@ -165,7 +166,6 @@ private slots:
     void boxFilter();
     void boxFilter_data();
     void filterContentChange();
-    void sort_data();
 
 private:
     QObject* createComponent(const QString& componentString);
@@ -217,7 +217,17 @@ void tst_QDeclarativeLandmark::initTestCase()
         QFile::remove(dbFileName);
     }
 #else
-   // TODO clean Symbian default database
+    // On Symbian we can't just go about and delete the databasefile. Empty it manually instead.
+    m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.symbian");
+    if (m_manager) {
+        m_manager->removeLandmarks(m_manager->landmarkIds());
+        QList<QLandmarkCategoryId> catIds = m_manager->categoryIds();
+        for ( int i=0; i < catIds.count(); ++i) {
+            // Don't try to delete read-only global categories
+            if (!m_manager->isReadOnly(catIds.at(i)))
+                m_manager->removeCategory(catIds.at(i));
+        }
+    }
 #endif
 }
 
@@ -332,7 +342,7 @@ void tst_QDeclarativeLandmark::construction_data()
     // Address
     QTest::newRow("Address: No properties") << "QDeclarativeGeoAddress" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Address {}" << true;
     QTest::newRow("Address: Id property") << "QDeclarativeGeoAddress" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Address {id: exampleId}" << true;
-    QTest::newRow("Address: Writable properties") << "QDeclarativeGeoAddress" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Address {country: 'Australia'; countryCode: '61'; state: 'QLD'; county: 'dracula county'; city: 'Brisbane'; district: 'Runcorn'; street: 'Wonderstreet'; postCode: '3344'}" << true;
+    QTest::newRow("Address: Writable properties") << "QDeclarativeGeoAddress" << "import Qt 4.7 \n import QtMobility.location 1.1 \n Address {country: 'Australia'; countryCode: '61'; state: 'QLD'; county: 'dracula county'; city: 'Brisbane'; district: 'Runcorn'; street: 'Wonderstreet'; postcode: '3344'}" << true;
     // BoundingBox
     QTest::newRow("BoundingBox: No properties") << "QDeclarativeGeoBoundingBox" << "import Qt 4.7 \n import QtMobility.location 1.1 \n BoundingBox {}" << true;
     QTest::newRow("BoundingBox: writable properties") << "QDeclarativeGeoBoundingBox" << "import Qt 4.7 \n import QtMobility.location 1.1 \n BoundingBox {bottomLeft: Coordinate{} bottomRight: Coordinate{} topLeft: Coordinate{} topRight: Coordinate{} center: Coordinate{} height: 3; width: 4}" << true;
@@ -396,7 +406,7 @@ void tst_QDeclarativeLandmark::defaultProperties()
     QCOMPARE(source_obj->property("offset").toInt(), -1);
     QCOMPARE(source_obj->property("count").toInt(), 0);
     delete source_obj;
-    
+
     source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n Landmark {id: landmark }");
     QCOMPARE(source_obj->property("name").toString(), QString());
     QCOMPARE(source_obj->property("phoneNumber").toString(), QString());
@@ -404,7 +414,7 @@ void tst_QDeclarativeLandmark::defaultProperties()
     QCOMPARE(source_obj->property("iconSource").toUrl(), QUrl());
     QCOMPARE(source_obj->property("url").toUrl(), QUrl());
     delete source_obj;
-    
+
     source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategory {id: landmark }");
     QCOMPARE(source_obj->property("name").toString(), QString());
     QCOMPARE(source_obj->property("iconSource").toUrl(), QUrl());
@@ -434,33 +444,104 @@ void tst_QDeclarativeLandmark::defaultProperties()
     QCOMPARE(source_obj->property("city").toString(), QString());
     QCOMPARE(source_obj->property("district").toString(), QString());
     QCOMPARE(source_obj->property("street").toString(), QString());
-    QCOMPARE(source_obj->property("postCode").toString(), QString());
+    QCOMPARE(source_obj->property("postcode").toString(), QString());
     delete source_obj;
 
-    //source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n BoundingBox {}");
-    //QVERIFY(source_obj->property("bottomLeft").value<QObject*>() == 0);
-    //QVERIFY(source_obj->property("bottomRight").value<QObject*>() == 0);
-    //QVERIFY(source_obj->property("topLeft").value<QObject*>() == 0);
-    //QVERIFY(source_obj->property("topRight").value<QObject*>() == 0);
-    //QVERIFY(source_obj->property("center").value<QObject*>() == 0);
-    //QVERIFY(qIsNaN(source_obj->property("height").toDouble()));
-    //QVERIFY(qIsNaN(source_obj->property("width").toDouble()));
-    //delete source_obj;
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n BoundingBox {}");
+    QDeclarativeGeoBoundingBox* box_obj = static_cast<QDeclarativeGeoBoundingBox*>(source_obj);
+    QVERIFY(box_obj->bottomLeft() != 0);
+    QVERIFY(box_obj->topLeft() != 0);
+    QVERIFY(box_obj->topRight() != 0);
+    QVERIFY(box_obj->bottomRight() != 0);
+    QVERIFY(box_obj->center() != 0);
+    delete source_obj;
 
-    //source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n Place {}");
-    //QVERIFY(source_obj->property("viewport").value<QObject*>() == 0);
-    //QVERIFY(source_obj->property("coordinate").value<QObject*>() == 0);
-    //QVERIFY(source_obj->property("address").value<QObject*>() == 0);
-    //delete source_obj;
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n Place {}");
+    QDeclarativeGeoPlace* place_obj = static_cast<QDeclarativeGeoPlace*>(source_obj);
+    QVERIFY(place_obj->viewport() != 0);
+    QVERIFY(place_obj->coordinate() != 0);
+    QVERIFY(place_obj->address() != 0);
+    delete source_obj;
 
-    //source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkBoxFilter {}");
-    //QVERIFY(source_obj->property("topLeft").value<QObject*>() == 0);
-    //QVERIFY(source_obj->property("bottomRight").value<QObject*>() == 0);
-    //delete source_obj;
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkBoxFilter {}");
+    QDeclarativeLandmarkBoxFilter* box_filter_obj = static_cast<QDeclarativeLandmarkBoxFilter*>(source_obj);
+    QVERIFY(box_filter_obj->topLeft() == 0);
+    QVERIFY(box_filter_obj->bottomRight() == 0);
+    delete source_obj;
 
-    //source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryFilter {}");
-    //QVERIFY(source_obj->property("category").value<QObject*>() == 0);
-    //delete source_obj;
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n LandmarkCategoryFilter {}");
+    QDeclarativeLandmarkCategoryFilter* category_filter_obj = static_cast<QDeclarativeLandmarkCategoryFilter*>(source_obj);
+    QVERIFY(category_filter_obj->category() == 0);
+    delete source_obj;
+}
+
+// Bounding box is bit more complicated, test it separately
+void tst_QDeclarativeLandmark::boundingBox()
+{
+    QObject* source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n BoundingBox {\n"
+                                          "topLeft: Coordinate {latitude: 10; longitude: 0} \n"
+                                          "bottomLeft: Coordinate {latitude: 0; longitude: 0} \n"
+                                          "topRight: Coordinate {latitude: 10; longitude: 10} \n"
+                                          "bottomRight: Coordinate {latitude: 0; longitude: 10} \n"
+                                          "}");
+    QDeclarativeGeoBoundingBox* box_obj = static_cast<QDeclarativeGeoBoundingBox*>(source_obj);
+    // (lat,lon)
+    //
+    //  (10,0) x...........x (10,10)
+    //         .............
+    //         ......x...... (5,5)
+    //         .............
+    //   (0,0) x...........x (0,10)
+    QCOMPARE(box_obj->bottomLeft()->latitude(), 0.0);
+    QCOMPARE(box_obj->bottomLeft()->longitude(), 0.0);
+    QCOMPARE(box_obj->topLeft()->latitude(), 10.0);
+    QCOMPARE(box_obj->topLeft()->longitude(), 0.0);
+    QCOMPARE(box_obj->topRight()->latitude(), 10.0);
+    QCOMPARE(box_obj->topRight()->longitude(), 10.0);
+    QCOMPARE(box_obj->bottomRight()->latitude(), 0.0);
+    QCOMPARE(box_obj->bottomRight()->longitude(), 10.0);
+    // Center should be calculated correctly
+    QCOMPARE(box_obj->center()->latitude(), 5.0);
+    QCOMPARE(box_obj->center()->longitude(), 5.0);
+
+    // Change coordinates and check that changes are reflected
+    QDeclarativeCoordinate newTopRight(QGeoCoordinate(20,20));
+    QSignalSpy topRightCoordinateChangedSpy(box_obj, SIGNAL(topRightChanged()));
+    QSignalSpy topLeftLatitudeChangedSpy(box_obj->topLeft(), SIGNAL(latitudeChanged(double)));
+    QSignalSpy bottomRightLongitudeChangedSpy(box_obj->bottomRight(), SIGNAL(longitudeChanged(double)));
+    QSignalSpy centerLatitudeChangedSpy(box_obj->center(), SIGNAL(latitudeChanged(double)));
+    QSignalSpy bottomLeftLongitudeChangedSpy(box_obj->bottomLeft(), SIGNAL(longitudeChanged(double)));
+    box_obj->setTopRight(&newTopRight);
+    QTRY_VERIFY(!topRightCoordinateChangedSpy.isEmpty());
+    QTRY_VERIFY(!topLeftLatitudeChangedSpy.isEmpty());
+    QTRY_VERIFY(!bottomRightLongitudeChangedSpy.isEmpty());
+    QTRY_VERIFY(!centerLatitudeChangedSpy.isEmpty());
+    QTRY_VERIFY(bottomLeftLongitudeChangedSpy.isEmpty()); // Should not change
+    QCOMPARE(box_obj->topLeft()->latitude(), 20.0);
+    QCOMPARE(box_obj->topLeft()->longitude(), 0.0);
+    QCOMPARE(box_obj->bottomRight()->latitude(), 0.0);
+    QCOMPARE(box_obj->bottomRight()->longitude(), 20.0);
+    QCOMPARE(box_obj->center()->latitude(), 10.0);
+    QCOMPARE(box_obj->center()->longitude(), 10.0);
+    QCOMPARE(box_obj->bottomLeft()->latitude(), 0.0);
+    QCOMPARE(box_obj->bottomLeft()->longitude(), 0.0);
+
+    QDeclarativeCoordinate newBottomRight(QGeoCoordinate(-20, 20));
+    QSignalSpy bottomRightCoordinateChangedSpy(box_obj, SIGNAL(bottomRightChanged()));
+    box_obj->setBottomRight(&newBottomRight);
+    QTRY_VERIFY(!bottomRightCoordinateChangedSpy.isEmpty());
+
+    QDeclarativeCoordinate newBottomLeft(QGeoCoordinate(-20, -20));
+    QSignalSpy bottomLeftCoordinateChangedSpy(box_obj, SIGNAL(bottomLeftChanged()));
+    box_obj->setBottomLeft(&newBottomLeft);
+    QTRY_VERIFY(!bottomLeftCoordinateChangedSpy.isEmpty());
+
+    QDeclarativeCoordinate newTopLeft(QGeoCoordinate(30, -20));
+    QSignalSpy topLeftCoordinateChangedSpy(box_obj, SIGNAL(topLeftChanged()));
+    box_obj->setTopLeft(&newTopLeft);
+    QTRY_VERIFY(!topLeftCoordinateChangedSpy.isEmpty());
+
+    delete source_obj;
 }
 
 /*
@@ -621,7 +702,7 @@ void tst_QDeclarativeLandmark::basicSignals()
     QSignalSpy cityChangedSpy(source_obj, SIGNAL(cityChanged()));
     QSignalSpy districtChangedSpy(source_obj, SIGNAL(districtChanged()));
     QSignalSpy streetChangedSpy(source_obj, SIGNAL(streetChanged()));
-    QSignalSpy postCodeChangedSpy(source_obj, SIGNAL(postCodeChanged()));
+    QSignalSpy postcodeChangedSpy(source_obj, SIGNAL(postcodeChanged()));
     source_obj->setProperty("country", "new");
     source_obj->setProperty("countryCode", "new");
     source_obj->setProperty("state", "new");
@@ -629,7 +710,7 @@ void tst_QDeclarativeLandmark::basicSignals()
     source_obj->setProperty("city", "new");
     source_obj->setProperty("district", "new");
     source_obj->setProperty("street", "new");
-    source_obj->setProperty("postCode", "new");
+    source_obj->setProperty("postcode", "new");
     QTRY_VERIFY(!countryChangedSpy.isEmpty());
     QTRY_VERIFY(!countryCodeChangedSpy.isEmpty());
     QTRY_VERIFY(!stateChangedSpy.isEmpty());
@@ -637,7 +718,34 @@ void tst_QDeclarativeLandmark::basicSignals()
     QTRY_VERIFY(!cityChangedSpy.isEmpty());
     QTRY_VERIFY(!districtChangedSpy.isEmpty());
     QTRY_VERIFY(!streetChangedSpy.isEmpty());
-    QTRY_VERIFY(!postCodeChangedSpy.isEmpty());
+    QTRY_VERIFY(!postcodeChangedSpy.isEmpty());
+    delete source_obj;
+
+    // Place
+    source_obj = createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n Place {}");
+    QDeclarativeGeoPlace* place_obj = static_cast<QDeclarativeGeoPlace*>(source_obj);
+    QSignalSpy viewportChangedSpy(place_obj, SIGNAL(viewportChanged()));
+    QSignalSpy placeCoordinateChangedSpy(place_obj, SIGNAL(coordinateChanged()));
+    QSignalSpy addressChangedSpy(place_obj, SIGNAL(addressChanged()));
+    QDeclarativeGeoBoundingBox* box_obj = static_cast<QDeclarativeGeoBoundingBox*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n BoundingBox {\n"
+                                          "topLeft: Coordinate {latitude: 10; longitude: 0} \n"
+                                          "bottomLeft: Coordinate {latitude: 0; longitude: 0} \n"
+                                          "topRight: Coordinate {latitude: 10; longitude: 10} \n"
+                                          "bottomRight: Coordinate {latitude: 0; longitude: 10} \n"
+                                          "}"));
+    place_obj->setViewport(box_obj);
+    QTRY_VERIFY(!viewportChangedSpy.isEmpty());
+    QDeclarativeCoordinate* coordinate_obj = static_cast<QDeclarativeCoordinate*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n Coordinate {latitude: 10; longitude: 10}"));
+    place_obj->setCoordinate(coordinate_obj);
+    QTRY_VERIFY(!placeCoordinateChangedSpy.isEmpty());
+    QDeclarativeGeoAddress* address_obj = static_cast<QDeclarativeGeoAddress*>(createComponent("import Qt 4.7 \n import QtMobility.location 1.1 \n Address {street: 'Johnson street'}"));
+    place_obj->setAddress(address_obj);
+    QTRY_VERIFY(!addressChangedSpy.isEmpty());
+    delete box_obj;
+    delete coordinate_obj;
+    delete address_obj;
+    delete source_obj;
+    // Bounding Box has its own test function
 }
 
 void tst_QDeclarativeLandmark::basicFetch()
@@ -1054,7 +1162,7 @@ void tst_QDeclarativeLandmark::declarativeCategoryList()
     // Count()
     QTRY_COMPARE(QDeclarativeLandmarkCategoryModel::categories_count(&declarativeList), model->count());
     // At()
-    for (int i = 0; i < model->count(); i++) {        
+    for (int i = 0; i < model->count(); i++) {
         // TODO make this a 'contains' check
         //QCOMPARE(QDeclarativeLandmarkCategoryModel::categories_at(&declarativeList, i)->name(), model->categoryList().at(i).name());
     }
@@ -1209,6 +1317,9 @@ void tst_QDeclarativeLandmark::filterContentChange()
     extra_declarative_coordinate.setLatitude(1);
     QTRY_COMPARE(source_obj->property("count").toInt(), 1);
     QDeclarativeLandmarkCompoundFilter::filters_clear(&declarativeList);
+
+    delete union_filter_obj;
+    delete proximity_filter_obj;
     delete source_obj;
 }
 

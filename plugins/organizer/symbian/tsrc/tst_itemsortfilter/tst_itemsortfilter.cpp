@@ -120,7 +120,6 @@ private: // util functions
     QOrganizerItemFilter invalidFilter();
     QOrganizerItemFilter defaultFilter();
     QOrganizerItemFilter detailFilter(QString defNam, QString fieldNam, int flags, QVariant filterCriterion);
-    QOrganizerItemFilter dateTimeFilter(QDateTime start, QDateTime end);
     QOrganizerItemFilter detailRangeFilter(QString defNam, QString fieldNam, int flags, QVariant min, QVariant max);
 private:
     QList<QOrganizerItemManager *> m_managers;
@@ -145,7 +144,7 @@ tst_itemSortFilter::tst_itemSortFilter()
 tst_itemSortFilter::~tst_itemSortFilter()
 {
     foreach (QOrganizerItemManager* manager, m_managers) {
-        manager->removeItems(manager->itemIds(), 0);
+        manager->removeItems(manager->itemIds());
         delete manager;
         manager = 0;
     }
@@ -227,11 +226,6 @@ void tst_itemSortFilter::filterItems_data()
             QOrganizerItemFilter::MatchExactly, QVariant(QOrganizerTodoProgress::StatusInProgress)), "be");
         addNewFilterRow(i, detailFilter(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus,
             QOrganizerItemFilter::MatchExactly, QVariant(QOrganizerTodoProgress::StatusComplete)), "cf");
-
-        addNewFilterRow(i, dateTimeFilter(QDateTime::currentDateTime().addDays(-1), QDateTime::currentDateTime().addDays(3)), "abcdef");
-        addNewFilterRow(i, dateTimeFilter(QDateTime::currentDateTime().addDays(-1), QDateTime::currentDateTime().addDays(1)), "abc");
-        addNewFilterRow(i, dateTimeFilter(QDateTime::currentDateTime(), QDateTime::currentDateTime().addDays(3)), "def");
-        addNewFilterRow(i, dateTimeFilter(QDateTime::currentDateTime(), QDateTime::currentDateTime().addDays(1)), QString());
 
         if (m_managers.at(i)->detailDefinitions(QOrganizerItemType::TypeTodo).value(QOrganizerTodoProgress::DefinitionName)
             .fields().contains(QOrganizerTodoProgress::FieldPercentageComplete)) {
@@ -325,7 +319,7 @@ void tst_itemSortFilter::sortItems()
     QFETCH(int, mgrIndex);
     QFETCH(QString, matchingItemsStr);
 
-    QList<QOrganizerItem>actualItems = m_managers.at(mgrIndex)->items(sortOrderList);
+    QList<QOrganizerItem> actualItems = m_managers.at(mgrIndex)->items(QOrganizerItemFilter(), sortOrderList);
     QList<QOrganizerItemLocalId> actualIds;
     QString actualItemsStr;
 
@@ -479,14 +473,6 @@ QOrganizerItemFilter tst_itemSortFilter::detailFilter(QString defNam, QString fi
     f.setDetailDefinitionName(defNam, fieldNam);
     f.setMatchFlags(QOrganizerItemFilter::MatchFlags(flags));
     f.setValue(filterCriterion);
-    return f;
-}
-
-QOrganizerItemFilter tst_itemSortFilter::dateTimeFilter(QDateTime start, QDateTime end)
-{
-    QOrganizerItemDateTimePeriodFilter f;
-    f.setStartPeriod(start);
-    f.setEndPeriod(end);
     return f;
 }
 

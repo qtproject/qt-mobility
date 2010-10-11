@@ -51,7 +51,7 @@ class QDeclarativeContactFamily : public QDeclarativeContactDetail
     Q_OBJECT
     Q_PROPERTY(QString spouse READ spouse WRITE setSpouse NOTIFY fieldsChanged)
     Q_PROPERTY(QStringList children READ children WRITE setChildren NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
 public:
     enum FieldType {
         Spouse = 0,

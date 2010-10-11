@@ -119,7 +119,7 @@ bool QOrganizerTodo::isTimeSpecified() const
 /*!
   Sets the dates on which the todo reoccurs to \a rdates
  */
-void QOrganizerTodo::setRecurrenceDates(const QList<QDate>& rdates)
+void QOrganizerTodo::setRecurrenceDates(const QSet<QDate>& rdates)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setRecurrenceDates(rdates);
@@ -130,7 +130,7 @@ void QOrganizerTodo::setRecurrenceDates(const QList<QDate>& rdates)
   Returns the dates on which the todo reoccurs, which have been explicitly set
   by calling \l setRecurrenceDates()
  */
-QList<QDate> QOrganizerTodo::recurrenceDates() const
+QSet<QDate> QOrganizerTodo::recurrenceDates() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.recurrenceDates();
@@ -139,7 +139,7 @@ QList<QDate> QOrganizerTodo::recurrenceDates() const
 /*!
   Sets the recurrence rules which define when the todo occurs to \a rrules
  */
-void QOrganizerTodo::setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules)
+void QOrganizerTodo::setRecurrenceRules(const QSet<QOrganizerItemRecurrenceRule>& rrules)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setRecurrenceRules(rrules);
@@ -149,7 +149,7 @@ void QOrganizerTodo::setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule
 /*!
   Returns the list of recurrence rules which define when the todo occurs
  */
-QList<QOrganizerItemRecurrenceRule> QOrganizerTodo::recurrenceRules() const
+QSet<QOrganizerItemRecurrenceRule> QOrganizerTodo::recurrenceRules() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.recurrenceRules();
@@ -159,7 +159,7 @@ QList<QOrganizerItemRecurrenceRule> QOrganizerTodo::recurrenceRules() const
   Sets the dates on which the todo does not occur despite the date
   fulfilling the recurrence rules of the todo, to \a exdates
  */
-void QOrganizerTodo::setExceptionDates(const QList<QDate>& exdates)
+void QOrganizerTodo::setExceptionDates(const QSet<QDate>& exdates)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setExceptionDates(exdates);
@@ -170,7 +170,7 @@ void QOrganizerTodo::setExceptionDates(const QList<QDate>& exdates)
   Returns the dates on which the todo does not occur, where it otherwise
   would occur as described by the recurrence rules.
  */
-QList<QDate> QOrganizerTodo::exceptionDates() const
+QSet<QDate> QOrganizerTodo::exceptionDates() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.exceptionDates();
@@ -181,7 +181,7 @@ QList<QDate> QOrganizerTodo::exceptionDates() const
   not occur, where it otherwise would occur as described by the recurrence rules
   set with \l setRecurrenceRules(), to \a exrules
  */
-void QOrganizerTodo::setExceptionRules(const QList<QOrganizerItemRecurrenceRule>& exrules)
+void QOrganizerTodo::setExceptionRules(const QSet<QOrganizerItemRecurrenceRule>& exrules)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setExceptionRules(exrules);
@@ -193,7 +193,7 @@ void QOrganizerTodo::setExceptionRules(const QList<QOrganizerItemRecurrenceRule>
   does not occur, where it otherwise would occur as described by the recurrence rules
   set the \l setRecurrenceRules().
  */
-QList<QOrganizerItemRecurrenceRule> QOrganizerTodo::exceptionRules() const
+QSet<QOrganizerItemRecurrenceRule> QOrganizerTodo::exceptionRules() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.exceptionRules();

@@ -69,7 +69,7 @@ public:
     void setContents(const QString& subject, const QString& body, const QVariantList& attachments) {setValue(FieldSubject, subject); setValue(FieldBody, body); setValue(FieldAttachments, attachments);}
     QString subject() const {return value(FieldSubject);}
     QString body() const {return value(FieldBody);}
-    QVariantList attachments() {return value<QVariantList>(FieldAttachments);} // mime data type?
+    QVariantList attachments() const {return value<QVariantList>(FieldAttachments);} // mime data type?
     void setRecipients(const QStringList& recipients) {setValue(FieldRecipients, recipients);}
     QStringList recipients() const {return value<QStringList>(FieldRecipients);}
 };

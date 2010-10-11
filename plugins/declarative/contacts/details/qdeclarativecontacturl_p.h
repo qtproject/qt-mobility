@@ -53,7 +53,7 @@ class QDeclarativeContactUrl : public QDeclarativeContactDetail
     Q_PROPERTY(QString url READ url WRITE setUrl NOTIFY fieldsChanged)
     Q_PROPERTY(QString subType READ subType WRITE setSubType NOTIFY fieldsChanged)
 
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "url")
 public:
     enum FieldType {

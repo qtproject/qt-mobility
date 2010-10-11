@@ -37,11 +37,11 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and 
-** Navigation API.  The use of these services, whether by use of the 
-** plugin or by other means, is governed by the terms and conditions 
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in 
-** this package, located in the directory containing the Ovi services 
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
 ** plugin source code.
 **
 ****************************************************************************/
@@ -58,35 +58,34 @@
 QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoSearchManagerEngine(parameters),
         m_host("loc.desktop.maps.svc.ovi.com"),
-        m_referer("localhost")
+        m_token(QGeoServiceProviderFactoryNokia::defaultToken),
+        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer)
 {
     m_networkManager = new QNetworkAccessManager(this);
 
-    QList<QString> keys = parameters.keys();
-
-    if (keys.contains("places.proxy")) {
+    if (parameters.contains("places.proxy")) {
         QString proxy = parameters.value("places.proxy").toString();
         if (!proxy.isEmpty())
             m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
     }
 
-    if (keys.contains("places.host")) {
+    if (parameters.contains("places.host")) {
         QString host = parameters.value("places.host").toString();
         if (!host.isEmpty())
             m_host = host;
     }
 
-    if (keys.contains("places.referer")) {
-        QString referer = parameters.value("places.referer").toString();
-        if (!referer.isEmpty())
-            m_referer = referer;
+    if (parameters.contains("places.referer")) {
+        m_referer = parameters.value("places.referer").toString();
     }
 
-    if (keys.contains("places.token")) {
-        QString token = parameters.value("places.token").toString();
-        if (!token.isEmpty())
-            m_token = token;
+    if (parameters.contains("places.token")) {
+        m_token = parameters.value("places.token").toString();
     }
+    else if (parameters.contains("token")) {
+        m_token = parameters.value("token").toString();
+    }
+
 
     setSupportsGeocoding(true);
     setSupportsReverseGeocoding(true);
@@ -136,9 +135,9 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
         requestString += address.city();
     }
 
-    if (!address.postCode().isEmpty()) {
+    if (!address.postcode().isEmpty()) {
         requestString += "&zip=";
-        requestString += address.postCode();
+        requestString += address.postcode();
     }
 
     if (!address.street().isEmpty()) {
@@ -146,7 +145,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
         requestString += address.street();
     }
 
-    // TODO? 
+    // TODO?
     // street number has been removed from QGeoAddress
     // do we need to try to split it out from QGeoAddress::street
     // in order to geocode properly
@@ -182,7 +181,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordina
     requestString += "&lg=";
     requestString += languageToMarc(locale().language());
 
-    return search(requestString,bounds);
+    return search(requestString, bounds);
 }
 
 QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString,
@@ -228,9 +227,9 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
 }
 
 QGeoSearchReply* QGeoSearchManagerEngineNokia::search(QString requestString,
-    QGeoBoundingArea *bounds,
-    int limit,
-    int offset)
+        QGeoBoundingArea *bounds,
+        int limit,
+        int offset)
 {
     QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(QUrl(requestString)));
     QGeoSearchReplyNokia *reply = new QGeoSearchReplyNokia(networkReply, limit, offset, bounds, this);
@@ -292,8 +291,8 @@ void QGeoSearchManagerEngineNokia::placesError(QGeoSearchReply::Error error, con
 
 QString QGeoSearchManagerEngineNokia::languageToMarc(QLocale::Language language)
 {
-    uint offset = 3*(uint(language));
-    if (language == QLocale::C || offset+2 > sizeof(marc_language_code_list))
+    uint offset = 3 * (uint(language));
+    if (language == QLocale::C || offset + 2 > sizeof(marc_language_code_list))
         return QLatin1String("eng");
 
     const unsigned char *c = marc_language_code_list + offset;
