@@ -158,13 +158,13 @@ protected:
     virtual void errorChanged() = 0;
 
     bool m_paused;
-    int m_loopCount;
-    int m_runningCount;
     bool m_playing;
     bool m_autoLoad;
     bool m_loaded;
     bool m_muted;
     bool m_complete;
+    int m_loopCount;
+    int m_runningCount;
     int m_position;
     qreal m_vol;
     qreal m_playbackRate;

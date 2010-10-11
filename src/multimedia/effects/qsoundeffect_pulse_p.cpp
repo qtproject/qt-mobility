@@ -520,8 +520,9 @@ void QSoundEffectPrivate::createPulseStream()
 {
     pa_sample_spec spec = audioFormatToSampleSpec(m_waveDecoder->audioFormat());
     pa_stream *stream = pa_stream_new(daemon()->context(), m_name.constData(), &spec, 0);
-    if (stream == 0)
+    if (stream == 0) {
         qWarning("QSoundEffect(pulseaudio): Failed to create stream");
+    }
     else {
         pa_stream_set_state_callback(stream, stream_state_callback, this);
         pa_stream_set_write_callback(stream, stream_write_callback, this);
