@@ -304,7 +304,8 @@ The elements and attributes have the following meanings:
         \o "
         \o ipcaddress
         \o The socket name or path that the inter-process service will be published
-           on that will provide clients with remote access.
+           on that will provide clients with remote access. Should be the same name
+           as the executable for the service without any suffix such as ".exe" etc.
     \row
         \o "
         \o name
@@ -493,8 +494,8 @@ nature of IPC, pointers to objects cannot be passed between services and clients
 Unfortunately, this also means that anything wrapped in a typedef macro cannot be 
 communicated effectively between processes.
 
-\section3 Rendezvous
-D-Bus services inherit rendezvous support by providing .service files to the
+\section3 Service Autostart
+D-Bus services inherit automatic start support by providing .service files to the
 D-Bus daemon search paths. Aside from producing these files manually, the 
 servicefw tool provides an option to generate the corresponding files inside
 the local user D-Bus folder for convenience. This will allow all client
@@ -521,13 +522,90 @@ This is usually done on deployment by adding services through the servicefw tool
 
 \section2 Symbian Client-Server Framework
 
-Symbian IPC services are automatically instantiated if the service is not already 
-running.  
+\section3 Service Autostart
+Symbian IPC will automatically start the server process if required when the client
+calls loadInterface.  The executable name must be the same as the name provided
+<ipcaddress> tag in the xml registration file.  For example <ipcaddress>xyzabc</ipcaddress>
+should have the executable for the service called xyzabc.exe.
 
-\section3 Rendezvous 
-Symbian IPC support allows server-side processes to be created upon client request 
-and every service has a server of its own. Automatic shutdown also occurs when
-the remote services manager no longer holds requested service instances.
+\section3 Service registration
+All services must be registered for clients to be able to locate and use them.
+Symbian provides 3 different methods to register services.
+
+\list
+\o \l{Automatic registration}
+\o \l{Secure registration}
+\o \l{ROM build registration}
+\endlist
+
+\section4 Automatic Registration
+Automatic registration is the prefered method for services that are not
+Symbian Signed and don't require high levels of security.  The XML
+file is copied into the import directory of the IPC backend.  In Qt
+project files this can be done by:
+
+\code
+xmlautoimport.path = /private/2002AC7F/import/
+xmlautoimport.sources = <service xml file>.xml
+DEPLOYMENT += xmlautoimport
+\endcode
+
+Or in a symbian .pkg file by:
+
+\code
+"/epoc32/data/z/private/2002AC7F/import/<service xml file>.xml" - "c:\private\2002AC7F\import\<service xml file>.xml"
+\endcode
+
+\section4 Secure Registration
+For services that are Symbian Signed and require a higher level of security they
+may chose to use a post install program.  The authenticity of the service is done during
+registration using the VID/SID.  If the installer the defines the VID it is stored in the
+registration database, and only the same VID maybe used to remove the service or reinstall it.
+If the VID is undefined then the SID is used.  The VID/SID remain in the registration
+database after unregistration locking the name to the VID/SID.  Only installers using the
+same VID/SID may register a service of the same name.
+
+An example project can be found at \c {examples/serviceinstaller_sfw_symbian}.
+
+More info about VID and SID can be found from:
+\list
+    \o \l {http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#VendorID}{VendorID}
+    \o \l {http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#SecureID}{SecureID}
+\endlist
+
+\section4 ROM build registration
+For Symbian application built into the rom image registration must be done at
+build time using the host tool servicedbgen. To register a service run
+the command:
+
+\code
+servicedbgen -tall add <service xml file>
+\endcode
+
+Appropriate iby files, and settings are required for including the service executable
+and related files in the rom image.
+
+\section3 Service security filters
+On connection the service can install a filter function to check the credentials
+of a client and block the connection without the required credentials.  The filter
+is a function:
+
+\code
+bool securityFilter(const void *p)
+{
+    const RMessage2 *aMessage = reinterpret_cast<const RMessage2*>(p);
+    if(check_security) {
+        return true; // accept connection
+    }
+    else {
+        retun false; // reject connection
+    }
+}
+\endcode
+
+Returning true returns CPolicyServer::EPass and false returns CPolicyServer::EFail
+to the Client-Server secuity check.  Registration of the filter is done by
+calling QRemoteServiceRegister::setSecurityFilter().
 
 \section2 Local Socket
 
@@ -538,15 +616,51 @@ underlying IPC mechanism utilized is a local socket based protocol.
 Similar to the other IPC mechanisms, passing object pointers or typedefs will not
 work on local socket. 
 
-\section3 Rendezvous
-This mechanism provides automatic service startup by supplying the <ipcaddress> tag
-with the path to the service executable file, which is also used as the listening
-server name. Client's that request local socket IPC service objects will attempt
-to start the service process before accessing it; otherwise a timeout will notify
-the client that the service process is not running. Note that this feature requires
-that the service is published with a matching file location path through the
-QRemoteServiceRegister.
+\section3 Service Autostart
+This mechanism provides automatic service startup. The <ipcaddress> tag
+must be set to the executable filename.  For example
+<ipcaddress>xyzabc</ipcaddress> must be used if the executable is xyzabc,
+or xyzabc.exe on windows systems.  The PATH is searched for the executable.
+If the executable is not found, or the service does not start, then
+the error is reported to the client.
 
+\section3 Service Registration
+All services must be registered.  The 'servicefw' tool registers xml
+files.  It must be run before a service can be used. For example:
+
+\code
+servicefw add <service xml file>
+\endcode
+
+\section3 Service security filters
+The service can install a security filter to filter and reject
+connections from some clients.
+
+\code
+bool securityFilter(const void *p)
+{
+    const QRemoteServiceRegisterCredentials *cr = (const struct QRemoteServiceRegisterCredentials *)p;
+    if(cr->pid == 0) {
+        return true; // accept connection
+    }
+    else {
+        retun false; // reject connection
+    }
+}
+
+struct QRemoteServiceRegisterCredentials {
+    int fd;
+    int pid;
+    int uid;
+    int gid;
+};
+\endcode
+
+Returning true accepts the connect, false terminates it.  Certain
+platforms do not provide all the results, and undefined values are
+set to -1. Registration of the filter is done by
+calling QRemoteServiceRegister::setSecurityFilter().  Only 1 filter maybe installed
+at one time.
 
 \section2 Error handling
 
