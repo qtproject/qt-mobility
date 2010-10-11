@@ -46,7 +46,6 @@
 #include <QtCore/QObject>
 #include <QtCore/QStringList>
 
-
 QT_BEGIN_HEADER
     
 QTM_BEGIN_NAMESPACE
@@ -74,7 +73,7 @@ public:
         ThemeItemMoveOver, ThemeBounceEffect, ThemeCheckBox, ThemeMultipleCheckBox, ThemeEditor,
         ThemeTextSelection, ThemeBlankSelection, ThemeLineSelection, ThemeEmptyLineSelection,
         ThemePopUp, ThemePopupOpen, ThemePopupClose, ThemeFlick, ThemeStopFlick, // XXX PopUp -> Popup
-        ThemeMultitouchActivate, ThemeRotateStep, ThemeLongPress, ThemePositiveTacticon,
+        ThemeMultiPointTouchActivate, ThemeRotateStep, ThemeLongPress, ThemePositiveTacticon,
         ThemeNeutralTacticon, ThemeNegativeTacticon,
         NumberOfThemeEffects,
         ThemeUser = 65535
