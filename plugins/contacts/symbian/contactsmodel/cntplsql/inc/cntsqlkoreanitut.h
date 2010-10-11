@@ -24,6 +24,8 @@
 #include "cntsqlsearchbase.h"
 
 class C12keyKeyMap;
+class KoreanInput;
+class QStringList;
 
 class CntSqlKoreanItuT : public CntSqlSearchBase 
 {
@@ -70,9 +72,9 @@ private:
     SqlQueryType getSQLQueryType(const QString &pattern);
     
    
-    
-   
-    
+private:    
+    KoreanInput* mKoreaninput;
+    QStringList* mTokens;
 
 friend class UT_CntSqlKoreanItuT;    
 };
