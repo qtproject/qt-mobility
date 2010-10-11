@@ -35,6 +35,8 @@
 #include <QLocale>
 #include <hbinputkeymapfactory.h>
 #include <hbinputkeymap.h>
+#include <XQSettingsManager>
+#include <LogsDomainCRKeys.h>
 
 
 // Must have same value as KMaxTokenLength in c12keypredictivesearchtable.cpp
@@ -938,6 +940,25 @@ void UT_CPplPredictiveSearchTable::UT_GetFieldsLCL()
     CleanupStack::PopAndDestroy(koreanName);
     }
 
+// Can't expect some specific value for status, just that the setting can
+// be read successfully.
+void UT_CPplPredictiveSearchTable::UT_ReadSettingL()
+    {
+    // These have been copied from recents/logsui/logsapp/inc/logsdefs.h
+    const int logsContactSearchPermanentlyDisabled = 0;
+    const int logsContactSearchEnabled = 1;
+
+    XQSettingsManager* settingsManager = new XQSettingsManager();
+    XQSettingsKey key(XQSettingsKey::TargetCentralRepository, 
+                      KCRUidLogs.iUid, 
+                      KLogsPredictiveSearch);
+    QVariant value = settingsManager->readItemValue(key, XQSettingsManager::TypeInt);
+    delete settingsManager;
+
+    EUNIT_ASSERT(!value.isNull());
+    int status = value.toInt();     
+    }
+    
 void UT_CPplPredictiveSearchTable::AddContactL(const TDesC& aFirstName,
                                                const TDesC& aLastName,
                                                TContactItemId aContactId)
@@ -1355,6 +1376,13 @@ EUNIT_TEST(
     "GetFieldsLC",
     "FUNCTIONALITY",
     SetupL, UT_GetFieldsLCL, Teardown )
+
+EUNIT_TEST(
+    "Read predictive search setting flag",
+    "UT_CPplPredictiveSearchTable",
+    "",
+    "FUNCTIONALITY",
+    SetupL, UT_ReadSettingL, Teardown )
 
 EUNIT_END_TEST_TABLE
 
