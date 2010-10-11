@@ -38,28 +38,29 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "organizeriteminstanceorigintransform.h"
+
+#include "organizeritemparenttransform.h"
 #include "qorganizeritemparent.h"
 
-void OrganizerItemInstanceOriginTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
+void OrganizerItemParentTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
     Q_UNUSED(entry);
     Q_UNUSED(item);
 }
 
-void OrganizerItemInstanceOriginTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
+void OrganizerItemParentTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
     Q_UNUSED(entry);
     Q_UNUSED(item);
 }
 
-void OrganizerItemInstanceOriginTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+void OrganizerItemParentTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemOccurrence)
 {
     Q_UNUSED(instance);
-    Q_UNUSED(itemInstance);
+    Q_UNUSED(itemOccurrence);
 }
 
-QString OrganizerItemInstanceOriginTransform::detailDefinitionName()
+QString OrganizerItemParentTransform::detailDefinitionName()
 {
     // Note: the conversions are done elsewhere, this class exists only to
     // indicate that we support instance origin detail

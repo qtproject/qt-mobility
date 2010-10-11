@@ -74,7 +74,7 @@ public:
 
     enum RequestType {
         InvalidRequest = 0,
-        ItemInstanceFetchRequest,
+        ItemOccurrenceFetchRequest,
         ItemFetchRequest,
         ItemFetchForExportRequest,
         ItemLocalIdFetchRequest,

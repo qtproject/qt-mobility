@@ -49,7 +49,7 @@
 #include "qorganizeritemdetaildefinitionremoverequest.h"
 #include "qorganizeritemdetaildefinitionsaverequest.h"
 
-#include "qorganizeriteminstancefetchrequest.h"
+#include "qorganizeritemoccurrencefetchrequest.h"
 #include "qorganizeritemfetchrequest.h"
 #include "qorganizeritemfetchforexportrequest.h"
 #include "qorganizeritemlocalidfetchrequest.h"

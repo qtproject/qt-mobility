@@ -681,7 +681,7 @@ bool QOrganizerItemMemoryEngine::itemHasReccurence(const QOrganizerItem& oi) con
 }
 
 
-QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, bool forExport, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemOccurrences(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, bool forExport, QOrganizerItemManager::Error* error) const
 {
     // given the generating item, grab it's QOrganizerItemRecurrence detail (if it exists), and calculate all of the dates within the given period.
     // how would a real backend do this?
@@ -786,7 +786,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemInstances(const QO
     foreach (const QDateTime& rdate, rdates) {
         if (!xdates.contains(rdate.date()) && rdate >= realPeriodStart && rdate < realPeriodEnd) {
             // generate the required instance and add it to the return list.
-            retn.append(generateInstance(generator, rdate));
+            retn.append(generateOccurrence(generator, rdate));
         }
     }
 
@@ -795,13 +795,13 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemInstances(const QO
 }
 
 /*! \reimp */
-QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemOccurrences(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(fetchHint);
-    return internalItemInstances(generator, periodStart, periodEnd, maxCount, false, error);
+    return internalItemOccurrences(generator, periodStart, periodEnd, maxCount, false, error);
 }
 
-QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem& generator, const QDateTime& rdate)
+QOrganizerItem QOrganizerItemMemoryEngine::generateOccurrence(const QOrganizerItem& generator, const QDateTime& rdate)
 {
     QOrganizerItem instanceItem;
     if (generator.type() == QOrganizerItemType::TypeEvent) {
@@ -898,7 +898,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItems(const QDateTime&
 void QOrganizerItemMemoryEngine::addItemRecurrences(QList<QOrganizerItem>& sorted, const QOrganizerItem& c, const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, bool forExport) const
 {
     QOrganizerItemManager::Error error = QOrganizerItemManager::NoError;
-    QList<QOrganizerItem> recItems = internalItemInstances(c, startDate, endDate, forExport ? 1 : 50, forExport, &error);
+    QList<QOrganizerItem> recItems = internalItemOccurrences(c, startDate, endDate, forExport ? 1 : 50, forExport, &error);
 
     if (filter.type() == QOrganizerItemFilter::DefaultFilter) {
         foreach(const QOrganizerItem&oi, recItems) {
@@ -1556,9 +1556,9 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
         }
         break;
 
-        case QOrganizerItemAbstractRequest::ItemInstanceFetchRequest:
+        case QOrganizerItemAbstractRequest::ItemOccurrenceFetchRequest:
         {
-            QOrganizerItemInstanceFetchRequest* r = static_cast<QOrganizerItemInstanceFetchRequest*>(currentRequest);
+            QOrganizerItemOccurrenceFetchRequest* r = static_cast<QOrganizerItemOccurrenceFetchRequest*>(currentRequest);
             QOrganizerItem generator(r->generator());
             QDateTime startDate(r->startDate());
             QDateTime endDate(r->endDate());
@@ -1566,11 +1566,11 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             QOrganizerItemFetchHint fetchHint = r->fetchHint();
 
             QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
-            QList<QOrganizerItem> requestedOrganizerItems = itemInstances(generator, startDate, endDate, countLimit, fetchHint, &operationError);
+            QList<QOrganizerItem> requestedOrganizerItems = itemOccurrences(generator, startDate, endDate, countLimit, fetchHint, &operationError);
 
             // update the request with the results.
             if (!requestedOrganizerItems.isEmpty() || operationError != QOrganizerItemManager::NoError)
-                updateItemInstanceFetchRequest(r, requestedOrganizerItems, operationError, QOrganizerItemAbstractRequest::FinishedState);
+                updateItemOccurrenceFetchRequest(r, requestedOrganizerItems, operationError, QOrganizerItemAbstractRequest::FinishedState);
             else
                 updateRequestState(currentRequest, QOrganizerItemAbstractRequest::FinishedState);
         }

@@ -226,8 +226,8 @@ void OrganizerAsynchProcess::processRequest()
     case QOrganizerItemAbstractRequest::ItemFetchForExportRequest:
         handleItemFetchForExportRequest(static_cast<QOrganizerItemFetchForExportRequest *>(req));
         break;
-    case QOrganizerItemAbstractRequest::ItemInstanceFetchRequest:
-        handleItemInstanceFetchRequest(static_cast<QOrganizerItemInstanceFetchRequest *>(req));
+    case QOrganizerItemAbstractRequest::ItemOccurrenceFetchRequest:
+        handleItemOccurrenceFetchRequest(static_cast<QOrganizerItemOccurrenceFetchRequest *>(req));
         break;
     case QOrganizerItemAbstractRequest::ItemLocalIdFetchRequest:
         handleLocalIdFetchRequest(static_cast<QOrganizerItemLocalIdFetchRequest *>(req));
@@ -279,11 +279,11 @@ void OrganizerAsynchProcess::handleItemFetchForExportRequest(QOrganizerItemFetch
     QOrganizerItemManagerEngine::updateItemFetchForExportRequest(req, items, err, QOrganizerItemAbstractRequest::FinishedState);
 }
 
-void OrganizerAsynchProcess::handleItemInstanceFetchRequest(QOrganizerItemInstanceFetchRequest *req)
+void OrganizerAsynchProcess::handleItemOccurrenceFetchRequest(QOrganizerItemOccurrenceFetchRequest *req)
 {
     QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
-    QList<QOrganizerItem> items = m_engine->itemInstances(req->generator(), req->startDate(), req->endDate(), req->maxOccurrences(), req->fetchHint(), &err);
-    QOrganizerItemManagerEngine::updateItemInstanceFetchRequest(req, items, err, QOrganizerItemAbstractRequest::FinishedState);
+    QList<QOrganizerItem> items = m_engine->itemOccurrences(req->generator(), req->startDate(), req->endDate(), req->maxOccurrences(), req->fetchHint(), &err);
+    QOrganizerItemManagerEngine::updateItemOccurrenceFetchRequest(req, items, err, QOrganizerItemAbstractRequest::FinishedState);
 }
 
 void OrganizerAsynchProcess::handleLocalIdFetchRequest(QOrganizerItemLocalIdFetchRequest *req)

@@ -348,7 +348,7 @@ int QOrganizerItemSymbianEngine::managerVersion() const
     return 1;
 }
 
-QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(
+QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemOccurrences(
     const QOrganizerItem& generator,
     const QDateTime& periodStart,
     const QDateTime& periodEnd,
@@ -356,17 +356,17 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(
     const QOrganizerItemFetchHint& fetchHint,
     QOrganizerItemManager::Error* error) const
 {
-    QList<QOrganizerItem> itemInstances; 
-    TRAPD(err, itemInstancesL(itemInstances, generator, periodStart, periodEnd, maxCount, fetchHint));
+    QList<QOrganizerItem> itemOccurrences;
+    TRAPD(err, itemOccurrencesL(itemOccurrences, generator, periodStart, periodEnd, maxCount, fetchHint));
     if (err != KErrNone) {
         transformError(err, error);
         return QList<QOrganizerItem>();
     }
-    return itemInstances;
+    return itemOccurrences;
 }
 
-void QOrganizerItemSymbianEngine::itemInstancesL(
-    QList<QOrganizerItem> &itemInstances,
+void QOrganizerItemSymbianEngine::itemOccurrencesL(
+    QList<QOrganizerItem> &itemOccurrences,
     const QOrganizerItem &generator,
     const QDateTime &periodStart,
     const QDateTime &periodEnd,
@@ -412,7 +412,7 @@ void QOrganizerItemSymbianEngine::itemInstancesL(
         instanceViewL(collectionId)->FindInstanceL(instanceList, filter,
             CalCommon::TCalTimeRange(startTime, endTime));
         // Transform CCalInstances to QOrganizerItems
-        toItemInstancesL(instanceList, generator, maxCount, collectionId, itemInstances);
+        toItemOccurrencesL(instanceList, generator, maxCount, collectionId, itemOccurrences);
         CleanupStack::PopAndDestroy(&instanceList);
     }
 }
@@ -456,7 +456,7 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemsL(
             instanceList, CalCommon::EIncludeAll,
             CalCommon::TCalTimeRange(startTime, endTime));
         // Transform CCalInstances to QOrganizerItems
-        toItemInstancesL(instanceList, QOrganizerItem(), -1, collectionId, items);
+        toItemOccurrencesL(instanceList, QOrganizerItem(), -1, collectionId, items);
         CleanupStack::PopAndDestroy(&instanceList);
     }
 
@@ -466,23 +466,23 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemsL(
     return items;
 }
 
-void QOrganizerItemSymbianEngine::toItemInstancesL(
+void QOrganizerItemSymbianEngine::toItemOccurrencesL(
     const RPointerArray<CCalInstance> &calInstanceList,
     QOrganizerItem generator,
     const int maxCount,
     QOrganizerCollectionLocalId collectionLocalId,
-    QList<QOrganizerItem> &itemInstances) const
+    QList<QOrganizerItem> &itemOccurrences) const
 {
     quint64 localCollectionIdValue = m_collections[collectionLocalId].calCollectionId();
 
     // Transform all the instances to QOrganizerItems
     for(int i(0); i < calInstanceList.Count(); i++) {
-        QOrganizerItem itemInstance;
+        QOrganizerItem itemOccurrence;
         CCalInstance* calInstance = calInstanceList[i];
-        m_itemTransform.toItemInstanceL(*calInstance, &itemInstance);
+        m_itemTransform.toItemOccurrenceL(*calInstance, &itemOccurrence);
 
         // Optimization: if a generator instance is defined, skip the instances that do not match
-        if (!generator.isEmpty() && generator.guid() != itemInstance.guid())
+        if (!generator.isEmpty() && generator.guid() != itemOccurrence.guid())
             continue;
 
         // Check if maxCount limit is reached
@@ -498,13 +498,13 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
             id.setLocalId(instanceEntryId);
         }
         id.setManagerUri(managerUri());
-        itemInstance.setId(id);
+        itemOccurrence.setId(id);
 
         // Set parent id
         TCalLocalUid parentLocalUid(0);
         if (isException) {
-            HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(itemInstance);
-            CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, itemInstance, *globalUid);
+            HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(itemOccurrence);
+            CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, itemOccurrence, *globalUid);
             parentLocalUid = parentEntry->LocalUidL();
             CleanupStack::PopAndDestroy(parentEntry);
             CleanupStack::PopAndDestroy(globalUid);
@@ -514,18 +514,18 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
 
         // Set instance origin, the detail is set here because the corresponding transform class
         // does not know the required values
-        QOrganizerItemParent origin(itemInstance.detail<QOrganizerItemParent>());
+        QOrganizerItemParent origin(itemOccurrence.detail<QOrganizerItemParent>());
         origin.setParentLocalId(toItemLocalId(localCollectionIdValue, parentLocalUid));
         origin.setOriginalDate(toQDateTimeL(calInstance->StartTimeL()).date());
-        itemInstance.saveDetail(&origin);
+        itemOccurrence.saveDetail(&origin);
 
         // Set collection id
         QOrganizerCollectionId cid;
         cid.setLocalId(collectionLocalId);
         cid.setManagerUri(managerUri());
-        itemInstance.setCollectionId(cid);
+        itemOccurrence.setCollectionId(cid);
 
-        itemInstances.append(itemInstance);
+        itemOccurrences.append(itemOccurrence);
     }
 }
 

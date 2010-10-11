@@ -67,9 +67,9 @@ void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalEntry& entry
     }
 }
 
-void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemOccurrence)
 {
-    if (itemInstance->type() == QOrganizerItemType::TypeEventOccurrence) // type has already been converted
+    if (itemOccurrence->type() == QOrganizerItemType::TypeEventOccurrence) // type has already been converted
     {
         TCalTime startTime = instance.StartTimeL();
         TCalTime endTime = instance.EndTimeL();
@@ -87,7 +87,7 @@ void OrganizerEventTimeRangeTransform::transformToDetailL(const CCalInstance& in
             range.setEndDateTime(toQDateTimeL(endTime));
 
         if (!range.isEmpty())
-            itemInstance->saveDetail(&range);
+            itemOccurrence->saveDetail(&range);
     }
 }
 

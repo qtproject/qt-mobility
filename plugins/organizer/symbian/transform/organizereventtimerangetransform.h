@@ -48,7 +48,7 @@ class OrganizerEventTimeRangeTransform : public OrganizerItemDetailTransform
 {
 public:
     void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
-    void transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance);
+    void transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemOccurrence);
     void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
     QString detailDefinitionName();
 };

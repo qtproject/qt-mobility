@@ -53,7 +53,7 @@
 #include "organizeritemdetailtransform.h"
 #include "organizeritemdisplaylabeltransform.h"
 #include "organizeritemguidtransform.h"
-#include "organizeriteminstanceorigintransform.h"
+#include "organizeritemparenttransform.h"
 #include "organizeritemlocationtransform.h"
 #include "organizeritemprioritytransform.h"
 #include "organizeritemrecurrencetransform.h"
@@ -112,7 +112,7 @@ OrganizerItemTransform::OrganizerItemTransform()
     m_detailTransforms.append(new OrganizerItemDescriptionTransform());
     m_detailTransforms.append(new OrganizerItemDisplayLabelTransform());
     m_detailTransforms.append(new OrganizerItemGuidTransform());
-    m_detailTransforms.append(new OrganizerItemInstanceOriginTransform());
+    m_detailTransforms.append(new OrganizerItemParentTransform());
     m_detailTransforms.append(new OrganizerItemLocationTransform());
     m_detailTransforms.append(new OrganizerItemPriorityTransform());
     m_detailTransforms.append(new OrganizerItemTimeStampTransform());
@@ -186,14 +186,14 @@ void OrganizerItemTransform::toItemPostSaveL(const CCalEntry &entry, QOrganizerI
     }
 }
 
-void OrganizerItemTransform::toItemInstanceL(
+void OrganizerItemTransform::toItemOccurrenceL(
     const CCalInstance &instance,
-    QOrganizerItem *itemInstance) const
+    QOrganizerItem *itemOccurrence) const
 {
     //debugInstanceL(instance);
 
     // Loop through transform objects
     foreach (OrganizerItemDetailTransform *i, m_detailTransforms) {
-        i->transformToDetailL(instance, itemInstance);
+        i->transformToDetailL(instance, itemOccurrence);
     }
 }

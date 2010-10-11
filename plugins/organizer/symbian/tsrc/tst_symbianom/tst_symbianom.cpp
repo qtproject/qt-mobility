@@ -694,12 +694,12 @@ void tst_SymbianOm::addReminderToSingleInstance()
     QVERIFY(m_om->saveItem(&repeatingEvent));
     
     // Fetch the instances
-    QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
-    QVERIFY(itemInstances.count() == 3);
+    QList<QOrganizerItem> itemOccurrences = m_om->itemOccurrences(repeatingEvent, startDateTime, QDateTime(), 3);
+    QVERIFY(itemOccurrences.count() == 3);
 
 
     // Verify that reminder detail is empty
-    QOrganizerItem instance1 = itemInstances.at(0);
+    QOrganizerItem instance1 = itemOccurrences.at(0);
     QOrganizerItemReminder rptReminder = instance1.detail<QOrganizerItemReminder>();
     QVERIFY(rptReminder.isEmpty());
     
@@ -714,9 +714,9 @@ void tst_SymbianOm::addReminderToSingleInstance()
     QVERIFY(!rptReminder.isEmpty());
 
     // Verify that the other instances have not been modified
-    itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
-    QCOMPARE(itemInstances.count(), 3);
-    QVERIFY(itemInstances.at(1).detail<QOrganizerItemReminder>().isEmpty());
+    itemOccurrences = m_om->itemOccurrences(repeatingEvent, startDateTime, QDateTime(), 3);
+    QCOMPARE(itemOccurrences.count(), 3);
+    QVERIFY(itemOccurrences.at(1).detail<QOrganizerItemReminder>().isEmpty());
 }
 
 /*!
@@ -754,11 +754,11 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
     QVERIFY(m_om->saveItem(&repeatingEvent));
     
     // Fetch the instances
-    QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
-    QVERIFY(itemInstances.count() == 3);
+    QList<QOrganizerItem> itemOccurrences = m_om->itemOccurrences(repeatingEvent, startDateTime, QDateTime(), 3);
+    QVERIFY(itemOccurrences.count() == 3);
     
     // Modify first instance by removing reminder detail and save
-    QOrganizerItem instance1 = itemInstances.at(0);
+    QOrganizerItem instance1 = itemOccurrences.at(0);
     QOrganizerItemReminder rptReminder = instance1.detail<QOrganizerItemReminder>();
     QCOMPARE(rptReminder.secondsBeforeStart(), repeatReminder.secondsBeforeStart());
     instance1.removeDetail(&rptReminder);
@@ -770,9 +770,9 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
     QVERIFY(rptReminder.isEmpty());
 	
     // Check if the other instances are intact
-    itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
-    QCOMPARE(itemInstances.count(), 3);
-    QVERIFY(!itemInstances.at(1).detail<QOrganizerItemReminder>().isEmpty());
+    itemOccurrences = m_om->itemOccurrences(repeatingEvent, startDateTime, QDateTime(), 3);
+    QCOMPARE(itemOccurrences.count(), 3);
+    QVERIFY(!itemOccurrences.at(1).detail<QOrganizerItemReminder>().isEmpty());
 }
 
 void tst_SymbianOm::timezone()
