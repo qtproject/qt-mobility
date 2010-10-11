@@ -42,11 +42,13 @@
 #ifndef QLLCPSOCKET_H
 #define QLLCPSOCKET_H
 
+#include <qmobilityglobal.h>
+
 #include <QtCore/QIODevice>
 
 class QNearFieldTarget;
 
-class QLlcpSocket : public QIODevice
+class Q_CONNECTIVITY_EXPORT QLlcpSocket : public QIODevice
 {
     Q_OBJECT
 

@@ -42,6 +42,8 @@
 #ifndef QNDEFFILTER_H
 #define QNDEFFILTER_H
 
+#include <qmobilityglobal.h>
+
 #include <QtCore/QList>
 #include <QtCore/QPair>
 
@@ -51,7 +53,7 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QNdefFilter
+class Q_CONNECTIVITY_EXPORT QNdefFilter
 {
 public:
     QNdefFilter();
