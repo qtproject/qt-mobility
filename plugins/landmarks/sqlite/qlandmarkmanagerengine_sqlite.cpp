@@ -429,7 +429,7 @@ QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::sortOrderSupportLev
     return m_databaseOperations.sortOrderSupportLevel(sortOrder);
 }
 
-bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const
+bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::ManagerFeature feature, QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);

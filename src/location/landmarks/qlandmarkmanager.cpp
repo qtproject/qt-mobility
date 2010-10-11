@@ -987,7 +987,7 @@ QString QLandmarkManager::errorString() const
 /*!
     Returns whether the manager supports the given \a feature.
 */
-bool QLandmarkManager::isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const
+bool QLandmarkManager::isFeatureSupported(QLandmarkManager::ManagerFeature feature) const
 {
     Q_D(const QLandmarkManager);
 

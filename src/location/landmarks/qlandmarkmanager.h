@@ -90,7 +90,7 @@ public:
         NoSupport
     };
 
-    enum LandmarkFeature {
+    enum ManagerFeature {
         ImportExportFeature,
         NotificationsFeature
     };
@@ -175,7 +175,7 @@ public:
 
     SupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
     SupportLevel sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder) const;
-    bool isFeatureSupported(LandmarkFeature feature) const;
+    bool isFeatureSupported(ManagerFeature feature) const;
 
     bool isReadOnly() const;
     bool isReadOnly(const QLandmarkId &id) const;
