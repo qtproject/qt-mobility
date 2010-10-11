@@ -262,6 +262,27 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
     return 0;
 }
 
+/*!
+    Returns true if the backend identified by \a type and \a identifier is registered.
+
+    This is a convenience method that helps out plugins doing dynamic registration.
+*/
+bool QSensorManager::isBackendRegistered(const QByteArray &type, const QByteArray &identifier)
+{
+    QSensorManagerPrivate *d = sensorManagerPrivate();
+    if (!d->pluginsLoaded)
+        loadPlugins();
+
+    if (!d->backendsByType.contains(type))
+        return false;
+
+    const FactoryForIdentifierMap &factoryByIdentifier = d->backendsByType[type];
+    if (!factoryByIdentifier.contains(identifier))
+        return false;
+
+    return true;
+}
+
 // =====================================================================
 
 /*!

@@ -59,6 +59,8 @@ public:
     static void registerBackend(const QByteArray &type, const QByteArray &identifier, QSensorBackendFactory *factory);
     static void unregisterBackend(const QByteArray &type, const QByteArray &identifier);
 
+    static bool isBackendRegistered(const QByteArray &type, const QByteArray &identifier);
+
     // Create a backend (uses the type and identifier set in the sensor)
     static QSensorBackend *createBackend(QSensor *sensor);
 
