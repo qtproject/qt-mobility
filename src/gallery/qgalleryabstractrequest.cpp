@@ -48,7 +48,7 @@ QTM_BEGIN_NAMESPACE
 void QGalleryAbstractRequestPrivate::_q_finished()
 {
     if (state == QGalleryAbstractRequest::Active
-            || state == QGalleryAbstractRequest::Cancelling
+            || state == QGalleryAbstractRequest::Canceling
             || state == QGalleryAbstractRequest::Idle) {
         if (response->error() != QGalleryAbstractRequest::NoError) {
             error = response->error();
@@ -86,13 +86,13 @@ void QGalleryAbstractRequestPrivate::_q_finished()
     }
 }
 
-void QGalleryAbstractRequestPrivate::_q_cancelled()
+void QGalleryAbstractRequestPrivate::_q_canceled()
 {
-    if (state == QGalleryAbstractRequest::Cancelling) {
+    if (state == QGalleryAbstractRequest::Canceling) {
         if (!wasIdle) {
-            state = QGalleryAbstractRequest::Cancelled;
+            state = QGalleryAbstractRequest::Canceled;
 
-            emit q_func()->cancelled();
+            emit q_func()->canceled();
         } else {
             state = QGalleryAbstractRequest::Finished;
         }
@@ -136,9 +136,9 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
 
     \value Inactive The request has not been executed, or has finished.
     \value Active The request is currently executing.
-    \value Cancelling The request was cancelled, but hasn't yet returned to the
+    \value Canceling The request was canceled, but hasn't yet returned to the
     Inactive state.
-    \value Cancelled The request was cancelled.
+    \value Canceled The request was canceled.
     \value Idle The request has finished, and is monitoring its return values
     for changes.
     \value Finished The request is finished.
@@ -411,7 +411,7 @@ void QGalleryAbstractRequest::execute()
 
                 connect(d_ptr->response.data(), SIGNAL(finished()), this, SLOT(_q_finished()));
                 connect(d_ptr->response.data(), SIGNAL(resumed()), this, SLOT(_q_resumed()));
-                connect(d_ptr->response.data(), SIGNAL(cancelled()), this, SLOT(_q_cancelled()));
+                connect(d_ptr->response.data(), SIGNAL(canceled()), this, SLOT(_q_canceled()));
                 connect(d_ptr->response.data(), SIGNAL(progressChanged(int,int)),
                         this, SLOT(_q_progressChanged(int,int)));
 
@@ -461,10 +461,10 @@ void QGalleryAbstractRequest::execute()
 void QGalleryAbstractRequest::cancel()
 {
     if (d_ptr->state == Active || d_ptr->state == Idle) {
-        d_ptr->state = Cancelling;
+        d_ptr->state = Canceling;
         d_ptr->response->cancel();
 
-        if (d_ptr->state == Cancelling)
+        if (d_ptr->state == Canceling)
             emit stateChanged(d_ptr->state);
     }
 }
@@ -472,7 +472,7 @@ void QGalleryAbstractRequest::cancel()
 /*!
     Clears the results of a request.
 
-    If the request is active or idle it will be cancelled.
+    If the request is active or idle it will be canceled.
 */
 
 void QGalleryAbstractRequest::clear()
@@ -516,9 +516,9 @@ void QGalleryAbstractRequest::clear()
 */
 
 /*!
-    \fn QGalleryAbstractRequest::cancelled()
+    \fn QGalleryAbstractRequest::canceled()
 
-    Signals that a request was cancelled before it could finish.
+    Signals that a request was canceled before it could finish.
 */
 
 /*!

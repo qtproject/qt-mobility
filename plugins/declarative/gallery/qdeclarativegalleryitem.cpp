@@ -133,7 +133,7 @@ void QDeclarativeGalleryItem::componentComplete()
 void QDeclarativeGalleryItem::reload()
 {
     if (m_updateStatus == PendingUpdate)
-        m_updateStatus = CancelledUpdate;
+        m_updateStatus = CanceledUpdate;
 
     m_request.execute();
 }
@@ -141,7 +141,7 @@ void QDeclarativeGalleryItem::reload()
 void QDeclarativeGalleryItem::cancel()
 {
     if (m_updateStatus == PendingUpdate)
-        m_updateStatus = CancelledUpdate;
+        m_updateStatus = CanceledUpdate;
 
     m_request.cancel();
 }
@@ -149,7 +149,7 @@ void QDeclarativeGalleryItem::cancel()
 void QDeclarativeGalleryItem::clear()
 {
     if (m_updateStatus == PendingUpdate)
-        m_updateStatus = CancelledUpdate;
+        m_updateStatus = CanceledUpdate;
 
     m_request.clear();
 }
@@ -160,7 +160,7 @@ void QDeclarativeGalleryItem::deferredExecute()
         m_updateStatus = PendingUpdate;
 
         QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
-    } else if (m_updateStatus == CancelledUpdate) {
+    } else if (m_updateStatus == CanceledUpdate) {
         m_updateStatus = PendingUpdate;
     }
 }
@@ -298,9 +298,9 @@ void QDeclarativeDocumentGalleryItem::classBegin()
     \o Finished Information about an \l item is available.
     \o Idle Information about an \l item which will be automatically
     updated is available.
-    \o Cancelling The query was cancelled but hasn't yet reached the
-    cancelled status.
-    \o Cancelled The query was cancelled.
+    \o Canceling The query was canceled but hasn't yet reached the
+    canceled status.
+    \o Canceled The query was canceled.
     \o Error Information about a type could not be retrieved due to an error.
     \endlist
 */

@@ -71,8 +71,8 @@ public:
     {
         Null        = QGalleryAbstractRequest::Inactive,
         Active      = QGalleryAbstractRequest::Active,
-        Cancelling  = QGalleryAbstractRequest::Cancelling,
-        Cancelled   = QGalleryAbstractRequest::Cancelled,
+        Canceling   = QGalleryAbstractRequest::Canceling,
+        Canceled    = QGalleryAbstractRequest::Canceled,
         Idle        = QGalleryAbstractRequest::Idle,
         Finished    = QGalleryAbstractRequest::Finished,
         Error       = QGalleryAbstractRequest::Error
@@ -123,7 +123,7 @@ protected:
         Incomplete,
         NoUpdate,
         PendingUpdate,
-        CancelledUpdate
+        CanceledUpdate
     };
 
     explicit QDeclarativeGalleryItem(QObject *parent = 0);

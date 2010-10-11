@@ -151,7 +151,7 @@ Q_SIGNALS:
     void scopeChanged();
     void filterChanged();
     void finished();
-    void cancelled();
+    void canceled();
     void error(int error, const QString &errorString);
     void errorChanged();
     void stateChanged(QGalleryAbstractRequest::State state);

@@ -72,7 +72,7 @@ public:
         QObject::connect(&query, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
                 q_ptr, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
         QObject::connect(&query, SIGNAL(finished()), q_ptr, SIGNAL(finished()));
-        QObject::connect(&query, SIGNAL(cancelled()), q_ptr, SIGNAL(cancelled()));
+        QObject::connect(&query, SIGNAL(canceled()), q_ptr, SIGNAL(canceled()));
         QObject::connect(&query, SIGNAL(errorChanged()), q_ptr, SIGNAL(errorChanged()));
         QObject::connect(&query, SIGNAL(error(int,QString)), q_ptr, SIGNAL(error(int,QString)));
         QObject::connect(&query, SIGNAL(galleryChanged()), q_ptr, SIGNAL(galleryChanged()));
@@ -739,9 +739,9 @@ QString QGalleryQueryModel::errorString() const
 */
 
 /*!
-    \fn QGalleryQueryModel::cancelled()
+    \fn QGalleryQueryModel::canceled()
 
-    Signals that the query was cancelled.
+    Signals that the query was canceled.
 */
 
 /*!

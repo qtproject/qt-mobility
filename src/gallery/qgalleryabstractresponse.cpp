@@ -169,7 +169,7 @@ bool QGalleryAbstractResponse::waitForFinished(int msecs)
     Cancels an active or idle gallery response.
 
     The default implementation finishes the an active response with the
-    \l QGalleryAbstractRequest::Cancelled result.  If the reponse is idle the
+    \l QGalleryAbstractRequest::Canceled result.  If the reponse is idle the
     \l finished() signal will be re-emitted with idle
 */
 
@@ -179,9 +179,9 @@ void QGalleryAbstractResponse::cancel()
 
     if (d->state == QGalleryAbstractRequest::Active
             || d->state == QGalleryAbstractRequest::Idle) {
-        d->state = QGalleryAbstractRequest::Cancelled;
+        d->state = QGalleryAbstractRequest::Canceled;
 
-        emit cancelled();
+        emit canceled();
     }
 }
 
@@ -265,9 +265,9 @@ void QGalleryAbstractResponse::error(int error, const QString &errorString)
 */
 
 /*!
-    \fn QGalleryAbstractResponse::cancelled()
+    \fn QGalleryAbstractResponse::canceled()
 
-    Signals that a response was cancelled.
+    Signals that a response was canceled.
 */
 
 #include "moc_qgalleryabstractresponse.cpp"

@@ -335,7 +335,7 @@ void tst_QGalleryQueryModel::execute()
     QGalleryQueryModel model(&gallery);
 
     QSignalSpy finishedSpy(&model, SIGNAL(finished()));
-    QSignalSpy cancelledSpy(&model, SIGNAL(cancelled()));
+    QSignalSpy canceledSpy(&model, SIGNAL(canceled()));
     QSignalSpy errorSpy(&model, SIGNAL(error(int,QString)));
     QSignalSpy stateSpy(&model, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
 
@@ -343,7 +343,7 @@ void tst_QGalleryQueryModel::execute()
     QCOMPARE(model.state(), QGalleryAbstractRequest::Finished);
     QCOMPARE(model.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(canceledSpy.count(), 0);
     QCOMPARE(errorSpy.count(), 0);
     QCOMPARE(stateSpy.count(), 1);
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(), model.state());
@@ -353,16 +353,16 @@ void tst_QGalleryQueryModel::execute()
     QCOMPARE(model.state(), QGalleryAbstractRequest::Active);
     QCOMPARE(model.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(canceledSpy.count(), 0);
     QCOMPARE(errorSpy.count(), 0);
     QCOMPARE(stateSpy.count(), 2);
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(), model.state());
 
     model.cancel();
-    QCOMPARE(model.state(), QGalleryAbstractRequest::Cancelled);
+    QCOMPARE(model.state(), QGalleryAbstractRequest::Canceled);
     QCOMPARE(model.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 1);
+    QCOMPARE(canceledSpy.count(), 1);
     QCOMPARE(errorSpy.count(), 0);
     QCOMPARE(stateSpy.count(), 3);
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(), model.state());
@@ -373,7 +373,7 @@ void tst_QGalleryQueryModel::execute()
     QCOMPARE(model.error(), 120);
     QCOMPARE(model.errorString(), QLatin1String("bad connection"));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 1);
+    QCOMPARE(canceledSpy.count(), 1);
     QCOMPARE(errorSpy.count(), 1);
     QCOMPARE(stateSpy.count(), 4);
     QCOMPARE(errorSpy.last().value(0).toInt(), model.error());
@@ -384,7 +384,7 @@ void tst_QGalleryQueryModel::execute()
     QCOMPARE(model.state(), QGalleryAbstractRequest::Inactive);
     QCOMPARE(model.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 1);
-    QCOMPARE(cancelledSpy.count(), 1);
+    QCOMPARE(canceledSpy.count(), 1);
     QCOMPARE(errorSpy.count(), 1);
     QCOMPARE(stateSpy.count(), 5);
 }

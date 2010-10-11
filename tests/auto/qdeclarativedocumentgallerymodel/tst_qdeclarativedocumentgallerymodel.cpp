@@ -325,7 +325,7 @@ private Q_SLOTS:
     void cancelAsyncResponse();
     void cancelIdleResponse();
     void cancelPendingResponse();
-    void deferExecuteCancelledResponse();
+    void deferExecuteCanceledResponse();
     void clear();
     void clearPendingResponse();
     void error_data();
@@ -3060,7 +3060,7 @@ void tst_QDeclarativeDocumentGalleryModel::cancelAsyncResponse()
     QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Active));
 
     QMetaObject::invokeMethod(object.data(), "cancel");
-    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Cancelled));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryQueryModel::Canceled));
     QCOMPARE(spy.count(), 1);
 }
 
@@ -3120,7 +3120,7 @@ void tst_QDeclarativeDocumentGalleryModel::cancelPendingResponse()
     QCOMPARE(spy.count(), 0);
 }
 
-void tst_QDeclarativeDocumentGalleryModel::deferExecuteCancelledResponse()
+void tst_QDeclarativeDocumentGalleryModel::deferExecuteCanceledResponse()
 {
     const QByteArray qml(
             "import Qt 4.7\n"

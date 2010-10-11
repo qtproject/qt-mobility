@@ -72,8 +72,8 @@ public:
     {
         Inactive,
         Active,
-        Cancelling,
-        Cancelled,
+        Canceling,
+        Canceled,
         Idle,
         Finished,
         Error
@@ -124,7 +124,7 @@ Q_SIGNALS:
     void galleryChanged();
     void supportedChanged();
     void finished();
-    void cancelled();
+    void canceled();
     void error(int error, const QString &errorString);
     void stateChanged(QGalleryAbstractRequest::State state);
     void errorChanged();
@@ -139,7 +139,7 @@ protected:
 
 private:
     Q_PRIVATE_SLOT(d_ptr, void _q_finished())
-    Q_PRIVATE_SLOT(d_ptr, void _q_cancelled())
+    Q_PRIVATE_SLOT(d_ptr, void _q_canceled())
     Q_PRIVATE_SLOT(d_ptr, void _q_resumed())
     Q_PRIVATE_SLOT(d_ptr, void _q_progressChanged(int, int))
 };

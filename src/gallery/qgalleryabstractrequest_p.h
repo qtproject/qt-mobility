@@ -83,7 +83,7 @@ public:
     }
 
     void _q_finished();
-    void _q_cancelled();
+    void _q_canceled();
     void _q_resumed();
     void _q_progressChanged(int current, int maximum);
 
