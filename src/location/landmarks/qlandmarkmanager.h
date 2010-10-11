@@ -90,7 +90,7 @@ public:
         NoSupport
     };
 
-    enum LandmarkFeature {
+    enum ManagerFeature {
         ImportExportFeature,
         NotificationsFeature
     };
@@ -165,8 +165,8 @@ public:
 
     bool importLandmarks(QIODevice *device, const QString &format= QString() ,QLandmarkManager::TransferOption option = IncludeCategoryData, const QLandmarkCategoryId& = QLandmarkCategoryId());
     bool importLandmarks(const QString &fileName, const QString &format = QString(),QLandmarkManager::TransferOption option = IncludeCategoryData, const QLandmarkCategoryId& = QLandmarkCategoryId());
-    bool exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>(), QLandmarkManager::TransferOption option = IncludeCategoryData) const;
-    bool exportLandmarks(const QString &, const QString &format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>(), QLandmarkManager::TransferOption option = IncludeCategoryData) const;
+    bool exportLandmarks(QIODevice *device, const QString &format, const QList<QLandmarkId> &landmarkIds = QList<QLandmarkId>(), QLandmarkManager::TransferOption option = IncludeCategoryData) const;
+    bool exportLandmarks(const QString &, const QString &format, const QList<QLandmarkId> &landmarkIds = QList<QLandmarkId>(), QLandmarkManager::TransferOption option = IncludeCategoryData) const;
 
     QStringList supportedFormats(TransferOperation operation) const;
 
@@ -174,8 +174,8 @@ public:
     QString errorString() const;
 
     SupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
-    SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder>& sortOrders) const;
-    bool isFeatureSupported(LandmarkFeature feature) const;
+    SupportLevel sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder) const;
+    bool isFeatureSupported(ManagerFeature feature) const;
 
     bool isReadOnly() const;
     bool isReadOnly(const QLandmarkId &id) const;
@@ -213,43 +213,6 @@ private:
     friend class QLandmarkAbstractRequest;
     QLandmarkManagerEngine *engine();
 };
-
-/*
-class QLandmarkCodec;
-class QLandmarkCodecPluginPrivate;
-class QLandmarkCodecPlugin : public QObject
-{
-    Q_OBJECT
-public:
-    QLandmarkCodecPlugin(QObject *parent =0);
-    ~QLandmarkCodecPlugin();
-    virtual QLandmarkCodec *create();
-    QStringList keys(); //landmark formats
-private:
-    QLandmarkCodecPluginPrivate *d;
-};
-
-
-class QIODevice;
-class QLandmarkCodecPrivate;
-class QLandmarkCodec
-{
-public:
-    QLandmarkCodec();
-
-    virtual ~QLandmarkCodec();
-    QIODevice *device() const;
-    void setDevice(QIODevice *device);
-    QLandmarkManager database();
-    void setDatabase(const QLandmarkManager &database);
-    QString format();
-    void setFormat(const QString &format);
-
-    virtual bool decode();
-    virtual bool encode(QList<QLandmarkId> landmarkIds =QList<QLandmarkId>());
-private:
-    QLandmarkCodecPrivate *d;
-};*/
 
 QTM_END_NAMESPACE
 
