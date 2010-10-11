@@ -66,9 +66,13 @@ public:
     void setFilter(const QOrganizerItemFilter& filter);
     void setSorting(const QList<QOrganizerItemSortOrder>& sorting);
     void setFetchHint(const QOrganizerItemFetchHint& fetchHint);
+    void setStartDate(const QDateTime& date);
+    void setEndDate(const QDateTime& date);
     QOrganizerItemFilter filter() const;
     QList<QOrganizerItemSortOrder> sorting() const;
     QOrganizerItemFetchHint fetchHint() const;
+    QDateTime startDate() const;
+    QDateTime endDate() const;
 
     /* Results */
     QList<QOrganizerItem> items() const;

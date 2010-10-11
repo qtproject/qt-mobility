@@ -49,7 +49,7 @@
 #include <QMetaMethod>
 #include <QtTest/QtTest>
 #include <qservice.h>
-#include <qremoteservicecontrol.h>
+#include <qremoteserviceregister.h>
 
 #define QTRY_VERIFY(a)                       \
     for (int _i = 0; _i < 5000; _i += 100) {    \
@@ -147,6 +147,7 @@ void tst_QServiceManager_IPC::initTestCase()
     verbose = false;
     lackey = 0;
     serviceUnique = 0;
+    serviceUniqueOther = 0;
     serviceSharedOther = 0;
     serviceShared = 0;
     serviceSharedOther = 0;
@@ -168,6 +169,9 @@ void tst_QServiceManager_IPC::initTestCase()
     //start lackey that represents the service
     if (requiresLackey()) {
         lackey = new QProcess(this);
+        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+        env.insert("PATH", env.value("Path"));
+        lackey->setProcessEnvironment(env);
         if (verbose)
             lackey->setProcessChannelMode(QProcess::ForwardedChannels);
         lackey->start("./qt_sfw_example_ipc_unittest");
@@ -200,7 +204,7 @@ void tst_QServiceManager_IPC::initTestCase()
 
 void tst_QServiceManager_IPC::ipcError(QService::UnrecoverableIPCError err)
 {  
-  ipcfailure = true;  
+    ipcfailure = true;  
 }
 
 void tst_QServiceManager_IPC::cleanupTestCase()
@@ -990,15 +994,15 @@ void tst_QServiceManager_IPC::testSlotInvokation()
 
 void tst_QServiceManager_IPC::verifyServiceClass()
 {
-    QRemoteServiceControl *control = new QRemoteServiceControl();
+    QRemoteServiceRegister *registerObject = new QRemoteServiceRegister();
 
-    QVERIFY2(control->quitOnLastInstanceClosed() == true, "should default to true, default is to shutdown");
-    control->setQuitOnLastInstanceClosed(false);
-    QVERIFY2(control->quitOnLastInstanceClosed() == false, "must transition to false");
-    control->setQuitOnLastInstanceClosed(true);
-    QVERIFY2(control->quitOnLastInstanceClosed() == true, "must transition back to true");
+    QVERIFY2(registerObject->quitOnLastInstanceClosed() == true, "should default to true, default is to shutdown");
+    registerObject->setQuitOnLastInstanceClosed(false);
+    QVERIFY2(registerObject->quitOnLastInstanceClosed() == false, "must transition to false");
+    registerObject->setQuitOnLastInstanceClosed(true);
+    QVERIFY2(registerObject->quitOnLastInstanceClosed() == true, "must transition back to true");
 
-    delete control;
+    delete registerObject;
 }
 
 void tst_QServiceManager_IPC::testIpcFailure()
@@ -1016,11 +1020,6 @@ void tst_QServiceManager_IPC::testIpcFailure()
     while (!ipcfailure && i++ < 50)
         QTest::qWait(50);
     
-#ifndef Q_OS_SYMBIAN
-#ifndef QT_NO_DBUS
-    QEXPECT_FAIL("", "Serviceframework IPC Failure failed", Abort);
-#endif
-#endif
     QVERIFY(ipcfailure);
   
 // TODO restart the connection

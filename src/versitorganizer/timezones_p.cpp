@@ -58,7 +58,7 @@ QDateTime TimeZone::convert(const QDateTime& dateTime) const
     foreach(const TimeZonePhase& phase, mPhases) {
         QOrganizerEvent event;
         event.setStartDateTime(phase.startDateTime());
-        event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << phase.recurrenceRule());
+        event.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << phase.recurrenceRule());
         event.setRecurrenceDates(phase.recurrenceDates());
         QList<QOrganizerItem> occurrences =
             manager->itemInstances(event, phase.startDateTime(), dateTime, 500);

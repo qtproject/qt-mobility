@@ -102,7 +102,6 @@ public:
         qmlRegisterType<QDeclarativeOrganizerItemFilter>(uri, 1, 1, "OrganizerItemFilter");
         qmlRegisterType<QDeclarativeOrganizerItemChangelogFilter>(uri, 1, 1, "OrganizerItemChangelogFilter");
         qmlRegisterType<QDeclarativeOrganizerItemCollectionFilter>(uri, 1, 1, "OrganizerItemCollectionFilter");
-        qmlRegisterType<QDeclarativeOrganizerItemDateTimePeriodFilter>(uri, 1, 1, "OrganizerItemDateTimePeriodFilter");
         qmlRegisterType<QDeclarativeOrganizerItemDetailFilter>(uri, 1, 1, "OrganizerItemDetailFilter");
         qmlRegisterType<QDeclarativeOrganizerItemDetailRangeFilter>(uri, 1, 1, "OrganizerItemDetailRangeFilter");
         qmlRegisterType<QDeclarativeOrganizerItemLocalIdFilter>(uri, 1, 1, "OrganizerItemLocalIdFilter");

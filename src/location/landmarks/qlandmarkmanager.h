@@ -69,6 +69,8 @@ public:
     enum Error {
         NoError = 0,
         DoesNotExistError,
+        LandmarkDoesNotExistError,
+        CategoryDoesNotExistError,
         AlreadyExistsError,
         LockedError,
         PermissionsError,

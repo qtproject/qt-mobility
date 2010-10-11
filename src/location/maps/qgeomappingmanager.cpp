@@ -129,12 +129,11 @@ int QGeoMappingManager::managerVersion() const
 }
 
 /*!
-    Returns a new QGeoMapData instance for \a geoMap which will be managed by
-    this manager.
+    Returns a new QGeoMapData instance which will be managed by this manager.
 */
-QGeoMapData* QGeoMappingManager::createMapData(QGraphicsGeoMap *geoMap)
+QGeoMapData* QGeoMappingManager::createMapData()
 {
-    return d_ptr->engine->createMapData(geoMap);
+    return d_ptr->engine->createMapData();
 }
 
 /*!

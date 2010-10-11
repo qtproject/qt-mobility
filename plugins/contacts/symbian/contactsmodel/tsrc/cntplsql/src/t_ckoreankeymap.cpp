@@ -132,7 +132,7 @@ void UT_CKoreanKeyMap::UT_GetMappedString_HangulL()
 
     QString result = iKeyMap->GetMappedString(koreanInput);
 
-    EUNIT_ASSERT(result == "1313a1a");
+    EUNIT_ASSERT(result == "13 13a1a ");
     
     
     
@@ -142,7 +142,7 @@ void UT_CKoreanKeyMap::UT_GetMappedString_HangulL()
 
     QString result2 = iKeyMap->GetMappedString(koreanInput2);
 
-    EUNIT_ASSERT(result2 == "8a33a2");
+    EUNIT_ASSERT(result2 == "8a33a2 ");
     }
 
 // -----------------------------------------------------------------------------
@@ -161,7 +161,23 @@ void UT_CKoreanKeyMap::UT_GetMappedString_MixedL()
 
     QString result = iKeyMap->GetMappedString(koreanInput);
 
-    EUNIT_ASSERT(result == "131b013a1a33a92ab");
+    EUNIT_ASSERT(result == "13 1b013a1a 33a92ab");
+    }
+
+// -----------------------------------------------------------------------------
+// UT_CKoreanKeyMap::UT_GetMappedString_TokenizeHangulL
+// -----------------------------------------------------------------------------
+//
+void UT_CKoreanKeyMap::UT_GetMappedString_TokenizeHangulL()
+    {
+    QString koreanInput;
+    koreanInput += QChar(0xAC50); // cho:key-1  jung:key-3 key-*  jong:key-1 key-*
+    koreanInput += QChar(0xB070); // cho:key-1 key-#  jung:key-0 key-9  jong:key-5
+    koreanInput += QChar(0xB204); // cho:key-2  jung:key-6 key-6  jong:none
+
+    QString result = iKeyMap->GetMappedString(koreanInput);
+
+    EUNIT_ASSERT(result == "13a1a 1b095 266 ");
     }
 
 // -----------------------------------------------------------------------------
@@ -262,6 +278,13 @@ EUNIT_TEST(
     "FUNCTIONALITY",
     SetupL, UT_GetMappedString_MixedL, Teardown )
 
+EUNIT_TEST(
+    "GetMappedString - test tokenizing Hangul",
+    "UT_CKoreanKeyMap",
+    "GetMappedStringL",
+    "FUNCTIONALITY",
+    SetupL, UT_GetMappedString_TokenizeHangulL, Teardown )
+    
 EUNIT_TEST(
     "IsLanguageSupported - test latin text",
     "UT_CKoreanKeyMap",

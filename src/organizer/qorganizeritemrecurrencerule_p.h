@@ -53,9 +53,9 @@
 // We mean it.
 //
 
-#include <QMap>
-#include <QVariant>
+#include <QSet>
 #include <QSharedData>
+#include "qorganizeritemrecurrencerule.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -63,13 +63,31 @@ class QOrganizerItemRecurrenceRulePrivate : public QSharedData
 {
 public:
     QOrganizerItemRecurrenceRulePrivate()
-            : QSharedData()
+            : QSharedData(),
+            frequency(QOrganizerItemRecurrenceRule::Invalid),
+            limitCount(-1),
+            limitType(QOrganizerItemRecurrenceRule::NoLimit),
+            interval(1),
+            firstDayOfWeek(Qt::Monday)
     {
+
     }
 
     QOrganizerItemRecurrenceRulePrivate(const QOrganizerItemRecurrenceRulePrivate& other)
             : QSharedData(other),
-            m_variantValues(other.m_variantValues)
+            frequency(other.frequency),
+            limitCount(other.limitCount),
+            limitDate(other.limitDate),
+            limitType(other.limitType),
+            interval(other.interval),
+            daysOfWeek(other.daysOfWeek),
+            daysOfMonth(other.daysOfMonth),
+            daysOfYear(other.daysOfYear),
+            monthsOfYear(other.monthsOfYear),
+            weeksOfYear(other.weeksOfYear),
+            positions(other.positions),
+            firstDayOfWeek(other.firstDayOfWeek)
+
     {
     }
 
@@ -77,7 +95,18 @@ public:
     {
     }
 
-    QVariantMap m_variantValues;
+    QOrganizerItemRecurrenceRule::Frequency frequency;
+    int limitCount;
+    QDate limitDate;
+    QOrganizerItemRecurrenceRule::LimitType limitType;
+    int interval;
+    QSet<Qt::DayOfWeek> daysOfWeek;
+    QSet<int> daysOfMonth;
+    QSet<int> daysOfYear;
+    QSet<QOrganizerItemRecurrenceRule::Month> monthsOfYear;
+    QSet<int> weeksOfYear;
+    QSet<int> positions;
+    Qt::DayOfWeek firstDayOfWeek;
 };
 
 QTM_END_NAMESPACE

@@ -334,10 +334,10 @@ void Dialog::setupNetwork()
 
     cellIdLabel->setText(QString::number(ni->cellId()));
     locationAreaCodeLabel->setText(QString::number(ni->locationAreaCode()));
-    currentMMCLabel->setText(ni->currentMobileCountryCode());
+    currentMCCLabel->setText(ni->currentMobileCountryCode());
     currentMNCLabel->setText(ni->currentMobileNetworkCode());
 
-    homeMMCLabel->setText(ni->homeMobileCountryCode());
+    homeMCCLabel->setText(ni->homeMobileCountryCode());
     homeMNCLabel->setText(ni->homeMobileNetworkCode());
 
     networkModeChanged(ni->currentMode());

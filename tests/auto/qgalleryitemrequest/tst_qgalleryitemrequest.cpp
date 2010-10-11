@@ -63,7 +63,9 @@ public Q_SLOTS:
     void initTestCase();
 
 private Q_SLOTS:
-    void properties();
+    void propertyNames();
+    void autoUpdate();
+    void itemId();
     void executeSynchronous();
     void executeAsynchronous();
     void noResponse();
@@ -191,36 +193,96 @@ void tst_QGalleryItemRequest::initTestCase()
     qRegisterMetaType<QList<int> >();
 }
 
-void tst_QGalleryItemRequest::properties()
+void tst_QGalleryItemRequest::propertyNames()
 {
     const QGalleryProperty titleProperty("title");
     const QGalleryProperty artistProperty("artist");
 
-    QGalleryItemRequest request;
-
-    QCOMPARE(request.propertyNames(), QStringList());
-    QCOMPARE(request.autoUpdate(), false);
-    QCOMPARE(request.itemId(), QVariant());
-
-    request.setPropertyNames(QStringList()
+    const QStringList propertyNames = QStringList()
             << titleProperty
             << artistProperty.name()
             << QLatin1String("album")
-            << QString::fromLatin1("trackNumber"));
-    QCOMPARE(request.propertyNames(), QStringList()
-            << QLatin1String("title")
-            << QLatin1String("artist")
-            << QLatin1String("album")
-            << QLatin1String("trackNumber"));
+            << QLatin1String("trackNumber");
+
+    QGalleryItemRequest request;
+
+    QSignalSpy spy(&request, SIGNAL(propertyNamesChanged()));
+
+    QCOMPARE(request.propertyNames(), QStringList());
+
+    request.setPropertyNames(QStringList());
+    QCOMPARE(request.propertyNames(), QStringList());
+    QCOMPARE(spy.count(), 0);
+
+    request.setPropertyNames(propertyNames);
+    QCOMPARE(request.propertyNames(), propertyNames);
+    QCOMPARE(spy.count(), 1);
+
+    request.setPropertyNames(propertyNames);
+    QCOMPARE(request.propertyNames(), propertyNames);
+    QCOMPARE(spy.count(), 1);
+
+    request.setPropertyNames(QStringList());
+    QCOMPARE(request.propertyNames(), QStringList());
+    QCOMPARE(spy.count(), 2);
+}
+
+void tst_QGalleryItemRequest::autoUpdate()
+{
+    QGalleryItemRequest request;
+
+    QSignalSpy spy(&request, SIGNAL(autoUpdateChanged()));
+
+    QCOMPARE(request.autoUpdate(), false);
+
+    request.setAutoUpdate(false);
+    QCOMPARE(request.autoUpdate(), false);
+    QCOMPARE(spy.count(), 0);
 
     request.setAutoUpdate(true);
     QCOMPARE(request.autoUpdate(), true);
+    QCOMPARE(spy.count(), 1);
 
-    request.setItemId(QVariant(76));
+    request.setAutoUpdate(true);
+    QCOMPARE(request.autoUpdate(), true);
+    QCOMPARE(spy.count(), 1);
+
+    request.setAutoUpdate(false);
+    QCOMPARE(request.autoUpdate(), false);
+    QCOMPARE(spy.count(), 2);
+}
+
+void tst_QGalleryItemRequest::itemId()
+{
+    QGalleryItemRequest request;
+
+    QSignalSpy spy(&request, SIGNAL(itemIdChanged()));
+
+    QCOMPARE(request.itemId(), QVariant());
+
+    request.setItemId(QVariant());
+    QCOMPARE(request.itemId(), QVariant());
+    QCOMPARE(spy.count(), 0);
+
+    request.setItemId(76);
     QCOMPARE(request.itemId(), QVariant(76));
+    QCOMPARE(spy.count(), 1);
 
-    request.setItemId(QVariant(QLatin1String("65")));
+    request.setItemId(76);
+    QCOMPARE(request.itemId(), QVariant(76));
+    QCOMPARE(spy.count(), 1);
+
+    request.setItemId(QLatin1String("65"));
     QCOMPARE(request.itemId(), QVariant(QLatin1String("65")));
+    QCOMPARE(spy.count(), 2);
+
+    request.setItemId(QLatin1String("65"));
+    QCOMPARE(request.itemId(), QVariant(QLatin1String("65")));
+    QCOMPARE(spy.count(), 2);
+
+    request.setItemId(QVariant());
+    QCOMPARE(request.itemId(), QVariant());
+    QCOMPARE(spy.count(), 3);
 }
 
 void tst_QGalleryItemRequest::executeSynchronous()

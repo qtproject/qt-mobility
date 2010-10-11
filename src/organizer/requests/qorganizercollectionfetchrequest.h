@@ -61,12 +61,10 @@ public:
     QOrganizerCollectionFetchRequest(QObject* parent = 0);
 
     /* Selection, restriction and sorting */
-    void setCollectionIds(const QList<QOrganizerCollectionLocalId>& collectionIds);
-    QList<QOrganizerCollectionLocalId> collectionIds() const;
+    // none.  you get all collections from the manager.
 
     /* Results */
     QList<QOrganizerCollection> collections() const;
-    QMap<int, QOrganizerItemManager::Error> errorMap() const;
 
 private:
     Q_DISABLE_COPY(QOrganizerCollectionFetchRequest)

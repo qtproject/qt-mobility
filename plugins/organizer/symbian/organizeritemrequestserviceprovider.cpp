@@ -137,14 +137,13 @@ bool COrganizerItemRequestsServiceProvider::StartRequest(
         case QOrganizerItemAbstractRequest::CollectionRemoveRequest:       // Fallthrough
         case QOrganizerItemAbstractRequest::CollectionSaveRequest:         // .
 #endif
-        case QOrganizerItemAbstractRequest::ItemFetchRequest:              // .
+        case QOrganizerItemAbstractRequest::ItemFetchForExportRequest:     // .
         case QOrganizerItemAbstractRequest::ItemRemoveRequest:             // .
         case QOrganizerItemAbstractRequest::ItemSaveRequest:               // .
-        case QOrganizerItemAbstractRequest::ItemInstanceFetchRequest:      // .
+        case QOrganizerItemAbstractRequest::ItemFetchRequest:              // .
         case QOrganizerItemAbstractRequest::ItemLocalIdFetchRequest:       // .
         case QOrganizerItemAbstractRequest::DetailDefinitionFetchRequest:  // .
-        case QOrganizerItemAbstractRequest::CollectionFetchRequest:        // .
-        case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest:
+        case QOrganizerItemAbstractRequest::CollectionFetchRequest:
             {
                 // QWeakPointer is aware if the request object (which is derived from QObject) is deleted.
                 QWeakPointer<QOrganizerItemAbstractRequest> req = aReq;
@@ -183,14 +182,14 @@ bool COrganizerItemRequestsServiceProvider::CancelRequest()
 void COrganizerItemRequestsServiceProvider::RunL()
 {
     switch (iReq->type()) {
-    case QOrganizerItemAbstractRequest::ItemInstanceFetchRequest: 
-        {
-        FetchInstance();
-        }
-        break;
     case QOrganizerItemAbstractRequest::ItemFetchRequest: 
         {
         FetchItems();
+        }
+        break;
+    case QOrganizerItemAbstractRequest::ItemFetchForExportRequest: 
+        {
+        FetchItemsForExport();
         }
         break;
     case QOrganizerItemAbstractRequest::ItemLocalIdFetchRequest: 
@@ -228,11 +227,6 @@ void COrganizerItemRequestsServiceProvider::RunL()
         FetchCollections();
         }
         break;
-    case QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest:
-        {
-        CollectionIds();
-        }
-        break;
     case QOrganizerItemAbstractRequest::CollectionRemoveRequest :
         {
         RemoveCollections();
@@ -252,16 +246,16 @@ void COrganizerItemRequestsServiceProvider::RunL()
 }
 
 //Fetch item instances
-void COrganizerItemRequestsServiceProvider::FetchInstance()
+void COrganizerItemRequestsServiceProvider::FetchItems()
 {
-    QOrganizerItemInstanceFetchRequest *req = static_cast<QOrganizerItemInstanceFetchRequest *>(iReq);
+    QOrganizerItemFetchRequest *req = static_cast<QOrganizerItemFetchRequest *>(iReq);
     // Fetch ItemInstancesList
     QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
-    QList<QOrganizerItem> itemList = iOrganizerItemManagerEngine.itemInstances(
-        req->filter(), req->sorting(), req->fetchHint(), &error);
+    QList<QOrganizerItem> itemList = iOrganizerItemManagerEngine.items(
+        req->startDate(), req->endDate(), req->filter(), req->sorting(), req->fetchHint(), &error);
 
     // Update the request status
-    QOrganizerItemManagerEngine::updateItemInstanceFetchRequest(
+    QOrganizerItemManagerEngine::updateItemFetchRequest(
         req, itemList, error, QOrganizerItemAbstractRequest::FinishedState);
 }
 
@@ -307,7 +301,7 @@ void COrganizerItemRequestsServiceProvider::SaveItem()
     if (iOrganizerItemManagerEngine.validateItem(items[iIndex], &error))
         {
         // Save item (emits "itemsAdded")
-        iOrganizerItemManagerEngine.saveItem(&(items[iIndex]), req->collectionId(), &error);
+        iOrganizerItemManagerEngine.saveItem(&(items[iIndex]), &error);
         }
 
     if (error == QOrganizerItemManager::NoError) {
@@ -338,9 +332,9 @@ void COrganizerItemRequestsServiceProvider::SaveItem()
     }    
 }
 
-void COrganizerItemRequestsServiceProvider::FetchItems()
+void COrganizerItemRequestsServiceProvider::FetchItemsForExport()
 {
-    QOrganizerItemFetchRequest *req = static_cast<QOrganizerItemFetchRequest *>(iReq);
+    QOrganizerItemFetchForExportRequest *req = static_cast<QOrganizerItemFetchForExportRequest *>(iReq);
     if (req->filter().type() == QOrganizerItemFilter::LocalIdFilter) {
         FetchItemsByLocalIds();
     } else {
@@ -349,10 +343,10 @@ void COrganizerItemRequestsServiceProvider::FetchItems()
             QOrganizerItemFilter filter;
             QList<QOrganizerItemSortOrder> sortOrder;
             QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
-            iItemIds = iOrganizerItemManagerEngine.itemIds(filter, sortOrder, &error);
+            iItemIds = iOrganizerItemManagerEngine.itemIds(req->startDate(), req->endDate(), filter, sortOrder, &error);
             if (error != QOrganizerItemManager::NoError || !iItemIds.count()) {
                 // Complete with empty list
-                QOrganizerItemManagerEngine::updateItemFetchRequest(
+                QOrganizerItemManagerEngine::updateItemFetchForExportRequest(
                     req, QList<QOrganizerItem>(), error, QOrganizerItemAbstractRequest::FinishedState);
             } else {
                 FetchItemsandFilter();
@@ -369,7 +363,7 @@ void COrganizerItemRequestsServiceProvider::FetchItemIds()
     Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::ItemLocalIdFetchRequest);
     QOrganizerItemLocalIdFetchRequest *req = static_cast<QOrganizerItemLocalIdFetchRequest *>(iReq);
     QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
-    QList<QOrganizerItemLocalId> itemIds = iOrganizerItemManagerEngine.itemIds(req->filter(), req->sorting(), &error);
+    QList<QOrganizerItemLocalId> itemIds = iOrganizerItemManagerEngine.itemIds(req->startDate(), req->endDate(), req->filter(), req->sorting(), &error);
     QOrganizerItemManagerEngine::updateItemLocalIdFetchRequest(
         req, itemIds, error, QOrganizerItemAbstractRequest::FinishedState);
 }
@@ -377,8 +371,8 @@ void COrganizerItemRequestsServiceProvider::FetchItemIds()
 // Fetch Entries by local Ids
 void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIds()
 {
-    Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::ItemFetchRequest);
-    QOrganizerItemFetchRequest *req = static_cast<QOrganizerItemFetchRequest *>(iReq);
+    Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::ItemFetchForExportRequest);
+    QOrganizerItemFetchForExportRequest *req = static_cast<QOrganizerItemFetchForExportRequest *>(iReq);
     Q_ASSERT(req->filter().type() == QOrganizerItemFilter::LocalIdFilter);
     QOrganizerItemLocalIdFilter localIdFilter = req->filter();
     QList<QOrganizerItemLocalId> itemIds = localIdFilter.ids();
@@ -406,10 +400,10 @@ void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIds()
     if (iIndex < itemIds.count()) {
         // Continue until all items fetched; emit new result, no state change
         SelfComplete();
-        QOrganizerItemManagerEngine::updateItemFetchRequest(req, items, error, req->state());
+        QOrganizerItemManagerEngine::updateItemFetchForExportRequest(req, items, error, req->state());
     } else {
         // Done, emit state change
-        QOrganizerItemManagerEngine::updateItemFetchRequest(
+        QOrganizerItemManagerEngine::updateItemFetchForExportRequest(
             req, items, error, QOrganizerItemAbstractRequest::FinishedState);
     }
 }
@@ -417,8 +411,8 @@ void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIds()
 // Fetch items/entries by details
 void COrganizerItemRequestsServiceProvider::FetchItemsandFilter()
 {
-    Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::ItemFetchRequest);
-    QOrganizerItemFetchRequest *req = static_cast<QOrganizerItemFetchRequest *>(iReq);
+    Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::ItemFetchForExportRequest);
+    QOrganizerItemFetchForExportRequest *req = static_cast<QOrganizerItemFetchForExportRequest *>(iReq);
     Q_ASSERT(iIndex < iItemIds.count());
 
     // Fetch the item
@@ -441,10 +435,10 @@ void COrganizerItemRequestsServiceProvider::FetchItemsandFilter()
     if (iIndex < iItemIds.count()) {
         // Continue until all items fetched; emit new result, no state change
         SelfComplete();
-        QOrganizerItemManagerEngine::updateItemFetchRequest(req, items, error, req->state());
+        QOrganizerItemManagerEngine::updateItemFetchForExportRequest(req, items, error, req->state());
     } else {
         // Done, emit state change
-        QOrganizerItemManagerEngine::updateItemFetchRequest(
+        QOrganizerItemManagerEngine::updateItemFetchForExportRequest(
             req, items, error, QOrganizerItemAbstractRequest::FinishedState);
     }
 }
@@ -485,33 +479,17 @@ void COrganizerItemRequestsServiceProvider::FetchDetailDefinition()
         req, detailDefinitionMap, error, errorMap, QOrganizerItemAbstractRequest::FinishedState);
 }
 
-void COrganizerItemRequestsServiceProvider::CollectionIds()
-{
-    Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::CollectionLocalIdFetchRequest);
-    QOrganizerCollectionLocalIdFetchRequest *fetchReq = static_cast<QOrganizerCollectionLocalIdFetchRequest *>(iReq);
-
-    // Notify results
-    QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
-    QOrganizerItemManagerEngine::updateCollectionLocalIdFetchRequest(
-        fetchReq,
-        iOrganizerItemManagerEngine.collectionIds(&error),
-        error,
-        QOrganizerItemAbstractRequest::FinishedState);
-}
-
 void COrganizerItemRequestsServiceProvider::FetchCollections()
 {
     Q_ASSERT(iReq->type() == QOrganizerItemAbstractRequest::CollectionFetchRequest);
     QOrganizerCollectionFetchRequest *fetchReq = static_cast<QOrganizerCollectionFetchRequest *>(iReq);
 
-    QMap<int, QOrganizerItemManager::Error> errorMap;
     QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
-    QList<QOrganizerCollection> result = iOrganizerItemManagerEngine.collections(fetchReq->collectionIds(), &errorMap, &error);
+    QList<QOrganizerCollection> result = iOrganizerItemManagerEngine.collections(&error);
     QOrganizerItemManagerEngine::updateCollectionFetchRequest(
         fetchReq,
         result,
         error,
-        errorMap,
         QOrganizerItemAbstractRequest::FinishedState);
 }
 

@@ -101,25 +101,77 @@ QDeclarativeContactModel::QDeclarativeContactModel(QObject *parent) :
     connect(this, SIGNAL(filterChanged()), SLOT(fetchAgain()));
     connect(this, SIGNAL(fetchHintChanged()), SLOT(fetchAgain()));
     connect(this, SIGNAL(sortOrdersChanged()), SLOT(fetchAgain()));
-
+    
+    d->m_manager = new QContactManager();
     //import vcard
     connect(&d->m_reader, SIGNAL(stateChanged(QVersitReader::State)), this, SLOT(startImport(QVersitReader::State)));
 }
 
 QString QDeclarativeContactModel::manager() const
 {
-    return d->m_manager->managerName();
+    if (d->m_manager)
+    	return d->m_manager->managerName();
+    return QString();
+}
+
+
+QString QDeclarativeContactModel::error() const
+{
+    switch (d->m_manager->error()) {
+    case QContactManager::DoesNotExistError:
+        return QLatin1String("Not exist");
+    case QContactManager::AlreadyExistsError:
+        return QLatin1String("Already exist");
+    case QContactManager::InvalidDetailError:
+        return QLatin1String("Invalid detail");
+    case QContactManager::InvalidRelationshipError:
+        return QLatin1String("Invalid relationship");
+    case QContactManager::LockedError:
+        return QLatin1String("Locked error");
+    case QContactManager::DetailAccessError:
+        return QLatin1String("Detail access error");
+    case QContactManager::PermissionsError:
+        return QLatin1String("Permissions error");
+    case QContactManager::OutOfMemoryError:
+        return QLatin1String("Out of memory");
+    case QContactManager::NotSupportedError:
+        return QLatin1String("Not supported");
+    case QContactManager::BadArgumentError:
+        return QLatin1String("Bad argument");
+    case QContactManager::UnspecifiedError:
+        return QLatin1String("Unspecified error");
+    case QContactManager::VersionMismatchError:
+        return QLatin1String("Version mismatch");
+    case QContactManager::LimitReachedError:
+        return QLatin1String("Limit reached");
+    case QContactManager::InvalidContactTypeError:
+        return QLatin1String("Invalid contact type");
+    default:
+        break;
+    }
+    return QLatin1String("Status ok");
 }
 
 QStringList QDeclarativeContactModel::availableManagers() const
 {
     return QContactManager::availableManagers();
 }
+static QString urlToLocalFileName(const QString& str)
+{
+   QUrl url(str);
+   if (!url.isValid()) {
+      return str;
+   } else if (url.scheme() == "qrc") {
+      return url.toString().remove(0, 5).prepend(':');
+   } else {
+      return url.toString(QUrl::RemoveScheme);
+   }
 
+}
 void QDeclarativeContactModel::importContacts(const QString& fileName)
 {
    qWarning() << "importing contacts from:" << fileName;
-   QFile*  file = new QFile(fileName);
+   QFile*  file = new QFile(urlToLocalFileName(fileName));
    bool ok = file->open(QIODevice::ReadOnly);
    if (ok) {
       d->m_reader.setDevice(file);
@@ -129,6 +181,7 @@ void QDeclarativeContactModel::importContacts(const QString& fileName)
 
 void QDeclarativeContactModel::exportContacts(const QString& fileName)
 {
+   qWarning() << "exporting contacts into:" << fileName;
    QVersitContactExporter exporter;
    QList<QContact> contacts;
    foreach (QDeclarativeContact* dc, d->m_contacts) {
@@ -137,7 +190,7 @@ void QDeclarativeContactModel::exportContacts(const QString& fileName)
 
    exporter.exportContacts(contacts, QVersitDocument::VCard30Type);
    QList<QVersitDocument> documents = exporter.documents();
-   QFile* file = new QFile(fileName);
+   QFile* file = new QFile(urlToLocalFileName(fileName));
    bool ok = file->open(QIODevice::ReadWrite);
    if (ok) {
       d->m_writer.setDevice(file);
@@ -261,6 +314,7 @@ void QDeclarativeContactModel::contactFetched()
         QList<QDeclarativeContact*> dcs;
         foreach(QContact c, contacts) {
             dcs.append(new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()), this));
+            qDebug() << "id: " << c.localId() << " label:" << c.displayLabel();
         }
 
         reset();
@@ -359,6 +413,7 @@ QVariant QDeclarativeContactModel::data(const QModelIndex &index, int role) cons
 {
     QDeclarativeContact* dc = d->m_contacts.value(index.row());
     QContact c = dc->contact();
+    qDebug() << "id: " << c.localId() << " label:" << c.displayLabel();
     switch(role) {
         case Qt::DisplayRole:
             return c.displayLabel();

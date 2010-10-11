@@ -60,7 +60,7 @@ class QDeclarativeContactGeoLocation : public QDeclarativeContactDetail
     Q_PROPERTY(double speed READ speed WRITE setSpeed NOTIFY fieldsChanged)
     Q_PROPERTY(QDateTime timestamp READ timestamp WRITE setTimestamp NOTIFY fieldsChanged)
     Q_CLASSINFO("DefaultProperty", "label")
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
 public:
     enum FieldType {
         Label = 0,

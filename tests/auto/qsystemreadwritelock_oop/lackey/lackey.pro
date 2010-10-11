@@ -6,9 +6,7 @@ SOURCES += main.cpp
 TARGET = lackey
 INCLUDEPATH += ../../../../src/publishsubscribe
 DEPENDPATH += ../../../../src/publishsubscribe
-QT = core network
-
-CONFIG+= testcase
+QT = core network testlib
 
 include(../../../../common.pri)
 

@@ -56,7 +56,7 @@ class QDeclarativeContactRelationship : public QObject
     Q_PROPERTY(int first READ first WRITE setFirst NOTIFY valueChanged)
     Q_PROPERTY(int second READ second WRITE setSecond NOTIFY valueChanged)
     Q_PROPERTY(QString type READ relationshipType WRITE setRelationshipType NOTIFY valueChanged)
-    Q_ENUMS(Role);
+    Q_ENUMS(Role)
 public:
     enum Role {
         First = 0,

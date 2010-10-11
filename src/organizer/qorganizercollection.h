@@ -53,6 +53,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QOrganizerItemManagerEngine;
 class QOrganizerCollectionData;
 class Q_ORGANIZER_EXPORT QOrganizerCollection
 {
@@ -92,6 +93,7 @@ public:
 #endif
 
 private:
+    friend class QOrganizerItemManagerEngine;
     QSharedDataPointer<QOrganizerCollectionData> d;
 };
 

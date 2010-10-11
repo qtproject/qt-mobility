@@ -48,7 +48,7 @@ class QDeclarativeContactNote : public QDeclarativeContactDetail
 {
     Q_OBJECT
     Q_PROPERTY(QString note READ note WRITE setNote NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "note")
 public:
     enum FieldType {

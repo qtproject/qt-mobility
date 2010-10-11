@@ -50,7 +50,7 @@
 int main(int argc, char *argv[])
 {
 
-#if defined (Q_WS_X11) || defined (Q_WS_MAC)
+#if defined (Q_WS_X11) || defined (Q_WS_MAC) || defined (Q_OS_SYMBIAN)
     //### default to using raster graphics backend for now
     bool gsSpecified = false;
     for (int i = 0; i < argc; ++i) {
