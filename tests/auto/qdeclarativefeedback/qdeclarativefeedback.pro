@@ -17,3 +17,8 @@ symbian: {
 }
 
 CONFIG += testcase
+
+OTHER_FILES += \
+    data/hapticseffect.qml \
+    data/fileeffect.qml \
+    data/actuator.qml
