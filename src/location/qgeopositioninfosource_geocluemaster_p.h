@@ -32,10 +32,12 @@ public:
                          GeoclueAccuracy      *accuracy);
     QGeoPositionInfoSourceGeoclueMaster(QObject *parent = 0);
     ~QGeoPositionInfoSourceGeoclueMaster();
-    void setUpdateInterval(int msec);
 
+    // From QGeoPositionInfoSource
+    void setUpdateInterval(int msec);
     QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     PositioningMethods supportedPositioningMethods() const;
+    void setPreferredPositioningMethods(PositioningMethods methods);
     int minimumUpdateInterval() const;
     int init();
 
@@ -45,7 +47,11 @@ public slots:
     virtual void requestUpdate(int timeout = 5000);
 
 private:
+    int configurePositionSource();
+
+private:
     int m_updateInterval;
+    GeoclueResourceFlags m_preferredResources;
     GeoclueMasterClient *m_client;
     GeocluePosition *m_pos;
     QGeoPositionInfo m_lastPosition;
