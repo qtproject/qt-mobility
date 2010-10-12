@@ -96,7 +96,7 @@ static const symbol_t Feature_lut[] =
   SYM(QSystemInfo::LocationFeature),
   SYM(QSystemInfo::VideoOutFeature),
   SYM(QSystemInfo::HapticsFeature),
- // SYM(QSystemInfo::FmTransmitterFeature),
+ SYM(QSystemInfo::FmTransmitterFeature),
   {0,0}
 };
 
@@ -124,10 +124,10 @@ static const symbol_t NetworkMode_lut[] =
   SYM(QSystemNetworkInfo::EthernetMode),
   SYM(QSystemNetworkInfo::BluetoothMode),
   SYM(QSystemNetworkInfo::WimaxMode),
-//  SYM(QSystemNetworkInfo::GprsMode),
-//  SYM(QSystemNetworkInfo::EdgeMode),
-//  SYM(QSystemNetworkInfo::HspaMode),
-//  SYM(QSystemNetworkInfo::LteMode),
+  SYM(QSystemNetworkInfo::GprsMode),
+  SYM(QSystemNetworkInfo::EdgeMode),
+  SYM(QSystemNetworkInfo::HspaMode),
+  SYM(QSystemNetworkInfo::LteMode),
   {0,0}
 };
 
@@ -161,7 +161,7 @@ static void test_systeminfo(void)
   X(info.hasFeatureSupported(QSystemInfo::LocationFeature));
   X(info.hasFeatureSupported(QSystemInfo::VideoOutFeature));
   X(info.hasFeatureSupported(QSystemInfo::HapticsFeature));
-  //X(info.hasFeatureSupported(QSystemInfo::FmTransmitterFeature));
+  X(info.hasFeatureSupported(QSystemInfo::FmTransmitterFeature));
 }
 
 /* ------------------------------------------------------------------------- *
@@ -181,14 +181,14 @@ static void test_systemdeviceinfo(void)
   X(deviceinfo.imsi());
   X(deviceinfo.inputMethodType());
   X(deviceinfo.isDeviceLocked());
-//  X(deviceinfo.isKeyboardFlipOpen());
-//  X(deviceinfo.isWirelessKeyboardConnected());
-//  X(deviceinfo.keyboardType());
+  X(deviceinfo.isKeyboardFlipOpen());
+  X(deviceinfo.isWirelessKeyboardConnected());
+  X(deviceinfo.keyboardType());
   X(deviceinfo.manufacturer());
   X(deviceinfo.model());
   X(deviceinfo.productName());
   X(deviceinfo.simStatus());
-//  X(deviceinfo.typeOfLock());
+  X(deviceinfo.typeOfLock());
 }
 
 /* ------------------------------------------------------------------------- *
@@ -207,18 +207,18 @@ static void test_systemdisplayinfo(void)
     qDebug() << "  displayinfo.colorDepth() ->" << depth;
     int value = displayinfo.displayBrightness(display);
     qDebug() << "  displayinfo.displayBrightness() ->" << value;
-//    QSystemDisplayInfo::DisplayOrientation orientation = displayinfo.getOrientation(display);
-//    qDebug() << "  displayinfo.getOrientation() ->" << orientation;
-//    float contrast = displayinfo.contrast(display);
-//    qDebug() << "  displayinfo.getContrast() ->" << contrast;
-//    int dpiWidth = displayinfo.getDPIWidth(display);
-//    qDebug() << "  displayinfo.getDPIWidth() ->" << dpiWidth;
-//    int dpiHeight = displayinfo.getDPIHeight(display);
-//    qDebug() << "  displayinfo.getDPIHeight() ->" << dpiHeight;
-//    int physicalHeight = displayinfo.physicalHeight(display);
-//    qDebug() << "  displayinfo.physicalHeight() ->" << physicalHeight;
-//    int physicalWidth = displayinfo.physicalWidth(display);
-//    qDebug() << "  displayinfo.physicalWidth() ->" << physicalWidth;
+    QSystemDisplayInfo::DisplayOrientation orientation = displayinfo.getOrientation(display);
+    qDebug() << "  displayinfo.getOrientation() ->" << orientation;
+    float contrast = displayinfo.contrast(display);
+    qDebug() << "  displayinfo.getContrast() ->" << contrast;
+    int dpiWidth = displayinfo.getDPIWidth(display);
+    qDebug() << "  displayinfo.getDPIWidth() ->" << dpiWidth;
+    int dpiHeight = displayinfo.getDPIHeight(display);
+    qDebug() << "  displayinfo.getDPIHeight() ->" << dpiHeight;
+    int physicalHeight = displayinfo.physicalHeight(display);
+    qDebug() << "  displayinfo.physicalHeight() ->" << physicalHeight;
+    int physicalWidth = displayinfo.physicalWidth(display);
+    qDebug() << "  displayinfo.physicalWidth() ->" << physicalWidth;
   }
 }
 
@@ -271,11 +271,11 @@ static void test_systemstorageinfo(void)
     QSystemStorageInfo::DriveType dtype = storageinfo.typeForDrive(drv);
     qDebug() << "  storageinfo.typeForDrive() ->" << dtype;
 
-//    QString duri = storageinfo.uriForDrive(drv);
-//    qDebug() << "  storageinfo.uriForDrive() ->" << duri;
+    QString duri = storageinfo.uriForDrive(drv);
+    qDebug() << "  storageinfo.uriForDrive() ->" << duri;
 
-//    QSystemStorageInfo::StorageState dstate = storageinfo.getStorageState(drv);
-//    qDebug() << "  storageinfo.getStorageState() ->" << dstate;
+    QSystemStorageInfo::StorageState dstate = storageinfo.getStorageState(drv);
+    qDebug() << "  storageinfo.getStorageState() ->" << dstate;
   }
 }
 
