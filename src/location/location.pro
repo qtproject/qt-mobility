@@ -110,12 +110,15 @@ maemo5 {
     pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
     pkgconfig.files = QtLocation.pc
 }
+
 meego {
     contains (geoclue-master_enabled, yes) {
         message("Building location with GeoClue master support.")
         SOURCES += qgeopositioninfosource_geocluemaster.cpp
         HEADERS += qgeopositioninfosource_geocluemaster_p.h
         DEFINES += GEOCLUE_MASTER_AVAILABLE=1
+        PKGCONFIG += geoclue
+        QMAKE_PKGCONFIG_REQUIRES += geoclue
     } else {
         message("Building location without GeoClue master support.")
     }
@@ -124,14 +127,18 @@ meego {
         SOURCES += qgeosatelliteinfosource_gypsy.cpp
         HEADERS += qgeosatelliteinfosource_gypsy_p.h
         DEFINES += GYPSY_AVAILABLE=1
+        PKGCONFIG += gypsy
+        QMAKE_PKGCONFIG_REQUIRES += gypsy
     } else {
         message("Building location without Gypsy support.")
     }
-    CONFIG += qdbus link_pkgconfig
-    PKGCONFIG += geoclue gypsy gconf-2.0 glib-2.0
-    QMAKE_PKGCONFIG_REQUIRES = geoclue gypsy glib-2.0 gconf-2.0
-    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-    pkgconfig.files = QtLocation.pc
+    if (contains(gypsy_enabled, yes) || contains (geoclue-master_enabled, yes)) {
+        CONFIG += qdbus link_pkgconfig
+        PKGCONFIG += gconf-2.0 glib-2.0
+        QMAKE_PKGCONFIG_REQUIRES += glib-2.0 gconf-2.0
+        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+        pkgconfig.files = QtLocation.pc
+    }
 }
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
