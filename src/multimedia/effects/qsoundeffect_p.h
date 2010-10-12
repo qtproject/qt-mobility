@@ -56,6 +56,7 @@
 #include <qmobilityglobal.h>
 #include <QtCore/qobject.h>
 #include <QtCore/qurl.h>
+#include <QtCore/qstringlist.h>
 
 
 QT_BEGIN_HEADER
