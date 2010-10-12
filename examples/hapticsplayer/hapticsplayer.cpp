@@ -292,6 +292,7 @@ void HapticsPlayer::browseClicked()
     if (!filename.isEmpty()) {
         ui.filename->setText(QDir::toNativeSeparators(filename));
         fileEffect.setSource(QUrl::fromLocalFile(filename));
+        fileEffect.load();
     }
 }
 
