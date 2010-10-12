@@ -633,9 +633,14 @@ void QOrganizerItemMaemo5Engine::internalAddOccurances(QList<QOrganizerItem>* so
         if (containsRecurrenceInformation(cevent)) {
             // Get event instance times
             std::vector< std::time_t > eventInstanceDates;
-            cevent->generateInstanceTimes(startDate.toTime_t(), endDate.toTime_t(), eventInstanceDates);
+            bool dontGenerateOccurrences = startDate.isNull() && endDate.isNull() && forExport;
+            if (!dontGenerateOccurrences) {
+                time_t realStartDate = startDate.isNull() ? cevent->getDateStart() : startDate.toTime_t();
+                time_t realEndDate = endDate.isNull() ? realStartDate + 157680000 : endDate.toTime_t();
+                cevent->generateInstanceTimes(realStartDate, realEndDate, eventInstanceDates);
+            }
 
-            if (eventInstanceDates.size() > 0) {
+            if (dontGenerateOccurrences || eventInstanceDates.size() > 0) {
                 if (forExport) {
                     if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
                         QOrganizerItemManagerEngine::addSorted(sorted, item, sortOrders);
@@ -654,7 +659,7 @@ void QOrganizerItemMaemo5Engine::internalAddOccurances(QList<QOrganizerItem>* so
                         d->m_itemTransformer.fillInCommonCComponentDetails(&eventOcc, cevent, false); // false = do not set local ids
 
                         // Set the collection id
-                        QOrganizerItemManagerEngine::setItemCollectionId(&eventOcc, item.collectionId());
+                        eventOcc.setCollectionId(item.collectionId());
 
                         if (QOrganizerItemManagerEngine::testFilter(filter, eventOcc) && QOrganizerItemManagerEngine::isItemBetweenDates(eventOcc, startDate, endDate))
                             QOrganizerItemManagerEngine::addSorted(sorted, eventOcc, sortOrders);
@@ -699,7 +704,7 @@ bool QOrganizerItemMaemo5Engine::internalSaveItems(QList<QOrganizerItem>* items,
                 errorMap->insert(i, QOrganizerItemManager::InvalidCollectionError);
             }
             *error = tempError;
-	}
+        }
         completeCollectionId.setLocalId(collectionId);
 
         tempError = QOrganizerItemManager::NoError;
@@ -718,11 +723,11 @@ bool QOrganizerItemMaemo5Engine::internalSaveItems(QList<QOrganizerItem>* items,
         }
         else {
             // Set item collection id
-	    curr.setCollectionId(completeCollectionId);
+            // curr.setCollectionId(completeCollectionId);
         }
 
         items->replace(i, curr);
-	cleanupCal(cal); // TODO we may want to coalesce cleanup/instantiation into blocks (save items with the same collectionId at the same time)
+        cleanupCal(cal); // TODO we may want to coalesce cleanup/instantiation into blocks (save items with the same collectionId at the same time)
     }
 
     d->m_mcInstance->commitAllChanges(); // ensure that changes are committed before emitting signals
@@ -1614,6 +1619,9 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
         }
     }
 
+    if (occurrence->collectionId().isNull())
+        occurrence->setCollectionId(parent->collectionId());
+
     // Save occurrence
     CEvent* cevent = static_cast<CEvent *>(component);
     QString ceventId = QString::fromStdString(cevent->getId());
@@ -1857,7 +1865,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
             cleanupCal(cal);
 
             // Set calendar (collection) id
-	    retn.setCollectionId(collectionId);
+            retn.setCollectionId(collectionId);
 
             return retn;
         }
@@ -1878,7 +1886,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
             cleanupCal(cal);
 
             // Set calendar (collection) id
-	    retn.setCollectionId(collectionId);
+            retn.setCollectionId(collectionId);
 
             return retn;
         }
@@ -1900,7 +1908,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
         cleanupCal(cal);
 
         // Set calendar (collection) id
-	retn.setCollectionId(collectionId);
+        retn.setCollectionId(collectionId);
 
         return retn;
     }
@@ -1921,7 +1929,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
         cleanupCal(cal);
 
         // Set calendar (collection) id
-	retn.setCollectionId(collectionId);
+        retn.setCollectionId(collectionId);
 
         return retn;
     }
