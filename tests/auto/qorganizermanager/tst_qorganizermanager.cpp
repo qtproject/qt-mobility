@@ -2596,6 +2596,9 @@ void tst_QOrganizerManager::detailOrders()
     
     if (cm->managerName() == "symbian")
         QSKIP("symbian manager does not support detail ordering", SkipSingle);
+
+    if (cm->managerName() == "maemo5")
+        QSKIP("maemo5 manager does not support detail ordering", SkipSingle);
     
     QOrganizerEvent a;
 
