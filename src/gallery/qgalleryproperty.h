@@ -61,11 +61,11 @@ public:
 
     Q_DECLARE_FLAGS(Attributes, Attribute)
 
-#ifndef Q_QDOC
+#if  !defined(Q_QDOC) && !defined(Q_OS_SYMBIAN)
     template <int N>
     explicit QGalleryProperty(const char (&name)[N]) : m_name(name), m_length(N - 1) {}
 #else
-    explicit QGalleryProperty(const char *name);
+    explicit QGalleryProperty(const char *name) : m_name(name), m_length(-1) {}
 #endif
 
     QString name() const;
