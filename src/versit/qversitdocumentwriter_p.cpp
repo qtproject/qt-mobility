@@ -190,7 +190,7 @@ void QVersitDocumentWriter::writeBytes(const QByteArray &value)
     int charsWritten = 0;
     while (spaceRemaining < value.length() - charsWritten) {
         // Write the first "spaceRemaining" characters
-        if (mDevice->write(value.mid(charsWritten, spaceRemaining)) < 0
+        if (mDevice->write(value.constData() + charsWritten, spaceRemaining) < 0
                || mDevice->write("\r\n ") < 0)
             mSuccessful = false;
         charsWritten += spaceRemaining;
@@ -198,7 +198,7 @@ void QVersitDocumentWriter::writeBytes(const QByteArray &value)
         mCurrentLineLength = 1;
     }
 
-    if (mDevice->write(value.mid(charsWritten)) < 0)
+    if (mDevice->write(value.constData() + charsWritten) < 0)
         mSuccessful = false;
     mCurrentLineLength += value.length() - charsWritten;
 }
