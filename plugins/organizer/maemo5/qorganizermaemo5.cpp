@@ -378,6 +378,24 @@ bool QOrganizerItemMaemo5Engine::removeCollection(const QOrganizerCollectionLoca
     return internalRemoveCollection(collectionId, error);
 }
 
+QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMaemo5Engine::detailDefinitions(const QString& itemType, QOrganizerManager::Error* error) const
+{
+    // as this method does not access the db, it does not need a mutex guard
+    QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > definitions = QOrganizerManagerEngine::schemaDefinitions();
+
+    // Modify the base schema to match backend support
+    d->m_itemTransformer.modifyBaseSchemaDefinitions(definitions);
+
+    // Check if we support the item type
+    if (!definitions.contains(itemType)) {
+        *error = QOrganizerManager::NotSupportedError;
+        return QMap<QString, QOrganizerItemDetailDefinition>();
+    }
+
+    *error = QOrganizerManager::NoError;
+    return definitions.value(itemType);
+}
+
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItemOccurrences(const QOrganizerItem &parentItem, const QDateTime &periodStart, const QDateTime &periodEnd, int maxCount, QOrganizerManager::Error *error) const
 {
     *error = QOrganizerManager::NoError;

@@ -167,6 +167,9 @@ public:
     bool saveCollection(QOrganizerCollection* collection, QOrganizerManager::Error* error);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error);
 
+    /* Definitions - Accessors and Mutators */
+    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, QOrganizerManager::Error* error) const;
+
     /* Capabilities reporting */
     bool hasFeature(QOrganizerManager::ManagerFeature feature, const QString &itemType) const;
     bool isFilterSupported(const QOrganizerItemFilter &filter) const;

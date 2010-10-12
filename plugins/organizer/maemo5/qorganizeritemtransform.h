@@ -55,6 +55,7 @@
 
 #include "qtorganizer.h"
 #include "qorganizerrecurrencetransform.h"
+#include "qorganizeritemdetaildefinition.h"
 
 QTM_USE_NAMESPACE
 
@@ -105,6 +106,9 @@ public: // transform functions
     QString fromCalendarType(CalendarType calendarType);
     CalendarType toCalendarType(QString calendarType);
     QMap<CalendarType, QString> calendarTypeMap() const;
+
+    // schema definitions
+    void modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const;
 
     bool addGeoToQOIL(const QString& src, QOrganizerItemLocation* detail) const;
 

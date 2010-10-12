@@ -806,6 +806,36 @@ QMap<CalendarType, QString> OrganizerItemTransform::calendarTypeMap() const
     return retn;
 }
 
+void OrganizerItemTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
+{
+    // Add all the supported detail definition names
+    QStringList supportedDetails;
+    supportedDetails << QOrganizerEventTime::DefinitionName;
+    supportedDetails << QOrganizerItemComment::DefinitionName;
+    supportedDetails << QOrganizerItemDescription::DefinitionName;
+    supportedDetails << QOrganizerItemDisplayLabel::DefinitionName;
+    supportedDetails << QOrganizerItemGuid::DefinitionName;
+    supportedDetails << QOrganizerItemLocation::DefinitionName;
+    supportedDetails << QOrganizerItemParent::DefinitionName;
+    supportedDetails << QOrganizerItemPriority::DefinitionName;
+    supportedDetails << QOrganizerItemRecurrence::DefinitionName;
+    supportedDetails << QOrganizerItemTimestamp::DefinitionName;
+    supportedDetails << QOrganizerItemType::DefinitionName;
+    supportedDetails << QOrganizerItemVisualReminder::DefinitionName;
+    supportedDetails << QOrganizerJournalTime::DefinitionName;
+    supportedDetails << QOrganizerTodoProgress::DefinitionName;
+    supportedDetails << QOrganizerTodoTime::DefinitionName;
+
+    // Remove all not supported details
+    foreach (QString itemTypeName, schemaDefs.keys()) {
+        QMap<QString, QOrganizerItemDetailDefinition> details = schemaDefs.value(itemTypeName);
+        foreach (QString detailName, details.keys()) {
+            if (!supportedDetails.contains(detailName))
+                schemaDefs[itemTypeName].remove(detailName);
+        }
+    }
+}
+
 QString OrganizerItemTransform::randomGuid() const
 {
     QUuid guid = QUuid::createUuid();
