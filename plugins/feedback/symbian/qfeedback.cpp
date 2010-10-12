@@ -150,7 +150,7 @@ static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::ThemeEffect effec
     case QFeedbackEffect::ThemeBasicKeypad:
         themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::ThemeMultitouchActivate:
+    case QFeedbackEffect::ThemeMultiPointTouchActivate:
         themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
     case QFeedbackEffect::ThemeRotateStep:
