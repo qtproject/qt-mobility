@@ -165,7 +165,7 @@ void tst_symbianomcollections::init()
     // Remove all collections (except the default)
     foreach (const QOrganizerCollection& coll, m_om->collections()) {
         if (coll != m_om->defaultCollection())
-            m_om->removeCollection(coll);
+            m_om->removeCollection(coll.localId());
     }
 }
 
@@ -175,7 +175,7 @@ void tst_symbianomcollections::cleanup()
     // Remove all collections (except the default)
     foreach (const QOrganizerCollection& coll, m_om->collections()) {
         if (coll != m_om->defaultCollection())
-            m_om->removeCollection(coll);
+            m_om->removeCollection(coll.localId());
     }
     delete m_om;
     m_om = 0;
@@ -371,7 +371,7 @@ void tst_symbianomcollections::removeCollection()
     if (!m_customCollectionsSupported) {    
         QWARN("Removing a collection not supported!");
         // Verify it fails with correct error code
-        QVERIFY(!m_om->removeCollection(m_om->defaultCollection()));
+        QVERIFY(!m_om->removeCollection(m_om->defaultCollection().localId()));
         QVERIFY(m_om->error() == QOrganizerItemManager::NotSupportedError);
         return;
     }
@@ -421,14 +421,14 @@ void tst_symbianomcollections::removeCollection()
     QVERIFY(colls.count() >= 2); // default collection + collection saved
     foreach (const QOrganizerCollection& coll, colls) {
         if (coll == m_om->defaultCollection())
-            QVERIFY(!m_om->removeCollection(coll)); // removing default collection not allowed
+            QVERIFY(!m_om->removeCollection(coll.localId())); // removing default collection not allowed
         else
-            QVERIFY(m_om->removeCollection(coll));
+            QVERIFY(m_om->removeCollection(coll.localId()));
     }
     
     // Try removing the same ones again 
     foreach (const QOrganizerCollection& coll, colls) {
-        QVERIFY(!m_om->removeCollection(coll));
+        QVERIFY(!m_om->removeCollection(coll.localId()));
     }
 }
 

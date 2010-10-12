@@ -689,20 +689,6 @@ bool QOrganizerItemManager::removeCollection(const QOrganizerCollectionLocalId& 
 }
 
 /*!
-  Removes the collection \a collection (and all items in the collection)
-  from the manager if the given \a collection exists in the manager.
-  Returns true on success, false on failure.
-
-  Attempting to remove the default collection will fail and calling \l error() will return
-  QOrganizerItemManager::PermissionsError.
- */
-bool QOrganizerItemManager::removeCollection(const QOrganizerCollection& collection)
-{
-    d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->removeCollection(collection.localId(), &d->m_error);
-}
-
-/*!
   Returns a pruned or modified version of the \a original organizer item which is valid and can be saved in the manager.
   The returned organizer item might have entire details removed or arbitrarily changed.
  */

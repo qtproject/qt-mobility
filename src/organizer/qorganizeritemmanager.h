@@ -132,10 +132,9 @@ public:
     /* Collections - every item belongs to one or more collections */
     QOrganizerCollection defaultCollection() const;
     QOrganizerCollection collection(const QOrganizerCollectionLocalId& collectionId) const;
-    QList<QOrganizerCollection> collections() const; // should this be replaced with collectionIds()?
+    QList<QOrganizerCollection> collections() const;
     bool saveCollection(QOrganizerCollection* collection);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId);
-    bool removeCollection(const QOrganizerCollection& collection); // is this really necessary?
 
     /* Return a pruned or modified item which is valid and can be saved in the manager */
     QOrganizerItem compatibleItem(const QOrganizerItem& original) const;
