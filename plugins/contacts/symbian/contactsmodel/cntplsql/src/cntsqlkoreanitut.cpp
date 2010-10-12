@@ -25,6 +25,7 @@
 #include "cntsqlsearchinterface.h"
 #include "cntsqlsearchbase.h"
 #include "c12keykeymap.h"
+#include "koreaninput.h"
 #include <QString>
 #include <QStringList>
 
@@ -40,6 +41,7 @@ CCntPplViewSession first phase constructor.
 CntSqlKoreanItuT::CntSqlKoreanItuT(const C12keyKeyMap* twelveKeyKeyMap)
               :CntSqlSearchBase(twelveKeyKeyMap)
     {
+    mKoreaninput = new KoreanInput();
     }
   
 /**
@@ -47,7 +49,7 @@ CCntPplViewSession destructor.
 */
 CntSqlKoreanItuT::~CntSqlKoreanItuT()
     {
-    
+    delete mKoreaninput;
     }
    
 QString CntSqlKoreanItuT::createInputSpecificSearch(const QString &pattern)
@@ -214,23 +216,24 @@ QString CntSqlKoreanItuT::getSearchColumns(const QString& token, int position) c
 
 QStringList CntSqlKoreanItuT::getSearchPattern(const QString &pattern)
     {
-    return pattern.split("0", QString::SkipEmptyParts);
+    //return pattern.split("0", QString::SkipEmptyParts);
+    return mKoreaninput->Tokenize(pattern);
     }
 
 CntSqlKoreanItuT::SqlQueryType CntSqlKoreanItuT::getSQLQueryType(const QString &pattern)
     {
-    if (pattern.length() == KMinimumSearchPatternLength)
+    if (pattern.length() == KMinimumSearchPatternLength )
         {
         return AllFromOneTable;
+        }
+    else if (pattern.length() == KMinimumSearchPatternLength || pattern.startsWith('3') || pattern.startsWith('6') || pattern.startsWith('9')) //TODO: Change this after tokens are detected!!!
+        {
+        return ExactMatchFromOneTable;
         }
     //TODO: Change this after Korean tokens are working
     else if (pattern.length() > KMinimumSearchPatternLength && getSearchPattern(pattern).count() > 1) //TODO: Change this after tokens are detected!!!
         {
         return KoreanBasicSearch;
-        }
-    else if (pattern.length() > KMinimumSearchPatternLength) //TODO: Change this after tokens are detected!!!
-        {
-        return ExactMatchFromOneTable;
         }
     else
         {
