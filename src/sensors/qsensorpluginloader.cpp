@@ -49,10 +49,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-QSensorPluginLoader::QSensorPluginLoader(const char *iid, const QString &location)
-    : m_iid(iid)
+QSensorPluginLoader::QSensorPluginLoader()
 {
-    m_location = location + QLatin1String("/");
     load();
 }
 
@@ -70,15 +68,14 @@ void QSensorPluginLoader::load()
     if (!m_plugins.isEmpty())
         return;
 
-    QStringList plugins;
-    plugins = mobilityPlugins(QLatin1String("sensors"));
+    QStringList plugins = mobilityPlugins(QLatin1String("sensors"));
 
     /* Now discover the dynamic plugins */
-    for (int i=0; i < plugins.count(); i++) {
+    for (int i = 0; i < plugins.count(); i++) {
         QPluginLoader *loader = new QPluginLoader(plugins.at(i));
 
         QObject *o = loader->instance();
-        if (o != 0 && o->qt_metacast(m_iid) != 0) {
+        if (o != 0) {
             QSensorPluginInterface *p = qobject_cast<QSensorPluginInterface*>(o);
             if (p != 0) {
                 m_plugins << p;
@@ -91,11 +88,6 @@ void QSensorPluginLoader::load()
             continue;
         } else {
             qWarning() << "QSensorPluginLoader: Failed to load plugin";
-            if (o == 0) {
-                qWarning() << "Reason: o == 0";
-            } else if (o->qt_metacast(m_iid) == 0) {
-                qWarning() << "Reason: o->qt_metacast(m_iid) == 0";
-            }
             qWarning() << "Plugin:" << plugins.at(i);
             qWarning() << "Error:" << loader->errorString();
         }

@@ -66,7 +66,7 @@ class QSensorPluginInterface;
 class QM_AUTOTEST_EXPORT QSensorPluginLoader
 {
 public:
-    QSensorPluginLoader(const char *iid, const QString &suffix = QString());
+    QSensorPluginLoader();
     ~QSensorPluginLoader();
 
     QList<QSensorPluginInterface*> plugins() const { return m_plugins; }
@@ -74,8 +74,6 @@ public:
 private:
     void load();
 
-    QByteArray  m_iid;
-    QString     m_location;
     QList<QSensorPluginInterface*> m_plugins;
     QList<QPluginLoader *> m_loaders;
 };

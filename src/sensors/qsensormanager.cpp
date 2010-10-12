@@ -49,7 +49,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-Q_GLOBAL_STATIC_WITH_ARGS(QSensorPluginLoader, pluginLoader, (QSensorPluginInterface_iid, QLatin1String("/sensors")))
+Q_GLOBAL_STATIC(QSensorPluginLoader, pluginLoader)
 
 typedef QHash<QByteArray,QSensorBackendFactory*> FactoryForIdentifierMap;
 typedef QHash<QByteArray,FactoryForIdentifierMap> BackendIdentifiersForTypeMap;
