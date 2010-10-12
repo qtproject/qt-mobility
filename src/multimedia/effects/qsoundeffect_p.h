@@ -56,6 +56,7 @@
 #include <qmobilityglobal.h>
 #include <QtCore/qobject.h>
 #include <QtCore/qurl.h>
+#include <QtCore/qstringlist.h>
 
 
 QT_BEGIN_HEADER
@@ -68,7 +69,7 @@ class Q_MULTIMEDIA_EXPORT QSoundEffect : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
-    Q_PROPERTY(int loops READ loops WRITE setLoops NOTIFY loopsChanged)
+    Q_PROPERTY(int loops READ loopCount WRITE setLoopCount NOTIFY loopCountChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
     Q_ENUMS(Loop)
@@ -82,11 +83,13 @@ public:
     explicit QSoundEffect(QObject *parent = 0);
     ~QSoundEffect();
 
+    static QStringList supportedMimeTypes();
+
     QUrl source() const;
     void setSource(const QUrl &url);
 
-    int loops() const;
-    void setLoops(int loopCount);
+    int loopCount() const;
+    void setLoopCount(int loopCount);
 
     int volume() const;
     void setVolume(int volume);
@@ -96,9 +99,10 @@ public:
 
 Q_SIGNALS:
     void sourceChanged();
-    void loopsChanged();
+    void loopCountChanged();
     void volumeChanged();
     void mutedChanged();
+    void loaded();
 
 public Q_SLOTS:
     void play();
