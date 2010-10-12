@@ -29,6 +29,7 @@
 // FORWARD DECLARATIONS
 class QString;
 class QTextCodec;
+class KoreanInput;
 
 
 // CLASS DECLARATION
@@ -88,11 +89,10 @@ NONSHARABLE_CLASS(CKoreanKeyMap) : public CBase, public MLanguageSpecificKeymap
 		// the keypresses used to produce the character.
 		QMap<QChar, QString> iKeyPressMap;
 
+		QTextCodec* iLatinCodec;  // Not owned
+		QTextCodec* iKoreanCodec; // Not owned
 
-		// Not owned
-		QTextCodec* iLatinCodec;
-		QTextCodec* iKoreanCodec;
-
+		KoreanInput* iTokenizer; // Owned
 
 		// For unit testing
 		friend class UT_CKoreanKeyMap;

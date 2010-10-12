@@ -23,6 +23,7 @@
 // This macro suppresses log writes
 // #define NO_PRED_SEARCH_LOGS
 #include "predictivesearchlog.h"
+#include "koreaninput.h"
 
 
 const int KMibKorean = 36;
@@ -63,6 +64,7 @@ CKoreanKeyMap* CKoreanKeyMap::NewL()
 // ----------------------------------------------------------------------------
 CKoreanKeyMap::~CKoreanKeyMap()
     {
+	delete iTokenizer;
     }
 
 // ----------------------------------------------------------------------------
@@ -130,6 +132,8 @@ QString CKoreanKeyMap::GetMappedString(QString aSource) const
 			// TODO: detect the syllable limits within stream of Jamos in this way:
 			// syllable begins by C + V pair, which is never in the middle of a syllable.
 			// Currently assumes aSource only contains grammatically valid Jamo stream
+
+			// To tokenize Jamos, map them to keysequences, and split them with iTokenizer->Tokenize()
 			}
 		}
 #if defined(WRITE_PRED_SEARCH_LOGS)
@@ -166,6 +170,8 @@ void CKoreanKeyMap::ConstructL()
         PRINT1(_L("CKoreanKeyMap::ConstructL exception, err=%d"), err);
         User::Leave(err);
         }
+
+	iTokenizer = new (ELeave) KoreanInput;
 
 	PRINT(_L("End CKoreanKeyMap::ConstructL"));
 	}

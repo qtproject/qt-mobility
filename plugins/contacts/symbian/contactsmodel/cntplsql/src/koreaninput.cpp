@@ -17,9 +17,8 @@
 
 
 #include "koreaninput.h"
-#include "QStringList"
+#include <QStringList>
 
-QStringList mTokenList;
 
 // -----------------------------------------------------------------------------
 // KoreanInput::KoreanInput
