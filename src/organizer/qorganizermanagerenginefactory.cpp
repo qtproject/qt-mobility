@@ -85,6 +85,28 @@ QOrganizerManagerEngineFactory::~QOrganizerManagerEngineFactory()
  */
 
 /*!
+  \fn QOrganizerManagerEngineFactory::createCollectionEngineLocalId()
+
+  This function is used internally when deserializing an id.  It allows the
+  deserialization functions to correctly allocate an empty engine-specific
+  local id for an item, which it then fills with the serialized data.
+
+  Engine implementers must implement this function, but should not need
+  to call it.
+ */
+
+/*!
+  \fn QOrganizerManagerEngineFactory::createItemEngineLocalId()
+
+  This function is used internally when deserializing an id.  It allows the
+  deserialization functions to correctly allocate an empty engine-specific
+  local id for a collection, which it then fills with the serialized data.
+
+  Engine implementers must implement this function, but should not need
+  to call it.
+ */
+
+/*!
   \fn QOrganizerManagerEngineFactory::managerName() const
 
   This function should return a unique string that identifies

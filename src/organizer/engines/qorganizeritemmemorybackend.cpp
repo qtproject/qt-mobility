@@ -681,25 +681,25 @@ bool QOrganizerItemMemoryEngine::itemHasReccurence(const QOrganizerItem& oi) con
 }
 
 
-QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, bool forExport, QOrganizerManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, bool includeExceptions, QOrganizerManager::Error* error) const
 {
     // given the generating item, grab it's QOrganizerItemRecurrence detail (if it exists), and calculate all of the dates within the given period.
     // how would a real backend do this?
-    // Also, should this also return the exception instances (ie, return any persistent instances with parent information == generator?)
+    // Also, should this also return the exception instances (ie, return any persistent instances with parent information == parent item?)
     // XXX TODO: in detail validation, ensure that the referenced parent Id exists...
 
     QDateTime realPeriodStart(periodStart);
     QDateTime realPeriodEnd(periodEnd);
     QDateTime initialDateTime;
-    if (generator.type() == QOrganizerItemType::TypeEvent) {
-        QOrganizerEvent evt = generator;
+    if (parentItem.type() == QOrganizerItemType::TypeEvent) {
+        QOrganizerEvent evt = parentItem;
         initialDateTime = evt.startDateTime();
-    } else if (generator.type() == QOrganizerItemType::TypeTodo) {
-        QOrganizerTodo todo = generator;
+    } else if (parentItem.type() == QOrganizerItemType::TypeTodo) {
+        QOrganizerTodo todo = parentItem;
         initialDateTime = todo.startDateTime();
     } else {
         // erm... not a recurring item in our schema...
-        return QList<QOrganizerItem>() << generator;
+        return QList<QOrganizerItem>() << parentItem;
     }
 
     if (initialDateTime > realPeriodStart)
@@ -715,13 +715,13 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemInstances(const QO
     }
 
     QList<QOrganizerItem> retn;
-    QOrganizerItemRecurrence recur = generator.detail(QOrganizerItemRecurrence::DefinitionName);
+    QOrganizerItemRecurrence recur = parentItem.detail(QOrganizerItemRecurrence::DefinitionName);
 
-    if (!forExport) {
+    if (includeExceptions) {
         // first, retrieve all persisted instances (exceptions) which occur between the specified datetimes.
         QOrganizerItemDetailFilter parentFilter;
-        parentFilter.setDetailDefinitionName(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemInstanceOrigin::FieldParentLocalId);
-        parentFilter.setValue(QVariant::fromValue(generator.localId()));
+        parentFilter.setDetailDefinitionName(QOrganizerItemParent::DefinitionName, QOrganizerItemParent::FieldParentLocalId);
+        parentFilter.setValue(QVariant::fromValue(parentItem.localId()));
         foreach(const QOrganizerItem&currException, d->m_organizeritems) {
             if (QOrganizerManagerEngine::testFilter(parentFilter, currException)) {
                 QDateTime lowerBound;
@@ -744,7 +744,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemInstances(const QO
         }
     }
 
-    // then, generate the required (unchanged) instances from the generator.
+    // then, generate the required (unchanged) instances from the parentItem.
     // before doing that, we have to find out all of the exception dates.
     QList<QDate> xdates;
     foreach (const QDate& xdate, recur.exceptionDates()) {
@@ -786,7 +786,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemInstances(const QO
     foreach (const QDateTime& rdate, rdates) {
         if (!xdates.contains(rdate.date()) && rdate >= realPeriodStart && rdate < realPeriodEnd) {
             // generate the required instance and add it to the return list.
-            retn.append(generateInstance(generator, rdate));
+            retn.append(generateOccurrence(parentItem, rdate));
         }
     }
 
@@ -795,24 +795,24 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemInstances(const QO
 }
 
 /*! \reimp */
-QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     Q_UNUSED(fetchHint);
-    return internalItemInstances(generator, periodStart, periodEnd, maxCount, false, error);
+    return internalItemOccurrences(parentItem, periodStart, periodEnd, maxCount, true, error);
 }
 
-QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem& generator, const QDateTime& rdate)
+QOrganizerItem QOrganizerItemMemoryEngine::generateOccurrence(const QOrganizerItem& parentItem, const QDateTime& rdate)
 {
     QOrganizerItem instanceItem;
-    if (generator.type() == QOrganizerItemType::TypeEvent) {
+    if (parentItem.type() == QOrganizerItemType::TypeEvent) {
         instanceItem = QOrganizerEventOccurrence();
     } else {
         instanceItem = QOrganizerTodoOccurrence();
     }
 
     // XXX TODO: something better than this linear search...
-    // Grab all details from the generator except the recurrence information, and event/todo time range
-    QList<QOrganizerItemDetail> allDets = generator.details();
+    // Grab all details from the parent item except the recurrence information, and event/todo time range
+    QList<QOrganizerItemDetail> allDets = parentItem.details();
     QList<QOrganizerItemDetail> occDets;
     foreach (const QOrganizerItemDetail& det, allDets) {
         if (det.definitionName() != QOrganizerItemRecurrence::DefinitionName
@@ -823,8 +823,8 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem
     }
 
     // add the detail which identifies exactly which instance this item is.
-    QOrganizerItemInstanceOrigin currOrigin;
-    currOrigin.setParentLocalId(generator.localId());
+    QOrganizerItemParent currOrigin;
+    currOrigin.setParentLocalId(parentItem.localId());
     currOrigin.setOriginalDate(rdate.date());
     occDets.append(currOrigin);
 
@@ -838,8 +838,8 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem
     }
 
     // and update the time range in the instance based on the current instance date
-    if (generator.type() == QOrganizerItemType::TypeEvent) {
-        QOrganizerEventTime etr = generator.detail<QOrganizerEventTime>();
+    if (parentItem.type() == QOrganizerItemType::TypeEvent) {
+        QOrganizerEventTime etr = parentItem.detail<QOrganizerEventTime>();
         QDateTime temp = etr.startDateTime();
         temp.setDate(rdate.date());
         etr.setStartDateTime(temp);
@@ -850,8 +850,8 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem
     }
 
     // for todo's?
-    if (generator.type() == QOrganizerItemType::TypeTodo) {
-        QOrganizerTodoTime ttr = generator.detail<QOrganizerTodoTime>();
+    if (parentItem.type() == QOrganizerItemType::TypeTodo) {
+        QOrganizerTodoTime ttr = parentItem.detail<QOrganizerTodoTime>();
         QDateTime temp = ttr.dueDateTime();
         temp.setDate(rdate.date());
         ttr.setDueDateTime(temp);
@@ -898,7 +898,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItems(const QDateTime&
 void QOrganizerItemMemoryEngine::addItemRecurrences(QList<QOrganizerItem>& sorted, const QOrganizerItem& c, const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, bool forExport) const
 {
     QOrganizerManager::Error error = QOrganizerManager::NoError;
-    QList<QOrganizerItem> recItems = internalItemInstances(c, startDate, endDate, forExport ? 1 : 50, forExport, &error);
+    QList<QOrganizerItem> recItems = internalItemOccurrences(c, startDate, endDate, forExport ? 1 : 50, false, &error);
 
     if (filter.type() == QOrganizerItemFilter::DefaultFilter) {
         foreach(const QOrganizerItem&oi, recItems) {
@@ -1007,7 +1007,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         if (theOrganizerItem->type() == QOrganizerItemType::TypeEventOccurrence) {
             // update the event by adding an EX-DATE which corresponds to the original date of the occurrence being saved.
             QOrganizerManager::Error tempError = QOrganizerManager::NoError;
-            QOrganizerItemInstanceOrigin origin = theOrganizerItem->detail<QOrganizerItemInstanceOrigin>();
+            QOrganizerItemParent origin = theOrganizerItem->detail<QOrganizerItemParent>();
             QOrganizerItemLocalId parentId = origin.parentLocalId();
 
             // for occurrences, if given a null collection id, save it in the same collection as the parent.
@@ -1039,7 +1039,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         } else if (theOrganizerItem->type() == QOrganizerItemType::TypeTodoOccurrence) {
             // update the todo by adding an EX-DATE which corresponds to the original date of the occurrence being saved.
             QOrganizerManager::Error tempError = QOrganizerManager::NoError;
-            QOrganizerItemInstanceOrigin origin = theOrganizerItem->detail<QOrganizerItemInstanceOrigin>();
+            QOrganizerItemParent origin = theOrganizerItem->detail<QOrganizerItemParent>();
             QOrganizerItemLocalId parentId = origin.parentLocalId();
 
             // for occurrences, if given a null collection id, save it in the same collection as the parent.
@@ -1105,7 +1105,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
     if (theItem->type() == QOrganizerItemType::TypeEventOccurrence
             || theItem->type() == QOrganizerItemType::TypeTodoOccurrence) {
         const QString guid = theItem->guid();
-        QOrganizerItemInstanceOrigin instanceOrigin = theItem->detail<QOrganizerItemInstanceOrigin>();
+        QOrganizerItemParent instanceOrigin = theItem->detail<QOrganizerItemParent>();
         if (!instanceOrigin.originalDate().isValid()) {
             *error = QOrganizerManager::InvalidOccurrenceError;
             return false;
@@ -1144,7 +1144,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
                     return false;
                 }
                 // found a matching item - set the parentId of the occurrence
-                QOrganizerItemInstanceOrigin origin = theItem->detail<QOrganizerItemInstanceOrigin>();
+                QOrganizerItemParent origin = theItem->detail<QOrganizerItemParent>();
                 origin.setParentLocalId(parentId);
                 theItem->saveDetail(&origin);
             }
@@ -1556,21 +1556,21 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerAbstract
         }
         break;
 
-        case QOrganizerAbstractRequest::ItemInstanceFetchRequest:
+        case QOrganizerAbstractRequest::ItemOccurrenceFetchRequest:
         {
-            QOrganizerItemInstanceFetchRequest* r = static_cast<QOrganizerItemInstanceFetchRequest*>(currentRequest);
-            QOrganizerItem generator(r->generator());
+            QOrganizerItemOccurrenceFetchRequest* r = static_cast<QOrganizerItemOccurrenceFetchRequest*>(currentRequest);
+            QOrganizerItem parentItem(r->parentItem());
             QDateTime startDate(r->startDate());
             QDateTime endDate(r->endDate());
             int countLimit = r->maxOccurrences();
             QOrganizerItemFetchHint fetchHint = r->fetchHint();
 
             QOrganizerManager::Error operationError = QOrganizerManager::NoError;
-            QList<QOrganizerItem> requestedOrganizerItems = itemInstances(generator, startDate, endDate, countLimit, fetchHint, &operationError);
+            QList<QOrganizerItem> requestedOrganizerItems = itemOccurrences(parentItem, startDate, endDate, countLimit, fetchHint, &operationError);
 
             // update the request with the results.
             if (!requestedOrganizerItems.isEmpty() || operationError != QOrganizerManager::NoError)
-                updateItemInstanceFetchRequest(r, requestedOrganizerItems, operationError, QOrganizerAbstractRequest::FinishedState);
+                updateItemOccurrenceFetchRequest(r, requestedOrganizerItems, operationError, QOrganizerAbstractRequest::FinishedState);
             else
                 updateRequestState(currentRequest, QOrganizerAbstractRequest::FinishedState);
         }

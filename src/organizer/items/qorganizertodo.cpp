@@ -137,6 +137,15 @@ QSet<QDate> QOrganizerTodo::recurrenceDates() const
 }
 
 /*!
+  Clears the set of recurrence rules which define when the todo occurs, and replaces
+  it will the single recurrence rule \a rrule.
+ */
+void QOrganizerTodo::setRecurrenceRule(const QOrganizerRecurrenceRule& rrule)
+{
+    setRecurrenceRules(QSet<QOrganizerRecurrenceRule>() << rrule);
+}
+
+/*!
   Sets the recurrence rules which define when the todo occurs to \a rrules
  */
 void QOrganizerTodo::setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rrules)
@@ -144,6 +153,19 @@ void QOrganizerTodo::setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rr
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setRecurrenceRules(rrules);
     saveDetail(&rec);
+}
+
+/*!
+  Returns a recurrence rule which defines when the todo occurs.
+  If more than one recurrence rule has been set in the todo,
+  one will be returned at random.
+ */
+QOrganizerRecurrenceRule QOrganizerTodo::recurrenceRule() const
+{
+    QSet<QOrganizerRecurrenceRule> rrules = recurrenceRules();
+    if (!rrules.isEmpty())
+        return *rrules.begin();
+    return QOrganizerRecurrenceRule();
 }
 
 /*!
@@ -177,6 +199,16 @@ QSet<QDate> QOrganizerTodo::exceptionDates() const
 }
 
 /*!
+  Clears the set of recurrence rules which describe the dates on which the todo does
+  not occur, where it otherwise would occur as described by the recurrence rules, and
+  inserts into the cleared list the single exception rule \a exrule.
+ */
+void QOrganizerTodo::setExceptionRule(const QOrganizerRecurrenceRule& exrule)
+{
+    setExceptionRules(QSet<QOrganizerRecurrenceRule>() << exrule);
+}
+
+/*!
   Sets the recurrence rules which describe the dates on which the todo does
   not occur, where it otherwise would occur as described by the recurrence rules
   set with \l setRecurrenceRules(), to \a exrules
@@ -186,6 +218,19 @@ void QOrganizerTodo::setExceptionRules(const QSet<QOrganizerRecurrenceRule>& exr
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setExceptionRules(exrules);
     saveDetail(&rec);
+}
+
+/*!
+  Returns a recurrence rule which describe the dates on which the todo does not occur, where
+  it otherwise would occur as described by the recurrence rules.  If more than one exception
+  rule was set for the todo item, one of those exception rules will be returned at random.
+ */
+QOrganizerRecurrenceRule QOrganizerTodo::exceptionRule() const
+{
+    QSet<QOrganizerRecurrenceRule> exrules = exceptionRules();
+    if (!exrules.isEmpty())
+        return *exrules.begin();
+    return QOrganizerRecurrenceRule();
 }
 
 /*!

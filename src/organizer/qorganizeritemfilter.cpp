@@ -69,7 +69,6 @@
   \value InvalidFilter An invalid filter which matches nothing
   \value OrganizerItemDetailFilter A filter which matches items containing one or more details of a particular definition with a particular value
   \value OrganizerItemDetailRangeFilter A filter which matches items containing one or more details of a particular definition whose values are within a particular range
-  \value OrganizerItemDateTimePeriodFilter A filter which matches items which occur in a given date/time period
   \value ChangeLogFilter A filter which matches items whose timestamps have been updated since some particular date and time
   \omitvalue ActionFilter A filter which matches items for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
   \value IntersectionFilter A filter which matches all items that are matched by all filters it includes

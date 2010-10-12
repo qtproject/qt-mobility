@@ -134,7 +134,7 @@ void QVersitOrganizerExporterPrivate::exportDetail(
         encodeRecurrence(item, detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemPriority::DefinitionName) {
         encodePriority(detail, *document, &removedProperties, &generatedProperties, &processedFields);
-    } else if (detail.definitionName() == QOrganizerItemInstanceOrigin::DefinitionName) {
+    } else if (detail.definitionName() == QOrganizerItemParent::DefinitionName) {
         encodeInstanceOrigin(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerTodoProgress::DefinitionName) {
         encodeTodoProgress(detail, *document, &removedProperties, &generatedProperties, &processedFields);
@@ -462,13 +462,13 @@ void QVersitOrganizerExporterPrivate::encodeInstanceOrigin(
         QList<QVersitProperty>* generatedProperties,
         QSet<QString>* processedFields)
 {
-    QOrganizerItemInstanceOrigin instanceOrigin = static_cast<QOrganizerItemInstanceOrigin>(detail);
+    QOrganizerItemParent instanceOrigin = static_cast<QOrganizerItemParent>(detail);
     QVersitProperty property =
         takeProperty(document, QLatin1String("RECURRENCE-ID"), removedProperties);
     property.setName(QLatin1String("RECURRENCE-ID"));
     property.setValue(instanceOrigin.originalDate().toString(QLatin1String("yyyyMMdd")));
     *generatedProperties << property;
-    *processedFields << QOrganizerItemInstanceOrigin::FieldOriginalDate;
+    *processedFields << QOrganizerItemParent::FieldOriginalDate;
 }
 
 void QVersitOrganizerExporterPrivate::encodeTodoProgress(

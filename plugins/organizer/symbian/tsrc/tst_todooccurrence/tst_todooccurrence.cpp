@@ -222,7 +222,7 @@ void TestTodoOccurrence::addSimpleOccurrenceDetail()
     QCOMPARE(item.type(), itemType);
     // Fetch the instances of the item.
     QList<QOrganizerItem> instanceList = 
-    		m_om->itemInstances(item,startTime,thirdInstanceDueDateTime);
+                m_om->itemOccurrences(item,startTime,thirdInstanceDueDateTime);
     QCOMPARE(instanceList.size(), numberOfInstances);
     QOrganizerItem todoItem = instanceList.at(2);
     QCOMPARE(todoItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
@@ -233,7 +233,7 @@ void TestTodoOccurrence::addSimpleOccurrenceDetail()
     
     // Fetch instances using maxcount only.
     instanceList.clear();
-    instanceList = m_om->itemInstances(item,startTime,QDateTime(),2);
+    instanceList = m_om->itemOccurrences(item,startTime,QDateTime(),2);
     QCOMPARE(instanceList.size(), 2);
     todoItem = instanceList.at(0);
     QCOMPARE(todoItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
@@ -250,7 +250,7 @@ void TestTodoOccurrence::addSimpleOccurrenceDetail()
     thirdTodoOccurence.saveDetail(&status);
     QVERIFY(m_om->saveItem(&thirdTodoOccurence));
     instanceList.clear();
-    instanceList = m_om->itemInstances
+    instanceList = m_om->itemOccurrences
     		(item,startTime,thirdInstanceDueDateTime);
     todoItem = instanceList.at(2);
     thirdTodoOccurence = static_cast<QOrganizerTodoOccurrence>(todoItem);
@@ -416,7 +416,7 @@ void TestTodoOccurrence::addOccurrenceDetail()
 	QCOMPARE(todoPriority.priority(), priority.priority());
 	// Fetch the instances of the item.
 	QList<QOrganizerItem> instanceList = 
-			m_om->itemInstances(item,startTime,fifthInstanceDateTime.addDays(400));
+                        m_om->itemOccurrences(item,startTime,fifthInstanceDateTime.addDays(400));
 	QCOMPARE(instanceList.size(), rrule.limitCount());
 	QOrganizerItem todoItem = instanceList.at(4);
 	QCOMPARE(todoItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
@@ -485,7 +485,7 @@ void TestTodoOccurrence::editOccurrenceNegative()
     
 
     //Fetch first instance of the saved entry to modify
-    QList<QOrganizerItem> instanceList = m_om->itemInstances(item,startTime,startTime);
+    QList<QOrganizerItem> instanceList = m_om->itemOccurrences(item,startTime,startTime);
     QCOMPARE(instanceList.size(),1);
     QOrganizerItem firstItem = instanceList.at(0);
     QCOMPARE(firstItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
@@ -623,12 +623,12 @@ void TestTodoOccurrence::addOccurrenceWithException()
     item = m_om->item(item.localId());
             
     //Fetch instance on the exception date.An empty list should be returned
-    QList<QOrganizerItem> instanceList = m_om->itemInstances(item,QDateTime(exceptionDate),QDateTime(exceptionDate));
+    QList<QOrganizerItem> instanceList = m_om->itemOccurrences(item,QDateTime(exceptionDate),QDateTime(exceptionDate));
     QCOMPARE(instanceList.size(),0);
 
     //Fetch the instance on rdate should return one instance
     instanceList.clear();
-    instanceList = m_om->itemInstances(item,QDateTime(rDate),QDateTime(rDate));
+    instanceList = m_om->itemOccurrences(item,QDateTime(rDate),QDateTime(rDate));
     QCOMPARE(instanceList.size(),1);
     QOrganizerItem rDateItem = instanceList.at(0);
     QCOMPARE(rDateItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
@@ -637,7 +637,7 @@ void TestTodoOccurrence::addOccurrenceWithException()
 
     // Fetch the item again
     instanceList.clear();
-    instanceList = m_om->itemInstances(item,startTime,QDateTime(),20);
+    instanceList = m_om->itemOccurrences(item,startTime,QDateTime(),20);
     QCOMPARE(instanceList.size(),rrule.limitCount());
 
     QOrganizerItem lastItem = instanceList.at(rrule.limitCount()-1);
@@ -690,7 +690,7 @@ void TestTodoOccurrence::editOccurrence()
     item = m_om->item(item.localId());
 
     //Fetch first and third instance of the saved entry to modify
-    QList<QOrganizerItem> instanceList = m_om->itemInstances(item,startTime,QDateTime(),3);
+    QList<QOrganizerItem> instanceList = m_om->itemOccurrences(item,startTime,QDateTime(),3);
     QCOMPARE(instanceList.size(), 3);
             
     QOrganizerItem firstItem = instanceList.at(0);
@@ -712,7 +712,7 @@ void TestTodoOccurrence::editOccurrence()
     
     //Fetch the first and third instances and verify
     instanceList.clear();
-    instanceList = m_om->itemInstances(item,startTime,QDateTime(),3);
+    instanceList = m_om->itemOccurrences(item,startTime,QDateTime(),3);
     QCOMPARE(instanceList.size(),3);
     QOrganizerItem changedFirstItem = instanceList.at(0);
     QCOMPARE(changedFirstItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
@@ -735,7 +735,7 @@ void TestTodoOccurrence::editOccurrence()
     QVERIFY(m_om->saveItem(&firstInstance));
     
     instanceList.clear();
-    instanceList = m_om->itemInstances(item,modifiedStartTime,modifiedStartTime);
+    instanceList = m_om->itemOccurrences(item,modifiedStartTime,modifiedStartTime);
     QCOMPARE(instanceList.size(),1);
     QOrganizerTodoOccurrence newInstance = static_cast<QOrganizerTodoOccurrence>(instanceList[0]);
     QCOMPARE(newInstance.startDateTime(),firstInstance.startDateTime());

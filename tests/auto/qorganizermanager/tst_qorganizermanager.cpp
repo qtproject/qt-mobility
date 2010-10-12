@@ -893,7 +893,7 @@ void tst_QOrganizerManager::addExceptions()
     QVERIFY(!event.guid().isEmpty());
 
     QList<QOrganizerItem> items =
-        cm->itemInstances(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
+        cm->itemOccurrences(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
                                  QDateTime(QDate(2010, 2, 1), QTime(0, 0, 0)));
     QCOMPARE(items.size(), 3);
     QOrganizerItem secondItem = items.at(1);
@@ -907,7 +907,7 @@ void tst_QOrganizerManager::addExceptions()
     secondEvent.setDisplayLabel(QLatin1String("seminar"));
     QVERIFY(cm->saveItem(&secondEvent));
     event = cm->item(event.localId()); // reload the event to pick up any changed exception dates.
-    items = cm->itemInstances(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
+    items = cm->itemOccurrences(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
                                      QDateTime(QDate(2010, 2, 1), QTime(0, 0, 0)));
     QCOMPARE(items.size(), 3); // shouldn't change the count.
 
@@ -919,7 +919,7 @@ void tst_QOrganizerManager::addExceptions()
     thirdEvent.setEndDateTime(QDateTime(QDate(2010, 1, 15), QTime(14, 0, 0)));
     QVERIFY(cm->saveItem(&thirdEvent));
     event = cm->item(event.localId()); // reload the event to pick up any changed exception dates.
-    items = cm->itemInstances(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
+    items = cm->itemOccurrences(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
                                      QDateTime(QDate(2010, 2, 1), QTime(0, 0, 0)));
     QCOMPARE(items.size(), 3); // shouldn't change the count.
 
@@ -1837,7 +1837,7 @@ void tst_QOrganizerManager::recurrenceWithGenerator()
     event.setRecurrenceRule(recurrenceRule);
 
     if (cm->saveItem(&event)) {
-        QList<QOrganizerItem> items = cm->itemInstances(event,
+        QList<QOrganizerItem> items = cm->itemOccurrences(event,
                 QDateTime(startDate, QTime(0, 0, 0)),
                 QDateTime(endDate.addDays(1), QTime(0, 0, 0)));
 

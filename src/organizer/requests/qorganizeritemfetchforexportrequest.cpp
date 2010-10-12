@@ -134,12 +134,24 @@ QOrganizerItemFetchHint QOrganizerItemFetchForExportRequest::fetchHint() const
     return d->m_fetchHint;
 }
 
+/*!
+   Returns the date-time which is the lower bound for the range in which items will be returned.
+   An invalid (default-constructed) date-time signifies that no lower bound is given (matches everything
+   up to the end date).
+   Note that an item matches if either it or any of its occurrences occur within the defined range.
+ */
 QDateTime QOrganizerItemFetchForExportRequest::startDate() const
 {
     Q_D(const QOrganizerItemFetchForExportRequest);
     return d->m_startDate;
 }
 
+/*!
+   Returns the date-time which is the upper bound for the range in which items will be returned.
+   An invalid (default-constructed) date-time signifies that no upper bound is given (matches everything
+   after the start date).
+   Note that an item matches if either it or any of its occurrences occur within the defined range.
+ */
 QDateTime QOrganizerItemFetchForExportRequest::endDate() const
 {
     Q_D(const QOrganizerItemFetchForExportRequest);

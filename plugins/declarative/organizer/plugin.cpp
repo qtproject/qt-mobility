@@ -84,7 +84,7 @@ public:
         qmlRegisterType<QDeclarativeOrganizerItemDescription>(uri, 1, 1, "OrganizerItemDescription");
         qmlRegisterType<QDeclarativeOrganizerItemDisplayLabel>(uri, 1, 1, "OrganizerItemDisplayLabel");
         qmlRegisterType<QDeclarativeOrganizerItemGuid>(uri, 1, 1, "OrganizerItemGuid");
-        qmlRegisterType<QDeclarativeOrganizerItemInstanceOrigin>(uri, 1, 1, "OrganizerItemInstanceOrigin");
+        qmlRegisterType<QDeclarativeOrganizerItemParent>(uri, 1, 1, "OrganizerItemParent");
         qmlRegisterType<QDeclarativeOrganizerItemLocation>(uri, 1, 1, "OrganizerItemLocation");
         qmlRegisterType<QDeclarativeOrganizerItemPriority>(uri, 1, 1, "OrganizerItemPriority");
         qmlRegisterType<QDeclarativeOrganizerItemRecurrence>(uri, 1, 1, "OrganizerItemRecurrence");

@@ -9,8 +9,8 @@ PUBLIC_HEADERS += \
     details/qorganizeritemdisplaylabel.h \
     details/qorganizeritememailreminder.h \
     details/qorganizeritemguid.h \
-    details/qorganizeriteminstanceorigin.h \
     details/qorganizeritemlocation.h \
+    details/qorganizeritemparent.h \
     details/qorganizeritempriority.h \
     details/qorganizeritemrecurrence.h \
     details/qorganizeritemreminder.h \

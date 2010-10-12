@@ -196,7 +196,7 @@ void QOrganizerCollection::setMetaData(const QString& key, const QVariant& value
 /*!
   Returns the meta data of the collection for the given \a key
  */
-QVariant QOrganizerCollection::metaData(const QString& key)
+QVariant QOrganizerCollection::metaData(const QString& key) const
 {
     return d->m_metaData.value(key);
 }

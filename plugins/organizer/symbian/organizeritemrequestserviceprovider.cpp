@@ -249,7 +249,7 @@ void COrganizerItemRequestsServiceProvider::RunL()
 void COrganizerItemRequestsServiceProvider::FetchItems()
 {
     QOrganizerItemFetchRequest *req = static_cast<QOrganizerItemFetchRequest *>(iReq);
-    // Fetch ItemInstancesList
+    // Fetch ItemOccurrencesList
     QOrganizerManager::Error error(QOrganizerManager::NoError);
     QList<QOrganizerItem> itemList = iOrganizerItemManagerEngine.items(
         req->startDate(), req->endDate(), req->filter(), req->sorting(), req->fetchHint(), &error);

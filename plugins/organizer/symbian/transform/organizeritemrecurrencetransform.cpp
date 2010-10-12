@@ -90,10 +90,10 @@ void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalEntry& entry
         item->saveDetail(&recurrence);
 }
 
-void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemOccurrence)
 {
     Q_UNUSED(instance);
-    Q_UNUSED(itemInstance);
+    Q_UNUSED(itemOccurrence);
     // There is no recurrence rules with item instances
 }
 

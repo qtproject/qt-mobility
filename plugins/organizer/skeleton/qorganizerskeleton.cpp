@@ -533,21 +533,23 @@ int QOrganizerItemSkeletonEngine::managerVersion() const
     return 1;
 }
 
-QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     /*
         TODO
 
-        This function should create a list of instances that occur in the time period from the supplied item.
+        This function should create a list of occurrences that occur in the time period from the supplied item,
+        generated from the parent item.
+
         The periodStart should always be valid, and either the periodEnd or the maxCount will be valid (if periodEnd is
         valid, use that.  Otherwise use the count).  It's permissible to limit the number of items returned...
 
-        Basically, if the generator item is an Event, a list of EventOccurrences should be returned.  Similarly for
+        Basically, if the parent item is an Event, a list of EventOccurrences should be returned.  Similarly for
         Todo/TodoOccurrence.
 
         If there are no instances, return an empty list.
 
-        The returned items should have a QOrganizerItemInstanceOrigin detail that points to the generator and the
+        The returned items should have a QOrganizerItemParent detail that points to the parentItem and the
         original instance that the event would have occurred on (e.g. with an exception).
 
         They should not have recurrence information details in them.
@@ -555,7 +557,7 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganiz
         We might change the signature to split up the periodStart + periodEnd / periodStart + maxCount cases.
     */
 
-    return QOrganizerManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, fetchHint, error);
+    return QOrganizerManagerEngine::itemOccurrences(parentItem, periodStart, periodEnd, maxCount, fetchHint, error);
 }
 
 QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const

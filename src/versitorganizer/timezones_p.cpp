@@ -61,7 +61,7 @@ QDateTime TimeZone::convert(const QDateTime& dateTime) const
         event.setRecurrenceRules(QSet<QOrganizerRecurrenceRule>() << phase.recurrenceRule());
         event.setRecurrenceDates(phase.recurrenceDates());
         QList<QOrganizerItem> occurrences =
-            manager->itemInstances(event, phase.startDateTime(), dateTime, 500);
+            manager->itemOccurrences(event, phase.startDateTime(), dateTime, 500);
         if (!occurrences.isEmpty()) {
             QDateTime phaseStart(static_cast<QOrganizerEventOccurrence>(occurrences.last()).startDateTime());
             if (phaseStart > latestPhase) {

@@ -140,22 +140,22 @@ public:
     QDateTime m_endDate;
 };
 
-class QOrganizerItemInstanceFetchRequestPrivate : public QOrganizerAbstractRequestPrivate
+class QOrganizerItemOccurrenceFetchRequestPrivate : public QOrganizerAbstractRequestPrivate
 {
 public:
-    QOrganizerItemInstanceFetchRequestPrivate()
+    QOrganizerItemOccurrenceFetchRequestPrivate()
         : QOrganizerAbstractRequestPrivate(),
           m_maxOccurrences(-1)
     {
     }
 
-    ~QOrganizerItemInstanceFetchRequestPrivate()
+    ~QOrganizerItemOccurrenceFetchRequestPrivate()
     {
     }
 
     QOrganizerAbstractRequest::RequestType type() const
     {
-        return QOrganizerAbstractRequest::ItemInstanceFetchRequest;
+        return QOrganizerAbstractRequest::ItemOccurrenceFetchRequest;
     }
 
     QOrganizerItem m_generator;

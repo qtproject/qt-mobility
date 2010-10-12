@@ -74,7 +74,7 @@ private slots:  // Test cases
 
     void getItemIds();
     void getItems();
-    void getItemInstances();
+    void getItemOccurrences();
     void setRecurrenceDates();
 
     //void getCollectionIds(); // this function is no longer provided by the API.
@@ -353,7 +353,7 @@ void tst_Maemo5Om::addEventWithRecurrence()
     QVERIFY(!event.guid().isEmpty());
 
     // Fetch all event instances
-    QList<QOrganizerItem> instances = m_om->itemInstances(event, QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,12,31), QTime(23,59,59)), 0);
+    QList<QOrganizerItem> instances = m_om->itemOccurrences(event, QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,12,31), QTime(23,59,59)), 0);
     QVERIFY(instances.count() == 10);
     foreach(QOrganizerItem instance, instances) {
         QVERIFY(instance.guid() == event.guid());
@@ -386,7 +386,7 @@ void tst_Maemo5Om::addEventExceptions()
     QVERIFY(!event.guid().isEmpty());
 
     QList<QOrganizerItem> items =
-        m_om->itemInstances(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
+        m_om->itemOccurrences(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
                                  QDateTime(QDate(2010, 2, 1), QTime(0, 0, 0)));
     QCOMPARE(items.size(), 3);
     QOrganizerItem secondItem = items.at(1);
@@ -407,7 +407,7 @@ void tst_Maemo5Om::addEventExceptions()
     QVERIFY(m_om->saveItem(&thirdEvent));
 
     items =
-        m_om->itemInstances(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
+        m_om->itemOccurrences(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
                                  QDateTime(QDate(2010, 2, 1), QTime(0, 0, 0)));
     QCOMPARE(items.size(), 3);
     QOrganizerItem firstItem = items.at(0);
@@ -566,7 +566,7 @@ void tst_Maemo5Om::removeEventWithRecurrence()
     QVERIFY(!event.guid().isEmpty());
 
     // Fetch all event instances
-    QList<QOrganizerItem> instances = m_om->itemInstances(event, QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,12,31), QTime(23,59,59)), 0);
+    QList<QOrganizerItem> instances = m_om->itemOccurrences(event, QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,12,31), QTime(23,59,59)), 0);
     QVERIFY(instances.count() == 20);
     foreach(QOrganizerItem instance, instances) {
         QVERIFY(instance.guid() == event.guid());
@@ -586,7 +586,7 @@ void tst_Maemo5Om::removeEventWithRecurrence()
     QCOMPARE(m_om->error(), QOrganizerManager::NoError);
 
     // Fetch all event instances
-    instances = m_om->itemInstances(event, QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,12,31), QTime(23,59,59)), 0);
+    instances = m_om->itemOccurrences(event, QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,12,31), QTime(23,59,59)), 0);
 
     // Shouldn't get any
     QVERIFY(instances.isEmpty());
@@ -621,7 +621,7 @@ void tst_Maemo5Om::removeEventExceptions()
     QVERIFY(!event.guid().isEmpty());
 
     // Fetch one event instance
-    QList<QOrganizerItem> instances = m_om->itemInstances(event, QDateTime(QDate(2010,10,5), QTime(0,0,0)), QDateTime(QDate(2010,10,5), QTime(23,59,59)), 0);
+    QList<QOrganizerItem> instances = m_om->itemOccurrences(event, QDateTime(QDate(2010,10,5), QTime(0,0,0)), QDateTime(QDate(2010,10,5), QTime(23,59,59)), 0);
     QVERIFY(instances.count() == 1);
 
     if (instances.count() == 1) {
@@ -635,7 +635,7 @@ void tst_Maemo5Om::removeEventExceptions()
         QVERIFY(m_om->saveItem(&occ));
 
         // Fetch all event instances
-        instances = m_om->itemInstances(event, QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,12,31), QTime(23,59,59)), 0);
+        instances = m_om->itemOccurrences(event, QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,12,31), QTime(23,59,59)), 0);
 
         // Should still get 10
         QCOMPARE(instances.count(), 10);
@@ -654,7 +654,7 @@ void tst_Maemo5Om::removeEventExceptions()
         QVERIFY(m_om->saveItem(&extraOccurrence));
 
         // Fetch all event instances
-        instances = m_om->itemInstances(event, QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,12,31), QTime(23,59,59)), 0);
+        instances = m_om->itemOccurrences(event, QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,12,31), QTime(23,59,59)), 0);
 
         // Should now get 11
         QCOMPARE(instances.count(), 11);
@@ -663,7 +663,7 @@ void tst_Maemo5Om::removeEventExceptions()
         QVERIFY(m_om->removeItem(event.id().localId()));
 
         // Fetch all event instances
-        instances = m_om->itemInstances(event, QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,12,31), QTime(23,59,59)), 0);
+        instances = m_om->itemOccurrences(event, QDateTime(QDate(2010,1,1), QTime(0,0,0)), QDateTime(QDate(2010,12,31), QTime(23,59,59)), 0);
 
         // Shouldn't get any
         QVERIFY(instances.isEmpty());
@@ -776,14 +776,14 @@ void tst_Maemo5Om::getItems()
 
 }
 
-void tst_Maemo5Om::getItemInstances()
+void tst_Maemo5Om::getItemOccurrences()
 {
     // Create an event with recurrence
     QOrganizerEvent event;
 
     event.setStartDateTime(QDateTime(QDate(2010, 1, 1), QTime(12, 0, 0)));
     event.setEndDateTime(QDateTime(QDate(2010, 1, 1), QTime(13, 0, 0)));
-    event.setDisplayLabel("getItemInstances");
+    event.setDisplayLabel("getItemOccurrences");
     event.setDescription("A daily recurring event");
 
     // Create recurrence
@@ -811,7 +811,7 @@ void tst_Maemo5Om::getItemInstances()
         occ.setStartDateTime(QDateTime(QDate(2010,1,20+i), QTime(14, 0, 0)));
         occ.setEndDateTime(QDateTime(QDate(2010,1,20+i), QTime(15, 0, 0)));
         occ.setOriginalDate(event.startDateTime().date());
-        occ.setDisplayLabel("getItemInstances");
+        occ.setDisplayLabel("getItemOccurrences");
         occ.setDescription("Exception occurrence");
         QVERIFY(m_om->saveItem(&occ));
         QCOMPARE(m_om->error(), QOrganizerManager::NoError);

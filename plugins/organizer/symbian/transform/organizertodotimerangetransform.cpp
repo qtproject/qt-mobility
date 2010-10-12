@@ -59,9 +59,9 @@ void OrganizerTodoTimeTransform::transformToDetailL(const CCalEntry& entry, QOrg
     }
 }
 
-void OrganizerTodoTimeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+void OrganizerTodoTimeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemOccurrence)
 {
-    if(itemInstance->type() == QOrganizerItemType::TypeTodoOccurrence)
+    if(itemOccurrence->type() == QOrganizerItemType::TypeTodoOccurrence)
     {
         TCalTime startTime = instance.StartTimeL();
         TCalTime endTime = instance.EndTimeL();
@@ -73,7 +73,7 @@ void OrganizerTodoTimeTransform::transformToDetailL(const CCalInstance& instance
             range.setDueDateTime(toQDateTimeL(endTime));
         
         if (!range.isEmpty())
-            itemInstance->saveDetail(&range);
+            itemOccurrence->saveDetail(&range);
     }
 }
 
