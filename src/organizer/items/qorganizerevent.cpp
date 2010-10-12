@@ -147,8 +147,9 @@ QSet<QOrganizerItemRecurrenceRule> QOrganizerEvent::recurrenceRules() const
     return rec.recurrenceRules();
 }
 
-/*! Returns the recurrence rule which has been explicitly set for the event.
-    Note: if there are more than one dates exist, the order of the dates is undefined, so any one could be returned.*/
+/*! Returns a recurrence rule which has been explicitly set for the event.
+    Note: if more than one rule exists, the order of the rules is undefined, so any one could be returned.
+ */
 QOrganizerItemRecurrenceRule QOrganizerEvent::recurrenceRule() const
 {
     QSet<QOrganizerItemRecurrenceRule> rrules = recurrenceRules();
@@ -204,6 +205,16 @@ void QOrganizerEvent::setExceptionRules(const QSet<QOrganizerItemRecurrenceRule>
 void QOrganizerEvent::setExceptionRule(const QOrganizerItemRecurrenceRule& xrule)
 {
     setExceptionRules(QSet<QOrganizerItemRecurrenceRule>() << xrule);
+}
+
+/*! Returns an exception rule which has been explicitly set for the event.
+    Note: if more than one exception rule exists, the order of the rules is undefined, so any one could be returned.*/
+QOrganizerItemRecurrenceRule QOrganizerEvent::exceptionRule() const
+{
+    QSet<QOrganizerItemRecurrenceRule> exrules = exceptionRules();
+    if (!exrules.isEmpty())
+        return *exrules.begin();
+    return QOrganizerItemRecurrenceRule();
 }
 
 /*! Returns the list of exception rules for the event */
