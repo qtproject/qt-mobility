@@ -4,5 +4,5 @@ qmlbattery_src = $$PWD
 symbian {
     load(data_caging_paths)
 }
-qmlbattery_files.sources = qmlbattery_src/battery-bubble.qml qmlbattery_src/images
+qmlbattery_files.sources = $$qmlbattery_src/battery-bubble.qml $$qmlbattery_src/images
 DEPLOYMENT += qmlbattery_files
