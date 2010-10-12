@@ -394,33 +394,33 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLongitude, "Longitude");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLabel, "Label");
 
 /*!
-    \fn QOrganizerItemLocation::geoLocation() const
-    Returns a string of geolication value.
+    \fn QOrganizerItemLocation::latitude() const
+    Returns the latitude value of the location's geocoordinates
  */
 
 /*!
-    \fn QOrganizerItemLocation::setGeoLocation(const QString& stringCoords)
-    Sets geolication value to \a stringCoords.
+    \fn QOrganizerItemLocation::setLatitude(double latitude)
+    Sets the latitude value of the location's geocoordinates to \a latitude
  */
 
 /*!
-    \fn QOrganizerItemLocation::locationName() const
-    Returns a string of location name.
+    \fn QOrganizerItemLocation::longitude() const
+    Returns the longitude value of the location's geocoordinates
  */
 
 /*!
-   \fn QOrganizerItemLocation::setLocationName(const QString& locationName)
-   Sets location name to \a locationName.
+   \fn QOrganizerItemLocation::setLongitude(double longitude)
+   Sets the longitude value of the location's geocoordinates to \a longitude
  */
 
 /*!
-    \fn QOrganizerItemLocation::address() const
-    Returns a string of address name.
+    \fn QOrganizerItemLocation::label() const
+    Returns the human-readable label of the location
  */
 
 /*!
-   \fn QOrganizerItemLocation::setAddress(const QString& address)
-   Sets address name to \a address.
+   \fn QOrganizerItemLocation::setLabel(const QString& label)
+   Sets the human-readable label of the location to \a label
  */
 
 /* ==================== QOrganizerItemComment ======================= */
@@ -610,7 +610,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionRules, "Excepti
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "ExceptionDates");
 
 /*!
-   \fn QOrganizerItemRecurrence::recurrenceDates() const
    Returns a list of recurrence dates.
  */
 QSet<QDate> QOrganizerItemRecurrence::recurrenceDates() const
@@ -619,7 +618,6 @@ QSet<QDate> QOrganizerItemRecurrence::recurrenceDates() const
 }
 
 /*!
-   \fn QOrganizerItemRecurrence::setRecurrenceDates(const QList<QDate>& rdates)
    Sets a list of recurrence dates to \a rdates.
  */
 void QOrganizerItemRecurrence::setRecurrenceDates(const QSet<QDate>& rdates)
@@ -628,7 +626,6 @@ void QOrganizerItemRecurrence::setRecurrenceDates(const QSet<QDate>& rdates)
 }
 
 /*!
-   \fn QOrganizerItemRecurrence::exceptionRules() const
    Returns a list of exception rules.
  */
 QSet<QOrganizerItemRecurrenceRule> QOrganizerItemRecurrence::exceptionRules() const
@@ -636,7 +633,6 @@ QSet<QOrganizerItemRecurrenceRule> QOrganizerItemRecurrence::exceptionRules() co
     return variantValue(FieldExceptionRules).value< QSet<QOrganizerItemRecurrenceRule> >();
 }
 /*!
-   \fn QOrganizerItemRecurrence::setExceptionRules(const QList<QOrganizerItemRecurrenceRule>& xrules)
    Sets a list of exception rules to \a xrules.
  */
 void QOrganizerItemRecurrence::setExceptionRules(const QSet<QOrganizerItemRecurrenceRule>& xrules)
@@ -644,7 +640,6 @@ void QOrganizerItemRecurrence::setExceptionRules(const QSet<QOrganizerItemRecurr
     setValue(FieldExceptionRules, QVariant::fromValue(xrules));
 }
 /*!
-   \fn QOrganizerItemRecurrence::recurrenceRules() const
    Returns a list of recurrence rules.
  */
 QSet<QOrganizerItemRecurrenceRule> QOrganizerItemRecurrence::recurrenceRules() const
@@ -654,7 +649,6 @@ QSet<QOrganizerItemRecurrenceRule> QOrganizerItemRecurrence::recurrenceRules() c
 
 
 /*!
-   \fn QOrganizerItemRecurrence::setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules)
    Sets a list of recurrence rules to \a rrules.
  */
 void QOrganizerItemRecurrence::setRecurrenceRules(const QSet<QOrganizerItemRecurrenceRule>& rrules)
@@ -662,7 +656,6 @@ void QOrganizerItemRecurrence::setRecurrenceRules(const QSet<QOrganizerItemRecur
     setValue(FieldRecurrenceRules, QVariant::fromValue(rrules));
 }
 /*!
-   \fn QOrganizerItemRecurrence::exceptionDates() const
    Returns a list of exception dates.
  */
 QSet<QDate> QOrganizerItemRecurrence::exceptionDates() const
@@ -671,7 +664,6 @@ QSet<QDate> QOrganizerItemRecurrence::exceptionDates() const
 }
 
 /*!
-   \fn QOrganizerItemRecurrence::setExceptionDates(const QList<QDate>& exdates)
    Sets a list of exception dates to \a exdates.
  */
 void QOrganizerItemRecurrence::setExceptionDates(const QSet<QDate>& xdates)
@@ -792,6 +784,15 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
    Returns the delay (in seconds) between each repetition of the reminder.
 
    \sa repetitionCount()
+*/
+
+/*!
+   \fn setRepetition(int count, int delaySeconds)
+
+   Sets the number of repetitions of the reminderto \a count, and the delay (in seconds)
+   between each repetition of the reminder to \a delaySeconds.
+
+   \sa repetitionCount(), repetitionDelay()
 */
 
 /*!
@@ -1177,6 +1178,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldTimeSpecified, "TimeSpeci
 /*!
     \fn QOrganizerTodoTimeRange::setDueDateTime(const QDateTime& dueDateTime)
     Sets the todo timerange's due date and time to \a dueDateTime.
+ */
+
+/*!
+    \fn QOrganizerTodoTimeRange::isTimeSpecified() const
+    Returns true if a specific time was specified for the todo.
+    Returns false if the todo is an all-day todo.
  */
 
 /* ==================== QOrganizerItemType ======================= */

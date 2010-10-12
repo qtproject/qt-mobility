@@ -94,8 +94,9 @@ QTM_BEGIN_NAMESPACE
   \enum QOrganizerItemAbstractRequest::RequestType
   Enumerates the various possible types of asynchronous requests
   \value InvalidRequest An invalid request
-  \value ItemInstanceFetchRequest A request to fetch a list of instances of organizer items
+  \value ItemInstanceFetchRequest A request to fetch a list of items and occurrences of organizer items
   \value ItemFetchRequest A request to fetch a list of organizer items
+  \value ItemFetchForExportRequest A request to fetch a list of persisted organizer items and exceptions
   \value ItemLocalIdFetchRequest A request to fetch a list of local organizer item ids
   \value ItemRemoveRequest A request to remove a list of organizer items
   \value ItemSaveRequest A request to save a list of organizer items
@@ -103,7 +104,6 @@ QTM_BEGIN_NAMESPACE
   \value DetailDefinitionRemoveRequest A request to remove a list of detail definitions
   \value DetailDefinitionSaveRequest A request to save a list of detail definitions
   \value CollectionFetchRequest A request to fetch a collection.
-  \value CollectionLocalIdFetchRequest A request to collect a local id.
   \value CollectionRemoveRequest A request to remove a collection.
   \value CollectionSaveRequest A request to save a collection.
  */
