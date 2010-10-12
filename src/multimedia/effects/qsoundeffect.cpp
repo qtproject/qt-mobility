@@ -175,12 +175,12 @@ void QSoundEffect::setSource(const QUrl &url)
     emit sourceChanged();
 }
 
-int QSoundEffect::loops() const
+int QSoundEffect::loopCount() const
 {
     return d->loopCount();
 }
 
-void QSoundEffect::setLoops(int loopCount)
+void QSoundEffect::setLoopCount(int loopCount)
 {
     if (loopCount == 0)
         loopCount = 1;
@@ -188,7 +188,7 @@ void QSoundEffect::setLoops(int loopCount)
         return;
 
     d->setLoopCount(loopCount);
-    emit loopsChanged();
+    emit loopCountChanged();
 }
 
 int QSoundEffect::volume() const

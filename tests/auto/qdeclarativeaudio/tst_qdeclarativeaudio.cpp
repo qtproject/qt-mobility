@@ -77,6 +77,7 @@ private slots:
     void metaData_data();
     void metaData();
     void error();
+    void loops();
 };
 
 Q_DECLARE_METATYPE(QtMultimediaKit::MetaData);
@@ -1241,6 +1242,93 @@ void tst_QDeclarativeAudio::error()
     QCOMPARE(errorChangedSpy.count(), 2);
 }
 
+void tst_QDeclarativeAudio::loops()
+{
+    QtTestMediaServiceProvider provider;
+    QDeclarativeAudio audio;
+
+    QSignalSpy loopsChangedSpy(&audio, SIGNAL(loopCountChanged()));
+    QSignalSpy playingChangedSpy(&audio, SIGNAL(playingChanged()));
+    QSignalSpy stoppedSpy(&audio, SIGNAL(stopped()));
+
+    int playingChanged = 0;
+    int stopped = 0;
+    int loopsChanged = 0;
+
+    audio.componentComplete();
+
+    QCOMPARE(audio.isPlaying(), false);
+
+    //setLoops(3) when stopped.
+    audio.setLoopCount(3);
+    QCOMPARE(audio.loopCount(), 3);
+    QCOMPARE(loopsChangedSpy.count(), ++loopsChanged);
+
+    //play till end
+    audio.play();
+    QCOMPARE(provider.playerControl()->state(), QMediaPlayer::PlayingState);
+    QCOMPARE(playingChangedSpy.count(), ++playingChanged);
+    QCOMPARE(provider.playerControl()->state(), QMediaPlayer::PlayingState);
+    QCOMPARE(audio.isPlaying(), true);
+
+    // setPlaying(true) when playing.
+    audio.setPlaying(true);
+    QCOMPARE(audio.isPlaying(), true);
+    QCOMPARE(provider.playerControl()->state(), QMediaPlayer::PlayingState);
+    QCOMPARE(playingChangedSpy.count(),   playingChanged);
+    QCOMPARE(stoppedSpy.count(),          stopped);
+
+    provider.playerControl()->updateMediaStatus(QMediaPlayer::EndOfMedia, QMediaPlayer::StoppedState);
+    QCOMPARE(audio.isPlaying(), true);
+    QCOMPARE(provider.playerControl()->state(), QMediaPlayer::PlayingState);
+    QCOMPARE(playingChangedSpy.count(),   playingChanged);
+
+    provider.playerControl()->updateMediaStatus(QMediaPlayer::EndOfMedia, QMediaPlayer::StoppedState);
+    provider.playerControl()->updateMediaStatus(QMediaPlayer::EndOfMedia, QMediaPlayer::StoppedState);
+
+    QCOMPARE(audio.isPlaying(), false);
+    QCOMPARE(provider.playerControl()->state(), QMediaPlayer::StoppedState);
+    QCOMPARE(playingChangedSpy.count(), ++playingChanged);
+    QCOMPARE(stoppedSpy.count(),        ++stopped);
+
+    // stop when playing
+    audio.play();
+    QCOMPARE(provider.playerControl()->state(), QMediaPlayer::PlayingState);
+    QCOMPARE(playingChangedSpy.count(), ++playingChanged);
+    provider.playerControl()->updateMediaStatus(QMediaPlayer::EndOfMedia, QMediaPlayer::StoppedState);
+    audio.stop();
+    QCOMPARE(audio.isPlaying(), false);
+    QCOMPARE(provider.playerControl()->state(), QMediaPlayer::StoppedState);
+    QCOMPARE(playingChangedSpy.count(), ++playingChanged);
+    QCOMPARE(stoppedSpy.count(),        ++stopped);
+
+    //setPlaying(true) with infinite loop
+    audio.setLoopCount(-1);
+    QCOMPARE(audio.loopCount(), -1);
+    QCOMPARE(loopsChangedSpy.count(), ++loopsChanged);
+    audio.setPlaying(true);
+    QCOMPARE(audio.isPlaying(), true);
+    QCOMPARE(playingChangedSpy.count(), ++playingChanged);
+    QCOMPARE(provider.playerControl()->state(), QMediaPlayer::PlayingState);
+    provider.playerControl()->updateMediaStatus(QMediaPlayer::EndOfMedia, QMediaPlayer::StoppedState);
+    QCOMPARE(audio.isPlaying(), true);
+    QCOMPARE(provider.playerControl()->state(), QMediaPlayer::PlayingState);
+    QCOMPARE(playingChangedSpy.count(), playingChanged);
+
+    // play() when playing.
+    audio.play();
+    QCOMPARE(audio.isPlaying(), true);
+    QCOMPARE(provider.playerControl()->state(), QMediaPlayer::PlayingState);
+    QCOMPARE(playingChangedSpy.count(),   playingChanged);
+    QCOMPARE(stoppedSpy.count(),          stopped);
+
+    // setPlaying(false) when playing in infinite loop.
+    audio.setPlaying(false);
+    QCOMPARE(audio.isPlaying(), false);
+    QCOMPARE(provider.playerControl()->state(), QMediaPlayer::StoppedState);
+    QCOMPARE(playingChangedSpy.count(), ++playingChanged);
+    QCOMPARE(stoppedSpy.count(),        ++stopped);
+}
 
 QTEST_MAIN(tst_QDeclarativeAudio)
 

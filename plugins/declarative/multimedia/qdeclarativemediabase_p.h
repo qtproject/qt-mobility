@@ -83,8 +83,8 @@ public:
     bool isAutoLoad() const;
     void setAutoLoad(bool autoLoad);
 
-    int loops() const;
-    void setLoops(int loopCount);
+    int loopCount() const;
+    void setLoopCount(int loopCount);
 
     bool isPlaying() const;
     void setPlaying(bool playing);
@@ -129,7 +129,7 @@ protected:
     virtual void autoLoadChanged() = 0;
     virtual void playingChanged() = 0;
     virtual void pausedChanged() = 0;
-    virtual void loopsChanged() = 0;
+    virtual void loopCountChanged() = 0;
 
     virtual void started() = 0;
     virtual void resumed() = 0;

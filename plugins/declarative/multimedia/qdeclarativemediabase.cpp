@@ -373,12 +373,12 @@ void QDeclarativeMediaBase::setAutoLoad(bool autoLoad)
     emit autoLoadChanged();
 }
 
-int QDeclarativeMediaBase::loops() const
+int QDeclarativeMediaBase::loopCount() const
 {
     return m_loopCount;
 }
 
-void QDeclarativeMediaBase::setLoops(int loopCount)
+void QDeclarativeMediaBase::setLoopCount(int loopCount)
 {
     if (loopCount == 0)
         loopCount = 1;
@@ -389,7 +389,7 @@ void QDeclarativeMediaBase::setLoops(int loopCount)
         return;
     }
     m_loopCount = loopCount;
-    emit loopsChanged();
+    emit loopCountChanged();
 }
 
 bool QDeclarativeMediaBase::isPlaying() const
