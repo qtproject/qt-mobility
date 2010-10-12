@@ -310,7 +310,8 @@ QRemoteServiceRegister::~QRemoteServiceRegister()
     the service can be reached. 
     
     This address must match the address provided in the services XML descriptor, otherwise 
-    the service will not be discoverable.
+    the service will not be discoverable. In some cases this may also cause the IPC 
+    rendezvous feature to fail.
 
     \sa createEntry()
 */

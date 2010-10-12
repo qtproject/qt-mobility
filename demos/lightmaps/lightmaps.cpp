@@ -544,6 +544,7 @@ protected:
             QPoint center = dragPos - QPoint(0, radius);
             center = center + QPoint(0, radius / 2);
             QPoint corner = center - QPoint(radius, radius);
+            magnifierPos = center;
 
             QPoint xy = center * 2 - QPoint(radius, radius);
 
@@ -593,8 +594,21 @@ protected:
             return;
         pressed = snapped = true;
         pressPos = dragPos = event->pos();
+
         tapTimer.stop();
         tapTimer.start(HOLD_TIME, this);
+
+        if (zoomed) {
+            QPoint distance = dragPos - magnifierPos;
+
+            int magnifierSize = qMin(MAX_MAGNIFIER, (qMin(width(), height()) * 2) / 3);
+            int radius = magnifierSize / 2;
+
+            if (distance.manhattanLength() > radius) {
+                zoomed = false;
+                tapTimer.stop();
+            }
+        }
     }
 
     void mouseMoveEvent(QMouseEvent *event) {
@@ -686,6 +700,7 @@ private:
     bool snapped;
     QPoint pressPos;
     QPoint dragPos;
+    QPoint magnifierPos;
     QBasicTimer tapTimer;
     bool zoomed;
     QPixmap zoomPixmap;
