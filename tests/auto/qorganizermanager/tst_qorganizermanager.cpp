@@ -2486,6 +2486,7 @@ void tst_QOrganizerManager::itemFetch()
     QOrganizerEvent recEvent;
     recEvent.setDisplayLabel("daily event");
     recEvent.setStartDateTime(QDateTime(QDate(2010, 9, 1), QTime(16, 0, 0)));
+    recEvent.setEndDateTime(QDateTime(QDate(2010, 9, 1), QTime(16, 30, 0)));
     QOrganizerRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
     rrule.setLimit(QDate(2010, 9, 10));
