@@ -224,7 +224,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
         return 0;
     }
     return source;
-#elif (defined(Q_WS_MEEGO))
+#elif (defined(Q_WS_MEEGO)) && (defined(GEOCLUE_MASTER_AVAILABLE))
     QGeoPositionInfoSourceGeoclueMaster *source = new QGeoPositionInfoSourceGeoclueMaster(parent);
     int status = source->init();
     if (status == -1) {

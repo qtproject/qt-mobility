@@ -554,6 +554,13 @@ compileTest "Maemo5 contacts dependencies" maemo5-contacts
 compileTest "Maemo5 organizer dependencies" maemo5-calendar
 compileTest "Bluez" bluez
 compileTest "Gstreamer Photography" gstreamer-photography
+if [ "$LINUX_TARGET" = meego ]; then
+    compileTest "Location GeoClue master provider" geoclue-master
+    compileTest "Location Gypsy provider" gypsy
+else
+    echo "geoclue-master_enabled = no" >> "$CONFIG_IN"
+    echo "gypsy_enabled = no" >> "$CONFIG_IN"
+fi
 if [ "$LINUX_TARGET" = maemo6 ]; then
     compileTest sensord sensord
 else

@@ -111,15 +111,25 @@ maemo5 {
     pkgconfig.files = QtLocation.pc
 }
 meego {
+    contains (geoclue-master_enabled, yes) {
+        message("Building location with GeoClue master support.")
+        SOURCES += qgeopositioninfosource_geocluemaster.cpp
+        HEADERS += qgeopositioninfosource_geocluemaster_p.h
+        DEFINES += GEOCLUE_MASTER_AVAILABLE=1
+    } else {
+        message("Building location without GeoClue master support.")
+    }
+    contains (gypsy_enabled, yes) {
+        message("Building location with Gypsy support.")
+        SOURCES += qgeosatelliteinfosource_gypsy.cpp
+        HEADERS += qgeosatelliteinfosource_gypsy_p.h
+        DEFINES += GYPSY_AVAILABLE=1
+    } else {
+        message("Building location without Gypsy support.")
+    }
     CONFIG += qdbus link_pkgconfig
-    PKGCONFIG += geoclue gypsy gconf-2.0
-    SOURCES += qgeopositioninfosource_geocluemaster.cpp \
-               qgeosatelliteinfosource_gypsy.cpp \
-
-    HEADERS += qgeopositioninfosource_geocluemaster_p.h \
-               qgeosatelliteinfosource_gypsy_p.h
-
-    QMAKE_PKGCONFIG_REQUIRES = glib-2.0 gconf-2.0 gypsy
+    PKGCONFIG += geoclue gypsy gconf-2.0 glib-2.0
+    QMAKE_PKGCONFIG_REQUIRES = geoclue gypsy glib-2.0 gconf-2.0
     pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
     pkgconfig.files = QtLocation.pc
 }
