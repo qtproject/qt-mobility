@@ -65,7 +65,16 @@ public:
     {
         return QDeclarativeContactDetail::Note;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Note:
+            return QContactNote::FieldNote;
+        default:
+            break;
+        }
+        return "";
+    }
     void setNote(const QString& note) {detail().setValue(QContactNote::FieldNote, note);}
     QString note() const {return detail().value(QContactNote::FieldNote);}
 signals:

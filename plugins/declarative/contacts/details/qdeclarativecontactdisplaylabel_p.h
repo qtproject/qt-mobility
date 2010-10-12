@@ -67,6 +67,17 @@ public:
         return QDeclarativeContactDetail::DisplayLabel;
     }
 
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Label:
+            return QContactDisplayLabel::FieldLabel;
+        default:
+            break;
+        }
+        return "";
+    }
+
     QString label() const {return detail().value(QContactDisplayLabel::FieldLabel);}
 signals:
     void fieldsChanged();
