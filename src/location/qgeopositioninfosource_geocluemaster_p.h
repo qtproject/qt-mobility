@@ -14,6 +14,7 @@
 
 #include <qgeopositioninfosource.h>
 #include <geoclue/geoclue-master.h>
+#include <QTimer>
 
 #define Q_LOCATION_GEOCLUE_DEBUG
 
@@ -46,6 +47,9 @@ public slots:
     virtual void stopUpdates();
     virtual void requestUpdate(int timeout = 5000);
 
+private slots:
+    void updateRequestTimeout();
+
 private:
     int configurePositionSource();
 
@@ -54,6 +58,8 @@ private:
     GeoclueResourceFlags m_preferredResources;
     GeoclueMasterClient *m_client;
     GeocluePosition *m_pos;
+    QTimer m_updateTimer;
+    QTimer m_requestTimer;
     QGeoPositionInfo m_lastPosition;
 };
 

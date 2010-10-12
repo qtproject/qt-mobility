@@ -40,6 +40,8 @@ void QGeoPositionInfoSourceGeoclueMaster::positionChanged(GeocluePosition      *
     Q_UNUSED(position);
     if ((fields & GEOCLUE_POSITION_FIELDS_LATITUDE) &&
             (fields & GEOCLUE_POSITION_FIELDS_LONGITUDE)) {
+        if (m_requestTimer.isActive())
+            m_requestTimer.stop();
         QGeoCoordinate coordinate(latitude, longitude);
         QDateTime dateTime = QDateTime();
         dateTime.setTime_t(timestamp);
@@ -58,6 +60,16 @@ QGeoPositionInfoSourceGeoclueMaster::QGeoPositionInfoSourceGeoclueMaster(QObject
     : QGeoPositionInfoSource(parent), m_updateInterval(0), m_preferredResources(GEOCLUE_RESOURCE_ALL),
       m_client(0), m_pos(0)
 {
+    m_requestTimer.setSingleShot(true);
+    QObject::connect(&m_requestTimer, SIGNAL(timeout()), this, SLOT(updateRequestTimeout()));
+}
+
+QGeoPositionInfoSourceGeoclueMaster::~QGeoPositionInfoSourceGeoclueMaster()
+{
+    if (m_pos)
+        g_object_unref (m_pos);
+    if (m_client)
+        g_object_unref (m_client);
 }
 
 int QGeoPositionInfoSourceGeoclueMaster::init()
@@ -177,45 +189,27 @@ void QGeoPositionInfoSourceGeoclueMaster::stopUpdates()
                                          NULL);
 }
 
-void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int /*timeout*/)
+void QGeoPositionInfoSourceGeoclueMaster::requestUpdate(int timeout)
 {
-    GeocluePositionFields fields;
-    int              timestamp;
-    double           latitude;
-    double           longitude;
-    double           altitude;
-    GeoclueAccuracy *accuracy;
-    GError *error = NULL;
-    fields = geoclue_position_get_position (m_pos, &timestamp,
-                                            &latitude, &longitude, &altitude,
-                                            &accuracy, &error);
-    if (error) {
-        qCritical ("QGeoPositionInfoSourceGeoclueMaster Error in geoclue_position_get_position: %s.\n",
-                   error->message);
-        g_error_free (error);
-        error = NULL;
+    if (timeout < minimumUpdateInterval()) {
         emit updateTimeout();
-    } else {
-        if (fields & GEOCLUE_POSITION_FIELDS_LATITUDE &&
-                fields & GEOCLUE_POSITION_FIELDS_LONGITUDE) {
-            qDebug ("We're at %.3f, %.3f.\n", latitude, longitude);
-            positionChanged(m_pos, fields, timestamp, latitude, longitude, altitude,
-                            accuracy);
-            return;
-
-        }
-        qCritical ("QGeoPositionInfoSourceGeoclueMaster Invalid Longitude and latitude");
-        emit updateTimeout();
+        return;
     }
+    if (m_requestTimer.isActive()) {
+        return;
+    }
+    m_requestTimer.start(timeout);
+    geoclue_position_get_position_async (m_pos, (GeocluePositionCallback)position_changed,this);
 }
 
-QGeoPositionInfoSourceGeoclueMaster::~QGeoPositionInfoSourceGeoclueMaster()
+void QGeoPositionInfoSourceGeoclueMaster::updateRequestTimeout()
 {
-    if (m_pos)
-        g_object_unref (m_pos);
-    if (m_client)
-        g_object_unref (m_client);
+#ifdef Q_LOCATION_GEOCLUE_DEBUG
+    qDebug() << "QGeoPositionInfoSourceGeoclueMaster requestUpdate timeout occured.";
+#endif
+    emit updateTimeout();
 }
+
 
 #include "moc_qgeopositioninfosource_geocluemaster_p.cpp"
 QTM_END_NAMESPACE
