@@ -87,6 +87,7 @@ protected:
     QVersitDocument::VersitType mType;
     QIODevice* mDevice;
     QTextCodec* mCodec;
+    bool mCodecIsAsciiCompatible;
     QTextEncoder* mEncoder;
     QTextEncoder* mUtf8Encoder;
     bool mSuccessful;

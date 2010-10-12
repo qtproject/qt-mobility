@@ -79,6 +79,7 @@ void QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
     writeString(QLatin1String(":"));
 
     QString renderedValue;
+    QByteArray renderedBytes;
     if (variant.canConvert<QVersitDocument>()) {
         QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
         QByteArray data;
@@ -122,9 +123,16 @@ void QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
             }
         }
     } else if (variant.type() == QVariant::ByteArray) {
-        renderedValue = QLatin1String(variant.toByteArray().toBase64().data());
+        if (mCodecIsAsciiCompatible) // optimize by not converting to unicode
+            renderedBytes = variant.toByteArray().toBase64();
+        else
+            renderedValue = QLatin1String(variant.toByteArray().toBase64().data());
     }
-    writeString(renderedValue);
+
+    if (renderedBytes.isEmpty())
+        writeString(renderedValue);
+    else
+        writeBytes(renderedBytes);
     writeCrlf();
 }
 

@@ -93,6 +93,11 @@ void QVersitDocumentWriter::setCodec(QTextCodec *codec)
     // Hack so the encoder doesn't output a byte order mark for UTF-8.
     if (mCodec->name() == "UTF-8")
         mEncoder->fromUnicode(QString());
+
+    // UTF-(16|32)(LE|BE) are the only codecs where characters in the base64 range aren't encoded
+    // the same as in ASCII.  For ASCII compatible codecs, we can do some optimizations.
+    mCodecIsAsciiCompatible = !(mCodec->name().startsWith("UTF-16")
+                             || mCodec->name().startsWith("UTF-32"));
 }
 
 /*!
@@ -171,6 +176,31 @@ void QVersitDocumentWriter::encodeGroupsAndName(const QVersitProperty& property)
         writeString(QLatin1String("."));
     }
     writeString(property.name());
+}
+
+/*!
+  Writes \a value to the device.
+
+  This function tracks how many characters have been written to the line and folds (wraps) the line
+  according to RFC2425.
+  */
+void QVersitDocumentWriter::writeBytes(const QByteArray &value)
+{
+    int spaceRemaining = MAX_LINE_LENGTH - mCurrentLineLength;
+    int charsWritten = 0;
+    while (spaceRemaining < value.length() - charsWritten) {
+        // Write the first "spaceRemaining" characters
+        if (mDevice->write(value.mid(charsWritten, spaceRemaining)) < 0
+               || mDevice->write("\r\n ") < 0)
+            mSuccessful = false;
+        charsWritten += spaceRemaining;
+        spaceRemaining = MAX_LINE_LENGTH - 1; // minus 1 for the space at the front.
+        mCurrentLineLength = 1;
+    }
+
+    if (mDevice->write(value.mid(charsWritten)) < 0)
+        mSuccessful = false;
+    mCurrentLineLength += value.length() - charsWritten;
 }
 
 /*!
