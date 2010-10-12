@@ -905,7 +905,7 @@ bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &f
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option) const
+bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format, const QList<QLandmarkId> &landmarkIds, QLandmarkManager::TransferOption option) const
 {
     Q_D(const QLandmarkManager);
 
@@ -957,7 +957,7 @@ QStringList QLandmarkManager::supportedFormats(QLandmarkManager::TransferOperati
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(const QString &fileName, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::TransferOption option) const
+bool QLandmarkManager::exportLandmarks(const QString &fileName, const QString &format, const QList<QLandmarkId> &landmarkIds, QLandmarkManager::TransferOption option) const
 {
     QFile file(fileName);
 
@@ -987,7 +987,7 @@ QString QLandmarkManager::errorString() const
 /*!
     Returns whether the manager supports the given \a feature.
 */
-bool QLandmarkManager::isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const
+bool QLandmarkManager::isFeatureSupported(QLandmarkManager::ManagerFeature feature) const
 {
     Q_D(const QLandmarkManager);
 
@@ -1019,9 +1019,9 @@ QLandmarkManager::SupportLevel QLandmarkManager::filterSupportLevel(const QLandm
 }
 
 /*!
-    Returns the support level the manager provides for the given list of \a sortOrders.
+    Returns the support level the manager provides for the given \a sortOrder.
 */
-QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QList<QLandmarkSortOrder>& sortOrders) const
+QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder) const
 {
     Q_D(const QLandmarkManager);
 
@@ -1032,7 +1032,7 @@ QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QLi
      d->errorCode = QLandmarkManager::NoError;
      d->errorString = "";
 
-    return d->engine->sortOrderSupportLevel(sortOrders, &(d->errorCode), &(d->errorString));
+    return d->engine->sortOrderSupportLevel(sortOrder, &(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -1301,25 +1301,33 @@ bool QLandmarkManager::parseUri(const QString& uri, QString* pManagerId, QMap<QS
 */
 void QLandmarkManager::connectNotify(const char *signal)
 {
-    if (d_ptr->engine) {
-        if (QLatin1String(signal) == SIGNAL(landmarksAdded(QList<QLandmarkId>))) {
-            connect(d_ptr->engine,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
-                    this, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
-        } else if (QLatin1String(signal) == SIGNAL(landmarksChanged(QList<QLandmarkId>))) {
-            connect(d_ptr->engine,SIGNAL(landmarksChanged(QList<QLandmarkId>)),
-                    this, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
-        } else if (QLatin1String(signal) == SIGNAL(landmarksRemoved(QList<QLandmarkId>))) {
-            connect(d_ptr->engine,SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
-                    this, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
-        } else if (QLatin1String(signal) == SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>))) {
-            connect(d_ptr->engine,SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
-                    this, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
-        } else if (QLatin1String(signal) == SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>))) {
-            connect(d_ptr->engine,SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
-                    this, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
-        } else if (QLatin1String(signal) == SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>))) {
-            connect(d_ptr->engine,SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
-                    this, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+
+    if (!d_ptr->isConnected) {
+        if (d_ptr->engine) {
+            if (QLatin1String(signal) == SIGNAL(landmarksAdded(QList<QLandmarkId>))
+                || (QLatin1String(signal) == SIGNAL(landmarksChanged(QList<QLandmarkId>)))
+                || (QLatin1String(signal) == SIGNAL(landmarksRemoved(QList<QLandmarkId>)))
+                || (QLatin1String(signal) == SIGNAL(landmarksChanged(QList<QLandmarkId>)))
+                || (QLatin1String(signal) == SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)))
+                || (QLatin1String(signal) == SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)))
+                || (QLatin1String(signal) == SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)))
+                || (QLatin1String(signal) == SIGNAL(dataChanged()))) {
+                connect(d_ptr->engine,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
+                        this, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+                connect(d_ptr->engine,SIGNAL(landmarksChanged(QList<QLandmarkId>)),
+                        this, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+                connect(d_ptr->engine,SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
+                        this, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+                connect(d_ptr->engine,SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
+                        this, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+                connect(d_ptr->engine,SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
+                        this, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
+                connect(d_ptr->engine,SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
+                        this, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+                connect(d_ptr->engine,SIGNAL(dataChanged()),
+                        this, SIGNAL(dataChanged()));
+                d_ptr->isConnected = true;
+            }
         }
     }
     QObject::connectNotify(signal);
@@ -1330,25 +1338,31 @@ void QLandmarkManager::connectNotify(const char *signal)
 */
 void QLandmarkManager::disconnectNotify(const char *signal)
 {
-    if (d_ptr->engine) {
-        if (QLatin1String(signal) == SIGNAL(landmarksAdded(QList<QLandmarkId>))) {
-            disconnect(d_ptr->engine,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
-                    this, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
-        } else if (QLatin1String(signal) == SIGNAL(landmarksChanged(QList<QLandmarkId>))) {
-            disconnect(d_ptr->engine,SIGNAL(landmarksChanged(QList<QLandmarkId>)),
-                    this, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
-        } else if (QLatin1String(signal) == SIGNAL(landmarksRemoved(QList<QLandmarkId>))) {
-            disconnect(d_ptr->engine,SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
-                    this, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
-        } else if (QLatin1String(signal) == SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>))) {
-            disconnect(d_ptr->engine,SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
-                    this, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
-        } else if (QLatin1String(signal) == SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>))) {
-            disconnect(d_ptr->engine,SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
-                    this, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
-        } else if (QLatin1String(signal) == SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>))) {
-            disconnect(d_ptr->engine,SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
-                    this, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+    if (d_ptr->isConnected) {
+        if (d_ptr->engine) {
+            if ((QLatin1String(signal) == SIGNAL(landmarksAdded(QList<QLandmarkId>)))
+                || (QLatin1String(signal) == SIGNAL(landmarksChanged(QList<QLandmarkId>)))
+                || (QLatin1String(signal) == SIGNAL(landmarksRemoved(QList<QLandmarkId>)))
+                || (QLatin1String(signal) == SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)))
+                || (QLatin1String(signal) == SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)))
+                || (QLatin1String(signal) == SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)))
+                || (QLatin1String(signal) == SIGNAL(dataChanged()))) {
+                disconnect(d_ptr->engine,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
+                           this, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+                disconnect(d_ptr->engine,SIGNAL(landmarksChanged(QList<QLandmarkId>)),
+                           this, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+                disconnect(d_ptr->engine,SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
+                           this, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+                disconnect(d_ptr->engine,SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
+                           this, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+                disconnect(d_ptr->engine,SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
+                           this, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
+                disconnect(d_ptr->engine,SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
+                           this, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+                disconnect(d_ptr->engine,SIGNAL(dataChanged()),
+                           this, SIGNAL(dataChanged()));
+                d_ptr->isConnected = false;
+            }
         }
     }
     QObject::disconnectNotify(signal);

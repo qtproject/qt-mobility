@@ -103,17 +103,17 @@ public slots:
         m_accept = accept;
     }
 
-    void closeIncoming() {
+    void closeIncoming(const QString& instanceId) {
         QDBusReply<QString> reply = 
             connection().interface()->serviceOwner(message().service());
-        QString clientId = reply.value();
-        emit closeConnection(clientId);
+        const QString& clientId = reply.value();
+        emit closeConnection(clientId, instanceId);
     }
 
 Q_SIGNALS:
     void packageReceived(const QByteArray &package, int type, const QString &id);
     void newConnection(int pid, int uid);
-    void closeConnection(QString clientId);
+    void closeConnection(const QString& clientId, const QString& instanceId);
 
 private:
     bool m_accept;

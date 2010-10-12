@@ -110,7 +110,7 @@ EXPORTS
 	?autoUpdateCursorPosition@QGalleryItemListModel@QtMobility@@QBE_NXZ @ 109 NONAME ABSENT ; bool QtMobility::QGalleryItemListModel::autoUpdateCursorPosition(void) const
 	?cancel@QGalleryAbstractRequest@QtMobility@@QAEXXZ @ 110 NONAME ; void QtMobility::QGalleryAbstractRequest::cancel(void)
 	?cancel@QGalleryAbstractResponse@QtMobility@@UAEXXZ @ 111 NONAME ; void QtMobility::QGalleryAbstractResponse::cancel(void)
-	?cancelled@QGalleryAbstractRequest@QtMobility@@IAEXXZ @ 112 NONAME ; void QtMobility::QGalleryAbstractRequest::cancelled(void)
+	?cancelled@QGalleryAbstractRequest@QtMobility@@IAEXXZ @ 112 NONAME ABSENT ; void QtMobility::QGalleryAbstractRequest::cancelled(void)
 	?caseSensitivity@QGalleryMetaDataFilter@QtMobility@@QBE?AW4CaseSensitivity@Qt@@XZ @ 113 NONAME ABSENT ; enum Qt::CaseSensitivity QtMobility::QGalleryMetaDataFilter::caseSensitivity(void) const
 	?clear@QGalleryAbstractRequest@QtMobility@@QAEXXZ @ 114 NONAME ; void QtMobility::QGalleryAbstractRequest::clear(void)
 	?clear@QGalleryIntersectionFilter@QtMobility@@QAEXXZ @ 115 NONAME ; void QtMobility::QGalleryIntersectionFilter::clear(void)
@@ -267,8 +267,8 @@ EXPORTS
 	?qt_metacast@QGalleryQueryRequest@QtMobility@@UAEPAXPBD@Z @ 266 NONAME ; void * QtMobility::QGalleryQueryRequest::qt_metacast(char const *)
 	?qt_metacast@QGalleryRemoveRequest@QtMobility@@UAEPAXPBD@Z @ 267 NONAME ABSENT ; void * QtMobility::QGalleryRemoveRequest::qt_metacast(char const *)
 	?qt_metacast@QGalleryUrlRequest@QtMobility@@UAEPAXPBD@Z @ 268 NONAME ABSENT ; void * QtMobility::QGalleryUrlRequest::qt_metacast(char const *)
-	?removeAt@QGalleryIntersectionFilter@QtMobility@@QAEXH@Z @ 269 NONAME ; void QtMobility::QGalleryIntersectionFilter::removeAt(int)
-	?removeAt@QGalleryUnionFilter@QtMobility@@QAEXH@Z @ 270 NONAME ; void QtMobility::QGalleryUnionFilter::removeAt(int)
+	?removeAt@QGalleryIntersectionFilter@QtMobility@@QAEXH@Z @ 269 NONAME ABSENT ; void QtMobility::QGalleryIntersectionFilter::removeAt(int)
+	?removeAt@QGalleryUnionFilter@QtMobility@@QAEXH@Z @ 270 NONAME ABSENT ; void QtMobility::QGalleryUnionFilter::removeAt(int)
 	?removeColumn@QGalleryItemListModel@QtMobility@@QAEXH@Z @ 271 NONAME ABSENT ; void QtMobility::QGalleryItemListModel::removeColumn(int)
 	?removed@QGalleryItemList@QtMobility@@IAEXHH@Z @ 272 NONAME ABSENT ; void QtMobility::QGalleryItemList::removed(int, int)
 	?replace@QGalleryIntersectionFilter@QtMobility@@QAEXHABVQGalleryMetaDataFilter@2@@Z @ 273 NONAME ; void QtMobility::QGalleryIntersectionFilter::replace(int, class QtMobility::QGalleryMetaDataFilter const &)
@@ -325,8 +325,8 @@ EXPORTS
 	?setSortPropertyNames@QGalleryQueryRequest@QtMobility@@QAEXABVQStringList@@@Z @ 324 NONAME ; void QtMobility::QGalleryQueryRequest::setSortPropertyNames(class QStringList const &)
 	?setValue@QGalleryMetaDataFilter@QtMobility@@QAEXABVQVariant@@@Z @ 325 NONAME ; void QtMobility::QGalleryMetaDataFilter::setValue(class QVariant const &)
 	?sortPropertyNames@QGalleryQueryRequest@QtMobility@@QBE?AVQStringList@@XZ @ 326 NONAME ; class QStringList QtMobility::QGalleryQueryRequest::sortPropertyNames(void) const
-	?state@QGalleryAbstractRequest@QtMobility@@QBE?AW4State@12@XZ @ 327 NONAME ABSENT ; enum QtMobility::QGalleryAbstractRequest::State QtMobility::QGalleryAbstractRequest::state(void) const
-	?stateChanged@QGalleryAbstractRequest@QtMobility@@IAEXW4State@12@@Z @ 328 NONAME ABSENT ; void QtMobility::QGalleryAbstractRequest::stateChanged(enum QtMobility::QGalleryAbstractRequest::State)
+	?state@QGalleryAbstractRequest@QtMobility@@QBE?AW4State@12@XZ @ 327 NONAME ; enum QtMobility::QGalleryAbstractRequest::State QtMobility::QGalleryAbstractRequest::state(void) const
+	?stateChanged@QGalleryAbstractRequest@QtMobility@@IAEXW4State@12@@Z @ 328 NONAME ; void QtMobility::QGalleryAbstractRequest::stateChanged(enum QtMobility::QGalleryAbstractRequest::State)
 	?status@QGalleryBaseResponse@QtMobility@@UBE?AV?$QFlags@W4ItemStatusFlag@QGalleryItemList@QtMobility@@@@H@Z @ 329 NONAME ABSENT ; class QFlags<enum QtMobility::QGalleryItemList::ItemStatusFlag> QtMobility::QGalleryBaseResponse::status(int) const
 	?statusChanged@QGalleryItemList@QtMobility@@IAEXHH@Z @ 330 NONAME ABSENT ; void QtMobility::QGalleryItemList::statusChanged(int, int)
 	?succeeded@QGalleryAbstractRequest@QtMobility@@IAEXXZ @ 331 NONAME ABSENT ; void QtMobility::QGalleryAbstractRequest::succeeded(void)
@@ -497,7 +497,7 @@ EXPORTS
 	?addColumn@QGalleryQueryModel@QtMobility@@QAEXABV?$QHash@HVQString@@@@@Z @ 496 NONAME ; void QtMobility::QGalleryQueryModel::addColumn(class QHash<int, class QString> const &)
 	?addColumn@QGalleryQueryModel@QtMobility@@QAEXABVQString@@H@Z @ 497 NONAME ; void QtMobility::QGalleryQueryModel::addColumn(class QString const &, int)
 	?cancel@QGalleryQueryModel@QtMobility@@QAEXXZ @ 498 NONAME ; void QtMobility::QGalleryQueryModel::cancel(void)
-	?cancelled@QGalleryQueryModel@QtMobility@@IAEXXZ @ 499 NONAME ; void QtMobility::QGalleryQueryModel::cancelled(void)
+	?cancelled@QGalleryQueryModel@QtMobility@@IAEXXZ @ 499 NONAME ABSENT ; void QtMobility::QGalleryQueryModel::cancelled(void)
 	?clear@QGalleryQueryModel@QtMobility@@QAEXXZ @ 500 NONAME ; void QtMobility::QGalleryQueryModel::clear(void)
 	?columnCount@QGalleryQueryModel@QtMobility@@UBEHABVQModelIndex@@@Z @ 501 NONAME ; int QtMobility::QGalleryQueryModel::columnCount(class QModelIndex const &) const
 	?currentIndex@QGalleryQueryRequest@QtMobility@@QBEHXZ @ 502 NONAME ; int QtMobility::QGalleryQueryRequest::currentIndex(void) const
@@ -634,8 +634,8 @@ EXPORTS
 	?setScope@QGalleryQueryRequest@QtMobility@@QAEXW4Scope@12@@Z @ 633 NONAME ; void QtMobility::QGalleryQueryRequest::setScope(enum QtMobility::QGalleryQueryRequest::Scope)
 	?setSortPropertyNames@QGalleryQueryModel@QtMobility@@QAEXABVQStringList@@@Z @ 634 NONAME ; void QtMobility::QGalleryQueryModel::setSortPropertyNames(class QStringList const &)
 	?sortPropertyNames@QGalleryQueryModel@QtMobility@@QBE?AVQStringList@@XZ @ 635 NONAME ; class QStringList QtMobility::QGalleryQueryModel::sortPropertyNames(void) const
-	?state@QGalleryQueryModel@QtMobility@@QBE?AW4State@QGalleryAbstractRequest@2@XZ @ 636 NONAME ABSENT ; enum QtMobility::QGalleryAbstractRequest::State QtMobility::QGalleryQueryModel::state(void) const
-	?stateChanged@QGalleryQueryModel@QtMobility@@IAEXW4State@QGalleryAbstractRequest@2@@Z @ 637 NONAME ABSENT ; void QtMobility::QGalleryQueryModel::stateChanged(enum QtMobility::QGalleryAbstractRequest::State)
+	?state@QGalleryQueryModel@QtMobility@@QBE?AW4State@QGalleryAbstractRequest@2@XZ @ 636 NONAME ; enum QtMobility::QGalleryAbstractRequest::State QtMobility::QGalleryQueryModel::state(void) const
+	?stateChanged@QGalleryQueryModel@QtMobility@@IAEXW4State@QGalleryAbstractRequest@2@@Z @ 637 NONAME ; void QtMobility::QGalleryQueryModel::stateChanged(enum QtMobility::QGalleryAbstractRequest::State)
 	?succeeded@QGalleryQueryModel@QtMobility@@IAEXXZ @ 638 NONAME ABSENT ; void QtMobility::QGalleryQueryModel::succeeded(void)
 	?tr@QGalleryQueryModel@QtMobility@@SA?AVQString@@PBD0@Z @ 639 NONAME ; class QString QtMobility::QGalleryQueryModel::tr(char const *, char const *)
 	?tr@QGalleryQueryModel@QtMobility@@SA?AVQString@@PBD0H@Z @ 640 NONAME ; class QString QtMobility::QGalleryQueryModel::tr(char const *, char const *, int)
@@ -657,7 +657,7 @@ EXPORTS
 	?staticMetaObject@QGalleryResultSet@QtMobility@@2UQMetaObject@@B @ 656 NONAME ; struct QMetaObject const QtMobility::QGalleryResultSet::staticMetaObject
 	?staticMetaObject@QGalleryQueryModel@QtMobility@@2UQMetaObject@@B @ 657 NONAME ; struct QMetaObject const QtMobility::QGalleryQueryModel::staticMetaObject
 	??0QGalleryAbstractResponse@QtMobility@@QAE@HABVQString@@PAVQObject@@@Z @ 658 NONAME ; QtMobility::QGalleryAbstractResponse::QGalleryAbstractResponse(int, class QString const &, class QObject *)
-	?cancelled@QGalleryAbstractResponse@QtMobility@@IAEXXZ @ 659 NONAME ; void QtMobility::QGalleryAbstractResponse::cancelled(void)
+	?cancelled@QGalleryAbstractResponse@QtMobility@@IAEXXZ @ 659 NONAME ABSENT ; void QtMobility::QGalleryAbstractResponse::cancelled(void)
 	?error@QGalleryAbstractRequest@QtMobility@@IAEXHABVQString@@@Z @ 660 NONAME ; void QtMobility::QGalleryAbstractRequest::error(int, class QString const &)
 	?error@QGalleryAbstractRequest@QtMobility@@QBEHXZ @ 661 NONAME ; int QtMobility::QGalleryAbstractRequest::error(void) const
 	?error@QGalleryAbstractResponse@QtMobility@@IAEXHABVQString@@@Z @ 662 NONAME ; void QtMobility::QGalleryAbstractResponse::error(int, class QString const &)
@@ -683,10 +683,10 @@ EXPORTS
 	?setAutoUpdate@QGalleryQueryModel@QtMobility@@QAEX_N@Z @ 682 NONAME ; void QtMobility::QGalleryQueryModel::setAutoUpdate(bool)
 	?setAutoUpdate@QGalleryQueryRequest@QtMobility@@QAEX_N@Z @ 683 NONAME ; void QtMobility::QGalleryQueryRequest::setAutoUpdate(bool)
 	?setAutoUpdate@QGalleryTypeRequest@QtMobility@@QAEX_N@Z @ 684 NONAME ; void QtMobility::QGalleryTypeRequest::setAutoUpdate(bool)
-	?status@QGalleryAbstractRequest@QtMobility@@QBE?AW4Status@12@XZ @ 685 NONAME ; enum QtMobility::QGalleryAbstractRequest::Status QtMobility::QGalleryAbstractRequest::status(void) const
-	?status@QGalleryQueryModel@QtMobility@@QBE?AW4Status@QGalleryAbstractRequest@2@XZ @ 686 NONAME ; enum QtMobility::QGalleryAbstractRequest::Status QtMobility::QGalleryQueryModel::status(void) const
-	?statusChanged@QGalleryAbstractRequest@QtMobility@@IAEXW4Status@12@@Z @ 687 NONAME ; void QtMobility::QGalleryAbstractRequest::statusChanged(enum QtMobility::QGalleryAbstractRequest::Status)
-	?statusChanged@QGalleryQueryModel@QtMobility@@IAEXW4Status@QGalleryAbstractRequest@2@@Z @ 688 NONAME ; void QtMobility::QGalleryQueryModel::statusChanged(enum QtMobility::QGalleryAbstractRequest::Status)
+	?status@QGalleryAbstractRequest@QtMobility@@QBE?AW4Status@12@XZ @ 685 NONAME ABSENT ; enum QtMobility::QGalleryAbstractRequest::Status QtMobility::QGalleryAbstractRequest::status(void) const
+	?status@QGalleryQueryModel@QtMobility@@QBE?AW4Status@QGalleryAbstractRequest@2@XZ @ 686 NONAME ABSENT ; enum QtMobility::QGalleryAbstractRequest::Status QtMobility::QGalleryQueryModel::status(void) const
+	?statusChanged@QGalleryAbstractRequest@QtMobility@@IAEXW4Status@12@@Z @ 687 NONAME ABSENT ; void QtMobility::QGalleryAbstractRequest::statusChanged(enum QtMobility::QGalleryAbstractRequest::Status)
+	?statusChanged@QGalleryQueryModel@QtMobility@@IAEXW4Status@QGalleryAbstractRequest@2@@Z @ 688 NONAME ABSENT ; void QtMobility::QGalleryQueryModel::statusChanged(enum QtMobility::QGalleryAbstractRequest::Status)
 	??WQtMobility@@YA?AVQGalleryUnionFilter@0@ABV10@0@Z @ 689 NONAME ; class QtMobility::QGalleryUnionFilter QtMobility::operator||(class QtMobility::QGalleryUnionFilter const &, class QtMobility::QGalleryUnionFilter const &)
 	??VQtMobility@@YA?AVQGalleryIntersectionFilter@0@ABV10@0@Z @ 690 NONAME ; class QtMobility::QGalleryIntersectionFilter QtMobility::operator&&(class QtMobility::QGalleryIntersectionFilter const &, class QtMobility::QGalleryIntersectionFilter const &)
 	?autoUpdate@QGalleryTypeRequest@QtMobility@@QBE_NXZ @ 691 NONAME ; bool QtMobility::QGalleryTypeRequest::autoUpdate(void) const
@@ -725,4 +725,17 @@ EXPORTS
 	?rootTypeChanged@QGalleryQueryRequest@QtMobility@@IAEXXZ @ 724 NONAME ; void QtMobility::QGalleryQueryRequest::rootTypeChanged(void)
 	?limitChanged@QGalleryQueryModel@QtMobility@@IAEXXZ @ 725 NONAME ; void QtMobility::QGalleryQueryModel::limitChanged(void)
 	?filterChanged@QGalleryQueryModel@QtMobility@@IAEXXZ @ 726 NONAME ; void QtMobility::QGalleryQueryModel::filterChanged(void)
+	?prepend@QGalleryIntersectionFilter@QtMobility@@QAEXABVQGalleryUnionFilter@2@@Z @ 727 NONAME ; void QtMobility::QGalleryIntersectionFilter::prepend(class QtMobility::QGalleryUnionFilter const &)
+	?remove@QGalleryIntersectionFilter@QtMobility@@QAEXH@Z @ 728 NONAME ; void QtMobility::QGalleryIntersectionFilter::remove(int)
+	?prepend@QGalleryIntersectionFilter@QtMobility@@QAEXABV12@@Z @ 729 NONAME ; void QtMobility::QGalleryIntersectionFilter::prepend(class QtMobility::QGalleryIntersectionFilter const &)
+	?remove@QGalleryUnionFilter@QtMobility@@QAEXH@Z @ 730 NONAME ; void QtMobility::QGalleryUnionFilter::remove(int)
+	??6QGalleryIntersectionFilter@QtMobility@@QAEAAV01@ABV01@@Z @ 731 NONAME ; class QtMobility::QGalleryIntersectionFilter & QtMobility::QGalleryIntersectionFilter::operator<<(class QtMobility::QGalleryIntersectionFilter const &)
+	?prepend@QGalleryIntersectionFilter@QtMobility@@QAEXABVQGalleryMetaDataFilter@2@@Z @ 732 NONAME ; void QtMobility::QGalleryIntersectionFilter::prepend(class QtMobility::QGalleryMetaDataFilter const &)
+	??6QGalleryUnionFilter@QtMobility@@QAEAAV01@ABV01@@Z @ 733 NONAME ; class QtMobility::QGalleryUnionFilter & QtMobility::QGalleryUnionFilter::operator<<(class QtMobility::QGalleryUnionFilter const &)
+	?prepend@QGalleryUnionFilter@QtMobility@@QAEXABVQGalleryIntersectionFilter@2@@Z @ 734 NONAME ; void QtMobility::QGalleryUnionFilter::prepend(class QtMobility::QGalleryIntersectionFilter const &)
+	?canceled@QGalleryAbstractRequest@QtMobility@@IAEXXZ @ 735 NONAME ; void QtMobility::QGalleryAbstractRequest::canceled(void)
+	?canceled@QGalleryAbstractResponse@QtMobility@@IAEXXZ @ 736 NONAME ; void QtMobility::QGalleryAbstractResponse::canceled(void)
+	?canceled@QGalleryQueryModel@QtMobility@@IAEXXZ @ 737 NONAME ; void QtMobility::QGalleryQueryModel::canceled(void)
+	?prepend@QGalleryUnionFilter@QtMobility@@QAEXABVQGalleryMetaDataFilter@2@@Z @ 738 NONAME ; void QtMobility::QGalleryUnionFilter::prepend(class QtMobility::QGalleryMetaDataFilter const &)
+	?prepend@QGalleryUnionFilter@QtMobility@@QAEXABV12@@Z @ 739 NONAME ; void QtMobility::QGalleryUnionFilter::prepend(class QtMobility::QGalleryUnionFilter const &)
 

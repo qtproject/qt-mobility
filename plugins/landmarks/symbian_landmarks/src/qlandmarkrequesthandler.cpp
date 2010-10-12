@@ -82,13 +82,15 @@ void CLandmarkRequestAO::RunL()
             SetActive();
         }
         else if (iStatus == KErrNone && IsMultiOperationRequest()) {
-            iObserver->HandleExecutionL(iParent, iStatus);
+            TRAP_IGNORE(iObserver->HandleExecutionL(iParent, iStatus);)
+            //qDebug() << "iStatus = " << iStatus.Int();
             iStatus = KRequestPending;
             if (iOperation) {
                 iOperation->NextStep(iStatus, iProgress);
                 SetActive();
             }
             else {
+                //qDebug() << "starting multi-operation";
                 SetActive();
                 // Only for the Landmark save and Category save. These dont have async operations.
                 // Self completing ative object.
