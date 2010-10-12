@@ -2306,7 +2306,7 @@ void tst_QOrganizerManager::detailDefinitions()
 
         /* Bad remove string */
         QVERIFY(cm->removeDetailDefinition(QString(), QOrganizerItemType::TypeEvent) == false);
-        QVERIFY(cQOrganizerManagerzerItemManager::BadArgumentError);
+        QVERIFY(cm->error() == QOrganizerManager::BadArgumentError);
 
         QVERIFY(cm->saveDetailDefinition(noIdDef, QOrganizerItemType::TypeEvent) == false);
         QVERIFY(cm->error() == QOrganizerManager::BadArgumentError);
