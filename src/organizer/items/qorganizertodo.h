@@ -67,18 +67,18 @@ public:
     void setRecurrenceDates(const QSet<QDate>& rdates);
     QSet<QDate> recurrenceDates() const;
 
-    void setRecurrenceRule(const QOrganizerItemRecurrenceRule& rrule);
-    void setRecurrenceRules(const QSet<QOrganizerItemRecurrenceRule>& rrules);
-    QSet<QOrganizerItemRecurrenceRule> recurrenceRules() const;
-    QOrganizerItemRecurrenceRule recurrenceRule() const;
+    void setRecurrenceRule(const QOrganizerRecurrenceRule& rrule);
+    void setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rrules);
+    QSet<QOrganizerRecurrenceRule> recurrenceRules() const;
+    QOrganizerRecurrenceRule recurrenceRule() const;
 
     void setExceptionDates(const QSet<QDate>& exdates);
     QSet<QDate> exceptionDates() const;
 
-    void setExceptionRule(const QOrganizerItemRecurrenceRule& exrule);
-    void setExceptionRules(const QSet<QOrganizerItemRecurrenceRule>& exrules);
-    QSet<QOrganizerItemRecurrenceRule> exceptionRules() const;
-    QOrganizerItemRecurrenceRule exceptionRule() const;
+    void setExceptionRule(const QOrganizerRecurrenceRule& exrule);
+    void setExceptionRules(const QSet<QOrganizerRecurrenceRule>& exrules);
+    QSet<QOrganizerRecurrenceRule> exceptionRules() const;
+    QOrganizerRecurrenceRule exceptionRule() const;
 
     void setPriority(QOrganizerItemPriority::Priority);
     QOrganizerItemPriority::Priority priority() const;

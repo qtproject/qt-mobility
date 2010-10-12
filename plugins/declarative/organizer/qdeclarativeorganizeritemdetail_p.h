@@ -127,29 +127,29 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemDetail)
 
 
 //event time range detail
-class QDeclarativeOrganizerEventTimeRange : public QDeclarativeOrganizerItemDetail
+class QDeclarativeOrganizerEventTime : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
     Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
     Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime NOTIFY valueChanged)
     Q_PROPERTY(bool isTimeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
 public:
-    Q_DECLARE_LATIN1_CONSTANT(DetailName, "eventTimeRange");
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "eventTime");
 
-    QDeclarativeOrganizerEventTimeRange(QObject* parent = 0)
+    QDeclarativeOrganizerEventTime(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
     }
-    void setStartDateTime(const QDateTime& startDateTime) {m_detail.setValue(QOrganizerEventTimeRange::FieldStartDateTime, startDateTime);}
-    QDateTime startDateTime() const {return m_detail.value<QDateTime>(QOrganizerEventTimeRange::FieldStartDateTime);}
-    void setEndDateTime(const QDateTime& endDateTime) {m_detail.setValue(QOrganizerEventTimeRange::FieldEndDateTime, endDateTime);}
-    QDateTime endDateTime() const {return m_detail.value<QDateTime>(QOrganizerEventTimeRange::FieldEndDateTime);}
-    void setTimeSpecified(bool isTimeSpecified) {m_detail.setValue(QOrganizerEventTimeRange::FieldTimeSpecified, isTimeSpecified);}
-    bool isTimeSpecified() {return m_detail.value<bool>(QOrganizerEventTimeRange::FieldTimeSpecified);}
+    void setStartDateTime(const QDateTime& startDateTime) {m_detail.setValue(QOrganizerEventTime::FieldStartDateTime, startDateTime);}
+    QDateTime startDateTime() const {return m_detail.value<QDateTime>(QOrganizerEventTime::FieldStartDateTime);}
+    void setEndDateTime(const QDateTime& endDateTime) {m_detail.setValue(QOrganizerEventTime::FieldEndDateTime, endDateTime);}
+    QDateTime endDateTime() const {return m_detail.value<QDateTime>(QOrganizerEventTime::FieldEndDateTime);}
+    void setTimeSpecified(bool isTimeSpecified) {m_detail.setValue(QOrganizerEventTime::FieldTimeSpecified, isTimeSpecified);}
+    bool isTimeSpecified() {return m_detail.value<bool>(QOrganizerEventTime::FieldTimeSpecified);}
 signals:
     void valueChanged();
 };
-QML_DECLARE_TYPE(QDeclarativeOrganizerEventTimeRange)
+QML_DECLARE_TYPE(QDeclarativeOrganizerEventTime)
 
 //comment detail
 class QDeclarativeOrganizerItemComment : public QDeclarativeOrganizerItemDetail
@@ -374,7 +374,7 @@ signals:
 private slots:
     void _saveRecurrenceRules()
     {
-        QSet<QOrganizerItemRecurrenceRule> rules;
+        QSet<QOrganizerRecurrenceRule> rules;
         foreach (const QDeclarativeOrganizerItemRecurrenceRule* r, m_recurrenceRules) {
             rules << r->rule();
         }
@@ -384,7 +384,7 @@ private slots:
 
     void _saveExceptionRules()
     {
-        QSet<QOrganizerItemRecurrenceRule> rules;
+        QSet<QOrganizerRecurrenceRule> rules;
         foreach (const QDeclarativeOrganizerItemRecurrenceRule* r, m_exceptionRules) {
             rules << r->rule();
         }
@@ -559,22 +559,22 @@ signals:
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemType)
 
 //journal time range detail
-class QDeclarativeOrganizerJournalTimeRange : public QDeclarativeOrganizerItemDetail
+class QDeclarativeOrganizerJournalTime : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
     Q_PROPERTY(QDateTime entryDateTime READ entryDateTime WRITE setEntryDateTime NOTIFY valueChanged)
 public:
-    Q_DECLARE_LATIN1_CONSTANT(DetailName, "journalTimeRange");
-    QDeclarativeOrganizerJournalTimeRange(QObject* parent = 0)
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "journalTime");
+    QDeclarativeOrganizerJournalTime(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
     }
-    void setEntryDateTime(const QDateTime& entryDateTime) {m_detail.setValue(QOrganizerJournalTimeRange::FieldEntryDateTime, entryDateTime);}
-    QDateTime entryDateTime() const {return m_detail.value<QDateTime>(QOrganizerJournalTimeRange::FieldEntryDateTime);}
+    void setEntryDateTime(const QDateTime& entryDateTime) {m_detail.setValue(QOrganizerJournalTime::FieldEntryDateTime, entryDateTime);}
+    QDateTime entryDateTime() const {return m_detail.value<QDateTime>(QOrganizerJournalTime::FieldEntryDateTime);}
 signals:
     void valueChanged();
 };
-QML_DECLARE_TYPE(QDeclarativeOrganizerJournalTimeRange)
+QML_DECLARE_TYPE(QDeclarativeOrganizerJournalTime)
 
 //todo progress detail
 class QDeclarativeOrganizerTodoProgress : public QDeclarativeOrganizerItemDetail
@@ -615,29 +615,29 @@ signals:
 QML_DECLARE_TYPE(QDeclarativeOrganizerTodoProgress)
 
 //todo time range detail
-class QDeclarativeOrganizerTodoTimeRange : public QDeclarativeOrganizerItemDetail
+class QDeclarativeOrganizerTodoTime : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
     Q_PROPERTY(bool isTimeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
     Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
     Q_PROPERTY(QDateTime dueDateTime READ dueDateTime WRITE setDueDateTime NOTIFY valueChanged)
 public:
-    Q_DECLARE_LATIN1_CONSTANT(DetailName, "todoTimeRange");
-    QDeclarativeOrganizerTodoTimeRange(QObject* parent = 0)
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "todoTime");
+    QDeclarativeOrganizerTodoTime(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
     }
-    void setStartDateTime(const QDateTime& startDateTime) {m_detail.setValue(QOrganizerTodoTimeRange::FieldStartDateTime, startDateTime);}
-    QDateTime startDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoTimeRange::FieldStartDateTime);}
-    void setDueDateTime(const QDateTime& dueDateTime) {m_detail.setValue(QOrganizerTodoTimeRange::FieldDueDateTime, dueDateTime);}
-    QDateTime dueDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoTimeRange::FieldDueDateTime);}
-    void setTimeSpecified(bool isTimeSpecified) {m_detail.setValue(QOrganizerTodoTimeRange::FieldTimeSpecified, isTimeSpecified);}
-    bool isTimeSpecified() {return m_detail.value<bool>(QOrganizerTodoTimeRange::FieldTimeSpecified);}
+    void setStartDateTime(const QDateTime& startDateTime) {m_detail.setValue(QOrganizerTodoTime::FieldStartDateTime, startDateTime);}
+    QDateTime startDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoTime::FieldStartDateTime);}
+    void setDueDateTime(const QDateTime& dueDateTime) {m_detail.setValue(QOrganizerTodoTime::FieldDueDateTime, dueDateTime);}
+    QDateTime dueDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoTime::FieldDueDateTime);}
+    void setTimeSpecified(bool isTimeSpecified) {m_detail.setValue(QOrganizerTodoTime::FieldTimeSpecified, isTimeSpecified);}
+    bool isTimeSpecified() {return m_detail.value<bool>(QOrganizerTodoTime::FieldTimeSpecified);}
 
 signals:
     void valueChanged();
 };
-QML_DECLARE_TYPE(QDeclarativeOrganizerTodoTimeRange)
+QML_DECLARE_TYPE(QDeclarativeOrganizerTodoTime)
 
 #endif // QDECLARATIVEORGANIZERITEMDETAIL_H
 

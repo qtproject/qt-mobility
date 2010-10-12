@@ -59,7 +59,7 @@ QTM_USE_NAMESPACE
 /*! Sets the start date time of the event to \a startDateTime */
 void QOrganizerEvent::setStartDateTime(const QDateTime& startDateTime)
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     etr.setStartDateTime(startDateTime);
     saveDetail(&etr);
 }
@@ -67,14 +67,14 @@ void QOrganizerEvent::setStartDateTime(const QDateTime& startDateTime)
 /*! Returns the date time at which the first instance of the event starts */
 QDateTime QOrganizerEvent::startDateTime() const
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     return etr.startDateTime();
 }
 
 /*! Sets the end date time of the event to \a endDateTime */
 void QOrganizerEvent::setEndDateTime(const QDateTime& endDateTime)
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     etr.setEndDateTime(endDateTime);
     saveDetail(&etr);
 }
@@ -82,14 +82,14 @@ void QOrganizerEvent::setEndDateTime(const QDateTime& endDateTime)
 /*! Returns the date time at which the first instance of the event ends */
 QDateTime QOrganizerEvent::endDateTime() const
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     return etr.endDateTime();
 }
 
 /*! Sets whether the time component of the start datetime or end datetime are significant. */
 void QOrganizerEvent::setTimeSpecified(bool isTimeSpecified)
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     etr.setTimeSpecified(isTimeSpecified);
     saveDetail(&etr);
 }
@@ -97,7 +97,7 @@ void QOrganizerEvent::setTimeSpecified(bool isTimeSpecified)
 /*! Returns whether the time component of the start datetime or end datetime are significant. */
 bool QOrganizerEvent::isTimeSpecified() const
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     return etr.isTimeSpecified();
 }
 
@@ -125,7 +125,7 @@ QSet<QDate> QOrganizerEvent::recurrenceDates() const
 
 /*! Sets the list of recurrence rules \a rrules to be the rules which define when the event occurs, other than those dates
     specified explicitly via setRecurrenceDates(). */
-void QOrganizerEvent::setRecurrenceRules(const QSet<QOrganizerItemRecurrenceRule>& rrules)
+void QOrganizerEvent::setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rrules)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setRecurrenceRules(rrules);
@@ -135,13 +135,13 @@ void QOrganizerEvent::setRecurrenceRules(const QSet<QOrganizerItemRecurrenceRule
 /*! Sets a single recurrence rule \a rrule to be the rule which define when the event occurs, other than those dates
     specified explicitly via setRecurrenceDates().
     \sa setRecurrenceRules()*/
-void QOrganizerEvent::setRecurrenceRule(const QOrganizerItemRecurrenceRule& rrule)
+void QOrganizerEvent::setRecurrenceRule(const QOrganizerRecurrenceRule& rrule)
 {
-    setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rrule);
+    setRecurrenceRules(QSet<QOrganizerRecurrenceRule>() << rrule);
 }
 
 /*! Returns the list of recurrence rules which define when the event occurs */
-QSet<QOrganizerItemRecurrenceRule> QOrganizerEvent::recurrenceRules() const
+QSet<QOrganizerRecurrenceRule> QOrganizerEvent::recurrenceRules() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.recurrenceRules();
@@ -150,12 +150,12 @@ QSet<QOrganizerItemRecurrenceRule> QOrganizerEvent::recurrenceRules() const
 /*! Returns a recurrence rule which has been explicitly set for the event.
     Note: if more than one rule exists, the order of the rules is undefined, so any one could be returned.
  */
-QOrganizerItemRecurrenceRule QOrganizerEvent::recurrenceRule() const
+QOrganizerRecurrenceRule QOrganizerEvent::recurrenceRule() const
 {
-    QSet<QOrganizerItemRecurrenceRule> rrules = recurrenceRules();
+    QSet<QOrganizerRecurrenceRule> rrules = recurrenceRules();
     if (!rrules.isEmpty())
         return *rrules.begin();
-    return QOrganizerItemRecurrenceRule();
+    return QOrganizerRecurrenceRule();
 }
 
 /*! Sets the given list of dates \a exdates to be dates on which the event explicitly does not occur,
@@ -190,7 +190,7 @@ QSet<QDate> QOrganizerEvent::exceptionDates() const
 /*! Sets the given list of recurrence rules \a exrules to be the rules which define when
     the event does not occur.  Any previously specified exception rules will be cleared
     when this function is called. */
-void QOrganizerEvent::setExceptionRules(const QSet<QOrganizerItemRecurrenceRule>& exrules)
+void QOrganizerEvent::setExceptionRules(const QSet<QOrganizerRecurrenceRule>& exrules)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setExceptionRules(exrules);
@@ -202,23 +202,23 @@ void QOrganizerEvent::setExceptionRules(const QSet<QOrganizerItemRecurrenceRule>
     when this function is called.
     \sa setExceptionRules.
  */
-void QOrganizerEvent::setExceptionRule(const QOrganizerItemRecurrenceRule& xrule)
+void QOrganizerEvent::setExceptionRule(const QOrganizerRecurrenceRule& xrule)
 {
-    setExceptionRules(QSet<QOrganizerItemRecurrenceRule>() << xrule);
+    setExceptionRules(QSet<QOrganizerRecurrenceRule>() << xrule);
 }
 
 /*! Returns an exception rule which has been explicitly set for the event.
     Note: if more than one exception rule exists, the order of the rules is undefined, so any one could be returned.*/
-QOrganizerItemRecurrenceRule QOrganizerEvent::exceptionRule() const
+QOrganizerRecurrenceRule QOrganizerEvent::exceptionRule() const
 {
-    QSet<QOrganizerItemRecurrenceRule> exrules = exceptionRules();
+    QSet<QOrganizerRecurrenceRule> exrules = exceptionRules();
     if (!exrules.isEmpty())
         return *exrules.begin();
-    return QOrganizerItemRecurrenceRule();
+    return QOrganizerRecurrenceRule();
 }
 
 /*! Returns the list of exception rules for the event */
-QSet<QOrganizerItemRecurrenceRule> QOrganizerEvent::exceptionRules() const
+QSet<QOrganizerRecurrenceRule> QOrganizerEvent::exceptionRules() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.exceptionRules();

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERTODOTIMERANGE_H
-#define QORGANIZERTODOTIMERANGE_H
+#ifndef QORGANIZEREVENTTIME_H
+#define QORGANIZEREVENTTIME_H
 
 #include <QString>
 
@@ -51,25 +51,25 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_ORGANIZER_EXPORT QOrganizerTodoTimeRange : public QOrganizerItemDetail
+class Q_ORGANIZER_EXPORT QOrganizerEventTime : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
     static const QLatin1Constant DefinitionName;
     static const QLatin1Constant FieldStartDateTime;
-    static const QLatin1Constant FieldDueDateTime;
+    static const QLatin1Constant FieldEndDateTime;
     static const QLatin1Constant FieldTimeSpecified;
 #else
-    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerTodoTimeRange, "TodoTimeRange")
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerEventTime, "EventTime")
     Q_DECLARE_LATIN1_CONSTANT(FieldStartDateTime, "StartDateTime");
-    Q_DECLARE_LATIN1_CONSTANT(FieldDueDateTime, "DueDateTime");
+    Q_DECLARE_LATIN1_CONSTANT(FieldEndDateTime, "EndDateTime");
     Q_DECLARE_LATIN1_CONSTANT(FieldTimeSpecified, "TimeSpecified");
 #endif
 
     void setStartDateTime(const QDateTime& startDateTime) {setValue(FieldStartDateTime, startDateTime);}
     QDateTime startDateTime() const {return value<QDateTime>(FieldStartDateTime);}
-    void setDueDateTime(const QDateTime& dueDateTime) {setValue(FieldDueDateTime, dueDateTime);}
-    QDateTime dueDateTime() const {return value<QDateTime>(FieldDueDateTime);}
+    void setEndDateTime(const QDateTime& endDateTime) {setValue(FieldEndDateTime, endDateTime);}
+    QDateTime endDateTime() const {return value<QDateTime>(FieldEndDateTime);}
     void setTimeSpecified(bool isTimeSpecified) {setValue(FieldTimeSpecified, isTimeSpecified);}
     bool isTimeSpecified() {return value<bool>(FieldTimeSpecified);}
 };

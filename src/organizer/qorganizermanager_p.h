@@ -39,8 +39,9 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMABSTRACTREQUEST_P_H
-#define QORGANIZERITEMABSTRACTREQUEST_P_H
+
+#ifndef QCONTACTMANAGER_P_H
+#define QCONTACTMANAGER_P_H
 
 //
 //  W A R N I N G
@@ -53,56 +54,54 @@
 // We mean it.
 //
 
-#include "qorganizeritemmanager.h"
-#include "qorganizeritemmanager_p.h"
-#include "qorganizeritemabstractrequest.h"
-
+#include <QMap>
+#include <QMultiMap>
 #include <QList>
-#include <QPointer>
-#include <QMutex>
+#include <QString>
+
+#include "qorganizermanager.h"
+#include "qorganizermanagerengine.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemAbstractRequestPrivate
+class QOrganizerManagerEngineFactory;
+
+/* Data and stuff that is shared amongst all backends */
+class QOrganizerManagerData
 {
 public:
-    QOrganizerItemAbstractRequestPrivate()
-        : m_error(QOrganizerItemManager::NoError),
-            m_state(QOrganizerItemAbstractRequest::InactiveState),
-            m_manager(0)
+    QOrganizerManagerData()
+        : m_engine(0),
+        m_error(QOrganizerManager::NoError)
     {
     }
 
-    virtual ~QOrganizerItemAbstractRequestPrivate()
+    ~QOrganizerManagerData()
     {
+        delete m_engine;
     }
 
-    virtual QOrganizerItemAbstractRequest::RequestType type() const
-    {
-        return QOrganizerItemAbstractRequest::InvalidRequest;
-    }
+    void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
+    static QOrganizerManagerEngine* engine(const QOrganizerManager* manager);
+    static QOrganizerItemEngineLocalId* createEngineItemLocalId(const QString& uri);
+    static QOrganizerCollectionEngineLocalId* createEngineCollectionLocalId(const QString& uri);
 
-    static void notifyEngine(QOrganizerItemAbstractRequest* request)
-    {
-        Q_ASSERT(request);
-        QOrganizerItemAbstractRequestPrivate* d = request->d_ptr;
-        if (d) {
-            QMutexLocker ml(&d->m_mutex);
-            QOrganizerItemManagerEngine *engine = QOrganizerItemManagerData::engine(d->m_manager);
-            ml.unlock();
-            if (engine) {
-                engine->requestDestroyed(request);
-            }
-        }
-    }
+    QOrganizerManagerEngine* m_engine;
+    QOrganizerManager::Error m_error;
+    QMap<int, QOrganizerManager::Error> m_errorMap;
 
-    QOrganizerItemManager::Error m_error;
-    QOrganizerItemAbstractRequest::State m_state;
-    QPointer<QOrganizerItemManager> m_manager;
-    QPointer<QOrganizerItemManagerEngine> m_engine;
+    /* Manager plugins */
+    static QHash<QString, QOrganizerManagerEngineFactory*> m_engines;
+    static bool m_discovered;
+    static bool m_discoveredStatic;
+    static QStringList m_pluginPaths;
+    static void loadFactories();
+    static void loadStaticFactories();
 
-    mutable QMutex m_mutex;
+private:
+    Q_DISABLE_COPY(QOrganizerManagerData)
 };
+
 
 QTM_END_NAMESPACE
 

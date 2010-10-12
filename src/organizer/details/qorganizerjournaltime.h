@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERJOURNALTIMERANGE_H
-#define QORGANIZERJOURNALTIMERANGE_H
+#ifndef QORGANIZERJOURNALTIME_H
+#define QORGANIZERJOURNALTIME_H
 
 #include <QString>
 
@@ -51,14 +51,14 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_ORGANIZER_EXPORT QOrganizerJournalTimeRange : public QOrganizerItemDetail
+class Q_ORGANIZER_EXPORT QOrganizerJournalTime : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
     static const QLatin1Constant DefinitionName;
     static const QLatin1Constant FieldEntryDateTime;
 #else
-    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerJournalTimeRange, "JournalTimeRange")
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerJournalTime, "JournalTime")
     Q_DECLARE_LATIN1_CONSTANT(FieldEntryDateTime, "EntryDateTime");
 #endif
 

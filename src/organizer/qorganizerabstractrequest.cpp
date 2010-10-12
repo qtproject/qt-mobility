@@ -39,19 +39,19 @@
 **
 ****************************************************************************/
 
-#include "qorganizeritemabstractrequest.h"
-#include "qorganizeritemabstractrequest_p.h"
-#include "qorganizeritemmanager.h"
-#include "qorganizeritemmanager_p.h"
-#include "qorganizeritemmanagerengine.h"
+#include "qorganizerabstractrequest.h"
+#include "qorganizerabstractrequest_p.h"
+#include "qorganizermanager.h"
+#include "qorganizermanager_p.h"
+#include "qorganizermanagerengine.h"
 
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QOrganizerItemAbstractRequest
+  \class QOrganizerAbstractRequest
 
-  \brief The QOrganizerItemAbstractRequest class provides a mechanism for
+  \brief The QOrganizerAbstractRequest class provides a mechanism for
   asynchronous requests to be made of a manager if it supports them.
 
   \inmodule QtOrganizer
@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
   \ingroup organizer-main
 
   It allows a client to asynchronously request some functionality of a
-  particular QOrganizerItemManager.  Instances of the class will emit signals
+  particular QOrganizerManager.  Instances of the class will emit signals
   when the state of the request changes, or when more results become
   available.
 
@@ -75,14 +75,14 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerItemAbstractRequest::stateChanged(QOrganizerItemAbstractRequest::State newState)
+  \fn QOrganizerAbstractRequest::stateChanged(QOrganizerAbstractRequest::State newState)
   This signal is emitted when the state of the request is changed.  The new state of
   the request will be contained in \a newState.
  */
 
 
 /*!
-  \fn QOrganizerItemAbstractRequest::resultsAvailable()
+  \fn QOrganizerAbstractRequest::resultsAvailable()
   This signal is emitted when new results are available.  Results can include
   the operation error which may be accessed via error(), or derived-class-specific
   results which are accessible through the derived class API.
@@ -91,7 +91,7 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \enum QOrganizerItemAbstractRequest::RequestType
+  \enum QOrganizerAbstractRequest::RequestType
   Enumerates the various possible types of asynchronous requests
   \value InvalidRequest An invalid request
   \value ItemOccurrenceFetchRequest A request to fetch a list of occurrences of an organizer item
@@ -109,7 +109,7 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \enum QOrganizerItemAbstractRequest::State
+  \enum QOrganizerAbstractRequest::State
   Enumerates the various states that a request may be in at any given time
   \value InactiveState Operation not yet started
   \value ActiveState Operation started, not yet finished
@@ -118,7 +118,7 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerItemAbstractRequest::QOrganizerItemAbstractRequest(QObject* parent)
+  \fn QOrganizerAbstractRequest::QOrganizerAbstractRequest(QObject* parent)
   Constructs a new, invalid asynchronous request with the specified \a parent
  */
 
@@ -127,16 +127,16 @@ QTM_BEGIN_NAMESPACE
   Constructs a new request from the given request data \a otherd with
   the given parent \a parent
 */
-QOrganizerItemAbstractRequest::QOrganizerItemAbstractRequest(QOrganizerItemAbstractRequestPrivate* otherd, QObject* parent)
+QOrganizerAbstractRequest::QOrganizerAbstractRequest(QOrganizerAbstractRequestPrivate* otherd, QObject* parent)
     : QObject(parent), d_ptr(otherd)
 {
 }
 
 /*! Cleans up the memory used by this request */
-QOrganizerItemAbstractRequest::~QOrganizerItemAbstractRequest()
+QOrganizerAbstractRequest::~QOrganizerAbstractRequest()
 {
     if (d_ptr) {
-        QOrganizerItemManagerEngine *engine = QOrganizerItemManagerData::engine(d_ptr->m_manager);
+        QOrganizerManagerEngine *engine = QOrganizerManagerData::engine(d_ptr->m_manager);
         if (engine) {
             engine->requestDestroyed(this);
         }
@@ -146,51 +146,51 @@ QOrganizerItemAbstractRequest::~QOrganizerItemAbstractRequest()
 }
 
 /*!
-  Returns true if the request is in the \c QOrganizerItemAbstractRequest::InactiveState state; otherwise, returns false
+  Returns true if the request is in the \c QOrganizerAbstractRequest::InactiveState state; otherwise, returns false
 
   \sa state()
  */
-bool QOrganizerItemAbstractRequest::isInactive() const
+bool QOrganizerAbstractRequest::isInactive() const
 {
     QMutexLocker ml(&d_ptr->m_mutex);
-    return (d_ptr->m_state == QOrganizerItemAbstractRequest::InactiveState);
+    return (d_ptr->m_state == QOrganizerAbstractRequest::InactiveState);
 }
 
 /*!
-  Returns true if the request is in the \c QOrganizerItemAbstractRequest::ActiveState state; otherwise, returns false
+  Returns true if the request is in the \c QOrganizerAbstractRequest::ActiveState state; otherwise, returns false
 
   \sa state()
  */
-bool QOrganizerItemAbstractRequest::isActive() const
+bool QOrganizerAbstractRequest::isActive() const
 {
     QMutexLocker ml(&d_ptr->m_mutex);
-    return (d_ptr->m_state == QOrganizerItemAbstractRequest::ActiveState);
+    return (d_ptr->m_state == QOrganizerAbstractRequest::ActiveState);
 }
 
 /*!
-  Returns true if the request is in the \c QOrganizerItemAbstractRequest::FinishedState; otherwise, returns false
+  Returns true if the request is in the \c QOrganizerAbstractRequest::FinishedState; otherwise, returns false
 
   \sa state()
  */
-bool QOrganizerItemAbstractRequest::isFinished() const
+bool QOrganizerAbstractRequest::isFinished() const
 {
     QMutexLocker ml(&d_ptr->m_mutex);
-    return (d_ptr->m_state == QOrganizerItemAbstractRequest::FinishedState);
+    return (d_ptr->m_state == QOrganizerAbstractRequest::FinishedState);
 }
 
 /*!
-  Returns true if the request is in the \c QOrganizerItemAbstractRequest::CanceledState; otherwise, returns false
+  Returns true if the request is in the \c QOrganizerAbstractRequest::CanceledState; otherwise, returns false
 
   \sa state()
  */
-bool QOrganizerItemAbstractRequest::isCanceled() const
+bool QOrganizerAbstractRequest::isCanceled() const
 {
     QMutexLocker ml(&d_ptr->m_mutex);
-    return (d_ptr->m_state == QOrganizerItemAbstractRequest::CanceledState);
+    return (d_ptr->m_state == QOrganizerAbstractRequest::CanceledState);
 }
 
 /*! Returns the overall error of the most recent asynchronous operation */
-QOrganizerItemManager::Error QOrganizerItemAbstractRequest::error() const
+QOrganizerManager::Error QOrganizerAbstractRequest::error() const
 {
     QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->m_error;
@@ -199,7 +199,7 @@ QOrganizerItemManager::Error QOrganizerItemAbstractRequest::error() const
 /*!
   Returns the type of this asynchronous request
  */
-QOrganizerItemAbstractRequest::RequestType QOrganizerItemAbstractRequest::type() const
+QOrganizerAbstractRequest::RequestType QOrganizerAbstractRequest::type() const
 {
     QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->type();
@@ -208,38 +208,38 @@ QOrganizerItemAbstractRequest::RequestType QOrganizerItemAbstractRequest::type()
 /*!
   Returns the current state of the request.
  */
-QOrganizerItemAbstractRequest::State QOrganizerItemAbstractRequest::state() const
+QOrganizerAbstractRequest::State QOrganizerAbstractRequest::state() const
 {
     QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->m_state;
 }
 
 /*! Returns a pointer to the manager of which this request instance requests operations */
-QOrganizerItemManager* QOrganizerItemAbstractRequest::manager() const
+QOrganizerManager* QOrganizerAbstractRequest::manager() const
 {
     QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->m_manager;
 }
 
 /*! Sets the manager of which this request instance requests operations to \a manager */
-void QOrganizerItemAbstractRequest::setManager(QOrganizerItemManager* manager)
+void QOrganizerAbstractRequest::setManager(QOrganizerManager* manager)
 {
     QMutexLocker ml(&d_ptr->m_mutex);
     // In theory we might have been active and the manager didn't cancel/finish us
-    if (d_ptr->m_state == QOrganizerItemAbstractRequest::ActiveState && d_ptr->m_manager)
+    if (d_ptr->m_state == QOrganizerAbstractRequest::ActiveState && d_ptr->m_manager)
         return;
     d_ptr->m_manager = manager;
-    d_ptr->m_engine = QOrganizerItemManagerData::engine(d_ptr->m_manager);
+    d_ptr->m_engine = QOrganizerManagerData::engine(d_ptr->m_manager);
 }
 
-/*! Attempts to start the request.  Returns false if the request is not in the \c QOrganizerItemAbstractRequest::Inactive, \c QOrganizerItemAbstractRequest::Finished or \c QOrganizerItemAbstractRequest::Cancelled states,
+/*! Attempts to start the request.  Returns false if the request is not in the \c QOrganizerAbstractRequest::Inactive, \c QOrganizerAbstractRequest::Finished or \c QOrganizerAbstractRequest::Cancelled states,
     or if the request was unable to be performed by the manager engine; otherwise returns true. */
-bool QOrganizerItemAbstractRequest::start()
+bool QOrganizerAbstractRequest::start()
 {
     QMutexLocker ml(&d_ptr->m_mutex);
-    if (d_ptr->m_engine && (d_ptr->m_state == QOrganizerItemAbstractRequest::CanceledState
-                   || d_ptr->m_state == QOrganizerItemAbstractRequest::FinishedState
-                   || d_ptr->m_state == QOrganizerItemAbstractRequest::InactiveState)) {
+    if (d_ptr->m_engine && (d_ptr->m_state == QOrganizerAbstractRequest::CanceledState
+                   || d_ptr->m_state == QOrganizerAbstractRequest::FinishedState
+                   || d_ptr->m_state == QOrganizerAbstractRequest::InactiveState)) {
         ml.unlock();
         return d_ptr->m_engine->startRequest(this);
     }
@@ -247,12 +247,12 @@ bool QOrganizerItemAbstractRequest::start()
     return false; // unable to start operation; another operation already in progress or no engine.
 }
 
-/*! Attempts to cancel the request.  Returns false if the request is not in the \c QOrganizerItemAbstractRequest::Active state,
+/*! Attempts to cancel the request.  Returns false if the request is not in the \c QOrganizerAbstractRequest::Active state,
     or if the request is unable to be cancelled by the manager engine; otherwise returns true. */
-bool QOrganizerItemAbstractRequest::cancel()
+bool QOrganizerAbstractRequest::cancel()
 {
     QMutexLocker ml(&d_ptr->m_mutex);
-    if (d_ptr->m_engine && d_ptr->m_state == QOrganizerItemAbstractRequest::ActiveState) {
+    if (d_ptr->m_engine && d_ptr->m_state == QOrganizerAbstractRequest::ActiveState) {
         ml.unlock();
         return d_ptr->m_engine->cancelRequest(this);
     }
@@ -265,16 +265,16 @@ bool QOrganizerItemAbstractRequest::cancel()
     Returns true if the request was cancelled or completed successfully within the given period, otherwise false.
     Some backends are unable to support this operation safely, and will return false immediately.
  */
-bool QOrganizerItemAbstractRequest::waitForFinished(int msecs)
+bool QOrganizerAbstractRequest::waitForFinished(int msecs)
 {
     QMutexLocker ml(&d_ptr->m_mutex);
     if (d_ptr->m_engine) {
         switch (d_ptr->m_state) {
-        case QOrganizerItemAbstractRequest::ActiveState:
+        case QOrganizerAbstractRequest::ActiveState:
             ml.unlock();
             return d_ptr->m_engine->waitForRequestFinished(this, msecs);
-        case QOrganizerItemAbstractRequest::CanceledState:
-        case QOrganizerItemAbstractRequest::FinishedState:
+        case QOrganizerAbstractRequest::CanceledState:
+        case QOrganizerAbstractRequest::FinishedState:
             return true;
         default:
             return false;
@@ -284,7 +284,7 @@ bool QOrganizerItemAbstractRequest::waitForFinished(int msecs)
     return false; // unable to wait for operation; not in progress or no engine
 }
 
-#include "moc_qorganizeritemabstractrequest.cpp"
+#include "moc_qorganizerabstractrequest.cpp"
 
 QTM_END_NAMESPACE
 

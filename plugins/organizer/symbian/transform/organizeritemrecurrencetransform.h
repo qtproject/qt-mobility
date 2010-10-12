@@ -42,7 +42,7 @@
 #define ORGANIZERITEMRECURRENCETRANSFORM_H_
 
 #include "organizeritemdetailtransform.h"
-#include "qorganizeritemrecurrencerule.h"
+#include "qorganizerrecurrencerule.h"
 
 #include <calrrule.h>
 
@@ -58,18 +58,18 @@ public:
 private:
     void toTCalTimesL(const QSet<QDate> &dateTimes, RArray<TCalTime> &calDates) const;
     QSet<QDate> toQDatesL(const RArray<TCalTime> &calDates) const;
-    QSet<QOrganizerItemRecurrenceRule> toItemRecurrenceRulesL(const TCalRRule &calrrule) const;
-    TCalRRule toCalRRuleL(QSet<QOrganizerItemRecurrenceRule> recrules, QDateTime startDateTime) const;
-    QOrganizerItemRecurrenceRule::Frequency toFrequencyL(TCalRRule::TType type) const;
-    TCalRRule::TType toTypeL(QOrganizerItemRecurrenceRule::Frequency frequency) const;
+    QSet<QOrganizerRecurrenceRule> toItemRecurrenceRulesL(const TCalRRule &calrrule) const;
+    TCalRRule toCalRRuleL(QSet<QOrganizerRecurrenceRule> recrules, QDateTime startDateTime) const;
+    QOrganizerRecurrenceRule::Frequency toFrequencyL(TCalRRule::TType type) const;
+    TCalRRule::TType toTypeL(QOrganizerRecurrenceRule::Frequency frequency) const;
     void toDaysL(QSet<Qt::DayOfWeek> daysOfWeek, QDateTime startDateTime, TCalRRule &calRRule) const;
     void toDaysOfMonthL(QSet<Qt::DayOfWeek> daysOfWeek, QSet<int> positions, TCalRRule &calRRule) const;
     void toMonthDaysL(QSet<int> daysOfMonth, TCalRRule &calRule) const;
-    void toTMonthsL(QSet<QOrganizerItemRecurrenceRule::Month> months, TCalRRule &calRRule) const;
+    void toTMonthsL(QSet<QOrganizerRecurrenceRule::Month> months, TCalRRule &calRRule) const;
     Qt::DayOfWeek toDayOfWeekL(TDay day) const;
     TDay toTDayL(Qt::DayOfWeek dayOfWeek) const;
-    QOrganizerItemRecurrenceRule::Month toMonthL(TMonth month) const;
-    TMonth toTMonthL(QOrganizerItemRecurrenceRule::Month month) const;
+    QOrganizerRecurrenceRule::Month toMonthL(TMonth month) const;
+    TMonth toTMonthL(QOrganizerRecurrenceRule::Month month) const;
 };
 
 #endif // ORGANIZERITEMRECURRENCETRANSFORM_H_

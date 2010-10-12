@@ -46,7 +46,7 @@
 #include <calinstanceview.h>
 #include "organizersymbianutils.h"
 #include "qorganizeritemchangeset.h"
-#include "qorganizeritemmanagerengine.h"
+#include "qorganizermanagerengine.h"
 
 using namespace OrganizerSymbianUtils;
 
@@ -156,7 +156,7 @@ OrganizerSymbianCollection::OrganizerSymbianCollection()
     d = new OrganizerSymbianCollectionPrivate();
 }
 
-OrganizerSymbianCollection::OrganizerSymbianCollection(QOrganizerItemManagerEngine *engine)
+OrganizerSymbianCollection::OrganizerSymbianCollection(QOrganizerManagerEngine *engine)
     :d(0)
 {
     d = new OrganizerSymbianCollectionPrivate();

@@ -86,7 +86,7 @@ private:
     void addOccurrenceData(QString managerName, QString itemType);
     
 private:
-    QOrganizerItemManager *m_om;
+    QOrganizerManager *m_om;
 };
 
 void tst_ItemOccurrence::init()
@@ -94,7 +94,7 @@ void tst_ItemOccurrence::init()
     QFETCH(QString, managerName);
     
     // Create a new item manager instance
-    m_om = new QOrganizerItemManager(managerName);
+    m_om = new QOrganizerManager(managerName);
     
     // Cleanup by deleting all items
     m_om->removeItems(m_om->itemIds());
@@ -114,7 +114,7 @@ void tst_ItemOccurrence::cleanup()
 QStringList tst_ItemOccurrence::getAvailableManagers()
 {
     // Get the list of all available item managers
-    QStringList availableManagers = QOrganizerItemManager::availableManagers();
+    QStringList availableManagers = QOrganizerManager::availableManagers();
     
     // Remove these since test would fail
     availableManagers.removeAll("invalid");
@@ -130,7 +130,7 @@ void tst_ItemOccurrence::addOccurrenceDetail_data()
     QTest::addColumn<QString>("managerName");
     QTest::addColumn<QString>("itemType");
     QTest::addColumn<QDateTime>("startTime");
-    QTest::addColumn<QOrganizerItemRecurrenceRule>("rrule");
+    QTest::addColumn<QOrganizerRecurrenceRule>("rrule");
     
     foreach(QString manager, availableManagers) {
         addOccurrenceData(manager, QOrganizerItemType::TypeEvent);
@@ -139,8 +139,8 @@ void tst_ItemOccurrence::addOccurrenceDetail_data()
 
 void tst_ItemOccurrence::addOccurrenceData(QString managerName, QString itemType)
 {
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
     rrule.setLimit(3);
     QSet<Qt::DayOfWeek> daysOfWeek;
     daysOfWeek.insert(Qt::Wednesday);
@@ -157,18 +157,18 @@ void tst_ItemOccurrence::addOccurrenceDetail()
     QFETCH(QString, managerName);
     QFETCH(QString, itemType);
     QFETCH(QDateTime, startTime);
-    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+    QFETCH(QOrganizerRecurrenceRule, rrule);
     
     // Set the item type
     QOrganizerItem item;
     item.setType(itemType);
     QDateTime endTime(QDate(QDate::currentDate().year() , 9, 30));
-    QOrganizerEventTimeRange timeRange;
+    QOrganizerEventTime timeRange;
     timeRange.setStartDateTime(startTime);
     QVERIFY(item.saveDetail(&timeRange));
 
     // Add recurrence rules to the item
-    QSet<QOrganizerItemRecurrenceRule> rrules;
+    QSet<QOrganizerRecurrenceRule> rrules;
     rrules.insert(rrule);
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
@@ -209,7 +209,7 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort_data()
     QTest::addColumn<QString>("managerName");
     QTest::addColumn<QString>("itemType");
     QTest::addColumn<QDateTime>("startTime");
-    QTest::addColumn<QOrganizerItemRecurrenceRule>("rrule");
+    QTest::addColumn<QOrganizerRecurrenceRule>("rrule");
     QTest::addColumn<QString>("label");
     QTest::addColumn<QString>("modifiedLabel");
     
@@ -218,8 +218,8 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort_data()
     QString itemType = QOrganizerItemType::TypeEvent;
     
     foreach(QString manager, availableManagers) {
-        QOrganizerItemRecurrenceRule rrule;
-        rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+        QOrganizerRecurrenceRule rrule;
+        rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
         rrule.setLimit(3);
         QSet<Qt::DayOfWeek> daysOfWeek;
         daysOfWeek.insert(Qt::Wednesday);
@@ -239,7 +239,7 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     QFETCH(QString, managerName);
     QFETCH(QString, itemType);
     QFETCH(QDateTime, startTime);
-    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+    QFETCH(QOrganizerRecurrenceRule, rrule);
     QFETCH(QString, label);
     QFETCH(QString, modifiedLabel);
     
@@ -247,12 +247,12 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     QOrganizerItem item;
     item.setType(itemType);
     QDateTime endTime(QDate(QDate::currentDate().year() , 9, 30));
-    QOrganizerEventTimeRange timeRange;
+    QOrganizerEventTime timeRange;
     timeRange.setStartDateTime(startTime);
     QVERIFY(item.saveDetail(&timeRange));
     item.setDisplayLabel(label); 
     // Add recurrence rules to the item
-    QSet<QOrganizerItemRecurrenceRule> rrules;
+    QSet<QOrganizerRecurrenceRule> rrules;
     rrules.insert(rrule);
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
@@ -284,8 +284,8 @@ void tst_ItemOccurrence::fetchOccurrenceByFilterSort()
     
     QOrganizerItemSortOrder sortOrder;
     sortOrder.setDirection(Qt::DescendingOrder);
-    sortOrder.setDetailDefinitionName(QOrganizerEventTimeRange::DefinitionName,
-                                     QOrganizerEventTimeRange::FieldStartDateTime);
+    sortOrder.setDetailDefinitionName(QOrganizerEventTime::DefinitionName,
+                                     QOrganizerEventTime::FieldStartDateTime);
     QList<QOrganizerItemSortOrder> sortList;
     sortList.append(sortOrder);
     instanceList.clear();
@@ -339,7 +339,7 @@ void tst_ItemOccurrence::addOccurrenceWithException_data()
     QTest::addColumn<QDateTime>("startTime");
     QTest::addColumn<QDate>("rDate");
     QTest::addColumn<QDate>("exceptionDate");
-    QTest::addColumn<QOrganizerItemRecurrenceRule>("rrule");
+    QTest::addColumn<QOrganizerRecurrenceRule>("rrule");
     QTest::addColumn<QOrganizerItemPriority>("priority");
     QTest::addColumn<QOrganizerItemLocation>("location");
     QTest::addColumn<QString>("modifiedDescription");
@@ -355,8 +355,8 @@ void tst_ItemOccurrence::addOccurrenceWithException_data()
     QString newDescription("modifyOccurrence");
     
     foreach(QString manager, availableManagers) {
-        QOrganizerItemRecurrenceRule rrule;
-        rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+        QOrganizerRecurrenceRule rrule;
+        rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
         rrule.setLimit(10);
         QDate rDate(QDate::currentDate().year() , 9, 11);
         QDate exceptionDate(QDate::currentDate().year() , 9, 3);
@@ -373,8 +373,8 @@ void tst_ItemOccurrence::addOccurrenceWithException_data()
             << newDescription
             << QDateTime(QDate(QDate::currentDate().year() , 8, 30));        
         
-        QOrganizerItemRecurrenceRule monthRule;
-        monthRule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+        QOrganizerRecurrenceRule monthRule;
+        monthRule.setFrequency(QOrganizerRecurrenceRule::Monthly);
         monthRule.setLimit(5);
 
         QTest::newRow(QString("[%1] Monthly event for 5 occurrences").arg(manager).toLatin1().constData())
@@ -390,10 +390,10 @@ void tst_ItemOccurrence::addOccurrenceWithException_data()
             << newDescription
             << QDateTime(QDate(QDate::currentDate().year() , 8, 1));        
                     
-        QOrganizerItemRecurrenceRule yearRule;
-        yearRule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-        QSet<QOrganizerItemRecurrenceRule::Month> months;
-        months.insert(QOrganizerItemRecurrenceRule::September);
+        QOrganizerRecurrenceRule yearRule;
+        yearRule.setFrequency(QOrganizerRecurrenceRule::Yearly);
+        QSet<QOrganizerRecurrenceRule::Month> months;
+        months.insert(QOrganizerRecurrenceRule::September);
         yearRule.setLimit(3);
         yearRule.setInterval(2);
         yearRule.setMonthsOfYear(months);
@@ -421,19 +421,19 @@ void tst_ItemOccurrence::addOccurrenceWithException()
     QFETCH(QDateTime, startTime);
     QFETCH(QDate, rDate);
     QFETCH(QDate,exceptionDate );
-    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+    QFETCH(QOrganizerRecurrenceRule, rrule);
     QFETCH(QOrganizerItemPriority, priority);
     QFETCH(QOrganizerItemLocation, location);
     
     // Set the item type
     QOrganizerItem item;
     item.setType(itemType);
-    QOrganizerEventTimeRange timeRange;
+    QOrganizerEventTime timeRange;
     timeRange.setStartDateTime(startTime);
     QVERIFY(item.saveDetail(&timeRange));
 
     // Add recurrence rules to the item
-    QSet<QOrganizerItemRecurrenceRule> rrules;
+    QSet<QOrganizerRecurrenceRule> rrules;
     QSet<QDate> exceptionList;
     QSet<QDate> rDateList;
     rrules.insert(rrule);
@@ -502,7 +502,7 @@ void tst_ItemOccurrence::editOccurrence()
     QFETCH(QDateTime, startTime);
     QFETCH(QDate, rDate);
     QFETCH(QDate,exceptionDate );
-    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+    QFETCH(QOrganizerRecurrenceRule, rrule);
     QFETCH(QOrganizerItemPriority, priority);
     QFETCH(QOrganizerItemLocation, location);
     QFETCH(QString,modifiedDescription);
@@ -511,12 +511,12 @@ void tst_ItemOccurrence::editOccurrence()
     // Set the item type
     QOrganizerItem item;
     item.setType(itemType);
-    QOrganizerEventTimeRange timeRange;
+    QOrganizerEventTime timeRange;
     timeRange.setStartDateTime(startTime);
     QVERIFY(item.saveDetail(&timeRange));
 
     // Add recurrence rules to the item
-    QSet<QOrganizerItemRecurrenceRule> rrules;
+    QSet<QOrganizerRecurrenceRule> rrules;
     rrules.insert(rrule);
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
@@ -591,11 +591,11 @@ void tst_ItemOccurrence::editOccurrenceNegative_data()
     QTest::addColumn<QString>("managerName");
     QTest::addColumn<QString>("itemType");
     QTest::addColumn<QDateTime>("startTime");
-    QTest::addColumn<QOrganizerItemRecurrenceRule>("rrule");
+    QTest::addColumn<QOrganizerRecurrenceRule>("rrule");
     
     QString itemType = QOrganizerItemType::TypeEvent;
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
     rrule.setLimit(10);
     foreach(QString manager, availableManagers) {
         QTest::newRow(QString("[%1] daily repeating entry").arg(manager).toLatin1().constData())
@@ -611,17 +611,17 @@ void tst_ItemOccurrence::editOccurrenceNegative()
     QFETCH(QString, managerName);
     QFETCH(QString, itemType);
     QFETCH(QDateTime, startTime);
-    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+    QFETCH(QOrganizerRecurrenceRule, rrule);
      
     // Set the item type
     QOrganizerItem item;
     item.setType(itemType);
-    QOrganizerEventTimeRange timeRange;
+    QOrganizerEventTime timeRange;
     timeRange.setStartDateTime(startTime);
     QVERIFY(item.saveDetail(&timeRange));
 
     // Add recurrence rules to the item
-    QSet<QOrganizerItemRecurrenceRule> rrules;
+    QSet<QOrganizerRecurrenceRule> rrules;
     rrules.insert(rrule);
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
@@ -644,7 +644,7 @@ void tst_ItemOccurrence::editOccurrenceNegative()
     //firstInstance.setGuid(QString(""));
     //firstInstance.setParentLocalId(QOrganizerItemLocalId(-1));
     //QVERIFY(!m_om->saveItem(&firstInstance));
-    //QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    //QCOMPARE(m_om->error(), QOrganizerManager::InvalidOccurrenceError);
 
     //change to invalid original Date of the instance and save 
     firstInstance.setGuid(instanceGuid);
@@ -652,7 +652,7 @@ void tst_ItemOccurrence::editOccurrenceNegative()
     QVERIFY(!m_om->saveItem(&firstInstance));
     // Allow undefined error code, the engine should iterate through item instances to see if the
     // original date is valid to be able to give a specific error code
-    QVERIFY(m_om->error() != QOrganizerItemManager::NoError);
+    QVERIFY(m_om->error() != QOrganizerManager::NoError);
     
     firstInstance = static_cast<QOrganizerEventOccurrence>(firstItem);
     firstInstance.setStartDateTime(startTime.addDays(-1));
@@ -664,7 +664,7 @@ void tst_ItemOccurrence::editOccurrenceNegative()
     //itemId.setLocalId(1);
     //firstInstance.setId(itemId);
     //QVERIFY(!m_om->saveItem(&firstInstance));
-    //QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    //QCOMPARE(m_om->error(), QOrganizerManager::InvalidOccurrenceError);
 }
 
 void tst_ItemOccurrence::updateOccurrenceLocalId()
@@ -675,9 +675,9 @@ void tst_ItemOccurrence::updateOccurrenceLocalId()
     christmas.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(0, 0, 0)));
     christmas.setEndDateTime(QDateTime(QDate(2010, 12, 26), QTime(0, 0, 0)));
     christmas.setDisplayLabel(QLatin1String("Christmas"));
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-    christmas.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rrule);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
+    christmas.setRecurrenceRules(QSet<QOrganizerRecurrenceRule>() << rrule);
     QVERIFY(m_om->saveItem(&christmas));
 
     // Save an exception
@@ -726,7 +726,7 @@ void tst_ItemOccurrence::fetchNegative()
     QList<QOrganizerItem> instanceList;
     item.setType(itemType);
     QDateTime endTime(startTime);
-    QOrganizerEventTimeRange timeRange;
+    QOrganizerEventTime timeRange;
     timeRange.setStartDateTime(startTime);
     QVERIFY(item.saveDetail(&timeRange));
     
@@ -746,26 +746,26 @@ void tst_ItemOccurrence::fetchNegative()
     QDateTime previousEndTime(startTime);
     previousEndTime.setDate(QDate(startTime.date().year() - 2, startTime.date().month(),startTime.date().day()));
     instanceList = m_om->itemOccurrences(item,startTime,previousEndTime);
-    QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
+    QCOMPARE(m_om->error(), QOrganizerManager::BadArgumentError);
     
     //Fetch itemoccurrence for invalid itemtype eventoccurrence
     QOrganizerEventOccurrence invalidItem;
     instanceList = m_om->itemOccurrences(invalidItem,startTime,endTime);
-    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidItemTypeError);
+    QCOMPARE(m_om->error(), QOrganizerManager::InvalidItemTypeError);
     
     // Fetch the item instance with negative count
     instanceList = m_om->itemOccurrences(item, startTime, QDateTime(), -2);
-    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(m_om->error(), QOrganizerManager::NoError);
     QCOMPARE(instanceList.count(), 1);
 
     // Fetch the item instance with undefined starttime
     instanceList = m_om->itemOccurrences(item, QDateTime(), endTime);
-    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(m_om->error(), QOrganizerManager::NoError);
     QCOMPARE(instanceList.count(), 1);
 
     // Fetch the item instance with undefined endtime
     instanceList = m_om->itemOccurrences(item, startTime, QDateTime());
-    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(m_om->error(), QOrganizerManager::NoError);
     QCOMPARE(instanceList.count(), 1);
 }
 
@@ -780,10 +780,10 @@ void tst_ItemOccurrence::daylightSavingTime()
     event.setStartDateTime(startDateTime);
     event.setEndDateTime(endDateTime);
     
-    QOrganizerItemRecurrenceRule rule;
-    rule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+    QOrganizerRecurrenceRule rule;
+    rule.setFrequency(QOrganizerRecurrenceRule::Monthly);
     rule.setLimit(QDate(2010, 12, 31));
-    event.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rule);
+    event.setRecurrenceRules(QSet<QOrganizerRecurrenceRule>() << rule);
 
     QVERIFY(m_om->saveItem(&event));
 
@@ -823,11 +823,11 @@ void tst_ItemOccurrence::leapYear()
     QDateTime endDateTime = startDateTime.addSecs(60*60);
     event.setStartDateTime(startDateTime);
     event.setEndDateTime(endDateTime);
-    QOrganizerItemRecurrenceRule rule;
-    rule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    QOrganizerRecurrenceRule rule;
+    rule.setFrequency(QOrganizerRecurrenceRule::Yearly);
     rule.setDaysOfMonth(QSet<int>() << 29);
     rule.setLimit(QDate(2020, 3, 1));
-    event.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rule);
+    event.setRecurrenceRules(QSet<QOrganizerRecurrenceRule>() << rule);
     QVERIFY(m_om->saveItem(&event));
 
     // Verify

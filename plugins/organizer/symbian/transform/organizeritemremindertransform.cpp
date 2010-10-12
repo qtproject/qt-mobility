@@ -45,8 +45,8 @@
 #include "qorganizeritemaudiblereminder.h"
 #include "qorganizeritemvisualreminder.h"
 #include "qorganizeritememailreminder.h"
-#include "qorganizereventtimerange.h"
-#include "qorganizertodotimerange.h"
+#include "qorganizereventtime.h"
+#include "qorganizertodotime.h"
 #include "organizeritemremindertransform.h"
 
 const int secondsInOneMinute = 60;

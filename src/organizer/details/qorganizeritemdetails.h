@@ -45,7 +45,7 @@
 // this file includes all of the leaf detail classes
 // provided by the Qt Organizer API.
 
-#include "qorganizereventtimerange.h"
+#include "qorganizereventtime.h"
 #include "qorganizeritemcomment.h"
 #include "qorganizeritemdescription.h"
 #include "qorganizeritemdisplaylabel.h"
@@ -56,9 +56,9 @@
 #include "qorganizeritemrecurrence.h"
 #include "qorganizeritemtimestamp.h"
 #include "qorganizeritemtype.h"
-#include "qorganizerjournaltimerange.h"
+#include "qorganizerjournaltime.h"
 #include "qorganizertodoprogress.h"
-#include "qorganizertodotimerange.h"
+#include "qorganizertodotime.h"
 
 #include "qorganizeritemreminder.h"
 #include "qorganizeritemaudiblereminder.h"

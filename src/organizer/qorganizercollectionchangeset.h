@@ -52,7 +52,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemManagerEngine;
+class QOrganizerManagerEngine;
 class QOrganizerCollectionChangeSetData;
 class Q_ORGANIZER_EXPORT QOrganizerCollectionChangeSet
 {
@@ -83,7 +83,7 @@ public:
 
     void clearAll();
 
-    void emitSignals(QOrganizerItemManagerEngine *engine);
+    void emitSignals(QOrganizerManagerEngine *engine);
 
 private:
     QSharedDataPointer<QOrganizerCollectionChangeSetData> d;

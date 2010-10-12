@@ -80,7 +80,7 @@ public:
 
         //details
         qmlRegisterType<QDeclarativeOrganizerItemDetail>(uri, 1, 1, "OrganizerItemDetail");
-        qmlRegisterType<QDeclarativeOrganizerEventTimeRange>(uri, 1, 1, "OrganizerEventTimeRange");
+        qmlRegisterType<QDeclarativeOrganizerEventTime>(uri, 1, 1, "OrganizerEventTime");
         qmlRegisterType<QDeclarativeOrganizerItemDescription>(uri, 1, 1, "OrganizerItemDescription");
         qmlRegisterType<QDeclarativeOrganizerItemDisplayLabel>(uri, 1, 1, "OrganizerItemDisplayLabel");
         qmlRegisterType<QDeclarativeOrganizerItemGuid>(uri, 1, 1, "OrganizerItemGuid");
@@ -94,9 +94,9 @@ public:
         qmlRegisterType<QDeclarativeOrganizerItemEmailReminder>(uri, 1, 1, "OrganizerItemEmailReminder");
         qmlRegisterType<QDeclarativeOrganizerItemTimestamp>(uri, 1, 1, "OrganizerItemTimestamp");
         qmlRegisterType<QDeclarativeOrganizerItemType>(uri, 1, 1, "OrganizerItemType");
-        qmlRegisterType<QDeclarativeOrganizerJournalTimeRange>(uri, 1, 1, "OrganizerJournalTimeRange");
+        qmlRegisterType<QDeclarativeOrganizerJournalTime>(uri, 1, 1, "OrganizerJournalTime");
         qmlRegisterType<QDeclarativeOrganizerTodoProgress>(uri, 1, 1, "OrganizerTodoProgress");
-        qmlRegisterType<QDeclarativeOrganizerTodoTimeRange>(uri, 1, 1, "OrganizerTodoTimeRange");
+        qmlRegisterType<QDeclarativeOrganizerTodoTime>(uri, 1, 1, "OrganizerTodoTime");
 
         //filters
         qmlRegisterType<QDeclarativeOrganizerItemFilter>(uri, 1, 1, "OrganizerItemFilter");

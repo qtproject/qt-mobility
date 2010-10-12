@@ -43,22 +43,22 @@
 #include "qtorganizer.h"
 #include <QDateTime>
 
-QOrganizerItemManager* TimeZone::getManager()
+QOrganizerManager* TimeZone::getManager()
 {
-    static QOrganizerItemManager* manager(new QOrganizerItemManager());
+    static QOrganizerManager* manager(new QOrganizerManager());
     return manager;
 }
 
 QDateTime TimeZone::convert(const QDateTime& dateTime) const
 {
     Q_ASSERT(isValid());
-    QOrganizerItemManager* manager = getManager();
+    QOrganizerManager* manager = getManager();
     int offset = 100000; // impossible value
     QDateTime latestPhase;
     foreach(const TimeZonePhase& phase, mPhases) {
         QOrganizerEvent event;
         event.setStartDateTime(phase.startDateTime());
-        event.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << phase.recurrenceRule());
+        event.setRecurrenceRules(QSet<QOrganizerRecurrenceRule>() << phase.recurrenceRule());
         event.setRecurrenceDates(phase.recurrenceDates());
         QList<QOrganizerItem> occurrences =
             manager->itemOccurrences(event, phase.startDateTime(), dateTime, 500);
