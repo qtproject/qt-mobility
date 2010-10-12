@@ -49,14 +49,14 @@
 
 QTM_USE_NAMESPACE
 /* Define an innocuous request (fetch ie doesn't mutate) to "fill up" any queues */
-#define FILL_QUEUE_WITH_FETCH_REQUESTS() QOrganizerItemFetchRequest fqifr1, fqifr2, fqifr3; \
-                                         QOrganizerItemDetailDefinitionFetchRequest fqdfr1, fqdfr2, fqdfr3; \
-                                         fqifr1.start(); \
-                                         fqifr2.start(); \
-                                         fqifr3.start(); \
-                                         fqdfr1.start(); \
-                                         fqdfr2.start(); \
-                                         fqdfr3.start();
+#define FILL_QUEUE_WITH_FETCH_REQUESTS(manager) QOrganizerItemFetchRequest fqifr1, fqifr2, fqifr3; \
+                                                QOrganizerItemDetailDefinitionFetchRequest fqdfr1, fqdfr2, fqdfr3; \
+                                                fqifr1.setManager(manager); fqifr1.start(); \
+                                                fqifr2.setManager(manager); fqifr2.start(); \
+                                                fqifr3.setManager(manager); fqifr3.start(); \
+                                                fqdfr1.setManager(manager); fqdfr1.start(); \
+                                                fqdfr2.setManager(manager); fqdfr2.start(); \
+                                                fqdfr3.setManager(manager); fqdfr3.start();
 
 //TESTED_COMPONENT=src/organizer
 //TESTED_CLASS=
@@ -562,7 +562,7 @@ void tst_QOrganizerItemAsync::itemFetch()
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!ifr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(ifr.start());
         if (!ifr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -595,7 +595,7 @@ void tst_QOrganizerItemAsync::itemFetch()
     // restart, and wait for progress after cancel.
     while (true) {
         QVERIFY(!ifr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(ifr.start());
         if (!ifr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -780,7 +780,7 @@ void tst_QOrganizerItemAsync::itemIdFetch()
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!ifr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(ifr.start());
         if (!ifr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -812,7 +812,7 @@ void tst_QOrganizerItemAsync::itemIdFetch()
     // restart, and wait for progress after cancel.
     while (true) {
         QVERIFY(!ifr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(ifr.start());
         if (!ifr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -936,7 +936,7 @@ void tst_QOrganizerItemAsync::itemRemove()
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!irr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(spy.count() == 0);
         QVERIFY(irr.start());
         if (!irr.cancel()) {
@@ -971,7 +971,7 @@ void tst_QOrganizerItemAsync::itemRemove()
     // restart, and wait for progress after cancel.
     while (true) {
         QVERIFY(!irr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(irr.start());
         if (!irr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -1020,6 +1020,7 @@ void tst_QOrganizerItemAsync::itemSave()
     QOrganizerItemDescription description;
     description.setDescription("Test todo");
     testTodo.saveDetail(&description);
+
     QList<QOrganizerItem> saveList;
     saveList << testTodo;
     isr.setManager(oim.data());
@@ -1075,6 +1076,7 @@ void tst_QOrganizerItemAsync::itemSave()
     expected = isr.items();
     result.clear();
     result << oim->item(expected.first().id().localId());
+
     QVERIFY(compareItemLists(result, expected));
 
     //here we can't compare the whole item details, testTodo would be updated by async call because we just use QThreadSignalSpy to receive signals.
@@ -1093,7 +1095,7 @@ void tst_QOrganizerItemAsync::itemSave()
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!isr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(isr.start());
         if (!isr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -1136,7 +1138,7 @@ void tst_QOrganizerItemAsync::itemSave()
 
     while (true) {
         QVERIFY(!isr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(isr.start());
         if (!isr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -1385,7 +1387,7 @@ void tst_QOrganizerItemAsync::definitionFetch()
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!dfr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(dfr.start());
         if (!dfr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -1413,7 +1415,7 @@ void tst_QOrganizerItemAsync::definitionFetch()
     // restart, and wait for progress after cancel.
     while (true) {
         QVERIFY(!dfr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(dfr.start());
         if (!dfr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -1547,7 +1549,7 @@ void tst_QOrganizerItemAsync::definitionRemove()
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!drr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(drr.start());
         if (!drr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -1580,7 +1582,7 @@ void tst_QOrganizerItemAsync::definitionRemove()
     // restart, and wait for progress after cancel.
     while (true) {
         QVERIFY(!drr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(drr.start());
         if (!drr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -1703,7 +1705,7 @@ void tst_QOrganizerItemAsync::definitionSave()
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!dsr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(dsr.start());
         if (!dsr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -1740,7 +1742,7 @@ void tst_QOrganizerItemAsync::definitionSave()
     // restart, and wait for progress after cancel.
     while (true) {
         QVERIFY(!dsr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(dsr.start());
         if (!dsr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -1821,7 +1823,7 @@ void tst_QOrganizerItemAsync::collectionFetch()
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!cfr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(cfr.start());
         if (!cfr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -1849,7 +1851,7 @@ void tst_QOrganizerItemAsync::collectionFetch()
     // restart, and wait for progress after cancel.
     while (true) {
         QVERIFY(!cfr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(cfr.start());
         if (!cfr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -1955,7 +1957,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!crr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(spy.count() == 0);
         QVERIFY(crr.start());
         if (!crr.cancel()) {
@@ -1994,7 +1996,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
     // restart, and wait for progress after cancel.
     while (true) {
         QVERIFY(!crr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(crr.start());
         if (!crr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -2086,7 +2088,7 @@ void tst_QOrganizerItemAsync::collectionSave()
     // update a previously saved collection
     QVERIFY(!result.isEmpty()); // make sure that we were able to retrieve the required collection.
     testCollection = result.first();
-    testCollection.setMetaData("name", "test name");
+    testCollection.setMetaData(QOrganizerCollection::KeyName, "test name");
     saveList.clear();
     saveList << testCollection;
     csr.setCollections(saveList);
@@ -2114,7 +2116,8 @@ void tst_QOrganizerItemAsync::collectionSave()
     QCOMPARE(oim->collections().size(), originalCount + 1); // ie shouldn't have added an extra one (would be +2)
 
     // cancelling
-    QOrganizerCollection temp = testCollection;
+    QOrganizerCollection temp;
+    temp.setMetaData(testCollection.metaData());
     temp.setMetaData("test", "shouldn't be saved");
     saveList.clear();
     saveList << temp;
@@ -2123,7 +2126,7 @@ void tst_QOrganizerItemAsync::collectionSave()
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
         QVERIFY(!csr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(csr.start());
         if (!csr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
@@ -2163,7 +2166,7 @@ void tst_QOrganizerItemAsync::collectionSave()
 
     while (true) {
         QVERIFY(!csr.cancel()); // not started
-        FILL_QUEUE_WITH_FETCH_REQUESTS();
+        FILL_QUEUE_WITH_FETCH_REQUESTS(oim.data());
         QVERIFY(csr.start());
         if (!csr.cancel()) {
             // due to thread scheduling, async cancel might be attempted
