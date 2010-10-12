@@ -92,8 +92,6 @@ class QOrganizerItemSimulatorEngine : public QOrganizerItemMemoryEngine
     Q_OBJECT
 
 public:
-    ~QOrganizerItemSimulatorEngine();
-
     QString managerName() const;
     int managerVersion() const;
 

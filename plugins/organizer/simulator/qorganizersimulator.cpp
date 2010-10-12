@@ -68,12 +68,10 @@ QOrganizerItemManagerEngine* QOrganizerItemSimulatorFactory::engine(const QMap<Q
         data->m_id = QLatin1String("simulatorengine");
         data->m_anonymous = false;
 
-        // we never want the data to be deleted, so push the refcount to two!
-        data->m_refCount.ref();
-
         QOrganizerItemSimulatorEngine::engineData = data;
 
         // give an engine to the simulator connection
+        data->m_refCount.ref(); // push the refcount to two
         Simulator::Connection::instance()->setEngine(new QOrganizerItemSimulatorEngine(data));
     }
     return new QOrganizerItemSimulatorEngine(data);
@@ -97,14 +95,6 @@ QString QOrganizerItemSimulatorFactory::managerName() const
 }
 Q_EXPORT_PLUGIN2(qtorganizer_simulator, QOrganizerItemSimulatorFactory);
 
-
-QOrganizerItemSimulatorEngine::~QOrganizerItemSimulatorEngine()
-{
-    // have to be extremely careful with the QOrganizerItemMemoryEngine destructor
-    // it decrements the refcount and deletes engineData if the count hits 0
-    // luckily, we set up the refcount to always be >= 2
-    Q_ASSERT(engineData->m_refCount >= 2);
-}
 
 QString QOrganizerItemSimulatorEngine::managerName() const
 {
