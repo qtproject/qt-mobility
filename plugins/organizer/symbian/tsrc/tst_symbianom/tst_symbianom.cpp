@@ -128,7 +128,6 @@ private slots:  // Init & cleanup
     void cleanup();
 
 private slots:  // Test cases
-
     void addSimpleItem_data(){ addManagers(); };
     void addSimpleItem();
     void fetchSimpleItem_data(){ addManagers(); };
@@ -147,14 +146,16 @@ private slots:  // Test cases
     void addItem();
     void signalEmission_data(){ addManagers(); };
     void signalEmission();
-    void invalidDetail();
     void invalidDetail_data(){ addManagers(); };
+    void invalidDetail();
+    void addReminderToSingleInstance_data(){ addManagers(); };
 	void addReminderToSingleInstance();
-	void addReminderToSingleInstance_data(){ addManagers(); };
-	void removeReminderFromSingleInstance();
 	void removeReminderFromSingleInstance_data(){ addManagers(); };
-	void timezone();
+	void removeReminderFromSingleInstance();
 	void timezone_data() { addManagers(); };
+	void timezone();
+    void supportedItemTypes_data() { addManagers(); };
+    void supportedItemTypes();
 
 private:
     // TODO: enable the following test cases by moving them to "private slots"
@@ -193,7 +194,7 @@ void tst_SymbianOm::init()
     m_om = new QOrganizerItemManager(managerName);
 
     // Remove all organizer items first (Note: ignores possible errors)
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
 	
     // Save UTC offset
     m_UTCOffset = User::UTCOffset();
@@ -202,7 +203,7 @@ void tst_SymbianOm::init()
 void tst_SymbianOm::cleanup()
 {
     // Remove all organizer items first (Note: ignores possible errors)
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
     delete m_om;
     m_om = 0;
 	
@@ -228,7 +229,7 @@ void tst_SymbianOm::addSimpleItem()
     // Save with list parameter
     QList<QOrganizerItem> items;
     items.append(item);
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(m_om->saveItems(&items));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     foreach (QOrganizerItem listitem, items) {
         QVERIFY(listitem.id().localId() != QOrganizerItemLocalId());
@@ -236,10 +237,9 @@ void tst_SymbianOm::addSimpleItem()
     }
 
     // Save with list parameter and error map parameter
-    QMap<int, QOrganizerItemManager::Error> errorMap;
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap));
+    QVERIFY(m_om->saveItems(&items));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
-    QVERIFY(errorMap.count() == 0);
+    QVERIFY(m_om->errorMap().count() == 0);
     foreach (QOrganizerItem listitem2, items) {
         QVERIFY(listitem2.id().localId() != QOrganizerItemLocalId());
         QVERIFY(item.id().managerUri().contains(m_om->managerName()));
@@ -291,8 +291,7 @@ void tst_SymbianOm::removeSimpleItem()
     QList<QOrganizerItemLocalId> itemIds;
     itemIds.append(item2.localId());
     itemIds.append(item3.localId());
-    QMap<int, QOrganizerItemManager::Error> errorMap;
-    QVERIFY(m_om->removeItems(itemIds, &errorMap));
+    QVERIFY(m_om->removeItems(itemIds));
 
     // Remove with itemIds
     QOrganizerItem item4;
@@ -301,7 +300,7 @@ void tst_SymbianOm::removeSimpleItem()
     item5.setType(QOrganizerItemType::TypeTodo);
     QVERIFY(m_om->saveItem(&item4));
     QVERIFY(m_om->saveItem(&item5));
-    QVERIFY(m_om->removeItems(m_om->itemIds(), 0));
+    QVERIFY(m_om->removeItems(m_om->itemIds()));
 }
 
 void tst_SymbianOm::fetchItems()
@@ -465,11 +464,11 @@ void tst_SymbianOm::addNegative()
     QVERIFY(!m_om->saveItem(0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
-    QVERIFY(!m_om->saveItems(0, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(!m_om->saveItems(0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
     QList<QOrganizerItem> items;
-    QVERIFY(!m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(!m_om->saveItems(&items));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
     // TODO: try to save an event with non-existing (non-zero) id and check that it fails
@@ -626,7 +625,7 @@ void tst_SymbianOm::signalEmission()
     QList<QOrganizerItem> items;
     items << todo;
     items << todo2;
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(m_om->saveItems(&items));
     itemsAddedSignals++;
     itemsAdded = 2;
     QTRY_COMPARE_SIGNAL_COUNTS();
@@ -635,7 +634,7 @@ void tst_SymbianOm::signalEmission()
     // Change - batch
     items[0].setDescription("foobar1");
     items[1].setDescription("foobar2");
-    QVERIFY(m_om->saveItems(&items, QOrganizerCollectionLocalId(), 0));
+    QVERIFY(m_om->saveItems(&items));
     itemsChangedSignals++;
     itemsChanged = 2;
     QTRY_COMPARE_SIGNAL_COUNTS();
@@ -645,7 +644,7 @@ void tst_SymbianOm::signalEmission()
     QList<QOrganizerItemLocalId> itemIds;
     itemIds << items[0].localId();
     itemIds << items[1].localId();
-    QVERIFY(m_om->removeItems(itemIds, 0));
+    QVERIFY(m_om->removeItems(itemIds));
     itemsRemovedSignals++;
     itemsRemoved = 2;
     QTRY_COMPARE_SIGNAL_COUNTS();
@@ -670,50 +669,51 @@ void tst_SymbianOm::invalidDetail()
  */
 void tst_SymbianOm::addReminderToSingleInstance()
 {
-	// Repeating event without reminder
+    // Repeating event without reminder
     QOrganizerItem repeatingEvent;
     repeatingEvent.setType(QOrganizerItemType::TypeEvent);
     
-	// Add the start and end time
-	QOrganizerEventTimeRange timeRange;
-	QDateTime startDateTime = QDateTime::currentDateTime();
+    // Add the start and end time
+    QOrganizerEventTimeRange timeRange;
+    QDateTime startDateTime = QDateTime::currentDateTime();
     timeRange.setStartDateTime(startDateTime);
     timeRange.setEndDateTime(startDateTime.addSecs(3000));
     
-	// Create a daily recurrence rule
-	QOrganizerItemRecurrence recurrence;
+    // Create a daily recurrence rule
+    QOrganizerItemRecurrence recurrence;
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-    rrule.setCount(3);
-    QList<QOrganizerItemRecurrenceRule> list;
-    list.append(rrule);
+    rrule.setLimit(3);
+    QSet<QOrganizerItemRecurrenceRule> list;
+    list.insert(rrule);
     recurrence.setRecurrenceRules(list);
     
-	// Save the item
-	repeatingEvent.saveDetail(&timeRange);
+    // Save the item
+    repeatingEvent.saveDetail(&timeRange);
     repeatingEvent.saveDetail(&recurrence);
     QVERIFY(m_om->saveItem(&repeatingEvent));
     
-	// Fetch the instances
-	QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
+    // Fetch the instances
+    QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
     QVERIFY(itemInstances.count() == 3);
-    
-	// Verify that reminder detail is empty
-	QOrganizerItem instance1 = itemInstances.at(0);
+
+
+    // Verify that reminder detail is empty
+    QOrganizerItem instance1 = itemInstances.at(0);
     QOrganizerItemReminder rptReminder = instance1.detail<QOrganizerItemReminder>();
     QVERIFY(rptReminder.isEmpty());
     
-	// Add reminder detail to create an exceptional entry
-	rptReminder.setDateTime(startDateTime.addSecs(-300));
+    // Add reminder detail to create an exceptional entry
+    rptReminder.setSecondsBeforeStart(300);
     instance1.saveDetail(&rptReminder);
     QVERIFY(m_om->saveItem(&instance1));
-	
-	// Verify that the exceptional entry has been created
+
+    // Verify that the exceptional entry has been created
     instance1 = m_om->item(instance1.localId());
     rptReminder = instance1.detail<QOrganizerItemReminder>();
     QVERIFY(!rptReminder.isEmpty());
 
-	// Verify that the other instances have not been modified
+    // Verify that the other instances have not been modified
     itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
     QCOMPARE(itemInstances.count(), 3);
     QVERIFY(itemInstances.at(1).detail<QOrganizerItemReminder>().isEmpty());
@@ -724,54 +724,54 @@ void tst_SymbianOm::addReminderToSingleInstance()
  */
 void tst_SymbianOm::removeReminderFromSingleInstance()
 {
-	// Repeating event with reminder
+    // Repeating event with reminder
     QOrganizerItem repeatingEvent;
     repeatingEvent.setType(QOrganizerItemType::TypeEvent);
     
-	// Add the start and end time
+    // Add the start and end time
     QOrganizerEventTimeRange timeRange;
     QDateTime startDateTime = QDateTime::currentDateTime();
     timeRange.setStartDateTime(startDateTime);
     timeRange.setEndDateTime(startDateTime.addSecs(3000));
     
-	// Create a daily recurrence rule
-	QOrganizerItemRecurrence recurrence;
+    // Create a daily recurrence rule
+    QOrganizerItemRecurrence recurrence;
     QOrganizerItemRecurrenceRule rrule;
     rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-    rrule.setCount(3);
-    QList<QOrganizerItemRecurrenceRule> list;
-    list.append(rrule);
+    rrule.setLimit(3);
+    QSet<QOrganizerItemRecurrenceRule> list;
+    list.insert(rrule);
     recurrence.setRecurrenceRules(list);
     
-	// Add reminder detail
-	QOrganizerItemReminder repeatReminder;
-    repeatReminder.setDateTime(startDateTime.addSecs(-300));
+    // Add reminder detail
+    QOrganizerItemReminder repeatReminder;
+    repeatReminder.setSecondsBeforeStart(300);
     
-	// Save the item
-	repeatingEvent.saveDetail(&timeRange);
+    // Save the item
+    repeatingEvent.saveDetail(&timeRange);
     repeatingEvent.saveDetail(&recurrence);
     repeatingEvent.saveDetail(&repeatReminder);
     QVERIFY(m_om->saveItem(&repeatingEvent));
     
-	// Fetch the instances
-	QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
+    // Fetch the instances
+    QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
     QVERIFY(itemInstances.count() == 3);
     
-	// Modify first instance by removing reminder detail and save
-	QOrganizerItem instance1 = itemInstances.at(0);
+    // Modify first instance by removing reminder detail and save
+    QOrganizerItem instance1 = itemInstances.at(0);
     QOrganizerItemReminder rptReminder = instance1.detail<QOrganizerItemReminder>();
-    QCOMPARE(rptReminder.dateTime(), repeatReminder.dateTime());
+    QCOMPARE(rptReminder.secondsBeforeStart(), repeatReminder.secondsBeforeStart());
     instance1.removeDetail(&rptReminder);
     QVERIFY(m_om->saveItem(&instance1));
-    
-	// Verify that an exception has been created
-	instance1 = m_om->item(instance1.localId());
+
+    // Verify that an exception has been created
+    instance1 = m_om->item(instance1.localId());
     rptReminder = instance1.detail<QOrganizerItemReminder>();
     QVERIFY(rptReminder.isEmpty());
 	
-	// Check if the other instances are intact
-	itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
-	QCOMPARE(itemInstances.count(), 3);
+    // Check if the other instances are intact
+    itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
+    QCOMPARE(itemInstances.count(), 3);
     QVERIFY(!itemInstances.at(1).detail<QOrganizerItemReminder>().isEmpty());
 }
 
@@ -801,6 +801,17 @@ void tst_SymbianOm::timezone()
     event = m_om->item(event.localId());
     QVERIFY(event.startDateTime() == startDateTime);
     QVERIFY(event.endDateTime() == endDateTime);
+}
+
+void tst_SymbianOm::supportedItemTypes()
+{
+    // Verify item type support
+    QVERIFY(m_om->supportedItemTypes().count() > 0);
+    foreach (QString itemType, m_om->supportedItemTypes()) {
+        QVERIFY(!m_om->detailDefinitions(itemType).isEmpty());
+        // TODO: Try saving an item with the given type.
+        // This would require some logic though.
+    }
 }
 
 /*!
@@ -951,7 +962,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
         fieldEndDateTime = QLatin1String(QOrganizerTodoTimeRange::FieldDueDateTime);
     }
 
-    QTest::newRow(testCaseName("item with reminder starttime", managerName, itemType).toLatin1().constData())
+    QTest::newRow(testCaseName("item with reminder time delta", managerName, itemType).toLatin1().constData())
         << managerName
         << (int) QOrganizerItemManager::NoError
         << (QTstDetailFieldList(itemTypeDetails)
@@ -960,7 +971,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
             << QTstDetailField(timeRangeDefinition, fieldStartDateTime, QDateTime::currentDateTime().addDays(1))
             << QTstDetailField(timeRangeDefinition, fieldEndDateTime, QDateTime::currentDateTime().addDays(2))
             // datetime reminder after half an hour
-            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldDateTime, QDateTime::currentDateTime().addSecs(1800)));
+            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldSecondsBeforeStart, 1800));
 
     // There is a known issue in symbian calendar server, the datetimes seem to
     // be rounded to one day accuracy. In other words you cannot create for
@@ -978,7 +989,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
                 // start after an hour
                 << QTstDetailField(timeRangeDefinition, fieldStartDateTime, QDateTime::currentDateTime().addSecs(3600))
                 // datetime reminder after half an hour
-                << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldDateTime, QDateTime::currentDateTime().addSecs(1800)));
+                << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldSecondsBeforeStart, 1800));
     }
 
     QTest::newRow(testCaseName("item with reminder starttime after 3 hours, 2 secs", managerName, itemType).toLatin1().constData())
@@ -990,7 +1001,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
             << QTstDetailField(timeRangeDefinition, fieldStartDateTime, QDateTime::currentDateTime().addDays(1))
             << QTstDetailField(timeRangeDefinition, fieldEndDateTime, QDateTime::currentDateTime().addDays(2))
             // datetime reminder ~3 hours ago
-            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldDateTime, QDateTime::currentDateTime().addSecs(11802)));
+            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldSecondsBeforeStart, 11802));
 
     QTest::newRow(testCaseName("item with reminder starttime after 30 days", managerName, itemType).toLatin1().constData())
         << managerName
@@ -1001,7 +1012,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
             << QTstDetailField(timeRangeDefinition, fieldStartDateTime, QDateTime::currentDateTime().addDays(30))
             << QTstDetailField(timeRangeDefinition, fieldEndDateTime, QDateTime::currentDateTime().addDays(31))
             // datetime reminder after (29 days, 23 hours and 59 minutes)
-            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldDateTime, QDateTime::currentDateTime().addSecs(2591940)));
+            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldSecondsBeforeStart, 2591940));
 
     QTest::newRow(testCaseName("item with reminder starttime after 365 days", managerName, itemType).toLatin1().constData())
         << managerName
@@ -1012,7 +1023,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
             << QTstDetailField(timeRangeDefinition, fieldStartDateTime, QDateTime::currentDateTime().addDays(365))
             << QTstDetailField(timeRangeDefinition, fieldEndDateTime, QDateTime::currentDateTime().addDays(366))
             // datetime reminder after 364 days
-            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldDateTime, QDateTime::currentDateTime().addDays(364)));
+            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldSecondsBeforeStart, 364*24*60*60));
 
     QTest::newRow(testCaseName("item with reminder starttime in the past", managerName, itemType).toLatin1().constData())
         << managerName
@@ -1023,7 +1034,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
             << QTstDetailField(timeRangeDefinition, fieldStartDateTime, QDateTime::currentDateTime())
             << QTstDetailField(timeRangeDefinition, fieldEndDateTime, QDateTime::currentDateTime().addDays(1))
             // datetime reminder half an hour ago
-            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldDateTime, QDateTime::currentDateTime().addSecs(-1800)));
+            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldSecondsBeforeStart,-1800));
 
     QTest::newRow(testCaseName("item with reminder delta", managerName, itemType).toLatin1().constData())
         << managerName
@@ -1034,7 +1045,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
             << QTstDetailField(timeRangeDefinition, fieldStartDateTime, QDateTime::currentDateTime().addDays(1))
             << QTstDetailField(timeRangeDefinition, fieldEndDateTime, QDateTime::currentDateTime().addDays(2))
             // delta reminder half an hour before
-            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldTimeDelta, int(1800)));
+            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldSecondsBeforeStart, int(1800)));
 
     QTest::newRow(testCaseName("item with small reminder delta", managerName, itemType).toLatin1().constData())
         << managerName
@@ -1045,7 +1056,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
             << QTstDetailField(timeRangeDefinition, fieldStartDateTime, QDateTime::currentDateTime().addDays(1))
             << QTstDetailField(timeRangeDefinition, fieldEndDateTime, QDateTime::currentDateTime().addDays(2))
             // delta reminder 65 seconds before
-            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldTimeDelta, int(65)));
+            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldSecondsBeforeStart, int(65)));
 
     QTest::newRow(testCaseName("item with smallest reminder delta", managerName, itemType).toLatin1().constData())
         << managerName
@@ -1056,7 +1067,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
             << QTstDetailField(timeRangeDefinition, fieldStartDateTime, QDateTime::currentDateTime().addDays(1))
             << QTstDetailField(timeRangeDefinition, fieldEndDateTime, QDateTime::currentDateTime().addDays(2))
             // delta reminder 1 second before
-            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldTimeDelta, int(1)));
+            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldSecondsBeforeStart, int(1)));
 
     QTest::newRow(testCaseName("item with reminder delta in past", managerName, itemType).toLatin1().constData())
         << managerName
@@ -1067,33 +1078,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
             << QTstDetailField(timeRangeDefinition, fieldStartDateTime, QDateTime::currentDateTime())
             << QTstDetailField(timeRangeDefinition, fieldEndDateTime, QDateTime::currentDateTime().addDays(1))
             // delta reminder half an hour before
-            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldTimeDelta, int(-1800)));
-
-    QTest::newRow(testCaseName("item with reminder datetime and delta", managerName, itemType).toLatin1().constData())
-        << managerName
-        << (int) QOrganizerItemManager::NoError
-        << (QTstDetailFieldList(itemTypeDetails)
-            << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president"))
-            // start tomorrow
-            << QTstDetailField(timeRangeDefinition, fieldStartDateTime, QDateTime::currentDateTime().addDays(1))
-            << QTstDetailField(timeRangeDefinition, fieldEndDateTime, QDateTime::currentDateTime().addDays(2))
-            // datetime reminder after 23,5 hours
-            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldDateTime, QDateTime::currentDateTime().addDays(1).addSecs(-1800))
-            // delta reminder half an hour before
-            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldTimeDelta, int(1800)));
-
-    QTest::newRow(testCaseName("item with conflicting reminder datetime and delta", managerName, itemType).toLatin1().constData())
-        << managerName
-        << (int) QOrganizerItemManager::BadArgumentError
-        << (QTstDetailFieldList(itemTypeDetails)
-            << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president"))
-            // start tomorrow
-            << QTstDetailField(timeRangeDefinition, fieldStartDateTime, QDateTime::currentDateTime().addDays(1))
-            << QTstDetailField(timeRangeDefinition, fieldEndDateTime, QDateTime::currentDateTime().addDays(2))
-            // datetime reminder after half an hour
-            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldDateTime, QDateTime::currentDateTime().addSecs(1800))
-            // delta reminder 15 minutes before
-            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldTimeDelta, int(900)));
+            << QTstDetailField(QOrganizerItemReminder::DefinitionName, QOrganizerItemReminder::FieldSecondsBeforeStart, int(-1800)));
 }
 
 /*!
@@ -1305,42 +1290,13 @@ bool tst_SymbianOm::isKnownIssue(QOrganizerItemDetail actual, QOrganizerItemDeta
         QOrganizerItemReminder expectedReminder = expected;
 
         // Known issue:
-        // DateTime and Delta fields of a reminder depend on each
-        // other. If only DateTime is defined, Delta is calculated
-        // by symbian backend and vice-versa.
-        if (expectedReminder.dateTime().isValid()
-            && expectedReminder.dateTime() == actualReminder.dateTime()
-            && expectedReminder.timeDelta() == 0
-            && actualReminder.timeDelta() != 0) {
-            // The expected detail contains startDateTime but not delta
-            // -> Ignore delta field in actual detail.
-            qWarning() << "Known issue 1";
-            return true;
-        } else if (expectedReminder.dateTime().isNull()
-            && actualReminder.dateTime().isValid()
-            && expectedReminder.timeDelta() != 0
-            && expectedReminder.timeDelta() == actualReminder.timeDelta()) {
-            // The expected detail contains delta but not startDateTime
-            // -> Ignore datetime field in actual detail.
-            qWarning() << "Known issue 2";
-            return true;
-        }
-
-        // Known issue:
         // Symbian calendar server saves reminder delta as minutes.
-        // QOrganizerItemReminder::FieldTimeDelta uses seconds.
+        // QOrganizerItemReminder::FieldSecondsBeforeStart uses seconds.
         // This causes a rounding issue.
-        if(expectedReminder.timeDelta()
-            && actualReminder.timeDelta() != expectedReminder.timeDelta()
-            && actualReminder.timeDelta() == ((expectedReminder.timeDelta() / 60) * 60)) {
-            qWarning() << "Known issue 3";
-            return true;
-        } else if(actualReminder.dateTime().isValid()
-            && expectedReminder.dateTime().isValid()
-            && actualReminder.dateTime() != expectedReminder.dateTime()
-            && ((actualReminder.dateTime().toTime_t() / 60) * 60)
-            == ((expectedReminder.dateTime().toTime_t() / 60) * 60)) {
-            qWarning() << "Known issue 4";
+        if(expectedReminder.secondsBeforeStart()
+            && actualReminder.secondsBeforeStart() != expectedReminder.secondsBeforeStart()
+            && actualReminder.secondsBeforeStart() == ((expectedReminder.secondsBeforeStart() / 60) * 60)) {
+            qWarning() << "Known issue 1";
             return true;
         }
     }

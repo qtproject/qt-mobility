@@ -37,17 +37,19 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and 
-** Navigation API.  The use of these services, whether by use of the 
-** plugin or by other means, is governed by the terms and conditions 
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in 
-** this package, located in the directory containing the Ovi services 
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
 ** plugin source code.
 **
 ****************************************************************************/
 
 #ifndef QGEOSEARCHMANAGER_NOKIA_H
 #define QGEOSEARCHMANAGER_NOKIA_H
+
+#include "qgeoserviceproviderplugin_nokia.h"
 
 #include <qgeoserviceprovider.h>
 #include <qgeosearchmanagerengine.h>
@@ -84,13 +86,13 @@ private slots:
 
 private:
     static QString trimDouble(qreal degree, int decimalDigits = 10);
-    QGeoSearchReply* search(QString requestString, QGeoBoundingArea *bounds, int limit=-1, int offset=0);
+    QGeoSearchReply* search(QString requestString, QGeoBoundingArea *bounds, int limit = -1, int offset = 0);
     QString languageToMarc(QLocale::Language language);
 
     QNetworkAccessManager *m_networkManager;
     QString m_host;
-    QString m_referer;
     QString m_token;
+    QString m_referer;
 };
 
 #endif

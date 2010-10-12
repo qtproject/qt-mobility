@@ -50,7 +50,7 @@ class QDeclarativeContactDisplayLabel : public QDeclarativeContactDetail
 {
     Q_OBJECT
     Q_PROPERTY(QString label READ label NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "label")
 public:
     enum FieldType {

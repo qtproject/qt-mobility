@@ -45,6 +45,8 @@
 #include "qgeomapdata.h"
 #include "qgeotiledmapreply.h"
 
+#include <QRectF>
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoTiledMapDataPrivate;
@@ -54,7 +56,7 @@ class Q_LOCATION_EXPORT QGeoTiledMapData : public QGeoMapData
     Q_OBJECT
 
 public:
-    QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
+    QGeoTiledMapData(QGeoMappingManagerEngine *engine);
     virtual ~QGeoTiledMapData();
 
     void setWindowSize(const QSizeF &size);
@@ -77,13 +79,15 @@ public:
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
     QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
 
-    virtual QPoint coordinateToWorldPixel(const QGeoCoordinate &coordinate) const;
-    virtual QGeoCoordinate worldPixelToCoordinate(const QPoint &pixel) const;
+    virtual QPoint coordinateToWorldReferencePosition(const QGeoCoordinate &coordinate) const;
+    virtual QGeoCoordinate worldReferencePositionToCoordinate(const QPoint &pixel) const;
 
-    QPoint maxZoomCenter() const;
-    QSize maxZoomSize() const;
-    QRect maxZoomScreenRect() const;
+    QPoint worldReferenceViewportCenter() const;
+    QSize worldReferenceSize() const;
+    QRect worldReferenceViewportRect() const;
     int zoomFactor() const;
+
+    void triggerUpdateMapDisplay(const QRectF &target = QRectF());
 
 protected:
     void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);

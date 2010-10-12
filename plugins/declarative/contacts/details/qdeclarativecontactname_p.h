@@ -56,7 +56,7 @@ class QDeclarativeContactName : public QDeclarativeContactDetail
     Q_PROPERTY(QString suffix READ suffix WRITE setSuffix NOTIFY fieldsChanged)
     Q_PROPERTY(QString customLabel READ customLabel WRITE setCustomLabel NOTIFY fieldsChanged)
 
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "firstName")
 public:
     enum FieldType {

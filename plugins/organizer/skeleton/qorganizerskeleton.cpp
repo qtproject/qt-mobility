@@ -57,22 +57,457 @@ QOrganizerItemManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QS
 
 QOrganizerItemEngineLocalId* QOrganizerItemSkeletonFactory::createItemEngineLocalId() const
 {
-    /* TODO - return the localid specific to the engine */
-    return NULL;
+    /* TODO - instantiate your engine-specific item id in this function */
+    return new QOrganizerItemSkeletonEngineLocalId;
 }
 
 QOrganizerCollectionEngineLocalId* QOrganizerItemSkeletonFactory::createCollectionEngineLocalId() const
 {
-    /* TODO - return the localid specific to the engine */
-    return NULL;
+    /* TODO - instantiate your engine-specific collection id in this function */
+    return new QOrganizerCollectionSkeletonEngineLocalId;
 }
 
 QString QOrganizerItemSkeletonFactory::managerName() const
 {
     /* TODO - put your engine name here */
-    return QString("skeleton");
+    return QLatin1String("skeleton");
 }
 Q_EXPORT_PLUGIN2(qtorganizer_skeleton, QOrganizerItemSkeletonFactory);
+
+QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId()
+    : QOrganizerItemEngineLocalId(), m_localItemId(0)
+{
+    /*
+      TODO
+
+      Initialize any data members of your engine-specific item id in the constructor.
+
+      This default constructor should not be used when returning a null id,
+      but is provided in order to allow use of the ids in a list, and as an
+      enabler for the implementation of QOrganizerItemLocalId.
+
+      When returning a null id, the backend should simply return a default
+      constructed QOrganizerItemLocalId.
+
+      In this example, we use just a single quint32 to identify the item,
+      however your engine may require more information in order to uniquely
+      identify an item within it (e.g., a collection identifier plus an item
+      identifier, and perhaps a datastore identifier which identifies the
+      datastore in which the collection can be found).
+     */
+}
+
+QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId(quint32 itemId)
+    : QOrganizerItemEngineLocalId(), m_localItemId(itemId)
+{
+    /*
+      TODO
+
+      Whatever data members your particular class has, should be passed as arguments
+      to a ctor of this type.  This is the constructor which will be used by your
+      engine code.
+
+      In particular, you will most likely be returning to clients an id by calling:
+      QOrganizerItemLocalId id(new QOrganizerItemSkeletonEngineLocalId(3));
+      or something similar.  Note that the QOrganizerItemLocalId constructor which
+      takes a QOrganizerItemEngineLocalId pointer as a parameter takes ownership
+      of that pointer (and so controls its lifetime).
+     */
+}
+
+QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId(const QOrganizerItemSkeletonEngineLocalId& other)
+    : QOrganizerItemEngineLocalId(), m_localItemId(other.m_localItemId)
+{
+    /* TODO - implement a copy constructor for your engine-specific local id class */
+}
+
+QOrganizerItemSkeletonEngineLocalId::~QOrganizerItemSkeletonEngineLocalId()
+{
+    /* TODO - Clean up any memory in use by your engine-specific local id. */
+}
+
+bool QOrganizerItemSkeletonEngineLocalId::isEqualTo(const QOrganizerItemEngineLocalId* other) const
+{
+    /*
+      TODO
+
+      The isEqualTo(other) function is called by the QOrganizerItemLocalId::operator==(other) function.
+      You must implement this in terms of the data members which your class contains.
+
+      An example implementation is provided below, for the case where only a single quint32
+      is required to uniquely identify an item in a manager.
+     */
+
+    quint32 otherlocalItemId = static_cast<const QOrganizerItemSkeletonEngineLocalId*>(other)->m_localItemId;
+    if (m_localItemId != otherlocalItemId)
+        return false;
+    return true;
+}
+
+bool QOrganizerItemSkeletonEngineLocalId::isLessThan(const QOrganizerItemEngineLocalId* other) const
+{
+    /*
+      TODO
+
+      The isLessThan(other) function is called by the QOrganizerItemLocalId::operator<(other) function.
+      You must implement this in terms of the data members which your class contains.
+
+      An example implementation is provided below, for the case where only a single quint32
+      is required to uniquely identify an item in a manager.
+     */
+
+    quint32 otherlocalItemId = static_cast<const QOrganizerItemSkeletonEngineLocalId*>(other)->m_localItemId;
+    return (m_localItemId < otherlocalItemId);
+}
+
+uint QOrganizerItemSkeletonEngineLocalId::engineLocalIdType() const
+{
+    /*
+      TODO
+
+      The engine-local id type value is used by QOrganizerItemLocalId to ensure that
+      comparisons are occurring between ids of the same engine-specific type.
+      Such comparisons would return false if the types are not equal.
+
+      As such, it is important that the type identifier of your engine does not
+      clash with that of any other engine, in order to avoid possibly undefined
+      behaviour during comparison.
+
+      We recommend returning the pre-calculated hash value of your manager name.
+      Engines should embed the hash value into their application as a constant,
+      read-only data value (uint), instead of calculating the value in this
+      function.  For example purposes, however, we calculate it every time, below.
+     */
+
+    return qHash(QString(QLatin1String("skeleton")));
+}
+
+QOrganizerItemEngineLocalId* QOrganizerItemSkeletonEngineLocalId::clone() const
+{
+    /*
+      TODO
+
+      When a QOrganizerItemLocalId is copied or assigned, it performs a clone of
+      the engine-specific local id.  This function is called in that case.
+
+      Implement this function so that the data members of your engine-specific id
+      are deep-copied.
+
+      An example implementation for the case where an item can be uniquely identified
+      with just a single quint32 is given below.
+     */
+
+    QOrganizerItemSkeletonEngineLocalId *myClone = new QOrganizerItemSkeletonEngineLocalId;
+    myClone->m_localItemId = m_localItemId;
+    return myClone;
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug QOrganizerItemSkeletonEngineLocalId::debugStreamOut(QDebug dbg)
+{
+    /*
+      TODO
+
+      In order to allow clients to debug applications, you must implement this
+      function.  We recommend streaming the name of your class followed by the
+      values of the data members in your engine-specific local id class in
+      parentheses.
+
+      An example implementation for the case where an item can be uniquely identified
+      with just a single quint32 is given below.
+
+      Note that you must include the #ifndef QT_NO_DEBUG_STREAM preprocessor
+      directive block in order to ensure compilation in environments where that
+      directive is defined.
+     */
+
+    dbg.nospace() << "QOrganizerItemSkeletonEngineLocalId(" << m_localItemId << ")";
+    return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& QOrganizerItemSkeletonEngineLocalId::dataStreamOut(QDataStream& out)
+{
+    /*
+      TODO
+
+      In order to allow clients to serialize QOrganizerItemId's, you must implement
+      this function.
+
+      An example implementation for the case where an item can be uniquely identified
+      with just a single quint32 is given below.
+
+      Note that you must include the #ifndef QT_NO_DATASTREAM preprocessor
+      directive block in order to ensure compilation in environments where that
+      directive is defined.
+     */
+
+    out << m_localItemId;
+    return out;
+}
+
+QDataStream& QOrganizerItemSkeletonEngineLocalId::dataStreamIn(QDataStream& in)
+{
+    /*
+      TODO
+
+      In order to allow clients to deserialize QOrganizerItemId's, you must implement
+      this function.  If the dataStreamOut() function is implemented as:
+          out << dataMemberOne << dataMemberTwo;
+      then this function should be implemented as:
+          in >> dataMemberOne >> dataMemberTwo;
+
+      An example implementation for the case where an item can be uniquely identified
+      with just a single quint32 is given below.
+
+      Note that you must include the #ifndef QT_NO_DATASTREAM preprocessor
+      directive block in order to ensure compilation in environments where that
+      directive is defined.
+     */
+
+    in >> m_localItemId;
+    return in;
+}
+#endif
+
+uint QOrganizerItemSkeletonEngineLocalId::hash() const
+{
+    /*
+      TODO
+
+      Provide a hash function for your engine-specific id.
+      Note that the hash doesn't strictly need to be unique, since isEqualTo()
+      ensures that individual id's in a single hash-bucket can be uniquely
+      determined; however a better hash function will result in better performance
+      because the ids will be distributed more randomly in a hash table.
+
+      In the example implementation below, we could simply return the id, since the
+      id is a quint32.  In more complex id classes, however, you may need to
+      qHash() individual data members and combine the results somehow.
+     */
+
+    return QT_PREPEND_NAMESPACE(qHash)(m_localItemId);
+}
+
+
+QOrganizerCollectionSkeletonEngineLocalId::QOrganizerCollectionSkeletonEngineLocalId()
+    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(0)
+{
+    /*
+      TODO
+
+      Initialize any data members of your engine-specific collection id in the constructor.
+
+      This default constructor should not be used when returning a null id,
+      but is provided in order to allow use of the ids in a list, and as an
+      enabler for the implementation of QOrganizerCollectionLocalId.
+
+      When returning a null id, the backend should simply return a default
+      constructed QOrganizerCollectionLocalId.
+
+      In this example, we use just a single quint32 to identify the collection,
+      however your engine may require more information in order to uniquely
+      identify a collection within it (e.g., a collection identifier plus a datastore
+      identifier which identifies the datastore in which the collection can be found).
+     */
+}
+
+QOrganizerCollectionSkeletonEngineLocalId::QOrganizerCollectionSkeletonEngineLocalId(quint32 collectionId)
+    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(collectionId)
+{
+    /*
+      TODO
+
+      Whatever data members your particular class has, should be passed as arguments
+      to a ctor of this type.  This is the constructor which will be used by your
+      engine code.
+
+      In particular, you will most likely be returning to clients an id by calling:
+      QOrganizerCollectionLocalId id(new QOrganizerCollectionSkeletonEngineLocalId(3));
+      or something similar.  Note that the QOrganizerCollectionLocalId constructor which
+      takes a QOrganizerCollectionEngineLocalId pointer as a parameter takes ownership
+      of that pointer (and so controls its lifetime).
+     */
+}
+
+QOrganizerCollectionSkeletonEngineLocalId::QOrganizerCollectionSkeletonEngineLocalId(const QOrganizerCollectionSkeletonEngineLocalId& other)
+    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(other.m_localCollectionId)
+{
+    /* TODO - implement a copy constructor for your engine-specific local id class */
+}
+
+QOrganizerCollectionSkeletonEngineLocalId::~QOrganizerCollectionSkeletonEngineLocalId()
+{
+    /* TODO - Clean up any memory in use by your engine-specific local id. */
+}
+
+bool QOrganizerCollectionSkeletonEngineLocalId::isEqualTo(const QOrganizerCollectionEngineLocalId* other) const
+{
+    /*
+      TODO
+
+      The isEqualTo(other) function is called by the QOrganizerCollectionLocalId::operator==(other) function.
+      You must implement this in terms of the data members which your class contains.
+
+      An example implementation is provided below, for the case where only a single quint32
+      is required to uniquely identify a collection in a manager.
+     */
+
+    quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionSkeletonEngineLocalId*>(other)->m_localCollectionId;
+    if (m_localCollectionId != otherlocalCollectionId)
+        return false;
+    return true;
+}
+
+bool QOrganizerCollectionSkeletonEngineLocalId::isLessThan(const QOrganizerCollectionEngineLocalId* other) const
+{
+    /*
+      TODO
+
+      The isLessThan(other) function is called by the QOrganizerCollectionLocalId::operator<(other) function.
+      You must implement this in terms of the data members which your class contains.
+
+      An example implementation is provided below, for the case where only a single quint32
+      is required to uniquely identify a collection in a manager.
+     */
+
+    quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionSkeletonEngineLocalId*>(other)->m_localCollectionId;
+    if (m_localCollectionId < otherlocalCollectionId)
+        return true;
+    return false;
+}
+
+uint QOrganizerCollectionSkeletonEngineLocalId::engineLocalIdType() const
+{
+    /*
+      TODO
+
+      The engine-local id type value is used by QOrganizerCollectionLocalId to ensure that
+      comparisons are occurring between ids of the same engine-specific type.
+      Such comparisons would return false if the types are not equal.
+
+      As such, it is important that the type identifier of your engine does not
+      clash with that of any other engine, in order to avoid possibly undefined
+      behaviour during comparison.
+
+      We recommend returning the pre-calculated hash value of your manager name.
+      Engines should embed the hash value into their application as a constant,
+      read-only data value (uint), instead of calculating the value in this
+      function.  For example purposes, however, we calculate it every time, below.
+     */
+
+    return qHash(QString(QLatin1String("skeleton")));
+}
+
+QOrganizerCollectionEngineLocalId* QOrganizerCollectionSkeletonEngineLocalId::clone() const
+{
+    /*
+      TODO
+
+      When a QOrganizerCollectionLocalId is copied or assigned, it performs a clone of
+      the engine-specific local id.  This function is called in that case.
+
+      Implement this function so that the data members of your engine-specific id
+      are deep-copied.
+
+      An example implementation for the case where a collection can be uniquely identified
+      with just a single quint32 is given below.
+     */
+
+    QOrganizerCollectionSkeletonEngineLocalId *myClone = new QOrganizerCollectionSkeletonEngineLocalId;
+    myClone->m_localCollectionId = m_localCollectionId;
+    return myClone;
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug QOrganizerCollectionSkeletonEngineLocalId::debugStreamOut(QDebug dbg)
+{
+    /*
+      TODO
+
+      In order to allow clients to debug applications, you must implement this
+      function.  We recommend streaming the name of your class followed by the
+      values of the data members in your engine-specific local id class in
+      parentheses.
+
+      An example implementation for the case where a collection can be uniquely identified
+      with just a single quint32 is given below.
+
+      Note that you must include the #ifndef QT_NO_DEBUG_STREAM preprocessor
+      directive block in order to ensure compilation in environments where that
+      directive is defined.
+     */
+
+    dbg.nospace() << "QOrganizerCollectionSkeletonEngineLocalId(" << m_localCollectionId << ")";
+    return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& QOrganizerCollectionSkeletonEngineLocalId::dataStreamOut(QDataStream& out)
+{
+    /*
+      TODO
+
+      In order to allow clients to serialize QOrganizerCollectionId's, you must implement
+      this function.
+
+      An example implementation for the case where a collection can be uniquely identified
+      with just a single quint32 is given below.
+
+      Note that you must include the #ifndef QT_NO_DATASTREAM preprocessor
+      directive block in order to ensure compilation in environments where that
+      directive is defined.
+     */
+
+    out << m_localCollectionId;
+    return out;
+}
+
+QDataStream& QOrganizerCollectionSkeletonEngineLocalId::dataStreamIn(QDataStream& in)
+{
+    /*
+      TODO
+
+      In order to allow clients to deserialize QOrganizerCollectionId's, you must implement
+      this function.  If the dataStreamOut() function is implemented as:
+          out << dataMemberOne << dataMemberTwo;
+      then this function should be implemented as:
+          in >> dataMemberOne >> dataMemberTwo;
+
+      An example implementation for the case where a collection can be uniquely identified
+      with just a single quint32 is given below.
+
+      Note that you must include the #ifndef QT_NO_DATASTREAM preprocessor
+      directive block in order to ensure compilation in environments where that
+      directive is defined.
+     */
+
+    in >> m_localCollectionId;
+    return in;
+}
+#endif
+
+uint QOrganizerCollectionSkeletonEngineLocalId::hash() const
+{
+    /*
+      TODO
+
+      Provide a hash function for your engine-specific id.
+      Note that the hash doesn't strictly need to be unique, since isEqualTo()
+      ensures that individual id's in a single hash-bucket can be uniquely
+      determined; however a better hash function will result in better performance
+      because the ids will be distributed more randomly in a hash table.
+
+      In the example implementation below, we could simply return the id, since the
+      id is a quint32.  In more complex id classes, however, you may need to
+      qHash() individual data members and combine the results somehow.
+     */
+
+    return QT_PREPEND_NAMESPACE(qHash)(m_localCollectionId);
+}
+
 
 
 QOrganizerItemSkeletonEngine::~QOrganizerItemSkeletonEngine()
@@ -83,7 +518,7 @@ QOrganizerItemSkeletonEngine::~QOrganizerItemSkeletonEngine()
 QString QOrganizerItemSkeletonEngine::managerName() const
 {
     /* TODO - put your engine name here */
-    return QLatin1String("Skeleton");
+    return QLatin1String("skeleton");
 }
 
 QMap<QString, QString> QOrganizerItemSkeletonEngine::managerParameters() const
@@ -98,7 +533,7 @@ int QOrganizerItemSkeletonEngine::managerVersion() const
     return 1;
 }
 
-QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -120,10 +555,10 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganiz
         We might change the signature to split up the periodStart + periodEnd / periodStart + maxCount cases.
     */
 
-    return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, error);
+    return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, fetchHint, error);
 }
 
-QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -142,7 +577,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QOrgani
     QList<QOrganizerItem> ret;
 
     foreach(const QOrganizerItem& item, partiallyFilteredItems) {
-        if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
+        if (QOrganizerItemManagerEngine::isItemBetweenDates(item, startDate, endDate) && QOrganizerItemManagerEngine::testFilter(filter, item)) {
             ret.append(item);
         }
     }
@@ -150,7 +585,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QOrgani
     return QOrganizerItemManagerEngine::sortItems(ret, sortOrders);
 }
 
-QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
@@ -171,7 +606,7 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QOrganizerItemFi
     QList<QOrganizerItem> ret;
 
     foreach(const QOrganizerItem& item, partiallyFilteredItems) {
-        if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
+        if (QOrganizerItemManagerEngine::isItemBetweenDates(item, startDate, endDate) && QOrganizerItemManagerEngine::testFilter(filter, item)) {
             QOrganizerItemManagerEngine::addSorted(&ret, item, sortOrders);
         }
     }
@@ -200,17 +635,18 @@ QOrganizerItem QOrganizerItemSkeletonEngine::item(const QOrganizerItemLocalId& i
     return QOrganizerItemManagerEngine::item(itemId, fetchHint, error);
 }
 
-bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
     /*
         TODO
 
-        Save a list of items into the collection specified (or their current collection
+        Save a list of items into the collection specified in each (or their current collection
         if no collection is specified and they already exist, or the default collection
         if no collection is specified and they do not exist).
 
         For each item, convert it to your local type, assign an item id, and update the
         QOrganizerItem's ID (in the list above - e.g. *items[idx] = updated item).
+        Then, examine the collection id specified in each item and save the item in that collection.
 
         If you encounter an error (e.g. converting to local type, or saving), insert an entry into
         the map above at the corresponding index (e.g. errorMap->insert(idx, QOIM::InvalidDetailError).
@@ -218,7 +654,7 @@ bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, const
 
         The item passed in should be validated according to the schema.
     */
-    return QOrganizerItemManagerEngine::saveItems(items, collectionId, errorMap, error);
+    return QOrganizerItemManagerEngine::saveItems(items, errorMap, error);
 
 }
 
@@ -262,46 +698,44 @@ bool QOrganizerItemSkeletonEngine::removeDetailDefinition(const QString& definit
 }
 
 
-QOrganizerCollectionLocalId QOrganizerItemSkeletonEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
+QOrganizerCollection QOrganizerItemSkeletonEngine::defaultCollection(QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
 
         This allows clients to determine which collection an item will be saved,
         if the item is saved via saveItems() without specifying a collection id
-        of a collection in which to save the item.
-
-        If the backend does not support multiple collections (calendars) it may
-        return the default constructed collection id.
+        of a collection in which to save the item, via item->setCollectionId().
 
         There is always at least one collection in a manager, and all items are
         saved in exactly one collection.
      */
-    return QOrganizerItemManagerEngine::defaultCollectionId(error);
+    return QOrganizerItemManagerEngine::defaultCollection(error);
 }
 
-QList<QOrganizerCollectionLocalId> QOrganizerItemSkeletonEngine::collectionIds(QOrganizerItemManager::Error* error) const
+QOrganizerCollection QOrganizerItemSkeletonEngine::collection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
 
-        This allows clients to retrieve the ids of all collections currently
-        in this manager.  Some backends will have a prepopulated list of valid
-        collections, others will not.
+        This allows clients to retrieve a collection by (manager-local) id.
+        Prior to saving items, clients will set which collection the item will/should
+        be saved by calling item->setCollectionId().
      */
-    return QOrganizerItemManagerEngine::collectionIds(error);
+    return QOrganizerItemManagerEngine::collection(collectionId, error);
 }
 
-QList<QOrganizerCollection> QOrganizerItemSkeletonEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemSkeletonEngine::collections(QOrganizerItemManager::Error* error) const
 {
     /*
         TODO
 
-        This allows clients to retrieve the collections which correspond
-        to the given collection ids.  A collection can have properties
+        This allows clients to retrieve a list of all of the collections currently
+        in this manager.  Some backends will have a prepopulated list of valid
+        collections, others will not.  A collection can have properties
         like colour, description, perhaps a priority, etc etc.
      */
-    return QOrganizerItemManagerEngine::collections(collectionIds, error);
+    return QOrganizerItemManagerEngine::collections(error);
 }
 
 bool QOrganizerItemSkeletonEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)

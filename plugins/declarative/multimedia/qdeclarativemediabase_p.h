@@ -64,8 +64,8 @@ class QMediaPlayerControl;
 class QMediaService;
 class QMediaServiceProvider;
 class QMetaDataReaderControl;
-class QMetaDataControlMetaObject;
 class QDeclarativeMediaBaseAnimation;
+class QDeclarativeMediaMetaData;
 
 class QDeclarativeMediaBase
 {
@@ -105,10 +105,9 @@ public:
 
     QString errorString() const;
 
-    QObject *metaData() const;
+    QDeclarativeMediaMetaData *metaData() const;
 
-    void _q_stateChanged(QMediaPlayer::State state);
-    void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
+    void _q_statusChanged();
 
     void _q_metaDataChanged();
 
@@ -165,9 +164,8 @@ protected:
     QMediaObject *m_mediaObject;
     QMediaServiceProvider *m_mediaProvider;
     QMetaDataReaderControl *m_metaDataControl;
-    QMetaDataControlMetaObject *m_metaObject;
     QDeclarativeMediaBaseAnimation *m_animation;
-    QScopedPointer<QObject> m_metaData;
+    QScopedPointer<QDeclarativeMediaMetaData> m_metaData;
 
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_status;

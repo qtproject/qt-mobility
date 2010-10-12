@@ -113,6 +113,8 @@ public:
     bool operator!=(const QOrganizerCollectionId& other) const;
     bool operator<(const QOrganizerCollectionId& other) const;
 
+    bool isNull() const;
+
     QString managerUri() const;
     QOrganizerCollectionLocalId localId() const;
 
@@ -128,8 +130,8 @@ QTM_END_NAMESPACE
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerCollectionLocalId), Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerCollectionId), Q_MOVABLE_TYPE);
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerCollectionLocalId));
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerCollectionId));
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerCollectionLocalId))
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerCollectionId))
 
 #endif
 

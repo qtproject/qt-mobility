@@ -51,7 +51,7 @@ class QDeclarativeContactFavorite : public QDeclarativeContactDetail
     Q_OBJECT
     Q_PROPERTY(bool favorite READ isFavorite WRITE setFavorite NOTIFY fieldsChanged)
     Q_PROPERTY(int index READ index WRITE setIndex NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "index")
 public:
     enum FieldType {

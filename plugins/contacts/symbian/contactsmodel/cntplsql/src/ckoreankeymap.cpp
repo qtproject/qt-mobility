@@ -104,10 +104,6 @@ TBool CKoreanKeyMap::IsLanguageSupported(QString aSource) const
 // ----------------------------------------------------------------------------
 QString CKoreanKeyMap::GetMappedString(QString aSource) const
 	{
-	// TODO: in a later sprint: put a KSeparatorChar between syllables.
-	// If aSource has jamo chars, try to detect the syllable limits this way:
-	// syllable begins by C + V pair, which is never in the middle of a syllable.
-	
 	QString destination;
 	TInt length = aSource.length();
 
@@ -118,6 +114,7 @@ QString CKoreanKeyMap::GetMappedString(QString aSource) const
 			{
 			QString jamos = ExtractJamos(ch);
 			destination.append(GetMappedString(jamos));
+			destination.append(KSeparatorChar); // Syllable is one token
 			}
 		else
 			{
@@ -130,6 +127,10 @@ QString CKoreanKeyMap::GetMappedString(QString aSource) const
 				QString keySequence = MapJamoToKeySequence(ch); // searches iKeyPressMap
 				destination.append(keySequence);
 				}
+
+			// TODO: detect the syllable limits within stream of Jamos in this way:
+			// syllable begins by C + V pair, which is never in the middle of a syllable.
+			// Currently assumes aSource only contains grammatically valid Jamo stream
 			}
 		}
 #if defined(WRITE_PRED_SEARCH_LOGS)

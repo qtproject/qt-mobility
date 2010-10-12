@@ -70,7 +70,6 @@ public:
         InvalidFilter = QOrganizerItemFilter::InvalidFilter,
         OrganizerItemDetailFilter = QOrganizerItemFilter::OrganizerItemDetailFilter,
         OrganizerItemDetailRangeFilter = QOrganizerItemFilter::OrganizerItemDetailRangeFilter,
-        OrganizerItemDateTimePeriodFilter = QOrganizerItemFilter::OrganizerItemDateTimePeriodFilter,
         ChangeLogFilter = QOrganizerItemFilter::ChangeLogFilter,
         ActionFilter = QOrganizerItemFilter::ActionFilter,
         IntersectionFilter = QOrganizerItemFilter::IntersectionFilter,
@@ -162,64 +161,23 @@ public:
 
     QVariantList ids() const
     {
-        return QVariantList(); //TODO
+        return m_ids;
     }
 
     void setIds(const QVariantList& ids)
     {
-        //TODO
+        m_ids = ids;
     }
 
-    QOrganizerItemFilter filter() const
-    {
-
-        QSet<QOrganizerCollectionLocalId> ids;
-        //TODO: ids <= m_ids
-        QOrganizerItemCollectionFilter f;
-        f.setCollectionIds(ids);
-        return f;
-    }
+    QOrganizerItemFilter filter() const;
 
 signals:
     void valueChanged();
 
 private:
-    QList<uint> m_ids;
+    QVariantList m_ids;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemCollectionFilter)
-
-//date time period filter
-class QDeclarativeOrganizerItemDateTimePeriodFilter : public QDeclarativeOrganizerItemFilter
-{
-    Q_OBJECT
-    Q_PROPERTY(QDateTime start READ start WRITE setStart NOTIFY valueChanged)
-    Q_PROPERTY(QDateTime end READ end WRITE setEnd NOTIFY valueChanged)
-public:
-    QDeclarativeOrganizerItemDateTimePeriodFilter(QObject *parent = 0)
-        :QDeclarativeOrganizerItemFilter(parent)
-    {
-    }
-
-    QDateTime start() const { return d.startPeriod(); }
-    void setStart(const QDateTime& dateTime) { d.setStartPeriod(dateTime); }
-
-    QDateTime end() const { return d.endPeriod(); }
-    void setEnd(const QDateTime& dateTime) { d.setEndPeriod(dateTime); }
-
-    QOrganizerItemFilter filter() const
-    {
-        return d;
-    }
-
-signals:
-    void valueChanged();
-
-private:
-    QOrganizerItemDateTimePeriodFilter d;
-
-};
-QML_DECLARE_TYPE(QDeclarativeOrganizerItemDateTimePeriodFilter)
-
 
 //detail filter
 class QDeclarativeOrganizerItemDetailFilter : public QDeclarativeOrganizerItemFilter
@@ -379,29 +337,23 @@ public:
     {
     }
 
-    QOrganizerItemFilter filter() const
-    {
-        QOrganizerItemLocalIdFilter f;
-        f.setIds(m_ids);
-        return f;
-    }
+    QOrganizerItemFilter filter() const;
 
     QVariantList ids() const
     {
-        //TODO
-        return QVariantList();
+        return m_ids;
     }
 
     void setIds(const QVariantList& ids)
     {
-        //TODO
+        m_ids = ids;
     }
 
 signals:
     void valueChanged();
 
 private:
-    QList<QOrganizerItemLocalId> m_ids;
+    QVariantList m_ids;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemLocalIdFilter)
 

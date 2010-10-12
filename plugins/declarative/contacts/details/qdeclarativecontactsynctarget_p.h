@@ -50,7 +50,7 @@ class  QDeclarativeContactSyncTarget : public QDeclarativeContactDetail
 {
     Q_OBJECT
     Q_PROPERTY(QString syncTarget READ syncTarget WRITE setSyncTarget NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "syncTarget")
 public:
     enum FieldType {

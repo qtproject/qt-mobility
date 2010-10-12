@@ -59,6 +59,7 @@ class QDeclarativeContactModel : public QAbstractListModel
     Q_OBJECT
     Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
     Q_PROPERTY(QStringList availableManagers READ availableManagers)
+    Q_PROPERTY(QString error READ error NOTIFY errorChanged)
     Q_PROPERTY(QDeclarativeContactFilter* filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(QDeclarativeContactFetchHint* fetchHint READ fetchHint WRITE setFetchHint NOTIFY fetchHintChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContact> contacts READ contacts NOTIFY contactsChanged)
@@ -84,6 +85,8 @@ public:
     void setManager(const QString& manager);
 
     QStringList availableManagers() const;
+    
+    QString error() const;
 
     QDeclarativeContactFilter* filter() const;
     void setFilter(QDeclarativeContactFilter* filter);
@@ -105,6 +108,7 @@ public:
 signals:
     void managerChanged();
     void filterChanged();
+    void errorChanged();
     void fetchHintChanged();
     void contactsChanged();
     void vcardChanged();

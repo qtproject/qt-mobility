@@ -149,6 +149,15 @@ isEmpty(QT_LIBINFIX):symbian {
 
         pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\feedback\\symbian\\qmakepluginstubs\\qtfeedback_symbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\feedback\\qtfeedback_symbian.qtplugin\""
+
+        contains(QT_CONFIG, declarative): {
+            qtmobilitydeployment.sources += \
+                $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_feedback.dll
+            pluginstubs += \
+                "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\feedback\\qmakepluginstubs\\declarative_feedback.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\feedback\\declarative_feedback.qtplugin\""
+            qmldirs += \
+                "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\feedback\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\feedback\\qmldir\""
+        }
     }
 
     contains(mobility_modules, organizer) { 
@@ -201,7 +210,8 @@ isEmpty(QT_LIBINFIX):symbian {
     contains(mobility_modules, contacts) {
 
         qtmobilitydeployment.sources += \
-            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtContacts.dll \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtContacts.dll
+        contains(mobility_modules,serviceframework):qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtcontacts_serviceactionmanager.dll
 
         contacts = \
@@ -218,7 +228,8 @@ isEmpty(QT_LIBINFIX):symbian {
         qtmobilitydeployment.pkg_postrules += contacts
 
         pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/plugin/qmakepluginstubs/qtcontacts_symbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\qtcontacts_symbian.qtplugin\"" \
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/plugin/qmakepluginstubs/qtcontacts_symbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\qtcontacts_symbian.qtplugin\""
+        contains(mobility_modules,serviceframework):pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/serviceactionmanager/qmakepluginstubs/qtcontacts_serviceactionmanager.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\qtcontacts_serviceactionmanager.qtplugin\""
 
         contains(symbiancntsim_enabled, yes) {
@@ -238,7 +249,7 @@ isEmpty(QT_LIBINFIX):symbian {
 
             qtmobilitydeployment.pkg_postrules += symbiancntsim
         }
-     contains(QT_CONFIG, declarative): {
+     contains(QT_CONFIG, declarative):contains(mobility_modules,versit)  {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_contacts.dll
             pluginstubs += \

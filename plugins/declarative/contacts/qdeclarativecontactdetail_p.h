@@ -56,8 +56,8 @@ class QDeclarativeContactDetail : public QObject
     Q_PROPERTY(QStringList linkedDetailUris READ linkedDetailUris WRITE setLinkedDetailUris NOTIFY fieldsChanged)
     Q_PROPERTY(QStringList fieldNames READ fieldNames NOTIFY fieldsChanged)
 
-    Q_ENUMS(AccessConstraint);
-    Q_ENUMS(ContactDetailType);
+    Q_ENUMS(AccessConstraint)
+    Q_ENUMS(ContactDetailType)
 public:
     QDeclarativeContactDetail(QObject* parent = 0);
 

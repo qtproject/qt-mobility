@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "databasemanagersignalhandler.h"
+#include "databasemanagersignalhandler_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -52,5 +52,5 @@ void DatabaseManagerSignalHandler::databaseChanged(const QString &path)
     iDatabaseManagerServerSession.databaseChanged(path);
 }
 
-#include "moc_databasemanagersignalhandler.cpp"
+#include "moc_databasemanagersignalhandler_p.cpp"
 QTM_END_NAMESPACE

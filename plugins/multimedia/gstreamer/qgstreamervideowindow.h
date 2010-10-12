@@ -122,7 +122,7 @@ private:
     QRect m_displayRect;
     bool m_fullScreen;
     QSize m_nativeSize;
-    QColor m_colorKey;
+    mutable QColor m_colorKey;
     int m_bufferProbeId;
 };
 

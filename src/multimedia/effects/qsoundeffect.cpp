@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qsoundeffect.h"
+#include "qsoundeffect_p.h"
 
 #if defined(QT_MULTIMEDIA_PULSEAUDIO)
 #include "qsoundeffect_pulse_p.h"
@@ -61,7 +61,7 @@ QT_BEGIN_NAMESPACE
 
     \qml
     import Qt 4.7
-    import Qt.multimedia 1.0
+    import QtMultimediaKit 1.1
 
     Text {
         text: "Click Me!";
@@ -210,4 +210,4 @@ void QSoundEffect::play()
 
 QT_END_NAMESPACE
 
-#include "moc_qsoundeffect.cpp"
+#include "moc_qsoundeffect_p.cpp"

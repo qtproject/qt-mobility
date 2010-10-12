@@ -93,24 +93,6 @@ QList<QOrganizerItem> QOrganizerItemSaveRequest::items() const
     return d->m_organizeritems;
 }
 
-/*!
-  XXX TODO
- */
-void QOrganizerItemSaveRequest::setCollectionId(const QOrganizerCollectionLocalId& collectionId)
-{
-    Q_D(QOrganizerItemSaveRequest);
-    d->m_collectionId = collectionId;
-}
-
-/*!
-  XXX TODO
- */
-QOrganizerCollectionLocalId QOrganizerItemSaveRequest::collectionId() const
-{
-    Q_D(const QOrganizerItemSaveRequest);
-    return d->m_collectionId;
-}
-
 /*! Returns the map of input definition list indices to errors which occurred */
 QMap<int, QOrganizerItemManager::Error> QOrganizerItemSaveRequest::errorMap() const
 {

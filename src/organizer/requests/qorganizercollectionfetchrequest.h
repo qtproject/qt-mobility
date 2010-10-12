@@ -45,9 +45,10 @@
 #include "qtorganizerglobal.h"
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizercollection.h"
+#include "qorganizeritemmanager.h"
 
 #include <QList>
-#include <QStringList>
+#include <QMap>
 
 QTM_BEGIN_NAMESPACE
 
@@ -60,8 +61,7 @@ public:
     QOrganizerCollectionFetchRequest(QObject* parent = 0);
 
     /* Selection, restriction and sorting */
-    void setCollectionIds(const QList<QOrganizerCollectionLocalId>& collectionIds);
-    QList<QOrganizerCollectionLocalId> collectionIds() const;
+    // none.  you get all collections from the manager.
 
     /* Results */
     QList<QOrganizerCollection> collections() const;

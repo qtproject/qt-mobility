@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-
+#include <QDebug>
 #include <qdeclarativeextensionplugin.h>
 
 #include <qdeclarativeengine.h>
@@ -87,7 +87,7 @@ QImage ContactThumbnailImageProvider::requestImage(const QString &id, QSize *siz
         image = t.thumbnail().scaled(image.size());
     } else {
         QContactAvatar a = c.detail<QContactAvatar>();
-        QString imageUrl = a.imageUrl().isEmpty()? QString::fromLatin1("contents/default.svg") : a.imageUrl().toString();
+        QString imageUrl = a.imageUrl().isEmpty()? QLatin1String(":/default.svg") : a.imageUrl().toString();
         image.load(imageUrl);
     }
 

@@ -85,4 +85,3 @@ void QXAMediaServiceProviderPlugin::release(QMediaService *service)
 }
 
 Q_EXPORT_PLUGIN2(qtmultimediakit_openmaxalengine, QXAMediaServiceProviderPlugin);
-

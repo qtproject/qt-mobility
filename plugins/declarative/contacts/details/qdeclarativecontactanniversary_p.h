@@ -54,7 +54,7 @@ class QDeclarativeContactAnniversary : public QDeclarativeContactDetail
     Q_PROPERTY(QDateTime originalDateTime READ originalDateTime WRITE setOriginalDateTime NOTIFY fieldsChanged)
     Q_PROPERTY(QString event READ event WRITE setEvent NOTIFY fieldsChanged)
     Q_PROPERTY(QString subType READ subType WRITE setSubType NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
 public:
     enum FieldType {
         CalendarId = 0,

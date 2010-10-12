@@ -2,16 +2,16 @@ EXPORTS
 	?setPropertyHandler@QVersitOrganizerImporter@QtMobility@@QAEXPAVQVersitOrganizerImporterPropertyHandler@2@@Z @ 1 NONAME ; void QtMobility::QVersitOrganizerImporter::setPropertyHandler(class QtMobility::QVersitOrganizerImporterPropertyHandler *)
 	??_EQVersitOrganizerHandler@QtMobility@@UAE@I@Z @ 2 NONAME ; QtMobility::QVersitOrganizerHandler::~QVersitOrganizerHandler(unsigned int)
 	??0QVersitOrganizerImporter@QtMobility@@QAE@ABVQString@@@Z @ 3 NONAME ; QtMobility::QVersitOrganizerImporter::QVersitOrganizerImporter(class QString const &)
-	?document@QVersitOrganizerExporter@QtMobility@@QBE?AVQVersitDocument@2@XZ @ 4 NONAME ; class QtMobility::QVersitDocument QtMobility::QVersitOrganizerExporter::document(void) const
-	??_EQVersitTimeZoneHandler@QtMobility@@UAE@I@Z @ 5 NONAME ; QtMobility::QVersitTimeZoneHandler::~QVersitTimeZoneHandler(unsigned int)
-	??_EQVersitOrganizerImporterPropertyHandler@QtMobility@@UAE@I@Z @ 6 NONAME ; QtMobility::QVersitOrganizerImporterPropertyHandler::~QVersitOrganizerImporterPropertyHandler(unsigned int)
-	?setDetailHandler@QVersitOrganizerExporter@QtMobility@@QAEXPAVQVersitOrganizerExporterDetailHandler@2@@Z @ 7 NONAME ; void QtMobility::QVersitOrganizerExporter::setDetailHandler(class QtMobility::QVersitOrganizerExporterDetailHandler *)
-	?profiles@QVersitOrganizerHandlerFactory@QtMobility@@UBE?AV?$QSet@VQString@@@@XZ @ 8 NONAME ; class QSet<class QString> QtMobility::QVersitOrganizerHandlerFactory::profiles(void) const
-	??1QVersitOrganizerHandlerFactory@QtMobility@@UAE@XZ @ 9 NONAME ; QtMobility::QVersitOrganizerHandlerFactory::~QVersitOrganizerHandlerFactory(void)
-	?errors@QVersitOrganizerImporter@QtMobility@@QBE?AV?$QMap@HW4Error@QVersitOrganizerImporter@QtMobility@@@@XZ @ 10 NONAME ; class QMap<int, enum QtMobility::QVersitOrganizerImporter::Error> QtMobility::QVersitOrganizerImporter::errors(void) const
-	??_EQVersitOrganizerHandlerFactory@QtMobility@@UAE@I@Z @ 11 NONAME ; QtMobility::QVersitOrganizerHandlerFactory::~QVersitOrganizerHandlerFactory(unsigned int)
-	??1QVersitOrganizerImporter@QtMobility@@QAE@XZ @ 12 NONAME ; QtMobility::QVersitOrganizerImporter::~QVersitOrganizerImporter(void)
-	?errors@QVersitOrganizerExporter@QtMobility@@QBE?AV?$QMap@HW4Error@QVersitOrganizerExporter@QtMobility@@@@XZ @ 13 NONAME ; class QMap<int, enum QtMobility::QVersitOrganizerExporter::Error> QtMobility::QVersitOrganizerExporter::errors(void) const
+	?errorMap@QVersitOrganizerExporter@QtMobility@@QBE?AV?$QMap@HW4Error@QVersitOrganizerExporter@QtMobility@@@@XZ @ 4 NONAME ; class QMap<int, enum QtMobility::QVersitOrganizerExporter::Error> QtMobility::QVersitOrganizerExporter::errorMap(void) const
+	?document@QVersitOrganizerExporter@QtMobility@@QBE?AVQVersitDocument@2@XZ @ 5 NONAME ; class QtMobility::QVersitDocument QtMobility::QVersitOrganizerExporter::document(void) const
+	??_EQVersitTimeZoneHandler@QtMobility@@UAE@I@Z @ 6 NONAME ; QtMobility::QVersitTimeZoneHandler::~QVersitTimeZoneHandler(unsigned int)
+	??_EQVersitOrganizerImporterPropertyHandler@QtMobility@@UAE@I@Z @ 7 NONAME ; QtMobility::QVersitOrganizerImporterPropertyHandler::~QVersitOrganizerImporterPropertyHandler(unsigned int)
+	?setDetailHandler@QVersitOrganizerExporter@QtMobility@@QAEXPAVQVersitOrganizerExporterDetailHandler@2@@Z @ 8 NONAME ; void QtMobility::QVersitOrganizerExporter::setDetailHandler(class QtMobility::QVersitOrganizerExporterDetailHandler *)
+	?profiles@QVersitOrganizerHandlerFactory@QtMobility@@UBE?AV?$QSet@VQString@@@@XZ @ 9 NONAME ; class QSet<class QString> QtMobility::QVersitOrganizerHandlerFactory::profiles(void) const
+	??1QVersitOrganizerHandlerFactory@QtMobility@@UAE@XZ @ 10 NONAME ; QtMobility::QVersitOrganizerHandlerFactory::~QVersitOrganizerHandlerFactory(void)
+	??0QVersitOrganizerExporter@QtMobility@@QAE@ABVQString@@@Z @ 11 NONAME ; QtMobility::QVersitOrganizerExporter::QVersitOrganizerExporter(class QString const &)
+	??_EQVersitOrganizerHandlerFactory@QtMobility@@UAE@I@Z @ 12 NONAME ; QtMobility::QVersitOrganizerHandlerFactory::~QVersitOrganizerHandlerFactory(unsigned int)
+	??1QVersitOrganizerImporter@QtMobility@@QAE@XZ @ 13 NONAME ; QtMobility::QVersitOrganizerImporter::~QVersitOrganizerImporter(void)
 	??0QVersitOrganizerExporter@QtMobility@@QAE@XZ @ 14 NONAME ; QtMobility::QVersitOrganizerExporter::QVersitOrganizerExporter(void)
 	?index@QVersitOrganizerHandlerFactory@QtMobility@@UBEHXZ @ 15 NONAME ; int QtMobility::QVersitOrganizerHandlerFactory::index(void) const
 	??_EQVersitOrganizerExporterDetailHandler@QtMobility@@UAE@I@Z @ 16 NONAME ; QtMobility::QVersitOrganizerExporterDetailHandler::~QVersitOrganizerExporterDetailHandler(unsigned int)
@@ -25,5 +25,6 @@ EXPORTS
 	?ProfileBackup@QVersitOrganizerHandlerFactory@QtMobility@@2U?$QLatin1Constant@$06@2@B @ 24 NONAME ; struct QtMobility::QLatin1Constant<7> const QtMobility::QVersitOrganizerHandlerFactory::ProfileBackup
 	?importDocument@QVersitOrganizerImporter@QtMobility@@QAE_NABVQVersitDocument@2@@Z @ 25 NONAME ; bool QtMobility::QVersitOrganizerImporter::importDocument(class QtMobility::QVersitDocument const &)
 	??1QVersitOrganizerExporter@QtMobility@@QAE@XZ @ 26 NONAME ; QtMobility::QVersitOrganizerExporter::~QVersitOrganizerExporter(void)
-	??0QVersitOrganizerImporter@QtMobility@@QAE@XZ @ 27 NONAME ; QtMobility::QVersitOrganizerImporter::QVersitOrganizerImporter(void)
+	?errorMap@QVersitOrganizerImporter@QtMobility@@QBE?AV?$QMap@HW4Error@QVersitOrganizerImporter@QtMobility@@@@XZ @ 27 NONAME ; class QMap<int, enum QtMobility::QVersitOrganizerImporter::Error> QtMobility::QVersitOrganizerImporter::errorMap(void) const
+	??0QVersitOrganizerImporter@QtMobility@@QAE@XZ @ 28 NONAME ; QtMobility::QVersitOrganizerImporter::QVersitOrganizerImporter(void)
 

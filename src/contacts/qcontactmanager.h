@@ -123,6 +123,7 @@ public:
 
     /* Error reporting */
     QContactManager::Error error() const;
+    QMap<int, QContactManager::Error> errorMap() const;
 
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;
@@ -137,9 +138,9 @@ public:
     bool saveContact(QContact* contact);                 // note: MODIFIES contact (sets the contactId)
     bool removeContact(const QContactLocalId& contactId);      // remove the contact from the persistent store
 
-    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap); // batch API - save.
-    bool saveContacts(QList<QContact>* contacts, const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap); // Partial save
-    bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap); // batch API - remove.
+    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap = 0); // batch API - save.
+    bool saveContacts(QList<QContact>* contacts, const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap = 0); // Partial save
+    bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap = 0); // batch API - remove.
 
     /* Return a pruned or modified contact which is valid and can be saved in the manager */
     QContact compatibleContact(const QContact& original);
@@ -156,9 +157,9 @@ public:
     QList<QContactRelationship> relationships(const QContactId& participantId, QContactRelationship::Role role = QContactRelationship::Either) const;
     QList<QContactRelationship> relationships(const QString& relationshipType = QString(), const QContactId& participantId = QContactId(), QContactRelationship::Role role = QContactRelationship::Either) const;
     bool saveRelationship(QContactRelationship* relationship);
-    bool saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap);
+    bool saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap = 0);
     bool removeRelationship(const QContactRelationship& relationship);
-    bool removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap);
+    bool removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap = 0);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType = QContactType::TypeContact) const;

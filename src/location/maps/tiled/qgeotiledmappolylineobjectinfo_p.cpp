@@ -52,7 +52,7 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapPolylineObjectInfo::QGeoTiledMapPolylineObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject)
+    : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
     polyline = static_cast<QGeoMapPolylineObject*>(mapObject);
 

@@ -57,7 +57,7 @@ class GeocodingCoordinateInputDialog: public QDialog
 {
     Q_OBJECT
 public:
-    GeocodingCoordinateInputDialog(QGeoCoordinate& location, QWidget *parent=0);
+    GeocodingCoordinateInputDialog(QGeoCoordinate& location, QWidget *parent = 0);
 private slots:
     void accept();
 private:

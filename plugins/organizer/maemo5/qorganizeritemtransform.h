@@ -91,7 +91,7 @@ public: // transform functions
     CRecurrence* createCRecurrence(const QOrganizerItem *item, QOrganizerItemManager::Error *error);
 
     // alarm setting
-    void setAlarm(CCalendar *cal, QOrganizerItem *item, CComponent *component);
+    QPair<qint32, qint32> modifyAlarmEvent(CCalendar *cal, QOrganizerItem *item, CComponent *component);
 
     // error code conversion
     QOrganizerItemManager::Error calErrorToManagerError(int calError) const;
@@ -105,6 +105,8 @@ public: // transform functions
     QString fromCalendarType(CalendarType calendarType);
     CalendarType toCalendarType(QString calendarType);
     QMap<CalendarType, QString> calendarTypeMap() const;
+
+    bool addGeoToQOIL(const QString& src, QOrganizerItemLocation* detail) const;
 
 private:
     // random GUID generation

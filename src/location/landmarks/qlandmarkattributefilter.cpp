@@ -49,6 +49,8 @@ class QLandmarkAttributeFilterPrivate : public QLandmarkFilterPrivate
 {
 public:
     QLandmarkAttributeFilterPrivate();
+    QLandmarkAttributeFilterPrivate(const QLandmarkAttributeFilterPrivate &other);
+
     virtual ~QLandmarkAttributeFilterPrivate();
 
     virtual bool compare(const QLandmarkFilterPrivate *other) const
@@ -77,6 +79,13 @@ QLandmarkAttributeFilterPrivate::QLandmarkAttributeFilterPrivate()
     type = QLandmarkFilter::AttributeFilter;
 }
 
+QLandmarkAttributeFilterPrivate::QLandmarkAttributeFilterPrivate(const QLandmarkAttributeFilterPrivate &other)
+    : QLandmarkFilterPrivate(other),
+    attributes(other.attributes),
+    flags(other.flags)
+{
+}
+
 QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
 {
 }
@@ -89,11 +98,35 @@ QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
 
     \ingroup landmarks-filter
 
-    The QLandmarkAttributeFilter class may be used to filter landmarks whose attributes match certain values.
-    If an invalid QVariant is provided as the value for an attribute, then any landmark that has that attribute is
-    considered a match, regardless of its value.  More than one attribute may be set in the filter and may be
-    combined using an AND or OR operation.  The filter may only be used to search through either manager attributes
-    (ie. common cross platform attributes and extended attributes specific to a manager) or custom attributes.
+    Filtering on various attributes is facilitated by the QLandmarkAttributeFilter.
+    You can provide various keys which describe the attribute(s) to search.
+    Precisely which keys may be used depends on the manager
+    and these can be retrieved by using QLandmarkManager::searchableLandmarkAttributeKeys().
+    The table below outlines some keys that may be used with the default managers on the
+    currently supported platforms.  The match flags may be used for attributes which are
+    of string type (typically most, if not all searchable attributes are string types).
+
+    \table
+    \header
+        \o {3,1} Searchable attributes
+    \row
+        \o "city"
+        \o "countryCode"
+        \o "country"
+    \row
+        \o "county"
+        \o "countryCode"
+        \o "description"
+
+    \row
+        \o "district"
+        \o "name"
+        \o "state"
+    \row
+        \o "phoneNumber"
+        \o "postcode"
+        \o "street"
+    \endtable
 */
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkAttributeFilter);
 

@@ -139,22 +139,7 @@ class QOrganizerItemManagerEngine;
 class QOrganizerItemMemoryEngineData : public QSharedData
 {
 public:
-    QOrganizerItemMemoryEngineData()
-        : QSharedData(),
-        m_refCount(QAtomicInt(1)),
-        m_nextOrganizerItemId(1),
-        m_anonymous(false)
-    {
-    }
-
-    QOrganizerItemMemoryEngineData(const QOrganizerItemMemoryEngineData& other)
-        : QSharedData(other),
-        m_refCount(QAtomicInt(1)),
-        m_nextOrganizerItemId(other.m_nextOrganizerItemId),
-        m_anonymous(other.m_anonymous)
-    {
-    }
-
+    QOrganizerItemMemoryEngineData();
     ~QOrganizerItemMemoryEngineData()
     {
     }
@@ -162,11 +147,15 @@ public:
     QAtomicInt m_refCount;
     QString m_id;                                  // the id parameter value
 
-    QList<QOrganizerItem> m_organizeritems;                    // list of organizer items
-    QList<QOrganizerItemLocalId> m_organizeritemIds;           // list of organizer item Id's
+    QList<QOrganizerItem> m_organizeritems;                      // list of organizer items
+    QList<QOrganizerItemLocalId> m_organizeritemIds;             // list of organizer item Id's
+    QList<QOrganizerCollection> m_organizerCollections;          // list of collections
+    QList<QOrganizerCollectionLocalId> m_organizerCollectionIds; // list of collection ids
+    QMultiMap<QOrganizerCollectionLocalId, QOrganizerItemLocalId> m_itemsInCollections; // map of collection ids to the ids of items the collection contains.
     QList<QString> m_definitionIds;                // list of definition types (id's)
     mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definitions; // map of organizer item type to map of definition name to definitions.
     quint32 m_nextOrganizerItemId; // the m_localItemId portion of a QOrganizerItemMemoryEngineLocalId.
+    quint32 m_nextOrganizerCollectionId; // the m_localCollectionId portion of a QOrganizerCollectionMemoryEngineLocalId.
     bool m_anonymous;                              // Is this backend ever shared?
 
     void emitSharedSignals(QOrganizerItemChangeSet* cs)
@@ -193,26 +182,41 @@ public:
     /*! \reimp */
     int managerVersion() const {return 1;}
 
-    virtual QList<QOrganizerItem> itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
-    virtual QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const;
+    virtual QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
-    virtual QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const;
-    virtual QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
+    virtual QList<QOrganizerItemLocalId> itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const;
+    virtual QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
+    virtual QList<QOrganizerItem> itemsForExport(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
     virtual QOrganizerItem item(const QOrganizerItemLocalId& organizeritemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
-    virtual bool saveItems(QList<QOrganizerItem>* organizeritems, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    virtual bool saveItems(QList<QOrganizerItem>* organizeritems, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
     virtual bool removeItems(const QList<QOrganizerItemLocalId>& organizeritemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+
+    virtual QOrganizerCollection defaultCollection(QOrganizerItemManager::Error* error) const;
+    virtual QOrganizerCollection collection(const QOrganizerCollectionLocalId &collectionId, QOrganizerItemManager::Error *error) const;
+    virtual QList<QOrganizerCollection> collections(QOrganizerItemManager::Error* error) const;
+    virtual bool saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error);
+    virtual bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
 
     /*! \reimp */
     virtual QOrganizerItem compatibleItem(const QOrganizerItem& original, QOrganizerItemManager::Error* error) const
     {
         return QOrganizerItemManagerEngine::compatibleItem(original, error);
     }
+    /*! \reimp */
+    virtual QOrganizerCollection compatibleCollection(const QOrganizerCollection& original, QOrganizerItemManager::Error* error) const;
 
     /*! \reimp */
     virtual bool validateItem(const QOrganizerItem& organizeritem, QOrganizerItemManager::Error* error) const
     {
         return QOrganizerItemManagerEngine::validateItem(organizeritem, error);
+    }
+    /*! \reimp */
+    virtual bool validateCollection(const QOrganizerCollection& collection, QOrganizerItemManager::Error* error) const
+    {
+        Q_UNUSED(collection)
+        *error = QOrganizerItemManager::NoError;
+        return true; // all collections are valid in the memory engine.
     }
     /*! \reimp */
     virtual bool validateDefinition(const QOrganizerItemDetailDefinition& def, QOrganizerItemManager::Error* error) const
@@ -239,7 +243,6 @@ public:
     /* Capabilities reporting */
     virtual bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizeritemType) const;
     virtual bool isFilterSupported(const QOrganizerItemFilter& filter) const;
-    virtual QList<int> supportedDataTypes() const;
     /*! \reimp */
     virtual QStringList supportedItemTypes() const
     {
@@ -250,8 +253,12 @@ protected:
     QOrganizerItemMemoryEngine(QOrganizerItemMemoryEngineData* data);
 
 private:
+    QList<QOrganizerItem> internalItems(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error, bool forExport) const;
+    QList<QOrganizerItem> internalItemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, bool forExport, QOrganizerItemManager::Error* error) const;
+    void addItemRecurrences(QList<QOrganizerItem>& sorted, const QOrganizerItem& c, const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, bool forExport) const;
+
     /* Implement "signal coalescing" for batch functions via change set */
-    bool saveItem(QOrganizerItem* theOrganizerItem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
+    bool saveItem(QOrganizerItem* theOrganizerItem, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
     bool fixOccurrenceReferences(QOrganizerItem* item, QOrganizerItemManager::Error* error);
     bool typesAreRelated(const QString& occurrenceType, const QString& parentType);
     bool removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
@@ -264,11 +271,12 @@ private:
 
     QList<QDateTime> generateDateTimes(const QDateTime& initialDateTime, QOrganizerItemRecurrenceRule rrule, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount) const;
     void inferMissingCriteria(QOrganizerItemRecurrenceRule* rrule, const QDate& initialDate) const;
-    bool inIntervaledPeriod(const QDate& date, const QDate& initialDate, QOrganizerItemRecurrenceRule::Frequency frequency, int interval, Qt::DayOfWeek firstDayOfWeek) const;
+    bool inMultipleOfInterval(const QDate& date, const QDate& initialDate, QOrganizerItemRecurrenceRule::Frequency frequency, int interval, Qt::DayOfWeek firstDayOfWeek, int maxCount) const;
     QDate firstDateInPeriod(const QDate& date, QOrganizerItemRecurrenceRule::Frequency frequency, Qt::DayOfWeek firstDayOfWeek) const;
     QDate firstDateInNextPeriod(const QDate& date, QOrganizerItemRecurrenceRule::Frequency frequency, Qt::DayOfWeek firstDayOfWeek) const;
     QList<QDate> matchingDates(const QDate& periodStart, const QDate& periodEnd, const QOrganizerItemRecurrenceRule& rrule) const;
-    QList<QDate> filterByPosition(const QList<QDate>& dates, const QList<int> positions) const;
+    QList<QDate> filterByPosition(const QList<QDate>& dates, const QSet<int> positions) const;
+    bool itemHasReccurence(const QOrganizerItem& oi) const;
 
     QOrganizerItemMemoryEngineData* d;
     static QMap<QString, QOrganizerItemMemoryEngineData*> engineDatas;

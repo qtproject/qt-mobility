@@ -49,7 +49,7 @@ class QDeclarativeContactThumbnail : public QDeclarativeContactDetail
 {
     Q_OBJECT
     Q_PROPERTY(QString thumbnail READ thumbnail WRITE setThumbnail NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "thumbnail")
 public:
     enum FieldType {

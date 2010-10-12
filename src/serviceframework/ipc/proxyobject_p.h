@@ -57,6 +57,7 @@ QTM_BEGIN_NAMESPACE
 class QServiceProxyPrivate;
 class QServiceProxy : public QObject
 {
+    //TODO make inherit from QRemoteService
     //Note: Do not put Q_OBJECT here
 public:
     QServiceProxy(const QByteArray& metadata, ObjectEndPoint* endpoint, QObject* parent = 0);
@@ -66,9 +67,6 @@ public:
     virtual const QMetaObject* metaObject() const;
     int qt_metacall(QMetaObject::Call c, int id, void **a);
     void *qt_metacast(const char* className);
-/*protected:
-    void connectNotify(const char* signal);
-    void disconnectNotify(const char* signal);*/
 
 private:
     QServiceProxyPrivate* d;

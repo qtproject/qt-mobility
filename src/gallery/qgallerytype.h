@@ -51,11 +51,11 @@ QTM_BEGIN_NAMESPACE
 class Q_GALLERY_EXPORT QGalleryType
 {
 public:
-#ifndef Q_QDOC
+#if !defined(Q_QDOC) && !defined(Q_OS_SYMBIAN)
     template <int N>
     explicit QGalleryType(const char (&name)[N]) : m_name(name), m_length(N - 1) {}
 #else
-    explicit QGalleryType(const char *name);
+    explicit QGalleryType(const char *name) : m_name(name), m_length(-1) {}
 #endif
 
     QString name() const;
