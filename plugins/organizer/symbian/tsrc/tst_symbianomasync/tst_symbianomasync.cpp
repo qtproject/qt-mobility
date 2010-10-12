@@ -171,7 +171,7 @@ void tst_SymbianOmAsync::init()
     // Remove all collections (except the default)
     foreach (const QOrganizerCollection& collection, m_om->collections()) {
         if (collection != m_om->defaultCollection())
-            m_om->removeCollection(collection);
+            m_om->removeCollection(collection.localId());
     }
 }
 
@@ -181,7 +181,7 @@ void tst_SymbianOmAsync::cleanup()
     // Remove all collections (except the default)
     foreach (const QOrganizerCollection& collection, m_om->collections()) {
         if (collection != m_om->defaultCollection())
-            m_om->removeCollection(collection);
+            m_om->removeCollection(collection.localId());
     }
     delete m_om;
     m_om = 0;

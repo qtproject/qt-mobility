@@ -445,8 +445,17 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemsL(
     // TODO: It might be possible to optimize by using fetch hint
     Q_UNUSED(fetchHint);
 
-    TCalTime startTime(toTCalTimeL(periodStart));
-    TCalTime endTime(toTCalTimeL(periodEnd));
+    // If start time is not defined, use minimum start date
+    TCalTime startTime;
+    startTime.SetTimeUtcL(TCalTime::MinTime());
+    if (periodStart.isValid())
+        startTime.SetTimeLocalL(toTTime(periodStart, Qt::LocalTime));
+
+    // If end date is not defined, use maximum end date
+    TCalTime endTime;
+    endTime.SetTimeUtcL(TCalTime::MaxTime());
+    if (periodEnd.isValid())
+        endTime.SetTimeLocalL(toTTime(periodEnd, Qt::LocalTime));
 
     // Loop through all the instance views and fetch the item instances
     foreach(QOrganizerCollectionLocalId collectionId, m_collections.keys()) {
