@@ -2477,6 +2477,8 @@ void tst_QOrganizerManager::itemFetch()
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
 
+    cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
+
     QOrganizerEvent event;
     event.setDisplayLabel("event");
     event.setStartDateTime(QDateTime(QDate(2010, 9, 9), QTime(11, 0, 0)));
@@ -2508,6 +2510,8 @@ void tst_QOrganizerManager::spanOverDays()
 {
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
+
+    cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
 
     QOrganizerEvent event;
     event.setDisplayLabel("event");
