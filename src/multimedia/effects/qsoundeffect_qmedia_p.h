@@ -70,6 +70,8 @@ public:
     explicit QSoundEffectPrivate(QObject* parent);
     ~QSoundEffectPrivate();
 
+    static QStringList supportedMimeTypes();
+
     QUrl source() const;
     void setSource(const QUrl &url);
     int loopCount() const;
@@ -86,9 +88,11 @@ public Q_SLOTS:
 Q_SIGNALS:
     void volumeChanged();
     void mutedChanged();
+    void loaded();
 
 private Q_SLOTS:
     void stateChanged(QMediaPlayer::State);
+    void mediaStatusChanged(QMediaPlayer::MediaStatus);
 
 private:
     int m_loopCount;

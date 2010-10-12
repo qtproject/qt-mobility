@@ -68,10 +68,16 @@ QSoundEffectPrivate::QSoundEffectPrivate(QObject* parent):
 {
     m_player = new QMediaPlayer(this, QMediaPlayer::LowLatency);
     connect(m_player, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(stateChanged(QMediaPlayer::State)));
+    connect(m_player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), SLOT(mediaStatusChanged(QMediaPlayer::MediaStatus)));
 }
 
 QSoundEffectPrivate::~QSoundEffectPrivate()
 {
+}
+
+QStringList QSoundEffectPrivate::supportedMimeTypes()
+{
+    return QMediaPlayer::supportedMimeTypes();
 }
 
 QUrl QSoundEffectPrivate::source() const
@@ -142,6 +148,12 @@ void QSoundEffectPrivate::stateChanged(QMediaPlayer::State state)
         else if (--m_runningCount > 0)
             m_player->play();
     }
+}
+
+void QSoundEffectPrivate::mediaStatusChanged(QMediaPlayer::MediaStatus status)
+{
+    if (status == QMediaPlayer::LoadedMedia)
+        emit loaded();
 }
 
 QT_END_NAMESPACE
