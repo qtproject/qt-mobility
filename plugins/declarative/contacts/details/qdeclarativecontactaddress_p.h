@@ -61,20 +61,20 @@ class QDeclarativeContactAddress : public QDeclarativeContactDetail
     Q_ENUMS(SubType)
 public:
     enum FieldType {
-        Street = 0,
-        Locality,
-        Region,
-        PostCode,
-        Country,
-        SubTypes,
-        PostOfficeBox
+        FieldStreet = 0,
+        FieldLocality,
+        FieldRegion,
+        FieldPostCode,
+        FieldCountry,
+        FieldSubTypes,
+        FieldPostOfficeBox
     };
 
     enum SubType {
-        Parcel = 0,
-        Postal,
-        Domestic,
-        International
+        SubTypeParcel = 0,
+        SubTypePostal,
+        SubTypeDomestic,
+        SubTypeInternational
     };
 
     QDeclarativeContactAddress(QObject* parent = 0)
@@ -88,22 +88,22 @@ public:
         return QDeclarativeContactDetail::Address;
     }
 
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Street:
+        case FieldStreet:
             return QContactAddress::FieldStreet;
-        case Locality:
+        case FieldLocality:
             return QContactAddress::FieldLocality;
-        case Region:
+        case FieldRegion:
             return QContactAddress::FieldRegion;
-        case PostCode:
+        case FieldPostCode:
             return QContactAddress::FieldPostcode;
-        case Country:
+        case FieldCountry:
             return QContactAddress::FieldCountry;
-        case SubTypes:
+        case FieldSubTypes:
             return QContactAddress::FieldSubTypes;
-        case PostOfficeBox:
+        case FieldPostOfficeBox:
             return QContactAddress::FieldPostOfficeBox;
         default:
             break;
@@ -129,16 +129,16 @@ public:
         foreach (const QVariant subType, subTypes) {
             switch (static_cast<SubType>(subType.value<int>()))
             {
-            case Parcel:
+            case SubTypeParcel:
                 savedList << QContactAddress::SubTypeParcel;
                 break;
-            case Postal:
+            case SubTypePostal:
                 savedList << QContactAddress::SubTypePostal;
                 break;
-            case Domestic:
+            case SubTypeDomestic:
                 savedList << QContactAddress::SubTypeDomestic;
                 break;
-            case International:
+            case SubTypeInternational:
                 savedList << QContactAddress::SubTypeInternational;
                 break;
             default:
@@ -155,13 +155,13 @@ public:
         QStringList savedList = detail().value<QStringList>(QContactAddress::FieldSubTypes);
         foreach (const QString& subType, savedList) {
             if (subType == QContactAddress::SubTypePostal)
-                returnList << static_cast<int>(Postal);
+                returnList << static_cast<int>(SubTypePostal);
             else if (subType == QContactAddress::SubTypeParcel)
-                returnList << static_cast<int>(Parcel);
+                returnList << static_cast<int>(SubTypeParcel);
             else if (subType == QContactAddress::SubTypeDomestic)
-                returnList << static_cast<int>(Domestic);
+                returnList << static_cast<int>(SubTypeDomestic);
             else if (subType == QContactAddress::SubTypeInternational)
-                returnList << static_cast<int>(International);
+                returnList << static_cast<int>(SubTypeInternational);
         }
         return returnList;
     }

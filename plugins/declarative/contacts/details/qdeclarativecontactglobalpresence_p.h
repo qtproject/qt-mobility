@@ -59,12 +59,12 @@ class QDeclarativeContactGlobalPresence : public QDeclarativeContactDetail
     Q_ENUMS(FieldType)
 public:
     enum FieldType {
-        Timestamp = 0,
-        Nickname,
-        State,
-        StateText,
-        ImageUrl,
-        CustomMessage
+        FieldTimestamp = 0,
+        FieldNickname,
+        FieldState,
+        FieldStateText,
+        FieldImageUrl,
+        FieldCustomMessage
     };
 
     QDeclarativeContactGlobalPresence(QObject* parent = 0)
@@ -76,20 +76,20 @@ public:
     {
         return QDeclarativeContactDetail::GlobalPresence;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Timestamp:
+        case FieldTimestamp:
             return QContactGlobalPresence::FieldTimestamp;
-        case Nickname:
+        case FieldNickname:
             return QContactGlobalPresence::FieldNickname;
-        case State:
+        case FieldState:
             return QContactGlobalPresence::FieldPresenceState;
-        case StateText:
+        case FieldStateText:
             return QContactGlobalPresence::FieldPresenceStateText;
-        case ImageUrl:
+        case FieldImageUrl:
             return QContactGlobalPresence::FieldPresenceStateImageUrl;
-        case CustomMessage:
+        case FieldCustomMessage:
             return QContactGlobalPresence::FieldCustomMessage;
         default:
             break;

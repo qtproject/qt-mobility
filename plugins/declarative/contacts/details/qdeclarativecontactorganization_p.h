@@ -60,13 +60,13 @@ class QDeclarativeContactOrganization : public QDeclarativeContactDetail
     Q_ENUMS(FieldType)
 public:
     enum FieldType {
-        Name = 0,
-        LogoUrl,
-        Department,
-        Location,
-        Role,
-        Title,
-        AssistantName
+        FieldName = 0,
+        FieldLogoUrl,
+        FieldDepartment,
+        FieldLocation,
+        FieldRole,
+        FieldTitle,
+        FieldAssistantName
     };
 
     QDeclarativeContactOrganization(QObject* parent = 0)
@@ -78,22 +78,22 @@ public:
     {
         return QDeclarativeContactDetail::Organization;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Name:
+        case FieldName:
             return QContactOrganization::FieldName;
-        case LogoUrl:
+        case FieldLogoUrl:
             return QContactOrganization::FieldLogoUrl;
-        case Department:
+        case FieldDepartment:
             return QContactOrganization::FieldDepartment;
-        case Location:
+        case FieldLocation:
             return QContactOrganization::FieldLocation;
-        case Role:
+        case FieldRole:
             return QContactOrganization::FieldRole;
-        case Title:
+        case FieldTitle:
             return QContactOrganization::FieldTitle;
-        case AssistantName:
+        case FieldAssistantName:
             return QContactOrganization::FieldAssistantName;
         default:
             break;

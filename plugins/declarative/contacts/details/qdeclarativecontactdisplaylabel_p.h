@@ -54,7 +54,7 @@ class QDeclarativeContactDisplayLabel : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "label")
 public:
     enum FieldType {
-        Label = 0
+        FieldLabel = 0
     };
     QDeclarativeContactDisplayLabel(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
@@ -67,10 +67,10 @@ public:
         return QDeclarativeContactDetail::DisplayLabel;
     }
 
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Label:
+        case FieldLabel:
             return QContactDisplayLabel::FieldLabel;
         default:
             break;

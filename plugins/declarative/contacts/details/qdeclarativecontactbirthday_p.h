@@ -55,8 +55,7 @@ class  QDeclarativeContactBirthday : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "date")
 public:
     enum FieldType {
-        Date = 0,
-        DateTime
+        FieldBirthday = 0
     };
     QDeclarativeContactBirthday(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
@@ -68,12 +67,10 @@ public:
     {
         return QDeclarativeContactDetail::Birthday;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Date:
-            return QContactBirthday::FieldBirthday;
-        case DateTime:
+        case FieldBirthday:
             return QContactBirthday::FieldBirthday;
         default:
             break;

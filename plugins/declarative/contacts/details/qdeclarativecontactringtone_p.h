@@ -58,9 +58,9 @@ class QDeclarativeContactRingtone : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "audioRingtoneUrl")
 public:
     enum FieldType {
-        AudioRingtoneUrl = 0,
-        VideoRingtoneUrl,
-        VibrationRingtoneUrl
+        FieldAudioRingtoneUrl = 0,
+        FieldVideoRingtoneUrl,
+        FieldVibrationRingtoneUrl
     };
 
     QDeclarativeContactRingtone(QObject* parent = 0)
@@ -72,14 +72,14 @@ public:
     {
         return QDeclarativeContactDetail::Ringtone;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case AudioRingtoneUrl:
+        case FieldAudioRingtoneUrl:
             return QContactRingtone::FieldAudioRingtoneUrl;
-        case VideoRingtoneUrl:
+        case FieldVideoRingtoneUrl:
             return QContactRingtone::FieldVideoRingtoneUrl;
-        case VibrationRingtoneUrl:
+        case FieldVibrationRingtoneUrl:
             return QContactRingtone::FieldVibrationRingtoneUrl;
         default:
             break;

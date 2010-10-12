@@ -53,7 +53,7 @@ class QDeclarativeContactEmailAddress : public QDeclarativeContactDetail
     Q_ENUMS(FieldType)
 public:
     enum FieldType {
-        Email = 0
+        FieldEmailAddress = 0
     };
     QDeclarativeContactEmailAddress(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
@@ -65,10 +65,10 @@ public:
     {
         return QDeclarativeContactDetail::Email;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Email:
+        case FieldEmailAddress:
             return QContactEmailAddress::FieldEmailAddress;
         default:
             break;

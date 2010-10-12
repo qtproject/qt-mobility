@@ -51,20 +51,20 @@ class QDeclarativeContactUrl : public QDeclarativeContactDetail
     Q_OBJECT
 
     Q_PROPERTY(QString url READ url WRITE setUrl NOTIFY fieldsChanged)
-    Q_PROPERTY(SubTypeType subType READ subType WRITE setSubType NOTIFY fieldsChanged)
+    Q_PROPERTY(SubType subType READ subType WRITE setSubType NOTIFY fieldsChanged)
 
     Q_ENUMS(FieldType)
-    Q_ENUMS(SubTypeType)
+    Q_ENUMS(SubType)
     Q_CLASSINFO("DefaultProperty", "url")
 public:
     enum FieldType {
-        Url = 0,
-        SubType
+        FieldUrl = 0,
+        FieldSubType
     };
 
-    enum SubTypeType {
-        HomePage = 0,
-        Favourite
+    enum SubType {
+        SubTypeHomePage = 0,
+        SubTypeFavourite
     };
 
     QDeclarativeContactUrl(QObject* parent = 0)
@@ -76,12 +76,12 @@ public:
     {
         return QDeclarativeContactDetail::Url;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Url:
+        case FieldUrl:
             return QContactUrl::FieldUrl;
-        case SubType:
+        case FieldSubType:
             return QContactUrl::FieldSubType;
         default:
             break;
@@ -91,19 +91,19 @@ public:
     void setUrl(const QString& url) {detail().setValue(QContactUrl::FieldUrl, url);}
     QString url() const {return detail().value(QContactUrl::FieldUrl);}
 
-    void setSubType(SubTypeType subType)
+    void setSubType(SubType subType)
     {
-        if (subType == HomePage)
+        if (subType == SubTypeHomePage)
             detail().setValue(QContactUrl::FieldSubType, QContactUrl::SubTypeHomePage);
-        else if (subType == Favourite)
+        else if (subType == SubTypeFavourite)
             detail().setValue(QContactUrl::FieldSubType, QContactUrl::SubTypeFavourite);
     }
-    SubTypeType subType() const
+    SubType subType() const
     {
         QString typeString = detail().value(QContactUrl::FieldSubType);
         if (typeString == QContactUrl::SubTypeFavourite)
-            return Favourite;
-        return HomePage;
+            return SubTypeFavourite;
+        return SubTypeHomePage;
     }
 signals:
     void fieldsChanged();

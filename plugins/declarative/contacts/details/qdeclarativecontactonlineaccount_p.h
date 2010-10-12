@@ -59,17 +59,17 @@ class QDeclarativeContactOnlineAccount : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "accountUri")
 public:
     enum FieldType {
-        AccountUri = 0,
-        ServiceProvider,
-        Capabilities,
-        SubTypes
+        FieldAccountUri = 0,
+        FieldServiceProvider,
+        FieldCapabilities,
+        FieldSubTypes
     };
 
     enum SubType {
-        Sip = 0,
-        SipVoip,
-        Impp,
-        VideoShare
+        SubTypeSip = 0,
+        SubTypeSipVoip,
+        SubTypeImpp,
+        SubTypeVideoShare
     };
 
     QDeclarativeContactOnlineAccount(QObject* parent = 0)
@@ -82,16 +82,16 @@ public:
     {
         return QDeclarativeContactDetail::OnlineAccount;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case AccountUri:
+        case FieldAccountUri:
             return QContactOnlineAccount::FieldAccountUri;
-        case ServiceProvider:
+        case FieldServiceProvider:
             return QContactOnlineAccount::FieldServiceProvider;
-        case Capabilities:
+        case FieldCapabilities:
             return QContactOnlineAccount::FieldCapabilities;
-        case SubTypes:
+        case FieldSubTypes:
             return QContactOnlineAccount::FieldSubTypes;
         default:
             break;
@@ -113,16 +113,16 @@ public:
         foreach (const QVariant subType, subTypes) {
             switch (static_cast<SubType>(subType.value<int>()))
             {
-            case Sip:
+            case SubTypeSip:
                 savedList << QContactOnlineAccount::SubTypeSip;
                 break;
-            case SipVoip:
+            case SubTypeSipVoip:
                 savedList << QContactOnlineAccount::SubTypeSipVoip;
                 break;
-            case Impp:
+            case SubTypeImpp:
                 savedList << QContactOnlineAccount::SubTypeImpp;
                 break;
-            case VideoShare:
+            case SubTypeVideoShare:
                 savedList << QContactOnlineAccount::SubTypeVideoShare;
                 break;
             default:
@@ -139,13 +139,13 @@ public:
         QStringList savedList = detail().value<QStringList>(QContactOnlineAccount::FieldSubTypes);
         foreach (const QString& subType, savedList) {
             if (subType == QContactOnlineAccount::SubTypeSip)
-                returnList << static_cast<int>(Sip);
+                returnList << static_cast<int>(SubTypeSip);
             else if (subType == QContactOnlineAccount::SubTypeSipVoip)
-                returnList << static_cast<int>(SipVoip);
+                returnList << static_cast<int>(SubTypeSipVoip);
             else if (subType == QContactOnlineAccount::SubTypeImpp)
-                returnList << static_cast<int>(Impp);
+                returnList << static_cast<int>(SubTypeImpp);
             else if (subType == QContactOnlineAccount::SubTypeVideoShare)
-                returnList << static_cast<int>(VideoShare);
+                returnList << static_cast<int>(SubTypeVideoShare);
         }
         return returnList;
     }

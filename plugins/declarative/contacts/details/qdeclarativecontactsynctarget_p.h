@@ -54,7 +54,7 @@ class  QDeclarativeContactSyncTarget : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "syncTarget")
 public:
     enum FieldType {
-        SyncTarget = 0
+        FieldSyncTarget = 0
     };
 
     QDeclarativeContactSyncTarget(QObject* parent = 0)
@@ -66,10 +66,10 @@ public:
     {
         return QDeclarativeContactDetail::SyncTarget;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case SyncTarget:
+        case FieldSyncTarget:
             return QContactSyncTarget::FieldSyncTarget;
         default:
             break;

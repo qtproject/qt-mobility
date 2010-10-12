@@ -53,7 +53,7 @@ class QDeclarativeContactNickname : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "nickname")
 public:
     enum FieldType {
-        NickName = 0
+        FieldNickName = 0
     };
 
     QDeclarativeContactNickname(QObject* parent = 0)
@@ -65,10 +65,10 @@ public:
     {
         return QDeclarativeContactDetail::NickName;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case NickName:
+        case FieldNickName:
             return QContactNickname::FieldNickname;
         default:
             break;

@@ -55,8 +55,8 @@ class QDeclarativeContactFavorite : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "index")
 public:
     enum FieldType {
-        Favorite = 0,
-        Index
+        FieldFavorite = 0,
+        FieldIndex
     };
     QDeclarativeContactFavorite(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
@@ -67,12 +67,12 @@ public:
     {
         return QDeclarativeContactDetail::Favorite;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Favorite:
+        case FieldFavorite:
             return QContactFavorite::FieldFavorite;
-        case Index:
+        case FieldIndex:
             return QContactFavorite::FieldIndex;
         default:
             break;

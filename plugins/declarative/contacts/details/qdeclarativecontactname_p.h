@@ -60,12 +60,12 @@ class QDeclarativeContactName : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "firstName")
 public:
     enum FieldType {
-        Prefix = 0,
-        FirstName,
-        MiddleName,
-        LastName,
-        Suffix,
-        CustomLabel
+        FieldPrefix = 0,
+        FieldFirstName,
+        FieldMiddleName,
+        FieldLastName,
+        FieldSuffix,
+        FieldCustomLabel
     };
 
     QDeclarativeContactName(QObject* parent = 0)
@@ -77,20 +77,20 @@ public:
     {
         return QDeclarativeContactDetail::Name;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Prefix:
+        case FieldPrefix:
             return QContactName::FieldPrefix;
-        case FirstName:
+        case FieldFirstName:
             return QContactName::FieldFirstName;
-        case MiddleName:
+        case FieldMiddleName:
             return QContactName::FieldMiddleName;
-        case LastName:
+        case FieldLastName:
             return QContactName::FieldLastName;
-        case Suffix:
+        case FieldSuffix:
             return QContactName::FieldSuffix;
-        case CustomLabel:
+        case FieldCustomLabel:
             return QContactName::FieldCustomLabel;
         default:
             break;

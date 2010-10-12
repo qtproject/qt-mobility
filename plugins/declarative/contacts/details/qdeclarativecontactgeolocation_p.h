@@ -63,15 +63,15 @@ class QDeclarativeContactGeoLocation : public QDeclarativeContactDetail
     Q_ENUMS(FieldType)
 public:
     enum FieldType {
-        Label = 0,
-        Latitude,
-        Longitude,
-        Accuracy,
-        Altitude,
-        AltitudeAccuracy,
-        Heading,
-        Speed,
-        Timestamp
+        FieldLabel = 0,
+        FieldLatitude,
+        FieldLongitude,
+        FieldAccuracy,
+        FieldAltitude,
+        FieldAltitudeAccuracy,
+        FieldHeading,
+        FieldSpeed,
+        FieldTimestamp
     };
 
     QDeclarativeContactGeoLocation(QObject* parent = 0)
@@ -83,26 +83,26 @@ public:
     {
         return QDeclarativeContactDetail::Geolocation;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Label:
+        case FieldLabel:
             return QContactGeoLocation::FieldLabel;
-        case Latitude:
+        case FieldLatitude:
             return QContactGeoLocation::FieldLatitude;
-        case Longitude:
+        case FieldLongitude:
             return QContactGeoLocation::FieldLongitude;
-        case Accuracy:
+        case FieldAccuracy:
             return QContactGeoLocation::FieldAccuracy;
-        case Altitude:
+        case FieldAltitude:
             return QContactGeoLocation::FieldAltitude;
-        case AltitudeAccuracy:
+        case FieldAltitudeAccuracy:
             return QContactGeoLocation::FieldAltitudeAccuracy;
-        case Heading:
+        case FieldHeading:
             return QContactGeoLocation::FieldHeading;
-        case Speed:
+        case FieldSpeed:
             return QContactGeoLocation::FieldSpeed;
-        case Timestamp:
+        case FieldTimestamp:
             return QContactGeoLocation::FieldTimestamp;
         default:
             break;

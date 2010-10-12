@@ -59,12 +59,12 @@ class QDeclarativeContactPresence : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "state")
 public:
     enum FieldType {
-        Timestamp = 0,
-        Nickname,
-        State,
-        StateText,
-        ImageUrl,
-        CustomMessage
+        FieldTimestamp = 0,
+        FieldNickname,
+        FieldState,
+        FieldStateText,
+        FieldImageUrl,
+        FieldCustomMessage
     };
 
     QDeclarativeContactPresence(QObject* parent = 0)
@@ -76,20 +76,20 @@ public:
     {
         return QDeclarativeContactDetail::Presence;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Timestamp:
+        case FieldTimestamp:
             return QContactPresence::FieldTimestamp;
-        case Nickname:
+        case FieldNickname:
             return QContactPresence::FieldNickname;
-        case State:
+        case FieldState:
             return QContactPresence::FieldPresenceState;
-        case StateText:
+        case FieldStateText:
             return QContactPresence::FieldPresenceStateText;
-        case ImageUrl:
+        case FieldImageUrl:
             return QContactPresence::FieldPresenceStateImageUrl;
-        case CustomMessage:
+        case FieldCustomMessage:
             return QContactPresence::FieldCustomMessage;
         default:
             break;

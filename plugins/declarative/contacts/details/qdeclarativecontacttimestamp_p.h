@@ -54,8 +54,8 @@ class QDeclarativeContactTimestamp : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "lastModified")
 public:
     enum FieldType {
-        LastModified = 0,
-        Created
+        FieldLastModified = 0,
+        FieldCreated
     };
 
     ContactDetailType detailType() const
@@ -63,12 +63,12 @@ public:
         return QDeclarativeContactDetail::Timestamp;
     }
 
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case LastModified:
+        case FieldLastModified:
             return QContactTimestamp::FieldModificationTimestamp;
-        case Created:
+        case FieldCreated:
             return QContactTimestamp::FieldCreationTimestamp;
         default:
             break;

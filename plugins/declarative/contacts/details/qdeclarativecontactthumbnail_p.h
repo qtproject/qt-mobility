@@ -53,7 +53,7 @@ class QDeclarativeContactThumbnail : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "thumbnail")
 public:
     enum FieldType {
-        Thumbnail = 0
+        FieldThumbnail = 0
     };
 
     QDeclarativeContactThumbnail(QObject* parent = 0)
@@ -66,10 +66,10 @@ public:
     {
         return QDeclarativeContactDetail::Thumbnail;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Thumbnail:
+        case FieldThumbnail:
             return QContactThumbnail::FieldThumbnail;
         default:
             break;

@@ -54,7 +54,7 @@ class QDeclarativeContactGuid : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "guid")
 public:
     enum FieldType {
-        Guid = 0
+        FieldGuid = 0
     };
     QDeclarativeContactGuid(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
@@ -66,10 +66,10 @@ public:
     {
         return QDeclarativeContactDetail::Guid;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Guid:
+        case FieldGuid:
             return QContactGuid::FieldGuid;
         default:
             break;

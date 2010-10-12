@@ -54,7 +54,7 @@ class QDeclarativeContactTag : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "tag")
 public:
     enum FieldType {
-        Tag = 0
+        FieldTag = 0
     };
 
     QDeclarativeContactTag(QObject* parent = 0)
@@ -66,10 +66,10 @@ public:
     {
         return QDeclarativeContactDetail::Tag;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Tag:
+        case FieldTag:
             return QContactTag::FieldTag;
         default:
             break;

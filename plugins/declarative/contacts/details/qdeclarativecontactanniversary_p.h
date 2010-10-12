@@ -53,24 +53,23 @@ class QDeclarativeContactAnniversary : public QDeclarativeContactDetail
     Q_PROPERTY(QDate originalDate READ originalDate WRITE setOriginalDate NOTIFY fieldsChanged)
     Q_PROPERTY(QDateTime originalDateTime READ originalDateTime WRITE setOriginalDateTime NOTIFY fieldsChanged)
     Q_PROPERTY(QString event READ event WRITE setEvent NOTIFY fieldsChanged)
-    Q_PROPERTY(SubTypeType subType READ subType WRITE setSubType NOTIFY fieldsChanged)
+    Q_PROPERTY(SubType subType READ subType WRITE setSubType NOTIFY fieldsChanged)
     Q_ENUMS(FieldType)
-    Q_ENUMS(SubTypeType)
+    Q_ENUMS(SubType)
 public:
     enum FieldType {
-        CalendarId = 0,
-        OriginalDate,
-        OriginalDateTime,
-        Event,
-        SubType
+        FieldCalendarId = 0,
+        FieldOriginalDate,
+        FieldEvent,
+        FieldSubType
     };
 
-    enum SubTypeType {
-        Wedding = 0,
-        Engagement,
-        House,
-        Employment,
-        Memorial
+    enum SubType {
+        SubTypeWedding = 0,
+        SubTypeEngagement,
+        SubTypeHouse,
+        SubTypeEmployment,
+        SubTypeMemorial
     };
 
     QDeclarativeContactAnniversary(QObject* parent = 0)
@@ -83,18 +82,16 @@ public:
     {
         return QDeclarativeContactDetail::Anniversary;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case CalendarId:
+        case FieldCalendarId:
             return QContactAnniversary::FieldCalendarId;
-        case OriginalDate:
+        case FieldOriginalDate:
             return QContactAnniversary::FieldOriginalDate;
-        case OriginalDateTime:
-            return QContactAnniversary::FieldOriginalDate;
-        case Event:
+        case FieldEvent:
             return QContactAnniversary::FieldEvent;
-        case SubType:
+        case FieldSubType:
             return QContactAnniversary::FieldSubType;
         default:
             break;
@@ -111,23 +108,23 @@ public:
     void setEvent(const QString& event) {detail().setValue(QContactAnniversary::FieldEvent, event);}
     QString event() const {return detail().value(QContactAnniversary::FieldEvent);}
 
-    void setSubType(SubTypeType subType)
+    void setSubType(SubType subType)
     {
         QString subTypeString;
         switch (subType) {
-        case Wedding:
+        case SubTypeWedding:
             subTypeString = QContactAnniversary::SubTypeWedding.latin1();
             break;
-        case Engagement:
+        case SubTypeEngagement:
             subTypeString = QContactAnniversary::SubTypeEngagement.latin1();
             break;
-        case House:
+        case SubTypeHouse:
             subTypeString = QContactAnniversary::SubTypeHouse.latin1();
             break;
-        case Employment:
+        case SubTypeEmployment:
             subTypeString = QContactAnniversary::SubTypeEmployment.latin1();
             break;
-        case Memorial:
+        case SubTypeMemorial:
             subTypeString = QContactAnniversary::SubTypeMemorial.latin1();
             break;
        default:
@@ -137,19 +134,19 @@ public:
         detail().setValue(QContactAnniversary::FieldSubType, subTypeString);
     }
 
-    SubTypeType subType() const
+    SubType subType() const
     {
         QString subType = detail().value(QContactAnniversary::FieldSubType);
         if (subType == QContactAnniversary::SubTypeWedding)
-            return Wedding;
+            return SubTypeWedding;
         else if (subType == QContactAnniversary::SubTypeEngagement)
-            return Engagement;
+            return SubTypeEngagement;
         else if (subType == QContactAnniversary::SubTypeHouse)
-            return House;
+            return SubTypeHouse;
         else if (subType == QContactAnniversary::SubTypeEmployment)
-            return Employment;
-        else
-            return Memorial;
+            return SubTypeEmployment;
+        else if (subType == QContactAnniversary::SubTypeMemorial)
+            return SubTypeMemorial;
     }
 signals:
     void fieldsChanged();

@@ -53,8 +53,8 @@ class  QDeclarativeContactAvatar : public QDeclarativeContactDetail
     Q_ENUMS(FieldType)
 public:
     enum FieldType {
-        ImageUrl = 0,
-        VideoUrl
+        FieldImageUrl = 0,
+        FieldVideoUrl
     };
     QDeclarativeContactAvatar(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
@@ -72,12 +72,12 @@ public:
         return QDeclarativeContactDetail::Avatar;
     }
 
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case ImageUrl:
+        case FieldImageUrl:
             return QContactAvatar::FieldVideoUrl;
-        case VideoUrl:
+        case FieldVideoUrl:
             return QContactAvatar::FieldVideoUrl;
         default:
             break;

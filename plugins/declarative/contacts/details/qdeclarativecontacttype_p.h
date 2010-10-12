@@ -54,7 +54,7 @@ class QDeclarativeContactType : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "type")
 public:
     enum FieldType {
-        Type = 0
+        TypeField = 0
     };
 
     enum ContactType {
@@ -66,10 +66,10 @@ public:
     {
         return QDeclarativeContactDetail::Type;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Type:
+        case TypeField:
             return QContactType::FieldType;
         default:
             break;
