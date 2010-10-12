@@ -234,8 +234,13 @@ bool QOrganizerItemSimulatorEngine::removeCollection(const QOrganizerCollectionL
     if (*error != QOrganizerItemManager::NoError)
         return false;
 
+    // removing a collection removes its items - which has already been done on the simulator
+    // side by the request above
+    bool oldNotify = con->mNotifySimulator;
+    con->mNotifySimulator = false;
     if (!QOrganizerItemMemoryEngine::removeCollection(collectionId, error))
         return false; // it's already removed remotely - revert?
+    con->mNotifySimulator = oldNotify;
 
     con->mRemoteToLocal.collections.remove(remoteId.localId());
     con->mLocalToRemote.collections.remove(collectionId);
@@ -249,7 +254,19 @@ bool QOrganizerItemSimulatorEngine::saveDetailDefinition(const QOrganizerItemDet
 
     if (!con->mNotifySimulator)
         return QOrganizerItemMemoryEngine::saveDetailDefinition(def, organizeritemType, changeSet, error);
-    return QOrganizerItemMemoryEngine::saveDetailDefinition(def, organizeritemType, changeSet, error);
+
+    QLocalSocket *sendSocket = con->sendSocket();
+    int errorInt = RemoteMetacall<int>::call(
+                sendSocket, TimeoutSync, "requestSaveOrganizerDetailDefinition", def, organizeritemType);
+    *error = static_cast<QOrganizerItemManager::Error>(errorInt);
+
+    if (*error != QOrganizerItemManager::NoError)
+        return false;
+
+    if (!QOrganizerItemMemoryEngine::saveDetailDefinition(def, organizeritemType, changeSet, error))
+        return false; // already saved remotely - revert?
+
+    return true;
 }
 
 bool QOrganizerItemSimulatorEngine::removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
@@ -258,7 +275,19 @@ bool QOrganizerItemSimulatorEngine::removeDetailDefinition(const QString& defini
 
     if (!con->mNotifySimulator)
         return QOrganizerItemMemoryEngine::removeDetailDefinition(definitionId, organizeritemType, changeSet, error);
-    return QOrganizerItemMemoryEngine::removeDetailDefinition(definitionId, organizeritemType, changeSet, error);
+
+    QLocalSocket *sendSocket = con->sendSocket();
+    int errorInt = RemoteMetacall<int>::call(
+                sendSocket, TimeoutSync, "requestRemoveOrganizerDetailDefinition", definitionId, organizeritemType);
+    *error = static_cast<QOrganizerItemManager::Error>(errorInt);
+
+    if (*error != QOrganizerItemManager::NoError)
+        return false;
+
+    if (!QOrganizerItemMemoryEngine::removeDetailDefinition(definitionId, organizeritemType, changeSet, error))
+        return false; // already removed remotely - revert?
+
+    return true;
 }
 
 QOrganizerItemSimulatorEngine::QOrganizerItemSimulatorEngine(QOrganizerItemMemoryEngineData* data)

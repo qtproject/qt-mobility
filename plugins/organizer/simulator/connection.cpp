@@ -214,15 +214,6 @@ void Connection::clearOrganizerData()
     foreach (const QOrganizerCollection &collection, mManager.collections())
         mManager.removeCollection(collection);
 
-    // detail definitions
-    foreach (const QString &itemType, mManager.supportedItemTypes()) {
-        foreach (const QOrganizerItemDetailDefinition &def, mManager.detailDefinitions(itemType)) {
-            // never remove the Name definition - supportedItemTypes() relies on it
-            if (def.name() != QOrganizerItemType::DefinitionName)
-                mManager.removeDetailDefinition(def.name(), itemType);
-        }
-    }
-
     mNotifySimulator = true;
 }
 
@@ -248,13 +239,13 @@ void Connection::saveOrganizerItem(QtMobility::QOrganizerItem item)
     }
 }
 
-void Connection::removeOrganizerItem(QOrganizerItemLocalId id)
+void Connection::removeOrganizerItem(QOrganizerItemId id)
 {
-    if (!mRemoteToLocal.items.contains(id))
+    if (!mRemoteToLocal.items.contains(id.localId()))
         return;
 
-    QOrganizerItemLocalId localId = mRemoteToLocal.items.value(id);
-    mRemoteToLocal.items.remove(id);
+    QOrganizerItemLocalId localId = mRemoteToLocal.items.value(id.localId());
+    mRemoteToLocal.items.remove(id.localId());
     mLocalToRemote.items.remove(localId);
 
     mNotifySimulator = false;
@@ -269,7 +260,7 @@ void Connection::saveOrganizerCollection(QtMobility::QOrganizerCollection collec
     bool newItem = collection.id().isNull();
 
     mNotifySimulator = false;
-    qDebug() << "Saving collection" << collection << " original id " << remoteLocalId;
+    //qDebug() << "Saving collection" << collection << " original id " << remoteLocalId;
     mManager.saveCollection(&collection);
     mNotifySimulator = true;
     if (mManager.error())
@@ -282,16 +273,17 @@ void Connection::saveOrganizerCollection(QtMobility::QOrganizerCollection collec
     }
 }
 
-void Connection::removeOrganizerCollection(QOrganizerCollectionLocalId id)
+void Connection::removeOrganizerCollection(QOrganizerCollectionId id)
 {
-    if (!mRemoteToLocal.collections.contains(id))
+    if (!mRemoteToLocal.collections.contains(id.localId()))
         return;
 
-    QOrganizerCollectionLocalId localId = mRemoteToLocal.collections.value(id);
-    mRemoteToLocal.collections.remove(id);
+    QOrganizerCollectionLocalId localId = mRemoteToLocal.collections.value(id.localId());
+    mRemoteToLocal.collections.remove(id.localId());
     mLocalToRemote.collections.remove(localId);
 
     mNotifySimulator = false;
+    //qDebug() << "Removing collection" << id.localId() << localId;
     mManager.removeCollection(localId);
     mNotifySimulator = true;
 }
@@ -310,6 +302,7 @@ void Connection::saveOrganizerDetailDefinition(QtMobility::QOrganizerItemDetailD
 void Connection::removeOrganizerDetailDefinition(QString definitionName, QString itemType)
 {
     mNotifySimulator = false;
+    //qDebug() << "Removing" << definitionName << itemType;
     mManager.removeDetailDefinition(definitionName, itemType);
     mNotifySimulator = true;
 }
