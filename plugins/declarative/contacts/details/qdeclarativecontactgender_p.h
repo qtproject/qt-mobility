@@ -71,7 +71,16 @@ public:
     {
         return QDeclarativeContactDetail::Gender;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Gender:
+            return QContactGender::FieldGender;
+        default:
+            break;
+        }
+        return "";
+    }
     void setGender(const GenderType gender)
     {
         if (gender == Male) {

@@ -83,7 +83,24 @@ public:
     {
         return QDeclarativeContactDetail::Anniversary;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case CalendarId:
+            return QContactAnniversary::FieldCalendarId;
+        case OriginalDate:
+            return QContactAnniversary::FieldOriginalDate;
+        case OriginalDateTime:
+            return QContactAnniversary::FieldOriginalDate;
+        case Event:
+            return QContactAnniversary::FieldEvent;
+        case SubType:
+            return QContactAnniversary::FieldSubType;
+        default:
+            break;
+        }
+        return "";
+    }
     void setOriginalDate(const QDate& date) {detail().setValue(QContactAnniversary::FieldOriginalDate, date);}
     QDate originalDate() const {return detail().value<QDate>(QContactAnniversary::FieldOriginalDate);}
     void setOriginalDateTime(const QDateTime& dateTime) {detail().setValue(QContactAnniversary::FieldOriginalDate, dateTime);}

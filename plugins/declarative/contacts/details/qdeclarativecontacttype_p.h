@@ -66,7 +66,16 @@ public:
     {
         return QDeclarativeContactDetail::Type;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Type:
+            return QContactType::FieldType;
+        default:
+            break;
+        }
+        return "";
+    }
     QDeclarativeContactType(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {

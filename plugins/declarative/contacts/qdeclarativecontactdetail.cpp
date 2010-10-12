@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativecontactdetail_p.h"
+#include "qdeclarativecontactdetails_p.h"
 #include "qcontactdetails.h"
 #include <QDebug>
 QDeclarativeContactDetail::QDeclarativeContactDetail(QObject* parent)
@@ -241,3 +241,10 @@ QDeclarativeContactDetail::ContactDetailType QDeclarativeContactDetail::detailTy
     return QDeclarativeContactDetail::Customized;
 }
 
+
+
+QString QDeclarativeContactDetail::fieldNameFromFieldType(int fieldType) const
+{
+    Q_UNUSED(fieldType);
+    return "";
+}

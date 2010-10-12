@@ -76,7 +76,18 @@ public:
     {
         return QDeclarativeContactDetail::Url;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Url:
+            return QContactUrl::FieldUrl;
+        case SubType:
+            return QContactUrl::FieldSubType;
+        default:
+            break;
+        }
+        return "";
+    }
     void setUrl(const QString& url) {detail().setValue(QContactUrl::FieldUrl, url);}
     QString url() const {return detail().value(QContactUrl::FieldUrl);}
 

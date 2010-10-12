@@ -88,6 +88,28 @@ public:
         return QDeclarativeContactDetail::Address;
     }
 
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Street:
+            return QContactAddress::FieldStreet;
+        case Locality:
+            return QContactAddress::FieldLocality;
+        case Region:
+            return QContactAddress::FieldRegion;
+        case PostCode:
+            return QContactAddress::FieldPostcode;
+        case Country:
+            return QContactAddress::FieldCountry;
+        case SubTypes:
+            return QContactAddress::FieldSubTypes;
+        case PostOfficeBox:
+            return QContactAddress::FieldPostOfficeBox;
+        default:
+            break;
+        }
+        return "";
+    }
     void setStreet(const QString& street) {detail().setValue(QContactAddress::FieldStreet, street);}
     QString street() const {return detail().value(QContactAddress::FieldStreet);}
     void setLocality(const QString& locality) {detail().setValue(QContactAddress::FieldLocality, locality);}

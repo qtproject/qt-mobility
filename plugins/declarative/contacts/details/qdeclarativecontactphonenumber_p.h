@@ -86,7 +86,18 @@ public:
     {
         return QDeclarativeContactDetail::PhoneNumber;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Number:
+            return QContactPhoneNumber::FieldNumber;
+        case SubTypes:
+            return QContactPhoneNumber::FieldSubTypes;
+        default:
+            break;
+        }
+        return "";
+    }
     void setNumber(const QString& number) {detail().setValue(QContactPhoneNumber::FieldNumber, number);}
     QString number() const {return detail().value(QContactPhoneNumber::FieldNumber);}
 

@@ -66,7 +66,16 @@ public:
     {
         return QDeclarativeContactDetail::Thumbnail;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Thumbnail:
+            return QContactThumbnail::FieldThumbnail;
+        default:
+            break;
+        }
+        return "";
+    }
     void setThumbnail(const QString& thumbnail)
     {
         //TODO

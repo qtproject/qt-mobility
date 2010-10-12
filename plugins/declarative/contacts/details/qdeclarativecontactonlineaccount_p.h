@@ -82,7 +82,22 @@ public:
     {
         return QDeclarativeContactDetail::OnlineAccount;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case AccountUri:
+            return QContactOnlineAccount::FieldAccountUri;
+        case ServiceProvider:
+            return QContactOnlineAccount::FieldServiceProvider;
+        case Capabilities:
+            return QContactOnlineAccount::FieldCapabilities;
+        case SubTypes:
+            return QContactOnlineAccount::FieldSubTypes;
+        default:
+            break;
+        }
+        return "";
+    }
     void setAccountUri(const QString& accountUri) {detail().setValue(QContactOnlineAccount::FieldAccountUri, accountUri);}
     QString accountUri() const {return detail().value(QContactOnlineAccount::FieldAccountUri);}
 
