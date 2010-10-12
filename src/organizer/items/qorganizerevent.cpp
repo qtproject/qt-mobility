@@ -213,15 +213,6 @@ QSet<QOrganizerItemRecurrenceRule> QOrganizerEvent::exceptionRules() const
     return rec.exceptionRules();
 }
 
-/*! Returns the exception rule which has been explicitly set for the event.
-    Note: if there are more than one dates exist, the order of the dates is undefined, so any one could be returned.*/
-QOrganizerItemRecurrenceRule QOrganizerEvent::exceptionRule() const
-{
-    QSet<QOrganizerItemRecurrenceRule> xrules = exceptionRules();
-    if (!xrules.isEmpty())
-        return *xrules.begin();
-    return QOrganizerItemRecurrenceRule();
-}
 /*! Sets the priority of this event to \a priority */
 void QOrganizerEvent::setPriority(QOrganizerItemPriority::Priority priority)
 {

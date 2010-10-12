@@ -706,7 +706,7 @@ bool QOrganizerItemManager::removeCollection(const QOrganizerCollection& collect
   Returns a pruned or modified version of the \a original organizer item which is valid and can be saved in the manager.
   The returned organizer item might have entire details removed or arbitrarily changed.
  */
-QOrganizerItem QOrganizerItemManager::compatibleItem(const QOrganizerItem& original)
+QOrganizerItem QOrganizerItemManager::compatibleItem(const QOrganizerItem& original) const
 {
     d->m_error = QOrganizerItemManager::NoError;
     d->m_errorMap.clear();
@@ -717,7 +717,7 @@ QOrganizerItem QOrganizerItemManager::compatibleItem(const QOrganizerItem& origi
   Returns a pruned or modified version of the \a original organizer collection which is valid and can be saved in the manager.
   The returned organizer collection might have meta data removed or arbitrarily changed.
  */
-QOrganizerCollection QOrganizerItemManager::compatibleCollection(const QOrganizerCollection& original)
+QOrganizerCollection QOrganizerItemManager::compatibleCollection(const QOrganizerCollection& original) const
 {
     d->m_error = QOrganizerItemManager::NoError;
     d->m_errorMap.clear();
