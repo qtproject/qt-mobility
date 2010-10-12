@@ -193,8 +193,8 @@ void tst_QGalleryTypeRequest::initTestCase()
 
 void tst_QGalleryTypeRequest::propertyNames()
 {
-    const QGalleryProperty titleProperty("title");
-    const QGalleryProperty artistProperty("artist");
+    const QGalleryProperty titleProperty = {"title", sizeof("title")};
+    const QGalleryProperty artistProperty = {"artist", sizeof("artist")};
 
     const QStringList propertyNames = QStringList()
             << titleProperty

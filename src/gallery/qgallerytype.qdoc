@@ -39,12 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qgallerytype.h"
-
-QTM_BEGIN_NAMESPACE
-
 /*!
-    \class QGalleryType 
+    \struct QGalleryType
 
     \ingroup gallery
 
@@ -55,25 +51,13 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QGalleryType::QGalleryType(const char *name)
+    \fn QGalleryType::name() const
 
-    Construct a gallery item type from a string literal \a name.
-*/
-
-/*!
     Returns the name of an item type.
 */
-
-QString QGalleryType::name() const
-{
-    return QString::fromLatin1(m_name, m_length);
-}
 
 /*!
     \fn QGalleryType::operator QString() const
 
     Returns the string name of an item type.
 */
-
-QTM_END_NAMESPACE
-

@@ -686,8 +686,8 @@ void tst_QGalleryFilter::propertyOperators_data()
     QTest::addColumn<QVariant>("value");
     QTest::addColumn<QGalleryFilter::Comparator>("comparator");
 
-    const QGalleryProperty albumTitle("albumTitle");
-    const QGalleryProperty trackNumber("trackNumber");
+    const QGalleryProperty albumTitle = {"albumTitle", sizeof("albumTitle")};
+    const QGalleryProperty trackNumber = {"trackNumber", sizeof("trackNumber")};
 
     QTest::newRow("albumTitle == Self Titled")
             << (albumTitle == QLatin1String("Self Titled"))
@@ -771,10 +771,10 @@ void tst_QGalleryFilter::propertyOperators()
 
 void tst_QGalleryFilter::equality_data()
 {
-    const QGalleryProperty albumProperty("albumTitle");
-    const QGalleryProperty artistProperty("artistTitle");
-    const QGalleryProperty durationProperty("duration");
-    const QGalleryProperty trackProperty("trackNumber");
+    const QGalleryProperty albumProperty = {"albumTitle", sizeof("albumTitle")};
+    const QGalleryProperty artistProperty = {"artistTitle", sizeof("artistTitle>")};
+    const QGalleryProperty durationProperty = {"duration", sizeof("duration")};
+    const QGalleryProperty trackProperty = {"trackNumber", sizeof("trackNumber")};
 
     QGalleryMetaDataFilter metaDataFilter = albumProperty == QLatin1String("Greatest Hits");
     QGalleryMetaDataFilter metaDataRangeFilter = durationProperty < 12000;
