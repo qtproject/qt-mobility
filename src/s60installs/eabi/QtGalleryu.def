@@ -351,7 +351,7 @@ EXPORTS
 	_ZN10QtMobilityeqERKNS_14QGalleryFilterES2_ @ 350 NONAME
 	_ZN10QtMobilitylsE6QDebugRKNS_14QGalleryFilterE @ 351 NONAME
 	_ZN10QtMobilityneERKNS_14QGalleryFilterES2_ @ 352 NONAME
-	_ZNK10QtMobility12QGalleryType4nameEv @ 353 NONAME
+	_ZNK10QtMobility12QGalleryType4nameEv @ 353 NONAME ABSENT
 	_ZNK10QtMobility14QGalleryFilter13toUnionFilterEv @ 354 NONAME
 	_ZNK10QtMobility14QGalleryFilter16toMetaDataFilterEv @ 355 NONAME
 	_ZNK10QtMobility14QGalleryFilter20toIntersectionFilterEv @ 356 NONAME
@@ -362,14 +362,14 @@ EXPORTS
 	_ZNK10QtMobility16QDocumentGallery18isRequestSupportedENS_23QGalleryAbstractRequest11RequestTypeE @ 361 NONAME
 	_ZNK10QtMobility16QDocumentGallery18propertyAttributesERK7QStringS3_ @ 362 NONAME
 	_ZNK10QtMobility16QDocumentGallery21itemTypePropertyNamesERK7QString @ 363 NONAME
-	_ZNK10QtMobility16QGalleryProperty10descendingEv @ 364 NONAME
-	_ZNK10QtMobility16QGalleryProperty4nameEv @ 365 NONAME
-	_ZNK10QtMobility16QGalleryProperty9ascendingEv @ 366 NONAME
-	_ZNK10QtMobility16QGalleryPropertyeqERK8QVariant @ 367 NONAME
-	_ZNK10QtMobility16QGalleryPropertygeERK8QVariant @ 368 NONAME
-	_ZNK10QtMobility16QGalleryPropertygtERK8QVariant @ 369 NONAME
-	_ZNK10QtMobility16QGalleryPropertyleERK8QVariant @ 370 NONAME
-	_ZNK10QtMobility16QGalleryPropertyltERK8QVariant @ 371 NONAME
+	_ZNK10QtMobility16QGalleryProperty10descendingEv @ 364 NONAME ABSENT
+	_ZNK10QtMobility16QGalleryProperty4nameEv @ 365 NONAME ABSENT
+	_ZNK10QtMobility16QGalleryProperty9ascendingEv @ 366 NONAME ABSENT
+	_ZNK10QtMobility16QGalleryPropertyeqERK8QVariant @ 367 NONAME ABSENT
+	_ZNK10QtMobility16QGalleryPropertygeERK8QVariant @ 368 NONAME ABSENT
+	_ZNK10QtMobility16QGalleryPropertygtERK8QVariant @ 369 NONAME ABSENT
+	_ZNK10QtMobility16QGalleryPropertyleERK8QVariant @ 370 NONAME ABSENT
+	_ZNK10QtMobility16QGalleryPropertyltERK8QVariant @ 371 NONAME ABSENT
 	_ZNK10QtMobility16QGalleryResource10attributesEv @ 372 NONAME
 	_ZNK10QtMobility16QGalleryResource3urlEv @ 373 NONAME
 	_ZNK10QtMobility16QGalleryResource9attributeEi @ 374 NONAME
@@ -539,12 +539,12 @@ EXPORTS
 	_ZN10QtMobility22QGalleryMetaDataFilterC2ERK7QStringRK8QVariantNS_14QGalleryFilter10ComparatorE @ 538 NONAME
 	_ZN10QtMobility22QGalleryMetaDataFilter10setNegatedEb @ 539 NONAME
 	_ZNK10QtMobility22QGalleryMetaDataFilter9isNegatedEv @ 540 NONAME
-	_ZNK10QtMobility16QGalleryProperty10startsWithERK7QString @ 541 NONAME
-	_ZNK10QtMobility16QGalleryProperty6regExpERK7QRegExp @ 542 NONAME
-	_ZNK10QtMobility16QGalleryProperty6regExpERK7QString @ 543 NONAME
-	_ZNK10QtMobility16QGalleryProperty8containsERK7QString @ 544 NONAME
-	_ZNK10QtMobility16QGalleryProperty8endsWithERK7QString @ 545 NONAME
-	_ZNK10QtMobility16QGalleryProperty8wildcardERK7QString @ 546 NONAME
+	_ZNK10QtMobility16QGalleryProperty10startsWithERK7QString @ 541 NONAME ABSENT
+	_ZNK10QtMobility16QGalleryProperty6regExpERK7QRegExp @ 542 NONAME ABSENT
+	_ZNK10QtMobility16QGalleryProperty6regExpERK7QString @ 543 NONAME ABSENT
+	_ZNK10QtMobility16QGalleryProperty8containsERK7QString @ 544 NONAME ABSENT
+	_ZNK10QtMobility16QGalleryProperty8endsWithERK7QString @ 545 NONAME ABSENT
+	_ZNK10QtMobility16QGalleryProperty8wildcardERK7QString @ 546 NONAME ABSENT
 	_ZN10QtMobility18QGalleryQueryModel12limitChangedEv @ 547 NONAME
 	_ZN10QtMobility18QGalleryQueryModel12scopeChangedEv @ 548 NONAME
 	_ZN10QtMobility18QGalleryQueryModel13filterChangedEv @ 549 NONAME
