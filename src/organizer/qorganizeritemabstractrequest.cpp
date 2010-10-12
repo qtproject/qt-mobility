@@ -96,6 +96,7 @@ QTM_BEGIN_NAMESPACE
   \value InvalidRequest An invalid request
   \value ItemOccurrenceFetchRequest A request to fetch a list of occurrences of an organizer item
   \value ItemFetchRequest A request to fetch a list of organizer items
+  \value ItemFetchForExportRequest A request to fetch a list of persisted organizer items and exceptions
   \value ItemLocalIdFetchRequest A request to fetch a list of local organizer item ids
   \value ItemRemoveRequest A request to remove a list of organizer items
   \value ItemSaveRequest A request to save a list of organizer items
@@ -103,7 +104,6 @@ QTM_BEGIN_NAMESPACE
   \value DetailDefinitionRemoveRequest A request to remove a list of detail definitions
   \value DetailDefinitionSaveRequest A request to save a list of detail definitions
   \value CollectionFetchRequest A request to fetch a collection.
-  \value CollectionLocalIdFetchRequest A request to collect a local id.
   \value CollectionRemoveRequest A request to remove a collection.
   \value CollectionSaveRequest A request to save a collection.
  */

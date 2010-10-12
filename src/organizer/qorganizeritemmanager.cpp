@@ -360,6 +360,10 @@ QMap<int, QOrganizerItemManager::Error> QOrganizerItemManager::errorMap() const
   If \a periodStart is after \a periodEnd, the operation will fail.
   If \a maxCount is negative, it is backend specific as to how many occurrences will be returned.
   Some backends may return no instances, others may return some limited number of occurrences.
+
+  The \a fetchHint allows clients to specify which pieces of information they are interested or not interested in, to allow
+  backends to optimise data retrieval if possible.  Note that it is simply a hint; backends can ignore the \a fetchHint,
+  but if they do so they must return the full item.
   */
 QList<QOrganizerItem> QOrganizerItemManager::itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint) const
 {
@@ -379,7 +383,11 @@ QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QOrganizerItem
 }
 
 /*!
-  Returns a list of organizer item ids that match the given \a filter, sorted according to the given list of \a sortOrders.
+  Returns a list of organizer item ids of persisted items that match the given \a filter, sorted according to the given list of \a sortOrders,
+  for any item which occurs (or has an occurrence which occurs) in the range specified by the given \a startDate and \a endDate.
+  A default-constructed (invalid) \a startDate specifies an open start date (matches anything which occurs up until the \a endDate),
+  and a default-constructed (invalid) \a endDate specifies an open end date (matches anything which occurs after the \a startDate).
+  If both the \a startDate and \a endDate are invalid, this function will return the ids of all items which match the \a filter criteria.
   Depending on the backend, this filtering operation may involve retrieving all the organizeritems.
  */
 QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
@@ -409,7 +417,13 @@ QList<QOrganizerItem> QOrganizerItemManager::items(const QOrganizerItemFilter& f
 }
 
 /*!
-  Returns a list of organizeritems that match the given \a filter, sorted according to the given list of \a sortOrders.
+  Returns a list of organizeritems that match the given \a filter, sorted according to the given list of \a sortOrders,
+  for any item or occurrence of an item which occurs in the range specified by the given \a startDate and \a endDate.
+  A default-constructed (invalid) \a startDate specifies an open start date (matches anything which occurs up until the \a endDate),
+  and a default-constructed (invalid) \a endDate specifies an open end date (matches anything which occurs after the \a startDate).
+  If both the \a startDate and \a endDate are invalid, this function will return all items which match the \a filter criteria.
+
+  This function will return parent items and both persisted and generated occurrences of items which match the specified criteria.
 
   Depending on the manager implementation, this filtering operation might be slow and involve retrieving all the
   organizeritems and testing them against the supplied filter - see the \l isFilterSupported() function.
@@ -431,7 +445,13 @@ QList<QOrganizerItem> QOrganizerItemManager::items(const QDateTime& startDate, c
 }
 
 /*!
-  Returns a list of organizeritems that match the given \a filter, sorted according to the given list of \a sortOrders.
+  Returns a list of organizeritems that match the given \a filter, sorted according to the given list of \a sortOrders,
+  for any item which occurs (or has an occurrence which occurs) in the range specified by the given \a startDate and \a endDate.
+  A default-constructed (invalid) \a startDate specifies an open start date (matches anything which occurs up until the \a endDate),
+  and a default-constructed (invalid) \a endDate specifies an open end date (matches anything which occurs after the \a startDate).
+  If both the \a startDate and \a endDate are invalid, this function will return all items which match the \a filter criteria.
+
+  This function will only return parent items and persisted exceptions which match the specified criteria; not generated occurrences.
 
   Depending on the manager implementation, this filtering operation might be slow and involve retrieving all the
   organizeritems and testing them against the supplied filter - see the \l isFilterSupported() function.
@@ -477,16 +497,12 @@ QOrganizerItem QOrganizerItemManager::item(const QOrganizerItemLocalId& organize
 /*!
   Adds the given \a organizeritem to the database if \a organizeritem has a
   default-constructed id, or an id with the manager URI set to the URI of
-  this manager and a local id of zero.  It will be saved in the collection specified
-  by \a collectionId if the specified collection exists, or if no \a collectionId is
-  specified, or the \a collectionId is the default (zero) collection id, it will be
-  saved in the collection in which the item is currently saved (if it is not a new
-  item) or in the default collection (if it is a new item).
-
-  Each collection may have a different schema, so if the item cannot be saved
-  in the given collection due to invalid details, the function will return false.
-  An item which is valid in one collection may be invalid in another collection, in the
-  same manager.
+  this manager and a local id of zero.  It will be saved in the collection whose
+  id is reported by calling item->collectionId() if the specified collection exists,
+  or if no collectionId is specified in the item, or the collectionId is the default
+  collection id, it will be saved in the collection in which the item is currently
+  saved (if it is not a new item) or in the default collection (if it is a new item).
+  As such, an item may be moved between collections with this save operation.
 
   If the manager URI of the id of the \a organizeritem is neither empty nor equal to the URI of
   this manager, or local id of the \a organizeritem is non-zero but does not exist in the
@@ -536,21 +552,14 @@ bool QOrganizerItemManager::removeItem(const QOrganizerItemLocalId& organizerite
 }
 
 /*!
-  Adds the list of organizeritems given by \a organizeritems list to the database, in
-  the collection identified by the given \a collectionId.
+  Adds the list of organizeritems given by \a organizeritems list to the database.
+  Each item in the list will be saved in the collection whose
+  id is reported by calling item->collectionId() if the specified collection exists,
+  or if no collectionId is specified in the item, or the collectionId is the default
+  collection id, it will be saved in the collection in which the item is currently
+  saved (if it is not a new item) or in the default collection (if it is a new item).
+  As such, an item may be moved between collections with this save operation.
   Returns true if the organizeritems were saved successfully, otherwise false.
-
-  If the given \a collectionId does not exist, the function will return false.
-  If the given \a collectionId is the default (zero) id, the items will be saved
-  in the collection in which they are currently saved (if they are not new items) or
-  in the default collection (if they are new items).
-  If the given \a collectionId does exist, all items will be saved in the collection
-  identified by the given \a collectionId.
-
-  Each collection may have a different schema, so if any of the items cannot be saved
-  in the given collection due to invalid details, the function will return false.
-  An item which is valid in one collection may be invalid in another collection, in the
-  same manager.
 
   Calling \l errorMap() will return the per-input errors for the latest batch function.
   The \l QOrganizerItemManager::error() function will only return \c QOrganizerItemManager::NoError
@@ -558,7 +567,7 @@ bool QOrganizerItemManager::removeItem(const QOrganizerItemLocalId& organizerite
 
   For each newly saved organizer item that was successful, the id of the organizeritem
   in the \a organizeritems list will be updated with the new value.  If a failure occurs
-  when saving a new organizeritem, the id will be cleared.
+  when saving a new item, the id will be cleared.
 
   \sa QOrganizerItemManager::saveItem()
  */
@@ -697,7 +706,7 @@ bool QOrganizerItemManager::removeCollection(const QOrganizerCollection& collect
   Returns a pruned or modified version of the \a original organizer item which is valid and can be saved in the manager.
   The returned organizer item might have entire details removed or arbitrarily changed.
  */
-QOrganizerItem QOrganizerItemManager::compatibleItem(const QOrganizerItem& original)
+QOrganizerItem QOrganizerItemManager::compatibleItem(const QOrganizerItem& original) const
 {
     d->m_error = QOrganizerItemManager::NoError;
     d->m_errorMap.clear();
@@ -708,7 +717,7 @@ QOrganizerItem QOrganizerItemManager::compatibleItem(const QOrganizerItem& origi
   Returns a pruned or modified version of the \a original organizer collection which is valid and can be saved in the manager.
   The returned organizer collection might have meta data removed or arbitrarily changed.
  */
-QOrganizerCollection QOrganizerItemManager::compatibleCollection(const QOrganizerCollection& original)
+QOrganizerCollection QOrganizerItemManager::compatibleCollection(const QOrganizerCollection& original) const
 {
     d->m_error = QOrganizerItemManager::NoError;
     d->m_errorMap.clear();

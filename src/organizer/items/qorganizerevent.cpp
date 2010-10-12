@@ -110,7 +110,7 @@ void QOrganizerEvent::setRecurrenceDates(const QSet<QDate>& rdates)
 }
 
 /*! Sets a single date \a rdate to be the date on which the event occurs.
-    \see setRecurrenceDates() */
+    \sa setRecurrenceDates() */
 void QOrganizerEvent::setRecurrenceDate(const QDate& rdate)
 {
     setRecurrenceDates(QSet<QDate>() << rdate);
@@ -134,7 +134,7 @@ void QOrganizerEvent::setRecurrenceRules(const QSet<QOrganizerItemRecurrenceRule
 
 /*! Sets a single recurrence rule \a rrule to be the rule which define when the event occurs, other than those dates
     specified explicitly via setRecurrenceDates().
-    \see setRecurrenceRules()*/
+    \sa setRecurrenceRules()*/
 void QOrganizerEvent::setRecurrenceRule(const QOrganizerItemRecurrenceRule& rrule)
 {
     setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>() << rrule);
@@ -147,8 +147,9 @@ QSet<QOrganizerItemRecurrenceRule> QOrganizerEvent::recurrenceRules() const
     return rec.recurrenceRules();
 }
 
-/*! Returns the recurrence rule which has been explicitly set for the event.
-    Note: if there are more than one dates exist, the order of the dates is undefined, so any one could be returned.*/
+/*! Returns a recurrence rule which has been explicitly set for the event.
+    Note: if more than one rule exists, the order of the rules is undefined, so any one could be returned.
+ */
 QOrganizerItemRecurrenceRule QOrganizerEvent::recurrenceRule() const
 {
     QSet<QOrganizerItemRecurrenceRule> rrules = recurrenceRules();
@@ -158,7 +159,9 @@ QOrganizerItemRecurrenceRule QOrganizerEvent::recurrenceRule() const
 }
 
 /*! Sets the given list of dates \a exdates to be dates on which the event explicitly does not occur,
-    when the recurrence rules suggest that the event should occur on those dates. */
+    even if the recurrence rules suggest that the event should occur on those dates.  Any previously
+    specified exception dates will be cleared when this function is called.
+ */
 void QOrganizerEvent::setExceptionDates(const QSet<QDate>& exdates)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
@@ -167,8 +170,10 @@ void QOrganizerEvent::setExceptionDates(const QSet<QDate>& exdates)
 }
 
 /*! Sets the given single date \a exdate to be the date on which the event explicitly does not occur,
-    when the recurrence rules suggest that the event should occur on this dates.
-    \see setExceptionDates() */
+    event if the recurrence rules suggest that the event should occur on this date.  Any previously
+    specified exception dates will be cleared when this function is called.
+    \sa setExceptionDates()
+ */
 void QOrganizerEvent::setExceptionDate(const QDate& exdate)
 {
     setExceptionDates(QSet<QDate>() << exdate);
@@ -183,7 +188,8 @@ QSet<QDate> QOrganizerEvent::exceptionDates() const
 }
 
 /*! Sets the given list of recurrence rules \a exrules to be the rules which define when
-    the event does not occur. */
+    the event does not occur.  Any previously specified exception rules will be cleared
+    when this function is called. */
 void QOrganizerEvent::setExceptionRules(const QSet<QOrganizerItemRecurrenceRule>& exrules)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
@@ -191,12 +197,24 @@ void QOrganizerEvent::setExceptionRules(const QSet<QOrganizerItemRecurrenceRule>
     saveDetail(&rec);
 }
 
-/*! Sets the given single recurrence rules\a xrule to be the rule which define when
-    the event does not occur.
-    \see setExceptionRules.*/
+/*! Sets the given single recurrence rules \a xrule to be the rule which defines when
+    the event does not occur.  Any previously specified exception rules will be cleared
+    when this function is called.
+    \sa setExceptionRules.
+ */
 void QOrganizerEvent::setExceptionRule(const QOrganizerItemRecurrenceRule& xrule)
 {
     setExceptionRules(QSet<QOrganizerItemRecurrenceRule>() << xrule);
+}
+
+/*! Returns an exception rule which has been explicitly set for the event.
+    Note: if more than one exception rule exists, the order of the rules is undefined, so any one could be returned.*/
+QOrganizerItemRecurrenceRule QOrganizerEvent::exceptionRule() const
+{
+    QSet<QOrganizerItemRecurrenceRule> exrules = exceptionRules();
+    if (!exrules.isEmpty())
+        return *exrules.begin();
+    return QOrganizerItemRecurrenceRule();
 }
 
 /*! Returns the list of exception rules for the event */
@@ -206,15 +224,6 @@ QSet<QOrganizerItemRecurrenceRule> QOrganizerEvent::exceptionRules() const
     return rec.exceptionRules();
 }
 
-/*! Returns the exception rule which has been explicitly set for the event.
-    Note: if there are more than one dates exist, the order of the dates is undefined, so any one could be returned.*/
-QOrganizerItemRecurrenceRule QOrganizerEvent::exceptionRule() const
-{
-    QSet<QOrganizerItemRecurrenceRule> xrules = exceptionRules();
-    if (!xrules.isEmpty())
-        return *xrules.begin();
-    return QOrganizerItemRecurrenceRule();
-}
 /*! Sets the priority of this event to \a priority */
 void QOrganizerEvent::setPriority(QOrganizerItemPriority::Priority priority)
 {
