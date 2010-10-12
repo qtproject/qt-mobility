@@ -66,7 +66,16 @@ public:
     {
         return QDeclarativeContactDetail::SyncTarget;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case SyncTarget:
+            return QContactSyncTarget::FieldSyncTarget;
+        default:
+            break;
+        }
+        return "";
+    }
     void setSyncTarget(const QString& syncTarget) {detail().setValue(QContactSyncTarget::FieldSyncTarget, syncTarget);}
     QString syncTarget() const {return detail().value(QContactSyncTarget::FieldSyncTarget);}
 signals:

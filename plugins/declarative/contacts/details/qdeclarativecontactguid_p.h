@@ -66,7 +66,16 @@ public:
     {
         return QDeclarativeContactDetail::Guid;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Guid:
+            return QContactGuid::FieldGuid;
+        default:
+            break;
+        }
+        return "";
+    }
     void setGuid(const QString& guid) {detail().setValue(QContactGuid::FieldGuid, guid);}
     QString guid() const {return detail().value(QContactGuid::FieldGuid);}
 signals:
