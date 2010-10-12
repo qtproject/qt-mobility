@@ -488,7 +488,7 @@ void QSoundEffectPrivate::uploadSample()
     }
     daemon()->unlock();
 
-    emit loaded();
+    emit loadedChanged();
 }
 
 void QSoundEffectPrivate::playSample()

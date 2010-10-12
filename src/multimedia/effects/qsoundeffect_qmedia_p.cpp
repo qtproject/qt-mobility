@@ -161,7 +161,7 @@ void QSoundEffectPrivate::mediaStatusChanged(QMediaPlayer::MediaStatus status)
 {
     if (status == QMediaPlayer::LoadedMedia) {
         m_loaded = true;
-        emit loaded();
+        emit loadedChanged();
     }
 }
 

@@ -90,7 +90,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void volumeChanged();
     void mutedChanged();
-    void loaded();
+    void loadedChanged();
 
 private:
     bool m_muted;

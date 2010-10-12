@@ -147,7 +147,7 @@ QSoundEffect::QSoundEffect(QObject *parent) :
     d = new QSoundEffectPrivate(this);
     connect(d, SIGNAL(volumeChanged()), SIGNAL(volumeChanged()));
     connect(d, SIGNAL(mutedChanged()), SIGNAL(mutedChanged()));
-    connect(d, SIGNAL(loaded()), SIGNAL(loaded()));
+    connect(d, SIGNAL(loadedChanged()), SIGNAL(loadedChanged()));
 }
 
 QSoundEffect::~QSoundEffect()
