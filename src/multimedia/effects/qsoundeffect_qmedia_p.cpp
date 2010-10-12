@@ -64,6 +64,7 @@ QSoundEffectPrivate::QSoundEffectPrivate(QObject* parent):
     QObject(parent),
     m_loopCount(1),
     m_runningCount(0),
+    m_loaded(false),
     m_player(0)
 {
     m_player = new QMediaPlayer(this, QMediaPlayer::LowLatency);
@@ -87,6 +88,7 @@ QUrl QSoundEffectPrivate::source() const
 
 void QSoundEffectPrivate::setSource(const QUrl &url)
 {
+    m_loaded = false;
     m_player->setMedia(url);
 }
 
@@ -118,6 +120,11 @@ bool QSoundEffectPrivate::isMuted() const
 void QSoundEffectPrivate::setMuted(bool muted)
 {
     m_player->setMuted(muted);
+}
+
+bool QSoundEffectPrivate::isLoaded() const
+{
+    return m_loaded;
 }
 
 void QSoundEffectPrivate::play()
@@ -152,8 +159,10 @@ void QSoundEffectPrivate::stateChanged(QMediaPlayer::State state)
 
 void QSoundEffectPrivate::mediaStatusChanged(QMediaPlayer::MediaStatus status)
 {
-    if (status == QMediaPlayer::LoadedMedia)
+    if (status == QMediaPlayer::LoadedMedia) {
+        m_loaded = true;
         emit loaded();
+    }
 }
 
 QT_END_NAMESPACE

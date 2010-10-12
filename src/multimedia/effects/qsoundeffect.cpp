@@ -219,6 +219,11 @@ void QSoundEffect::setMuted(bool muted)
     emit mutedChanged();
 }
 
+bool QSoundEffect::isLoaded() const
+{
+    return d->isLoaded();
+}
+
 void QSoundEffect::play()
 {
     d->play();

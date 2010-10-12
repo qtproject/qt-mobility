@@ -133,6 +133,11 @@ void QSoundEffectPrivate::setMuted(bool muted)
     m_muted = muted;
 }
 
+bool QSoundEffectPrivate::isLoaded() const
+{
+    return true;
+}
+
 void QSoundEffectPrivate::play()
 {
     m_sound->play();

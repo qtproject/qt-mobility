@@ -87,6 +87,7 @@ public:
     void setVolume(int volume);
     bool isMuted() const;
     void setMuted(bool muted);
+    bool isLoaded() const;
 
 public Q_SLOTS:
     void play();

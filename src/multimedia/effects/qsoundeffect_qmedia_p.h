@@ -80,6 +80,7 @@ public:
     void setVolume(int volume);
     bool isMuted() const;
     void setMuted(bool muted);
+    bool isLoaded() const;
 
 public Q_SLOTS:
     void play();
@@ -95,9 +96,10 @@ private Q_SLOTS:
     void mediaStatusChanged(QMediaPlayer::MediaStatus);
 
 private:
-    int m_loopCount;
-    int m_runningCount;
-    QMediaPlayer *m_player;
+    int            m_loopCount;
+    int            m_runningCount;
+    bool           m_loaded;
+    QMediaPlayer  *m_player;
 };
 
 QT_END_NAMESPACE

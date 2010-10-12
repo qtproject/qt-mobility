@@ -341,6 +341,11 @@ void QSoundEffectPrivate::setMuted(bool muted)
     m_muted = muted;
 }
 
+bool QSoundEffectPrivate::isLoaded() const
+{
+    return m_sampleLoaded;
+}
+
 void QSoundEffectPrivate::play()
 {
     if (m_retry) {
