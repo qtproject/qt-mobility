@@ -73,14 +73,14 @@ public:
 
         foreach(const QString& mgr, managerNames) {
             // Don't bother with these
-            if (mgr == "memory" || mgr == "invalid" || mgr == "testdummy" || mgr == "maliciousplugin")
+            if (mgr == "memory" || mgr == "invalid" || mgr == "testdummy" || mgr == "maliciousplugin" || mgr == "skeleton")
                 continue;
             QMap<QString, QString> params;
             QString mgrUri = QOrganizerItemManager::buildUri(mgr, params);
             QOrganizerItemManager* cm = QOrganizerItemManager::fromUri(mgrUri);
             if (cm) {
                 qDebug() << "Saving items for" << mgrUri;
-                QList<QOrganizerItem> items = cm->items();
+                QList<QOrganizerItem> items = cm->itemsForExport(QDateTime(), QDateTime(), QOrganizerItemFilter());
                 savedItems.insert(cm->managerName(),items);
                 QList<QOrganizerItemLocalId> ids;
                 foreach(const QOrganizerItem& item, items)
