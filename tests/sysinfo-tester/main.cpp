@@ -51,7 +51,7 @@ using namespace QtMobility;
 struct symbol_t
 {
   const char *key;
-  int         val;
+  int val;
 };
 
 int lookup(const symbol_t *stab, const char *key, int def)
@@ -64,8 +64,8 @@ int lookup(const symbol_t *stab, const char *key, int def)
 
 const char *rlookup(const symbol_t *stab, int val, const char *def)
 {
-  for(;stab->key; ++stab ) {
-    if( stab->val == val ) return stab->key;
+  for(;stab->key; ++stab) {
+    if(stab->val == val) return stab->key;
   }
   return def;
 }
@@ -228,7 +228,7 @@ static void test_systemdisplayinfo(void)
 
 static const char *human_size(qlonglong n)
 {
-  if( n == 0 ) return "0B";
+  if(n == 0) return "0B";
 
   static char buf[256];
   char *pos = buf;
@@ -240,10 +240,10 @@ static const char *human_size(qlonglong n)
   int g = n & 1023; n >>= 10;
 
   *pos = 0;
-  if( g ) snprintf(pos, end-pos, "%s%dGB", *buf?" ":"", g), pos = strchr(pos,0);
-  if( m ) snprintf(pos, end-pos, "%s%dMB", *buf?" ":"", m), pos = strchr(pos,0);
-  if( k ) snprintf(pos, end-pos, "%s%dkB", *buf?" ":"", k), pos = strchr(pos,0);
-  if( b ) snprintf(pos, end-pos, "%s%dB",  *buf?" ":"", b), pos = strchr(pos,0);
+  if(g) snprintf(pos, end-pos, "%s%dGB", *buf?" ":"", g), pos = strchr(pos,0);
+  if(m) snprintf(pos, end-pos, "%s%dMB", *buf?" ":"", m), pos = strchr(pos,0);
+  if(k) snprintf(pos, end-pos, "%s%dkB", *buf?" ":"", k), pos = strchr(pos,0);
+  if(b) snprintf(pos, end-pos, "%s%dB",  *buf?" ":"", b), pos = strchr(pos,0);
 
   return buf;
 }
@@ -256,8 +256,7 @@ static void test_systemstorageinfo(void)
 
   qDebug() << "storageinfo.logicalDrives ->" << lst;
 
-  for( int i = 0; i < lst.size(); ++i)
-  {
+  for(int i = 0; i < lst.size(); ++i) {
     const QString &drv = lst.at(i);
 
     qDebug() << "Logical drive:" << drv;
@@ -294,8 +293,7 @@ static void test_systemnetworkinfo(void)
   X(networkinfo.homeMobileNetworkCode());
   X(networkinfo.locationAreaCode());
 
-  for( const symbol_t *sym = NetworkMode_lut; sym->key; ++sym )
-  {
+  for(const symbol_t *sym = NetworkMode_lut; sym->key; ++sym) {
     QtMobility::QSystemNetworkInfo::NetworkMode mode =
     (QtMobility::QSystemNetworkInfo::NetworkMode) sym->val;
 
@@ -330,9 +328,8 @@ static void test_systemscreensaver(void)
 struct dummy_t
 {
   const char *name;
-  void      (*func)(void);
-} lut[] =
-{
+  void (*func)(void);
+} lut[] = {
 #define ADD(x) {#x, test_##x }
   ADD(systeminfo),
   ADD(systemdeviceinfo),
@@ -353,70 +350,56 @@ static bool endswith(const char *str, const char *pat)
 
 int lookup_test(const char *name)
 {
-  for( int i = 0; lut[i].name; ++i )
-  {
-    if( !strcmp(lut[i].name, name) ) return i;
+  for(int i = 0; lut[i].name; ++i) {
+    if(!strcmp(lut[i].name, name)) return i;
   }
-  for( int i = 0; lut[i].name; ++i )
-  {
-    if( endswith(lut[i].name, name) ) return i;
+  for(int i = 0; lut[i].name; ++i) {
+    if(endswith(lut[i].name, name)) return i;
   }
-  for( int i = 0; lut[i].name; ++i )
-  {
-    if( strstr(lut[i].name, name) ) return i;
+  for(int i = 0; lut[i].name; ++i) {
+    if(strstr(lut[i].name, name)) return i;
   }
   return -1;
 }
 
 int main(int ac, char **av)
 {
-  if( !getenv("DISPLAY") )
-  {
+  if(!getenv("DISPLAY")) {
     qDebug() << "$DISPLAY not set, assuming :0";
     setenv("DISPLAY", ":0", 1);
   }
-  if( !getenv("DBUS_SESSION_BUS_ADDRESS") )
-  {
+  if(!getenv("DBUS_SESSION_BUS_ADDRESS")) {
     qDebug() << "session bus not configured";
   }
 
   QApplication app(ac, av, true);
 
-  if( ac < 2 )
-  {
+  if(ac < 2) {
     qDebug() << "available tests:";
-    for( int k = 0; lut[k].name; ++k )
-    {
+    for(int k = 0; lut[k].name; ++k) {
       qDebug() << *av << lut[k].name;
     }
     exit(0);
   }
 
-  for( int i = 1; i < ac; ++i )
-  {
+  for(int i = 1; i < ac; ++i) {
     const char *name = av[i];
 
     int k = lookup_test(name);
 
-    if( k != -1 )
-    {
+    if(k != -1) {
       qDebug() << "";
       qDebug() << "----(" << lut[k].name << ")----";
       qDebug() << "";
       lut[k].func();
-    }
-    else if( !strcmp(name, "all") )
-    {
-      for( int k = 0; lut[k].name; ++k )
-      {
+    } else if( !strcmp(name, "all")) {
+      for(int k = 0; lut[k].name; ++k) {
         qDebug() << "";
         qDebug() << "----(" << lut[k].name << ")----";
         qDebug() << "";
         lut[k].func();
       }
-    }
-    else
-    {
+    } else {
       break;
     }
   }
