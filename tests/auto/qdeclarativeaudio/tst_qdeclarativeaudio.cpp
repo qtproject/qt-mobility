@@ -162,7 +162,12 @@ public:
         emit mediaStatusChanged(m_mediaStatus);
     }
 
-    void play() { emit stateChanged(m_state = QMediaPlayer::PlayingState); }
+    void play()
+    {
+        if (m_mediaStatus == QMediaPlayer::EndOfMedia)
+            updateMediaStatus(QMediaPlayer::LoadedMedia);
+        emit stateChanged(m_state = QMediaPlayer::PlayingState);
+    }
     void pause() { emit stateChanged(m_state = QMediaPlayer::PausedState); }
     void stop() { emit stateChanged(m_state = QMediaPlayer::StoppedState); }
 
@@ -284,7 +289,6 @@ public:
     QtTestMediaService *service;
     QByteArray requestedService;
 };
-
 
 void tst_QDeclarativeAudio::initTestCase()
 {
@@ -1259,17 +1263,16 @@ void tst_QDeclarativeAudio::loops()
 
     QCOMPARE(audio.isPlaying(), false);
 
-    //setLoops(3) when stopped.
+    //setLoopCount(3) when stopped.
     audio.setLoopCount(3);
     QCOMPARE(audio.loopCount(), 3);
     QCOMPARE(loopsChangedSpy.count(), ++loopsChanged);
 
     //play till end
     audio.play();
+    QCOMPARE(audio.isPlaying(), true);
     QCOMPARE(provider.playerControl()->state(), QMediaPlayer::PlayingState);
     QCOMPARE(playingChangedSpy.count(), ++playingChanged);
-    QCOMPARE(provider.playerControl()->state(), QMediaPlayer::PlayingState);
-    QCOMPARE(audio.isPlaying(), true);
 
     // setPlaying(true) when playing.
     audio.setPlaying(true);
@@ -1283,9 +1286,10 @@ void tst_QDeclarativeAudio::loops()
     QCOMPARE(provider.playerControl()->state(), QMediaPlayer::PlayingState);
     QCOMPARE(playingChangedSpy.count(),   playingChanged);
 
+    //play to end
     provider.playerControl()->updateMediaStatus(QMediaPlayer::EndOfMedia, QMediaPlayer::StoppedState);
+    //play to end
     provider.playerControl()->updateMediaStatus(QMediaPlayer::EndOfMedia, QMediaPlayer::StoppedState);
-
     QCOMPARE(audio.isPlaying(), false);
     QCOMPARE(provider.playerControl()->state(), QMediaPlayer::StoppedState);
     QCOMPARE(playingChangedSpy.count(), ++playingChanged);
