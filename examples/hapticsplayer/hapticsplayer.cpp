@@ -291,7 +291,8 @@ void HapticsPlayer::browseClicked()
     QString filename = QFileDialog::getOpenFileName(this, tr("Feedback file"));
     if (!filename.isEmpty()) {
         ui.filename->setText(QDir::toNativeSeparators(filename));
-        fileEffect.setFileName(filename);
+        fileEffect.setSource(QUrl::fromLocalFile(filename));
+        fileEffect.load();
     }
 }
 
