@@ -193,7 +193,7 @@ QString QOrganizerItemManagerEngine::managerUri() const
 
 /*!
   Return the list of a maximum of \a maxCount organizer item instances which are occurrences of the
-  given \a generator recurring item, which occur between the given \a periodStart date and the given
+  given \a parentItem recurring item, which occur between the given \a periodStart date and the given
   \a periodEnd date.
 
   If \a periodStart is after \a periodEnd, the operation will fail, and \a error will be set to \c
@@ -201,22 +201,22 @@ QString QOrganizerItemManagerEngine::managerUri() const
   If \a maxCount is negative, it is backend specific as to how many occurrences will be returned.
   Some backends may return no instances, others may return some limited number of occurrences.
 
-  If the \a generator is an item of type QOrganizerItemType::TypeEvent, a list of items of type
+  If the \a parentItem is an item of type QOrganizerItemType::TypeEvent, a list of items of type
   QOrganizerItemType::TypeEventOccurrence will be returned, representing the expansion of the
-  generator according to its QOrganizerItemRecurrence detail.  Similarly, a \a generator of type
+  parent item according to its QOrganizerItemRecurrence detail.  Similarly, a \a parentItem of type
   QOrganizerItemType::TypeTodo will result in a list of QOrganizerItemType::TypeTodoOccurrence
-  items.  If the \a generator is of any other type, it is returned by itself from the backend.
+  items.  If the \a parentItem is of any other type, it is returned by itself from the backend.
 
   The occurrence-typed items returned should have a QOrganizerItemParent detail that refers
-  to the generator and the original instance that the event would have occurred on (if it is an
+  to the parent item and the original instance that the event would have occurred on (if it is an
   exception).  No returned item should contain a QOrganizerItemRecurrence detail.
 
-  If the \a generator does not exist in the backend, or if there are no instances matching the
+  If the \a parentItem does not exist in the backend, or if there are no instances matching the
   criteria, an empty list should be returned.
   */
-QList<QOrganizerItem> QOrganizerItemManagerEngine::itemOccurrences(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemManagerEngine::itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
-    Q_UNUSED(generator);
+    Q_UNUSED(parentItem);
     Q_UNUSED(periodStart);
     Q_UNUSED(periodEnd);
     Q_UNUSED(maxCount);

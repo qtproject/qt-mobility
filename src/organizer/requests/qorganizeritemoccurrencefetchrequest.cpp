@@ -63,8 +63,8 @@ QOrganizerItemOccurrenceFetchRequest::QOrganizerItemOccurrenceFetchRequest(QObje
 {
 }
 
-/*! Sets the generator item, whose occurrences are to be fetched. */
-void QOrganizerItemOccurrenceFetchRequest::setGenerator(const QOrganizerItem &item)
+/*! Sets the parent item, whose occurrences are to be fetched to \a item. */
+void QOrganizerItemOccurrenceFetchRequest::setParentItem(const QOrganizerItem &item)
 {
     Q_D(QOrganizerItemOccurrenceFetchRequest);
     d->m_generator = item;
@@ -99,8 +99,8 @@ void QOrganizerItemOccurrenceFetchRequest::setFetchHint(const QOrganizerItemFetc
     d->m_fetchHint = hint;
 }
 
-/*! Returns the generator item, whose occurrences are to be fetched. */
-QOrganizerItem QOrganizerItemOccurrenceFetchRequest::generator() const
+/*! Returns the parent item, whose occurrences are to be fetched. */
+QOrganizerItem QOrganizerItemOccurrenceFetchRequest::parentItem() const
 {
     Q_D(const QOrganizerItemOccurrenceFetchRequest);
     return d->m_generator;

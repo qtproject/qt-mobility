@@ -63,6 +63,6 @@ void OrganizerItemParentTransform::transformToDetailL(const CCalInstance& instan
 QString OrganizerItemParentTransform::detailDefinitionName()
 {
     // Note: the conversions are done elsewhere, this class exists only to
-    // indicate that we support instance origin detail
+    // indicate that we support the parent detail
     return QOrganizerItemParent::DefinitionName;
 }

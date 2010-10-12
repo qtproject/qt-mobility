@@ -354,18 +354,18 @@ QMap<int, QOrganizerItemManager::Error> QOrganizerItemManager::errorMap() const
 }
 
 /*!
-  Return the list of a maximum of \a maxCount organizer item instances which are occurrences of the given \a generator recurring item, which
+  Return the list of a maximum of \a maxCount organizer item instances which are occurrences of the given \a parentItem recurring item, which
   occur between the given \a periodStart date and the given \a periodEnd date.
 
   If \a periodStart is after \a periodEnd, the operation will fail.
   If \a maxCount is negative, it is backend specific as to how many occurrences will be returned.
   Some backends may return no instances, others may return some limited number of occurrences.
   */
-QList<QOrganizerItem> QOrganizerItemManager::itemOccurrences(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint) const
+QList<QOrganizerItem> QOrganizerItemManager::itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerItemManager::NoError;
     d->m_errorMap.clear();
-    return d->m_engine->itemOccurrences(generator, periodStart, periodEnd, maxCount, fetchHint, &d->m_error);
+    return d->m_engine->itemOccurrences(parentItem, periodStart, periodEnd, maxCount, fetchHint, &d->m_error);
 }
 
 /*!

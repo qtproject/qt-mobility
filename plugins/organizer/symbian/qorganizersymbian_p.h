@@ -217,7 +217,7 @@ public:
     QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
-    QList<QOrganizerItem> itemOccurrences(const QOrganizerItem& generator,
+    QList<QOrganizerItem> itemOccurrences(const QOrganizerItem& parentItem,
         const QDateTime& periodStart, const QDateTime& periodEnd,
         int maxCount, const QOrganizerItemFetchHint& fetchHint,
         QOrganizerItemManager::Error* error) const;
@@ -319,7 +319,7 @@ public:
         QOrganizerItemManager::Error* qtError);
     void itemOccurrencesL(
         QList<QOrganizerItem> &itemOccurrences,
-        const QOrganizerItem &generator,
+        const QOrganizerItem &parentItem,
         const QDateTime &periodStart,
         const QDateTime &periodEnd,
         int maxCount,
@@ -333,7 +333,7 @@ public:
         const QOrganizerItemFetchHint &fetchHint) const;
     void toItemOccurrencesL(
         const RPointerArray<CCalInstance> &calInstanceList,
-        QOrganizerItem generator,
+        QOrganizerItem parentItem,
         const int maxCount,
         QOrganizerCollectionLocalId collectionLocalId,
         QList<QOrganizerItem> &itemOccurrences) const;

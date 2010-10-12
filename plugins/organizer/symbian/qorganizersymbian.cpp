@@ -349,7 +349,7 @@ int QOrganizerItemSymbianEngine::managerVersion() const
 }
 
 QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemOccurrences(
-    const QOrganizerItem& generator,
+    const QOrganizerItem& parentItem,
     const QDateTime& periodStart,
     const QDateTime& periodEnd,
     int maxCount,
@@ -357,7 +357,7 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemOccurrences(
     QOrganizerItemManager::Error* error) const
 {
     QList<QOrganizerItem> itemOccurrences;
-    TRAPD(err, itemOccurrencesL(itemOccurrences, generator, periodStart, periodEnd, maxCount, fetchHint));
+    TRAPD(err, itemOccurrencesL(itemOccurrences, parentItem, periodStart, periodEnd, maxCount, fetchHint));
     if (err != KErrNone) {
         transformError(err, error);
         return QList<QOrganizerItem>();
@@ -367,7 +367,7 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemOccurrences(
 
 void QOrganizerItemSymbianEngine::itemOccurrencesL(
     QList<QOrganizerItem> &itemOccurrences,
-    const QOrganizerItem &generator,
+    const QOrganizerItem &parentItem,
     const QDateTime &periodStart,
     const QDateTime &periodEnd,
     int maxCount,
@@ -383,10 +383,10 @@ void QOrganizerItemSymbianEngine::itemOccurrencesL(
     // Set cal view filter based on the item type
     CalCommon::TCalViewFilter filter(0);
     QString itemType;
-    if (generator.type() == QOrganizerItemType::TypeEvent) {
+    if (parentItem.type() == QOrganizerItemType::TypeEvent) {
         itemType = QOrganizerItemType::TypeEventOccurrence.latin1();
         filter = CalCommon::EIncludeAppts | CalCommon::EIncludeEvents;
-    } else if (generator.type() == QOrganizerItemType::TypeTodo) {
+    } else if (parentItem.type() == QOrganizerItemType::TypeTodo) {
         itemType = QOrganizerItemType::TypeTodoOccurrence.latin1();
         filter = (CalCommon::EIncludeCompletedTodos | CalCommon::EIncludeIncompletedTodos);
     } else {
@@ -412,7 +412,7 @@ void QOrganizerItemSymbianEngine::itemOccurrencesL(
         instanceViewL(collectionId)->FindInstanceL(instanceList, filter,
             CalCommon::TCalTimeRange(startTime, endTime));
         // Transform CCalInstances to QOrganizerItems
-        toItemOccurrencesL(instanceList, generator, maxCount, collectionId, itemOccurrences);
+        toItemOccurrencesL(instanceList, parentItem, maxCount, collectionId, itemOccurrences);
         CleanupStack::PopAndDestroy(&instanceList);
     }
 }
@@ -468,7 +468,7 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemsL(
 
 void QOrganizerItemSymbianEngine::toItemOccurrencesL(
     const RPointerArray<CCalInstance> &calInstanceList,
-    QOrganizerItem generator,
+    QOrganizerItem parentItem,
     const int maxCount,
     QOrganizerCollectionLocalId collectionLocalId,
     QList<QOrganizerItem> &itemOccurrences) const
@@ -481,8 +481,8 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
         CCalInstance* calInstance = calInstanceList[i];
         m_itemTransform.toItemOccurrenceL(*calInstance, &itemOccurrence);
 
-        // Optimization: if a generator instance is defined, skip the instances that do not match
-        if (!generator.isEmpty() && generator.guid() != itemOccurrence.guid())
+        // Optimization: if a parent item instance is defined, skip the instances that do not match
+        if (!parentItem.isEmpty() && parentItem.guid() != itemOccurrence.guid())
             continue;
 
         // Check if maxCount limit is reached

@@ -235,7 +235,7 @@ class QDeclarativeOrganizerItemParent : public QDeclarativeOrganizerItemDetail
     Q_PROPERTY(QDate originalDate READ originalDate WRITE setOriginalDate NOTIFY valueChanged)
 
 public:
-    Q_DECLARE_LATIN1_CONSTANT(DetailName, "parent");
+    Q_DECLARE_LATIN1_CONSTANT(DetailName, "parentId");
     QDeclarativeOrganizerItemParent(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {

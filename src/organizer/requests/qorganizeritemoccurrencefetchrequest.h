@@ -62,13 +62,13 @@ class Q_ORGANIZER_EXPORT QOrganizerItemOccurrenceFetchRequest : public QOrganize
 public:
     QOrganizerItemOccurrenceFetchRequest(QObject* parent = 0);
 
-    void setGenerator(const QOrganizerItem& item);
+    void setParentItem(const QOrganizerItem& item);
     void setStartDate(const QDateTime& date);
     void setEndDate(const QDateTime& date);
     void setMaxOccurrences(int maxCount);
     void setFetchHint(const QOrganizerItemFetchHint& hint);
 
-    QOrganizerItem generator() const;
+    QOrganizerItem parentItem() const;
     QDateTime startDate() const;
     QDateTime endDate() const;
     int maxOccurrences() const;

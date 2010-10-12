@@ -282,7 +282,7 @@ void OrganizerAsynchProcess::handleItemFetchForExportRequest(QOrganizerItemFetch
 void OrganizerAsynchProcess::handleItemOccurrenceFetchRequest(QOrganizerItemOccurrenceFetchRequest *req)
 {
     QOrganizerItemManager::Error err = QOrganizerItemManager::NoError;
-    QList<QOrganizerItem> items = m_engine->itemOccurrences(req->generator(), req->startDate(), req->endDate(), req->maxOccurrences(), req->fetchHint(), &err);
+    QList<QOrganizerItem> items = m_engine->itemOccurrences(req->parentItem(), req->startDate(), req->endDate(), req->maxOccurrences(), req->fetchHint(), &err);
     QOrganizerItemManagerEngine::updateItemOccurrenceFetchRequest(req, items, err, QOrganizerItemAbstractRequest::FinishedState);
 }
 
