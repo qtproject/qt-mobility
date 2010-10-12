@@ -117,6 +117,8 @@ public:
     Q_INVOKABLE QVariant value(const QString& key) const;
     Q_INVOKABLE bool setValue(const QString& key, const QVariant& value);
 
+    static QString definitionName(ContactDetailType type) ;
+    static ContactDetailType detailType(const QString& definitionName) ;
 signals:
     void fieldsChanged();
 

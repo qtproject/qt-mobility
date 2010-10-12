@@ -73,15 +73,13 @@ Rectangle {
                 emailAddress:"charles.yin@nokia.com"
             }
 
-            ContactAddress {
-                street:"53 Brandl St"
-                locality: "Eight Mile Plains"
-                region: "QLD"
-                postcode:"4111"
-                country:"Australia"
-                subTypes:["Office"]
-                postOfficeBox:"1111"
-            }
+                address.street:"53 Brandl St"
+                address.locality: "Eight Mile Plains"
+                address.region: "QLD"
+                address.postcode:"4111"
+                address.country:"Australia"
+                address.subTypes:["Office"]
+                address.postOfficeBox:"1111"
 
             ContactNickname {
                 nickname:"Charles"

@@ -105,6 +105,7 @@ public:
 signals:
     void fieldsChanged();
 };
+QML_DECLARE_TYPE(QDeclarativeContactGeoLocation)
 
 #endif
 
