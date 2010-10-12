@@ -139,6 +139,43 @@ void tst_QNdefMessage::tst_parse_data()
         QTest::newRow("unknown") << data << QNdefMessage(recordList) << QVariantList();
     }
 
+    // chunked message
+    {
+        QByteArray type("type");
+        QByteArray id("id");
+        QByteArray payload("payload");
+
+        QByteArray data;
+        data.append(char(0xbd));            // MB=1, CF=1, SR=1, IL=1, TNF=5
+        data.append(char(type.length()));   // TYPE LENGTH
+        data.append(char(1));               // PAYLOAD LENGTH
+        data.append(char(id.length()));     // ID LENGTH
+        data.append(type);                  // TYPE
+        data.append(id);                    // ID
+        data.append(payload.at(0));         // PAYLOAD[0]
+
+        for (int i = 1; i < payload.length() - 1; ++i) {
+            data.append(char(0x36));            // CF=1, SR=1, TNF=6
+            data.append(char(0));               // TYPE LENGTH
+            data.append(char(1));               // PAYLOAD LENGTH
+            data.append(payload.at(i));         // PAYLOAD[i]
+        }
+
+        data.append(char(0x56));                        // ME=1, SR=1, TNF=6
+        data.append(char(0));                           // TYPE LENGTH
+        data.append(char(1));                           // PAYLOAD LENGTH
+        data.append(payload.at(payload.length() - 1));  // PAYLOAD[length - 1]
+
+        QNdefRecord record;
+        record.setTypeNameFormat(QNdefRecord::Unknown);
+        record.setType(type);
+        record.setId(id);
+        record.setPayload(payload);
+        QList<QNdefRecord> recordList;
+        recordList.append(record);
+        QTest::newRow("chunked") << data << QNdefMessage(recordList) << QVariantList();
+    }
+
     // NFC-RTD Text
     {
         QByteArray type("T");

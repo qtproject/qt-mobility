@@ -42,8 +42,6 @@
 #include "qndefmessage.h"
 #include "qndefrecord_p.h"
 
-#include <QtCore/QDebug>
-
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -85,6 +83,8 @@ QTM_BEGIN_NAMESPACE
 
     The \a message paramater is interpreted as the raw message format defined in the NFC
     Specifications.
+
+    If a parse error occurs an empty NDEF message is returned.
 */
 QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
 {
@@ -93,13 +93,12 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
     bool seenMessageBegin = false;
     bool seenMessageEnd = false;
 
+    QByteArray partialChunk;
+    QNdefRecord record;
+
     QByteArray::const_iterator i = message.begin();
     while (i != message.end()) {
         quint8 flags = *i;
-
-        QNdefRecord record;
-
-        record.setUserTypeNameFormat(flags & 0x07);
 
         bool messageBegin = flags & 0x80;
         bool messageEnd = flags & 0x40;
@@ -107,15 +106,27 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
         bool cf = flags & 0x20;
         bool sr = flags & 0x10;
         bool il = flags & 0x08;
+        quint8 typeNameFormat = flags & 0x07;
 
-        if (messageBegin && seenMessageBegin)
-            qDebug() << "Got message begin but already parsed some records";
-        if (messageEnd && seenMessageEnd)
-            qDebug() << "Got message end but already parsed final record";
-        if (cf)
-            qDebug() << "Chunked records not supported, yet";
+        if (messageBegin && seenMessageBegin) {
+            qWarning("Got message begin but already parsed some records");
+            return QNdefMessage();
+        }
+        if (messageEnd && seenMessageEnd) {
+            qWarning("Got message end but already parsed final record");
+            return QNdefMessage();
+        }
+        if (cf && (typeNameFormat != 0x06) && !partialChunk.isEmpty()) {
+            qWarning("partial chunk not empty or typeNameFormat not 0x06 as expected");
+            return QNdefMessage();
+        }
 
         quint8 typeLength = *(++i);
+
+        if ((typeNameFormat == 0x06) && (typeLength != 0)) {
+            qWarning("Invalid chunked data, TYPE_LENGTH != 0");
+            return QNdefMessage();
+        }
 
         quint32 payloadLength;
         if (sr)
@@ -133,6 +144,13 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
         else
             idLength = 0;
 
+        if ((typeNameFormat == 0x06) && (idLength != 0)) {
+            qWarning("Invalid chunked data, IL != 0");
+            return QNdefMessage();
+        }
+
+        record.setUserTypeNameFormat(typeNameFormat);
+
         if (typeLength > 0) {
             QByteArray type(++i, typeLength);
             record.setType(type);
@@ -147,11 +165,25 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
 
         if (payloadLength > 0) {
             QByteArray payload(++i, payloadLength);
-            record.setPayload(payload);
+
+
+            if (cf) {
+                // chunked payload, except last
+                partialChunk.append(payload);
+            } else if (typeNameFormat == 0x06) {
+                // last chunk of chunked payload
+                record.setPayload(partialChunk + payload);
+                partialChunk.clear();
+            } else {
+                // non-chunked payload
+                record.setPayload(payload);
+            }
+
             i += payloadLength - 1;
         }
 
-        result.append(record);
+        if (!cf)
+            result.append(record);
 
         // move to start of next record
         ++i;
