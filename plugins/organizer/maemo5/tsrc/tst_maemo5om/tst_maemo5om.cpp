@@ -948,7 +948,7 @@ void tst_Maemo5Om::removeCollection()
 
     QVERIFY(m_om->collections().contains(newCollection));
 
-    QVERIFY(m_om->removeCollection(newCollection)); // can pass the collection, rather than its id.
+    QVERIFY(m_om->removeCollection(newCollection.localId()));
     QVERIFY(!m_om->collections().contains(newCollection));
 
     // Not possible to remove again
