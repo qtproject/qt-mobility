@@ -17,7 +17,10 @@
 
 #ifndef KOREANINPUT_H
 #define KOREANINPUT_H
-#include <QStringList>
+
+class QStringList;
+class QString;
+class QChar;
 
 class KoreanInput
 {
@@ -25,12 +28,10 @@ public:
     KoreanInput();
     ~KoreanInput();
     QStringList Tokenize(QString sourcestring);
+    
+private:
     int countConsecutive( QString stringToCount, QChar keychar, int currentpos );
     int findEndchar( QString sourcestring, QChar startchar, int startpoint );
-
-private:
-
-
 };
 
 #endif // KOREANINPUT_H
