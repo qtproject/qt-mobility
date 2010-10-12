@@ -128,6 +128,13 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
+ * \enum LimitType
+ * \value NoLimit The recurrence rule has no limit specified
+ * \value CountLimit The recurrence rule specifies a certain count of repetitions in the series
+ * \value DateLimit The recurrence rule specifies that the series ends at a particular date
+ */
+
+/*!
  * Constructs a QOrganizerItemRecurrenceRule object describing a weekly recurrence.
  */
 QOrganizerItemRecurrenceRule::QOrganizerItemRecurrenceRule()

@@ -70,21 +70,17 @@ public:
     QSet<QDate> recurrenceDates() const;
 
     void setRecurrenceRule(const QOrganizerItemRecurrenceRule& rrule);
-    QOrganizerItemRecurrenceRule recurrenceRule() const;
-
     void setRecurrenceRules(const QSet<QOrganizerItemRecurrenceRule>& rrules);
+    QOrganizerItemRecurrenceRule recurrenceRule() const;
     QSet<QOrganizerItemRecurrenceRule> recurrenceRules() const;
 
     void setExceptionDate(const QDate& exdate);
-    QDate exceptionDate() const;
-
     void setExceptionDates(const QSet<QDate>& exdates);
     QSet<QDate> exceptionDates() const;
 
     void setExceptionRule(const QOrganizerItemRecurrenceRule& xrule);
-    QOrganizerItemRecurrenceRule exceptionRule() const;
-
     void setExceptionRules(const QSet<QOrganizerItemRecurrenceRule>& exrules);
+    QOrganizerItemRecurrenceRule exceptionRule() const;
     QSet<QOrganizerItemRecurrenceRule> exceptionRules() const;
 
     void setPriority(QOrganizerItemPriority::Priority);

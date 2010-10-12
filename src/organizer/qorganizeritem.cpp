@@ -670,10 +670,11 @@ bool QOrganizerItem::removeDetail(QOrganizerItemDetail* detail)
     return true;
 }
 
-/*! Returns true if this organizer item is equal to the \a other organizer item, false if either the id or stored details are not the same */
+/*! Returns true if this organizer item is equal to the \a other organizer item, false if either the id, collection id or stored details are not the same */
 bool QOrganizerItem::operator==(const QOrganizerItem& other) const
 {
     return other.d->m_id == d->m_id &&
+        other.d->m_collectionId == d->m_collectionId &&
         other.d->m_details == d->m_details;
 }
 
@@ -684,6 +685,7 @@ bool QOrganizerItem::operator==(const QOrganizerItem& other) const
 uint qHash(const QOrganizerItem &key)
 {
     uint hash = qHash(key.id());
+    hash += qHash(key.collectionId());
     foreach (const QOrganizerItemDetail& detail, key.details()) {
         hash += qHash(detail);
     }
@@ -696,7 +698,7 @@ uint qHash(const QOrganizerItem &key)
  */
 QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem)
 {
-    dbg.nospace() << "QOrganizerItem(" << organizeritem.id() << ")";
+    dbg.nospace() << "QOrganizerItem(" << organizeritem.id() << ") in collection(" << organizeritem.collectionId() << ")";
     foreach (const QOrganizerItemDetail& detail, organizeritem.details()) {
         dbg.space() << '\n' << detail;
     }
@@ -713,6 +715,7 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item)
     quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItem
     out << formatVersion
         << item.id()
+        << item.collectionId()
         << item.details();
     return out;
 }
@@ -727,9 +730,11 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItem& item)
     if (formatVersion == 1) {
         item = QOrganizerItem();
         QOrganizerItemId id;
+        QOrganizerCollectionId collectionId;
         QList<QOrganizerItemDetail> details;
-        in >> id >> details;
+        in >> id >> collectionId >> details;
         item.setId(id);
+        item.setCollectionId(collectionId);
         item.d->m_details = details;
     } else {
         in.setStatus(QDataStream::ReadCorruptData);

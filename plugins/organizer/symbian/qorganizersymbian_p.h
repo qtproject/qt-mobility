@@ -217,7 +217,7 @@ public:
     QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
-    QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator,
+    QList<QOrganizerItem> itemOccurrences(const QOrganizerItem& parentItem,
         const QDateTime& periodStart, const QDateTime& periodEnd,
         int maxCount, const QOrganizerItemFetchHint& fetchHint,
         QOrganizerItemManager::Error* error) const;
@@ -317,26 +317,26 @@ public:
     /* Util functions */
     static bool transformError(TInt symbianError, 
         QOrganizerItemManager::Error* qtError);
-    void itemInstancesL(
-        QList<QOrganizerItem> &itemInstances,
-        const QOrganizerItem &generator,
+    void itemOccurrencesL(
+        QList<QOrganizerItem> &itemOccurrences,
+        const QOrganizerItem &parentItem,
         const QDateTime &periodStart,
         const QDateTime &periodEnd,
         int maxCount,
         const QOrganizerItemFetchHint &fetchHint) const;
     QList<QOrganizerItem> itemsL(
-        QList<QOrganizerItem> &itemInstances,
+        QList<QOrganizerItem> &itemOccurrences,
         const QDateTime& periodStart,
         const QDateTime& periodEnd,
         const QOrganizerItemFilter &filter,
         const QList<QOrganizerItemSortOrder> &sortOrders,
         const QOrganizerItemFetchHint &fetchHint) const;
-    void toItemInstancesL(
+    void toItemOccurrencesL(
         const RPointerArray<CCalInstance> &calInstanceList,
-        QOrganizerItem generator,
+        QOrganizerItem parentItem,
         const int maxCount,
         QOrganizerCollectionLocalId collectionLocalId,
-        QList<QOrganizerItem> &itemInstances) const;
+        QList<QOrganizerItem> &itemOccurrences) const;
     QOrganizerItem itemL(const QOrganizerItemLocalId& itemId,
             const QOrganizerItemFetchHint& fetchHint) const;
     void saveItemL(QOrganizerItem *item,

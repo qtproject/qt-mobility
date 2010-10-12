@@ -193,7 +193,7 @@ QString QOrganizerItemManagerEngine::managerUri() const
 
 /*!
   Return the list of a maximum of \a maxCount organizer item instances which are occurrences of the
-  given \a generator recurring item, which occur between the given \a periodStart date and the given
+  given \a parentItem recurring item, which occur between the given \a periodStart date and the given
   \a periodEnd date.
 
   If \a periodStart is after \a periodEnd, the operation will fail, and \a error will be set to \c
@@ -201,22 +201,22 @@ QString QOrganizerItemManagerEngine::managerUri() const
   If \a maxCount is negative, it is backend specific as to how many occurrences will be returned.
   Some backends may return no instances, others may return some limited number of occurrences.
 
-  If the \a generator is an item of type QOrganizerItemType::TypeEvent, a list of items of type
+  If the \a parentItem is an item of type QOrganizerItemType::TypeEvent, a list of items of type
   QOrganizerItemType::TypeEventOccurrence will be returned, representing the expansion of the
-  generator according to its QOrganizerItemRecurrence detail.  Similarly, a \a generator of type
+  parent item according to its QOrganizerItemRecurrence detail.  Similarly, a \a parentItem of type
   QOrganizerItemType::TypeTodo will result in a list of QOrganizerItemType::TypeTodoOccurrence
-  items.  If the \a generator is of any other type, it is returned by itself from the backend.
+  items.  If the \a parentItem is of any other type, it is returned by itself from the backend.
 
-  The occurrence-typed items returned should have a QOrganizerItemInstanceOrigin detail that refers
-  to the generator and the original instance that the event would have occurred on (if it is an
+  The occurrence-typed items returned should have a QOrganizerItemParent detail that refers
+  to the parent item and the original instance that the event would have occurred on (if it is an
   exception).  No returned item should contain a QOrganizerItemRecurrence detail.
 
-  If the \a generator does not exist in the backend, or if there are no instances matching the
+  If the \a parentItem does not exist in the backend, or if there are no instances matching the
   criteria, an empty list should be returned.
   */
-QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemManagerEngine::itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
-    Q_UNUSED(generator);
+    Q_UNUSED(parentItem);
     Q_UNUSED(periodStart);
     Q_UNUSED(periodEnd);
     Q_UNUSED(maxCount);
@@ -228,7 +228,14 @@ QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganize
 
 /*!
   Returns a list of organizer item ids that match the given \a filter, sorted according to the given
-  list of \a sortOrders.  Depending on the backend, this filtering operation may involve retrieving
+  list of \a sortOrders, for any item which occurs (or has an occurrence which occurs) in the range
+  specified by the given \a startDate and \a endDate.  A default-constructed (invalid) \a startDate
+  specifies an open start date (matches anything which occurs up until the \a endDate), and a
+  default-constructed (invalid) \a endDate specifies an open end date (matches anything which occurs
+  after the \a startDate).  If both the \a startDate and \a endDate are invalid, this function will
+  return the ids of all items which match the \a filter criteria.
+
+  Depending on the backend, this filtering operation may involve retrieving
   all the organizer items.  Any error which occurs will be saved in \a error.
  */
 QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
@@ -243,7 +250,11 @@ QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QDateTim
 }
 
 /*!
-  Returns the list of organizer items which match the given \a filter stored in the manager sorted according to the given list of \a sortOrders.
+  Returns the list of organizer items which match the given \a filter stored in the manager sorted according to the given list of \a sortOrders,
+  for any item or item occurrence which occurs in the range specified by the given \a startDate and \a endDate.
+  A default-constructed (invalid) \a startDate specifies an open start date (matches anything which occurs up until the \a endDate),
+  and a default-constructed (invalid) \a endDate specifies an open end date (matches anything which occurs after the \a startDate).
+  If both the \a startDate and \a endDate are invalid, this function will return all items which match the \a filter criteria.
 
   Any operation error which occurs will be saved in \a error.
 
@@ -253,11 +264,6 @@ QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QDateTim
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the item back to the manager (as the "new" restricted item will
   replace the previously saved item in the backend).
-
-  Items of type EventOccurrence and TodoOccurrence should only be returned when they represent an
-  exceptional occurrence; ie. if the client has specifically saved the item occurrence in the
-  manager.  Occurrence-typed items that are generated purely from a recurrence specification of
-  another detail should not be returned in this list.
 
   All items returned should have a non-zero local ID.
 
@@ -275,7 +281,11 @@ QList<QOrganizerItem> QOrganizerItemManagerEngine::items(const QDateTime& startD
 }
 
 /*!
-  Returns the list of organizer items which match the given \a filter stored in the manager sorted according to the given list of \a sortOrders.
+  Returns the list of organizer items which match the given \a filter stored in the manager sorted according to the given list of \a sortOrders,
+  for any persisted item which occurs (or has an occurrence which occurs) in the range specified by the given \a startDate and \a endDate.
+  A default-constructed (invalid) \a startDate specifies an open start date (matches anything which occurs up until the \a endDate),
+  and a default-constructed (invalid) \a endDate specifies an open end date (matches anything which occurs after the \a startDate).
+  If both the \a startDate and \a endDate are invalid, this function will return all items which match the \a filter criteria.
 
   Any operation error which occurs will be saved in \a error.
 
@@ -849,13 +859,13 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     retn.insert(d.name(), d);
 
     // instance origin
-    d.setName(QOrganizerItemInstanceOrigin::DefinitionName);
+    d.setName(QOrganizerItemParent::DefinitionName);
     fields.clear();
     f.setDataType(qMetaTypeId<QOrganizerItemLocalId>());
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
+    fields.insert(QOrganizerItemParent::FieldParentLocalId, f);
     f.setDataType(QVariant::Date);
-    fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalDate, f);
+    fields.insert(QOrganizerItemParent::FieldOriginalDate, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -1242,13 +1252,13 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     retn.insert(d.name(), d);
 
     // instance origin
-    d.setName(QOrganizerItemInstanceOrigin::DefinitionName);
+    d.setName(QOrganizerItemParent::DefinitionName);
     fields.clear();
     f.setDataType(qMetaTypeId<QOrganizerItemLocalId>());
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
+    fields.insert(QOrganizerItemParent::FieldParentLocalId, f);
     f.setDataType(QVariant::Date);
-    fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalDate, f);
+    fields.insert(QOrganizerItemParent::FieldOriginalDate, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -1706,15 +1716,16 @@ void QOrganizerItemManagerEngine::setDetailAccessConstraints(QOrganizerItemDetai
   manager, the function will return false and \a error will be set to
   \c QOrganizerItemManager::DoesNotExistError.
 
-  The \a organizeritem will be added to the collection identified by the given
-  \a collectionId if it exists, and the item conforms to the schema supported
+  The \a organizeritem will be added to the collection identified by the
+  collectionId specified in the item (accessible via item->organizerId())
+  if it exists, and the item conforms to the schema supported
   for that collection.  If the collection exists but the item does not conform
   to the schema supported for that collection, the function will return false,
   and the \a error will be set to QOrganizerItemManager::InvalidDetailError.
 
-  If the given \a collectionId is not the default (zero) id, but does not identify
+  If the collectionId is not the default (zero) id, but does not identify
   a valid collection, the function will return false, and \a error will be set
-  to QOrganizerItemManager::InvalidCollectionError.  If the given \a collectionId
+  to QOrganizerItemManager::InvalidCollectionError.  If the collectionId
   is the default (zero) id, the item should be saved in the collection in which
   it is already saved (if it is already saved in this manager), or in the default
   collection (if it is a new item in this manager).
@@ -1786,18 +1797,18 @@ bool QOrganizerItemManagerEngine::removeItem(const QOrganizerItemLocalId& organi
   in the \a organizeritems list will be updated with the new value.  If a failure occurs
   when saving a new item, the id will be cleared.
 
-  The \a organizeritems will be added to the collection identified by the given
-  \a collectionId if it exists, and the items conform to the schema supported
-  for that collection.  If the collection exists but an item does not conform
-  to the schema supported for that collection, the function will return false,
-  and the error in the \a errorMap for the item at that index will be set to
-  QOrganizerItemManager::InvalidDetailError.
+  Each item in the given list \a organizeritems will be added to the collection
+  identified in the item (accessible via item->collectionId()) if it exists, and if
+  the item conform to the schema supported for that collection.  If the collection
+  exists but the item does not conform to the schema supported for that collection,
+  the function will return false, and the error in the \a errorMap for the item at
+  that index will be set to QOrganizerItemManager::InvalidDetailError.
 
-  If the given \a collectionId is not the default (zero) id, but does not identify
+  If the collectionId is not the default (zero) id, but does not identify
   a valid collection, the function will return false, and \a error will be set
-  to QOrganizerItemManager::InvalidCollectionError.  If the given \a collectionId
-  is the default (zero) id, the items should be saved in the collection in which
-  they is already saved (if they are already saved in this manager), or in the default
+  to QOrganizerItemManager::InvalidCollectionError.  If the collectionId
+  is the default (zero) id, the item should be saved in the collection in which
+  it is already saved (if they are already saved in this manager), or in the default
   collection (if they are new items in this manager).
 
   Any errors encountered during this operation should be stored to
@@ -2320,6 +2331,14 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
     return false;
 }
 
+/*!
+  Returns true if the given item (or an occurrence of the item) occurs within the range
+  specified by the \a startPeriod and the \a endPeriod.
+  A default-constructed \a startPeriod signifies that the lower bound of the range is
+  infinitely small (i.e., will match anything up to the \a endPeriod) and a default-constructed
+  \a endPeriod signifies that the upper bound of the range is infinitely large
+  (i.e., will match anything which occurs after the \a startPeriod).
+ */
 bool QOrganizerItemManagerEngine::isItemBetweenDates(const QOrganizerItem& item, const QDateTime& startPeriod, const QDateTime& endPeriod)
 {
     if (startPeriod.isNull() && endPeriod.isNull())
@@ -2580,18 +2599,18 @@ void QOrganizerItemManagerEngine::updateRequestState(QOrganizerItemAbstractReque
 }
 
 /*!
-  Updates the given QOrganizerItemInstanceFetchRequest \a req with the latest results \a result, and operation error \a error.
+  Updates the given QOrganizerItemOccurrenceFetchRequest \a req with the latest results \a result, and operation error \a error.
   In addition, the state of the request will be changed to \a newState.
 
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
  */
-void QOrganizerItemManagerEngine::updateItemInstanceFetchRequest(QOrganizerItemInstanceFetchRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
+void QOrganizerItemManagerEngine::updateItemOccurrenceFetchRequest(QOrganizerItemOccurrenceFetchRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
 {
     if (req) {
-        QWeakPointer<QOrganizerItemInstanceFetchRequest> ireq(req); // Take this in case the first emit deletes us
-        QOrganizerItemInstanceFetchRequestPrivate* rd = static_cast<QOrganizerItemInstanceFetchRequestPrivate*>(req->d_ptr);
+        QWeakPointer<QOrganizerItemOccurrenceFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerItemOccurrenceFetchRequestPrivate* rd = static_cast<QOrganizerItemOccurrenceFetchRequestPrivate*>(req->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
         rd->m_organizeritems = result;

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,18 +38,51 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef ORGANIZERITEMINSTANCEORIGINTRANSFORM_H_
-#define ORGANIZERITEMINSTANCEORIGINTRANSFORM_H_
 
-#include "organizeritemdetailtransform.h"
+#ifndef QORGANIZERITEMOCCURRENCEFETCHREQUEST_H
+#define QORGANIZERITEMOCCURRENCEFETCHREQUEST_H
 
-class OrganizerItemInstanceOriginTransform : public OrganizerItemDetailTransform
+#include "qtorganizerglobal.h"
+#include "qorganizeritemabstractrequest.h"
+#include "qorganizeritemsortorder.h"
+#include "qorganizeritemfilter.h"
+#include "qorganizeritem.h"
+#include "qorganizeritemfetchhint.h"
+
+#include <QList>
+#include <QStringList>
+
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemOccurrenceFetchRequestPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerItemOccurrenceFetchRequest : public QOrganizerItemAbstractRequest
 {
+    Q_OBJECT
+
 public:
-    void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
-    void transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance);
-    void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
-    QString detailDefinitionName();
+    QOrganizerItemOccurrenceFetchRequest(QObject* parent = 0);
+
+    void setParentItem(const QOrganizerItem& item);
+    void setStartDate(const QDateTime& date);
+    void setEndDate(const QDateTime& date);
+    void setMaxOccurrences(int maxCount);
+    void setFetchHint(const QOrganizerItemFetchHint& hint);
+
+    QOrganizerItem parentItem() const;
+    QDateTime startDate() const;
+    QDateTime endDate() const;
+    int maxOccurrences() const;
+    QOrganizerItemFetchHint fetchHint() const;
+
+    /* Results */
+    QList<QOrganizerItem> itemOccurrences() const;
+
+private:
+    Q_DISABLE_COPY(QOrganizerItemOccurrenceFetchRequest)
+    friend class QOrganizerItemManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemOccurrenceFetchRequest)
 };
 
-#endif // ORGANIZERITEMINSTANCEORIGINTRANSFORM_H_
+QTM_END_NAMESPACE
+
+#endif

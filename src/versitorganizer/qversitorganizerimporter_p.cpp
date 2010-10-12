@@ -273,7 +273,7 @@ bool QVersitOrganizerImporterPrivate::createRecurrenceId(
     QDate date = parseDate(property.value());
     if (!date.isValid())
         return false;
-    QOrganizerItemInstanceOrigin origin(item->detail<QOrganizerItemInstanceOrigin>());
+    QOrganizerItemParent origin(item->detail<QOrganizerItemParent>());
     origin.setOriginalDate(date);
     updatedDetails->append(origin);
     item->setType(QOrganizerItemType::TypeEventOccurrence);

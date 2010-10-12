@@ -127,11 +127,11 @@ private slots:  // Test cases
     void removeItems_data(){ addManagers(); };
     void removeItems();
 
-    void fetchItemInstance_data(){ addManagers(); };
-    void fetchItemInstance();
+    void fetchItemOccurrence_data(){ addManagers(); };
+    void fetchItemOccurrence();
 
-    void modifyItemInstance_data(){ addManagers(); };
-    void modifyItemInstance();
+    void modifyItemOccurrence_data(){ addManagers(); };
+    void modifyItemOccurrence();
 
     void itemsInDeletedCollection_data(){ addManagers(); };
     void itemsInDeletedCollection();
@@ -165,7 +165,7 @@ void tst_symbianomcollections::init()
     // Remove all collections (except the default)
     foreach (const QOrganizerCollection& coll, m_om->collections()) {
         if (coll != m_om->defaultCollection())
-            m_om->removeCollection(coll);
+            m_om->removeCollection(coll.localId());
     }
 }
 
@@ -175,7 +175,7 @@ void tst_symbianomcollections::cleanup()
     // Remove all collections (except the default)
     foreach (const QOrganizerCollection& coll, m_om->collections()) {
         if (coll != m_om->defaultCollection())
-            m_om->removeCollection(coll);
+            m_om->removeCollection(coll.localId());
     }
     delete m_om;
     m_om = 0;
@@ -371,7 +371,7 @@ void tst_symbianomcollections::removeCollection()
     if (!m_customCollectionsSupported) {    
         QWARN("Removing a collection not supported!");
         // Verify it fails with correct error code
-        QVERIFY(!m_om->removeCollection(m_om->defaultCollection()));
+        QVERIFY(!m_om->removeCollection(m_om->defaultCollection().localId()));
         QVERIFY(m_om->error() == QOrganizerItemManager::NotSupportedError);
         return;
     }
@@ -421,14 +421,14 @@ void tst_symbianomcollections::removeCollection()
     QVERIFY(colls.count() >= 2); // default collection + collection saved
     foreach (const QOrganizerCollection& coll, colls) {
         if (coll == m_om->defaultCollection())
-            QVERIFY(!m_om->removeCollection(coll)); // removing default collection not allowed
+            QVERIFY(!m_om->removeCollection(coll.localId())); // removing default collection not allowed
         else
-            QVERIFY(m_om->removeCollection(coll));
+            QVERIFY(m_om->removeCollection(coll.localId()));
     }
     
     // Try removing the same ones again 
     foreach (const QOrganizerCollection& coll, colls) {
-        QVERIFY(!m_om->removeCollection(coll));
+        QVERIFY(!m_om->removeCollection(coll.localId()));
     }
 }
 
@@ -799,7 +799,7 @@ void tst_symbianomcollections::removeItems()
     QCOMPARE(m_om->itemIds().count(), 0);
 }
 
-void tst_symbianomcollections::fetchItemInstance()
+void tst_symbianomcollections::fetchItemOccurrence()
 {
     // Can we test this?
     if (!m_customCollectionsSupported) {
@@ -809,12 +809,12 @@ void tst_symbianomcollections::fetchItemInstance()
     
     // Save a collection
     QOrganizerCollection c;
-    c.setMetaData(QOrganizerCollection::KeyName, "fetchItemInstance");
+    c.setMetaData(QOrganizerCollection::KeyName, "fetchItemOccurrence");
     QVERIFY(m_om->saveCollection(&c));
 
     // Save a weekly recurring item
     QOrganizerItem item = createItem(QOrganizerItemType::TypeEvent,
-                                      QString("fetchiteminstance"),
+                                      QString("fetchitemoccurrence"),
                                       QDateTime::currentDateTime().addMSecs(3600));
     item.setCollectionId(c.id());
     QOrganizerItemRecurrenceRule rrule;
@@ -837,7 +837,7 @@ void tst_symbianomcollections::fetchItemInstance()
     QCOMPARE(m_om->items().at(1).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
 }
 
-void tst_symbianomcollections::modifyItemInstance()
+void tst_symbianomcollections::modifyItemOccurrence()
 {
     // Can we test this?
     if (!m_customCollectionsSupported) {
@@ -847,12 +847,12 @@ void tst_symbianomcollections::modifyItemInstance()
     
     // Save a collection
     QOrganizerCollection c;
-    c.setMetaData(QOrganizerCollection::KeyName, "modifyItemInstance");
+    c.setMetaData(QOrganizerCollection::KeyName, "modifyItemOccurrence");
     QVERIFY(m_om->saveCollection(&c));
 
     // Save a weekly recurring item
     QOrganizerItem item = createItem(QOrganizerItemType::TypeEvent,
-                                      QString("modifyiteminstance"),
+                                      QString("modifyitemoccurrence"),
                                       QDateTime::currentDateTime().addMSecs(3600));
     item.setCollectionId(c.id());
     QOrganizerItemRecurrenceRule rrule;
@@ -868,7 +868,7 @@ void tst_symbianomcollections::modifyItemInstance()
 
     // Modify the second instance
     QOrganizerItem secondInstance = m_om->items().at(1);
-    secondInstance.setDisplayLabel("secondinstance");
+    secondInstance.setDisplayLabel("secondoccurrence");
     QVERIFY(m_om->saveItem(&secondInstance));
 
     // Verify
@@ -879,9 +879,9 @@ void tst_symbianomcollections::modifyItemInstance()
     QVERIFY(m_om->items().at(0).localId().isNull());
     QVERIFY(!m_om->items().at(1).localId().isNull());
     QVERIFY(m_om->items().at(2).localId().isNull());
-    QCOMPARE(m_om->items().at(0).displayLabel(), QString("modifyiteminstance"));
-    QCOMPARE(m_om->items().at(1).displayLabel(), QString("secondinstance"));
-    QCOMPARE(m_om->items().at(2).displayLabel(), QString("modifyiteminstance"));
+    QCOMPARE(m_om->items().at(0).displayLabel(), QString("modifyitemoccurrence"));
+    QCOMPARE(m_om->items().at(1).displayLabel(), QString("secondoccurrence"));
+    QCOMPARE(m_om->items().at(2).displayLabel(), QString("modifyitemoccurrence"));
 }
 
 void tst_symbianomcollections::itemsInDeletedCollection()

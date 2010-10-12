@@ -112,7 +112,7 @@ public:
     QOrganizerItemManager::Error error() const;
     QMap<int, QOrganizerItemManager::Error> errorMap() const;
 
-    QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart = QDateTime(), const QDateTime& periodEnd = QDateTime(), int maxCount = -1, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
+    QList<QOrganizerItem> itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart = QDateTime(), const QDateTime& periodEnd = QDateTime(), int maxCount = -1, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
 
     /* Items - Accessors and Mutators */
     QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;
@@ -132,14 +132,13 @@ public:
     /* Collections - every item belongs to one or more collections */
     QOrganizerCollection defaultCollection() const;
     QOrganizerCollection collection(const QOrganizerCollectionLocalId& collectionId) const;
-    QList<QOrganizerCollection> collections() const; // should this be replaced with collectionIds()?
+    QList<QOrganizerCollection> collections() const;
     bool saveCollection(QOrganizerCollection* collection);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId);
-    bool removeCollection(const QOrganizerCollection& collection); // is this really necessary?
 
     /* Return a pruned or modified item which is valid and can be saved in the manager */
-    QOrganizerItem compatibleItem(const QOrganizerItem& original);
-    QOrganizerCollection compatibleCollection(const QOrganizerCollection& original);
+    QOrganizerItem compatibleItem(const QOrganizerItem& original) const;
+    QOrganizerCollection compatibleCollection(const QOrganizerCollection& original) const;
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType) const;

@@ -48,7 +48,7 @@ class OrganizerItemTypeTransform : public OrganizerItemDetailTransform
 public:
     void modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const;
     void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
-    void transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance);
+    void transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemOccurrence);
     void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
     QString detailDefinitionName();
     static CCalEntry::TType entryTypeL(const QOrganizerItem &item);
