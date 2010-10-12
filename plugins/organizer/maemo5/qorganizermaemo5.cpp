@@ -1828,7 +1828,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
 
     // Get calendar id (or -1) of the target item
     if (itemId.isNull()) {
-        *error = QOrganizerItemManager::DoesNotExistError;
+        *error = QOrganizerManager::DoesNotExistError;
         return QOrganizerItem();
     }
     int calId = d->m_dbAccess->calIdOf(itemId);
