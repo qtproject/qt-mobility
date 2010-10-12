@@ -66,7 +66,7 @@ QTM_USE_NAMESPACE
  */
 void QOrganizerTodo::setStartDateTime(const QDateTime& startDateTime)
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     ttr.setStartDateTime(startDateTime);
     saveDetail(&ttr);
 }
@@ -76,7 +76,7 @@ void QOrganizerTodo::setStartDateTime(const QDateTime& startDateTime)
  */
 QDateTime QOrganizerTodo::startDateTime() const
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     return ttr.startDateTime();
 }
 
@@ -85,7 +85,7 @@ QDateTime QOrganizerTodo::startDateTime() const
  */
 void QOrganizerTodo::setDueDateTime(const QDateTime& dueDateTime)
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     ttr.setDueDateTime(dueDateTime);
     saveDetail(&ttr);
 }
@@ -95,7 +95,7 @@ void QOrganizerTodo::setDueDateTime(const QDateTime& dueDateTime)
  */
 QDateTime QOrganizerTodo::dueDateTime() const
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     return ttr.dueDateTime();
 }
 
@@ -104,7 +104,7 @@ the start datetime or end datetime are significant.
 */
 void QOrganizerTodo::setTimeSpecified(bool isTimeSpecified)
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     ttr.setTimeSpecified(isTimeSpecified);
     saveDetail(&ttr);
 }
@@ -112,7 +112,7 @@ void QOrganizerTodo::setTimeSpecified(bool isTimeSpecified)
 /*! Returns whether the time component of the start datetime or end datetime are significant. */
 bool QOrganizerTodo::isTimeSpecified() const
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     return ttr.isTimeSpecified();
 }
 
@@ -139,7 +139,7 @@ QSet<QDate> QOrganizerTodo::recurrenceDates() const
 /*!
   Sets the recurrence rules which define when the todo occurs to \a rrules
  */
-void QOrganizerTodo::setRecurrenceRules(const QSet<QOrganizerItemRecurrenceRule>& rrules)
+void QOrganizerTodo::setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rrules)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setRecurrenceRules(rrules);
@@ -149,7 +149,7 @@ void QOrganizerTodo::setRecurrenceRules(const QSet<QOrganizerItemRecurrenceRule>
 /*!
   Returns the list of recurrence rules which define when the todo occurs
  */
-QSet<QOrganizerItemRecurrenceRule> QOrganizerTodo::recurrenceRules() const
+QSet<QOrganizerRecurrenceRule> QOrganizerTodo::recurrenceRules() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.recurrenceRules();
@@ -181,7 +181,7 @@ QSet<QDate> QOrganizerTodo::exceptionDates() const
   not occur, where it otherwise would occur as described by the recurrence rules
   set with \l setRecurrenceRules(), to \a exrules
  */
-void QOrganizerTodo::setExceptionRules(const QSet<QOrganizerItemRecurrenceRule>& exrules)
+void QOrganizerTodo::setExceptionRules(const QSet<QOrganizerRecurrenceRule>& exrules)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setExceptionRules(exrules);
@@ -193,7 +193,7 @@ void QOrganizerTodo::setExceptionRules(const QSet<QOrganizerItemRecurrenceRule>&
   does not occur, where it otherwise would occur as described by the recurrence rules
   set the \l setRecurrenceRules().
  */
-QSet<QOrganizerItemRecurrenceRule> QOrganizerTodo::exceptionRules() const
+QSet<QOrganizerRecurrenceRule> QOrganizerTodo::exceptionRules() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.exceptionRules();

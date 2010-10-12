@@ -81,26 +81,26 @@ public:
     };
 
     enum Error {
-        NoError = QOrganizerItemManager::NoError,
-        DoesNotExistError = QOrganizerItemManager::DoesNotExistError,
-        AlreadyExistsError = QOrganizerItemManager::AlreadyExistsError,
-        InvalidDetailError = QOrganizerItemManager::InvalidDetailError,
-        LockedError = QOrganizerItemManager::LockedError,
-        DetailAccessError = QOrganizerItemManager::DetailAccessError,
-        PermissionsError = QOrganizerItemManager::PermissionsError,
-        OutOfMemoryError = QOrganizerItemManager::OutOfMemoryError,
-        NotSupportedError = QOrganizerItemManager::NotSupportedError,
-        BadArgumentError = QOrganizerItemManager::BadArgumentError,
-        UnspecifiedError = QOrganizerItemManager::UnspecifiedError,
-        VersionMismatchError = QOrganizerItemManager::VersionMismatchError,
-        LimitReachedError = QOrganizerItemManager::LimitReachedError,
-        InvalidItemTypeError = QOrganizerItemManager::InvalidItemTypeError,
-        InvalidCollectionError = QOrganizerItemManager::InvalidCollectionError,
-        InvalidOccurrenceError = QOrganizerItemManager::InvalidOccurrenceError
+        NoError = QOrganizerManager::NoError,
+        DoesNotExistError = QOrganizerManager::DoesNotExistError,
+        AlreadyExistsError = QOrganizerManager::AlreadyExistsError,
+        InvalidDetailError = QOrganizerManager::InvalidDetailError,
+        LockedError = QOrganizerManager::LockedError,
+        DetailAccessError = QOrganizerManager::DetailAccessError,
+        PermissionsError = QOrganizerManager::PermissionsError,
+        OutOfMemoryError = QOrganizerManager::OutOfMemoryError,
+        NotSupportedError = QOrganizerManager::NotSupportedError,
+        BadArgumentError = QOrganizerManager::BadArgumentError,
+        UnspecifiedError = QOrganizerManager::UnspecifiedError,
+        VersionMismatchError = QOrganizerManager::VersionMismatchError,
+        LimitReachedError = QOrganizerManager::LimitReachedError,
+        InvalidItemTypeError = QOrganizerManager::InvalidItemTypeError,
+        InvalidCollectionError = QOrganizerManager::InvalidCollectionError,
+        InvalidOccurrenceError = QOrganizerManager::InvalidOccurrenceError
     };
 
     explicit QDeclarativeOrganizerModel(QObject *parent = 0);
-    explicit QDeclarativeOrganizerModel(QOrganizerItemManager* manager, const QDateTime& start, const QDateTime& end, QObject *parent = 0);
+    explicit QDeclarativeOrganizerModel(QOrganizerManager* manager, const QDateTime& start, const QDateTime& end, QObject *parent = 0);
 
     Error error() const;
     QString manager() const;

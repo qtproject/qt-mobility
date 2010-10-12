@@ -44,10 +44,10 @@
 
 #include <QDateTime>
 #include <QHash>
-#include "qorganizeritemrecurrencerule.h"
+#include "qorganizerrecurrencerule.h"
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManager;
+class QOrganizerManager;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -71,8 +71,8 @@ class TimeZonePhase {
         int utcOffset() const { return mUtcOffset; }
         void setStartDateTime(const QDateTime& dateTime) { mStartDateTime = dateTime; }
         QDateTime startDateTime() const { return mStartDateTime; }
-        void setRecurrenceRule(const QOrganizerItemRecurrenceRule& rrule) { mRecurrenceRule = rrule; }
-        QOrganizerItemRecurrenceRule recurrenceRule() const { return mRecurrenceRule; }
+        void setRecurrenceRule(const QOrganizerRecurrenceRule& rrule) { mRecurrenceRule = rrule; }
+        QOrganizerRecurrenceRule recurrenceRule() const { return mRecurrenceRule; }
         void setRecurrenceDates(const QSet<QDate>& rdates) { mRecurrenceDates = rdates; }
         QSet<QDate> recurrenceDates() const { return mRecurrenceDates; }
         bool isValid() const {
@@ -83,7 +83,7 @@ class TimeZonePhase {
         bool mStandard; // true for STANDARD, false for DAYLIGHT
         int mUtcOffset; // in seconds, the offset to apply after mStartDateTime
         QDateTime mStartDateTime; // local time, when the phase comes into effect
-        QOrganizerItemRecurrenceRule mRecurrenceRule;
+        QOrganizerRecurrenceRule mRecurrenceRule;
         QSet<QDate> mRecurrenceDates;
 };
 
@@ -101,7 +101,7 @@ class TimeZone {
         }
 
     private:
-        static QOrganizerItemManager* getManager();
+        static QOrganizerManager* getManager();
         QString mTzid;
         QList<TimeZonePhase> mPhases;
 };

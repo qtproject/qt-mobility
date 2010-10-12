@@ -69,10 +69,10 @@ class OrganizerRequestTimeoutTimer : public QObject
     Q_OBJECT
 
 public:
-    OrganizerRequestTimeoutTimer(QOrganizerItemAbstractRequest *req, int msecs);
+    OrganizerRequestTimeoutTimer(QOrganizerAbstractRequest *req, int msecs);
     ~OrganizerRequestTimeoutTimer();
 
-    QOrganizerItemAbstractRequest *request() const;
+    QOrganizerAbstractRequest *request() const;
 
 private Q_SLOTS:
     void internalTimeout();
@@ -82,7 +82,7 @@ Q_SIGNALS:
 
 private:
     QTimer* m_timeoutTimer;
-    QOrganizerItemAbstractRequest *m_req;
+    QOrganizerAbstractRequest *m_req;
 };
 
 
@@ -94,17 +94,17 @@ public:
     OrganizerAsynchProcess(QOrganizerItemMaemo5Engine *engine);
     ~OrganizerAsynchProcess();
 
-    void requestDestroyed(QOrganizerItemAbstractRequest *req);
-    bool addRequest(QOrganizerItemAbstractRequest *req);
-    bool cancelRequest(QOrganizerItemAbstractRequest *req);
-    bool waitForRequestFinished(QOrganizerItemAbstractRequest *req, int msecs);
+    void requestDestroyed(QOrganizerAbstractRequest *req);
+    bool addRequest(QOrganizerAbstractRequest *req);
+    bool cancelRequest(QOrganizerAbstractRequest *req);
+    bool waitForRequestFinished(QOrganizerAbstractRequest *req, int msecs);
 
 protected:
     void processRequest();
     void run();
 
 private:
-    bool waitForRequestFinished(QOrganizerItemAbstractRequest *req);
+    bool waitForRequestFinished(QOrganizerAbstractRequest *req);
 
     void handleItemFetchRequest(QOrganizerItemFetchRequest *req);
     void handleItemFetchForExportRequest(QOrganizerItemFetchForExportRequest *req);
@@ -124,9 +124,9 @@ private Q_SLOTS:
 
 private:
     QOrganizerItemMaemo5Engine* m_engine;
-    QQueue<QOrganizerItemAbstractRequest *> m_requestQueue;
+    QQueue<QOrganizerAbstractRequest *> m_requestQueue;
     QList<OrganizerRequestTimeoutTimer *> m_timers;
-    QSet<QOrganizerItemAbstractRequest *> m_activeRequests;
+    QSet<QOrganizerAbstractRequest *> m_activeRequests;
     QMutex m_mainMutex;
     QMutex m_timeoutMutex;
     bool m_quitNow;

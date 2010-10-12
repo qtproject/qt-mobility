@@ -39,9 +39,8 @@
 **
 ****************************************************************************/
 
-
-#ifndef QCONTACTINVALIDBACKEND_P_H
-#define QCONTACTINVALIDBACKEND_P_H
+#ifndef QORGANIZERRECURRENCERULE_P_H
+#define QORGANIZERRECURRENCERULE_P_H
 
 //
 //  W A R N I N G
@@ -54,39 +53,62 @@
 // We mean it.
 //
 
-#include "qorganizermanager.h"
-#include "qorganizermanager_p.h"
-
-#include <QMap>
-#include <QString>
+#include <QSet>
+#include <QSharedData>
+#include "qorganizerrecurrencerule.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemInvalidEngine : public QOrganizerManagerEngine
+class QOrganizerRecurrenceRulePrivate : public QSharedData
 {
 public:
-    QOrganizerItemInvalidEngine();
-    QString managerName() const;
-
-    /*! \reimp */
-    int managerVersion() const {return 0;}
-
-    /*! \reimp */
-    virtual QString synthesizedDisplayLabel(const QOrganizerItem&, QOrganizerManager::Error* error) const
+    QOrganizerRecurrenceRulePrivate()
+            : QSharedData(),
+            frequency(QOrganizerRecurrenceRule::Invalid),
+            limitCount(-1),
+            limitType(QOrganizerRecurrenceRule::NoLimit),
+            interval(1),
+            firstDayOfWeek(Qt::Monday)
     {
-        *error =  QOrganizerManager::NotSupportedError;
-        return QString();
+
     }
 
-    /*! \reimp */
-    virtual QOrganizerItem compatibleItem(const QOrganizerItem&, QOrganizerManager::Error* error) const
+    QOrganizerRecurrenceRulePrivate(const QOrganizerRecurrenceRulePrivate& other)
+            : QSharedData(other),
+            frequency(other.frequency),
+            limitCount(other.limitCount),
+            limitDate(other.limitDate),
+            limitType(other.limitType),
+            interval(other.interval),
+            daysOfWeek(other.daysOfWeek),
+            daysOfMonth(other.daysOfMonth),
+            daysOfYear(other.daysOfYear),
+            monthsOfYear(other.monthsOfYear),
+            weeksOfYear(other.weeksOfYear),
+            positions(other.positions),
+            firstDayOfWeek(other.firstDayOfWeek)
+
     {
-        *error =  QOrganizerManager::NotSupportedError;
-        return QOrganizerItem();
     }
+
+    ~QOrganizerRecurrenceRulePrivate()
+    {
+    }
+
+    QOrganizerRecurrenceRule::Frequency frequency;
+    int limitCount;
+    QDate limitDate;
+    QOrganizerRecurrenceRule::LimitType limitType;
+    int interval;
+    QSet<Qt::DayOfWeek> daysOfWeek;
+    QSet<int> daysOfMonth;
+    QSet<int> daysOfYear;
+    QSet<QOrganizerRecurrenceRule::Month> monthsOfYear;
+    QSet<int> weeksOfYear;
+    QSet<int> positions;
+    Qt::DayOfWeek firstDayOfWeek;
 };
 
 QTM_END_NAMESPACE
 
 #endif
-

@@ -43,7 +43,7 @@
 #define QORGANIZERITEMINSTANCEFETCHREQUEST_H
 
 #include "qtorganizerglobal.h"
-#include "qorganizeritemabstractrequest.h"
+#include "qorganizerabstractrequest.h"
 #include "qorganizeritemsortorder.h"
 #include "qorganizeritemfilter.h"
 #include "qorganizeritem.h"
@@ -55,7 +55,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemInstanceFetchRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemInstanceFetchRequest : public QOrganizerItemAbstractRequest
+class Q_ORGANIZER_EXPORT QOrganizerItemInstanceFetchRequest : public QOrganizerAbstractRequest
 {
     Q_OBJECT
 
@@ -79,7 +79,7 @@ public:
 
 private:
     Q_DISABLE_COPY(QOrganizerItemInstanceFetchRequest)
-    friend class QOrganizerItemManagerEngine;
+    friend class QOrganizerManagerEngine;
     Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemInstanceFetchRequest)
 };
 

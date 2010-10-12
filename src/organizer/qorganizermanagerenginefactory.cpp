@@ -40,14 +40,14 @@
 ****************************************************************************/
 
 
-#include "qorganizeritemmanagerenginefactory.h"
+#include "qorganizermanagerenginefactory.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QOrganizerItemManagerEngineFactory
-  \brief The QOrganizerItemManagerEngineFactory class provides the interface for
- plugins that implement QOrganizerItemManagerEngine functionality.
+  \class QOrganizerManagerEngineFactory
+  \brief The QOrganizerManagerEngineFactory class provides the interface for
+ plugins that implement QOrganizerManagerEngine functionality.
 
   \inmodule QtOrganizer
   \ingroup organizer-backends
@@ -55,37 +55,37 @@ QTM_BEGIN_NAMESPACE
   This class provides a simple interface for the creation of
   manager engine instances.  Each factory has a specific id
   associated with it, which forms the \c managerName parameter
-  when creating \l QOrganizerItemManager objects.
+  when creating \l QOrganizerManager objects.
 
   More information on writing a organizeritems engine plugin is available in
   the \l{Qt Organizer Manager Engines} documentation.
 
-  \sa QOrganizerItemManager, QOrganizerItemManagerEngine
+  \sa QOrganizerManager, QOrganizerManagerEngine
  */
 
 /*!
   A default, empty destructor.
  */
-QOrganizerItemManagerEngineFactory::~QOrganizerItemManagerEngineFactory()
+QOrganizerManagerEngineFactory::~QOrganizerManagerEngineFactory()
 {
 }
 
 /*!
-  \fn QOrganizerItemManagerEngineFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
+  \fn QOrganizerManagerEngineFactory::engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error* error)
 
-  This function is called by the QOrganizerItemManager implementation to
+  This function is called by the QOrganizerManager implementation to
   create an instance of the engine provided by this factory.
 
   The \a parameters supplied can be ignored or interpreted as desired.
 
   If a supplied parameter results in an unfulfillable request, or some other error
   occurs, this function may return a null pointer, and the client developer will get an
-  invalid QOrganizerItemManager in return.  Any error should be stored in the supplied \a error
+  invalid QOrganizerManager in return.  Any error should be stored in the supplied \a error
   reference.
  */
 
 /*!
-  \fn QOrganizerItemManagerEngineFactory::managerName() const
+  \fn QOrganizerManagerEngineFactory::managerName() const
 
   This function should return a unique string that identifies
   the engines provided by this factory.
@@ -95,11 +95,11 @@ QOrganizerItemManagerEngineFactory::~QOrganizerItemManagerEngineFactory()
  */
 
 /*!
-  \fn QOrganizerItemManagerEngineFactory::supportedImplementationVersions() const
+  \fn QOrganizerManagerEngineFactory::supportedImplementationVersions() const
 
   This function should return a list of versions of the engine which this factory can instantiate.
  */
-QList<int> QOrganizerItemManagerEngineFactory::supportedImplementationVersions() const
+QList<int> QOrganizerManagerEngineFactory::supportedImplementationVersions() const
 {
     return QList<int>();
 }

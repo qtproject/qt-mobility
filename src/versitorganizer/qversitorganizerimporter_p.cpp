@@ -292,7 +292,7 @@ bool QVersitOrganizerImporterPrivate::createStartDateTime(
     QDateTime newStart = parseDateTime(property);
     if (!newStart.isValid())
         return false;
-    QOrganizerEventTimeRange etr(item->detail<QOrganizerEventTimeRange>());
+    QOrganizerEventTime etr(item->detail<QOrganizerEventTime>());
     if (mDurationSpecified) {
         // Need to fix up the end date to match the duration of the event
         QDateTime start = etr.startDateTime();
@@ -324,7 +324,7 @@ bool QVersitOrganizerImporterPrivate::createEndDateTime(
     QDateTime newEnd = parseDateTime(property);
     if (!newEnd.isValid())
         return false;
-    QOrganizerEventTimeRange etr(item->detail<QOrganizerEventTimeRange>());
+    QOrganizerEventTime etr(item->detail<QOrganizerEventTime>());
     etr.setEndDateTime(newEnd);
     updatedDetails->append(etr);
     mDurationSpecified = false;
@@ -343,7 +343,7 @@ bool QVersitOrganizerImporterPrivate::createDuration(
     Duration duration = Duration::parseDuration(property.value());
     if (!duration.isValid())
         return false;
-    QOrganizerEventTimeRange etr(item->detail<QOrganizerEventTimeRange>());
+    QOrganizerEventTime etr(item->detail<QOrganizerEventTime>());
     QDateTime startTime = etr.startDateTime();
     if (!startTime.isValid()) {
         // not having a start date set is treated as a start date of epoch
@@ -368,7 +368,7 @@ bool QVersitOrganizerImporterPrivate::createTodoStartDateTime(
     QDateTime newStart = parseDateTime(property);
     if (!newStart.isValid())
         return false;
-    QOrganizerTodoTimeRange ttr(item->detail<QOrganizerTodoTimeRange>());
+    QOrganizerTodoTime ttr(item->detail<QOrganizerTodoTime>());
     ttr.setStartDateTime(newStart);
     updatedDetails->append(ttr);
     return true;
@@ -385,7 +385,7 @@ bool QVersitOrganizerImporterPrivate::createDueDateTime(
     QDateTime newEnd = parseDateTime(property);
     if (!newEnd.isValid())
         return false;
-    QOrganizerTodoTimeRange ttr(item->detail<QOrganizerTodoTimeRange>());
+    QOrganizerTodoTime ttr(item->detail<QOrganizerTodoTime>());
     ttr.setDueDateTime(newEnd);
     updatedDetails->append(ttr);
     mDurationSpecified = false;
@@ -403,7 +403,7 @@ bool QVersitOrganizerImporterPrivate::createJournalEntryDateTime(
     QDateTime dateTime = parseDateTime(property);
     if (!dateTime.isValid())
         return false;
-    QOrganizerJournalTimeRange jtr(item->detail<QOrganizerJournalTimeRange>());
+    QOrganizerJournalTime jtr(item->detail<QOrganizerJournalTime>());
     jtr.setEntryDateTime(dateTime);
     updatedDetails->append(jtr);
     return true;
@@ -453,7 +453,7 @@ bool QVersitOrganizerImporterPrivate::createRecurrenceRule(
         QList<QOrganizerItemDetail>* updatedDetails) {
     if (property.value().isEmpty())
         return false;
-    QOrganizerItemRecurrenceRule rule;
+    QOrganizerRecurrenceRule rule;
     if (!parseRecurRule(property.value(), &rule))
         return false;
     QOrganizerItemRecurrence detail(item->detail<QOrganizerItemRecurrence>());
@@ -470,7 +470,7 @@ bool QVersitOrganizerImporterPrivate::createRecurrenceRule(
  * Parses an iCalendar recurrence rule string \a str and puts the result in \a rule.
  * Return true on success, false on failure.
  */
-bool QVersitOrganizerImporterPrivate::parseRecurRule(const QString& str, QOrganizerItemRecurrenceRule* rule) const
+bool QVersitOrganizerImporterPrivate::parseRecurRule(const QString& str, QOrganizerRecurrenceRule* rule) const
 {
     QStringList parts = str.split(QLatin1Char(';'));
     if (parts.size() == 0)
@@ -484,13 +484,13 @@ bool QVersitOrganizerImporterPrivate::parseRecurRule(const QString& str, QOrgani
         return false;
     QString freqValue = freqParts.at(1);
     if (freqValue == QLatin1String("DAILY")) {
-        rule->setFrequency(QOrganizerItemRecurrenceRule::Daily);
+        rule->setFrequency(QOrganizerRecurrenceRule::Daily);
     } else if (freqValue == QLatin1String("WEEKLY")) {
-        rule->setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+        rule->setFrequency(QOrganizerRecurrenceRule::Weekly);
     } else if (freqValue == QLatin1String("MONTHLY")) {
-        rule->setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+        rule->setFrequency(QOrganizerRecurrenceRule::Monthly);
     } else if (freqValue == QLatin1String("YEARLY")) {
-        rule->setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+        rule->setFrequency(QOrganizerRecurrenceRule::Yearly);
     } else {
         return false;
     }
@@ -509,7 +509,7 @@ bool QVersitOrganizerImporterPrivate::parseRecurRule(const QString& str, QOrgani
  * \a key is the part of the fragment before the equals sign and \a value is the part after.
  */
 void QVersitOrganizerImporterPrivate::parseRecurFragment(const QString& key, const QString& value,
-                                                         QOrganizerItemRecurrenceRule* rule) const
+                                                         QOrganizerRecurrenceRule* rule) const
 {
     if (key == QLatin1String("INTERVAL")) {
         bool ok;
@@ -569,13 +569,13 @@ void QVersitOrganizerImporterPrivate::parseRecurFragment(const QString& key, con
             rule->setWeeksOfYear(weeks);
         }
     } else if (key == QLatin1String("BYMONTH")) {
-        QSet<QOrganizerItemRecurrenceRule::Month> months;
+        QSet<QOrganizerRecurrenceRule::Month> months;
         QStringList monthParts = value.split(QLatin1Char(','));
         foreach (const QString& monthParts, monthParts) {
             bool ok;
             int month = monthParts.toInt(&ok);
             if (ok && month >= 1 && month <= 12) {
-                months << (QOrganizerItemRecurrenceRule::Month)month;
+                months << (QOrganizerRecurrenceRule::Month)month;
             }
         }
         if (!months.isEmpty()) {
@@ -938,7 +938,7 @@ TimeZonePhase QVersitOrganizerImporterPrivate::importTimeZonePhase(const QVersit
                 phase.setStartDateTime(dt);
             }
         } else if (property.name() == QLatin1String("RRULE")) {
-            QOrganizerItemRecurrenceRule rrule;
+            QOrganizerRecurrenceRule rrule;
             if (parseRecurRule(property.value(), &rrule)) {
                 phase.setRecurrenceRule(rrule);
             }

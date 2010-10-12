@@ -76,7 +76,7 @@ Q_DECLARE_METATYPE(QList<QOrganizerItemLocalId>)
 Q_DECLARE_METATYPE(QList<QOrganizerCollectionLocalId>)
 
 /*!
- * For testing symbian backend via QOrganizerItemManager API. The target is
+ * For testing symbian backend via QOrganizerManager API. The target is
  * to implement test cases in a platform independent manner so that this test
  * module could be used also with other backends and potentially used as a
  * QtMobility auto test with as little porting work as possible.
@@ -141,7 +141,7 @@ private: // util functions
     void addManagers();
 
 private:
-    QOrganizerItemManager *m_om;
+    QOrganizerManager *m_om;
     bool m_customCollectionsSupported;
 };
 
@@ -159,7 +159,7 @@ void tst_symbianomcollections::initTestCase()
 void tst_symbianomcollections::init()
 {
     QFETCH(QString, managerName);
-    m_om = new QOrganizerItemManager(managerName);
+    m_om = new QOrganizerManager(managerName);
     // Remove items on all collections
     m_om->removeItems(m_om->itemIds());
     // Remove all collections (except the default)
@@ -185,12 +185,12 @@ void tst_symbianomcollections::fetchCollection()
 {
     // Fetch default collection id
     QOrganizerCollectionLocalId dId = m_om->defaultCollection().localId();
-    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QVERIFY(m_om->error() == QOrganizerManager::NoError);
     QVERIFY(!dId.isNull());
     
     // Get collections but do not provide id's
     QList<QOrganizerCollection> cs = m_om->collections();
-    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QVERIFY(m_om->error() == QOrganizerManager::NoError);
     QVERIFY(cs.count() == 0);
     
     // Get all collections
@@ -207,7 +207,7 @@ void tst_symbianomcollections::fetchCollection()
     // Get a specific collection
     QOrganizerCollection defaultCollection = m_om->collection(dId);
     cs << defaultCollection;
-    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QVERIFY(m_om->error() == QOrganizerManager::NoError);
     QVERIFY(cs.count() == 1);
 
     // Do a basic verify
@@ -218,7 +218,7 @@ void tst_symbianomcollections::fetchCollection()
     QOrganizerCollectionLocalId nonId;
     cs.clear();
     cs << m_om->collection(nonId);
-    QVERIFY(m_om->error() == QOrganizerItemManager::DoesNotExistError);
+    QVERIFY(m_om->error() == QOrganizerManager::DoesNotExistError);
 
     // Can we save collections? 
     if (!m_customCollectionsSupported)
@@ -230,7 +230,7 @@ void tst_symbianomcollections::fetchCollection()
     QVERIFY(m_om->saveCollection(&c1));
     cs.clear();
     cs = m_om->collections();
-    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QVERIFY(m_om->error() == QOrganizerManager::NoError);
     QVERIFY(cs.count() == 2);
     
     //remove and then fetch the collections
@@ -238,13 +238,13 @@ void tst_symbianomcollections::fetchCollection()
         
     cs.clear();
     cs = m_om->collections();
-    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QVERIFY(m_om->error() == QOrganizerManager::NoError);
     QVERIFY(cs.count() == 1);
     
     // fetch an already removed collection
     cs.clear();
     cs << m_om->collection(c1.id().localId());
-    QVERIFY(m_om->error() == QOrganizerItemManager::DoesNotExistError);
+    QVERIFY(m_om->error() == QOrganizerManager::DoesNotExistError);
 }
 
 void tst_symbianomcollections::saveCollection()
@@ -255,7 +255,7 @@ void tst_symbianomcollections::saveCollection()
         // Verify it fails with correct error
         QOrganizerCollection c1;
         QVERIFY(!m_om->saveCollection(&c1));
-        QVERIFY(m_om->error() == QOrganizerItemManager::NotSupportedError);        
+        QVERIFY(m_om->error() == QOrganizerManager::NotSupportedError);        
         return;
     }
     
@@ -279,7 +279,7 @@ void tst_symbianomcollections::saveCollection()
     // Verify saved collection matches to fetched collection
     QList<QOrganizerCollection> cs;
     cs << m_om->collection(c1.id().localId());
-    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QVERIFY(m_om->error() == QOrganizerManager::NoError);
     QVERIFY(cs.count() == 1);
     foreach (QString key, c1.metaData().keys()) {
         if (cs[0].metaData(key) != c1.metaData(key)) {
@@ -327,7 +327,7 @@ void tst_symbianomcollections::saveCollection()
     // Verify saved collection matches to fetched collection (again)
     cs.clear();
     cs << m_om->collection(c1.id().localId());
-    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QVERIFY(m_om->error() == QOrganizerManager::NoError);
     QVERIFY(cs.count() == 1);
     foreach (QString key, c1.metaData().keys()) {
         if (cs[0].metaData(key) != c1.metaData(key)) {
@@ -372,7 +372,7 @@ void tst_symbianomcollections::removeCollection()
         QWARN("Removing a collection not supported!");
         // Verify it fails with correct error code
         QVERIFY(!m_om->removeCollection(m_om->defaultCollection()));
-        QVERIFY(m_om->error() == QOrganizerItemManager::NotSupportedError);
+        QVERIFY(m_om->error() == QOrganizerManager::NotSupportedError);
         return;
     }
     
@@ -390,7 +390,7 @@ void tst_symbianomcollections::removeCollection()
     QVERIFY(m_om->saveCollection(&c));
     
     // Create a second manager which will open the same collection
-    QScopedPointer<QOrganizerItemManager> om2(new QOrganizerItemManager(m_om->managerName()));
+    QScopedPointer<QOrganizerManager> om2(new QOrganizerManager(m_om->managerName()));
     QList<QOrganizerCollection> colls = om2->collections();
     QVERIFY(colls.contains(c)); // we assume that collections local id is global between managers
     
@@ -400,7 +400,7 @@ void tst_symbianomcollections::removeCollection()
     QVERIFY(m_om->removeCollection(c.id().localId()));
 
     // Create a third manager
-    QScopedPointer<QOrganizerItemManager> om3(new QOrganizerItemManager(m_om->managerName()));
+    QScopedPointer<QOrganizerManager> om3(new QOrganizerManager(m_om->managerName()));
 
     // Collection should not appear in any manager
     QTRY_COMPARE(m_om->collections().count(), 1);
@@ -417,7 +417,7 @@ void tst_symbianomcollections::removeCollection()
     
     // Remove all collections
     colls = m_om->collections();
-    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QVERIFY(m_om->error() == QOrganizerManager::NoError);
     QVERIFY(colls.count() >= 2); // default collection + collection saved
     foreach (const QOrganizerCollection& coll, colls) {
         if (coll == m_om->defaultCollection())
@@ -439,7 +439,7 @@ void tst_symbianomcollections::collectionSignalEmission()
         QSKIP("Collection signals not supported!", SkipSingle);
     
     // Create a second manager
-    QScopedPointer<QOrganizerItemManager> om2(new QOrganizerItemManager(m_om->managerName()));
+    QScopedPointer<QOrganizerManager> om2(new QOrganizerManager(m_om->managerName()));
     
     // Setup signal spies
     qRegisterMetaType<QList<QOrganizerCollectionLocalId> >("QList<QOrganizerCollectionLocalId>");
@@ -511,7 +511,7 @@ void tst_symbianomcollections::itemSignalEmission()
     QVERIFY(m_om->saveCollection(&c));
     
     // Create a second manager
-    QScopedPointer<QOrganizerItemManager> om2(new QOrganizerItemManager(m_om->managerName()));
+    QScopedPointer<QOrganizerManager> om2(new QOrganizerManager(m_om->managerName()));
     
     // Setup signal spies
     qRegisterMetaType<QList<QOrganizerItemLocalId> >("QList<QOrganizerItemLocalId>");
@@ -817,10 +817,10 @@ void tst_symbianomcollections::fetchItemInstance()
                                       QString("fetchiteminstance"),
                                       QDateTime::currentDateTime().addMSecs(3600));
     item.setCollectionId(c.id());
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
     rrule.setLimit(5);
-    QSet<QOrganizerItemRecurrenceRule> rrules;
+    QSet<QOrganizerRecurrenceRule> rrules;
     rrules.insert(rrule);
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
@@ -855,10 +855,10 @@ void tst_symbianomcollections::modifyItemInstance()
                                       QString("modifyiteminstance"),
                                       QDateTime::currentDateTime().addMSecs(3600));
     item.setCollectionId(c.id());
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
     rrule.setLimit(5);
-    QSet<QOrganizerItemRecurrenceRule> rrules;
+    QSet<QOrganizerRecurrenceRule> rrules;
     rrules.insert(rrule);
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
@@ -945,7 +945,7 @@ QOrganizerItem tst_symbianomcollections::createItem(QString itemType, QString la
     item.setType(itemType);
     item.setDisplayLabel(label);
     if (itemType == QOrganizerItemType::TypeTodo) {
-        QOrganizerTodoTimeRange timeRange;
+        QOrganizerTodoTime timeRange;
         if (startTime.isValid())
             timeRange.setStartDateTime(startTime);
         if (endTime.isValid())
@@ -953,7 +953,7 @@ QOrganizerItem tst_symbianomcollections::createItem(QString itemType, QString la
         if (!timeRange.isEmpty())
             item.saveDetail(&timeRange);
     } else {
-        QOrganizerEventTimeRange timeRange;
+        QOrganizerEventTime timeRange;
         if (startTime.isValid())
             timeRange.setStartDateTime(startTime);
         if (endTime.isValid())
@@ -971,7 +971,7 @@ void tst_symbianomcollections::addManagers()
 {
     QTest::addColumn<QString>("managerName");
 
-    QStringList managerNames = QOrganizerItemManager::availableManagers();
+    QStringList managerNames = QOrganizerManager::availableManagers();
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
     managerNames.removeAll("memory");

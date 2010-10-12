@@ -42,7 +42,7 @@
 #include "qdeclarativeorganizeritemdetail_p.h"
 
 
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEventTimeRange::DetailName, "eventTimeRange");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerEventTime::DetailName, "eventTime");
 Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemComment::DetailName, "comment");
 Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemComment::DetailGroupName, "comments");
 Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemDescription::DetailName, "description");
@@ -62,6 +62,6 @@ Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemEmailReminder::DetailName, "em
 Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemEmailReminder::DetailGroupName, "emailReminders");
 Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemTimestamp::DetailName, "timestamp");
 Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerItemType::DetailName, "type");
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerJournalTimeRange::DetailName, "journalTimeRange");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerJournalTime::DetailName, "journalTime");
 Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoProgress::DetailName, "todoProgress");
-Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoTimeRange::DetailName, "todoTimeRange");
+Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoTime::DetailName, "todoTime");

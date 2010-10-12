@@ -39,36 +39,42 @@
 **
 ****************************************************************************/
 
+#ifndef QORGANIZERTODOTIME_H
+#define QORGANIZERTODOTIME_H
 
-#ifndef QORGANIZERITEMMANAGERENGINEFACTORY_H
-#define QORGANIZERITEMMANAGERENGINEFACTORY_H
-
-#include <QtPlugin>
-#include <QMap>
 #include <QString>
 
-#include "qorganizeritemmanager.h"
+#include "qtorganizerglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritem.h"
 
 QTM_BEGIN_NAMESPACE
-/* Backend plugin API interface, creates engines for us */
-class QOrganizerItemManagerEngine;
-class QOrganizerCollectionEngineLocalId;
-class Q_ORGANIZER_EXPORT QOrganizerItemManagerEngineFactory
+
+/* Leaf class */
+class Q_ORGANIZER_EXPORT QOrganizerTodoTime : public QOrganizerItemDetail
 {
 public:
-    // engine factory functions
-    virtual QList<int> supportedImplementationVersions() const;
-    virtual ~QOrganizerItemManagerEngineFactory();
-    virtual QOrganizerItemManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error) = 0;
-    virtual QString managerName() const = 0;
-    virtual QOrganizerItemEngineLocalId* createItemEngineLocalId() const = 0;
-    virtual QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId()const  = 0;
+#ifdef Q_QDOC
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldStartDateTime;
+    static const QLatin1Constant FieldDueDateTime;
+    static const QLatin1Constant FieldTimeSpecified;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerTodoTime, "TodoTime")
+    Q_DECLARE_LATIN1_CONSTANT(FieldStartDateTime, "StartDateTime");
+    Q_DECLARE_LATIN1_CONSTANT(FieldDueDateTime, "DueDateTime");
+    Q_DECLARE_LATIN1_CONSTANT(FieldTimeSpecified, "TimeSpecified");
+#endif
+
+    void setStartDateTime(const QDateTime& startDateTime) {setValue(FieldStartDateTime, startDateTime);}
+    QDateTime startDateTime() const {return value<QDateTime>(FieldStartDateTime);}
+    void setDueDateTime(const QDateTime& dueDateTime) {setValue(FieldDueDateTime, dueDateTime);}
+    QDateTime dueDateTime() const {return value<QDateTime>(FieldDueDateTime);}
+    void setTimeSpecified(bool isTimeSpecified) {setValue(FieldTimeSpecified, isTimeSpecified);}
+    bool isTimeSpecified() {return value<bool>(FieldTimeSpecified);}
 };
+
 QTM_END_NAMESPACE
 
-QT_BEGIN_NAMESPACE
-#define QT_ORGANIZER_BACKEND_INTERFACE "com.nokia.qt.mobility.organizeritems.enginefactory/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QOrganizerItemManagerEngineFactory, QT_ORGANIZER_BACKEND_INTERFACE);
-QT_END_NAMESPACE
-
 #endif
+

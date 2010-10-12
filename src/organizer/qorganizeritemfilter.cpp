@@ -46,20 +46,20 @@
 #include "qorganizeritemintersectionfilter.h"
 #include "qorganizeritemunionfilter.h"
 
-#include "qorganizeritemmanager.h"
+#include "qorganizermanager.h"
 
 
 
 /*!
   \class QOrganizerItemFilter
   \brief The QOrganizerItemFilter class is used to select organizer items made available
-  through a QOrganizerItemManager.
+  through a QOrganizerManager.
 
   \inmodule QtOrganizer
 
   \ingroup organizer-main
 
-  This class is used as a parameter to various functions offered by QOrganizerItemManager, to allow
+  This class is used as a parameter to various functions offered by QOrganizerManager, to allow
   selection of items which have certain details or properties.
  */
 

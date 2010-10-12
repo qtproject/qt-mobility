@@ -50,7 +50,7 @@
 QTM_USE_NAMESPACE
 
 static void snippets();
-static void dumpItems(QOrganizerItemManager* manager);
+static void dumpItems(QOrganizerManager* manager);
 static void dumpItem(const QOrganizerItem& item);
 
 int main(int, char**)
@@ -62,11 +62,11 @@ int main(int, char**)
 void snippets()
 {
     //! [Instantiating the default manager for the platform]
-    QOrganizerItemManager defaultManager;
+    QOrganizerManager defaultManager;
     //! [Instantiating the default manager for the platform]
 
     //! [Instantiating a specific manager]
-    QOrganizerItemManager specificManager("KCal");
+    QOrganizerManager specificManager("KCal");
     //! [Instantiating a specific manager]
 
     // XXX TODO: use rrule instead of rdates.
@@ -146,7 +146,7 @@ void snippets()
     dumpItems(&defaultManager);
 }
 
-void dumpItems(QOrganizerItemManager* manager)
+void dumpItems(QOrganizerManager* manager)
 {
     QList<QOrganizerItem> items = manager->items();
     qDebug() << "dumping" << items.count() << "items:";

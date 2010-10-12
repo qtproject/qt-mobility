@@ -50,7 +50,7 @@ Window::Window()
 {
     setupGui();
 
-    manager = new QOrganizerItemManager("memory");
+    manager = new QOrganizerManager("memory");
 
     setWindowTitle(tr("ToDo Example"));
     refreshList();
@@ -125,8 +125,8 @@ void Window::refreshList()
     listWidget->clear();
 
     QOrganizerItemSortOrder sortOrder;
-    sortOrder.setDetailDefinitionName(QOrganizerTodoTimeRange::DefinitionName,
-        QOrganizerTodoTimeRange::FieldDueDateTime);
+    sortOrder.setDetailDefinitionName(QOrganizerTodoTime::DefinitionName,
+        QOrganizerTodoTime::FieldDueDateTime);
 
     QList<QOrganizerItem> items =
         manager->items(QOrganizerItemFilter(), QList<QOrganizerItemSortOrder>() << sortOrder);

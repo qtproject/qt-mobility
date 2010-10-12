@@ -39,24 +39,24 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMABSTRACTREQUEST_H
-#define QORGANIZERITEMABSTRACTREQUEST_H
+#ifndef QORGANIZERABSTRACTREQUEST_H
+#define QORGANIZERABSTRACTREQUEST_H
 
 
-#include "qorganizeritemmanager.h"
+#include "qorganizermanager.h"
 
 #include <QObject>
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemManagerEngine;
-class QOrganizerItemAbstractRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemAbstractRequest : public QObject
+class QOrganizerManagerEngine;
+class QOrganizerAbstractRequestPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerAbstractRequest : public QObject
 {
     Q_OBJECT
 
 public:
-    ~QOrganizerItemAbstractRequest();
+    ~QOrganizerAbstractRequest();
 
     enum State {
         InactiveState = 0,   // operation not yet started
@@ -70,7 +70,7 @@ public:
     bool isActive() const;
     bool isFinished() const;
     bool isCanceled() const;
-    QOrganizerItemManager::Error error() const;
+    QOrganizerManager::Error error() const;
 
     enum RequestType {
         InvalidRequest = 0,
@@ -91,8 +91,8 @@ public:
     RequestType type() const;
 
     /* Which manager we want to perform the asynchronous request */
-    QOrganizerItemManager* manager() const;
-    void setManager(QOrganizerItemManager* manager);
+    QOrganizerManager* manager() const;
+    void setManager(QOrganizerManager* manager);
 
 public Q_SLOTS:
     /* Verbs */
@@ -103,18 +103,18 @@ public Q_SLOTS:
     bool waitForFinished(int msecs = 0);
 
 Q_SIGNALS:
-    void stateChanged(QOrganizerItemAbstractRequest::State newState);
+    void stateChanged(QOrganizerAbstractRequest::State newState);
     void resultsAvailable();
 
 protected:
-    QOrganizerItemAbstractRequest(QOrganizerItemAbstractRequestPrivate* otherd, QObject* parent = 0);
-    QOrganizerItemAbstractRequestPrivate* d_ptr;
+    QOrganizerAbstractRequest(QOrganizerAbstractRequestPrivate* otherd, QObject* parent = 0);
+    QOrganizerAbstractRequestPrivate* d_ptr;
 
 private:
-    QOrganizerItemAbstractRequest(QObject* parent = 0) : QObject(parent), d_ptr(0) {}
-    Q_DISABLE_COPY(QOrganizerItemAbstractRequest)
-    friend class QOrganizerItemManagerEngine;
-    friend class QOrganizerItemAbstractRequestPrivate;
+    QOrganizerAbstractRequest(QObject* parent = 0) : QObject(parent), d_ptr(0) {}
+    Q_DISABLE_COPY(QOrganizerAbstractRequest)
+    friend class QOrganizerManagerEngine;
+    friend class QOrganizerAbstractRequestPrivate;
 };
 
 QTM_END_NAMESPACE

@@ -45,7 +45,7 @@
 #include <QScopedPointer>
 
 #include "qtorganizer.h"
-#include "qorganizeritemmanagerdataholder.h" //QOrganizerItemManagerDataHolder
+#include "qorganizermanagerdataholder.h" //QOrganizerManagerDataHolder
 
 QTM_USE_NAMESPACE
 /* Define an innocuous request (fetch ie doesn't mutate) to "fill up" any queues */
@@ -229,11 +229,11 @@ private:
     bool containsIgnoringTimestamps(const QList<QOrganizerItem>& list, const QOrganizerItem& c);
     bool compareIgnoringTimestamps(const QOrganizerItem& ca, const QOrganizerItem& cb);
     bool containsAllCollectionIds(const QList<QOrganizerCollectionLocalId>& target, const QList<QOrganizerCollectionLocalId>& ids);
-    QOrganizerItemManager* prepareModel(const QString& uri);
+    QOrganizerManager* prepareModel(const QString& uri);
 
     Qt::HANDLE m_mainThreadId;
     Qt::HANDLE m_resultsAvailableSlotThreadId;
-    QScopedPointer<QOrganizerItemManagerDataHolder> managerDataHolder;
+    QScopedPointer<QOrganizerManagerDataHolder> managerDataHolder;
 };
 
 tst_QOrganizerItemAsync::tst_QOrganizerItemAsync()
@@ -242,7 +242,7 @@ tst_QOrganizerItemAsync::tst_QOrganizerItemAsync()
     QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
     QApplication::addLibraryPath(path);
 
-    qRegisterMetaType<QOrganizerItemAbstractRequest::State>("QOrganizerItemAbstractRequest::State");
+    qRegisterMetaType<QOrganizerAbstractRequest::State>("QOrganizerAbstractRequest::State");
 }
 
 tst_QOrganizerItemAsync::~tst_QOrganizerItemAsync()
@@ -251,7 +251,7 @@ tst_QOrganizerItemAsync::~tst_QOrganizerItemAsync()
 
 void tst_QOrganizerItemAsync::initTestCase()
 {
-    managerDataHolder.reset(new QOrganizerItemManagerDataHolder());
+    managerDataHolder.reset(new QOrganizerManagerDataHolder());
 }
 
 void tst_QOrganizerItemAsync::cleanupTestCase()
@@ -374,11 +374,11 @@ bool tst_QOrganizerItemAsync::containsAllCollectionIds(const QList<QOrganizerCol
 void tst_QOrganizerItemAsync::testDestructor()
 {
     QFETCH(QString, uri);
-    QOrganizerItemManager* cm = prepareModel(uri);
+    QOrganizerManager* cm = prepareModel(uri);
     QOrganizerItemFetchRequest* req = new QOrganizerItemFetchRequest;
     req->setManager(cm);
 
-    QOrganizerItemManager* cm2 = prepareModel(uri);
+    QOrganizerManager* cm2 = prepareModel(uri);
     QOrganizerItemFetchRequest* req2 = new QOrganizerItemFetchRequest;
     req2->setManager(cm2);
 
@@ -400,10 +400,10 @@ void tst_QOrganizerItemAsync::deleteRequest()
 void tst_QOrganizerItemAsync::itemFetch()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
+    QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
 
     QOrganizerItemFetchRequest ifr;
-    QVERIFY(ifr.type() == QOrganizerItemAbstractRequest::ItemFetchRequest);
+    QVERIFY(ifr.type() == QOrganizerAbstractRequest::ItemFetchRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!ifr.isActive());
@@ -421,14 +421,14 @@ void tst_QOrganizerItemAsync::itemFetch()
     QVERIFY(!ifr.cancel());
     QVERIFY(!ifr.waitForFinished());
     qRegisterMetaType<QOrganizerItemFetchRequest*>("QOrganizerItemFetchRequest*");
-    QThreadSignalSpy spy(&ifr, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QThreadSignalSpy spy(&ifr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     ifr.setFilter(fil);
     QCOMPARE(ifr.filter(), fil);
     QVERIFY(!ifr.cancel()); // not started
 
     QVERIFY(ifr.start());
     //QVERIFY(ifr.isFinished() || !ifr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY((ifr.isActive() && ifr.state() == QOrganizerItemAbstractRequest::ActiveState) || ifr.isFinished());
+    QVERIFY((ifr.isActive() && ifr.state() == QOrganizerAbstractRequest::ActiveState) || ifr.isFinished());
     QVERIFY(ifr.waitForFinished());
     QVERIFY(ifr.isFinished());
 
@@ -451,7 +451,7 @@ void tst_QOrganizerItemAsync::itemFetch()
     QVERIFY(!ifr.cancel()); // not started
 
     QVERIFY(ifr.start());
-    QVERIFY((ifr.isActive() && ifr.state() == QOrganizerItemAbstractRequest::ActiveState) || ifr.isFinished());
+    QVERIFY((ifr.isActive() && ifr.state() == QOrganizerAbstractRequest::ActiveState) || ifr.isFinished());
     //QVERIFY(ifr.isFinished() || !ifr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(ifr.waitForFinished());
     QVERIFY(ifr.isFinished());
@@ -476,7 +476,7 @@ void tst_QOrganizerItemAsync::itemFetch()
     QCOMPARE(ifr.sorting(), sorting);
     QVERIFY(!ifr.cancel()); // not started
     QVERIFY(ifr.start());
-    QVERIFY((ifr.isActive() && ifr.state() == QOrganizerItemAbstractRequest::ActiveState) || ifr.isFinished());
+    QVERIFY((ifr.isActive() && ifr.state() == QOrganizerAbstractRequest::ActiveState) || ifr.isFinished());
     //QVERIFY(ifr.isFinished() || !ifr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(ifr.waitForFinished());
     QVERIFY(ifr.isFinished());
@@ -502,7 +502,7 @@ void tst_QOrganizerItemAsync::itemFetch()
     QCOMPARE(ifr.fetchHint().detailDefinitionsHint(), QStringList(QOrganizerItemDescription::DefinitionName));
     QVERIFY(!ifr.cancel()); // not started
     QVERIFY(ifr.start());
-    QVERIFY((ifr.isActive() && ifr.state() == QOrganizerItemAbstractRequest::ActiveState) || ifr.isFinished());
+    QVERIFY((ifr.isActive() && ifr.state() == QOrganizerAbstractRequest::ActiveState) || ifr.isFinished());
     //QVERIFY(ifr.isFinished() || !ifr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(ifr.waitForFinished());
     QVERIFY(ifr.isFinished());
@@ -618,7 +618,7 @@ void tst_QOrganizerItemAsync::itemFetch()
         QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         QVERIFY(!ifr.isActive());
-        QVERIFY(ifr.state() == QOrganizerItemAbstractRequest::CanceledState);
+        QVERIFY(ifr.state() == QOrganizerAbstractRequest::CanceledState);
         break;
     }
 
@@ -626,7 +626,7 @@ void tst_QOrganizerItemAsync::itemFetch()
     QOrganizerItemFetchRequest *ifr2 = new QOrganizerItemFetchRequest();
     QPointer<QObject> obj(ifr2);
     ifr2->setManager(oim.data());
-    connect(ifr2, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(deleteRequest()));
+    connect(ifr2, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), this, SLOT(deleteRequest()));
     QVERIFY(ifr2->start());
     int i = 100;
     // at this point we can't even call wait for finished..
@@ -640,12 +640,12 @@ void tst_QOrganizerItemAsync::itemFetch()
 void tst_QOrganizerItemAsync::itemFetchById()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
+    QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
 
 /* XXX TODO: fetchbyid request for items as well as items!!!
 
     QOrganizerItemFetchByIdRequest ifr;
-    QVERIFY(ifr.type() == QOrganizerItemAbstractRequest::ItemFetchByIdRequest);
+    QVERIFY(ifr.type() == QOrganizerAbstractRequest::ItemFetchByIdRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!ifr.isActive());
@@ -666,12 +666,12 @@ void tst_QOrganizerItemAsync::itemFetchById()
     QVERIFY(!ifr.cancel());
     QVERIFY(!ifr.waitForFinished());
     qRegisterMetaType<QOrganizerItemFetchByIdRequest*>("QOrganizerItemFetchByIdRequest*");
-    QThreadSignalSpy spy(&ifr, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QThreadSignalSpy spy(&ifr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QVERIFY(!ifr.cancel()); // not started
 
     QVERIFY(ifr.start());
     //QVERIFY(ifr.isFinished() || !ifr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY((ifr.isActive() && ifr.state() == QOrganizerItemAbstractRequest::ActiveState) || ifr.isFinished());
+    QVERIFY((ifr.isActive() && ifr.state() == QOrganizerAbstractRequest::ActiveState) || ifr.isFinished());
     QVERIFY(ifr.waitForFinished());
     QVERIFY(ifr.isFinished());
 
@@ -691,9 +691,9 @@ XXX TODO: fetchbyid request for items as well as items!!! */
 void tst_QOrganizerItemAsync::itemIdFetch()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
+    QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
     QOrganizerItemLocalIdFetchRequest ifr;
-    QVERIFY(ifr.type() == QOrganizerItemAbstractRequest::ItemLocalIdFetchRequest);
+    QVERIFY(ifr.type() == QOrganizerAbstractRequest::ItemLocalIdFetchRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!ifr.isActive());
@@ -712,13 +712,13 @@ void tst_QOrganizerItemAsync::itemIdFetch()
     QVERIFY(!ifr.waitForFinished());
     qRegisterMetaType<QOrganizerItemLocalIdFetchRequest*>("QOrganizerItemLocalIdFetchRequest*");
 
-    QThreadSignalSpy spy(&ifr, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QThreadSignalSpy spy(&ifr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     ifr.setFilter(fil);
     QCOMPARE(ifr.filter(), fil);
     QVERIFY(!ifr.cancel()); // not started
     QVERIFY(ifr.start());
 
-    QVERIFY((ifr.isActive() &&ifr.state() == QOrganizerItemAbstractRequest::ActiveState) || ifr.isFinished());
+    QVERIFY((ifr.isActive() &&ifr.state() == QOrganizerAbstractRequest::ActiveState) || ifr.isFinished());
     //QVERIFY(ifr.isFinished() || !ifr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(ifr.waitForFinished());
     QVERIFY(ifr.isFinished());
@@ -738,7 +738,7 @@ void tst_QOrganizerItemAsync::itemIdFetch()
     QVERIFY(!ifr.cancel()); // not started
 
     QVERIFY(ifr.start());
-    QVERIFY((ifr.isActive() && ifr.state() == QOrganizerItemAbstractRequest::ActiveState) || ifr.isFinished());
+    QVERIFY((ifr.isActive() && ifr.state() == QOrganizerAbstractRequest::ActiveState) || ifr.isFinished());
     //QVERIFY(ifr.isFinished() || !ifr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(ifr.waitForFinished());
     QVERIFY(ifr.isFinished());
@@ -760,7 +760,7 @@ void tst_QOrganizerItemAsync::itemIdFetch()
     QCOMPARE(ifr.sorting(), sorting);
     QVERIFY(!ifr.cancel()); // not started
     QVERIFY(ifr.start());
-    QVERIFY((ifr.isActive() && ifr.state() == QOrganizerItemAbstractRequest::ActiveState) || ifr.isFinished());
+    QVERIFY((ifr.isActive() && ifr.state() == QOrganizerAbstractRequest::ActiveState) || ifr.isFinished());
     //QVERIFY(ifr.isFinished() || !ifr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(ifr.waitForFinished());
     QVERIFY(ifr.isFinished());
@@ -842,12 +842,12 @@ void tst_QOrganizerItemAsync::itemIdFetch()
 void tst_QOrganizerItemAsync::itemRemove()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
+    QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
 
     qRegisterMetaType<QList<QOrganizerItemLocalId> >("QList<QOrganizerItemLocalId>");
 
     QOrganizerItemRemoveRequest irr;
-    QVERIFY(irr.type() == QOrganizerItemAbstractRequest::ItemRemoveRequest);
+    QVERIFY(irr.type() == QOrganizerAbstractRequest::ItemRemoveRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!irr.isActive());
@@ -891,14 +891,14 @@ void tst_QOrganizerItemAsync::itemRemove()
     QVERIFY(!irr.cancel());
     QVERIFY(!irr.waitForFinished());
     qRegisterMetaType<QOrganizerItemRemoveRequest*>("QOrganizerItemRemoveRequest*");
-    QThreadSignalSpy spy(&irr, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QThreadSignalSpy spy(&irr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QVERIFY(!irr.cancel()); // not started
 
     QVERIFY(!oim->itemIds(dfil).isEmpty());
 
     QVERIFY(irr.start());
 
-    QVERIFY((irr.isActive() &&irr.state() == QOrganizerItemAbstractRequest::ActiveState) || irr.isFinished());
+    QVERIFY((irr.isActive() &&irr.state() == QOrganizerAbstractRequest::ActiveState) || irr.isFinished());
     //QVERIFY(irr.isFinished() || !irr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(irr.waitForFinished());
     QVERIFY(irr.isFinished());
@@ -916,7 +916,7 @@ void tst_QOrganizerItemAsync::itemRemove()
     QVERIFY(!irr.cancel()); // not started
     QVERIFY(irr.start());
 
-    QVERIFY((irr.isActive() && irr.state() == QOrganizerItemAbstractRequest::ActiveState) || irr.isFinished());
+    QVERIFY((irr.isActive() && irr.state() == QOrganizerAbstractRequest::ActiveState) || irr.isFinished());
     //QVERIFY(irr.isFinished() || !irr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(irr.waitForFinished());
     QVERIFY(irr.isFinished());
@@ -1003,9 +1003,9 @@ void tst_QOrganizerItemAsync::itemRemove()
 void tst_QOrganizerItemAsync::itemSave()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
+    QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
     QOrganizerItemSaveRequest isr;
-    QVERIFY(isr.type() == QOrganizerItemAbstractRequest::ItemSaveRequest);
+    QVERIFY(isr.type() == QOrganizerAbstractRequest::ItemSaveRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!isr.isActive());
@@ -1029,13 +1029,13 @@ void tst_QOrganizerItemAsync::itemSave()
     QVERIFY(!isr.cancel());
     QVERIFY(!isr.waitForFinished());
     qRegisterMetaType<QOrganizerItemSaveRequest*>("QOrganizerItemSaveRequest*");
-    QThreadSignalSpy spy(&isr, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QThreadSignalSpy spy(&isr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     isr.setItem(testTodo);
     QCOMPARE(isr.items(), saveList);
     QVERIFY(!isr.cancel()); // not started
     QVERIFY(isr.start());
 
-    QVERIFY((isr.isActive() && isr.state() == QOrganizerItemAbstractRequest::ActiveState) || isr.isFinished());
+    QVERIFY((isr.isActive() && isr.state() == QOrganizerAbstractRequest::ActiveState) || isr.isFinished());
     //QVERIFY(isr.isFinished() || !isr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(isr.waitForFinished());
     QVERIFY(isr.isFinished());
@@ -1048,7 +1048,7 @@ void tst_QOrganizerItemAsync::itemSave()
     result << oim->item(expected.first().id().localId());
     //some backends add extra fields, so this doesn't work:
     //QCOMPARE(result, expected);
-    // XXX: really, we should use isSuperset() from tst_QOrganizerItemManager, but this will do for now:
+    // XXX: really, we should use isSuperset() from tst_QOrganizerManager, but this will do for now:
     QVERIFY(result.first().detail<QOrganizerItemDescription>() == description);
     QCOMPARE(oim->itemIds().size(), originalCount + 1);
 
@@ -1064,10 +1064,10 @@ void tst_QOrganizerItemAsync::itemSave()
     QVERIFY(!isr.cancel()); // not started
     QVERIFY(isr.start());
 
-    QVERIFY((isr.isActive() && isr.state() == QOrganizerItemAbstractRequest::ActiveState) || isr.isFinished());
+    QVERIFY((isr.isActive() && isr.state() == QOrganizerAbstractRequest::ActiveState) || isr.isFinished());
     //QVERIFY(isr.isFinished() || !isr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(isr.waitForFinished());
-    QVERIFY(isr.error() == QOrganizerItemManager::NoError); // if this fails, it means that the backend doesn't support Priority...
+    QVERIFY(isr.error() == QOrganizerManager::NoError); // if this fails, it means that the backend doesn't support Priority...
     QVERIFY(isr.isFinished());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
@@ -1079,7 +1079,7 @@ void tst_QOrganizerItemAsync::itemSave()
 
     //here we can't compare the whole item details, testTodo would be updated by async call because we just use QThreadSignalSpy to receive signals.
     //QVERIFY(containsIgnoringTimestamps(result, testTodo));
-    // XXX: really, we should use isSuperset() from tst_QOrganizerItemManager, but this will do for now:
+    // XXX: really, we should use isSuperset() from tst_QOrganizerManager, but this will do for now:
     QVERIFY(result.first().detail<QOrganizerItemPriority>().priority() == priority.priority());
     QCOMPARE(oim->itemIds().size(), originalCount + 1);
 
@@ -1178,7 +1178,7 @@ void tst_QOrganizerItemAsync::itemSave()
 void tst_QOrganizerItemAsync::itemPartialSave()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
+    QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
 
 /* XXX TODO: partial save for organizer items as well as items!!!
 
@@ -1200,15 +1200,15 @@ void tst_QOrganizerItemAsync::itemPartialSave()
     isr.setItems(items);
     isr.setDefinitionMask(QStringList(QOrganizerItemEmailAddress::DefinitionName));
     qRegisterMetaType<QOrganizerItemSaveRequest*>("QOrganizerItemSaveRequest*");
-    QThreadSignalSpy spy(&isr, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QThreadSignalSpy spy(&isr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QVERIFY(isr.start());
-    QVERIFY((isr.isActive() && isr.state() == QOrganizerItemAbstractRequest::ActiveState) || isr.isFinished());
+    QVERIFY((isr.isActive() && isr.state() == QOrganizerAbstractRequest::ActiveState) || isr.isFinished());
     QVERIFY(isr.waitForFinished());
     QVERIFY(isr.isFinished());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    QCOMPARE(isr.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(isr.error(), QOrganizerManager::NoError);
     QVERIFY(isr.errorMap().isEmpty());
     items[0] = oim->item(aId);
     QCOMPARE(items[0].detail<QOrganizerItemPriority>().priority(),
@@ -1222,7 +1222,7 @@ void tst_QOrganizerItemAsync::itemPartialSave()
     isr.setDefinitionMask(QStringList(QOrganizerItemEmailAddress::DefinitionName));
     QVERIFY(isr.start());
     QVERIFY(isr.waitForFinished());
-    QCOMPARE(isr.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(isr.error(), QOrganizerManager::NoError);
     QVERIFY(isr.errorMap().isEmpty());
     items[1] = oim->item(bId);
     QCOMPARE(items[1].detail<QOrganizerItemEmailAddress>().emailAddress(), QString("me@example.com"));
@@ -1239,7 +1239,7 @@ void tst_QOrganizerItemAsync::itemPartialSave()
     isr.setDefinitionMask(QStringList(QOrganizerItemEmailAddress::DefinitionName));
     QVERIFY(isr.start());
     QVERIFY(isr.waitForFinished());
-    QCOMPARE(isr.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(isr.error(), QOrganizerManager::NoError);
     QVERIFY(isr.errorMap().isEmpty());
     items[1] = oim->item(bId);
     QCOMPARE(items[1].details<QOrganizerItemEmailAddress>().count(), 0);
@@ -1254,7 +1254,7 @@ void tst_QOrganizerItemAsync::itemPartialSave()
     isr.setDefinitionMask(QStringList(QOrganizerItemOnlineAccount::DefinitionName));
     QVERIFY(isr.start());
     QVERIFY(isr.waitForFinished());
-    QCOMPARE(isr.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(isr.error(), QOrganizerManager::NoError);
     QVERIFY(isr.errorMap().isEmpty());
     items = isr.items();
     QCOMPARE(items.size()-1, 3);  // Just check that we are dealing with the item at index 3
@@ -1272,7 +1272,7 @@ void tst_QOrganizerItemAsync::itemPartialSave()
     isr.setDefinitionMask(QStringList(QOrganizerItemPriority::DefinitionName));
     QVERIFY(isr.start());
     QVERIFY(isr.waitForFinished());
-    QCOMPARE(isr.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(isr.error(), QOrganizerManager::NoError);
     QVERIFY(isr.errorMap().isEmpty());
     items = isr.items();
     QCOMPARE(items.size()-1, 4);  // Just check that we are dealing with the item at index 4
@@ -1293,11 +1293,11 @@ void tst_QOrganizerItemAsync::itemPartialSave()
     isr.setDefinitionMask(QStringList("BadDetail"));
     QVERIFY(isr.start());
     QVERIFY(isr.waitForFinished());
-    QVERIFY(isr.error() != QOrganizerItemManager::NoError);
-    QMap<int, QOrganizerItemManager::Error> errorMap(isr.errorMap());
+    QVERIFY(isr.error() != QOrganizerManager::NoError);
+    QMap<int, QOrganizerManager::Error> errorMap(isr.errorMap());
     QCOMPARE(errorMap.count(), 2);
-    QCOMPARE(errorMap[3], QOrganizerItemManager::DoesNotExistError);
-    QCOMPARE(errorMap[4], QOrganizerItemManager::InvalidDetailError);
+    QCOMPARE(errorMap[3], QOrganizerManager::DoesNotExistError);
+    QCOMPARE(errorMap[4], QOrganizerManager::InvalidDetailError);
 
     // 7) Have a non existing item in the middle followed by a save error
     badId = id3;
@@ -1307,11 +1307,11 @@ void tst_QOrganizerItemAsync::itemPartialSave()
     isr.setDefinitionMask(QStringList("BadDetail"));
     QVERIFY(isr.start());
     QVERIFY(isr.waitForFinished());
-    QVERIFY(isr.error() != QOrganizerItemManager::NoError);
+    QVERIFY(isr.error() != QOrganizerManager::NoError);
     errorMap = isr.errorMap();
     QCOMPARE(errorMap.count(), 2);
-    QCOMPARE(errorMap[3], QOrganizerItemManager::DoesNotExistError);
-    QCOMPARE(errorMap[4], QOrganizerItemManager::InvalidDetailError);
+    QCOMPARE(errorMap[3], QOrganizerManager::DoesNotExistError);
+    QCOMPARE(errorMap[4], QOrganizerManager::InvalidDetailError);
 
 XXX TODO: partial save for organizer items as well as items!!! */
 }
@@ -1319,9 +1319,9 @@ XXX TODO: partial save for organizer items as well as items!!! */
 void tst_QOrganizerItemAsync::definitionFetch()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
+    QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
     QOrganizerItemDetailDefinitionFetchRequest dfr;
-    QVERIFY(dfr.type() == QOrganizerItemAbstractRequest::DetailDefinitionFetchRequest);
+    QVERIFY(dfr.type() == QOrganizerAbstractRequest::DetailDefinitionFetchRequest);
     QVERIFY(dfr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeNote))); // ensure ctor sets item type correctly.
     dfr.setItemType(QOrganizerItemType::TypeEvent);
     QVERIFY(dfr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeEvent)));
@@ -1341,12 +1341,12 @@ void tst_QOrganizerItemAsync::definitionFetch()
     QVERIFY(!dfr.cancel());
     QVERIFY(!dfr.waitForFinished());
     qRegisterMetaType<QOrganizerItemDetailDefinitionFetchRequest*>("QOrganizerItemDetailDefinitionFetchRequest*");
-    QThreadSignalSpy spy(&dfr, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QThreadSignalSpy spy(&dfr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     dfr.setDefinitionNames(QStringList());
     QVERIFY(!dfr.cancel()); // not started
     QVERIFY(dfr.start());
 
-    QVERIFY((dfr.isActive() && dfr.state() == QOrganizerItemAbstractRequest::ActiveState) || dfr.isFinished());
+    QVERIFY((dfr.isActive() && dfr.state() == QOrganizerAbstractRequest::ActiveState) || dfr.isFinished());
     //QVERIFY(dfr.isFinished() || !dfr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(dfr.waitForFinished());
     QVERIFY(dfr.isFinished());
@@ -1367,7 +1367,7 @@ void tst_QOrganizerItemAsync::definitionFetch()
     QVERIFY(!dfr.cancel()); // not started
     QVERIFY(dfr.start());
 
-    QVERIFY((dfr.isActive() && dfr.state() == QOrganizerItemAbstractRequest::ActiveState) || dfr.isFinished());
+    QVERIFY((dfr.isActive() && dfr.state() == QOrganizerAbstractRequest::ActiveState) || dfr.isFinished());
     //QVERIFY(dfr.isFinished() || !dfr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(dfr.waitForFinished());
     QVERIFY(dfr.isFinished());
@@ -1443,12 +1443,12 @@ void tst_QOrganizerItemAsync::definitionRemove()
 {
     QFETCH(QString, uri);
 
-    QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
-    if (!oim->hasFeature(QOrganizerItemManager::MutableDefinitions)) {
+    QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
+    if (!oim->hasFeature(QOrganizerManager::MutableDefinitions)) {
        QSKIP("This item manager does not support mutable definitions, can't remove a definition!", SkipSingle);
     }
     QOrganizerItemDetailDefinitionRemoveRequest drr;
-    QVERIFY(drr.type() == QOrganizerItemAbstractRequest::DetailDefinitionRemoveRequest);
+    QVERIFY(drr.type() == QOrganizerAbstractRequest::DetailDefinitionRemoveRequest);
     QVERIFY(drr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeNote))); // ensure ctor sets item type correctly.
     drr.setItemType(QOrganizerItemType::TypeEvent);
     drr.setDefinitionNames(QStringList());
@@ -1473,12 +1473,12 @@ void tst_QOrganizerItemAsync::definitionRemove()
     QVERIFY(!drr.cancel());
     QVERIFY(!drr.waitForFinished());
     qRegisterMetaType<QOrganizerItemDetailDefinitionRemoveRequest*>("QOrganizerItemDetailDefinitionRemoveRequest*");
-    QThreadSignalSpy spy(&drr, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QThreadSignalSpy spy(&drr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QVERIFY(drr.definitionNames() == removeIds);
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
 
-    QVERIFY((drr.isActive() && drr.state() == QOrganizerItemAbstractRequest::ActiveState) || drr.isFinished());
+    QVERIFY((drr.isActive() && drr.state() == QOrganizerAbstractRequest::ActiveState) || drr.isFinished());
     //QVERIFY(drr.isFinished() || !drr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(drr.waitForFinished());
     QVERIFY(drr.isFinished());
@@ -1487,14 +1487,14 @@ void tst_QOrganizerItemAsync::definitionRemove()
 
     QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().size(), originalCount - 1);
     oim->detailDefinition(removeIds.first(), QOrganizerItemType::TypeEvent); // check that it has already been removed.
-    QCOMPARE(oim->error(), QOrganizerItemManager::DoesNotExistError);
+    QCOMPARE(oim->error(), QOrganizerManager::DoesNotExistError);
 
     // remove (asynchronously) a nonexistent group - should fail.
     drr.setDefinitionNames(removeIds);
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
 
-    QVERIFY((drr.isActive() && drr.state() == QOrganizerItemAbstractRequest::ActiveState) || drr.isFinished());
+    QVERIFY((drr.isActive() && drr.state() == QOrganizerAbstractRequest::ActiveState) || drr.isFinished());
     //QVERIFY(drr.isFinished() || !drr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(drr.waitForFinished());
     QVERIFY(drr.isFinished());
@@ -1502,7 +1502,7 @@ void tst_QOrganizerItemAsync::definitionRemove()
     spy.clear();
 
     QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().size(), originalCount - 1); // hasn't changed
-    QCOMPARE(drr.error(), QOrganizerItemManager::DoesNotExistError);
+    QCOMPARE(drr.error(), QOrganizerManager::DoesNotExistError);
 
     // remove with list containing one valid and one invalid id.
     removeIds << oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().first();
@@ -1510,7 +1510,7 @@ void tst_QOrganizerItemAsync::definitionRemove()
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
 
-    QVERIFY((drr.isActive() && drr.state() == QOrganizerItemAbstractRequest::ActiveState) || drr.isFinished());
+    QVERIFY((drr.isActive() && drr.state() == QOrganizerAbstractRequest::ActiveState) || drr.isFinished());
     //QVERIFY(drr.isFinished() || !drr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(drr.waitForFinished());
     QVERIFY(drr.isFinished());
@@ -1520,7 +1520,7 @@ void tst_QOrganizerItemAsync::definitionRemove()
     QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().size(), originalCount - 2); // only one more has been removed
     QVERIFY(drr.errorMap().count() == 1);
     QVERIFY(drr.errorMap().keys().contains(0));
-    QCOMPARE(drr.errorMap().value(0), QOrganizerItemManager::DoesNotExistError);
+    QCOMPARE(drr.errorMap().value(0), QOrganizerManager::DoesNotExistError);
 
     // remove with empty list - nothing should happen.
     removeIds.clear();
@@ -1537,7 +1537,7 @@ void tst_QOrganizerItemAsync::definitionRemove()
     spy.clear();
 
     QCOMPARE(oim->detailDefinitions(QOrganizerItemType::TypeEvent).keys().size(), originalCount - 2); // hasn't changed
-    QCOMPARE(drr.error(), QOrganizerItemManager::NoError);  // no error but no effect.
+    QCOMPARE(drr.error(), QOrganizerManager::NoError);  // no error but no effect.
 
     // cancelling
     removeIds.clear();
@@ -1611,15 +1611,15 @@ void tst_QOrganizerItemAsync::definitionSave()
 {
     QFETCH(QString, uri);
 
-    QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
+    QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
 
-    if (!oim->hasFeature(QOrganizerItemManager::MutableDefinitions)) {
+    if (!oim->hasFeature(QOrganizerManager::MutableDefinitions)) {
 
        QSKIP("This item manager does not support mutable definitions, can't save a definition!", SkipSingle);
     }
     
     QOrganizerItemDetailDefinitionSaveRequest dsr;
-    QVERIFY(dsr.type() == QOrganizerItemAbstractRequest::DetailDefinitionSaveRequest);
+    QVERIFY(dsr.type() == QOrganizerAbstractRequest::DetailDefinitionSaveRequest);
     QVERIFY(dsr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeNote))); // ensure ctor sets item type correctly
     dsr.setItemType(QOrganizerItemType::TypeEvent);
     QVERIFY(dsr.itemType() == QString(QLatin1String(QOrganizerItemType::TypeEvent)));
@@ -1649,13 +1649,13 @@ void tst_QOrganizerItemAsync::definitionSave()
     QVERIFY(!dsr.cancel());
     QVERIFY(!dsr.waitForFinished());
     qRegisterMetaType<QOrganizerItemDetailDefinitionSaveRequest*>("QOrganizerItemDetailDefinitionSaveRequest*");
-    QThreadSignalSpy spy(&dsr, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QThreadSignalSpy spy(&dsr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     dsr.setDefinition(testDef);
     QCOMPARE(dsr.definitions(), saveList);
     QVERIFY(!dsr.cancel()); // not started
     QVERIFY(dsr.start());
 
-    QVERIFY((dsr.isActive() && dsr.state() == QOrganizerItemAbstractRequest::ActiveState) || dsr.isFinished());
+    QVERIFY((dsr.isActive() && dsr.state() == QOrganizerAbstractRequest::ActiveState) || dsr.isFinished());
     //QVERIFY(dsr.isFinished() || !dsr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(dsr.waitForFinished());
     QVERIFY(dsr.isFinished());
@@ -1679,7 +1679,7 @@ void tst_QOrganizerItemAsync::definitionSave()
     QVERIFY(!dsr.cancel()); // not started
     QVERIFY(dsr.start());
 
-    QVERIFY((dsr.isActive() && dsr.state() == QOrganizerItemAbstractRequest::ActiveState) || dsr.isFinished());
+    QVERIFY((dsr.isActive() && dsr.state() == QOrganizerAbstractRequest::ActiveState) || dsr.isFinished());
     //QVERIFY(dsr.isFinished() || !dsr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(dsr.waitForFinished());
     QVERIFY(dsr.isFinished());
@@ -1777,10 +1777,10 @@ void tst_QOrganizerItemAsync::definitionSave()
 void tst_QOrganizerItemAsync::collectionFetch()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
+    QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
 
     QOrganizerCollectionFetchRequest cfr;
-    QVERIFY(cfr.type() == QOrganizerItemAbstractRequest::CollectionFetchRequest);
+    QVERIFY(cfr.type() == QOrganizerAbstractRequest::CollectionFetchRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!cfr.isActive());
@@ -1797,12 +1797,12 @@ void tst_QOrganizerItemAsync::collectionFetch()
     QVERIFY(!cfr.cancel());
     QVERIFY(!cfr.waitForFinished());
     qRegisterMetaType<QOrganizerCollectionFetchRequest*>("QOrganizerCollectionFetchRequest*");
-    QThreadSignalSpy spy(&cfr, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QThreadSignalSpy spy(&cfr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QVERIFY(!cfr.cancel()); // not started
 
     QVERIFY(cfr.start());
     //QVERIFY(cfr.isFinished() || !cfr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY((cfr.isActive() && cfr.state() == QOrganizerItemAbstractRequest::ActiveState) || cfr.isFinished());
+    QVERIFY((cfr.isActive() && cfr.state() == QOrganizerAbstractRequest::ActiveState) || cfr.isFinished());
     QVERIFY(cfr.waitForFinished());
     QVERIFY(cfr.isFinished());
 
@@ -1868,7 +1868,7 @@ void tst_QOrganizerItemAsync::collectionFetch()
         QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         QVERIFY(!cfr.isActive());
-        QVERIFY(cfr.state() == QOrganizerItemAbstractRequest::CanceledState);
+        QVERIFY(cfr.state() == QOrganizerAbstractRequest::CanceledState);
         break;
     }
 
@@ -1876,7 +1876,7 @@ void tst_QOrganizerItemAsync::collectionFetch()
     QOrganizerCollectionFetchRequest *cfr2 = new QOrganizerCollectionFetchRequest();
     QPointer<QObject> obj(cfr2);
     cfr2->setManager(oim.data());
-    connect(cfr2, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(deleteRequest()));
+    connect(cfr2, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), this, SLOT(deleteRequest()));
     QVERIFY(cfr2->start());
     int i = 100;
     // at this point we can't even call wait for finished..
@@ -1890,9 +1890,9 @@ void tst_QOrganizerItemAsync::collectionFetch()
 void tst_QOrganizerItemAsync::collectionRemove()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
+    QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
     QOrganizerCollectionRemoveRequest crr;
-    QVERIFY(crr.type() == QOrganizerItemAbstractRequest::CollectionRemoveRequest);
+    QVERIFY(crr.type() == QOrganizerAbstractRequest::CollectionRemoveRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!crr.isActive());
@@ -1913,10 +1913,10 @@ void tst_QOrganizerItemAsync::collectionRemove()
     QVERIFY(!crr.cancel());
     QVERIFY(!crr.waitForFinished());
     qRegisterMetaType<QOrganizerCollectionRemoveRequest*>("QOrganizerCollectionRemoveRequest*");
-    QThreadSignalSpy spy(&crr, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QThreadSignalSpy spy(&crr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QVERIFY(!crr.cancel()); // not started
     QVERIFY(crr.start());
-    QVERIFY((crr.isActive() &&crr.state() == QOrganizerItemAbstractRequest::ActiveState) || crr.isFinished());
+    QVERIFY((crr.isActive() &&crr.state() == QOrganizerAbstractRequest::ActiveState) || crr.isFinished());
     //QVERIFY(crr.isFinished() || !crr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(crr.waitForFinished());
     QVERIFY(crr.isFinished());
@@ -1936,7 +1936,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
     QVERIFY(!crr.cancel()); // not started
     QVERIFY(crr.start());
 
-    QVERIFY((crr.isActive() && crr.state() == QOrganizerItemAbstractRequest::ActiveState) || crr.isFinished());
+    QVERIFY((crr.isActive() && crr.state() == QOrganizerAbstractRequest::ActiveState) || crr.isFinished());
     //QVERIFY(crr.isFinished() || !crr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(crr.waitForFinished());
     QVERIFY(crr.isFinished());
@@ -2034,9 +2034,9 @@ void tst_QOrganizerItemAsync::collectionRemove()
 void tst_QOrganizerItemAsync::collectionSave()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
+    QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
     QOrganizerCollectionSaveRequest csr;
-    QVERIFY(csr.type() == QOrganizerItemAbstractRequest::CollectionSaveRequest);
+    QVERIFY(csr.type() == QOrganizerAbstractRequest::CollectionSaveRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!csr.isActive());
@@ -2059,13 +2059,13 @@ void tst_QOrganizerItemAsync::collectionSave()
     QVERIFY(!csr.cancel());
     QVERIFY(!csr.waitForFinished());
     qRegisterMetaType<QOrganizerCollectionSaveRequest*>("QOrganizerCollectionSaveRequest*");
-    QThreadSignalSpy spy(&csr, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QThreadSignalSpy spy(&csr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     csr.setCollection(testCollection);
     QCOMPARE(csr.collections(), saveList);
     QVERIFY(!csr.cancel()); // not started
     QVERIFY(csr.start());
 
-    QVERIFY((csr.isActive() && csr.state() == QOrganizerItemAbstractRequest::ActiveState) || csr.isFinished());
+    QVERIFY((csr.isActive() && csr.state() == QOrganizerAbstractRequest::ActiveState) || csr.isFinished());
     //QVERIFY(csr.isFinished() || !csr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(csr.waitForFinished());
     QVERIFY(csr.isFinished());
@@ -2094,7 +2094,7 @@ void tst_QOrganizerItemAsync::collectionSave()
     QVERIFY(!csr.cancel()); // not started
     QVERIFY(csr.start());
 
-    QVERIFY((csr.isActive() && csr.state() == QOrganizerItemAbstractRequest::ActiveState) || csr.isFinished());
+    QVERIFY((csr.isActive() && csr.state() == QOrganizerAbstractRequest::ActiveState) || csr.isFinished());
     //QVERIFY(csr.isFinished() || !csr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY(csr.waitForFinished());
 
@@ -2208,7 +2208,7 @@ void tst_QOrganizerItemAsync::testQuickDestruction()
     // this is to test for segfaults etc.
     for (int i = 0; i < 10; i++) {
         QOrganizerItemFetchRequest ifr;
-        QOrganizerItemManager *cm = prepareModel(uri);
+        QOrganizerManager *cm = prepareModel(uri);
         ifr.setManager(cm);
         ifr.start();
         delete cm;
@@ -2217,7 +2217,7 @@ void tst_QOrganizerItemAsync::testQuickDestruction()
     // this is to test for segfaults, etc.
     for (int i = 0; i < 10; i++) {
         QOrganizerItemFetchRequest *ifr = new QOrganizerItemFetchRequest;
-        QOrganizerItemManager *cm = prepareModel(uri);
+        QOrganizerManager *cm = prepareModel(uri);
         ifr->setManager(cm);
         ifr->start();
         delete ifr;
@@ -2227,7 +2227,7 @@ void tst_QOrganizerItemAsync::testQuickDestruction()
     // this is to test for segfaults, etc.
     for (int i = 0; i < 10; i++) {
         QOrganizerItemFetchRequest *ifr = new QOrganizerItemFetchRequest;
-        QOrganizerItemManager *cm = prepareModel(uri);
+        QOrganizerManager *cm = prepareModel(uri);
         ifr->setManager(cm);
         ifr->start();
         delete cm;
@@ -2235,7 +2235,7 @@ void tst_QOrganizerItemAsync::testQuickDestruction()
     }
     // in this test, we create a manager, fire off a request, and delete the request, all in quick succession
     // this is to test for segfaults, etc.
-    QOrganizerItemManager *cm = prepareModel(uri);
+    QOrganizerManager *cm = prepareModel(uri);
     for (int i = 0; i < 10; i++) {
         QOrganizerItemFetchRequest *ifr = new QOrganizerItemFetchRequest;
         ifr->setManager(cm);
@@ -2248,7 +2248,7 @@ void tst_QOrganizerItemAsync::testQuickDestruction()
 void tst_QOrganizerItemAsync::threadDelivery()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> oim(prepareModel(uri));
+    QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
     m_mainThreadId = oim->thread()->currentThreadId();
     m_resultsAvailableSlotThreadId = m_mainThreadId;
 
@@ -2260,7 +2260,7 @@ void tst_QOrganizerItemAsync::threadDelivery()
 
     int totalWaitTime = 0;
     QTest::qWait(1); // force it to process events at least once.
-    while (req->state() != QOrganizerItemAbstractRequest::FinishedState) {
+    while (req->state() != QOrganizerAbstractRequest::FinishedState) {
         // ensure that the progress signal was delivered to the main thread.
         QCOMPARE(m_mainThreadId, m_resultsAvailableSlotThreadId);
 
@@ -2293,7 +2293,7 @@ void tst_QOrganizerItemAsync::addManagers(QStringList stringlist)
     QTest::addColumn<QString>("uri");
 
     // retrieve the list of available managers
-    QStringList managers = QOrganizerItemManager::availableManagers();
+    QStringList managers = QOrganizerManager::availableManagers();
 
     // remove ones that we know will not pass
     if (!stringlist.contains("invalid"))
@@ -2307,17 +2307,17 @@ void tst_QOrganizerItemAsync::addManagers(QStringList stringlist)
 
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;
-        QTest::newRow(QString("mgr='%1'").arg(mgr).toLatin1().constData()) << QOrganizerItemManager::buildUri(mgr, params);
+        QTest::newRow(QString("mgr='%1'").arg(mgr).toLatin1().constData()) << QOrganizerManager::buildUri(mgr, params);
         if (mgr == "memory") {
-            params.insert("id", "tst_QOrganizerItemManager");
-            QTest::newRow(QString("mgr='%1', params").arg(mgr).toLatin1().constData()) << QOrganizerItemManager::buildUri(mgr, params);
+            params.insert("id", "tst_QOrganizerManager");
+            QTest::newRow(QString("mgr='%1', params").arg(mgr).toLatin1().constData()) << QOrganizerManager::buildUri(mgr, params);
         }
     }
 }
 
-QOrganizerItemManager* tst_QOrganizerItemAsync::prepareModel(const QString& managerUri)
+QOrganizerManager* tst_QOrganizerItemAsync::prepareModel(const QString& managerUri)
 {
-    QOrganizerItemManager* oim = QOrganizerItemManager::fromUri(managerUri);
+    QOrganizerManager* oim = QOrganizerManager::fromUri(managerUri);
 
     // XXX TODO: ensure that this is the case:
     // there should be no items in the database.

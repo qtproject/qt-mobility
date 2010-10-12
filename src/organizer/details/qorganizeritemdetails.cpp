@@ -144,65 +144,65 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDisplayLabel::FieldLabel, "Label");
 
 
 
-/* ==================== QOrganizerEventTimeRange ======================= */
+/* ==================== QOrganizerEventTime ======================= */
 /*!
-   \class QOrganizerEventTimeRange
-   \brief The QOrganizerEventTimeRange class contains the start and end dates and times of a recurring event series,
+   \class QOrganizerEventTime
+   \brief The QOrganizerEventTime class contains the start and end dates and times of a recurring event series,
           or occurrence of an event.
    \inmodule QtOrganizer
    \ingroup organizer-details
 */
 
 /*!
-   \variable QOrganizerEventTimeRange::DefinitionName
+   \variable QOrganizerEventTime::DefinitionName
 
    The constant string which identifies the definition of details
    which contain a start and end timestamps of an event series or event occurrence.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::DefinitionName, "EventTimeRange");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::DefinitionName, "EventTime");
 
 /*!
-   \variable QOrganizerEventTimeRange::FieldEndDateTime
+   \variable QOrganizerEventTime::FieldEndDateTime
 
    The constant key for which the end date and time value is stored in
-   details of the QOrganizerEventTimeRange type.
+   details of the QOrganizerEventTime type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldEndDateTime, "EndDateTime");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldEndDateTime, "EndDateTime");
 
 /*!
-   \variable QOrganizerEventTimeRange::FieldStartDateTime
+   \variable QOrganizerEventTime::FieldStartDateTime
 
    The constant key for which the start date and time value is stored in
-   details of the QOrganizerEventTimeRange type.
+   details of the QOrganizerEventTime type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldStartDateTime, "StartDateTime");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldStartDateTime, "StartDateTime");
 
 /*!
-   \variable QOrganizerEventTimeRange::FieldTimeSpecified
+   \variable QOrganizerEventTime::FieldTimeSpecified
 
    The constant key for the specification of whether the time is significant in the
-   start datetime of the QOrganizerEventTimeRange type.
+   start datetime of the QOrganizerEventTime type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldTimeSpecified, "TimeSpecified");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldTimeSpecified, "TimeSpecified");
 
 
 /*!
-    \fn QOrganizerEventTimeRange::startDateTime() const
+    \fn QOrganizerEventTime::startDateTime() const
     Returns the event timerange's start date and time as QDateTime.
  */
 
 /*!
-    \fn QOrganizerEventTimeRange::setStartDateTime(const QDateTime& startDateTime)
+    \fn QOrganizerEventTime::setStartDateTime(const QDateTime& startDateTime)
     Sets the event timerange's start date and time to \a startDateTime.
  */
 
 /*!
-    \fn QOrganizerEventTimeRange::endDateTime() const
+    \fn QOrganizerEventTime::endDateTime() const
     Returns the event timerange's due date and time as QDateTime.
  */
 
 /*!
-    \fn QOrganizerEventTimeRange::setEndDateTime(const QDateTime& dueDateTime)
+    \fn QOrganizerEventTime::setEndDateTime(const QDateTime& dueDateTime)
     Sets the event timerange's due date and time to \a dueDateTime.
  */
 
@@ -298,40 +298,40 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldOriginalDate, "Origi
  */
 
 
-/* ==================== QOrganizerJournalTimeRange ======================= */
+/* ==================== QOrganizerJournalTime ======================= */
 // XXX TODO: time range or just single instant in time?
 /*!
-   \class QOrganizerJournalTimeRange
+   \class QOrganizerJournalTime
 
-   \brief The QOrganizerJournalTimeRange class contains information about
+   \brief The QOrganizerJournalTime class contains information about
    the date and time for which a journal entry has been created.
    \inmodule QtOrganizer
    \ingroup organizer-details
  */
 
 /*!
-\variable QOrganizerJournalTimeRange::DefinitionName
+\variable QOrganizerJournalTime::DefinitionName
 
 The constant string which identifies the definition of details
 which describe the date and time associated with a journal item.
 */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTimeRange::DefinitionName, "JournalTimeRange");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTime::DefinitionName, "JournalTime");
 
 /*!
-   \variable QOrganizerJournalTimeRange::FieldEntryDateTime
+   \variable QOrganizerJournalTime::FieldEntryDateTime
 
    The constant key for which the date and time of value for a journal entry is
-   stored in details of the QOrganizerJournalTimeRange type.
+   stored in details of the QOrganizerJournalTime type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTimeRange::FieldEntryDateTime, "EntryDateTime");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTime::FieldEntryDateTime, "EntryDateTime");
 
 /*!
-   \fn QOrganizerJournalTimeRange::entryDateTime() const
+   \fn QOrganizerJournalTime::entryDateTime() const
    Returns the journal entry date and time as QDateTime.
  */
 
 /*!
-   \fn QOrganizerJournalTimeRange::setEntryDateTime(const QDateTime& entryDateTime)
+   \fn QOrganizerJournalTime::setEntryDateTime(const QDateTime& entryDateTime)
    Sets the journal entry date and time to \a entryDateTime.
  */
 
@@ -631,15 +631,15 @@ void QOrganizerItemRecurrence::setRecurrenceDates(const QSet<QDate>& rdates)
    \fn QOrganizerItemRecurrence::exceptionRules() const
    Returns a list of exception rules.
  */
-QSet<QOrganizerItemRecurrenceRule> QOrganizerItemRecurrence::exceptionRules() const
+QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::exceptionRules() const
 {
-    return variantValue(FieldExceptionRules).value< QSet<QOrganizerItemRecurrenceRule> >();
+    return variantValue(FieldExceptionRules).value< QSet<QOrganizerRecurrenceRule> >();
 }
 /*!
-   \fn QOrganizerItemRecurrence::setExceptionRules(const QList<QOrganizerItemRecurrenceRule>& xrules)
+   \fn QOrganizerItemRecurrence::setExceptionRules(const QList<QOrganizerRecurrenceRule>& xrules)
    Sets a list of exception rules to \a xrules.
  */
-void QOrganizerItemRecurrence::setExceptionRules(const QSet<QOrganizerItemRecurrenceRule>& xrules)
+void QOrganizerItemRecurrence::setExceptionRules(const QSet<QOrganizerRecurrenceRule>& xrules)
 {
     setValue(FieldExceptionRules, QVariant::fromValue(xrules));
 }
@@ -647,17 +647,17 @@ void QOrganizerItemRecurrence::setExceptionRules(const QSet<QOrganizerItemRecurr
    \fn QOrganizerItemRecurrence::recurrenceRules() const
    Returns a list of recurrence rules.
  */
-QSet<QOrganizerItemRecurrenceRule> QOrganizerItemRecurrence::recurrenceRules() const
+QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::recurrenceRules() const
 {
-    return variantValue(FieldRecurrenceRules).value< QSet<QOrganizerItemRecurrenceRule> >();
+    return variantValue(FieldRecurrenceRules).value< QSet<QOrganizerRecurrenceRule> >();
 }
 
 
 /*!
-   \fn QOrganizerItemRecurrence::setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules)
+   \fn QOrganizerItemRecurrence::setRecurrenceRules(const QList<QOrganizerRecurrenceRule>& rrules)
    Sets a list of recurrence rules to \a rrules.
  */
-void QOrganizerItemRecurrence::setRecurrenceRules(const QSet<QOrganizerItemRecurrenceRule>& rrules)
+void QOrganizerItemRecurrence::setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rrules)
 {
     setValue(FieldRecurrenceRules, QVariant::fromValue(rrules));
 }
@@ -1121,61 +1121,61 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoProgress::FieldFinishedDateTime, "Finishe
   \fn QOrganizerTodoProgress::setPercentageComplete(int percentage)
   Sets the todo progress item's completion percentage to \a percentage.
  */
-/* ==================== QOrganizerTodoTimeRange ======================= */
+/* ==================== QOrganizerTodoTime ======================= */
 /*!
-   \class QOrganizerTodoTimeRange
-   \brief The QOrganizerTodoTimeRange class contains information about the time range of a todo item.
+   \class QOrganizerTodoTime
+   \brief The QOrganizerTodoTime class contains information about the time range of a todo item.
    \inmodule QtOrganizer
    \ingroup organizer-details
  */
 
 /*!
-   \variable QOrganizerTodoTimeRange::DefinitionName
+   \variable QOrganizerTodoTime::DefinitionName
    The constant string which identifies the definition of details which contain time-range information about a todo item.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::DefinitionName, "TodoTimeRange");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::DefinitionName, "TodoTime");
 
 /*!
-   \variable QOrganizerTodoTimeRange::FieldStartDateTime
+   \variable QOrganizerTodoTime::FieldStartDateTime
 
    The constant key of the date time value which describes the date at which
    the todo should be started.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldStartDateTime, "StartDateTime");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldStartDateTime, "StartDateTime");
 
 /*!
-   \variable QOrganizerTodoTimeRange::FieldDueDateTime
+   \variable QOrganizerTodoTime::FieldDueDateTime
 
    The constant key of the date time value which describes the latest date at which
    the todo should be completed.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldDueDateTime, "DueDateTime");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldDueDateTime, "DueDateTime");
 
 /*!
-   \variable QOrganizerTodoTimeRange::FieldTimeSpecified
+   \variable QOrganizerTodoTime::FieldTimeSpecified
 
    The constant key for the specification of whether the time is significant in the
-   start datetime of the QOrganizerTodoTimeRange type.
+   start datetime of the QOrganizerTodoTime type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldTimeSpecified, "TimeSpecified");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldTimeSpecified, "TimeSpecified");
 
 /*!
-    \fn QOrganizerTodoTimeRange::startDateTime() const
+    \fn QOrganizerTodoTime::startDateTime() const
     Returns the todo timerange's start date and time as QDateTime.
  */
 
 /*!
-    \fn QOrganizerTodoTimeRange::setStartDateTime(const QDateTime& startDateTime)
+    \fn QOrganizerTodoTime::setStartDateTime(const QDateTime& startDateTime)
     Sets the todo timerange's start date and time to \a startDateTime.
  */
 
 /*!
-    \fn QOrganizerTodoTimeRange::dueDateTime() const
+    \fn QOrganizerTodoTime::dueDateTime() const
     Returns the todo timerange's due date and time as QDateTime.
  */
 
 /*!
-    \fn QOrganizerTodoTimeRange::setDueDateTime(const QDateTime& dueDateTime)
+    \fn QOrganizerTodoTime::setDueDateTime(const QDateTime& dueDateTime)
     Sets the todo timerange's due date and time to \a dueDateTime.
  */
 

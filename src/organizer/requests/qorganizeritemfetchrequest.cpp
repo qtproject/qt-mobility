@@ -60,7 +60,7 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a new organizer item fetch request whose parent is the specified \a parent */
 QOrganizerItemFetchRequest::QOrganizerItemFetchRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerItemFetchRequestPrivate, parent)
+    : QOrganizerAbstractRequest(new QOrganizerItemFetchRequestPrivate, parent)
 {
 }
 

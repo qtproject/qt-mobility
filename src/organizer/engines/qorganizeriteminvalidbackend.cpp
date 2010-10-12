@@ -46,7 +46,7 @@
 /*!
   \class QOrganizerItemInvalidEngine
   \brief The QOrganizerItemInvalidEngine class provides an implementation of
-  QOrganizerItemManagerEngine whose functions always return an error.
+  QOrganizerManagerEngine whose functions always return an error.
   \inmodule QtOrganizer
   
   The invalid engine may be used as a reference or test engine, but does nothing.

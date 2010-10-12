@@ -46,7 +46,7 @@
 
 #include "qtorganizer.h"
 #include "qorganizeritemchangeset.h"
-#include "qorganizeritemmanagerdataholder.h"
+#include "qorganizermanagerdataholder.h"
 
 #include "qorganizernote.h"
 #include "qorganizerevent.h"
@@ -108,8 +108,8 @@ QTM_USE_NAMESPACE
 //TESTED_FILES=
 
 // to get QFETCH to work with the template expression...
-typedef QMap<QString,QString> tst_QOrganizerItemManager_QStringMap;
-Q_DECLARE_METATYPE(tst_QOrganizerItemManager_QStringMap)
+typedef QMap<QString,QString> tst_QOrganizerManager_QStringMap;
+Q_DECLARE_METATYPE(tst_QOrganizerManager_QStringMap)
 Q_DECLARE_METATYPE(QList<QOrganizerItemLocalId>)
 
 /* A class that no backend can support */
@@ -118,26 +118,26 @@ class UnsupportedMetatype {
 };
 Q_DECLARE_METATYPE(UnsupportedMetatype)
 Q_DECLARE_METATYPE(QOrganizerItem)
-Q_DECLARE_METATYPE(QOrganizerItemManager::Error)
+Q_DECLARE_METATYPE(QOrganizerManager::Error)
 Q_DECLARE_METATYPE(QList<QDate>)
 
-class tst_QOrganizerItemManager : public QObject
+class tst_QOrganizerManager : public QObject
 {
 Q_OBJECT
 
 public:
-    tst_QOrganizerItemManager();
-    virtual ~tst_QOrganizerItemManager();
+    tst_QOrganizerManager();
+    virtual ~tst_QOrganizerManager();
 
 private:
     void dumpOrganizerItemDifferences(const QOrganizerItem& a, const QOrganizerItem& b);
     void dumpOrganizerItem(const QOrganizerItem &c);
-    void dumpOrganizerItems(QOrganizerItemManager *cm);
+    void dumpOrganizerItems(QOrganizerManager *cm);
     bool isSuperset(const QOrganizerItem& ca, const QOrganizerItem& cb);
     QList<QOrganizerItemDetail> removeAllDefaultDetails(const QList<QOrganizerItemDetail>& details);
     void addManagers(); // add standard managers to the data
 
-    QScopedPointer<QOrganizerItemManagerDataHolder> managerDataHolder;
+    QScopedPointer<QOrganizerManagerDataHolder> managerDataHolder;
 
 public slots:
     void initTestCase();
@@ -207,31 +207,31 @@ private slots:
     void recurrence_data() {addManagers();}
 };
 
-tst_QOrganizerItemManager::tst_QOrganizerItemManager()
+tst_QOrganizerManager::tst_QOrganizerManager()
 {
 }
 
-tst_QOrganizerItemManager::~tst_QOrganizerItemManager()
+tst_QOrganizerManager::~tst_QOrganizerManager()
 {
 }
 
-void tst_QOrganizerItemManager::initTestCase()
+void tst_QOrganizerManager::initTestCase()
 {
-    managerDataHolder.reset(new QOrganizerItemManagerDataHolder());
+    managerDataHolder.reset(new QOrganizerManagerDataHolder());
 
     /* Make sure these other test plugins are NOT loaded by default */
     // These are now removed from the list of managers in addManagers()
-    //QVERIFY(!QOrganizerItemManager::availableManagers().contains("testdummy"));
-    //QVERIFY(!QOrganizerItemManager::availableManagers().contains("teststaticdummy"));
-    //QVERIFY(!QOrganizerItemManager::availableManagers().contains("maliciousplugin"));
+    //QVERIFY(!QOrganizerManager::availableManagers().contains("testdummy"));
+    //QVERIFY(!QOrganizerManager::availableManagers().contains("teststaticdummy"));
+    //QVERIFY(!QOrganizerManager::availableManagers().contains("maliciousplugin"));
 }
 
-void tst_QOrganizerItemManager::cleanupTestCase()
+void tst_QOrganizerManager::cleanupTestCase()
 {
     managerDataHolder.reset(0);
 }
 
-void tst_QOrganizerItemManager::dumpOrganizerItemDifferences(const QOrganizerItem& ca, const QOrganizerItem& cb)
+void tst_QOrganizerManager::dumpOrganizerItemDifferences(const QOrganizerItem& ca, const QOrganizerItem& cb)
 {
     // Try to narrow down the differences
     QOrganizerItem a(ca);
@@ -280,7 +280,7 @@ void tst_QOrganizerItemManager::dumpOrganizerItemDifferences(const QOrganizerIte
     }
 }
 
-bool tst_QOrganizerItemManager::isSuperset(const QOrganizerItem& ca, const QOrganizerItem& cb)
+bool tst_QOrganizerManager::isSuperset(const QOrganizerItem& ca, const QOrganizerItem& cb)
 {
     // returns true if item ca is a superset of item cb
     // we use this test instead of equality because dynamic information
@@ -347,9 +347,9 @@ bool tst_QOrganizerItemManager::isSuperset(const QOrganizerItem& ca, const QOrga
     return true;
 }
 
-void tst_QOrganizerItemManager::dumpOrganizerItem(const QOrganizerItem& item)
+void tst_QOrganizerManager::dumpOrganizerItem(const QOrganizerItem& item)
 {
-    QOrganizerItemManager m;
+    QOrganizerManager m;
     qDebug() << "OrganizerItem: " << item.id().localId() << "(" << item.displayLabel() << ")";
     QList<QOrganizerItemDetail> details = item.details();
     foreach(QOrganizerItemDetail d, details) {
@@ -358,7 +358,7 @@ void tst_QOrganizerItemManager::dumpOrganizerItem(const QOrganizerItem& item)
     }
 }
 
-void tst_QOrganizerItemManager::dumpOrganizerItems(QOrganizerItemManager *cm)
+void tst_QOrganizerManager::dumpOrganizerItems(QOrganizerManager *cm)
 {
     QList<QOrganizerItemLocalId> ids = cm->itemIds();
 
@@ -370,7 +370,7 @@ void tst_QOrganizerItemManager::dumpOrganizerItems(QOrganizerItemManager *cm)
     }
 }
 
-void tst_QOrganizerItemManager::uriParsing_data()
+void tst_QOrganizerManager::uriParsing_data()
 {
     QTest::addColumn<QString>("uri");
     QTest::addColumn<bool>("good"); // is this a good uri or not
@@ -387,14 +387,14 @@ void tst_QOrganizerItemManager::uriParsing_data()
     inparameters2.insert("and& an", " &amp;");
     inparameters2.insert("and an ", "=quals");
 
-    QTest::newRow("built") << QOrganizerItemManager::buildUri("manager", inparameters) << true << "manager" << inparameters;
-    QTest::newRow("built with escaped parameters") << QOrganizerItemManager::buildUri("manager", inparameters2) << true << "manager" << inparameters2;
-    QTest::newRow("no scheme") << "this should not split" << false << QString() << tst_QOrganizerItemManager_QStringMap();
-    QTest::newRow("wrong scheme") << "invalidscheme:foo bar" << false << QString() << tst_QOrganizerItemManager_QStringMap();
-    QTest::newRow("right scheme, no colon") << "qtorganizer" << false << QString() << tst_QOrganizerItemManager_QStringMap();
-    QTest::newRow("no manager, colon, no params") << "qtorganizer::" << false  << "manager" << tst_QOrganizerItemManager_QStringMap();
-    QTest::newRow("yes manager, no colon, no params") << "qtorganizer:manager" << true << "manager" << tst_QOrganizerItemManager_QStringMap();
-    QTest::newRow("yes manager, yes colon, no params") << "qtorganizer:manager:" << true << "manager"<< tst_QOrganizerItemManager_QStringMap();
+    QTest::newRow("built") << QOrganizerManager::buildUri("manager", inparameters) << true << "manager" << inparameters;
+    QTest::newRow("built with escaped parameters") << QOrganizerManager::buildUri("manager", inparameters2) << true << "manager" << inparameters2;
+    QTest::newRow("no scheme") << "this should not split" << false << QString() << tst_QOrganizerManager_QStringMap();
+    QTest::newRow("wrong scheme") << "invalidscheme:foo bar" << false << QString() << tst_QOrganizerManager_QStringMap();
+    QTest::newRow("right scheme, no colon") << "qtorganizer" << false << QString() << tst_QOrganizerManager_QStringMap();
+    QTest::newRow("no manager, colon, no params") << "qtorganizer::" << false  << "manager" << tst_QOrganizerManager_QStringMap();
+    QTest::newRow("yes manager, no colon, no params") << "qtorganizer:manager" << true << "manager" << tst_QOrganizerManager_QStringMap();
+    QTest::newRow("yes manager, yes colon, no params") << "qtorganizer:manager:" << true << "manager"<< tst_QOrganizerManager_QStringMap();
     QTest::newRow("yes params") << "qtorganizer:manager:foo=bar&bazflag=&bar=glob" << true << "manager" << inparameters;
     QTest::newRow("yes params but misformed") << "qtorganizer:manager:foo=bar&=gloo&bar=glob" << false << "manager" << inparameters;
     QTest::newRow("yes params but misformed 2") << "qtorganizer:manager:=&=gloo&bar=glob" << false << "manager" << inparameters;
@@ -411,11 +411,11 @@ void tst_QOrganizerItemManager::uriParsing_data()
     QTest::newRow("no manager or params or colon") << "qtorganizer:" << false << QString() << inparameters;
 }
 
-void tst_QOrganizerItemManager::addManagers()
+void tst_QOrganizerManager::addManagers()
 {
     QTest::addColumn<QString>("uri");
 
-    QStringList managers = QOrganizerItemManager::availableManagers();
+    QStringList managers = QOrganizerManager::availableManagers();
 
     /* Known one that will not pass */
     managers.removeAll("invalid");
@@ -426,35 +426,35 @@ void tst_QOrganizerItemManager::addManagers()
 
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;
-        QTest::newRow(QString("mgr='%1'").arg(mgr).toLatin1().constData()) << QOrganizerItemManager::buildUri(mgr, params);
+        QTest::newRow(QString("mgr='%1'").arg(mgr).toLatin1().constData()) << QOrganizerManager::buildUri(mgr, params);
         if (mgr == "memory") {
-            params.insert("id", "tst_QOrganizerItemManager");
-            QTest::newRow(QString("mgr='%1', params").arg(mgr).toLatin1().constData()) << QOrganizerItemManager::buildUri(mgr, params);
+            params.insert("id", "tst_QOrganizerManager");
+            QTest::newRow(QString("mgr='%1', params").arg(mgr).toLatin1().constData()) << QOrganizerManager::buildUri(mgr, params);
         }
     }
 }
 
-void tst_QOrganizerItemManager::metadata()
+void tst_QOrganizerManager::metadata()
 {
     // ensure that the backend is publishing its metadata (name / parameters / uri) correctly
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> cm(new QOrganizerItemManager("memory"));
-    QVERIFY(QOrganizerItemManager::buildUri(cm->managerName(), cm->managerParameters()) == cm->managerUri());
+    QScopedPointer<QOrganizerManager> cm(new QOrganizerManager("memory"));
+    QVERIFY(QOrganizerManager::buildUri(cm->managerName(), cm->managerParameters()) == cm->managerUri());
 }
 
 
-void tst_QOrganizerItemManager::nullIdOperations()
+void tst_QOrganizerManager::nullIdOperations()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> cm(new QOrganizerItemManager("memory"));
+    QScopedPointer<QOrganizerManager> cm(new QOrganizerManager("memory"));
     QVERIFY(!cm->removeItem(QOrganizerItemLocalId()));
-    QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
+    QVERIFY(cm->error() == QOrganizerManager::DoesNotExistError);
 
 
     QOrganizerItem c = cm->item(QOrganizerItemLocalId());
     QVERIFY(c.id() == QOrganizerItemId());
     QVERIFY(c.isEmpty());
-    QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
+    QVERIFY(cm->error() == QOrganizerManager::DoesNotExistError);
 
 
     // test that streaming null ids doesn't crash.
@@ -513,12 +513,12 @@ void tst_QOrganizerItemManager::nullIdOperations()
     }
 }
 
-void tst_QOrganizerItemManager::uriParsing()
+void tst_QOrganizerManager::uriParsing()
 {
     QFETCH(QString, uri);
     QFETCH(bool, good);
     QFETCH(QString, manager);
-    QFETCH(tst_QOrganizerItemManager_QStringMap, parameters);
+    QFETCH(tst_QOrganizerManager_QStringMap, parameters);
 
     QString outmanager;
     QMap<QString, QString> outparameters;
@@ -526,12 +526,12 @@ void tst_QOrganizerItemManager::uriParsing()
     if (good) {
         /* Good split */
         /* Test splitting */
-        QVERIFY(QOrganizerItemManager::parseUri(uri, 0, 0)); // no out parms
+        QVERIFY(QOrganizerManager::parseUri(uri, 0, 0)); // no out parms
 
         // 1 out param
-        QVERIFY(QOrganizerItemManager::parseUri(uri, &outmanager, 0));
+        QVERIFY(QOrganizerManager::parseUri(uri, &outmanager, 0));
         QCOMPARE(manager, outmanager);
-        QVERIFY(QOrganizerItemManager::parseUri(uri, 0, &outparameters));
+        QVERIFY(QOrganizerManager::parseUri(uri, 0, &outparameters));
 
         QORGANIZERITEMMANAGER_REMOVE_VERSIONS_FROM_URI(outparameters);
 
@@ -539,7 +539,7 @@ void tst_QOrganizerItemManager::uriParsing()
 
         outmanager.clear();
         outparameters.clear();
-        QVERIFY(QOrganizerItemManager::parseUri(uri, &outmanager, &outparameters));
+        QVERIFY(QOrganizerManager::parseUri(uri, &outmanager, &outparameters));
 
         QORGANIZERITEMMANAGER_REMOVE_VERSIONS_FROM_URI(outparameters);
 
@@ -549,33 +549,33 @@ void tst_QOrganizerItemManager::uriParsing()
         /* bad splitting */
         outmanager.clear();
         outparameters.clear();
-        QVERIFY(QOrganizerItemManager::parseUri(uri, 0, 0) == false);
-        QVERIFY(QOrganizerItemManager::parseUri(uri, &outmanager, 0) == false);
+        QVERIFY(QOrganizerManager::parseUri(uri, 0, 0) == false);
+        QVERIFY(QOrganizerManager::parseUri(uri, &outmanager, 0) == false);
         QVERIFY(outmanager.isEmpty());
-        QVERIFY(QOrganizerItemManager::parseUri(uri, 0, &outparameters) == false);
+        QVERIFY(QOrganizerManager::parseUri(uri, 0, &outparameters) == false);
         QORGANIZERITEMMANAGER_REMOVE_VERSIONS_FROM_URI(outparameters);
         QVERIFY(outparameters.isEmpty());
 
         /* make sure the in parameters don't change with a bad split */
         outmanager = manager;
         outparameters = parameters;
-        QVERIFY(QOrganizerItemManager::parseUri(uri, &outmanager, 0) == false);
+        QVERIFY(QOrganizerManager::parseUri(uri, &outmanager, 0) == false);
         QCOMPARE(manager, outmanager);
-        QVERIFY(QOrganizerItemManager::parseUri(uri, 0, &outparameters) == false);
+        QVERIFY(QOrganizerManager::parseUri(uri, 0, &outparameters) == false);
         QORGANIZERITEMMANAGER_REMOVE_VERSIONS_FROM_URI(outparameters);
         QCOMPARE(parameters, outparameters);
     }
 }
 
-void tst_QOrganizerItemManager::ctors()
+void tst_QOrganizerManager::ctors()
 {
     /* test the different ctors to make sure we end up with the same uri */
-    QVERIFY(QOrganizerItemManager::availableManagers().count() > 1); // invalid + something else
-    QVERIFY(QOrganizerItemManager::availableManagers().contains("invalid"));
-    QString defaultStore = QOrganizerItemManager::availableManagers().value(0);
+    QVERIFY(QOrganizerManager::availableManagers().count() > 1); // invalid + something else
+    QVERIFY(QOrganizerManager::availableManagers().contains("invalid"));
+    QString defaultStore = QOrganizerManager::availableManagers().value(0);
     QVERIFY(defaultStore != "invalid");
 
-    qDebug() << "Available managers:" << QOrganizerItemManager::availableManagers();
+    qDebug() << "Available managers:" << QOrganizerManager::availableManagers();
 
     QMap<QString, QString> randomParameters;
     randomParameters.insert("something", "old");
@@ -585,14 +585,14 @@ void tst_QOrganizerItemManager::ctors()
 
     QObject parent;
 
-    QOrganizerItemManager cm; // default
-    QOrganizerItemManager cm2(defaultStore);
-    QOrganizerItemManager cm3(defaultStore, QMap<QString, QString>());
-    QOrganizerItemManager cm4(cm.managerUri()); // should fail
+    QOrganizerManager cm; // default
+    QOrganizerManager cm2(defaultStore);
+    QOrganizerManager cm3(defaultStore, QMap<QString, QString>());
+    QOrganizerManager cm4(cm.managerUri()); // should fail
 
-    QScopedPointer<QOrganizerItemManager> cm5(QOrganizerItemManager::fromUri(QOrganizerItemManager::buildUri(defaultStore, QMap<QString, QString>())));
-    QScopedPointer<QOrganizerItemManager> cm6(QOrganizerItemManager::fromUri(cm.managerUri())); // uri is not a name; should fail.
-    QScopedPointer<QOrganizerItemManager> cm9(QOrganizerItemManager::fromUri(QString(), &parent));
+    QScopedPointer<QOrganizerManager> cm5(QOrganizerManager::fromUri(QOrganizerManager::buildUri(defaultStore, QMap<QString, QString>())));
+    QScopedPointer<QOrganizerManager> cm6(QOrganizerManager::fromUri(cm.managerUri())); // uri is not a name; should fail.
+    QScopedPointer<QOrganizerManager> cm9(QOrganizerManager::fromUri(QString(), &parent));
 
     QVERIFY(cm9->parent() == &parent);
 
@@ -612,14 +612,14 @@ void tst_QOrganizerItemManager::ctors()
     QVERIFY(cm.managerUri() != cm4.managerUri()); // don't pass a uri to the ctor
 
     /* Test that we get invalid stores when we do silly things */
-    QOrganizerItemManager em("non existent");
-    QOrganizerItemManager em2("non existent", QMap<QString, QString>());
-    QOrganizerItemManager em3("memory", randomParameters);
+    QOrganizerManager em("non existent");
+    QOrganizerManager em2("non existent", QMap<QString, QString>());
+    QOrganizerManager em3("memory", randomParameters);
 
     /* Also invalid, since we don't have one of these anyway */
-    QScopedPointer<QOrganizerItemManager> em4(QOrganizerItemManager::fromUri("invalid uri"));
-    QScopedPointer<QOrganizerItemManager> em5(QOrganizerItemManager::fromUri(QOrganizerItemManager::buildUri("nonexistent", QMap<QString, QString>())));
-    QScopedPointer<QOrganizerItemManager> em6(QOrganizerItemManager::fromUri(em3.managerUri()));
+    QScopedPointer<QOrganizerManager> em4(QOrganizerManager::fromUri("invalid uri"));
+    QScopedPointer<QOrganizerManager> em5(QOrganizerManager::fromUri(QOrganizerManager::buildUri("nonexistent", QMap<QString, QString>())));
+    QScopedPointer<QOrganizerManager> em6(QOrganizerManager::fromUri(em3.managerUri()));
 
 
     /*
@@ -649,10 +649,10 @@ void tst_QOrganizerItemManager::ctors()
     QCOMPARE(em4->managerName(), QString("invalid"));
     QCOMPARE(em5->managerName(), QString("invalid"));
     QCOMPARE(em6->managerName(), QString("memory"));
-    QCOMPARE(em.managerParameters(), tst_QOrganizerItemManager_QStringMap());
-    QCOMPARE(em2.managerParameters(), tst_QOrganizerItemManager_QStringMap());
-    QCOMPARE(em4->managerParameters(), tst_QOrganizerItemManager_QStringMap());
-    QCOMPARE(em5->managerParameters(), tst_QOrganizerItemManager_QStringMap());
+    QCOMPARE(em.managerParameters(), tst_QOrganizerManager_QStringMap());
+    QCOMPARE(em2.managerParameters(), tst_QOrganizerManager_QStringMap());
+    QCOMPARE(em4->managerParameters(), tst_QOrganizerManager_QStringMap());
+    QCOMPARE(em5->managerParameters(), tst_QOrganizerManager_QStringMap());
     QCOMPARE(em3.managerParameters(), em6->managerParameters()); // memory engine discards the given params, replaces with id.
 
 
@@ -670,12 +670,12 @@ void tst_QOrganizerItemManager::ctors()
 #endif
 }
 
-void tst_QOrganizerItemManager::doDump()
+void tst_QOrganizerManager::doDump()
 {
     // Only do this if it has been explicitly selected
     if (QCoreApplication::arguments().contains("doDump")) {
         QFETCH(QString, uri);
-        QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+        QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
 
         dumpOrganizerItems(cm.data());
     }
@@ -683,12 +683,12 @@ void tst_QOrganizerItemManager::doDump()
 
 Q_DECLARE_METATYPE(QVariant)
 
-void tst_QOrganizerItemManager::doDumpSchema()
+void tst_QOrganizerManager::doDumpSchema()
 {
     // Only do this if it has been explicitly selected
     if (QCoreApplication::arguments().contains("doDumpSchema")) {
         QFETCH(QString, uri);
-        QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+        QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
 
         // Get the schema for each supported type
         foreach(QString type, cm->supportedItemTypes()) {
@@ -732,10 +732,10 @@ void tst_QOrganizerItemManager::doDumpSchema()
     }
 }
 
-void tst_QOrganizerItemManager::add()
+void tst_QOrganizerManager::add()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
     
     // Use note & todo item depending on backend support
     QString type;
@@ -752,7 +752,7 @@ void tst_QOrganizerItemManager::add()
     item.setDescription("This note is a particularly notey note");
     int currCount = cm->itemIds().count();
     QVERIFY(cm->saveItem(&item));
-    QVERIFY(cm->error() == QOrganizerItemManager::NoError);
+    QVERIFY(cm->error() == QOrganizerManager::NoError);
 
     QVERIFY(!item.id().managerUri().isEmpty());
     QVERIFY(!item.id().localId().isNull());
@@ -776,7 +776,7 @@ void tst_QOrganizerItemManager::add()
     QVERIFY(cm->saveItem(&nonexistentItem));       // should work
     QVERIFY(cm->removeItem(nonexistentItem.id().localId())); // now nonexistentItem has an id which does not exist
     QVERIFY(!cm->saveItem(&nonexistentItem));      // hence, should fail
-    QCOMPARE(cm->error(), QOrganizerItemManager::DoesNotExistError);
+    QCOMPARE(cm->error(), QOrganizerManager::DoesNotExistError);
     nonexistentItem.setId(QOrganizerItemId());
     QVERIFY(cm->saveItem(&nonexistentItem));       // after setting id to zero, should save
     QVERIFY(cm->removeItem(nonexistentItem.id().localId()));
@@ -873,17 +873,17 @@ void tst_QOrganizerItemManager::add()
     // XXX TODO.
 }
 
-void tst_QOrganizerItemManager::addExceptions()
+void tst_QOrganizerManager::addExceptions()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
 
     QOrganizerEvent event;
     event.setDisplayLabel(QLatin1String("meeting"));
     event.setStartDateTime(QDateTime(QDate(2010, 1, 1), QTime(11, 0, 0)));
     event.setEndDateTime(QDateTime(QDate(2010, 1, 1), QTime(12, 0, 0)));
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
     rrule.setLimit(3);
     event.setRecurrenceRule(rrule);
     QVERIFY(cm->saveItem(&event));
@@ -962,7 +962,7 @@ void tst_QOrganizerItemManager::addExceptions()
     QVERIFY(!thirdEvent.localId().isNull());
 }
 
-void tst_QOrganizerItemManager::addExceptionsWithGuid()
+void tst_QOrganizerManager::addExceptionsWithGuid()
 {
     // It should be possible to save an exception that has at least an originalDate and either a
     // guid or a parentLocalId.  If guid and parentLocalId are both specified, the client should
@@ -970,7 +970,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     // guid or parentLocalId are specified, the manager should generate the other one.
     // This test case tests all of this.
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
 
     // Set up some recurring items
     QOrganizerEvent christmas;
@@ -978,8 +978,8 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     christmas.setStartDateTime(QDateTime(QDate(2009, 12, 25), QTime(0, 0, 0)));
     christmas.setEndDateTime(QDateTime(QDate(2009, 12, 26), QTime(0, 0, 0)));
     christmas.setDisplayLabel(QLatin1String("Christmas"));
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
     christmas.setRecurrenceRule(rrule);
     QVERIFY(cm->saveItem(&christmas));
     QVERIFY(!christmas.id().managerUri().isEmpty());
@@ -1009,13 +1009,13 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     if (cm->detailDefinitions(QOrganizerItemType::TypeEventOccurrence).contains(QOrganizerItemComment::DefinitionName))
         exception.addComment(QLatin1String("With the in-laws"));
     QVERIFY(!cm->saveItem(&exception));
-    QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    QCOMPARE(cm->error(), QOrganizerManager::InvalidOccurrenceError);
 
     // exception with invalid guid fails
     exception.setId(QOrganizerItemId());
     exception.setGuid(QLatin1String("halloween"));
     QVERIFY(!cm->saveItem(&exception));
-    QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    QCOMPARE(cm->error(), QOrganizerManager::InvalidOccurrenceError);
     
     // with the guid set, it should work
     exception.setId(QOrganizerItemId());
@@ -1042,19 +1042,19 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
         exception2.addComment(QLatin1String("With the in-laws"));
     exception2.setParentLocalId(report.localId()); // report is not an event
     QVERIFY(!cm->saveItem(&exception2));
-    QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    QCOMPARE(cm->error(), QOrganizerManager::InvalidOccurrenceError);
 
     // can't set guid to a non-event
     exception2.setGuid(QLatin1String("report"));
     exception2.setParentLocalId(QOrganizerItemLocalId());
     QVERIFY(!cm->saveItem(&exception2));
-    QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    QCOMPARE(cm->error(), QOrganizerManager::InvalidOccurrenceError);
 
     // can't make the guid inconsistent with the parentId
     exception2.setParentLocalId(christmas.localId());
     exception2.setGuid(QLatin1String("newyear"));
     QVERIFY(!cm->saveItem(&exception2));
-    QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    QCOMPARE(cm->error(), QOrganizerManager::InvalidOccurrenceError);
 
     // with just the parentId set to a valid parent, it should work
     exception2.setGuid(QLatin1String(""));
@@ -1074,7 +1074,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     exception3.setParentLocalId(christmas.localId());
     exception3.setGuid(QLatin1String("christmas"));
     QVERIFY(!cm->saveItem(&exception3));
-    QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
+    QCOMPARE(cm->error(), QOrganizerManager::InvalidOccurrenceError);
 
     // with original date, guid and parentId set and consistent, and localId=0, it should work
     exception3.setOriginalDate(QDate(2012, 12, 25));
@@ -1084,10 +1084,10 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     QCOMPARE(savedException.parentLocalId(), christmas.localId());
 }
 
-void tst_QOrganizerItemManager::update()
+void tst_QOrganizerManager::update()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
     
     // Use note & todo item depending on backend support
     QString type;
@@ -1104,27 +1104,27 @@ void tst_QOrganizerItemManager::update()
     item.setDisplayLabel("Yet another note");
     item.setDescription("Surprisingly, this note is not a particularly notey note");
     QVERIFY(cm->saveItem(&item));
-    QVERIFY(cm->error() == QOrganizerItemManager::NoError);
+    QVERIFY(cm->error() == QOrganizerManager::NoError);
 
     /* Update name */
     QOrganizerItemDescription descr = item.detail(QOrganizerItemDescription::DefinitionName);
     descr.setDescription("This note is now slightly noteworthy");
     item.saveDetail(&descr);
     QVERIFY(cm->saveItem(&item));
-    QVERIFY(cm->error() == QOrganizerItemManager::NoError);
+    QVERIFY(cm->error() == QOrganizerManager::NoError);
     descr.setDescription("This is a very noteworthy note");
     item.saveDetail(&descr);
     QVERIFY(cm->saveItem(&item));
-    QVERIFY(cm->error() == QOrganizerItemManager::NoError);
+    QVERIFY(cm->error() == QOrganizerManager::NoError);
     QOrganizerItem updated = cm->item(item.localId());
     QOrganizerItemDescription updatedDescr = updated.detail(QOrganizerItemDescription::DefinitionName);
     QCOMPARE(updatedDescr, descr);
 }
 
-void tst_QOrganizerItemManager::remove()
+void tst_QOrganizerManager::remove()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
     
     // Use note & todo item depending on backend support
     QString type;
@@ -1141,7 +1141,7 @@ void tst_QOrganizerItemManager::remove()
     item.setDisplayLabel("Not another note");
     item.setDescription("Yes, another note!");
     QVERIFY(cm->saveItem(&item));
-    QVERIFY(cm->error() == QOrganizerItemManager::NoError);
+    QVERIFY(cm->error() == QOrganizerManager::NoError);
     QVERIFY(item.id() != QOrganizerItemId());
 
     /* Remove the created item */
@@ -1149,20 +1149,20 @@ void tst_QOrganizerItemManager::remove()
     QVERIFY(cm->removeItem(item.localId()));
     QCOMPARE(cm->itemIds().count(), itemCount - 1);
     QVERIFY(cm->item(item.localId()).isEmpty());
-    QCOMPARE(cm->error(), QOrganizerItemManager::DoesNotExistError);
+    QCOMPARE(cm->error(), QOrganizerManager::DoesNotExistError);
 }
 
-void tst_QOrganizerItemManager::batch()
+void tst_QOrganizerManager::batch()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
 
     /* First test null pointer operations */
     QVERIFY(!cm->saveItems(NULL));
-    QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
+    QVERIFY(cm->error() == QOrganizerManager::BadArgumentError);
 
     QVERIFY(!cm->removeItems(QList<QOrganizerItemLocalId>()));
-    QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
+    QVERIFY(cm->error() == QOrganizerManager::BadArgumentError);
     
     // Use note & todo item depending on backend support
     QString type;
@@ -1196,11 +1196,11 @@ void tst_QOrganizerItemManager::batch()
     QList<QOrganizerItem> items;
     items << a << b << c;
 
-    QMap<int, QOrganizerItemManager::Error> errorMap;
+    QMap<int, QOrganizerManager::Error> errorMap;
     // Add one dummy error to test if the errors are reset
-    errorMap.insert(0, QOrganizerItemManager::NoError);
+    errorMap.insert(0, QOrganizerManager::NoError);
     QVERIFY(cm->saveItems(&items));
-    QVERIFY(cm->error() == QOrganizerItemManager::NoError);
+    QVERIFY(cm->error() == QOrganizerManager::NoError);
     errorMap = cm->errorMap();
     QVERIFY(errorMap.count() == 0);
 
@@ -1233,7 +1233,7 @@ void tst_QOrganizerItemManager::batch()
     QVERIFY(items[2].saveDetail(&descr));
 
     QVERIFY(cm->saveItems(&items));
-    QVERIFY(cm->error() == QOrganizerItemManager::NoError);
+    QVERIFY(cm->error() == QOrganizerManager::NoError);
     errorMap = cm->errorMap();
     QVERIFY(errorMap.count() == 0);
 
@@ -1259,29 +1259,29 @@ void tst_QOrganizerItemManager::batch()
     QVERIFY(cm->removeItems(ids));
     errorMap = cm->errorMap();
     QVERIFY(errorMap.count() == 0);
-    QVERIFY(cm->error() == QOrganizerItemManager::NoError);
+    QVERIFY(cm->error() == QOrganizerManager::NoError);
 
     /* Make sure the items really don't exist any more */
     QVERIFY(cm->item(a.id().localId()).id() == QOrganizerItemId());
     QVERIFY(cm->item(a.id().localId()).isEmpty());
-    QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
+    QVERIFY(cm->error() == QOrganizerManager::DoesNotExistError);
     QVERIFY(cm->item(b.id().localId()).id() == QOrganizerItemId());
     QVERIFY(cm->item(b.id().localId()).isEmpty());
-    QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
+    QVERIFY(cm->error() == QOrganizerManager::DoesNotExistError);
     QVERIFY(cm->item(c.id().localId()).id() == QOrganizerItemId());
     QVERIFY(cm->item(c.id().localId()).isEmpty());
-    QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
+    QVERIFY(cm->error() == QOrganizerManager::DoesNotExistError);
 
     /* Now try removing with all invalid ids (e.g. the ones we just removed) */
     ids.clear();
     ids << a.id().localId() << b.id().localId() << c.id().localId();
     QVERIFY(!cm->removeItems(ids));
-    QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
+    QVERIFY(cm->error() == QOrganizerManager::DoesNotExistError);
     errorMap = cm->errorMap();
     QVERIFY(errorMap.count() == 3);
-    QVERIFY(errorMap.values().at(0) == QOrganizerItemManager::DoesNotExistError);
-    QVERIFY(errorMap.values().at(1) == QOrganizerItemManager::DoesNotExistError);
-    QVERIFY(errorMap.values().at(2) == QOrganizerItemManager::DoesNotExistError);
+    QVERIFY(errorMap.values().at(0) == QOrganizerManager::DoesNotExistError);
+    QVERIFY(errorMap.values().at(1) == QOrganizerManager::DoesNotExistError);
+    QVERIFY(errorMap.values().at(2) == QOrganizerManager::DoesNotExistError);
 
     /* Try adding some new ones again, this time one with an error */
     items.clear();
@@ -1297,7 +1297,7 @@ void tst_QOrganizerItemManager::batch()
     items << a << b << c;
     QVERIFY(!cm->saveItems(&items)); // since we don't setCollectionId() in any of the items, they go in default collection.
     /* We can't really say what the error will be.. maybe bad argument, maybe invalid detail */
-    QVERIFY(cm->error() != QOrganizerItemManager::NoError);
+    QVERIFY(cm->error() != QOrganizerManager::NoError);
 
     /* It's permissible to fail all the adds, or to add the successful ones */
     errorMap = cm->errorMap();
@@ -1306,19 +1306,19 @@ void tst_QOrganizerItemManager::batch()
 
     // A might have gone through
     if (errorMap.keys().contains(0)) {
-        QVERIFY(errorMap.value(0) != QOrganizerItemManager::NoError);
+        QVERIFY(errorMap.value(0) != QOrganizerManager::NoError);
         QVERIFY(items.at(0).id() == QOrganizerItemId());
     } else {
         QVERIFY(items.at(0).id() != QOrganizerItemId());
     }
 
     // B should have failed
-    QVERIFY(errorMap.value(1) == QOrganizerItemManager::InvalidDetailError);
+    QVERIFY(errorMap.value(1) == QOrganizerManager::InvalidDetailError);
     QVERIFY(items.at(1).id() == QOrganizerItemId());
 
     // C might have gone through
     if (errorMap.keys().contains(2)) {
-        QVERIFY(errorMap.value(2) != QOrganizerItemManager::NoError);
+        QVERIFY(errorMap.value(2) != QOrganizerManager::NoError);
         QVERIFY(items.at(2).id() == QOrganizerItemId());
     } else {
         QVERIFY(items.at(2).id() != QOrganizerItemId());
@@ -1329,7 +1329,7 @@ void tst_QOrganizerItemManager::batch()
     QVERIFY(cm->saveItems(&items));
     errorMap = cm->errorMap();
     QVERIFY(errorMap.count() == 0);
-    QVERIFY(cm->error() == QOrganizerItemManager::NoError);
+    QVERIFY(cm->error() == QOrganizerManager::NoError);
     
     // Save and remove a fourth item. Store the id.
     QOrganizerItem d;
@@ -1346,7 +1346,7 @@ void tst_QOrganizerItemManager::batch()
     ids << items.at(2).id().localId();
 
     QVERIFY(!cm->removeItems(ids));
-    QVERIFY(cm->error() != QOrganizerItemManager::NoError);
+    QVERIFY(cm->error() != QOrganizerManager::NoError);
 
     /* Again, the backend has the choice of either removing the successful ones, or not */
     errorMap = cm->errorMap();
@@ -1355,40 +1355,40 @@ void tst_QOrganizerItemManager::batch()
 
     // A might have gone through
     if (errorMap.keys().contains(0)) {
-        QVERIFY(errorMap.value(0) != QOrganizerItemManager::NoError);
+        QVERIFY(errorMap.value(0) != QOrganizerManager::NoError);
         QVERIFY(items.at(0).id() == QOrganizerItemId());
     } else {
         QVERIFY(items.at(0).id() != QOrganizerItemId());
     }
 
     /* B should definitely have failed */
-    QVERIFY(errorMap.value(1) == QOrganizerItemManager::DoesNotExistError);
+    QVERIFY(errorMap.value(1) == QOrganizerManager::DoesNotExistError);
     QVERIFY(ids.at(1) == removedId);
 
     // A might have gone through
     if (errorMap.keys().contains(2)) {
-        QVERIFY(errorMap.value(2) != QOrganizerItemManager::NoError);
+        QVERIFY(errorMap.value(2) != QOrganizerManager::NoError);
         QVERIFY(items.at(2).id() == QOrganizerItemId());
     } else {
         QVERIFY(items.at(2).id() != QOrganizerItemId());
     }
 }
 
-void tst_QOrganizerItemManager::invalidManager()
+void tst_QOrganizerManager::invalidManager()
 {
     /* Create an invalid manager */
-    QOrganizerItemManager manager("this should never work");
+    QOrganizerManager manager("this should never work");
     QVERIFY(manager.managerName() == "invalid");
     QVERIFY(manager.managerVersion() == 0);
 
     /* also, test the other ctor behaviour is sane also */
-    QOrganizerItemManager anotherManager("this should never work", 15);
+    QOrganizerManager anotherManager("this should never work", 15);
     QVERIFY(anotherManager.managerName() == "invalid");
     QVERIFY(anotherManager.managerVersion() == 0);
 
     /* Now test that all the operations fail */
     QVERIFY(manager.itemIds().count() == 0);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError);
 
     QOrganizerItem foo;
     QOrganizerItemDisplayLabel dl;
@@ -1396,36 +1396,36 @@ void tst_QOrganizerItemManager::invalidManager()
     foo.saveDetail(&dl);
 
     QVERIFY(manager.saveItem(&foo) == false);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError);
     QVERIFY(foo.id() == QOrganizerItemId());
     QVERIFY(manager.itemIds().count() == 0);
 
     QVERIFY(manager.item(foo.id().localId()).id() == QOrganizerItemId());
     QVERIFY(manager.item(foo.id().localId()).isEmpty());
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError);
 
     QVERIFY(manager.removeItem(foo.id().localId()) == false);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError);
 
-    QMap<int, QOrganizerItemManager::Error> errorMap;
-    errorMap.insert(0, QOrganizerItemManager::NoError);
+    QMap<int, QOrganizerManager::Error> errorMap;
+    errorMap.insert(0, QOrganizerManager::NoError);
     QVERIFY(!manager.saveItems(0));
     errorMap = manager.errorMap();
     QVERIFY(errorMap.count() == 0);
-    QVERIFY(manager.error() == QOrganizerItemManager::BadArgumentError);
+    QVERIFY(manager.error() == QOrganizerManager::BadArgumentError);
 
     /* filters */
     QOrganizerItemFilter f; // matches everything
     QOrganizerItemDetailFilter df;
     df.setDetailDefinitionName(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel);
     QVERIFY(manager.itemIds(QOrganizerItemFilter()).count() == 0);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError);
     QVERIFY(manager.itemIds(df).count() == 0);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError);
     QVERIFY(manager.itemIds(f | f).count() == 0);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError);
     QVERIFY(manager.itemIds(df | df).count() == 0);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError);
 
     QVERIFY(manager.isFilterSupported(f) == false);
     QVERIFY(manager.isFilterSupported(df) == false);
@@ -1436,23 +1436,23 @@ void tst_QOrganizerItemManager::invalidManager()
     QVERIFY(!manager.saveItems(&list));
     errorMap = manager.errorMap();
     QVERIFY(errorMap.count() == 0);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError);
 
     QVERIFY(!manager.removeItems(QList<QOrganizerItemLocalId>()));
     errorMap = manager.errorMap();
     QVERIFY(errorMap.count() == 0);
-    QVERIFY(manager.error() == QOrganizerItemManager::BadArgumentError);
+    QVERIFY(manager.error() == QOrganizerManager::BadArgumentError);
 
     QList<QOrganizerItemLocalId> idlist;
     idlist << foo.id().localId();
     QVERIFY(!manager.removeItems(idlist));
     errorMap = manager.errorMap();
     QVERIFY(errorMap.count() == 0);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError);
 
     /* Detail definitions */
     QVERIFY(manager.detailDefinitions(QOrganizerItemType::TypeEvent).count() == 0);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError || manager.error() == QOrganizerManager::InvalidItemTypeError);
 
     QOrganizerItemDetailDefinition def;
     def.setUnique(true);
@@ -1464,39 +1464,39 @@ void tst_QOrganizerItemManager::invalidManager()
     def.setFields(fields);
 
     QVERIFY(manager.saveDetailDefinition(def, QOrganizerItemType::TypeNote) == false);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError || manager.error() == QOrganizerManager::InvalidItemTypeError);
     QVERIFY(manager.saveDetailDefinition(def, QOrganizerItemType::TypeEvent) == false);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError || manager.error() == QOrganizerManager::InvalidItemTypeError);
     QVERIFY(manager.detailDefinitions(QOrganizerItemType::TypeEvent).count(QOrganizerItemType::TypeNote) == 0);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError || manager.error() == QOrganizerManager::InvalidItemTypeError);
     QVERIFY(manager.detailDefinitions(QOrganizerItemType::TypeEvent).count() == 0);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError || manager.error() == QOrganizerManager::InvalidItemTypeError);
     QVERIFY(manager.detailDefinition("new field", QOrganizerItemType::TypeEvent).name() == QString());
     QVERIFY(manager.removeDetailDefinition(def.name(), QOrganizerItemType::TypeNote) == false);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError || manager.error() == QOrganizerManager::InvalidItemTypeError);
     QVERIFY(manager.removeDetailDefinition(def.name(), QOrganizerItemType::TypeEvent) == false);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError || manager.error() == QOrganizerManager::InvalidItemTypeError);
     QVERIFY(manager.detailDefinitions(QOrganizerItemType::TypeEvent).count() == 0);
-    QVERIFY(manager.error() == QOrganizerItemManager::NotSupportedError || manager.error() == QOrganizerItemManager::InvalidItemTypeError);
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError || manager.error() == QOrganizerManager::InvalidItemTypeError);
 
      /* Capabilities */
-    QVERIFY(!manager.hasFeature(QOrganizerItemManager::MutableDefinitions));
+    QVERIFY(!manager.hasFeature(QOrganizerManager::MutableDefinitions));
 }
 
-void tst_QOrganizerItemManager::memoryManager()
+void tst_QOrganizerManager::memoryManager()
 {
     QMap<QString, QString> params;
-    QOrganizerItemManager m1("memory");
+    QOrganizerManager m1("memory");
     params.insert("random", "shouldNotBeUsed");
-    QOrganizerItemManager m2("memory", params);
+    QOrganizerManager m2("memory", params);
     params.insert("id", "shouldBeUsed");
-    QOrganizerItemManager m3("memory", params);
-    QOrganizerItemManager m4("memory", params);
+    QOrganizerManager m3("memory", params);
+    QOrganizerManager m4("memory", params);
     params.insert("id", QString(""));
-    QOrganizerItemManager m5("memory", params); // should be another anonymous
+    QOrganizerManager m5("memory", params); // should be another anonymous
 
-    QVERIFY(m1.hasFeature(QOrganizerItemManager::MutableDefinitions));
-    QVERIFY(m1.hasFeature(QOrganizerItemManager::Anonymous));
+    QVERIFY(m1.hasFeature(QOrganizerManager::MutableDefinitions));
+    QVERIFY(m1.hasFeature(QOrganizerManager::Anonymous));
 
     // add a item to each of m1, m2, m3
     QOrganizerItem c;
@@ -1549,12 +1549,12 @@ void tst_QOrganizerItemManager::memoryManager()
 }
 
 
-void tst_QOrganizerItemManager::compatibleItem_data()
+void tst_QOrganizerManager::compatibleItem_data()
 {
     // XXX TODO: fix this test - need more item types tested etc.
     QTest::addColumn<QOrganizerItem>("input");
     QTest::addColumn<QOrganizerItem>("expected");
-    QTest::addColumn<QOrganizerItemManager::Error>("error");
+    QTest::addColumn<QOrganizerManager::Error>("error");
 
     QOrganizerNote baseNote;
     QOrganizerItemDisplayLabel dl;
@@ -1562,7 +1562,7 @@ void tst_QOrganizerItemManager::compatibleItem_data()
     baseNote.saveDetail(&dl);
 
     {
-        QTest::newRow("already compatible") << QOrganizerItem(baseNote) << QOrganizerItem(baseNote) << QOrganizerItemManager::NoError;
+        QTest::newRow("already compatible") << QOrganizerItem(baseNote) << QOrganizerItem(baseNote) << QOrganizerManager::NoError;
     }
 
     {
@@ -1570,7 +1570,7 @@ void tst_QOrganizerItemManager::compatibleItem_data()
         QOrganizerItemDetail detail("UnknownDetail");
         detail.setValue("Key", QLatin1String("Value"));
         item.saveDetail(&detail);
-        QTest::newRow("unknown detail") << item << QOrganizerItem(baseNote) << QOrganizerItemManager::NoError;
+        QTest::newRow("unknown detail") << item << QOrganizerItem(baseNote) << QOrganizerManager::NoError;
     }
 
     {
@@ -1583,7 +1583,7 @@ void tst_QOrganizerItemManager::compatibleItem_data()
         item.saveDetail(&description2);
         QOrganizerItem expected(baseNote);
         expected.saveDetail(&description2); // can't have two descriptions, only the second will be kept XXX TODO: surely it's backend specific which gets kept?
-        QTest::newRow("duplicate unique field") << item << expected << QOrganizerItemManager::NoError;
+        QTest::newRow("duplicate unique field") << item << expected << QOrganizerManager::NoError;
     }
 
     {
@@ -1591,7 +1591,7 @@ void tst_QOrganizerItemManager::compatibleItem_data()
         QOrganizerItemDescription descr;
         descr.setValue("UnknownKey", "Value");
         item.saveDetail(&descr);
-        QTest::newRow("unknown field") << item << QOrganizerItem(baseNote) << QOrganizerItemManager::NoError;
+        QTest::newRow("unknown field") << item << QOrganizerItem(baseNote) << QOrganizerManager::NoError;
     }
 
     {
@@ -1600,31 +1600,31 @@ void tst_QOrganizerItemManager::compatibleItem_data()
         //QOrganizerItemDisplayLabel displayLabel;
         //displayLabel.setValue(QOrganizerItemDisplayLabel::FieldLabel, QStringList("Value"));
         //item.saveDetail(&displayLabel);
-        //QTest::newRow("wrong type") << QOrganizerItem(item) << QOrganizerItem(baseNote) << QOrganizerItemManager::NoError;
+        //QTest::newRow("wrong type") << QOrganizerItem(item) << QOrganizerItem(baseNote) << QOrganizerManager::NoError;
     }
 }
 
-void tst_QOrganizerItemManager::compatibleItem()
+void tst_QOrganizerManager::compatibleItem()
 {
-    QOrganizerItemManager cm("memory");
+    QOrganizerManager cm("memory");
 
     QFETCH(QOrganizerItem, input);
     QFETCH(QOrganizerItem, expected);
-    QFETCH(QOrganizerItemManager::Error, error);
+    QFETCH(QOrganizerManager::Error, error);
     QCOMPARE(cm.compatibleItem(input), expected);
     QCOMPARE(cm.error(), error);
 }
 
-void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
+void tst_QOrganizerManager::recurrenceWithGenerator_data()
 {
     QTest::addColumn<QString>("uri");
     QTest::addColumn<QDate>("eventDate");
-    QTest::addColumn<QOrganizerItemRecurrenceRule>("recurrenceRule");
+    QTest::addColumn<QOrganizerRecurrenceRule>("recurrenceRule");
     QTest::addColumn<QDate>("startDate");
     QTest::addColumn<QDate>("endDate");
     QTest::addColumn<QList<QDate> >("occurrenceDates");
 
-    QStringList managers = QOrganizerItemManager::availableManagers();
+    QStringList managers = QOrganizerManager::availableManagers();
 
     /* Known one that will not pass */
     managers.removeAll("invalid");
@@ -1634,11 +1634,11 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
     managers.removeAll("skeleton");
 
     foreach(QString mgr, managers) {
-        QString managerUri = QOrganizerItemManager::buildUri(mgr, QMap<QString, QString>());
+        QString managerUri = QOrganizerManager::buildUri(mgr, QMap<QString, QString>());
 
         {
-            QOrganizerItemRecurrenceRule rrule;
-            rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+            QOrganizerRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
             rrule.setLimit(QDate(2010, 1, 22));
             QTest::newRow(QString("mgr=%1, weekly recurrence").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
@@ -1676,8 +1676,8 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         }
 
         {
-            QOrganizerItemRecurrenceRule rrule;
-            rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+            QOrganizerRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
             rrule.setLimit(QDate(2010, 1, 5));
             QTest::newRow(QString("mgr=%1, daily").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
@@ -1693,8 +1693,8 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         }
 
         {
-            QOrganizerItemRecurrenceRule rrule;
-            rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+            QOrganizerRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
             rrule.setFirstDayOfWeek(Qt::Monday);
             rrule.setDaysOfWeek(QSet<Qt::DayOfWeek>() << Qt::Friday << Qt::Saturday << Qt::Sunday);
             rrule.setLimit(QDate(2010, 1, 27));
@@ -1715,8 +1715,8 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         }
 
         {
-            QOrganizerItemRecurrenceRule rrule;
-            rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+            QOrganizerRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerRecurrenceRule::Monthly);
             rrule.setDaysOfMonth(QSet<int>() << 1 << 10);
             rrule.setLimit(QDate(2010, 4, 15));
             QTest::newRow(QString("mgr=%1, monthly recurrence").arg(mgr).toLatin1().constData())
@@ -1736,8 +1736,8 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         }
 
         {
-            QOrganizerItemRecurrenceRule rrule;
-            rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+            QOrganizerRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
             rrule.setDaysOfYear(QSet<int>() << 1 << 32);
             rrule.setLimit(QDate(2012, 3, 15));
             QTest::newRow(QString("mgr=%1, yearly recurrence").arg(mgr).toLatin1().constData())
@@ -1757,11 +1757,11 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         }
 
         {
-            QOrganizerItemRecurrenceRule rrule;
-            rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-            rrule.setMonthsOfYear(QSet<QOrganizerItemRecurrenceRule::Month>()
-                    << QOrganizerItemRecurrenceRule::January
-                    << QOrganizerItemRecurrenceRule::March);
+            QOrganizerRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
+            rrule.setMonthsOfYear(QSet<QOrganizerRecurrenceRule::Month>()
+                    << QOrganizerRecurrenceRule::January
+                    << QOrganizerRecurrenceRule::March);
             rrule.setLimit(QDate(2011, 3, 15));
             QTest::newRow(QString("mgr=%1, yearly recurrence, by month").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
@@ -1772,8 +1772,8 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         }
 
         {
-            QOrganizerItemRecurrenceRule rrule;
-            rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+            QOrganizerRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
             rrule.setWeeksOfYear(QSet<int>() << 1 << 4);
             rrule.setDaysOfWeek(QSet<Qt::DayOfWeek>() << Qt::Thursday);
             rrule.setLimit(QDate(2011, 3, 15));
@@ -1785,10 +1785,10 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         }
 
         {
-            QOrganizerItemRecurrenceRule rrule;
-            rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-            rrule.setMonthsOfYear(QSet<QOrganizerItemRecurrenceRule::Month>()
-                    << QOrganizerItemRecurrenceRule::April);
+            QOrganizerRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
+            rrule.setMonthsOfYear(QSet<QOrganizerRecurrenceRule::Month>()
+                    << QOrganizerRecurrenceRule::April);
             rrule.setDaysOfWeek(QSet<Qt::DayOfWeek>() << Qt::Sunday);
             rrule.setPositions(QSet<int>() << 1);
             QTest::newRow(QString("mgr=%1, yearly recurrence, first Sunday of April").arg(mgr).toLatin1().constData())
@@ -1802,10 +1802,10 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         }
 
         {
-            QOrganizerItemRecurrenceRule rrule;
-            rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-            rrule.setMonthsOfYear(QSet<QOrganizerItemRecurrenceRule::Month>()
-                    << QOrganizerItemRecurrenceRule::October);
+            QOrganizerRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
+            rrule.setMonthsOfYear(QSet<QOrganizerRecurrenceRule::Month>()
+                    << QOrganizerRecurrenceRule::October);
             rrule.setDaysOfWeek(QSet<Qt::DayOfWeek>() << Qt::Sunday);
             rrule.setPositions(QSet<int>() << -1);
             QTest::newRow(QString("mgr=%1, yearly recurrence, last Sunday of October").arg(mgr).toLatin1().constData())
@@ -1820,12 +1820,12 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
     }
 }
 
-void tst_QOrganizerItemManager::recurrenceWithGenerator()
+void tst_QOrganizerManager::recurrenceWithGenerator()
 {
     QFETCH(QString, uri);
     QFETCH(QDate, eventDate);
-    QFETCH(QOrganizerItemRecurrenceRule, recurrenceRule);
-    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    QFETCH(QOrganizerRecurrenceRule, recurrenceRule);
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
     QFETCH(QDate, startDate);
     QFETCH(QDate, endDate);
     QFETCH(QList<QDate>, occurrenceDates);
@@ -1847,9 +1847,9 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator()
             QCOMPARE(item.type(), QString(QLatin1String(QOrganizerItemType::TypeEventOccurrence)));
             QDate occurrenceDate;
             if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
-                occurrenceDate = item.detail<QOrganizerEventTimeRange>().startDateTime().date();
+                occurrenceDate = item.detail<QOrganizerEventTime>().startDateTime().date();
             } else if (item.type() == QOrganizerItemType::TypeTodoOccurrence) {
-                occurrenceDate = item.detail<QOrganizerTodoTimeRange>().startDateTime().date();
+                occurrenceDate = item.detail<QOrganizerTodoTime>().startDateTime().date();
             }
             //QCOMPARE(occurrenceDate, occurrenceDates.at(i));
             actualDates << occurrenceDate;
@@ -1862,15 +1862,15 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator()
         }
     } else {
         // Allow backend specific limitations
-        QCOMPARE(cm->error(), QOrganizerItemManager::NotSupportedError);
+        QCOMPARE(cm->error(), QOrganizerManager::NotSupportedError);
         qWarning() << "The event not supported by the backend";
     }
 }
 
-void tst_QOrganizerItemManager::itemValidation()
+void tst_QOrganizerManager::itemValidation()
 {
     /* Use the memory engine as a reference (validation is not engine specific) */
-    QScopedPointer<QOrganizerItemManager> cm(new QOrganizerItemManager("memory"));
+    QScopedPointer<QOrganizerManager> cm(new QOrganizerManager("memory"));
     QOrganizerNote c;
 
     /*
@@ -1904,7 +1904,7 @@ void tst_QOrganizerItemManager::itemValidation()
     d1.setValue("test", "test");
     c.saveDetail(&d1);
     QVERIFY(!cm->saveItem(&c));
-    QCOMPARE(cm->error(), QOrganizerItemManager::InvalidDetailError);
+    QCOMPARE(cm->error(), QOrganizerManager::InvalidDetailError);
     c.removeDetail(&d1);
 
     // second, test an invalid uniqueness constraint
@@ -1914,14 +1914,14 @@ void tst_QOrganizerItemManager::itemValidation()
 
     // One unique should be ok
     QVERIFY(cm->saveItem(&c));
-    QCOMPARE(cm->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(cm->error(), QOrganizerManager::NoError);
 
     // Two uniques should not be ok
     QOrganizerItemDetail d3 = QOrganizerItemDetail("UniqueDetail");
     d3.setValue("value", "test2");
     c.saveDetail(&d3);
     QVERIFY(!cm->saveItem(&c));
-    QCOMPARE(cm->error(), QOrganizerItemManager::AlreadyExistsError);
+    QCOMPARE(cm->error(), QOrganizerManager::AlreadyExistsError);
     c.removeDetail(&d3);
     c.removeDetail(&d2);
 
@@ -1930,7 +1930,7 @@ void tst_QOrganizerItemManager::itemValidation()
     d4.setValue("test", "test");
     c.saveDetail(&d4);
     QVERIFY(!cm->saveItem(&c));
-    QCOMPARE(cm->error(), QOrganizerItemManager::InvalidDetailError);
+    QCOMPARE(cm->error(), QOrganizerManager::InvalidDetailError);
     c.removeDetail(&d4);
 
     // fourth, test an invalid field data type
@@ -1938,7 +1938,7 @@ void tst_QOrganizerItemManager::itemValidation()
     d5.setValue(QOrganizerItemDescription::FieldDescription, QDateTime::currentDateTime());
     c.saveDetail(&d5);
     QVERIFY(!cm->saveItem(&c));
-    QCOMPARE(cm->error(), QOrganizerItemManager::InvalidDetailError);
+    QCOMPARE(cm->error(), QOrganizerManager::InvalidDetailError);
     c.removeDetail(&d5);
 
     // fifth, test an invalid field value (not in the allowed list)
@@ -1946,14 +1946,14 @@ void tst_QOrganizerItemManager::itemValidation()
     d6.setValue("value", "Seven"); // not in One, Two or Three
     c.saveDetail(&d6);
     QVERIFY(!cm->saveItem(&c));
-    QCOMPARE(cm->error(), QOrganizerItemManager::InvalidDetailError);
+    QCOMPARE(cm->error(), QOrganizerManager::InvalidDetailError);
     c.removeDetail(&d6);
 
     /* Now a valid value */
     d6.setValue("value", "Two");
     c.saveDetail(&d6);
     QVERIFY(cm->saveItem(&c));
-    QCOMPARE(cm->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(cm->error(), QOrganizerManager::NoError);
     c.removeDetail(&d6);
 
     // Test a completely valid one.
@@ -1961,15 +1961,15 @@ void tst_QOrganizerItemManager::itemValidation()
     d7.setValue(QOrganizerItemDescription::FieldDescription, "A valid description");
     c.saveDetail(&d7);
     QVERIFY(cm->saveItem(&c));
-    QCOMPARE(cm->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(cm->error(), QOrganizerManager::NoError);
     c.removeDetail(&d7);
 }
 
-void tst_QOrganizerItemManager::signalEmission()
+void tst_QOrganizerManager::signalEmission()
 {
     QTest::qWait(500); // clear the signal queue
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> m1(QOrganizerItemManager::fromUri(uri));
+    QScopedPointer<QOrganizerManager> m1(QOrganizerManager::fromUri(uri));
 
     qRegisterMetaType<QOrganizerItemLocalId>("QOrganizerItemLocalId");
     qRegisterMetaType<QList<QOrganizerItemLocalId> >("QList<QOrganizerItemLocalId>");
@@ -2071,7 +2071,7 @@ void tst_QOrganizerItemManager::signalEmission()
     todo2.setId(QOrganizerItemId());
     todo3.setId(QOrganizerItemId());
     batchAdd << todo << todo2 << todo3;
-    QMap<int, QOrganizerItemManager::Error> errorMap;
+    QMap<int, QOrganizerManager::Error> errorMap;
     QVERIFY(m1->saveItems(&batchAdd));
     errorMap = m1->errorMap();
 
@@ -2114,12 +2114,12 @@ void tst_QOrganizerItemManager::signalEmission()
     QTRY_COMPARE(spyCA.count(), 0);
     QTRY_COMPARE(spyCM.count(), 0);
 
-    QScopedPointer<QOrganizerItemManager> m2(QOrganizerItemManager::fromUri(uri));
-    QVERIFY(m1->hasFeature(QOrganizerItemManager::Anonymous) ==
-        m2->hasFeature(QOrganizerItemManager::Anonymous));
+    QScopedPointer<QOrganizerManager> m2(QOrganizerManager::fromUri(uri));
+    QVERIFY(m1->hasFeature(QOrganizerManager::Anonymous) ==
+        m2->hasFeature(QOrganizerManager::Anonymous));
 
     /* Now some cross manager testing */
-    if (!m1->hasFeature(QOrganizerItemManager::Anonymous)) {
+    if (!m1->hasFeature(QOrganizerManager::Anonymous)) {
         // verify that signals are emitted for modifications made to other managers (same id).
         QOrganizerItemDisplayLabel ncs = todo.detail(QOrganizerItemDisplayLabel::DefinitionName);
         ncs.setLabel("Test");
@@ -2136,29 +2136,29 @@ void tst_QOrganizerItemManager::signalEmission()
     }
 }
 
-void tst_QOrganizerItemManager::errorStayingPut()
+void tst_QOrganizerManager::errorStayingPut()
 {
     /* Make sure that when we clone a manager, we don't clone the error */
     QMap<QString, QString> params;
     params.insert("id", "error isolation test");
-    QOrganizerItemManager m1("memory",params);
+    QOrganizerManager m1("memory",params);
 
-    QVERIFY(m1.error() == QOrganizerItemManager::NoError);
+    QVERIFY(m1.error() == QOrganizerManager::NoError);
 
     /* Remove an invalid item to get an error */
     QVERIFY(m1.removeItem(QOrganizerItemLocalId()) == false);
-    QVERIFY(m1.error() == QOrganizerItemManager::DoesNotExistError);
+    QVERIFY(m1.error() == QOrganizerManager::DoesNotExistError);
 
     /* Create a new manager with hopefully the same backend */
-    QOrganizerItemManager m2("memory", params);
+    QOrganizerManager m2("memory", params);
 
-    QVERIFY(m1.error() == QOrganizerItemManager::DoesNotExistError);
-    QVERIFY(m2.error() == QOrganizerItemManager::NoError);
+    QVERIFY(m1.error() == QOrganizerManager::DoesNotExistError);
+    QVERIFY(m2.error() == QOrganizerManager::NoError);
 
     /* Cause an error on the other ones and check the first is not affected */
     m2.saveItems(0);
-    QVERIFY(m1.error() == QOrganizerItemManager::DoesNotExistError);
-    QVERIFY(m2.error() == QOrganizerItemManager::BadArgumentError);
+    QVERIFY(m1.error() == QOrganizerManager::DoesNotExistError);
+    QVERIFY(m2.error() == QOrganizerManager::BadArgumentError);
 
     QOrganizerItem c;
     QOrganizerItemDetail d("This does not exist and if it does this will break");
@@ -2166,14 +2166,14 @@ void tst_QOrganizerItemManager::errorStayingPut()
     c.saveDetail(&d);
 
     QVERIFY(m1.saveItem(&c) == false);
-    QVERIFY(m1.error() == QOrganizerItemManager::InvalidDetailError);
-    QVERIFY(m2.error() == QOrganizerItemManager::BadArgumentError);
+    QVERIFY(m1.error() == QOrganizerManager::InvalidDetailError);
+    QVERIFY(m2.error() == QOrganizerManager::BadArgumentError);
 }
 
-void tst_QOrganizerItemManager::detailDefinitions()
+void tst_QOrganizerManager::detailDefinitions()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
     QMap<QString, QOrganizerItemDetailDefinition> defs = cm->detailDefinitions(QOrganizerItemType::TypeEvent);
     QVERIFY(defs.size() > 0);
 
@@ -2297,43 +2297,43 @@ void tst_QOrganizerItemManager::detailDefinitions()
 
     /* XXX Multiply defined fields.. depends on semantichangeSet. */
 
-    if (cm->hasFeature(QOrganizerItemManager::MutableDefinitions)) {
+    if (cm->hasFeature(QOrganizerManager::MutableDefinitions)) {
         /* First do some negative testing */
 
         /* Bad add class */
         QVERIFY(cm->saveDetailDefinition(QOrganizerItemDetailDefinition(), QOrganizerItemType::TypeEvent) == false);
-        QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
+        QVERIFY(cm->error() == QOrganizerManager::BadArgumentError);
 
         /* Bad remove string */
         QVERIFY(cm->removeDetailDefinition(QString(), QOrganizerItemType::TypeEvent) == false);
-        QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
+        QVERIFY(cQOrganizerManagerzerItemManager::BadArgumentError);
 
         QVERIFY(cm->saveDetailDefinition(noIdDef, QOrganizerItemType::TypeEvent) == false);
-        QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
+        QVERIFY(cm->error() == QOrganizerManager::BadArgumentError);
 
         QVERIFY(cm->saveDetailDefinition(noFieldsDef, QOrganizerItemType::TypeEvent) == false);
-        QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
+        QVERIFY(cm->error() == QOrganizerManager::BadArgumentError);
 
         QVERIFY(cm->saveDetailDefinition(invalidFieldKeyDef, QOrganizerItemType::TypeEvent) == false);
-        QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
+        QVERIFY(cm->error() == QOrganizerManager::BadArgumentError);
 
         // the manager can no longer report supportedDataTypes(), so the default validateDefinition() function passes.
         //QVERIFY(cm->saveDetailDefinition(invalidFieldTypeDef, QOrganizerItemType::TypeEvent) == false);
-        //QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
+        //QVERIFY(cm->error() == QOrganizerManager::BadArgumentError);
 
         QVERIFY(cm->saveDetailDefinition(invalidAllowedValuesDef, QOrganizerItemType::TypeEvent) == false);
-        QVERIFY(cm->error() == QOrganizerItemManager::BadArgumentError);
+        QVERIFY(cm->error() == QOrganizerManager::BadArgumentError);
 
         /* Check that our new definition doesn't already exist */
         QVERIFY(cm->detailDefinition(newDef.name(),QOrganizerItemType::TypeEvent).isEmpty());
-        QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
+        QVERIFY(cm->error() == QOrganizerManager::DoesNotExistError);
 
         QVERIFY(cm->removeDetailDefinition(newDef.name(), QOrganizerItemType::TypeEvent) == false);
-        QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
+        QVERIFY(cm->error() == QOrganizerManager::DoesNotExistError);
 
         /* Add a new definition */
         QVERIFY(cm->saveDetailDefinition(newDef, QOrganizerItemType::TypeEvent) == true);
-        QVERIFY(cm->error() == QOrganizerItemManager::NoError);
+        QVERIFY(cm->error() == QOrganizerManager::NoError);
 
         /* Now retrieve it */
         QOrganizerItemDetailDefinition def = cm->detailDefinition(newDef.name(), QOrganizerItemType::TypeEvent);
@@ -2345,49 +2345,49 @@ void tst_QOrganizerItemManager::detailDefinitions()
         newDef.setFields(newFields);
 
         QVERIFY(cm->saveDetailDefinition(newDef, QOrganizerItemType::TypeEvent) == true);
-        QVERIFY(cm->error() == QOrganizerItemManager::NoError);
+        QVERIFY(cm->error() == QOrganizerManager::NoError);
 
         QVERIFY(cm->detailDefinition(newDef.name(), QOrganizerItemType::TypeEvent) == newDef);
 
         /* Remove it */
         QVERIFY(cm->removeDetailDefinition(newDef.name(), QOrganizerItemType::TypeEvent) == true);
-        QVERIFY(cm->error() == QOrganizerItemManager::NoError);
+        QVERIFY(cm->error() == QOrganizerManager::NoError);
 
         /* and make sure it does not exist any more */
         QVERIFY(cm->detailDefinition(newDef.name(), QOrganizerItemType::TypeEvent) == QOrganizerItemDetailDefinition());
-        QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
+        QVERIFY(cm->error() == QOrganizerManager::DoesNotExistError);
 
         /* Add the other good one */
         QVERIFY(cm->saveDetailDefinition(allowedDef, QOrganizerItemType::TypeEvent) == true);
-        QVERIFY(cm->error() == QOrganizerItemManager::NoError);
+        QVERIFY(cm->error() == QOrganizerManager::NoError);
 
         QVERIFY(allowedDef == cm->detailDefinition(allowedDef.name(), QOrganizerItemType::TypeEvent));
 
         /* and remove it */
         QVERIFY(cm->removeDetailDefinition(allowedDef.name(), QOrganizerItemType::TypeEvent) == true);
         QVERIFY(cm->detailDefinition(allowedDef.name(), QOrganizerItemType::TypeEvent) == QOrganizerItemDetailDefinition());
-        QVERIFY(cm->error() == QOrganizerItemManager::DoesNotExistError);
+        QVERIFY(cm->error() == QOrganizerManager::DoesNotExistError);
 
     } else {
         /* Bad add class */
         QVERIFY(cm->saveDetailDefinition(QOrganizerItemDetailDefinition(), QOrganizerItemType::TypeEvent) == false);
-        QVERIFY(cm->error() == QOrganizerItemManager::NotSupportedError);
+        QVERIFY(cm->error() == QOrganizerManager::NotSupportedError);
 
         /* Make sure we can't add/remove/modify detail definitions */
         QVERIFY(cm->removeDetailDefinition(QString(), QOrganizerItemType::TypeEvent) == false);
-        QVERIFY(cm->error() == QOrganizerItemManager::NotSupportedError);
+        QVERIFY(cm->error() == QOrganizerManager::NotSupportedError);
 
         /* Try updating an existing definition */
         QVERIFY(cm->saveDetailDefinition(updatedDef, QOrganizerItemType::TypeEvent) == false);
-        QVERIFY(cm->error() == QOrganizerItemManager::NotSupportedError);
+        QVERIFY(cm->error() == QOrganizerManager::NotSupportedError);
 
         /* Try removing an existing definition */
         QVERIFY(cm->removeDetailDefinition(updatedDef.name(), QOrganizerItemType::TypeEvent) == false);
-        QVERIFY(cm->error() == QOrganizerItemManager::NotSupportedError);
+        QVERIFY(cm->error() == QOrganizerManager::NotSupportedError);
     }
 }
 
-void tst_QOrganizerItemManager::changeSet()
+void tst_QOrganizerManager::changeSet()
 {
     QOrganizerItemLocalId id;
 
@@ -2442,17 +2442,17 @@ void tst_QOrganizerItemManager::changeSet()
     changeSet.emitSignals(0);
 }
 
-void tst_QOrganizerItemManager::fetchHint()
+void tst_QOrganizerManager::fetchHint()
 {
     QOrganizerItemFetchHint hint;
     hint.setOptimizationHints(QOrganizerItemFetchHint::NoBinaryBlobs);
     QCOMPARE(hint.optimizationHints(), QOrganizerItemFetchHint::NoBinaryBlobs);
 }
 
-void tst_QOrganizerItemManager::dataSerialization()
+void tst_QOrganizerManager::dataSerialization()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
 
     QOrganizerEvent event;
     event.setDisplayLabel("event");
@@ -2472,10 +2472,10 @@ void tst_QOrganizerItemManager::dataSerialization()
     }
 }
 
-void tst_QOrganizerItemManager::itemFetch()
+void tst_QOrganizerManager::itemFetch()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
 
     QOrganizerEvent event;
     event.setDisplayLabel("event");
@@ -2486,8 +2486,8 @@ void tst_QOrganizerItemManager::itemFetch()
     QOrganizerEvent recEvent;
     recEvent.setDisplayLabel("daily event");
     recEvent.setStartDateTime(QDateTime(QDate(2010, 9, 1), QTime(16, 0, 0)));
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
     rrule.setLimit(QDate(2010, 9, 10));
     recEvent.setRecurrenceRule(rrule);
     QVERIFY(cm->saveItem(&recEvent));
@@ -2503,10 +2503,10 @@ void tst_QOrganizerItemManager::itemFetch()
     QCOMPARE(items.count(), 2);
 }
 
-void tst_QOrganizerItemManager::spanOverDays()
+void tst_QOrganizerManager::spanOverDays()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
 
     QOrganizerEvent event;
     event.setDisplayLabel("event");
@@ -2540,17 +2540,17 @@ void tst_QOrganizerItemManager::spanOverDays()
     QCOMPARE(items.count(), 1);
 }
 
-void tst_QOrganizerItemManager::recurrence()
+void tst_QOrganizerManager::recurrence()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
 
     QOrganizerEvent event;
     event.setDisplayLabel("event");
     event.setStartDateTime(QDateTime(QDate(2012, 8, 9), QTime(11, 0, 0)));
     event.setEndDateTime(QDateTime(QDate(2012, 8, 9), QTime(11, 30, 0)));
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
     rrule.setLimit(3);
     event.setRecurrenceRule(rrule);
     QVERIFY(cm->saveItem(&event));
@@ -2571,7 +2571,7 @@ void tst_QOrganizerItemManager::recurrence()
 
 
 
-QList<QOrganizerItemDetail> tst_QOrganizerItemManager::removeAllDefaultDetails(const QList<QOrganizerItemDetail>& details)
+QList<QOrganizerItemDetail> tst_QOrganizerManager::removeAllDefaultDetails(const QList<QOrganizerItemDetail>& details)
 {
     QList<QOrganizerItemDetail> newlist;
     foreach (const QOrganizerItemDetail d, details) {
@@ -2584,10 +2584,10 @@ QList<QOrganizerItemDetail> tst_QOrganizerItemManager::removeAllDefaultDetails(c
     return newlist;
 }
 
-void tst_QOrganizerItemManager::detailOrders()
+void tst_QOrganizerManager::detailOrders()
 {
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
     
     if (cm->managerName() == "symbian")
         QSKIP("symbian manager does not support detail ordering", SkipSingle);
@@ -2656,20 +2656,20 @@ void tst_QOrganizerItemManager::detailOrders()
 }
 
 
-void tst_QOrganizerItemManager::itemType()
+void tst_QOrganizerManager::itemType()
 {
     // XXX TODO!
 }
 
 
-void tst_QOrganizerItemManager::collections()
+void tst_QOrganizerManager::collections()
 {
     // XXX TODO: break test into smaller sub-tests (per operation).
 
     QFETCH(QString, uri);
-    QScopedPointer<QOrganizerItemManager> oim(QOrganizerItemManager::fromUri(uri));
+    QScopedPointer<QOrganizerManager> oim(QOrganizerManager::fromUri(uri));
 
-    //if (!oim->hasFeature(QOrganizerItemManager::MutableCollections)) {
+    //if (!oim->hasFeature(QOrganizerManager::MutableCollections)) {
     //    QSKIP("This manager does not support mutable collections!", SkipSingle);
     //}
 
@@ -2781,5 +2781,5 @@ void tst_QOrganizerItemManager::collections()
     }
 }
 
-QTEST_MAIN(tst_QOrganizerItemManager)
-#include "tst_qorganizeritemmanager.moc"
+QTEST_MAIN(tst_QOrganizerManager)
+#include "tst_qorganizermanager.moc"

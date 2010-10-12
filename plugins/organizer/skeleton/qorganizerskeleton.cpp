@@ -44,7 +44,7 @@
 
 //QTM_USE_NAMESPACE
 
-QOrganizerItemManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
+QOrganizerManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error* error)
 {
     Q_UNUSED(parameters);
     Q_UNUSED(error);
@@ -533,7 +533,7 @@ int QOrganizerItemSkeletonEngine::managerVersion() const
     return 1;
 }
 
-QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     /*
         TODO
@@ -555,10 +555,10 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemInstances(const QOrganiz
         We might change the signature to split up the periodStart + periodEnd / periodStart + maxCount cases.
     */
 
-    return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, fetchHint, error);
+    return QOrganizerManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, fetchHint, error);
 }
 
-QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const
 {
     /*
         TODO
@@ -571,21 +571,21 @@ QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QDateTi
         If you do have to fetch, consider setting a fetch hint that restricts the information to that needed for filtering/sorting.
     */
 
-    *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
+    *error = QOrganizerManager::NotSupportedError; // TODO <- remove this
 
     QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
     QList<QOrganizerItem> ret;
 
     foreach(const QOrganizerItem& item, partiallyFilteredItems) {
-        if (QOrganizerItemManagerEngine::isItemBetweenDates(item, startDate, endDate) && QOrganizerItemManagerEngine::testFilter(filter, item)) {
+        if (QOrganizerManagerEngine::isItemBetweenDates(item, startDate, endDate) && QOrganizerManagerEngine::testFilter(filter, item)) {
             ret.append(item);
         }
     }
 
-    return QOrganizerItemManagerEngine::sortItems(ret, sortOrders);
+    return QOrganizerManagerEngine::sortItems(ret, sortOrders);
 }
 
-QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     /*
         TODO
@@ -600,14 +600,14 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QDateTime& start
     */
 
     Q_UNUSED(fetchHint);
-    *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
+    *error = QOrganizerManager::NotSupportedError; // TODO <- remove this
 
     QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
     QList<QOrganizerItem> ret;
 
     foreach(const QOrganizerItem& item, partiallyFilteredItems) {
-        if (QOrganizerItemManagerEngine::isItemBetweenDates(item, startDate, endDate) && QOrganizerItemManagerEngine::testFilter(filter, item)) {
-            QOrganizerItemManagerEngine::addSorted(&ret, item, sortOrders);
+        if (QOrganizerManagerEngine::isItemBetweenDates(item, startDate, endDate) && QOrganizerManagerEngine::testFilter(filter, item)) {
+            QOrganizerManagerEngine::addSorted(&ret, item, sortOrders);
         }
     }
 
@@ -621,7 +621,7 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QDateTime& start
     return ret;
 }
 
-QOrganizerItem QOrganizerItemSkeletonEngine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+QOrganizerItem QOrganizerItemSkeletonEngine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     /*
         TODO
@@ -632,10 +632,10 @@ QOrganizerItem QOrganizerItemSkeletonEngine::item(const QOrganizerItemLocalId& i
         fetch at least what is mentioned in the fetch hint).
 
     */
-    return QOrganizerItemManagerEngine::item(itemId, fetchHint, error);
+    return QOrganizerManagerEngine::item(itemId, fetchHint, error);
 }
 
-bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
     /*
         TODO
@@ -654,11 +654,11 @@ bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, QMap<
 
         The item passed in should be validated according to the schema.
     */
-    return QOrganizerItemManagerEngine::saveItems(items, errorMap, error);
+    return QOrganizerManagerEngine::saveItems(items, errorMap, error);
 
 }
 
-bool QOrganizerItemSkeletonEngine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
     /*
         TODO
@@ -670,35 +670,35 @@ bool QOrganizerItemSkeletonEngine::removeItems(const QList<QOrganizerItemLocalId
 
         DoesNotExistError should be used if the id refers to a non existent item.
     */
-    return QOrganizerItemManagerEngine::removeItems(itemIds, errorMap, error);
+    return QOrganizerManagerEngine::removeItems(itemIds, errorMap, error);
 }
 
-QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSkeletonEngine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
+QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSkeletonEngine::detailDefinitions(const QString& itemType, QOrganizerManager::Error* error) const
 {
     /* TODO - once you know what your engine will support, implement this properly.  One way is to call the base version, and add/remove things as needed */
-    return QOrganizerItemManagerEngine::detailDefinitions(itemType, error);
+    return QOrganizerManagerEngine::detailDefinitions(itemType, error);
 }
 
-QOrganizerItemDetailDefinition QOrganizerItemSkeletonEngine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
+QOrganizerItemDetailDefinition QOrganizerItemSkeletonEngine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerManager::Error* error) const
 {
     /* TODO - the default implementation just calls the base detailDefinitions function.  If that's inefficent, implement this */
-    return QOrganizerItemManagerEngine::detailDefinition(definitionId, itemType, error);
+    return QOrganizerManagerEngine::detailDefinition(definitionId, itemType, error);
 }
 
-bool QOrganizerItemSkeletonEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerManager::Error* error)
 {
     /* TODO - if you support adding custom fields, do that here.  Otherwise call the base functionality. */
-    return QOrganizerItemManagerEngine::saveDetailDefinition(def, itemType, error);
+    return QOrganizerManagerEngine::saveDetailDefinition(def, itemType, error);
 }
 
-bool QOrganizerItemSkeletonEngine::removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerManager::Error* error)
 {
     /* TODO - if you support removing custom fields, do that here.  Otherwise call the base functionality. */
-    return QOrganizerItemManagerEngine::removeDetailDefinition(definitionId, itemType, error);
+    return QOrganizerManagerEngine::removeDetailDefinition(definitionId, itemType, error);
 }
 
 
-QOrganizerCollection QOrganizerItemSkeletonEngine::defaultCollection(QOrganizerItemManager::Error* error) const
+QOrganizerCollection QOrganizerItemSkeletonEngine::defaultCollection(QOrganizerManager::Error* error) const
 {
     /*
         TODO
@@ -710,10 +710,10 @@ QOrganizerCollection QOrganizerItemSkeletonEngine::defaultCollection(QOrganizerI
         There is always at least one collection in a manager, and all items are
         saved in exactly one collection.
      */
-    return QOrganizerItemManagerEngine::defaultCollection(error);
+    return QOrganizerManagerEngine::defaultCollection(error);
 }
 
-QOrganizerCollection QOrganizerItemSkeletonEngine::collection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
+QOrganizerCollection QOrganizerItemSkeletonEngine::collection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error) const
 {
     /*
         TODO
@@ -722,10 +722,10 @@ QOrganizerCollection QOrganizerItemSkeletonEngine::collection(const QOrganizerCo
         Prior to saving items, clients will set which collection the item will/should
         be saved by calling item->setCollectionId().
      */
-    return QOrganizerItemManagerEngine::collection(collectionId, error);
+    return QOrganizerManagerEngine::collection(collectionId, error);
 }
 
-QList<QOrganizerCollection> QOrganizerItemSkeletonEngine::collections(QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemSkeletonEngine::collections(QOrganizerManager::Error* error) const
 {
     /*
         TODO
@@ -735,10 +735,10 @@ QList<QOrganizerCollection> QOrganizerItemSkeletonEngine::collections(QOrganizer
         collections, others will not.  A collection can have properties
         like colour, description, perhaps a priority, etc etc.
      */
-    return QOrganizerItemManagerEngine::collections(error);
+    return QOrganizerManagerEngine::collections(error);
 }
 
-bool QOrganizerItemSkeletonEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::saveCollection(QOrganizerCollection* collection, QOrganizerManager::Error* error)
 {
     /*
         TODO
@@ -747,10 +747,10 @@ bool QOrganizerItemSkeletonEngine::saveCollection(QOrganizerCollection* collecti
         mutable collections.  If the backend does support mutable collections, it
         should report that it supports the MutableCollections manager feature.
      */
-    return QOrganizerItemManagerEngine::saveCollection(collection, error);
+    return QOrganizerManagerEngine::saveCollection(collection, error);
 }
 
-bool QOrganizerItemSkeletonEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error)
 {
     /*
         TODO
@@ -766,10 +766,10 @@ bool QOrganizerItemSkeletonEngine::removeCollection(const QOrganizerCollectionLo
         the backend may decide whether to fail (with a permissions error) or to
         succeed and arbitrarily choose another collection to be the default collection.
      */
-    return QOrganizerItemManagerEngine::removeCollection(collectionId, error);
+    return QOrganizerManagerEngine::removeCollection(collectionId, error);
 }
 
-bool QOrganizerItemSkeletonEngine::startRequest(QOrganizerItemAbstractRequest* req)
+bool QOrganizerItemSkeletonEngine::startRequest(QOrganizerAbstractRequest* req)
 {
     /*
         TODO
@@ -808,20 +808,20 @@ bool QOrganizerItemSkeletonEngine::startRequest(QOrganizerItemAbstractRequest* r
         Return true if the request can be started, false otherwise.  You can set an error
         in the request if you like.
     */
-    return QOrganizerItemManagerEngine::startRequest(req);
+    return QOrganizerManagerEngine::startRequest(req);
 }
 
-bool QOrganizerItemSkeletonEngine::cancelRequest(QOrganizerItemAbstractRequest* req)
+bool QOrganizerItemSkeletonEngine::cancelRequest(QOrganizerAbstractRequest* req)
 {
     /*
         TODO
 
         Cancel an in progress async request.  If not possible, return false from here.
     */
-    return QOrganizerItemManagerEngine::cancelRequest(req);
+    return QOrganizerManagerEngine::cancelRequest(req);
 }
 
-bool QOrganizerItemSkeletonEngine::waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs)
+bool QOrganizerItemSkeletonEngine::waitForRequestFinished(QOrganizerAbstractRequest* req, int msecs)
 {
     /*
         TODO
@@ -835,10 +835,10 @@ bool QOrganizerItemSkeletonEngine::waitForRequestFinished(QOrganizerItemAbstract
 
         It's best to avoid processing events, if you can, or at least only process non-UI events.
     */
-    return QOrganizerItemManagerEngine::waitForRequestFinished(req, msecs);
+    return QOrganizerManagerEngine::waitForRequestFinished(req, msecs);
 }
 
-void QOrganizerItemSkeletonEngine::requestDestroyed(QOrganizerItemAbstractRequest* req)
+void QOrganizerItemSkeletonEngine::requestDestroyed(QOrganizerAbstractRequest* req)
 {
     /*
         TODO
@@ -859,23 +859,23 @@ void QOrganizerItemSkeletonEngine::requestDestroyed(QOrganizerItemAbstractReques
         ordering problems :D
 
     */
-    return QOrganizerItemManagerEngine::requestDestroyed(req);
+    return QOrganizerManagerEngine::requestDestroyed(req);
 }
 
-bool QOrganizerItemSkeletonEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const
+bool QOrganizerItemSkeletonEngine::hasFeature(QOrganizerManager::ManagerFeature feature, const QString& itemType) const
 {
     // TODO - the answer to the question may depend on the type
     Q_UNUSED(itemType);
     switch(feature) {
-        case QOrganizerItemManager::MutableDefinitions:
+        case QOrganizerManager::MutableDefinitions:
             // TODO If you support save/remove detail definition, return true
             return false;
 
-        case QOrganizerItemManager::Anonymous:
+        case QOrganizerManager::Anonymous:
             // TODO if this engine is anonymous (e.g. no other engine can share the data) return true
             // (mostly for an in memory engine)
             return false;
-        case QOrganizerItemManager::ChangeLogs:
+        case QOrganizerManager::ChangeLogs:
             // TODO if this engine supports filtering by last modified/created/removed timestamps, return true
             return false;
     }

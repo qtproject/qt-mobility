@@ -144,7 +144,7 @@ void EditCalendarsPage::itemDoubleClicked(QListWidgetItem *listItem)
     emit showAddCalendarPage(m_manager, &m_collection);
 }
 
-void EditCalendarsPage::showPage(QOrganizerItemManager *manager)
+void EditCalendarsPage::showPage(QOrganizerManager *manager)
 {
     m_manager = manager;
     m_calendarList->clear();

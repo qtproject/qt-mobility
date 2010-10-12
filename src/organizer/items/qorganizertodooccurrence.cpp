@@ -64,7 +64,7 @@ QTM_USE_NAMESPACE
  */
 void QOrganizerTodoOccurrence::setStartDateTime(const QDateTime& startDateTime)
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     ttr.setStartDateTime(startDateTime);
     saveDetail(&ttr);
 }
@@ -74,7 +74,7 @@ void QOrganizerTodoOccurrence::setStartDateTime(const QDateTime& startDateTime)
  */
 QDateTime QOrganizerTodoOccurrence::startDateTime() const
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     return ttr.startDateTime();
 }
 
@@ -83,7 +83,7 @@ QDateTime QOrganizerTodoOccurrence::startDateTime() const
  */
 void QOrganizerTodoOccurrence::setDueDateTime(const QDateTime& dueDateTime)
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     ttr.setDueDateTime(dueDateTime);
     saveDetail(&ttr);
 }
@@ -93,7 +93,7 @@ void QOrganizerTodoOccurrence::setDueDateTime(const QDateTime& dueDateTime)
  */
 QDateTime QOrganizerTodoOccurrence::dueDateTime() const
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     return ttr.dueDateTime();
 }
 

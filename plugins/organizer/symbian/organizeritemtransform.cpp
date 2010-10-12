@@ -108,7 +108,7 @@ void debugSchemaDefs(const QMap<QString, QMap<QString, QOrganizerItemDetailDefin
 OrganizerItemTransform::OrganizerItemTransform()
 {
     m_detailTransforms.append(new OrganizerItemTypeTransform()); // this must be first always
-    m_detailTransforms.append(new OrganizerEventTimeRangeTransform());
+    m_detailTransforms.append(new OrganizerEventTimeTransform());
     m_detailTransforms.append(new OrganizerItemDescriptionTransform());
     m_detailTransforms.append(new OrganizerItemDisplayLabelTransform());
     m_detailTransforms.append(new OrganizerItemGuidTransform());
@@ -116,9 +116,9 @@ OrganizerItemTransform::OrganizerItemTransform()
     m_detailTransforms.append(new OrganizerItemLocationTransform());
     m_detailTransforms.append(new OrganizerItemPriorityTransform());
     m_detailTransforms.append(new OrganizerItemTimeStampTransform());
-    m_detailTransforms.append(new OrganizerJournalTimeRangeTransform());
+    m_detailTransforms.append(new OrganizerJournalTimeTransform());
     m_detailTransforms.append(new OrganizerTodoProgressTransform());
-    m_detailTransforms.append(new OrganizerTodoTimeRangeTransform());
+    m_detailTransforms.append(new OrganizerTodoTimeTransform());
     m_detailTransforms.append(new OrganizerItemRecurrenceTransform());
 	m_detailTransforms.append(new OrganizerItemReminderTransform());
 }

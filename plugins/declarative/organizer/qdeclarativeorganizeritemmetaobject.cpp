@@ -14,7 +14,7 @@ QTM_USE_NAMESPACE
     {QDeclarativeOrganizer##classname::DetailGroupName.latin1(), QOrganizer##classname::DefinitionName.latin1(), true}
 
 static OrganizerItemDetailNameMap qt_organizerItemDetailNameMap[] = {
-    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(EventTimeRange),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(EventTime),
     Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(ItemComment),
     Q_DECLARATIVE_ORGANIZER_ITEM_DETAILGROUPNAME(ItemComment),
     Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(ItemDescription),
@@ -34,9 +34,9 @@ static OrganizerItemDetailNameMap qt_organizerItemDetailNameMap[] = {
     Q_DECLARATIVE_ORGANIZER_ITEM_DETAILGROUPNAME(ItemEmailReminder),
     Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(ItemTimestamp),
     Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(ItemType),
-    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(JournalTimeRange),
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(JournalTime),
     Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(TodoProgress),
-    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(TodoTimeRange)
+    Q_DECLARATIVE_ORGANIZER_ITEM_DETAILNAME(TodoTime)
 };
 
 QDeclarativeOrganizerItemMetaObject::QDeclarativeOrganizerItemMetaObject(QObject* obj, const QOrganizerItem& item)

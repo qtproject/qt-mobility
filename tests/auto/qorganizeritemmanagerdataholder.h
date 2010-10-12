@@ -49,7 +49,7 @@
 #include <QString>
 #include <QDebug>
 
-#include "qorganizeritemmanager.h"
+#include "qorganizermanager.h"
 
 //
 //  W A R N I N G
@@ -64,20 +64,20 @@
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItem;
-class QOrganizerItemManagerDataHolder
+class QOrganizerManagerDataHolder
 {
 public:
-    QOrganizerItemManagerDataHolder()
+    QOrganizerManagerDataHolder()
     {
-        QStringList managerNames = QOrganizerItemManager::availableManagers();
+        QStringList managerNames = QOrganizerManager::availableManagers();
 
         foreach(const QString& mgr, managerNames) {
             // Don't bother with these
             if (mgr == "memory" || mgr == "invalid" || mgr == "testdummy" || mgr == "maliciousplugin")
                 continue;
             QMap<QString, QString> params;
-            QString mgrUri = QOrganizerItemManager::buildUri(mgr, params);
-            QOrganizerItemManager* cm = QOrganizerItemManager::fromUri(mgrUri);
+            QString mgrUri = QOrganizerManager::buildUri(mgr, params);
+            QOrganizerManager* cm = QOrganizerManager::fromUri(mgrUri);
             if (cm) {
                 qDebug() << "Saving items for" << mgrUri;
                 QList<QOrganizerItem> items = cm->items();
@@ -91,10 +91,10 @@ public:
         }
     }
 
-    ~QOrganizerItemManagerDataHolder()
+    ~QOrganizerManagerDataHolder()
     {
         foreach(const QString& mgrUri, savedItems.keys()) {
-            QOrganizerItemManager* cm = QOrganizerItemManager::fromUri(mgrUri);
+            QOrganizerManager* cm = QOrganizerManager::fromUri(mgrUri);
             if (cm) {
                 qDebug() << "Restoring items for" << mgrUri;
                 QList<QOrganizerItem> items = savedItems.value(mgrUri);
