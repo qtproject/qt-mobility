@@ -55,9 +55,10 @@ class QDeclarativeContactAddress : public QDeclarativeContactDetail
     Q_PROPERTY(QString region READ region WRITE setRegion  NOTIFY fieldsChanged)
     Q_PROPERTY(QString postcode READ postcode WRITE setPostcode  NOTIFY fieldsChanged)
     Q_PROPERTY(QString country READ country WRITE setCountry  NOTIFY fieldsChanged)
-    Q_PROPERTY(QStringList subTypes READ subTypes WRITE setSubTypes NOTIFY fieldsChanged)
+    Q_PROPERTY(QVariantList subTypes READ subTypes WRITE setSubTypes NOTIFY fieldsChanged)
     Q_PROPERTY(QString postOfficeBox READ postOfficeBox WRITE setPostOfficeBox  NOTIFY fieldsChanged)
     Q_ENUMS(FieldType)
+    Q_ENUMS(SubType)
 public:
     enum FieldType {
         Street = 0,
@@ -67,6 +68,13 @@ public:
         Country,
         SubTypes,
         PostOfficeBox
+    };
+
+    enum SubType {
+        Parcel = 0,
+        Postal,
+        Domestic,
+        International
     };
 
     QDeclarativeContactAddress(QObject* parent = 0)
@@ -93,8 +101,48 @@ public:
     void setPostOfficeBox(const QString& postOfficeBox) {detail().setValue(QContactAddress::FieldPostOfficeBox, postOfficeBox);}
     QString postOfficeBox() const {return detail().value(QContactAddress::FieldPostOfficeBox);}
 
-    void setSubTypes(const QStringList& subTypes) {detail().setValue(QContactAddress::FieldSubTypes, subTypes);}
-    QStringList subTypes() const {return detail().value<QStringList>(QContactAddress::FieldSubTypes);}
+    void setSubTypes(const QVariantList& subTypes)
+    {
+        QStringList savedList;
+        foreach (const QVariant subType, subTypes) {
+            switch (static_cast<SubType>(subType.value<int>()))
+            {
+            case Parcel:
+                savedList << QContactAddress::SubTypeParcel;
+                break;
+            case Postal:
+                savedList << QContactAddress::SubTypePostal;
+                break;
+            case Domestic:
+                savedList << QContactAddress::SubTypeDomestic;
+                break;
+            case International:
+                savedList << QContactAddress::SubTypeInternational;
+                break;
+            default:
+                break;
+
+            }
+        }
+        detail().setValue(QContactAddress::FieldSubTypes, savedList);
+    }
+
+    QVariantList subTypes() const
+    {
+        QVariantList returnList;
+        QStringList savedList = detail().value<QStringList>(QContactAddress::FieldSubTypes);
+        foreach (const QString& subType, savedList) {
+            if (subType == QContactAddress::SubTypePostal)
+                returnList << static_cast<int>(Postal);
+            else if (subType == QContactAddress::SubTypeParcel)
+                returnList << static_cast<int>(Parcel);
+            else if (subType == QContactAddress::SubTypeDomestic)
+                returnList << static_cast<int>(Domestic);
+            else if (subType == QContactAddress::SubTypeInternational)
+                returnList << static_cast<int>(International);
+        }
+        return returnList;
+    }
 signals:
     void fieldsChanged();
 };

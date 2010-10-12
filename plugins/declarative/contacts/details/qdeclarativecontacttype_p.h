@@ -48,13 +48,20 @@
 class QDeclarativeContactType : public QDeclarativeContactDetail
 {
     Q_OBJECT
-    Q_PROPERTY(QString type READ type WRITE setType NOTIFY fieldsChanged)
+    Q_PROPERTY(ContactType type READ type WRITE setType NOTIFY fieldsChanged)
     Q_ENUMS(FieldType)
+    Q_ENUMS(ContactType)
     Q_CLASSINFO("DefaultProperty", "type")
 public:
     enum FieldType {
         Type = 0
     };
+
+    enum ContactType {
+        Contact = 0,
+        Group
+    };
+
     ContactDetailType detailType() const
     {
         return QDeclarativeContactDetail::Type;
@@ -66,8 +73,20 @@ public:
         setDetail(QContactType());
     }
 
-    void setType(const QString& type) {detail().setValue(QContactType::FieldType, type);}
-    QString type() const {return detail().value(QContactType::FieldType);}
+    void setType(ContactType type)
+    {
+        if (type == Contact)
+            detail().setValue(QContactType::FieldType, QContactType::TypeContact);
+        else if (type == Group)
+            detail().setValue(QContactType::FieldType, QContactType::TypeGroup);
+    }
+    ContactType type() const
+    {
+        QString typeString = detail().value(QContactType::FieldType);
+        if (typeString == QContactType::TypeContact)
+            return Contact;
+        return Group;
+    }
 signals:
     void fieldsChanged();
 };
