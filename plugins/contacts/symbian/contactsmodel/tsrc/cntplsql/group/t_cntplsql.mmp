@@ -54,6 +54,7 @@ SOURCE          cpredictivesearchsettingstable.cpp
 SOURCE          cpredictivesearchsynchronizer.cpp
 // Other required code
 SOURCE          cntsqlprovider.cpp
+SOURCE          koreaninput.cpp
 
 USERINCLUDE     ../../../cntplsql/inc
 USERINCLUDE     ../../../cntsrv/inc
