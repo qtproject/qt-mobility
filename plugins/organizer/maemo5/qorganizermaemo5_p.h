@@ -206,7 +206,7 @@ private:
     QList<QOrganizerCollectionLocalId> internalCollectionIds(QOrganizerManager::Error* error) const;
 
     // single item saving implementation
-    void checkItemIdValidity(CCalendar *cal, QOrganizerItem *checkItem, QOrganizerManager::Error *error);
+    void checkItemIdValidity(QOrganizerItem *checkItem, QOrganizerManager::Error *error);
     int doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemChangeSet &cs, QOrganizerManager::Error *error);
 
     // saving the occurrences
