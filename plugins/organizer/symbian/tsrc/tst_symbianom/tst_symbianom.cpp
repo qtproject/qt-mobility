@@ -315,7 +315,7 @@ void tst_SymbianOm::fetchItems()
     }
 
     // Fetch ids
-    QList<QOrganizerItem> actualItems = m_om->items();
+    QList<QOrganizerItem> actualItems = m_om->itemsForExport();
     QVERIFY(m_om->error() == QOrganizerManager::NoError);
     
     // Verify
@@ -1027,7 +1027,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
 
     QTest::newRow(testCaseName("item with reminder starttime in the past", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerManager::NoError
+        << (int) QOrganizerManager::BadArgumentError
         << (QTstDetailFieldList(itemTypeDetails)
             << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with the president"))
             // start now
@@ -1071,7 +1071,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
 
     QTest::newRow(testCaseName("item with reminder delta in past", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerManager::NoError
+        << (int) QOrganizerManager::BadArgumentError
         << (QTstDetailFieldList(itemTypeDetails)
             << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president"))
             // start now
