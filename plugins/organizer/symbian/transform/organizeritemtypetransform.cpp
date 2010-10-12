@@ -80,7 +80,7 @@ void OrganizerItemTypeTransform::transformToDetailL(const CCalEntry& entry, QOrg
     item->setType(itemType);
 }
 
-void OrganizerItemTypeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
+void OrganizerItemTypeTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemOccurrence)
 {
     CCalEntry::TType entryType = instance.Entry().EntryTypeL();
     QString itemType;
@@ -96,7 +96,7 @@ void OrganizerItemTypeTransform::transformToDetailL(const CCalInstance& instance
     else
         User::Leave(KErrUnknown); // unknown type
 
-    itemInstance->setType(itemType);
+    itemOccurrence->setType(itemType);
 }
 
 void OrganizerItemTypeTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)

@@ -39,36 +39,50 @@
 **
 ****************************************************************************/
 
+#ifndef QORGANIZERITEMOCCURRENCEFETCHREQUEST_H
+#define QORGANIZERITEMOCCURRENCEFETCHREQUEST_H
 
-#ifndef QORGANIZERITEMMANAGERENGINEFACTORY_H
-#define QORGANIZERITEMMANAGERENGINEFACTORY_H
+#include "qtorganizerglobal.h"
+#include "qorganizerabstractrequest.h"
+#include "qorganizeritemsortorder.h"
+#include "qorganizeritemfilter.h"
+#include "qorganizeritem.h"
+#include "qorganizeritemfetchhint.h"
 
-#include <QtPlugin>
-#include <QMap>
-#include <QString>
-
-#include "qorganizeritemmanager.h"
+#include <QList>
+#include <QStringList>
 
 QTM_BEGIN_NAMESPACE
-/* Backend plugin API interface, creates engines for us */
-class QOrganizerItemManagerEngine;
-class QOrganizerCollectionEngineLocalId;
-class Q_ORGANIZER_EXPORT QOrganizerItemManagerEngineFactory
-{
-public:
-    // engine factory functions
-    virtual QList<int> supportedImplementationVersions() const;
-    virtual ~QOrganizerItemManagerEngineFactory();
-    virtual QOrganizerItemManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error) = 0;
-    virtual QString managerName() const = 0;
-    virtual QOrganizerItemEngineLocalId* createItemEngineLocalId() const = 0;
-    virtual QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId()const  = 0;
-};
-QTM_END_NAMESPACE
 
-QT_BEGIN_NAMESPACE
-#define QT_ORGANIZER_BACKEND_INTERFACE "com.nokia.qt.mobility.organizeritems.enginefactory/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QOrganizerItemManagerEngineFactory, QT_ORGANIZER_BACKEND_INTERFACE);
-QT_END_NAMESPACE
+class QOrganizerItemOccurrenceFetchRequestPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerItemOccurrenceFetchRequest : public QOrganizerAbstractRequest
+{
+    Q_OBJECT
+
+public:
+    QOrganizerItemOccurrenceFetchRequest(QObject* parent = 0);
+
+    void setParentItem(const QOrganizerItem& item);
+    void setStartDate(const QDateTime& date);
+    void setEndDate(const QDateTime& date);
+    void setMaxOccurrences(int maxCount);
+    void setFetchHint(const QOrganizerItemFetchHint& hint);
+
+    QOrganizerItem parentItem() const;
+    QDateTime startDate() const;
+    QDateTime endDate() const;
+    int maxOccurrences() const;
+    QOrganizerItemFetchHint fetchHint() const;
+
+    /* Results */
+    QList<QOrganizerItem> itemOccurrences() const;
+
+private:
+    Q_DISABLE_COPY(QOrganizerItemOccurrenceFetchRequest)
+    friend class QOrganizerManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemOccurrenceFetchRequest)
+};
+
+QTM_END_NAMESPACE
 
 #endif

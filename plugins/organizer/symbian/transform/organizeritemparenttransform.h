@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,51 +38,18 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef ORGANIZERITEMPARENTTRANSFORM_H_
+#define ORGANIZERITEMPARENTTRANSFORM_H_
 
-#ifndef QORGANIZERITEMINSTANCEFETCHREQUEST_H
-#define QORGANIZERITEMINSTANCEFETCHREQUEST_H
+#include "organizeritemdetailtransform.h"
 
-#include "qtorganizerglobal.h"
-#include "qorganizeritemabstractrequest.h"
-#include "qorganizeritemsortorder.h"
-#include "qorganizeritemfilter.h"
-#include "qorganizeritem.h"
-#include "qorganizeritemfetchhint.h"
-
-#include <QList>
-#include <QStringList>
-
-QTM_BEGIN_NAMESPACE
-
-class QOrganizerItemInstanceFetchRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemInstanceFetchRequest : public QOrganizerItemAbstractRequest
+class OrganizerItemParentTransform : public OrganizerItemDetailTransform
 {
-    Q_OBJECT
-
 public:
-    QOrganizerItemInstanceFetchRequest(QObject* parent = 0);
-
-    void setGenerator(const QOrganizerItem& item);
-    void setStartDate(const QDateTime& date);
-    void setEndDate(const QDateTime& date);
-    void setMaxOccurrences(int maxCount);
-    void setFetchHint(const QOrganizerItemFetchHint& hint);
-
-    QOrganizerItem generator() const;
-    QDateTime startDate() const;
-    QDateTime endDate() const;
-    int maxOccurrences() const;
-    QOrganizerItemFetchHint fetchHint() const;
-
-    /* Results */
-    QList<QOrganizerItem> items() const;
-
-private:
-    Q_DISABLE_COPY(QOrganizerItemInstanceFetchRequest)
-    friend class QOrganizerItemManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemInstanceFetchRequest)
+    void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
+    void transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemOccurrence);
+    void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
+    QString detailDefinitionName();
 };
 
-QTM_END_NAMESPACE
-
-#endif
+#endif // ORGANIZERITEMPARENTTRANSFORM_H_

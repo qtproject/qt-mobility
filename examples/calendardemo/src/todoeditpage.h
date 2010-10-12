@@ -47,7 +47,7 @@
 #include <qorganizertodo.h>
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManager;
+class QOrganizerManager;
 class QOrganizerEvent;
 class QOrganizerItem;
 QTM_END_NAMESPACE
@@ -68,7 +68,7 @@ public:
 public Q_SLOTS:
     void cancelClicked();
     void saveClicked();
-    void todoChanged(QOrganizerItemManager *manager, const QOrganizerTodo &todo);
+    void todoChanged(QOrganizerManager *manager, const QOrganizerTodo &todo);
     void handleAlarmIndexChanged(const QString);
 
 
@@ -79,7 +79,7 @@ protected: // from QWidget
     void showEvent(QShowEvent *event);
 
 private:
-    QOrganizerItemManager *m_manager;
+    QOrganizerManager *m_manager;
     QOrganizerTodo m_organizerTodo;
     QLineEdit *m_subjectEdit;
     QDateTimeEdit *m_startTimeEdit;

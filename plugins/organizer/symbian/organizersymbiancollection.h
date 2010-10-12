@@ -48,7 +48,7 @@
 QTM_USE_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManagerEngine;
+class QOrganizerManagerEngine;
 QTM_END_NAMESPACE
 class CCalSession;
 class CCalEntryView;
@@ -68,7 +68,7 @@ public:
     TBool NotifyProgress();
     void CalChangeNotification(RArray<TCalChangeEntry>& aChangeItems);
     
-    QOrganizerItemManagerEngine *m_engine;
+    QOrganizerManagerEngine *m_engine;
     CCalSession *m_calSession;
     CCalEntryView *m_calEntryView;
     CCalInstanceView *m_calInstanceView;
@@ -83,7 +83,7 @@ class OrganizerSymbianCollection
 {
 public:
     OrganizerSymbianCollection();
-    OrganizerSymbianCollection(QOrganizerItemManagerEngine *engine);
+    OrganizerSymbianCollection(QOrganizerManagerEngine *engine);
     OrganizerSymbianCollection(const OrganizerSymbianCollection &other);
     
 #ifdef SYMBIAN_CALENDAR_V2

@@ -72,10 +72,10 @@ private slots:
    
 public slots:
    void fetchRequestStateChanged(
-           QOrganizerItemAbstractRequest::State currentState);
+           QOrganizerAbstractRequest::State currentState);
    void fetchRequestResultsAvailable();
    void saveRequestStateChanged(
-           QOrganizerItemAbstractRequest::State currentState);
+           QOrganizerAbstractRequest::State currentState);
    void saveRequestResultsAvailable();
 
    
@@ -83,7 +83,7 @@ private:
    QList<QOrganizerItem> createItems(int noOfItems);
    //void fetchItems();
 private:
-    QOrganizerItemManager*              m_om;
+    QOrganizerManager*              m_om;
     QOrganizerItemFetchRequest*         m_fetchItemRequest;
     QOrganizerItemSaveRequest*          m_saveItemRequest;
 };
@@ -91,7 +91,7 @@ private:
 void TestFetchItems::initTestCase()
 {
     // Create a new item manager instance
-    m_om = new QOrganizerItemManager(managerNameSymbian);
+    m_om = new QOrganizerManager(managerNameSymbian);
     // Cleanup by deleting all items
     m_om->removeItems(m_om->itemIds());
     
@@ -100,8 +100,8 @@ void TestFetchItems::initTestCase()
     m_saveItemRequest = new QOrganizerItemSaveRequest(this);
     // Connect for the state change signal 
     connect(m_saveItemRequest, 
-            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, 
-            SLOT(saveRequestStateChanged(QOrganizerItemAbstractRequest::State)));
+            SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), this, 
+            SLOT(saveRequestStateChanged(QOrganizerAbstractRequest::State)));
     connect(m_saveItemRequest, SIGNAL(resultsAvailable()), 
             this, SLOT(saveRequestResultsAvailable()));
 
@@ -109,9 +109,9 @@ void TestFetchItems::initTestCase()
     m_fetchItemRequest = new QOrganizerItemFetchRequest(this);
     // Connect for the state change signal 
     connect(m_fetchItemRequest, 
-            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+            SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), 
             this, 
-            SLOT(fetchRequestStateChanged(QOrganizerItemAbstractRequest::State)));
+            SLOT(fetchRequestStateChanged(QOrganizerAbstractRequest::State)));
     connect(m_fetchItemRequest, SIGNAL(resultsAvailable()), 
             this, SLOT(fetchRequestResultsAvailable()));
 }
@@ -156,19 +156,19 @@ QList<QOrganizerItem> TestFetchItems::createItems(int noOfItems)
         organizerItem.setDisplayLabel(desplaylabel);
         
         // Set current time
-        QOrganizerEventTimeRange timeRange;
+        QOrganizerEventTime timeRange;
         QDateTime startTime;
         startTime.currentDateTime();
         timeRange.setStartDateTime(startTime.currentDateTime());
         
         QVERIFY(organizerItem.saveDetail(&timeRange));
         
-        QOrganizerItemRecurrenceRule rrule;
-        rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+        QOrganizerRecurrenceRule rrule;
+        rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
         rrule.setLimit(KNumberOfOccurrences);
  
         // Add recurrence rules to the item
-        QSet<QOrganizerItemRecurrenceRule> rrules;
+        QSet<QOrganizerRecurrenceRule> rrules;
         rrules.insert(rrule);
         QOrganizerItemRecurrence recurrence;
         recurrence.setRecurrenceRules(rrules);
@@ -182,24 +182,24 @@ QList<QOrganizerItem> TestFetchItems::createItems(int noOfItems)
 
 // request status changed for save request
 void TestFetchItems::saveRequestStateChanged(
-        QOrganizerItemAbstractRequest::State currentState)
+        QOrganizerAbstractRequest::State currentState)
 {
     switch(currentState) {
-        case QOrganizerItemAbstractRequest::InactiveState: { 
+        case QOrganizerAbstractRequest::InactiveState: { 
             // Operation not yet started start the operation
             saveItems();
             break;
         }
-        case QOrganizerItemAbstractRequest::ActiveState: { 
+        case QOrganizerAbstractRequest::ActiveState: { 
             // Operation started, not yet finished operation already started
         break;
         }
-        case QOrganizerItemAbstractRequest::CanceledState: { 
+        case QOrganizerAbstractRequest::CanceledState: { 
             // Operation is finished due to cancellation test not completed, 
             // failed
         break;
         }
-        case QOrganizerItemAbstractRequest::FinishedState: { 
+        case QOrganizerAbstractRequest::FinishedState: { 
             // Operation either completed successfully or failed.  
             // No further results will be available.
             // test completed, compare the results when results available 
@@ -265,24 +265,24 @@ void TestFetchItems::fetchItems()
 
 // Fetch request state changed
 void TestFetchItems::fetchRequestStateChanged(
-        QOrganizerItemAbstractRequest::State currentState)
+        QOrganizerAbstractRequest::State currentState)
 {
     switch(currentState) {
-        case QOrganizerItemAbstractRequest::InactiveState: { 
+        case QOrganizerAbstractRequest::InactiveState: { 
             // Operation not yet started start the operation
             fetchItems();
             break;
         }
-        case QOrganizerItemAbstractRequest::ActiveState: { 
+        case QOrganizerAbstractRequest::ActiveState: { 
             // Operation started, not yet finished operation already started
         break;
         }
-        case QOrganizerItemAbstractRequest::CanceledState: { 
+        case QOrganizerAbstractRequest::CanceledState: { 
             // Operation is finished due to cancellation test not completed, 
             // failed
         break;
         }
-        case QOrganizerItemAbstractRequest::FinishedState: { 
+        case QOrganizerAbstractRequest::FinishedState: { 
             // Operation either completed successfully or failed.  
             // No further results will be available.
             // test completed, compate the results while available

@@ -43,7 +43,7 @@
 #define QORGANIZERITEMREMOVEREQUEST_H
 
 #include "qtorganizerglobal.h"
-#include "qorganizeritemabstractrequest.h"
+#include "qorganizerabstractrequest.h"
 #include "qorganizeritemfilter.h"
 
 #include <QList>
@@ -51,7 +51,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemRemoveRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemRemoveRequest : public QOrganizerItemAbstractRequest
+class Q_ORGANIZER_EXPORT QOrganizerItemRemoveRequest : public QOrganizerAbstractRequest
 {
     Q_OBJECT
 
@@ -64,11 +64,11 @@ public:
     QList<QOrganizerItemLocalId> itemIds() const;
 
     /* Results */
-    QMap<int, QOrganizerItemManager::Error> errorMap() const;
+    QMap<int, QOrganizerManager::Error> errorMap() const;
 
 private:
     Q_DISABLE_COPY(QOrganizerItemRemoveRequest)
-    friend class QOrganizerItemManagerEngine;
+    friend class QOrganizerManagerEngine;
     Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemRemoveRequest)
 };
 

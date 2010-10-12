@@ -128,7 +128,7 @@ JournalEditPage::~JournalEditPage()
 
 }
 
-void JournalEditPage::journalChanged(QOrganizerItemManager *manager, const QOrganizerJournal &journal)
+void JournalEditPage::journalChanged(QOrganizerManager *manager, const QOrganizerJournal &journal)
 {
     m_manager = manager;
     m_organizerJournal = journal;
