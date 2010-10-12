@@ -63,6 +63,11 @@ QSensorPluginLoader::~QSensorPluginLoader()
     }
 }
 
+QList<QObject*> QSensorPluginLoader::plugins() const
+{
+    return m_plugins;
+}
+
 void QSensorPluginLoader::load()
 {
     if (!m_plugins.isEmpty())
@@ -78,7 +83,7 @@ void QSensorPluginLoader::load()
         if (o != 0) {
             QSensorPluginInterface *p = qobject_cast<QSensorPluginInterface*>(o);
             if (p != 0) {
-                m_plugins << p;
+                m_plugins << o;
                 m_loaders << loader;
             } else {
                 loader->unload();

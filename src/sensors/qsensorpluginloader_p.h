@@ -61,20 +61,18 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QSensorPluginInterface;
-
 class QM_AUTOTEST_EXPORT QSensorPluginLoader
 {
 public:
     QSensorPluginLoader();
     ~QSensorPluginLoader();
 
-    QList<QSensorPluginInterface*> plugins() const { return m_plugins; }
+    QList<QObject*> plugins() const;
 
 private:
     void load();
 
-    QList<QSensorPluginInterface*> m_plugins;
+    QList<QObject*> m_plugins;
     QList<QPluginLoader *> m_loaders;
 };
 

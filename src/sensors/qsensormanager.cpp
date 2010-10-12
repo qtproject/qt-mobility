@@ -62,6 +62,7 @@ class QSensorManagerPrivate : public QObject
 public:
     QSensorManagerPrivate()
         : pluginsLoaded(false)
+        , sensorsChanged(false)
     {
     }
 
@@ -75,11 +76,8 @@ public:
     // Holds the first identifier for each type
     QHash<QByteArray, QByteArray> firstIdentifierForType;
 
-    enum {
-        IDLE,
-        REGISTERED,
-        NOTIFYING
-    } registrationState;
+    bool sensorsChanged;
+    QList<QSensorChangesInterface*> changeListeners;
 
 Q_SIGNALS:
     void availableSensorsChanged();
@@ -87,6 +85,32 @@ Q_SIGNALS:
 public Q_SLOTS:
     void emitSensorsChanged()
     {
+        static bool alreadyRunning = false;
+        if (!pluginsLoaded || alreadyRunning) {
+            // We're busy.
+            // Just note that a registration changed and exit.
+            // Someone up the call stack will deal with this.
+            sensorsChanged = true;
+            return;
+        }
+
+        // Set a flag so any recursive calls doesn't cause a loop.
+        alreadyRunning = true;
+
+        // Since one [un]registration may cause other [un]registrations and since
+        // the order in which we do things matters we just do a cascading update
+        // until things stop changing.
+        do {
+            sensorsChanged = false;
+            Q_FOREACH (QSensorChangesInterface *changes, changeListeners) {
+                changes->sensorsChanged();
+            }
+        } while (sensorsChanged);
+
+        // We're going away now so clear the flag
+        alreadyRunning = false;
+
+        // Notify the client of the changes
         Q_EMIT availableSensorsChanged();
     }
 };
@@ -95,22 +119,25 @@ Q_GLOBAL_STATIC(QSensorManagerPrivate, sensorManagerPrivate)
 
 // The unit test needs to change the behaviour of the library. It does this
 // through an exported but undocumented function.
+static void initPlugin(QObject *plugin);
 static bool settings_use_user_scope = false;
 static bool load_external_plugins = true;
 Q_SENSORS_EXPORT void sensors_unit_test_hook(int index)
 {
+    QSensorManagerPrivate *d = sensorManagerPrivate();
+
     switch (index) {
     case 0:
-        Q_ASSERT(sensorManagerPrivate()->pluginsLoaded == false);
+        Q_ASSERT(d->pluginsLoaded == false);
         settings_use_user_scope = true;
         load_external_plugins = false;
         break;
     case 1:
         Q_ASSERT(load_external_plugins == false);
-        Q_ASSERT(sensorManagerPrivate()->pluginsLoaded == true);
+        Q_ASSERT(d->pluginsLoaded == true);
         SENSORLOG() << "initializing plugins";
-        Q_FOREACH (QSensorPluginInterface *plugin, pluginLoader()->plugins()) {
-            plugin->registerSensors();
+        Q_FOREACH (QObject *plugin, pluginLoader()->plugins()) {
+            initPlugin(plugin);
         }
         break;
     default:
@@ -118,10 +145,22 @@ Q_SENSORS_EXPORT void sensors_unit_test_hook(int index)
     }
 }
 
+static void initPlugin(QObject *o)
+{
+    if (!o) return;
+    QSensorManagerPrivate *d = sensorManagerPrivate();
+
+    QSensorPluginInterface *plugin = qobject_cast<QSensorPluginInterface*>(o);
+    if (plugin)
+        plugin->registerSensors();
+    QSensorChangesInterface *changes = qobject_cast<QSensorChangesInterface*>(o);
+    if (changes)
+        d->changeListeners << changes;
+}
+
 static void loadPlugins()
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
-    d->pluginsLoaded = true;
 
     SENSORLOG() << "initializing static plugins";
     Q_FOREACH (CreatePluginFunc func, d->staticRegistrations) {
@@ -131,9 +170,17 @@ static void loadPlugins()
 
     if (load_external_plugins) {
         SENSORLOG() << "initializing plugins";
-        Q_FOREACH (QSensorPluginInterface *plugin, pluginLoader()->plugins()) {
-            plugin->registerSensors();
+        Q_FOREACH (QObject *plugin, pluginLoader()->plugins()) {
+            initPlugin(plugin);
         }
+    }
+
+    d->pluginsLoaded = true;
+
+    if (d->sensorsChanged) {
+        // Notify the app that the available sensor list has changed.
+        // This may cause recursive calls!
+        d->emitSensorsChanged();
     }
 }
 
@@ -171,15 +218,9 @@ void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &i
     SENSORLOG() << "registering backend for type" << type << "identifier" << identifier;// << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
     factoryByIdentifier[identifier] = factory;
 
-    switch (d->registrationState) {
-    case QSensorManagerPrivate::IDLE: /* fall through */
-    case QSensorManagerPrivate::NOTIFYING:
-        d->registrationState = QSensorManagerPrivate::REGISTERED;
-        QTimer::singleShot(0, d, SLOT(emitSensorsChanged()));
-        break;
-    case QSensorManagerPrivate::REGISTERED:
-        break;
-    }
+    // Notify the app that the available sensor list has changed.
+    // This may cause recursive calls!
+    d->emitSensorsChanged();
 }
 
 /*!
@@ -212,15 +253,9 @@ void QSensorManager::unregisterBackend(const QByteArray &type, const QByteArray 
     if (!factoryByIdentifier.count())
         (void)d->backendsByType.take(type);
 
-    switch (d->registrationState) {
-    case QSensorManagerPrivate::IDLE: /* fall through */
-    case QSensorManagerPrivate::NOTIFYING:
-        d->registrationState = QSensorManagerPrivate::REGISTERED;
-        QTimer::singleShot(0, d, SLOT(emitSensorsChanged()));
-        break;
-    case QSensorManagerPrivate::REGISTERED:
-        break;
-    }
+    // Notify the app that the available sensor list has changed.
+    // This may cause recursive calls!
+    d->emitSensorsChanged();
 }
 
 /*!
