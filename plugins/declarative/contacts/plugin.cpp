@@ -83,7 +83,7 @@ public:
         qmlRegisterType<QDeclarativeContactGender>(uri, 1, 1, "Gender");
         qmlRegisterType<QDeclarativeContactGeoLocation>(uri, 1, 1, "Location");
         qmlRegisterType<QDeclarativeContactGlobalPresence>(uri, 1, 1, "GlobalPresence");
-        qmlRegisterType<QDeclarativeContactGuid>(uri, 1, 1, "uid");
+        qmlRegisterType<QDeclarativeContactGuid>(uri, 1, 1, "Guid");
         qmlRegisterType<QDeclarativeContactName>(uri, 1, 1, "Name");
         qmlRegisterType<QDeclarativeContactNickname>(uri, 1, 1, "Nickname");
         qmlRegisterType<QDeclarativeContactNote>(uri, 1, 1, "Note");
