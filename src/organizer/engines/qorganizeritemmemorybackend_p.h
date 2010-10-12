@@ -254,7 +254,7 @@ protected:
 
 private:
     QList<QOrganizerItem> internalItems(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error, bool forExport) const;
-    QList<QOrganizerItem> internalItemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, bool forExport, QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerItem> internalItemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, bool includeExceptions, QOrganizerItemManager::Error* error) const;
     void addItemRecurrences(QList<QOrganizerItem>& sorted, const QOrganizerItem& c, const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, bool forExport) const;
 
     /* Implement "signal coalescing" for batch functions via change set */

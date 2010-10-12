@@ -681,7 +681,7 @@ bool QOrganizerItemMemoryEngine::itemHasReccurence(const QOrganizerItem& oi) con
 }
 
 
-QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, bool forExport, QOrganizerItemManager::Error* error) const
+QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, bool includeExceptions, QOrganizerItemManager::Error* error) const
 {
     // given the generating item, grab it's QOrganizerItemRecurrence detail (if it exists), and calculate all of the dates within the given period.
     // how would a real backend do this?
@@ -717,7 +717,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemInstances(const QO
     QList<QOrganizerItem> retn;
     QOrganizerItemRecurrence recur = generator.detail(QOrganizerItemRecurrence::DefinitionName);
 
-    if (!forExport) {
+    if (includeExceptions) {
         // first, retrieve all persisted instances (exceptions) which occur between the specified datetimes.
         QOrganizerItemDetailFilter parentFilter;
         parentFilter.setDetailDefinitionName(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemInstanceOrigin::FieldParentLocalId);
@@ -798,7 +798,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemInstances(const QO
 QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(fetchHint);
-    return internalItemInstances(generator, periodStart, periodEnd, maxCount, false, error);
+    return internalItemInstances(generator, periodStart, periodEnd, maxCount, true, error);
 }
 
 QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem& generator, const QDateTime& rdate)
@@ -898,7 +898,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItems(const QDateTime&
 void QOrganizerItemMemoryEngine::addItemRecurrences(QList<QOrganizerItem>& sorted, const QOrganizerItem& c, const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, bool forExport) const
 {
     QOrganizerItemManager::Error error = QOrganizerItemManager::NoError;
-    QList<QOrganizerItem> recItems = internalItemInstances(c, startDate, endDate, forExport ? 1 : 50, forExport, &error);
+    QList<QOrganizerItem> recItems = internalItemInstances(c, startDate, endDate, forExport ? 1 : 50, false, &error);
 
     if (filter.type() == QOrganizerItemFilter::DefaultFilter) {
         foreach(const QOrganizerItem&oi, recItems) {
