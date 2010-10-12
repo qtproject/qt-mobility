@@ -3707,25 +3707,26 @@ void tst_QLandmarkManager::filterLandmarksName() {
     QCOMPARE(lms.at(1), lm6);
     QCOMPARE(lms.at(2), lm8);
 
-#ifdef WORKAROUND
-#else
-       //test fixed string
+    //test fixed string
     nameFilter.setName("adel");
     nameFilter.setMatchFlags(QLandmarkFilter::MatchFixedString);
     QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
     QCOMPARE(lms.count(), 2);
     QCOMPARE(lms.at(0), lm2);
     QCOMPARE(lms.at(1), lm9);
-#endif
 
-    //TODO: symbian, when using Match exactly first do
-    //a matched fixed string search, then do QVariant comparison
-    //test match exactly
     nameFilter.setName("Adel");
     nameFilter.setMatchFlags(QLandmarkFilter::MatchExactly);
     QVERIFY(doFetch(type,nameFilter, &lms,QLandmarkManager::NoError));
+#ifdef Q_OS_SYMBIAN
+    //on symbian MatchExactly has the same semantics and MatchFixedString
+    QCOMPARE(lms.count(), 2);
+    QCOMPARE(lms.at(0), lm2);
+    QCOMPARE(lms.at(1), lm9);
+#else
     QCOMPARE(lms.count(), 1);
     QCOMPARE(lms.at(0), lm2);
+#endif
 
     //test no match
     nameFilter.setName("Washington");
