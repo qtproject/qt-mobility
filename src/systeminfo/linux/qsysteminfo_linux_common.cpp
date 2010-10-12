@@ -118,6 +118,10 @@
 #include <linux/wireless.h>
 #include <sys/ioctl.h>
 
+#if defined(UDEV_SUPPORTED)
+#include "qudevservice_linux_p.h"
+#endif
+
 static bool halAvailable()
 {
 #if !defined(QT_NO_DBUS)
@@ -278,10 +282,17 @@ QString QSystemInfoLinuxCommonPrivate::currentLanguage() const
 
 bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+     QUdevService udevService;
+     QUdevFeatureMatrix udevFeature = udevService.availableFeatures();
+#endif
      bool featureSupported = false;
      switch (feature) {
      case QSystemInfo::BluetoothFeature :
          {
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+             return udevFeature.bluetooth;
+#endif
              const QString sysPath = "/sys/class/bluetooth/";
              const QDir sysDir(sysPath);
              QStringList filters;
@@ -297,6 +308,9 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      break;
      case QSystemInfo::CameraFeature :
          {
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+             return udevFeature.camera;
+#endif
  #if !defined(QT_NO_DBUS)
              featureSupported = hasHalUsbFeature(0x06); // image
              if(featureSupported)
@@ -307,6 +321,9 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::FmradioFeature :
          {
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+             return udevFeature.radio;
+#endif
              const QString sysPath = "/sys/class/video4linux/";
              const QDir sysDir(sysPath);
              QStringList filters;
@@ -321,6 +338,9 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::IrFeature :
          {
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+         return udevFeature.infrared;
+#endif
  #if !defined(QT_NO_DBUS)
          featureSupported = hasHalUsbFeature(0xFE);
          if(featureSupported)
@@ -331,11 +351,17 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::LedFeature :
          {
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+             return udevFeature.leds;
+#endif
              featureSupported = hasSysFeature("led"); //?
          }
          break;
      case QSystemInfo::MemcardFeature :
          {
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+             return udevFeature.memcard;
+#endif
  #if !defined(QT_NO_DBUS)
              QHalInterface iface;
              if (iface.isValid()) {
@@ -358,6 +384,9 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::UsbFeature :
          {
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+         return udevFeature.usb;
+#endif
  #if !defined(QT_NO_DBUS)
          featureSupported = hasHalDeviceFeature("usb");
          if(featureSupported)
@@ -367,6 +396,9 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          }
          break;
      case QSystemInfo::VibFeature :
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+         return udevFeature.vibration;
+#endif
  #if !defined(QT_NO_DBUS)
          if(hasHalDeviceFeature("vibrator") || hasHalDeviceFeature("vib")) {
              return true;
@@ -375,6 +407,9 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::WlanFeature :
          {
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+             return udevFeature.wlan;
+#endif
  #if !defined(QT_NO_DBUS)
              QHalInterface iface;
              if (iface.isValid()) {
@@ -391,6 +426,9 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
      case QSystemInfo::SimFeature :
          break;
      case QSystemInfo::LocationFeature :
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+             return udevFeature.gps;
+#endif
  #if !defined(QT_NO_DBUS)
          featureSupported = hasHalDeviceFeature("gps"); //might not always be true
          if(featureSupported)
@@ -400,6 +438,9 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::VideoOutFeature :
          {
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+             return udevFeature.videoOut;
+#endif
              const QString sysPath = "/sys/class/video4linux/";
              const QDir sysDir(sysPath);
              QStringList filters;
@@ -411,6 +452,9 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          }
          break;
      case QSystemInfo::HapticsFeature:
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
+         return udevFeature.haptics;
+#endif
          break;
      default:
          featureSupported = false;

@@ -84,6 +84,14 @@ unix:!simulator {
                 SOURCES += linux/qdevicekitservice_linux.cpp
                 HEADERS += linux/qdevicekitservice_linux_p.h
 
+        # udev should not be enabled on maemo5 and maemo6
+        contains(udev_enabled, yes): {
+            DEFINES += UDEV_SUPPORTED
+            LIBS += -ludev
+            SOURCES += linux/qudevservice_linux.cpp
+            HEADERS += linux/qudevservice_linux_p.h
+        }
+
         contains(networkmanager_enabled, yes): {
                     SOURCES += linux/qnetworkmanagerservice_linux.cpp linux/qnmdbushelper.cpp
                     HEADERS += linux/qnetworkmanagerservice_linux_p.h linux/qnmdbushelper_p.h

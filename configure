@@ -556,6 +556,7 @@ compileTest "Bluez" bluez
 compileTest "Gstreamer Photography" gstreamer-photography
 compileTest "Blkid" blkid
 compileTest "Pulse Audio" pulseaudio
+compileTest "udev" udev
 
 if [ "$LINUX_TARGET" = maemo6 ]; then
     compileTest sensord sensord
