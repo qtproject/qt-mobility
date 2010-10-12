@@ -43,10 +43,10 @@ void QGeoPositionInfoSourceGeoclueMaster::positionChanged(GeocluePosition      *
         QGeoCoordinate coordinate(latitude, longitude);
         QDateTime dateTime = QDateTime();
         dateTime.setTime_t(timestamp);
-        QGeoPositionInfo info(coordinate, dateTime);
         if (fields & GEOCLUE_POSITION_FIELDS_ALTITUDE) {
-            info.setAttribute(QGeoPositionInfo::GroundSpeed, altitude);
+            coordinate.setAltitude(altitude);
         }
+        QGeoPositionInfo info(coordinate, dateTime);
         if (info.isValid()) {
             m_lastPosition = info;
             emit positionUpdated(info);
