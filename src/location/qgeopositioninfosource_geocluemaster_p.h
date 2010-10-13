@@ -42,13 +42,19 @@ public:
     int minimumUpdateInterval() const;
     int init();
 
+    void singleUpdateFailed();
+    void singleUpdateSucceeded(QGeoPositionInfo info);
+    void regularUpdateFailed();
+    void regularUpdateSucceeded(QGeoPositionInfo info);
+
 public slots:
     virtual void startUpdates();
     virtual void stopUpdates();
     virtual void requestUpdate(int timeout = 5000);
 
 private slots:
-    void updateRequestTimeout();
+    void requestUpdateTimeout();
+    void startUpdatesTimeout();
 
 private:
     int configurePositionSource();
@@ -60,6 +66,7 @@ private:
     GeocluePosition *m_pos;
     QTimer m_updateTimer;
     QTimer m_requestTimer;
+    bool m_lastPositionIsFresh;
     QGeoPositionInfo m_lastPosition;
 };
 
