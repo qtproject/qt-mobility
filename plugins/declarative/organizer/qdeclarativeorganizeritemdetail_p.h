@@ -46,7 +46,7 @@
 #include <QVariant>
 #include "qorganizeritemdetail.h"
 #include "qorganizeritemdetails.h"
-#include "qdeclarativeorganizeritemrecurrencerule_p.h"
+#include "qdeclarativeorganizerrecurrencerule_p.h"
 
 QTM_USE_NAMESPACE;
 
@@ -323,8 +323,8 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemPriority)
 class QDeclarativeOrganizerItemRecurrence : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> recurrenceRules READ recurrenceRules NOTIFY recurrenceRulesChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> exceptionRules READ exceptionRules NOTIFY exceptionRulesChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerRecurrenceRule> recurrenceRules READ recurrenceRules NOTIFY recurrenceRulesChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerRecurrenceRule> exceptionRules READ exceptionRules NOTIFY exceptionRulesChanged)
     Q_PROPERTY(QVariantList recurrenceDates READ recurrenceDates WRITE setRecurrenceDates NOTIFY valueChanged)
     Q_PROPERTY(QVariantList exceptionDates  READ exceptionDates WRITE setExceptionDates NOTIFY valueChanged)
 public:
@@ -336,14 +336,14 @@ public:
         connect(this, SIGNAL(exceptionRulesChanged()), SLOT(_saveExceptionRules()));
     }
 
-    QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> recurrenceRules()
+    QDeclarativeListProperty<QDeclarativeOrganizerRecurrenceRule> recurrenceRules()
     {
-        return QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule>(this, m_recurrenceRules);
+        return QDeclarativeListProperty<QDeclarativeOrganizerRecurrenceRule>(this, m_recurrenceRules);
     }
 
-    QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule> exceptionRules()
+    QDeclarativeListProperty<QDeclarativeOrganizerRecurrenceRule> exceptionRules()
     {
-        return QDeclarativeListProperty<QDeclarativeOrganizerItemRecurrenceRule>(this, m_exceptionRules);
+        return QDeclarativeListProperty<QDeclarativeOrganizerRecurrenceRule>(this, m_exceptionRules);
     }
 
     QVariantList recurrenceDates() const
@@ -375,7 +375,7 @@ private slots:
     void _saveRecurrenceRules()
     {
         QSet<QOrganizerRecurrenceRule> rules;
-        foreach (const QDeclarativeOrganizerItemRecurrenceRule* r, m_recurrenceRules) {
+        foreach (const QDeclarativeOrganizerRecurrenceRule* r, m_recurrenceRules) {
             rules << r->rule();
         }
         m_detail.setValue(QOrganizerItemRecurrence::FieldRecurrenceRules, QVariant::fromValue(rules));
@@ -385,7 +385,7 @@ private slots:
     void _saveExceptionRules()
     {
         QSet<QOrganizerRecurrenceRule> rules;
-        foreach (const QDeclarativeOrganizerItemRecurrenceRule* r, m_exceptionRules) {
+        foreach (const QDeclarativeOrganizerRecurrenceRule* r, m_exceptionRules) {
             rules << r->rule();
         }
         m_detail.setValue(QOrganizerItemRecurrence::FieldExceptionRules, QVariant::fromValue(rules));
@@ -394,8 +394,8 @@ private slots:
     }
 
 private:
-    QList<QDeclarativeOrganizerItemRecurrenceRule*>   m_recurrenceRules;
-    QList<QDeclarativeOrganizerItemRecurrenceRule*>   m_exceptionRules;
+    QList<QDeclarativeOrganizerRecurrenceRule*>   m_recurrenceRules;
+    QList<QDeclarativeOrganizerRecurrenceRule*>   m_exceptionRules;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemRecurrence)
 

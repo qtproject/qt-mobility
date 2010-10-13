@@ -49,7 +49,7 @@
 
 QTM_USE_NAMESPACE
 
-class QDeclarativeOrganizerItemRecurrenceRule : public QObject
+class QDeclarativeOrganizerRecurrenceRule : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(Frequency frequency READ frequency WRITE setFrequency NOTIFY valueChanged)
@@ -69,7 +69,7 @@ class QDeclarativeOrganizerItemRecurrenceRule : public QObject
     Q_ENUMS(LimitType)
 public:
 
-    QDeclarativeOrganizerItemRecurrenceRule(QObject* parent = 0)
+    QDeclarativeOrganizerRecurrenceRule(QObject* parent = 0)
         :QObject(parent)
     {
     }
@@ -267,6 +267,6 @@ signals:
 private:
     QOrganizerRecurrenceRule m_rule;
 };
-QML_DECLARE_TYPE(QDeclarativeOrganizerItemRecurrenceRule)
+QML_DECLARE_TYPE(QDeclarativeOrganizerRecurrenceRule)
 
 #endif
