@@ -78,11 +78,13 @@ class CFSAsynchronousOperation : public QObject
 protected:
     CFSAsynchronousOperation(AsynchronousOperationType opType); 
     CFSAsynchronousOperation(AsynchronousOperationType opType, QMessageServicePrivate &privateService); 
-    
+
+    void createFSMessage(QMessage &message, NmApiMessage &fsMessage);
+    void handleFSMessage(QMessage &message, NmApiMessage &fsMessage);
+
 public:
     virtual ~CFSAsynchronousOperation();
     
-    void createFSMessage(QMessage &message, NmApiMessage &fsMessage);
     AsynchronousOperationType operationType();
 
 public slots:
@@ -90,10 +92,11 @@ public slots:
 
 signals:    
     void operationCompleted(int success, CFSAsynchronousOperation *operation);
-    
+
 protected:
     QMessageServicePrivate *m_privateService;
-
+    NmApiMessageManager *m_manager;
+    
 private:
     AsynchronousOperationType m_operationType;
 };
@@ -124,8 +127,6 @@ private:
 private:
     NmApiMessage m_fsMessage;
     QMessage m_qMessage;
-    NmApiMessageManager* m_manager;
-
 };
 
 /*
@@ -152,7 +153,6 @@ private:
 private:
     NmApiMessage m_fsMessage;
     QMessage m_qMessage;
-    NmApiMessageManager* m_manager;
 
 };
 
@@ -171,10 +171,9 @@ public:
     void updateMessage(QMessage &message);
 
 private:
-    NmApiMessage updateFsMessage(QMessage *message);
+    NmApiMessage updateFsMessage(QMessage &message);
 
 private:
-    NmApiMessageManager* m_manager;
     NmApiEmailService *m_emailService;
 
 };
@@ -193,10 +192,6 @@ public:
     ~CFSAsynchronousRetrieveBodyOperation();
     
     void retrieveBody(const QMessageId &messageId);
-    
-private:
-    NmApiMessageManager* m_manager;
-
 };
 
 /*
@@ -215,7 +210,6 @@ public:
     void retrieveAttachment(const QMessageId &messageId, const QMessageContentContainerId &containerId);
     
 private:
-    NmApiMessageManager* m_manager;
     NmApiEmailService *m_emailService;
 };
 
@@ -252,7 +246,6 @@ public:
     void removeMessage(const QMessageId &messageId);
 
 private:
-    NmApiMessageManager* m_manager;
     NmApiEmailService *m_emailService;
 
 };

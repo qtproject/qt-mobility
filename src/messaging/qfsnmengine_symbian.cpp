@@ -165,6 +165,7 @@ void CFSEngine::messageChangedEvent(quint64 mailboxId, QList<quint64> envelopeId
 
 void CFSEngine::messageDeletedEvent(quint64 mailboxId, QList<quint64> envelopeIdList, quint64 folderId)
 {
+    Q_UNUSED(folderId);
     QMessageManager::NotificationFilterIdSet matchingFilters;
     QMap<int, QMessageFilter> filters(m_filters);
     QMap<int, QMessageFilter>::const_iterator it = filters.begin(), end = filters.end();  
