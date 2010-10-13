@@ -43,7 +43,8 @@
 #include "qdeclarativecontact_p.h"
 #include "qdeclarativecontactdetail_p.h"
 #include "qdeclarativecontactmetaobject_p.h"
-
+#include <QImage>
+#include <QUrl>
 #include <QDeclarativeListProperty>
 
 
@@ -94,6 +95,11 @@ QDeclarativeListProperty<QDeclarativeContactDetail> QDeclarativeContact::details
 QContactLocalId QDeclarativeContact::contactId() const
 {
     return d->localId();
+}
+
+QString QDeclarativeContact::manager() const
+{
+    return d->contactId().managerUri();
 }
 
 
@@ -212,10 +218,22 @@ QDeclarativeContactTag*  QDeclarativeContact::tag()
 {
     return static_cast<QDeclarativeContactTag*>(d->detail(QDeclarativeContactDetail::Tag).value<QDeclarativeContactDetail*>());
 }
-QDeclarativeContactThumbnail*  QDeclarativeContact::thumbnail()
+QUrl QDeclarativeContact::thumbnail() const
 {
-    return static_cast<QDeclarativeContactThumbnail*>(d->detail(QDeclarativeContactDetail::Thumbnail).value<QDeclarativeContactDetail*>());
+    //Just let the imager provider deal with it
+    return QUrl(QString("image://thumbnail/%1.%2").arg(manager()).arg(contactId()).toLatin1());
 }
+
+//Only support local file
+void QDeclarativeContact::setThumbnail(const QUrl& url)
+{
+    QImage image(100, 50, QImage::Format_RGB32);
+    image.load(url.toLocalFile());
+    QContactThumbnail detail;
+    detail.setThumbnail(image);
+    d->m_contact.saveDetail(&detail);
+}
+
 QDeclarativeContactType*  QDeclarativeContact::type()
 {
     return static_cast<QDeclarativeContactType*>(d->detail(QDeclarativeContactDetail::Type).value<QDeclarativeContactDetail*>());

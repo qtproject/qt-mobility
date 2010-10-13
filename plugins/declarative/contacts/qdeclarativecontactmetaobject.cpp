@@ -249,6 +249,10 @@ int QDeclarativeContactMetaObject::localId() const
     return m_contact.localId();
 }
 
+QContactId QDeclarativeContactMetaObject::contactId() const
+{
+    return m_contact.id();
+}
 void QDeclarativeContactMetaObject::detail_append(QDeclarativeListProperty<QDeclarativeContactDetail> *p, QDeclarativeContactDetail *detail)
 {
     ContactDetailNameMap* data = (ContactDetailNameMap*)(p->data);
@@ -357,8 +361,6 @@ QDeclarativeContactDetail* QDeclarativeContactMetaObject::createContactDetail(QD
         return new QDeclarativeContactSyncTarget(parent);
     case QDeclarativeContactDetail::Tag:
         return new QDeclarativeContactTag(parent);
-    case QDeclarativeContactDetail::Thumbnail:
-        return new QDeclarativeContactThumbnail(parent);
     case QDeclarativeContactDetail::Timestamp:
         return new QDeclarativeContactTimestamp(parent);
     case QDeclarativeContactDetail::Type:
