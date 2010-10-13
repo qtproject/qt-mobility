@@ -41,6 +41,8 @@
 
 #include <qndefnfctextrecord.h>
 
+#include <QtCore/QTextCodec>
+
 #include <QtCore/QDebug>
 
 QTM_BEGIN_NAMESPACE
@@ -115,12 +117,9 @@ QString QNdefNfcTextRecord::text() const
     bool utf16 = status & 0x80;
     quint8 codeLength = status & 0x3f;
 
-    if (utf16) {
-        return QString::fromUtf16(reinterpret_cast<const ushort *>(p.constData() + 1 + codeLength),
-                                  p.length() - 1 - codeLength);
-    } else {
-        return QString::fromUtf8(p.constData() + 1 + codeLength, p.length() - 1 - codeLength);
-    }
+    QTextCodec *codec = QTextCodec::codecForName(utf16 ? "UTF-16BE" : "UTF-8");
+
+    return codec->toUnicode(p.constData() + 1 + codeLength, p.length() - 1 - codeLength);
 }
 
 /*!
@@ -140,10 +139,9 @@ void QNdefNfcTextRecord::setText(const QString text)
 
     p.truncate(1 + codeLength);
 
-    if (utf16)
-        p += reinterpret_cast<const char *>(text.utf16());
-    else
-        p += text.toUtf8();
+    QTextCodec *codec = QTextCodec::codecForName(utf16 ? "UTF-16BE" : "UTF-8");
+
+    p += codec->fromUnicode(text);
 
     setPayload(p);
 }
