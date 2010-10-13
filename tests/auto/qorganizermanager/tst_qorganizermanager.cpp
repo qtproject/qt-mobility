@@ -2839,7 +2839,18 @@ void tst_QOrganizerManager::collections()
             i1.setCollectionId(c1.id());
             QVERIFY(oim->saveItem(&i1));
             QVERIFY(i1.collectionId() == c1.id());
-            QVERIFY(oim->items(fil).contains(i1)); // it should be in c1
+
+            QList<QOrganizerItem> c1Items = oim->items(fil);
+            int itemIndex = -1;
+            for (int i = 0; i < c1Items.count(); i++) {
+                if (c1Items.at(i).id() == i1.id()) {
+                    itemIndex = i;
+                    break;
+                }
+            }
+            QVERIFY(itemIndex >= 0);
+            QVERIFY(oim->items(fil).contains(i1) || isSuperset(c1Items.at(itemIndex), i1));
+
             fil.setCollectionId(oim->defaultCollection().localId());
             QVERIFY(!oim->items(fil).contains(i1)); // it should not be in the default collection.
         }
