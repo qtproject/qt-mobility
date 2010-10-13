@@ -151,7 +151,7 @@ Q_SIGNALS:
     void autoLoadChanged();
     void playingChanged();
     void pausedChanged();
-    void loopsChanged();
+    void loopCountChanged();
 
     void started();
     void resumed();

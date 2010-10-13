@@ -70,6 +70,8 @@ public:
     explicit QSoundEffectPrivate(QObject* parent);
     ~QSoundEffectPrivate();
 
+    static QStringList supportedMimeTypes();
+
     QUrl source() const;
     void setSource(const QUrl &url);
     int loopCount() const;
@@ -78,6 +80,7 @@ public:
     void setVolume(int volume);
     bool isMuted() const;
     void setMuted(bool muted);
+    bool isLoaded() const;
 
 public Q_SLOTS:
     void play();
@@ -86,14 +89,17 @@ public Q_SLOTS:
 Q_SIGNALS:
     void volumeChanged();
     void mutedChanged();
+    void loadedChanged();
 
 private Q_SLOTS:
     void stateChanged(QMediaPlayer::State);
+    void mediaStatusChanged(QMediaPlayer::MediaStatus);
 
 private:
-    int m_loopCount;
-    int m_runningCount;
-    QMediaPlayer *m_player;
+    int            m_loopCount;
+    int            m_runningCount;
+    bool           m_loaded;
+    QMediaPlayer  *m_player;
 };
 
 QT_END_NAMESPACE
