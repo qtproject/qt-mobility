@@ -65,7 +65,16 @@ public:
     {
         return QDeclarativeContactDetail::NickName;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case NickName:
+            return QContactNickname::FieldNickname;
+        default:
+            break;
+        }
+        return "";
+    }
     void setNickname(const QString& nickname) {detail().setValue(QContactNickname::FieldNickname, nickname);}
     QString nickname() const {return detail().value(QContactNickname::FieldNickname);}
 signals:

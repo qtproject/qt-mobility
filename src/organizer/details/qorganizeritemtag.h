@@ -1,7 +1,6 @@
-
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,47 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVECONTACTTAG_H
-#define QDECLARATIVECONTACTTAG_H
+#ifndef QORGANIZERITEMTAG_H
+#define QORGANIZERITEMTAG_H
 
-#include "qdeclarativecontactdetail_p.h"
-#include "qcontacttag.h"
+#include <QString>
 
-class QDeclarativeContactTag : public QDeclarativeContactDetail
+#include "qtorganizerglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritem.h"
+#include "qorganizeritemfilter.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_ORGANIZER_EXPORT QOrganizerItemTag : public QOrganizerItemDetail
 {
-    Q_OBJECT
-    Q_PROPERTY(QString tag READ tag WRITE setTag NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType)
-    Q_CLASSINFO("DefaultProperty", "tag")
 public:
-    enum FieldType {
-        Tag = 0
-    };
+#ifdef Q_QDOC
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldTag;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemTag, "Tag")
+    Q_DECLARE_LATIN1_CONSTANT(FieldTag, "Tag");
+#endif
 
-    QDeclarativeContactTag(QObject* parent = 0)
-        :QDeclarativeContactDetail(parent)
-    {
-        setDetail(QContactTag());
-    }
-    ContactDetailType detailType() const
-    {
-        return QDeclarativeContactDetail::Tag;
-    }
-    QString fieldNameFromFieldType(int fieldType) const
-    {
-        switch (fieldType) {
-        case Tag:
-            return QContactTag::FieldTag;
-        default:
-            break;
-        }
-        return "";
-    }
-    void setTag(const QString& tag) {detail().setValue(QContactTag::FieldTag, tag);}
-    QString tag() const {return detail().value(QContactTag::FieldTag);}
-signals:
-    void fieldsChanged();
+    void setTag(const QString& tag) {setValue(FieldTag, tag);}
+    QString tag() const {return value(FieldTag);}
+
+    // Convenience filter
+    static QOrganizerItemFilter match(const QString& substring);
 };
-QML_DECLARE_TYPE(QDeclarativeContactTag)
+
+QTM_END_NAMESPACE
 
 #endif
+

@@ -83,7 +83,32 @@ public:
     {
         return QDeclarativeContactDetail::Geolocation;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Label:
+            return QContactGeoLocation::FieldLabel;
+        case Latitude:
+            return QContactGeoLocation::FieldLatitude;
+        case Longitude:
+            return QContactGeoLocation::FieldLongitude;
+        case Accuracy:
+            return QContactGeoLocation::FieldAccuracy;
+        case Altitude:
+            return QContactGeoLocation::FieldAltitude;
+        case AltitudeAccuracy:
+            return QContactGeoLocation::FieldAltitudeAccuracy;
+        case Heading:
+            return QContactGeoLocation::FieldHeading;
+        case Speed:
+            return QContactGeoLocation::FieldSpeed;
+        case Timestamp:
+            return QContactGeoLocation::FieldTimestamp;
+        default:
+            break;
+        }
+        return "";
+    }
     void setLabel(const QString& label) {detail().setValue(QContactGeoLocation::FieldLabel, label);}
     QString label() const {return detail().value(QContactGeoLocation::FieldLabel);}
     void setLatitude(double latitude) {detail().setValue(QContactGeoLocation::FieldLatitude, latitude);}
@@ -105,6 +130,7 @@ public:
 signals:
     void fieldsChanged();
 };
+QML_DECLARE_TYPE(QDeclarativeContactGeoLocation)
 
 #endif
 
