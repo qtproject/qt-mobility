@@ -171,6 +171,9 @@ QVariant QDeclarativeContactMetaObject::detail(QDeclarativeContactDetail::Contac
 {
     foreach(QDeclarativeContactDetail* cd, m_details) {
         if (cd->detailType() == type) {
+            if (cd->detailType() == QDeclarativeContactDetail::DisplayLabel) {
+                QDeclarativeContactDisplayLabel* label = static_cast<QDeclarativeContactDisplayLabel*>(cd);
+            }
             return QVariant::fromValue(cd);
         }
     }
@@ -222,11 +225,9 @@ void QDeclarativeContactMetaObject::setContact(const QContact& contact)
     QList<QContactDetail> details = m_contact.details();
     m_details.clear();
     foreach (const QContactDetail& detail, details) {
-      QDeclarativeContactDetail* cd = new QDeclarativeContactDetail(object());
-
-      cd->connect(cd, SIGNAL(fieldsChanged()), object(), SIGNAL(detailsChanged()));
-
+      QDeclarativeContactDetail* cd = createContactDetail(QDeclarativeContactDetail::detailType(detail.definitionName()), object());
       cd->setDetail(detail);
+      cd->connect(cd, SIGNAL(fieldsChanged()), object(), SIGNAL(detailsChanged()));
       m_details.append(cd);
     }
 }

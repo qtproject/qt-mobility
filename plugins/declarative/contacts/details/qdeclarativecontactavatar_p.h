@@ -60,11 +60,12 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactAvatar());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
-    void setImageUrl(const QUrl& imageUrl) {detail().setValue(QContactAvatar::FieldImageUrl, imageUrl);}
+    void setImageUrl(const QUrl& imageUrl) {if (!readOnly()) detail().setValue(QContactAvatar::FieldImageUrl, imageUrl);}
     QUrl imageUrl() const {return detail().value<QUrl>(QContactAvatar::FieldImageUrl);}
 
-    void setVideoUrl(const QUrl& videoUrl) {detail().setValue(QContactAvatar::FieldVideoUrl, videoUrl);}
+    void setVideoUrl(const QUrl& videoUrl) {if (!readOnly()) detail().setValue(QContactAvatar::FieldVideoUrl, videoUrl);}
     QUrl videoUrl() const {return detail().value<QUrl>(QContactAvatar::FieldVideoUrl);}
 
     ContactDetailType detailType() const

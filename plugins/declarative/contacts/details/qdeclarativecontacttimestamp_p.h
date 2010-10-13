@@ -79,10 +79,11 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactTimestamp());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
-    void setLastModified(const QDateTime& timestamp) {detail().setValue(QContactTimestamp::FieldModificationTimestamp, timestamp);}
+    void setLastModified(const QDateTime& timestamp) {if (!readOnly()) detail().setValue(QContactTimestamp::FieldModificationTimestamp, timestamp);}
     QDateTime lastModified() const {return detail().value<QDateTime>(QContactTimestamp::FieldModificationTimestamp);}
-    void setCreated(const QDateTime& timestamp) {detail().setValue(QContactTimestamp::FieldCreationTimestamp, timestamp);}
+    void setCreated(const QDateTime& timestamp) {if (!readOnly()) detail().setValue(QContactTimestamp::FieldCreationTimestamp, timestamp);}
     QDateTime created() const {return detail().value<QDateTime>(QContactTimestamp::FieldCreationTimestamp);}
 signals:
     void fieldsChanged();

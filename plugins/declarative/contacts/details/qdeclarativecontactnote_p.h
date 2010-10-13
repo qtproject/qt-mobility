@@ -59,6 +59,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactNote());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
 
     ContactDetailType detailType() const
@@ -75,7 +76,7 @@ public:
         }
         return "";
     }
-    void setNote(const QString& note) {detail().setValue(QContactNote::FieldNote, note);}
+    void setNote(const QString& note) {if (!readOnly()) detail().setValue(QContactNote::FieldNote, note);}
     QString note() const {return detail().value(QContactNote::FieldNote);}
 signals:
     void fieldsChanged();

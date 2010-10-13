@@ -61,6 +61,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactFamily());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
     ContactDetailType detailType() const
     {
@@ -78,9 +79,9 @@ public:
         }
         return "";
     }
-    void setSpouse(const QString& spouseName) {detail().setValue(QContactFamily::FieldSpouse, spouseName);}
+    void setSpouse(const QString& spouseName) {if (!readOnly()) detail().setValue(QContactFamily::FieldSpouse, spouseName);}
     QString spouse() const {return detail().value(QContactFamily::FieldSpouse);}
-    void setChildren(const QStringList& childrenNames) {detail().setValue(QContactFamily::FieldChildren, childrenNames);}
+    void setChildren(const QStringList& childrenNames) {if (!readOnly()) detail().setValue(QContactFamily::FieldChildren, childrenNames);}
     QStringList children() const {return detail().value<QStringList>(QContactFamily::FieldChildren);}
 signals:
     void fieldsChanged();

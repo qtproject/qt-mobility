@@ -60,6 +60,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactNickname());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
     ContactDetailType detailType() const
     {
@@ -75,7 +76,7 @@ public:
         }
         return "";
     }
-    void setNickname(const QString& nickname) {detail().setValue(QContactNickname::FieldNickname, nickname);}
+    void setNickname(const QString& nickname) {if (!readOnly()) detail().setValue(QContactNickname::FieldNickname, nickname);}
     QString nickname() const {return detail().value(QContactNickname::FieldNickname);}
 signals:
     void fieldsChanged();

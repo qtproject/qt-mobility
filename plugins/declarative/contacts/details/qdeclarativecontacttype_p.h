@@ -80,14 +80,17 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactType());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
 
     void setType(ContactType type)
     {
-        if (type == Contact)
-            detail().setValue(QContactType::FieldType, QContactType::TypeContact);
-        else if (type == Group)
-            detail().setValue(QContactType::FieldType, QContactType::TypeGroup);
+         if (!readOnly())  {
+            if (type == Contact)
+                detail().setValue(QContactType::FieldType, QContactType::TypeContact);
+            else if (type == Group)
+                detail().setValue(QContactType::FieldType, QContactType::TypeGroup);
+         }
     }
     ContactType type() const
     {

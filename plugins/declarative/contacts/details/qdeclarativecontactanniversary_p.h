@@ -76,6 +76,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactAnniversary());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
 
     ContactDetailType detailType() const
@@ -98,40 +99,42 @@ public:
         }
         return "";
     }
-    void setOriginalDate(const QDate& date) {detail().setValue(QContactAnniversary::FieldOriginalDate, date);}
+    void setOriginalDate(const QDate& date) {if (!readOnly()) detail().setValue(QContactAnniversary::FieldOriginalDate, date);}
     QDate originalDate() const {return detail().value<QDate>(QContactAnniversary::FieldOriginalDate);}
-    void setOriginalDateTime(const QDateTime& dateTime) {detail().setValue(QContactAnniversary::FieldOriginalDate, dateTime);}
+    void setOriginalDateTime(const QDateTime& dateTime) {if (!readOnly()) detail().setValue(QContactAnniversary::FieldOriginalDate, dateTime);}
     QDateTime originalDateTime() const {return detail().value<QDateTime>(QContactAnniversary::FieldOriginalDate);}
 
-    void setCalendarId(const QString& calendarId) {detail().setValue(QContactAnniversary::FieldCalendarId, calendarId);}
+    void setCalendarId(const QString& calendarId) {if (!readOnly()) detail().setValue(QContactAnniversary::FieldCalendarId, calendarId);}
     QString calendarId() const {return detail().value(QContactAnniversary::FieldCalendarId);}
-    void setEvent(const QString& event) {detail().setValue(QContactAnniversary::FieldEvent, event);}
+    void setEvent(const QString& event) {if (!readOnly()) detail().setValue(QContactAnniversary::FieldEvent, event);}
     QString event() const {return detail().value(QContactAnniversary::FieldEvent);}
 
     void setSubType(SubType subType)
     {
-        QString subTypeString;
-        switch (subType) {
-        case SubTypeWedding:
-            subTypeString = QContactAnniversary::SubTypeWedding.latin1();
-            break;
-        case SubTypeEngagement:
-            subTypeString = QContactAnniversary::SubTypeEngagement.latin1();
-            break;
-        case SubTypeHouse:
-            subTypeString = QContactAnniversary::SubTypeHouse.latin1();
-            break;
-        case SubTypeEmployment:
-            subTypeString = QContactAnniversary::SubTypeEmployment.latin1();
-            break;
-        case SubTypeMemorial:
-            subTypeString = QContactAnniversary::SubTypeMemorial.latin1();
-            break;
-       default:
-            break;
-        }
+        if (!readOnly()) {
+            QString subTypeString;
+            switch (subType) {
+            case SubTypeWedding:
+                subTypeString = QContactAnniversary::SubTypeWedding.latin1();
+                break;
+            case SubTypeEngagement:
+                subTypeString = QContactAnniversary::SubTypeEngagement.latin1();
+                break;
+            case SubTypeHouse:
+                subTypeString = QContactAnniversary::SubTypeHouse.latin1();
+                break;
+            case SubTypeEmployment:
+                subTypeString = QContactAnniversary::SubTypeEmployment.latin1();
+                break;
+            case SubTypeMemorial:
+                subTypeString = QContactAnniversary::SubTypeMemorial.latin1();
+                break;
+           default:
+                break;
+            }
 
-        detail().setValue(QContactAnniversary::FieldSubType, subTypeString);
+           detail().setValue(QContactAnniversary::FieldSubType, subTypeString);
+        }
     }
 
     SubType subType() const

@@ -71,6 +71,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactUrl());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
     ContactDetailType detailType() const
     {
@@ -88,15 +89,17 @@ public:
         }
         return "";
     }
-    void setUrl(const QString& url) {detail().setValue(QContactUrl::FieldUrl, url);}
+    void setUrl(const QString& url) {if (!readOnly()) detail().setValue(QContactUrl::FieldUrl, url);}
     QString url() const {return detail().value(QContactUrl::FieldUrl);}
 
     void setSubType(SubType subType)
     {
-        if (subType == SubTypeHomePage)
-            detail().setValue(QContactUrl::FieldSubType, QContactUrl::SubTypeHomePage);
-        else if (subType == SubTypeFavourite)
-            detail().setValue(QContactUrl::FieldSubType, QContactUrl::SubTypeFavourite);
+        if (!readOnly()) {
+            if (subType == SubTypeHomePage)
+                detail().setValue(QContactUrl::FieldSubType, QContactUrl::SubTypeHomePage);
+            else if (subType == SubTypeFavourite)
+                detail().setValue(QContactUrl::FieldSubType, QContactUrl::SubTypeFavourite);
+        }
     }
     SubType subType() const
     {

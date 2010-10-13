@@ -66,6 +66,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactGender());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
     ContactDetailType detailType() const
     {
@@ -84,9 +85,9 @@ public:
     void setGender(const GenderType gender)
     {
         if (gender == GenderMale) {
-            detail().setValue(QContactGender::FieldGender, QContactGender::GenderMale);
+            if (!readOnly()) detail().setValue(QContactGender::FieldGender, QContactGender::GenderMale);
         } else if (gender == GenderFemale) {
-            detail().setValue(QContactGender::FieldGender, QContactGender::GenderFemale);
+            if (!readOnly()) detail().setValue(QContactGender::FieldGender, QContactGender::GenderFemale);
         }
     }
     GenderType gender() const

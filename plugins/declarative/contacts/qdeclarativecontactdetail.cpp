@@ -75,6 +75,15 @@ void QDeclarativeContactDetail::setContexts(const QStringList& contexts)
     m_detail.setContexts(contexts);
 }
 
+bool QDeclarativeContactDetail::readOnly() const
+{
+    return m_detail.accessConstraints().testFlag(QContactDetail::ReadOnly);
+}
+bool QDeclarativeContactDetail::removable() const
+{
+    return !m_detail.accessConstraints().testFlag(QContactDetail::Irremovable);
+}
+
 QString QDeclarativeContactDetail::detailUri() const
 {
     return m_detail.detailUri();
@@ -116,7 +125,7 @@ bool QDeclarativeContactDetail::setValue(const QString& key, const QVariant& v)
          changed = m_detail.setValue(key, v);
 
     if (changed)
-        emit fieldsChanged();
+        emit valueChanged();
 
     return changed;
 }

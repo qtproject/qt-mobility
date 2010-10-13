@@ -61,6 +61,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactSyncTarget());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
     ContactDetailType detailType() const
     {
@@ -76,7 +77,7 @@ public:
         }
         return "";
     }
-    void setSyncTarget(const QString& syncTarget) {detail().setValue(QContactSyncTarget::FieldSyncTarget, syncTarget);}
+    void setSyncTarget(const QString& syncTarget) {if (!readOnly()) detail().setValue(QContactSyncTarget::FieldSyncTarget, syncTarget);}
     QString syncTarget() const {return detail().value(QContactSyncTarget::FieldSyncTarget);}
 signals:
     void fieldsChanged();

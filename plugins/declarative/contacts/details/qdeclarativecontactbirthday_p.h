@@ -61,6 +61,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactBirthday());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
 
     ContactDetailType detailType() const
@@ -77,9 +78,9 @@ public:
         }
         return "";
     }
-    void setDate(const QDate& date) {detail().setValue(QContactBirthday::FieldBirthday, date);}
+    void setDate(const QDate& date) {if (!readOnly()) detail().setValue(QContactBirthday::FieldBirthday, date);}
     QDate date() const {return detail().value<QDate>(QContactBirthday::FieldBirthday);}
-    void setDateTime(const QDateTime& dateTime) {detail().setValue(QContactBirthday::FieldBirthday, dateTime);}
+    void setDateTime(const QDateTime& dateTime) {if (!readOnly()) detail().setValue(QContactBirthday::FieldBirthday, dateTime);}
     QDateTime dateTime() const {return detail().value<QDateTime>(QContactBirthday::FieldBirthday);}
 signals:
     void fieldsChanged();

@@ -45,7 +45,7 @@
 
 #include "qdeclarativecontactdetail_p.h"
 #include "qcontactdisplaylabel.h"
-
+#include <QDebug>
 class QDeclarativeContactDisplayLabel : public QDeclarativeContactDetail
 {
     Q_OBJECT
@@ -60,6 +60,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactDisplayLabel());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
 
     ContactDetailType detailType() const
@@ -78,7 +79,9 @@ public:
         return "";
     }
 
-    QString label() const {return detail().value(QContactDisplayLabel::FieldLabel);}
+    QString label() const {
+        return detail().value(QContactDisplayLabel::FieldLabel);
+    }
 signals:
     void fieldsChanged();
 };

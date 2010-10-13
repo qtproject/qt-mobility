@@ -59,6 +59,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactEmailAddress());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
 
     ContactDetailType detailType() const
@@ -76,7 +77,7 @@ public:
         return "";
     }
 
-    void setEmailAddress(const QString& emailAddress) {detail().setValue(QContactEmailAddress::FieldEmailAddress, emailAddress);}
+    void setEmailAddress(const QString& emailAddress) {if (!readOnly()) detail().setValue(QContactEmailAddress::FieldEmailAddress, emailAddress);}
     QString emailAddress() const {return detail().value(QContactEmailAddress::FieldEmailAddress);}
 
 signals:

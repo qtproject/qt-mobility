@@ -60,6 +60,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactGuid());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
 
     ContactDetailType detailType() const
@@ -76,7 +77,7 @@ public:
         }
         return "";
     }
-    void setGuid(const QString& guid) {detail().setValue(QContactGuid::FieldGuid, guid);}
+    void setGuid(const QString& guid) {if (!readOnly()) detail().setValue(QContactGuid::FieldGuid, guid);}
     QString guid() const {return detail().value(QContactGuid::FieldGuid);}
 signals:
     void fieldsChanged();

@@ -60,6 +60,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactThumbnail());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
 
     ContactDetailType detailType() const

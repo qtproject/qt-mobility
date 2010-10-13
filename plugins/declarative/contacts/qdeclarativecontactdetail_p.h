@@ -50,22 +50,17 @@ QTM_USE_NAMESPACE;
 class QDeclarativeContactDetail : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString definitionName READ definitionName NOTIFY fieldsChanged)
-    Q_PROPERTY(QStringList contexts READ contexts WRITE setContexts NOTIFY fieldsChanged)
-    Q_PROPERTY(QString detailUri READ detailUri WRITE setDetailUri NOTIFY fieldsChanged)
-    Q_PROPERTY(QStringList linkedDetailUris READ linkedDetailUris WRITE setLinkedDetailUris NOTIFY fieldsChanged)
-    Q_PROPERTY(QStringList fieldNames READ fieldNames NOTIFY fieldsChanged)
-
-    Q_ENUMS(AccessConstraint)
+    Q_PROPERTY(QString definitionName READ definitionName NOTIFY valueChanged)
+    Q_PROPERTY(QStringList contexts READ contexts WRITE setContexts NOTIFY valueChanged)
+    Q_PROPERTY(QString detailUri READ detailUri WRITE setDetailUri NOTIFY valueChanged)
+    Q_PROPERTY(QStringList linkedDetailUris READ linkedDetailUris WRITE setLinkedDetailUris NOTIFY valueChanged)
+    Q_PROPERTY(QStringList fieldNames READ fieldNames NOTIFY valueChanged)
+    Q_PROPERTY(bool readOnly READ readOnly NOTIFY valueChanged)
+    Q_PROPERTY(bool removable READ removable NOTIFY valueChanged)
     Q_ENUMS(ContactDetailType)
 public:
     QDeclarativeContactDetail(QObject* parent = 0);
 
-    enum AccessConstraint {
-        NoConstraint = QContactDetail::NoConstraint,
-        ReadOnly = QContactDetail::ReadOnly,
-        Irremovable = QContactDetail::Irremovable
-    };
 
     enum ContactDetailType {
         Address = 0,
@@ -101,6 +96,9 @@ public:
     const QContactDetail& detail() const;
     void setDetail(const QContactDetail& detail);
 
+    bool readOnly() const;
+    bool removable() const;
+
     QString definitionName() const;
 
     QStringList contexts() const;
@@ -121,7 +119,7 @@ public:
     static ContactDetailType detailType(const QString& definitionName) ;
     static QString fieldName(ContactDetailType detailType, int fieldType);
 signals:
-    void fieldsChanged();
+    void valueChanged();
 
 private:
     QContactDetail m_detail;

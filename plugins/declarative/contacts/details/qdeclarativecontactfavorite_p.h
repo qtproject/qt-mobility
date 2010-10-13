@@ -62,6 +62,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactFavorite());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
     ContactDetailType detailType() const
     {
@@ -79,9 +80,9 @@ public:
         }
         return "";
     }
-    void setFavorite(bool isFavorite) {detail().setValue(QContactFavorite::FieldFavorite, isFavorite);}
+    void setFavorite(bool isFavorite) {if (!readOnly()) detail().setValue(QContactFavorite::FieldFavorite, isFavorite);}
     bool isFavorite() const {return detail().variantValue(QContactFavorite::FieldFavorite).toBool();}
-    void setIndex(int index) {detail().setValue(QContactFavorite::FieldIndex, index);}
+    void setIndex(int index) {if (!readOnly()) detail().setValue(QContactFavorite::FieldIndex, index);}
     int index() const {return detail().variantValue(QContactFavorite::FieldIndex).toInt();}
 signals:
     void fieldsChanged();

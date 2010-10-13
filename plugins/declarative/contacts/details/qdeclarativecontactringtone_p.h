@@ -67,6 +67,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactRingtone());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
     ContactDetailType detailType() const
     {
@@ -86,13 +87,13 @@ public:
         }
         return "";
     }
-    void setAudioRingtoneUrl(const QUrl& audioRingtoneUrl) {detail().setValue(QContactRingtone::FieldAudioRingtoneUrl, audioRingtoneUrl);}
+    void setAudioRingtoneUrl(const QUrl& audioRingtoneUrl) {if (!readOnly()) detail().setValue(QContactRingtone::FieldAudioRingtoneUrl, audioRingtoneUrl);}
     QUrl audioRingtoneUrl() const {return detail().value(QContactRingtone::FieldAudioRingtoneUrl);}
 
-    void setVideoRingtoneUrl(const QUrl& videoRingtoneUrl) {detail().setValue(QContactRingtone::FieldVideoRingtoneUrl, videoRingtoneUrl);}
+    void setVideoRingtoneUrl(const QUrl& videoRingtoneUrl) {if (!readOnly()) detail().setValue(QContactRingtone::FieldVideoRingtoneUrl, videoRingtoneUrl);}
     QUrl videoRingtoneUrl() const {return detail().value(QContactRingtone::FieldVideoRingtoneUrl);}
 
-    void setVibrationRingtoneUrl(const QUrl& vibrationRingtoneUrl) {detail().setValue(QContactRingtone::FieldVibrationRingtoneUrl, vibrationRingtoneUrl);}
+    void setVibrationRingtoneUrl(const QUrl& vibrationRingtoneUrl) {if (!readOnly()) detail().setValue(QContactRingtone::FieldVibrationRingtoneUrl, vibrationRingtoneUrl);}
     QUrl vibrationRingtoneUrl() const {return detail().value(QContactRingtone::FieldVibrationRingtoneUrl);}
 signals:
     void fieldsChanged();

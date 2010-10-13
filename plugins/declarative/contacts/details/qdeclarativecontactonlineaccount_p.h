@@ -76,6 +76,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactOnlineAccount());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
 
     ContactDetailType detailType() const
@@ -98,13 +99,13 @@ public:
         }
         return "";
     }
-    void setAccountUri(const QString& accountUri) {detail().setValue(QContactOnlineAccount::FieldAccountUri, accountUri);}
+    void setAccountUri(const QString& accountUri) {if (!readOnly()) detail().setValue(QContactOnlineAccount::FieldAccountUri, accountUri);}
     QString accountUri() const {return detail().value(QContactOnlineAccount::FieldAccountUri);}
 
-    void setServiceProvider(const QString& serviceProvider) {detail().setValue(QContactOnlineAccount::FieldServiceProvider, serviceProvider);}
+    void setServiceProvider(const QString& serviceProvider) {if (!readOnly()) detail().setValue(QContactOnlineAccount::FieldServiceProvider, serviceProvider);}
     QString serviceProvider() const {return detail().value(QContactOnlineAccount::FieldServiceProvider);}
 
-    void setCapabilities(const QStringList& capabilities) {detail().setValue(QContactOnlineAccount::FieldCapabilities, capabilities);}
+    void setCapabilities(const QStringList& capabilities) {if (!readOnly()) detail().setValue(QContactOnlineAccount::FieldCapabilities, capabilities);}
     QStringList capabilities() const {return detail().value<QStringList>(QContactOnlineAccount::FieldCapabilities);}
 
     void setSubTypes(const QVariantList& subTypes)
@@ -130,7 +131,7 @@ public:
 
             }
         }
-        detail().setValue(QContactOnlineAccount::FieldSubTypes, savedList);
+        if (!readOnly()) detail().setValue(QContactOnlineAccount::FieldSubTypes, savedList);
     }
 
     QVariantList subTypes() const

@@ -81,6 +81,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactPhoneNumber());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
     ContactDetailType detailType() const
     {
@@ -98,7 +99,7 @@ public:
         }
         return "";
     }
-    void setNumber(const QString& number) {detail().setValue(QContactPhoneNumber::FieldNumber, number);}
+    void setNumber(const QString& number) {if (!readOnly()) detail().setValue(QContactPhoneNumber::FieldNumber, number);}
     QString number() const {return detail().value(QContactPhoneNumber::FieldNumber);}
 
 
@@ -149,7 +150,7 @@ public:
 
             }
         }
-        detail().setValue(QContactPhoneNumber::FieldSubTypes, savedList);
+        if (!readOnly()) detail().setValue(QContactPhoneNumber::FieldSubTypes, savedList);
     }
 
     QVariantList subTypes() const
