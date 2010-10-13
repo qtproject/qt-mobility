@@ -66,7 +66,16 @@ public:
     {
         return QDeclarativeContactDetail::Tag;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Tag:
+            return QContactTag::FieldTag;
+        default:
+            break;
+        }
+        return "";
+    }
     void setTag(const QString& tag) {detail().setValue(QContactTag::FieldTag, tag);}
     QString tag() const {return detail().value(QContactTag::FieldTag);}
 signals:

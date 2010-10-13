@@ -109,6 +109,8 @@ public:
     virtual ~QSystemInfoPrivate();
     QStringList availableLanguages() const;
     QString version(QSystemInfo::Version,  const QString &parameter = QString());
+    QString currentLanguage() const;
+    QString currentCountryCode() const;
 
     bool hasFeatureSupported(QSystemInfo::Feature feature);
 };

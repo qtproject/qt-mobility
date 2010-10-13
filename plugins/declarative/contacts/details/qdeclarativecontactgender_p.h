@@ -48,13 +48,20 @@
 class QDeclarativeContactGender : public QDeclarativeContactDetail
 {
     Q_OBJECT
-    Q_PROPERTY(QString gender READ gender WRITE setGender NOTIFY fieldsChanged)
+    Q_PROPERTY(GenderType gender READ gender WRITE setGender NOTIFY fieldsChanged)
     Q_ENUMS(FieldType)
+    Q_ENUMS(GenderType)
     Q_CLASSINFO("DefaultProperty", "gender")
 public:
     enum FieldType {
         Gender = 0
     };
+
+    enum GenderType {
+        Male = 0,
+        Female
+    };
+
     QDeclarativeContactGender(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
@@ -64,9 +71,31 @@ public:
     {
         return QDeclarativeContactDetail::Gender;
     }
-
-    void setGender(const QString& gender) {detail().setValue(QContactGender::FieldGender, gender);}
-    QString gender() const {return detail().value(QContactGender::FieldGender);}
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Gender:
+            return QContactGender::FieldGender;
+        default:
+            break;
+        }
+        return "";
+    }
+    void setGender(const GenderType gender)
+    {
+        if (gender == Male) {
+            detail().setValue(QContactGender::FieldGender, QContactGender::GenderMale);
+        } else {
+            detail().setValue(QContactGender::FieldGender, QContactGender::GenderFemale);
+        }
+    }
+    GenderType gender() const
+    {
+        if (detail().value(QContactGender::FieldGender) == QContactGender::GenderMale) {
+            return Male;
+        }
+        return Female;
+    }
 signals:
     void fieldsChanged();
 };

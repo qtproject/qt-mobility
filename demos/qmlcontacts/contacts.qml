@@ -248,7 +248,7 @@ Item {
                                         height: 40
 
                                         model: fieldNames
-                                        property ContactDetail detail: modelData
+                                        property Detail detail: modelData
 
                                         delegate: Item {
                                             height: parent.height
