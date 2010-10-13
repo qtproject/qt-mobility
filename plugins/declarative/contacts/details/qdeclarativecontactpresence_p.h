@@ -71,11 +71,11 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactPresence());
-        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
+        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Presence;
+        return QDeclarativeContactDetail::ContactPresence;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {

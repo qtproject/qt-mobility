@@ -69,19 +69,20 @@ public:
         SubTypeEngagement,
         SubTypeHouse,
         SubTypeEmployment,
-        SubTypeMemorial
+        SubTypeMemorial,
+        SubTypeInvalid
     };
 
     QDeclarativeContactAnniversary(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactAnniversary());
-        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
+        connect(this, SIGNAL(fieldsChanged), SIGNAL(valueChanged()));
     }
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Anniversary;
+        return QDeclarativeContactDetail::ContactAnniversary;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {
@@ -150,6 +151,7 @@ public:
             return SubTypeEmployment;
         else if (subType == QContactAnniversary::SubTypeMemorial)
             return SubTypeMemorial;
+        return SubTypeInvalid;
     }
 signals:
     void fieldsChanged();

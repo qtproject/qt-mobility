@@ -54,7 +54,7 @@ class QDeclarativeContactGender : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "gender")
 public:
     enum FieldType {
-        FieldFavoriteGender = 0
+        FieldGender = 0
     };
 
     enum GenderType {
@@ -66,16 +66,16 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactGender());
-        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
+        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Gender;
+        return QDeclarativeContactDetail::ContactGender;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Gender:
+        case FieldGender:
             return QContactGender::FieldGender;
         default:
             break;

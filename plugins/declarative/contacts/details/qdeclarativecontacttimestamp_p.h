@@ -60,7 +60,7 @@ public:
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Timestamp;
+        return QDeclarativeContactDetail::ContactTimestamp;
     }
 
     static QString fieldNameFromFieldType(int fieldType)
@@ -79,7 +79,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactTimestamp());
-        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
+        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
     }
     void setLastModified(const QDateTime& timestamp) {if (!readOnly()) detail().setValue(QContactTimestamp::FieldModificationTimestamp, timestamp);}
     QDateTime lastModified() const {return detail().value<QDateTime>(QContactTimestamp::FieldModificationTimestamp);}

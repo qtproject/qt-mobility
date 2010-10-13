@@ -62,11 +62,11 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactFavorite());
-        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
+        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Favorite;
+        return QDeclarativeContactDetail::ContactFavorite;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {

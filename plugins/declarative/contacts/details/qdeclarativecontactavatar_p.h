@@ -60,7 +60,7 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactAvatar());
-        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
+        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
     }
     void setImageUrl(const QUrl& imageUrl) {if (!readOnly()) detail().setValue(QContactAvatar::FieldImageUrl, imageUrl);}
     QUrl imageUrl() const {return detail().value<QUrl>(QContactAvatar::FieldImageUrl);}
@@ -70,7 +70,7 @@ public:
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Avatar;
+        return QDeclarativeContactDetail::ContactAvatar;
     }
 
     static QString fieldNameFromFieldType(int fieldType)

@@ -76,12 +76,12 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactOnlineAccount());
-        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
+        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
     }
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::OnlineAccount;
+        return QDeclarativeContactDetail::ContactOnlineAccount;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {

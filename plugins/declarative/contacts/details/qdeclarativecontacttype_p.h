@@ -57,14 +57,11 @@ public:
         TypeField = 0
     };
 
-    enum ContactType {
-        Contact = 0,
-        Group
-    };
+
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Type;
+        return QDeclarativeContactDetail::ContactType;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {

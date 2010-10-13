@@ -77,18 +77,26 @@ class QDeclarativeContact : public QObject
     Q_PROPERTY (QDeclarativeContactSyncTarget*  syncTarget READ syncTarget NOTIFY detailsChanged)
     Q_PROPERTY (QDeclarativeContactTag*  tag READ tag NOTIFY detailsChanged)
     Q_PROPERTY (QUrl thumbnail READ thumbnail WRITE setThumbnail NOTIFY detailsChanged)
-    Q_PROPERTY (QDeclarativeContactType*  type READ type NOTIFY detailsChanged)
+    Q_PROPERTY (ContactType  type READ type  WRITE setType NOTIFY detailsChanged)
     Q_PROPERTY (QDeclarativeContactUrl*  url READ url NOTIFY detailsChanged)
 
+    Q_ENUMS(ContactType)
     Q_CLASSINFO("DefaultProperty", "details")
 
 public:
+    enum ContactType {
+        TypeContact = 0,
+        TypeGroup
+    };
     explicit QDeclarativeContact(QObject *parent = 0);
     explicit QDeclarativeContact(const QContact& contact, const QMap<QString, QContactDetailDefinition>& defs, QObject *parent = 0);
     ~QDeclarativeContact();
 
     void setContact(const QContact& c);
     QContact contact() const;
+
+    void setType(ContactType type);
+    ContactType type() const;
 
     void setDetailDefinitions(const QMap<QString, QContactDetailDefinition>& defs);
     QMap<QString, QContactDetailDefinition> detailDefinitions() const;
@@ -127,7 +135,6 @@ public:
     QDeclarativeContactTag*  tag();
     QUrl  thumbnail() const;
     void  setThumbnail(const QUrl& url);
-    QDeclarativeContactType*  type();
     QDeclarativeContactUrl*  url();
 
 public slots:

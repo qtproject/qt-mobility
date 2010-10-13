@@ -78,11 +78,11 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactGeoLocation());
-        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
+        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Geolocation;
+        return QDeclarativeContactDetail::ContactGeolocation;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {
