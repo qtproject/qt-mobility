@@ -83,7 +83,7 @@ QDeclarativeGeneralInfo::QDeclarativeGeneralInfo(QObject *parent) :
 void QDeclarativeGeneralInfo::startCurrentLanguageChanged()
 {
     connect(generalInfo(),SIGNAL(startCurrentLanguageChanged(const QString &)),
-            this,SLOT(declarativeCurrentLanguageChanged(const QString &)));
+            this,SLOT(declarativeCurrentLanguageChanged(const QString &)),Qt::UniqueConnection);
 }
 
 void QDeclarativeGeneralInfo::declarativeCurrentLanguageChanged(const QString &language)

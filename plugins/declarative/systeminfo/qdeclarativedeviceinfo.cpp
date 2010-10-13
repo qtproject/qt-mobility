@@ -120,7 +120,7 @@ QDeclarativeDeviceInfo::QDeclarativeDeviceInfo(QObject *parent) :
 void QDeclarativeDeviceInfo::startBatteryLevelChanged()
 {
     connect(deviceInfo(),SIGNAL(batteryLevelChanged(int)),
-            this,SLOT(declarativeBatteryLevelChanged(int)));
+            this,SLOT(declarativeBatteryLevelChanged(int)),Qt::UniqueConnection);
 }
 
 /*!
