@@ -247,7 +247,7 @@ void QDeclarativeGraphicsGeoMap::setCenter(const QDeclarativeCoordinate *center)
 
         center_->setCoordinate(center->coordinate());
 
-        // TODO emit signal
+        emit declarativeCenterChanged(center_);
     }
 }
 
