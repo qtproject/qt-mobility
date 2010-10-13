@@ -131,7 +131,7 @@ QT_BEGIN_NAMESPACE
 
 
 /*!
-    \qmlsignal SoundEffect::loaded()
+    \qmlsignal SoundEffect::loadedChanged()
 
     This handler is called when the audio source is loaded and ready for play.
 */
