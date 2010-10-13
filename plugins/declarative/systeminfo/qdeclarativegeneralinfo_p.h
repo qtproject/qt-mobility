@@ -40,44 +40,34 @@
 ****************************************************************************/
 
 
-#ifndef QDECLARATIVEDEVICEINFO_P_H
-#define QDECLARATIVEDEVICEINFO_P_H
+#ifndef QDECLARATIVEGENERALINFO_P_H
+#define QDECLARATIVEGENERALINFO_P_H
 
 #include <QObject>
-#include "qsystemdeviceinfo.h"
+#include "qsystemgeneralinfo.h"
 
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 
-class QDeclarativeDeviceInfo : public QSystemDeviceInfo
+class QDeclarativeGeneralInfo : public QSystemInfo
 {
     Q_OBJECT
 public:
-    explicit QDeclarativeDeviceInfo(QObject *parent = 0);
+    explicit QDeclarativeGeneralInfo(QObject *parent = 0);
 
 
 public slots:
-    void startBatteryLevelChanged();
-    void startBatteryStatusChanged();
-    void startPowerStateChanged();
-    void startCurrentProfileChanged();
-    void startBluetoothStateChanged();
+    void startCurrentLanguageChanged();
 
 Q_SIGNALS:
-    void batteryLevelChanged(int level);
-    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);
-    void powerStateChanged(QSystemDeviceInfo::PowerState powerState);
-    void currentProfileChanged(QSystemDeviceInfo::Profile currentProfile);
-    void bluetoothStateChanged(bool on);
+   void currentLanguageChanged(const QString &language);
 
 private slots:
-    void declarativeBatteryLevelChanged(int level);
-    void declarativeBatteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);
-    void declarativePowerStateChanged(QSystemDeviceInfo::PowerState powerState);
-    void declarativeCurrentProfileChanged(QSystemDeviceInfo::Profile currentProfile);
-    void declarativeBluetoothStateChanged(bool on);
+    void declarativeCurrentLanguageChanged(const QString &);
+
 };
 
 QT_END_NAMESPACE
 QT_END_HEADER
-#endif // QDECLARATIVEDEVICEINFO_P_H
+
+#endif // QDECLARATIVEGENERALINFO_P_H

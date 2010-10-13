@@ -40,44 +40,53 @@
 ****************************************************************************/
 
 
-#ifndef QDECLARATIVEDEVICEINFO_P_H
-#define QDECLARATIVEDEVICEINFO_P_H
+#include "qdeclarativegeneralinfo_p.h"
+#include "qsystemgeneralinfo.h"
+#include <QMetaType>
 
-#include <QObject>
-#include "qsystemdeviceinfo.h"
+QT_BEGIN_NAMESPACE
 
-QT_BEGIN_HEADER
-QTM_USE_NAMESPACE
+Q_GLOBAL_STATIC(QSystemInfo, generalInfo)
 
-class QDeclarativeDeviceInfo : public QSystemDeviceInfo
+
+/*!
+    \qmlclass GeneralInfo QDeclarativeGeneralInfo
+    \brief The GeneralInfo element allows you to receive notifications from the device.
+
+    This element is part of the \bold{QtMobility.systeminfo 1.0} module.
+    It is a convience class to make QML usage easier.
+
+    Note: To use notification signals, you need to use the start* slots.
+
+
+    \qml
+        Component.onCompleted: {
+            generalInfo.startCurrentLanguageChanged();
+        }
+    \endqml
+
+\sa QSystemGeneralInfo
+*/
+
+
+/*!
+    \qmlsignal SystemInfo::startCurrentLanguageChanged()
+
+    This handler is called when current system language has changed.
+    Note: To receive this notification, you must first call \a startCurrentLanguageChanged.
+*/
+QDeclarativeGeneralInfo::QDeclarativeGeneralInfo(QObject *parent) :
+    QSystemInfo(parent)
 {
-    Q_OBJECT
-public:
-    explicit QDeclarativeDeviceInfo(QObject *parent = 0);
+}
 
+void QDeclarativeGeneralInfo::startCurrentLanguageChanged()
+{
+    connect(generalInfo(),SIGNAL(startCurrentLanguageChanged(const QString &)),
+            this,SLOT(declarativeCurrentLanguageChanged(const QString &)));
+}
 
-public slots:
-    void startBatteryLevelChanged();
-    void startBatteryStatusChanged();
-    void startPowerStateChanged();
-    void startCurrentProfileChanged();
-    void startBluetoothStateChanged();
-
-Q_SIGNALS:
-    void batteryLevelChanged(int level);
-    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);
-    void powerStateChanged(QSystemDeviceInfo::PowerState powerState);
-    void currentProfileChanged(QSystemDeviceInfo::Profile currentProfile);
-    void bluetoothStateChanged(bool on);
-
-private slots:
-    void declarativeBatteryLevelChanged(int level);
-    void declarativeBatteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);
-    void declarativePowerStateChanged(QSystemDeviceInfo::PowerState powerState);
-    void declarativeCurrentProfileChanged(QSystemDeviceInfo::Profile currentProfile);
-    void declarativeBluetoothStateChanged(bool on);
-};
-
-QT_END_NAMESPACE
-QT_END_HEADER
-#endif // QDECLARATIVEDEVICEINFO_P_H
+void QDeclarativeGeneralInfo::declarativeCurrentLanguageChanged(const QString &language)
+{
+    Q_EMIT currentLanguageChanged(language);
+}
