@@ -56,6 +56,7 @@
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativegraphicsgeomap_p.h"
 #include "qdeclarativegeomapobject_p.h"
+#include "qdeclarativegeomapobjectborder_p.h"
 #include "qdeclarativegeomapcircleobject_p.h"
 #include "qdeclarativegeomappixmapobject_p.h"
 #include "qdeclarativegeomappolygonobject_p.h"
@@ -99,6 +100,7 @@ public:
         qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 1, 1, "Plugin");
         qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 1, 1, "PluginParameter");
         qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 1, 1, "Map");
+        qmlRegisterType<QDeclarativeGeoMapObjectBorder>();
         qmlRegisterType<QGeoMapObject>(uri, 1, 1, "QGeoMapObject");
         qmlRegisterType<QDeclarativeGeoMapObject>(uri, 1, 1, "MapObject");
         qmlRegisterType<QDeclarativeGeoMapCircleObject>(uri, 1, 1, "MapCircleObject");
