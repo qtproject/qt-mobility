@@ -790,6 +790,8 @@ void tst_QContactManager::add()
                 continue;
             if (def.name() == QContactOnlineAccount::DefinitionName)
                 continue;
+	    if (def.name() == QContactPresence::DefinitionName)
+                continue;
         }
 
         // This is probably read-only

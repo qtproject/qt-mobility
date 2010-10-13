@@ -237,6 +237,8 @@ public:
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     QSystemDeviceInfo::PowerState currentPowerState();
+    QString model();
+    QString productName();
 
 protected:
 #if !defined(QT_NO_DBUS)
@@ -273,6 +275,7 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
+    bool isInhibited;
 
 private Q_SLOTS:
     void wakeUpDisplay();

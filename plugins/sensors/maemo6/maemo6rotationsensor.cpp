@@ -58,10 +58,6 @@ maemo6rotationsensor::maemo6rotationsensor(QSensor *sensor)
     else
         qWarning() << "Unable to initialize "<<sensorName;
     setReading<QRotationReading>(&m_reading);
-    // metadata
-    addDataRate(1, 130); // 43 Hz
-    addOutputRange(-179, 180, 1);
-    setDescription(QLatin1String("Measures x, y, and z axes rotation in degrees"));
     sensor->setProperty("hasZ", true);
 }
 

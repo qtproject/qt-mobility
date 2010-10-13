@@ -122,7 +122,7 @@ When developing on Symbian we will also need to add the required capabilites to 
 This can be achieved with a line such as the following:
 
 \code
-    TARGET.CAPABILITIES = CAPABILITY_A CABAPILITY_B
+    TARGET.CAPABILITY = CAPABILITY_A CABAPILITY_B
 \endcode
 
 CAPABILITY_A and CAPABILITY_B are place holders for the appropriate Symbian capabilities. A complete list of all Symbian

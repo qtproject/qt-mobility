@@ -68,13 +68,17 @@
 #include <memailcontent.h>
 #include <mmessageiterator.h>
 
+#include <QThreadStorage>
+#include <QCoreApplication>
+
 using namespace EmailInterface;
 
 QTM_BEGIN_NAMESPACE
 
 using namespace SymbianHelpers;
 
-Q_GLOBAL_STATIC(CFSEngine,fsEngine);
+Q_GLOBAL_STATIC(CFSEngine, applicationThreadFsEngine);
+Q_GLOBAL_STATIC(QThreadStorage<CFSEngine *>, fsEngineThreadStorage)
 
 CFSEngine::CFSEngine()
 {
@@ -95,32 +99,70 @@ CFSEngine::CFSEngine()
 
 CFSEngine::~CFSEngine()
 {
+    m_mtmAccountList.clear();
 
+    for (TInt i = 0; i < m_attachments.Count(); i++){
+        m_attachments[i]->Release();
+    }
+    m_attachments.Reset();
+
+    for (TInt i = 0; i < m_mailboxes.Count(); i++){
+        m_mailboxes[i]->Release();
+    }
+    m_mailboxes.Reset();
+
+    if (m_clientApi) {
+        m_clientApi->Release();
+        m_clientApi = NULL;
+    }
+
+    if (m_factory) {
+        delete m_factory;
+        m_factory = NULL;
+    }
 }
 
 void CFSEngine::cleanupFSBackend()
 {
     m_mtmAccountList.clear();
+
     for (TInt i = 0; i < m_attachments.Count(); i++){
         m_attachments[i]->Release();
     }
     m_attachments.Reset();
+
     for (TInt i = 0; i < m_mailboxes.Count(); i++){
         m_mailboxes[i]->Release();
     }
     m_mailboxes.Reset();
-    m_clientApi->Release();
-    delete m_factory;
+
+    if (m_clientApi) {
+        m_clientApi->Release();
+        m_clientApi = NULL;
+    }
+
+    if (m_factory) {
+        delete m_factory;
+        m_factory = NULL;
+    }
 }
 
 CFSEngine* CFSEngine::instance()
 {   
-    return fsEngine();
+    if (QCoreApplication::instance() && QCoreApplication::instance()->thread() == QThread::currentThread()) {
+        return applicationThreadFsEngine();
+    }
+
+    if (!fsEngineThreadStorage()->hasLocalData()) {
+        fsEngineThreadStorage()->setLocalData(new CFSEngine);
+    }
+    
+    return fsEngineThreadStorage()->localData();
 }
 
 bool CFSEngine::accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2)
 {
-    CFSEngine* freestyleEngine = fsEngine();
+    CFSEngine* freestyleEngine = instance();
     return QMessageAccountSortOrderPrivate::lessThan(freestyleEngine->m_currentAccountOrdering,
         freestyleEngine->account(accountId1),
         freestyleEngine->account(accountId2));
@@ -135,7 +177,7 @@ void CFSEngine::orderAccounts(QMessageAccountIdList& accountIds, const QMessageA
 
 bool CFSEngine::folderLessThan(const QMessageFolderId folderId1, const QMessageFolderId folderId2)
 {
-    CFSEngine* freestyleEngine = fsEngine();
+    CFSEngine* freestyleEngine = instance();
     return QMessageFolderSortOrderPrivate::lessThan(freestyleEngine->m_currentFolderOrdering,
             freestyleEngine->folder(folderId1),
             freestyleEngine->folder(folderId2));
@@ -149,7 +191,7 @@ void CFSEngine::orderFolders(QMessageFolderIdList& folderIds,  const QMessageFol
 
 bool CFSEngine::messageLessThan(const QMessage& message1, const QMessage& message2)
 {
-    CFSEngine* freestyleEngine = fsEngine();
+    CFSEngine* freestyleEngine = instance();
     return QMessageSortOrderPrivate::lessThan(freestyleEngine->m_currentMessageOrdering, message1, message2);
 }
 
@@ -1370,6 +1412,12 @@ void CFSEngine::applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, 
 QMessageManager::NotificationFilterId CFSEngine::registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
                                                                            const QMessageFilter &filter, QMessageManager::NotificationFilterId aId)
 {
+    if (QCoreApplication::instance() && QCoreApplication::instance()->thread() != QThread::currentThread()) {
+        if (this != applicationThreadFsEngine()) {
+            return applicationThreadFsEngine()->registerNotificationFilter(aPrivateStore, filter, aId);
+        }
+    }
+
     ipMessageStorePrivate = &aPrivateStore;
     iListenForNotifications = true;    
 
@@ -1382,6 +1430,12 @@ QMessageManager::NotificationFilterId CFSEngine::registerNotificationFilter(QMes
 
 void CFSEngine::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
 {
+    if (QCoreApplication::instance() && QCoreApplication::instance()->thread() != QThread::currentThread()) {
+        if (this != applicationThreadFsEngine()) {
+            return applicationThreadFsEngine()->unregisterNotificationFilter(notificationFilterId);
+        }
+    }
+
     m_filters.remove(notificationFilterId);
     if (m_filters.count() == 0) {
         iListenForNotifications = false;
@@ -2048,10 +2102,13 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
     attachments.Close();
     
     //from
-    TPtrC from = aMessage->SenderAddressL()->Address();
-    if (from.Length() > 0) {
-        message.setFrom(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(from.Ptr(), from.Length())));
-        QMessagePrivate::setSenderName(message, QString::fromUtf16(from.Ptr(), from.Length()));
+    MEmailAddress* pSenderAddress = aMessage->SenderAddressL();
+    if (pSenderAddress) {
+        TPtrC from = pSenderAddress->Address();
+        if (from.Length() > 0) {
+            message.setFrom(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(from.Ptr(), from.Length())));
+            QMessagePrivate::setSenderName(message, QString::fromUtf16(from.Ptr(), from.Length()));
+        }
     }
     
     //to
@@ -2722,11 +2779,14 @@ void CFSMessagesFindOperation::getAccountSpecificMessagesL(QMessageAccount& mess
     TMailboxId mailboxId(stripIdPrefix(messageAccount.id().toString()).toInt());
     FSSearchOperation operation;
     operation.m_mailbox = m_clientApi->MailboxL(mailboxId);
-    operation.m_search = operation.m_mailbox->MessageSearchL();
-    operation.m_search->AddSearchKeyL(_L("*"));
-    operation.m_search->SetSortCriteriaL( sortCriteria );
-    operation.m_search->StartSearchL( *this ); // this implements MEmailSearchObserver
-    m_activeSearchCount++;
+    operation.m_emailSortCriteria = sortCriteria;
+    if (m_searchOperations.isEmpty()) {
+        operation.m_search = operation.m_mailbox->MessageSearchL();
+        operation.m_search->AddSearchKeyL(_L("*"));
+        operation.m_search->SetSortCriteriaL(operation.m_emailSortCriteria);
+        operation.m_search->StartSearchL(*this); // this implements MEmailSearchObserver
+        m_activeSearchCount++;
+    }
     m_searchOperations.append(operation);
 }
 
@@ -2777,15 +2837,39 @@ void CFSMessagesFindOperation::SearchCompletedL()
     if (m_receiveNewMessages) {
         m_receiveNewMessages = false;
     } else {
-        m_activeSearchCount--;
-        if (m_activeSearchCount <= 0) {
+        if (m_searchOperations.count() > 1) {
+            // At least two searchOperations in the list
+            // => Search continues
+            QMetaObject::invokeMethod(this, "continueSearch", Qt::QueuedConnection);
+        } else {
+            // Only one handled searchOperation in the list
+            // => Search completed
+            m_activeSearchCount--;
             QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
         }
     }
 }
+
+void CFSMessagesFindOperation::continueSearch()
+{
+    // Remove previous search
+    m_searchOperations.first().m_search->Release();
+    m_searchOperations.first().m_mailbox->Release();
+    m_searchOperations.removeFirst();
+    // Start next search
+    m_searchOperations.first().m_search = m_searchOperations.first().m_mailbox->MessageSearchL();
+    m_searchOperations.first().m_search->AddSearchKeyL(_L("*"));
+    m_searchOperations.first().m_search->SetSortCriteriaL(m_searchOperations.first().m_emailSortCriteria);
+    m_searchOperations.first().m_search->StartSearchL(*this); // this implements MEmailSearchObserver
+}
     
 void CFSMessagesFindOperation::SearchCompleted()
 {
+    if (m_searchOperations.count() > 0) {
+        m_searchOperations.first().m_search->Release();
+        m_searchOperations.first().m_mailbox->Release();
+        m_searchOperations.removeFirst();
+    }
     if (m_searchField != None) { 
         QMessageIdList idList;
         foreach (QMessageId messageId, m_idList) {

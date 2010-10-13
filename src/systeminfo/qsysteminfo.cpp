@@ -728,7 +728,7 @@ QSystemDisplayInfo::~QSystemDisplayInfo()
 
     Depending on platform, displayBrightness may not be available due to
     differing hardware, software or driver implementation. In which case this
-    will return 0.
+    will return -1.
 
     \sa QDesktopWidget::screenCount()
 */
@@ -738,7 +738,7 @@ int QSystemDisplayInfo::displayBrightness(int screenNumber)
 }
 
 /*!
-    Returns the color depth of the screen with the index \a screenNumber, in bits per pixel, or 0 if the screen is not found.
+    Returns the color depth of the screen with the index \a screenNumber, in bits per pixel, or -1 if the screen is not found, or an error occurs.
 
     \sa QDesktopWidget::screenCount()
 */

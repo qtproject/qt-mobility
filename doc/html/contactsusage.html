@@ -42,7 +42,40 @@
 </ul>
 <a name="introduction"></a>
 <h2>Introduction</h2>
-<p>This section provides some examples of common usage of the Qt Contacts API.</p>
+<p>This section provides some examples of common usage of the Qt Contacts API. The most common use of the API is to retrieve a contact and then display certain details of that contact. To do so, several steps must be taken:</p>
+<ul>
+<li>A contact manager must be instantiated</li>
+<li>The contact must be retrieved from the manager</li>
+<li>The required details of the contact must be selected from the contact</li>
+</ul>
+<p>The first step is usually as simple as:</p>
+<pre>    QContactManager cm; <span class="comment">// instantiate the default manager</span></pre>
+<p>The second step requires either a filtering operation, or, if the id of the contact is already known, a direct selection operation. If you are interested in all contacts, a &quot;default filter&quot; retrieve operation is used. The retrieval operations may either be <a href="contactssync.html">synchronous</a> or <a href="contactsasync.html">asynchronous</a>; we recommend using asynchronous operations for applications which require a responsive user interface. For simplicity, however, the example below uses the synchronous API to retrieve all contacts:</p>
+<pre>    QList&lt;QContact&gt; allContacts = cm.contacts();</pre>
+<p>The third step may be performed in several ways. The recommended way is to utilize the templated detail accessor, if you know which type of detail you are interested in:</p>
+<pre>    QContact firstContact = allContacts.first();
+    qDebug() &lt;&lt; &quot;The first contact has a phone number:&quot; &lt;&lt; firstContact.detail&lt;QContactPhoneNumber&gt;().number();</pre>
+<p>Alternatively, you can use the base <a href="qcontactdetail.html">QContactDetail</a> class methods to select the detail in which you are interested in, and the field keys specified in the derived class to select the value which you are interested in:</p>
+<pre>    qDebug() &lt;&lt; &quot;The first contact has a phone number:&quot; &lt;&lt; firstContact.detail(QContactPhoneNumber::DefinitionName).value(QContactPhoneNumber::FieldNumber);</pre>
+<p>Note that in each case, if the contact did not have a phone number detail, the return value of <a href="qcontact.html#detail">QContact::detail</a>() is an empty detail. Also note that in the first case, the return value will be of the <a href="qcontactphonenumber.html">QContactPhoneNumber</a> detail type, whereas in the second case, the return value will be of the <a href="qcontactdetail.html">QContactDetail</a> (base-class detail) type -- although the actual detail returned in both cases is exactly the same.</p>
+<p>If you wish to retrieve all of the details of a contact, you may do something similar to:</p>
+<pre>    QList&lt;QContactDetail&gt; allDetails = firstContact.details();</pre>
+<p>Alternatively, if you wish only to retrieve the details which are of some particular type, you can use either the templated or non-templated accessor:</p>
+<pre>    QList&lt;QContactPhoneNumber&gt; allPhoneNumbers = firstContact.details&lt;QContactPhoneNumber&gt;();
+    QList&lt;QContactDetail&gt; allPhoneNumbers2 = firstContact.details(QContactPhoneNumber::DefinitionName);</pre>
+<p>Note that in each case, if the contact did not have any phone number details, the return value of <a href="qcontact.html#details">QContact::details</a>() is an empty list. Also note that in the first case, the return value will be a list of the <a href="qcontactphonenumber.html">QContactPhoneNumber</a> detail type, whereas in the second case, the return value will be a list of the <a href="qcontactdetail.html">QContactDetail</a> (base-class detail) type -- although the actual details returned in both cases will be exactly the same.</p>
+<p>The next most common use of the API is to save a contact. Such an operation consists of two steps:</p>
+<ul>
+<li>Saving a detail in a contact</li>
+<li>Saving the contact in a manager</li>
+</ul>
+<p>Removing a contact is done similarly to saving a contact. An example of these two operations is given below. Note that it uses the synchronous API to save and remove the contact, although in a real application we recommend using the asynchronous API to perform such manager-related operations.</p>
+<pre>    QContactPhoneNumber newPhoneNumber;       <span class="comment">// create the detail to add</span>
+    newPhoneNumber.setNumber(&quot;12345&quot;);        <span class="comment">// set the value(s) to save</span>
+    firstContact.saveDetail(&amp;newPhoneNumber); <span class="comment">// save the detail in the contact</span>
+    cm.saveContact(&amp;firstContact);            <span class="comment">// save the contact in the manager</span>
+    cm.removeContact(firstContact.localId()); <span class="comment">// remove the contact from the manager</span></pre>
+<p>That's it! For more in-depth discussion of usage of the API, see the sections below.</p>
 <a name="manager-settings-and-configuration"></a>
 <h2>Manager Settings And Configuration</h2>
 <p>Users of the contacts API can define which backend they wish to access if a manager for that backend is available. The list of available managers can be queried programmatically at run-time, and the capabilities of different managers can be ascertained by inspecting a <a href="qcontactmanager.html">QContactManager</a> instance. Furthermore, some managers can be constructed with parameters which affect the operation of the backend.</p>
@@ -502,6 +535,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.3</div></td>
 </tr></table></div></address></body>
 </html>

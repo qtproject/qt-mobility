@@ -186,10 +186,11 @@
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/waitForFinished"></a>
 <h3 class="fn"><a name="waitForFinished"></a>bool QContactAbstractRequest::waitForFinished ( int <i>msecs</i> = 0 )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Blocks until the request has been completed by the manager engine, or until <i>msecs</i> milliseconds has elapsed. If <i>msecs</i> is zero, this function will block indefinitely. Returns true if the request was cancelled or completed successfully within the given period, otherwise false. Some backends are unable to support this operation safely, and will return false immediately.</p>
+<p>Note that any signals generated while waiting for the request to complete may be queued and delivered some time after this function has returned, when the calling thread's event loop is dispatched. If your code depends on your slots being invoked, you may need to process events after calling this function.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.3</div></td>
 </tr></table></div></address></body>
 </html>

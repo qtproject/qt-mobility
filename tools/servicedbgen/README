@@ -93,3 +93,26 @@ option was given and no path was specified.
 "/epoc32/winscw/c/private/2002AC7F/Nokia/des" // Emulator
 "/epoc32/data/z/private/2002AC7F/Nokia/des"   // HW
 
+
+*) Notes For Symbian ROM images
+
+In the initialization phase, typically first boot, if the database is
+not found on the C drive, it is copied from the Z drive.
+
+qtmobility.iby must contain:
+
+data=\epoc32\data\z\private\2002ac7f\QtServiceFramework_4.6_system.db  private\2002ac7f\QtServiceFramework_4.6_system.db
+
+To use servicedbgen when it's not provided as part of SDK these files
+should be deployed to:
+
+features\qtservice.meta -> $EPOCROOT\epoc32\tools\makefile_templates\qt
+features\qtservice.mk 	-> $EPOCROOT\epoc32\tools\makefile_templates\qt
+features\qtservice.prf 	-> $EPOCROOT\epoc32\tools\qt\mkspecs\features\symbian
+servicedbgen.exe      	-> $EPOCROOT\epoc32\tools
+QtCore4.dll and 	-> $EPOCROOT\epoc32\tools
+QtSql4.dll.exe 		-> $EPOCROOT\epoc32\tools
+qsqlite4.dll		-> $EPOCROOT\epoc32\tools\sqldrivers
+
+
+

@@ -1,0 +1,9 @@
+INCLUDEPATH += ../../../src/sensors
+QT += core
+QT += testlib
+CONFIG += qt
+CONFIG += testcase
+CONFIG += mobility
+HEADERS += sensorslotclass.h
+SOURCES += test_manual.cpp
+MOBILITY += sensors

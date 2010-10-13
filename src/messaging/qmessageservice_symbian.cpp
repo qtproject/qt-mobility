@@ -77,12 +77,12 @@ QMessageServicePrivate::~QMessageServicePrivate()
 
 bool QMessageServicePrivate::sendSMS(QMessage &message)
 {
-    return CMTMEngine::instance()->sendSMS(message);
+    return CMTMEngine::instance()->sendSMS((QMessageServicePrivate&)*this, message);
 }
 
 bool QMessageServicePrivate::sendMMS(QMessage &message)
 {
-    return CMTMEngine::instance()->sendMMS(message);
+    return CMTMEngine::instance()->sendMMS((QMessageServicePrivate&)*this, message);
 }
 
 bool QMessageServicePrivate::sendEmail(QMessage &message)
@@ -90,14 +90,18 @@ bool QMessageServicePrivate::sendEmail(QMessage &message)
     switch (idType(message.parentAccountId())) {
         case EngineTypeFreestyle:
 #if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-            return CFSEngine::instance()->sendEmail(*this, message);
+            bool retVal = CFSEngine::instance()->sendEmail(*this, message);
+            if (retVal == true) {
+                setFinished(retVal);
+            }
+            return retVal;
 #else
             return false;
 #endif
             break;
         case EngineTypeMTM:
         default:
-            return CMTMEngine::instance()->sendEmail(message);
+            return CMTMEngine::instance()->sendEmail((QMessageServicePrivate&)*this, message);
             break;
     }
 }
@@ -331,9 +335,9 @@ void QMessageServicePrivate::setFinished(bool successful)
         _error = QMessageManager::RequestIncomplete;
     }
 
+    _active = false;
     _state = QMessageService::FinishedState;
     emit q_ptr->stateChanged(_state);
-    _active = false;
 }
 
 QMessageService::QMessageService(QObject *parent)
@@ -494,7 +498,9 @@ bool QMessageService::send(QMessage &message)
         }
     }
     
-    d_ptr->setFinished(retVal);
+    if (retVal == false) {
+        d_ptr->setFinished(retVal);
+    }
     return retVal;
 }
 

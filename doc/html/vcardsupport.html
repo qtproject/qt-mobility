@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- vcardsupport.qdoc -->
+<head>
+  <title>Qt Mobility Project 1.0: Supported vCard Features</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Supported vCard Features<br /><span class="subtitle"></span>
+</h1>
+<a name="vcardsupport"></a><a name="properties"></a>
+<h2>Properties</h2>
+<p>The following table lists the vCard properties that the <a href="versit.html">Versit API</a> supports.</p>
+<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Versit Property</th><th><a href="qcontactdetail.html">QContactDetail</a></th></tr></thead>
+<tr valign="top" class="odd"><td>ADR</td><td><a href="qcontactaddress.html">QContactAddress</a></td></tr>
+<tr valign="top" class="even"><td>BDAY</td><td><a href="qcontactbirthday.html">QContactBirthday</a></td></tr>
+<tr valign="top" class="odd"><td>CATEGORIES, X-CATEGORIES*</td><td><a href="qcontacttag.html">QContactTag</a></td></tr>
+<tr valign="top" class="even"><td>FN</td><td><a href="qcontactname.html">QContactName</a> (CustomLabel field)</td></tr>
+<tr valign="top" class="odd"><td>GEO</td><td><a href="qcontactgeolocation.html">QContactGeoLocation</a></td></tr>
+<tr valign="top" class="even"><td>EMAIL</td><td><a href="qcontactemailaddress.html">QContactEmailAddress</a></td></tr>
+<tr valign="top" class="odd"><td>IMPP, X-IMPP*</td><td><a href="qcontactonlineaccount.html">QContactOnlineAccount</a> (SubTypeImpp)</td></tr>
+<tr valign="top" class="even"><td>LOGO</td><td><a href="qcontactorganization.html">QContactOrganization</a> (LogoUrl field)</td></tr>
+<tr valign="top" class="odd"><td>N</td><td><a href="qcontactname.html">QContactName</a></td></tr>
+<tr valign="top" class="even"><td>NICKNAME, X-NICKNAME*, X-EPOCSECONDNAME*</td><td><a href="qcontactnickname.html">QContactNickname</a></td></tr>
+<tr valign="top" class="odd"><td>NOTE</td><td><a href="qcontactnote.html">QContactNote</a></td></tr>
+<tr valign="top" class="even"><td>ORG</td><td><a href="qcontactorganization.html">QContactOrganization</a> (Name field)</td></tr>
+<tr valign="top" class="odd"><td>PHOTO</td><td><a href="qcontactthumbnail.html">QContactThumbnail</a> for base-64 encoded images or <a href="qcontactavatar.html">QContactAvatar</a> for URLs</td></tr>
+<tr valign="top" class="even"><td>REV</td><td><a href="qcontacttimestamp.html">QContactTimestamp</a></td></tr>
+<tr valign="top" class="odd"><td>ROLE</td><td><a href="qcontactorganization.html">QContactOrganization</a> (Role field)</td></tr>
+<tr valign="top" class="even"><td>SOUND</td><td><a href="qcontactringtone.html">QContactRingtone</a></td></tr>
+<tr valign="top" class="odd"><td>TEL</td><td><a href="qcontactphonenumber.html">QContactPhoneNumber</a></td></tr>
+<tr valign="top" class="even"><td>TITLE</td><td><a href="qcontactorganization.html">QContactOrganization</a> (Title field)</td></tr>
+<tr valign="top" class="odd"><td>UID</td><td><a href="qcontactguid.html">QContactGuid</a></td></tr>
+<tr valign="top" class="even"><td>URL</td><td><a href="qcontacturl.html">QContactUrl</a></td></tr>
+<tr valign="top" class="odd"><td>X-ANNIVERSARY</td><td><a href="qcontactanniversary.html">QContactAnniversary</a></td></tr>
+<tr valign="top" class="even"><td>X-ASSISTANT</td><td><a href="qcontactorganization.html">QContactOrganization</a> (Assistant field)</td></tr>
+<tr valign="top" class="odd"><td>X-ASSISTANT-TEL</td><td><a href="qcontactphonenumber.html">QContactPhoneNumber</a> (SubTypeAssistant)</td></tr>
+<tr valign="top" class="even"><td>X-CHILDREN</td><td><a href="qcontactfamily.html">QContactFamily</a> (Children field)</td></tr>
+<tr valign="top" class="odd"><td>X-GENDER</td><td><a href="qcontactgender.html">QContactGender</a></td></tr>
+<tr valign="top" class="even"><td>X-JABBER</td><td><a href="qcontactonlineaccount.html">QContactOnlineAccount</a> (SubTypeImpp)</td></tr>
+<tr valign="top" class="odd"><td>X-SIP</td><td><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></td></tr>
+<tr valign="top" class="even"><td>X-SPOUSE</td><td><a href="qcontactfamily.html">QContactFamily</a> (Spouse field)</td></tr>
+</table></p>
+<p>* These are understood by the importer, but are not generated by the exporter.</p>
+<a name="parameters"></a>
+<h2>Parameters</h2>
+<p>The Versit module supports the following vCard parameter:</p>
+<ul>
+<li>ENCODING (for base64 or quoted-printable values)</li>
+<li>CHARSET (text character set for a specific property)</li>
+<li>VALUE (for LOGO, SOUND and PHOTO to specify whether the resource is external or embedded)</li>
+<li>TYPE (see below)</li>
+</ul>
+<p>The following table lists the values that are supported for the TYPE parameter:</p>
+<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Value of TYPE parameter</th><th>Value of <a href="qcontactdetail.html">QContactDetail</a> Context/SubType</th></tr></thead>
+<tr valign="top" class="odd"><td>HOME</td><td><a href="qcontactdetail.html#ContextHome-var">QContactDetail::ContextHome</a></td></tr>
+<tr valign="top" class="even"><td>WORK</td><td><a href="qcontactdetail.html#ContextWork-var">QContactDetail::ContextWork</a></td></tr>
+<tr valign="top" class="odd"><td>DOM</td><td><a href="qcontactaddress.html#SubTypeDomestic-var">QContactAddress::SubTypeDomestic</a></td></tr>
+<tr valign="top" class="even"><td>INTL</td><td><a href="qcontactaddress.html#SubTypeInternational-var">QContactAddress::SubTypeInternational</a></td></tr>
+<tr valign="top" class="odd"><td>POSTAL</td><td><a href="qcontactaddress.html#SubTypePostal-var">QContactAddress::SubTypePostal</a></td></tr>
+<tr valign="top" class="even"><td>PARCEL</td><td><a href="qcontactaddress.html#SubTypeParcel-var">QContactAddress::SubTypeParcel</a></td></tr>
+<tr valign="top" class="odd"><td>VOICE</td><td><a href="qcontactphonenumber.html#SubTypeVoice-var">QContactPhoneNumber::SubTypeVoice</a></td></tr>
+<tr valign="top" class="even"><td>CELL</td><td><a href="qcontactphonenumber.html#SubTypeMobile-var">QContactPhoneNumber::SubTypeMobile</a></td></tr>
+<tr valign="top" class="odd"><td>MODEM</td><td><a href="qcontactphonenumber.html#SubTypeModem-var">QContactPhoneNumber::SubTypeModem</a></td></tr>
+<tr valign="top" class="even"><td>CAR</td><td><a href="qcontactphonenumber.html#SubTypeCar-var">QContactPhoneNumber::SubTypeCar</a></td></tr>
+<tr valign="top" class="odd"><td>VIDEO</td><td><a href="qcontactphonenumber.html#SubTypeVideo-var">QContactPhoneNumber::SubTypeVideo</a></td></tr>
+<tr valign="top" class="even"><td>FAX</td><td><a href="qcontactphonenumber.html#SubTypeFax-var">QContactPhoneNumber::SubTypeFax</a></td></tr>
+<tr valign="top" class="odd"><td>BBS</td><td><a href="qcontactphonenumber.html#SubTypeBulletinBoardSystem-var">QContactPhoneNumber::SubTypeBulletinBoardSystem</a></td></tr>
+<tr valign="top" class="even"><td>PAGER</td><td><a href="qcontactphonenumber.html#SubTypePager-var">QContactPhoneNumber::SubTypePager</a></td></tr>
+<tr valign="top" class="odd"><td>SWIS</td><td><a href="qcontactonlineaccount.html#SubTypeVideoShare-var">QContactOnlineAccount::SubTypeVideoShare</a></td></tr>
+<tr valign="top" class="even"><td>VOIP</td><td><a href="qcontactonlineaccount.html#SubTypeSipVoip-var">QContactOnlineAccount::SubTypeSipVoip</a></td></tr>
+</table></p>
+<p>PREF is partially supported. If a property has the parameter TYPE set to PREF, the <a href="qcontactdetail.html">QContactDetail</a> that it generates is placed at the front of the list saved to the resultant <a href="qcontact.html">QContact</a>. This has the effect that calling <a href="qcontact.html#detail">QContact::detail</a>() will return it in preference over other details. However, the existence of the PREF parameter is not preserved, so it won't appear when exporting the contact back to vCard.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.3</div></td>
+</tr></table></div></address></body>
+</html>

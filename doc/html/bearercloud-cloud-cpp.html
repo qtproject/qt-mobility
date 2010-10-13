@@ -253,6 +253,8 @@
         else
             finalOpacity = 1.0;
 
+    #if !defined(Q_WS_MAEMO_5) &amp;&amp; !defined(Q_WS_MAEMO_6) &amp;&amp; \
+        !defined(Q_OS_SYMBIAN) &amp;&amp; !defined(Q_OS_WINCE)
         QString tooltip;
 
         if (configuration.name().isEmpty())
@@ -308,6 +310,9 @@
         tooltip += tr(&quot;&lt;br&gt;Sent data: %1 bytes&quot;).arg(session-&gt;bytesWritten());
 
         setToolTip(tooltip);
+    #else
+        Q_UNUSED(state);
+    #endif
     }
 
     void Cloud::newConfigurationActivated()
@@ -366,6 +371,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.3</div></td>
 </tr></table></div></address></body>
 </html>

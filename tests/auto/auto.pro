@@ -3,8 +3,7 @@ TEMPLATE = subdirs
 include(../../staticconfig.pri)
 
 contains(mobility_modules,serviceframework) {
-    SUBDIRS += databasemanager \                #service framework
-           servicemetadata \
+    SUBDIRS += servicemetadata \                   #service framework
            qserviceinterfacedescriptor \
            qservicefilter \
            qservicemanager \
@@ -12,6 +11,8 @@ contains(mobility_modules,serviceframework) {
            qservicecontext \
            icheck \
            servicedatabase
+         # databasemanager # disabled from auto builds
+
 }
 
 contains(mobility_modules,bearer) {
@@ -101,7 +102,8 @@ contains(mobility_modules,versit) {
 }
 
 contains(mobility_modules,multimedia) {
-    SUBDIRS += \             #Multimedia
+    # Multimedia
+    SUBDIRS += \
         qaudiocapturesource \
         qgraphicsvideoitem \
         qmediaimageviewer \
@@ -125,16 +127,6 @@ contains(mobility_modules,multimedia) {
         qaudioformat \
         qvideoframe \
         qvideosurfaceformat
-
-    symbian: {
-        #symbian spesific autotests
-        SUBDIRS += symbian 
-        SUBDIRS -= \
-                qmediaplayer_s60 \
-                qradiotuner_s60 \
-                qmediaobject_s60 \
-                qmediarecorder_s60
-    }
 }
 #Messaging
 contains(mobility_modules,messaging) {

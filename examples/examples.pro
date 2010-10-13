@@ -9,9 +9,10 @@ contains(mobility_modules,serviceframework) {
                notesmanagerplugin \
                servicebrowser
 
+    #These examples do not work on Symbian yet
     !symbian:SUBDIRS+= sfw-notes
     
-    contains(QT_CONFIG, declarative) {
+    !symbian:contains(QT_CONFIG, declarative) {
         SUBDIRS += declarative-sfw-dialer
 
         sources.files += declarative-sfw-notes \
@@ -43,7 +44,7 @@ contains(mobility_modules,location) {
 contains(mobility_modules,contacts) {
     SUBDIRS += samplephonebook
     contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
-        SUBDIRS += qmlcontacts
+        sources.files += qmlcontacts
     }
 }
 

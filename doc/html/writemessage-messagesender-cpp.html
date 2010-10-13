@@ -192,6 +192,25 @@
         connect(&amp;service, SIGNAL(stateChanged(QMessageService::State)), this, SLOT(stateChanged(QMessageService::State)));
 
         QTimer::singleShot(0, this, SLOT(populateAccounts()));
+
+        QWidgetList focusableWidgets;
+        focusableWidgets &lt;&lt; accountCombo
+                         &lt;&lt; toEdit
+                         &lt;&lt; subjectEdit
+    #ifdef USE_TABBED_LAYOUT
+                         &lt;&lt; tabWidget
+    #else
+                         &lt;&lt; textEdit
+                         &lt;&lt; attachmentsList
+    #endif
+                         &lt;&lt; addButton
+                         &lt;&lt; removeButton
+                         &lt;&lt; sendButton;
+
+        foreach(QWidget* w, focusableWidgets)
+            w-&gt;setContextMenuPolicy(Qt::NoContextMenu);
+
+        accountCombo-&gt;setFocus();
     }
 
     MessageSender::~MessageSender()
@@ -362,6 +381,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.3</div></td>
 </tr></table></div></address></body>
 </html>

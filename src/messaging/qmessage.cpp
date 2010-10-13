@@ -461,6 +461,11 @@ QList<QByteArray> charsets;
     Append the contents of the files specified by \a fileNames to the end of the list of 
     attachments for the message. The internet media (MIME) type of the attachments will be 
     determined by examining the files or file names.
+    
+    Symbian OS based devices have a limit for MMS message size. The message size limit 
+    varies between different devices, but is frequently 600 000 bytes. If the attachment
+    size is greater than the limit then message sending will fail when 
+    QMessageService::send() is called.
 
     \sa attachmentIds(), clearAttachments()
 */

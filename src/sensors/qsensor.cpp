@@ -298,7 +298,30 @@ void QSensor::setDataRate(int rate)
     Start retrieving values from the sensor.
     Returns true if the sensor was started, false otherwise.
 
-    Note that the sensor may fail to start for several reasons.
+    The sensor may fail to start for several reasons.
+
+    Once an application has started a sensor it must wait until the sensor receives a
+    new value before it can query the sensor's values. This is due to how the sensor
+    receives values from the system. Sensors do not (in general) poll for new values,
+    rather new values are pushed to the sensors as they happen.
+
+    For example, this code will not work as intended.
+
+    \badcode
+    sensor->start();
+    sensor->reading()->x(); // no data available
+    \endcode
+
+    To work correctly, the code that accesses the reading should ensure the
+    readingChanged() signal has been emitted.
+
+    \code
+        connect(sensor, SIGNAL(readingChanged()), this, SLOT(checkReading()));
+        sensor->start();
+    }
+    void MyClass::checkReading() {
+        sensor->reading()->x();
+    \endcode
 
     \sa QSensor::busy
 */
@@ -339,7 +362,10 @@ void QSensor::stop()
 
     Note that this will return 0 until a sensor backend is connected to a backend.
 
-    \sa isConnectedToBackend()
+    Also note that readings are not immediately available after start() is called.
+    Applications must wait for the readingChanged() signal to be emitted.
+
+    \sa isConnectedToBackend(), start()
 */
 
 QSensorReading *QSensor::reading() const
@@ -388,6 +414,11 @@ void QSensor::removeFilter(QSensorFilter *filter)
     \fn QSensor::readingChanged()
 
     This signal is emitted when the reading has changed.
+
+    Before this signal has been emitted for the first time, the sensor reading will
+    have uninitialized data.
+
+    \sa start()
 */
 
 /*!

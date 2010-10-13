@@ -65,7 +65,6 @@ class QGeoPositionInfoSourceMaemo : public QGeoPositionInfoSource
     Q_OBJECT
 
 public:
-
     QGeoPositionInfoSourceMaemo(QObject *parent = 0);
     int init();
 
@@ -81,16 +80,17 @@ public Q_SLOTS:
     void requestUpdate(int timeout = 5000);
 
 private:
-    static const int MinimumUpdateInterval = 1000;
-    static const int DefaultUpdateInterval = 5000;
-
     DBusComm* dbusComm;
-
-    int time_interval_;
-    PositioningMethods availableMethods;
+    QTimer* requestTimer;
+    bool locationOngoing;
+    
+    void shutdownRequestSession();
 
 private Q_SLOTS:
     void newPositionUpdate(const QGeoPositionInfo &update);
+    void onServiceConnect();
+    void onServiceDisconnect();
+    void requestTimerExpired();
 };
 
 QTM_END_NAMESPACE

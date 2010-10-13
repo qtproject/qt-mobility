@@ -723,7 +723,7 @@ public:
         connect(nightModeAction, SIGNAL(triggered()), map, SLOT(toggleNightMode()));
         connect(osmAction, SIGNAL(triggered()), SLOT(aboutOsm()));
 
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM)
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
         menuBar()->addAction(gpsAction);
         menuBar()->addAction(osloAction);
         menuBar()->addAction(berlinAction);
@@ -787,7 +787,7 @@ int main(int argc, char **argv)
 
     MapZoom w;
     w.setWindowTitle("OpenStreetMap");
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM)
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     w.showMaximized();
 #else
     w.resize(600, 450);

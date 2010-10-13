@@ -99,6 +99,7 @@ struct FSSearchOperation
 {
     MEmailMailbox* m_mailbox;
     MEmailMessageSearchAsync* m_search;
+    TEmailSortCriteria m_emailSortCriteria;
 };
 
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
@@ -272,6 +273,7 @@ public:
 
     
 public slots:
+    void continueSearch();
     void SearchCompleted();
 
 private:
