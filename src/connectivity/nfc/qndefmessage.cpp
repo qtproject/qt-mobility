@@ -223,6 +223,10 @@ bool QNdefMessage::operator==(const QNdefMessage &other) const
 */
 QByteArray QNdefMessage::toByteArray() const
 {
+    // An empty message is treated as a message containing a single empty record.
+    if (isEmpty())
+        return QNdefMessage(QNdefRecord()).toByteArray();
+
     QByteArray m;
 
     for (int i = 0; i < count(); ++i) {
