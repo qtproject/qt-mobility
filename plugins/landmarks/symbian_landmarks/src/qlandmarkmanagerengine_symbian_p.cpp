@@ -688,9 +688,15 @@ QList<QLandmarkCategory> LandmarkManagerEngineSymbianPrivate::categories(const Q
         errorMap->clear();
 
     QList<QLandmarkCategory> result;
-    if (&landmarkCategoryIds == 0 || landmarkCategoryIds.isEmpty()) {
+    if (&landmarkCategoryIds == 0) {
         *error = QLandmarkManager::BadArgumentError;
         *errorString = "Invalid category ids or empty ids";
+        return result;
+    }
+
+    if(landmarkCategoryIds.isEmpty()) {
+        *error = QLandmarkManager::NoError;
+        *errorString = "";
         return result;
     }
 
@@ -2992,6 +2998,10 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
     {
         QLandmarkIdFilter landmarkIdFilter = filter;
         QList<QLandmarkId> qtLmIds = landmarkIdFilter.landmarkIds();
+
+        if (qtLmIds.isEmpty())
+            User::Leave(KErrNone);
+
         RArray<TPosLmItemId> symLmIds = LandmarkUtility::getSymbianLandmarkIds(qtLmIds);
         if (symLmIds.Count() <= 0) {
             User::Leave(KErrArgument);
