@@ -52,6 +52,8 @@
 #include "qdeclarativegeoaddress_p.h"
 #include "qdeclarativegeoplace_p.h"
 #include "qdeclarativecoordinate_p.h"
+
+#include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativegraphicsgeomap_p.h"
 #include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativegeomapcircleobject_p.h"
@@ -93,6 +95,9 @@ public:
         qmlRegisterType<QDeclarativeGeoBoundingBox>(uri, 1, 1, "BoundingBox");
         qmlRegisterType<QDeclarativeGeoPlace>(uri, 1, 1, "Place");
         qmlRegisterType<QDeclarativeGeoAddress>(uri, 1, 1, "Address");
+
+        qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 1, 1, "Plugin");
+        qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 1, 1, "PluginParameter");
         qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 1, 1, "Map");
         qmlRegisterType<QGeoMapObject>(uri, 1, 1, "QGeoMapObject");
         qmlRegisterType<QDeclarativeGeoMapObject>(uri, 1, 1, "MapObject");
