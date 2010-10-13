@@ -158,11 +158,8 @@ void QDeclarativeMediaBase::_q_statusChanged()
             emit stalled();
             break;
         case QMediaPlayer::EndOfMedia:
-            if (m_runningCount < 0 || m_runningCount > 1)
-            {
-                //m_playing = false;
+            if (m_runningCount != 0)
                 setPlaying(true);
-            }
             emit endOfMedia();
             break;
         default:
@@ -223,13 +220,13 @@ void QDeclarativeMediaBase::_q_metaDataChanged()
 
 QDeclarativeMediaBase::QDeclarativeMediaBase()
     : m_paused(false)
-    , m_loopCount(1)
-    , m_runningCount(0)
     , m_playing(false)
     , m_autoLoad(true)
     , m_loaded(false)
     , m_muted(false)
     , m_complete(false)
+    , m_loopCount(1)
+    , m_runningCount(0)
     , m_position(0)
     , m_vol(1.0)
     , m_playbackRate(1.0)
@@ -376,21 +373,23 @@ void QDeclarativeMediaBase::setAutoLoad(bool autoLoad)
     emit autoLoadChanged();
 }
 
-int QDeclarativeMediaBase::loops() const
+int QDeclarativeMediaBase::loopCount() const
 {
     return m_loopCount;
 }
 
-void QDeclarativeMediaBase::setLoops(int loopCount)
+void QDeclarativeMediaBase::setLoopCount(int loopCount)
 {
-    if (loopCount == 0) {
+    if (loopCount == 0)
         loopCount = 1;
-    }
+    else if (loopCount < -1)
+        loopCount = -1;
+
     if (m_loopCount == loopCount) {
         return;
     }
     m_loopCount = loopCount;
-    emit loopsChanged();
+    emit loopCountChanged();
 }
 
 bool QDeclarativeMediaBase::isPlaying() const
@@ -403,14 +402,18 @@ void QDeclarativeMediaBase::setPlaying(bool playing)
     if (playing == m_playing)
         return;
 
+    bool fromInternal = false;
+
     if (playing) {
-        if (m_runningCount == 0 || m_runningCount == 1) {
-            m_runningCount = m_loopCount;
+        if (m_runningCount == 0) {
+            m_runningCount = m_loopCount - 1;
         }
-        else if (m_runningCount > 0)
-            m_runningCount--;
-    }
-    else
+        else {
+            if (m_runningCount > 0)
+                m_runningCount--;
+            fromInternal = true;
+        }
+    } else
         m_runningCount = 0;
 
     m_playing = playing;
@@ -431,7 +434,8 @@ void QDeclarativeMediaBase::setPlaying(bool playing)
             m_playerControl->stop();
     }
 
-    emit playingChanged();
+    if (!fromInternal)
+        emit playingChanged();
 }
 
 bool QDeclarativeMediaBase::isPaused() const
