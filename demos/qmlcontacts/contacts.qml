@@ -131,11 +131,11 @@ Item {
                                 anchors.margins: 2;
 
                                 Image {
-                                    id: avatar
+                                    id: thumbnail
                                     anchors.fill: parent;
                                     anchors.margins: 2;
 
-                                    source: model.avatar;
+                                    source: model.contact.thumbnail;
                                     fillMode: Image.PreserveAspectFit
                                     smooth:true
                                 }
@@ -143,7 +143,7 @@ Item {
                                     anchors.fill: parent;
                                     anchors.margins: 2;
                                     source: "contents/images/default.svg";
-                                    opacity: avatar.status == Image.Ready ? 0 : 1;
+                                    opacity: thumbnail.status == Image.Ready ? 0 : 1;
                                 }
                             }
                         }
@@ -156,7 +156,7 @@ Item {
                                 Text {
                                     id: nameTxt
                                     y: 8;
-                                    text: model.display
+                                    text: model.contact.displayLabel.label
                                     color: "white"
                                 }
                             }
@@ -170,11 +170,11 @@ Item {
 
                                 Column {
                                     Text {
-                                        text: model.interestLabel + ": " + model.interest
+                                        text: model.contact.displayLabel.label
                                         color: details.textColor;
                                     }
                                     Text {
-                                        text: model.presenceAvailable ? model.presenceText + " [" + model.presenceMessage + "]" : " ";
+                                        text: model.contact.presence.state + ":" + model.contact.presence.stateText
                                         color: details.textColor;
                                     }
                                 }
@@ -248,7 +248,7 @@ Item {
                                         height: 40
 
                                         model: fieldNames
-                                        property Detail detail: modelData
+                                        property ContactDetail detail: modelData
 
                                         delegate: Item {
                                             height: parent.height
@@ -393,6 +393,7 @@ Item {
             width: 20
             height: mainList.height
             anchors.right: views.right
+            anchors.top: titleBar.bottom
             fgColor: "white"
             // Only show the scrollbar when the view is moving.
             states: [
