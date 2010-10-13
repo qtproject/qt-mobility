@@ -51,12 +51,12 @@
 
 #include "qdeclarativeorganizermodel_p.h"
 #include "qdeclarativeorganizeritemsortorder_p.h"
-#include "qdeclarativeorganizeritemrecurrencerule_p.h" 
+#include "qdeclarativeorganizerrecurrencerule_p.h" 
 #include "qdeclarativeorganizeritem_p.h" 
 #include "qdeclarativeorganizeritemfilter_p.h" 
 #include "qdeclarativeorganizeritemdetail_p.h" 
 #include "qdeclarativeorganizeritemfetchhint_p.h" 
-#include "qdeclarativeorganizeritemcollection_p.h" 
+#include "qdeclarativeorganizercollection_p.h" 
 
 // Eventually these will make it into qtestcase.h
 // but we might need to tweak the timeout values here.
