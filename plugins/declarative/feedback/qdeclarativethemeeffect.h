@@ -38,65 +38,59 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef QDECLARATIVEFILEEFFECT_H
-#define QDECLARATIVEFILEEFFECT_H
+#ifndef QDECLARATIVETHEMEEFFECT_H
+#define QDECLARATIVETHEMEEFFECT_H
 
 #include <QtDeclarative/qdeclarative.h>
 #include <qfeedbackeffect.h>
+#include "qdeclarativefeedback.h"
 
 QTM_USE_NAMESPACE
 
-class QDeclarativeFileEffect : public QFeedbackFileEffect
+// Wrapper for theme effects
+class QDeclarativeThemeEffect : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool running READ isRunning WRITE setRunning NOTIFY runningChanged)
-    Q_PROPERTY(bool paused READ isPaused WRITE setPaused NOTIFY pausedChanged)
+    Q_PROPERTY(bool supportsEffect READ effectSupported)
+    Q_PROPERTY(QDeclarativeFeedbackEffect::ThemeEffect effect READ effect WRITE setEffect NOTIFY effectChanged)
+    Q_CLASSINFO("DefaultMethod", "play()")
+
 public:
-    QDeclarativeFileEffect(QObject *parent = 0) : QFeedbackFileEffect(parent), running_(false), paused_(false) {
-        QObject::connect(this, SIGNAL(stateChanged()), this, SLOT(updateState()));
+
+    QDeclarativeThemeEffect(QObject *parent = 0)
+        : QObject(parent),
+        m_effect(QDeclarativeFeedbackEffect::Basic)
+    {
     }
 
-    bool isRunning() const { return running_; }
-    bool isPaused() const { return paused_; }
-    void setRunning(bool running) {
-        State currentState = state();
-        if (currentState != Running && running) {
-            start();
-        } else if (currentState != Stopped && !running) {
-            stop();
+    bool effectSupported() {
+        return QFeedbackEffect::supportsThemeEffect();
+    }
+
+    void setEffect(QDeclarativeFeedbackEffect::ThemeEffect effect)
+    {
+        if (m_effect != effect) {
+            m_effect = effect;
+            emit effectChanged();
         }
     }
-    void setPaused(bool paused) {
-        State currentState = state();
-        if (currentState == Paused && !paused) {
-            start();
-        } else if (currentState == Running && paused) {
-            pause();
-        }
+
+    QDeclarativeFeedbackEffect::ThemeEffect effect() const
+    {
+        return m_effect;
+    }
+
+    Q_INVOKABLE void play() {
+        QFeedbackEffect::playThemeEffect(static_cast<QFeedbackEffect::ThemeEffect>(m_effect));
     }
 
 signals:
-    void runningChanged();
-    void pausedChanged();
-public slots:
-    void updateState() {
-        bool running = state() == Running;
-        bool paused = state() == Paused;
-        if (running != running_) {
-            running_ = running;
-            emit runningChanged();
-        }
-        if (paused != paused_) {
-            paused_ = paused;
-            emit pausedChanged();
-        }
-    }
-private:
-    bool running_;
-    bool paused_;
+    void effectChanged();
+
+public:
+    QDeclarativeFeedbackEffect::ThemeEffect m_effect;
 };
 
-QML_DECLARE_TYPE(QDeclarativeFileEffect);
+QML_DECLARE_TYPE(QDeclarativeThemeEffect);
 
-#endif // QDECLARATIVEFILEEFFECT_H
+#endif // QDECLARATIVETHEMEEFFECT_H
