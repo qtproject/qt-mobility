@@ -1140,6 +1140,7 @@ QStringList QOrganizerItemMaemo5Engine::supportedItemTypes() const
 
 void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerItem *checkItem, QOrganizerManager::Error *error)
 {
+    Q_UNUSED(cal);
     *error = QOrganizerManager::NoError;
 
     // Check local id
@@ -1288,7 +1289,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
     if (item->type() == QOrganizerItemType::TypeEventOccurrence) {
         QOrganizerEventOccurrence *eventOccurrence = static_cast<QOrganizerEventOccurrence *>(item);
         eventOccurrenceParent = parentOf((CCalendar *)0, eventOccurrence, error);
-        if (*error == QOrganizerItemManager::NoError) {
+        if (*error == QOrganizerManager::NoError) {
             // get the calendar of the parent item
             int calendarId = static_cast<int>(readCollectionLocalId(eventOccurrenceParent.collectionLocalId()));
             if (calendarId != cal->getCalendarId()) {
@@ -1392,7 +1393,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         else {
             // Event occurrence without a parent item fails,
             // but this should not happen after passing the validity check...
-            *error = QOrganizerItemManager::InvalidOccurrenceError;
+            *error = QOrganizerManager::InvalidOccurrenceError;
         }
 
         if (usesResolvedParentCalendar)
