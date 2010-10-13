@@ -41,13 +41,12 @@
 
 #include <QtTest/QtTest>
 
-#include <QDebug>
-
 #include <qndefrecord.h>
 #include <qndefmessage.h>
 #include <qndefnfctextrecord.h>
 #include <qndefnfcurirecord.h>
 
+Q_DECLARE_METATYPE(QtMobility::QNdefRecord)
 
 QTM_USE_NAMESPACE
 
@@ -92,7 +91,7 @@ void tst_QNdefMessage::tst_parse_data()
         QNdefRecord record;
         record.setTypeNameFormat(QNdefRecord::Empty);
         QTest::newRow("empty record") << data
-                                      << QNdefMessage(QList<QNdefRecord>() << record)
+                                      << QNdefMessage(record)
                                       << QVariantList();
     }
 
@@ -107,7 +106,7 @@ void tst_QNdefMessage::tst_parse_data()
         QNdefRecord record;
         record.setTypeNameFormat(QNdefRecord::Empty);
         QTest::newRow("empty record") << data
-                                      << QNdefMessage(QList<QNdefRecord>() << record)
+                                      << QNdefMessage(record)
                                       << QVariantList();
     }
 
@@ -332,12 +331,23 @@ void tst_QNdefMessage::tst_parse()
     QVERIFY(parsedMessage == message);
     QVERIFY(message == parsedMessage);
 
+    QNdefMessage reparsedMessage = QNdefMessage::fromByteArray(message.toByteArray());
+
+    QVERIFY(message == reparsedMessage);
+    QVERIFY(reparsedMessage == message);
+
     for (int i = 0; i < message.count(); ++i) {
         const QNdefRecord &record = message.at(i);
         const QNdefRecord &parsedRecord = parsedMessage.at(i);
 
-        // Test NDEF NFC Text
-        {
+        QCOMPARE(record.typeNameFormat(), parsedRecord.typeNameFormat());
+        QCOMPARE(record.userTypeNameFormat(), parsedRecord.userTypeNameFormat());
+        QCOMPARE(record.type(), parsedRecord.type());
+        QCOMPARE(record.id(), parsedRecord.id());
+        QCOMPARE(record.payload(), parsedRecord.payload());
+        QCOMPARE(record.isEmpty(), parsedRecord.isEmpty());
+
+        if (record.isRecordType<QNdefNfcTextRecord>()) {
             QNdefNfcTextRecord textRecord(record);
             QNdefNfcTextRecord parsedTextRecord(parsedRecord);
 
@@ -348,10 +358,7 @@ void tst_QNdefMessage::tst_parse()
                 QCOMPARE(parsedTextRecord.text(), expectedData.at(0).toString());
                 QCOMPARE(parsedTextRecord.locale(), expectedData.at(1).toLocale());
             }
-        }
-
-        // Test NDEF NFC URI
-        {
+        } else if (record.isRecordType<QNdefNfcUriRecord>()) {
             QNdefNfcUriRecord uriRecord(record);
             QNdefNfcUriRecord parsedUriRecord(parsedRecord);
 
@@ -359,6 +366,8 @@ void tst_QNdefMessage::tst_parse()
 
             if (expectedData.count() == 1)
                 QCOMPARE(parsedUriRecord.uri(), expectedData.at(0).toUrl());
+        } else if (record.isRecordType<QNdefRecord>()) {
+            QVERIFY(record.isEmpty());
         }
     }
 }

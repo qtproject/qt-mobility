@@ -225,6 +225,7 @@ contains(mobility_modules,feedback) {
 # Connectivity
 contains(mobility_modules,connectivity) {
     SUBDIRS += \
+        qndefrecord \
         qndefmessage
 }
 
