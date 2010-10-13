@@ -1334,6 +1334,13 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         }
     }
 
+    // If no calendar is set, it fails
+    if (!cal)
+    {
+        *error = QOrganizerManager::InvalidCollectionError;
+        return calError;
+    }
+
     // Returns InvalidItemTypeError if the type won't be recognized later
     *error = QOrganizerManager::InvalidItemTypeError;
 
