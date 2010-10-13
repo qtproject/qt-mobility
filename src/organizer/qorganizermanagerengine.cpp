@@ -2363,13 +2363,15 @@ bool QOrganizerManagerEngine::isItemBetweenDates(const QOrganizerItem& item, con
         return false;
     }
 
-    // if period start date is not given, check that item is starting before period end
+    // if period start date is not given, check that item is starting or ending before period end
     if (startPeriod.isNull()) // endPeriod must be non-null because of initial test
-        return !itemDateStart.isNull() && itemDateStart <= endPeriod;
+        return (!itemDateStart.isNull() && itemDateStart <= endPeriod) ||
+               (!itemDateEnd.isNull() && itemDateEnd <= endPeriod);
 
-    // if period end date is not given, check that item is ending after the period start
+    // if period end date is not given, check that item is starting or ending after the period start
     if (endPeriod.isNull())   // startPeriod must be non-null because of initial test
-        return !itemDateEnd.isNull() && itemDateEnd >= startPeriod;
+        return !itemDateEnd.isNull() && itemDateEnd >= startPeriod ||
+               !itemDateStart.isNull() && itemDateStart >= startPeriod;
 
     // Both startPeriod and endPeriod are not null
     // check if item start date is between the period start and end date
