@@ -53,24 +53,7 @@
 QTM_BEGIN_NAMESPACE
 
 #if defined(Q_OS_SYMBIAN)
-// This is here to avoid connecting to RFS multiple times.
-class DirChecker
-{
-public:
-    DirChecker();
-    ~DirChecker();
-    bool checkDir(const QDir& dir);
-
-private:
-    RFs rfs;
-};
-
-DirChecker::DirChecker()
-{
-    qt_symbian_throwIfError(rfs.Connect());
-}
-
-bool DirChecker::checkDir(const QDir& dir)
+static inline bool qSymbian_CheckDir(const QDir& dir, RFs& rfs)
 {
     bool pathFound = false;
     // In Symbian, going cdUp() in a c:/private/<uid3>/ will result in *platsec* error at fileserver (requires AllFiles capability)
@@ -89,23 +72,12 @@ bool DirChecker::checkDir(const QDir& dir)
     }
     return pathFound;
 }
-
-DirChecker::~DirChecker()
-{
-    rfs.Close();
-}
-
-#define DECL_CHECKDIR() DirChecker dirChecker
-#define CHECKDIR(dir) dirChecker.checkDir(dir)
-
+#define CHECKDIR(dir) qSymbian_CheckDir(dir, rfs)
 #else
-
-#define DECL_CHECKDIR()
 #define CHECKDIR(dir) (dir).exists()
-
 #endif
 
-inline QStringList mobilityPlugins(const QString plugintype)
+inline QStringList mobilityPlugins(const QString& plugintype)
 {
 #if !defined QT_NO_DEBUG
     const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
@@ -120,12 +92,16 @@ inline QStringList mobilityPlugins(const QString plugintype)
         qDebug() << "Plugin paths:" << paths;
 #endif
 
-    DECL_CHECKDIR();
+#if defined(Q_OS_SYMBIAN)
+    RFs rfs;
+    qt_symbian_throwIfError(rfs.Connect());
+#endif
 
-    //temp variable to avoid multiple identic path
+    // Temp variable to avoid multiple identical paths
+    // (we don't convert the list to set first, because that loses the order)
     QSet<QString> processed;
 
-    /* Discover a bunch o plugins */
+    /* The list of discovered plugins */
     QStringList plugins;
 
     /* Enumerate our plugin paths */
@@ -168,6 +144,9 @@ inline QStringList mobilityPlugins(const QString plugintype)
             }
         }
     }
+#if defined(Q_OS_SYMBIAN)
+    rfs.close();
+#endif
     return  plugins;
 }
 
