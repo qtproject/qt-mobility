@@ -60,7 +60,7 @@ class QGalleryTrackerTypeResultSetPrivate : public QGalleryResultSetPrivate
 public:
     QGalleryTrackerTypeResultSetPrivate(const QGalleryTrackerTypeResultSetArguments &arguments)
         : accumulative(arguments.accumulative)
-        , cancelled(false)
+        , canceled(false)
         , refresh(false)
         , updateMask(arguments.updateMask)
         , currentIndex(-1)
@@ -80,7 +80,7 @@ public:
     void queryCount();
 
     const bool accumulative;
-    bool cancelled;
+    bool canceled;
     bool refresh;
     const int updateMask;
     int currentIndex;
@@ -147,7 +147,7 @@ void QGalleryTrackerTypeResultSetPrivate::queryFinished(const QDBusPendingCall &
                 if (count > workingCount)
                     count = workingCount;
 
-                if (cancelled)
+                if (canceled)
                     q_func()->QGalleryAbstractResponse::cancel();
                 else
                     queryCount();
@@ -267,7 +267,7 @@ bool QGalleryTrackerTypeResultSet::fetch(int index)
 
 void QGalleryTrackerTypeResultSet::cancel()
 {
-    d_func()->cancelled = true;
+    d_func()->canceled = true;
     d_func()->refresh = false;
 
     if (!d_func()->queryWatcher)
@@ -290,7 +290,7 @@ bool QGalleryTrackerTypeResultSet::waitForFinished(int msecs)
 
             delete watcher;
 
-            if (d->status != QGalleryAbstractRequest::Active)
+            if (d->state != QGalleryAbstractRequest::Active)
                 return true;
         } else {
             return true;
@@ -304,7 +304,7 @@ void QGalleryTrackerTypeResultSet::refresh(int serviceId)
 {
     Q_D(QGalleryTrackerTypeResultSet);
 
-    if (!d->cancelled && (d->updateMask & serviceId)) {
+    if (!d->canceled && (d->updateMask & serviceId)) {
         d->refresh = true;
 
         if (!d->queryWatcher)
