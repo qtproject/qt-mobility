@@ -530,11 +530,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::internalItemIds(const Q
     QList<QOrganizerItem> clist = internalItems(startDate, endDate, filter, sortOrders, fetchMinimalData(), true, error);
 
     /* Extract the ids */
-    QList<QOrganizerItemLocalId> ids;
-    foreach(const QOrganizerItem& c, clist)
-        ids.append(c.localId());
-
-    return ids;
+    return QOrganizerManager::extractLocalIds(clist);
 }
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItems(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, const QOrganizerItemFetchHint &fetchHint, bool forExport, QOrganizerManager::Error *error) const

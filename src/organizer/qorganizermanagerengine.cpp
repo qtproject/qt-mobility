@@ -2460,27 +2460,6 @@ void QOrganizerManagerEngine::addSorted(QList<QOrganizerItem>* sorted, const QOr
     sorted->append(toAdd);
 }
 
-/*! Sorts the given list of organizer items \a cs according to the provided \a sortOrders */
-QList<QOrganizerItemLocalId> QOrganizerManagerEngine::sortItems(const QList<QOrganizerItem>& cs, const QList<QOrganizerItemSortOrder>& sortOrders)
-{
-    QList<QOrganizerItemLocalId> sortedIds;
-    QList<QOrganizerItem> sortedOrganizerItems;
-    if (!sortOrders.isEmpty()) {
-        foreach (const QOrganizerItem& c, cs) {
-            QOrganizerManagerEngine::addSorted(&sortedOrganizerItems, c, sortOrders);
-        }
-
-        foreach(const QOrganizerItem& c, sortedOrganizerItems) {
-            sortedIds.append(c.localId());
-        }
-    } else {
-        foreach(const QOrganizerItem& c, cs) {
-            sortedIds.append(c.localId());
-        }
-    }
-    return sortedIds;
-}
-
 /*!
   Returns the engine local id from the given \a localId.
   The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.

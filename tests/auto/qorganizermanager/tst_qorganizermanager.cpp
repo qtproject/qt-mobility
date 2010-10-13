@@ -154,6 +154,7 @@ private slots:
     void uriParsing();
     void compatibleItem();
     void recurrenceWithGenerator();
+    void dateRange();
 
     /* Tests that are run on all managers */
     void metadata();
@@ -173,7 +174,6 @@ private slots:
     void itemFetch();
     void spanOverDays();
     void recurrence();
-    void dateRange();
 
     /* Tests that take no data */
     void itemValidation();
