@@ -88,7 +88,11 @@ public:
     bool isEmpty() const;
 
     template <typename T>
-    bool isRecordType() const { return false; }
+    bool isRecordType() const
+    {
+        T dummy;
+        return (userTypeNameFormat() == dummy.userTypeNameFormat() && type() == dummy.type());
+    }
 
     bool operator==(const QNdefRecord &other) const;
     inline bool operator!=(const QNdefRecord &other) const { return !operator==(other); }
