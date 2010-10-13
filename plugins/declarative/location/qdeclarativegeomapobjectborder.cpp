@@ -39,55 +39,48 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEGEOMAPCIRCLEOBJECT_H
-#define QDECLARATIVEGEOMAPCIRCLEOBJECT_H
-
-#include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeomapobjectborder_p.h"
-#include "qgeomapcircleobject.h"
 
-class QColor;
-class QBrush;
+#include <QColor>
+#include <QBrush>
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMapCircleObject : public QGeoMapCircleObject
+QDeclarativeGeoMapObjectBorder::QDeclarativeGeoMapObjectBorder(QObject *parent) 
+    : QObject(parent),
+    m_width(1) {}
+
+QDeclarativeGeoMapObjectBorder::~QDeclarativeGeoMapObjectBorder() {}
+
+void QDeclarativeGeoMapObjectBorder::setColor(const QColor &color)
 {
-    Q_OBJECT
+    if (m_color == color)
+        return;
 
-    Q_PROPERTY(QDeclarativeCoordinate* center READ declarativeCenter WRITE setDeclarativeCenter NOTIFY declarativeCenterChanged)
-    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
-    Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
+    m_color = color;
+    emit colorChanged(m_color);
+}
 
-public:
-    QDeclarativeGeoMapCircleObject();
-    ~QDeclarativeGeoMapCircleObject();
+QColor QDeclarativeGeoMapObjectBorder::color() const
+{
+    return m_color;
+}
 
-    QDeclarativeCoordinate* declarativeCenter() const;
-    void setDeclarativeCenter(const QDeclarativeCoordinate *center);
+void QDeclarativeGeoMapObjectBorder::setWidth(int width)
+{
+    if (m_width == width)
+        return;
 
-    QColor color() const;
-    void setColor(const QColor &color);
+    m_width = width;
+    emit widthChanged(width);
+}
 
-    QDeclarativeGeoMapObjectBorder* border();
+int QDeclarativeGeoMapObjectBorder::width() const
+{
+    return m_width;
+}
 
-signals:
-    void declarativeCenterChanged(const QDeclarativeCoordinate *center);
-    void colorChanged(const QColor &color);
-
-private Q_SLOTS:
-    void borderColorChanged(const QColor &color);
-    void borderWidthChanged(int width);
-
-private:
-    mutable QDeclarativeCoordinate* m_center;
-    QColor m_color;
-    QDeclarativeGeoMapObjectBorder m_border;
-    Q_DISABLE_COPY(QDeclarativeGeoMapCircleObject)
-};
+#include "moc_qdeclarativegeomapobjectborder_p.cpp"
 
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapCircleObject));
-
-#endif
