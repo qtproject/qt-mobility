@@ -137,12 +137,6 @@ Q_SIGNALS:
 
     void statusChanged();
 
-    void loaded();
-    void buffering();
-    void stalled();
-    void buffered();
-    void endOfMedia();
-
     void durationChanged();
     void positionChanged();
 
