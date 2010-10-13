@@ -2,7 +2,7 @@ TEMPLATE=app
 
 CONFIG += mobility testcase
 MOBILITY += organizer versit
-QT += testlib declarative
+QT += testlib declarative network script
 
 INCLUDEPATH += ../../../src/organizer
 INCLUDEPATH += ../../../src/organizer/items

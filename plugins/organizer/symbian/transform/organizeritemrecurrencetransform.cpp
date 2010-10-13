@@ -252,7 +252,7 @@ QSet<QOrganizerRecurrenceRule> OrganizerItemRecurrenceTransform::toItemRecurrenc
     // Count has higher priority than end date
     if (calrrule.Count()) {
         rrule.setLimit(calrrule.Count());
-    } else { // XXX TODO: check this; commented out: // if (calrrule.Until().TimeUtcL() != Time::NullTTime()) {
+    } else if (calrrule.Until().TimeUtcL() != Time::NullTTime()) {
         rrule.setLimit(toQDateTimeL(calrrule.Until()).date());
     }
 
@@ -323,7 +323,7 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QSet<QOrganizerRecurrenc
         calRule.SetDtStart(toTCalTimeL(startDateTime));
 
         // Set the count if it is defined, otherwise set the end date
-        if (rrule.limitCount()) {
+        if (rrule.limitCount() && rrule.limitCount() != -1) {
             calRule.SetCount(rrule.limitCount());
         } else if (rrule.limitDate().isValid()) {
             if (rrule.limitDate() < startDateTime.date()) {
