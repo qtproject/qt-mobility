@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMRECURRENCERULE_P_H
-#define QORGANIZERITEMRECURRENCERULE_P_H
+#ifndef QORGANIZERABSTRACTREQUEST_P_H
+#define QORGANIZERABSTRACTREQUEST_P_H
 
 //
 //  W A R N I N G
@@ -53,60 +53,55 @@
 // We mean it.
 //
 
-#include <QSet>
-#include <QSharedData>
-#include "qorganizeritemrecurrencerule.h"
+#include "qorganizermanager.h"
+#include "qorganizermanager_p.h"
+#include "qorganizerabstractrequest.h"
+
+#include <QList>
+#include <QPointer>
+#include <QMutex>
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemRecurrenceRulePrivate : public QSharedData
+class QOrganizerAbstractRequestPrivate
 {
 public:
-    QOrganizerItemRecurrenceRulePrivate()
-            : QSharedData(),
-            frequency(QOrganizerItemRecurrenceRule::Invalid),
-            limitCount(-1),
-            limitType(QOrganizerItemRecurrenceRule::NoLimit),
-            interval(1),
-            firstDayOfWeek(Qt::Monday)
-    {
-
-    }
-
-    QOrganizerItemRecurrenceRulePrivate(const QOrganizerItemRecurrenceRulePrivate& other)
-            : QSharedData(other),
-            frequency(other.frequency),
-            limitCount(other.limitCount),
-            limitDate(other.limitDate),
-            limitType(other.limitType),
-            interval(other.interval),
-            daysOfWeek(other.daysOfWeek),
-            daysOfMonth(other.daysOfMonth),
-            daysOfYear(other.daysOfYear),
-            monthsOfYear(other.monthsOfYear),
-            weeksOfYear(other.weeksOfYear),
-            positions(other.positions),
-            firstDayOfWeek(other.firstDayOfWeek)
-
+    QOrganizerAbstractRequestPrivate()
+        : m_error(QOrganizerManager::NoError),
+            m_state(QOrganizerAbstractRequest::InactiveState),
+            m_manager(0)
     {
     }
 
-    ~QOrganizerItemRecurrenceRulePrivate()
+    virtual ~QOrganizerAbstractRequestPrivate()
     {
     }
 
-    QOrganizerItemRecurrenceRule::Frequency frequency;
-    int limitCount;
-    QDate limitDate;
-    QOrganizerItemRecurrenceRule::LimitType limitType;
-    int interval;
-    QSet<Qt::DayOfWeek> daysOfWeek;
-    QSet<int> daysOfMonth;
-    QSet<int> daysOfYear;
-    QSet<QOrganizerItemRecurrenceRule::Month> monthsOfYear;
-    QSet<int> weeksOfYear;
-    QSet<int> positions;
-    Qt::DayOfWeek firstDayOfWeek;
+    virtual QOrganizerAbstractRequest::RequestType type() const
+    {
+        return QOrganizerAbstractRequest::InvalidRequest;
+    }
+
+    static void notifyEngine(QOrganizerAbstractRequest* request)
+    {
+        Q_ASSERT(request);
+        QOrganizerAbstractRequestPrivate* d = request->d_ptr;
+        if (d) {
+            QMutexLocker ml(&d->m_mutex);
+            QOrganizerManagerEngine *engine = QOrganizerManagerData::engine(d->m_manager);
+            ml.unlock();
+            if (engine) {
+                engine->requestDestroyed(request);
+            }
+        }
+    }
+
+    QOrganizerManager::Error m_error;
+    QOrganizerAbstractRequest::State m_state;
+    QPointer<QOrganizerManager> m_manager;
+    QPointer<QOrganizerManagerEngine> m_engine;
+
+    mutable QMutex m_mutex;
 };
 
 QTM_END_NAMESPACE

@@ -159,7 +159,7 @@ TodoEditPage::~TodoEditPage()
 
 }
 
-void TodoEditPage::todoChanged(QOrganizerItemManager *manager, const QOrganizerTodo &todo)
+void TodoEditPage::todoChanged(QOrganizerManager *manager, const QOrganizerTodo &todo)
 {
     m_manager = manager;
     m_organizerTodo = todo;

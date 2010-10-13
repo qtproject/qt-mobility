@@ -150,7 +150,7 @@ void AddCalendarPage::saveClicked()
         emit showPreviousPage();
 }
 
-void AddCalendarPage::calendarChanged(QOrganizerItemManager *manager, QOrganizerCollection& calendar)
+void AddCalendarPage::calendarChanged(QOrganizerManager *manager, QOrganizerCollection& calendar)
 {
     m_manager = manager;
     m_collection = calendar;

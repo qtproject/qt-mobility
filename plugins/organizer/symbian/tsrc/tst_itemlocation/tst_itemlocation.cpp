@@ -49,7 +49,7 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QOrganizerItemLocation)
-Q_DECLARE_METATYPE(QOrganizerItemManager::Error)
+Q_DECLARE_METATYPE(QOrganizerManager::Error)
 
 class TestItemLocation : public QObject
 {
@@ -67,7 +67,7 @@ private:
     void addLocationData(QString managerName, QString itemType);
     
 private:
-    QOrganizerItemManager *m_om;
+    QOrganizerManager *m_om;
     
 };
 
@@ -76,7 +76,7 @@ void TestItemLocation::init()
     QFETCH(QString, managerName);
     
     // Create a new item manager instance
-    m_om = new QOrganizerItemManager(managerName);
+    m_om = new QOrganizerManager(managerName);
     
     // Cleanup by deleting all items
     m_om->removeItems(m_om->itemIds());
@@ -93,7 +93,7 @@ void TestItemLocation::cleanup()
 void TestItemLocation::addLocationDetail_data()
 {
     // Get the list of all available item managers
-    QStringList availableManagers = QOrganizerItemManager::availableManagers();
+    QStringList availableManagers = QOrganizerManager::availableManagers();
     
     // Remove these since test would fail
     availableManagers.removeAll("invalid");
@@ -104,7 +104,7 @@ void TestItemLocation::addLocationDetail_data()
     QTest::addColumn<QString>("itemType");
     QTest::addColumn<QDateTime>("startTime");
     QTest::addColumn<QOrganizerItemLocation>("location");
-    QTest::addColumn<QOrganizerItemManager::Error>("error");
+    QTest::addColumn<QOrganizerManager::Error>("error");
     
     foreach(QString manager, availableManagers) {
     	addLocationData(manager, QOrganizerItemType::TypeEvent);
@@ -121,7 +121,7 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
         << itemType
         << QDateTime::currentDateTime().addDays(1)
         << loc
-        << QOrganizerItemManager::NoError;
+        << QOrganizerManager::NoError;
 
     loc.setLabel("");
     QTest::newRow(QString("[%1] LocationName=%2").arg(managerName).arg(loc.label()).toLatin1().constData())
@@ -129,7 +129,7 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
         << itemType
         << QDateTime::currentDateTime().addDays(1)
         << loc
-        << QOrganizerItemManager::NoError;
+        << QOrganizerManager::NoError;
 
     loc.setLabel("#$%^");
     QTest::newRow(QString("[%1] LocationName=%2").arg(managerName).arg(loc.label()).toLatin1().constData())
@@ -137,7 +137,7 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
         << itemType
         << QDateTime::currentDateTime().addDays(1)
         << loc
-        << QOrganizerItemManager::NoError;
+        << QOrganizerManager::NoError;
 
 #ifdef SYMBIAN_CALENDAR_V2
         loc.setLabel("TestLocationName");
@@ -148,7 +148,7 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
 		<< loc
-		<< QOrganizerItemManager::NoError;
+		<< QOrganizerManager::NoError;
     
         loc.setLabel("TestLocationName");
         loc.setLatitude(20.356784);
@@ -158,7 +158,7 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
         << itemType
         << QDateTime::currentDateTime().addDays(1)
         << loc
-        << QOrganizerItemManager::NoError;
+        << QOrganizerManager::NoError;
 
         loc.setLabel("TestLocationName");
         loc.setLatitude(200.356784);
@@ -168,7 +168,7 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
 		<< loc
-		<< QOrganizerItemManager::BadArgumentError;
+		<< QOrganizerManager::BadArgumentError;
 	
         loc.setLabel("TestLocationName");
         loc.setLatitude(20);
@@ -178,7 +178,7 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
 		<< loc
-		<< QOrganizerItemManager::BadArgumentError;
+		<< QOrganizerManager::BadArgumentError;
 	
         loc.setLabel("TestLocationName");
         loc.setLatitude(20);
@@ -188,7 +188,7 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
 		<< loc
-		<< QOrganizerItemManager::NoError;
+		<< QOrganizerManager::NoError;
 	
         loc.setLabel("TestLocationName");
         loc.setLatitude(0);
@@ -198,7 +198,7 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
 		<< loc
-		<< QOrganizerItemManager::NoError;
+		<< QOrganizerManager::NoError;
 	
         loc.setLabel("TestLocationName");
         loc.setLatitude(0);
@@ -208,7 +208,7 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
 		<< loc
-		<< QOrganizerItemManager::NoError;
+		<< QOrganizerManager::NoError;
 	
         loc.setLabel("TestLocationName");
         loc.setLatitude(20);
@@ -218,7 +218,7 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
 		<< loc
-		<< QOrganizerItemManager::NoError;
+		<< QOrganizerManager::NoError;
 	
         loc.setLabel("TestLocationName");
         loc.setLatitude(0.128675);
@@ -228,7 +228,7 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
 		<< loc
-		<< QOrganizerItemManager::NoError;
+		<< QOrganizerManager::NoError;
 #else
         loc.setLabel("TestLocationName");
         loc.setLatitude(0.128675);
@@ -238,7 +238,7 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
 		<< itemType
 		<< QDateTime::currentDateTime().addDays(1)
                 << loc
-                << QOrganizerItemManager::InvalidDetailError; // latitude/longitude is not supported so QOrganizerItemManagerEngine::validateItem will return this error.
+                << QOrganizerManager::InvalidDetailError; // latitude/longitude is not supported so QOrganizerManagerEngine::validateItem will return this error.
 #endif
 }
 
@@ -248,14 +248,14 @@ void TestItemLocation::addLocationDetail()
     QFETCH(QString, itemType);
     QFETCH(QDateTime, startTime);
     QFETCH(QOrganizerItemLocation, location);
-    QFETCH(QOrganizerItemManager::Error, error);
+    QFETCH(QOrganizerManager::Error, error);
     
     // Set the item type
     QOrganizerItem item;
     item.setType(itemType);
     
     // Set the start time, without which Symbian does not save entries
-    QOrganizerEventTimeRange timeRange;
+    QOrganizerEventTime timeRange;
     timeRange.setStartDateTime(startTime);
     item.saveDetail(&timeRange);
     
@@ -263,7 +263,7 @@ void TestItemLocation::addLocationDetail()
     item.saveDetail(&location);
     
     // Now save the item
-    if (error == QOrganizerItemManager::NoError) {
+    if (error == QOrganizerManager::NoError) {
     	QVERIFY(m_om->saveItem(&item));
     } else {
     	// Check for the expected error while saving and return.

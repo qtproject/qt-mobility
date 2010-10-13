@@ -46,7 +46,7 @@
 #include <qmobilityglobal.h>
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManager;
+class QOrganizerManager;
 class QOrganizerItem;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
@@ -85,7 +85,7 @@ public Q_SLOTS:
     void refresh();
 
 Q_SIGNALS:
-    void managerChanged(QOrganizerItemManager *manager);
+    void managerChanged(QOrganizerManager *manager);
     void currentDayChanged(QDate date);
     void showDayPage(QDate date);
     void showEditPage(const QOrganizerItem &item);
@@ -97,7 +97,7 @@ protected: // from QWidget
 
 private:
     QComboBox* m_managerComboBox;
-    QOrganizerItemManager *m_manager;
+    QOrganizerManager *m_manager;
     QCalendarWidget *m_calendarWidget;
     QLabel *m_dateLabel;
     QListWidget *m_itemList;

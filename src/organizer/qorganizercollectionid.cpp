@@ -42,7 +42,7 @@
 #include "qorganizercollectionid.h"
 #include "qorganizercollectionid_p.h"
 #include "qorganizercollectionenginelocalid.h"
-#include "qorganizeritemmanager_p.h"
+#include "qorganizermanager_p.h"
 #include <QHash>
 #include <QDebug>
 
@@ -336,7 +336,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId)
 
         quint8 localIdMarker = static_cast<quint8>(false);
         in >> localIdMarker;
-        QOrganizerCollectionLocalId localId(QOrganizerItemManagerData::createEngineCollectionLocalId(managerUri));
+        QOrganizerCollectionLocalId localId(QOrganizerManagerData::createEngineCollectionLocalId(managerUri));
         if (localIdMarker == static_cast<quint8>(true)) {
             if (localId.d) {
                 // only stream in the local id data if it exists.
