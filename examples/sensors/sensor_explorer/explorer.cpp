@@ -60,6 +60,12 @@ Explorer::Explorer(QWidget *parent)
     ui.sensors->clear();
     clearSensorProperties();
     clearReading();
+
+    // Force types to be registered
+    (void)QSensor::sensorTypes();
+    // Listen for changes to the registered types
+    QSensor *sensor = new QSensor(QByteArray(), this);
+    connect(sensor, SIGNAL(availableSensorsChanged()), this, SLOT(loadSensors()));
 }
 
 Explorer::~Explorer()
