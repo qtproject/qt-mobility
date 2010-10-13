@@ -63,7 +63,6 @@ public:
     {
         Q_ASSERT(uri == QLatin1String("QtMobility.organizer"));
         qmlRegisterType<QDeclarativeOrganizerModel>(uri, 1, 1, "OrganizerModel");
-        qmlRegisterType<QDeclarativeOrganizerItem>(uri, 1, 1, "OrganizerItem");
         qmlRegisterType<QDeclarativeOrganizerRecurrenceRule>(uri, 1, 1, "RecurrenceRule");
         qmlRegisterType<QDeclarativeOrganizerItemFetchHint>(uri, 1, 1, "FetchHint");
         qmlRegisterType<QDeclarativeOrganizerItemSortOrder>(uri, 1, 1, "SortOrder");
