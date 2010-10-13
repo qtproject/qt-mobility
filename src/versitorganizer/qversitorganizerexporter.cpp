@@ -57,7 +57,7 @@ QTM_USE_NAMESPACE
   \inmodule QtVersit
 
   This class is used to convert a list of \l {QOrganizerItem}{QOrganizerItems} (which may be stored
-  in a QOrganizerItemManager) into a QVersitDocument (which may be written to an I/O device using
+  in a QOrganizerManager) into a QVersitDocument (which may be written to an I/O device using
   QVersitReader.  While multiple items are provided as input, a single QVersitDocument is produced
   as output.  Unless there is an error, there is a one-to-one mapping between organizer items
   and sub-documents of the result.

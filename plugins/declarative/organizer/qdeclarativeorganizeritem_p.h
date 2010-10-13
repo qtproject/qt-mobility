@@ -166,34 +166,34 @@ public:
 
     void setStartDateTime(const QDateTime& startDateTime)
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTimeRange, "startDateTime", startDateTime)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTime, "startDateTime", startDateTime)
     }
 
     QDateTime startDateTime() const
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTimeRange, "startDateTime", returnValue)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTime, "startDateTime", returnValue)
         return returnValue.value<QDateTime>();
     }
 
     void setEndDateTime(const QDateTime& endDateTime)
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTimeRange, "endDateTime", endDateTime)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTime, "endDateTime", endDateTime)
     }
 
     QDateTime endDateTime() const
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTimeRange, "endDateTime", returnValue)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTime, "endDateTime", returnValue)
         return returnValue.value<QDateTime>();
     }
 
     void setTimeSpecified(bool isTimeSpecified)
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTimeRange, "isTimeSpecified", isTimeSpecified)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTime, "isTimeSpecified", isTimeSpecified)
     }
 
     bool isTimeSpecified() const
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTimeRange, "isTimeSpecified", returnValue)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTime, "isTimeSpecified", returnValue)
         return returnValue.value<bool>();
     }
 
@@ -289,34 +289,34 @@ public:
 
     void setStartDateTime(const QDateTime& startDateTime)
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTimeRange, "startDateTime", startDateTime)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTime, "startDateTime", startDateTime)
     }
 
     QDateTime startDateTime() const
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTimeRange, "startDateTime", returnValue)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTime, "startDateTime", returnValue)
         return returnValue.value<QDateTime>();
     }
 
     void setEndDateTime(const QDateTime& endDateTime)
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTimeRange, "endDateTime", endDateTime)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTime, "endDateTime", endDateTime)
     }
 
     QDateTime endDateTime() const
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTimeRange, "endDateTime", returnValue)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTime, "endDateTime", returnValue)
         return returnValue.value<QDateTime>();
     }
 
     void setTimeSpecified(bool isTimeSpecified)
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTimeRange, "isTimeSpecified", isTimeSpecified)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTime, "isTimeSpecified", isTimeSpecified)
     }
 
     bool isTimeSpecified() const
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTimeRange, "isTimeSpecified", returnValue)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTime, "isTimeSpecified", returnValue)
         return returnValue.value<bool>();
     }
 
@@ -380,12 +380,12 @@ public:
     explicit QDeclarativeOrganizerJournal(QObject *parent = 0);
     void setDateTime(const QDateTime& dateTime)
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerJournalTimeRange, "entryDateTime", dateTime)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerJournalTime, "entryDateTime", dateTime)
     }
 
     QDateTime dateTime() const
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerJournalTimeRange, "entryDateTime", returnValue)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerJournalTime, "entryDateTime", returnValue)
         return returnValue.value<QDateTime>();
     }
 signals:
@@ -426,34 +426,34 @@ public:
     explicit QDeclarativeOrganizerTodo(QObject *parent = 0);
     void setStartDateTime(const QDateTime& startDateTime)
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTimeRange, "startDateTime", startDateTime)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTime, "startDateTime", startDateTime)
     }
 
     QDateTime startDateTime() const
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoTimeRange, "startDateTime", returnValue)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoTime, "startDateTime", returnValue)
         return returnValue.value<QDateTime>();
     }
 
     void setDueDateTime(const QDateTime& dueDateTime)
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTimeRange, "dueDateTime", dueDateTime)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTime, "dueDateTime", dueDateTime)
     }
 
     QDateTime dueDateTime() const
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoTimeRange, "dueDateTime", returnValue)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoTime, "dueDateTime", returnValue)
         return returnValue.value<QDateTime>();
     }
 
     void setTimeSpecified(bool isTimeSpecified)
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTimeRange, "isTimeSpecified", isTimeSpecified)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTime, "isTimeSpecified", isTimeSpecified)
     }
 
     bool isTimeSpecified() const
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoTimeRange, "isTimeSpecified", returnValue)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoTime, "isTimeSpecified", returnValue)
         return returnValue.value<bool>();
     }
 
@@ -528,23 +528,23 @@ public:
     explicit QDeclarativeOrganizerTodoOccurrence(QObject *parent = 0);
     void setStartDateTime(const QDateTime& startDateTime)
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTimeRange, "startDateTime", startDateTime)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTime, "startDateTime", startDateTime)
     }
 
     QDateTime startDateTime() const
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoTimeRange, "startDateTime", returnValue)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoTime, "startDateTime", returnValue)
         return returnValue.value<QDateTime>();
     }
 
     void setDueDateTime(const QDateTime& dueDateTime)
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTimeRange, "dueDateTime", dueDateTime)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTime, "dueDateTime", dueDateTime)
     }
 
     QDateTime dueDateTime() const
     {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoTimeRange, "dueDateTime", returnValue)
+        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoTime, "dueDateTime", returnValue)
         return returnValue.value<QDateTime>();
     }
 

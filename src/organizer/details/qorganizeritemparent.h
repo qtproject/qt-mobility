@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,30 +38,42 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "organizeriteminstanceorigintransform.h"
-#include "qorganizeriteminstanceorigin.h"
 
-void OrganizerItemInstanceOriginTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
-{
-    Q_UNUSED(entry);
-    Q_UNUSED(item);
-}
 
-void OrganizerItemInstanceOriginTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
-{
-    Q_UNUSED(entry);
-    Q_UNUSED(item);
-}
+#ifndef QORGANIZERITEMPARENT_H
+#define QORGANIZERITEMPARENT_H
 
-void OrganizerItemInstanceOriginTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
-{
-    Q_UNUSED(instance);
-    Q_UNUSED(itemInstance);
-}
+#include <QString>
 
-QString OrganizerItemInstanceOriginTransform::detailDefinitionName()
+#include "qtorganizerglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritem.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_ORGANIZER_EXPORT QOrganizerItemParent : public QOrganizerItemDetail
 {
-    // Note: the conversions are done elsewhere, this class exists only to
-    // indicate that we support instance origin detail
-    return QOrganizerItemInstanceOrigin::DefinitionName;    
-}
+public:
+#ifdef Q_QDOC
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldParentLocalId;
+    static const QLatin1Constant FieldOriginalDate;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemParent, "Parent")
+    Q_DECLARE_LATIN1_CONSTANT(FieldParentLocalId, "ParentLocalId");
+    Q_DECLARE_LATIN1_CONSTANT(FieldOriginalDate, "OriginalDate");
+#endif
+
+    void setParentLocalId(const QOrganizerItemLocalId& parentId) {setValue(FieldParentLocalId, QVariant::fromValue(parentId));}
+    QOrganizerItemLocalId parentLocalId() const {return variantValue(FieldParentLocalId).value<QOrganizerItemLocalId>();}
+
+
+    void setOriginalDate(const QDate& date) {setValue(FieldOriginalDate, date);}
+    QDate originalDate() const {return variantValue(FieldOriginalDate).toDate();}
+};
+
+QTM_END_NAMESPACE
+
+#endif
+

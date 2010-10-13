@@ -49,13 +49,13 @@ QTM_USE_NAMESPACE
 
 const QString managerNameSymbian("symbian");
 
-// We need to be able to pass QOrganizerItemRecurrenceRule as parameter from
+// We need to be able to pass QOrganizerRecurrenceRule as parameter from
 // test data functions
-//Q_DECLARE_METATYPE(QOrganizerItemRecurrenceRule) // already declared.
+//Q_DECLARE_METATYPE(QOrganizerRecurrenceRule) // already declared.
 
 /*!
  * For testing recurrence rule implementation of organizer backends via
- * QOrganizerItemManager API. The target is  to implement test cases in a
+ * QOrganizerManager API. The target is  to implement test cases in a
  * platform independent manner so that this test module could be used with
  * every backends and potentially used as a QtMobility auto test with as little
  * porting work as possible.
@@ -84,23 +84,23 @@ private: // util functions
     void addItemsMonthlyRecurrence(QString managerName, QString itemType);
     void addItemsYearlyRecurrence(QString managerName, QString itemType);
     bool verifyRecurrenceRule(
-        QOrganizerItemRecurrenceRule expectedRRule,
-        QOrganizerItemRecurrenceRule actualRRule);
+        QOrganizerRecurrenceRule expectedRRule,
+        QOrganizerRecurrenceRule actualRRule);
     QOrganizerItem createItem(QString itemType, QString label, QDateTime startTime, QDateTime endTime = QDateTime());
 
 private:
-    QOrganizerItemManager *m_om;
+    QOrganizerManager *m_om;
 };
 
 void tst_recurringItems::initTestCase()
 {
     // Remove all organizer items from available managers
-    QStringList managerNames = QOrganizerItemManager::availableManagers();
+    QStringList managerNames = QOrganizerManager::availableManagers();
     managerNames.removeAll("invalid");
     managerNames.removeAll("skeleton");
     managerNames.removeAll("memory");
     foreach (QString managerName, managerNames) {
-        m_om = new QOrganizerItemManager(managerName);
+        m_om = new QOrganizerManager(managerName);
         m_om->removeItems(m_om->itemIds());
     }
 }
@@ -108,7 +108,7 @@ void tst_recurringItems::initTestCase()
 void tst_recurringItems::init()
 {
     QFETCH(QString, managerName);
-    m_om = new QOrganizerItemManager(managerName);
+    m_om = new QOrganizerManager(managerName);
 
     // Remove all organizer items first (Note: ignores possible errors)
     m_om->removeItems(m_om->itemIds());
@@ -128,9 +128,9 @@ void tst_recurringItems::addRecurrenceRule_data()
     QTest::addColumn<QString>("displayLabel");
     QTest::addColumn<QString>("itemType");
     QTest::addColumn<QDateTime>("startTime");
-    QTest::addColumn<QOrganizerItemRecurrenceRule>("rrule");
+    QTest::addColumn<QOrganizerRecurrenceRule>("rrule");
 
-    QStringList managerNames = QOrganizerItemManager::availableManagers();
+    QStringList managerNames = QOrganizerManager::availableManagers();
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
     managerNames.removeAll("memory");
@@ -150,18 +150,18 @@ void tst_recurringItems::addRecurrenceRule()
     QFETCH(QString, displayLabel);
     QFETCH(QString, itemType);
     QFETCH(QDateTime, startTime);
-    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+    QFETCH(QOrganizerRecurrenceRule, rrule);
 
     // Create item
     QOrganizerItem item;
     item.setType(itemType);
     item.setDisplayLabel(displayLabel);
-    QOrganizerEventTimeRange timeRange;
+    QOrganizerEventTime timeRange;
     timeRange.setStartDateTime(startTime);
     QVERIFY(item.saveDetail(&timeRange));
 
     // Add recurrence rules to the item
-    QSet<QOrganizerItemRecurrenceRule> rrules;
+    QSet<QOrganizerRecurrenceRule> rrules;
     rrules.insert(rrule);
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
@@ -189,8 +189,8 @@ void tst_recurringItems::addRecurrenceRule()
  * debugging easier
  */
 bool tst_recurringItems::verifyRecurrenceRule(
-    QOrganizerItemRecurrenceRule expectedRRule,
-    QOrganizerItemRecurrenceRule actualRRule)
+        QOrganizerRecurrenceRule expectedRRule,
+        QOrganizerRecurrenceRule actualRRule)
 {
     bool match(true);
 
@@ -279,7 +279,7 @@ bool tst_recurringItems::verifyRecurrenceRule(
         // days-of-month. This is needed because symbian calendar server does
         // not allow a monthly recurrence without days-of-month or
         // days-of-week. 
-        if (expectedRRule.frequency() == QOrganizerItemRecurrenceRule::Monthly
+        if (expectedRRule.frequency() == QOrganizerRecurrenceRule::Monthly
             && expectedRRule.daysOfMonth().isEmpty()
             && actualRRule.daysOfMonth().size() == 1) {
             qWarning() << "Non-empty days-of-month";
@@ -356,17 +356,17 @@ void tst_recurringItems::removeRecurrenceRule()
     QFETCH(QString, managerName);
     QFETCH(QString, itemType);
     QFETCH(QDateTime, startTime);
-    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+    QFETCH(QOrganizerRecurrenceRule, rrule);
 
     // Create an item
     QOrganizerItem item;
     item.setType(itemType);
-    QOrganizerEventTimeRange timeRange;
+    QOrganizerEventTime timeRange;
     timeRange.setStartDateTime(startTime);
     QVERIFY(item.saveDetail(&timeRange));
 
     // Add recurrence rules to the item
-    QSet<QOrganizerItemRecurrenceRule> rrules;
+    QSet<QOrganizerRecurrenceRule> rrules;
     rrules.insert(rrule);
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
@@ -392,7 +392,7 @@ void tst_recurringItems::removeRecurrenceRule()
     
     // Set empty recurrence rule detail & save & verify it does not exist
     recurrence = item.detail<QOrganizerItemRecurrence>();
-    recurrence.setRecurrenceRules(QSet<QOrganizerItemRecurrenceRule>());
+    recurrence.setRecurrenceRules(QSet<QOrganizerRecurrenceRule>());
     QVERIFY(item.saveDetail(&recurrence));
     QVERIFY(m_om->saveItem(&item));
     item = m_om->item(item.localId());
@@ -408,10 +408,10 @@ void tst_recurringItems::exceptionDates()
         QDateTime(QDate(2010, 10, 1), QTime(10, 0, 0)));
 
     // Add recurring item "weekly for 10 weeks"
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
     rrule.setLimit(10);
-    QSet<QOrganizerItemRecurrenceRule> rrules;
+    QSet<QOrganizerRecurrenceRule> rrules;
     rrules.insert(rrule);
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
@@ -420,7 +420,7 @@ void tst_recurringItems::exceptionDates()
 
     // Verify
     QCOMPARE(m_om->items().count(), 10);
-    QCOMPARE(m_om->itemInstances(item).count(), 10);
+    QCOMPARE(m_om->itemOccurrences(item).count(), 10);
 
     // Delete the second instance; "weekly for 10 weeks, except on 2nd week"
     QSet<QDate> xdates;
@@ -431,7 +431,7 @@ void tst_recurringItems::exceptionDates()
 
     // Verify
     QCOMPARE(m_om->items().count(), 9);
-    QCOMPARE(m_om->itemInstances(item).count(), 9);
+    QCOMPARE(m_om->itemOccurrences(item).count(), 9);
     QCOMPARE(m_om->items().at(0).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QCOMPARE(QOrganizerEventOccurrence(m_om->items().at(0)).startDateTime().date(), QDate(2010, 10, 1));
     QCOMPARE(m_om->items().at(1).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
@@ -445,7 +445,7 @@ void tst_recurringItems::exceptionDates()
 
     // Verify
     QCOMPARE(m_om->items().count(), 8);
-    QCOMPARE(m_om->itemInstances(item).count(), 8);
+    QCOMPARE(m_om->itemOccurrences(item).count(), 8);
     QCOMPARE(m_om->items().at(0).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QCOMPARE(QOrganizerEventOccurrence(m_om->items().at(0)).startDateTime().date(), QDate(2010, 10, 15));
     QCOMPARE(m_om->items().at(1).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
@@ -459,7 +459,7 @@ void tst_recurringItems::addManagers()
 {
     QTest::addColumn<QString>("managerName");
 
-    QStringList managerNames = QOrganizerItemManager::availableManagers();
+    QStringList managerNames = QOrganizerManager::availableManagers();
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
     managerNames.removeAll("memory");
@@ -475,10 +475,10 @@ void tst_recurringItems::addManagers()
  */
 void tst_recurringItems::addItemsWeeklyRecurrence(QString managerName, QString itemType)
 {
-    QOrganizerItemRecurrenceRule rrule;
+    QOrganizerRecurrenceRule rrule;
     QSet<Qt::DayOfWeek> daysOfWeek;
 
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
     QTest::newRow(QString("[%1] weekly forever").arg(managerName).toLatin1().constData())
         << managerName
         << QString("weekly 0")
@@ -493,8 +493,8 @@ void tst_recurringItems::addItemsWeeklyRecurrence(QString managerName, QString i
         // the test case for symbian backend.
         qWarning("Symbian: Weekly recurrences without \"by day\" not supported");
     } else {
-        rrule = QOrganizerItemRecurrenceRule(); // reset
-        rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+        rrule = QOrganizerRecurrenceRule(); // reset
+        rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
         rrule.setLimit(10);
         QTest::newRow(QString("[%1] weekly for 10 occurrences").arg(managerName).toLatin1().constData())
             << managerName
@@ -504,8 +504,8 @@ void tst_recurringItems::addItemsWeeklyRecurrence(QString managerName, QString i
             << rrule;
     }
 
-    rrule = QOrganizerItemRecurrenceRule(); // reset
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    rrule = QOrganizerRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
     rrule.setLimit(3);
     daysOfWeek.clear(); // reset
     daysOfWeek.insert(Qt::Tuesday);
@@ -517,8 +517,8 @@ void tst_recurringItems::addItemsWeeklyRecurrence(QString managerName, QString i
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
 
-    rrule = QOrganizerItemRecurrenceRule(); // reset
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    rrule = QOrganizerRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
     rrule.setLimit(5);
     daysOfWeek.clear(); // reset
     daysOfWeek.insert(Qt::Tuesday);
@@ -532,8 +532,8 @@ void tst_recurringItems::addItemsWeeklyRecurrence(QString managerName, QString i
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
 
-    rrule = QOrganizerItemRecurrenceRule(); // reset
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    rrule = QOrganizerRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
     rrule.setInterval(2);
     daysOfWeek.clear(); // reset
     daysOfWeek.insert(Qt::Monday);
@@ -548,8 +548,8 @@ void tst_recurringItems::addItemsWeeklyRecurrence(QString managerName, QString i
         << QDateTime(QDate(QDate::currentDate().year() , 9, 1))
         << rrule;
 
-    rrule = QOrganizerItemRecurrenceRule(); // reset
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    rrule = QOrganizerRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
     daysOfWeek.clear(); // reset
     daysOfWeek.insert(Qt::Tuesday);
     daysOfWeek.insert(Qt::Thursday);
@@ -570,8 +570,8 @@ void tst_recurringItems::addItemsWeeklyRecurrence(QString managerName, QString i
 void tst_recurringItems::addItemsMonthlyRecurrence(QString managerName, QString itemType)
 {
     // On 15th day for 3 months
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Monthly);
     rrule.setLimit(3);
     QSet<int> daysOfMonth;
     daysOfMonth.insert(15);
@@ -584,8 +584,8 @@ void tst_recurringItems::addItemsMonthlyRecurrence(QString managerName, QString 
         << rrule;
 
     // Monthly for 3 months
-    rrule = QOrganizerItemRecurrenceRule(); // reset
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+    rrule = QOrganizerRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerRecurrenceRule::Monthly);
     rrule.setLimit(3);
     QTest::newRow(QString("[%1] Monthly for 3 months").arg(managerName).toLatin1().constData())
         << managerName
@@ -595,8 +595,8 @@ void tst_recurringItems::addItemsMonthlyRecurrence(QString managerName, QString 
         << rrule;
 
     // Every other Month on first and last Sunday for 10 occurances
-    rrule = QOrganizerItemRecurrenceRule(); // reset
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+    rrule = QOrganizerRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerRecurrenceRule::Monthly);
     rrule.setLimit(10);
     rrule.setInterval(2);
     QSet<Qt::DayOfWeek> daysOfWeek;
@@ -614,8 +614,8 @@ void tst_recurringItems::addItemsMonthlyRecurrence(QString managerName, QString 
         << rrule;
 
     // Every third Month on first and third Sunday for 10 occurances
-    rrule = QOrganizerItemRecurrenceRule(); // reset
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+    rrule = QOrganizerRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerRecurrenceRule::Monthly);
     rrule.setLimit(10);
     rrule.setInterval(3);
     daysOfWeek.clear();
@@ -633,8 +633,8 @@ void tst_recurringItems::addItemsMonthlyRecurrence(QString managerName, QString 
         << rrule;
 
     // Every other month every tuesday
-    rrule = QOrganizerItemRecurrenceRule(); // reset
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+    rrule = QOrganizerRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerRecurrenceRule::Monthly);
     rrule.setInterval(2);
     daysOfWeek.clear();
     daysOfWeek.insert(Qt::Tuesday);
@@ -647,8 +647,8 @@ void tst_recurringItems::addItemsMonthlyRecurrence(QString managerName, QString 
         << rrule;
 
     // The 2nd Sunday of the month for 3 months
-    rrule = QOrganizerItemRecurrenceRule(); // reset
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+    rrule = QOrganizerRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerRecurrenceRule::Monthly);
     daysOfWeek.clear();
     daysOfWeek.insert(Qt::Sunday);
     rrule.setDaysOfWeek(daysOfWeek);
@@ -671,8 +671,8 @@ void tst_recurringItems::addItemsMonthlyRecurrence(QString managerName, QString 
 void tst_recurringItems::addItemsDailyRecurrence(QString managerName, QString itemType)
 {
     // Daily for 3 days
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
     rrule.setLimit(3);
     QTest::newRow(QString("[%1] Daily for 3 days").arg(managerName).toLatin1().constData())
         << managerName
@@ -687,8 +687,8 @@ void tst_recurringItems::addItemsDailyRecurrence(QString managerName, QString it
         qWarning("Symbian: Week start not supported for daily recurring item");
     } else {
         // Daily for 3 days, wk start on Sunday
-        rrule = QOrganizerItemRecurrenceRule(); // reset
-        rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+        rrule = QOrganizerRecurrenceRule(); // reset
+        rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
         rrule.setLimit(3);
         rrule.setFirstDayOfWeek(Qt::Sunday);
         QTest::newRow(QString("[%1] Daily for 3 days, wk start on Sunday").arg(managerName).toLatin1().constData())
@@ -700,8 +700,8 @@ void tst_recurringItems::addItemsDailyRecurrence(QString managerName, QString it
     }
 
     // Daily for 3 days, wk start on Monday
-    rrule = QOrganizerItemRecurrenceRule(); // reset
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrule = QOrganizerRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
     rrule.setLimit(3);
     rrule.setFirstDayOfWeek(Qt::Monday);
     QTest::newRow(QString("[%1] Daily for 3 days, wk start on Monday").arg(managerName).toLatin1().constData())
@@ -712,8 +712,8 @@ void tst_recurringItems::addItemsDailyRecurrence(QString managerName, QString it
         << rrule;
 
     // Every second day for 5 occurrences
-    rrule = QOrganizerItemRecurrenceRule(); // reset
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrule = QOrganizerRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
     rrule.setLimit(5);
     rrule.setInterval(2);
     QTest::newRow(QString("[%1] Every second day for 5 occurrences").arg(managerName).toLatin1().constData())
@@ -724,8 +724,8 @@ void tst_recurringItems::addItemsDailyRecurrence(QString managerName, QString it
         << rrule;
 
     // Every second day for four days
-    rrule = QOrganizerItemRecurrenceRule(); // reset
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrule = QOrganizerRecurrenceRule(); // reset
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
     rrule.setInterval(2);
     rrule.setLimit(QDate(QDate::currentDate().year(), QDate::currentDate().month(), QDate::currentDate().day() + 4));
     QTest::newRow(QString("[%1] Every second day for four days").arg(managerName).toLatin1().constData())
@@ -741,11 +741,11 @@ void tst_recurringItems::addItemsDailyRecurrence(QString managerName, QString it
         qWarning("Symbian: Daily recurring events do not support months");
     } else {
         // Every day in January for 3 years
-        rrule = QOrganizerItemRecurrenceRule(); // reset
-        rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+        rrule = QOrganizerRecurrenceRule(); // reset
+        rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
         rrule.setLimit(QDate(QDate::currentDate().year() + 3, 1, 31));
-        QSet<QOrganizerItemRecurrenceRule::Month> oneMonth;
-        oneMonth.insert(QOrganizerItemRecurrenceRule::January);
+        QSet<QOrganizerRecurrenceRule::Month> oneMonth;
+        oneMonth.insert(QOrganizerRecurrenceRule::January);
         rrule.setMonthsOfYear(oneMonth);
         QTest::newRow(QString("[%1] Every day in January for 3 years").arg(managerName).toLatin1().constData())
             << managerName
@@ -763,8 +763,8 @@ void tst_recurringItems::addItemsDailyRecurrence(QString managerName, QString it
         // Note: This test case may not be valid, at least it does not seem
         // reasonable that a daily recurring event that has "days of week" set.
         // I.e. recurrence rule "daily, on Mondays" does not make much sense.
-        rrule = QOrganizerItemRecurrenceRule(); // reset
-        rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+        rrule = QOrganizerRecurrenceRule(); // reset
+        rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
         QSet<Qt::DayOfWeek> daysOfWeek;
         daysOfWeek.insert(Qt::Monday);
         rrule.setDaysOfWeek(daysOfWeek);
@@ -780,8 +780,8 @@ void tst_recurringItems::addItemsDailyRecurrence(QString managerName, QString it
 void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString itemType)
 {
     // Every year
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
     QTest::newRow(QString("[%1] yearly").arg(managerName).toLatin1().constData())
         << managerName
         << QString("yearly 0")
@@ -790,8 +790,8 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         << rrule;
 
     // Every year for 3 occurances
-    rrule = QOrganizerItemRecurrenceRule();
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    rrule = QOrganizerRecurrenceRule();
+    rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
     rrule.setLimit(3);
     QTest::newRow(QString("[%1] yearly for three years").arg(managerName).toLatin1().constData())
         << managerName
@@ -801,11 +801,11 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         << rrule;
 
     // Yearly on first Monday of January for 2 occurrences
-    rrule = QOrganizerItemRecurrenceRule();
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    rrule = QOrganizerRecurrenceRule();
+    rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
     rrule.setLimit(2);
-    QSet<QOrganizerItemRecurrenceRule::Month> months;
-    months.insert(QOrganizerItemRecurrenceRule::January);
+    QSet<QOrganizerRecurrenceRule::Month> months;
+    months.insert(QOrganizerRecurrenceRule::January);
     rrule.setMonthsOfYear(months);
     QSet<Qt::DayOfWeek> daysOfWeek;
     daysOfWeek.insert(Qt::Monday);
@@ -826,11 +826,11 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         qWarning("Symbian: only one position supported");
     } else {
         // Yearly on first and third Monday of January for 2 occurrences
-        rrule = QOrganizerItemRecurrenceRule();
-        rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+        rrule = QOrganizerRecurrenceRule();
+        rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
         rrule.setLimit(2);
         months.clear();
-        months.insert(QOrganizerItemRecurrenceRule::January);
+        months.insert(QOrganizerRecurrenceRule::January);
         rrule.setMonthsOfYear(months);
         daysOfWeek.clear();
         daysOfWeek.insert(Qt::Monday);
@@ -855,10 +855,10 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         qWarning("Symbian: yearly recurrences with days-of-week and without positions not supported");
     } else {
         // yearly on every Monday of January
-        rrule = QOrganizerItemRecurrenceRule();
-        rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-        months = QSet<QOrganizerItemRecurrenceRule::Month>();
-        months.insert(QOrganizerItemRecurrenceRule::January);
+        rrule = QOrganizerRecurrenceRule();
+        rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
+        months = QSet<QOrganizerRecurrenceRule::Month>();
+        months.insert(QOrganizerRecurrenceRule::January);
         rrule.setMonthsOfYear(months);
         daysOfWeek = QSet<Qt::DayOfWeek>();
         daysOfWeek.insert(Qt::Monday);
@@ -877,11 +877,11 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         qWarning("Symbian: yearly recurrences with days-of-month not supported");
     } else {
         // Yearly on 15th day of January
-        rrule = QOrganizerItemRecurrenceRule();
-        rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+        rrule = QOrganizerRecurrenceRule();
+        rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
         rrule.setLimit(2);
-        QSet<QOrganizerItemRecurrenceRule::Month> months;
-        months.insert(QOrganizerItemRecurrenceRule::January);
+        QSet<QOrganizerRecurrenceRule::Month> months;
+        months.insert(QOrganizerRecurrenceRule::January);
         rrule.setMonthsOfYear(months);
         QSet<int> daysOfMonth;
         daysOfMonth.insert(15);
@@ -899,12 +899,12 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
     //Every year in january and march for 4 occurances
     // TODO: Symbian calendar server does not allow setting a yearly recurring
     // event with "months" set but without setting "day of month"
-    rrule = QOrganizerItemRecurrenceRule();
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    rrule = QOrganizerRecurrenceRule();
+    rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
     rrule.setLimit(4);
-    months = QSet<QOrganizerItemRecurrenceRule::Month>();
-    months.insert(QOrganizerItemRecurrenceRule::January);
-    months.insert(QOrganizerItemRecurrenceRule::March);
+    months = QSet<QOrganizerRecurrenceRule::Month>();
+    months.insert(QOrganizerRecurrenceRule::January);
+    months.insert(QOrganizerRecurrenceRule::March);
     rrule.setMonthsOfYear(months);
     QTest::newRow(QString("[%1] yearly on January and March").arg(managerName).toLatin1().constData())
         << managerName
@@ -914,14 +914,14 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         << rrule;
 
     //Every other year in january,feburary and march for 4 occurances
-    rrule = QOrganizerItemRecurrenceRule();
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    rrule = QOrganizerRecurrenceRule();
+    rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
     rrule.setLimit(4);
     rrule.setInterval(2);
     months.clear();
-    months.insert(QOrganizerItemRecurrenceRule::January);
-    months.insert(QOrganizerItemRecurrenceRule::February);
-    months.insert(QOrganizerItemRecurrenceRule::March);
+    months.insert(QOrganizerRecurrenceRule::January);
+    months.insert(QOrganizerRecurrenceRule::February);
+    months.insert(QOrganizerRecurrenceRule::March);
     rrule.setMonthsOfYear(months);
     QTest::newRow(QString("[%1] every other year on January Feburary and March").arg(managerName).toLatin1().constData())
         << managerName
@@ -931,8 +931,8 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         << rrule;
 
     //Every 3rd year on 1st,100th and 200th day for 10 occurances
-    rrule = QOrganizerItemRecurrenceRule();
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    rrule = QOrganizerRecurrenceRule();
+    rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
     rrule.setLimit(10);
     rrule.setInterval(3);
     QSet<int> daysOfYear;
@@ -948,8 +948,8 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         << rrule;
 
     //Every 20th monday of the year,forever
-    rrule = QOrganizerItemRecurrenceRule();
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    rrule = QOrganizerRecurrenceRule();
+    rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
     rrule.setLimit(0);
     rrule.setInterval(1);
     daysOfWeek = QSet<Qt::DayOfWeek>();
@@ -966,8 +966,8 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         << rrule;
 
     //Monday of week number 20 forever
-    rrule = QOrganizerItemRecurrenceRule();
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    rrule = QOrganizerRecurrenceRule();
+    rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
     QSet<int> weekNumber;
     weekNumber.insert(20);
     rrule.setWeeksOfYear(weekNumber);
@@ -980,10 +980,10 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         << rrule;
 
     //Every Monday in march forever
-    rrule = QOrganizerItemRecurrenceRule();
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-    QSet<QOrganizerItemRecurrenceRule::Month> oneMonth;
-    oneMonth.insert(QOrganizerItemRecurrenceRule::March);
+    rrule = QOrganizerRecurrenceRule();
+    rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
+    QSet<QOrganizerRecurrenceRule::Month> oneMonth;
+    oneMonth.insert(QOrganizerRecurrenceRule::March);
     rrule.setMonthsOfYear(oneMonth);
     rrule.setDaysOfWeek(daysOfWeek);
     QTest::newRow(QString("[%1] Every Monday in march forever").arg(managerName).toLatin1().constData())
@@ -993,8 +993,8 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
 
-    rrule = QOrganizerItemRecurrenceRule();
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    rrule = QOrganizerRecurrenceRule();
+    rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
     QSet<int> daysOfMonth;
     daysOfMonth.insert(1);
     rrule.setDaysOfMonth(daysOfMonth);
@@ -1007,8 +1007,8 @@ void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString i
         << QDateTime::currentDateTime().addSecs(3600)
         << rrule;
 
-    rrule = QOrganizerItemRecurrenceRule();
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    rrule = QOrganizerRecurrenceRule();
+    rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
     daysOfYear.clear();
     daysOfYear.insert(32);
     rrule.setDaysOfYear(daysOfYear);
@@ -1031,7 +1031,7 @@ QOrganizerItem tst_recurringItems::createItem(QString itemType, QString label, Q
     item.setType(itemType);
     item.setDisplayLabel(label);
     if (itemType == QOrganizerItemType::TypeTodo) {
-        QOrganizerTodoTimeRange timeRange;
+        QOrganizerTodoTime timeRange;
         if (startTime.isValid())
             timeRange.setStartDateTime(startTime);
         if (endTime.isValid())
@@ -1039,7 +1039,7 @@ QOrganizerItem tst_recurringItems::createItem(QString itemType, QString label, Q
         if (!timeRange.isEmpty())
             item.saveDetail(&timeRange);
     } else {
-        QOrganizerEventTimeRange timeRange;
+        QOrganizerEventTime timeRange;
         if (startTime.isValid())
             timeRange.setStartDateTime(startTime);
         if (endTime.isValid())

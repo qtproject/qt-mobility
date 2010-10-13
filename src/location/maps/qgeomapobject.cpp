@@ -89,7 +89,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a new root map object associated with \a mapData.
+    Constructs a new map object associated with \a mapData.
 */
 QGeoMapObject::QGeoMapObject(QGeoMapData *mapData)
     : d_ptr(new QGeoMapObjectPrivate())
@@ -290,6 +290,33 @@ QGeoMapObjectInfo* QGeoMapObject::info() const
 {
     return d_ptr->info;
 }
+
+/*!
+\fn void QGeoMapObject::zValueChanged(int zValue)
+
+    This signal is emitted when the z value of the map object 
+    has changed.
+
+    The new value is \a zValue.
+*/
+
+/*!
+\fn void QGeoMapObject::visibleChanged(bool visible)
+
+    This signal is emitted when the visible state of the map object 
+    has changed.
+
+    The new value is \a visible.
+*/
+
+/*!
+\fn void QGeoMapObject::selectedChanged(bool selected)
+
+    This signal is emitted when the selected state of the map object
+    has changed.
+
+    The new vlaue is \a selected.
+*/
 
 /*******************************************************************************
 *******************************************************************************/

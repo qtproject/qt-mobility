@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef QORGANIZERITEMRECURRENCERULE_H
-#define QORGANIZERITEMRECURRENCERULE_H
+#ifndef QORGANIZERRECURRENCERULE_H
+#define QORGANIZERRECURRENCERULE_H
 
 #include <QString>
 #include <QDateTime>
@@ -53,16 +53,16 @@
 
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemRecurrenceRulePrivate;
+class QOrganizerRecurrenceRulePrivate;
 
-class Q_ORGANIZER_EXPORT QOrganizerItemRecurrenceRule
+class Q_ORGANIZER_EXPORT QOrganizerRecurrenceRule
 {
 public:
-    QOrganizerItemRecurrenceRule();
-    ~QOrganizerItemRecurrenceRule();
-    QOrganizerItemRecurrenceRule(const QOrganizerItemRecurrenceRule& other);
-    QOrganizerItemRecurrenceRule& operator=(const QOrganizerItemRecurrenceRule& other);
-    bool operator==(const QOrganizerItemRecurrenceRule& other) const;
+    QOrganizerRecurrenceRule();
+    ~QOrganizerRecurrenceRule();
+    QOrganizerRecurrenceRule(const QOrganizerRecurrenceRule& other);
+    QOrganizerRecurrenceRule& operator=(const QOrganizerRecurrenceRule& other);
+    bool operator==(const QOrganizerRecurrenceRule& other) const;
     // enums
     enum Frequency {
         Invalid = 0,
@@ -137,14 +137,14 @@ public:
     QSet<int> positions() const;
 
 private:
-    QSharedDataPointer<QOrganizerItemRecurrenceRulePrivate> d;
+    QSharedDataPointer<QOrganizerRecurrenceRulePrivate> d;
 };
 
 //hash functions
-Q_ORGANIZER_EXPORT uint qHash(const QOrganizerItemRecurrenceRule& rule);
+Q_ORGANIZER_EXPORT uint qHash(const QOrganizerRecurrenceRule& rule);
 
 
-inline uint qHash(QOrganizerItemRecurrenceRule::Month month)
+inline uint qHash(QOrganizerRecurrenceRule::Month month)
 {
     return static_cast<uint>(month);
 }
@@ -157,9 +157,9 @@ inline uint qHash(const QDate &date)
 }
 
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemRecurrenceRule), Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerItemRecurrenceRule));
-Q_DECLARE_METATYPE(QSet<QTM_PREPEND_NAMESPACE(QOrganizerItemRecurrenceRule)>);
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerRecurrenceRule), Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerRecurrenceRule));
+Q_DECLARE_METATYPE(QSet<QTM_PREPEND_NAMESPACE(QOrganizerRecurrenceRule)>);
 Q_DECLARE_METATYPE(QSet<QDate>);
 
 

@@ -40,69 +40,35 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTMANAGER_P_H
-#define QCONTACTMANAGER_P_H
+#ifndef QORGANIZERMANAGERENGINEFACTORY_H
+#define QORGANIZERMANAGERENGINEFACTORY_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
+#include <QtPlugin>
 #include <QMap>
-#include <QMultiMap>
-#include <QList>
 #include <QString>
 
-#include "qorganizeritemmanager.h"
-#include "qorganizeritemmanagerengine.h"
+#include "qorganizermanager.h"
 
 QTM_BEGIN_NAMESPACE
-
-class QOrganizerItemManagerEngineFactory;
-
-/* Data and stuff that is shared amongst all backends */
-class QOrganizerItemManagerData
+/* Backend plugin API interface, creates engines for us */
+class QOrganizerManagerEngine;
+class QOrganizerCollectionEngineLocalId;
+class Q_ORGANIZER_EXPORT QOrganizerManagerEngineFactory
 {
 public:
-    QOrganizerItemManagerData()
-        : m_engine(0),
-        m_error(QOrganizerItemManager::NoError)
-    {
-    }
-
-    ~QOrganizerItemManagerData()
-    {
-        delete m_engine;
-    }
-
-    void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
-    static QOrganizerItemManagerEngine* engine(const QOrganizerItemManager* manager);
-    static QOrganizerItemEngineLocalId* createEngineItemLocalId(const QString& uri);
-    static QOrganizerCollectionEngineLocalId* createEngineCollectionLocalId(const QString& uri);
-
-    QOrganizerItemManagerEngine* m_engine;
-    QOrganizerItemManager::Error m_error;
-    QMap<int, QOrganizerItemManager::Error> m_errorMap;
-
-    /* Manager plugins */
-    static QHash<QString, QOrganizerItemManagerEngineFactory*> m_engines;
-    static bool m_discovered;
-    static bool m_discoveredStatic;
-    static QStringList m_pluginPaths;
-    static void loadFactories();
-    static void loadStaticFactories();
-
-private:
-    Q_DISABLE_COPY(QOrganizerItemManagerData)
+    // engine factory functions
+    virtual QList<int> supportedImplementationVersions() const;
+    virtual ~QOrganizerManagerEngineFactory();
+    virtual QOrganizerManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error* error) = 0;
+    virtual QString managerName() const = 0;
+    virtual QOrganizerItemEngineLocalId* createItemEngineLocalId() const = 0;
+    virtual QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId()const  = 0;
 };
-
-
 QTM_END_NAMESPACE
+
+QT_BEGIN_NAMESPACE
+#define QT_ORGANIZER_BACKEND_INTERFACE "com.nokia.qt.mobility.organizeritems.enginefactory/1.0"
+Q_DECLARE_INTERFACE(QtMobility::QOrganizerManagerEngineFactory, QT_ORGANIZER_BACKEND_INTERFACE);
+QT_END_NAMESPACE
 
 #endif
