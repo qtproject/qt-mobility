@@ -51,6 +51,7 @@ ServiceBrowser::ServiceBrowser(QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags)
 {
     serviceManager = new QServiceManager(this);
+    systemManager = new QServiceManager(QService::SystemScope);
 
     registerExampleServices();
 
@@ -77,11 +78,11 @@ void ServiceBrowser::currentInterfaceImplChanged(QListWidgetItem *current, QList
     QServiceInterfaceDescriptor descriptor = current->data(Qt::UserRole).value<QServiceInterfaceDescriptor>();
     if (descriptor.isValid()) {
 #if defined(Q_WS_MAEMO_5)
-        defaultInterfaceButton->setText(tr("Set as default implementation for \n%1")
+        defaultInterfaceButton->setText(tr("Set as default implementation for \n%1").arg(descriptor.interfaceName()));
 #else
-        defaultInterfaceButton->setText(tr("Set as default implementation for %1")
+        defaultInterfaceButton->setText(tr("Set as default implementation for %1").arg(descriptor.interfaceName()));
 #endif
-                .arg(descriptor.interfaceName()));
+                //TODO: .arg(descriptor.interfaceName()));
         defaultInterfaceButton->setEnabled(true);
     }
 }
@@ -90,10 +91,21 @@ void ServiceBrowser::reloadServicesList()
 {
     servicesListWidget->clear();
 
-    QStringList services = serviceManager->findServices();
-    for (int i=0; i<services.count(); i++)
-        servicesListWidget->addItem(services[i]);
+    QSet<QString> services;
+    QList<QServiceInterfaceDescriptor> descriptors = serviceManager->findInterfaces();
+    for (int i=0; i<descriptors.count(); i++) {
+        QString service = descriptors[i].serviceName();
+        
+        if (descriptors[i].scope() == QService::SystemScope)
+            service += tr(" (system)");
+       
+        services << service;
+    }
+   
+    foreach (const QString& service, services)
+        servicesListWidget->addItem(service);
 
+    servicesListWidget->sortItems();
     servicesListWidget->addItem(showAllServicesItem);
 }
 
@@ -108,21 +120,42 @@ void ServiceBrowser::reloadInterfaceImplementationsList()
         interfacesGroup->setTitle(tr("All interface implementations"));
     }
 
-    QList<QServiceInterfaceDescriptor> descriptors = serviceManager->findInterfaces(serviceName);
+    QServiceManager *manager = serviceManager;
+    if (serviceName.endsWith(" (system)")) {
+        serviceName.chop(9);
+        manager = systemManager;
+    }
+
+    QList<QServiceInterfaceDescriptor> descriptors = manager->findInterfaces(serviceName);
 
     attributesListWidget->clear();
     interfacesListWidget->clear();
     for (int i=0; i<descriptors.count(); i++) {
+        if (descriptors[i].scope() != manager->scope() && !serviceName.isEmpty())
+            continue;
+
         QString text = QString("%1 %2.%3")
                 .arg(descriptors[i].interfaceName())
                 .arg(descriptors[i].majorVersion())
                 .arg(descriptors[i].minorVersion());
 
-        if (serviceName.isEmpty())
+        QServiceInterfaceDescriptor defaultInterfaceImpl 
+            = manager->interfaceDefault(descriptors[i].interfaceName());
+        
+        if (serviceName.isEmpty()) {
             text += " (" + descriptors[i].serviceName() + ")";
-
-        QServiceInterfaceDescriptor defaultInterfaceImpl = 
-                serviceManager->interfaceDefault(descriptors[i].interfaceName());
+            
+            if (descriptors[i].scope() == QService::SystemScope) {
+                text += tr(" (system");
+                defaultInterfaceImpl = systemManager->interfaceDefault(descriptors[i].interfaceName());
+                if (descriptors[i] == defaultInterfaceImpl)
+                    text += tr(" default)");
+                else
+                    text += ")";
+                defaultInterfaceImpl = QServiceInterfaceDescriptor();
+            }
+        }
+                
         if (descriptors[i] == defaultInterfaceImpl)
             text += tr(" (default)");
 
@@ -176,7 +209,12 @@ void ServiceBrowser::setDefaultInterfaceImplementation()
 
     QServiceInterfaceDescriptor descriptor = item->data(Qt::UserRole).value<QServiceInterfaceDescriptor>();
     if (descriptor.isValid()) {
-        if (serviceManager->setInterfaceDefault(descriptor)) {
+        QServiceManager *manager = serviceManager;
+
+        if (descriptor.scope() == QService::SystemScope)
+            manager = systemManager;
+
+        if (manager->setInterfaceDefault(descriptor)) {
             int currentIndex = interfacesListWidget->row(item);
             reloadInterfaceImplementationsList();
             interfacesListWidget->setCurrentRow(currentIndex);
