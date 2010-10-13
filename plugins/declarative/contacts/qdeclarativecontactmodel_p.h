@@ -69,8 +69,7 @@ public:
     explicit QDeclarativeContactModel(QObject *parent = 0);
 
     enum {
-        ContactRole =  Qt::UserRole + 500,
-        AvatarRole
+        ContactRole =  Qt::UserRole + 500
     };
 
     QString manager() const;

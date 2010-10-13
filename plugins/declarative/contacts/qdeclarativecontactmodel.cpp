@@ -87,7 +87,6 @@ QDeclarativeContactModel::QDeclarativeContactModel(QObject *parent) :
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(ContactRole, "contact");
-    roleNames.insert(AvatarRole, "avatar");
     setRoleNames(roleNames);
 
     connect(this, SIGNAL(managerChanged()), SLOT(fetchAgain()));
@@ -391,9 +390,6 @@ QVariant QDeclarativeContactModel::data(const QModelIndex &index, int role) cons
             return c.displayLabel();
         case ContactRole:
             return QVariant::fromValue(dc);
-        case AvatarRole:
-            //Just let the imager provider deal with it
-            return QString("image://thumbnail/%1.%2").arg(manager()).arg(c.localId());
     }
     return QVariant();
 }

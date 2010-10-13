@@ -131,11 +131,11 @@ Item {
                                 anchors.margins: 2;
 
                                 Image {
-                                    id: avatar
+                                    id: thumbnail
                                     anchors.fill: parent;
                                     anchors.margins: 2;
 
-                                    source: model.avatar;
+                                    source: model.contact.thumbnail;
                                     fillMode: Image.PreserveAspectFit
                                     smooth:true
                                 }
@@ -143,7 +143,7 @@ Item {
                                     anchors.fill: parent;
                                     anchors.margins: 2;
                                     source: "contents/images/default.svg";
-                                    opacity: avatar.status == Image.Ready ? 0 : 1;
+                                    opacity: thumbnail.status == Image.Ready ? 0 : 1;
                                 }
                             }
                         }
@@ -393,6 +393,7 @@ Item {
             width: 20
             height: mainList.height
             anchors.right: views.right
+            anchors.top: titleBar.bottom
             fgColor: "white"
             // Only show the scrollbar when the view is moving.
             states: [
