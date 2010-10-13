@@ -260,7 +260,8 @@ int QGeoSearchReply::limit() const
 }
 
 /*!
-    Returns the offset
+    Returns the offset into the entire result set at which to start 
+    fetching results.
 */
 int QGeoSearchReply::offset() const
 {
@@ -277,7 +278,9 @@ void QGeoSearchReply::setLimit(int limit)
     d_ptr->limit = limit;
 }
 
-/*!
+/*
+    Sets the offset in the entire result set at which to start 
+    fetching result to \a offset.
 */
 void QGeoSearchReply::setOffset(int offset)
 {

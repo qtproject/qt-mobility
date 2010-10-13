@@ -78,7 +78,28 @@ public:
     {
         return QDeclarativeContactDetail::Organization;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Name:
+            return QContactOrganization::FieldName;
+        case LogoUrl:
+            return QContactOrganization::FieldLogoUrl;
+        case Department:
+            return QContactOrganization::FieldDepartment;
+        case Location:
+            return QContactOrganization::FieldLocation;
+        case Role:
+            return QContactOrganization::FieldRole;
+        case Title:
+            return QContactOrganization::FieldTitle;
+        case AssistantName:
+            return QContactOrganization::FieldAssistantName;
+        default:
+            break;
+        }
+        return "";
+    }
     void setName(const QString& name) {detail().setValue(QContactOrganization::FieldName, name);}
     QString name() const {return detail().value(QContactOrganization::FieldName);}
     void setLogoUrl(const QUrl& logo) {detail().setValue(QContactOrganization::FieldLogoUrl, logo);}

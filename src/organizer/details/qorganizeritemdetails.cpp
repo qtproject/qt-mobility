@@ -991,6 +991,54 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::FieldDataUrl, "DataUrl");
 */
 
 
+/* ==================== QOrganizerItemTag ======================= */
+/*!
+   \class QOrganizerItemTag
+   \brief The QOrganizerItemTag class contains some arbitrary tag which is relevant to the organizer item.
+   \inmodule QtOrganizer
+   \ingroup organizer-details
+ */
+
+/*!
+    Returns a filter suitable for finding items with a tag containing the specified
+    \a substring.
+*/
+QOrganizerItemFilter QOrganizerItemTag::match(const QString &substring)
+{
+    QOrganizerItemDetailFilter f;
+    f.setDetailDefinitionName(QOrganizerItemTag::DefinitionName,
+                              QOrganizerItemTag::FieldTag);
+    f.setValue(substring);
+    f.setMatchFlags(QOrganizerItemFilter::MatchContains);
+
+    return f;
+}
+
+/*!
+   \variable QOrganizerItemTag::DefinitionName
+   The constant string which identifies the definition of details which are tags.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTag::DefinitionName, "Tag");
+
+/*!
+   \variable QOrganizerItemTag::FieldTag
+
+   The constant key for which the tag value is stored in details of
+   the QOrganizerItemTag type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTag::FieldTag, "Tag");
+
+/*!
+   \fn QOrganizerItemTag::setTag(const QString& tag)
+   Sets a tag associated with an organizer item to \a tag.
+ */
+
+/*!
+   \fn QOrganizerItemTag::tag() const
+   Returns the tag associated with an organizer item which is stored in this detail.
+ */
+
+
 /* ==================== QOrganizerItemTimestamp ======================= */
 /*!
    \class QOrganizerItemTimestamp

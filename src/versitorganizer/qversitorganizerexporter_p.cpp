@@ -69,6 +69,9 @@ QVersitOrganizerExporterPrivate::QVersitOrganizerExporterPrivate(const QString& 
 
 QVersitOrganizerExporterPrivate::~QVersitOrganizerExporterPrivate()
 {
+    foreach (QVersitOrganizerHandler* pluginHandler, mPluginDetailHandlers) {
+        delete pluginHandler;
+    }
 }
 
 bool QVersitOrganizerExporterPrivate::exportItem(

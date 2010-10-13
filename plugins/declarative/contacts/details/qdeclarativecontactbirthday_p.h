@@ -68,7 +68,18 @@ public:
     {
         return QDeclarativeContactDetail::Birthday;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Date:
+            return QContactBirthday::FieldBirthday;
+        case DateTime:
+            return QContactBirthday::FieldBirthday;
+        default:
+            break;
+        }
+        return "";
+    }
     void setDate(const QDate& date) {detail().setValue(QContactBirthday::FieldBirthday, date);}
     QDate date() const {return detail().value<QDate>(QContactBirthday::FieldBirthday);}
     void setDateTime(const QDateTime& dateTime) {detail().setValue(QContactBirthday::FieldBirthday, dateTime);}

@@ -72,6 +72,18 @@ public:
         return QDeclarativeContactDetail::Avatar;
     }
 
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case ImageUrl:
+            return QContactAvatar::FieldVideoUrl;
+        case VideoUrl:
+            return QContactAvatar::FieldVideoUrl;
+        default:
+            break;
+        }
+        return "";
+    }
 signals:
     void fieldsChanged();
 

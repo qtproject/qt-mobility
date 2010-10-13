@@ -154,6 +154,7 @@ private slots:
     void uriParsing();
     void compatibleItem();
     void recurrenceWithGenerator();
+    void dateRange();
 
     /* Tests that are run on all managers */
     void metadata();
@@ -187,6 +188,7 @@ private slots:
     void uriParsing_data();
     void compatibleItem_data();
     void recurrenceWithGenerator_data();
+    void dateRange_data();
     /* Tests that are run on all managers */
     void metadata_data() {addManagers();}
     void nullIdOperations_data() {addManagers();}
@@ -2514,33 +2516,41 @@ void tst_QOrganizerManager::spanOverDays()
     cm->removeItems(cm->itemIds()); // empty the calendar to prevent the previous test from interfering this one
 
     QOrganizerEvent event;
-    event.setDisplayLabel("event");
+    event.setDisplayLabel("huge event");
     event.setStartDateTime(QDateTime(QDate(2010, 8, 9), QTime(11, 0, 0)));
     event.setEndDateTime(QDateTime(QDate(2010, 8, 11), QTime(11, 30, 0)));
     QVERIFY(cm->saveItem(&event));
 
+    // just fetch one day from the event
     QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2010, 8, 9)),
                                             QDateTime(QDate(2010, 8, 9), QTime(23,59,59)));
     QCOMPARE(items.count(), 1);
 
+    // fetch the next day
     items = cm->items(QDateTime(QDate(2010, 8, 10), QTime(0,0,0)), QDateTime(QDate(2010, 8, 10), QTime(23,59,59)));
     QCOMPARE(items.count(), 1);
 
+    // fetch the last day
     items = cm->items(QDateTime(QDate(2010, 8, 11), QTime(0,0,0)), QDateTime(QDate(2010, 11, 10), QTime(23,59,59)));
     QCOMPARE(items.count(), 1);
 
+    // fetch an interval starting before the event until infinity
     items = cm->items(QDateTime(QDate(2010, 8, 5), QTime(0,0,0)), QDateTime());
     QCOMPARE(items.count(), 1);
 
+    // fetch an interval ending after the event
     items = cm->items(QDateTime(), QDateTime(QDate(2010, 12, 10), QTime(23,59,59)));
     QCOMPARE(items.count(), 1);
 
+    // fetch an interval starting before the event and ending at almost end of the year
     items = cm->items(QDateTime(QDate(2010, 8, 5), QTime(0,0,0)), QDateTime(QDate(2010, 12, 10), QTime(23,59,59)));
     QCOMPARE(items.count(), 1);
 
+    // fetch an interval ending in the middle of the event
     items = cm->items(QDateTime(), QDateTime(QDate(2010, 8, 10), QTime(23,59,59)));
     QCOMPARE(items.count(), 1);
 
+    // fetch an interval starting from the middle of the event until infinity
     items = cm->items(QDateTime(QDate(2010, 8, 10), QTime(0,0,0)), QDateTime());
     QCOMPARE(items.count(), 1);
 }
@@ -2551,7 +2561,7 @@ void tst_QOrganizerManager::recurrence()
     QScopedPointer<QOrganizerManager> cm(QOrganizerManager::fromUri(uri));
 
     QOrganizerEvent event;
-    event.setDisplayLabel("event");
+    event.setDisplayLabel("recurrent event");
     event.setStartDateTime(QDateTime(QDate(2012, 8, 9), QTime(11, 0, 0)));
     event.setEndDateTime(QDateTime(QDate(2012, 8, 9), QTime(11, 30, 0)));
     QOrganizerRecurrenceRule rrule;
@@ -2560,21 +2570,134 @@ void tst_QOrganizerManager::recurrence()
     event.setRecurrenceRule(rrule);
     QVERIFY(cm->saveItem(&event));
 
+    // Fetch all events with occurrences
     QList<QOrganizerItem> items = cm->items(QDateTime(QDate(2012, 8, 9)),
                                             QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
     QCOMPARE(items.count(), 3);
 
+    // Fetch events for the first day
     items = cm->items(QDateTime(QDate(2012, 8, 9), QTime(0,0,0)), QDateTime(QDate(2012, 8, 9), QTime(23,59,59)));
     QCOMPARE(items.count(), 1);
 
+    // Fetch events for the second day
     items = cm->items(QDateTime(QDate(2012, 8, 10), QTime(0,0,0)), QDateTime(QDate(2012, 8, 10), QTime(23,59,59)));
     QCOMPARE(items.count(), 1);
 
+    // Create an exception on the second day
+    QOrganizerEventOccurrence ex = static_cast<QOrganizerEventOccurrence>(items.at(0));
+    ex.setStartDateTime(QDateTime(QDate(2012, 8, 10), QTime(10, 30, 0)));
+    QVERIFY(cm->saveItem(&ex));
+
+    // Fetch again the events for the second day
+    items = cm->items(QDateTime(QDate(2012, 8, 10), QTime(0,0,0)), QDateTime(QDate(2012, 8, 10), QTime(23,59,59)));
+    QCOMPARE(items.count(), 1);
+    QOrganizerItem item = items.at(0);
+    QVERIFY(!item.localId().isNull());
+    QVERIFY(item.type() == QOrganizerItemType::TypeEventOccurrence);
+
+    // Add a normal event to the first day
+    QOrganizerEvent event2;
+    event2.setDisplayLabel("event");
+    event2.setStartDateTime(QDateTime(QDate(2012, 8, 9), QTime(15, 0, 0)));
+    event2.setEndDateTime(QDateTime(QDate(2012, 8, 9), QTime(16, 0, 0)));
+    QVERIFY(cm->saveItem(&event2));
+
+    // Fetch the whole period again
+    items = cm->items(QDateTime(QDate(2012, 8, 9)), QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
+    QCOMPARE(items.count(), 4);
+    foreach(QOrganizerItem item, items) {
+        // check if the item is the recurrence exception
+        if (item.localId() == ex.localId()) {
+            QOrganizerEventOccurrence exc = static_cast<QOrganizerEventOccurrence>(item);
+            QCOMPARE(exc.guid(), ex.guid());
+            QCOMPARE(exc.startDateTime(), ex.startDateTime());
+            QCOMPARE(exc.endDateTime(), ex.endDateTime());
+        } else if (item.localId() == event2.localId()) {
+            // check if the item is the normal event
+            QOrganizerEvent ev = static_cast<QOrganizerEvent>(item);
+            QCOMPARE(ev.guid(), event2.guid());
+            QCOMPARE(ev.startDateTime(), event2.startDateTime());
+            QCOMPARE(ev.endDateTime(), event2.endDateTime());
+        } else {
+            // item must be event occurrence type and has to be a generated one
+            QVERIFY(item.type() == QOrganizerItemType::TypeEventOccurrence);
+            QVERIFY(item.localId().isNull());
+        }
+    }
+
+    // Fetch events on a day where the recurrence is no longer valid
     items = cm->items(QDateTime(QDate(2012, 8, 12), QTime(0,0,0)), QDateTime(QDate(2012, 8, 12), QTime(23,59,59)));
     QCOMPARE(items.count(), 0);
 }
 
+void tst_QOrganizerManager::dateRange()
+{
+    QFETCH(QOrganizerItem, item);
+    QFETCH(QDateTime, startPeriod);
+    QFETCH(QDateTime, endPeriod);
+    QFETCH(bool, result);
+    QCOMPARE(QOrganizerManagerEngine::isItemBetweenDates(item, startPeriod, endPeriod), result);
+}
 
+void tst_QOrganizerManager::dateRange_data()
+{
+    QTest::addColumn<QOrganizerItem>("item");
+    QTest::addColumn<QDateTime>("startPeriod");
+    QTest::addColumn<QDateTime>("endPeriod");
+    QTest::addColumn<bool>("result");
+
+    QOrganizerEvent ev;
+    ev.setStartDateTime(QDateTime(QDate(2010, 10, 10), QTime(10,0,0)));
+    ev.setEndDateTime(QDateTime(QDate(2010, 10, 12), QTime(11,0,0)));
+
+    QTest::newRow("event - month") << QOrganizerItem(ev) << QDateTime(QDate(2010,10,1)) << QDateTime(QDate(2010,10,31)) << true;
+    QTest::newRow("event - first day") << QOrganizerItem(ev) << QDateTime(QDate(2010,10,10)) << QDateTime(QDate(2010,10,10), QTime(23,59,59)) << true;
+    QTest::newRow("event - second day") << QOrganizerItem(ev) << QDateTime(QDate(2010,10,11)) << QDateTime(QDate(2010,10,11), QTime(23,59,59)) << true;
+    QTest::newRow("event - last day") << QOrganizerItem(ev) << QDateTime(QDate(2010,10,12)) << QDateTime(QDate(2010,10,12), QTime(23,59,59)) << true;
+    QTest::newRow("event - undefined period") << QOrganizerItem(ev) << QDateTime() << QDateTime() << true;
+    QTest::newRow("event - undefined start") << QOrganizerItem(ev) << QDateTime() << QDateTime(QDate(2010,10,11)) << true;
+    QTest::newRow("event - undefined end") << QOrganizerItem(ev) << QDateTime(QDate(2010,10,11)) << QDateTime() << true;
+    QTest::newRow("event - before") << QOrganizerItem(ev) << QDateTime(QDate(2010,10,8)) << QDateTime(QDate(2010,10,9)) << false;
+    QTest::newRow("event - after") << QOrganizerItem(ev) << QDateTime(QDate(2010,10,13)) << QDateTime(QDate(2010,10,14)) << false;
+
+    QOrganizerTodo todo;
+    todo.setStartDateTime(QDateTime(QDate(2010, 10, 10), QTime(10,0,0)));
+    todo.setDueDateTime(QDateTime(QDate(2010, 10, 12), QTime(11,0,0)));
+
+    QTest::newRow("todo - month") << QOrganizerItem(todo) << QDateTime(QDate(2010,10,1)) << QDateTime(QDate(2010,10,31)) << true;
+    QTest::newRow("todo - first day") << QOrganizerItem(todo) << QDateTime(QDate(2010,10,10)) << QDateTime(QDate(2010,10,10), QTime(23,59,59)) << true;
+    QTest::newRow("todo - second day") << QOrganizerItem(todo) << QDateTime(QDate(2010,10,11)) << QDateTime(QDate(2010,10,11), QTime(23,59,59)) << true;
+    QTest::newRow("todo - last day") << QOrganizerItem(todo) << QDateTime(QDate(2010,10,12)) << QDateTime(QDate(2010,10,12), QTime(23,59,59)) << true;
+    QTest::newRow("todo - undefined period") << QOrganizerItem(todo) << QDateTime() << QDateTime() << true;
+    QTest::newRow("todo - undefined start") << QOrganizerItem(todo) << QDateTime() << QDateTime(QDate(2010,10,11)) << true;
+    QTest::newRow("todo - undefined end") << QOrganizerItem(todo) << QDateTime(QDate(2010,10,11)) << QDateTime() << true;
+    QTest::newRow("todo - before") << QOrganizerItem(todo) << QDateTime(QDate(2010,10,8)) << QDateTime(QDate(2010,10,9)) << false;
+    QTest::newRow("todo - after") << QOrganizerItem(todo) << QDateTime(QDate(2010,10,13)) << QDateTime(QDate(2010,10,14)) << false;
+
+    todo.setDueDateTime(QDateTime());
+    QTest::newRow("todo missing due date - undefined start") << QOrganizerItem(todo) << QDateTime() << QDateTime(QDate(2010,10,11)) << true;
+    QTest::newRow("todo missing due date - undefined end") << QOrganizerItem(todo) << QDateTime(QDate(2010,10,10)) << QDateTime() << true;
+
+    todo.setStartDateTime(QDateTime());
+    todo.setDueDateTime(QDateTime(QDate(2010, 10, 12), QTime(11,0,0)));
+    QTest::newRow("todo missing start date - undefined start") << QOrganizerItem(todo) << QDateTime() << QDateTime(QDate(2010,10,13)) << true;
+    QTest::newRow("todo missing start date - undefined end") << QOrganizerItem(todo) << QDateTime(QDate(2010,10,11)) << QDateTime() << true;
+
+    QOrganizerJournal journal;
+    journal.setDateTime(QDateTime(QDate(2010, 10, 10), QTime(10,0,0)));
+    QTest::newRow("journal - month") << QOrganizerItem(journal) << QDateTime(QDate(2010,10,1)) << QDateTime(QDate(2010,10,31)) << true;
+    QTest::newRow("journal - first day") << QOrganizerItem(journal) << QDateTime(QDate(2010,10,10)) << QDateTime(QDate(2010,10,10), QTime(23,59,59)) << true;
+    QTest::newRow("journal - second day") << QOrganizerItem(journal) << QDateTime(QDate(2010,10,11)) << QDateTime(QDate(2010,10,11), QTime(23,59,59)) << false;
+    QTest::newRow("journal - undefined period") << QOrganizerItem(journal) << QDateTime() << QDateTime() << true;
+    QTest::newRow("journal - undefined start") << QOrganizerItem(journal) << QDateTime() << QDateTime(QDate(2010,10,11)) << true;
+    QTest::newRow("journal - undefined end") << QOrganizerItem(journal) << QDateTime(QDate(2010,10,10)) << QDateTime() << true;
+    QTest::newRow("journal - before") << QOrganizerItem(journal) << QDateTime(QDate(2010,10,8)) << QDateTime(QDate(2010,10,9)) << false;
+    QTest::newRow("journal - after") << QOrganizerItem(journal) << QDateTime(QDate(2010,10,13)) << QDateTime(QDate(2010,10,14)) << false;
+
+    QOrganizerNote note;
+    QTest::newRow("note") << QOrganizerItem(note) << QDateTime(QDate(2010,10,1)) << QDateTime() << false;
+    QTest::newRow("note - undefined period") << QOrganizerItem(note) << QDateTime() << QDateTime() << true;
+}
 
 QList<QOrganizerItemDetail> tst_QOrganizerManager::removeAllDefaultDetails(const QList<QOrganizerItemDetail>& details)
 {
