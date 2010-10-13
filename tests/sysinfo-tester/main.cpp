@@ -240,11 +240,17 @@ static const char *human_size(qlonglong n)
   int g = n & 1023; n >>= 10;
 
   *pos = 0;
+#if defined(Q_WS_WIN)
+  if(g) _snprintf_s(pos, sizeof(pos), end-pos,"%s%dGB", *buf?" ":"", g), pos = strchr(pos,0);
+  if(m) _snprintf_s(pos, sizeof(pos), end-pos,"%s%dMB", *buf?" ":"", m), pos = strchr(pos,0);
+  if(k) _snprintf_s(pos, sizeof(pos), end-pos,"%s%dkB", *buf?" ":"", k), pos = strchr(pos,0);
+  if(b) _snprintf_s(pos, sizeof(pos), end-pos,"%s%dB",  *buf?" ":"", b), pos = strchr(pos,0);
+#else
   if(g) snprintf(pos, end-pos, "%s%dGB", *buf?" ":"", g), pos = strchr(pos,0);
   if(m) snprintf(pos, end-pos, "%s%dMB", *buf?" ":"", m), pos = strchr(pos,0);
   if(k) snprintf(pos, end-pos, "%s%dkB", *buf?" ":"", k), pos = strchr(pos,0);
   if(b) snprintf(pos, end-pos, "%s%dB",  *buf?" ":"", b), pos = strchr(pos,0);
-
+#endif
   return buf;
 }
 
@@ -364,14 +370,15 @@ int lookup_test(const char *name)
 
 int main(int ac, char **av)
 {
-  if(!getenv("DISPLAY")) {
+#if !defined(Q_WS_WIN)
+    if(!getenv("DISPLAY")) {
     qDebug() << "$DISPLAY not set, assuming :0";
     setenv("DISPLAY", ":0", 1);
   }
   if(!getenv("DBUS_SESSION_BUS_ADDRESS")) {
     qDebug() << "session bus not configured";
   }
-
+#endif
   QApplication app(ac, av, true);
 
   if(ac < 2) {
