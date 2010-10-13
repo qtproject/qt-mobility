@@ -271,13 +271,25 @@ void LandmarkBrowser::on_deleteCategoriesButton_clicked()
 
     QLandmarkCategoryId id;
     QModelIndex index;
+    bool alreadyWarned = false;
     while(selectedIndexes.count() > 0) {
         index = selectedIndexes.takeLast();
         id.setManagerUri(manager->managerUri());
         id.setLocalId(categoryTable->item(index.row(),1)->text());
+        if (manager->isReadOnly(id)) {
+            if (!alreadyWarned) {
+                QMessageBox::warning(this,"Warning", "Cannot delete a global category", QMessageBox::Ok, QMessageBox::NoButton);
+                alreadyWarned = true;
+            }
 
-        deleteIds.append(id);
-        categoryTable->removeRow(index.row());
+            selection->setCurrentIndex(index, QItemSelectionModel::Deselect);
+            categoryTable->setSelectionModel(selection);
+
+        } else {
+            deleteIds.append(id);
+            categoryTable->removeRow(index.row());
+        }
+
         selectedIndexes = categoryTable->selectionModel()->selectedRows();
     }
 
@@ -296,7 +308,9 @@ void LandmarkBrowser::on_deleteCategoriesButton_clicked()
 void LandmarkBrowser::on_addLandmark_clicked()
 {
     LandmarkAddDialog addDialog(this);
+#ifndef Q_OS_SYMBIAN
     addDialog.resize(this->width(), this->height());
+#endif
     if (!addDialog.exec()) {
         return;
     }
@@ -577,7 +591,11 @@ void LandmarkBrowser::updateCategoryTable(const QList<QLandmarkCategory> &cats)
     for ( int i =0; i < cats.count(); ++i) {
         cat = cats.at(i);
         categoryTable->insertRow(categoryTable->rowCount());
-        categoryTable->setItem(categoryTable->rowCount()-1,0,new QTableWidgetItem(cat.name()));
+        if(manager->isReadOnly(cat.categoryId())) {
+            categoryTable->setItem(categoryTable->rowCount()-1,0,new QTableWidgetItem(cat.name() + "(global)"));
+        } else {
+            categoryTable->setItem(categoryTable->rowCount()-1,0,new QTableWidgetItem(cat.name()));
+        }
         categoryTable->setItem(categoryTable->rowCount()-1,1,new QTableWidgetItem(cat.categoryId().localId()));
 
         if (i %20)

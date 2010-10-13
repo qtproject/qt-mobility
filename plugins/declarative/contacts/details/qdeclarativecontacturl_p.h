@@ -51,14 +51,20 @@ class QDeclarativeContactUrl : public QDeclarativeContactDetail
     Q_OBJECT
 
     Q_PROPERTY(QString url READ url WRITE setUrl NOTIFY fieldsChanged)
-    Q_PROPERTY(QString subType READ subType WRITE setSubType NOTIFY fieldsChanged)
+    Q_PROPERTY(SubTypeType subType READ subType WRITE setSubType NOTIFY fieldsChanged)
 
     Q_ENUMS(FieldType)
+    Q_ENUMS(SubTypeType)
     Q_CLASSINFO("DefaultProperty", "url")
 public:
     enum FieldType {
         Url = 0,
         SubType
+    };
+
+    enum SubTypeType {
+        HomePage = 0,
+        Favourite
     };
 
     QDeclarativeContactUrl(QObject* parent = 0)
@@ -70,12 +76,35 @@ public:
     {
         return QDeclarativeContactDetail::Url;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Url:
+            return QContactUrl::FieldUrl;
+        case SubType:
+            return QContactUrl::FieldSubType;
+        default:
+            break;
+        }
+        return "";
+    }
     void setUrl(const QString& url) {detail().setValue(QContactUrl::FieldUrl, url);}
     QString url() const {return detail().value(QContactUrl::FieldUrl);}
 
-    void setSubType(const QString& subType) {detail().setValue(QContactUrl::FieldSubType, subType);}
-    QString subType() const {return detail().value(QContactUrl::FieldSubType);}
+    void setSubType(SubTypeType subType)
+    {
+        if (subType == HomePage)
+            detail().setValue(QContactUrl::FieldSubType, QContactUrl::SubTypeHomePage);
+        else if (subType == Favourite)
+            detail().setValue(QContactUrl::FieldSubType, QContactUrl::SubTypeFavourite);
+    }
+    SubTypeType subType() const
+    {
+        QString typeString = detail().value(QContactUrl::FieldSubType);
+        if (typeString == QContactUrl::SubTypeFavourite)
+            return Favourite;
+        return HomePage;
+    }
 signals:
     void fieldsChanged();
 };

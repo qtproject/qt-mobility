@@ -63,6 +63,18 @@ public:
         return QDeclarativeContactDetail::Timestamp;
     }
 
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case LastModified:
+            return QContactTimestamp::FieldModificationTimestamp;
+        case Created:
+            return QContactTimestamp::FieldCreationTimestamp;
+        default:
+            break;
+        }
+        return "";
+    }
     QDeclarativeContactTimestamp(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
