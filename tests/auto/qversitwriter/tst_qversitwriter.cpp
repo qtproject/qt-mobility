@@ -280,7 +280,7 @@ void tst_QVersitWriter::testByteArrayOutput()
     property.setName(QString(QLatin1String("FN")));
     property.setValue(QLatin1String("John"));
     document.addProperty(property);
-    QVERIFY2(mWriter->startWriting(QList<QVersitDocument>() << document), QString::number(mWriter->error()).toAscii().data());
+    QVERIFY2(mWriter->startWriting(document), QString::number(mWriter->error()).toAscii().data());
     QVERIFY2(mWriter->waitForFinished(), QString::number(mWriter->error()).toAscii().data());
     QCOMPARE(output, vCard30);
 }

@@ -54,22 +54,19 @@ class QDeclarativeContactType : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "type")
 public:
     enum FieldType {
-        Type = 0
+        TypeField = 0
     };
 
-    enum ContactType {
-        Contact = 0,
-        Group
-    };
+
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Type;
+        return QDeclarativeContactDetail::ContactType;
     }
-    QString fieldNameFromFieldType(int fieldType) const
+    static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case Type:
+        case TypeField:
             return QContactType::FieldType;
         default:
             break;
@@ -80,14 +77,17 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactType());
+        connect(this, SIGNAL(valueChanged()), SIGNAL(fieldsChanged()));
     }
 
     void setType(ContactType type)
     {
-        if (type == Contact)
-            detail().setValue(QContactType::FieldType, QContactType::TypeContact);
-        else if (type == Group)
-            detail().setValue(QContactType::FieldType, QContactType::TypeGroup);
+         if (!readOnly())  {
+            if (type == Contact)
+                detail().setValue(QContactType::FieldType, QContactType::TypeContact);
+            else if (type == Group)
+                detail().setValue(QContactType::FieldType, QContactType::TypeGroup);
+         }
     }
     ContactType type() const
     {
