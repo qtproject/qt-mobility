@@ -79,6 +79,7 @@ public:
         newHints &= 0xFFFFFFFF;
         newHints &= (int)hints;
         d.setOptimizationHints(newHints);
+        emit valueChanged();
     }
 
     QOrganizerItemFetchHint fetchHint() const

@@ -72,16 +72,19 @@ public:
     void setDefinitionName(const QString& name)
     {
         d.setDetailDefinitionName(name, d.detailFieldName());
+        emit valueChanged();
     }
 
     void setFieldName(const QString& name)
     {
         d.setDetailDefinitionName(d.detailDefinitionName(), name);
+        emit valueChanged();
     }
 
     void setBlankPolicy(BlankPolicy blankPolicy)
     {
         d.setBlankPolicy(static_cast<QOrganizerItemSortOrder::BlankPolicy>(blankPolicy));
+        emit valueChanged();
     }
 
     void setDirection(Qt::SortOrder direction)
@@ -92,6 +95,7 @@ public:
     void setCaseSensitivity(Qt::CaseSensitivity sensitivity)
     {
         d.setCaseSensitivity(sensitivity);
+        emit valueChanged();
     }
 
     QString definitionName() const

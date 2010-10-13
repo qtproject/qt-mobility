@@ -91,7 +91,6 @@ QDeclarativeOrganizerModel::QDeclarativeOrganizerModel(QObject *parent) :
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(OrganizerItemRole, "item");
-    roleNames.insert(OrganizerItemIdRole, "itemId");
     setRoleNames(roleNames);
 
     connect(this, SIGNAL(managerChanged()), SLOT(fetchAgain()));
@@ -195,29 +194,29 @@ QDeclarativeOrganizerItemFilter* QDeclarativeOrganizerModel::filter() const
     return d->m_filter;
 }
 
-void QDeclarativeOrganizerModel::setFilter(QDeclarativeOrganizerItemFilter* filter)
-{
-    if (filter && filter != d->m_filter) {
-        if (d->m_filter)
-            delete d->m_filter;
-        d->m_filter = filter;
-        emit filterChanged();
-    }
-}
+//void QDeclarativeOrganizerModel::setFilter(QDeclarativeOrganizerItemFilter* filter)
+//{
+//    if (filter && filter != d->m_filter) {
+//        if (d->m_filter)
+//            delete d->m_filter;
+//        d->m_filter = filter;
+//        emit filterChanged();
+//    }
+//}
 
 QDeclarativeOrganizerItemFetchHint* QDeclarativeOrganizerModel::fetchHint() const
 {
     return d->m_fetchHint;
 }
-void QDeclarativeOrganizerModel::setFetchHint(QDeclarativeOrganizerItemFetchHint* fetchHint)
-{
-    if (fetchHint && fetchHint != d->m_fetchHint) {
-        if (d->m_fetchHint)
-            delete d->m_fetchHint;
-        d->m_fetchHint = fetchHint;
-        emit fetchHintChanged();
-    }
-}
+//void QDeclarativeOrganizerModel::setFetchHint(QDeclarativeOrganizerItemFetchHint* fetchHint)
+//{
+//    if (fetchHint && fetchHint != d->m_fetchHint) {
+//        if (d->m_fetchHint)
+//            delete d->m_fetchHint;
+//        d->m_fetchHint = fetchHint;
+//        emit fetchHintChanged();
+//    }
+//}
 
 QDeclarativeOrganizerModel::Error QDeclarativeOrganizerModel::error() const
 {
@@ -384,10 +383,12 @@ QVariant QDeclarativeOrganizerModel::data(const QModelIndex &index, int role) co
     QDeclarativeOrganizerItem* di = d->m_items.value(index.row());
     QOrganizerItem item = di->item();
     switch(role) {
+        case Qt::DisplayRole:
+            return item.displayLabel();
+        case Qt::DecorationRole:
+            //return pixmap for this item type
         case OrganizerItemRole:
             return QVariant::fromValue(di);
-        case OrganizerItemIdRole:
-            return qHash(item.id());
     }
     return QVariant();
 }
@@ -395,6 +396,12 @@ QVariant QDeclarativeOrganizerModel::data(const QModelIndex &index, int role) co
 
 QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::items()
 {
+    return QDeclarativeListProperty<QDeclarativeOrganizerItem>(this, d->m_items);
+}
+
+QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::occurrences()
+{
+    //TODO:XXX
     return QDeclarativeListProperty<QDeclarativeOrganizerItem>(this, d->m_items);
 }
 

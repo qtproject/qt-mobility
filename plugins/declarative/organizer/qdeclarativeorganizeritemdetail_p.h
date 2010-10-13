@@ -128,16 +128,20 @@ public:
 
     Q_INVOKABLE bool setValue(const QString& key, const QVariant& value)
     {
-        return m_detail.setValue(key, value);
+        bool ok = m_detail.setValue(key, value);
+        emit detailChanged();
+        return ok;
     }
 
     Q_INVOKABLE bool removeValue(const QString& key)
     {
-        return m_detail.removeValue(key);
+        bool ok = m_detail.removeValue(key);
+        emit detailChanged();
+        return ok;
     }
 
 signals:
-    void valueChanged();
+    void detailChanged();
 
 protected:
     QOrganizerItemDetail m_detail;
@@ -158,6 +162,7 @@ public:
     QDeclarativeOrganizerEventTime(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
 
     virtual ItemDetailType type() const
@@ -206,6 +211,7 @@ public:
     QDeclarativeOrganizerItemComment(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
     virtual ItemDetailType type() const
     {
@@ -236,6 +242,7 @@ public:
     QDeclarativeOrganizerItemDescription(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
     virtual ItemDetailType type() const
     {
@@ -265,6 +272,7 @@ public:
     QDeclarativeOrganizerItemDisplayLabel(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
     virtual ItemDetailType type() const
     {
@@ -294,6 +302,7 @@ public:
     QDeclarativeOrganizerItemGuid(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
     virtual ItemDetailType type() const
     {
@@ -326,6 +335,7 @@ public:
     QDeclarativeOrganizerItemParent(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
 
     virtual ItemDetailType type() const
@@ -373,6 +383,7 @@ public:
     QDeclarativeOrganizerItemLocation(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
     virtual ItemDetailType type() const
     {
@@ -433,6 +444,7 @@ public:
     QDeclarativeOrganizerItemPriority(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
     virtual ItemDetailType type() const
     {
@@ -466,6 +478,7 @@ public:
     QDeclarativeOrganizerItemRecurrence(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
         connect(this, SIGNAL(recurrenceRulesChanged()), SLOT(_saveRecurrenceRules()));
         connect(this, SIGNAL(exceptionRulesChanged()), SLOT(_saveExceptionRules()));
     }
@@ -565,6 +578,7 @@ public:
     QDeclarativeOrganizerItemReminder(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
 
     virtual ItemDetailType type() const
@@ -619,6 +633,7 @@ public:
     QDeclarativeOrganizerItemAudibleReminder(QObject* parent = 0)
         :QDeclarativeOrganizerItemReminder(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
     virtual ItemDetailType type() const
     {
@@ -649,6 +664,7 @@ public:
     QDeclarativeOrganizerItemVisualReminder(QObject* parent = 0)
         :QDeclarativeOrganizerItemReminder(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
 
     virtual ItemDetailType type() const
@@ -691,6 +707,7 @@ public:
     QDeclarativeOrganizerItemEmailReminder(QObject* parent = 0)
         :QDeclarativeOrganizerItemReminder(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
     virtual ItemDetailType type() const
     {
@@ -748,6 +765,7 @@ public:
     QDeclarativeOrganizerItemTimestamp(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
     virtual ItemDetailType type() const
     {
@@ -796,6 +814,7 @@ public:
     QDeclarativeOrganizerItemType(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
     virtual ItemDetailType type() const
     {
@@ -864,6 +883,7 @@ public:
     QDeclarativeOrganizerJournalTime(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
     virtual ItemDetailType type() const
     {
@@ -955,6 +975,7 @@ public:
     QDeclarativeOrganizerTodoTime(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(detailChanged()));
     }
     virtual ItemDetailType type() const
     {

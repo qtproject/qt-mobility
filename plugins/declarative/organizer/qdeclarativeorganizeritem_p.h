@@ -141,7 +141,6 @@ public:
     {
         Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemGuid, "guid", guid)
     }
-
 signals:
     void valueChanged();
 protected:
