@@ -1409,6 +1409,9 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             }
         }
 
+        d->m_itemTransformer.addEventPostSaveDetails(item, cevent);
+        d->m_itemTransformer.sortDetails(item);
+
         delete cevent;
         return calError;
     }
@@ -1430,6 +1433,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
         if (usesResolvedParentCalendar)
             cleanupCal(cal);
+
         return calError;
     }
     else if (item->type() == QOrganizerItemType::TypeTodo || item->type() == QOrganizerItemType::TypeTodoOccurrence) {
@@ -1511,6 +1515,8 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             }
         }
 
+        d->m_itemTransformer.addTodoPostSaveDetails(item, ctodo);
+        d->m_itemTransformer.sortDetails(item);
         delete ctodo;
         return calError;
     }
@@ -1575,6 +1581,8 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             }
         }
 
+        d->m_itemTransformer.addJournalPostSaveDetails(item, cjournal);
+        d->m_itemTransformer.sortDetails(item);
         delete cjournal;
         return calError;
     }
@@ -1953,6 +1961,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
             // Set calendar (collection) id
             retn.setCollectionId(collectionId);
 
+            d->m_itemTransformer.sortDetails(&retn);
             return retn;
         }
         else {
@@ -1974,6 +1983,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
             // Set calendar (collection) id
             retn.setCollectionId(collectionId);
 
+            d->m_itemTransformer.sortDetails(&retn);
             return retn;
         }
     }
@@ -1996,6 +2006,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
         // Set calendar (collection) id
         retn.setCollectionId(collectionId);
 
+        d->m_itemTransformer.sortDetails(&retn);
         return retn;
     }
 
@@ -2017,6 +2028,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
         // Set calendar (collection) id
         retn.setCollectionId(collectionId);
 
+        d->m_itemTransformer.sortDetails(&retn);
         return retn;
     }
 

@@ -112,6 +112,11 @@ public: // transform functions
 
     bool addGeoToQOIL(const QString& src, QOrganizerItemLocation* detail) const;
 
+    void addEventPostSaveDetails(QOrganizerItem *item, CEvent *cevent);
+    void addTodoPostSaveDetails(QOrganizerItem *item, CTodo *ctodo);
+    void addJournalPostSaveDetails(QOrganizerItem *item, CJournal *cjournal);
+    void sortDetails(QOrganizerItem *item) const;
+
 private:
     // random GUID generation
     QString randomGuid() const;
@@ -123,5 +128,8 @@ private:
     // recurrence rule converter instance
     OrganizerRecurrenceTransform m_recTransformer;
 };
+
+// detail sort function
+bool detailLessThan(const QOrganizerItemDetail &d1, const QOrganizerItemDetail &d2);
 
 #endif // QORGANIZERITEMTRANSFORM_H
