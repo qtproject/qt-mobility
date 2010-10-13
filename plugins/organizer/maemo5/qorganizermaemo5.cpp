@@ -1154,7 +1154,6 @@ QStringList QOrganizerItemMaemo5Engine::supportedItemTypes() const
 
 void QOrganizerItemMaemo5Engine::checkItemIdValidity(QOrganizerItem *checkItem, QOrganizerManager::Error *error)
 {
-    Q_UNUSED(cal);
     *error = QOrganizerManager::NoError;
 
     // Check local id

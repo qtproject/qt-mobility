@@ -404,6 +404,11 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
 
         CEvent *cevent = cal->getEvent(itemIdStr.toStdString(), calError);
         if (!cevent) {
+            if (!itemId.isNull()) {
+                // If item id is not null, the item must exist. Otherwise return 'does not found'.
+                *error = QOrganizerManager::DoesNotExistError;
+                return retn;
+            }
             // Event did not existed in calendar, create a new CEvent with an empty ID
             cevent = new CEvent();
         }
@@ -457,11 +462,16 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
 
         CTodo *ctodo = cal->getTodo(itemIdStr.toStdString(), calError);
         if (!ctodo) {
-            // Event did not existed in calendar, create a new CEvent with an empty ID
+            if (!itemId.isNull()) {
+                // If item id is not null, the item must exist. Otherwise return 'does not found'.
+                *error = QOrganizerManager::DoesNotExistError;
+                return retn;
+            }
+            // Todo did not existed in calendar, create a new CEvent with an empty ID
             ctodo = new CTodo();
         }
         else {
-            // Event existed in calendar, use the existing event's ID
+            // Todo existed in calendar, use the existing event's ID
             ctodo->setId(itemIdStr.toStdString());
         }
         ctodo->setCalendarId(calId);
@@ -510,11 +520,16 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         *error = QOrganizerManager::NoError;
         CJournal *cjournal = cal->getJournal(itemIdStr.toStdString(), calError);
         if (!cjournal) {
-            // Event did not existed in calendar, create a new CEvent with an empty ID
+            if (!itemId.isNull()) {
+                // If item id is not null, the item must exist. Otherwise return 'does not found'.
+                *error = QOrganizerManager::DoesNotExistError;
+                return retn;
+            }
+            // Journal did not existed in calendar, create a new CEvent with an empty ID
             cjournal = new CJournal();
         }
         else {
-            // Event existed in calendar, use the existing event's ID
+            // Journal existed in calendar, use the existing event's ID
             cjournal->setId(itemIdStr.toStdString());
         }
         cjournal->setCalendarId(calId);
