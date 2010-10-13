@@ -49,8 +49,6 @@
 #include <qgeomapdata.h>
 #include <qgeomapobject.h>
 
-#include <QDebug>
-
 QTM_BEGIN_NAMESPACE
 
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
@@ -90,11 +88,7 @@ void QDeclarativeGraphicsGeoMap::paint(QPainter *painter,
 void QDeclarativeGraphicsGeoMap::geometryChanged(const QRectF &newGeometry,
                                                  const QRectF & /*oldGeometry*/)
 {
-    qWarning() << "geometryChanged";
-    if (mapData_)
-        mapData_->setWindowSize(size_);
-    else
-        size_ = newGeometry.size();
+    setSize(newGeometry.size());
 }
 
 // this is write once
