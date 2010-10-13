@@ -70,11 +70,14 @@ class QDeclarativeOrganizerItem : public QObject
 {
     Q_OBJECT
     Q_PROPERTY (QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> details READ details NOTIFY valueChanged);
-    Q_PROPERTY (uint itemId READ itemId NOTIFY valueChanged)
-    Q_PROPERTY (QString type READ type NOTIFY valueChanged)
+    Q_PROPERTY (QString manager READ manager)
+    Q_PROPERTY (uint itemId READ itemId)
+    Q_PROPERTY (QString type READ type)
     Q_PROPERTY (QString displayLabel READ displayLabel WRITE setDisplayLabel NOTIFY valueChanged)
     Q_PROPERTY (QString description READ description WRITE setDescription NOTIFY valueChanged)
     Q_PROPERTY (QString guid READ guid WRITE setGuid NOTIFY valueChanged)
+    Q_PROPERTY (bool modified READ modified)
+
     Q_CLASSINFO("DefaultProperty", "details")
 
 public:
@@ -83,6 +86,8 @@ public:
     ~QDeclarativeOrganizerItem();
 
     uint itemId() const;
+    QString manager() const;
+    bool modified() const;
 
     void setItem(const QOrganizerItem& c);
     QOrganizerItem item() const;
@@ -141,6 +146,7 @@ signals:
     void valueChanged();
 protected:
     QDeclarativeOrganizerItemDetail* detailByDefinitionName(const QString& name) const;
+    void setModified(bool modified);
     QDeclarativeOrganizerItemMetaObject* d;
     friend class QDeclarativeOrganizerItemMetaObject;
 };
@@ -490,7 +496,7 @@ public:
     {
         Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoProgress,  "status", returnValue)
         if (returnValue.isNull())
-            return QDeclarativeOrganizerTodoProgress::StatusNotStarted;
+            return QDeclarativeOrganizerTodoProgress::NotStarted;
         return static_cast<QDeclarativeOrganizerTodoProgress::Status>(returnValue.value<int>());
     }
 
@@ -603,7 +609,7 @@ public:
     {
         Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoProgress,  "status", returnValue)
         if (returnValue.isNull())
-            return QDeclarativeOrganizerTodoProgress::StatusNotStarted;
+            return QDeclarativeOrganizerTodoProgress::NotStarted;
         return static_cast<QDeclarativeOrganizerTodoProgress::Status>(returnValue.value<int>());
     }
 

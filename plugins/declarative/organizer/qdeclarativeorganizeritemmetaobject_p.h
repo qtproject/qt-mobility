@@ -86,6 +86,7 @@ private:
     static void  detail_clear(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p);
 
 
+    bool m_modified;
     QOrganizerItem m_item;
     QMap<QString, QOrganizerItemDetailDefinition> m_defs;
     QList<QDeclarativeOrganizerItemDetail*> m_details;

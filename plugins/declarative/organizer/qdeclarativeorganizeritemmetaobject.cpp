@@ -40,7 +40,8 @@ static OrganizerItemDetailNameMap qt_organizerItemDetailNameMap[] = {
 };
 
 QDeclarativeOrganizerItemMetaObject::QDeclarativeOrganizerItemMetaObject(QObject* obj, const QOrganizerItem& item)
-    :QDeclarativeOpenMetaObject(obj)
+    :QDeclarativeOpenMetaObject(obj),
+      m_modified(false)
 {
     setItem(item);
 }
