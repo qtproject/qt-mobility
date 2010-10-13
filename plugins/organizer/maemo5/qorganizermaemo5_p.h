@@ -244,6 +244,7 @@ private:
     QOrganizerItemMaemo5EngineData *d;
     QTimer m_waitTimer;
     mutable QMutex m_operationMutex;
+    mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definitions;
     friend class QOrganizerItemMaemo5Factory;
 };
 
