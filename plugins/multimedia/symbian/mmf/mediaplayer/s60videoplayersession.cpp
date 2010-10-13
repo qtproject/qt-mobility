@@ -344,10 +344,18 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 
     RWindow *window = static_cast<RWindow *>(m_window);
     if (window) {
+        /* Get the window size */
         TRect rect;
-        S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
-        const QSize size = widgetControl->videoWidgetSize();
-        rect.SetSize(TSize(size.width(), size.height()));
+        if (m_videoOutput && m_videoOutput->inherits("S60VideoWidgetControl")) {
+            S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
+            const QSize size = widgetControl->videoWidgetSize();
+            rect.SetSize(TSize(size.width(), size.height()));
+        }
+        else if (m_videoOutput && m_videoOutput->inherits("S60VideoOverlay")) {
+            S60VideoOverlay* videoOverlay = qobject_cast<S60VideoOverlay *>(m_videoOutput);
+            const QSize size = videoOverlay->displayRect().size();
+            rect.SetSize(TSize(size.width(), size.height()));
+        }
         m_rect = rect;
 
         window->SetBackgroundColor(TRgb(0, 0, 0, 255));
@@ -507,6 +515,9 @@ void S60VideoPlayerSession::resizeVideoWindow()
 {
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED
     S60VideoWidgetControl *widgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
+    if (!widgetControl)
+        return;
+
     m_aspectRatioMode = widgetControl->aspectRatioMode();
 
     TRect rect;
