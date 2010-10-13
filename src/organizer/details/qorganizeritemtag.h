@@ -39,31 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILS_H
-#define QORGANIZERITEMDETAILS_H
+#ifndef QORGANIZERITEMTAG_H
+#define QORGANIZERITEMTAG_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Organizer API.
+#include <QString>
 
-#include "qorganizereventtime.h"
-#include "qorganizeritemcomment.h"
-#include "qorganizeritemdescription.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemguid.h"
-#include "qorganizeritemlocation.h"
-#include "qorganizeritemparent.h"
-#include "qorganizeritempriority.h"
-#include "qorganizeritemrecurrence.h"
-#include "qorganizeritemtag.h"
-#include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtype.h"
-#include "qorganizerjournaltime.h"
-#include "qorganizertodoprogress.h"
-#include "qorganizertodotime.h"
+#include "qtorganizerglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritem.h"
+#include "qorganizeritemfilter.h"
 
-#include "qorganizeritemreminder.h"
-#include "qorganizeritemaudiblereminder.h"
-#include "qorganizeritememailreminder.h"
-#include "qorganizeritemvisualreminder.h"
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_ORGANIZER_EXPORT QOrganizerItemTag : public QOrganizerItemDetail
+{
+public:
+#ifdef Q_QDOC
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldTag;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemTag, "Tag")
+    Q_DECLARE_LATIN1_CONSTANT(FieldTag, "Tag");
+#endif
+
+    void setTag(const QString& tag) {setValue(FieldTag, tag);}
+    QString tag() const {return value(FieldTag);}
+
+    // Convenience filter
+    static QOrganizerItemFilter match(const QString& substring);
+};
+
+QTM_END_NAMESPACE
 
 #endif
+

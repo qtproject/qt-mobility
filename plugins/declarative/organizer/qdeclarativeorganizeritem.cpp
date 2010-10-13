@@ -93,6 +93,20 @@ uint QDeclarativeOrganizerItem::itemId() const
     return d->itemId();
 }
 
+QString QDeclarativeOrganizerItem::manager() const
+{
+    return d->m_item.id().managerUri();
+}
+
+bool QDeclarativeOrganizerItem::modified() const
+{
+    return d->m_modified;
+}
+
+void QDeclarativeOrganizerItem::setModified(bool modified)
+{
+    d->m_modified = modified;
+}
 
 QVariant QDeclarativeOrganizerItem::detail(const QString& name)
 {

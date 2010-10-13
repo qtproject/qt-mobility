@@ -56,7 +56,7 @@ class QDeclarativeOrganizerItemFilter : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(FilterType type READ type NOTIFY typeChanged)
+    Q_PROPERTY(FilterType type READ type)
 
     Q_ENUMS(FilterType);
     Q_FLAGS(MatchFlags);
@@ -68,13 +68,13 @@ public:
 
     enum FilterType {
         InvalidFilter = QOrganizerItemFilter::InvalidFilter,
-        OrganizerItemDetailFilter = QOrganizerItemFilter::OrganizerItemDetailFilter,
-        OrganizerItemDetailRangeFilter = QOrganizerItemFilter::OrganizerItemDetailRangeFilter,
+        DetailFilter = QOrganizerItemFilter::OrganizerItemDetailFilter,
+        DetailRangeFilter = QOrganizerItemFilter::OrganizerItemDetailRangeFilter,
         ChangeLogFilter = QOrganizerItemFilter::ChangeLogFilter,
         ActionFilter = QOrganizerItemFilter::ActionFilter,
         IntersectionFilter = QOrganizerItemFilter::IntersectionFilter,
         UnionFilter = QOrganizerItemFilter::UnionFilter,
-        LocalIdFilter = QOrganizerItemFilter::LocalIdFilter,
+        IdFilter = QOrganizerItemFilter::LocalIdFilter,
         CollectionFilter = QOrganizerItemFilter::CollectionFilter,
         DefaultFilter = QOrganizerItemFilter::DefaultFilter
     };
@@ -100,8 +100,7 @@ public:
     }
 
 signals:
-    void typeChanged();
-    void valueChanged();
+    void filterChanged();
 };
 
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemFilter)
@@ -126,10 +125,17 @@ public:
     QDeclarativeOrganizerItemChangelogFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
 
     QDateTime since() const { return d.since(); }
-    void setSince(const QDateTime& since) { d.setSince(since); }
+    void setSince(const QDateTime& datetime)
+    {
+        if (datetime != since()) {
+            emit valueChanged();
+            d.setSince(datetime);
+        }
+    }
 
     EventType eventType() const { return static_cast<QDeclarativeOrganizerItemChangelogFilter::EventType>(d.eventType()); }
     void setEventType(EventType type) { d.setEventType(static_cast<QOrganizerItemChangeLogFilter::EventType>(type)); }
@@ -157,6 +163,7 @@ public:
     QDeclarativeOrganizerItemCollectionFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
 
     QVariantList ids() const
@@ -192,6 +199,7 @@ public:
     QDeclarativeOrganizerItemDetailFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
 
 
@@ -262,6 +270,7 @@ public:
     QDeclarativeOrganizerItemDetailRangeFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
 
 
@@ -335,6 +344,7 @@ public:
     QDeclarativeOrganizerItemLocalIdFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
 
     QOrganizerItemFilter filter() const;
@@ -369,6 +379,7 @@ public:
     QDeclarativeOrganizerItemIntersectionFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
 
     QOrganizerItemFilter filter() const
@@ -407,6 +418,7 @@ public:
     QDeclarativeOrganizerItemUnionFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
 
     QOrganizerItemFilter filter() const
@@ -441,6 +453,7 @@ public:
     QDeclarativeOrganizerItemInvalidFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
+        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
 
     QOrganizerItemFilter filter() const

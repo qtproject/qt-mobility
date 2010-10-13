@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,31 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILS_H
-#define QORGANIZERITEMDETAILS_H
+import Qt 4.7
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Organizer API.
+Item {
+    id: titleBar
+    property string managerName: ""
+    property int contactsCount: 0
+    property string statusString: ""
 
-#include "qorganizereventtime.h"
-#include "qorganizeritemcomment.h"
-#include "qorganizeritemdescription.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemguid.h"
-#include "qorganizeritemlocation.h"
-#include "qorganizeritemparent.h"
-#include "qorganizeritempriority.h"
-#include "qorganizeritemrecurrence.h"
-#include "qorganizeritemtag.h"
-#include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtype.h"
-#include "qorganizerjournaltime.h"
-#include "qorganizertodoprogress.h"
-#include "qorganizertodotime.h"
 
-#include "qorganizeritemreminder.h"
-#include "qorganizeritemaudiblereminder.h"
-#include "qorganizeritememailreminder.h"
-#include "qorganizeritemvisualreminder.h"
+    BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
 
-#endif
+    Item {
+        id: container
+        width: (parent.width * 2) - 55 ; height: parent.height
+
+        Image {
+            id: quitButton
+            anchors.left: parent.left//; anchors.leftMargin: 0
+            anchors.verticalCenter: parent.verticalCenter
+            source: "images/quit.png"
+            MouseArea {
+                anchors.fill: parent
+                onClicked: Qt.quit()
+            }
+        }
+
+        Text {
+            id: categoryText
+            anchors {
+                left: quitButton.right; right: parent.right; //leftMargin: 10; rightMargin: 10
+                verticalCenter: parent.verticalCenter
+            }
+            elide: Text.ElideLeft
+            text: "[" + managerName + "] Total:" + contactsCount + " " + statusString
+            font.bold: true; font.pixelSize: 15; color: "White"; style: Text.Raised; styleColor: "Black"
+        }
+
+    }
+
+}

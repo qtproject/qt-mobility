@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,31 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILS_H
-#define QORGANIZERITEMDETAILS_H
+import Qt 4.7
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Organizer API.
+Item {
+    id: toolbar
 
-#include "qorganizereventtime.h"
-#include "qorganizeritemcomment.h"
-#include "qorganizeritemdescription.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemguid.h"
-#include "qorganizeritemlocation.h"
-#include "qorganizeritemparent.h"
-#include "qorganizeritempriority.h"
-#include "qorganizeritemrecurrence.h"
-#include "qorganizeritemtag.h"
-#include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtype.h"
-#include "qorganizerjournaltime.h"
-#include "qorganizertodoprogress.h"
-#include "qorganizertodotime.h"
+    property alias button1Label: button1.text
+    property alias button2Label: button2.text
+    signal button1Clicked
+    signal button2Clicked
 
-#include "qorganizeritemreminder.h"
-#include "qorganizeritemaudiblereminder.h"
-#include "qorganizeritememailreminder.h"
-#include "qorganizeritemvisualreminder.h"
+    BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
 
-#endif
+    Button {
+        id: button1
+        anchors.left: parent.left; anchors.leftMargin: 5; y: 3; width: 140; height: 32
+        onClicked: toolbar.button1Clicked()
+    }
+
+    Button {
+        id: button2
+        anchors.right: parent.right; anchors.rightMargin: 5; y: 3; width: 140; height: 32
+        onClicked: toolbar.button2Clicked()
+    }
+
+}

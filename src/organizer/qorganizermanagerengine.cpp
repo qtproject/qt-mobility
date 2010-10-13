@@ -2363,13 +2363,15 @@ bool QOrganizerManagerEngine::isItemBetweenDates(const QOrganizerItem& item, con
         return false;
     }
 
-    // if period start date is not given, check that item is starting before period end
+    // if period start date is not given, check that item is starting or ending before period end
     if (startPeriod.isNull()) // endPeriod must be non-null because of initial test
-        return !itemDateStart.isNull() && itemDateStart <= endPeriod;
+        return (!itemDateStart.isNull() && itemDateStart <= endPeriod) ||
+               (!itemDateEnd.isNull() && itemDateEnd <= endPeriod);
 
-    // if period end date is not given, check that item is ending after the period start
+    // if period end date is not given, check that item is starting or ending after the period start
     if (endPeriod.isNull())   // startPeriod must be non-null because of initial test
-        return !itemDateEnd.isNull() && itemDateEnd >= startPeriod;
+        return !itemDateEnd.isNull() && itemDateEnd >= startPeriod ||
+               !itemDateStart.isNull() && itemDateStart >= startPeriod;
 
     // Both startPeriod and endPeriod are not null
     // check if item start date is between the period start and end date
@@ -2456,27 +2458,6 @@ void QOrganizerManagerEngine::addSorted(QList<QOrganizerItem>* sorted, const QOr
 
     // hasn't been inserted yet?  append to the list.
     sorted->append(toAdd);
-}
-
-/*! Sorts the given list of organizer items \a cs according to the provided \a sortOrders */
-QList<QOrganizerItemLocalId> QOrganizerManagerEngine::sortItems(const QList<QOrganizerItem>& cs, const QList<QOrganizerItemSortOrder>& sortOrders)
-{
-    QList<QOrganizerItemLocalId> sortedIds;
-    QList<QOrganizerItem> sortedOrganizerItems;
-    if (!sortOrders.isEmpty()) {
-        foreach (const QOrganizerItem& c, cs) {
-            QOrganizerManagerEngine::addSorted(&sortedOrganizerItems, c, sortOrders);
-        }
-
-        foreach(const QOrganizerItem& c, sortedOrganizerItems) {
-            sortedIds.append(c.localId());
-        }
-    } else {
-        foreach(const QOrganizerItem& c, cs) {
-            sortedIds.append(c.localId());
-        }
-    }
-    return sortedIds;
 }
 
 /*!
