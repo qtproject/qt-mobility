@@ -115,6 +115,27 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     return languages;
 }
 
+QString QSystemInfoPrivate::currentLanguage() const
+{
+#if defined(Q_WS_MAEMO_6)
+    GConfItem langItem("/meegotouch/i18n/language");
+    return langItem.value().toString();
+#else
+    return QSystemInfoLinuxCommonPrivate::currentLanguage();
+#endif
+}
+
+
+QString QSystemInfoPrivate::currentCountryCode() const
+{
+#if defined(Q_WS_MAEMO_6)
+    GConfItem langItem("/meegotouch/i18n/language");
+    return langItem.value().toString().section("_",1,1);
+#else
+    return QSystemInfoLinuxCommonPrivate::currentCountryCode();
+#endif
+}
+
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,
                                     const QString &parameter)
 {
