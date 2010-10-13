@@ -381,9 +381,9 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
     }
 }
 
-CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrganizerItem *item, QOrganizerItemManager::Error *error)
+CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrganizerItem *item, QOrganizerManager::Error *error)
 {
-    *error = QOrganizerItemManager::InvalidItemTypeError;
+    *error = QOrganizerManager::InvalidItemTypeError;
 
     QOrganizerItemLocalId itemId = item->localId();
 
@@ -400,7 +400,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
     if (item->type() == QOrganizerItemType::TypeEvent
         || item->type() == QOrganizerItemType::TypeEventOccurrence) {
 
-        *error = QOrganizerItemManager::NoError;
+        *error = QOrganizerManager::NoError;
 
         CEvent *cevent = cal->getEvent(itemIdStr.toStdString(), calError);
         if (!cevent) {
@@ -453,7 +453,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
     else if (item->type() == QOrganizerItemType::TypeTodo
             || item->type() == QOrganizerItemType::TypeTodoOccurrence) {
 
-        *error = QOrganizerItemManager::NoError;
+        *error = QOrganizerManager::NoError;
 
         CTodo *ctodo = cal->getTodo(itemIdStr.toStdString(), calError);
         if (!ctodo) {
@@ -507,7 +507,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         retn = ctodo;
     }
     else if (item->type() == QOrganizerItemType::TypeJournal) {
-        *error = QOrganizerItemManager::NoError;
+        *error = QOrganizerManager::NoError;
         CJournal *cjournal = cal->getJournal(itemIdStr.toStdString(), calError);
         if (!cjournal) {
             // Event did not existed in calendar, create a new CEvent with an empty ID
@@ -586,9 +586,9 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
     return retn;
 }
 
-CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* item, QOrganizerItemManager::Error *error)
+CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* item, QOrganizerManager::Error *error)
 {
-    *error = QOrganizerItemManager::NoError;
+    *error = QOrganizerManager::NoError;
 
     // Only the event and todo types contain recurrence information
     if (item->type() == QOrganizerItemType::TypeEvent) {
@@ -596,13 +596,13 @@ CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* ite
         const QOrganizerEvent *event = static_cast<const QOrganizerEvent *>(item);
 
         // Add recurrence rules
-        QSet<QOrganizerItemRecurrenceRule> recurrenceRules = event->recurrenceRules();
-        foreach (QOrganizerItemRecurrenceRule rule, recurrenceRules)
-            m_recTransformer.addQOrganizerItemRecurrenceRule(rule);
+        QSet<QOrganizerRecurrenceRule> recurrenceRules = event->recurrenceRules();
+        foreach (QOrganizerRecurrenceRule rule, recurrenceRules)
+            m_recTransformer.addQOrganizerRecurrenceRule(rule);
 
         // Add exception rules
-        QSet<QOrganizerItemRecurrenceRule> exceptionRules = event->exceptionRules();
-        foreach (QOrganizerItemRecurrenceRule rule, exceptionRules)
+        QSet<QOrganizerRecurrenceRule> exceptionRules = event->exceptionRules();
+        foreach (QOrganizerRecurrenceRule rule, exceptionRules)
             m_recTransformer.addQOrganizerItemExceptionRule(rule);
 
         // Add recurrence dates
@@ -613,7 +613,7 @@ CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* ite
             // recurrence rule, no date must be set 6 years or more after
             // the current event's date. Otherwise setting a correct rule would be impossible.
             if (recDate >= dateLimit)
-                *error = QOrganizerItemManager::NotSupportedError;
+                *error = QOrganizerManager::NotSupportedError;
 
             // Still set the date, let the caller decise what to do
             m_recTransformer.addQOrganizerItemRecurrenceDate(recDate);
@@ -626,7 +626,7 @@ CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* ite
             // exception rule, no date must be set 6 years or more after
             // the current event's date. Otherwise setting a correct rule would be impossible.
             if (exceptionDate >= dateLimit)
-                *error = QOrganizerItemManager::NotSupportedError;
+                *error = QOrganizerManager::NotSupportedError;
 
             // Still set the date, let the caller decise what to do
             m_recTransformer.addQOrganizerItemExceptionDate(exceptionDate);
@@ -652,13 +652,13 @@ QPair<qint32, qint32> OrganizerItemTransform::modifyAlarmEvent(CCalendar *cal, Q
             QDateTime reminderDateTime;
             QDateTime startDateTime;
             if (item->type() == QOrganizerItemType::TypeEvent || item->type() == QOrganizerItemType::TypeEventOccurrence) {
-                startDateTime = item->detail<QOrganizerEventTimeRange>().startDateTime();
+                startDateTime = item->detail<QOrganizerEventTime>().startDateTime();
             }
             else if (item->type() == QOrganizerItemType::TypeTodo || item->type() == QOrganizerItemType::TypeTodoOccurrence) {
-                startDateTime = item->detail<QOrganizerTodoTimeRange>().startDateTime();
+                startDateTime = item->detail<QOrganizerTodoTime>().startDateTime();
             }
             else if (item->type() == QOrganizerItemType::TypeJournal) {
-                startDateTime = item->detail<QOrganizerJournalTimeRange>().entryDateTime();
+                startDateTime = item->detail<QOrganizerJournalTime>().entryDateTime();
             }
 
             // XXX Shouldn't this check to see if the reminder is valid - if invalid, delete the alarm event?
@@ -683,11 +683,11 @@ QPair<qint32, qint32> OrganizerItemTransform::modifyAlarmEvent(CCalendar *cal, Q
     return QPair<qint32, qint32>(oldCookie, newCookie);
 }
 
-QOrganizerItemManager::Error OrganizerItemTransform::calErrorToManagerError(int calError) const
+QOrganizerManager::Error OrganizerItemTransform::calErrorToManagerError(int calError) const
 {
     switch(calError) {
         case CALENDAR_OPERATION_SUCCESSFUL:
-            return QOrganizerItemManager::NoError;
+            return QOrganizerManager::NoError;
 
         case CALENDAR_SYSTEM_ERROR:
         case CALENDAR_DATABASE_ERROR:
@@ -702,43 +702,43 @@ QOrganizerItemManager::Error OrganizerItemTransform::calErrorToManagerError(int 
         case CALENDAR_INVALID_ICSFILE:
         case CALENDAR_SCHEMA_CHANGED:
         case CALENDAR_IMPORT_INCOMPLETE:
-            return QOrganizerItemManager::UnspecifiedError;
+            return QOrganizerManager::UnspecifiedError;
 
         case CALENDAR_MEMORY_ERROR:
-            return QOrganizerItemManager::OutOfMemoryError;
+            return QOrganizerManager::OutOfMemoryError;
 
         case CALENDAR_FILE_ERROR:
         case CALENDAR_DOESNOT_EXISTS:
         case CALENDAR_NONE_INDB:
         case NO_DUPLICATE_ITEM:
         case CALENDAR_FETCH_NOITEMS:
-            return QOrganizerItemManager::DoesNotExistError;
+            return QOrganizerManager::DoesNotExistError;
 
         case CALENDAR_DISK_FULL:
         case CALENDAR_DB_FULL:
-            return QOrganizerItemManager::LimitReachedError;
+            return QOrganizerManager::LimitReachedError;
 
         case CALENDAR_INVALID_ARG_ERROR:
-            return QOrganizerItemManager::BadArgumentError;
+            return QOrganizerManager::BadArgumentError;
 
         case CALENDAR_ALREADY_EXISTS:
         case CALENDAR_ENTRY_DUPLICATED:
-            return QOrganizerItemManager::AlreadyExistsError;
+            return QOrganizerManager::AlreadyExistsError;
 
         case CALENDAR_CANNOT_BE_DELETED:
         case EXT_ITEM_RETAINED:
         case LOCAL_ITEM_RETAINED:
-            return QOrganizerItemManager::PermissionsError;
+            return QOrganizerManager::PermissionsError;
 
         case CALENDAR_DB_LOCKED:
-            return QOrganizerItemManager::LockedError;
+            return QOrganizerManager::LockedError;
 
         case CALENDAR_ICS_COMPONENT_INVALID:
         case CALENDAR_BATCH_ADD_INVALID:
-            return QOrganizerItemManager::InvalidDetailError;
+            return QOrganizerManager::InvalidDetailError;
 
         default:
-            return QOrganizerItemManager::UnspecifiedError;
+            return QOrganizerManager::UnspecifiedError;
     }
 }
 

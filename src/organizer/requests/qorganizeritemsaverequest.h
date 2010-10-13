@@ -43,7 +43,7 @@
 #define QORGANIZERITEMSAVEREQUEST_H
 
 #include "qtorganizerglobal.h"
-#include "qorganizeritemabstractrequest.h"
+#include "qorganizerabstractrequest.h"
 #include "qorganizeritem.h"
 
 #include <QList>
@@ -51,7 +51,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemSaveRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemSaveRequest : public QOrganizerItemAbstractRequest
+class Q_ORGANIZER_EXPORT QOrganizerItemSaveRequest : public QOrganizerAbstractRequest
 {
     Q_OBJECT
 
@@ -64,11 +64,11 @@ public:
 
     /* Results */
     QList<QOrganizerItem> items() const;
-    QMap<int, QOrganizerItemManager::Error> errorMap() const;
+    QMap<int, QOrganizerManager::Error> errorMap() const;
 
 private:
     Q_DISABLE_COPY(QOrganizerItemSaveRequest)
-    friend class QOrganizerItemManagerEngine;
+    friend class QOrganizerManagerEngine;
     Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemSaveRequest)
 };
 

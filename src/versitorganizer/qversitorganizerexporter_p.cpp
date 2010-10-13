@@ -125,11 +125,11 @@ void QVersitOrganizerExporterPrivate::exportDetail(
     QList<QVersitProperty> generatedProperties;
     QSet<QString> processedFields;
 
-    if (detail.definitionName() == QOrganizerEventTimeRange::DefinitionName) {
+    if (detail.definitionName() == QOrganizerEventTime::DefinitionName) {
         encodeEventTimeRange(detail, *document, &removedProperties, &generatedProperties, &processedFields);
-    } else if (detail.definitionName() == QOrganizerTodoTimeRange::DefinitionName) {
+    } else if (detail.definitionName() == QOrganizerTodoTime::DefinitionName) {
         encodeTodoTimeRange(detail, *document, &removedProperties, &generatedProperties, &processedFields);
-    } else if (detail.definitionName() == QOrganizerJournalTimeRange::DefinitionName) {
+    } else if (detail.definitionName() == QOrganizerJournalTime::DefinitionName) {
         encodeJournalTimeRange(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemTimestamp::DefinitionName) {
         encodeTimestamp(detail, *document, &removedProperties, &generatedProperties, &processedFields);
@@ -137,7 +137,7 @@ void QVersitOrganizerExporterPrivate::exportDetail(
         encodeRecurrence(item, detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemPriority::DefinitionName) {
         encodePriority(detail, *document, &removedProperties, &generatedProperties, &processedFields);
-    } else if (detail.definitionName() == QOrganizerItemInstanceOrigin::DefinitionName) {
+    } else if (detail.definitionName() == QOrganizerItemParent::DefinitionName) {
         encodeInstanceOrigin(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerTodoProgress::DefinitionName) {
         encodeTodoProgress(detail, *document, &removedProperties, &generatedProperties, &processedFields);
@@ -173,7 +173,7 @@ void QVersitOrganizerExporterPrivate::encodeEventTimeRange(
         QList<QVersitProperty>* generatedProperties,
         QSet<QString>* processedFields)
 {
-    QOrganizerEventTimeRange etr = static_cast<QOrganizerEventTimeRange>(detail);
+    QOrganizerEventTime etr = static_cast<QOrganizerEventTime>(detail);
     QVersitProperty property =
         takeProperty(document, QLatin1String("DTSTART"), removedProperties);
     property.setName(QLatin1String("DTSTART"));
@@ -185,8 +185,8 @@ void QVersitOrganizerExporterPrivate::encodeEventTimeRange(
     property.setName(QLatin1String("DTEND"));
     property.setValue(encodeDateTime(etr.endDateTime()));
     *generatedProperties << property;
-    *processedFields << QOrganizerEventTimeRange::FieldStartDateTime
-                     << QOrganizerEventTimeRange::FieldEndDateTime;
+    *processedFields << QOrganizerEventTime::FieldStartDateTime
+                     << QOrganizerEventTime::FieldEndDateTime;
 }
 
 void QVersitOrganizerExporterPrivate::encodeTodoTimeRange(
@@ -196,7 +196,7 @@ void QVersitOrganizerExporterPrivate::encodeTodoTimeRange(
         QList<QVersitProperty>* generatedProperties,
         QSet<QString>* processedFields)
 {
-    QOrganizerTodoTimeRange ttr = static_cast<QOrganizerTodoTimeRange>(detail);
+    QOrganizerTodoTime ttr = static_cast<QOrganizerTodoTime>(detail);
     QVersitProperty property =
         takeProperty(document, QLatin1String("DTSTART"), removedProperties);
     property.setName(QLatin1String("DTSTART"));
@@ -208,8 +208,8 @@ void QVersitOrganizerExporterPrivate::encodeTodoTimeRange(
     property.setName(QLatin1String("DUE"));
     property.setValue(encodeDateTime(ttr.dueDateTime()));
     *generatedProperties << property;
-    *processedFields << QOrganizerTodoTimeRange::FieldStartDateTime
-                     << QOrganizerTodoTimeRange::FieldDueDateTime;
+    *processedFields << QOrganizerTodoTime::FieldStartDateTime
+                     << QOrganizerTodoTime::FieldDueDateTime;
 }
 
 void QVersitOrganizerExporterPrivate::encodeJournalTimeRange(
@@ -219,13 +219,13 @@ void QVersitOrganizerExporterPrivate::encodeJournalTimeRange(
         QList<QVersitProperty>* generatedProperties,
         QSet<QString>* processedFields)
 {
-    QOrganizerJournalTimeRange jtr = static_cast<QOrganizerJournalTimeRange>(detail);
+    QOrganizerJournalTime jtr = static_cast<QOrganizerJournalTime>(detail);
     QVersitProperty property =
         takeProperty(document, QLatin1String("DTSTART"), removedProperties);
     property.setName(QLatin1String("DTSTART"));
     property.setValue(encodeDateTime(jtr.entryDateTime()));
     *generatedProperties << property;
-    *processedFields << QOrganizerJournalTimeRange::FieldEntryDateTime;
+    *processedFields << QOrganizerJournalTime::FieldEntryDateTime;
 }
 
 void QVersitOrganizerExporterPrivate::encodeTimestamp(
@@ -260,18 +260,18 @@ void QVersitOrganizerExporterPrivate::encodeRecurrence(
         QSet<QString>* processedFields)
 {
     QOrganizerItemRecurrence recurrence = static_cast<QOrganizerItemRecurrence>(detail);
-    QSet<QOrganizerItemRecurrenceRule> rrules = recurrence.recurrenceRules();
-    QSet<QOrganizerItemRecurrenceRule> exrules = recurrence.exceptionRules();
+    QSet<QOrganizerRecurrenceRule> rrules = recurrence.recurrenceRules();
+    QSet<QOrganizerRecurrenceRule> exrules = recurrence.exceptionRules();
     QSet<QDate> rdates = recurrence.recurrenceDates();
     QSet<QDate> exdates = recurrence.exceptionDates();
     if (!rrules.isEmpty()) {
-        foreach (const QOrganizerItemRecurrenceRule& rrule, rrules) {
+        foreach (const QOrganizerRecurrenceRule& rrule, rrules) {
             encodeRecurRule(QLatin1String("RRULE"), rrule, generatedProperties);
         }
         *processedFields << QOrganizerItemRecurrence::FieldRecurrenceRules;
     }
     if (!exrules.isEmpty()) {
-        foreach (const QOrganizerItemRecurrenceRule& exrule, exrules) {
+        foreach (const QOrganizerRecurrenceRule& exrule, exrules) {
             encodeRecurRule(QLatin1String("EXRULE"), exrule, generatedProperties);
         }
         *processedFields << QOrganizerItemRecurrence::FieldExceptionRules;
@@ -289,34 +289,34 @@ void QVersitOrganizerExporterPrivate::encodeRecurrence(
 /*! Encodes an iCalendar recurrence specification from \a rule. */
 void QVersitOrganizerExporterPrivate::encodeRecurRule(
         const QString& propertyName,
-        const QOrganizerItemRecurrenceRule& rule,
+        const QOrganizerRecurrenceRule& rule,
         QList<QVersitProperty>* generatedProperties)
 {
     QVersitProperty property;
     property.setName(propertyName);
     QString value = QLatin1String("FREQ=");
     switch (rule.frequency()) {
-        case QOrganizerItemRecurrenceRule::Daily:
+        case QOrganizerRecurrenceRule::Daily:
             value.append(QLatin1String("DAILY"));
             break;
-        case QOrganizerItemRecurrenceRule::Weekly:
+        case QOrganizerRecurrenceRule::Weekly:
             value.append(QLatin1String("WEEKLY"));
             break;
-        case QOrganizerItemRecurrenceRule::Monthly:
+        case QOrganizerRecurrenceRule::Monthly:
             value.append(QLatin1String("MONTHLY"));
             break;
-        case QOrganizerItemRecurrenceRule::Yearly:
+        case QOrganizerRecurrenceRule::Yearly:
             value.append(QLatin1String("YEARLY"));
             break;
-        case QOrganizerItemRecurrenceRule::Invalid:
+        case QOrganizerRecurrenceRule::Invalid:
         default:
             return;
     }
-    if (rule.limitType() == QOrganizerItemRecurrenceRule::CountLimit) {
+    if (rule.limitType() == QOrganizerRecurrenceRule::CountLimit) {
         value.append(QLatin1String(";COUNT="));
         value.append(QString::number(rule.limitCount()));
     }
-    if (rule.limitType() == QOrganizerItemRecurrenceRule::DateLimit) {
+    if (rule.limitType() == QOrganizerRecurrenceRule::DateLimit) {
         value.append(QLatin1String(";UNTIL="));
         value.append(rule.limitDate().toString(QLatin1String("yyyyMMdd")));
     }
@@ -351,10 +351,10 @@ void QVersitOrganizerExporterPrivate::encodeRecurRule(
     if (!rule.monthsOfYear().isEmpty()) {
         value.append(QLatin1String(";BYMONTH="));
         bool first = true;
-        QList<QOrganizerItemRecurrenceRule::Month> months(
-                QList<QOrganizerItemRecurrenceRule::Month>::fromSet(rule.monthsOfYear()));
+        QList<QOrganizerRecurrenceRule::Month> months(
+                QList<QOrganizerRecurrenceRule::Month>::fromSet(rule.monthsOfYear()));
         qSort(months);
-        foreach (QOrganizerItemRecurrenceRule::Month month, months) {
+        foreach (QOrganizerRecurrenceRule::Month month, months) {
             if (!first)
                 value.append(QLatin1String(","));
             first = false;
@@ -465,13 +465,13 @@ void QVersitOrganizerExporterPrivate::encodeInstanceOrigin(
         QList<QVersitProperty>* generatedProperties,
         QSet<QString>* processedFields)
 {
-    QOrganizerItemInstanceOrigin instanceOrigin = static_cast<QOrganizerItemInstanceOrigin>(detail);
+    QOrganizerItemParent instanceOrigin = static_cast<QOrganizerItemParent>(detail);
     QVersitProperty property =
         takeProperty(document, QLatin1String("RECURRENCE-ID"), removedProperties);
     property.setName(QLatin1String("RECURRENCE-ID"));
     property.setValue(instanceOrigin.originalDate().toString(QLatin1String("yyyyMMdd")));
     *generatedProperties << property;
-    *processedFields << QOrganizerItemInstanceOrigin::FieldOriginalDate;
+    *processedFields << QOrganizerItemParent::FieldOriginalDate;
 }
 
 void QVersitOrganizerExporterPrivate::encodeTodoProgress(

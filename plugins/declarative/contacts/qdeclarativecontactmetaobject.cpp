@@ -84,7 +84,7 @@ void QDeclarativeContactMetaObject::getValue(int propId, void **a)
 
         } else {
             foreach(QDeclarativeContactDetail* cd, m_details) {
-                if (cd->detail().definitionName() == detailMetaData->definitionName) {
+                if (cd->detailType() == detailMetaData->type) {
                     *reinterpret_cast<QVariant *>(a[0]) = QVariant::fromValue(cd);
                 }
             }
@@ -102,7 +102,7 @@ void QDeclarativeContactMetaObject::setValue(int propId, void **a)
             QDeclarativeContactDetail* detail = v.value<QDeclarativeContactDetail*>();
 
             foreach(const QDeclarativeContactDetail* cd, m_details) {
-                if (cd->detail().definitionName() == detailMetaData->definitionName) {
+                if (cd->detailType() == detailMetaData->type) {
                     delete cd;
                     cd = detail;
                 }
@@ -111,10 +111,9 @@ void QDeclarativeContactMetaObject::setValue(int propId, void **a)
     }
 }
 
-int QDeclarativeContactMetaObject::createProperty(const char * name,  const char *)
+ContactDetailNameMap* QDeclarativeContactMetaObject::detailMetaDataByDetailName(const char * name)
 {
-
-    const int detailCount = sizeof(qt_contactDetailNameMap)/sizeof(ContactDetailNameMap);
+    static const int detailCount = sizeof(qt_contactDetailNameMap)/sizeof(ContactDetailNameMap);
     ContactDetailNameMap* detailMetaData = 0;
 
     for (int i = 0; i < detailCount; i++) {
@@ -123,13 +122,44 @@ int QDeclarativeContactMetaObject::createProperty(const char * name,  const char
             break;
         }
     }
+    return detailMetaData;
+}
 
+ContactDetailNameMap* QDeclarativeContactMetaObject::detailMetaDataByDefinitionName(const char * name)
+{
+    return detailMetaDataByDetailType(QDeclarativeContactDetail::detailType(name));
+}
+
+ContactDetailNameMap* QDeclarativeContactMetaObject::detailMetaDataByDetailType(QDeclarativeContactDetail::ContactDetailType type)
+{
+    static const int detailCount = sizeof(qt_contactDetailNameMap)/sizeof(ContactDetailNameMap);
+    ContactDetailNameMap* detailMetaData = 0;
+
+    for (int i = 0; i < detailCount; i++) {
+        if (qt_contactDetailNameMap[i].type == type && qt_contactDetailNameMap[i].group) {
+            detailMetaData = &qt_contactDetailNameMap[i];
+            break;
+        }
+    }
+    return detailMetaData;
+}
+
+
+int QDeclarativeContactMetaObject::createProperty(const char * name,  const char *)
+{
+    ContactDetailNameMap* detailMetaData = detailMetaDataByDetailName(name);
     if (detailMetaData) {
         int propId = -1;
-        if (detailMetaData->group)
-            propId = QDeclarativeOpenMetaObject::createProperty(name, "QDeclarativeListProperty<QDeclarativeContactDetail>");
-        else
+        if (detailMetaData->group) {
+            QContactDetailDefinition def = m_defs.value(detailMetaData->definitionName);
+
+            //do not allow multiple details property for non unique details
+            if (m_defs.isEmpty() || (!def.isEmpty() && !def.isUnique()))
+                propId = QDeclarativeOpenMetaObject::createProperty(name, "QDeclarativeListProperty<QDeclarativeContactDetail>");
+        }
+        else {
             propId = QDeclarativeOpenMetaObject::createProperty(name, "QVariant");
+        }
         m_properties.insert(propId, detailMetaData);
         return propId;
     }
@@ -137,20 +167,28 @@ int QDeclarativeContactMetaObject::createProperty(const char * name,  const char
 }
 
 
-QVariant QDeclarativeContactMetaObject::detail(const QString& name)
+QVariant QDeclarativeContactMetaObject::detail(QDeclarativeContactDetail::ContactDetailType type)
 {
-    int propId = indexOfProperty(name.toLatin1());
-
-    if (propId > 0)
-        return property(propId).read(object());
-
-    //Assume it's a detail definition name
     foreach(QDeclarativeContactDetail* cd, m_details) {
-        if (cd->detail().definitionName() == name) {
+        if (cd->detailType() == type) {
             return QVariant::fromValue(cd);
         }
     }
+
+    //Check should we create a new detail for this type
+    //XXX:TODO check mutable detail definition feature in manager?
+    if (m_defs.isEmpty() || !m_defs.value(QDeclarativeContactDetail::definitionName(type)).isEmpty()) {
+        QDeclarativeContactDetail* cd = createContactDetail(type, object());
+        m_details.append(cd);
+        return QVariant::fromValue(cd);
+    }
+
     return QVariant();
+}
+
+QVariant QDeclarativeContactMetaObject::detail(const QString& name)
+{
+    return detail(QDeclarativeContactDetail::detailType(name));
 }
 
 QVariant QDeclarativeContactMetaObject::details(const QString& name)
@@ -160,17 +198,21 @@ QVariant QDeclarativeContactMetaObject::details(const QString& name)
         return QVariant::fromValue(QDeclarativeListProperty<QDeclarativeContactDetail>(object(), m_details));
     } else {
         int propId = indexOfProperty(name.toLatin1());
+        if (propId <= 0) {
+            ContactDetailNameMap* metaData  = detailMetaDataByDefinitionName(name.toLatin1());
+            if (metaData) {
+               propId = indexOfProperty(metaData->name);
+            }
+        }
         if (propId > 0)
             return property(propId).read(object());
-
-        //Assume it's a detail definition name
-        //TODO::customized details
-        for (QHash<int, ContactDetailNameMap*>::ConstIterator iter = m_properties.constBegin(); iter != m_properties.constEnd(); iter++) {
-            if (iter.value()->group && iter.value()->definitionName == name)
-                return property(iter.key()).read(object());
-        }
     }
     return QVariant();
+}
+
+QVariant QDeclarativeContactMetaObject::details(QDeclarativeContactDetail::ContactDetailType type)
+{
+    return details(QDeclarativeContactDetail::definitionName(type));
 }
 
 void QDeclarativeContactMetaObject::setContact(const QContact& contact)
@@ -264,4 +306,67 @@ void  QDeclarativeContactMetaObject::detail_clear(QDeclarativeListProperty<QDecl
             }
         }
     }
+}
+
+
+QDeclarativeContactDetail* QDeclarativeContactMetaObject::createContactDetail(QDeclarativeContactDetail::ContactDetailType type, QObject* parent)
+{
+    switch (type) {
+    case QDeclarativeContactDetail::Address:
+        return new QDeclarativeContactAddress(parent);
+    case QDeclarativeContactDetail::Anniversary:
+        return new QDeclarativeContactAnniversary(parent);
+    case QDeclarativeContactDetail::Avatar:
+        return new QDeclarativeContactAvatar(parent);
+    case QDeclarativeContactDetail::Birthday:
+        return new QDeclarativeContactBirthday(parent);
+    case QDeclarativeContactDetail::DisplayLabel:
+        return new QDeclarativeContactDisplayLabel(parent);
+    case QDeclarativeContactDetail::Email:
+        return new QDeclarativeContactEmailAddress(parent);
+    case QDeclarativeContactDetail::Family:
+        return new QDeclarativeContactFamily(parent);
+    case QDeclarativeContactDetail::Favorite:
+        return new QDeclarativeContactFavorite(parent);
+    case QDeclarativeContactDetail::Gender:
+        return new QDeclarativeContactGender(parent);
+    case QDeclarativeContactDetail::Geolocation:
+        return new QDeclarativeContactGeoLocation(parent);
+    case QDeclarativeContactDetail::GlobalPresence:
+        return new QDeclarativeContactGlobalPresence(parent);
+    case QDeclarativeContactDetail::Guid:
+        return new QDeclarativeContactGuid(parent);
+    case QDeclarativeContactDetail::Name:
+        return new QDeclarativeContactName(parent);
+    case QDeclarativeContactDetail::NickName:
+        return new QDeclarativeContactNickname(parent);
+    case QDeclarativeContactDetail::Note:
+        return new QDeclarativeContactNote(parent);
+    case QDeclarativeContactDetail::OnlineAccount:
+        return new QDeclarativeContactOnlineAccount(parent);
+    case QDeclarativeContactDetail::Organization:
+        return new QDeclarativeContactOrganization(parent);
+    case QDeclarativeContactDetail::PhoneNumber:
+        return new QDeclarativeContactPhoneNumber(parent);
+    case QDeclarativeContactDetail::Presence:
+        return new QDeclarativeContactPresence(parent);
+    case QDeclarativeContactDetail::Ringtone:
+        return new QDeclarativeContactRingtone(parent);
+    case QDeclarativeContactDetail::SyncTarget:
+        return new QDeclarativeContactSyncTarget(parent);
+    case QDeclarativeContactDetail::Tag:
+        return new QDeclarativeContactTag(parent);
+    case QDeclarativeContactDetail::Thumbnail:
+        return new QDeclarativeContactThumbnail(parent);
+    case QDeclarativeContactDetail::Timestamp:
+        return new QDeclarativeContactTimestamp(parent);
+    case QDeclarativeContactDetail::Type:
+        return new QDeclarativeContactType(parent);
+    case QDeclarativeContactDetail::Url:
+        return new QDeclarativeContactUrl(parent);
+    case QDeclarativeContactDetail::Customized:
+    default:
+        break;
+    }
+    return new QDeclarativeContactDetail(parent);
 }

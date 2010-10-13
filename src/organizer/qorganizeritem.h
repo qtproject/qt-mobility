@@ -61,7 +61,7 @@ class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemManager;
+class QOrganizerManager;
 class QOrganizerItemData;
 class QOrganizerItemName;
 
@@ -198,9 +198,9 @@ protected:
 
 protected:
     friend class QOrganizerItemData;
-    friend class QOrganizerItemManager;
-    friend class QOrganizerItemManagerData;
-    friend class QOrganizerItemManagerEngine;
+    friend class QOrganizerManager;
+    friend class QOrganizerManagerData;
+    friend class QOrganizerManagerEngine;
     Q_ORGANIZER_EXPORT friend QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item);
     Q_ORGANIZER_EXPORT friend QDataStream& operator>>(QDataStream& in, QOrganizerItem& item);
 

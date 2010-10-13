@@ -77,7 +77,26 @@ public:
     {
         return QDeclarativeContactDetail::Name;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Prefix:
+            return QContactName::FieldPrefix;
+        case FirstName:
+            return QContactName::FieldFirstName;
+        case MiddleName:
+            return QContactName::FieldMiddleName;
+        case LastName:
+            return QContactName::FieldLastName;
+        case Suffix:
+            return QContactName::FieldSuffix;
+        case CustomLabel:
+            return QContactName::FieldCustomLabel;
+        default:
+            break;
+        }
+        return "";
+    }
     QString prefix() const {return detail().value(QContactName::FieldPrefix);}
     QString firstName() const {return detail().value(QContactName::FieldFirstName);}
     QString middleName() const {return detail().value(QContactName::FieldMiddleName);}

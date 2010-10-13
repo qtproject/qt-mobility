@@ -72,7 +72,20 @@ public:
     {
         return QDeclarativeContactDetail::Ringtone;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case AudioRingtoneUrl:
+            return QContactRingtone::FieldAudioRingtoneUrl;
+        case VideoRingtoneUrl:
+            return QContactRingtone::FieldVideoRingtoneUrl;
+        case VibrationRingtoneUrl:
+            return QContactRingtone::FieldVibrationRingtoneUrl;
+        default:
+            break;
+        }
+        return "";
+    }
     void setAudioRingtoneUrl(const QUrl& audioRingtoneUrl) {detail().setValue(QContactRingtone::FieldAudioRingtoneUrl, audioRingtoneUrl);}
     QUrl audioRingtoneUrl() const {return detail().value(QContactRingtone::FieldAudioRingtoneUrl);}
 

@@ -178,9 +178,9 @@ private:
             const QVersitProperty& property,
             QOrganizerItem* item,
             QList<QOrganizerItemDetail>* updatedDetails);
-    bool parseRecurRule(const QString& str, QOrganizerItemRecurrenceRule* rule) const;
+    bool parseRecurRule(const QString& str, QOrganizerRecurrenceRule* rule) const;
     void parseRecurFragment(const QString& key, const QString& value,
-                            QOrganizerItemRecurrenceRule* rule) const;
+                            QOrganizerRecurrenceRule* rule) const;
     QSet<int> parseInts(const QString& str, int min, int max) const;
     int parseDayOfWeek(const QString& str) const;
 

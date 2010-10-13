@@ -163,7 +163,7 @@ void QOrganizerCollection::setId(const QOrganizerCollectionId& id)
 /*!
   Sets the meta data of the collection to \a metaData.
   Not all managers support arbitrary meta data for collections.  You can see whether the meta data
-  is compatible with the manager by calling \l QOrganizerItemManager::compatibleCollection().
+  is compatible with the manager by calling \l QOrganizerManager::compatibleCollection().
   Attempting to save a collection with unsupported meta data in a manager will cause an error
   in the operation.
  */
@@ -196,7 +196,7 @@ void QOrganizerCollection::setMetaData(const QString& key, const QVariant& value
 /*!
   Returns the meta data of the collection for the given \a key
  */
-QVariant QOrganizerCollection::metaData(const QString& key)
+QVariant QOrganizerCollection::metaData(const QString& key) const
 {
     return d->m_metaData.value(key);
 }

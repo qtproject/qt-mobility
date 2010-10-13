@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include "qorganizeritemmanager.h"
-#include "qorganizeritemmanager_p.h"
-#include "qorganizeritemmanagerengine.h"
-#include "qorganizeritemmanagerenginefactory.h"
+#include "qorganizermanager.h"
+#include "qorganizermanager_p.h"
+#include "qorganizermanagerengine.h"
+#include "qorganizermanagerenginefactory.h"
 
 #include "qorganizeritem_p.h"
 
@@ -66,21 +66,21 @@
 
 QTM_BEGIN_NAMESPACE
 
-/* Shared QOrganizerItemManager stuff here, default engine stuff below */
-QHash<QString, QOrganizerItemManagerEngineFactory*> QOrganizerItemManagerData::m_engines;
+/* Shared QOrganizerManager stuff here, default engine stuff below */
+QHash<QString, QOrganizerManagerEngineFactory*> QOrganizerManagerData::m_engines;
 
-bool QOrganizerItemManagerData::m_discovered;
-bool QOrganizerItemManagerData::m_discoveredStatic;
-QStringList QOrganizerItemManagerData::m_pluginPaths;
+bool QOrganizerManagerData::m_discovered;
+bool QOrganizerManagerData::m_discoveredStatic;
+QStringList QOrganizerManagerData::m_pluginPaths;
 
 static void qOrganizerItemsCleanEngines()
 {
-    QOrganizerItemManagerData::m_discovered = false;
-    QList<QOrganizerItemManagerEngineFactory*> factories = QOrganizerItemManagerData::m_engines.values();
+    QOrganizerManagerData::m_discovered = false;
+    QList<QOrganizerManagerEngineFactory*> factories = QOrganizerManagerData::m_engines.values();
     for (int i=0; i < factories.count(); i++) {
         delete factories.at(i);
     }
-    QOrganizerItemManagerData::m_engines.clear();
+    QOrganizerManagerData::m_engines.clear();
 }
 
 
@@ -96,11 +96,11 @@ static int parameterValue(const QMap<QString, QString>& parameters, const char* 
     return defaultValue;
 }
 
-void QOrganizerItemManagerData::createEngine(const QString& managerName, const QMap<QString, QString>& parameters)
+void QOrganizerManagerData::createEngine(const QString& managerName, const QMap<QString, QString>& parameters)
 {
     m_engine = 0;
 
-    QString builtManagerName = managerName.isEmpty() ? QOrganizerItemManager::availableManagers().value(0) : managerName;
+    QString builtManagerName = managerName.isEmpty() ? QOrganizerManager::availableManagers().value(0) : managerName;
     if (builtManagerName == QLatin1String("memory")) {
         m_engine = QOrganizerItemMemoryEngine::createMemoryEngine(parameters);
     } else {
@@ -113,11 +113,11 @@ void QOrganizerItemManagerData::createEngine(const QString& managerName, const Q
         loadStaticFactories();
 
         /* See if we got a fast hit */
-        QList<QOrganizerItemManagerEngineFactory*> factories = m_engines.values(builtManagerName);
-        m_error = QOrganizerItemManager::NoError;
+        QList<QOrganizerManagerEngineFactory*> factories = m_engines.values(builtManagerName);
+        m_error = QOrganizerManager::NoError;
 
         while(!found) {
-            foreach (QOrganizerItemManagerEngineFactory* f, factories) {
+            foreach (QOrganizerManagerEngineFactory* f, factories) {
                 QList<int> versions = f->supportedImplementationVersions();
                 if (implementationVersion == -1 ||//no given implementation version required
                         versions.isEmpty() || //the manager engine factory does not report any version
@@ -141,20 +141,20 @@ void QOrganizerItemManagerData::createEngine(const QString& managerName, const Q
         // XXX remove this
         // the engine factory could lie to us, so check the real implementation version
         if (m_engine && (implementationVersion != -1 && m_engine->managerVersion() != implementationVersion)) {
-            m_error = QOrganizerItemManager::VersionMismatchError;
+            m_error = QOrganizerManager::VersionMismatchError;
             m_engine = 0;
         }
 
         if (!m_engine) {
-            if (m_error == QOrganizerItemManager::NoError)
-                m_error = QOrganizerItemManager::DoesNotExistError;
+            if (m_error == QOrganizerManager::NoError)
+                m_error = QOrganizerManager::DoesNotExistError;
             m_engine = new QOrganizerItemInvalidEngine();
         }
     }
 }
 
 
-void QOrganizerItemManagerData::loadStaticFactories()
+void QOrganizerManagerData::loadStaticFactories()
 {
     if (!m_discoveredStatic) {
 #if !defined QT_NO_DEBUG
@@ -169,7 +169,7 @@ void QOrganizerItemManagerData::loadStaticFactories()
         /* Loop over all the static plugins */
         QObjectList staticPlugins = QPluginLoader::staticInstances();
         for (int i=0; i < staticPlugins.count(); i++ ){
-            QOrganizerItemManagerEngineFactory *f = qobject_cast<QOrganizerItemManagerEngineFactory*>(staticPlugins.at(i));
+            QOrganizerManagerEngineFactory *f = qobject_cast<QOrganizerManagerEngineFactory*>(staticPlugins.at(i));
             if (f) {
                 QString name = f->managerName();
 #if !defined QT_NO_DEBUG
@@ -193,7 +193,7 @@ void QOrganizerItemManagerData::loadStaticFactories()
 
 
 /* Plugin loader */
-void QOrganizerItemManagerData::loadFactories()
+void QOrganizerManagerData::loadFactories()
 {
 #if !defined QT_NO_DEBUG
     const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
@@ -212,7 +212,7 @@ void QOrganizerItemManagerData::loadFactories()
         /* Now discover the dynamic plugins */
         for (int i=0; i < m_pluginPaths.count(); i++) {
             QPluginLoader qpl(m_pluginPaths.at(i));
-            QOrganizerItemManagerEngineFactory *f = qobject_cast<QOrganizerItemManagerEngineFactory*>(qpl.instance());
+            QOrganizerManagerEngineFactory *f = qobject_cast<QOrganizerManagerEngineFactory*>(qpl.instance());
             if (f) {
                 QString name = f->managerName();
 #if !defined QT_NO_DEBUG
@@ -243,7 +243,7 @@ void QOrganizerItemManagerData::loadFactories()
         }
 
         QStringList engineNames;
-        foreach (QOrganizerItemManagerEngineFactory* f, m_engines.values()) {
+        foreach (QOrganizerManagerEngineFactory* f, m_engines.values()) {
             QStringList versions;
             foreach (int v, f->supportedImplementationVersions()) {
                 versions << QString::fromAscii("%1").arg(v);
@@ -259,35 +259,35 @@ void QOrganizerItemManagerData::loadFactories()
 }
 
 /* Caller takes ownership of the id */
-QOrganizerItemEngineLocalId* QOrganizerItemManagerData::createEngineItemLocalId(const QString& uri)
+QOrganizerItemEngineLocalId* QOrganizerManagerData::createEngineItemLocalId(const QString& uri)
 {
     QString managerName;
-    QOrganizerItemManager::parseUri(uri, &managerName, NULL);
+    QOrganizerManager::parseUri(uri, &managerName, NULL);
 
     if (managerName == QLatin1String("memory"))
         return new QOrganizerItemMemoryEngineLocalId();
 
     loadFactories();
-    QOrganizerItemManagerEngineFactory *engineFactory = m_engines.value(managerName);
+    QOrganizerManagerEngineFactory *engineFactory = m_engines.value(managerName);
     return engineFactory ? engineFactory->createItemEngineLocalId() : NULL;
 }
 
 /* Caller takes ownership of the id */
-QOrganizerCollectionEngineLocalId* QOrganizerItemManagerData::createEngineCollectionLocalId(const QString& uri)
+QOrganizerCollectionEngineLocalId* QOrganizerManagerData::createEngineCollectionLocalId(const QString& uri)
 {
     QString managerName;
-    QOrganizerItemManager::parseUri(uri, &managerName, NULL);
+    QOrganizerManager::parseUri(uri, &managerName, NULL);
 
     if (managerName == QLatin1String("memory"))
         return new QOrganizerCollectionMemoryEngineLocalId();
 
     loadFactories();
-    QOrganizerItemManagerEngineFactory *engineFactory = m_engines.value(managerName);
+    QOrganizerManagerEngineFactory *engineFactory = m_engines.value(managerName);
     return engineFactory ? engineFactory->createCollectionEngineLocalId() : NULL;
 }
 
 // trampoline for private classes
-QOrganizerItemManagerEngine* QOrganizerItemManagerData::engine(const QOrganizerItemManager* manager)
+QOrganizerManagerEngine* QOrganizerManagerData::engine(const QOrganizerManager* manager)
 {
     if (manager)
         return manager->d->m_engine;

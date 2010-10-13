@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef QORGANIZERITEMMANAGER_H
-#define QORGANIZERITEMMANAGER_H
+#ifndef QORGANIZERMANAGER_H
+#define QORGANIZERMANAGER_H
 
 #include <QObject>
 
@@ -63,23 +63,23 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemManagerData;
-class Q_ORGANIZER_EXPORT QOrganizerItemManager : public QObject
+class QOrganizerManagerData;
+class Q_ORGANIZER_EXPORT QOrganizerManager : public QObject
 {
     Q_OBJECT
 
 public:
 #if Q_QDOC // qdoc's parser fails to recognise the default map argument
-    explicit QOrganizerItemManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
-    QOrganizerItemManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
+    explicit QOrganizerManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
+    QOrganizerManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
 #else
-    explicit QOrganizerItemManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
-    QOrganizerItemManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
+    explicit QOrganizerManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
+    QOrganizerManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
 #endif
-    explicit QOrganizerItemManager(QObject* parent);
+    explicit QOrganizerManager(QObject* parent);
 
-    static QOrganizerItemManager* fromUri(const QString& uri, QObject* parent = 0);
-    ~QOrganizerItemManager();
+    static QOrganizerManager* fromUri(const QString& uri, QObject* parent = 0);
+    ~QOrganizerManager();
 
     QString managerName() const;                       // e.g. "Symbian"
     QMap<QString, QString> managerParameters() const;  // e.g. "filename=private.db"
@@ -109,10 +109,10 @@ public:
     };
 
     /* Error reporting */
-    QOrganizerItemManager::Error error() const;
-    QMap<int, QOrganizerItemManager::Error> errorMap() const;
+    QOrganizerManager::Error error() const;
+    QMap<int, QOrganizerManager::Error> errorMap() const;
 
-    QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart = QDateTime(), const QDateTime& periodEnd = QDateTime(), int maxCount = -1, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
+    QList<QOrganizerItem> itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart = QDateTime(), const QDateTime& periodEnd = QDateTime(), int maxCount = -1, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
 
     /* Items - Accessors and Mutators */
     QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;
@@ -132,14 +132,13 @@ public:
     /* Collections - every item belongs to one or more collections */
     QOrganizerCollection defaultCollection() const;
     QOrganizerCollection collection(const QOrganizerCollectionLocalId& collectionId) const;
-    QList<QOrganizerCollection> collections() const; // should this be replaced with collectionIds()?
+    QList<QOrganizerCollection> collections() const;
     bool saveCollection(QOrganizerCollection* collection);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId);
-    bool removeCollection(const QOrganizerCollection& collection); // is this really necessary?
 
     /* Return a pruned or modified item which is valid and can be saved in the manager */
-    QOrganizerItem compatibleItem(const QOrganizerItem& original);
-    QOrganizerCollection compatibleCollection(const QOrganizerCollection& original);
+    QOrganizerItem compatibleItem(const QOrganizerItem& original) const;
+    QOrganizerCollection compatibleCollection(const QOrganizerCollection& original) const;
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType) const;
@@ -153,11 +152,11 @@ public:
         Anonymous,
         ChangeLogs
     };
-    bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType = QOrganizerItemType::TypeEvent) const;
+    bool hasFeature(QOrganizerManager::ManagerFeature feature, const QString& itemType = QOrganizerItemType::TypeEvent) const;
     bool isFilterSupported(const QOrganizerItemFilter& filter) const;
     QStringList supportedItemTypes() const;
 
-    /* return a list of available backends for which a QOrganizerItemManager can be constructed. */
+    /* return a list of available backends for which a QOrganizerManager can be constructed. */
     static QStringList availableManagers();
 
 Q_SIGNALS:
@@ -170,11 +169,11 @@ Q_SIGNALS:
     void collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds);
 
 private:
-    friend class QOrganizerItemManagerData;
+    friend class QOrganizerManagerData;
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters); 
-    Q_DISABLE_COPY(QOrganizerItemManager)
+    Q_DISABLE_COPY(QOrganizerManager)
     // private data pointer
-    QOrganizerItemManagerData* d;
+    QOrganizerManagerData* d;
 };
 
 QTM_END_NAMESPACE

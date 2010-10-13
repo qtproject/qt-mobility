@@ -1,6 +1,6 @@
 QT += testlib
 TEMPLATE=app
-TARGET=tst_qorganizeritemmanager
+TARGET=tst_qorganizermanager
 CONFIG+=testcase
 
 include(../../../common.pri)
@@ -15,8 +15,8 @@ INCLUDEPATH += ../
 
 CONFIG += mobility
 MOBILITY = organizer
-SOURCES  += tst_qorganizeritemmanager.cpp
-HEADERS += ../qorganizeritemmanagerdataholder.h
+SOURCES  += tst_qorganizermanager.cpp
+HEADERS += ../qorganizermanagerdataholder.h
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \
