@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -40,47 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVECONTACTTAG_H
-#define QDECLARATIVECONTACTTAG_H
+#ifndef QDECLARATIVEGEOMAPOBJECTBORDER_H
+#define QDECLARATIVEGEOMAPOBJECTBORDER_H
 
-#include "qdeclarativecontactdetail_p.h"
-#include "qcontacttag.h"
+#include "qmobilityglobal.h"
+#include <QtDeclarative/qdeclarative.h>
 
-class QDeclarativeContactTag : public QDeclarativeContactDetail
+#include <QObject>
+#include <QColor>
+
+QTM_BEGIN_NAMESPACE
+
+class QDeclarativeGeoMapObjectBorder : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString tag READ tag WRITE setTag NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType)
-    Q_CLASSINFO("DefaultProperty", "tag")
-public:
-    enum FieldType {
-        Tag = 0
-    };
 
-    QDeclarativeContactTag(QObject* parent = 0)
-        :QDeclarativeContactDetail(parent)
-    {
-        setDetail(QContactTag());
-    }
-    ContactDetailType detailType() const
-    {
-        return QDeclarativeContactDetail::Tag;
-    }
-    QString fieldNameFromFieldType(int fieldType) const
-    {
-        switch (fieldType) {
-        case Tag:
-            return QContactTag::FieldTag;
-        default:
-            break;
-        }
-        return "";
-    }
-    void setTag(const QString& tag) {detail().setValue(QContactTag::FieldTag, tag);}
-    QString tag() const {return detail().value(QContactTag::FieldTag);}
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(int width READ width WRITE setWidth NOTIFY widthChanged)
+
+public:
+    QDeclarativeGeoMapObjectBorder(QObject *parent = 0);
+    ~QDeclarativeGeoMapObjectBorder();
+
+    QColor color() const;
+    void setColor(const QColor &color);
+
+    int width() const;
+    void setWidth(int width);
+
 signals:
-    void fieldsChanged();
+    void colorChanged(const QColor &color);
+    void widthChanged(int width);
+
+private:
+    QColor m_color;
+    int m_width;
+    Q_DISABLE_COPY(QDeclarativeGeoMapObjectBorder)
 };
-QML_DECLARE_TYPE(QDeclarativeContactTag)
+
+QTM_END_NAMESPACE
+
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapObjectBorder));
 
 #endif

@@ -67,6 +67,18 @@ public:
     {
         return QDeclarativeContactDetail::Favorite;
     }
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Favorite:
+            return QContactFavorite::FieldFavorite;
+        case Index:
+            return QContactFavorite::FieldIndex;
+        default:
+            break;
+        }
+        return "";
+    }
     void setFavorite(bool isFavorite) {detail().setValue(QContactFavorite::FieldFavorite, isFavorite);}
     bool isFavorite() const {return detail().variantValue(QContactFavorite::FieldFavorite).toBool();}
     void setIndex(int index) {detail().setValue(QContactFavorite::FieldIndex, index);}

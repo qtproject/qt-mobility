@@ -112,11 +112,14 @@ public:
     QStringList linkedDetailUris() const;
     void setLinkedDetailUris(const QStringList& linkedDetailUris);
     virtual ContactDetailType detailType() const;
+    virtual QString fieldNameFromFieldType(int fieldType) const;
 
     Q_INVOKABLE QStringList fieldNames() const;
     Q_INVOKABLE QVariant value(const QString& key) const;
     Q_INVOKABLE bool setValue(const QString& key, const QVariant& value);
 
+    static QString definitionName(ContactDetailType type) ;
+    static ContactDetailType detailType(const QString& definitionName) ;
 signals:
     void fieldsChanged();
 

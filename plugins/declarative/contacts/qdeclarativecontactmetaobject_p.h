@@ -71,7 +71,10 @@ public:
     virtual int createProperty(const char *,  const char *);
 
     QVariant detail(const QString& name);
+    QVariant detail(QDeclarativeContactDetail::ContactDetailType type);
+
     QVariant details(const QString& name);
+    QVariant details(QDeclarativeContactDetail::ContactDetailType type);
     void setContact(const QContact& contact);
     QContact contact();
     int localId() const;
@@ -80,9 +83,14 @@ public:
 private:
     static void detail_append(QDeclarativeListProperty<QDeclarativeContactDetail> *p, QDeclarativeContactDetail *detail);
     static int  detail_count(QDeclarativeListProperty<QDeclarativeContactDetail> *p);
-    static QDeclarativeContactDetail * detail_at(QDeclarativeListProperty<QDeclarativeContactDetail> *p, int idx);
+    static QDeclarativeContactDetail* detail_at(QDeclarativeListProperty<QDeclarativeContactDetail> *p, int idx);
     static void  detail_clear(QDeclarativeListProperty<QDeclarativeContactDetail> *p);
 
+    static QDeclarativeContactDetail* createContactDetail(QDeclarativeContactDetail::ContactDetailType type, QObject* parent = 0);
+
+    static ContactDetailNameMap* detailMetaDataByDetailName(const char * name);
+    static ContactDetailNameMap* detailMetaDataByDefinitionName(const char * name);
+    static ContactDetailNameMap* detailMetaDataByDetailType(QDeclarativeContactDetail::ContactDetailType type);
 
     QContact m_contact;
     QMap<QString, QContactDetailDefinition> m_defs;

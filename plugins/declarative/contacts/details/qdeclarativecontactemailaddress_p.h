@@ -65,6 +65,16 @@ public:
     {
         return QDeclarativeContactDetail::Email;
     }
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Email:
+            return QContactEmailAddress::FieldEmailAddress;
+        default:
+            break;
+        }
+        return "";
+    }
 
     void setEmailAddress(const QString& emailAddress) {detail().setValue(QContactEmailAddress::FieldEmailAddress, emailAddress);}
     QString emailAddress() const {return detail().value(QContactEmailAddress::FieldEmailAddress);}

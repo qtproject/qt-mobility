@@ -66,6 +66,18 @@ public:
     {
         return QDeclarativeContactDetail::Family;
     }
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Spouse:
+            return QContactFamily::FieldSpouse;
+        case Children:
+            return QContactFamily::FieldChildren;
+        default:
+            break;
+        }
+        return "";
+    }
     void setSpouse(const QString& spouseName) {detail().setValue(QContactFamily::FieldSpouse, spouseName);}
     QString spouse() const {return detail().value(QContactFamily::FieldSpouse);}
     void setChildren(const QStringList& childrenNames) {detail().setValue(QContactFamily::FieldChildren, childrenNames);}

@@ -97,12 +97,130 @@ QContactLocalId QDeclarativeContact::contactId() const
 }
 
 
-QVariant QDeclarativeContact::detail(const QString& name)
+QVariant QDeclarativeContact::detailByName(const QString& name)
 {
     return d->detail(name);
 }
 
-QVariant QDeclarativeContact::details(const QString& name)
+QVariant QDeclarativeContact::detailsByName(const QString& name)
 {
     return d->details(name);
+}
+
+
+QVariant QDeclarativeContact::detailByType(QDeclarativeContactDetail::ContactDetailType type)
+{
+    return d->detail(type);
+}
+
+QVariant QDeclarativeContact::detailsByType(QDeclarativeContactDetail::ContactDetailType type)
+{
+    return d->details(type);
+}
+
+void QDeclarativeContact::clearDetails()
+{
+    d->m_details.clear();
+    emit detailsChanged();
+}
+
+QDeclarativeContactAddress* QDeclarativeContact::address()
+{
+    return static_cast<QDeclarativeContactAddress*>(d->detail(QDeclarativeContactDetail::Address).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactAnniversary* QDeclarativeContact::anniversary()
+{
+    return static_cast<QDeclarativeContactAnniversary*>(d->detail(QDeclarativeContactDetail::Anniversary).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactAvatar* QDeclarativeContact::avatar()
+{
+    return static_cast<QDeclarativeContactAvatar*>(d->detail(QDeclarativeContactDetail::Avatar).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactBirthday*  QDeclarativeContact::birthday()
+{
+    return static_cast<QDeclarativeContactBirthday*>(d->detail(QDeclarativeContactDetail::Birthday).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactDisplayLabel*  QDeclarativeContact::displayLabel()
+{
+    return static_cast<QDeclarativeContactDisplayLabel*>(d->detail(QDeclarativeContactDetail::DisplayLabel).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactEmailAddress*  QDeclarativeContact::email()
+{
+    return static_cast<QDeclarativeContactEmailAddress*>(d->detail(QDeclarativeContactDetail::Email).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactFamily*  QDeclarativeContact::family()
+{
+    return static_cast<QDeclarativeContactFamily*>(d->detail(QDeclarativeContactDetail::Family).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactFavorite*  QDeclarativeContact::favorite()
+{
+    return static_cast<QDeclarativeContactFavorite*>(d->detail(QDeclarativeContactDetail::Favorite).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactGender*  QDeclarativeContact::gender()
+{
+    return static_cast<QDeclarativeContactGender*>(d->detail(QDeclarativeContactDetail::Gender).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactGeoLocation*  QDeclarativeContact::geolocation()
+{
+    return static_cast<QDeclarativeContactGeoLocation*>(d->detail(QDeclarativeContactDetail::Geolocation).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactGlobalPresence*  QDeclarativeContact::globalPresence()
+{
+    return static_cast<QDeclarativeContactGlobalPresence*>(d->detail(QDeclarativeContactDetail::GlobalPresence).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactGuid*  QDeclarativeContact::guid()
+{
+    return static_cast<QDeclarativeContactGuid*>(d->detail(QDeclarativeContactDetail::Guid).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactName*  QDeclarativeContact::name()
+{
+    return static_cast<QDeclarativeContactName*>(d->detail(QDeclarativeContactDetail::Name).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactNickname*  QDeclarativeContact::nickname()
+{
+    return static_cast<QDeclarativeContactNickname*>(d->detail(QDeclarativeContactDetail::NickName).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactNote*  QDeclarativeContact::note()
+{
+    return static_cast<QDeclarativeContactNote*>(d->detail(QDeclarativeContactDetail::Note).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactOnlineAccount*  QDeclarativeContact::onlineAccount()
+{
+    return static_cast<QDeclarativeContactOnlineAccount*>(d->detail(QDeclarativeContactDetail::OnlineAccount).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactOrganization*  QDeclarativeContact::organization()
+{
+    return static_cast<QDeclarativeContactOrganization*>(d->detail(QDeclarativeContactDetail::Organization).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactPhoneNumber*  QDeclarativeContact::phoneNumber()
+{
+    return static_cast<QDeclarativeContactPhoneNumber*>(d->detail(QDeclarativeContactDetail::PhoneNumber).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactPresence*  QDeclarativeContact::presence()
+{
+    return static_cast<QDeclarativeContactPresence*>(d->detail(QDeclarativeContactDetail::Presence).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactRingtone*  QDeclarativeContact::ringtone()
+{
+    return static_cast<QDeclarativeContactRingtone*>(d->detail(QDeclarativeContactDetail::Ringtone).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactSyncTarget*  QDeclarativeContact::syncTarget()
+{
+    return static_cast<QDeclarativeContactSyncTarget*>(d->detail(QDeclarativeContactDetail::SyncTarget).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactTag*  QDeclarativeContact::tag()
+{
+    return static_cast<QDeclarativeContactTag*>(d->detail(QDeclarativeContactDetail::Tag).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactThumbnail*  QDeclarativeContact::thumbnail()
+{
+    return static_cast<QDeclarativeContactThumbnail*>(d->detail(QDeclarativeContactDetail::Thumbnail).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactType*  QDeclarativeContact::type()
+{
+    return static_cast<QDeclarativeContactType*>(d->detail(QDeclarativeContactDetail::Type).value<QDeclarativeContactDetail*>());
+}
+QDeclarativeContactUrl*  QDeclarativeContact::url()
+{
+    return static_cast<QDeclarativeContactUrl*>(d->detail(QDeclarativeContactDetail::Url).value<QDeclarativeContactDetail*>());
 }

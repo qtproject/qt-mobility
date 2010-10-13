@@ -76,7 +76,26 @@ public:
     {
         return QDeclarativeContactDetail::Presence;
     }
-
+    QString fieldNameFromFieldType(int fieldType) const
+    {
+        switch (fieldType) {
+        case Timestamp:
+            return QContactPresence::FieldTimestamp;
+        case Nickname:
+            return QContactPresence::FieldNickname;
+        case State:
+            return QContactPresence::FieldPresenceState;
+        case StateText:
+            return QContactPresence::FieldPresenceStateText;
+        case ImageUrl:
+            return QContactPresence::FieldPresenceStateImageUrl;
+        case CustomMessage:
+            return QContactPresence::FieldCustomMessage;
+        default:
+            break;
+        }
+        return "";
+    }
     void setTimestamp(const QDateTime& timestamp) {detail().setValue(QContactPresence::FieldTimestamp, timestamp);}
     QDateTime timestamp() const {return detail().value<QDateTime>(QContactPresence::FieldTimestamp);}
     void setNickname(const QString& nickname) {detail().setValue(QContactPresence::FieldNickname, nickname);}

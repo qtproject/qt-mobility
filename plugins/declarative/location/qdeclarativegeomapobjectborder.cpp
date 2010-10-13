@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -40,47 +39,48 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVECONTACTTAG_H
-#define QDECLARATIVECONTACTTAG_H
+#include "qdeclarativegeomapobjectborder_p.h"
 
-#include "qdeclarativecontactdetail_p.h"
-#include "qcontacttag.h"
+#include <QColor>
+#include <QBrush>
 
-class QDeclarativeContactTag : public QDeclarativeContactDetail
+QTM_BEGIN_NAMESPACE
+
+QDeclarativeGeoMapObjectBorder::QDeclarativeGeoMapObjectBorder(QObject *parent) 
+    : QObject(parent),
+    m_width(1) {}
+
+QDeclarativeGeoMapObjectBorder::~QDeclarativeGeoMapObjectBorder() {}
+
+void QDeclarativeGeoMapObjectBorder::setColor(const QColor &color)
 {
-    Q_OBJECT
-    Q_PROPERTY(QString tag READ tag WRITE setTag NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType)
-    Q_CLASSINFO("DefaultProperty", "tag")
-public:
-    enum FieldType {
-        Tag = 0
-    };
+    if (m_color == color)
+        return;
 
-    QDeclarativeContactTag(QObject* parent = 0)
-        :QDeclarativeContactDetail(parent)
-    {
-        setDetail(QContactTag());
-    }
-    ContactDetailType detailType() const
-    {
-        return QDeclarativeContactDetail::Tag;
-    }
-    QString fieldNameFromFieldType(int fieldType) const
-    {
-        switch (fieldType) {
-        case Tag:
-            return QContactTag::FieldTag;
-        default:
-            break;
-        }
-        return "";
-    }
-    void setTag(const QString& tag) {detail().setValue(QContactTag::FieldTag, tag);}
-    QString tag() const {return detail().value(QContactTag::FieldTag);}
-signals:
-    void fieldsChanged();
-};
-QML_DECLARE_TYPE(QDeclarativeContactTag)
+    m_color = color;
+    emit colorChanged(m_color);
+}
 
-#endif
+QColor QDeclarativeGeoMapObjectBorder::color() const
+{
+    return m_color;
+}
+
+void QDeclarativeGeoMapObjectBorder::setWidth(int width)
+{
+    if (m_width == width)
+        return;
+
+    m_width = width;
+    emit widthChanged(width);
+}
+
+int QDeclarativeGeoMapObjectBorder::width() const
+{
+    return m_width;
+}
+
+#include "moc_qdeclarativegeomapobjectborder_p.cpp"
+
+QTM_END_NAMESPACE
+
