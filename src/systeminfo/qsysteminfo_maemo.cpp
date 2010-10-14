@@ -504,6 +504,7 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
 {
     currentCellNetworkStatus = -1;
     currentBluetoothNetworkStatus = networkStatus(QSystemNetworkInfo::BluetoothMode);
+    currentWlanNetworkStatus = networkStatus(QSystemNetworkInfo::WlanMode);
     currentEthernetState = "down";
     currentEthernetSignalStrength = networkSignalStrength(QSystemNetworkInfo::EthernetMode);
     currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
@@ -529,6 +530,9 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
             rx.close();
         }
     }
+
+    currentNetworkMode = currentMode();
+
 #if !defined(QT_NO_DBUS)
     QDBusConnection systemDbusConnection = QDBusConnection::systemBus();
 
@@ -675,6 +679,8 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                        this, SLOT(networkModeChanged(int)))) {
         qWarning() << "unable to connect to radio_access_technology_change";
     }
+    #endif /* Maemo 5 */
+
     if(!systemDbusConnection.connect("com.nokia.icd",
                               "/com/nokia/icd",
                               "com.nokia.icd",
@@ -682,8 +688,6 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                               this, SLOT(icdStatusChanged(QString,QString,QString,QString))) ) {
         qWarning() << "unable to connect to icdStatusChanged";
     }
-    #endif /* Maemo 5 */
-
     if(!systemDbusConnection.connect("com.nokia.bme",
                               "/com/nokia/bme/signal",
                               "com.nokia.bme.signal",
@@ -770,19 +774,16 @@ void QSystemNetworkInfoPrivate::slotRegistrationChanged(const QString &status)
 
 void QSystemNetworkInfoPrivate::slotCellChanged(const QString &type, int id, int lac)
 {
-    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
     int newRadioAccessTechnology = 0;
     if (type == "GSM") {
-        mode = QSystemNetworkInfo::GsmMode;
         newRadioAccessTechnology = 1;
     } else if (type == "WCDMA") {
-        mode = QSystemNetworkInfo::WcdmaMode;
         newRadioAccessTechnology = 2;
     }
 
     if (newRadioAccessTechnology != radioAccessTechnology) {
         radioAccessTechnology = newRadioAccessTechnology;
-        emit networkModeChanged(mode);
+        networkModeChangeCheck();
     }
     if (currentCellId != id) {
         currentCellId = id;
@@ -813,16 +814,8 @@ void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged(uchar var1, uch
 
 void QSystemNetworkInfoPrivate::networkModeChanged(int newRadioAccessTechnology)
 {
-    QSystemNetworkInfo::NetworkMode newMode = QSystemNetworkInfo::UnknownMode;
     radioAccessTechnology = newRadioAccessTechnology;
-
-    if (radioAccessTechnology == 1)
-        newMode = QSystemNetworkInfo::GsmMode;
-    if (radioAccessTechnology == 2)
-        newMode = QSystemNetworkInfo::WcdmaMode;
-
-    if (newMode != QSystemNetworkInfo::UnknownMode)
-        emit networkModeChanged(newMode);
+    networkModeChangeCheck();
 }
 
 void QSystemNetworkInfoPrivate::operatorNameChanged(uchar, QString name, QString, uint, uint)
@@ -869,15 +862,21 @@ void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar var1, ushort var
     }
 }
 
+#endif /* Maemo 5 */
+
 void QSystemNetworkInfoPrivate::icdStatusChanged(QString, QString var2, QString, QString)
 {
     if (var2 == "WLAN_INFRA") {
-        emit networkStatusChanged(QSystemNetworkInfo::WlanMode,
-                                  networkStatus(QSystemNetworkInfo::WlanMode));
+        QSystemNetworkInfo::NetworkStatus newWlanNetworkStatus =
+                networkStatus(QSystemNetworkInfo::WlanMode);
+
+        if (currentWlanNetworkStatus != newWlanNetworkStatus) {
+            currentWlanNetworkStatus = newWlanNetworkStatus;
+            emit networkStatusChanged(QSystemNetworkInfo::WlanMode, currentWlanNetworkStatus);
+            networkModeChangeCheck();
+        }
     }
 }
-
-#endif /* Maemo 5 */
 
 void QSystemNetworkInfoPrivate::usbCableAction()
 {
@@ -899,6 +898,7 @@ void QSystemNetworkInfoPrivate::usbCableAction()
                 currentEthernetState = newEthernetState;
                 emit networkStatusChanged(QSystemNetworkInfo::EthernetMode,
                                           networkStatus(QSystemNetworkInfo::EthernetMode));
+                networkModeChangeCheck();
             }
         }
     }
@@ -919,6 +919,16 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
         return QSystemNetworkInfo::WcdmaMode;
 
     return QSystemNetworkInfo::UnknownMode;
+}
+
+void QSystemNetworkInfoPrivate::networkModeChangeCheck()
+{
+    QSystemNetworkInfo::NetworkMode newNetworkMode = currentMode();
+    if (currentNetworkMode != newNetworkMode)
+    {
+        currentNetworkMode = newNetworkMode;
+        emit networkModeChanged(currentNetworkMode);
+    }
 }
 
 void QSystemNetworkInfoPrivate::wlanSignalStrengthCheck()
