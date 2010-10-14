@@ -364,7 +364,7 @@ void COrganizerItemRequestsServiceProvider::FetchItemIds()
     QOrganizerItemLocalIdFetchRequest *req = static_cast<QOrganizerItemLocalIdFetchRequest *>(iReq);
     QOrganizerManager::Error error(QOrganizerManager::NoError);
     QList<QOrganizerItemLocalId> itemIds = iOrganizerItemManagerEngine.itemIds(req->startDate(), req->endDate(), req->filter(), req->sorting(), &error);
-    QOrganizerManagerEngine::updateItemLocalIdFetchRequest(
+    QOrganizerManagerEngine::updateItemIdFetchRequest(
         req, itemIds, error, QOrganizerAbstractRequest::FinishedState);
 }
 

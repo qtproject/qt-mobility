@@ -66,19 +66,19 @@ public:
     void setDataChanged(bool dataChanged);
     bool dataChanged();
 
-    QSet<QOrganizerItemLocalId> addedItems() const;
-    void insertAddedItem(const QOrganizerItemLocalId& addedItemId);
-    void insertAddedItems(const QList<QOrganizerItemLocalId>& addedItemIds);
+    QSet<QOrganizerItemId> addedItems() const;
+    void insertAddedItem(const QOrganizerItemId& addedItemId);
+    void insertAddedItems(const QList<QOrganizerItemId>& addedItemIds);
     void clearAddedItems();
 
-    QSet<QOrganizerItemLocalId> changedItems() const;
-    void insertChangedItem(const QOrganizerItemLocalId& addedItemId);
-    void insertChangedItems(const QList<QOrganizerItemLocalId>& addedItemIds);
+    QSet<QOrganizerItemId> changedItems() const;
+    void insertChangedItem(const QOrganizerItemId& addedItemId);
+    void insertChangedItems(const QList<QOrganizerItemId>& addedItemIds);
     void clearChangedItems();
 
-    QSet<QOrganizerItemLocalId> removedItems() const;
-    void insertRemovedItem(const QOrganizerItemLocalId& addedItemId);
-    void insertRemovedItems(const QList<QOrganizerItemLocalId>& addedItemIds);
+    QSet<QOrganizerItemId> removedItems() const;
+    void insertRemovedItem(const QOrganizerItemId& addedItemId);
+    void insertRemovedItems(const QList<QOrganizerItemId>& addedItemIds);
     void clearRemovedItems();
 
     void clearAll();

@@ -265,25 +265,6 @@ QOrganizerItemId QOrganizerItem::id() const
 }
 
 /*!
-    Returns the QOrganizerItemLocalId that identifies this organizer item within its manager
-
-    This may have been set when the organizer item was retrieved from
-    a particular manager, or when the organizer item was first saved
-    in a manager.  The QOrganizerItemLocalId is associated with a specific
-    manager, but other organizer items with the same local id might exist in
-    different managers.
-
-    See \l QOrganizerManager::saveItem() for more
-    information.
-
-   \sa id()
-*/
-QOrganizerItemLocalId QOrganizerItem::localId() const
-{
-    return d->m_id.localId();
-}
-
-/*!
   Returns the id of the collection which this item is part of, in the manager
   in which the item has been saved, if the item has previously been saved in
   a manager.  If the item has not previously been saved in a manager, this function

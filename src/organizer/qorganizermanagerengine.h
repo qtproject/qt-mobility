@@ -68,7 +68,7 @@ class QOrganizerItemEngineLocalId;
 
 /* Forward decls, since these don't actually exist yet */
 class QOrganizerItemOccurrenceFetchRequest;
-class QOrganizerItemLocalIdFetchRequest;
+class QOrganizerItemIdFetchRequest;
 class QOrganizerItemFetchRequest;
 class QOrganizerItemRemoveRequest;
 class QOrganizerItemSaveRequest;
@@ -94,16 +94,16 @@ public:
 
     /* Filtering */
     virtual QList<QOrganizerItem> itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
-    virtual QList<QOrganizerItemLocalId> itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const;
+    virtual QList<QOrganizerItemId> itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const;
     virtual QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
     virtual QList<QOrganizerItem> itemsForExport(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
-    virtual QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
+    virtual QOrganizerItem item(const QOrganizerItemId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
 
     virtual bool saveItem(QOrganizerItem* item, QOrganizerManager::Error* error);
-    virtual bool removeItem(const QOrganizerItemLocalId& itemId, QOrganizerManager::Error* error);
+    virtual bool removeItem(const QOrganizerItemId& itemId, QOrganizerManager::Error* error);
 
     virtual bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error);
-    virtual bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error);
+    virtual bool removeItems(const QList<QOrganizerItemId>& itemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error);
 
     /* Collections - every item belongs to exactly one collection */
     virtual QOrganizerCollection defaultCollection(QOrganizerManager::Error* error) const;
@@ -143,9 +143,9 @@ public:
 
 Q_SIGNALS:
     void dataChanged();
-    void itemsAdded(const QList<QOrganizerItemLocalId>& itemIds);
-    void itemsChanged(const QList<QOrganizerItemLocalId>& itemIds);
-    void itemsRemoved(const QList<QOrganizerItemLocalId>& itemIds);
+    void itemsAdded(const QList<QOrganizerItemId>& itemIds);
+    void itemsChanged(const QList<QOrganizerItemId>& itemIds);
+    void itemsRemoved(const QList<QOrganizerItemId>& itemIds);
     void collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds);
     void collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds);
     void collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds);
@@ -155,7 +155,7 @@ public:
     static void updateRequestState(QOrganizerAbstractRequest* req, QOrganizerAbstractRequest::State state);
 
     static void updateItemOccurrenceFetchRequest(QOrganizerItemOccurrenceFetchRequest* req, const QList<QOrganizerItem>& result, QOrganizerManager::Error error, QOrganizerAbstractRequest::State newState);
-    static void updateItemLocalIdFetchRequest(QOrganizerItemLocalIdFetchRequest* req, const QList<QOrganizerItemLocalId>& result, QOrganizerManager::Error error, QOrganizerAbstractRequest::State newState);
+    static void updateItemIdFetchRequest(QOrganizerItemIdFetchRequest* req, const QList<QOrganizerItemId>& result, QOrganizerManager::Error error, QOrganizerAbstractRequest::State newState);
     static void updateItemFetchRequest(QOrganizerItemFetchRequest* req, const QList<QOrganizerItem>& result, QOrganizerManager::Error error, QOrganizerAbstractRequest::State newState);
     static void updateItemFetchForExportRequest(QOrganizerItemFetchForExportRequest* req, const QList<QOrganizerItem>& result, QOrganizerManager::Error error, QOrganizerAbstractRequest::State newState);
     static void updateItemRemoveRequest(QOrganizerItemRemoveRequest* req, QOrganizerManager::Error error, const QMap<int, QOrganizerManager::Error>& errorMap, QOrganizerAbstractRequest::State newState);
@@ -169,7 +169,7 @@ public:
 
     // Other protected area update functions
     static void setDetailAccessConstraints(QOrganizerItemDetail* detail, QOrganizerItemDetail::AccessConstraints constraints);
-    static QOrganizerItemEngineLocalId* engineLocalItemId(const QOrganizerItemLocalId& localId);
+    static QOrganizerItemEngineLocalId* engineLocalItemId(const QOrganizerItemId& localId);
     static QOrganizerCollectionEngineLocalId* engineLocalCollectionId(const QOrganizerCollectionLocalId& localId);
 
     /* Helper functions */

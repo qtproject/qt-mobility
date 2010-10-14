@@ -82,9 +82,9 @@ public:
                 qDebug() << "Saving items for" << mgrUri;
                 QList<QOrganizerItem> items = cm->itemsForExport(QDateTime(), QDateTime(), QOrganizerItemFilter());
                 savedItems.insert(cm->managerName(),items);
-                QList<QOrganizerItemLocalId> ids;
+                QList<QOrganizerItemId> ids;
                 foreach(const QOrganizerItem& item, items)
-                    ids.append(item.localId());
+                    ids.append(item.id());
                 cm->removeItems(ids);
                 delete cm;
             }

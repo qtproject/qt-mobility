@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "qorganizeritemid.h"
-#include "qorganizeritemid_p.h"
 #include "qorganizeritemenginelocalid.h"
 #include "qorganizermanager_p.h"
 #include <QHash>
@@ -59,42 +58,15 @@ QTM_BEGIN_NAMESPACE
   It consists of a manager URI which identifies the manager which contains the organizer item,
   and the local id of the organizer item in that manager.
 
-  A "null" QOrganizerItemId has an empty manager URI, and an invalid QOrganizerItemLocalId (0).
-
-  \sa QOrganizerItemLocalId
+  A "null" QOrganizerItemId has an empty manager URI
  */
 
 /*!
-  \class QOrganizerItemLocalId
-  \relates QOrganizerItemId
-  \brief The QOrganizerItemLocalId class represents the unique id of an organizer item within its manager.
-
-  Most operations within a \l QOrganizerManager accept a QOrganizerItemLocalId.  Some operations
-  (involving links to organizer items outside a particular manager) also accept a manager URI - this
-  combination is stored in a \l QOrganizerItemId.
-
-  A default-constructed QOrganizerItemLocalId is a null QOrganizerItemLocalId, which does not identify
-  any item in a manager.  Clients may wish to set the local id of an item to the default-constructed id
-  if they wish to copy that item from one manager to another (by calling QOrganizerManager::saveItem()),
-  whereupon that manager will replace the id with one that identifies the newly created item.
-
-  \sa QOrganizerItemId
-*/
-
-/*!
-  Constructs a new, null QOrganizerItemLocalId.
+ * Constructs a new organizer item id
  */
-QOrganizerItemLocalId::QOrganizerItemLocalId()
-    : d(0)
+QOrganizerItemId::QOrganizerItemId()
+        : d(0)
 {
-}
-
-/*!
-  Cleans up any memory in use by this local id.
- */
-QOrganizerItemLocalId::~QOrganizerItemLocalId()
-{
-    delete d;
 }
 
 /*!
@@ -103,15 +75,21 @@ QOrganizerItemLocalId::~QOrganizerItemLocalId()
   will delete it when the local id goes out of scope.  Engine implementors must not
   delete the \a engineItemId or undefined behaviour will occur.
  */
-QOrganizerItemLocalId::QOrganizerItemLocalId(QOrganizerItemEngineLocalId* engineItemId)
+QOrganizerItemId::QOrganizerItemId(QOrganizerItemEngineLocalId* engineItemId)
     : d(engineItemId)
 {
 }
 
 /*!
-  Constructs a new copy of the \a other id.
+ * Cleans up the memory in use by the organizer item id
  */
-QOrganizerItemLocalId::QOrganizerItemLocalId(const QOrganizerItemLocalId& other)
+QOrganizerItemId::~QOrganizerItemId()
+{
+    delete d;
+}
+
+/*! Constructs a new organizer item id as a copy of \a other */
+QOrganizerItemId::QOrganizerItemId(const QOrganizerItemId& other)
 {
     if (other.d)
         d = other.d->clone();
@@ -119,10 +97,8 @@ QOrganizerItemLocalId::QOrganizerItemLocalId(const QOrganizerItemLocalId& other)
         d = 0;
 }
 
-/*!
-  Assigns the \a other id to this id.
- */
-QOrganizerItemLocalId& QOrganizerItemLocalId::operator=(const QOrganizerItemLocalId& other)
+/*! Assigns the organizer item id to be equal to \a other */
+QOrganizerItemId& QOrganizerItemId::operator=(const QOrganizerItemId& other)
 {
     if (d == other.d)
         return *this;
@@ -139,10 +115,8 @@ QOrganizerItemLocalId& QOrganizerItemLocalId::operator=(const QOrganizerItemLoca
     return *this;
 }
 
-/*!
-  Returns true if this id is equal to the \a other id; otherwise returns false.
- */
-bool QOrganizerItemLocalId::operator==(const QOrganizerItemLocalId& other) const
+/*! Returns true if the organizer item id has the same manager URI and local id as \a other */
+bool QOrganizerItemId::operator==(const QOrganizerItemId& other) const
 {
     // if both ids are null then they are equal.
     if (d == 0 && other.d == 0)
@@ -155,79 +129,6 @@ bool QOrganizerItemLocalId::operator==(const QOrganizerItemLocalId& other) const
         }
     }
     return false;
-}
-
-/*!
-  Returns true if this id is not equal to the \a other id; otherwise, returns false.
- */
-bool QOrganizerItemLocalId::operator!=(const QOrganizerItemLocalId& other) const
-{
-    return !(*this == other);
-}
-
-/*!
-  Returns true if this id is less than the \a other id; otherwise, returns false.
- */
-bool QOrganizerItemLocalId::operator<(const QOrganizerItemLocalId& other) const
-{
-    // a null id is always less than a non-null id.
-    if (d == 0 && other.d != 0)
-        return true;
-
-    if (d && other.d) {
-        // ensure they're of the same type (and therefore comparable)
-        if (d->engineLocalIdType() == other.d->engineLocalIdType()) {
-            return d->isLessThan(other.d);
-        }
-    }
-
-    return false;
-}
-
-/*!
-  Returns true if this id is a null or default constructed id; otherwise, returns false.
- */
-bool QOrganizerItemLocalId::isNull() const
-{
-    return (d == 0);
-}
-
-/*!
- * Constructs a new organizer item id
- */
-QOrganizerItemId::QOrganizerItemId()
-        : d(new QOrganizerItemIdPrivate)
-{
-}
-
-/*!
- * Cleans up the memory in use by the organizer item id
- */
-QOrganizerItemId::~QOrganizerItemId()
-{
-}
-
-/*! Constructs a new organizer item id as a copy of \a other */
-QOrganizerItemId::QOrganizerItemId(const QOrganizerItemId& other)
-        : d(other.d)
-{
-}
-
-/*! Assigns the organizer item id to be equal to \a other */
-QOrganizerItemId& QOrganizerItemId::operator=(const QOrganizerItemId& other)
-{
-    d = other.d;
-    return *this;
-}
-
-/*! Returns true if the organizer item id has the same manager URI and local id as \a other */
-bool QOrganizerItemId::operator==(const QOrganizerItemId& other) const
-{
-    if (d && other.d)
-        return (d->m_managerUri == other.d->m_managerUri) &&
-               (d->m_localId == other.d->m_localId);
-
-    return !d && !other.d;
 }
 
 /*! Returns true if either the manager URI or local id of the organizer item id is different to that of \a other */
@@ -252,21 +153,18 @@ bool QOrganizerItemId::operator!=(const QOrganizerItemId& other) const
  */
 bool QOrganizerItemId::operator<(const QOrganizerItemId& other) const
 {
-    const int comp = this->managerUri().compare(other.managerUri());
-    if (comp != 0)
-        return comp < 0;
+    // a null id is always less than a non-null id.
+    if (d == 0 && other.d != 0)
+        return true;
 
-    return this->localId() < other.localId();
-}
+    if (d && other.d) {
+        // ensure they're of the same type (and therefore comparable)
+        if (d->engineLocalIdType() == other.d->engineLocalIdType()) {
+            return d->isLessThan(other.d);
+        }
+    }
 
-/*!
- * Returns the hash value for \a key.
- */
-uint qHash(const QOrganizerItemLocalId &key)
-{
-    if (key.d)
-        return QT_PREPEND_NAMESPACE(qHash)(key.d->hash());
-    return 0;
+    return false;
 }
 
 /*!
@@ -274,40 +172,24 @@ uint qHash(const QOrganizerItemLocalId &key)
  */
 uint qHash(const QOrganizerItemId &key)
 {
-    return QT_PREPEND_NAMESPACE(qHash)(key.managerUri())
-            + qHash(key.localId());
+    if (key.d)
+        return QT_PREPEND_NAMESPACE(qHash)(key.d->hash());
+    return 0;
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const QOrganizerItemLocalId& id)
+QDebug& operator<<(QDebug& dbg, const QOrganizerItemId& id)
 {
-    if (id.d) {
-        return id.d->debugStreamOut(dbg);
-    }
-
-    dbg << QString(QLatin1String("(null)")); // no local id data.
-    return dbg;
-}
-
-QDebug operator<<(QDebug dbg, const QOrganizerItemId& id)
-{
-    dbg.nospace() << "QOrganizerItemId(" << id.managerUri() << ", " << id.localId() << ")";
+    dbg.nospace() << "QOrganizerItemId(";
+    if (id.isNull())
+        dbg.nospace() << "(null))";
+    else
+        id.d->debugStreamOut(dbg)  << ")";
     return dbg.maybeSpace();
 }
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream& operator<<(QDataStream& out, const QOrganizerItemLocalId& id)
-{
-    if (id.d) {
-        // we include a marker which contains "true" if there is local id data to be streamed.
-        out << static_cast<quint8>(true);
-        return id.d->dataStreamOut(out);
-    }
-
-    out << static_cast<quint8>(false);
-    return out;
-}
 
 /*!
  * Writes \a id to the stream \a out.
@@ -321,13 +203,10 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerItemId& id)
     out << formatVersion
         << id.managerUri();
 
-    // if the manager uri is null, there'd be no way to deserialize
-    // the local id.  So, we don't serialize out the local id.
-    if (id.managerUri().isEmpty())
-        return out;
+    // the id is not null. we can serialize out
+    if (!id.isNull())
+        out << id.d->dataStreamOut(out);
 
-    // the manager uri is not null.  we can serialize out the local id.
-    out << id.localId();
     return out;
 }
 
@@ -352,23 +231,15 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
         }
         quint8 localIdMarker = static_cast<quint8>(false);
         in >> localIdMarker;
-        QOrganizerItemLocalId localId(QOrganizerManagerData::createEngineItemLocalId(managerUri));
-        if (localIdMarker == static_cast<quint8>(true)) {
-            if (localId.d) {
-                // only try to stream in data if it exists and the engine could create an engine
-                // specific localId based on the managerUri. otherwise, skip it.
-                localId.d->dataStreamIn(in);
-            } else {
-                // the local id should be the null local id
-                localId = QOrganizerItemLocalId();
-            }
+        QOrganizerItemId id(QOrganizerManagerData::createEngineItemId(managerUri));
+        if (id.d) {
+            // only try to stream in data if it exists and the engine could create an engine
+            // specific id based on the managerUri. otherwise, skip it.
+            id.d->dataStreamIn(in);
         } else {
-            // the local id should be the null local id
-            localId = QOrganizerItemLocalId();
+            // the id should be the null id
+            id = QOrganizerItemId();
         }
-
-        id.setManagerUri(managerUri);
-        id.setLocalId(localId);
     } else {
         in.setStatus(QDataStream::ReadCorruptData);
     }
@@ -381,7 +252,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
  */
 bool QOrganizerItemId::isNull() const
 {
-    return d->m_localId.isNull();
+    return d == 0;
 }
 
 /*!
@@ -389,35 +260,7 @@ bool QOrganizerItemId::isNull() const
  */
 QString QOrganizerItemId::managerUri() const
 {
-    return d->m_managerUri;
-}
-
-/*!
- * Returns the manager-local id of the organizer item identified by this organizer item id
- */
-QOrganizerItemLocalId QOrganizerItemId::localId() const
-{
-    return d->m_localId;
-}
-
-/*!
- * Sets the URI of the manager which contains the organizer item identified by this id to \a uri.
- * If the old manager URI was different to \a uri, the local id will be set to the null local id.
- * \sa localId()
- */
-void QOrganizerItemId::setManagerUri(const QString& uri)
-{
-    if (!d->m_managerUri.isEmpty() && d->m_managerUri != uri)
-        d->m_localId = QOrganizerItemLocalId();
-    d->m_managerUri = uri;
-}
-
-/*!
- * Sets the manager-local id of the organizer item identified by this organizer item id to \a id
- */
-void QOrganizerItemId::setLocalId(const QOrganizerItemLocalId& id)
-{
-    d->m_localId = id;
+    return d ? d->managerUri() : QString();
 }
 
 QTM_END_NAMESPACE

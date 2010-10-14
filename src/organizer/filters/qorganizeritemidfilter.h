@@ -39,32 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMLOCALIDFILTER_H
-#define QORGANIZERITEMLOCALIDFILTER_H
+#ifndef QORGANIZERITEMIDFILTER_H
+#define QORGANIZERITEMIDFILTER_H
 
 #include "qorganizeritemfilter.h"
 #include "qorganizeritemid.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemLocalIdFilterPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemLocalIdFilter : public QOrganizerItemFilter
+class QOrganizerItemIdFilterPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerItemIdFilter : public QOrganizerItemFilter
 {
 public:
-    QOrganizerItemLocalIdFilter();
-    QOrganizerItemLocalIdFilter(const QOrganizerItemFilter& other);
+    QOrganizerItemIdFilter();
+    QOrganizerItemIdFilter(const QOrganizerItemFilter& other);
 
     /* Mutators */
-    void setIds(const QList<QOrganizerItemLocalId>& ids);
-    void insert(const QOrganizerItemLocalId& id);
-    void remove(const QOrganizerItemLocalId& id);
+    void setIds(const QList<QOrganizerItemId>& ids);
+    void insert(const QOrganizerItemId& id);
+    void remove(const QOrganizerItemId& id);
     void clear();
 
     /* Accessors */
-    QList<QOrganizerItemLocalId> ids() const;
+    QList<QOrganizerItemId> ids() const;
 
 private:
-    Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemLocalIdFilter)
+    Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemIdFilter)
 };
 
 QTM_END_NAMESPACE

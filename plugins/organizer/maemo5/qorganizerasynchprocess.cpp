@@ -230,7 +230,7 @@ void OrganizerAsynchProcess::processRequest()
         handleItemOccurrenceFetchRequest(static_cast<QOrganizerItemOccurrenceFetchRequest *>(req));
         break;
     case QOrganizerAbstractRequest::ItemLocalIdFetchRequest:
-        handleLocalIdFetchRequest(static_cast<QOrganizerItemLocalIdFetchRequest *>(req));
+        handleIdFetchRequest(static_cast<QOrganizerItemIdFetchRequest *>(req));
         break;
     case QOrganizerAbstractRequest::ItemRemoveRequest:
         handleItemRemoveRequest(static_cast<QOrganizerItemRemoveRequest *>(req));
@@ -286,11 +286,11 @@ void OrganizerAsynchProcess::handleItemOccurrenceFetchRequest(QOrganizerItemOccu
     QOrganizerManagerEngine::updateItemOccurrenceFetchRequest(req, items, err, QOrganizerAbstractRequest::FinishedState);
 }
 
-void OrganizerAsynchProcess::handleLocalIdFetchRequest(QOrganizerItemLocalIdFetchRequest *req)
+void OrganizerAsynchProcess::handleIdFetchRequest(QOrganizerItemIdFetchRequest *req)
 {
     QOrganizerManager::Error err = QOrganizerManager::NoError;
-    QList<QOrganizerItemLocalId> ids = m_engine->itemIds(req->startDate(), req->endDate(), req->filter(), req->sorting(), &err);
-    QOrganizerManagerEngine::updateItemLocalIdFetchRequest(req, ids, err, QOrganizerAbstractRequest::FinishedState);
+    QList<QOrganizerItemId> ids = m_engine->itemIds(req->startDate(), req->endDate(), req->filter(), req->sorting(), &err);
+    QOrganizerManagerEngine::updateItemIdFetchRequest(req, ids, err, QOrganizerAbstractRequest::FinishedState);
 }
 
 void OrganizerAsynchProcess::handleItemRemoveRequest(QOrganizerItemRemoveRequest *req)

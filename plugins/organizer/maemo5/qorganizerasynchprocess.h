@@ -109,7 +109,7 @@ private:
     void handleItemFetchRequest(QOrganizerItemFetchRequest *req);
     void handleItemFetchForExportRequest(QOrganizerItemFetchForExportRequest *req);
     void handleItemOccurrenceFetchRequest(QOrganizerItemOccurrenceFetchRequest *req);
-    void handleLocalIdFetchRequest(QOrganizerItemLocalIdFetchRequest *req);
+    void handleIdFetchRequest(QOrganizerItemIdFetchRequest *req);
     void handleItemRemoveRequest(QOrganizerItemRemoveRequest *req);
     void handleSaveRequest(QOrganizerItemSaveRequest *req);
     void handleDefinitionFetchRequest(QOrganizerItemDetailDefinitionFetchRequest *req);

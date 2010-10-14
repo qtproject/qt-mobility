@@ -406,7 +406,7 @@ void CalendarDemo::exportItems()
 void CalendarDemo::deleteAllEntries()
 {
     // Fetch all the entries
-    QList<QOrganizerItemLocalId> ids = m_manager->itemIds();
+    QList<QOrganizerItemId> ids = m_manager->itemIds();
     
     if(ids.count()) {
         m_remReq.setItemIds(ids);

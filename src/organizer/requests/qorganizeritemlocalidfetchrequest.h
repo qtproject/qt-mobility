@@ -52,13 +52,13 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemLocalIdFetchRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemLocalIdFetchRequest : public QOrganizerAbstractRequest
+class QOrganizerItemIdFetchRequestPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerItemIdFetchRequest : public QOrganizerAbstractRequest
 {
     Q_OBJECT
 
 public:
-    QOrganizerItemLocalIdFetchRequest(QObject* parent = 0);
+    QOrganizerItemIdFetchRequest(QObject* parent = 0);
 
     /* Selection, restriction and sorting */
     void setFilter(const QOrganizerItemFilter& filter);
@@ -71,12 +71,12 @@ public:
     QDateTime endDate() const;
 
     /* Results */
-    QList<QOrganizerItemLocalId> itemIds() const;
+    QList<QOrganizerItemId> itemIds() const;
 
 private:
-    Q_DISABLE_COPY(QOrganizerItemLocalIdFetchRequest)
+    Q_DISABLE_COPY(QOrganizerItemIdFetchRequest)
     friend class QOrganizerManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemLocalIdFetchRequest)
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemIdFetchRequest)
 };
 
 QTM_END_NAMESPACE

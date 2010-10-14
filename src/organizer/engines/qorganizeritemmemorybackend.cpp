@@ -143,6 +143,12 @@ uint QOrganizerItemMemoryEngineLocalId::engineLocalIdType() const
     return qHash(QString(QLatin1String("memory")));
 }
 
+QString QOrganizerItemMemoryEngineLocalId::managerUri() const
+{
+    // TODO: fix this !!
+    return QString::fromLatin1("QOrganizer:memory:");
+}
+
 QOrganizerItemEngineLocalId* QOrganizerItemMemoryEngineLocalId::clone() const
 {
     QOrganizerItemMemoryEngineLocalId *myClone = new QOrganizerItemMemoryEngineLocalId;
@@ -152,7 +158,7 @@ QOrganizerItemEngineLocalId* QOrganizerItemMemoryEngineLocalId::clone() const
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug QOrganizerItemMemoryEngineLocalId::debugStreamOut(QDebug dbg)
+QDebug& QOrganizerItemMemoryEngineLocalId::debugStreamOut(QDebug& dbg)
 {
     dbg.nospace() << "QOrganizerItemMemoryEngineLocalId(" << m_localCollectionId << ", " << m_localItemId << ")";
     return dbg.maybeSpace();
@@ -354,7 +360,7 @@ QMap<QString, QString> QOrganizerItemMemoryEngine::managerParameters() const
 }
 
 /*! \reimp */
-QOrganizerItem QOrganizerItemMemoryEngine::item(const QOrganizerItemLocalId& organizeritemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
+QOrganizerItem QOrganizerItemMemoryEngine::item(const QOrganizerItemId& organizeritemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     Q_UNUSED(fetchHint); // no optimisations are possible in the memory backend; ignore the fetch hint.
     int index = d->m_organizeritemIds.indexOf(organizeritemId);
@@ -369,7 +375,7 @@ QOrganizerItem QOrganizerItemMemoryEngine::item(const QOrganizerItemLocalId& org
 }
 
 /*! \reimp */
-QList<QOrganizerItemLocalId> QOrganizerItemMemoryEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const
+QList<QOrganizerItemId> QOrganizerItemMemoryEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const
 {
     /* Special case the fast case */
     if (startDate.isNull() && endDate.isNull() && filter.type() == QOrganizerItemFilter::DefaultFilter && sortOrders.count() == 0) {
@@ -713,8 +719,8 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::internalItemOccurrences(const 
     if (includeExceptions) {
         // first, retrieve all persisted instances (exceptions) which occur between the specified datetimes.
         QOrganizerItemDetailFilter parentFilter;
-        parentFilter.setDetailDefinitionName(QOrganizerItemParent::DefinitionName, QOrganizerItemParent::FieldParentLocalId);
-        parentFilter.setValue(QVariant::fromValue(parentItem.localId()));
+        parentFilter.setDetailDefinitionName(QOrganizerItemParent::DefinitionName, QOrganizerItemParent::FieldParentId);
+        parentFilter.setValue(QVariant::fromValue(parentItem.id()));
         foreach(const QOrganizerItem&currException, d->m_organizeritems) {
             if (QOrganizerManagerEngine::testFilter(parentFilter, currException)) {
                 QDateTime lowerBound;
@@ -817,7 +823,7 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateOccurrence(const QOrganizerIt
 
     // add the detail which identifies exactly which instance this item is.
     QOrganizerItemParent currOrigin;
-    currOrigin.setParentLocalId(parentItem.localId());
+    currOrigin.setParentId(parentItem.id());
     currOrigin.setOriginalDate(rdate.date());
     occDets.append(currOrigin);
 
@@ -923,7 +929,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
     }
 
     // check to see if this organizer item already exists
-    int index = d->m_organizeritemIds.indexOf(theOrganizerItem->id().localId());
+    int index = d->m_organizeritemIds.indexOf(theOrganizerItem->id());
     if (index != -1) {
         /* We also need to check that there are no modified create only details */
         QOrganizerItem oldOrganizerItem = d->m_organizeritems.at(index);
@@ -936,8 +942,8 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         // check that the old and new collection is the same (ie, not attempting to save to a different collection)
         if (targetCollectionId.isNull()) {
             // it already exists, so save it where it already exists.
-            targetCollectionId = d->m_itemsInCollections.key(theOrganizerItem->localId());
-        } else if (!d->m_itemsInCollections.values(targetCollectionId).contains(theOrganizerItem->localId())) {
+            targetCollectionId = d->m_itemsInCollections.key(theOrganizerItem->id());
+        } else if (!d->m_itemsInCollections.values(targetCollectionId).contains(theOrganizerItem->id())) {
             // the given collection id was non-null but doesn't already contain this item.  error.
             *error = QOrganizerManager::InvalidCollectionError;
             return false;
@@ -954,11 +960,9 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
 
         // Looks ok, so continue
         d->m_organizeritems.replace(index, *theOrganizerItem);
-        changeSet.insertChangedItem(theOrganizerItem->localId());
+        changeSet.insertChangedItem(theOrganizerItem->id());
     } else {
         // id does not exist; if not zero, fail.
-        QOrganizerItemId newId;
-        newId.setManagerUri(managerUri());
         if (!theOrganizerItem->id().isNull()) {
             // the ID is not empty, and it doesn't identify an existing organizer item in our database either.
             *error = QOrganizerManager::DoesNotExistError;
@@ -985,9 +989,8 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         QOrganizerItemMemoryEngineLocalId* newMemoryEngineLocalId = new QOrganizerItemMemoryEngineLocalId;
         newMemoryEngineLocalId->m_localCollectionId = static_cast<QOrganizerCollectionMemoryEngineLocalId*>(QOrganizerManagerEngine::engineLocalCollectionId(targetCollectionId))->m_localCollectionId;
         newMemoryEngineLocalId->m_localItemId = nextOrganizerItemId;
-        newId.setLocalId(QOrganizerItemLocalId(newMemoryEngineLocalId));
-        theOrganizerItem->setId(newId);
-        // note: do NOT delete the QOrganizerItemMemoryEngineLocalId -- the QOrganizerItemLocalId ctor takes ownership of it.
+        theOrganizerItem->setId(QOrganizerItemId(newMemoryEngineLocalId));
+        // note: do NOT delete the QOrganizerItemMemoryEngineLocalId -- the QOrganizerItemId ctor takes ownership of it.
 
         if (!fixOccurrenceReferences(theOrganizerItem, error)) {
             return false;
@@ -1001,7 +1004,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
             // update the event by adding an EX-DATE which corresponds to the original date of the occurrence being saved.
             QOrganizerManager::Error tempError = QOrganizerManager::NoError;
             QOrganizerItemParent origin = theOrganizerItem->detail<QOrganizerItemParent>();
-            QOrganizerItemLocalId parentId = origin.parentLocalId();
+            QOrganizerItemId parentId = origin.parentId();
 
             // for occurrences, if given a null collection id, save it in the same collection as the parent.
             // otherwise, ensure that the parent is in the same collection.  You cannot save an exception to a different collection than the parent.
@@ -1011,8 +1014,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
                     *error = QOrganizerManager::UnspecifiedError; // this should never occur; parent should _always_ be in a collection.
                     return false;
                 }
-                newId.setLocalId(QOrganizerItemLocalId(QOrganizerItemLocalId(new QOrganizerItemMemoryEngineLocalId(static_cast<QOrganizerCollectionMemoryEngineLocalId*>(QOrganizerManagerEngine::engineLocalCollectionId(targetCollectionId))->m_localCollectionId, nextOrganizerItemId))));
-                theOrganizerItem->setId(newId);
+                theOrganizerItem->setId(QOrganizerItemId(new QOrganizerItemMemoryEngineLocalId(static_cast<QOrganizerCollectionMemoryEngineLocalId*>(QOrganizerManagerEngine::engineLocalCollectionId(targetCollectionId))->m_localCollectionId, nextOrganizerItemId)));
             } else if (!d->m_itemsInCollections.values(targetCollectionId).contains(parentId)) {
                 // nope, the specified collection doesn't contain the parent.  error.
                 *error = QOrganizerManager::InvalidCollectionError;
@@ -1025,15 +1027,15 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
             if (!currentExceptionDates.contains(originalDate)) {
                 currentExceptionDates << originalDate;
                 parentEvent.setExceptionDates(currentExceptionDates);
-                int parentEventIndex = d->m_organizeritemIds.indexOf(parentEvent.localId());
+                int parentEventIndex = d->m_organizeritemIds.indexOf(parentEvent.id());
                 d->m_organizeritems.replace(parentEventIndex, parentEvent);
-                changeSet.insertChangedItem(parentEvent.localId()); // is this correct?  it's an exception, so change parent?
+                changeSet.insertChangedItem(parentEvent.id()); // is this correct?  it's an exception, so change parent?
             }
         } else if (theOrganizerItem->type() == QOrganizerItemType::TypeTodoOccurrence) {
             // update the todo by adding an EX-DATE which corresponds to the original date of the occurrence being saved.
             QOrganizerManager::Error tempError = QOrganizerManager::NoError;
             QOrganizerItemParent origin = theOrganizerItem->detail<QOrganizerItemParent>();
-            QOrganizerItemLocalId parentId = origin.parentLocalId();
+            QOrganizerItemId parentId = origin.parentId();
 
             // for occurrences, if given a null collection id, save it in the same collection as the parent.
             // otherwise, ensure that the parent is in the same collection.  You cannot save an exception to a different collection than the parent.
@@ -1043,8 +1045,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
                     *error = QOrganizerManager::UnspecifiedError; // this should never occur; parent should _always_ be in a collection.
                     return false;
                 }
-                newId.setLocalId(QOrganizerItemLocalId(QOrganizerItemLocalId(new QOrganizerItemMemoryEngineLocalId(static_cast<QOrganizerCollectionMemoryEngineLocalId*>(QOrganizerManagerEngine::engineLocalCollectionId(targetCollectionId))->m_localCollectionId, nextOrganizerItemId))));
-                theOrganizerItem->setId(newId);
+               theOrganizerItem->setId(QOrganizerItemId(QOrganizerItemId(new QOrganizerItemMemoryEngineLocalId(static_cast<QOrganizerCollectionMemoryEngineLocalId*>(QOrganizerManagerEngine::engineLocalCollectionId(targetCollectionId))->m_localCollectionId, nextOrganizerItemId))));
             } else if (!d->m_itemsInCollections.values(targetCollectionId).contains(parentId)) {
                 // nope, the specified collection doesn't contain the parent.  error.
                 *error = QOrganizerManager::InvalidCollectionError;
@@ -1057,9 +1058,9 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
             if (!currentExceptionDates.contains(originalDate)) {
                 currentExceptionDates << originalDate;
                 parentTodo.setExceptionDates(currentExceptionDates);
-                int parentTodoIndex = d->m_organizeritemIds.indexOf(parentTodo.localId());
+                int parentTodoIndex = d->m_organizeritemIds.indexOf(parentTodo.id());
                 d->m_organizeritems.replace(parentTodoIndex, parentTodo);
-                changeSet.insertChangedItem(parentTodo.localId()); // is this correct?  it's an exception, so change parent?
+                changeSet.insertChangedItem(parentTodo.id()); // is this correct?  it's an exception, so change parent?
             }
         }
 
@@ -1072,10 +1073,10 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         targetCompleteCollectionId.setLocalId(targetCollectionId);
         theOrganizerItem->setCollectionId(targetCompleteCollectionId);
         d->m_organizeritems.append(*theOrganizerItem);              // add organizer item to list
-        d->m_organizeritemIds.append(theOrganizerItem->localId());  // track the organizer item id.
-        d->m_itemsInCollections.insert(targetCollectionId, theOrganizerItem->localId());
+        d->m_organizeritemIds.append(theOrganizerItem->id());  // track the organizer item id.
+        d->m_itemsInCollections.insert(targetCollectionId, theOrganizerItem->id());
 
-        changeSet.insertAddedItem(theOrganizerItem->localId());
+        changeSet.insertAddedItem(theOrganizerItem->id());
 
         // XXX TODO: prior to all of this, need to check:
         // 1) is it an Occurrence item?
@@ -1090,7 +1091,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
 }
 
 /*!
- * For Occurrence type items, ensure the ParentLocalId and the Guid are set consistently.  Returns
+ * For Occurrence type items, ensure the ParentId and the Guid are set consistently.  Returns
  * false and sets \a error on error, returns true otherwise.
  */
 bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem, QOrganizerManager::Error* error)
@@ -1103,7 +1104,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
             *error = QOrganizerManager::InvalidOccurrenceError;
             return false;
         }
-        QOrganizerItemLocalId parentId = instanceOrigin.parentLocalId();
+        QOrganizerItemId parentId = instanceOrigin.parentId();
         if (!guid.isEmpty()) {
             if (!parentId.isNull()) {
                 QOrganizerManager::Error tempError;
@@ -1120,7 +1121,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
                 // find an item with the given guid
                 foreach (const QOrganizerItem& item, d->m_organizeritems) {
                     if (item.guid() == guid) {
-                        parentId = item.localId();
+                        parentId = item.id();
                         break;
                     }
                 }
@@ -1138,7 +1139,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
                 }
                 // found a matching item - set the parentId of the occurrence
                 QOrganizerItemParent origin = theItem->detail<QOrganizerItemParent>();
-                origin.setParentLocalId(parentId);
+                origin.setParentId(parentId);
                 theItem->saveDetail(&origin);
             }
         } else if (!parentId.isNull()) {
@@ -1204,7 +1205,7 @@ bool QOrganizerItemMemoryEngine::saveItems(QList<QOrganizerItem>* organizeritems
 
 /*! Removes the organizer item identified by the given \a organizeritemId, storing any error to \a error and
     filling the \a changeSet with ids of changed organizer items and relationships as required */
-bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error)
+bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error)
 {
     int index = d->m_organizeritemIds.indexOf(organizeritemId);
 
@@ -1214,10 +1215,6 @@ bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemLocalId& organiz
     }
 
     // remove the organizer item from the lists.
-    QOrganizerItemId thisOrganizerItem;
-    thisOrganizerItem.setManagerUri(managerUri());
-    thisOrganizerItem.setLocalId(organizeritemId);
-
     d->m_organizeritems.removeAt(index);
     d->m_organizeritemIds.removeAt(index);
     d->m_itemsInCollections.remove(d->m_itemsInCollections.key(organizeritemId), organizeritemId);
@@ -1228,7 +1225,7 @@ bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemLocalId& organiz
 }
 
 /*! \reimp */
-bool QOrganizerItemMemoryEngine::removeItems(const QList<QOrganizerItemLocalId>& organizeritemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
+bool QOrganizerItemMemoryEngine::removeItems(const QList<QOrganizerItemId>& organizeritemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
     if (organizeritemIds.count() == 0) {
         *error = QOrganizerManager::BadArgumentError;
@@ -1236,7 +1233,7 @@ bool QOrganizerItemMemoryEngine::removeItems(const QList<QOrganizerItemLocalId>&
     }
     
     QOrganizerItemChangeSet changeSet;
-    QOrganizerItemLocalId current;
+    QOrganizerItemId current;
     QOrganizerManager::Error operationError = QOrganizerManager::NoError;
     for (int i = 0; i < organizeritemIds.count(); i++) {
         current = organizeritemIds.at(i);
@@ -1359,7 +1356,7 @@ bool QOrganizerItemMemoryEngine::removeCollection(const QOrganizerCollectionLoca
     }
 
     // try to find the collection to remove it (and the items it contains)
-    QList<QOrganizerItemLocalId> itemsToRemove = d->m_itemsInCollections.values(collectionId);
+    QList<QOrganizerItemId> itemsToRemove = d->m_itemsInCollections.values(collectionId);
     for (int i = 0; i < d->m_organizerCollectionIds.size(); ++i) {
         if (d->m_organizerCollectionIds.at(i) == collectionId) {
             // found the collection to remove.  remove the items in the collection.
@@ -1572,17 +1569,17 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerAbstract
 
         case QOrganizerAbstractRequest::ItemLocalIdFetchRequest:
         {
-            QOrganizerItemLocalIdFetchRequest* r = static_cast<QOrganizerItemLocalIdFetchRequest*>(currentRequest);
+            QOrganizerItemIdFetchRequest* r = static_cast<QOrganizerItemIdFetchRequest*>(currentRequest);
             QOrganizerItemFilter filter = r->filter();
             QList<QOrganizerItemSortOrder> sorting = r->sorting();
             QDateTime startDate = r->startDate();
             QDateTime endDate = r->endDate();
 
             QOrganizerManager::Error operationError = QOrganizerManager::NoError;
-            QList<QOrganizerItemLocalId> requestedOrganizerItemIds = itemIds(startDate, endDate, filter, sorting, &operationError);
+            QList<QOrganizerItemId> requestedOrganizerItemIds = itemIds(startDate, endDate, filter, sorting, &operationError);
 
             if (!requestedOrganizerItemIds.isEmpty() || operationError != QOrganizerManager::NoError)
-                updateItemLocalIdFetchRequest(r, requestedOrganizerItemIds, operationError, QOrganizerAbstractRequest::FinishedState);
+                updateItemIdFetchRequest(r, requestedOrganizerItemIds, operationError, QOrganizerAbstractRequest::FinishedState);
             else
                 updateRequestState(currentRequest, QOrganizerAbstractRequest::FinishedState);
         }
@@ -1605,7 +1602,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerAbstract
         {
             QOrganizerItemRemoveRequest* r = static_cast<QOrganizerItemRemoveRequest*>(currentRequest);
             QOrganizerManager::Error operationError = QOrganizerManager::NoError;
-            QList<QOrganizerItemLocalId> organizeritemsToRemove = r->itemIds();
+            QList<QOrganizerItemId> organizeritemsToRemove = r->itemIds();
             QMap<int, QOrganizerManager::Error> errorMap;
 
             for (int i = 0; i < organizeritemsToRemove.size(); i++) {

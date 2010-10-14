@@ -80,19 +80,19 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerManager::itemsAdded(const QList<QOrganizerItemLocalId>& itemIds)
+  \fn QOrganizerManager::itemsAdded(const QList<QOrganizerItemId>& itemIds)
   This signal is emitted at some point once the items identified by \a itemIds have been added to a datastore managed by this manager.
   This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerManager::itemsChanged(const QList<QOrganizerItemLocalId>& itemIds)
+  \fn QOrganizerManager::itemsChanged(const QList<QOrganizerItemId>& itemIds)
   This signal is emitted at some point once the items identified by \a itemIds have been modified in a datastore managed by this manager.
   This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerManager::itemsRemoved(const QList<QOrganizerItemLocalId>& itemIds)
+  \fn QOrganizerManager::itemsRemoved(const QList<QOrganizerItemId>& itemIds)
   This signal is emitted at some point once the items identified by \a itemIds have been removed from a datastore managed by this manager.
   This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
@@ -278,9 +278,9 @@ void QOrganizerManager::createEngine(const QString& managerName, const QMap<QStr
 {
     d->createEngine(managerName, parameters);
     connect(d->m_engine, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
-    connect(d->m_engine, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)), this, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
-    connect(d->m_engine, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)), this, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)));
-    connect(d->m_engine, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)), this, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)));
+    connect(d->m_engine, SIGNAL(itemsAdded(QList<QOrganizerItemId>)), this, SIGNAL(itemsAdded(QList<QOrganizerItemId>)));
+    connect(d->m_engine, SIGNAL(itemsChanged(QList<QOrganizerItemId>)), this, SIGNAL(itemsChanged(QList<QOrganizerItemId>)));
+    connect(d->m_engine, SIGNAL(itemsRemoved(QList<QOrganizerItemId>)), this, SIGNAL(itemsRemoved(QList<QOrganizerItemId>)));
     connect(d->m_engine, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)), this, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
     connect(d->m_engine, SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)), this, SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)));
     connect(d->m_engine, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)), this, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)));
@@ -376,7 +376,7 @@ QList<QOrganizerItem> QOrganizerManager::itemOccurrences(const QOrganizerItem& p
   Returns a list of organizer item ids that match the given \a filter, sorted according to the given list of \a sortOrders.
   Depending on the backend, this filtering operation may involve retrieving all the organizeritems.
  */
-QList<QOrganizerItemLocalId> QOrganizerManager::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
+QList<QOrganizerItemId> QOrganizerManager::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
     d->m_error = QOrganizerManager::NoError;
     return d->m_engine->itemIds(QDateTime(), QDateTime(), filter, sortOrders, &d->m_error);
@@ -390,7 +390,7 @@ QList<QOrganizerItemLocalId> QOrganizerManager::itemIds(const QOrganizerItemFilt
   If both the \a startDate and \a endDate are invalid, this function will return the ids of all items which match the \a filter criteria.
   Depending on the backend, this filtering operation may involve retrieving all the organizeritems.
  */
-QList<QOrganizerItemLocalId> QOrganizerManager::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
+QList<QOrganizerItemId> QOrganizerManager::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
     d->m_error = QOrganizerManager::NoError;
     d->m_errorMap.clear();
@@ -487,7 +487,7 @@ QList<QOrganizerItem> QOrganizerManager::itemsForExport(const QDateTime& startDa
 
   \sa QOrganizerItemFetchHint
  */
-QOrganizerItem QOrganizerManager::item(const QOrganizerItemLocalId& organizeritemId, const QOrganizerItemFetchHint& fetchHint) const
+QOrganizerItem QOrganizerManager::item(const QOrganizerItemId& organizeritemId, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerManager::NoError;
     d->m_errorMap.clear();
@@ -544,7 +544,7 @@ bool QOrganizerManager::saveItem(QOrganizerItem* organizeritem)
   Returns true if the organizer item was removed successfully, otherwise
   returns false.
  */
-bool QOrganizerManager::removeItem(const QOrganizerItemLocalId& organizeritemId)
+bool QOrganizerManager::removeItem(const QOrganizerItemId& organizeritemId)
 {
     d->m_error = QOrganizerManager::NoError;
     d->m_errorMap.clear();
@@ -603,7 +603,7 @@ bool QOrganizerManager::saveItems(QList<QOrganizerItem>* organizeritems)
 
   \sa QOrganizerManager::removeItem()
  */
-bool QOrganizerManager::removeItems(const QList<QOrganizerItemLocalId>& organizeritemIds)
+bool QOrganizerManager::removeItems(const QList<QOrganizerItemId>& organizeritemIds)
 {
     d->m_errorMap.clear();
     if (organizeritemIds.isEmpty()) {
@@ -838,12 +838,12 @@ QString QOrganizerManager::managerUri() const
     return d->m_engine->managerUri();
 }
 
-/*! Return a list of QOrganizerItemLocalId extracted from the \a items */
-QList<QOrganizerItemLocalId> QOrganizerManager::extractLocalIds(QList<QOrganizerItem> items)
+/*! Return a list of QOrganizerItemId extracted from the \a items */
+QList<QOrganizerItemId> QOrganizerManager::extractLocalIds(QList<QOrganizerItem> items)
 {
-    QList<QOrganizerItemLocalId> ids;
+    QList<QOrganizerItemId> ids;
     foreach(QOrganizerItem item, items)
-        ids.append(item.localId());
+        ids.append(item.id());
     return ids;
 }
 

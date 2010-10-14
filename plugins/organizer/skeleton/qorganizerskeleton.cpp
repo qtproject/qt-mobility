@@ -84,10 +84,10 @@ QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId()
 
       This default constructor should not be used when returning a null id,
       but is provided in order to allow use of the ids in a list, and as an
-      enabler for the implementation of QOrganizerItemLocalId.
+      enabler for the implementation of QOrganizerItemId.
 
       When returning a null id, the backend should simply return a default
-      constructed QOrganizerItemLocalId.
+      constructed QOrganizerItemId.
 
       In this example, we use just a single quint32 to identify the item,
       however your engine may require more information in order to uniquely
@@ -108,8 +108,8 @@ QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId(quint32
       engine code.
 
       In particular, you will most likely be returning to clients an id by calling:
-      QOrganizerItemLocalId id(new QOrganizerItemSkeletonEngineLocalId(3));
-      or something similar.  Note that the QOrganizerItemLocalId constructor which
+      QOrganizerItemId id(new QOrganizerItemSkeletonEngineLocalId(3));
+      or something similar.  Note that the QOrganizerItemId constructor which
       takes a QOrganizerItemEngineLocalId pointer as a parameter takes ownership
       of that pointer (and so controls its lifetime).
      */
@@ -131,7 +131,7 @@ bool QOrganizerItemSkeletonEngineLocalId::isEqualTo(const QOrganizerItemEngineLo
     /*
       TODO
 
-      The isEqualTo(other) function is called by the QOrganizerItemLocalId::operator==(other) function.
+      The isEqualTo(other) function is called by the QOrganizerItemId::operator==(other) function.
       You must implement this in terms of the data members which your class contains.
 
       An example implementation is provided below, for the case where only a single quint32
@@ -149,7 +149,7 @@ bool QOrganizerItemSkeletonEngineLocalId::isLessThan(const QOrganizerItemEngineL
     /*
       TODO
 
-      The isLessThan(other) function is called by the QOrganizerItemLocalId::operator<(other) function.
+      The isLessThan(other) function is called by the QOrganizerItemId::operator<(other) function.
       You must implement this in terms of the data members which your class contains.
 
       An example implementation is provided below, for the case where only a single quint32
@@ -165,7 +165,7 @@ uint QOrganizerItemSkeletonEngineLocalId::engineLocalIdType() const
     /*
       TODO
 
-      The engine-local id type value is used by QOrganizerItemLocalId to ensure that
+      The engine-local id type value is used by QOrganizerItemId to ensure that
       comparisons are occurring between ids of the same engine-specific type.
       Such comparisons would return false if the types are not equal.
 
@@ -182,12 +182,17 @@ uint QOrganizerItemSkeletonEngineLocalId::engineLocalIdType() const
     return qHash(QString(QLatin1String("skeleton")));
 }
 
+QString QOrganizerItemSkeletonEngineLocalId::managerUri() const
+{
+    return QString::fromLatin1("QOrganizer:skeleton:");
+}
+
 QOrganizerItemEngineLocalId* QOrganizerItemSkeletonEngineLocalId::clone() const
 {
     /*
       TODO
 
-      When a QOrganizerItemLocalId is copied or assigned, it performs a clone of
+      When a QOrganizerItemId is copied or assigned, it performs a clone of
       the engine-specific local id.  This function is called in that case.
 
       Implement this function so that the data members of your engine-specific id
@@ -203,7 +208,7 @@ QOrganizerItemEngineLocalId* QOrganizerItemSkeletonEngineLocalId::clone() const
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug QOrganizerItemSkeletonEngineLocalId::debugStreamOut(QDebug dbg)
+QDebug& QOrganizerItemSkeletonEngineLocalId::debugStreamOut(QDebug& dbg)
 {
     /*
       TODO
@@ -560,7 +565,7 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::itemOccurrences(const QOrgan
     return QOrganizerManagerEngine::itemOccurrences(parentItem, periodStart, periodEnd, maxCount, fetchHint, error);
 }
 
-QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const
+QList<QOrganizerItemId> QOrganizerItemSkeletonEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const
 {
     /*
         TODO
@@ -615,7 +620,7 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QDateTime& start
 
     /* An alternative formulation, depending on how your engine is implemented is just:
 
-        foreach(const QOrganizerItemLocalId& id, itemIds(filter, sortOrders, error)) {
+        foreach(const QOrganizerItemId& id, itemIds(filter, sortOrders, error)) {
             ret.append(item(id, fetchHint, error);
         }
      */
@@ -623,7 +628,7 @@ QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QDateTime& start
     return ret;
 }
 
-QOrganizerItem QOrganizerItemSkeletonEngine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
+QOrganizerItem QOrganizerItemSkeletonEngine::item(const QOrganizerItemId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     /*
         TODO
@@ -660,7 +665,7 @@ bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, QMap<
 
 }
 
-bool QOrganizerItemSkeletonEngine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
+bool QOrganizerItemSkeletonEngine::removeItems(const QList<QOrganizerItemId>& itemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
     /*
         TODO

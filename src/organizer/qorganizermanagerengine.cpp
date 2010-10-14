@@ -104,7 +104,7 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerManagerEngine::itemsAdded(const QList<QOrganizerItemLocalId>& organizeritemIds);
+  \fn QOrganizerManagerEngine::itemsAdded(const QList<QOrganizerItemId>& organizeritemIds);
 
   This signal is emitted some time after a set of organizer items has been added to
   this engine where the \l dataChanged() signal was not emitted for those changes.
@@ -118,7 +118,7 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerManagerEngine::itemsChanged(const QList<QOrganizerItemLocalId>& organizeritemIds);
+  \fn QOrganizerManagerEngine::itemsChanged(const QList<QOrganizerItemId>& organizeritemIds);
 
   This signal is emitted some time after a set of organizer items has been modified in
   this engine where the \l dataChanged() signal was not emitted for those changes.
@@ -132,7 +132,7 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerManagerEngine::itemsRemoved(const QList<QOrganizerItemLocalId>& organizeritemIds);
+  \fn QOrganizerManagerEngine::itemsRemoved(const QList<QOrganizerItemId>& organizeritemIds);
 
   This signal is emitted some time after a set of organizer items has been removed from
   this engine where the \l dataChanged() signal was not emitted for those changes.
@@ -238,7 +238,7 @@ QList<QOrganizerItem> QOrganizerManagerEngine::itemOccurrences(const QOrganizerI
   Depending on the backend, this filtering operation may involve retrieving
   all the organizer items.  Any error which occurs will be saved in \a error.
  */
-QList<QOrganizerItemLocalId> QOrganizerManagerEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const
+QList<QOrganizerItemId> QOrganizerManagerEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const
 {
     Q_UNUSED(startDate);
     Q_UNUSED(endDate);
@@ -246,7 +246,7 @@ QList<QOrganizerItemLocalId> QOrganizerManagerEngine::itemIds(const QDateTime& s
     Q_UNUSED(sortOrders);
 
     *error = QOrganizerManager::NotSupportedError;
-    return QList<QOrganizerItemLocalId>();
+    return QList<QOrganizerItemId>();
 }
 
 /*!
@@ -333,7 +333,7 @@ QList<QOrganizerItem> QOrganizerManagerEngine::itemsForExport(const QDateTime& s
 
   \sa QOrganizerItemFetchHint
  */
-QOrganizerItem QOrganizerManagerEngine::item(const QOrganizerItemLocalId& organizeritemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
+QOrganizerItem QOrganizerManagerEngine::item(const QOrganizerItemId& organizeritemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     Q_UNUSED(organizeritemId);
     Q_UNUSED(fetchHint);
@@ -365,7 +365,7 @@ bool QOrganizerManagerEngine::hasFeature(QOrganizerManager::ManagerFeature featu
      with a default QOrganizerItemFilter
    \o An empty QOrganizerItemIntersectionFilter will be replaced with a QOrganizerItemDefaultFilter
    \o An empty QOrganizerItemUnionFilter will be replaced with a QOrganizerItemInvalidFilter
-   \o An empty QOrganizerItemLocalIdFilter will be replaced with a QOrganizerItemInvalidFilter
+   \o An empty QOrganizerItemIdFilter will be replaced with a QOrganizerItemInvalidFilter
    \o An intersection or union filter with a single entry will be replaced by that entry
    \o A QOrganizerItemDetailFilter or QOrganizerItemDetailRangeFilter with no definition name will be replaced with a QOrganizerItemInvalidFilter
    \o A QOrganizerItemDetailRangeFilter with no range specified will be converted to a QOrganizerItemDetailFilter
@@ -434,7 +434,7 @@ QOrganizerItemFilter QOrganizerManagerEngine::canonicalizedFilter(const QOrganiz
 
         case QOrganizerItemFilter::LocalIdFilter:
         {
-            QOrganizerItemLocalIdFilter f(filter);
+            QOrganizerItemIdFilter f(filter);
             if (f.ids().count() == 0)
                 return QOrganizerItemInvalidFilter();
         }
@@ -861,9 +861,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     // instance origin
     d.setName(QOrganizerItemParent::DefinitionName);
     fields.clear();
-    f.setDataType(qMetaTypeId<QOrganizerItemLocalId>());
+    f.setDataType(qMetaTypeId<QOrganizerItemId>());
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemParent::FieldParentLocalId, f);
+    fields.insert(QOrganizerItemParent::FieldParentId, f);
     f.setDataType(QVariant::Date);
     fields.insert(QOrganizerItemParent::FieldOriginalDate, f);
     d.setFields(fields);
@@ -1254,9 +1254,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     // instance origin
     d.setName(QOrganizerItemParent::DefinitionName);
     fields.clear();
-    f.setDataType(qMetaTypeId<QOrganizerItemLocalId>());
+    f.setDataType(qMetaTypeId<QOrganizerItemId>());
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemParent::FieldParentLocalId, f);
+    fields.insert(QOrganizerItemParent::FieldParentId, f);
     f.setDataType(QVariant::Date);
     fields.insert(QOrganizerItemParent::FieldOriginalDate, f);
     d.setFields(fields);
@@ -1768,10 +1768,10 @@ bool QOrganizerManagerEngine::saveItem(QOrganizerItem* organizeritem, QOrganizer
 
   The default implementation will convert this into a call to removeItems.
  */
-bool QOrganizerManagerEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerManager::Error* error)
+bool QOrganizerManagerEngine::removeItem(const QOrganizerItemId& organizeritemId, QOrganizerManager::Error* error)
 {
     // Convert to a list op
-    QList<QOrganizerItemLocalId> list;
+    QList<QOrganizerItemId> list;
     list.append(organizeritemId);
 
     QMap<int, QOrganizerManager::Error> errors;
@@ -1851,7 +1851,7 @@ bool QOrganizerManagerEngine::saveItems(QList<QOrganizerItem>* organizeritems, Q
 
   \sa QOrganizerManager::removeItem()
  */
-bool QOrganizerManagerEngine::removeItems(const QList<QOrganizerItemLocalId>& organizeritemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
+bool QOrganizerManagerEngine::removeItems(const QList<QOrganizerItemId>& organizeritemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
     Q_UNUSED(organizeritemIds);
     Q_UNUSED(errorMap);
@@ -2095,8 +2095,8 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
 
         case QOrganizerItemFilter::LocalIdFilter:
             {
-                const QOrganizerItemLocalIdFilter idf(filter);
-                if (idf.ids().contains(organizeritem.id().localId()))
+                const QOrganizerItemIdFilter idf(filter);
+                if (idf.ids().contains(organizeritem.id()))
                     return true;
             }
             // Fall through to end
@@ -2370,8 +2370,8 @@ bool QOrganizerManagerEngine::isItemBetweenDates(const QOrganizerItem& item, con
 
     // if period end date is not given, check that item is starting or ending after the period start
     if (endPeriod.isNull())   // startPeriod must be non-null because of initial test
-        return !itemDateEnd.isNull() && itemDateEnd >= startPeriod ||
-               !itemDateStart.isNull() && itemDateStart >= startPeriod;
+        return (!itemDateEnd.isNull() && itemDateEnd >= startPeriod) ||
+               (!itemDateStart.isNull() && itemDateStart >= startPeriod);
 
     // Both startPeriod and endPeriod are not null
     // check if item start date is between the period start and end date
@@ -2464,7 +2464,7 @@ void QOrganizerManagerEngine::addSorted(QList<QOrganizerItem>* sorted, const QOr
   Returns the engine local id from the given \a localId.
   The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
  */
-QOrganizerItemEngineLocalId* QOrganizerManagerEngine::engineLocalItemId(const QOrganizerItemLocalId& localId)
+QOrganizerItemEngineLocalId* QOrganizerManagerEngine::engineLocalItemId(const QOrganizerItemId& localId)
 {
     return localId.d;
 }
@@ -2605,18 +2605,18 @@ void QOrganizerManagerEngine::updateItemOccurrenceFetchRequest(QOrganizerItemOcc
 }
 
 /*!
-  Updates the given QOrganizerItemLocalIdFetchRequest \a req with the latest results \a result, and operation error \a error.
+  Updates the given QOrganizerItemIdFetchRequest \a req with the latest results \a result, and operation error \a error.
   In addition, the state of the request will be changed to \a newState.
 
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
  */
-void QOrganizerManagerEngine::updateItemLocalIdFetchRequest(QOrganizerItemLocalIdFetchRequest* req, const QList<QOrganizerItemLocalId>& result, QOrganizerManager::Error error, QOrganizerAbstractRequest::State newState)
+void QOrganizerManagerEngine::updateItemIdFetchRequest(QOrganizerItemIdFetchRequest* req, const QList<QOrganizerItemId>& result, QOrganizerManager::Error error, QOrganizerAbstractRequest::State newState)
 {
     if (req) {
-        QWeakPointer<QOrganizerItemLocalIdFetchRequest> ireq(req); // Take this in case the first emit deletes us
-        QOrganizerItemLocalIdFetchRequestPrivate* rd = static_cast<QOrganizerItemLocalIdFetchRequestPrivate*>(ireq.data()->d_ptr);
+        QWeakPointer<QOrganizerItemIdFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerItemIdFetchRequestPrivate* rd = static_cast<QOrganizerItemIdFetchRequestPrivate*>(ireq.data()->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
         rd->m_ids = result;

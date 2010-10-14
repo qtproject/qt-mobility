@@ -162,7 +162,7 @@ void MonthPage::removeItem()
     if (organizerItem.isEmpty())
         return;
 
-    m_manager->removeItem(organizerItem.localId());
+    m_manager->removeItem(organizerItem.id());
     refresh();
 }
 

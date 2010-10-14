@@ -59,9 +59,9 @@ public:
     QOrganizerItemRemoveRequest(QObject* parent = 0);
 
     /* Selection */
-    void setItemId(const QOrganizerItemLocalId& organizeritemId);
-    void setItemIds(const QList<QOrganizerItemLocalId>& organizeritemIds);
-    QList<QOrganizerItemLocalId> itemIds() const;
+    void setItemId(const QOrganizerItemId& organizeritemId);
+    void setItemIds(const QList<QOrganizerItemId>& organizeritemIds);
+    QList<QOrganizerItemId> itemIds() const;
 
     /* Results */
     QMap<int, QOrganizerManager::Error> errorMap() const;

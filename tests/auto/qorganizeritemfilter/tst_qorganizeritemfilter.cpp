@@ -103,7 +103,10 @@ public:
         BasicItemLocalId* cloned = new BasicItemLocalId(m_id);
         return cloned;
     }
-    QDebug debugStreamOut(QDebug dbg) {
+    QString managerUri() const {
+        return QString::fromLatin1("QOrganizer:basicItem:");
+    }
+    QDebug& debugStreamOut(QDebug& dbg) {
         return dbg << m_id;
     }
     QDataStream& dataStreamOut(QDataStream& out) {
@@ -123,9 +126,9 @@ private:
     uint m_id;
 };
 
-QOrganizerItemLocalId makeId(uint id)
+QOrganizerItemId makeId(uint id)
 {
-    return QOrganizerItemLocalId(new BasicItemLocalId(id));
+    return QOrganizerItemId(new BasicItemLocalId(id));
 }
 
 tst_QOrganizerItemFilter::tst_QOrganizerItemFilter()
@@ -851,19 +854,19 @@ void tst_QOrganizerItemFilter::boringFilters()
 
 void tst_QOrganizerItemFilter::idListFilter()
 {
-    QOrganizerItemLocalIdFilter idf;
+    QOrganizerItemIdFilter idf;
 
     QVERIFY(idf.type() == QOrganizerItemFilter::LocalIdFilter);
 
     QVERIFY(idf.ids().count() == 0);
 
-    QList<QOrganizerItemLocalId> ids;
+    QList<QOrganizerItemId> ids;
     ids << makeId(5) << makeId(6) << makeId(17);
 
     idf.setIds(ids);
     QVERIFY(idf.ids() == ids);
 
-    idf.setIds(QList<QOrganizerItemLocalId>());
+    idf.setIds(QList<QOrganizerItemId>());
     QVERIFY(idf.ids().count() == 0);
 
     /* Test op= */
@@ -871,7 +874,7 @@ void tst_QOrganizerItemFilter::idListFilter()
     QOrganizerItemFilter f = idf;
     QVERIFY(f == idf);
 
-    QOrganizerItemLocalIdFilter idf2 = f;
+    QOrganizerItemIdFilter idf2 = f;
     QVERIFY(idf2 == idf);
     QVERIFY(idf2.ids() == ids);
 
@@ -883,9 +886,9 @@ void tst_QOrganizerItemFilter::idListFilter()
     QVERIFY(idf2 == idf);
 
     QOrganizerItemDetailFilter dfil;
-    QOrganizerItemLocalIdFilter idf3(dfil);
+    QOrganizerItemIdFilter idf3(dfil);
     QVERIFY(idf3.type() == QOrganizerItemFilter::LocalIdFilter); // should be a blank id list filter
-    QOrganizerItemLocalIdFilter idf4(idf);
+    QOrganizerItemIdFilter idf4(idf);
     QVERIFY(idf4 == idf); // should be a copy of idf.
     idf = dfil; // now assign.
     QVERIFY(idf == idf3); // again, should be a blank id list filter.
@@ -1013,15 +1016,15 @@ void tst_QOrganizerItemFilter::canonicalizedFilter_data()
     }
 
     {
-        QOrganizerItemLocalIdFilter qclif;
+        QOrganizerItemIdFilter qclif;
         QTest::newRow("Empty local id filter")
                 << static_cast<QOrganizerItemFilter>(qclif)
                 << static_cast<QOrganizerItemFilter>(invalidFilter);
     }
 
     {
-        QOrganizerItemLocalIdFilter qclif;
-        qclif.setIds(QList<QOrganizerItemLocalId>() << makeId(1) << makeId(2));
+        QOrganizerItemIdFilter qclif;
+        qclif.setIds(QList<QOrganizerItemId>() << makeId(1) << makeId(2));
         QTest::newRow("Normal local id filter")
                 << static_cast<QOrganizerItemFilter>(qclif)
                 << static_cast<QOrganizerItemFilter>(qclif);

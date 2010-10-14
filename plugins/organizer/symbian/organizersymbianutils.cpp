@@ -127,9 +127,9 @@ QOrganizerCollectionLocalId toCollectionLocalId(quint64 collectionId)
     return QOrganizerCollectionLocalId(new QOrganizerCollectionSymbianEngineLocalId(collectionId));
 }
 
-QOrganizerItemLocalId toItemLocalId(quint64 collectionId, quint32 itemId)
+QOrganizerItemId toItemLocalId(quint64 collectionId, quint32 itemId)
 {
-    return QOrganizerItemLocalId(new QOrganizerItemSymbianEngineLocalId(collectionId, itemId));
+    return QOrganizerItemId(new QOrganizerItemSymbianEngineLocalId(collectionId, itemId));
 }
 
 TCalLocalUid toTCalLocalUid(const QOrganizerItemLocalId& itemLocalId)

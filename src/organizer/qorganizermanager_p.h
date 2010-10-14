@@ -83,7 +83,7 @@ public:
 
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
     static QOrganizerManagerEngine* engine(const QOrganizerManager* manager);
-    static QOrganizerItemEngineLocalId* createEngineItemLocalId(const QString& uri);
+    static QOrganizerItemEngineLocalId* createEngineItemId(const QString& uri);
     static QOrganizerCollectionEngineLocalId* createEngineCollectionLocalId(const QString& uri);
 
     QOrganizerManagerEngine* m_engine;

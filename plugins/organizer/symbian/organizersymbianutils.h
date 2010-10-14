@@ -68,7 +68,7 @@ namespace OrganizerSymbianUtils
     TTime toTTime(const QDateTime &dateTime, Qt::TimeSpec timeSpec);
     QDateTime toQDateTime(const TTime &time, Qt::TimeSpec timeSpec);
     QOrganizerCollectionLocalId toCollectionLocalId(quint64 collectionId);
-    QOrganizerItemLocalId toItemLocalId(quint64 collectionId, quint32 itemId);
+    QOrganizerItemId toItemLocalId(quint64 collectionId, quint32 itemId);
     TCalLocalUid toTCalLocalUid(const QOrganizerItemLocalId& itemLocalId);
     quint64 toTCalCollectionId(const QOrganizerItemLocalId& itemLocalId);
     QOrganizerCollectionLocalId getCollectionLocalId(const QOrganizerItemLocalId& itemLocalId);

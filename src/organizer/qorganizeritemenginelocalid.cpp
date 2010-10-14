@@ -43,7 +43,7 @@
 
 /*!
   \class QOrganizerItemEngineLocalId
-  \relates QOrganizerItemLocalId
+  \relates QOrganizerItemId
   \brief The QOrganizerItemEngineLocalId class uniquely identifies an item within a
   particular engine plugin.
 
@@ -65,14 +65,14 @@
   \fn QOrganizerItemEngineLocalId::isEqualTo(const QOrganizerItemEngineLocalId* other) const
   Returns true if this id is equal to the \a other id; false otherwise.
   Note that when implementing this function, you do not have to check that the type is the same,
-  since the function which calls this function (in QOrganizerItemLocalId) does that check for you.
+  since the function which calls this function (in QOrganizerItemId) does that check for you.
  */
 
 /*!
   \fn QOrganizerItemEngineLocalId::isLessThan(const QOrganizerItemEngineLocalId* other) const
   Returns true if this id is less than the \a other id; false otherwise.
   Note that when implementing this function, you do not have to check that the type is the same,
-  since the function which calls this function (in QOrganizerItemLocalId) does that check for you.
+  since the function which calls this function (in QOrganizerItemId) does that check for you.
  */
 
 /*!

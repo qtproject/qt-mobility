@@ -206,7 +206,7 @@ void DayPage::removeItem()
     if (organizerItem.isEmpty())
         return;
 
-    m_manager->removeItem(organizerItem.localId());
+    m_manager->removeItem(organizerItem.id());
     if (m_manager->error())
         QMessageBox::information(this, "Failed!", QString("Failed to remove item!\n(error code %1)").arg(m_manager->error()));
     else

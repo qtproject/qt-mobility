@@ -78,7 +78,7 @@ public: // transform functions
 
     QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent *cevent);
     QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent *cevent, const QDateTime &instanceStartDate, const QDateTime &instanceEndDate);
-    QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent *cevent, const QDateTime &instanceStartDate, const QDateTime &instanceEndDate, QOrganizerItemLocalId parentLocalId);
+    QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent *cevent, const QDateTime &instanceStartDate, const QDateTime &instanceEndDate, QOrganizerItemId parentId);
 
     QOrganizerTodo convertCTodoToQTodo(CTodo *ctodo);
     QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo *ctodo);

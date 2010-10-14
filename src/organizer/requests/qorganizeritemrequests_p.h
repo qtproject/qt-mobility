@@ -184,19 +184,19 @@ public:
         return QOrganizerAbstractRequest::ItemRemoveRequest;
     }
 
-    QList<QOrganizerItemLocalId> m_organizeritemIds;
+    QList<QOrganizerItemId> m_organizeritemIds;
     QMap<int, QOrganizerManager::Error> m_errors;
 };
 
-class QOrganizerItemLocalIdFetchRequestPrivate : public QOrganizerAbstractRequestPrivate
+class QOrganizerItemIdFetchRequestPrivate : public QOrganizerAbstractRequestPrivate
 {
 public:
-    QOrganizerItemLocalIdFetchRequestPrivate()
+    QOrganizerItemIdFetchRequestPrivate()
         : QOrganizerAbstractRequestPrivate()
     {
     }
 
-    ~QOrganizerItemLocalIdFetchRequestPrivate()
+    ~QOrganizerItemIdFetchRequestPrivate()
     {
     }
 
@@ -208,7 +208,7 @@ public:
     QOrganizerItemFilter m_filter;
     QList<QOrganizerItemSortOrder> m_sorting;
 
-    QList<QOrganizerItemLocalId> m_ids;
+    QList<QOrganizerItemId> m_ids;
 
     QDateTime m_startDate;
     QDateTime m_endDate;

@@ -280,7 +280,7 @@ bool tst_QOrganizerItemAsync::compareItems(QOrganizerItem ca, QOrganizerItem cb)
 {
     // NOTE: This compare is item detail order insensitive.
     
-    if (ca.localId() != cb.localId())
+    if (ca.id() != cb.id())
         return false;
     
     QList<QOrganizerItemDetail> aDetails = ca.details();
@@ -435,7 +435,7 @@ void tst_QOrganizerItemAsync::itemFetch()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    QList<QOrganizerItemLocalId> itemIds = oim->itemIds();
+    QList<QOrganizerItemId> itemIds = oim->itemIds();
     QList<QOrganizerItem> items = ifr.items();
     QCOMPARE(itemIds.size(), items.size());
     for (int i = 0; i < itemIds.size(); i++) {
@@ -655,7 +655,7 @@ void tst_QOrganizerItemAsync::itemFetchById()
     QVERIFY(!ifr.waitForFinished());
 
     // get all item ids
-    QList<QOrganizerItemLocalId> itemIds(oim->itemIds());
+    QList<QOrganizerItemId> itemIds(oim->itemIds());
 
     // "all items" retrieval
     ifr.setManager(oim.data());
@@ -692,7 +692,7 @@ void tst_QOrganizerItemAsync::itemIdFetch()
 {
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
-    QOrganizerItemLocalIdFetchRequest ifr;
+    QOrganizerItemIdFetchRequest ifr;
     QVERIFY(ifr.type() == QOrganizerAbstractRequest::ItemLocalIdFetchRequest);
 
     // initial state - not started, no manager.
@@ -710,7 +710,7 @@ void tst_QOrganizerItemAsync::itemIdFetch()
     QVERIFY(!ifr.isFinished());
     QVERIFY(!ifr.cancel());
     QVERIFY(!ifr.waitForFinished());
-    qRegisterMetaType<QOrganizerItemLocalIdFetchRequest*>("QOrganizerItemLocalIdFetchRequest*");
+    qRegisterMetaType<QOrganizerItemIdFetchRequest*>("QOrganizerItemIdFetchRequest*");
 
     QThreadSignalSpy spy(&ifr, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     ifr.setFilter(fil);
@@ -726,8 +726,8 @@ void tst_QOrganizerItemAsync::itemIdFetch()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    QList<QOrganizerItemLocalId> itemIds = oim->itemIds();
-    QList<QOrganizerItemLocalId> result = ifr.itemIds();
+    QList<QOrganizerItemId> itemIds = oim->itemIds();
+    QList<QOrganizerItemId> result = ifr.itemIds();
     QCOMPARE(itemIds, result);
 
     // asynchronous detail filtering
@@ -844,7 +844,7 @@ void tst_QOrganizerItemAsync::itemRemove()
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
 
-    qRegisterMetaType<QList<QOrganizerItemLocalId> >("QList<QOrganizerItemLocalId>");
+    qRegisterMetaType<QList<QOrganizerItemId> >("QList<QOrganizerItemId>");
 
     QOrganizerItemRemoveRequest irr;
     QVERIFY(irr.type() == QOrganizerAbstractRequest::ItemRemoveRequest);
@@ -871,13 +871,13 @@ void tst_QOrganizerItemAsync::itemRemove()
     testTodo1.saveDetail(&comment);
     QVERIFY(oim->saveItem(&testTodo1));
 
-    QList<QOrganizerItemLocalId> allIds(oim->itemIds());
+    QList<QOrganizerItemId> allIds(oim->itemIds());
     QVERIFY(!allIds.isEmpty());
-    QOrganizerItemLocalId removableId(allIds.first());
+    QOrganizerItemId removableId(allIds.first());
 
     // specific item set
     irr.setItemId(removableId);
-    QVERIFY(irr.itemIds() == QList<QOrganizerItemLocalId>() << removableId);
+    QVERIFY(irr.itemIds() == QList<QOrganizerItemId>() << removableId);
 
     // specific item removal via detail filter
     int originalCount = oim->itemIds().size();
@@ -1046,7 +1046,7 @@ void tst_QOrganizerItemAsync::itemSave()
     QList<QOrganizerItem> expected = isr.items();
     QCOMPARE(expected.size(), 1);
     QList<QOrganizerItem> result;
-    result << oim->item(expected.first().id().localId());
+    result << oim->item(expected.first().id());
     //some backends add extra fields, so this doesn't work:
     //QCOMPARE(result, expected);
     // XXX: really, we should use isSuperset() from tst_QOrganizerManager, but this will do for now:
@@ -1075,7 +1075,7 @@ void tst_QOrganizerItemAsync::itemSave()
 
     expected = isr.items();
     result.clear();
-    result << oim->item(expected.first().id().localId());
+    result << oim->item(expected.first().id());
 
     QVERIFY(compareItemLists(result, expected));
 
@@ -1102,7 +1102,7 @@ void tst_QOrganizerItemAsync::itemSave()
             // after the request has already finished.. so loop and try again.
             isr.waitForFinished();
             saveList = isr.items();
-            if (oim->itemIds().size() > (originalCount + 1) && !oim->removeItem(saveList.at(0).localId())) {
+            if (oim->itemIds().size() > (originalCount + 1) && !oim->removeItem(saveList.at(0).id())) {
                 QSKIP("Unable to remove saved item to test cancellation of item save request", SkipSingle);
             }
             saveList.clear();
@@ -1126,7 +1126,7 @@ void tst_QOrganizerItemAsync::itemSave()
 
         // verify that the changes were not saved
         expected.clear();
-        QList<QOrganizerItemLocalId> allItems = oim->itemIds();
+        QList<QOrganizerItemId> allItems = oim->itemIds();
         for (int i = 0; i < allItems.size(); i++) {
             expected.append(oim->item(allItems.at(i)));
         }
@@ -1145,7 +1145,7 @@ void tst_QOrganizerItemAsync::itemSave()
             // after the request has already finished.. so loop and try again.
             isr.waitForFinished();
             saveList = isr.items();
-            if (oim->itemIds().size() > (originalCount + 1) && !oim->removeItem(saveList.at(0).localId())) {
+            if (oim->itemIds().size() > (originalCount + 1) && !oim->removeItem(saveList.at(0).id())) {
                 QSKIP("Unable to remove saved item to test cancellation of item save request", SkipSingle);
             }
             saveList.clear();
@@ -1167,7 +1167,7 @@ void tst_QOrganizerItemAsync::itemSave()
 
         // verify that the changes were not saved
         expected.clear();
-        QList<QOrganizerItemLocalId> allItems = oim->itemIds();
+        QList<QOrganizerItemId> allItems = oim->itemIds();
         for (int i = 0; i < allItems.size(); i++) {
             expected.append(oim->item(allItems.at(i)));
         }
@@ -1188,9 +1188,9 @@ void tst_QOrganizerItemAsync::itemPartialSave()
     QList<QOrganizerItem> originalItems(items);
     QCOMPARE(items.count(), 3);
 
-    QOrganizerItemLocalId aId = items[0].localId();
-    QOrganizerItemLocalId bId = items[1].localId();
-    QOrganizerItemLocalId cId = items[2].localId();
+    QOrganizerItemId aId = items[0].id();
+    QOrganizerItemId bId = items[1].id();
+    QOrganizerItemId cId = items[2].id();
 
     // Test 1: saving a item with a changed detail masked out does nothing
     QOrganizerItemPriority priority(items[0].detail<QOrganizerItemPriority>());
@@ -1260,13 +1260,13 @@ void tst_QOrganizerItemAsync::itemPartialSave()
     QVERIFY(isr.errorMap().isEmpty());
     items = isr.items();
     QCOMPARE(items.size()-1, 3);  // Just check that we are dealing with the item at index 3
-    QOrganizerItemLocalId dId = items[3].localId();
+    QOrganizerItemId dId = items[3].id();
     items[3] = oim->item(dId);
     QVERIFY(items[3].details<QOrganizerItemEmailAddress>().count() == 0); // not saved
     QVERIFY(items[3].details<QOrganizerItemPriority>().count() == 0); // not saved
 
     // 5 - New item, some details in the mask
-    QVERIFY(newContact.localId() == 0);
+    QVERIFY(newContact.id() == 0);
     QVERIFY(newContact.details<QOrganizerItemEmailAddress>().count() == 1);
     QVERIFY(newContact.details<QOrganizerItemPriority>().count() == 1);
     items.append(newContact);
@@ -1278,7 +1278,7 @@ void tst_QOrganizerItemAsync::itemPartialSave()
     QVERIFY(isr.errorMap().isEmpty());
     items = isr.items();
     QCOMPARE(items.size()-1, 4);  // Just check that we are dealing with the item at index 4
-    QOrganizerItemLocalId eId = items[4].localId();
+    QOrganizerItemId eId = items[4].id();
     items[4] = oim->item(eId);
     QCOMPARE(items[4].details<QOrganizerItemEmailAddress>().count(), 0); // not saved
     QCOMPARE(items[4].details<QOrganizerItemPriority>().count(), 1); // saved
@@ -2324,8 +2324,8 @@ QOrganizerManager* tst_QOrganizerItemAsync::prepareModel(const QString& managerU
 
     // XXX TODO: ensure that this is the case:
     // there should be no items in the database.
-    QList<QOrganizerItemLocalId> toRemove = oim->itemIds();
-    foreach (const QOrganizerItemLocalId& removeId, toRemove)
+    QList<QOrganizerItemId> toRemove = oim->itemIds();
+    foreach (const QOrganizerItemId& removeId, toRemove)
         oim->removeItem(removeId);
 
     QOrganizerEvent a, b, c;

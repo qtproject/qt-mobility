@@ -93,10 +93,11 @@ public:
     bool isLessThan(const QOrganizerItemEngineLocalId* other) const;
 
     uint engineLocalIdType() const;
+    QString managerUri() const;
     QOrganizerItemEngineLocalId* clone() const;
 
 #ifndef QT_NO_DEBUG_STREAM
-    QDebug debugStreamOut(QDebug dbg);
+    QDebug& debugStreamOut(QDebug& dbg);
 #endif
 #ifndef QT_NO_DATASTREAM
     QDataStream& dataStreamOut(QDataStream& out);
@@ -109,11 +110,11 @@ public:
     friend class OrganizerAsynchProcess;
 };
 
-inline QOrganizerItemLocalId makeItemLocalId(quint32 id) {
-    return QOrganizerItemLocalId(new QOrganizerItemMaemo5EngineLocalId(id));
+inline QOrganizerItemId makeItemLocalId(quint32 id) {
+    return QOrganizerItemId(new QOrganizerItemMaemo5EngineLocalId(id));
 }
 
-inline quint32 readItemLocalId(const QOrganizerItemLocalId& id) {
+inline quint32 readItemLocalId(const QOrganizerItemId& id) {
     return static_cast<QOrganizerItemMaemo5EngineLocalId*>(
             QOrganizerManagerEngine::engineLocalItemId(id))->m_localItemId;
 }

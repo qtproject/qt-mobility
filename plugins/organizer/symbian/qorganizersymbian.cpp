@@ -499,15 +499,11 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
             break;
 
         bool isException = (calInstance->Entry().RecurrenceIdL().TimeUtcL() != Time::NullTTime());
-        QOrganizerItemId id;
-        // Set local id if this is an exceptional item
+        // Set id if this is an exceptional item
         if (isException) {
-            QOrganizerItemLocalId instanceEntryId(new QOrganizerItemSymbianEngineLocalId(
-                localCollectionIdValue, calInstance->Entry().LocalUidL()));
-            id.setLocalId(instanceEntryId);
+            itemOccurrence.setId(QOrganizerItemId(new QOrganizerItemSymbianEngineLocalId(
+                localCollectionIdValue, calInstance->Entry().LocalUidL())));
         }
-        id.setManagerUri(managerUri());
-        itemOccurrence.setId(id);
 
         // Set parent id
         TCalLocalUid parentLocalUid(0);
@@ -716,10 +712,7 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& i
     CleanupStack::PopAndDestroy(calEntry);
     
     // Set item id
-    QOrganizerItemId id;
-    id.setLocalId(itemId);
-    id.setManagerUri(managerUri());
-    item.setId(id);    
+    item.setId(itemId);
 
     // Set collection id
     QOrganizerCollectionId cid;
@@ -824,11 +817,8 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item,
     // Transform details that are available/updated after saving    
     m_itemTransform.toItemPostSaveL(*entry, item, managerUri());
     
-    // Update local id
-    QOrganizerItemId itemId;
-    itemId.setManagerUri(managerUri());
-    itemId.setLocalId(toItemLocalId(m_collections[collectionLocalId].calCollectionId(), entry->LocalUidL()));
-    item->setId(itemId);
+    // Update id
+    item->setId(toItemLocalId(m_collections[collectionLocalId].calCollectionId(), entry->LocalUidL()));
 
     // Set collection id
     QOrganizerCollectionId cid;

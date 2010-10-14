@@ -59,8 +59,8 @@ public:
     void setEndDateTime(const QDateTime& endDateTime);
     QDateTime endDateTime() const;
 
-    void setParentLocalId(const QOrganizerItemLocalId& parentId);
-    QOrganizerItemLocalId parentLocalId() const;
+    void setParentId(const QOrganizerItemId& parentId);
+    QOrganizerItemId parentId() const;
     void setOriginalDate(const QDate& date);
     QDate originalDate() const;
 

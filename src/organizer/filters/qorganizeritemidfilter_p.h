@@ -62,15 +62,15 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemLocalIdFilterPrivate : public QOrganizerItemFilterPrivate
+class QOrganizerItemIdFilterPrivate : public QOrganizerItemFilterPrivate
 {
 public:
-    QOrganizerItemLocalIdFilterPrivate()
+    QOrganizerItemIdFilterPrivate()
         : QOrganizerItemFilterPrivate()
     {
     }
 
-    QOrganizerItemLocalIdFilterPrivate(const QOrganizerItemLocalIdFilterPrivate& other)
+    QOrganizerItemIdFilterPrivate(const QOrganizerItemIdFilterPrivate& other)
         : QOrganizerItemFilterPrivate(other),
         m_ids(other.m_ids)
     {
@@ -78,7 +78,7 @@ public:
 
     virtual bool compare(const QOrganizerItemFilterPrivate* other) const
     {
-        const QOrganizerItemLocalIdFilterPrivate *od = static_cast<const QOrganizerItemLocalIdFilterPrivate*>(other);
+        const QOrganizerItemIdFilterPrivate *od = static_cast<const QOrganizerItemIdFilterPrivate*>(other);
         if (m_ids != od->m_ids)
             return false;
         return true;
@@ -98,9 +98,9 @@ public:
         return stream;
     }
 
-    Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemLocalIdFilter, QOrganizerItemFilter::LocalIdFilter)
+    Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemIdFilter, QOrganizerItemFilter::LocalIdFilter)
 
-    QList<QOrganizerItemLocalId> m_ids;
+    QList<QOrganizerItemId> m_ids;
 };
 
 QTM_END_NAMESPACE
