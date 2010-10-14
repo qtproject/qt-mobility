@@ -392,4 +392,4 @@ QList<QVariant::Type> DummyEngine::supportedDataTypes() const
     return st;
 }
 
-#include "dummyplugin.moc"
+#include "moc_dummyplugin.cpp"
