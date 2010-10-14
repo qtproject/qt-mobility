@@ -235,7 +235,7 @@ public:
     QString m_organizeritemType;
     QStringList m_names;
     QMap<QString, QOrganizerItemDetailDefinition> m_definitions;
-    QOrganizerCollectionLocalId m_collectionId;
+    QOrganizerCollectionId m_collectionId;
     QMap<int, QOrganizerManager::Error> m_errors;
 };
 
@@ -259,7 +259,7 @@ public:
 
     QString m_organizeritemType;
     QList<QOrganizerItemDetailDefinition> m_definitions;
-    QOrganizerCollectionLocalId m_collectionId;
+    QOrganizerCollectionId m_collectionId;
     QMap<int, QOrganizerManager::Error> m_errors;
 };
 
@@ -283,7 +283,7 @@ public:
 
     QString m_organizeritemType;
     QStringList m_names;
-    QOrganizerCollectionLocalId m_collectionId;
+    QOrganizerCollectionId m_collectionId;
     QMap<int, QOrganizerManager::Error> m_errors;
 };
 
@@ -324,7 +324,7 @@ public:
         return QOrganizerAbstractRequest::CollectionRemoveRequest;
     }
 
-    QList<QOrganizerCollectionLocalId> m_collectionIds;
+    QList<QOrganizerCollectionId> m_collectionIds;
     QMap<int, QOrganizerManager::Error> m_errors;
 };
 

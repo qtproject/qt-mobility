@@ -1876,7 +1876,7 @@ QOrganizerCollection QOrganizerManagerEngine::defaultCollection(QOrganizerManage
     If the given \a collectionId does not specify a valid collection, \a error will
     be set to \c QOrganizerManager::DoesNotExistError.
 */
-QOrganizerCollection QOrganizerManagerEngine::collection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error) const
+QOrganizerCollection QOrganizerManagerEngine::collection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error) const
 {
     Q_UNUSED(collectionId);
     *error = QOrganizerManager::NotSupportedError;
@@ -1912,7 +1912,7 @@ bool QOrganizerManagerEngine::saveCollection(QOrganizerCollection* collection, Q
     Any errors encountered during this operation should be stored to
     \a error.
 */
-bool QOrganizerManagerEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error)
+bool QOrganizerManagerEngine::removeCollection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error)
 {
     Q_UNUSED(collectionId);
 
@@ -2321,8 +2321,8 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
     case QOrganizerItemFilter::CollectionFilter:
             {
                 const QOrganizerItemCollectionFilter cf(filter);
-                const QSet<QOrganizerCollectionLocalId>& ids = cf.collectionIds();
-                if (ids.contains(organizeritem.collectionId().localId()))
+                const QSet<QOrganizerCollectionId>& ids = cf.collectionIds();
+                if (ids.contains(organizeritem.collectionId()))
                     return true;
                 return false;
             }
@@ -2473,9 +2473,9 @@ const QOrganizerItemEngineLocalId* QOrganizerManagerEngine::engineLocalItemId(co
   Returns the engine local id from the given \a localId.
   The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
  */
-QOrganizerCollectionEngineLocalId* QOrganizerManagerEngine::engineLocalCollectionId(const QOrganizerCollectionLocalId& localId)
+const QOrganizerCollectionEngineLocalId* QOrganizerManagerEngine::engineLocalCollectionId(const QOrganizerCollectionId& localId)
 {
-    return localId.d;
+    return localId.d.data();
 }
 
 /*!

@@ -281,9 +281,9 @@ void QOrganizerManager::createEngine(const QString& managerName, const QMap<QStr
     connect(d->m_engine, SIGNAL(itemsAdded(QList<QOrganizerItemId>)), this, SIGNAL(itemsAdded(QList<QOrganizerItemId>)));
     connect(d->m_engine, SIGNAL(itemsChanged(QList<QOrganizerItemId>)), this, SIGNAL(itemsChanged(QList<QOrganizerItemId>)));
     connect(d->m_engine, SIGNAL(itemsRemoved(QList<QOrganizerItemId>)), this, SIGNAL(itemsRemoved(QList<QOrganizerItemId>)));
-    connect(d->m_engine, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)), this, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
-    connect(d->m_engine, SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)), this, SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)));
-    connect(d->m_engine, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)), this, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)));
+    connect(d->m_engine, SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)), this, SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)));
+    connect(d->m_engine, SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)), this, SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)));
+    connect(d->m_engine, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)), this, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)));
 }
 
 /*!
@@ -628,7 +628,7 @@ QOrganizerCollection QOrganizerManager::defaultCollection() const
 /*!
   Returns the collection identified by the given \a collectionId which is managed by this manager.
  */
-QOrganizerCollection QOrganizerManager::collection(const QOrganizerCollectionLocalId& collectionId) const
+QOrganizerCollection QOrganizerManager::collection(const QOrganizerCollectionId& collectionId) const
 {
     d->m_error = QOrganizerManager::NoError;
     d->m_errorMap.clear();
@@ -681,7 +681,7 @@ bool QOrganizerManager::saveCollection(QOrganizerCollection* collection)
   Attempting to remove the default collection will fail and calling \l error() will return
   QOrganizerManager::PermissionsError.
  */
-bool QOrganizerManager::removeCollection(const QOrganizerCollectionLocalId& collectionId)
+bool QOrganizerManager::removeCollection(const QOrganizerCollectionId& collectionId)
 {
     d->m_error = QOrganizerManager::NoError;
     d->m_errorMap.clear();

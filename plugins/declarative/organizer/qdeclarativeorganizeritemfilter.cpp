@@ -61,12 +61,12 @@ QOrganizerItemFilter QDeclarativeOrganizerItemLocalIdFilter::filter() const
 QOrganizerItemFilter QDeclarativeOrganizerItemCollectionFilter::filter() const
 {
     QOrganizerItemCollectionFilter f;
-    QSet<QOrganizerCollectionLocalId> ids;
+    QSet<QOrganizerCollectionId> ids;
 
     foreach(const QVariant& id, m_ids) {
         QOrganizerCollectionId cId = QDeclarativeOrganizerModel::collectionIdFromHash(id.value<uint>());
-        if (!cId.localId().isNull())
-            ids << cId.localId();
+        if (!cId.isNull())
+            ids << cId;
     }
 
     f.setCollectionIds(ids);

@@ -103,13 +103,14 @@ public:
     bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const;
 
     uint engineLocalIdType() const;
+    QString managerUri() const;
     QOrganizerCollectionEngineLocalId* clone() const;
 
 #ifndef QT_NO_DEBUG_STREAM
-    QDebug debugStreamOut(QDebug dbg);
+    QDebug& debugStreamOut(QDebug& dbg) const;
 #endif
 #ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out);
+    QDataStream& dataStreamOut(QDataStream& out) const;
     QDataStream& dataStreamIn(QDataStream& in);
 #endif
     uint hash() const;
@@ -277,11 +278,11 @@ public:
     QList<QOrganizerCollection> collections(
         QOrganizerManager::Error* error) const;
     QOrganizerCollection collection(
-        const QOrganizerCollectionLocalId& collectionId,
+        const QOrganizerCollectionId& collectionId,
         QOrganizerManager::Error* error);
     bool saveCollection(QOrganizerCollection* collection, 
         QOrganizerManager::Error* error);
-    bool removeCollection(const QOrganizerCollectionLocalId& collectionId, 
+    bool removeCollection(const QOrganizerCollectionId& collectionId, 
         QOrganizerManager::Error* error);
 
     /* Definitions - Accessors and Mutators */
@@ -335,7 +336,7 @@ public:
         const RPointerArray<CCalInstance> &calInstanceList,
         QOrganizerItem parentItem,
         const int maxCount,
-        QOrganizerCollectionLocalId collectionLocalId,
+        QOrganizerCollectionId collectionLocalId,
         QList<QOrganizerItem> &itemOccurrences) const;
     QOrganizerItem itemL(const QOrganizerItemLocalId& itemId,
             const QOrganizerItemFetchHint& fetchHint) const;
@@ -349,30 +350,30 @@ public:
 private:
     QList<QOrganizerCollection> collectionsL() const;
     QOrganizerCollection collectionL(
-        const QOrganizerCollectionLocalId& collectionId) const;
+        const QOrganizerCollectionId& collectionId) const;
     void saveCollectionL(QOrganizerCollection* collection);
-    void removeCollectionL(const QOrganizerCollectionLocalId& collectionId);
-    CCalEntryView* entryViewL(const QOrganizerCollectionLocalId& collectionId) const;
-    CCalInstanceView* instanceViewL(const QOrganizerCollectionLocalId& collectionId) const;
-    QOrganizerCollectionLocalId collectionLocalIdL(const QOrganizerItem &item, 
-        const QOrganizerCollectionLocalId &collectionId = QOrganizerCollectionLocalId()) const;
+    void removeCollectionL(const QOrganizerCollectionId& collectionId);
+    CCalEntryView* entryViewL(const QOrganizerCollectionId& collectionId) const;
+    CCalInstanceView* instanceViewL(const QOrganizerCollectionId& collectionId) const;
+    QOrganizerCollectionId collectionLocalIdL(const QOrganizerItem &item, 
+        const QOrganizerCollectionId &collectionId = QOrganizerCollectionId()) const;
     CCalEntry* entryForItemOccurrenceL(
-        const QOrganizerCollectionLocalId &collectionId, const QOrganizerItem &item, 
+        const QOrganizerCollectionId &collectionId, const QOrganizerItem &item, 
         bool &isNewEntry) const;
-    CCalEntry* entryForItemL(const QOrganizerCollectionLocalId &collectionId, 
+    CCalEntry* entryForItemL(const QOrganizerCollectionId &collectionId, 
         const QOrganizerItem &item, bool &isNewEntry) const;
-    CCalEntry* findEntryL(const QOrganizerCollectionLocalId &collectionId, 
+    CCalEntry* findEntryL(const QOrganizerCollectionId &collectionId, 
         const QOrganizerItemLocalId &localId, QString manageruri) const;
-    CCalEntry* findEntryL(const QOrganizerCollectionLocalId &collectionId, 
+    CCalEntry* findEntryL(const QOrganizerCollectionId &collectionId, 
         const TDesC8& globalUid) const;
-    CCalEntry* findParentEntryLC(const QOrganizerCollectionLocalId &collectionId,
+    CCalEntry* findParentEntryLC(const QOrganizerCollectionId &collectionId,
         const QOrganizerItem &item, const TDesC8& globalUid) const;
 	
 private:
     QOrganizerItemSymbianEngineData *d;
     
     OrganizerSymbianCollection m_defaultCollection;
-    QMap<QOrganizerCollectionLocalId, OrganizerSymbianCollection> m_collections;
+    QMap<QOrganizerCollectionId, OrganizerSymbianCollection> m_collections;
     QOrganizerItemRequestQueue* m_requestServiceProviderQueue;
     OrganizerItemTransform m_itemTransform;
     mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definition;

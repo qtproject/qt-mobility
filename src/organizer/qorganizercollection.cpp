@@ -137,9 +137,9 @@ bool QOrganizerCollection::operator==(const QOrganizerCollection &other) const
 /*!
   Returns the manager-local id of the collection
  */
-QOrganizerCollectionLocalId QOrganizerCollection::localId() const
+QOrganizerCollectionId QOrganizerCollection::localId() const
 {
-    return d->m_id.localId();
+    return d->m_id;
 }
 
 /*!
@@ -219,7 +219,7 @@ uint qHash(const QOrganizerCollection &key)
 /*!
   Streams the \a collection to the given debug stream \a dbg, and returns the stream.
  */
-QDebug operator<<(QDebug dbg, const QOrganizerCollection& collection)
+QDebug& operator<<(QDebug& dbg, const QOrganizerCollection& collection)
 {
     dbg.nospace() << "QOrganizerCollection(id=" << collection.id();
     QVariantMap metadata = collection.metaData();

@@ -235,7 +235,7 @@ void OrganizerSymbianCollection::openL(const TDesC &fileName)
     // collection so it does not matter if its just a magic number.
     d->m_calCollectionId = 1;
 #endif
-    d->m_id.setLocalId(toCollectionLocalId(d->m_calCollectionId));
+    d->m_id = toCollectionLocalId(d->m_calCollectionId);
     
     // Start listening to calendar events
     TCalTime minTime;
@@ -264,11 +264,6 @@ void OrganizerSymbianCollection::createViewsL()
 QOrganizerCollectionId OrganizerSymbianCollection::id() const
 {
     return d->m_id;
-}
-
-QOrganizerCollectionLocalId OrganizerSymbianCollection::localId() const 
-{ 
-    return d->m_id.localId(); 
 }
 
 quint64 OrganizerSymbianCollection::calCollectionId() const

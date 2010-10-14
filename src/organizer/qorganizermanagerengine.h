@@ -107,10 +107,10 @@ public:
 
     /* Collections - every item belongs to exactly one collection */
     virtual QOrganizerCollection defaultCollection(QOrganizerManager::Error* error) const;
-    virtual QOrganizerCollection collection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error) const;
+    virtual QOrganizerCollection collection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error) const;
     virtual QList<QOrganizerCollection> collections(QOrganizerManager::Error* error) const;
     virtual bool saveCollection(QOrganizerCollection* collection, QOrganizerManager::Error* error);
-    virtual bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error);
+    virtual bool removeCollection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error);
 
     /* Return a pruned or modified item which is valid and can be saved in the backend */
     virtual QOrganizerItem compatibleItem(const QOrganizerItem& original, QOrganizerManager::Error* error) const;
@@ -146,9 +146,9 @@ Q_SIGNALS:
     void itemsAdded(const QList<QOrganizerItemId>& itemIds);
     void itemsChanged(const QList<QOrganizerItemId>& itemIds);
     void itemsRemoved(const QList<QOrganizerItemId>& itemIds);
-    void collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds);
-    void collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds);
-    void collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds);
+    void collectionsAdded(const QList<QOrganizerCollectionId>& collectionIds);
+    void collectionsChanged(const QList<QOrganizerCollectionId>& collectionIds);
+    void collectionsRemoved(const QList<QOrganizerCollectionId>& collectionIds);
 
 public:
     // Async update functions
@@ -170,7 +170,7 @@ public:
     // Other protected area update functions
     static void setDetailAccessConstraints(QOrganizerItemDetail* detail, QOrganizerItemDetail::AccessConstraints constraints);
     static const QOrganizerItemEngineLocalId* engineLocalItemId(const QOrganizerItemId& localId);
-    static QOrganizerCollectionEngineLocalId* engineLocalCollectionId(const QOrganizerCollectionLocalId& localId);
+    static const QOrganizerCollectionEngineLocalId* engineLocalCollectionId(const QOrganizerCollectionId& localId);
 
     /* Helper functions */
     static bool isItemBetweenDates(const QOrganizerItem& item, const QDateTime& startPeriod, const QDateTime& endPeriod);

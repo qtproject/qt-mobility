@@ -66,19 +66,19 @@ public:
     void setDataChanged(bool dataChanged);
     bool dataChanged();
 
-    QSet<QOrganizerCollectionLocalId> addedCollections() const;
-    void insertAddedCollection(const QOrganizerCollectionLocalId& addedCollectionId);
-    void insertAddedCollections(const QList<QOrganizerCollectionLocalId>& addedCollectionIds);
+    QSet<QOrganizerCollectionId> addedCollections() const;
+    void insertAddedCollection(const QOrganizerCollectionId& addedCollectionId);
+    void insertAddedCollections(const QList<QOrganizerCollectionId>& addedCollectionIds);
     void clearAddedCollections();
 
-    QSet<QOrganizerCollectionLocalId> changedCollections() const;
-    void insertChangedCollection(const QOrganizerCollectionLocalId& addedCollectionId);
-    void insertChangedCollections(const QList<QOrganizerCollectionLocalId>& addedCollectionIds);
+    QSet<QOrganizerCollectionId> changedCollections() const;
+    void insertChangedCollection(const QOrganizerCollectionId& addedCollectionId);
+    void insertChangedCollections(const QList<QOrganizerCollectionId>& addedCollectionIds);
     void clearChangedCollections();
 
-    QSet<QOrganizerCollectionLocalId> removedCollections() const;
-    void insertRemovedCollection(const QOrganizerCollectionLocalId& addedCollectionId);
-    void insertRemovedCollections(const QList<QOrganizerCollectionLocalId>& addedCollectionIds);
+    QSet<QOrganizerCollectionId> removedCollections() const;
+    void insertRemovedCollection(const QOrganizerCollectionId& addedCollectionId);
+    void insertRemovedCollections(const QList<QOrganizerCollectionId>& addedCollectionIds);
     void clearRemovedCollections();
 
     void clearAll();

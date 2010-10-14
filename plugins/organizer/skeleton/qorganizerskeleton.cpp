@@ -405,6 +405,11 @@ uint QOrganizerCollectionSkeletonEngineLocalId::engineLocalIdType() const
     return qHash(QString(QLatin1String("skeleton")));
 }
 
+QString QOrganizerCollectionSkeletonEngineLocalId::managerUri() const
+{
+    return QString::fromLatin1("qtorganizer:skeleton:");
+}
+
 QOrganizerCollectionEngineLocalId* QOrganizerCollectionSkeletonEngineLocalId::clone() const
 {
     /*
@@ -426,7 +431,7 @@ QOrganizerCollectionEngineLocalId* QOrganizerCollectionSkeletonEngineLocalId::cl
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug QOrganizerCollectionSkeletonEngineLocalId::debugStreamOut(QDebug dbg)
+QDebug& QOrganizerCollectionSkeletonEngineLocalId::debugStreamOut(QDebug& dbg) const
 {
     /*
       TODO
@@ -450,7 +455,7 @@ QDebug QOrganizerCollectionSkeletonEngineLocalId::debugStreamOut(QDebug dbg)
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerCollectionSkeletonEngineLocalId::dataStreamOut(QDataStream& out)
+QDataStream& QOrganizerCollectionSkeletonEngineLocalId::dataStreamOut(QDataStream& out) const
 {
     /*
       TODO
@@ -720,7 +725,7 @@ QOrganizerCollection QOrganizerItemSkeletonEngine::defaultCollection(QOrganizerM
     return QOrganizerManagerEngine::defaultCollection(error);
 }
 
-QOrganizerCollection QOrganizerItemSkeletonEngine::collection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error) const
+QOrganizerCollection QOrganizerItemSkeletonEngine::collection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error) const
 {
     /*
         TODO
@@ -757,7 +762,7 @@ bool QOrganizerItemSkeletonEngine::saveCollection(QOrganizerCollection* collecti
     return QOrganizerManagerEngine::saveCollection(collection, error);
 }
 
-bool QOrganizerItemSkeletonEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error)
+bool QOrganizerItemSkeletonEngine::removeCollection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error)
 {
     /*
         TODO

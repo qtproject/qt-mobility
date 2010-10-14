@@ -198,7 +198,7 @@ void TodoEditPage::todoChanged(QOrganizerManager *manager, const QOrganizerTodo 
             visibleName = collection.metaData(calendarNameMetadataKey).toString();
 
         m_calendarComboBox->addItem(visibleName);
-        if (collection.id().localId() == todo.collectionId().localId())
+        if (collection.id() == todo.collectionId())
             todoCalendarIndex = counter;
         ++counter;
     }

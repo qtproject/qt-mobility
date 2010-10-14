@@ -525,7 +525,7 @@ void COrganizerItemRequestsServiceProvider::RemoveCollections()
     Q_ASSERT(iReq->type() == QOrganizerAbstractRequest::CollectionRemoveRequest);
 
     QOrganizerCollectionRemoveRequest *removeReq = static_cast<QOrganizerCollectionRemoveRequest *>(iReq);
-    QList<QOrganizerCollectionLocalId> collectionIds = removeReq->collectionIds();
+    QList<QOrganizerCollectionId> collectionIds = removeReq->collectionIds();
     QOrganizerManager::Error error(QOrganizerManager::NoError);
     QMap<int, QOrganizerManager::Error> errorMap;
 

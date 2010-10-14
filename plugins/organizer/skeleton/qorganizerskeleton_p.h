@@ -99,13 +99,14 @@ public:
     bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const;
 
     uint engineLocalIdType() const;
+    QString managerUri() const;
     QOrganizerCollectionEngineLocalId* clone() const;
 
 #ifndef QT_NO_DEBUG_STREAM
-    QDebug debugStreamOut(QDebug dbg);
+    QDebug& debugStreamOut(QDebug& dbg) const;
 #endif
 #ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out);
+    QDataStream& dataStreamOut(QDataStream& out) const;
     QDataStream& dataStreamIn(QDataStream& in);
 #endif
     uint hash() const;
@@ -197,10 +198,10 @@ public:
 
     /* Collections - every item belongs to exactly one collection */
     QOrganizerCollection defaultCollection(QOrganizerManager::Error* error) const;
-    QOrganizerCollection collection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error) const;
+    QOrganizerCollection collection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error) const;
     QList<QOrganizerCollection> collections(QOrganizerManager::Error* error) const;
     bool saveCollection(QOrganizerCollection* collection, QOrganizerManager::Error* error);
-    bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error);
+    bool removeCollection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error);
 
     /* Capabilities reporting */
     bool hasFeature(QOrganizerManager::ManagerFeature feature, const QString& itemType) const;

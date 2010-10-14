@@ -119,7 +119,7 @@ bool QOrganizerCollectionChangeSet::dataChanged()
    Returns the set of ids of collections which have been added to
    the database.
  */
-QSet<QOrganizerCollectionLocalId> QOrganizerCollectionChangeSet::addedCollections() const
+QSet<QOrganizerCollectionId> QOrganizerCollectionChangeSet::addedCollections() const
 {
     return d->m_addedCollections;
 }
@@ -128,7 +128,7 @@ QSet<QOrganizerCollectionLocalId> QOrganizerCollectionChangeSet::addedCollection
   Inserts the given collection id \a addedOrganizerCollectionId into the set of ids of collections
   which have been added to the database.
  */
-void QOrganizerCollectionChangeSet::insertAddedCollection(const QOrganizerCollectionLocalId& addedOrganizerCollectionId)
+void QOrganizerCollectionChangeSet::insertAddedCollection(const QOrganizerCollectionId& addedOrganizerCollectionId)
 {
     d->m_addedCollections.insert(addedOrganizerCollectionId);
 }
@@ -137,9 +137,9 @@ void QOrganizerCollectionChangeSet::insertAddedCollection(const QOrganizerCollec
   Inserts each of the given collection ids \a addedOrganizerCollectionIds into
   the set of ids of collections which have been added to the database.
  */
-void QOrganizerCollectionChangeSet::insertAddedCollections(const QList<QOrganizerCollectionLocalId>& addedOrganizerCollectionIds)
+void QOrganizerCollectionChangeSet::insertAddedCollections(const QList<QOrganizerCollectionId>& addedOrganizerCollectionIds)
 {
-    foreach (const QOrganizerCollectionLocalId& id, addedOrganizerCollectionIds)
+    foreach (const QOrganizerCollectionId& id, addedOrganizerCollectionIds)
         d->m_addedCollections.insert(id);
 }
 
@@ -155,7 +155,7 @@ void QOrganizerCollectionChangeSet::clearAddedCollections()
    Returns the set of ids of collections which have been changed in
    the database.
  */
-QSet<QOrganizerCollectionLocalId> QOrganizerCollectionChangeSet::changedCollections() const
+QSet<QOrganizerCollectionId> QOrganizerCollectionChangeSet::changedCollections() const
 {
     return d->m_changedCollections;
 }
@@ -164,7 +164,7 @@ QSet<QOrganizerCollectionLocalId> QOrganizerCollectionChangeSet::changedCollecti
   Inserts the given collection id \a changedOrganizerCollectionId into the set of ids of collections
   which have been changed to the database.
  */
-void QOrganizerCollectionChangeSet::insertChangedCollection(const QOrganizerCollectionLocalId& changedOrganizerCollectionId)
+void QOrganizerCollectionChangeSet::insertChangedCollection(const QOrganizerCollectionId& changedOrganizerCollectionId)
 {
     d->m_changedCollections.insert(changedOrganizerCollectionId);
 }
@@ -173,9 +173,9 @@ void QOrganizerCollectionChangeSet::insertChangedCollection(const QOrganizerColl
   Inserts each of the given collection ids \a changedOrganizerCollectionIds into the set of ids of collections
   which have been changed to the database.
  */
-void QOrganizerCollectionChangeSet::insertChangedCollections(const QList<QOrganizerCollectionLocalId>& changedOrganizerCollectionIds)
+void QOrganizerCollectionChangeSet::insertChangedCollections(const QList<QOrganizerCollectionId>& changedOrganizerCollectionIds)
 {
-    foreach (const QOrganizerCollectionLocalId& id, changedOrganizerCollectionIds)
+    foreach (const QOrganizerCollectionId& id, changedOrganizerCollectionIds)
         d->m_changedCollections.insert(id);
 }
 
@@ -191,7 +191,7 @@ void QOrganizerCollectionChangeSet::clearChangedCollections()
    Returns the set of ids of collections which have been removed from
    the database.
  */
-QSet<QOrganizerCollectionLocalId> QOrganizerCollectionChangeSet::removedCollections() const
+QSet<QOrganizerCollectionId> QOrganizerCollectionChangeSet::removedCollections() const
 {
     return d->m_removedCollections;
 }
@@ -200,7 +200,7 @@ QSet<QOrganizerCollectionLocalId> QOrganizerCollectionChangeSet::removedCollecti
   Inserts the given collection id \a removedOrganizerCollectionId into the set of ids of collections
   which have been removed to the database.
  */
-void QOrganizerCollectionChangeSet::insertRemovedCollection(const QOrganizerCollectionLocalId& removedOrganizerCollectionId)
+void QOrganizerCollectionChangeSet::insertRemovedCollection(const QOrganizerCollectionId& removedOrganizerCollectionId)
 {
     d->m_removedCollections.insert(removedOrganizerCollectionId);
 }
@@ -209,9 +209,9 @@ void QOrganizerCollectionChangeSet::insertRemovedCollection(const QOrganizerColl
   Inserts each of the given collection ids \a removedOrganizerCollectionIds into the set of ids of collections
   which have been removed to the database.
  */
-void QOrganizerCollectionChangeSet::insertRemovedCollections(const QList<QOrganizerCollectionLocalId>& removedOrganizerCollectionIds)
+void QOrganizerCollectionChangeSet::insertRemovedCollections(const QList<QOrganizerCollectionId>& removedOrganizerCollectionIds)
 {
-    foreach (const QOrganizerCollectionLocalId& id, removedOrganizerCollectionIds)
+    foreach (const QOrganizerCollectionId& id, removedOrganizerCollectionIds)
         d->m_removedCollections.insert(id);
 }
 

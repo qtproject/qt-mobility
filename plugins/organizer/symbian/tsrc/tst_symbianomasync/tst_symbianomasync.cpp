@@ -148,7 +148,7 @@ tst_SymbianOmAsync::tst_SymbianOmAsync() :
 {
     qRegisterMetaType<QOrganizerAbstractRequest::State>("QOrganizerAbstractRequest::State");
     qRegisterMetaType<QList<QOrganizerItemLocalId> >("QList<QOrganizerItemLocalId>");
-    qRegisterMetaType<QList<QOrganizerCollectionLocalId> >("QList<QOrganizerCollectionLocalId>");
+    qRegisterMetaType<QList<QOrganizerCollectionId> >("QList<QOrganizerCollectionLocalId>");
 }
 
 void tst_SymbianOmAsync::initTestCase()
@@ -666,7 +666,7 @@ void tst_SymbianOmAsync::addCollection()
     // Create signal spys for verification purposes
     QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
-    QSignalSpy addedSpy(m_om, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
+    QSignalSpy addedSpy(m_om, SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)));
 
     // Create new collection
     QOrganizerCollection collection;
@@ -718,8 +718,8 @@ void tst_SymbianOmAsync::modifyCollection()
     // Create signal spys for verification purposes
     QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
-    QSignalSpy addedSpy(m_om, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
-    QSignalSpy changedSpy(m_om, SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)));
+    QSignalSpy addedSpy(m_om, SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)));
+    QSignalSpy changedSpy(m_om, SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)));
 
     // Create new collection (synchronously)
     QOrganizerCollection collection;
@@ -760,7 +760,7 @@ void tst_SymbianOmAsync::removeCollection()
     // Create signal spys for verification purposes
     QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
-    QSignalSpy removedSpy(m_om, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)));
+    QSignalSpy removedSpy(m_om, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)));
     
     // Not supported?
     if (!m_customCollectionsSupported) {
@@ -816,8 +816,8 @@ void tst_SymbianOmAsync::addCollectionMultiManager()
     // Setup signal spies
     QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
-    QSignalSpy addedSpy1(m_om, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
-    QSignalSpy addedSpy2(om2.data(), SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
+    QSignalSpy addedSpy1(m_om, SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)));
+    QSignalSpy addedSpy2(om2.data(), SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)));
 
     // Creating new collections is not supported on legacy symbian devices
     if (!m_customCollectionsSupported) {

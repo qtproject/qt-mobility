@@ -119,13 +119,14 @@ public:
     bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const;
 
     uint engineLocalIdType() const;
+    QString managerUri() const;
     QOrganizerCollectionEngineLocalId* clone() const;
 
 #ifndef QT_NO_DEBUG_STREAM
-    QDebug debugStreamOut(QDebug dbg);
+    QDebug& debugStreamOut(QDebug& dbg) const;
 #endif
 #ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out);
+    QDataStream& dataStreamOut(QDataStream& out) const;
     QDataStream& dataStreamIn(QDataStream& in);
 #endif
     uint hash() const;
@@ -151,8 +152,8 @@ public:
     QList<QOrganizerItem> m_organizeritems;                      // list of organizer items
     QList<QOrganizerItemId> m_organizeritemIds;             // list of organizer item Id's
     QList<QOrganizerCollection> m_organizerCollections;          // list of collections
-    QList<QOrganizerCollectionLocalId> m_organizerCollectionIds; // list of collection ids
-    QMultiMap<QOrganizerCollectionLocalId, QOrganizerItemId> m_itemsInCollections; // map of collection ids to the ids of items the collection contains.
+    QList<QOrganizerCollectionId> m_organizerCollectionIds; // list of collection ids
+    QMultiMap<QOrganizerCollectionId, QOrganizerItemId> m_itemsInCollections; // map of collection ids to the ids of items the collection contains.
     QList<QString> m_definitionIds;                // list of definition types (id's)
     mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definitions; // map of organizer item type to map of definition name to definitions.
     quint32 m_nextOrganizerItemId; // the m_localItemId portion of a QOrganizerItemMemoryEngineLocalId.
@@ -194,10 +195,10 @@ public:
     virtual bool removeItems(const QList<QOrganizerItemId>& organizeritemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error);
 
     virtual QOrganizerCollection defaultCollection(QOrganizerManager::Error* error) const;
-    virtual QOrganizerCollection collection(const QOrganizerCollectionLocalId &collectionId, QOrganizerManager::Error *error) const;
+    virtual QOrganizerCollection collection(const QOrganizerCollectionId &collectionId, QOrganizerManager::Error *error) const;
     virtual QList<QOrganizerCollection> collections(QOrganizerManager::Error* error) const;
     virtual bool saveCollection(QOrganizerCollection* collection, QOrganizerManager::Error* error);
-    virtual bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error);
+    virtual bool removeCollection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error);
 
     /*! \reimp */
     virtual QOrganizerItem compatibleItem(const QOrganizerItem& original, QOrganizerManager::Error* error) const

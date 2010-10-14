@@ -42,12 +42,10 @@ PUBLIC_HEADERS += \
 PRIVATE_HEADERS += \
     qorganizercollection_p.h \
     qorganizercollectionchangeset_p.h \
-    qorganizercollectionid_p.h \
     qorganizerabstractrequest_p.h \
     qorganizeritemchangeset_p.h \
     qorganizeritem_p.h \
     qorganizeritemdetail_p.h \
-    qorganizeritemid_p.h \
     qorganizeritemfilter_p.h \
     qorganizeritemfetchhint_p.h \
     qorganizeritemdetailfielddefinition_p.h \

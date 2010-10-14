@@ -310,16 +310,6 @@ void QOrganizerItem::setCollectionId(const QOrganizerCollectionId& collectionId)
 }
 
 /*!
-  Returns the manager-local id portion of the collection id of the item.
-  A collection id consists of a manager-local id and the URI of the manager
-  in which the collection can be found.
- */
-QOrganizerCollectionLocalId QOrganizerItem::collectionLocalId() const
-{
-    return d->m_collectionId.localId();
-}
-
-/*!
  * Sets the id of this organizer item to \a id.
  *
  * Note that this only affects this object, not any corresponding structures stored

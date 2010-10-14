@@ -122,9 +122,9 @@ QDateTime toQDateTime(const TTime &time, Qt::TimeSpec timeSpec)
     return qdt.toTimeSpec(Qt::LocalTime); // return with default timespec set
 }
 
-QOrganizerCollectionLocalId toCollectionLocalId(quint64 collectionId)
+QOrganizerCollectionId toCollectionLocalId(quint64 collectionId)
 {
-    return QOrganizerCollectionLocalId(new QOrganizerCollectionSymbianEngineLocalId(collectionId));
+    return QOrganizerCollectionId(new QOrganizerCollectionSymbianEngineLocalId(collectionId));
 }
 
 QOrganizerItemId toItemLocalId(quint64 collectionId, quint32 itemId)
@@ -144,7 +144,7 @@ quint64 toTCalCollectionId(const QOrganizerItemLocalId& itemLocalId)
     return static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerManagerEngine::engineLocalItemId(itemLocalId))->calCollectionId();
 }
 
-QOrganizerCollectionLocalId getCollectionLocalId(const QOrganizerItemLocalId& itemLocalId)
+QOrganizerCollectionId getCollectionLocalId(const QOrganizerItemLocalId& itemLocalId)
 {
     // TODO: should we have a check for engineLocalIdType here?
     quint64 calCollectionId  = static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerManagerEngine::engineLocalItemId(itemLocalId))->calCollectionId();

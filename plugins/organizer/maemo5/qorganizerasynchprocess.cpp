@@ -367,7 +367,7 @@ void OrganizerAsynchProcess::handleCollectionRemoveRequest(QOrganizerCollectionR
     QOrganizerManager::Error err = QOrganizerManager::NoError;
     QMap<int, QOrganizerManager::Error> errorMap;
     int i = 0;
-    foreach (QOrganizerCollectionLocalId id, req->collectionIds()) {
+    foreach (QOrganizerCollectionId id, req->collectionIds()) {
         m_engine->removeCollection(id, &err);
         errorMap.insert(i, err);
         i++;

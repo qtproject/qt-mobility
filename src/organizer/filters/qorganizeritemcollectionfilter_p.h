@@ -103,7 +103,7 @@ public:
 
     Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemCollectionFilter, QOrganizerItemFilter::CollectionFilter)
 
-    QSet<QOrganizerCollectionLocalId> m_ids;
+    QSet<QOrganizerCollectionId> m_ids;
 };
 
 QTM_END_NAMESPACE

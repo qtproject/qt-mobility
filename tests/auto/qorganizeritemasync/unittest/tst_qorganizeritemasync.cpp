@@ -228,7 +228,7 @@ private:
     bool compareItems(QOrganizerItem ca, QOrganizerItem cb);
     bool containsIgnoringTimestamps(const QList<QOrganizerItem>& list, const QOrganizerItem& c);
     bool compareIgnoringTimestamps(const QOrganizerItem& ca, const QOrganizerItem& cb);
-    bool containsAllCollectionIds(const QList<QOrganizerCollectionLocalId>& target, const QList<QOrganizerCollectionLocalId>& ids);
+    bool containsAllCollectionIds(const QList<QOrganizerCollectionId>& target, const QList<QOrganizerCollectionId>& ids);
     QOrganizerManager* prepareModel(const QString& uri);
 
     Qt::HANDLE m_mainThreadId;
@@ -359,10 +359,10 @@ bool tst_QOrganizerItemAsync::compareIgnoringTimestamps(const QOrganizerItem& ca
     return false;
 }
 
-bool tst_QOrganizerItemAsync::containsAllCollectionIds(const QList<QOrganizerCollectionLocalId>& target, const QList<QOrganizerCollectionLocalId>& ids)
+bool tst_QOrganizerItemAsync::containsAllCollectionIds(const QList<QOrganizerCollectionId>& target, const QList<QOrganizerCollectionId>& ids)
 {
     bool containsAllIds = true;
-    foreach(QOrganizerCollectionLocalId id, ids) {
+    foreach(QOrganizerCollectionId id, ids) {
         if (!target.contains(id)) {
             containsAllIds = false;
             break;
@@ -1904,9 +1904,9 @@ void tst_QOrganizerItemAsync::collectionRemove()
     QVERIFY(!crr.waitForFinished());
 
     // specific collection set
-    QOrganizerCollectionLocalId removeId = oim->collections().last().localId();
+    QOrganizerCollectionId removeId = oim->collections().last().localId();
     crr.setCollectionId(removeId);
-    QVERIFY(crr.collectionIds() == QList<QOrganizerCollectionLocalId>() << removeId);
+    QVERIFY(crr.collectionIds() == QList<QOrganizerCollectionId>() << removeId);
     int originalCount = oim->collections().size();
     crr.setManager(oim.data());
     QCOMPARE(crr.manager(), oim.data());
@@ -1929,7 +1929,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
     QCOMPARE(oim->collections().size(), originalCount - 1); // should have removed that particular collection.
 
     // remove all collections
-    QList<QOrganizerCollectionLocalId> allCollectionIds;
+    QList<QOrganizerCollectionId> allCollectionIds;
     QList<QOrganizerCollection> allCollections = oim->collections();
     for (int i = 0; i < allCollections.size(); ++i)
         allCollectionIds << allCollections.at(i).localId();
@@ -1951,7 +1951,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
     QOrganizerCollection temp;
     temp.setMetaData("description", "Should not be removed!");
     oim->saveCollection(&temp);
-    crr.setCollectionId(temp.id().localId());
+    crr.setCollectionId(temp.id());
 
     int collectionCount = oim->collections().size();
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
@@ -1968,7 +1968,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
             if (!oim->saveCollection(&temp)) {
                 QSKIP("Unable to save temporary item for remove request cancellation test!", SkipSingle);
             }
-            crr.setCollectionId(temp.id().localId());
+            crr.setCollectionId(temp.id());
             bailoutCount -= 1;
             if (!bailoutCount) {
 //                qWarning("Unable to test cancelling due to thread scheduling!");
@@ -1983,7 +1983,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
         QVERIFY(crr.waitForFinished());
         QVERIFY(crr.isCanceled());
         QCOMPARE(oim->collections().size(), collectionCount); // temp collection should not have been removed
-        QList<QOrganizerCollectionLocalId> removeCollectionIds;
+        QList<QOrganizerCollectionId> removeCollectionIds;
         QList<QOrganizerCollection> removeCollections = oim->collections();
         for (int i = 0; i < removeCollections.size(); ++i)
             removeCollectionIds << removeCollections.at(i).localId();
@@ -2006,7 +2006,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
             if (!oim->saveCollection(&temp)) {
                 QSKIP("Unable to save temporary item for remove request cancellation test!", SkipSingle);
             }
-            crr.setCollectionId(temp.id().localId());
+            crr.setCollectionId(temp.id());
             bailoutCount -= 1;
             if (!bailoutCount) {
 //                qWarning("Unable to test cancelling due to thread scheduling!");
@@ -2019,7 +2019,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
         crr.waitForFinished();
         QVERIFY(crr.isCanceled());
         QCOMPARE(oim->collections().size(), collectionCount); // temp collection should not have been removed
-        QList<QOrganizerCollectionLocalId> removeCollectionIds;
+        QList<QOrganizerCollectionId> removeCollectionIds;
         QList<QOrganizerCollection> removeCollections = oim->collections();
         for (int i = 0; i < removeCollections.size(); ++i)
             removeCollectionIds << removeCollections.at(i).localId();

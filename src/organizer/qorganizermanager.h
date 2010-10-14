@@ -131,10 +131,10 @@ public:
 
     /* Collections - every item belongs to one or more collections */
     QOrganizerCollection defaultCollection() const;
-    QOrganizerCollection collection(const QOrganizerCollectionLocalId& collectionId) const;
+    QOrganizerCollection collection(const QOrganizerCollectionId& collectionId) const;
     QList<QOrganizerCollection> collections() const;
     bool saveCollection(QOrganizerCollection* collection);
-    bool removeCollection(const QOrganizerCollectionLocalId& collectionId);
+    bool removeCollection(const QOrganizerCollectionId& collectionId);
 
     /* Return a pruned or modified item which is valid and can be saved in the manager */
     QOrganizerItem compatibleItem(const QOrganizerItem& original) const;
@@ -166,9 +166,9 @@ Q_SIGNALS:
     void itemsAdded(const QList<QOrganizerItemId>& itemIds);
     void itemsChanged(const QList<QOrganizerItemId>& itemIds);
     void itemsRemoved(const QList<QOrganizerItemId>& itemIds);
-    void collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds);
-    void collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds);
-    void collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds);
+    void collectionsAdded(const QList<QOrganizerCollectionId>& collectionIds);
+    void collectionsChanged(const QList<QOrganizerCollectionId>& collectionIds);
+    void collectionsRemoved(const QList<QOrganizerCollectionId>& collectionIds);
 
 private:
     friend class QOrganizerManagerData;

@@ -105,7 +105,7 @@ private:
 private:
     QOrganizerManager*                  m_om;
     QOrganizerAbstractRequest*          m_itemRequest;
-    QList<QOrganizerCollectionLocalId>           m_collectionIds;
+    QList<QOrganizerCollectionId>           m_collectionIds;
 };
 
 
@@ -356,7 +356,7 @@ void tst_symbianasynchcollections::requestResultsAvailable()
         int count(savedCollections.count());
         m_collectionIds.clear();
         for (int index(0); index < count; index++) {
-            m_collectionIds.append(savedCollections.at(index).id().localId());
+            m_collectionIds.append(savedCollections.at(index).id());
         }
         // Check the number of requests saved. magic number to be changed to a
         // constant
@@ -385,8 +385,8 @@ void tst_symbianasynchcollections::requestResultsAvailable()
 //Signal emission testcases
 void tst_symbianasynchcollections::addCollectionSignals()
 {        
-    qRegisterMetaType<QOrganizerCollectionLocalId>("QOrganizerCollectionLocalId");
-    qRegisterMetaType<QList<QOrganizerCollectionLocalId> >("QList<QOrganizerCollectionLocalId>");
+    qRegisterMetaType<QOrganizerCollectionId>("QOrganizerCollectionLocalId");
+    qRegisterMetaType<QList<QOrganizerCollectionId> >("QList<QOrganizerCollectionLocalId>");
     qRegisterMetaType<QOrganizerAbstractRequest::State>("QOrganizerAbstractRequest::State");
     
     // Create a second manager
@@ -399,8 +399,8 @@ void tst_symbianasynchcollections::addCollectionSignals()
     // Setup signal spies
     QSignalSpy stateSpy(req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(req, SIGNAL(resultsAvailable()));
-    QSignalSpy addedSpy1(m_om, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
-    QSignalSpy addedSpy2(om2.data(), SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
+    QSignalSpy addedSpy1(m_om, SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)));
+    QSignalSpy addedSpy2(om2.data(), SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)));
   
     // Create a collection
     QOrganizerCollection collection;
@@ -435,8 +435,8 @@ void tst_symbianasynchcollections::addCollectionSignals()
 
 void tst_symbianasynchcollections::modifyCollectionSignals()
 {
-    qRegisterMetaType<QOrganizerCollectionLocalId>("QOrganizerCollectionLocalId");
-    qRegisterMetaType<QList<QOrganizerCollectionLocalId> >("QList<QOrganizerCollectionLocalId>");
+    qRegisterMetaType<QOrganizerCollectionId>("QOrganizerCollectionLocalId");
+    qRegisterMetaType<QList<QOrganizerCollectionId> >("QList<QOrganizerCollectionLocalId>");
     qRegisterMetaType<QList<QOrganizerAbstractRequest::State> >("QOrganizerAbstractRequest::State>");
     
     // Create a second manager
@@ -449,8 +449,8 @@ void tst_symbianasynchcollections::modifyCollectionSignals()
     // Setup signal spies
     QSignalSpy stateSpy(req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(req, SIGNAL(resultsAvailable()));
-    QSignalSpy changedSpy1(m_om, SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)));
-    QSignalSpy changedSpy2(om2.data(), SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)));
+    QSignalSpy changedSpy1(m_om, SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)));
+    QSignalSpy changedSpy2(om2.data(), SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)));
 
      
     //Fetch the saved collection
@@ -488,8 +488,8 @@ void tst_symbianasynchcollections::deleteCollectionSignals()
     // Make sure to delete the old request, if any
     delete m_itemRequest;
     m_itemRequest =0;
-    qRegisterMetaType<QOrganizerCollectionLocalId>("QOrganizerCollectionLocalId");
-    qRegisterMetaType<QList<QOrganizerCollectionLocalId> >("QList<QOrganizerCollectionLocalId>");
+    qRegisterMetaType<QOrganizerCollectionId>("QOrganizerCollectionLocalId");
+    qRegisterMetaType<QList<QOrganizerCollectionId> >("QList<QOrganizerCollectionLocalId>");
     qRegisterMetaType<QOrganizerAbstractRequest::State>("QOrganizerAbstractRequest::State");
     
     // Create a second manager
@@ -502,11 +502,11 @@ void tst_symbianasynchcollections::deleteCollectionSignals()
     // Setup signal spies
     QSignalSpy stateSpy(deleteReq, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(deleteReq, SIGNAL(resultsAvailable()));
-    QSignalSpy removedSpy1(m_om, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)));
-    QSignalSpy removedSpy2(om2.data(), SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)));
+    QSignalSpy removedSpy1(m_om, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)));
+    QSignalSpy removedSpy2(om2.data(), SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)));
      
      //Fetch the saved collection
-     QOrganizerCollectionLocalId savedCollectionLocalId = m_om->collections().at(1).localId();
+     QOrganizerCollectionId savedCollectionLocalId = m_om->collections().at(1).localId();
      int countBeforeDeletion = m_om->collections().count();
      qWarning() << countBeforeDeletion << "calendar/s are present currently for deletion";
     

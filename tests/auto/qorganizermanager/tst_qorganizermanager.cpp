@@ -501,7 +501,7 @@ void tst_QOrganizerManager::nullIdOperations()
     }
 
     {
-        QOrganizerCollectionLocalId nullLocalId;
+        QOrganizerCollectionId nullLocalId;
         QByteArray buffer;
         QDataStream outBufferStream(&buffer, QIODevice::WriteOnly);
         outBufferStream << nullLocalId;
