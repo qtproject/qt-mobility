@@ -145,7 +145,7 @@ inline QStringList mobilityPlugins(const QString& plugintype)
         }
     }
 #if defined(Q_OS_SYMBIAN)
-    rfs.close();
+    rfs.Close();
 #endif
     return  plugins;
 }
