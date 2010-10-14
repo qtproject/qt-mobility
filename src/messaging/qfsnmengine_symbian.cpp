@@ -74,13 +74,17 @@
 #include <QEventLoop>
 #include <QTimer>
 
+#include <QThreadStorage>
+#include <QCoreApplication>
+
 using namespace EmailClientApi;
 
 QTM_BEGIN_NAMESPACE
 
 using namespace SymbianHelpers;
 
-Q_GLOBAL_STATIC(CFSEngine,fsEngine);
+Q_GLOBAL_STATIC(CFSEngine, applicationThreadFsEngine);
+Q_GLOBAL_STATIC(QThreadStorage<CFSEngine *>, fsEngineThreadStorage)
 
 
 CFSEngine::CFSEngine()
@@ -104,7 +108,15 @@ CFSEngine::~CFSEngine()
 
 CFSEngine* CFSEngine::instance()
 {   
-    return fsEngine();
+    if (QCoreApplication::instance() && QCoreApplication::instance()->thread() == QThread::currentThread()) {
+        return applicationThreadFsEngine();
+    }
+
+    if (!fsEngineThreadStorage()->hasLocalData()) {
+        fsEngineThreadStorage()->setLocalData(new CFSEngine);
+    }
+    
+    return fsEngineThreadStorage()->localData();
 }
 
 void CFSEngine::emailServiceInitialized(bool initialized)
@@ -254,7 +266,7 @@ void CFSEngine::cancelEventObserver()
 
 bool CFSEngine::accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2)
 {
-    CFSEngine* freestyleEngine = fsEngine();
+    CFSEngine* freestyleEngine = instance();
     return QMessageAccountSortOrderPrivate::lessThan(freestyleEngine->m_currentAccountOrdering,
         freestyleEngine->account(accountId1),
         freestyleEngine->account(accountId2));
@@ -269,7 +281,7 @@ void CFSEngine::orderAccounts(QMessageAccountIdList &accountIds, const QMessageA
 
 bool CFSEngine::folderLessThan(const QMessageFolderId folderId1, const QMessageFolderId folderId2)
 {
-    CFSEngine* freestyleEngine = fsEngine();
+    CFSEngine* freestyleEngine = instance();
     return QMessageFolderSortOrderPrivate::lessThan(freestyleEngine->m_currentFolderOrdering,
             freestyleEngine->folder(folderId1),
             freestyleEngine->folder(folderId2));
@@ -283,7 +295,7 @@ void CFSEngine::orderFolders(QMessageFolderIdList &folderIds,  const QMessageFol
 
 bool CFSEngine::messageLessThan(const QMessage &message1, const QMessage &message2)
 {
-    CFSEngine *freestyleEngine = fsEngine();
+    CFSEngine *freestyleEngine = instance();
     return QMessageSortOrderPrivate::lessThan(freestyleEngine->m_currentMessageOrdering, message1, message2);
 }
 
@@ -1134,6 +1146,12 @@ void CFSEngine::applyOffsetAndLimitToMsgIds(QMessageIdList &idList, int offset, 
 QMessageManager::NotificationFilterId CFSEngine::registerNotificationFilter(QMessageStorePrivate &aPrivateStore,
                                                                            const QMessageFilter &filter, QMessageManager::NotificationFilterId aId)
 {
+    if (QCoreApplication::instance() && QCoreApplication::instance()->thread() != QThread::currentThread()) {
+        if (this != applicationThreadFsEngine()) {
+            return applicationThreadFsEngine()->registerNotificationFilter(aPrivateStore, filter, aId);
+        }
+    }
+
     ipMessageStorePrivate = &aPrivateStore;
     iListenForNotifications = true;    
 
@@ -1146,6 +1164,12 @@ QMessageManager::NotificationFilterId CFSEngine::registerNotificationFilter(QMes
 
 void CFSEngine::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
 {
+    if (QCoreApplication::instance() && QCoreApplication::instance()->thread() != QThread::currentThread()) {
+        if (this != applicationThreadFsEngine()) {
+            return applicationThreadFsEngine()->unregisterNotificationFilter(notificationFilterId);
+        }
+    }
+
     m_filters.remove(notificationFilterId);
     if (m_filters.count() == 0) {
         iListenForNotifications = false;

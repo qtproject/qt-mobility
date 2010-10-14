@@ -73,9 +73,6 @@ void QMessageStorePrivate::initialize(QMessageStore *store)
 {
     q_ptr = store;
     _mtmEngine = CMTMEngine::instance();
-#if defined(FREESTYLEMAILUSED) || defined(FREESTYLENMAILUSED)
-    _fsEngine = CFSEngine::instance();
-#endif
 }
 
 QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
