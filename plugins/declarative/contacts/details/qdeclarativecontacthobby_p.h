@@ -40,61 +40,56 @@
 ****************************************************************************/
 
 
-#ifndef QDECLARATIVECONTACTRELATIONSHIP_P_H
-#define QDECLARATIVECONTACTRELATIONSHIP_P_H
+#ifndef QDECLARATIVECONTACTHOBBY_H
+#define QDECLARATIVECONTACTHOBBY_H
 
-#include <qdeclarative.h>
-#include <QDeclarativeExtensionPlugin>
+#include "qdeclarativecontactdetail_p.h"
+#include "qcontacthobby.h"
 
-#include "qcontactrelationship.h"
-
-QTM_USE_NAMESPACE
-
-class QDeclarativeContactRelationship : public QObject
+class QDeclarativeContactHobby : public QDeclarativeContactDetail
 {
     Q_OBJECT
-    Q_PROPERTY(QContactLocalId first READ first WRITE setFirst NOTIFY valueChanged)
-    Q_PROPERTY(QContactLocalId second READ second WRITE setSecond NOTIFY valueChanged)
-    Q_PROPERTY(QVariant type READ relationshipType WRITE setRelationshipType NOTIFY valueChanged)
-    Q_ENUMS(RelationshipRole)
-    Q_ENUMS(RelationshipType)
+    Q_PROPERTY(QString hobby READ hobby WRITE setHobby NOTIFY fieldsChanged)
+    Q_ENUMS(FieldType)
+    Q_CLASSINFO("DefaultProperty", "hobby")
 public:
-    enum RelationshipRole {
-        First = QContactRelationship::First,
-        Second = QContactRelationship::Second,
-        Either = QContactRelationship::Either
+    enum FieldType {
+        Hobby = 0
     };
+    QDeclarativeContactHobby(QObject* parent = 0)
+        :QDeclarativeContactDetail(parent)
+    {
+        setDetail(QContactHobby());
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
+    }
 
-    enum RelationshipType {
-        Unknown = 0,
-        HasMember,
-        Aggregates,
-        IsSameAs,
-        HasAssistant,
-        HasManager,
-        HasSpouse
-    };
-
-    QDeclarativeContactRelationship(QObject* parent = 0);
-
-    QContactLocalId first() const;
-    QContactLocalId second() const;
-    QVariant relationshipType() const;
-
-    void setFirst( QContactLocalId firstId);
-    void setSecond( QContactLocalId secondId);
-    void setRelationshipType(const QVariant& relationshipType);
-
-    QContactRelationship relationship() const;
-    void setRelationship(const QContactRelationship& relationship);
-
+    ContactDetailType detailType() const
+    {
+        return QDeclarativeContactDetail::ContactHobby;
+    }
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case Hobby:
+            return QContactHobby::FieldHobby;
+        default:
+            break;
+        }
+        //qWarning
+        return QString();
+    }
+    void setHobby(const QString& v)
+    {
+        if (!readOnly() && v != hobby()) {
+            detail().setValue(QContactHobby::FieldHobby, v);
+            emit fieldsChanged();
+        }
+    }
+    QString hobby() const {return detail().value(QContactHobby::FieldHobby);}
 signals:
-    void valueChanged();
-private:
-    QContactRelationship m_relationship;
+    void fieldsChanged();
 };
 
-QML_DECLARE_TYPE(QDeclarativeContactRelationship)
-
+QML_DECLARE_TYPE(QDeclarativeContactHobby)
 #endif
 
