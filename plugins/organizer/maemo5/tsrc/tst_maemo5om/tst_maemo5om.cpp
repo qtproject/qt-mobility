@@ -270,11 +270,6 @@ void tst_Maemo5Om::addTodo() {
     todo.setPriority(QOrganizerItemPriority::LowestPriority);
     todo.setProgressPercentage(53);
     todo.setStatus(QOrganizerTodoProgress::StatusInProgress);
-    QOrganizerItemLocation loc = todo.detail<QOrganizerItemLocation>();
-    loc.setLatitude(54.0);
-    loc.setLongitude(-139.0);
-    loc.setLabel("Todo location address");
-    todo.saveDetail(&loc);
 
 
     // Save todo
@@ -358,7 +353,6 @@ void tst_Maemo5Om::addEventWithRecurrence()
     foreach(QOrganizerItem instance, instances) {
         QVERIFY(instance.guid() == event.guid());
         QVERIFY(instance.id().isNull());
-        QVERIFY(instance.id().managerUri().contains(managerName));
         QVERIFY(instance.displayLabel() == event.displayLabel());
         QVERIFY(instance.description() == event.description());
         QVERIFY(instance.type() == QOrganizerItemType::TypeEventOccurrence);
@@ -571,7 +565,6 @@ void tst_Maemo5Om::removeEventWithRecurrence()
     foreach(QOrganizerItem instance, instances) {
         QVERIFY(instance.guid() == event.guid());
         QVERIFY(instance.id().isNull());
-        QVERIFY(instance.id().managerUri().contains(managerName));
         QVERIFY(instance.displayLabel() == event.displayLabel());
         QVERIFY(instance.description() == event.description());
         QVERIFY(instance.type() == QOrganizerItemType::TypeEventOccurrence);
