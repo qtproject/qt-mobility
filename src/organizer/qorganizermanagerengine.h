@@ -178,7 +178,6 @@ public:
     static void addSorted(QList<QOrganizerItem>* sorted, const QOrganizerItem& toAdd, const QList<QOrganizerItemSortOrder>& sortOrders);
     static int compareVariant(const QVariant& first, const QVariant& second, Qt::CaseSensitivity sensitivity);
     static bool testFilter(const QOrganizerItemFilter& filter, const QOrganizerItem& item);
-    static QList<QOrganizerItemLocalId> sortItems(const QList<QOrganizerItem>& items, const QList<QOrganizerItemSortOrder>& sortOrders);
 
     static QOrganizerItemFilter canonicalizedFilter(const QOrganizerItemFilter& filter);
 

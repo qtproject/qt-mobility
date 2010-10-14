@@ -375,14 +375,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemMemoryEngine::itemIds(const QDateTime
     if (startDate.isNull() && endDate.isNull() && filter.type() == QOrganizerItemFilter::DefaultFilter && sortOrders.count() == 0) {
         return d->m_organizeritemIds;
     } else {
-        QList<QOrganizerItem> clist = itemsForExport(startDate, endDate, filter, sortOrders, QOrganizerItemFetchHint(), error);
-
-        /* Extract the ids */
-        QList<QOrganizerItemLocalId> ids;
-        foreach(const QOrganizerItem& c, clist)
-            ids.append(c.localId());
-
-        return ids;
+        return QOrganizerManager::extractLocalIds(itemsForExport(startDate, endDate, filter, sortOrders, QOrganizerItemFetchHint(), error));
     }
 }
 

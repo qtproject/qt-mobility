@@ -314,16 +314,19 @@ void OrganizerAsynchProcess::handleDefinitionFetchRequest(QOrganizerItemDetailDe
 {
     QOrganizerManager::Error err = QOrganizerManager::NoError;
     QMap<QString, QOrganizerItemDetailDefinition> definitions = m_engine->detailDefinitions(req->itemType(), &err);
+    QMap<QString, QOrganizerItemDetailDefinition> retn;
     QMap<int, QOrganizerManager::Error> errorMap;
     QStringList keys = req->definitionNames();
+    if (keys.isEmpty())
+        keys = definitions.keys();
     int definitionsCount = keys.count();
     for (int i = 0; i < definitionsCount; ++i) {
-        QOrganizerItemDetailDefinition definition = m_engine->detailDefinition(keys.at(i), req->itemType(), &err);
-        definitions.insert(keys.at(i), definition);
-        if (err != QOrganizerManager::NoError)
-            errorMap.insert(i, err);
+        if (definitions.contains(keys.at(i)))
+            retn.insert(keys.at(i), definitions[keys.at(i)]);
+        else
+            errorMap.insert(i, QOrganizerManager::DoesNotExistError);
     }
-    QOrganizerManagerEngine::updateDefinitionFetchRequest(req, definitions, err, errorMap, QOrganizerAbstractRequest::FinishedState);
+    QOrganizerManagerEngine::updateDefinitionFetchRequest(req, retn, err, errorMap, QOrganizerAbstractRequest::FinishedState);
 }
 
 void OrganizerAsynchProcess::handleDefinitionRemoveRequest(QOrganizerItemDetailDefinitionRemoveRequest *req)

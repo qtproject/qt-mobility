@@ -167,6 +167,9 @@ public:
     bool saveCollection(QOrganizerCollection* collection, QOrganizerManager::Error* error);
     bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error);
 
+    /* Definitions - Accessors and Mutators */
+    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, QOrganizerManager::Error* error) const;
+
     /* Capabilities reporting */
     bool hasFeature(QOrganizerManager::ManagerFeature feature, const QString &itemType) const;
     bool isFilterSupported(const QOrganizerItemFilter &filter) const;
@@ -203,7 +206,7 @@ private:
     QList<QOrganizerCollectionLocalId> internalCollectionIds(QOrganizerManager::Error* error) const;
 
     // single item saving implementation
-    void checkItemIdValidity(CCalendar *cal, QOrganizerItem *checkItem, QOrganizerManager::Error *error);
+    void checkItemIdValidity(QOrganizerItem *checkItem, QOrganizerManager::Error *error);
     int doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemChangeSet &cs, QOrganizerManager::Error *error);
 
     // saving the occurrences
@@ -241,6 +244,7 @@ private:
     QOrganizerItemMaemo5EngineData *d;
     QTimer m_waitTimer;
     mutable QMutex m_operationMutex;
+    mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definitions;
     friend class QOrganizerItemMaemo5Factory;
 };
 

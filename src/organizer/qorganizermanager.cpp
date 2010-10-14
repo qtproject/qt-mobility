@@ -838,6 +838,15 @@ QString QOrganizerManager::managerUri() const
     return d->m_engine->managerUri();
 }
 
+/*! Return a list of QOrganizerItemLocalId extracted from the \a items */
+QList<QOrganizerItemLocalId> QOrganizerManager::extractLocalIds(QList<QOrganizerItem> items)
+{
+    QList<QOrganizerItemLocalId> ids;
+    foreach(QOrganizerItem item, items)
+        ids.append(item.localId());
+    return ids;
+}
+
 #include "moc_qorganizermanager.cpp"
 
 QTM_END_NAMESPACE
