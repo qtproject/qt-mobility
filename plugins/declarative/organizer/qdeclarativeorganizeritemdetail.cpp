@@ -109,6 +109,7 @@ QString QDeclarativeOrganizerItemDetail::definitionName(QDeclarativeOrganizerIte
     default:
         break;
     }
+    qWarning() << QString("Can't find the detail definition name for detail type '%1'").arg(type);
     return QString();
 }
 
@@ -150,6 +151,8 @@ QDeclarativeOrganizerItemDetail::ItemDetailType QDeclarativeOrganizerItemDetail:
         return QDeclarativeOrganizerItemDetail::Timestamp;
     if (definitionName == QDeclarativeOrganizerItemType::DetailName)
         return QDeclarativeOrganizerItemDetail::Type;
+    qWarning() << QString("Can't find the detail type for detail name '%1'").arg(definitionName);
+    return QDeclarativeOrganizerItemDetail::Customized;
 }
 
 QString QDeclarativeOrganizerItemDetail::fieldName(QDeclarativeOrganizerItemDetail::ItemDetailType detailType, int fieldType)
@@ -194,6 +197,7 @@ QString QDeclarativeOrganizerItemDetail::fieldName(QDeclarativeOrganizerItemDeta
     default:
         break;
     }
+    qWarning() << QString("Can't find the field name for detail type '%1' and field type '%2'").arg(detailType).arg(fieldType);
     return QString();
 }
 
