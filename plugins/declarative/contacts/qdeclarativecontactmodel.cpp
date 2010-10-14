@@ -396,7 +396,7 @@ void QDeclarativeContactModel::contactsRemoved()
                 }
                 if (row < d->m_contacts.count()) {
                     beginRemoveRows(QModelIndex(), row, row);
-                    d->m_contacts.removeAll(d->m_contactMap.value(localId));
+                    d->m_contacts.removeAt(row);
                     d->m_contactMap.remove(localId);
                     endRemoveRows();
                 } else {
