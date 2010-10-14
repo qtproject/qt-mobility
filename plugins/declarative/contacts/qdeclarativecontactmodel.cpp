@@ -291,13 +291,13 @@ void QDeclarativeContactModel::fetchAgain()
     req->setFilter(d->m_filter? d->m_filter->filter() : QContactFilter());
     req->setFetchHint(d->m_fetchHint ? d->m_fetchHint->fetchHint() : QContactFetchHint());
 
-    connect(req,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(contactFetched()));
+    connect(req,SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(requestUpdated()));
 
     req->start();
     emit contactsChanged();
 }
 
-void QDeclarativeContactModel::contactFetched()
+void QDeclarativeContactModel::requestUpdated()
 {
     QContactFetchRequest* req = qobject_cast<QContactFetchRequest*>(QObject::sender());
     if (req && req->isFinished()) {
@@ -388,6 +388,13 @@ QVariant QDeclarativeContactModel::data(const QModelIndex &index, int role) cons
     switch(role) {
         case Qt::DisplayRole:
             return c.displayLabel();
+        case Qt::DecorationRole:
+            {
+                QContactThumbnail t = c.detail<QContactThumbnail>();
+                if (!t.thumbnail().isNull())
+                    return QPixmap::fromImage(t.thumbnail());
+                return QPixmap();
+            }
         case ContactRole:
             return QVariant::fromValue(dc);
     }

@@ -109,7 +109,7 @@ public:
     void setLinkedDetailUris(const QStringList& linkedDetailUris);
     virtual ContactDetailType detailType() const;
 
-    Q_INVOKABLE QStringList fieldNames() const;
+    QStringList fieldNames() const;
     Q_INVOKABLE QVariant value(const QString& key) const;
     Q_INVOKABLE bool setValue(const QString& key, const QVariant& value);
 

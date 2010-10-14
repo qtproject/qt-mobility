@@ -86,18 +86,31 @@ QContact QDeclarativeContact::contact() const
 {
     return d->contact();
 }
-void QDeclarativeContact::setType(QDeclarativeContact::ContactType type)
+void QDeclarativeContact::setType(QDeclarativeContact::ContactType newType)
 {
-    if (type == QDeclarativeContact::TypeContact)
-        d->m_contact.setType(QContactType::TypeContact);
-    else if (type == QDeclarativeContact::TypeGroup)
-        d->m_contact.setType(QContactType::TypeGroup);
+    if (newType != type()) {
+        if (newType == QDeclarativeContact::TypeContact)
+            d->m_contact.setType(QContactType::TypeContact);
+        else if (newType == QDeclarativeContact::TypeGroup)
+            d->m_contact.setType(QContactType::TypeGroup);
+        emit detailsChanged();
+    }
 }
 QDeclarativeContact::ContactType QDeclarativeContact::type() const
 {
     if (d->m_contact.type() == QContactType::TypeGroup)
         return QDeclarativeContact::TypeGroup;
     return QDeclarativeContact::TypeContact;
+}
+
+bool QDeclarativeContact::removeDetail(QDeclarativeContactDetail* detail)
+{
+    if (detail->removable()) {
+        d->m_details.removeAll(detail);
+        emit detailsChanged();
+    }
+    return false;
+
 }
 
 QDeclarativeListProperty<QDeclarativeContactDetail> QDeclarativeContact::details()
@@ -116,23 +129,23 @@ QString QDeclarativeContact::manager() const
 }
 
 
-QVariant QDeclarativeContact::detailByName(const QString& name)
+QVariant QDeclarativeContact::detail(const QString& name)
 {
     return d->detail(name);
 }
 
-QVariant QDeclarativeContact::detailsByName(const QString& name)
+QVariant QDeclarativeContact::details(const QString& name)
 {
     return d->details(name);
 }
 
 
-QVariant QDeclarativeContact::detailByType(QDeclarativeContactDetail::ContactDetailType type)
+QVariant QDeclarativeContact::detail(QDeclarativeContactDetail::ContactDetailType type)
 {
     return d->detail(type);
 }
 
-QVariant QDeclarativeContact::detailsByType(QDeclarativeContactDetail::ContactDetailType type)
+QVariant QDeclarativeContact::details(QDeclarativeContactDetail::ContactDetailType type)
 {
     return d->details(type);
 }
@@ -159,9 +172,9 @@ QDeclarativeContactBirthday*  QDeclarativeContact::birthday()
 {
     return static_cast<QDeclarativeContactBirthday*>(d->detail(QDeclarativeContactDetail::ContactBirthday).value<QDeclarativeContactDetail*>());
 }
-QDeclarativeContactDisplayLabel*  QDeclarativeContact::displayLabel()
+QString QDeclarativeContact::displayLabel()
 {
-    return static_cast<QDeclarativeContactDisplayLabel*>(d->detail(QDeclarativeContactDetail::ContactDisplayLabel).value<QDeclarativeContactDetail*>());
+    return d->m_contact.displayLabel();
 }
 QDeclarativeContactEmailAddress*  QDeclarativeContact::email()
 {
@@ -245,6 +258,7 @@ void QDeclarativeContact::setThumbnail(const QUrl& url)
     QContactThumbnail detail;
     detail.setThumbnail(image);
     d->m_contact.saveDetail(&detail);
+    emit detailsChanged();
 }
 
 QDeclarativeContactUrl*  QDeclarativeContact::url()

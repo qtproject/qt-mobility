@@ -110,7 +110,7 @@ public slots:
     void importContacts(const QString& file);
 private slots:
     void fetchAgain();
-    void contactFetched();
+    void requestUpdated();
 
     void saveContact();
     void contactSaved();
