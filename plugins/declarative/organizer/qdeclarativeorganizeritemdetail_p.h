@@ -140,6 +140,10 @@ public:
         return ok;
     }
 
+    static QString definitionName(ItemDetailType type) ;
+    static ItemDetailType detailType(const QString& definitionName) ;
+    static QString fieldName(ItemDetailType detailType, int fieldType);
+
 signals:
     void detailChanged();
 
@@ -156,7 +160,15 @@ class QDeclarativeOrganizerEventTime : public QDeclarativeOrganizerItemDetail
     Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
     Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime NOTIFY valueChanged)
     Q_PROPERTY(bool isTimeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        StartDateTime = 0,
+        EndDateTime,
+        TimeSpecified
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "eventTime");
 
     QDeclarativeOrganizerEventTime(QObject* parent = 0)
@@ -204,7 +216,13 @@ class QDeclarativeOrganizerItemComment : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
     Q_PROPERTY(QString comment READ comment WRITE setComment NOTIFY valueChanged)
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        Comment = 0
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "comment");
     Q_DECLARE_LATIN1_CONSTANT(DetailGroupName, "comments");
 
@@ -236,7 +254,13 @@ class QDeclarativeOrganizerItemDescription : public QDeclarativeOrganizerItemDet
 {
     Q_OBJECT
     Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY valueChanged)
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        Description = 0
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "description");
 
     QDeclarativeOrganizerItemDescription(QObject* parent = 0)
@@ -267,7 +291,13 @@ class QDeclarativeOrganizerItemDisplayLabel : public QDeclarativeOrganizerItemDe
 {
     Q_OBJECT
     Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY valueChanged)
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        Label = 0
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "label");
     QDeclarativeOrganizerItemDisplayLabel(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
@@ -297,7 +327,13 @@ class QDeclarativeOrganizerItemGuid : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
     Q_PROPERTY(QString guid READ guid WRITE setGuid NOTIFY valueChanged)
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        Guid = 0
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "guid");
     QDeclarativeOrganizerItemGuid(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
@@ -330,7 +366,14 @@ class QDeclarativeOrganizerItemParent : public QDeclarativeOrganizerItemDetail
     Q_PROPERTY(uint parentId READ parentId WRITE setParentId NOTIFY valueChanged)
     Q_PROPERTY(QDate originalDate READ originalDate WRITE setOriginalDate NOTIFY valueChanged)
 
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        ParentId = 0,
+        OriginalDate
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "parent");
     QDeclarativeOrganizerItemParent(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
@@ -376,9 +419,17 @@ class QDeclarativeOrganizerItemLocation : public QDeclarativeOrganizerItemDetail
     Q_OBJECT
     Q_PROPERTY(double latitude READ latitude WRITE setLatitude NOTIFY valueChanged)
     Q_PROPERTY(double longitude READ longitude WRITE setLongitude NOTIFY valueChanged)
-    Q_PROPERTY(QString location READ location WRITE setLocation NOTIFY valueChanged)
+    Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY valueChanged)
 
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        Latitude = 0,
+        Longitude,
+        Label
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "location");
     QDeclarativeOrganizerItemLocation(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
@@ -389,14 +440,14 @@ public:
     {
         return QDeclarativeOrganizerItemDetail::Location;
     }
-    void setLocation(const QString& newLocation)
+    void setLabel(const QString& newLabel)
     {
-        if (newLocation != location() && !readOnly()) {
-            m_detail.setValue(QOrganizerItemLocation::FieldLabel, newLocation);
+        if (newLabel != label() && !readOnly()) {
+            m_detail.setValue(QOrganizerItemLocation::FieldLabel, newLabel);
             emit valueChanged();
         }
     }
-    QString location() const {return m_detail.value(QOrganizerItemLocation::FieldLabel);}
+    QString label() const {return m_detail.value(QOrganizerItemLocation::FieldLabel);}
 
     void setLatitude(double newLatitude)
     {
@@ -424,11 +475,17 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemLocation)
 class QDeclarativeOrganizerItemPriority : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
-    Q_PROPERTY(Priority priority READ priority WRITE setPriority NOTIFY valueChanged)
-    Q_ENUMS(Priority)
+    Q_PROPERTY(PriorityType priority READ priority WRITE setPriority NOTIFY valueChanged)
+    Q_ENUMS(PriorityType)
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        Priority = 0
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "priority");
-    enum Priority {
+    enum PriorityType {
         UnknownPriority = QOrganizerItemPriority::UnknownPriority,
         HighestPriority = QOrganizerItemPriority::HighestPriority,
         ExtremelyHighPriority = QOrganizerItemPriority::ExtremelyHighPriority,
@@ -451,14 +508,14 @@ public:
         return QDeclarativeOrganizerItemDetail::Priority;
     }
 
-    void setPriority(Priority newPriority)
+    void setPriority(PriorityType newPriority)
     {
         if (newPriority != priority() && !readOnly()) {
             m_detail.setValue(QOrganizerItemPriority::FieldPriority, static_cast<int>(newPriority));
             emit valueChanged();
         }
     }
-    Priority priority() const {return static_cast<Priority>(m_detail.value<int>(QOrganizerItemPriority::FieldPriority));}
+    PriorityType priority() const {return static_cast<PriorityType>(m_detail.value<int>(QOrganizerItemPriority::FieldPriority));}
 
 signals:
     void valueChanged();
@@ -473,7 +530,16 @@ class QDeclarativeOrganizerItemRecurrence : public QDeclarativeOrganizerItemDeta
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerRecurrenceRule> exceptionRules READ exceptionRules NOTIFY exceptionRulesChanged)
     Q_PROPERTY(QVariantList recurrenceDates READ recurrenceDates WRITE setRecurrenceDates NOTIFY valueChanged)
     Q_PROPERTY(QVariantList exceptionDates  READ exceptionDates WRITE setExceptionDates NOTIFY valueChanged)
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        RecurrenceRules = 0,
+        ExceptionRules,
+        RecurrenceDates,
+        ExceptionDates
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "recurrence");
     QDeclarativeOrganizerItemRecurrence(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
@@ -565,7 +631,16 @@ class QDeclarativeOrganizerItemReminder : public QDeclarativeOrganizerItemDetail
     Q_PROPERTY(int repetitionCount READ repetitionCount WRITE setRepetitionCount NOTIFY valueChanged)
     Q_PROPERTY(int repetitionDelay READ repetitionDelay WRITE setRepetitionDelay NOTIFY valueChanged)
     Q_ENUMS(ReminderType)
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        Type = 0,
+        SecondsBeforeStart,
+        RepetitionCount,
+        RepetitionDelay
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "reminder");
     Q_DECLARE_LATIN1_CONSTANT(DetailGroupName, "reminders");
     enum ReminderType {
@@ -627,7 +702,13 @@ class QDeclarativeOrganizerItemAudibleReminder : public QDeclarativeOrganizerIte
 {
     Q_OBJECT
     Q_PROPERTY(QUrl dataUrl READ dataUrl WRITE setDataUrl NOTIFY valueChanged)
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        DataUrl = 0
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "audibleReminder");
     Q_DECLARE_LATIN1_CONSTANT(DetailGroupName, "audibleReminders");
     QDeclarativeOrganizerItemAudibleReminder(QObject* parent = 0)
@@ -658,7 +739,14 @@ class QDeclarativeOrganizerItemVisualReminder : public QDeclarativeOrganizerItem
     Q_OBJECT
     Q_PROPERTY(QString message READ message WRITE setMessage NOTIFY valueChanged)
     Q_PROPERTY(QUrl dataUrl READ dataUrl WRITE setDataUrl NOTIFY valueChanged)
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        DataUrl = 0,
+        Message
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "visualReminder");
     Q_DECLARE_LATIN1_CONSTANT(DetailGroupName, "visualReminders");
     QDeclarativeOrganizerItemVisualReminder(QObject* parent = 0)
@@ -701,7 +789,16 @@ class QDeclarativeOrganizerItemEmailReminder : public QDeclarativeOrganizerItemR
     Q_PROPERTY(QString body READ body WRITE setBody NOTIFY valueChanged)
     Q_PROPERTY(QStringList recipients READ recipients WRITE setRecipients NOTIFY valueChanged)
     Q_PROPERTY(QVariantList attachments READ attachments WRITE setAttachments NOTIFY valueChanged)
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        Subject = 0,
+        Body,
+        Recipients,
+        Attachments
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "emailReminder");
     Q_DECLARE_LATIN1_CONSTANT(DetailGroupName, "emailReminders");
     QDeclarativeOrganizerItemEmailReminder(QObject* parent = 0)
@@ -760,7 +857,14 @@ class QDeclarativeOrganizerItemTimestamp : public QDeclarativeOrganizerItemDetai
     Q_OBJECT
     Q_PROPERTY(QDateTime lastModified READ lastModified WRITE setLastModified NOTIFY valueChanged)
     Q_PROPERTY(QDateTime created READ created WRITE setCreated NOTIFY valueChanged)
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        LastModified = 0,
+        Created
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "timestamp");
     QDeclarativeOrganizerItemTimestamp(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
@@ -798,9 +902,15 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemTimestamp)
 class QDeclarativeOrganizerItemType : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
-    Q_PROPERTY(ItemType itemType READ itemType WRITE setItemType NOTIFY valueChanged)
+    Q_PROPERTY(OrganizerItemType itemType READ itemType WRITE setItemType NOTIFY valueChanged)
+    Q_ENUMS(FieldType)
 public:
-    enum ItemType {
+    enum FieldType {
+        ItemType = 0
+    };
+    static QString fieldNameFromFieldType(int type);
+
+    enum OrganizerItemType {
         Event = 0,
         EventOccurrence,
         Todo,
@@ -820,7 +930,7 @@ public:
     {
         return QDeclarativeOrganizerItemDetail::Type;
     }
-    void setItemType(ItemType newType)
+    void setItemType(OrganizerItemType newType)
     {
         if (newType != itemType() && !readOnly()) {
             switch (newType) {
@@ -849,7 +959,7 @@ public:
             emit valueChanged();
         }
     }
-    ItemType itemType() const
+    OrganizerItemType itemType() const
     {
         QString typeString = m_detail.value(QOrganizerItemType::FieldType);
         if (typeString == QOrganizerItemType::TypeEvent)
@@ -878,7 +988,13 @@ class QDeclarativeOrganizerJournalTime : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
     Q_PROPERTY(QDateTime entryDateTime READ entryDateTime WRITE setEntryDateTime NOTIFY valueChanged)
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        EntryDateTime = 0
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "journalTime");
     QDeclarativeOrganizerJournalTime(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)
@@ -906,11 +1022,25 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerJournalTime)
 class QDeclarativeOrganizerTodoProgress : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
-    Q_PROPERTY(Status status READ status WRITE setStatus NOTIFY valueChanged)
+    Q_PROPERTY(StatusType status READ status WRITE setStatus NOTIFY valueChanged)
     Q_PROPERTY(int percentage READ percentageComplete WRITE setPercentageComplete NOTIFY valueChanged)
     Q_PROPERTY(QDateTime finishedDateTime READ finishedDateTime WRITE setFinishedDateTime NOTIFY valueChanged)
-    Q_ENUMS(Status)
+    Q_ENUMS(StatusType)
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        Status = 0,
+        Percentage,
+        FinishedDateTime
+    };
+
+    enum StatusType {
+        NotStarted = QOrganizerTodoProgress::StatusNotStarted,
+        InProgress = QOrganizerTodoProgress::StatusInProgress,
+        Complete = QOrganizerTodoProgress::StatusComplete
+    };
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName,"todoProgress");
 
     QDeclarativeOrganizerTodoProgress(QObject* parent = 0)
@@ -944,20 +1074,16 @@ public:
     }
     int percentageComplete() const {return m_detail.value<int>(QOrganizerTodoProgress::FieldPercentageComplete);}
 
-    enum Status {
-        NotStarted = QOrganizerTodoProgress::StatusNotStarted,
-        InProgress = QOrganizerTodoProgress::StatusInProgress,
-        Complete = QOrganizerTodoProgress::StatusComplete
-    };
 
-    void setStatus(Status newStatus)
+
+    void setStatus(StatusType newStatus)
     {
         if (newStatus != status() && !readOnly()) {
             m_detail.setValue(QOrganizerTodoProgress::FieldStatus, (int) newStatus);
             emit valueChanged();
         }
     }
-    Status status() const {return (Status) m_detail.value<int>(QOrganizerTodoProgress::FieldStatus);}
+    StatusType status() const {return (StatusType) m_detail.value<int>(QOrganizerTodoProgress::FieldStatus);}
 signals:
     void valueChanged();
 };
@@ -970,7 +1096,16 @@ class QDeclarativeOrganizerTodoTime : public QDeclarativeOrganizerItemDetail
     Q_PROPERTY(bool timeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
     Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
     Q_PROPERTY(QDateTime dueDateTime READ dueDateTime WRITE setDueDateTime NOTIFY valueChanged)
+    Q_ENUMS(FieldType)
 public:
+    enum FieldType {
+        TimeSpecified = 0,
+        StartDateTime,
+        DueDateTime
+    };
+
+    static QString fieldNameFromFieldType(int type);
+
     Q_DECLARE_LATIN1_CONSTANT(DetailName, "todoTime");
     QDeclarativeOrganizerTodoTime(QObject* parent = 0)
         :QDeclarativeOrganizerItemDetail(parent)

@@ -223,7 +223,7 @@ bool QDeclarativeOrganizerEvent::isTimeSpecified() const
 {
     return m_event->isTimeSpecified();
 }
-void QDeclarativeOrganizerEvent::setPriority(QDeclarativeOrganizerItemPriority::Priority value)
+void QDeclarativeOrganizerEvent::setPriority(QDeclarativeOrganizerItemPriority::PriorityType value)
 {
     QOrganizerItemPriority::Priority newPriority = static_cast<QOrganizerItemPriority::Priority>(value);
     if (newPriority != m_event->priority()) {
@@ -231,9 +231,9 @@ void QDeclarativeOrganizerEvent::setPriority(QDeclarativeOrganizerItemPriority::
         emit valueChanged();
     }
 }
-QDeclarativeOrganizerItemPriority::Priority QDeclarativeOrganizerEvent::priority() const
+QDeclarativeOrganizerItemPriority::PriorityType QDeclarativeOrganizerEvent::priority() const
 {
-    return static_cast<QDeclarativeOrganizerItemPriority::Priority>(m_event->priority());
+    return static_cast<QDeclarativeOrganizerItemPriority::PriorityType>(m_event->priority());
 }
 QString QDeclarativeOrganizerEvent::location() const
 {
@@ -249,7 +249,7 @@ void QDeclarativeOrganizerEvent::setLocation(const QString& loc)
 
 QDeclarativeOrganizerItemRecurrence* QDeclarativeOrganizerEvent::recurrence()
 {
-    QDeclarativeOrganizerItemDetail* detail = d->detailByDefinitionName(QDeclarativeOrganizerItemRecurrence::DetailName);
+    QDeclarativeOrganizerItemDetail* detail = d->detail(QDeclarativeOrganizerItemRecurrence::DetailName).value<QDeclarativeOrganizerItemDetail*>();
     return static_cast<QDeclarativeOrganizerItemRecurrence*>(detail);
 }
 
@@ -313,7 +313,7 @@ QDateTime QDeclarativeOrganizerEventOccurrence::endDateTime() const
     return m_eo->endDateTime();
 }
 
-void QDeclarativeOrganizerEventOccurrence::setPriority(QDeclarativeOrganizerItemPriority::Priority value)
+void QDeclarativeOrganizerEventOccurrence::setPriority(QDeclarativeOrganizerItemPriority::PriorityType value)
 {
     QOrganizerItemPriority::Priority newPriority = static_cast<QOrganizerItemPriority::Priority>(value);
     if (newPriority != m_eo->priority()) {
@@ -321,9 +321,9 @@ void QDeclarativeOrganizerEventOccurrence::setPriority(QDeclarativeOrganizerItem
         emit valueChanged();
     }
 }
-QDeclarativeOrganizerItemPriority::Priority QDeclarativeOrganizerEventOccurrence::priority() const
+QDeclarativeOrganizerItemPriority::PriorityType QDeclarativeOrganizerEventOccurrence::priority() const
 {
-    return static_cast<QDeclarativeOrganizerItemPriority::Priority>(m_eo->priority());
+    return static_cast<QDeclarativeOrganizerItemPriority::PriorityType>(m_eo->priority());
 }
 QString QDeclarativeOrganizerEventOccurrence::location() const
 {
@@ -373,7 +373,7 @@ QDeclarativeOrganizerTodo::QDeclarativeOrganizerTodo(QObject *parent)
 
 QDeclarativeOrganizerItemRecurrence* QDeclarativeOrganizerTodo::recurrence()
 {
-    QDeclarativeOrganizerItemDetail* detail = d->detailByDefinitionName(QDeclarativeOrganizerItemRecurrence::DetailName);
+    QDeclarativeOrganizerItemDetail* detail = d->detail(QDeclarativeOrganizerItemRecurrence::DetailName).value<QDeclarativeOrganizerItemDetail*>();
     return static_cast<QDeclarativeOrganizerItemRecurrence*>(detail);
 }
 
@@ -417,7 +417,7 @@ bool QDeclarativeOrganizerTodo::isTimeSpecified() const
     return m_todo->isTimeSpecified();
 }
 
-void QDeclarativeOrganizerTodo::setPriority(QDeclarativeOrganizerItemPriority::Priority value)
+void QDeclarativeOrganizerTodo::setPriority(QDeclarativeOrganizerItemPriority::PriorityType value)
 {
     QOrganizerItemPriority::Priority newPriority = static_cast<QOrganizerItemPriority::Priority>(value);
     if (newPriority != m_todo->priority()) {
@@ -426,9 +426,9 @@ void QDeclarativeOrganizerTodo::setPriority(QDeclarativeOrganizerItemPriority::P
     }
 }
 
-QDeclarativeOrganizerItemPriority::Priority QDeclarativeOrganizerTodo::priority() const
+QDeclarativeOrganizerItemPriority::PriorityType QDeclarativeOrganizerTodo::priority() const
 {
-    return static_cast<QDeclarativeOrganizerItemPriority::Priority>(m_todo->priority());
+    return static_cast<QDeclarativeOrganizerItemPriority::PriorityType>(m_todo->priority());
 }
 void QDeclarativeOrganizerTodo::setProgressPercentage(int percentage)
 {
@@ -442,7 +442,7 @@ int QDeclarativeOrganizerTodo::progressPercentage() const
 {
     return m_todo->progressPercentage();
 }
-void QDeclarativeOrganizerTodo::setStatus(QDeclarativeOrganizerTodoProgress::Status value)
+void QDeclarativeOrganizerTodo::setStatus(QDeclarativeOrganizerTodoProgress::StatusType value)
 {
     QOrganizerTodoProgress::Status newStatus = static_cast<QOrganizerTodoProgress::Status>(value);
 
@@ -452,9 +452,9 @@ void QDeclarativeOrganizerTodo::setStatus(QDeclarativeOrganizerTodoProgress::Sta
     }
 }
 
-QDeclarativeOrganizerTodoProgress::Status QDeclarativeOrganizerTodo::status() const
+QDeclarativeOrganizerTodoProgress::StatusType QDeclarativeOrganizerTodo::status() const
 {
-    return static_cast<QDeclarativeOrganizerTodoProgress::Status>(m_todo->status());
+    return static_cast<QDeclarativeOrganizerTodoProgress::StatusType>(m_todo->status());
 }
 
 void QDeclarativeOrganizerTodo::setFinishedDateTime(const QDateTime& datetime)
@@ -507,7 +507,7 @@ QDateTime QDeclarativeOrganizerTodoOccurrence::dueDateTime() const
 }
 
 
-void QDeclarativeOrganizerTodoOccurrence::setPriority(QDeclarativeOrganizerItemPriority::Priority value)
+void QDeclarativeOrganizerTodoOccurrence::setPriority(QDeclarativeOrganizerItemPriority::PriorityType value)
 {
     QOrganizerItemPriority::Priority newPriority = static_cast<QOrganizerItemPriority::Priority>(value);
     if (newPriority != m_to->priority()) {
@@ -516,9 +516,9 @@ void QDeclarativeOrganizerTodoOccurrence::setPriority(QDeclarativeOrganizerItemP
     }
 }
 
-QDeclarativeOrganizerItemPriority::Priority QDeclarativeOrganizerTodoOccurrence::priority() const
+QDeclarativeOrganizerItemPriority::PriorityType QDeclarativeOrganizerTodoOccurrence::priority() const
 {
-    return static_cast<QDeclarativeOrganizerItemPriority::Priority>(m_to->priority());
+    return static_cast<QDeclarativeOrganizerItemPriority::PriorityType>(m_to->priority());
 }
 void QDeclarativeOrganizerTodoOccurrence::setProgressPercentage(int percentage)
 {
@@ -532,7 +532,7 @@ int QDeclarativeOrganizerTodoOccurrence::progressPercentage() const
 {
     return m_to->progressPercentage();
 }
-void QDeclarativeOrganizerTodoOccurrence::setStatus(QDeclarativeOrganizerTodoProgress::Status value)
+void QDeclarativeOrganizerTodoOccurrence::setStatus(QDeclarativeOrganizerTodoProgress::StatusType value)
 {
     QOrganizerTodoProgress::Status newStatus = static_cast<QOrganizerTodoProgress::Status>(value);
 
@@ -542,9 +542,9 @@ void QDeclarativeOrganizerTodoOccurrence::setStatus(QDeclarativeOrganizerTodoPro
     }
 }
 
-QDeclarativeOrganizerTodoProgress::Status QDeclarativeOrganizerTodoOccurrence::status() const
+QDeclarativeOrganizerTodoProgress::StatusType QDeclarativeOrganizerTodoOccurrence::status() const
 {
-    return static_cast<QDeclarativeOrganizerTodoProgress::Status>(m_to->status());
+    return static_cast<QDeclarativeOrganizerTodoProgress::StatusType>(m_to->status());
 }
 
 void QDeclarativeOrganizerTodoOccurrence::setFinishedDateTime(const QDateTime& datetime)
