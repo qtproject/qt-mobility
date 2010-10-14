@@ -2282,24 +2282,25 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
         }
         else {
 
-            bool status = false;
-            // Using QLandmarkIdFilter to determine whether all the told landmarks exists
             QLandmarkIdFilter filter;
-            filter.setLandmarkIds(exportedLandmarkIds);
-
             QList<QLandmarkSortOrder> sortOrders;
             QLandmarkNameSort nameSort;
             sortOrders.append(nameSort);
 
-            QList<QLandmarkId> checkedLms = this->landmarkIds(filter, KAllLandmarks, KDefaultIndex,
+            filter.setLandmarkIds(exportRequest->landmarkIds());
+
+            // Using QLandmarkIdFilter to determine wether all the told landmarks exists
+            QList<QLandmarkId> fetchedLandmarkIds;
+
+            fetchedLandmarkIds = this->landmarkIds(filter, KAllLandmarks, KDefaultIndex,
                 sortOrders, &error, &errorString);
 
-            if (exportRequest->landmarkIds().count() !=0
-                && exportRequest->landmarkIds().count() != exportedLandmarkIds.count()) {
+            if (exportRequest->landmarkIds().count() != 0 && exportRequest->landmarkIds().count()
+                != fetchedLandmarkIds.count()) {
                 User::Leave(-20002); //errorId for QLandmarkManager::LandmarkDoesNotExistError
             }
 
-            foreach(const QLandmarkId& id,checkedLms)
+            foreach(const QLandmarkId& id,fetchedLandmarkIds)
                     selectedLandmarks.AppendL(LandmarkUtility::convertToSymbianLandmarkId(id));
         }
 
@@ -3227,7 +3228,7 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
 
             //qDebug() << "Attribute Key " << keyList.at(i);
 
-            QString filterStr1((QChar*) (filterName.Ptr()), filterName.Length());
+            //QString filterStr1((QChar*) (filterName.Ptr()), filterName.Length());
             //qDebug() << "filter string1  = " << filterStr1;
 
             if (filterNamecont.Length() > 0) {
@@ -3622,7 +3623,9 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
         errorString = aData->errorString;
     }
 
-    qDebug() << "Request Completed with " << error << " = " << errorString;
+    if (error != QLandmarkManager::NoError) {
+        qDebug() << "Request Completed with " << error << " = " << errorString;
+    }
 
     if (!aData->iQtRequest) {
         qDebug() << "Bad or Corrupted Request ";
@@ -4752,8 +4755,7 @@ void LandmarkManagerEngineSymbianPrivate::exportLandmarksL(QIODevice *device,
         transferOption = CPosLandmarkDatabase::EIncludeCategories;
         break;
     case QLandmarkManager::ExcludeCategoryData:
-        transferOption = CPosLandmarkDatabase::EIncludeCategories
-            | CPosLandmarkDatabase::ESupressCategoryCreation;
+        transferOption = CPosLandmarkDatabase::EDefaultOptions;
         break;
     case QLandmarkManager::AttachSingleCategory:
         transferOption = CPosLandmarkDatabase::EIncludeCategories;
@@ -5175,10 +5177,12 @@ void LandmarkManagerEngineSymbianPrivate::handleDatabaseEvent(const TPosLmEvent&
             lmid.setManagerUri(managerUri());
             QList<QLandmarkId> lmids;
             lmids << lmid;
-            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkAdded, lmids);
+            if (id != 0) {
+                m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkAdded, lmids);
+                qDebug() << "landmark created";
+            }
         }
 
-        //qDebug() << "landmark created";
         break;
     }
     case EPosLmEventLandmarkDeleted:
@@ -5198,12 +5202,15 @@ void LandmarkManagerEngineSymbianPrivate::handleDatabaseEvent(const TPosLmEvent&
             lmid.setManagerUri(managerUri());
             QList<QLandmarkId> lmids;
             lmids << lmid;
-            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkRemoved, lmids);
+            if (id != 0) {
+                m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkRemoved, lmids);
+                qDebug() << "landmark deleted";
+            }
         }
-        //qDebug() << "landmark deleted";
         break;
     }
-    case EPosLmEventLandmarkUpdated:
+    case EPosLmEventLandmarkUpdated: // 103
+    case EPosLmEventLandmarkUnknownChanges: // 100
     {
         if (m_UpdatedLmIds.contains(localId, Qt::CaseInsensitive)) {
 
@@ -5220,9 +5227,11 @@ void LandmarkManagerEngineSymbianPrivate::handleDatabaseEvent(const TPosLmEvent&
             lmid.setManagerUri(managerUri());
             QList<QLandmarkId> lmids;
             lmids << lmid;
-            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkUpdated, lmids);
+            if (id != 0) {
+                m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::landmarkUpdated, lmids);
+                qDebug() << "landmark updated";
+            }
         }
-        //qDebug() << "landmark updated";
         break;
     }
     case EPosLmEventCategoryCreated:
@@ -5242,13 +5251,15 @@ void LandmarkManagerEngineSymbianPrivate::handleDatabaseEvent(const TPosLmEvent&
             catid.setManagerUri(managerUri());
             QList<QLandmarkCategoryId> catids;
             catids << catid;
-            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::categoryAdded, QList<
-                QLandmarkId> (), catids);
+            if (id != 0) {
+                m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::categoryAdded, QList<
+                    QLandmarkId> (), catids);
+                qDebug() << "landmark category created";
+            }
         }
-        //qDebug() << "landmark category created";
         break;
     }
-    case EPosLmEventCategoryDeleted:
+    case EPosLmEventCategoryDeleted: // 202
     {
         if (m_DeletedCatIds.contains(localId, Qt::CaseInsensitive)) {
 
@@ -5265,13 +5276,16 @@ void LandmarkManagerEngineSymbianPrivate::handleDatabaseEvent(const TPosLmEvent&
             catid.setManagerUri(managerUri());
             QList<QLandmarkCategoryId> catids;
             catids << catid;
-            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::categoryRemoved, QList<
-                QLandmarkId> (), catids);
+            if (id != 0) {
+                m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::categoryRemoved,
+                    QList<QLandmarkId> (), catids);
+                qDebug() << "landmark category deleted";
+            }
         }
-        //qDebug() << "landmark category deleted";
         break;
     }
-    case EPosLmEventCategoryUpdated:
+    case EPosLmEventCategoryUpdated: //203
+    case EPosLmEventCategoryUnknownChanges: //200
     {
         if (m_UpdatedCatIds.contains(localId, Qt::CaseInsensitive)) {
 
@@ -5288,14 +5302,14 @@ void LandmarkManagerEngineSymbianPrivate::handleDatabaseEvent(const TPosLmEvent&
             catid.setManagerUri(managerUri());
             QList<QLandmarkCategoryId> catids;
             catids << catid;
-            m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::categoryUpdated, QList<
-                QLandmarkId> (), catids);
+            if (id != 0) {
+                m_LmEventObserver.handleLandmarkEvent(LandmarkEventObserver::categoryUpdated,
+                    QList<QLandmarkId> (), catids);
+                qDebug() << "landmark category updated";
+            }
         }
-        //qDebug() << "landmark category updated";
         break;
     }
-        //    case EPosLmEventLandmarkUnknownChanges: //100
-        //    case EPosLmEventCategoryUnknownChanges: //200
         //    case EPosLmEventUnknownChanges: //0
         //    case EPosLmEventNewDefaultDatabaseLocation: //10
         //    case EPosLmEventMediaRemoved: //11
