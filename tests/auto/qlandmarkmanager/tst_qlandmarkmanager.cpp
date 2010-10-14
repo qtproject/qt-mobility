@@ -5782,6 +5782,9 @@ void tst_QLandmarkManager::importGpx() {
                                            QLandmarkManager::AttachSingleCategory, cat3.categoryId()));
         QCOMPARE(m_manager->error(), QLandmarkManager::CategoryDoesNotExistError); //Category id doesn't exist
 
+#ifdef Q_OS_SYMBIAN
+        QEXPECT_FAIL("", "Should be able to attach single category", Abort);
+#endif
         QVERIFY(m_manager->importLandmarks(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx", QLandmarkManager::Gpx,
                                            QLandmarkManager::AttachSingleCategory, cat2.categoryId()));
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError); //valid id
@@ -5866,11 +5869,13 @@ void tst_QLandmarkManager::importGpx() {
 
     QList<QLandmarkId> ids;
 
-#ifdef WORKAROUND
-    //REMOVE WORKAROUND
+
     QCOMPARE(spyAdd.count(), 0);
-    QCOMPARE(dataChanged.count(),1);
+
+#ifdef Q_OS_SYMBIAN
+    QEXPECT_FAIL("", "We should be getting a data changed signal for the import operation", Continue);
 #endif
+    QCOMPARE(dataChanged.count(),1);
 
     spyAdd.clear();
     dataChanged.clear();
@@ -5892,16 +5897,6 @@ void tst_QLandmarkManager::importGpx() {
         retrievedFirst.setCategoryIds(QList<QLandmarkCategoryId>());
     }
 
-#ifdef Q_OS_SYMBIAN
-#ifdef WORKAROUND
-    //REMOVE WORKAROUND
-    lmFirst.setRadius(0);
-    lmFirst.setUrl(QUrl(""));
-    retrievedFirst.setRadius(0);
-    retrievedFirst.setUrl(QUrl(""));
-#else
-#endif
-#endif
     QCOMPARE(lmFirst, retrievedFirst);
 
     QLandmark lmLast;
@@ -5919,15 +5914,6 @@ void tst_QLandmarkManager::importGpx() {
         retrievedLast.setCategoryIds(QList<QLandmarkCategoryId>());
     }
 
-#ifdef Q_OS_SYMBIAN
-#ifdef WORKAROUND
-    //REMOVE WORKAROUND
-    lmLast.setUrl(QUrl(""));
-    retrievedLast.setRadius(0);
-    retrievedLast.setUrl(QUrl(""));
-#else
-#endif
-#endif
     QCOMPARE(lmLast, retrievedLast);
 
     if (type == "sync") {
@@ -5969,12 +5955,10 @@ void tst_QLandmarkManager::importGpx() {
         QStringList lmNames;
 
 #ifdef Q_OS_SYMBIAN
-#ifdef WORKAROUND
-#else
     QCOMPARE(spyAdd.count(), 0);
-    QCOMPARE(dataChanged.count(),1);
-#endif
 
+    QEXPECT_FAIL("", "We should be getting a data changed signal for the import operation", Continue);
+    QCOMPARE(dataChanged.count(),1);
 #else
     QCOMPARE(spyAdd.count(), 1);
     ids = spyAdd.at(0).at(0).value<QList<QLandmarkId> >();
