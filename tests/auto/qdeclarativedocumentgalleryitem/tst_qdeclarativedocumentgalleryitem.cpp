@@ -986,6 +986,7 @@ void tst_QDeclarativeDocumentGalleryItem::metaData()
 
     QScopedPointer<QObject> object(component.create());
     QVERIFY(object);
+    QVERIFY(gallery.response());
 
     QObject *metaData = object->property("metaData").value<QObject *>();
     QVERIFY(metaData);
