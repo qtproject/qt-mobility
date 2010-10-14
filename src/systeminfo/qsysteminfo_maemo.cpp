@@ -1276,7 +1276,7 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
         profileName = profile;
         foreach (const ProfileDataValue value, values) {
             qDebug() << value.key << value.val;
-            if (value.key == "ringing.alert.type"){
+            if (value.key == "ringing.alert.type") {
                 silentProfile = QString::compare(value.val, "silent", Qt::CaseInsensitive) == 0;
                 beepProfile = QString::compare(value.val, "beep", Qt::CaseInsensitive) == 0;
             }

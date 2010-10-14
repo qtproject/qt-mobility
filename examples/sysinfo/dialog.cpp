@@ -761,14 +761,14 @@ void Dialog::updateProfile()
             }
             break;
             case QSystemDeviceInfo::CustomProfile:
-                {
-                    profilestring = "custom";
-                }
+            {
+                profilestring = "custom";
+            }
             break;
             default:
-                {
+            {
                 profilestring = "Unknown";
-                }
+            }
         };
         profileLabel->setText(profilestring);
     }
