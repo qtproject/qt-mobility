@@ -5670,13 +5670,18 @@ void tst_QLandmarkManager::sortLandmarksName() {
     QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NoError,-1,3,QLandmarkSortOrder()));
     QCOMPARE(lms.count(), 2);
 
-#ifndef WORKAROUND
+
     //try an offset larger than the number of landmarks
+#ifdef Q_OS_SYMBIAN
+    QEXPECT_FAIL("", "We shouldn't be receiving an error if the offset is larger than the number of total landmarks", Continue);
+#endif
     QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NoError,-1,10,sortAscending));
     QCOMPARE(lms.count(), 0);
+#ifdef Q_OS_SYMBIAN
+    QEXPECT_FAIL("", "We shouldn't be receiving an error if the offset is larger than the number of total landmarks", Continue);
+#endif
     QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NoError,-1,10, QLandmarkSortOrder()));
     QCOMPARE(lms.count(), 0);
-#endif
 
     //try a combination of non-default limit and offset values
     QVERIFY(doFetch(type,filter,&lms,QLandmarkManager::NoError,2,2,sortAscending));
@@ -6180,8 +6185,14 @@ void tst_QLandmarkManager::importLmx() {
         QCOMPARE(spyAdd.count(), 0);
         QCOMPARE(spyCatRemove.count(), 0);
         QCOMPARE(spyCatChange.count(), 0);
-        QCOMPARE(spyCatAdd.count(), 1);
-        QEXPECT_FAIL("", "Should be getting a dataChanged() signal after an import operation", Continue);
+        if (type == "syncAttachSingleCategory" || type == "asyncAttachSingleCategory") {
+            QCOMPARE(spyCatAdd.count(), 2);
+        } else {
+            QCOMPARE(spyCatAdd.count(), 1);
+        }
+
+        if (type != "sync" && type != "async")
+            QEXPECT_FAIL("", "Should be getting a dataChanged() signal after an import operation", Continue);
         QCOMPARE(spyDataChanged.count(), 1);
         spyDataChanged.clear();
 #endif
