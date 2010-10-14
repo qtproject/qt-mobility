@@ -86,7 +86,6 @@ Item {
             if (mouseDown) {
                 var dx = mouse.x - lastX
                 var dy = mouse.y - lastY
-                console.log(dx + " " + dy)
                 map.pan(-dx, -dy)
                 lastX = mouse.x
                 lastY = mouse.y

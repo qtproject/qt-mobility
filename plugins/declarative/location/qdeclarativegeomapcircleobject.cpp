@@ -50,6 +50,15 @@ QTM_BEGIN_NAMESPACE
 QDeclarativeGeoMapCircleObject::QDeclarativeGeoMapCircleObject()
 {
     m_center = new QDeclarativeCoordinate(this);
+
+    connect(&m_border,
+            SIGNAL(colorChanged(QColor)),
+            this,
+            SLOT(borderColorChanged(QColor)));
+    connect(&m_border,
+            SIGNAL(widthChanged(int)),
+            this,
+            SLOT(borderWidthChanged(int)));
 }
 
 QDeclarativeGeoMapCircleObject::~QDeclarativeGeoMapCircleObject()
@@ -86,6 +95,25 @@ void QDeclarativeGeoMapCircleObject::setColor(const QColor &color)
 QColor QDeclarativeGeoMapCircleObject::color() const
 {
     return m_color;
+}
+
+QDeclarativeGeoMapObjectBorder* QDeclarativeGeoMapCircleObject::border()
+{
+    return &m_border;
+}
+
+void QDeclarativeGeoMapCircleObject::borderColorChanged(const QColor &color)
+{
+    QPen p = pen();
+    p.setColor(color);
+    setPen(p);
+}
+
+void QDeclarativeGeoMapCircleObject::borderWidthChanged(int width)
+{
+    QPen p = pen();
+    p.setWidth(width);
+    setPen(p);
 }
 
 #include "moc_qdeclarativegeomapcircleobject_p.cpp"
