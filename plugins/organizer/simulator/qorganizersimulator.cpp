@@ -52,15 +52,15 @@
 using namespace Simulator;
 using namespace QtSimulatorPrivate;
 
-QOrganizerItemMemoryEngineData *QOrganizerItemSimulatorEngine::engineData = 0;
+QOrganizerItemMemoryEngineData *QOrganizerSimulatorEngine::engineData = 0;
 
-QOrganizerItemManagerEngine* QOrganizerItemSimulatorFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
+QOrganizerManagerEngine* QOrganizerItemSimulatorFactory::engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error* error)
 {
     Q_UNUSED(parameters);
     Q_UNUSED(error);
 
     // all simulator engines always share the same engineData
-    QOrganizerItemMemoryEngineData* data = QOrganizerItemSimulatorEngine::engineData;
+    QOrganizerItemMemoryEngineData* data = QOrganizerSimulatorEngine::engineData;
     if (data) {
         data->m_refCount.ref();
     } else {
@@ -68,13 +68,13 @@ QOrganizerItemManagerEngine* QOrganizerItemSimulatorFactory::engine(const QMap<Q
         data->m_id = QLatin1String("simulatorengine");
         data->m_anonymous = false;
 
-        QOrganizerItemSimulatorEngine::engineData = data;
+        QOrganizerSimulatorEngine::engineData = data;
 
         // give an engine to the simulator connection
         data->m_refCount.ref(); // push the refcount to two
-        Simulator::Connection::instance()->setEngine(new QOrganizerItemSimulatorEngine(data));
+        Simulator::Connection::instance()->setEngine(new QOrganizerSimulatorEngine(data));
     }
-    return new QOrganizerItemSimulatorEngine(data);
+    return new QOrganizerSimulatorEngine(data);
 }
 
 QOrganizerItemEngineLocalId* QOrganizerItemSimulatorFactory::createItemEngineLocalId() const
@@ -96,19 +96,19 @@ QString QOrganizerItemSimulatorFactory::managerName() const
 Q_EXPORT_PLUGIN2(qtorganizer_simulator, QOrganizerItemSimulatorFactory);
 
 
-QString QOrganizerItemSimulatorEngine::managerName() const
+QString QOrganizerSimulatorEngine::managerName() const
 {
     /* TODO - put your engine name here */
     return QLatin1String("simulator");
 }
 
-int QOrganizerItemSimulatorEngine::managerVersion() const
+int QOrganizerSimulatorEngine::managerVersion() const
 {
     /* TODO - implement this appropriately.  This is strictly defined by the engine, so return whatever you like */
     return 1;
 }
 
-bool QOrganizerItemSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
+bool QOrganizerSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error)
 {
     Connection *con = Connection::instance();
 
@@ -127,7 +127,7 @@ bool QOrganizerItemSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, Q
     *error = reply.error;
 
     // if it failed, stop
-    if (reply.error != QOrganizerItemManager::NoError)
+    if (reply.error != QOrganizerManager::NoError)
         return false;
 
     // save locally
@@ -142,7 +142,7 @@ bool QOrganizerItemSimulatorEngine::saveItem(QOrganizerItem* theOrganizerItem, Q
     return true;
 }
 
-bool QOrganizerItemSimulatorEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
+bool QOrganizerSimulatorEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error)
 {
     Connection *con = Connection::instance();
 
@@ -156,9 +156,9 @@ bool QOrganizerItemSimulatorEngine::removeItem(const QOrganizerItemLocalId& orga
     QLocalSocket *sendSocket = con->sendSocket();
     int errorInt = RemoteMetacall<int>::call(
                 sendSocket, TimeoutSync, "requestRemoveOrganizerItem", remoteId);
-    *error = static_cast<QOrganizerItemManager::Error>(errorInt);
+    *error = static_cast<QOrganizerManager::Error>(errorInt);
 
-    if (*error != QOrganizerItemManager::NoError)
+    if (*error != QOrganizerManager::NoError)
         return false;
 
     if (!QOrganizerItemMemoryEngine::removeItem(organizeritemId, changeSet, error))
@@ -170,7 +170,7 @@ bool QOrganizerItemSimulatorEngine::removeItem(const QOrganizerItemLocalId& orga
     return true;
 }
 
-bool QOrganizerItemSimulatorEngine::saveCollection(QOrganizerCollection *collection, QOrganizerItemManager::Error *error)
+bool QOrganizerSimulatorEngine::saveCollection(QOrganizerCollection *collection, QOrganizerManager::Error *error)
 {
     Connection *con = Connection::instance();
 
@@ -190,7 +190,7 @@ bool QOrganizerItemSimulatorEngine::saveCollection(QOrganizerCollection *collect
     *error = reply.error;
 
     // if it failed, stop
-    if (reply.error != QOrganizerItemManager::NoError)
+    if (reply.error != QOrganizerManager::NoError)
         return false;
 
     // save locally
@@ -205,7 +205,7 @@ bool QOrganizerItemSimulatorEngine::saveCollection(QOrganizerCollection *collect
     return true;
 }
 
-bool QOrganizerItemSimulatorEngine::removeCollection(const QOrganizerCollectionLocalId &collectionId, QOrganizerItemManager::Error *error)
+bool QOrganizerSimulatorEngine::removeCollection(const QOrganizerCollectionLocalId &collectionId, QOrganizerManager::Error *error)
 {
     Connection *con = Connection::instance();
 
@@ -219,9 +219,9 @@ bool QOrganizerItemSimulatorEngine::removeCollection(const QOrganizerCollectionL
     QLocalSocket *sendSocket = con->sendSocket();
     int errorInt = RemoteMetacall<int>::call(
                 sendSocket, TimeoutSync, "requestRemoveOrganizerCollection", remoteId);
-    *error = static_cast<QOrganizerItemManager::Error>(errorInt);
+    *error = static_cast<QOrganizerManager::Error>(errorInt);
 
-    if (*error != QOrganizerItemManager::NoError)
+    if (*error != QOrganizerManager::NoError)
         return false;
 
     // removing a collection removes its items - which has already been done on the simulator
@@ -238,7 +238,7 @@ bool QOrganizerItemSimulatorEngine::removeCollection(const QOrganizerCollectionL
     return true;
 }
 
-bool QOrganizerItemSimulatorEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
+bool QOrganizerSimulatorEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error)
 {
     Connection *con = Connection::instance();
 
@@ -248,9 +248,9 @@ bool QOrganizerItemSimulatorEngine::saveDetailDefinition(const QOrganizerItemDet
     QLocalSocket *sendSocket = con->sendSocket();
     int errorInt = RemoteMetacall<int>::call(
                 sendSocket, TimeoutSync, "requestSaveOrganizerDetailDefinition", def, organizeritemType);
-    *error = static_cast<QOrganizerItemManager::Error>(errorInt);
+    *error = static_cast<QOrganizerManager::Error>(errorInt);
 
-    if (*error != QOrganizerItemManager::NoError)
+    if (*error != QOrganizerManager::NoError)
         return false;
 
     if (!QOrganizerItemMemoryEngine::saveDetailDefinition(def, organizeritemType, changeSet, error))
@@ -259,7 +259,7 @@ bool QOrganizerItemSimulatorEngine::saveDetailDefinition(const QOrganizerItemDet
     return true;
 }
 
-bool QOrganizerItemSimulatorEngine::removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
+bool QOrganizerSimulatorEngine::removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error)
 {
     Connection *con = Connection::instance();
 
@@ -269,9 +269,9 @@ bool QOrganizerItemSimulatorEngine::removeDetailDefinition(const QString& defini
     QLocalSocket *sendSocket = con->sendSocket();
     int errorInt = RemoteMetacall<int>::call(
                 sendSocket, TimeoutSync, "requestRemoveOrganizerDetailDefinition", definitionId, organizeritemType);
-    *error = static_cast<QOrganizerItemManager::Error>(errorInt);
+    *error = static_cast<QOrganizerManager::Error>(errorInt);
 
-    if (*error != QOrganizerItemManager::NoError)
+    if (*error != QOrganizerManager::NoError)
         return false;
 
     if (!QOrganizerItemMemoryEngine::removeDetailDefinition(definitionId, organizeritemType, changeSet, error))
@@ -280,7 +280,7 @@ bool QOrganizerItemSimulatorEngine::removeDetailDefinition(const QString& defini
     return true;
 }
 
-QOrganizerItemSimulatorEngine::QOrganizerItemSimulatorEngine(QOrganizerItemMemoryEngineData* data)
+QOrganizerSimulatorEngine::QOrganizerSimulatorEngine(QOrganizerItemMemoryEngineData* data)
     : QOrganizerItemMemoryEngine(data)
 {
 }

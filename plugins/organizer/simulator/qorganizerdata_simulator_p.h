@@ -58,7 +58,7 @@
 #include "qorganizeritem.h"
 #include "qorganizercollection.h"
 #include "qorganizeritemdetaildefinition.h"
-#include "qorganizeritemmanager.h"
+#include "qorganizermanager.h"
 #include <QtCore/QMetaType>
 
 QT_BEGIN_HEADER
@@ -70,14 +70,14 @@ class SaveOrganizerItemReply
 {
 public:
     QOrganizerItem savedItem;
-    QOrganizerItemManager::Error error;
+    QOrganizerManager::Error error;
 };
 
 class SaveOrganizerCollectionReply
 {
 public:
     QOrganizerCollection savedCollection;
-    QOrganizerItemManager::Error error;
+    QOrganizerManager::Error error;
 };
 
 } // namespace Simulator

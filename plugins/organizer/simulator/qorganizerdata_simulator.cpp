@@ -45,22 +45,6 @@
 
 #include <QtCore/QDataStream>
 
-// ### hack!
-// A correct implementation is impossible, since you need to know the managerUri to create
-// a QOrganizerItemManagerEngineLocalId for the manager. This one should work for the Simulator's
-// needs.
-QDataStream& operator>>(QDataStream& in, QtMobility::QOrganizerItemLocalId& id)
-{
-    quint8 marker;
-    in >> marker;
-    if (marker) {
-        QtMobility::QOrganizerItemEngineLocalId *d = new QtMobility::QOrganizerItemMemoryEngineLocalId;
-        d->dataStreamIn(in);
-        id = QtMobility::QOrganizerItemLocalId(d);
-    }
-    return in;
-}
-
 QDataStream &operator<<(QDataStream &out, const QtMobility::Simulator::SaveOrganizerItemReply &s)
 {
     out << s.savedItem << static_cast<int>(s.error);
@@ -71,7 +55,7 @@ QDataStream &operator>>(QDataStream &in, QtMobility::Simulator::SaveOrganizerIte
 {
     int errorInt;
     in >> s.savedItem >> errorInt;
-    s.error = static_cast<QtMobility::QOrganizerItemManager::Error>(errorInt);
+    s.error = static_cast<QtMobility::QOrganizerManager::Error>(errorInt);
     return in;
 }
 
@@ -85,7 +69,7 @@ QDataStream &operator>>(QDataStream &in, QtMobility::Simulator::SaveOrganizerCol
 {
     int errorInt;
     in >> s.savedCollection >> errorInt;
-    s.error = static_cast<QtMobility::QOrganizerItemManager::Error>(errorInt);
+    s.error = static_cast<QtMobility::QOrganizerManager::Error>(errorInt);
     return in;
 }
 
@@ -96,7 +80,6 @@ void qt_registerOrganizerTypes()
     qRegisterMetaTypeStreamOperators<QOrganizerItem>("QtMobility::QOrganizerItem");
     qRegisterMetaTypeStreamOperators<QOrganizerCollection>("QtMobility::QOrganizerCollection");
     qRegisterMetaTypeStreamOperators<QOrganizerItemId>("QtMobility::QOrganizerItemId");
-    qRegisterMetaTypeStreamOperators<QOrganizerItemLocalId>("QtMobility::QOrganizerItemLocalId");
     qRegisterMetaTypeStreamOperators<QOrganizerCollectionId>("QtMobility::QOrganizerCollectionId");
     qRegisterMetaTypeStreamOperators<QOrganizerItemDetailDefinition>("QtMobility::QOrganizerItemDetailDefinition");
     qRegisterMetaTypeStreamOperators<Simulator::SaveOrganizerItemReply>("QtMobility::Simulator::SaveOrganizerItemReply");

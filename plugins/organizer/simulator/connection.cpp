@@ -74,7 +74,7 @@ Connection *Connection::instance()
     return connection;
 }
 
-void Connection::setEngine(QOrganizerItemSimulatorEngine *engine)
+void Connection::setEngine(QOrganizerSimulatorEngine *engine)
 {
     Q_ASSERT(!mRegisteredWithSimulator);
 
@@ -212,7 +212,7 @@ void Connection::clearOrganizerData()
 
     // collections
     foreach (const QOrganizerCollection &collection, mManager.collections())
-        mManager.removeCollection(collection);
+        mManager.removeCollection(collection.localId());
 
     mNotifySimulator = true;
 }

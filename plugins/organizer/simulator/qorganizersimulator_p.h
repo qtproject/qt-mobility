@@ -65,9 +65,9 @@
 #include <QObject>
 
 #include "qorganizeritem.h"
-#include "qorganizeritemmanager.h"
-#include "qorganizeritemmanagerengine.h"
-#include "qorganizeritemmanagerenginefactory.h"
+#include "qorganizermanager.h"
+#include "qorganizermanagerengine.h"
+#include "qorganizermanagerenginefactory.h"
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
@@ -76,18 +76,18 @@
 
 QTM_USE_NAMESPACE
 
-class QOrganizerItemSimulatorFactory : public QObject, public QOrganizerItemManagerEngineFactory
+class QOrganizerItemSimulatorFactory : public QObject, public QOrganizerManagerEngineFactory
 {
   Q_OBJECT
-  Q_INTERFACES(QtMobility::QOrganizerItemManagerEngineFactory)
+  Q_INTERFACES(QtMobility::QOrganizerManagerEngineFactory)
   public:
-    QOrganizerItemManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error*);
+    QOrganizerManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error*);
     QOrganizerItemEngineLocalId* createItemEngineLocalId() const;
     QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() const;
     QString managerName() const;
 };
 
-class QOrganizerItemSimulatorEngine : public QOrganizerItemMemoryEngine
+class QOrganizerSimulatorEngine : public QOrganizerItemMemoryEngine
 {
     Q_OBJECT
 
@@ -95,17 +95,17 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
-    bool saveCollection(QOrganizerCollection *collection, QOrganizerItemManager::Error *error);
-    bool removeCollection(const QOrganizerCollectionLocalId &collectionId, QOrganizerItemManager::Error *error);
+    bool saveCollection(QOrganizerCollection *collection, QOrganizerManager::Error *error);
+    bool removeCollection(const QOrganizerCollectionLocalId &collectionId, QOrganizerManager::Error *error);
 
 protected:
-    QOrganizerItemSimulatorEngine(QOrganizerItemMemoryEngineData* data);
+    QOrganizerSimulatorEngine(QOrganizerItemMemoryEngineData* data);
 
 protected:
-    bool saveItem(QOrganizerItem* theOrganizerItem, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
-    bool removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
-    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
-    bool removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
+    bool saveItem(QOrganizerItem* theOrganizerItem, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
+    bool removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
+    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
+    bool removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
 
 private:
     static QOrganizerItemMemoryEngineData* engineData;

@@ -56,13 +56,13 @@
 #include <QtCore/QObject>
 #include <QtCore/QList>
 
-#include "qorganizeritemmanager.h"
+#include "qorganizermanager.h"
 
 QT_BEGIN_HEADER
 
 QT_FORWARD_DECLARE_CLASS(QLocalSocket)
 
-class QOrganizerItemSimulatorEngine;
+class QOrganizerSimulatorEngine;
 
 QTM_BEGIN_NAMESPACE
 
@@ -77,7 +77,7 @@ public:
     explicit Connection(MobilityConnection *mobilityCon);
     static Connection *instance();
 
-    void setEngine(QOrganizerItemSimulatorEngine *engine);
+    void setEngine(QOrganizerSimulatorEngine *engine);
 
     QLocalSocket *sendSocket();
 
@@ -121,8 +121,8 @@ private:
     MobilityConnection *mConnection;
     bool mRegisteredWithSimulator;
     bool mInitialDataReceived;
-    QOrganizerItemSimulatorEngine *mEngine;
-    QOrganizerItemManager mManager;
+    QOrganizerSimulatorEngine *mEngine;
+    QOrganizerManager mManager;
 };
 
 } // namespace Simulator
