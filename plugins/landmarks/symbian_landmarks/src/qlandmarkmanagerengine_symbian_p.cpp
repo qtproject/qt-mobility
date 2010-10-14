@@ -3121,6 +3121,12 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
         }
 
         QStringList keyList = attributeFilter.attributeKeys();
+        for (int i = 0; i < keyList.size(); ++i) {
+            if (opType == QLandmarkAttributeFilter::AndOperation && (attributeFilter.matchFlags(
+                keyList.at(i)) & QLandmarkFilter::MatchContains)) {
+                User::Leave(KErrNotSupported);
+            }
+        }
 
         //if any of the attribute matchflag is set to MatchCaseSensitive, then return KErrNotSupported 
         for (int i = 0; i < keyList.size(); ++i) {
