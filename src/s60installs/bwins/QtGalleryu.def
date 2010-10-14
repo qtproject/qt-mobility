@@ -110,7 +110,7 @@ EXPORTS
 	?autoUpdateCursorPosition@QGalleryItemListModel@QtMobility@@QBE_NXZ @ 109 NONAME ABSENT ; bool QtMobility::QGalleryItemListModel::autoUpdateCursorPosition(void) const
 	?cancel@QGalleryAbstractRequest@QtMobility@@QAEXXZ @ 110 NONAME ; void QtMobility::QGalleryAbstractRequest::cancel(void)
 	?cancel@QGalleryAbstractResponse@QtMobility@@UAEXXZ @ 111 NONAME ; void QtMobility::QGalleryAbstractResponse::cancel(void)
-	?cancelled@QGalleryAbstractRequest@QtMobility@@IAEXXZ @ 112 NONAME ; void QtMobility::QGalleryAbstractRequest::cancelled(void)
+	?cancelled@QGalleryAbstractRequest@QtMobility@@IAEXXZ @ 112 NONAME ABSENT ; void QtMobility::QGalleryAbstractRequest::cancelled(void)
 	?caseSensitivity@QGalleryMetaDataFilter@QtMobility@@QBE?AW4CaseSensitivity@Qt@@XZ @ 113 NONAME ABSENT ; enum Qt::CaseSensitivity QtMobility::QGalleryMetaDataFilter::caseSensitivity(void) const
 	?clear@QGalleryAbstractRequest@QtMobility@@QAEXXZ @ 114 NONAME ; void QtMobility::QGalleryAbstractRequest::clear(void)
 	?clear@QGalleryIntersectionFilter@QtMobility@@QAEXXZ @ 115 NONAME ; void QtMobility::QGalleryIntersectionFilter::clear(void)
@@ -267,8 +267,8 @@ EXPORTS
 	?qt_metacast@QGalleryQueryRequest@QtMobility@@UAEPAXPBD@Z @ 266 NONAME ; void * QtMobility::QGalleryQueryRequest::qt_metacast(char const *)
 	?qt_metacast@QGalleryRemoveRequest@QtMobility@@UAEPAXPBD@Z @ 267 NONAME ABSENT ; void * QtMobility::QGalleryRemoveRequest::qt_metacast(char const *)
 	?qt_metacast@QGalleryUrlRequest@QtMobility@@UAEPAXPBD@Z @ 268 NONAME ABSENT ; void * QtMobility::QGalleryUrlRequest::qt_metacast(char const *)
-	?removeAt@QGalleryIntersectionFilter@QtMobility@@QAEXH@Z @ 269 NONAME ; void QtMobility::QGalleryIntersectionFilter::removeAt(int)
-	?removeAt@QGalleryUnionFilter@QtMobility@@QAEXH@Z @ 270 NONAME ; void QtMobility::QGalleryUnionFilter::removeAt(int)
+	?removeAt@QGalleryIntersectionFilter@QtMobility@@QAEXH@Z @ 269 NONAME ABSENT ; void QtMobility::QGalleryIntersectionFilter::removeAt(int)
+	?removeAt@QGalleryUnionFilter@QtMobility@@QAEXH@Z @ 270 NONAME ABSENT ; void QtMobility::QGalleryUnionFilter::removeAt(int)
 	?removeColumn@QGalleryItemListModel@QtMobility@@QAEXH@Z @ 271 NONAME ABSENT ; void QtMobility::QGalleryItemListModel::removeColumn(int)
 	?removed@QGalleryItemList@QtMobility@@IAEXHH@Z @ 272 NONAME ABSENT ; void QtMobility::QGalleryItemList::removed(int, int)
 	?replace@QGalleryIntersectionFilter@QtMobility@@QAEXHABVQGalleryMetaDataFilter@2@@Z @ 273 NONAME ; void QtMobility::QGalleryIntersectionFilter::replace(int, class QtMobility::QGalleryMetaDataFilter const &)
@@ -325,8 +325,8 @@ EXPORTS
 	?setSortPropertyNames@QGalleryQueryRequest@QtMobility@@QAEXABVQStringList@@@Z @ 324 NONAME ; void QtMobility::QGalleryQueryRequest::setSortPropertyNames(class QStringList const &)
 	?setValue@QGalleryMetaDataFilter@QtMobility@@QAEXABVQVariant@@@Z @ 325 NONAME ; void QtMobility::QGalleryMetaDataFilter::setValue(class QVariant const &)
 	?sortPropertyNames@QGalleryQueryRequest@QtMobility@@QBE?AVQStringList@@XZ @ 326 NONAME ; class QStringList QtMobility::QGalleryQueryRequest::sortPropertyNames(void) const
-	?state@QGalleryAbstractRequest@QtMobility@@QBE?AW4State@12@XZ @ 327 NONAME ABSENT ; enum QtMobility::QGalleryAbstractRequest::State QtMobility::QGalleryAbstractRequest::state(void) const
-	?stateChanged@QGalleryAbstractRequest@QtMobility@@IAEXW4State@12@@Z @ 328 NONAME ABSENT ; void QtMobility::QGalleryAbstractRequest::stateChanged(enum QtMobility::QGalleryAbstractRequest::State)
+	?state@QGalleryAbstractRequest@QtMobility@@QBE?AW4State@12@XZ @ 327 NONAME ; enum QtMobility::QGalleryAbstractRequest::State QtMobility::QGalleryAbstractRequest::state(void) const
+	?stateChanged@QGalleryAbstractRequest@QtMobility@@IAEXW4State@12@@Z @ 328 NONAME ; void QtMobility::QGalleryAbstractRequest::stateChanged(enum QtMobility::QGalleryAbstractRequest::State)
 	?status@QGalleryBaseResponse@QtMobility@@UBE?AV?$QFlags@W4ItemStatusFlag@QGalleryItemList@QtMobility@@@@H@Z @ 329 NONAME ABSENT ; class QFlags<enum QtMobility::QGalleryItemList::ItemStatusFlag> QtMobility::QGalleryBaseResponse::status(int) const
 	?statusChanged@QGalleryItemList@QtMobility@@IAEXHH@Z @ 330 NONAME ABSENT ; void QtMobility::QGalleryItemList::statusChanged(int, int)
 	?succeeded@QGalleryAbstractRequest@QtMobility@@IAEXXZ @ 331 NONAME ABSENT ; void QtMobility::QGalleryAbstractRequest::succeeded(void)
@@ -391,93 +391,93 @@ EXPORTS
 	?waitForFinished@QGalleryAbstractRequest@QtMobility@@QAE_NH@Z @ 390 NONAME ; bool QtMobility::QGalleryAbstractRequest::waitForFinished(int)
 	?waitForFinished@QGalleryBaseResponse@QtMobility@@UAE_NH@Z @ 391 NONAME ABSENT ; bool QtMobility::QGalleryBaseResponse::waitForFinished(int)
 	?thumbnailPixmap@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 392 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::thumbnailPixmap
-	?discNumber@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 393 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::discNumber
+	?discNumber@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 393 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::discNumber
 	?staticMetaObject@QGalleryItemListModel@QtMobility@@2UQMetaObject@@B @ 394 NONAME ABSENT ; struct QMetaObject const QtMobility::QGalleryItemListModel::staticMetaObject
-	?keywords@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 395 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::keywords
-	?Album@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 396 NONAME ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Album
-	?Playlist@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 397 NONAME ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Playlist
-	?language@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 398 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::language
-	?Image@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 399 NONAME ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Image
-	?cameraManufacturer@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 400 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::cameraManufacturer
-	?File@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 401 NONAME ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::File
+	?keywords@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 395 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::keywords
+	?Album@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 396 NONAME ABSENT ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Album
+	?Playlist@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 397 NONAME ABSENT ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Playlist
+	?language@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 398 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::language
+	?Image@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 399 NONAME ABSENT ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Image
+	?cameraManufacturer@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 400 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::cameraManufacturer
+	?File@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 401 NONAME ABSENT ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::File
 	?staticMetaObject@QGalleryAbstractResponse@QtMobility@@2UQMetaObject@@B @ 402 NONAME ; struct QMetaObject const QtMobility::QGalleryAbstractResponse::staticMetaObject
-	?videoBitRate@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 403 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::videoBitRate
-	?lastModified@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 404 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::lastModified
-	?duration@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 405 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::duration
-	?Video@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 406 NONAME ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Video
-	?subject@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 407 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::subject
-	?albumArtist@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 408 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::albumArtist
-	?fNumber@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 409 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::fNumber
-	?mimeType@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 410 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::mimeType
+	?videoBitRate@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 403 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::videoBitRate
+	?lastModified@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 404 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::lastModified
+	?duration@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 405 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::duration
+	?Video@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 406 NONAME ABSENT ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Video
+	?subject@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 407 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::subject
+	?albumArtist@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 408 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::albumArtist
+	?fNumber@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 409 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::fNumber
+	?mimeType@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 410 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::mimeType
 	?iconPixmap@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 411 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::iconPixmap
-	?lastPlayed@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 412 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::lastPlayed
-	?Document@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 413 NONAME ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Document
+	?lastPlayed@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 412 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::lastPlayed
+	?Document@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 413 NONAME ABSENT ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Document
 	?staticMetaObject@QGalleryBaseResponse@QtMobility@@2UQMetaObject@@B @ 414 NONAME ABSENT ; struct QMetaObject const QtMobility::QGalleryBaseResponse::staticMetaObject
-	?channelCount@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 415 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::channelCount
+	?channelCount@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 415 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::channelCount
 	?staticMetaObject@QGalleryQueryRequest@QtMobility@@2UQMetaObject@@B @ 416 NONAME ; struct QMetaObject const QtMobility::QGalleryQueryRequest::staticMetaObject
-	?exposureTime@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 417 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::exposureTime
-	?path@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 418 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::path
-	?Folder@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 419 NONAME ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Folder
+	?exposureTime@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 417 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::exposureTime
+	?path@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 418 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::path
+	?Folder@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 419 NONAME ABSENT ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Folder
 	?staticMetaObject@QGalleryCountRequest@QtMobility@@2UQMetaObject@@B @ 420 NONAME ABSENT ; struct QMetaObject const QtMobility::QGalleryCountRequest::staticMetaObject
-	?comments@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 421 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::comments
-	?audioCodec@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 422 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::audioCodec
-	?whiteBalance@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 423 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::whiteBalance
-	?dateTaken@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 424 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::dateTaken
+	?comments@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 421 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::comments
+	?audioCodec@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 422 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::audioCodec
+	?whiteBalance@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 423 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::whiteBalance
+	?dateTaken@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 424 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::dateTaken
 	?staticMetaObject@QDocumentGallery@QtMobility@@2UQMetaObject@@B @ 425 NONAME ; struct QMetaObject const QtMobility::QDocumentGallery::staticMetaObject
-	?AlbumArtist@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 426 NONAME ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::AlbumArtist
-	?Text@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 427 NONAME ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Text
+	?AlbumArtist@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 426 NONAME ABSENT ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::AlbumArtist
+	?Text@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 427 NONAME ABSENT ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Text
 	?staticMetaObject@QAbstractGallery@QtMobility@@2UQMetaObject@@B @ 428 NONAME ; struct QMetaObject const QtMobility::QAbstractGallery::staticMetaObject
-	?Artist@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 429 NONAME ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Artist
-	?sampleRate@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 430 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::sampleRate
-	?producer@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 431 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::producer
+	?Artist@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 429 NONAME ABSENT ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Artist
+	?sampleRate@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 430 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::sampleRate
+	?producer@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 431 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::producer
 	?staticMetaObject@QGalleryRemoveRequest@QtMobility@@2UQMetaObject@@B @ 432 NONAME ABSENT ; struct QMetaObject const QtMobility::QGalleryRemoveRequest::staticMetaObject
-	?pageCount@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 433 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::pageCount
-	?resumePosition@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 434 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::resumePosition
-	?wordCount@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 435 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::wordCount
+	?pageCount@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 433 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::pageCount
+	?resumePosition@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 434 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::resumePosition
+	?wordCount@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 435 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::wordCount
 	?staticMetaObject@QGalleryUrlRequest@QtMobility@@2UQMetaObject@@B @ 436 NONAME ABSENT ; struct QMetaObject const QtMobility::QGalleryUrlRequest::staticMetaObject
-	?fileExtension@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 437 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::fileExtension
-	?frameRate@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 438 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::frameRate
+	?fileExtension@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 437 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::fileExtension
+	?frameRate@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 438 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::frameRate
 	?thumbnailImage@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 439 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::thumbnailImage
-	?lastAccessed@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 440 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::lastAccessed
-	?created@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 441 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::created
-	?width@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 442 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::width
+	?lastAccessed@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 440 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::lastAccessed
+	?created@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 441 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::created
+	?width@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 442 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::width
 	?iconImage@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 443 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::iconImage
-	?description@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 444 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::description
+	?description@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 444 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::description
 	?photoAlbum@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 445 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::photoAlbum
-	?exposureProgram@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 446 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::exposureProgram
-	?copyright@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 447 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::copyright
-	?albumTitle@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 448 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::albumTitle
-	?trackNumber@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 449 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::trackNumber
-	?audioBitRate@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 450 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::audioBitRate
-	?videoCodec@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 451 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::videoCodec
+	?exposureProgram@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 446 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::exposureProgram
+	?copyright@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 447 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::copyright
+	?albumTitle@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 448 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::albumTitle
+	?trackNumber@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 449 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::trackNumber
+	?audioBitRate@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 450 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::audioBitRate
+	?videoCodec@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 451 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::videoCodec
 	?previewImage@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 452 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::previewImage
-	?AudioGenre@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 453 NONAME ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::AudioGenre
-	?Audio@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 454 NONAME ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Audio
-	?fileName@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 455 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::fileName
+	?AudioGenre@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 453 NONAME ABSENT ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::AudioGenre
+	?Audio@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 454 NONAME ABSENT ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::Audio
+	?fileName@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 455 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::fileName
 	?staticMetaObject@QGalleryItemList@QtMobility@@2UQMetaObject@@B @ 456 NONAME ABSENT ; struct QMetaObject const QtMobility::QGalleryItemList::staticMetaObject
-	?title@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 457 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::title
-	?PhotoAlbum@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 458 NONAME ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::PhotoAlbum
-	?composer@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 459 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::composer
-	?performer@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 460 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::performer
+	?title@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 457 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::title
+	?PhotoAlbum@QDocumentGallery@QtMobility@@2VQGalleryType@2@B @ 458 NONAME ABSENT ; class QtMobility::QGalleryType const QtMobility::QDocumentGallery::PhotoAlbum
+	?composer@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 459 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::composer
+	?performer@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 460 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::performer
 	?staticMetaObject@QGalleryAbstractRequest@QtMobility@@2UQMetaObject@@B @ 461 NONAME ; struct QMetaObject const QtMobility::QGalleryAbstractRequest::staticMetaObject
-	?rating@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 462 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::rating
-	?orientation@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 463 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::orientation
-	?meteringMode@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 464 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::meteringMode
+	?rating@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 462 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::rating
+	?orientation@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 463 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::orientation
+	?meteringMode@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 464 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::meteringMode
 	?staticMetaObject@QGalleryItemRequest@QtMobility@@2UQMetaObject@@B @ 465 NONAME ; struct QMetaObject const QtMobility::QGalleryItemRequest::staticMetaObject
-	?genre@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 466 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::genre
+	?genre@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 466 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::genre
 	?previewPixmap@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 467 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::previewPixmap
-	?director@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 468 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::director
-	?artist@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 469 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::artist
-	?flashEnabled@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 470 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::flashEnabled
-	?playCount@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 471 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::playCount
-	?height@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 472 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::height
-	?cameraModel@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 473 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::cameraModel
-	?focalLength@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 474 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::focalLength
-	?trackCount@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 475 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::trackCount
-	?author@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 476 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::author
-	?filePath@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 477 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::filePath
-	?fileSize@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 478 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::fileSize
-	?lyrics@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 479 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::lyrics
+	?director@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 468 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::director
+	?artist@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 469 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::artist
+	?flashEnabled@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 470 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::flashEnabled
+	?playCount@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 471 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::playCount
+	?height@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 472 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::height
+	?cameraModel@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 473 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::cameraModel
+	?focalLength@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 474 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::focalLength
+	?trackCount@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 475 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::trackCount
+	?author@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 476 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::author
+	?filePath@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 477 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::filePath
+	?fileSize@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 478 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::fileSize
+	?lyrics@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 479 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::lyrics
 	??0QGalleryAbstractRequest@QtMobility@@QAE@PAVQAbstractGallery@1@W4RequestType@01@PAVQObject@@@Z @ 480 NONAME ; QtMobility::QGalleryAbstractRequest::QGalleryAbstractRequest(class QtMobility::QAbstractGallery *, enum QtMobility::QGalleryAbstractRequest::RequestType, class QObject *)
 	??0QGalleryAbstractRequest@QtMobility@@QAE@W4RequestType@01@PAVQObject@@@Z @ 481 NONAME ; QtMobility::QGalleryAbstractRequest::QGalleryAbstractRequest(enum QtMobility::QGalleryAbstractRequest::RequestType, class QObject *)
 	??0QGalleryAbstractResponse@QtMobility@@IAE@PAVQObject@@@Z @ 482 NONAME ; QtMobility::QGalleryAbstractResponse::QGalleryAbstractResponse(class QObject *)
@@ -497,7 +497,7 @@ EXPORTS
 	?addColumn@QGalleryQueryModel@QtMobility@@QAEXABV?$QHash@HVQString@@@@@Z @ 496 NONAME ; void QtMobility::QGalleryQueryModel::addColumn(class QHash<int, class QString> const &)
 	?addColumn@QGalleryQueryModel@QtMobility@@QAEXABVQString@@H@Z @ 497 NONAME ; void QtMobility::QGalleryQueryModel::addColumn(class QString const &, int)
 	?cancel@QGalleryQueryModel@QtMobility@@QAEXXZ @ 498 NONAME ; void QtMobility::QGalleryQueryModel::cancel(void)
-	?cancelled@QGalleryQueryModel@QtMobility@@IAEXXZ @ 499 NONAME ; void QtMobility::QGalleryQueryModel::cancelled(void)
+	?cancelled@QGalleryQueryModel@QtMobility@@IAEXXZ @ 499 NONAME ABSENT ; void QtMobility::QGalleryQueryModel::cancelled(void)
 	?clear@QGalleryQueryModel@QtMobility@@QAEXXZ @ 500 NONAME ; void QtMobility::QGalleryQueryModel::clear(void)
 	?columnCount@QGalleryQueryModel@QtMobility@@UBEHABVQModelIndex@@@Z @ 501 NONAME ; int QtMobility::QGalleryQueryModel::columnCount(class QModelIndex const &) const
 	?currentIndex@QGalleryQueryRequest@QtMobility@@QBEHXZ @ 502 NONAME ; int QtMobility::QGalleryQueryRequest::currentIndex(void) const
@@ -634,8 +634,8 @@ EXPORTS
 	?setScope@QGalleryQueryRequest@QtMobility@@QAEXW4Scope@12@@Z @ 633 NONAME ; void QtMobility::QGalleryQueryRequest::setScope(enum QtMobility::QGalleryQueryRequest::Scope)
 	?setSortPropertyNames@QGalleryQueryModel@QtMobility@@QAEXABVQStringList@@@Z @ 634 NONAME ; void QtMobility::QGalleryQueryModel::setSortPropertyNames(class QStringList const &)
 	?sortPropertyNames@QGalleryQueryModel@QtMobility@@QBE?AVQStringList@@XZ @ 635 NONAME ; class QStringList QtMobility::QGalleryQueryModel::sortPropertyNames(void) const
-	?state@QGalleryQueryModel@QtMobility@@QBE?AW4State@QGalleryAbstractRequest@2@XZ @ 636 NONAME ABSENT ; enum QtMobility::QGalleryAbstractRequest::State QtMobility::QGalleryQueryModel::state(void) const
-	?stateChanged@QGalleryQueryModel@QtMobility@@IAEXW4State@QGalleryAbstractRequest@2@@Z @ 637 NONAME ABSENT ; void QtMobility::QGalleryQueryModel::stateChanged(enum QtMobility::QGalleryAbstractRequest::State)
+	?state@QGalleryQueryModel@QtMobility@@QBE?AW4State@QGalleryAbstractRequest@2@XZ @ 636 NONAME ; enum QtMobility::QGalleryAbstractRequest::State QtMobility::QGalleryQueryModel::state(void) const
+	?stateChanged@QGalleryQueryModel@QtMobility@@IAEXW4State@QGalleryAbstractRequest@2@@Z @ 637 NONAME ; void QtMobility::QGalleryQueryModel::stateChanged(enum QtMobility::QGalleryAbstractRequest::State)
 	?succeeded@QGalleryQueryModel@QtMobility@@IAEXXZ @ 638 NONAME ABSENT ; void QtMobility::QGalleryQueryModel::succeeded(void)
 	?tr@QGalleryQueryModel@QtMobility@@SA?AVQString@@PBD0@Z @ 639 NONAME ; class QString QtMobility::QGalleryQueryModel::tr(char const *, char const *)
 	?tr@QGalleryQueryModel@QtMobility@@SA?AVQString@@PBD0H@Z @ 640 NONAME ; class QString QtMobility::QGalleryQueryModel::tr(char const *, char const *, int)
@@ -653,11 +653,11 @@ EXPORTS
 	?typeChanged@QGalleryTypeRequest@QtMobility@@IAEXXZ @ 652 NONAME ; void QtMobility::QGalleryTypeRequest::typeChanged(void)
 	?waitForFinished@QGalleryAbstractResponse@QtMobility@@UAE_NH@Z @ 653 NONAME ; bool QtMobility::QGalleryAbstractResponse::waitForFinished(int)
 	?staticMetaObject@QGalleryTypeRequest@QtMobility@@2UQMetaObject@@B @ 654 NONAME ; struct QMetaObject const QtMobility::QGalleryTypeRequest::staticMetaObject
-	?url@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 655 NONAME ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::url
+	?url@QDocumentGallery@QtMobility@@2VQGalleryProperty@2@B @ 655 NONAME ABSENT ; class QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::url
 	?staticMetaObject@QGalleryResultSet@QtMobility@@2UQMetaObject@@B @ 656 NONAME ; struct QMetaObject const QtMobility::QGalleryResultSet::staticMetaObject
 	?staticMetaObject@QGalleryQueryModel@QtMobility@@2UQMetaObject@@B @ 657 NONAME ; struct QMetaObject const QtMobility::QGalleryQueryModel::staticMetaObject
 	??0QGalleryAbstractResponse@QtMobility@@QAE@HABVQString@@PAVQObject@@@Z @ 658 NONAME ; QtMobility::QGalleryAbstractResponse::QGalleryAbstractResponse(int, class QString const &, class QObject *)
-	?cancelled@QGalleryAbstractResponse@QtMobility@@IAEXXZ @ 659 NONAME ; void QtMobility::QGalleryAbstractResponse::cancelled(void)
+	?cancelled@QGalleryAbstractResponse@QtMobility@@IAEXXZ @ 659 NONAME ABSENT ; void QtMobility::QGalleryAbstractResponse::cancelled(void)
 	?error@QGalleryAbstractRequest@QtMobility@@IAEXHABVQString@@@Z @ 660 NONAME ; void QtMobility::QGalleryAbstractRequest::error(int, class QString const &)
 	?error@QGalleryAbstractRequest@QtMobility@@QBEHXZ @ 661 NONAME ; int QtMobility::QGalleryAbstractRequest::error(void) const
 	?error@QGalleryAbstractResponse@QtMobility@@IAEXHABVQString@@@Z @ 662 NONAME ; void QtMobility::QGalleryAbstractResponse::error(int, class QString const &)
@@ -683,10 +683,10 @@ EXPORTS
 	?setAutoUpdate@QGalleryQueryModel@QtMobility@@QAEX_N@Z @ 682 NONAME ; void QtMobility::QGalleryQueryModel::setAutoUpdate(bool)
 	?setAutoUpdate@QGalleryQueryRequest@QtMobility@@QAEX_N@Z @ 683 NONAME ; void QtMobility::QGalleryQueryRequest::setAutoUpdate(bool)
 	?setAutoUpdate@QGalleryTypeRequest@QtMobility@@QAEX_N@Z @ 684 NONAME ; void QtMobility::QGalleryTypeRequest::setAutoUpdate(bool)
-	?status@QGalleryAbstractRequest@QtMobility@@QBE?AW4Status@12@XZ @ 685 NONAME ; enum QtMobility::QGalleryAbstractRequest::Status QtMobility::QGalleryAbstractRequest::status(void) const
-	?status@QGalleryQueryModel@QtMobility@@QBE?AW4Status@QGalleryAbstractRequest@2@XZ @ 686 NONAME ; enum QtMobility::QGalleryAbstractRequest::Status QtMobility::QGalleryQueryModel::status(void) const
-	?statusChanged@QGalleryAbstractRequest@QtMobility@@IAEXW4Status@12@@Z @ 687 NONAME ; void QtMobility::QGalleryAbstractRequest::statusChanged(enum QtMobility::QGalleryAbstractRequest::Status)
-	?statusChanged@QGalleryQueryModel@QtMobility@@IAEXW4Status@QGalleryAbstractRequest@2@@Z @ 688 NONAME ; void QtMobility::QGalleryQueryModel::statusChanged(enum QtMobility::QGalleryAbstractRequest::Status)
+	?status@QGalleryAbstractRequest@QtMobility@@QBE?AW4Status@12@XZ @ 685 NONAME ABSENT ; enum QtMobility::QGalleryAbstractRequest::Status QtMobility::QGalleryAbstractRequest::status(void) const
+	?status@QGalleryQueryModel@QtMobility@@QBE?AW4Status@QGalleryAbstractRequest@2@XZ @ 686 NONAME ABSENT ; enum QtMobility::QGalleryAbstractRequest::Status QtMobility::QGalleryQueryModel::status(void) const
+	?statusChanged@QGalleryAbstractRequest@QtMobility@@IAEXW4Status@12@@Z @ 687 NONAME ABSENT ; void QtMobility::QGalleryAbstractRequest::statusChanged(enum QtMobility::QGalleryAbstractRequest::Status)
+	?statusChanged@QGalleryQueryModel@QtMobility@@IAEXW4Status@QGalleryAbstractRequest@2@@Z @ 688 NONAME ABSENT ; void QtMobility::QGalleryQueryModel::statusChanged(enum QtMobility::QGalleryAbstractRequest::Status)
 	??WQtMobility@@YA?AVQGalleryUnionFilter@0@ABV10@0@Z @ 689 NONAME ; class QtMobility::QGalleryUnionFilter QtMobility::operator||(class QtMobility::QGalleryUnionFilter const &, class QtMobility::QGalleryUnionFilter const &)
 	??VQtMobility@@YA?AVQGalleryIntersectionFilter@0@ABV10@0@Z @ 690 NONAME ; class QtMobility::QGalleryIntersectionFilter QtMobility::operator&&(class QtMobility::QGalleryIntersectionFilter const &, class QtMobility::QGalleryIntersectionFilter const &)
 	?autoUpdate@QGalleryTypeRequest@QtMobility@@QBE_NXZ @ 691 NONAME ; bool QtMobility::QGalleryTypeRequest::autoUpdate(void) const
@@ -725,4 +725,87 @@ EXPORTS
 	?rootTypeChanged@QGalleryQueryRequest@QtMobility@@IAEXXZ @ 724 NONAME ; void QtMobility::QGalleryQueryRequest::rootTypeChanged(void)
 	?limitChanged@QGalleryQueryModel@QtMobility@@IAEXXZ @ 725 NONAME ; void QtMobility::QGalleryQueryModel::limitChanged(void)
 	?filterChanged@QGalleryQueryModel@QtMobility@@IAEXXZ @ 726 NONAME ; void QtMobility::QGalleryQueryModel::filterChanged(void)
+	?prepend@QGalleryIntersectionFilter@QtMobility@@QAEXABVQGalleryUnionFilter@2@@Z @ 727 NONAME ; void QtMobility::QGalleryIntersectionFilter::prepend(class QtMobility::QGalleryUnionFilter const &)
+	?remove@QGalleryIntersectionFilter@QtMobility@@QAEXH@Z @ 728 NONAME ; void QtMobility::QGalleryIntersectionFilter::remove(int)
+	?prepend@QGalleryIntersectionFilter@QtMobility@@QAEXABV12@@Z @ 729 NONAME ; void QtMobility::QGalleryIntersectionFilter::prepend(class QtMobility::QGalleryIntersectionFilter const &)
+	?remove@QGalleryUnionFilter@QtMobility@@QAEXH@Z @ 730 NONAME ; void QtMobility::QGalleryUnionFilter::remove(int)
+	??6QGalleryIntersectionFilter@QtMobility@@QAEAAV01@ABV01@@Z @ 731 NONAME ; class QtMobility::QGalleryIntersectionFilter & QtMobility::QGalleryIntersectionFilter::operator<<(class QtMobility::QGalleryIntersectionFilter const &)
+	?prepend@QGalleryIntersectionFilter@QtMobility@@QAEXABVQGalleryMetaDataFilter@2@@Z @ 732 NONAME ; void QtMobility::QGalleryIntersectionFilter::prepend(class QtMobility::QGalleryMetaDataFilter const &)
+	??6QGalleryUnionFilter@QtMobility@@QAEAAV01@ABV01@@Z @ 733 NONAME ; class QtMobility::QGalleryUnionFilter & QtMobility::QGalleryUnionFilter::operator<<(class QtMobility::QGalleryUnionFilter const &)
+	?prepend@QGalleryUnionFilter@QtMobility@@QAEXABVQGalleryIntersectionFilter@2@@Z @ 734 NONAME ; void QtMobility::QGalleryUnionFilter::prepend(class QtMobility::QGalleryIntersectionFilter const &)
+	?canceled@QGalleryAbstractRequest@QtMobility@@IAEXXZ @ 735 NONAME ; void QtMobility::QGalleryAbstractRequest::canceled(void)
+	?canceled@QGalleryAbstractResponse@QtMobility@@IAEXXZ @ 736 NONAME ; void QtMobility::QGalleryAbstractResponse::canceled(void)
+	?canceled@QGalleryQueryModel@QtMobility@@IAEXXZ @ 737 NONAME ; void QtMobility::QGalleryQueryModel::canceled(void)
+	?prepend@QGalleryUnionFilter@QtMobility@@QAEXABVQGalleryMetaDataFilter@2@@Z @ 738 NONAME ; void QtMobility::QGalleryUnionFilter::prepend(class QtMobility::QGalleryMetaDataFilter const &)
+	?prepend@QGalleryUnionFilter@QtMobility@@QAEXABV12@@Z @ 739 NONAME ; void QtMobility::QGalleryUnionFilter::prepend(class QtMobility::QGalleryUnionFilter const &)
+	?lastPlayed@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 740 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::lastPlayed
+	?channelCount@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 741 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::channelCount
+	?Audio@QDocumentGallery@QtMobility@@2UQGalleryType@2@B @ 742 NONAME ; struct QtMobility::QGalleryType const QtMobility::QDocumentGallery::Audio
+	?comments@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 743 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::comments
+	?sampleRate@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 744 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::sampleRate
+	?resumePosition@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 745 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::resumePosition
+	?frameRate@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 746 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::frameRate
+	?description@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 747 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::description
+	?url@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 748 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::url
+	?copyright@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 749 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::copyright
+	?albumTitle@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 750 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::albumTitle
+	?trackNumber@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 751 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::trackNumber
+	?audioBitRate@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 752 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::audioBitRate
+	?Album@QDocumentGallery@QtMobility@@2UQGalleryType@2@B @ 753 NONAME ; struct QtMobility::QGalleryType const QtMobility::QDocumentGallery::Album
+	?composer@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 754 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::composer
+	?performer@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 755 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::performer
+	?rating@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 756 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::rating
+	?Video@QDocumentGallery@QtMobility@@2UQGalleryType@2@B @ 757 NONAME ; struct QtMobility::QGalleryType const QtMobility::QDocumentGallery::Video
+	?orientation@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 758 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::orientation
+	?meteringMode@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 759 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::meteringMode
+	?Document@QDocumentGallery@QtMobility@@2UQGalleryType@2@B @ 760 NONAME ; struct QtMobility::QGalleryType const QtMobility::QDocumentGallery::Document
+	?artist@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 761 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::artist
+	?cameraModel@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 762 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::cameraModel
+	?focalLength@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 763 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::focalLength
+	?trackCount@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 764 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::trackCount
+	?author@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 765 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::author
+	?fileSize@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 766 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::fileSize
+	?Folder@QDocumentGallery@QtMobility@@2UQGalleryType@2@B @ 767 NONAME ; struct QtMobility::QGalleryType const QtMobility::QDocumentGallery::Folder
+	?language@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 768 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::language
+	?AlbumArtist@QDocumentGallery@QtMobility@@2UQGalleryType@2@B @ 769 NONAME ; struct QtMobility::QGalleryType const QtMobility::QDocumentGallery::AlbumArtist
+	?videoBitRate@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 770 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::videoBitRate
+	?Artist@QDocumentGallery@QtMobility@@2UQGalleryType@2@B @ 771 NONAME ; struct QtMobility::QGalleryType const QtMobility::QDocumentGallery::Artist
+	?subject@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 772 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::subject
+	?mimeType@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 773 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::mimeType
+	?exposureTime@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 774 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::exposureTime
+	?path@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 775 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::path
+	?AudioGenre@QDocumentGallery@QtMobility@@2UQGalleryType@2@B @ 776 NONAME ; struct QtMobility::QGalleryType const QtMobility::QDocumentGallery::AudioGenre
+	?audioCodec@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 777 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::audioCodec
+	?PhotoAlbum@QDocumentGallery@QtMobility@@2UQGalleryType@2@B @ 778 NONAME ; struct QtMobility::QGalleryType const QtMobility::QDocumentGallery::PhotoAlbum
+	?whiteBalance@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 779 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::whiteBalance
+	?dateTaken@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 780 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::dateTaken
+	?producer@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 781 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::producer
+	?pageCount@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 782 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::pageCount
+	?wordCount@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 783 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::wordCount
+	?fileExtension@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 784 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::fileExtension
+	?lastAccessed@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 785 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::lastAccessed
+	?created@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 786 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::created
+	?width@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 787 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::width
+	?exposureProgram@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 788 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::exposureProgram
+	?videoCodec@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 789 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::videoCodec
+	?Playlist@QDocumentGallery@QtMobility@@2UQGalleryType@2@B @ 790 NONAME ; struct QtMobility::QGalleryType const QtMobility::QDocumentGallery::Playlist
+	?fileName@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 791 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::fileName
+	?Image@QDocumentGallery@QtMobility@@2UQGalleryType@2@B @ 792 NONAME ; struct QtMobility::QGalleryType const QtMobility::QDocumentGallery::Image
+	?title@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 793 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::title
+	?File@QDocumentGallery@QtMobility@@2UQGalleryType@2@B @ 794 NONAME ; struct QtMobility::QGalleryType const QtMobility::QDocumentGallery::File
+	?genre@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 795 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::genre
+	?director@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 796 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::director
+	?flashEnabled@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 797 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::flashEnabled
+	?height@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 798 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::height
+	?playCount@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 799 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::playCount
+	?filePath@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 800 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::filePath
+	?lyrics@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 801 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::lyrics
+	?discNumber@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 802 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::discNumber
+	?keywords@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 803 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::keywords
+	?cameraManufacturer@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 804 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::cameraManufacturer
+	?Text@QDocumentGallery@QtMobility@@2UQGalleryType@2@B @ 805 NONAME ; struct QtMobility::QGalleryType const QtMobility::QDocumentGallery::Text
+	?lastModified@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 806 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::lastModified
+	?duration@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 807 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::duration
+	?albumArtist@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 808 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::albumArtist
+	?fNumber@QDocumentGallery@QtMobility@@2UQGalleryProperty@2@B @ 809 NONAME ; struct QtMobility::QGalleryProperty const QtMobility::QDocumentGallery::fNumber
 

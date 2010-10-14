@@ -64,7 +64,7 @@ public:
             const QStringList &propertyNames,
             const QHash<QString, QVariant> &metaData,
             int count,
-            QGalleryAbstractRequest::Status status,
+            QGalleryAbstractRequest::State state,
             int error,
             const QString &errorString)
         : m_count(count)
@@ -81,9 +81,9 @@ public:
 
         if (error != QGalleryAbstractRequest::NoError)
             QGalleryAbstractResponse::error(error, errorString);
-        else if (status == QGalleryAbstractRequest::Finished)
+        else if (state == QGalleryAbstractRequest::Finished)
             finish();
-        else if (status == QGalleryAbstractRequest::Idle)
+        else if (state == QGalleryAbstractRequest::Idle)
             finish(true);
     }
 
@@ -155,14 +155,14 @@ class QtTestGallery : public QAbstractGallery
 public:
     QtTestGallery()
         : m_count(0)
-        , m_status(QGalleryAbstractRequest::Finished)
+        , m_state(QGalleryAbstractRequest::Finished)
         , m_error(QGalleryAbstractRequest::NoError)
     {}
 
     bool isRequestSupported(QGalleryAbstractRequest::RequestType type) const {
         return type == QGalleryAbstractRequest::TypeRequest; }
 
-    void setStatus(QGalleryAbstractRequest::Status status) { m_status = status; }
+    void setState(QGalleryAbstractRequest::State state) { m_state = state; }
     void setError(int error, const QString &errorString) {
         m_error = error; m_errorString = errorString; }
 
@@ -177,7 +177,7 @@ public:
     void reset()
     {
         m_count = 0;
-        m_status = QGalleryAbstractRequest::Finished;
+        m_state = QGalleryAbstractRequest::Finished;
         m_error = QGalleryTypeRequest::NoError;
         m_metaData.clear();
         m_blacklist.clear();
@@ -195,7 +195,7 @@ protected:
                     propertyNames,
                     m_metaData,
                     m_count,
-                    m_status,
+                    m_state,
                     m_error,
                     m_errorString);
         } else {
@@ -206,7 +206,7 @@ protected:
 
 private:
     int m_count;
-    QGalleryAbstractRequest::Status m_status;
+    QGalleryAbstractRequest::State m_state;
     int m_error;
     QString m_errorString;
     QHash<QString, QVariant> m_metaData;
@@ -236,7 +236,7 @@ private Q_SLOTS:
     void cancelAsyncResponse();
     void cancelIdleResponse();
     void cancelPendingResponse();
-    void deferExecuteCancelledResponse();
+    void deferExecuteCanceledResponse();
     void clear();
     void clearPendingResponse();
     void error_data();
@@ -529,7 +529,7 @@ void tst_QDeclarativeDocumentGalleryType::disableAutoUpdateFinished()
             "autoUpdate: true\n"
         "}\n");
 
-    gallery.setStatus(QGalleryAbstractRequest::Finished);
+    gallery.setState(QGalleryAbstractRequest::Finished);
 
     QDeclarativeComponent component(&engine);
     component.setData(qml, QUrl());
@@ -558,7 +558,7 @@ void tst_QDeclarativeDocumentGalleryType::disableAutoUpdateIdle()
             "autoUpdate: true\n"
         "}\n");
 
-    gallery.setStatus(QGalleryAbstractRequest::Idle);
+    gallery.setState(QGalleryAbstractRequest::Idle);
 
     QDeclarativeComponent component(&engine);
     component.setData(qml, QUrl());
@@ -587,7 +587,7 @@ void tst_QDeclarativeDocumentGalleryType::disableAutoUpdateActive()
             "autoUpdate: true\n"
         "}\n");
 
-    gallery.setStatus(QGalleryAbstractRequest::Active);
+    gallery.setState(QGalleryAbstractRequest::Active);
 
     QDeclarativeComponent component(&engine);
     component.setData(qml, QUrl());
@@ -619,7 +619,7 @@ void tst_QDeclarativeDocumentGalleryType::asyncResponse()
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryType { itemType: DocumentGallery.File }\n");
 
-    gallery.setStatus(QGalleryAbstractRequest::Active);
+    gallery.setState(QGalleryAbstractRequest::Active);
 
     QDeclarativeComponent component(&engine);
     component.setData(qml, QUrl());
@@ -645,7 +645,7 @@ void tst_QDeclarativeDocumentGalleryType::cancelAsyncResponse()
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryType { itemType: DocumentGallery.File }\n");
 
-    gallery.setStatus(QGalleryAbstractRequest::Active);
+    gallery.setState(QGalleryAbstractRequest::Active);
 
     QDeclarativeComponent component(&engine);
     component.setData(qml, QUrl());
@@ -660,7 +660,7 @@ void tst_QDeclarativeDocumentGalleryType::cancelAsyncResponse()
     QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryType::Active));
 
     QMetaObject::invokeMethod(object.data(), "cancel");
-    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryType::Cancelled));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryType::Canceled));
     QCOMPARE(spy.count(), 1);
 }
 
@@ -671,7 +671,7 @@ void tst_QDeclarativeDocumentGalleryType::cancelIdleResponse()
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryType { itemType: DocumentGallery.File; autoUpdate: true }\n");
 
-    gallery.setStatus(QGalleryAbstractRequest::Idle);
+    gallery.setState(QGalleryAbstractRequest::Idle);
 
     QDeclarativeComponent component(&engine);
     component.setData(qml, QUrl());
@@ -720,7 +720,7 @@ void tst_QDeclarativeDocumentGalleryType::cancelPendingResponse()
     QCOMPARE(spy.count(), 0);
 }
 
-void tst_QDeclarativeDocumentGalleryType::deferExecuteCancelledResponse()
+void tst_QDeclarativeDocumentGalleryType::deferExecuteCanceledResponse()
 {
     const QByteArray qml(
             "import Qt 4.7\n"
