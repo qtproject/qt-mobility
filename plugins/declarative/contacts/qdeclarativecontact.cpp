@@ -52,6 +52,7 @@ QDeclarativeContact::QDeclarativeContact(QObject *parent)
     :QObject(parent),
     d(new QDeclarativeContactMetaObject(this, QContact()))
 {
+    connect(this, SIGNAL(detailsChanged()), SLOT(setModified()));
 }
 
 
@@ -60,6 +61,7 @@ QDeclarativeContact::QDeclarativeContact(const QContact& contact, const QMap<QSt
     d(new QDeclarativeContactMetaObject(this, contact))
 {
     setDetailDefinitions(defs);
+    connect(this, SIGNAL(detailsChanged()), SLOT(setModified()));
 }
 
 QDeclarativeContact::~QDeclarativeContact()
@@ -86,6 +88,15 @@ QContact QDeclarativeContact::contact() const
 {
     return d->contact();
 }
+bool QDeclarativeContact::modified() const
+{
+     return d->m_modified;
+}
+void QDeclarativeContact::setModified()
+{
+     d->m_modified = true;
+}
+
 void QDeclarativeContact::setType(QDeclarativeContact::ContactType newType)
 {
     if (newType != type()) {
@@ -96,6 +107,7 @@ void QDeclarativeContact::setType(QDeclarativeContact::ContactType newType)
         emit detailsChanged();
     }
 }
+
 QDeclarativeContact::ContactType QDeclarativeContact::type() const
 {
     if (d->m_contact.type() == QContactType::TypeGroup)

@@ -39,11 +39,15 @@
 ****************************************************************************/
 
 #include "qdeclarativecontactdetails_p.h"
+#include "qdeclarativecontact_p.h"
 #include "qcontactdetails.h"
 #include <QDebug>
 QDeclarativeContactDetail::QDeclarativeContactDetail(QObject* parent)
     :QObject(parent)
 {
+    QDeclarativeContact* c = qobject_cast<QDeclarativeContact*>(parent);
+    if (c)
+        connect(this, SIGNAL(valueChanged()), c, SLOT(detailsChanged()));
 }
 
 QContactDetail& QDeclarativeContactDetail::detail()

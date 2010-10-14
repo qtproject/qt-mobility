@@ -79,7 +79,7 @@ class QDeclarativeContact : public QObject
     Q_PROPERTY (QUrl thumbnail READ thumbnail WRITE setThumbnail NOTIFY detailsChanged)
     Q_PROPERTY (ContactType  type READ type  WRITE setType NOTIFY detailsChanged)
     Q_PROPERTY (QDeclarativeContactUrl*  url READ url)
-
+    Q_PROPERTY (bool modified READ modified)
     Q_ENUMS(ContactType)
     Q_CLASSINFO("DefaultProperty", "details")
 
@@ -94,6 +94,7 @@ public:
 
     void setContact(const QContact& c);
     QContact contact() const;
+    bool modified() const;
 
     void setType(ContactType type);
     ContactType type() const;
@@ -139,6 +140,8 @@ public:
 
 public slots:
     void clearDetails();
+private slots:
+    void setModified();
 signals:
     void contactIdChanged();
     void managerChanged();
