@@ -140,6 +140,7 @@ public:
 
 public slots:
     void clearDetails();
+    void save();
 private slots:
     void setModified();
 signals:

@@ -43,6 +43,7 @@
 #include "qdeclarativecontact_p.h"
 #include "qdeclarativecontactdetail_p.h"
 #include "qdeclarativecontactmetaobject_p.h"
+#include "qdeclarativecontactmodel_p.h"
 #include <QImage>
 #include <QUrl>
 #include <QDeclarativeListProperty>
@@ -82,6 +83,7 @@ QMap<QString, QContactDetailDefinition> QDeclarativeContact::detailDefinitions()
 void QDeclarativeContact::setContact(const QContact& contact)
 {
    d->setContact(contact);
+   d->m_modified = false;
 }
 
 QContact QDeclarativeContact::contact() const
@@ -166,6 +168,17 @@ void QDeclarativeContact::clearDetails()
 {
     d->m_details.clear();
     emit detailsChanged();
+}
+
+void QDeclarativeContact::save()
+{
+    if (modified()) {
+        QDeclarativeContactModel* model = qobject_cast<QDeclarativeContactModel*>(parent());
+        if (model) {
+            model->saveContact(this);
+        }
+        d->m_modified = false;
+    }
 }
 
 QDeclarativeContactAddress* QDeclarativeContact::address()
