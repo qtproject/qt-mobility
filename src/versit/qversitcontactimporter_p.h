@@ -61,6 +61,7 @@
 #include <QHash>
 #include <QPair>
 #include <QMap>
+#include <QSet>
 
 QTM_BEGIN_NAMESPACE
 class QContact;
@@ -73,7 +74,7 @@ class QVersitContactHandler;
 class QM_AUTOTEST_EXPORT QVersitContactImporterPrivate
 {
 public:
-    QVersitContactImporterPrivate(const QString& profile = QString());
+    QVersitContactImporterPrivate(const QStringList& profiles = QStringList());
     ~QVersitContactImporterPrivate();
 
     bool importContact(const QVersitDocument& versitDocument, int contactIndex,
