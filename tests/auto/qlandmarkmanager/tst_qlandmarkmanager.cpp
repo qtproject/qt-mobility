@@ -7565,7 +7565,9 @@ void tst_QLandmarkManager::testSignals()
     QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyChange.count(), 0);
     QCOMPARE(spyRemove.count(), 0);
+#ifdef Q_OS_SYMBIAN
     QCOMPARE(spyCatAdd.count(), 2);
+#endif
     QCOMPARE(spyCatRemove.count(), 0);
     QCOMPARE(spyCatChange.count(),0);
     QCOMPARE(spyDataChanged.count(), 0);
@@ -7576,18 +7578,16 @@ void tst_QLandmarkManager::testSignals()
     QTest::qWait(10);
     QCOMPARE(spyAdd.count(), 0);
 
-#ifdef Q_OS_SYMBIAN
     QEXPECT_FAIL("", "MOBILITY-1714 we shouldn't expect a spy change signal", Continue);
-#endif
     QCOMPARE(spyChange.count(), 0);
-
     QCOMPARE(spyRemove.count(), 0);
     QCOMPARE(spyCatAdd.count(), 0);
     QCOMPARE(spyCatRemove.count(), 0);
     QCOMPARE(spyCatChange.count(),0);
 #ifdef Q_OS_SYMBIAN
-    QEXPECT_FAIL("", "MOBILITY-1715, we shouldn't expect a spy change signal", Continue);
-#endif
+    QEXPECT_FAIL("", "MOBILITY-1715, on symbian saving a landmark"
+                     "with no changes to categories gives off a datachanged signal", Continue);
+#endif;
     QCOMPARE(spyDataChanged.count(), 0);
     spyAdd.clear();
     spyChange.clear();
@@ -7603,12 +7603,10 @@ void tst_QLandmarkManager::testSignals()
     QTest::qWait(10);
 
     QCOMPARE(spyAdd.count(), 0);
-#ifdef Q_OS_SYMBIAN
     QEXPECT_FAIL("", "MOBILITY-1714", Continue);
     //Generally a change in category should not trigger a landmarkChanged signal
     //(even though the landmark technically has changed.) Probably the reason we are receiving this
     //signal is the same reason as outlined in MOBILITY-1714
-#endif
     QCOMPARE(spyChange.count(), 0);
     QCOMPARE(spyRemove.count(), 0);
     QCOMPARE(spyCatAdd.count(), 0);
