@@ -159,7 +159,7 @@ void QDeclarativeOrganizerModel::exportItems(const QString& fileName)
    bool ok = file->open(QIODevice::ReadWrite);
    if (ok) {
       d->m_writer.setDevice(file);
-      d->m_writer.startWriting(QList<QVersitDocument>() << document);
+      d->m_writer.startWriting(document);
    }
 }
 
