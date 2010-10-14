@@ -95,6 +95,7 @@ private:
     QPushButton *defaultInterfaceButton;
 
     QServiceManager *serviceManager;
+    QServiceManager *systemManager;
 };
 
 #endif

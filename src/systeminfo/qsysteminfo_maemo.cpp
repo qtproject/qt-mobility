@@ -1060,8 +1060,11 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
     if (flightMode)
         return QSystemDeviceInfo::OfflineProfile;
 
-    if (silentProfile )
+    if (silentProfile)
         return vibratingAlertEnabled ? QSystemDeviceInfo::VibProfile : QSystemDeviceInfo::SilentProfile;
+
+    if (beepProfile)
+        return QSystemDeviceInfo::BeepProfile;
 
     if (ringingAlertVolume > 75)
         return QSystemDeviceInfo::LoudProfile;
@@ -1246,8 +1249,10 @@ qDebug() << Q_FUNC_INFO << profileName;
     QDBusReply<QString> ringingAlertTypeReply = connectionInterface.call("get_value", profileName, "ringing.alert.type");
     qDebug() << ringingAlertTypeReply.value();
 
-    if (ringingAlertTypeReply.isValid())
+    if (ringingAlertTypeReply.isValid()) {
         silentProfile = QString::compare(ringingAlertTypeReply.value(), "silent", Qt::CaseInsensitive) == 0;
+        beepProfile = QString::compare(ringingAlertTypeReply.value(), "beep", Qt::CaseInsensitive) == 0;
+    }
 
     QDBusReply<QString> vibratingAlertEnabledReply = connectionInterface.call("get_value", profileName, "vibrating.alert.enabled");
     if (vibratingAlertEnabledReply.isValid())
@@ -1286,8 +1291,10 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
         profileName = profile;
         foreach (const ProfileDataValue value, values) {
             qDebug() << value.key << value.val;
-            if (value.key == "ringing.alert.type")
+            if (value.key == "ringing.alert.type") {
                 silentProfile = QString::compare(value.val, "silent", Qt::CaseInsensitive) == 0;
+                beepProfile = QString::compare(value.val, "beep", Qt::CaseInsensitive) == 0;
+            }
             else if (value.key == "vibrating.alert.enabled")
                 vibratingAlertEnabled = QString::compare(value.val, "On", Qt::CaseInsensitive) == 0;
             else if (value.key == "ringing.alert.volume")

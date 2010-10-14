@@ -39,55 +39,25 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEGEOMAPCIRCLEOBJECT_H
-#define QDECLARATIVEGEOMAPCIRCLEOBJECT_H
+/*!
+    \struct QGalleryType
 
-#include "qdeclarativecoordinate_p.h"
-#include "qdeclarativegeomapobjectborder_p.h"
-#include "qgeomapcircleobject.h"
+    \ingroup gallery
 
-class QColor;
-class QBrush;
+    \inmodule QtGallery
 
-QTM_BEGIN_NAMESPACE
+    \brief The QGalleryType class provides an identifier for a gallery item
+    type.
+*/
 
-class QDeclarativeGeoMapCircleObject : public QGeoMapCircleObject
-{
-    Q_OBJECT
+/*!
+    \fn QGalleryType::name() const
 
-    Q_PROPERTY(QDeclarativeCoordinate* center READ declarativeCenter WRITE setDeclarativeCenter NOTIFY declarativeCenterChanged)
-    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
-    Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
+    Returns the name of an item type.
+*/
 
-public:
-    QDeclarativeGeoMapCircleObject();
-    ~QDeclarativeGeoMapCircleObject();
+/*!
+    \fn QGalleryType::operator QString() const
 
-    QDeclarativeCoordinate* declarativeCenter() const;
-    void setDeclarativeCenter(const QDeclarativeCoordinate *center);
-
-    QColor color() const;
-    void setColor(const QColor &color);
-
-    QDeclarativeGeoMapObjectBorder* border();
-
-signals:
-    void declarativeCenterChanged(const QDeclarativeCoordinate *center);
-    void colorChanged(const QColor &color);
-
-private Q_SLOTS:
-    void borderColorChanged(const QColor &color);
-    void borderWidthChanged(int width);
-
-private:
-    mutable QDeclarativeCoordinate* m_center;
-    QColor m_color;
-    QDeclarativeGeoMapObjectBorder m_border;
-    Q_DISABLE_COPY(QDeclarativeGeoMapCircleObject)
-};
-
-QTM_END_NAMESPACE
-
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapCircleObject));
-
-#endif
+    Returns the string name of an item type.
+*/

@@ -39,55 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEGEOMAPCIRCLEOBJECT_H
-#define QDECLARATIVEGEOMAPCIRCLEOBJECT_H
+#ifndef QDECLARATIVEGEOMAPOBJECTBORDER_H
+#define QDECLARATIVEGEOMAPOBJECTBORDER_H
 
-#include "qdeclarativecoordinate_p.h"
-#include "qdeclarativegeomapobjectborder_p.h"
-#include "qgeomapcircleobject.h"
+#include "qmobilityglobal.h"
+#include <QtDeclarative/qdeclarative.h>
 
-class QColor;
-class QBrush;
+#include <QObject>
+#include <QColor>
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMapCircleObject : public QGeoMapCircleObject
+class QDeclarativeGeoMapObjectBorder : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDeclarativeCoordinate* center READ declarativeCenter WRITE setDeclarativeCenter NOTIFY declarativeCenterChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
-    Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
+    Q_PROPERTY(int width READ width WRITE setWidth NOTIFY widthChanged)
 
 public:
-    QDeclarativeGeoMapCircleObject();
-    ~QDeclarativeGeoMapCircleObject();
-
-    QDeclarativeCoordinate* declarativeCenter() const;
-    void setDeclarativeCenter(const QDeclarativeCoordinate *center);
+    QDeclarativeGeoMapObjectBorder(QObject *parent = 0);
+    ~QDeclarativeGeoMapObjectBorder();
 
     QColor color() const;
     void setColor(const QColor &color);
 
-    QDeclarativeGeoMapObjectBorder* border();
+    int width() const;
+    void setWidth(int width);
 
 signals:
-    void declarativeCenterChanged(const QDeclarativeCoordinate *center);
     void colorChanged(const QColor &color);
-
-private Q_SLOTS:
-    void borderColorChanged(const QColor &color);
-    void borderWidthChanged(int width);
+    void widthChanged(int width);
 
 private:
-    mutable QDeclarativeCoordinate* m_center;
     QColor m_color;
-    QDeclarativeGeoMapObjectBorder m_border;
-    Q_DISABLE_COPY(QDeclarativeGeoMapCircleObject)
+    int m_width;
+    Q_DISABLE_COPY(QDeclarativeGeoMapObjectBorder)
 };
 
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapCircleObject));
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapObjectBorder));
 
 #endif

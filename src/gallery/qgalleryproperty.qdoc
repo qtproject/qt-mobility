@@ -39,12 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qgalleryproperty.h"
-
-QTM_BEGIN_NAMESPACE
-
 /*!
-    \class QGalleryProperty
+    \struct QGalleryProperty
 
     \inmodule QtGallery
 
@@ -64,19 +60,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QGalleryProperty::QGalleryProperty(const char *name)
+    \fn QGalleryProperty::name() const
 
-    Constructs a property from a string literal \a name.
-*/
-
-/*!
     Returns the name of a property.
 */
-
-QString QGalleryProperty::name() const
-{
-    return QString::fromLatin1(m_name, m_length);
-}
 
 /*!
     \fn QGalleryProperty::operator QString() const
@@ -85,132 +72,91 @@ QString QGalleryProperty::name() const
 */
 
 /*!
+    \fn QGalleryProperty::operator <(const QVariant &value) const
+
     Returns a gallery filter which tests if  a property is less than a
     \a value.
 */
 
-QGalleryMetaDataFilter QGalleryProperty::operator <(const QVariant &value) const
-{
-    return QGalleryMetaDataFilter(name(), value, QGalleryFilter::LessThan);
-}
-
 /*!
+    \fn QGalleryProperty::operator <=(const QVariant &value) const
+
     Returns a gallery filter which tests if a property is less than or equal to
     a \a value.
 */
 
-QGalleryMetaDataFilter QGalleryProperty::operator <=(const QVariant &value) const
-{
-    return QGalleryMetaDataFilter(name(), value, QGalleryFilter::LessThanEquals);
-}
-
 /*!
+    \fn QGalleryProperty::operator ==(const QVariant &value) const
     Returns a gallery filter which tests if a property is equal to a \a value.
 */
 
-QGalleryMetaDataFilter QGalleryProperty::operator ==(const QVariant &value) const
-{
-    return QGalleryMetaDataFilter(name(), value);
-}
-
 /*!
+    \fn QGalleryProperty::operator >=(const QVariant &value) const
+
     Returns a gallery filter which tests if a property is greater than or equal
     to a \a value.
 */
 
-QGalleryMetaDataFilter QGalleryProperty::operator >=(const QVariant &value) const
-{
-    return QGalleryMetaDataFilter(name(), value, QGalleryFilter::GreaterThanEquals);
-}
-
 /*!
+    \fn QGalleryProperty::operator >(const QVariant &value) const
+
     Returns a gallery filter which tests if a property is greater than a
     \a value.
 */
 
-QGalleryMetaDataFilter QGalleryProperty::operator >(const QVariant &value) const
-{
-    return QGalleryMetaDataFilter(name(), value, QGalleryFilter::GreaterThan);
-}
-
 /*!
+    \fn QGalleryProperty::contains(const QString &string) const
+
     Returns a gallery filter which tests if a property value contains contains
     a \a string literal.
 */
 
-QGalleryMetaDataFilter QGalleryProperty::contains(const QString &string) const
-{
-    return QGalleryMetaDataFilter(name(), string, QGalleryFilter::Contains);
-}
-
 /*!
+    \fn QGalleryProperty::startsWith(const QString &string) const
+
     Returns a gallery filter which tests if a property value starts with a
     \a string literal.
 */
 
-QGalleryMetaDataFilter QGalleryProperty::startsWith(const QString &string) const
-{
-    return QGalleryMetaDataFilter(name(), string, QGalleryFilter::StartsWith);
-}
-
 /*!
+    \fn QGalleryProperty::endsWith(const QString &string) const
+
     Returns a gallery filter which tests if a property value ends with a
     \a string literal.
 */
 
-QGalleryMetaDataFilter QGalleryProperty::endsWith(const QString &string) const
-{
-    return QGalleryMetaDataFilter(name(), string, QGalleryFilter::EndsWith);
-}
-
 /*!
+    \fn QGalleryProperty::wildcard(const QString &string) const
+
     Returns a gallery filter which tests if a property value matches a
     \a string literal using wildcard matching.
 */
 
-QGalleryMetaDataFilter QGalleryProperty::wildcard(const QString &string) const
-{
-    return QGalleryMetaDataFilter(name(), string, QGalleryFilter::Wildcard);
-}
-
 /*!
+    \fn QGalleryProperty::regExp(const QString &regExp) const
+
     Returns a gallery filter which tests if a property value matches a
     \a regExp.
 */
 
-QGalleryMetaDataFilter QGalleryProperty::regExp(const QString &regExp) const
-{
-    return QGalleryMetaDataFilter(name(), regExp, QGalleryFilter::RegExp);
-}
-
 /*!
+    \fn QGalleryProperty::regExp(const QRegExp &regExp) const
+
     Returns a gallery filter which tests if a property value matches a
     \a regExp.
 */
 
-QGalleryMetaDataFilter QGalleryProperty::regExp(const QRegExp &regExp) const
-{
-    return QGalleryMetaDataFilter(name(), regExp, QGalleryFilter::RegExp);
-}
-
 /*!
+    \fn QGalleryProperty::ascending() const
+
     Returns a sort key which indicating items should be sorted a property in
     ascending order.
 */
 
-QString QGalleryProperty::ascending() const
-{
-    return QLatin1Char('+') + name();
-}
-
 /*!
+    \fn QString QGalleryProperty::descending() const
+
     Returns a sort key which indicating items should be sorted a property in
     descending order.
 */
 
-QString QGalleryProperty::descending() const
-{
-    return QLatin1Char('-') + name();
-}
-
-QTM_END_NAMESPACE

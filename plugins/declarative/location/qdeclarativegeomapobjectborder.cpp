@@ -39,41 +39,48 @@
 **
 ****************************************************************************/
 
-#include "qgallerytype.h"
+#include "qdeclarativegeomapobjectborder_p.h"
+
+#include <QColor>
+#include <QBrush>
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \class QGalleryType 
+QDeclarativeGeoMapObjectBorder::QDeclarativeGeoMapObjectBorder(QObject *parent) 
+    : QObject(parent),
+    m_width(1) {}
 
-    \ingroup gallery
+QDeclarativeGeoMapObjectBorder::~QDeclarativeGeoMapObjectBorder() {}
 
-    \inmodule QtGallery
-
-    \brief The QGalleryType class provides an identifier for a gallery item
-    type.
-*/
-
-/*!
-    \fn QGalleryType::QGalleryType(const char *name)
-
-    Construct a gallery item type from a string literal \a name.
-*/
-
-/*!
-    Returns the name of an item type.
-*/
-
-QString QGalleryType::name() const
+void QDeclarativeGeoMapObjectBorder::setColor(const QColor &color)
 {
-    return QString::fromLatin1(m_name, m_length);
+    if (m_color == color)
+        return;
+
+    m_color = color;
+    emit colorChanged(m_color);
 }
 
-/*!
-    \fn QGalleryType::operator QString() const
+QColor QDeclarativeGeoMapObjectBorder::color() const
+{
+    return m_color;
+}
 
-    Returns the string name of an item type.
-*/
+void QDeclarativeGeoMapObjectBorder::setWidth(int width)
+{
+    if (m_width == width)
+        return;
+
+    m_width = width;
+    emit widthChanged(width);
+}
+
+int QDeclarativeGeoMapObjectBorder::width() const
+{
+    return m_width;
+}
+
+#include "moc_qdeclarativegeomapobjectborder_p.cpp"
 
 QTM_END_NAMESPACE
 
