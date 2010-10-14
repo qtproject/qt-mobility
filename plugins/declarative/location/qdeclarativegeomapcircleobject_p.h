@@ -80,7 +80,7 @@ private Q_SLOTS:
     void borderWidthChanged(int width);
 
 private:
-    mutable QDeclarativeCoordinate* m_center;
+    QDeclarativeCoordinate* m_center;
     QColor m_color;
     QDeclarativeGeoMapObjectBorder m_border;
     Q_DISABLE_COPY(QDeclarativeGeoMapCircleObject)
