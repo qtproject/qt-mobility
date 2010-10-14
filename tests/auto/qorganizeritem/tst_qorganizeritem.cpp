@@ -602,7 +602,7 @@ void tst_QOrganizerItem::datastream()
     // first, stream an item with a complete id
     {
         QDataStream stream1(&buffer, QIODevice::WriteOnly);
-        QOrganizerItemManager om("memory");
+        QOrganizerManager om("memory");
         QVERIFY(om.saveItem(&itemIn)); // fill in its ID
         originalId = itemIn.id();
         originalCollectionId = itemIn.collectionId();
@@ -830,59 +830,59 @@ void tst_QOrganizerItem::event()
     testEvent.setExceptionDates(exdates);
     QCOMPARE(testEvent.exceptionDates(), exdates);
 
-    QSet<QOrganizerItemRecurrenceRule> rrules;
-    QOrganizerItemRecurrenceRule rrule;
+    QSet<QOrganizerRecurrenceRule> rrules;
+    QOrganizerRecurrenceRule rrule;
 
-    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::NoLimit);
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::NoLimit);
     QVERIFY(rrule.limitCount() == -1);
     QVERIFY(rrule.limitDate().isNull());
 
     rrule.setLimit(1);
-    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit);
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::CountLimit);
     QVERIFY(rrule.limitCount() == 1);
     QVERIFY(rrule.limitDate().isNull());
 
     rrule.setLimit(-1);
-    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::NoLimit);
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::NoLimit);
     QVERIFY(rrule.limitCount() == -1);
     QVERIFY(rrule.limitDate().isNull());
 
     rrule.setLimit(0);
-    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::CountLimit);
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::CountLimit);
     QVERIFY(rrule.limitCount() == 0);
     QVERIFY(rrule.limitDate().isNull());
 
     rrule.setLimit(-100);
-    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::NoLimit);
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::NoLimit);
     QVERIFY(rrule.limitCount() == -1);
     QVERIFY(rrule.limitDate().isNull());
 
     rrule.setLimit(QDate());
-    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::NoLimit);
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::NoLimit);
     QVERIFY(rrule.limitCount() == -1);
     QVERIFY(rrule.limitDate().isNull());
 
     rrule.setLimit(QDate(2010, 10, 6));
-    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::DateLimit);
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::DateLimit);
     QVERIFY(rrule.limitCount() == -1);
     QVERIFY(rrule.limitDate() == QDate(2010, 10, 6));
 
     rrule.setLimit(QDate(2010, 13, 34));
-    QVERIFY(rrule.limitType() == QOrganizerItemRecurrenceRule::NoLimit);
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::NoLimit);
     QVERIFY(rrule.limitCount() == -1);
     QVERIFY(rrule.limitDate() == QDate());
 
 
     rrule.setLimit(2);
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
     rrules << rrule;
     testEvent.setRecurrenceRule(rrule);
     QVERIFY(testEvent.recurrenceRules() == rrules);
 
-    QSet<QOrganizerItemRecurrenceRule> exrules;
-    QOrganizerItemRecurrenceRule exrule;
+    QSet<QOrganizerRecurrenceRule> exrules;
+    QOrganizerRecurrenceRule exrule;
     exrule.setLimit(1);
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
     testEvent.setExceptionRules(exrules);
     QVERIFY(testEvent.exceptionRules() == exrules);
 }
@@ -922,18 +922,18 @@ void tst_QOrganizerItem::todo()
     testTodo.setExceptionDates(exdates);
     QCOMPARE(testTodo.exceptionDates(), exdates);
 
-    QSet<QOrganizerItemRecurrenceRule> rrules;
-    QOrganizerItemRecurrenceRule rrule;
+    QSet<QOrganizerRecurrenceRule> rrules;
+    QOrganizerRecurrenceRule rrule;
     rrule.setLimit(2);
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
     rrules << rrule;
     testTodo.setRecurrenceRules(rrules);
     QVERIFY(testTodo.recurrenceRules() == rrules);
 
-    QSet<QOrganizerItemRecurrenceRule> exrules;
-    QOrganizerItemRecurrenceRule exrule;
+    QSet<QOrganizerRecurrenceRule> exrules;
+    QOrganizerRecurrenceRule exrule;
     exrule.setLimit(1);
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
     testTodo.setExceptionRules(exrules);
     QVERIFY(testTodo.exceptionRules() == exrules);
 }

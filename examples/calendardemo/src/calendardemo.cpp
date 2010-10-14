@@ -78,7 +78,7 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     m_addCalendarPage = new AddCalendarPage(m_stackedWidget);
     m_editCalendarsPage = new EditCalendarsPage(m_stackedWidget);
 
-    //qRegisterMetaType<QOrganizerItemManager>("QOrganizerItemManager");
+    //qRegisterMetaType<QOrganizerManager>("QOrganizerManager");
     qRegisterMetaType<QOrganizerItem>("QOrganizerItem");
     qRegisterMetaType<QOrganizerCollection>("QOrganizerCollection");
 
@@ -86,8 +86,8 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     connect(m_monthPage, SIGNAL(showEditPage(const QOrganizerItem &)), this, SLOT(activateEditPage(const QOrganizerItem &)), Qt::QueuedConnection);
     connect(m_monthPage, SIGNAL(addNewEvent()), this, SLOT(addNewEvent()), Qt::QueuedConnection);
     connect(m_monthPage, SIGNAL(addNewTodo()), this, SLOT(addNewTodo()), Qt::QueuedConnection);
-    connect(m_monthPage, SIGNAL(managerChanged(QOrganizerItemManager*)), this, SLOT(changeManager(QOrganizerItemManager*)), Qt::QueuedConnection);
-    connect(m_monthPage, SIGNAL(managerChanged(QOrganizerItemManager*)), m_dayPage, SLOT(changeManager(QOrganizerItemManager*)), Qt::QueuedConnection);
+    connect(m_monthPage, SIGNAL(managerChanged(QOrganizerManager*)), this, SLOT(changeManager(QOrganizerManager*)), Qt::QueuedConnection);
+    connect(m_monthPage, SIGNAL(managerChanged(QOrganizerManager*)), m_dayPage, SLOT(changeManager(QOrganizerManager*)), Qt::QueuedConnection);
     connect(m_monthPage, SIGNAL(currentDayChanged(QDate)), this, SLOT(updateSelectedDay(QDate)));
     connect(m_dayPage, SIGNAL(showMonthPage()), this, SLOT(activateMonthPage()), Qt::QueuedConnection);
     connect(m_dayPage, SIGNAL(showEditPage(const QOrganizerItem &)), this, SLOT(activateEditPage(const QOrganizerItem &)), Qt::QueuedConnection);
@@ -98,15 +98,15 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     connect(m_journalEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_eventOccurrenceEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_addCalendarPage, SIGNAL(showPreviousPage()), this, SLOT(activatePreviousPage()), Qt::QueuedConnection);
-    connect(m_editCalendarsPage, SIGNAL(showAddCalendarPage(QOrganizerItemManager*,QOrganizerCollection*)), this, SLOT(editExistingCalendar(QOrganizerItemManager*,QOrganizerCollection*)), Qt::QueuedConnection);
+    connect(m_editCalendarsPage, SIGNAL(showAddCalendarPage(QOrganizerManager*,QOrganizerCollection*)), this, SLOT(editExistingCalendar(QOrganizerManager*,QOrganizerCollection*)), Qt::QueuedConnection);
     connect(m_editCalendarsPage, SIGNAL(showPreviousPage()), this, SLOT(activateMonthPage()), Qt::QueuedConnection);
     connect(m_editCalendarsPage, SIGNAL(addClicked()), this, SLOT(addCalendar()), Qt::QueuedConnection);
 
     // Connect to the save and remove request status change signals
-    connect(&m_saveReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
-            this, SLOT(saveReqStateChanged(QOrganizerItemAbstractRequest::State)));
-    connect(&m_remReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
-            this, SLOT(removeReqStateChanged(QOrganizerItemAbstractRequest::State)));
+    connect(&m_saveReq, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)),
+            this, SLOT(saveReqStateChanged(QOrganizerAbstractRequest::State)));
+    connect(&m_remReq, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)),
+            this, SLOT(removeReqStateChanged(QOrganizerAbstractRequest::State)));
 
     m_monthPage->init();
     
@@ -316,7 +316,7 @@ void CalendarDemo::addEvents()
         item.setDisplayLabel(QString("Subject for event %1").arg(index + 1));
         
         // Set the start date to index to add events to next 5000 days
-        QOrganizerEventTimeRange timeRange;
+        QOrganizerEventTime timeRange;
         timeRange.setStartDateTime(QDateTime::currentDateTime().addDays(index));
         timeRange.setEndDateTime(QDateTime::currentDateTime().addDays(index).addSecs(60 * 60));
         item.saveDetail(&timeRange);
@@ -438,22 +438,22 @@ void CalendarDemo::editCalendar()
     m_stackedWidget->setCurrentWidget(m_editCalendarsPage);
 }
 
-void CalendarDemo::editExistingCalendar(QOrganizerItemManager *manager, QOrganizerCollection* calendar)
+void CalendarDemo::editExistingCalendar(QOrganizerManager *manager, QOrganizerCollection* calendar)
 {
     m_addCalendarPage->calendarChanged(manager, *calendar);
     m_previousPage = m_stackedWidget->currentIndex();
     m_stackedWidget->setCurrentWidget(m_addCalendarPage);
 }
 
-void CalendarDemo::saveReqStateChanged(QOrganizerItemAbstractRequest::State reqState)
+void CalendarDemo::saveReqStateChanged(QOrganizerAbstractRequest::State reqState)
 {
-    if(QOrganizerItemAbstractRequest::ActiveState == reqState) {
+    if(QOrganizerAbstractRequest::ActiveState == reqState) {
         // Request started. Show a progress or wait dialog
         m_progressDlg = new QProgressDialog("Saving events..", "Cancel", 100, 100, this);
         connect(m_progressDlg, SIGNAL(canceled()), &m_saveReq, SLOT(cancel()));
         m_progressDlg->show();
-    } else if (QOrganizerItemAbstractRequest::FinishedState == reqState ||
-               QOrganizerItemAbstractRequest::CanceledState == reqState) {
+    } else if (QOrganizerAbstractRequest::FinishedState == reqState ||
+               QOrganizerAbstractRequest::CanceledState == reqState) {
         // Request finished or cancelled. Stop showing the progress dialog and refresh
         m_progressDlg->hide();
         m_monthPage->refresh();
@@ -461,15 +461,15 @@ void CalendarDemo::saveReqStateChanged(QOrganizerItemAbstractRequest::State reqS
     }
 }
 
-void CalendarDemo::removeReqStateChanged(QOrganizerItemAbstractRequest::State reqState)
+void CalendarDemo::removeReqStateChanged(QOrganizerAbstractRequest::State reqState)
 {
-    if(QOrganizerItemAbstractRequest::ActiveState == reqState) {
+    if(QOrganizerAbstractRequest::ActiveState == reqState) {
         // Request started. Show a progress or wait dialog
         m_progressDlg = new QProgressDialog("Removing events..", "Cancel", 100, 100, this);
         connect(m_progressDlg, SIGNAL(canceled()), &m_remReq, SLOT(cancel()));
         m_progressDlg->show();
-    } else if (QOrganizerItemAbstractRequest::FinishedState == reqState ||
-               QOrganizerItemAbstractRequest::CanceledState == reqState) {
+    } else if (QOrganizerAbstractRequest::FinishedState == reqState ||
+               QOrganizerAbstractRequest::CanceledState == reqState) {
         // Request finished or cancelled. Stop showing the progress dialog and refresh
         m_progressDlg->hide();
         m_monthPage->refresh();
@@ -477,7 +477,7 @@ void CalendarDemo::removeReqStateChanged(QOrganizerItemAbstractRequest::State re
     }
 }
 
-void CalendarDemo::changeManager(QOrganizerItemManager *manager)
+void CalendarDemo::changeManager(QOrganizerManager *manager)
 {
     m_manager = manager;
 }

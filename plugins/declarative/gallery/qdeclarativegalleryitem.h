@@ -71,8 +71,8 @@ public:
     {
         Null        = QGalleryAbstractRequest::Inactive,
         Active      = QGalleryAbstractRequest::Active,
-        Cancelling  = QGalleryAbstractRequest::Cancelling,
-        Cancelled   = QGalleryAbstractRequest::Cancelled,
+        Canceling   = QGalleryAbstractRequest::Canceling,
+        Canceled    = QGalleryAbstractRequest::Canceled,
         Idle        = QGalleryAbstractRequest::Idle,
         Finished    = QGalleryAbstractRequest::Finished,
         Error       = QGalleryAbstractRequest::Error
@@ -123,7 +123,7 @@ protected:
         Incomplete,
         NoUpdate,
         PendingUpdate,
-        CancelledUpdate
+        CanceledUpdate
     };
 
     explicit QDeclarativeGalleryItem(QObject *parent = 0);
@@ -139,7 +139,7 @@ protected:
     UpdateStatus m_updateStatus;
 
 private Q_SLOTS:
-    void _q_statusChanged();
+    void _q_stateChanged();
     void _q_itemChanged();
     void _q_metaDataChanged(const QList<int> &keys);
     void _q_valueChanged(const QString &key, const QVariant &value) {

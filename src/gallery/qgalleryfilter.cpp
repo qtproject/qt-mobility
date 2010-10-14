@@ -371,6 +371,33 @@ void QGalleryIntersectionFilter::append(const QGalleryIntersectionFilter &filter
 }
 
 /*!
+    Prepends a meta-data \a filter to an intersection.
+*/
+
+void QGalleryIntersectionFilter::prepend(const QGalleryMetaDataFilter &filter)
+{
+    d->filters.prepend(filter);
+}
+
+/*!
+    Prepends a union \a filter to an intersection.
+*/
+
+void QGalleryIntersectionFilter::prepend(const QGalleryUnionFilter &filter)
+{
+    d->filters.prepend(filter);
+}
+
+/*!
+    Prepends the contents of an intersection \a filter to an intersection.
+*/
+
+void QGalleryIntersectionFilter::prepend(const QGalleryIntersectionFilter &filter)
+{
+    d->filters += filter.d->filters;
+}
+
+/*!
     Inserts a meta-data \a filter into an intersection at \a index.
 */
 
@@ -425,7 +452,7 @@ void QGalleryIntersectionFilter::replace(int index, const QGalleryUnionFilter &f
     Removes the filter at \a index from an intersection.
 */
 
-void QGalleryIntersectionFilter::removeAt(int index)
+void QGalleryIntersectionFilter::remove(int index)
 {
     d->filters.removeAt(index);
 }
@@ -437,6 +464,18 @@ void QGalleryIntersectionFilter::removeAt(int index)
 void QGalleryIntersectionFilter::clear()
 {
     d->filters.clear();
+}
+
+/*!
+    Appends a \a filter to an intersection.
+*/
+
+QGalleryIntersectionFilter &QGalleryIntersectionFilter::operator <<(
+        const QGalleryIntersectionFilter &filter)
+{
+    d->filters.append(filter.d->filters);
+
+    return *this;
 }
 
 /*!
@@ -610,6 +649,33 @@ void QGalleryUnionFilter::append(const QGalleryUnionFilter &filter)
 }
 
 /*!
+    Prepends a meta-data \a filter to a union.
+*/
+
+void QGalleryUnionFilter::prepend(const QGalleryMetaDataFilter &filter)
+{
+    d->filters.prepend(filter);
+}
+
+/*!
+    Prepends an intersection \a filter to a union.
+*/
+
+void QGalleryUnionFilter::prepend(const QGalleryIntersectionFilter &filter)
+{
+    d->filters.prepend(filter);
+}
+
+/*!
+    Prepends the contents of a union \a filter to a union.
+*/
+
+void QGalleryUnionFilter::prepend(const QGalleryUnionFilter &filter)
+{
+    d->filters += filter.d->filters;
+}
+
+/*!
     Inserts a meta-data \a filter into a union at \a index.
 */
 
@@ -661,7 +727,7 @@ void QGalleryUnionFilter::replace(int index, const QGalleryIntersectionFilter &f
     Removes the filter at \a index from a union.
 */
 
-void QGalleryUnionFilter::removeAt(int index)
+void QGalleryUnionFilter::remove(int index)
 {
     d->filters.removeAt(index);
 }
@@ -673,6 +739,17 @@ void QGalleryUnionFilter::removeAt(int index)
 void QGalleryUnionFilter::clear()
 {
     d->filters.clear();
+}
+
+/*!
+    Appends a \a filter to a union.
+*/
+
+QGalleryUnionFilter &QGalleryUnionFilter::operator <<(const QGalleryUnionFilter &filter)
+{
+    d->filters.append(filter.d->filters);
+
+    return *this;
 }
 
 /*!

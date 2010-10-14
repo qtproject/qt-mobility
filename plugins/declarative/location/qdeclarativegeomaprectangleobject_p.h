@@ -43,6 +43,7 @@
 #define QDECLARATIVEGEOMAPRECTANGLEOBJECT_H
 
 #include "qdeclarativecoordinate_p.h"
+#include "qdeclarativegeomapobjectborder_p.h"
 #include "qgeomaprectangleobject.h"
 
 class QColor;
@@ -57,6 +58,7 @@ class QDeclarativeGeoMapRectangleObject : public QGeoMapRectangleObject
     Q_PROPERTY(QDeclarativeCoordinate* topLeft READ declarativeTopLeft WRITE setDeclarativeTopLeft NOTIFY declarativeTopLeftChanged)
     Q_PROPERTY(QDeclarativeCoordinate* bottomRight READ declarativeBottomRight WRITE setDeclarativeBottomRight NOTIFY declarativeBottomRightChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
 
 public:
     QDeclarativeGeoMapRectangleObject();
@@ -71,15 +73,22 @@ public:
     QColor color() const;
     void setColor(const QColor &color);
 
-signals:
+    QDeclarativeGeoMapObjectBorder* border();
+
+Q_SIGNALS:
     void declarativeTopLeftChanged(const QDeclarativeCoordinate *center);
     void declarativeBottomRightChanged(const QDeclarativeCoordinate *center);
     void colorChanged(const QColor &color);
 
+private Q_SLOTS:
+    void borderColorChanged(const QColor &color);
+    void borderWidthChanged(int width);
+
 private:
     mutable QDeclarativeCoordinate* m_topLeft;
     mutable QDeclarativeCoordinate* m_bottomRight;
-    mutable QColor m_color;
+    QColor m_color;
+    QDeclarativeGeoMapObjectBorder m_border;
     Q_DISABLE_COPY(QDeclarativeGeoMapRectangleObject)
 };
 

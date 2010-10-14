@@ -60,38 +60,60 @@ class QDeclarativeContactOrganization : public QDeclarativeContactDetail
     Q_ENUMS(FieldType)
 public:
     enum FieldType {
-        Name = 0,
-        LogoUrl,
-        Department,
-        Location,
-        Role,
-        Title,
-        AssistantName
+        FieldName = 0,
+        FieldLogoUrl,
+        FieldDepartment,
+        FieldLocation,
+        FieldRole,
+        FieldTitle,
+        FieldAssistantName
     };
 
     QDeclarativeContactOrganization(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactOrganization());
+        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Organization;
+        return QDeclarativeContactDetail::ContactOrganization;
     }
-
-    void setName(const QString& name) {detail().setValue(QContactOrganization::FieldName, name);}
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case FieldName:
+            return QContactOrganization::FieldName;
+        case FieldLogoUrl:
+            return QContactOrganization::FieldLogoUrl;
+        case FieldDepartment:
+            return QContactOrganization::FieldDepartment;
+        case FieldLocation:
+            return QContactOrganization::FieldLocation;
+        case FieldRole:
+            return QContactOrganization::FieldRole;
+        case FieldTitle:
+            return QContactOrganization::FieldTitle;
+        case FieldAssistantName:
+            return QContactOrganization::FieldAssistantName;
+        default:
+            break;
+        }
+        return "";
+    }
+    void setName(const QString& name) {if (!readOnly()) detail().setValue(QContactOrganization::FieldName, name);}
     QString name() const {return detail().value(QContactOrganization::FieldName);}
-    void setLogoUrl(const QUrl& logo) {detail().setValue(QContactOrganization::FieldLogoUrl, logo);}
+    void setLogoUrl(const QUrl& logo) {if (!readOnly()) detail().setValue(QContactOrganization::FieldLogoUrl, logo);}
     QUrl logoUrl() const {return detail().value(QContactOrganization::FieldLogoUrl);}
-    void setDepartment(const QStringList& department) {detail().setValue(QContactOrganization::FieldDepartment, department);}
+    void setDepartment(const QStringList& department) {if (!readOnly()) detail().setValue(QContactOrganization::FieldDepartment, department);}
     QStringList department() const {return detail().value<QStringList>(QContactOrganization::FieldDepartment);}
-    void setLocation(const QString& location) {detail().setValue(QContactOrganization::FieldLocation, location);}
+    void setLocation(const QString& location) {if (!readOnly()) detail().setValue(QContactOrganization::FieldLocation, location);}
     QString location() const {return detail().value(QContactOrganization::FieldLocation);}
-    void setRole(const QString& role) {detail().setValue(QContactOrganization::FieldRole, role);}
+    void setRole(const QString& role) {if (!readOnly()) detail().setValue(QContactOrganization::FieldRole, role);}
     QString role() const {return detail().value(QContactOrganization::FieldRole);}
-    void setTitle(const QString& title) {detail().setValue(QContactOrganization::FieldTitle, title);}
+    void setTitle(const QString& title) {if (!readOnly()) detail().setValue(QContactOrganization::FieldTitle, title);}
     QString title() const {return detail().value(QContactOrganization::FieldTitle);}
-    void setAssistantName(const QString& assistantName) {detail().setValue(QContactOrganization::FieldAssistantName, assistantName);}
+    void setAssistantName(const QString& assistantName) {if (!readOnly()) detail().setValue(QContactOrganization::FieldAssistantName, assistantName);}
     QString assistantName() const {return detail().value(QContactOrganization::FieldAssistantName);}
 signals:
     void fieldsChanged();

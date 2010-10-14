@@ -120,6 +120,9 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate(const QString& prof
 QVersitContactExporterPrivate::~QVersitContactExporterPrivate()
 {
     delete mDefaultResourceHandler;
+    foreach (QVersitContactHandler* pluginHandler, mPluginDetailHandlers) {
+        delete pluginHandler;
+    }
 }
 
 

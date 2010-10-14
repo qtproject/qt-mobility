@@ -508,16 +508,17 @@ QList<QLandmarkCategoryId> LandmarkManagerEngineSymbianPrivate::categoryIds(int 
     if (err == KErrNone) {
         // do fetch based on offset and max items
         int resultcount = qtCatIds.size();
-        if (limit > 0) {
-            if (offset < 0)
-                offset = 0;
-            return qtCatIds.mid(offset, limit);
-        }
-        else if (offset > 0) {
-            return qtCatIds.mid(offset, resultcount);
-        }
-        else
+
+        if (offset >= resultcount) {
+            qtCatIds.clear();
             return qtCatIds;
+        }
+
+        if (offset <=0 ) {
+            offset = 0;
+        }
+
+        return qtCatIds.mid(offset,limit);
     }
     else {
         handleSymbianError(err, error, errorString);
@@ -687,9 +688,15 @@ QList<QLandmarkCategory> LandmarkManagerEngineSymbianPrivate::categories(const Q
         errorMap->clear();
 
     QList<QLandmarkCategory> result;
-    if (&landmarkCategoryIds == 0 || landmarkCategoryIds.isEmpty()) {
+    if (&landmarkCategoryIds == 0) {
         *error = QLandmarkManager::BadArgumentError;
         *errorString = "Invalid category ids or empty ids";
+        return result;
+    }
+
+    if(landmarkCategoryIds.isEmpty()) {
+        *error = QLandmarkManager::NoError;
+        *errorString = "";
         return result;
     }
 
@@ -752,9 +759,12 @@ QList<QLandmarkCategory> LandmarkManagerEngineSymbianPrivate::categories(int lim
 
             return qtCats.mid(offset, limit);
         }
+    } else if (err == KErrNone && *error == QLandmarkManager::NotSupportedError) {
+        // do nothing, since error code should already be set.
+    } else {
+        handleSymbianError(err, error, errorString);
     }
 
-    handleSymbianError(err, error, errorString);
     return QList<QLandmarkCategory> ();
 }
 
@@ -1804,6 +1814,9 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
             QLandmarkCategoryFetchRequest * catFetchRequest =
                 static_cast<QLandmarkCategoryFetchRequest *> (request);
 
+            if (catFetchRequest->sorting().caseSensitivity() == Qt::CaseSensitive)
+                User::Leave(KErrNotSupported);
+
             if (catFetchRequest->sorting().direction() == Qt::AscendingOrder) {
                 sortPref = CPosLmCategoryManager::ECategorySortOrderNameAscending;
             }
@@ -1815,6 +1828,9 @@ bool LandmarkManagerEngineSymbianPrivate::startRequestL(QLandmarkAbstractRequest
 
             QLandmarkCategoryIdFetchRequest * catIdFetchRequest =
                 static_cast<QLandmarkCategoryIdFetchRequest *> (request);
+
+            if (catIdFetchRequest->sorting().caseSensitivity() == Qt::CaseSensitive)
+                User::Leave(KErrNotSupported);
 
             if (catIdFetchRequest->sorting().direction() == Qt::AscendingOrder) {
                 sortPref = CPosLmCategoryManager::ECategorySortOrderNameAscending;
@@ -2826,7 +2842,6 @@ QList<QLandmarkCategoryId> LandmarkManagerEngineSymbianPrivate::fetchCategoryIds
         *error = QLandmarkManager::NotSupportedError;
         *errorString
             = "Case Sensivity Support is not there, Please prefer CaseInsensitive to get result.";
-
         return QList<QLandmarkCategoryId> ();
     }
 
@@ -2983,6 +2998,10 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
     {
         QLandmarkIdFilter landmarkIdFilter = filter;
         QList<QLandmarkId> qtLmIds = landmarkIdFilter.landmarkIds();
+
+        if (qtLmIds.isEmpty())
+            User::Leave(KErrNone);
+
         RArray<TPosLmItemId> symLmIds = LandmarkUtility::getSymbianLandmarkIds(qtLmIds);
         if (symLmIds.Count() <= 0) {
             User::Leave(KErrArgument);
@@ -3711,6 +3730,19 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                 symbianCatIds);
             symbianCatIds.Close();
         }
+
+        int resultcount = aData->iCategoryIds.size();
+        int offset = catIdFetchRequest->offset();
+        if ( offset >= resultcount) {
+            aData->iCategoryIds.clear();
+        }
+
+        if (offset <= 0) {
+            offset = 0;
+        }
+
+        aData->iCategoryIds = aData->iCategoryIds.mid(offset, catIdFetchRequest->limit());
+
         // for resultsAvailable signal
         QLandmarkManagerEngineSymbian::updateLandmarkCategoryIdFetchRequest(catIdFetchRequest,
             aData->iCategoryIds, error, errorString, QLandmarkAbstractRequest::FinishedState);
@@ -3841,6 +3873,18 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                     aData->iCategories.append(qtLmCategory);
                 }
         }
+
+        int resultcount = aData->iCategories.size();
+        int offset = catFetchRequest->offset();
+        if ( offset >= resultcount) {
+            aData->iCategories.clear();
+        }
+
+        if (offset <= 0) {
+            offset = 0;
+        }
+
+        aData->iCategories = aData->iCategories.mid(offset, catFetchRequest->limit());
 
         // for resultsAvailable signal
         QLandmarkManagerEngineSymbian::updateLandmarkCategoryFetchRequest(catFetchRequest,

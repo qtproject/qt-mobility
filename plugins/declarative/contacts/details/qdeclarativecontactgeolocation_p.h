@@ -63,48 +63,75 @@ class QDeclarativeContactGeoLocation : public QDeclarativeContactDetail
     Q_ENUMS(FieldType)
 public:
     enum FieldType {
-        Label = 0,
-        Latitude,
-        Longitude,
-        Accuracy,
-        Altitude,
-        AltitudeAccuracy,
-        Heading,
-        Speed,
-        Timestamp
+        FieldLabel = 0,
+        FieldLatitude,
+        FieldLongitude,
+        FieldAccuracy,
+        FieldAltitude,
+        FieldAltitudeAccuracy,
+        FieldHeading,
+        FieldSpeed,
+        FieldTimestamp
     };
 
     QDeclarativeContactGeoLocation(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactGeoLocation());
+        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Geolocation;
+        return QDeclarativeContactDetail::ContactGeolocation;
     }
-
-    void setLabel(const QString& label) {detail().setValue(QContactGeoLocation::FieldLabel, label);}
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case FieldLabel:
+            return QContactGeoLocation::FieldLabel;
+        case FieldLatitude:
+            return QContactGeoLocation::FieldLatitude;
+        case FieldLongitude:
+            return QContactGeoLocation::FieldLongitude;
+        case FieldAccuracy:
+            return QContactGeoLocation::FieldAccuracy;
+        case FieldAltitude:
+            return QContactGeoLocation::FieldAltitude;
+        case FieldAltitudeAccuracy:
+            return QContactGeoLocation::FieldAltitudeAccuracy;
+        case FieldHeading:
+            return QContactGeoLocation::FieldHeading;
+        case FieldSpeed:
+            return QContactGeoLocation::FieldSpeed;
+        case FieldTimestamp:
+            return QContactGeoLocation::FieldTimestamp;
+        default:
+            break;
+        }
+        return "";
+    }
+    void setLabel(const QString& label) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldLabel, label);}
     QString label() const {return detail().value(QContactGeoLocation::FieldLabel);}
-    void setLatitude(double latitude) {detail().setValue(QContactGeoLocation::FieldLatitude, latitude);}
+    void setLatitude(double latitude) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldLatitude, latitude);}
     double latitude() const {return detail().variantValue(QContactGeoLocation::FieldLatitude).toDouble();}
-    void setLongitude(double longitude) {detail().setValue(QContactGeoLocation::FieldLongitude, longitude);}
+    void setLongitude(double longitude) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldLongitude, longitude);}
     double longitude() const {return detail().variantValue(QContactGeoLocation::FieldLongitude).toDouble();}
-    void setAccuracy(double accuracy) {detail().setValue(QContactGeoLocation::FieldAccuracy, accuracy);}
+    void setAccuracy(double accuracy) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldAccuracy, accuracy);}
     double accuracy() const {return detail().variantValue(QContactGeoLocation::FieldAccuracy).toDouble();}
-    void setAltitude(double altitude) {detail().setValue(QContactGeoLocation::FieldAltitude, altitude);}
+    void setAltitude(double altitude) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldAltitude, altitude);}
     double altitude() const {return detail().variantValue(QContactGeoLocation::FieldAltitude).toDouble();}
-    void setAltitudeAccuracy(double altitudeAccuracy) {detail().setValue(QContactGeoLocation::FieldAltitudeAccuracy, altitudeAccuracy);}
+    void setAltitudeAccuracy(double altitudeAccuracy) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldAltitudeAccuracy, altitudeAccuracy);}
     double altitudeAccuracy() const {return detail().variantValue(QContactGeoLocation::FieldAltitudeAccuracy).toDouble();}
-    void setHeading(double heading) {detail().setValue(QContactGeoLocation::FieldHeading, heading);}
+    void setHeading(double heading) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldHeading, heading);}
     double heading() const {return detail().variantValue(QContactGeoLocation::FieldHeading).toDouble();}
-    void setSpeed(double speed) {detail().setValue(QContactGeoLocation::FieldSpeed, speed);}
+    void setSpeed(double speed) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldSpeed, speed);}
     double speed() const {return detail().variantValue(QContactGeoLocation::FieldSpeed).toDouble();}
-    void setTimestamp(const QDateTime& timestamp) {detail().setValue(QContactGeoLocation::FieldTimestamp, timestamp);}
+    void setTimestamp(const QDateTime& timestamp) {if (!readOnly()) detail().setValue(QContactGeoLocation::FieldTimestamp, timestamp);}
     QDateTime timestamp() const {return detail().variantValue(QContactGeoLocation::FieldTimestamp).toDateTime();}
 signals:
     void fieldsChanged();
 };
+QML_DECLARE_TYPE(QDeclarativeContactGeoLocation)
 
 #endif
 

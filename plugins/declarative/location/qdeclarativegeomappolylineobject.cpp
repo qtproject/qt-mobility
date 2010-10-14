@@ -49,6 +49,14 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapPolylineObject::QDeclarativeGeoMapPolylineObject()
 {
+    connect(&m_border,
+            SIGNAL(colorChanged(QColor)),
+            this,
+            SLOT(borderColorChanged(QColor)));
+    connect(&m_border,
+            SIGNAL(widthChanged(int)),
+            this,
+            SLOT(borderWidthChanged(int)));
 }
 
 QDeclarativeGeoMapPolylineObject::~QDeclarativeGeoMapPolylineObject()
@@ -92,6 +100,25 @@ void QDeclarativeGeoMapPolylineObject::path_clear(QDeclarativeListProperty<QDecl
     qDeleteAll(p);
     p.clear();
     poly->setPath(QList<QGeoCoordinate>());
+}
+
+QDeclarativeGeoMapObjectBorder* QDeclarativeGeoMapPolylineObject::border()
+{
+    return &m_border;
+}
+
+void QDeclarativeGeoMapPolylineObject::borderColorChanged(const QColor &color)
+{
+    QPen p = pen();
+    p.setColor(color);
+    setPen(p);
+}
+
+void QDeclarativeGeoMapPolylineObject::borderWidthChanged(int width)
+{
+    QPen p = pen();
+    p.setWidth(width);
+    setPen(p);
 }
 
 #include "moc_qdeclarativegeomappolylineobject_p.cpp"

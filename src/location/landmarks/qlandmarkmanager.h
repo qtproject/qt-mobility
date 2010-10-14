@@ -129,20 +129,20 @@ public:
     virtual ~QLandmarkManager();
 
     bool saveLandmark(QLandmark *landmark);
-    bool saveLandmarks(QList<QLandmark> *landmarks, QMap<int, QLandmarkManager::Error> *errorMap = 0);
+    bool saveLandmarks(QList<QLandmark> *landmarks);
 
     bool removeLandmark(const QLandmarkId &landmarkId);
     bool removeLandmark(const QLandmark &landmark);
 
-    bool removeLandmarks(const QList<QLandmarkId> &landmarksIds, QMap<int, QLandmarkManager::Error> *errorMap = 0);
-    bool removeLandmarks(const QList<QLandmark> &landmarks, QMap<int, QLandmarkManager::Error> *errorMap =0);
+    bool removeLandmarks(const QList<QLandmarkId> &landmarksIds);
+    bool removeLandmarks(const QList<QLandmark> &landmarks);
 
     bool saveCategory(QLandmarkCategory *category);
     bool removeCategory(const QLandmarkCategoryId &categoryId);
     bool removeCategory(const QLandmarkCategory &category);
 
     QLandmarkCategory category(const QLandmarkCategoryId &categoryId) const;
-    QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &categoryIds, QMap<int, QLandmarkManager::Error> *errorMap=0) const;
+    QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &categoryIds) const;
 
     QList<QLandmarkCategory> categories( int limit=-1, int offset=0, const QLandmarkNameSort &nameSort = QLandmarkNameSort()) const;
     QList<QLandmarkCategoryId> categoryIds(int limit =-1, int offset=0, const QLandmarkNameSort &nameSort = QLandmarkNameSort()) const;
@@ -155,7 +155,7 @@ public:
                             int limit=-1, int offset=0,
                             const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder()) const;
 
-    QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap =0) const;
+    QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds) const;
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,
                                     int limit, int offset,
                                    const QList<QLandmarkSortOrder> &sortOrders)const;
@@ -172,10 +172,12 @@ public:
 
     Error error() const;
     QString errorString() const;
+    QMap<int, QLandmarkManager::Error> errorMap() const;
 
+    bool isFeatureSupported(ManagerFeature feature) const;
     SupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
     SupportLevel sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder) const;
-    bool isFeatureSupported(ManagerFeature feature) const;
+
 
     bool isReadOnly() const;
     bool isReadOnly(const QLandmarkId &id) const;

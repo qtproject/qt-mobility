@@ -114,7 +114,7 @@ Q_DECLARE_METATYPE(QTstDetailFieldList)
 Q_DECLARE_METATYPE(QList<QOrganizerItemLocalId>)
 
 /*!
- * For testing symbian backend via QOrganizerItemManager API. The target is
+ * For testing symbian backend via QOrganizerManager API. The target is
  * to implement test cases in a platform independent manner so that this test
  * module could be used also with other backends and potentially used as a
  * QtMobility auto test with as little porting work as possible.
@@ -172,8 +172,8 @@ private:
 private: // util functions
     void addManagers();
     void addItem_dataBasic(QString managerName, QString itemType);
-    void addItem_dataEventTimeRange(QString managerName, QString itemType);
-    void addItem_dataTodoTimeRange(QString managerName, QString itemType);
+    void addItem_dataEventTime(QString managerName, QString itemType);
+    void addItem_dataTodoTime(QString managerName, QString itemType);
     void addItem_dataReminders(QString managerName, QString itemType);
     QString testCaseName(QString testCase, QString managerName, QString itemType);
     bool parseDetails(QTstDetailFieldList detailsString, QList<QOrganizerItemDetail> &details);
@@ -183,7 +183,7 @@ private: // util functions
     bool compareItems(QOrganizerItem itemA, QOrganizerItem itemB, QStringList ignoredDetails = QStringList());    
 
 private:
-    QOrganizerItemManager *m_om;
+    QOrganizerManager *m_om;
     TTimeIntervalSeconds m_UTCOffset;
 };
 
@@ -191,7 +191,7 @@ private:
 void tst_SymbianOm::init()
 {
     QFETCH(QString, managerName);
-    m_om = new QOrganizerItemManager(managerName);
+    m_om = new QOrganizerManager(managerName);
 
     // Remove all organizer items first (Note: ignores possible errors)
     m_om->removeItems(m_om->itemIds());
@@ -222,7 +222,7 @@ void tst_SymbianOm::addSimpleItem()
 
     // Save
     QVERIFY(m_om->saveItem(&item));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(m_om->error(), QOrganizerManager::NoError);
     QVERIFY(item.id().localId() != QOrganizerItemLocalId());
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
@@ -230,7 +230,7 @@ void tst_SymbianOm::addSimpleItem()
     QList<QOrganizerItem> items;
     items.append(item);
     QVERIFY(m_om->saveItems(&items));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(m_om->error(), QOrganizerManager::NoError);
     foreach (QOrganizerItem listitem, items) {
         QVERIFY(listitem.id().localId() != QOrganizerItemLocalId());
         QVERIFY(item.id().managerUri().contains(m_om->managerName()));
@@ -238,7 +238,7 @@ void tst_SymbianOm::addSimpleItem()
 
     // Save with list parameter and error map parameter
     QVERIFY(m_om->saveItems(&items));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(m_om->error(), QOrganizerManager::NoError);
     QVERIFY(m_om->errorMap().count() == 0);
     foreach (QOrganizerItem listitem2, items) {
         QVERIFY(listitem2.id().localId() != QOrganizerItemLocalId());
@@ -259,7 +259,7 @@ void tst_SymbianOm::fetchSimpleItem()
 
     // Fetch
     QOrganizerItem fetchedItem = m_om->item(item.localId());
-    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(m_om->error(), QOrganizerManager::NoError);
     QCOMPARE(fetchedItem.id(), item.id());
     QVERIFY(fetchedItem.type() == QOrganizerItemType::TypeTodo);
 }
@@ -315,8 +315,8 @@ void tst_SymbianOm::fetchItems()
     }
 
     // Fetch ids
-    QList<QOrganizerItem> actualItems = m_om->items();
-    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QList<QOrganizerItem> actualItems = m_om->itemsForExport();
+    QVERIFY(m_om->error() == QOrganizerManager::NoError);
     
     // Verify
     QVERIFY(compareItemLists(actualItems, expectedItems));
@@ -335,7 +335,7 @@ void tst_SymbianOm::fetchItemIds()
 
     // Fetch ids
     QList<QOrganizerItemLocalId> actualIds = m_om->itemIds();
-    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QVERIFY(m_om->error() == QOrganizerManager::NoError);
     
     // Verify
     QVERIFY(actualIds.count() == expectedIds.count());
@@ -376,7 +376,7 @@ void tst_SymbianOm::uniqueIds()
     // Load and check that ids are the still the same
     for (int i=0; i<count; i++) {
         QOrganizerItem item = m_om->item(lids[i]);
-        QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+        QVERIFY(m_om->error() == QOrganizerManager::NoError);
         QVERIFY(lids[i] == item.localId());
         QVERIFY(guids[i] == item.guid());
     }
@@ -452,7 +452,7 @@ void tst_SymbianOm::timeStamp()
         
     // Load the same item again
     QOrganizerTodo item2 = m_om->item(item1.localId());
-    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QVERIFY(m_om->error() == QOrganizerManager::NoError);
     QOrganizerItemTimestamp timeStamp3 = item2.detail<QOrganizerItemTimestamp>();
     //qDebug() << "timestamp3" << timeStamp3;
     QVERIFY(timeStamp3.lastModified() == timeStamp2.lastModified());
@@ -462,14 +462,14 @@ void tst_SymbianOm::addNegative()
 {
     // Save with null pointer as item
     QVERIFY(!m_om->saveItem(0));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
+    QCOMPARE(m_om->error(), QOrganizerManager::BadArgumentError);
 
     QVERIFY(!m_om->saveItems(0));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
+    QCOMPARE(m_om->error(), QOrganizerManager::BadArgumentError);
 
     QList<QOrganizerItem> items;
     QVERIFY(!m_om->saveItems(&items));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
+    QCOMPARE(m_om->error(), QOrganizerManager::BadArgumentError);
 
     // TODO: try to save an event with non-existing (non-zero) id and check that it fails
 }
@@ -490,7 +490,7 @@ void tst_SymbianOm::addItem_data()
     QTest::addColumn<int>("expectedError");
     QTest::addColumn<QTstDetailFieldList>("detailsList");
 
-    QStringList managerNames = QOrganizerItemManager::availableManagers();
+    QStringList managerNames = QOrganizerManager::availableManagers();
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
     managerNames.removeAll("memory");
@@ -498,12 +498,12 @@ void tst_SymbianOm::addItem_data()
     foreach (QString managerName, managerNames) {
         // TypeEvent
         addItem_dataBasic(managerName, QOrganizerItemType::TypeEvent);
-        addItem_dataEventTimeRange(managerName, QOrganizerItemType::TypeEvent);
+        addItem_dataEventTime(managerName, QOrganizerItemType::TypeEvent);
         addItem_dataReminders(managerName, QOrganizerItemType::TypeEvent);
 
         // TypeTodo
         addItem_dataBasic(managerName, QOrganizerItemType::TypeTodo);
-        addItem_dataTodoTimeRange(managerName, QOrganizerItemType::TypeTodo);
+        addItem_dataTodoTime(managerName, QOrganizerItemType::TypeTodo);
         addItem_dataReminders(managerName, QOrganizerItemType::TypeTodo);
 
         // TypeJournal not implementable on symbian backend
@@ -522,7 +522,7 @@ void tst_SymbianOm::addItem()
     QFETCH(int, expectedError);
     QFETCH(QTstDetailFieldList, detailsList);
 
-    QOrganizerItemManager::Error expectedErrorCode = (QOrganizerItemManager::Error) expectedError; 
+    QOrganizerManager::Error expectedErrorCode = (QOrganizerManager::Error) expectedError; 
     QList<QOrganizerItemDetail> details;
     QVERIFY(parseDetails(detailsList, details));
 
@@ -532,7 +532,7 @@ void tst_SymbianOm::addItem()
         QVERIFY(item.saveDetail(&detail));
         /* TODO: enable the following and implement detail definitions to symbian backend 
         QOrganizerItemDetailDefinition def = m_om->detailDefinition(detail.definitionName(), item.type());
-        if (m_om->error() != QOrganizerItemManager::NoError) {
+        if (m_om->error() != QOrganizerManager::NoError) {
             // this detail is not supported, skip the test case
             QString skipMsg = QString("Detail ") + detail.definitionName() + QString(" not supported for item type " + item.type());
             QSKIP(skipMsg.toAscii(), SkipSingle);
@@ -541,7 +541,7 @@ void tst_SymbianOm::addItem()
     }
 
     // Add, fetch and verify result
-    if (expectedErrorCode == QOrganizerItemManager::NoError) {
+    if (expectedErrorCode == QOrganizerManager::NoError) {
         // Save
         QVERIFY(m_om->saveItem(&item));
         QCOMPARE(m_om->error(), expectedErrorCode);
@@ -550,7 +550,7 @@ void tst_SymbianOm::addItem()
 
         // Fetch item to verify everything was saved successfully
         QOrganizerItem savedItem = m_om->item(item.localId());
-        QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+        QCOMPARE(m_om->error(), QOrganizerManager::NoError);
         QVERIFY(verifyDetails(savedItem.details(), details));
     } else {
         // An error is expected -> Check that save fails and the error code
@@ -565,7 +565,7 @@ void tst_SymbianOm::signalEmission()
     QFETCH(QString, managerName);
     
     // Create a second manager
-    QOrganizerItemManager om2(managerName);
+    QOrganizerManager om2(managerName);
     
     // Connect signal spies
     qRegisterMetaType<QOrganizerItemLocalId>("QOrganizerItemLocalId");
@@ -653,7 +653,7 @@ void tst_SymbianOm::signalEmission()
 
 void tst_SymbianOm::invalidDetail()
 {
-    // NOTE: There is an auto test about this (tst_QOrganizerItemManager::itemValidation)
+    // NOTE: There is an auto test about this (tst_QOrganizerManager::itemValidation)
     // but its not working currently on symbian backend. This test can be removed
     // when it's compatible with symbian backend.
     QOrganizerTodo todo;
@@ -661,7 +661,7 @@ void tst_SymbianOm::invalidDetail()
     invalidDetail.setValue("foo", "bar");
     QVERIFY(todo.saveDetail(&invalidDetail));
     QVERIFY(!m_om->saveItem(&todo));
-    QVERIFY(m_om->error() == QOrganizerItemManager::InvalidDetailError);
+    QVERIFY(m_om->error() == QOrganizerManager::InvalidDetailError);
 }
 
 /*!
@@ -674,17 +674,17 @@ void tst_SymbianOm::addReminderToSingleInstance()
     repeatingEvent.setType(QOrganizerItemType::TypeEvent);
     
     // Add the start and end time
-    QOrganizerEventTimeRange timeRange;
+    QOrganizerEventTime timeRange;
     QDateTime startDateTime = QDateTime::currentDateTime();
     timeRange.setStartDateTime(startDateTime);
     timeRange.setEndDateTime(startDateTime.addSecs(3000));
     
     // Create a daily recurrence rule
     QOrganizerItemRecurrence recurrence;
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
     rrule.setLimit(3);
-    QSet<QOrganizerItemRecurrenceRule> list;
+    QSet<QOrganizerRecurrenceRule> list;
     list.insert(rrule);
     recurrence.setRecurrenceRules(list);
     
@@ -694,12 +694,12 @@ void tst_SymbianOm::addReminderToSingleInstance()
     QVERIFY(m_om->saveItem(&repeatingEvent));
     
     // Fetch the instances
-    QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
-    QVERIFY(itemInstances.count() == 3);
+    QList<QOrganizerItem> itemOccurrences = m_om->itemOccurrences(repeatingEvent, startDateTime, QDateTime(), 3);
+    QVERIFY(itemOccurrences.count() == 3);
 
 
     // Verify that reminder detail is empty
-    QOrganizerItem instance1 = itemInstances.at(0);
+    QOrganizerItem instance1 = itemOccurrences.at(0);
     QOrganizerItemReminder rptReminder = instance1.detail<QOrganizerItemReminder>();
     QVERIFY(rptReminder.isEmpty());
     
@@ -714,9 +714,9 @@ void tst_SymbianOm::addReminderToSingleInstance()
     QVERIFY(!rptReminder.isEmpty());
 
     // Verify that the other instances have not been modified
-    itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
-    QCOMPARE(itemInstances.count(), 3);
-    QVERIFY(itemInstances.at(1).detail<QOrganizerItemReminder>().isEmpty());
+    itemOccurrences = m_om->itemOccurrences(repeatingEvent, startDateTime, QDateTime(), 3);
+    QCOMPARE(itemOccurrences.count(), 3);
+    QVERIFY(itemOccurrences.at(1).detail<QOrganizerItemReminder>().isEmpty());
 }
 
 /*!
@@ -729,17 +729,17 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
     repeatingEvent.setType(QOrganizerItemType::TypeEvent);
     
     // Add the start and end time
-    QOrganizerEventTimeRange timeRange;
+    QOrganizerEventTime timeRange;
     QDateTime startDateTime = QDateTime::currentDateTime();
     timeRange.setStartDateTime(startDateTime);
     timeRange.setEndDateTime(startDateTime.addSecs(3000));
     
     // Create a daily recurrence rule
     QOrganizerItemRecurrence recurrence;
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
     rrule.setLimit(3);
-    QSet<QOrganizerItemRecurrenceRule> list;
+    QSet<QOrganizerRecurrenceRule> list;
     list.insert(rrule);
     recurrence.setRecurrenceRules(list);
     
@@ -754,11 +754,11 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
     QVERIFY(m_om->saveItem(&repeatingEvent));
     
     // Fetch the instances
-    QList<QOrganizerItem> itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
-    QVERIFY(itemInstances.count() == 3);
+    QList<QOrganizerItem> itemOccurrences = m_om->itemOccurrences(repeatingEvent, startDateTime, QDateTime(), 3);
+    QVERIFY(itemOccurrences.count() == 3);
     
     // Modify first instance by removing reminder detail and save
-    QOrganizerItem instance1 = itemInstances.at(0);
+    QOrganizerItem instance1 = itemOccurrences.at(0);
     QOrganizerItemReminder rptReminder = instance1.detail<QOrganizerItemReminder>();
     QCOMPARE(rptReminder.secondsBeforeStart(), repeatReminder.secondsBeforeStart());
     instance1.removeDetail(&rptReminder);
@@ -770,9 +770,9 @@ void tst_SymbianOm::removeReminderFromSingleInstance()
     QVERIFY(rptReminder.isEmpty());
 	
     // Check if the other instances are intact
-    itemInstances = m_om->itemInstances(repeatingEvent, startDateTime, QDateTime(), 3);
-    QCOMPARE(itemInstances.count(), 3);
-    QVERIFY(!itemInstances.at(1).detail<QOrganizerItemReminder>().isEmpty());
+    itemOccurrences = m_om->itemOccurrences(repeatingEvent, startDateTime, QDateTime(), 3);
+    QCOMPARE(itemOccurrences.count(), 3);
+    QVERIFY(!itemOccurrences.at(1).detail<QOrganizerItemReminder>().isEmpty());
 }
 
 void tst_SymbianOm::timezone()
@@ -821,7 +821,7 @@ void tst_SymbianOm::addManagers()
 {
     QTest::addColumn<QString>("managerName");
 
-    QStringList managerNames = QOrganizerItemManager::availableManagers();
+    QStringList managerNames = QOrganizerManager::availableManagers();
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
     managerNames.removeAll("memory");
@@ -852,23 +852,23 @@ void tst_SymbianOm::addItem_dataBasic(QString managerName, QString itemType)
         && itemType == QOrganizerItemType::TypeEvent) {
         QTest::newRow(testCaseName("item without details", managerName, itemType).toLatin1().constData())
             << managerName
-            << (int) QOrganizerItemManager::BadArgumentError // Symbian calendar server requires start time for an event
+            << (int) QOrganizerManager::BadArgumentError // Symbian calendar server requires start time for an event
             << QTstDetailFieldList(itemTypeDetails);
 
         QTest::newRow(testCaseName("item with description", managerName, itemType).toLatin1().constData())
             << managerName
-            << (int) QOrganizerItemManager::BadArgumentError // Symbian calendar server requires start time for an event
+            << (int) QOrganizerManager::BadArgumentError // Symbian calendar server requires start time for an event
             << (QTstDetailFieldList(itemTypeDetails)
                 << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president")));
     } else {
         QTest::newRow(testCaseName("item without details", managerName, itemType).toLatin1().constData())
             << managerName
-            << (int) QOrganizerItemManager::NoError
+            << (int) QOrganizerManager::NoError
             << QTstDetailFieldList(itemTypeDetails);
 
         QTest::newRow(testCaseName("item with description", managerName, itemType).toLatin1().constData())
             << managerName
-            << (int) QOrganizerItemManager::NoError
+            << (int) QOrganizerManager::NoError
             << (QTstDetailFieldList(itemTypeDetails)
                 << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president")));
     }
@@ -879,7 +879,7 @@ void tst_SymbianOm::addItem_dataBasic(QString managerName, QString itemType)
  * Note: the test cases are actually type dependent, because the time range
  * detail is type dependent.
  */
-void tst_SymbianOm::addItem_dataEventTimeRange(QString managerName, QString itemType)
+void tst_SymbianOm::addItem_dataEventTime(QString managerName, QString itemType)
 {
     // The default detail list contains only the type (event)
     QTstDetailFieldList itemTypeDetails = QTstDetailFieldList();
@@ -890,9 +890,9 @@ void tst_SymbianOm::addItem_dataEventTimeRange(QString managerName, QString item
 
     QTest::newRow(testCaseName("item with start time", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::NoError
         << (QTstDetailFieldList(itemTypeDetails)
-            << QTstDetailField(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime()));
+            << QTstDetailField(QOrganizerEventTime::DefinitionName, QOrganizerEventTime::FieldStartDateTime, QDateTime::currentDateTime()));
 
     // There is a bug in symbian calendar server: An end datetime that is
     // exactly the same as the start datetime is ignored.
@@ -902,25 +902,25 @@ void tst_SymbianOm::addItem_dataEventTimeRange(QString managerName, QString item
     if (managerName != m_managerNameSymbian) {
         QTest::newRow(testCaseName("item with start time = end time", managerName, itemType).toLatin1().constData())
             << managerName
-            << (int) QOrganizerItemManager::NoError
+            << (int) QOrganizerManager::NoError
             << (QTstDetailFieldList(itemTypeDetails)
-                << QTstDetailField(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
-                << QTstDetailField(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime()));
+                << QTstDetailField(QOrganizerEventTime::DefinitionName, QOrganizerEventTime::FieldStartDateTime, QDateTime::currentDateTime())
+                << QTstDetailField(QOrganizerEventTime::DefinitionName, QOrganizerEventTime::FieldEndDateTime, QDateTime::currentDateTime()));
     }
 
     QTest::newRow(testCaseName("item with start time < end time", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::NoError
         << (QTstDetailFieldList(itemTypeDetails)
-            << QTstDetailField(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
-            << QTstDetailField(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime().addSecs(3600)));
+            << QTstDetailField(QOrganizerEventTime::DefinitionName, QOrganizerEventTime::FieldStartDateTime, QDateTime::currentDateTime())
+            << QTstDetailField(QOrganizerEventTime::DefinitionName, QOrganizerEventTime::FieldEndDateTime, QDateTime::currentDateTime().addSecs(3600)));
 
     QTest::newRow(testCaseName("item with start time > end time", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::BadArgumentError
+        << (int) QOrganizerManager::BadArgumentError
         << (QTstDetailFieldList(itemTypeDetails)
-            << QTstDetailField(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addSecs(3600))
-            << QTstDetailField(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime()));
+            << QTstDetailField(QOrganizerEventTime::DefinitionName, QOrganizerEventTime::FieldStartDateTime, QDateTime::currentDateTime().addSecs(3600))
+            << QTstDetailField(QOrganizerEventTime::DefinitionName, QOrganizerEventTime::FieldEndDateTime, QDateTime::currentDateTime()));
 
     // Symbian calendar server makes the client process panic in case the start
     // time of an event (calendar event of type EAppt) is left empty.
@@ -931,16 +931,16 @@ void tst_SymbianOm::addItem_dataEventTimeRange(QString managerName, QString item
         // This test case matches the iCalendar specification
         QTest::newRow(testCaseName("item with end time", managerName, itemType).toLatin1().constData())
             << managerName
-            << (int) QOrganizerItemManager::NoError
+            << (int) QOrganizerManager::NoError
             << (QTstDetailFieldList(itemTypeDetails)
-                << QTstDetailField(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime().addSecs(3600)));
+                << QTstDetailField(QOrganizerEventTime::DefinitionName, QOrganizerEventTime::FieldEndDateTime, QDateTime::currentDateTime().addSecs(3600)));
     } else {
         // This test case is against the iCalendar specification
         QTest::newRow(testCaseName("item with end time", managerName, itemType).toLatin1().constData())
             << managerName
-            << (int) QOrganizerItemManager::BadArgumentError
+            << (int) QOrganizerManager::BadArgumentError
             << (QTstDetailFieldList(itemTypeDetails)
-                << QTstDetailField(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime().addSecs(3600)));
+                << QTstDetailField(QOrganizerEventTime::DefinitionName, QOrganizerEventTime::FieldEndDateTime, QDateTime::currentDateTime().addSecs(3600)));
     }
 }
 
@@ -952,19 +952,19 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
         QOrganizerItemType::FieldType,
         itemType);
 
-    QString timeRangeDefinition = QOrganizerEventTimeRange::DefinitionName;
-    QString fieldStartDateTime = QOrganizerEventTimeRange::FieldStartDateTime;
-    QString fieldEndDateTime = QOrganizerEventTimeRange::FieldEndDateTime;
+    QString timeRangeDefinition = QOrganizerEventTime::DefinitionName;
+    QString fieldStartDateTime = QOrganizerEventTime::FieldStartDateTime;
+    QString fieldEndDateTime = QOrganizerEventTime::FieldEndDateTime;
 
     if (itemType == QOrganizerItemType::TypeTodo) {
-        timeRangeDefinition = QLatin1String(QOrganizerTodoTimeRange::DefinitionName);
-        fieldStartDateTime = QLatin1String(QOrganizerTodoTimeRange::FieldStartDateTime);
-        fieldEndDateTime = QLatin1String(QOrganizerTodoTimeRange::FieldDueDateTime);
+        timeRangeDefinition = QLatin1String(QOrganizerTodoTime::DefinitionName);
+        fieldStartDateTime = QLatin1String(QOrganizerTodoTime::FieldStartDateTime);
+        fieldEndDateTime = QLatin1String(QOrganizerTodoTime::FieldDueDateTime);
     }
 
     QTest::newRow(testCaseName("item with reminder time delta", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::NoError
         << (QTstDetailFieldList(itemTypeDetails)
             << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with the president"))
             // start tomorrow
@@ -983,7 +983,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
     if (itemType != QOrganizerItemType::TypeTodo) {
         QTest::newRow(testCaseName("item with reminder starttime", managerName, itemType).toLatin1().constData())
             << managerName
-            << (int) QOrganizerItemManager::NoError
+            << (int) QOrganizerManager::NoError
             << (QTstDetailFieldList(itemTypeDetails)
                 << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with the president"))
                 // start after an hour
@@ -994,7 +994,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
 
     QTest::newRow(testCaseName("item with reminder starttime after 3 hours, 2 secs", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::NoError
         << (QTstDetailFieldList(itemTypeDetails)
             << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with the president"))
             // start now
@@ -1005,7 +1005,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
 
     QTest::newRow(testCaseName("item with reminder starttime after 30 days", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::NoError
         << (QTstDetailFieldList(itemTypeDetails)
             << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with the president"))
             // start after 30 days
@@ -1016,7 +1016,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
 
     QTest::newRow(testCaseName("item with reminder starttime after 365 days", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::NoError
         << (QTstDetailFieldList(itemTypeDetails)
             << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with the president"))
             // start after 365 days
@@ -1027,7 +1027,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
 
     QTest::newRow(testCaseName("item with reminder starttime in the past", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::BadArgumentError
         << (QTstDetailFieldList(itemTypeDetails)
             << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with the president"))
             // start now
@@ -1038,7 +1038,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
 
     QTest::newRow(testCaseName("item with reminder delta", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::NoError
         << (QTstDetailFieldList(itemTypeDetails)
             << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president"))
             // start tomorrow
@@ -1049,7 +1049,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
 
     QTest::newRow(testCaseName("item with small reminder delta", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::NoError
         << (QTstDetailFieldList(itemTypeDetails)
             << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president"))
             // start tomorrow
@@ -1060,7 +1060,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
 
     QTest::newRow(testCaseName("item with smallest reminder delta", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::NoError
         << (QTstDetailFieldList(itemTypeDetails)
             << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president"))
             // start tomorrow
@@ -1071,7 +1071,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
 
     QTest::newRow(testCaseName("item with reminder delta in past", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::BadArgumentError
         << (QTstDetailFieldList(itemTypeDetails)
             << QTstDetailField(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president"))
             // start now
@@ -1086,7 +1086,7 @@ void tst_SymbianOm::addItem_dataReminders(QString managerName, QString itemType)
  * Note: the test cases are actually type dependent, because the time range
  * detail is type dependent.
  */
-void tst_SymbianOm::addItem_dataTodoTimeRange(QString managerName, QString itemType)
+void tst_SymbianOm::addItem_dataTodoTime(QString managerName, QString itemType)
 {
     // The default detail list contains only the type (todo)
     QTstDetailFieldList itemTypeDetails;
@@ -1104,31 +1104,31 @@ void tst_SymbianOm::addItem_dataTodoTimeRange(QString managerName, QString itemT
     if (managerName != m_managerNameSymbian) {
         QTest::newRow(testCaseName("item with due time", managerName, itemType).toLatin1().constData())
             << managerName
-            << (int) QOrganizerItemManager::NoError
+            << (int) QOrganizerManager::NoError
             << (QTstDetailFieldList(itemTypeDetails)
-                << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime())); 
+                << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldDueDateTime, QDateTime::currentDateTime())); 
     }
 
     QTest::newRow(testCaseName("item with due time == not-before time", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::NoError
         << (QTstDetailFieldList(itemTypeDetails)
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime())
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime()));
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldDueDateTime, QDateTime::currentDateTime())
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime, QDateTime::currentDateTime()));
 
     QTest::newRow(testCaseName("item with due time > not-before time", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::NoError
         << (QTstDetailFieldList(itemTypeDetails)
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime()));
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime, QDateTime::currentDateTime()));
 
     QTest::newRow(testCaseName("item with due time < not-before time", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::BadArgumentError
+        << (int) QOrganizerManager::BadArgumentError
         << (QTstDetailFieldList(itemTypeDetails)
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime())
-            << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(1)));
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldDueDateTime, QDateTime::currentDateTime())
+            << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime, QDateTime::currentDateTime().addDays(1)));
 
     // There is a bug in symbian calendar server which makes the "not-before"
     // datetime to be ignored if no "due" datetime is defined
@@ -1138,17 +1138,17 @@ void tst_SymbianOm::addItem_dataTodoTimeRange(QString managerName, QString itemT
     if (managerName != m_managerNameSymbian) {
         QTest::newRow(testCaseName("item with not-before time", managerName, itemType).toLatin1().constData())
             << managerName
-            << (int) QOrganizerItemManager::NoError
+            << (int) QOrganizerManager::NoError
             << (QTstDetailFieldList(itemTypeDetails)
-                << QTstDetailField(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(1)));
+                << QTstDetailField(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime, QDateTime::currentDateTime().addDays(1)));
     }
 
-    QTstDetailField timeStart(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime());
-    QTstDetailField timeDue(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1));
+    QTstDetailField timeStart(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldStartDateTime, QDateTime::currentDateTime());
+    QTstDetailField timeDue(QOrganizerTodoTime::DefinitionName, QOrganizerTodoTime::FieldDueDateTime, QDateTime::currentDateTime().addDays(1));
     
     QTest::newRow(testCaseName("item with progress StatusNotStarted", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::NoError
         << (QTstDetailFieldList(itemTypeDetails)
             << timeStart
             << timeDue
@@ -1156,7 +1156,7 @@ void tst_SymbianOm::addItem_dataTodoTimeRange(QString managerName, QString itemT
     
     QTest::newRow(testCaseName("item with progress StatusInProgress", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::NoError
         << (QTstDetailFieldList(itemTypeDetails)
             << timeStart
             << timeDue
@@ -1164,7 +1164,7 @@ void tst_SymbianOm::addItem_dataTodoTimeRange(QString managerName, QString itemT
     
     QTest::newRow(testCaseName("item with progress StatusComplete", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::NoError
+        << (int) QOrganizerManager::NoError
         << (QTstDetailFieldList(itemTypeDetails)
             << timeStart
             << timeDue
@@ -1173,7 +1173,7 @@ void tst_SymbianOm::addItem_dataTodoTimeRange(QString managerName, QString itemT
 
     QTest::newRow(testCaseName("item with progress StatusComplete, no finished date", managerName, itemType).toLatin1().constData())
         << managerName
-        << (int) QOrganizerItemManager::BadArgumentError
+        << (int) QOrganizerManager::BadArgumentError
         << (QTstDetailFieldList(itemTypeDetails)
             << timeStart
             << timeDue
@@ -1182,7 +1182,7 @@ void tst_SymbianOm::addItem_dataTodoTimeRange(QString managerName, QString itemT
     if (managerName != m_managerNameSymbian) {
         QTest::newRow(testCaseName("item with progress percentage", managerName, itemType).toLatin1().constData())
             << managerName
-            << (int) QOrganizerItemManager::NoError
+            << (int) QOrganizerManager::NoError
             << (QTstDetailFieldList(itemTypeDetails)
                 << timeStart
                 << timeDue
@@ -1190,7 +1190,7 @@ void tst_SymbianOm::addItem_dataTodoTimeRange(QString managerName, QString itemT
     } else {
         QTest::newRow(testCaseName("item with progress percentage", managerName, itemType).toLatin1().constData())
             << managerName
-            << (int) QOrganizerItemManager::InvalidDetailError
+            << (int) QOrganizerManager::InvalidDetailError
             << (QTstDetailFieldList(itemTypeDetails)
                 << timeStart
                 << timeDue

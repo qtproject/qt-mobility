@@ -64,7 +64,7 @@ Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerCollectionLocal
 Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerCollectionId& id);
 #endif
 
-class QOrganizerItemManagerEngine;
+class QOrganizerManagerEngine;
 class QOrganizerCollectionEngineLocalId;
 
 class QOrganizerCollectionId;
@@ -96,7 +96,7 @@ private:
     Q_ORGANIZER_EXPORT friend QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& id);
 #endif
     Q_ORGANIZER_EXPORT friend uint qHash(const QOrganizerCollectionLocalId& key);
-    friend class QOrganizerItemManagerEngine;
+    friend class QOrganizerManagerEngine;
 };
 
 class QOrganizerCollectionIdPrivate;

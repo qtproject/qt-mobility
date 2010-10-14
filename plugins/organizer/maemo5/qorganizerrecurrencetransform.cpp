@@ -131,7 +131,7 @@ CRecurrence* OrganizerRecurrenceTransform::crecurrence(bool *success) const
     return retn;
 }
 
-void OrganizerRecurrenceTransform::addQOrganizerItemRecurrenceRule(const QOrganizerItemRecurrenceRule& rule)
+void OrganizerRecurrenceTransform::addQOrganizerRecurrenceRule(const QOrganizerRecurrenceRule& rule)
 {
     QString icalRule = qrecurrenceRuleToIcalRecurrenceRule(rule);
 
@@ -146,7 +146,7 @@ void OrganizerRecurrenceTransform::addQOrganizerItemRecurrenceRule(const QOrgani
     m_rtype = m_rtype ? ( ruleRtype < m_rtype ? ruleRtype : m_rtype ) : ruleRtype;
 }
 
-void OrganizerRecurrenceTransform::addQOrganizerItemExceptionRule(const QOrganizerItemRecurrenceRule& rule)
+void OrganizerRecurrenceTransform::addQOrganizerItemExceptionRule(const QOrganizerRecurrenceRule& rule)
 {
     QString icalRule = qrecurrenceRuleToIcalRecurrenceRule(rule);
 
@@ -163,7 +163,7 @@ void OrganizerRecurrenceTransform::addQOrganizerItemRecurrenceDate(const QDate &
     m_vRecDateList.push_back(QString::number(QDateTime(date, QTime(0, 0, 0)).toTime_t()).toStdString());
 
     if (!m_rtype)
-        m_rtype = qfrequencyToRtype(QOrganizerItemRecurrenceRule::Yearly);
+        m_rtype = qfrequencyToRtype(QOrganizerRecurrenceRule::Yearly);
 }
 
 void OrganizerRecurrenceTransform::addQOrganizerItemExceptionDate(const QDate &date)
@@ -172,7 +172,7 @@ void OrganizerRecurrenceTransform::addQOrganizerItemExceptionDate(const QDate &d
     m_vExceptionDateList.push_back(QString::number(QDateTime(date, QTime(0, 0, 0)).toTime_t()).toStdString());
 }
 
-QString OrganizerRecurrenceTransform::qrecurrenceRuleToIcalRecurrenceRule(const QOrganizerItemRecurrenceRule& rule) const
+QString OrganizerRecurrenceTransform::qrecurrenceRuleToIcalRecurrenceRule(const QOrganizerRecurrenceRule& rule) const
 {
     QStringList icalRule;
 
@@ -185,7 +185,7 @@ QString OrganizerRecurrenceTransform::qrecurrenceRuleToIcalRecurrenceRule(const 
 
     icalRule << qintervalToIcalInterval(rule.interval());
 
-    QSet<QOrganizerItemRecurrenceRule::Month> months(rule.monthsOfYear());
+    QSet<QOrganizerRecurrenceRule::Month> months(rule.monthsOfYear());
     if (!months.isEmpty())
         icalRule << qmonthsToIcalByMonth(months);
 
@@ -217,14 +217,14 @@ QString OrganizerRecurrenceTransform::qrecurrenceRuleToIcalRecurrenceRule(const 
     return icalRule.join(";");
 }
 
-QString OrganizerRecurrenceTransform::qfrequencyToIcalFrequency(QOrganizerItemRecurrenceRule::Frequency frequency) const
+QString OrganizerRecurrenceTransform::qfrequencyToIcalFrequency(QOrganizerRecurrenceRule::Frequency frequency) const
 {
     switch( frequency )
     {
-    case QOrganizerItemRecurrenceRule::Daily: return QString("FREQ=DAILY");
-    case QOrganizerItemRecurrenceRule::Weekly: return QString("FREQ=WEEKLY");
-    case QOrganizerItemRecurrenceRule::Monthly: return QString("FREQ=MONTHLY");
-    case QOrganizerItemRecurrenceRule::Yearly: return QString("FREQ=YEARLY");
+    case QOrganizerRecurrenceRule::Daily: return QString("FREQ=DAILY");
+    case QOrganizerRecurrenceRule::Weekly: return QString("FREQ=WEEKLY");
+    case QOrganizerRecurrenceRule::Monthly: return QString("FREQ=MONTHLY");
+    case QOrganizerRecurrenceRule::Yearly: return QString("FREQ=YEARLY");
     default: return QString("FREQ=WEEKLY"); // invalid frequency, assume weekly
     }
 }
@@ -276,10 +276,10 @@ QString OrganizerRecurrenceTransform::qdaysOfYearToIcalByYearDay(const QSet<int>
     return QString("BYYEARDAY=") + listOfNumbers(daysOfYear);
 }
 
-QString OrganizerRecurrenceTransform::qmonthsToIcalByMonth(const QSet<QOrganizerItemRecurrenceRule::Month> &months) const
+QString OrganizerRecurrenceTransform::qmonthsToIcalByMonth(const QSet<QOrganizerRecurrenceRule::Month> &months) const
 {
     QSet<int> monthList;
-    foreach (QOrganizerItemRecurrenceRule::Month month, months)
+    foreach (QOrganizerRecurrenceRule::Month month, months)
         monthList << static_cast<int>(month);
     return QString("BYMONTH=") + listOfNumbers(monthList);
 }
@@ -307,7 +307,7 @@ QString OrganizerRecurrenceTransform::listOfNumbers(const QSet<int> &list) const
     return slist.join(",");
 }
 
-int OrganizerRecurrenceTransform::qfrequencyToRtype(QOrganizerItemRecurrenceRule::Frequency frequency) const
+int OrganizerRecurrenceTransform::qfrequencyToRtype(QOrganizerRecurrenceRule::Frequency frequency) const
 {
     // The recursion types the native calendar application
     // uses are found by experiment:
@@ -318,10 +318,10 @@ int OrganizerRecurrenceTransform::qfrequencyToRtype(QOrganizerItemRecurrenceRule
 
     switch( frequency )
     {
-    case QOrganizerItemRecurrenceRule::Daily: return NATIVE_CAL_APP_DAILY;
-    case QOrganizerItemRecurrenceRule::Weekly: return NATIVE_CAL_APP_WEEKLY;
-    case QOrganizerItemRecurrenceRule::Monthly: return NATIVE_CAL_APP_MONTHLY;
-    case QOrganizerItemRecurrenceRule::Yearly: return NATIVE_CAL_APP_YEARLY;
+    case QOrganizerRecurrenceRule::Daily: return NATIVE_CAL_APP_DAILY;
+    case QOrganizerRecurrenceRule::Weekly: return NATIVE_CAL_APP_WEEKLY;
+    case QOrganizerRecurrenceRule::Monthly: return NATIVE_CAL_APP_MONTHLY;
+    case QOrganizerRecurrenceRule::Yearly: return NATIVE_CAL_APP_YEARLY;
     default: return NATIVE_CAL_APP_YEARLY;
     }
 }
@@ -344,7 +344,7 @@ void OrganizerRecurrenceTransform::transformToQrecurrence(CRecurrence *crecurren
         CRecurrenceRule *rule = *i;
         if (rule)
         {
-            QOrganizerItemRecurrenceRule qrule(icalRecurrenceRuleToQrecurrenceRule(rule));
+            QOrganizerRecurrenceRule qrule(icalRecurrenceRuleToQrecurrenceRule(rule));
             if (rule->getRuleType() == RECURRENCE_RULE)
                 m_lRecurrenceRules << qrule;
             else if(rule->getRuleType() == EXCEPTION_RULE)
@@ -365,12 +365,12 @@ void OrganizerRecurrenceTransform::transformToQrecurrence(CRecurrence *crecurren
         m_lExceptionDates << QDateTime::fromTime_t(QString::fromStdString(*exceptionDate).toInt()).date();
 }
 
-QSet<QOrganizerItemRecurrenceRule> OrganizerRecurrenceTransform::recurrenceRules() const
+QSet<QOrganizerRecurrenceRule> OrganizerRecurrenceTransform::recurrenceRules() const
 {
     return m_lRecurrenceRules;
 }
 
-QSet<QOrganizerItemRecurrenceRule> OrganizerRecurrenceTransform::exceptionRules() const
+QSet<QOrganizerRecurrenceRule> OrganizerRecurrenceTransform::exceptionRules() const
 {
     return m_lExceptionRules;
 }
@@ -385,9 +385,9 @@ QSet<QDate> OrganizerRecurrenceTransform::exceptionDates() const
     return m_lExceptionDates;
 }
 
-QOrganizerItemRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQrecurrenceRule(CRecurrenceRule *rule ) const
+QOrganizerRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQrecurrenceRule(CRecurrenceRule *rule ) const
 {
-    QOrganizerItemRecurrenceRule retn;
+    QOrganizerRecurrenceRule retn;
     // Parse rrule
     if (!rule->rruleParser(rule->getRrule()))
         return retn; // parsing failed
@@ -407,11 +407,11 @@ QOrganizerItemRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQ
 
     retn.setInterval(rule->getInterval());
 
-    QSet<QOrganizerItemRecurrenceRule::Month> qMonths;
+    QSet<QOrganizerRecurrenceRule::Month> qMonths;
     std::vector< short > months = rule->getMonth();
     std::vector< short >::const_iterator month;
     for (month = months.begin(); month != months.end(); ++month)
-        qMonths << static_cast<QOrganizerItemRecurrenceRule::Month>(*month);
+        qMonths << static_cast<QOrganizerRecurrenceRule::Month>(*month);
     retn.setMonthsOfYear(qMonths);
 
     QSet<Qt::DayOfWeek> qDaysOfWeek;
@@ -462,17 +462,17 @@ QOrganizerItemRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQ
     return retn;
 }
 
-QOrganizerItemRecurrenceRule::Frequency OrganizerRecurrenceTransform::icalFrequencyToQfrequency(FREQUENCY frequency) const
+QOrganizerRecurrenceRule::Frequency OrganizerRecurrenceTransform::icalFrequencyToQfrequency(FREQUENCY frequency) const
 {
     switch( frequency )
     {
-    case DAILY_RECURRENCE: return QOrganizerItemRecurrenceRule::Daily;
-    case WEEKLY_RECURRENCE: return QOrganizerItemRecurrenceRule::Weekly;
-    case MONTHLY_RECURRENCE: return QOrganizerItemRecurrenceRule::Monthly;
-    case YEARLY_RECURRENCE: return QOrganizerItemRecurrenceRule::Yearly;
+    case DAILY_RECURRENCE: return QOrganizerRecurrenceRule::Daily;
+    case WEEKLY_RECURRENCE: return QOrganizerRecurrenceRule::Weekly;
+    case MONTHLY_RECURRENCE: return QOrganizerRecurrenceRule::Monthly;
+    case YEARLY_RECURRENCE: return QOrganizerRecurrenceRule::Yearly;
     default:
         // No corresponding frequencies defined for the rest of cases
-        return QOrganizerItemRecurrenceRule::Daily;
+        return QOrganizerRecurrenceRule::Daily;
     }
 }
 
