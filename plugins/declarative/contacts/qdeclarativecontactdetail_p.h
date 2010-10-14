@@ -87,6 +87,7 @@ public:
         ContactTag,
         ContactTimestamp,
         ContactUrl,
+        ContactHobby,
         ContactCustomizedDetail = 100
     };
 

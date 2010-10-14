@@ -69,5 +69,5 @@
 #include "qdeclarativecontacttag_p.h"
 #include "qdeclarativecontacttimestamp_p.h"
 #include "qdeclarativecontacturl_p.h"
-
+#include "qdeclarativecontacthobby_p.h"
 #endif

@@ -53,6 +53,7 @@ HEADERS += ../../../plugins/declarative/contacts/qdeclarativecontactdetail_p.h\
            ../../../plugins/declarative/contacts/details/qdeclarativecontactglobalpresence_p.h\
            ../../../plugins/declarative/contacts/details/qdeclarativecontactguid_p.h\
            ../../../plugins/declarative/contacts/details/qdeclarativecontacturl_p.h \
+           ../../../plugins/declarative/contacts/details/qdeclarativecontacthobby_p.h \
            ../../../plugins/declarative/contacts/filters/qdeclarativecontactactionfilter_p.h\
       	   ../../../plugins/declarative/contacts/filters/qdeclarativecontactintersectionfilter_p.h \
            ../../../plugins/declarative/contacts/filters/qdeclarativecontactchangelogfilter_p.h	\
