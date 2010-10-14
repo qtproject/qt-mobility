@@ -247,6 +247,12 @@ void QDeclarativeOrganizerEvent::setLocation(const QString& loc)
     }
 }
 
+QDeclarativeOrganizerItemRecurrence* QDeclarativeOrganizerEvent::recurrence()
+{
+    QDeclarativeOrganizerItemDetail* detail = d->detailByDefinitionName(QDeclarativeOrganizerItemRecurrence::DetailName);
+    return static_cast<QDeclarativeOrganizerItemRecurrence*>(detail);
+}
+
 QDeclarativeOrganizerEventOccurrence::QDeclarativeOrganizerEventOccurrence(QObject *parent)
     :QDeclarativeOrganizerItem(parent)
 {
@@ -364,6 +370,13 @@ QDeclarativeOrganizerTodo::QDeclarativeOrganizerTodo(QObject *parent)
     m_todo = static_cast<QOrganizerTodo*>(&d->m_item);
     connect(this, SIGNAL(valueChanged()), SIGNAL(itemChanged()));
 }
+
+QDeclarativeOrganizerItemRecurrence* QDeclarativeOrganizerTodo::recurrence()
+{
+    QDeclarativeOrganizerItemDetail* detail = d->detailByDefinitionName(QDeclarativeOrganizerItemRecurrence::DetailName);
+    return static_cast<QDeclarativeOrganizerItemRecurrence*>(detail);
+}
+
 
 void QDeclarativeOrganizerTodo::setStartDateTime(const QDateTime& datetime)
 {

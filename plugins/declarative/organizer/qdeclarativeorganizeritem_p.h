@@ -116,6 +116,7 @@ class QDeclarativeOrganizerEvent : public QDeclarativeOrganizerItem
     Q_PROPERTY(bool timeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
     Q_PROPERTY(QString location READ location WRITE setLocation NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemPriority::Priority priority READ priority WRITE setPriority NOTIFY valueChanged)
+    Q_PROPERTY(QDeclarativeOrganizerItemRecurrence* recurrence READ recurrence NOTIFY valueChanged)
 public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "event");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "events");
@@ -132,6 +133,8 @@ public:
     QDeclarativeOrganizerItemPriority::Priority priority() const;
     QString location() const;
     void setLocation(const QString& loc);
+
+    QDeclarativeOrganizerItemRecurrence* recurrence();
 
 signals:
     void valueChanged();
@@ -226,7 +229,7 @@ class QDeclarativeOrganizerTodo : public QDeclarativeOrganizerItem
     Q_PROPERTY(int progressPercentage READ progressPercentage WRITE setProgressPercentage NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerTodoProgress::Status status READ status WRITE setStatus NOTIFY valueChanged)
     Q_PROPERTY(QDateTime finishedDateTime READ finishedDateTime WRITE setFinishedDateTime NOTIFY valueChanged)
-
+    Q_PROPERTY(QDeclarativeOrganizerItemRecurrence* recurrence READ recurrence NOTIFY valueChanged)
 public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "todo");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "todos");
@@ -251,6 +254,8 @@ public:
 
     void setFinishedDateTime(const QDateTime& finishedDateTime);
     QDateTime finishedDateTime() const;
+    QDeclarativeOrganizerItemRecurrence* recurrence();
+
 signals:
     void valueChanged();
 private:
