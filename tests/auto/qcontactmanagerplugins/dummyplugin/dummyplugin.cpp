@@ -56,6 +56,7 @@ QTM_USE_NAMESPACE
 
 class DummyEngine : public QContactManagerEngine
 {
+    Q_OBJECT
 public:
     DummyEngine(const QMap<QString, QString>& parameters, QContactManager::Error* error);
     DummyEngine(const DummyEngine& other);
@@ -392,4 +393,4 @@ QList<QVariant::Type> DummyEngine::supportedDataTypes() const
     return st;
 }
 
-#include "moc_dummyplugin.cpp"
+#include "dummyplugin.moc"

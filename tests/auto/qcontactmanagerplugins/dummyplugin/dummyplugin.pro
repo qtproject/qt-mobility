@@ -10,6 +10,8 @@ INCLUDEPATH += ../../../../src/contacts \
                ../../../../src/contacts/requests \
                ../../../../src/contacts/filters
 
+INCLUDEPATH += $$MOC_DIR
+
 CONFIG += mobility
 MOBILITY = contacts
 SOURCES += dummyplugin.cpp
