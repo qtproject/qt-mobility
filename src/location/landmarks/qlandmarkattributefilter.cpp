@@ -92,7 +92,7 @@ QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
 
 /*!
     \class QLandmarkAttributeFilter
-    \brief The QLandmarkAttributeFilter class provides filtering based on generic landmark attributes.
+    \brief The QLandmarkAttributeFilter class provides filtering based on various landmark attributes.
 
     \inmodule QtLocation
 
@@ -171,12 +171,10 @@ QVariant QLandmarkAttributeFilter::attribute(const QString &key) const
 /*!
     Sets the \a value of the attribute corresponding to \a key.
 
-    Setting an invalid QVariant to an attribute means that the filter
-    will match any landmark that has that attribute, regardless of its value.
-    Setting a valid QVariant means that the filter will match only landmarks
-    whose values match that of \a value.  For string based attributes a
-    set of matching \a flags can be provided to define how the string values should be matched.
+    For string based attributes a set of matching \a flags can be provided
+    to define how the string values should be matched.
     For non-string based attributes the \a flags are ignored.
+    The beahviour of the filter is undefined if an invalid QVariant is used as a \a value
 */
 void QLandmarkAttributeFilter::setAttribute(const QString &key, const QVariant &value, QLandmarkFilter::MatchFlags flags)
 {
@@ -188,12 +186,10 @@ void QLandmarkAttributeFilter::setAttribute(const QString &key, const QVariant &
 /*!
     Sets the \a value of all the attributes correponding to those in \a keys.
 
-    Setting an invalid QVariant to an attribute means that the filter
-    will match any landmark that has that attribute, regardless of its value.
-    Setting a valid QVariant means that the filter will match only landmarks
-    whose values match that of \a value.  For string based attributes a
+    For string based attributes a
     set of matching \a flags can be provided to define how the string values should be matched.
     For non-string based attributes the \a flags are ignored.
+    The behaviour of the filter is undefined if an invalid QVariant is used as \a value.
 */
 void QLandmarkAttributeFilter::setAttributes(const QStringList &keys, const QVariant &value, QLandmarkFilter::MatchFlags flags)
 {

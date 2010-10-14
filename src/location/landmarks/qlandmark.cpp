@@ -175,8 +175,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
 
     \ingroup landmarks-main
 
-    \brief The QLandmark class represents a location or point of interest
-           of some significance.
+    \brief The QLandmark class represents a point of interest.
 
 
     Each landmark consists of a number of core properties such as name, coordinates,
