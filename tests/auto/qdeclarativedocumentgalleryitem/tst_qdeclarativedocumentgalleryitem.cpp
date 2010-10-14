@@ -275,7 +275,6 @@ void tst_QDeclarativeDocumentGalleryItem::itemId_data()
 
     QTest::newRow("Null -> 45")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {}\n")
             << QVariant()
@@ -283,7 +282,6 @@ void tst_QDeclarativeDocumentGalleryItem::itemId_data()
 
     QTest::newRow("45 -> 45")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem { item: 45 }\n")
             << QVariant(45)
@@ -291,7 +289,6 @@ void tst_QDeclarativeDocumentGalleryItem::itemId_data()
 
     QTest::newRow("45 -> file:///path/to/file.ext")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem { item: 45 }\n")
             << QVariant(45)
@@ -299,7 +296,6 @@ void tst_QDeclarativeDocumentGalleryItem::itemId_data()
 
     QTest::newRow("file:///path/to/file.ext -> Null")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem { item: \"file:///path/to/file.ext\" }\n")
             << QVariant(QLatin1String("file:///path/to/file.ext"))
@@ -349,7 +345,6 @@ void tst_QDeclarativeDocumentGalleryItem::properties_data()
 
     QTest::newRow("[] -> [ title, fileName ]")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -359,7 +354,6 @@ void tst_QDeclarativeDocumentGalleryItem::properties_data()
 
     QTest::newRow("[ title, fileName ] -> [ title, fileName ]")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -370,7 +364,6 @@ void tst_QDeclarativeDocumentGalleryItem::properties_data()
 
     QTest::newRow("[ title, fileName ] -> [ count ]")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -416,7 +409,6 @@ void tst_QDeclarativeDocumentGalleryItem::autoUpdate_data()
 
     QTest::newRow("Default -> true")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -426,7 +418,6 @@ void tst_QDeclarativeDocumentGalleryItem::autoUpdate_data()
 
     QTest::newRow("true -> false")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -437,7 +428,6 @@ void tst_QDeclarativeDocumentGalleryItem::autoUpdate_data()
 
     QTest::newRow("false -> true")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -448,7 +438,6 @@ void tst_QDeclarativeDocumentGalleryItem::autoUpdate_data()
 
     QTest::newRow("true -> true")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -459,7 +448,6 @@ void tst_QDeclarativeDocumentGalleryItem::autoUpdate_data()
 
     QTest::newRow("false -> false")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -499,7 +487,6 @@ void tst_QDeclarativeDocumentGalleryItem::autoUpdate()
 void tst_QDeclarativeDocumentGalleryItem::disableAutoUpdateFinished()
 {
     const QByteArray qml(
-        "import Qt 4.7\n"
         "import QtMobility.gallery 1.1\n"
         "DocumentGalleryItem {\n"
             "item: 12\n"
@@ -528,7 +515,6 @@ void tst_QDeclarativeDocumentGalleryItem::disableAutoUpdateFinished()
 void tst_QDeclarativeDocumentGalleryItem::disableAutoUpdateIdle()
 {
     const QByteArray qml(
-        "import Qt 4.7\n"
         "import QtMobility.gallery 1.1\n"
         "DocumentGalleryItem {\n"
             "item: 12\n"
@@ -557,7 +543,6 @@ void tst_QDeclarativeDocumentGalleryItem::disableAutoUpdateIdle()
 void tst_QDeclarativeDocumentGalleryItem::disableAutoUpdateActive()
 {
     const QByteArray qml(
-        "import Qt 4.7\n"
         "import QtMobility.gallery 1.1\n"
         "DocumentGalleryItem {\n"
             "item: 12\n"
@@ -591,7 +576,6 @@ void tst_QDeclarativeDocumentGalleryItem::disableAutoUpdateActive()
 void tst_QDeclarativeDocumentGalleryItem::asyncResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -617,7 +601,6 @@ void tst_QDeclarativeDocumentGalleryItem::asyncResponse()
 void tst_QDeclarativeDocumentGalleryItem::cancelAsyncResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -643,7 +626,6 @@ void tst_QDeclarativeDocumentGalleryItem::cancelAsyncResponse()
 void tst_QDeclarativeDocumentGalleryItem::cancelIdleResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12; autoUpdate: true }\n");
 
@@ -669,7 +651,6 @@ void tst_QDeclarativeDocumentGalleryItem::cancelIdleResponse()
 void tst_QDeclarativeDocumentGalleryItem::cancelPendingResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -699,7 +680,6 @@ void tst_QDeclarativeDocumentGalleryItem::cancelPendingResponse()
 void tst_QDeclarativeDocumentGalleryItem::deferExecuteCanceledResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -732,7 +712,6 @@ void tst_QDeclarativeDocumentGalleryItem::deferExecuteCanceledResponse()
 void tst_QDeclarativeDocumentGalleryItem::clear()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -761,7 +740,6 @@ void tst_QDeclarativeDocumentGalleryItem::clear()
 void tst_QDeclarativeDocumentGalleryItem::clearPendingResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -797,7 +775,6 @@ void tst_QDeclarativeDocumentGalleryItem::error_data()
 
     QTest::newRow("Specific error message")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem { item: 0 }\n")
             << int(QDocumentGallery::ConnectionError)
@@ -808,7 +785,6 @@ void tst_QDeclarativeDocumentGalleryItem::error_data()
 
     QTest::newRow("Generic connection Error")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem { item: 0 }\n")
             << int(QDocumentGallery::ConnectionError)
@@ -819,7 +795,6 @@ void tst_QDeclarativeDocumentGalleryItem::error_data()
 
     QTest::newRow("Generic rootItem error")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem { item: 0 }\n")
             << int(QDocumentGallery::ItemIdError)
@@ -830,7 +805,6 @@ void tst_QDeclarativeDocumentGalleryItem::error_data()
 
     QTest::newRow("Unhandled error code")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem { item: 0 }\n")
             << int(QDocumentGallery::NoGallery)
@@ -893,7 +867,6 @@ void tst_QDeclarativeDocumentGalleryItem::progress()
     QFETCH(qreal, normalizedProgress);
 
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -917,7 +890,6 @@ void tst_QDeclarativeDocumentGalleryItem::progress()
 void tst_QDeclarativeDocumentGalleryItem::available()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -944,7 +916,6 @@ void tst_QDeclarativeDocumentGalleryItem::available()
 void tst_QDeclarativeDocumentGalleryItem::itemUrl()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -971,7 +942,6 @@ void tst_QDeclarativeDocumentGalleryItem::itemUrl()
 void tst_QDeclarativeDocumentGalleryItem::itemType()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -998,7 +968,6 @@ void tst_QDeclarativeDocumentGalleryItem::itemType()
 void tst_QDeclarativeDocumentGalleryItem::metaData()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem {\n"
                 "item: 12\n"
@@ -1017,6 +986,7 @@ void tst_QDeclarativeDocumentGalleryItem::metaData()
 
     QScopedPointer<QObject> object(component.create());
     QVERIFY(object);
+    QVERIFY(gallery.response());
 
     QObject *metaData = object->property("metaData").value<QObject *>();
     QVERIFY(metaData);

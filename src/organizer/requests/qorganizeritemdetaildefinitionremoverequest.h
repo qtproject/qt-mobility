@@ -43,14 +43,14 @@
 #define QORGANIZERITEMDETAILDEFINITIONREMOVEREQUEST_H
 
 #include "qtorganizerglobal.h"
-#include "qorganizeritemabstractrequest.h"
+#include "qorganizerabstractrequest.h"
 
 #include <QStringList>
 
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemDetailDefinitionRemoveRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemDetailDefinitionRemoveRequest : public QOrganizerItemAbstractRequest
+class Q_ORGANIZER_EXPORT QOrganizerItemDetailDefinitionRemoveRequest : public QOrganizerAbstractRequest
 {
     Q_OBJECT
 
@@ -65,11 +65,11 @@ public:
     QString itemType() const;
 
     /* Results */
-    QMap<int, QOrganizerItemManager::Error> errorMap() const;
+    QMap<int, QOrganizerManager::Error> errorMap() const;
 
 private:
     Q_DISABLE_COPY(QOrganizerItemDetailDefinitionRemoveRequest)
-    friend class QOrganizerItemManagerEngine;
+    friend class QOrganizerManagerEngine;
     Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemDetailDefinitionRemoveRequest)
 };
 

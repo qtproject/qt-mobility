@@ -129,6 +129,14 @@ QT_BEGIN_NAMESPACE
     This handler is called when the mute state has changed.
 */
 
+
+/*!
+    \qmlsignal SoundEffect::loadedChanged()
+
+    This handler is called when the audio source is loaded and ready for play.
+*/
+
+
 /*!
     \internal
 */
@@ -139,11 +147,17 @@ QSoundEffect::QSoundEffect(QObject *parent) :
     d = new QSoundEffectPrivate(this);
     connect(d, SIGNAL(volumeChanged()), SIGNAL(volumeChanged()));
     connect(d, SIGNAL(mutedChanged()), SIGNAL(mutedChanged()));
+    connect(d, SIGNAL(loadedChanged()), SIGNAL(loadedChanged()));
 }
 
 QSoundEffect::~QSoundEffect()
 {
     d->deleteLater();
+}
+
+QStringList QSoundEffect::supportedMimeTypes()
+{
+    return QSoundEffectPrivate::supportedMimeTypes();
 }
 
 QUrl QSoundEffect::source() const
@@ -161,18 +175,20 @@ void QSoundEffect::setSource(const QUrl &url)
     emit sourceChanged();
 }
 
-int QSoundEffect::loops() const
+int QSoundEffect::loopCount() const
 {
     return d->loopCount();
 }
 
-void QSoundEffect::setLoops(int loopCount)
+void QSoundEffect::setLoopCount(int loopCount)
 {
+    if (loopCount == 0)
+        loopCount = 1;
     if (d->loopCount() == loopCount)
         return;
 
     d->setLoopCount(loopCount);
-    emit loopsChanged();
+    emit loopCountChanged();
 }
 
 int QSoundEffect::volume() const
@@ -203,9 +219,27 @@ void QSoundEffect::setMuted(bool muted)
     emit mutedChanged();
 }
 
+bool QSoundEffect::isLoaded() const
+{
+    return d->isLoaded();
+}
+
 void QSoundEffect::play()
 {
     d->play();
+}
+
+/*!
+  \qmlmethod SoundEffect::stop()
+
+  Stop current playback.
+  Note that if the backend is PulseAudio, due to the limitation of the underlying API,
+  tis stop will only prevent next looping but will not be able to stop current playback immediately.
+
+ */
+void QSoundEffect::stop()
+{
+    d->stop();
 }
 
 QT_END_NAMESPACE

@@ -56,10 +56,6 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
    \inmodule QtSystemInfo
 
    \brief The QSystemNetworkInfo class provides access to network information.
-
-    \fn QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
-
-        Constructs a QSystemNetworkInfo object with the given \a parent.
 */
 
 
@@ -264,6 +260,7 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
 
 /*!
  \property QSystemNetworkInfo::currentMode
+ \brief The current network mode.
 
     Returns the current active mode. If more than one mode is active, returns the
      default or preferred mode. If no modes are active, returns UnknownMode.

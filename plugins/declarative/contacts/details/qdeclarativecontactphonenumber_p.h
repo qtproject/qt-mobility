@@ -51,30 +51,141 @@ class  QDeclarativeContactPhoneNumber : public QDeclarativeContactDetail
     Q_OBJECT
 
     Q_PROPERTY(QString number READ number WRITE setNumber NOTIFY fieldsChanged)
-    Q_PROPERTY(QStringList subTypes READ subTypes WRITE setSubTypes NOTIFY fieldsChanged)
-    Q_CLASSINFO("DefaultProperty", "number")
+    Q_PROPERTY(QVariantList subTypes READ subTypes WRITE setSubTypes NOTIFY fieldsChanged)
     Q_ENUMS(FieldType)
+    Q_ENUMS(SubType)
+
+    Q_CLASSINFO("DefaultProperty", "number")
 public:
     enum FieldType {
-        Number = 0,
-        SubTypes
+        FieldNumber = 0,
+        FieldSubTypes
+    };
+
+    enum SubType {
+        SubTypeLandline = 0,
+        SubTypeMobile,
+        SubTypeFax,
+        SubTypePager,
+        SubTypeVoice,
+        SubTypeModem,
+        SubTypeVideo,
+        SubTypeCar,
+        SubTypeBulletinBoardSystem,
+        SubTypeMessagingCapable,
+        SubTypeAssistant,
+        SubTypeDtmfMenu
     };
 
     QDeclarativeContactPhoneNumber(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactPhoneNumber());
+        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::PhoneNumber;
+        return QDeclarativeContactDetail::ContactPhoneNumber;
     }
-
-    void setNumber(const QString& number) {detail().setValue(QContactPhoneNumber::FieldNumber, number);}
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case FieldNumber:
+            return QContactPhoneNumber::FieldNumber;
+        case FieldSubTypes:
+            return QContactPhoneNumber::FieldSubTypes;
+        default:
+            break;
+        }
+        return "";
+    }
+    void setNumber(const QString& number) {if (!readOnly()) detail().setValue(QContactPhoneNumber::FieldNumber, number);}
     QString number() const {return detail().value(QContactPhoneNumber::FieldNumber);}
 
-    void setSubTypes(const QStringList& subTypes) {detail().setValue(QContactPhoneNumber::FieldSubTypes, subTypes);}
-    QStringList subTypes() const {return detail().value<QStringList>(QContactPhoneNumber::FieldSubTypes);}
+
+    void setSubTypes(const QVariantList& subTypes)
+    {
+        QStringList savedList;
+        foreach (const QVariant subType, subTypes) {
+            switch (static_cast<SubType>(subType.value<int>()))
+            {
+            case SubTypeLandline:
+                savedList << QContactPhoneNumber::SubTypeLandline;
+                break;
+            case SubTypeMobile:
+                savedList << QContactPhoneNumber::SubTypeMobile;
+                break;
+            case SubTypeFax:
+                savedList << QContactPhoneNumber::SubTypeFax;
+                break;
+            case SubTypePager:
+                savedList << QContactPhoneNumber::SubTypePager;
+                break;
+            case SubTypeVoice:
+                savedList << QContactPhoneNumber::SubTypeVoice;
+                break;
+            case SubTypeModem:
+                savedList << QContactPhoneNumber::SubTypeModem;
+                break;
+            case SubTypeVideo:
+                savedList << QContactPhoneNumber::SubTypeVideo;
+                break;
+            case SubTypeCar:
+                savedList << QContactPhoneNumber::SubTypeCar;
+                break;
+            case SubTypeBulletinBoardSystem:
+                savedList << QContactPhoneNumber::SubTypeBulletinBoardSystem;
+                break;
+            case SubTypeMessagingCapable:
+                savedList << QContactPhoneNumber::SubTypeMessagingCapable;
+                break;
+            case SubTypeAssistant:
+                savedList << QContactPhoneNumber::SubTypeAssistant;
+                break;
+            case SubTypeDtmfMenu:
+                savedList << QContactPhoneNumber::SubTypeDtmfMenu;
+                break;
+            default:
+                break;
+
+            }
+        }
+        if (!readOnly()) detail().setValue(QContactPhoneNumber::FieldSubTypes, savedList);
+    }
+
+    QVariantList subTypes() const
+    {
+        QVariantList returnList;
+        QStringList savedList = detail().value<QStringList>(QContactPhoneNumber::FieldSubTypes);
+        foreach (const QString& subType, savedList) {
+            if (subType == QContactPhoneNumber::SubTypeLandline)
+                returnList << static_cast<int>(SubTypeLandline);
+            else if (subType == QContactPhoneNumber::SubTypeMobile)
+                returnList << static_cast<int>(SubTypeMobile);
+            else if (subType == QContactPhoneNumber::SubTypeFax)
+                returnList << static_cast<int>(SubTypeFax);
+            else if (subType == QContactPhoneNumber::SubTypePager)
+                returnList << static_cast<int>(SubTypePager);
+            else if (subType == QContactPhoneNumber::SubTypeVoice)
+                returnList << static_cast<int>(SubTypeVoice);
+            else if (subType == QContactPhoneNumber::SubTypeModem)
+                returnList << static_cast<int>(SubTypeModem);
+            else if (subType == QContactPhoneNumber::SubTypeVideo)
+                returnList << static_cast<int>(SubTypeVideo);
+            else if (subType == QContactPhoneNumber::SubTypeCar)
+                returnList << static_cast<int>(SubTypeCar);
+            else if (subType == QContactPhoneNumber::SubTypeBulletinBoardSystem)
+                returnList << static_cast<int>(SubTypeBulletinBoardSystem);
+            else if (subType == QContactPhoneNumber::SubTypeMessagingCapable)
+                returnList << static_cast<int>(SubTypeMessagingCapable);
+            else if (subType == QContactPhoneNumber::SubTypeAssistant)
+                returnList << static_cast<int>(SubTypeAssistant);
+            else if (subType == QContactPhoneNumber::SubTypeDtmfMenu)
+                returnList << static_cast<int>(SubTypeDtmfMenu);
+        }
+        return returnList;
+    }
+
 signals:
     void fieldsChanged();
 

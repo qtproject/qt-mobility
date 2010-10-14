@@ -79,6 +79,7 @@ void QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
     writeString(QLatin1String(":"));
 
     QString renderedValue;
+    QByteArray renderedBytes;
     if (variant.canConvert<QVersitDocument>()) {
         QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
         QByteArray data;
@@ -122,9 +123,16 @@ void QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
             }
         }
     } else if (variant.type() == QVariant::ByteArray) {
-        renderedValue = QLatin1String(variant.toByteArray().toBase64().data());
+        if (mCodecIsAsciiCompatible) // optimize by not converting to unicode
+            renderedBytes = variant.toByteArray().toBase64();
+        else
+            renderedValue = QLatin1String(variant.toByteArray().toBase64().data());
     }
-    writeString(renderedValue);
+
+    if (renderedBytes.isEmpty())
+        writeString(renderedValue);
+    else
+        writeBytes(renderedBytes);
     writeCrlf();
 }
 
@@ -159,11 +167,15 @@ void QVCard30Writer::encodeParameters(const QMultiHash<QString,QString>& paramet
  */
 void QVCard30Writer::backSlashEscape(QString* text)
 {
+    static const QString m1(QLatin1String("([;,\\\\])"));
+    static const QString r1(QLatin1String("\\\\1"));
+    static const QString m2(QLatin1String("\r\n|\r|\n"));
+    static const QString r2(QLatin1String("\\n"));
     /* replaces ; with \;
                 , with \,
                 \ with \\
      */
-    text->replace(QRegExp(QLatin1String("([;,\\\\])")), QLatin1String("\\\\1"));
+    text->replace(QRegExp(m1), r1);
     // replaces any CRLFs with \n
-    text->replace(QRegExp(QLatin1String("\r\n|\r|\n")), QLatin1String("\\n"));
+    text->replace(QRegExp(m2), r2);
 }

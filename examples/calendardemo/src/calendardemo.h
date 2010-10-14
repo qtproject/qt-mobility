@@ -49,7 +49,7 @@
 class QProgressDialog;
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManager;
+class QOrganizerManager;
 class QOrganizerItem;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
@@ -83,7 +83,7 @@ public Q_SLOTS:
     void addNewEvent();
     void addNewTodo();
     void addNewJournal();
-    void changeManager(QOrganizerItemManager *manager);
+    void changeManager(QOrganizerManager *manager);
     void updateSelectedDay(const QDate& date);
 
 private Q_SLOTS:
@@ -96,15 +96,15 @@ private Q_SLOTS:
     void deleteAllEntries();
     void addCalendar();
     void editCalendar();
-    void editExistingCalendar(QOrganizerItemManager *manager, QOrganizerCollection* calendar);
-    void saveReqStateChanged(QOrganizerItemAbstractRequest::State);
-    void removeReqStateChanged(QOrganizerItemAbstractRequest::State);
+    void editExistingCalendar(QOrganizerManager *manager, QOrganizerCollection* calendar);
+    void saveReqStateChanged(QOrganizerAbstractRequest::State);
+    void removeReqStateChanged(QOrganizerAbstractRequest::State);
 
 private:
     void buildMenu();
 
     QDate m_currentDate;
-    QOrganizerItemManager *m_manager;
+    QOrganizerManager *m_manager;
     QStackedWidget *m_stackedWidget;
     MonthPage *m_monthPage;
     DayPage *m_dayPage;

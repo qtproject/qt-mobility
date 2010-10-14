@@ -522,6 +522,14 @@ This is usually done on deployment by adding services through the servicefw tool
 
 \section2 Symbian Client-Server Framework
 
+\section3 Limitations
+Pointers to objects, and anything wrapped in a typedef cannot be passed
+between services and clients.  It's recommended that IPC messages
+be kept small on Symbian when possible.  Symbian Client-Server IPC mandates
+a fixed buffer size, currently set at 255 bytes. Messages that are large
+will cause a large number of context switches. This may cause a system
+performance pentalty if a lot of very large messages are transfered frequently.
+
 \section3 Service Autostart
 Symbian IPC will automatically start the server process if required when the client
 calls loadInterface.  The executable name must be the same as the name provided
@@ -558,8 +566,8 @@ Or in a symbian .pkg file by:
 
 \section4 Secure Registration
 For services that are Symbian Signed and require a higher level of security they
-may chose to use a post install program.  The authenticity of the service is done during
-registration using the VID/SID.  If the installer the defines the VID it is stored in the
+may chose to use a post install program.  The authenticity check of the service is done during
+registration using the VID/SID.  If the installer defines the VID it is stored in the
 registration database, and only the same VID maybe used to remove the service or reinstall it.
 If the VID is undefined then the SID is used.  The VID/SID remain in the registration
 database after unregistration locking the name to the VID/SID.  Only installers using the
@@ -586,9 +594,9 @@ Appropriate iby files, and settings are required for including the service execu
 and related files in the rom image.
 
 \section3 Service security filters
-On connection the service can install a filter function to check the credentials
-of a client and block the connection without the required credentials.  The filter
-is a function:
+Services can install a filter function to check the credentials
+of a client on initial connection and then terminate connections if desired.
+The filter is a function:
 
 \code
 bool securityFilter(const void *p)
@@ -605,7 +613,16 @@ bool securityFilter(const void *p)
 
 Returning true returns CPolicyServer::EPass and false returns CPolicyServer::EFail
 to the Client-Server secuity check.  Registration of the filter is done by
-calling QRemoteServiceRegister::setSecurityFilter().
+calling QRemoteServiceRegister::setSecurityFilter().  The Symbian Policy Server
+API can be used to work with the RMessage2 to extract security policy details, such
+as RMessage2::HasCapability or RMessage2::VendorId().
+
+\section3 Error handling
+IPC errors can occur. QObjects returned by the service manager have an additional
+signal created, errorUnrecoverableIPCFault(QService::UnrecoverableIPCError) which the
+client must connect to.  If an error occurs the object must be
+destroyed; no further calls can be made.  The error recovery is left up to
+the client application.
 
 \section2 Local Socket
 
@@ -614,7 +631,10 @@ underlying IPC mechanism utilized is a local socket based protocol.
 
 \section3 Limitations
 Similar to the other IPC mechanisms, passing object pointers or typedefs will not
-work on local socket. 
+work on local socket. Local socket also requires the executable for the service to
+be installed somewhere in your PATH for autostart to work.  Not all platforms support
+all fields on the QRemoteServiceResgiterCredentials and will return -1 in unsupported
+fields.
 
 \section3 Service Autostart
 This mechanism provides automatic service startup. The <ipcaddress> tag
@@ -633,14 +653,14 @@ servicefw add <service xml file>
 \endcode
 
 \section3 Service security filters
-The service can install a security filter to filter and reject
-connections from some clients.
+The service can install a security filter to reject connections from
+some clients.
 
 \code
 bool securityFilter(const void *p)
 {
     const QRemoteServiceRegisterCredentials *cr = (const struct QRemoteServiceRegisterCredentials *)p;
-    if(cr->pid == 0) {
+    if(cr->uid == 0) {
         return true; // accept connection
     }
     else {
@@ -663,7 +683,6 @@ calling QRemoteServiceRegister::setSecurityFilter().  Only 1 filter maybe instal
 at one time.
 
 \section2 Error handling
-
 Out of process services behave similarly to local services, with one
 exception.  There can be IPC errors, or the remote service can
 terminate unexpectedly.  QObjects returned by the service manager for

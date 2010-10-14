@@ -16,7 +16,6 @@ win32 {
 
 win32:!wince*:!simulator {
     contains(directshow_enabled, yes): SUBDIRS += directshow
-    contains(wmp_enabled, yes): SUBDIRS += wmp
 }
 
 unix:!mac:!symbian {

@@ -45,7 +45,7 @@
 #include <qorganizercollection.h>
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManager;
+class QOrganizerManager;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
@@ -67,18 +67,18 @@ public Q_SLOTS:
     void deleteClicked();
     void backClicked();
     void itemDoubleClicked(QListWidgetItem *listItem);
-    void showPage(QOrganizerItemManager *manager);
+    void showPage(QOrganizerManager *manager);
 
 Q_SIGNALS:
     void addClicked();
     void showPreviousPage();
-    void showAddCalendarPage(QOrganizerItemManager*, QOrganizerCollection*);
+    void showAddCalendarPage(QOrganizerManager*, QOrganizerCollection*);
 
 protected: // from QWidget
     void showEvent(QShowEvent *event);
 
 private:
-    QOrganizerItemManager *m_manager;
+    QOrganizerManager *m_manager;
     QOrganizerCollection m_collection;
     QAction *m_saveOrNextSoftKey;
     QListWidget *m_calendarList;

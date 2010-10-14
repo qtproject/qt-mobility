@@ -43,7 +43,7 @@
 #define QVERSITORGANIZEREXPORTER_P_H
 
 #include "qversitorganizerexporter.h"
-#include "qorganizeritemrecurrencerule.h"
+#include "qorganizerrecurrencerule.h"
 #include "qversitorganizerhandler.h"
 #include "qversittimezonehandler.h"
 
@@ -103,7 +103,7 @@ private:
             QSet<QString>* processedFields);
     void encodeRecurRule(
             const QString& propertyName,
-            const QOrganizerItemRecurrenceRule& rule,
+            const QOrganizerRecurrenceRule& rule,
             QList<QVersitProperty>* generatedProperties);
     void appendInts(QString* str, const QSet<int>& ints);
     QString weekString(Qt::DayOfWeek day);

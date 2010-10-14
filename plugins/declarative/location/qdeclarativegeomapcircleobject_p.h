@@ -43,6 +43,7 @@
 #define QDECLARATIVEGEOMAPCIRCLEOBJECT_H
 
 #include "qdeclarativecoordinate_p.h"
+#include "qdeclarativegeomapobjectborder_p.h"
 #include "qgeomapcircleobject.h"
 
 class QColor;
@@ -56,6 +57,7 @@ class QDeclarativeGeoMapCircleObject : public QGeoMapCircleObject
 
     Q_PROPERTY(QDeclarativeCoordinate* center READ declarativeCenter WRITE setDeclarativeCenter NOTIFY declarativeCenterChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
 
 public:
     QDeclarativeGeoMapCircleObject();
@@ -67,13 +69,20 @@ public:
     QColor color() const;
     void setColor(const QColor &color);
 
+    QDeclarativeGeoMapObjectBorder* border();
+
 signals:
     void declarativeCenterChanged(const QDeclarativeCoordinate *center);
     void colorChanged(const QColor &color);
 
+private Q_SLOTS:
+    void borderColorChanged(const QColor &color);
+    void borderWidthChanged(int width);
+
 private:
     mutable QDeclarativeCoordinate* m_center;
-    mutable QColor m_color;
+    QColor m_color;
+    QDeclarativeGeoMapObjectBorder m_border;
     Q_DISABLE_COPY(QDeclarativeGeoMapCircleObject)
 };
 

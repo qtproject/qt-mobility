@@ -130,12 +130,6 @@ protected:
 
     virtual void statusChanged() = 0;
 
-    virtual void loaded() = 0;
-    virtual void buffering() = 0;
-    virtual void stalled() = 0;
-    virtual void buffered() = 0;
-    virtual void endOfMedia() = 0;
-
     virtual void durationChanged() = 0;
     virtual void positionChanged() = 0;
 

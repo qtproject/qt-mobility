@@ -127,6 +127,44 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
 
     \brief The QGalleryAbstractRequest class provides a base class for gallery
     requests.
+
+    Gallery requests are the interface through which clients can interact with
+    a gallery to execute queries or perform actions.  QAbstractGalleryRequest
+    manages executing requests against a gallery and reporting the state of
+    responses.
+
+    In order to execute a request it is first necessary to assign the \l gallery
+    to the request.  If the request is supported by the gallery the \l supported
+    property will be true, otherwise if the request is not supported or no
+    gallery is assigned to the request \l supported will be false.
+
+    Once a request has been assigned a gallery and its own arguments it can be
+    \l {execute()}{executed}.  As requests are asynchronous results will not
+    be available immediately, instead the request will go into an \l Active
+    \l state until it is finished.  If the request is successful the finished()
+    signal will be emitted and if not the error() signal will be emitted, in
+    both cases the stateChanged() signal will be emitted with the new state of
+    the request.
+
+    Active requests can be canceled by calling the cancel() function.
+    Canceling a request can also be an asynchronous action and does not always
+    prevent a request from finishing successfully such as when the earliest
+    possible point to interrupt a request is on completion.  If a canceled
+    request isn't aborted immediately it will go into the \l Canceling state
+    until it is aborted and enters the \l Canceled state or succeeds and enters
+    the \l Finished state.
+
+    Some requests support automatically updating their results in response to
+    changes in their source data or some other event.  A request that will
+    provide these sort of updates will enter the Idle state upon finishing
+    its initial request.  From the \l Idle state a request may return to the
+    \l Active state itself to refresh its results or update it results
+    immeditately if a a new query is not required.  Cancelling an idle request
+    will put it into the \l Finished state and prevent future updates.
+
+    While requests are asynchronous it is possible to use them in a synchronous
+    manner by using the waitForFinished() function to block until the request
+    has finished.
 */
 
 /*!
@@ -134,13 +172,13 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
 
     Identifies the state of a gallery request.
 
-    \value Inactive The request has not been executed, or has finished.
+    \value Inactive The request has not been executed.
     \value Active The request is currently executing.
-    \value Canceling The request was canceled, but hasn't yet returned to the
-    Inactive state.
+    \value Canceling The request was canceled, but hasn't yet reached the
+    Canceled state.
     \value Canceled The request was canceled.
-    \value Idle The request has finished, and is monitoring its return values
-    for changes.
+    \value Idle The request has finished, but may return to the active state
+    in response to an internal event.
     \value Finished The request is finished.
     \value Error The request runs into an error.
 */

@@ -898,7 +898,7 @@ void tst_QOrganizerItemFilter::canonicalizedFilter()
     QFETCH(QOrganizerItemFilter, in);
     QFETCH(QOrganizerItemFilter, expected);
 
-    QOrganizerItemFilter out = QOrganizerItemManagerEngine::canonicalizedFilter(in);
+    QOrganizerItemFilter out = QOrganizerManagerEngine::canonicalizedFilter(in);
     QCOMPARE(out, expected);
 }
 
@@ -1117,7 +1117,7 @@ void tst_QOrganizerItemFilter::testFilter()
     QFETCH(QOrganizerItemFilter, filter);
     QFETCH(bool, expected);
 
-    QCOMPARE(QOrganizerItemManagerEngine::testFilter(filter, item), expected);
+    QCOMPARE(QOrganizerManagerEngine::testFilter(filter, item), expected);
 }
 
 void tst_QOrganizerItemFilter::testFilter_data()

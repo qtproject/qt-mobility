@@ -47,8 +47,12 @@ QTM_USE_NAMESPACE
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-
     LandmarkBrowser browser;
+#ifdef Q_OS_SYMBIAN
+    browser.showMaximized();
+#else
     browser.show();
+#endif
+
     return app.exec();
 }

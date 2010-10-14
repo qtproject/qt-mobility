@@ -69,38 +69,43 @@ Rectangle {
                 lastName:"Yin"
             }
 
-            ContactEmail {
+            EmailAddress {
                 emailAddress:"charles.yin@nokia.com"
             }
 
-            ContactAddress {
-                street:"53 Brandl St"
-                locality: "Eight Mile Plains"
-                region: "QLD"
-                postcode:"4111"
-                country:"Australia"
-                subTypes:["Office"]
-                postOfficeBox:"1111"
-            }
+            address.street:"53 Brandl St"
+            address.locality: "Eight Mile Plains"
+            address.region: "QLD"
+            address.postcode:"4111"
+            address.country:"Australia"
+            address.subTypes:["Office"]
+            address.postOfficeBox:"1111"
 
-            ContactNickname {
+            Nickname {
                 nickname:"Charles"
             }
 
-            ContactPhoneNumber {
+            PhoneNumber {
                 number: "1111111111"
                 subTypes:["Office", "Mobile"]
             }
 
-            ContactPhoneNumber {
+            PhoneNumber {
                 number: "2222222222"
                 subTypes:["Home"]
             }
 
-            ContactPhoneNumber {
+            PhoneNumber {
                 number: "3333333333"
                 subTypes:["Mobile"]
             }
+    }
+    DetailFilter {
+       id:filter
+       detail:Detail.DetailName
+       field:Name.FieldFirstName
+       value:"Charles"
+       matchFlags:Filter.MatchExactly
     }
 }
 

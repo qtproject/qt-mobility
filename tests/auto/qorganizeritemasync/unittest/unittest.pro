@@ -17,7 +17,7 @@ CONFIG += mobility
 MOBILITY = organizer
 
 SOURCES  += tst_qorganizeritemasync.cpp
-HEADERS += ../../qorganizeritemmanagerdataholder.h
+HEADERS += ../../qorganizermanagerdataholder.h
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \

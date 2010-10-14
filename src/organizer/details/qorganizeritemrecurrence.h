@@ -47,7 +47,7 @@
 #include "qtorganizerglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
-#include "qorganizeritemrecurrencerule.h"
+#include "qorganizerrecurrencerule.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -69,17 +69,17 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldExceptionDates, "ExceptionDates");
 #endif
 
-    void setRecurrenceRules(const QSet<QOrganizerItemRecurrenceRule>& rrules);
+    void setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rrules);
 
-    QSet<QOrganizerItemRecurrenceRule> recurrenceRules() const;
+    QSet<QOrganizerRecurrenceRule> recurrenceRules() const;
 
     void setRecurrenceDates(const QSet<QDate>& rdates);
 
     QSet<QDate> recurrenceDates() const;
 
-    void setExceptionRules(const QSet<QOrganizerItemRecurrenceRule>& xrules);
+    void setExceptionRules(const QSet<QOrganizerRecurrenceRule>& xrules);
 
-    QSet<QOrganizerItemRecurrenceRule> exceptionRules() const;
+    QSet<QOrganizerRecurrenceRule> exceptionRules() const;
 
     void setExceptionDates(const QSet<QDate>& xdates);
 

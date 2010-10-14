@@ -55,46 +55,117 @@ class QDeclarativeContactAddress : public QDeclarativeContactDetail
     Q_PROPERTY(QString region READ region WRITE setRegion  NOTIFY fieldsChanged)
     Q_PROPERTY(QString postcode READ postcode WRITE setPostcode  NOTIFY fieldsChanged)
     Q_PROPERTY(QString country READ country WRITE setCountry  NOTIFY fieldsChanged)
-    Q_PROPERTY(QStringList subTypes READ subTypes WRITE setSubTypes NOTIFY fieldsChanged)
+    Q_PROPERTY(QVariantList subTypes READ subTypes WRITE setSubTypes NOTIFY fieldsChanged)
     Q_PROPERTY(QString postOfficeBox READ postOfficeBox WRITE setPostOfficeBox  NOTIFY fieldsChanged)
     Q_ENUMS(FieldType)
+    Q_ENUMS(SubType)
 public:
     enum FieldType {
-        Street = 0,
-        Locality,
-        Region,
-        PostCode,
-        Country,
-        SubTypes,
-        PostOfficeBox
+        FieldStreet = 0,
+        FieldLocality,
+        FieldRegion,
+        FieldPostCode,
+        FieldCountry,
+        FieldSubTypes,
+        FieldPostOfficeBox
+    };
+
+    enum SubType {
+        SubTypeParcel = 0,
+        SubTypePostal,
+        SubTypeDomestic,
+        SubTypeInternational
     };
 
     QDeclarativeContactAddress(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactAddress());
+        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
     }
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Address;
+        return QDeclarativeContactDetail::ContactAddress;
     }
 
-    void setStreet(const QString& street) {detail().setValue(QContactAddress::FieldStreet, street);}
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case FieldStreet:
+            return QContactAddress::FieldStreet;
+        case FieldLocality:
+            return QContactAddress::FieldLocality;
+        case FieldRegion:
+            return QContactAddress::FieldRegion;
+        case FieldPostCode:
+            return QContactAddress::FieldPostcode;
+        case FieldCountry:
+            return QContactAddress::FieldCountry;
+        case FieldSubTypes:
+            return QContactAddress::FieldSubTypes;
+        case FieldPostOfficeBox:
+            return QContactAddress::FieldPostOfficeBox;
+        default:
+            break;
+        }
+        return "";
+    }
+    void setStreet(const QString& street) {if (!readOnly()) detail().setValue(QContactAddress::FieldStreet, street);}
     QString street() const {return detail().value(QContactAddress::FieldStreet);}
-    void setLocality(const QString& locality) {detail().setValue(QContactAddress::FieldLocality, locality);}
+    void setLocality(const QString& locality) {if (!readOnly()) detail().setValue(QContactAddress::FieldLocality, locality);}
     QString locality() const {return detail().value(QContactAddress::FieldLocality);}
-    void setRegion(const QString& region) {detail().setValue(QContactAddress::FieldRegion, region);}
+    void setRegion(const QString& region) {if (!readOnly()) detail().setValue(QContactAddress::FieldRegion, region);}
     QString region() const {return detail().value(QContactAddress::FieldRegion);}
-    void setPostcode(const QString& postcode) {detail().setValue(QContactAddress::FieldPostcode, postcode);}
+    void setPostcode(const QString& postcode) {if (!readOnly()) detail().setValue(QContactAddress::FieldPostcode, postcode);}
     QString postcode() const {return detail().value(QContactAddress::FieldPostcode);}
-    void setCountry(const QString& country) {detail().setValue(QContactAddress::FieldCountry, country);}
+    void setCountry(const QString& country) {if (!readOnly()) detail().setValue(QContactAddress::FieldCountry, country);}
     QString country() const {return detail().value(QContactAddress::FieldCountry);}
-    void setPostOfficeBox(const QString& postOfficeBox) {detail().setValue(QContactAddress::FieldPostOfficeBox, postOfficeBox);}
+    void setPostOfficeBox(const QString& postOfficeBox) {if (!readOnly()) detail().setValue(QContactAddress::FieldPostOfficeBox, postOfficeBox);}
     QString postOfficeBox() const {return detail().value(QContactAddress::FieldPostOfficeBox);}
 
-    void setSubTypes(const QStringList& subTypes) {detail().setValue(QContactAddress::FieldSubTypes, subTypes);}
-    QStringList subTypes() const {return detail().value<QStringList>(QContactAddress::FieldSubTypes);}
+    void setSubTypes(const QVariantList& subTypes)
+    {
+        QStringList savedList;
+        foreach (const QVariant subType, subTypes) {
+            switch (static_cast<SubType>(subType.value<int>()))
+            {
+            case SubTypeParcel:
+                savedList << QContactAddress::SubTypeParcel;
+                break;
+            case SubTypePostal:
+                savedList << QContactAddress::SubTypePostal;
+                break;
+            case SubTypeDomestic:
+                savedList << QContactAddress::SubTypeDomestic;
+                break;
+            case SubTypeInternational:
+                savedList << QContactAddress::SubTypeInternational;
+                break;
+            default:
+                break;
+
+            }
+        }
+        if (!readOnly()) detail().setValue(QContactAddress::FieldSubTypes, savedList);
+    }
+
+    QVariantList subTypes() const
+    {
+        QVariantList returnList;
+        QStringList savedList = detail().value<QStringList>(QContactAddress::FieldSubTypes);
+        foreach (const QString& subType, savedList) {
+            if (subType == QContactAddress::SubTypePostal)
+                returnList << static_cast<int>(SubTypePostal);
+            else if (subType == QContactAddress::SubTypeParcel)
+                returnList << static_cast<int>(SubTypeParcel);
+            else if (subType == QContactAddress::SubTypeDomestic)
+                returnList << static_cast<int>(SubTypeDomestic);
+            else if (subType == QContactAddress::SubTypeInternational)
+                returnList << static_cast<int>(SubTypeInternational);
+        }
+        return returnList;
+    }
 signals:
     void fieldsChanged();
 };

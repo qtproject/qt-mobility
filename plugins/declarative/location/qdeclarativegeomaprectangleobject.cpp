@@ -53,6 +53,15 @@ QDeclarativeGeoMapRectangleObject::QDeclarativeGeoMapRectangleObject()
 {
     m_topLeft = new QDeclarativeCoordinate(this);
     m_bottomRight = new QDeclarativeCoordinate(this);
+
+    connect(&m_border,
+            SIGNAL(colorChanged(QColor)),
+            this,
+            SLOT(borderColorChanged(QColor)));
+    connect(&m_border,
+            SIGNAL(widthChanged(int)),
+            this,
+            SLOT(borderWidthChanged(int)));
 }
 
 QDeclarativeGeoMapRectangleObject::~QDeclarativeGeoMapRectangleObject()
@@ -105,6 +114,25 @@ void QDeclarativeGeoMapRectangleObject::setColor(const QColor &color)
 QColor QDeclarativeGeoMapRectangleObject::color() const
 {
     return m_color;
+}
+
+QDeclarativeGeoMapObjectBorder* QDeclarativeGeoMapRectangleObject::border()
+{
+    return &m_border;
+}
+
+void QDeclarativeGeoMapRectangleObject::borderColorChanged(const QColor &color)
+{
+    QPen p = pen();
+    p.setColor(color);
+    setPen(p);
+}
+
+void QDeclarativeGeoMapRectangleObject::borderWidthChanged(int width)
+{
+    QPen p = pen();
+    p.setWidth(width);
+    setPen(p);
 }
 
 #include "moc_qdeclarativegeomaprectangleobject_p.cpp"

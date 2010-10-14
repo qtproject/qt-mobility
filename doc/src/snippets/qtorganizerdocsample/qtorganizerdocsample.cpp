@@ -50,7 +50,7 @@
 QTM_USE_NAMESPACE
 
 static void snippets();
-static void dumpItems(QOrganizerItemManager* manager);
+static void dumpItems(QOrganizerManager* manager);
 static void dumpItem(const QOrganizerItem& item);
 
 int main(int, char**)
@@ -62,11 +62,11 @@ int main(int, char**)
 void snippets()
 {
     //! [Instantiating the default manager for the platform]
-    QOrganizerItemManager defaultManager;
+    QOrganizerManager defaultManager;
     //! [Instantiating the default manager for the platform]
 
     //! [Instantiating a specific manager]
-    QOrganizerItemManager specificManager("KCal");
+    QOrganizerManager specificManager("KCal");
     //! [Instantiating a specific manager]
 
     // XXX TODO: use rrule instead of rdates.
@@ -90,7 +90,7 @@ void snippets()
     //! [Creating a recurrent event]
 
     //! [Retrieving occurrences of a particular recurrent event within a time period]
-    QList<QOrganizerItem> instances = defaultManager.itemInstances(recEvent, startDateTime, endDateTime);
+    QList<QOrganizerItem> instances = defaultManager.itemOccurrences(recEvent, startDateTime, endDateTime);
     //! [Retrieving occurrences of a particular recurrent event within a time period]
     qDebug() << "dumping retrieved instances:";
     foreach(const QOrganizerItem& currInst, instances)
@@ -101,12 +101,12 @@ void snippets()
 
 
     //! [Retrieving the next 5 occurrences of a particular recurrent event]
-    instances = defaultManager.itemInstances(recEvent, QDateTime::currentDateTime(), QDateTime(), 5);
+    instances = defaultManager.itemOccurrences(recEvent, QDateTime::currentDateTime(), QDateTime(), 5);
     //! [Retrieving the next 5 occurrences of a particular recurrent event]
 
     //! [Retrieving the next 10 occurrences of any item (Agenda View)]
     // XXX TODO: make this more convenient.
-    // QOIM::itemInstances(count) ?
+    // QOIM::itemOccurrences(count) ?
     //! [Retrieving the next 10 occurrences of any item (Agenda View)]
 
     //! [Creating a non-recurrent entry]
@@ -130,9 +130,9 @@ void snippets()
     //! [Retrieving any entry (not occurrence) which matches a search criteria]
 
     //! [Creating an exception to a particular recurrent event]
-    // the following line should be made simpler via QOIM::itemInstances(item, startDateTime, endDateTime, count)...
+    // the following line should be made simpler via QOIM::itemOccurrences(item, startDateTime, endDateTime, count)...
     /* FIXME: correct the example
-    QOrganizerEventOccurrence nextMarshmallowMeeting = QOrganizerEventOccurrence(defaultManager.itemInstances().value(0)); // should use dfil.
+    QOrganizerEventOccurrence nextMarshmallowMeeting = QOrganizerEventOccurrence(defaultManager.itemOccurrences().value(0)); // should use dfil.
     nextMarshmallowMeeting.setStartDateTime(QDateTime::fromString("13.05.2010 18:00:00", "dd.MM.yy hh:mm:ss"));
     nextMarshmallowMeeting.setEndDateTime(QDateTime::fromString("13.05.2010 20:00:00", "dd.MM.yy hh:mm:ss"));
     nextMarshmallowMeeting.addComment("The next meeting will go for an hour longer (starting one "\
@@ -146,7 +146,7 @@ void snippets()
     dumpItems(&defaultManager);
 }
 
-void dumpItems(QOrganizerItemManager* manager)
+void dumpItems(QOrganizerManager* manager)
 {
     QList<QOrganizerItem> items = manager->items();
     qDebug() << "dumping" << items.count() << "items:";

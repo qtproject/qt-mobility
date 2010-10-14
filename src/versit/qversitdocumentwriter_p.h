@@ -79,13 +79,15 @@ public:
     bool encodeVersitDocument(const QVersitDocument& document, bool encodeVersion = true);
     void encodeGroupsAndName(const QVersitProperty& property);
 
-    void writeString(const QString& string, bool useUtf8 = false);
+    void writeBytes(const QByteArray& value);
+    void writeString(const QString& value, bool useUtf8 = false);
     void writeCrlf();
 
 protected:
     QVersitDocument::VersitType mType;
     QIODevice* mDevice;
     QTextCodec* mCodec;
+    bool mCodecIsAsciiCompatible;
     QTextEncoder* mEncoder;
     QTextEncoder* mUtf8Encoder;
     bool mSuccessful;
