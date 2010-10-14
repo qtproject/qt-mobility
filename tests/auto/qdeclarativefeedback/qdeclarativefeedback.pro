@@ -1,6 +1,6 @@
 load(qttest_p4)
 include (../../../common.pri)
-QT += declarative
+QT += declarative network script
 CONFIG += mobility
 MOBILITY += feedback
 

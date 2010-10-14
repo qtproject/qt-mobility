@@ -580,11 +580,11 @@ QList<QOrganizerItemLocalId> QOrganizerItemSkeletonEngine::itemIds(const QDateTi
 
     foreach(const QOrganizerItem& item, partiallyFilteredItems) {
         if (QOrganizerManagerEngine::isItemBetweenDates(item, startDate, endDate) && QOrganizerManagerEngine::testFilter(filter, item)) {
-            ret.append(item);
+            QOrganizerManagerEngine::addSorted(&ret, item, sortOrders);
         }
     }
 
-    return QOrganizerManagerEngine::sortItems(ret, sortOrders);
+    return QOrganizerManager::extractLocalIds(ret);
 }
 
 QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const

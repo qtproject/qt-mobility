@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,55 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEORGANIZERCOLLECTION_H
-#define QDECLARATIVEORGANIZERCOLLECTION_H
 
-#include "qdeclarative.h"
-#include "qorganizercollection.h"
+#ifndef QDECLARATIVEGENERALINFO_P_H
+#define QDECLARATIVEGENERALINFO_P_H
 
+#include <QObject>
+#include "qsystemgeneralinfo.h"
+
+QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 
-
-class QDeclarativeOrganizerCollection : public QObject
+class QDeclarativeGeneralInfo : public QSystemInfo
 {
     Q_OBJECT
-    Q_PROPERTY(uint collectionId READ id NOTIFY valueChanged)
 public:
-    QDeclarativeOrganizerCollection(QObject* parent = 0)
-        :QObject(parent)
-    {
-    }
+    explicit QDeclarativeGeneralInfo(QObject *parent = 0);
 
 
-    uint id() const
-    {
-        return qHash(d.id());
-    }
+public slots:
+    void startCurrentLanguageChanged();
 
-    Q_INVOKABLE void setMetaData(const QString& key, const QVariant& value)
-    {
-        d.setMetaData(key, value);
-    }
+Q_SIGNALS:
+   void currentLanguageChanged(const QString &language);
 
-    Q_INVOKABLE  QVariant metaData(const QString& key)
-    {
-        return d.metaData(key);
-    }
+private slots:
+    void declarativeCurrentLanguageChanged(const QString &);
 
-    QOrganizerCollection collection() const
-    {
-        return d;
-    }
-
-    void setCollection(const QOrganizerCollection& collection)
-    {
-        d = collection;
-    }
-signals:
-    void valueChanged();
-private:
-    QOrganizerCollection d;
 };
-QML_DECLARE_TYPE(QDeclarativeOrganizerCollection)
-#endif
 
+QT_END_NAMESPACE
+QT_END_HEADER
+
+#endif // QDECLARATIVEGENERALINFO_P_H

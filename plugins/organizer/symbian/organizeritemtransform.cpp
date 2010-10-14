@@ -179,6 +179,7 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
 
 void OrganizerItemTransform::toItemPostSaveL(const CCalEntry &entry, QOrganizerItem *item, QString managerUri) const
 {
+    Q_UNUSED(managerUri);
     //debugEntryL(entry);
     // Loop through transform objects
     foreach (OrganizerItemDetailTransform *i, m_detailTransforms) {

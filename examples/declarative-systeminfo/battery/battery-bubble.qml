@@ -57,6 +57,7 @@ Rectangle{
         onBatteryLevelChanged: doBatteryLevelChange(level)
         property int battlevel: batteryLevel;
 
+
     }
 
     Component.onCompleted: {
@@ -93,28 +94,25 @@ Rectangle{
         oldstate = img.state;
         img.state = "levelchange"
         img.state = oldstate;
-    getPowerState();
+        console.debug("batteryChangeLevel: " );
+        getPowerState();
 }
 
-    function getPowerState(/*powerState*/) {
-        oldstate = img.state;
+    function getPowerState() {
 
+        console.debug("curPowerState: " );
         if ( curPowerState == 1) {
             img.state = "Battery"
-            img.state = oldstate;
-            return "On Battery : " + batlevel +"%"
+            oldstate = img.state;
         }
         if ( curPowerState == 2 ) {
             img.state = "WallPower"
-            img.state = oldstate;
-            return "Wall Power : " + batlevel +"%"
+            oldstate = img.state;
         }
         if ( curPowerState == 3) {
             img.state = "Charging"
-            img.state = oldstate;
-            return "Charging : " + batlevel +"%"
+            oldstate = img.state;
         }
-        return ""
     }
 
     property alias manufacturer: deviceinfo.manufacturer
@@ -130,7 +128,7 @@ Rectangle{
 
     Text {
         id: power
-        text: getPowerState();
+        text: img.state + " "+batlevel +"%"
         anchors.top: manu.bottom
         color: "white";
     }

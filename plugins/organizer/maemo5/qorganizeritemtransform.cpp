@@ -101,6 +101,154 @@ bool OrganizerItemTransform::addGeoToQOIL(const QString &src, QOrganizerItemLoca
     return false;
 }
 
+void OrganizerItemTransform::addEventPostSaveDetails(QOrganizerItem *item, CEvent *cevent)
+{
+    // Priority
+    int tempint = cevent->getPriority();
+    if (tempint != -1) {
+        QOrganizerItemPriority priority = item->detail<QOrganizerItemPriority>();
+        priority.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint)); // assume that the saved priority is vCal compliant.
+        item->saveDetail(&priority);
+    }
+
+    // Start time
+    QDateTime tempdt = QDateTime::fromTime_t(cevent->getDateStart());
+    if (!tempdt.isNull()) {
+        QOrganizerEventTime eventTime = item->detail<QOrganizerEventTime>();
+        eventTime.setStartDateTime(tempdt);
+        item->saveDetail(&eventTime);
+    }
+
+    // End time
+    tempdt = QDateTime::fromTime_t(cevent->getDateEnd());
+    if (!tempdt.isNull()) {
+        QOrganizerEventTime eventTime = item->detail<QOrganizerEventTime>();
+        eventTime.setEndDateTime(tempdt);
+        item->saveDetail(&eventTime);
+    }
+
+    // Recurrence
+    m_recTransformer.transformToQrecurrence(cevent->getRecurrence());
+    QOrganizerItemRecurrence recurrence = item->detail<QOrganizerItemRecurrence>();
+    recurrence.setRecurrenceRules(m_recTransformer.recurrenceRules());
+    recurrence.setExceptionRules(m_recTransformer.exceptionRules());
+    recurrence.setRecurrenceDates(m_recTransformer.recurrenceDates());
+    recurrence.setExceptionDates(m_recTransformer.exceptionDates());
+    item->saveDetail(&recurrence);
+
+    // Timestamps
+    time_t createdTime = cevent->getCreatedTime();
+    time_t lastModifiedTime = cevent->getLastModified();
+
+    if (createdTime || lastModifiedTime) {
+        QOrganizerItemTimestamp timeStamps = item->detail<QOrganizerItemTimestamp>();
+        timeStamps.setCreated(QDateTime::fromTime_t(createdTime));
+        timeStamps.setLastModified(QDateTime::fromTime_t(lastModifiedTime));
+        item->saveDetail(&timeStamps);
+    }
+}
+
+void OrganizerItemTransform::addTodoPostSaveDetails(QOrganizerItem *item, CTodo *ctodo)
+{
+    // Priority
+    int tempint = ctodo->getPriority();
+    if (tempint != -1) {
+        QOrganizerItemPriority priority = item->detail<QOrganizerItemPriority>();
+        priority.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint)); // assume that the saved priority is vCal compliant.
+        item->saveDetail(&priority);
+    }
+
+    // Date start
+    QDateTime tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
+    if (!tempdt.isNull()) {
+        QOrganizerTodoTime todoTime = item->detail<QOrganizerTodoTime>();
+        todoTime.setStartDateTime(tempdt);
+        item->saveDetail(&todoTime);
+    }
+
+    // Due
+    tempdt = QDateTime::fromTime_t(ctodo->getDue());
+    if (!tempdt.isNull()) {
+        QOrganizerTodoTime todoTime = item->detail<QOrganizerTodoTime>();
+        todoTime.setDueDateTime(tempdt);
+        item->saveDetail(&todoTime);
+    }
+
+    // Completed time
+    tempdt = QDateTime::fromTime_t(ctodo->getCompleted());
+    if (!tempdt.isNull()) {
+        QOrganizerTodoProgress todoProgress = item->detail<QOrganizerTodoProgress>();
+        todoProgress.setFinishedDateTime(tempdt);
+        item->saveDetail(&todoProgress);
+    }
+
+    // Percent complete
+    tempint = ctodo->getPercentComplete();
+    if (!tempdt.isNull()) {
+        QOrganizerTodoProgress todoProgress = item->detail<QOrganizerTodoProgress>();
+        todoProgress.setPercentageComplete(tempint);
+        item->saveDetail(&todoProgress);
+    }
+
+    // Status
+    QOrganizerTodoProgress todoProgress = item->detail<QOrganizerTodoProgress>();
+    todoProgress.setStatus(static_cast<QOrganizerTodoProgress::Status>(ctodo->getStatus()));
+    item->saveDetail(&todoProgress);
+
+    // Timestamps
+    time_t createdTime = ctodo->getCreatedTime();
+    time_t lastModifiedTime = ctodo->getLastModified();
+
+    if (createdTime || lastModifiedTime) {
+        QOrganizerItemTimestamp timeStamps = item->detail<QOrganizerItemTimestamp>();
+        timeStamps.setCreated(QDateTime::fromTime_t(createdTime));
+        timeStamps.setLastModified(QDateTime::fromTime_t(lastModifiedTime));
+        item->saveDetail(&timeStamps);
+    }
+}
+
+void OrganizerItemTransform::addJournalPostSaveDetails(QOrganizerItem *item, CJournal *cjournal)
+{
+    // Journal time
+    QDateTime tempdt = QDateTime::fromTime_t(cjournal->getDateStart());
+    if (!tempdt.isNull()) {
+        QOrganizerJournalTime journalTime = item->detail<QOrganizerJournalTime>();
+        journalTime.setEntryDateTime(tempdt);
+        item->saveDetail(&journalTime);
+    }
+
+    // Timestamps
+    time_t createdTime = cjournal->getCreatedTime();
+    time_t lastModifiedTime = cjournal->getLastModified();
+
+    if (createdTime || lastModifiedTime) {
+        QOrganizerItemTimestamp timeStamps = item->detail<QOrganizerItemTimestamp>();
+        timeStamps.setCreated(QDateTime::fromTime_t(createdTime));
+        timeStamps.setLastModified(QDateTime::fromTime_t(lastModifiedTime));
+        item->saveDetail(&timeStamps);
+    }
+}
+
+void OrganizerItemTransform::sortDetails(QOrganizerItem *item) const
+{
+    if(!item)
+        return;
+
+    QList<QOrganizerItemDetail> detailsTmp = item->details();
+    qSort(detailsTmp.begin(), detailsTmp.end(), detailLessThan);
+    item->clearDetails();
+    int detailCount = detailsTmp.count();
+    for (int i = 0; i < detailCount; ++i) {
+        QOrganizerItemDetail curr = detailsTmp.at(i);
+        item->saveDetail(&curr);
+    }
+}
+
+bool detailLessThan(const QOrganizerItemDetail &d1, const QOrganizerItemDetail &d2)
+{
+    return (d1.definitionName() < d2.definitionName());
+}
+
 QOrganizerEvent OrganizerItemTransform::convertCEventToQEvent(CEvent *cevent)
 {
     QOrganizerEvent retn;
@@ -404,6 +552,11 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
 
         CEvent *cevent = cal->getEvent(itemIdStr.toStdString(), calError);
         if (!cevent) {
+            if (!itemId.isNull()) {
+                // If item id is not null, the item must exist. Otherwise return 'does not found'.
+                *error = QOrganizerManager::DoesNotExistError;
+                return retn;
+            }
             // Event did not existed in calendar, create a new CEvent with an empty ID
             cevent = new CEvent();
         }
@@ -457,11 +610,16 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
 
         CTodo *ctodo = cal->getTodo(itemIdStr.toStdString(), calError);
         if (!ctodo) {
-            // Event did not existed in calendar, create a new CEvent with an empty ID
+            if (!itemId.isNull()) {
+                // If item id is not null, the item must exist. Otherwise return 'does not found'.
+                *error = QOrganizerManager::DoesNotExistError;
+                return retn;
+            }
+            // Todo did not existed in calendar, create a new CEvent with an empty ID
             ctodo = new CTodo();
         }
         else {
-            // Event existed in calendar, use the existing event's ID
+            // Todo existed in calendar, use the existing event's ID
             ctodo->setId(itemIdStr.toStdString());
         }
         ctodo->setCalendarId(calId);
@@ -510,11 +668,16 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         *error = QOrganizerManager::NoError;
         CJournal *cjournal = cal->getJournal(itemIdStr.toStdString(), calError);
         if (!cjournal) {
-            // Event did not existed in calendar, create a new CEvent with an empty ID
+            if (!itemId.isNull()) {
+                // If item id is not null, the item must exist. Otherwise return 'does not found'.
+                *error = QOrganizerManager::DoesNotExistError;
+                return retn;
+            }
+            // Journal did not existed in calendar, create a new CEvent with an empty ID
             cjournal = new CJournal();
         }
         else {
-            // Event existed in calendar, use the existing event's ID
+            // Journal existed in calendar, use the existing event's ID
             cjournal->setId(itemIdStr.toStdString());
         }
         cjournal->setCalendarId(calId);
@@ -804,6 +967,36 @@ QMap<CalendarType, QString> OrganizerItemTransform::calendarTypeMap() const
     retn[DEFAULT_PRIVATE] = "Default private";
     retn[DEFAULT_SYNC] = "Default sync";
     return retn;
+}
+
+void OrganizerItemTransform::modifyBaseSchemaDefinitions(QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > &schemaDefs) const
+{
+    // Add all the supported detail definition names
+    QStringList supportedDetails;
+    supportedDetails << QOrganizerEventTime::DefinitionName;
+    supportedDetails << QOrganizerItemComment::DefinitionName;
+    supportedDetails << QOrganizerItemDescription::DefinitionName;
+    supportedDetails << QOrganizerItemDisplayLabel::DefinitionName;
+    supportedDetails << QOrganizerItemGuid::DefinitionName;
+    supportedDetails << QOrganizerItemLocation::DefinitionName;
+    supportedDetails << QOrganizerItemParent::DefinitionName;
+    supportedDetails << QOrganizerItemPriority::DefinitionName;
+    supportedDetails << QOrganizerItemRecurrence::DefinitionName;
+    supportedDetails << QOrganizerItemTimestamp::DefinitionName;
+    supportedDetails << QOrganizerItemType::DefinitionName;
+    supportedDetails << QOrganizerItemVisualReminder::DefinitionName;
+    supportedDetails << QOrganizerJournalTime::DefinitionName;
+    supportedDetails << QOrganizerTodoProgress::DefinitionName;
+    supportedDetails << QOrganizerTodoTime::DefinitionName;
+
+    // Remove all not supported details
+    foreach (QString itemTypeName, schemaDefs.keys()) {
+        QMap<QString, QOrganizerItemDetailDefinition> details = schemaDefs.value(itemTypeName);
+        foreach (QString detailName, details.keys()) {
+            if (!supportedDetails.contains(detailName))
+                schemaDefs[itemTypeName].remove(detailName);
+        }
+    }
 }
 
 QString OrganizerItemTransform::randomGuid() const
