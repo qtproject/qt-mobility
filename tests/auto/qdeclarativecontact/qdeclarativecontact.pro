@@ -1,8 +1,8 @@
-TEMPLATE=app
-
-CONFIG += mobility testcase
+load(qttest_p4)
+include (../../../common.pri)
+CONFIG += mobility 
 MOBILITY += contacts versit
-QT += testlib declarative network script
+QT += declarative
 
 INCLUDEPATH += ../../../src/contacts
 INCLUDEPATH += ../../../src/contacts/details
@@ -12,7 +12,6 @@ INCLUDEPATH += ../../../src/versit
 DEPENDPATH += ../../src/contacts
 DEPENDPATH += ../../src/versit
 
-include (../../../common.pri)
 
 INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/plugins/declarative/contacts
 INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/plugins/declarative/contacts/details
