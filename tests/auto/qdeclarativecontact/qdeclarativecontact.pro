@@ -19,7 +19,6 @@ INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/plugins/declarative/contacts/filters
 
 SOURCES += tst_qdeclarativecontact.cpp
 
-
 symbian: {
     importFiles.sources = data
     importFiles.path = .
