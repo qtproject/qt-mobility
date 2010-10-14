@@ -233,12 +233,11 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
     if(!socket->waitForConnected()){
         if (!socket->isValid()) {
             qWarning() << "Cannot connect to remote service, trying to start service " << location;
-            // try starting the service by hand
-            QProcess *service = new QProcess();
+            // Start the service as a detached process
 #ifdef Q_OS_WIN
-            service->start(location);
+            QProcess::startDetached(location);
 #else
-            service->start("./" + location);
+            QProcess::startDetached("./" + location);
 #endif
             service->waitForStarted();
             if(service->error() != QProcess::UnknownError || service->state() != QProcess::Running) {
