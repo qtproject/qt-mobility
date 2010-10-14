@@ -84,7 +84,7 @@ public:
     QString managerUri() const;
 
 private:
-    QOrganizerItemEngineLocalId *d;
+    QSharedDataPointer<QOrganizerItemEngineLocalId> d;
 
 #ifndef QT_NO_DEBUG_STREAM
     Q_ORGANIZER_EXPORT friend QDebug& operator<<(QDebug& dbg, const QOrganizerItemId& id);

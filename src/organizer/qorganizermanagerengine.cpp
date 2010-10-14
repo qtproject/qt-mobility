@@ -2464,9 +2464,9 @@ void QOrganizerManagerEngine::addSorted(QList<QOrganizerItem>* sorted, const QOr
   Returns the engine local id from the given \a localId.
   The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
  */
-QOrganizerItemEngineLocalId* QOrganizerManagerEngine::engineLocalItemId(const QOrganizerItemId& localId)
+const QOrganizerItemEngineLocalId* QOrganizerManagerEngine::engineLocalItemId(const QOrganizerItemId& localId)
 {
-    return localId.d;
+    return localId.d.data();
 }
 
 /*!

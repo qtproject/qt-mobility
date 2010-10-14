@@ -169,7 +169,7 @@ public:
 
     // Other protected area update functions
     static void setDetailAccessConstraints(QOrganizerItemDetail* detail, QOrganizerItemDetail::AccessConstraints constraints);
-    static QOrganizerItemEngineLocalId* engineLocalItemId(const QOrganizerItemId& localId);
+    static const QOrganizerItemEngineLocalId* engineLocalItemId(const QOrganizerItemId& localId);
     static QOrganizerCollectionEngineLocalId* engineLocalCollectionId(const QOrganizerCollectionLocalId& localId);
 
     /* Helper functions */

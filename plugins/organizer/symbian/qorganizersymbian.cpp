@@ -122,7 +122,7 @@ QOrganizerItemEngineLocalId* QOrganizerItemSymbianEngineLocalId::clone() const
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug QOrganizerItemSymbianEngineLocalId::debugStreamOut(QDebug dbg)
+QDebug QOrganizerItemSymbianEngineLocalId::debugStreamOut(QDebug dbg) const
 {
     dbg.nospace() << "QOrganizerItemSymbianEngineLocalId(" << m_localCollectionId << ", " << m_localItemId << ")";
     return dbg.maybeSpace();
@@ -130,7 +130,7 @@ QDebug QOrganizerItemSymbianEngineLocalId::debugStreamOut(QDebug dbg)
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerItemSymbianEngineLocalId::dataStreamOut(QDataStream& out)
+QDataStream& QOrganizerItemSymbianEngineLocalId::dataStreamOut(QDataStream& out) const
 {
     return (out << m_localItemId << m_localCollectionId);
 }

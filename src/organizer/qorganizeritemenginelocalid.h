@@ -51,7 +51,7 @@ class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
-class Q_ORGANIZER_EXPORT QOrganizerItemEngineLocalId
+class Q_ORGANIZER_EXPORT QOrganizerItemEngineLocalId: public QSharedData
 {
 public:
     virtual ~QOrganizerItemEngineLocalId() {}
@@ -65,11 +65,11 @@ public:
 
 #ifndef QT_NO_DEBUG_STREAM
     // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
-    virtual QDebug& debugStreamOut(QDebug& dbg) = 0;
+    virtual QDebug& debugStreamOut(QDebug& dbg) const = 0;
 #endif
 #ifndef QT_NO_DATASTREAM
     // NOTE: on platforms where Qt is built without data streams enabled, vtable will differ!
-    virtual QDataStream& dataStreamOut(QDataStream& out) = 0;
+    virtual QDataStream& dataStreamOut(QDataStream& out) const = 0;
     virtual QDataStream& dataStreamIn(QDataStream& in) = 0;
 #endif
     virtual uint hash() const = 0;

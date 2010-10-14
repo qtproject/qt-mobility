@@ -128,7 +128,7 @@ QOrganizerItemEngineLocalId* QOrganizerItemMaemo5EngineLocalId::clone() const
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug& QOrganizerItemMaemo5EngineLocalId::debugStreamOut(QDebug& dbg)
+QDebug& QOrganizerItemMaemo5EngineLocalId::debugStreamOut(QDebug& dbg) const
 {
     dbg.nospace() << "QOrganizerItemMaemo5EngineLocalId(" << m_localItemId << ")";
     return dbg.maybeSpace();
@@ -136,7 +136,7 @@ QDebug& QOrganizerItemMaemo5EngineLocalId::debugStreamOut(QDebug& dbg)
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerItemMaemo5EngineLocalId::dataStreamOut(QDataStream& out)
+QDataStream& QOrganizerItemMaemo5EngineLocalId::dataStreamOut(QDataStream& out) const
 {
     out << m_localItemId;
     return out;

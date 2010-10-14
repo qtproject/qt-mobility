@@ -46,6 +46,13 @@
 #include <QDebug>
 #include <QDataStream>
 
+#if !defined(Q_CC_MWERKS)
+template<> QTM_PREPEND_NAMESPACE(QOrganizerItemEngineLocalId) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QOrganizerItemEngineLocalId)>::clone()
+{
+    return d ? d->clone() : 0;
+}
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -85,33 +92,18 @@ QOrganizerItemId::QOrganizerItemId(QOrganizerItemEngineLocalId* engineItemId)
  */
 QOrganizerItemId::~QOrganizerItemId()
 {
-    delete d;
 }
 
 /*! Constructs a new organizer item id as a copy of \a other */
 QOrganizerItemId::QOrganizerItemId(const QOrganizerItemId& other)
+    : d(other.d)
 {
-    if (other.d)
-        d = other.d->clone();
-    else
-        d = 0;
 }
 
 /*! Assigns the organizer item id to be equal to \a other */
 QOrganizerItemId& QOrganizerItemId::operator=(const QOrganizerItemId& other)
 {
-    if (d == other.d)
-        return *this;
-
-    // clean up our "old" engine id.
-    if (d)
-        delete d;
-
-    if (other.d)
-        d = other.d->clone();
-    else
-        d = 0;
-
+    d = other.d;
     return *this;
 }
 

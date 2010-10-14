@@ -158,7 +158,7 @@ QOrganizerItemEngineLocalId* QOrganizerItemMemoryEngineLocalId::clone() const
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug& QOrganizerItemMemoryEngineLocalId::debugStreamOut(QDebug& dbg)
+QDebug& QOrganizerItemMemoryEngineLocalId::debugStreamOut(QDebug& dbg) const
 {
     dbg.nospace() << "QOrganizerItemMemoryEngineLocalId(" << m_localCollectionId << ", " << m_localItemId << ")";
     return dbg.maybeSpace();
@@ -166,7 +166,7 @@ QDebug& QOrganizerItemMemoryEngineLocalId::debugStreamOut(QDebug& dbg)
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerItemMemoryEngineLocalId::dataStreamOut(QDataStream& out)
+QDataStream& QOrganizerItemMemoryEngineLocalId::dataStreamOut(QDataStream& out) const
 {
     return (out << m_localItemId << m_localCollectionId);
 }

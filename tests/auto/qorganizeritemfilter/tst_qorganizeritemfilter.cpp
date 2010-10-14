@@ -106,10 +106,10 @@ public:
     QString managerUri() const {
         return QString::fromLatin1("qtorganizer:basicItem:");
     }
-    QDebug& debugStreamOut(QDebug& dbg) {
+    QDebug& debugStreamOut(QDebug& dbg) const {
         return dbg << m_id;
     }
-    QDataStream& dataStreamOut(QDataStream& out) {
+    QDataStream& dataStreamOut(QDataStream& out) const {
         return out << static_cast<quint32>(m_id);
     }
     QDataStream& dataStreamIn(QDataStream& in) {

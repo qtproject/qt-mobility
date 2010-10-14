@@ -208,7 +208,7 @@ QOrganizerItemEngineLocalId* QOrganizerItemSkeletonEngineLocalId::clone() const
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug& QOrganizerItemSkeletonEngineLocalId::debugStreamOut(QDebug& dbg)
+QDebug& QOrganizerItemSkeletonEngineLocalId::debugStreamOut(QDebug& dbg) const
 {
     /*
       TODO
@@ -232,7 +232,7 @@ QDebug& QOrganizerItemSkeletonEngineLocalId::debugStreamOut(QDebug& dbg)
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerItemSkeletonEngineLocalId::dataStreamOut(QDataStream& out)
+QDataStream& QOrganizerItemSkeletonEngineLocalId::dataStreamOut(QDataStream& out) const
 {
     /*
       TODO
