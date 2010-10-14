@@ -149,7 +149,7 @@ public:
 protected:
 
 private Q_SLOTS:
-    void bluetoothNetworkStatusCheck();
+    void bluetoothNetworkStatusCheck(QString device);
     void setupNetworkInfo();
 #if defined(Q_WS_MAEMO_6)
     // Slots only available in Maemo6

@@ -236,7 +236,6 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
         wlanSignalStrengthTimer->stop();
 }
 
-
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
@@ -679,15 +678,6 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                        this, SLOT(networkModeChanged(int)))) {
         qWarning() << "unable to connect to radio_access_technology_change";
     }
-    #endif /* Maemo 5 */
-
-    if(!systemDbusConnection.connect("com.nokia.icd",
-                              "/com/nokia/icd",
-                              "com.nokia.icd",
-                              QLatin1String("status_changed"),
-                              this, SLOT(icdStatusChanged(QString,QString,QString,QString))) ) {
-        qWarning() << "unable to connect to icdStatusChanged";
-    }
     if(!systemDbusConnection.connect("com.nokia.bme",
                               "/com/nokia/bme/signal",
                               "com.nokia.bme.signal",
@@ -702,18 +692,27 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                               this, SLOT(usbCableAction())) ) {
         qWarning() << "unable to connect to usbCableAction (disconnect)";
     }
+    #endif /* Maemo 5 */
+
+    if(!systemDbusConnection.connect("com.nokia.icd",
+                              "/com/nokia/icd",
+                              "com.nokia.icd",
+                              QLatin1String("status_changed"),
+                              this, SLOT(icdStatusChanged(QString,QString,QString,QString))) ) {
+        qWarning() << "unable to connect to icdStatusChanged";
+    }
     if(!systemDbusConnection.connect("org.freedesktop.Hal",
                               "/org/freedesktop/Hal/Manager",
                               "org.freedesktop.Hal.Manager",
                               QLatin1String("DeviceAdded"),
-                              this, SLOT(bluetoothNetworkStatusCheck())) ) {
+                              this, SLOT(bluetoothNetworkStatusCheck(QString))) ) {
         qWarning() << "unable to connect to bluetoothNetworkStatusCheck (1)";
     }
     if(!systemDbusConnection.connect("org.freedesktop.Hal",
                               "/org/freedesktop/Hal/Manager",
                               "org.freedesktop.Hal.Manager",
                               QLatin1String("DeviceRemoved"),
-                              this, SLOT(bluetoothNetworkStatusCheck())) ) {
+                              this, SLOT(bluetoothNetworkStatusCheck(QString))) ) {
         qWarning() << "unable to connect to bluetoothNetworkStatusCheck (2)";
     }
 #endif
@@ -894,14 +893,16 @@ void QSystemNetworkInfoPrivate::usbCableAction()
             QTextStream stream(&rx);
             stream >> newEthernetState;
             rx.close();
-            if (currentEthernetState != newEthernetState) {
-                currentEthernetState = newEthernetState;
-                emit networkStatusChanged(QSystemNetworkInfo::EthernetMode,
-                                          networkStatus(QSystemNetworkInfo::EthernetMode));
-                networkModeChangeCheck();
-            }
         }
     }
+
+    if (currentEthernetState != newEthernetState) {
+        currentEthernetState = newEthernetState;
+        emit networkStatusChanged(QSystemNetworkInfo::EthernetMode,
+                                  networkStatus(QSystemNetworkInfo::EthernetMode));
+    }
+
+    networkModeChangeCheck();
 }
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
@@ -941,11 +942,15 @@ void QSystemNetworkInfoPrivate::wlanSignalStrengthCheck()
     }
 }
 
-void QSystemNetworkInfoPrivate::bluetoothNetworkStatusCheck()
+void QSystemNetworkInfoPrivate::bluetoothNetworkStatusCheck(QString device)
 {
-    if (currentBluetoothNetworkStatus != networkStatus(QSystemNetworkInfo::BluetoothMode)) {
-        currentBluetoothNetworkStatus = networkStatus(QSystemNetworkInfo::BluetoothMode);
-        emit networkStatusChanged(QSystemNetworkInfo::BluetoothMode, currentBluetoothNetworkStatus);
+    if (device == "/org/freedesktop/Hal/devices/net_1b") {
+        QTimer::singleShot(500, this, SLOT(usbCableAction()));
+    } else {
+        if (currentBluetoothNetworkStatus != networkStatus(QSystemNetworkInfo::BluetoothMode)) {
+            currentBluetoothNetworkStatus = networkStatus(QSystemNetworkInfo::BluetoothMode);
+            emit networkStatusChanged(QSystemNetworkInfo::BluetoothMode, currentBluetoothNetworkStatus);
+        }
     }
 }
 
