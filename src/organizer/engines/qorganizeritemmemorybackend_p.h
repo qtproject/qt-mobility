@@ -75,9 +75,15 @@
 #include "qorganizeritemenginelocalid.h"
 #include "qorganizercollectionenginelocalid.h"
 
+#ifdef QT_SIMULATOR
+#define Q_ORGANIZER_MEMORYENGINE_EXPORT Q_ORGANIZER_EXPORT
+#else
+#define Q_ORGANIZER_MEMORYENGINE_EXPORT
+#endif
+
 QTM_BEGIN_NAMESPACE
 
-class Q_ORGANIZER_EXPORT QOrganizerItemMemoryEngineLocalId : public QOrganizerItemEngineLocalId
+class Q_ORGANIZER_MEMORYENGINE_EXPORT QOrganizerItemMemoryEngineLocalId : public QOrganizerItemEngineLocalId
 {
 public:
     QOrganizerItemMemoryEngineLocalId();
@@ -106,7 +112,7 @@ private:
     friend class QOrganizerItemMemoryEngine;
 };
 
-class Q_ORGANIZER_EXPORT QOrganizerCollectionMemoryEngineLocalId : public QOrganizerCollectionEngineLocalId
+class Q_ORGANIZER_MEMORYENGINE_EXPORT QOrganizerCollectionMemoryEngineLocalId : public QOrganizerCollectionEngineLocalId
 {
 public:
     QOrganizerCollectionMemoryEngineLocalId();
@@ -136,7 +142,7 @@ private:
 
 class QOrganizerItemAbstractRequest;
 class QOrganizerItemManagerEngine;
-class Q_ORGANIZER_EXPORT QOrganizerItemMemoryEngineData : public QSharedData
+class Q_ORGANIZER_MEMORYENGINE_EXPORT QOrganizerItemMemoryEngineData : public QSharedData
 {
 public:
     QOrganizerItemMemoryEngineData();
@@ -167,7 +173,7 @@ public:
     QList<QOrganizerItemManagerEngine*> m_sharedEngines;   // The list of engines that share this data
 };
 
-class Q_ORGANIZER_EXPORT QOrganizerItemMemoryEngine : public QOrganizerItemManagerEngine
+class Q_ORGANIZER_MEMORYENGINE_EXPORT QOrganizerItemMemoryEngine : public QOrganizerItemManagerEngine
 {
     Q_OBJECT
 
