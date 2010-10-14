@@ -159,13 +159,12 @@ class QDeclarativeOrganizerEventTime : public QDeclarativeOrganizerItemDetail
     Q_OBJECT
     Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
     Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime NOTIFY valueChanged)
-    Q_PROPERTY(bool isTimeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
-    Q_ENUMS(FieldType)
+    Q_PROPERTY(bool isAllDay READ isAllDay WRITE setAllDay NOTIFY valueChanged)
 public:
     enum FieldType {
         StartDateTime = 0,
         EndDateTime,
-        TimeSpecified
+        AllDay
     };
     static QString fieldNameFromFieldType(int type);
 
@@ -198,14 +197,14 @@ public:
         }
     }
     QDateTime endDateTime() const {return m_detail.value<QDateTime>(QOrganizerEventTime::FieldEndDateTime);}
-    void setTimeSpecified(bool timeSpecified)
+    void setAllDay(bool allDay)
     {
-        if (timeSpecified != isTimeSpecified() && !readOnly()) {
-            m_detail.setValue(QOrganizerEventTime::FieldTimeSpecified, timeSpecified);
+        if (allDay != isAllDay() && !readOnly()) {
+            m_detail.setValue(QOrganizerEventTime::FieldAllDay, allDay);
             emit valueChanged();
         }
     }
-    bool isTimeSpecified() {return m_detail.value<bool>(QOrganizerEventTime::FieldTimeSpecified);}
+    bool isAllDay() {return m_detail.value<bool>(QOrganizerEventTime::FieldAllDay);}
 signals:
     void valueChanged();
 };
@@ -1093,13 +1092,13 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerTodoProgress)
 class QDeclarativeOrganizerTodoTime : public QDeclarativeOrganizerItemDetail
 {
     Q_OBJECT
-    Q_PROPERTY(bool timeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
+    Q_PROPERTY(bool allDay READ isAllDay WRITE setAllDay NOTIFY valueChanged)
     Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
     Q_PROPERTY(QDateTime dueDateTime READ dueDateTime WRITE setDueDateTime NOTIFY valueChanged)
     Q_ENUMS(FieldType)
 public:
     enum FieldType {
-        TimeSpecified = 0,
+        AllDay = 0,
         StartDateTime,
         DueDateTime
     };
@@ -1133,14 +1132,14 @@ public:
     }
     QDateTime dueDateTime() const {return m_detail.value<QDateTime>(QOrganizerTodoTime::FieldDueDateTime);}
 
-    void setTimeSpecified(bool timeSpecified)
+    void setAllDay(bool allDay)
     {
-        if (timeSpecified != isTimeSpecified() && !readOnly()) {
-            m_detail.setValue(QOrganizerTodoTime::FieldTimeSpecified, timeSpecified);
+        if (allDay != isAllDay() && !readOnly()) {
+            m_detail.setValue(QOrganizerTodoTime::FieldAllDay, allDay);
             emit valueChanged();
         }
     }
-    bool isTimeSpecified() {return m_detail.value<bool>(QOrganizerTodoTime::FieldTimeSpecified);}
+    bool isAllDay() {return m_detail.value<bool>(QOrganizerTodoTime::FieldAllDay);}
 
 signals:
     void valueChanged();

@@ -504,13 +504,13 @@ void tst_QOrganizerItemDetails::eventTime()
     QOrganizerEvent e;
 
     QVERIFY(r.isEmpty());
-    QVERIFY(!r.isTimeSpecified());
+    QVERIFY(!r.isAllDay());
 
     r.setStartDateTime(QDateTime(QDate(2010, 10, 13)));
     QVERIFY(r.startDateTime() == QDateTime(QDate(2010, 10, 13)));
-    QVERIFY(!r.isTimeSpecified());
-    r.setTimeSpecified(true);
-    QVERIFY(r.isTimeSpecified());
+    QVERIFY(!r.isAllDay());
+    r.setAllDay(true);
+    QVERIFY(r.isAllDay());
 
     r.setEndDateTime(QDateTime(QDate(2010, 10, 14)));
     QVERIFY(r.endDateTime() == QDateTime(QDate(2010, 10, 14)));
@@ -529,7 +529,7 @@ void tst_QOrganizerItemDetails::eventTime()
     QVERIFY(e.detail<QOrganizerEventTime>() == r);
 
     // update
-    r.setTimeSpecified(false);
+    r.setAllDay(false);
     QVERIFY(e.detail<QOrganizerEventTime>() != r);
     QVERIFY(e.saveDetail(&r));
     QVERIFY(e.detail<QOrganizerEventTime>() == r);
@@ -579,13 +579,13 @@ void tst_QOrganizerItemDetails::todoTime()
     QOrganizerTodo t;
 
     QVERIFY(r.isEmpty());
-    QVERIFY(!r.isTimeSpecified());
+    QVERIFY(!r.isAllDay());
 
     r.setStartDateTime(QDateTime(QDate(2010, 10, 13)));
     QVERIFY(r.startDateTime() == QDateTime(QDate(2010, 10, 13)));
-    QVERIFY(!r.isTimeSpecified());
-    r.setTimeSpecified(true);
-    QVERIFY(r.isTimeSpecified());
+    QVERIFY(!r.isAllDay());
+    r.setAllDay(true);
+    QVERIFY(r.isAllDay());
 
     r.setDueDateTime(QDateTime(QDate(2010, 10, 14)));
     QVERIFY(r.dueDateTime() == QDateTime(QDate(2010, 10, 14)));
@@ -604,7 +604,7 @@ void tst_QOrganizerItemDetails::todoTime()
     QVERIFY(t.detail<QOrganizerTodoTime>() == r);
 
     // update
-    r.setTimeSpecified(false);
+    r.setAllDay(false);
     QVERIFY(t.detail<QOrganizerTodoTime>() != r);
     QVERIFY(t.saveDetail(&r));
     QVERIFY(t.detail<QOrganizerTodoTime>() == r);

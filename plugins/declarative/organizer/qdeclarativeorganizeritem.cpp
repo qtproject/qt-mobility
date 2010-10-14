@@ -212,16 +212,16 @@ QDateTime QDeclarativeOrganizerEvent::endDateTime() const
 {
     return m_event->endDateTime();
 }
-void QDeclarativeOrganizerEvent::setTimeSpecified(bool timeSpecified)
+void QDeclarativeOrganizerEvent::setAllDay(bool isAllDay)
 {
-    if (timeSpecified != m_event->isTimeSpecified()) {
-        m_event->setTimeSpecified(timeSpecified);
+    if (isAllDay != m_event->isAllDay()) {
+        m_event->setAllDay(isAllDay);
         emit valueChanged();
     }
 }
-bool QDeclarativeOrganizerEvent::isTimeSpecified() const
+bool QDeclarativeOrganizerEvent::isAllDay() const
 {
-    return m_event->isTimeSpecified();
+    return m_event->isAllDay();
 }
 void QDeclarativeOrganizerEvent::setPriority(QDeclarativeOrganizerItemPriority::PriorityType value)
 {
@@ -404,17 +404,17 @@ QDateTime QDeclarativeOrganizerTodo::dueDateTime() const
     return m_todo->dueDateTime();
 }
 
-void QDeclarativeOrganizerTodo::setTimeSpecified(bool isTimeSpecified)
+void QDeclarativeOrganizerTodo::setAllDay(bool isAllDay)
 {
-    if (isTimeSpecified != m_todo->isTimeSpecified()) {
-        m_todo->setTimeSpecified(isTimeSpecified);
+    if (isAllDay != m_todo->isAllDay()) {
+        m_todo->setAllDay(isAllDay);
         emit valueChanged();
     }
 }
 
-bool QDeclarativeOrganizerTodo::isTimeSpecified() const
+bool QDeclarativeOrganizerTodo::isAllDay() const
 {
-    return m_todo->isTimeSpecified();
+    return m_todo->isAllDay();
 }
 
 void QDeclarativeOrganizerTodo::setPriority(QDeclarativeOrganizerItemPriority::PriorityType value)

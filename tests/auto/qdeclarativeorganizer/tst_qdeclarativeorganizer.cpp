@@ -196,7 +196,7 @@ void tst_QDeclarativeOrganizer::construction_data()
     QTest::newRow("Organizer event") << "QDeclarativeOrganizerEvent" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerEvent {}" << true;
     QTest::newRow("Organizer event: Valuetype properties") << "QDeclarativeOrganizerEvent"
                << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n"
-                  "OrganizerEvent {id:organizerEvent; displayLabel:'meeting'; startDateTime:'2010-08-12T13:00:00'; endDateTime:'2010-08-12T15:00:00'; isTimeSpecified:false; locationName:'office'; locationAddress:'53 Brandl st'; locationGeoCoordinates:'-27.579570, 153.10031'; priority:OrganizerItemPriority.LowPriority;"
+                  "OrganizerEvent {id:organizerEvent; displayLabel:'meeting'; startDateTime:'2010-08-12T13:00:00'; endDateTime:'2010-08-12T15:00:00'; isAllDay:false; locationName:'office'; locationAddress:'53 Brandl st'; locationGeoCoordinates:'-27.579570, 153.10031'; priority:OrganizerItemPriority.LowPriority;"
                   "recurrence.recurrenceRules:[OrganizerItemRecurrenceRule {}]\n"
                   "recurrence.recurrenceDates:[]\n recurrence.exceptionDates:[]"
                   "}"

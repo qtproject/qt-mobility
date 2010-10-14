@@ -378,8 +378,8 @@ QString QDeclarativeOrganizerEventTime::fieldNameFromFieldType(int type)
         return QOrganizerEventTime::FieldStartDateTime;
     case QDeclarativeOrganizerEventTime::EndDateTime:
         return QOrganizerEventTime::FieldEndDateTime;
-    case QDeclarativeOrganizerEventTime::TimeSpecified:
-        return QOrganizerEventTime::FieldTimeSpecified;
+    case QDeclarativeOrganizerEventTime::AllDay:
+        return QOrganizerEventTime::FieldAllDay;
     }
     qWarning() << "invalid field type:" << type;
     return QString();
@@ -424,8 +424,8 @@ QString QDeclarativeOrganizerTodoProgress::fieldNameFromFieldType(int type)
 QString QDeclarativeOrganizerTodoTime::fieldNameFromFieldType(int type)
 {
     switch (type) {
-    case QDeclarativeOrganizerTodoTime::TimeSpecified:
-        return QOrganizerTodoTime::FieldTimeSpecified;
+    case QDeclarativeOrganizerTodoTime::AllDay:
+        return QOrganizerTodoTime::FieldAllDay;
     case QDeclarativeOrganizerTodoTime::StartDateTime:
         return QOrganizerTodoTime::FieldStartDateTime;
     case QDeclarativeOrganizerTodoTime::DueDateTime:

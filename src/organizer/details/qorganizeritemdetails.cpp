@@ -178,12 +178,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldEndDateTime, "EndDateTime");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldStartDateTime, "StartDateTime");
 
 /*!
-   \variable QOrganizerEventTime::FieldTimeSpecified
+   \variable QOrganizerEventTime::FieldAllDay
 
    The constant key for the specification of whether the time is significant in the
    start datetime of the QOrganizerEventTime type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldTimeSpecified, "TimeSpecified");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
 
 
 /*!
@@ -1201,12 +1201,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldStartDateTime, "StartDateTime"
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldDueDateTime, "DueDateTime");
 
 /*!
-   \variable QOrganizerTodoTime::FieldTimeSpecified
+   \variable QOrganizerTodoTime::FieldAllDay
 
    The constant key for the specification of whether the time is significant in the
    start datetime of the QOrganizerTodoTime type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldTimeSpecified, "TimeSpecified");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldAllDay, "AllDay");
 
 /*!
     \fn QOrganizerTodoTime::startDateTime() const
@@ -1229,7 +1229,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldTimeSpecified, "TimeSpecified"
  */
 
 /*!
-    \fn QOrganizerTodoTimeRange::isTimeSpecified() const
+    \fn QOrganizerTodoTimeRange::isAllDay() const
     Returns true if a specific time was specified for the todo.
     Returns false if the todo is an all-day todo.
  */

@@ -113,7 +113,7 @@ class QDeclarativeOrganizerEvent : public QDeclarativeOrganizerItem
     Q_OBJECT
     Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
     Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime NOTIFY valueChanged)
-    Q_PROPERTY(bool timeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
+    Q_PROPERTY(bool allDay READ isAllDay WRITE setAllDay NOTIFY valueChanged)
     Q_PROPERTY(QString location READ location WRITE setLocation NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemPriority::PriorityType priority READ priority WRITE setPriority NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemRecurrence* recurrence READ recurrence NOTIFY valueChanged)
@@ -127,8 +127,8 @@ public:
     QDateTime startDateTime() const;
     void setEndDateTime(const QDateTime& endDateTime);
     QDateTime endDateTime() const;
-    void setTimeSpecified(bool isTimeSpecified);
-    bool isTimeSpecified() const;
+    void setAllDay(bool isAllDay);
+    bool isAllDay() const;
     void setPriority(QDeclarativeOrganizerItemPriority::PriorityType priority);
     QDeclarativeOrganizerItemPriority::PriorityType priority() const;
     QString location() const;
@@ -224,7 +224,7 @@ class QDeclarativeOrganizerTodo : public QDeclarativeOrganizerItem
     Q_OBJECT
     Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
     Q_PROPERTY(QDateTime dueDateTime READ dueDateTime WRITE setDueDateTime NOTIFY valueChanged)
-    Q_PROPERTY(bool isTimeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
+    Q_PROPERTY(bool isAllDay READ isAllDay WRITE setAllDay NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemPriority::PriorityType priority READ priority WRITE setPriority NOTIFY valueChanged)
     Q_PROPERTY(int progressPercentage READ progressPercentage WRITE setProgressPercentage NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerTodoProgress::StatusType status READ status WRITE setStatus NOTIFY valueChanged)
@@ -242,8 +242,8 @@ public:
 
     QDateTime dueDateTime() const;
 
-    void setTimeSpecified(bool isTimeSpecified);
-    bool isTimeSpecified() const;
+    void setAllDay(bool isAllDay);
+    bool isAllDay() const;
 
     void setPriority(QDeclarativeOrganizerItemPriority::PriorityType priority);
     QDeclarativeOrganizerItemPriority::PriorityType priority() const;
