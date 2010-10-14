@@ -86,15 +86,7 @@ QDeclarativeContactModel::QDeclarativeContactModel(QObject *parent) :
 {
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(InterestLabelRole, "interestLabel");
-    roleNames.insert(InterestRole, "interest");
     roleNames.insert(ContactRole, "contact");
-    roleNames.insert(ContactIdRole, "contactId");
-    roleNames.insert(AvatarRole, "avatar");
-    roleNames.insert(PresenceAvailableRole, "presenceSupported");
-    roleNames.insert(PresenceTextRole, "presenceText");
-    roleNames.insert(PresenceStateRole, "presenceState");
-    roleNames.insert(PresenceMessageRole, "presenceMessage");
     setRoleNames(roleNames);
 
     connect(this, SIGNAL(managerChanged()), SLOT(fetchAgain()));
@@ -314,7 +306,6 @@ void QDeclarativeContactModel::contactFetched()
         QList<QDeclarativeContact*> dcs;
         foreach(QContact c, contacts) {
             dcs.append(new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()), this));
-            qDebug() << "id: " << c.localId() << " label:" << c.displayLabel();
         }
 
         reset();
@@ -388,61 +379,17 @@ void QDeclarativeContactModel::contactRemoved()
     }
 }
 
-QPair<QString, QString> QDeclarativeContactModel::interestingDetail(const QContact&c) const
-{
-    // Try a phone number, then email, then online account
-    // This does only check the first detail of each type
-    QContactDetail p = c.details<QContactPhoneNumber>().value(0);
-    if (!p.isEmpty())
-        return qMakePair(tr("Phone"), p.value(QContactPhoneNumber::FieldNumber));
-
-    p = c.details<QContactEmailAddress>().value(0);
-    if (!p.isEmpty())
-        return qMakePair(tr("Email"), p.value(QContactEmailAddress::FieldEmailAddress));
-
-    p = c.details<QContactOnlineAccount>().value(0);
-    if (!p.isEmpty())
-        return qMakePair(p.value(QContactOnlineAccount::FieldServiceProvider), p.value(QContactOnlineAccount::FieldAccountUri));
-
-    // Well, don't know.
-    return qMakePair(QString(), QString());
-}
-
 
 QVariant QDeclarativeContactModel::data(const QModelIndex &index, int role) const
 {
     QDeclarativeContact* dc = d->m_contacts.value(index.row());
     QContact c = dc->contact();
-    qDebug() << "id: " << c.localId() << " label:" << c.displayLabel();
+
     switch(role) {
         case Qt::DisplayRole:
             return c.displayLabel();
-        case InterestLabelRole:
-            return interestingDetail(c).first;
-        case InterestRole:
-            return interestingDetail(c).second;
         case ContactRole:
             return QVariant::fromValue(dc);
-        case ContactIdRole:
-            return c.localId();
-        case AvatarRole:
-            //Just let the imager provider deal with it
-            return QString("image://thumbnail/%1.%2").arg(manager()).arg(c.localId());
-        case Qt::DecorationRole:
-            {
-                QContactThumbnail t = c.detail<QContactThumbnail>();
-                if (!t.thumbnail().isNull())
-                    return QPixmap::fromImage(t.thumbnail());
-            }
-            return QPixmap();
-        case PresenceAvailableRole:
-            return !c.detail<QContactGlobalPresence>().isEmpty();
-        case PresenceMessageRole:
-            return c.detail<QContactGlobalPresence>().customMessage();
-        case PresenceTextRole:
-            return c.detail<QContactGlobalPresence>().presenceStateText();
-        case PresenceStateRole:
-            return c.detail<QContactGlobalPresence>().presenceState();
     }
     return QVariant();
 }

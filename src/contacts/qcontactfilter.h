@@ -112,8 +112,8 @@ protected:
 protected:
     friend class QContactFilterPrivate;
 #ifndef QT_NO_DATASTREAM
-    friend QDataStream& operator<<(QDataStream& out, const QContactFilter& filter);
-    friend QDataStream& operator>>(QDataStream& in, QContactFilter& filter);
+    Q_CONTACTS_EXPORT friend QDataStream& operator<<(QDataStream& out, const QContactFilter& filter);
+    Q_CONTACTS_EXPORT friend QDataStream& operator>>(QDataStream& in, QContactFilter& filter);
 #endif
     QSharedDataPointer<QContactFilterPrivate> d_ptr;
 };

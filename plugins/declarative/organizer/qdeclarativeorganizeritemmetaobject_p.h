@@ -78,7 +78,7 @@ public:
     uint itemId() const;
 
 
-private:
+
     QDeclarativeOrganizerItemDetail* detailByDefinitionName(const QString& name);
     static void detail_append(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p, QDeclarativeOrganizerItemDetail *detail);
     static int  detail_count(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p);
@@ -86,6 +86,7 @@ private:
     static void  detail_clear(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p);
 
 
+    bool m_modified;
     QOrganizerItem m_item;
     QMap<QString, QOrganizerItemDetailDefinition> m_defs;
     QList<QDeclarativeOrganizerItemDetail*> m_details;

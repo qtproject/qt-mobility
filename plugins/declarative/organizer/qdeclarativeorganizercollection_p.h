@@ -45,6 +45,9 @@
 #include "qdeclarative.h"
 #include "qorganizercollection.h"
 
+#include <QColor>
+#include <QUrl>
+
 QTM_USE_NAMESPACE
 
 
@@ -52,6 +55,10 @@ class QDeclarativeOrganizerCollection : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(uint collectionId READ id NOTIFY valueChanged)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY valueChanged)
+    Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY valueChanged)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY valueChanged)
+    Q_PROPERTY(QUrl image READ image WRITE setImage NOTIFY valueChanged)
 public:
     QDeclarativeOrganizerCollection(QObject* parent = 0)
         :QObject(parent)
@@ -64,12 +71,56 @@ public:
         return qHash(d.id());
     }
 
-    Q_INVOKABLE void setMetaData(const QString& key, const QVariant& value)
+    QString name() const
     {
-        d.setMetaData(key, value);
+        return metaData(QOrganizerCollection::KeyName).toString();
     }
 
-    Q_INVOKABLE  QVariant metaData(const QString& key)
+    void setName(const QString& name)
+    {
+        setMetaData(QOrganizerCollection::KeyName, name);
+    }
+
+    QString description() const
+    {
+        return metaData(QOrganizerCollection::KeyDescription).toString();
+    }
+
+    void setDescription(const QString& desc)
+    {
+        setMetaData(QOrganizerCollection::KeyDescription, desc);
+    }
+
+    QColor color() const
+    {
+        return metaData(QOrganizerCollection::KeyColor).value<QColor>();
+    }
+
+    void setColor(const QColor& color)
+    {
+        setMetaData(QOrganizerCollection::KeyColor, color);
+    }
+
+    QUrl image() const
+    {
+        //image or image url?
+        return QUrl(metaData(QOrganizerCollection::KeyImage).toString());
+    }
+
+    void setImage(const QUrl& url)
+    {
+        setMetaData(QOrganizerCollection::KeyImage, url);
+    }
+
+    Q_INVOKABLE void setMetaData(const QString& key, const QVariant& value)
+    {
+        if (metaData(key) != value) {
+            d.setMetaData(key, value);
+            emit valueChanged();
+        }
+    }
+
+    Q_INVOKABLE  QVariant metaData(const QString& key) const
     {
         return d.metaData(key);
     }

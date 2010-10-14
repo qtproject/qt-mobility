@@ -75,10 +75,13 @@ public:
 
     void setOptimizationHints(OptimizationHints hints)
     {
-        QOrganizerItemFetchHint::OptimizationHints newHints;
-        newHints &= 0xFFFFFFFF;
-        newHints &= (int)hints;
-        d.setOptimizationHints(newHints);
+        if (hints != d.optimizationHints()) {
+            QOrganizerItemFetchHint::OptimizationHints newHints;
+            newHints &= 0xFFFFFFFF;
+            newHints &= (int)hints;
+            d.setOptimizationHints(newHints);
+            emit valueChanged();
+        }
     }
 
     QOrganizerItemFetchHint fetchHint() const

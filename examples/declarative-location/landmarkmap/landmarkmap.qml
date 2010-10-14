@@ -216,6 +216,9 @@ Item {
         //![Category model]
         Map {
             id: map
+            plugin : Plugin {
+                        name : "nokia"
+                    }
             anchors.fill: parent
             size.width: parent.width
             size.height: parent.height

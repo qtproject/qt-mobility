@@ -3,7 +3,7 @@ TEMPLATE = lib
 CONFIG += qt plugin mobility
 MOBILITY += location
 PLUGIN_TYPE = declarative
-QT += declarative
+QT += declarative network
 
 include(../../../common.pri)
 
@@ -35,6 +35,7 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeomappolylineobject_p.h \
            qdeclarativegeomaprectangleobject_p.h \
            qdeclarativegeomaptextobject_p.h \
+           qdeclarativegeoserviceprovider_p.h \
            qdeclarativegraphicsgeomap_p.h \
 	   qdeclarativegeoplace_p.h \
 	   qdeclarativegeoaddress_p.h \
@@ -56,6 +57,7 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeomappolylineobject.cpp \
            qdeclarativegeomaprectangleobject.cpp \
            qdeclarativegeomaptextobject.cpp \
+           qdeclarativegeoserviceprovider.cpp \
            qdeclarativegraphicsgeomap.cpp \
 	   qdeclarativegeoplace.cpp \
 	   qdeclarativegeoaddress.cpp \

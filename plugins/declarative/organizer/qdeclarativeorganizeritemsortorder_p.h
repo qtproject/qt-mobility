@@ -71,27 +71,42 @@ public:
 
     void setDefinitionName(const QString& name)
     {
-        d.setDetailDefinitionName(name, d.detailFieldName());
+        if (name != d.detailDefinitionName()) {
+            d.setDetailDefinitionName(name, d.detailFieldName());
+            emit valueChanged();
+        }
     }
 
     void setFieldName(const QString& name)
     {
-        d.setDetailDefinitionName(d.detailDefinitionName(), name);
+        if (name != d.detailFieldName()) {
+            d.setDetailDefinitionName(d.detailDefinitionName(), name);
+            emit valueChanged();
+        }
     }
 
-    void setBlankPolicy(BlankPolicy blankPolicy)
+    void setBlankPolicy(BlankPolicy policy)
     {
-        d.setBlankPolicy(static_cast<QOrganizerItemSortOrder::BlankPolicy>(blankPolicy));
+        if (policy != blankPolicy()) {
+            d.setBlankPolicy(static_cast<QOrganizerItemSortOrder::BlankPolicy>(policy));
+            emit valueChanged();
+        }
     }
 
-    void setDirection(Qt::SortOrder direction)
+    void setDirection(Qt::SortOrder newDirection)
     {
-        d.setDirection(direction);
+        if (newDirection != direction()) {
+            d.setDirection(newDirection);
+            emit valueChanged();
+        }
     }
 
-    void setCaseSensitivity(Qt::CaseSensitivity sensitivity)
+    void setCaseSensitivity(Qt::CaseSensitivity newSensitivity)
     {
-        d.setCaseSensitivity(sensitivity);
+        if (newSensitivity != caseSensitivity()) {
+            d.setCaseSensitivity(newSensitivity);
+            emit valueChanged();
+        }
     }
 
     QString definitionName() const
