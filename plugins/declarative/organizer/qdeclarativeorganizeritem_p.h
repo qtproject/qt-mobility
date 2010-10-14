@@ -51,31 +51,18 @@
 
 QTM_USE_NAMESPACE;
 
-#define Q_DECLARATIVEORGANIZERITEMDETAIL_SET(detailType, propertyName, propertyValue)  \
-    QDeclarativeOrganizerItemDetail* detail = detailByDefinitionName(propertyName); \
-    if (detail) \
-        detail->setValue(propertyName, propertyValue);
-
-#define Q_DECLARATIVEORGANIZERITEMDETAIL_GET(detailType, propertyName, returnValue) \
-    QVariant returnValue; \
-    QDeclarativeOrganizerItemDetail* detail = detailByDefinitionName(propertyName); \
-    if (detail) \
-        returnValue = detail->value(propertyName);
-
-
-
 class QDeclarativeOrganizerItemMetaObject;
 class QDeclarativeOrganizerItemDetail;
 class QDeclarativeOrganizerItem : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY (QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> details READ details NOTIFY valueChanged);
+    Q_PROPERTY (QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> details READ details NOTIFY itemChanged);
     Q_PROPERTY (QString manager READ manager)
     Q_PROPERTY (uint itemId READ itemId)
     Q_PROPERTY (QString type READ type)
-    Q_PROPERTY (QString displayLabel READ displayLabel WRITE setDisplayLabel NOTIFY valueChanged)
-    Q_PROPERTY (QString description READ description WRITE setDescription NOTIFY valueChanged)
-    Q_PROPERTY (QString guid READ guid WRITE setGuid NOTIFY valueChanged)
+    Q_PROPERTY (QString displayLabel READ displayLabel WRITE setDisplayLabel NOTIFY itemChanged)
+    Q_PROPERTY (QString description READ description WRITE setDescription NOTIFY itemChanged)
+    Q_PROPERTY (QString guid READ guid WRITE setGuid NOTIFY itemChanged)
     Q_PROPERTY (bool modified READ modified)
 
     Q_CLASSINFO("DefaultProperty", "details")
@@ -103,48 +90,16 @@ public:
     Q_INVOKABLE void clearComments();
     Q_INVOKABLE void clearDetails();
 
-    QString type() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemType, "type", returnValue)
-        if (returnValue.isNull())
-            return QOrganizerItemType::TypeEvent;
-        return returnValue.value<QString>();
-    }
-    QString displayLabel() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemDisplayLabel, "label", returnValue)
-        return returnValue.value<QString>();
-    }
-
-    void setDisplayLabel(const QString& label)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemDisplayLabel, "label", label)
-    }
-
-    QString description() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemDescription, "description", returnValue)
-        return returnValue.value<QString>();
-    }
-
-    void setDescription(const QString& description)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemDescription, "description", description)
-    }
-
-    QString guid() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemGuid, "guid", returnValue)
-        return returnValue.value<QString>();
-    }
-    void setGuid(const QString& guid)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemGuid, "guid", guid)
-    }
+    QString type() const;
+    QString displayLabel() const;
+    void setDisplayLabel(const QString& label);
+    QString description() const;
+    void setDescription(const QString& description);
+    QString guid() const;
+    void setGuid(const QString& guid);
 signals:
-    void valueChanged();
+    void itemChanged();
 protected:
-    QDeclarativeOrganizerItemDetail* detailByDefinitionName(const QString& name) const;
     void setModified(bool modified);
     QDeclarativeOrganizerItemMetaObject* d;
     friend class QDeclarativeOrganizerItemMetaObject;
@@ -158,10 +113,8 @@ class QDeclarativeOrganizerEvent : public QDeclarativeOrganizerItem
     Q_OBJECT
     Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
     Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime NOTIFY valueChanged)
-    Q_PROPERTY(bool isTimeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
-    Q_PROPERTY(QString locationName READ locationName WRITE setLocationName NOTIFY valueChanged)
-    Q_PROPERTY(QString locationAddress READ locationAddress WRITE setLocationAddress NOTIFY valueChanged)
-    Q_PROPERTY(QString locationGeoCoordinates READ locationGeoCoordinates WRITE setLocationGeoCoordinates NOTIFY valueChanged)
+    Q_PROPERTY(bool timeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
+    Q_PROPERTY(QString location READ location WRITE setLocation NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemPriority::Priority priority READ priority WRITE setPriority NOTIFY valueChanged)
 public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "event");
@@ -169,85 +122,21 @@ public:
 
     explicit QDeclarativeOrganizerEvent(QObject *parent = 0);
 
-    void setStartDateTime(const QDateTime& startDateTime)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTime, "startDateTime", startDateTime)
-    }
-
-    QDateTime startDateTime() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTime, "startDateTime", returnValue)
-        return returnValue.value<QDateTime>();
-    }
-
-    void setEndDateTime(const QDateTime& endDateTime)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTime, "endDateTime", endDateTime)
-    }
-
-    QDateTime endDateTime() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTime, "endDateTime", returnValue)
-        return returnValue.value<QDateTime>();
-    }
-
-    void setTimeSpecified(bool isTimeSpecified)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTime, "isTimeSpecified", isTimeSpecified)
-    }
-
-    bool isTimeSpecified() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTime, "isTimeSpecified", returnValue)
-        return returnValue.value<bool>();
-    }
-
-     void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", static_cast<int>(priority))
-    }
-
-    QDeclarativeOrganizerItemPriority::Priority priority() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemPriority, "priority", returnValue)
-        if (returnValue.isNull())
-            return QDeclarativeOrganizerItemPriority::MediumPriority;
-        return static_cast<QDeclarativeOrganizerItemPriority::Priority>(returnValue.value<int>());
-    }
-
-    QString locationName() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemLocation, "locationName", returnValue)
-        return returnValue.value<QString>();
-    }
-    void setLocationName(const QString& locationName)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemLocation, "locationName", locationName)
-    }
-
-    QString locationAddress() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemLocation, "address", returnValue)
-        return returnValue.value<QString>();
-    }
-    void setLocationAddress(const QString& locationAddress)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemLocation, "address", locationAddress)
-    }
-
-    QString locationGeoCoordinates() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemLocation, "geoLocation", returnValue)
-        return returnValue.value<QString>();
-    }
-
-    void setLocationGeoCoordinates(const QString& locationCoordinates)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET   (QDeclarativeOrganizerItemLocation, "geoLocation", locationCoordinates)
-    }
+    void setStartDateTime(const QDateTime& startDateTime);
+    QDateTime startDateTime() const;
+    void setEndDateTime(const QDateTime& endDateTime);
+    QDateTime endDateTime() const;
+    void setTimeSpecified(bool isTimeSpecified);
+    bool isTimeSpecified() const;
+    void setPriority(QDeclarativeOrganizerItemPriority::Priority priority);
+    QDeclarativeOrganizerItemPriority::Priority priority() const;
+    QString location() const;
+    void setLocation(const QString& loc);
 
 signals:
     void valueChanged();
+private:
+    QOrganizerEvent* m_event;
 
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerEvent)
@@ -258,10 +147,7 @@ class QDeclarativeOrganizerEventOccurrence : public QDeclarativeOrganizerItem
     Q_OBJECT
     Q_PROPERTY(QDateTime startDateTime READ startDateTime WRITE setStartDateTime NOTIFY valueChanged)
     Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime NOTIFY valueChanged)
-    Q_PROPERTY(bool isTimeSpecified READ isTimeSpecified WRITE setTimeSpecified NOTIFY valueChanged)
-    Q_PROPERTY(QString locationName READ locationName WRITE setLocationName NOTIFY valueChanged)
-    Q_PROPERTY(QString locationAddress READ locationAddress WRITE setLocationAddress NOTIFY valueChanged)
-    Q_PROPERTY(QString locationGeoCoordinates READ locationGeoCoordinates WRITE setLocationGeoCoordinates NOTIFY valueChanged)
+    Q_PROPERTY(QString location READ location WRITE setLocation NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemPriority::Priority priority READ priority WRITE setPriority NOTIFY valueChanged)
     Q_PROPERTY(uint parentId READ parentLocalId WRITE setParentLocalId NOTIFY valueChanged)
     Q_PROPERTY(QDate originalDate READ originalDate WRITE setOriginalDate NOTIFY valueChanged)
@@ -271,106 +157,29 @@ public:
 
     explicit QDeclarativeOrganizerEventOccurrence(QObject *parent = 0);
 
-    void setParentLocalId(uint parentId)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemInstanceOrigin, "parentLocalId", parentId)
-    }
+    void setParentLocalId(uint parentId);
+    uint parentLocalId() const;
 
-    uint parentLocalId() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemInstanceOrigin, "parentLocalId", returnValue)
-        return returnValue.value<uint>();
-    }
-    void setOriginalDate(const QDate& date)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemInstanceOrigin, "originalDate", date)
-    }
+    void setOriginalDate(const QDate& date);
 
-    QDate originalDate() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemInstanceOrigin, "originalDate", returnValue)
-        return returnValue.value<QDate>();
-    }
+    QDate originalDate() const;
+    void setStartDateTime(const QDateTime& startDateTime);
 
-    void setStartDateTime(const QDateTime& startDateTime)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTime, "startDateTime", startDateTime)
-    }
+    QDateTime startDateTime() const;
 
-    QDateTime startDateTime() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTime, "startDateTime", returnValue)
-        return returnValue.value<QDateTime>();
-    }
+    void setEndDateTime(const QDateTime& endDateTime);
+    QDateTime endDateTime() const;
 
-    void setEndDateTime(const QDateTime& endDateTime)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTime, "endDateTime", endDateTime)
-    }
+    void setPriority(QDeclarativeOrganizerItemPriority::Priority priority);
+    QDeclarativeOrganizerItemPriority::Priority priority() const;
 
-    QDateTime endDateTime() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTime, "endDateTime", returnValue)
-        return returnValue.value<QDateTime>();
-    }
-
-    void setTimeSpecified(bool isTimeSpecified)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerEventTime, "isTimeSpecified", isTimeSpecified)
-    }
-
-    bool isTimeSpecified() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerEventTime, "isTimeSpecified", returnValue)
-        return returnValue.value<bool>();
-    }
-
-    void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", static_cast<int>(priority))
-    }
-
-    QDeclarativeOrganizerItemPriority::Priority priority() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemPriority, "priority", returnValue)
-        if (returnValue.isNull())
-            return QDeclarativeOrganizerItemPriority::MediumPriority;
-        return static_cast<QDeclarativeOrganizerItemPriority::Priority>(returnValue.value<int>());
-    }
-
-    QString locationName() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemLocation, "locationName", returnValue)
-        return returnValue.value<QString>();
-    }
-    void setLocationName(const QString& locationName)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemLocation, "locationName", locationName)
-    }
-
-    QString locationAddress() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemLocation, "address", returnValue)
-        return returnValue.value<QString>();
-    }
-    void setLocationAddress(const QString& locationAddress)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemLocation, "address", locationAddress)
-    }
-
-    QString locationGeoCoordinates() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemLocation, "geoLocation", returnValue)
-        return returnValue.value<QString>();
-    }
-
-    void setLocationGeoCoordinates(const QString& locationCoordinates)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET   (QDeclarativeOrganizerItemLocation, "geoLocation", locationCoordinates)
-    }
+    QString location() const;
+    void setLocation(const QString& loc);
 
 signals:
     void valueChanged();
+private:
+    QOrganizerEventOccurrence* m_eo;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerEventOccurrence)
 
@@ -383,18 +192,12 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "journal");
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "journals");
     explicit QDeclarativeOrganizerJournal(QObject *parent = 0);
-    void setDateTime(const QDateTime& dateTime)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerJournalTime, "entryDateTime", dateTime)
-    }
-
-    QDateTime dateTime() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerJournalTime, "entryDateTime", returnValue)
-        return returnValue.value<QDateTime>();
-    }
+    void setDateTime(const QDateTime& dateTime);
+    QDateTime dateTime() const;
 signals:
     void valueChanged();
+private:
+    QOrganizerJournal* m_journal;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerJournal)
 
@@ -429,88 +232,29 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "todos");
 
     explicit QDeclarativeOrganizerTodo(QObject *parent = 0);
-    void setStartDateTime(const QDateTime& startDateTime)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTime, "startDateTime", startDateTime)
-    }
+    void setStartDateTime(const QDateTime& startDateTime);
+    QDateTime startDateTime() const;
 
-    QDateTime startDateTime() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoTime, "startDateTime", returnValue)
-        return returnValue.value<QDateTime>();
-    }
+    void setDueDateTime(const QDateTime& dueDateTime);
 
-    void setDueDateTime(const QDateTime& dueDateTime)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTime, "dueDateTime", dueDateTime)
-    }
+    QDateTime dueDateTime() const;
 
-    QDateTime dueDateTime() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoTime, "dueDateTime", returnValue)
-        return returnValue.value<QDateTime>();
-    }
+    void setTimeSpecified(bool isTimeSpecified);
+    bool isTimeSpecified() const;
 
-    void setTimeSpecified(bool isTimeSpecified)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTime, "isTimeSpecified", isTimeSpecified)
-    }
+    void setPriority(QDeclarativeOrganizerItemPriority::Priority priority);
+    QDeclarativeOrganizerItemPriority::Priority priority() const;
+    void setProgressPercentage(int percentage);
+    int progressPercentage() const;
+    void setStatus(QDeclarativeOrganizerTodoProgress::Status status);
+    QDeclarativeOrganizerTodoProgress::Status status() const;
 
-    bool isTimeSpecified() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoTime, "isTimeSpecified", returnValue)
-        return returnValue.value<bool>();
-    }
-
-     void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", priority)
-    }
-
-    QDeclarativeOrganizerItemPriority::Priority priority() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemPriority, "priority", returnValue)
-        if (returnValue.isNull())
-            return QDeclarativeOrganizerItemPriority::MediumPriority;
-        return static_cast<QDeclarativeOrganizerItemPriority::Priority>(returnValue.value<int>());
-    }
-
-    void setProgressPercentage(int percentage)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "percentage", percentage)
-    }
-
-    int progressPercentage() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoProgress, "percentage", returnValue)
-        return returnValue.value<int>();
-    }
-
-    void setStatus(QDeclarativeOrganizerTodoProgress::Status status)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "status", status)
-    }
-
-    QDeclarativeOrganizerTodoProgress::Status status() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoProgress,  "status", returnValue)
-        if (returnValue.isNull())
-            return QDeclarativeOrganizerTodoProgress::NotStarted;
-        return static_cast<QDeclarativeOrganizerTodoProgress::Status>(returnValue.value<int>());
-    }
-
-    void setFinishedDateTime(const QDateTime& finishedDateTime)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "finishedDateTime", finishedDateTime)
-    }
-
-    QDateTime finishedDateTime() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoProgress,  "finishedDateTime", returnValue)
-        return returnValue.value<QDateTime>();
-    }
+    void setFinishedDateTime(const QDateTime& finishedDateTime);
+    QDateTime finishedDateTime() const;
 signals:
     void valueChanged();
+private:
+    QOrganizerTodo* m_todo;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerTodo)
 
@@ -531,99 +275,34 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ItemGroupName, "todoOccurrences");
 
     explicit QDeclarativeOrganizerTodoOccurrence(QObject *parent = 0);
-    void setStartDateTime(const QDateTime& startDateTime)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTime, "startDateTime", startDateTime)
-    }
+    void setStartDateTime(const QDateTime& startDateTime);
+    QDateTime startDateTime() const;
 
-    QDateTime startDateTime() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoTime, "startDateTime", returnValue)
-        return returnValue.value<QDateTime>();
-    }
+    void setDueDateTime(const QDateTime& dueDateTime);
+    QDateTime dueDateTime() const;
+    uint parentLocalId() const;
+    void setParentLocalId(uint parentId);
 
-    void setDueDateTime(const QDateTime& dueDateTime)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoTime, "dueDateTime", dueDateTime)
-    }
+    void setPriority(QDeclarativeOrganizerItemPriority::Priority priority);
 
-    QDateTime dueDateTime() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoTime, "dueDateTime", returnValue)
-        return returnValue.value<QDateTime>();
-    }
+    QDeclarativeOrganizerItemPriority::Priority priority() const;
 
 
-    void setParentLocalId(uint parentId)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemInstanceOrigin, "parentLocalId", parentId)
-    }
+    void setOriginalDate(const QDate& date);
+    QDate originalDate() const;
 
-    void setPriority(QDeclarativeOrganizerItemPriority::Priority priority)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemPriority, "priority", priority)
-    }
+    void setProgressPercentage(int percentage);
+    int progressPercentage() const;
 
-    QDeclarativeOrganizerItemPriority::Priority priority() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemPriority, "priority", returnValue)
-        if (returnValue.isNull())
-            return QDeclarativeOrganizerItemPriority::MediumPriority;
-        return static_cast<QDeclarativeOrganizerItemPriority::Priority>(returnValue.value<int>());
-    }
+    void setStatus(QDeclarativeOrganizerTodoProgress::Status status);
 
-    uint parentLocalId() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemInstanceOrigin, "parentLocalId", returnValue)
-        return returnValue.value<uint>();
-    }
-    void setOriginalDate(const QDate& date)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerItemInstanceOrigin, "originalDate", date)
-    }
-
-    QDate originalDate() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerItemInstanceOrigin, "originalDate", returnValue)
-        return returnValue.value<QDate>();
-    }
-
-    void setProgressPercentage(int percentage)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "percentage", percentage)
-    }
-
-    int progressPercentage() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoProgress, "percentage", returnValue)
-        return returnValue.value<int>();
-    }
-
-    void setStatus(QDeclarativeOrganizerTodoProgress::Status status)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "status", status)
-    }
-
-    QDeclarativeOrganizerTodoProgress::Status status() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoProgress,  "status", returnValue)
-        if (returnValue.isNull())
-            return QDeclarativeOrganizerTodoProgress::NotStarted;
-        return static_cast<QDeclarativeOrganizerTodoProgress::Status>(returnValue.value<int>());
-    }
-
-    void setFinishedDateTime(const QDateTime& finishedDateTime)
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_SET(QDeclarativeOrganizerTodoProgress,  "finishedDateTime", finishedDateTime)
-    }
-
-    QDateTime finishedDateTime() const
-    {
-        Q_DECLARATIVEORGANIZERITEMDETAIL_GET(QDeclarativeOrganizerTodoProgress,  "finishedDateTime", returnValue)
-        return returnValue.value<QDateTime>();
-    }
+    QDeclarativeOrganizerTodoProgress::Status status() const;
+    void setFinishedDateTime(const QDateTime& finishedDateTime);
+    QDateTime finishedDateTime() const;
 signals:
     void valueChanged();
+private:
+    QOrganizerTodoOccurrence* m_to;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerTodoOccurrence)
 #endif // QDECLARATIVEORGANIZERITEM_H
