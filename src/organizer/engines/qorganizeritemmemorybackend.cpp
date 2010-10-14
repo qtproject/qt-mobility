@@ -146,7 +146,7 @@ uint QOrganizerItemMemoryEngineLocalId::engineLocalIdType() const
 QString QOrganizerItemMemoryEngineLocalId::managerUri() const
 {
     // TODO: fix this !!
-    return QString::fromLatin1("QOrganizer:memory:");
+    return QString::fromLatin1("qtorganizer:memory:");
 }
 
 QOrganizerItemEngineLocalId* QOrganizerItemMemoryEngineLocalId::clone() const

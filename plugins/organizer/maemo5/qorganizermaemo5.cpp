@@ -117,7 +117,7 @@ uint QOrganizerItemMaemo5EngineLocalId::engineLocalIdType() const
 QString QOrganizerItemMaemo5EngineLocalId::managerUri() const
 {
     // TODO: fixme
-    return QString::fromLatin1("QOrganizer:maemo5:");
+    return QString::fromLatin1("qtorganizer:maemo5:");
 }
 
 QOrganizerItemEngineLocalId* QOrganizerItemMaemo5EngineLocalId::clone() const

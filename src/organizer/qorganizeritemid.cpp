@@ -204,8 +204,8 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerItemId& id)
         << id.managerUri();
 
     // the id is not null. we can serialize out
-    if (!id.isNull())
-        out << id.d->dataStreamOut(out);
+    if (id.d)
+        id.d->dataStreamOut(out);
 
     return out;
 }
@@ -229,9 +229,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
             id = QOrganizerItemId();
             return in;
         }
-        quint8 localIdMarker = static_cast<quint8>(false);
-        in >> localIdMarker;
-        QOrganizerItemId id(QOrganizerManagerData::createEngineItemId(managerUri));
+        id = QOrganizerItemId(QOrganizerManagerData::createEngineItemId(managerUri));
         if (id.d) {
             // only try to stream in data if it exists and the engine could create an engine
             // specific id based on the managerUri. otherwise, skip it.

@@ -484,7 +484,7 @@ public:
         return 0;
     }
     QString managerUri() const {
-        return QString::fromLatin1("basicId");
+        return QString::fromLatin1("qtorganizer:basicId:");
     }
     QOrganizerItemEngineLocalId* clone() const {
         BasicItemLocalId* cloned = new BasicItemLocalId(m_id);
@@ -610,13 +610,18 @@ void tst_QOrganizerItem::datastream()
         QDataStream stream1(&buffer, QIODevice::WriteOnly);
         QOrganizerManager om("memory");
         QVERIFY(om.saveItem(&itemIn)); // fill in its ID
+        qDebug() << "- 1 -";
         originalId = itemIn.id();
         originalCollectionId = itemIn.collectionId();
+        qDebug() << "- 2 -";
         stream1 << itemIn;
         QVERIFY(buffer.size() > 0);
+        qDebug() << "- 3 -";
         QDataStream stream2(buffer);
         stream2 >> itemOut;
         //QCOMPARE(itemOut, itemIn); // can't do QCOMPARE because detail keys get changed.
+        qDebug() << itemOut;
+        qDebug() << itemIn;
         QVERIFY(itemOut.details() == itemIn.details());
         QVERIFY(itemOut.id() == itemIn.id());
     }

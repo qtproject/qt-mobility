@@ -104,7 +104,7 @@ public:
         return cloned;
     }
     QString managerUri() const {
-        return QString::fromLatin1("QOrganizer:basicItem:");
+        return QString::fromLatin1("qtorganizer:basicItem:");
     }
     QDebug& debugStreamOut(QDebug& dbg) {
         return dbg << m_id;

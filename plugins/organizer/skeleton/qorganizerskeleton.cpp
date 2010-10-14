@@ -184,7 +184,7 @@ uint QOrganizerItemSkeletonEngineLocalId::engineLocalIdType() const
 
 QString QOrganizerItemSkeletonEngineLocalId::managerUri() const
 {
-    return QString::fromLatin1("QOrganizer:skeleton:");
+    return QString::fromLatin1("qtorganizer:skeleton:");
 }
 
 QOrganizerItemEngineLocalId* QOrganizerItemSkeletonEngineLocalId::clone() const
