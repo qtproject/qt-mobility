@@ -18,5 +18,7 @@ MOBILITY = contacts
 DEFINES += DUMMYPLUGINTARGET=contacts_testdummyempty
 
 SOURCES += ../dummyplugin/dummyplugin.cpp
+HEADERS += ../dummyplugin/dummyplugin.h
+
 
 include(../../contacts_plugins.pri)
