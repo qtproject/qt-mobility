@@ -280,8 +280,8 @@ void QRemoteServiceRegisterDBusPrivate::processIncoming(int pid, int uid)
         cred.pid = pid;
         cred.uid = uid;
         cred.gid = -1;
-        
-        if(!getSecurityFilter()(reinterpret_cast<const void *>(&cred))){
+       
+        if(!getSecurityFilter()(reinterpret_cast<const void *>(&cred))) {
             session->acceptIncoming(false);
 
             // Close service if no instances
@@ -325,7 +325,7 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
         return 0;
     }
 
-    QDBusReply<bool> reply = iface->call("processIncoming");
+    QDBusReply<bool> reply = iface->call(QDBus::Block, "processIncoming");
     if (reply.value()) {
         DBusEndPoint* ipcEndPoint = new DBusEndPoint(iface, CLIENT);
         ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
