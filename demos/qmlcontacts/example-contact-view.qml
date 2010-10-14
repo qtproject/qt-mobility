@@ -64,12 +64,12 @@ Rectangle {
     Contact {
         id: myContact
 
-            Name {
+            ContactName {
                 firstName:"Charles"
                 lastName:"Yin"
             }
 
-            Email {
+            EmailAddress {
                 emailAddress:"charles.yin@nokia.com"
             }
 
@@ -99,6 +99,13 @@ Rectangle {
                 number: "3333333333"
                 subTypes:["Mobile"]
             }
+    }
+    DetailFilter {
+       id:filter
+       detail:Detail.DetailName
+       field:Name.FieldFirstName
+       value:"Charles"
+       matchFlags:Filter.MatchExactly
     }
 }
 

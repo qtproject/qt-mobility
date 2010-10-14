@@ -39,56 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVECONTACTTHUMBNAIL_H
-#define QDECLARATIVECONTACTTHUMBNAIL_H
 
-#include "qdeclarativecontactdetail_p.h"
-#include "qcontactthumbnail.h"
+#ifndef QDECLARATIVEGENERALINFO_P_H
+#define QDECLARATIVEGENERALINFO_P_H
 
-class QDeclarativeContactThumbnail : public QDeclarativeContactDetail
+#include <QObject>
+#include "qsystemgeneralinfo.h"
+
+QT_BEGIN_HEADER
+QTM_USE_NAMESPACE
+
+class QDeclarativeGeneralInfo : public QSystemInfo
 {
     Q_OBJECT
-    Q_PROPERTY(QString thumbnail READ thumbnail WRITE setThumbnail NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType)
-    Q_CLASSINFO("DefaultProperty", "thumbnail")
 public:
-    enum FieldType {
-        Thumbnail = 0
-    };
+    explicit QDeclarativeGeneralInfo(QObject *parent = 0);
 
-    QDeclarativeContactThumbnail(QObject* parent = 0)
-        :QDeclarativeContactDetail(parent)
-    {
-        setDetail(QContactThumbnail());
-    }
 
-    ContactDetailType detailType() const
-    {
-        return QDeclarativeContactDetail::Thumbnail;
-    }
-    QString fieldNameFromFieldType(int fieldType) const
-    {
-        switch (fieldType) {
-        case Thumbnail:
-            return QContactThumbnail::FieldThumbnail;
-        default:
-            break;
-        }
-        return "";
-    }
-    void setThumbnail(const QString& thumbnail)
-    {
-        //TODO
-        Q_UNUSED(thumbnail)
+public slots:
+    void startCurrentLanguageChanged();
 
-    }
-    QString thumbnail() const
-    {
-        //TODO
-        return QString();
-    }
-signals:
-    void fieldsChanged();
+Q_SIGNALS:
+   void currentLanguageChanged(const QString &language);
+
+private slots:
+    void declarativeCurrentLanguageChanged(const QString &);
+
 };
-QML_DECLARE_TYPE(QDeclarativeContactThumbnail)
-#endif
+
+QT_END_NAMESPACE
+QT_END_HEADER
+
+#endif // QDECLARATIVEGENERALINFO_P_H

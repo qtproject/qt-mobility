@@ -39,49 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVECONTACTNOTE_H
-#define QDECLARATIVECONTACTNOTE_H
 
-#include "qdeclarativecontactdetail_p.h"
-#include "qcontactnote.h"
-class QDeclarativeContactNote : public QDeclarativeContactDetail
-{
-    Q_OBJECT
-    Q_PROPERTY(QString note READ note WRITE setNote NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType)
-    Q_CLASSINFO("DefaultProperty", "note")
-public:
-    enum FieldType {
-        FieldNote = 0
-    };
+#include "qdeclarativegeneralinfo_p.h"
+#include "qsystemgeneralinfo.h"
+#include <QMetaType>
 
-    QDeclarativeContactNote(QObject* parent = 0)
-        :QDeclarativeContactDetail(parent)
-    {
-        setDetail(QContactNote());
-        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
-    }
+QT_BEGIN_NAMESPACE
 
-    ContactDetailType detailType() const
-    {
-        return QDeclarativeContactDetail::ContactNote;
-    }
-    static QString fieldNameFromFieldType(int fieldType)
-    {
-        switch (fieldType) {
-        case FieldNote:
-            return QContactNote::FieldNote;
-        default:
-            break;
+Q_GLOBAL_STATIC(QSystemInfo, generalInfo)
+
+
+/*!
+    \qmlclass GeneralInfo QDeclarativeGeneralInfo
+    \brief The GeneralInfo element allows you to receive notifications from the device.
+
+    This element is part of the \bold{QtMobility.systeminfo 1.0} module.
+    It is a convience class to make QML usage easier.
+
+    Note: To use notification signals, you need to use the start* slots.
+
+
+    \qml
+        Component.onCompleted: {
+            generalInfo.startCurrentLanguageChanged();
         }
-        return "";
-    }
-    void setNote(const QString& note) {if (!readOnly()) detail().setValue(QContactNote::FieldNote, note);}
-    QString note() const {return detail().value(QContactNote::FieldNote);}
-signals:
-    void fieldsChanged();
-};
+    \endqml
 
-QML_DECLARE_TYPE(QDeclarativeContactNote)
-#endif
+\sa QSystemGeneralInfo
+*/
 
+
+/*!
+    \qmlsignal SystemInfo::startCurrentLanguageChanged()
+
+    This handler is called when current system language has changed.
+    Note: To receive this notification, you must first call \a startCurrentLanguageChanged.
+*/
+QDeclarativeGeneralInfo::QDeclarativeGeneralInfo(QObject *parent) :
+    QSystemInfo(parent)
+{
+}
+
+void QDeclarativeGeneralInfo::startCurrentLanguageChanged()
+{
+    connect(generalInfo(),SIGNAL(startCurrentLanguageChanged(const QString &)),
+            this,SLOT(declarativeCurrentLanguageChanged(const QString &)),Qt::UniqueConnection);
+}
+
+void QDeclarativeGeneralInfo::declarativeCurrentLanguageChanged(const QString &language)
+{
+    Q_EMIT currentLanguageChanged(language);
+}

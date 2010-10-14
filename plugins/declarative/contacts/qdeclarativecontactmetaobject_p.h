@@ -77,6 +77,7 @@ public:
     QVariant details(QDeclarativeContactDetail::ContactDetailType type);
     void setContact(const QContact& contact);
     QContact contact();
+    QContactId contactId() const;
     int localId() const;
 
 

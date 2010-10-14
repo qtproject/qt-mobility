@@ -191,7 +191,7 @@ EXPORTS
 	??0QVideoWidget@@QAE@PAVQWidget@@@Z @ 190 NONAME ; QVideoWidget::QVideoWidget(class QWidget *)
 	?metaObject@QAbstractAudioOutput@@UBEPBUQMetaObject@@XZ @ 191 NONAME ; struct QMetaObject const * QAbstractAudioOutput::metaObject(void) const
 	??_EQMediaPlayerControl@@UAE@I@Z @ 192 NONAME ; QMediaPlayerControl::~QMediaPlayerControl(unsigned int)
-	?setLoops@QSoundEffect@@QAEXH@Z @ 193 NONAME ; void QSoundEffect::setLoops(int)
+	?setLoops@QSoundEffect@@QAEXH@Z @ 193 NONAME ABSENT ; void QSoundEffect::setLoops(int)
 	?viewport@QVideoSurfaceFormat@@QBE?AVQRect@@XZ @ 194 NONAME ; class QRect QVideoSurfaceFormat::viewport(void) const
 	?d_func@QMediaService@@AAEPAVQMediaServicePrivate@@XZ @ 195 NONAME ; class QMediaServicePrivate * QMediaService::d_func(void)
 	?resume@QAudioInput@@QAEXXZ @ 196 NONAME ; void QAudioInput::resume(void)
@@ -295,7 +295,7 @@ EXPORTS
 	?trUtf8@QAudioEndpointSelector@@SA?AVQString@@PBD0@Z @ 294 NONAME ; class QString QAudioEndpointSelector::trUtf8(char const *, char const *)
 	?shuffle@QMediaPlaylist@@QAEXXZ @ 295 NONAME ; void QMediaPlaylist::shuffle(void)
 	?metaObject@QSoundEffect@@UBEPBUQMetaObject@@XZ @ 296 NONAME ; struct QMetaObject const * QSoundEffect::metaObject(void) const
-	?loops@QSoundEffect@@QBEHXZ @ 297 NONAME ; int QSoundEffect::loops(void) const
+	?loops@QSoundEffect@@QBEHXZ @ 297 NONAME ABSENT ; int QSoundEffect::loops(void) const
 	??_EQMediaPlaylist@@UAE@I@Z @ 298 NONAME ; QMediaPlaylist::~QMediaPlaylist(unsigned int)
 	??0QVideoWindowControl@@IAE@PAVQObject@@@Z @ 299 NONAME ; QVideoWindowControl::QVideoWindowControl(class QObject *)
 	?trUtf8@QMediaPlaylistIOPlugin@@SA?AVQString@@PBD0@Z @ 300 NONAME ; class QString QMediaPlaylistIOPlugin::trUtf8(char const *, char const *)
@@ -646,7 +646,7 @@ EXPORTS
 	?isMapped@QVideoFrame@@QBE_NXZ @ 645 NONAME ; bool QVideoFrame::isMapped(void) const
 	?tr@QAudioOutput@@SA?AVQString@@PBD0@Z @ 646 NONAME ; class QString QAudioOutput::tr(char const *, char const *)
 	?metaDataWritableChanged@QMediaRecorder@@IAEX_N@Z @ 647 NONAME ; void QMediaRecorder::metaDataWritableChanged(bool)
-	?loopsChanged@QSoundEffect@@IAEXXZ @ 648 NONAME ; void QSoundEffect::loopsChanged(void)
+	?loopsChanged@QSoundEffect@@IAEXXZ @ 648 NONAME ABSENT ; void QSoundEffect::loopsChanged(void)
 	?trUtf8@QAbstractAudioInput@@SA?AVQString@@PBD0H@Z @ 649 NONAME ; class QString QAbstractAudioInput::trUtf8(char const *, char const *, int)
 	?setDataSize@QMediaResource@@QAEX_J@Z @ 650 NONAME ; void QMediaResource::setDataSize(long long)
 	?trUtf8@QAudioEndpointSelector@@SA?AVQString@@PBD0H@Z @ 651 NONAME ; class QString QAudioEndpointSelector::trUtf8(char const *, char const *, int)
@@ -1587,4 +1587,15 @@ EXPORTS
 	??0QCameraControl@@IAE@PAVQObject@@@Z @ 1586 NONAME ; QCameraControl::QCameraControl(class QObject *)
 	?tr@QCameraExposure@@SA?AVQString@@PBD0H@Z @ 1587 NONAME ; class QString QCameraExposure::tr(char const *, char const *, int)
 	?getStaticMetaObject@QCameraViewfinder@@SAABUQMetaObject@@XZ @ 1588 NONAME ; struct QMetaObject const & QCameraViewfinder::getStaticMetaObject(void)
+	?stop@QSoundEffect@@QAEXXZ @ 1589 NONAME ; void QSoundEffect::stop(void)
+	?loadedChanged@QSoundEffect@@IAEXXZ @ 1590 NONAME ; void QSoundEffect::loadedChanged(void)
+	?isLoaded@QSoundEffect@@QBE_NXZ @ 1591 NONAME ; bool QSoundEffect::isLoaded(void) const
+	?loopCountChanged@QSoundEffect@@IAEXXZ @ 1592 NONAME ; void QSoundEffect::loopCountChanged(void)
+	?maximumOpticalZoomChanged@QCameraFocusControl@@IAEXM@Z @ 1593 NONAME ; void QCameraFocusControl::maximumOpticalZoomChanged(float)
+	?maximumDigitalZoomChanged@QCameraFocus@@IAEXM@Z @ 1594 NONAME ; void QCameraFocus::maximumDigitalZoomChanged(float)
+	?loopCount@QSoundEffect@@QBEHXZ @ 1595 NONAME ; int QSoundEffect::loopCount(void) const
+	?supportedMimeTypes@QSoundEffect@@SA?AVQStringList@@XZ @ 1596 NONAME ; class QStringList QSoundEffect::supportedMimeTypes(void)
+	?setLoopCount@QSoundEffect@@QAEXH@Z @ 1597 NONAME ; void QSoundEffect::setLoopCount(int)
+	?maximumDigitalZoomChanged@QCameraFocusControl@@IAEXM@Z @ 1598 NONAME ; void QCameraFocusControl::maximumDigitalZoomChanged(float)
+	?maximumOpticalZoomChanged@QCameraFocus@@IAEXM@Z @ 1599 NONAME ; void QCameraFocus::maximumOpticalZoomChanged(float)
 

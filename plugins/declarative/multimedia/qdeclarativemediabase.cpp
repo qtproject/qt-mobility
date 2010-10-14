@@ -161,28 +161,8 @@ void QDeclarativeMediaBase::_q_statusChanged()
     if (m_state == QMediaPlayer::PausedState)
         m_paused = true;
 
-    if (m_status != status) {
-        switch (m_status) {
-        case QMediaPlayer::LoadedMedia:
-            emit loaded();
-            break;
-        case QMediaPlayer::BufferingMedia:
-            emit buffering();
-            break;
-        case QMediaPlayer::BufferedMedia:
-            emit buffered();
-            break;
-        case QMediaPlayer::StalledMedia:
-            emit stalled();
-            break;
-        case QMediaPlayer::EndOfMedia:
-            emit endOfMedia();
-            break;
-        default:
-            break;
-        }
+    if (m_status != status)
         emit statusChanged();
-    }
 
     if (m_state != state) {
         switch (m_state) {
