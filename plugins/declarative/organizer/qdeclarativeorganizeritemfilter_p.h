@@ -138,7 +138,13 @@ public:
     }
 
     EventType eventType() const { return static_cast<QDeclarativeOrganizerItemChangelogFilter::EventType>(d.eventType()); }
-    void setEventType(EventType type) { d.setEventType(static_cast<QOrganizerItemChangeLogFilter::EventType>(type)); }
+    void setEventType(EventType type)
+    {
+        if (type != eventType()) {
+            d.setEventType(static_cast<QOrganizerItemChangeLogFilter::EventType>(type));
+            emit valueChanged();
+        }
+    }
 
     QOrganizerItemFilter filter() const
     {
@@ -173,7 +179,20 @@ public:
 
     void setIds(const QVariantList& ids)
     {
-        m_ids = ids;
+        foreach (const QVariant& id, ids) {
+            if (!m_ids.contains(id)) {
+                m_ids = ids;
+                emit valueChanged();
+                return;
+            }
+        }
+
+        foreach (const QVariant& id, m_ids) {
+            if (!ids.contains(id)) {
+                m_ids = ids;
+                emit valueChanged();
+            }
+        }
     }
 
     QOrganizerItemFilter filter() const;
@@ -204,10 +223,22 @@ public:
 
 
     QString detailDefinitionName() const { return d.detailDefinitionName(); }
-    void setDetailDefinitionName(const QString& definition) { d.setDetailDefinitionName(definition, d.detailFieldName()); }
+    void setDetailDefinitionName(const QString& definition)
+    {
+        if (definition != d.detailDefinitionName()) {
+            d.setDetailDefinitionName(definition, d.detailFieldName());
+            emit valueChanged();
+        }
+    }
 
     QString detailFieldName() const { return d.detailFieldName(); }
-    void setDetailFieldName(const QString& fieldName) { d.setDetailDefinitionName(d.detailDefinitionName(), fieldName); }
+    void setDetailFieldName(const QString& fieldName)
+    {
+        if (fieldName != d.detailFieldName()) {
+            d.setDetailDefinitionName(d.detailDefinitionName(), fieldName);
+            emit valueChanged();
+        }
+    }
 
 
     void setMatchFlags(QDeclarativeOrganizerItemFilter::MatchFlags flags)
@@ -215,7 +246,10 @@ public:
         QOrganizerItemFilter::MatchFlags newFlags;
         newFlags &= 0xFFFFFFFF;
         newFlags &= (int)flags;
-        d.setMatchFlags(newFlags);
+        if (newFlags != d.matchFlags()) {
+            d.setMatchFlags(newFlags);
+            emit valueChanged();
+        }
     }
     QDeclarativeOrganizerItemFilter::MatchFlags matchFlags() const
     {
@@ -275,17 +309,32 @@ public:
 
 
     QString detailDefinitionName() const { return d.detailDefinitionName(); }
-    void setDetailDefinitionName(const QString& definition) { d.setDetailDefinitionName(definition, d.detailFieldName()); }
+    void setDetailDefinitionName(const QString& definition)
+    {
+        if (definition != d.detailDefinitionName()) {
+            d.setDetailDefinitionName(definition, d.detailFieldName());
+            emit valueChanged();
+        }
+    }
 
     QString detailFieldName() const { return d.detailFieldName(); }
-    void setDetailFieldName(const QString& fieldName) { d.setDetailDefinitionName(d.detailDefinitionName(), fieldName); }
+    void setDetailFieldName(const QString& fieldName)
+    {
+        if (fieldName != d.detailFieldName()) {
+            d.setDetailDefinitionName(d.detailDefinitionName(), fieldName);
+            emit valueChanged();
+        }
+    }
 
     void setMatchFlags(QDeclarativeOrganizerItemFilter::MatchFlags flags)
     {
         QOrganizerItemFilter::MatchFlags newFlags;
         newFlags &= 0xFFFFFFFF;
         newFlags &= (int)flags;
-        d.setMatchFlags(newFlags);
+        if (newFlags != d.matchFlags()) {
+            d.setMatchFlags(newFlags);
+            emit valueChanged();
+        }
     }
     QDeclarativeOrganizerItemFilter::MatchFlags matchFlags() const
     {
@@ -300,8 +349,10 @@ public:
         QOrganizerItemDetailRangeFilter::RangeFlags newFlags;
         newFlags &= 0xFFFFFFFF;
         newFlags &= (int)flags;
-
-        d.setRange(d.minValue(), d.maxValue(), newFlags);
+        if (newFlags != d.rangeFlags()) {
+            d.setRange(d.minValue(), d.maxValue(), newFlags);
+            emit valueChanged();
+        }
     }
     RangeFlags rangeFlags() const
     {
@@ -313,10 +364,22 @@ public:
     }
 
 
-    void setMinValue(const QVariant& value) { d.setRange(value, d.maxValue(), d.rangeFlags()); }
+    void setMinValue(const QVariant& value)
+    {
+        if (value != d.minValue()) {
+            d.setRange(value, d.maxValue(), d.rangeFlags());
+            emit valueChanged();
+        }
+    }
     QVariant minValue() const { return d.minValue(); }
 
-    void setMaxValue(const QVariant& value) { d.setRange(d.minValue(), value, d.rangeFlags()); }
+    void setMaxValue(const QVariant& value)
+    {
+        if (value != d.maxValue()) {
+            d.setRange(d.minValue(), value, d.rangeFlags());
+            emit valueChanged();
+        }
+    }
     QVariant maxValue() const { return d.maxValue(); }
 
     QOrganizerItemFilter filter() const
@@ -356,7 +419,20 @@ public:
 
     void setIds(const QVariantList& ids)
     {
-        m_ids = ids;
+        foreach (const QVariant& id, ids) {
+            if (!m_ids.contains(id)) {
+                m_ids = ids;
+                emit valueChanged();
+                return;
+            }
+        }
+
+        foreach (const QVariant& id, m_ids) {
+            if (!ids.contains(id)) {
+                m_ids = ids;
+                emit valueChanged();
+            }
+        }
     }
 
 signals:
