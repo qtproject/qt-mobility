@@ -56,28 +56,48 @@ class QDeclarativeContactName : public QDeclarativeContactDetail
     Q_PROPERTY(QString suffix READ suffix WRITE setSuffix NOTIFY fieldsChanged)
     Q_PROPERTY(QString customLabel READ customLabel WRITE setCustomLabel NOTIFY fieldsChanged)
 
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
     Q_CLASSINFO("DefaultProperty", "firstName")
 public:
     enum FieldType {
-        Prefix = 0,
-        FirstName,
-        MiddleName,
-        LastName,
-        Suffix,
-        CustomLabel
+        FieldPrefix = 0,
+        FieldFirstName,
+        FieldMiddleName,
+        FieldLastName,
+        FieldSuffix,
+        FieldCustomLabel
     };
 
     QDeclarativeContactName(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactName());
+        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Name;
+        return QDeclarativeContactDetail::ContactName;
     }
-
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case FieldPrefix:
+            return QContactName::FieldPrefix;
+        case FieldFirstName:
+            return QContactName::FieldFirstName;
+        case FieldMiddleName:
+            return QContactName::FieldMiddleName;
+        case FieldLastName:
+            return QContactName::FieldLastName;
+        case FieldSuffix:
+            return QContactName::FieldSuffix;
+        case FieldCustomLabel:
+            return QContactName::FieldCustomLabel;
+        default:
+            break;
+        }
+        return "";
+    }
     QString prefix() const {return detail().value(QContactName::FieldPrefix);}
     QString firstName() const {return detail().value(QContactName::FieldFirstName);}
     QString middleName() const {return detail().value(QContactName::FieldMiddleName);}
@@ -85,12 +105,12 @@ public:
     QString suffix() const {return detail().value(QContactName::FieldSuffix);}
     QString customLabel() const{return detail().value(QContactName::FieldCustomLabel);}
 
-    void setPrefix(const QString& prefix) {detail().setValue(QContactName::FieldPrefix, prefix);}
-    void setFirstName(const QString& firstName) {detail().setValue(QContactName::FieldFirstName, firstName);}
-    void setMiddleName(const QString& middleName) {detail().setValue(QContactName::FieldMiddleName, middleName);}
-    void setLastName(const QString& lastName) {detail().setValue(QContactName::FieldLastName, lastName);}
-    void setSuffix(const QString& suffix) {detail().setValue(QContactName::FieldSuffix, suffix);}
-    void setCustomLabel(const QString& customLabel) {detail().setValue(QContactName::FieldCustomLabel, customLabel);}
+    void setPrefix(const QString& prefix) {if (!readOnly()) detail().setValue(QContactName::FieldPrefix, prefix);}
+    void setFirstName(const QString& firstName) {if (!readOnly()) detail().setValue(QContactName::FieldFirstName, firstName);}
+    void setMiddleName(const QString& middleName) {if (!readOnly()) detail().setValue(QContactName::FieldMiddleName, middleName);}
+    void setLastName(const QString& lastName) {if (!readOnly()) detail().setValue(QContactName::FieldLastName, lastName);}
+    void setSuffix(const QString& suffix) {if (!readOnly()) detail().setValue(QContactName::FieldSuffix, suffix);}
+    void setCustomLabel(const QString& customLabel) {if (!readOnly()) detail().setValue(QContactName::FieldCustomLabel, customLabel);}
 
 signals:
     void fieldsChanged();

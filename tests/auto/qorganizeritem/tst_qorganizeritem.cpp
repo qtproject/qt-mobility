@@ -106,7 +106,7 @@ void tst_QOrganizerItem::details()
     }
     // Second, construct the detail after the contact has been constructed
     QOrganizerItemLocation adr;
-    adr.setAddress("this is a test address");
+    adr.setLabel("this is a test address");
     QVERIFY(keyTest.saveDetail(&adr));
     allDetails = keyTest.details();
     detailKeys.clear();
@@ -147,27 +147,27 @@ void tst_QOrganizerItem::details()
 
     // Add a detail
     QOrganizerItemLocation a;
-    a.setAddress("another test address label");
+    a.setLabel("another test address label");
     QVERIFY(oi.saveDetail(&a));
     QVERIFY(oi.isEmpty() == false);
 
     QVERIFY(oi.details().count() == 2);
 
     QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName).count() == 1);
-    QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress, QString("another test address label")).count() == 1);
+    QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel, QString("another test address label")).count() == 1);
     QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName, QString(), QString("another test address label")).count() == oi.details(QOrganizerItemLocation::DefinitionName).count());
 
     QVERIFY(oi.details(QLatin1String(QOrganizerItemLocation::DefinitionName)).count() == 1);
-    QVERIFY(oi.details(QLatin1String(QOrganizerItemLocation::DefinitionName), QOrganizerItemLocation::FieldAddress, QString("another test address label")).count() == 1);
+    QVERIFY(oi.details(QLatin1String(QOrganizerItemLocation::DefinitionName), QOrganizerItemLocation::FieldLabel, QString("another test address label")).count() == 1);
     QVERIFY(oi.details(QLatin1String(QOrganizerItemLocation::DefinitionName), QString(), QString("another test address label")).count() == oi.details(QOrganizerItemLocation::DefinitionName).count());
 
     QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName.latin1()).count() == 1);
-    QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName.latin1(), QOrganizerItemLocation::FieldAddress, QString("another test address label")).count() == 1);
+    QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName.latin1(), QOrganizerItemLocation::FieldLabel, QString("another test address label")).count() == 1);
     QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName.latin1(), QString(), QString("another test address label")).count() == oi.details(QOrganizerItemLocation::DefinitionName).count());
 
-    QVERIFY(oi.details<QOrganizerItemLocation>(QOrganizerItemLocation::FieldAddress, QString("another test address label")).count() == 1);
-    QVERIFY(oi.details<QOrganizerItemLocation>(QOrganizerItemLocation::FieldAddress.latin1(), QString("another test address label")).count() == 1);
-    QVERIFY(oi.details<QOrganizerItemLocation>(QLatin1String(QOrganizerItemLocation::FieldAddress), QString("another test address label")).count() == 1);
+    QVERIFY(oi.details<QOrganizerItemLocation>(QOrganizerItemLocation::FieldLabel, QString("another test address label")).count() == 1);
+    QVERIFY(oi.details<QOrganizerItemLocation>(QOrganizerItemLocation::FieldLabel.latin1(), QString("another test address label")).count() == 1);
+    QVERIFY(oi.details<QOrganizerItemLocation>(QLatin1String(QOrganizerItemLocation::FieldLabel), QString("another test address label")).count() == 1);
 
     QVERIFY(oi.details<QOrganizerItemLocation>().count() == 1);
     QVERIFY(!oi.detail(QOrganizerItemLocation::DefinitionName).isEmpty());
@@ -179,7 +179,7 @@ void tst_QOrganizerItem::details()
     QCOMPARE(oi.details().count(), 1);
     QVERIFY(oi.isEmpty() == true);
     QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName).count() == 0);
-    QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress, QString("another test address label")).count() == 0);
+    QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel, QString("another test address label")).count() == 0);
     QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName, QString(), QString("another test address label")).count() == oi.details(QOrganizerItemLocation::DefinitionName).count());
     QCOMPARE(oi.details<QOrganizerItemLocation>().count(), 0);
     QVERIFY(oi.detail(QOrganizerItemLocation::DefinitionName).isEmpty());
@@ -199,7 +199,7 @@ void tst_QOrganizerItem::details()
     QCOMPARE(oi.details().count(), 1);
     QVERIFY(oi.isEmpty() == true);
     QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName).count() == 0);
-    QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress, QString("another test address label")).count() == 0);
+    QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel, QString("another test address label")).count() == 0);
     QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName, QString(), QString("another test address label")).count() == oi.details(QOrganizerItemLocation::DefinitionName).count());
     QVERIFY(oi.details<QOrganizerItemLocation>().count() == 0);
     QVERIFY(oi.detail(QOrganizerItemLocation::DefinitionName).isEmpty());
@@ -216,7 +216,7 @@ void tst_QOrganizerItem::details()
     QVERIFY(oi.removeDetail(&a3));
     QCOMPARE(oi.details().count(), 1);
     QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName).count() == 0);
-    QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress, QString("another test address label")).count() == 0);
+    QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel, QString("another test address label")).count() == 0);
     QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName, QString(), QString("another test address label")).count() == oi.details(QOrganizerItemLocation::DefinitionName).count());
     QVERIFY(oi.details<QOrganizerItemLocation>().count() == 0);
     QVERIFY(oi.detail(QOrganizerItemLocation::DefinitionName).isEmpty());
@@ -226,13 +226,13 @@ void tst_QOrganizerItem::details()
 
     // now we want to add multiple details of the same type, and test that retrieval works correctly.
     a2 = QOrganizerItemLocation();
-    a2.setAddress("22222");
+    a2.setLabel("22222");
     a2.setValue("nonexistent-field", QVariant("22222-2"));
     oi.saveDetail(&a);
     oi.saveDetail(&a2);
     QCOMPARE(oi.details().count(), 3);
     QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName).count() == 2);
-    QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress, QString("another test address label")).count() == 1);
+    QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel, QString("another test address label")).count() == 1);
     QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName, QString(), QString("another test address label")).count() == oi.details(QOrganizerItemLocation::DefinitionName).count());
     QVERIFY(oi.details<QOrganizerItemLocation>().count() == 2);
     QVERIFY(!oi.detail(QOrganizerItemLocation::DefinitionName).isEmpty());
@@ -310,8 +310,8 @@ void tst_QOrganizerItem::details()
     QOrganizerItemLocation one;
     QOrganizerItemLocation two;
 
-    one.setAddress("12345");
-    two.setAddress("12345");
+    one.setLabel("12345");
+    two.setLabel("12345");
 
     // add it once
     QVERIFY(oi.saveDetail(&one));
@@ -358,7 +358,7 @@ void tst_QOrganizerItem::details()
     QOrganizerItemDetail& ref = one;
     QVERIFY(oi.saveDetail(&one));
     QVERIFY(ref == one);
-    one.setAddress("56678");
+    one.setLabel("56678");
     QVERIFY(oi.saveDetail(&one));
     QVERIFY(ref == one);
 
@@ -366,7 +366,7 @@ void tst_QOrganizerItem::details()
     QOrganizerItemLocation three = oi.detail<QOrganizerItemLocation>();
     QVERIFY(ref == three);
     QVERIFY(one == three);
-    three.setAddress("542343");
+    three.setLabel("542343");
     QVERIFY(oi.saveDetail(&three));
 
     // Now see if we got any updates to ref/one
@@ -375,7 +375,7 @@ void tst_QOrganizerItem::details()
 
     // test saving of a detail with an empty field.
     QOrganizerItemLocation four;
-    four.setAddress("");
+    four.setLabel("");
     oi.saveDetail(&four);
     QVERIFY(oi.details(QOrganizerItemLocation::DefinitionName).count() == 2);
     QVERIFY(!four.variantValues().isEmpty()); // an empty qstring is not invalid; make sure it exists in the detail.
@@ -597,13 +597,15 @@ void tst_QOrganizerItem::datastream()
     itemIn.addComment("test comment");
     QOrganizerItem itemOut;
     QOrganizerItemId originalId;
+    QOrganizerCollectionId originalCollectionId;
 
     // first, stream an item with a complete id
     {
         QDataStream stream1(&buffer, QIODevice::WriteOnly);
-        QOrganizerItemManager om("memory");
+        QOrganizerManager om("memory");
         QVERIFY(om.saveItem(&itemIn)); // fill in its ID
         originalId = itemIn.id();
+        originalCollectionId = itemIn.collectionId();
         stream1 << itemIn;
         QVERIFY(buffer.size() > 0);
         QDataStream stream2(buffer);
@@ -644,16 +646,32 @@ void tst_QOrganizerItem::datastream()
         QVERIFY(itemOut.id() != itemIn.id()); // in this case, with null mgr uri, the id doesn't get serialized.
     }
 
-    // fourth, stream an item with a null id
+    // fourth, stream an item with null ids
     {
         QDataStream stream1(&buffer, QIODevice::WriteOnly);
         itemIn.setId(QOrganizerItemId());
+        itemIn.setCollectionId(QOrganizerCollectionId());
         stream1 << itemIn;
         QVERIFY(buffer.size() > 0);
         QDataStream stream2(buffer);
         stream2 >> itemOut;
         //QCOMPARE(itemOut, itemIn); // can't do QCOMPARE because detail keys get changed.
         QVERIFY(itemOut.details() == itemIn.details());
+        QVERIFY(itemOut.id() == itemIn.id());
+    }
+
+    // fifth, stream an item with a collection id
+    {
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        itemIn.setId(QOrganizerItemId());
+        itemIn.setCollectionId(originalCollectionId);
+        stream1 << itemIn;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> itemOut;
+        //QCOMPARE(itemOut, itemIn); // can't do QCOMPARE because detail keys get changed.
+        QVERIFY(itemOut.details() == itemIn.details());
+        QVERIFY(itemOut.collectionId() == itemIn.collectionId());
         QVERIFY(itemOut.id() == itemIn.id());
     }
 
@@ -785,12 +803,8 @@ void tst_QOrganizerItem::event()
     QOrganizerEvent testEvent;
     QCOMPARE(testEvent.type(), QString(QLatin1String(QOrganizerItemType::TypeEvent)));
 
-    testEvent.setLocationName("test location");
-    testEvent.setLocationAddress("test address");
-    testEvent.setLocationGeoCoordinates("0.73;0.57");
-    QCOMPARE(testEvent.locationName(), QString("test location"));
-    QCOMPARE(testEvent.locationAddress(), QString("test address"));
-    QCOMPARE(testEvent.locationGeoCoordinates(), QString("0.73;0.57"));
+    testEvent.setLocation("test address");
+    QCOMPARE(testEvent.location(), QString("test address"));
 
     testEvent.setStartDateTime(QDateTime(QDate::currentDate()));
     QCOMPARE(testEvent.startDateTime(), QDateTime(QDate::currentDate()));
@@ -805,30 +819,72 @@ void tst_QOrganizerItem::event()
     testEvent.setPriority(QOrganizerItemPriority::VeryLowPriority);
     QCOMPARE(testEvent.priority(), QOrganizerItemPriority::VeryLowPriority);
 
-    QList<QDate> rdates;
+
+    QSet<QDate> rdates;
     rdates << QDate::currentDate() << QDate::currentDate().addDays(3) << QDate::currentDate().addDays(8);
     testEvent.setRecurrenceDates(rdates);
     QCOMPARE(testEvent.recurrenceDates(), rdates);
 
-    QList<QDate> exdates;
+    QSet<QDate> exdates;
     exdates << QDate::currentDate().addDays(3);
     testEvent.setExceptionDates(exdates);
     QCOMPARE(testEvent.exceptionDates(), exdates);
 
-    QList<QOrganizerItemRecurrenceRule> rrules;
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setCount(2);
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
-    rrules << rrule;
-    testEvent.setRecurrenceRules(rrules);
-    //QVERIFY(testEvent.recurrenceRules() == rrules); // XXX TODO: implement operator == for QOIRR.
+    QSet<QOrganizerRecurrenceRule> rrules;
+    QOrganizerRecurrenceRule rrule;
 
-    QList<QOrganizerItemRecurrenceRule> exrules;
-    QOrganizerItemRecurrenceRule exrule;
-    exrule.setCount(1);
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::NoLimit);
+    QVERIFY(rrule.limitCount() == -1);
+    QVERIFY(rrule.limitDate().isNull());
+
+    rrule.setLimit(1);
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::CountLimit);
+    QVERIFY(rrule.limitCount() == 1);
+    QVERIFY(rrule.limitDate().isNull());
+
+    rrule.setLimit(-1);
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::NoLimit);
+    QVERIFY(rrule.limitCount() == -1);
+    QVERIFY(rrule.limitDate().isNull());
+
+    rrule.setLimit(0);
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::CountLimit);
+    QVERIFY(rrule.limitCount() == 0);
+    QVERIFY(rrule.limitDate().isNull());
+
+    rrule.setLimit(-100);
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::NoLimit);
+    QVERIFY(rrule.limitCount() == -1);
+    QVERIFY(rrule.limitDate().isNull());
+
+    rrule.setLimit(QDate());
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::NoLimit);
+    QVERIFY(rrule.limitCount() == -1);
+    QVERIFY(rrule.limitDate().isNull());
+
+    rrule.setLimit(QDate(2010, 10, 6));
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::DateLimit);
+    QVERIFY(rrule.limitCount() == -1);
+    QVERIFY(rrule.limitDate() == QDate(2010, 10, 6));
+
+    rrule.setLimit(QDate(2010, 13, 34));
+    QVERIFY(rrule.limitType() == QOrganizerRecurrenceRule::NoLimit);
+    QVERIFY(rrule.limitCount() == -1);
+    QVERIFY(rrule.limitDate() == QDate());
+
+
+    rrule.setLimit(2);
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
+    rrules << rrule;
+    testEvent.setRecurrenceRule(rrule);
+    QVERIFY(testEvent.recurrenceRules() == rrules);
+
+    QSet<QOrganizerRecurrenceRule> exrules;
+    QOrganizerRecurrenceRule exrule;
+    exrule.setLimit(1);
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
     testEvent.setExceptionRules(exrules);
-    //QVERIFY(testEvent.exceptionRules() == exrules); // XXX TODO: implement operator == for QOIRR.
+    QVERIFY(testEvent.exceptionRules() == exrules);
 }
 
 void tst_QOrganizerItem::todo()
@@ -856,30 +912,30 @@ void tst_QOrganizerItem::todo()
     testTodo.setPriority(QOrganizerItemPriority::VeryLowPriority);
     QCOMPARE(testTodo.priority(), QOrganizerItemPriority::VeryLowPriority);
 
-    QList<QDate> rdates;
+    QSet<QDate> rdates;
     rdates << QDate::currentDate() << QDate::currentDate().addDays(3) << QDate::currentDate().addDays(8);
     testTodo.setRecurrenceDates(rdates);
     QCOMPARE(testTodo.recurrenceDates(), rdates);
 
-    QList<QDate> exdates;
+    QSet<QDate> exdates;
     exdates << QDate::currentDate().addDays(3);
     testTodo.setExceptionDates(exdates);
     QCOMPARE(testTodo.exceptionDates(), exdates);
 
-    QList<QOrganizerItemRecurrenceRule> rrules;
-    QOrganizerItemRecurrenceRule rrule;
-    rrule.setCount(2);
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    QSet<QOrganizerRecurrenceRule> rrules;
+    QOrganizerRecurrenceRule rrule;
+    rrule.setLimit(2);
+    rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
     rrules << rrule;
     testTodo.setRecurrenceRules(rrules);
-    //QVERIFY(testTodo.recurrenceRules() == rrules); // XXX TODO: implement operator == for QOIRR.
+    QVERIFY(testTodo.recurrenceRules() == rrules);
 
-    QList<QOrganizerItemRecurrenceRule> exrules;
-    QOrganizerItemRecurrenceRule exrule;
-    exrule.setCount(1);
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    QSet<QOrganizerRecurrenceRule> exrules;
+    QOrganizerRecurrenceRule exrule;
+    exrule.setLimit(1);
+    rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
     testTodo.setExceptionRules(exrules);
-    //QVERIFY(testTodo.exceptionRules() == exrules); // XXX TODO: implement operator == for QOIRR.
+    QVERIFY(testTodo.exceptionRules() == exrules);
 }
 
 void tst_QOrganizerItem::journal()
@@ -903,12 +959,8 @@ void tst_QOrganizerItem::eventOccurrence()
     QOrganizerEventOccurrence testEventOccurrence;
     QCOMPARE(testEventOccurrence.type(), QString(QLatin1String(QOrganizerItemType::TypeEventOccurrence)));
 
-    testEventOccurrence.setLocationName("test location");
-    testEventOccurrence.setLocationAddress("test address");
-    testEventOccurrence.setLocationGeoCoordinates("0.73;0.57");
-    QCOMPARE(testEventOccurrence.locationName(), QString("test location"));
-    QCOMPARE(testEventOccurrence.locationAddress(), QString("test address"));
-    QCOMPARE(testEventOccurrence.locationGeoCoordinates(), QString("0.73;0.57"));
+    testEventOccurrence.setLocation("test address");
+    QCOMPARE(testEventOccurrence.location(), QString("test address"));
 
     testEventOccurrence.setStartDateTime(QDateTime(QDate::currentDate()));
     QCOMPARE(testEventOccurrence.startDateTime(), QDateTime(QDate::currentDate()));

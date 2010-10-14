@@ -55,8 +55,9 @@ class QDeclarativeContactRelationship : public QObject
     Q_OBJECT
     Q_PROPERTY(int first READ first WRITE setFirst NOTIFY valueChanged)
     Q_PROPERTY(int second READ second WRITE setSecond NOTIFY valueChanged)
-    Q_PROPERTY(QString type READ relationshipType WRITE setRelationshipType NOTIFY valueChanged)
-    Q_ENUMS(Role);
+    Q_PROPERTY(Type type READ relationshipType WRITE setRelationshipType NOTIFY valueChanged)
+    Q_ENUMS(Role)
+    Q_ENUMS(Type)
 public:
     enum Role {
         First = 0,
@@ -64,15 +65,25 @@ public:
         Either
     };
 
+    enum Type {
+        HasMember = 0,
+        Aggregates,
+        IsSameAs,
+        HasAssistant,
+        HasManager,
+        HasSpouse,
+        InvalidType
+    };
+
     QDeclarativeContactRelationship(QObject* parent = 0);
 
     int first() const;
     int second() const;
-    QString relationshipType() const;
+    Type relationshipType() const;
 
     void setFirst( int firstId);
     void setSecond( int secondId);
-    void setRelationshipType(const QString& relationshipType);
+    void setRelationshipType(Type relationshipType);
 
     QContactRelationship relationship() const;
     void setRelationship(const QContactRelationship& relationship);

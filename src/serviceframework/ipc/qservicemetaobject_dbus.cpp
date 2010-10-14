@@ -99,8 +99,6 @@ QServiceMetaObjectDBus::QServiceMetaObjectDBus(QObject* service, bool signalsObj
 
 QServiceMetaObjectDBus::~QServiceMetaObjectDBus()
 {
-    if (d->serviceMeta)
-        delete d->serviceMeta;
     if (d->dbusMeta)
         delete d->dbusMeta;
     delete d;
@@ -119,12 +117,19 @@ void QServiceMetaObjectDBus::connectMetaSignals(bool signalsObject) {
         int methodCount = d->serviceMeta->methodCount();
         for (int i = 0; i < methodCount; i++) {
             QMetaMethod mm = d->serviceMeta->method(i);
+        
 
             if (mm.methodType() == QMetaMethod::Signal) {
                 QByteArray sig(mm.signature());
                 bool customType = false;
                 const QList<QByteArray> pTypes = mm.parameterTypes();
                 const int pTypesCount = pTypes.count();
+            
+                // Ignore all QObject calls
+                const QMetaObject *mo = QObject::metaObject();
+                int qobjectIndex = mo->indexOfMethod(sig);
+                if (qobjectIndex >= 0)
+                    continue;
 
                 // Detects custom types as passed arguments
                 for (int arg = 0; arg < pTypesCount; arg++) {
@@ -162,6 +167,7 @@ void QServiceMetaObjectDBus::activateMetaSignal(int id, const QVariantList& args
     QVariantList convertedList = args;
     QByteArray sig(method.signature());
     QList<QByteArray> params = method.parameterTypes();
+    
     for (int i = 0; i < params.size(); i++) {
         QVariant dbusVariant = args[i];
        
@@ -310,13 +316,9 @@ const QMetaObject* QServiceMetaObjectDBus::dbusMetaObject(bool signalsObject) co
             property.setUser(mp.isUser());
             property.setStdCppSet(mp.hasStdCppSet());
             property.setEnumOrFlag(mp.isEnumType());
-
-            if (mp.hasNotifySignal()) {
-                //TODO: signal notify for property
-            }
         }
 
-        // TODO: Need Enumerators??
+        // Needs Enumerators support when QtDBus supports
 
         mo = mo->superClass();
     }
@@ -346,7 +348,7 @@ int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
     if (c == QMetaObject::InvokeMetaMethod) {
         // METHOD CALL
         QMetaMethod method = d->dbusMeta->method(id);
-        
+    
         const bool isSignal = (method.methodType() == QMetaMethod::Signal);
 
         ///////////////////// CHECK SPECIAL PROPERTY ///////////////////////

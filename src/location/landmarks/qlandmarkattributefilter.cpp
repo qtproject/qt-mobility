@@ -49,6 +49,8 @@ class QLandmarkAttributeFilterPrivate : public QLandmarkFilterPrivate
 {
 public:
     QLandmarkAttributeFilterPrivate();
+    QLandmarkAttributeFilterPrivate(const QLandmarkAttributeFilterPrivate &other);
+
     virtual ~QLandmarkAttributeFilterPrivate();
 
     virtual bool compare(const QLandmarkFilterPrivate *other) const
@@ -75,6 +77,13 @@ QLandmarkAttributeFilterPrivate::QLandmarkAttributeFilterPrivate()
 
 {
     type = QLandmarkFilter::AttributeFilter;
+}
+
+QLandmarkAttributeFilterPrivate::QLandmarkAttributeFilterPrivate(const QLandmarkAttributeFilterPrivate &other)
+    : QLandmarkFilterPrivate(other),
+    attributes(other.attributes),
+    flags(other.flags)
+{
 }
 
 QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
@@ -115,7 +124,7 @@ QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
         \o "state"
     \row
         \o "phoneNumber"
-        \o "postCode"
+        \o "postcode"
         \o "street"
     \endtable
 */

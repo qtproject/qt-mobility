@@ -316,6 +316,11 @@ bool QLandmarkAbstractRequest::start()
         return false;
     }
     QLandmarkManagerEngine *engine = d_ptr->manager->engine();
+    if (!engine) {
+        d_ptr->error = QLandmarkManager::InvalidManagerError;
+        d_ptr->errorString = "The manager is invalid";
+        return false;
+    }
 
     if (d_ptr->state != QLandmarkAbstractRequest::ActiveState) {
         ml.unlock();

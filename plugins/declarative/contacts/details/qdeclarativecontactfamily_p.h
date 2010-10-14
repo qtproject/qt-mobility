@@ -51,24 +51,37 @@ class QDeclarativeContactFamily : public QDeclarativeContactDetail
     Q_OBJECT
     Q_PROPERTY(QString spouse READ spouse WRITE setSpouse NOTIFY fieldsChanged)
     Q_PROPERTY(QStringList children READ children WRITE setChildren NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
 public:
     enum FieldType {
-        Spouse = 0,
-        Children
+        FieldSpouse = 0,
+        FieldChildren
     };
     QDeclarativeContactFamily(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactFamily());
+        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Family;
+        return QDeclarativeContactDetail::ContactFamily;
     }
-    void setSpouse(const QString& spouseName) {detail().setValue(QContactFamily::FieldSpouse, spouseName);}
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case FieldSpouse:
+            return QContactFamily::FieldSpouse;
+        case FieldChildren:
+            return QContactFamily::FieldChildren;
+        default:
+            break;
+        }
+        return "";
+    }
+    void setSpouse(const QString& spouseName) {if (!readOnly()) detail().setValue(QContactFamily::FieldSpouse, spouseName);}
     QString spouse() const {return detail().value(QContactFamily::FieldSpouse);}
-    void setChildren(const QStringList& childrenNames) {detail().setValue(QContactFamily::FieldChildren, childrenNames);}
+    void setChildren(const QStringList& childrenNames) {if (!readOnly()) detail().setValue(QContactFamily::FieldChildren, childrenNames);}
     QStringList children() const {return detail().value<QStringList>(QContactFamily::FieldChildren);}
 signals:
     void fieldsChanged();

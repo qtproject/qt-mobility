@@ -111,11 +111,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a new tiled map data object, which stores the map data required by
-    \a geoMap and makes use of the functionality provided by \a engine.
+    Constructs a new tiled map data object, which makes use of the functionality provided by \a engine.
 */
-QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
-    : QGeoMapData(new QGeoTiledMapDataPrivate(this, engine, geoMap))
+QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine)
+    : QGeoMapData(new QGeoTiledMapDataPrivate(this, engine))
 {
     Q_D(QGeoTiledMapData);
 
@@ -294,7 +293,7 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
 
     d->worldReferenceViewportCenter = coordinateToWorldReferencePosition(center);
     d->updateScreenRect();
-    geoMap()->update();
+    emit updateMapDisplay();
 
     emit centerChanged(center);
 
@@ -318,7 +317,7 @@ void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
     d->clearRequests();
     d->cache.clear();
     d->zoomCache.clear();
-    geoMap()->update();
+    emit updateMapDisplay();
 
     emit mapTypeChanged(d->mapType);
 
@@ -445,7 +444,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
         }
     }
 
-    geoMap()->update();
+    emit updateMapDisplay();
 
     d->clearRequests();
     d->updateMapImage();
@@ -718,7 +717,7 @@ void QGeoTiledMapData::tileFinished()
                                int(t.width()) / d->zoomFactor,
                                int(t.height()) / d->zoomFactor);
 
-        geoMap()->update(target);
+        emit updateMapDisplay(target);
     }
 
     if (d->requests.size() > 0)
@@ -849,11 +848,21 @@ int QGeoTiledMapData::zoomFactor() const
     return d->zoomFactor;
 }
 
+/*!
+    Forces the map display to update in the region specified by \a target.
+
+    If \a target is empty the entire map display will be updated. 
+*/
+void QGeoTiledMapData::triggerUpdateMapDisplay(const QRectF &target)
+{
+    emit updateMapDisplay(target);
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap)
-    : QGeoMapDataPrivate(parent, engine, geoMap) {}
+QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoMappingManagerEngine *engine)
+    : QGeoMapDataPrivate(parent, engine) {}
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 {

@@ -86,15 +86,7 @@ QDeclarativeContactModel::QDeclarativeContactModel(QObject *parent) :
 {
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(InterestLabelRole, "interestLabel");
-    roleNames.insert(InterestRole, "interest");
     roleNames.insert(ContactRole, "contact");
-    roleNames.insert(ContactIdRole, "contactId");
-    roleNames.insert(AvatarRole, "avatar");
-    roleNames.insert(PresenceAvailableRole, "presenceSupported");
-    roleNames.insert(PresenceTextRole, "presenceText");
-    roleNames.insert(PresenceStateRole, "presenceState");
-    roleNames.insert(PresenceMessageRole, "presenceMessage");
     setRoleNames(roleNames);
 
     connect(this, SIGNAL(managerChanged()), SLOT(fetchAgain()));
@@ -109,7 +101,9 @@ QDeclarativeContactModel::QDeclarativeContactModel(QObject *parent) :
 
 QString QDeclarativeContactModel::manager() const
 {
-    return d->m_manager->managerName();
+    if (d->m_manager)
+    	return d->m_manager->managerName();
+    return QString();
 }
 
 
@@ -154,11 +148,22 @@ QStringList QDeclarativeContactModel::availableManagers() const
 {
     return QContactManager::availableManagers();
 }
+static QString urlToLocalFileName(const QString& str)
+{
+   QUrl url(str);
+   if (!url.isValid()) {
+      return str;
+   } else if (url.scheme() == "qrc") {
+      return url.toString().remove(0, 5).prepend(':');
+   } else {
+      return url.toString(QUrl::RemoveScheme);
+   }
 
+}
 void QDeclarativeContactModel::importContacts(const QString& fileName)
 {
    qWarning() << "importing contacts from:" << fileName;
-   QFile*  file = new QFile(fileName);
+   QFile*  file = new QFile(urlToLocalFileName(fileName));
    bool ok = file->open(QIODevice::ReadOnly);
    if (ok) {
       d->m_reader.setDevice(file);
@@ -168,6 +173,7 @@ void QDeclarativeContactModel::importContacts(const QString& fileName)
 
 void QDeclarativeContactModel::exportContacts(const QString& fileName)
 {
+   qWarning() << "exporting contacts into:" << fileName;
    QVersitContactExporter exporter;
    QList<QContact> contacts;
    foreach (QDeclarativeContact* dc, d->m_contacts) {
@@ -176,7 +182,7 @@ void QDeclarativeContactModel::exportContacts(const QString& fileName)
 
    exporter.exportContacts(contacts, QVersitDocument::VCard30Type);
    QList<QVersitDocument> documents = exporter.documents();
-   QFile* file = new QFile(fileName);
+   QFile* file = new QFile(urlToLocalFileName(fileName));
    bool ok = file->open(QIODevice::ReadWrite);
    if (ok) {
       d->m_writer.setDevice(file);
@@ -373,60 +379,17 @@ void QDeclarativeContactModel::contactRemoved()
     }
 }
 
-QPair<QString, QString> QDeclarativeContactModel::interestingDetail(const QContact&c) const
-{
-    // Try a phone number, then email, then online account
-    // This does only check the first detail of each type
-    QContactDetail p = c.details<QContactPhoneNumber>().value(0);
-    if (!p.isEmpty())
-        return qMakePair(tr("Phone"), p.value(QContactPhoneNumber::FieldNumber));
-
-    p = c.details<QContactEmailAddress>().value(0);
-    if (!p.isEmpty())
-        return qMakePair(tr("Email"), p.value(QContactEmailAddress::FieldEmailAddress));
-
-    p = c.details<QContactOnlineAccount>().value(0);
-    if (!p.isEmpty())
-        return qMakePair(p.value(QContactOnlineAccount::FieldServiceProvider), p.value(QContactOnlineAccount::FieldAccountUri));
-
-    // Well, don't know.
-    return qMakePair(QString(), QString());
-}
-
 
 QVariant QDeclarativeContactModel::data(const QModelIndex &index, int role) const
 {
     QDeclarativeContact* dc = d->m_contacts.value(index.row());
     QContact c = dc->contact();
+
     switch(role) {
         case Qt::DisplayRole:
             return c.displayLabel();
-        case InterestLabelRole:
-            return interestingDetail(c).first;
-        case InterestRole:
-            return interestingDetail(c).second;
         case ContactRole:
             return QVariant::fromValue(dc);
-        case ContactIdRole:
-            return c.localId();
-        case AvatarRole:
-            //Just let the imager provider deal with it
-            return QString("image://thumbnail/%1.%2").arg(manager()).arg(c.localId());
-        case Qt::DecorationRole:
-            {
-                QContactThumbnail t = c.detail<QContactThumbnail>();
-                if (!t.thumbnail().isNull())
-                    return QPixmap::fromImage(t.thumbnail());
-            }
-            return QPixmap();
-        case PresenceAvailableRole:
-            return !c.detail<QContactGlobalPresence>().isEmpty();
-        case PresenceMessageRole:
-            return c.detail<QContactGlobalPresence>().customMessage();
-        case PresenceTextRole:
-            return c.detail<QContactGlobalPresence>().presenceStateText();
-        case PresenceStateRole:
-            return c.detail<QContactGlobalPresence>().presenceState();
     }
     return QVariant();
 }

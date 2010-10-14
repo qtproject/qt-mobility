@@ -46,8 +46,6 @@
 #include <QString>
 
 #include "qremoteserviceregister.h"
-//#include "instancemanager_p.h"
-//#include "qserviceinterfacedescriptor.h"
 
 QTM_BEGIN_NAMESPACE
 

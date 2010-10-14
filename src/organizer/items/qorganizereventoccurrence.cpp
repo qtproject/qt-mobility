@@ -64,7 +64,7 @@ QTM_USE_NAMESPACE
  */
 void QOrganizerEventOccurrence::setStartDateTime(const QDateTime& startDateTime)
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     etr.setStartDateTime(startDateTime);
     saveDetail(&etr);
 }
@@ -74,7 +74,7 @@ void QOrganizerEventOccurrence::setStartDateTime(const QDateTime& startDateTime)
  */
 QDateTime QOrganizerEventOccurrence::startDateTime() const
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     return etr.startDateTime();
 }
 
@@ -83,7 +83,7 @@ QDateTime QOrganizerEventOccurrence::startDateTime() const
  */
 void QOrganizerEventOccurrence::setEndDateTime(const QDateTime& endDateTime)
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     etr.setEndDateTime(endDateTime);
     saveDetail(&etr);
 }
@@ -93,7 +93,7 @@ void QOrganizerEventOccurrence::setEndDateTime(const QDateTime& endDateTime)
  */
 QDateTime QOrganizerEventOccurrence::endDateTime() const
 {
-    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
+    QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     return etr.endDateTime();
 }
 
@@ -103,7 +103,7 @@ QDateTime QOrganizerEventOccurrence::endDateTime() const
  */
 void QOrganizerEventOccurrence::setParentLocalId(const QOrganizerItemLocalId& parentLocalId)
 {
-    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    QOrganizerItemParent origin = detail<QOrganizerItemParent>();
     origin.setParentLocalId(parentLocalId);
     saveDetail(&origin);
 }
@@ -113,7 +113,7 @@ void QOrganizerEventOccurrence::setParentLocalId(const QOrganizerItemLocalId& pa
  */
 QOrganizerItemLocalId QOrganizerEventOccurrence::parentLocalId() const
 {
-    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    QOrganizerItemParent origin = detail<QOrganizerItemParent>();
     return origin.parentLocalId();
 }
 
@@ -123,7 +123,7 @@ QOrganizerItemLocalId QOrganizerEventOccurrence::parentLocalId() const
  */
 void QOrganizerEventOccurrence::setOriginalDate(const QDate& date)
 {
-    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    QOrganizerItemParent origin = detail<QOrganizerItemParent>();
     origin.setOriginalDate(date);
     saveDetail(&origin);
 }
@@ -133,7 +133,7 @@ void QOrganizerEventOccurrence::setOriginalDate(const QDate& date)
  */
 QDate QOrganizerEventOccurrence::originalDate() const
 {
-    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    QOrganizerItemParent origin = detail<QOrganizerItemParent>();
     return origin.originalDate();
 }
 
@@ -157,62 +157,20 @@ QOrganizerItemPriority::Priority QOrganizerEventOccurrence::priority() const
 }
 
 /*!
-  Returns the name of the location at which the event occurrence is held, if known
+  Returns the label of the location at which the event occurrence is held, if known
  */
-QString QOrganizerEventOccurrence::locationName() const
+QString QOrganizerEventOccurrence::location() const
 {
     QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    return ld.locationName();
+    return ld.label();
 }
 
 /*!
-  Sets the name of the location at which the event occurrence is held to \a locationName
+  Sets the label of the location at which the event occurrence is held to \a location
  */
-void QOrganizerEventOccurrence::setLocationName(const QString& locationName)
+void QOrganizerEventOccurrence::setLocation(const QString& location)
 {
     QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    ld.setLocationName(locationName);
+    ld.setLabel(location);
     saveDetail(&ld);
 }
-
-/*!
-  Returns the address of the location at which the event occurrence is held, if known
- */
-QString QOrganizerEventOccurrence::locationAddress() const
-{
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    return ld.address();
-}
-
-/*!
-  Sets the address of the location at which the event occurrence is held to \a locationAddress
- */
-void QOrganizerEventOccurrence::setLocationAddress(const QString& locationAddress)
-{
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    ld.setAddress(locationAddress);
-    saveDetail(&ld);
-}
-
-/*!
-  Returns the geo-coordinates of the location at which the event occurrence is held, if known
- */
-QString QOrganizerEventOccurrence::locationGeoCoordinates() const
-{
-    // XXX TODO: consistency with QOILocation API ?
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    return ld.geoLocation();
-}
-
-/*!
-  \preliminary
-  Sets the geo-coordinates of the location at which the event occurrence is held to \a locationCoordinates.
-  The coordinates must be in the form "latitude;longitude".
- */
-void QOrganizerEventOccurrence::setLocationGeoCoordinates(const QString& locationCoordinates)
-{
-    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
-    ld.setGeoLocation(locationCoordinates);
-    saveDetail(&ld);
-}
-

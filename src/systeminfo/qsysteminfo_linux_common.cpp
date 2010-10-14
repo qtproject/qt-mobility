@@ -452,7 +452,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
         {
             const QString baseSysDir = "/sys/class/net/";
             const QDir wDir(baseSysDir);
-            const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::Dirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo wiFi(devFile + "/phy80211");
@@ -517,7 +517,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
             QString wlanInterface;
             const QString baseSysDir = "/sys/class/net/";
             const QDir wDir(baseSysDir);
-            const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::Dirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/phy80211");
@@ -592,7 +592,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
             QString result;
             const QString baseSysDir = "/sys/class/net/";
             const QDir wDir(baseSysDir);
-            const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::Dirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/phy80211");
@@ -624,7 +624,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
             QString result;
             const QString baseSysDir = "/sys/class/net/";
             const QDir eDir(baseSysDir);
-            const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::Dirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/address");
@@ -715,7 +715,7 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
             QString result;
             const QString baseSysDir = "/sys/class/net/";
             const QDir eDir(baseSysDir);
-            const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::AllDirs | QDir::NoDotAndDotDot);
+            const QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::Dirs | QDir::NoDotAndDotDot);
             foreach(const QString dir, dirs) {
                 const QString devFile = baseSysDir + dir;
                 const QFileInfo fi(devFile + "/carrier");
@@ -823,7 +823,7 @@ QNetworkInterface QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(QSystem
     QString result;
     const QString baseSysDir = "/sys/class/net/";
     const QDir eDir(baseSysDir);
-    const QStringList dirs = eDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+    const QStringList dirs = eDir.entryList(QStringList() << "*", QDir::Dirs | QDir::NoDotAndDotDot);
     foreach(const QString dir, dirs) {
         const QString devFile = baseSysDir + dir;
         const QFileInfo devfi(devFile + "/device");
@@ -933,12 +933,10 @@ QSystemDisplayInfoLinuxCommonPrivate::~QSystemDisplayInfoLinuxCommonPrivate()
 
 int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 {
-#if !defined(Q_WS_MAEMO_6)
-#ifdef Q_WS_X11
+#if !defined(Q_WS_MAEMO_6) && defined(Q_WS_X11)
     QDesktopWidget wid;
     return wid.screen(screen)->x11Info().depth();
 #else
-#endif
 #endif
     return QPixmap::defaultDepth();
 }

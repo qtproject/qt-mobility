@@ -53,6 +53,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QOrganizerManagerEngine;
 class QOrganizerCollectionData;
 class Q_ORGANIZER_EXPORT QOrganizerCollection
 {
@@ -76,7 +77,7 @@ public:
     QVariantMap metaData() const;
 
     void setMetaData(const QString& key, const QVariant& value);
-    QVariant metaData(const QString& key);
+    QVariant metaData(const QString& key) const;
 
     /* Default meta data keys */
 #ifdef Q_QDOC
@@ -92,6 +93,7 @@ public:
 #endif
 
 private:
+    friend class QOrganizerManagerEngine;
     QSharedDataPointer<QOrganizerCollectionData> d;
 };
 

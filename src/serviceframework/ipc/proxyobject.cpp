@@ -79,7 +79,6 @@ QServiceProxy::QServiceProxy(const QByteArray& metadata, ObjectEndPoint* endPoin
         localSignals.replace(b.index(), true); // Call activate locally
         
         d->meta = builder.toMetaObject();
-        qWarning() << "Proxy object for" << d->meta->className() << "created.";
     }
 }
 

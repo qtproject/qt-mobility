@@ -71,12 +71,12 @@ public:
     {
         setupUi(this);
 
-        sharedEcho = 0;
-        uniqueEcho = 0;
+        globalEcho = 0;
+        privateEcho = 0;
         echo = 0;
 
-        // Set default connection to the echo shared server
-        on_sharedChat_toggled(true);
+        // Set default connection to the echo global server
+        on_globalChat_toggled(true);
     }
 
     ~EchoClient()
@@ -93,25 +93,25 @@ public slots:
         QMetaObject::invokeMethod(echo, "sendMessage", Q_ARG(QString, message));
     }
 
-    void on_sharedChat_toggled(bool checked)
+    void on_globalChat_toggled(bool checked)
     {
-        uniqueChat->setChecked(!checked);
+        privateChat->setChecked(!checked);
         if (checked) {
             if (!connectToChat())
-                echoBox->append("**Unable to connect to shared Echo Chat server**");
+                echoBox->append("**Unable to connect to global Echo Chat server**");
             else 
-                echoBox->append("**Connected to shared Echo Chat server**");
+                echoBox->append("**Connected to global Echo Chat server**");
         }
     }
     
-    void on_uniqueChat_toggled(bool checked)
+    void on_privateChat_toggled(bool checked)
     {
-        sharedChat->setChecked(!checked);
+        globalChat->setChecked(!checked);
         if (checked) {
             if (!connectToChat())
-                echoBox->append("**Unable to connect to unique Echo Chat server**");
+                echoBox->append("**Unable to connect to private Echo Chat server**");
             else 
-                echoBox->append("**Connected to unique Echo Chat server**");
+                echoBox->append("**Connected to private Echo Chat server**");
         }
     }
 
@@ -121,34 +121,38 @@ public slots:
         echoBox->append(newMsg);
     }
 
-    void errorIPC()
+    void errorIPC(QService::UnrecoverableIPCError error)
     {
       QDateTime ts = QDateTime::currentDateTime();
-      QString newMsg = "[" + ts.toString("hh:mm") + "]" + " " + "IPC Error";
+      QString newMsg = "[" + ts.toString("hh:mm") + "]" + " " + "IPC Error! ";
+
+      if (error == QService::ErrorServiceNoLongerAvailable)
+          newMsg += "Service no longer available";
+      
       echoBox->append(newMsg);
     }
 
 private:
-    QObject *sharedEcho;
-    QObject *uniqueEcho;
+    QObject *globalEcho;
+    QObject *privateEcho;
     QObject *echo;
 
     bool connectToChat()
     {
-        // 0 for unique and 1 for shared
+        // 0 for private and 1 for global
         int version = 0;
-        if (sharedChat->isChecked())
+        if (globalChat->isChecked())
             version = 1;
 
-        // Set to unique server if it previously existed
-        if (uniqueEcho && version == 0) {
-            echo = uniqueEcho;
+        // Set to private server if it previously existed
+        if (privateEcho && version == 0) {
+            echo = privateEcho;
             return true;
         }
         
-        // Set to shared server if it previously existed
-        if (sharedEcho && version == 1) {
-            echo = sharedEcho;
+        // Set to global server if it previously existed
+        if (globalEcho && version == 1) {
+            echo = globalEcho;
             return true;
         }
 
@@ -173,11 +177,11 @@ private:
         }
 
         if (version == 0) {
-            uniqueEcho = service;
-            echo = uniqueEcho;
+            privateEcho = service;
+            echo = privateEcho;
         } else {
-            sharedEcho = service;
-            echo = sharedEcho;
+            globalEcho = service;
+            echo = globalEcho;
         }
 
         echo->setParent(this);
@@ -186,8 +190,9 @@ private:
         QObject::connect(echo, SIGNAL(broadcastMessage(QString,QDateTime)),
                          this, SLOT(receivedMessage(QString,QDateTime)));
 
+        // Connect IPC errors
         QObject::connect(echo, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
-                         this, SLOT(errorIPC()));
+                         this, SLOT(errorIPC(QService::UnrecoverableIPCError)));
 
         return true;
     }

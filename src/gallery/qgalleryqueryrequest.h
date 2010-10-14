@@ -58,15 +58,15 @@ class Q_GALLERY_EXPORT QGalleryQueryRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryQueryRequest)
-    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
-    Q_PROPERTY(QStringList sortPropertyNames READ sortPropertyNames WRITE setSortPropertyNames)
-    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate)
-    Q_PROPERTY(int offset READ offset WRITE setOffset)
-    Q_PROPERTY(int limit READ limit WRITE setLimit)
-    Q_PROPERTY(QString rootType READ rootType WRITE setRootType)
-    Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem)
-    Q_PROPERTY(QGalleryQueryRequest::Scope scope READ scope WRITE setScope)
-    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter)
+    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames NOTIFY propertyNamesChanged)
+    Q_PROPERTY(QStringList sortPropertyNames READ sortPropertyNames WRITE setSortPropertyNames NOTIFY sortPropertyNamesChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
+    Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
+    Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
+    Q_PROPERTY(QString rootType READ rootType WRITE setRootType NOTIFY rootTypeChanged)
+    Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem NOTIFY rootItemChanged)
+    Q_PROPERTY(QGalleryQueryRequest::Scope scope READ scope WRITE setScope NOTIFY scopeChanged)
+    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(bool valid READ isValid NOTIFY currentItemChanged)
     Q_PROPERTY(QVariant itemId READ itemId NOTIFY currentItemChanged)
     Q_PROPERTY(QString itemType READ itemType NOTIFY currentItemChanged)
@@ -141,6 +141,15 @@ public:
     bool last();
 
 Q_SIGNALS:
+    void propertyNamesChanged();
+    void sortPropertyNamesChanged();
+    void autoUpdateChanged();
+    void offsetChanged();
+    void limitChanged();
+    void rootTypeChanged();
+    void rootItemChanged();
+    void scopeChanged();
+    void filterChanged();
     void resultSetChanged(QGalleryResultSet *resultSet);
     void currentItemChanged();
 

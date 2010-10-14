@@ -38,12 +38,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef ORGANIZERJOURNALTIMERANGETRANSFORM_H_
-#define ORGANIZERJOURNALTIMERANGETRANSFORM_H_
+#ifndef ORGANIZERJOURNALTIMETRANSFORM_H_
+#define ORGANIZERJOURNALTIMETRANSFORM_H_
 
 #include "organizeritemdetailtransform.h"
 
-class OrganizerJournalTimeRangeTransform : public OrganizerItemDetailTransform
+class OrganizerJournalTimeTransform : public OrganizerItemDetailTransform
 {
 public:
     void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
@@ -51,4 +51,4 @@ public:
     QString detailDefinitionName();
 };
 
-#endif /* ORGANIZERJOURNALTIMERANGETRANSFORM_H_ */
+#endif /* ORGANIZERJOURNALTIMETRANSFORM_H_ */

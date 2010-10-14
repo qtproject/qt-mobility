@@ -58,7 +58,6 @@ private slots:
     void cleanup();
     
 private slots:
-    void fetchDetailDef();
     void fetchEventDetailDef();
     void fetchEventOccDetailDef();
     void fetchTodoDetailDef();
@@ -67,16 +66,16 @@ private slots:
     void fetchJournalDetailDef();
     
 private:
-    QOrganizerItemManager *m_om;
+    QOrganizerManager *m_om;
 };
 
 void TestDetailDef::init()
 {
     // Create a new item manager instance
-    m_om = new QOrganizerItemManager(m_managerNameSymbian);
+    m_om = new QOrganizerManager(m_managerNameSymbian);
     
     // Cleanup by deleting all items
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
 }
 
 void TestDetailDef::cleanup()
@@ -85,12 +84,6 @@ void TestDetailDef::cleanup()
         delete m_om;
         m_om = 0;
     }
-}
-
-void TestDetailDef::fetchDetailDef()
-{
-    QMap<QString, QOrganizerItemDetailDefinition> detailDef = m_om->detailDefinitions();
-    QVERIFY(!detailDef.isEmpty());
 }
 
 void TestDetailDef::fetchEventDetailDef()
@@ -151,10 +144,10 @@ void TestDetailDef::fetchEventDetailDef()
     QCOMPARE(def, def1);
     
     // Event time range
-    def = detailDef.value(QOrganizerEventTimeRange::DefinitionName);
+    def = detailDef.value(QOrganizerEventTime::DefinitionName);
     QVERIFY(!def.isEmpty());
     QVERIFY(def.isUnique());
-    def1 = m_om->detailDefinition(QOrganizerEventTimeRange::DefinitionName, QOrganizerItemType::TypeEvent);
+    def1 = m_om->detailDefinition(QOrganizerEventTime::DefinitionName, QOrganizerItemType::TypeEvent);
     QCOMPARE(def, def1);
     
     // Priority
@@ -172,9 +165,9 @@ void TestDetailDef::fetchEventDetailDef()
     QCOMPARE(def, def1);
     
     // Instance origin - Not supported
-    def = detailDef.value(QOrganizerItemInstanceOrigin::DefinitionName);
+    def = detailDef.value(QOrganizerItemParent::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemType::TypeEvent);
+    def1 = m_om->detailDefinition(QOrganizerItemParent::DefinitionName, QOrganizerItemType::TypeEvent);
     QCOMPARE(def, def1);
     
     // To-do progress - Not supported
@@ -184,15 +177,15 @@ void TestDetailDef::fetchEventDetailDef()
     QCOMPARE(def, def1);
     
     // To-do time range - Not supported
-    def = detailDef.value(QOrganizerTodoTimeRange::DefinitionName);
+    def = detailDef.value(QOrganizerTodoTime::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerTodoTimeRange::DefinitionName, QOrganizerItemType::TypeEvent);
+    def1 = m_om->detailDefinition(QOrganizerTodoTime::DefinitionName, QOrganizerItemType::TypeEvent);
     QCOMPARE(def, def1);
     
     // Journal time range - Not supported
-    def = detailDef.value(QOrganizerJournalTimeRange::DefinitionName);
+    def = detailDef.value(QOrganizerJournalTime::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerJournalTimeRange::DefinitionName, QOrganizerItemType::TypeEvent);
+    def1 = m_om->detailDefinition(QOrganizerJournalTime::DefinitionName, QOrganizerItemType::TypeEvent);
     QCOMPARE(def, def1);
 }
 
@@ -253,10 +246,10 @@ void TestDetailDef::fetchEventOccDetailDef()
     QCOMPARE(def, def1);
     
     // Event time range
-    def = detailDef.value(QOrganizerEventTimeRange::DefinitionName);
+    def = detailDef.value(QOrganizerEventTime::DefinitionName);
     QVERIFY(!def.isEmpty());
     QVERIFY(def.isUnique());
-    def1 = m_om->detailDefinition(QOrganizerEventTimeRange::DefinitionName, QOrganizerItemType::TypeEventOccurrence);
+    def1 = m_om->detailDefinition(QOrganizerEventTime::DefinitionName, QOrganizerItemType::TypeEventOccurrence);
     QCOMPARE(def, def1);
     
     // Priority
@@ -274,10 +267,10 @@ void TestDetailDef::fetchEventOccDetailDef()
     QCOMPARE(def, def1);
     
     // Instance origin
-    def = detailDef.value(QOrganizerItemInstanceOrigin::DefinitionName);
+    def = detailDef.value(QOrganizerItemParent::DefinitionName);
     QVERIFY(!def.isEmpty());
     QVERIFY(def.isUnique());
-    def1 = m_om->detailDefinition(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemType::TypeEventOccurrence);
+    def1 = m_om->detailDefinition(QOrganizerItemParent::DefinitionName, QOrganizerItemType::TypeEventOccurrence);
     QCOMPARE(def, def1);
     
     // To-do progress - Not supported
@@ -287,15 +280,15 @@ void TestDetailDef::fetchEventOccDetailDef()
     QCOMPARE(def, def1);
     
     // To-do time range - Not supported
-    def = detailDef.value(QOrganizerTodoTimeRange::DefinitionName);
+    def = detailDef.value(QOrganizerTodoTime::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerTodoTimeRange::DefinitionName, QOrganizerItemType::TypeEventOccurrence);
+    def1 = m_om->detailDefinition(QOrganizerTodoTime::DefinitionName, QOrganizerItemType::TypeEventOccurrence);
     QCOMPARE(def, def1);
     
     // Journal time range - Not supported
-    def = detailDef.value(QOrganizerJournalTimeRange::DefinitionName);
+    def = detailDef.value(QOrganizerJournalTime::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerJournalTimeRange::DefinitionName, QOrganizerItemType::TypeEventOccurrence);
+    def1 = m_om->detailDefinition(QOrganizerJournalTime::DefinitionName, QOrganizerItemType::TypeEventOccurrence);
     QCOMPARE(def, def1);
 }
 
@@ -357,9 +350,9 @@ void TestDetailDef::fetchTodoDetailDef()
     QCOMPARE(def, def1);
     
     // Event time range - Not supported
-    def = detailDef.value(QOrganizerEventTimeRange::DefinitionName);
+    def = detailDef.value(QOrganizerEventTime::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerEventTimeRange::DefinitionName, QOrganizerItemType::TypeTodo);
+    def1 = m_om->detailDefinition(QOrganizerEventTime::DefinitionName, QOrganizerItemType::TypeTodo);
     QCOMPARE(def, def1);
     
     // Priority
@@ -376,9 +369,9 @@ void TestDetailDef::fetchTodoDetailDef()
     QCOMPARE(def, def1);
     
     // Instance origin - Not supported
-    def = detailDef.value(QOrganizerItemInstanceOrigin::DefinitionName);
+    def = detailDef.value(QOrganizerItemParent::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemType::TypeTodo);
+    def1 = m_om->detailDefinition(QOrganizerItemParent::DefinitionName, QOrganizerItemType::TypeTodo);
     QCOMPARE(def, def1);
     
     // To-do progress
@@ -389,16 +382,16 @@ void TestDetailDef::fetchTodoDetailDef()
     QCOMPARE(def, def1);
     
     // To-do time range
-    def = detailDef.value(QOrganizerTodoTimeRange::DefinitionName);
+    def = detailDef.value(QOrganizerTodoTime::DefinitionName);
     QVERIFY(!def.isEmpty());
     QVERIFY(def.isUnique());
-    def1 = m_om->detailDefinition(QOrganizerTodoTimeRange::DefinitionName, QOrganizerItemType::TypeTodo);
+    def1 = m_om->detailDefinition(QOrganizerTodoTime::DefinitionName, QOrganizerItemType::TypeTodo);
     QCOMPARE(def, def1);
     
     // Journal time range - Not supported
-    def = detailDef.value(QOrganizerJournalTimeRange::DefinitionName);
+    def = detailDef.value(QOrganizerJournalTime::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerJournalTimeRange::DefinitionName, QOrganizerItemType::TypeTodo);
+    def1 = m_om->detailDefinition(QOrganizerJournalTime::DefinitionName, QOrganizerItemType::TypeTodo);
     QCOMPARE(def, def1);
 }
 
@@ -459,9 +452,9 @@ void TestDetailDef::fetchTodoOccDetailDef()
     QCOMPARE(def, def1);
     
     // Event time range - Not supported
-    def = detailDef.value(QOrganizerEventTimeRange::DefinitionName);
+    def = detailDef.value(QOrganizerEventTime::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerEventTimeRange::DefinitionName, QOrganizerItemType::TypeTodoOccurrence);
+    def1 = m_om->detailDefinition(QOrganizerEventTime::DefinitionName, QOrganizerItemType::TypeTodoOccurrence);
     QCOMPARE(def, def1);
     
     // Priority
@@ -478,10 +471,10 @@ void TestDetailDef::fetchTodoOccDetailDef()
     QCOMPARE(def, def1);
     
     // Instance origin
-    def = detailDef.value(QOrganizerItemInstanceOrigin::DefinitionName);
+    def = detailDef.value(QOrganizerItemParent::DefinitionName);
     QVERIFY(!def.isEmpty());
     QVERIFY(def.isUnique());
-    def1 = m_om->detailDefinition(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemType::TypeTodoOccurrence);
+    def1 = m_om->detailDefinition(QOrganizerItemParent::DefinitionName, QOrganizerItemType::TypeTodoOccurrence);
     QCOMPARE(def, def1);
     
     // To-do progress
@@ -492,16 +485,16 @@ void TestDetailDef::fetchTodoOccDetailDef()
     QCOMPARE(def, def1);
     
     // To-do time range
-    def = detailDef.value(QOrganizerTodoTimeRange::DefinitionName);
+    def = detailDef.value(QOrganizerTodoTime::DefinitionName);
     QVERIFY(!def.isEmpty());
     QVERIFY(def.isUnique());
-    def1 = m_om->detailDefinition(QOrganizerTodoTimeRange::DefinitionName, QOrganizerItemType::TypeTodoOccurrence);
+    def1 = m_om->detailDefinition(QOrganizerTodoTime::DefinitionName, QOrganizerItemType::TypeTodoOccurrence);
     QCOMPARE(def, def1);
     
     // Journal time range - Not supported
-    def = detailDef.value(QOrganizerJournalTimeRange::DefinitionName);
+    def = detailDef.value(QOrganizerJournalTime::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerJournalTimeRange::DefinitionName, QOrganizerItemType::TypeTodoOccurrence);
+    def1 = m_om->detailDefinition(QOrganizerJournalTime::DefinitionName, QOrganizerItemType::TypeTodoOccurrence);
     QCOMPARE(def, def1);
 }
 
@@ -564,9 +557,9 @@ void TestDetailDef::fetchNoteDetailDef()
     QCOMPARE(def, def1);
     
     // Event time range - Not supported
-    def = detailDef.value(QOrganizerEventTimeRange::DefinitionName);
+    def = detailDef.value(QOrganizerEventTime::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerEventTimeRange::DefinitionName, QOrganizerItemType::TypeNote);
+    def1 = m_om->detailDefinition(QOrganizerEventTime::DefinitionName, QOrganizerItemType::TypeNote);
     QCOMPARE(def, def1);
     
     // Priority - Not supported
@@ -582,9 +575,9 @@ void TestDetailDef::fetchNoteDetailDef()
     QCOMPARE(def, def1);
     
     // Instance origin - Not supported
-    def = detailDef.value(QOrganizerItemInstanceOrigin::DefinitionName);
+    def = detailDef.value(QOrganizerItemParent::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemType::TypeNote);
+    def1 = m_om->detailDefinition(QOrganizerItemParent::DefinitionName, QOrganizerItemType::TypeNote);
     QCOMPARE(def, def1);
     
     // To-do progress - Not supported
@@ -594,15 +587,15 @@ void TestDetailDef::fetchNoteDetailDef()
     QCOMPARE(def, def1);
     
     // To-do time range - Not supported
-    def = detailDef.value(QOrganizerTodoTimeRange::DefinitionName);
+    def = detailDef.value(QOrganizerTodoTime::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerTodoTimeRange::DefinitionName, QOrganizerItemType::TypeNote);
+    def1 = m_om->detailDefinition(QOrganizerTodoTime::DefinitionName, QOrganizerItemType::TypeNote);
     QCOMPARE(def, def1);
     
     // Journal time range - Not supported
-    def = detailDef.value(QOrganizerJournalTimeRange::DefinitionName);
+    def = detailDef.value(QOrganizerJournalTime::DefinitionName);
     QVERIFY(def.isEmpty());
-    def1 = m_om->detailDefinition(QOrganizerJournalTimeRange::DefinitionName, QOrganizerItemType::TypeNote);
+    def1 = m_om->detailDefinition(QOrganizerJournalTime::DefinitionName, QOrganizerItemType::TypeNote);
     QCOMPARE(def, def1);
     */
 }

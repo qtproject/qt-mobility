@@ -219,7 +219,7 @@ void tst_QOrganizerCollection::datastream()
     // first, stream an item with a complete id
     {
         QDataStream stream1(&buffer, QIODevice::WriteOnly);
-        QOrganizerItemManager om("memory");
+        QOrganizerManager om("memory");
         QVERIFY(om.saveCollection(&collectionIn)); // fill in its ID
         originalId = collectionIn.id();
         stream1 << collectionIn;

@@ -10,7 +10,7 @@ SUBDIRS += grueplugin grueapp
 
 SUBDIRS += sensor_explorer
 
-SUBDIRS += reading_perf
+#SUBDIRS += reading_perf
 
 contains(QT_CONFIG,opengl):SUBDIRS += cubehouse
 

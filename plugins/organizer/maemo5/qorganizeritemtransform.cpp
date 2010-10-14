@@ -78,6 +78,29 @@ OrganizerRecurrenceTransform* OrganizerItemTransform::recurrenceTransformer()
     return &m_recTransformer;
 }
 
+// This should probably accept a std::string
+bool OrganizerItemTransform::addGeoToQOIL(const QString &src, QOrganizerItemLocation* detail) const
+{
+    double latitude = 0;
+    double longitude = 0;
+
+    Q_ASSERT(detail);
+
+    QStringList sl = src.split(QLatin1Char(';'));
+    if (sl.count() == 2) {
+        bool ok = false;
+        latitude = sl.at(0).toDouble(&ok);
+        if (ok)
+            longitude = sl.at(1).toDouble(&ok);
+        if (ok) {
+            detail->setLatitude(latitude);
+            detail->setLongitude(longitude);
+            return true;
+        }
+    }
+    return false;
+}
+
 QOrganizerEvent OrganizerItemTransform::convertCEventToQEvent(CEvent *cevent)
 {
     QOrganizerEvent retn;
@@ -88,9 +111,9 @@ QOrganizerEvent OrganizerItemTransform::convertCEventToQEvent(CEvent *cevent)
         retn.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint)); // assume that the saved priority is vCal compliant.
 
     // Location geo coordinates
-    QString tempstr = QString::fromStdString(cevent->getGeo());
-    if (!tempstr.isNull())
-        retn.setLocationGeoCoordinates(tempstr);
+    QOrganizerItemLocation loc = retn.detail<QOrganizerItemLocation>();
+    if(addGeoToQOIL(QString::fromStdString(cevent->getGeo()), &loc))
+        retn.saveDetail(&loc);
 
     // Start time
     QDateTime tempdt = QDateTime::fromTime_t(cevent->getDateStart());
@@ -130,9 +153,9 @@ QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrenc
         retn.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint)); // assume that the saved priority is vCal compliant.
 
     // Location geo coordinates
-    QString tempstr = QString::fromStdString(cevent->getGeo());
-    if (!tempstr.isNull())
-        retn.setLocationGeoCoordinates(tempstr);
+    QOrganizerItemLocation loc = retn.detail<QOrganizerItemLocation>();
+    if(addGeoToQOIL(QString::fromStdString(cevent->getGeo()), &loc))
+        retn.saveDetail(&loc);
 
     // Start time
     if (!instanceStartDate.isNull())
@@ -193,12 +216,9 @@ QOrganizerTodo OrganizerItemTransform::convertCTodoToQTodo(CTodo *ctodo)
     retn.setStatus(static_cast<QOrganizerTodoProgress::Status>(ctodo->getStatus()));
 
     // Location geo coordinates
-    QString tempstr = QString::fromStdString(ctodo->getGeo());
-    if (!tempstr.isNull()) {
-        QOrganizerItemLocation il = retn.detail<QOrganizerItemLocation>();
-        il.setGeoLocation(tempstr);
-        retn.saveDetail(&il);
-    }
+    QOrganizerItemLocation loc = retn.detail<QOrganizerItemLocation>();
+    if(addGeoToQOIL(QString::fromStdString(ctodo->getGeo()), &loc))
+        retn.saveDetail(&loc);
 
     return retn;
 }
@@ -238,12 +258,9 @@ QOrganizerTodoOccurrence OrganizerItemTransform::convertCTodoToQTodoOccurrence(C
     retn.setStatus(static_cast<QOrganizerTodoProgress::Status>(ctodo->getStatus()));
 
     // Location geo coordinates
-    QString tempstr = QString::fromStdString(ctodo->getGeo());
-    if (!tempstr.isNull()) {
-        QOrganizerItemLocation il = retn.detail<QOrganizerItemLocation>();
-        il.setGeoLocation(tempstr);
-        retn.saveDetail(&il);
-    }
+    QOrganizerItemLocation loc = retn.detail<QOrganizerItemLocation>();
+    if(addGeoToQOIL(QString::fromStdString(ctodo->getGeo()), &loc))
+        retn.saveDetail(&loc);
 
     // Only the following are occurrence specific details:
 
@@ -284,20 +301,9 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
         // Location
         tempstr = QString::fromStdString(component->getLocation());
         if(!tempstr.isEmpty()) {
-            int lastCr = tempstr.lastIndexOf("\n");
-            if (lastCr == -1) {
-                QOrganizerItemLocation il = item->detail<QOrganizerItemLocation>();
-                il.setLocationName(tempstr);
-                item->saveDetail(&il);
-            }
-            else {
-                QString locationName = tempstr.left(lastCr);
-                QString locationAddress = tempstr.mid(lastCr + 1);
-                QOrganizerItemLocation il = item->detail<QOrganizerItemLocation>();
-                il.setLocationName(locationName);
-                il.setAddress(locationAddress);
-                item->saveDetail(&il);
-            }
+            QOrganizerItemLocation il = item->detail<QOrganizerItemLocation>();
+            il.setLabel(tempstr);
+            item->saveDetail(&il);
         }
 
         // Timestamps
@@ -362,12 +368,11 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
                     QString message = QString::fromStdString(alarm_event_get_title(eve));
                     reminder.setMessage(message);
                     time_t alarmTime = alarm_event_get_trigger(eve);
-                    reminder.setDateTime(QDateTime::fromTime_t(alarmTime));
                     alarm_event_delete(eve);
 
                     QDateTime sTime = QDateTime::fromTime_t(component->getDateStart());
                     QDateTime aTime = QDateTime::fromTime_t(alarmTime);
-                    reminder.setTimeDelta(aTime.secsTo(sTime));
+                    reminder.setSecondsBeforeStart(aTime.secsTo(sTime));
                 }
             }
 
@@ -376,9 +381,9 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
     }
 }
 
-CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrganizerItem *item, QOrganizerItemManager::Error *error)
+CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrganizerItem *item, QOrganizerManager::Error *error)
 {
-    *error = QOrganizerItemManager::InvalidItemTypeError;
+    *error = QOrganizerManager::InvalidItemTypeError;
 
     QOrganizerItemLocalId itemId = item->localId();
 
@@ -395,7 +400,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
     if (item->type() == QOrganizerItemType::TypeEvent
         || item->type() == QOrganizerItemType::TypeEventOccurrence) {
 
-        *error = QOrganizerItemManager::NoError;
+        *error = QOrganizerManager::NoError;
 
         CEvent *cevent = cal->getEvent(itemIdStr.toStdString(), calError);
         if (!cevent) {
@@ -412,8 +417,13 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         const QOrganizerEvent *event = static_cast<const QOrganizerEvent *>(item);
 
         // Location geo coordinates
-        if (!event->locationGeoCoordinates().isEmpty())
-            cevent->setGeo(event->locationGeoCoordinates().toStdString());
+        QOrganizerItemLocation loc = event->detail<QOrganizerItemLocation>();
+        if (loc.hasValue(QOrganizerItemLocation::FieldLatitude) && loc.hasValue(QOrganizerItemLocation::FieldLongitude)) {
+            // std::ostringstream, perhaps
+            char buff[64];
+            if (snprintf(buff, sizeof(buff), "%.18f;%.18f", loc.latitude(), loc.longitude()) > 0)
+                cevent->setGeo(std::string(buff));
+        }
 
         // Priority
         cevent->setPriority(static_cast<int>(event->priority()));
@@ -443,7 +453,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
     else if (item->type() == QOrganizerItemType::TypeTodo
             || item->type() == QOrganizerItemType::TypeTodoOccurrence) {
 
-        *error = QOrganizerItemManager::NoError;
+        *error = QOrganizerManager::NoError;
 
         CTodo *ctodo = cal->getTodo(itemIdStr.toStdString(), calError);
         if (!ctodo) {
@@ -484,15 +494,20 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         ctodo->setStatus(todo->status());
 
         // Location geo coordinates
-        if (!todo->detail("QOrganizerItemLocation::DefinitionName").isEmpty())
-            ctodo->setGeo(todo->detail<QOrganizerItemLocation>().geoLocation().toStdString());
+        QOrganizerItemLocation loc = todo->detail<QOrganizerItemLocation>();
+        if (loc.hasValue(QOrganizerItemLocation::FieldLatitude) && loc.hasValue(QOrganizerItemLocation::FieldLongitude)) {
+            // std::ostringstream, perhaps
+            char buff[64];
+            if (snprintf(buff, sizeof(buff), "%.18f;%.18f", loc.latitude(), loc.longitude()) > 0)
+                ctodo->setGeo(std::string(buff));
+        }
 
         // Recurrence is not set as todos can't contain any recurrence information in Maemo5
 
         retn = ctodo;
     }
     else if (item->type() == QOrganizerItemType::TypeJournal) {
-        *error = QOrganizerItemManager::NoError;
+        *error = QOrganizerManager::NoError;
         CJournal *cjournal = cal->getJournal(itemIdStr.toStdString(), calError);
         if (!cjournal) {
             // Event did not existed in calendar, create a new CEvent with an empty ID
@@ -525,9 +540,8 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
 
         // Location (Geo location is not set here as it's not a general CComponent detail)
         QOrganizerItemLocation location = item->detail(QOrganizerItemLocation::DefinitionName);
-        if (!location.isEmpty() && (!location.locationName().isEmpty() || !location.address().isEmpty())) {
-            QString locationString = location.locationName() + "\n" + location.address();
-            retn->setLocation(locationString.toStdString());
+        if (!location.label().isEmpty()) {
+            retn->setLocation(location.label().toStdString());
         }
 
         // dateStart and dateEnd are common fields for all CComponents, but those are set
@@ -554,28 +568,16 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
 
         // Visual reminder (alarm)
         QOrganizerItemVisualReminder reminder = item->detail<QOrganizerItemVisualReminder>();
-        QDateTime reminderDateTime = reminder.dateTime();
-        QDateTime deltaDateTime;
-        if (reminder.variantValues().contains(QOrganizerItemReminder::FieldTimeDelta))
-            deltaDateTime = dateStartForAlarm.addSecs(-reminder.timeDelta());
 
-        if (!reminderDateTime.isNull() || !deltaDateTime.isNull()) {
-            if (!reminderDateTime.isNull() && !deltaDateTime.isNull()) {
-                if (reminderDateTime != deltaDateTime) {
-                    // reminder date time and the set delta do not match
-                    *error = QOrganizerItemManager::BadArgumentError;
-                    return 0;
-                }
-            }
-
-            QDateTime resolvedDateTime = !reminderDateTime.isNull() ? reminderDateTime : deltaDateTime;
+        if (!reminder.isEmpty() && dateStartForAlarm.isValid()) {
+            QDateTime deltaDateTime = dateStartForAlarm.addSecs(-reminder.secondsBeforeStart());
 
             // Set alarm for the ccomponent
             CAlarm alarm;
 
             alarm.setRepeat(reminder.repetitionCount());
-            alarm.setDuration(E_AM_EXACTDATETIME);
-            alarm.setTrigger(resolvedDateTime.toTime_t());
+            alarm.setDuration(E_AM_EXACTDATETIME); // TODO: repetitionDelay()?
+            alarm.setTrigger(deltaDateTime.toTime_t());
 
             retn->setAlarm(&alarm); // makes a copy
         }
@@ -584,9 +586,9 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
     return retn;
 }
 
-CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* item, QOrganizerItemManager::Error *error)
+CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* item, QOrganizerManager::Error *error)
 {
-    *error = QOrganizerItemManager::NoError;
+    *error = QOrganizerManager::NoError;
 
     // Only the event and todo types contain recurrence information
     if (item->type() == QOrganizerItemType::TypeEvent) {
@@ -594,37 +596,37 @@ CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* ite
         const QOrganizerEvent *event = static_cast<const QOrganizerEvent *>(item);
 
         // Add recurrence rules
-        QList<QOrganizerItemRecurrenceRule> recurrenceRules = event->recurrenceRules();
-        foreach (QOrganizerItemRecurrenceRule rule, recurrenceRules)
-            m_recTransformer.addQOrganizerItemRecurrenceRule(rule);
+        QSet<QOrganizerRecurrenceRule> recurrenceRules = event->recurrenceRules();
+        foreach (QOrganizerRecurrenceRule rule, recurrenceRules)
+            m_recTransformer.addQOrganizerRecurrenceRule(rule);
 
         // Add exception rules
-        QList<QOrganizerItemRecurrenceRule> exceptionRules = event->exceptionRules();
-        foreach (QOrganizerItemRecurrenceRule rule, exceptionRules)
+        QSet<QOrganizerRecurrenceRule> exceptionRules = event->exceptionRules();
+        foreach (QOrganizerRecurrenceRule rule, exceptionRules)
             m_recTransformer.addQOrganizerItemExceptionRule(rule);
 
         // Add recurrence dates
         QDate dateLimit = event->startDateTime().date().addYears(6);
-        QList<QDate> recurrenceDates = event->recurrenceDates();
+        QSet<QDate> recurrenceDates = event->recurrenceDates();
         foreach (QDate recDate, recurrenceDates) {
             // Because recurrence dates are simulated with setting an appropriate
             // recurrence rule, no date must be set 6 years or more after
             // the current event's date. Otherwise setting a correct rule would be impossible.
             if (recDate >= dateLimit)
-                *error = QOrganizerItemManager::NotSupportedError;
+                *error = QOrganizerManager::NotSupportedError;
 
             // Still set the date, let the caller decise what to do
             m_recTransformer.addQOrganizerItemRecurrenceDate(recDate);
         }
 
         // Add exception dates
-        QList<QDate> exceptionDates = event->exceptionDates();
+        QSet<QDate> exceptionDates = event->exceptionDates();
         foreach (QDate exceptionDate, exceptionDates) {
             // Because exception dates are simulated with setting an appropriate
             // exception rule, no date must be set 6 years or more after
             // the current event's date. Otherwise setting a correct rule would be impossible.
             if (exceptionDate >= dateLimit)
-                *error = QOrganizerItemManager::NotSupportedError;
+                *error = QOrganizerManager::NotSupportedError;
 
             // Still set the date, let the caller decise what to do
             m_recTransformer.addQOrganizerItemExceptionDate(exceptionDate);
@@ -647,23 +649,20 @@ QPair<qint32, qint32> OrganizerItemTransform::modifyAlarmEvent(CCalendar *cal, Q
             oldCookie = cookies[0];
 
             QOrganizerItemVisualReminder reminder = item->detail<QOrganizerItemVisualReminder>();
-
-            QDateTime reminderDateTime = reminder.dateTime();
-            if (reminderDateTime.isNull()) {
-                // use time delta instead
-                QDateTime startDateTime;
-                if (item->type() == QOrganizerItemType::TypeEvent || item->type() == QOrganizerItemType::TypeEventOccurrence) {
-                    startDateTime = item->detail<QOrganizerEventTimeRange>().startDateTime();
-                }
-                else if (item->type() == QOrganizerItemType::TypeTodo || item->type() == QOrganizerItemType::TypeTodoOccurrence) {
-                    startDateTime = item->detail<QOrganizerTodoTimeRange>().startDateTime();
-                }
-                else if (item->type() == QOrganizerItemType::TypeJournal) {
-                    startDateTime = item->detail<QOrganizerJournalTimeRange>().entryDateTime();
-                }
-
-                reminderDateTime = startDateTime.addSecs(-reminder.timeDelta());
+            QDateTime reminderDateTime;
+            QDateTime startDateTime;
+            if (item->type() == QOrganizerItemType::TypeEvent || item->type() == QOrganizerItemType::TypeEventOccurrence) {
+                startDateTime = item->detail<QOrganizerEventTime>().startDateTime();
             }
+            else if (item->type() == QOrganizerItemType::TypeTodo || item->type() == QOrganizerItemType::TypeTodoOccurrence) {
+                startDateTime = item->detail<QOrganizerTodoTime>().startDateTime();
+            }
+            else if (item->type() == QOrganizerItemType::TypeJournal) {
+                startDateTime = item->detail<QOrganizerJournalTime>().entryDateTime();
+            }
+
+            // XXX Shouldn't this check to see if the reminder is valid - if invalid, delete the alarm event?
+            reminderDateTime = startDateTime.addSecs(-reminder.secondsBeforeStart());
 
             int ignoreErrors = 0;
             newCookie = alarm->modifyAlarmEvent(oldCookie, reminderDateTime.toTime_t(), reminder.message().toStdString(),
@@ -684,11 +683,11 @@ QPair<qint32, qint32> OrganizerItemTransform::modifyAlarmEvent(CCalendar *cal, Q
     return QPair<qint32, qint32>(oldCookie, newCookie);
 }
 
-QOrganizerItemManager::Error OrganizerItemTransform::calErrorToManagerError(int calError) const
+QOrganizerManager::Error OrganizerItemTransform::calErrorToManagerError(int calError) const
 {
     switch(calError) {
         case CALENDAR_OPERATION_SUCCESSFUL:
-            return QOrganizerItemManager::NoError;
+            return QOrganizerManager::NoError;
 
         case CALENDAR_SYSTEM_ERROR:
         case CALENDAR_DATABASE_ERROR:
@@ -703,43 +702,43 @@ QOrganizerItemManager::Error OrganizerItemTransform::calErrorToManagerError(int 
         case CALENDAR_INVALID_ICSFILE:
         case CALENDAR_SCHEMA_CHANGED:
         case CALENDAR_IMPORT_INCOMPLETE:
-            return QOrganizerItemManager::UnspecifiedError;
+            return QOrganizerManager::UnspecifiedError;
 
         case CALENDAR_MEMORY_ERROR:
-            return QOrganizerItemManager::OutOfMemoryError;
+            return QOrganizerManager::OutOfMemoryError;
 
         case CALENDAR_FILE_ERROR:
         case CALENDAR_DOESNOT_EXISTS:
         case CALENDAR_NONE_INDB:
         case NO_DUPLICATE_ITEM:
         case CALENDAR_FETCH_NOITEMS:
-            return QOrganizerItemManager::DoesNotExistError;
+            return QOrganizerManager::DoesNotExistError;
 
         case CALENDAR_DISK_FULL:
         case CALENDAR_DB_FULL:
-            return QOrganizerItemManager::LimitReachedError;
+            return QOrganizerManager::LimitReachedError;
 
         case CALENDAR_INVALID_ARG_ERROR:
-            return QOrganizerItemManager::BadArgumentError;
+            return QOrganizerManager::BadArgumentError;
 
         case CALENDAR_ALREADY_EXISTS:
         case CALENDAR_ENTRY_DUPLICATED:
-            return QOrganizerItemManager::AlreadyExistsError;
+            return QOrganizerManager::AlreadyExistsError;
 
         case CALENDAR_CANNOT_BE_DELETED:
         case EXT_ITEM_RETAINED:
         case LOCAL_ITEM_RETAINED:
-            return QOrganizerItemManager::PermissionsError;
+            return QOrganizerManager::PermissionsError;
 
         case CALENDAR_DB_LOCKED:
-            return QOrganizerItemManager::LockedError;
+            return QOrganizerManager::LockedError;
 
         case CALENDAR_ICS_COMPONENT_INVALID:
         case CALENDAR_BATCH_ADD_INVALID:
-            return QOrganizerItemManager::InvalidDetailError;
+            return QOrganizerManager::InvalidDetailError;
 
         default:
-            return QOrganizerItemManager::UnspecifiedError;
+            return QOrganizerManager::UnspecifiedError;
     }
 }
 
