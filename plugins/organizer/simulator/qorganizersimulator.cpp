@@ -154,8 +154,10 @@ bool QOrganizerSimulatorEngine::removeItem(const QOrganizerItemLocalId& organize
     remoteId.setLocalId(con->mLocalToRemote.items.value(organizeritemId));
 
     QLocalSocket *sendSocket = con->sendSocket();
+    Simulator::OrganizerItemId packedId;
+    packedId.id = remoteId;
     int errorInt = RemoteMetacall<int>::call(
-                sendSocket, TimeoutSync, "requestRemoveOrganizerItem", remoteId);
+                sendSocket, TimeoutSync, "requestRemoveOrganizerItem", packedId);
     *error = static_cast<QOrganizerManager::Error>(errorInt);
 
     if (*error != QOrganizerManager::NoError)
@@ -217,8 +219,10 @@ bool QOrganizerSimulatorEngine::removeCollection(const QOrganizerCollectionLocal
     remoteId.setLocalId(con->mLocalToRemote.collections.value(collectionId));
 
     QLocalSocket *sendSocket = con->sendSocket();
+    Simulator::OrganizerCollectionId packedId;
+    packedId.id = remoteId;
     int errorInt = RemoteMetacall<int>::call(
-                sendSocket, TimeoutSync, "requestRemoveOrganizerCollection", remoteId);
+                sendSocket, TimeoutSync, "requestRemoveOrganizerCollection", packedId);
     *error = static_cast<QOrganizerManager::Error>(errorInt);
 
     if (*error != QOrganizerManager::NoError)

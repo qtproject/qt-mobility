@@ -80,6 +80,20 @@ public:
     QOrganizerManager::Error error;
 };
 
+// wrap the ids because they are registered with QTM_PREPEND_NAMESPACE(...Id),
+// which leads to a method signature moc can not cope with
+class OrganizerItemId
+{
+public:
+    QOrganizerItemId id;
+};
+
+class OrganizerCollectionId
+{
+public:
+    QOrganizerCollectionId id;
+};
+
 } // namespace Simulator
 
 void qt_registerOrganizerTypes();
@@ -89,6 +103,8 @@ QTM_END_NAMESPACE
 Q_DECLARE_METATYPE(QtMobility::QOrganizerItem)
 Q_DECLARE_METATYPE(QtMobility::QOrganizerCollection)
 Q_DECLARE_METATYPE(QtMobility::QOrganizerItemDetailDefinition)
+Q_DECLARE_METATYPE(QtMobility::Simulator::OrganizerItemId)
+Q_DECLARE_METATYPE(QtMobility::Simulator::OrganizerCollectionId)
 Q_DECLARE_METATYPE(QtMobility::Simulator::SaveOrganizerItemReply)
 Q_DECLARE_METATYPE(QtMobility::Simulator::SaveOrganizerCollectionReply)
 

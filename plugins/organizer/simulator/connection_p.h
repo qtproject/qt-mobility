@@ -57,6 +57,7 @@
 #include <QtCore/QList>
 
 #include "qorganizermanager.h"
+#include "qorganizerdata_simulator_p.h"
 
 QT_BEGIN_HEADER
 
@@ -106,10 +107,10 @@ private slots:
     void clearOrganizerData();
 
     void saveOrganizerItem(QtMobility::QOrganizerItem item);
-    void removeOrganizerItem(QtMobility::QOrganizerItemId id);
+    void removeOrganizerItem(QtMobility::Simulator::OrganizerItemId id);
 
     void saveOrganizerCollection(QtMobility::QOrganizerCollection collection);
-    void removeOrganizerCollection(QtMobility::QOrganizerCollectionId id);
+    void removeOrganizerCollection(QtMobility::Simulator::OrganizerCollectionId id);
 
     void saveOrganizerDetailDefinition(QtMobility::QOrganizerItemDetailDefinition definition,
                                        QString itemType);

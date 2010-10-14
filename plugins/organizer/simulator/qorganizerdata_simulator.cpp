@@ -73,6 +73,30 @@ QDataStream &operator>>(QDataStream &in, QtMobility::Simulator::SaveOrganizerCol
     return in;
 }
 
+QDataStream &operator<<(QDataStream &out, const QtMobility::Simulator::OrganizerItemId &s)
+{
+    out << s.id;
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, QtMobility::Simulator::OrganizerItemId &s)
+{
+    in >> s.id;
+    return in;
+}
+
+QDataStream &operator<<(QDataStream &out, const QtMobility::Simulator::OrganizerCollectionId &s)
+{
+    out << s.id;
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, QtMobility::Simulator::OrganizerCollectionId &s)
+{
+    in >> s.id;
+    return in;
+}
+
 QTM_BEGIN_NAMESPACE
 
 void qt_registerOrganizerTypes()
@@ -82,6 +106,8 @@ void qt_registerOrganizerTypes()
     qRegisterMetaTypeStreamOperators<QOrganizerItemId>("QtMobility::QOrganizerItemId");
     qRegisterMetaTypeStreamOperators<QOrganizerCollectionId>("QtMobility::QOrganizerCollectionId");
     qRegisterMetaTypeStreamOperators<QOrganizerItemDetailDefinition>("QtMobility::QOrganizerItemDetailDefinition");
+    qRegisterMetaTypeStreamOperators<Simulator::OrganizerItemId>("QtMobility::Simulator::OrganizerItemId");
+    qRegisterMetaTypeStreamOperators<Simulator::OrganizerCollectionId>("QtMobility::Simulator::OrganizerCollectionId");
     qRegisterMetaTypeStreamOperators<Simulator::SaveOrganizerItemReply>("QtMobility::Simulator::SaveOrganizerItemReply");
     qRegisterMetaTypeStreamOperators<Simulator::SaveOrganizerCollectionReply>("QtMobility::Simulator::SaveOrganizerCollectionReply");
 }

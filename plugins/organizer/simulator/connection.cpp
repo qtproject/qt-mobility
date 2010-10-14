@@ -239,13 +239,14 @@ void Connection::saveOrganizerItem(QtMobility::QOrganizerItem item)
     }
 }
 
-void Connection::removeOrganizerItem(QOrganizerItemId id)
+void Connection::removeOrganizerItem(Simulator::OrganizerItemId id)
 {
-    if (!mRemoteToLocal.items.contains(id.localId()))
+    QOrganizerItemLocalId remoteLocalId = id.id.localId();
+    if (!mRemoteToLocal.items.contains(remoteLocalId))
         return;
 
-    QOrganizerItemLocalId localId = mRemoteToLocal.items.value(id.localId());
-    mRemoteToLocal.items.remove(id.localId());
+    QOrganizerItemLocalId localId = mRemoteToLocal.items.value(remoteLocalId);
+    mRemoteToLocal.items.remove(remoteLocalId);
     mLocalToRemote.items.remove(localId);
 
     mNotifySimulator = false;
@@ -273,13 +274,14 @@ void Connection::saveOrganizerCollection(QtMobility::QOrganizerCollection collec
     }
 }
 
-void Connection::removeOrganizerCollection(QOrganizerCollectionId id)
+void Connection::removeOrganizerCollection(Simulator::OrganizerCollectionId id)
 {
-    if (!mRemoteToLocal.collections.contains(id.localId()))
+    QOrganizerCollectionLocalId remoteLocalId = id.id.localId();
+    if (!mRemoteToLocal.collections.contains(remoteLocalId))
         return;
 
-    QOrganizerCollectionLocalId localId = mRemoteToLocal.collections.value(id.localId());
-    mRemoteToLocal.collections.remove(id.localId());
+    QOrganizerCollectionLocalId localId = mRemoteToLocal.collections.value(remoteLocalId);
+    mRemoteToLocal.collections.remove(remoteLocalId);
     mLocalToRemote.collections.remove(localId);
 
     mNotifySimulator = false;
