@@ -48,6 +48,21 @@
 #include <QUrl>
 #include <QDeclarativeListProperty>
 
+/*!
+    \qmlclass Contact
+
+    \brief The Contact element represents an addressbook contact, A Contact
+     object has a collection of details (like a name, phone numbers and
+     email addresses).  Each detail (which can have multiple fields) is stored
+     in an appropriate subclass of ContactDetail, and the Contact allows
+     retrieving these details in various ways.
+
+    \inherits QObject
+
+    \ingroup qml-contact
+
+    The Contact element is part of the \bold{QtMobility.contacts 1.1} module.
+*/
 
 QDeclarativeContact::QDeclarativeContact(QObject *parent)
     :QObject(parent),
@@ -90,6 +105,14 @@ QContact QDeclarativeContact::contact() const
 {
     return d->contact();
 }
+
+/*!
+    \qmlproperty bool Contact::modified
+
+    This property holds the dirty flag of the Contact object.
+    If the Contact has been changed, returns true, otherwise returns false.
+
+*/
 bool QDeclarativeContact::modified() const
 {
      return d->m_modified;
@@ -99,6 +122,13 @@ void QDeclarativeContact::setModified()
      d->m_modified = true;
 }
 
+/*!
+    \qmlproperty type Contact::type
+
+    This property holds type of the Contact object.
+
+    \sa Contact::ContactType
+*/
 void QDeclarativeContact::setType(QDeclarativeContact::ContactType newType)
 {
     if (newType != type()) {
@@ -132,11 +162,21 @@ QDeclarativeListProperty<QDeclarativeContactDetail> QDeclarativeContact::details
     return d->details(QString()).value< QDeclarativeListProperty<QDeclarativeContactDetail> >();
 }
 
+/*!
+    \qmlproperty uint Contact::contactId
+
+    This property holds the id of the Contact object, it's a read only property.
+*/
 QContactLocalId QDeclarativeContact::contactId() const
 {
     return d->localId();
 }
 
+/*!
+    \qmlproperty QString Contact::manager
+
+    This property holds the manager name which the Contact object comes from.
+*/
 QString QDeclarativeContact::manager() const
 {
     return d->contactId().managerUri();
@@ -181,6 +221,11 @@ void QDeclarativeContact::save()
     }
 }
 
+/*!
+    \qmlproperty Address Contact::address
+
+    This property holds the address detail of the Contact object.
+*/
 QDeclarativeContactAddress* QDeclarativeContact::address()
 {
     return static_cast<QDeclarativeContactAddress*>(d->detail(QDeclarativeContactDetail::ContactAddress).value<QDeclarativeContactDetail*>());
