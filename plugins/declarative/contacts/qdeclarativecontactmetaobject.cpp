@@ -60,7 +60,8 @@ static ContactDetailNameMap qt_contactDetailNameMap[] = {
 };
 
 QDeclarativeContactMetaObject::QDeclarativeContactMetaObject(QObject* obj, const QContact& contact)
-    :QDeclarativeOpenMetaObject(obj)
+    :QDeclarativeOpenMetaObject(obj),
+      m_modified(false)
 {
     setContact(contact);
 }

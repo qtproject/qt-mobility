@@ -444,7 +444,6 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
     if (catIds.Count() > 0) {
         for (int i = 0; i < catIds.Count(); ++i) {
             symbianLandmark.RemoveCategory(catIds[i]);
-            ExecuteAndDeleteLD(catMgr->RemoveCategoryFromLandmarksL(catIds[i], lmIds));
         }
     }
 

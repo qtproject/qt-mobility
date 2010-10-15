@@ -40,12 +40,19 @@
 ****************************************************************************/
 
 /*!
-    \struct QGalleryProperty
+    \class QGalleryProperty
 
     \inmodule QtGallery
 
-    \brief The QGalleryProperty class provides an identifier for a gallery
-    property.
+    \brief The QGalleryProperty class provides a string constant identifying a
+    gallery property.
+
+    QAbstractGallery implementations use to QGalleryProperty to define the
+    names of properties in their schemas.  In addition to providing the name of
+    a property QGalleryProperty also contains a number of operator overloads and
+    functions for constructing meta-data filters.
+
+    \sa QGalleryType, QGalleryMetaDataFilter
 */
 
 /*!
@@ -160,3 +167,12 @@
     descending order.
 */
 
+
+/*!
+    \macro Q_DEFINE_GALLERY_PROPERTY(scope, name)
+
+    Macro for defining the \a name of a gallery property within the \a scope of
+    a class or namespace.
+
+    \relates QGalleryProperty
+*/

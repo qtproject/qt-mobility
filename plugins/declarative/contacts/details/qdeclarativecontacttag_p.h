@@ -54,14 +54,14 @@ class QDeclarativeContactTag : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "tag")
 public:
     enum FieldType {
-        FieldTag = 0
+        Tag = 0
     };
 
     QDeclarativeContactTag(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactTag());
-        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
@@ -70,14 +70,21 @@ public:
     static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case FieldTag:
+        case Tag:
             return QContactTag::FieldTag;
         default:
             break;
         }
-        return "";
+        //qWarning
+        return QString();
     }
-    void setTag(const QString& tag) {if (!readOnly()) detail().setValue(QContactTag::FieldTag, tag);}
+    void setTag(const QString& v)
+    {
+        if (!readOnly() && v != tag()) {
+            detail().setValue(QContactTag::FieldTag, v);
+            emit fieldsChanged();
+        }
+    }
     QString tag() const {return detail().value(QContactTag::FieldTag);}
 signals:
     void fieldsChanged();
