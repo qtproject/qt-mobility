@@ -60,13 +60,29 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactNickname());
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::NickName;
+        return QDeclarativeContactDetail::ContactNickName;
     }
-
-    void setNickname(const QString& nickname) {detail().setValue(QContactNickname::FieldNickname, nickname);}
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case NickName:
+            return QContactNickname::FieldNickname;
+        default:
+            break;
+        }
+        //qWarning
+        return QString();
+    }
+    void setNickname(const QString& v)
+    {
+        if (!readOnly() && v != nickname()) {
+            detail().setValue(QContactNickname::FieldNickname, v);
+        }
+    }
     QString nickname() const {return detail().value(QContactNickname::FieldNickname);}
 signals:
     void fieldsChanged();

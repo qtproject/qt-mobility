@@ -147,7 +147,10 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
             if (lmUrl.Length() > 0) {
                 lmBuf.Copy(lmUrl);
                 QString LandmarkUrl((QChar*) (lmBuf.Ptr()), lmBuf.Length());
-                qtLandmark->setUrl(LandmarkUrl);
+                //qDebug() << "landmark url " << LandmarkUrl;
+                //TODO: tmp fix, need to know exact reason.
+                if(LandmarkUrl != "0") 
+                    qtLandmark->setUrl(LandmarkUrl);
             }
         }
 
@@ -441,7 +444,6 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
     if (catIds.Count() > 0) {
         for (int i = 0; i < catIds.Count(); ++i) {
             symbianLandmark.RemoveCategory(catIds[i]);
-            ExecuteAndDeleteLD(catMgr->RemoveCategoryFromLandmarksL(catIds[i], lmIds));
         }
     }
 

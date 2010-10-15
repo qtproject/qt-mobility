@@ -233,9 +233,9 @@ uint QOrganizerCollectionSymbianEngineLocalId::hash() const
 const TInt KErrInvalidOccurrence(-32768);
 const TInt KErrInvalidItemType(-32769);
 
-QOrganizerItemManagerEngine* QOrganizerItemSymbianFactory::engine(
+QOrganizerManagerEngine* QOrganizerItemSymbianFactory::engine(
     const QMap<QString, QString>& parameters, 
-    QOrganizerItemManager::Error* error)
+    QOrganizerManager::Error* error)
 {
     Q_UNUSED(parameters);
 
@@ -243,9 +243,9 @@ QOrganizerItemManagerEngine* QOrganizerItemSymbianFactory::engine(
     QOrganizerItemSymbianEngine* ret = new QOrganizerItemSymbianEngine();
     TRAPD(err, ret->initializeL());
     QOrganizerItemSymbianEngine::transformError(err, error);
-    if (*error != QOrganizerItemManager::NoError) {
+    if (*error != QOrganizerManager::NoError) {
         // Something went wrong. Return null so that 
-        // QOrganizerItemManagerData::createEngine() will return 
+        // QOrganizerManagerData::createEngine() will return 
         // QOrganizerItemInvalidEngine to the client. This will avoid null 
         // pointer exceptions if the client still tries to access the manager.
         delete ret;
@@ -272,7 +272,7 @@ QString QOrganizerItemSymbianFactory::managerName() const
 Q_EXPORT_PLUGIN2(qtorganizer_symbian, QOrganizerItemSymbianFactory);
 
 QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
-    QOrganizerItemManagerEngine(),
+    QOrganizerManagerEngine(),
     m_defaultCollection(this),
     m_requestServiceProviderQueue(0)
 {
@@ -348,26 +348,26 @@ int QOrganizerItemSymbianEngine::managerVersion() const
     return 1;
 }
 
-QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(
-    const QOrganizerItem& generator,
+QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemOccurrences(
+    const QOrganizerItem& parentItem,
     const QDateTime& periodStart,
     const QDateTime& periodEnd,
     int maxCount,
     const QOrganizerItemFetchHint& fetchHint,
-    QOrganizerItemManager::Error* error) const
+    QOrganizerManager::Error* error) const
 {
-    QList<QOrganizerItem> itemInstances; 
-    TRAPD(err, itemInstancesL(itemInstances, generator, periodStart, periodEnd, maxCount, fetchHint));
+    QList<QOrganizerItem> itemOccurrences;
+    TRAPD(err, itemOccurrencesL(itemOccurrences, parentItem, periodStart, periodEnd, maxCount, fetchHint));
     if (err != KErrNone) {
         transformError(err, error);
         return QList<QOrganizerItem>();
     }
-    return itemInstances;
+    return itemOccurrences;
 }
 
-void QOrganizerItemSymbianEngine::itemInstancesL(
-    QList<QOrganizerItem> &itemInstances,
-    const QOrganizerItem &generator,
+void QOrganizerItemSymbianEngine::itemOccurrencesL(
+    QList<QOrganizerItem> &itemOccurrences,
+    const QOrganizerItem &parentItem,
     const QDateTime &periodStart,
     const QDateTime &periodEnd,
     int maxCount,
@@ -383,10 +383,10 @@ void QOrganizerItemSymbianEngine::itemInstancesL(
     // Set cal view filter based on the item type
     CalCommon::TCalViewFilter filter(0);
     QString itemType;
-    if (generator.type() == QOrganizerItemType::TypeEvent) {
+    if (parentItem.type() == QOrganizerItemType::TypeEvent) {
         itemType = QOrganizerItemType::TypeEventOccurrence.latin1();
         filter = CalCommon::EIncludeAppts | CalCommon::EIncludeEvents;
-    } else if (generator.type() == QOrganizerItemType::TypeTodo) {
+    } else if (parentItem.type() == QOrganizerItemType::TypeTodo) {
         itemType = QOrganizerItemType::TypeTodoOccurrence.latin1();
         filter = (CalCommon::EIncludeCompletedTodos | CalCommon::EIncludeIncompletedTodos);
     } else {
@@ -412,7 +412,7 @@ void QOrganizerItemSymbianEngine::itemInstancesL(
         instanceViewL(collectionId)->FindInstanceL(instanceList, filter,
             CalCommon::TCalTimeRange(startTime, endTime));
         // Transform CCalInstances to QOrganizerItems
-        toItemInstancesL(instanceList, generator, maxCount, collectionId, itemInstances);
+        toItemOccurrencesL(instanceList, parentItem, maxCount, collectionId, itemOccurrences);
         CleanupStack::PopAndDestroy(&instanceList);
     }
 }
@@ -423,7 +423,7 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::items(
     const QOrganizerItemFilter& filter,
     const QList<QOrganizerItemSortOrder>& sortOrders,
     const QOrganizerItemFetchHint& fetchHint,
-    QOrganizerItemManager::Error* error) const
+    QOrganizerManager::Error* error) const
 {
     QList<QOrganizerItem> items;
     TRAPD(err, itemsL(items, periodStart, periodEnd, filter, sortOrders, fetchHint));
@@ -445,8 +445,17 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemsL(
     // TODO: It might be possible to optimize by using fetch hint
     Q_UNUSED(fetchHint);
 
-    TCalTime startTime(toTCalTimeL(periodStart));
-    TCalTime endTime(toTCalTimeL(periodEnd));
+    // If start time is not defined, use minimum start date
+    TCalTime startTime;
+    startTime.SetTimeUtcL(TCalTime::MinTime());
+    if (periodStart.isValid())
+        startTime.SetTimeLocalL(toTTime(periodStart, Qt::LocalTime));
+
+    // If end date is not defined, use maximum end date
+    TCalTime endTime;
+    endTime.SetTimeUtcL(TCalTime::MaxTime());
+    if (periodEnd.isValid())
+        endTime.SetTimeLocalL(toTTime(periodEnd, Qt::LocalTime));
 
     // Loop through all the instance views and fetch the item instances
     foreach(QOrganizerCollectionLocalId collectionId, m_collections.keys()) {
@@ -456,7 +465,7 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemsL(
             instanceList, CalCommon::EIncludeAll,
             CalCommon::TCalTimeRange(startTime, endTime));
         // Transform CCalInstances to QOrganizerItems
-        toItemInstancesL(instanceList, QOrganizerItem(), -1, collectionId, items);
+        toItemOccurrencesL(instanceList, QOrganizerItem(), -1, collectionId, items);
         CleanupStack::PopAndDestroy(&instanceList);
     }
 
@@ -466,23 +475,23 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemsL(
     return items;
 }
 
-void QOrganizerItemSymbianEngine::toItemInstancesL(
+void QOrganizerItemSymbianEngine::toItemOccurrencesL(
     const RPointerArray<CCalInstance> &calInstanceList,
-    QOrganizerItem generator,
+    QOrganizerItem parentItem,
     const int maxCount,
     QOrganizerCollectionLocalId collectionLocalId,
-    QList<QOrganizerItem> &itemInstances) const
+    QList<QOrganizerItem> &itemOccurrences) const
 {
     quint64 localCollectionIdValue = m_collections[collectionLocalId].calCollectionId();
 
     // Transform all the instances to QOrganizerItems
     for(int i(0); i < calInstanceList.Count(); i++) {
-        QOrganizerItem itemInstance;
+        QOrganizerItem itemOccurrence;
         CCalInstance* calInstance = calInstanceList[i];
-        m_itemTransform.toItemInstanceL(*calInstance, &itemInstance);
+        m_itemTransform.toItemOccurrenceL(*calInstance, &itemOccurrence);
 
-        // Optimization: if a generator instance is defined, skip the instances that do not match
-        if (!generator.isEmpty() && generator.guid() != itemInstance.guid())
+        // Optimization: if a parent item instance is defined, skip the instances that do not match
+        if (!parentItem.isEmpty() && parentItem.guid() != itemOccurrence.guid())
             continue;
 
         // Check if maxCount limit is reached
@@ -498,13 +507,13 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
             id.setLocalId(instanceEntryId);
         }
         id.setManagerUri(managerUri());
-        itemInstance.setId(id);
+        itemOccurrence.setId(id);
 
         // Set parent id
         TCalLocalUid parentLocalUid(0);
         if (isException) {
-            HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(itemInstance);
-            CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, itemInstance, *globalUid);
+            HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(itemOccurrence);
+            CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, itemOccurrence, *globalUid);
             parentLocalUid = parentEntry->LocalUidL();
             CleanupStack::PopAndDestroy(parentEntry);
             CleanupStack::PopAndDestroy(globalUid);
@@ -514,18 +523,18 @@ void QOrganizerItemSymbianEngine::toItemInstancesL(
 
         // Set instance origin, the detail is set here because the corresponding transform class
         // does not know the required values
-        QOrganizerItemInstanceOrigin origin(itemInstance.detail<QOrganizerItemInstanceOrigin>());
+        QOrganizerItemParent origin(itemOccurrence.detail<QOrganizerItemParent>());
         origin.setParentLocalId(toItemLocalId(localCollectionIdValue, parentLocalUid));
         origin.setOriginalDate(toQDateTimeL(calInstance->StartTimeL()).date());
-        itemInstance.saveDetail(&origin);
+        itemOccurrence.saveDetail(&origin);
 
         // Set collection id
         QOrganizerCollectionId cid;
         cid.setLocalId(collectionLocalId);
         cid.setManagerUri(managerUri());
-        itemInstance.setCollectionId(cid);
+        itemOccurrence.setCollectionId(cid);
 
-        itemInstances.append(itemInstance);
+        itemOccurrences.append(itemOccurrence);
     }
 }
 
@@ -534,12 +543,12 @@ QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(
         const QDateTime& periodEnd,
         const QOrganizerItemFilter& filter,
         const QList<QOrganizerItemSortOrder>& sortOrders,
-        QOrganizerItemManager::Error* error) const
+        QOrganizerManager::Error* error) const
 {
     QList<QOrganizerItemLocalId> ids;
     TRAPD(err, itemIdsL(ids, periodStart, periodEnd, filter, sortOrders))
     transformError(err, error);
-    if (*error != QOrganizerItemManager::NoError) {
+    if (*error != QOrganizerManager::NoError) {
         return QList<QOrganizerItemLocalId>();
     } else {
         return ids;
@@ -617,12 +626,12 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemsForExport(
     const QOrganizerItemFilter& filter, 
     const QList<QOrganizerItemSortOrder>& sortOrders, 
     const QOrganizerItemFetchHint& fetchHint, 
-    QOrganizerItemManager::Error* error) const
+    QOrganizerManager::Error* error) const
 {
     QList<QOrganizerItem> itemsList;
     TRAPD(err, itemsForExportL(itemsList, periodStart, periodEnd, filter, sortOrders, fetchHint));
     transformError(err, error);
-    if (*error != QOrganizerItemManager::NoError) {
+    if (*error != QOrganizerManager::NoError) {
         return QList<QOrganizerItem>();
     } else {
         return itemsList;
@@ -658,7 +667,7 @@ void QOrganizerItemSymbianEngine::itemsForExportL(QList<QOrganizerItem>& itemsLi
 QOrganizerItem QOrganizerItemSymbianEngine::item(
     const QOrganizerItemLocalId& itemId, 
     const QOrganizerItemFetchHint& fetchHint, 
-    QOrganizerItemManager::Error* error) const
+    QOrganizerManager::Error* error) const
 {
     QOrganizerItem item;
     TRAPD(err, item = itemL(itemId, fetchHint));
@@ -696,7 +705,7 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& i
 
         // Set instance origin, the detail is set here because the corresponding transform class
         // does not know the required values
-        QOrganizerItemInstanceOrigin origin(item.detail<QOrganizerItemInstanceOrigin>());
+        QOrganizerItemParent origin(item.detail<QOrganizerItemParent>());
         origin.setParentLocalId(toItemLocalId(localCollectionIdValue, parentEntry->LocalUidL()));
         origin.setOriginalDate(toQDateTimeL(calEntry->StartTimeL()).date());
         item.saveDetail(&origin);
@@ -722,8 +731,8 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& i
 }
 
 bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, 
-    QMap<int, QOrganizerItemManager::Error> *errorMap, 
-    QOrganizerItemManager::Error* error)
+    QMap<int, QOrganizerManager::Error> *errorMap, 
+    QOrganizerManager::Error* error)
 {
     // TODO: the performance would be probably better, if we had a separate
     // implementation for the case with a list of items that would save all
@@ -735,14 +744,14 @@ bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items,
         QOrganizerItem item = items->at(i);
         
         // Validate & save
-        QOrganizerItemManager::Error saveError;
+        QOrganizerManager::Error saveError;
         if (validateItem(item, &saveError)) {
             TRAPD(err, saveItemL(&item, &changeSet));
             transformError(err, &saveError);
         }
         
         // Check error
-        if (saveError != QOrganizerItemManager::NoError) {
+        if (saveError != QOrganizerManager::NoError) {
             *error = saveError;
             if (errorMap)
                 errorMap->insert(i, *error);
@@ -755,11 +764,11 @@ bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items,
     // Emit changes
     changeSet.emitSignals(this);
     
-    return *error == QOrganizerItemManager::NoError;
+    return *error == QOrganizerManager::NoError;
 }
 
 bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem* item, 
-    QOrganizerItemManager::Error* error)
+    QOrganizerManager::Error* error)
 {
     // Validate & save
     if (validateItem(*item, error)) {
@@ -768,7 +777,7 @@ bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem* item,
         transformError(err, error);
         changeSet.emitSignals(this);
     }
-    return *error == QOrganizerItemManager::NoError;
+    return *error == QOrganizerManager::NoError;
 }
 
 void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, 
@@ -931,8 +940,8 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemOccurrenceL(
         findParentEntryLC(collectionId, item, *parentGlobalUid));
 
     // Get the parameters for the new child entry
-    QOrganizerItemInstanceOrigin origin(
-        item.detail<QOrganizerItemInstanceOrigin>());
+    QOrganizerItemParent origin(
+        item.detail<QOrganizerItemParent>());
     if (!origin.originalDate().isValid()) {
         User::Leave(KErrInvalidOccurrence);
     }
@@ -1036,7 +1045,7 @@ CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(
     CCalEntry *parent(0);
 
     // Try to find with parent's local id
-    QOrganizerItemInstanceOrigin origin = item.detail<QOrganizerItemInstanceOrigin>();
+    QOrganizerItemParent origin = item.detail<QOrganizerItemParent>();
     if (!origin.parentLocalId().isNull()) {
         // Fetch the item (will return NULL if the localid is not found)
         parent = entryViewL(collectionId)->FetchL(toTCalLocalUid(origin.parentLocalId())); // ownership transferred
@@ -1074,8 +1083,8 @@ CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(
 
 bool QOrganizerItemSymbianEngine::removeItems(
     const QList<QOrganizerItemLocalId>& itemIds, 
-    QMap<int, QOrganizerItemManager::Error>* errorMap, 
-    QOrganizerItemManager::Error* error)
+    QMap<int, QOrganizerManager::Error>* errorMap, 
+    QOrganizerManager::Error* error)
 {
     // Note: the performance would be probably better, if we had a separate
     // implementation for the case with a list of item ids that would
@@ -1085,8 +1094,8 @@ bool QOrganizerItemSymbianEngine::removeItems(
 
     for (int i(0); i < itemIds.count(); i++) {
         // Remove
-        QOrganizerItemManager::Error removeError(
-            QOrganizerItemManager::NoError);
+        QOrganizerManager::Error removeError(
+            QOrganizerManager::NoError);
         TRAPD(err, removeItemL(itemIds.at(i)));
         if (err != KErrNone) {
             transformError(err, &removeError);
@@ -1102,12 +1111,12 @@ bool QOrganizerItemSymbianEngine::removeItems(
     // Emit changes
     changeSet.emitSignals(this);
 
-    return *error == QOrganizerItemManager::NoError;
+    return *error == QOrganizerManager::NoError;
 }
 
 bool QOrganizerItemSymbianEngine::removeItem(
     const QOrganizerItemLocalId& organizeritemId, 
-    QOrganizerItemManager::Error* error)
+    QOrganizerManager::Error* error)
 {
     TRAPD(err, removeItemL(organizeritemId));
     if (err != KErrNone) {
@@ -1118,7 +1127,7 @@ bool QOrganizerItemSymbianEngine::removeItem(
         changeSet.insertRemovedItem(organizeritemId);
         changeSet.emitSignals(this);
     }
-    return *error == QOrganizerItemManager::NoError;
+    return *error == QOrganizerManager::NoError;
 }
 
 void QOrganizerItemSymbianEngine::removeItemL(
@@ -1151,12 +1160,12 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(
     if (filter.type() == QOrganizerItemFilter::DefaultFilter) {
         // Only sort items.
         foreach(const QOrganizerItem& item, items) {
-            QOrganizerItemManagerEngine::addSorted(&filteredAndSorted, item, sortOrders);
+            QOrganizerManagerEngine::addSorted(&filteredAndSorted, item, sortOrders);
         }
     } else if (filter.type() != QOrganizerItemFilter::InvalidFilter) {
         foreach(const QOrganizerItem& item, items) {
-            if (QOrganizerItemManagerEngine::testFilter(filter, item))
-                QOrganizerItemManagerEngine::addSorted(&filteredAndSorted, item, sortOrders);
+            if (QOrganizerManagerEngine::testFilter(filter, item))
+                QOrganizerManagerEngine::addSorted(&filteredAndSorted, item, sortOrders);
         }
     }
 
@@ -1164,14 +1173,14 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(
 }
 
 QOrganizerCollection QOrganizerItemSymbianEngine::defaultCollection(
-    QOrganizerItemManager::Error* error) const
+    QOrganizerManager::Error* error) const
 {
-    *error = QOrganizerItemManager::NoError;
+    *error = QOrganizerManager::NoError;
     return m_defaultCollection.toQOrganizerCollectionL();
 }
 
 QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collections(
-    QOrganizerItemManager::Error* error) const
+    QOrganizerManager::Error* error) const
 {
     // Get collections
     QList<QOrganizerCollection> collections;
@@ -1200,7 +1209,7 @@ QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collectionsL() const
 
 bool QOrganizerItemSymbianEngine::saveCollection(
     QOrganizerCollection* collection, 
-    QOrganizerItemManager::Error* error)
+    QOrganizerManager::Error* error)
 {
     bool isNewCollection = true;
     if (!collection->id().localId().isNull())
@@ -1209,7 +1218,7 @@ bool QOrganizerItemSymbianEngine::saveCollection(
     TRAPD(err, saveCollectionL(collection));
     transformError(err, error);
 
-    if (*error == QOrganizerItemManager::NoError) {
+    if (*error == QOrganizerManager::NoError) {
         if (isNewCollection) {
             // Emit changes
             QOrganizerCollectionChangeSet changeSet;
@@ -1220,7 +1229,7 @@ bool QOrganizerItemSymbianEngine::saveCollection(
         // CalendarInfoChangeNotificationL
     }
 
-    return (*error == QOrganizerItemManager::NoError);   
+    return (*error == QOrganizerManager::NoError);   
 }
 
 void QOrganizerItemSymbianEngine::saveCollectionL(
@@ -1300,16 +1309,16 @@ void QOrganizerItemSymbianEngine::saveCollectionL(
 
 bool QOrganizerItemSymbianEngine::removeCollection(
     const QOrganizerCollectionLocalId& collectionId, 
-    QOrganizerItemManager::Error* error)
+    QOrganizerManager::Error* error)
 {
     TRAPD(err, removeCollectionL(collectionId));
     transformError(err, error);
-    if (*error == QOrganizerItemManager::NoError) {
+    if (*error == QOrganizerManager::NoError) {
         QOrganizerCollectionChangeSet collectionChangeSet;
         collectionChangeSet.insertRemovedCollection(collectionId);
         collectionChangeSet.emitSignals(this);
     }
-    return (*error == QOrganizerItemManager::NoError);
+    return (*error == QOrganizerManager::NoError);
 }
 
 void QOrganizerItemSymbianEngine::removeCollectionL(
@@ -1373,11 +1382,11 @@ void QOrganizerItemSymbianEngine::removeCollectionL(
 
 QMap<QString, QOrganizerItemDetailDefinition> 
 QOrganizerItemSymbianEngine::detailDefinitions(
-    const QString& itemType, QOrganizerItemManager::Error* error) const
+    const QString& itemType, QOrganizerManager::Error* error) const
 {
     if (m_definition.isEmpty()) {
         // Get all the detail definitions from the base implementation
-        m_definition = QOrganizerItemManagerEngine::schemaDefinitions();
+        m_definition = QOrganizerManagerEngine::schemaDefinitions();
         
         // Modify the base schema to match backend support
         m_itemTransform.modifyBaseSchemaDefinitions(m_definition);
@@ -1385,16 +1394,16 @@ QOrganizerItemSymbianEngine::detailDefinitions(
     
     // Check if we support the item type
     if (!m_definition.contains(itemType)) {
-        *error = QOrganizerItemManager::NotSupportedError;
+        *error = QOrganizerManager::NotSupportedError;
         return QMap<QString, QOrganizerItemDetailDefinition>();
     }
     
-    *error = QOrganizerItemManager::NoError;
+    *error = QOrganizerManager::NoError;
     return m_definition.value(itemType);
 }
 
 bool QOrganizerItemSymbianEngine::startRequest(
-    QOrganizerItemAbstractRequest* req)
+    QOrganizerAbstractRequest* req)
 {
     /*
         This is the entry point to the async API.  The request object describes 
@@ -1436,7 +1445,7 @@ bool QOrganizerItemSymbianEngine::startRequest(
 }
 
 bool QOrganizerItemSymbianEngine::cancelRequest(
-    QOrganizerItemAbstractRequest* req)
+    QOrganizerAbstractRequest* req)
 {
     /*
         Cancel an in progress async request.  If not possible, return false 
@@ -1446,7 +1455,7 @@ bool QOrganizerItemSymbianEngine::cancelRequest(
 }
 
 bool QOrganizerItemSymbianEngine::waitForRequestFinished(
-    QOrganizerItemAbstractRequest* req, int msecs)
+    QOrganizerAbstractRequest* req, int msecs)
 {
     /*
         Wait for a request to complete (up to a max of msecs milliseconds).
@@ -1464,7 +1473,7 @@ bool QOrganizerItemSymbianEngine::waitForRequestFinished(
 }
 
 void QOrganizerItemSymbianEngine::requestDestroyed(
-    QOrganizerItemAbstractRequest* req)
+    QOrganizerAbstractRequest* req)
 {
     /*
         This is called when a request is being deleted.  It lets you know:
@@ -1489,18 +1498,18 @@ void QOrganizerItemSymbianEngine::requestDestroyed(
 }
 
 bool QOrganizerItemSymbianEngine::hasFeature(
-    QOrganizerItemManager::ManagerFeature feature, 
+    QOrganizerManager::ManagerFeature feature, 
     const QString& itemType) const
 {
     Q_UNUSED(itemType);
     switch(feature) {
-        case QOrganizerItemManager::MutableDefinitions:
+        case QOrganizerManager::MutableDefinitions:
             // We don't support save/remove detail definition
             return false;
-        case QOrganizerItemManager::Anonymous:
+        case QOrganizerManager::Anonymous:
             // The engines share the same data
             return false;
-        case QOrganizerItemManager::ChangeLogs:
+        case QOrganizerManager::ChangeLogs:
             // Change logs not supported
             return false;
     }
@@ -1531,7 +1540,7 @@ QStringList QOrganizerItemSymbianEngine::supportedItemTypes() const
 {
     // Lazy initialization
     if (m_definition.isEmpty()) {
-        m_definition = QOrganizerItemManagerEngine::schemaDefinitions();
+        m_definition = QOrganizerManagerEngine::schemaDefinitions();
         m_itemTransform.modifyBaseSchemaDefinitions(m_definition);
     }
     
@@ -1637,76 +1646,76 @@ void QOrganizerItemSymbianEngine::CalendarInfoChangeNotificationL(
 }
 #endif
 
-/*! Transform a Symbian error id to QOrganizerItemManager::Error.
+/*! Transform a Symbian error id to QOrganizerManager::Error.
  *
  * \param symbianError Symbian error.
  * \param QtError Qt error.
  * \return true if there was no error
  *         false if there was an error
 */
-bool QOrganizerItemSymbianEngine::transformError(TInt symbianError, QOrganizerItemManager::Error* qtError)
+bool QOrganizerItemSymbianEngine::transformError(TInt symbianError, QOrganizerManager::Error* qtError)
 {
     switch(symbianError)
     {
         case KErrNone:
         {
-            *qtError = QOrganizerItemManager::NoError;
+            *qtError = QOrganizerManager::NoError;
             break;
         }
         case KErrNotFound:
         {
-            *qtError = QOrganizerItemManager::DoesNotExistError;
+            *qtError = QOrganizerManager::DoesNotExistError;
             break;
         }
         case KErrAlreadyExists:
         {
-            *qtError = QOrganizerItemManager::AlreadyExistsError;
+            *qtError = QOrganizerManager::AlreadyExistsError;
             break;
         }
         case KErrLocked:
         {
-            *qtError = QOrganizerItemManager::LockedError;
+            *qtError = QOrganizerManager::LockedError;
             break;
         }
         case KErrAccessDenied:
         case KErrPermissionDenied:
         {
-            *qtError = QOrganizerItemManager::PermissionsError;
+            *qtError = QOrganizerManager::PermissionsError;
             break;
         }
         case KErrNoMemory:
         {
-            *qtError = QOrganizerItemManager::OutOfMemoryError;
+            *qtError = QOrganizerManager::OutOfMemoryError;
             break;
         }
         case KErrNotSupported:
         {
-            *qtError = QOrganizerItemManager::NotSupportedError;
+            *qtError = QOrganizerManager::NotSupportedError;
             break;
         }
         case KErrArgument:
         {
-            *qtError = QOrganizerItemManager::BadArgumentError;
+            *qtError = QOrganizerManager::BadArgumentError;
             break;
         }
         // KErrInvalidOccurrence is a special error code defined for Qt
         // Organizer API implementation purpose only
         case KErrInvalidOccurrence:
         {
-            *qtError = QOrganizerItemManager::InvalidOccurrenceError;
+            *qtError = QOrganizerManager::InvalidOccurrenceError;
             break;
         }
         case KErrInvalidItemType:
         {
-            *qtError = QOrganizerItemManager::InvalidItemTypeError;
+            *qtError = QOrganizerManager::InvalidItemTypeError;
             break;
         }
         default:
         {
-            *qtError = QOrganizerItemManager::UnspecifiedError;
+            *qtError = QOrganizerManager::UnspecifiedError;
             break;
         }
     }
-    return *qtError == QOrganizerItemManager::NoError;
+    return *qtError == QOrganizerManager::NoError;
 }
 

@@ -120,9 +120,9 @@ void DayPage::refresh()
 
     foreach (const QOrganizerItem &item, items)
     {
-        QOrganizerEventTimeRange eventTimeRange = item.detail<QOrganizerEventTimeRange>();
-        if (!eventTimeRange.isEmpty()) {
-            QString time = eventTimeRange.startDateTime().time().toString("hh:mm");
+        QOrganizerEventTime eventTime = item.detail<QOrganizerEventTime>();
+        if (!eventTime.isEmpty()) {
+            QString time = eventTime.startDateTime().time().toString("hh:mm");
             QListWidgetItem* listItem = new QListWidgetItem();
             if (item.type() == QOrganizerItemType::TypeEventOccurrence)
                 listItem->setText(QString("Event occurance:%1-%2").arg(time).arg(item.displayLabel()));
@@ -133,9 +133,9 @@ void DayPage::refresh()
             m_itemList->addItem(listItem);
         }
         
-        QOrganizerTodoTimeRange todoTimeRange = item.detail<QOrganizerTodoTimeRange>();
-        if (!todoTimeRange.isEmpty()) {
-            QString time = todoTimeRange.startDateTime().time().toString("hh:mm");
+        QOrganizerTodoTime todoTime = item.detail<QOrganizerTodoTime>();
+        if (!todoTime.isEmpty()) {
+            QString time = todoTime.startDateTime().time().toString("hh:mm");
             QListWidgetItem* listItem = new QListWidgetItem();
             listItem->setText(QString("Todo:%1-%2").arg(time).arg(item.displayLabel()));
             QVariant data = QVariant::fromValue<QOrganizerItem>(item);
@@ -143,9 +143,9 @@ void DayPage::refresh()
             m_itemList->addItem(listItem);
         }
 
-        QOrganizerJournalTimeRange journalTimeRange = item.detail<QOrganizerJournalTimeRange>();
-        if (!journalTimeRange.isEmpty()) {
-            QString time = journalTimeRange.entryDateTime().time().toString("hh:mm");
+        QOrganizerJournalTime journalTime = item.detail<QOrganizerJournalTime>();
+        if (!journalTime.isEmpty()) {
+            QString time = journalTime.entryDateTime().time().toString("hh:mm");
             QListWidgetItem* listItem = new QListWidgetItem();
             listItem->setText(QString("Journal:%1-%2").arg(time).arg(item.displayLabel()));
             QVariant data = QVariant::fromValue<QOrganizerItem>(item);
@@ -160,7 +160,7 @@ void DayPage::refresh()
         m_itemList->addItem("(no entries)");
 }
 
-void DayPage::changeManager(QOrganizerItemManager *manager)
+void DayPage::changeManager(QOrganizerManager *manager)
 {
     m_manager = manager;
 }

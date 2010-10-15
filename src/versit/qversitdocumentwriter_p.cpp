@@ -93,6 +93,11 @@ void QVersitDocumentWriter::setCodec(QTextCodec *codec)
     // Hack so the encoder doesn't output a byte order mark for UTF-8.
     if (mCodec->name() == "UTF-8")
         mEncoder->fromUnicode(QString());
+
+    // UTF-(16|32)(LE|BE) are the only codecs where characters in the base64 range aren't encoded
+    // the same as in ASCII.  For ASCII compatible codecs, we can do some optimizations.
+    mCodecIsAsciiCompatible = !(mCodec->name().startsWith("UTF-16")
+                             || mCodec->name().startsWith("UTF-32"));
 }
 
 /*!
@@ -174,30 +179,57 @@ void QVersitDocumentWriter::encodeGroupsAndName(const QVersitProperty& property)
 }
 
 /*!
-  Writes \a string to the device.
+  Writes \a value to the device.
+
+  This function tracks how many characters have been written to the line and folds (wraps) the line
+  according to RFC2425.
+  */
+void QVersitDocumentWriter::writeBytes(const QByteArray &value)
+{
+    int spaceRemaining = MAX_LINE_LENGTH - mCurrentLineLength;
+    int charsWritten = 0;
+    while (spaceRemaining < value.length() - charsWritten) {
+        // Write the first "spaceRemaining" characters
+        if (mDevice->write(value.constData() + charsWritten, spaceRemaining) < 0
+               || mDevice->write("\r\n ") < 0)
+            mSuccessful = false;
+        charsWritten += spaceRemaining;
+        spaceRemaining = MAX_LINE_LENGTH - 1; // minus 1 for the space at the front.
+        mCurrentLineLength = 1;
+    }
+
+    if (mDevice->write(value.constData() + charsWritten) < 0)
+        mSuccessful = false;
+    mCurrentLineLength += value.length() - charsWritten;
+}
+
+/*!
+  Writes \a value to the device.
   If \a useUtf8 is true, uses the UTF-8 codec instead of the one set in setCodec().
 
   This function tracks how many characters have been written to the line and folds (wraps) the line
   according to RFC2425.
   */
-void QVersitDocumentWriter::writeString(const QString &string, bool useUtf8)
+void QVersitDocumentWriter::writeString(const QString &value, bool useUtf8)
 {
-    QString value(string); // nonconst copy
     QTextEncoder* encoder = useUtf8 ? mUtf8Encoder : mEncoder;
     int spaceRemaining = MAX_LINE_LENGTH - mCurrentLineLength;
-    while (spaceRemaining < value.length()) {
+    int charsWritten = 0;
+    QString crlfSpace(QLatin1String("\r\n "));
+    while (spaceRemaining < value.length() - charsWritten) {
         // Write the first "spaceRemaining" characters
-        QString line(value.left(spaceRemaining));
-        value.remove(0, spaceRemaining);
-        if (mDevice->write(encoder->fromUnicode(line + QLatin1String("\r\n "))) < 0)
+        QStringRef line(&value, charsWritten, spaceRemaining);
+        charsWritten += spaceRemaining;
+        if (mDevice->write(encoder->fromUnicode(line.constData(), line.length())) < 0
+               || mDevice->write(encoder->fromUnicode(crlfSpace)) < 0)
             mSuccessful = false;
         spaceRemaining = MAX_LINE_LENGTH - 1; // minus 1 for the space at the front.
         mCurrentLineLength = 1;
     }
 
-    if (mDevice->write(encoder->fromUnicode(value)) < 0)
+    if (mDevice->write(encoder->fromUnicode(value.mid(charsWritten))) < 0)
         mSuccessful = false;
-    mCurrentLineLength += value.length();
+    mCurrentLineLength += value.length() - charsWritten;
 }
 
 /*!

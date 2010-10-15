@@ -69,16 +69,7 @@ public:
     explicit QDeclarativeContactModel(QObject *parent = 0);
 
     enum {
-        InterestRole = Qt::UserRole + 500,
-        InterestLabelRole,
-        ContactIdRole,
-        ContactRole,
-        DetailsRole,
-        AvatarRole,
-        PresenceAvailableRole,
-        PresenceTextRole,
-        PresenceStateRole,
-        PresenceMessageRole
+        ContactRole =  Qt::UserRole + 500
     };
 
     QString manager() const;
@@ -119,13 +110,11 @@ public slots:
     void importContacts(const QString& file);
 private slots:
     void fetchAgain();
-    void contactFetched();
+    void requestUpdated();
 
-    void saveContact();
-    void contactSaved();
+    void contactsSaved();
 
-    void removeContact();
-    void contactRemoved();
+    void contactsRemoved();
 
     void startImport(QVersitReader::State state);
     void contactsExported(QVersitWriter::State state);
@@ -133,7 +122,6 @@ private slots:
 
 
 private:
-    QPair<QString, QString> interestingDetail(const QContact&c) const;
     QDeclarativeContactModelPrivate* d;
 };
 

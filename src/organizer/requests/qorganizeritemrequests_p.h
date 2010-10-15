@@ -54,7 +54,7 @@
 //
 
 #include "qorganizercollectionid.h"
-#include "qorganizeritemabstractrequest_p.h"
+#include "qorganizerabstractrequest_p.h"
 #include "qorganizeritemfilter.h"
 #include "qorganizeritemsortorder.h"
 #include "qorganizeritem.h"
@@ -65,11 +65,11 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemSaveRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+class QOrganizerItemSaveRequestPrivate : public QOrganizerAbstractRequestPrivate
 {
 public:
     QOrganizerItemSaveRequestPrivate()
-        : QOrganizerItemAbstractRequestPrivate()
+        : QOrganizerAbstractRequestPrivate()
     {
     }
 
@@ -77,20 +77,20 @@ public:
     {
     }
 
-    QOrganizerItemAbstractRequest::RequestType type() const
+    QOrganizerAbstractRequest::RequestType type() const
     {
-        return QOrganizerItemAbstractRequest::ItemSaveRequest;
+        return QOrganizerAbstractRequest::ItemSaveRequest;
     }
 
     QList<QOrganizerItem> m_organizeritems;
-    QMap<int, QOrganizerItemManager::Error> m_errors;
+    QMap<int, QOrganizerManager::Error> m_errors;
 };
 
-class QOrganizerItemFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+class QOrganizerItemFetchRequestPrivate : public QOrganizerAbstractRequestPrivate
 {
 public:
     QOrganizerItemFetchRequestPrivate()
-        : QOrganizerItemAbstractRequestPrivate()
+        : QOrganizerAbstractRequestPrivate()
     {
     }
 
@@ -98,9 +98,9 @@ public:
     {
     }
 
-    QOrganizerItemAbstractRequest::RequestType type() const
+    QOrganizerAbstractRequest::RequestType type() const
     {
-        return QOrganizerItemAbstractRequest::ItemFetchRequest;
+        return QOrganizerAbstractRequest::ItemFetchRequest;
     }
 
     QOrganizerItemFilter m_filter;
@@ -113,11 +113,11 @@ public:
     QDateTime m_endDate;
 };
 
-class QOrganizerItemFetchForExportRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+class QOrganizerItemFetchForExportRequestPrivate : public QOrganizerAbstractRequestPrivate
 {
 public:
     QOrganizerItemFetchForExportRequestPrivate()
-        : QOrganizerItemAbstractRequestPrivate()
+        : QOrganizerAbstractRequestPrivate()
     {
     }
 
@@ -125,9 +125,9 @@ public:
     {
     }
 
-    QOrganizerItemAbstractRequest::RequestType type() const
+    QOrganizerAbstractRequest::RequestType type() const
     {
-        return QOrganizerItemAbstractRequest::ItemFetchForExportRequest;
+        return QOrganizerAbstractRequest::ItemFetchForExportRequest;
     }
 
     QOrganizerItemFilter m_filter;
@@ -140,22 +140,22 @@ public:
     QDateTime m_endDate;
 };
 
-class QOrganizerItemInstanceFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+class QOrganizerItemOccurrenceFetchRequestPrivate : public QOrganizerAbstractRequestPrivate
 {
 public:
-    QOrganizerItemInstanceFetchRequestPrivate()
-        : QOrganizerItemAbstractRequestPrivate(),
+    QOrganizerItemOccurrenceFetchRequestPrivate()
+        : QOrganizerAbstractRequestPrivate(),
           m_maxOccurrences(-1)
     {
     }
 
-    ~QOrganizerItemInstanceFetchRequestPrivate()
+    ~QOrganizerItemOccurrenceFetchRequestPrivate()
     {
     }
 
-    QOrganizerItemAbstractRequest::RequestType type() const
+    QOrganizerAbstractRequest::RequestType type() const
     {
-        return QOrganizerItemAbstractRequest::ItemInstanceFetchRequest;
+        return QOrganizerAbstractRequest::ItemOccurrenceFetchRequest;
     }
 
     QOrganizerItem m_generator;
@@ -167,11 +167,11 @@ public:
     QList<QOrganizerItem> m_organizeritems;
 };
 
-class QOrganizerItemRemoveRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+class QOrganizerItemRemoveRequestPrivate : public QOrganizerAbstractRequestPrivate
 {
 public:
     QOrganizerItemRemoveRequestPrivate()
-        : QOrganizerItemAbstractRequestPrivate()
+        : QOrganizerAbstractRequestPrivate()
     {
     }
 
@@ -179,20 +179,20 @@ public:
     {
     }
 
-    QOrganizerItemAbstractRequest::RequestType type() const
+    QOrganizerAbstractRequest::RequestType type() const
     {
-        return QOrganizerItemAbstractRequest::ItemRemoveRequest;
+        return QOrganizerAbstractRequest::ItemRemoveRequest;
     }
 
     QList<QOrganizerItemLocalId> m_organizeritemIds;
-    QMap<int, QOrganizerItemManager::Error> m_errors;
+    QMap<int, QOrganizerManager::Error> m_errors;
 };
 
-class QOrganizerItemLocalIdFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+class QOrganizerItemLocalIdFetchRequestPrivate : public QOrganizerAbstractRequestPrivate
 {
 public:
     QOrganizerItemLocalIdFetchRequestPrivate()
-        : QOrganizerItemAbstractRequestPrivate()
+        : QOrganizerAbstractRequestPrivate()
     {
     }
 
@@ -200,9 +200,9 @@ public:
     {
     }
 
-    QOrganizerItemAbstractRequest::RequestType type() const
+    QOrganizerAbstractRequest::RequestType type() const
     {
-        return QOrganizerItemAbstractRequest::ItemLocalIdFetchRequest;
+        return QOrganizerAbstractRequest::ItemLocalIdFetchRequest;
     }
 
     QOrganizerItemFilter m_filter;
@@ -214,11 +214,11 @@ public:
     QDateTime m_endDate;
 };
 
-class QOrganizerItemDetailDefinitionFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+class QOrganizerItemDetailDefinitionFetchRequestPrivate : public QOrganizerAbstractRequestPrivate
 {
 public:
     QOrganizerItemDetailDefinitionFetchRequestPrivate()
-        : QOrganizerItemAbstractRequestPrivate(),
+        : QOrganizerAbstractRequestPrivate(),
         m_organizeritemType(QString(QLatin1String(QOrganizerItemType::TypeNote)))
     {
     }
@@ -227,23 +227,23 @@ public:
     {
     }
 
-    QOrganizerItemAbstractRequest::RequestType type() const
+    QOrganizerAbstractRequest::RequestType type() const
     {
-        return QOrganizerItemAbstractRequest::DetailDefinitionFetchRequest;
+        return QOrganizerAbstractRequest::DetailDefinitionFetchRequest;
     }
 
     QString m_organizeritemType;
     QStringList m_names;
     QMap<QString, QOrganizerItemDetailDefinition> m_definitions;
     QOrganizerCollectionLocalId m_collectionId;
-    QMap<int, QOrganizerItemManager::Error> m_errors;
+    QMap<int, QOrganizerManager::Error> m_errors;
 };
 
-class QOrganizerItemDetailDefinitionSaveRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+class QOrganizerItemDetailDefinitionSaveRequestPrivate : public QOrganizerAbstractRequestPrivate
 {
 public:
     QOrganizerItemDetailDefinitionSaveRequestPrivate()
-        : QOrganizerItemAbstractRequestPrivate(),
+        : QOrganizerAbstractRequestPrivate(),
         m_organizeritemType(QString(QLatin1String(QOrganizerItemType::TypeNote)))
     {
     }
@@ -252,22 +252,22 @@ public:
     {
     }
 
-    QOrganizerItemAbstractRequest::RequestType type() const
+    QOrganizerAbstractRequest::RequestType type() const
     {
-        return QOrganizerItemAbstractRequest::DetailDefinitionSaveRequest;
+        return QOrganizerAbstractRequest::DetailDefinitionSaveRequest;
     }
 
     QString m_organizeritemType;
     QList<QOrganizerItemDetailDefinition> m_definitions;
     QOrganizerCollectionLocalId m_collectionId;
-    QMap<int, QOrganizerItemManager::Error> m_errors;
+    QMap<int, QOrganizerManager::Error> m_errors;
 };
 
-class QOrganizerItemDetailDefinitionRemoveRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+class QOrganizerItemDetailDefinitionRemoveRequestPrivate : public QOrganizerAbstractRequestPrivate
 {
 public:
     QOrganizerItemDetailDefinitionRemoveRequestPrivate()
-        : QOrganizerItemAbstractRequestPrivate(),
+        : QOrganizerAbstractRequestPrivate(),
         m_organizeritemType(QString(QLatin1String(QOrganizerItemType::TypeNote)))
     {
     }
@@ -276,22 +276,22 @@ public:
     {
     }
 
-    QOrganizerItemAbstractRequest::RequestType type() const
+    QOrganizerAbstractRequest::RequestType type() const
     {
-        return QOrganizerItemAbstractRequest::DetailDefinitionRemoveRequest;
+        return QOrganizerAbstractRequest::DetailDefinitionRemoveRequest;
     }
 
     QString m_organizeritemType;
     QStringList m_names;
     QOrganizerCollectionLocalId m_collectionId;
-    QMap<int, QOrganizerItemManager::Error> m_errors;
+    QMap<int, QOrganizerManager::Error> m_errors;
 };
 
-class QOrganizerCollectionFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+class QOrganizerCollectionFetchRequestPrivate : public QOrganizerAbstractRequestPrivate
 {
 public:
     QOrganizerCollectionFetchRequestPrivate()
-        : QOrganizerItemAbstractRequestPrivate()
+        : QOrganizerAbstractRequestPrivate()
     {
     }
 
@@ -299,19 +299,19 @@ public:
     {
     }
 
-    QOrganizerItemAbstractRequest::RequestType type() const
+    QOrganizerAbstractRequest::RequestType type() const
     {
-        return QOrganizerItemAbstractRequest::CollectionFetchRequest;
+        return QOrganizerAbstractRequest::CollectionFetchRequest;
     }
 
     QList<QOrganizerCollection> m_collections;
 };
 
-class QOrganizerCollectionRemoveRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+class QOrganizerCollectionRemoveRequestPrivate : public QOrganizerAbstractRequestPrivate
 {
 public:
     QOrganizerCollectionRemoveRequestPrivate()
-        : QOrganizerItemAbstractRequestPrivate()
+        : QOrganizerAbstractRequestPrivate()
     {
     }
 
@@ -319,20 +319,20 @@ public:
     {
     }
 
-    QOrganizerItemAbstractRequest::RequestType type() const
+    QOrganizerAbstractRequest::RequestType type() const
     {
-        return QOrganizerItemAbstractRequest::CollectionRemoveRequest;
+        return QOrganizerAbstractRequest::CollectionRemoveRequest;
     }
 
     QList<QOrganizerCollectionLocalId> m_collectionIds;
-    QMap<int, QOrganizerItemManager::Error> m_errors;
+    QMap<int, QOrganizerManager::Error> m_errors;
 };
 
-class QOrganizerCollectionSaveRequestPrivate : public QOrganizerItemAbstractRequestPrivate
+class QOrganizerCollectionSaveRequestPrivate : public QOrganizerAbstractRequestPrivate
 {
 public:
     QOrganizerCollectionSaveRequestPrivate()
-        : QOrganizerItemAbstractRequestPrivate()
+        : QOrganizerAbstractRequestPrivate()
     {
     }
 
@@ -340,13 +340,13 @@ public:
     {
     }
 
-    QOrganizerItemAbstractRequest::RequestType type() const
+    QOrganizerAbstractRequest::RequestType type() const
     {
-        return QOrganizerItemAbstractRequest::CollectionSaveRequest;
+        return QOrganizerAbstractRequest::CollectionSaveRequest;
     }
 
     QList<QOrganizerCollection> m_collections;
-    QMap<int, QOrganizerItemManager::Error> m_errors;
+    QMap<int, QOrganizerManager::Error> m_errors;
 };
 
 

@@ -59,14 +59,31 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactNote());
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Note;
+        return QDeclarativeContactDetail::ContactNote;
     }
-
-    void setNote(const QString& note) {detail().setValue(QContactNote::FieldNote, note);}
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case Note:
+            return QContactNote::FieldNote;
+        default:
+            break;
+        }
+        //qWarning
+        return QString();
+    }
+    void setNote(const QString& v)
+    {
+        if (!readOnly() && v != note()) {
+            detail().setValue(QContactNote::FieldNote, v);
+            emit fieldsChanged();
+        }
+    }
     QString note() const {return detail().value(QContactNote::FieldNote);}
 signals:
     void fieldsChanged();

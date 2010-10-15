@@ -232,7 +232,7 @@ qreal QGeoRoute::distance() const
 }
 
 /*!
-    Sets the travel mode for this route.
+    Sets the travel mode for this route to \a mode.
 
     This should be one of the travel modes returned by request().travelModes().
 */

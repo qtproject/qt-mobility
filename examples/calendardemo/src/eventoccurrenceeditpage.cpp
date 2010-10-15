@@ -117,7 +117,7 @@ EventOccurrenceEditPage::~EventOccurrenceEditPage()
 
 }
 
-void EventOccurrenceEditPage::eventOccurrenceChanged(QOrganizerItemManager *manager, const QOrganizerEventOccurrence &eventOccurrence)
+void EventOccurrenceEditPage::eventOccurrenceChanged(QOrganizerManager *manager, const QOrganizerEventOccurrence &eventOccurrence)
 {
     m_manager = manager;
     m_organizerEventOccurrence = eventOccurrence;

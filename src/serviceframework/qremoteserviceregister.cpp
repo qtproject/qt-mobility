@@ -186,13 +186,12 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiatio
     \ingroup servicefw
     \brief The QRemoteServiceRegister class manages instances of remote service objects.
 
-    This class registers and publishes IPC based service objects. It owns each created service
-    object instance and ensures that the platform specific IPC mechanism publishes the required
-    service object to other processes in the system. 
+    This class registers and publishes IPC based service objects. It owns the service's
+    objects and uess the platform specific IPC mechanism to publish the service.
 
-    Note that in order for the remote services to be discoverable by QServiceManager each
-    QRemoteServiceRegister::Entry must be registered with the information reflecting the 
-    service XML description, otherwise no corresponding QServiceInterfaceDescriptor can be
+    In order for the remote services to be discoverable by QServiceManager each
+    QRemoteServiceRegister::Entry must be registered with the same information in
+    the XML description, otherwise no corresponding QServiceInterfaceDescriptor can be
     found.
     
     The following XML descriptor is used for subsequent examples. 
@@ -201,7 +200,7 @@ QRemoteServiceRegister::InstanceType QRemoteServiceRegister::Entry::instantiatio
     <SFW version="1.1">
     <service>
         <name>MyService</name>
-        <ipcaddress>my_service</ipcaddress>
+        <ipcaddress>my_executable</ipcaddress>
         <description>My service example</description>
         <interface>
             <name>com.nokia.qt.example.myService</name>
@@ -310,7 +309,8 @@ QRemoteServiceRegister::~QRemoteServiceRegister()
     the service can be reached. 
     
     This address must match the address provided in the services XML descriptor, otherwise 
-    the service will not be discoverable.
+    the service will not be discoverable. In some cases this may also cause the IPC 
+    rendezvous feature to fail.
 
     \sa createEntry()
 */
@@ -322,8 +322,7 @@ void QRemoteServiceRegister::publishEntries(const QString& ident)
 /*!
     \property QRemoteServiceRegister::quitOnLastInstanceClosed
 
-    Holds the value for automatically exiting services if connected clients have closed their
-    instances. By default this value is set to true.
+    \brief Terminate the service when all clients have closed all objects. Default value is true.
 */
 bool QRemoteServiceRegister::quitOnLastInstanceClosed() const
 {
@@ -351,11 +350,11 @@ void QRemoteServiceRegister::setQuitOnLastInstanceClosed(bool quit)
         const QRemoteServiceRegisterCredentials *cred = 
             (const struct QRemoteServiceRegisterCredentials *)p;
 
-        // deny the superuser
+        // allow the superuser
         if (cred->uid == 0)
-            return false;
+            return true;
 
-        return true;
+        return false;
     }
         
     int main(int argc, char** argv)
@@ -368,6 +367,7 @@ void QRemoteServiceRegister::setQuitOnLastInstanceClosed(bool quit)
         ...
     }
     \endcode
+
 */
 QRemoteServiceRegister::SecurityFilter QRemoteServiceRegister::setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter)
 {

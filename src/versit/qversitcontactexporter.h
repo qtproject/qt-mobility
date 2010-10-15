@@ -94,6 +94,7 @@ public:
 
     QVersitContactExporter();
     explicit QVersitContactExporter(const QString& profile);
+    explicit QVersitContactExporter(const QStringList& profile);
     ~QVersitContactExporter();
 
     bool exportContacts(const QList<QContact>& contacts,

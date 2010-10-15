@@ -89,6 +89,12 @@ private:
     int metaIndex;
 };
 
+struct ClientInstance {
+    QString clientId;
+    QRemoteServiceRegister::Entry entry;
+    QUuid instanceId;
+};
+
 class ObjectEndPointPrivate
 {
 public:
@@ -104,11 +110,12 @@ public:
     ObjectEndPoint::Type endPointType;
     ObjectEndPoint* parent;
 
-    // Used for calculate the registered paths on DBus
+    // Used to calculate the registered paths on DBus
     QRemoteServiceRegister::Entry entry;
     QUuid serviceInstanceId;
 
-    QList<QPair<QString, QPair<QRemoteServiceRegister::Entry, QUuid> > > clientList; 
+    // Service side local client ownership list
+    QList<ClientInstance> clientList;
 };
 
 /*!
@@ -126,7 +133,6 @@ ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* pa
 
     dispatch->setParent(this);
     connect(dispatch, SIGNAL(readyRead()), this, SLOT(newPackageReady()));
-    //connect(dispatch, SIGNAL(disconnected()), this, SLOT(disconnected()));
     if (type == Client) {
         // client waiting for construct proxy and registers DBus custom type
         qDBusRegisterMetaType<QTM_PREPEND_NAMESPACE(QServiceUserTypeDBus)>();
@@ -143,23 +149,33 @@ ObjectEndPoint::~ObjectEndPoint()
     delete d;
 }
 
-void ObjectEndPoint::disconnected(QString clientId)
+void ObjectEndPoint::disconnected(const QString& clientId, const QString& instanceId)
 {
+    // Service Side
     if (d->endPointType == Service) {
         for (int i=d->clientList.size()-1; i>=0; i--) {
-            if (d->clientList[i].first == clientId) {
-                QRemoteServiceRegister::Entry entry = d->clientList[i].second.first;
-                QUuid instance = d->clientList[i].second.second;
-                InstanceManager::instance()->removeObjectInstance(entry, instance);
-                d->clientList.removeAt(i);
+            // Find right client process
+            if (d->clientList[i].clientId == clientId) {
+                //QRemoteServiceRegister::Entry entry = d->clientList[i].second.first;
+                //QUuid instance = d->clientList[i].second.second;
+                QRemoteServiceRegister::Entry entry = d->clientList[i].entry;
+                QUuid instance = d->clientList[i].instanceId;
+
+                if (instance.toString() == instanceId) {
+                    // Remove an instance from the InstanceManager and local list
+                    InstanceManager::instance()->removeObjectInstance(entry, instance);
+                    d->clientList.removeAt(i);
+
+                    // Unregister object from D-Bus
+                    uint hash = qHash(instance.toString());
+                    QString objPath = "/" + entry.interfaceName() + "/" + entry.version() +
+                                      "/" + QString::number(hash);
+                    objPath.replace(QString("."), QString("/"));
+                    connection->unregisterObject(objPath, QDBusConnection::UnregisterTree);
+                }
             }
         }
-
-        //if (d->clientList.size() < 1)
-        //    deleteLater();
     }
-   
-    //TODO: UnregisterService
 }
 
 /*!
@@ -341,12 +357,11 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         connection->registerObject(objPath, serviceDBus, QDBusConnection::ExportAllContents);
        
         // Add new instance to client ownership list
-        QString clientId = p.d->payload.toString();
-        QPair<QString, QPair<QRemoteServiceRegister::Entry, QUuid> > client;
-        client.first = clientId;
-        client.second.first = p.d->entry;
-        client.second.second = d->serviceInstanceId;
-        d->clientList << client;
+        ClientInstance c;
+        c.clientId = p.d->payload.toString();
+        c.entry = p.d->entry;
+        c.instanceId = d->serviceInstanceId;
+        d->clientList << c;
 
 #ifdef DEBUG
         qDebug() << "Service Interface ObjectPath:" << objPath;
@@ -433,6 +448,16 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         response.d->payload = QVariant(data);
         dispatch->writePackage(response);
     }
+}
+
+/*!
+    Returns the created service instance Id
+*/
+QString ObjectEndPoint::getInstanceId() const
+{
+    Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
+   
+    return d->serviceInstanceId.toString();
 }
 
 /*!

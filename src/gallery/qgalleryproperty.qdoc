@@ -1,0 +1,178 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+    \class QGalleryProperty
+
+    \inmodule QtGallery
+
+    \brief The QGalleryProperty class provides a string constant identifying a
+    gallery property.
+
+    QAbstractGallery implementations use to QGalleryProperty to define the
+    names of properties in their schemas.  In addition to providing the name of
+    a property QGalleryProperty also contains a number of operator overloads and
+    functions for constructing meta-data filters.
+
+    \sa QGalleryType, QGalleryMetaDataFilter
+*/
+
+/*!
+    \enum QGalleryProperty::Attribute
+
+    This enumeration describes the attributes of a property.
+
+    \value CanRead The value of this property can be read.
+    \value CanWrite The value of this property can be written.
+    \value CanSort The value of this property can be used to sort items.
+    \value CanFilter The value of this property can be used in a filter.
+*/
+
+/*!
+    \fn QGalleryProperty::name() const
+
+    Returns the name of a property.
+*/
+
+/*!
+    \fn QGalleryProperty::operator QString() const
+
+    Returns the name of a property.
+*/
+
+/*!
+    \fn QGalleryProperty::operator <(const QVariant &value) const
+
+    Returns a gallery filter which tests if  a property is less than a
+    \a value.
+*/
+
+/*!
+    \fn QGalleryProperty::operator <=(const QVariant &value) const
+
+    Returns a gallery filter which tests if a property is less than or equal to
+    a \a value.
+*/
+
+/*!
+    \fn QGalleryProperty::operator ==(const QVariant &value) const
+    Returns a gallery filter which tests if a property is equal to a \a value.
+*/
+
+/*!
+    \fn QGalleryProperty::operator >=(const QVariant &value) const
+
+    Returns a gallery filter which tests if a property is greater than or equal
+    to a \a value.
+*/
+
+/*!
+    \fn QGalleryProperty::operator >(const QVariant &value) const
+
+    Returns a gallery filter which tests if a property is greater than a
+    \a value.
+*/
+
+/*!
+    \fn QGalleryProperty::contains(const QString &string) const
+
+    Returns a gallery filter which tests if a property value contains contains
+    a \a string literal.
+*/
+
+/*!
+    \fn QGalleryProperty::startsWith(const QString &string) const
+
+    Returns a gallery filter which tests if a property value starts with a
+    \a string literal.
+*/
+
+/*!
+    \fn QGalleryProperty::endsWith(const QString &string) const
+
+    Returns a gallery filter which tests if a property value ends with a
+    \a string literal.
+*/
+
+/*!
+    \fn QGalleryProperty::wildcard(const QString &string) const
+
+    Returns a gallery filter which tests if a property value matches a
+    \a string literal using wildcard matching.
+*/
+
+/*!
+    \fn QGalleryProperty::regExp(const QString &regExp) const
+
+    Returns a gallery filter which tests if a property value matches a
+    \a regExp.
+*/
+
+/*!
+    \fn QGalleryProperty::regExp(const QRegExp &regExp) const
+
+    Returns a gallery filter which tests if a property value matches a
+    \a regExp.
+*/
+
+/*!
+    \fn QGalleryProperty::ascending() const
+
+    Returns a sort key which indicating items should be sorted a property in
+    ascending order.
+*/
+
+/*!
+    \fn QString QGalleryProperty::descending() const
+
+    Returns a sort key which indicating items should be sorted a property in
+    descending order.
+*/
+
+
+/*!
+    \macro Q_DEFINE_GALLERY_PROPERTY(scope, name)
+
+    Macro for defining the \a name of a gallery property within the \a scope of
+    a class or namespace.
+
+    \relates QGalleryProperty
+*/

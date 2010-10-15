@@ -49,6 +49,14 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapPolygonObject::QDeclarativeGeoMapPolygonObject()
 {
+    connect(&m_border,
+            SIGNAL(colorChanged(QColor)),
+            this,
+            SLOT(borderColorChanged(QColor)));
+    connect(&m_border,
+            SIGNAL(widthChanged(int)),
+            this,
+            SLOT(borderWidthChanged(int)));
 }
 
 QDeclarativeGeoMapPolygonObject::~QDeclarativeGeoMapPolygonObject()
@@ -108,6 +116,25 @@ void QDeclarativeGeoMapPolygonObject::setColor(const QColor &color)
 QColor QDeclarativeGeoMapPolygonObject::color() const
 {
     return m_color;
+}
+
+QDeclarativeGeoMapObjectBorder* QDeclarativeGeoMapPolygonObject::border()
+{
+    return &m_border;
+}
+
+void QDeclarativeGeoMapPolygonObject::borderColorChanged(const QColor &color)
+{
+    QPen p = pen();
+    p.setColor(color);
+    setPen(p);
+}
+
+void QDeclarativeGeoMapPolygonObject::borderWidthChanged(int width)
+{
+    QPen p = pen();
+    p.setWidth(width);
+    setPen(p);
 }
 
 #include "moc_qdeclarativegeomappolygonobject_p.cpp"

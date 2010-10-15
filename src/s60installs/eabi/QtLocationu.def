@@ -390,7 +390,7 @@ EXPORTS
 	_ZN10QtMobility16QLandmarkManager12saveCategoryEPNS_17QLandmarkCategoryE @ 389 NONAME
 	_ZN10QtMobility16QLandmarkManager12saveLandmarkEPNS_9QLandmarkE @ 390 NONAME
 	_ZN10QtMobility16QLandmarkManager13connectNotifyEPKc @ 391 NONAME
-	_ZN10QtMobility16QLandmarkManager13saveLandmarksEP5QListINS_9QLandmarkEEP4QMapIiNS0_5ErrorEE @ 392 NONAME
+	_ZN10QtMobility16QLandmarkManager13saveLandmarksEP5QListINS_9QLandmarkEE @ 392 NONAME
 	_ZN10QtMobility16QLandmarkManager14landmarksAddedERK5QListINS_11QLandmarkIdEE @ 393 NONAME
 	_ZN10QtMobility16QLandmarkManager14removeCategoryERKNS_17QLandmarkCategoryE @ 394 NONAME
 	_ZN10QtMobility16QLandmarkManager14removeCategoryERKNS_19QLandmarkCategoryIdE @ 395 NONAME
@@ -399,8 +399,8 @@ EXPORTS
 	_ZN10QtMobility16QLandmarkManager15categoriesAddedERK5QListINS_19QLandmarkCategoryIdEE @ 398 NONAME
 	_ZN10QtMobility16QLandmarkManager15importLandmarksEP9QIODeviceRK7QStringNS0_14TransferOptionERKNS_19QLandmarkCategoryIdE @ 399 NONAME
 	_ZN10QtMobility16QLandmarkManager15importLandmarksERK7QStringS3_NS0_14TransferOptionERKNS_19QLandmarkCategoryIdE @ 400 NONAME
-	_ZN10QtMobility16QLandmarkManager15removeLandmarksERK5QListINS_11QLandmarkIdEEP4QMapIiNS0_5ErrorEE @ 401 NONAME
-	_ZN10QtMobility16QLandmarkManager15removeLandmarksERK5QListINS_9QLandmarkEEP4QMapIiNS0_5ErrorEE @ 402 NONAME
+	_ZN10QtMobility16QLandmarkManager15removeLandmarksERK5QListINS_11QLandmarkIdEE @ 401 NONAME
+	_ZN10QtMobility16QLandmarkManager15removeLandmarksERK5QListINS_9QLandmarkEE @ 402 NONAME
 	_ZN10QtMobility16QLandmarkManager16disconnectNotifyEPKc @ 403 NONAME
 	_ZN10QtMobility16QLandmarkManager16landmarksChangedERK5QListINS_11QLandmarkIdEE @ 404 NONAME
 	_ZN10QtMobility16QLandmarkManager16landmarksRemovedERK5QListINS_11QLandmarkIdEE @ 405 NONAME
@@ -557,8 +557,8 @@ EXPORTS
 	_ZN10QtMobility18QGeoMapGroupObject17clearChildObjectsEv @ 556 NONAME
 	_ZN10QtMobility18QGeoMapGroupObject17removeChildObjectEPNS_13QGeoMapObjectE @ 557 NONAME
 	_ZN10QtMobility18QGeoMapGroupObject19getStaticMetaObjectEv @ 558 NONAME
-	_ZN10QtMobility18QGeoMapGroupObjectC1EPNS_11QGeoMapDataE @ 559 NONAME
-	_ZN10QtMobility18QGeoMapGroupObjectC2EPNS_11QGeoMapDataE @ 560 NONAME
+	_ZN10QtMobility18QGeoMapGroupObjectC1Ev @ 559 NONAME
+	_ZN10QtMobility18QGeoMapGroupObjectC2Ev @ 560 NONAME
 	_ZN10QtMobility18QGeoMapGroupObjectD0Ev @ 561 NONAME
 	_ZN10QtMobility18QGeoMapGroupObjectD1Ev @ 562 NONAME
 	_ZN10QtMobility18QGeoMapGroupObjectD2Ev @ 563 NONAME
@@ -1280,7 +1280,7 @@ EXPORTS
 	_ZNK10QtMobility16QGeoTiledMapData34worldReferencePositionToCoordinateERK6QPoint @ 1279 NONAME
 	_ZNK10QtMobility16QGeoTiledMapData6centerEv @ 1280 NONAME
 	_ZNK10QtMobility16QGeoTiledMapData8viewportEv @ 1281 NONAME
-	_ZNK10QtMobility16QLandmarkManager10categoriesERK5QListINS_19QLandmarkCategoryIdEEP4QMapIiNS0_5ErrorEE @ 1282 NONAME
+	_ZNK10QtMobility16QLandmarkManager10categoriesERK5QListINS_19QLandmarkCategoryIdEE @ 1282 NONAME
 	_ZNK10QtMobility16QLandmarkManager10categoriesEiiRKNS_17QLandmarkNameSortE @ 1283 NONAME
 	_ZNK10QtMobility16QLandmarkManager10isReadOnlyERKNS_11QLandmarkIdE @ 1284 NONAME
 	_ZNK10QtMobility16QLandmarkManager10isReadOnlyERKNS_19QLandmarkCategoryIdE @ 1285 NONAME
@@ -1293,413 +1293,414 @@ EXPORTS
 	_ZNK10QtMobility16QLandmarkManager11landmarkIdsERKNS_15QLandmarkFilterEiiRKNS_18QLandmarkSortOrderE @ 1292 NONAME
 	_ZNK10QtMobility16QLandmarkManager11managerNameEv @ 1293 NONAME
 	_ZNK10QtMobility16QLandmarkManager14managerVersionEv @ 1294 NONAME
-	_ZNK10QtMobility16QLandmarkManager15exportLandmarksEP9QIODeviceRK7QString5QListINS_11QLandmarkIdEENS0_14TransferOptionE @ 1295 NONAME
-	_ZNK10QtMobility16QLandmarkManager15exportLandmarksERK7QStringS3_5QListINS_11QLandmarkIdEENS0_14TransferOptionE @ 1296 NONAME
+	_ZNK10QtMobility16QLandmarkManager15exportLandmarksEP9QIODeviceRK7QStringRK5QListINS_11QLandmarkIdEENS0_14TransferOptionE @ 1295 NONAME
+	_ZNK10QtMobility16QLandmarkManager15exportLandmarksERK7QStringS3_RK5QListINS_11QLandmarkIdEENS0_14TransferOptionE @ 1296 NONAME
 	_ZNK10QtMobility16QLandmarkManager16supportedFormatsENS0_17TransferOperationE @ 1297 NONAME
 	_ZNK10QtMobility16QLandmarkManager17managerParametersEv @ 1298 NONAME
 	_ZNK10QtMobility16QLandmarkManager18filterSupportLevelERKNS_15QLandmarkFilterE @ 1299 NONAME
-	_ZNK10QtMobility16QLandmarkManager18isFeatureSupportedENS0_15LandmarkFeatureE @ 1300 NONAME
-	_ZNK10QtMobility16QLandmarkManager21sortOrderSupportLevelERK5QListINS_18QLandmarkSortOrderEE @ 1301 NONAME
+	_ZNK10QtMobility16QLandmarkManager18isFeatureSupportedENS0_14ManagerFeatureE @ 1300 NONAME
+	_ZNK10QtMobility16QLandmarkManager21sortOrderSupportLevelERKNS_18QLandmarkSortOrderE @ 1301 NONAME
 	_ZNK10QtMobility16QLandmarkManager31searchableLandmarkAttributeKeysEv @ 1302 NONAME
 	_ZNK10QtMobility16QLandmarkManager5errorEv @ 1303 NONAME
 	_ZNK10QtMobility16QLandmarkManager8categoryERKNS_19QLandmarkCategoryIdE @ 1304 NONAME
-	_ZNK10QtMobility16QLandmarkManager8landmarkERKNS_11QLandmarkIdE @ 1305 NONAME
-	_ZNK10QtMobility16QLandmarkManager9landmarksERK5QListINS_11QLandmarkIdEEP4QMapIiNS0_5ErrorEE @ 1306 NONAME
-	_ZNK10QtMobility16QLandmarkManager9landmarksERKNS_15QLandmarkFilterEiiRK5QListINS_18QLandmarkSortOrderEE @ 1307 NONAME
-	_ZNK10QtMobility16QLandmarkManager9landmarksERKNS_15QLandmarkFilterEiiRKNS_18QLandmarkSortOrderE @ 1308 NONAME
-	_ZNK10QtMobility17QGeoMapObjectInfo10metaObjectEv @ 1309 NONAME
-	_ZNK10QtMobility17QGeoMapObjectInfo11boundingBoxEv @ 1310 NONAME
-	_ZNK10QtMobility17QGeoMapObjectInfo8containsERKNS_14QGeoCoordinateE @ 1311 NONAME
-	_ZNK10QtMobility17QGeoMapTextObject10coordinateEv @ 1312 NONAME
-	_ZNK10QtMobility17QGeoMapTextObject10metaObjectEv @ 1313 NONAME
-	_ZNK10QtMobility17QGeoMapTextObject3penEv @ 1314 NONAME
-	_ZNK10QtMobility17QGeoMapTextObject4fontEv @ 1315 NONAME
-	_ZNK10QtMobility17QGeoMapTextObject4textEv @ 1316 NONAME
-	_ZNK10QtMobility17QGeoMapTextObject4typeEv @ 1317 NONAME
-	_ZNK10QtMobility17QGeoMapTextObject5brushEv @ 1318 NONAME
-	_ZNK10QtMobility17QGeoMapTextObject6offsetEv @ 1319 NONAME
-	_ZNK10QtMobility17QGeoMapTextObject9alignmentEv @ 1320 NONAME
-	_ZNK10QtMobility17QGeoSearchManager10metaObjectEv @ 1321 NONAME
-	_ZNK10QtMobility17QGeoSearchManager11managerNameEv @ 1322 NONAME
-	_ZNK10QtMobility17QGeoSearchManager14managerVersionEv @ 1323 NONAME
-	_ZNK10QtMobility17QGeoSearchManager17supportsGeocodingEv @ 1324 NONAME
-	_ZNK10QtMobility17QGeoSearchManager20supportedSearchTypesEv @ 1325 NONAME
-	_ZNK10QtMobility17QGeoSearchManager22defaultLandmarkManagerEv @ 1326 NONAME
-	_ZNK10QtMobility17QGeoSearchManager24supportsReverseGeocodingEv @ 1327 NONAME
-	_ZNK10QtMobility17QGeoSearchManager26additionalLandmarkManagersEv @ 1328 NONAME
-	_ZNK10QtMobility17QGeoSearchManager6localeEv @ 1329 NONAME
-	_ZNK10QtMobility17QGeoTiledMapReply10isFinishedEv @ 1330 NONAME
-	_ZNK10QtMobility17QGeoTiledMapReply10metaObjectEv @ 1331 NONAME
-	_ZNK10QtMobility17QGeoTiledMapReply11errorStringEv @ 1332 NONAME
-	_ZNK10QtMobility17QGeoTiledMapReply12mapImageDataEv @ 1333 NONAME
-	_ZNK10QtMobility17QGeoTiledMapReply14mapImageFormatEv @ 1334 NONAME
-	_ZNK10QtMobility17QGeoTiledMapReply5errorEv @ 1335 NONAME
-	_ZNK10QtMobility17QGeoTiledMapReply7requestEv @ 1336 NONAME
-	_ZNK10QtMobility17QGeoTiledMapReply8isCachedEv @ 1337 NONAME
-	_ZNK10QtMobility17QLandmarkCategory10categoryIdEv @ 1338 NONAME
-	_ZNK10QtMobility17QLandmarkCategory4nameEv @ 1339 NONAME
-	_ZNK10QtMobility17QLandmarkCategory7iconUrlEv @ 1340 NONAME
-	_ZNK10QtMobility17QLandmarkCategoryeqERKS0_ @ 1341 NONAME
-	_ZNK10QtMobility17QLandmarkCategoryneERKS0_ @ 1342 NONAME
-	_ZNK10QtMobility17QLandmarkIdFilter11landmarkIdsEv @ 1343 NONAME
-	_ZNK10QtMobility17QLandmarkNameSort15caseSensitivityEv @ 1344 NONAME
-	_ZNK10QtMobility18QGeoBoundingCircle10translatedEdd @ 1345 NONAME
-	_ZNK10QtMobility18QGeoBoundingCircle4typeEv @ 1346 NONAME
-	_ZNK10QtMobility18QGeoBoundingCircle6centerEv @ 1347 NONAME
-	_ZNK10QtMobility18QGeoBoundingCircle6radiusEv @ 1348 NONAME
-	_ZNK10QtMobility18QGeoBoundingCircle7isEmptyEv @ 1349 NONAME
-	_ZNK10QtMobility18QGeoBoundingCircle7isValidEv @ 1350 NONAME
-	_ZNK10QtMobility18QGeoBoundingCircle8containsERKNS_14QGeoCoordinateE @ 1351 NONAME
-	_ZNK10QtMobility18QGeoBoundingCircleeqERKS0_ @ 1352 NONAME
-	_ZNK10QtMobility18QGeoBoundingCircleneERKS0_ @ 1353 NONAME
-	_ZNK10QtMobility18QGeoMapGroupObject10metaObjectEv @ 1354 NONAME
-	_ZNK10QtMobility18QGeoMapGroupObject11boundingBoxEv @ 1355 NONAME
-	_ZNK10QtMobility18QGeoMapGroupObject12childObjectsEv @ 1356 NONAME
-	_ZNK10QtMobility18QGeoMapGroupObject4typeEv @ 1357 NONAME
-	_ZNK10QtMobility18QGeoMapGroupObject8containsERKNS_14QGeoCoordinateE @ 1358 NONAME
-	_ZNK10QtMobility18QGeoMapRouteObject10metaObjectEv @ 1359 NONAME
-	_ZNK10QtMobility18QGeoMapRouteObject11detailLevelEv @ 1360 NONAME
-	_ZNK10QtMobility18QGeoMapRouteObject3penEv @ 1361 NONAME
-	_ZNK10QtMobility18QGeoMapRouteObject4typeEv @ 1362 NONAME
-	_ZNK10QtMobility18QGeoMapRouteObject5routeEv @ 1363 NONAME
-	_ZNK10QtMobility18QGeoMappingManager10metaObjectEv @ 1364 NONAME
-	_ZNK10QtMobility18QGeoMappingManager11managerNameEv @ 1365 NONAME
-	_ZNK10QtMobility18QGeoMappingManager14managerVersionEv @ 1366 NONAME
-	_ZNK10QtMobility18QGeoMappingManager16maximumZoomLevelEv @ 1367 NONAME
-	_ZNK10QtMobility18QGeoMappingManager16minimumZoomLevelEv @ 1368 NONAME
-	_ZNK10QtMobility18QGeoMappingManager17supportedMapTypesEv @ 1369 NONAME
-	_ZNK10QtMobility18QGeoMappingManager26supportedConnectivityModesEv @ 1370 NONAME
-	_ZNK10QtMobility18QGeoMappingManager6localeEv @ 1371 NONAME
-	_ZNK10QtMobility18QGeoRoutingManager10metaObjectEv @ 1372 NONAME
-	_ZNK10QtMobility18QGeoRoutingManager11managerNameEv @ 1373 NONAME
-	_ZNK10QtMobility18QGeoRoutingManager14managerVersionEv @ 1374 NONAME
-	_ZNK10QtMobility18QGeoRoutingManager20supportedTravelModesEv @ 1375 NONAME
-	_ZNK10QtMobility18QGeoRoutingManager20supportsExcludeAreasEv @ 1376 NONAME
-	_ZNK10QtMobility18QGeoRoutingManager20supportsRouteUpdatesEv @ 1377 NONAME
-	_ZNK10QtMobility18QGeoRoutingManager21supportedFeatureTypesEv @ 1378 NONAME
-	_ZNK10QtMobility18QGeoRoutingManager23supportedFeatureWeightsEv @ 1379 NONAME
-	_ZNK10QtMobility18QGeoRoutingManager23supportedSegmentDetailsEv @ 1380 NONAME
-	_ZNK10QtMobility18QGeoRoutingManager24supportedManeuverDetailsEv @ 1381 NONAME
-	_ZNK10QtMobility18QGeoRoutingManager25supportsAlternativeRoutesEv @ 1382 NONAME
-	_ZNK10QtMobility18QGeoRoutingManager27supportedRouteOptimizationsEv @ 1383 NONAME
-	_ZNK10QtMobility18QGeoRoutingManager6localeEv @ 1384 NONAME
-	_ZNK10QtMobility18QLandmarkBoxFilter11boundingBoxEv @ 1385 NONAME
-	_ZNK10QtMobility18QLandmarkSortOrder4typeEv @ 1386 NONAME
-	_ZNK10QtMobility18QLandmarkSortOrder9directionEv @ 1387 NONAME
-	_ZNK10QtMobility18QLandmarkSortOrdereqERKS0_ @ 1388 NONAME
-	_ZNK10QtMobility19QGeoMapCircleObject10metaObjectEv @ 1389 NONAME
-	_ZNK10QtMobility19QGeoMapCircleObject3penEv @ 1390 NONAME
-	_ZNK10QtMobility19QGeoMapCircleObject4typeEv @ 1391 NONAME
-	_ZNK10QtMobility19QGeoMapCircleObject5brushEv @ 1392 NONAME
-	_ZNK10QtMobility19QGeoMapCircleObject6centerEv @ 1393 NONAME
-	_ZNK10QtMobility19QGeoMapCircleObject6circleEv @ 1394 NONAME
-	_ZNK10QtMobility19QGeoMapCircleObject6radiusEv @ 1395 NONAME
-	_ZNK10QtMobility19QGeoMapPixmapObject10coordinateEv @ 1396 NONAME
-	_ZNK10QtMobility19QGeoMapPixmapObject10metaObjectEv @ 1397 NONAME
-	_ZNK10QtMobility19QGeoMapPixmapObject4typeEv @ 1398 NONAME
-	_ZNK10QtMobility19QGeoMapPixmapObject6offsetEv @ 1399 NONAME
-	_ZNK10QtMobility19QGeoMapPixmapObject6pixmapEv @ 1400 NONAME
-	_ZNK10QtMobility19QGeoServiceProvider11errorStringEv @ 1401 NONAME
-	_ZNK10QtMobility19QGeoServiceProvider13searchManagerEv @ 1402 NONAME
-	_ZNK10QtMobility19QGeoServiceProvider14mappingManagerEv @ 1403 NONAME
-	_ZNK10QtMobility19QGeoServiceProvider14routingManagerEv @ 1404 NONAME
-	_ZNK10QtMobility19QGeoServiceProvider5errorEv @ 1405 NONAME
-	_ZNK10QtMobility19QGeoTiledMapRequest16connectivityModeEv @ 1406 NONAME
-	_ZNK10QtMobility19QGeoTiledMapRequest3rowEv @ 1407 NONAME
-	_ZNK10QtMobility19QGeoTiledMapRequest6columnEv @ 1408 NONAME
-	_ZNK10QtMobility19QGeoTiledMapRequest7mapTypeEv @ 1409 NONAME
-	_ZNK10QtMobility19QGeoTiledMapRequest8tileRectEv @ 1410 NONAME
-	_ZNK10QtMobility19QGeoTiledMapRequest9zoomLevelEv @ 1411 NONAME
-	_ZNK10QtMobility19QGeoTiledMapRequesteqERKS0_ @ 1412 NONAME
-	_ZNK10QtMobility19QLandmarkCategoryId10managerUriEv @ 1413 NONAME
-	_ZNK10QtMobility19QLandmarkCategoryId7isValidEv @ 1414 NONAME
-	_ZNK10QtMobility19QLandmarkCategoryId7localIdEv @ 1415 NONAME
-	_ZNK10QtMobility19QLandmarkCategoryIdeqERKS0_ @ 1416 NONAME
-	_ZNK10QtMobility19QLandmarkCategoryIdneERKS0_ @ 1417 NONAME
-	_ZNK10QtMobility19QLandmarkNameFilter10matchFlagsEv @ 1418 NONAME
-	_ZNK10QtMobility19QLandmarkNameFilter4nameEv @ 1419 NONAME
-	_ZNK10QtMobility20QGeoMapPolygonObject10metaObjectEv @ 1420 NONAME
-	_ZNK10QtMobility20QGeoMapPolygonObject3penEv @ 1421 NONAME
-	_ZNK10QtMobility20QGeoMapPolygonObject4pathEv @ 1422 NONAME
-	_ZNK10QtMobility20QGeoMapPolygonObject4typeEv @ 1423 NONAME
-	_ZNK10QtMobility20QGeoMapPolygonObject5brushEv @ 1424 NONAME
-	_ZNK10QtMobility20QLandmarkSaveRequest10metaObjectEv @ 1425 NONAME
-	_ZNK10QtMobility20QLandmarkSaveRequest8errorMapEv @ 1426 NONAME
-	_ZNK10QtMobility20QLandmarkSaveRequest9landmarksEv @ 1427 NONAME
-	_ZNK10QtMobility20QLandmarkUnionFilter7filtersEv @ 1428 NONAME
-	_ZNK10QtMobility21QGeoMapPolylineObject10metaObjectEv @ 1429 NONAME
-	_ZNK10QtMobility21QGeoMapPolylineObject3penEv @ 1430 NONAME
-	_ZNK10QtMobility21QGeoMapPolylineObject4pathEv @ 1431 NONAME
-	_ZNK10QtMobility21QGeoMapPolylineObject4typeEv @ 1432 NONAME
-	_ZNK10QtMobility21QLandmarkFetchRequest10metaObjectEv @ 1433 NONAME
-	_ZNK10QtMobility21QLandmarkFetchRequest5limitEv @ 1434 NONAME
-	_ZNK10QtMobility21QLandmarkFetchRequest6filterEv @ 1435 NONAME
-	_ZNK10QtMobility21QLandmarkFetchRequest6offsetEv @ 1436 NONAME
-	_ZNK10QtMobility21QLandmarkFetchRequest7sortingEv @ 1437 NONAME
-	_ZNK10QtMobility21QLandmarkFetchRequest9landmarksEv @ 1438 NONAME
-	_ZNK10QtMobility22QGeoMapRectangleObject10metaObjectEv @ 1439 NONAME
-	_ZNK10QtMobility22QGeoMapRectangleObject11bottomRightEv @ 1440 NONAME
-	_ZNK10QtMobility22QGeoMapRectangleObject3penEv @ 1441 NONAME
-	_ZNK10QtMobility22QGeoMapRectangleObject4typeEv @ 1442 NONAME
-	_ZNK10QtMobility22QGeoMapRectangleObject5brushEv @ 1443 NONAME
-	_ZNK10QtMobility22QGeoMapRectangleObject6boundsEv @ 1444 NONAME
-	_ZNK10QtMobility22QGeoMapRectangleObject7topLeftEv @ 1445 NONAME
-	_ZNK10QtMobility22QLandmarkExportRequest10metaObjectEv @ 1446 NONAME
-	_ZNK10QtMobility22QLandmarkExportRequest11landmarkIdsEv @ 1447 NONAME
-	_ZNK10QtMobility22QLandmarkExportRequest14transferOptionEv @ 1448 NONAME
-	_ZNK10QtMobility22QLandmarkExportRequest6deviceEv @ 1449 NONAME
-	_ZNK10QtMobility22QLandmarkExportRequest6formatEv @ 1450 NONAME
-	_ZNK10QtMobility22QLandmarkExportRequest8fileNameEv @ 1451 NONAME
-	_ZNK10QtMobility22QLandmarkImportRequest10categoryIdEv @ 1452 NONAME
-	_ZNK10QtMobility22QLandmarkImportRequest10metaObjectEv @ 1453 NONAME
-	_ZNK10QtMobility22QLandmarkImportRequest11landmarkIdsEv @ 1454 NONAME
-	_ZNK10QtMobility22QLandmarkImportRequest14transferOptionEv @ 1455 NONAME
-	_ZNK10QtMobility22QLandmarkImportRequest6deviceEv @ 1456 NONAME
-	_ZNK10QtMobility22QLandmarkImportRequest6formatEv @ 1457 NONAME
-	_ZNK10QtMobility22QLandmarkImportRequest8fileNameEv @ 1458 NONAME
-	_ZNK10QtMobility22QLandmarkManagerEngine10categoriesERK5QListINS_19QLandmarkCategoryIdEEP4QMapIiNS_16QLandmarkManager5ErrorEEPS8_P7QString @ 1459 NONAME
-	_ZNK10QtMobility22QLandmarkManagerEngine10categoriesEiiRKNS_17QLandmarkNameSortEPNS_16QLandmarkManager5ErrorEP7QString @ 1460 NONAME
-	_ZNK10QtMobility22QLandmarkManagerEngine10managerUriEv @ 1461 NONAME
-	_ZNK10QtMobility22QLandmarkManagerEngine10metaObjectEv @ 1462 NONAME
-	_ZNK10QtMobility22QLandmarkManagerEngine11categoryIdsEiiRKNS_17QLandmarkNameSortEPNS_16QLandmarkManager5ErrorEP7QString @ 1463 NONAME
-	_ZNK10QtMobility22QLandmarkManagerEngine11landmarkIdsERKNS_15QLandmarkFilterEiiRK5QListINS_18QLandmarkSortOrderEEPNS_16QLandmarkManager5ErrorEP7QString @ 1464 NONAME
-	_ZNK10QtMobility22QLandmarkManagerEngine11managerNameEv @ 1465 NONAME
-	_ZNK10QtMobility22QLandmarkManagerEngine14managerVersionEv @ 1466 NONAME
-	_ZNK10QtMobility22QLandmarkManagerEngine15exportLandmarksEP9QIODeviceRK7QString5QListINS_11QLandmarkIdEENS_16QLandmarkManager14TransferOptionEPNS9_5ErrorEPS3_ @ 1467 NONAME
-	_ZNK10QtMobility22QLandmarkManagerEngine16supportedFormatsENS_16QLandmarkManager17TransferOperationEPNS1_5ErrorEP7QString @ 1468 NONAME
-	_ZNK10QtMobility22QLandmarkManagerEngine17managerParametersEv @ 1469 NONAME
-	_ZNK10QtMobility22QLandmarkManagerEngine8categoryERKNS_19QLandmarkCategoryIdEPNS_16QLandmarkManager5ErrorEP7QString @ 1470 NONAME
-	_ZNK10QtMobility22QLandmarkManagerEngine8landmarkERKNS_11QLandmarkIdEPNS_16QLandmarkManager5ErrorEP7QString @ 1471 NONAME
-	_ZNK10QtMobility22QLandmarkManagerEngine9landmarksERK5QListINS_11QLandmarkIdEEP4QMapIiNS_16QLandmarkManager5ErrorEEPS8_P7QString @ 1472 NONAME
-	_ZNK10QtMobility22QLandmarkManagerEngine9landmarksERKNS_15QLandmarkFilterEiiRK5QListINS_18QLandmarkSortOrderEEPNS_16QLandmarkManager5ErrorEP7QString @ 1473 NONAME
-	_ZNK10QtMobility22QLandmarkRemoveRequest10metaObjectEv @ 1474 NONAME
-	_ZNK10QtMobility22QLandmarkRemoveRequest11landmarkIdsEv @ 1475 NONAME
-	_ZNK10QtMobility22QLandmarkRemoveRequest8errorMapEv @ 1476 NONAME
-	_ZNK10QtMobility23QGeoSearchManagerEngine10metaObjectEv @ 1477 NONAME
-	_ZNK10QtMobility23QGeoSearchManagerEngine11managerNameEv @ 1478 NONAME
-	_ZNK10QtMobility23QGeoSearchManagerEngine14managerVersionEv @ 1479 NONAME
-	_ZNK10QtMobility23QGeoSearchManagerEngine17supportsGeocodingEv @ 1480 NONAME
-	_ZNK10QtMobility23QGeoSearchManagerEngine20supportedSearchTypesEv @ 1481 NONAME
-	_ZNK10QtMobility23QGeoSearchManagerEngine22defaultLandmarkManagerEv @ 1482 NONAME
-	_ZNK10QtMobility23QGeoSearchManagerEngine24supportsReverseGeocodingEv @ 1483 NONAME
-	_ZNK10QtMobility23QGeoSearchManagerEngine26additionalLandmarkManagersEv @ 1484 NONAME
-	_ZNK10QtMobility23QGeoSearchManagerEngine6localeEv @ 1485 NONAME
-	_ZNK10QtMobility23QLandmarkCategoryFilter10categoryIdEv @ 1486 NONAME
-	_ZNK10QtMobility23QLandmarkIdFetchRequest10metaObjectEv @ 1487 NONAME
-	_ZNK10QtMobility23QLandmarkIdFetchRequest11landmarkIdsEv @ 1488 NONAME
-	_ZNK10QtMobility23QLandmarkIdFetchRequest5limitEv @ 1489 NONAME
-	_ZNK10QtMobility23QLandmarkIdFetchRequest6filterEv @ 1490 NONAME
-	_ZNK10QtMobility23QLandmarkIdFetchRequest6offsetEv @ 1491 NONAME
-	_ZNK10QtMobility23QLandmarkIdFetchRequest7sortingEv @ 1492 NONAME
-	_ZNK10QtMobility24QGeoMappingManagerEngine10metaObjectEv @ 1493 NONAME
-	_ZNK10QtMobility24QGeoMappingManagerEngine11managerNameEv @ 1494 NONAME
-	_ZNK10QtMobility24QGeoMappingManagerEngine14managerVersionEv @ 1495 NONAME
-	_ZNK10QtMobility24QGeoMappingManagerEngine16maximumZoomLevelEv @ 1496 NONAME
-	_ZNK10QtMobility24QGeoMappingManagerEngine16minimumZoomLevelEv @ 1497 NONAME
-	_ZNK10QtMobility24QGeoMappingManagerEngine17supportedMapTypesEv @ 1498 NONAME
-	_ZNK10QtMobility24QGeoMappingManagerEngine26supportedConnectivityModesEv @ 1499 NONAME
-	_ZNK10QtMobility24QGeoMappingManagerEngine6localeEv @ 1500 NONAME
-	_ZNK10QtMobility24QGeoRoutingManagerEngine10metaObjectEv @ 1501 NONAME
-	_ZNK10QtMobility24QGeoRoutingManagerEngine11managerNameEv @ 1502 NONAME
-	_ZNK10QtMobility24QGeoRoutingManagerEngine14managerVersionEv @ 1503 NONAME
-	_ZNK10QtMobility24QGeoRoutingManagerEngine20supportedTravelModesEv @ 1504 NONAME
-	_ZNK10QtMobility24QGeoRoutingManagerEngine20supportsExcludeAreasEv @ 1505 NONAME
-	_ZNK10QtMobility24QGeoRoutingManagerEngine20supportsRouteUpdatesEv @ 1506 NONAME
-	_ZNK10QtMobility24QGeoRoutingManagerEngine21supportedFeatureTypesEv @ 1507 NONAME
-	_ZNK10QtMobility24QGeoRoutingManagerEngine23supportedFeatureWeightsEv @ 1508 NONAME
-	_ZNK10QtMobility24QGeoRoutingManagerEngine23supportedSegmentDetailsEv @ 1509 NONAME
-	_ZNK10QtMobility24QGeoRoutingManagerEngine24supportedManeuverDetailsEv @ 1510 NONAME
-	_ZNK10QtMobility24QGeoRoutingManagerEngine25supportsAlternativeRoutesEv @ 1511 NONAME
-	_ZNK10QtMobility24QGeoRoutingManagerEngine27supportedRouteOptimizationsEv @ 1512 NONAME
-	_ZNK10QtMobility24QGeoRoutingManagerEngine6localeEv @ 1513 NONAME
-	_ZNK10QtMobility24QLandmarkAbstractRequest10isFinishedEv @ 1514 NONAME
-	_ZNK10QtMobility24QLandmarkAbstractRequest10isInactiveEv @ 1515 NONAME
-	_ZNK10QtMobility24QLandmarkAbstractRequest10metaObjectEv @ 1516 NONAME
-	_ZNK10QtMobility24QLandmarkAbstractRequest11errorStringEv @ 1517 NONAME
-	_ZNK10QtMobility24QLandmarkAbstractRequest4typeEv @ 1518 NONAME
-	_ZNK10QtMobility24QLandmarkAbstractRequest5errorEv @ 1519 NONAME
-	_ZNK10QtMobility24QLandmarkAbstractRequest7managerEv @ 1520 NONAME
-	_ZNK10QtMobility24QLandmarkAbstractRequest8isActiveEv @ 1521 NONAME
-	_ZNK10QtMobility24QLandmarkAttributeFilter10matchFlagsERK7QString @ 1522 NONAME
-	_ZNK10QtMobility24QLandmarkAttributeFilter13attributeKeysEv @ 1523 NONAME
-	_ZNK10QtMobility24QLandmarkAttributeFilter13operationTypeEv @ 1524 NONAME
-	_ZNK10QtMobility24QLandmarkAttributeFilter9attributeERK7QString @ 1525 NONAME
-	_ZNK10QtMobility24QLandmarkProximityFilter6centerEv @ 1526 NONAME
-	_ZNK10QtMobility24QLandmarkProximityFilter6radiusEv @ 1527 NONAME
-	_ZNK10QtMobility25QLandmarkFetchByIdRequest10metaObjectEv @ 1528 NONAME
-	_ZNK10QtMobility25QLandmarkFetchByIdRequest11landmarkIdsEv @ 1529 NONAME
-	_ZNK10QtMobility25QLandmarkFetchByIdRequest8errorMapEv @ 1530 NONAME
-	_ZNK10QtMobility25QLandmarkFetchByIdRequest9landmarksEv @ 1531 NONAME
-	_ZNK10QtMobility26QGeoServiceProviderFactory25createSearchManagerEngineERK4QMapI7QString8QVariantEPNS_19QGeoServiceProvider5ErrorEPS2_ @ 1532 NONAME
-	_ZNK10QtMobility26QGeoServiceProviderFactory26createMappingManagerEngineERK4QMapI7QString8QVariantEPNS_19QGeoServiceProvider5ErrorEPS2_ @ 1533 NONAME
-	_ZNK10QtMobility26QGeoServiceProviderFactory26createRoutingManagerEngineERK4QMapI7QString8QVariantEPNS_19QGeoServiceProvider5ErrorEPS2_ @ 1534 NONAME
-	_ZNK10QtMobility27QLandmarkIntersectionFilter7filtersEv @ 1535 NONAME
-	_ZNK10QtMobility28QLandmarkCategorySaveRequest10categoriesEv @ 1536 NONAME
-	_ZNK10QtMobility28QLandmarkCategorySaveRequest10metaObjectEv @ 1537 NONAME
-	_ZNK10QtMobility28QLandmarkCategorySaveRequest8errorMapEv @ 1538 NONAME
-	_ZNK10QtMobility29QGeoTiledMappingManagerEngine10metaObjectEv @ 1539 NONAME
-	_ZNK10QtMobility29QGeoTiledMappingManagerEngine8tileSizeEv @ 1540 NONAME
-	_ZNK10QtMobility29QLandmarkCategoryFetchRequest10categoriesEv @ 1541 NONAME
-	_ZNK10QtMobility29QLandmarkCategoryFetchRequest10metaObjectEv @ 1542 NONAME
-	_ZNK10QtMobility29QLandmarkCategoryFetchRequest5limitEv @ 1543 NONAME
-	_ZNK10QtMobility29QLandmarkCategoryFetchRequest6offsetEv @ 1544 NONAME
-	_ZNK10QtMobility29QLandmarkCategoryFetchRequest7sortingEv @ 1545 NONAME
-	_ZNK10QtMobility29QLandmarkManagerEngineFactory31supportedImplementationVersionsEv @ 1546 NONAME
-	_ZNK10QtMobility30QLandmarkCategoryRemoveRequest10metaObjectEv @ 1547 NONAME
-	_ZNK10QtMobility30QLandmarkCategoryRemoveRequest11categoryIdsEv @ 1548 NONAME
-	_ZNK10QtMobility30QLandmarkCategoryRemoveRequest8errorMapEv @ 1549 NONAME
-	_ZNK10QtMobility31QLandmarkCategoryIdFetchRequest10metaObjectEv @ 1550 NONAME
-	_ZNK10QtMobility31QLandmarkCategoryIdFetchRequest11categoryIdsEv @ 1551 NONAME
-	_ZNK10QtMobility31QLandmarkCategoryIdFetchRequest5limitEv @ 1552 NONAME
-	_ZNK10QtMobility31QLandmarkCategoryIdFetchRequest6offsetEv @ 1553 NONAME
-	_ZNK10QtMobility31QLandmarkCategoryIdFetchRequest7sortingEv @ 1554 NONAME
-	_ZNK10QtMobility33QLandmarkCategoryFetchByIdRequest10categoriesEv @ 1555 NONAME
-	_ZNK10QtMobility33QLandmarkCategoryFetchByIdRequest10metaObjectEv @ 1556 NONAME
-	_ZNK10QtMobility33QLandmarkCategoryFetchByIdRequest11categoryIdsEv @ 1557 NONAME
-	_ZNK10QtMobility33QLandmarkCategoryFetchByIdRequest8errorMapEv @ 1558 NONAME
-	_ZNK10QtMobility9QGeoPlace10coordinateEv @ 1559 NONAME
-	_ZNK10QtMobility9QGeoPlace10isLandmarkEv @ 1560 NONAME
-	_ZNK10QtMobility9QGeoPlace7addressEv @ 1561 NONAME
-	_ZNK10QtMobility9QGeoPlace8viewportEv @ 1562 NONAME
-	_ZNK10QtMobility9QGeoPlaceeqERKS0_ @ 1563 NONAME
-	_ZNK10QtMobility9QGeoPlaceneERKS0_ @ 1564 NONAME
-	_ZNK10QtMobility9QGeoRoute10travelModeEv @ 1565 NONAME
-	_ZNK10QtMobility9QGeoRoute10travelTimeEv @ 1566 NONAME
-	_ZNK10QtMobility9QGeoRoute17firstRouteSegmentEv @ 1567 NONAME
-	_ZNK10QtMobility9QGeoRoute4pathEv @ 1568 NONAME
-	_ZNK10QtMobility9QGeoRoute6boundsEv @ 1569 NONAME
-	_ZNK10QtMobility9QGeoRoute7requestEv @ 1570 NONAME
-	_ZNK10QtMobility9QGeoRoute7routeIdEv @ 1571 NONAME
-	_ZNK10QtMobility9QGeoRoute8distanceEv @ 1572 NONAME
-	_ZNK10QtMobility9QGeoRouteeqERKS0_ @ 1573 NONAME
-	_ZNK10QtMobility9QGeoRouteneERKS0_ @ 1574 NONAME
-	_ZNK10QtMobility9QLandmark10landmarkIdEv @ 1575 NONAME
-	_ZNK10QtMobility9QLandmark11categoryIdsEv @ 1576 NONAME
-	_ZNK10QtMobility9QLandmark11descriptionEv @ 1577 NONAME
-	_ZNK10QtMobility9QLandmark11phoneNumberEv @ 1578 NONAME
-	_ZNK10QtMobility9QLandmark3urlEv @ 1579 NONAME
-	_ZNK10QtMobility9QLandmark4nameEv @ 1580 NONAME
-	_ZNK10QtMobility9QLandmark6radiusEv @ 1581 NONAME
-	_ZNK10QtMobility9QLandmark7iconUrlEv @ 1582 NONAME
-	_ZNK10QtMobility9QLandmarkeqERKS0_ @ 1583 NONAME
-	_ZTIN10QtMobility11QGeoMapDataE @ 1584 NONAME ; #<TI>#
-	_ZTIN10QtMobility13QGeoMapObjectE @ 1585 NONAME ; #<TI>#
-	_ZTIN10QtMobility14QGeoMapOverlayE @ 1586 NONAME ; #<TI>#
-	_ZTIN10QtMobility14QGeoRouteReplyE @ 1587 NONAME ; #<TI>#
-	_ZTIN10QtMobility15QGeoBoundingBoxE @ 1588 NONAME ; #<TI>#
-	_ZTIN10QtMobility15QGeoSearchReplyE @ 1589 NONAME ; #<TI>#
-	_ZTIN10QtMobility15QGraphicsGeoMapE @ 1590 NONAME ; #<TI>#
-	_ZTIN10QtMobility15QLandmarkFilterE @ 1591 NONAME ; #<TI>#
-	_ZTIN10QtMobility16QGeoBoundingAreaE @ 1592 NONAME ; #<TI>#
-	_ZTIN10QtMobility16QGeoTiledMapDataE @ 1593 NONAME ; #<TI>#
-	_ZTIN10QtMobility16QLandmarkManagerE @ 1594 NONAME ; #<TI>#
-	_ZTIN10QtMobility17QGeoMapObjectInfoE @ 1595 NONAME ; #<TI>#
-	_ZTIN10QtMobility17QGeoMapTextObjectE @ 1596 NONAME ; #<TI>#
-	_ZTIN10QtMobility17QGeoSearchManagerE @ 1597 NONAME ; #<TI>#
-	_ZTIN10QtMobility17QGeoTiledMapReplyE @ 1598 NONAME ; #<TI>#
-	_ZTIN10QtMobility17QLandmarkIdFilterE @ 1599 NONAME ; #<TI>#
-	_ZTIN10QtMobility17QLandmarkNameSortE @ 1600 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QGeoBoundingCircleE @ 1601 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QGeoMapGroupObjectE @ 1602 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QGeoMapRouteObjectE @ 1603 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QGeoMappingManagerE @ 1604 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QGeoRoutingManagerE @ 1605 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QLandmarkBoxFilterE @ 1606 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QLandmarkSortOrderE @ 1607 NONAME ; #<TI>#
-	_ZTIN10QtMobility19QGeoMapCircleObjectE @ 1608 NONAME ; #<TI>#
-	_ZTIN10QtMobility19QGeoMapPixmapObjectE @ 1609 NONAME ; #<TI>#
-	_ZTIN10QtMobility19QLandmarkNameFilterE @ 1610 NONAME ; #<TI>#
-	_ZTIN10QtMobility20QGeoMapPolygonObjectE @ 1611 NONAME ; #<TI>#
-	_ZTIN10QtMobility20QLandmarkSaveRequestE @ 1612 NONAME ; #<TI>#
-	_ZTIN10QtMobility20QLandmarkUnionFilterE @ 1613 NONAME ; #<TI>#
-	_ZTIN10QtMobility21QGeoMapPolylineObjectE @ 1614 NONAME ; #<TI>#
-	_ZTIN10QtMobility21QLandmarkFetchRequestE @ 1615 NONAME ; #<TI>#
-	_ZTIN10QtMobility22QGeoMapRectangleObjectE @ 1616 NONAME ; #<TI>#
-	_ZTIN10QtMobility22QLandmarkExportRequestE @ 1617 NONAME ; #<TI>#
-	_ZTIN10QtMobility22QLandmarkImportRequestE @ 1618 NONAME ; #<TI>#
-	_ZTIN10QtMobility22QLandmarkManagerEngineE @ 1619 NONAME ; #<TI>#
-	_ZTIN10QtMobility22QLandmarkRemoveRequestE @ 1620 NONAME ; #<TI>#
-	_ZTIN10QtMobility23QGeoSearchManagerEngineE @ 1621 NONAME ; #<TI>#
-	_ZTIN10QtMobility23QLandmarkCategoryFilterE @ 1622 NONAME ; #<TI>#
-	_ZTIN10QtMobility23QLandmarkIdFetchRequestE @ 1623 NONAME ; #<TI>#
-	_ZTIN10QtMobility24QGeoMappingManagerEngineE @ 1624 NONAME ; #<TI>#
-	_ZTIN10QtMobility24QGeoRoutingManagerEngineE @ 1625 NONAME ; #<TI>#
-	_ZTIN10QtMobility24QLandmarkAbstractRequestE @ 1626 NONAME ; #<TI>#
-	_ZTIN10QtMobility24QLandmarkAttributeFilterE @ 1627 NONAME ; #<TI>#
-	_ZTIN10QtMobility24QLandmarkProximityFilterE @ 1628 NONAME ; #<TI>#
-	_ZTIN10QtMobility25QLandmarkFetchByIdRequestE @ 1629 NONAME ; #<TI>#
-	_ZTIN10QtMobility26QGeoServiceProviderFactoryE @ 1630 NONAME ; #<TI>#
-	_ZTIN10QtMobility27QLandmarkIntersectionFilterE @ 1631 NONAME ; #<TI>#
-	_ZTIN10QtMobility28QLandmarkCategorySaveRequestE @ 1632 NONAME ; #<TI>#
-	_ZTIN10QtMobility29QGeoTiledMappingManagerEngineE @ 1633 NONAME ; #<TI>#
-	_ZTIN10QtMobility29QLandmarkCategoryFetchRequestE @ 1634 NONAME ; #<TI>#
-	_ZTIN10QtMobility29QLandmarkManagerEngineFactoryE @ 1635 NONAME ; #<TI>#
-	_ZTIN10QtMobility30QLandmarkCategoryRemoveRequestE @ 1636 NONAME ; #<TI>#
-	_ZTIN10QtMobility31QLandmarkCategoryIdFetchRequestE @ 1637 NONAME ; #<TI>#
-	_ZTIN10QtMobility33QLandmarkCategoryFetchByIdRequestE @ 1638 NONAME ; #<TI>#
-	_ZTIN10QtMobility9QGeoPlaceE @ 1639 NONAME ; #<TI>#
-	_ZTIN10QtMobility9QLandmarkE @ 1640 NONAME ; #<TI>#
-	_ZTVN10QtMobility11QGeoMapDataE @ 1641 NONAME ; #<VT>#
-	_ZTVN10QtMobility13QGeoMapObjectE @ 1642 NONAME ; #<VT>#
-	_ZTVN10QtMobility14QGeoMapOverlayE @ 1643 NONAME ; #<VT>#
-	_ZTVN10QtMobility14QGeoRouteReplyE @ 1644 NONAME ; #<VT>#
-	_ZTVN10QtMobility15QGeoBoundingBoxE @ 1645 NONAME ; #<VT>#
-	_ZTVN10QtMobility15QGeoSearchReplyE @ 1646 NONAME ; #<VT>#
-	_ZTVN10QtMobility15QGraphicsGeoMapE @ 1647 NONAME ; #<VT>#
-	_ZTVN10QtMobility15QLandmarkFilterE @ 1648 NONAME ; #<VT>#
-	_ZTVN10QtMobility16QGeoBoundingAreaE @ 1649 NONAME ; #<VT>#
-	_ZTVN10QtMobility16QGeoTiledMapDataE @ 1650 NONAME ; #<VT>#
-	_ZTVN10QtMobility16QLandmarkManagerE @ 1651 NONAME ; #<VT>#
-	_ZTVN10QtMobility17QGeoMapObjectInfoE @ 1652 NONAME ; #<VT>#
-	_ZTVN10QtMobility17QGeoMapTextObjectE @ 1653 NONAME ; #<VT>#
-	_ZTVN10QtMobility17QGeoSearchManagerE @ 1654 NONAME ; #<VT>#
-	_ZTVN10QtMobility17QGeoTiledMapReplyE @ 1655 NONAME ; #<VT>#
-	_ZTVN10QtMobility17QLandmarkIdFilterE @ 1656 NONAME ; #<VT>#
-	_ZTVN10QtMobility17QLandmarkNameSortE @ 1657 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QGeoBoundingCircleE @ 1658 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QGeoMapGroupObjectE @ 1659 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QGeoMapRouteObjectE @ 1660 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QGeoMappingManagerE @ 1661 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QGeoRoutingManagerE @ 1662 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QLandmarkBoxFilterE @ 1663 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QLandmarkSortOrderE @ 1664 NONAME ; #<VT>#
-	_ZTVN10QtMobility19QGeoMapCircleObjectE @ 1665 NONAME ; #<VT>#
-	_ZTVN10QtMobility19QGeoMapPixmapObjectE @ 1666 NONAME ; #<VT>#
-	_ZTVN10QtMobility19QLandmarkNameFilterE @ 1667 NONAME ; #<VT>#
-	_ZTVN10QtMobility20QGeoMapPolygonObjectE @ 1668 NONAME ; #<VT>#
-	_ZTVN10QtMobility20QLandmarkSaveRequestE @ 1669 NONAME ; #<VT>#
-	_ZTVN10QtMobility20QLandmarkUnionFilterE @ 1670 NONAME ; #<VT>#
-	_ZTVN10QtMobility21QGeoMapPolylineObjectE @ 1671 NONAME ; #<VT>#
-	_ZTVN10QtMobility21QLandmarkFetchRequestE @ 1672 NONAME ; #<VT>#
-	_ZTVN10QtMobility22QGeoMapRectangleObjectE @ 1673 NONAME ; #<VT>#
-	_ZTVN10QtMobility22QLandmarkExportRequestE @ 1674 NONAME ; #<VT>#
-	_ZTVN10QtMobility22QLandmarkImportRequestE @ 1675 NONAME ; #<VT>#
-	_ZTVN10QtMobility22QLandmarkManagerEngineE @ 1676 NONAME ; #<VT>#
-	_ZTVN10QtMobility22QLandmarkRemoveRequestE @ 1677 NONAME ; #<VT>#
-	_ZTVN10QtMobility23QGeoSearchManagerEngineE @ 1678 NONAME ; #<VT>#
-	_ZTVN10QtMobility23QLandmarkCategoryFilterE @ 1679 NONAME ; #<VT>#
-	_ZTVN10QtMobility23QLandmarkIdFetchRequestE @ 1680 NONAME ; #<VT>#
-	_ZTVN10QtMobility24QGeoMappingManagerEngineE @ 1681 NONAME ; #<VT>#
-	_ZTVN10QtMobility24QGeoRoutingManagerEngineE @ 1682 NONAME ; #<VT>#
-	_ZTVN10QtMobility24QLandmarkAbstractRequestE @ 1683 NONAME ; #<VT>#
-	_ZTVN10QtMobility24QLandmarkAttributeFilterE @ 1684 NONAME ; #<VT>#
-	_ZTVN10QtMobility24QLandmarkProximityFilterE @ 1685 NONAME ; #<VT>#
-	_ZTVN10QtMobility25QLandmarkFetchByIdRequestE @ 1686 NONAME ; #<VT>#
-	_ZTVN10QtMobility26QGeoServiceProviderFactoryE @ 1687 NONAME ; #<VT>#
-	_ZTVN10QtMobility27QLandmarkIntersectionFilterE @ 1688 NONAME ; #<VT>#
-	_ZTVN10QtMobility28QLandmarkCategorySaveRequestE @ 1689 NONAME ; #<VT>#
-	_ZTVN10QtMobility29QGeoTiledMappingManagerEngineE @ 1690 NONAME ; #<VT>#
-	_ZTVN10QtMobility29QLandmarkCategoryFetchRequestE @ 1691 NONAME ; #<VT>#
-	_ZTVN10QtMobility29QLandmarkManagerEngineFactoryE @ 1692 NONAME ; #<VT>#
-	_ZTVN10QtMobility30QLandmarkCategoryRemoveRequestE @ 1693 NONAME ; #<VT>#
-	_ZTVN10QtMobility31QLandmarkCategoryIdFetchRequestE @ 1694 NONAME ; #<VT>#
-	_ZTVN10QtMobility33QLandmarkCategoryFetchByIdRequestE @ 1695 NONAME ; #<VT>#
-	_ZTVN10QtMobility9QGeoPlaceE @ 1696 NONAME ; #<VT>#
-	_ZTVN10QtMobility9QLandmarkE @ 1697 NONAME ; #<VT>#
-	_ZThn16_N10QtMobility15QGraphicsGeoMapD0Ev @ 1698 NONAME ; #<thunk>#
-	_ZThn16_N10QtMobility15QGraphicsGeoMapD1Ev @ 1699 NONAME ; #<thunk>#
-	_ZThn8_N10QtMobility15QGraphicsGeoMap5paintEP8QPainterPK24QStyleOptionGraphicsItemP7QWidget @ 1700 NONAME ; #<thunk>#
-	_ZThn8_N10QtMobility15QGraphicsGeoMapD0Ev @ 1701 NONAME ; #<thunk>#
-	_ZThn8_N10QtMobility15QGraphicsGeoMapD1Ev @ 1702 NONAME ; #<thunk>#
-	_ZThn8_NK10QtMobility15QGraphicsGeoMap5shapeEv @ 1703 NONAME ; #<thunk>#
+	_ZNK10QtMobility16QLandmarkManager8errorMapEv @ 1305 NONAME
+	_ZNK10QtMobility16QLandmarkManager8landmarkERKNS_11QLandmarkIdE @ 1306 NONAME
+	_ZNK10QtMobility16QLandmarkManager9landmarksERK5QListINS_11QLandmarkIdEE @ 1307 NONAME
+	_ZNK10QtMobility16QLandmarkManager9landmarksERKNS_15QLandmarkFilterEiiRK5QListINS_18QLandmarkSortOrderEE @ 1308 NONAME
+	_ZNK10QtMobility16QLandmarkManager9landmarksERKNS_15QLandmarkFilterEiiRKNS_18QLandmarkSortOrderE @ 1309 NONAME
+	_ZNK10QtMobility17QGeoMapObjectInfo10metaObjectEv @ 1310 NONAME
+	_ZNK10QtMobility17QGeoMapObjectInfo11boundingBoxEv @ 1311 NONAME
+	_ZNK10QtMobility17QGeoMapObjectInfo8containsERKNS_14QGeoCoordinateE @ 1312 NONAME
+	_ZNK10QtMobility17QGeoMapTextObject10coordinateEv @ 1313 NONAME
+	_ZNK10QtMobility17QGeoMapTextObject10metaObjectEv @ 1314 NONAME
+	_ZNK10QtMobility17QGeoMapTextObject3penEv @ 1315 NONAME
+	_ZNK10QtMobility17QGeoMapTextObject4fontEv @ 1316 NONAME
+	_ZNK10QtMobility17QGeoMapTextObject4textEv @ 1317 NONAME
+	_ZNK10QtMobility17QGeoMapTextObject4typeEv @ 1318 NONAME
+	_ZNK10QtMobility17QGeoMapTextObject5brushEv @ 1319 NONAME
+	_ZNK10QtMobility17QGeoMapTextObject6offsetEv @ 1320 NONAME
+	_ZNK10QtMobility17QGeoMapTextObject9alignmentEv @ 1321 NONAME
+	_ZNK10QtMobility17QGeoSearchManager10metaObjectEv @ 1322 NONAME
+	_ZNK10QtMobility17QGeoSearchManager11managerNameEv @ 1323 NONAME
+	_ZNK10QtMobility17QGeoSearchManager14managerVersionEv @ 1324 NONAME
+	_ZNK10QtMobility17QGeoSearchManager17supportsGeocodingEv @ 1325 NONAME
+	_ZNK10QtMobility17QGeoSearchManager20supportedSearchTypesEv @ 1326 NONAME
+	_ZNK10QtMobility17QGeoSearchManager22defaultLandmarkManagerEv @ 1327 NONAME
+	_ZNK10QtMobility17QGeoSearchManager24supportsReverseGeocodingEv @ 1328 NONAME
+	_ZNK10QtMobility17QGeoSearchManager26additionalLandmarkManagersEv @ 1329 NONAME
+	_ZNK10QtMobility17QGeoSearchManager6localeEv @ 1330 NONAME
+	_ZNK10QtMobility17QGeoTiledMapReply10isFinishedEv @ 1331 NONAME
+	_ZNK10QtMobility17QGeoTiledMapReply10metaObjectEv @ 1332 NONAME
+	_ZNK10QtMobility17QGeoTiledMapReply11errorStringEv @ 1333 NONAME
+	_ZNK10QtMobility17QGeoTiledMapReply12mapImageDataEv @ 1334 NONAME
+	_ZNK10QtMobility17QGeoTiledMapReply14mapImageFormatEv @ 1335 NONAME
+	_ZNK10QtMobility17QGeoTiledMapReply5errorEv @ 1336 NONAME
+	_ZNK10QtMobility17QGeoTiledMapReply7requestEv @ 1337 NONAME
+	_ZNK10QtMobility17QGeoTiledMapReply8isCachedEv @ 1338 NONAME
+	_ZNK10QtMobility17QLandmarkCategory10categoryIdEv @ 1339 NONAME
+	_ZNK10QtMobility17QLandmarkCategory4nameEv @ 1340 NONAME
+	_ZNK10QtMobility17QLandmarkCategory7iconUrlEv @ 1341 NONAME
+	_ZNK10QtMobility17QLandmarkCategoryeqERKS0_ @ 1342 NONAME
+	_ZNK10QtMobility17QLandmarkCategoryneERKS0_ @ 1343 NONAME
+	_ZNK10QtMobility17QLandmarkIdFilter11landmarkIdsEv @ 1344 NONAME
+	_ZNK10QtMobility17QLandmarkNameSort15caseSensitivityEv @ 1345 NONAME
+	_ZNK10QtMobility18QGeoBoundingCircle10translatedEdd @ 1346 NONAME
+	_ZNK10QtMobility18QGeoBoundingCircle4typeEv @ 1347 NONAME
+	_ZNK10QtMobility18QGeoBoundingCircle6centerEv @ 1348 NONAME
+	_ZNK10QtMobility18QGeoBoundingCircle6radiusEv @ 1349 NONAME
+	_ZNK10QtMobility18QGeoBoundingCircle7isEmptyEv @ 1350 NONAME
+	_ZNK10QtMobility18QGeoBoundingCircle7isValidEv @ 1351 NONAME
+	_ZNK10QtMobility18QGeoBoundingCircle8containsERKNS_14QGeoCoordinateE @ 1352 NONAME
+	_ZNK10QtMobility18QGeoBoundingCircleeqERKS0_ @ 1353 NONAME
+	_ZNK10QtMobility18QGeoBoundingCircleneERKS0_ @ 1354 NONAME
+	_ZNK10QtMobility18QGeoMapGroupObject10metaObjectEv @ 1355 NONAME
+	_ZNK10QtMobility18QGeoMapGroupObject11boundingBoxEv @ 1356 NONAME
+	_ZNK10QtMobility18QGeoMapGroupObject12childObjectsEv @ 1357 NONAME
+	_ZNK10QtMobility18QGeoMapGroupObject4typeEv @ 1358 NONAME
+	_ZNK10QtMobility18QGeoMapGroupObject8containsERKNS_14QGeoCoordinateE @ 1359 NONAME
+	_ZNK10QtMobility18QGeoMapRouteObject10metaObjectEv @ 1360 NONAME
+	_ZNK10QtMobility18QGeoMapRouteObject11detailLevelEv @ 1361 NONAME
+	_ZNK10QtMobility18QGeoMapRouteObject3penEv @ 1362 NONAME
+	_ZNK10QtMobility18QGeoMapRouteObject4typeEv @ 1363 NONAME
+	_ZNK10QtMobility18QGeoMapRouteObject5routeEv @ 1364 NONAME
+	_ZNK10QtMobility18QGeoMappingManager10metaObjectEv @ 1365 NONAME
+	_ZNK10QtMobility18QGeoMappingManager11managerNameEv @ 1366 NONAME
+	_ZNK10QtMobility18QGeoMappingManager14managerVersionEv @ 1367 NONAME
+	_ZNK10QtMobility18QGeoMappingManager16maximumZoomLevelEv @ 1368 NONAME
+	_ZNK10QtMobility18QGeoMappingManager16minimumZoomLevelEv @ 1369 NONAME
+	_ZNK10QtMobility18QGeoMappingManager17supportedMapTypesEv @ 1370 NONAME
+	_ZNK10QtMobility18QGeoMappingManager26supportedConnectivityModesEv @ 1371 NONAME
+	_ZNK10QtMobility18QGeoMappingManager6localeEv @ 1372 NONAME
+	_ZNK10QtMobility18QGeoRoutingManager10metaObjectEv @ 1373 NONAME
+	_ZNK10QtMobility18QGeoRoutingManager11managerNameEv @ 1374 NONAME
+	_ZNK10QtMobility18QGeoRoutingManager14managerVersionEv @ 1375 NONAME
+	_ZNK10QtMobility18QGeoRoutingManager20supportedTravelModesEv @ 1376 NONAME
+	_ZNK10QtMobility18QGeoRoutingManager20supportsExcludeAreasEv @ 1377 NONAME
+	_ZNK10QtMobility18QGeoRoutingManager20supportsRouteUpdatesEv @ 1378 NONAME
+	_ZNK10QtMobility18QGeoRoutingManager21supportedFeatureTypesEv @ 1379 NONAME
+	_ZNK10QtMobility18QGeoRoutingManager23supportedFeatureWeightsEv @ 1380 NONAME
+	_ZNK10QtMobility18QGeoRoutingManager23supportedSegmentDetailsEv @ 1381 NONAME
+	_ZNK10QtMobility18QGeoRoutingManager24supportedManeuverDetailsEv @ 1382 NONAME
+	_ZNK10QtMobility18QGeoRoutingManager25supportsAlternativeRoutesEv @ 1383 NONAME
+	_ZNK10QtMobility18QGeoRoutingManager27supportedRouteOptimizationsEv @ 1384 NONAME
+	_ZNK10QtMobility18QGeoRoutingManager6localeEv @ 1385 NONAME
+	_ZNK10QtMobility18QLandmarkBoxFilter11boundingBoxEv @ 1386 NONAME
+	_ZNK10QtMobility18QLandmarkSortOrder4typeEv @ 1387 NONAME
+	_ZNK10QtMobility18QLandmarkSortOrder9directionEv @ 1388 NONAME
+	_ZNK10QtMobility18QLandmarkSortOrdereqERKS0_ @ 1389 NONAME
+	_ZNK10QtMobility19QGeoMapCircleObject10metaObjectEv @ 1390 NONAME
+	_ZNK10QtMobility19QGeoMapCircleObject3penEv @ 1391 NONAME
+	_ZNK10QtMobility19QGeoMapCircleObject4typeEv @ 1392 NONAME
+	_ZNK10QtMobility19QGeoMapCircleObject5brushEv @ 1393 NONAME
+	_ZNK10QtMobility19QGeoMapCircleObject6centerEv @ 1394 NONAME
+	_ZNK10QtMobility19QGeoMapCircleObject6circleEv @ 1395 NONAME
+	_ZNK10QtMobility19QGeoMapCircleObject6radiusEv @ 1396 NONAME
+	_ZNK10QtMobility19QGeoMapPixmapObject10coordinateEv @ 1397 NONAME
+	_ZNK10QtMobility19QGeoMapPixmapObject10metaObjectEv @ 1398 NONAME
+	_ZNK10QtMobility19QGeoMapPixmapObject4typeEv @ 1399 NONAME
+	_ZNK10QtMobility19QGeoMapPixmapObject6offsetEv @ 1400 NONAME
+	_ZNK10QtMobility19QGeoMapPixmapObject6pixmapEv @ 1401 NONAME
+	_ZNK10QtMobility19QGeoServiceProvider11errorStringEv @ 1402 NONAME
+	_ZNK10QtMobility19QGeoServiceProvider13searchManagerEv @ 1403 NONAME
+	_ZNK10QtMobility19QGeoServiceProvider14mappingManagerEv @ 1404 NONAME
+	_ZNK10QtMobility19QGeoServiceProvider14routingManagerEv @ 1405 NONAME
+	_ZNK10QtMobility19QGeoServiceProvider5errorEv @ 1406 NONAME
+	_ZNK10QtMobility19QGeoTiledMapRequest16connectivityModeEv @ 1407 NONAME
+	_ZNK10QtMobility19QGeoTiledMapRequest3rowEv @ 1408 NONAME
+	_ZNK10QtMobility19QGeoTiledMapRequest6columnEv @ 1409 NONAME
+	_ZNK10QtMobility19QGeoTiledMapRequest7mapTypeEv @ 1410 NONAME
+	_ZNK10QtMobility19QGeoTiledMapRequest8tileRectEv @ 1411 NONAME
+	_ZNK10QtMobility19QGeoTiledMapRequest9zoomLevelEv @ 1412 NONAME
+	_ZNK10QtMobility19QGeoTiledMapRequesteqERKS0_ @ 1413 NONAME
+	_ZNK10QtMobility19QLandmarkCategoryId10managerUriEv @ 1414 NONAME
+	_ZNK10QtMobility19QLandmarkCategoryId7isValidEv @ 1415 NONAME
+	_ZNK10QtMobility19QLandmarkCategoryId7localIdEv @ 1416 NONAME
+	_ZNK10QtMobility19QLandmarkCategoryIdeqERKS0_ @ 1417 NONAME
+	_ZNK10QtMobility19QLandmarkCategoryIdneERKS0_ @ 1418 NONAME
+	_ZNK10QtMobility19QLandmarkNameFilter10matchFlagsEv @ 1419 NONAME
+	_ZNK10QtMobility19QLandmarkNameFilter4nameEv @ 1420 NONAME
+	_ZNK10QtMobility20QGeoMapPolygonObject10metaObjectEv @ 1421 NONAME
+	_ZNK10QtMobility20QGeoMapPolygonObject3penEv @ 1422 NONAME
+	_ZNK10QtMobility20QGeoMapPolygonObject4pathEv @ 1423 NONAME
+	_ZNK10QtMobility20QGeoMapPolygonObject4typeEv @ 1424 NONAME
+	_ZNK10QtMobility20QGeoMapPolygonObject5brushEv @ 1425 NONAME
+	_ZNK10QtMobility20QLandmarkSaveRequest10metaObjectEv @ 1426 NONAME
+	_ZNK10QtMobility20QLandmarkSaveRequest8errorMapEv @ 1427 NONAME
+	_ZNK10QtMobility20QLandmarkSaveRequest9landmarksEv @ 1428 NONAME
+	_ZNK10QtMobility20QLandmarkUnionFilter7filtersEv @ 1429 NONAME
+	_ZNK10QtMobility21QGeoMapPolylineObject10metaObjectEv @ 1430 NONAME
+	_ZNK10QtMobility21QGeoMapPolylineObject3penEv @ 1431 NONAME
+	_ZNK10QtMobility21QGeoMapPolylineObject4pathEv @ 1432 NONAME
+	_ZNK10QtMobility21QGeoMapPolylineObject4typeEv @ 1433 NONAME
+	_ZNK10QtMobility21QLandmarkFetchRequest10metaObjectEv @ 1434 NONAME
+	_ZNK10QtMobility21QLandmarkFetchRequest5limitEv @ 1435 NONAME
+	_ZNK10QtMobility21QLandmarkFetchRequest6filterEv @ 1436 NONAME
+	_ZNK10QtMobility21QLandmarkFetchRequest6offsetEv @ 1437 NONAME
+	_ZNK10QtMobility21QLandmarkFetchRequest7sortingEv @ 1438 NONAME
+	_ZNK10QtMobility21QLandmarkFetchRequest9landmarksEv @ 1439 NONAME
+	_ZNK10QtMobility22QGeoMapRectangleObject10metaObjectEv @ 1440 NONAME
+	_ZNK10QtMobility22QGeoMapRectangleObject11bottomRightEv @ 1441 NONAME
+	_ZNK10QtMobility22QGeoMapRectangleObject3penEv @ 1442 NONAME
+	_ZNK10QtMobility22QGeoMapRectangleObject4typeEv @ 1443 NONAME
+	_ZNK10QtMobility22QGeoMapRectangleObject5brushEv @ 1444 NONAME
+	_ZNK10QtMobility22QGeoMapRectangleObject6boundsEv @ 1445 NONAME
+	_ZNK10QtMobility22QGeoMapRectangleObject7topLeftEv @ 1446 NONAME
+	_ZNK10QtMobility22QLandmarkExportRequest10metaObjectEv @ 1447 NONAME
+	_ZNK10QtMobility22QLandmarkExportRequest11landmarkIdsEv @ 1448 NONAME
+	_ZNK10QtMobility22QLandmarkExportRequest14transferOptionEv @ 1449 NONAME
+	_ZNK10QtMobility22QLandmarkExportRequest6deviceEv @ 1450 NONAME
+	_ZNK10QtMobility22QLandmarkExportRequest6formatEv @ 1451 NONAME
+	_ZNK10QtMobility22QLandmarkExportRequest8fileNameEv @ 1452 NONAME
+	_ZNK10QtMobility22QLandmarkImportRequest10categoryIdEv @ 1453 NONAME
+	_ZNK10QtMobility22QLandmarkImportRequest10metaObjectEv @ 1454 NONAME
+	_ZNK10QtMobility22QLandmarkImportRequest11landmarkIdsEv @ 1455 NONAME
+	_ZNK10QtMobility22QLandmarkImportRequest14transferOptionEv @ 1456 NONAME
+	_ZNK10QtMobility22QLandmarkImportRequest6deviceEv @ 1457 NONAME
+	_ZNK10QtMobility22QLandmarkImportRequest6formatEv @ 1458 NONAME
+	_ZNK10QtMobility22QLandmarkImportRequest8fileNameEv @ 1459 NONAME
+	_ZNK10QtMobility22QLandmarkManagerEngine10categoriesERK5QListINS_19QLandmarkCategoryIdEEP4QMapIiNS_16QLandmarkManager5ErrorEEPS8_P7QString @ 1460 NONAME
+	_ZNK10QtMobility22QLandmarkManagerEngine10categoriesEiiRKNS_17QLandmarkNameSortEPNS_16QLandmarkManager5ErrorEP7QString @ 1461 NONAME
+	_ZNK10QtMobility22QLandmarkManagerEngine10managerUriEv @ 1462 NONAME
+	_ZNK10QtMobility22QLandmarkManagerEngine10metaObjectEv @ 1463 NONAME
+	_ZNK10QtMobility22QLandmarkManagerEngine11categoryIdsEiiRKNS_17QLandmarkNameSortEPNS_16QLandmarkManager5ErrorEP7QString @ 1464 NONAME
+	_ZNK10QtMobility22QLandmarkManagerEngine11landmarkIdsERKNS_15QLandmarkFilterEiiRK5QListINS_18QLandmarkSortOrderEEPNS_16QLandmarkManager5ErrorEP7QString @ 1465 NONAME
+	_ZNK10QtMobility22QLandmarkManagerEngine11managerNameEv @ 1466 NONAME
+	_ZNK10QtMobility22QLandmarkManagerEngine14managerVersionEv @ 1467 NONAME
+	_ZNK10QtMobility22QLandmarkManagerEngine15exportLandmarksEP9QIODeviceRK7QStringRK5QListINS_11QLandmarkIdEENS_16QLandmarkManager14TransferOptionEPNSB_5ErrorEPS3_ @ 1468 NONAME
+	_ZNK10QtMobility22QLandmarkManagerEngine16supportedFormatsENS_16QLandmarkManager17TransferOperationEPNS1_5ErrorEP7QString @ 1469 NONAME
+	_ZNK10QtMobility22QLandmarkManagerEngine17managerParametersEv @ 1470 NONAME
+	_ZNK10QtMobility22QLandmarkManagerEngine8categoryERKNS_19QLandmarkCategoryIdEPNS_16QLandmarkManager5ErrorEP7QString @ 1471 NONAME
+	_ZNK10QtMobility22QLandmarkManagerEngine8landmarkERKNS_11QLandmarkIdEPNS_16QLandmarkManager5ErrorEP7QString @ 1472 NONAME
+	_ZNK10QtMobility22QLandmarkManagerEngine9landmarksERK5QListINS_11QLandmarkIdEEP4QMapIiNS_16QLandmarkManager5ErrorEEPS8_P7QString @ 1473 NONAME
+	_ZNK10QtMobility22QLandmarkManagerEngine9landmarksERKNS_15QLandmarkFilterEiiRK5QListINS_18QLandmarkSortOrderEEPNS_16QLandmarkManager5ErrorEP7QString @ 1474 NONAME
+	_ZNK10QtMobility22QLandmarkRemoveRequest10metaObjectEv @ 1475 NONAME
+	_ZNK10QtMobility22QLandmarkRemoveRequest11landmarkIdsEv @ 1476 NONAME
+	_ZNK10QtMobility22QLandmarkRemoveRequest8errorMapEv @ 1477 NONAME
+	_ZNK10QtMobility23QGeoSearchManagerEngine10metaObjectEv @ 1478 NONAME
+	_ZNK10QtMobility23QGeoSearchManagerEngine11managerNameEv @ 1479 NONAME
+	_ZNK10QtMobility23QGeoSearchManagerEngine14managerVersionEv @ 1480 NONAME
+	_ZNK10QtMobility23QGeoSearchManagerEngine17supportsGeocodingEv @ 1481 NONAME
+	_ZNK10QtMobility23QGeoSearchManagerEngine20supportedSearchTypesEv @ 1482 NONAME
+	_ZNK10QtMobility23QGeoSearchManagerEngine22defaultLandmarkManagerEv @ 1483 NONAME
+	_ZNK10QtMobility23QGeoSearchManagerEngine24supportsReverseGeocodingEv @ 1484 NONAME
+	_ZNK10QtMobility23QGeoSearchManagerEngine26additionalLandmarkManagersEv @ 1485 NONAME
+	_ZNK10QtMobility23QGeoSearchManagerEngine6localeEv @ 1486 NONAME
+	_ZNK10QtMobility23QLandmarkCategoryFilter10categoryIdEv @ 1487 NONAME
+	_ZNK10QtMobility23QLandmarkIdFetchRequest10metaObjectEv @ 1488 NONAME
+	_ZNK10QtMobility23QLandmarkIdFetchRequest11landmarkIdsEv @ 1489 NONAME
+	_ZNK10QtMobility23QLandmarkIdFetchRequest5limitEv @ 1490 NONAME
+	_ZNK10QtMobility23QLandmarkIdFetchRequest6filterEv @ 1491 NONAME
+	_ZNK10QtMobility23QLandmarkIdFetchRequest6offsetEv @ 1492 NONAME
+	_ZNK10QtMobility23QLandmarkIdFetchRequest7sortingEv @ 1493 NONAME
+	_ZNK10QtMobility24QGeoMappingManagerEngine10metaObjectEv @ 1494 NONAME
+	_ZNK10QtMobility24QGeoMappingManagerEngine11managerNameEv @ 1495 NONAME
+	_ZNK10QtMobility24QGeoMappingManagerEngine14managerVersionEv @ 1496 NONAME
+	_ZNK10QtMobility24QGeoMappingManagerEngine16maximumZoomLevelEv @ 1497 NONAME
+	_ZNK10QtMobility24QGeoMappingManagerEngine16minimumZoomLevelEv @ 1498 NONAME
+	_ZNK10QtMobility24QGeoMappingManagerEngine17supportedMapTypesEv @ 1499 NONAME
+	_ZNK10QtMobility24QGeoMappingManagerEngine26supportedConnectivityModesEv @ 1500 NONAME
+	_ZNK10QtMobility24QGeoMappingManagerEngine6localeEv @ 1501 NONAME
+	_ZNK10QtMobility24QGeoRoutingManagerEngine10metaObjectEv @ 1502 NONAME
+	_ZNK10QtMobility24QGeoRoutingManagerEngine11managerNameEv @ 1503 NONAME
+	_ZNK10QtMobility24QGeoRoutingManagerEngine14managerVersionEv @ 1504 NONAME
+	_ZNK10QtMobility24QGeoRoutingManagerEngine20supportedTravelModesEv @ 1505 NONAME
+	_ZNK10QtMobility24QGeoRoutingManagerEngine20supportsExcludeAreasEv @ 1506 NONAME
+	_ZNK10QtMobility24QGeoRoutingManagerEngine20supportsRouteUpdatesEv @ 1507 NONAME
+	_ZNK10QtMobility24QGeoRoutingManagerEngine21supportedFeatureTypesEv @ 1508 NONAME
+	_ZNK10QtMobility24QGeoRoutingManagerEngine23supportedFeatureWeightsEv @ 1509 NONAME
+	_ZNK10QtMobility24QGeoRoutingManagerEngine23supportedSegmentDetailsEv @ 1510 NONAME
+	_ZNK10QtMobility24QGeoRoutingManagerEngine24supportedManeuverDetailsEv @ 1511 NONAME
+	_ZNK10QtMobility24QGeoRoutingManagerEngine25supportsAlternativeRoutesEv @ 1512 NONAME
+	_ZNK10QtMobility24QGeoRoutingManagerEngine27supportedRouteOptimizationsEv @ 1513 NONAME
+	_ZNK10QtMobility24QGeoRoutingManagerEngine6localeEv @ 1514 NONAME
+	_ZNK10QtMobility24QLandmarkAbstractRequest10isFinishedEv @ 1515 NONAME
+	_ZNK10QtMobility24QLandmarkAbstractRequest10isInactiveEv @ 1516 NONAME
+	_ZNK10QtMobility24QLandmarkAbstractRequest10metaObjectEv @ 1517 NONAME
+	_ZNK10QtMobility24QLandmarkAbstractRequest11errorStringEv @ 1518 NONAME
+	_ZNK10QtMobility24QLandmarkAbstractRequest4typeEv @ 1519 NONAME
+	_ZNK10QtMobility24QLandmarkAbstractRequest5errorEv @ 1520 NONAME
+	_ZNK10QtMobility24QLandmarkAbstractRequest7managerEv @ 1521 NONAME
+	_ZNK10QtMobility24QLandmarkAbstractRequest8isActiveEv @ 1522 NONAME
+	_ZNK10QtMobility24QLandmarkAttributeFilter10matchFlagsERK7QString @ 1523 NONAME
+	_ZNK10QtMobility24QLandmarkAttributeFilter13attributeKeysEv @ 1524 NONAME
+	_ZNK10QtMobility24QLandmarkAttributeFilter13operationTypeEv @ 1525 NONAME
+	_ZNK10QtMobility24QLandmarkAttributeFilter9attributeERK7QString @ 1526 NONAME
+	_ZNK10QtMobility24QLandmarkProximityFilter6centerEv @ 1527 NONAME
+	_ZNK10QtMobility24QLandmarkProximityFilter6radiusEv @ 1528 NONAME
+	_ZNK10QtMobility25QLandmarkFetchByIdRequest10metaObjectEv @ 1529 NONAME
+	_ZNK10QtMobility25QLandmarkFetchByIdRequest11landmarkIdsEv @ 1530 NONAME
+	_ZNK10QtMobility25QLandmarkFetchByIdRequest8errorMapEv @ 1531 NONAME
+	_ZNK10QtMobility25QLandmarkFetchByIdRequest9landmarksEv @ 1532 NONAME
+	_ZNK10QtMobility26QGeoServiceProviderFactory25createSearchManagerEngineERK4QMapI7QString8QVariantEPNS_19QGeoServiceProvider5ErrorEPS2_ @ 1533 NONAME
+	_ZNK10QtMobility26QGeoServiceProviderFactory26createMappingManagerEngineERK4QMapI7QString8QVariantEPNS_19QGeoServiceProvider5ErrorEPS2_ @ 1534 NONAME
+	_ZNK10QtMobility26QGeoServiceProviderFactory26createRoutingManagerEngineERK4QMapI7QString8QVariantEPNS_19QGeoServiceProvider5ErrorEPS2_ @ 1535 NONAME
+	_ZNK10QtMobility27QLandmarkIntersectionFilter7filtersEv @ 1536 NONAME
+	_ZNK10QtMobility28QLandmarkCategorySaveRequest10categoriesEv @ 1537 NONAME
+	_ZNK10QtMobility28QLandmarkCategorySaveRequest10metaObjectEv @ 1538 NONAME
+	_ZNK10QtMobility28QLandmarkCategorySaveRequest8errorMapEv @ 1539 NONAME
+	_ZNK10QtMobility29QGeoTiledMappingManagerEngine10metaObjectEv @ 1540 NONAME
+	_ZNK10QtMobility29QGeoTiledMappingManagerEngine8tileSizeEv @ 1541 NONAME
+	_ZNK10QtMobility29QLandmarkCategoryFetchRequest10categoriesEv @ 1542 NONAME
+	_ZNK10QtMobility29QLandmarkCategoryFetchRequest10metaObjectEv @ 1543 NONAME
+	_ZNK10QtMobility29QLandmarkCategoryFetchRequest5limitEv @ 1544 NONAME
+	_ZNK10QtMobility29QLandmarkCategoryFetchRequest6offsetEv @ 1545 NONAME
+	_ZNK10QtMobility29QLandmarkCategoryFetchRequest7sortingEv @ 1546 NONAME
+	_ZNK10QtMobility29QLandmarkManagerEngineFactory31supportedImplementationVersionsEv @ 1547 NONAME
+	_ZNK10QtMobility30QLandmarkCategoryRemoveRequest10metaObjectEv @ 1548 NONAME
+	_ZNK10QtMobility30QLandmarkCategoryRemoveRequest11categoryIdsEv @ 1549 NONAME
+	_ZNK10QtMobility30QLandmarkCategoryRemoveRequest8errorMapEv @ 1550 NONAME
+	_ZNK10QtMobility31QLandmarkCategoryIdFetchRequest10metaObjectEv @ 1551 NONAME
+	_ZNK10QtMobility31QLandmarkCategoryIdFetchRequest11categoryIdsEv @ 1552 NONAME
+	_ZNK10QtMobility31QLandmarkCategoryIdFetchRequest5limitEv @ 1553 NONAME
+	_ZNK10QtMobility31QLandmarkCategoryIdFetchRequest6offsetEv @ 1554 NONAME
+	_ZNK10QtMobility31QLandmarkCategoryIdFetchRequest7sortingEv @ 1555 NONAME
+	_ZNK10QtMobility33QLandmarkCategoryFetchByIdRequest10categoriesEv @ 1556 NONAME
+	_ZNK10QtMobility33QLandmarkCategoryFetchByIdRequest10metaObjectEv @ 1557 NONAME
+	_ZNK10QtMobility33QLandmarkCategoryFetchByIdRequest11categoryIdsEv @ 1558 NONAME
+	_ZNK10QtMobility33QLandmarkCategoryFetchByIdRequest8errorMapEv @ 1559 NONAME
+	_ZNK10QtMobility9QGeoPlace10coordinateEv @ 1560 NONAME
+	_ZNK10QtMobility9QGeoPlace10isLandmarkEv @ 1561 NONAME
+	_ZNK10QtMobility9QGeoPlace7addressEv @ 1562 NONAME
+	_ZNK10QtMobility9QGeoPlace8viewportEv @ 1563 NONAME
+	_ZNK10QtMobility9QGeoPlaceeqERKS0_ @ 1564 NONAME
+	_ZNK10QtMobility9QGeoPlaceneERKS0_ @ 1565 NONAME
+	_ZNK10QtMobility9QGeoRoute10travelModeEv @ 1566 NONAME
+	_ZNK10QtMobility9QGeoRoute10travelTimeEv @ 1567 NONAME
+	_ZNK10QtMobility9QGeoRoute17firstRouteSegmentEv @ 1568 NONAME
+	_ZNK10QtMobility9QGeoRoute4pathEv @ 1569 NONAME
+	_ZNK10QtMobility9QGeoRoute6boundsEv @ 1570 NONAME
+	_ZNK10QtMobility9QGeoRoute7requestEv @ 1571 NONAME
+	_ZNK10QtMobility9QGeoRoute7routeIdEv @ 1572 NONAME
+	_ZNK10QtMobility9QGeoRoute8distanceEv @ 1573 NONAME
+	_ZNK10QtMobility9QGeoRouteeqERKS0_ @ 1574 NONAME
+	_ZNK10QtMobility9QGeoRouteneERKS0_ @ 1575 NONAME
+	_ZNK10QtMobility9QLandmark10landmarkIdEv @ 1576 NONAME
+	_ZNK10QtMobility9QLandmark11categoryIdsEv @ 1577 NONAME
+	_ZNK10QtMobility9QLandmark11descriptionEv @ 1578 NONAME
+	_ZNK10QtMobility9QLandmark11phoneNumberEv @ 1579 NONAME
+	_ZNK10QtMobility9QLandmark3urlEv @ 1580 NONAME
+	_ZNK10QtMobility9QLandmark4nameEv @ 1581 NONAME
+	_ZNK10QtMobility9QLandmark6radiusEv @ 1582 NONAME
+	_ZNK10QtMobility9QLandmark7iconUrlEv @ 1583 NONAME
+	_ZNK10QtMobility9QLandmarkeqERKS0_ @ 1584 NONAME
+	_ZTIN10QtMobility11QGeoMapDataE @ 1585 NONAME
+	_ZTIN10QtMobility13QGeoMapObjectE @ 1586 NONAME
+	_ZTIN10QtMobility14QGeoMapOverlayE @ 1587 NONAME
+	_ZTIN10QtMobility14QGeoRouteReplyE @ 1588 NONAME
+	_ZTIN10QtMobility15QGeoBoundingBoxE @ 1589 NONAME
+	_ZTIN10QtMobility15QGeoSearchReplyE @ 1590 NONAME
+	_ZTIN10QtMobility15QGraphicsGeoMapE @ 1591 NONAME
+	_ZTIN10QtMobility15QLandmarkFilterE @ 1592 NONAME
+	_ZTIN10QtMobility16QGeoBoundingAreaE @ 1593 NONAME
+	_ZTIN10QtMobility16QGeoTiledMapDataE @ 1594 NONAME
+	_ZTIN10QtMobility16QLandmarkManagerE @ 1595 NONAME
+	_ZTIN10QtMobility17QGeoMapObjectInfoE @ 1596 NONAME
+	_ZTIN10QtMobility17QGeoMapTextObjectE @ 1597 NONAME
+	_ZTIN10QtMobility17QGeoSearchManagerE @ 1598 NONAME
+	_ZTIN10QtMobility17QGeoTiledMapReplyE @ 1599 NONAME
+	_ZTIN10QtMobility17QLandmarkIdFilterE @ 1600 NONAME
+	_ZTIN10QtMobility17QLandmarkNameSortE @ 1601 NONAME
+	_ZTIN10QtMobility18QGeoBoundingCircleE @ 1602 NONAME
+	_ZTIN10QtMobility18QGeoMapGroupObjectE @ 1603 NONAME
+	_ZTIN10QtMobility18QGeoMapRouteObjectE @ 1604 NONAME
+	_ZTIN10QtMobility18QGeoMappingManagerE @ 1605 NONAME
+	_ZTIN10QtMobility18QGeoRoutingManagerE @ 1606 NONAME
+	_ZTIN10QtMobility18QLandmarkBoxFilterE @ 1607 NONAME
+	_ZTIN10QtMobility18QLandmarkSortOrderE @ 1608 NONAME
+	_ZTIN10QtMobility19QGeoMapCircleObjectE @ 1609 NONAME
+	_ZTIN10QtMobility19QGeoMapPixmapObjectE @ 1610 NONAME
+	_ZTIN10QtMobility19QLandmarkNameFilterE @ 1611 NONAME
+	_ZTIN10QtMobility20QGeoMapPolygonObjectE @ 1612 NONAME
+	_ZTIN10QtMobility20QLandmarkSaveRequestE @ 1613 NONAME
+	_ZTIN10QtMobility20QLandmarkUnionFilterE @ 1614 NONAME
+	_ZTIN10QtMobility21QGeoMapPolylineObjectE @ 1615 NONAME
+	_ZTIN10QtMobility21QLandmarkFetchRequestE @ 1616 NONAME
+	_ZTIN10QtMobility22QGeoMapRectangleObjectE @ 1617 NONAME
+	_ZTIN10QtMobility22QLandmarkExportRequestE @ 1618 NONAME
+	_ZTIN10QtMobility22QLandmarkImportRequestE @ 1619 NONAME
+	_ZTIN10QtMobility22QLandmarkManagerEngineE @ 1620 NONAME
+	_ZTIN10QtMobility22QLandmarkRemoveRequestE @ 1621 NONAME
+	_ZTIN10QtMobility23QGeoSearchManagerEngineE @ 1622 NONAME
+	_ZTIN10QtMobility23QLandmarkCategoryFilterE @ 1623 NONAME
+	_ZTIN10QtMobility23QLandmarkIdFetchRequestE @ 1624 NONAME
+	_ZTIN10QtMobility24QGeoMappingManagerEngineE @ 1625 NONAME
+	_ZTIN10QtMobility24QGeoRoutingManagerEngineE @ 1626 NONAME
+	_ZTIN10QtMobility24QLandmarkAbstractRequestE @ 1627 NONAME
+	_ZTIN10QtMobility24QLandmarkAttributeFilterE @ 1628 NONAME
+	_ZTIN10QtMobility24QLandmarkProximityFilterE @ 1629 NONAME
+	_ZTIN10QtMobility25QLandmarkFetchByIdRequestE @ 1630 NONAME
+	_ZTIN10QtMobility26QGeoServiceProviderFactoryE @ 1631 NONAME
+	_ZTIN10QtMobility27QLandmarkIntersectionFilterE @ 1632 NONAME
+	_ZTIN10QtMobility28QLandmarkCategorySaveRequestE @ 1633 NONAME
+	_ZTIN10QtMobility29QGeoTiledMappingManagerEngineE @ 1634 NONAME
+	_ZTIN10QtMobility29QLandmarkCategoryFetchRequestE @ 1635 NONAME
+	_ZTIN10QtMobility29QLandmarkManagerEngineFactoryE @ 1636 NONAME
+	_ZTIN10QtMobility30QLandmarkCategoryRemoveRequestE @ 1637 NONAME
+	_ZTIN10QtMobility31QLandmarkCategoryIdFetchRequestE @ 1638 NONAME
+	_ZTIN10QtMobility33QLandmarkCategoryFetchByIdRequestE @ 1639 NONAME
+	_ZTIN10QtMobility9QGeoPlaceE @ 1640 NONAME
+	_ZTIN10QtMobility9QLandmarkE @ 1641 NONAME
+	_ZTVN10QtMobility11QGeoMapDataE @ 1642 NONAME
+	_ZTVN10QtMobility13QGeoMapObjectE @ 1643 NONAME
+	_ZTVN10QtMobility14QGeoMapOverlayE @ 1644 NONAME
+	_ZTVN10QtMobility14QGeoRouteReplyE @ 1645 NONAME
+	_ZTVN10QtMobility15QGeoBoundingBoxE @ 1646 NONAME
+	_ZTVN10QtMobility15QGeoSearchReplyE @ 1647 NONAME
+	_ZTVN10QtMobility15QGraphicsGeoMapE @ 1648 NONAME
+	_ZTVN10QtMobility15QLandmarkFilterE @ 1649 NONAME
+	_ZTVN10QtMobility16QGeoBoundingAreaE @ 1650 NONAME
+	_ZTVN10QtMobility16QGeoTiledMapDataE @ 1651 NONAME
+	_ZTVN10QtMobility16QLandmarkManagerE @ 1652 NONAME
+	_ZTVN10QtMobility17QGeoMapObjectInfoE @ 1653 NONAME
+	_ZTVN10QtMobility17QGeoMapTextObjectE @ 1654 NONAME
+	_ZTVN10QtMobility17QGeoSearchManagerE @ 1655 NONAME
+	_ZTVN10QtMobility17QGeoTiledMapReplyE @ 1656 NONAME
+	_ZTVN10QtMobility17QLandmarkIdFilterE @ 1657 NONAME
+	_ZTVN10QtMobility17QLandmarkNameSortE @ 1658 NONAME
+	_ZTVN10QtMobility18QGeoBoundingCircleE @ 1659 NONAME
+	_ZTVN10QtMobility18QGeoMapGroupObjectE @ 1660 NONAME
+	_ZTVN10QtMobility18QGeoMapRouteObjectE @ 1661 NONAME
+	_ZTVN10QtMobility18QGeoMappingManagerE @ 1662 NONAME
+	_ZTVN10QtMobility18QGeoRoutingManagerE @ 1663 NONAME
+	_ZTVN10QtMobility18QLandmarkBoxFilterE @ 1664 NONAME
+	_ZTVN10QtMobility18QLandmarkSortOrderE @ 1665 NONAME
+	_ZTVN10QtMobility19QGeoMapCircleObjectE @ 1666 NONAME
+	_ZTVN10QtMobility19QGeoMapPixmapObjectE @ 1667 NONAME
+	_ZTVN10QtMobility19QLandmarkNameFilterE @ 1668 NONAME
+	_ZTVN10QtMobility20QGeoMapPolygonObjectE @ 1669 NONAME
+	_ZTVN10QtMobility20QLandmarkSaveRequestE @ 1670 NONAME
+	_ZTVN10QtMobility20QLandmarkUnionFilterE @ 1671 NONAME
+	_ZTVN10QtMobility21QGeoMapPolylineObjectE @ 1672 NONAME
+	_ZTVN10QtMobility21QLandmarkFetchRequestE @ 1673 NONAME
+	_ZTVN10QtMobility22QGeoMapRectangleObjectE @ 1674 NONAME
+	_ZTVN10QtMobility22QLandmarkExportRequestE @ 1675 NONAME
+	_ZTVN10QtMobility22QLandmarkImportRequestE @ 1676 NONAME
+	_ZTVN10QtMobility22QLandmarkManagerEngineE @ 1677 NONAME
+	_ZTVN10QtMobility22QLandmarkRemoveRequestE @ 1678 NONAME
+	_ZTVN10QtMobility23QGeoSearchManagerEngineE @ 1679 NONAME
+	_ZTVN10QtMobility23QLandmarkCategoryFilterE @ 1680 NONAME
+	_ZTVN10QtMobility23QLandmarkIdFetchRequestE @ 1681 NONAME
+	_ZTVN10QtMobility24QGeoMappingManagerEngineE @ 1682 NONAME
+	_ZTVN10QtMobility24QGeoRoutingManagerEngineE @ 1683 NONAME
+	_ZTVN10QtMobility24QLandmarkAbstractRequestE @ 1684 NONAME
+	_ZTVN10QtMobility24QLandmarkAttributeFilterE @ 1685 NONAME
+	_ZTVN10QtMobility24QLandmarkProximityFilterE @ 1686 NONAME
+	_ZTVN10QtMobility25QLandmarkFetchByIdRequestE @ 1687 NONAME
+	_ZTVN10QtMobility26QGeoServiceProviderFactoryE @ 1688 NONAME
+	_ZTVN10QtMobility27QLandmarkIntersectionFilterE @ 1689 NONAME
+	_ZTVN10QtMobility28QLandmarkCategorySaveRequestE @ 1690 NONAME
+	_ZTVN10QtMobility29QGeoTiledMappingManagerEngineE @ 1691 NONAME
+	_ZTVN10QtMobility29QLandmarkCategoryFetchRequestE @ 1692 NONAME
+	_ZTVN10QtMobility29QLandmarkManagerEngineFactoryE @ 1693 NONAME
+	_ZTVN10QtMobility30QLandmarkCategoryRemoveRequestE @ 1694 NONAME
+	_ZTVN10QtMobility31QLandmarkCategoryIdFetchRequestE @ 1695 NONAME
+	_ZTVN10QtMobility33QLandmarkCategoryFetchByIdRequestE @ 1696 NONAME
+	_ZTVN10QtMobility9QGeoPlaceE @ 1697 NONAME
+	_ZTVN10QtMobility9QLandmarkE @ 1698 NONAME
+	_ZThn16_N10QtMobility15QGraphicsGeoMapD0Ev @ 1699 NONAME
+	_ZThn16_N10QtMobility15QGraphicsGeoMapD1Ev @ 1700 NONAME
+	_ZThn8_N10QtMobility15QGraphicsGeoMap5paintEP8QPainterPK24QStyleOptionGraphicsItemP7QWidget @ 1701 NONAME
+	_ZThn8_N10QtMobility15QGraphicsGeoMapD0Ev @ 1702 NONAME
+	_ZThn8_N10QtMobility15QGraphicsGeoMapD1Ev @ 1703 NONAME
+	_ZThn8_NK10QtMobility15QGraphicsGeoMap5shapeEv @ 1704 NONAME
 
