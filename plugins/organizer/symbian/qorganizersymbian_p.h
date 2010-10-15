@@ -356,7 +356,7 @@ private:
     void removeCollectionL(const QOrganizerCollectionId& collectionId);
     CCalEntryView* entryViewL(const QOrganizerCollectionId& collectionId) const;
     CCalInstanceView* instanceViewL(const QOrganizerCollectionId& collectionId) const;
-    QOrganizerCollectionId collectionLocalIdL(const QOrganizerItem &item, 
+    QOrganizerCollectionId collectionIdL(const QOrganizerItem &item, 
         const QOrganizerCollectionId &collectionId = QOrganizerCollectionId()) const;
     CCalEntry* entryForItemOccurrenceL(
         const QOrganizerCollectionId &collectionId, const QOrganizerItem &item, 

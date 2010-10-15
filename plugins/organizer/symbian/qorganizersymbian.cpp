@@ -113,7 +113,7 @@ uint QOrganizerItemSymbianEngineId::engineIdType() const
     return KSymbianEngineIdType;
 }
 
-QString QOrganizerItemSymbianEngineId::managerUri() const
+const QString QOrganizerItemSymbianEngineId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with
@@ -202,7 +202,7 @@ uint QOrganizerCollectionSymbianEngineId::engineIdType() const
     return KSymbianEngineIdType;
 }
 
-QString QOrganizerCollectionSymbianEngineId::managerUri() const
+const QString QOrganizerCollectionSymbianEngineId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with

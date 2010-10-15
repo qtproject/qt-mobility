@@ -234,7 +234,7 @@ void OrganizerSymbianCollection::openL(const TDesC &fileName)
     // collection so it does not matter if its just a magic number.
     d->m_calCollectionId = 1;
 #endif
-    d->m_id = toCollectionLocalId(d->m_calCollectionId);
+    d->m_id = toCollectionId(d->m_calCollectionId);
     
     // Start listening to calendar events
     TCalTime minTime;

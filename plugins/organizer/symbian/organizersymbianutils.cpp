@@ -144,7 +144,7 @@ quint64 toTCalCollectionId(const QOrganizerItemId& itemId)
     return static_cast<const QOrganizerItemSymbianEngineId*>(QOrganizerManagerEngine::engineItemId(itemId))->calCollectionId();
 }
 
-QOrganizerCollectionId getCollectionLocalId(const QOrganizerItemId& itemId)
+QOrganizerCollectionId getCollectionId(const QOrganizerItemId& itemId)
 {
     // TODO: should we have a check for engineLocalIdType here?
     quint64 calCollectionId  = static_cast<const QOrganizerItemSymbianEngineId*>(QOrganizerManagerEngine::engineItemId(itemId))->calCollectionId();
