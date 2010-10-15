@@ -81,13 +81,12 @@ class QDeclarativeContact : public QObject
     Q_PROPERTY (QDeclarativeContactUrl*  url READ url NOTIFY detailsChanged)
     Q_PROPERTY (QDeclarativeContactHobby*  hobby READ hobby NOTIFY detailsChanged)
     Q_PROPERTY (bool modified READ modified NOTIFY dirtyFlagChanged)
-    Q_ENUMS(ContactType)
     Q_CLASSINFO("DefaultProperty", "details")
-
+    Q_ENUMS(ContactType)
 public:
     enum ContactType {
-        TypeContact = 0,
-        TypeGroup
+        Contact = 0,
+        Group
     };
     explicit QDeclarativeContact(QObject *parent = 0);
     explicit QDeclarativeContact(const QContact& contact, const QMap<QString, QContactDetailDefinition>& defs, QObject *parent = 0);
