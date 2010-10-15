@@ -493,11 +493,12 @@ void QSoundEffectPrivate::uploadSample()
 
 void QSoundEffectPrivate::playSample()
 {
-    pa_volume_t volume = PA_VOLUME_NORM;
-
+    pa_volume_t volume;
     daemon()->lock();
 #ifdef Q_WS_MAEMO_5
     volume = PA_VOLUME_NORM / 100 * ((daemon()->volume() + m_volume) / 2);
+#else
+    volume = pa_sw_volume_from_linear(qreal(m_volume) * 0.01);
 #endif
     pa_operation_unref(
             pa_context_play_sample(daemon()->context(),
