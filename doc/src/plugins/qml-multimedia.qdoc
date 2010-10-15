@@ -153,21 +153,6 @@
             \o \l{Audio::onStopped}{onStopped}
             \o Called when playback is stopped.
         \row
-            \o \l{Audio::onLoaded}{onLoaded}
-            \o Called when the media source has been loaded.
-        \row
-            \o \l{Audio::onBuffered}{onBuffered}
-            \o Called when the media has finished buffering.
-        \row
-            \o \l{Audio::onStalled}{onStalled}
-            \o Called when the media has stalled while buffering.
-        \row
-            \o \l{Audio::onBuffered}{onBuffered}
-            \o Called when the media has finished buffering.
-        \row
-            \o \l{Audio::onEndOfMedia}{onEndOfMedia}
-            \o Called when playback stops because the end of the media has been reached.
-        \row
             \o \l{Audio::onError}{onError}
             \o Called when the specified error occurs.
     \endtable
