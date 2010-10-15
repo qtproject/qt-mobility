@@ -273,7 +273,7 @@ void TestItemLocation::addLocationDetail()
     }
     
     // Fetch the item again
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     
     // Check if the location has been set properly
     QOrganizerItemLocation itemLocation;

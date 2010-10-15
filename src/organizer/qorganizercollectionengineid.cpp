@@ -39,17 +39,17 @@
 **
 ****************************************************************************/
 
-#include "qorganizeritemenginelocalid.h"
+#include "qorganizeritemengineid.h"
 
 /*!
-  \class QOrganizerCollectionEngineLocalId
-  \relates QOrganizerCollectionLocalId
-  \brief The QOrganizerCollectionEngineLocalId class uniquely identifies an item within a
+  \class QOrganizerCollectionEngineId
+  \relates QOrganizerCollectionId
+  \brief The QOrganizerCollectionEngineId class uniquely identifies an item within a
   particular engine plugin.
 
   Clients of the Organizer API should never use this class.
   Every engine implementor must implement a class derived from
-  QOrganizerCollectionEngineLocalId.
+  QOrganizerCollectionEngineId.
 
   This class is provided so that engine implementors can implement their own
   id class (which may contain arbitrary data, and which may implement the
@@ -57,34 +57,34 @@
  */
 
 /*!
-  \fn QOrganizerCollectionEngineLocalId::~QOrganizerCollectionEngineLocalId()
-  Cleans up any memory in use by this engine-local collection id.
+  \fn QOrganizerCollectionEngineId::~QOrganizerCollectionEngineId()
+  Cleans up any memory in use by this engine collection id.
  */
 
 /*!
-  \fn QOrganizerCollectionEngineLocalId::isEqualTo(const QOrganizerCollectionEngineLocalId* other) const
+  \fn QOrganizerCollectionEngineId::isEqualTo(const QOrganizerCollectionEngineId* other) const
   Returns true if this id is equal to the \a other id; false otherwise.
   Note that when implementing this function, you do not have to check that the type is the same,
-  since the function which calls this function (in QOrganizerCollectionLocalId) does that check for you.
+  since the function which calls this function (in QOrganizerCollectionId) does that check for you.
  */
 
 /*!
-  \fn QOrganizerCollectionEngineLocalId::isLessThan(const QOrganizerCollectionEngineLocalId* other) const
+  \fn QOrganizerCollectionEngineId::isLessThan(const QOrganizerCollectionEngineId* other) const
   Returns true if this id is less than the \a other id; false otherwise.
   Note that when implementing this function, you do not have to check that the type is the same,
-  since the function which calls this function (in QOrganizerCollectionLocalId) does that check for you.
+  since the function which calls this function (in QOrganizerCollectionId) does that check for you.
  */
 
 /*!
-  \fn QOrganizerCollectionEngineLocalId::engineLocalIdType() const
-  Returns an integer which identifies the type of the engine local id.
+  \fn QOrganizerCollectionEngineId::engineIdType() const
+  Returns an integer which identifies the type of the engine id.
   This is important because operators ==, < and != require ids of the same type.
   We suggest that engine implementors embed a globally unique UUID in their engine,
   and that this function should return the qHash() of that globally unique UUID;
   alternatively engine implementors can return a qHash() of their managerName.
 
   If the engine allows access to different datastores based on the construction parameters,
-  the engine-specific implementation of QOrganizerCollectionEngineLocalId may have to include
+  the engine-specific implementation of QOrganizerCollectionEngineId may have to include
   a field which identifies which datastore the item was from, so that persisted item ids
   don't "magically" change which item they reference based on nothing more than the
   parameters the client uses to construct the manager.
@@ -98,28 +98,28 @@
  */
 
 /*!
-  \fn QOrganizerCollectionEngineLocalId::clone() const
+  \fn QOrganizerCollectionEngineId::clone() const
   Returns a deep-copy clone of this id.
-  The caller takes ownership of the returned engine-local collection id.
+  The caller takes ownership of the returned engine collection id.
  */
 
 /*!
-  \fn QOrganizerCollectionEngineLocalId::debugStreamOut(QDebug dbg)
+  \fn QOrganizerCollectionEngineId::debugStreamOut(QDebug dbg)
   Streams this id out to the debug stream \a dbg.
  */
 
 /*!
-  \fn QOrganizerCollectionEngineLocalId::dataStreamOut(QDataStream& out)
+  \fn QOrganizerCollectionEngineId::dataStreamOut(QDataStream& out)
   Streams this id out to the data stream \a out.
  */
 
 /*!
-  \fn QOrganizerCollectionEngineLocalId::dataStreamIn(QDataStream& in)
+  \fn QOrganizerCollectionEngineId::dataStreamIn(QDataStream& in)
   Streams this id in from the datastream \a in.
  */
 
 /*!
-  \fn QOrganizerCollectionEngineLocalId::hash() const
+  \fn QOrganizerCollectionEngineId::hash() const
   Returns the hash value of this id.
  */
 

@@ -58,26 +58,25 @@ class QDeclarativeOrganizerModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
-    Q_PROPERTY(QStringList availableManagers READ availableManagers NOTIFY availableManagersChanged)
+    Q_PROPERTY(QStringList availableManagers READ availableManagers)
     Q_PROPERTY(QDateTime startPeriod READ startPeriod WRITE setStartPeriod NOTIFY startPeriodChanged)
     Q_PROPERTY(QDateTime endPeriod READ endPeriod WRITE setEndPeriod NOTIFY endPeriodChanged)
-    Q_PROPERTY(QDeclarativeOrganizerItemFilter* filter READ filter WRITE setFilter NOTIFY filterChanged)
-    Q_PROPERTY(QDeclarativeOrganizerItemFetchHint* fetchHint READ fetchHint WRITE setFetchHint NOTIFY fetchHintChanged)
+    Q_PROPERTY(QDeclarativeOrganizerItemFilter* filter READ filter NOTIFY filterChanged)
+    Q_PROPERTY(QDeclarativeOrganizerItemFetchHint* fetchHint READ fetchHint NOTIFY fetchHintChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> sortOrders READ sortOrders NOTIFY sortOrdersChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> items READ items NOTIFY itemsChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> occurrences READ occurrences NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> events READ events NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> eventOccurrences READ eventOccurrences NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> todos READ todos NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> todoOccurrences READ todoOccurrences NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> journals READ journals NOTIFY itemsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItem> notes READ notes NOTIFY itemsChanged)
-    Q_PROPERTY(Error error READ error NOTIFY errorChanged)
+    Q_PROPERTY(Error error READ error)
     Q_ENUMS(Error)
 public:
     enum {
-        OrganizerItemIdRole = Qt::UserRole + 500,
-        OrganizerItemRole
-
+        OrganizerItemRole = Qt::UserRole + 500
     };
 
     enum Error {
@@ -116,13 +115,12 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
 
     QDeclarativeOrganizerItemFilter* filter() const;
-    void setFilter(QDeclarativeOrganizerItemFilter* filter);
 
     QDeclarativeOrganizerItemFetchHint* fetchHint() const;
-    void setFetchHint(QDeclarativeOrganizerItemFetchHint* fetchHint);
 
 
     QDeclarativeListProperty<QDeclarativeOrganizerItem> items() ;
+    QDeclarativeListProperty<QDeclarativeOrganizerItem> occurrences();
     QDeclarativeListProperty<QDeclarativeOrganizerItemSortOrder> sortOrders() ;
     QDeclarativeListProperty<QDeclarativeOrganizerItem> events();
     QDeclarativeListProperty<QDeclarativeOrganizerItem> eventOccurrences();

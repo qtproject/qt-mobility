@@ -39,17 +39,17 @@
 **
 ****************************************************************************/
 
-#include "qorganizeritemenginelocalid.h"
+#include "qorganizeritemengineid.h"
 
 /*!
-  \class QOrganizerItemEngineLocalId
-  \relates QOrganizerItemLocalId
-  \brief The QOrganizerItemEngineLocalId class uniquely identifies an item within a
+  \class QOrganizerItemEngineId
+  \relates QOrganizerItemId
+  \brief The QOrganizerItemEngineId class uniquely identifies an item within a
   particular engine plugin.
 
   Clients of the Organizer API should never use this class.
   Every engine implementor must implement a class derived from
-  QOrganizerItemEngineLocalId.
+  QOrganizerItemEngineId.
 
   This class is provided so that engine implementors can implement their own
   id class (which may contain arbitrary data, and which may implement the
@@ -57,34 +57,34 @@
  */
 
 /*!
-  \fn QOrganizerItemEngineLocalId::~QOrganizerItemEngineLocalId()
-  Cleans up any memory in use by this engine-local item id.
+  \fn QOrganizerItemEngineId::~QOrganizerItemEngineId()
+  Cleans up any memory in use by this engine item id.
  */
 
 /*!
-  \fn QOrganizerItemEngineLocalId::isEqualTo(const QOrganizerItemEngineLocalId* other) const
+  \fn QOrganizerItemEngineId::isEqualTo(const QOrganizerItemEngineId* other) const
   Returns true if this id is equal to the \a other id; false otherwise.
   Note that when implementing this function, you do not have to check that the type is the same,
-  since the function which calls this function (in QOrganizerItemLocalId) does that check for you.
+  since the function which calls this function (in QOrganizerItemId) does that check for you.
  */
 
 /*!
-  \fn QOrganizerItemEngineLocalId::isLessThan(const QOrganizerItemEngineLocalId* other) const
+  \fn QOrganizerItemEngineId::isLessThan(const QOrganizerItemEngineId* other) const
   Returns true if this id is less than the \a other id; false otherwise.
   Note that when implementing this function, you do not have to check that the type is the same,
-  since the function which calls this function (in QOrganizerItemLocalId) does that check for you.
+  since the function which calls this function (in QOrganizerItemId) does that check for you.
  */
 
 /*!
-  \fn QOrganizerItemEngineLocalId::engineLocalIdType() const
-  Returns an integer which identifies the type of the engine local id.
+  \fn QOrganizerItemEngineId::engineIdType() const
+  Returns an integer which identifies the type of the engine id.
   This is important because operators ==, < and != require ids of the same type.
   We suggest that engine implementors embed a globally unique UUID in their engine,
   and that this function should return the qHash() of that globally unique UUID;
   alternatively engine implementors can return a qHash() of their managerName.
 
   If the engine allows access to different datastores based on the construction parameters,
-  the engine-specific implementation of QOrganizerItemEngineLocalId may have to include
+  the engine-specific implementation of QOrganizerItemEngineId may have to include
   a field which identifies which datastore the item was from, so that persisted item ids
   don't "magically" change which item they reference based on nothing more than the
   parameters the client uses to construct the manager.
@@ -98,28 +98,28 @@
  */
 
 /*!
-  \fn QOrganizerItemEngineLocalId::clone() const
+  \fn QOrganizerItemEngineId::clone() const
   Returns a deep-copy clone of this id.
-  The caller takes ownership of the returned engine-local item id.
+  The caller takes ownership of the returned engine item id.
  */
 
 /*!
-  \fn QOrganizerItemEngineLocalId::debugStreamOut(QDebug dbg)
+  \fn QOrganizerItemEngineId::debugStreamOut(QDebug dbg)
   Streams this id out to the debug stream \a dbg.
  */
 
 /*!
-  \fn QOrganizerItemEngineLocalId::dataStreamOut(QDataStream& out)
+  \fn QOrganizerItemEngineId::dataStreamOut(QDataStream& out)
   Streams this id out to the data stream \a out.
  */
 
 /*!
-  \fn QOrganizerItemEngineLocalId::dataStreamIn(QDataStream& in)
+  \fn QOrganizerItemEngineId::dataStreamIn(QDataStream& in)
   Streams this id in from the datastream \a in.
  */
 
 /*!
-  \fn QOrganizerItemEngineLocalId::hash() const
+  \fn QOrganizerItemEngineId::hash() const
   Returns the hash value of this id.
  */
 

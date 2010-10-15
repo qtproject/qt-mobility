@@ -108,7 +108,7 @@ void tst_symbianperformance::init()
     // Remove all collections (except the default)
     foreach (QOrganizerCollection collection, m_om->collections()) {
         if (collection.id() != m_om->defaultCollection().id())
-            m_om->removeCollection(collection.localId());
+            m_om->removeCollection(collection.id());
     }
 }
 
@@ -120,7 +120,7 @@ void tst_symbianperformance::cleanup()
     // Remove all collections (except the default)
     foreach (QOrganizerCollection collection, m_om->collections()) {
         if (collection.id() != m_om->defaultCollection().id())
-            m_om->removeCollection(collection.localId());
+            m_om->removeCollection(collection.id());
     }
 
     delete m_om;
@@ -207,7 +207,7 @@ void tst_symbianperformance::items()
 
     {
         // Remove all items
-        QList<QOrganizerItemLocalId> itemIds = m_om->itemIds();
+        QList<QOrganizerItemId> itemIds = m_om->itemIds();
         QTime timerStart = QTime::currentTime();
         QVERIFY(m_om->removeItems(itemIds));
         QTime timerEnd = QTime::currentTime();
@@ -273,7 +273,7 @@ void tst_symbianperformance::itemsInCollections()
     {
         // Fetch items from collection c1
         QOrganizerItemCollectionFilter filter;
-        filter.setCollectionId(c1.localId());
+        filter.setCollectionId(c1.id());
         QTime startTime = QTime::currentTime();
         QList<QOrganizerItem> items = m_om->itemsForExport(QDateTime(), QDateTime(), filter);
         QTime endTime = QTime::currentTime();
@@ -293,7 +293,7 @@ void tst_symbianperformance::itemsInCollections()
     {
         // Fetch item instances with a collection filter
         QOrganizerItemCollectionFilter filter;
-        filter.setCollectionId(c1.localId());
+        filter.setCollectionId(c1.id());
         QTime startTime = QTime::currentTime();
         QList<QOrganizerItem> items = m_om->items(filter);
         QTime endTime = QTime::currentTime();
@@ -303,7 +303,7 @@ void tst_symbianperformance::itemsInCollections()
 
     {
         // Remove all items
-        QList<QOrganizerItemLocalId> itemIds = m_om->itemIds();
+        QList<QOrganizerItemId> itemIds = m_om->itemIds();
         QTime startTime = QTime::currentTime();
         QVERIFY(m_om->removeItems(itemIds));
         QTime endTime = QTime::currentTime();

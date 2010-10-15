@@ -93,7 +93,6 @@ public:
 #endif
     void createViewsL();
     QOrganizerCollectionId id() const;
-    QOrganizerCollectionLocalId localId() const;
     quint64 calCollectionId() const;
     CCalSession *calSession() const; 
     CCalEntryView *calEntryView() const;

@@ -217,7 +217,7 @@ void TestTodoOccurrence::addSimpleOccurrenceDetail()
     QVERIFY(m_om->saveItem(&item));
     
     // Fetch the saved item
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     
     QCOMPARE(item.type(), itemType);
     // Fetch the instances of the item.
@@ -228,8 +228,8 @@ void TestTodoOccurrence::addSimpleOccurrenceDetail()
     QCOMPARE(todoItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
     QOrganizerTodoOccurrence thirdTodoOccurence = static_cast<QOrganizerTodoOccurrence>(todoItem);
     QCOMPARE(thirdTodoOccurence.dueDateTime(), thirdInstanceDueDateTime);
-    QCOMPARE(thirdTodoOccurence.localId(), QOrganizerItemLocalId());
-    QCOMPARE(thirdTodoOccurence.parentLocalId(), item.localId());
+    QCOMPARE(thirdTodoOccurence.id(), QOrganizerItemId());
+    QCOMPARE(thirdTodoOccurence.parentId(), item.id());
     
     // Fetch instances using maxcount only.
     instanceList.clear();
@@ -238,9 +238,9 @@ void TestTodoOccurrence::addSimpleOccurrenceDetail()
     todoItem = instanceList.at(0);
     QCOMPARE(todoItem.type(), QLatin1String(QOrganizerItemType::TypeTodoOccurrence));
     QOrganizerTodoOccurrence firstTodoOccurrence = static_cast<QOrganizerTodoOccurrence>(todoItem);
-    QCOMPARE(firstTodoOccurrence.localId(), QOrganizerItemLocalId());
+    QCOMPARE(firstTodoOccurrence.id(), QOrganizerItemId());
     QCOMPARE(firstTodoOccurrence.dueDateTime(), firstInstanceDueDateTime);
-    QCOMPARE(firstTodoOccurrence.parentLocalId(), item.localId());   
+    QCOMPARE(firstTodoOccurrence.parentId(), item.id());   
     QCOMPARE(firstTodoOccurrence.status(), QOrganizerTodoProgress::StatusNotStarted);
     
     // Mark the third instance as done and check for the appropriate status.
@@ -408,7 +408,7 @@ void TestTodoOccurrence::addOccurrenceDetail()
 	QVERIFY(m_om->saveItem(&item));
 
 	// Fetch the saved item
-	item = m_om->item(item.localId());
+	item = m_om->item(item.id());
 
 	QCOMPARE(item.type(), itemType);
 	QCOMPARE(item.displayLabel(), displayLabel);
@@ -423,8 +423,8 @@ void TestTodoOccurrence::addOccurrenceDetail()
 	QOrganizerTodoOccurrence fifthTodoOccurence = static_cast<QOrganizerTodoOccurrence>(todoItem);
 	QCOMPARE(fifthTodoOccurence.startDateTime(), fifthInstanceDateTime);
 	QCOMPARE(fifthTodoOccurence.dueDateTime(), fifthInstanceDateTime);
-	QCOMPARE(fifthTodoOccurence.localId(), QOrganizerItemLocalId());
-	QCOMPARE(fifthTodoOccurence.parentLocalId(), item.localId());
+	QCOMPARE(fifthTodoOccurence.id(), QOrganizerItemId());
+	QCOMPARE(fifthTodoOccurence.parentId(), item.id());
 	
 	todoItem = instanceList.at(3);
 	QOrganizerTodoOccurrence fourthTodoOccurence = static_cast<QOrganizerTodoOccurrence>(todoItem);
@@ -473,7 +473,7 @@ void TestTodoOccurrence::editOccurrenceNegative()
      
     // Save item with recurrence rule.
     QVERIFY(m_om->saveItem(&item));    
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     
     // Add comment to the item and save.
     QOrganizerItemComment comment;
@@ -492,10 +492,10 @@ void TestTodoOccurrence::editOccurrenceNegative()
     QOrganizerTodoOccurrence firstInstance = static_cast<QOrganizerTodoOccurrence>(firstItem);
     QString instanceGuid (firstInstance.guid());
    
-    //Try to save instance with invalid guid and parentlocalId fails
+    //Try to save instance with invalid guid and parentId fails
     // TODO: Disabled because of API change. REFACTOR!
     //firstInstance.setGuid(QString(""));
-    //firstInstance.setParentLocalId(QOrganizerItemLocalId(-1));
+    //firstInstance.setParentId(QOrganizerItemId(-1));
     //QVERIFY(!m_om->saveItem(&firstInstance));
     //QCOMPARE(m_om->error(), QOrganizerManager::InvalidOccurrenceError);
     
@@ -505,10 +505,10 @@ void TestTodoOccurrence::editOccurrenceNegative()
     QVERIFY(!m_om->saveItem(&firstInstance));
     QCOMPARE(m_om->error(), QOrganizerManager::InvalidOccurrenceError);
     
-    //Save the instance with invalid localid
+    //Save the instance with invalid id
     // TODO: Disabled because of API change. REFACTOR!
     //QOrganizerItemId itemId;
-    //itemId.setLocalId(1);
+    //itemId.setId(1);
     //firstInstance.setId(itemId);
     //QVERIFY(!m_om->saveItem(&firstInstance));
     //QCOMPARE(m_om->error(), QOrganizerManager::InvalidOccurrenceError);
@@ -620,7 +620,7 @@ void TestTodoOccurrence::addOccurrenceWithException()
     
     // Save item with recurrence rule.
     QVERIFY(m_om->saveItem(&item));    
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
             
     //Fetch instance on the exception date.An empty list should be returned
     QList<QOrganizerItem> instanceList = m_om->itemOccurrences(item,QDateTime(exceptionDate),QDateTime(exceptionDate));
@@ -687,7 +687,7 @@ void TestTodoOccurrence::editOccurrence()
     
     // Save item with recurrence rule.
     QVERIFY(m_om->saveItem(&item));    
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
 
     //Fetch first and third instance of the saved entry to modify
     QList<QOrganizerItem> instanceList = m_om->itemOccurrences(item,startTime,QDateTime(),3);

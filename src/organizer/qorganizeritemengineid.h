@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERCOLLECTIONENGINELOCALID_H
-#define QORGANIZERCOLLECTIONENGINELOCALID_H
+#ifndef QORGANIZERITEMENGINEID_H
+#define QORGANIZERITEMENGINEID_H
 
 #include <QString>
 #include <QSharedDataPointer>
@@ -51,32 +51,29 @@ class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
-class Q_ORGANIZER_EXPORT QOrganizerCollectionEngineLocalId
+class Q_ORGANIZER_EXPORT QOrganizerItemEngineId: public QSharedData
 {
 public:
-    virtual ~QOrganizerCollectionEngineLocalId() {}
+    virtual ~QOrganizerItemEngineId() {}
 
-    virtual bool isEqualTo(const QOrganizerCollectionEngineLocalId* other) const = 0;
-    virtual bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const = 0;
+    virtual bool isEqualTo(const QOrganizerItemEngineId* other) const = 0;
+    virtual bool isLessThan(const QOrganizerItemEngineId* other) const = 0;
 
-    virtual uint engineLocalIdType() const = 0;
-    virtual QOrganizerCollectionEngineLocalId* clone() const = 0;
+    virtual QString managerUri() const = 0;
+    virtual QOrganizerItemEngineId* clone() const = 0;
+
+    virtual QString toString() const = 0;
 
 #ifndef QT_NO_DEBUG_STREAM
     // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
-    virtual QDebug debugStreamOut(QDebug dbg) = 0;
-#endif
-#ifndef QT_NO_DATASTREAM
-    // NOTE: on platforms where Qt is built without data streams enabled, vtable will differ!
-    virtual QDataStream& dataStreamOut(QDataStream& out) = 0;
-    virtual QDataStream& dataStreamIn(QDataStream& in) = 0;
+    virtual QDebug& debugStreamOut(QDebug& dbg) const = 0;
 #endif
     virtual uint hash() const = 0;
 };
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerCollectionEngineLocalId), Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemEngineId), Q_MOVABLE_TYPE);
 
 
 #endif

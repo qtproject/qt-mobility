@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,46 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMIDFETCHREQUEST_H
-#define QORGANIZERITEMIDFETCHREQUEST_H
+import Qt 4.7
 
-#include "qtorganizerglobal.h"
-#include "qorganizerabstractrequest.h"
-#include "qorganizeritemsortorder.h"
-#include "qorganizeritemfilter.h"
+Item {
+    id: toolbar
 
-#include <QList>
-#include <QStringList>
+    property alias button1Label: button1.text
+    property alias button2Label: button2.text
+    signal button1Clicked
+    signal button2Clicked
 
-QTM_BEGIN_NAMESPACE
+    BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
 
-class QOrganizerItemLocalIdFetchRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemLocalIdFetchRequest : public QOrganizerAbstractRequest
-{
-    Q_OBJECT
+    Button {
+        id: button1
+        anchors.left: parent.left; anchors.leftMargin: 5; y: 3; width: 140; height: 32
+        onClicked: toolbar.button1Clicked()
+    }
 
-public:
-    QOrganizerItemLocalIdFetchRequest(QObject* parent = 0);
+    Button {
+        id: button2
+        anchors.right: parent.right; anchors.rightMargin: 5; y: 3; width: 140; height: 32
+        onClicked: toolbar.button2Clicked()
+    }
 
-    /* Selection, restriction and sorting */
-    void setFilter(const QOrganizerItemFilter& filter);
-    void setSorting(const QList<QOrganizerItemSortOrder>& sorting);
-    void setStartDate(const QDateTime& date);
-    void setEndDate(const QDateTime& date);
-    QOrganizerItemFilter filter() const;
-    QList<QOrganizerItemSortOrder> sorting() const;
-    QDateTime startDate() const;
-    QDateTime endDate() const;
-
-    /* Results */
-    QList<QOrganizerItemLocalId> itemIds() const;
-
-private:
-    Q_DISABLE_COPY(QOrganizerItemLocalIdFetchRequest)
-    friend class QOrganizerManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemLocalIdFetchRequest)
-};
-
-QTM_END_NAMESPACE
-
-#endif
+}

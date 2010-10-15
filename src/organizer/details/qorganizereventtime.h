@@ -58,20 +58,20 @@ public:
     static const QLatin1Constant DefinitionName;
     static const QLatin1Constant FieldStartDateTime;
     static const QLatin1Constant FieldEndDateTime;
-    static const QLatin1Constant FieldTimeSpecified;
+    static const QLatin1Constant FieldAllDay;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerEventTime, "EventTime")
     Q_DECLARE_LATIN1_CONSTANT(FieldStartDateTime, "StartDateTime");
     Q_DECLARE_LATIN1_CONSTANT(FieldEndDateTime, "EndDateTime");
-    Q_DECLARE_LATIN1_CONSTANT(FieldTimeSpecified, "TimeSpecified");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAllDay, "AllDay");
 #endif
 
     void setStartDateTime(const QDateTime& startDateTime) {setValue(FieldStartDateTime, startDateTime);}
     QDateTime startDateTime() const {return value<QDateTime>(FieldStartDateTime);}
     void setEndDateTime(const QDateTime& endDateTime) {setValue(FieldEndDateTime, endDateTime);}
     QDateTime endDateTime() const {return value<QDateTime>(FieldEndDateTime);}
-    void setTimeSpecified(bool isTimeSpecified) {setValue(FieldTimeSpecified, isTimeSpecified);}
-    bool isTimeSpecified() {return value<bool>(FieldTimeSpecified);}
+    void setAllDay(bool isAllDay) {setValue(FieldAllDay, isAllDay);}
+    bool isAllDay() const {return value<bool>(FieldAllDay);}
 };
 
 QTM_END_NAMESPACE

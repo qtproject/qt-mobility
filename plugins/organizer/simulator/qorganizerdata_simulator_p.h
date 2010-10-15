@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMLOCALIDFILTER_P_H
-#define QORGANIZERITEMLOCALIDFILTER_P_H
+#ifndef QORGANIZERDATA_SIMULATOR_P_H
+#define QORGANIZERDATA_SIMULATOR_P_H
 
 //
 //  W A R N I N G
@@ -53,56 +53,61 @@
 // We mean it.
 //
 
-#include "qorganizeritemfilter_p.h"
-#include "qorganizeritemfilter.h"
+#include "qmobilityglobal.h"
+// needed to make imports work from Simulator and Mobility
+#include "qorganizeritem.h"
+#include "qorganizercollection.h"
+#include "qorganizeritemdetaildefinition.h"
+#include "qorganizermanager.h"
+#include <QtCore/QMetaType>
 
-#include <QString>
-#include <QVariant>
-#include <QDebug>
-
+QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemLocalIdFilterPrivate : public QOrganizerItemFilterPrivate
+namespace Simulator {
+
+class SaveOrganizerItemReply
 {
 public:
-    QOrganizerItemLocalIdFilterPrivate()
-        : QOrganizerItemFilterPrivate()
-    {
-    }
-
-    QOrganizerItemLocalIdFilterPrivate(const QOrganizerItemLocalIdFilterPrivate& other)
-        : QOrganizerItemFilterPrivate(other),
-        m_ids(other.m_ids)
-    {
-    }
-
-    virtual bool compare(const QOrganizerItemFilterPrivate* other) const
-    {
-        const QOrganizerItemLocalIdFilterPrivate *od = static_cast<const QOrganizerItemLocalIdFilterPrivate*>(other);
-        if (m_ids != od->m_ids)
-            return false;
-        return true;
-    }
-
-    QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
-    {
-        Q_UNUSED(formatVersion)
-        qWarning() << "Can't stream a local ID filter to a QDataStream";
-        return stream;
-    }
-
-    QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
-    {
-        Q_UNUSED(formatVersion)
-        qWarning() << "Can't stream a local ID filter from a QDataStream";
-        return stream;
-    }
-
-    Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemLocalIdFilter, QOrganizerItemFilter::LocalIdFilter)
-
-    QList<QOrganizerItemLocalId> m_ids;
+    QOrganizerItem savedItem;
+    QOrganizerManager::Error error;
 };
+
+class SaveOrganizerCollectionReply
+{
+public:
+    QOrganizerCollection savedCollection;
+    QOrganizerManager::Error error;
+};
+
+// wrap the ids because they are registered with QTM_PREPEND_NAMESPACE(...Id),
+// which leads to a method signature moc can not cope with
+class OrganizerItemId
+{
+public:
+    QOrganizerItemId id;
+};
+
+class OrganizerCollectionId
+{
+public:
+    QOrganizerCollectionId id;
+};
+
+} // namespace Simulator
+
+void qt_registerOrganizerTypes();
 
 QTM_END_NAMESPACE
 
-#endif
+Q_DECLARE_METATYPE(QtMobility::QOrganizerItem)
+Q_DECLARE_METATYPE(QtMobility::QOrganizerCollection)
+Q_DECLARE_METATYPE(QtMobility::QOrganizerItemDetailDefinition)
+Q_DECLARE_METATYPE(QtMobility::Simulator::OrganizerItemId)
+Q_DECLARE_METATYPE(QtMobility::Simulator::OrganizerCollectionId)
+Q_DECLARE_METATYPE(QtMobility::Simulator::SaveOrganizerItemReply)
+Q_DECLARE_METATYPE(QtMobility::Simulator::SaveOrganizerCollectionReply)
+
+QT_END_HEADER
+
+#endif // QORGANIZERDATA_SIMULATOR_P_H

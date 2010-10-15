@@ -39,45 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMENGINELOCALID_H
-#define QORGANIZERITEMENGINELOCALID_H
+#ifndef QORGANIZERITEMTAG_H
+#define QORGANIZERITEMTAG_H
 
 #include <QString>
-#include <QSharedDataPointer>
 
 #include "qtorganizerglobal.h"
-
-class QDataStream;
+#include "qorganizeritemdetail.h"
+#include "qorganizeritem.h"
+#include "qorganizeritemfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
-class Q_ORGANIZER_EXPORT QOrganizerItemEngineLocalId
+/* Leaf class */
+class Q_ORGANIZER_EXPORT QOrganizerItemTag : public QOrganizerItemDetail
 {
 public:
-    virtual ~QOrganizerItemEngineLocalId() {}
-
-    virtual bool isEqualTo(const QOrganizerItemEngineLocalId* other) const = 0;
-    virtual bool isLessThan(const QOrganizerItemEngineLocalId* other) const = 0;
-
-    virtual uint engineLocalIdType() const = 0;
-    virtual QOrganizerItemEngineLocalId* clone() const = 0;
-
-#ifndef QT_NO_DEBUG_STREAM
-    // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
-    virtual QDebug debugStreamOut(QDebug dbg) = 0;
+#ifdef Q_QDOC
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldTag;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemTag, "Tag")
+    Q_DECLARE_LATIN1_CONSTANT(FieldTag, "Tag");
 #endif
-#ifndef QT_NO_DATASTREAM
-    // NOTE: on platforms where Qt is built without data streams enabled, vtable will differ!
-    virtual QDataStream& dataStreamOut(QDataStream& out) = 0;
-    virtual QDataStream& dataStreamIn(QDataStream& in) = 0;
-#endif
-    virtual uint hash() const = 0;
+
+    void setTag(const QString& tag) {setValue(FieldTag, tag);}
+    QString tag() const {return value(FieldTag);}
+
+    // Convenience filter
+    static QOrganizerItemFilter match(const QString& substring);
 };
 
 QTM_END_NAMESPACE
-
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemEngineLocalId), Q_MOVABLE_TYPE);
-
 
 #endif
 
