@@ -68,12 +68,10 @@ public:
     const QString managerUri() const;
     QOrganizerCollectionEngineId* clone() const;
 
+    QString toString() const;
+
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;
-#endif
-#ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out) const;
-    QDataStream& dataStreamIn(QDataStream& in);
 #endif
     uint hash() const;
 
@@ -97,12 +95,10 @@ public:
     const QString managerUri() const;
     QOrganizerItemEngineId* clone() const;
 
+    QString toString() const;
+
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;
-#endif
-#ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out) const;
-    QDataStream& dataStreamIn(QDataStream& in);
 #endif
     uint hash() const;
 

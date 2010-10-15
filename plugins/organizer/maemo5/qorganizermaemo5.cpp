@@ -129,25 +129,16 @@ QOrganizerItemEngineId* QOrganizerItemMaemo5EngineId::clone() const
     return myClone;
 }
 
+QString QOrganizerItemMaemo5EngineId::toString() const
+{
+    return QString::number(m_localItemId);
+}
+
 #ifndef QT_NO_DEBUG_STREAM
 QDebug& QOrganizerItemMaemo5EngineId::debugStreamOut(QDebug& dbg) const
 {
     dbg.nospace() << "QOrganizerItemMaemo5EngineLocalId(" << m_localItemId << ")";
     return dbg.maybeSpace();
-}
-#endif
-
-#ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerItemMaemo5EngineId::dataStreamOut(QDataStream& out) const
-{
-    out << m_localItemId;
-    return out;
-}
-
-QDataStream& QOrganizerItemMaemo5EngineId::dataStreamIn(QDataStream& in)
-{
-    in >> m_localItemId;
-    return in;
 }
 #endif
 
@@ -217,23 +208,16 @@ QOrganizerCollectionEngineId* QOrganizerCollectionMaemo5EngineId::clone() const
     return myClone;
 }
 
+QString QOrganizerCollectionMaemo5EngineId::toString() const
+{
+    return QString::number(m_localCollectionId);
+}
+
 #ifndef QT_NO_DEBUG_STREAM
 QDebug& QOrganizerCollectionMaemo5EngineId::debugStreamOut(QDebug& dbg) const
 {
     dbg.nospace() << "QOrganizerCollectionMaemo5EngineLocalId(" << m_localCollectionId << ")";
     return dbg.maybeSpace();
-}
-#endif
-
-#ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerCollectionMaemo5EngineId::dataStreamOut(QDataStream& out) const
-{
-    return (out << m_localCollectionId);
-}
-
-QDataStream& QOrganizerCollectionMaemo5EngineId::dataStreamIn(QDataStream& in)
-{
-    return (in >> m_localCollectionId);
 }
 #endif
 
@@ -251,16 +235,22 @@ QOrganizerManagerEngine* QOrganizerItemMaemo5Factory::engine(const QMap<QString,
     return retn;
 }
 
-QOrganizerItemEngineId* QOrganizerItemMaemo5Factory::createItemEngineId(const QMap<QString, QString>& parameters) const
+QOrganizerItemEngineId* QOrganizerItemMaemo5Factory::createItemEngineId(const QMap<QString, QString>& parameters, const QString& idString) const
 {
     Q_UNUSED(parameters);
-    return new QOrganizerItemMaemo5EngineId;
+    QOrganizerItemMaemo5EngineId* retn = new QOrganizerItemMaemo5EngineId;
+    if (!idString.isEmpty())
+        retn->m_localItemId = idString.toUInt();
+    return retn;
 }
 
-QOrganizerCollectionEngineId* QOrganizerItemMaemo5Factory::createCollectionEngineId(const QMap<QString, QString>& parameters) const
+QOrganizerCollectionEngineId* QOrganizerItemMaemo5Factory::createCollectionEngineId(const QMap<QString, QString>& parameters, const QString& idString) const
 {
     Q_UNUSED(parameters);
-    return new QOrganizerCollectionMaemo5EngineId;
+    QOrganizerCollectionMaemo5EngineId* retn = new QOrganizerCollectionMaemo5EngineId;
+    if (!idString.isEmpty())
+        retn->m_localCollectionId = idString.toUInt();
+    return retn;
 }
 
 QString QOrganizerItemMaemo5Factory::managerName() const
