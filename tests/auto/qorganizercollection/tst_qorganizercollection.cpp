@@ -43,7 +43,6 @@
 
 #include "qtorganizer.h"
 #include "qorganizeritemid.h"
-#include "qorganizercollectionenginelocalid.h"
 #include <QSet>
 
 //TESTED_COMPONENT=src/organizer
