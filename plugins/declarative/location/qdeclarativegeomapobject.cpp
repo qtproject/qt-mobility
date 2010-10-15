@@ -44,11 +44,34 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass MapGroup
+
+    \brief The MapGroup element aggregates a set of map objects.
+    \inherits QGeoMapGroupObject
+
+    \ingroup qml-location-maps
+
+    Grouping is provided to make it easier to quickly add, remove, show 
+    and hide groups of objects.
+
+    It also allows users to specify an ordering of objects local to the 
+    group via the z-values and insertion order of the objects in the group.
+
+    The MapGroup element is part of the \bold{QtMobility.location 1.1} module.
+*/
 
 QDeclarativeGeoMapObject::QDeclarativeGeoMapObject()
         : QGeoMapGroupObject() {}
 
 QDeclarativeGeoMapObject::~QDeclarativeGeoMapObject() {}
+
+/*!
+    \qmlproperty list<QGeoMapObject> MapGroup::objects
+    \default
+
+    This property holds the list of objects which make up the group.
+*/
 
 QDeclarativeListProperty<QGeoMapObject> QDeclarativeGeoMapObject::objects()
 {
@@ -79,6 +102,34 @@ void QDeclarativeGeoMapObject::child_clear(QDeclarativeListProperty<QGeoMapObjec
 {
     static_cast<QDeclarativeGeoMapObject*>(prop->object)->clearChildObjects();
 }
+
+/*!
+    \qmlproperty int MapGroup::zValue
+
+    This property holds the z-value of the group.
+
+    Map objects are drawn in z-value order, and objects with the 
+    same z-value will be drawn in insertion order.
+
+    The objects inside the group are drawn according to the z-values 
+    and insertion order of the other elements of the group.  This 
+    is indpendent of the z-value and insertion order of the group 
+    element itself.
+*/
+
+/*!
+    \qmlproperty bool MapGroup::visible
+
+    This property holds a boolean corresponding to whether or not the 
+    group is visible.
+*/
+
+/*!
+    \qmlproperty bool MapGroup::selected
+
+    This property holds a boolean corresponding to whether or not the 
+    group is selected.
+*/
 
 #include "moc_qdeclarativegeomapobject_p.cpp"
 

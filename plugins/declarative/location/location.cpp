@@ -102,13 +102,13 @@ public:
         qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 1, 1, "Map");
         qmlRegisterType<QDeclarativeGeoMapObjectBorder>();
         qmlRegisterType<QGeoMapObject>(uri, 1, 1, "QGeoMapObject");
-        qmlRegisterType<QDeclarativeGeoMapObject>(uri, 1, 1, "MapObject");
+        qmlRegisterType<QDeclarativeGeoMapObject>(uri, 1, 1, "MapGroup");
         qmlRegisterType<QDeclarativeGeoMapCircleObject>(uri, 1, 1, "MapCircle");
         qmlRegisterType<QDeclarativeGeoMapPolygonObject>(uri, 1, 1, "MapPolygon");
         qmlRegisterType<QDeclarativeGeoMapPolylineObject>(uri, 1, 1, "MapPolyline");
         qmlRegisterType<QDeclarativeGeoMapRectangleObject>(uri, 1, 1, "MapRectangle");
         qmlRegisterType<QDeclarativeGeoMapTextObject>(uri, 1, 1, "MapText");
-        qmlRegisterType<QDeclarativeGeoMapPixmapObject>(uri, 1, 1, "MapPixmap");
+        qmlRegisterType<QDeclarativeGeoMapPixmapObject>(uri, 1, 1, "MapImage");
     }
 };
 

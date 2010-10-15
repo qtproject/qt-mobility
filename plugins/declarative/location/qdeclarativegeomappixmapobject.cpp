@@ -55,6 +55,25 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass MapImage
+
+    \brief The MapImage element displays an image on a map.
+    \inherits QGeoMapPixmapObject
+
+    \ingroup qml-location-maps
+
+    The image loaded from \l source will be drawn \l offset.x and 
+    \l offset.y pixels away from the on-screen position of \l coordinate.
+    
+    If \l source does not point to an image or \l coordinate is 
+    invalid nothing will be displayed.
+
+    The status of the image loading can be monitored via \l status.
+
+    The MapImage element is part of the \bold{QtMobility.location 1.1} module.
+*/
+
 QDeclarativeGeoMapPixmapObject::QDeclarativeGeoMapPixmapObject()
     : m_status(QDeclarativeGeoMapPixmapObject::Null),
     m_reply(0)
@@ -81,6 +100,12 @@ QDeclarativeGeoMapPixmapObject::~QDeclarativeGeoMapPixmapObject()
 {
 }
 
+/*!
+    \qmlproperty Coordinate MapImage::coordinate
+
+    This property holds the coordinate at which to anchor the image. 
+*/
+
 void QDeclarativeGeoMapPixmapObject::setDeclarativeCoordinate(const QDeclarativeCoordinate *coordinate)
 {
     if (m_coordinate->coordinate() == coordinate->coordinate())
@@ -97,7 +122,6 @@ QDeclarativeCoordinate* QDeclarativeGeoMapPixmapObject::declarativeCoordinate()
     return m_coordinate;
 }
 
-
 void QDeclarativeGeoMapPixmapObject::coordinateLatitudeChanged(double /*latitude*/)
 {
     setCoordinate(m_coordinate->coordinate());
@@ -112,6 +136,27 @@ void QDeclarativeGeoMapPixmapObject::coordinateAltitudeChanged(double /*altitude
 {
     setCoordinate(m_coordinate->coordinate());
 }
+
+/*!
+    \qmlproperty int MapImage::offset.x
+    \qmlproperty int MapImage::offset.y
+
+    These properties hold the offset from the on-screen position of 
+    \l coordinate at which the image should be displayed.
+
+    They both default to 0.
+*/
+
+/*!
+    \qmlproperty url MapImage::source
+
+    This property holds the URL describing the location of the image to 
+    display.
+
+    The URL can be absolute or relative to where the QML file 
+    was loaded from, and can be a local file, a file embedded within 
+    a Qt Resource bundle, or a file retrieved from the network.
+*/
 
 void QDeclarativeGeoMapPixmapObject::setSource(const QUrl &source)
 {
@@ -130,6 +175,17 @@ QUrl QDeclarativeGeoMapPixmapObject::source() const
     return m_source;
 }
 
+/*!
+    \qmlproperty enumeration MapImage::status
+
+    This property holds the status of image loading.  It can be one of:
+    \list
+    \o MapImage.Null - no image has been set
+    \o MapImage.Ready - the image has been loaded
+    \o MapImage.Loading - the image is currently being loaded
+    \o MapImage.Error - an error occurred while loading the image
+    \endlist
+*/
 
 QDeclarativeGeoMapPixmapObject::Status QDeclarativeGeoMapPixmapObject::status() const
 {
@@ -254,6 +310,29 @@ void QDeclarativeGeoMapPixmapObject::error(QNetworkReply::NetworkError error)
     setStatus(QDeclarativeGeoMapPixmapObject::Error);
     //qWarning() << "network error fail";
 }
+
+/*!
+    \qmlproperty int MapImage::zValue
+
+    This property holds the z-value of the image.
+
+    Map objects are drawn in z-value order, and objects with the 
+    same z-value will be drawn in insertion order.
+*/
+
+/*!
+    \qmlproperty bool MapImage::visible
+
+    This property holds a boolean corresponding to whether or not the 
+    image is visible.
+*/
+
+/*!
+    \qmlproperty bool MapImage::selected
+
+    This property holds a boolean corresponding to whether or not the 
+    image is selected.
+*/
 
 #include "moc_qdeclarativegeomappixmapobject_p.cpp"
 

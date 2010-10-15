@@ -45,11 +45,27 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass Plugin
+
+    \brief The Plugin element describes a Location based services plugin.
+    \inherits QObject
+
+    \ingroup qml-location-maps
+
+    The Plugin element is part of the \bold{QtMobility.location 1.1} module.
+*/
+
 QDeclarativeGeoServiceProvider::QDeclarativeGeoServiceProvider(QObject *parent)
     : QObject(parent) {}
 
 QDeclarativeGeoServiceProvider::~QDeclarativeGeoServiceProvider() {}
 
+/*!
+    \qmlproperty string Plugin::name
+
+    This property holds the name of the plugin.
+*/
 void QDeclarativeGeoServiceProvider::setName(const QString &name)
 {
     if (name_ == name)
@@ -65,6 +81,12 @@ QString QDeclarativeGeoServiceProvider::name() const
     return name_;
 }
 
+/*!
+    \qmlproperty list<PluginParameter> Plugin::parameters
+    \default
+
+    This property holds the list of plugin parameters.
+*/
 QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> QDeclarativeGeoServiceProvider::parameters()
 {
     return QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter>(this,
@@ -109,11 +131,27 @@ QMap<QString, QVariant> QDeclarativeGeoServiceProvider::parameterMap() const
 /*******************************************************************************
 *******************************************************************************/
 
+/*!
+    \qmlclass PluginParameter
+
+    \brief The PluginParameter element describes the parameter to a \l Plugin.
+    \inherits QObject
+
+    \ingroup qml-location-maps
+
+    The PluginParameter element is part of the \bold{QtMobility.location 1.1} module.
+*/
+
 QDeclarativeGeoServiceProviderParameter::QDeclarativeGeoServiceProviderParameter(QObject *parent)
     : QObject(parent) {}
 
 QDeclarativeGeoServiceProviderParameter::~QDeclarativeGeoServiceProviderParameter() {}
 
+/*!
+    \qmlproperty string PluginParameter::name
+
+    This property holds the name of the plugin parameter.
+*/
 void QDeclarativeGeoServiceProviderParameter::setName(const QString &name)
 {
     if (name_ == name)
@@ -129,6 +167,11 @@ QString QDeclarativeGeoServiceProviderParameter::name() const
     return name_;
 }
 
+/*!
+    \qmlproperty QVariant PluginParameter::value
+
+    This property holds the value of the plugin parameter.
+*/
 void QDeclarativeGeoServiceProviderParameter::setValue(const QVariant &value)
 {
     if (value_ == value)
