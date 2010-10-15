@@ -162,7 +162,7 @@ bool QOrganizerItemSkeletonEngineLocalId::isLessThan(const QOrganizerItemEngineI
     return (m_localItemId < otherlocalItemId);
 }
 
-uint QOrganizerItemSkeletonEngineLocalId::engineLocalIdType() const
+uint QOrganizerItemSkeletonEngineLocalId::engineIdType() const
 {
     /*
       TODO
@@ -388,7 +388,7 @@ bool QOrganizerCollectionSkeletonEngineLocalId::isLessThan(const QOrganizerColle
     return false;
 }
 
-uint QOrganizerCollectionSkeletonEngineLocalId::engineLocalIdType() const
+uint QOrganizerCollectionSkeletonEngineLocalId::engineIdType() const
 {
     /*
       TODO

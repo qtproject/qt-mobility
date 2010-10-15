@@ -96,7 +96,7 @@ public:
     bool isLessThan(const QOrganizerItemEngineId* other) const {
         return m_id < static_cast<const BasicItemLocalId*>(other)->m_id;
     }
-    uint engineLocalIdType() const {
+    uint engineIdType() const {
         return 0;
     }
     QOrganizerItemEngineId* clone() const {

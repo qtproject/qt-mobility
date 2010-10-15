@@ -107,7 +107,7 @@ bool QOrganizerItemMaemo5EngineId::isLessThan(const QOrganizerItemEngineId* othe
     return (m_localItemId < otherlocalItemId);
 }
 
-uint QOrganizerItemMaemo5EngineId::engineLocalIdType() const
+uint QOrganizerItemMaemo5EngineId::engineIdType() const
 {
     // engines should embed the result of this as const read-only data (uint),
     // instead of calculating it every time the function is called...
@@ -195,7 +195,7 @@ bool QOrganizerCollectionMaemo5EngineId::isLessThan(const QOrganizerCollectionEn
     return false;
 }
 
-uint QOrganizerCollectionMaemo5EngineId::engineLocalIdType() const
+uint QOrganizerCollectionMaemo5EngineId::engineIdType() const
 {
     // engines should embed the result of this as const read-only data (uint),
     // instead of calculating it every time the function is called...

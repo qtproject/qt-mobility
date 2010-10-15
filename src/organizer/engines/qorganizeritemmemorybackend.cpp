@@ -136,7 +136,7 @@ bool QOrganizerItemMemoryEngineLocalId::isLessThan(const QOrganizerItemEngineId*
     return false;
 }
 
-uint QOrganizerItemMemoryEngineLocalId::engineLocalIdType() const
+uint QOrganizerItemMemoryEngineLocalId::engineIdType() const
 {
     // engines should embed the result of this as const read-only data (uint),
     // instead of calculating it every time the function is called...
@@ -236,7 +236,7 @@ bool QOrganizerCollectionMemoryEngineLocalId::isLessThan(const QOrganizerCollect
     return false;
 }
 
-uint QOrganizerCollectionMemoryEngineLocalId::engineLocalIdType() const
+uint QOrganizerCollectionMemoryEngineLocalId::engineIdType() const
 {
     // engines should embed the result of this as const read-only data (uint),
     // instead of calculating it every time the function is called...

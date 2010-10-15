@@ -108,7 +108,7 @@ bool QOrganizerItemSymbianEngineLocalId::isLessThan(const QOrganizerItemEngineId
     return false;
 }
 
-uint QOrganizerItemSymbianEngineLocalId::engineLocalIdType() const
+uint QOrganizerItemSymbianEngineLocalId::engineIdType() const
 {
     return KSymbianEngineLocalIdType;
 }
@@ -197,7 +197,7 @@ bool QOrganizerCollectionSymbianEngineLocalId::isLessThan(const QOrganizerCollec
     return false;
 }
 
-uint QOrganizerCollectionSymbianEngineLocalId::engineLocalIdType() const
+uint QOrganizerCollectionSymbianEngineLocalId::engineIdType() const
 {
     return KSymbianEngineLocalIdType;
 }
