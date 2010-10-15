@@ -191,9 +191,9 @@ void tst_symbianomcollections::fetchCollection()
     // Get all collections
     QList<QOrganizerCollection> collections = m_om->collections();
     QVERIFY(collections.count() >= 1); // default collection should always be present
-    QVERIFY(collections[0].id().localId() == dId);
+    QVERIFY(collections[0].id() == dId);
     foreach (QOrganizerCollection collection, collections) {
-        QVERIFY(!collection.id().localId().isNull());
+        QVERIFY(!collection.id().isNull());
         QVERIFY(collection.id().managerUri() == m_om->managerUri());
         // dump metadata into log
         foreach (QString key, collection.metaData().keys())
@@ -203,7 +203,7 @@ void tst_symbianomcollections::fetchCollection()
     // Get a specific collection
     QOrganizerCollection defaultCollection = m_om->collection(dId);
     QCOMPARE(m_om->error(), QOrganizerManager::NoError);
-    QVERIFY(!defaultCollection.id().localId().isNull());
+    QVERIFY(!defaultCollection.id().isNull());
 
     // Can we save collections? 
     if (!m_customCollectionsSupported)
@@ -217,10 +217,10 @@ void tst_symbianomcollections::fetchCollection()
     QCOMPARE(m_om->collections().count(), 2);
 
     // fetch an already removed collection
-    QVERIFY(m_om->removeCollection(c1.id().localId()));
+    QVERIFY(m_om->removeCollection(c1.id()));
     QCOMPARE(m_om->error(), QOrganizerManager::NoError);
     QCOMPARE(m_om->collections().count(), 1);
-    QVERIFY(m_om->collection(c1.id().localId()) == QOrganizerCollection());
+    QVERIFY(m_om->collection(c1.id()) == QOrganizerCollection());
     QCOMPARE(m_om->error(), QOrganizerManager::DoesNotExistError);
 }
 
