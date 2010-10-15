@@ -63,6 +63,9 @@ class QContactActionDescriptorPrivate;
 // MSVC needs the declaration before the friend statement
 class QContactActionDescriptor;
 Q_CONTACTS_EXPORT uint qHash(const QContactActionDescriptor& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug& operator<<(QDebug dbg, const QContactActionDescriptor& descriptor);
+#endif
 
 class Q_CONTACTS_EXPORT QContactActionDescriptor
 {
@@ -111,6 +114,9 @@ private:
     QSharedDataPointer<QContactActionDescriptorPrivate> d;
     friend class QContactActionFactory;
     friend class QContactActionServiceManager;
+#ifndef QT_NO_DEBUG_STREAM
+    Q_CONTACTS_EXPORT friend QDebug& operator<<(QDebug dbg, const QContactActionDescriptor& descriptor);
+#endif
     Q_CONTACTS_EXPORT friend uint qHash(const QContactActionDescriptor& key);
 };
 

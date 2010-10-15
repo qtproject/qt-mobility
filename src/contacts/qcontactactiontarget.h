@@ -47,11 +47,23 @@
 #include "qcontact.h"
 #include "qcontactdetail.h"
 
+#include <QDebug>
 #include <QList>
 #include <QString>
 #include <QSharedDataPointer>
 
 QTM_BEGIN_NAMESPACE
+
+// MSVC needs the function declared before the friend declaration
+class QContactActionTarget;
+Q_CONTACTS_EXPORT uint qHash(const QContactActionTarget& key);
+#ifndef QT_NO_DATASTREAM
+Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactActionTarget& target);
+Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactActionTarget& target);
+#endif
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug& operator<<(QDebug dbg, const QContactActionTarget& target);
+#endif
 
 class QContactActionTargetPrivate;
 class Q_CONTACTS_EXPORT QContactActionTarget
@@ -84,10 +96,12 @@ public:
     QList<QContactDetail> details() const;
 
 private:
+#ifndef QT_NO_DATASTREAM
+    Q_CONTACTS_EXPORT friend QDataStream& operator<<(QDataStream& out, const QContactActionTarget& target);
+    Q_CONTACTS_EXPORT friend QDataStream& operator>>(QDataStream& in, QContactActionTarget& target);
+#endif
     QSharedDataPointer<QContactActionTargetPrivate> d;
 };
-
-Q_CONTACTS_EXPORT uint qHash(const QContactActionTarget& key);
 
 QTM_END_NAMESPACE
 
