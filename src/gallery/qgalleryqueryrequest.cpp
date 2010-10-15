@@ -139,7 +139,7 @@ public:
     type of value that will returned by metaData() can be queried using
     propertyType().
 
-    \sa QDocumentGallery, QGalleyQueryModel
+    \sa QDocumentGallery, QGalleryQueryModel
 */
 
 /*!
@@ -320,7 +320,7 @@ void QGalleryQueryRequest::setLimit(int limit)
 }
 
 /*!
-    \property QGalleryQueryRequest::limitChanged()
+    \fn QGalleryQueryRequest::limitChanged()
 
     Signals that the value of \l limit has changed.
 */
