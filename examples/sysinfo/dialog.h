@@ -72,6 +72,7 @@ private:
     QSystemStorageInfo *sti;
     void updateStorage();
     QSystemDeviceInfo::BatteryStatus currentBatStat;
+    QSystemDeviceInfo::PowerState currentPowerState;
     
 private slots:
     void tabChanged(int index);
