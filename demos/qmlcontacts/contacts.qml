@@ -156,7 +156,8 @@ Item {
                                 Text {
                                     id: nameTxt
                                     y: 8;
-                                    text: model.contact.displayLabel
+                                    //text: model.contact.displayLabel
+                                    text: model.contact.name.firstName
                                     color: "white"
                                 }
                             }

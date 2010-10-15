@@ -64,7 +64,7 @@ public:
 
     enum FilterType {
         InvalidFilter = QContactFilter::InvalidFilter,
-        tDetailFilter = QContactFilter::ContactDetailFilter,
+        DetailFilter = QContactFilter::ContactDetailFilter,
         DetailRangeFilter = QContactFilter::ContactDetailRangeFilter,
         ChangeLogFilter = QContactFilter::ChangeLogFilter,
         ActionFilter = QContactFilter::ActionFilter,

@@ -65,7 +65,7 @@ public:
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactFamily;
+        return QDeclarativeContactDetail::Family;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {

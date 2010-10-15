@@ -71,7 +71,7 @@ public:
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactRingtone;
+        return QDeclarativeContactDetail::Ringtone;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {

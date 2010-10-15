@@ -107,11 +107,9 @@ public:
     QString manager() const;
     QDeclarativeListProperty<QDeclarativeContactDetail> details();
 
-    Q_INVOKABLE QVariant detail(const QString& name);
-    Q_INVOKABLE QVariant detail(QDeclarativeContactDetail::ContactDetailType type);
+    Q_INVOKABLE QDeclarativeContactDetail* detail(const QVariant& name);
+    Q_INVOKABLE QDeclarativeListProperty<QDeclarativeContactDetail> details(const QVariant& name);
 
-    Q_INVOKABLE QVariant details(const QString& name);
-    Q_INVOKABLE QVariant details(QDeclarativeContactDetail::ContactDetailType type);
     Q_INVOKABLE bool removeDetail(QDeclarativeContactDetail* detail);
     QDeclarativeContactAddress* address();
     QDeclarativeContactAnniversary* anniversary();

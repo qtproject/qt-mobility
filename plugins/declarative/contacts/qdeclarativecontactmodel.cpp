@@ -63,7 +63,10 @@ public:
     QDeclarativeContactModelPrivate()
         :m_manager(0),
         m_fetchHint(0),
-        m_filter(0)
+        m_filter(0),
+        m_autoUpdate(true),
+        m_updatePending(false),
+        m_componentCompleted(false)
     {
     }
     ~QDeclarativeContactModelPrivate()
@@ -82,6 +85,10 @@ public:
     QVersitReader m_reader;
     QVersitWriter m_writer;
     QStringList m_importProfiles;
+
+    bool m_autoUpdate;
+    bool m_updatePending;
+    bool m_componentCompleted;
 };
 
 QDeclarativeContactModel::QDeclarativeContactModel(QObject *parent) :
@@ -110,6 +117,36 @@ QString QDeclarativeContactModel::manager() const
     return QString();
 }
 
+void QDeclarativeContactModel::componentComplete()
+{
+    d->m_componentCompleted = true;
+    if (!d->m_manager) {
+        d->m_manager = new QContactManager();
+        //connectManager();
+    }
+    if (d->m_autoUpdate) {
+        //TODO
+        //scheduleUpdate();
+    }
+}
+
+void QDeclarativeContactModel::setAutoUpdate(bool autoUpdate)
+{
+    if (autoUpdate == d->m_autoUpdate)
+        return;
+    d->m_autoUpdate = autoUpdate;
+    emit autoUpdateChanged();
+}
+
+bool QDeclarativeContactModel::autoUpdate() const
+{
+    return d->m_autoUpdate;
+}
+
+void QDeclarativeContactModel::update()
+{
+    //TODO
+}
 
 QString QDeclarativeContactModel::error() const
 {
@@ -159,13 +196,13 @@ static QString urlToLocalFileName(const QUrl& url)
    } else if (url.scheme() == "qrc") {
       return url.toString().remove(0, 5).prepend(':');
    } else {
-      return url.toString(QUrl::RemoveScheme);
+      return url.toLocalFile();
    }
 
 }
 void QDeclarativeContactModel::importContacts(const QUrl& url, const QStringList& profiles)
 {
-   qWarning() << "importing contacts from:" << url;
+   //qWarning() << "importing contacts from:" << url;
    d->m_importProfiles = profiles;
 
    //TODO: need to allow download vcard from network
@@ -179,7 +216,7 @@ void QDeclarativeContactModel::importContacts(const QUrl& url, const QStringList
 
 void QDeclarativeContactModel::exportContacts(const QUrl& url, const QStringList& profiles)
 {
-   qWarning() << "exporting contacts into:" << url;
+   //qWarning() << "exporting contacts into:" << url;
 
    QString profile = profiles.isEmpty()? QString() : profiles.at(0);
     //only one profile string supported now
@@ -237,10 +274,9 @@ QDeclarativeContactFilter* QDeclarativeContactModel::filter() const
 
 void QDeclarativeContactModel::setFilter(QDeclarativeContactFilter* filter)
 {
-    if (filter && filter != d->m_filter) {
-        if (d->m_filter)
-            delete d->m_filter;
-        d->m_filter = filter;
+    d->m_filter = filter;
+    if (d->m_filter) {
+        connect(d->m_filter, SIGNAL(valueChanged()), SLOT(fetchAgain()));
         emit filterChanged();
     }
 }
@@ -414,6 +450,7 @@ void QDeclarativeContactModel::contactsRemoved(const QList<QContactLocalId>& ids
     foreach (const QContactLocalId& id, ids) {
         if (d->m_contactMap.contains(id)) {
             int row = 0;
+            //TODO:need a fast lookup
             for (; row < d->m_contacts.count(); row++) {
                 if (d->m_contacts.at(row)->contactId() == id)
                     break;
@@ -441,7 +478,8 @@ void QDeclarativeContactModel::contactsChanged(const QList<QContactLocalId>& ids
         }
     }
 
-    fetchContacts(updatedIds);
+    if (updatedIds.count() > 0)
+        fetchContacts(updatedIds);
 }
 
 void QDeclarativeContactModel::contactsRemoved()
