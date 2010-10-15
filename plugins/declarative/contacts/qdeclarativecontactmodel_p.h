@@ -105,8 +105,8 @@ signals:
     void sortOrdersChanged();
 
 public slots:
-    void exportContacts(const QString& file);
-    void importContacts(const QString& file);
+    void exportContacts(const QUrl& url, const QStringList& profiles = QStringList());
+    void importContacts(const QUrl& url, const QStringList& profiles = QStringList());
     void removeContacts(const QList<QContactLocalId>& ids);
     void fetchContacts(const QList<QContactLocalId>& contactIds);
 private slots:

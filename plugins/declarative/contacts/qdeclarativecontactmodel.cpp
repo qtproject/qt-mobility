@@ -81,6 +81,7 @@ public:
 
     QVersitReader m_reader;
     QVersitWriter m_writer;
+    QStringList m_importProfiles;
 };
 
 QDeclarativeContactModel::QDeclarativeContactModel(QObject *parent) :
@@ -151,11 +152,10 @@ QStringList QDeclarativeContactModel::availableManagers() const
 {
     return QContactManager::availableManagers();
 }
-static QString urlToLocalFileName(const QString& str)
+static QString urlToLocalFileName(const QUrl& url)
 {
-   QUrl url(str);
    if (!url.isValid()) {
-      return str;
+      return url.toString();
    } else if (url.scheme() == "qrc") {
       return url.toString().remove(0, 5).prepend(':');
    } else {
@@ -163,10 +163,13 @@ static QString urlToLocalFileName(const QString& str)
    }
 
 }
-void QDeclarativeContactModel::importContacts(const QString& fileName)
+void QDeclarativeContactModel::importContacts(const QUrl& url, const QStringList& profiles)
 {
-   qWarning() << "importing contacts from:" << fileName;
-   QFile*  file = new QFile(urlToLocalFileName(fileName));
+   qWarning() << "importing contacts from:" << url;
+   d->m_importProfiles = profiles;
+
+   //TODO: need to allow download vcard from network
+   QFile*  file = new QFile(urlToLocalFileName(url));
    bool ok = file->open(QIODevice::ReadOnly);
    if (ok) {
       d->m_reader.setDevice(file);
@@ -174,10 +177,14 @@ void QDeclarativeContactModel::importContacts(const QString& fileName)
    }
 }
 
-void QDeclarativeContactModel::exportContacts(const QString& fileName)
+void QDeclarativeContactModel::exportContacts(const QUrl& url, const QStringList& profiles)
 {
-   qWarning() << "exporting contacts into:" << fileName;
-   QVersitContactExporter exporter;
+   qWarning() << "exporting contacts into:" << url;
+
+   QString profile = profiles.isEmpty()? QString() : profiles.at(0);
+    //only one profile string supported now
+   QVersitContactExporter exporter(profile);
+
    QList<QContact> contacts;
    foreach (QDeclarativeContact* dc, d->m_contacts) {
        contacts.append(dc->contact());
@@ -185,7 +192,7 @@ void QDeclarativeContactModel::exportContacts(const QString& fileName)
 
    exporter.exportContacts(contacts, QVersitDocument::VCard30Type);
    QList<QVersitDocument> documents = exporter.documents();
-   QFile* file = new QFile(urlToLocalFileName(fileName));
+   QFile* file = new QFile(urlToLocalFileName(url));
    bool ok = file->open(QIODevice::ReadWrite);
    if (ok) {
       d->m_writer.setDevice(file);
@@ -266,7 +273,7 @@ QDeclarativeListProperty<QDeclarativeContactSortOrder> QDeclarativeContactModel:
 void QDeclarativeContactModel::startImport(QVersitReader::State state)
 {
     if (state == QVersitReader::FinishedState || state == QVersitReader::CanceledState) {
-        QVersitContactImporter importer;
+        QVersitContactImporter importer(d->m_importProfiles);
         importer.importDocuments(d->m_reader.results());
         QList<QContact> contacts = importer.contacts();
 
