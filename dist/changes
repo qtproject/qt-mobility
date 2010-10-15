@@ -86,8 +86,17 @@ QtServiceFramework
 QtSystemInfo
 ------
 
- - foo
-    * bar
+- Provide means of detecting the Mobility version at runtime.
+- Implement storageAdded and storageRemoved signals.
+- Implement backend for harmattan.
+
+- Initialization optimizations.
+- Change QFileSystemWatcher to inotify.
+- Various bug fixes.
+
+- qsysinfo example
+    * make the batterystatus messagebox less annoying.
+    * new UI easiler to navigate on handsets.
 
 Qt Mobility Plugins
 ------
