@@ -85,7 +85,7 @@ public:
         ActionFilter,
         IntersectionFilter,
         UnionFilter,
-        LocalIdFilter,
+        IdFilter,
         CollectionFilter,
         DefaultFilter
     };

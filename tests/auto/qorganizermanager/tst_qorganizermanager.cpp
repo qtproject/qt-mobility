@@ -52,7 +52,7 @@
 #include "qorganizerevent.h"
 
 #include "qorganizeritemmemorybackend_p.h"
-#include "qorganizeritemenginelocalid.h"
+#include "qorganizeritemengineid.h"
 
 QTM_USE_NAMESPACE
 // Eventually these will make it into qtestcase.h

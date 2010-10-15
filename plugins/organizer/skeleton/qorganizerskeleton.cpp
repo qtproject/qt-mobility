@@ -55,7 +55,7 @@ QOrganizerManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QStrin
     return ret;
 }
 
-QOrganizerItemEngineLocalId* QOrganizerItemSkeletonFactory::createItemEngineLocalId(const QString& idString) const
+QOrganizerItemEngineId* QOrganizerItemSkeletonFactory::createItemEngineId(const QMap<QString, QString>& parameters, const QString& idString) const
 {
     /*
       TODO
@@ -70,12 +70,14 @@ QOrganizerItemEngineLocalId* QOrganizerItemSkeletonFactory::createItemEngineLoca
       This function allows clients to deserialize serialized ids from
       your engine.
      */
+    Q_UNUSED(parameters);
     QOrganizerItemSkeletonEngineLocalId* retn = new QOrganizerItemSkeletonEngineLocalId;
     if (!idString.isEmpty())
         retn->m_localItemId = idString.toUInt();
+    return retn;
 }
 
-QOrganizerCollectionEngineLocalId* QOrganizerItemSkeletonFactory::createCollectionEngineLocalId(const QString& idString) const
+QOrganizerCollectionEngineId* QOrganizerItemSkeletonFactory::createCollectionEngineId(const QMap<QString, QString>& parameters, const QString& idString) const
 {
     /*
       TODO
@@ -90,9 +92,11 @@ QOrganizerCollectionEngineLocalId* QOrganizerItemSkeletonFactory::createCollecti
       This function allows clients to deserialize serialized ids from
       your engine.
      */
+    Q_UNUSED(parameters);
     QOrganizerCollectionSkeletonEngineLocalId* retn = new QOrganizerCollectionSkeletonEngineLocalId;
     if (!idString.isEmpty())
         retn->m_localCollectionId = idString.toUInt();
+    return retn;
 }
 
 QString QOrganizerItemSkeletonFactory::managerName() const
@@ -103,7 +107,7 @@ QString QOrganizerItemSkeletonFactory::managerName() const
 Q_EXPORT_PLUGIN2(qtorganizer_skeleton, QOrganizerItemSkeletonFactory);
 
 QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId()
-    : QOrganizerItemEngineLocalId(), m_localItemId(0)
+    : QOrganizerItemEngineId(), m_localItemId(0)
 {
     /*
       TODO
@@ -126,7 +130,7 @@ QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId()
 }
 
 QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId(quint32 itemId)
-    : QOrganizerItemEngineLocalId(), m_localItemId(itemId)
+    : QOrganizerItemEngineId(), m_localItemId(itemId)
 {
     /*
       TODO
@@ -144,7 +148,7 @@ QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId(quint32
 }
 
 QOrganizerItemSkeletonEngineLocalId::QOrganizerItemSkeletonEngineLocalId(const QOrganizerItemSkeletonEngineLocalId& other)
-    : QOrganizerItemEngineLocalId(), m_localItemId(other.m_localItemId)
+    : QOrganizerItemEngineId(), m_localItemId(other.m_localItemId)
 {
     /* TODO - implement a copy constructor for your engine-specific local id class */
 }
@@ -154,7 +158,7 @@ QOrganizerItemSkeletonEngineLocalId::~QOrganizerItemSkeletonEngineLocalId()
     /* TODO - Clean up any memory in use by your engine-specific local id. */
 }
 
-bool QOrganizerItemSkeletonEngineLocalId::isEqualTo(const QOrganizerItemEngineLocalId* other) const
+bool QOrganizerItemSkeletonEngineLocalId::isEqualTo(const QOrganizerItemEngineId* other) const
 {
     /*
       TODO
@@ -172,7 +176,7 @@ bool QOrganizerItemSkeletonEngineLocalId::isEqualTo(const QOrganizerItemEngineLo
     return true;
 }
 
-bool QOrganizerItemSkeletonEngineLocalId::isLessThan(const QOrganizerItemEngineLocalId* other) const
+bool QOrganizerItemSkeletonEngineLocalId::isLessThan(const QOrganizerItemEngineId* other) const
 {
     /*
       TODO
@@ -210,12 +214,15 @@ uint QOrganizerItemSkeletonEngineLocalId::engineLocalIdType() const
     return qHash(QString(QLatin1String("skeleton")));
 }
 
-QString QOrganizerItemSkeletonEngineLocalId::managerUri() const
+const QString QOrganizerItemSkeletonEngineLocalId::managerUri() const
 {
-    return QString::fromLatin1("qtorganizer:skeleton:");
+    // TODO: make this return the actual managerUri (including params) of the
+    // engine it is associated with
+    static const QString uri(QLatin1String("qtorganizer:skeleton:"));
+    return uri;
 }
 
-QOrganizerItemEngineLocalId* QOrganizerItemSkeletonEngineLocalId::clone() const
+QOrganizerItemEngineId* QOrganizerItemSkeletonEngineLocalId::clone() const
 {
     /*
       TODO
@@ -295,7 +302,7 @@ uint QOrganizerItemSkeletonEngineLocalId::hash() const
 
 
 QOrganizerCollectionSkeletonEngineLocalId::QOrganizerCollectionSkeletonEngineLocalId()
-    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(0)
+    : QOrganizerCollectionEngineId(), m_localCollectionId(0)
 {
     /*
       TODO
@@ -317,7 +324,7 @@ QOrganizerCollectionSkeletonEngineLocalId::QOrganizerCollectionSkeletonEngineLoc
 }
 
 QOrganizerCollectionSkeletonEngineLocalId::QOrganizerCollectionSkeletonEngineLocalId(quint32 collectionId)
-    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(collectionId)
+    : QOrganizerCollectionEngineId(), m_localCollectionId(collectionId)
 {
     /*
       TODO
@@ -335,7 +342,7 @@ QOrganizerCollectionSkeletonEngineLocalId::QOrganizerCollectionSkeletonEngineLoc
 }
 
 QOrganizerCollectionSkeletonEngineLocalId::QOrganizerCollectionSkeletonEngineLocalId(const QOrganizerCollectionSkeletonEngineLocalId& other)
-    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(other.m_localCollectionId)
+    : QOrganizerCollectionEngineId(), m_localCollectionId(other.m_localCollectionId)
 {
     /* TODO - implement a copy constructor for your engine-specific local id class */
 }
@@ -345,7 +352,7 @@ QOrganizerCollectionSkeletonEngineLocalId::~QOrganizerCollectionSkeletonEngineLo
     /* TODO - Clean up any memory in use by your engine-specific local id. */
 }
 
-bool QOrganizerCollectionSkeletonEngineLocalId::isEqualTo(const QOrganizerCollectionEngineLocalId* other) const
+bool QOrganizerCollectionSkeletonEngineLocalId::isEqualTo(const QOrganizerCollectionEngineId* other) const
 {
     /*
       TODO
@@ -363,7 +370,7 @@ bool QOrganizerCollectionSkeletonEngineLocalId::isEqualTo(const QOrganizerCollec
     return true;
 }
 
-bool QOrganizerCollectionSkeletonEngineLocalId::isLessThan(const QOrganizerCollectionEngineLocalId* other) const
+bool QOrganizerCollectionSkeletonEngineLocalId::isLessThan(const QOrganizerCollectionEngineId* other) const
 {
     /*
       TODO
@@ -403,12 +410,15 @@ uint QOrganizerCollectionSkeletonEngineLocalId::engineLocalIdType() const
     return qHash(QString(QLatin1String("skeleton")));
 }
 
-QString QOrganizerCollectionSkeletonEngineLocalId::managerUri() const
+const QString QOrganizerCollectionSkeletonEngineLocalId::managerUri() const
 {
-    return QString::fromLatin1("qtorganizer:skeleton:");
+    // TODO: make this return the actual managerUri (including params) of the
+    // engine it is associated with
+    static const QString uri(QLatin1String("qtorganizer:skeleton:"));
+    return uri;
 }
 
-QOrganizerCollectionEngineLocalId* QOrganizerCollectionSkeletonEngineLocalId::clone() const
+QOrganizerCollectionEngineId* QOrganizerCollectionSkeletonEngineLocalId::clone() const
 {
     /*
       TODO

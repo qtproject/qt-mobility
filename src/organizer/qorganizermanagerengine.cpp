@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qorganizermanagerengine.h"
-#include "qorganizeritemenginelocalid.h"
+#include "qorganizeritemengineid.h"
 
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemdetailfielddefinition.h"
@@ -432,7 +432,7 @@ QOrganizerItemFilter QOrganizerManagerEngine::canonicalizedFilter(const QOrganiz
         }
         // unreachable
 
-        case QOrganizerItemFilter::LocalIdFilter:
+        case QOrganizerItemFilter::IdFilter:
         {
             QOrganizerItemIdFilter f(filter);
             if (f.ids().count() == 0)
@@ -2093,7 +2093,7 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
         case QOrganizerItemFilter::DefaultFilter:
             return true;
 
-        case QOrganizerItemFilter::LocalIdFilter:
+        case QOrganizerItemFilter::IdFilter:
             {
                 const QOrganizerItemIdFilter idf(filter);
                 if (idf.ids().contains(organizeritem.id()))
@@ -2464,7 +2464,7 @@ void QOrganizerManagerEngine::addSorted(QList<QOrganizerItem>* sorted, const QOr
   Returns the engine local id from the given \a localId.
   The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
  */
-const QOrganizerItemEngineLocalId* QOrganizerManagerEngine::engineLocalItemId(const QOrganizerItemId& localId)
+const QOrganizerItemEngineId* QOrganizerManagerEngine::engineItemId(const QOrganizerItemId& localId)
 {
     return localId.d.data();
 }
@@ -2473,7 +2473,7 @@ const QOrganizerItemEngineLocalId* QOrganizerManagerEngine::engineLocalItemId(co
   Returns the engine local id from the given \a localId.
   The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
  */
-const QOrganizerCollectionEngineLocalId* QOrganizerManagerEngine::engineLocalCollectionId(const QOrganizerCollectionId& localId)
+const QOrganizerCollectionEngineId* QOrganizerManagerEngine::engineCollectionId(const QOrganizerCollectionId& localId)
 {
     return localId.d.data();
 }

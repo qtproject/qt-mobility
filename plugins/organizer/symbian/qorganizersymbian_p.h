@@ -66,8 +66,8 @@
 #include <QObject>
 
 #include "qorganizeritem.h"
-#include "qorganizeritemenginelocalid.h"
-#include "qorganizercollectionenginelocalid.h"
+#include "qorganizeritemengineid.h"
+#include "qorganizercollectionengineid.h"
 #include "qorganizermanager.h"
 #include "qorganizermanagerengine.h"
 #include "qorganizermanagerenginefactory.h"
@@ -91,7 +91,7 @@ const uint KSymbianEngineLocalIdType = 0xb038f9e;
 
 class OrganizerItemTransform; // forward declare transform class.
 class QOrganizerItemSymbianEngine; // forward declare symbian engine.
-class QOrganizerCollectionSymbianEngineLocalId : public QOrganizerCollectionEngineLocalId
+class QOrganizerCollectionSymbianEngineLocalId : public QOrganizerCollectionEngineId
 {
 public:
     QOrganizerCollectionSymbianEngineLocalId();
@@ -99,12 +99,12 @@ public:
     ~QOrganizerCollectionSymbianEngineLocalId();
     QOrganizerCollectionSymbianEngineLocalId(const QOrganizerCollectionSymbianEngineLocalId& other);
 
-    bool isEqualTo(const QOrganizerCollectionEngineLocalId* other) const;
-    bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const;
+    bool isEqualTo(const QOrganizerCollectionEngineId* other) const;
+    bool isLessThan(const QOrganizerCollectionEngineId* other) const;
 
     uint engineLocalIdType() const;
-    QString managerUri() const;
-    QOrganizerCollectionEngineLocalId* clone() const;
+    const QString managerUri() const;
+    QOrganizerCollectionEngineId* clone() const;
 
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;
@@ -120,7 +120,7 @@ private:
     friend class QOrganizerItemSymbianEngine;
 };
 
-class QOrganizerItemSymbianEngineLocalId : public QOrganizerItemEngineLocalId
+class QOrganizerItemSymbianEngineLocalId : public QOrganizerItemEngineId
 {
 public:
     QOrganizerItemSymbianEngineLocalId();
@@ -128,11 +128,12 @@ public:
     ~QOrganizerItemSymbianEngineLocalId();
     QOrganizerItemSymbianEngineLocalId(const QOrganizerItemSymbianEngineLocalId& other);
 
-    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const;
-    bool isLessThan(const QOrganizerItemEngineLocalId* other) const;
+    bool isEqualTo(const QOrganizerItemEngineId* other) const;
+    bool isLessThan(const QOrganizerItemEngineId* other) const;
 
     uint engineLocalIdType() const;
-    QOrganizerItemEngineLocalId* clone() const;
+    const QString managerUri() const;
+    QOrganizerItemEngineId* clone() const;
 
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;
@@ -144,8 +145,8 @@ public:
     uint hash() const;
     
 public:
-    quint32 calLocalUid() { return m_localItemId; }
-    quint64 calCollectionId() { return m_localCollectionId; }
+    quint32 calLocalUid() const { return m_localItemId; }
+    quint64 calCollectionId() const { return m_localCollectionId; }
     
 private:
     quint64 m_localCollectionId;
@@ -167,8 +168,8 @@ public QOrganizerManagerEngineFactory
         const QMap<QString, QString>& parameters, 
         QOrganizerManager::Error*);
     QString managerName() const;
-    QOrganizerItemEngineLocalId* createItemEngineLocalId() const;
-    QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() const;
+    QOrganizerItemEngineId* createItemEngineId(const QMap<QString, QString>& parameters) const;
+    QOrganizerCollectionEngineId* createCollectionEngineId(const QMap<QString, QString>& parameters) const;
 };
 
 class QOrganizerItemSymbianEngineData : public QSharedData
@@ -229,17 +230,17 @@ public:
         const QOrganizerItemFetchHint& fetchHint, 
         QOrganizerManager::Error* error) const;
 
-    QList<QOrganizerItemLocalId> itemIds(const QDateTime& periodStart,
+    QList<QOrganizerItemId> itemIds(const QDateTime& periodStart,
         const QDateTime& periodEnd,
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders, 
         QOrganizerManager::Error* error) const;
-    QList<QOrganizerItemLocalId> getIdsModifiedSinceDateL(
+    QList<QOrganizerItemId> getIdsModifiedSinceDateL(
         const QDateTime& periodStart,
         const QDateTime& periodEnd,
         const QOrganizerItemFilter& filter) const;
     void itemIdsL(
-        QList<QOrganizerItemLocalId>& ids, 
+        QList<QOrganizerItemId>& ids, 
         const QDateTime& periodStart,
         const QDateTime& periodEnd,
         const QOrganizerItemFilter& filter, 
@@ -256,7 +257,7 @@ public:
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders, 
         const QOrganizerItemFetchHint& fetchHint) const;
-    QOrganizerItem item(const QOrganizerItemLocalId& itemId, 
+    QOrganizerItem item(const QOrganizerItemId& itemId, 
         const QOrganizerItemFetchHint& fetchHint, 
         QOrganizerManager::Error* error) const;
 
@@ -266,9 +267,9 @@ public:
         QMap<int, QOrganizerManager::Error> *errorMap, 
         QOrganizerManager::Error *error);
 
-    bool removeItem(const QOrganizerItemLocalId& organizeritemId, 
+    bool removeItem(const QOrganizerItemId& organizeritemId, 
         QOrganizerManager::Error* error);
-    bool removeItems(const QList<QOrganizerItemLocalId> &itemIds, 
+    bool removeItems(const QList<QOrganizerItemId> &itemIds, 
         QMap<int, QOrganizerManager::Error> *errorMap, 
         QOrganizerManager::Error *error);
     
@@ -338,11 +339,11 @@ public:
         const int maxCount,
         QOrganizerCollectionId collectionLocalId,
         QList<QOrganizerItem> &itemOccurrences) const;
-    QOrganizerItem itemL(const QOrganizerItemLocalId& itemId,
+    QOrganizerItem itemL(const QOrganizerItemId& itemId,
             const QOrganizerItemFetchHint& fetchHint) const;
     void saveItemL(QOrganizerItem *item,
         QOrganizerItemChangeSet *changeSet);
-    void removeItemL(const QOrganizerItemLocalId& organizeritemId);
+    void removeItemL(const QOrganizerItemId& organizeritemId);
     QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, 
         const QOrganizerItemFilter& filter, 
         const QList<QOrganizerItemSortOrder>& sortOrders) const;
@@ -363,7 +364,7 @@ private:
     CCalEntry* entryForItemL(const QOrganizerCollectionId &collectionId, 
         const QOrganizerItem &item, bool &isNewEntry) const;
     CCalEntry* findEntryL(const QOrganizerCollectionId &collectionId, 
-        const QOrganizerItemLocalId &localId, QString manageruri) const;
+        const QOrganizerItemId &localId, QString manageruri) const;
     CCalEntry* findEntryL(const QOrganizerCollectionId &collectionId, 
         const TDesC8& globalUid) const;
     CCalEntry* findParentEntryLC(const QOrganizerCollectionId &collectionId,

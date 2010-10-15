@@ -58,7 +58,7 @@ Q_ORGANIZER_EXPORT QDebug& operator<<(QDebug& dbg, const QOrganizerCollectionId&
 #endif
 
 class QOrganizerManagerEngine;
-class QOrganizerCollectionEngineLocalId;
+class QOrganizerCollectionEngineId;
 
 class Q_ORGANIZER_EXPORT QOrganizerCollectionId
 {
@@ -66,7 +66,7 @@ public:
     QOrganizerCollectionId();
     ~QOrganizerCollectionId();
 
-    explicit QOrganizerCollectionId(QOrganizerCollectionEngineLocalId* engineId);
+    explicit QOrganizerCollectionId(QOrganizerCollectionEngineId* engineId);
     QOrganizerCollectionId(const QOrganizerCollectionId& other);
     QOrganizerCollectionId& operator=(const QOrganizerCollectionId& other);
 
@@ -76,7 +76,7 @@ public:
 
     bool isNull() const;
 
-    QString managerUri() const;
+    const QString managerUri() const;
 
     QString toString() const;
     static QOrganizerCollectionId fromString(const QString& idString);
@@ -85,7 +85,7 @@ private:
     static QString buildIdString(const QString& managerName, const QMap<QString, QString>& params, const QString& engineId);
     static bool parseIdString(const QString& stringId, QString* managerName, QMap<QString, QString>* params, QString* engineId);
 
-    QSharedDataPointer<QOrganizerCollectionEngineLocalId> d;
+    QSharedDataPointer<QOrganizerCollectionEngineId> d;
 
 #ifndef QT_NO_DEBUG_STREAM
     Q_ORGANIZER_EXPORT friend QDebug& operator<<(QDebug& dbg, const QOrganizerCollectionId& id);

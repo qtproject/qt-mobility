@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemFilter;
 class QOrganizerItemSortOrder;
-class QOrganizerItemEngineLocalId;
+class QOrganizerItemEngineId;
 
 /* Forward decls, since these don't actually exist yet */
 class QOrganizerItemOccurrenceFetchRequest;
@@ -169,8 +169,8 @@ public:
 
     // Other protected area update functions
     static void setDetailAccessConstraints(QOrganizerItemDetail* detail, QOrganizerItemDetail::AccessConstraints constraints);
-    static const QOrganizerItemEngineLocalId* engineLocalItemId(const QOrganizerItemId& localId);
-    static const QOrganizerCollectionEngineLocalId* engineLocalCollectionId(const QOrganizerCollectionId& localId);
+    static const QOrganizerItemEngineId* engineItemId(const QOrganizerItemId& localId);
+    static const QOrganizerCollectionEngineId* engineCollectionId(const QOrganizerCollectionId& localId);
 
     /* Helper functions */
     static bool isItemBetweenDates(const QOrganizerItem& item, const QDateTime& startPeriod, const QDateTime& endPeriod);

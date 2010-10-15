@@ -40,14 +40,14 @@
 ****************************************************************************/
 
 #include "qorganizeritemid.h"
-#include "qorganizeritemenginelocalid.h"
+#include "qorganizeritemengineid.h"
 #include "qorganizermanager_p.h"
 #include <QHash>
 #include <QDebug>
 #include <QDataStream>
 
 #if !defined(Q_CC_MWERKS)
-template<> QTM_PREPEND_NAMESPACE(QOrganizerItemEngineLocalId) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QOrganizerItemEngineLocalId)>::clone()
+template<> QTM_PREPEND_NAMESPACE(QOrganizerItemEngineId) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QOrganizerItemEngineId)>::clone()
 {
     return d ? d->clone() : 0;
 }
@@ -82,7 +82,7 @@ QOrganizerItemId::QOrganizerItemId()
   will delete it when the local id goes out of scope.  Engine implementors must not
   delete the \a engineItemId or undefined behaviour will occur.
  */
-QOrganizerItemId::QOrganizerItemId(QOrganizerItemEngineLocalId* engineItemId)
+QOrganizerItemId::QOrganizerItemId(QOrganizerItemEngineId* engineItemId)
     : d(engineItemId)
 {
 }
@@ -193,7 +193,7 @@ bool QOrganizerItemId::isNull() const
 /*!
  * Returns the URI of the manager which contains the organizer item identified by this id
  */
-QString QOrganizerItemId::managerUri() const
+const QString QOrganizerItemId::managerUri() const
 {
     return d ? d->managerUri() : QString();
 }
@@ -232,7 +232,7 @@ QOrganizerItemId QOrganizerItemId::fromString(const QString& idString)
         return QOrganizerItemId(); // invalid idString given.
 
     QString managerUri = QOrganizerManager::buildUri(managerName, params);
-    QOrganizerItemEngineLocalId* engineId = QOrganizerManagerData::createEngineItemId(managerUri, engineIdString);
+    QOrganizerItemEngineId* engineId = QOrganizerManagerData::createEngineItemId(managerUri, engineIdString);
     return QOrganizerItemId(engineId);
 }
 

@@ -124,7 +124,7 @@ void OrganizerSymbianCollectionPrivate::CalChangeNotification(RArray<TCalChangeE
     int count = aChangeItems.Count();
     for (int i=0; i<count; i++) 
     {
-        QOrganizerItemLocalId id = toItemLocalId(m_calCollectionId, aChangeItems[i].iEntryId);
+        QOrganizerItemId id = toItemId(m_calCollectionId, aChangeItems[i].iEntryId);
         switch(aChangeItems[i].iChangeType)
         {
         case MCalChangeCallBack2::EChangeAdd:       
@@ -161,7 +161,6 @@ OrganizerSymbianCollection::OrganizerSymbianCollection(QOrganizerManagerEngine *
 {
     d = new OrganizerSymbianCollectionPrivate();
     d->m_engine = engine;
-    d->m_id.setManagerUri(engine->managerUri());
 }
 
 OrganizerSymbianCollection::OrganizerSymbianCollection(const OrganizerSymbianCollection &other)

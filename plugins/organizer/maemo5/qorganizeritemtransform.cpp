@@ -315,7 +315,7 @@ QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrenc
 
     // Set parent local id
     QString idString = QString::fromStdString(cevent->getId());
-    retn.setParentId(QOrganizerItemId(new QOrganizerItemMaemo5EngineLocalId(idString.toUInt())));
+    retn.setParentId(QOrganizerItemId(new QOrganizerItemMaemo5EngineId(idString.toUInt())));
 
     // Set original event date
     retn.setOriginalDate(instanceStartDate.date());
@@ -474,7 +474,7 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
         // Set component ID
         if (setId) {
             QString idString = QString::fromStdString(component->getId());
-            item->setId(QOrganizerItemId(new QOrganizerItemMaemo5EngineLocalId(idString.toUInt())));
+            item->setId(QOrganizerItemId(new QOrganizerItemMaemo5EngineId(idString.toUInt())));
         } else {
             item->setId(QOrganizerItemId());
         }

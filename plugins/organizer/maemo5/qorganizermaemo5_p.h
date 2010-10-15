@@ -69,8 +69,8 @@
 #include "qorganizermanager.h"
 #include "qorganizermanagerengine.h"
 #include "qorganizermanagerenginefactory.h"
-#include "qorganizeritemenginelocalid.h"
-#include "qorganizercollectionenginelocalid.h"
+#include "qorganizeritemengineid.h"
+#include "qorganizercollectionengineid.h"
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizerabstractrequest.h"
 #include "qorganizeritemchangeset.h"
@@ -96,8 +96,8 @@ class QOrganizerItemMaemo5Factory : public QObject, public QOrganizerManagerEngi
   Q_INTERFACES(QtMobility::QOrganizerManagerEngineFactory)
   public:
     QOrganizerManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error*);
-    QOrganizerItemEngineLocalId* createItemEngineLocalId() const;
-    QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() const;
+    QOrganizerItemEngineId* createItemEngineId(const QMap<QString, QString>& parameters) const;
+    QOrganizerCollectionEngineId* createCollectionEngineId(const QMap<QString, QString>& parameters) const;
     QString managerName() const;
 };
 

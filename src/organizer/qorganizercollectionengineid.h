@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERCOLLECTIONENGINELOCALID_H
-#define QORGANIZERCOLLECTIONENGINELOCALID_H
+#ifndef QORGANIZERCOLLECTIONENGINEID_H
+#define QORGANIZERCOLLECTIONENGINEID_H
 
 #include <QString>
 #include <QSharedDataPointer>
@@ -51,17 +51,17 @@ class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
-class Q_ORGANIZER_EXPORT QOrganizerCollectionEngineLocalId : public QSharedData
+class Q_ORGANIZER_EXPORT QOrganizerCollectionEngineId : public QSharedData
 {
 public:
-    virtual ~QOrganizerCollectionEngineLocalId() {}
+    virtual ~QOrganizerCollectionEngineId() {}
 
-    virtual bool isEqualTo(const QOrganizerCollectionEngineLocalId* other) const = 0;
-    virtual bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const = 0;
+    virtual bool isEqualTo(const QOrganizerCollectionEngineId* other) const = 0;
+    virtual bool isLessThan(const QOrganizerCollectionEngineId* other) const = 0;
 
     virtual uint engineLocalIdType() const = 0;
-    virtual QString managerUri() const = 0;
-    virtual QOrganizerCollectionEngineLocalId* clone() const = 0;
+    virtual const QString managerUri() const = 0;
+    virtual QOrganizerCollectionEngineId* clone() const = 0;
 
     virtual QString toString() const = 0;
 
@@ -74,7 +74,7 @@ public:
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerCollectionEngineLocalId), Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerCollectionEngineId), Q_MOVABLE_TYPE);
 
 
 #endif

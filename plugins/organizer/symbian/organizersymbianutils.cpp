@@ -127,27 +127,27 @@ QOrganizerCollectionId toCollectionLocalId(quint64 collectionId)
     return QOrganizerCollectionId(new QOrganizerCollectionSymbianEngineLocalId(collectionId));
 }
 
-QOrganizerItemId toItemLocalId(quint64 collectionId, quint32 itemId)
+QOrganizerItemId toItemId(quint64 collectionId, quint32 itemId)
 {
     return QOrganizerItemId(new QOrganizerItemSymbianEngineLocalId(collectionId, itemId));
 }
 
-TCalLocalUid toTCalLocalUid(const QOrganizerItemLocalId& itemLocalId)
+TCalLocalUid toTCalLocalUid(const QOrganizerItemId& itemId)
 {
     // TODO: should we have a check for engineLocalIdType here?
-    return static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerManagerEngine::engineLocalItemId(itemLocalId))->calLocalUid();
+    return static_cast<const QOrganizerItemSymbianEngineLocalId*>(QOrganizerManagerEngine::engineItemId(itemId))->calLocalUid();
 }
 
-quint64 toTCalCollectionId(const QOrganizerItemLocalId& itemLocalId)
+quint64 toTCalCollectionId(const QOrganizerItemId& itemId)
 {
     // TODO: should we have a check for engineLocalIdType here?
-    return static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerManagerEngine::engineLocalItemId(itemLocalId))->calCollectionId();
+    return static_cast<const QOrganizerItemSymbianEngineLocalId*>(QOrganizerManagerEngine::engineItemId(itemId))->calCollectionId();
 }
 
-QOrganizerCollectionId getCollectionLocalId(const QOrganizerItemLocalId& itemLocalId)
+QOrganizerCollectionId getCollectionLocalId(const QOrganizerItemId& itemId)
 {
     // TODO: should we have a check for engineLocalIdType here?
-    quint64 calCollectionId  = static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerManagerEngine::engineLocalItemId(itemLocalId))->calCollectionId();
+    quint64 calCollectionId  = static_cast<const QOrganizerItemSymbianEngineLocalId*>(QOrganizerManagerEngine::engineItemId(itemId))->calCollectionId();
     return toCollectionLocalId(calCollectionId);
 }
 

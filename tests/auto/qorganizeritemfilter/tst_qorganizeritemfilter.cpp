@@ -42,7 +42,7 @@
 #include <QMetaType>
 
 #include "qtorganizer.h"
-#include "qorganizeritemenginelocalid.h"
+#include "qorganizeritemengineid.h"
 
 //TESTED_COMPONENT=src/organizer
 //TESTED_CLASS=
@@ -86,25 +86,26 @@ private slots:
     void sortTraits();
 };
 
-class BasicItemLocalId : public QOrganizerItemEngineLocalId
+class BasicItemLocalId : public QOrganizerItemEngineId
 {
 public:
     BasicItemLocalId(uint id) : m_id(id) {}
-    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const {
+    bool isEqualTo(const QOrganizerItemEngineId* other) const {
         return m_id == static_cast<const BasicItemLocalId*>(other)->m_id;
     }
-    bool isLessThan(const QOrganizerItemEngineLocalId* other) const {
+    bool isLessThan(const QOrganizerItemEngineId* other) const {
         return m_id < static_cast<const BasicItemLocalId*>(other)->m_id;
     }
     uint engineLocalIdType() const {
         return 0;
     }
-    QOrganizerItemEngineLocalId* clone() const {
+    QOrganizerItemEngineId* clone() const {
         BasicItemLocalId* cloned = new BasicItemLocalId(m_id);
         return cloned;
     }
-    QString managerUri() const {
-        return QString::fromLatin1("qtorganizer:basicItem:");
+    const QString managerUri() const {
+        static const QString uri(QLatin1String("qtorganizer:basicItem:"));
+        return uri;
     }
     QDebug& debugStreamOut(QDebug& dbg) const {
         return dbg << m_id;
@@ -856,7 +857,7 @@ void tst_QOrganizerItemFilter::idListFilter()
 {
     QOrganizerItemIdFilter idf;
 
-    QVERIFY(idf.type() == QOrganizerItemFilter::LocalIdFilter);
+    QVERIFY(idf.type() == QOrganizerItemFilter::IdFilter);
 
     QVERIFY(idf.ids().count() == 0);
 
@@ -887,7 +888,7 @@ void tst_QOrganizerItemFilter::idListFilter()
 
     QOrganizerItemDetailFilter dfil;
     QOrganizerItemIdFilter idf3(dfil);
-    QVERIFY(idf3.type() == QOrganizerItemFilter::LocalIdFilter); // should be a blank id list filter
+    QVERIFY(idf3.type() == QOrganizerItemFilter::IdFilter); // should be a blank id list filter
     QOrganizerItemIdFilter idf4(idf);
     QVERIFY(idf4 == idf); // should be a copy of idf.
     idf = dfil; // now assign.

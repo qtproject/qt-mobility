@@ -71,8 +71,8 @@
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizerabstractrequest.h"
 #include "qorganizeritemchangeset.h"
-#include "qorganizeritemenginelocalid.h"
-#include "qorganizercollectionenginelocalid.h"
+#include "qorganizeritemengineid.h"
+#include "qorganizercollectionengineid.h"
 
 QTM_USE_NAMESPACE
 
@@ -82,12 +82,12 @@ class QOrganizerItemSkeletonFactory : public QObject, public QOrganizerManagerEn
   Q_INTERFACES(QtMobility::QOrganizerManagerEngineFactory)
   public:
     QOrganizerManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error*);
-    QOrganizerItemEngineLocalId* createItemEngineLocalId(const QString& idString) const;
-    QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId(const QString& idString) const;
+    QOrganizerItemEngineId* createItemEngineId(const QMap<QString, QString>& parameters, const QString& idString) const;
+    QOrganizerCollectionEngineId* createCollectionEngineId(const QMap<QString, QString>& parameters, const QString& idString) const;
     QString managerName() const;
 };
 
-class QOrganizerCollectionSkeletonEngineLocalId : public QOrganizerCollectionEngineLocalId
+class QOrganizerCollectionSkeletonEngineLocalId : public QOrganizerCollectionEngineId
 {
 public:
     QOrganizerCollectionSkeletonEngineLocalId();
@@ -95,12 +95,12 @@ public:
     ~QOrganizerCollectionSkeletonEngineLocalId();
     QOrganizerCollectionSkeletonEngineLocalId(const QOrganizerCollectionSkeletonEngineLocalId& other);
 
-    bool isEqualTo(const QOrganizerCollectionEngineLocalId* other) const;
-    bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const;
+    bool isEqualTo(const QOrganizerCollectionEngineId* other) const;
+    bool isLessThan(const QOrganizerCollectionEngineId* other) const;
 
     uint engineLocalIdType() const;
-    QString managerUri() const;
-    QOrganizerCollectionEngineLocalId* clone() const;
+    const QString managerUri() const;
+    QOrganizerCollectionEngineId* clone() const;
 
     QString toString() const;
 
@@ -116,7 +116,7 @@ public:
     quint32 m_localCollectionId;
 };
 
-class QOrganizerItemSkeletonEngineLocalId : public QOrganizerItemEngineLocalId
+class QOrganizerItemSkeletonEngineLocalId : public QOrganizerItemEngineId
 {
 public:
     QOrganizerItemSkeletonEngineLocalId();
@@ -124,12 +124,12 @@ public:
     ~QOrganizerItemSkeletonEngineLocalId();
     QOrganizerItemSkeletonEngineLocalId(const QOrganizerItemSkeletonEngineLocalId& other);
 
-    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const;
-    bool isLessThan(const QOrganizerItemEngineLocalId* other) const;
+    bool isEqualTo(const QOrganizerItemEngineId* other) const;
+    bool isLessThan(const QOrganizerItemEngineId* other) const;
 
     uint engineLocalIdType() const;
-    QString managerUri() const;
-    QOrganizerItemEngineLocalId* clone() const;
+    const QString managerUri() const;
+    QOrganizerItemEngineId* clone() const;
 
     QString toString() const;
 

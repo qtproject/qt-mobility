@@ -43,7 +43,7 @@
 
 #include "qtorganizer.h"
 #include "qorganizeritemid.h"
-#include "qorganizercollectionenginelocalid.h"
+#include "qorganizercollectionengineid.h"
 #include <QSet>
 
 //TESTED_COMPONENT=src/organizer
@@ -91,23 +91,24 @@ void tst_QOrganizerCollection::metaData()
     QCOMPARE(c.metaData(), mdm);
 }
 
-class BasicCollectionLocalId : public QOrganizerCollectionEngineLocalId
+class BasicCollectionLocalId : public QOrganizerCollectionEngineId
 {
 public:
     BasicCollectionLocalId(uint id) : m_id(id) {}
-    bool isEqualTo(const QOrganizerCollectionEngineLocalId* other) const {
+    bool isEqualTo(const QOrganizerCollectionEngineId* other) const {
         return m_id == static_cast<const BasicCollectionLocalId*>(other)->m_id;
     }
-    bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const {
+    bool isLessThan(const QOrganizerCollectionEngineId* other) const {
         return m_id < static_cast<const BasicCollectionLocalId*>(other)->m_id;
     }
     uint engineLocalIdType() const {
         return 0;
     }
-    QString managerUri() const {
-        return QString::fromLatin1("qtorganizer:basic:");
+    const QString managerUri() const {
+        static const QString uri(QLatin1String("qtorganizer:basic:"));
+        return uri;
     }
-    QOrganizerCollectionEngineLocalId* clone() const {
+    QOrganizerCollectionEngineId* clone() const {
         BasicCollectionLocalId* cloned = new BasicCollectionLocalId(m_id);
         return cloned;
     }

@@ -86,7 +86,7 @@ private: // Worker functions
     void FetchItems();
     void SaveItem();
     void FetchItemsForExport();
-    void FetchItemsByLocalIds();
+    void FetchItemsByIds();
     void FetchItemsandFilter();
     void FetchItemIds();
     void RemoveItem();
@@ -98,7 +98,7 @@ private: // Worker functions
 private:
     QOrganizerItemSymbianEngine&            iOrganizerItemManagerEngine;
     QOrganizerAbstractRequest*          iReq; // Request to be processed
-    QList<QOrganizerItemLocalId>            iItemIds;
+    QList<QOrganizerItemId>            iItemIds;
     QMap<int, QOrganizerManager::Error> iErrorMap; // Error map
     TInt                                    iIndex;
 };

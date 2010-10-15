@@ -44,9 +44,9 @@
 #include "qorganizeritemid.h"
 #include "qorganizercollectionid.h"
 
-QOrganizerItemFilter QDeclarativeOrganizerItemLocalIdFilter::filter() const
+QOrganizerItemFilter QDeclarativeOrganizerItemIdFilter::filter() const
 {
-    QOrganizerItemLocalIdFilter f;
+    QOrganizerItemIdFilter f;
     QList<QOrganizerItemId> ids;
 
     foreach(const QVariant& id, m_ids) {
