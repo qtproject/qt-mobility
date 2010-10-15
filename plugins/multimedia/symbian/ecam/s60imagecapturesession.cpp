@@ -829,14 +829,12 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
         TInt fileWriteErr = KErrNone;
         fileWriteErr = file.Replace(*fileSystemAccess, aPath, EFileWrite);
         if (fileWriteErr) {
-            Cancel(); // Cancel ongoing decoding
             User::Leave(fileWriteErr);
         }
         CleanupClosePushL(file); // Close if Leaves
 
         fileWriteErr = file.Write(*aData);
         if (fileWriteErr) {
-            Cancel(); // Cancel ongoing decoding
             User::Leave(fileWriteErr);
         }
 
@@ -1825,12 +1823,10 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
         scaledSize.SetSize((m_captureSize.width() / (KSnapshotDownScaleFactor/4)), (m_captureSize.height() / (KSnapshotDownScaleFactor/4)));
     if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
         scaledSize.SetSize(m_captureSize.width(), m_captureSize.height());
-    QC_TRACE3("S60ImageCaptureSession::MceoCapturedBitmapReady: Scaling Preview to Size =", scaledSize.iWidth, "x", scaledSize.iHeight)
 
     TFrameInfo *info = m_imageDecoder->frameInfo();
     if (!info)
         setError(KErrGeneral, QString("Preview image creation failed."));
-    }
 
     m_previewBitmap = new CFbsBitmap;
     if (!m_previewBitmap) {

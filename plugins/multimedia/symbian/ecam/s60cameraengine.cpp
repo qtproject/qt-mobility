@@ -560,7 +560,6 @@ void CCameraEngine::HandleImageReady(const TInt aError, const bool isBitmap)
 //=============================================================================
 // S60 3.1 - AutoFocus support (Other platforms, see S60CameraSettings class)
 //=============================================================================
-// TODO: Set 1 common ifdef for all 3.1 autofocus functions?
 
 void CCameraEngine::InitComplete(TInt aError)
 {

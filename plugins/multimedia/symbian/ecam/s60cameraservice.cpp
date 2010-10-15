@@ -87,11 +87,6 @@ S60CameraService::S60CameraService(QObject *parent) :
         m_locksControl = new S60CameraLocksControl(m_imagesession, this);
         m_rendererControl = new S60VideoRendererControl(this);
 
-        // TODO: To be implemented later
-        // QVideoWindowControl (for QVideoWindow)
-        // QMetaDataWriterControl
-        // QMetaDataReaderControl
-
     }
 }
 

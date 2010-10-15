@@ -1774,7 +1774,7 @@ void S60VideoCaptureSession::doPopulateVideoCodecsDataL()
         for(int x = 0; x < videoFormats.Count(); ++x) {
             QString codecMimeType = QString::fromUtf8((char *)videoFormats[x]->MimeType().Ptr(),videoFormats[x]->MimeType().Length());
 
-            //m_videoCodeclist.append(codecMimeType); TODO: Done in PopulateVideoCodecs
+            //m_videoCodeclist.append(codecMimeType);
             m_videoParametersForEncoder[newIndex].mimeTypes.append(codecMimeType);
         }
 

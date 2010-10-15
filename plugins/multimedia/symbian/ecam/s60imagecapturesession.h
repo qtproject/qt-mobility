@@ -243,7 +243,7 @@ public: // Methods
     // Flash Mode Control
     QCameraExposure::FlashMode flashMode();
     void setFlashMode(QCameraExposure::FlashModes mode);
-    QCameraExposure::FlashModes supportedFlashModes(); // TODO: Change to isXSupported?
+    QCameraExposure::FlashModes supportedFlashModes();
 
     // Contrast Control
     int contrast() const;
