@@ -132,7 +132,7 @@ QString QOrganizerItemSymbianEngineId::toString() const
 #ifndef QT_NO_DEBUG_STREAM
 QDebug& QOrganizerItemSymbianEngineId::debugStreamOut(QDebug& dbg) const
 {
-    dbg.nospace() << "QOrganizerItemSymbianEngineLocalId(" << m_localCollectionId << ", " << m_localItemId << ")";
+    dbg.nospace() << "QOrganizerItemSymbianEngineId(" << m_localCollectionId << ", " << m_localItemId << ")";
     return dbg.maybeSpace();
 }
 #endif
@@ -207,7 +207,7 @@ QString QOrganizerCollectionSymbianEngineId::toString() const
 #ifndef QT_NO_DEBUG_STREAM
 QDebug& QOrganizerCollectionSymbianEngineId::debugStreamOut(QDebug& dbg) const
 {
-    dbg.nospace() << "QOrganizerCollectionSymbianEngineLocalId(" << m_localCollectionId << ")";
+    dbg.nospace() << "QOrganizerCollectionSymbianEngineId(" << m_localCollectionId << ")";
     return dbg.maybeSpace();
 }
 #endif
@@ -1170,7 +1170,7 @@ QOrganizerCollection QOrganizerItemSymbianEngine::defaultCollection(
 }
 
 QOrganizerCollection QOrganizerItemSymbianEngine::collection(
-    const QOrganizerCollectionLocalId& collectionId,
+    const QOrganizerCollectionId& collectionId,
     QOrganizerManager::Error* error) const
 {
     if (m_collections.contains(collectionId))
