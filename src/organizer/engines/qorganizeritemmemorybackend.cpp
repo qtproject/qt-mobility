@@ -143,7 +143,7 @@ uint QOrganizerItemMemoryEngineId::engineIdType() const
     return qHash(QString(QLatin1String("memory")));
 }
 
-QString QOrganizerItemMemoryEngineLocalId::managerUri() const
+QString QOrganizerItemMemoryEngineId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with
@@ -243,7 +243,7 @@ uint QOrganizerCollectionMemoryEngineId::engineIdType() const
     return qHash(QString(QLatin1String("memory")));
 }
 
-QString QOrganizerCollectionMemoryEngineLocalId::managerUri() const
+QString QOrganizerCollectionMemoryEngineId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with
