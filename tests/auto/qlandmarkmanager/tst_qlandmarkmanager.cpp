@@ -96,33 +96,33 @@
 #endif
 
 //defines to turn on and off tests for symbian
-//#define INVALID_MANAGER
-//#define RETRIEVE_CATEGORY
-//#define RETRIEVE_LANDMARK
-//#define SAVE_CATEGORY
-//#define SAVE_LANDMARK
-//#define REMOVE_CATEGORY
-//#define REMOVE_LANDMARK
-//#define GET_ALL_CATEGORIES
-//#define FILTER_DEFAULT
-//#define FILTER_NAME
-//#define FILTER_ID
-//#define FILTER_PROXIMITY
+#define INVALID_MANAGER
+#define RETRIEVE_CATEGORY
+#define RETRIEVE_LANDMARK
+#define SAVE_CATEGORY
+#define SAVE_LANDMARK
+#define REMOVE_CATEGORY
+#define REMOVE_LANDMARK
+#define GET_ALL_CATEGORIES
+#define FILTER_DEFAULT
+#define FILTER_NAME
+#define FILTER_ID
+#define FILTER_PROXIMITY
 #define FILTER_CATEGORY
-//#define FILTER_BOX
-//#define FILTER_INTERSECTION
-//#define FILTER_MULTIBOX
-//#define FILTER_UNION
-//#define FILTER_ATTRIBUTE
-//#define SORT_LANDMARKS
-//#define LANDMARK_FETCH_CANCEL
-//#define IMPORT_GPX
-//#define IMPORT_LMX
-//#define IMPORT_FILE
-//#define EXPORT_LMX
-//#define WAIT_FOR_FINISHED
-//#define MISC
-//#define TEST_SIGNALS
+#define FILTER_BOX
+#define FILTER_INTERSECTION
+#define FILTER_MULTIBOX
+#define FILTER_UNION
+#define FILTER_ATTRIBUTE
+#define SORT_LANDMARKS
+#define LANDMARK_FETCH_CANCEL
+#define IMPORT_GPX
+#define IMPORT_LMX
+#define IMPORT_FILE
+#define EXPORT_LMX
+#define WAIT_FOR_FINISHED
+#define MISC
+#define TEST_SIGNALS
 
 //#define WORKAROUND
 
@@ -7681,7 +7681,7 @@ void tst_QLandmarkManager::testSignals()
     m_manager->saveLandmarks(&lms);
     QTest::qWait(10);
 
-    ("", "MOBILITY-1746, Not getting any signals from another manager when multiple landmarks are saved", Continue);
+    QEXPECT_FAIL("", "MOBILITY-1746, Not getting any signals from another manager when multiple landmarks are saved", Continue);
     QCOMPARE(spyAdd2.count(), 1);
     QCOMPARE(spyChange2.count(), 0);
     QCOMPARE(spyRemove2.count(), 0);
