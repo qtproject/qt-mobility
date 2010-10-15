@@ -56,6 +56,8 @@ static ContactDetailNameMap qt_contactDetailNameMap[] = {
     {QDeclarativeContactDetail::ContactTimestamp,      "timestamps",     QContactTimestamp::DefinitionName.latin1(), true},
     {QDeclarativeContactDetail::ContactUrl,            "url",            QContactUrl::DefinitionName.latin1(), false},
     {QDeclarativeContactDetail::ContactUrl,            "urls",           QContactUrl::DefinitionName.latin1(), true},
+    {QDeclarativeContactDetail::ContactHobby,          "hobby",          QContactHobby::DefinitionName.latin1(), false},
+    {QDeclarativeContactDetail::ContactHobby,          "hobbies",        QContactHobby::DefinitionName.latin1(), true},
     {QDeclarativeContactDetail::ContactCustomizedDetail,     "",               "",                false}
 };
 

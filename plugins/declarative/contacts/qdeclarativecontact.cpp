@@ -335,3 +335,9 @@ QDeclarativeContactUrl*  QDeclarativeContact::url()
 {
     return static_cast<QDeclarativeContactUrl*>(d->detail(QDeclarativeContactDetail::ContactUrl).value<QDeclarativeContactDetail*>());
 }
+
+
+QDeclarativeContactHobby*  QDeclarativeContact::hobby()
+{
+    return static_cast<QDeclarativeContactHobby*>(d->detail(QDeclarativeContactDetail::ContactHobby).value<QDeclarativeContactDetail*>());
+}
