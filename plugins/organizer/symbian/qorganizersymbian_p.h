@@ -87,17 +87,17 @@ QTM_USE_NAMESPACE
 
 // This is the result of qHash(QString(QLatin1String("symbian")))
 // Precalculated value is used for performance reasons.
-const uint KSymbianEngineLocalIdType = 0xb038f9e;
+const uint KSymbianEngineIdType = 0xb038f9e;
 
 class OrganizerItemTransform; // forward declare transform class.
 class QOrganizerItemSymbianEngine; // forward declare symbian engine.
-class QOrganizerCollectionSymbianEngineLocalId : public QOrganizerCollectionEngineId
+class QOrganizerCollectionSymbianEngineId : public QOrganizerCollectionEngineId
 {
 public:
-    QOrganizerCollectionSymbianEngineLocalId();
-    QOrganizerCollectionSymbianEngineLocalId(quint64 collectionId);
-    ~QOrganizerCollectionSymbianEngineLocalId();
-    QOrganizerCollectionSymbianEngineLocalId(const QOrganizerCollectionSymbianEngineLocalId& other);
+    QOrganizerCollectionSymbianEngineId();
+    QOrganizerCollectionSymbianEngineId(quint64 collectionId);
+    ~QOrganizerCollectionSymbianEngineId();
+    QOrganizerCollectionSymbianEngineId(const QOrganizerCollectionSymbianEngineId& other);
 
     bool isEqualTo(const QOrganizerCollectionEngineId* other) const;
     bool isLessThan(const QOrganizerCollectionEngineId* other) const;
@@ -120,13 +120,13 @@ private:
     friend class QOrganizerItemSymbianEngine;
 };
 
-class QOrganizerItemSymbianEngineLocalId : public QOrganizerItemEngineId
+class QOrganizerItemSymbianEngineId : public QOrganizerItemEngineId
 {
 public:
-    QOrganizerItemSymbianEngineLocalId();
-    QOrganizerItemSymbianEngineLocalId(quint64 collectionId, quint32 itemId);
-    ~QOrganizerItemSymbianEngineLocalId();
-    QOrganizerItemSymbianEngineLocalId(const QOrganizerItemSymbianEngineLocalId& other);
+    QOrganizerItemSymbianEngineId();
+    QOrganizerItemSymbianEngineId(quint64 collectionId, quint32 itemId);
+    ~QOrganizerItemSymbianEngineId();
+    QOrganizerItemSymbianEngineId(const QOrganizerItemSymbianEngineId& other);
 
     bool isEqualTo(const QOrganizerItemEngineId* other) const;
     bool isLessThan(const QOrganizerItemEngineId* other) const;
@@ -337,7 +337,7 @@ public:
         const RPointerArray<CCalInstance> &calInstanceList,
         QOrganizerItem parentItem,
         const int maxCount,
-        QOrganizerCollectionId collectionLocalId,
+        QOrganizerCollectionId collectionId,
         QList<QOrganizerItem> &itemOccurrences) const;
     QOrganizerItem itemL(const QOrganizerItemId& itemId,
             const QOrganizerItemFetchHint& fetchHint) const;

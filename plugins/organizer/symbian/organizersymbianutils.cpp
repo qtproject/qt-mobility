@@ -122,33 +122,33 @@ QDateTime toQDateTime(const TTime &time, Qt::TimeSpec timeSpec)
     return qdt.toTimeSpec(Qt::LocalTime); // return with default timespec set
 }
 
-QOrganizerCollectionId toCollectionLocalId(quint64 collectionId)
+QOrganizerCollectionId toCollectionId(quint64 collectionId)
 {
-    return QOrganizerCollectionId(new QOrganizerCollectionSymbianEngineLocalId(collectionId));
+    return QOrganizerCollectionId(new QOrganizerCollectionSymbianEngineId(collectionId));
 }
 
 QOrganizerItemId toItemId(quint64 collectionId, quint32 itemId)
 {
-    return QOrganizerItemId(new QOrganizerItemSymbianEngineLocalId(collectionId, itemId));
+    return QOrganizerItemId(new QOrganizerItemSymbianEngineId(collectionId, itemId));
 }
 
 TCalLocalUid toTCalLocalUid(const QOrganizerItemId& itemId)
 {
     // TODO: should we have a check for engineLocalIdType here?
-    return static_cast<const QOrganizerItemSymbianEngineLocalId*>(QOrganizerManagerEngine::engineItemId(itemId))->calLocalUid();
+    return static_cast<const QOrganizerItemSymbianEngineId*>(QOrganizerManagerEngine::engineItemId(itemId))->calLocalUid();
 }
 
 quint64 toTCalCollectionId(const QOrganizerItemId& itemId)
 {
     // TODO: should we have a check for engineLocalIdType here?
-    return static_cast<const QOrganizerItemSymbianEngineLocalId*>(QOrganizerManagerEngine::engineItemId(itemId))->calCollectionId();
+    return static_cast<const QOrganizerItemSymbianEngineId*>(QOrganizerManagerEngine::engineItemId(itemId))->calCollectionId();
 }
 
 QOrganizerCollectionId getCollectionLocalId(const QOrganizerItemId& itemId)
 {
     // TODO: should we have a check for engineLocalIdType here?
-    quint64 calCollectionId  = static_cast<const QOrganizerItemSymbianEngineLocalId*>(QOrganizerManagerEngine::engineItemId(itemId))->calCollectionId();
-    return toCollectionLocalId(calCollectionId);
+    quint64 calCollectionId  = static_cast<const QOrganizerItemSymbianEngineId*>(QOrganizerManagerEngine::engineItemId(itemId))->calCollectionId();
+    return toCollectionId(calCollectionId);
 }
 
 #ifdef SYMBIAN_CALENDAR_V2

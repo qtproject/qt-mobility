@@ -66,29 +66,29 @@
 
 using namespace OrganizerSymbianUtils;
 
-QOrganizerItemSymbianEngineLocalId::QOrganizerItemSymbianEngineLocalId()
+QOrganizerItemSymbianEngineId::QOrganizerItemSymbianEngineId()
     : QOrganizerItemEngineId(), m_localCollectionId(0), m_localItemId(0)
 {
 }
 
-QOrganizerItemSymbianEngineLocalId::QOrganizerItemSymbianEngineLocalId(quint64 collectionId, quint32 itemId)
+QOrganizerItemSymbianEngineId::QOrganizerItemSymbianEngineId(quint64 collectionId, quint32 itemId)
     : QOrganizerItemEngineId(), m_localCollectionId(collectionId), m_localItemId(itemId)
 {
 }
 
-QOrganizerItemSymbianEngineLocalId::~QOrganizerItemSymbianEngineLocalId()
+QOrganizerItemSymbianEngineId::~QOrganizerItemSymbianEngineId()
 {
 }
 
-QOrganizerItemSymbianEngineLocalId::QOrganizerItemSymbianEngineLocalId(const QOrganizerItemSymbianEngineLocalId& other)
+QOrganizerItemSymbianEngineId::QOrganizerItemSymbianEngineId(const QOrganizerItemSymbianEngineId& other)
     : QOrganizerItemEngineId(), m_localCollectionId(other.m_localCollectionId), m_localItemId(other.m_localItemId)
 {
 }
 
-bool QOrganizerItemSymbianEngineLocalId::isEqualTo(const QOrganizerItemEngineId* other) const
+bool QOrganizerItemSymbianEngineId::isEqualTo(const QOrganizerItemEngineId* other) const
 {
-    quint64 otherlocalCollectionId = static_cast<const QOrganizerItemSymbianEngineLocalId*>(other)->m_localCollectionId;
-    quint32 otherlocalItemId = static_cast<const QOrganizerItemSymbianEngineLocalId*>(other)->m_localItemId;
+    quint64 otherlocalCollectionId = static_cast<const QOrganizerItemSymbianEngineId*>(other)->m_localCollectionId;
+    quint32 otherlocalItemId = static_cast<const QOrganizerItemSymbianEngineId*>(other)->m_localItemId;
     if (m_localCollectionId != otherlocalCollectionId)
         return false;
     if (m_localItemId != otherlocalItemId)
@@ -96,11 +96,11 @@ bool QOrganizerItemSymbianEngineLocalId::isEqualTo(const QOrganizerItemEngineId*
     return true;
 }
 
-bool QOrganizerItemSymbianEngineLocalId::isLessThan(const QOrganizerItemEngineId* other) const
+bool QOrganizerItemSymbianEngineId::isLessThan(const QOrganizerItemEngineId* other) const
 {
     // order by collection, then by item in collection.
-    quint64 otherlocalCollectionId = static_cast<const QOrganizerItemSymbianEngineLocalId*>(other)->m_localCollectionId;
-    quint32 otherlocalItemId = static_cast<const QOrganizerItemSymbianEngineLocalId*>(other)->m_localItemId;
+    quint64 otherlocalCollectionId = static_cast<const QOrganizerItemSymbianEngineId*>(other)->m_localCollectionId;
+    quint32 otherlocalItemId = static_cast<const QOrganizerItemSymbianEngineId*>(other)->m_localItemId;
     if (m_localCollectionId < otherlocalCollectionId)
         return true;
     if (m_localCollectionId == otherlocalCollectionId)
@@ -108,12 +108,12 @@ bool QOrganizerItemSymbianEngineLocalId::isLessThan(const QOrganizerItemEngineId
     return false;
 }
 
-uint QOrganizerItemSymbianEngineLocalId::engineIdType() const
+uint QOrganizerItemSymbianEngineId::engineIdType() const
 {
-    return KSymbianEngineLocalIdType;
+    return KSymbianEngineIdType;
 }
 
-const QString QOrganizerItemSymbianEngineLocalId::managerUri() const
+QString QOrganizerItemSymbianEngineId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with
@@ -121,16 +121,16 @@ const QString QOrganizerItemSymbianEngineLocalId::managerUri() const
     return managerUri;
 }
 
-QOrganizerItemEngineId* QOrganizerItemSymbianEngineLocalId::clone() const
+QOrganizerItemEngineId* QOrganizerItemSymbianEngineId::clone() const
 {
-    QOrganizerItemSymbianEngineLocalId *myClone = new QOrganizerItemSymbianEngineLocalId;
+    QOrganizerItemSymbianEngineId *myClone = new QOrganizerItemSymbianEngineId;
     myClone->m_localCollectionId = m_localCollectionId;
     myClone->m_localItemId = m_localItemId;
     return myClone;
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug& QOrganizerItemSymbianEngineLocalId::debugStreamOut(QDebug& dbg) const
+QDebug& QOrganizerItemSymbianEngineId::debugStreamOut(QDebug& dbg) const
 {
     dbg.nospace() << "QOrganizerItemSymbianEngineLocalId(" << m_localCollectionId << ", " << m_localItemId << ")";
     return dbg.maybeSpace();
@@ -138,19 +138,19 @@ QDebug& QOrganizerItemSymbianEngineLocalId::debugStreamOut(QDebug& dbg) const
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerItemSymbianEngineLocalId::dataStreamOut(QDataStream& out) const
+QDataStream& QOrganizerItemSymbianEngineId::dataStreamOut(QDataStream& out) const
 {
     return (out << m_localItemId << m_localCollectionId);
 }
 
-QDataStream& QOrganizerItemSymbianEngineLocalId::dataStreamIn(QDataStream& in)
+QDataStream& QOrganizerItemSymbianEngineId::dataStreamIn(QDataStream& in)
 {
     in >> m_localItemId >> m_localCollectionId;
     return in;
 }
 #endif
 
-uint QOrganizerItemSymbianEngineLocalId::hash() const
+uint QOrganizerItemSymbianEngineId::hash() const
 {
     // Note: doesn't need to be unique, since == ensures difference.
     // hash function merely determines distribution in a hash table.
@@ -161,48 +161,48 @@ uint QOrganizerItemSymbianEngineLocalId::hash() const
     return uint(((combinedLocalId >> (8 * sizeof(uint) - 1)) ^ combinedLocalId) & (~0U));
 }
 
-QOrganizerCollectionSymbianEngineLocalId::QOrganizerCollectionSymbianEngineLocalId()
+QOrganizerCollectionSymbianEngineId::QOrganizerCollectionSymbianEngineId()
     : QOrganizerCollectionEngineId(), m_localCollectionId(0)
 {
 }
 
-QOrganizerCollectionSymbianEngineLocalId::QOrganizerCollectionSymbianEngineLocalId(quint64 collectionId)
+QOrganizerCollectionSymbianEngineId::QOrganizerCollectionSymbianEngineId(quint64 collectionId)
     : QOrganizerCollectionEngineId(), m_localCollectionId(collectionId)
 {
 }
 
-QOrganizerCollectionSymbianEngineLocalId::QOrganizerCollectionSymbianEngineLocalId(const QOrganizerCollectionSymbianEngineLocalId& other)
+QOrganizerCollectionSymbianEngineId::QOrganizerCollectionSymbianEngineId(const QOrganizerCollectionSymbianEngineId& other)
     : QOrganizerCollectionEngineId(), m_localCollectionId(other.m_localCollectionId)
 {
 }
 
-QOrganizerCollectionSymbianEngineLocalId::~QOrganizerCollectionSymbianEngineLocalId()
+QOrganizerCollectionSymbianEngineId::~QOrganizerCollectionSymbianEngineId()
 {
 }
 
-bool QOrganizerCollectionSymbianEngineLocalId::isEqualTo(const QOrganizerCollectionEngineId* other) const
+bool QOrganizerCollectionSymbianEngineId::isEqualTo(const QOrganizerCollectionEngineId* other) const
 {
-    quint64 otherlocalCollectionId = static_cast<const QOrganizerCollectionSymbianEngineLocalId*>(other)->m_localCollectionId;
+    quint64 otherlocalCollectionId = static_cast<const QOrganizerCollectionSymbianEngineId*>(other)->m_localCollectionId;
     if (m_localCollectionId != otherlocalCollectionId)
         return false;
     return true;
 }
 
-bool QOrganizerCollectionSymbianEngineLocalId::isLessThan(const QOrganizerCollectionEngineId* other) const
+bool QOrganizerCollectionSymbianEngineId::isLessThan(const QOrganizerCollectionEngineId* other) const
 {
     // order by collection, then by item in collection.
-    quint64 otherlocalCollectionId = static_cast<const QOrganizerCollectionSymbianEngineLocalId*>(other)->m_localCollectionId;
+    quint64 otherlocalCollectionId = static_cast<const QOrganizerCollectionSymbianEngineId*>(other)->m_localCollectionId;
     if (m_localCollectionId < otherlocalCollectionId)
         return true;
     return false;
 }
 
-uint QOrganizerCollectionSymbianEngineLocalId::engineIdType() const
+uint QOrganizerCollectionSymbianEngineId::engineIdType() const
 {
-    return KSymbianEngineLocalIdType;
+    return KSymbianEngineIdType;
 }
 
-const QString QOrganizerCollectionSymbianEngineLocalId::managerUri() const
+QString QOrganizerCollectionSymbianEngineId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with
@@ -210,15 +210,15 @@ const QString QOrganizerCollectionSymbianEngineLocalId::managerUri() const
     return managerUri;
 }
 
-QOrganizerCollectionEngineId* QOrganizerCollectionSymbianEngineLocalId::clone() const
+QOrganizerCollectionEngineId* QOrganizerCollectionSymbianEngineId::clone() const
 {
-    QOrganizerCollectionSymbianEngineLocalId *myClone = new QOrganizerCollectionSymbianEngineLocalId;
+    QOrganizerCollectionSymbianEngineId *myClone = new QOrganizerCollectionSymbianEngineId;
     myClone->m_localCollectionId = m_localCollectionId;
     return myClone;
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug& QOrganizerCollectionSymbianEngineLocalId::debugStreamOut(QDebug& dbg) const
+QDebug& QOrganizerCollectionSymbianEngineId::debugStreamOut(QDebug& dbg) const
 {
     dbg.nospace() << "QOrganizerCollectionSymbianEngineLocalId(" << m_localCollectionId << ")";
     return dbg.maybeSpace();
@@ -226,18 +226,18 @@ QDebug& QOrganizerCollectionSymbianEngineLocalId::debugStreamOut(QDebug& dbg) co
 #endif
 
 #ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerCollectionSymbianEngineLocalId::dataStreamOut(QDataStream& out) const
+QDataStream& QOrganizerCollectionSymbianEngineId::dataStreamOut(QDataStream& out) const
 {
     return (out << m_localCollectionId);
 }
 
-QDataStream& QOrganizerCollectionSymbianEngineLocalId::dataStreamIn(QDataStream& in)
+QDataStream& QOrganizerCollectionSymbianEngineId::dataStreamIn(QDataStream& in)
 {
     return (in >> m_localCollectionId);
 }
 #endif
 
-uint QOrganizerCollectionSymbianEngineLocalId::hash() const
+uint QOrganizerCollectionSymbianEngineId::hash() const
 {
     return QT_PREPEND_NAMESPACE(qHash)(m_localCollectionId);
 }
@@ -274,13 +274,13 @@ QOrganizerManagerEngine* QOrganizerItemSymbianFactory::engine(
 QOrganizerItemEngineId* QOrganizerItemSymbianFactory::createItemEngineId(const QMap<QString, QString>& parameters) const
 {
     Q_UNUSED(parameters);
-    return new QOrganizerItemSymbianEngineLocalId;
+    return new QOrganizerItemSymbianEngineId;
 }
 
 QOrganizerCollectionEngineId* QOrganizerItemSymbianFactory::createCollectionEngineId(const QMap<QString, QString>& parameters) const
 {
     Q_UNUSED(parameters);
-    return new QOrganizerCollectionSymbianEngineLocalId;
+    return new QOrganizerCollectionSymbianEngineId;
 }
 
 QString QOrganizerItemSymbianFactory::managerName() const
@@ -497,10 +497,10 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
     const RPointerArray<CCalInstance> &calInstanceList,
     QOrganizerItem parentItem,
     const int maxCount,
-    QOrganizerCollectionId collectionLocalId,
+    QOrganizerCollectionId collectionId,
     QList<QOrganizerItem> &itemOccurrences) const
 {
-    quint64 localCollectionIdValue = m_collections[collectionLocalId].calCollectionId();
+    quint64 localCollectionIdValue = m_collections[collectionId].calCollectionId();
 
     // Transform all the instances to QOrganizerItems
     for(int i(0); i < calInstanceList.Count(); i++) {
@@ -519,7 +519,7 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
         bool isException = (calInstance->Entry().RecurrenceIdL().TimeUtcL() != Time::NullTTime());
         // Set id if this is an exceptional item
         if (isException) {
-            itemOccurrence.setId(QOrganizerItemId(new QOrganizerItemSymbianEngineLocalId(
+            itemOccurrence.setId(QOrganizerItemId(new QOrganizerItemSymbianEngineId(
                 localCollectionIdValue, calInstance->Entry().LocalUidL())));
         }
 
@@ -527,7 +527,7 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
         TCalLocalUid parentLocalUid(0);
         if (isException) {
             HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(itemOccurrence);
-            CCalEntry *parentEntry = findParentEntryLC(collectionLocalId, itemOccurrence, *globalUid);
+            CCalEntry *parentEntry = findParentEntryLC(collectionId, itemOccurrence, *globalUid);
             parentLocalUid = parentEntry->LocalUidL();
             CleanupStack::PopAndDestroy(parentEntry);
             CleanupStack::PopAndDestroy(globalUid);
@@ -543,7 +543,7 @@ void QOrganizerItemSymbianEngine::toItemOccurrencesL(
         itemOccurrence.saveDetail(&origin);
 
         // Set collection id
-        itemOccurrence.setCollectionId(collectionLocalId);
+        itemOccurrence.setCollectionId(collectionId);
 
         itemOccurrences.append(itemOccurrence);
     }
@@ -692,7 +692,7 @@ QOrganizerItem QOrganizerItemSymbianEngine::itemL(const QOrganizerItemId& itemId
 	Q_UNUSED(fetchHint)
 
     // Check collection id
-    QOrganizerCollectionId collectionLocalId = getCollectionLocalId(itemId);
+    QOrganizerCollectionId collectionLocalId = getCollectionId(itemId);
     if (!m_collections.contains(collectionLocalId))
         User::Leave(KErrNotFound);
     
@@ -794,7 +794,7 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item,
         completeCollectionId = item->collectionId();
         collectionId = item->collectionId();
     }
-    QOrganizerCollectionId collectionLocalId = collectionLocalIdL(*item, 
+    QOrganizerCollectionId collectionLocalId = collectionIdL(*item,
         collectionId);
 
     // Find the entry corresponding to the item or to the item occurrence.
@@ -890,7 +890,7 @@ CCalInstanceView* QOrganizerItemSymbianEngine::instanceViewL(const QOrganizerCol
  * given as a parameter if it is valid. Fallback is to return the default
  * session's collection id.
  */
-QOrganizerCollectionId QOrganizerItemSymbianEngine::collectionLocalIdL(
+QOrganizerCollectionId QOrganizerItemSymbianEngine::collectionIdL(
     const QOrganizerItem &item, const QOrganizerCollectionId &collectionId) const
 {
 #ifdef SYMBIAN_CALENDAR_V2
@@ -992,7 +992,7 @@ CCalEntry* QOrganizerItemSymbianEngine::entryForItemL(
 
 CCalEntry * QOrganizerItemSymbianEngine::findEntryL(
     const QOrganizerCollectionId &collectionId, 
-    const QOrganizerItemId &localId, QString manageruri) const
+    const QOrganizerItemId &id, QString manageruri) const
 {
     CCalEntry *entry(0);
 
@@ -1002,10 +1002,10 @@ CCalEntry * QOrganizerItemSymbianEngine::findEntryL(
             User::Leave(KErrArgument);
     }
 
-    // There must be an existing entry if local id is provided
-    if (!localId.isNull()) {
-        // Fetch the item (will return NULL if the localid is not found)
-        entry = entryViewL(collectionId)->FetchL(toTCalLocalUid(localId));
+    // There must be an existing entry if id is provided
+    if (!id.isNull()) {
+        // Fetch the item (will return NULL if the id is not found)
+        entry = entryViewL(collectionId)->FetchL(toTCalLocalUid(id));
         if (!entry)
             User::Leave(KErrNotFound);
     }
@@ -1043,10 +1043,10 @@ CCalEntry* QOrganizerItemSymbianEngine::findParentEntryLC(
 {
     CCalEntry *parent(0);
 
-    // Try to find with parent's local id
+    // Try to find with parent's id
     QOrganizerItemParent origin = item.detail<QOrganizerItemParent>();
     if (!origin.parentId().isNull()) {
-        // Fetch the item (will return NULL if the localid is not found)
+        // Fetch the item (will return NULL if the id is not found)
         parent = entryViewL(collectionId)->FetchL(toTCalLocalUid(origin.parentId())); // ownership transferred
         if (!parent)
             User::Leave(KErrInvalidOccurrence);
@@ -1134,7 +1134,7 @@ void QOrganizerItemSymbianEngine::removeItemL(
 {
     // TODO: How to remove item instances?
 
-    QOrganizerCollectionId collectionId = getCollectionLocalId(organizeritemId);
+    QOrganizerCollectionId collectionId = getCollectionId(organizeritemId);
     if (!m_collections.contains(collectionId))
         User::Leave(KErrNotFound);
 
@@ -1245,11 +1245,11 @@ void QOrganizerItemSymbianEngine::saveCollectionL(
     }
     
     // Find existing collection
-    QOrganizerCollectionId localId = collection->id();
+    QOrganizerCollectionId id = collection->id();
     OrganizerSymbianCollection symbianCollection(this);
-    if (!localId.isNull()) {
-        if (m_collections.contains(localId))
-            symbianCollection = m_collections[localId];
+    if (!id.isNull()) {
+        if (m_collections.contains(id))
+            symbianCollection = m_collections[id];
         else
             User::Leave(KErrArgument); // collection id was defined but was not found 
     }
