@@ -71,7 +71,8 @@ public:
     ~QGeoTiledMapPixmapObjectInfo();
 
     QGeoMapPixmapObject* pixmap;
-    QGraphicsPixmapItem *pixmapItem;
+    QGraphicsPixmapItem *pixmapItem1;
+    QGraphicsPixmapItem *pixmapItem2;
 
     void updateValidity();
 
@@ -81,7 +82,7 @@ public slots:
     void offsetChanged(const QPoint &offset);
     void zoomLevelChanged(qreal zoomLevel);
 private:
-    void updateOffset();
+    void update();
 };
 
 QTM_END_NAMESPACE

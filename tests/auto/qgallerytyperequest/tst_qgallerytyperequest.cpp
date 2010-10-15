@@ -79,7 +79,7 @@ public:
     QtGalleryTestResponse(
             const QStringList &propertyNames,
             int count,
-            QGalleryAbstractRequest::Status status,
+            QGalleryAbstractRequest::State state,
             int error,
             const QString &errorString)
         : m_count(count)
@@ -90,9 +90,9 @@ public:
 
         if (error != QGalleryAbstractRequest::NoError)
             QGalleryAbstractResponse::error(error, errorString);
-        else if (status == QGalleryAbstractRequest::Finished)
+        else if (state == QGalleryAbstractRequest::Finished)
             finish();
-        else if (status == QGalleryAbstractRequest::Idle)
+        else if (state == QGalleryAbstractRequest::Idle)
             finish(true);
     }
 
@@ -151,14 +151,14 @@ class QtTestGallery : public QAbstractGallery
 public:
     QtTestGallery()
         : m_count(0)
-        , m_status(QGalleryAbstractRequest::Active)
+        , m_state(QGalleryAbstractRequest::Active)
         , m_error(QGalleryAbstractRequest::NoError)
     {}
 
     bool isRequestSupported(QGalleryAbstractRequest::RequestType type) const {
         return type == QGalleryAbstractRequest::TypeRequest; }
 
-    void setStatus(QGalleryAbstractRequest::Status status) { m_status = status; }
+    void setState(QGalleryAbstractRequest::State state) { m_state = state; }
     void setError(int error, const QString &errorString) {
         m_error = error; m_errorString = errorString; }
 
@@ -171,7 +171,7 @@ protected:
             return new QtGalleryTestResponse(
                     static_cast<QGalleryTypeRequest *>(request)->propertyNames(),
                     m_count,
-                    m_status,
+                    m_state,
                     m_error,
                     m_errorString);
         }
@@ -180,7 +180,7 @@ protected:
 
 private:
     int m_count;
-    QGalleryAbstractRequest::Status m_status;
+    QGalleryAbstractRequest::State m_state;
     int m_error;
     QString m_errorString;
 };
@@ -193,8 +193,8 @@ void tst_QGalleryTypeRequest::initTestCase()
 
 void tst_QGalleryTypeRequest::propertyNames()
 {
-    const QGalleryProperty titleProperty("title");
-    const QGalleryProperty artistProperty("artist");
+    const QGalleryProperty titleProperty = {"title", sizeof("title")};
+    const QGalleryProperty artistProperty = {"artist", sizeof("artist")};
 
     const QStringList propertyNames = QStringList()
             << titleProperty
@@ -280,7 +280,7 @@ void tst_QGalleryTypeRequest::itemType()
 void tst_QGalleryTypeRequest::executeSynchronous()
 {
     QtTestGallery gallery;
-    gallery.setStatus(QGalleryAbstractRequest::Finished);
+    gallery.setState(QGalleryAbstractRequest::Finished);
     gallery.setCount(1);
     gallery.setError(80, QString());
 
@@ -299,14 +299,14 @@ void tst_QGalleryTypeRequest::executeSynchronous()
     request.execute();
 
     QCOMPARE(request.error(), 80);
-    QCOMPARE(request.status(), QGalleryAbstractRequest::Error);
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Error);
     QCOMPARE(resultSetSpy.count(), 0);
     QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.resultSet()) == 0);
 
     gallery.setError(QGalleryAbstractRequest::NoError, QString());
     request.execute();
     QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
-    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Finished);
     QCOMPARE(resultSetSpy.count(), 1);
     QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.resultSet()) != 0);
     QCOMPARE(resultSetSpy.last().at(0).value<QGalleryResultSet*>(), request.resultSet());
@@ -340,7 +340,7 @@ void tst_QGalleryTypeRequest::executeSynchronous()
     QCOMPARE(metaDataSpy.count(), 2);
 
     request.clear();
-    QCOMPARE(request.status(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
     QCOMPARE(resultSetSpy.count(), 2);
     QVERIFY(request.resultSet() == 0);
     QCOMPARE(resultSetSpy.last().at(0).value<QGalleryResultSet*>(), request.resultSet());
@@ -351,7 +351,7 @@ void tst_QGalleryTypeRequest::executeSynchronous()
 void tst_QGalleryTypeRequest::executeAsynchronous()
 {
     QtTestGallery gallery;
-    gallery.setStatus(QGalleryAbstractRequest::Active);
+    gallery.setState(QGalleryAbstractRequest::Active);
 
     QGalleryTypeRequest request(&gallery);
     QVERIFY(request.resultSet() == 0);
@@ -366,7 +366,7 @@ void tst_QGalleryTypeRequest::executeAsynchronous()
     QSignalSpy metaDataSpy(&request, SIGNAL(metaDataChanged(QList<int>)));
 
     request.execute();
-    QCOMPARE(request.status(), QGalleryAbstractRequest::Active);
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Active);
     QCOMPARE(resultSetSpy.count(), 1);
     QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.resultSet()) != 0);
     QCOMPARE(resultSetSpy.last().at(0).value<QGalleryResultSet*>(), request.resultSet());
@@ -410,7 +410,7 @@ void tst_QGalleryTypeRequest::executeAsynchronous()
 
     resultSet->finish(false);
 
-    QCOMPARE(request.status(), QGalleryAbstractRequest::Finished);
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Finished);
     QCOMPARE(resultSetSpy.count(), 1);
     QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.resultSet()) != 0);
 
@@ -427,7 +427,7 @@ void tst_QGalleryTypeRequest::executeAsynchronous()
 
 
     request.clear();
-    QCOMPARE(request.status(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
     QCOMPARE(resultSetSpy.count(), 2);
     QVERIFY(request.resultSet() == 0);
     QCOMPARE(resultSetSpy.last().at(0).value<QGalleryResultSet*>(), request.resultSet());

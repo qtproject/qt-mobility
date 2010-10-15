@@ -821,9 +821,9 @@ void tst_QOrganizerItem::event()
     QCOMPARE(testEvent.startDateTime(), QDateTime(QDate::currentDate()));
     testEvent.setEndDateTime(QDateTime(QDate::currentDate().addDays(1)));
     QCOMPARE(testEvent.endDateTime(), QDateTime(QDate::currentDate().addDays(1)));
-    QVERIFY(!testEvent.isTimeSpecified()); // default is all day event.
-    testEvent.setTimeSpecified(true);
-    QVERIFY(testEvent.isTimeSpecified());
+    QVERIFY(!testEvent.isAllDay()); // default to not all day
+    testEvent.setAllDay(true);
+    QVERIFY(testEvent.isAllDay());
 
     testEvent.setPriority(QOrganizerItemPriority::VeryHighPriority);
     QCOMPARE(testEvent.priority(), QOrganizerItemPriority::VeryHighPriority);

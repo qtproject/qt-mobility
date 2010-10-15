@@ -66,7 +66,7 @@ public:
             const QStringList &propertyNames,
             const QHash<QString, QVariant> &metaData,
             int count,
-            QGalleryAbstractRequest::Status status,
+            QGalleryAbstractRequest::State state,
             int error,
             const QString &errorString)
         : m_count(count)
@@ -83,9 +83,9 @@ public:
 
         if (error != QGalleryAbstractRequest::NoError)
             QGalleryAbstractResponse::error(error, errorString);
-        else if (status == QGalleryAbstractRequest::Finished)
+        else if (state == QGalleryAbstractRequest::Finished)
             finish();
-        else if (status == QGalleryAbstractRequest::Idle)
+        else if (state == QGalleryAbstractRequest::Idle)
             finish(true);
     }
 
@@ -159,14 +159,14 @@ class QtTestGallery : public QAbstractGallery
 public:
     QtTestGallery()
         : m_count(0)
-        , m_status(QGalleryAbstractRequest::Finished)
+        , m_state(QGalleryAbstractRequest::Finished)
         , m_error(QGalleryAbstractRequest::NoError)
     {}
 
     bool isRequestSupported(QGalleryAbstractRequest::RequestType type) const {
         return type == QGalleryAbstractRequest::TypeRequest; }
 
-    void setStatus(QGalleryAbstractRequest::Status status) { m_status = status; }
+    void setState(QGalleryAbstractRequest::State state) { m_state = state; }
     void setError(int error, const QString &errorString) {
         m_error = error; m_errorString = errorString; }
 
@@ -181,7 +181,7 @@ public:
     void reset()
     {
         m_count = 0;
-        m_status = QGalleryAbstractRequest::Finished;
+        m_state = QGalleryAbstractRequest::Finished;
         m_error = QGalleryItemRequest::NoError;
         m_metaData.clear();
         m_blacklist.clear();
@@ -199,7 +199,7 @@ protected:
                     propertyNames,
                     m_metaData,
                     m_count,
-                    m_status,
+                    m_state,
                     m_error,
                     m_errorString);
         } else {
@@ -210,7 +210,7 @@ protected:
 
 private:
     int m_count;
-    QGalleryAbstractRequest::Status m_status;
+    QGalleryAbstractRequest::State m_state;
     int m_error;
     QString m_errorString;
     QHash<QString, QVariant> m_metaData;
@@ -240,7 +240,7 @@ private Q_SLOTS:
     void cancelAsyncResponse();
     void cancelIdleResponse();
     void cancelPendingResponse();
-    void deferExecuteCancelledResponse();
+    void deferExecuteCanceledResponse();
     void clear();
     void clearPendingResponse();
     void error_data();
@@ -275,7 +275,6 @@ void tst_QDeclarativeDocumentGalleryItem::itemId_data()
 
     QTest::newRow("Null -> 45")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {}\n")
             << QVariant()
@@ -283,7 +282,6 @@ void tst_QDeclarativeDocumentGalleryItem::itemId_data()
 
     QTest::newRow("45 -> 45")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem { item: 45 }\n")
             << QVariant(45)
@@ -291,7 +289,6 @@ void tst_QDeclarativeDocumentGalleryItem::itemId_data()
 
     QTest::newRow("45 -> file:///path/to/file.ext")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem { item: 45 }\n")
             << QVariant(45)
@@ -299,7 +296,6 @@ void tst_QDeclarativeDocumentGalleryItem::itemId_data()
 
     QTest::newRow("file:///path/to/file.ext -> Null")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem { item: \"file:///path/to/file.ext\" }\n")
             << QVariant(QLatin1String("file:///path/to/file.ext"))
@@ -349,7 +345,6 @@ void tst_QDeclarativeDocumentGalleryItem::properties_data()
 
     QTest::newRow("[] -> [ title, fileName ]")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -359,7 +354,6 @@ void tst_QDeclarativeDocumentGalleryItem::properties_data()
 
     QTest::newRow("[ title, fileName ] -> [ title, fileName ]")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -370,7 +364,6 @@ void tst_QDeclarativeDocumentGalleryItem::properties_data()
 
     QTest::newRow("[ title, fileName ] -> [ count ]")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -416,7 +409,6 @@ void tst_QDeclarativeDocumentGalleryItem::autoUpdate_data()
 
     QTest::newRow("Default -> true")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -426,7 +418,6 @@ void tst_QDeclarativeDocumentGalleryItem::autoUpdate_data()
 
     QTest::newRow("true -> false")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -437,7 +428,6 @@ void tst_QDeclarativeDocumentGalleryItem::autoUpdate_data()
 
     QTest::newRow("false -> true")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -448,7 +438,6 @@ void tst_QDeclarativeDocumentGalleryItem::autoUpdate_data()
 
     QTest::newRow("true -> true")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -459,7 +448,6 @@ void tst_QDeclarativeDocumentGalleryItem::autoUpdate_data()
 
     QTest::newRow("false -> false")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem {\n"
                         "item: 0\n"
@@ -499,14 +487,13 @@ void tst_QDeclarativeDocumentGalleryItem::autoUpdate()
 void tst_QDeclarativeDocumentGalleryItem::disableAutoUpdateFinished()
 {
     const QByteArray qml(
-        "import Qt 4.7\n"
         "import QtMobility.gallery 1.1\n"
         "DocumentGalleryItem {\n"
             "item: 12\n"
             "autoUpdate: true\n"
         "}\n");
 
-    gallery.setStatus(QGalleryAbstractRequest::Finished);
+    gallery.setState(QGalleryAbstractRequest::Finished);
 
     QDeclarativeComponent component(&engine);
     component.setData(qml, QUrl());
@@ -528,14 +515,13 @@ void tst_QDeclarativeDocumentGalleryItem::disableAutoUpdateFinished()
 void tst_QDeclarativeDocumentGalleryItem::disableAutoUpdateIdle()
 {
     const QByteArray qml(
-        "import Qt 4.7\n"
         "import QtMobility.gallery 1.1\n"
         "DocumentGalleryItem {\n"
             "item: 12\n"
             "autoUpdate: true\n"
         "}\n");
 
-    gallery.setStatus(QGalleryAbstractRequest::Idle);
+    gallery.setState(QGalleryAbstractRequest::Idle);
 
     QDeclarativeComponent component(&engine);
     component.setData(qml, QUrl());
@@ -557,14 +543,13 @@ void tst_QDeclarativeDocumentGalleryItem::disableAutoUpdateIdle()
 void tst_QDeclarativeDocumentGalleryItem::disableAutoUpdateActive()
 {
     const QByteArray qml(
-        "import Qt 4.7\n"
         "import QtMobility.gallery 1.1\n"
         "DocumentGalleryItem {\n"
             "item: 12\n"
             "autoUpdate: true\n"
         "}\n");
 
-    gallery.setStatus(QGalleryAbstractRequest::Active);
+    gallery.setState(QGalleryAbstractRequest::Active);
 
     QDeclarativeComponent component(&engine);
     component.setData(qml, QUrl());
@@ -591,11 +576,10 @@ void tst_QDeclarativeDocumentGalleryItem::disableAutoUpdateActive()
 void tst_QDeclarativeDocumentGalleryItem::asyncResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
-    gallery.setStatus(QGalleryAbstractRequest::Active);
+    gallery.setState(QGalleryAbstractRequest::Active);
 
     QDeclarativeComponent component(&engine);
     component.setData(qml, QUrl());
@@ -617,11 +601,10 @@ void tst_QDeclarativeDocumentGalleryItem::asyncResponse()
 void tst_QDeclarativeDocumentGalleryItem::cancelAsyncResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
-    gallery.setStatus(QGalleryAbstractRequest::Active);
+    gallery.setState(QGalleryAbstractRequest::Active);
 
     QDeclarativeComponent component(&engine);
     component.setData(qml, QUrl());
@@ -636,18 +619,17 @@ void tst_QDeclarativeDocumentGalleryItem::cancelAsyncResponse()
     QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryItem::Active));
 
     QMetaObject::invokeMethod(object.data(), "cancel");
-    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryItem::Cancelled));
+    QCOMPARE(object->property("status"), QVariant(QDeclarativeGalleryItem::Canceled));
     QCOMPARE(spy.count(), 1);
 }
 
 void tst_QDeclarativeDocumentGalleryItem::cancelIdleResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12; autoUpdate: true }\n");
 
-    gallery.setStatus(QGalleryAbstractRequest::Idle);
+    gallery.setState(QGalleryAbstractRequest::Idle);
 
     QDeclarativeComponent component(&engine);
     component.setData(qml, QUrl());
@@ -669,7 +651,6 @@ void tst_QDeclarativeDocumentGalleryItem::cancelIdleResponse()
 void tst_QDeclarativeDocumentGalleryItem::cancelPendingResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -696,10 +677,9 @@ void tst_QDeclarativeDocumentGalleryItem::cancelPendingResponse()
     QCOMPARE(spy.count(), 0);
 }
 
-void tst_QDeclarativeDocumentGalleryItem::deferExecuteCancelledResponse()
+void tst_QDeclarativeDocumentGalleryItem::deferExecuteCanceledResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -732,7 +712,6 @@ void tst_QDeclarativeDocumentGalleryItem::deferExecuteCancelledResponse()
 void tst_QDeclarativeDocumentGalleryItem::clear()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -761,7 +740,6 @@ void tst_QDeclarativeDocumentGalleryItem::clear()
 void tst_QDeclarativeDocumentGalleryItem::clearPendingResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -797,7 +775,6 @@ void tst_QDeclarativeDocumentGalleryItem::error_data()
 
     QTest::newRow("Specific error message")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem { item: 0 }\n")
             << int(QDocumentGallery::ConnectionError)
@@ -808,7 +785,6 @@ void tst_QDeclarativeDocumentGalleryItem::error_data()
 
     QTest::newRow("Generic connection Error")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem { item: 0 }\n")
             << int(QDocumentGallery::ConnectionError)
@@ -819,7 +795,6 @@ void tst_QDeclarativeDocumentGalleryItem::error_data()
 
     QTest::newRow("Generic rootItem error")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem { item: 0 }\n")
             << int(QDocumentGallery::ItemIdError)
@@ -830,7 +805,6 @@ void tst_QDeclarativeDocumentGalleryItem::error_data()
 
     QTest::newRow("Unhandled error code")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryItem { item: 0 }\n")
             << int(QDocumentGallery::NoGallery)
@@ -893,7 +867,6 @@ void tst_QDeclarativeDocumentGalleryItem::progress()
     QFETCH(qreal, normalizedProgress);
 
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -917,7 +890,6 @@ void tst_QDeclarativeDocumentGalleryItem::progress()
 void tst_QDeclarativeDocumentGalleryItem::available()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -944,7 +916,6 @@ void tst_QDeclarativeDocumentGalleryItem::available()
 void tst_QDeclarativeDocumentGalleryItem::itemUrl()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -971,7 +942,6 @@ void tst_QDeclarativeDocumentGalleryItem::itemUrl()
 void tst_QDeclarativeDocumentGalleryItem::itemType()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem { item: 12 }\n");
 
@@ -998,7 +968,6 @@ void tst_QDeclarativeDocumentGalleryItem::itemType()
 void tst_QDeclarativeDocumentGalleryItem::metaData()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryItem {\n"
                 "item: 12\n"
@@ -1017,6 +986,7 @@ void tst_QDeclarativeDocumentGalleryItem::metaData()
 
     QScopedPointer<QObject> object(component.create());
     QVERIFY(object);
+    QVERIFY(gallery.response());
 
     QObject *metaData = object->property("metaData").value<QObject *>();
     QVERIFY(metaData);

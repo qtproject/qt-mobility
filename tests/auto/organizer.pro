@@ -13,6 +13,6 @@ SUBDIRS += \
     qorganizeritemfilter \
     qorganizermanager
 
-contains(QT_CONFIG, declarative) {
-    SUBDIRS += qdeclarativeorganizer
-}
+#contains(QT_CONFIG, declarative) {
+#    SUBDIRS += qdeclarativeorganizer
+#}

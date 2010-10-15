@@ -19,6 +19,7 @@ maemo5 {
         message("Unable to build organizer backend plugin for maemo5!  Please install calendar-backend-dev to build this plugin!")
     }
 }
+simulator:SUBDIRS += simulator
 
 # To start with
 SUBDIRS += skeleton

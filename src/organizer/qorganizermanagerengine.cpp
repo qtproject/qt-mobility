@@ -747,7 +747,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.insert(QOrganizerEventTime::FieldStartDateTime, f);
     fields.insert(QOrganizerEventTime::FieldEndDateTime, f);
     f.setDataType(QVariant::Bool);
-    fields.insert(QOrganizerEventTime::FieldTimeSpecified, f);
+    fields.insert(QOrganizerEventTime::FieldAllDay, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -878,7 +878,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.insert(QOrganizerEventTime::FieldStartDateTime, f);
     fields.insert(QOrganizerEventTime::FieldEndDateTime, f);
     f.setDataType(QVariant::Bool);
-    fields.insert(QOrganizerEventTime::FieldTimeSpecified, f);
+    fields.insert(QOrganizerEventTime::FieldAllDay, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -1154,7 +1154,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.insert(QOrganizerTodoTime::FieldStartDateTime, f);
     fields.insert(QOrganizerTodoTime::FieldDueDateTime, f);
     f.setDataType(QVariant::Bool);
-    fields.insert(QOrganizerTodoTime::FieldTimeSpecified, f);
+    fields.insert(QOrganizerTodoTime::FieldAllDay, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -1349,7 +1349,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     fields.insert(QOrganizerTodoTime::FieldStartDateTime, f);
     fields.insert(QOrganizerTodoTime::FieldDueDateTime, f);
     f.setDataType(QVariant::Bool);
-    fields.insert(QOrganizerTodoTime::FieldTimeSpecified, f);
+    fields.insert(QOrganizerTodoTime::FieldAllDay, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);

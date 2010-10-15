@@ -75,6 +75,7 @@ public:
     QLandmarkManagerEngine *engine;
     mutable QLandmarkManager::Error errorCode;
     mutable QString errorString;
+    mutable QMap<int, QLandmarkManager::Error> errorMap;
     static QLandmarkManagerEngine *getEngine(const QLandmarkManager* manager);
     static void loadFactories();
     static QHash<QString, QLandmarkManagerEngineFactory*> factories(bool reload = false);

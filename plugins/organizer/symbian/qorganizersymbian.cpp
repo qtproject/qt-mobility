@@ -1169,6 +1169,16 @@ QOrganizerCollection QOrganizerItemSymbianEngine::defaultCollection(
     return m_defaultCollection.toQOrganizerCollectionL();
 }
 
+QOrganizerCollection QOrganizerItemSymbianEngine::collection(
+    const QOrganizerCollectionLocalId& collectionId,
+    QOrganizerManager::Error* error) const
+{
+    if (m_collections.contains(collectionId))
+        return (m_collections[collectionId].toQOrganizerCollectionL());
+    *error = QOrganizerManager::DoesNotExistError;
+    return QOrganizerCollection();
+}
+
 QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collections(
     QOrganizerManager::Error* error) const
 {
@@ -1177,14 +1187,6 @@ QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collections(
     TRAPD(err, collections = collectionsL());
     transformError(err, error);
     return collections;
-}
-
-QOrganizerCollection QOrganizerItemSymbianEngine::collectionL(
-    const QOrganizerCollectionId& collectionId) const
-{
-    if (m_collections.contains(collectionId))
-        return (m_collections[collectionId].toQOrganizerCollectionL());
-    User::Leave(KErrNotFound);
 }
 
 QList<QOrganizerCollection> QOrganizerItemSymbianEngine::collectionsL() const

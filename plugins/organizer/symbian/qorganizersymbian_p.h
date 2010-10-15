@@ -268,11 +268,11 @@ public:
     /* Collections - every item belongs to exactly one collection */
     QOrganizerCollection defaultCollection(
         QOrganizerManager::Error* error) const;
-    QList<QOrganizerCollection> collections(
-        QOrganizerManager::Error* error) const;
     QOrganizerCollection collection(
         const QOrganizerCollectionId& collectionId,
         QOrganizerManager::Error* error);
+    QList<QOrganizerCollection> collections(
+        QOrganizerManager::Error* error) const;
     bool saveCollection(QOrganizerCollection* collection, 
         QOrganizerManager::Error* error);
     bool removeCollection(const QOrganizerCollectionId& collectionId, 
@@ -342,8 +342,6 @@ public:
 
 private:
     QList<QOrganizerCollection> collectionsL() const;
-    QOrganizerCollection collectionL(
-        const QOrganizerCollectionId& collectionId) const;
     void saveCollectionL(QOrganizerCollection* collection);
     void removeCollectionL(const QOrganizerCollectionId& collectionId);
     CCalEntryView* entryViewL(const QOrganizerCollectionId& collectionId) const;

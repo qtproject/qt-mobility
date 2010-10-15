@@ -75,9 +75,15 @@
 #include "qorganizeritemengineid.h"
 #include "qorganizercollectionengineid.h"
 
+#ifdef QT_SIMULATOR
+#define Q_ORGANIZER_MEMORYENGINE_EXPORT Q_ORGANIZER_EXPORT
+#else
+#define Q_ORGANIZER_MEMORYENGINE_EXPORT
+#endif
+
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemMemoryEngineId : public QOrganizerItemEngineId
+class Q_ORGANIZER_MEMORYENGINE_EXPORT QOrganizerItemMemoryEngineId : public QOrganizerItemEngineId
 {
 public:
     QOrganizerItemMemoryEngineId();
@@ -105,7 +111,7 @@ private:
     friend class QOrganizerItemMemoryEngine;
 };
 
-class QOrganizerCollectionMemoryEngineId : public QOrganizerCollectionEngineId
+class Q_ORGANIZER_MEMORYENGINE_EXPORT QOrganizerCollectionMemoryEngineId : public QOrganizerCollectionEngineId
 {
 public:
     QOrganizerCollectionMemoryEngineId();
@@ -134,7 +140,7 @@ private:
 
 class QOrganizerAbstractRequest;
 class QOrganizerManagerEngine;
-class QOrganizerItemMemoryEngineData : public QSharedData
+class Q_ORGANIZER_MEMORYENGINE_EXPORT QOrganizerItemMemoryEngineData : public QSharedData
 {
 public:
     QOrganizerItemMemoryEngineData();
@@ -165,7 +171,7 @@ public:
     QList<QOrganizerManagerEngine*> m_sharedEngines;   // The list of engines that share this data
 };
 
-class QOrganizerItemMemoryEngine : public QOrganizerManagerEngine
+class Q_ORGANIZER_MEMORYENGINE_EXPORT QOrganizerItemMemoryEngine : public QOrganizerManagerEngine
 {
     Q_OBJECT
 
@@ -250,18 +256,20 @@ public:
 protected:
     QOrganizerItemMemoryEngine(QOrganizerItemMemoryEngineData* data);
 
+protected:
+    /* Implement "signal coalescing" for batch functions via change set */
+    virtual bool saveItem(QOrganizerItem* theOrganizerItem, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
+    virtual bool removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
+    virtual bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
+    virtual bool removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
+
 private:
     QList<QOrganizerItem> internalItems(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error, bool forExport) const;
     QList<QOrganizerItem> internalItemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, bool includeExceptions, QOrganizerManager::Error* error) const;
     void addItemRecurrences(QList<QOrganizerItem>& sorted, const QOrganizerItem& c, const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, bool forExport) const;
 
-    /* Implement "signal coalescing" for batch functions via change set */
-    bool saveItem(QOrganizerItem* theOrganizerItem, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
     bool fixOccurrenceReferences(QOrganizerItem* item, QOrganizerManager::Error* error);
     bool typesAreRelated(const QString& occurrenceType, const QString& parentType);
-    bool removeItem(const QOrganizerItemId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
-    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
-    bool removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
 
     void performAsynchronousOperation(QOrganizerAbstractRequest* request);
 

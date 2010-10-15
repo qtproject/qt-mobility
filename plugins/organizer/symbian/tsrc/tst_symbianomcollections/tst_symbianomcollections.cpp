@@ -187,64 +187,41 @@ void tst_symbianomcollections::fetchCollection()
     QOrganizerCollectionId dId = m_om->defaultCollection().id();
     QVERIFY(m_om->error() == QOrganizerManager::NoError);
     QVERIFY(!dId.isNull());
-    
-    // Get collections but do not provide id's
-    QList<QOrganizerCollection> cs = m_om->collections();
-    QVERIFY(m_om->error() == QOrganizerManager::NoError);
-    QVERIFY(cs.count() == 0);
-    
+
     // Get all collections
-    cs = m_om->collections();
-    QVERIFY(cs.count() >= 1); // default collection should always be present
-    
-    // Dump all to log
-    foreach (QOrganizerCollection collection, cs) {
-        qDebug() << "Collection id:" << collection.id();
+    QList<QOrganizerCollection> collections = m_om->collections();
+    QVERIFY(collections.count() >= 1); // default collection should always be present
+    QVERIFY(collections[0].id().localId() == dId);
+    foreach (QOrganizerCollection collection, collections) {
+        QVERIFY(!collection.id().localId().isNull());
+        QVERIFY(collection.id().managerUri() == m_om->managerUri());
+        // dump metadata into log
         foreach (QString key, collection.metaData().keys())
             qDebug() << "\t" << key << collection.metaData().value(key);
     }
-    
+
     // Get a specific collection
     QOrganizerCollection defaultCollection = m_om->collection(dId);
-    cs << defaultCollection;
-    QVERIFY(m_om->error() == QOrganizerManager::NoError);
-    QVERIFY(cs.count() == 1);
-
-    // Do a basic verify
-    QVERIFY(cs[0].id() == dId);
-    QVERIFY(cs[0].id().managerUri() == m_om->managerUri());    
-
-    // fetch entries for an non existent calendar
-    QOrganizerCollectionId nonId;
-    cs.clear();
-    cs << m_om->collection(nonId);
-    QVERIFY(m_om->error() == QOrganizerManager::DoesNotExistError);
+    QCOMPARE(m_om->error(), QOrganizerManager::NoError);
+    QVERIFY(!defaultCollection.id().localId().isNull());
 
     // Can we save collections? 
     if (!m_customCollectionsSupported)
         return;
-    
+
     // add a collection and fetch
     QOrganizerCollection c1;
     c1.setMetaData(QOrganizerCollection::KeyName, "fetchCollection");
     QVERIFY(m_om->saveCollection(&c1));
-    cs.clear();
-    cs = m_om->collections();
-    QVERIFY(m_om->error() == QOrganizerManager::NoError);
-    QVERIFY(cs.count() == 2);
-    
-    //remove and then fetch the collections
-    QVERIFY(m_om->removeCollection(c1.id()));
-        
-    cs.clear();
-    cs = m_om->collections();
-    QVERIFY(m_om->error() == QOrganizerManager::NoError);
-    QVERIFY(cs.count() == 1);
-    
+    QCOMPARE(m_om->error(), QOrganizerManager::NoError);
+    QCOMPARE(m_om->collections().count(), 2);
+
     // fetch an already removed collection
-    cs.clear();
-    cs << m_om->collection(c1.id());
-    QVERIFY(m_om->error() == QOrganizerManager::DoesNotExistError);
+    QVERIFY(m_om->removeCollection(c1.id().localId()));
+    QCOMPARE(m_om->error(), QOrganizerManager::NoError);
+    QCOMPARE(m_om->collections().count(), 1);
+    QVERIFY(m_om->collection(c1.id().localId()) == QOrganizerCollection());
+    QCOMPARE(m_om->error(), QOrganizerManager::DoesNotExistError);
 }
 
 void tst_symbianomcollections::saveCollection()

@@ -42,13 +42,21 @@
 
 #include "qdeclarativegeomaptextobject_p.h"
 
+#include <QPen>
 #include <QBrush>
 
 QTM_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapTextObject::QDeclarativeGeoMapTextObject()
 {
+    QPen p = pen();
+    p.setStyle(Qt::NoPen);
+    setPen(p);
+
     m_coordinate = new QDeclarativeCoordinate(this);
+
+    m_hAlignment = QDeclarativeGeoMapTextObject::AlignHCenter;
+    m_vAlignment = QDeclarativeGeoMapTextObject::AlignVCenter;
 }
 
 QDeclarativeGeoMapTextObject::~QDeclarativeGeoMapTextObject()
@@ -85,6 +93,41 @@ void QDeclarativeGeoMapTextObject::setColor(const QColor &color)
 QColor QDeclarativeGeoMapTextObject::color() const
 {
     return m_color;
+}
+
+QDeclarativeGeoMapTextObject::HorizontalAlignment QDeclarativeGeoMapTextObject::horizontalAlignment() const
+{
+    return m_hAlignment;
+}
+
+void QDeclarativeGeoMapTextObject::setHorizontalAlignment(QDeclarativeGeoMapTextObject::HorizontalAlignment alignment)
+{
+    if (m_hAlignment == alignment)
+        return;
+
+
+    m_hAlignment = alignment;
+
+    setAlignment(Qt::Alignment(m_hAlignment | m_vAlignment));
+
+    emit horizontalAlignmentChanged(m_hAlignment);
+}
+
+QDeclarativeGeoMapTextObject::VerticalAlignment QDeclarativeGeoMapTextObject::verticalAlignment() const
+{
+    return m_vAlignment;
+}
+
+void QDeclarativeGeoMapTextObject::setVerticalAlignment(QDeclarativeGeoMapTextObject::VerticalAlignment alignment)
+{
+    if (m_vAlignment == alignment)
+        return;
+
+    m_vAlignment = alignment;
+
+    setAlignment(Qt::Alignment(m_hAlignment | m_vAlignment));
+
+    emit verticalAlignmentChanged(m_vAlignment);
 }
 
 #include "moc_qdeclarativegeomaptextobject_p.cpp"

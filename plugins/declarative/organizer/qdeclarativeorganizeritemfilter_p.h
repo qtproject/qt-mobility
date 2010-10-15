@@ -260,7 +260,13 @@ public:
     }
 
 
-    void setValue(const QVariant& value) { d.setValue(value); }
+    void setValue(const QVariant& v)
+    {
+        if (v != value()) {
+            d.setValue(v);
+            emit valueChanged();
+        }
+    }
     QVariant value() const { return d.value(); }
 
     QOrganizerItemFilter filter() const

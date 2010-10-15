@@ -1483,8 +1483,77 @@ void tst_QOrganizerManager::invalidManager()
     QVERIFY(manager.detailDefinitions(QOrganizerItemType::TypeEvent).count() == 0);
     QVERIFY(manager.error() == QOrganizerManager::NotSupportedError || manager.error() == QOrganizerManager::InvalidItemTypeError);
 
-     /* Capabilities */
+    /* Collections */
+    QOrganizerCollection testCollection;
+    testCollection.setMetaData("test", "example");
+    QVERIFY(!manager.saveCollection(&testCollection));
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError || manager.error() == QOrganizerManager::InvalidCollectionError);
+    QVERIFY(!manager.removeCollection(testCollection.localId()));
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError || manager.error() == QOrganizerManager::DoesNotExistError);
+    QVERIFY(manager.defaultCollection() == QOrganizerCollection());
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError);
+    QVERIFY(manager.collections().isEmpty());
+    QVERIFY(manager.error() == QOrganizerManager::NotSupportedError);
+    testCollection = manager.compatibleCollection(testCollection);
+    QVERIFY(testCollection == QOrganizerCollection()); // no compatible collection.
+
+    /* Capabilities */
     QVERIFY(!manager.hasFeature(QOrganizerManager::MutableDefinitions));
+
+    /* Requests */
+    QOrganizerItemFetchRequest ifr;
+    QOrganizerItemFetchForExportRequest ifer;
+    QOrganizerItemSaveRequest isr;
+    QOrganizerItemRemoveRequest irr;
+    QOrganizerCollectionFetchRequest cfr;
+    QOrganizerCollectionSaveRequest csr;
+    QOrganizerCollectionRemoveRequest crr;
+
+    ifr.setManager(&manager);
+    QVERIFY(!ifr.start());
+    QVERIFY(!ifr.cancel());
+    ifr.waitForFinished();
+    //QVERIFY(ifr.error() == QOrganizerManager::NotSupportedError); // XXX TODO: if start fails, should be not supported error...
+
+    ifer.setManager(&manager);
+    QVERIFY(!ifer.start());
+    QVERIFY(!ifer.cancel());
+    ifer.waitForFinished();
+    //QVERIFY(ifer.error() == QOrganizerManager::NotSupportedError); // XXX TODO: if start fails, should be not supported error...
+
+    isr.setManager(&manager);
+    isr.setItem(testItem);
+    QVERIFY(!isr.start());
+    QVERIFY(!isr.cancel());
+    isr.waitForFinished();
+    //QVERIFY(isr.error() == QOrganizerManager::NotSupportedError); // XXX TODO: if start fails, should be not supported error...
+
+    irr.setManager(&manager);
+    irr.setItemId(testItem.localId());
+    QVERIFY(!irr.start());
+    QVERIFY(!irr.cancel());
+    irr.waitForFinished();
+    //QVERIFY(irr.error() == QOrganizerManager::NotSupportedError); // XXX TODO: if start fails, should be not supported error...
+
+    cfr.setManager(&manager);
+    QVERIFY(!cfr.start());
+    QVERIFY(!cfr.cancel());
+    cfr.waitForFinished();
+    //QVERIFY(cfr.error() == QOrganizerManager::NotSupportedError); // XXX TODO: if start fails, should be not supported error...
+
+    csr.setManager(&manager);
+    csr.setCollection(testCollection);
+    QVERIFY(!csr.start());
+    QVERIFY(!csr.cancel());
+    csr.waitForFinished();
+    //QVERIFY(csr.error() == QOrganizerManager::NotSupportedError); // XXX TODO: if start fails, should be not supported error...
+
+    crr.setManager(&manager);
+    crr.setCollectionId(testCollection.localId());
+    QVERIFY(!crr.start());
+    QVERIFY(!crr.cancel());
+    crr.waitForFinished();
+    //QVERIFY(crr.error() == QOrganizerManager::NotSupportedError); // XXX TODO: if start fails, should be not supported error...
 }
 
 void tst_QOrganizerManager::memoryManager()

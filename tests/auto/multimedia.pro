@@ -4,6 +4,8 @@ requires(contains(mobility_modules,multimedia))
 
 TEMPLATE = subdirs
 SUBDIRS += \
+    qabstractvideobuffer \
+    qabstractvideosurface \
     qaudiocapturesource \
     qgraphicsvideoitem \
     qmediaimageviewer \
