@@ -5348,6 +5348,7 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
                     getAccountSpecificMessagesL(messageAccount, iOrdering, privateFilter);
                 }
             } else { // NotEqual
+                ipEntrySelection = new(ELeave)CMsvEntrySelection;
                 foreach (QMessageAccount value, iOwner.iAccounts) {
                     if (!(value.messageTypes() & type)) {
                         getAccountSpecificMessagesL(value, iOrdering, privateFilter);
@@ -5358,12 +5359,14 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
             QMessage::TypeFlags typeFlags = static_cast<QMessage::TypeFlags>(pf->_value.toInt());
             QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
             if (cmp == QMessageDataComparator::Includes) {
+                ipEntrySelection = new(ELeave)CMsvEntrySelection;
                 foreach (QMessageAccount value, iOwner.iAccounts) {
                     if (value.messageTypes() | typeFlags) {
                         getAccountSpecificMessagesL(value, iOrdering, privateFilter);
                     }
                 }
             } else { // Excludes
+                ipEntrySelection = new(ELeave)CMsvEntrySelection;
                 foreach (QMessageAccount value, iOwner.iAccounts) {
                     if (!(value.messageTypes() & typeFlags)) {
                         getAccountSpecificMessagesL(value, iOrdering, privateFilter);
