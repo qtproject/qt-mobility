@@ -223,7 +223,7 @@ QLandmarkManager::QLandmarkManager(QObject *parent)
 #ifdef Q_OS_SYMBIAN
     managerName = "com.nokia.qt.landmarks.engines.symbian";
 #else
-    managerName = "com.nokia.qt.landmarks.engines.sqlite";
+    managerName = "com.nokia.qt.landmarks.engines.qsparql";
 #endif
 
     d->createEngine(managerName);
