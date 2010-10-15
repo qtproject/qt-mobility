@@ -55,6 +55,7 @@
 #include <QtCore/qtextstream.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qxmlstream.h>
+#include <QtCore/QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -121,7 +122,11 @@ namespace
         ImageId         = 0x0010,
         VideoId         = 0x0020,
         PlaylistId      = 0x0040,
-        TextId          = 0x0080
+        TextId          = 0x0080,
+        ArtistId = 0x0100,
+        AlbumId = 0x0200,
+        PhotoAlbumId = 0x0400
+
     };
 
     enum UpdateMask
@@ -140,7 +145,11 @@ namespace
         ImageMask       = ImageId,
         VideoMask       = VideoId,
         PlaylistMask    = PlaylistId,
-        TextMask        = TextId
+        TextMask        = TextId,
+        ArtistMask = ArtistId,
+        AlbumMask = AlbumId,
+        PhotoAlbumMask = PhotoAlbumId
+
     };
 
     struct QGalleryTypePrefix : public QLatin1String
@@ -993,16 +1002,17 @@ static const QGalleryCompositeProperty qt_galleryDocumentCompositePropertyList[]
 
 static const QGalleryItemType qt_galleryItemTypeList[] =
 {
-    QT_GALLERY_ITEM_TYPE(File       , Files        , file    , File),
-    QT_GALLERY_ITEM_TYPE(Folder     , Folders      , folder  , File),
-    QT_GALLERY_ITEM_TYPE(Document   , Documents    , document, Document),
-    QT_GALLERY_ITEM_TYPE(Audio      , Music        , audio   , Audio),
-    QT_GALLERY_ITEM_TYPE(Image      , Images       , image   , Image),
-    QT_GALLERY_ITEM_TYPE(Video      , Videos       , video   , Video),
-    QT_GALLERY_ITEM_TYPE(Playlist   , Playlists    , playlist, Playlist),
-    QT_GALLERY_ITEM_TYPE(Text       , Text         , text    , File),
-    QT_GALLERY_ITEM_TYPE(Text       , Development  , text    , File),
-    QT_GALLERY_ITEM_TYPE(File       , Other        , file    , File),
+    QT_GALLERY_ITEM_TYPE(File    , nfo:FileDataObject, file    , File),
+    QT_GALLERY_ITEM_TYPE(Folder  , nfo:Folder        , folder  , File),
+    QT_GALLERY_ITEM_TYPE(Document, nfo:Document      , document, Document),
+    QT_GALLERY_ITEM_TYPE(Audio   , nfo:Audio         , audio   , Audio),
+    QT_GALLERY_ITEM_TYPE(Image   , nfo:Image         , image   , Image),
+    QT_GALLERY_ITEM_TYPE(Video   , nfo:Video         , video   , Video),
+    QT_GALLERY_ITEM_TYPE(Playlist, nmm:Playlist      , playlist, Playlist),
+    QT_GALLERY_ITEM_TYPE(Text    , nfo:TextDocument  , text    , File),
+    QT_GALLERY_ITEM_TYPE(Artist     , nmm:Artist , Artist     , Audio),
+    QT_GALLERY_ITEM_TYPE(Album      , nmm:MusicAlbum , album      , Audio),
+    QT_GALLERY_ITEM_TYPE(PhotoAlbum , nmm:ImageList, photoAlbum , Image)
 };
 
 /////////
@@ -1026,11 +1036,12 @@ static const QGalleryAggregateProperty qt_galleryArtistAggregateList[] =
     QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , "COUNT", Int),
 };
 
+#if 0
 static void qt_writeArtistIdCondition(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     qt_writeEqualsCondition(xml, QLatin1String("Audio:Artist"), itemId.toString());
 }
-
+#endif
 ///////////////
 // Album Artist
 ///////////////
@@ -1081,6 +1092,7 @@ static const QGalleryAggregateProperty qt_galleryAlbumAggregateList[] =
     QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , "COUNT", Int),
 };
 
+#if 0
 static void qt_writeAlbumIdCondition(
         QDocumentGallery::Error *error, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
@@ -1106,6 +1118,7 @@ static void qt_writeAlbumIdCondition(
 
     *error = QDocumentGallery::ItemIdError;
 }
+#endif
 
 //////////////
 // Music Genre
@@ -1154,23 +1167,20 @@ static const QGalleryAggregateProperty qt_galleryPhotoAlbumAggregateList[] =
     QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*", "COUNT", Int)
 };
 
+#if 0
 static void qt_writePhotoAlbumIdCondition(QDocumentGallery::Error *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
     qt_writeEqualsCondition(xml, QLatin1String("Image:Album"), itemId.toString());
 }
-
+#endif
 //////////////////
 // Aggregate Types
 //////////////////
 
 static const QGalleryAggregateType qt_galleryAggregateTypeList[] =
 {
-    QT_GALLERY_AGGREGATE_TYPE(Artist     , Music , artist     , AudioMask),
-    QT_GALLERY_AGGREGATE_TYPE(AlbumArtist, Music , albumArtist, AudioMask),
-    QT_GALLERY_AGGREGATE_TYPE(Album      , Music , album      , AudioMask),
-    QT_GALLERY_AGGREGATE_TYPE(AudioGenre , Music , audioGenre , AudioMask),
-    QT_GALLERY_AGGREGATE_TYPE(PhotoAlbum , Images, photoAlbum , ImageMask)
-
+    QT_GALLERY_AGGREGATE_TYPE(AlbumArtist, nmm:albumArtist, albumArtist, AudioMask),
+    QT_GALLERY_AGGREGATE_TYPE(AudioGenre , nfo:genre , audioGenre , AudioMask)
 };
 
 class QGalleryTrackerServicePrefixColumn : public QGalleryTrackerCompositeColumn
@@ -1425,52 +1435,32 @@ QDocumentGallery::Error QGalleryTrackerSchema::prepareQueryResponse(
 QDocumentGallery::Error QGalleryTrackerSchema::prepareTypeResponse(
         QGalleryTrackerTypeResultSetArguments *arguments, QGalleryDBusInterfaceFactory *dbus) const
 {
-    QString query;
-
     if (m_itemIndex >= 0) {
+        arguments->service = qt_galleryItemTypeList[m_itemIndex].service;
         arguments->accumulative = false;
         arguments->updateMask = qt_galleryItemTypeList[m_itemIndex].updateMask;
-        arguments->queryInterface = dbus->metaDataInterface();
-        arguments->queryMethod = QLatin1String("GetCount");
-        arguments->queryArguments = QVariantList()
-                << qt_galleryItemTypeList[m_itemIndex].service
-                << QLatin1String("*")
-                << query;
+        arguments->queryInterface = dbus->statisticsInterface();
+        arguments->queryMethod = QLatin1String("Get");
+        arguments->queryArguments = QVariantList();
 
         return QDocumentGallery::NoError;
     } else if (m_aggregateIndex >= 0) {
         const QGalleryAggregateType &type = qt_galleryAggregateTypeList[m_aggregateIndex];
-
-        if (type.identity.count == 1) {
-            const QString countField = type.identity[0].field;
-
-            arguments->accumulative = false;
-            arguments->updateMask = type.updateMask;
-            arguments->queryInterface = dbus->metaDataInterface();
-            arguments->queryMethod = QLatin1String("GetCount");
+        arguments->service = type.service;
+        arguments->accumulative = false;
+        arguments->updateMask = type.updateMask;
+        arguments->queryInterface = dbus->metaDataInterface();
+        arguments->queryMethod = QLatin1String("SparqlQuery");
+        if( type.service == "nfo:genre")
+        {
             arguments->queryArguments = QVariantList()
-                    << type.service
-                    << countField
-                    << query;
-        } else {
-            QStringList identity;
-            for (int i = 0; i < type.identity.count - 1; ++i)
-                identity.append(type.identity[i].field);
-            const QString countField = type.identity[type.identity.count - 1].field;
-            const bool descending = false;
-
-            arguments->accumulative = true;
-            arguments->updateMask = type.updateMask;
-            arguments->queryInterface = dbus->metaDataInterface();
-            arguments->queryMethod = QLatin1String("GetUniqueValuesWithCount");
-            arguments->queryArguments = QVariantList()
-                    << type.service
-                    << identity
-                    << query
-                    << countField
-                    << descending;
+                << "SELECT COUNT(DISTINCT ?x) WHERE {?urn rdf:type nfo:Media. ?urn nfo:genre ?x}";
         }
-
+        else
+        { /* nmm:albumArtist */
+            arguments->queryArguments = QVariantList()
+                << "SELECT COUNT(DISTINCT ?x) WHERE { ?urn rdf:type nmm:MusicAlbum. ?urn nmm:albumArtist ?x }";
+        }
         return QDocumentGallery::NoError;
     } else {
         return QDocumentGallery::ItemTypeError;

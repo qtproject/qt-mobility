@@ -71,6 +71,7 @@ struct QGalleryTrackerTypeResultSetArguments
     QGalleryDBusInterfacePointer queryInterface;
     QString queryMethod;
     QVariantList queryArguments;
+    QString service;
 };
 
 class QGalleryTrackerTypeResultSetPrivate;

@@ -71,6 +71,7 @@ private:
     QGalleryDBusInterfacePointer metaDataInterface();
     QGalleryDBusInterfacePointer searchInterface();
     QGalleryDBusInterfacePointer fileInterface();
+    QGalleryDBusInterfacePointer statisticsInterface();
     QGalleryTrackerChangeNotifier *changeNotifier();
 
     QGalleryAbstractResponse *createItemListResponse(
@@ -84,6 +85,7 @@ private:
     QGalleryDBusInterfacePointer metaDataService;
     QGalleryDBusInterfacePointer searchService;
     QGalleryDBusInterfacePointer fileService;
+    QGalleryDBusInterfacePointer statisticsService;
     QScopedPointer<QGalleryTrackerChangeNotifier> notifier;
 };
 
@@ -134,6 +136,16 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::fileInterface()
     }
 #endif
     return fileService;
+}
+QGalleryDBusInterfacePointer QDocumentGalleryPrivate::statisticsInterface()
+{
+    if(!statisticsService) {
+        statisticsService = new QGalleryDBusInterface(
+                QLatin1String("org.freedesktop.Tracker1"),
+                QLatin1String("/org/freedesktop/Tracker1/Statistics"),
+                "org.freedesktop.Tracker1.Statistics");
+    }
+    return statisticsService;
 }
 
 QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::changeNotifier()

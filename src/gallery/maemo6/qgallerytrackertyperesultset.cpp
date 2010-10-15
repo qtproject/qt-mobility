@@ -38,12 +38,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
+#include <algorithm>
 #include "qgallerytrackertyperesultset_p.h"
 
 #include "qgallerytrackerschema_p.h"
 
 #include <QtCore/qdatetime.h>
+#include <QtCore/QDebug>
 #include <QtDBus/qdbuspendingreply.h>
 
 #include "qdocumentgallery.h"
@@ -71,6 +72,7 @@ public:
         , queryInterface(arguments.queryInterface)
         , queryMethod(arguments.queryMethod)
         , queryArguments(arguments.queryArguments)
+        , service( arguments.service )
     {
     }
 
@@ -91,6 +93,7 @@ public:
     const QGalleryDBusInterfacePointer queryInterface;
     const QString queryMethod;
     const QVariantList queryArguments;
+    const QString service;
 };
 
 void QGalleryTrackerTypeResultSetPrivate::_q_queryFinished(QDBusPendingCallWatcher *watcher)
@@ -105,25 +108,58 @@ void QGalleryTrackerTypeResultSetPrivate::_q_queryFinished(QDBusPendingCallWatch
     }
 }
 
+class FindType {
+public:
+    FindType( const QString& type ) : m_type( type ) {}
+    bool operator()(const QStringList& list)
+    {
+        return list.first() == m_type;
+    }
+
+private:
+    QString m_type;
+};
+
 void QGalleryTrackerTypeResultSetPrivate::queryFinished(const QDBusPendingCall &call)
 {
     const int oldCount = count;
 
     if (call.isError()) {
+        qDebug() << call.error().message();
         q_func()->finish(QDocumentGallery::ConnectionError);
 
         return;
     } else if (!accumulative) {
-        QDBusPendingReply<int> reply(call);
+        QDBusPendingReply<QVector<QStringList> > reply(call);
 
-        count = reply.value();
-
-        if (refresh) {
-            refresh = false;
-
-            queryCount();
+        if( queryMethod == "SparqlQuery" )
+        {
+            QVector<QStringList> v = reply.value();
+            count = v[0].first().toInt();
         }
+        else
+        {
+            /*
+             * Process reply to org.freedesktop.Tracker.Statistics.Get -method. Value is a list of list of two strings:
+             * type1 count1
+             * type2 count2
+             * ...
+             * where typeX corresponds to the service name ( i.e. ontology class name, e.g. "nfo:FileDataObject" ).
+             * Search through the list and find the requested service and extract the count from the second string.
+             */
+            std::vector<QStringList> v = reply.value().toStdVector();
+            std::vector<QStringList>::const_iterator pos = find_if( v.begin(), v.end(), FindType( service ));
+            if( pos != v.end() )
+            {
+                count = (*pos).last().toInt();
+            }
 
+            // TODO Do we need this?
+            if (refresh) {
+                refresh = false;
+                queryCount();
+            }
+        }
     } else {
         QDBusPendingReply<QVector<QStringList> > reply(call);
 
