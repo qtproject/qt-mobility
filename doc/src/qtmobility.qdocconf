@@ -102,6 +102,7 @@ headerdirs = ../../src/global \
              ../../plugins/declarative/gallery \
              ../../src/camera \
              ../../src/organizer \
+             ../../src/versitorganizer \
              ../../plugins/declarative/serviceframework \
              .
 
@@ -126,6 +127,7 @@ sourcedirs = ../../src/global \
              ../../plugins/declarative/gallery \
              ../../src/camera \
              ../../src/organizer \
+             ../../src/versitorganizer \
              .
 
 excludedirs = ../../src/messaging/win32wce \
