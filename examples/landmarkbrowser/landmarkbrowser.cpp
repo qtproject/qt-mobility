@@ -411,6 +411,7 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                     updateRowLabels();
                     delete progress;
                     progress = new QProgressDialog (tr("Please wait..."),tr("Cancel"),0,0, this);
+                    QObject::connect(progress,SIGNAL(canceled()), this, SLOT(cancel()));
                 break;
             }
         case QLandmarkAbstractRequest::CategoryFetchRequest: {
@@ -445,6 +446,7 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                     //progress->hide();
                     delete progress;
                     progress = new QProgressDialog (tr("Please wait..."),tr("Cancel"),0,0, this);
+                    QObject::connect(progress,SIGNAL(canceled()), this, SLOT(cancel()));
                 }
             }
         }
