@@ -217,7 +217,6 @@ void QDeclarativeContact::save()
         if (model) {
             model->saveContact(this);
         }
-        d->m_modified = false;
     }
 }
 
