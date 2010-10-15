@@ -98,20 +98,20 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerManager::collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  \fn QOrganizerManager::collectionsAdded(const QList<QOrganizerCollectionId>& collectionIds)
   This signal is emitted at some point once the collections identified by \a collectionIds have been added to a datastore managed by this manager.
   This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerManager::collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  \fn QOrganizerManager::collectionsChanged(const QList<QOrganizerCollectionId>& collectionIds)
   This signal is emitted at some point once the metadata for the collections identified by \a collectionIds have been modified in a datastore managed by this manager.
   This signal is not emitted if one of the items in this collection has changed - itemsChanged() will be emitted instead.
   This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerManager::collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  \fn QOrganizerManager::collectionsRemoved(const QList<QOrganizerCollectionId>& collectionIds)
   This signal is emitted at some point once the collections identified by \a collectionIds have been removed from a datastore managed by this manager.
   This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
@@ -497,7 +497,7 @@ QOrganizerItem QOrganizerManager::item(const QOrganizerItemId& organizeritemId, 
 /*!
   Adds the given \a organizeritem to the database if \a organizeritem has a
   default-constructed id, or an id with the manager URI set to the URI of
-  this manager and a local id of zero.  It will be saved in the collection whose
+  this manager and a id of zero.  It will be saved in the collection whose
   id is reported by calling item->collectionId() if the specified collection exists,
   or if no collectionId is specified in the item, or the collectionId is the default
   collection id, it will be saved in the collection in which the item is currently
@@ -505,7 +505,7 @@ QOrganizerItem QOrganizerManager::item(const QOrganizerItemId& organizeritemId, 
   As such, an item may be moved between collections with this save operation.
 
   If the manager URI of the id of the \a organizeritem is neither empty nor equal to the URI of
-  this manager, or local id of the \a organizeritem is non-zero but does not exist in the
+  this manager, or id of the \a organizeritem is non-zero but does not exist in the
   manager, the operation will fail and calling error() will return
   \c QOrganizerManager::DoesNotExistError.
 
@@ -519,7 +519,7 @@ QOrganizerItem QOrganizerManager::item(const QOrganizerItemId& organizeritemId, 
   Returns false on failure, or true on
   success.  On successful save of an organizer item with an id of zero, its
   id will be set to a new, valid id with the manager URI set to the URI of
-  this manager, and the local id set to a new, valid local id.
+  this manager, and the id set to a new, valid id.
   The manager will automatically synthesize the display label of the organizer item when it is saved.
   The manager is not required to fetch updated details of the organizer item on save,
   and as such, clients should fetch an organizer item if they want the most up-to-date information
@@ -839,7 +839,7 @@ QString QOrganizerManager::managerUri() const
 }
 
 /*! Return a list of QOrganizerItemId extracted from the \a items */
-QList<QOrganizerItemId> QOrganizerManager::extractLocalIds(QList<QOrganizerItem> items)
+QList<QOrganizerItemId> QOrganizerManager::extractIds(QList<QOrganizerItem> items)
 {
     QList<QOrganizerItemId> ids;
     foreach(QOrganizerItem item, items)

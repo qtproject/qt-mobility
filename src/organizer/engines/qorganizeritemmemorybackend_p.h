@@ -77,13 +77,13 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemMemoryEngineLocalId : public QOrganizerItemEngineId
+class QOrganizerItemMemoryEngineId : public QOrganizerItemEngineId
 {
 public:
-    QOrganizerItemMemoryEngineLocalId();
-    QOrganizerItemMemoryEngineLocalId(quint32 collectionId, quint32 itemId);
-    ~QOrganizerItemMemoryEngineLocalId();
-    QOrganizerItemMemoryEngineLocalId(const QOrganizerItemMemoryEngineLocalId& other);
+    QOrganizerItemMemoryEngineId();
+    QOrganizerItemMemoryEngineId(quint32 collectionId, quint32 itemId);
+    ~QOrganizerItemMemoryEngineId();
+    QOrganizerItemMemoryEngineId(const QOrganizerItemMemoryEngineId& other);
 
     bool isEqualTo(const QOrganizerItemEngineId* other) const;
     bool isLessThan(const QOrganizerItemEngineId* other) const;
@@ -102,18 +102,18 @@ public:
     uint hash() const;
 
 private:
-    quint32 m_localCollectionId;
-    quint32 m_localItemId;
+    quint32 m_collectionId;
+    quint32 m_itemId;
     friend class QOrganizerItemMemoryEngine;
 };
 
-class QOrganizerCollectionMemoryEngineLocalId : public QOrganizerCollectionEngineId
+class QOrganizerCollectionMemoryEngineId : public QOrganizerCollectionEngineId
 {
 public:
-    QOrganizerCollectionMemoryEngineLocalId();
-    QOrganizerCollectionMemoryEngineLocalId(quint32 collectionId);
-    ~QOrganizerCollectionMemoryEngineLocalId();
-    QOrganizerCollectionMemoryEngineLocalId(const QOrganizerCollectionMemoryEngineLocalId& other);
+    QOrganizerCollectionMemoryEngineId();
+    QOrganizerCollectionMemoryEngineId(quint32 collectionId);
+    ~QOrganizerCollectionMemoryEngineId();
+    QOrganizerCollectionMemoryEngineId(const QOrganizerCollectionMemoryEngineId& other);
 
     bool isEqualTo(const QOrganizerCollectionEngineId* other) const;
     bool isLessThan(const QOrganizerCollectionEngineId* other) const;
@@ -132,7 +132,7 @@ public:
     uint hash() const;
 
 private:
-    quint32 m_localCollectionId;
+    quint32 m_collectionId;
     friend class QOrganizerItemMemoryEngine;
 };
 
@@ -156,8 +156,8 @@ public:
     QMultiMap<QOrganizerCollectionId, QOrganizerItemId> m_itemsInCollections; // map of collection ids to the ids of items the collection contains.
     QList<QString> m_definitionIds;                // list of definition types (id's)
     mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definitions; // map of organizer item type to map of definition name to definitions.
-    quint32 m_nextOrganizerItemId; // the m_localItemId portion of a QOrganizerItemMemoryEngineLocalId.
-    quint32 m_nextOrganizerCollectionId; // the m_localCollectionId portion of a QOrganizerCollectionMemoryEngineLocalId.
+    quint32 m_nextOrganizerItemId; // the m_itemId portion of a QOrganizerItemMemoryEngineId.
+    quint32 m_nextOrganizerCollectionId; // the m_collectionId portion of a QOrganizerCollectionMemoryEngineId.
     bool m_anonymous;                              // Is this backend ever shared?
 
     void emitSharedSignals(QOrganizerItemChangeSet* cs)

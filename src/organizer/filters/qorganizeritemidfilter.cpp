@@ -61,11 +61,11 @@ Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemIdFilter);
 
 /*!
  * \fn QOrganizerItemIdFilter::QOrganizerItemIdFilter(const QOrganizerItemFilter& other)
- * Constructs a copy of \a other if possible, otherwise constructs a new organizer item local id filter
+ * Constructs a copy of \a other if possible, otherwise constructs a new organizer item id filter
  */
 
 /*!
- * Constructs a new organizer item local id filter
+ * Constructs a new organizer item id filter
  */
 QOrganizerItemIdFilter::QOrganizerItemIdFilter()
     : QOrganizerItemFilter(new QOrganizerItemIdFilterPrivate)
@@ -106,7 +106,7 @@ void QOrganizerItemIdFilter::remove(const QOrganizerItemId& id)
 
 /*!
  * Clears the list which contains the ids of possible matching items.
- * A local id filter with a cleared list will match no items.
+ * A id filter with a cleared list will match no items.
  * \sa setIds()
  */
 void QOrganizerItemIdFilter::clear()

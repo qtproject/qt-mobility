@@ -109,7 +109,7 @@ void QOrganizerTodoOccurrence::setParentId(const QOrganizerItemId& parentId)
 }
 
 /*!
-  Returns the local id of the todo which is this occurrence's parent
+  Returns the id of the todo which is this occurrence's parent
  */
 QOrganizerItemId QOrganizerTodoOccurrence::parentId() const
 {

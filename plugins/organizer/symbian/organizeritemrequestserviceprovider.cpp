@@ -141,7 +141,7 @@ bool COrganizerItemRequestsServiceProvider::StartRequest(
         case QOrganizerAbstractRequest::ItemRemoveRequest:             // .
         case QOrganizerAbstractRequest::ItemSaveRequest:               // .
         case QOrganizerAbstractRequest::ItemFetchRequest:              // .
-        case QOrganizerAbstractRequest::ItemLocalIdFetchRequest:       // .
+        case QOrganizerAbstractRequest::ItemIdFetchRequest:       // .
         case QOrganizerAbstractRequest::DetailDefinitionFetchRequest:  // .
         case QOrganizerAbstractRequest::CollectionFetchRequest:
             {
@@ -192,7 +192,7 @@ void COrganizerItemRequestsServiceProvider::RunL()
         FetchItemsForExport();
         }
         break;
-    case QOrganizerAbstractRequest::ItemLocalIdFetchRequest: 
+    case QOrganizerAbstractRequest::ItemIdFetchRequest: 
         {
         FetchItemIds();
         }
@@ -360,7 +360,7 @@ void COrganizerItemRequestsServiceProvider::FetchItemsForExport()
 // Fetch item local ids
 void COrganizerItemRequestsServiceProvider::FetchItemIds()
 {
-    Q_ASSERT(iReq->type() == QOrganizerAbstractRequest::ItemLocalIdFetchRequest);
+    Q_ASSERT(iReq->type() == QOrganizerAbstractRequest::ItemIdFetchRequest);
     QOrganizerItemIdFetchRequest *req = static_cast<QOrganizerItemIdFetchRequest *>(iReq);
     QOrganizerManager::Error error(QOrganizerManager::NoError);
     QList<QOrganizerItemId> itemIds = iOrganizerItemManagerEngine.itemIds(req->startDate(), req->endDate(), req->filter(), req->sorting(), &error);

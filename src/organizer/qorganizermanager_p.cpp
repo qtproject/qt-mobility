@@ -266,7 +266,7 @@ QOrganizerItemEngineId* QOrganizerManagerData::createEngineItemId(const QString&
     QOrganizerManager::parseUri(uri, &managerName, &parameters);
 
     if (managerName == QLatin1String("memory"))
-        return new QOrganizerItemMemoryEngineLocalId();
+        return new QOrganizerItemMemoryEngineId();
 
     loadFactories();
     QOrganizerManagerEngineFactory *engineFactory = m_engines.value(managerName);
@@ -281,7 +281,7 @@ QOrganizerCollectionEngineId* QOrganizerManagerData::createEngineCollectionId(co
     QOrganizerManager::parseUri(uri, &managerName, &parameters);
 
     if (managerName == QLatin1String("memory"))
-        return new QOrganizerCollectionMemoryEngineLocalId();
+        return new QOrganizerCollectionMemoryEngineId();
 
     loadFactories();
     QOrganizerManagerEngineFactory *engineFactory = m_engines.value(managerName);

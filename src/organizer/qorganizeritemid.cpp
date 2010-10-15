@@ -63,7 +63,7 @@ QTM_BEGIN_NAMESPACE
   \inmodule QtOrganizer
 
   It consists of a manager URI which identifies the manager which contains the organizer item,
-  and the local id of the organizer item in that manager.
+  and the id of the organizer item in that manager.
 
   A "null" QOrganizerItemId has an empty manager URI
  */
@@ -77,9 +77,9 @@ QOrganizerItemId::QOrganizerItemId()
 }
 
 /*!
-  Constructs a manager-unique local id which wraps the given engine-unique item id
-  \a engineItemId.  This local id takes ownership of the engine-unique item id and
-  will delete it when the local id goes out of scope.  Engine implementors must not
+  Constructs a manager-unique id which wraps the given engine-unique item id
+  \a engineItemId.  This id takes ownership of the engine-unique item id and
+  will delete it when the id goes out of scope.  Engine implementors must not
   delete the \a engineItemId or undefined behaviour will occur.
  */
 QOrganizerItemId::QOrganizerItemId(QOrganizerItemEngineId* engineItemId)
@@ -107,7 +107,7 @@ QOrganizerItemId& QOrganizerItemId::operator=(const QOrganizerItemId& other)
     return *this;
 }
 
-/*! Returns true if the organizer item id has the same manager URI and local id as \a other */
+/*! Returns true if the organizer item id has the same manager URI and id as \a other */
 bool QOrganizerItemId::operator==(const QOrganizerItemId& other) const
 {
     // if both ids are null then they are equal.
@@ -123,7 +123,7 @@ bool QOrganizerItemId::operator==(const QOrganizerItemId& other) const
     return false;
 }
 
-/*! Returns true if either the manager URI or local id of the organizer item id is different to that of \a other */
+/*! Returns true if either the manager URI or id of the organizer item id is different to that of \a other */
 bool QOrganizerItemId::operator!=(const QOrganizerItemId& other) const
 {
     return !(*this == other);
@@ -134,10 +134,10 @@ bool QOrganizerItemId::operator!=(const QOrganizerItemId& other) const
     manager URI of this id is alphabetically less than the manager
     URI of the \a other id.  If both ids have the same manager URI,
     this id will be considered less than the \a other id if the
-    local id of this id is less than the local id of the \a other id.
+    id of this id is less than the id of the \a other id.
 
     The invalid, empty id consists of an empty manager URI and the
-    invalid, zero local id, and hence will be less than any non-invalid
+    invalid, zero id, and hence will be less than any non-invalid
     id.
 
     This operator is provided primarily to allow use of a QOrganizerItemId
@@ -238,7 +238,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
 #endif
 
 /*!
-  Returns true if the local id part of the id is a null (default constructed) local id; otherwise, returns false.
+  Returns true if the id part of the id is a null (default constructed) id; otherwise, returns false.
  */
 bool QOrganizerItemId::isNull() const
 {

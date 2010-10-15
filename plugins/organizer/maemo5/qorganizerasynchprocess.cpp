@@ -229,7 +229,7 @@ void OrganizerAsynchProcess::processRequest()
     case QOrganizerAbstractRequest::ItemOccurrenceFetchRequest:
         handleItemOccurrenceFetchRequest(static_cast<QOrganizerItemOccurrenceFetchRequest *>(req));
         break;
-    case QOrganizerAbstractRequest::ItemLocalIdFetchRequest:
+    case QOrganizerAbstractRequest::ItemIdFetchRequest:
         handleIdFetchRequest(static_cast<QOrganizerItemIdFetchRequest *>(req));
         break;
     case QOrganizerAbstractRequest::ItemRemoveRequest:

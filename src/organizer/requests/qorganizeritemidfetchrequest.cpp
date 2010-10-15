@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qorganizeritemlocalidfetchrequest.h"
+#include "qorganizeritemidfetchrequest.h"
 #include "qorganizeritemrequests_p.h"
 
 QTM_BEGIN_NAMESPACE
@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
 
 
   For a QOrganizerItemIdFetchRequest, the resultsAvailable() signal will be emitted when the resultant
-  manager-local organizer item ids (which may be retrieved by calling ids()), are updated, as well as if
+  manager organizer item ids (which may be retrieved by calling ids()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
   \ingroup organizer-requests
@@ -148,6 +148,6 @@ QList<QOrganizerItemId> QOrganizerItemIdFetchRequest::itemIds() const
     return d->m_ids;
 }
 
-#include "moc_qorganizeritemlocalidfetchrequest.cpp"
+#include "moc_qorganizeritemidfetchrequest.cpp"
 
 QTM_END_NAMESPACE

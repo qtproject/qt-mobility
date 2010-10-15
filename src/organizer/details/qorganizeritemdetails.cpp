@@ -263,7 +263,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::DefinitionName, "Parent");
 /*!
    \variable QOrganizerItemParent::FieldParentId
 
-   The constant key for the field in which the local id of the parent recurrent event
+   The constant key for the field in which the id of the parent recurrent event
    is stored in details of the QOrganizerItemParent type.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::FieldParentId, "ParentId");
@@ -279,7 +279,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::FieldOriginalDate, "OriginalDate"
 
 /*!
    \fn QOrganizerItemParent::parentId() const
-    Returns the local id of the item instance origin's parent item.
+    Returns the id of the item instance origin's parent item.
  */
 
 /*!

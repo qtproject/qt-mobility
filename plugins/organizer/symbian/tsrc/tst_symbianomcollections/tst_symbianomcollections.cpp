@@ -165,7 +165,7 @@ void tst_symbianomcollections::init()
     // Remove all collections (except the default)
     foreach (const QOrganizerCollection& coll, m_om->collections()) {
         if (coll != m_om->defaultCollection())
-            m_om->removeCollection(coll.localId());
+            m_om->removeCollection(coll.id());
     }
 }
 
@@ -175,7 +175,7 @@ void tst_symbianomcollections::cleanup()
     // Remove all collections (except the default)
     foreach (const QOrganizerCollection& coll, m_om->collections()) {
         if (coll != m_om->defaultCollection())
-            m_om->removeCollection(coll.localId());
+            m_om->removeCollection(coll.id());
     }
     delete m_om;
     m_om = 0;
@@ -184,7 +184,7 @@ void tst_symbianomcollections::cleanup()
 void tst_symbianomcollections::fetchCollection()
 {
     // Fetch default collection id
-    QOrganizerCollectionId dId = m_om->defaultCollection().localId();
+    QOrganizerCollectionId dId = m_om->defaultCollection().id();
     QVERIFY(m_om->error() == QOrganizerManager::NoError);
     QVERIFY(!dId.isNull());
     
@@ -351,7 +351,7 @@ void tst_symbianomcollections::saveCollection()
     QVERIFY(!m_om->saveCollection(&c2));
     
     // Remove the collection
-    QVERIFY(m_om->removeCollection(c1.localId()));
+    QVERIFY(m_om->removeCollection(c1.id()));
     
     // Try saving again without clearing local id. Should fail.
     QVERIFY(!m_om->saveCollection(&c1));
@@ -371,7 +371,7 @@ void tst_symbianomcollections::removeCollection()
     if (!m_customCollectionsSupported) {    
         QWARN("Removing a collection not supported!");
         // Verify it fails with correct error code
-        QVERIFY(!m_om->removeCollection(m_om->defaultCollection().localId()));
+        QVERIFY(!m_om->removeCollection(m_om->defaultCollection().id()));
         QVERIFY(m_om->error() == QOrganizerManager::NotSupportedError);
         return;
     }
@@ -421,14 +421,14 @@ void tst_symbianomcollections::removeCollection()
     QVERIFY(colls.count() >= 2); // default collection + collection saved
     foreach (const QOrganizerCollection& coll, colls) {
         if (coll == m_om->defaultCollection())
-            QVERIFY(!m_om->removeCollection(coll.localId())); // removing default collection not allowed
+            QVERIFY(!m_om->removeCollection(coll.id())); // removing default collection not allowed
         else
-            QVERIFY(m_om->removeCollection(coll.localId()));
+            QVERIFY(m_om->removeCollection(coll.id()));
     }
     
     // Try removing the same ones again 
     foreach (const QOrganizerCollection& coll, colls) {
-        QVERIFY(!m_om->removeCollection(coll.localId()));
+        QVERIFY(!m_om->removeCollection(coll.id()));
     }
 }
 
@@ -606,7 +606,7 @@ void tst_symbianomcollections::addItem()
 
     // Verify
     QVERIFY(item1.localId() != item2.localId());
-    QCOMPARE(item1.collectionId(), m_om->defaultCollection().localId());
+    QCOMPARE(item1.collectionId(), m_om->defaultCollection().id());
     QCOMPARE(item2.collectionId(), c.id());
 }
 
@@ -773,13 +773,13 @@ void tst_symbianomcollections::removeItems()
     // Filter for the first new collection
     QOrganizerItemCollectionFilter filter1;
     QSet<QOrganizerCollectionId> collectionIds1;
-    collectionIds1.insert(c1.localId());
+    collectionIds1.insert(c1.id());
     filter1.setCollectionIds(collectionIds1);
 
     // Filter for the second new collection
     QOrganizerItemCollectionFilter filter2;
     QSet<QOrganizerCollectionId> collectionIds2;
-    collectionIds2.insert(c2.localId());
+    collectionIds2.insert(c2.id());
     filter2.setCollectionIds(collectionIds2);
 
     // Remove from the first new collection and verify
@@ -917,7 +917,7 @@ void tst_symbianomcollections::itemsInDeletedCollection()
     QVERIFY(m_om->saveItem(&itemFetch));
 
     // Remove the collection
-    QVERIFY(m_om->removeCollection(c.localId()));
+    QVERIFY(m_om->removeCollection(c.id()));
 
     // Try to modify an item in the deleted collection
     QVERIFY(!m_om->saveItem(&itemSave));
@@ -931,7 +931,7 @@ void tst_symbianomcollections::itemsInDeletedCollection()
     // Try to fetch item instances from the deleted collection
     QOrganizerItemCollectionFilter fil;
     QSet<QOrganizerCollectionId> filterCollectionIds;
-    filterCollectionIds.insert(c.localId());
+    filterCollectionIds.insert(c.id());
     fil.setCollectionIds(filterCollectionIds);
     QVERIFY(m_om->items(fil).count() == 0);
 }

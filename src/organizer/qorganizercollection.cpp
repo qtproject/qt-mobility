@@ -135,15 +135,7 @@ bool QOrganizerCollection::operator==(const QOrganizerCollection &other) const
 
 
 /*!
-  Returns the manager-local id of the collection
- */
-QOrganizerCollectionId QOrganizerCollection::localId() const
-{
-    return d->m_id;
-}
-
-/*!
-  Returns the complete id of the collection, which includes the manager uri and the manager-local id of the collection
+  Returns the complete id of the collection, which includes the manager uri and the manager id of the collection
  */
 QOrganizerCollectionId QOrganizerCollection::id() const
 {

@@ -97,7 +97,7 @@ QTM_BEGIN_NAMESPACE
   \value ItemOccurrenceFetchRequest A request to fetch a list of occurrences of an organizer item
   \value ItemFetchRequest A request to fetch a list of organizer items
   \value ItemFetchForExportRequest A request to fetch a list of persisted organizer items and exceptions
-  \value ItemLocalIdFetchRequest A request to fetch a list of local organizer item ids
+  \value ItemIdFetchRequest A request to fetch a list of organizer item ids
   \value ItemRemoveRequest A request to remove a list of organizer items
   \value ItemSaveRequest A request to save a list of organizer items
   \value DetailDefinitionFetchRequest A request to fetch a collection of detail definitions

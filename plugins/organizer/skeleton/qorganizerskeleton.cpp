@@ -602,7 +602,7 @@ QList<QOrganizerItemId> QOrganizerItemSkeletonEngine::itemIds(const QDateTime& s
         }
     }
 
-    return QOrganizerManager::extractLocalIds(ret);
+    return QOrganizerManager::extractIds(ret);
 }
 
 QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const

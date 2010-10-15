@@ -568,7 +568,7 @@ QList<QOrganizerItemId> QOrganizerItemMaemo5Engine::internalItemIds(const QDateT
     QList<QOrganizerItem> clist = internalItems(startDate, endDate, filter, sortOrders, fetchMinimalData(), true, error);
 
     /* Extract the ids */
-    return QOrganizerManager::extractLocalIds(clist);
+    return QOrganizerManager::extractIds(clist);
 }
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItems(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, const QOrganizerItemFetchHint &fetchHint, bool forExport, QOrganizerManager::Error *error) const
@@ -863,7 +863,7 @@ QOrganizerCollection QOrganizerItemMaemo5Engine::internalCollection(const QOrgan
     *error = QOrganizerManager::NoError;
     QList<QOrganizerCollection> allCollections = internalCollections(error);
     foreach (const QOrganizerCollection& collection, allCollections) {
-        if (collection.localId() == collectionId) {
+        if (collection.id() == collectionId) {
             return collection;
         }
     }

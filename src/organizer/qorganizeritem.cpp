@@ -257,7 +257,7 @@ QOrganizerItem::~QOrganizerItem()
     manager.  See \l QOrganizerManager::saveItem() for more
     information.
 
-    \sa localId()
+    \sa id()
  */
 QOrganizerItemId QOrganizerItem::id() const
 {

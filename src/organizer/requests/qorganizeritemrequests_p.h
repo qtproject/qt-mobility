@@ -202,7 +202,7 @@ public:
 
     QOrganizerAbstractRequest::RequestType type() const
     {
-        return QOrganizerAbstractRequest::ItemLocalIdFetchRequest;
+        return QOrganizerAbstractRequest::ItemIdFetchRequest;
     }
 
     QOrganizerItemFilter m_filter;

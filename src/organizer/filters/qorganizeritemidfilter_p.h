@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMLOCALIDFILTER_P_H
-#define QORGANIZERITEMLOCALIDFILTER_P_H
+#ifndef QORGANIZERITEMIDFILTER_P_H
+#define QORGANIZERITEMIDFILTER_P_H
 
 //
 //  W A R N I N G
@@ -87,14 +87,14 @@ public:
     QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
     {
         Q_UNUSED(formatVersion)
-        qWarning() << "Can't stream a local ID filter to a QDataStream";
+        qWarning() << "Can't stream a ID filter to a QDataStream";
         return stream;
     }
 
     QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
     {
         Q_UNUSED(formatVersion)
-        qWarning() << "Can't stream a local ID filter from a QDataStream";
+        qWarning() << "Can't stream a ID filter from a QDataStream";
         return stream;
     }
 

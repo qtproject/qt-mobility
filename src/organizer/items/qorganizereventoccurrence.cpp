@@ -109,7 +109,7 @@ void QOrganizerEventOccurrence::setParentId(const QOrganizerItemId& parentId)
 }
 
 /*!
-  Returns the local id of the event which is this occurrence's parent
+  Returns the id of the event which is this occurrence's parent
  */
 QOrganizerItemId QOrganizerEventOccurrence::parentId() const
 {
