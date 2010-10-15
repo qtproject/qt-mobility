@@ -125,7 +125,6 @@ void QGalleryTrackerTypeResultSetPrivate::queryFinished(const QDBusPendingCall &
     const int oldCount = count;
 
     if (call.isError()) {
-        qDebug() << call.error().message();
         q_func()->finish(QDocumentGallery::ConnectionError);
 
         return;
