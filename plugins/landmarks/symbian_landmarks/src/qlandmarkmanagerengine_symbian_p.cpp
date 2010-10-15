@@ -3110,7 +3110,11 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
 
         QStringList keyList = attributeFilter.attributeKeys();
         for (int i = 0; i < keyList.size(); ++i) {
-            if (opType == QLandmarkAttributeFilter::AndOperation && (attributeFilter.matchFlags(
+            QLandmarkFilter::MatchFlags matchFlags = attributeFilter.matchFlags(keyList.at(i));
+            matchFlags = (matchFlags & 3);
+            if (matchFlags == QLandmarkFilter::MatchEndsWith) {
+                //make sure we don't match with match ends with 0x3 (Match contains is 0x2)
+            } else if (opType == QLandmarkAttributeFilter::AndOperation && (attributeFilter.matchFlags(
                 keyList.at(i)) & QLandmarkFilter::MatchContains)) {
                 User::Leave(KErrNotSupported);
             }
