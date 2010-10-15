@@ -139,7 +139,7 @@ public:
     type of value that will returned by metaData() can be queried using
     propertyType().
 
-    \sa QDocumentGallery, QGalleyQueryModel
+    \sa QDocumentGallery, QGalleryQueryModel
 */
 
 /*!
