@@ -264,7 +264,7 @@ void COrganizerItemRequestsServiceProvider::RemoveItem()
 {
     Q_ASSERT(iReq->type() == QOrganizerAbstractRequest::ItemRemoveRequest);
     QOrganizerItemRemoveRequest *req = static_cast<QOrganizerItemRemoveRequest *>(iReq);
-    QList<QOrganizerItemLocalId> itemIds = req->itemIds();
+    QList<QOrganizerItemId> itemIds = req->itemIds();
     Q_ASSERT(iIndex < itemIds.count());
 
     QOrganizerManager::Error error(QOrganizerManager::NoError);
@@ -336,7 +336,7 @@ void COrganizerItemRequestsServiceProvider::FetchItemsForExport()
 {
     QOrganizerItemFetchForExportRequest *req = static_cast<QOrganizerItemFetchForExportRequest *>(iReq);
     if (req->filter().type() == QOrganizerItemFilter::LocalIdFilter) {
-        FetchItemsByLocalIds();
+        FetchItemsByIds();
     } else {
         if (!iItemIds.count()) {
             // Fetch all item ids
@@ -361,21 +361,21 @@ void COrganizerItemRequestsServiceProvider::FetchItemsForExport()
 void COrganizerItemRequestsServiceProvider::FetchItemIds()
 {
     Q_ASSERT(iReq->type() == QOrganizerAbstractRequest::ItemLocalIdFetchRequest);
-    QOrganizerItemLocalIdFetchRequest *req = static_cast<QOrganizerItemLocalIdFetchRequest *>(iReq);
+    QOrganizerItemIdFetchRequest *req = static_cast<QOrganizerItemIdFetchRequest *>(iReq);
     QOrganizerManager::Error error(QOrganizerManager::NoError);
-    QList<QOrganizerItemLocalId> itemIds = iOrganizerItemManagerEngine.itemIds(req->startDate(), req->endDate(), req->filter(), req->sorting(), &error);
+    QList<QOrganizerItemId> itemIds = iOrganizerItemManagerEngine.itemIds(req->startDate(), req->endDate(), req->filter(), req->sorting(), &error);
     QOrganizerManagerEngine::updateItemIdFetchRequest(
         req, itemIds, error, QOrganizerAbstractRequest::FinishedState);
 }
 
 // Fetch Entries by local Ids
-void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIds()
+void COrganizerItemRequestsServiceProvider::FetchItemsByIds()
 {
     Q_ASSERT(iReq->type() == QOrganizerAbstractRequest::ItemFetchForExportRequest);
     QOrganizerItemFetchForExportRequest *req = static_cast<QOrganizerItemFetchForExportRequest *>(iReq);
     Q_ASSERT(req->filter().type() == QOrganizerItemFilter::LocalIdFilter);
-    QOrganizerItemLocalIdFilter localIdFilter = req->filter();
-    QList<QOrganizerItemLocalId> itemIds = localIdFilter.ids();
+    QOrganizerItemIdFilter localIdFilter = req->filter();
+    QList<QOrganizerItemId> itemIds = localIdFilter.ids();
     Q_ASSERT(iIndex < itemIds.count());
 
     QOrganizerItemFetchHint fetchHint;
