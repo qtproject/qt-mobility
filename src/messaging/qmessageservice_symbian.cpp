@@ -337,6 +337,16 @@ void QMessageServicePrivate::setFinished(bool successful)
     emit q_ptr->stateChanged(_state);
 }
 
+void QMessageServicePrivate::cancel()
+{
+    if (_active) {
+#ifdef FREESTYLEMAILUSED
+        CFSEngine::instance()->cancel((QMessageServicePrivate&)*this);
+#endif        
+        CMTMEngine::instance()->cancel((QMessageServicePrivate&)*this);
+    }
+}
+
 QMessageService::QMessageService(QObject *parent)
     : QObject(parent),
     d_ptr(new QMessageServicePrivate(this))
@@ -349,6 +359,7 @@ QMessageService::QMessageService(QObject *parent)
 
 QMessageService::~QMessageService()
 {
+    d_ptr->cancel();
 }
 
 bool QMessageService::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
@@ -660,6 +671,12 @@ QMessageService::State QMessageService::state() const
 
 void QMessageService::cancel()
 {
+    if (d_ptr->_active) {
+        d_ptr->cancel();
+        d_ptr->_active = false;
+        d_ptr->_state = QMessageService::CanceledState;
+        emit stateChanged(d_ptr->_state);
+    }
 }
 
 QMessageManager::Error QMessageService::error() const
