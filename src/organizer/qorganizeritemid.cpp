@@ -170,7 +170,7 @@ uint qHash(const QOrganizerItemId &key)
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug& operator<<(QDebug& dbg, const QOrganizerItemId& id)
+QDebug operator<<(QDebug dbg, const QOrganizerItemId& id)
 {
     dbg.nospace() << "QOrganizerItemId(";
     if (id.isNull())

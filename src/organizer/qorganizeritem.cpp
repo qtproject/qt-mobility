@@ -667,7 +667,7 @@ uint qHash(const QOrganizerItem &key)
 /*!
   Streams the \a organizeritem to the given debug stream \a dbg, and returns the stream.
  */
-QDebug& operator<<(QDebug dbg, const QOrganizerItem& organizeritem)
+QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem)
 {
     dbg.nospace() << "QOrganizerItem(" << organizeritem.id() << ") in collection(" << organizeritem.collectionId() << ")";
     foreach (const QOrganizerItemDetail& detail, organizeritem.details()) {

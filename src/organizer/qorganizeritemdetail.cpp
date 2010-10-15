@@ -369,7 +369,7 @@ uint qHash(const QOrganizerItemDetail &key)
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug& operator<<(QDebug dbg, const QOrganizerItemDetail& detail)
+QDebug operator<<(QDebug dbg, const QOrganizerItemDetail& detail)
 {
     dbg.nospace() << "QOrganizerItemDetail(name=" << detail.definitionName() << ", key=" << detail.key();
     QVariantMap fields = detail.variantValues();

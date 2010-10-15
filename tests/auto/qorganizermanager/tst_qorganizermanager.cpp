@@ -1530,6 +1530,8 @@ void tst_QOrganizerManager::invalidManager()
 
     irr.setManager(&manager);
     irr.setItemId(foo.id());
+
+    qDebug() << foo.id();
     QVERIFY(!irr.start());
     QVERIFY(!irr.cancel());
     irr.waitForFinished();

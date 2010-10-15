@@ -72,6 +72,7 @@ private slots:
     void traits();
     void idTraits();
     void localIdTraits();
+    void debugOutput();
 
     void event();
     void todo();
@@ -438,6 +439,34 @@ void tst_QOrganizerItem::description()
     oi.operator =(oi);
     QVERIFY(oi.details().count() == 2);
     QVERIFY(oi.isEmpty() == false);
+}
+
+void tst_QOrganizerItem::debugOutput()
+{
+    QOrganizerCollection c;
+    QOrganizerItem item;
+    QOrganizerItemDetail d;
+
+    // Test that these can be used as the first argument to qDebug()
+    qDebug() << item.id();
+    qDebug() << item.collectionId();
+    qDebug() << item;
+    qDebug() << d;
+    qDebug() << c;
+
+    // And that other things can come after them (return type)
+    qDebug() << item.id() << "id";
+    qDebug() << item.collectionId() << "collection id";
+    qDebug() << item << "item";
+    qDebug() << d << "detail";
+    qDebug() << c << "collection";
+
+    // And for kicks, that other things can come first
+    qDebug() << " " << item.id();
+    qDebug() << " " << item.collectionId();
+    qDebug() << " " << item;
+    qDebug() << " " << d;
+    qDebug() << " " << c;
 }
 
 void tst_QOrganizerItem::type()

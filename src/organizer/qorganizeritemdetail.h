@@ -164,7 +164,7 @@ private:
 
 Q_ORGANIZER_EXPORT uint qHash(const QOrganizerItemDetail& key);
 #ifndef QT_NO_DEBUG_STREAM
-Q_ORGANIZER_EXPORT QDebug& operator<<(QDebug dbg, const QOrganizerItemDetail& detail);
+Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemDetail& detail);
 #endif
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QOrganizerItemDetail::AccessConstraints);

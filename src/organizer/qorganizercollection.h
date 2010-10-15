@@ -98,7 +98,7 @@ private:
 
 Q_ORGANIZER_EXPORT uint qHash(const QOrganizerCollection& key);
 #ifndef QT_NO_DEBUG_STREAM
-Q_ORGANIZER_EXPORT QDebug& operator<<(QDebug dbg, const QOrganizerCollection& collection);
+Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerCollection& collection);
 #endif
 
 #ifndef QT_NO_DATASTREAM
