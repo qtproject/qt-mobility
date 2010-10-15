@@ -110,14 +110,8 @@ public:
     QDebug& debugStreamOut(QDebug& dbg) const {
         return dbg << m_id;
     }
-    QDataStream& dataStreamOut(QDataStream& out) const {
-        return out << static_cast<quint32>(m_id);
-    }
-    QDataStream& dataStreamIn(QDataStream& in) {
-        quint32 id;
-        in >> id;
-        m_id = id;
-        return in;
+    QString toString() const {
+        return QString::number(m_id);
     }
     uint hash() const {
         return m_id;

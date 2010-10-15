@@ -459,6 +459,7 @@ void tst_QOrganizerManager::nullIdOperations()
     QVERIFY(cm->error() == QOrganizerManager::DoesNotExistError);
 
 
+    /* TODO: rewrite tests using toString() / fromString()
     // test that streaming null ids doesn't crash.
     {
         QOrganizerItemId nullId;
@@ -513,6 +514,7 @@ void tst_QOrganizerManager::nullIdOperations()
         //inBufferStream >> id;
         //QVERIFY(id == nullLocalId);
     }
+    */
 }
 
 void tst_QOrganizerManager::uriParsing()
@@ -2464,12 +2466,13 @@ void tst_QOrganizerManager::dataSerialization()
     if (cm->saveItem(&event)) {
         QByteArray buffer;
         QDataStream outBufferStream(&buffer, QIODevice::WriteOnly);
-        outBufferStream << event.id();
+        outBufferStream << event.id().toString();
         QVERIFY(buffer.length() > 0);
 
         QDataStream inBufferStream(buffer);
-        QOrganizerItemId id;
-        inBufferStream >> id;
+        QString inString;
+        inBufferStream >> inString;
+        QOrganizerItemId id = QOrganizerItemId::fromString(inString);
         QVERIFY(id == event.id());
     }
 }
