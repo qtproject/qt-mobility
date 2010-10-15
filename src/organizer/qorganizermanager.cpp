@@ -839,10 +839,10 @@ QString QOrganizerManager::managerUri() const
 }
 
 /*! Return a list of QOrganizerItemId extracted from the \a items */
-QList<QOrganizerItemId> QOrganizerManager::extractIds(QList<QOrganizerItem> items)
+QList<QOrganizerItemId> QOrganizerManager::extractIds(const QList<QOrganizerItem>& items)
 {
     QList<QOrganizerItemId> ids;
-    foreach(QOrganizerItem item, items)
+    foreach(const QOrganizerItem& item, items)
         ids.append(item.id());
     return ids;
 }

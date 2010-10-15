@@ -159,7 +159,7 @@ public:
     /* return a list of available backends for which a QOrganizerManager can be constructed. */
     static QStringList availableManagers();
 
-    static QList<QOrganizerItemId> extractIds(QList<QOrganizerItem> items);
+    static QList<QOrganizerItemId> extractIds(const QList<QOrganizerItem>& items);
 
 Q_SIGNALS:
     void dataChanged();
