@@ -118,7 +118,7 @@ QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId(const QStri
 {
     QStringList colonSplit = idString.split(QLatin1String(":"));
     m_localCollectionId = colonSplit.value(0).toUInt();
-    m_localCollectionId = colonSplit.value(1).toUInt();
+    m_localItemId = colonSplit.value(1).toUInt();
 }
 
 bool QOrganizerItemMemoryEngineLocalId::isEqualTo(const QOrganizerItemEngineId* other) const

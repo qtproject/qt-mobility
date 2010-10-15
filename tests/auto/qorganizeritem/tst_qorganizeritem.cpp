@@ -605,18 +605,13 @@ void tst_QOrganizerItem::datastream()
         QDataStream stream1(&buffer, QIODevice::WriteOnly);
         QOrganizerManager om("memory");
         QVERIFY(om.saveItem(&itemIn)); // fill in its ID
-        qDebug() << "- 1 -";
         originalId = itemIn.id();
         originalCollectionId = itemIn.collectionId();
-        qDebug() << "- 2 -";
         stream1 << itemIn;
         QVERIFY(buffer.size() > 0);
-        qDebug() << "- 3 -";
         QDataStream stream2(buffer);
         stream2 >> itemOut;
         //QCOMPARE(itemOut, itemIn); // can't do QCOMPARE because detail keys get changed.
-        qDebug() << itemOut;
-        qDebug() << itemIn;
         QVERIFY(itemOut.details() == itemIn.details());
         QVERIFY(itemOut.id() == itemIn.id());
     }
@@ -687,19 +682,13 @@ void tst_QOrganizerItem::datastream()
     QOrganizerItemId inputId;
     QOrganizerItemId outputId;
 
-    /* TODO: rewrite test with toString() / fromString()
     // first, stream the whole id (mgr uri set, local id set)
     {
         inputId = originalId;
-        buffer.clear();
-        QDataStream stream1(&buffer, QIODevice::WriteOnly);
-        stream1 << inputId;
-        QVERIFY(buffer.size() > 0);
-        QDataStream stream2(buffer);
-        stream2 >> outputId;
+        QString serializedId = inputId.toString();
+        outputId = QOrganizerItemId::fromString(serializedId);
         QCOMPARE(inputId, outputId);
     }
-    */
 
     // TODO : review tests
     // second, stream a partial id (mgr uri null, local id set)
@@ -731,19 +720,13 @@ void tst_QOrganizerItem::datastream()
         QCOMPARE(inputId, outputId);
     }*/
 
-    /* TODO: rewrite test with toString() / fromString()
     // fourth, stream a null id
     {
         inputId = QOrganizerItemId();
-        buffer.clear();
-        QDataStream stream1(&buffer, QIODevice::WriteOnly);
-        stream1 << inputId;
-        QVERIFY(buffer.size() > 0);
-        QDataStream stream2(buffer);
-        stream2 >> outputId;
+        QString serializedId = inputId.toString();
+        outputId = QOrganizerItemId::fromString(serializedId);
         QCOMPARE(inputId, outputId);
     }
-    */
 
     // TODO : review tests
     // fifth, stream an id after changing it's manager uri string.

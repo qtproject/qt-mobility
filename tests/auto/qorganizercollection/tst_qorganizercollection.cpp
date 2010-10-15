@@ -274,19 +274,13 @@ void tst_QOrganizerCollection::datastream()
     QOrganizerCollectionId inputId;
     QOrganizerCollectionId outputId;
 
-    /* TODO: rewrite test with toString() / fromString()
     // first, stream the whole id (mgr uri set, local id set)
     {
         inputId = originalId;
-        buffer.clear();
-        QDataStream stream1(&buffer, QIODevice::WriteOnly);
-        stream1 << inputId;
-        QVERIFY(buffer.size() > 0);
-        QDataStream stream2(buffer);
-        stream2 >> outputId;
+        QString serializedId = inputId.toString();
+        outputId = QOrganizerCollectionId::fromString(serializedId);
         QCOMPARE(inputId, outputId);
     }
-    */
 
     /* TODO: review test
     // second, stream a partial id (mgr uri null, local id set)
@@ -318,19 +312,13 @@ void tst_QOrganizerCollection::datastream()
         QCOMPARE(inputId, outputId);
     }*/
 
-    /* Todo: rewrite test with toString() / fromString()
     // fourth, stream a null id
     {
         inputId = QOrganizerCollectionId();
-        buffer.clear();
-        QDataStream stream1(&buffer, QIODevice::WriteOnly);
-        stream1 << inputId;
-        QVERIFY(buffer.size() > 0);
-        QDataStream stream2(buffer);
-        stream2 >> outputId;
+        QString serializedId = inputId.toString();
+        outputId = QOrganizerCollectionId::fromString(serializedId);
         QCOMPARE(inputId, outputId);
     }
-    */
 
     /* TODO: review test
     // fifth, stream an id after changing it's manager uri.
