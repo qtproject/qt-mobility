@@ -581,4 +581,5 @@ EXPORTS
 	_ZN10QtMobility26QGalleryIntersectionFilter7prependERKNS_22QGalleryMetaDataFilterE @ 580 NONAME
 	_ZN10QtMobility26QGalleryIntersectionFilter7prependERKS0_ @ 581 NONAME
 	_ZN10QtMobility26QGalleryIntersectionFilterlsERKS0_ @ 582 NONAME
+	_ZN10QtMobility16QDocumentGallery5countE @ 583 NONAME DATA 8
 

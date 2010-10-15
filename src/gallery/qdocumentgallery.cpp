@@ -111,6 +111,8 @@ QTM_BEGIN_NAMESPACE
     The set of properties addressable differs between item type but some
     properties are shared by most types.
 
+    \section3 Common item properties
+
     \list
     \o \l author
     \o \l comments
@@ -122,6 +124,12 @@ QTM_BEGIN_NAMESPACE
     \o \l subject
     \o \l title
     \o \l url
+    \endlist
+
+    \section3 Common type properties
+
+    \list
+    \o \l count
     \endlist
 */
 
@@ -381,7 +389,7 @@ Q_DEFINE_GALLERY_TYPE(QDocumentGallery, AudioGenre)
     This type matches all photo albums in the document gallery.
 
     \list
-    \o \l trackCount
+    \o \l count
     \endlist
 */
 
@@ -870,6 +878,17 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, resumePosition)
 */
 
 Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, director)
+
+// Type
+
+/*!
+    \variable QDocumentGallery::count
+
+    This property contains the number of items within the scope of a parent
+    item or an item type.
+*/
+
+Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, count)
 
 /*!
     \fn QDocumentGallery::QDocumentGallery(QObject *parent)
