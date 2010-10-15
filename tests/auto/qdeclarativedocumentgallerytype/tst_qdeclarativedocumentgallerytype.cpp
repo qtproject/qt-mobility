@@ -272,7 +272,6 @@ void tst_QDeclarativeDocumentGalleryType::itemType_data()
 
     QTest::newRow("Null -> Audio")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType {}\n")
             << int(QDeclarativeDocumentGallery::InvalidType)
@@ -283,7 +282,6 @@ void tst_QDeclarativeDocumentGalleryType::itemType_data()
 
     QTest::newRow("Audio -> Audio")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType { itemType: DocumentGallery.Audio }\n")
             << int(QDeclarativeDocumentGallery::Audio)
@@ -294,7 +292,6 @@ void tst_QDeclarativeDocumentGalleryType::itemType_data()
 
     QTest::newRow("Audio -> PhotoAlbum")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType { itemType: DocumentGallery.Audio }\n")
             << int(QDeclarativeDocumentGallery::Audio)
@@ -305,7 +302,6 @@ void tst_QDeclarativeDocumentGalleryType::itemType_data()
 
     QTest::newRow("PhotoAlbum -> Null")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType { itemType: DocumentGallery.PhotoAlbum }\n")
             << int(QDeclarativeDocumentGallery::PhotoAlbum)
@@ -316,7 +312,6 @@ void tst_QDeclarativeDocumentGalleryType::itemType_data()
 
     QTest::newRow("PhotoAlbum -> Undefined Type")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType { itemType: DocumentGallery.PhotoAlbum }\n")
             << int(QDeclarativeDocumentGallery::PhotoAlbum)
@@ -372,7 +367,6 @@ void tst_QDeclarativeDocumentGalleryType::properties_data()
 
     QTest::newRow("[] -> [ title, fileName ]")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType {\n"
                         "itemType: DocumentGallery.File\n"
@@ -382,7 +376,6 @@ void tst_QDeclarativeDocumentGalleryType::properties_data()
 
     QTest::newRow("[ title, fileName ] -> [ title, fileName ]")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType {\n"
                         "itemType: DocumentGallery.File\n"
@@ -393,7 +386,6 @@ void tst_QDeclarativeDocumentGalleryType::properties_data()
 
     QTest::newRow("[ title, fileName ] -> [ count ]")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType {\n"
                         "itemType: DocumentGallery.File\n"
@@ -439,7 +431,6 @@ void tst_QDeclarativeDocumentGalleryType::autoUpdate_data()
 
     QTest::newRow("Default -> true")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType {\n"
                         "itemType: DocumentGallery.File\n"
@@ -449,7 +440,6 @@ void tst_QDeclarativeDocumentGalleryType::autoUpdate_data()
 
     QTest::newRow("true -> false")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType {\n"
                         "itemType: DocumentGallery.File\n"
@@ -460,7 +450,6 @@ void tst_QDeclarativeDocumentGalleryType::autoUpdate_data()
 
     QTest::newRow("false -> true")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType {\n"
                         "itemType: DocumentGallery.File\n"
@@ -471,7 +460,6 @@ void tst_QDeclarativeDocumentGalleryType::autoUpdate_data()
 
     QTest::newRow("true -> true")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType {\n"
                         "itemType: DocumentGallery.File\n"
@@ -482,7 +470,6 @@ void tst_QDeclarativeDocumentGalleryType::autoUpdate_data()
 
     QTest::newRow("false -> false")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType {\n"
                         "itemType: DocumentGallery.File\n"
@@ -522,7 +509,6 @@ void tst_QDeclarativeDocumentGalleryType::autoUpdate()
 void tst_QDeclarativeDocumentGalleryType::disableAutoUpdateFinished()
 {
     const QByteArray qml(
-        "import Qt 4.7\n"
         "import QtMobility.gallery 1.1\n"
         "DocumentGalleryType {\n"
             "itemType: DocumentGallery.File\n"
@@ -551,7 +537,6 @@ void tst_QDeclarativeDocumentGalleryType::disableAutoUpdateFinished()
 void tst_QDeclarativeDocumentGalleryType::disableAutoUpdateIdle()
 {
     const QByteArray qml(
-        "import Qt 4.7\n"
         "import QtMobility.gallery 1.1\n"
         "DocumentGalleryType {\n"
             "itemType: DocumentGallery.File\n"
@@ -580,7 +565,6 @@ void tst_QDeclarativeDocumentGalleryType::disableAutoUpdateIdle()
 void tst_QDeclarativeDocumentGalleryType::disableAutoUpdateActive()
 {
     const QByteArray qml(
-        "import Qt 4.7\n"
         "import QtMobility.gallery 1.1\n"
         "DocumentGalleryType {\n"
             "itemType: DocumentGallery.File\n"
@@ -615,7 +599,6 @@ void tst_QDeclarativeDocumentGalleryType::disableAutoUpdateActive()
 void tst_QDeclarativeDocumentGalleryType::asyncResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryType { itemType: DocumentGallery.File }\n");
 
@@ -641,7 +624,6 @@ void tst_QDeclarativeDocumentGalleryType::asyncResponse()
 void tst_QDeclarativeDocumentGalleryType::cancelAsyncResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryType { itemType: DocumentGallery.File }\n");
 
@@ -667,7 +649,6 @@ void tst_QDeclarativeDocumentGalleryType::cancelAsyncResponse()
 void tst_QDeclarativeDocumentGalleryType::cancelIdleResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryType { itemType: DocumentGallery.File; autoUpdate: true }\n");
 
@@ -693,7 +674,6 @@ void tst_QDeclarativeDocumentGalleryType::cancelIdleResponse()
 void tst_QDeclarativeDocumentGalleryType::cancelPendingResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryType { itemType: DocumentGallery.File }\n");
 
@@ -723,7 +703,6 @@ void tst_QDeclarativeDocumentGalleryType::cancelPendingResponse()
 void tst_QDeclarativeDocumentGalleryType::deferExecuteCanceledResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryType { itemType: DocumentGallery.File }\n");
 
@@ -756,7 +735,6 @@ void tst_QDeclarativeDocumentGalleryType::deferExecuteCanceledResponse()
 void tst_QDeclarativeDocumentGalleryType::clear()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryType { itemType: DocumentGallery.File }\n");
 
@@ -785,7 +763,6 @@ void tst_QDeclarativeDocumentGalleryType::clear()
 void tst_QDeclarativeDocumentGalleryType::clearPendingResponse()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryType { itemType: DocumentGallery.File }\n");
 
@@ -821,7 +798,6 @@ void tst_QDeclarativeDocumentGalleryType::error_data()
 
     QTest::newRow("Specific error message")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType { itemType: DocumentGallery.File }\n")
             << int(QDocumentGallery::ConnectionError)
@@ -832,7 +808,6 @@ void tst_QDeclarativeDocumentGalleryType::error_data()
 
     QTest::newRow("Generic connection Error")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType { itemType: DocumentGallery.File }\n")
             << int(QDocumentGallery::ConnectionError)
@@ -843,7 +818,6 @@ void tst_QDeclarativeDocumentGalleryType::error_data()
 
     QTest::newRow("Generic itemType Error")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType { itemType: DocumentGallery.File }\n")
             << int(QDocumentGallery::ItemTypeError)
@@ -854,7 +828,6 @@ void tst_QDeclarativeDocumentGalleryType::error_data()
 
     QTest::newRow("Unhandled error code")
             << QByteArray(
-                    "import Qt 4.7\n"
                     "import QtMobility.gallery 1.1\n"
                     "DocumentGalleryType { itemType: DocumentGallery.File }\n")
             << int(QDocumentGallery::NoGallery)
@@ -917,7 +890,6 @@ void tst_QDeclarativeDocumentGalleryType::progress()
     QFETCH(qreal, normalizedProgress);
 
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryType { itemType: DocumentGallery.File }\n");
 
@@ -941,7 +913,6 @@ void tst_QDeclarativeDocumentGalleryType::progress()
 void tst_QDeclarativeDocumentGalleryType::available()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryType { itemType: DocumentGallery.File }\n");
 
@@ -968,7 +939,6 @@ void tst_QDeclarativeDocumentGalleryType::available()
 void tst_QDeclarativeDocumentGalleryType::metaData()
 {
     const QByteArray qml(
-            "import Qt 4.7\n"
             "import QtMobility.gallery 1.1\n"
             "DocumentGalleryType {\n"
                 "itemType: DocumentGallery.Audio\n"
@@ -987,6 +957,7 @@ void tst_QDeclarativeDocumentGalleryType::metaData()
 
     QScopedPointer<QObject> object(component.create());
     QVERIFY(object);
+    QVERIFY(gallery.response());
 
     QObject *metaData = object->property("metaData").value<QObject *>();
     QVERIFY(metaData);

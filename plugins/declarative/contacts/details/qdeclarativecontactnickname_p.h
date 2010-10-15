@@ -53,14 +53,14 @@ class QDeclarativeContactNickname : public QDeclarativeContactDetail
     Q_CLASSINFO("DefaultProperty", "nickname")
 public:
     enum FieldType {
-        FieldNickName = 0
+        NickName = 0
     };
 
     QDeclarativeContactNickname(QObject* parent = 0)
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactNickname());
-        connect(this, SIGNAL((fieldsChanged)), SIGNAL(valueChanged()));
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
@@ -69,14 +69,20 @@ public:
     static QString fieldNameFromFieldType(int fieldType)
     {
         switch (fieldType) {
-        case FieldNickName:
+        case NickName:
             return QContactNickname::FieldNickname;
         default:
             break;
         }
-        return "";
+        //qWarning
+        return QString();
     }
-    void setNickname(const QString& nickname) {if (!readOnly()) detail().setValue(QContactNickname::FieldNickname, nickname);}
+    void setNickname(const QString& v)
+    {
+        if (!readOnly() && v != nickname()) {
+            detail().setValue(QContactNickname::FieldNickname, v);
+        }
+    }
     QString nickname() const {return detail().value(QContactNickname::FieldNickname);}
 signals:
     void fieldsChanged();

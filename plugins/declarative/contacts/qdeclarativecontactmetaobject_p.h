@@ -81,7 +81,6 @@ public:
     int localId() const;
 
 
-private:
     static void detail_append(QDeclarativeListProperty<QDeclarativeContactDetail> *p, QDeclarativeContactDetail *detail);
     static int  detail_count(QDeclarativeListProperty<QDeclarativeContactDetail> *p);
     static QDeclarativeContactDetail* detail_at(QDeclarativeListProperty<QDeclarativeContactDetail> *p, int idx);
@@ -93,6 +92,7 @@ private:
     static ContactDetailNameMap* detailMetaDataByDefinitionName(const char * name);
     static ContactDetailNameMap* detailMetaDataByDetailType(QDeclarativeContactDetail::ContactDetailType type);
 
+    bool m_modified;
     QContact m_contact;
     QMap<QString, QContactDetailDefinition> m_defs;
     QList<QDeclarativeContactDetail*> m_details;
