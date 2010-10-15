@@ -169,8 +169,8 @@ public:
 
     // Other protected area update functions
     static void setDetailAccessConstraints(QOrganizerItemDetail* detail, QOrganizerItemDetail::AccessConstraints constraints);
-    static const QOrganizerItemEngineId* engineLocalItemId(const QOrganizerItemId& localId);
-    static const QOrganizerCollectionEngineId* engineLocalCollectionId(const QOrganizerCollectionId& localId);
+    static const QOrganizerItemEngineId* engineItemId(const QOrganizerItemId& localId);
+    static const QOrganizerCollectionEngineId* engineCollectionId(const QOrganizerCollectionId& localId);
 
     /* Helper functions */
     static bool isItemBetweenDates(const QOrganizerItem& item, const QDateTime& startPeriod, const QDateTime& endPeriod);

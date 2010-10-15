@@ -581,7 +581,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItems(const QDateTime&
     }
 
     foreach (QOrganizerCollectionId collectionId, collectionIds) {
-        CCalendar *cal = d->m_mcInstance->getCalendarById(static_cast<int>(static_cast<const QOrganizerCollectionMaemo5EngineLocalId *>(QOrganizerManagerEngine::engineLocalCollectionId(collectionId))->m_localCollectionId), calError);
+        CCalendar *cal = d->m_mcInstance->getCalendarById(static_cast<int>(static_cast<const QOrganizerCollectionMaemo5EngineLocalId *>(QOrganizerManagerEngine::engineCollectionId(collectionId))->m_localCollectionId), calError);
 
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         if (*error != QOrganizerManager::NoError)

@@ -117,7 +117,7 @@ inline QOrganizerItemId makeItemLocalId(quint32 id) {
 
 inline quint32 readItemLocalId(const QOrganizerItemId& id) {
     return static_cast<const QOrganizerItemMaemo5EngineLocalId*>(
-            QOrganizerManagerEngine::engineLocalItemId(id))->m_localItemId;
+            QOrganizerManagerEngine::engineItemId(id))->m_localItemId;
 }
 
 inline QOrganizerCollectionId makeCollectionLocalId(quint32 id) {
@@ -126,7 +126,7 @@ inline QOrganizerCollectionId makeCollectionLocalId(quint32 id) {
 
 inline quint32 readCollectionLocalId(const QOrganizerCollectionId& id) {
     return static_cast<const QOrganizerCollectionMaemo5EngineLocalId*>(
-            QOrganizerManagerEngine::engineLocalCollectionId(id))->m_localCollectionId;
+            QOrganizerManagerEngine::engineCollectionId(id))->m_localCollectionId;
 }
 
 #endif

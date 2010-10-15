@@ -989,7 +989,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         quint32 nextOrganizerItemId = d->m_nextOrganizerItemId; // don't increment it until we're successful.
         nextOrganizerItemId += 1;
         QOrganizerItemMemoryEngineLocalId* newMemoryEngineLocalId = new QOrganizerItemMemoryEngineLocalId;
-        newMemoryEngineLocalId->m_localCollectionId = static_cast<const QOrganizerCollectionMemoryEngineLocalId*>(QOrganizerManagerEngine::engineLocalCollectionId(targetCollectionId))->m_localCollectionId;
+        newMemoryEngineLocalId->m_localCollectionId = static_cast<const QOrganizerCollectionMemoryEngineLocalId*>(QOrganizerManagerEngine::engineCollectionId(targetCollectionId))->m_localCollectionId;
         newMemoryEngineLocalId->m_localItemId = nextOrganizerItemId;
         theOrganizerItem->setId(QOrganizerItemId(newMemoryEngineLocalId));
         // note: do NOT delete the QOrganizerItemMemoryEngineLocalId -- the QOrganizerItemId ctor takes ownership of it.
@@ -1016,7 +1016,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
                     *error = QOrganizerManager::UnspecifiedError; // this should never occur; parent should _always_ be in a collection.
                     return false;
                 }
-                theOrganizerItem->setId(QOrganizerItemId(new QOrganizerItemMemoryEngineLocalId(static_cast<const QOrganizerCollectionMemoryEngineLocalId*>(QOrganizerManagerEngine::engineLocalCollectionId(targetCollectionId))->m_localCollectionId, nextOrganizerItemId)));
+                theOrganizerItem->setId(QOrganizerItemId(new QOrganizerItemMemoryEngineLocalId(static_cast<const QOrganizerCollectionMemoryEngineLocalId*>(QOrganizerManagerEngine::engineCollectionId(targetCollectionId))->m_localCollectionId, nextOrganizerItemId)));
             } else if (!d->m_itemsInCollections.values(targetCollectionId).contains(parentId)) {
                 // nope, the specified collection doesn't contain the parent.  error.
                 *error = QOrganizerManager::InvalidCollectionError;
@@ -1047,7 +1047,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
                     *error = QOrganizerManager::UnspecifiedError; // this should never occur; parent should _always_ be in a collection.
                     return false;
                 }
-               theOrganizerItem->setId(QOrganizerItemId(QOrganizerItemId(new QOrganizerItemMemoryEngineLocalId(static_cast<const QOrganizerCollectionMemoryEngineLocalId*>(QOrganizerManagerEngine::engineLocalCollectionId(targetCollectionId))->m_localCollectionId, nextOrganizerItemId))));
+               theOrganizerItem->setId(QOrganizerItemId(QOrganizerItemId(new QOrganizerItemMemoryEngineLocalId(static_cast<const QOrganizerCollectionMemoryEngineLocalId*>(QOrganizerManagerEngine::engineCollectionId(targetCollectionId))->m_localCollectionId, nextOrganizerItemId))));
             } else if (!d->m_itemsInCollections.values(targetCollectionId).contains(parentId)) {
                 // nope, the specified collection doesn't contain the parent.  error.
                 *error = QOrganizerManager::InvalidCollectionError;
