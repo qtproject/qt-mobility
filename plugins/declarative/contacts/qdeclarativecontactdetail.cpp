@@ -47,7 +47,7 @@ QDeclarativeContactDetail::QDeclarativeContactDetail(QObject* parent)
 {
     QDeclarativeContact* c = qobject_cast<QDeclarativeContact*>(parent);
     if (c)
-        connect(this, SIGNAL(valueChanged()), c, SLOT(detailsChanged()));
+        connect(this, SIGNAL(valueChanged()), c, SIGNAL(detailsChanged()));
 }
 
 QContactDetail& QDeclarativeContactDetail::detail()
