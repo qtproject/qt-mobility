@@ -842,7 +842,9 @@ QString QOrganizerManager::managerUri() const
 QList<QOrganizerItemId> QOrganizerManager::extractIds(const QList<QOrganizerItem>& items)
 {
     QList<QOrganizerItemId> ids;
+#if QT_VERSION > 0x040700    
     ids.reserve(items.count());
+#endif
 
     foreach(const QOrganizerItem& item, items)
         ids.append(item.id());
