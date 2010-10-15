@@ -171,7 +171,7 @@ void tst_recurringItems::addRecurrenceRule()
     QVERIFY(m_om->saveItem(&item));
 
     // Fetch and Verify
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
 
     QOrganizerItemRecurrence resultRecurrence = item.detail(QOrganizerItemRecurrence::DefinitionName);
 
@@ -374,20 +374,20 @@ void tst_recurringItems::removeRecurrenceRule()
     QVERIFY(m_om->saveItem(&item));
 
     // Fetch the saved item & check that recurrence rule was saved
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 1);
 
     // Remove a recurrence rule detail & save & verify it does not exist
     recurrence = item.detail<QOrganizerItemRecurrence>();
     item.removeDetail(&recurrence);
     QVERIFY(m_om->saveItem(&item));
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 0);
     
     // Save the recurrence again & fetch & verify
     QVERIFY(item.saveDetail(&recurrence));
     QVERIFY(m_om->saveItem(&item));
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 1);
     
     // Set empty recurrence rule detail & save & verify it does not exist
@@ -395,7 +395,7 @@ void tst_recurringItems::removeRecurrenceRule()
     recurrence.setRecurrenceRules(QSet<QOrganizerRecurrenceRule>());
     QVERIFY(item.saveDetail(&recurrence));
     QVERIFY(m_om->saveItem(&item));
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     QVERIFY(item.details(QOrganizerItemRecurrence::DefinitionName).count() == 0);
 }
 

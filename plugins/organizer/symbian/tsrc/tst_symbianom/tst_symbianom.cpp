@@ -399,11 +399,11 @@ void tst_SymbianOm::uniqueIds()
     QVERIFY(todo.guid() == "1234567890");
     
     // Save an existing todo item with guid only. Should pass.
-    QOrganizerItemId localId = todo.id();
+    QOrganizerItemId id = todo.id();
     todo.setDescription("foobar");
     todo.setId(QOrganizerItemId());
     QVERIFY(m_om->saveItem(&todo));
-    QVERIFY(todo.id() == localId); // local id should remain the same
+    QVERIFY(todo.id() == id); // local id should remain the same
     
     // Change manager uri and save again. Should fail.
     todo.setId(QOrganizerItemId());

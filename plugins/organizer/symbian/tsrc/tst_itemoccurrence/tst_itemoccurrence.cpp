@@ -71,8 +71,8 @@ private slots:
     void editOccurrence();
     void editOccurrenceNegative_data();
     void editOccurrenceNegative();
-    void updateOccurrenceLocalId_data(){addManagers();};
-    void updateOccurrenceLocalId();
+    void updateOccurrenceId_data(){addManagers();};
+    void updateOccurrenceId();
     void fetchNegative_data();
     void fetchNegative();
     void daylightSavingTime_data() { addManagers(); }
@@ -178,7 +178,7 @@ void tst_ItemOccurrence::addOccurrenceDetail()
     QVERIFY(m_om->saveItem(&item));
         
     // Fetch the saved item
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     
     // Fetch the item again
     QList<QOrganizerItem> instanceList = m_om->itemOccurrences(item,startTime,endTime);
@@ -188,8 +188,8 @@ void tst_ItemOccurrence::addOccurrenceDetail()
     QCOMPARE(lastItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QOrganizerEventOccurrence thirdEvent = static_cast<QOrganizerEventOccurrence>(lastItem);
     QCOMPARE(thirdEvent.startDateTime(), QDateTime(QDate(QDate::currentDate().year() , 9, 15)));
-    QCOMPARE(thirdEvent.localId(), QOrganizerItemLocalId());
-    QCOMPARE(thirdEvent.parentLocalId(), item.localId());
+    QCOMPARE(thirdEvent.id(), QOrganizerItemId());
+    QCOMPARE(thirdEvent.parentId(), item.id());
     
     //Fetch instances using maxcount only.
     instanceList.clear();
@@ -199,8 +199,8 @@ void tst_ItemOccurrence::addOccurrenceDetail()
     QCOMPARE(secondItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QOrganizerEventOccurrence secondEvent = static_cast<QOrganizerEventOccurrence>(secondItem);
     QCOMPARE(secondEvent.startDateTime(), QDateTime(QDate(QDate::currentDate().year() , 9, 8)));
-    QCOMPARE(secondEvent.localId(), QOrganizerItemLocalId());
-    QCOMPARE(secondEvent.parentLocalId(), item.localId());    
+    QCOMPARE(secondEvent.id(), QOrganizerItemId());
+    QCOMPARE(secondEvent.parentId(), item.id());    
 }
 
 void tst_ItemOccurrence::fetchOccurrenceByFilterSort_data() 
@@ -452,7 +452,7 @@ void tst_ItemOccurrence::addOccurrenceWithException()
     
     // Save item with recurrence rule.
     QVERIFY(m_om->saveItem(&item));    
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
             
     //Fetch instance on the exception date.An empty list should be returned
     QList<QOrganizerItem> instanceList = m_om->itemOccurrences(item,QDateTime(exceptionDate),QDateTime(exceptionDate));
@@ -529,7 +529,7 @@ void tst_ItemOccurrence::editOccurrence()
     
     // Save item with recurrence rule.
     QVERIFY(m_om->saveItem(&item));    
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
 
     //Fetch first and third instance of the saved entry to modify
     QList<QOrganizerItem> instanceList = m_om->itemOccurrences(item,startTime,QDateTime(),3);
@@ -629,7 +629,7 @@ void tst_ItemOccurrence::editOccurrenceNegative()
      
     // Save item with recurrence rule.
     QVERIFY(m_om->saveItem(&item));    
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
 
     //Fetch first instance of the saved entry to modify
     QList<QOrganizerItem> instanceList = m_om->itemOccurrences(item,startTime,startTime);
@@ -639,10 +639,10 @@ void tst_ItemOccurrence::editOccurrenceNegative()
     QOrganizerEventOccurrence firstInstance = static_cast<QOrganizerEventOccurrence>(firstItem);
     QString instanceGuid (firstInstance.guid());
 
-    //Try to save instance with invalid guid and parentlocalId fails
+    //Try to save instance with invalid guid and parentid fails
     // TODO: Disabled because of API change. REFACTOR!
     //firstInstance.setGuid(QString(""));
-    //firstInstance.setParentLocalId(QOrganizerItemLocalId(-1));
+    //firstInstance.setParentId(QOrganizerItemId(-1));
     //QVERIFY(!m_om->saveItem(&firstInstance));
     //QCOMPARE(m_om->error(), QOrganizerManager::InvalidOccurrenceError);
 
@@ -661,13 +661,13 @@ void tst_ItemOccurrence::editOccurrenceNegative()
     //Save the instance with invalid localid
     // TODO: Disabled because of API change. REFACTOR!
     //QOrganizerItemId itemId;
-    //itemId.setLocalId(1);
+    //itemId.setId(1);
     //firstInstance.setId(itemId);
     //QVERIFY(!m_om->saveItem(&firstInstance));
     //QCOMPARE(m_om->error(), QOrganizerManager::InvalidOccurrenceError);
 }
 
-void tst_ItemOccurrence::updateOccurrenceLocalId()
+void tst_ItemOccurrence::updateOccurrenceId()
 {
     // Create recurring event
     QOrganizerEvent christmas;
@@ -686,13 +686,13 @@ void tst_ItemOccurrence::updateOccurrenceLocalId()
     exception.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(0, 0, 0)));
     exception.setEndDateTime(QDateTime(QDate(2010, 12, 26), QTime(0, 0, 0)));
     exception.setDisplayLabel(QLatin1String("Xmass"));
-    exception.setParentLocalId(christmas.localId());
+    exception.setParentId(christmas.id());
     QVERIFY(m_om->saveItem(&exception));
-    QVERIFY(exception.localId() != QOrganizerItemLocalId(0));
+    QVERIFY(exception.id() != QOrganizerItemId(0));
 
     // Modify the exception
     exception.setDisplayLabel(QLatin1String("Christmas"));
-    exception.setParentLocalId(QOrganizerItemLocalId(0));
+    exception.setParentId(QOrganizerItemId(0));
     QVERIFY(m_om->saveItem(&exception));
 }
 
@@ -734,7 +734,7 @@ void tst_ItemOccurrence::fetchNegative()
     QVERIFY(m_om->saveItem(&item));
     
     // Fetch the saved item
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
         
     // Fetch the item instances for a non repeating entry
     instanceList = m_om->itemOccurrences(item,startTime,endTime);

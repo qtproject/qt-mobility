@@ -361,9 +361,9 @@ void tst_SymbianOmAsync::fetchItemsIdFilter()
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
 
     // Fetch with local id filter
-    QOrganizerItemIdFilter localIdFilter;
-    localIdFilter.setIds(m_om->itemIds().mid(pos, length));
-    req.setFilter(localIdFilter);
+    QOrganizerItemIdFilter idFilter;
+    idFilter.setIds(m_om->itemIds().mid(pos, length));
+    req.setFilter(idFilter);
     QVERIFY(req.start());
     QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
@@ -389,13 +389,13 @@ void tst_SymbianOmAsync::fetchItemsNonExistingIds()
     // Create fetch request with id filter
     QOrganizerItemFetchRequest req;
     req.setManager(m_om);
-    QOrganizerItemIdFilter localIdFilter;
+    QOrganizerItemIdFilter idFilter;
     QList<QOrganizerItemId> ids;
     foreach (QOrganizerItem item, items) {
         ids.append(item.id());
     }
-    localIdFilter.setIds(ids);
-    req.setFilter(localIdFilter);
+    idFilter.setIds(ids);
+    req.setFilter(idFilter);
 
     // Create signal spys for verification purposes
     QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
