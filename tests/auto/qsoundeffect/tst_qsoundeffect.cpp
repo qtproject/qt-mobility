@@ -116,8 +116,8 @@ void tst_QSoundEffect::testVolume()
 #ifndef QT_MULTIMEDIA_QMEDIAPLAYER
     QSignalSpy readSignal(sound, SIGNAL(volumeChanged()));
 
-    sound->setVolume(50);
-    QCOMPARE(sound->volume(),50);
+    sound->setVolume(0.5);
+    QCOMPARE(sound->volume(),0.5);
 
     QTest::qWait(20);
     QCOMPARE(readSignal.count(),1);
