@@ -250,7 +250,7 @@ QString QDeclarativeOrganizerItemParent::fieldNameFromFieldType(int type)
 {
     switch (type) {
     case QDeclarativeOrganizerItemParent::ParentId:
-        return QOrganizerItemParent::FieldParentLocalId;
+        return QOrganizerItemParent::FieldParentId;
     case QDeclarativeOrganizerItemParent::OriginalDate:
         return QOrganizerItemParent::FieldOriginalDate;
     }
