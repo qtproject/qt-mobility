@@ -88,7 +88,6 @@ public:
     Q_INVOKABLE QVariant details(const QString& name);
     Q_INVOKABLE void addComment(const QString& comment);
     Q_INVOKABLE void clearComments();
-    Q_INVOKABLE void clearDetails();
 
     QString type() const;
     QString displayLabel() const;
@@ -97,10 +96,15 @@ public:
     void setDescription(const QString& description);
     QString guid() const;
     void setGuid(const QString& guid);
+
+public slots:
+    void save();
+    void clearDetails();
 signals:
     void itemChanged();
+private slots:
+    void setModified();
 protected:
-    void setModified(bool modified);
     QDeclarativeOrganizerItemMetaObject* d;
     friend class QDeclarativeOrganizerItemMetaObject;
 };

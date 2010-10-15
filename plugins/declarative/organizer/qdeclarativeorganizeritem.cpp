@@ -48,6 +48,7 @@ QDeclarativeOrganizerItem::QDeclarativeOrganizerItem(QObject *parent)
     d(new QDeclarativeOrganizerItemMetaObject(this, QOrganizerItem()))
 {
     d->setMetaObject(QDeclarativeOrganizerItem::staticMetaObject);
+    connect(this, SIGNAL(itemChanged()), SLOT(setModified()));
 }
 
 
@@ -57,6 +58,7 @@ QDeclarativeOrganizerItem::QDeclarativeOrganizerItem(const QOrganizerItem& item,
 {
     d->setMetaObject(QDeclarativeOrganizerItem::staticMetaObject);
     setDetailDefinitions(defs);
+    connect(this, SIGNAL(itemChanged()), SLOT(setModified()));
 }
 
 QDeclarativeOrganizerItem::~QDeclarativeOrganizerItem()
@@ -77,6 +79,7 @@ QMap<QString, QOrganizerItemDetailDefinition> QDeclarativeOrganizerItem::detailD
 void QDeclarativeOrganizerItem::setItem(const QOrganizerItem& item)
 {
    d->setItem(item);
+   d->m_modified = false;
 }
 
 QOrganizerItem QDeclarativeOrganizerItem::item() const
@@ -104,9 +107,9 @@ bool QDeclarativeOrganizerItem::modified() const
     return d->m_modified;
 }
 
-void QDeclarativeOrganizerItem::setModified(bool modified)
+void QDeclarativeOrganizerItem::setModified()
 {
-    d->m_modified = modified;
+    d->m_modified = true;
 }
 
 QVariant QDeclarativeOrganizerItem::detail(const QString& name)
@@ -136,6 +139,16 @@ void QDeclarativeOrganizerItem::clearDetails()
 {
     d->m_item.clearDetails();
     emit itemChanged();
+}
+
+void QDeclarativeOrganizerItem::save()
+{
+    if (modified()) {
+        QDeclarativeOrganizerModel* model = qobject_cast<QDeclarativeOrganizerModel*>(parent());
+        if (model) {
+            model->saveItem(this);
+        }
+    }
 }
 
 QString QDeclarativeOrganizerItem::type() const
