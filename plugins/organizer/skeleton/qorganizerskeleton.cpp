@@ -182,9 +182,12 @@ uint QOrganizerItemSkeletonEngineLocalId::engineLocalIdType() const
     return qHash(QString(QLatin1String("skeleton")));
 }
 
-QString QOrganizerItemSkeletonEngineLocalId::managerUri() const
+const QString QOrganizerItemSkeletonEngineLocalId::managerUri() const
 {
-    return QString::fromLatin1("qtorganizer:skeleton:");
+    // TODO: make this return the actual managerUri (including params) of the
+    // engine it is associated with
+    static const QString uri(QLatin1String("qtorganizer:skeleton:"));
+    return uri;
 }
 
 QOrganizerItemEngineId* QOrganizerItemSkeletonEngineLocalId::clone() const
@@ -405,9 +408,12 @@ uint QOrganizerCollectionSkeletonEngineLocalId::engineLocalIdType() const
     return qHash(QString(QLatin1String("skeleton")));
 }
 
-QString QOrganizerCollectionSkeletonEngineLocalId::managerUri() const
+const QString QOrganizerCollectionSkeletonEngineLocalId::managerUri() const
 {
-    return QString::fromLatin1("qtorganizer:skeleton:");
+    // TODO: make this return the actual managerUri (including params) of the
+    // engine it is associated with
+    static const QString uri(QLatin1String("qtorganizer:skeleton:"));
+    return uri;
 }
 
 QOrganizerCollectionEngineId* QOrganizerCollectionSkeletonEngineLocalId::clone() const

@@ -104,8 +104,9 @@ public:
     uint engineLocalIdType() const {
         return 0;
     }
-    QString managerUri() const {
-        return QString::fromLatin1("qtorganizer:basic:");
+    const QString managerUri() const {
+        static const QString uri(QLatin1String("qtorganizer:basic:"));
+        return uri;
     }
     QOrganizerCollectionEngineId* clone() const {
         BasicCollectionLocalId* cloned = new BasicCollectionLocalId(m_id);

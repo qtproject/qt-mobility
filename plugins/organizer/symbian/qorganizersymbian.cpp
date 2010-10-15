@@ -113,11 +113,11 @@ uint QOrganizerItemSymbianEngineLocalId::engineLocalIdType() const
     return KSymbianEngineLocalIdType;
 }
 
-QString QOrganizerItemSymbianEngineLocalId::managerUri() const
+const QString QOrganizerItemSymbianEngineLocalId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with
-    static QString managerUri(QLatin1String("qtorganizer:symbian:"));
+    static const QString managerUri(QLatin1String("qtorganizer:symbian:"));
     return managerUri;
 }
 
@@ -202,11 +202,12 @@ uint QOrganizerCollectionSymbianEngineLocalId::engineLocalIdType() const
     return KSymbianEngineLocalIdType;
 }
 
-QString QOrganizerCollectionSymbianEngineLocalId::managerUri() const
+const QString QOrganizerCollectionSymbianEngineLocalId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with
-    return QString::fromLatin1("qtorganizer:symbian:");
+    static const QString managerUri(QLatin1String("qtorganizer:symbian:"));
+    return managerUri;
 }
 
 QOrganizerCollectionEngineId* QOrganizerCollectionSymbianEngineLocalId::clone() const

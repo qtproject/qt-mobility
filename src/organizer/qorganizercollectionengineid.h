@@ -60,7 +60,7 @@ public:
     virtual bool isLessThan(const QOrganizerCollectionEngineId* other) const = 0;
 
     virtual uint engineLocalIdType() const = 0;
-    virtual QString managerUri() const = 0;
+    virtual const QString managerUri() const = 0;
     virtual QOrganizerCollectionEngineId* clone() const = 0;
 
 #ifndef QT_NO_DEBUG_STREAM

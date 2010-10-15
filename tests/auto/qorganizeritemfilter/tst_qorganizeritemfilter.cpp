@@ -103,8 +103,9 @@ public:
         BasicItemLocalId* cloned = new BasicItemLocalId(m_id);
         return cloned;
     }
-    QString managerUri() const {
-        return QString::fromLatin1("qtorganizer:basicItem:");
+    const QString managerUri() const {
+        static const QString uri(QLatin1String("qtorganizer:basicItem:"));
+        return uri;
     }
     QDebug& debugStreamOut(QDebug& dbg) const {
         return dbg << m_id;

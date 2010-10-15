@@ -81,7 +81,7 @@ public:
 
     bool isNull() const;
 
-    QString managerUri() const;
+    const QString managerUri() const;
 
 private:
     QSharedDataPointer<QOrganizerItemEngineId> d;
