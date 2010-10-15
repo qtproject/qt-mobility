@@ -5411,6 +5411,7 @@ void tst_QLandmarkManager::filterAttribute() {
 #endif
 
      //test ends with
+    attributeFilter.setAttribute("city", "ra",QLandmarkFilter::MatchEndsWith);
     QVERIFY(doFetch(type,attributeFilter,&lms));
     //TODO: Symbian is only giving one match
     QCOMPARE(lms.count(),2);
