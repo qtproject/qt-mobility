@@ -44,10 +44,6 @@
 
     \tableofcontents
 
-    The advantage of sharing this work with you is that you now have the
-    opportunity to review and provide your feedback to us. With your feedback we
-    will together build high quality robust new APIs for Qt.
-
     Although we anticipate that the new APIs will be of most advantage to those
     developers embarked on mobile application development, in many cases they may
     be equally relevant for other development usage including, in some cases,
@@ -59,7 +55,7 @@
     \section2 Introducing the Qt Mobility Project APIs
 
     The Qt Mobility project covers a diverse range of features and technologies.
-    It is not a single API but a collection of APIs or frameworks.
+    It is not a single API but a collection of APIs and frameworks.
 
     This release contains the following APIs:
 
@@ -263,7 +259,7 @@
 
     \section2 Versit (Organizer)
 
-    This is an continuation of the Versit API to interface the Organizer API
+    This is a continuation of the Versit API to interface the Organizer API
     with iCalendar documents using the same framework as for vCards.
 
     \section2 Camera

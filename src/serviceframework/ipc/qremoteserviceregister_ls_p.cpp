@@ -49,6 +49,7 @@
 #include <QDataStream>
 #include <QTimer>
 #include <QProcess>
+#include <QFile>
 
 #include <time.h>
 #include <sys/types.h>          /* See NOTES */
@@ -232,15 +233,18 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
     socket->connectToServer(location);
     if(!socket->waitForConnected()){
         if (!socket->isValid()) {
-            qWarning() << "Cannot connect to remote service, trying to start service " << location;
-            // Start the service as a detached process
-            bool servicestarted = false;
-#ifdef Q_OS_WIN
-            servicestarted = QProcess::startDetached(location);
-#else
-            servicestarted = QProcess::startDetached("./" + location);
+            QString path = location;
+            qWarning() << "Cannot connect to remote service, trying to start service " << path;
+            // If we have autotests enable, check for the service in .
+#ifdef QTM_BUILD_UNITTESTS
+            QFile file("./" + path);
+            if(file.exists()){
+                path.prepend("./");
+            }
 #endif
-            if(servicestarted){
+            qint64 pid = 0;
+            // Start the service as a detached process
+            if(QProcess::startDetached(path, QStringList(), QString(), &pid)){
                 int i;
                 socket->connectToServer(location);
                 for(i = 0; !socket->isValid() && i < 100; i++){
