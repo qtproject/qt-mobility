@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "cntsymbiansimtransformerror.h"
-#include <GsmError.h>
+#include <gsmerror.h>
 
 /*! Transform a Symbian contact error id to QContactManager::Error.
  *
