@@ -96,33 +96,33 @@
 #endif
 
 //defines to turn on and off tests for symbian
-#define INVALID_MANAGER
-#define RETRIEVE_CATEGORY
-#define RETRIEVE_LANDMARK
-#define SAVE_CATEGORY
-#define SAVE_LANDMARK
-#define REMOVE_CATEGORY
-#define REMOVE_LANDMARK
-#define GET_ALL_CATEGORIES
-#define FILTER_DEFAULT
-#define FILTER_NAME
-#define FILTER_ID
-#define FILTER_PROXIMITY
+//#define INVALID_MANAGER
+//#define RETRIEVE_CATEGORY
+//#define RETRIEVE_LANDMARK
+//#define SAVE_CATEGORY
+//#define SAVE_LANDMARK
+//#define REMOVE_CATEGORY
+//#define REMOVE_LANDMARK
+//#define GET_ALL_CATEGORIES
+//#define FILTER_DEFAULT
+//#define FILTER_NAME
+//#define FILTER_ID
+//#define FILTER_PROXIMITY
 #define FILTER_CATEGORY
-#define FILTER_BOX
-#define FILTER_INTERSECTION
-#define FILTER_MULTIBOX
-#define FILTER_UNION
-#define FILTER_ATTRIBUTE
-#define SORT_LANDMARKS
-#define LANDMARK_FETCH_CANCEL
-#define IMPORT_GPX
-#define IMPORT_LMX
-#define IMPORT_FILE
-#define EXPORT_LMX
-#define WAIT_FOR_FINISHED
-#define MISC
-#define TEST_SIGNALS
+//#define FILTER_BOX
+//#define FILTER_INTERSECTION
+//#define FILTER_MULTIBOX
+//#define FILTER_UNION
+//#define FILTER_ATTRIBUTE
+//#define SORT_LANDMARKS
+//#define LANDMARK_FETCH_CANCEL
+//#define IMPORT_GPX
+//#define IMPORT_LMX
+//#define IMPORT_FILE
+//#define EXPORT_LMX
+//#define WAIT_FOR_FINISHED
+//#define MISC
+//#define TEST_SIGNALS
 
 //#define WORKAROUND
 
@@ -546,7 +546,6 @@ private:
 
              QMap<int, QLandmarkManager::Error> errorMap;
              errorMap = catRemoveRequest.errorMap();
-
 
              if (error == QLandmarkManager::NoError) {
                  result = result && (errorMap.count() ==0);
@@ -4229,23 +4228,24 @@ void tst_QLandmarkManager::filterLandmarksCategory() {
     //try a default category id
     QLandmarkCategoryId idNotExist;
     filter.setCategoryId(idNotExist);
-    //TODO: Symbian, async request does not finish when category does not exist
-    QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::CategoryDoesNotExistError));
+    QVERIFY(doFetch(type, filter, &lms, QLandmarkManager::NoError));
+    QCOMPARE(lms.count(),0);
 
-
-   //try a category with an empty local id
+    QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::NoError));
+    //try a category with an empty local id
     QLandmarkCategoryId idNotExist2;
     idNotExist2.setManagerUri(m_manager->managerUri());
     filter.setCategoryId(idNotExist2);
-    QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::CategoryDoesNotExistError));
-
+    QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::NoError));
+    QCOMPARE(lms.count(),0);
 
     //try a category with a valid manager uri but local id that does not exist
     QLandmarkCategoryId idNotExist3;
     idNotExist3.setManagerUri(m_manager->managerUri());
     idNotExist3.setLocalId("100");
     filter.setCategoryId(idNotExist3);
-    QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::CategoryDoesNotExistError));
+    QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::NoError));
+    QCOMPARE(lms.count(),0);
 }
 
 void tst_QLandmarkManager::filterLandmarksCategory_data()
@@ -7675,7 +7675,6 @@ void tst_QLandmarkManager::testSignals()
 
     QLandmark lmBeta;
     lmBeta.setName("lmBeta");
-
 
     QList<QLandmark> lms;
     lms << lmAlpha << lmBeta;
