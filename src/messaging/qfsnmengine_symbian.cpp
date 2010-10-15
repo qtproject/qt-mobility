@@ -900,17 +900,6 @@ void CFSEngine::handleNestedFiltersFromMessageFilter(QMessageFilter &filter) con
 
 bool CFSEngine::queryMessages(QMessageServicePrivate &privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    TRAPD(err, queryMessagesL(privateService, filter, sortOrder, limit, offset));
-    if (err != KErrNone) {
-        return false;
-    }
-    return true;
-}
-
-
-void CFSEngine::queryMessagesL(QMessageServicePrivate &privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
-{
-    
     FSMessageQueryInfo queryInfo;
     queryInfo.operationId = ++m_operationIds;
     if (queryInfo.operationId == 100000) {
@@ -935,18 +924,10 @@ void CFSEngine::queryMessagesL(QMessageServicePrivate &privateService, const QMe
     } else {
         queryInfo.findOperation->filterAndOrderMessages(pf->_filterList[0], m_messageQueries[m_messageQueries.count()-1].sortOrder);
     }
-}
-
-bool CFSEngine::queryMessages(QMessageServicePrivate &privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
-{
-    TRAPD(err, queryMessagesL(privateService, filter, body, matchFlags, sortOrder, limit, offset));
-    if (err != KErrNone) {
-        return false;
-    }
     return true;
 }
 
-void CFSEngine::queryMessagesL(QMessageServicePrivate &privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+bool CFSEngine::queryMessages(QMessageServicePrivate &privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     FSMessageQueryInfo queryInfo;
     queryInfo.operationId = ++m_operationIds;
@@ -979,18 +960,10 @@ void CFSEngine::queryMessagesL(QMessageServicePrivate &privateService, const QMe
                                                         body,
                                                         matchFlags);
     }
-}
-
-bool CFSEngine::countMessages(QMessageServicePrivate &privateService, const QMessageFilter &filter)
-{
-    TRAPD(err, countMessagesL(privateService, filter));
-    if (err != KErrNone) {
-        return false;
-    }
     return true;
 }
 
-void CFSEngine::countMessagesL(QMessageServicePrivate &privateService, const QMessageFilter &filter)
+bool CFSEngine::countMessages(QMessageServicePrivate &privateService, const QMessageFilter &filter)
 {
     FSMessageQueryInfo queryInfo;
     queryInfo.operationId = ++m_operationIds;
@@ -1018,6 +991,7 @@ void CFSEngine::countMessagesL(QMessageServicePrivate &privateService, const QMe
     } else {
         queryInfo.findOperation->filterAndOrderMessages(pf->_filterList[0], m_messageQueries[m_messageQueries.count()-1].sortOrder);
     }
+    return true;
 }
 
 void CFSEngine::filterAndOrderMessagesReady(bool success, int operationId, QMessageIdList ids, int numberOfHandledFilters,
@@ -1829,7 +1803,6 @@ CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOpera
       m_operationId(aOperationId),
       m_resultCorrectlyOrdered(false),
       m_receiveNewMessages(false),
-      m_activeSearchCount(0),
       m_searchField(None)
 {
 
@@ -1986,6 +1959,7 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
                         m_idList.append(message.id());
                         m_resultCorrectlyOrdered = true;
                         QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
+                        return;
 
                     } else { // NotEqual
                         m_excludeIdList.clear();
@@ -2006,11 +1980,11 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
                             m_idList.append(message.id());
                         }
                         QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
+                        return;
                     } else { // Excludes
                         for (int i=0; i < pf->_ids.count(); i++) {
                             m_excludeIdList.clear();
                             m_excludeIdList.append(QMessageId(pf->_ids[i].toString()));
-                            getAllMessages(sortCriteria);
                         }
                         getAllMessages(sortCriteria);
                     }
@@ -2180,10 +2154,8 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
                         }
                     }
                     getFolderSpecificMessages(standardFolder);
-                    m_activeSearchCount++;
                 }
                 m_resultCorrectlyOrdered = true;
-                QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
             } else { // NotEqual
                 foreach (QMessageAccount messageAccount, m_owner.m_accounts) {
                     quint64 mailboxId(stripIdPrefix(messageAccount.id().toString()).toULongLong());
@@ -2202,13 +2174,11 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
                                     folder.name());
 
                                 getFolderSpecificMessages(standardFolder);
-                                m_activeSearchCount++;
                             }
                         }
                         i = static_cast<QMessage::StandardFolder>(static_cast<int>(i) + 1);
                     }
                 }
-                QMetaObject::invokeMethod(this, "searchCompleted", Qt::QueuedConnection);
             }
             break;
             }

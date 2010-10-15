@@ -182,10 +182,6 @@ private:
     void notification(quint64 mailboxId, quint64 envelopeId, quint64 folderId, 
                                         QMessageStorePrivate::NotificationType aNotificationType);
     
-    void queryMessagesL(QMessageServicePrivate &privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
-    void queryMessagesL(QMessageServicePrivate &privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
-    void countMessagesL(QMessageServicePrivate &privateService, const QMessageFilter &filter);
-    
     QMessageAccountIdList accountsByType(QMessage::Type type) const;
     void updateEmailAccounts() const;
     NmApiMessage message(const quint64 mailboxId, const quint64 folderId, const quint64 messageId) const;
@@ -290,8 +286,6 @@ private: // Data
     
     int m_numberOfHandledFilters;
     int m_operationId;
-    int m_activeSearchCount;
-    //TMsvSelectionOrdering iOrdering;
     bool m_resultCorrectlyOrdered;
     QMessageIdList m_idList;
     QMessageFilterPrivate::SortedMessageFilterList m_filterList;
