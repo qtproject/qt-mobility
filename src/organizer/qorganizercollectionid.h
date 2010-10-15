@@ -86,9 +86,6 @@ public:
     static QOrganizerCollectionId fromString(const QString& idString);
 
 private:
-    static QString buildIdString(const QString& managerName, const QMap<QString, QString>& params, const QString& engineId);
-    static bool parseIdString(const QString& stringId, QString* managerName, QMap<QString, QString>* params, QString* engineId);
-
     QSharedDataPointer<QOrganizerCollectionEngineId> d;
 
 #ifndef QT_NO_DEBUG_STREAM

@@ -221,47 +221,9 @@ QString QOrganizerItemId::managerUri() const
 }
 
 /*!
-  Serializes the id to a string.  The format of the string will be:
-  "qtorganizer:managerName:constructionParams:serializedEngineLocalItemId"
- */
-QString QOrganizerItemId::toString() const
-{
-    QString mgrName;
-    QMap<QString, QString> params;
-    QString engineId;
-
-    if (d) {
-        QOrganizerManager::parseUri(d->managerUri(), &mgrName, &params);
-        engineId = d->toString();
-    }
-
-    // having extracted the params the name, we now need to build a new string.
-    return buildIdString(mgrName, params, engineId);
-}
-
-/*!
-  Deserializes the given \a idString.  Returns a default-constructed (null)
-  item id if the given \a idString is not a valid, serialized item id, or
-  if the manager engine from which the id came could not be found.
- */
-QOrganizerItemId QOrganizerItemId::fromString(const QString& idString)
-{
-    QString managerName;
-    QMap<QString, QString> params;
-    QString engineIdString;
-
-    if (!parseIdString(idString, &managerName, &params, &engineIdString))
-        return QOrganizerItemId(); // invalid idString given.
-
-    QString managerUri = QOrganizerManager::buildUri(managerName, params);
-    QOrganizerItemEngineId* engineId = QOrganizerManagerData::createEngineItemId(managerUri, engineIdString);
-    return QOrganizerItemId(engineId);
-}
-
-/*!
   Builds a string from the given \a managerName, \a params and \a engineIdString
  */
-QString QOrganizerItemId::buildIdString(const QString& managerName, const QMap<QString, QString>& params, const QString& engineIdString)
+inline QString buildIdString(const QString& managerName, const QMap<QString, QString>& params, const QString& engineIdString)
 {
     // the constructed id string will be of the form: "qtorganizer:managerName:param1=value1&param2=value2:
     QString ret(QLatin1String("qtorganizer:%1:%2:%3"));
@@ -294,7 +256,7 @@ QString QOrganizerItemId::buildIdString(const QString& managerName, const QMap<Q
   Parses the individual components of the given \a idString and fills the \a managerName, \a params and \a engineIdString.
   Returns true if the parts could be parsed successfully, false otherwise.
  */
-bool QOrganizerItemId::parseIdString(const QString& idString, QString* managerName, QMap<QString, QString>* params, QString* engineIdString)
+inline bool parseIdString(const QString& idString, QString* managerName, QMap<QString, QString>* params, QString* engineIdString)
 {
     QStringList colonSplit = idString.split(QLatin1Char(':'));
 
@@ -348,6 +310,44 @@ bool QOrganizerItemId::parseIdString(const QString& idString, QString* managerNa
 
     // and return.
     return true;
+}
+
+/*!
+  Serializes the id to a string.  The format of the string will be:
+  "qtorganizer:managerName:constructionParams:serializedEngineLocalItemId"
+ */
+QString QOrganizerItemId::toString() const
+{
+    QString mgrName;
+    QMap<QString, QString> params;
+    QString engineId;
+
+    if (d) {
+        QOrganizerManager::parseUri(d->managerUri(), &mgrName, &params);
+        engineId = d->toString();
+    }
+
+    // having extracted the params the name, we now need to build a new string.
+    return buildIdString(mgrName, params, engineId);
+}
+
+/*!
+  Deserializes the given \a idString.  Returns a default-constructed (null)
+  item id if the given \a idString is not a valid, serialized item id, or
+  if the manager engine from which the id came could not be found.
+ */
+QOrganizerItemId QOrganizerItemId::fromString(const QString& idString)
+{
+    QString managerName;
+    QMap<QString, QString> params;
+    QString engineIdString;
+
+    if (!parseIdString(idString, &managerName, &params, &engineIdString))
+        return QOrganizerItemId(); // invalid idString given.
+
+    QString managerUri = QOrganizerManager::buildUri(managerName, params);
+    QOrganizerItemEngineId* engineId = QOrganizerManagerData::createEngineItemId(managerUri, engineIdString);
+    return QOrganizerItemId(engineId);
 }
 
 QTM_END_NAMESPACE
