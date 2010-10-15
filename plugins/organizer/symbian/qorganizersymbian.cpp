@@ -271,13 +271,15 @@ QOrganizerManagerEngine* QOrganizerItemSymbianFactory::engine(
     return ret;
 }
 
-QOrganizerItemEngineId* QOrganizerItemSymbianFactory::createItemEngineLocalId() const
+QOrganizerItemEngineId* QOrganizerItemSymbianFactory::createItemEngineId(const QMap<QString, QString>& parameters) const
 {
+    Q_UNUSED(parameters);
     return new QOrganizerItemSymbianEngineLocalId;
 }
 
-QOrganizerCollectionEngineId* QOrganizerItemSymbianFactory::createCollectionEngineLocalId() const
+QOrganizerCollectionEngineId* QOrganizerItemSymbianFactory::createCollectionEngineId(const QMap<QString, QString>& parameters) const
 {
+    Q_UNUSED(parameters);
     return new QOrganizerCollectionSymbianEngineLocalId;
 }
 

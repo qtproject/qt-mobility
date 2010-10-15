@@ -55,14 +55,16 @@ QOrganizerManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QStrin
     return ret;
 }
 
-QOrganizerItemEngineId* QOrganizerItemSkeletonFactory::createItemEngineLocalId() const
+QOrganizerItemEngineId* QOrganizerItemSkeletonFactory::createItemEngineId(const QMap<QString, QString>& parameters) const
 {
+    Q_UNUSED(parameters);
     /* TODO - instantiate your engine-specific item id in this function */
     return new QOrganizerItemSkeletonEngineLocalId;
 }
 
-QOrganizerCollectionEngineId* QOrganizerItemSkeletonFactory::createCollectionEngineLocalId() const
+QOrganizerCollectionEngineId* QOrganizerItemSkeletonFactory::createCollectionEngineId(const QMap<QString, QString>& parameters) const
 {
+    Q_UNUSED(parameters);
     /* TODO - instantiate your engine-specific collection id in this function */
     return new QOrganizerCollectionSkeletonEngineLocalId;
 }

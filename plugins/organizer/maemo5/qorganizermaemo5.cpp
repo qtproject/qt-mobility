@@ -251,13 +251,15 @@ QOrganizerManagerEngine* QOrganizerItemMaemo5Factory::engine(const QMap<QString,
     return retn;
 }
 
-QOrganizerItemEngineId* QOrganizerItemMaemo5Factory::createItemEngineLocalId() const
+QOrganizerItemEngineId* QOrganizerItemMaemo5Factory::createItemEngineId(const QMap<QString, QString>& parameters) const
 {
+    Q_UNUSED(parameters);
     return new QOrganizerItemMaemo5EngineId;
 }
 
-QOrganizerCollectionEngineId* QOrganizerItemMaemo5Factory::createCollectionEngineLocalId() const
+QOrganizerCollectionEngineId* QOrganizerItemMaemo5Factory::createCollectionEngineId(const QMap<QString, QString>& parameters) const
 {
+    Q_UNUSED(parameters);
     return new QOrganizerCollectionMaemo5EngineId;
 }
 

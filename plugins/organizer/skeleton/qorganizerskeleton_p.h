@@ -82,8 +82,8 @@ class QOrganizerItemSkeletonFactory : public QObject, public QOrganizerManagerEn
   Q_INTERFACES(QtMobility::QOrganizerManagerEngineFactory)
   public:
     QOrganizerManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error*);
-    QOrganizerItemEngineId* createItemEngineLocalId() const;
-    QOrganizerCollectionEngineId* createCollectionEngineLocalId() const;
+    QOrganizerItemEngineId* createItemEngineId(const QMap<QString, QString>& parameters) const;
+    QOrganizerCollectionEngineId* createCollectionEngineId(const QMap<QString, QString>& parameters) const;
     QString managerName() const;
 };
 

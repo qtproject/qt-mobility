@@ -168,8 +168,8 @@ public QOrganizerManagerEngineFactory
         const QMap<QString, QString>& parameters, 
         QOrganizerManager::Error*);
     QString managerName() const;
-    QOrganizerItemEngineId* createItemEngineLocalId() const;
-    QOrganizerCollectionEngineId* createCollectionEngineLocalId() const;
+    QOrganizerItemEngineId* createItemEngineId(const QMap<QString, QString>& parameters) const;
+    QOrganizerCollectionEngineId* createCollectionEngineId(const QMap<QString, QString>& parameters) const;
 };
 
 class QOrganizerItemSymbianEngineData : public QSharedData

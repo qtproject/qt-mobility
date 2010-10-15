@@ -262,28 +262,30 @@ void QOrganizerManagerData::loadFactories()
 QOrganizerItemEngineId* QOrganizerManagerData::createEngineItemId(const QString& uri)
 {
     QString managerName;
-    QOrganizerManager::parseUri(uri, &managerName, NULL);
+    QMap<QString, QString> parameters;
+    QOrganizerManager::parseUri(uri, &managerName, &parameters);
 
     if (managerName == QLatin1String("memory"))
         return new QOrganizerItemMemoryEngineLocalId();
 
     loadFactories();
     QOrganizerManagerEngineFactory *engineFactory = m_engines.value(managerName);
-    return engineFactory ? engineFactory->createItemEngineLocalId() : NULL;
+    return engineFactory ? engineFactory->createItemEngineId(parameters) : NULL;
 }
 
 /* Caller takes ownership of the id */
 QOrganizerCollectionEngineId* QOrganizerManagerData::createEngineCollectionId(const QString& uri)
 {
     QString managerName;
-    QOrganizerManager::parseUri(uri, &managerName, NULL);
+    QMap<QString, QString> parameters;
+    QOrganizerManager::parseUri(uri, &managerName, &parameters);
 
     if (managerName == QLatin1String("memory"))
         return new QOrganizerCollectionMemoryEngineLocalId();
 
     loadFactories();
     QOrganizerManagerEngineFactory *engineFactory = m_engines.value(managerName);
-    return engineFactory ? engineFactory->createCollectionEngineLocalId() : NULL;
+    return engineFactory ? engineFactory->createCollectionEngineId(parameters) : NULL;
 }
 
 // trampoline for private classes
