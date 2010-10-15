@@ -71,7 +71,7 @@ public:
     QDeclarativeGeoMapPixmapObject();
     ~QDeclarativeGeoMapPixmapObject();
 
-    QDeclarativeCoordinate* declarativeCoordinate() const;
+    QDeclarativeCoordinate* declarativeCoordinate();
     void setDeclarativeCoordinate(const QDeclarativeCoordinate *coordinate);
 
     QUrl source() const;
@@ -85,6 +85,9 @@ Q_SIGNALS:
     void statusChanged(QDeclarativeGeoMapPixmapObject::Status status);
 
 private Q_SLOTS:
+    void coordinateLatitudeChanged(double latitude);
+    void coordinateLongitudeChanged(double longitude);
+    void coordinateAltitudeChanged(double altitude);
     void finished();
     void error(QNetworkReply::NetworkError error);
 

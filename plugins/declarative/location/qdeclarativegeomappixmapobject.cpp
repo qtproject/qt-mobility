@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -61,6 +60,21 @@ QDeclarativeGeoMapPixmapObject::QDeclarativeGeoMapPixmapObject()
     m_reply(0)
 {
     m_coordinate = new QDeclarativeCoordinate(this);
+
+    connect(m_coordinate,
+            SIGNAL(latitudeChanged(double)),
+            this,
+            SLOT(coordinateLatitudeChanged(double)));
+
+    connect(m_coordinate,
+            SIGNAL(longitudeChanged(double)),
+            this,
+            SLOT(coordinateLongitudeChanged(double)));
+
+    connect(m_coordinate,
+            SIGNAL(altitudeChanged(double)),
+            this,
+            SLOT(coordinateAltitudeChanged(double)));
 }
 
 QDeclarativeGeoMapPixmapObject::~QDeclarativeGeoMapPixmapObject()
@@ -78,9 +92,25 @@ void QDeclarativeGeoMapPixmapObject::setDeclarativeCoordinate(const QDeclarative
     emit declarativeCoordinateChanged(m_coordinate);
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoMapPixmapObject::declarativeCoordinate() const
+QDeclarativeCoordinate* QDeclarativeGeoMapPixmapObject::declarativeCoordinate() 
 {
     return m_coordinate;
+}
+
+
+void QDeclarativeGeoMapPixmapObject::coordinateLatitudeChanged(double /*latitude*/)
+{
+    setCoordinate(m_coordinate->coordinate());
+}
+
+void QDeclarativeGeoMapPixmapObject::coordinateLongitudeChanged(double /*longitude*/)
+{
+    setCoordinate(m_coordinate->coordinate());
+}
+
+void QDeclarativeGeoMapPixmapObject::coordinateAltitudeChanged(double /*altitude*/)
+{
+    setCoordinate(m_coordinate->coordinate());
 }
 
 void QDeclarativeGeoMapPixmapObject::setSource(const QUrl &source)

@@ -51,6 +51,21 @@ QDeclarativeGeoMapCircleObject::QDeclarativeGeoMapCircleObject()
 {
     m_center = new QDeclarativeCoordinate(this);
 
+    connect(m_center,
+            SIGNAL(latitudeChanged(double)),
+            this,
+            SLOT(centerLatitudeChanged(double)));
+
+    connect(m_center,
+            SIGNAL(longitudeChanged(double)),
+            this,
+            SLOT(centerLongitudeChanged(double)));
+
+    connect(m_center,
+            SIGNAL(altitudeChanged(double)),
+            this,
+            SLOT(centerAltitudeChanged(double)));
+
     connect(&m_border,
             SIGNAL(colorChanged(QColor)),
             this,
@@ -76,9 +91,24 @@ void QDeclarativeGeoMapCircleObject::setDeclarativeCenter(const QDeclarativeCoor
     emit declarativeCenterChanged(m_center);
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoMapCircleObject::declarativeCenter() const
+QDeclarativeCoordinate* QDeclarativeGeoMapCircleObject::declarativeCenter()
 {
     return m_center;
+}
+
+void QDeclarativeGeoMapCircleObject::centerLatitudeChanged(double /*latitude*/)
+{
+    setCenter(m_center->coordinate());
+}
+
+void QDeclarativeGeoMapCircleObject::centerLongitudeChanged(double /*longitude*/)
+{
+    setCenter(m_center->coordinate());
+}
+
+void QDeclarativeGeoMapCircleObject::centerAltitudeChanged(double /*altitude*/)
+{
+    setCenter(m_center->coordinate());
 }
 
 void QDeclarativeGeoMapCircleObject::setColor(const QColor &color)
@@ -113,6 +143,10 @@ void QDeclarativeGeoMapCircleObject::borderWidthChanged(int width)
 {
     QPen p = pen();
     p.setWidth(width);
+    if (width == 0)
+        p.setStyle(Qt::NoPen);
+    else
+        p.setStyle(Qt::SolidLine);
     setPen(p);
 }
 

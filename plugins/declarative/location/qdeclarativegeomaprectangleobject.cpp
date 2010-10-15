@@ -52,7 +52,34 @@ QTM_BEGIN_NAMESPACE
 QDeclarativeGeoMapRectangleObject::QDeclarativeGeoMapRectangleObject()
 {
     m_topLeft = new QDeclarativeCoordinate(this);
+
+    connect(m_topLeft,
+            SIGNAL(latitudeChanged(double)),
+            this,
+            SLOT(topLeftLatitudeChanged(double)));
+    connect(m_topLeft,
+            SIGNAL(longitudeChanged(double)),
+            this,
+            SLOT(topLeftLongitudeChanged(double)));
+    connect(m_topLeft,
+            SIGNAL(altitudeChanged(double)),
+            this,
+            SLOT(topLeftAltitudeChanged(double)));
+
     m_bottomRight = new QDeclarativeCoordinate(this);
+
+    connect(m_bottomRight,
+            SIGNAL(latitudeChanged(double)),
+            this,
+            SLOT(bottomRightLatitudeChanged(double)));
+    connect(m_bottomRight,
+            SIGNAL(longitudeChanged(double)),
+            this,
+            SLOT(bottomRightLongitudeChanged(double)));
+    connect(m_bottomRight,
+            SIGNAL(altitudeChanged(double)),
+            this,
+            SLOT(bottomRightAltitudeChanged(double)));
 
     connect(&m_border,
             SIGNAL(colorChanged(QColor)),
@@ -79,9 +106,24 @@ void QDeclarativeGeoMapRectangleObject::setDeclarativeTopLeft(const QDeclarative
     emit declarativeTopLeftChanged(m_topLeft);
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoMapRectangleObject::declarativeTopLeft() const
+QDeclarativeCoordinate* QDeclarativeGeoMapRectangleObject::declarativeTopLeft()
 {
     return m_topLeft;
+}
+
+void QDeclarativeGeoMapRectangleObject::topLeftLatitudeChanged(double /*latitude*/)
+{
+    setTopLeft(m_topLeft->coordinate());
+}
+
+void QDeclarativeGeoMapRectangleObject::topLeftLongitudeChanged(double /*longitude*/)
+{
+    setTopLeft(m_topLeft->coordinate());
+}
+
+void QDeclarativeGeoMapRectangleObject::topLeftAltitudeChanged(double /*altitude*/)
+{
+    setTopLeft(m_topLeft->coordinate());
 }
 
 void QDeclarativeGeoMapRectangleObject::setDeclarativeBottomRight(const QDeclarativeCoordinate *bottomRight)
@@ -95,9 +137,24 @@ void QDeclarativeGeoMapRectangleObject::setDeclarativeBottomRight(const QDeclara
     emit declarativeBottomRightChanged(m_bottomRight);
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoMapRectangleObject::declarativeBottomRight() const
+QDeclarativeCoordinate* QDeclarativeGeoMapRectangleObject::declarativeBottomRight()
 {
     return m_bottomRight;
+}
+
+void QDeclarativeGeoMapRectangleObject::bottomRightLatitudeChanged(double /*latitude*/)
+{
+    setBottomRight(m_bottomRight->coordinate());
+}
+
+void QDeclarativeGeoMapRectangleObject::bottomRightLongitudeChanged(double /*longitude*/)
+{
+    setBottomRight(m_bottomRight->coordinate());
+}
+
+void QDeclarativeGeoMapRectangleObject::bottomRightAltitudeChanged(double /*altitude*/)
+{
+    setBottomRight(m_bottomRight->coordinate());
 }
 
 void QDeclarativeGeoMapRectangleObject::setColor(const QColor &color)
@@ -132,6 +189,10 @@ void QDeclarativeGeoMapRectangleObject::borderWidthChanged(int width)
 {
     QPen p = pen();
     p.setWidth(width);
+    if (width == 0)
+        p.setStyle(Qt::NoPen);
+    else
+        p.setStyle(Qt::SolidLine);
     setPen(p);
 }
 

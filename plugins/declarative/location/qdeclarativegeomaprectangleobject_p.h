@@ -64,10 +64,10 @@ public:
     QDeclarativeGeoMapRectangleObject();
     ~QDeclarativeGeoMapRectangleObject();
 
-    QDeclarativeCoordinate* declarativeTopLeft() const;
+    QDeclarativeCoordinate* declarativeTopLeft();
     void setDeclarativeTopLeft(const QDeclarativeCoordinate *center);
 
-    QDeclarativeCoordinate* declarativeBottomRight() const;
+    QDeclarativeCoordinate* declarativeBottomRight();
     void setDeclarativeBottomRight(const QDeclarativeCoordinate *center);
 
     QColor color() const;
@@ -81,6 +81,14 @@ Q_SIGNALS:
     void colorChanged(const QColor &color);
 
 private Q_SLOTS:
+    void topLeftLatitudeChanged(double latitude);
+    void topLeftLongitudeChanged(double longitude);
+    void topLeftAltitudeChanged(double altitude);
+
+    void bottomRightLatitudeChanged(double latitude);
+    void bottomRightLongitudeChanged(double longitude);
+    void bottomRightAltitudeChanged(double altitude);
+
     void borderColorChanged(const QColor &color);
     void borderWidthChanged(int width);
 

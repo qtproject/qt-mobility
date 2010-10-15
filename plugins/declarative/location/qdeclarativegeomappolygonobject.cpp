@@ -134,6 +134,10 @@ void QDeclarativeGeoMapPolygonObject::borderWidthChanged(int width)
 {
     QPen p = pen();
     p.setWidth(width);
+    if (width == 0)
+        p.setStyle(Qt::NoPen);
+    else
+        p.setStyle(Qt::SolidLine);
     setPen(p);
 }
 

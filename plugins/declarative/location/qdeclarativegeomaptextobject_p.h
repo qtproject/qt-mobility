@@ -76,7 +76,7 @@ public:
     QDeclarativeGeoMapTextObject();
     ~QDeclarativeGeoMapTextObject();
 
-    QDeclarativeCoordinate* declarativeCoordinate() const;
+    QDeclarativeCoordinate* declarativeCoordinate();
     void setDeclarativeCoordinate(const QDeclarativeCoordinate *coordinate);
 
     QColor color() const;
@@ -93,6 +93,11 @@ Q_SIGNALS:
     void colorChanged(const QColor &color);
     void horizontalAlignmentChanged(HorizontalAlignment alignment);
     void verticalAlignmentChanged(VerticalAlignment alignment);
+
+private Q_SLOTS:
+    void coordinateLatitudeChanged(double latitude);
+    void coordinateLongitudeChanged(double longitude);
+    void coordinateAltitudeChanged(double altitude);
 
 private:
     QDeclarativeCoordinate* m_coordinate;

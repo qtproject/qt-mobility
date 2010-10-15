@@ -55,6 +55,21 @@ QDeclarativeGeoMapTextObject::QDeclarativeGeoMapTextObject()
 
     m_coordinate = new QDeclarativeCoordinate(this);
 
+    connect(m_coordinate,
+            SIGNAL(latitudeChanged(double)),
+            this,
+            SLOT(coordinateLatitudeChanged(double)));
+
+    connect(m_coordinate,
+            SIGNAL(longitudeChanged(double)),
+            this,
+            SLOT(coordinateLongitudeChanged(double)));
+
+    connect(m_coordinate,
+            SIGNAL(altitudeChanged(double)),
+            this,
+            SLOT(coordinateAltitudeChanged(double)));
+
     m_hAlignment = QDeclarativeGeoMapTextObject::AlignHCenter;
     m_vAlignment = QDeclarativeGeoMapTextObject::AlignVCenter;
 }
@@ -74,9 +89,24 @@ void QDeclarativeGeoMapTextObject::setDeclarativeCoordinate(const QDeclarativeCo
     emit declarativeCoordinateChanged(m_coordinate);
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoMapTextObject::declarativeCoordinate() const
+QDeclarativeCoordinate* QDeclarativeGeoMapTextObject::declarativeCoordinate()
 {
     return m_coordinate;
+}
+
+void QDeclarativeGeoMapTextObject::coordinateLatitudeChanged(double /*latitude*/)
+{
+    setCoordinate(m_coordinate->coordinate());
+}
+
+void QDeclarativeGeoMapTextObject::coordinateLongitudeChanged(double /*longitude*/)
+{
+    setCoordinate(m_coordinate->coordinate());
+}
+
+void QDeclarativeGeoMapTextObject::coordinateAltitudeChanged(double /*altitude*/)
+{
+    setCoordinate(m_coordinate->coordinate());
 }
 
 void QDeclarativeGeoMapTextObject::setColor(const QColor &color)

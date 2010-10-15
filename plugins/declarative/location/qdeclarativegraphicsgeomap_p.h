@@ -113,7 +113,7 @@ public:
     qreal zoomLevel() const;
 
     void setCenter(const QDeclarativeCoordinate *center);
-    QDeclarativeCoordinate* center() const;
+    QDeclarativeCoordinate* center();
 
     void setMapType(MapType mapType);
     MapType mapType() const;

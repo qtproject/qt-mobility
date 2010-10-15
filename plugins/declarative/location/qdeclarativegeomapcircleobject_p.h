@@ -63,7 +63,7 @@ public:
     QDeclarativeGeoMapCircleObject();
     ~QDeclarativeGeoMapCircleObject();
 
-    QDeclarativeCoordinate* declarativeCenter() const;
+    QDeclarativeCoordinate* declarativeCenter();
     void setDeclarativeCenter(const QDeclarativeCoordinate *center);
 
     QColor color() const;
@@ -71,13 +71,16 @@ public:
 
     QDeclarativeGeoMapObjectBorder* border();
 
-signals:
+Q_SIGNALS:
     void declarativeCenterChanged(const QDeclarativeCoordinate *center);
     void colorChanged(const QColor &color);
 
 private Q_SLOTS:
     void borderColorChanged(const QColor &color);
     void borderWidthChanged(int width);
+    void centerLatitudeChanged(double latitude);
+    void centerLongitudeChanged(double longitude);
+    void centerAltitudeChanged(double altitude);
 
 private:
     QDeclarativeCoordinate* m_center;

@@ -251,7 +251,7 @@ void QDeclarativeGraphicsGeoMap::setCenter(const QDeclarativeCoordinate *center)
     }
 }
 
-QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::center() const
+QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::center()
 {
     if (mapData_)
         center_->setCoordinate(mapData_->center());
