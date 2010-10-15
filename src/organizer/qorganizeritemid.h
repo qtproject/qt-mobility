@@ -60,7 +60,7 @@ Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerIte
 Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemId& itemId);
 #endif
 #ifndef QT_NO_DEBUG_STREAM
-Q_ORGANIZER_EXPORT QDebug& operator<<(QDebug& dbg, const QOrganizerItemId& id);
+Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemId& id);
 #endif
 
 class QOrganizerManagerEngine;
@@ -91,7 +91,7 @@ private:
     QSharedDataPointer<QOrganizerItemEngineId> d;
 
 #ifndef QT_NO_DEBUG_STREAM
-    Q_ORGANIZER_EXPORT friend QDebug& operator<<(QDebug& dbg, const QOrganizerItemId& id);
+    Q_ORGANIZER_EXPORT friend QDebug operator<<(QDebug dbg, const QOrganizerItemId& id);
 #endif
     Q_ORGANIZER_EXPORT friend uint qHash(const QOrganizerItemId& key);
     friend class QOrganizerManagerEngine;

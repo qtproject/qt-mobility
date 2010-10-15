@@ -207,7 +207,7 @@ protected:
 
 Q_ORGANIZER_EXPORT uint qHash(const QOrganizerItem& key);
 #ifndef QT_NO_DEBUG_STREAM
-Q_ORGANIZER_EXPORT QDebug& operator<<(QDebug dbg, const QOrganizerItem& organizeritem);
+Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem);
 #endif
 
 #define Q_DECLARE_CUSTOM_ORGANIZER_ITEM(className, typeConstant) \

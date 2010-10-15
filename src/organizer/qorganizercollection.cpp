@@ -211,7 +211,7 @@ uint qHash(const QOrganizerCollection &key)
 /*!
   Streams the \a collection to the given debug stream \a dbg, and returns the stream.
  */
-QDebug& operator<<(QDebug& dbg, const QOrganizerCollection& collection)
+QDebug operator<<(QDebug dbg, const QOrganizerCollection& collection)
 {
     dbg.nospace() << "QOrganizerCollection(id=" << collection.id();
     QVariantMap metadata = collection.metaData();
