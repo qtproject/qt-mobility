@@ -1187,4 +1187,12 @@ EXPORTS
 	??8QContactActionTarget@QtMobility@@QBE_NABV01@@Z @ 1186 NONAME ; bool QtMobility::QContactActionTarget::operator==(class QtMobility::QContactActionTarget const &) const
 	?FieldFavorite@QContactFavorite@QtMobility@@2U?$QLatin1Constant@$08@2@B @ 1187 NONAME ; struct QtMobility::QLatin1Constant<9> const QtMobility::QContactFavorite::FieldFavorite
 	?details@QContactActionTarget@QtMobility@@QBE?AV?$QList@VQContactDetail@QtMobility@@@@XZ @ 1188 NONAME ; class QList<class QtMobility::QContactDetail> QtMobility::QContactActionTarget::details(void) const
+	??6QtMobility@@YAAAVQDataStream@@AAV1@ABVQContactActionTarget@0@@Z @ 1189 NONAME ; class QDataStream & QtMobility::operator<<(class QDataStream &, class QtMobility::QContactActionTarget const &)
+	?FieldCalendarId@QContactBirthday@QtMobility@@2U?$QLatin1Constant@$0L@@2@B @ 1190 NONAME ; struct QtMobility::QLatin1Constant<11> const QtMobility::QContactBirthday::FieldCalendarId
+	?SubTypeBlog@QContactUrl@QtMobility@@2U?$QLatin1Constant@$04@2@B @ 1191 NONAME ; struct QtMobility::QLatin1Constant<5> const QtMobility::QContactUrl::SubTypeBlog
+	??5QtMobility@@YAAAVQDataStream@@AAV1@AAVQContactActionTarget@0@@Z @ 1192 NONAME ; class QDataStream & QtMobility::operator>>(class QDataStream &, class QtMobility::QContactActionTarget &)
+	?calendarId@QContactBirthday@QtMobility@@QBE?AVQString@@XZ @ 1193 NONAME ; class QString QtMobility::QContactBirthday::calendarId(void) const
+	??6QtMobility@@YAAAVQDebug@@V1@ABVQContactActionTarget@0@@Z @ 1194 NONAME ; class QDebug & QtMobility::operator<<(class QDebug, class QtMobility::QContactActionTarget const &)
+	??6QtMobility@@YAAAVQDebug@@V1@ABVQContactActionDescriptor@0@@Z @ 1195 NONAME ; class QDebug & QtMobility::operator<<(class QDebug, class QtMobility::QContactActionDescriptor const &)
+	?setCalendarId@QContactBirthday@QtMobility@@QAEXABVQString@@@Z @ 1196 NONAME ; void QtMobility::QContactBirthday::setCalendarId(class QString const &)
 
