@@ -280,6 +280,15 @@ void tst_QOrganizerCollection::datastream()
         QString serializedId = inputId.toString();
         outputId = QOrganizerCollectionId::fromString(serializedId);
         QCOMPARE(inputId, outputId);
+
+        inputId = originalId;
+        buffer.clear();
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << inputId;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> outputId;
+        QCOMPARE(inputId, outputId);
     }
 
     /* TODO: review test
@@ -317,6 +326,15 @@ void tst_QOrganizerCollection::datastream()
         inputId = QOrganizerCollectionId();
         QString serializedId = inputId.toString();
         outputId = QOrganizerCollectionId::fromString(serializedId);
+        QCOMPARE(inputId, outputId);
+
+        inputId = QOrganizerCollectionId();
+        buffer.clear();
+        QDataStream stream1(&buffer, QIODevice::WriteOnly);
+        stream1 << inputId;
+        QVERIFY(buffer.size() > 0);
+        QDataStream stream2(buffer);
+        stream2 >> outputId;
         QCOMPARE(inputId, outputId);
     }
 

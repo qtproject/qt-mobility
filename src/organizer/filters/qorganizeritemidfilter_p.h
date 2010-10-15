@@ -55,6 +55,7 @@
 
 #include "qorganizeritemfilter_p.h"
 #include "qorganizeritemfilter.h"
+#include "qorganizeritemid.h"
 
 #include <QString>
 #include <QVariant>
@@ -86,15 +87,17 @@ public:
 
     QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
     {
-        Q_UNUSED(formatVersion)
-        qWarning() << "Can't stream a ID filter to a QDataStream";
+        if (formatVersion == 1) {
+            stream << m_ids;
+        }
         return stream;
     }
 
     QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
     {
-        Q_UNUSED(formatVersion)
-        qWarning() << "Can't stream a ID filter from a QDataStream";
+        if (formatVersion == 1) {
+            stream >> m_ids;
+        }
         return stream;
     }
 

@@ -175,6 +175,9 @@ uint qHash(const QOrganizerCollectionId &key)
 }
 
 #ifndef QT_NO_DEBUG_STREAM
+/*!
+  Outputs \a id to the debug stream \a dbg
+ */
 QDebug& operator<<(QDebug& dbg, const QOrganizerCollectionId& id)
 {
     dbg.nospace() << "QOrganizerCollectionId(";
@@ -186,6 +189,27 @@ QDebug& operator<<(QDebug& dbg, const QOrganizerCollectionId& id)
 }
 #endif
 
+#ifndef QT_NO_DATASTREAM
+/*!
+  Streams \a collectionId to the data stream \a out
+ */
+QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionId& collectionId)
+{
+    out << (collectionId.toString());
+    return out;
+}
+
+/*!
+  Streams \a collectionId in from the data stream \a in
+ */
+QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId)
+{
+    QString idString;
+    in >> idString;
+    collectionId = QOrganizerCollectionId::fromString(idString);
+    return in;
+}
+#endif
 
 /*!
  * Returns the URI of the manager which contains the collection identified by this id

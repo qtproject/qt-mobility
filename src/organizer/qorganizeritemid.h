@@ -55,6 +55,10 @@ QTM_BEGIN_NAMESPACE
 // MSVC needs the function declared before the friend declaration
 class QOrganizerItemId;
 Q_ORGANIZER_EXPORT uint qHash(const QOrganizerItemId& key);
+#ifndef QT_NO_DATASTREAM
+Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItemId& itemId);
+Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemId& itemId);
+#endif
 #ifndef QT_NO_DEBUG_STREAM
 Q_ORGANIZER_EXPORT QDebug& operator<<(QDebug& dbg, const QOrganizerItemId& id);
 #endif

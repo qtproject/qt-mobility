@@ -181,6 +181,28 @@ QDebug& operator<<(QDebug& dbg, const QOrganizerItemId& id)
 }
 #endif
 
+#ifndef QT_NO_DATASTREAM
+/*!
+  Streams \a itemId to the data stream \a out
+ */
+QDataStream& operator<<(QDataStream& out, const QOrganizerItemId& itemId)
+{
+    out << (itemId.toString());
+    return out;
+}
+
+/*!
+  Streams \a collectionId in from the data stream \a in
+ */
+QDataStream& operator>>(QDataStream& in, QOrganizerItemId& itemId)
+{
+    QString idString;
+    in >> idString;
+    itemId = QOrganizerItemId::fromString(idString);
+    return in;
+}
+#endif
+
 
 /*!
   Returns true if the local id part of the id is a null (default constructed) local id; otherwise, returns false.
