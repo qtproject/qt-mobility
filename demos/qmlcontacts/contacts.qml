@@ -174,7 +174,7 @@ Item {
                                         color: details.textColor;
                                     }
                                     Text {
-                                        text: model.contact.presence.state == Presence.Unknown ? "Unknown" : model.contact.presence.stateText
+                                        text: "State:" + (model.contact.presence.state == Presence.Unknown ? "Unknown" : model.contact.presence.stateText)
                                         color: details.textColor;
                                     }
                                 }
