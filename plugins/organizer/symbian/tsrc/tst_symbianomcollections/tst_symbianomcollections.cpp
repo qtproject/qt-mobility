@@ -687,11 +687,11 @@ void tst_symbianomcollections::removeItem()
     QVERIFY(m_om->saveItem(&item));
 
     // Remove item
-    QOrganizerItemId localId = item.id();
-    QVERIFY(m_om->removeItem(localId));
+    QOrganizerItemId id = item.id();
+    QVERIFY(m_om->removeItem(id));
 
     // Verify
-    QVERIFY(m_om->item(localId).isEmpty());
+    QVERIFY(m_om->item(id).isEmpty());
 }
 
 void tst_symbianomcollections::fetchItems()
@@ -726,9 +726,9 @@ void tst_symbianomcollections::fetchItems()
 
     // Verify there are no duplicates in the list
     bool noduplicates(true);
-    foreach(QOrganizerItemId localid, m_om->itemIds()) {
-        if (m_om->itemIds().count(localid) > 1) {
-            qWarning() << "duplicate local id: " << localid;
+    foreach(QOrganizerItemId id, m_om->itemIds()) {
+        if (m_om->itemIds().count(id) > 1) {
+            qWarning() << "duplicate id: " << id;
             noduplicates = false;
         }
     }

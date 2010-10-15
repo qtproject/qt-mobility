@@ -190,9 +190,9 @@ void TestNoteItems::fetchItem()
     QOrganizerItemFetchRequest * itemFetchRequest(
         (QOrganizerItemFetchRequest*)m_itemRequest);
 
-    QOrganizerItemIdFilter localIdFilter;
-    localIdFilter.setIds(m_itemIds);
-    //itemFetchRequest->setFilter(localIdFilter);
+    QOrganizerItemIdFilter idFilter;
+    idFilter.setIds(m_itemIds);
+    //itemFetchRequest->setFilter(idFilter);
         
     // Set ItemDetailsFilter
     QOrganizerItemDetailFilter detailsFilter;
@@ -625,7 +625,7 @@ QList<QOrganizerItem> TestNoteItems::createItems_Negative(int noOfItems)
         // TODO: Disabled because of API change. REFACTOR!
         //QOrganizerItemId id;
         //QOrganizerItemId id(1234);
-        //id.setId(localId);
+        //id.setId(id);
         //id.setManagerUri("qtorganizer:symbian:");
         //organizerItem.setId(id);
 
