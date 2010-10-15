@@ -114,7 +114,7 @@ uint QOrganizerItemMaemo5EngineId::engineIdType() const
     return qHash(QString(QLatin1String("maemo5")));
 }
 
-const QString QOrganizerItemMaemo5EngineId::managerUri() const
+QString QOrganizerItemMaemo5EngineId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with
@@ -202,7 +202,7 @@ uint QOrganizerCollectionMaemo5EngineId::engineIdType() const
     return qHash(QString(QLatin1String("maemo5")));
 }
 
-const QString QOrganizerCollectionMaemo5EngineId::managerUri() const
+QString QOrganizerCollectionMaemo5EngineId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with

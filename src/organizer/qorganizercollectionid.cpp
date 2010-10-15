@@ -243,7 +243,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId)
 /*!
  * Returns the URI of the manager which contains the collection identified by this id
  */
-const QString QOrganizerCollectionId::managerUri() const
+QString QOrganizerCollectionId::managerUri() const
 {
     return d ? d->managerUri() : QString();
 }

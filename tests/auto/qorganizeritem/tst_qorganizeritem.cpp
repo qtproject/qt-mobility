@@ -483,7 +483,7 @@ public:
     uint engineIdType() const {
         return 0;
     }
-    const QString managerUri() const {
+    QString managerUri() const {
         static const QString uri(QLatin1String("qtorganizer:basicid:"));
         return uri;
     }

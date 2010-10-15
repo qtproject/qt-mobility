@@ -103,7 +103,7 @@ public:
         BasicItemLocalId* cloned = new BasicItemLocalId(m_id);
         return cloned;
     }
-    const QString managerUri() const {
+    QString managerUri() const {
         static const QString uri(QLatin1String("qtorganizer:basicItem:"));
         return uri;
     }

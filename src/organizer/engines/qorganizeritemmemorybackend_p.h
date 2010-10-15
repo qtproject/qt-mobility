@@ -89,7 +89,7 @@ public:
     bool isLessThan(const QOrganizerItemEngineId* other) const;
 
     uint engineIdType() const;
-    const QString managerUri() const;
+    QString managerUri() const;
     QOrganizerItemEngineId* clone() const;
 
 #ifndef QT_NO_DEBUG_STREAM
@@ -119,7 +119,7 @@ public:
     bool isLessThan(const QOrganizerCollectionEngineId* other) const;
 
     uint engineIdType() const;
-    const QString managerUri() const;
+    QString managerUri() const;
     QOrganizerCollectionEngineId* clone() const;
 
 #ifndef QT_NO_DEBUG_STREAM

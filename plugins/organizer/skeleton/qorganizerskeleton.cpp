@@ -184,7 +184,7 @@ uint QOrganizerItemSkeletonEngineLocalId::engineIdType() const
     return qHash(QString(QLatin1String("skeleton")));
 }
 
-const QString QOrganizerItemSkeletonEngineLocalId::managerUri() const
+QString QOrganizerItemSkeletonEngineLocalId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with
@@ -410,7 +410,7 @@ uint QOrganizerCollectionSkeletonEngineLocalId::engineIdType() const
     return qHash(QString(QLatin1String("skeleton")));
 }
 
-const QString QOrganizerCollectionSkeletonEngineLocalId::managerUri() const
+QString QOrganizerCollectionSkeletonEngineLocalId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with

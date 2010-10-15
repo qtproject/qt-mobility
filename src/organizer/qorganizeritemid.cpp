@@ -248,7 +248,7 @@ bool QOrganizerItemId::isNull() const
 /*!
  * Returns the URI of the manager which contains the organizer item identified by this id
  */
-const QString QOrganizerItemId::managerUri() const
+QString QOrganizerItemId::managerUri() const
 {
     return d ? d->managerUri() : QString();
 }

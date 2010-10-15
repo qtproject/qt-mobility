@@ -79,7 +79,7 @@ public:
 
     bool isNull() const;
 
-    const QString managerUri() const;
+    QString managerUri() const;
 
 private:
     QSharedDataPointer<QOrganizerCollectionEngineId> d;
