@@ -110,13 +110,11 @@ public slots:
     void importContacts(const QString& file);
 private slots:
     void fetchAgain();
-    void contactFetched();
+    void requestUpdated();
 
-    void saveContact();
-    void contactSaved();
+    void contactsSaved();
 
-    void removeContact();
-    void contactRemoved();
+    void contactsRemoved();
 
     void startImport(QVersitReader::State state);
     void contactsExported(QVersitWriter::State state);

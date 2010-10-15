@@ -99,7 +99,7 @@ void completeExample()
 
 //! [Play a haptic effect from a file]
     QFeedbackFileEffect hapticTune;
-    hapticTune.setFileName("mySavedRumble.ifr");
+    hapticTune.setSource(QUrl::fromLocalFile("mySavedRumble.ifr"));
     hapticTune.load();
     hapticTune.start();
 //! [Play a haptic effect from a file]
