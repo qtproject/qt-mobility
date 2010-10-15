@@ -78,6 +78,7 @@ private:
 public:
     static QObject* proxyForService(const QRemoteServiceRegister::Entry& entry, const QString& location);
     static QRemoteServiceRegisterPrivate* constructPrivateObject(QObject *parent);
+    static void removeProxyForService(const QString& serviceName);
 };
 
 QTM_END_NAMESPACE

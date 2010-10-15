@@ -346,6 +346,10 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
     return 0;
 }
 
+void QRemoteServiceRegisterPrivate::removeProxyForService(const QString& serviceName)
+{
+}
+
 #include "moc_qremoteserviceregister_dbus_p.cpp"
 #include "qremoteserviceregister_dbus_p.moc"
 QTM_END_NAMESPACE

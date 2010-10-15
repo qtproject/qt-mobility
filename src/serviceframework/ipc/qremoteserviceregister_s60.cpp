@@ -273,6 +273,10 @@ RServiceSession::RServiceSession(QString address)
     iServerAddress = address;
 }
 
+void QRemoteServiceRegisterPrivate::removeProxyForService(const QString& serviceName)
+{
+}
+
 RServiceSession::~RServiceSession()
 {
     delete iListener;

@@ -133,6 +133,33 @@ private:
     QLocalSocket* socket;
 };
 
+struct PROXY
+{
+public:
+    LocalSocketEndPoint* pLocalSocketEndPoint;
+    ObjectEndPoint*      pObjectEndPoint;
+    QLocalSocket*        pSocket;
+    QString servicename;
+
+    void init(){
+        pLocalSocketEndPoint = 0;
+        pObjectEndPoint = 0;
+        pSocket = 0;
+        servicename = "";
+    }
+
+    bool operator==(const PROXY& other)
+    {
+        if(pLocalSocketEndPoint == other.pLocalSocketEndPoint
+            && pObjectEndPoint == other.pObjectEndPoint
+            && servicename == other.servicename
+            && pSocket == other.pSocket)
+            return true; 
+        return false;
+    }
+};
+static QList<PROXY>proxylist;
+
 QRemoteServiceRegisterLocalSocketPrivate::QRemoteServiceRegisterLocalSocketPrivate(QObject* parent)
     : QRemoteServiceRegisterPrivate(parent)
 {
@@ -279,10 +306,34 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
             QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
             QObject::connect(ipcEndPoint, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
                              proxy, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)));
+            PROXY pr;
+            pr.init();
+            pr.pLocalSocketEndPoint = ipcEndPoint;
+            pr.pObjectEndPoint = endPoint;
+            pr.servicename = entry.serviceName();
+            pr.pSocket = socket;
+            proxylist.append(pr);
         }
         return proxy;
     }
     return 0;
+}
+
+void QRemoteServiceRegisterPrivate::removeProxyForService(const QString& serviceName)
+{
+    QList<PROXY> todelete;
+    for(int i = 0; i < proxylist.count(); i++){
+        if(proxylist[i].servicename == serviceName){
+            todelete.append(proxylist[i]);
+        }
+    }
+    for(int i = 0; i < todelete.count(); i++){
+        int delidx = proxylist.indexOf(todelete[i]);
+        if(todelete[i].pObjectEndPoint)
+            todelete[i].pObjectEndPoint->disconnect();
+        delete todelete[i].pObjectEndPoint;
+        proxylist.removeAt(delidx);
+    }
 }
 
 #include "moc_qremoteserviceregister_ls_p.cpp"

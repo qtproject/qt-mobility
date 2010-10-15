@@ -402,8 +402,9 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
                                 == QService::InterProcess);
     if (isInterProcess) {
         //ipc service
-        const QByteArray version = QString("%1.%2").arg(descriptor.majorVersion())
-                                                   .arg(descriptor.minorVersion()).toLatin1();
+        const int majorversion = descriptor.majorVersion();
+        const int minorversion = descriptor.minorVersion();
+        QString version = QString::number(majorversion) + "." + QString::number(minorversion);
 
         QRemoteServiceRegister::Entry serviceEntry;
         serviceEntry.d->iface = descriptor.interfaceName();
@@ -657,6 +658,7 @@ bool QServiceManager::removeService(const QString& serviceName)
         d->setError();
         return false;
     }
+    QRemoteServiceRegisterPrivate::removeProxyForService(serviceName);
     return true;
 }
 
