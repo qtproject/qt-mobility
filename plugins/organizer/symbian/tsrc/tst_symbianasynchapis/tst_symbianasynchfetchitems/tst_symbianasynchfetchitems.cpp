@@ -221,8 +221,8 @@ void TestFetchItems::saveRequestResultsAvailable()
 
 void TestFetchItems::fetchItems()
 {
-    QOrganizerItemLocalIdFilter localIdFilter;
-    QList<QOrganizerItemLocalId> lUids;
+    QOrganizerItemIdFilter localIdFilter;
+    QList<QOrganizerItemId> lUids;
     // TODO: Disabled because of API change. REFACTOR!
     //lUids.append(3);
     //lUids.append(4);

@@ -207,7 +207,7 @@ void tst_symbianperformance::items()
 
     {
         // Remove all items
-        QList<QOrganizerItemLocalId> itemIds = m_om->itemIds();
+        QList<QOrganizerItemId> itemIds = m_om->itemIds();
         QTime timerStart = QTime::currentTime();
         QVERIFY(m_om->removeItems(itemIds));
         QTime timerEnd = QTime::currentTime();
@@ -303,7 +303,7 @@ void tst_symbianperformance::itemsInCollections()
 
     {
         // Remove all items
-        QList<QOrganizerItemLocalId> itemIds = m_om->itemIds();
+        QList<QOrganizerItemId> itemIds = m_om->itemIds();
         QTime startTime = QTime::currentTime();
         QVERIFY(m_om->removeItems(itemIds));
         QTime endTime = QTime::currentTime();

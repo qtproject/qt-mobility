@@ -72,8 +72,8 @@ QTM_USE_NAMESPACE
     QTRY_COMPARE(removedSpy1.count(), removedCount); \
     QTRY_COMPARE(removedSpy2.count(), removedCount);
     
-Q_DECLARE_METATYPE(QList<QOrganizerItemLocalId>)
-Q_DECLARE_METATYPE(QList<QOrganizerCollectionLocalId>)
+Q_DECLARE_METATYPE(QList<QOrganizerItemId>)
+Q_DECLARE_METATYPE(QList<QOrganizerCollectionId>)
 
 /*!
  * For testing symbian backend via QOrganizerManager API. The target is
@@ -442,7 +442,7 @@ void tst_symbianomcollections::collectionSignalEmission()
     QScopedPointer<QOrganizerManager> om2(new QOrganizerManager(m_om->managerName()));
     
     // Setup signal spies
-    qRegisterMetaType<QList<QOrganizerCollectionId> >("QList<QOrganizerCollectionLocalId>");
+    qRegisterMetaType<QList<QOrganizerCollectionId> >("QList<QOrganizerCollectionId>");
     QSignalSpy addedSpy1(m_om, SIGNAL(collectionsAdded(const QList<QOrganizerCollectionId>&)));
     QSignalSpy addedSpy2(om2.data(), SIGNAL(collectionsAdded(const QList<QOrganizerCollectionId>&)));
     QSignalSpy changedSpy1(m_om, SIGNAL(collectionsChanged(const QList<QOrganizerCollectionId>&)));
@@ -459,10 +459,10 @@ void tst_symbianomcollections::collectionSignalEmission()
     QVERIFY(m_om->saveCollection(&c));
     addedCount++;
     QTRY_COMPARE_SIGNAL_COUNTS();
-    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
-    QVERIFY(addedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().contains(c.id()));
-    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
-    QVERIFY(addedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().contains(c.id()));
+    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerCollectionId> >().count(), 1);
+    QVERIFY(addedSpy1.last().at(0).value<QList<QOrganizerCollectionId> >().contains(c.id()));
+    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerCollectionId> >().count(), 1);
+    QVERIFY(addedSpy2.last().at(0).value<QList<QOrganizerCollectionId> >().contains(c.id()));
     
     // Modify collection
     c.setMetaData(QOrganizerCollection::KeyName, "testsignalemissionmodified");
@@ -514,13 +514,13 @@ void tst_symbianomcollections::itemSignalEmission()
     QScopedPointer<QOrganizerManager> om2(new QOrganizerManager(m_om->managerName()));
     
     // Setup signal spies
-    qRegisterMetaType<QList<QOrganizerItemLocalId> >("QList<QOrganizerItemLocalId>");
-    QSignalSpy addedSpy1(m_om, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
-    QSignalSpy addedSpy2(om2.data(), SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
-    QSignalSpy changedSpy1(m_om, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)));
-    QSignalSpy changedSpy2(om2.data(), SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)));
-    QSignalSpy removedSpy1(m_om, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)));
-    QSignalSpy removedSpy2(om2.data(), SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)));
+    qRegisterMetaType<QList<QOrganizerItemId> >("QList<QOrganizerItemId>");
+    QSignalSpy addedSpy1(m_om, SIGNAL(itemsAdded(QList<QOrganizerItemId>)));
+    QSignalSpy addedSpy2(om2.data(), SIGNAL(itemsAdded(QList<QOrganizerItemId>)));
+    QSignalSpy changedSpy1(m_om, SIGNAL(itemsChanged(QList<QOrganizerItemId>)));
+    QSignalSpy changedSpy2(om2.data(), SIGNAL(itemsChanged(QList<QOrganizerItemId>)));
+    QSignalSpy removedSpy1(m_om, SIGNAL(itemsRemoved(QList<QOrganizerItemId>)));
+    QSignalSpy removedSpy2(om2.data(), SIGNAL(itemsRemoved(QList<QOrganizerItemId>)));
     int addedCount = 0;
     int changedCount = 0;
     int removedCount = 0;
@@ -541,7 +541,7 @@ void tst_symbianomcollections::itemSignalEmission()
     QTRY_COMPARE_SIGNAL_COUNTS();
     
     // Remove item
-    QVERIFY(m_om->removeItem(item.localId()));
+    QVERIFY(m_om->removeItem(item.id()));
     removedCount++;
     QTRY_COMPARE_SIGNAL_COUNTS();
     
@@ -560,8 +560,8 @@ void tst_symbianomcollections::itemSignalEmission()
     QVERIFY(m_om->saveItems(&items));
     addedCount++; // There should be one signal from both managers and the list should contain 2 items
     QTRY_COMPARE_SIGNAL_COUNTS();
-    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), 2);
-    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), 2);
+    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerItemId> >().count(), 2);
+    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerItemId> >().count(), 2);
         
     // Change items - batch api
     items[0].setDisplayLabel("testitemsignalemission1 changed");
@@ -569,17 +569,17 @@ void tst_symbianomcollections::itemSignalEmission()
     QVERIFY(m_om->saveItems(&items));
     changedCount++;
     QTRY_COMPARE_SIGNAL_COUNTS();
-    QCOMPARE(changedSpy1.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), 2);
-    QCOMPARE(changedSpy2.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), 2);
+    QCOMPARE(changedSpy1.last().at(0).value<QList<QOrganizerItemId> >().count(), 2);
+    QCOMPARE(changedSpy2.last().at(0).value<QList<QOrganizerItemId> >().count(), 2);
     
     // Remove items - batch api
-    QList<QOrganizerItemLocalId> ids;
-    ids << items[0].localId() << items[1].localId();
+    QList<QOrganizerItemId> ids;
+    ids << items[0].id() << items[1].id();
     QVERIFY(m_om->removeItems(ids));
     removedCount++;
     QTRY_COMPARE_SIGNAL_COUNTS();
-    QCOMPARE(removedSpy1.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), 2);
-    QCOMPARE(removedSpy2.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), 2);
+    QCOMPARE(removedSpy1.last().at(0).value<QList<QOrganizerItemId> >().count(), 2);
+    QCOMPARE(removedSpy2.last().at(0).value<QList<QOrganizerItemId> >().count(), 2);
 }
 
 void tst_symbianomcollections::addItem()
@@ -605,7 +605,7 @@ void tst_symbianomcollections::addItem()
     QVERIFY(m_om->saveItem(&item2)); // creates a new item in a different collection.
 
     // Verify
-    QVERIFY(item1.localId() != item2.localId());
+    QVERIFY(item1.id() != item2.id());
     QCOMPARE(item1.collectionId(), m_om->defaultCollection().id());
     QCOMPARE(item2.collectionId(), c.id());
 }
@@ -633,8 +633,8 @@ void tst_symbianomcollections::fetchItem()
     // Fetch and verify the item
     // Note: collections need to be empty before executing the test case
     QCOMPARE(m_om->itemIds().count(), 1);
-    QCOMPARE(m_om->item(item.localId()).collectionId(), c.id());
-    QCOMPARE(m_om->item(item.localId()).displayLabel(), QString("fetchitem"));
+    QCOMPARE(m_om->item(item.id()).collectionId(), c.id());
+    QCOMPARE(m_om->item(item.id()).displayLabel(), QString("fetchitem"));
 }
 
 void tst_symbianomcollections::modifyItem()
@@ -662,8 +662,8 @@ void tst_symbianomcollections::modifyItem()
     QVERIFY(m_om->saveItem(&item));
 
     // Verify
-    QCOMPARE(m_om->item(item.localId()).displayLabel(), QString("modifyitem"));
-    QCOMPARE(m_om->item(item.localId()).collectionId(), c.id().localId());
+    QCOMPARE(m_om->item(item.id()).displayLabel(), QString("modifyitem"));
+    QCOMPARE(m_om->item(item.id()).collectionId(), c.id().id());
 }
 
 void tst_symbianomcollections::removeItem()
@@ -687,7 +687,7 @@ void tst_symbianomcollections::removeItem()
     QVERIFY(m_om->saveItem(&item));
 
     // Remove item
-    QOrganizerItemLocalId localId = item.localId();
+    QOrganizerItemId localId = item.id();
     QVERIFY(m_om->removeItem(localId));
 
     // Verify
@@ -726,7 +726,7 @@ void tst_symbianomcollections::fetchItems()
 
     // Verify there are no duplicates in the list
     bool noduplicates(true);
-    foreach(QOrganizerItemLocalId localid, m_om->itemIds()) {
+    foreach(QOrganizerItemId localid, m_om->itemIds()) {
         if (m_om->itemIds().count(localid) > 1) {
             qWarning() << "duplicate local id: " << localid;
             noduplicates = false;
@@ -831,8 +831,8 @@ void tst_symbianomcollections::fetchItemOccurrence()
     QCOMPARE(m_om->itemsForExport().count(), 1);
     QCOMPARE(m_om->itemsForExport().at(0).collectionId(), c.id());
     QCOMPARE(m_om->items().count(), 5);
-    QVERIFY(m_om->items().at(0).localId().isNull());
-    QVERIFY(m_om->items().at(1).localId().isNull());
+    QVERIFY(m_om->items().at(0).id().isNull());
+    QVERIFY(m_om->items().at(1).id().isNull());
     QCOMPARE(m_om->items().at(0).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QCOMPARE(m_om->items().at(1).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
 }
@@ -876,9 +876,9 @@ void tst_symbianomcollections::modifyItemOccurrence()
     QCOMPARE(m_om->items().at(0).collectionId(), c.id());
     QCOMPARE(m_om->items().at(1).collectionId(), c.id());
     QCOMPARE(m_om->items().at(2).collectionId(), c.id());
-    QVERIFY(m_om->items().at(0).localId().isNull());
-    QVERIFY(!m_om->items().at(1).localId().isNull());
-    QVERIFY(m_om->items().at(2).localId().isNull());
+    QVERIFY(m_om->items().at(0).id().isNull());
+    QVERIFY(!m_om->items().at(1).id().isNull());
+    QVERIFY(m_om->items().at(2).id().isNull());
     QCOMPARE(m_om->items().at(0).displayLabel(), QString("modifyitemoccurrence"));
     QCOMPARE(m_om->items().at(1).displayLabel(), QString("secondoccurrence"));
     QCOMPARE(m_om->items().at(2).displayLabel(), QString("modifyitemoccurrence"));
@@ -923,10 +923,10 @@ void tst_symbianomcollections::itemsInDeletedCollection()
     QVERIFY(!m_om->saveItem(&itemSave));
 
     // Try to remove item from the deleted collection
-    QVERIFY(!m_om->removeItem(itemRemove.localId()));
+    QVERIFY(!m_om->removeItem(itemRemove.id()));
 
     // Try to fetch an item from the deleted collection
-    QVERIFY(m_om->item(itemFetch.localId()).isEmpty());
+    QVERIFY(m_om->item(itemFetch.id()).isEmpty());
 
     // Try to fetch item instances from the deleted collection
     QOrganizerItemCollectionFilter fil;
