@@ -54,9 +54,12 @@ IMPLEMENT_READING(QOrientationReading)
     \brief The QOrientationReading class represents one reading from the
            orientation sensor.
 
-    It should be noted that the orientation sensor reports the orientation of the device
-    and not the UI. The orientation of the device will not change just because the UI is
-    rotated.
+    The orientation sensor reports the orientation of the device. As it operates below
+    the UI level it does not report on or even know how the UI is rotated. Most importantly
+    this means that this sensor cannot be used to detect if a device is in portrait or
+    landscape mode.
+
+    This sensor is useful to detect that a particular side of the device is pointing up.
 
     \section2 QOrientationReading Units
     The orientation sensor returns the orientation of the device using
@@ -87,7 +90,8 @@ IMPLEMENT_READING(QOrientationReading)
 
     It should be noted that the orientation sensor reports the orientation of the device
     and not the UI. The orientation of the device will not change just because the UI is
-    rotated.
+    rotated. This means this sensor cannot be used to detect if a device is in portrait
+    or landscape mode.
 */
 
 /*!
