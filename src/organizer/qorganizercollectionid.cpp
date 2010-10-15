@@ -170,7 +170,7 @@ bool QOrganizerCollectionId::isNull() const
 uint qHash(const QOrganizerCollectionId &key)
 {
     if (key.d)
-        return QT_PREPEND_NAMESPACE(qHash)(key.d->hash());
+        return key.d->hash();
     return 0;
 }
 

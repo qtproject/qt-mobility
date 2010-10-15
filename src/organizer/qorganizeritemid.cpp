@@ -165,7 +165,7 @@ bool QOrganizerItemId::operator<(const QOrganizerItemId& other) const
 uint qHash(const QOrganizerItemId &key)
 {
     if (key.d)
-        return QT_PREPEND_NAMESPACE(qHash)(key.d->hash());
+        return key.d->hash();
     return 0;
 }
 
