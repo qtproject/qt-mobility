@@ -547,7 +547,6 @@ private:
              QMap<int, QLandmarkManager::Error> errorMap;
              errorMap = catRemoveRequest.errorMap();
 
-
              if (error == QLandmarkManager::NoError) {
                  result = result && (errorMap.count() ==0);
                  if (errorMap.count() !=0) {
@@ -4229,23 +4228,24 @@ void tst_QLandmarkManager::filterLandmarksCategory() {
     //try a default category id
     QLandmarkCategoryId idNotExist;
     filter.setCategoryId(idNotExist);
-    //TODO: Symbian, async request does not finish when category does not exist
-    QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::CategoryDoesNotExistError));
+    QVERIFY(doFetch(type, filter, &lms, QLandmarkManager::NoError));
+    QCOMPARE(lms.count(),0);
 
-
-   //try a category with an empty local id
+    QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::NoError));
+    //try a category with an empty local id
     QLandmarkCategoryId idNotExist2;
     idNotExist2.setManagerUri(m_manager->managerUri());
     filter.setCategoryId(idNotExist2);
-    QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::CategoryDoesNotExistError));
-
+    QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::NoError));
+    QCOMPARE(lms.count(),0);
 
     //try a category with a valid manager uri but local id that does not exist
     QLandmarkCategoryId idNotExist3;
     idNotExist3.setManagerUri(m_manager->managerUri());
     idNotExist3.setLocalId("100");
     filter.setCategoryId(idNotExist3);
-    QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::CategoryDoesNotExistError));
+    QVERIFY(doFetch(type,filter, &lms, QLandmarkManager::NoError));
+    QCOMPARE(lms.count(),0);
 }
 
 void tst_QLandmarkManager::filterLandmarksCategory_data()
@@ -5406,11 +5406,12 @@ void tst_QLandmarkManager::filterAttribute() {
     QVERIFY(doFetch(type,attributeFilter,&lms));
     QCOMPARE(lms.count(),3);
     QCOMPARE(lms.at(0), lm5);
-    QCOMPARE(lms.at(1), lm);
+    QCOMPARE(lms.at(1), lm6);
     QCOMPARE(lms.at(2), lm8);
 #endif
 
      //test ends with
+    attributeFilter.setAttribute("city", "ra",QLandmarkFilter::MatchEndsWith);
     QVERIFY(doFetch(type,attributeFilter,&lms));
     //TODO: Symbian is only giving one match
     QCOMPARE(lms.count(),2);
@@ -7675,13 +7676,12 @@ void tst_QLandmarkManager::testSignals()
     QLandmark lmBeta;
     lmBeta.setName("lmBeta");
 
-
     QList<QLandmark> lms;
     lms << lmAlpha << lmBeta;
     m_manager->saveLandmarks(&lms);
     QTest::qWait(10);
 
-    ("", "MOBILITY-1746, Not getting any signals from another manager when multiple landmarks are saved", Continue);
+    QEXPECT_FAIL("", "MOBILITY-1746, Not getting any signals from another manager when multiple landmarks are saved", Continue);
     QCOMPARE(spyAdd2.count(), 1);
     QCOMPARE(spyChange2.count(), 0);
     QCOMPARE(spyRemove2.count(), 0);
