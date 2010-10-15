@@ -63,12 +63,13 @@ S60CameraViewfinderEngine::S60CameraViewfinderEngine(QObject *parent, CCameraEng
     m_wsSession(CCoeEnv::Static()->WsSession()),
     m_screenDevice(*CCoeEnv::Static()->ScreenDevice()),
     m_window(NULL),
+    m_desktopWidget(NULL),
     m_vfState(EVFNotConnectedNotStarted),
     m_viewfinderSize(KDefaultViewfinderSize),
     m_actualViewFinderSize(KDefaultViewfinderSize),
     m_viewfinderType(OutputTypeNotSet),
     m_viewfinderNativeType(EBitmapViewFinder), // Default type
-    m_isViewFinderVisible(true), // True as default (only QVideoWidgetControl supports being hidden)
+    m_isViewFinderVisible(true), // True by default (only QVideoWidgetControl supports being hidden)
     m_uiLandscape(true),
     m_vfErrorsSignalled(0)
 {
@@ -105,6 +106,11 @@ S60CameraViewfinderEngine::S60CameraViewfinderEngine(QObject *parent, CCameraEng
         m_uiLandscape = true;
     else
         m_uiLandscape = false;
+
+    // Detect UI Rotations
+    m_desktopWidget = QApplication::desktop();
+    if (m_desktopWidget)
+        connect(m_desktopWidget, SIGNAL(resized(int)), this, SLOT(handleDesktopResize(int)));
 }
 
 S60CameraViewfinderEngine::~S60CameraViewfinderEngine()
@@ -120,6 +126,33 @@ S60CameraViewfinderEngine::~S60CameraViewfinderEngine()
 void S60CameraViewfinderEngine::setNewCameraEngine(CCameraEngine *engine)
 {
     m_cameraEngine = engine;
+
+    if (m_cameraEngine) {
+        // And set observer to the new CameraEngine
+        MCameraViewfinderObserver *vfObserver = this;
+        m_cameraEngine->SetViewfinderObserver(vfObserver);
+    }
+}
+
+void S60CameraViewfinderEngine::handleDesktopResize(int screen)
+{
+    Q_UNUSED(screen);
+    // UI Rotation is handled by the QVideoWidgetControl, thus this is needed
+    // only for the QVideoRendererControl
+    if (m_viewfinderType == OutputTypeRenderer) {
+        QSize newResolution(-1,-1);
+        if (m_viewfinderSurface) {
+            newResolution = m_viewfinderSurface->nativeResolution();
+        }
+
+        if (newResolution.width() == -1 || newResolution.height() == -1) {
+            QDesktopWidget* desktopWidget = QApplication::desktop();
+            QRect screenRect = desktopWidget->screenGeometry();
+            newResolution = QSize(screenRect.width(), screenRect.height());
+        }
+
+        resetViewfinderSize(newResolution); // This handles also Camera rotation if needed
+    }
 }
 
 void S60CameraViewfinderEngine::setVideoWidgetControl(QObject *viewfinderOutput)
@@ -254,7 +287,7 @@ void S60CameraViewfinderEngine::setVideoRendererControl(QObject *viewfinderOutpu
 
         m_viewfinderSize = m_viewfinderSurface->nativeResolution();
         // Use display size if no native resolution has been set
-        if (m_viewfinderSize.width() == 0 || m_viewfinderSize.height() == 0) {
+        if (m_viewfinderSize.width() == -1 || m_viewfinderSize.height() == -1) {
             QDesktopWidget* desktopWidget = QApplication::desktop();
             QRect screenRect = desktopWidget->screenGeometry();
             m_viewfinderSize = QSize(screenRect.width(), screenRect.height());
@@ -566,11 +599,11 @@ void S60CameraViewfinderEngine::resetViewfinderDisplay()
 
 void S60CameraViewfinderEngine::viewFinderBitmapReady(const QPixmap &pixmap)
 {
-    // Adjust surface size according to ViewFinder if needed
-    if(m_surfaceFormat.frameSize() != m_actualViewFinderSize) {
+    // Adjust surface size according to ViewFinder frame size if needed
+    if(m_surfaceFormat.frameSize() != pixmap.size()) {
         m_viewfinderSurface->stop();
-        m_surfaceFormat.setFrameSize(m_actualViewFinderSize);
-        m_surfaceFormat.setViewport(QRect(0, 0, m_actualViewFinderSize.width(), m_actualViewFinderSize.height()));
+        m_surfaceFormat.setFrameSize(pixmap.size());
+        m_surfaceFormat.setViewport(QRect(0, 0, pixmap.size().width(), pixmap.size().height()));
         m_viewfinderSurface->start(m_surfaceFormat);
     }
 
@@ -647,16 +680,8 @@ void S60CameraViewfinderEngine::checkAndRotateCamera()
     if (isUiNowLandscape != m_uiLandscape) {
         stopViewfinder(true);
 
-        // Check if the camera can be rotated, and Rotate it
-        if (m_cameraEngine &&
-            (m_cameraEngine->IsCameraReady() || m_cameraControl->status() == QCamera::UnloadedStatus)) {
-            // Request orientation reset
-            m_cameraControl->resetCameraOrientation();
-
-            // And set observer to the new CameraEngine
-            MCameraViewfinderObserver *vfObserver = this;
-            m_cameraEngine->SetViewfinderObserver(vfObserver);
-        }
+        // Request orientation reset
+        m_cameraControl->resetCameraOrientation();
     }
     m_uiLandscape = isUiNowLandscape;
 }
