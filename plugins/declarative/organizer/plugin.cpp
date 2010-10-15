@@ -103,7 +103,7 @@ public:
         qmlRegisterType<QDeclarativeOrganizerItemCollectionFilter>(uri, 1, 1, "CollectionFilter");
         qmlRegisterType<QDeclarativeOrganizerItemDetailFilter>(uri, 1, 1, "DetailFilter");
         qmlRegisterType<QDeclarativeOrganizerItemDetailRangeFilter>(uri, 1, 1, "DetailRangeFilter");
-        qmlRegisterType<QDeclarativeOrganizerItemLocalIdFilter>(uri, 1, 1, "LocalIdFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemIdFilter>(uri, 1, 1, "IdFilter");
         qmlRegisterType<QDeclarativeOrganizerItemIntersectionFilter>(uri, 1, 1, "IntersectionFilter");
         qmlRegisterType<QDeclarativeOrganizerItemUnionFilter>(uri, 1, 1, "UnionFilter");
         qmlRegisterType<QDeclarativeOrganizerItemInvalidFilter>(uri, 1, 1, "InvalidFilter");

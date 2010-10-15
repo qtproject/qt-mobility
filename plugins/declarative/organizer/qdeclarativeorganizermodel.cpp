@@ -343,17 +343,17 @@ void QDeclarativeOrganizerModel::removeItems(const QList<uint>& ids)
 {
     QOrganizerItemRemoveRequest* req = new QOrganizerItemRemoveRequest(this);
     req->setManager(d->m_manager);
+    QList<QOrganizerItemId> oids;
 
-    QList<QOrganizerItemLocalId> localIds;
     foreach (uint id, ids) {
         QOrganizerItemId itemId = itemIdFromHash(id);
-        if (!itemId.localId().isNull()) {
-            localIds << itemId.localId();
+        if (!itemId.isNull()) {
              qt_organizerItemIdHash.remove(id);
+             oids.append(itemId);
         }
     }
 
-    req->setItemIds(localIds);
+    req->setItemIds(oids);
 
     connect(req,SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), this, SLOT(itemRemoved()));
 

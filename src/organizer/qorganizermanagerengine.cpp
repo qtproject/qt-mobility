@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qorganizermanagerengine.h"
-#include "qorganizeritemenginelocalid.h"
+#include "qorganizeritemengineid.h"
 
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemdetailfielddefinition.h"
@@ -104,7 +104,7 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerManagerEngine::itemsAdded(const QList<QOrganizerItemLocalId>& organizeritemIds);
+  \fn QOrganizerManagerEngine::itemsAdded(const QList<QOrganizerItemId>& organizeritemIds);
 
   This signal is emitted some time after a set of organizer items has been added to
   this engine where the \l dataChanged() signal was not emitted for those changes.
@@ -118,7 +118,7 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerManagerEngine::itemsChanged(const QList<QOrganizerItemLocalId>& organizeritemIds);
+  \fn QOrganizerManagerEngine::itemsChanged(const QList<QOrganizerItemId>& organizeritemIds);
 
   This signal is emitted some time after a set of organizer items has been modified in
   this engine where the \l dataChanged() signal was not emitted for those changes.
@@ -132,7 +132,7 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerManagerEngine::itemsRemoved(const QList<QOrganizerItemLocalId>& organizeritemIds);
+  \fn QOrganizerManagerEngine::itemsRemoved(const QList<QOrganizerItemId>& organizeritemIds);
 
   This signal is emitted some time after a set of organizer items has been removed from
   this engine where the \l dataChanged() signal was not emitted for those changes.
@@ -146,20 +146,20 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerManagerEngine::collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  \fn QOrganizerManagerEngine::collectionsAdded(const QList<QOrganizerCollectionId>& collectionIds)
   This signal should be emitted at some point once the collections identified by \a collectionIds have been added to a datastore managed by this engine.
   This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerManagerEngine::collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  \fn QOrganizerManagerEngine::collectionsChanged(const QList<QOrganizerCollectionId>& collectionIds)
   This signal should be emitted at some point once the metadata for the collections identified by \a collectionIds have been modified in a datastore managed by this engine.
   This signal is not emitted if one of the items in this collection has changed - itemsChanged() will be emitted instead.
   This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerManagerEngine::collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  \fn QOrganizerManagerEngine::collectionsRemoved(const QList<QOrganizerCollectionId>& collectionIds)
   This signal should be emitted at some point once the collections identified by \a collectionIds have been removed from a datastore managed by this engine.
   This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
@@ -238,7 +238,7 @@ QList<QOrganizerItem> QOrganizerManagerEngine::itemOccurrences(const QOrganizerI
   Depending on the backend, this filtering operation may involve retrieving
   all the organizer items.  Any error which occurs will be saved in \a error.
  */
-QList<QOrganizerItemLocalId> QOrganizerManagerEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const
+QList<QOrganizerItemId> QOrganizerManagerEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const
 {
     Q_UNUSED(startDate);
     Q_UNUSED(endDate);
@@ -246,7 +246,7 @@ QList<QOrganizerItemLocalId> QOrganizerManagerEngine::itemIds(const QDateTime& s
     Q_UNUSED(sortOrders);
 
     *error = QOrganizerManager::NotSupportedError;
-    return QList<QOrganizerItemLocalId>();
+    return QList<QOrganizerItemId>();
 }
 
 /*!
@@ -265,7 +265,7 @@ QList<QOrganizerItemLocalId> QOrganizerManagerEngine::itemIds(const QDateTime& s
   loss when saving the item back to the manager (as the "new" restricted item will
   replace the previously saved item in the backend).
 
-  All items returned should have a non-zero local ID.
+  All items returned should have a non-zero ID.
 
   \sa QOrganizerItemFetchHint
  */
@@ -301,7 +301,7 @@ QList<QOrganizerItem> QOrganizerManagerEngine::items(const QDateTime& startDate,
   manager.  Occurrence-typed items that are generated purely from a recurrence specification of
   another detail should not be returned in this list.
 
-  All items returned should have a non-zero local ID.
+  All items returned should have a non-zero ID.
 
   \sa QOrganizerItemFetchHint
  */
@@ -333,7 +333,7 @@ QList<QOrganizerItem> QOrganizerManagerEngine::itemsForExport(const QDateTime& s
 
   \sa QOrganizerItemFetchHint
  */
-QOrganizerItem QOrganizerManagerEngine::item(const QOrganizerItemLocalId& organizeritemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
+QOrganizerItem QOrganizerManagerEngine::item(const QOrganizerItemId& organizeritemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     Q_UNUSED(organizeritemId);
     Q_UNUSED(fetchHint);
@@ -365,7 +365,7 @@ bool QOrganizerManagerEngine::hasFeature(QOrganizerManager::ManagerFeature featu
      with a default QOrganizerItemFilter
    \o An empty QOrganizerItemIntersectionFilter will be replaced with a QOrganizerItemDefaultFilter
    \o An empty QOrganizerItemUnionFilter will be replaced with a QOrganizerItemInvalidFilter
-   \o An empty QOrganizerItemLocalIdFilter will be replaced with a QOrganizerItemInvalidFilter
+   \o An empty QOrganizerItemIdFilter will be replaced with a QOrganizerItemInvalidFilter
    \o An intersection or union filter with a single entry will be replaced by that entry
    \o A QOrganizerItemDetailFilter or QOrganizerItemDetailRangeFilter with no definition name will be replaced with a QOrganizerItemInvalidFilter
    \o A QOrganizerItemDetailRangeFilter with no range specified will be converted to a QOrganizerItemDetailFilter
@@ -432,9 +432,9 @@ QOrganizerItemFilter QOrganizerManagerEngine::canonicalizedFilter(const QOrganiz
         }
         // unreachable
 
-        case QOrganizerItemFilter::LocalIdFilter:
+        case QOrganizerItemFilter::IdFilter:
         {
-            QOrganizerItemLocalIdFilter f(filter);
+            QOrganizerItemIdFilter f(filter);
             if (f.ids().count() == 0)
                 return QOrganizerItemInvalidFilter();
         }
@@ -861,9 +861,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     // instance origin
     d.setName(QOrganizerItemParent::DefinitionName);
     fields.clear();
-    f.setDataType(qMetaTypeId<QOrganizerItemLocalId>());
+    f.setDataType(qMetaTypeId<QOrganizerItemId>());
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemParent::FieldParentLocalId, f);
+    fields.insert(QOrganizerItemParent::FieldParentId, f);
     f.setDataType(QVariant::Date);
     fields.insert(QOrganizerItemParent::FieldOriginalDate, f);
     d.setFields(fields);
@@ -1254,9 +1254,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
     // instance origin
     d.setName(QOrganizerItemParent::DefinitionName);
     fields.clear();
-    f.setDataType(qMetaTypeId<QOrganizerItemLocalId>());
+    f.setDataType(qMetaTypeId<QOrganizerItemId>());
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemParent::FieldParentLocalId, f);
+    fields.insert(QOrganizerItemParent::FieldParentId, f);
     f.setDataType(QVariant::Date);
     fields.insert(QOrganizerItemParent::FieldOriginalDate, f);
     d.setFields(fields);
@@ -1710,7 +1710,7 @@ void QOrganizerManagerEngine::setDetailAccessConstraints(QOrganizerItemDetail *d
 /*!
   Adds the given \a organizeritem to the database if \a organizeritem has a
   default-constructed id, or an id with the manager URI set to the URI of
-  this manager and a local id of zero, otherwise updates the organizer item in
+  this manager and a id of zero, otherwise updates the organizer item in
   the database which has the same id to be the given \a organizeritem.
   If the id is non-zero but does not identify any item stored in the
   manager, the function will return false and \a error will be set to
@@ -1768,10 +1768,10 @@ bool QOrganizerManagerEngine::saveItem(QOrganizerItem* organizeritem, QOrganizer
 
   The default implementation will convert this into a call to removeItems.
  */
-bool QOrganizerManagerEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerManager::Error* error)
+bool QOrganizerManagerEngine::removeItem(const QOrganizerItemId& organizeritemId, QOrganizerManager::Error* error)
 {
     // Convert to a list op
-    QList<QOrganizerItemLocalId> list;
+    QList<QOrganizerItemId> list;
     list.append(organizeritemId);
 
     QMap<int, QOrganizerManager::Error> errors;
@@ -1851,7 +1851,7 @@ bool QOrganizerManagerEngine::saveItems(QList<QOrganizerItem>* organizeritems, Q
 
   \sa QOrganizerManager::removeItem()
  */
-bool QOrganizerManagerEngine::removeItems(const QList<QOrganizerItemLocalId>& organizeritemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
+bool QOrganizerManagerEngine::removeItems(const QList<QOrganizerItemId>& organizeritemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
     Q_UNUSED(organizeritemIds);
     Q_UNUSED(errorMap);
@@ -1876,7 +1876,7 @@ QOrganizerCollection QOrganizerManagerEngine::defaultCollection(QOrganizerManage
     If the given \a collectionId does not specify a valid collection, \a error will
     be set to \c QOrganizerManager::DoesNotExistError.
 */
-QOrganizerCollection QOrganizerManagerEngine::collection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error) const
+QOrganizerCollection QOrganizerManagerEngine::collection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error) const
 {
     Q_UNUSED(collectionId);
     *error = QOrganizerManager::NotSupportedError;
@@ -1912,7 +1912,7 @@ bool QOrganizerManagerEngine::saveCollection(QOrganizerCollection* collection, Q
     Any errors encountered during this operation should be stored to
     \a error.
 */
-bool QOrganizerManagerEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error)
+bool QOrganizerManagerEngine::removeCollection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error)
 {
     Q_UNUSED(collectionId);
 
@@ -2093,10 +2093,10 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
         case QOrganizerItemFilter::DefaultFilter:
             return true;
 
-        case QOrganizerItemFilter::LocalIdFilter:
+        case QOrganizerItemFilter::IdFilter:
             {
-                const QOrganizerItemLocalIdFilter idf(filter);
-                if (idf.ids().contains(organizeritem.id().localId()))
+                const QOrganizerItemIdFilter idf(filter);
+                if (idf.ids().contains(organizeritem.id()))
                     return true;
             }
             // Fall through to end
@@ -2321,8 +2321,8 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
     case QOrganizerItemFilter::CollectionFilter:
             {
                 const QOrganizerItemCollectionFilter cf(filter);
-                const QSet<QOrganizerCollectionLocalId>& ids = cf.collectionIds();
-                if (ids.contains(organizeritem.collectionId().localId()))
+                const QSet<QOrganizerCollectionId>& ids = cf.collectionIds();
+                if (ids.contains(organizeritem.collectionId()))
                     return true;
                 return false;
             }
@@ -2370,8 +2370,8 @@ bool QOrganizerManagerEngine::isItemBetweenDates(const QOrganizerItem& item, con
 
     // if period end date is not given, check that item is starting or ending after the period start
     if (endPeriod.isNull())   // startPeriod must be non-null because of initial test
-        return !itemDateEnd.isNull() && itemDateEnd >= startPeriod ||
-               !itemDateStart.isNull() && itemDateStart >= startPeriod;
+        return (!itemDateEnd.isNull() && itemDateEnd >= startPeriod) ||
+               (!itemDateStart.isNull() && itemDateStart >= startPeriod);
 
     // Both startPeriod and endPeriod are not null
     // check if item start date is between the period start and end date
@@ -2461,21 +2461,21 @@ void QOrganizerManagerEngine::addSorted(QList<QOrganizerItem>* sorted, const QOr
 }
 
 /*!
-  Returns the engine local id from the given \a localId.
+  Returns the engine id from the given \a id.
   The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
  */
-QOrganizerItemEngineLocalId* QOrganizerManagerEngine::engineLocalItemId(const QOrganizerItemLocalId& localId)
+const QOrganizerItemEngineId* QOrganizerManagerEngine::engineItemId(const QOrganizerItemId& id)
 {
-    return localId.d;
+    return id.d.data();
 }
 
 /*!
-  Returns the engine local id from the given \a localId.
+  Returns the engine id from the given \a id.
   The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
  */
-QOrganizerCollectionEngineLocalId* QOrganizerManagerEngine::engineLocalCollectionId(const QOrganizerCollectionLocalId& localId)
+const QOrganizerCollectionEngineId* QOrganizerManagerEngine::engineCollectionId(const QOrganizerCollectionId& id)
 {
-    return localId.d;
+    return id.d.data();
 }
 
 /*!
@@ -2605,18 +2605,18 @@ void QOrganizerManagerEngine::updateItemOccurrenceFetchRequest(QOrganizerItemOcc
 }
 
 /*!
-  Updates the given QOrganizerItemLocalIdFetchRequest \a req with the latest results \a result, and operation error \a error.
+  Updates the given QOrganizerItemIdFetchRequest \a req with the latest results \a result, and operation error \a error.
   In addition, the state of the request will be changed to \a newState.
 
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
  */
-void QOrganizerManagerEngine::updateItemLocalIdFetchRequest(QOrganizerItemLocalIdFetchRequest* req, const QList<QOrganizerItemLocalId>& result, QOrganizerManager::Error error, QOrganizerAbstractRequest::State newState)
+void QOrganizerManagerEngine::updateItemIdFetchRequest(QOrganizerItemIdFetchRequest* req, const QList<QOrganizerItemId>& result, QOrganizerManager::Error error, QOrganizerAbstractRequest::State newState)
 {
     if (req) {
-        QWeakPointer<QOrganizerItemLocalIdFetchRequest> ireq(req); // Take this in case the first emit deletes us
-        QOrganizerItemLocalIdFetchRequestPrivate* rd = static_cast<QOrganizerItemLocalIdFetchRequestPrivate*>(ireq.data()->d_ptr);
+        QWeakPointer<QOrganizerItemIdFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerItemIdFetchRequestPrivate* rd = static_cast<QOrganizerItemIdFetchRequestPrivate*>(ireq.data()->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
         rd->m_ids = result;

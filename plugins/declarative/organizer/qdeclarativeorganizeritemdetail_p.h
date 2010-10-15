@@ -388,13 +388,13 @@ public:
     void setParentId(uint newParentId)
     {
         if (newParentId != parentId() && !readOnly()) {
-            m_detail.setValue(QOrganizerItemParent::FieldParentLocalId, newParentId);
+            m_detail.setValue(QOrganizerItemParent::FieldParentId, newParentId);
             emit valueChanged();
         }
     }
     uint parentId() const
     {
-        return m_detail.variantValue(QOrganizerItemParent::FieldParentLocalId).toInt();
+        return m_detail.variantValue(QOrganizerItemParent::FieldParentId).toInt();
     }
 
 

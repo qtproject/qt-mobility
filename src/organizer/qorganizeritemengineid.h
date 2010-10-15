@@ -39,46 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMIDFETCHREQUEST_H
-#define QORGANIZERITEMIDFETCHREQUEST_H
+#ifndef QORGANIZERITEMENGINEID_H
+#define QORGANIZERITEMENGINEID_H
+
+#include <QString>
+#include <QSharedDataPointer>
 
 #include "qtorganizerglobal.h"
-#include "qorganizerabstractrequest.h"
-#include "qorganizeritemsortorder.h"
-#include "qorganizeritemfilter.h"
 
-#include <QList>
-#include <QStringList>
+class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemLocalIdFetchRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemLocalIdFetchRequest : public QOrganizerAbstractRequest
+class Q_ORGANIZER_EXPORT QOrganizerItemEngineId: public QSharedData
 {
-    Q_OBJECT
-
 public:
-    QOrganizerItemLocalIdFetchRequest(QObject* parent = 0);
+    virtual ~QOrganizerItemEngineId() {}
 
-    /* Selection, restriction and sorting */
-    void setFilter(const QOrganizerItemFilter& filter);
-    void setSorting(const QList<QOrganizerItemSortOrder>& sorting);
-    void setStartDate(const QDateTime& date);
-    void setEndDate(const QDateTime& date);
-    QOrganizerItemFilter filter() const;
-    QList<QOrganizerItemSortOrder> sorting() const;
-    QDateTime startDate() const;
-    QDateTime endDate() const;
+    virtual bool isEqualTo(const QOrganizerItemEngineId* other) const = 0;
+    virtual bool isLessThan(const QOrganizerItemEngineId* other) const = 0;
 
-    /* Results */
-    QList<QOrganizerItemLocalId> itemIds() const;
+    virtual QString managerUri() const = 0;
+    virtual QOrganizerItemEngineId* clone() const = 0;
 
-private:
-    Q_DISABLE_COPY(QOrganizerItemLocalIdFetchRequest)
-    friend class QOrganizerManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemLocalIdFetchRequest)
+    virtual QString toString() const = 0;
+
+#ifndef QT_NO_DEBUG_STREAM
+    // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
+    virtual QDebug& debugStreamOut(QDebug& dbg) const = 0;
+#endif
+    virtual uint hash() const = 0;
 };
 
 QTM_END_NAMESPACE
 
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemEngineId), Q_MOVABLE_TYPE);
+
+
 #endif
+

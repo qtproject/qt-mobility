@@ -79,7 +79,6 @@ public:
 
     void setItem(const QOrganizerItem& item);
     QOrganizerItem item();
-    uint localId() const;
     uint itemId() const;
 
     static void detail_append(QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> *p, QDeclarativeOrganizerItemDetail *detail);

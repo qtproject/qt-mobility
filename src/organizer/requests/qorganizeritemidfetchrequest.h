@@ -39,48 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERCOLLECTIONID_P_H
-#define QORGANIZERCOLLECTIONID_P_H
+#ifndef QORGANIZERITEMIDFETCHREQUEST_H
+#define QORGANIZERITEMIDFETCHREQUEST_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qtorganizerglobal.h"
+#include "qorganizerabstractrequest.h"
+#include "qorganizeritemsortorder.h"
+#include "qorganizeritemfilter.h"
 
-#include <QString>
-#include <QSharedData>
-
-#include "qorganizercollectionid.h"
+#include <QList>
+#include <QStringList>
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerCollectionIdPrivate : public QSharedData
+class QOrganizerItemIdFetchRequestPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerItemIdFetchRequest : public QOrganizerAbstractRequest
 {
+    Q_OBJECT
+
 public:
-    QOrganizerCollectionIdPrivate()
-            : QSharedData()
-    {
-    }
+    QOrganizerItemIdFetchRequest(QObject* parent = 0);
 
-    QOrganizerCollectionIdPrivate(const QOrganizerCollectionIdPrivate& other)
-            : QSharedData(other),
-            m_managerUri(other.m_managerUri),
-            m_localId(other.m_localId)
-    {
-    }
+    /* Selection, restriction and sorting */
+    void setFilter(const QOrganizerItemFilter& filter);
+    void setSorting(const QList<QOrganizerItemSortOrder>& sorting);
+    void setStartDate(const QDateTime& date);
+    void setEndDate(const QDateTime& date);
+    QOrganizerItemFilter filter() const;
+    QList<QOrganizerItemSortOrder> sorting() const;
+    QDateTime startDate() const;
+    QDateTime endDate() const;
 
-    ~QOrganizerCollectionIdPrivate()
-    {
-    }
+    /* Results */
+    QList<QOrganizerItemId> itemIds() const;
 
-    QString m_managerUri;
-    QOrganizerCollectionLocalId m_localId;
+private:
+    Q_DISABLE_COPY(QOrganizerItemIdFetchRequest)
+    friend class QOrganizerManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemIdFetchRequest)
 };
 
 QTM_END_NAMESPACE

@@ -99,22 +99,22 @@ QDateTime QOrganizerTodoOccurrence::dueDateTime() const
 
 /*!
   Sets the todo occurrence's parent to be the todo identified by the
-  given \a parentLocalId
+  given \a parentId
  */
-void QOrganizerTodoOccurrence::setParentLocalId(const QOrganizerItemLocalId& parentLocalId)
+void QOrganizerTodoOccurrence::setParentId(const QOrganizerItemId& parentId)
 {
     QOrganizerItemParent origin = detail<QOrganizerItemParent>();
-    origin.setParentLocalId(parentLocalId);
+    origin.setParentId(parentId);
     saveDetail(&origin);
 }
 
 /*!
-  Returns the local id of the todo which is this occurrence's parent
+  Returns the id of the todo which is this occurrence's parent
  */
-QOrganizerItemLocalId QOrganizerTodoOccurrence::parentLocalId() const
+QOrganizerItemId QOrganizerTodoOccurrence::parentId() const
 {
     QOrganizerItemParent origin = detail<QOrganizerItemParent>();
-    return origin.parentLocalId();
+    return origin.parentId();
 }
 
 /*!

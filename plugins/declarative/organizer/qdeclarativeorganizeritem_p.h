@@ -156,7 +156,7 @@ class QDeclarativeOrganizerEventOccurrence : public QDeclarativeOrganizerItem
     Q_PROPERTY(QDateTime endDateTime READ endDateTime WRITE setEndDateTime NOTIFY valueChanged)
     Q_PROPERTY(QString location READ location WRITE setLocation NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerItemPriority::PriorityType priority READ priority WRITE setPriority NOTIFY valueChanged)
-    Q_PROPERTY(uint parentId READ parentLocalId WRITE setParentLocalId NOTIFY valueChanged)
+    Q_PROPERTY(uint parentId READ parentId WRITE setParentId NOTIFY valueChanged)
     Q_PROPERTY(QDate originalDate READ originalDate WRITE setOriginalDate NOTIFY valueChanged)
 public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "eventOccurrence");
@@ -164,8 +164,8 @@ public:
 
     explicit QDeclarativeOrganizerEventOccurrence(QObject *parent = 0);
 
-    void setParentLocalId(uint parentId);
-    uint parentLocalId() const;
+    void setParentId(uint parentId);
+    uint parentId() const;
 
     void setOriginalDate(const QDate& date);
 
@@ -277,7 +277,7 @@ class QDeclarativeOrganizerTodoOccurrence : public QDeclarativeOrganizerItem
     Q_PROPERTY(int progressPercentage READ progressPercentage WRITE setProgressPercentage NOTIFY valueChanged)
     Q_PROPERTY(QDeclarativeOrganizerTodoProgress::StatusType status READ status WRITE setStatus NOTIFY valueChanged)
     Q_PROPERTY(QDateTime finishedDateTime READ finishedDateTime WRITE setFinishedDateTime NOTIFY valueChanged)
-    Q_PROPERTY(uint parentId READ parentLocalId WRITE setParentLocalId NOTIFY valueChanged)
+    Q_PROPERTY(uint parentId READ parentId WRITE setParentId NOTIFY valueChanged)
     Q_PROPERTY(QDate originalDate READ originalDate WRITE setOriginalDate NOTIFY valueChanged)
 public:
     Q_DECLARE_LATIN1_CONSTANT(ItemName, "todoOccurrence");
@@ -289,8 +289,8 @@ public:
 
     void setDueDateTime(const QDateTime& dueDateTime);
     QDateTime dueDateTime() const;
-    uint parentLocalId() const;
-    void setParentLocalId(uint parentId);
+    uint parentId() const;
+    void setParentId(uint parentId);
 
     void setPriority(QDeclarativeOrganizerItemPriority::PriorityType priority);
 

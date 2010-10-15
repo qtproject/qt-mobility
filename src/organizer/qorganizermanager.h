@@ -115,26 +115,26 @@ public:
     QList<QOrganizerItem> itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart = QDateTime(), const QDateTime& periodEnd = QDateTime(), int maxCount = -1, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
 
     /* Items - Accessors and Mutators */
-    QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;
-    QList<QOrganizerItemLocalId> itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;
+    QList<QOrganizerItemId> itemIds(const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;
+    QList<QOrganizerItemId> itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;
 
     QList<QOrganizerItem> items(const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
     QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
     QList<QOrganizerItem> itemsForExport(const QDateTime& startDate = QDateTime(), const QDateTime& endDate = QDateTime(), const QOrganizerItemFilter& filter = QOrganizerItemFilter(), const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
 
-    QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;  // retrieve an item
+    QOrganizerItem item(const QOrganizerItemId& itemId, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;  // retrieve an item
 
     bool saveItem(QOrganizerItem* item);
     bool saveItems(QList<QOrganizerItem>* items);
-    bool removeItem(const QOrganizerItemLocalId& itemId);
-    bool removeItems(const QList<QOrganizerItemLocalId>& itemIds);
+    bool removeItem(const QOrganizerItemId& itemId);
+    bool removeItems(const QList<QOrganizerItemId>& itemIds);
 
     /* Collections - every item belongs to one or more collections */
     QOrganizerCollection defaultCollection() const;
-    QOrganizerCollection collection(const QOrganizerCollectionLocalId& collectionId) const;
+    QOrganizerCollection collection(const QOrganizerCollectionId& collectionId) const;
     QList<QOrganizerCollection> collections() const;
     bool saveCollection(QOrganizerCollection* collection);
-    bool removeCollection(const QOrganizerCollectionLocalId& collectionId);
+    bool removeCollection(const QOrganizerCollectionId& collectionId);
 
     /* Return a pruned or modified item which is valid and can be saved in the manager */
     QOrganizerItem compatibleItem(const QOrganizerItem& original) const;
@@ -159,16 +159,16 @@ public:
     /* return a list of available backends for which a QOrganizerManager can be constructed. */
     static QStringList availableManagers();
 
-    static QList<QOrganizerItemLocalId> extractLocalIds(QList<QOrganizerItem> items);
+    static QList<QOrganizerItemId> extractIds(const QList<QOrganizerItem>& items);
 
 Q_SIGNALS:
     void dataChanged();
-    void itemsAdded(const QList<QOrganizerItemLocalId>& itemIds);
-    void itemsChanged(const QList<QOrganizerItemLocalId>& itemIds);
-    void itemsRemoved(const QList<QOrganizerItemLocalId>& itemIds);
-    void collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds);
-    void collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds);
-    void collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds);
+    void itemsAdded(const QList<QOrganizerItemId>& itemIds);
+    void itemsChanged(const QList<QOrganizerItemId>& itemIds);
+    void itemsRemoved(const QList<QOrganizerItemId>& itemIds);
+    void collectionsAdded(const QList<QOrganizerCollectionId>& collectionIds);
+    void collectionsChanged(const QList<QOrganizerCollectionId>& collectionIds);
+    void collectionsRemoved(const QList<QOrganizerCollectionId>& collectionIds);
 
 private:
     friend class QOrganizerManagerData;

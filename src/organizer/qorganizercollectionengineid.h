@@ -39,34 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMLOCALIDFILTER_H
-#define QORGANIZERITEMLOCALIDFILTER_H
+#ifndef QORGANIZERCOLLECTIONENGINEID_H
+#define QORGANIZERCOLLECTIONENGINEID_H
 
-#include "qorganizeritemfilter.h"
-#include "qorganizeritemid.h"
+#include <QString>
+#include <QSharedDataPointer>
+
+#include "qtorganizerglobal.h"
+
+class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemLocalIdFilterPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemLocalIdFilter : public QOrganizerItemFilter
+class Q_ORGANIZER_EXPORT QOrganizerCollectionEngineId : public QSharedData
 {
 public:
-    QOrganizerItemLocalIdFilter();
-    QOrganizerItemLocalIdFilter(const QOrganizerItemFilter& other);
+    virtual ~QOrganizerCollectionEngineId() {}
 
-    /* Mutators */
-    void setIds(const QList<QOrganizerItemLocalId>& ids);
-    void insert(const QOrganizerItemLocalId& id);
-    void remove(const QOrganizerItemLocalId& id);
-    void clear();
+    virtual bool isEqualTo(const QOrganizerCollectionEngineId* other) const = 0;
+    virtual bool isLessThan(const QOrganizerCollectionEngineId* other) const = 0;
 
-    /* Accessors */
-    QList<QOrganizerItemLocalId> ids() const;
+    virtual QString managerUri() const = 0;
+    virtual QOrganizerCollectionEngineId* clone() const = 0;
 
-private:
-    Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemLocalIdFilter)
+    virtual QString toString() const = 0;
+
+#ifndef QT_NO_DEBUG_STREAM
+    // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
+    virtual QDebug& debugStreamOut(QDebug& dbg) const = 0;
+#endif
+    virtual uint hash() const = 0;
 };
 
 QTM_END_NAMESPACE
 
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerCollectionEngineId), Q_MOVABLE_TYPE);
+
+
 #endif
+

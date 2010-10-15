@@ -80,7 +80,7 @@ CalendarDemo::CalendarDemo(QWidget *parent)
 
     //qRegisterMetaType<QOrganizerManager>("QOrganizerManager");
     qRegisterMetaType<QOrganizerItem>("QOrganizerItem");
-    qRegisterMetaType<QOrganizerItemLocalId>("QOrganizerItemLocalId");
+    qRegisterMetaType<QOrganizerItemId>("QOrganizerItemId");
     qRegisterMetaType<QOrganizerCollection>("QOrganizerCollection");
     qRegisterMetaType<QOrganizerAbstractRequest::State>("QOrganizerAbstractRequest::State");
 
@@ -408,7 +408,7 @@ void CalendarDemo::exportItems()
 void CalendarDemo::deleteAllEntries()
 {
     // Fetch all the entries
-    QList<QOrganizerItemLocalId> ids = m_manager->itemIds();
+    QList<QOrganizerItemId> ids = m_manager->itemIds();
     
     if(ids.count()) {
         m_remReq.setItemIds(ids);

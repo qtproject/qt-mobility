@@ -39,45 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMENGINELOCALID_H
-#define QORGANIZERITEMENGINELOCALID_H
+#ifndef QORGANIZERITEMIDFILTER_H
+#define QORGANIZERITEMIDFILTER_H
 
-#include <QString>
-#include <QSharedDataPointer>
-
-#include "qtorganizerglobal.h"
-
-class QDataStream;
+#include "qorganizeritemfilter.h"
+#include "qorganizeritemid.h"
 
 QTM_BEGIN_NAMESPACE
 
-class Q_ORGANIZER_EXPORT QOrganizerItemEngineLocalId
+class QOrganizerItemIdFilterPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerItemIdFilter : public QOrganizerItemFilter
 {
 public:
-    virtual ~QOrganizerItemEngineLocalId() {}
+    QOrganizerItemIdFilter();
+    QOrganizerItemIdFilter(const QOrganizerItemFilter& other);
 
-    virtual bool isEqualTo(const QOrganizerItemEngineLocalId* other) const = 0;
-    virtual bool isLessThan(const QOrganizerItemEngineLocalId* other) const = 0;
+    /* Mutators */
+    void setIds(const QList<QOrganizerItemId>& ids);
+    void insert(const QOrganizerItemId& id);
+    void remove(const QOrganizerItemId& id);
+    void clear();
 
-    virtual uint engineLocalIdType() const = 0;
-    virtual QOrganizerItemEngineLocalId* clone() const = 0;
+    /* Accessors */
+    QList<QOrganizerItemId> ids() const;
 
-#ifndef QT_NO_DEBUG_STREAM
-    // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
-    virtual QDebug debugStreamOut(QDebug dbg) = 0;
-#endif
-#ifndef QT_NO_DATASTREAM
-    // NOTE: on platforms where Qt is built without data streams enabled, vtable will differ!
-    virtual QDataStream& dataStreamOut(QDataStream& out) = 0;
-    virtual QDataStream& dataStreamIn(QDataStream& in) = 0;
-#endif
-    virtual uint hash() const = 0;
+private:
+    Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemIdFilter)
 };
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemEngineLocalId), Q_MOVABLE_TYPE);
-
-
 #endif
-

@@ -80,38 +80,38 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerManager::itemsAdded(const QList<QOrganizerItemLocalId>& itemIds)
+  \fn QOrganizerManager::itemsAdded(const QList<QOrganizerItemId>& itemIds)
   This signal is emitted at some point once the items identified by \a itemIds have been added to a datastore managed by this manager.
   This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerManager::itemsChanged(const QList<QOrganizerItemLocalId>& itemIds)
+  \fn QOrganizerManager::itemsChanged(const QList<QOrganizerItemId>& itemIds)
   This signal is emitted at some point once the items identified by \a itemIds have been modified in a datastore managed by this manager.
   This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerManager::itemsRemoved(const QList<QOrganizerItemLocalId>& itemIds)
+  \fn QOrganizerManager::itemsRemoved(const QList<QOrganizerItemId>& itemIds)
   This signal is emitted at some point once the items identified by \a itemIds have been removed from a datastore managed by this manager.
   This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerManager::collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  \fn QOrganizerManager::collectionsAdded(const QList<QOrganizerCollectionId>& collectionIds)
   This signal is emitted at some point once the collections identified by \a collectionIds have been added to a datastore managed by this manager.
   This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerManager::collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  \fn QOrganizerManager::collectionsChanged(const QList<QOrganizerCollectionId>& collectionIds)
   This signal is emitted at some point once the metadata for the collections identified by \a collectionIds have been modified in a datastore managed by this manager.
   This signal is not emitted if one of the items in this collection has changed - itemsChanged() will be emitted instead.
   This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerManager::collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  \fn QOrganizerManager::collectionsRemoved(const QList<QOrganizerCollectionId>& collectionIds)
   This signal is emitted at some point once the collections identified by \a collectionIds have been removed from a datastore managed by this manager.
   This signal will not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
@@ -278,12 +278,12 @@ void QOrganizerManager::createEngine(const QString& managerName, const QMap<QStr
 {
     d->createEngine(managerName, parameters);
     connect(d->m_engine, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
-    connect(d->m_engine, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)), this, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
-    connect(d->m_engine, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)), this, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)));
-    connect(d->m_engine, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)), this, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)));
-    connect(d->m_engine, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)), this, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
-    connect(d->m_engine, SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)), this, SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)));
-    connect(d->m_engine, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)), this, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)));
+    connect(d->m_engine, SIGNAL(itemsAdded(QList<QOrganizerItemId>)), this, SIGNAL(itemsAdded(QList<QOrganizerItemId>)));
+    connect(d->m_engine, SIGNAL(itemsChanged(QList<QOrganizerItemId>)), this, SIGNAL(itemsChanged(QList<QOrganizerItemId>)));
+    connect(d->m_engine, SIGNAL(itemsRemoved(QList<QOrganizerItemId>)), this, SIGNAL(itemsRemoved(QList<QOrganizerItemId>)));
+    connect(d->m_engine, SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)), this, SIGNAL(collectionsAdded(QList<QOrganizerCollectionId>)));
+    connect(d->m_engine, SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)), this, SIGNAL(collectionsChanged(QList<QOrganizerCollectionId>)));
+    connect(d->m_engine, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)), this, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionId>)));
 }
 
 /*!
@@ -376,7 +376,7 @@ QList<QOrganizerItem> QOrganizerManager::itemOccurrences(const QOrganizerItem& p
   Returns a list of organizer item ids that match the given \a filter, sorted according to the given list of \a sortOrders.
   Depending on the backend, this filtering operation may involve retrieving all the organizeritems.
  */
-QList<QOrganizerItemLocalId> QOrganizerManager::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
+QList<QOrganizerItemId> QOrganizerManager::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
     d->m_error = QOrganizerManager::NoError;
     return d->m_engine->itemIds(QDateTime(), QDateTime(), filter, sortOrders, &d->m_error);
@@ -390,7 +390,7 @@ QList<QOrganizerItemLocalId> QOrganizerManager::itemIds(const QOrganizerItemFilt
   If both the \a startDate and \a endDate are invalid, this function will return the ids of all items which match the \a filter criteria.
   Depending on the backend, this filtering operation may involve retrieving all the organizeritems.
  */
-QList<QOrganizerItemLocalId> QOrganizerManager::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
+QList<QOrganizerItemId> QOrganizerManager::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
     d->m_error = QOrganizerManager::NoError;
     d->m_errorMap.clear();
@@ -487,7 +487,7 @@ QList<QOrganizerItem> QOrganizerManager::itemsForExport(const QDateTime& startDa
 
   \sa QOrganizerItemFetchHint
  */
-QOrganizerItem QOrganizerManager::item(const QOrganizerItemLocalId& organizeritemId, const QOrganizerItemFetchHint& fetchHint) const
+QOrganizerItem QOrganizerManager::item(const QOrganizerItemId& organizeritemId, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerManager::NoError;
     d->m_errorMap.clear();
@@ -497,7 +497,7 @@ QOrganizerItem QOrganizerManager::item(const QOrganizerItemLocalId& organizerite
 /*!
   Adds the given \a organizeritem to the database if \a organizeritem has a
   default-constructed id, or an id with the manager URI set to the URI of
-  this manager and a local id of zero.  It will be saved in the collection whose
+  this manager and a id of zero.  It will be saved in the collection whose
   id is reported by calling item->collectionId() if the specified collection exists,
   or if no collectionId is specified in the item, or the collectionId is the default
   collection id, it will be saved in the collection in which the item is currently
@@ -505,7 +505,7 @@ QOrganizerItem QOrganizerManager::item(const QOrganizerItemLocalId& organizerite
   As such, an item may be moved between collections with this save operation.
 
   If the manager URI of the id of the \a organizeritem is neither empty nor equal to the URI of
-  this manager, or local id of the \a organizeritem is non-zero but does not exist in the
+  this manager, or id of the \a organizeritem is non-zero but does not exist in the
   manager, the operation will fail and calling error() will return
   \c QOrganizerManager::DoesNotExistError.
 
@@ -519,7 +519,7 @@ QOrganizerItem QOrganizerManager::item(const QOrganizerItemLocalId& organizerite
   Returns false on failure, or true on
   success.  On successful save of an organizer item with an id of zero, its
   id will be set to a new, valid id with the manager URI set to the URI of
-  this manager, and the local id set to a new, valid local id.
+  this manager, and the id set to a new, valid id.
   The manager will automatically synthesize the display label of the organizer item when it is saved.
   The manager is not required to fetch updated details of the organizer item on save,
   and as such, clients should fetch an organizer item if they want the most up-to-date information
@@ -544,7 +544,7 @@ bool QOrganizerManager::saveItem(QOrganizerItem* organizeritem)
   Returns true if the organizer item was removed successfully, otherwise
   returns false.
  */
-bool QOrganizerManager::removeItem(const QOrganizerItemLocalId& organizeritemId)
+bool QOrganizerManager::removeItem(const QOrganizerItemId& organizeritemId)
 {
     d->m_error = QOrganizerManager::NoError;
     d->m_errorMap.clear();
@@ -603,7 +603,7 @@ bool QOrganizerManager::saveItems(QList<QOrganizerItem>* organizeritems)
 
   \sa QOrganizerManager::removeItem()
  */
-bool QOrganizerManager::removeItems(const QList<QOrganizerItemLocalId>& organizeritemIds)
+bool QOrganizerManager::removeItems(const QList<QOrganizerItemId>& organizeritemIds)
 {
     d->m_errorMap.clear();
     if (organizeritemIds.isEmpty()) {
@@ -628,7 +628,7 @@ QOrganizerCollection QOrganizerManager::defaultCollection() const
 /*!
   Returns the collection identified by the given \a collectionId which is managed by this manager.
  */
-QOrganizerCollection QOrganizerManager::collection(const QOrganizerCollectionLocalId& collectionId) const
+QOrganizerCollection QOrganizerManager::collection(const QOrganizerCollectionId& collectionId) const
 {
     d->m_error = QOrganizerManager::NoError;
     d->m_errorMap.clear();
@@ -681,7 +681,7 @@ bool QOrganizerManager::saveCollection(QOrganizerCollection* collection)
   Attempting to remove the default collection will fail and calling \l error() will return
   QOrganizerManager::PermissionsError.
  */
-bool QOrganizerManager::removeCollection(const QOrganizerCollectionLocalId& collectionId)
+bool QOrganizerManager::removeCollection(const QOrganizerCollectionId& collectionId)
 {
     d->m_error = QOrganizerManager::NoError;
     d->m_errorMap.clear();
@@ -838,12 +838,16 @@ QString QOrganizerManager::managerUri() const
     return d->m_engine->managerUri();
 }
 
-/*! Return a list of QOrganizerItemLocalId extracted from the \a items */
-QList<QOrganizerItemLocalId> QOrganizerManager::extractLocalIds(QList<QOrganizerItem> items)
+/*! Return a list of QOrganizerItemId extracted from the \a items */
+QList<QOrganizerItemId> QOrganizerManager::extractIds(const QList<QOrganizerItem>& items)
 {
-    QList<QOrganizerItemLocalId> ids;
-    foreach(QOrganizerItem item, items)
-        ids.append(item.localId());
+    QList<QOrganizerItemId> ids;
+#if QT_VERSION > 0x040700    
+    ids.reserve(items.count());
+#endif
+
+    foreach(const QOrganizerItem& item, items)
+        ids.append(item.id());
     return ids;
 }
 

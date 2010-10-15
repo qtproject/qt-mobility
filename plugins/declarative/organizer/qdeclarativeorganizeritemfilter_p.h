@@ -74,7 +74,7 @@ public:
         ActionFilter = QOrganizerItemFilter::ActionFilter,
         IntersectionFilter = QOrganizerItemFilter::IntersectionFilter,
         UnionFilter = QOrganizerItemFilter::UnionFilter,
-        IdFilter = QOrganizerItemFilter::LocalIdFilter,
+        IdFilter = QOrganizerItemFilter::IdFilter,
         CollectionFilter = QOrganizerItemFilter::CollectionFilter,
         DefaultFilter = QOrganizerItemFilter::DefaultFilter
     };
@@ -403,14 +403,14 @@ private:
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemDetailRangeFilter)
 
 
-//localid filter
-class QDeclarativeOrganizerItemLocalIdFilter : public QDeclarativeOrganizerItemFilter
+//id filter
+class QDeclarativeOrganizerItemIdFilter : public QDeclarativeOrganizerItemFilter
 {
     Q_OBJECT
     Q_PROPERTY(QVariantList ids READ ids WRITE setIds NOTIFY valueChanged)
 
 public:
-    QDeclarativeOrganizerItemLocalIdFilter(QObject *parent = 0)
+    QDeclarativeOrganizerItemIdFilter(QObject *parent = 0)
         :QDeclarativeOrganizerItemFilter(parent)
     {
         connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
@@ -447,7 +447,7 @@ signals:
 private:
     QVariantList m_ids;
 };
-QML_DECLARE_TYPE(QDeclarativeOrganizerItemLocalIdFilter)
+QML_DECLARE_TYPE(QDeclarativeOrganizerItemIdFilter)
 
 
 //intersection filter

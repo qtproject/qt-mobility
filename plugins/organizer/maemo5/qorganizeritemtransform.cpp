@@ -288,7 +288,7 @@ QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrenc
 {
     QDateTime instanceStartDate = QDateTime::fromTime_t(cevent->getDateStart());
     QDateTime instanceEndDate = QDateTime::fromTime_t(cevent->getDateEnd());
-    return convertCEventToQEventOccurrence(cevent, instanceStartDate, instanceEndDate, QOrganizerItemLocalId(0));
+    return convertCEventToQEventOccurrence(cevent, instanceStartDate, instanceEndDate, QOrganizerItemId(0));
 }
 
 QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceStartDate, const QDateTime &instanceEndDate)
@@ -315,8 +315,7 @@ QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrenc
 
     // Set parent local id
     QString idString = QString::fromStdString(cevent->getId());
-    QOrganizerItemLocalId localId(new QOrganizerItemMaemo5EngineLocalId(idString.toUInt()));
-    retn.setParentLocalId(localId);
+    retn.setParentId(QOrganizerItemId(new QOrganizerItemMaemo5EngineId(idString.toUInt())));
 
     // Set original event date
     retn.setOriginalDate(instanceStartDate.date());
@@ -324,10 +323,10 @@ QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrenc
     return retn;
 }
 
-QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrence(CEvent *cevent, const QDateTime &instanceStartDate, const QDateTime &instanceEndDate, QOrganizerItemLocalId parentLocalId)
+QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrence(CEvent *cevent, const QDateTime &instanceStartDate, const QDateTime &instanceEndDate, QOrganizerItemId parentId)
 {
     QOrganizerEventOccurrence retn = convertCEventToQEventOccurrence(cevent, instanceStartDate, instanceEndDate);
-    retn.setParentLocalId(parentLocalId);
+    retn.setParentId(parentId);
     return retn;
 }
 
@@ -413,7 +412,7 @@ QOrganizerTodoOccurrence OrganizerItemTransform::convertCTodoToQTodoOccurrence(C
     // Only the following are occurrence specific details:
 
     // In maemo, the parent id is the same as this id (todo's only have one occurrence)
-    retn.setParentLocalId(makeItemLocalId(QString::fromStdString(ctodo->getId()).toUInt()));
+    retn.setParentId(makeItemLocalId(QString::fromStdString(ctodo->getId()).toUInt()));
 
     // Original date
     retn.setOriginalDate(retn.startDateTime().date());
@@ -473,17 +472,12 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
         item->saveDetail(&ig);
 
         // Set component ID
-        QOrganizerItemId id;
-        id.setManagerUri(managerUri());
         if (setId) {
             QString idString = QString::fromStdString(component->getId());
-            QOrganizerItemLocalId localId(new QOrganizerItemMaemo5EngineLocalId(idString.toUInt()));
-            id.setLocalId(localId);
+            item->setId(QOrganizerItemId(new QOrganizerItemMaemo5EngineId(idString.toUInt())));
+        } else {
+            item->setId(QOrganizerItemId());
         }
-        else {
-            id.setLocalId(QOrganizerItemLocalId()); // no local id
-        }
-        item->setId(id);
 
         // Set comments
         CComponentDetails *componentDetails = dynamic_cast<CComponentDetails*>(component);
@@ -533,7 +527,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
 {
     *error = QOrganizerManager::InvalidItemTypeError;
 
-    QOrganizerItemLocalId itemId = item->localId();
+    QOrganizerItemId itemId = item->id();
 
     QString itemIdStr = "";
     if (!itemId.isNull())
