@@ -32,6 +32,10 @@ unix:!mac:!symbian {
         SUBDIRS += audiocapture
     }
     SUBDIRS += v4l
+    maemo6 {
+        SUBDIRS += pulseaudio
+        SUBDIRS -= v4l
+    }
 }
 
 mac {
