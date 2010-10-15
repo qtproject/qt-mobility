@@ -626,7 +626,6 @@ QList<QOrganizerItem> TestNoteItems::createItems_Negative(int noOfItems)
         //QOrganizerItemId id;
         //QOrganizerItemId id(1234);
         //id.setId(id);
-        //id.setManagerUri("qtorganizer:symbian:");
         //organizerItem.setId(id);
 
         // Set current time

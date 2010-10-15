@@ -343,12 +343,11 @@ void tst_symbianomcollections::saveCollection()
     c2.setMetaData("FileName", "c:testsavemodified");
     QVERIFY(!m_om->saveCollection(&c2));
     
-    // Try saving with unknown manager uri. Should fail.
-    c2 = c1;
-    QOrganizerCollectionId id = c2.id();
-    id.setManagerUri("foobar");
-    c2.setId(id);
-    QVERIFY(!m_om->saveCollection(&c2));
+    // Try saving with unknown manager uri. Should fail. -- cannot do this any more.
+    //c2 = c1;
+    //QOrganizerCollectionId id = c2.id();
+    //c2.setId(id);
+    //QVERIFY(!m_om->saveCollection(&c2));
     
     // Remove the collection
     QVERIFY(m_om->removeCollection(c1.id()));
