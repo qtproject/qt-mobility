@@ -192,28 +192,6 @@ bool QOrganizerItemSkeletonEngineLocalId::isLessThan(const QOrganizerItemEngineI
     return (m_localItemId < otherlocalItemId);
 }
 
-uint QOrganizerItemSkeletonEngineLocalId::engineIdType() const
-{
-    /*
-      TODO
-
-      The engine-local id type value is used by QOrganizerItemId to ensure that
-      comparisons are occurring between ids of the same engine-specific type.
-      Such comparisons would return false if the types are not equal.
-
-      As such, it is important that the type identifier of your engine does not
-      clash with that of any other engine, in order to avoid possibly undefined
-      behaviour during comparison.
-
-      We recommend returning the pre-calculated hash value of your manager name.
-      Engines should embed the hash value into their application as a constant,
-      read-only data value (uint), instead of calculating the value in this
-      function.  For example purposes, however, we calculate it every time, below.
-     */
-
-    return qHash(QString(QLatin1String("skeleton")));
-}
-
 QString QOrganizerItemSkeletonEngineLocalId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
@@ -386,28 +364,6 @@ bool QOrganizerCollectionSkeletonEngineLocalId::isLessThan(const QOrganizerColle
     if (m_localCollectionId < otherlocalCollectionId)
         return true;
     return false;
-}
-
-uint QOrganizerCollectionSkeletonEngineLocalId::engineIdType() const
-{
-    /*
-      TODO
-
-      The engine-local id type value is used by QOrganizerCollectionLocalId to ensure that
-      comparisons are occurring between ids of the same engine-specific type.
-      Such comparisons would return false if the types are not equal.
-
-      As such, it is important that the type identifier of your engine does not
-      clash with that of any other engine, in order to avoid possibly undefined
-      behaviour during comparison.
-
-      We recommend returning the pre-calculated hash value of your manager name.
-      Engines should embed the hash value into their application as a constant,
-      read-only data value (uint), instead of calculating the value in this
-      function.  For example purposes, however, we calculate it every time, below.
-     */
-
-    return qHash(QString(QLatin1String("skeleton")));
 }
 
 QString QOrganizerCollectionSkeletonEngineLocalId::managerUri() const

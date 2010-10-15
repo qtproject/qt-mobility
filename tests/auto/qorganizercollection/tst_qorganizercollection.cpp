@@ -101,9 +101,6 @@ public:
     bool isLessThan(const QOrganizerCollectionEngineId* other) const {
         return m_id < static_cast<const BasicCollectionLocalId*>(other)->m_id;
     }
-    uint engineIdType() const {
-        return 0;
-    }
     QString managerUri() const {
         static const QString uri(QLatin1String("qtorganizer:basic:"));
         return uri;

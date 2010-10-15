@@ -113,7 +113,7 @@ bool QOrganizerCollectionId::operator==(const QOrganizerCollectionId& other) con
 
     if (d && other.d) {
         // ensure they're of the same type (and therefore comparable)
-        if (d->engineIdType() == other.d->engineIdType()) {
+        if (d->managerUri() == other.d->managerUri()) {
             return d->isEqualTo(other.d);
         }
     }
@@ -148,7 +148,7 @@ bool QOrganizerCollectionId::operator<(const QOrganizerCollectionId& other) cons
 
     if (d && other.d) {
         // ensure they're of the same type (and therefore comparable)
-        if (d->engineIdType() == other.d->engineIdType()) {
+        if (d->managerUri() == other.d->managerUri()) {
             return d->isLessThan(other.d);
         }
     }

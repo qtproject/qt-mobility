@@ -98,7 +98,6 @@ public:
     bool isEqualTo(const QOrganizerCollectionEngineId* other) const;
     bool isLessThan(const QOrganizerCollectionEngineId* other) const;
 
-    uint engineIdType() const;
     QString managerUri() const;
     QOrganizerCollectionEngineId* clone() const;
 
@@ -127,7 +126,6 @@ public:
     bool isEqualTo(const QOrganizerItemEngineId* other) const;
     bool isLessThan(const QOrganizerItemEngineId* other) const;
 
-    uint engineIdType() const;
     QString managerUri() const;
     QOrganizerItemEngineId* clone() const;
 

@@ -144,13 +144,6 @@ bool QOrganizerItemMemoryEngineId::isLessThan(const QOrganizerItemEngineId* othe
     return false;
 }
 
-uint QOrganizerItemMemoryEngineId::engineIdType() const
-{
-    // engines should embed the result of this as const read-only data (uint),
-    // instead of calculating it every time the function is called...
-    return qHash(QString(QLatin1String("memory")));
-}
-
 QString QOrganizerItemMemoryEngineId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
@@ -240,13 +233,6 @@ bool QOrganizerCollectionMemoryEngineId::isLessThan(const QOrganizerCollectionEn
     if (m_collectionId < otherCollectionId)
         return true;
     return false;
-}
-
-uint QOrganizerCollectionMemoryEngineId::engineIdType() const
-{
-    // engines should embed the result of this as const read-only data (uint),
-    // instead of calculating it every time the function is called...
-    return qHash(QString(QLatin1String("memory")));
 }
 
 QString QOrganizerCollectionMemoryEngineId::managerUri() const

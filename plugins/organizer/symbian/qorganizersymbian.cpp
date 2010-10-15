@@ -108,11 +108,6 @@ bool QOrganizerItemSymbianEngineId::isLessThan(const QOrganizerItemEngineId* oth
     return false;
 }
 
-uint QOrganizerItemSymbianEngineId::engineIdType() const
-{
-    return KSymbianEngineIdType;
-}
-
 QString QOrganizerItemSymbianEngineId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
@@ -187,11 +182,6 @@ bool QOrganizerCollectionSymbianEngineId::isLessThan(const QOrganizerCollectionE
     if (m_localCollectionId < otherlocalCollectionId)
         return true;
     return false;
-}
-
-uint QOrganizerCollectionSymbianEngineId::engineIdType() const
-{
-    return KSymbianEngineIdType;
 }
 
 QString QOrganizerCollectionSymbianEngineId::managerUri() const

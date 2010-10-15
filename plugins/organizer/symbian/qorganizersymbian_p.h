@@ -85,10 +85,6 @@
 
 QTM_USE_NAMESPACE
 
-// This is the result of qHash(QString(QLatin1String("symbian")))
-// Precalculated value is used for performance reasons.
-const uint KSymbianEngineIdType = 0xb038f9e;
-
 class OrganizerItemTransform; // forward declare transform class.
 class QOrganizerItemSymbianEngine; // forward declare symbian engine.
 class QOrganizerCollectionSymbianEngineId : public QOrganizerCollectionEngineId
@@ -102,7 +98,6 @@ public:
     bool isEqualTo(const QOrganizerCollectionEngineId* other) const;
     bool isLessThan(const QOrganizerCollectionEngineId* other) const;
 
-    uint engineIdType() const;
     QString managerUri() const;
     QOrganizerCollectionEngineId* clone() const;
 
@@ -129,7 +124,6 @@ public:
     bool isEqualTo(const QOrganizerItemEngineId* other) const;
     bool isLessThan(const QOrganizerItemEngineId* other) const;
 
-    uint engineIdType() const;
     QString managerUri() const;
     QOrganizerItemEngineId* clone() const;
 
