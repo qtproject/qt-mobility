@@ -80,7 +80,7 @@ CalendarDemo::CalendarDemo(QWidget *parent)
 
     //qRegisterMetaType<QOrganizerManager>("QOrganizerManager");
     qRegisterMetaType<QOrganizerItem>("QOrganizerItem");
-    qRegisterMetaType<QOrganizerItemLocalId>("QOrganizerItemLocalId");
+    qRegisterMetaType<QOrganizerItemId>("QOrganizerItemId");
     qRegisterMetaType<QOrganizerCollection>("QOrganizerCollection");
     qRegisterMetaType<QOrganizerAbstractRequest::State>("QOrganizerAbstractRequest::State");
 
