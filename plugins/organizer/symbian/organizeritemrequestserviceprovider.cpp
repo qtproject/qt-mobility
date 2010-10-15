@@ -335,7 +335,7 @@ void COrganizerItemRequestsServiceProvider::SaveItem()
 void COrganizerItemRequestsServiceProvider::FetchItemsForExport()
 {
     QOrganizerItemFetchForExportRequest *req = static_cast<QOrganizerItemFetchForExportRequest *>(iReq);
-    if (req->filter().type() == QOrganizerItemFilter::LocalIdFilter) {
+    if (req->filter().type() == QOrganizerItemFilter::IdFilter) {
         FetchItemsByIds();
     } else {
         if (!iItemIds.count()) {
@@ -373,7 +373,7 @@ void COrganizerItemRequestsServiceProvider::FetchItemsByIds()
 {
     Q_ASSERT(iReq->type() == QOrganizerAbstractRequest::ItemFetchForExportRequest);
     QOrganizerItemFetchForExportRequest *req = static_cast<QOrganizerItemFetchForExportRequest *>(iReq);
-    Q_ASSERT(req->filter().type() == QOrganizerItemFilter::LocalIdFilter);
+    Q_ASSERT(req->filter().type() == QOrganizerItemFilter::IdFilter);
     QOrganizerItemIdFilter localIdFilter = req->filter();
     QList<QOrganizerItemId> itemIds = localIdFilter.ids();
     Q_ASSERT(iIndex < itemIds.count());

@@ -74,7 +74,6 @@ public:
     QVariant details(const QString& name);
     void setItem(const QOrganizerItem& item);
     QOrganizerItem item();
-    uint localId() const;
     uint itemId() const;
 
 

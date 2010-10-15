@@ -432,7 +432,7 @@ QOrganizerItemFilter QOrganizerManagerEngine::canonicalizedFilter(const QOrganiz
         }
         // unreachable
 
-        case QOrganizerItemFilter::LocalIdFilter:
+        case QOrganizerItemFilter::IdFilter:
         {
             QOrganizerItemIdFilter f(filter);
             if (f.ids().count() == 0)
@@ -2093,7 +2093,7 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
         case QOrganizerItemFilter::DefaultFilter:
             return true;
 
-        case QOrganizerItemFilter::LocalIdFilter:
+        case QOrganizerItemFilter::IdFilter:
             {
                 const QOrganizerItemIdFilter idf(filter);
                 if (idf.ids().contains(organizeritem.id()))

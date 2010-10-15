@@ -856,7 +856,7 @@ void tst_QOrganizerItemFilter::idListFilter()
 {
     QOrganizerItemIdFilter idf;
 
-    QVERIFY(idf.type() == QOrganizerItemFilter::LocalIdFilter);
+    QVERIFY(idf.type() == QOrganizerItemFilter::IdFilter);
 
     QVERIFY(idf.ids().count() == 0);
 
@@ -887,7 +887,7 @@ void tst_QOrganizerItemFilter::idListFilter()
 
     QOrganizerItemDetailFilter dfil;
     QOrganizerItemIdFilter idf3(dfil);
-    QVERIFY(idf3.type() == QOrganizerItemFilter::LocalIdFilter); // should be a blank id list filter
+    QVERIFY(idf3.type() == QOrganizerItemFilter::IdFilter); // should be a blank id list filter
     QOrganizerItemIdFilter idf4(idf);
     QVERIFY(idf4 == idf); // should be a copy of idf.
     idf = dfil; // now assign.

@@ -287,7 +287,7 @@ QDateTime QDeclarativeOrganizerEventOccurrence::startDateTime() const
     return m_eo->startDateTime();
 }
 
-void QDeclarativeOrganizerEventOccurrence::setParentLocalId(uint key)
+void QDeclarativeOrganizerEventOccurrence::setParentId(uint key)
 {
      QOrganizerItemId itemId = QDeclarativeOrganizerModel::itemIdFromHash(key);
      if (itemId != m_eo->parentId()) {
@@ -296,7 +296,7 @@ void QDeclarativeOrganizerEventOccurrence::setParentLocalId(uint key)
      }
 }
 
-uint QDeclarativeOrganizerEventOccurrence::parentLocalId() const
+uint QDeclarativeOrganizerEventOccurrence::parentId() const
 {
     return qHash(m_eo->parentId());
 }
@@ -560,7 +560,7 @@ QDateTime QDeclarativeOrganizerTodoOccurrence::finishedDateTime() const
     return m_to->finishedDateTime();
 }
 
-void QDeclarativeOrganizerTodoOccurrence::setParentLocalId(uint key)
+void QDeclarativeOrganizerTodoOccurrence::setParentId(uint key)
 {
     QOrganizerItemId itemId = QDeclarativeOrganizerModel::itemIdFromHash(key);
     if (itemId != m_to->parentId()) {
@@ -569,7 +569,7 @@ void QDeclarativeOrganizerTodoOccurrence::setParentLocalId(uint key)
     }
 }
 
-uint QDeclarativeOrganizerTodoOccurrence::parentLocalId() const
+uint QDeclarativeOrganizerTodoOccurrence::parentId() const
 {
     return qHash(m_to->parentId());
 }

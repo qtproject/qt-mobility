@@ -98,7 +98,7 @@ public:
         return stream;
     }
 
-    Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemIdFilter, QOrganizerItemFilter::LocalIdFilter)
+    Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemIdFilter, QOrganizerItemFilter::IdFilter)
 
     QList<QOrganizerItemId> m_ids;
 };

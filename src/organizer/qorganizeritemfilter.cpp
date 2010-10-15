@@ -199,7 +199,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemFilter& filter)
             case QOrganizerItemFilter::UnionFilter:
                 filter = QOrganizerItemUnionFilter();
                 break;
-            case QOrganizerItemFilter::LocalIdFilter:
+            case QOrganizerItemFilter::IdFilter:
                 filter = QOrganizerItemIdFilter();
                 break;
             case QOrganizerItemFilter::DefaultFilter:
