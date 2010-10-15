@@ -70,7 +70,7 @@ class Q_MULTIMEDIA_EXPORT QSoundEffect : public QObject
     Q_OBJECT
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(int loops READ loopCount WRITE setLoopCount NOTIFY loopCountChanged)
-    Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
+    Q_PROPERTY(qreal volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
     Q_PROPERTY(bool loaded READ isLoaded NOTIFY loadedChanged)
     Q_ENUMS(Loop)
@@ -92,8 +92,8 @@ public:
     int loopCount() const;
     void setLoopCount(int loopCount);
 
-    int volume() const;
-    void setVolume(int volume);
+    qreal volume() const;
+    void setVolume(qreal volume);
 
     bool isMuted() const;
     void setMuted(bool muted);
