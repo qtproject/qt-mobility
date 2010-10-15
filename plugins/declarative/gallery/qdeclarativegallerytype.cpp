@@ -294,12 +294,6 @@ void QDeclarativeDocumentGalleryType::classBegin()
 */
 
 /*!
-    \qmlproperty int DocumentGalleryType::maximumProgress
-
-    This property holds the maximum progress value.
-*/
-
-/*!
     \qmlproperty QStringList DocumentGalleryType::properties
 
     This property holds the type properties a request should return values for.
