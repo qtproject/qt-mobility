@@ -85,7 +85,7 @@ QOrganizerManagerEngineFactory::~QOrganizerManagerEngineFactory()
  */
 
 /*!
-  \fn QOrganizerManagerEngineFactory::createCollectionEngineId()
+  \fn QOrganizerManagerEngineFactory::createCollectionEngineId() const
 
   This function is used internally when deserializing an id.  It allows the
   deserialization functions to correctly allocate an empty engine-specific
@@ -96,7 +96,7 @@ QOrganizerManagerEngineFactory::~QOrganizerManagerEngineFactory()
  */
 
 /*!
-  \fn QOrganizerManagerEngineFactory::createItemEngineId()
+  \fn QOrganizerManagerEngineFactory::createItemEngineId() const
 
   This function is used internally when deserializing an id.  It allows the
   deserialization functions to correctly allocate an empty engine-specific

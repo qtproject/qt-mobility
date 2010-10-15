@@ -202,7 +202,7 @@ void QOrganizerEvent::setExceptionRules(const QSet<QOrganizerRecurrenceRule>& ex
 /*! Sets the given single recurrence rules \a xrule to be the rule which defines when
     the event does not occur.  Any previously specified exception rules will be cleared
     when this function is called.
-    \sa setExceptionRules.
+    \sa setExceptionRules()
  */
 void QOrganizerEvent::setExceptionRule(const QOrganizerRecurrenceRule& xrule)
 {

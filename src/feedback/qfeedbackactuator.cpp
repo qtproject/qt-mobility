@@ -168,7 +168,7 @@ QFeedbackActuator::State QFeedbackActuator::state() const
 }
 
 /*!
-    \fn QFeedbackActuator::isCapabilitySupported(Capability capability) const
+    \fn bool QFeedbackActuator::isCapabilitySupported(Capability capability) const
 
     returns if the actuator supports the supplied \a capability.
 */

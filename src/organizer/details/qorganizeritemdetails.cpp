@@ -787,7 +787,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
 */
 
 /*!
-   \fn setRepetition(int count, int delaySeconds)
+   \fn QOrganizerItemReminder::setRepetition(int count, int delaySeconds)
 
    Sets the number of repetitions of the reminderto \a count, and the delay (in seconds)
    between each repetition of the reminder to \a delaySeconds.

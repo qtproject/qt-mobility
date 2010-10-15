@@ -332,9 +332,9 @@ isEmpty(QT_LIBINFIX):symbian {
             qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_multimedia.dll
             pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\multimedia\\qmakepluginstubs\\declarative_multimedia.qtplugin\"  - \"!:\\resource\\qt\\imports\\Qt\\multimedia\\declarative_multimedia.qtplugin\""
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\multimedia\\qmakepluginstubs\\declarative_multimedia.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMultimediaKit\\declarative_multimedia.qtplugin\""
             qmldirs += \
-            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\multimedia\\qmldir\"  - \"!:\\resource\\qt\\imports\\Qt\\multimedia\\qmldir\""
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\multimedia\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMultimediaKit\\qmldir\""
         }
     }
 

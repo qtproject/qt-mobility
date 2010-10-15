@@ -60,7 +60,7 @@ public:
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactTimestamp;
+        return QDeclarativeContactDetail::Timestamp;
     }
 
     static QString fieldNameFromFieldType(int fieldType)

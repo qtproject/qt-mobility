@@ -64,7 +64,7 @@ Rectangle {
     Contact {
         id: myContact
 
-            ContactName {
+            Name {
                 firstName:"Charles"
                 lastName:"Yin"
             }
@@ -102,8 +102,8 @@ Rectangle {
     }
     DetailFilter {
        id:filter
-       detail:Detail.DetailName
-       field:Name.FieldFirstName
+       detail:ContactDetail.Name
+       field:Name.FirstName
        value:"Charles"
        matchFlags:Filter.MatchExactly
     }

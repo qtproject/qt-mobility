@@ -555,8 +555,7 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferO
 */
 
 /*!
-    \fn bool QLandmarkManagerEngine::isFeatureSupported(QLandmarkManager::LandmarkFeature feature,
-                                                        QLandmarkManager::Error *error, QString *errorString) const
+    \fn bool QLandmarkManagerEngine::isFeatureSupported(QLandmarkManager::ManagerFeature feature, QLandmarkManager::Error *error, QString *errorString) const
 
     Returns true if the manager engine supports the given \a feature, otherwise returns false;   Errors are stored in
     \a error and \a errorString.

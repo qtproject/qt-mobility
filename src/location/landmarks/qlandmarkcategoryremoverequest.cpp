@@ -130,7 +130,7 @@ void QLandmarkCategoryRemoveRequest::setCategories(const QList<QLandmarkCategory
 /*!
     Sets a single \a category to be removed.
 
-    \sa setCategories, setCategoryId()
+    \sa setCategories(), setCategoryId()
 */
 void QLandmarkCategoryRemoveRequest::setCategory(const QLandmarkCategory &category)
 {
