@@ -39,9 +39,11 @@
 **
 ****************************************************************************/
 
-#include "qfeedback.h"
 #include <QtCore/QtPlugin>
 #include <QtCore/QCoreApplication>
+
+#include <QDebug>
+#include "qfeedback.h"
 
 Q_EXPORT_PLUGIN2(feedback_mmk, QFeedbackMMK)
 
@@ -51,40 +53,117 @@ QFeedbackMMK::QFeedbackMMK() : QObject(qApp)
 
 QFeedbackMMK::~QFeedbackMMK()
 {
+    foreach(FeedbackInfo fi, mEffects.values()) {
+        delete fi.soundEffect;
+    }
 }
 
 void QFeedbackMMK::setLoaded(QFeedbackFileEffect *effect, bool load)
 {
-    Q_UNUSED(effect);
-    // XXX TODO
+    if (!effect)
+        return;
+
+    qDebug() << "setLoaded for " << effect->source();
+
+    // See if we have seen this effect before
+    FeedbackInfo fi = mEffects.value(effect);
+
     if (load) {
+        // Well.. we might already have an effect, since we don't create them until
+        // we load...
+        if (fi.loaded) {
+            // We've already loaded?
+            return;
+        } else {
+            if (fi.soundEffect) {
+                // We've started a load, they must just be impatient
+                // Pushing this elevator button does nothing..
+                return;
+            } else {
+                // New sound effect!
+                fi.soundEffect = new QSoundEffect(this);
+                connect(fi.soundEffect, SIGNAL(loadedChanged()), this, SLOT(soundEffectLoaded()));
+                fi.soundEffect->setSource(effect->source());
+                mEffects.insert(effect, fi);
+                mEffectMap.insert(fi.soundEffect, effect);
+            }
+        }
     } else {
+        // Time to unload.
+        if (fi.soundEffect) {
+            mEffectMap.remove(fi.soundEffect);
+            delete fi.soundEffect;
+        }
+        mEffects.remove(effect);
     }
 }
 
 void QFeedbackMMK::setEffectState(QFeedbackFileEffect *effect, QFeedbackEffect::State state)
 {
-    Q_UNUSED(effect);
-    Q_UNUSED(state);
-    // XXX TODO
+    FeedbackInfo fi = mEffects.value(effect);
+    switch (state)
+    {
+        case QFeedbackEffect::Stopped:
+            if (fi.playing) {
+                Q_ASSERT(fi.soundEffect);
+                fi.soundEffect->stop();
+                fi.playing = false;
+            }
+            break;
+
+        case QFeedbackEffect::Paused:
+            // Well, we can't pause, really
+            reportError(effect, QFeedbackEffect::UnknownError);
+            break;
+
+        case QFeedbackEffect::Running:
+            if (fi.playing) {
+                // We're already playing.
+            } else if (fi.soundEffect){
+                fi.soundEffect->play();
+                fi.playing = true;
+            }
+            break;
+        default:
+            break;
+    }
 }
 
 QFeedbackEffect::State QFeedbackMMK::effectState(const QFeedbackFileEffect *effect)
 {
-    Q_UNUSED(effect);
-    // XXX TODO
+    FeedbackInfo fi = mEffects.value(effect);
+
+    if (fi.soundEffect) {
+        if (fi.playing)
+            return QFeedbackEffect::Running;
+        if (fi.loaded)
+            return QFeedbackEffect::Stopped; // No idle?
+        return QFeedbackEffect::Loading;
+    }
     return QFeedbackEffect::Stopped;
 }
 
 int QFeedbackMMK::effectDuration(const QFeedbackFileEffect *effect)
 {
     Q_UNUSED(effect);
-    // XXX TODO
-    return -1;
+    // XXX This isn't supported by MMK currently
+    return 0;
 }
 
 QStringList QFeedbackMMK::supportedMimeTypes()
 {
-    return QStringList() << "audio/x-wav"; // XXX todo - need an API for this
+    return QSoundEffect::supportedMimeTypes();
 }
 
+void QFeedbackMMK::soundEffectLoaded()
+{
+    QSoundEffect* se = qobject_cast<QSoundEffect*>(sender());
+    if (se) {
+        // Hmm, now look up the right sound effect
+        QFeedbackFileEffect* fe = mEffectMap.value(se);
+
+        if (fe) {
+            reportLoadFinished(fe, se->isLoaded());
+        }
+    }
+}

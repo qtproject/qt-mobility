@@ -45,6 +45,8 @@
 
 #include <qfeedbackplugininterfaces.h>
 
+#include "../../../src/multimedia/effects/qsoundeffect_p.h"
+
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 
@@ -63,6 +65,19 @@ public:
     virtual QFeedbackEffect::State effectState(const QFeedbackFileEffect *);
     virtual int effectDuration(const QFeedbackFileEffect*);
     virtual QStringList supportedMimeTypes();
+private Q_SLOTS:
+    void soundEffectLoaded();
+
+private:
+    struct FeedbackInfo {
+        FeedbackInfo() : soundEffect(0), loaded(false), playing(false) {}
+        QSoundEffect* soundEffect;
+        bool loaded;
+        bool playing;
+    };
+
+    QHash<const QFeedbackFileEffect*, FeedbackInfo> mEffects;
+    QHash<const QSoundEffect*, QFeedbackFileEffect*> mEffectMap;
 };
 
 QT_END_HEADER
