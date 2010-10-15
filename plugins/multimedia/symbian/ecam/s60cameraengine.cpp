@@ -56,7 +56,7 @@ CCameraEngine::CCameraEngine(TInt aCameraHandle,
     iImageCaptureObserver(NULL),
     iAdvancedSettingsObserver(NULL),
     iViewfinderObserver(NULL),
-    iCameraHandle(aCameraHandle),
+    iCameraIndex(aCameraHandle),
     iPriority(aPriority),
     iEngineState(EEngineNotReady),
     iNew2LImplementation(false),
@@ -115,10 +115,10 @@ void CCameraEngine::ConstructL()
 #ifdef S60_31_PLATFORM
     // Construct CCamera object for S60 3.1 (NewL)
     iNew2LImplementation = false;
-    TRAP(err, iCamera = CCamera::NewL(*this, iCameraHandle));
+    TRAP(err, iCamera = CCamera::NewL(*this, iCameraIndex));
 #else // For S60 3.2 onwards - use this constructor (New2L)
     iNew2LImplementation = true;
-    TRAP(err, iCamera = CCamera::New2L(*this, iCameraHandle, iPriority));
+    TRAP(err, iCamera = CCamera::New2L(*this, iCameraIndex, iPriority));
 #endif // S60_31_PLATFORM
 
 #ifdef S60_CAM_AUTOFOCUS_SUPPORT
@@ -179,7 +179,7 @@ void CCameraEngine::StartViewFinderL(TSize& aSize)
     }
 
     if (!iCamera->ViewFinderActive()) {
-        if (iCameraHandle != 0) {
+        if (iCameraIndex != 0) {
             iCamera->SetViewFinderMirrorL(true);
         }
         iCamera->StartViewFinderBitmapsL(aSize);
@@ -207,7 +207,7 @@ void CCameraEngine::StartDirectViewFinderL(RWsSession& aSession,
     }
 
     if (!iCamera->ViewFinderActive()) {
-        if (iCameraHandle != 0) {
+        if (iCameraIndex != 0) {
             iCamera->SetViewFinderMirrorL(true);
         }
         iCamera->StartViewFinderDirectL(aSession, aScreenDevice, aWindow, aSize);

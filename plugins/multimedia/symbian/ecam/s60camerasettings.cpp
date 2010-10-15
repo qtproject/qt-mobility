@@ -105,6 +105,7 @@ S60CameraSettings* S60CameraSettings::New(int &error, QObject *parent, CCameraEn
         return NULL;
     }
 
+    error = KErrNone;
     return self;
 }
 

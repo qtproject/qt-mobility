@@ -111,7 +111,7 @@ void S60ViewFinderWidget::paintEvent(QPaintEvent *event)
         QLabel::paintEvent(event);
 }
 
-//#############################################################################
+//=============================================================================
 
 S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent):
     QVideoWidgetControl(parent),
@@ -158,7 +158,8 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
                 break;
         }
     }
-    return false;
+
+    return false; // Forward Event
 }
 
 /*

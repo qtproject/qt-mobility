@@ -108,7 +108,7 @@ public:
     /**
      * Returns the index of the currently active camera device
      */
-    TInt currentCameraIndex() const { return iCameraHandle; }
+    TInt currentCameraIndex() const { return iCameraIndex; }
 
     /**
      * Returns the current state (TCameraEngineState)
@@ -359,7 +359,7 @@ private:  // Data
     TDesC8                              *iImageData2;
     CFbsBitmap                          *iImageBitmap1;
     CFbsBitmap                          *iImageBitmap2;
-    TInt                                iCameraHandle;
+    TInt                                iCameraIndex;
     TInt                                iPriority;
     TCameraEngineState                  iEngineState;
     TCameraInfo                         iCameraInfo;
