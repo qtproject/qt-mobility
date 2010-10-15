@@ -5406,7 +5406,7 @@ void tst_QLandmarkManager::filterAttribute() {
     QVERIFY(doFetch(type,attributeFilter,&lms));
     QCOMPARE(lms.count(),3);
     QCOMPARE(lms.at(0), lm5);
-    QCOMPARE(lms.at(1), lm);
+    QCOMPARE(lms.at(1), lm6);
     QCOMPARE(lms.at(2), lm8);
 #endif
 
