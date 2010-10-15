@@ -70,7 +70,7 @@ public:
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactGender;
+        return QDeclarativeContactDetail::Gender;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {

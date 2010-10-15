@@ -43,6 +43,8 @@
 
 #include <QAbstractListModel>
 #include <QDeclarativeListProperty>
+#include <QDeclarativeParserStatus>
+
 #include "qcontact.h"
 #include "qdeclarativecontact_p.h"
 #include "qversitreader.h"
@@ -54,17 +56,18 @@
 
 QTM_USE_NAMESPACE;
 class QDeclarativeContactModelPrivate;
-class QDeclarativeContactModel : public QAbstractListModel
+class QDeclarativeContactModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
     Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
     Q_PROPERTY(QStringList availableManagers READ availableManagers)
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QDeclarativeContactFilter* filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(QDeclarativeContactFetchHint* fetchHint READ fetchHint WRITE setFetchHint NOTIFY fetchHintChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContact> contacts READ contacts NOTIFY contactsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContactSortOrder> sortOrders READ sortOrders NOTIFY sortOrdersChanged)
-
+    Q_INTERFACES(QDeclarativeParserStatus)
 public:
     explicit QDeclarativeContactModel(QObject *parent = 0);
 
@@ -85,14 +88,21 @@ public:
     QDeclarativeContactFetchHint* fetchHint() const;
     void setFetchHint(QDeclarativeContactFetchHint* fetchHint);
 
+    // From QDeclarativeParserStatus
+    virtual void classBegin() {}
+    virtual void componentComplete();
+
+    // From QAbstractListModel
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
+
+    bool autoUpdate() const;
+    void setAutoUpdate(bool autoUpdate);
 
     QDeclarativeListProperty<QDeclarativeContact> contacts() ;
     QDeclarativeListProperty<QDeclarativeContactSortOrder> sortOrders() ;
 
     Q_INVOKABLE void removeContact(QContactLocalId id);
-    Q_INVOKABLE void removeContacts(const QList<QContactLocalId>& id);
     Q_INVOKABLE void saveContact(QDeclarativeContact* dc);
 
 
@@ -104,17 +114,21 @@ signals:
     void contactsChanged();
     void vcardChanged();
     void sortOrdersChanged();
+    void autoUpdateChanged();
 
 public slots:
-    void exportContacts(const QString& file);
-    void importContacts(const QString& file);
+    void update();
+    void exportContacts(const QUrl& url, const QStringList& profiles = QStringList());
+    void importContacts(const QUrl& url, const QStringList& profiles = QStringList());
+    void removeContacts(const QList<QContactLocalId>& ids);
+    void fetchContacts(const QList<QContactLocalId>& contactIds);
 private slots:
     void fetchAgain();
     void requestUpdated();
-
     void contactsSaved();
-
     void contactsRemoved();
+    void contactsRemoved(const QList<QContactLocalId>& ids);
+    void contactsChanged(const QList<QContactLocalId>& ids);
 
     void startImport(QVersitReader::State state);
     void contactsExported(QVersitWriter::State state);

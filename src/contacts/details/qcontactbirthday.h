@@ -57,15 +57,19 @@ public:
 #ifdef Q_QDOC
     static const QLatin1Constant DefinitionName;
     static const QLatin1Constant FieldBirthday;
+    static const QLatin1Constant FieldCalendarId;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactBirthday, "Birthday")
     Q_DECLARE_LATIN1_CONSTANT(FieldBirthday, "Birthday");
+    Q_DECLARE_LATIN1_CONSTANT(FieldCalendarId, "CalendarId");
 #endif
 
     void setDate(const QDate& date) {setValue(FieldBirthday, date);}
     QDate date() const {return value<QDate>(FieldBirthday);}
     void setDateTime(const QDateTime& dateTime) {setValue(FieldBirthday, dateTime);}
     QDateTime dateTime() const {return value<QDateTime>(FieldBirthday);}
+    void setCalendarId(const QString& calendarId) {setValue(FieldCalendarId, calendarId);}
+    QString calendarId() const {return value(FieldCalendarId);}
 };
 
 QTM_END_NAMESPACE
