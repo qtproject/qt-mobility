@@ -52,7 +52,7 @@
 #include "qorganizeritemoccurrencefetchrequest.h"
 #include "qorganizeritemfetchrequest.h"
 #include "qorganizeritemfetchforexportrequest.h"
-#include "qorganizeritemlocalidfetchrequest.h"
+#include "qorganizeritemidfetchrequest.h"
 #include "qorganizeritemremoverequest.h"
 #include "qorganizeritemsaverequest.h"
 

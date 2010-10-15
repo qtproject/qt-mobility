@@ -192,7 +192,7 @@ bool QOrganizerItemSkeletonEngineLocalId::isLessThan(const QOrganizerItemEngineI
     return (m_localItemId < otherlocalItemId);
 }
 
-uint QOrganizerItemSkeletonEngineLocalId::engineLocalIdType() const
+uint QOrganizerItemSkeletonEngineLocalId::engineIdType() const
 {
     /*
       TODO
@@ -214,7 +214,7 @@ uint QOrganizerItemSkeletonEngineLocalId::engineLocalIdType() const
     return qHash(QString(QLatin1String("skeleton")));
 }
 
-const QString QOrganizerItemSkeletonEngineLocalId::managerUri() const
+QString QOrganizerItemSkeletonEngineLocalId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with
@@ -388,7 +388,7 @@ bool QOrganizerCollectionSkeletonEngineLocalId::isLessThan(const QOrganizerColle
     return false;
 }
 
-uint QOrganizerCollectionSkeletonEngineLocalId::engineLocalIdType() const
+uint QOrganizerCollectionSkeletonEngineLocalId::engineIdType() const
 {
     /*
       TODO
@@ -410,7 +410,7 @@ uint QOrganizerCollectionSkeletonEngineLocalId::engineLocalIdType() const
     return qHash(QString(QLatin1String("skeleton")));
 }
 
-const QString QOrganizerCollectionSkeletonEngineLocalId::managerUri() const
+QString QOrganizerCollectionSkeletonEngineLocalId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with
@@ -572,7 +572,7 @@ QList<QOrganizerItemId> QOrganizerItemSkeletonEngine::itemIds(const QDateTime& s
         }
     }
 
-    return QOrganizerManager::extractLocalIds(ret);
+    return QOrganizerManager::extractIds(ret);
 }
 
 QList<QOrganizerItem> QOrganizerItemSkeletonEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const

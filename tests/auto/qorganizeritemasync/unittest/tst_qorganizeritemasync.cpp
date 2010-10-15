@@ -693,7 +693,7 @@ void tst_QOrganizerItemAsync::itemIdFetch()
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerManager> oim(prepareModel(uri));
     QOrganizerItemIdFetchRequest ifr;
-    QVERIFY(ifr.type() == QOrganizerAbstractRequest::ItemLocalIdFetchRequest);
+    QVERIFY(ifr.type() == QOrganizerAbstractRequest::ItemIdFetchRequest);
 
     // initial state - not started, no manager.
     QVERIFY(!ifr.isActive());
@@ -1904,7 +1904,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
     QVERIFY(!crr.waitForFinished());
 
     // specific collection set
-    QOrganizerCollectionId removeId = oim->collections().last().localId();
+    QOrganizerCollectionId removeId = oim->collections().last().id();
     crr.setCollectionId(removeId);
     QVERIFY(crr.collectionIds() == QList<QOrganizerCollectionId>() << removeId);
     int originalCount = oim->collections().size();
@@ -1932,7 +1932,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
     QList<QOrganizerCollectionId> allCollectionIds;
     QList<QOrganizerCollection> allCollections = oim->collections();
     for (int i = 0; i < allCollections.size(); ++i)
-        allCollectionIds << allCollections.at(i).localId();
+        allCollectionIds << allCollections.at(i).id();
     crr.setCollectionIds(allCollectionIds);
 
     QVERIFY(!crr.cancel()); // not started
@@ -1986,7 +1986,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
         QList<QOrganizerCollectionId> removeCollectionIds;
         QList<QOrganizerCollection> removeCollections = oim->collections();
         for (int i = 0; i < removeCollections.size(); ++i)
-            removeCollectionIds << removeCollections.at(i).localId();
+            removeCollectionIds << removeCollections.at(i).id();
         QVERIFY(containsAllCollectionIds(removeCollectionIds, crr.collectionIds()));
         QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
@@ -2022,7 +2022,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
         QList<QOrganizerCollectionId> removeCollectionIds;
         QList<QOrganizerCollection> removeCollections = oim->collections();
         for (int i = 0; i < removeCollections.size(); ++i)
-            removeCollectionIds << removeCollections.at(i).localId();
+            removeCollectionIds << removeCollections.at(i).id();
         QVERIFY(containsAllCollectionIds(removeCollectionIds, crr.collectionIds()));
         QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
@@ -2030,7 +2030,7 @@ void tst_QOrganizerItemAsync::collectionRemove()
     }
 
     // now clean up our temp collection.
-    oim->removeCollection(temp.localId());
+    oim->removeCollection(temp.id());
 }
 
 void tst_QOrganizerItemAsync::collectionSave()
@@ -2077,7 +2077,7 @@ void tst_QOrganizerItemAsync::collectionSave()
     QList<QOrganizerCollection> expected = csr.collections();
     QCOMPARE(expected.size(), 1);
     QList<QOrganizerCollection> result;
-    result << oim->collection(csr.collections().at(0).localId());
+    result << oim->collection(csr.collections().at(0).id());
     // find the saved one, compare.
     foreach (const QOrganizerCollection& col, result) {
         if (col.id() == expected.at(0).id()) {
@@ -2133,7 +2133,7 @@ void tst_QOrganizerItemAsync::collectionSave()
             // after the request has already finished.. so loop and try again.
             csr.waitForFinished();
             saveList = csr.collections();
-            if (oim->collections().size() > (originalCount + 1) && !oim->removeCollection(saveList.at(0).localId())) {
+            if (oim->collections().size() > (originalCount + 1) && !oim->removeCollection(saveList.at(0).id())) {
                 QSKIP("Unable to remove saved collection to test cancellation of collection save request", SkipSingle);
             }
             saveList.clear();
@@ -2173,7 +2173,7 @@ void tst_QOrganizerItemAsync::collectionSave()
             // after the request has already finished.. so loop and try again.
             csr.waitForFinished();
             saveList = csr.collections();
-            if (oim->collections().size() > (originalCount + 1) && !oim->removeCollection(saveList.at(0).localId())) {
+            if (oim->collections().size() > (originalCount + 1) && !oim->removeCollection(saveList.at(0).id())) {
                 QSKIP("Unable to remove saved item to test cancellation of item save request", SkipSingle);
             }
             saveList.clear();

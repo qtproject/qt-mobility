@@ -76,7 +76,7 @@ public:
 
     bool isNull() const;
 
-    const QString managerUri() const;
+    QString managerUri() const;
 
     QString toString() const;
     static QOrganizerCollectionId fromString(const QString& idString);

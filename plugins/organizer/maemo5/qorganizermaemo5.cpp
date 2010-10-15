@@ -107,14 +107,14 @@ bool QOrganizerItemMaemo5EngineId::isLessThan(const QOrganizerItemEngineId* othe
     return (m_localItemId < otherlocalItemId);
 }
 
-uint QOrganizerItemMaemo5EngineId::engineLocalIdType() const
+uint QOrganizerItemMaemo5EngineId::engineIdType() const
 {
     // engines should embed the result of this as const read-only data (uint),
     // instead of calculating it every time the function is called...
     return qHash(QString(QLatin1String("maemo5")));
 }
 
-const QString QOrganizerItemMaemo5EngineId::managerUri() const
+QString QOrganizerItemMaemo5EngineId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with
@@ -186,14 +186,14 @@ bool QOrganizerCollectionMaemo5EngineId::isLessThan(const QOrganizerCollectionEn
     return false;
 }
 
-uint QOrganizerCollectionMaemo5EngineId::engineLocalIdType() const
+uint QOrganizerCollectionMaemo5EngineId::engineIdType() const
 {
     // engines should embed the result of this as const read-only data (uint),
     // instead of calculating it every time the function is called...
     return qHash(QString(QLatin1String("maemo5")));
 }
 
-const QString QOrganizerCollectionMaemo5EngineId::managerUri() const
+QString QOrganizerCollectionMaemo5EngineId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with
@@ -558,7 +558,7 @@ QList<QOrganizerItemId> QOrganizerItemMaemo5Engine::internalItemIds(const QDateT
     QList<QOrganizerItem> clist = internalItems(startDate, endDate, filter, sortOrders, fetchMinimalData(), true, error);
 
     /* Extract the ids */
-    return QOrganizerManager::extractLocalIds(clist);
+    return QOrganizerManager::extractIds(clist);
 }
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::internalItems(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, const QOrganizerItemFetchHint &fetchHint, bool forExport, QOrganizerManager::Error *error) const
@@ -853,7 +853,7 @@ QOrganizerCollection QOrganizerItemMaemo5Engine::internalCollection(const QOrgan
     *error = QOrganizerManager::NoError;
     QList<QOrganizerCollection> allCollections = internalCollections(error);
     foreach (const QOrganizerCollection& collection, allCollections) {
-        if (collection.localId() == collectionId) {
+        if (collection.id() == collectionId) {
             return collection;
         }
     }

@@ -888,7 +888,7 @@ void tst_Maemo5Om::saveCollection()
     QList<QOrganizerCollection> colls = m_om->collections();
     foreach (QOrganizerCollection c, colls) {
         if (c.metaData("Name") == "New calendar") {
-            m_om->removeCollection(c.localId());
+            m_om->removeCollection(c.id());
             break;
         }
     }
@@ -941,7 +941,7 @@ void tst_Maemo5Om::removeCollection()
 
     QVERIFY(m_om->collections().contains(newCollection));
 
-    QVERIFY(m_om->removeCollection(newCollection.localId()));
+    QVERIFY(m_om->removeCollection(newCollection.id()));
     QVERIFY(!m_om->collections().contains(newCollection));
 
     // Not possible to remove again
@@ -954,7 +954,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
     QList<QOrganizerCollection> colls = m_om->collections();
     foreach (QOrganizerCollection c, colls) {
         if (c.metaData("Name") == "New items") {
-            m_om->removeCollection(c.localId());
+            m_om->removeCollection(c.id());
             break;
         }
     }
@@ -1098,7 +1098,7 @@ void tst_Maemo5Om::saveItemsToNewCollection()
 
     // Define a collection filter for the default calendar
     QOrganizerItemCollectionFilter defaultCollectionFilter;
-    defaultCollectionFilter.setCollectionIds(QSet<QOrganizerCollectionId>() << (m_om->defaultCollection().localId()));
+    defaultCollectionFilter.setCollectionIds(QSet<QOrganizerCollectionId>() << (m_om->defaultCollection().id()));
 
     // Define a union filter of the previous two collections
     QOrganizerItemUnionFilter unionFilter;
@@ -1197,7 +1197,7 @@ void tst_Maemo5Om::asynchronousSaveAndFetch()
     QList<QOrganizerCollection> allCollections = m_om->collections();
     QSet<QOrganizerCollectionId> allCollectionsLocalIds;
     foreach (const QOrganizerCollection& collection, allCollections) {
-        allCollectionsLocalIds.insert(collection.localId());
+        allCollectionsLocalIds.insert(collection.id());
     }
     QOrganizerItemCollectionFilter collectionFilter;
     collectionFilter.setCollectionIds(allCollectionsLocalIds);
@@ -1306,7 +1306,7 @@ void tst_Maemo5Om::deleteRequest()
     QList<QOrganizerCollection> allCollections = m_om->collections();
     QSet<QOrganizerCollectionId> allCollectionLocalIds;
     foreach (const QOrganizerCollection& collection, allCollections) {
-        allCollectionLocalIds.insert(collection.localId());
+        allCollectionLocalIds.insert(collection.id());
     }
     collectionFilter.setCollectionIds(allCollectionLocalIds);
     QList<QOrganizerItemSortOrder> noSorting;

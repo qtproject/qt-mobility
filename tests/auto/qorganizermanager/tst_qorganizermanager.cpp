@@ -2838,7 +2838,7 @@ void tst_QOrganizerManager::collections()
 
             // save an item in that collection
             QOrganizerItemCollectionFilter fil;
-            fil.setCollectionId(c1.localId());
+            fil.setCollectionId(c1.id());
             i1.setCollectionId(c1.id());
             QVERIFY(oim->saveItem(&i1));
             QVERIFY(i1.collectionId() == c1.id());
@@ -2854,7 +2854,7 @@ void tst_QOrganizerManager::collections()
             QVERIFY(itemIndex >= 0);
             QVERIFY(oim->items(fil).contains(i1) || isSuperset(c1Items.at(itemIndex), i1));
 
-            fil.setCollectionId(oim->defaultCollection().localId());
+            fil.setCollectionId(oim->defaultCollection().id());
             QVERIFY(!oim->items(fil).contains(i1)); // it should not be in the default collection.
         }
     }
@@ -2907,7 +2907,7 @@ void tst_QOrganizerManager::collections()
             QVERIFY(fetchedItems.contains(i5));
 
             // remove a collection, removes its items.
-            QVERIFY(oim->removeCollection(c2.localId()));
+            QVERIFY(oim->removeCollection(c2.id()));
             fetchedItems = oim->items();
             QCOMPARE(fetchedItems.count(), originalItemCount + 1); // i5 should remain, i2->i4 should be removed.
             QVERIFY(!fetchedItems.contains(i2)); // these three should have been removed

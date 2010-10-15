@@ -59,8 +59,8 @@ public:
     virtual bool isEqualTo(const QOrganizerItemEngineId* other) const = 0;
     virtual bool isLessThan(const QOrganizerItemEngineId* other) const = 0;
 
-    virtual uint engineLocalIdType() const = 0;
-    virtual const QString managerUri() const = 0;
+    virtual uint engineIdType() const = 0;
+    virtual QString managerUri() const = 0;
     virtual QOrganizerItemEngineId* clone() const = 0;
 
     virtual QString toString() const = 0;

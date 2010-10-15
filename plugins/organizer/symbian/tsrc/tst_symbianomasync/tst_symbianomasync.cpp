@@ -171,7 +171,7 @@ void tst_SymbianOmAsync::init()
     // Remove all collections (except the default)
     foreach (const QOrganizerCollection& collection, m_om->collections()) {
         if (collection != m_om->defaultCollection())
-            m_om->removeCollection(collection.localId());
+            m_om->removeCollection(collection.id());
     }
 }
 
@@ -181,7 +181,7 @@ void tst_SymbianOmAsync::cleanup()
     // Remove all collections (except the default)
     foreach (const QOrganizerCollection& collection, m_om->collections()) {
         if (collection != m_om->defaultCollection())
-            m_om->removeCollection(collection.localId());
+            m_om->removeCollection(collection.id());
     }
     delete m_om;
     m_om = 0;
@@ -703,7 +703,7 @@ void tst_SymbianOmAsync::addCollection()
     // Verify the signal emitted contains the id of the new collection
     QCOMPARE(addedSpy.last().count(), 1);
     QCOMPARE(addedSpy.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
-    QCOMPARE(addedSpy.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), req.collections().at(0).localId());
+    QCOMPARE(addedSpy.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), req.collections().at(0).id());
 }
 
 void tst_SymbianOmAsync::modifyCollection()
@@ -782,7 +782,7 @@ void tst_SymbianOmAsync::removeCollection()
     QVERIFY(m_om->saveCollection(&collection));
 
     // Remove the new collection
-    req.setCollectionId(collection.localId());
+    req.setCollectionId(collection.id());
 
     // Start the request
     QVERIFY(req.start());
@@ -797,7 +797,7 @@ void tst_SymbianOmAsync::removeCollection()
     QCOMPARE(m_om->collections().count(), 1); // the default
 
     // Try to remove again, should fail
-    req.setCollectionId(collection.localId());
+    req.setCollectionId(collection.id());
     QVERIFY(req.start());
     QTRY_COMPARE(resultSpy.count(), 2);
     QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
@@ -844,7 +844,7 @@ void tst_SymbianOmAsync::addCollectionMultiManager()
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
     QCOMPARE(req.collections().count(), 1);
-    QVERIFY(!req.collections().at(0).localId().isNull());
+    QVERIFY(!req.collections().at(0).id().isNull());
     QVERIFY(!req.collections().at(0).id().managerUri().isEmpty());
     // Verify the count of collectionsAdded signals on both managers
     QTRY_COMPARE(addedSpy1.count(), 1);
@@ -855,8 +855,8 @@ void tst_SymbianOmAsync::addCollectionMultiManager()
     // Verify the arguments contain the id of the new collection
     QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
     QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
-    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), req.collections().at(0).localId());
-    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), req.collections().at(0).localId());
+    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), req.collections().at(0).id());
+    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().at(0), req.collections().at(0).id());
 }
 
 void tst_SymbianOmAsync::detailDefinitionFetch()

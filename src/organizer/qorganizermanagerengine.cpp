@@ -146,20 +146,20 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerManagerEngine::collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  \fn QOrganizerManagerEngine::collectionsAdded(const QList<QOrganizerCollectionId>& collectionIds)
   This signal should be emitted at some point once the collections identified by \a collectionIds have been added to a datastore managed by this engine.
   This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerManagerEngine::collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  \fn QOrganizerManagerEngine::collectionsChanged(const QList<QOrganizerCollectionId>& collectionIds)
   This signal should be emitted at some point once the metadata for the collections identified by \a collectionIds have been modified in a datastore managed by this engine.
   This signal is not emitted if one of the items in this collection has changed - itemsChanged() will be emitted instead.
   This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerManagerEngine::collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  \fn QOrganizerManagerEngine::collectionsRemoved(const QList<QOrganizerCollectionId>& collectionIds)
   This signal should be emitted at some point once the collections identified by \a collectionIds have been removed from a datastore managed by this engine.
   This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
@@ -265,7 +265,7 @@ QList<QOrganizerItemId> QOrganizerManagerEngine::itemIds(const QDateTime& startD
   loss when saving the item back to the manager (as the "new" restricted item will
   replace the previously saved item in the backend).
 
-  All items returned should have a non-zero local ID.
+  All items returned should have a non-zero ID.
 
   \sa QOrganizerItemFetchHint
  */
@@ -301,7 +301,7 @@ QList<QOrganizerItem> QOrganizerManagerEngine::items(const QDateTime& startDate,
   manager.  Occurrence-typed items that are generated purely from a recurrence specification of
   another detail should not be returned in this list.
 
-  All items returned should have a non-zero local ID.
+  All items returned should have a non-zero ID.
 
   \sa QOrganizerItemFetchHint
  */
@@ -1710,7 +1710,7 @@ void QOrganizerManagerEngine::setDetailAccessConstraints(QOrganizerItemDetail *d
 /*!
   Adds the given \a organizeritem to the database if \a organizeritem has a
   default-constructed id, or an id with the manager URI set to the URI of
-  this manager and a local id of zero, otherwise updates the organizer item in
+  this manager and a id of zero, otherwise updates the organizer item in
   the database which has the same id to be the given \a organizeritem.
   If the id is non-zero but does not identify any item stored in the
   manager, the function will return false and \a error will be set to
@@ -2461,21 +2461,21 @@ void QOrganizerManagerEngine::addSorted(QList<QOrganizerItem>* sorted, const QOr
 }
 
 /*!
-  Returns the engine local id from the given \a localId.
+  Returns the engine id from the given \a id.
   The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
  */
-const QOrganizerItemEngineId* QOrganizerManagerEngine::engineItemId(const QOrganizerItemId& localId)
+const QOrganizerItemEngineId* QOrganizerManagerEngine::engineItemId(const QOrganizerItemId& id)
 {
-    return localId.d.data();
+    return id.d.data();
 }
 
 /*!
-  Returns the engine local id from the given \a localId.
+  Returns the engine id from the given \a id.
   The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
  */
-const QOrganizerCollectionEngineId* QOrganizerManagerEngine::engineCollectionId(const QOrganizerCollectionId& localId)
+const QOrganizerCollectionEngineId* QOrganizerManagerEngine::engineCollectionId(const QOrganizerCollectionId& id)
 {
-    return localId.d.data();
+    return id.d.data();
 }
 
 /*!

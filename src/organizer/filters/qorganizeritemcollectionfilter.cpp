@@ -59,11 +59,11 @@ Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemCollectionFilter);
 
 /*!
  * \fn QOrganizerItemCollectionFilter::QOrganizerItemCollectionFilter(const QOrganizerItemFilter& other)
- * Constructs a copy of \a other if possible, otherwise constructs a new organizeritem local id filter
+ * Constructs a copy of \a other if possible, otherwise constructs a new organizeritem id filter
  */
 
 /*!
- * Constructs a new organizeritem local id filter
+ * Constructs a new organizeritem id filter
  */
 QOrganizerItemCollectionFilter::QOrganizerItemCollectionFilter()
     : QOrganizerItemFilter(new QOrganizerItemCollectionFilterPrivate)
