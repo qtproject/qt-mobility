@@ -223,7 +223,7 @@ void tst_SymbianOm::addSimpleItem()
     // Save
     QVERIFY(m_om->saveItem(&item));
     QCOMPARE(m_om->error(), QOrganizerManager::NoError);
-    QVERIFY(item.id().id() != QOrganizerItemId());
+    QVERIFY(item.id() != QOrganizerItemId());
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
     // Save with list parameter
@@ -232,7 +232,7 @@ void tst_SymbianOm::addSimpleItem()
     QVERIFY(m_om->saveItems(&items));
     QCOMPARE(m_om->error(), QOrganizerManager::NoError);
     foreach (QOrganizerItem listitem, items) {
-        QVERIFY(listitem.id().id() != QOrganizerItemId());
+        QVERIFY(listitem.id() != QOrganizerItemId());
         QVERIFY(item.id().managerUri().contains(m_om->managerName()));
     }
 
@@ -241,7 +241,7 @@ void tst_SymbianOm::addSimpleItem()
     QCOMPARE(m_om->error(), QOrganizerManager::NoError);
     QVERIFY(m_om->errorMap().count() == 0);
     foreach (QOrganizerItem listitem2, items) {
-        QVERIFY(listitem2.id().id() != QOrganizerItemId());
+        QVERIFY(listitem2.id() != QOrganizerItemId());
         QVERIFY(item.id().managerUri().contains(m_om->managerName()));
     }
 }
@@ -254,7 +254,7 @@ void tst_SymbianOm::fetchSimpleItem()
 
     // Save
     QVERIFY(m_om->saveItem(&item));
-    QVERIFY(item.id().id() != QOrganizerItemId());
+    QVERIFY(item.id() != QOrganizerItemId());
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
     // Fetch
@@ -272,7 +272,7 @@ void tst_SymbianOm::removeSimpleItem()
 
     // Save
     QVERIFY(m_om->saveItem(&item));
-    QVERIFY(item.id().id() != QOrganizerItemId());
+    QVERIFY(item.id() != QOrganizerItemId());
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
     // Remove
@@ -545,7 +545,7 @@ void tst_SymbianOm::addItem()
         // Save
         QVERIFY(m_om->saveItem(&item));
         QCOMPARE(m_om->error(), expectedErrorCode);
-        QVERIFY(item.id().id() != QOrganizerItemId());
+        QVERIFY(item.id() != QOrganizerItemId());
         QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
         // Fetch item to verify everything was saved successfully

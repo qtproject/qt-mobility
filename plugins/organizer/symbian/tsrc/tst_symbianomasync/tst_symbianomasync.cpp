@@ -228,7 +228,7 @@ void tst_SymbianOmAsync::fetchSimpleItem()
 
     // Save (synchronously)
     QVERIFY(m_om->saveItem(&item));
-    QVERIFY(item.id().id() != QOrganizerItemId());
+    QVERIFY(item.id() != QOrganizerItemId());
     QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
     // Create fetch request
@@ -260,7 +260,7 @@ void tst_SymbianOmAsync::fetchWaitForFinished()
 
      // Save (synchronously)
      QVERIFY(m_om->saveItem(&item));
-     QVERIFY(item.id().id() != QOrganizerItemId());
+     QVERIFY(item.id() != QOrganizerItemId());
      QVERIFY(item.id().managerUri().contains(m_om->managerName()));
 
      // Create fetch request

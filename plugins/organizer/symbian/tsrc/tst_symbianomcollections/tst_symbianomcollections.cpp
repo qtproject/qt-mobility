@@ -663,7 +663,7 @@ void tst_symbianomcollections::modifyItem()
 
     // Verify
     QCOMPARE(m_om->item(item.id()).displayLabel(), QString("modifyitem"));
-    QCOMPARE(m_om->item(item.id()).collectionId(), c.id().id());
+    QCOMPARE(m_om->item(item.id()).collectionId(), c.id());
 }
 
 void tst_symbianomcollections::removeItem()
