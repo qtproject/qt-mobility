@@ -267,7 +267,7 @@ void QGalleryQueryRequest::setLimit(int limit)
 }
 
 /*!
-    \property QGalleryQueryRequest::limitChanged()
+    \fn QGalleryQueryRequest::limitChanged()
 
     Signals that the value of \l limit has changed.
 */

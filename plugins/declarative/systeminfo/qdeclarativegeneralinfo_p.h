@@ -39,41 +39,35 @@
 **
 ****************************************************************************/
 
-#include "qgallerytype.h"
 
-QTM_BEGIN_NAMESPACE
+#ifndef QDECLARATIVEGENERALINFO_P_H
+#define QDECLARATIVEGENERALINFO_P_H
 
-/*!
-    \class QGalleryType 
+#include <QObject>
+#include "qsystemgeneralinfo.h"
 
-    \ingroup gallery
+QT_BEGIN_HEADER
+QTM_USE_NAMESPACE
 
-    \inmodule QtGallery
-
-    \brief The QGalleryType class provides an identifier for a gallery item
-    type.
-*/
-
-/*!
-    \fn QGalleryType::QGalleryType(const char *name)
-
-    Construct a gallery item type from a string literal \a name.
-*/
-
-/*!
-    Returns the name of an item type.
-*/
-
-QString QGalleryType::name() const
+class QDeclarativeGeneralInfo : public QSystemInfo
 {
-    return QString::fromLatin1(m_name, m_length);
-}
+    Q_OBJECT
+public:
+    explicit QDeclarativeGeneralInfo(QObject *parent = 0);
 
-/*!
-    \fn QGalleryType::operator QString() const
 
-    Returns the string name of an item type.
-*/
+public slots:
+    void startCurrentLanguageChanged();
 
-QTM_END_NAMESPACE
+Q_SIGNALS:
+   void currentLanguageChanged(const QString &language);
 
+private slots:
+    void declarativeCurrentLanguageChanged(const QString &);
+
+};
+
+QT_END_NAMESPACE
+QT_END_HEADER
+
+#endif // QDECLARATIVEGENERALINFO_P_H

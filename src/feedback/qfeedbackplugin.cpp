@@ -370,7 +370,7 @@ QFeedbackHapticsInterface *QFeedbackHapticsInterface::instance()
 }
 
 /*!
-    \fn QFeedbackHapticsInterface::createFeedbackActuator(int id)
+    \fn QFeedbackHapticsInterface::createFeedbackActuator(QObject *parent, int id)
 
     Creates an instance of QFeedbackActuator with the identifier \a id. That is the way
     of the backends to create instances of actuators. It is then up to the backends to manage

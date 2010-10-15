@@ -25,4 +25,5 @@ HEADERS += \
     details/qdeclarativecontactsynctarget_p.h \
     details/qdeclarativecontacttag_p.h \
     details/qdeclarativecontacttimestamp_p.h \
-    details/qdeclarativecontacturl_p.h
+    details/qdeclarativecontacturl_p.h \
+    details/qdeclarativecontacthobby_p.h

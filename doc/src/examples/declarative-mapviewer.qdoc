@@ -43,7 +43,7 @@
     \example declarative-location/mapviewer
     \title Declarative Map Viewer Example
 
-    This example demonstrates the basic use of QML Map element.
+    This example demonstrates the basic use of the QML Map element.
 
     Moving the mouse while holding down the left mouse button pans the map.
     Double-clicking the mouse centers and zooms in on the point that was clicked.
