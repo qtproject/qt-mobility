@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMENGINELOCALID_H
-#define QORGANIZERITEMENGINELOCALID_H
+#ifndef QORGANIZERITEMENGINEID_H
+#define QORGANIZERITEMENGINEID_H
 
 #include <QString>
 #include <QSharedDataPointer>

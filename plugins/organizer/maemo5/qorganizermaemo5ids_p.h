@@ -53,13 +53,13 @@ class OrganizerItemTransform;     // forward declare maemo5 transform.
 class QOrganizerItemMaemo5Engine; // forward declare maemo5 engine.
 class OrganizerAsynchProcess;     // forward declare maemo5 asynchronous process.
 
-class QOrganizerCollectionMaemo5EngineLocalId : public QOrganizerCollectionEngineId
+class QOrganizerCollectionMaemo5EngineId : public QOrganizerCollectionEngineId
 {
 public:
-    QOrganizerCollectionMaemo5EngineLocalId();
-    QOrganizerCollectionMaemo5EngineLocalId(quint32 collectionId);
-    ~QOrganizerCollectionMaemo5EngineLocalId();
-    QOrganizerCollectionMaemo5EngineLocalId(const QOrganizerCollectionMaemo5EngineLocalId& other);
+    QOrganizerCollectionMaemo5EngineId();
+    QOrganizerCollectionMaemo5EngineId(quint32 collectionId);
+    ~QOrganizerCollectionMaemo5EngineId();
+    QOrganizerCollectionMaemo5EngineId(const QOrganizerCollectionMaemo5EngineId& other);
 
     bool isEqualTo(const QOrganizerCollectionEngineId* other) const;
     bool isLessThan(const QOrganizerCollectionEngineId* other) const;
@@ -82,13 +82,13 @@ public:
     friend class OrganizerAsynchProcess;
 };
 
-class QOrganizerItemMaemo5EngineLocalId : public QOrganizerItemEngineId
+class QOrganizerItemMaemo5EngineId : public QOrganizerItemEngineId
 {
 public:
-    QOrganizerItemMaemo5EngineLocalId();
-    QOrganizerItemMaemo5EngineLocalId(quint32 itemId);
-    ~QOrganizerItemMaemo5EngineLocalId();
-    QOrganizerItemMaemo5EngineLocalId(const QOrganizerItemMaemo5EngineLocalId& other);
+    QOrganizerItemMaemo5EngineId();
+    QOrganizerItemMaemo5EngineId(quint32 itemId);
+    ~QOrganizerItemMaemo5EngineId();
+    QOrganizerItemMaemo5EngineId(const QOrganizerItemMaemo5EngineId& other);
 
     bool isEqualTo(const QOrganizerItemEngineId* other) const;
     bool isLessThan(const QOrganizerItemEngineId* other) const;
@@ -112,20 +112,20 @@ public:
 };
 
 inline QOrganizerItemId makeItemLocalId(quint32 id) {
-    return QOrganizerItemId(new QOrganizerItemMaemo5EngineLocalId(id));
+    return QOrganizerItemId(new QOrganizerItemMaemo5EngineId(id));
 }
 
 inline quint32 readItemLocalId(const QOrganizerItemId& id) {
-    return static_cast<const QOrganizerItemMaemo5EngineLocalId*>(
+    return static_cast<const QOrganizerItemMaemo5EngineId*>(
             QOrganizerManagerEngine::engineItemId(id))->m_localItemId;
 }
 
 inline QOrganizerCollectionId makeCollectionLocalId(quint32 id) {
-    return QOrganizerCollectionId(new QOrganizerCollectionMaemo5EngineLocalId(id));
+    return QOrganizerCollectionId(new QOrganizerCollectionMaemo5EngineId(id));
 }
 
 inline quint32 readCollectionLocalId(const QOrganizerCollectionId& id) {
-    return static_cast<const QOrganizerCollectionMaemo5EngineLocalId*>(
+    return static_cast<const QOrganizerCollectionMaemo5EngineId*>(
             QOrganizerManagerEngine::engineCollectionId(id))->m_localCollectionId;
 }
 
