@@ -113,7 +113,7 @@ uint QOrganizerItemSymbianEngineId::engineIdType() const
     return KSymbianEngineIdType;
 }
 
-const QString QOrganizerItemSymbianEngineId::managerUri() const
+QString QOrganizerItemSymbianEngineId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with
@@ -129,24 +129,16 @@ QOrganizerItemEngineId* QOrganizerItemSymbianEngineId::clone() const
     return myClone;
 }
 
+QString QOrganizerItemSymbianEngineId::toString() const
+{
+    return QString::fromAscii("%1:%2").arg(m_localItemId).arg(m_localCollectionId);
+}
+
 #ifndef QT_NO_DEBUG_STREAM
 QDebug& QOrganizerItemSymbianEngineId::debugStreamOut(QDebug& dbg) const
 {
     dbg.nospace() << "QOrganizerItemSymbianEngineLocalId(" << m_localCollectionId << ", " << m_localItemId << ")";
     return dbg.maybeSpace();
-}
-#endif
-
-#ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerItemSymbianEngineId::dataStreamOut(QDataStream& out) const
-{
-    return (out << m_localItemId << m_localCollectionId);
-}
-
-QDataStream& QOrganizerItemSymbianEngineId::dataStreamIn(QDataStream& in)
-{
-    in >> m_localItemId >> m_localCollectionId;
-    return in;
 }
 #endif
 
@@ -202,7 +194,7 @@ uint QOrganizerCollectionSymbianEngineId::engineIdType() const
     return KSymbianEngineIdType;
 }
 
-const QString QOrganizerCollectionSymbianEngineId::managerUri() const
+QString QOrganizerCollectionSymbianEngineId::managerUri() const
 {
     // TODO: make this return the actual managerUri (including params) of the
     // engine it is associated with
@@ -217,23 +209,16 @@ QOrganizerCollectionEngineId* QOrganizerCollectionSymbianEngineId::clone() const
     return myClone;
 }
 
+QString QOrganizerCollectionSymbianEngineId::toString() const
+{
+    return QString::number(m_localCollectionId);
+}
+
 #ifndef QT_NO_DEBUG_STREAM
 QDebug& QOrganizerCollectionSymbianEngineId::debugStreamOut(QDebug& dbg) const
 {
     dbg.nospace() << "QOrganizerCollectionSymbianEngineLocalId(" << m_localCollectionId << ")";
     return dbg.maybeSpace();
-}
-#endif
-
-#ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerCollectionSymbianEngineId::dataStreamOut(QDataStream& out) const
-{
-    return (out << m_localCollectionId);
-}
-
-QDataStream& QOrganizerCollectionSymbianEngineId::dataStreamIn(QDataStream& in)
-{
-    return (in >> m_localCollectionId);
 }
 #endif
 
@@ -271,16 +256,32 @@ QOrganizerManagerEngine* QOrganizerItemSymbianFactory::engine(
     return ret;
 }
 
-QOrganizerItemEngineId* QOrganizerItemSymbianFactory::createItemEngineId(const QMap<QString, QString>& parameters) const
+QOrganizerItemEngineId* QOrganizerItemSymbianFactory::createItemEngineId(const QMap<QString, QString>& parameters, const QString& engineIdString) const
 {
     Q_UNUSED(parameters);
-    return new QOrganizerItemSymbianEngineId;
+    QStringList parts(engineIdString.split(QLatin1String(":")));
+    if (parts.size() != 2)
+        return NULL;
+
+    bool ok = true;
+    quint64 collectionid = parts[0].toULongLong(&ok);
+    if (!ok)
+        return NULL;
+    quint64 itemId = parts[1].toULongLong(&ok);
+    if (!ok)
+        return NULL;
+    return new QOrganizerItemSymbianEngineId(collectionid, itemId);
 }
 
-QOrganizerCollectionEngineId* QOrganizerItemSymbianFactory::createCollectionEngineId(const QMap<QString, QString>& parameters) const
+QOrganizerCollectionEngineId* QOrganizerItemSymbianFactory::createCollectionEngineId(const QMap<QString, QString>& parameters, const QString& engineIdString) const
 {
     Q_UNUSED(parameters);
-    return new QOrganizerCollectionSymbianEngineId;
+    bool ok = true;
+    quint64 collectionid = engineIdString.toULongLong(&ok);
+    if (!ok)
+        return NULL;
+    else
+        return new QOrganizerCollectionSymbianEngineId(collectionid);
 }
 
 QString QOrganizerItemSymbianFactory::managerName() const

@@ -106,12 +106,10 @@ public:
     QString managerUri() const;
     QOrganizerCollectionEngineId* clone() const;
 
+    QString toString() const;
+
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;
-#endif
-#ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out) const;
-    QDataStream& dataStreamIn(QDataStream& in);
 #endif
     uint hash() const;
 
@@ -135,12 +133,10 @@ public:
     QString managerUri() const;
     QOrganizerItemEngineId* clone() const;
 
+    QString toString() const;
+
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;
-#endif
-#ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out) const;
-    QDataStream& dataStreamIn(QDataStream& in);
 #endif
     uint hash() const;
     
@@ -168,8 +164,10 @@ public QOrganizerManagerEngineFactory
         const QMap<QString, QString>& parameters, 
         QOrganizerManager::Error*);
     QString managerName() const;
-    QOrganizerItemEngineId* createItemEngineId(const QMap<QString, QString>& parameters) const;
-    QOrganizerCollectionEngineId* createCollectionEngineId(const QMap<QString, QString>& parameters) const;
+    QOrganizerItemEngineId* createItemEngineId(const QMap<QString, QString>& parameters,
+            const QString& engineIdString) const;
+    QOrganizerCollectionEngineId* createCollectionEngineId(const QMap<QString, QString>& parameters,
+            const QString& engineIdString) const;
 };
 
 class QOrganizerItemSymbianEngineData : public QSharedData
