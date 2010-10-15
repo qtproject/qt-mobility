@@ -108,14 +108,16 @@ private slots:
         QList<QByteArray> expected;
         expected << "QAccelerometer" << TestSensor::type;
         QList<QByteArray> actual = QSensor::sensorTypes();
+        qSort(actual); // The actual list is not in a defined order
         QCOMPARE(actual, expected);
     }
 
     void testSensorRegistered()
     {
         QList<QByteArray> expected;
-        expected << testsensorimpl::id << "test sensor 2";
+        expected << "test sensor 2" << testsensorimpl::id;
         QList<QByteArray> actual = QSensor::sensorsForType(TestSensor::type);
+        qSort(actual); // The actual list is not in a defined order
         QCOMPARE(actual, expected);
     }
 
@@ -146,6 +148,8 @@ private slots:
         QByteArray expected = testsensorimpl::id;
         QByteArray actual = QSensor::defaultSensorForType(TestSensor::type);
         QCOMPARE(actual, expected);
+
+        settings.clear();
     }
 
     void testNoSensorsForType()
@@ -183,6 +187,8 @@ private slots:
         QByteArray expected = testsensorimpl::id;
         QByteArray actual = sensor.identifier();
         QCOMPARE(actual, expected);
+
+        settings.clear();
     }
 
     void testBadCreation()
@@ -192,13 +198,6 @@ private slots:
         QByteArray expected; // should be null
         QByteArray actual = sensor.identifier();
         QCOMPARE(actual, expected);
-    }
-
-    void resetSettings()
-    {
-        QSettings settings(QLatin1String("Nokia"), QLatin1String("Sensors"));
-        settings.setValue(QString(QLatin1String("Default/%1")).arg(QString::fromLatin1(TestSensor::type)), QByteArray(testsensorimpl::id));
-        settings.sync();
     }
 
     void testTimestamp()
@@ -237,58 +236,6 @@ private slots:
         QVERIFY(!sensor.isActive());
     }
 
-    void testMetaData()
-    {
-        TestSensor sensor;
-        sensor.connectToBackend();
-
-        QString actual = sensor.description();
-        QString expected = "sensor description";
-        QCOMPARE(actual, expected);
-        sensor.outputRange();
-        sensor.setOutputRange(1);
-        sensor.outputRanges();
-        sensor.availableDataRates();
-        sensor.setDataRate(100);
-        sensor.dataRate();
-        sensor.isBusy();
-        sensor.error();
-        sensor.isConnectedToBackend();
-
-        TestSensorReading *reading = sensor.reading();
-        reading->test();
-        QCOMPARE(reading->valueCount(), 1);
-        reading->value(0).toBool();
-    }
-
-    void testMetaData2()
-    {
-        TestSensor sensor;
-        sensor.setProperty("doThis", "rates(0)");
-        QTest::ignoreMessage(QtWarningMsg, "ERROR: Cannot call QSensorBackend::setDataRates with 0 ");
-        sensor.connectToBackend();
-    }
-
-    void testMetaData3()
-    {
-        TestSensor sensor;
-        sensor.setProperty("doThis", "rates");
-        sensor.connectToBackend();
-
-        sensor.availableDataRates();
-    }
-
-    void testFilter()
-    {
-        TestSensor sensor;
-        sensor.connectToBackend();
-
-        MyFilter filter;
-        sensor.addFilter(&filter);
-        sensor.removeFilter(&filter);
-        sensor.addFilter(&filter);
-    }
-
     void testStart2()
     {
         TestSensor sensor;
@@ -316,7 +263,6 @@ private slots:
         sensor.setProperty("doThis", "setTrue");
         sensor.start();
         QVERIFY(sensor.isActive());
-
     }
 
     void testSetBadRate()
