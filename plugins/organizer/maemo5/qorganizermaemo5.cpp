@@ -75,12 +75,12 @@ static const char* CALENDAR =  "/.calendar";
 static const char* CALENDARDB = "/calendardb";
 
 QOrganizerItemMaemo5EngineLocalId::QOrganizerItemMaemo5EngineLocalId()
-    : QOrganizerItemEngineLocalId(), m_localItemId(0)
+    : QOrganizerItemEngineId(), m_localItemId(0)
 {
 }
 
 QOrganizerItemMaemo5EngineLocalId::QOrganizerItemMaemo5EngineLocalId(quint32 itemId)
-    : QOrganizerItemEngineLocalId(), m_localItemId(itemId)
+    : QOrganizerItemEngineId(), m_localItemId(itemId)
 {
 }
 
@@ -89,11 +89,11 @@ QOrganizerItemMaemo5EngineLocalId::~QOrganizerItemMaemo5EngineLocalId()
 }
 
 QOrganizerItemMaemo5EngineLocalId::QOrganizerItemMaemo5EngineLocalId(const QOrganizerItemMaemo5EngineLocalId& other)
-    : QOrganizerItemEngineLocalId(), m_localItemId(other.m_localItemId)
+    : QOrganizerItemEngineId(), m_localItemId(other.m_localItemId)
 {
 }
 
-bool QOrganizerItemMaemo5EngineLocalId::isEqualTo(const QOrganizerItemEngineLocalId* other) const
+bool QOrganizerItemMaemo5EngineLocalId::isEqualTo(const QOrganizerItemEngineId* other) const
 {
     quint32 otherlocalItemId = static_cast<const QOrganizerItemMaemo5EngineLocalId*>(other)->m_localItemId;
     if (m_localItemId != otherlocalItemId)
@@ -101,7 +101,7 @@ bool QOrganizerItemMaemo5EngineLocalId::isEqualTo(const QOrganizerItemEngineLoca
     return true;
 }
 
-bool QOrganizerItemMaemo5EngineLocalId::isLessThan(const QOrganizerItemEngineLocalId* other) const
+bool QOrganizerItemMaemo5EngineLocalId::isLessThan(const QOrganizerItemEngineId* other) const
 {
     quint32 otherlocalItemId = static_cast<const QOrganizerItemMaemo5EngineLocalId*>(other)->m_localItemId;
     return (m_localItemId < otherlocalItemId);
@@ -120,7 +120,7 @@ QString QOrganizerItemMaemo5EngineLocalId::managerUri() const
     return QString::fromLatin1("qtorganizer:maemo5:");
 }
 
-QOrganizerItemEngineLocalId* QOrganizerItemMaemo5EngineLocalId::clone() const
+QOrganizerItemEngineId* QOrganizerItemMaemo5EngineLocalId::clone() const
 {
     QOrganizerItemMaemo5EngineLocalId *myClone = new QOrganizerItemMaemo5EngineLocalId;
     myClone->m_localItemId = m_localItemId;
@@ -158,17 +158,17 @@ uint QOrganizerItemMaemo5EngineLocalId::hash() const
 
 
 QOrganizerCollectionMaemo5EngineLocalId::QOrganizerCollectionMaemo5EngineLocalId()
-    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(0)
+    : QOrganizerCollectionEngineId(), m_localCollectionId(0)
 {
 }
 
 QOrganizerCollectionMaemo5EngineLocalId::QOrganizerCollectionMaemo5EngineLocalId(quint32 collectionId)
-    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(collectionId)
+    : QOrganizerCollectionEngineId(), m_localCollectionId(collectionId)
 {
 }
 
 QOrganizerCollectionMaemo5EngineLocalId::QOrganizerCollectionMaemo5EngineLocalId(const QOrganizerCollectionMaemo5EngineLocalId& other)
-    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(other.m_localCollectionId)
+    : QOrganizerCollectionEngineId(), m_localCollectionId(other.m_localCollectionId)
 {
 }
 
@@ -176,7 +176,7 @@ QOrganizerCollectionMaemo5EngineLocalId::~QOrganizerCollectionMaemo5EngineLocalI
 {
 }
 
-bool QOrganizerCollectionMaemo5EngineLocalId::isEqualTo(const QOrganizerCollectionEngineLocalId* other) const
+bool QOrganizerCollectionMaemo5EngineLocalId::isEqualTo(const QOrganizerCollectionEngineId* other) const
 {
     quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionMaemo5EngineLocalId*>(other)->m_localCollectionId;
     if (m_localCollectionId != otherlocalCollectionId)
@@ -184,7 +184,7 @@ bool QOrganizerCollectionMaemo5EngineLocalId::isEqualTo(const QOrganizerCollecti
     return true;
 }
 
-bool QOrganizerCollectionMaemo5EngineLocalId::isLessThan(const QOrganizerCollectionEngineLocalId* other) const
+bool QOrganizerCollectionMaemo5EngineLocalId::isLessThan(const QOrganizerCollectionEngineId* other) const
 {
     // order by collection, then by item in collection.
     quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionMaemo5EngineLocalId*>(other)->m_localCollectionId;
@@ -205,7 +205,7 @@ QString QOrganizerCollectionMaemo5EngineLocalId::managerUri() const
     return QString::fromLatin1("qtorganizer:maemo5:");
 }
 
-QOrganizerCollectionEngineLocalId* QOrganizerCollectionMaemo5EngineLocalId::clone() const
+QOrganizerCollectionEngineId* QOrganizerCollectionMaemo5EngineLocalId::clone() const
 {
     QOrganizerCollectionMaemo5EngineLocalId *myClone = new QOrganizerCollectionMaemo5EngineLocalId;
     myClone->m_localCollectionId = m_localCollectionId;
@@ -246,12 +246,12 @@ QOrganizerManagerEngine* QOrganizerItemMaemo5Factory::engine(const QMap<QString,
     return retn;
 }
 
-QOrganizerItemEngineLocalId* QOrganizerItemMaemo5Factory::createItemEngineLocalId() const
+QOrganizerItemEngineId* QOrganizerItemMaemo5Factory::createItemEngineLocalId() const
 {
     return new QOrganizerItemMaemo5EngineLocalId;
 }
 
-QOrganizerCollectionEngineLocalId* QOrganizerItemMaemo5Factory::createCollectionEngineLocalId() const
+QOrganizerCollectionEngineId* QOrganizerItemMaemo5Factory::createCollectionEngineLocalId() const
 {
     return new QOrganizerCollectionMaemo5EngineLocalId;
 }

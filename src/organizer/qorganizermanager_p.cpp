@@ -259,7 +259,7 @@ void QOrganizerManagerData::loadFactories()
 }
 
 /* Caller takes ownership of the id */
-QOrganizerItemEngineLocalId* QOrganizerManagerData::createEngineItemId(const QString& uri)
+QOrganizerItemEngineId* QOrganizerManagerData::createEngineItemId(const QString& uri)
 {
     QString managerName;
     QOrganizerManager::parseUri(uri, &managerName, NULL);
@@ -273,7 +273,7 @@ QOrganizerItemEngineLocalId* QOrganizerManagerData::createEngineItemId(const QSt
 }
 
 /* Caller takes ownership of the id */
-QOrganizerCollectionEngineLocalId* QOrganizerManagerData::createEngineCollectionId(const QString& uri)
+QOrganizerCollectionEngineId* QOrganizerManagerData::createEngineCollectionId(const QString& uri)
 {
     QString managerName;
     QOrganizerManager::parseUri(uri, &managerName, NULL);

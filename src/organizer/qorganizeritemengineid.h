@@ -51,17 +51,17 @@ class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
-class Q_ORGANIZER_EXPORT QOrganizerItemEngineLocalId: public QSharedData
+class Q_ORGANIZER_EXPORT QOrganizerItemEngineId: public QSharedData
 {
 public:
-    virtual ~QOrganizerItemEngineLocalId() {}
+    virtual ~QOrganizerItemEngineId() {}
 
-    virtual bool isEqualTo(const QOrganizerItemEngineLocalId* other) const = 0;
-    virtual bool isLessThan(const QOrganizerItemEngineLocalId* other) const = 0;
+    virtual bool isEqualTo(const QOrganizerItemEngineId* other) const = 0;
+    virtual bool isLessThan(const QOrganizerItemEngineId* other) const = 0;
 
     virtual uint engineLocalIdType() const = 0;
     virtual QString managerUri() const = 0;
-    virtual QOrganizerItemEngineLocalId* clone() const = 0;
+    virtual QOrganizerItemEngineId* clone() const = 0;
 
 #ifndef QT_NO_DEBUG_STREAM
     // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
@@ -77,7 +77,7 @@ public:
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemEngineLocalId), Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemEngineId), Q_MOVABLE_TYPE);
 
 
 #endif

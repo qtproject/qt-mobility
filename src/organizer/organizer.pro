@@ -19,7 +19,7 @@ include(engines/engines.pri)
 PUBLIC_HEADERS += \
     qorganizercollection.h \
     qorganizercollectionchangeset.h \
-    qorganizercollectionenginelocalid.h \
+    qorganizercollectionengineid.h \
     qorganizercollectionid.h \
     qorganizerabstractrequest.h \
     qorganizeritemchangeset.h \
@@ -30,7 +30,7 @@ PUBLIC_HEADERS += \
     qorganizeritemfilter.h \
     qorganizeritem.h \
     qorganizeritemid.h \
-    qorganizeritemenginelocalid.h \
+    qorganizeritemengineid.h \
     qorganizermanager.h \
     qorganizermanagerengine.h \
     qorganizermanagerenginefactory.h \
@@ -57,7 +57,7 @@ PRIVATE_HEADERS += \
 SOURCES += \
     qorganizercollection.cpp \
     qorganizercollectionchangeset.cpp \
-    qorganizercollectionenginelocalid.cpp \
+    qorganizercollectionengineid.cpp \
     qorganizercollectionid.cpp \
     qorganizerabstractrequest.cpp \
     qorganizeritemchangeset.cpp \
@@ -68,7 +68,7 @@ SOURCES += \
     qorganizeritemfetchhint.cpp \
     qorganizeritemfilter.cpp \
     qorganizeritemid.cpp \
-    qorganizeritemenginelocalid.cpp \
+    qorganizeritemengineid.cpp \
     qorganizermanager.cpp \
     qorganizermanagerengine.cpp \
     qorganizermanagerenginefactory.cpp \

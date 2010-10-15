@@ -61,7 +61,7 @@ Q_ORGANIZER_EXPORT QDebug& operator<<(QDebug& dbg, const QOrganizerCollectionId&
 #endif
 
 class QOrganizerManagerEngine;
-class QOrganizerCollectionEngineLocalId;
+class QOrganizerCollectionEngineId;
 
 class Q_ORGANIZER_EXPORT QOrganizerCollectionId
 {
@@ -69,7 +69,7 @@ public:
     QOrganizerCollectionId();
     ~QOrganizerCollectionId();
 
-    explicit QOrganizerCollectionId(QOrganizerCollectionEngineLocalId* engineId);
+    explicit QOrganizerCollectionId(QOrganizerCollectionEngineId* engineId);
     QOrganizerCollectionId(const QOrganizerCollectionId& other);
     QOrganizerCollectionId& operator=(const QOrganizerCollectionId& other);
 
@@ -82,7 +82,7 @@ public:
     QString managerUri() const;
 
 private:
-    QSharedDataPointer<QOrganizerCollectionEngineLocalId> d;
+    QSharedDataPointer<QOrganizerCollectionEngineId> d;
 
 #ifndef QT_NO_DEBUG_STREAM
     Q_ORGANIZER_EXPORT friend QDebug& operator<<(QDebug& dbg, const QOrganizerCollectionId& id);

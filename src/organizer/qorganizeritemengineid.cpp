@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qorganizeritemenginelocalid.h"
+#include "qorganizeritemengineid.h"
 
 /*!
   \class QOrganizerItemEngineLocalId

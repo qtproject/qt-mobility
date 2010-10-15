@@ -72,12 +72,12 @@
 #include "qorganizerabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 #include "qorganizerrecurrencerule.h"
-#include "qorganizeritemenginelocalid.h"
-#include "qorganizercollectionenginelocalid.h"
+#include "qorganizeritemengineid.h"
+#include "qorganizercollectionengineid.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemMemoryEngineLocalId : public QOrganizerItemEngineLocalId
+class QOrganizerItemMemoryEngineLocalId : public QOrganizerItemEngineId
 {
 public:
     QOrganizerItemMemoryEngineLocalId();
@@ -85,12 +85,12 @@ public:
     ~QOrganizerItemMemoryEngineLocalId();
     QOrganizerItemMemoryEngineLocalId(const QOrganizerItemMemoryEngineLocalId& other);
 
-    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const;
-    bool isLessThan(const QOrganizerItemEngineLocalId* other) const;
+    bool isEqualTo(const QOrganizerItemEngineId* other) const;
+    bool isLessThan(const QOrganizerItemEngineId* other) const;
 
     uint engineLocalIdType() const;
     QString managerUri() const;
-    QOrganizerItemEngineLocalId* clone() const;
+    QOrganizerItemEngineId* clone() const;
 
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;
@@ -107,7 +107,7 @@ private:
     friend class QOrganizerItemMemoryEngine;
 };
 
-class QOrganizerCollectionMemoryEngineLocalId : public QOrganizerCollectionEngineLocalId
+class QOrganizerCollectionMemoryEngineLocalId : public QOrganizerCollectionEngineId
 {
 public:
     QOrganizerCollectionMemoryEngineLocalId();
@@ -115,12 +115,12 @@ public:
     ~QOrganizerCollectionMemoryEngineLocalId();
     QOrganizerCollectionMemoryEngineLocalId(const QOrganizerCollectionMemoryEngineLocalId& other);
 
-    bool isEqualTo(const QOrganizerCollectionEngineLocalId* other) const;
-    bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const;
+    bool isEqualTo(const QOrganizerCollectionEngineId* other) const;
+    bool isLessThan(const QOrganizerCollectionEngineId* other) const;
 
     uint engineLocalIdType() const;
     QString managerUri() const;
-    QOrganizerCollectionEngineLocalId* clone() const;
+    QOrganizerCollectionEngineId* clone() const;
 
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;

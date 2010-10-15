@@ -66,8 +66,8 @@
 #include <QObject>
 
 #include "qorganizeritem.h"
-#include "qorganizeritemenginelocalid.h"
-#include "qorganizercollectionenginelocalid.h"
+#include "qorganizeritemengineid.h"
+#include "qorganizercollectionengineid.h"
 #include "qorganizermanager.h"
 #include "qorganizermanagerengine.h"
 #include "qorganizermanagerenginefactory.h"
@@ -91,7 +91,7 @@ const uint KSymbianEngineLocalIdType = 0xb038f9e;
 
 class OrganizerItemTransform; // forward declare transform class.
 class QOrganizerItemSymbianEngine; // forward declare symbian engine.
-class QOrganizerCollectionSymbianEngineLocalId : public QOrganizerCollectionEngineLocalId
+class QOrganizerCollectionSymbianEngineLocalId : public QOrganizerCollectionEngineId
 {
 public:
     QOrganizerCollectionSymbianEngineLocalId();
@@ -99,12 +99,12 @@ public:
     ~QOrganizerCollectionSymbianEngineLocalId();
     QOrganizerCollectionSymbianEngineLocalId(const QOrganizerCollectionSymbianEngineLocalId& other);
 
-    bool isEqualTo(const QOrganizerCollectionEngineLocalId* other) const;
-    bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const;
+    bool isEqualTo(const QOrganizerCollectionEngineId* other) const;
+    bool isLessThan(const QOrganizerCollectionEngineId* other) const;
 
     uint engineLocalIdType() const;
     QString managerUri() const;
-    QOrganizerCollectionEngineLocalId* clone() const;
+    QOrganizerCollectionEngineId* clone() const;
 
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;
@@ -120,7 +120,7 @@ private:
     friend class QOrganizerItemSymbianEngine;
 };
 
-class QOrganizerItemSymbianEngineLocalId : public QOrganizerItemEngineLocalId
+class QOrganizerItemSymbianEngineLocalId : public QOrganizerItemEngineId
 {
 public:
     QOrganizerItemSymbianEngineLocalId();
@@ -128,12 +128,12 @@ public:
     ~QOrganizerItemSymbianEngineLocalId();
     QOrganizerItemSymbianEngineLocalId(const QOrganizerItemSymbianEngineLocalId& other);
 
-    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const;
-    bool isLessThan(const QOrganizerItemEngineLocalId* other) const;
+    bool isEqualTo(const QOrganizerItemEngineId* other) const;
+    bool isLessThan(const QOrganizerItemEngineId* other) const;
 
     uint engineLocalIdType() const;
     QString managerUri() const;
-    QOrganizerItemEngineLocalId* clone() const;
+    QOrganizerItemEngineId* clone() const;
 
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;
@@ -168,8 +168,8 @@ public QOrganizerManagerEngineFactory
         const QMap<QString, QString>& parameters, 
         QOrganizerManager::Error*);
     QString managerName() const;
-    QOrganizerItemEngineLocalId* createItemEngineLocalId() const;
-    QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() const;
+    QOrganizerItemEngineId* createItemEngineLocalId() const;
+    QOrganizerCollectionEngineId* createCollectionEngineLocalId() const;
 };
 
 class QOrganizerItemSymbianEngineData : public QSharedData

@@ -95,12 +95,12 @@ QMap<QString, QOrganizerItemMemoryEngineData*> QOrganizerItemMemoryEngine::engin
   the precise implementation required may differ.
  */
 QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId()
-    : QOrganizerItemEngineLocalId(), m_localCollectionId(0), m_localItemId(0)
+    : QOrganizerItemEngineId(), m_localCollectionId(0), m_localItemId(0)
 {
 }
 
 QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId(quint32 collectionId, quint32 itemId)
-    : QOrganizerItemEngineLocalId(), m_localCollectionId(collectionId), m_localItemId(itemId)
+    : QOrganizerItemEngineId(), m_localCollectionId(collectionId), m_localItemId(itemId)
 {
 }
 
@@ -109,11 +109,11 @@ QOrganizerItemMemoryEngineLocalId::~QOrganizerItemMemoryEngineLocalId()
 }
 
 QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId(const QOrganizerItemMemoryEngineLocalId& other)
-    : QOrganizerItemEngineLocalId(), m_localCollectionId(other.m_localCollectionId), m_localItemId(other.m_localItemId)
+    : QOrganizerItemEngineId(), m_localCollectionId(other.m_localCollectionId), m_localItemId(other.m_localItemId)
 {
 }
 
-bool QOrganizerItemMemoryEngineLocalId::isEqualTo(const QOrganizerItemEngineLocalId* other) const
+bool QOrganizerItemMemoryEngineLocalId::isEqualTo(const QOrganizerItemEngineId* other) const
 {
     quint32 otherlocalCollectionId = static_cast<const QOrganizerItemMemoryEngineLocalId*>(other)->m_localCollectionId;
     quint32 otherlocalItemId = static_cast<const QOrganizerItemMemoryEngineLocalId*>(other)->m_localItemId;
@@ -124,7 +124,7 @@ bool QOrganizerItemMemoryEngineLocalId::isEqualTo(const QOrganizerItemEngineLoca
     return true;
 }
 
-bool QOrganizerItemMemoryEngineLocalId::isLessThan(const QOrganizerItemEngineLocalId* other) const
+bool QOrganizerItemMemoryEngineLocalId::isLessThan(const QOrganizerItemEngineId* other) const
 {
     // order by collection, then by item in collection.
     quint32 otherlocalCollectionId = static_cast<const QOrganizerItemMemoryEngineLocalId*>(other)->m_localCollectionId;
@@ -149,7 +149,7 @@ QString QOrganizerItemMemoryEngineLocalId::managerUri() const
     return QString::fromLatin1("qtorganizer:memory:");
 }
 
-QOrganizerItemEngineLocalId* QOrganizerItemMemoryEngineLocalId::clone() const
+QOrganizerItemEngineId* QOrganizerItemMemoryEngineLocalId::clone() const
 {
     QOrganizerItemMemoryEngineLocalId *myClone = new QOrganizerItemMemoryEngineLocalId;
     myClone->m_localCollectionId = m_localCollectionId;
@@ -199,17 +199,17 @@ uint QOrganizerItemMemoryEngineLocalId::hash() const
   the precise implementation required may differ.
  */
 QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId()
-    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(0)
+    : QOrganizerCollectionEngineId(), m_localCollectionId(0)
 {
 }
 
 QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId(quint32 collectionId)
-    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(collectionId)
+    : QOrganizerCollectionEngineId(), m_localCollectionId(collectionId)
 {
 }
 
 QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId(const QOrganizerCollectionMemoryEngineLocalId& other)
-    : QOrganizerCollectionEngineLocalId(), m_localCollectionId(other.m_localCollectionId)
+    : QOrganizerCollectionEngineId(), m_localCollectionId(other.m_localCollectionId)
 {
 }
 
@@ -217,7 +217,7 @@ QOrganizerCollectionMemoryEngineLocalId::~QOrganizerCollectionMemoryEngineLocalI
 {
 }
 
-bool QOrganizerCollectionMemoryEngineLocalId::isEqualTo(const QOrganizerCollectionEngineLocalId* other) const
+bool QOrganizerCollectionMemoryEngineLocalId::isEqualTo(const QOrganizerCollectionEngineId* other) const
 {
     quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionMemoryEngineLocalId*>(other)->m_localCollectionId;
     if (m_localCollectionId != otherlocalCollectionId)
@@ -225,7 +225,7 @@ bool QOrganizerCollectionMemoryEngineLocalId::isEqualTo(const QOrganizerCollecti
     return true;
 }
 
-bool QOrganizerCollectionMemoryEngineLocalId::isLessThan(const QOrganizerCollectionEngineLocalId* other) const
+bool QOrganizerCollectionMemoryEngineLocalId::isLessThan(const QOrganizerCollectionEngineId* other) const
 {
     // order by collection, then by item in collection.
     quint32 otherlocalCollectionId = static_cast<const QOrganizerCollectionMemoryEngineLocalId*>(other)->m_localCollectionId;
@@ -246,7 +246,7 @@ QString QOrganizerCollectionMemoryEngineLocalId::managerUri() const
     return QString::fromLatin1("qtorganizer:memory:");
 }
 
-QOrganizerCollectionEngineLocalId* QOrganizerCollectionMemoryEngineLocalId::clone() const
+QOrganizerCollectionEngineId* QOrganizerCollectionMemoryEngineLocalId::clone() const
 {
     QOrganizerCollectionMemoryEngineLocalId *myClone = new QOrganizerCollectionMemoryEngineLocalId;
     myClone->m_localCollectionId = m_localCollectionId;

@@ -40,14 +40,14 @@
 ****************************************************************************/
 
 #include "qorganizeritemid.h"
-#include "qorganizeritemenginelocalid.h"
+#include "qorganizeritemengineid.h"
 #include "qorganizermanager_p.h"
 #include <QHash>
 #include <QDebug>
 #include <QDataStream>
 
 #if !defined(Q_CC_MWERKS)
-template<> QTM_PREPEND_NAMESPACE(QOrganizerItemEngineLocalId) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QOrganizerItemEngineLocalId)>::clone()
+template<> QTM_PREPEND_NAMESPACE(QOrganizerItemEngineId) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QOrganizerItemEngineId)>::clone()
 {
     return d ? d->clone() : 0;
 }
@@ -82,7 +82,7 @@ QOrganizerItemId::QOrganizerItemId()
   will delete it when the local id goes out of scope.  Engine implementors must not
   delete the \a engineItemId or undefined behaviour will occur.
  */
-QOrganizerItemId::QOrganizerItemId(QOrganizerItemEngineLocalId* engineItemId)
+QOrganizerItemId::QOrganizerItemId(QOrganizerItemEngineId* engineItemId)
     : d(engineItemId)
 {
 }

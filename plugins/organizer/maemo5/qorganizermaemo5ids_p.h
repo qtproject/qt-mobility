@@ -43,8 +43,8 @@
 #define QORGANIZERMAEMO5IDS_P_H
 
 #include "qtorganizer.h"
-#include "qorganizeritemenginelocalid.h"
-#include "qorganizercollectionenginelocalid.h"
+#include "qorganizeritemengineid.h"
+#include "qorganizercollectionengineid.h"
 
 QTM_USE_NAMESPACE
 
@@ -53,7 +53,7 @@ class OrganizerItemTransform;     // forward declare maemo5 transform.
 class QOrganizerItemMaemo5Engine; // forward declare maemo5 engine.
 class OrganizerAsynchProcess;     // forward declare maemo5 asynchronous process.
 
-class QOrganizerCollectionMaemo5EngineLocalId : public QOrganizerCollectionEngineLocalId
+class QOrganizerCollectionMaemo5EngineLocalId : public QOrganizerCollectionEngineId
 {
 public:
     QOrganizerCollectionMaemo5EngineLocalId();
@@ -61,12 +61,12 @@ public:
     ~QOrganizerCollectionMaemo5EngineLocalId();
     QOrganizerCollectionMaemo5EngineLocalId(const QOrganizerCollectionMaemo5EngineLocalId& other);
 
-    bool isEqualTo(const QOrganizerCollectionEngineLocalId* other) const;
-    bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const;
+    bool isEqualTo(const QOrganizerCollectionEngineId* other) const;
+    bool isLessThan(const QOrganizerCollectionEngineId* other) const;
 
     uint engineLocalIdType() const;
     QString managerUri() const;
-    QOrganizerCollectionEngineLocalId* clone() const;
+    QOrganizerCollectionEngineId* clone() const;
 
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;
@@ -82,7 +82,7 @@ public:
     friend class OrganizerAsynchProcess;
 };
 
-class QOrganizerItemMaemo5EngineLocalId : public QOrganizerItemEngineLocalId
+class QOrganizerItemMaemo5EngineLocalId : public QOrganizerItemEngineId
 {
 public:
     QOrganizerItemMaemo5EngineLocalId();
@@ -90,12 +90,12 @@ public:
     ~QOrganizerItemMaemo5EngineLocalId();
     QOrganizerItemMaemo5EngineLocalId(const QOrganizerItemMaemo5EngineLocalId& other);
 
-    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const;
-    bool isLessThan(const QOrganizerItemEngineLocalId* other) const;
+    bool isEqualTo(const QOrganizerItemEngineId* other) const;
+    bool isLessThan(const QOrganizerItemEngineId* other) const;
 
     uint engineLocalIdType() const;
     QString managerUri() const;
-    QOrganizerItemEngineLocalId* clone() const;
+    QOrganizerItemEngineId* clone() const;
 
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;

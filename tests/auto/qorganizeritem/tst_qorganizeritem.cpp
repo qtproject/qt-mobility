@@ -43,7 +43,7 @@
 
 #include "qtorganizer.h"
 #include "qorganizeritemid.h"
-#include "qorganizeritemenginelocalid.h"
+#include "qorganizeritemengineid.h"
 #include <QSet>
 
 //TESTED_COMPONENT=src/organizer
@@ -470,14 +470,14 @@ void tst_QOrganizerItem::emptiness()
     QVERIFY(oi.isEmpty() == true); // type doesn't affect emptiness
 }
 
-class BasicItemLocalId : public QOrganizerItemEngineLocalId
+class BasicItemLocalId : public QOrganizerItemEngineId
 {
 public:
     BasicItemLocalId(uint id) : m_id(id) {}
-    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const {
+    bool isEqualTo(const QOrganizerItemEngineId* other) const {
         return m_id == static_cast<const BasicItemLocalId*>(other)->m_id;
     }
-    bool isLessThan(const QOrganizerItemEngineLocalId* other) const {
+    bool isLessThan(const QOrganizerItemEngineId* other) const {
         return m_id < static_cast<const BasicItemLocalId*>(other)->m_id;
     }
     uint engineLocalIdType() const {
@@ -486,7 +486,7 @@ public:
     QString managerUri() const {
         return QString::fromLatin1("qtorganizer:basicId:");
     }
-    QOrganizerItemEngineLocalId* clone() const {
+    QOrganizerItemEngineId* clone() const {
         BasicItemLocalId* cloned = new BasicItemLocalId(m_id);
         return cloned;
     }

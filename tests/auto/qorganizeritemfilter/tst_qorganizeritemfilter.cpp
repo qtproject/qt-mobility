@@ -42,7 +42,7 @@
 #include <QMetaType>
 
 #include "qtorganizer.h"
-#include "qorganizeritemenginelocalid.h"
+#include "qorganizeritemengineid.h"
 
 //TESTED_COMPONENT=src/organizer
 //TESTED_CLASS=
@@ -86,20 +86,20 @@ private slots:
     void sortTraits();
 };
 
-class BasicItemLocalId : public QOrganizerItemEngineLocalId
+class BasicItemLocalId : public QOrganizerItemEngineId
 {
 public:
     BasicItemLocalId(uint id) : m_id(id) {}
-    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const {
+    bool isEqualTo(const QOrganizerItemEngineId* other) const {
         return m_id == static_cast<const BasicItemLocalId*>(other)->m_id;
     }
-    bool isLessThan(const QOrganizerItemEngineLocalId* other) const {
+    bool isLessThan(const QOrganizerItemEngineId* other) const {
         return m_id < static_cast<const BasicItemLocalId*>(other)->m_id;
     }
     uint engineLocalIdType() const {
         return 0;
     }
-    QOrganizerItemEngineLocalId* clone() const {
+    QOrganizerItemEngineId* clone() const {
         BasicItemLocalId* cloned = new BasicItemLocalId(m_id);
         return cloned;
     }
