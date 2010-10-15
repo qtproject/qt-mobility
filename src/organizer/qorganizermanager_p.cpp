@@ -259,12 +259,8 @@ void QOrganizerManagerData::loadFactories()
 }
 
 /* Caller takes ownership of the id */
-QOrganizerItemEngineId* QOrganizerManagerData::createEngineItemId(const QString& managerUri, const QString& engineIdString)
+QOrganizerItemEngineId* QOrganizerManagerData::createEngineItemId(const QString& managerName, const QMap<QString, QString>& parameters, const QString& engineIdString)
 {
-    QString managerName;
-    QMap<QString, QString> parameters;
-    QOrganizerManager::parseUri(managerUri, &managerName, &parameters);
-
     if (managerName == QLatin1String("memory"))
         return new QOrganizerItemMemoryEngineId(engineIdString);
 
@@ -274,12 +270,8 @@ QOrganizerItemEngineId* QOrganizerManagerData::createEngineItemId(const QString&
 }
 
 /* Caller takes ownership of the id */
-QOrganizerCollectionEngineId* QOrganizerManagerData::createEngineCollectionId(const QString& managerUri, const QString& engineIdString)
+QOrganizerCollectionEngineId* QOrganizerManagerData::createEngineCollectionId(const QString& managerName, const QMap<QString, QString>& parameters, const QString& engineIdString)
 {
-    QString managerName;
-    QMap<QString, QString> parameters;
-    QOrganizerManager::parseUri(managerUri, &managerName, &parameters);
-
     if (managerName == QLatin1String("memory"))
         return new QOrganizerCollectionMemoryEngineId(engineIdString);
 

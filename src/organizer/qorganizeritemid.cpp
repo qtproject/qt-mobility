@@ -345,8 +345,7 @@ QOrganizerItemId QOrganizerItemId::fromString(const QString& idString)
     if (!parseIdString(idString, &managerName, &params, &engineIdString))
         return QOrganizerItemId(); // invalid idString given.
 
-    QString managerUri = QOrganizerManager::buildUri(managerName, params);
-    QOrganizerItemEngineId* engineId = QOrganizerManagerData::createEngineItemId(managerUri, engineIdString);
+    QOrganizerItemEngineId* engineId = QOrganizerManagerData::createEngineItemId(managerName, params, engineIdString);
     return QOrganizerItemId(engineId);
 }
 
