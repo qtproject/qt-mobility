@@ -842,6 +842,8 @@ QString QOrganizerManager::managerUri() const
 QList<QOrganizerItemId> QOrganizerManager::extractIds(const QList<QOrganizerItem>& items)
 {
     QList<QOrganizerItemId> ids;
+    ids.reserve(items.count());
+
     foreach(const QOrganizerItem& item, items)
         ids.append(item.id());
     return ids;
