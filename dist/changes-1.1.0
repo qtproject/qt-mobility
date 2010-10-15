@@ -130,9 +130,11 @@ QtMessaging
  - Symbian, fix keepintouch searching doesn't stop, MOBILITY-1418
  - Symbian, fix MMS message size limit not documented, MOBILITY-1224
  - Symbian, fix unable to send Chinese language SMS, MOBILITY-1168, QTMOBILITY-433
+ - Symbian, fix hardcoded paths to moc files, MOBILITY-1510
  - Symbian, MTM, send status signaling improved, MOBILITY-1148
  - Symbian^3, FreeStyle, fix backend is not thread safe, MOBILITY-1349
  - Symbian^3, fix keepintouch example crashes on exit, MOBILITY-1417
+ - Symbian^3, queryMessage crashes fixed, MOBILITY-1479, QTMOBILITY-535
 
 QtMultimediaKit
 ------
