@@ -46,7 +46,7 @@
 
 QOrganizerItemFilter QDeclarativeOrganizerItemLocalIdFilter::filter() const
 {
-    QOrganizerItemLocalIdFilter f;
+    QOrganizerItemIdFilter f;
     QList<QOrganizerItemId> ids;
 
     foreach(const QVariant& id, m_ids) {

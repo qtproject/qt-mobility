@@ -186,7 +186,7 @@ QOrganizerItem QDeclarativeOrganizerItemMetaObject::item()
 
 uint QDeclarativeOrganizerItemMetaObject::localId() const
 {
-    return qHash(m_item.localId());
+    return qHash(m_item.id());
 }
 
 uint QDeclarativeOrganizerItemMetaObject::itemId() const
