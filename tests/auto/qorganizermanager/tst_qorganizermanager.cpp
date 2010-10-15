@@ -1576,19 +1576,22 @@ void tst_QOrganizerManager::memoryManager()
     QOrganizerItemDisplayLabel c1dl;
     c1dl.setLabel("c1dl");
     c.saveDetail(&c1dl);
-    m1.saveItem(&c);
+    QVERIFY(m1.saveItem(&c));
     c.setId(QOrganizerItemId());
     QOrganizerItem c2;
     QOrganizerItemDisplayLabel c2dl = c2.detail(QOrganizerItemDisplayLabel::DefinitionName);
     c2 = c;
     c2dl.setLabel("c2dl");
     c2.saveDetail(&c2dl);
-    m2.saveItem(&c2);            // save c2 first; c will be given a higher id
-    m2.saveItem(&c);             // save c to m2
+    c2.setCollectionId(QOrganizerCollectionId());
+    c.setCollectionId(QOrganizerCollectionId());
+    QVERIFY(m2.saveItem(&c2));            // save c2 first; c will be given a higher id
+    QVERIFY(m2.saveItem(&c));             // save c to m2
     c.setId(QOrganizerItemId());
     c1dl.setLabel("c3dl");
     c.saveDetail(&c1dl);
-    m3.saveItem(&c);
+    c.setCollectionId(QOrganizerCollectionId());
+    QVERIFY(m3.saveItem(&c));
 
     /* test that m1 != m2 != m3 and that m3 == m4 */
 
@@ -2542,6 +2545,7 @@ void tst_QOrganizerManager::dataSerialization()
         QString inString;
         inBufferStream >> inString;
         QOrganizerItemId id = QOrganizerItemId::fromString(inString);
+
         QVERIFY(id == event.id());
     }
 }

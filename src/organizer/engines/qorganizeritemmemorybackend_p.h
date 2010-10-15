@@ -87,7 +87,7 @@ class Q_ORGANIZER_MEMORYENGINE_EXPORT QOrganizerItemMemoryEngineId : public QOrg
 {
 public:
     QOrganizerItemMemoryEngineId();
-    QOrganizerItemMemoryEngineId(quint32 collectionId, quint32 itemId);
+    QOrganizerItemMemoryEngineId(quint32 collectionId, quint32 itemId, const QString& managerUri);
     ~QOrganizerItemMemoryEngineId();
     QOrganizerItemMemoryEngineId(const QOrganizerItemMemoryEngineId& other);
     QOrganizerItemMemoryEngineId(const QString& idString);
@@ -108,6 +108,7 @@ public:
 private:
     quint32 m_collectionId;
     quint32 m_itemId;
+    QString m_managerUri;
     friend class QOrganizerItemMemoryEngine;
 };
 
@@ -115,7 +116,7 @@ class Q_ORGANIZER_MEMORYENGINE_EXPORT QOrganizerCollectionMemoryEngineId : publi
 {
 public:
     QOrganizerCollectionMemoryEngineId();
-    QOrganizerCollectionMemoryEngineId(quint32 collectionId);
+    QOrganizerCollectionMemoryEngineId(quint32 collectionId, const QString& managerUri);
     ~QOrganizerCollectionMemoryEngineId();
     QOrganizerCollectionMemoryEngineId(const QOrganizerCollectionMemoryEngineId& other);
     QOrganizerCollectionMemoryEngineId(const QString& idString);
@@ -135,6 +136,7 @@ public:
 
 private:
     quint32 m_collectionId;
+    QString m_managerUri;
     friend class QOrganizerItemMemoryEngine;
 };
 
@@ -161,6 +163,7 @@ public:
     quint32 m_nextOrganizerItemId; // the m_itemId portion of a QOrganizerItemMemoryEngineId.
     quint32 m_nextOrganizerCollectionId; // the m_collectionId portion of a QOrganizerCollectionMemoryEngineId.
     bool m_anonymous;                              // Is this backend ever shared?
+    QString m_managerUri;                        // for faster lookup.
 
     void emitSharedSignals(QOrganizerItemChangeSet* cs)
     {
