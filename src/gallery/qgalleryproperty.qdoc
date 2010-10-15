@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 /*!
-    \struct QGalleryProperty
+    \class QGalleryProperty
 
     \inmodule QtGallery
 

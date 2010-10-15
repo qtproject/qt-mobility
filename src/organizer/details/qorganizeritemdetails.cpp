@@ -787,7 +787,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
 */
 
 /*!
-   \fn setRepetition(int count, int delaySeconds)
+   \fn QOrganizerItemReminder::setRepetition(int count, int delaySeconds)
 
    Sets the number of repetitions of the reminderto \a count, and the delay (in seconds)
    between each repetition of the reminder to \a delaySeconds.
@@ -1181,7 +1181,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldTimeSpecified, "TimeSpecified"
  */
 
 /*!
-    \fn QOrganizerTodoTimeRange::isTimeSpecified() const
+    \fn QOrganizerTodoTime::isTimeSpecified()
     Returns true if a specific time was specified for the todo.
     Returns false if the todo is an all-day todo.
  */

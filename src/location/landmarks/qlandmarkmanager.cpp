@@ -184,7 +184,7 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
 */
 
 /*!
-    \enum QLandmarkManager::LandmarkFeature
+    \enum QLandmarkManager::ManagerFeature
     Defines the possible features the landmark manager can support.
     \value ImportExportFeature The manager supports import and/or export operations
     \value NotificationsFeature The manager will emit notification signals when landmarks/categories have

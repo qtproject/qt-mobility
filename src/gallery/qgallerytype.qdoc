@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 /*!
-    \struct QGalleryType
+    \class QGalleryType
 
     \ingroup gallery
 
