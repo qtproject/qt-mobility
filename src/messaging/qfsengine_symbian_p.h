@@ -305,8 +305,6 @@ private: // Data
     QMessageFilterPrivate::SortedMessageFilterList m_filterList;
     QMessageIdList m_excludeIdList;
 
-    MEmailClientApi* m_clientApi;
-    
     CEmailInterfaceFactory* m_factory; 
     MEmailInterface* m_interfacePtr; 
     bool m_receiveNewMessages;
