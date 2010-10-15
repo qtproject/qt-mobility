@@ -302,6 +302,10 @@ void tst_QContactDetails::birthday()
     QCOMPARE(b1.value<QDate>(QContactBirthday::FieldBirthday), currDate);
     QCOMPARE(b1.value<QDateTime>(QContactBirthday::FieldBirthday), currDateTime);
 
+    b1.setCalendarId("1234");
+    QCOMPARE(b1.calendarId(), QString("1234"));
+    QCOMPARE(b1.value(QContactBirthday::FieldCalendarId), QString("1234"));
+
     // test property add
     QVERIFY(c.saveDetail(&b1));
     QCOMPARE(c.details(QContactBirthday::DefinitionName).count(), 1);
@@ -310,9 +314,11 @@ void tst_QContactDetails::birthday()
     // test property update
     b1.setValue("label","label1");
     b1.setDate(currDate.addDays(3));
+    b1.setCalendarId("12345");
     QVERIFY(c.saveDetail(&b1));
     QCOMPARE(c.details(QContactBirthday::DefinitionName).value(0).value("label"), QString("label1"));
     QCOMPARE(c.details(QContactBirthday::DefinitionName).value(0).value<QDate>(QContactBirthday::FieldBirthday), currDate.addDays(3));
+    QCOMPARE(c.details(QContactBirthday::DefinitionName).value(0).value(QContactBirthday::FieldCalendarId), QString("12345"));
 
     // test property remove
     QVERIFY(c.removeDetail(&b1));

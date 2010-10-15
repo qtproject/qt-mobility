@@ -57,7 +57,7 @@ public:
 
     QDeclarativeContactDetailFilter(QObject* parent = 0)
         :QDeclarativeContactFilter(parent),
-          m_detailType(QDeclarativeContactDetail::ContactCustomizedDetail),
+          m_detailType(QDeclarativeContactDetail::Customized),
           m_fieldType(-1)
     {
     }

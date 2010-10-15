@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     QApplication application(argc, argv);
     const QString mainQmlApp = QLatin1String("qrc:/declarative-camera.qml");
     QDeclarativeView view;
-#if !defined(QT_NO_OPENGL) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+#if !defined(QT_NO_OPENGL) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6) && !defined(Q_WS_S60)
     view.setViewport(new QGLWidget);
 #endif
     view.setSource(QUrl(mainQmlApp));

@@ -474,18 +474,6 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
     }
     }//switch closure
 
-    int resultcount = result.size();
-    // if no search data found return empty list
-    if (resultcount <= 0)
-        return result;
-
-    if (offset > resultcount) {
-        *error = QLandmarkManager::DoesNotExistError;
-        *errorString = QString("No Landmark data found.");
-
-        return QList<QLandmarkId> ();
-    }
-
     sortFetchedLmIds(limit, offset, sortOrders, result, filter.type(), error, errorString);
 
     return result;
@@ -4638,14 +4626,9 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
     QLandmarkFilter::FilterType filterType, QLandmarkManager::Error *error, QString *errorString) const
 {
     // if no search data found return empty list
-    if (&landmarkIds == 0 || landmarkIds.isEmpty()) {
-        *error = QLandmarkManager::DoesNotExistError;
-        *errorString = QString("No landmarks found.");
-        return false;
-    }
-    if (offset >= landmarkIds.size()) {
-        *error = QLandmarkManager::DoesNotExistError;
-        *errorString = QString("No landmarks found, from provided offset value.");
+    if (&landmarkIds == 0 || landmarkIds.isEmpty() || offset >= landmarkIds.size()) {
+        landmarkIds.clear();
+        return true;
     }
 
     //fetchRequired will prevent multiple fetches from database

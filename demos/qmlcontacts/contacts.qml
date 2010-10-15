@@ -156,7 +156,8 @@ Item {
                                 Text {
                                     id: nameTxt
                                     y: 8;
-                                    text: model.contact.displayLabel.label
+                                    //text: model.contact.displayLabel
+                                    text: model.contact.name.firstName
                                     color: "white"
                                 }
                             }
@@ -170,11 +171,11 @@ Item {
 
                                 Column {
                                     Text {
-                                        text: model.contact.displayLabel.label
+                                        text: model.contact.displayLabel
                                         color: details.textColor;
                                     }
                                     Text {
-                                        text: model.contact.presence.state + ":" + model.contact.presence.stateText
+                                        text: "State:" + (model.contact.presence.state == Presence.Unknown ? "Unknown" : model.contact.presence.stateText)
                                         color: details.textColor;
                                     }
                                 }
