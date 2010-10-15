@@ -69,7 +69,7 @@
 #include "qorganizermanagerengine.h"
 #include "qorganizermanagerenginefactory.h"
 #include "qorganizeritemdetaildefinition.h"
-#include "qorganizeritemabstractrequest.h"
+#include "qorganizerabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 
 #include "engines/qorganizeritemmemorybackend_p.h"
@@ -82,9 +82,9 @@ class QOrganizerItemSimulatorFactory : public QObject, public QOrganizerManagerE
   Q_INTERFACES(QtMobility::QOrganizerManagerEngineFactory)
   public:
     QOrganizerManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error*);
-    QOrganizerItemEngineLocalId* createItemEngineLocalId() const;
-    QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() const;
-    QString managerName() const;
+    QOrganizerItemEngineId* createItemEngineId(const QMap<QString, QString>& parameters, const QString& engineIdString) const;
+    QOrganizerCollectionEngineId* createCollectionEngineId(const QMap<QString, QString>& parameters, const QString& engineIdString) const;
+    QString managerName() const;  
 };
 
 class QOrganizerSimulatorEngine : public QOrganizerItemMemoryEngine
@@ -96,14 +96,14 @@ public:
     int managerVersion() const;
 
     bool saveCollection(QOrganizerCollection *collection, QOrganizerManager::Error *error);
-    bool removeCollection(const QOrganizerCollectionLocalId &collectionId, QOrganizerManager::Error *error);
+    bool removeCollection(const QOrganizerCollectionId &collectionId, QOrganizerManager::Error *error);
 
 protected:
     QOrganizerSimulatorEngine(QOrganizerItemMemoryEngineData* data);
 
 protected:
     bool saveItem(QOrganizerItem* theOrganizerItem, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
-    bool removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
+    bool removeItem(const QOrganizerItemId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
     bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
     bool removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error);
 

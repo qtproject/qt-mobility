@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qorganizerdata_simulator_p.h"
-#include "qorganizeritemenginelocalid.h"
+#include "qorganizeritemengineid.h"
 #include "engines/qorganizeritemmemorybackend_p.h"
 
 #include <QtCore/QDataStream>

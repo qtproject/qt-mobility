@@ -77,29 +77,31 @@ QOrganizerManagerEngine* QOrganizerItemSimulatorFactory::engine(const QMap<QStri
     return new QOrganizerSimulatorEngine(data);
 }
 
-QOrganizerItemEngineLocalId* QOrganizerItemSimulatorFactory::createItemEngineLocalId() const
+
+QOrganizerItemEngineId* QOrganizerItemSimulatorFactory::createItemEngineId(const QMap<QString, QString>& parameters, const QString& engineIdString) const
 {
-    return new QOrganizerItemMemoryEngineLocalId;
+    Q_UNUSED(parameters); // XXX This should be used
+    return new QOrganizerItemMemoryEngineId(engineIdString);
 }
 
-QOrganizerCollectionEngineLocalId* QOrganizerItemSimulatorFactory::createCollectionEngineLocalId() const
+QOrganizerCollectionEngineId* createCollectionEngineId(const QMap<QString, QString>& parameters, const QString& engineIdString) const
 {
-    /* TODO - return the localid specific to the engine */
-    return new QOrganizerCollectionMemoryEngineLocalId;
+    Q_UNUSED(parameters);
+    return new QOrganizerItemMemoryEngineId(engineIdString);
 }
 
 QString QOrganizerItemSimulatorFactory::managerName() const
 {
-    /* TODO - put your engine name here */
-    return QString("simulator");
+    static const QString name(QLatin1String("simulator"));
+    return name;
 }
 Q_EXPORT_PLUGIN2(qtorganizer_simulator, QOrganizerItemSimulatorFactory);
 
 
 QString QOrganizerSimulatorEngine::managerName() const
 {
-    /* TODO - put your engine name here */
-    return QLatin1String("simulator");
+    static const QString name(QLatin1String("simulator"));
+    return name;
 }
 
 int QOrganizerSimulatorEngine::managerVersion() const
