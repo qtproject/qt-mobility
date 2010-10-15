@@ -55,16 +55,44 @@ QOrganizerManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QStrin
     return ret;
 }
 
-QOrganizerItemEngineLocalId* QOrganizerItemSkeletonFactory::createItemEngineLocalId() const
+QOrganizerItemEngineLocalId* QOrganizerItemSkeletonFactory::createItemEngineLocalId(const QString& idString) const
 {
-    /* TODO - instantiate your engine-specific item id in this function */
-    return new QOrganizerItemSkeletonEngineLocalId;
+    /*
+      TODO
+
+      Instantiate your engine-specific item id in this function.
+
+      If idString is not empty, then you should deserialize the idString
+      (the opposite of your QOrganizerItemEngineLocalId derived-class'
+      toString() function), otherwise you should instantiate an empty
+      engine-specific collection id.
+
+      This function allows clients to deserialize serialized ids from
+      your engine.
+     */
+    QOrganizerItemSkeletonEngineLocalId* retn = new QOrganizerItemSkeletonEngineLocalId;
+    if (!idString.isEmpty())
+        retn->m_localItemId = idString.toUInt();
 }
 
-QOrganizerCollectionEngineLocalId* QOrganizerItemSkeletonFactory::createCollectionEngineLocalId() const
+QOrganizerCollectionEngineLocalId* QOrganizerItemSkeletonFactory::createCollectionEngineLocalId(const QString& idString) const
 {
-    /* TODO - instantiate your engine-specific collection id in this function */
-    return new QOrganizerCollectionSkeletonEngineLocalId;
+    /*
+      TODO
+
+      Instantiate your engine-specific collection id in this function.
+
+      If idString is not empty, then you should deserialize the idString
+      (the opposite of your QOrganizerCollectionEngineLocalId derived-class'
+      toString() function), otherwise you should instantiate an empty
+      engine-specific collection id.
+
+      This function allows clients to deserialize serialized ids from
+      your engine.
+     */
+    QOrganizerCollectionSkeletonEngineLocalId* retn = new QOrganizerCollectionSkeletonEngineLocalId;
+    if (!idString.isEmpty())
+        retn->m_localCollectionId = idString.toUInt();
 }
 
 QString QOrganizerItemSkeletonFactory::managerName() const
@@ -231,8 +259,7 @@ QDebug& QOrganizerItemSkeletonEngineLocalId::debugStreamOut(QDebug& dbg) const
 }
 #endif
 
-#ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerItemSkeletonEngineLocalId::dataStreamOut(QDataStream& out) const
+QString QOrganizerItemSkeletonEngineLocalId::toString() const
 {
     /*
       TODO
@@ -242,39 +269,10 @@ QDataStream& QOrganizerItemSkeletonEngineLocalId::dataStreamOut(QDataStream& out
 
       An example implementation for the case where an item can be uniquely identified
       with just a single quint32 is given below.
-
-      Note that you must include the #ifndef QT_NO_DATASTREAM preprocessor
-      directive block in order to ensure compilation in environments where that
-      directive is defined.
      */
 
-    out << m_localItemId;
-    return out;
+    return QString::number(m_localItemId);
 }
-
-QDataStream& QOrganizerItemSkeletonEngineLocalId::dataStreamIn(QDataStream& in)
-{
-    /*
-      TODO
-
-      In order to allow clients to deserialize QOrganizerItemId's, you must implement
-      this function.  If the dataStreamOut() function is implemented as:
-          out << dataMemberOne << dataMemberTwo;
-      then this function should be implemented as:
-          in >> dataMemberOne >> dataMemberTwo;
-
-      An example implementation for the case where an item can be uniquely identified
-      with just a single quint32 is given below.
-
-      Note that you must include the #ifndef QT_NO_DATASTREAM preprocessor
-      directive block in order to ensure compilation in environments where that
-      directive is defined.
-     */
-
-    in >> m_localItemId;
-    return in;
-}
-#endif
 
 uint QOrganizerItemSkeletonEngineLocalId::hash() const
 {
@@ -454,8 +452,7 @@ QDebug& QOrganizerCollectionSkeletonEngineLocalId::debugStreamOut(QDebug& dbg) c
 }
 #endif
 
-#ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerCollectionSkeletonEngineLocalId::dataStreamOut(QDataStream& out) const
+QString QOrganizerCollectionSkeletonEngineLocalId::toString() const
 {
     /*
       TODO
@@ -465,39 +462,10 @@ QDataStream& QOrganizerCollectionSkeletonEngineLocalId::dataStreamOut(QDataStrea
 
       An example implementation for the case where a collection can be uniquely identified
       with just a single quint32 is given below.
-
-      Note that you must include the #ifndef QT_NO_DATASTREAM preprocessor
-      directive block in order to ensure compilation in environments where that
-      directive is defined.
      */
 
-    out << m_localCollectionId;
-    return out;
+    return QString::number(m_localCollectionId);
 }
-
-QDataStream& QOrganizerCollectionSkeletonEngineLocalId::dataStreamIn(QDataStream& in)
-{
-    /*
-      TODO
-
-      In order to allow clients to deserialize QOrganizerCollectionId's, you must implement
-      this function.  If the dataStreamOut() function is implemented as:
-          out << dataMemberOne << dataMemberTwo;
-      then this function should be implemented as:
-          in >> dataMemberOne >> dataMemberTwo;
-
-      An example implementation for the case where a collection can be uniquely identified
-      with just a single quint32 is given below.
-
-      Note that you must include the #ifndef QT_NO_DATASTREAM preprocessor
-      directive block in order to ensure compilation in environments where that
-      directive is defined.
-     */
-
-    in >> m_localCollectionId;
-    return in;
-}
-#endif
 
 uint QOrganizerCollectionSkeletonEngineLocalId::hash() const
 {

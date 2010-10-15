@@ -42,6 +42,7 @@
 #ifndef QORGANIZERITEMID_H
 #define QORGANIZERITEMID_H
 
+#include <QMap>
 #include <QString>
 #include <QSharedDataPointer>
 
@@ -56,10 +57,6 @@ class QOrganizerItemId;
 Q_ORGANIZER_EXPORT uint qHash(const QOrganizerItemId& key);
 #ifndef QT_NO_DEBUG_STREAM
 Q_ORGANIZER_EXPORT QDebug& operator<<(QDebug& dbg, const QOrganizerItemId& id);
-#endif
-#ifndef QT_NO_DATASTREAM
-Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItemId& id);
-Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id);
 #endif
 
 class QOrganizerManagerEngine;
@@ -83,15 +80,17 @@ public:
 
     QString managerUri() const;
 
+    QString toString() const;
+    static QOrganizerItemId fromString(const QString& idString);
+
 private:
+    static QString buildIdString(const QString& managerName, const QMap<QString, QString>& params, const QString& engineId);
+    static bool parseIdString(const QString& stringId, QString* managerName, QMap<QString, QString>* params, QString* engineId);
+
     QSharedDataPointer<QOrganizerItemEngineLocalId> d;
 
 #ifndef QT_NO_DEBUG_STREAM
     Q_ORGANIZER_EXPORT friend QDebug& operator<<(QDebug& dbg, const QOrganizerItemId& id);
-#endif
-#ifndef QT_NO_DATASTREAM
-    Q_ORGANIZER_EXPORT friend QDataStream& operator<<(QDataStream& out, const QOrganizerItemId& id);
-    Q_ORGANIZER_EXPORT friend QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id);
 #endif
     Q_ORGANIZER_EXPORT friend uint qHash(const QOrganizerItemId& key);
     friend class QOrganizerManagerEngine;

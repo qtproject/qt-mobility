@@ -84,6 +84,7 @@ public:
     QOrganizerItemMemoryEngineLocalId(quint32 collectionId, quint32 itemId);
     ~QOrganizerItemMemoryEngineLocalId();
     QOrganizerItemMemoryEngineLocalId(const QOrganizerItemMemoryEngineLocalId& other);
+    QOrganizerItemMemoryEngineLocalId(const QString& idString);
 
     bool isEqualTo(const QOrganizerItemEngineLocalId* other) const;
     bool isLessThan(const QOrganizerItemEngineLocalId* other) const;
@@ -92,12 +93,10 @@ public:
     QString managerUri() const;
     QOrganizerItemEngineLocalId* clone() const;
 
+    QString toString() const;
+
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;
-#endif
-#ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out) const;
-    QDataStream& dataStreamIn(QDataStream& in);
 #endif
     uint hash() const;
 
@@ -114,6 +113,7 @@ public:
     QOrganizerCollectionMemoryEngineLocalId(quint32 collectionId);
     ~QOrganizerCollectionMemoryEngineLocalId();
     QOrganizerCollectionMemoryEngineLocalId(const QOrganizerCollectionMemoryEngineLocalId& other);
+    QOrganizerCollectionMemoryEngineLocalId(const QString& idString);
 
     bool isEqualTo(const QOrganizerCollectionEngineLocalId* other) const;
     bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const;
@@ -122,12 +122,10 @@ public:
     QString managerUri() const;
     QOrganizerCollectionEngineLocalId* clone() const;
 
+    QString toString() const;
+
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;
-#endif
-#ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out) const;
-    QDataStream& dataStreamIn(QDataStream& in);
 #endif
     uint hash() const;
 

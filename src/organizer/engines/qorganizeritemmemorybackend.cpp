@@ -113,6 +113,14 @@ QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId(const QOrga
 {
 }
 
+QOrganizerItemMemoryEngineLocalId::QOrganizerItemMemoryEngineLocalId(const QString& idString)
+    : QOrganizerItemEngineLocalId()
+{
+    QStringList colonSplit = idString.split(QLatin1String(":"));
+    m_localCollectionId = colonSplit.value(0).toUInt();
+    m_localCollectionId = colonSplit.value(1).toUInt();
+}
+
 bool QOrganizerItemMemoryEngineLocalId::isEqualTo(const QOrganizerItemEngineLocalId* other) const
 {
     quint32 otherlocalCollectionId = static_cast<const QOrganizerItemMemoryEngineLocalId*>(other)->m_localCollectionId;
@@ -149,6 +157,11 @@ QString QOrganizerItemMemoryEngineLocalId::managerUri() const
     return QString::fromLatin1("qtorganizer:memory:");
 }
 
+QString QOrganizerItemMemoryEngineLocalId::toString() const
+{
+    return (QString::number(m_localCollectionId) + QLatin1String(":") + QString::number(m_localItemId));
+}
+
 QOrganizerItemEngineLocalId* QOrganizerItemMemoryEngineLocalId::clone() const
 {
     QOrganizerItemMemoryEngineLocalId *myClone = new QOrganizerItemMemoryEngineLocalId;
@@ -162,19 +175,6 @@ QDebug& QOrganizerItemMemoryEngineLocalId::debugStreamOut(QDebug& dbg) const
 {
     dbg.nospace() << "QOrganizerItemMemoryEngineLocalId(" << m_localCollectionId << ", " << m_localItemId << ")";
     return dbg.maybeSpace();
-}
-#endif
-
-#ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerItemMemoryEngineLocalId::dataStreamOut(QDataStream& out) const
-{
-    return (out << m_localItemId << m_localCollectionId);
-}
-
-QDataStream& QOrganizerItemMemoryEngineLocalId::dataStreamIn(QDataStream& in)
-{
-    in >> m_localItemId >> m_localCollectionId;
-    return in;
 }
 #endif
 
@@ -213,6 +213,12 @@ QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId
 {
 }
 
+QOrganizerCollectionMemoryEngineLocalId::QOrganizerCollectionMemoryEngineLocalId(const QString& idString)
+    : QOrganizerCollectionEngineLocalId()
+{
+    m_localCollectionId = idString.toUInt();
+}
+
 QOrganizerCollectionMemoryEngineLocalId::~QOrganizerCollectionMemoryEngineLocalId()
 {
 }
@@ -246,6 +252,11 @@ QString QOrganizerCollectionMemoryEngineLocalId::managerUri() const
     return QString::fromLatin1("qtorganizer:memory:");
 }
 
+QString QOrganizerCollectionMemoryEngineLocalId::toString() const
+{
+    return QString::number(m_localCollectionId);
+}
+
 QOrganizerCollectionEngineLocalId* QOrganizerCollectionMemoryEngineLocalId::clone() const
 {
     QOrganizerCollectionMemoryEngineLocalId *myClone = new QOrganizerCollectionMemoryEngineLocalId;
@@ -258,18 +269,6 @@ QDebug& QOrganizerCollectionMemoryEngineLocalId::debugStreamOut(QDebug& dbg) con
 {
     dbg.nospace() << "QOrganizerCollectionMemoryEngineLocalId(" << m_localCollectionId << ")";
     return dbg.maybeSpace();
-}
-#endif
-
-#ifndef QT_NO_DATASTREAM
-QDataStream& QOrganizerCollectionMemoryEngineLocalId::dataStreamOut(QDataStream& out) const
-{
-    return (out << m_localCollectionId);
-}
-
-QDataStream& QOrganizerCollectionMemoryEngineLocalId::dataStreamIn(QDataStream& in)
-{
-    return (in >> m_localCollectionId);
 }
 #endif
 

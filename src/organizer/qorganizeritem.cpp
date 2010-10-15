@@ -685,8 +685,8 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item)
 {
     quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItem
     out << formatVersion
-        << item.id()
-        << item.collectionId()
+        << item.id().toString()
+        << item.collectionId().toString()
         << item.details();
     return out;
 }
@@ -700,12 +700,12 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItem& item)
     in >> formatVersion;
     if (formatVersion == 1) {
         item = QOrganizerItem();
-        QOrganizerItemId id;
-        QOrganizerCollectionId collectionId;
+        QString itemIdString;
+        QString collectionIdString;
         QList<QOrganizerItemDetail> details;
-        in >> id >> collectionId >> details;
-        item.setId(id);
-        item.setCollectionId(collectionId);
+        in >> itemIdString >> collectionIdString >> details;
+        item.setId(QOrganizerItemId::fromString(itemIdString));
+        item.setCollectionId(QOrganizerCollectionId::fromString(collectionIdString));
         item.d->m_details = details;
     } else {
         in.setStatus(QDataStream::ReadCorruptData);

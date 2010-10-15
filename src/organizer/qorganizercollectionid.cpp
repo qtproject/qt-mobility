@@ -186,59 +186,6 @@ QDebug& operator<<(QDebug& dbg, const QOrganizerCollectionId& id)
 }
 #endif
 
-#ifndef QT_NO_DATASTREAM
-/*!
- * Writes \a collectionId to the stream \a out.
- * Note that if the manager uri of \a collectionId is empty or invalid, operator>>() will
- * not be able to reconstruct the id from the data.
- */
-QDataStream& operator<<(QDataStream& out, const QOrganizerCollectionId& collectionId)
-{
-    quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerCollectionId
-    out << formatVersion
-        << collectionId.managerUri();
-
-    // the id is not null. we can serialize out
-    if (collectionId.d)
-        collectionId.d->dataStreamOut(out);
-
-    return out;
-}
-/*!
- * Reads an organizer collection id from stream \a in into \a collectionId.
- * Note that if the manager uri of the id which was streamed out was empty,
- * this function will produce a null \a collectionId.
- */
-QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId)
-{
-    quint8 formatVersion;
-    in >> formatVersion;
-    if (formatVersion == 1) {
-        QString managerUri;
-        in >> managerUri;
-        if (managerUri.isEmpty()) {
-            // if no manager uri was set in the id which was serialized, then nothing can be deserialized.
-            // in this case, return the null id.
-            collectionId = QOrganizerCollectionId();
-            return in;
-        }
-
-        collectionId = QOrganizerCollectionId(QOrganizerManagerData::createEngineCollectionId(managerUri));
-        if (collectionId.d) {
-            // only stream in the local id data if it exists.
-            collectionId.d->dataStreamIn(in);
-        } else {
-            // the local id should be the null local id.
-            collectionId = QOrganizerCollectionId();
-        }
-    } else {
-        in.setStatus(QDataStream::ReadCorruptData);
-    }
-    return in;
-}
-
-#endif
-
 
 /*!
  * Returns the URI of the manager which contains the collection identified by this id
@@ -246,6 +193,136 @@ QDataStream& operator>>(QDataStream& in, QOrganizerCollectionId& collectionId)
 QString QOrganizerCollectionId::managerUri() const
 {
     return d ? d->managerUri() : QString();
+}
+
+/*!
+  Serializes the id to a string.  The format of the string will be:
+  "qtorganizer:managerName:constructionParams:serializedEngineLocalItemId"
+ */
+QString QOrganizerCollectionId::toString() const
+{
+    QString mgrName;
+    QMap<QString, QString> params;
+    QString engineId;
+
+    if (d) {
+        QOrganizerManager::parseUri(d->managerUri(), &mgrName, &params);
+        engineId = d->toString();
+    }
+
+    // having extracted the params the name, we now need to build a new string.
+    return buildIdString(mgrName, params, engineId);
+}
+
+/*!
+  Deserializes the given \a idString.  Returns a default-constructed (null)
+  item id if the given \a idString is not a valid, serialized item id, or
+  if the manager engine from which the id came could not be found.
+ */
+QOrganizerCollectionId QOrganizerCollectionId::fromString(const QString& idString)
+{
+    QString managerName;
+    QMap<QString, QString> params;
+    QString engineIdString;
+
+    if (!parseIdString(idString, &managerName, &params, &engineIdString))
+        return QOrganizerCollectionId(); // invalid idString given.
+
+    QString managerUri = QOrganizerManager::buildUri(managerName, params);
+    QOrganizerCollectionEngineLocalId* engineId = QOrganizerManagerData::createEngineCollectionId(managerUri, engineIdString);
+    return QOrganizerCollectionId(engineId);
+}
+
+/*!
+  Builds a string from the given \a managerName, \a params and \a engineIdString
+ */
+QString QOrganizerCollectionId::buildIdString(const QString& managerName, const QMap<QString, QString>& params, const QString& engineIdString)
+{
+    // the constructed id string will be of the form: "qtorganizer:managerName:param1=value1&param2=value2:
+    QString ret(QLatin1String("qtorganizer:%1:%2:%3"));
+
+    // we have to escape each param
+    QStringList escapedParams;
+    QStringList keys = params.keys();
+    for (int i=0; i < keys.size(); i++) {
+        QString key = keys.at(i);
+        QString arg = params.value(key);
+        arg = arg.replace(QLatin1Char('&'), QLatin1String("&amp;"));
+        arg = arg.replace(QLatin1Char('='), QLatin1String("&equ;"));
+        arg = arg.replace(QLatin1Char(':'), QLatin1String("&#58;"));
+        key = key.replace(QLatin1Char('&'), QLatin1String("&amp;"));
+        key = key.replace(QLatin1Char('='), QLatin1String("&equ;"));
+        key = key.replace(QLatin1Char(':'), QLatin1String("&#58;"));
+        key = key + QLatin1Char('=') + arg;
+        escapedParams.append(key);
+    }
+
+    // and we escape the engine id string.
+    QString escapedEngineId = engineIdString;
+    escapedEngineId.replace(QLatin1Char('&'), QLatin1String("&amp;"));
+    escapedEngineId.replace(QLatin1Char(':'), QLatin1String("&#58;"));
+
+    return ret.arg(managerName, escapedParams.join(QLatin1String("&")), escapedEngineId);
+}
+
+/*!
+  Parses the individual components of the given \a idString and fills the \a managerName, \a params and \a engineIdString.
+  Returns true if the parts could be parsed successfully, false otherwise.
+ */
+bool QOrganizerCollectionId::parseIdString(const QString& idString, QString* managerName, QMap<QString, QString>* params, QString* engineIdString)
+{
+    QStringList colonSplit = idString.split(QLatin1Char(':'));
+
+    QString prefix = colonSplit.value(0);
+    if (prefix != QLatin1String("qtorganizer") || colonSplit.size() != 4)
+        return false; // invalid serialized string.  we cannot continue.
+
+    QString mgrName = colonSplit.value(1);
+    QString paramString = colonSplit.value(2);
+    QString engIdString = colonSplit.value(3);
+
+    // Now we have to decode each parameter
+    QMap<QString, QString> outParams;
+    if (!paramString.isEmpty()) {
+        QStringList params = paramString.split(QRegExp(QLatin1String("&(?!(amp;|equ;))")), QString::KeepEmptyParts);
+        // If we have an empty string for paramstring, we get one entry in params,
+        // so skip that case.
+        for(int i = 0; i < params.count(); i++) {
+            /* This should be something like "foo&amp;bar&equ;=grob&amp;" */
+            QStringList paramChunk = params.value(i).split(QLatin1String("="), QString::KeepEmptyParts);
+
+            if (paramChunk.count() != 2)
+                return false;
+
+            QString arg = paramChunk.value(0);
+            QString param = paramChunk.value(1);
+
+            arg.replace(QLatin1String("&#58;"), QLatin1String(":"));
+            arg.replace(QLatin1String("&equ;"), QLatin1String("="));
+            arg.replace(QLatin1String("&amp;"), QLatin1String("&"));
+            param.replace(QLatin1String("&#58;"), QLatin1String(":"));
+            param.replace(QLatin1String("&equ;"), QLatin1String("="));
+            param.replace(QLatin1String("&amp;"), QLatin1String("&"));
+            if (arg.isEmpty())
+                return false;
+            outParams.insert(arg, param);
+        }
+    }
+
+    // and unescape the engine id string.
+    engIdString.replace(QLatin1String("&#58;"), QLatin1String(":"));
+    engIdString.replace(QLatin1String("&amp;"), QLatin1String("&"));
+
+    // now fill the return values.
+    if (managerName)
+        *managerName = mgrName;
+    if (params)
+        *params = outParams;
+    if (engineIdString)
+        *engineIdString = engIdString;
+
+    // and return.
+    return true;
 }
 
 QTM_END_NAMESPACE

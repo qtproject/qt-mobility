@@ -82,8 +82,8 @@ class QOrganizerItemSkeletonFactory : public QObject, public QOrganizerManagerEn
   Q_INTERFACES(QtMobility::QOrganizerManagerEngineFactory)
   public:
     QOrganizerManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error*);
-    QOrganizerItemEngineLocalId* createItemEngineLocalId() const;
-    QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() const;
+    QOrganizerItemEngineLocalId* createItemEngineLocalId(const QString& idString) const;
+    QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId(const QString& idString) const;
     QString managerName() const;
 };
 
@@ -102,12 +102,10 @@ public:
     QString managerUri() const;
     QOrganizerCollectionEngineLocalId* clone() const;
 
+    QString toString() const;
+
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;
-#endif
-#ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out) const;
-    QDataStream& dataStreamIn(QDataStream& in);
 #endif
     uint hash() const;
 
@@ -133,12 +131,10 @@ public:
     QString managerUri() const;
     QOrganizerItemEngineLocalId* clone() const;
 
+    QString toString() const;
+
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const;
-#endif
-#ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out) const;
-    QDataStream& dataStreamIn(QDataStream& in);
 #endif
     uint hash() const;
 

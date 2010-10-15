@@ -61,8 +61,8 @@ public:
     virtual ~QOrganizerManagerEngineFactory();
     virtual QOrganizerManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error* error) = 0;
     virtual QString managerName() const = 0;
-    virtual QOrganizerItemEngineLocalId* createItemEngineLocalId() const = 0;
-    virtual QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId()const  = 0;
+    virtual QOrganizerItemEngineLocalId* createItemEngineLocalId(const QString& engineIdString = QString()) const = 0;
+    virtual QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId(const QString& engineIdString = QString())const = 0;
 };
 QTM_END_NAMESPACE
 

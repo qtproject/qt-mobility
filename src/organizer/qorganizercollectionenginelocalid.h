@@ -63,14 +63,11 @@ public:
     virtual QString managerUri() const = 0;
     virtual QOrganizerCollectionEngineLocalId* clone() const = 0;
 
+    virtual QString toString() const = 0;
+
 #ifndef QT_NO_DEBUG_STREAM
     // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
     virtual QDebug& debugStreamOut(QDebug& dbg) const = 0;
-#endif
-#ifndef QT_NO_DATASTREAM
-    // NOTE: on platforms where Qt is built without data streams enabled, vtable will differ!
-    virtual QDataStream& dataStreamOut(QDataStream& out) const = 0;
-    virtual QDataStream& dataStreamIn(QDataStream& in) = 0;
 #endif
     virtual uint hash() const = 0;
 };
