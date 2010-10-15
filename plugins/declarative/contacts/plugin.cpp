@@ -96,6 +96,7 @@ public:
         qmlRegisterType<QDeclarativeContactTag>(uri, 1, 1, "ContactTag");
         qmlRegisterType<QDeclarativeContactTimestamp>(uri, 1, 1, "Timestamp");
         qmlRegisterType<QDeclarativeContactUrl>(uri, 1, 1, "ContactUrl");
+        qmlRegisterType<QDeclarativeContactHobby>(uri, 1, 1, "ContactHobby");
 
         //filters
         qmlRegisterType<QDeclarativeContactFilter>(uri, 1, 1, "Filter");

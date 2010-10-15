@@ -85,8 +85,8 @@ private Q_SLOTS:
     void borderWidthChanged(int width);
 
 private:
-    mutable QDeclarativeCoordinate* m_topLeft;
-    mutable QDeclarativeCoordinate* m_bottomRight;
+    QDeclarativeCoordinate* m_topLeft;
+    QDeclarativeCoordinate* m_bottomRight;
     QColor m_color;
     QDeclarativeGeoMapObjectBorder m_border;
     Q_DISABLE_COPY(QDeclarativeGeoMapRectangleObject)
