@@ -2437,6 +2437,12 @@ bool LandmarkManagerEngineSymbianPrivate::cancelRequest(QLandmarkAbstractRequest
 bool LandmarkManagerEngineSymbianPrivate::waitForRequestFinished(QLandmarkAbstractRequest* request,
     int msecs)
 {
+    if (request->type() == QLandmarkAbstractRequest::ImportRequest) {
+        // WFRF not supported for import request type operation.
+        qDebug() << "Wait for Requst Finish for Import Operation not Supported";
+        return false;
+    }
+
     CLandmarkRequestData* currentRequestData = NULL;
     currentRequestData = m_RequestHandler.FetchAsyncRequest(request);
     if (!currentRequestData)
