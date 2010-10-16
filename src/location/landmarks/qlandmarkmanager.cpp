@@ -406,7 +406,7 @@ bool QLandmarkManager::removeLandmarks(const QList<QLandmarkId> &landmarkIds)
 }
 
 /*!
-    Removes the given \a landmarks from the database.
+    Convenience function to remove the given \a landmarks from the database.
     Returns true if all landmarks were removed
     successfully, otherwise false.
 
@@ -415,7 +415,7 @@ bool QLandmarkManager::removeLandmarks(const QList<QLandmarkId> &landmarkIds)
     The QLandmarkManager::error() function will only return
     \c QLandmarkManager::NoError if all landmarks were removed successfully.
 
-    This is a convenience function.
+
 
     \sa QLandmarkManager::removeLandmark()
 */
@@ -711,7 +711,7 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int 
      d->errorMap.clear();
 
     QList<QLandmarkSortOrder> sortOrders;
-    if (sortOrder.type() != QLandmarkSortOrder::DefaultSort)
+    if (sortOrder.type() != QLandmarkSortOrder::NoSort)
         sortOrders.append(sortOrder);
 
     QList<QLandmark> lms = d->engine->landmarks(filter,
@@ -789,12 +789,12 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
 }
 
 /*!
-    Returns a list of landmark identifiers which match the given \a filter and are sorted according to
+    Convenience function to returns a list of landmark identifiers which match the given \a filter and are sorted according to
     the given \a sortOrder. The \a limit defines the maximum number of landmark ids to return and the
     \a offset defines the index offset of the first landmark id.
     A \a limit of -1 means that ids of all matching landmarks should be returned.
 
-    This is a convenience function.
+
 */
 QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
                                                  int limit, int offset,

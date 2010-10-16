@@ -1423,7 +1423,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::sortOrderSup
     QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::NativeSupport;
 
     switch (sortOrder.type()) {
-    case QLandmarkSortOrder::DefaultSort:
+    case QLandmarkSortOrder::NoSort:
     case QLandmarkSortOrder::NameSort: {
             QLandmarkNameSort nameSort = sortOrder;
             if (nameSort.caseSensitivity() == Qt::CaseSensitive)

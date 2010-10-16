@@ -7039,9 +7039,9 @@ void tst_QLandmarkManager::filterSupportLevel() {
 
 void tst_QLandmarkManager::sortOrderSupportLevel()
 {
-    //default sort order
-    QLandmarkSortOrder defaultSort;
-    QCOMPARE(m_manager->sortOrderSupportLevel(defaultSort), QLandmarkManager::NativeSupport);
+    //no sort order
+    QLandmarkSortOrder noSort;
+    QCOMPARE(m_manager->sortOrderSupportLevel(noSort), QLandmarkManager::NativeSupport);
 
     //name sort order
     QLandmarkNameSort nameSort;
