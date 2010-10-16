@@ -4399,6 +4399,9 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
             filterType = fetchRequest->filter().type();
 
             if (filterType == QLandmarkFilter::LandmarkIdFilter) {
+
+                QLandmarkIdFilter idfilter = fetchRequest->filter();
+                aData->iLandmarkIds = idfilter.landmarkIds();
                 // Set Complete.
                 aRequest = KErrNone;
                 break;
@@ -4428,6 +4431,9 @@ void LandmarkManagerEngineSymbianPrivate::HandleExecutionL(CLandmarkRequestData*
             filterType = fetchRequest->filter().type();
 
             if (filterType == QLandmarkFilter::LandmarkIdFilter) {
+
+                QLandmarkIdFilter idfilter = fetchRequest->filter();
+                aData->iLandmarkIds = idfilter.landmarkIds();
                 // Set Complete.
                 aRequest = KErrNone;
                 break;
@@ -4648,13 +4654,14 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
             {
                 // use landmark fetch method to get landmark from landmark id
                 qtLandmark = landmark(lmId, error, errorString);
-                if (*error != QLandmarkManager::NoError) {
-                    landmarkIds.clear();
-                    return false;
+                if (*error == QLandmarkManager::NoError) {
+                    landmarks.append(qtLandmark);
                 }
-                landmarks.append(qtLandmark);
             }
 
+        *error = QLandmarkManager::NoError;
+        errorString->clear();
+        
         landmarkIds.clear();
         landmarkIds = QLandmarkManagerEngineSymbian::sortLandmarks(landmarks, sortOrders);
     }
