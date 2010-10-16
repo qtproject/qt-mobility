@@ -51,15 +51,47 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass Map
+
+    \brief The Map element displays a map.
+    \inherits QDeclarativeItem
+
+    \ingroup qml-location-maps
+
+    The Map element can be used be used to display a map of the world.  The 
+    bulk of the functionality is provided by a mapping plugin described 
+    by the Plugin element associated with the Map.
+
+    Various map objects can be added to the map.  These map objects are 
+    specified in terms of coordinates and metres.
+
+
+    The Map element is part of the \bold{QtMobility.location 1.1} module.
+*/
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
     : QDeclarativeItem(parent),
     serviceProvider_(0),
     mapData_(0)
 {
     setFlag(QGraphicsItem::ItemHasNoContents, false);
+
     center_ = new QDeclarativeCoordinate(this);
+
+    connect(center_,
+            SIGNAL(latitudeChanged(double)),
+            this,
+            SLOT(centerLatitudeChanged(double)));
+    connect(center_,
+            SIGNAL(longitudeChanged(double)),
+            this,
+            SLOT(centerLongitudeChanged(double)));
+    connect(center_,
+            SIGNAL(altitudeChanged(double)),
+            this,
+            SLOT(centerAltitudeChanged(double)));
+
     center_->setCoordinate(QGeoCoordinate(-27.0, 153.0));
-    mapType_ = QDeclarativeGraphicsGeoMap::StreetMap;
     zoomLevel_ = 8;
     size_ = QSizeF(100.0, 100.0);
     
@@ -91,7 +123,15 @@ void QDeclarativeGraphicsGeoMap::geometryChanged(const QRectF &newGeometry,
     setSize(newGeometry.size());
 }
 
-// this is write once
+/*!
+    \qmlproperty Plugin Map::plugin
+
+    This property holds the plugin which provides the mapping functionality.
+
+    This is write-once property.  Once the map has a plugin associated with 
+    it any attempted modifications of the plugin will be ignored.
+*/
+
 void QDeclarativeGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 {
     if (plugin_)
@@ -169,6 +209,11 @@ QDeclarativeGeoServiceProvider* QDeclarativeGraphicsGeoMap::plugin() const
     return plugin_;
 }
 
+/*!
+    \qmlproperty qreal Map::minimumZoomLevel
+
+    This property holds the minimum valid zoom level for the map.
+*/
 qreal QDeclarativeGraphicsGeoMap::minimumZoomLevel() const
 {
     if (mappingManager_)
@@ -177,6 +222,11 @@ qreal QDeclarativeGraphicsGeoMap::minimumZoomLevel() const
         return -1.0;
 }
 
+/*!
+    \qmlproperty qreal Map::maximumZoomLevel
+
+    This property holds the maximum valid zoom level for the map.
+*/
 qreal QDeclarativeGraphicsGeoMap::maximumZoomLevel() const
 {
     if (mappingManager_)
@@ -189,6 +239,11 @@ qreal QDeclarativeGraphicsGeoMap::maximumZoomLevel() const
 //QList<MapType> QDeclarativeGraphicsGeoMap::supportedMapTypes() const;
 //QList<ConnectivityMode> QDeclarativeGraphicsGeoMap::supportedConnectivityModes() const;
 
+/*!
+    \qmlproperty QSizeF Map::size
+
+    This property holds the size of the map viewport.
+*/
 void QDeclarativeGraphicsGeoMap::setSize(const QSizeF &size)
 {
     if (mapData_) {
@@ -214,6 +269,15 @@ QSizeF QDeclarativeGraphicsGeoMap::size() const
         return size_;
 }
 
+/*!
+    \qmlproperty qreal Map::zoomLevel
+
+    This property holds the zoom level for the map.
+
+    Larger values for the zoom level provide more detail.
+
+    The default value is 8.0.
+*/
 void QDeclarativeGraphicsGeoMap::setZoomLevel(qreal zoomLevel)
 {
     if (mapData_) {
@@ -237,6 +301,14 @@ qreal QDeclarativeGraphicsGeoMap::zoomLevel() const
     }
 }
 
+/*!
+    \qmlproperty Coordinate Map::center
+
+    This property holds the coordinate which occupies the center of the 
+    mapping viewport.
+
+    The default value is an arbitrary valid coordinate.
+*/
 void QDeclarativeGraphicsGeoMap::setCenter(const QDeclarativeCoordinate *center)
 {
     if (mapData_) {
@@ -258,6 +330,39 @@ QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::center()
     return center_;
 }
 
+void QDeclarativeGraphicsGeoMap::centerLatitudeChanged(double /*latitude*/)
+{
+    if (mapData_)
+        mapData_->setCenter(center_->coordinate());
+}
+
+void QDeclarativeGraphicsGeoMap::centerLongitudeChanged(double /*longitude*/)
+{
+    if (mapData_)
+        mapData_->setCenter(center_->coordinate());
+}
+
+void QDeclarativeGraphicsGeoMap::centerAltitudeChanged(double /*altitude*/)
+{
+    if (mapData_)
+        mapData_->setCenter(center_->coordinate());
+}
+
+/*!
+    \qmlproperty enumeration Map::mapType
+
+    This property holds the type of map to display.
+
+    The type can be one of:
+    \list
+    \o Map.StreetMap
+    \o Map.SatelliteMapDay
+    \o Map.SatelliteMapNight
+    \o Map.TerrainMap
+    \endlist
+
+    The default value is determined by the plugin.
+*/
 void QDeclarativeGraphicsGeoMap::setMapType(QDeclarativeGraphicsGeoMap::MapType mapType)
 {
     if (mapData_) {
@@ -281,6 +386,20 @@ QDeclarativeGraphicsGeoMap::MapType QDeclarativeGraphicsGeoMap::mapType() const
     }
 }
 
+/*!
+    \qmlproperty enumeration Map::connectivityMode
+
+    This property holds the connectivity mode used to fetch the map data.
+
+    The mode can be one of:
+    \list
+    \o Map.OfflineMode
+    \o Map.OnlineMode
+    \o Map.HybridMode
+    \endlist
+
+    The default value is determined by the plugin.
+*/
 void QDeclarativeGraphicsGeoMap::setConnectivityMode(QDeclarativeGraphicsGeoMap::ConnectivityMode connectivityMode)
 {
     if (mapData_) {
@@ -303,6 +422,23 @@ QDeclarativeGraphicsGeoMap::ConnectivityMode QDeclarativeGraphicsGeoMap::connect
         return connectivityMode_;
 }
 
+/*!
+    \qmlproperty list<QGeoMapObject> Map::objects
+    \default
+
+    This property holds the list of objects associated with this map.
+
+    The various objects that can be added include:
+    \list
+    \o MapRectangle
+    \o MapCircle
+    \o MapText
+    \o MapImage
+    \o MapPolygon
+    \o MapPolyline
+    \o MapGroup
+    \endlist
+*/
 QDeclarativeListProperty<QGeoMapObject> QDeclarativeGraphicsGeoMap::objects()
 {
     return QDeclarativeListProperty<QGeoMapObject>(this,
@@ -353,6 +489,16 @@ void QDeclarativeGraphicsGeoMap::object_clear(QDeclarativeListProperty<QGeoMapOb
         map->objects_.clear();
 }
 
+/*!
+    \qmlmethod Map::toCoordinate(QPointF screenPosition)
+
+    Returns the coordinate which corresponds to the screen position 
+    \a screenPosition.
+
+    Returns an invalid coordinate if \a screenPosition is not within
+    the current viewport.
+*/
+
 QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::toCoordinate(QPointF screenPosition) const
 {
     QGeoCoordinate coordinate;
@@ -364,6 +510,15 @@ QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::toCoordinate(QPointF screenP
                                       const_cast<QDeclarativeGraphicsGeoMap *>(this));
 }
 
+/*!
+    \qmlmethod Map::toScreenPosition(Coordinate coordinate)
+
+    Returns the screen position which corresponds to the coordinate 
+    \a coordinate.
+
+    Returns an invalid QPointF if \a coordinate is not within the 
+    current viewport.
+*/
 QPointF QDeclarativeGraphicsGeoMap::toScreenPosition(QDeclarativeCoordinate* coordinate) const
 {
     QPointF point;

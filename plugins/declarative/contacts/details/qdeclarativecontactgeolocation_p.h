@@ -82,7 +82,7 @@ public:
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactGeolocation;
+        return QDeclarativeContactDetail::Geolocation;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {

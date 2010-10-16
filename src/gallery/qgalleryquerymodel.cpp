@@ -286,7 +286,7 @@ void QGalleryQueryModelPrivate::_q_metaDataChanged(int index, int count, const Q
     gallery query.
 
     The meta-data that should be queried by a QGalleryQueryModel is specified
-    by adding columns to the model, each column has a set of \l roleProperties
+    by adding columns to the model, each column has a set of \l roleProperties()
     which map item data roles to gallery properties.  After the model query
     has been executed the values of the properties requested for each column can
     be addressed using the roles they were mapped to.
@@ -312,10 +312,11 @@ void QGalleryQueryModelPrivate::_q_metaDataChanged(int index, int count, const Q
     for ascending order and a '-' character for descending order.
 
     If the \l autoUpdate property is true when the query is executed it will
-    enter an \l Idle state on finishing and will refresh the queried
-    information if the items matching the query change.  If the gallery can't
-    provide updates it will instead go immediately to the \l Finished state.
-    Automatic updates can be canceled by calling cancel() on a idle model.
+    enter an \l {QGalleryAbstractRequest::Idle}{Idle} state on finishing and
+    will refresh the queried information if the items matching the query change.
+    If the gallery can't provide updates it will instead go immediately to the
+    \l {QGalleryAbstractRequest::Finished}{Finished} state. Automatic updates
+    can be canceled by calling cancel() on a idle model.
 
     \sa QGalleryQueryRequest, QDocumentGallery
 */
