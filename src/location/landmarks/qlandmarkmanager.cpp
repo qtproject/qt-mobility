@@ -989,7 +989,7 @@ for which the error (whose error code is stored in the value for that key in
 the map) occurred during the batch operation.
 
 
-\sa error(), categories(), landmarks(),saveLandmarks(), removeCategories(), removeLandmarks()
+\sa error(), categories(), landmarks(), saveLandmarks(), removeCategory(),  removeLandmarks()
 */
 QMap<int, QLandmarkManager::Error> QLandmarkManager::errorMap() const
 {

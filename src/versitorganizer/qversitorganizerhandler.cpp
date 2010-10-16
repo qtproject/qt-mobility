@@ -67,7 +67,7 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitOrganizerHandlerFactory::ProfileBackup, "Backup"
 
    The constant string signifying a plugin that is relevant to import and export in a
    synchronization context.
-   \sa QVersitOrganizerHandlerFactory::profiles(), QVersitOrganizerImporter(), QVersitOrganizerExporter()
+   \sa QVersitOrganizerHandlerFactory::profiles(), QVersitOrganizerImporter, QVersitOrganizerExporter
  */
 
 /*!
@@ -101,7 +101,7 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitOrganizerHandlerFactory::ProfileBackup, "Backup"
  */
 
 /*!
-  \fn int index() const
+  \fn int QVersitOrganizerHandlerFactory::index() const
   This function should return an index that helps with determining the order in which to run the
   plugins.  Plugins are run in the following order:
   \list

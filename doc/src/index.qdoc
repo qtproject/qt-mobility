@@ -107,8 +107,7 @@
     \l{http://library.forum.nokia.com/topic/Qt_for_Symbian_Developers_Library/GUID-7E53D0F7-72CB-41C4-8807-FE7A772B0DB4.html}{Qt For Symbian Developer's Library}
 
     \section2 Known Issues
-    For a list of known issues and additional details on supported features see
-    \l {Release Notes of the QtMobility Project release}.
+    See \l {Release Notes of the QtMobility Project release}{Release Notes}.
 
     For an overview of Platform Compatibility see \l {Platform Compatibility}.
     
@@ -338,10 +337,10 @@
     <br>
 
     <b>Tier 1 Platforms</b><br>
-    Primary platforms are the main focus of Mobility API. There platforms are frequently tested by our unit test suite and other internal testing tools. However, the timeline of availability for each backend is subject to change.
+    QtMobility API development focuses on Nokia platforms. These platforms are part of our ongoing QA, which includes unit test coverage per API and rigorous testing via test utilities and other system test processes.
     <br>
     <b>Tier 2 Platforms</b><br>
-    Secondary platforms include future direction of Qt Mobility API. Contributions to these platforms are welcome.
+    These platforms are not currently under active development or QA. Contributions to these platforms are welcome.
     <br>
     <br>
     <table align="center" cellpadding="2" cellspacing="1" border="1" rules="all">
@@ -495,7 +494,7 @@
     </tr>
     <tr>
     <td>Versit(Organizer)</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -508,7 +507,7 @@
     </tr>
     <tr>
     <td>Camera</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
@@ -521,7 +520,7 @@
     </tr>
     <tr>
     <td nowrap="nowrap">Service Framework(OOP)</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -534,7 +533,7 @@
     </tr>
     <tr>
     <td>Organizer</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -547,7 +546,7 @@
     </tr>
     <tr>
     <td>Landmarks</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -560,7 +559,7 @@
     </tr>
     <tr>
     <td>Document Gallery</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
@@ -573,7 +572,7 @@
     </tr>
     <tr>
     <td>Maps/Navigation</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -586,7 +585,7 @@
     </tr>
     <tr>
     <td>Feedback</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
