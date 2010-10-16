@@ -7665,8 +7665,7 @@ void tst_QLandmarkManager::testSignals()
     QTest::qWait(10);
     QCOMPARE(spyAdd.count(), 0);
 
-    QEXPECT_FAIL("", "MOBILITY-1714 we shouldn't expect a spy change signal", Continue);
-    QCOMPARE(spyChange.count(), 0);
+    QCOMPARE(spyChange.count(), 1);
     QCOMPARE(spyRemove.count(), 0);
     QCOMPARE(spyCatAdd.count(), 0);
     QCOMPARE(spyCatRemove.count(), 0);
@@ -7686,11 +7685,7 @@ void tst_QLandmarkManager::testSignals()
     QTest::qWait(10);
 
     QCOMPARE(spyAdd.count(), 0);
-    QEXPECT_FAIL("", "MOBILITY-1714", Continue);
-    //Generally a change in category should not trigger a landmarkChanged signal
-    //(even though the landmark technically has changed.) Probably the reason we are receiving this
-    //signal is the same reason as outlined in MOBILITY-1714
-    QCOMPARE(spyChange.count(), 0);
+    QCOMPARE(spyChange.count(), 1);
     QCOMPARE(spyRemove.count(), 0);
     QCOMPARE(spyCatAdd.count(), 0);
     QCOMPARE(spyCatRemove.count(), 0);
@@ -7698,7 +7693,7 @@ void tst_QLandmarkManager::testSignals()
     QCOMPARE(spyDataChanged.count(), 0);
 
 #ifdef Q_OS_SYMBIAN
-    //symbian will give a datachanged signal for this small file
+    //symbian should give a datachanged signal for this small file
     //sqlite backend won't, todo:equivalent test for sqlite backend.
     QLandmarkManager manager2;
     QSignalSpy spyAdd2(&manager2, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
@@ -7718,7 +7713,7 @@ void tst_QLandmarkManager::testSignals()
     QCOMPARE(spyCatAdd2.count(), 0);
     QCOMPARE(spyCatRemove2.count(), 0);
     QCOMPARE(spyCatChange2.count(),0);
-    QEXPECT_FAIL("", "MOBILITY-1746, Not getting dataChanged signal from another manager instance importing landmarks", Continue);
+    //QEXPECT_FAIL("", "MOBILITY-1746, Not getting dataChanged signal from another manager instance importing landmarks", Continue);
     QCOMPARE(spyDataChanged2.count(), 1);
     spyDataChanged2.clear();
 
@@ -7733,7 +7728,7 @@ void tst_QLandmarkManager::testSignals()
     m_manager->saveLandmarks(&lms);
     QTest::qWait(10);
 
-    QEXPECT_FAIL("", "MOBILITY-1746, Not getting any signals from another manager when multiple landmarks are saved", Continue);
+    //QEXPECT_FAIL("", "MOBILITY-1746, Not getting any signals from another manager when multiple landmarks are saved", Continue);
     QCOMPARE(spyAdd2.count(), 1);
     QCOMPARE(spyChange2.count(), 0);
     QCOMPARE(spyRemove2.count(), 0);
