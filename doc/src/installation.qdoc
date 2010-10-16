@@ -41,7 +41,7 @@ Qt 4.7 or higher, visit \l {http://get.qt.nokia.com} to obtain
 a copy. Furthermore perl must be installed and available in the environment path. 
 Windows environments may require the installation of a perl interpreter such as
 \l {http://www.activestate.com/activeperl} {ActivePerl}. On the Maemo 5 (Fremantle) 
-platform PR1.2 firmware release or newer is required, and the experimental Qt 4.7 packages
+platform PR1.2 firmware release or newer is required, and the Qt 4.7 packages
 are required.
 
 

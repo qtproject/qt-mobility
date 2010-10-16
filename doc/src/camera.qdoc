@@ -35,10 +35,6 @@
 
 
 
-\note This API and documentation is a \bold {Technology Preview} and is still
-subject to change.
-
-
 The Camera API provides control of system camera devices. Providing support
 for still or video image capture with sound support.
 
@@ -150,7 +146,7 @@ Various operations such as image capture and auto focusing occur
 asynchrously. These operations can often be cancelled by the start of a new
 operation as long as this is supported by the backend. For image capture,
 the operation can be cancelled by calling
-\l {QStillImageCapture::cancelCapture()}{cancelCapture()}. For AutoFocus,
+\l {QCameraImageCapture::cancelCapture()}{cancelCapture()}. For AutoFocus,
 autoexposure or white balance cancellation can be done by calling
 \i {QCamera::unlock(QCamera::LockFocus)}.
 

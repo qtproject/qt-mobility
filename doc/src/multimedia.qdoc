@@ -53,7 +53,7 @@ Unlike the other APIs in Qt Mobility, the Multimedia API is \i not in the
 
 \section1 Overview
 
-This library will require Qt 4.6.
+This library will require Qt 4.7.
 
 This API delivers an easy to use interface to multimedia functions. The 
 developer can use the API to display an image, or a video, record sound or play a
