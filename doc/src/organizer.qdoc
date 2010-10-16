@@ -63,7 +63,7 @@ manner.  This is achieved by defining generic personal information data
 abstractions which can sufficiently describe calendar and scheduling data
 stored on any platform.  Due to the cross-platform nature of the API, and the
 ability for developers to write platform-independent implementations of a
-QOrganizerItemManager which may unify one or more platform-specific calendar
+QOrganizerManager which may unify one or more platform-specific calendar
 or scheduling backends, it is intended that the semantics and quirks of the
 underlying datastores on any platform may be entirely opaque from the
 perspective of Qt-based, cross-platform client applications.
@@ -76,7 +76,7 @@ to facilitate the future migration of Mobility APIs into Qt. See the
 namespace impacts on application development.
 
 Organizer information is stored in datastores whose functionality is exposed
-via a \l{QOrganizerItemManager}{manager}.  The Organizer API models organizer
+via a \l{QOrganizerManager}{manager}.  The Organizer API models organizer
 information as an \l{QOrganizerItem}{item} which consists of a collection of
 distinct details.  Each \l{QOrganizerItemDetail}{detail} conforms to a
 particular \l{QOrganizerItemDetailDefinition}{definition} (or template), which
@@ -101,7 +101,7 @@ reporting.
 Organizational data is stored in container (value) classes.  These classes are
 not derived from QObject, and hence can be used in lists, do not have parents,
 do not emit signals, and so on.  They represent data which may be manipulated
-and retrieved from a \l{QOrganizerItemManager}{manager}.
+and retrieved from a \l{QOrganizerManager}{manager}.
 
 \section3 \bold{Item}
 
@@ -163,7 +163,7 @@ fixtures" collection) while others may have built-in collections (for example,
 \section2 Manager
 
 Access to organizer items is provided by implementations of the Qt Organizer
-\l{QOrganizerItemManager}{manager} API. A manager provides access to zero or
+\l{QOrganizerManager}{manager} API. A manager provides access to zero or
 more platform-specific datastores.  Each manager must support exactly one
 schema per item type (that is, a schema is per-manager, not per-collection).
 Each manager may support different capabilities (for example, the ability
@@ -177,22 +177,22 @@ in a platform and datastore independent manner.
 
 \section3 \bold{Meta Data API}
 
-The API offered by the QOrganizerItemManager exposes functionality which is
+The API offered by the QOrganizerManager exposes functionality which is
 implemented by plugins.  These plugins may be platform specific, and may be
 provided by Nokia or by third party developers.  As described above, each
 plugin will have different capabilities and implement the functionality
 exposed by the Qt Organizer API to a different degree.
 
-The QOrganizerItemManager class provides a static function
-QOrganizerItemManager::availableManagers() which allows clients of the API to
+The QOrganizerManager class provides a static function
+QOrganizerManager::availableManagers() which allows clients of the API to
 determine (at run time) which plugins (managers) are available for use.
 
 Clients of the API also need to be able to determine (at run time) what the
 capabilities of a given plugin (organizer item manager) are.  The
-QOrganizerItemManager class provides API to query the capabilities of a given
+QOrganizerManager class provides API to query the capabilities of a given
 manager with the following synchronous functions:
 \list
-  \o hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType = QOrganizerItemType::TypeEvent) const
+  \o hasFeature(QOrganizerManager::ManagerFeature feature, const QString& itemType = QOrganizerItemType::TypeEvent) const
   \o isFilterSupported(const QOrganizerItemFilter& filter) const
   \o supportedDataTypes() const
   \o supportedItemTypes() const
@@ -230,7 +230,7 @@ asynchronous requests.  It is recommended for most
 applications that the asynchronous API be used where possible.
 
 The asynchronous API is offered through various classes derived from the
-QOrganizerItemAbstractRequest class, including
+QOrganizerAbstractRequest class, including
 QOrganizerItemLocalIdFetchRequest, QOrganizerItemFetchRequest,
 QOrganizerItemSaveRequest, QOrganizerItemRemoveRequest,
 QOrganizerCollectionLocalIdFetchRequest, QOrganizerCollectionFetchRequest,
@@ -255,7 +255,7 @@ and is therefore most suitable only for applications which interact with
 local, high-speed datastores, or for applications which do not require a
 responsive user interface.
 
-The synchronous API is offered through the QOrganizerItemManager class, and
+The synchronous API is offered through the QOrganizerManager class, and
 includes manipulation of \l{QOrganizerItem}{items},
 \l{QOrganizerCollection}{collections} and
 \l{QOrganizerItemDetailDefinition}{schema definitions}.  As previously
@@ -273,17 +273,17 @@ engine plugin from which clients may request data.
 
 \section2 Manager Engine
 
-The functionality exposed by the QOrganizerItemManager class may be implemented
-by \l{QOrganizerItemManagerEngine}{engine} plugins which interface directly to
+The functionality exposed by the QOrganizerManager class may be implemented
+by \l{QOrganizerManagerEngine}{engine} plugins which interface directly to
 a platform-specific backend or provide their own data storage backend.  As
 such, the terms "manager", "plugin" and "backend" are used interchangeably in
 this documentation to refer to any engine plugin which implements the
-functionality exposed by the QOrganizerItemManager interface.  The plugin
+functionality exposed by the QOrganizerManager interface.  The plugin
 architecture allows dynamic loading of different manager engines at runtime.
 
 A manager backend may be implemented by subclassing
-\l{QOrganizerItemManagerEngine}, and providing a
-\l{QOrganizerItemManagerEngineFactory} which can instantiate it when required.
+\l{QOrganizerManagerEngine}, and providing a
+\l{QOrganizerManagerEngineFactory} which can instantiate it when required.
 
 See \l{Qt Organizer Manager Engines} for more information on available engines
 and how to write your own engine.
@@ -422,7 +422,7 @@ Clients may use either the \l{Organizer Synchronous API}{synchronous}
 or \l{Organizer Asynchronous API}{asynchronous} API to access
 functionality provided by a manager backend. The
 \l{Organizer Asynchronous API}{asynchronous} API is
-offered through subclasses of the \l{QOrganizerItemAbstractRequest} class:
+offered through subclasses of the \l{QOrganizerAbstractRequest} class:
 
 \annotatedlist organizer-requests
 
