@@ -162,7 +162,7 @@ void JournalEditPage::journalChanged(QOrganizerManager *manager, const QOrganize
             visibleName = collection.metaData(calendarNameMetadataKey).toString();
 
         m_calendarComboBox->addItem(visibleName);
-        if (collection.id().localId() == journal.collectionId().localId())
+        if (collection.id() == journal.collectionId())
             journalCalendarIndex = index;
         ++index;
     }

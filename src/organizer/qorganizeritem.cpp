@@ -257,30 +257,11 @@ QOrganizerItem::~QOrganizerItem()
     manager.  See \l QOrganizerManager::saveItem() for more
     information.
 
-    \sa localId()
+    \sa id()
  */
 QOrganizerItemId QOrganizerItem::id() const
 {
     return d->m_id;
-}
-
-/*!
-    Returns the QOrganizerItemLocalId that identifies this organizer item within its manager
-
-    This may have been set when the organizer item was retrieved from
-    a particular manager, or when the organizer item was first saved
-    in a manager.  The QOrganizerItemLocalId is associated with a specific
-    manager, but other organizer items with the same local id might exist in
-    different managers.
-
-    See \l QOrganizerManager::saveItem() for more
-    information.
-
-   \sa id()
-*/
-QOrganizerItemLocalId QOrganizerItem::localId() const
-{
-    return d->m_id.localId();
 }
 
 /*!
@@ -326,16 +307,6 @@ QOrganizerCollectionId QOrganizerItem::collectionId() const
 void QOrganizerItem::setCollectionId(const QOrganizerCollectionId& collectionId)
 {
     d->m_collectionId = collectionId;
-}
-
-/*!
-  Returns the manager-local id portion of the collection id of the item.
-  A collection id consists of a manager-local id and the URI of the manager
-  in which the collection can be found.
- */
-QOrganizerCollectionLocalId QOrganizerItem::collectionLocalId() const
-{
-    return d->m_collectionId.localId();
 }
 
 /*!
@@ -714,8 +685,8 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item)
 {
     quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItem
     out << formatVersion
-        << item.id()
-        << item.collectionId()
+        << item.id().toString()
+        << item.collectionId().toString()
         << item.details();
     return out;
 }
@@ -729,12 +700,12 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItem& item)
     in >> formatVersion;
     if (formatVersion == 1) {
         item = QOrganizerItem();
-        QOrganizerItemId id;
-        QOrganizerCollectionId collectionId;
+        QString itemIdString;
+        QString collectionIdString;
         QList<QOrganizerItemDetail> details;
-        in >> id >> collectionId >> details;
-        item.setId(id);
-        item.setCollectionId(collectionId);
+        in >> itemIdString >> collectionIdString >> details;
+        item.setId(QOrganizerItemId::fromString(itemIdString));
+        item.setCollectionId(QOrganizerCollectionId::fromString(collectionIdString));
         item.d->m_details = details;
     } else {
         in.setStatus(QDataStream::ReadCorruptData);

@@ -66,7 +66,7 @@ QTM_BEGIN_NAMESPACE
 
     When a QGalleryAbstractRequest is executed it will call createResponse() on
     its gallery and pass a pointer to itself.  The gallery will then use the
-    \l {QGalleryAbstractRequest::type}{requestType} property of the request to
+    \l {QGalleryAbstractRequest::type()}{type} property of the request to
     determine its type and cast to the correct class.  Using the properties of
     the request a gallery can then create a QGalleryAbstractResponse which
     executes the requested task and returns any results.  Some requests will

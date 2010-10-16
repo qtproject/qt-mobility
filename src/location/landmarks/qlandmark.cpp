@@ -159,24 +159,16 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     \brief The QLandmark class represents a point of interest.
 
 
-    Each landmark consists of a number of core properties such as name, coordinates,
-    description etc accessible through standard member functions.  For
-    information on accessing landmark properties through the attributes function
-    see \l {Landmark Attributes}.
-
-    Each QLandmark may be associated with zero or more categories.
+    Each QLandmark represents a location with a number of attributes  or properties
+    such as name, description, phone number etc. Each QLandmark may also be associated with zero or more categories.
     A category  defines a type of landmark such as restaurant or
     cinema.  To set the category that a landmark belongs to, use
-    the setCategoryId() or addCategoryId() functions.  A landmark may
+    the setCategoryIds() or addCategoryId() functions.  A landmark may
     be removed from a category by using the removeCategoryId() function.
 
     Some landmarks may be designated as read-only, e.g. a publically accessible
     landmark server may not want some of its content to be editable.
-    Localization is only possible for landmarks that are read-only.  If the
-    landmark store supports localization, the locale may be set through a
-    QLandmarkManager's parameters and whenever landmarks are retrieved,
-    the translated names are used.  The \c {QLandmarkManager::isReadOnly(const QLandmarkyId &)}
-    function may be used to determine if a category is read-only.
+    Note, localization is only possible for landmarks that are read-only.
 
     Each QLandmark is an in memory representation of a landmark;
     it does not reflect the actual landmark state in persistent
@@ -184,8 +176,8 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     on the QLandmarkManager(e.g. \l {QLandmarkManager::saveLandmark()} {saveLandmark()},
     \l {QLandmarkManager::removeLandmark()} {removeLandmark()}).
 
-
-    The following are restrictions of landmark details for the symbian platform:
+    Note that QLandmark inherits from QGeoPlace and thus has a viewport data field.
+    Most managers usally however ignore this field when saving the landmark.
 */
 
 /*!
@@ -201,13 +193,21 @@ QLandmark::QLandmark()
 /*!
     Constructs a new landmark from \a other.
 
-    If other is a QLandmark instance this is equivalent to
+    If \a other is not a landmark, the coordinates, address and viewport
+    get copied into the newly created landmark.
+
+    If \a other is a landmark, this function is equivalent to calling
     QLandmark(const QLandmark &other).
 
-    If other::type() is QGeoPlace instance this will initialize just the
-    coordinate and address of this landmark.
+    This constructor allows (1) and c to take place.
+    /code
+    QGeoPlace geoPlace = lm1; //lm1 is a QLandmark
+    ...
+    QLandmark lm2 = geoPlace; //(1)lm2 is equivalent to lm1
 
-    Otherwise this is equivalent to QLandmark().
+    QGeoPlace ordinaryPlace;
+    QLandmark lm3 = ordinarPlace; //(2)lm3 has the details of ordinaryPlace's coordinate, address and viewport.
+    /endcode
 */
 QLandmark::QLandmark(const QGeoPlace &other)
     : QGeoPlace(other)
@@ -294,6 +294,8 @@ QString QLandmark::name() const
 
 /*!
     Sets the \a name of the landmark.
+
+    Using the default manager on the Symbian platform, the name is restricted to a length of 256 characters.
 */
 void QLandmark::setName(const QString &name)
 {
@@ -367,6 +369,8 @@ QString QLandmark::description() const
 
 /*!
     Sets the \a description of the landmark.
+
+    Using the default manager on the Symbian platform, the description is restricted to a length of 4096 characters.
 */
 void QLandmark::setDescription(const QString &description)
 {

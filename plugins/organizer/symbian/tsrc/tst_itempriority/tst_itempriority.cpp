@@ -207,7 +207,7 @@ void TestItemPriority::addPriorityDetail()
     QVERIFY(m_om->saveItem(&item));
     
     // Fetch the item again
-    item = m_om->item(item.localId());
+    item = m_om->item(item.id());
     
     // Check if the priority has been set properly
     QOrganizerItemPriority itemPriority;

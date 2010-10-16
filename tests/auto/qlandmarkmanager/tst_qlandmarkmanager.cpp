@@ -7039,9 +7039,9 @@ void tst_QLandmarkManager::filterSupportLevel() {
 
 void tst_QLandmarkManager::sortOrderSupportLevel()
 {
-    //default sort order
-    QLandmarkSortOrder defaultSort;
-    QCOMPARE(m_manager->sortOrderSupportLevel(defaultSort), QLandmarkManager::NativeSupport);
+    //no sort order
+    QLandmarkSortOrder noSort;
+    QCOMPARE(m_manager->sortOrderSupportLevel(noSort), QLandmarkManager::NativeSupport);
 
     //name sort order
     QLandmarkNameSort nameSort;
@@ -7570,6 +7570,58 @@ void tst_QLandmarkManager::testConvenienceFunctions()
     catIds.removeLast();
     catRemoveRequest.setCategories(cats);
     QCOMPARE(catRemoveRequest.categoryIds(), catIds);
+
+    QGeoPlace p;
+    QGeoAddress address;
+    address.setStreet("sesame street");
+    QGeoCoordinate coord(12,13);
+    box.setTopLeft(QGeoCoordinate(10,10));
+    box.setTopRight(QGeoCoordinate(0,20));
+    p.setAddress(address);
+    p.setCoordinate(coord);
+    p.setViewport(box);
+    QLandmark l;
+    l=p;
+    QCOMPARE(l.address(), address);
+    QCOMPARE(l.address().street(), QString("sesame street"));
+    QCOMPARE(l.coordinate(), coord);
+    QCOMPARE(l.viewport(), box);
+
+    QLandmark l2;
+    l2 = l;
+    l2.setName("l2");
+    QVERIFY(l2 != l);
+
+    QLandmarkCategory catAlpha;
+    catAlpha.setName("CAT-Alpha");
+    QLandmarkCategory catBeta;
+    catBeta.setName("CAT-Beta");
+    QVERIFY(catAlpha != catBeta);
+
+
+    lmId1.setLocalId("5");
+    lmId1.setManagerUri("manager.uri");
+
+    lmId2.setLocalId("6");
+    lmId2.setManagerUri("manager.uri");
+
+    QVERIFY(lmId1 != lmId2);
+
+    catId1.setLocalId("4");
+    catId1.setManagerUri("manager.uri");
+
+    catId2.setLocalId("5");
+    catId2.setManagerUri("manager.uri");
+    QVERIFY(catId1 != catId2);
+
+    QString uri = m_manager->managerUri();
+    QLandmarkManager * manager2 = QLandmarkManager::fromUri(uri);
+    QCOMPARE(manager2->error(), QLandmarkManager::NoError);
+    QLandmark lmGamma;
+    lmGamma.setName("lmGamma");
+    QVERIFY(manager2->saveLandmark(&lmGamma));
+    QCOMPARE(m_manager->landmark(lmGamma.landmarkId()), lmGamma);
+
 }
 #endif
 

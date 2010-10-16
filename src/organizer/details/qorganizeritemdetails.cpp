@@ -178,12 +178,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldEndDateTime, "EndDateTime");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldStartDateTime, "StartDateTime");
 
 /*!
-   \variable QOrganizerEventTime::FieldTimeSpecified
+   \variable QOrganizerEventTime::FieldAllDay
 
    The constant key for the specification of whether the time is significant in the
    start datetime of the QOrganizerEventTime type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldTimeSpecified, "TimeSpecified");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
 
 
 /*!
@@ -261,12 +261,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGuid::FieldGuid, "Guid");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::DefinitionName, "Parent");
 
 /*!
-   \variable QOrganizerItemParent::FieldParentLocalId
+   \variable QOrganizerItemParent::FieldParentId
 
-   The constant key for the field in which the local id of the parent recurrent event
+   The constant key for the field in which the id of the parent recurrent event
    is stored in details of the QOrganizerItemParent type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::FieldParentLocalId, "ParentLocalId");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::FieldParentId, "ParentId");
 
 
 /*!
@@ -278,12 +278,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::FieldParentLocalId, "ParentLocalI
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::FieldOriginalDate, "OriginalDate");
 
 /*!
-   \fn QOrganizerItemParent::parentLocalId() const
-    Returns the local id of the item instance origin's parent item.
+   \fn QOrganizerItemParent::parentId() const
+    Returns the id of the item instance origin's parent item.
  */
 
 /*!
-   \fn QOrganizerItemParent::setParentLocalId(const QOrganizerItemLocalId& parentId)
+   \fn QOrganizerItemParent::setParentId(const QOrganizerItemId& parentId)
     Sets the parent id of this instance origin item to \a parentId.
  */
 
@@ -787,7 +787,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
 */
 
 /*!
-   \fn setRepetition(int count, int delaySeconds)
+   \fn QOrganizerItemReminder::setRepetition(int count, int delaySeconds)
 
    Sets the number of repetitions of the reminderto \a count, and the delay (in seconds)
    between each repetition of the reminder to \a delaySeconds.
@@ -991,6 +991,54 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::FieldDataUrl, "DataUrl");
 */
 
 
+/* ==================== QOrganizerItemTag ======================= */
+/*!
+   \class QOrganizerItemTag
+   \brief The QOrganizerItemTag class contains some arbitrary tag which is relevant to the organizer item.
+   \inmodule QtOrganizer
+   \ingroup organizer-details
+ */
+
+/*!
+    Returns a filter suitable for finding items with a tag containing the specified
+    \a substring.
+*/
+QOrganizerItemFilter QOrganizerItemTag::match(const QString &substring)
+{
+    QOrganizerItemDetailFilter f;
+    f.setDetailDefinitionName(QOrganizerItemTag::DefinitionName,
+                              QOrganizerItemTag::FieldTag);
+    f.setValue(substring);
+    f.setMatchFlags(QOrganizerItemFilter::MatchContains);
+
+    return f;
+}
+
+/*!
+   \variable QOrganizerItemTag::DefinitionName
+   The constant string which identifies the definition of details which are tags.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTag::DefinitionName, "Tag");
+
+/*!
+   \variable QOrganizerItemTag::FieldTag
+
+   The constant key for which the tag value is stored in details of
+   the QOrganizerItemTag type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTag::FieldTag, "Tag");
+
+/*!
+   \fn QOrganizerItemTag::setTag(const QString& tag)
+   Sets a tag associated with an organizer item to \a tag.
+ */
+
+/*!
+   \fn QOrganizerItemTag::tag() const
+   Returns the tag associated with an organizer item which is stored in this detail.
+ */
+
+
 /* ==================== QOrganizerItemTimestamp ======================= */
 /*!
    \class QOrganizerItemTimestamp
@@ -1153,12 +1201,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldStartDateTime, "StartDateTime"
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldDueDateTime, "DueDateTime");
 
 /*!
-   \variable QOrganizerTodoTime::FieldTimeSpecified
+   \variable QOrganizerTodoTime::FieldAllDay
 
    The constant key for the specification of whether the time is significant in the
    start datetime of the QOrganizerTodoTime type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldTimeSpecified, "TimeSpecified");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldAllDay, "AllDay");
 
 /*!
     \fn QOrganizerTodoTime::startDateTime() const
@@ -1181,7 +1229,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldTimeSpecified, "TimeSpecified"
  */
 
 /*!
-    \fn QOrganizerTodoTimeRange::isTimeSpecified() const
+    \fn QOrganizerTodoTimeRange::isAllDay() const
     Returns true if a specific time was specified for the todo.
     Returns false if the todo is an all-day todo.
  */

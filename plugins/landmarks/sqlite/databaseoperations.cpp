@@ -1145,12 +1145,12 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
         QLandmarkCategoryId categoryId = categoryFilter.categoryId();
 
         if (categoryId.managerUri() != managerUri) {
-            *error = QLandmarkManager::CategoryDoesNotExistError;
-            *errorString = "The category does not exist in the manager because the managers do not match";
+            *error = QLandmarkManager::NoError;
+            *errorString = "";
             return result;
         } else if (categoryId.localId().isEmpty()) {
-            *error = QLandmarkManager::CategoryDoesNotExistError;
-            *errorString = "The category does not exist in the manager because the local id of the category is empty";
+            *error = QLandmarkManager::NoError;
+            *errorString = "";
             return result;
         }
         bindValues.clear();
@@ -1160,9 +1160,8 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
         }
 
         if (!query.next()) {
-            *error = QLandmarkManager::CategoryDoesNotExistError;
-            *errorString = QString("Category with local id %1, does not exist in database")
-                            .arg(categoryId.localId());
+            *error = QLandmarkManager::NoError;
+            *errorString = "";
             return result;
         }
 
@@ -3085,7 +3084,7 @@ QLandmarkManager::SupportLevel DatabaseOperations::sortOrderSupportLevel(const Q
     QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::NativeSupport;
 
     switch(sortOrder.type()) {
-    case (QLandmarkSortOrder::DefaultSort):
+    case (QLandmarkSortOrder::NoSort):
         break;
     case (QLandmarkSortOrder::NameSort): {
         QLandmarkNameSort  nameSort = sortOrder;

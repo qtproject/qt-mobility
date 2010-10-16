@@ -72,8 +72,8 @@ QTM_USE_NAMESPACE
     QTRY_COMPARE(removedSpy1.count(), removedCount); \
     QTRY_COMPARE(removedSpy2.count(), removedCount);
     
-Q_DECLARE_METATYPE(QList<QOrganizerItemLocalId>)
-Q_DECLARE_METATYPE(QList<QOrganizerCollectionLocalId>)
+Q_DECLARE_METATYPE(QList<QOrganizerItemId>)
+Q_DECLARE_METATYPE(QList<QOrganizerCollectionId>)
 
 /*!
  * For testing symbian backend via QOrganizerManager API. The target is
@@ -165,7 +165,7 @@ void tst_symbianomcollections::init()
     // Remove all collections (except the default)
     foreach (const QOrganizerCollection& coll, m_om->collections()) {
         if (coll != m_om->defaultCollection())
-            m_om->removeCollection(coll.localId());
+            m_om->removeCollection(coll.id());
     }
 }
 
@@ -175,7 +175,7 @@ void tst_symbianomcollections::cleanup()
     // Remove all collections (except the default)
     foreach (const QOrganizerCollection& coll, m_om->collections()) {
         if (coll != m_om->defaultCollection())
-            m_om->removeCollection(coll.localId());
+            m_om->removeCollection(coll.id());
     }
     delete m_om;
     m_om = 0;
@@ -184,67 +184,44 @@ void tst_symbianomcollections::cleanup()
 void tst_symbianomcollections::fetchCollection()
 {
     // Fetch default collection id
-    QOrganizerCollectionLocalId dId = m_om->defaultCollection().localId();
+    QOrganizerCollectionId dId = m_om->defaultCollection().id();
     QVERIFY(m_om->error() == QOrganizerManager::NoError);
     QVERIFY(!dId.isNull());
-    
-    // Get collections but do not provide id's
-    QList<QOrganizerCollection> cs = m_om->collections();
-    QVERIFY(m_om->error() == QOrganizerManager::NoError);
-    QVERIFY(cs.count() == 0);
-    
+
     // Get all collections
-    cs = m_om->collections();
-    QVERIFY(cs.count() >= 1); // default collection should always be present
-    
-    // Dump all to log
-    foreach (QOrganizerCollection collection, cs) {
-        qDebug() << "Collection id:" << collection.id();
+    QList<QOrganizerCollection> collections = m_om->collections();
+    QVERIFY(collections.count() >= 1); // default collection should always be present
+    QVERIFY(collections[0].id() == dId);
+    foreach (QOrganizerCollection collection, collections) {
+        QVERIFY(!collection.id().isNull());
+        QVERIFY(collection.id().managerUri() == m_om->managerUri());
+        // dump metadata into log
         foreach (QString key, collection.metaData().keys())
             qDebug() << "\t" << key << collection.metaData().value(key);
     }
-    
+
     // Get a specific collection
     QOrganizerCollection defaultCollection = m_om->collection(dId);
-    cs << defaultCollection;
-    QVERIFY(m_om->error() == QOrganizerManager::NoError);
-    QVERIFY(cs.count() == 1);
-
-    // Do a basic verify
-    QVERIFY(cs[0].id().localId() == dId);
-    QVERIFY(cs[0].id().managerUri() == m_om->managerUri());    
-
-    // fetch entries for an non existent calendar
-    QOrganizerCollectionLocalId nonId;
-    cs.clear();
-    cs << m_om->collection(nonId);
-    QVERIFY(m_om->error() == QOrganizerManager::DoesNotExistError);
+    QCOMPARE(m_om->error(), QOrganizerManager::NoError);
+    QVERIFY(!defaultCollection.id().isNull());
 
     // Can we save collections? 
     if (!m_customCollectionsSupported)
         return;
-    
+
     // add a collection and fetch
     QOrganizerCollection c1;
     c1.setMetaData(QOrganizerCollection::KeyName, "fetchCollection");
     QVERIFY(m_om->saveCollection(&c1));
-    cs.clear();
-    cs = m_om->collections();
-    QVERIFY(m_om->error() == QOrganizerManager::NoError);
-    QVERIFY(cs.count() == 2);
-    
-    //remove and then fetch the collections
-    QVERIFY(m_om->removeCollection(c1.id().localId()));
-        
-    cs.clear();
-    cs = m_om->collections();
-    QVERIFY(m_om->error() == QOrganizerManager::NoError);
-    QVERIFY(cs.count() == 1);
-    
+    QCOMPARE(m_om->error(), QOrganizerManager::NoError);
+    QCOMPARE(m_om->collections().count(), 2);
+
     // fetch an already removed collection
-    cs.clear();
-    cs << m_om->collection(c1.id().localId());
-    QVERIFY(m_om->error() == QOrganizerManager::DoesNotExistError);
+    QVERIFY(m_om->removeCollection(c1.id()));
+    QCOMPARE(m_om->error(), QOrganizerManager::NoError);
+    QCOMPARE(m_om->collections().count(), 1);
+    QVERIFY(m_om->collection(c1.id()) == QOrganizerCollection());
+    QCOMPARE(m_om->error(), QOrganizerManager::DoesNotExistError);
 }
 
 void tst_symbianomcollections::saveCollection()
@@ -265,7 +242,7 @@ void tst_symbianomcollections::saveCollection()
     QDateTime beforeSave = QDateTime::currentDateTime();
     QVERIFY(m_om->saveCollection(&c1));
     QDateTime afterSave = QDateTime::currentDateTime();
-    QVERIFY(!c1.id().localId().isNull());
+    QVERIFY(!c1.id().isNull());
 
     // Verify filename (generated from name)
     QVERIFY(c1.metaData(QOrganizerCollection::KeyName).toString().contains("testsave"));
@@ -278,7 +255,7 @@ void tst_symbianomcollections::saveCollection()
 
     // Verify saved collection matches to fetched collection
     QList<QOrganizerCollection> cs;
-    cs << m_om->collection(c1.id().localId());
+    cs << m_om->collection(c1.id());
     QVERIFY(m_om->error() == QOrganizerManager::NoError);
     QVERIFY(cs.count() == 1);
     foreach (QString key, c1.metaData().keys()) {
@@ -326,7 +303,7 @@ void tst_symbianomcollections::saveCollection()
 
     // Verify saved collection matches to fetched collection (again)
     cs.clear();
-    cs << m_om->collection(c1.id().localId());
+    cs << m_om->collection(c1.id());
     QVERIFY(m_om->error() == QOrganizerManager::NoError);
     QVERIFY(cs.count() == 1);
     foreach (QString key, c1.metaData().keys()) {
@@ -343,15 +320,14 @@ void tst_symbianomcollections::saveCollection()
     c2.setMetaData("FileName", "c:testsavemodified");
     QVERIFY(!m_om->saveCollection(&c2));
     
-    // Try saving with unknown manager uri. Should fail.
-    c2 = c1;
-    QOrganizerCollectionId id = c2.id();
-    id.setManagerUri("foobar");
-    c2.setId(id);
-    QVERIFY(!m_om->saveCollection(&c2));
+    // Try saving with unknown manager uri. Should fail. -- cannot do this any more.
+    //c2 = c1;
+    //QOrganizerCollectionId id = c2.id();
+    //c2.setId(id);
+    //QVERIFY(!m_om->saveCollection(&c2));
     
     // Remove the collection
-    QVERIFY(m_om->removeCollection(c1.localId()));
+    QVERIFY(m_om->removeCollection(c1.id()));
     
     // Try saving again without clearing local id. Should fail.
     QVERIFY(!m_om->saveCollection(&c1));
@@ -371,7 +347,7 @@ void tst_symbianomcollections::removeCollection()
     if (!m_customCollectionsSupported) {    
         QWARN("Removing a collection not supported!");
         // Verify it fails with correct error code
-        QVERIFY(!m_om->removeCollection(m_om->defaultCollection().localId()));
+        QVERIFY(!m_om->removeCollection(m_om->defaultCollection().id()));
         QVERIFY(m_om->error() == QOrganizerManager::NotSupportedError);
         return;
     }
@@ -383,7 +359,7 @@ void tst_symbianomcollections::removeCollection()
     
     // Remove it
     // Backend should be able to remove the calendar file itself
-    QVERIFY(m_om->removeCollection(c.id().localId()));
+    QVERIFY(m_om->removeCollection(c.id()));
     
     // Save again
     c.setId(QOrganizerCollectionId());
@@ -397,7 +373,7 @@ void tst_symbianomcollections::removeCollection()
     // Remove the collection again
     // Now the backend cannot remove the calendar file because om2 has it open.
     // It must set the MarkAsDelete flag instead. 
-    QVERIFY(m_om->removeCollection(c.id().localId()));
+    QVERIFY(m_om->removeCollection(c.id()));
 
     // Create a third manager
     QScopedPointer<QOrganizerManager> om3(new QOrganizerManager(m_om->managerName()));
@@ -421,14 +397,14 @@ void tst_symbianomcollections::removeCollection()
     QVERIFY(colls.count() >= 2); // default collection + collection saved
     foreach (const QOrganizerCollection& coll, colls) {
         if (coll == m_om->defaultCollection())
-            QVERIFY(!m_om->removeCollection(coll.localId())); // removing default collection not allowed
+            QVERIFY(!m_om->removeCollection(coll.id())); // removing default collection not allowed
         else
-            QVERIFY(m_om->removeCollection(coll.localId()));
+            QVERIFY(m_om->removeCollection(coll.id()));
     }
     
     // Try removing the same ones again 
     foreach (const QOrganizerCollection& coll, colls) {
-        QVERIFY(!m_om->removeCollection(coll.localId()));
+        QVERIFY(!m_om->removeCollection(coll.id()));
     }
 }
 
@@ -442,13 +418,13 @@ void tst_symbianomcollections::collectionSignalEmission()
     QScopedPointer<QOrganizerManager> om2(new QOrganizerManager(m_om->managerName()));
     
     // Setup signal spies
-    qRegisterMetaType<QList<QOrganizerCollectionLocalId> >("QList<QOrganizerCollectionLocalId>");
-    QSignalSpy addedSpy1(m_om, SIGNAL(collectionsAdded(const QList<QOrganizerCollectionLocalId>&)));
-    QSignalSpy addedSpy2(om2.data(), SIGNAL(collectionsAdded(const QList<QOrganizerCollectionLocalId>&)));
-    QSignalSpy changedSpy1(m_om, SIGNAL(collectionsChanged(const QList<QOrganizerCollectionLocalId>&)));
-    QSignalSpy changedSpy2(om2.data(), SIGNAL(collectionsChanged(const QList<QOrganizerCollectionLocalId>&)));
-    QSignalSpy removedSpy1(m_om, SIGNAL(collectionsRemoved(const QList<QOrganizerCollectionLocalId>&)));
-    QSignalSpy removedSpy2(om2.data(), SIGNAL(collectionsRemoved(const QList<QOrganizerCollectionLocalId>&)));
+    qRegisterMetaType<QList<QOrganizerCollectionId> >("QList<QOrganizerCollectionId>");
+    QSignalSpy addedSpy1(m_om, SIGNAL(collectionsAdded(const QList<QOrganizerCollectionId>&)));
+    QSignalSpy addedSpy2(om2.data(), SIGNAL(collectionsAdded(const QList<QOrganizerCollectionId>&)));
+    QSignalSpy changedSpy1(m_om, SIGNAL(collectionsChanged(const QList<QOrganizerCollectionId>&)));
+    QSignalSpy changedSpy2(om2.data(), SIGNAL(collectionsChanged(const QList<QOrganizerCollectionId>&)));
+    QSignalSpy removedSpy1(m_om, SIGNAL(collectionsRemoved(const QList<QOrganizerCollectionId>&)));
+    QSignalSpy removedSpy2(om2.data(), SIGNAL(collectionsRemoved(const QList<QOrganizerCollectionId>&)));
     int addedCount = 0;
     int changedCount = 0;
     int removedCount = 0;
@@ -459,10 +435,10 @@ void tst_symbianomcollections::collectionSignalEmission()
     QVERIFY(m_om->saveCollection(&c));
     addedCount++;
     QTRY_COMPARE_SIGNAL_COUNTS();
-    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
-    QVERIFY(addedSpy1.last().at(0).value<QList<QOrganizerCollectionLocalId> >().contains(c.id().localId()));
-    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().count(), 1);
-    QVERIFY(addedSpy2.last().at(0).value<QList<QOrganizerCollectionLocalId> >().contains(c.id().localId()));
+    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerCollectionId> >().count(), 1);
+    QVERIFY(addedSpy1.last().at(0).value<QList<QOrganizerCollectionId> >().contains(c.id()));
+    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerCollectionId> >().count(), 1);
+    QVERIFY(addedSpy2.last().at(0).value<QList<QOrganizerCollectionId> >().contains(c.id()));
     
     // Modify collection
     c.setMetaData(QOrganizerCollection::KeyName, "testsignalemissionmodified");
@@ -473,7 +449,7 @@ void tst_symbianomcollections::collectionSignalEmission()
     // Remove collection
     // This will not actually remove the calendar file. It will only be marked for deletion.
     // This is because the calendar file is open at om2 (and possibly native symbian calendar).
-    QVERIFY(m_om->removeCollection(c.id().localId()));
+    QVERIFY(m_om->removeCollection(c.id()));
     removedCount++;
     QTRY_COMPARE_SIGNAL_COUNTS();
     
@@ -492,7 +468,7 @@ void tst_symbianomcollections::collectionSignalEmission()
     
     // Release the calendar file for deleting
     delete om2.take();
-    QVERIFY(m_om->removeCollection(c.id().localId()));
+    QVERIFY(m_om->removeCollection(c.id()));
     removedCount++;
     QTRY_COMPARE(removedSpy1.count(), removedCount);
 }
@@ -514,13 +490,13 @@ void tst_symbianomcollections::itemSignalEmission()
     QScopedPointer<QOrganizerManager> om2(new QOrganizerManager(m_om->managerName()));
     
     // Setup signal spies
-    qRegisterMetaType<QList<QOrganizerItemLocalId> >("QList<QOrganizerItemLocalId>");
-    QSignalSpy addedSpy1(m_om, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
-    QSignalSpy addedSpy2(om2.data(), SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
-    QSignalSpy changedSpy1(m_om, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)));
-    QSignalSpy changedSpy2(om2.data(), SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)));
-    QSignalSpy removedSpy1(m_om, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)));
-    QSignalSpy removedSpy2(om2.data(), SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)));
+    qRegisterMetaType<QList<QOrganizerItemId> >("QList<QOrganizerItemId>");
+    QSignalSpy addedSpy1(m_om, SIGNAL(itemsAdded(QList<QOrganizerItemId>)));
+    QSignalSpy addedSpy2(om2.data(), SIGNAL(itemsAdded(QList<QOrganizerItemId>)));
+    QSignalSpy changedSpy1(m_om, SIGNAL(itemsChanged(QList<QOrganizerItemId>)));
+    QSignalSpy changedSpy2(om2.data(), SIGNAL(itemsChanged(QList<QOrganizerItemId>)));
+    QSignalSpy removedSpy1(m_om, SIGNAL(itemsRemoved(QList<QOrganizerItemId>)));
+    QSignalSpy removedSpy2(om2.data(), SIGNAL(itemsRemoved(QList<QOrganizerItemId>)));
     int addedCount = 0;
     int changedCount = 0;
     int removedCount = 0;
@@ -541,7 +517,7 @@ void tst_symbianomcollections::itemSignalEmission()
     QTRY_COMPARE_SIGNAL_COUNTS();
     
     // Remove item
-    QVERIFY(m_om->removeItem(item.localId()));
+    QVERIFY(m_om->removeItem(item.id()));
     removedCount++;
     QTRY_COMPARE_SIGNAL_COUNTS();
     
@@ -560,8 +536,8 @@ void tst_symbianomcollections::itemSignalEmission()
     QVERIFY(m_om->saveItems(&items));
     addedCount++; // There should be one signal from both managers and the list should contain 2 items
     QTRY_COMPARE_SIGNAL_COUNTS();
-    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), 2);
-    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), 2);
+    QCOMPARE(addedSpy1.last().at(0).value<QList<QOrganizerItemId> >().count(), 2);
+    QCOMPARE(addedSpy2.last().at(0).value<QList<QOrganizerItemId> >().count(), 2);
         
     // Change items - batch api
     items[0].setDisplayLabel("testitemsignalemission1 changed");
@@ -569,17 +545,17 @@ void tst_symbianomcollections::itemSignalEmission()
     QVERIFY(m_om->saveItems(&items));
     changedCount++;
     QTRY_COMPARE_SIGNAL_COUNTS();
-    QCOMPARE(changedSpy1.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), 2);
-    QCOMPARE(changedSpy2.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), 2);
+    QCOMPARE(changedSpy1.last().at(0).value<QList<QOrganizerItemId> >().count(), 2);
+    QCOMPARE(changedSpy2.last().at(0).value<QList<QOrganizerItemId> >().count(), 2);
     
     // Remove items - batch api
-    QList<QOrganizerItemLocalId> ids;
-    ids << items[0].localId() << items[1].localId();
+    QList<QOrganizerItemId> ids;
+    ids << items[0].id() << items[1].id();
     QVERIFY(m_om->removeItems(ids));
     removedCount++;
     QTRY_COMPARE_SIGNAL_COUNTS();
-    QCOMPARE(removedSpy1.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), 2);
-    QCOMPARE(removedSpy2.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), 2);
+    QCOMPARE(removedSpy1.last().at(0).value<QList<QOrganizerItemId> >().count(), 2);
+    QCOMPARE(removedSpy2.last().at(0).value<QList<QOrganizerItemId> >().count(), 2);
 }
 
 void tst_symbianomcollections::addItem()
@@ -605,9 +581,9 @@ void tst_symbianomcollections::addItem()
     QVERIFY(m_om->saveItem(&item2)); // creates a new item in a different collection.
 
     // Verify
-    QVERIFY(item1.localId() != item2.localId());
-    QCOMPARE(item1.collectionId().localId(), m_om->defaultCollection().localId());
-    QCOMPARE(item2.collectionId().localId(), c.id().localId());
+    QVERIFY(item1.id() != item2.id());
+    QCOMPARE(item1.collectionId(), m_om->defaultCollection().id());
+    QCOMPARE(item2.collectionId(), c.id());
 }
 
 void tst_symbianomcollections::fetchItem()
@@ -633,8 +609,8 @@ void tst_symbianomcollections::fetchItem()
     // Fetch and verify the item
     // Note: collections need to be empty before executing the test case
     QCOMPARE(m_om->itemIds().count(), 1);
-    QCOMPARE(m_om->item(item.localId()).collectionId().localId(), c.id().localId());
-    QCOMPARE(m_om->item(item.localId()).displayLabel(), QString("fetchitem"));
+    QCOMPARE(m_om->item(item.id()).collectionId(), c.id());
+    QCOMPARE(m_om->item(item.id()).displayLabel(), QString("fetchitem"));
 }
 
 void tst_symbianomcollections::modifyItem()
@@ -662,8 +638,8 @@ void tst_symbianomcollections::modifyItem()
     QVERIFY(m_om->saveItem(&item));
 
     // Verify
-    QCOMPARE(m_om->item(item.localId()).displayLabel(), QString("modifyitem"));
-    QCOMPARE(m_om->item(item.localId()).collectionId().localId(), c.id().localId());
+    QCOMPARE(m_om->item(item.id()).displayLabel(), QString("modifyitem"));
+    QCOMPARE(m_om->item(item.id()).collectionId(), c.id());
 }
 
 void tst_symbianomcollections::removeItem()
@@ -687,11 +663,11 @@ void tst_symbianomcollections::removeItem()
     QVERIFY(m_om->saveItem(&item));
 
     // Remove item
-    QOrganizerItemLocalId localId = item.localId();
-    QVERIFY(m_om->removeItem(localId));
+    QOrganizerItemId id = item.id();
+    QVERIFY(m_om->removeItem(id));
 
     // Verify
-    QVERIFY(m_om->item(localId).isEmpty());
+    QVERIFY(m_om->item(id).isEmpty());
 }
 
 void tst_symbianomcollections::fetchItems()
@@ -726,9 +702,9 @@ void tst_symbianomcollections::fetchItems()
 
     // Verify there are no duplicates in the list
     bool noduplicates(true);
-    foreach(QOrganizerItemLocalId localid, m_om->itemIds()) {
-        if (m_om->itemIds().count(localid) > 1) {
-            qWarning() << "duplicate local id: " << localid;
+    foreach(QOrganizerItemId id, m_om->itemIds()) {
+        if (m_om->itemIds().count(id) > 1) {
+            qWarning() << "duplicate id: " << id;
             noduplicates = false;
         }
     }
@@ -772,14 +748,14 @@ void tst_symbianomcollections::removeItems()
 
     // Filter for the first new collection
     QOrganizerItemCollectionFilter filter1;
-    QSet<QOrganizerCollectionLocalId> collectionIds1;
-    collectionIds1.insert(c1.localId());
+    QSet<QOrganizerCollectionId> collectionIds1;
+    collectionIds1.insert(c1.id());
     filter1.setCollectionIds(collectionIds1);
 
     // Filter for the second new collection
     QOrganizerItemCollectionFilter filter2;
-    QSet<QOrganizerCollectionLocalId> collectionIds2;
-    collectionIds2.insert(c2.localId());
+    QSet<QOrganizerCollectionId> collectionIds2;
+    collectionIds2.insert(c2.id());
     filter2.setCollectionIds(collectionIds2);
 
     // Remove from the first new collection and verify
@@ -831,8 +807,8 @@ void tst_symbianomcollections::fetchItemOccurrence()
     QCOMPARE(m_om->itemsForExport().count(), 1);
     QCOMPARE(m_om->itemsForExport().at(0).collectionId(), c.id());
     QCOMPARE(m_om->items().count(), 5);
-    QVERIFY(m_om->items().at(0).localId().isNull());
-    QVERIFY(m_om->items().at(1).localId().isNull());
+    QVERIFY(m_om->items().at(0).id().isNull());
+    QVERIFY(m_om->items().at(1).id().isNull());
     QCOMPARE(m_om->items().at(0).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QCOMPARE(m_om->items().at(1).type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
 }
@@ -876,9 +852,9 @@ void tst_symbianomcollections::modifyItemOccurrence()
     QCOMPARE(m_om->items().at(0).collectionId(), c.id());
     QCOMPARE(m_om->items().at(1).collectionId(), c.id());
     QCOMPARE(m_om->items().at(2).collectionId(), c.id());
-    QVERIFY(m_om->items().at(0).localId().isNull());
-    QVERIFY(!m_om->items().at(1).localId().isNull());
-    QVERIFY(m_om->items().at(2).localId().isNull());
+    QVERIFY(m_om->items().at(0).id().isNull());
+    QVERIFY(!m_om->items().at(1).id().isNull());
+    QVERIFY(m_om->items().at(2).id().isNull());
     QCOMPARE(m_om->items().at(0).displayLabel(), QString("modifyitemoccurrence"));
     QCOMPARE(m_om->items().at(1).displayLabel(), QString("secondoccurrence"));
     QCOMPARE(m_om->items().at(2).displayLabel(), QString("modifyitemoccurrence"));
@@ -917,21 +893,21 @@ void tst_symbianomcollections::itemsInDeletedCollection()
     QVERIFY(m_om->saveItem(&itemFetch));
 
     // Remove the collection
-    QVERIFY(m_om->removeCollection(c.localId()));
+    QVERIFY(m_om->removeCollection(c.id()));
 
     // Try to modify an item in the deleted collection
     QVERIFY(!m_om->saveItem(&itemSave));
 
     // Try to remove item from the deleted collection
-    QVERIFY(!m_om->removeItem(itemRemove.localId()));
+    QVERIFY(!m_om->removeItem(itemRemove.id()));
 
     // Try to fetch an item from the deleted collection
-    QVERIFY(m_om->item(itemFetch.localId()).isEmpty());
+    QVERIFY(m_om->item(itemFetch.id()).isEmpty());
 
     // Try to fetch item instances from the deleted collection
     QOrganizerItemCollectionFilter fil;
-    QSet<QOrganizerCollectionLocalId> filterCollectionIds;
-    filterCollectionIds.insert(c.localId());
+    QSet<QOrganizerCollectionId> filterCollectionIds;
+    filterCollectionIds.insert(c.id());
     fil.setCollectionIds(filterCollectionIds);
     QVERIFY(m_om->items(fil).count() == 0);
 }

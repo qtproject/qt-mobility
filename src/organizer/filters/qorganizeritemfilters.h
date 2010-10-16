@@ -51,6 +51,6 @@
 #include "qorganizeritemdetailrangefilter.h"
 #include "qorganizeritemintersectionfilter.h"
 #include "qorganizeriteminvalidfilter.h"
-#include "qorganizeritemlocalidfilter.h"
+#include "qorganizeritemidfilter.h"
 #include "qorganizeritemcollectionfilter.h"
 #endif

@@ -52,7 +52,9 @@ Rectangle {
     Column {
         spacing:4
 
-        Text { text:"Name:" + myContact.name.firstName + " " + myContact.name.lastName }
+        Text { text:"Name(from property name):" + myContact.name.firstName + " " + myContact.name.lastName }
+        Text { text:"Name(from detail type):" + myContact.detail(ContactDetail.Name).firstName + " " + myContact.name.lastName }
+        Text { text:"Name(from detail name):" + myContact.detail("Name").firstName + " " + myContact.name.lastName }
         Text { text:"Address:" + myContact.address.street + " " + myContact.address.locality + " " + myContact.address.region + " " + myContact.address.postcode }
         Text { text:"Email:" + myContact.email.emailAddress }
         Text { text:"phone number[0]:" + myContact.phoneNumbers[0].number }
@@ -63,8 +65,8 @@ Rectangle {
 
     Contact {
         id: myContact
-
-            ContactName {
+        type:"Contact"
+            Name {
                 firstName:"Charles"
                 lastName:"Yin"
             }
@@ -102,8 +104,8 @@ Rectangle {
     }
     DetailFilter {
        id:filter
-       detail:Detail.DetailName
-       field:Name.FieldFirstName
+       detail:ContactDetail.Name
+       field:Name.FirstName
        value:"Charles"
        matchFlags:Filter.MatchExactly
     }

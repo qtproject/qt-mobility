@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -47,6 +46,23 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass MapCircle
+
+    \brief The MapCircle element displays a circle on a map.
+    \inherits QGeoMapCircleObject
+
+    \ingroup qml-location-maps
+
+    The circle is specified in terms of a central coordinate and 
+    a radius in metres.
+
+    If \l center and \l radius are not specified and valid the 
+    circle will not be displayed.
+
+    The MapCircle element is part of the \bold{QtMobility.location 1.1} module.
+*/
+
 QDeclarativeGeoMapCircleObject::QDeclarativeGeoMapCircleObject()
 {
     m_center = new QDeclarativeCoordinate(this);
@@ -80,6 +96,14 @@ QDeclarativeGeoMapCircleObject::~QDeclarativeGeoMapCircleObject()
 {
 }
 
+/*!
+    \qmlproperty Coordinate MapCircle::center
+
+    This property holds the coordinate at the center of the circle.
+
+    The default value is an invalid coordinate.
+*/
+
 void QDeclarativeGeoMapCircleObject::setDeclarativeCenter(const QDeclarativeCoordinate *center)
 {
     if (m_center->coordinate() == center->coordinate())
@@ -111,6 +135,23 @@ void QDeclarativeGeoMapCircleObject::centerAltitudeChanged(double /*altitude*/)
     setCenter(m_center->coordinate());
 }
 
+/*!
+    \qmlproperty qreal MapCircle::radius
+
+    This property holds the radius of the circle in metres.
+    
+    A negative value is used to indicate that the radius is invalid and 
+    the default value is a radius of -1.0.
+*/
+
+/*!
+    \qmlproperty color MapCircle::color
+
+    This property holds the color used to fill the circle.
+
+    The default value corresponds to a transparent color.
+*/
+
 void QDeclarativeGeoMapCircleObject::setColor(const QColor &color)
 {
     if (m_color == color)
@@ -127,6 +168,18 @@ QColor QDeclarativeGeoMapCircleObject::color() const
     return m_color;
 }
 
+/*!
+    \qmlproperty int MapCircle::border.width
+    \qmlproperty color MapCircle::border.color
+
+    These properties hold the width and color used to draw the border of the circle.
+
+    The width is in pixels and is independent of the zoom level of the map.
+
+    The default values correspond to a black border with a width of 1 pixel.
+
+    For no line, use a width of 0 or a transparent color.
+*/
 QDeclarativeGeoMapObjectBorder* QDeclarativeGeoMapCircleObject::border()
 {
     return &m_border;
@@ -149,6 +202,29 @@ void QDeclarativeGeoMapCircleObject::borderWidthChanged(int width)
         p.setStyle(Qt::SolidLine);
     setPen(p);
 }
+
+/*!
+    \qmlproperty int MapCircle::zValue
+
+    This property holds the z-value of the circle.
+
+    Map objects are drawn in z-value order, and objects with the 
+    same z-value will be drawn in insertion order.
+*/
+
+/*!
+    \qmlproperty bool MapCircle::visible
+
+    This property holds a boolean corresponding to whether or not the 
+    circle is visible.
+*/
+
+/*!
+    \qmlproperty bool MapCircle::selected
+
+    This property holds a boolean corresponding to whether or not the 
+    circle is selected.
+*/
 
 #include "moc_qdeclarativegeomapcircleobject_p.cpp"
 

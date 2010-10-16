@@ -57,16 +57,16 @@ class Q_ORGANIZER_EXPORT QOrganizerItemParent : public QOrganizerItemDetail
 public:
 #ifdef Q_QDOC
     static const QLatin1Constant DefinitionName;
-    static const QLatin1Constant FieldParentLocalId;
+    static const QLatin1Constant FieldParentId;
     static const QLatin1Constant FieldOriginalDate;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemParent, "Parent")
-    Q_DECLARE_LATIN1_CONSTANT(FieldParentLocalId, "ParentLocalId");
+    Q_DECLARE_LATIN1_CONSTANT(FieldParentId, "ParentId");
     Q_DECLARE_LATIN1_CONSTANT(FieldOriginalDate, "OriginalDate");
 #endif
 
-    void setParentLocalId(const QOrganizerItemLocalId& parentId) {setValue(FieldParentLocalId, QVariant::fromValue(parentId));}
-    QOrganizerItemLocalId parentLocalId() const {return variantValue(FieldParentLocalId).value<QOrganizerItemLocalId>();}
+    void setParentId(const QOrganizerItemId& parentId) {setValue(FieldParentId, QVariant::fromValue(parentId));}
+    QOrganizerItemId parentId() const {return variantValue(FieldParentId).value<QOrganizerItemId>();}
 
 
     void setOriginalDate(const QDate& date) {setValue(FieldOriginalDate, date);}

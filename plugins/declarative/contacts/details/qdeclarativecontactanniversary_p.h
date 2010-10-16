@@ -82,7 +82,7 @@ public:
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::ContactAnniversary;
+        return QDeclarativeContactDetail::Anniversary;
     }
     static QString fieldNameFromFieldType(int fieldType)
     {
