@@ -56,7 +56,7 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkSortOrder
     \brief The QLandmarkSortOrder class serves as a base class
            for the different sort order types and by itself represents
-           default (i.e. no) sorting.
+           no sorting.
 
     \inmodule QtLocation
 
@@ -64,20 +64,21 @@ QTM_BEGIN_NAMESPACE
 
     The sort orders define how a list of landmarks should be ordered
     when they searched using a QLandmarkManager or one of the
-    landmark request classes.
+    landmark request classes.  (For sorting by distance
+    see the QLandmarkProximityFilter).
 */
 
 /*!
     \enum QLandmarkSortOrder::SortType
     Defines the type of sort order.
-    \value DefaultSort The default sort order that does no sorting.
+    \value NoSort No sorting is applied
     \value NameSort   Sorts landmarks by name.
 */
 
 /*!
     Constructs a landmark sort order.
 
-    The type of the sort order is InvalidSort.
+    The type of the sort order is NoSort.
 */
 QLandmarkSortOrder::QLandmarkSortOrder()
         : d_ptr(new QLandmarkSortOrderPrivate())
@@ -172,7 +173,7 @@ bool QLandmarkSortOrder::operator==(const QLandmarkSortOrder& other) const
 
 QLandmarkSortOrderPrivate::QLandmarkSortOrderPrivate()
         : QSharedData(),
-          type(QLandmarkSortOrder::DefaultSort),
+          type(QLandmarkSortOrder::NoSort),
           order(Qt::AscendingOrder)
 {
 }

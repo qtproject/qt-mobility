@@ -98,16 +98,15 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
     \enum QLandmarkFilter::FilterType
     Describes the type of the filter
     \value InvalidFilter An invalid filter which matches nothing
+    \value DefaultFilter A filter which matches all landmarks.
+    \value IntersectionFilter A filter which performs an AND operation with its
+                                      constituent filters
+    \value UnionFilter A filter which performs an OR operation with its constiuent filters.
     \value NameFilter A filter which matches landmarks based on name
     \value ProximityFilter A filter which matches landmarks within a certain range of a given
            coordinate.
     \value CategoryFilter A filter which matches landmarks that belong to a given category
     \value BoxFilter A filter which matches landmarks within a given bounding box.
-    \value IntersectionFilter A filter which performs an AND operation with its
-                                      constituent filters
-    \value UnionFilter A filter which performs an OR operation with its constiuent
-                               filters
-    \value DefaultFilter A filter which matches all landmarks.
     \value AttributeFilter A filter which matches landmarks based on generic attributes.
     \value LandmarkIdFilter A filter which matches landmarks based on a list of landmark ids.
 */
