@@ -6837,17 +6837,11 @@ void tst_QLandmarkManager::exportLmx_data()
 void tst_QLandmarkManager::waitForFinished()
 {
     QLandmarkImportRequest importRequest(m_manager);
-#ifdef Q_OS_SYMBIAN
     importRequest.setFileName("data/places.gpx");
     importRequest.start();
-    //
-    QVERIFY(importRequest.waitForFinished());
-    QVERIFY(importRequest.state() == QLandmarkAbstractRequest::FinishedState);
-    QVERIFY(m_manager->landmarks().count() > 0);
-#endif
-    importRequest.setFileName(":data/places.gpx");
-    importRequest.start();
+    qDebug() << "after start request";
     QVERIFY(!importRequest.waitForFinished());
+    qDebug() << "end of function";
 }
 #endif
 
