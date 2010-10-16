@@ -75,9 +75,6 @@
 
     \brief An API to navigate and query documents using their meta-data.
 
-    \note This API and documentation is a \bold {Technology Preview} and
-    is still subject to change.
-
 
     \section1 Namespace
 
