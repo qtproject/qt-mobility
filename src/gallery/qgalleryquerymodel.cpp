@@ -286,7 +286,7 @@ void QGalleryQueryModelPrivate::_q_metaDataChanged(int index, int count, const Q
     gallery query.
 
     The meta-data that should be queried by a QGalleryQueryModel is specified
-    by adding columns to the model, each column has a set of \l roleProperties
+    by adding columns to the model, each column has a set of \l roleProperties()
     which map item data roles to gallery properties.  After the model query
     has been executed the values of the properties requested for each column can
     be addressed using the roles they were mapped to.

@@ -77,10 +77,6 @@
 
     \annotatedlist qml-gallery-filters
 
-    Other filters enable \l {GalleryFilter::caseSensitivity}{case sensitivity}
-    options or the \l {GalleryFilter::comparator}{comparator} property can be
-    set to define the matching condition of the filter.
-
     There is nothing to prevent the developer creating a number of filters.
     Then she could use either a \l {GalleryFilterUnion} or a \l
     {GalleryFilterIntersection} to find the result of OR-ing or AND-ing the
@@ -88,26 +84,20 @@
 
     \section2 Gallery Item
 
-    \l {GalleryItem}s are elements that are a means to request information
+    \l {DocumentGalleryItem}s are elements that are a means to request information
     about a single item from a gallery. The information may include
     monitoring the state of the request, reading the meta-data for the
     document or writing meta-data.
 
-    When a request is made the \l {GalleryItem::state}{state} property
-    contains the current state of the request including whether it is active
-    or cancelled. The \l {GalleryItem::result}{result} property contains the
-    result of the request including error conditions or a success flag.
+    When a request is made the \l {DocumentGalleryItem::status}{status} property
+    contains the current status of the request including whether it is active
+    or canceled.
 
-    Progress of the request is available through the integer item property \l
-    {GalleryItem::currentProgress}{currentProgress} out of the maximum value
-    \l {GalleryItem::maximumProgress}{maximumProgress}.
+    Progress of the request is available through the \l qreal item property \l
+    {DocumentGalleryItem::progress}{progress}.
 
-    \l {GalleryItem} can emit signals for the events
-    \l {GalleryItem::onSucceeded}{onSucceeded()} ,
-    \l {GalleryItem::onCancelled}{onCancelled()} ,
-    \l {GalleryItem::onFailed}{onFailed()} and
-    \l {GalleryItem::onFinished}{onFinished()} .
 
+    
     \section2 Query Requests
 
     The \l GalleryQueryModel element is used to perform the requests on a
@@ -118,7 +108,7 @@
 
         ...
 
-        model: GalleryQueryModel {
+        model: DocumentGalleryQueryModel {
             gallery: DocumentGallery {}
 
             itemType: "Image"

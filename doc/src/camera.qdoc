@@ -68,33 +68,30 @@ Multimedia base classes including \l QMediaObject and \l QMediaControl.
 In order to capture an image we need to create a \l QCamera object and use
 it to initialize a \l QVideoWidget, so we can see where the camera is
 pointing - a viewfinder. The camera object is also used to initialize a new
-QStillImageCapture object, imageCapture. All that is then needed is to start
+QCameraImageCapture object, imageCapture. All that is then needed is to start
 the camera, lock it so that the settings are not changed while the image
 capture occurs, capture the image, and finally unlock the camera ready for
 the next photo.
 
     \code
-            camera = new QCamera;
-            viewFinder = new QCameraViewfinder();
-            viewFinder->show();
+        camera = new QCamera;
+        viewFinder = new QCameraViewfinder;
+        camera->setViewfinder(viewFinder);
+        viewFinder->show();
 
-            camera->setViewfinder(viewFinder);
+        imageCapture = new QCameraImageCapture(camera);
 
-            imageCapture = new QCameraImageCapture(camera);
+        camera->setCaptureMode(QCamera::CaptureStillImage);
+        camera->start();
 
-            camera->setCaptureMode(QCamera::CaptureStillImage);
-            camera->start();
+        //on half pressed shutter button
+        camera->searchA{QCameraFocus::FocusMode}{ndLock();
 
-            //on half pressed shutter button
-            camera->searchAndLock();
+        //on shutter button pressed
+        imageCapture->capture();
 
-            ...
-
-            //on shutter button pressed
-            imageCapture->capture();
-
-            //on shutter button released
-            camera->unlock();
+        //on shutter button released
+        camera->unlock();
     \endcode
 
 Alternatively, we could have used a QGraphicsVideoItem as a viewfinder.
@@ -140,10 +137,9 @@ shutter button is pressed the camera is locked as before but instead the
 Focusing is managed by the classes \l QCameraFocus and \l QCameraFocusControl.
 QCameraFocus allows the developer to set the general policy by means of the
 enums for the \l {QCameraFocus::FocusMode}{FocusMode} and the
-\l {QCameraFocus::FocusPointMode}{FocusPointMode}. \l FocusMode deals with
-settings such as \l AutoFocus, \l ContinuousFocus and \l InfinityFocus, whereas
-\l FocusPointMode deals with the various focus zones within the view.
-\l FocusPointMode has support for face recognition, center focus and a custom
+\l {QCameraFocus::FocusPointMode}{FocusPointMode}. \l {QCameraFocus::FocusMode}{FocusMode}
+deals with settings such as \l {QCameraFocus::FocusMode}{AutoFocus},
+\l {QCameraFocus::FocusMode}{ContinuousFocus} and \l {QCameraFocus::FocusMode}{InfinityFocus}, whereas \l {QCameraFocus::FocusMode}{FocusPointMode} deals with the various focus zones within the view. \l {QCameraFocus::FocusMode}{FocusPointMode} has support for face recognition, center focus and a custom
 focus where the focus point can be specified.
 
 
