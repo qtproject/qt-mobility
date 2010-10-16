@@ -100,11 +100,13 @@
     
     \section2 Query Requests
 
-    The \l GalleryQueryModel element is used to perform the requests on a
-    document gallery. The following snippet of QML from the \l GalleryQueryModel documentation is worth a closer look because it puts together several of the elements discussed in this overview.
+    The \l DocumentGalleryModel element is used to perform the requests on a
+    document gallery. The following snippet of QML from the
+    \l DocumentGalleryModel documentation is worth a closer look because it puts
+    together several of the elements discussed in this overview.
 
     \code
-    import QtMobility.gallery 1.0
+    import QtMobility.gallery 1.1
 
         ...
 
@@ -113,10 +115,9 @@
 
             itemType: "Image"
             properties: ["thumbnailImage"]
-            filter: GalleryFilter {
+            filter: GalleryWildcardFilter {
                 property: "fileName";
                 value: "*.jpg";
-                comparator: GalleryFilter.Wildcard
             }
         }
 

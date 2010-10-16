@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,50 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERCOLLECTIONID_P_H
-#define QORGANIZERCOLLECTIONID_P_H
+import Qt 4.7
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+Item {
+    id: titleBar
+    property string managerName: ""
+    property int contactsCount: 0
+    property string statusString: ""
 
-#include <QString>
-#include <QSharedData>
 
-#include "qorganizercollectionid.h"
+    BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
 
-QTM_BEGIN_NAMESPACE
+    Item {
+        id: container
+        width: (parent.width * 2) - 55 ; height: parent.height
 
-class QOrganizerCollectionIdPrivate : public QSharedData
-{
-public:
-    QOrganizerCollectionIdPrivate()
-            : QSharedData()
-    {
+        Image {
+            id: quitButton
+            anchors.left: parent.left//; anchors.leftMargin: 0
+            anchors.verticalCenter: parent.verticalCenter
+            source: "images/quit.png"
+            MouseArea {
+                anchors.fill: parent
+                onClicked: Qt.quit()
+            }
+        }
+
+        Text {
+            id: categoryText
+            anchors {
+                left: quitButton.right; right: parent.right; //leftMargin: 10; rightMargin: 10
+                verticalCenter: parent.verticalCenter
+            }
+            elide: Text.ElideLeft
+            text: "[" + managerName + "] Total:" + contactsCount + " " + statusString
+            font.bold: true; font.pixelSize: 15; color: "White"; style: Text.Raised; styleColor: "Black"
+        }
+
     }
 
-    QOrganizerCollectionIdPrivate(const QOrganizerCollectionIdPrivate& other)
-            : QSharedData(other),
-            m_managerUri(other.m_managerUri),
-            m_localId(other.m_localId)
-    {
-    }
-
-    ~QOrganizerCollectionIdPrivate()
-    {
-    }
-
-    QString m_managerUri;
-    QOrganizerCollectionLocalId m_localId;
-};
-
-QTM_END_NAMESPACE
-
-#endif
+}

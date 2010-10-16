@@ -132,9 +132,9 @@ void QDeclarativeContact::setModified()
 void QDeclarativeContact::setType(QDeclarativeContact::ContactType newType)
 {
     if (newType != type()) {
-        if (newType == QDeclarativeContact::TypeContact)
+        if (newType == QDeclarativeContact::Contact)
             d->m_contact.setType(QContactType::TypeContact);
-        else if (newType == QDeclarativeContact::TypeGroup)
+        else if (newType == QDeclarativeContact::Group)
             d->m_contact.setType(QContactType::TypeGroup);
         emit detailsChanged();
     }
@@ -143,8 +143,8 @@ void QDeclarativeContact::setType(QDeclarativeContact::ContactType newType)
 QDeclarativeContact::ContactType QDeclarativeContact::type() const
 {
     if (d->m_contact.type() == QContactType::TypeGroup)
-        return QDeclarativeContact::TypeGroup;
-    return QDeclarativeContact::TypeContact;
+        return QDeclarativeContact::Group;
+    return QDeclarativeContact::Contact;
 }
 
 bool QDeclarativeContact::removeDetail(QDeclarativeContactDetail* detail)
@@ -185,18 +185,18 @@ QString QDeclarativeContact::manager() const
 
 QDeclarativeContactDetail* QDeclarativeContact::detail(const QVariant& name)
 {
-    if (name.type() == QVariant::Int)
-        return d->detail(static_cast<QDeclarativeContactDetail::ContactDetailType>(name.value<int>())).value<QDeclarativeContactDetail*>();
-    else
+    if (name.type() == QVariant::String)
         return d->detail(name.toString()).value<QDeclarativeContactDetail*>();
+    else
+        return d->detail(static_cast<QDeclarativeContactDetail::ContactDetailType>(name.value<int>())).value<QDeclarativeContactDetail*>();
 }
 
 QDeclarativeListProperty<QDeclarativeContactDetail> QDeclarativeContact::details(const QVariant& name)
 {
-    if (name.type() == QVariant::Int)
-        return d->details(static_cast<QDeclarativeContactDetail::ContactDetailType>(name.value<int>())).value< QDeclarativeListProperty<QDeclarativeContactDetail> >();
+    if (name.type() == QVariant::String)
+        return d->details(name.toString()).value< QDeclarativeListProperty<QDeclarativeContactDetail> >();
     else
-        return d->details(name.toString()).value< QDeclarativeListProperty<QDeclarativeContactDetail> >();;
+        return d->details(static_cast<QDeclarativeContactDetail::ContactDetailType>(name.value<int>())).value< QDeclarativeListProperty<QDeclarativeContactDetail> >();
 }
 
 void QDeclarativeContact::clearDetails()

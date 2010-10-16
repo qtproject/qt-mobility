@@ -39,43 +39,43 @@
 **
 ****************************************************************************/
 
-#include "qorganizeritemlocalidfetchrequest.h"
+#include "qorganizeritemidfetchrequest.h"
 #include "qorganizeritemrequests_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QOrganizerItemLocalIdFetchRequest
-  \brief The QOrganizerItemLocalIdFetchRequest class allows a client to asynchronously
+  \class QOrganizerItemIdFetchRequest
+  \brief The QOrganizerItemIdFetchRequest class allows a client to asynchronously
     request a list of organizer item ids from a organizer item store manager.
   \inmodule QtOrganizer
 
 
-  For a QOrganizerItemLocalIdFetchRequest, the resultsAvailable() signal will be emitted when the resultant
-  manager-local organizer item ids (which may be retrieved by calling ids()), are updated, as well as if
+  For a QOrganizerItemIdFetchRequest, the resultsAvailable() signal will be emitted when the resultant
+  manager organizer item ids (which may be retrieved by calling ids()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
   \ingroup organizer-requests
  */
 
 /*! Constructs a new organizer item id fetch request whose parent is the specified \a parent */
-QOrganizerItemLocalIdFetchRequest::QOrganizerItemLocalIdFetchRequest(QObject* parent)
-    : QOrganizerAbstractRequest(new QOrganizerItemLocalIdFetchRequestPrivate, parent)
+QOrganizerItemIdFetchRequest::QOrganizerItemIdFetchRequest(QObject* parent)
+    : QOrganizerAbstractRequest(new QOrganizerItemIdFetchRequestPrivate, parent)
 {
 }
 
 /*! Sets the filter which will be used to select the organizer items whose ids will be returned to \a filter */
-void QOrganizerItemLocalIdFetchRequest::setFilter(const QOrganizerItemFilter& filter)
+void QOrganizerItemIdFetchRequest::setFilter(const QOrganizerItemFilter& filter)
 {
-    Q_D(QOrganizerItemLocalIdFetchRequest);
+    Q_D(QOrganizerItemIdFetchRequest);
     d->m_filter = filter;
 }
 
 /*! Sets the future sort ordering of the result of the request to \a sorting.  This function only has
     effect on the result if called prior to calling \c start() */
-void QOrganizerItemLocalIdFetchRequest::setSorting(const QList<QOrganizerItemSortOrder>& sorting)
+void QOrganizerItemIdFetchRequest::setSorting(const QList<QOrganizerItemSortOrder>& sorting)
 {
-    Q_D(QOrganizerItemLocalIdFetchRequest);
+    Q_D(QOrganizerItemIdFetchRequest);
     d->m_sorting = sorting;
 }
 
@@ -85,9 +85,9 @@ void QOrganizerItemLocalIdFetchRequest::setSorting(const QList<QOrganizerItemSor
    up to the end date).
    Note that an item matches if either it or any of its occurrences occur within the defined range.
  */
-void QOrganizerItemLocalIdFetchRequest::setStartDate(const QDateTime &date)
+void QOrganizerItemIdFetchRequest::setStartDate(const QDateTime &date)
 {
-    Q_D(QOrganizerItemLocalIdFetchRequest);
+    Q_D(QOrganizerItemIdFetchRequest);
     d->m_startDate = date;
 }
 
@@ -97,23 +97,23 @@ void QOrganizerItemLocalIdFetchRequest::setStartDate(const QDateTime &date)
    after the start date).
    Note that an item matches if either it or any of its occurrences occur within the defined range.
  */
-void QOrganizerItemLocalIdFetchRequest::setEndDate(const QDateTime &date)
+void QOrganizerItemIdFetchRequest::setEndDate(const QDateTime &date)
 {
-    Q_D(QOrganizerItemLocalIdFetchRequest);
+    Q_D(QOrganizerItemIdFetchRequest);
     d->m_endDate = date;
 }
 
 /*! Returns the filter which will be used to select the organizer items whose ids will be returned */
-QOrganizerItemFilter QOrganizerItemLocalIdFetchRequest::filter() const
+QOrganizerItemFilter QOrganizerItemIdFetchRequest::filter() const
 {
-    Q_D(const QOrganizerItemLocalIdFetchRequest);
+    Q_D(const QOrganizerItemIdFetchRequest);
     return d->m_filter;
 }
 
 /*! Returns the sort ordering which will be used to sort the result */
-QList<QOrganizerItemSortOrder> QOrganizerItemLocalIdFetchRequest::sorting() const
+QList<QOrganizerItemSortOrder> QOrganizerItemIdFetchRequest::sorting() const
 {
-    Q_D(const QOrganizerItemLocalIdFetchRequest);
+    Q_D(const QOrganizerItemIdFetchRequest);
     return d->m_sorting;
 }
 
@@ -123,9 +123,9 @@ QList<QOrganizerItemSortOrder> QOrganizerItemLocalIdFetchRequest::sorting() cons
    up until the end date).
    Note that an item matches if either it or any of its occurrences occur within the defined range.
  */
-QDateTime QOrganizerItemLocalIdFetchRequest::startDate() const
+QDateTime QOrganizerItemIdFetchRequest::startDate() const
 {
-    Q_D(const QOrganizerItemLocalIdFetchRequest);
+    Q_D(const QOrganizerItemIdFetchRequest);
     return d->m_startDate;
 }
 
@@ -135,19 +135,19 @@ QDateTime QOrganizerItemLocalIdFetchRequest::startDate() const
    after the start date).
    Note that an item matches if either it or any of its occurrences occur within the defined range.
  */
-QDateTime QOrganizerItemLocalIdFetchRequest::endDate() const
+QDateTime QOrganizerItemIdFetchRequest::endDate() const
 {
-    Q_D(const QOrganizerItemLocalIdFetchRequest);
+    Q_D(const QOrganizerItemIdFetchRequest);
     return d->m_endDate;
 }
 
 /*! Returns the list of ids of organizer items which matched the request */
-QList<QOrganizerItemLocalId> QOrganizerItemLocalIdFetchRequest::itemIds() const
+QList<QOrganizerItemId> QOrganizerItemIdFetchRequest::itemIds() const
 {
-    Q_D(const QOrganizerItemLocalIdFetchRequest);
+    Q_D(const QOrganizerItemIdFetchRequest);
     return d->m_ids;
 }
 
-#include "moc_qorganizeritemlocalidfetchrequest.cpp"
+#include "moc_qorganizeritemidfetchrequest.cpp"
 
 QTM_END_NAMESPACE

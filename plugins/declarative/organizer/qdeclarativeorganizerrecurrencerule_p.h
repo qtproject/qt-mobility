@@ -49,13 +49,11 @@
 
 QTM_USE_NAMESPACE
 
-class QDeclarativeOrganizerItemRecurrenceRule : public QObject
+class QDeclarativeOrganizerRecurrenceRule : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(Frequency frequency READ frequency WRITE setFrequency NOTIFY valueChanged)
-    Q_PROPERTY(LimitType limitType READ limitType NOTIFY valueChanged)
-    Q_PROPERTY(int limitCount READ limitCount WRITE setLimitCount NOTIFY valueChanged)
-    Q_PROPERTY(QDate limitDate READ limitDate WRITE setLimitDate NOTIFY valueChanged)
+    Q_PROPERTY(QVariant limit READ limit WRITE setLimit NOTIFY valueChanged)
     Q_PROPERTY(int interval READ interval WRITE setInterval NOTIFY valueChanged)
     Q_PROPERTY(QVariantList daysOfWeek READ daysOfWeek WRITE setDaysOfWeek NOTIFY valueChanged)
     Q_PROPERTY(QVariantList daysOfMonth READ daysOfMonth WRITE setDaysOfMonth NOTIFY valueChanged)
@@ -66,10 +64,9 @@ class QDeclarativeOrganizerItemRecurrenceRule : public QObject
 
     Q_ENUMS(Frequency)
     Q_ENUMS(Month)
-    Q_ENUMS(LimitType)
 public:
 
-    QDeclarativeOrganizerItemRecurrenceRule(QObject* parent = 0)
+    QDeclarativeOrganizerRecurrenceRule(QObject* parent = 0)
         :QObject(parent)
     {
     }
@@ -97,15 +94,12 @@ public:
         December = QOrganizerRecurrenceRule::December
     };
 
-    enum LimitType {
-        NoLimit = QOrganizerRecurrenceRule::NoLimit,
-        CountLimit = QOrganizerRecurrenceRule::CountLimit,
-        DateLimit = QOrganizerRecurrenceRule::DateLimit
-    };
-
     void setFrequency(Frequency freq)
     {
-        m_rule.setFrequency(static_cast<QOrganizerRecurrenceRule::Frequency>(freq));
+        if (freq != frequency()) {
+            m_rule.setFrequency(static_cast<QOrganizerRecurrenceRule::Frequency>(freq));
+            emit valueChanged();
+        }
     }
 
     Frequency frequency() const
@@ -113,33 +107,43 @@ public:
         return static_cast<Frequency>(m_rule.frequency());
     }
 
-    LimitType limitType() const
+    void setLimit(const QVariant& value)
     {
-        return static_cast<LimitType>(m_rule.limitType());
-    }
-    void setLimitCount(int count)
-    {
-        m_rule.setLimit(count);
+        if (value.userType() == QVariant::Date) {
+            QDate v = value.value<QDate>();
+            if (v != m_rule.limitDate()) {
+                m_rule.setLimit(v);
+                emit valueChanged();
+            }
+        }  else if (value.type() == QVariant::Int) {
+            int v = value.value<int>();
+            if (v != m_rule.limitCount()) {
+                m_rule.setLimit(v);
+                emit valueChanged();
+            }
+        } else {
+            qWarning() << "Invalid recurrence rule limit value:" << value;
+        }
     }
 
-    int limitCount() const
+    QVariant limit() const
     {
-        return m_rule.limitCount();
-    }
+        if (m_rule.limitType() == QOrganizerRecurrenceRule::CountLimit) {
+            return QVariant::fromValue(m_rule.limitCount());
+        } else if (m_rule.limitType() == QOrganizerRecurrenceRule::DateLimit) {
+            return QVariant::fromValue(m_rule.limitDate());
+        }
 
-    void setLimitDate(const QDate& date)
-    {
-        m_rule.setLimit(date);
-    }
-
-    QDate limitDate() const
-    {
-        return m_rule.limitDate();
+        //NoLimit
+        return QVariant();
     }
 
     void setInterval(int interval)
     {
-        m_rule.setInterval(interval);
+        if (interval != m_rule.interval()) {
+            m_rule.setInterval(interval);
+            emit valueChanged();
+        }
     }
 
     int interval() const
@@ -153,7 +157,10 @@ public:
         foreach(QVariant day, days) {
             saved << static_cast<Qt::DayOfWeek>(day.value<int>());
         }
-        m_rule.setDaysOfWeek(saved);
+        if (saved != m_rule.daysOfWeek()) {
+            m_rule.setDaysOfWeek(saved);
+            emit valueChanged();
+        }
     }
 
     QVariantList daysOfWeek() const
@@ -166,11 +173,14 @@ public:
 
     void setDaysOfMonth(const QVariantList& days)
     {
-        QSet<Qt::DayOfWeek> saved;
+        QSet<int> saved;
         foreach(QVariant day, days) {
-            saved << static_cast<Qt::DayOfWeek>(day.value<int>());
+            saved << day.value<int>();
         }
-        m_rule.setDaysOfWeek(saved);
+        if (saved != m_rule.daysOfMonth()) {
+            m_rule.setDaysOfMonth(saved);
+            emit valueChanged();
+        }
     }
 
     QVariantList daysOfMonth() const
@@ -187,7 +197,10 @@ public:
         foreach(QVariant day, days) {
             saved << day.value<int>();
         }
-        m_rule.setDaysOfYear(saved);
+        if (saved != m_rule.daysOfYear()) {
+            m_rule.setDaysOfYear(saved);
+            emit valueChanged();
+        }
     }
 
     QVariantList daysOfYear() const
@@ -204,7 +217,10 @@ public:
         foreach(QVariant day, months) {
             saved << static_cast<QOrganizerRecurrenceRule::Month>(day.value<int>());
         }
-        m_rule.setMonthsOfYear(saved);
+        if (saved != m_rule.monthsOfYear()) {
+            m_rule.setMonthsOfYear(saved);
+            emit valueChanged();
+        }
     }
 
     QVariantList monthsOfYear() const
@@ -221,7 +237,10 @@ public:
         foreach(QVariant week, weeks) {
             saved << week.value<int>();
         }
-        m_rule.setDaysOfYear(saved);
+        if (saved != m_rule.weeksOfYear()) {
+            m_rule.setWeeksOfYear(saved);
+            emit valueChanged();
+        }
     }
 
     QVariantList weeksOfYear() const
@@ -234,11 +253,14 @@ public:
 
     void setPositions(const QVariantList& pos)
     {
-        QSet<int> saved;
-        foreach(QVariant p, pos) {
-            saved << p.value<int>();
+        if (pos != positions()) {
+            QSet<int> saved;
+            foreach(QVariant p, pos) {
+                saved << p.value<int>();
+            }
+            m_rule.setPositions(saved);
+            emit valueChanged();
         }
-        m_rule.setPositions(saved);
     }
 
     QVariantList positions() const
@@ -251,7 +273,10 @@ public:
 
     void setFirstDayOfWeek(Qt::DayOfWeek day)
     {
-        m_rule.setFirstDayOfWeek(day);
+        if (day != firstDayOfWeek()) {
+            m_rule.setFirstDayOfWeek(day);
+            emit valueChanged();
+        }
     }
 
     Qt::DayOfWeek firstDayOfWeek() const
@@ -262,11 +287,16 @@ public:
     {
         return m_rule;
     }
+
+    void setRule(const QOrganizerRecurrenceRule& rule)
+    {
+        m_rule = rule;
+    }
 signals:
     void valueChanged();
 private:
     QOrganizerRecurrenceRule m_rule;
 };
-QML_DECLARE_TYPE(QDeclarativeOrganizerItemRecurrenceRule)
+QML_DECLARE_TYPE(QDeclarativeOrganizerRecurrenceRule)
 
 #endif

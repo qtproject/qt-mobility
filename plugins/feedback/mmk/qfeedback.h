@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,46 +38,48 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QFEEDBACK_SYMBIAN_H
+#define QFEEDBACK_SYMBIA_H
 
-#ifndef QORGANIZERITEMENGINELOCALID_H
-#define QORGANIZERITEMENGINELOCALID_H
+#include <qmobilityglobal.h>
 
-#include <QString>
-#include <QSharedDataPointer>
+#include <qfeedbackplugininterfaces.h>
 
-#include "qtorganizerglobal.h"
+#include "../../../src/multimedia/effects/qsoundeffect_p.h"
 
-class QDataStream;
+QT_BEGIN_HEADER
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+class QFeedbackMediaObject;
 
-class Q_ORGANIZER_EXPORT QOrganizerItemEngineLocalId
+class QFeedbackMMK : public QObject, public QFeedbackFileInterface
 {
+    Q_OBJECT
+    Q_INTERFACES(QTM_NAMESPACE::QFeedbackFileInterface)
 public:
-    virtual ~QOrganizerItemEngineLocalId() {}
+    QFeedbackMMK();
+    virtual ~QFeedbackMMK();
 
-    virtual bool isEqualTo(const QOrganizerItemEngineLocalId* other) const = 0;
-    virtual bool isLessThan(const QOrganizerItemEngineLocalId* other) const = 0;
+    virtual void setLoaded(QFeedbackFileEffect*, bool);
+    virtual void setEffectState(QFeedbackFileEffect *, QFeedbackEffect::State);
+    virtual QFeedbackEffect::State effectState(const QFeedbackFileEffect *);
+    virtual int effectDuration(const QFeedbackFileEffect*);
+    virtual QStringList supportedMimeTypes();
+private Q_SLOTS:
+    void soundEffectLoaded();
 
-    virtual uint engineLocalIdType() const = 0;
-    virtual QOrganizerItemEngineLocalId* clone() const = 0;
+private:
+    struct FeedbackInfo {
+        FeedbackInfo() : soundEffect(0), loaded(false), playing(false) {}
+        QSoundEffect* soundEffect;
+        bool loaded;
+        bool playing;
+    };
 
-#ifndef QT_NO_DEBUG_STREAM
-    // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
-    virtual QDebug debugStreamOut(QDebug dbg) = 0;
-#endif
-#ifndef QT_NO_DATASTREAM
-    // NOTE: on platforms where Qt is built without data streams enabled, vtable will differ!
-    virtual QDataStream& dataStreamOut(QDataStream& out) = 0;
-    virtual QDataStream& dataStreamIn(QDataStream& in) = 0;
-#endif
-    virtual uint hash() const = 0;
+    QHash<const QFeedbackFileEffect*, FeedbackInfo> mEffects;
+    QHash<const QSoundEffect*, QFeedbackFileEffect*> mEffectMap;
 };
 
-QTM_END_NAMESPACE
-
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemEngineLocalId), Q_MOVABLE_TYPE);
-
+QT_END_HEADER
 
 #endif
-

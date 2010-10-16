@@ -90,7 +90,7 @@ private:
 private:
     QOrganizerManager*              m_om;
     QOrganizerAbstractRequest*      m_itemRequest;
-    QList<QOrganizerItemLocalId>        m_itemIds;
+    QList<QOrganizerItemId>        m_itemIds;
     QStringList                         m_definitionNames;
 };
 
@@ -190,9 +190,9 @@ void TestNoteItems::fetchItem()
     QOrganizerItemFetchRequest * itemFetchRequest(
         (QOrganizerItemFetchRequest*)m_itemRequest);
 
-    QOrganizerItemLocalIdFilter localIdFilter;
-    localIdFilter.setIds(m_itemIds);
-    //itemFetchRequest->setFilter(localIdFilter);
+    QOrganizerItemIdFilter idFilter;
+    idFilter.setIds(m_itemIds);
+    //itemFetchRequest->setFilter(idFilter);
         
     // Set ItemDetailsFilter
     QOrganizerItemDetailFilter detailsFilter;
@@ -459,7 +459,7 @@ void TestNoteItems::requestResultsAvailable()
         for (int index(0); index < count; index++) {
             QVERIFY(items[index].type() == QOrganizerItemType::TypeNote);
             // Get the local Id
-            QOrganizerItemLocalId itemId(items.at(index).localId());
+            QOrganizerItemId itemId(items.at(index).id());
             // Append local Id of item
             m_itemIds.append(itemId);
         }
@@ -476,7 +476,7 @@ void TestNoteItems::requestResultsAvailable()
         for (int index(0); index < count; index++) {
             QVERIFY(items[index].type() == QOrganizerItemType::TypeNote);
             // Get the local Id
-            QOrganizerItemLocalId itemId(items.at(index).localId());
+            QOrganizerItemId itemId(items.at(index).id());
             // Append local Id of item
             m_itemIds.append(itemId);
         }
@@ -624,9 +624,8 @@ QList<QOrganizerItem> TestNoteItems::createItems_Negative(int noOfItems)
         //Set Luid
         // TODO: Disabled because of API change. REFACTOR!
         //QOrganizerItemId id;
-        //QOrganizerItemLocalId localId(1234);
-        //id.setLocalId(localId);
-        //id.setManagerUri("qtorganizer:symbian:");
+        //QOrganizerItemId id(1234);
+        //id.setId(id);
         //organizerItem.setId(id);
 
         // Set current time
@@ -737,7 +736,7 @@ void TestNoteItems::requestResultsAvailable_Negative()
         for (int index(0); index < count; index++) {
             QVERIFY(items[index].type() == QOrganizerItemType::TypeNote);
             // Get the local Id
-            QOrganizerItemLocalId itemId(items.at(index).localId());
+            QOrganizerItemId itemId(items.at(index).id());
             // Append local Id of item
             m_itemIds.append(itemId);
         }

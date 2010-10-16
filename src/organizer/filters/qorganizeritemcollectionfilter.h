@@ -55,11 +55,11 @@ public:
     QOrganizerItemCollectionFilter(const QOrganizerItemFilter& other);
 
     /* Mutators */
-    void setCollectionId(const QOrganizerCollectionLocalId& id);
-    void setCollectionIds(const QSet<QOrganizerCollectionLocalId>& ids);
+    void setCollectionId(const QOrganizerCollectionId& id);
+    void setCollectionIds(const QSet<QOrganizerCollectionId>& ids);
 
     /* Accessors */
-    QSet<QOrganizerCollectionLocalId> collectionIds() const;
+    QSet<QOrganizerCollectionId> collectionIds() const;
 
 private:
     Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemCollectionFilter)

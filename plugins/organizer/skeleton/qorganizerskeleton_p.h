@@ -71,8 +71,8 @@
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizerabstractrequest.h"
 #include "qorganizeritemchangeset.h"
-#include "qorganizeritemenginelocalid.h"
-#include "qorganizercollectionenginelocalid.h"
+#include "qorganizeritemengineid.h"
+#include "qorganizercollectionengineid.h"
 
 QTM_USE_NAMESPACE
 
@@ -82,31 +82,29 @@ class QOrganizerItemSkeletonFactory : public QObject, public QOrganizerManagerEn
   Q_INTERFACES(QtMobility::QOrganizerManagerEngineFactory)
   public:
     QOrganizerManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerManager::Error*);
-    QOrganizerItemEngineLocalId* createItemEngineLocalId() const;
-    QOrganizerCollectionEngineLocalId* createCollectionEngineLocalId() const;
+    QOrganizerItemEngineId* createItemEngineId(const QMap<QString, QString>& parameters, const QString& idString) const;
+    QOrganizerCollectionEngineId* createCollectionEngineId(const QMap<QString, QString>& parameters, const QString& idString) const;
     QString managerName() const;
 };
 
-class QOrganizerCollectionSkeletonEngineLocalId : public QOrganizerCollectionEngineLocalId
+class QOrganizerCollectionSkeletonEngineId : public QOrganizerCollectionEngineId
 {
 public:
-    QOrganizerCollectionSkeletonEngineLocalId();
-    QOrganizerCollectionSkeletonEngineLocalId(quint32 collectionId);
-    ~QOrganizerCollectionSkeletonEngineLocalId();
-    QOrganizerCollectionSkeletonEngineLocalId(const QOrganizerCollectionSkeletonEngineLocalId& other);
+    QOrganizerCollectionSkeletonEngineId();
+    QOrganizerCollectionSkeletonEngineId(quint32 collectionId);
+    ~QOrganizerCollectionSkeletonEngineId();
+    QOrganizerCollectionSkeletonEngineId(const QOrganizerCollectionSkeletonEngineId& other);
 
-    bool isEqualTo(const QOrganizerCollectionEngineLocalId* other) const;
-    bool isLessThan(const QOrganizerCollectionEngineLocalId* other) const;
+    bool isEqualTo(const QOrganizerCollectionEngineId* other) const;
+    bool isLessThan(const QOrganizerCollectionEngineId* other) const;
 
-    uint engineLocalIdType() const;
-    QOrganizerCollectionEngineLocalId* clone() const;
+    QString managerUri() const;
+    QOrganizerCollectionEngineId* clone() const;
+
+    QString toString() const;
 
 #ifndef QT_NO_DEBUG_STREAM
-    QDebug debugStreamOut(QDebug dbg);
-#endif
-#ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out);
-    QDataStream& dataStreamIn(QDataStream& in);
+    QDebug& debugStreamOut(QDebug& dbg) const;
 #endif
     uint hash() const;
 
@@ -114,29 +112,27 @@ public:
     // Your backend can use whatever it likes as an id internally.
     // In this example, we use just a single quint32, but you can
     // use any datatype you need to (filename string, etc).
-    quint32 m_localCollectionId;
+    quint32 m_collectionId;
 };
 
-class QOrganizerItemSkeletonEngineLocalId : public QOrganizerItemEngineLocalId
+class QOrganizerItemSkeletonEngineId : public QOrganizerItemEngineId
 {
 public:
-    QOrganizerItemSkeletonEngineLocalId();
-    QOrganizerItemSkeletonEngineLocalId(quint32 itemId);
-    ~QOrganizerItemSkeletonEngineLocalId();
-    QOrganizerItemSkeletonEngineLocalId(const QOrganizerItemSkeletonEngineLocalId& other);
+    QOrganizerItemSkeletonEngineId();
+    QOrganizerItemSkeletonEngineId(quint32 itemId);
+    ~QOrganizerItemSkeletonEngineId();
+    QOrganizerItemSkeletonEngineId(const QOrganizerItemSkeletonEngineId& other);
 
-    bool isEqualTo(const QOrganizerItemEngineLocalId* other) const;
-    bool isLessThan(const QOrganizerItemEngineLocalId* other) const;
+    bool isEqualTo(const QOrganizerItemEngineId* other) const;
+    bool isLessThan(const QOrganizerItemEngineId* other) const;
 
-    uint engineLocalIdType() const;
-    QOrganizerItemEngineLocalId* clone() const;
+    QString managerUri() const;
+    QOrganizerItemEngineId* clone() const;
+
+    QString toString() const;
 
 #ifndef QT_NO_DEBUG_STREAM
-    QDebug debugStreamOut(QDebug dbg);
-#endif
-#ifndef QT_NO_DATASTREAM
-    QDataStream& dataStreamOut(QDataStream& out);
-    QDataStream& dataStreamIn(QDataStream& in);
+    QDebug& debugStreamOut(QDebug& dbg) const;
 #endif
     uint hash() const;
 
@@ -145,7 +141,7 @@ public:
     // In this example, we use just a single quint32, but you can
     // use a pair of ints (one for collectionId, one for itemId)
     // or any other information (uuid string, etc).
-    quint32 m_localItemId;
+    quint32 m_itemId;
 };
 
 class QOrganizerItemSkeletonEngineData : public QSharedData
@@ -181,12 +177,12 @@ public:
     int managerVersion() const;
 
     QList<QOrganizerItem> itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
-    QList<QOrganizerItemLocalId> itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const;
+    QList<QOrganizerItemId> itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const;
     QList<QOrganizerItem> items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
-    QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
+    QOrganizerItem item(const QOrganizerItemId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const;
 
     bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error);
-    bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error);
+    bool removeItems(const QList<QOrganizerItemId>& itemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, QOrganizerManager::Error* error) const;
@@ -196,10 +192,10 @@ public:
 
     /* Collections - every item belongs to exactly one collection */
     QOrganizerCollection defaultCollection(QOrganizerManager::Error* error) const;
-    QOrganizerCollection collection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error) const;
+    QOrganizerCollection collection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error) const;
     QList<QOrganizerCollection> collections(QOrganizerManager::Error* error) const;
     bool saveCollection(QOrganizerCollection* collection, QOrganizerManager::Error* error);
-    bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerManager::Error* error);
+    bool removeCollection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error);
 
     /* Capabilities reporting */
     bool hasFeature(QOrganizerManager::ManagerFeature feature, const QString& itemType) const;

@@ -234,7 +234,7 @@ void EventEditPage::eventChanged(QOrganizerManager *manager, const QOrganizerEve
             visibleName = collection.metaData(calendarNameMetadataKey).toString();
 
         m_calendarComboBox->addItem(visibleName);
-        if (collection.id().localId() == event.collectionId().localId())
+        if (collection.id() == event.collectionId())
             eventCalendarIndex = index;
         ++index;
     }

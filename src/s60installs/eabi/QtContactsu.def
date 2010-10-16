@@ -921,4 +921,10 @@ EXPORTS
 	_ZTVN10QtMobility21QContactActionFactoryE @ 920 NONAME
 	_ZTVN10QtMobility23QContactManagerEngineV2E @ 921 NONAME
 	_ZTVN10QtMobility24QContactFetchByIdRequestE @ 922 NONAME
+	_ZN10QtMobility11QContactUrl11SubTypeBlogE @ 923 NONAME DATA 5
+	_ZN10QtMobility16QContactBirthday15FieldCalendarIdE @ 924 NONAME DATA 11
+	_ZN10QtMobilitylsE6QDebugRKNS_20QContactActionTargetE @ 925 NONAME
+	_ZN10QtMobilitylsE6QDebugRKNS_24QContactActionDescriptorE @ 926 NONAME
+	_ZN10QtMobilitylsER11QDataStreamRKNS_20QContactActionTargetE @ 927 NONAME
+	_ZN10QtMobilityrsER11QDataStreamRNS_20QContactActionTargetE @ 928 NONAME
 

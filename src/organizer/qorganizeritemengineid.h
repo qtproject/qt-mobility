@@ -39,50 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMID_P_H
-#define QORGANIZERITEMID_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#ifndef QORGANIZERITEMENGINEID_H
+#define QORGANIZERITEMENGINEID_H
 
 #include <QString>
-#include <QSharedData>
+#include <QSharedDataPointer>
 
-#include "qorganizeritemid.h"
+#include "qtorganizerglobal.h"
+
+class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemIdPrivate : public QSharedData
+class Q_ORGANIZER_EXPORT QOrganizerItemEngineId: public QSharedData
 {
 public:
-    QOrganizerItemIdPrivate()
-            : QSharedData()
-    {
-    }
+    virtual ~QOrganizerItemEngineId() {}
 
-    QOrganizerItemIdPrivate(const QOrganizerItemIdPrivate& other)
-            : QSharedData(other),
-            m_managerUri(other.m_managerUri),
-            m_localId(other.m_localId)
-    {
-    }
+    virtual bool isEqualTo(const QOrganizerItemEngineId* other) const = 0;
+    virtual bool isLessThan(const QOrganizerItemEngineId* other) const = 0;
 
-    ~QOrganizerItemIdPrivate()
-    {
-    }
+    virtual QString managerUri() const = 0;
+    virtual QOrganizerItemEngineId* clone() const = 0;
 
-    QString m_managerUri;
-    QOrganizerItemLocalId m_localId;
+    virtual QString toString() const = 0;
+
+#ifndef QT_NO_DEBUG_STREAM
+    // NOTE: on platforms where Qt is built without debug streams enabled, vtable will differ!
+    virtual QDebug& debugStreamOut(QDebug& dbg) const = 0;
+#endif
+    virtual uint hash() const = 0;
 };
 
 QTM_END_NAMESPACE
 
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemEngineId), Q_MOVABLE_TYPE);
+
+
 #endif
+

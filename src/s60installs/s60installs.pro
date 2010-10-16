@@ -134,6 +134,12 @@ isEmpty(QT_LIBINFIX):symbian {
                 "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\feedback\\immersion\\qmakepluginstubs\\qtfeedback_immersion.qtplugin\"  - \"!:\\resource\\qt\\plugins\\feedback\\qtfeedback_immersion.qtplugin\""
         }
 
+        contains(mobility_modules, multimedia) {
+            qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtfeedback_mmk.dll
+            pluginstubs += \
+                "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\feedback\\mmk\\qmakepluginstubs\\qtfeedback_mmk.qtplugin\"  - \"!:\\resource\\qt\\plugins\\feedback\\qtfeedback_mmk.qtplugin\""
+        }
+
         feedback = \
             "IF package(0x1028315F)" \
             "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtfeedback_symbian.dll\" - \"!:\\sys\\bin\\qtfeedback_symbian.dll\"" \
@@ -177,6 +183,14 @@ isEmpty(QT_LIBINFIX):symbian {
 
         pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\organizer\\symbian\\qmakepluginstubs\\qtorganizer_symbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\organizer\\qtorganizer_symbian.qtplugin\""
+     contains(QT_CONFIG, declarative):contains(mobility_modules,versit)  {
+            qtmobilitydeployment.sources += \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_organizer.dll
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\organizer\\qmakepluginstubs\\declarative_organizer.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\organizer\\declarative_organizer.qtplugin\""
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\organizer\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\organizer\\qmldir\""
+        }
     }
 
     contains(mobility_modules, gallery) { 

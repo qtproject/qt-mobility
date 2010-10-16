@@ -39,32 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMLOCALIDFILTER_H
-#define QORGANIZERITEMLOCALIDFILTER_H
+#ifndef QORGANIZERITEMIDFETCHREQUEST_H
+#define QORGANIZERITEMIDFETCHREQUEST_H
 
+#include "qtorganizerglobal.h"
+#include "qorganizerabstractrequest.h"
+#include "qorganizeritemsortorder.h"
 #include "qorganizeritemfilter.h"
-#include "qorganizeritemid.h"
+
+#include <QList>
+#include <QStringList>
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemLocalIdFilterPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemLocalIdFilter : public QOrganizerItemFilter
+class QOrganizerItemIdFetchRequestPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerItemIdFetchRequest : public QOrganizerAbstractRequest
 {
+    Q_OBJECT
+
 public:
-    QOrganizerItemLocalIdFilter();
-    QOrganizerItemLocalIdFilter(const QOrganizerItemFilter& other);
+    QOrganizerItemIdFetchRequest(QObject* parent = 0);
 
-    /* Mutators */
-    void setIds(const QList<QOrganizerItemLocalId>& ids);
-    void insert(const QOrganizerItemLocalId& id);
-    void remove(const QOrganizerItemLocalId& id);
-    void clear();
+    /* Selection, restriction and sorting */
+    void setFilter(const QOrganizerItemFilter& filter);
+    void setSorting(const QList<QOrganizerItemSortOrder>& sorting);
+    void setStartDate(const QDateTime& date);
+    void setEndDate(const QDateTime& date);
+    QOrganizerItemFilter filter() const;
+    QList<QOrganizerItemSortOrder> sorting() const;
+    QDateTime startDate() const;
+    QDateTime endDate() const;
 
-    /* Accessors */
-    QList<QOrganizerItemLocalId> ids() const;
+    /* Results */
+    QList<QOrganizerItemId> itemIds() const;
 
 private:
-    Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemLocalIdFilter)
+    Q_DISABLE_COPY(QOrganizerItemIdFetchRequest)
+    friend class QOrganizerManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemIdFetchRequest)
 };
 
 QTM_END_NAMESPACE

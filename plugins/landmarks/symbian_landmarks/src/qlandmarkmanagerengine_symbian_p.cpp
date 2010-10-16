@@ -3019,21 +3019,6 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
     case QLandmarkFilter::CategoryFilter:
     {
         QLandmarkCategoryFilter categoryFilter = filter;
-
-        TPosLmItemId symbianCatId = LandmarkUtility::convertToSymbianLandmarkCategoryId(
-            categoryFilter.categoryId());
-        if (categoryFilter.categoryId().managerUri() != managerUri()) {
-            User::Leave(-20001); //reuse EHttpCannotFindServer to mean category does not exist
-        }
-
-        CPosLandmarkCategory* symbiancat = NULL;
-        TRAPD(err, symbiancat = m_LandmarkCatMgr->ReadCategoryLC(symbianCatId);
-            if (symbiancat) CleanupStack::PopAndDestroy( symbiancat ) )
-
-        if (err != KErrNone) {
-            User::Leave(-20001); //reuse EHttpCannotFindServer to mean category does not exist
-        }
-
         CPosLmCategoryCriteria* categorySearchCriteria = CPosLmCategoryCriteria::NewLC();
         categorySearchCriteria->SetCategoryItemId(
             LandmarkUtility::convertToSymbianLandmarkCategoryId(categoryFilter.categoryId()));
@@ -3110,7 +3095,11 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
 
         QStringList keyList = attributeFilter.attributeKeys();
         for (int i = 0; i < keyList.size(); ++i) {
-            if (opType == QLandmarkAttributeFilter::AndOperation && (attributeFilter.matchFlags(
+            QLandmarkFilter::MatchFlags matchFlags = attributeFilter.matchFlags(keyList.at(i));
+            matchFlags = (matchFlags & 3);
+            if (matchFlags == QLandmarkFilter::MatchEndsWith) {
+                //make sure we don't match with match ends with 0x3 (Match contains is 0x2)
+            } else if (opType == QLandmarkAttributeFilter::AndOperation && (attributeFilter.matchFlags(
                 keyList.at(i)) & QLandmarkFilter::MatchContains)) {
                 User::Leave(KErrNotSupported);
             }
