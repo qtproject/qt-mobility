@@ -84,18 +84,20 @@
 
     \section2 Gallery Item
 
-    \l {DocumentGalleryItem}s are elements that are a means to request
-    information about a single item from a gallery. The information may include
+    \l {DocumentGalleryItem}s are elements that are a means to request information
+    about a single item from a gallery. The information may include
     monitoring the state of the request, reading the meta-data for the
     document or writing meta-data.
 
-    When a request is made the \l {DocumentGalleryItem::state}{state} property
-    contains the current state of the request including whether it is active
-    or cancelled.
+    When a request is made the \l {DocumentGalleryItem::status}{status} property
+    contains the current status of the request including whether it is active
+    or canceled.
 
-    Progress of the request is available through the read item property \l
+    Progress of the request is available through the \l qreal item property \l
     {DocumentGalleryItem::progress}{progress}.
 
+
+    
     \section2 Query Requests
 
     The \l DocumentGalleryModel element is used to perform the requests on a
@@ -108,8 +110,10 @@
 
         ...
 
-        model: DocumentGalleryModel {
-            itemType: DocumentGallery.Image
+        model: DocumentGalleryQueryModel {
+            gallery: DocumentGallery {}
+
+            itemType: "Image"
             properties: ["thumbnailImage"]
             filter: GalleryWildcardFilter {
                 property: "fileName";

@@ -990,7 +990,7 @@ The error map is only populated for indexes at which an error occurred.
 Eg If we saved 5 landmarks and an error occurred at index 3, the error map
 will have only a single key for index 3.
 
-\sa error(), categories(), landmarks(),saveLandmarks(), removeCategories(), removeLandmarks()
+\sa error(), categories(), landmarks(), saveLandmarks(), removeCategory(),  removeLandmarks()
 */
 QMap<int, QLandmarkManager::Error> QLandmarkManager::errorMap() const
 {
