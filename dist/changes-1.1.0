@@ -141,14 +141,22 @@ QtMultimediaKit
 
  - Added QCamera API
     * Includes Linux, maemo and symbian backends.
+ - QAbstractVideoSurface
+    * Fixed assert when run against a different version of Qt to the one it was
+      compiled with.
  - QAudioOutput
     * Fix crash on Windows when initialized with an invalid format
       [QTMOBILITY-438]
+    * Fixed audio glitches in the audiooutput example [QTBUG-13751]
  - QMediaImageViewer
     * Added setVideoOutput functions.
  - QVideoWidget
     * Fixed flickering when resizing a video widget on Windows.
       [QTMOBILITY-407]
+    * Fixed sizeHint() not always being updated with gstreamer.
+      [QTMOBILITY-548]
+ - QML Elements
+    * Finalized Audio, Video and SoundEffect elements.
 
 QtOrganizer
 ------
@@ -218,8 +226,9 @@ QtVersit
 Qt Mobility Plugins
 ------
 
- - foo
-    * bar
+ - QtMultimediaKit Media Services
+    * Disabled building the Windows Media Player plug-in by default.
+      [QTMOBILITY-554]
 
 
 ****************************************************************************
