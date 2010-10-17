@@ -2547,13 +2547,12 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
         symbianLandmark = m_LandmarkDb->ReadLandmarkLC(symbianLmId);
         if (symbianLandmark) {
             // updating existing landmark
-            LandmarkUtility::setSymbianLandmarkL(*symbianLandmark, landmark, m_LandmarkCatMgr);
-            m_LandmarkDb->UpdateLandmarkL(*symbianLandmark);
+            if (LandmarkUtility::setSymbianLandmarkL(*symbianLandmark, landmark)) {
+                m_LandmarkDb->UpdateLandmarkL(*symbianLandmark);
+                *changed = true;
+                m_UpdatedLmIds << landmarkId.localId();
+            }
             CleanupStack::PopAndDestroy(symbianLandmark);
-            *changed = true;
-
-            m_UpdatedLmIds << landmarkId.localId();
-
             result = true;
         }
     }
@@ -3648,7 +3647,9 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
             }
         }
 
-        if (!aData->iLandmarkIds.isEmpty()) {
+        //qDebug() << " aData->iLandmarkIds.size() = " << aData->iLandmarkIds.size();
+
+        if (aData->iLandmarkIds.size() > 0) {
 
             sortFetchedLmIds(lmIdFetchRequest->limit(), lmIdFetchRequest->offset(),
                 lmIdFetchRequest->sorting(), aData->iLandmarkIds,
@@ -3782,12 +3783,13 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                     {
                         // use landmark fetch method to get landmark from landmark id
                         qtLandmark = landmark(lmId, &error, &errorString);
-                        if (error != QLandmarkManager::NoError) {
-                            aData->iLandmarks.clear();
-                            break;
+                        if (error == QLandmarkManager::NoError) {
+                            aData->iLandmarks.append(qtLandmark);
                         }
-                        aData->iLandmarks.append(qtLandmark);
                     }
+
+                error = QLandmarkManager::NoError;
+                errorString.clear();
             }
 
             //qDebug() << "aData->iLandmarks.size() = " << aData->iLandmarks.size();
