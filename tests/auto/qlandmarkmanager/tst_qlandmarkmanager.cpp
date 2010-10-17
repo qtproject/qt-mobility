@@ -6861,7 +6861,7 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     QVERIFY(!fetchRequest.waitForFinished(1));
     qDebug() << "after second fetch request WFF";
 #else
-    QLandmarkFetchRequest fetchRequest;
+    QLandmarkFetchRequest fetchRequest(m_manager);
     QVERIFY(fetchRequest.start());
     QVERIFY(!fetchRequest.waitForFinished());
 #endif
