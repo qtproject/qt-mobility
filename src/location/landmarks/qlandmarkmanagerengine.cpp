@@ -682,8 +682,7 @@ bool QLandmarkManagerEngine::waitForRequestFinished(QLandmarkAbstractRequest* re
     As it is possible that other processes(or other devices) may have modified the landmarks,
     the timing cannot be determined.
 
-    Note that removal of a category will not trigger a \c landmarksChanged signal for landmarks belonging to that category, nor will modifying
-    list of categories that a landmark is belongs to.
+    Note that removal of a category will not trigger a \c landmarksChanged signal for landmarks belonging to that category.
 
     There may be one ore more landmark identifiers in the \a landmarkIds list.
     \sa dataChanged(), landmarksAdded(), landmarksRemoved()
