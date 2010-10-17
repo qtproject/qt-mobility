@@ -1072,7 +1072,8 @@ private slots:
 #endif
 
 #ifdef WAIT_FOR_FINISHED
-    void waitForFinished();
+    void importWaitForFinished();
+    void fetchWaitForFinished();
 #endif
 
 
@@ -5859,7 +5860,7 @@ void tst_QLandmarkManager::importGpx() {
         importRequest.start();
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::CategoryDoesNotExistError)); //no category id provided
 
-        importRequest.setFileName(":data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
+        importRequest.setFileName(prefix + "data/AUS-PublicToilet-AustralianCapitalTerritory.gpx");
         importRequest.setFormat(QLandmarkManager::Gpx);
         importRequest.setTransferOption(QLandmarkManager::AttachSingleCategory);
         importRequest.setCategoryId(cat3.categoryId()); //category id doesn't exist
@@ -6834,7 +6835,7 @@ void tst_QLandmarkManager::exportLmx_data()
 #endif
 
 #ifdef WAIT_FOR_FINISHED
-void tst_QLandmarkManager::waitForFinished()
+void tst_QLandmarkManager::importWaitForFinished()
 {
     QLandmarkImportRequest importRequest(m_manager);
     importRequest.setFileName("data/places.gpx");
@@ -6843,6 +6844,30 @@ void tst_QLandmarkManager::waitForFinished()
     QVERIFY(!importRequest.waitForFinished());
     qDebug() << "end of function";
 }
+
+void tst_QLandmarkManager::fetchWaitForFinished()
+{
+#ifdef Q_OS_SYMBIAN
+    //QVERIFY(m_manager->importLandmarks("data/AUS-PublicToilet-NewSouthWales.gpx"));
+    QVERIFY(m_manager->importLandmarks("data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+    QLandmarkFetchRequest fetchRequest(m_manager);
+    QVERIFY(fetchRequest.start());
+    qDebug() << "after first fetch request start";
+    QVERIFY(fetchRequest.waitForFinished());
+    qDebug() << "after first fetch request WFF";
+    QVERIFY(fetchRequest.landmarks().count() > 0);
+    QVERIFY(fetchRequest.start());
+    qDebug() << "after second fetch request start";
+    QVERIFY(!fetchRequest.waitForFinished(1));
+    qDebug() << "after second fetch request WFF";
+#else
+    QLandmarkFetchRequest fetchRequest;
+    QVERIFY(fetchRequest.start());
+    QVERIFY(!fetchRequest.waitForFinished());
+#endif
+    qDebug() << "end of function";
+}
+
 #endif
 
 #ifdef MISC
