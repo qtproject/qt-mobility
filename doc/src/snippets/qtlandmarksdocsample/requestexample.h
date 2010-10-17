@@ -109,6 +109,7 @@ private:
 
     QLandmarkManager *landmarkManager;
     QLandmarkCategoryId categoryId;
+    QLandmarkCategory category;
     int previousLastIndex;
 };
 
