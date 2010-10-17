@@ -2438,8 +2438,8 @@ bool LandmarkManagerEngineSymbianPrivate::waitForRequestFinished(QLandmarkAbstra
     int msecs)
 {
     if (request->type() == QLandmarkAbstractRequest::ImportRequest) {
+        cancelRequest(request);
         // WFRF not supported for import request type operation.
-        qDebug() << "Wait for Requst Finish for Import Operation not Supported";
         return false;
     }
 
