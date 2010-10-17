@@ -5308,8 +5308,8 @@ void tst_QLandmarkManager::filterLandmarksUnion() {
 
     unionFilter.clear();
     unionFilter << catFilter1 << catFilter2 << catFilter3;
-    QVERIFY(doFetch(type,unionFilter, &lms, QLandmarkManager::CategoryDoesNotExistError));
-    QCOMPARE(lms.count(), 0);
+    QVERIFY(doFetch(type,unionFilter, &lms, QLandmarkManager::NoError));
+    QCOMPARE(lms.count(), 18);
 
     QList<QLandmarkFilter> filters;
     filters << catFilter1 << catFilter3;
@@ -6221,7 +6221,10 @@ void tst_QLandmarkManager::importLmx() {
     QCOMPARE(spyRemove.count(), 0);
     QCOMPARE(spyChange.count(), 0);
     QCOMPARE(spyAdd.count(), 1);
-    QCOMPARE(spyCatAdd.count(), 1);
+    if (type == "async")
+        QCOMPARE(spyCatAdd.count(), 2);
+    else
+        QCOMPARE(spyCatAdd.count(), 1);
     QCOMPARE(spyCatRemove.count(), 0);
     QCOMPARE(spyCatChange.count(), 0);
     QCOMPARE(spyDataChanged.count(), 0);
