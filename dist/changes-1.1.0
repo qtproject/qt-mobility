@@ -72,10 +72,6 @@ QtLandmarks
  - Change QGeoAddress::thoroughfareName to street
  - Add ability to report support levels for sort orders
  - Landmark name filter now uses match flags
- - Expand the API to now include the concept
-   of extended and custom attributes.  Modify
-   the QLandmarkAttributeFilter accordingly,
-   and also use match flags in the attribute filter.
  - Common core filed such as name, street etc
    are now available through the QLandmark::attributes() 
    function
@@ -93,6 +89,12 @@ QtLandmarks
  - Implement signal notificiations in sqlite backend
  - Implement auto detection of file formats in sqlite backend.
  - Started adding in basic QML support for landmarks
+ - Remove the concept of custom/core attributes since 1.1 beta
+ - Change QLandmarkSortOrder::DefaultSort QLandmarkSortOrder::NoSort
+ - Add LandarkDoesNotExistError and CategoryDoesNotExistError error codes
+ - Add convenience functions so that we can pass in landmark object
+   and category objects rather than ids.  e.g CategoryFilter::setCategory
+   QLandmarkManager::removeCategory
 
 QtLocation
 ------
