@@ -97,35 +97,35 @@
 #endif
 
 //defines to turn on and off tests for symbian
-//#define INVALID_MANAGER
-//#define RETRIEVE_CATEGORY
-//#define RETRIEVE_LANDMARK
-//#define SAVE_CATEGORY
-//#define SIMPLE_SAVE_LANDMARK
-//#define SAVE_LANDMARK
-//#define SAVE_MULTIPLE_LANDMARKS
-//#define REMOVE_CATEGORY
-//#define REMOVE_LANDMARK
-//#define GET_ALL_CATEGORIES
-//#define FILTER_DEFAULT
-//#define FILTER_NAME
-//#define FILTER_ID
-//#define FILTER_PROXIMITY
-//#define FILTER_CATEGORY
-//#define FILTER_BOX
-//#define FILTER_INTERSECTION
-//#define FILTER_MULTIBOX
-//#define FILTER_UNION
-//#define FILTER_ATTRIBUTE
-//#define SORT_LANDMARKS
-//#define LANDMARK_FETCH_CANCEL
-//#define IMPORT_GPX
-//#define IMPORT_LMX
-//#define IMPORT_FILE
+#define INVALID_MANAGER
+#define RETRIEVE_CATEGORY
+#define RETRIEVE_LANDMARK
+#define SAVE_CATEGORY
+#define SIMPLE_SAVE_LANDMARK
+#define SAVE_LANDMARK
+#define SAVE_MULTIPLE_LANDMARKS
+#define REMOVE_CATEGORY
+#define REMOVE_LANDMARK
+#define GET_ALL_CATEGORIES
+#define FILTER_DEFAULT
+#define FILTER_NAME
+#define FILTER_ID
+#define FILTER_PROXIMITY
+#define FILTER_CATEGORY
+#define FILTER_BOX
+#define FILTER_INTERSECTION
+#define FILTER_MULTIBOX
+#define FILTER_UNION
+#define FILTER_ATTRIBUTE
+#define SORT_LANDMARKS
+#define LANDMARK_FETCH_CANCEL
+#define IMPORT_GPX
+#define IMPORT_LMX
+#define IMPORT_FILE
 #define EXPORT_LMX
-//#define WAIT_FOR_FINISHED
-//#define MISC
-//#define TEST_SIGNALS
+#define WAIT_FOR_FINISHED
+#define MISC
+#define TEST_SIGNALS
 
 //#define WORKAROUND
 
@@ -6907,8 +6907,8 @@ void tst_QLandmarkManager::importWaitForFinished()
 void tst_QLandmarkManager::fetchWaitForFinished()
 {
 #ifdef Q_OS_SYMBIAN
-    //QVERIFY(m_manager->importLandmarks("data/AUS-PublicToilet-NewSouthWales.gpx"));
-    QVERIFY(m_manager->importLandmarks("data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
+    QVERIFY(m_manager->importLandmarks("data/AUS-PublicToilet-NewSouthWales.gpx"));
+    //QVERIFY(m_manager->importLandmarks("data/AUS-PublicToilet-AustralianCapitalTerritory.gpx"));
     QLandmarkFetchRequest fetchRequest(m_manager);
     QVERIFY(fetchRequest.start());
     qDebug() << "after first fetch request start";
@@ -6916,7 +6916,7 @@ void tst_QLandmarkManager::fetchWaitForFinished()
     qDebug() << "after first fetch request WFF";
     QVERIFY(fetchRequest.landmarks().count() > 0);
     QVERIFY(fetchRequest.start());
-    qDebug() << "after second fetch request start";
+    qDebug() << "after second fetch request start state =" << fetchRequest.state();
     QVERIFY(!fetchRequest.waitForFinished(1));
     qDebug() << "after second fetch request WFF";
 #else
