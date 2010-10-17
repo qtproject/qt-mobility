@@ -247,6 +247,9 @@ TBool CLandmarkRequestAO::WaitForRequestL(TInt aTime, TRequestStatus &aRequest)
 
 void CLandmarkRequestAO::DoCancel()
 {
+    if( !iIsRequestRunning)
+        return;
+    
     //qDebug() << "DoCancel : request is canceled";
     if (iOperation) {
         // Only way to cancel the operation is to delete the CPosLmOperation object.
