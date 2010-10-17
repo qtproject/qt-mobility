@@ -1418,8 +1418,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
 
     This signal is emitted when landmarks (identified by \a landmarkIds) have been modified in the datastore managed by this manager.
     This signal is not emitted if the dataChanged() signal was previously emitted for these changes.  Note that removal
-    of a category will not trigger a \c landmarksChanged signal for landmarks belonging to that category, nor will modifying
-    list of categories that a landmark is belongs to.
+    of a category will not trigger a \c landmarksChanged signal for landmarks belonging to that category.
 
     \sa landmarksAdded(), landmarksRemoved()
 */
