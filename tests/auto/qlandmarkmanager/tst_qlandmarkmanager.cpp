@@ -100,6 +100,7 @@
 #define RETRIEVE_CATEGORY
 #define RETRIEVE_LANDMARK
 #define SAVE_CATEGORY
+#define SIMPLE_SAVE_LANDMARK
 #define SAVE_LANDMARK
 #define REMOVE_CATEGORY
 #define REMOVE_LANDMARK
@@ -961,6 +962,10 @@ private slots:
 #ifdef SAVE_CATEGORY
     void saveCategory();
     void saveCategory_data();
+#endif
+
+#ifdef SIMPLE_SAVE_LANDMARK
+    void simpleSaveLandmark();
 #endif
 
 #ifdef SAVE_LANDMARK
@@ -2151,6 +2156,19 @@ void tst_QLandmarkManager::saveCategory_data()
 
     QTest::newRow("sync") << "sync";
     QTest::newRow("async") << "async";
+}
+#endif
+
+#ifdef SIMPLE_SAVE_LANDMARK
+void tst_QLandmarkManager::simpleSaveLandmark() {
+    QLandmark lm1;
+    lm1.setName("lm1");
+    QVERIFY(m_manager->saveLandmark(&lm1));
+
+    lm1.setName("lm1Changed");
+    QVERIFY(m_manager->saveLandmark(&lm1));
+
+    QCOMPARE(m_manager->landmark(lm1.landmarkId()).name(),QString("lm1Changed"));
 }
 #endif
 
