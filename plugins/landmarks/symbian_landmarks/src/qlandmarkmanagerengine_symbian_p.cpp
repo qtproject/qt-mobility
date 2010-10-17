@@ -2547,11 +2547,10 @@ bool LandmarkManagerEngineSymbianPrivate::saveLandmarkInternalL(QLandmark* landm
         symbianLandmark = m_LandmarkDb->ReadLandmarkLC(symbianLmId);
         if (symbianLandmark) {
             // updating existing landmark
-            if (LandmarkUtility::setSymbianLandmarkL(*symbianLandmark, landmark)) {
-                m_LandmarkDb->UpdateLandmarkL(*symbianLandmark);
-                *changed = true;
-                m_UpdatedLmIds << landmarkId.localId();
-            }
+            LandmarkUtility::setSymbianLandmarkL(*symbianLandmark, landmark);
+            m_LandmarkDb->UpdateLandmarkL(*symbianLandmark);
+            *changed = true;
+            m_UpdatedLmIds << landmarkId.localId();
             CleanupStack::PopAndDestroy(symbianLandmark);
             result = true;
         }

@@ -104,7 +104,7 @@ public:
      * set landmark attributes to existing symbian landmark object from 
      * qt landmark object.
      */
-    static bool setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandmark* qtLandmark);
+    static void setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandmark* qtLandmark);
 
     /*
      * returns new qt landmark id object converted from symbian landmark id object.
