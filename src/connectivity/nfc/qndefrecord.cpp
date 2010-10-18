@@ -228,49 +228,10 @@ QNdefRecord::TypeNameFormat QNdefRecord::typeNameFormat() const
     if (!d)
         return Empty;
 
-    switch (d->typeNameFormat) {
-    case 0x00:
-        return Empty;
-    case 0x01:
-        return NfcRtd;
-    case 0x02:
-        return Mime;
-    case 0x03:
-        return Uri;
-    case 0x04:
-        return ExternalRtd;
-    case 0x06:
+    if (d->typeNameFormat > 0x05)
         return Unknown;
-    case 0x05:
-    default:
-        return Unknown;
-    }
-}
 
-/*!
-    Sets the user type name format of the NDEF record to \a typeNameFormat. The value of 0x06
-    cannot be set.
-*/
-void QNdefRecord::setUserTypeNameFormat(quint8 typeNameFormat)
-{
-    if (typeNameFormat == 0x06)
-        return;
-
-    if (!d)
-        d = new QNdefRecordPrivate;
-
-    d->typeNameFormat = typeNameFormat;
-}
-
-/*!
-    Returns the user type name format of the NDEF record.
-*/
-quint8 QNdefRecord::userTypeNameFormat() const
-{
-    if (!d)
-        return 0;
-
-    return d->typeNameFormat;
+    return TypeNameFormat(d->typeNameFormat);
 }
 
 /*!

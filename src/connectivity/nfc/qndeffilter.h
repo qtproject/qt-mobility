@@ -76,8 +76,6 @@ public:
     void appendRecord(unsigned int min = 1, unsigned int max = 1);
     void appendRecord(QNdefRecord::TypeNameFormat typeNameFormat, const QByteArray &type,
                       unsigned int min = 1, unsigned int max = 1);
-    void appendRecord(quint8 typeNameFormat, const QByteArray &type,
-                      unsigned int min = 1, unsigned int max = 1);
     void appendRecord(const Record &record);
 
     int recordCount() const;
@@ -94,7 +92,7 @@ void QNdefFilter::appendRecord(unsigned int min, unsigned int max)
 {
     T record;
 
-    appendRecord(record.userTypeNameFormat(), record.type(), min, max);
+    appendRecord(record.typeNameFormat(), record.type(), min, max);
 }
 
 QTM_END_NAMESPACE

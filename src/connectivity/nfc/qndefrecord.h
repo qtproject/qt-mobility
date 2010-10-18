@@ -57,12 +57,12 @@ class Q_CONNECTIVITY_EXPORT QNdefRecord
 {
 public:
     enum TypeNameFormat {
-        Empty,
-        NfcRtd,
-        Mime,
-        Uri,
-        ExternalRtd,
-        Unknown,
+        Empty = 0x00,
+        NfcRtd = 0x01,
+        Mime = 0x02,
+        Uri = 0x03,
+        ExternalRtd = 0x04,
+        Unknown = 0x05
     };
 
     QNdefRecord();
@@ -73,8 +73,6 @@ public:
 
     void setTypeNameFormat(TypeNameFormat typeNameFormat);
     TypeNameFormat typeNameFormat() const;
-    void setUserTypeNameFormat(quint8 typeNameFormat);
-    quint8 userTypeNameFormat() const;
 
     void setType(const QByteArray &type);
     QByteArray type() const;
@@ -91,7 +89,7 @@ public:
     bool isRecordType() const
     {
         T dummy;
-        return (userTypeNameFormat() == dummy.userTypeNameFormat() && type() == dummy.type());
+        return (typeNameFormat() == dummy.typeNameFormat() && type() == dummy.type());
     }
 
     bool operator==(const QNdefRecord &other) const;
@@ -109,11 +107,11 @@ private:
     className() : QNdefRecord(quint8(typeNameFormat), type) { } \
     className(const QNdefRecord &other) : QNdefRecord(other, quint8(typeNameFormat), type) { }
 
-#define Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(className, typeNameFormat, type_) \
+#define Q_DECLARE_ISRECORDTYPE_FOR_NDEF_RECORD(className, typeNameFormat_, type_) \
     QTM_BEGIN_NAMESPACE \
     template<> bool QNdefRecord::isRecordType<className>() const\
     { \
-        return (userTypeNameFormat() == typeNameFormat && type() == type_); \
+        return (typeNameFormat() == typeNameFormat_ && type() == type_); \
     } \
     QTM_END_NAMESPACE
 

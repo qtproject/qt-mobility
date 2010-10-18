@@ -341,7 +341,6 @@ void tst_QNdefMessage::tst_parse()
         const QNdefRecord &parsedRecord = parsedMessage.at(i);
 
         QCOMPARE(record.typeNameFormat(), parsedRecord.typeNameFormat());
-        QCOMPARE(record.userTypeNameFormat(), parsedRecord.userTypeNameFormat());
         QCOMPARE(record.type(), parsedRecord.type());
         QCOMPARE(record.id(), parsedRecord.id());
         QCOMPARE(record.payload(), parsedRecord.payload());

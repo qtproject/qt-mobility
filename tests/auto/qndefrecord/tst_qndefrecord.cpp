@@ -81,7 +81,6 @@ void tst_QNdefRecord::tst_record()
 
         QVERIFY(record.isEmpty());
         QCOMPARE(record.typeNameFormat(), QNdefRecord::Empty);
-        QCOMPARE(record.userTypeNameFormat(), quint8(0));
         QVERIFY(record.type().isEmpty());
         QVERIFY(record.id().isEmpty());
         QVERIFY(record.payload().isEmpty());
@@ -99,34 +98,26 @@ void tst_QNdefRecord::tst_record()
 
         record.setTypeNameFormat(QNdefRecord::Empty);
         QCOMPARE(record.typeNameFormat(), QNdefRecord::Empty);
-        QCOMPARE(record.userTypeNameFormat(), quint8(0));
 
         record.setTypeNameFormat(QNdefRecord::NfcRtd);
         QCOMPARE(record.typeNameFormat(), QNdefRecord::NfcRtd);
-        QCOMPARE(record.userTypeNameFormat(), quint8(1));
 
         record.setTypeNameFormat(QNdefRecord::Mime);
         QCOMPARE(record.typeNameFormat(), QNdefRecord::Mime);
-        QCOMPARE(record.userTypeNameFormat(), quint8(2));
 
         record.setTypeNameFormat(QNdefRecord::Uri);
         QCOMPARE(record.typeNameFormat(), QNdefRecord::Uri);
-        QCOMPARE(record.userTypeNameFormat(), quint8(3));
 
         record.setTypeNameFormat(QNdefRecord::ExternalRtd);
         QCOMPARE(record.typeNameFormat(), QNdefRecord::ExternalRtd);
-        QCOMPARE(record.userTypeNameFormat(), quint8(4));
 
         record.setTypeNameFormat(QNdefRecord::Unknown);
         QCOMPARE(record.typeNameFormat(), QNdefRecord::Unknown);
-        QVERIFY(record.userTypeNameFormat() != quint8(0));
-        QVERIFY(record.userTypeNameFormat() != quint8(1));
-        QVERIFY(record.userTypeNameFormat() != quint8(2));
-        QVERIFY(record.userTypeNameFormat() != quint8(3));
-        QVERIFY(record.userTypeNameFormat() != quint8(4));
 
-        record.setUserTypeNameFormat(7);
-        QCOMPARE(record.userTypeNameFormat(), quint8(7));
+        record.setTypeNameFormat(QNdefRecord::TypeNameFormat(6));
+        QCOMPARE(record.typeNameFormat(), QNdefRecord::Unknown);
+
+        record.setTypeNameFormat(QNdefRecord::TypeNameFormat(7));
         QCOMPARE(record.typeNameFormat(), QNdefRecord::Unknown);
     }
 
@@ -167,7 +158,6 @@ void tst_QNdefRecord::tst_record()
         QNdefRecord ccopy(record);
 
         QCOMPARE(record.typeNameFormat(), ccopy.typeNameFormat());
-        QCOMPARE(record.userTypeNameFormat(), ccopy.userTypeNameFormat());
         QCOMPARE(record.type(), ccopy.type());
         QCOMPARE(record.id(), ccopy.id());
         QCOMPARE(record.payload(), ccopy.payload());
@@ -179,7 +169,6 @@ void tst_QNdefRecord::tst_record()
         acopy = record;
 
         QCOMPARE(record.typeNameFormat(), acopy.typeNameFormat());
-        QCOMPARE(record.userTypeNameFormat(), acopy.userTypeNameFormat());
         QCOMPARE(record.type(), acopy.type());
         QCOMPARE(record.id(), acopy.id());
         QCOMPARE(record.payload(), acopy.payload());

@@ -178,23 +178,6 @@ void QNdefFilter::appendRecord(QNdefRecord::TypeNameFormat typeNameFormat, const
 }
 
 /*!
-    Appends a record with type name format \a typeNameFormat and type \a type to the NDEF filter.
-    The record must occur between \a min and \a max times in the NDEF message.
-*/
-void QNdefFilter::appendRecord(quint8 typeNameFormat, const QByteArray &type,
-                               unsigned int min, unsigned int max)
-{
-    QNdefFilter::Record record;
-
-    record.typeNameFormat = QNdefRecord::TypeNameFormat(typeNameFormat);
-    record.type = type;
-    record.minimum = min;
-    record.maximum = max;
-
-    d->filterRecords.append(record);
-}
-
-/*!
     Appends \a record to the NDEF filter.
 */
 void QNdefFilter::appendRecord(const Record &record)

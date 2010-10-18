@@ -149,7 +149,8 @@ QNdefMessage QNdefMessage::fromByteArray(const QByteArray &message)
             return QNdefMessage();
         }
 
-        record.setUserTypeNameFormat(typeNameFormat);
+        if (typeNameFormat != 0x06)
+            record.setTypeNameFormat(QNdefRecord::TypeNameFormat(typeNameFormat));
 
         if (typeLength > 0) {
             QByteArray type(++i, typeLength);
@@ -232,7 +233,7 @@ QByteArray QNdefMessage::toByteArray() const
     for (int i = 0; i < count(); ++i) {
         const QNdefRecord &record = at(i);
 
-        quint8 flags = record.userTypeNameFormat();
+        quint8 flags = record.typeNameFormat();
 
         if (i == 0)
             flags |= 0x80;
