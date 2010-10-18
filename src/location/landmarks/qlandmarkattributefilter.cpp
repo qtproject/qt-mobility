@@ -92,13 +92,12 @@ QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
 
 /*!
     \class QLandmarkAttributeFilter
-    \brief The QLandmarkAttributeFilter class provides filtering based on various landmark attributes.
+    \brief The QLandmarkAttributeFilter class provides filtering on various landmark attributes.
 
     \inmodule QtLocation
 
     \ingroup landmarks-filter
 
-    Filtering on various attributes is facilitated by the QLandmarkAttributeFilter.
     You can provide various keys which describe the attribute(s) to search.
     Precisely which keys may be used depends on the manager
     and these can be retrieved by using QLandmarkManager::searchableLandmarkAttributeKeys().
@@ -111,22 +110,25 @@ QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
         \o {3,1} Searchable attributes
     \row
         \o "city"
+        \o "country
         \o "countryCode"
-        \o "country"
     \row
         \o "county"
-        \o "countryCode"
         \o "description"
-
-    \row
         \o "district"
+    \row
         \o "name"
         \o "state"
-    \row
         \o "phoneNumber"
+    \row
         \o "postcode"
         \o "street"
+        \o
     \endtable
+
+        Please note that different platforms support different capabilites with the attribute filter.
+        The S60 3.1, 3.2 and 5.0 platforms do not support an OR type attribute filter.
+        These platforms are also not able to use the MatchContains flags.
 */
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkAttributeFilter);
 

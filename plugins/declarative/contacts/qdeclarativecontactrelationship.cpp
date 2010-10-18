@@ -52,7 +52,7 @@ void QDeclarativeContactRelationship::setSecond(QContactLocalId secondId)
 
 void QDeclarativeContactRelationship::setRelationshipType(const QVariant& relationshipType)
 {
-    if (relationshipType.type() == QVariant::Int) {
+    if (relationshipType.type() == QVariant::Double) {//numbers in qml are set to double, even it's integer
         switch (relationshipType.toInt()) {
         case QDeclarativeContactRelationship::HasMember:
             m_relationship.setRelationshipType(QContactRelationship::HasMember);

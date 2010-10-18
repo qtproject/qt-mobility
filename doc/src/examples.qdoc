@@ -86,9 +86,11 @@
 
     \list
     \o \l{audiorecorder}{Audio Recorder}
+    \o \l{audiodevices}{Audio Devices}
     \o \l{player}{Player}
     \o \l{radio}{Radio}
     \o \l{slideshow}{Slideshow}
+    \o \l{declarative-camera}{Declarative Camera}
     \endlist
 
     \section2 Organizer

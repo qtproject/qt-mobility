@@ -474,18 +474,6 @@ QList<QLandmarkId> LandmarkManagerEngineSymbianPrivate::landmarkIds(const QLandm
     }
     }//switch closure
 
-    int resultcount = result.size();
-    // if no search data found return empty list
-    if (resultcount <= 0)
-        return result;
-
-    if (offset > resultcount) {
-        *error = QLandmarkManager::DoesNotExistError;
-        *errorString = QString("No Landmark data found.");
-
-        return QList<QLandmarkId> ();
-    }
-
     sortFetchedLmIds(limit, offset, sortOrders, result, filter.type(), error, errorString);
 
     return result;
@@ -1435,7 +1423,7 @@ QLandmarkManager::SupportLevel LandmarkManagerEngineSymbianPrivate::sortOrderSup
     QLandmarkManager::SupportLevel supportLevel = QLandmarkManager::NativeSupport;
 
     switch (sortOrder.type()) {
-    case QLandmarkSortOrder::DefaultSort:
+    case QLandmarkSortOrder::NoSort:
     case QLandmarkSortOrder::NameSort: {
             QLandmarkNameSort nameSort = sortOrder;
             if (nameSort.caseSensitivity() == Qt::CaseSensitive)
@@ -2449,6 +2437,12 @@ bool LandmarkManagerEngineSymbianPrivate::cancelRequest(QLandmarkAbstractRequest
 bool LandmarkManagerEngineSymbianPrivate::waitForRequestFinished(QLandmarkAbstractRequest* request,
     int msecs)
 {
+    if (request->type() == QLandmarkAbstractRequest::ImportRequest) {
+        // WFRF not supported for import request type operation.
+        qDebug() << "Wait for Requst Finish for Import Operation not Supported";
+        return false;
+    }
+
     CLandmarkRequestData* currentRequestData = NULL;
     currentRequestData = m_RequestHandler.FetchAsyncRequest(request);
     if (!currentRequestData)
@@ -3031,21 +3025,6 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
     case QLandmarkFilter::CategoryFilter:
     {
         QLandmarkCategoryFilter categoryFilter = filter;
-
-        TPosLmItemId symbianCatId = LandmarkUtility::convertToSymbianLandmarkCategoryId(
-            categoryFilter.categoryId());
-        if (categoryFilter.categoryId().managerUri() != managerUri()) {
-            User::Leave(-20001); //reuse EHttpCannotFindServer to mean category does not exist
-        }
-
-        CPosLandmarkCategory* symbiancat = NULL;
-        TRAPD(err, symbiancat = m_LandmarkCatMgr->ReadCategoryLC(symbianCatId);
-            if (symbiancat) CleanupStack::PopAndDestroy( symbiancat ) )
-
-        if (err != KErrNone) {
-            User::Leave(-20001); //reuse EHttpCannotFindServer to mean category does not exist
-        }
-
         CPosLmCategoryCriteria* categorySearchCriteria = CPosLmCategoryCriteria::NewLC();
         categorySearchCriteria->SetCategoryItemId(
             LandmarkUtility::convertToSymbianLandmarkCategoryId(categoryFilter.categoryId()));
@@ -3122,7 +3101,11 @@ CPosLmSearchCriteria* LandmarkManagerEngineSymbianPrivate::getSearchCriteriaL(
 
         QStringList keyList = attributeFilter.attributeKeys();
         for (int i = 0; i < keyList.size(); ++i) {
-            if (opType == QLandmarkAttributeFilter::AndOperation && (attributeFilter.matchFlags(
+            QLandmarkFilter::MatchFlags matchFlags = attributeFilter.matchFlags(keyList.at(i));
+            matchFlags = (matchFlags & 3);
+            if (matchFlags == QLandmarkFilter::MatchEndsWith) {
+                //make sure we don't match with match ends with 0x3 (Match contains is 0x2)
+            } else if (opType == QLandmarkAttributeFilter::AndOperation && (attributeFilter.matchFlags(
                 keyList.at(i)) & QLandmarkFilter::MatchContains)) {
                 User::Leave(KErrNotSupported);
             }
@@ -4638,14 +4621,9 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
     QLandmarkFilter::FilterType filterType, QLandmarkManager::Error *error, QString *errorString) const
 {
     // if no search data found return empty list
-    if (&landmarkIds == 0 || landmarkIds.isEmpty()) {
-        *error = QLandmarkManager::DoesNotExistError;
-        *errorString = QString("No landmarks found.");
-        return false;
-    }
-    if (offset >= landmarkIds.size()) {
-        *error = QLandmarkManager::DoesNotExistError;
-        *errorString = QString("No landmarks found, from provided offset value.");
+    if (&landmarkIds == 0 || landmarkIds.isEmpty() || offset >= landmarkIds.size()) {
+        landmarkIds.clear();
+        return true;
     }
 
     //fetchRequired will prevent multiple fetches from database

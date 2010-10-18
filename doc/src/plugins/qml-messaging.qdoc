@@ -63,7 +63,7 @@
 
     The Messaging QML plugin supplies filters to search for messages
     with particular values for various properties in the message. The Message itself
-    is represented by a model called a \l {QDeclarativeMessageModel}{MessageModel}.
+    is represented by a model called a \l {MessageModel}.
     This model supplies a rich selection of properties to display or to use
     as filter criteria. We can also construct a series of filters and combine
     them using the \l {MessageIntersectionFilter} and \l {MessageUnionFilter}

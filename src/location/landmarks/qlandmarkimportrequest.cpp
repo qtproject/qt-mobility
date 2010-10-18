@@ -51,10 +51,12 @@ QTM_BEGIN_NAMESPACE
     request that a landmark manager import a set of landmarks.
 
     For a QLandmarkImportRequest, the resultsAvailable() signal will be emitted
-    when landmarks have been successfully added by the manager.  The list
-    of added landmarks may be retrieved by the ids() function.  The resultsAvailable()
+    when landmarks have been successfully imported by the manager.  The list
+    of added landmarks may be retrieved by the landmarkIds() function.  The resultsAvailable()
     signal may also be emitted if an overall operational error occurs.
 
+    Please see the class documentation for QLandmarkAbstractRequest for more information about
+    the usage of request classes and ownership semantics.
 
     \inmodule QtLocation
 
@@ -113,8 +115,8 @@ QString QLandmarkImportRequest::fileName() const
 
 /*!
     Sets the name of the file to be read from to \a fileName.  Internally,
-    QLandmarkExportRequest will create a QFile and open it in
-    QIODevice::WriteOnly mode, and use this file to export to.
+    QLandmarkImportRequest will create a QFile and use this as the
+    device to import from.
 
     \sa fileName(), setDevice()
 */
@@ -127,10 +129,8 @@ void QLandmarkImportRequest::setFileName(const QString &fileName)
 
 /*!
     Returns the expected data format for the import operation.
-    If the format is an empty byte array or not set, then during the import,
-    an attempt is made to auto detect the format.
-
-    By default no format is set.
+    By default no format is set, indicating that the manager
+    will try to automatically detect the format of the import file.
 */
 QString QLandmarkImportRequest::format() const
 {
@@ -141,7 +141,7 @@ QString QLandmarkImportRequest::format() const
 
 /*!
     Sets the expected data \a format for the import operation.
-    If an empty byte array is set, then during the import,
+    If an empty string is set, then during the import,
     an attempt is made to auto detect the format.
 */
 void QLandmarkImportRequest::setFormat(const QString &format)

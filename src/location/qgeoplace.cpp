@@ -61,7 +61,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoPlace class represents basic information about a place.
 
     \inmodule QtLocation
-    
+
     \ingroup location
 
     A QGeoPlace contains a coordinate and the corresponding address, along

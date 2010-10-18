@@ -192,9 +192,6 @@ QVariant QDeclarativeContactRelationshipModel::data(const QModelIndex &index, in
         return QVariant::fromValue(dcr);
     } else if (role == Qt::DisplayRole) {
         return QString("%1 %2 %3").arg(dcr->first()).arg(dcr->relationship().relationshipType()).arg(dcr->second());
-    } else if (role == Qt::DecorationRole) {
-        //show something?
-        return QPixmap();
     }
     return QVariant();
 }

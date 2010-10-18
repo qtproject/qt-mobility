@@ -43,6 +43,13 @@
 #include "qorganizeritemdetail_p.h"
 #include "qorganizermanager.h"
 #include "qorganizeritemrecurrence.h" //customized operator==() for recurrence detail
+
+// reminders need to be included for isEmpty() check.
+#include "qorganizeritemreminder.h"
+#include "qorganizeritemaudiblereminder.h"
+#include "qorganizeritememailreminder.h"
+#include "qorganizeritemvisualreminder.h"
+
 #include <QDebug>
 #include <QDataStream>
 
@@ -422,9 +429,20 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemDetail& detail)
  */
 bool QOrganizerItemDetail::isEmpty() const
 {
-    if (!d.constData()->m_values.isEmpty())
-        return false;
-    return true;
+    if (d.constData()->m_values.isEmpty())
+        return true;
+
+    // reminders always have a single field value (the type)
+    if (d.constData()->m_definitionName == QOrganizerItemReminder::DefinitionName
+            || d.constData()->m_definitionName == QOrganizerItemAudibleReminder::DefinitionName
+            || d.constData()->m_definitionName == QOrganizerItemEmailReminder::DefinitionName
+            || d.constData()->m_definitionName == QOrganizerItemVisualReminder::DefinitionName) {
+        if (d.constData()->m_values.count() == 1) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /*! Returns the key of this detail. */

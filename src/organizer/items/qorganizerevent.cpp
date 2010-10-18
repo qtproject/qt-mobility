@@ -86,19 +86,21 @@ QDateTime QOrganizerEvent::endDateTime() const
     return etr.endDateTime();
 }
 
-/*! Sets whether the time component of the start datetime or end datetime are significant. */
-void QOrganizerEvent::setTimeSpecified(bool isTimeSpecified)
+/*! Sets whether the time-of-day component of the event's start date/time or end date/time is
+ * insignificant (eg. this is generally set to true for a birthday). */
+void QOrganizerEvent::setAllDay(bool isAllDay)
 {
     QOrganizerEventTime etr = detail<QOrganizerEventTime>();
-    etr.setTimeSpecified(isTimeSpecified);
+    etr.setAllDay(isAllDay);
     saveDetail(&etr);
 }
 
-/*! Returns whether the time component of the start datetime or end datetime are significant. */
-bool QOrganizerEvent::isTimeSpecified() const
+/*! Returns true if and only if the time component of the start date/time or end date/time are
+ * insignificant. */
+bool QOrganizerEvent::isAllDay() const
 {
     QOrganizerEventTime etr = detail<QOrganizerEventTime>();
-    return etr.isTimeSpecified();
+    return etr.isAllDay();
 }
 
 /*! Sets the list of dates \a rdates to be dates on which the event occurs */
