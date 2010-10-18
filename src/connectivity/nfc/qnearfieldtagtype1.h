@@ -39,66 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef QNDEFFILTER_H
-#define QNDEFFILTER_H
+#ifndef QNEARFIELDTAGTYPE1_H
+#define QNEARFIELDTAGTYPE1_H
 
-#include <qmobilityglobal.h>
-
-#include <QtCore/QSharedDataPointer>
-
-#include <qndefrecord.h>
+#include <qnearfieldtarget.h>
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QNdefFilterPrivate;
-class Q_CONNECTIVITY_EXPORT QNdefFilter
+class Q_CONNECTIVITY_EXPORT QNearFieldTagType1 : public QNearFieldTarget
 {
+    Q_OBJECT
+
 public:
-    QNdefFilter();
-    QNdefFilter(const QNdefFilter &other);
-    ~QNdefFilter();
-
-    void clear();
-
-    void setOrderMatch(bool on);
-    bool orderMatch() const;
-
-    struct Record {
-        QNdefRecord::TypeNameFormat typeNameFormat;
-        QByteArray type;
-        unsigned int minimum;
-        unsigned int maximum;
+    enum WriteMode {
+        EraseAndWrite,
+        WriteOnly
     };
 
-    template<typename T>
-    void appendRecord(unsigned int min = 1, unsigned int max = 1);
-    void appendRecord(QNdefRecord::TypeNameFormat typeNameFormat, const QByteArray &type,
-                      unsigned int min = 1, unsigned int max = 1);
-    void appendRecord(quint8 typeNameFormat, const QByteArray &type,
-                      unsigned int min = 1, unsigned int max = 1);
-    void appendRecord(const Record &record);
+    explicit QNearFieldTagType1(QObject *parent = 0);
 
-    int recordCount() const;
-    Record recordAt(int i) const;
+    Type type() const { return NfcTagType1; }
 
-    QNdefFilter &operator=(const QNdefFilter &other);
+    bool hasNdefMessage();
+    QList<QNdefMessage> ndefMessages();
 
-private:
-    QSharedDataPointer<QNdefFilterPrivate> d;
+    // DIGPROTO
+    //virtual QByteArray readIdentification();
+
+    // static memory functions
+    virtual QByteArray readAll();
+    //virtual quint8 readByte(quint8 address);
+    //virtual bool writeByte(quint8 address, quint8 data, WriteMode mode = EraseAndWrite);
+
+    // dynamic memory functions
+    //virtual QByteArray readSegment(quint8 segmentAddress) = 0;
+    //virtual QByteArray readBlock(quint8 blockAddress) = 0;
+    //virtual bool writeBlock(quint8 blockAddress, const QByteArray &data,
+    //                        WriteMode mode = EraseAndWrite) = 0;
 };
-
-template <typename T>
-void QNdefFilter::appendRecord(unsigned int min, unsigned int max)
-{
-    T record;
-
-    appendRecord(record.userTypeNameFormat(), record.type(), min, max);
-}
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QNDEFFILTER_H
+#endif // QNEARFIELDTAGTYPE1_H

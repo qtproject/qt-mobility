@@ -8,6 +8,7 @@ HEADERS += \
     nfc/qllcpsocket.h \
     nfc/qndeffilter.h \
     nfc/qndefnfcurirecord.h \
+    nfc/qnearfieldtagtype1.h \
 
 PRIVATE_HEADERS += \
     nfc/qndefrecord_p.h \
@@ -22,6 +23,7 @@ SOURCES += \
     nfc/qndefmessage.cpp \
     nfc/qllcpsocket.cpp \
     nfc/qndeffilter.cpp \
-    nfc/qndefnfcurirecord.cpp
+    nfc/qndefnfcurirecord.cpp \
+    nfc/qnearfieldtagtype1.cpp
 
 INCLUDEPATH += $$PWD

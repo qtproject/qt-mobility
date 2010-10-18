@@ -41,6 +41,8 @@
 
 #include "qndeffilter.h"
 
+#include <QtCore/QList>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -80,11 +82,33 @@ QTM_BEGIN_NAMESPACE
     between \a min and \a max times in the NDEF message.
 */
 
+class QNdefFilterPrivate : public QSharedData
+{
+public:
+    QNdefFilterPrivate();
+
+    bool orderMatching;
+    QList<QNdefFilter::Record> filterRecords;
+};
+
+QNdefFilterPrivate::QNdefFilterPrivate()
+:   orderMatching(false)
+{
+}
+
 /*!
     Constructs a new NDEF filter.
 */
 QNdefFilter::QNdefFilter()
-:   m_orderMatching(false)
+:   d(new QNdefFilterPrivate)
+{
+}
+
+/*!
+    constructs a new NDEF filter that is a copy of \a other.
+*/
+QNdefFilter::QNdefFilter(const QNdefFilter &other)
+:   d(other.d)
 {
 }
 
@@ -96,11 +120,23 @@ QNdefFilter::~QNdefFilter()
 }
 
 /*!
+    Assigns \a other to this filter and returns a reference to this filter.
+*/
+QNdefFilter &QNdefFilter::operator=(const QNdefFilter &other)
+{
+    if (d != other.d)
+        d = other.d;
+
+    return *this;
+}
+
+/*!
     Clears the filter.
 */
 void QNdefFilter::clear()
 {
-    m_orderMatching = false;
+    d->orderMatching = false;
+    d->filterRecords.clear();
 }
 
 /*!
@@ -112,7 +148,7 @@ void QNdefFilter::clear()
 */
 void QNdefFilter::setOrderMatch(bool on)
 {
-    m_orderMatching = on;
+    d->orderMatching = on;
 }
 
 /*!
@@ -121,7 +157,7 @@ void QNdefFilter::setOrderMatch(bool on)
 */
 bool QNdefFilter::orderMatch() const
 {
-    return m_orderMatching;
+    return d->orderMatching;
 }
 
 /*!
@@ -131,10 +167,14 @@ bool QNdefFilter::orderMatch() const
 void QNdefFilter::appendRecord(QNdefRecord::TypeNameFormat typeNameFormat, const QByteArray &type,
                                unsigned int min, unsigned int max)
 {
-    Q_UNUSED(typeNameFormat);
-    Q_UNUSED(type);
-    Q_UNUSED(min);
-    Q_UNUSED(max);
+    QNdefFilter::Record record;
+
+    record.typeNameFormat = typeNameFormat;
+    record.type = type;
+    record.minimum = min;
+    record.maximum = max;
+
+    d->filterRecords.append(record);
 }
 
 /*!
@@ -144,11 +184,32 @@ void QNdefFilter::appendRecord(QNdefRecord::TypeNameFormat typeNameFormat, const
 void QNdefFilter::appendRecord(quint8 typeNameFormat, const QByteArray &type,
                                unsigned int min, unsigned int max)
 {
-    Q_UNUSED(typeNameFormat);
-    Q_UNUSED(type);
-    Q_UNUSED(min);
-    Q_UNUSED(max);
+    QNdefFilter::Record record;
+
+    record.typeNameFormat = QNdefRecord::TypeNameFormat(typeNameFormat);
+    record.type = type;
+    record.minimum = min;
+    record.maximum = max;
+
+    d->filterRecords.append(record);
 }
 
+/*!
+    Appends \a record to the NDEF filter.
+*/
+void QNdefFilter::appendRecord(const Record &record)
+{
+    d->filterRecords.append(record);
+}
+
+QNdefFilter::Record QNdefFilter::recordAt(int i) const
+{
+    return d->filterRecords.at(i);
+}
+
+int QNdefFilter::recordCount() const
+{
+    return d->filterRecords.count();
+}
 
 QTM_END_NAMESPACE

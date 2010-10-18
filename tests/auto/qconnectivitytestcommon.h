@@ -39,66 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef QNDEFFILTER_H
-#define QNDEFFILTER_H
+#ifndef QCONNECTIVITYTESTCOMMON_H
+#define QCONNECTIVITYTESTCOMMON_H
 
-#include <qmobilityglobal.h>
+// Wait for __expr to happen, while still allowing events to be processed.
+#define QTRY_NOOP(__expr) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 15000; \
+        if (!(__expr)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+    } while(0)
 
-#include <QtCore/QSharedDataPointer>
+// Will try to wait for the condition while allowing event processing
+#define QTRY_VERIFY(__expr) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if (!(__expr)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QVERIFY(__expr); \
+    } while(0)
 
-#include <qndefrecord.h>
+// Will try to wait for the condition while allowing event processing
+#define QTRY_COMPARE(__expr, __expected) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if ((__expr) != (__expected)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && ((__expr) != (__expected)); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QCOMPARE(__expr, __expected); \
+    } while(0)
 
-QT_BEGIN_HEADER
+#endif
 
-QTM_BEGIN_NAMESPACE
-
-class QNdefFilterPrivate;
-class Q_CONNECTIVITY_EXPORT QNdefFilter
-{
-public:
-    QNdefFilter();
-    QNdefFilter(const QNdefFilter &other);
-    ~QNdefFilter();
-
-    void clear();
-
-    void setOrderMatch(bool on);
-    bool orderMatch() const;
-
-    struct Record {
-        QNdefRecord::TypeNameFormat typeNameFormat;
-        QByteArray type;
-        unsigned int minimum;
-        unsigned int maximum;
-    };
-
-    template<typename T>
-    void appendRecord(unsigned int min = 1, unsigned int max = 1);
-    void appendRecord(QNdefRecord::TypeNameFormat typeNameFormat, const QByteArray &type,
-                      unsigned int min = 1, unsigned int max = 1);
-    void appendRecord(quint8 typeNameFormat, const QByteArray &type,
-                      unsigned int min = 1, unsigned int max = 1);
-    void appendRecord(const Record &record);
-
-    int recordCount() const;
-    Record recordAt(int i) const;
-
-    QNdefFilter &operator=(const QNdefFilter &other);
-
-private:
-    QSharedDataPointer<QNdefFilterPrivate> d;
-};
-
-template <typename T>
-void QNdefFilter::appendRecord(unsigned int min, unsigned int max)
-{
-    T record;
-
-    appendRecord(record.userTypeNameFormat(), record.type(), min, max);
-}
-
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QNDEFFILTER_H

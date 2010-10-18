@@ -39,66 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QNDEFFILTER_H
-#define QNDEFFILTER_H
+#ifndef QNEARFIELDMANAGER_EMULATOR_H
+#define QNEARFIELDMANAGER_EMULATOR_H
 
-#include <qmobilityglobal.h>
+#include "qnearfieldmanager_p.h"
+#include "qnearfieldtarget.h"
+#include "qndeffilter.h"
 
-#include <QtCore/QSharedDataPointer>
+#include <QtCore/QObject>
+#include <QtCore/QMetaMethod>
 
-#include <qndefrecord.h>
+QTM_USE_NAMESPACE
 
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-class QNdefFilterPrivate;
-class Q_CONNECTIVITY_EXPORT QNdefFilter
+class TagBase;
+class QNearFieldManagerPrivateImpl : public QtMobility::QNearFieldManagerPrivate
 {
+    Q_OBJECT
+
 public:
-    QNdefFilter();
-    QNdefFilter(const QNdefFilter &other);
-    ~QNdefFilter();
+    QNearFieldManagerPrivateImpl();
+    ~QNearFieldManagerPrivateImpl();
 
-    void clear();
+    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
+                                      QObject *object, const QMetaMethod &method);
+    int registerTargetDetectedHandler(QNearFieldTarget::Type targetType,
+                                      const QNdefFilter &filter,
+                                      QObject *object, const QMetaMethod &method);
 
-    void setOrderMatch(bool on);
-    bool orderMatch() const;
+    bool unregisterTargetDetectedHandler(int id);
 
-    struct Record {
-        QNdefRecord::TypeNameFormat typeNameFormat;
-        QByteArray type;
-        unsigned int minimum;
-        unsigned int maximum;
-    };
-
-    template<typename T>
-    void appendRecord(unsigned int min = 1, unsigned int max = 1);
-    void appendRecord(QNdefRecord::TypeNameFormat typeNameFormat, const QByteArray &type,
-                      unsigned int min = 1, unsigned int max = 1);
-    void appendRecord(quint8 typeNameFormat, const QByteArray &type,
-                      unsigned int min = 1, unsigned int max = 1);
-    void appendRecord(const Record &record);
-
-    int recordCount() const;
-    Record recordAt(int i) const;
-
-    QNdefFilter &operator=(const QNdefFilter &other);
+private slots:
+    void tagActivated(TagBase *tag);
 
 private:
-    QSharedDataPointer<QNdefFilterPrivate> d;
+    struct Callback {
+        QNearFieldTarget::Type targetType;
+        QNdefFilter filter;
+
+        QObject *object;
+        QMetaMethod method;
+    };
+
+    int getFreeId();
+
+    QList<Callback> m_registeredHandlers;
+    QList<int> m_freeIds;
+    QMap<TagBase *, QNearFieldTarget *> m_targets;
 };
 
-template <typename T>
-void QNdefFilter::appendRecord(unsigned int min, unsigned int max)
-{
-    T record;
-
-    appendRecord(record.userTypeNameFormat(), record.type(), min, max);
-}
-
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QNDEFFILTER_H
+#endif // QNEARFIELDMANAGER_EMULATOR_H

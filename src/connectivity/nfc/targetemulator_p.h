@@ -39,66 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QNDEFFILTER_H
-#define QNDEFFILTER_H
+#ifndef TARGETEMULATOR_P_H
+#define TARGETEMULATOR_P_H
 
-#include <qmobilityglobal.h>
+#include <QtCore/QtGlobal>
+#include <QtCore/QByteArray>
 
-#include <QtCore/QSharedDataPointer>
+QT_FORWARD_DECLARE_CLASS(QSettings)
 
-#include <qndefrecord.h>
-
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-class QNdefFilterPrivate;
-class Q_CONNECTIVITY_EXPORT QNdefFilter
+class TagBase
 {
 public:
-    QNdefFilter();
-    QNdefFilter(const QNdefFilter &other);
-    ~QNdefFilter();
+    TagBase();
+    ~TagBase();
 
-    void clear();
+    virtual void load(QSettings *settings) = 0;
 
-    void setOrderMatch(bool on);
-    bool orderMatch() const;
+    virtual QByteArray processCommand(const QByteArray &command) = 0;
 
-    struct Record {
-        QNdefRecord::TypeNameFormat typeNameFormat;
-        QByteArray type;
-        unsigned int minimum;
-        unsigned int maximum;
-    };
-
-    template<typename T>
-    void appendRecord(unsigned int min = 1, unsigned int max = 1);
-    void appendRecord(QNdefRecord::TypeNameFormat typeNameFormat, const QByteArray &type,
-                      unsigned int min = 1, unsigned int max = 1);
-    void appendRecord(quint8 typeNameFormat, const QByteArray &type,
-                      unsigned int min = 1, unsigned int max = 1);
-    void appendRecord(const Record &record);
-
-    int recordCount() const;
-    Record recordAt(int i) const;
-
-    QNdefFilter &operator=(const QNdefFilter &other);
-
-private:
-    QSharedDataPointer<QNdefFilterPrivate> d;
+    virtual QByteArray uid() const = 0;
 };
 
-template <typename T>
-void QNdefFilter::appendRecord(unsigned int min, unsigned int max)
+class NfcTagType1 : public TagBase
 {
-    T record;
+public:
+    NfcTagType1();
+    ~NfcTagType1();
 
-    appendRecord(record.userTypeNameFormat(), record.type(), min, max);
-}
+    void load(QSettings *settings);
 
-QTM_END_NAMESPACE
+    QByteArray processCommand(const QByteArray &command);
 
-QT_END_HEADER
+    QByteArray uid() const;
 
-#endif // QNDEFFILTER_H
+private:
+    quint8 readData(quint8 block, quint8 byte);
+
+    quint8 hr0;
+    quint8 hr1;
+
+    QByteArray staticMemory;
+};
+
+#endif // TARGETEMULATOR_P_H

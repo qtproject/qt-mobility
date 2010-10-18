@@ -12,7 +12,7 @@ contains(mobility_modules,serviceframework) {
            qabstractsecuritysession \
            qservicecontext \
            qmetaobjectbuilder \
-           icheck \
+#           icheck \
            qservicemanager_ipc \
            servicedatabase
          # databasemanager # disabled from auto builds
@@ -197,7 +197,7 @@ contains(mobility_modules,gallery) {
         qdocumentgallery \
         qgalleryabstractrequest \
         qgalleryabstractresponse \
-        qgalleryfilter \
+#        qgalleryfilter \
         qgalleryitemrequest \
         qgalleryquerymodel \
         qgalleryqueryrequest \
@@ -230,6 +230,7 @@ contains(mobility_modules,feedback) {
 contains(mobility_modules,connectivity) {
     SUBDIRS += \
         qndefrecord \
-        qndefmessage
+        qndefmessage \
+        qnearfieldmanager
 }
 
