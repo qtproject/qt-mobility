@@ -142,8 +142,8 @@ private:
     QSystemBatteryInfoPrivate *d;
 
 protected:
-//    void connectNotify(const char *signal);
-//    void disconnectNotify(const char *signal);
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 
 };
 

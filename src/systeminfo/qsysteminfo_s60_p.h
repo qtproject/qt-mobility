@@ -443,6 +443,51 @@ private:
     CMMCStorageStatus* m_mmcStorageStatus;
 };
 
+class QSystemBatteryInfoPrivate : public QObject
+{
+    Q_OBJECT
+public:
+    QSystemBatteryInfoPrivate(QObject *parent = 0);
+    ~QSystemBatteryInfoPrivate();
+
+    QSystemBatteryInfo::ChargerType chargerType() const;
+    QSystemBatteryInfo::ChargingState chargingState() const;
+
+    int nominalCapacity() const;
+    int remainingCapacityPercent() const;
+    int remainingCapacitymAh() const;
+
+    int voltage() const;
+    int remainingChargingTime() const;
+    int currentFlow() const;
+    int cumulativeCurrentFlow() const;
+    int remainingCapacityBars() const;
+    int maxBars() const;
+    QSystemBatteryInfo::BatteryStatus batteryStatus() const;
+
+Q_SIGNALS:
+    void batteryLevelChanged(int level);
+    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
+
+
+    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+
+    void nominalCapacityChanged(int);
+    void remainingCapacityPercentChanged(int);
+    void remainingCapacitymAhChanged(int);
+    void batteryCurrentFlowChanged(int);
+    void voltageChanged(int);
+
+    void currentFlowChanged(int);
+    void cumulativeCurrentFlowChanged(int);
+    void remainingCapacityBarsChanged(int);
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+};
+
 QTM_END_NAMESPACE
 
 QT_END_HEADER

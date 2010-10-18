@@ -1268,6 +1268,90 @@ void QSystemScreenSaverPrivate::resetInactivityTime()
     User::ResetInactivityTime();
 }
 
+QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
+: QObject(parent)
+{
+
+}
+
+QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
+{
+
+}
+
+
+QSystemBatteryInfoPrivate::ChargerType QSystemBatteryInfoPrivate::chargerType() const
+{
+    return QSystemBatteryInfo::Unknown;
+}
+
+QSystemBatteryInfoPrivate::ChargingState QSystemBatteryInfoPrivate::chargingState() const
+{
+    return QSystemBatteryInfo::NotCharging;
+}
+
+
+int QSystemBatteryInfoPrivate::nominalCapacity() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingCapacityPercent() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingCapacitymAh() const
+{
+    return 0;
+}
+
+
+int QSystemBatteryInfoPrivate::voltage() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingChargingTime() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::currentFlow() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::cumulativeCurrentFlow() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingCapacityBars() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::maxBars() const
+{
+    return 0;
+}
+
+QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivatePrivate::batteryStatus() const
+{
+   return QSystemBatteryInfo::BatteryUnknown;
+}
+
+void QSystemBatteryInfo::connectNotify(const char *signal)
+{
+
+}
+
+void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
+{
+
+}
+
 #include "moc_qsysteminfo_s60_p.cpp"
 
 QTM_END_NAMESPACE

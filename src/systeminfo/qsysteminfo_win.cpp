@@ -2167,6 +2167,89 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
     return !screenSettings.value("SCRNSAVE.EXE").toString().isEmpty();
 }
 
+QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
+: QObject(parent)
+{
+
+}
+
+QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
+{
+
+}
+
+
+QSystemBatteryInfo::ChargerType QSystemBatteryInfoPrivate::chargerType() const
+{
+    return QSystemBatteryInfo::Unknown;
+}
+
+QSystemBatteryInfo::ChargingState QSystemBatteryInfoPrivate::chargingState() const
+{
+    return QSystemBatteryInfo::NotCharging;
+}
+
+
+int QSystemBatteryInfoPrivate::nominalCapacity() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingCapacityPercent() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingCapacitymAh() const
+{
+    return 0;
+}
+
+
+int QSystemBatteryInfoPrivate::voltage() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingChargingTime() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::currentFlow() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::cumulativeCurrentFlow() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::remainingCapacityBars() const
+{
+    return 0;
+}
+
+int QSystemBatteryInfoPrivate::maxBars() const
+{
+    return 0;
+}
+
+QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() const
+{
+   return QSystemBatteryInfo::BatteryUnknown;
+}
+
+void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
+{
+
+}
+
+void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
+{
+
+}
 
 #include "moc_qsysteminfo_win_p.cpp"
 

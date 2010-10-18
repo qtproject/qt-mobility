@@ -309,32 +309,32 @@ int QSystemBatteryInfo::maxBars() const
     return d->maxBars();
 }
 
-///*!
-//  \internal
-//  This function is called when the client connects to signals.
+/*!
+  \internal
+  This function is called when the client connects to signals.
 
-//  \sa connectNotify()
-//*/
+  \sa connectNotify()
+*/
 
-//void QSystemBatteryInfo::connectNotify(const char *signal)
-//{
-//}
+void QSystemBatteryInfo::connectNotify(const char *signal)
+{
+}
 
-///*!
-//  \internal
-//  This function is called when the client disconnects to signals.
+/*!
+ \internal
+ This function is called when the client disconnects to signals.
 
-//  \sa connectNotify()
-//*/
+ \sa connectNotify()
+*/
 
-//void QSystemBatteryInfo::disconnectNotify(const char *signal)
-//{
+void QSystemBatteryInfo::disconnectNotify(const char *signal)
+{
 
-//}
+}
 
 QSystemBatteryInfo::BatteryStatus QSystemBatteryInfo::batteryStatus() const
 {
-return QSystemBatteryInfo::BatteryUnknown;
+   return QSystemBatteryInfo::BatteryUnknown;
 }
 
 #include "moc_qsystembatteryinfo.cpp"
