@@ -82,7 +82,7 @@
 
 QTM_USE_NAMESPACE
 
-class QOrganizerItemSimulatorFactory : public QObject, public QOrganizerManagerEngineFactory
+class QOrganizerSimulatorFactory : public QObject, public QOrganizerManagerEngineFactory
 {
   Q_OBJECT
   Q_INTERFACES(QtMobility::QOrganizerManagerEngineFactory)
@@ -116,7 +116,7 @@ protected:
 private:
     static QOrganizerItemMemoryEngineData* engineData;
 
-    friend class QOrganizerItemSimulatorFactory;
+    friend class QOrganizerSimulatorFactory;
 };
 
 #endif // QORGANIZERSIMULATOR_P_H
