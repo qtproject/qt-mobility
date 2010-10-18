@@ -1360,6 +1360,9 @@ void tst_QContactFilter::traits()
     QVERIFY(!ti.isLarge);
     QVERIFY(!ti.isPointer);
     QVERIFY(!ti.isDummy);
+
+    QCOMPARE(sizeof(QContactDetailFilter), sizeof(void*));
+    QCOMPARE(sizeof(QContactChangeLogFilter), sizeof(void*));
 }
 
 void tst_QContactFilter::sortTraits()

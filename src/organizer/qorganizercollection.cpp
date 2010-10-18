@@ -135,15 +135,7 @@ bool QOrganizerCollection::operator==(const QOrganizerCollection &other) const
 
 
 /*!
-  Returns the manager-local id of the collection
- */
-QOrganizerCollectionLocalId QOrganizerCollection::localId() const
-{
-    return d->m_id.localId();
-}
-
-/*!
-  Returns the complete id of the collection, which includes the manager uri and the manager-local id of the collection
+  Returns the complete id of the collection, which includes the manager uri and the manager id of the collection
  */
 QOrganizerCollectionId QOrganizerCollection::id() const
 {
@@ -240,7 +232,7 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerCollection& collection
 {
     quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerCollection
     return out << formatVersion
-               << collection.id()
+               << collection.id().toString()
                << collection.metaData();
 }
 
@@ -252,12 +244,12 @@ QDataStream& operator>>(QDataStream& in, QOrganizerCollection& collection)
     quint8 formatVersion;
     in >> formatVersion;
     if (formatVersion == 1) {
-        QOrganizerCollectionId id;
+        QString idString;
         QVariantMap metadata;
-        in >> id >> metadata;
+        in >> idString >> metadata;
 
         collection = QOrganizerCollection();
-        collection.setId(id);
+        collection.setId(QOrganizerCollectionId::fromString(idString));
 
         QMapIterator<QString, QVariant> it(metadata);
         while (it.hasNext()) {

@@ -71,7 +71,6 @@ public:
     /* Every collection has an id */
     QOrganizerCollectionId id() const;
     void setId(const QOrganizerCollectionId& id);
-    QOrganizerCollectionLocalId localId() const;
 
     void setMetaData(const QVariantMap& metaData);
     QVariantMap metaData() const;

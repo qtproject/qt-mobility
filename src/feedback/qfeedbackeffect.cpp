@@ -182,7 +182,7 @@ QTM_BEGIN_NAMESPACE
     \enum QFeedbackEffect::Duration
     This enum describes the possible effect duration types.
 
-    \value INFINITE Infinite effect duration
+    \value QFeedbackEffect::Duration::INFINITE Infinite effect duration
   */
 
 /*!

@@ -8,6 +8,7 @@ SUBDIRS += \
     qorganizeritem \
     qorganizeritemasync \
     qorganizeritemdetail \
+    qorganizeritemdetails \
     qorganizeritemdetaildefinition \
     qorganizeritemfilter \
     qorganizermanager

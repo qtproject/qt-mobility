@@ -50,17 +50,16 @@
     navigate a music collection.
 
     The main menu of the music browser contains links to the four sub-menus
-    each of which displays a different type of gallery item. The
-    \l DocumentGalleryType element provides the number of items in each
-    sub-menu.
+    each of which displays a different type of gallery item. The \l DocumentGalleryType
+    element provides the number of items in each sub-menu.
 
     Each sub-menu contains a list of items populated using the
-    \l DocumentGalleryModel element.  Selecting an item from one of the the
-    Albums, Artists, or Genres menus will display a list of songs which belong
-    to the selected item.
+    \l DocumentGalleryModel element.  Selecting an item from one of the the Albums,
+    Artists, or Genres menus will display a list of songs which belong to the
+    selected item.
 
     Selecting a song from the music browser will display a dialog with
-    information about a song provided by the \l DocumentGalleryItem element.
-    Property values changed in this dialog are written back to the
-    \l DocumentGalleryItem element and saved to the gallery.
+    information about a song provided by the \l DocumentGalleryItem element. Property
+    values changed in this dialog are written back to the \l DocumentGalleryItem
+    element and saved to the gallery.
 */
