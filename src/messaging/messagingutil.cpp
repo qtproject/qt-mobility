@@ -213,7 +213,7 @@ namespace SymbianHelpers {
         return QMessageId(addIdPrefix(id, type));
     }
 
-    void splitQMessageId(const QMessageId& id, quint64 mailboxId, quint64 folderId, quint64 messageId)
+    void splitQMessageId(const QMessageId& id, quint64& mailboxId, quint64& folderId, quint64& messageId)
     {
         QStringList list = stripIdPrefix(id.toString()).split(idDelimiter);
         mailboxId = list[0].toULongLong();
