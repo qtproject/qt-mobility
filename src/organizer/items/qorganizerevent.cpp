@@ -121,8 +121,10 @@ void QOrganizerEvent::setRecurrenceDates(const QSet<QDate>& rdates)
     saveDetail(&rec);
 }
 
-/*! Sets a single date \a rdate to be the date on which the event occurs.
-    \sa setRecurrenceDates() */
+/*!
+  \internal
+  Sets a single date \a rdate to be the date on which the event occurs.
+  \sa setRecurrenceDates() */
 void QOrganizerEvent::setRecurrenceDate(const QDate& rdate)
 {
     setRecurrenceDates(QSet<QDate>() << rdate);
@@ -181,10 +183,12 @@ void QOrganizerEvent::setExceptionDates(const QSet<QDate>& exdates)
     saveDetail(&rec);
 }
 
-/*! Sets the given single date \a exdate to be the date on which the event explicitly does not occur,
-    event if the recurrence rules suggest that the event should occur on this date.  Any previously
-    specified exception dates will be cleared when this function is called.
-    \sa setExceptionDates()
+/*!
+  \internal
+  Sets the given single date \a exdate to be the date on which the event explicitly does not occur,
+  event if the recurrence rules suggest that the event should occur on this date.  Any previously
+  specified exception dates will be cleared when this function is called.
+  \sa setExceptionDates()
  */
 void QOrganizerEvent::setExceptionDate(const QDate& exdate)
 {
