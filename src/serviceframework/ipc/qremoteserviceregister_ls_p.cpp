@@ -233,42 +233,37 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
     if(!socket->waitForConnected()){
         if (!socket->isValid()) {
             qWarning() << "Cannot connect to remote service, trying to start service " << location;
-            // try starting the service by hand
-            QProcess *service = new QProcess();
+            // Start the service as a detached process
+            bool servicestarted = false;
 #ifdef Q_OS_WIN
-            service->start(location);
+            servicestarted = QProcess::startDetached(location);
 #else
-            service->start("./" + location);
+            servicestarted = QProcess::startDetached("./" + location);
 #endif
-            service->waitForStarted();
-            if(service->error() != QProcess::UnknownError || service->state() != QProcess::Running) {
-                qWarning() << "Unable to start service " << location << service->error() << service->errorString() << service->state();
-                return false;
-            }
-            int i;
-            socket->connectToServer(location);
-            for(i = 0; !socket->isValid() && i < 100; i++){
-                if(service->state() != QProcess::Running){
-                    qWarning() << "Service died on startup" << service->errorString();
+            if(servicestarted){
+                int i;
+                socket->connectToServer(location);
+                for(i = 0; !socket->isValid() && i < 100; i++){
+                    // Temporary hack till we can improve startup signaling
+#ifdef Q_OS_WIN
+                    ::Sleep(10);
+#else
+                    struct timespec tm;
+                    tm.tv_sec = 0;
+                    tm.tv_nsec = 1000000;
+                    nanosleep(&tm, 0x0);
+#endif
+                    socket->connectToServer(location);
+                    // keep trying for a while
+                }
+                qDebug() << "Number of loops: "  << i;
+                if(!socket->isValid()){
+                    qWarning() << "Server failed to start within waiting period";
                     return false;
                 }
-                // Temporary hack till we can improve startup signaling
-#ifdef Q_OS_WIN
-                ::Sleep(10);
-#else
-                struct timespec tm;
-                tm.tv_sec = 0;
-                tm.tv_nsec = 1000000;
-                nanosleep(&tm, 0x0);
-#endif
-                socket->connectToServer(location);
-                // keep trying for a while
             }
-            qDebug() << "Number of loops: "  << i;
-            if(!socket->isValid()){
-                qWarning() << "Server failed to start within waiting period";
-                return false;
-            }
+            else
+                qWarning() << "Server could not be started";
         }
     }
     if (socket->isValid()){

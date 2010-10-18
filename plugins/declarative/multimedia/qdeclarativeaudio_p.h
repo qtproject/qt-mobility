@@ -82,7 +82,7 @@ class QDeclarativeAudio : public QObject, public QDeclarativeMediaBase, public Q
     Q_PROPERTY(qreal playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChanged)
     Q_PROPERTY(Error error READ error NOTIFY errorChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
-    Q_PROPERTY(QObject *metaData READ metaData CONSTANT)
+    Q_PROPERTY(QDeclarativeMediaMetaData *metaData READ metaData CONSTANT)
     Q_ENUMS(Status)
     Q_ENUMS(Error)
     Q_INTERFACES(QDeclarativeParserStatus)
@@ -137,12 +137,6 @@ Q_SIGNALS:
 
     void statusChanged();
 
-    void loaded();
-    void buffering();
-    void stalled();
-    void buffered();
-    void endOfMedia();
-
     void durationChanged();
     void positionChanged();
 
@@ -163,7 +157,6 @@ private Q_SLOTS:
 private:
     Q_DISABLE_COPY(QDeclarativeAudio)
     Q_PRIVATE_SLOT(mediaBase(), void _q_statusChanged())
-    Q_PRIVATE_SLOT(mediaBase(), void _q_metaDataChanged())
 
     inline QDeclarativeMediaBase *mediaBase() { return this; }
 };

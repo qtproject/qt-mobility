@@ -108,7 +108,7 @@ int main(int argc, char** argv)
 
     registerExampleService();
 
-    QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
+    QRemoteServiceRegister *serviceRegister = new QRemoteServiceRegister();
     //serviceRegister->setSecurityFilter(check);
 
     QRemoteServiceRegister::Entry shared = serviceRegister->createEntry<EchoService>(
@@ -120,6 +120,7 @@ int main(int argc, char** argv)
     unique.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
 
     serviceRegister->publishEntries("sfwecho_service");
+    serviceRegister->setQuitOnLastInstanceClosed(true);
 
     int res =  app.exec();
 

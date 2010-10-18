@@ -77,7 +77,6 @@
 #include <smuthdr.h>
 #include <mtuireg.h> // CMtmUiRegistry
 #include <mtmuibas.h> // CBaseMtmUi
-#include <CMessageData.h> //CMessageData
 #include <apgcli.h>
 #include <rsendas.h>
 #include <rsendasmessage.h>
@@ -99,6 +98,7 @@
 
 #include <email_services_api.h>
 #else
+#include <CMessageData.h> //CMessageData
 #include <SendUiConsts.h>
 #include <sendui.h>    // SendUi API
 #endif

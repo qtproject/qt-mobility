@@ -43,7 +43,7 @@
 #define QORGANIZERITEMIDFETCHREQUEST_H
 
 #include "qtorganizerglobal.h"
-#include "qorganizeritemabstractrequest.h"
+#include "qorganizerabstractrequest.h"
 #include "qorganizeritemsortorder.h"
 #include "qorganizeritemfilter.h"
 
@@ -53,7 +53,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemLocalIdFetchRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemLocalIdFetchRequest : public QOrganizerItemAbstractRequest
+class Q_ORGANIZER_EXPORT QOrganizerItemLocalIdFetchRequest : public QOrganizerAbstractRequest
 {
     Q_OBJECT
 
@@ -63,15 +63,19 @@ public:
     /* Selection, restriction and sorting */
     void setFilter(const QOrganizerItemFilter& filter);
     void setSorting(const QList<QOrganizerItemSortOrder>& sorting);
+    void setStartDate(const QDateTime& date);
+    void setEndDate(const QDateTime& date);
     QOrganizerItemFilter filter() const;
     QList<QOrganizerItemSortOrder> sorting() const;
+    QDateTime startDate() const;
+    QDateTime endDate() const;
 
     /* Results */
     QList<QOrganizerItemLocalId> itemIds() const;
 
 private:
     Q_DISABLE_COPY(QOrganizerItemLocalIdFetchRequest)
-    friend class QOrganizerItemManagerEngine;
+    friend class QOrganizerManagerEngine;
     Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemLocalIdFetchRequest)
 };
 

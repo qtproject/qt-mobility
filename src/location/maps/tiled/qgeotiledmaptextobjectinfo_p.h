@@ -75,7 +75,8 @@ public:
     void updateValidity();
 
     QGeoMapTextObject* text;
-    QGraphicsSimpleTextItem *textItem;
+    QGraphicsSimpleTextItem *textItem1;
+    QGraphicsSimpleTextItem *textItem2;
 
 public slots:
     void coordinateChanged(const QGeoCoordinate &coordinate);

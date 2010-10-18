@@ -426,20 +426,6 @@ void tst_QVersitReader::testReading()
     QCOMPARE(mReader->error(), QVersitReader::NoError);
     QCOMPARE(results.count(),2);
 
-    // Erroneous document (missing property name)
-    mInputDevice->close();
-    mInputDevice->setData(QByteArray(
-            "BEGIN:VCARD\r\nFN:Jenny\r\n;Jenny;;;\r\nEND:VCARD\r\n"
-            "BEGIN:VCARD\r\nFN:Jake\r\nEND:VCARD\r\n"));
-    mInputDevice->open(QBuffer::ReadOnly);
-    mInputDevice->seek(0);
-    QVERIFY2(mReader->startReading(), QString::number(mReader->error()).toAscii().data());
-    QVERIFY2(mReader->waitForFinished(), QString::number(mReader->error()).toAscii().data());
-    results = mReader->results();
-    QCOMPARE(mReader->state(), QVersitReader::FinishedState);
-    QCOMPARE(mReader->error(), QVersitReader::ParseError);
-    QCOMPARE(results.count(), 1);
-
     // Valid documents and a grouped document between them
     const QByteArray& validDocumentsAndGroupedDocument =
 "BEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\n"

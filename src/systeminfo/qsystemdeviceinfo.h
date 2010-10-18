@@ -126,7 +126,8 @@ public:
         VibProfile,
         OfflineProfile,
         PowersaveProfile,
-        CustomProfile
+        CustomProfile,
+        BeepProfile
     };
 
     enum SimStatus {

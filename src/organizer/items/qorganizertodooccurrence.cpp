@@ -64,7 +64,7 @@ QTM_USE_NAMESPACE
  */
 void QOrganizerTodoOccurrence::setStartDateTime(const QDateTime& startDateTime)
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     ttr.setStartDateTime(startDateTime);
     saveDetail(&ttr);
 }
@@ -74,7 +74,7 @@ void QOrganizerTodoOccurrence::setStartDateTime(const QDateTime& startDateTime)
  */
 QDateTime QOrganizerTodoOccurrence::startDateTime() const
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     return ttr.startDateTime();
 }
 
@@ -83,7 +83,7 @@ QDateTime QOrganizerTodoOccurrence::startDateTime() const
  */
 void QOrganizerTodoOccurrence::setDueDateTime(const QDateTime& dueDateTime)
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     ttr.setDueDateTime(dueDateTime);
     saveDetail(&ttr);
 }
@@ -93,7 +93,7 @@ void QOrganizerTodoOccurrence::setDueDateTime(const QDateTime& dueDateTime)
  */
 QDateTime QOrganizerTodoOccurrence::dueDateTime() const
 {
-    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    QOrganizerTodoTime ttr = detail<QOrganizerTodoTime>();
     return ttr.dueDateTime();
 }
 
@@ -103,7 +103,7 @@ QDateTime QOrganizerTodoOccurrence::dueDateTime() const
  */
 void QOrganizerTodoOccurrence::setParentLocalId(const QOrganizerItemLocalId& parentLocalId)
 {
-    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    QOrganizerItemParent origin = detail<QOrganizerItemParent>();
     origin.setParentLocalId(parentLocalId);
     saveDetail(&origin);
 }
@@ -113,7 +113,7 @@ void QOrganizerTodoOccurrence::setParentLocalId(const QOrganizerItemLocalId& par
  */
 QOrganizerItemLocalId QOrganizerTodoOccurrence::parentLocalId() const
 {
-    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    QOrganizerItemParent origin = detail<QOrganizerItemParent>();
     return origin.parentLocalId();
 }
 
@@ -123,7 +123,7 @@ QOrganizerItemLocalId QOrganizerTodoOccurrence::parentLocalId() const
  */
 void QOrganizerTodoOccurrence::setOriginalDate(const QDate& date)
 {
-    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    QOrganizerItemParent origin = detail<QOrganizerItemParent>();
     origin.setOriginalDate(date);
     saveDetail(&origin);
 }
@@ -133,7 +133,7 @@ void QOrganizerTodoOccurrence::setOriginalDate(const QDate& date)
  */
 QDate QOrganizerTodoOccurrence::originalDate() const
 {
-    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    QOrganizerItemParent origin = detail<QOrganizerItemParent>();
     return origin.originalDate();
 }
 

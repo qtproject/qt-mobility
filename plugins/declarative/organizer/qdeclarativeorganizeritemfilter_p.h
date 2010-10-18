@@ -70,7 +70,6 @@ public:
         InvalidFilter = QOrganizerItemFilter::InvalidFilter,
         OrganizerItemDetailFilter = QOrganizerItemFilter::OrganizerItemDetailFilter,
         OrganizerItemDetailRangeFilter = QOrganizerItemFilter::OrganizerItemDetailRangeFilter,
-        OrganizerItemDateTimePeriodFilter = QOrganizerItemFilter::OrganizerItemDateTimePeriodFilter,
         ChangeLogFilter = QOrganizerItemFilter::ChangeLogFilter,
         ActionFilter = QOrganizerItemFilter::ActionFilter,
         IntersectionFilter = QOrganizerItemFilter::IntersectionFilter,
@@ -179,39 +178,6 @@ private:
     QVariantList m_ids;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemCollectionFilter)
-
-//date time period filter
-class QDeclarativeOrganizerItemDateTimePeriodFilter : public QDeclarativeOrganizerItemFilter
-{
-    Q_OBJECT
-    Q_PROPERTY(QDateTime start READ start WRITE setStart NOTIFY valueChanged)
-    Q_PROPERTY(QDateTime end READ end WRITE setEnd NOTIFY valueChanged)
-public:
-    QDeclarativeOrganizerItemDateTimePeriodFilter(QObject *parent = 0)
-        :QDeclarativeOrganizerItemFilter(parent)
-    {
-    }
-
-    QDateTime start() const { return d.startPeriod(); }
-    void setStart(const QDateTime& dateTime) { d.setStartPeriod(dateTime); }
-
-    QDateTime end() const { return d.endPeriod(); }
-    void setEnd(const QDateTime& dateTime) { d.setEndPeriod(dateTime); }
-
-    QOrganizerItemFilter filter() const
-    {
-        return d;
-    }
-
-signals:
-    void valueChanged();
-
-private:
-    QOrganizerItemDateTimePeriodFilter d;
-
-};
-QML_DECLARE_TYPE(QDeclarativeOrganizerItemDateTimePeriodFilter)
-
 
 //detail filter
 class QDeclarativeOrganizerItemDetailFilter : public QDeclarativeOrganizerItemFilter

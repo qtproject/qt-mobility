@@ -21,7 +21,7 @@ PUBLIC_HEADERS += \
     qorganizercollectionchangeset.h \
     qorganizercollectionenginelocalid.h \
     qorganizercollectionid.h \
-    qorganizeritemabstractrequest.h \
+    qorganizerabstractrequest.h \
     qorganizeritemchangeset.h \
     qorganizeritemdetail.h \
     qorganizeritemdetaildefinition.h \
@@ -31,10 +31,10 @@ PUBLIC_HEADERS += \
     qorganizeritem.h \
     qorganizeritemid.h \
     qorganizeritemenginelocalid.h \
-    qorganizeritemmanager.h \
-    qorganizeritemmanagerengine.h \
-    qorganizeritemmanagerenginefactory.h \
-    qorganizeritemrecurrencerule.h \
+    qorganizermanager.h \
+    qorganizermanagerengine.h \
+    qorganizermanagerenginefactory.h \
+    qorganizerrecurrencerule.h \
     qorganizeritemsortorder.h \
     qtorganizerglobal.h \
     qtorganizer.h
@@ -43,7 +43,7 @@ PRIVATE_HEADERS += \
     qorganizercollection_p.h \
     qorganizercollectionchangeset_p.h \
     qorganizercollectionid_p.h \
-    qorganizeritemabstractrequest_p.h \
+    qorganizerabstractrequest_p.h \
     qorganizeritemchangeset_p.h \
     qorganizeritem_p.h \
     qorganizeritemdetail_p.h \
@@ -52,8 +52,8 @@ PRIVATE_HEADERS += \
     qorganizeritemfetchhint_p.h \
     qorganizeritemdetailfielddefinition_p.h \
     qorganizeritemdetaildefinition_p.h \
-    qorganizeritemmanager_p.h \
-    qorganizeritemrecurrencerule_p.h \
+    qorganizermanager_p.h \
+    qorganizerrecurrencerule_p.h \
     qorganizeritemsortorder_p.h
 
 SOURCES += \
@@ -61,7 +61,7 @@ SOURCES += \
     qorganizercollectionchangeset.cpp \
     qorganizercollectionenginelocalid.cpp \
     qorganizercollectionid.cpp \
-    qorganizeritemabstractrequest.cpp \
+    qorganizerabstractrequest.cpp \
     qorganizeritemchangeset.cpp \
     qorganizeritem.cpp \
     qorganizeritemdetail.cpp \
@@ -71,12 +71,12 @@ SOURCES += \
     qorganizeritemfilter.cpp \
     qorganizeritemid.cpp \
     qorganizeritemenginelocalid.cpp \
-    qorganizeritemmanager.cpp \
-    qorganizeritemmanagerengine.cpp \
-    qorganizeritemmanagerenginefactory.cpp \
-    qorganizeritemrecurrencerule.cpp \
+    qorganizermanager.cpp \
+    qorganizermanagerengine.cpp \
+    qorganizermanagerenginefactory.cpp \
+    qorganizerrecurrencerule.cpp \
     qorganizeritemsortorder.cpp \
-    qorganizeritemmanager_p.cpp
+    qorganizermanager_p.cpp
 
 HEADERS += $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS

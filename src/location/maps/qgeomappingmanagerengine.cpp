@@ -237,7 +237,7 @@ void QGeoMappingManagerEngine::setSupportedConnectivityModes(const QList<QGraphi
 }
 
 /*!
-    Sets the minimum zoom level supported by this engine.
+    Sets the minimum zoom level supported by this engine to \a minimumZoom.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
@@ -252,7 +252,7 @@ void QGeoMappingManagerEngine::setMinimumZoomLevel(qreal minimumZoom)
 }
 
 /*!
-    Sets the maximum zoom level supported by this engine.
+    Sets the maximum zoom level supported by this engine to \a maximumZoom.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.

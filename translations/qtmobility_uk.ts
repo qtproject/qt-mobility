@@ -20,25 +20,6 @@
     </message>
 </context>
 <context>
-    <name>CCameraViewfinderEngine</name>
-    <message>
-        <source>General viewfinder error.</source>
-        <translation>Загальна помилка видошукача.</translation>
-    </message>
-    <message>
-        <source>Viewfinder output not supported.</source>
-        <translation>Виведення видошукача не підтримується.</translation>
-    </message>
-    <message>
-        <source>Starting viewfinder failed.</source>
-        <translation>Збій запуску видошукача.</translation>
-    </message>
-    <message>
-        <source>Viewfinder format not supported.</source>
-        <translation>Формат видошукача не підтримується.</translation>
-    </message>
-</context>
-<context>
     <name>CameraBinAudioEncoder</name>
     <message>
         <source>Raw PCM audio</source>
@@ -156,17 +137,6 @@
     </message>
 </context>
 <context>
-    <name>QMLContactModel</name>
-    <message>
-        <source>Phone</source>
-        <translation>Телефон</translation>
-    </message>
-    <message>
-        <source>Email</source>
-        <translation>Ел. пошта</translation>
-    </message>
-</context>
-<context>
     <name>QMediaPlayer</name>
     <message>
         <source>The QMediaPlayer object does not have a valid service</source>
@@ -260,6 +230,10 @@
     <message>
         <source>Session aborted by user or system</source>
         <translation>Сесія була перервана користувачем або системою</translation>
+    </message>
+    <message>
+        <source>The specified configuration cannot be used.</source>
+        <translation>Вказана конфігурація не може бути використана.</translation>
     </message>
     <message>
         <source>Unidentified Error</source>
@@ -404,20 +378,8 @@
         <translation>Неправильний контейнер</translation>
     </message>
     <message>
-        <source>Invalid bitrate</source>
-        <translation>Неправильна бітова швидкість</translation>
-    </message>
-    <message>
-        <source>Invalid channel count</source>
-        <translation>Неправильна кількість каналів</translation>
-    </message>
-    <message>
         <source>Invalid codec</source>
         <translation>Неправильний кодек</translation>
-    </message>
-    <message>
-        <source>Invalid encoding quality setting</source>
-        <translation>Неправильні налаштування якості кодування</translation>
     </message>
     <message>
         <source>Invalid encoding mode setting</source>
@@ -426,25 +388,6 @@
     <message>
         <source>Internal error</source>
         <translation>Внутрішня помилка</translation>
-    </message>
-    <message>
-        <source>Invalid sample rate</source>
-        <translation>Неправильний розмір семплу</translation>
-    </message>
-</context>
-<context>
-    <name>S60CameraControl</name>
-    <message>
-        <source>Unexpected error.</source>
-        <translation>Неочікувана помилка.</translation>
-    </message>
-    <message>
-        <source>State not supported.</source>
-        <translation>Стан не підтримується.</translation>
-    </message>
-    <message>
-        <source>CaptureMode not supported.</source>
-        <translation>Режим захоплення не підтримується.</translation>
     </message>
 </context>
 <context>
@@ -468,8 +411,8 @@
 <context>
     <name>S60MediaRecorderControl</name>
     <message>
-        <source>Camera is not started for video capture.</source>
-        <translation>Камеру не запущено для захоплення відео.</translation>
+        <source>Video capture mode is not selected.</source>
+        <translation>Не обрано режим захоплення відео.</translation>
     </message>
 </context>
 <context>
@@ -522,6 +465,78 @@
     <message>
         <source>LandmarkAbstractModel is an abstract class</source>
         <translation>LandmarkAbstractModel - абстрактний клас</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeContactModel</name>
+    <message>
+        <source>Phone</source>
+        <translation>Телефон</translation>
+    </message>
+    <message>
+        <source>Email</source>
+        <translation>Ел. пошта</translation>
+    </message>
+</context>
+<context>
+    <name>S60CameraViewfinderEngine</name>
+    <message>
+        <source>General viewfinder error.</source>
+        <translation>Загальна помилка видошукача.</translation>
+    </message>
+    <message>
+        <source>Viewfinder output not supported.</source>
+        <translation>Виведення видошукача не підтримується.</translation>
+    </message>
+    <message>
+        <source>Requested viewfinder size is not supported.</source>
+        <translation>Розмір видошукача, що запитується, не підтримується.</translation>
+    </message>
+    <message>
+        <source>Starting viewfinder failed.</source>
+        <translation>Збій запуску видошукача.</translation>
+    </message>
+    <message>
+        <source>Requesting window for viewfinder failed.</source>
+        <translation>Збій запиту вікна для видошукача.</translation>
+    </message>
+    <message>
+        <source>Viewfinder format not supported.</source>
+        <translation>Формат видошукача не підтримується.</translation>
+    </message>
+    <message>
+        <source>Camera rotation failed.</source>
+        <translation>Збій повороту камери.</translation>
+    </message>
+    <message>
+        <source>Presenting viewfinder frame failed.</source>
+        <translation>Збій представлення кадру видошукача.</translation>
+    </message>
+    <message>
+        <source>Invalid viewfinder frame was received.</source>
+        <translation>Отримано неправильний кадр видошукача.</translation>
+    </message>
+    <message>
+        <source>Failed to convert viewfinder frame to presentable image.</source>
+        <translation>Збій конвертування кадру видошукача в зображення.</translation>
+    </message>
+</context>
+<context>
+    <name>CameraBinSession</name>
+    <message>
+        <source>Camera error</source>
+        <translation>Помилка камери</translation>
+    </message>
+</context>
+<context>
+    <name>QGstreamerServicePlugin</name>
+    <message>
+        <source>Main Camera</source>
+        <translation>Головна камера</translation>
+    </message>
+    <message>
+        <source>Front Camera</source>
+        <translation>Передня камера</translation>
     </message>
 </context>
 </TS>

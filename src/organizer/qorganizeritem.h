@@ -61,7 +61,7 @@ class QDataStream;
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemManager;
+class QOrganizerManager;
 class QOrganizerItemData;
 class QOrganizerItemName;
 
@@ -92,6 +92,8 @@ public:
 
     /* The collection to which an item belongs - read only */
     QOrganizerCollectionId collectionId() const;
+    void setCollectionId(const QOrganizerCollectionId& collectionId);
+    QOrganizerCollectionLocalId collectionLocalId() const;
 
     /* Is this an empty organizer item? */
     bool isEmpty() const;
@@ -196,9 +198,9 @@ protected:
 
 protected:
     friend class QOrganizerItemData;
-    friend class QOrganizerItemManager;
-    friend class QOrganizerItemManagerData;
-    friend class QOrganizerItemManagerEngine;
+    friend class QOrganizerManager;
+    friend class QOrganizerManagerData;
+    friend class QOrganizerManagerEngine;
     Q_ORGANIZER_EXPORT friend QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item);
     Q_ORGANIZER_EXPORT friend QDataStream& operator>>(QDataStream& in, QOrganizerItem& item);
 

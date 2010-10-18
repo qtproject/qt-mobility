@@ -115,6 +115,27 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     return languages;
 }
 
+QString QSystemInfoPrivate::currentLanguage() const
+{
+#if defined(Q_WS_MAEMO_6)
+    GConfItem langItem("/meegotouch/i18n/language");
+    return langItem.value().toString();
+#else
+    return QSystemInfoLinuxCommonPrivate::currentLanguage();
+#endif
+}
+
+
+QString QSystemInfoPrivate::currentCountryCode() const
+{
+#if defined(Q_WS_MAEMO_6)
+    GConfItem langItem("/meegotouch/i18n/language");
+    return langItem.value().toString().section("_",1,1);
+#else
+    return QSystemInfoLinuxCommonPrivate::currentCountryCode();
+#endif
+}
+
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,
                                     const QString &parameter)
 {
@@ -206,7 +227,7 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxComm
     csStatusMaemo6["Rejected"]   = 11;  // Offline because SIM was rejected by the network.
 
     QTimer::singleShot(0,this,SLOT(setupNetworkInfo()));
-
+    QCoreApplication::processEvents();//this needs to be called otherwise this timer never fires
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
@@ -215,7 +236,6 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
         wlanSignalStrengthTimer->stop();
 }
 
-
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
@@ -223,6 +243,12 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::WcdmaMode:
         {
+            // radioAccessTechnology: 1 = GSM, 2 = WCDMA
+            if((radioAccessTechnology == 1 && mode != QSystemNetworkInfo::GsmMode) ||
+               (radioAccessTechnology == 2 && mode != QSystemNetworkInfo::WcdmaMode)) {
+                return QSystemNetworkInfo::NoNetworkAvailable;
+            }
+
             switch(currentCellNetworkStatus) {
                 case 0: return QSystemNetworkInfo::HomeNetwork; // CS is registered to home network
                 case 1: return QSystemNetworkInfo::Roaming; // CS is registered to some other network than home network
@@ -267,6 +293,12 @@ qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Netw
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::WcdmaMode:
     {
+            // radioAccessTechnology: 1 = GSM, 2 = WCDMA
+            if((radioAccessTechnology == 1 && mode != QSystemNetworkInfo::GsmMode) ||
+               (radioAccessTechnology == 2 && mode != QSystemNetworkInfo::WcdmaMode)) {
+                return -1;
+            }
+
             return cellSignalStrength;
     }
     case QSystemNetworkInfo::EthernetMode: {
@@ -393,9 +425,16 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::GsmMode:
-    case QSystemNetworkInfo::WcdmaMode:
+    case QSystemNetworkInfo::WcdmaMode: {
+        // radioAccessTechnology: 1 = GSM, 2 = WCDMA
+        if((radioAccessTechnology == 1 && mode != QSystemNetworkInfo::GsmMode) ||
+           (radioAccessTechnology == 2 && mode != QSystemNetworkInfo::WcdmaMode)) {
+            break;
+        }
+
         return currentOperatorName;
         break;
+    }
     case QSystemNetworkInfo::WimaxMode:
         break;
     default:
@@ -464,6 +503,7 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
 {
     currentCellNetworkStatus = -1;
     currentBluetoothNetworkStatus = networkStatus(QSystemNetworkInfo::BluetoothMode);
+    currentWlanNetworkStatus = networkStatus(QSystemNetworkInfo::WlanMode);
     currentEthernetState = "down";
     currentEthernetSignalStrength = networkSignalStrength(QSystemNetworkInfo::EthernetMode);
     currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
@@ -489,6 +529,9 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
             rx.close();
         }
     }
+
+    currentNetworkMode = currentMode();
+
 #if !defined(QT_NO_DBUS)
     QDBusConnection systemDbusConnection = QDBusConnection::systemBus();
 
@@ -635,15 +678,6 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                        this, SLOT(networkModeChanged(int)))) {
         qWarning() << "unable to connect to radio_access_technology_change";
     }
-    if(!systemDbusConnection.connect("com.nokia.icd",
-                              "/com/nokia/icd",
-                              "com.nokia.icd",
-                              QLatin1String("status_changed"),
-                              this, SLOT(icdStatusChanged(QString,QString,QString,QString))) ) {
-        qWarning() << "unable to connect to icdStatusChanged";
-    }
-    #endif /* Maemo 5 */
-
     if(!systemDbusConnection.connect("com.nokia.bme",
                               "/com/nokia/bme/signal",
                               "com.nokia.bme.signal",
@@ -658,18 +692,27 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                               this, SLOT(usbCableAction())) ) {
         qWarning() << "unable to connect to usbCableAction (disconnect)";
     }
+    #endif /* Maemo 5 */
+
+    if(!systemDbusConnection.connect("com.nokia.icd",
+                              "/com/nokia/icd",
+                              "com.nokia.icd",
+                              QLatin1String("status_changed"),
+                              this, SLOT(icdStatusChanged(QString,QString,QString,QString))) ) {
+        qWarning() << "unable to connect to icdStatusChanged";
+    }
     if(!systemDbusConnection.connect("org.freedesktop.Hal",
                               "/org/freedesktop/Hal/Manager",
                               "org.freedesktop.Hal.Manager",
                               QLatin1String("DeviceAdded"),
-                              this, SLOT(bluetoothNetworkStatusCheck())) ) {
+                              this, SLOT(bluetoothNetworkStatusCheck(QString))) ) {
         qWarning() << "unable to connect to bluetoothNetworkStatusCheck (1)";
     }
     if(!systemDbusConnection.connect("org.freedesktop.Hal",
                               "/org/freedesktop/Hal/Manager",
                               "org.freedesktop.Hal.Manager",
                               QLatin1String("DeviceRemoved"),
-                              this, SLOT(bluetoothNetworkStatusCheck())) ) {
+                              this, SLOT(bluetoothNetworkStatusCheck(QString))) ) {
         qWarning() << "unable to connect to bluetoothNetworkStatusCheck (2)";
     }
 #endif
@@ -730,19 +773,16 @@ void QSystemNetworkInfoPrivate::slotRegistrationChanged(const QString &status)
 
 void QSystemNetworkInfoPrivate::slotCellChanged(const QString &type, int id, int lac)
 {
-    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
     int newRadioAccessTechnology = 0;
     if (type == "GSM") {
-        mode = QSystemNetworkInfo::GsmMode;
         newRadioAccessTechnology = 1;
     } else if (type == "WCDMA") {
-        mode = QSystemNetworkInfo::WcdmaMode;
         newRadioAccessTechnology = 2;
     }
 
     if (newRadioAccessTechnology != radioAccessTechnology) {
         radioAccessTechnology = newRadioAccessTechnology;
-        emit networkModeChanged(mode);
+        networkModeChangeCheck();
     }
     if (currentCellId != id) {
         currentCellId = id;
@@ -773,16 +813,8 @@ void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged(uchar var1, uch
 
 void QSystemNetworkInfoPrivate::networkModeChanged(int newRadioAccessTechnology)
 {
-    QSystemNetworkInfo::NetworkMode newMode = QSystemNetworkInfo::UnknownMode;
     radioAccessTechnology = newRadioAccessTechnology;
-
-    if (radioAccessTechnology == 1)
-        newMode = QSystemNetworkInfo::GsmMode;
-    if (radioAccessTechnology == 2)
-        newMode = QSystemNetworkInfo::WcdmaMode;
-
-    if (newMode != QSystemNetworkInfo::UnknownMode)
-        emit networkModeChanged(newMode);
+    networkModeChangeCheck();
 }
 
 void QSystemNetworkInfoPrivate::operatorNameChanged(uchar, QString name, QString, uint, uint)
@@ -829,15 +861,21 @@ void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar var1, ushort var
     }
 }
 
+#endif /* Maemo 5 */
+
 void QSystemNetworkInfoPrivate::icdStatusChanged(QString, QString var2, QString, QString)
 {
     if (var2 == "WLAN_INFRA") {
-        emit networkStatusChanged(QSystemNetworkInfo::WlanMode,
-                                  networkStatus(QSystemNetworkInfo::WlanMode));
+        QSystemNetworkInfo::NetworkStatus newWlanNetworkStatus =
+                networkStatus(QSystemNetworkInfo::WlanMode);
+
+        if (currentWlanNetworkStatus != newWlanNetworkStatus) {
+            currentWlanNetworkStatus = newWlanNetworkStatus;
+            emit networkStatusChanged(QSystemNetworkInfo::WlanMode, currentWlanNetworkStatus);
+            networkModeChangeCheck();
+        }
     }
 }
-
-#endif /* Maemo 5 */
 
 void QSystemNetworkInfoPrivate::usbCableAction()
 {
@@ -855,13 +893,16 @@ void QSystemNetworkInfoPrivate::usbCableAction()
             QTextStream stream(&rx);
             stream >> newEthernetState;
             rx.close();
-            if (currentEthernetState != newEthernetState) {
-                currentEthernetState = newEthernetState;
-                emit networkStatusChanged(QSystemNetworkInfo::EthernetMode,
-                                          networkStatus(QSystemNetworkInfo::EthernetMode));
-            }
         }
     }
+
+    if (currentEthernetState != newEthernetState) {
+        currentEthernetState = newEthernetState;
+        emit networkStatusChanged(QSystemNetworkInfo::EthernetMode,
+                                  networkStatus(QSystemNetworkInfo::EthernetMode));
+    }
+
+    networkModeChangeCheck();
 }
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
@@ -881,6 +922,16 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
     return QSystemNetworkInfo::UnknownMode;
 }
 
+void QSystemNetworkInfoPrivate::networkModeChangeCheck()
+{
+    QSystemNetworkInfo::NetworkMode newNetworkMode = currentMode();
+    if (currentNetworkMode != newNetworkMode)
+    {
+        currentNetworkMode = newNetworkMode;
+        emit networkModeChanged(currentNetworkMode);
+    }
+}
+
 void QSystemNetworkInfoPrivate::wlanSignalStrengthCheck()
 {
     int strength = 0;
@@ -891,11 +942,15 @@ void QSystemNetworkInfoPrivate::wlanSignalStrengthCheck()
     }
 }
 
-void QSystemNetworkInfoPrivate::bluetoothNetworkStatusCheck()
+void QSystemNetworkInfoPrivate::bluetoothNetworkStatusCheck(QString device)
 {
-    if (currentBluetoothNetworkStatus != networkStatus(QSystemNetworkInfo::BluetoothMode)) {
-        currentBluetoothNetworkStatus = networkStatus(QSystemNetworkInfo::BluetoothMode);
-        emit networkStatusChanged(QSystemNetworkInfo::BluetoothMode, currentBluetoothNetworkStatus);
+    if (device == "/org/freedesktop/Hal/devices/net_1b") {
+        QTimer::singleShot(500, this, SLOT(usbCableAction()));
+    } else {
+        if (currentBluetoothNetworkStatus != networkStatus(QSystemNetworkInfo::BluetoothMode)) {
+            currentBluetoothNetworkStatus = networkStatus(QSystemNetworkInfo::BluetoothMode);
+            emit networkStatusChanged(QSystemNetworkInfo::BluetoothMode, currentBluetoothNetworkStatus);
+        }
     }
 }
 
@@ -1005,8 +1060,11 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
     if (flightMode)
         return QSystemDeviceInfo::OfflineProfile;
 
-    if (silentProfile )
+    if (silentProfile)
         return vibratingAlertEnabled ? QSystemDeviceInfo::VibProfile : QSystemDeviceInfo::SilentProfile;
+
+    if (beepProfile)
+        return QSystemDeviceInfo::BeepProfile;
 
     if (ringingAlertVolume > 75)
         return QSystemDeviceInfo::LoudProfile;
@@ -1150,6 +1208,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
 void QSystemDeviceInfoPrivate::setupProfile()
 {
+    qDebug() << Q_FUNC_INFO;
     QDBusConnection systemDbusConnection = QDBusConnection::systemBus();
 
     QDBusInterface mceConnectionInterface("com.nokia.mce",
@@ -1161,7 +1220,7 @@ void QSystemDeviceInfoPrivate::setupProfile()
         return;
     } else {
         QDBusReply<QString> deviceModeReply = mceConnectionInterface.call("get_device_mode");
-        flightMode = deviceModeReply.value() == "flight";
+        flightMode = QString::compare(deviceModeReply.value(), "flight", Qt::CaseInsensitive) == 0;
     }
 
     if (!systemDbusConnection.connect("com.nokia.mce",
@@ -1185,14 +1244,19 @@ void QSystemDeviceInfoPrivate::setupProfile()
     QDBusReply<QString> profileNameReply = connectionInterface.call("get_profile");
     if (profileNameReply.isValid())
         profileName = profileNameReply.value();
+qDebug() << Q_FUNC_INFO << profileName;
 
     QDBusReply<QString> ringingAlertTypeReply = connectionInterface.call("get_value", profileName, "ringing.alert.type");
-    if (ringingAlertTypeReply.isValid())
-        silentProfile = ringingAlertTypeReply.value() == "silent";
+    qDebug() << ringingAlertTypeReply.value();
+
+    if (ringingAlertTypeReply.isValid()) {
+        silentProfile = QString::compare(ringingAlertTypeReply.value(), "silent", Qt::CaseInsensitive) == 0;
+        beepProfile = QString::compare(ringingAlertTypeReply.value(), "beep", Qt::CaseInsensitive) == 0;
+    }
 
     QDBusReply<QString> vibratingAlertEnabledReply = connectionInterface.call("get_value", profileName, "vibrating.alert.enabled");
     if (vibratingAlertEnabledReply.isValid())
-        vibratingAlertEnabled = vibratingAlertEnabledReply.value() == "On";
+        vibratingAlertEnabled = QString::compare(vibratingAlertEnabledReply.value(), "On", Qt::CaseInsensitive) == 0;
 
     QDBusReply<QString> ringingAlertVolumeReply = connectionInterface.call("get_value", profileName, "ringing.alert.volume");
     if (ringingAlertVolumeReply.isValid())
@@ -1222,13 +1286,17 @@ void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
 
 void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
 {
+    qDebug() << __FUNCTION__;
     if (active) {
         profileName = profile;
         foreach (const ProfileDataValue value, values) {
-            if (value.key == "ringing.alert.type")
-                silentProfile = value.val == "silent";
+            qDebug() << value.key << value.val;
+            if (value.key == "ringing.alert.type") {
+                silentProfile = QString::compare(value.val, "silent", Qt::CaseInsensitive) == 0;
+                beepProfile = QString::compare(value.val, "beep", Qt::CaseInsensitive) == 0;
+            }
             else if (value.key == "vibrating.alert.enabled")
-                vibratingAlertEnabled = value.val == "On";
+                vibratingAlertEnabled = QString::compare(value.val, "On", Qt::CaseInsensitive) == 0;
             else if (value.key == "ringing.alert.volume")
                 ringingAlertVolume = value.val.toInt();
         }

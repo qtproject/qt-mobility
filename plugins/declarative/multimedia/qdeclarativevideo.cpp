@@ -204,36 +204,6 @@ QDeclarativeVideo::Status QDeclarativeVideo::status() const
 }
 
 /*!
-    \qmlsignal Video::onLoaded()
-
-    This handler is called when the media source has been loaded.
-*/
-
-/*!
-    \qmlsignal Video::onBuffering()
-
-    This handler is called when the media starts buffering.
-*/
-
-/*!
-    \qmlsignal Video::onStalled()
-
-    This handler is called when playback has stalled while the media buffers.
-*/
-
-/*!
-    \qmlsignal Video::onBuffered()
-
-    This handler is called when the media has finished buffering.
-*/
-
-/*!
-    \qmlsignal Video::onEndOfMedia()
-
-    This handler is called when playback stops because end of the media has been reached.
-*/
-
-/*!
     \qmlproperty int Video::duration
 
     This property holds the duration of the media in milliseconds.

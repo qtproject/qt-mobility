@@ -109,14 +109,26 @@ void QVersitContactPluginLoader::loadPlugins() {
  *
  * The caller is responsible for deleting all returned handlers.
  */
-QList<QVersitContactHandler*> QVersitContactPluginLoader::createContactHandlers(const QString& profile)
+QList<QVersitContactHandler*> QVersitContactPluginLoader::createContactHandlers(const QStringList& profiles)
 {
     loadPlugins();
 
     QList<QVersitContactHandler*> handlers;
     foreach (const QVersitContactHandlerFactory* factory, mContactHandlerFactories) {
-        if (factory->profiles().isEmpty() ||
-                (!profile.isEmpty() && factory->profiles().contains(profile))) {
+        // if the plugin specifies no profiles, include it
+        QSet<QString> factoryProfiles(factory->profiles());
+        bool includePlugin = factory->profiles().isEmpty();
+        if (!includePlugin) {
+            // if the plugin's profile list intersects with the requested profile list, include it.
+            foreach (const QString& profile, profiles) {
+                if (factoryProfiles.contains(profile)) {
+                    includePlugin = true;
+                    break;
+                }
+            }
+        }
+
+        if (includePlugin) {
             QVersitContactHandler* handler = factory->createHandler();
             handlers.append(handler);
         }

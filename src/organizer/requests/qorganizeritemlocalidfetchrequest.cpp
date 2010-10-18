@@ -60,7 +60,7 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a new organizer item id fetch request whose parent is the specified \a parent */
 QOrganizerItemLocalIdFetchRequest::QOrganizerItemLocalIdFetchRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerItemLocalIdFetchRequestPrivate, parent)
+    : QOrganizerAbstractRequest(new QOrganizerItemLocalIdFetchRequestPrivate, parent)
 {
 }
 
@@ -79,6 +79,30 @@ void QOrganizerItemLocalIdFetchRequest::setSorting(const QList<QOrganizerItemSor
     d->m_sorting = sorting;
 }
 
+/*!
+   Sets the date-time which is the lower bound for the range for items whose ids will be returned to \a date.
+   An invalid (default-constructed) date-time signifies that no lower bound is given (matches everything
+   up to the end date).
+   Note that an item matches if either it or any of its occurrences occur within the defined range.
+ */
+void QOrganizerItemLocalIdFetchRequest::setStartDate(const QDateTime &date)
+{
+    Q_D(QOrganizerItemLocalIdFetchRequest);
+    d->m_startDate = date;
+}
+
+/*!
+   Sets the date-time which is the upper bound for the range for items whose ids will be returned to \a date.
+   An invalid (default-constructed) date-time signifies that no upper bound is given (matches everything
+   after the start date).
+   Note that an item matches if either it or any of its occurrences occur within the defined range.
+ */
+void QOrganizerItemLocalIdFetchRequest::setEndDate(const QDateTime &date)
+{
+    Q_D(QOrganizerItemLocalIdFetchRequest);
+    d->m_endDate = date;
+}
+
 /*! Returns the filter which will be used to select the organizer items whose ids will be returned */
 QOrganizerItemFilter QOrganizerItemLocalIdFetchRequest::filter() const
 {
@@ -91,6 +115,30 @@ QList<QOrganizerItemSortOrder> QOrganizerItemLocalIdFetchRequest::sorting() cons
 {
     Q_D(const QOrganizerItemLocalIdFetchRequest);
     return d->m_sorting;
+}
+
+/*!
+   Returns the date-time which is the lower bound for the range for items whose ids will be returned.
+   An invalid (default-constructed) date-time signifies that no lower bound is given (matches everything
+   up until the end date).
+   Note that an item matches if either it or any of its occurrences occur within the defined range.
+ */
+QDateTime QOrganizerItemLocalIdFetchRequest::startDate() const
+{
+    Q_D(const QOrganizerItemLocalIdFetchRequest);
+    return d->m_startDate;
+}
+
+/*!
+   Returns the date-time which is the upper bound for the range for items whose ids will be returned.
+   An invalid (default-constructed) date-time signifies that no upper bound is given (matches everything
+   after the start date).
+   Note that an item matches if either it or any of its occurrences occur within the defined range.
+ */
+QDateTime QOrganizerItemLocalIdFetchRequest::endDate() const
+{
+    Q_D(const QOrganizerItemLocalIdFetchRequest);
+    return d->m_endDate;
 }
 
 /*! Returns the list of ids of organizer items which matched the request */

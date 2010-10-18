@@ -185,7 +185,7 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
             if (query.next()) {
                 query.exec("SELECT name from sqlite_master WHERE name = 'version'");
                 if (!query.next()) {
-                    *error = QLandmarkManager::VersionMismatchError;
+                    *error = QLandmarkManager::InvalidManagerError;
                     *errorString = QString("Old landmarks database with incompatible schema detected, please delete this file and try again:") +
                                    this->m_dbFilename;
                     qWarning() << *errorString;
@@ -212,7 +212,7 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
             if (query.next()) {
                 int versionNumber = query.value(0).toInt();
                 if (versionNumber != 1) {
-                    *error =  QLandmarkManager::VersionMismatchError;
+                    *error =  QLandmarkManager::InvalidManagerError;
                     *errorString = "Sqlite landmark plugin only operates with version 1 of QtLandmarks.db";
                     db.rollback();
                     return;
@@ -387,7 +387,7 @@ bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
 
 bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
                                                    const QString &format,
-                                                   QList<QLandmarkId> landmarkIds,
+                                                   const QList<QLandmarkId> &landmarkIds,
                                                    QLandmarkManager::TransferOption option,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString) const
@@ -418,7 +418,7 @@ QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::filterSupportLevel(
     return m_databaseOperations.filterSupportLevel(filter);
 }
 
-QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders,
+QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder,
                                                             QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
@@ -426,10 +426,10 @@ QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::sortOrderSupportLev
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    return m_databaseOperations.sortOrderSupportLevel(sortOrders);
+    return m_databaseOperations.sortOrderSupportLevel(sortOrder);
 }
 
-bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const
+bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::ManagerFeature feature, QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -472,11 +472,6 @@ bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkId &landmarkId, QLa
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
     *errorString = "";
-    QList<QLandmarkId> landmarkIds;
-    landmarkIds << landmarkId;
-    QMap<int, QLandmarkManager::Error> errorMap;
-    QList<QLandmark> lms = m_databaseOperations.landmarks(landmarkIds, &errorMap, error, errorString);
-    Q_ASSERT(lms.count() == 1);
 
     return false;
 }
@@ -488,11 +483,6 @@ bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkCategoryId &categor
     *error = QLandmarkManager::NoError;
     *errorString = "";
 
-    QList<QLandmarkCategoryId> categoryIds;
-    categoryIds << categoryId;
-    QMap<int, QLandmarkManager::Error> errorMap;
-    QList<QLandmarkCategory> cats = m_databaseOperations.categories(categoryIds, &errorMap, error, errorString);
-    Q_ASSERT(cats.count() == 1);
     return false;
 }
 
@@ -586,14 +576,17 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
     landmarkId.setManagerUri(managerUri());
     bool ok;
     qint64 timestamp;
+    bool landmarkTimestampWasModified = true;
 
     while(query.next()) {
         timestamp = query.value(2).toLongLong(&ok);
         if (!ok) //this should never happen
             continue;
 
-        if (timestamp > m_latestLandmarkTimestamp)
+        if (timestamp > m_latestLandmarkTimestamp) {
             m_latestLandmarkTimestamp = timestamp;
+            landmarkTimestampWasModified = true;
+        }
 
         action = query.value(1).toString();
         landmarkId.setLocalId((query.value(0).toString()));
@@ -609,15 +602,6 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
                 removedLandmarkIds << landmarkId;
         }
     }
-
-    if (addedLandmarkIds.count() > 0)
-        emit landmarksAdded(addedLandmarkIds);
-
-    if (changedLandmarkIds.count() > 0)
-        emit landmarksChanged(changedLandmarkIds);
-
-    if (removedLandmarkIds.count() > 0)
-        emit landmarksRemoved(removedLandmarkIds);
 
     //now check for added/modified/removed categories
     if (!query.prepare("SELECT categoryId,action, timestamp FROM category_notification WHERE timestamp >= ?")) {
@@ -639,15 +623,17 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
 
     QLandmarkCategoryId categoryId;
     categoryId.setManagerUri(managerUri());
+    bool categoryTimestampWasModified = false;
 
     while(query.next()) {
         timestamp = query.value(2).toLongLong(&ok);
         if (!ok) //this should never happen
             continue;
 
-        if (timestamp > m_latestCategoryTimestamp)
+        if (timestamp > m_latestCategoryTimestamp) {
+            categoryTimestampWasModified = true;
             m_latestCategoryTimestamp = timestamp;
-
+        }
         action = query.value(1).toString();
         categoryId.setLocalId(query.value(0).toString());
 
@@ -663,17 +649,36 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
         }
     }
 
-    if (addedCategoryIds.count() > 0)
-        emit categoriesAdded(addedCategoryIds);
+    if(landmarkTimestampWasModified)
+        m_latestLandmarkTimestamp +=1;
 
-    if (changedCategoryIds.count() > 0)
-        emit categoriesChanged(changedCategoryIds);
+    if (categoryTimestampWasModified)
+        m_latestCategoryTimestamp +=1;
 
-    if (removedCategoryIds.count() > 0)
-        emit categoriesRemoved(removedCategoryIds);
+    int totalChangeCount = addedCategoryIds.count() + changedCategoryIds.count() + removedCategoryIds.count()
+                           + addedLandmarkIds.count() + changedLandmarkIds.count() + removedLandmarkIds.count();
+    if (totalChangeCount > 50 ) {
+        emit dataChanged();
+    } else {
+        if (addedCategoryIds.count() > 0)
+            emit categoriesAdded(addedCategoryIds);
 
-    m_latestLandmarkTimestamp +=1;
-    m_latestCategoryTimestamp +=1;
+        if (changedCategoryIds.count() > 0)
+            emit categoriesChanged(changedCategoryIds);
+
+        if (removedCategoryIds.count() > 0) {
+            emit categoriesRemoved(removedCategoryIds);
+        }
+
+        if (addedLandmarkIds.count() > 0)
+            emit landmarksAdded(addedLandmarkIds);
+
+        if (changedLandmarkIds.count() > 0)
+            emit landmarksChanged(changedLandmarkIds);
+
+        if (removedLandmarkIds.count() > 0)
+            emit landmarksRemoved(removedLandmarkIds);
+    }
 }
 
 void QLandmarkManagerEngineSqlite::setChangeNotificationsEnabled(bool enabled)
@@ -701,6 +706,7 @@ void QLandmarkManagerEngineSqlite::connectNotify(const char *signal)
         {
             setChangeNotificationsEnabled(true);
         }
+    QObject::connectNotify(signal);
 }
 void QLandmarkManagerEngineSqlite::disconnectNotify(const char *signal)
 {
@@ -719,6 +725,7 @@ void QLandmarkManagerEngineSqlite::disconnectNotify(const char *signal)
             )
             setChangeNotificationsEnabled(false);
     }
+    QObject::disconnectNotify(signal);
 }
 
 void QLandmarkManagerEngineSqlite::updateLandmarkIdFetchRequest(QLandmarkIdFetchRequest* req, const QList<QLandmarkId>& result,

@@ -56,8 +56,8 @@ QDeclarativeGalleryType::QDeclarativeGalleryType(QObject *parent)
     , m_status(Null)
     , m_updateStatus(Incomplete)
 {
-    connect(&m_request, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
-            this, SLOT(_q_statusChanged()));
+    connect(&m_request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
+            this, SLOT(_q_stateChanged()));
     connect(&m_request, SIGNAL(progressChanged(int,int)), this, SIGNAL(progressChanged()));
 
     connect(&m_request, SIGNAL(typeChanged()),
@@ -115,7 +115,7 @@ void QDeclarativeGalleryType::componentComplete()
 void QDeclarativeGalleryType::reload()
 {
     if (m_updateStatus == PendingUpdate)
-        m_updateStatus = CancelledUpdate;
+        m_updateStatus = CanceledUpdate;
 
     m_request.execute();
 }
@@ -123,7 +123,7 @@ void QDeclarativeGalleryType::reload()
 void QDeclarativeGalleryType::cancel()
 {
     if (m_updateStatus == PendingUpdate)
-        m_updateStatus = CancelledUpdate;
+        m_updateStatus = CanceledUpdate;
 
     m_request.cancel();
 }
@@ -131,7 +131,7 @@ void QDeclarativeGalleryType::cancel()
 void QDeclarativeGalleryType::clear()
 {
     if (m_updateStatus == PendingUpdate)
-        m_updateStatus = CancelledUpdate;
+        m_updateStatus = CanceledUpdate;
 
     m_request.clear();
 }
@@ -142,7 +142,7 @@ void QDeclarativeGalleryType::deferredExecute()
         m_updateStatus = PendingUpdate;
 
         QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
-    } else if (m_updateStatus == CancelledUpdate) {
+    } else if (m_updateStatus == CanceledUpdate) {
         m_updateStatus = PendingUpdate;
     }
 }
@@ -162,9 +162,9 @@ bool QDeclarativeGalleryType::event(QEvent *event)
     }
 }
 
-void QDeclarativeGalleryType::_q_statusChanged()
+void QDeclarativeGalleryType::_q_stateChanged()
 {
-    m_status = Status(m_request.status());
+    m_status = Status(m_request.state());
 
     if (m_status == Error) {
         const QString message = m_request.errorString();
@@ -279,9 +279,9 @@ void QDeclarativeDocumentGalleryType::classBegin()
     \o Finished Information about an \l itemType is available.
     \o Idle Information about an \l itemType which will be automatically
     updated is available.
-    \o Cancelling The query was cancelled but hasn't yet reached the
-    cancelled status.
-    \o Cancelled The query was cancelled.
+    \o Canceling The query was canceled but hasn't yet reached the
+    canceled status.
+    \o Canceled The query was canceled.
     \o Error Information about a type could not be retrieved due to an error.
     \endlist
 */

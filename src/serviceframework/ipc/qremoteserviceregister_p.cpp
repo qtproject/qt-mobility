@@ -40,12 +40,16 @@
 ****************************************************************************/
 
 #include "qremoteserviceregister_p.h"
+#include "instancemanager_p.h"
+
+#include <QCoreApplication>
 
 QTM_BEGIN_NAMESPACE
 
 QRemoteServiceRegisterPrivate::QRemoteServiceRegisterPrivate(QObject* parent)
-    : QObject(parent), m_quit(true), iFilter(0)
+    : QObject(parent), iFilter(0)
 {
+    setQuitOnLastInstanceClosed(true);
 }
 
 QRemoteServiceRegisterPrivate::~QRemoteServiceRegisterPrivate()
@@ -70,6 +74,12 @@ bool QRemoteServiceRegisterPrivate::quitOnLastInstanceClosed() const
 void QRemoteServiceRegisterPrivate::setQuitOnLastInstanceClosed(bool quit)
 {
     m_quit = quit;
+    if(m_quit){
+        connect(InstanceManager::instance(), SIGNAL(allInstancesClosed()), QCoreApplication::instance(), SLOT(quit()));
+    }
+    else {
+        disconnect(InstanceManager::instance(), SIGNAL(allInstancesClosed()), QCoreApplication::instance(), SLOT(quit()));
+    }
 }
 
 QRemoteServiceRegister::SecurityFilter QRemoteServiceRegisterPrivate::setSecurityFilter(QRemoteServiceRegister::SecurityFilter filter)

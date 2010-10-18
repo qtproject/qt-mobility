@@ -361,6 +361,7 @@ public slots:
     }
 
     void testIpcFailure() {
+      qDebug() << "Application exiting on request";
       qApp->exit(0); // exit to show failure
     }
     

@@ -47,7 +47,7 @@
 
 QXAPlaySession::QXAPlaySession(QObject *parent):QObject(parent),
 m_state(QMediaPlayer::StoppedState),
-m_mediaStatus(QMediaPlayer::UnknownMediaStatus),
+m_mediaStatus(QMediaPlayer::NoMedia),
 mSeekable(-1),
 mNumStreams(0),
 mbAudioAvailable(EFalse),
@@ -304,7 +304,7 @@ void QXAPlaySession::setMedia(const QMediaContent& media)
         return;
     }
 
-    setMediaStatus(QMediaPlayer::UnknownMediaStatus);
+    setMediaStatus(QMediaPlayer::NoMedia);
 
     QString urlStr = media.canonicalUrl().toString();
     TPtrC16 urlPtr(reinterpret_cast<const TUint16*>(urlStr.utf16()));
@@ -326,7 +326,7 @@ void QXAPlaySession::setMedia(const QMediaContent& media)
         }
     }
     else {
-        setMediaStatus(QMediaPlayer::UnknownMediaStatus);
+        setMediaStatus(QMediaPlayer::NoMedia);
         emit error(QMediaPlayer::ResourceError, tr("Unable to load media"));
     }
     QT_TRACE_FUNCTION_EXIT;
@@ -337,22 +337,27 @@ void QXAPlaySession::play()
     if (mImpl) {
         setMediaStatus(QMediaPlayer::BufferingMedia);
 
-        mImpl->play();
+        TInt err = mImpl->play();
+        if (err != KErrNone) {
+            setMediaStatus(QMediaPlayer::NoMedia);
+            RET_IF_ERROR(err);
+        }
         setPlayerState(QMediaPlayer::PlayingState);
 
         TInt fillLevel = 0;
-        TInt err = mImpl->bufferStatus(fillLevel);
-        if( (err == KErrNone) &&
-            (fillLevel == 100) ) {
-                setMediaStatus(QMediaPlayer::BufferedMedia);
-       }
+        err = mImpl->bufferStatus(fillLevel);
+        RET_IF_ERROR(err);
+        if (fillLevel == 100) {
+            setMediaStatus(QMediaPlayer::BufferedMedia);
+        }
     }
- }
+}
 
 void QXAPlaySession::pause()    
 {
     if (mImpl) {
-        mImpl->pause();
+        TInt err = mImpl->pause();
+        RET_IF_ERROR(err);
         setPlayerState(QMediaPlayer::PausedState);
     }
 }
@@ -360,7 +365,8 @@ void QXAPlaySession::pause()
 void QXAPlaySession::stop()
 {
     if (mImpl) {
-        mImpl->stop();
+        TInt err = mImpl->stop();
+        RET_IF_ERROR(err);
         setPlayerState(QMediaPlayer::StoppedState);
     }
 }
@@ -384,10 +390,20 @@ void QXAPlaySession::cbSeekableChanged(TBool seekable)
     }
 }
 
-void QXAPlaySession::cbPlaybackStopped_EOS()
+void QXAPlaySession::cbPlaybackStopped(TInt err)
 {
-    setMediaStatus(QMediaPlayer::EndOfMedia);
-    stop();
+    if (err) {
+        emit error(QMediaPlayer::ResourceError, tr("Resources Unavailable"));
+        SIGNAL_EMIT_TRACE1("emit error(QMediaPlayer::ResourceError, tr(\"Resources Unavailable\"))");
+        emit positionChanged(position());
+        setPlayerState(QMediaPlayer::StoppedState); 
+        setMediaStatus(QMediaPlayer::NoMedia);
+    }
+    else {
+        setMediaStatus(QMediaPlayer::EndOfMedia);
+        /* Set player state to Stopped */
+        stop();
+    }
 }
 
 void QXAPlaySession::cbPrefetchStatusChanged()

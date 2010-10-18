@@ -611,21 +611,34 @@ QGeoCoordinate QGraphicsGeoMap::screenPositionToCoordinate(QPointF screenPositio
 /*!
 \fn void QGraphicsGeoMap::zoomLevelChanged(qreal zoomLevel)
 
-Indicates that the zoom level has changed to \a zoomLevel.
+    This signal is emitted when the zoom level of the map changes.
+
+    The new value is \a zoomLevel.
 */
 
 /*!
 \fn void QGraphicsGeoMap::centerChanged(const QGeoCoordinate &coordinate)
 
-Indicates that the map has been centered on \a coordinate.
+    This signal is emitted when the center of the map changes.
 
-This signal will not be emitted when the user pans the map.
+    The new value is \a coordinate.
 */
 
 /*!
-\fn void QGraphicsGeoMap::mapTypeChanged(MapType mapType)
+\fn void QGraphicsGeoMap::mapTypeChanged(QGraphicsGeoMap::MapType mapType)
 
-Indicates that the type of the map has been changed.
+    This signal is emitted when the map type changes.
+
+    The new value is \a mapType.
+*/
+
+/*!
+\fn void QGraphicsGeoMap::connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode)
+
+    This signal is emitted when the connectivity mode used to fetch the 
+    map data changes.
+
+    The new value is \a connectivityMode.
 */
 
 /*******************************************************************************

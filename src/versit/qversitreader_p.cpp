@@ -550,6 +550,7 @@ bool QVersitReaderPrivate::parseVersitDocument(LineReader* lineReader, QVersitDo
     return parseVersitDocumentBody(lineReader, document);
 }
 
+/*! Parse the rest of a versit document after finding a BEGIN line */
 bool QVersitReaderPrivate::parseVersitDocumentBody(LineReader* lineReader, QVersitDocument* document)
 {
     mDocumentNestingLevel++;
@@ -561,7 +562,7 @@ bool QVersitReaderPrivate::parseVersitDocumentBody(LineReader* lineReader, QVers
         if (property.name() == QLatin1String("BEGIN")) {
             // Nested Versit document
             QVersitDocument subDocument;
-            subDocument.setType(document->type());
+            subDocument.setType(document->type()); // the nested document inherits the parent's type
             subDocument.setComponentType(property.value().trimmed().toUpper());
             if (!parseVersitDocumentBody(lineReader, &subDocument))
                 break;

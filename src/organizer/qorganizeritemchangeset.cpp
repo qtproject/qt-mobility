@@ -41,7 +41,7 @@
 
 #include "qorganizeritemchangeset.h"
 #include "qorganizeritemchangeset_p.h"
-#include "qorganizeritemmanagerengine.h"
+#include "qorganizermanagerengine.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -50,17 +50,17 @@ QTM_BEGIN_NAMESPACE
 
    \brief The QOrganizerItemChangeSet class provides a simple API to
    simplify the emission of state-change signals from
-   QOrganizerItemManagerEngine implementations.
+   QOrganizerManagerEngine implementations.
 
   \inmodule QtOrganizer
 
    This class can be utilised by backend implementations to ensure
-   correct emission of the \l QOrganizerItemManagerEngine::dataChanged(), \l
-   QOrganizerItemManagerEngine::itemsAdded(), \l
-   QOrganizerItemManagerEngine::itemsChanged() and \l
-   QOrganizerItemManagerEngine::itemsRemoved().
+   correct emission of the \l QOrganizerManagerEngine::dataChanged(), \l
+   QOrganizerManagerEngine::itemsAdded(), \l
+   QOrganizerManagerEngine::itemsChanged() and \l
+   QOrganizerManagerEngine::itemsRemoved().
 
-   \sa QOrganizerItemManagerEngine
+   \sa QOrganizerManagerEngine
  */
 
 /*!
@@ -97,7 +97,7 @@ QOrganizerItemChangeSet& QOrganizerItemChangeSet::operator=(const QOrganizerItem
 
 /*!
    Sets the data changed flag to \a dataChanged.  If this is set to true prior to calling \l emitSignals(),
-   only the \l QOrganizerItemManagerEngine::dataChanged() signal will be emitted; otherwise, the appropriate
+   only the \l QOrganizerManagerEngine::dataChanged() signal will be emitted; otherwise, the appropriate
    finer-grained signals will be emitted.
  */
 void QOrganizerItemChangeSet::setDataChanged(bool dataChanged)
@@ -236,7 +236,7 @@ void QOrganizerItemChangeSet::clearAll()
 /*!
    Emits the appropriate signals from the given \a engine given the state of the change set
  */
-void QOrganizerItemChangeSet::emitSignals(QOrganizerItemManagerEngine *engine)
+void QOrganizerItemChangeSet::emitSignals(QOrganizerManagerEngine *engine)
 {
     if (!engine)
         return;

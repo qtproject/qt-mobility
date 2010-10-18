@@ -42,7 +42,7 @@
 #include "qorganizeritemid.h"
 #include "qorganizeritemid_p.h"
 #include "qorganizeritemenginelocalid.h"
-#include "qorganizeritemmanager_p.h"
+#include "qorganizermanager_p.h"
 #include <QHash>
 #include <QDebug>
 #include <QDataStream>
@@ -69,13 +69,13 @@ QTM_BEGIN_NAMESPACE
   \relates QOrganizerItemId
   \brief The QOrganizerItemLocalId class represents the unique id of an organizer item within its manager.
 
-  Most operations within a \l QOrganizerItemManager accept a QOrganizerItemLocalId.  Some operations
+  Most operations within a \l QOrganizerManager accept a QOrganizerItemLocalId.  Some operations
   (involving links to organizer items outside a particular manager) also accept a manager URI - this
   combination is stored in a \l QOrganizerItemId.
 
   A default-constructed QOrganizerItemLocalId is a null QOrganizerItemLocalId, which does not identify
   any item in a manager.  Clients may wish to set the local id of an item to the default-constructed id
-  if they wish to copy that item from one manager to another (by calling QOrganizerItemManager::saveItem()),
+  if they wish to copy that item from one manager to another (by calling QOrganizerManager::saveItem()),
   whereupon that manager will replace the id with one that identifies the newly created item.
 
   \sa QOrganizerItemId
@@ -352,7 +352,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id)
         }
         quint8 localIdMarker = static_cast<quint8>(false);
         in >> localIdMarker;
-        QOrganizerItemLocalId localId(QOrganizerItemManagerData::createEngineItemLocalId(managerUri));
+        QOrganizerItemLocalId localId(QOrganizerManagerData::createEngineItemLocalId(managerUri));
         if (localIdMarker == static_cast<quint8>(true)) {
             if (localId.d) {
                 // only try to stream in data if it exists and the engine could create an engine

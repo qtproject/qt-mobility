@@ -42,7 +42,7 @@
 #include "qorganizeritemcollectionfilter.h"
 #include "qorganizeritemcollectionfilter_p.h"
 #include "qorganizeritemfilter_p.h"
-#include "qorganizeritemmanager.h"
+#include "qorganizermanager.h"
 
 QTM_BEGIN_NAMESPACE
 

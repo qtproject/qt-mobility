@@ -45,25 +45,50 @@ Item {
     width: 500
     height: 500
 
-    focus: true
+    focus : true
 
     Map {
         id: map
+        plugin : Plugin {
+                            name : "nokia"
+                        }
         size.width: parent.width
         size.height: parent.height
-        zoomLevel: 10
+        zoomLevel: 7
         center: Coordinate {
                     latitude: -27
-                    longitude: 153
+                    longitude: 179
                 }
+
+        MapCircle{
+            center : Coordinate {
+                                latitude : -27
+                                longitude : 179
+                                }
+            radius : 1000.0
+        }
+        MapCircle{
+            radius : 1000.0
+            color : "green"
+        }
+        MapCircle{
+            center : Coordinate {
+                                latitude : -27.2
+                                longitude : 179
+                                }
+            color : "red"
+        }
     }
 
     MouseArea {
-        anchors.fill: parent
+
+        anchors.fill : parent
 
         property bool mouseDown : false
         property int lastX : -1
         property int lastY : -1
+
+        hoverEnabled : true
 
         onPressed : {
             mouseDown = true 
@@ -86,18 +111,15 @@ Item {
         }
         onDoubleClicked: {
             map.center = map.toCoordinate(Qt.point(mouse.x, mouse.y))
-            if (map.zoomLevel < map.maximumZoomLevel)
-                map.zoomLevel += 1
+            map.zoomLevel += 1
         }
     }
 
     Keys.onPressed: {
         if (event.key == Qt.Key_Plus) {
-            if (map.zoomLevel < map.maximumZoomLevel)
-                map.zoomLevel += 1
+            map.zoomLevel += 1
         } else if (event.key == Qt.Key_Minus) {
-            if (map.zoomLevel > map.minimumZoomLevel)
-                map.zoomLevel -= 1
+            map.zoomLevel -= 1
         } else if (event.key == Qt.Key_T) {
             if (map.mapType == Map.StreetMap) {
                 map.mapType = Map.SatelliteMapDay

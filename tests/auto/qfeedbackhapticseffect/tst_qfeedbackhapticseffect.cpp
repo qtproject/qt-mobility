@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the test suite of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -104,14 +104,14 @@ void tst_QFeedbackHapticsEffect::initialization()
 {
     QFeedbackHapticsEffect effect;
     if (QFeedbackActuator::actuators().isEmpty()) {
-        QVERIFY(!effect.actuator().isValid());
+        QVERIFY(!effect.actuator()->isValid());
     } else {
-        QVERIFY(effect.actuator().isValid());
+        QVERIFY(effect.actuator()->isValid());
         QCOMPARE(effect.actuator(), QFeedbackActuator::actuators().first());
     }
 
     // we ignore the actuator which we know will fail.
-    if (effect.actuator().name() == QString("test plugin"))
+    if (effect.actuator()->name() == QString("test plugin"))
         QSKIP("The test plugin is the default actuator; skipping.", SkipSingle);
 
     // actuators from other plugins need to be verified.
@@ -156,7 +156,7 @@ void tst_QFeedbackHapticsEffect::envelope()
     QFeedbackHapticsEffect effect;
 
     // we ignore the actuator which we know will fail.
-    if (effect.actuator().name() == QString("test plugin"))
+    if (effect.actuator()->name() == QString("test plugin"))
         QSKIP("The test plugin is the default actuator; skipping.", SkipSingle);
 
     // actuators from other plugins need to be verified.
@@ -200,7 +200,7 @@ void tst_QFeedbackHapticsEffect::startStop_data()
 void tst_QFeedbackHapticsEffect::startStop()
 {
     qRegisterMetaType<QFeedbackEffect::ErrorType>("QFeedbackEffect::ErrorType");
-    if (QFeedbackActuator::actuators().isEmpty() || QFeedbackActuator::actuators().at(0).name() == QString("test plugin"))
+    if (QFeedbackActuator::actuators().isEmpty() || QFeedbackActuator::actuators().at(0)->name() == QString("test plugin"))
         QSKIP("this test requires to have actuators", SkipAll);
 
     QFETCH(int, duration);

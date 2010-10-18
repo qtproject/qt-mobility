@@ -118,7 +118,8 @@ QGeoMapData::~QGeoMapData()
 */
 void QGeoMapData::init()
 {
-    d_ptr->containerObject = new QGeoMapGroupObject(this);
+    d_ptr->containerObject = new QGeoMapGroupObject();
+    d_ptr->containerObject->setMapData(this);
 }
 
 /*!
@@ -572,6 +573,58 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 {
     d_ptr->blockPropertyChangeSignals = block;
 }
+
+/*!
+\fn void QGeoMapData::windowSizeChanged(const QSizeF &windowSize)
+
+    This signal is emitted when the size of the window which contains 
+    the map has changed.
+
+    The new value is \a windowSize.
+*/
+
+/*!
+\fn void QGeoMapData::zoomLevelChanged(qreal zoomLevel)
+
+    This signal is emitted when the zoom level of the map has changed.
+
+    The new value is \a zoomLevel.
+*/
+
+/*!
+\fn void QGeoMapData::centerChanged(const QGeoCoordinate &coordinate)
+
+    This signal is emitted when the center of the map has changed.
+
+    The new value is \a coordinate.
+*/
+
+/*!
+\fn void QGeoMapData::mapTypeChanged(QGraphicsGeoMap::MapType mapType)
+
+    This signal is emitted when the type of the map has changes.
+
+    The value is \a mapType.
+*/
+
+/*!
+\fn void QGeoMapData::connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode)
+
+    This signal is emitted when the connectivity mode used to fetch the 
+    map data has changed.
+
+    The new value is \a connectivityMode.
+*/
+
+/*!
+\fn void QGeoMapData::updateMapDisplay(const QRectF &target)
+
+    This signal is emitted when the region \a target of the window which 
+    contains the map needs to be updated.
+
+
+    If \a target is empty then the entire map will be updated.
+*/
 
 /*******************************************************************************
 *******************************************************************************/

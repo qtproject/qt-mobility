@@ -167,41 +167,41 @@ EventEditPage::~EventEditPage()
 
 }
 
-void EventEditPage::eventChanged(QOrganizerItemManager *manager, const QOrganizerEvent &event)
+void EventEditPage::eventChanged(QOrganizerManager *manager, const QOrganizerEvent &event)
 {
     m_manager = manager;
     m_organizerEvent = event;
     m_subjectEdit->setText(event.displayLabel());
     m_startTimeEdit->setDateTime(event.startDateTime());
     m_endTimeEdit->setDateTime(event.endDateTime());
-    QList<QOrganizerItemRecurrenceRule> rrules(m_organizerEvent.recurrenceRules());
+    QSet<QOrganizerRecurrenceRule> rrules(m_organizerEvent.recurrenceRules());
     // Check whether existing entry and if it is repeating.
     if (rrules.count() != 0) {
-        QOrganizerItemRecurrenceRule rrule(rrules.at(0));
-        QOrganizerItemRecurrenceRule::Frequency freq(rrule.frequency());
+        QOrganizerRecurrenceRule rrule(rrules.values().at(0));
+        QOrganizerRecurrenceRule::Frequency freq(rrule.frequency());
         switch (freq) {
-        case QOrganizerItemRecurrenceRule::Daily:
+        case QOrganizerRecurrenceRule::Daily:
             m_typeComboBox->setCurrentIndex(1);
             break;
-        case QOrganizerItemRecurrenceRule::Weekly:
+        case QOrganizerRecurrenceRule::Weekly:
             m_typeComboBox->setCurrentIndex(2);
             break;
-        case QOrganizerItemRecurrenceRule::Monthly:
+        case QOrganizerRecurrenceRule::Monthly:
             m_typeComboBox->setCurrentIndex(3);
             break;
-        case QOrganizerItemRecurrenceRule::Yearly:
+        case QOrganizerRecurrenceRule::Yearly:
             m_typeComboBox->setCurrentIndex(4);
             break;
-        case QOrganizerItemRecurrenceRule::Invalid:
+        case QOrganizerRecurrenceRule::Invalid:
             m_typeComboBox->setCurrentIndex(0); // No repeat
             return;
         }
-        if (rrule.endDate().isValid()) {
+        if (rrule.limitType() == QOrganizerRecurrenceRule::DateLimit) {
             m_endConditionComboBox->setCurrentIndex(1); // End date specified
-            m_repeatUntilDate->setDate(rrule.endDate());
-        } else if (rrule.count() > 0) {
+            m_repeatUntilDate->setDate(rrule.limitDate());
+        } else if (rrule.limitType() == QOrganizerRecurrenceRule::CountLimit) {
             m_endConditionComboBox->setCurrentIndex(2); // Count specified
-            m_countSpinBox->setValue(rrule.count());
+            m_countSpinBox->setValue(rrule.limitCount());
         }
     } else {
         m_typeComboBox->setCurrentIndex(0); // No repeat
@@ -266,10 +266,10 @@ void EventEditPage::saveClicked()
     m_organizerEvent.setStartDateTime(start);
     m_organizerEvent.setEndDateTime(end);
     m_listOfEvents.append(m_organizerEvent);
-    if (m_calendarComboBox->currentIndex() > 0)
-        m_manager->saveItem(&m_organizerEvent, m_collections[m_calendarComboBox->currentIndex()].localId());
-    else
-        m_manager->saveItem(&m_organizerEvent);
+    if (m_calendarComboBox->currentIndex() > 0) {
+        m_organizerEvent.setCollectionId(m_collections[m_calendarComboBox->currentIndex()].id());
+    }
+    m_manager->saveItem(&m_organizerEvent);
     if (m_manager->error())
         QMessageBox::warning(this, "Failed!", QString("Failed to save event!\n(error code %1)").arg(m_manager->error()));
     else
@@ -278,23 +278,21 @@ void EventEditPage::saveClicked()
 
 void EventEditPage::frequencyChanged(const QString& frequency)
 {
-    QOrganizerItemRecurrenceRule rrule;
-    QList<QOrganizerItemRecurrenceRule> listOfRRules;
-    listOfRRules.clear();
+    QOrganizerRecurrenceRule rrule;
+
     if (frequency != "None") {
         m_endConditionComboBox->setVisible(true);
 
         if (frequency == "Daily") {
-            rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+            rrule.setFrequency(QOrganizerRecurrenceRule::Daily);
         } else if (frequency == "Weekly") {
-            rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+            rrule.setFrequency(QOrganizerRecurrenceRule::Weekly);
         } else if (frequency == "Monthly") {
-            rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+            rrule.setFrequency(QOrganizerRecurrenceRule::Monthly);
         } else if (frequency == "Yearly") {
-            rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+            rrule.setFrequency(QOrganizerRecurrenceRule::Yearly);
         }
-        listOfRRules.append(rrule);
-        m_organizerEvent.setRecurrenceRules(listOfRRules);
+        m_organizerEvent.setRecurrenceRule(rrule);
     } else {
         m_endConditionComboBox->setCurrentIndex(0);
         m_endConditionComboBox->setVisible(false);
@@ -311,19 +309,15 @@ void EventEditPage::alarmIndexChanged(const QString time)
          m_organizerEvent.removeDetail(&fetchedReminder);
         return;
     } else if (time == "0 minutes before") {
-        reminder.setDateTime(m_startTimeEdit->dateTime());
+        reminder.setSecondsBeforeStart(0);
     } else if (time == "5 minutes before") {
-        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(5*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(5*60);
     } else if (time == "15 minutes before") {
-        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(15*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(15*60);
     } else if (time == "30 minutes before") {
-        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(30*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(30*60);
     } else if (time == "1 hour before") {
-        QDateTime reminderTime = m_startTimeEdit->dateTime().addSecs(-(60*60));
-        reminder.setDateTime(reminderTime);
+        reminder.setSecondsBeforeStart(60*60);
     }
 
     m_organizerEvent.saveDetail(&reminder);
@@ -337,24 +331,18 @@ void EventEditPage::showEvent(QShowEvent *event)
 
 void EventEditPage::countChanged(int i)
 {
-    QOrganizerItemRecurrenceRule rrule;
-    QList<QOrganizerItemRecurrenceRule> listOfRRules;
-    listOfRRules.clear();
-    rrule.setFrequency(m_organizerEvent.recurrenceRules().at(0).frequency());
-    rrule.setCount(i);
-    listOfRRules.append(rrule);
-    m_organizerEvent.setRecurrenceRules(listOfRRules);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(m_organizerEvent.recurrenceRules().values().at(0).frequency());
+    rrule.setLimit(i);
+    m_organizerEvent.setRecurrenceRule(rrule);
 }
 
 void EventEditPage::untilChanged(QDate date)
 {
-    QOrganizerItemRecurrenceRule rrule;
-    QList<QOrganizerItemRecurrenceRule> listOfRRules;
-    listOfRRules.clear();
-    rrule.setFrequency(m_organizerEvent.recurrenceRules().at(0).frequency());
-    rrule.setEndDate(date);
-    listOfRRules.append(rrule);
-    m_organizerEvent.setRecurrenceRules(listOfRRules);
+    QOrganizerRecurrenceRule rrule;
+    rrule.setFrequency(m_organizerEvent.recurrenceRules().values().at(0).frequency());
+    rrule.setLimit(date);
+    m_organizerEvent.setRecurrenceRule(rrule);
 }
 
 void EventEditPage::endConditionChanged(const QString& endCondition) {

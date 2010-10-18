@@ -50,7 +50,7 @@ class  QDeclarativeContactAvatar : public QDeclarativeContactDetail
     Q_OBJECT
     Q_PROPERTY(QUrl imageUrl READ imageUrl WRITE setImageUrl NOTIFY fieldsChanged)
     Q_PROPERTY(QUrl videoUrl READ videoUrl WRITE setVideoUrl NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
 public:
     enum FieldType {
         ImageUrl = 0,
@@ -60,18 +60,44 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactAvatar());
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
-    void setImageUrl(const QUrl& imageUrl) {detail().setValue(QContactAvatar::FieldImageUrl, imageUrl);}
+    void setImageUrl(const QUrl& v)
+    {
+        if (!readOnly() && v != imageUrl()) {
+            detail().setValue(QContactAvatar::FieldImageUrl, v);
+            emit fieldsChanged();
+        }
+    }
     QUrl imageUrl() const {return detail().value<QUrl>(QContactAvatar::FieldImageUrl);}
 
-    void setVideoUrl(const QUrl& videoUrl) {detail().setValue(QContactAvatar::FieldVideoUrl, videoUrl);}
+    void setVideoUrl(const QUrl& v)
+    {
+        if (!readOnly() && v != videoUrl()) {
+            detail().setValue(QContactAvatar::FieldVideoUrl, v);
+            emit fieldsChanged();
+        }
+    }
     QUrl videoUrl() const {return detail().value<QUrl>(QContactAvatar::FieldVideoUrl);}
 
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Avatar;
+        return QDeclarativeContactDetail::ContactAvatar;
     }
 
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case ImageUrl:
+            return QContactAvatar::FieldImageUrl;
+        case VideoUrl:
+            return QContactAvatar::FieldVideoUrl;
+        default:
+            break;
+        }
+        //QWarning()
+        return QString();
+    }
 signals:
     void fieldsChanged();
 

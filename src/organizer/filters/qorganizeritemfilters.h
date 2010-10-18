@@ -53,5 +53,4 @@
 #include "qorganizeriteminvalidfilter.h"
 #include "qorganizeritemlocalidfilter.h"
 #include "qorganizeritemcollectionfilter.h"
-#include "qorganizeritemdatetimeperiodfilter.h"
 #endif

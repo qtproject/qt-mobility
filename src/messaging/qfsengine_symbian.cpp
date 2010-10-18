@@ -2904,6 +2904,6 @@ bool CFSMessagesFindOperation::fillsSearchKeyCriteria(QMessageId& messageId)
     return false;
 }
 
-#include "..\..\build\Release\QtMessaging\moc\moc_qfsengine_symbian_p.cpp";
+#include "moc_qfsengine_symbian_p.cpp"
 
 QTM_END_NAMESPACE

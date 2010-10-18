@@ -858,6 +858,10 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                                 setPlaybackRate(rate);
                             }
                         }
+
+                        if (m_state != prevState)
+                            emit stateChanged(m_state);
+
                         break;
                     }
                     case GST_STATE_PLAYING:

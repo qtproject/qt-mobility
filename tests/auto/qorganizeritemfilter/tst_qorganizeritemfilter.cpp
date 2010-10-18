@@ -898,7 +898,7 @@ void tst_QOrganizerItemFilter::canonicalizedFilter()
     QFETCH(QOrganizerItemFilter, in);
     QFETCH(QOrganizerItemFilter, expected);
 
-    QOrganizerItemFilter out = QOrganizerItemManagerEngine::canonicalizedFilter(in);
+    QOrganizerItemFilter out = QOrganizerManagerEngine::canonicalizedFilter(in);
     QCOMPARE(out, expected);
 }
 
@@ -1029,9 +1029,9 @@ void tst_QOrganizerItemFilter::canonicalizedFilter_data()
 
     {
         QOrganizerItemDetailRangeFilter qcdrf;
-        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         QOrganizerItemDetailFilter expected;
-        expected.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        expected.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         QTest::newRow("Null valued range filter")
                 << static_cast<QOrganizerItemFilter>(qcdrf)
                 << static_cast<QOrganizerItemFilter>(expected);
@@ -1039,11 +1039,11 @@ void tst_QOrganizerItemFilter::canonicalizedFilter_data()
 
     {
         QOrganizerItemDetailRangeFilter qcdrf;
-        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         qcdrf.setRange(QLatin1String("a"), QLatin1String("a"));
         qcdrf.setMatchFlags(QOrganizerItemFilter::MatchFixedString);
         QOrganizerItemDetailFilter expected;
-        expected.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        expected.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         expected.setValue(QLatin1String("a"));
         expected.setMatchFlags(QOrganizerItemFilter::MatchFixedString);
         QTest::newRow("Equal valued range filter")
@@ -1053,7 +1053,7 @@ void tst_QOrganizerItemFilter::canonicalizedFilter_data()
 
     {
         QOrganizerItemDetailRangeFilter qcdrf;
-        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         qcdrf.setRange(QLatin1String("a"), QLatin1String("a"),
                QOrganizerItemDetailRangeFilter::ExcludeLower | QOrganizerItemDetailRangeFilter::ExcludeUpper);
         qcdrf.setMatchFlags(QOrganizerItemFilter::MatchFixedString);
@@ -1064,7 +1064,7 @@ void tst_QOrganizerItemFilter::canonicalizedFilter_data()
 
     {
         QOrganizerItemDetailRangeFilter qcdrf;
-        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         qcdrf.setRange(QLatin1String("a"), QLatin1String("b"));
         qcdrf.setMatchFlags(QOrganizerItemFilter::MatchFixedString);
         QTest::newRow("Normal range filter")
@@ -1074,11 +1074,11 @@ void tst_QOrganizerItemFilter::canonicalizedFilter_data()
 
     {
         QOrganizerItemDetailRangeFilter qcdrf;
-        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         qcdrf.setRange(QVariant(QVariant::String), QVariant(QVariant::String)); // null bounds
         qcdrf.setMatchFlags(QOrganizerItemFilter::MatchFixedString);
         QOrganizerItemDetailFilter qcdf;
-        qcdf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        qcdf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         qcdf.setMatchFlags(QOrganizerItemFilter::MatchFixedString);
         qcdf.setValue(QVariant(QVariant::String));
         QTest::newRow("Null valued range filter")
@@ -1088,7 +1088,7 @@ void tst_QOrganizerItemFilter::canonicalizedFilter_data()
 
     {
         QOrganizerItemDetailRangeFilter qcdrf;
-        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldAddress);
+        qcdrf.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLabel);
         qcdrf.setRange(QVariant(QVariant::String), QLatin1String("a")); // min is null
         qcdrf.setMatchFlags(QOrganizerItemFilter::MatchFixedString);
         QTest::newRow("One sided range filter")
@@ -1117,7 +1117,7 @@ void tst_QOrganizerItemFilter::testFilter()
     QFETCH(QOrganizerItemFilter, filter);
     QFETCH(bool, expected);
 
-    QCOMPARE(QOrganizerItemManagerEngine::testFilter(filter, item), expected);
+    QCOMPARE(QOrganizerManagerEngine::testFilter(filter, item), expected);
 }
 
 void tst_QOrganizerItemFilter::testFilter_data()
@@ -1131,8 +1131,7 @@ void tst_QOrganizerItemFilter::testFilter_data()
     {
         QOrganizerItem item;
         QOrganizerItemLocation name;
-        name.setAddress("test address");
-        name.setLocationName("test location");
+        name.setLabel("test location");
         item.saveDetail(&name);
 
         QTest::newRow("QOrganizerItemLocation::match location")

@@ -60,7 +60,7 @@ Q_DECLARE_METATYPE(QVersitProperty)
 #ifdef QT_BUILD_INTERNAL
 void tst_QVCard21Writer::init()
 {
-    mWriter = new QVCard21Writer;
+    mWriter = new QVCard21Writer(QVersitDocument::VCard21Type);
     mWriter->setCodec(QTextCodec::codecForName("ISO_8859-1"));
 }
 

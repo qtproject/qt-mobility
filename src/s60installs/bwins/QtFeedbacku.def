@@ -78,9 +78,9 @@ EXPORTS
 	?instance@QFeedbackFileInterface@QtMobility@@SAPAV12@XZ @ 77 NONAME ; class QtMobility::QFeedbackFileInterface * QtMobility::QFeedbackFileInterface::instance(void)
 	?tr@QFeedbackEffect@QtMobility@@SA?AVQString@@PBD0H@Z @ 78 NONAME ; class QString QtMobility::QFeedbackEffect::tr(char const *, char const *, int)
 	?period@QFeedbackHapticsEffect@QtMobility@@QBEHXZ @ 79 NONAME ; int QtMobility::QFeedbackHapticsEffect::period(void) const
-	?setFileName@QFeedbackFileEffect@QtMobility@@QAEXABVQString@@@Z @ 80 NONAME ; void QtMobility::QFeedbackFileEffect::setFileName(class QString const &)
+	?setSource@QFeedbackFileEffect@QtMobility@@QAEXABVQUrl@@@Z @ 80 NONAME ; void QtMobility::QFeedbackFileEffect::setSource(class QUrl const &)
 	??0QFeedbackFileEffect@QtMobility@@QAE@PAVQObject@@@Z @ 81 NONAME ; QtMobility::QFeedbackFileEffect::QFeedbackFileEffect(class QObject *)
-	?fileName@QFeedbackFileEffect@QtMobility@@QBE?AVQString@@XZ @ 82 NONAME ; class QString QtMobility::QFeedbackFileEffect::fileName(void) const
+	?source@QFeedbackFileEffect@QtMobility@@QBE?AVQUrl@@XZ @ 82 NONAME ; class QUrl QtMobility::QFeedbackFileEffect::source(void) const
 	?supportsThemeEffect@QFeedbackEffect@QtMobility@@SA_NXZ @ 83 NONAME ; bool QtMobility::QFeedbackEffect::supportsThemeEffect(void)
 	??1QFeedbackFileEffect@QtMobility@@UAE@XZ @ 84 NONAME ; QtMobility::QFeedbackFileEffect::~QFeedbackFileEffect(void)
 	?attackTime@QFeedbackHapticsEffect@QtMobility@@QBEHXZ @ 85 NONAME ; int QtMobility::QFeedbackHapticsEffect::attackTime(void) const

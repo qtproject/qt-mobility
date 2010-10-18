@@ -45,13 +45,13 @@
 
 #include "qdeclarativecontactdetail_p.h"
 #include "qcontactfamily.h"
-
+#include <QSet>
 class QDeclarativeContactFamily : public QDeclarativeContactDetail
 {
     Q_OBJECT
     Q_PROPERTY(QString spouse READ spouse WRITE setSpouse NOTIFY fieldsChanged)
     Q_PROPERTY(QStringList children READ children WRITE setChildren NOTIFY fieldsChanged)
-    Q_ENUMS(FieldType);
+    Q_ENUMS(FieldType)
 public:
     enum FieldType {
         Spouse = 0,
@@ -61,14 +61,40 @@ public:
         :QDeclarativeContactDetail(parent)
     {
         setDetail(QContactFamily());
+        connect(this, SIGNAL(fieldsChanged()), SIGNAL(valueChanged()));
     }
     ContactDetailType detailType() const
     {
-        return QDeclarativeContactDetail::Family;
+        return QDeclarativeContactDetail::ContactFamily;
     }
-    void setSpouse(const QString& spouseName) {detail().setValue(QContactFamily::FieldSpouse, spouseName);}
+    static QString fieldNameFromFieldType(int fieldType)
+    {
+        switch (fieldType) {
+        case Spouse:
+            return QContactFamily::FieldSpouse;
+        case Children:
+            return QContactFamily::FieldChildren;
+        default:
+            break;
+        }
+        //qWarning
+        return QString();
+    }
+    void setSpouse(const QString& v)
+    {
+        if (!readOnly() && v != spouse()) {
+            detail().setValue(QContactFamily::FieldSpouse, v);
+            emit fieldsChanged();
+        }
+    }
     QString spouse() const {return detail().value(QContactFamily::FieldSpouse);}
-    void setChildren(const QStringList& childrenNames) {detail().setValue(QContactFamily::FieldChildren, childrenNames);}
+    void setChildren(const QStringList& v)
+    {
+        if (!readOnly() && v.toSet() != children().toSet()) {
+            detail().setValue(QContactFamily::FieldChildren, v);
+            emit fieldsChanged();
+        }
+    }
     QStringList children() const {return detail().value<QStringList>(QContactFamily::FieldChildren);}
 signals:
     void fieldsChanged();

@@ -64,7 +64,7 @@ QTM_USE_NAMESPACE
 #endif
 
 /*!
- * For testing symbian backend via QOrganizerItemManager async API.
+ * For testing symbian backend via QOrganizerManager async API.
  */
 class tst_SymbianOmAsync : public QObject
 {
@@ -137,7 +137,7 @@ private: // util functions
     void addManagers();
 
 private:
-    QOrganizerItemManager *m_om;
+    QOrganizerManager *m_om;
     bool m_customCollectionsSupported;
 };
 
@@ -146,7 +146,7 @@ Q_DECLARE_METATYPE(QList<QOrganizerCollectionLocalId>)
 tst_SymbianOmAsync::tst_SymbianOmAsync() :
     m_om(0)
 {
-    qRegisterMetaType<QOrganizerItemAbstractRequest::State>("QOrganizerItemAbstractRequest::State");
+    qRegisterMetaType<QOrganizerAbstractRequest::State>("QOrganizerAbstractRequest::State");
     qRegisterMetaType<QList<QOrganizerItemLocalId> >("QList<QOrganizerItemLocalId>");
     qRegisterMetaType<QList<QOrganizerCollectionLocalId> >("QList<QOrganizerCollectionLocalId>");
 }
@@ -165,23 +165,23 @@ void tst_SymbianOmAsync::initTestCase()
 void tst_SymbianOmAsync::init()
 {
     QFETCH(QString, managerName);
-    m_om = new QOrganizerItemManager(managerName);
+    m_om = new QOrganizerManager(managerName);
     // Remove items on all collections
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
     // Remove all collections (except the default)
-    foreach (QOrganizerCollectionLocalId id, m_om->collectionIds()) {
-        if (id != m_om->defaultCollectionId())
-            m_om->removeCollection(id);
+    foreach (const QOrganizerCollection& collection, m_om->collections()) {
+        if (collection != m_om->defaultCollection())
+            m_om->removeCollection(collection.localId());
     }
 }
 
 void tst_SymbianOmAsync::cleanup()
 {
-    m_om->removeItems(m_om->itemIds(), 0);
+    m_om->removeItems(m_om->itemIds());
     // Remove all collections (except the default)
-    foreach (QOrganizerCollectionLocalId id, m_om->collectionIds()) {
-        if (id != m_om->defaultCollectionId())
-            m_om->removeCollection(id);
+    foreach (const QOrganizerCollection& collection, m_om->collections()) {
+        if (collection != m_om->defaultCollection())
+            m_om->removeCollection(collection.localId());
     }
     delete m_om;
     m_om = 0;
@@ -197,24 +197,23 @@ void tst_SymbianOmAsync::addSimpleItem()
     QOrganizerItemSaveRequest saveItemRequest;
     saveItemRequest.setManager(m_om);
     saveItemRequest.setItem(item);
-    saveItemRequest.setCollectionId(QOrganizerCollectionLocalId());
 
     // Create signal spys for verification purposes
-    QSignalSpy stateSpy(&saveItemRequest, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&saveItemRequest, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&saveItemRequest, SIGNAL(resultsAvailable()));
     QSignalSpy addedSpy(m_om, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
 
     // Save
     QVERIFY(saveItemRequest.start());
-    QCOMPARE(saveItemRequest.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(saveItemRequest.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1); // one item saved
     QTRY_COMPARE(addedSpy.count(), 1);  // one item saved
 
     // Verify
     QCOMPARE(m_om->itemIds().count(), 1);
-    QCOMPARE(saveItemRequest.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(saveItemRequest.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(saveItemRequest.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(saveItemRequest.error(), QOrganizerManager::NoError);
     QCOMPARE(saveItemRequest.items().count(), 1);
     QVERIFY(saveItemRequest.items().at(0).localId() != QOrganizerItemLocalId());
 }
@@ -237,18 +236,18 @@ void tst_SymbianOmAsync::fetchSimpleItem()
     fetchItemRequest.setManager(m_om);
 
     // Create signal spys for verification purposes
-    QSignalSpy stateSpy(&fetchItemRequest, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&fetchItemRequest, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&fetchItemRequest, SIGNAL(resultsAvailable()));
 
     // Fetch
     QVERIFY(fetchItemRequest.start());
-    QCOMPARE(fetchItemRequest.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(fetchItemRequest.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1); // 1 item fetched
 
     // Verify
-    QCOMPARE(fetchItemRequest.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(fetchItemRequest.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(fetchItemRequest.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(fetchItemRequest.error(), QOrganizerManager::NoError);
     QCOMPARE(fetchItemRequest.items().count(), 1);
     QVERIFY(fetchItemRequest.items().at(0).localId() != QOrganizerItemLocalId());
 }
@@ -270,12 +269,12 @@ void tst_SymbianOmAsync::fetchWaitForFinished()
 
      // Create signal spys for verification purposes
      QSignalSpy stateSpy(&fetchItemRequest,
-         SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+         SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
      QSignalSpy resultSpy(&fetchItemRequest, SIGNAL(resultsAvailable()));
 
      // Fetch
      QVERIFY(fetchItemRequest.start());
-     QCOMPARE(fetchItemRequest.state(), QOrganizerItemAbstractRequest::ActiveState);
+     QCOMPARE(fetchItemRequest.state(), QOrganizerAbstractRequest::ActiveState);
      QCOMPARE(stateSpy.count(), 1);  // inactive > active
      QTime startTime = QTime::currentTime();
      QVERIFY(fetchItemRequest.waitForFinished(5000)); // 5 seconds time-out
@@ -299,18 +298,18 @@ void tst_SymbianOmAsync::fetchItems()
     req.setManager(m_om);
 
     // Create signal spys for verification purposes
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
 
     // Fetch
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QVERIFY(resultSpy.count() > 1);
 
     // Verify
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerManager::NoError);
     QCOMPARE(req.items().count(), itemCount);
     QVERIFY(req.items().at(0).localId() != QOrganizerItemLocalId());
 }
@@ -327,18 +326,18 @@ void tst_SymbianOmAsync::fetchItemIds()
     req.setManager(m_om);
 
     // Create signal spys for verification purposes
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
 
     // Fetch
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QVERIFY(resultSpy.count() >= 1);   // allow one or more "resultsAvailable"
 
     // Verify
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerManager::NoError);
     QCOMPARE(req.itemIds().count(), itemCount);
     QVERIFY(req.itemIds().at(0) != QOrganizerItemLocalId());
 }
@@ -358,7 +357,7 @@ void tst_SymbianOmAsync::fetchItemsIdFilter()
     req.setManager(m_om);
 
     // Create signal spys for verification purposes
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
 
     // Fetch with local id filter
@@ -366,12 +365,12 @@ void tst_SymbianOmAsync::fetchItemsIdFilter()
     localIdFilter.setIds(m_om->itemIds().mid(pos, length));
     req.setFilter(localIdFilter);
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QVERIFY(resultSpy.count() > 1);
 
     // Verify
-    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req.error(), QOrganizerManager::NoError);
     QCOMPARE(req.items().count(), length);
     // Assuming the sort order is the same:
     QVERIFY(req.items().at(0).localId() == m_om->itemIds().at(pos));
@@ -399,19 +398,19 @@ void tst_SymbianOmAsync::fetchItemsNonExistingIds()
     req.setFilter(localIdFilter);
 
     // Create signal spys for verification purposes
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
 
     // Fetch
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
 
     // Verify
     QVERIFY(resultSpy.count() > 1);
     QCOMPARE(req.items().count(), itemCount - 1);
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(req.error(), QOrganizerItemManager::DoesNotExistError);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerManager::DoesNotExistError);
 }
 
 void tst_SymbianOmAsync::fetchItemsDetailFilter()
@@ -426,7 +425,7 @@ void tst_SymbianOmAsync::fetchItemsDetailFilter()
     req.setManager(m_om);
 
     // Create signal spys for verification purposes
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
 
     // Fetch with detail filter
@@ -434,12 +433,12 @@ void tst_SymbianOmAsync::fetchItemsDetailFilter()
     detailFilter.setDetailDefinitionName(QOrganizerItemDisplayLabel::DefinitionName);
     req.setFilter(detailFilter);
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QVERIFY(resultSpy.count() > 1);
 
     // Verify
-    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req.error(), QOrganizerManager::NoError);
     QCOMPARE(req.items().count(), itemCount);
     QVERIFY(req.items().at(0).localId() != QOrganizerItemLocalId());
 }
@@ -456,7 +455,7 @@ void tst_SymbianOmAsync::fetchItemsSortOrder()
     req.setManager(m_om);
 
     // Create signal spys for verification purposes
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
 
     // Set sort order
@@ -476,12 +475,12 @@ void tst_SymbianOmAsync::fetchItemsSortOrder()
 
     // Fetch
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QVERIFY(resultSpy.count() > 1);
 
     // Verify
-    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req.error(), QOrganizerManager::NoError);
     QCOMPARE(req.items().count(), itemCount);
     QVERIFY(req.items().at(0).localId() != QOrganizerItemLocalId());
 }
@@ -519,13 +518,13 @@ void tst_SymbianOmAsync::addItems()
     req.setItems(items);
 
     // Create signal spys for verification purposes
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
     QSignalSpy addedSpy(m_om, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
 
     // Save
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2); // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
 
@@ -536,8 +535,8 @@ void tst_SymbianOmAsync::addItems()
     // get one signal. For example showing information like "54% complete" to the user is not
     // possible if you get only one signal once the request is completed.
     QVERIFY(addedSpy.count() > 1);
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerManager::NoError);
     QCOMPARE(req.items().count(), itemCount);
     foreach (QOrganizerItem item, req.items()) {
         QVERIFY(!item.localId().isNull());
@@ -563,11 +562,11 @@ void tst_SymbianOmAsync::addItemsMultiReq()
     req3.setItem(item3);
 
     // Create signal spys for verification purposes
-    QSignalSpy stateSpy1(&req1, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy1(&req1, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy1(&req1, SIGNAL(resultsAvailable()));
-    QSignalSpy stateSpy2(&req2, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy2(&req2, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy2(&req2, SIGNAL(resultsAvailable()));
-    QSignalSpy stateSpy3(&req3, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy3(&req3, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy3(&req3, SIGNAL(resultsAvailable()));
     QSignalSpy addedSpy(m_om, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
 
@@ -575,9 +574,9 @@ void tst_SymbianOmAsync::addItemsMultiReq()
     QVERIFY(req1.start());
     QVERIFY(req2.start());
     QVERIFY(req3.start());
-    QCOMPARE(req1.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(req2.state(), QOrganizerItemAbstractRequest::ActiveState);
-    QCOMPARE(req3.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req1.state(), QOrganizerAbstractRequest::ActiveState);
+    QCOMPARE(req2.state(), QOrganizerAbstractRequest::ActiveState);
+    QCOMPARE(req3.state(), QOrganizerAbstractRequest::ActiveState);
 
     // Verify
     QTRY_COMPARE(stateSpy1.count(), 2); // inactive > active > finished
@@ -587,8 +586,8 @@ void tst_SymbianOmAsync::addItemsMultiReq()
     QTRY_COMPARE(resultSpy2.count(), 1);
     QTRY_COMPARE(resultSpy3.count(), 1);
     QCOMPARE(addedSpy.count(), 3);
-    QCOMPARE(req1.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(req1.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req1.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(req1.error(), QOrganizerManager::NoError);
     QCOMPARE(m_om->itemIds().count(), 3);
     foreach (QOrganizerItemLocalId id, m_om->itemIds()) {
         QVERIFY(!id.isNull());
@@ -610,21 +609,21 @@ void tst_SymbianOmAsync::modifyItems()
     req.setItems(items);
 
     // Create signal spys for verification purposes
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
     QSignalSpy changedSpy(m_om, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)));
 
     // Save
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
 
     // Verify
     QVERIFY(changedSpy.count() > 0);
     QVERIFY(changedSpy.count() > 1);
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerManager::NoError);
     QCOMPARE(req.items().count(), itemCount);
 }
 
@@ -640,21 +639,21 @@ void tst_SymbianOmAsync::removeItems()
     req.setManager(m_om);
 
     // Create signal spys for verification purposes
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
     QSignalSpy removedSpy(m_om, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)));
 
     // Remove
     req.setItemIds(m_om->itemIds());
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
 
     // Verify
     QVERIFY(removedSpy.count() > 0);
     QVERIFY(removedSpy.count() > 1);
-    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req.error(), QOrganizerManager::NoError);
     QCOMPARE(m_om->itemIds().count(), 0);
 }
 
@@ -665,7 +664,7 @@ void tst_SymbianOmAsync::addCollection()
     req.setManager(m_om);
 
     // Create signal spys for verification purposes
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
     QSignalSpy addedSpy(m_om, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
 
@@ -682,7 +681,7 @@ void tst_SymbianOmAsync::addCollection()
     if (!m_customCollectionsSupported) {
         QWARN("Saving collections not supported!");
         QVERIFY(!req.start());
-        QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+        QCOMPARE(req.error(), QOrganizerManager::NotSupportedError);
         QCOMPARE(stateSpy.count(), 1);
         QTRY_COMPARE(resultSpy.count(), 1);
         return;
@@ -690,15 +689,15 @@ void tst_SymbianOmAsync::addCollection()
 
     // Start the request
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
     QTRY_COMPARE(addedSpy.count(), 1);
 
     // Verify
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
-    QList<QOrganizerCollection> collections = m_om->collections(m_om->collectionIds());
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerManager::NoError);
+    QList<QOrganizerCollection> collections = m_om->collections();
     QCOMPARE(collections.count(), 2); // the default plus the new one
     QCOMPARE(collections.at(1).metaData().value("Name").toString(), QString("addCollection"));
     // Verify the signal emitted contains the id of the new collection
@@ -717,7 +716,7 @@ void tst_SymbianOmAsync::modifyCollection()
     req.setManager(m_om);
 
     // Create signal spys for verification purposes
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
     QSignalSpy addedSpy(m_om, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
     QSignalSpy changedSpy(m_om, SIGNAL(collectionsChanged(QList<QOrganizerCollectionLocalId>)));
@@ -737,16 +736,16 @@ void tst_SymbianOmAsync::modifyCollection()
 
     // Start the request
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
     QTRY_COMPARE(addedSpy.count(), 1);
     QTRY_COMPARE(changedSpy.count(), 1);
 
     // Verify
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
-    QList<QOrganizerCollection> collections = m_om->collections(m_om->collectionIds());
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerManager::NoError);
+    QList<QOrganizerCollection> collections = m_om->collections();
     QCOMPARE(collections.count(), 2); // the default plus the new one
     QCOMPARE(collections.at(1).metaData().value("Name").toString(), QString("modifyCollection"));
     QCOMPARE(collections.at(1).metaData().value("Description").toString(), QString("modifyCollection test2"));
@@ -759,7 +758,7 @@ void tst_SymbianOmAsync::removeCollection()
     req.setManager(m_om);
 
     // Create signal spys for verification purposes
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
     QSignalSpy removedSpy(m_om, SIGNAL(collectionsRemoved(QList<QOrganizerCollectionLocalId>)));
     
@@ -767,7 +766,7 @@ void tst_SymbianOmAsync::removeCollection()
     if (!m_customCollectionsSupported) {
         QWARN("Removing collections not supported!");
         QVERIFY(!req.start());
-        QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+        QCOMPARE(req.error(), QOrganizerManager::NotSupportedError);
         QCOMPARE(stateSpy.count(), 1);
         QTRY_COMPARE(resultSpy.count(), 1);
         return;
@@ -787,35 +786,35 @@ void tst_SymbianOmAsync::removeCollection()
 
     // Start the request
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
     QTRY_COMPARE(removedSpy.count(), 1);
 
     // Verify
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
-    QCOMPARE(m_om->collectionIds().count(), 1); // the default
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerManager::NoError);
+    QCOMPARE(m_om->collections().count(), 1); // the default
 
     // Try to remove again, should fail
     req.setCollectionId(collection.localId());
     QVERIFY(req.start());
     QTRY_COMPARE(resultSpy.count(), 2);
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(req.error(), QOrganizerItemManager::DoesNotExistError);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerManager::DoesNotExistError);
 }
 
 void tst_SymbianOmAsync::addCollectionMultiManager()
 {
     // Create a second manager
-    QScopedPointer<QOrganizerItemManager> om2(new QOrganizerItemManager(m_om->managerName()));
+    QScopedPointer<QOrganizerManager> om2(new QOrganizerManager(m_om->managerName()));
 
     // Create request
     QOrganizerCollectionSaveRequest req;
     req.setManager(m_om);
 
     // Setup signal spies
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
     QSignalSpy addedSpy1(m_om, SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
     QSignalSpy addedSpy2(om2.data(), SIGNAL(collectionsAdded(QList<QOrganizerCollectionLocalId>)));
@@ -824,7 +823,7 @@ void tst_SymbianOmAsync::addCollectionMultiManager()
     if (!m_customCollectionsSupported) {
         QWARN("Removing collections not supported!");
         QVERIFY(!req.start());
-        QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+        QCOMPARE(req.error(), QOrganizerManager::NotSupportedError);
         QCOMPARE(stateSpy.count(), 1);
         QTRY_COMPARE(resultSpy.count(), 1);
         return;
@@ -841,7 +840,7 @@ void tst_SymbianOmAsync::addCollectionMultiManager()
 
     // Start the request
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
     QCOMPARE(req.collections().count(), 1);
@@ -867,18 +866,18 @@ void tst_SymbianOmAsync::detailDefinitionFetch()
     req.setManager(m_om);
     
     // Setup signal spies
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
     
     // Fetch by item type only
     req.setItemType(QOrganizerItemType::TypeEvent);
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QCOMPARE(stateSpy.count(), 1);
     QTRY_COMPARE(resultSpy.count(), 1);
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
     QCOMPARE(stateSpy.count(), 2);
-    QCOMPARE(req.error(), QOrganizerItemManager::NoError);
+    QCOMPARE(req.error(), QOrganizerManager::NoError);
     QCOMPARE(req.errorMap().count(), 0);
     QVERIFY(req.definitions().count() > 0);
     stateSpy.clear();
@@ -893,11 +892,11 @@ void tst_SymbianOmAsync::detailDefinitionFetch()
     QVERIFY(req.start());
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
     QCOMPARE(stateSpy.count(), 2);
-    QCOMPARE(req.error(), QOrganizerItemManager::DoesNotExistError);
+    QCOMPARE(req.error(), QOrganizerManager::DoesNotExistError);
     QCOMPARE(req.errorMap().count(), 1);
-    QCOMPARE(req.errorMap().value(1), QOrganizerItemManager::DoesNotExistError);
+    QCOMPARE(req.errorMap().value(1), QOrganizerManager::DoesNotExistError);
     QVERIFY(req.definitions().count() == 1);    
     stateSpy.clear();
     resultSpy.clear();
@@ -906,11 +905,11 @@ void tst_SymbianOmAsync::detailDefinitionFetch()
     req.setItemType(QString());
     req.setDefinitionNames(QStringList());
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerManager::NotSupportedError);
     QCOMPARE(req.errorMap().count(), 0);
     QVERIFY(req.definitions().count() == 0);
     stateSpy.clear();
@@ -919,11 +918,11 @@ void tst_SymbianOmAsync::detailDefinitionFetch()
     // Fetch by not supported item type
     req.setItemType(QOrganizerItemType::TypeJournal);
     QVERIFY(req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::ActiveState);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::ActiveState);
     QTRY_COMPARE(stateSpy.count(), 2);  // inactive > active > finished
     QTRY_COMPARE(resultSpy.count(), 1);
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerManager::NotSupportedError);
     QCOMPARE(req.errorMap().count(), 0);
     QVERIFY(req.definitions().count() == 0);
     stateSpy.clear();
@@ -937,13 +936,13 @@ void tst_SymbianOmAsync::detailDefinitionSave()
     req.setManager(m_om);
     
     // Setup signal spies
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
     
     // Saving detail definitions is not supported so verify it cannot be started 
     QVERIFY(!req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerManager::NotSupportedError);
     QCOMPARE(req.errorMap().count(), 0);
     QCOMPARE(stateSpy.count(), 1);
     QCOMPARE(resultSpy.count(), 1);    
@@ -956,13 +955,13 @@ void tst_SymbianOmAsync::detailDefinitionRemove()
     req.setManager(m_om);
     
     // Setup signal spies
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)));
+    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QOrganizerAbstractRequest::State)));
     QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
     
     // Removing detail definitions is not supported so verify it cannot be started 
     QVERIFY(!req.start());
-    QCOMPARE(req.state(), QOrganizerItemAbstractRequest::FinishedState);
-    QCOMPARE(req.error(), QOrganizerItemManager::NotSupportedError);
+    QCOMPARE(req.state(), QOrganizerAbstractRequest::FinishedState);
+    QCOMPARE(req.error(), QOrganizerManager::NotSupportedError);
     QCOMPARE(req.errorMap().count(), 0);
     QCOMPARE(stateSpy.count(), 1);
     QCOMPARE(resultSpy.count(), 1);   
@@ -1001,7 +1000,7 @@ QOrganizerItem tst_SymbianOmAsync::createItem(QString itemType, QString label, Q
     item.setType(itemType);
     item.setDisplayLabel(label);
     if (itemType == QOrganizerItemType::TypeTodo) {
-        QOrganizerTodoTimeRange timeRange;
+        QOrganizerTodoTime timeRange;
         if (startTime.isValid())
             timeRange.setStartDateTime(startTime);
         if (endTime.isValid())
@@ -1009,7 +1008,7 @@ QOrganizerItem tst_SymbianOmAsync::createItem(QString itemType, QString label, Q
         if (!timeRange.isEmpty())
             item.saveDetail(&timeRange);
     } else {
-        QOrganizerEventTimeRange timeRange;
+        QOrganizerEventTime timeRange;
         if (startTime.isValid())
             timeRange.setStartDateTime(startTime);
         if (endTime.isValid())
@@ -1045,7 +1044,7 @@ void tst_SymbianOmAsync::addManagers()
 {
     QTest::addColumn<QString>("managerName");
 
-    QStringList managerNames = QOrganizerItemManager::availableManagers();
+    QStringList managerNames = QOrganizerManager::availableManagers();
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
     // TODO: memory backend does not have async API implemented

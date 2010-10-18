@@ -41,7 +41,7 @@
 #include <qorganizeritemdetails.h>
 
 #include "qdeclarativeorganizermodel_p.h"
-#include "qorganizeritemmanager.h"
+#include "qorganizermanager.h"
 #include "qversitreader.h"
 #include "qversitwriter.h"
 #include "qversitorganizerimporter.h"
@@ -73,7 +73,7 @@ public:
     }
 
     QList<QDeclarativeOrganizerItem*> m_items;
-    QOrganizerItemManager* m_manager;
+    QOrganizerManager* m_manager;
     QDeclarativeOrganizerItemFetchHint* m_fetchHint;
     QList<QDeclarativeOrganizerItemSortOrder*> m_sortOrders;
     QDeclarativeOrganizerItemFilter* m_filter;
@@ -112,7 +112,7 @@ QString QDeclarativeOrganizerModel::manager() const
 
 QStringList QDeclarativeOrganizerModel::availableManagers() const
 {
-    return QOrganizerItemManager::availableManagers();
+    return QOrganizerManager::availableManagers();
 }
 
 QDateTime QDeclarativeOrganizerModel::startPeriod() const
@@ -159,7 +159,7 @@ void QDeclarativeOrganizerModel::exportItems(const QString& fileName)
    bool ok = file->open(QIODevice::ReadWrite);
    if (ok) {
       d->m_writer.setDevice(file);
-      d->m_writer.startWriting(QList<QVersitDocument>() << document);
+      d->m_writer.startWriting(document);
    }
 }
 
@@ -183,7 +183,7 @@ void QDeclarativeOrganizerModel::setManager(const QString& managerName)
         delete d->m_manager;
 
 
-    d->m_manager = new QOrganizerItemManager(managerName);
+    d->m_manager = new QOrganizerManager(managerName);
 
     qWarning() << "Changed backend to: " << managerName;
     connect(d->m_manager, SIGNAL(dataChanged()), this, SLOT(fetchAgain()));
@@ -243,7 +243,7 @@ void QDeclarativeOrganizerModel::startImport(QVersitReader::State state)
             d->m_reader.setDevice(0);
 
             if (d->m_manager) {
-                if (d->m_manager->saveItems(&items, QOrganizerCollectionLocalId()))//TODO..
+                if (d->m_manager->saveItems(&items))
                     qWarning() << "items imported.";
                     fetchAgain();
             }
@@ -269,7 +269,7 @@ void QDeclarativeOrganizerModel::fetchAgain()
     req->setFilter(d->m_filter? d->m_filter->filter() : QOrganizerItemFilter());
     req->setFetchHint(d->m_fetchHint ? d->m_fetchHint->fetchHint() : QOrganizerItemFetchHint());
 
-    connect(req,SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(itemFetched()));
+    connect(req,SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), this, SLOT(itemFetched()));
 
     req->start();
     emit itemsChanged();
@@ -306,7 +306,7 @@ void QDeclarativeOrganizerModel::saveItem(QDeclarativeOrganizerItem* di)
         req->setManager(d->m_manager);
         req->setItem(c);
 
-        connect(req,SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(itemSaved()));
+        connect(req,SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), this, SLOT(itemSaved()));
 
         req->start();
     }
@@ -356,7 +356,7 @@ void QDeclarativeOrganizerModel::removeItems(const QList<uint>& ids)
 
     req->setItemIds(localIds);
 
-    connect(req,SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(itemRemoved()));
+    connect(req,SIGNAL(stateChanged(QOrganizerAbstractRequest::State)), this, SLOT(itemRemoved()));
 
     req->start();
 }
@@ -371,7 +371,7 @@ void QDeclarativeOrganizerModel::itemRemoved()
 {
     QOrganizerItemRemoveRequest* req = qobject_cast<QOrganizerItemRemoveRequest*>(QObject::sender());
     if (req->isFinished()) {
-         if (req->error() == QOrganizerItemManager::NoError)
+         if (req->error() == QOrganizerManager::NoError)
             fetchAgain();
          req->deleteLater();
     }

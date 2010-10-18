@@ -136,7 +136,6 @@ Q_SIGNALS:
     void centerChanged(const QGeoCoordinate &coordinate);
     void mapTypeChanged(QGraphicsGeoMap::MapType mapType);
     void connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode);
-
     void updateMapDisplay(const QRectF &target = QRectF());
 
 private:

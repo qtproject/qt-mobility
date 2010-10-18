@@ -66,7 +66,7 @@ Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerIte
 Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id);
 #endif
 
-class QOrganizerItemManagerEngine;
+class QOrganizerManagerEngine;
 class QOrganizerItemEngineLocalId;
 
 class QOrganizerItemId;
@@ -98,7 +98,7 @@ private:
     Q_ORGANIZER_EXPORT friend QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id);
 #endif
     Q_ORGANIZER_EXPORT friend uint qHash(const QOrganizerItemLocalId& key);
-    friend class QOrganizerItemManagerEngine;
+    friend class QOrganizerManagerEngine;
 };
 
 class QOrganizerItemIdPrivate;
@@ -132,8 +132,8 @@ QTM_END_NAMESPACE
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemLocalId), Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemId), Q_MOVABLE_TYPE);
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerItemLocalId));
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerItemId));
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerItemLocalId))
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QOrganizerItemId))
 
 
 #endif

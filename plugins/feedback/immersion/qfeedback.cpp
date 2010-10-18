@@ -59,6 +59,11 @@ QFeedbackImmersion::QFeedbackImmersion() : QObject(qApp)
         //that should be done once
         //error management
         qWarning() << "the Immersion library could not be initialized";
+    } else {
+        const int nbDev = ImmVibeGetDeviceCount();
+        for (int i = 0; i < nbDev; ++i) {
+            actuatorList << createFeedbackActuator(this, i);
+        }
     }
 }
 
@@ -76,15 +81,9 @@ QFeedbackInterface::PluginPriority QFeedbackImmersion::pluginPriority()
     return PluginNormalPriority;
 }
 
-QList<QFeedbackActuator> QFeedbackImmersion::actuators()
+QList<QFeedbackActuator*> QFeedbackImmersion::actuators()
 {
-    QList<QFeedbackActuator> ret;
-    const int nbDev = ImmVibeGetDeviceCount();
-    for (int i = 0; i < nbDev; ++i) {
-        ret << createFeedbackActuator(i);
-    }
-
-    return ret;
+    return actuatorList;
 }
 
 void QFeedbackImmersion::setActuatorProperty(const QFeedbackActuator &actuator, ActuatorProperty prop, const QVariant &value)
@@ -286,7 +285,13 @@ QFeedbackEffect::State QFeedbackImmersion::effectState(const QFeedbackHapticsEff
 
 void QFeedbackImmersion::setLoaded(QFeedbackFileEffect *effect, bool load)
 {
-    const QString fileName = effect->fileName();
+    const QUrl url = effect->source();
+
+    // This doesn't handle qrc urls..
+    const QString fileName = url.toLocalFile();
+    if (fileName.isEmpty())
+        return;
+
     if (!load && !fileData.contains(fileName))
         return;
 

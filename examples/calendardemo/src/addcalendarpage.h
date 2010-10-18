@@ -45,7 +45,7 @@
 #include <qorganizercollection.h>
 
 QTM_BEGIN_NAMESPACE
-class QOrganizerItemManager;
+class QOrganizerManager;
 class QOrganizerCollection;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
@@ -67,7 +67,7 @@ public:
 public Q_SLOTS:
     void cancelClicked();
     void saveClicked();
-    void calendarChanged(QOrganizerItemManager *manager, QOrganizerCollection& calendar);
+    void calendarChanged(QOrganizerManager *manager, QOrganizerCollection& calendar);
 
 #if defined(Q_WS_MAEMO_5)
     void colorChanged(const QString&);
@@ -80,7 +80,7 @@ Q_SIGNALS:
     void showPreviousPage();
 
 private:
-    QOrganizerItemManager *m_manager;
+    QOrganizerManager *m_manager;
     QOrganizerCollection m_collection;
     QAction *m_saveOrNextSoftKey;
 

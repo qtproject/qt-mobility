@@ -147,7 +147,10 @@ QLandmark* LandmarkUtility::convertToQtLandmark(QString managerUri, CPosLandmark
             if (lmUrl.Length() > 0) {
                 lmBuf.Copy(lmUrl);
                 QString LandmarkUrl((QChar*) (lmBuf.Ptr()), lmBuf.Length());
-                qtLandmark->setUrl(LandmarkUrl);
+                //qDebug() << "landmark url " << LandmarkUrl;
+                //TODO: tmp fix, need to know exact reason.
+                if(LandmarkUrl != "0") 
+                    qtLandmark->setUrl(LandmarkUrl);
             }
         }
 
@@ -441,7 +444,6 @@ void LandmarkUtility::setSymbianLandmarkL(CPosLandmark& symbianLandmark, QLandma
     if (catIds.Count() > 0) {
         for (int i = 0; i < catIds.Count(); ++i) {
             symbianLandmark.RemoveCategory(catIds[i]);
-            ExecuteAndDeleteLD(catMgr->RemoveCategoryFromLandmarksL(catIds[i], lmIds));
         }
     }
 
@@ -652,8 +654,9 @@ RArray<TPosLmItemId> LandmarkUtility::getSymbianLandmarkIds(QList<QLandmarkId>& 
     for (int i = 0; i < qtLandmarkIds.size(); ++i) {
         TPosLmItemId lmId = convertToSymbianLandmarkId(qtLandmarkIds.at(i));
         if (lmId == KPosLmNullItemId) {
-            symbianLandmarkIds.Reset();
-            return symbianLandmarkIds;
+            //if one of the ids is invalid we ignore it
+            //and not return it in the list
+            //this is to let the id filter find a subset of matches
         }
         else
             symbianLandmarkIds.Append(lmId);

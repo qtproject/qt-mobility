@@ -13,14 +13,14 @@ EXPORTS
 	_ZN10QtMobility17QFeedbackActuator16staticMetaObjectE @ 12 NONAME DATA 16
 	_ZN10QtMobility17QFeedbackActuator19getStaticMetaObjectEv @ 13 NONAME
 	_ZN10QtMobility17QFeedbackActuator9actuatorsEv @ 14 NONAME
-	_ZN10QtMobility17QFeedbackActuatorC1Ei @ 15 NONAME
-	_ZN10QtMobility17QFeedbackActuatorC1Ev @ 16 NONAME
-	_ZN10QtMobility17QFeedbackActuatorC2Ei @ 17 NONAME
-	_ZN10QtMobility17QFeedbackActuatorC2Ev @ 18 NONAME
+    _ZN10QtMobility17QFeedbackActuatorC1Ei @ 15 NONAME ABSENT
+    _ZN10QtMobility17QFeedbackActuatorC1Ev @ 16 NONAME ABSENT
+    _ZN10QtMobility17QFeedbackActuatorC2Ei @ 17 NONAME ABSENT
+    _ZN10QtMobility17QFeedbackActuatorC2Ev @ 18 NONAME ABSENT
 	_ZN10QtMobility18QFeedbackInterface11reportErrorEPKNS_15QFeedbackEffectENS1_9ErrorTypeE @ 19 NONAME
 	_ZN10QtMobility19QFeedbackFileEffect11qt_metacallEN11QMetaObject4CallEiPPv @ 20 NONAME
 	_ZN10QtMobility19QFeedbackFileEffect11qt_metacastEPKc @ 21 NONAME
-	_ZN10QtMobility19QFeedbackFileEffect11setFileNameERK7QString @ 22 NONAME
+	_ZN10QtMobility19QFeedbackFileEffect9setSourceERK4QUrl @ 22 NONAME
 	_ZN10QtMobility19QFeedbackFileEffect16staticMetaObjectE @ 23 NONAME DATA 16
 	_ZN10QtMobility19QFeedbackFileEffect18supportedMimeTypesEv @ 24 NONAME
 	_ZN10QtMobility19QFeedbackFileEffect19getStaticMetaObjectEv @ 25 NONAME
@@ -37,7 +37,7 @@ EXPORTS
 	_ZN10QtMobility22QFeedbackFileInterface8instanceEv @ 36 NONAME
 	_ZN10QtMobility22QFeedbackHapticsEffect11qt_metacallEN11QMetaObject4CallEiPPv @ 37 NONAME
 	_ZN10QtMobility22QFeedbackHapticsEffect11qt_metacastEPKc @ 38 NONAME
-	_ZN10QtMobility22QFeedbackHapticsEffect11setActuatorERKNS_17QFeedbackActuatorE @ 39 NONAME
+	_ZN10QtMobility22QFeedbackHapticsEffect11setActuatorERKNS_17QFeedbackActuatorE @ 39 NONAME ABSENT
 	_ZN10QtMobility22QFeedbackHapticsEffect11setDurationEi @ 40 NONAME
 	_ZN10QtMobility22QFeedbackHapticsEffect11setFadeTimeEi @ 41 NONAME
 	_ZN10QtMobility22QFeedbackHapticsEffect12setIntensityEf @ 42 NONAME
@@ -53,7 +53,7 @@ EXPORTS
 	_ZN10QtMobility22QFeedbackHapticsEffectD0Ev @ 52 NONAME
 	_ZN10QtMobility22QFeedbackHapticsEffectD1Ev @ 53 NONAME
 	_ZN10QtMobility22QFeedbackHapticsEffectD2Ev @ 54 NONAME
-	_ZN10QtMobility25QFeedbackHapticsInterface22createFeedbackActuatorEi @ 55 NONAME
+	_ZN10QtMobility25QFeedbackHapticsInterface22createFeedbackActuatorEi @ 55 NONAME ABSENT
 	_ZN10QtMobility25QFeedbackHapticsInterface8instanceEv @ 56 NONAME
 	_ZNK10QtMobility15QFeedbackEffect10metaObjectEv @ 57 NONAME
 	_ZNK10QtMobility15QFeedbackEffect5errorENS0_9ErrorTypeE @ 58 NONAME
@@ -66,7 +66,7 @@ EXPORTS
 	_ZNK10QtMobility19QFeedbackFileEffect10metaObjectEv @ 65 NONAME
 	_ZNK10QtMobility19QFeedbackFileEffect5stateEv @ 66 NONAME
 	_ZNK10QtMobility19QFeedbackFileEffect8durationEv @ 67 NONAME
-	_ZNK10QtMobility19QFeedbackFileEffect8fileNameEv @ 68 NONAME
+	_ZNK10QtMobility19QFeedbackFileEffect6sourceEv @ 68 NONAME
 	_ZNK10QtMobility19QFeedbackFileEffect8isLoadedEv @ 69 NONAME
 	_ZNK10QtMobility22QFeedbackHapticsEffect10attackTimeEv @ 70 NONAME
 	_ZNK10QtMobility22QFeedbackHapticsEffect10metaObjectEv @ 71 NONAME
@@ -88,4 +88,17 @@ EXPORTS
 	_ZTVN10QtMobility19QFeedbackFileEffectE @ 87 NONAME
 	_ZTVN10QtMobility22QFeedbackHapticsEffectE @ 88 NONAME
 	_ZNK10QtMobility17QFeedbackActuatoreqERKS0_ @ 89 NONAME
+    _ZN10QtMobility15QFeedbackEffect12stateChangedEv @ 90 NONAME
+    _ZN10QtMobility17QFeedbackActuator11qt_metacallEN11QMetaObject4CallEiPPv @ 91 NONAME
+    _ZN10QtMobility17QFeedbackActuator11qt_metacastEPKc @ 92 NONAME
+    _ZN10QtMobility17QFeedbackActuator14enabledChangedEv @ 93 NONAME
+    _ZN10QtMobility17QFeedbackActuatorC1EP7QObject @ 94 NONAME
+    _ZN10QtMobility17QFeedbackActuatorC1EP7QObjecti @ 95 NONAME
+    _ZN10QtMobility17QFeedbackActuatorC2EP7QObject @ 96 NONAME
+    _ZN10QtMobility17QFeedbackActuatorC2EP7QObjecti @ 97 NONAME
+    _ZN10QtMobility22QFeedbackHapticsEffect11setActuatorEPNS_17QFeedbackActuatorE @ 98 NONAME
+    _ZN10QtMobility25QFeedbackHapticsInterface22createFeedbackActuatorEP7QObjecti @ 99 NONAME
+    _ZNK10QtMobility17QFeedbackActuator10metaObjectEv @ 100 NONAME
+    _ZTIN10QtMobility17QFeedbackActuatorE @ 101 NONAME
+    _ZTVN10QtMobility17QFeedbackActuatorE @ 102 NONAME
 

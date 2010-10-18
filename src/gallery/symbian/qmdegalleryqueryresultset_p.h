@@ -109,7 +109,6 @@ private:
     CMdEObjectQuery *m_query;
     QEventLoop m_eventLoop;
 
-    CMdELogicCondition *m_queryConditions;
     RArray<TItemId> m_currentObjectIDs;
 
     bool m_launchUpdateQuery;

@@ -62,7 +62,7 @@ public:
     // Destruction, cleanup
     ~COrganizerItemRequestsServiceProvider();
     // To start an asynchronous request aReq
-    bool StartRequest(QOrganizerItemAbstractRequest* aReq);
+    bool StartRequest(QOrganizerAbstractRequest* aReq);
     // To cancel ongoing iReq request
     bool CancelRequest();
     
@@ -83,24 +83,23 @@ private:
     void Reset();
     
 private: // Worker functions
-    void FetchInstance();
-    void SaveItem();
     void FetchItems();
+    void SaveItem();
+    void FetchItemsForExport();
     void FetchItemsByLocalIds();
     void FetchItemsandFilter();
     void FetchItemIds();
     void RemoveItem();
     void FetchDetailDefinition();
-    void CollectionIds();
     void FetchCollections();
     void SaveCollections();
     void RemoveCollections();
     
 private:
     QOrganizerItemSymbianEngine&            iOrganizerItemManagerEngine;
-    QOrganizerItemAbstractRequest*          iReq; // Request to be processed
+    QOrganizerAbstractRequest*          iReq; // Request to be processed
     QList<QOrganizerItemLocalId>            iItemIds;
-    QMap<int, QOrganizerItemManager::Error> iErrorMap; // Error map
+    QMap<int, QOrganizerManager::Error> iErrorMap; // Error map
     TInt                                    iIndex;
 };
 

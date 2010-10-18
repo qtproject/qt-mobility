@@ -101,7 +101,7 @@ public:
     void cbDurationChanged(TInt64 new_dur);
     void cbPositionChanged(TInt64 new_pos);
     void cbSeekableChanged(TBool seekable);
-    void cbPlaybackStopped_EOS();
+    void cbPlaybackStopped(TInt error);
     void cbPrefetchStatusChanged();
     void cbStreamInformation(TBool);
 

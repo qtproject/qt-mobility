@@ -66,8 +66,8 @@ QTM_BEGIN_NAMESPACE
 /*!
     \fn QFeedbackInterface::reportError(const QFeedbackEffect *effect, QFeedbackEffect::ErrorType error)
 
-    Allows to report error whenever necessary from a backend plugin. Errors most likely can happen
-    trying to play an effect.
+    Allows to report the specified \a error whenever necessary from a backend plugin. Errors most likely can happen
+    trying to play an effect, which should be supplied as the parameter \a effect.
 */
 
 /*!
@@ -306,7 +306,7 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
 /*!
     \fn QFeedbackHapticsInterface::actuators()
 
-    return the available actuators on the system.
+    return the available actuators on the system. The ownership of the actuators objects stays with plugin.
 */
 
 /*!
@@ -316,9 +316,9 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
 */
 
 /*!
-    \fn QFeedbackHapticsInterface::setActuatorProperty(const QFeedbackActuator& actuator, ActuatorProperty property, const QVariant & priority)
+    \fn QFeedbackHapticsInterface::setActuatorProperty(const QFeedbackActuator& actuator, ActuatorProperty property, const QVariant & value)
 
-    Sets a \a priority on the \a actuator.
+    Sets a \a value for \a property on the \a actuator.
 
     \sa ActuatorProperty
 */
@@ -341,7 +341,7 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
 /*!
     \fn QFeedbackHapticsInterface::updateEffectProperty(const QFeedbackHapticsEffect *effect, EffectProperty property)
 
-    Tells the backend that the property \property has been update for the effect \a effect.
+    Tells the backend that the \a property has been updated for the supplied \a effect.
 */
 
 /*!
@@ -377,9 +377,9 @@ QFeedbackHapticsInterface *QFeedbackHapticsInterface::instance()
     the identifiers according to their needs.
 */
 
-QFeedbackActuator QFeedbackHapticsInterface::createFeedbackActuator(int id)
+QFeedbackActuator* QFeedbackHapticsInterface::createFeedbackActuator(QObject* parent, int id)
 {
-    return QFeedbackActuator(id);
+    return new QFeedbackActuator(parent, id);
 }
 
 
@@ -432,8 +432,8 @@ QFeedbackThemeInterface *QFeedbackThemeInterface::instance()
 /*!
     \fn QFeedbackFileInterface::setLoaded(QFeedbackFileEffect* effect, bool value)
 
-    Sets the state of the effect \a effect to be loaded or unloaded.
-    Loading a file is asynchronous. Once the backend know if it has loaded or can't load the plugin, it must
+    Sets the state of the effect \a effect to be loaded if \a value is true, otherwise unloaded.
+    Loading a file is asynchronous. Once the backend knows if it has loaded or can't load the plugin, it must
     call the reportLoadFinished function.
 */
 

@@ -85,16 +85,16 @@ public: // transform functions
 
     // conversions between CComponent and QOrganizerItem (common details for all items)
     void fillInCommonCComponentDetails(QOrganizerItem *item, CComponent *component, bool setId = true);
-    CComponent* createCComponent(CCalendar *cal, const QOrganizerItem *item, QOrganizerItemManager::Error *error);
+    CComponent* createCComponent(CCalendar *cal, const QOrganizerItem *item, QOrganizerManager::Error *error);
 
     // recurrence information conversions
-    CRecurrence* createCRecurrence(const QOrganizerItem *item, QOrganizerItemManager::Error *error);
+    CRecurrence* createCRecurrence(const QOrganizerItem *item, QOrganizerManager::Error *error);
 
     // alarm setting
     QPair<qint32, qint32> modifyAlarmEvent(CCalendar *cal, QOrganizerItem *item, CComponent *component);
 
     // error code conversion
-    QOrganizerItemManager::Error calErrorToManagerError(int calError) const;
+    QOrganizerManager::Error calErrorToManagerError(int calError) const;
 
     // calendar (collection) metadata conversions
     QString fromCalendarColour(CalendarColour calendarColour);
@@ -105,6 +105,8 @@ public: // transform functions
     QString fromCalendarType(CalendarType calendarType);
     CalendarType toCalendarType(QString calendarType);
     QMap<CalendarType, QString> calendarTypeMap() const;
+
+    bool addGeoToQOIL(const QString& src, QOrganizerItemLocation* detail) const;
 
 private:
     // random GUID generation

@@ -121,10 +121,14 @@ public slots:
         echoBox->append(newMsg);
     }
 
-    void errorIPC()
+    void errorIPC(QService::UnrecoverableIPCError error)
     {
       QDateTime ts = QDateTime::currentDateTime();
-      QString newMsg = "[" + ts.toString("hh:mm") + "]" + " " + "IPC Error";
+      QString newMsg = "[" + ts.toString("hh:mm") + "]" + " " + "IPC Error! ";
+
+      if (error == QService::ErrorServiceNoLongerAvailable)
+          newMsg += "Service no longer available";
+      
       echoBox->append(newMsg);
     }
 
@@ -186,8 +190,9 @@ private:
         QObject::connect(echo, SIGNAL(broadcastMessage(QString,QDateTime)),
                          this, SLOT(receivedMessage(QString,QDateTime)));
 
+        // Connect IPC errors
         QObject::connect(echo, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)),
-                         this, SLOT(errorIPC()));
+                         this, SLOT(errorIPC(QService::UnrecoverableIPCError)));
 
         return true;
     }

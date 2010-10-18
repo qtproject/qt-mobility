@@ -157,7 +157,7 @@ The synchronous API provides the QOrganizerItemManager::item() function specific
 
 Some items which clients are interested in may not be explicitly stored in the manager,
 but rather dynamically generated given a recurrence rule which is saved in a particular
-item.  These are known as occurrences and may be retrieved by calling itemInstances().
+item.  These are known as occurrences and may be retrieved by calling itemOccurrences().
 Once retrieved, a generated occurrence may be saved into the manager, at which point it
 becomes an exception to the original item.
 
@@ -205,7 +205,7 @@ that occurs every week for the next 10 weeks.  A recurring item is created by
 creating a QOrganizerEvent or QOrganizerTodo and adding a
 QOrganizerItemRecurrence detail to it to specify the rules for when it should
 recur.  While the item occurs multiple times, the client only has to create it
-once and save it once.  When QOrganizerItemManager::itemInstances() is called,
+once and save it once.  When QOrganizerItemManager::items() is called,
 any recurring items are expanded into multiple QOrganizerEventOccurrence and
 QOrganizerTodoOccurrence items by the manager.  Each generated occurrence item
 has a local id of zero.
@@ -213,12 +213,12 @@ has a local id of zero.
 The client is able to make an exception for an occurrence by taking a generated
 item occurrence from the manager, making the necessary modifications, and
 resaving it.  When the manager is then queried with
-QOrganizerItemManager::itemInstances(), it will return the list of occurrences
+QOrganizerItemManager::items(), it will return the list of occurrences
 as before, but with the modifications in place.  The modified item will be given
 a non-zero local id, and replaces the generated one in the list.
 
 The client can also query the manager for a list of unexpanded items by calling
-QOrganizerItemManager::items().  The list of returned items will contain all
+QOrganizerItemManager::itemForExport().  The list of returned items will contain all
 items that have been saved to the manager with a call to saveItem() (of course,
 without any items removed with removeItem()).  That is, recurring events will be
 returned as is, and event occurrences will not appear unless they are exceptions

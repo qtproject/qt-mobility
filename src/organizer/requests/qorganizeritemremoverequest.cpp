@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a new organizer item remove request whose parent is the specified \a parent */
 QOrganizerItemRemoveRequest::QOrganizerItemRemoveRequest(QObject* parent)
-    : QOrganizerItemAbstractRequest(new QOrganizerItemRemoveRequestPrivate, parent)
+    : QOrganizerAbstractRequest(new QOrganizerItemRemoveRequestPrivate, parent)
 {
 }
 
@@ -92,7 +92,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemRemoveRequest::itemIds() const
 }
 
 /*! Returns the map of input organizer item list indices to errors which occurred */
-QMap<int, QOrganizerItemManager::Error> QOrganizerItemRemoveRequest::errorMap() const
+QMap<int, QOrganizerManager::Error> QOrganizerItemRemoveRequest::errorMap() const
 {
     Q_D(const QOrganizerItemRemoveRequest);
     return d->m_errors;

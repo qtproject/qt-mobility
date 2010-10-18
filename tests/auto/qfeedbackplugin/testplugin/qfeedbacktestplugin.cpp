@@ -53,6 +53,7 @@ Q_EXPORT_PLUGIN2(feedback_testplugin, QFeedbackTestPlugin)
 
 QFeedbackTestPlugin::QFeedbackTestPlugin() : QObject(qApp)
 {
+    actuators_ << createFeedbackActuator(this, 7357);
 }
 
 QFeedbackTestPlugin::~QFeedbackTestPlugin()
@@ -64,12 +65,9 @@ QFeedbackInterface::PluginPriority QFeedbackTestPlugin::pluginPriority()
     return PluginLowPriority;
 }
 
-QList<QFeedbackActuator> QFeedbackTestPlugin::actuators()
+QList<QFeedbackActuator*> QFeedbackTestPlugin::actuators()
 {
-    QList<QFeedbackActuator> ret;
-    QFeedbackActuator testActuator = createFeedbackActuator(7357); // test actuator
-    ret << testActuator;
-    return ret;
+    return actuators_;
 }
 
 void QFeedbackTestPlugin::setActuatorProperty(const QFeedbackActuator &actuator, ActuatorProperty prop, const QVariant &value)

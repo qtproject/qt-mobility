@@ -55,11 +55,18 @@
 
 #include <QVariant>
 #include <QStringList>
+#include <QSet>
 #include <qnumeric.h>
 
 #ifdef LANDMARKPRIVATE_DEBUG
 #include <QDebug>
 #endif
+
+QTM_BEGIN_NAMESPACE
+uint qHash(const QLandmarkCategoryId& key) {
+   return qHash(key.localId()) + qHash(key.managerUri());
+}
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
@@ -111,32 +118,6 @@ QLandmarkPrivate& QLandmarkPrivate::operator= (const QLandmarkPrivate & other)
 
 bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
 {
-    bool categoryIdsMatch = true;
-    //TODO: optimize using QSet
-    if (categoryIds.count() == other.categoryIds.count()) {
-        for (int i=0; i < categoryIds.count(); ++i) {
-            if (other.categoryIds.contains(categoryIds.at(i))) {
-                continue;
-            } else {
-                categoryIdsMatch = false;
-                break;
-            }
-        }
-
-        if (categoryIdsMatch == true) {
-            for (int i=0; i < other.categoryIds.count(); ++i) {
-                if (categoryIds.contains(other.categoryIds.at(i))) {
-                    continue;
-                } else {
-                    categoryIdsMatch = false;
-                    break;
-                }
-            }
-        }
-    } else {
-        categoryIdsMatch = false;
-    }
-
     bool radiusIsMatch = false;
     if (qIsNaN(radius) && qIsNaN(other.radius))
         radiusIsMatch = true;
@@ -153,7 +134,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     qDebug() << "radius:" <<  radiusIsMatch;
     qDebug() << "phoneNumber:" << (phoneNumber == other.phoneNumber);
     qDebug() << "url:" << (url == other.url);
-    qDebug() << "categoryIds:" << (categoryIdsMatch);
+    qDebug() << "categoryIds:" << (categoryIds.toSet() == other.categoryIds.toSet());
     qDebug() << "id" << (id == other.id);
 #endif
 
@@ -164,7 +145,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
             && radiusIsMatch
             && (phoneNumber == other.phoneNumber)
             && (url == other.url)
-            && (categoryIdsMatch)
+            && (categoryIds.toSet() == other.categoryIds.toSet())
            && (id == other.id));
 }
 
@@ -175,8 +156,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
 
     \ingroup landmarks-main
 
-    \brief The QLandmark class represents a location or point of interest
-           of some significance.
+    \brief The QLandmark class represents a point of interest.
 
 
     Each landmark consists of a number of core properties such as name, coordinates,
@@ -206,8 +186,6 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
 
 
     The following are restrictions of landmark details for the symbian platform:
-
-
 */
 
 /*!

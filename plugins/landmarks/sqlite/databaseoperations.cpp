@@ -836,6 +836,18 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
     QList<QLandmarkId> result;
     bool alreadySorted = false;
 
+    for (int i=0; i < sortOrders.count(); ++i) {
+        if (sortOrders.at(i).type() == QLandmarkSortOrder::NameSort) {
+            QLandmarkNameSort nameSort = sortOrders.at(i);
+            if (nameSort.caseSensitivity() == Qt::CaseSensitive) {
+                *error = QLandmarkManager::NotSupportedError;
+                *errorString = "Case sensitive sorting is not supported";
+                return QList<QLandmarkId>();
+            }
+
+        }
+    }
+
     QSqlDatabase db = QSqlDatabase::database(connectionName, false);
     if (!db.isValid()) {
         if(error)
@@ -1133,12 +1145,12 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
         QLandmarkCategoryId categoryId = categoryFilter.categoryId();
 
         if (categoryId.managerUri() != managerUri) {
-            *error = QLandmarkManager::CategoryDoesNotExistError;
-            *errorString = "The category does not exist in the manager because the managers do not match";
+            *error = QLandmarkManager::NoError;
+            *errorString = "";
             return result;
         } else if (categoryId.localId().isEmpty()) {
-            *error = QLandmarkManager::CategoryDoesNotExistError;
-            *errorString = "The category does not exist in the manager because the local id of the category is empty";
+            *error = QLandmarkManager::NoError;
+            *errorString = "";
             return result;
         }
         bindValues.clear();
@@ -1148,9 +1160,8 @@ QList<QLandmarkId> DatabaseOperations::landmarkIds(const QLandmarkFilter& filter
         }
 
         if (!query.next()) {
-            *error = QLandmarkManager::CategoryDoesNotExistError;
-            *errorString = QString("Category with local id %1, does not exist in database")
-                            .arg(categoryId.localId());
+            *error = QLandmarkManager::NoError;
+            *errorString = "";
             return result;
         }
 
@@ -2478,24 +2489,6 @@ bool DatabaseOperations::removeCategoryHelper(const QLandmarkCategoryId &categor
         return false;
     }
 
-    if (!executeQuery(&query,"SELECT landmarkId FROM landmark_category WHERE categoryId = :catId",bindValues,error,errorString)) {
-        return false;
-    }
-
-    QSqlQuery query2(db);
-    QMap<QString,QVariant> bindValues2;
-
-    QString queryString2 = QString("INSERT INTO landmark_notification(timestamp, action, landmarkId) "
-                                   "VALUES((strftime(\"%f\", \"now\") - strftime(\"%S\", \"now\") + strftime(\"%s\"))*1000,'CHANGE', :lmId );");
-
-    while(query.next()) {
-        bindValues2.clear();
-        bindValues2.insert("lmId", query.value(0));
-        if (!executeQuery(&query2,queryString2, bindValues2,error,errorString)) {
-            return false;
-        }
-    }
-
     QStringList queryStrings;
     queryStrings << "DELETE FROM category WHERE id = :catId";
     queryStrings << "DELETE FROM landmark_category WHERE categoryId = :catId";
@@ -2709,7 +2702,7 @@ bool DatabaseOperations::importLandmarks(QIODevice *device,
 
 bool DatabaseOperations::exportLandmarks( QIODevice *device,
                      const QString &format,
-                     QList<QLandmarkId> landmarkIds,
+                     const QList<QLandmarkId> &landmarkIds,
                      QLandmarkManager::TransferOption option,
                      QLandmarkManager::Error *error,
                      QString *errorString) const
@@ -2909,7 +2902,7 @@ bool DatabaseOperations::importLandmarksGpx(QIODevice *device,
 }
 
 bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
-                        QList<QLandmarkId> landmarkIds,
+                        const QList<QLandmarkId> &landmarkIds,
                         QLandmarkManager::TransferOption option,
                         QLandmarkManager::Error *error,
                         QString *errorString) const
@@ -2959,7 +2952,7 @@ bool DatabaseOperations::exportLandmarksLmx(QIODevice *device,
 }
 
 bool DatabaseOperations::exportLandmarksGpx(QIODevice *device,
-                        QList<QLandmarkId> landmarkIds,
+                        const QList<QLandmarkId> &landmarkIds,
                         QLandmarkManager::Error *error,
                         QString *errorString) const
 {
@@ -3086,19 +3079,23 @@ QLandmarkManager::SupportLevel DatabaseOperations::filterSupportLevel(const QLan
     return QLandmarkManager::NoSupport;
 }
 
-QLandmarkManager::SupportLevel DatabaseOperations::sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders) const
+QLandmarkManager::SupportLevel DatabaseOperations::sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder) const
 {
     QLandmarkManager::SupportLevel currentLevel = QLandmarkManager::NativeSupport;
-    foreach(const QLandmarkSortOrder &sortOrder, sortOrders){
-        switch(sortOrder.type()) {
-            case (QLandmarkSortOrder::DefaultSort):
-                continue;
-            case (QLandmarkSortOrder::NameSort):
-                continue;
-            default:
-                currentLevel = QLandmarkManager::NoSupport;
-        }
+
+    switch(sortOrder.type()) {
+    case (QLandmarkSortOrder::DefaultSort):
+        break;
+    case (QLandmarkSortOrder::NameSort): {
+        QLandmarkNameSort  nameSort = sortOrder;
+        if (nameSort.caseSensitivity() == Qt::CaseSensitive)
+            currentLevel = QLandmarkManager::NoSupport;
+        break;
     }
+    default:
+        currentLevel = QLandmarkManager::NoSupport;
+    }
+
     return currentLevel;
 }
 

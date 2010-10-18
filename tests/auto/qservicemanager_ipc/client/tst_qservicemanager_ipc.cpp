@@ -204,7 +204,7 @@ void tst_QServiceManager_IPC::initTestCase()
 
 void tst_QServiceManager_IPC::ipcError(QService::UnrecoverableIPCError err)
 {  
-  ipcfailure = true;  
+    ipcfailure = true;  
 }
 
 void tst_QServiceManager_IPC::cleanupTestCase()
@@ -1020,11 +1020,6 @@ void tst_QServiceManager_IPC::testIpcFailure()
     while (!ipcfailure && i++ < 50)
         QTest::qWait(50);
     
-#ifndef Q_OS_SYMBIAN
-#ifndef QT_NO_DBUS
-    QEXPECT_FAIL("", "Serviceframework IPC Failure failed", Abort);
-#endif
-#endif
     QVERIFY(ipcfailure);
   
 // TODO restart the connection

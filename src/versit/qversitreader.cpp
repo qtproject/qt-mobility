@@ -251,13 +251,11 @@ void QVersitReader::cancel()
 bool QVersitReader::waitForFinished(int msec)
 {
     State state = d->state();
-    if (state == ActiveState) {
+    if (state != InactiveState) {
         if (msec <= 0)
             return d->wait(ULONG_MAX);
         else
             return d->wait(msec);
-    } else if (state == FinishedState) {
-        return true;
     } else {
         return false;
     }
