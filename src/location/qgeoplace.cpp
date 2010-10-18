@@ -91,6 +91,9 @@ QGeoPlace::QGeoPlace()
 {
 }
 
+/*!
+    \internal
+*/
 QGeoPlace::QGeoPlace(QGeoPlacePrivate *dd)
         : d_ptr(dd) {}
 
