@@ -55,6 +55,8 @@ QTM_BEGIN_NAMESPACE
 
     Conceptually it performs an AND operation and thus may be used to
     select landmarks which match all of it's constituent filters.
+    If the intersection filter contains a proximity filter at the top level (i.e. which is not nested
+    inside another filter) then the landmarks will be sorted by distance according to that filter.
 
     Whether an intersection filter can be comprised of
     compound filters  (i.e. union or intersection filters) is backend specific.

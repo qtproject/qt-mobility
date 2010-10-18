@@ -44,11 +44,15 @@
 #include <qsensorbackend.h>
 #include "gruesensor.h"
 #include <qambientlightsensor.h>
+#include <QTime>
 
 QTM_USE_NAMESPACE
 
-class gruesensorimpl : public QSensorBackend, public QAmbientLightFilter
+class QTimer;
+
+class gruesensorimpl : public QSensorBackend
 {
+    Q_OBJECT
 public:
     static char const * const id;
 
@@ -57,11 +61,15 @@ public:
     void start();
     void stop();
 
-    bool filter(QAmbientLightReading *reading);
+private Q_SLOTS:
+    void lightChanged();
+    void increaseChance();
 
 private:
     GrueSensorReading m_reading;
     QAmbientLightSensor *lightSensor;
+    QTimer *darkTimer;
+    QTime timer;
 };
 
 #endif

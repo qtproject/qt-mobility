@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,24 +39,18 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QMainWindow>
-#include <QDeclarativeView>
-#include <QDeclarativeContext>
-#include "buzzer.h"
+#include <QtGui/QApplication>
+#include "hapticsquare.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QApplication a(argc, argv);
+    a.addLibraryPath("../../plugins"); // allows the plugins to be loaded
+    HapticSquare w;
+#if defined Q_OS_SYMBIAN || defined (Q_OS_WINCE)
+    w.setWindowState(Qt::WindowMaximized);
+#endif
+    w.show();
 
-    QMainWindow mw;
-    QDeclarativeView *view = new QDeclarativeView(&mw);
-    view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    view->rootContext()->setContextProperty("hapticplayer", new Buzzer);
-
-    view->setSource(QUrl::fromLocalFile(":/hapticsquare.qml"));
-    mw.setCentralWidget(view);
-    mw.showMaximized();
-
-    return app.exec();
+    return a.exec();
 }

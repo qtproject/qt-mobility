@@ -16,12 +16,15 @@
 
 // INCLUDE FILES
 #include "c12keykeymap.h"
+#include "predictivesearchkeymapdefs.h"
+#include "ckoreankeymap.h"
 // This macro suppresses log writes
-// #define NO_PRED_SEARCH_LOGS
+//#define NO_PRED_SEARCH_LOGS
 #include "predictivesearchlog.h"
 
 // Detection for Thai language is needed for both hardcoded and Orbit keymaps
 #include <QTextCodec>
+#include <hbinputkeymap.h>
 #include <hbinputkeymapfactory.h>
 //#include <hbinputsettingproxy.h>
 
@@ -68,8 +71,7 @@ const QChar KPadChar		   = 'f';
 const QChar KLowerLimitPadding = '0';
 const QChar KUpperLimitPadding = 'f';
 
-const int KLatin1 = 4; // ISO_8859-1
-const int KThaiLanguage = 2259; // Thai Industrial Standards Institute
+const int KMibThaiLanguage = 2259; // Thai Industrial Standards Institute
 
 
 // ============================== MEMBER FUNCTIONS ============================
@@ -97,6 +99,9 @@ C12keyKeyMap* C12keyKeyMap::NewL()
 C12keyKeyMap::~C12keyKeyMap()
     {
     PRINT(_L("Enter C12keyKeyMap::~C12keyKeyMap"));
+
+	delete iKoreanKeymap;
+
     PRINT(_L("End C12keyKeyMap::~C12keyKeyMap"));
     }
 
@@ -169,8 +174,61 @@ TInt C12keyKeyMap::ComputeValue(QString aString,
 	return KErrNone;
 	}
 
+
 // ----------------------------------------------------------------------------
-// C12keyKeyMap::SetHardcodedCharacters
+// C12keyKeyMap::ReadExtraCharacters
+// The special chars that are listed in HbKeyboardSctPortrait, but not in
+// HbKeyboardVirtual12Key, are mapped to key-* except the hardcoded characters
+// "+*#".
+// ----------------------------------------------------------------------------
+TInt C12keyKeyMap::ReadExtraCharacters(const HbInputLanguage& aLanguage)
+	{
+	PRINT(_L("C12keyKeyMap::ReadExtraCharacters"));
+
+	TInt count(0); // How many new keys have been mapped
+
+#if defined(NEW_KEYMAP_FACTORY_API)
+	// Takes ownership
+	QScopedPointer<const HbKeymap> keymap(
+		HbKeymapFactory::instance()->keymap(aLanguage, HbKeymapFactory::NoCaching));
+#else
+	const HbKeymap* keymap =
+		HbKeymapFactory::instance()->keymap(aLanguage, HbKeymapFactory::Default);
+#endif
+
+	if (keymap)
+		{
+		TInt i(0);
+		const HbMappedKey* mappedKey = keymap->keyForIndex(HbKeyboardSctPortrait, i);
+		while (mappedKey)
+			{
+			AddNewKeyToMap(EKeyStar, mappedKey->characters(HbModifierNone), count);
+			mappedKey = keymap->keyForIndex(HbKeyboardSctPortrait, ++i);
+			}
+		}
+	else
+		{
+		PRINT1(_L("no keymap for language %d"), aLanguage.language());
+		}
+
+    PRINT1(_L("End C12keyKeyMap::ReadExtraCharacters added %d chars"), count);
+	return count;
+	}
+
+// ----------------------------------------------------------------------------
+// C12keyKeyMap::CheckLanguage
+// ----------------------------------------------------------------------------
+MLanguageSpecificKeymap* C12keyKeyMap::CheckLanguage(QString aSource) const
+	{
+	if (iKoreanKeymap->IsLanguageSupported(aSource))
+		{
+		return iKoreanKeymap;
+		}
+	return NULL;
+	}
+
+// ----------------------------------------------------------------------------
+// C12keyKeyMap::SelectLanguages
 // In emulator (except in unit tests), select just the default language, as new
 // SDKs have over 40 languages, causing out of memory error.
 // In hardware and when compiling unit tests in emulator, select all languages
@@ -254,6 +312,8 @@ void C12keyKeyMap::ConstructL()
         User::Leave(err);
         }
 
+	iKoreanKeymap = CKoreanKeyMap::NewL();
+
 	PRINT(_L("End C12keyKeyMap::ConstructL"));
 	}
 
@@ -262,8 +322,8 @@ void C12keyKeyMap::ConstructL()
 // ----------------------------------------------------------------------------
 void C12keyKeyMap::GetTextCodecs()
     {
-    iLatinCodec = QTextCodec::codecForMib(KLatin1);
-    iThaiCodec = QTextCodec::codecForMib(KThaiLanguage);
+    iLatinCodec = QTextCodec::codecForMib(KMibLatin1);
+    iThaiCodec = QTextCodec::codecForMib(KMibThaiLanguage);
     }
 
 // End of file

@@ -395,6 +395,8 @@ void QDeclarativeMessageModelPrivate::updateFilter()
     \qmlclass MessageModel QDeclarativeMessageModel
     \brief The MessageModel element provides access to messages.
 
+    \ingroup qml-messaging
+
     This element is part of the \bold{QtMobility.messaging 1.1} module.
 
     MessageModel provides a model of messages from the message store.

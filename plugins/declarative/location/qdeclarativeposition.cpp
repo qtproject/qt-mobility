@@ -53,24 +53,27 @@ QTM_BEGIN_NAMESPACE
     \brief The Position element holds various positional data, such as coordinate
     (longitude, latitude, altitude) and speed.
     \inherits QObject
-
     \ingroup qml-location
 
     The Position element holds various positional data, such as \l coordinate,
-    (longitude, latitude, and altitude) and \l speed. Not all of these are always available
-    (e.g. latitude and longitude may be valid, but speed update has not been received
-    or set manually), and hence there are corresponding validity attributes which can be
-    used when writing applications.
+    (longitude, latitude, and altitude) and \l speed, as well as \l timestamp.
+
+    Not all of these are always available (e.g. latitude and longitude may be valid,
+    but speed update has not been received or set manually), and hence there are
+    corresponding validity attributes which can be used when writing applications.
+
+    At the time being the Position element is a read-only element (meaning it does
+    not have exposed write accessors), primarily used by \l PositionSource.
 
     The Position element is part of the \bold{QtMobility.location 1.1} module.
 
-    \sa PositionSource
+    \sa PositionSource, Coordinate
 
 */
 
 QDeclarativePosition::QDeclarativePosition(QObject* parent)
         : QObject(parent), m_latitudeValid(false), m_longitudeValid(false),
-        m_altitudeValid(false), m_speed(0), m_speedValid(false)
+        m_altitudeValid(false), m_speedValid(false)
 {
 }
 
@@ -78,6 +81,20 @@ QDeclarativePosition::~QDeclarativePosition()
 {
 }
 
+/*!
+    \qmlproperty Coordinate Position::coordinate
+
+    This property holds the latitude, longitude, and altitude
+    value of the Position.
+
+    Note: due to its inherent changing nature, the coordinateChanged()
+    - signal is emitted also when the values of the coordinate changes,
+    which enables easier data binding to Coordinate element instead of
+    directly connecting to e.g. its latitude and longitude.
+
+    \sa longitudeValid latitudeValid altitudeValid
+
+*/
 
 void QDeclarativePosition::setCoordinate(QGeoCoordinate coordinate)
 {
@@ -109,6 +126,7 @@ void QDeclarativePosition::setCoordinate(QGeoCoordinate coordinate)
             emit latitudeValidChanged();
         }
     }
+    emit coordinateChanged();
 }
 
 QDeclarativeCoordinate* QDeclarativePosition::coordinate()
@@ -121,10 +139,9 @@ QDeclarativeCoordinate* QDeclarativePosition::coordinate()
 
     This property is true if coordinate's latitude has been set
     (to indicate whether that data has been received or not, as every update
-    does not necessarily contain all data). 'Valid' is meaningful only if the
-    latitude (coordinate) is from \l PositionSource.
+    does not necessarily contain all data).
 
-    \sa latitude
+    \sa coordinate
 
 */
 
@@ -139,10 +156,9 @@ bool QDeclarativePosition::isLatitudeValid() const
 
     This property is true if coordinate's longitude has been set
     (to indicate whether that data has been received or not, as every update
-    does not necessarily contain all data). 'Valid' is meaningful only if the
-    longitude is from \l PositionSource.
+    does not necessarily contain all data).
 
-    \sa longitude
+    \sa coordinate
 
 */
 
@@ -157,8 +173,7 @@ bool QDeclarativePosition::isLongitudeValid() const
 
     This property is true if \l speed has been set
     (to indicate whether that data has been received or not, as every update
-    does not necessarily contain all data). 'Valid' is meaningful only if the
-    speed is from \l PositionSource.
+    does not necessarily contain all data).
 
     \sa speed
 
@@ -174,10 +189,9 @@ bool QDeclarativePosition::isSpeedValid() const
 
     This property is true if coordinate's altitude has been set
     (to indicate whether that data has been received or not, as every update
-    does not necessarily contain all data). 'Valid' is meaningful only if the
-    altitude is from \l PositionSource.
+    does not necessarily contain all data).
 
-    \sa altitude
+    \sa coordinate
 
 */
 
@@ -190,10 +204,9 @@ bool QDeclarativePosition::isAltitudeValid() const
     \qmlproperty double Position::speed
 
     This property holds the value of speed (groundspeed, metres / second).
-    If the property has not been set, its default value is zero.
+    Currently a read-only property.
 
-    \sa speedValid, altitude, longitude, latitude
-
+    \sa speedValid, coordinate
 */
 
 void QDeclarativePosition::setSpeed(double speed)

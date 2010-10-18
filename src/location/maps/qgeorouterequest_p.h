@@ -58,6 +58,7 @@
 #include <QList>
 #include <QSharedData>
 #include <QDateTime>
+#include <QMap>
 
 QTM_BEGIN_NAMESPACE
 
@@ -74,10 +75,11 @@ public:
     QList<QGeoBoundingBox> excludeAreas;
     int numberAlternativeRoutes;
     QGeoRouteRequest::TravelModes travelModes;
-    QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes;
+    QMap < QGeoRouteRequest::FeatureType,
+         QGeoRouteRequest::FeatureWeight > featureWeights;
     QGeoRouteRequest::RouteOptimizations routeOptimization;
     QGeoRouteRequest::SegmentDetail segmentDetail;
-    QGeoRouteRequest::InstructionDetail instructionDetail;
+    QGeoRouteRequest::ManeuverDetail maneuverDetail;
 };
 
 QTM_END_NAMESPACE

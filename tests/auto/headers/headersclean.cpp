@@ -384,12 +384,11 @@
 //QtServiceFramework
 #include <qservicecontext.h>
 #include <qabstractsecuritysession.h>
-#include <qremoteserviceclassregister.h>
 #include <qserviceplugininterface.h>
 #include <qservicefilter.h>
 #include <qservice.h>
 #include <qserviceinterfacedescriptor.h>
-#include <qremoteservicecontrol.h>
+#include <qremoteserviceregister.h>
 #include <qservicemanager.h>
 
 //QtSystemInfo
@@ -400,10 +399,6 @@
 #include <qsystemdeviceinfo.h>
 #include <qsystemscreensaver.h>
 #include <qsystemstorageinfo.h>
-
-//QtTelephony
-#include <qtelephonycallinfo.h>
-#include <qtelephonycalllist.h>
 
 //QtVersit
 #include <qversitcontacthandler.h>

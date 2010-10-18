@@ -56,41 +56,17 @@
 #include "qgeomapobject.h"
 #include "qgeomapobjectinfo.h"
 
-#include <QList>
-#include <QRectF>
-#include "qgeoboundingbox.h"
-
-class QPainter;
-class QPainterPath;
-class QStyleOptionGraphicsItem;
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapObject;
 class QGeoMapData;
-class QGeoMapDataPrivate;
 
 class QGeoMapObjectPrivate
 {
 public:
-    QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent, QGeoMapObject::Type type = QGeoMapObject::ContainerType);
-    QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapData *mapData, QGeoMapObject::Type type = QGeoMapObject::ContainerType);
+    QGeoMapObjectPrivate();
     virtual ~QGeoMapObjectPrivate();
-
-    void setMapData(QGeoMapData *mapData);
-
-    void addToParent(QGeoMapObject *parent);
-    void removeFromParent();
-
-    void objectUpdated();
-    void mapUpdated();
-
-    QGeoBoundingBox boundingBox() const;
-    bool contains(const QGeoCoordinate &coord) const;
-
-    QGeoMapObject::Type type;
-    QGeoMapObject *parent;
-    QList<QGeoMapObject *> children;
 
     int zValue;
     bool isVisible;
@@ -99,8 +75,6 @@ public:
     QGeoMapData *mapData;
     mutable QGeoMapObjectInfo *info;
 
-    QGeoMapObject *q_ptr;
-    Q_DECLARE_PUBLIC(QGeoMapObject)
     Q_DISABLE_COPY(QGeoMapObjectPrivate)
 };
 

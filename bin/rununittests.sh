@@ -66,7 +66,6 @@ cd $shell_path/../build/tests/bin
 ./tst_qservicecontext
 ./tst_icheck
 ./tst_qmetaobjectbuilder
-./tst_qremoteserviceclassregister
 ./tst_qservicemanager_ipc
 
 #BearerManagement
@@ -130,7 +129,7 @@ cd $shell_path/../build/tests/bin
 ./tst_qpaintervideosurface
 ./tst_qradiotuner
 ./tst_qvideowidget
-a
+
 #QContacts
 ./tst_qcontact
 ./tst_qcontactactions
@@ -162,6 +161,13 @@ a
 
 #QOrganizer
 ./tst_qorganizeritemmanager
+./tst_qorganizercollection
+./tst_qorganizeritem
+./tst_qorganizeritemasync
+./tst_qorganizeritemdetail
+./tst_qorganizeritemdetaildefinition
+./tst_qorganizeritemfilter
+
 
 cd $SAVED_PWD
 

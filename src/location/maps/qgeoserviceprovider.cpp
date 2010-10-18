@@ -135,7 +135,7 @@ QStringList QGeoServiceProvider::availableServiceProviders()
     and errorString() will provide details about why this is the case.
 */
 QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, const QMap<QString, QVariant> &parameters)
-        : d_ptr(new QGeoServiceProviderPrivate())
+    : d_ptr(new QGeoServiceProviderPrivate())
 {
     d_ptr->loadPlugin(providerName, parameters);
     d_ptr->parameterMap = parameters;
@@ -312,14 +312,14 @@ QString QGeoServiceProvider::errorString() const
 *******************************************************************************/
 
 QGeoServiceProviderPrivate::QGeoServiceProviderPrivate()
-        : factory(0),
-        searchManager(0),
-        routingManager(0),
-        mappingManager(0),
-        searchError(QGeoServiceProvider::NoError),
-        routingError(QGeoServiceProvider::NoError),
-        mappingError(QGeoServiceProvider::NoError),
-        error(QGeoServiceProvider::NoError) {}
+    : factory(0),
+      searchManager(0),
+      routingManager(0),
+      mappingManager(0),
+      searchError(QGeoServiceProvider::NoError),
+      routingError(QGeoServiceProvider::NoError),
+      mappingError(QGeoServiceProvider::NoError),
+      error(QGeoServiceProvider::NoError) {}
 
 QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
 {
@@ -335,6 +335,8 @@ QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
 
 void QGeoServiceProviderPrivate::loadPlugin(const QString &providerName, const QMap<QString, QVariant> &parameters)
 {
+    Q_UNUSED(parameters)
+
     if (!QGeoServiceProviderPrivate::plugins().keys().contains(providerName)) {
         error = QGeoServiceProvider::NotSupportedError;
         errorString = QString("The geoservices provider %1 is not supported.").arg(providerName);
@@ -382,7 +384,7 @@ void QGeoServiceProviderPrivate::loadDynamicPlugins(QHash<QString, QGeoServicePr
     paths << mobilityPlugins(QLatin1String("geoservices"));
 
     QPluginLoader qpl;
-    for (int i = 0;i < paths.count(); ++i) {
+    for (int i = 0; i < paths.count(); ++i) {
         qpl.setFileName(paths.at(i));
 
         QGeoServiceProviderFactory *f = qobject_cast<QGeoServiceProviderFactory*>(qpl.instance());
@@ -412,7 +414,6 @@ void QGeoServiceProviderPrivate::loadStaticPlugins(QHash<QString, QGeoServicePro
             QString name = f->providerName();
 
 #if !defined QT_NO_DEBUG
-            const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
             if (showDebug)
                 qDebug() << "Static: found a service provider plugin with name" << name;
 #endif

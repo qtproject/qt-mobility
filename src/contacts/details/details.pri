@@ -15,6 +15,7 @@ PUBLIC_HEADERS += \
     details/qcontactgeolocation.h \
     details/qcontactglobalpresence.h \
     details/qcontactguid.h \
+    details/qcontacthobby.h \
     details/qcontactname.h \
     details/qcontactnickname.h \
     details/qcontactnote.h \

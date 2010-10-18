@@ -268,10 +268,16 @@ DatabaseManager::~DatabaseManager()
 
     //Aside: databases are implicitly closed
     //during deletion
-    delete m_userDb;
+    if(m_userDb){
+        m_userDb->close();
+        delete m_userDb;
+    }
     m_userDb = 0;
 
-    delete m_systemDb;
+    if(m_systemDb){
+        m_systemDb->close();
+        delete m_systemDb;
+    }
     m_systemDb = 0;
 }
 

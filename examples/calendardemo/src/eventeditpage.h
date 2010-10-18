@@ -103,6 +103,8 @@ private:
     QComboBox *m_endConditionComboBox;
     QSpinBox *m_countSpinBox;
     QDateEdit *m_repeatUntilDate;
+    QComboBox *m_calendarComboBox;
+    QList<QOrganizerCollection> m_collections;
 };
 
 #endif // EVENTEDITPAGE_H_

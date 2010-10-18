@@ -42,7 +42,7 @@
 #include "qgeomaprouteobject.h"
 #include "qgeomaprouteobject_p.h"
 
-#define DEFAULT_ROUTE_DETAIL_LEVEL 20
+#define DEFAULT_ROUTE_DETAIL_LEVEL 6
 
 QTM_BEGIN_NAMESPACE
 
@@ -67,20 +67,18 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a new route object with the parent \a parent.
+    Constructs a new route object.
 */
-QGeoMapRouteObject::QGeoMapRouteObject(QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapRouteObjectPrivate(this, parent)) {}
+QGeoMapRouteObject::QGeoMapRouteObject()
+    : d_ptr(new QGeoMapRouteObjectPrivate()) {}
 
 /*!
-    Constructs a new route object for the route \a route and with parent \a
-    parent.
+    Constructs a new route object for the route \a route.
 */
-QGeoMapRouteObject::QGeoMapRouteObject(const QGeoRoute &route, QGeoMapObject *parent)
-        : QGeoMapObject(new QGeoMapRouteObjectPrivate(this, parent))
+QGeoMapRouteObject::QGeoMapRouteObject(const QGeoRoute &route)
+    : d_ptr(new QGeoMapRouteObjectPrivate())
 {
-    Q_D(QGeoMapRouteObject);
-    d->route = route;
+    d_ptr->route = route;
 }
 
 /*!
@@ -88,6 +86,15 @@ QGeoMapRouteObject::QGeoMapRouteObject(const QGeoRoute &route, QGeoMapObject *pa
 */
 QGeoMapRouteObject::~QGeoMapRouteObject()
 {
+    delete d_ptr;
+}
+
+/*!
+    \reimp
+*/
+QGeoMapObject::Type QGeoMapRouteObject::type() const
+{
+    return QGeoMapObject::RouteType;
 }
 
 /*!
@@ -101,17 +108,14 @@ QGeoMapRouteObject::~QGeoMapRouteObject()
 */
 QGeoRoute QGeoMapRouteObject::route() const
 {
-    Q_D(const QGeoMapRouteObject);
-    return d->route;
+    return d_ptr->route;
 }
 
 void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
 {
-    Q_D(QGeoMapRouteObject);
-    //if (d->route != route) {
-    d->route = route;
-    objectUpdated();
-    emit routeChanged(d->route);
+    //if (d_ptr->route != route) {
+    d_ptr->route = route;
+    emit routeChanged(d_ptr->route);
     //}
 }
 
@@ -126,23 +130,19 @@ void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
 */
 QPen QGeoMapRouteObject::pen() const
 {
-    Q_D(const QGeoMapRouteObject);
-    return d->pen;
+    return d_ptr->pen;
 }
 
 void QGeoMapRouteObject::setPen(const QPen &pen)
 {
-    Q_D(QGeoMapRouteObject);
-
     QPen newPen = pen;
     newPen.setCosmetic(true);
 
-    if (d->pen == newPen)
+    if (d_ptr->pen == newPen)
         return;
 
-    d->pen = newPen;
-    objectUpdated();
-    emit penChanged(d->pen);
+    d_ptr->pen = newPen;
+    emit penChanged(d_ptr->pen);
 }
 
 /*!
@@ -158,29 +158,25 @@ void QGeoMapRouteObject::setPen(const QPen &pen)
     will skip members of the list until the manhattan distance between the
     start point and the end point of the line is at least \a detailLevel.
 
-    The default value of this property is 20.
+    The default value of this property is 6.
 */
 quint32 QGeoMapRouteObject::detailLevel() const
 {
-    Q_D(const QGeoMapRouteObject);
-    return d->detailLevel;
+    return d_ptr->detailLevel;
 }
 
 void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
 {
-    Q_D(QGeoMapRouteObject);
-    if (d->detailLevel != detailLevel) {
-        d->detailLevel = detailLevel;
-        objectUpdated();
-        emit detailLevelChanged(d->detailLevel);
+    if (d_ptr->detailLevel != detailLevel) {
+        d_ptr->detailLevel = detailLevel;
+        emit detailLevelChanged(d_ptr->detailLevel);
     }
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::RouteType)
+QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate()
 {
     detailLevel = DEFAULT_ROUTE_DETAIL_LEVEL;
     pen.setCosmetic(true);

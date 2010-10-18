@@ -64,6 +64,11 @@
 #include "qorganizercollection.h"                     // collection of items
 #include "qorganizercollectionid.h"                   // collection identifier
 
+#include "qorganizercollectionchangeset.h"            // engine-specific collection changeset
+#include "qorganizeritemchangeset.h"                  // engine-specific item changeset
+#include "qorganizercollectionenginelocalid.h"        // engine-specific collection id
+#include "qorganizeritemenginelocalid.h"              // engine specific item id
+
 #include "qorganizeritems.h"                          // item derived classes
 #include "qorganizeritemdetails.h"                    // detail derived classes
 #include "qorganizeritemrequests.h"                   // request derived classes

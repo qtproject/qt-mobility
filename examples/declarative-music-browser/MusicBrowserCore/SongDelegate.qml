@@ -40,7 +40,6 @@
 
 import Qt 4.7
 import QtMobility.gallery 1.1
-import "script/mediaart.js" as Script
 
 Item {
     height: 32
@@ -66,7 +65,7 @@ Item {
         id: durationLabel
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        text: Script.formatDuration(duration)
+        text: Utility.formatDuration(duration)
         color: "white"
     }
 

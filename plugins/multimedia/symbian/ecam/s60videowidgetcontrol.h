@@ -42,12 +42,53 @@
 #ifndef S60VIDEOWIDGETCONTROL_H
 #define S60VIDEOWIDGETCONTROL_H
 
-#include <QtCore/qobject.h>
 #include <QtGui>
 #include <qvideowidgetcontrol.h>
 
 QT_USE_NAMESPACE
 
+/*
+ * This class implements the widget used for displaying DirectScreen
+ * ViewFinder with QVideoWidget on platforms that support it. Other platforms
+ * are using Bitmap ViewFinder.
+ */
+class S60ViewFinderWidget : public QLabel
+{
+    Q_OBJECT
+
+public: // Constructor & Destructor
+
+    S60ViewFinderWidget(QWidget *parent = 0);
+    virtual ~S60ViewFinderWidget();
+
+public: // Methods
+
+    void reconfigureWidget(const bool isVFDirect);
+
+Q_SIGNALS: // NativePaintEvent Signals
+
+    void beginVideoWindowNativePaint();
+    void endVideoWindowNativePaint();
+
+private Q_SLOTS: // Slots to receive NativePaintEvents
+
+    void beginNativePaintEvent(const QRect&);
+    void endNativePaintEvent(const QRect&);
+
+protected: // Re-implement Paint operation to avoid drawing over viewfinder view
+
+    void paintEvent(QPaintEvent *event);
+
+private: // Data
+
+    bool m_isDirect;
+};
+
+//#############################################################################
+
+/*
+ * Control for QVideoWidget viewfinder output.
+ */
 class S60VideoWidgetControl : public QVideoWidgetControl
 {
     Q_OBJECT
@@ -88,6 +129,8 @@ public: // QVideoWidgetControl
 public: // Internal
     
     bool eventFilter(QObject *object, QEvent *event);
+    void reconfigureWidget(const bool directVF);
+    WId windowId();
     
 /*    
 Q_SIGNALS: // QVideoWidgetControl
@@ -103,13 +146,15 @@ Q_SIGNALS: // Internal Signals
 
     void widgetResized(QSize size);
     void widgetUpdated();
+    void widgetVisible(bool isVisible);
 
 private: // Data
 
-    QLabel              *m_widget;
+    S60ViewFinderWidget *m_widget;
     WId                 m_windowId;
     Qt::AspectRatioMode m_aspectRatioMode;
     bool                m_fullScreen;
+    bool                m_isViewFinderDirect;
 };
 
 #endif // S60VIDEOWIDGETCONTROL_H

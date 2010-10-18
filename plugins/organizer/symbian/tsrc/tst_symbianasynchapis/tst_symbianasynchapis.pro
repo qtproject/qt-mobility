@@ -1,10 +1,5 @@
 TEMPLATE = subdirs
 CONFIG += ordered
-SUBDIRS += tst_symbianasynchdetaildefs \
-           tst_symbianasynchfetchitems \
-		   tst_symbianasynchitemids \
-		   tst_symbianasynchremoveitems \
-		   tst_symbianasynchsaveitems \
-		   tst_symbianasynchfetchiteminstance \
-		   tst_symbianasynchnotes \
-		   tst_symbianasynchcollections
+SUBDIRS += tst_symbianasynchfetchiteminstance \
+           tst_symbianasynchnotes \
+           tst_symbianasynchcollections

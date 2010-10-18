@@ -84,7 +84,8 @@ private:
     QLineEdit *m_subjectEdit;
     QDateTimeEdit *m_timeEdit;
     QComboBox *m_alarmComboBox;
-
+    QComboBox *m_calendarComboBox;
+    QList<QOrganizerCollection> m_collections;
 };
 
 #endif // JOURNALEDITPAGE_H_

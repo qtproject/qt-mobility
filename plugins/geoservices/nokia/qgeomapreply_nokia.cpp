@@ -37,6 +37,13 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
+** plugin source code.
+**
 ****************************************************************************/
 
 #include "qgeomapreply_nokia.h"
@@ -80,8 +87,6 @@ void QGeoMapReplyNokia::abort()
         return;
 
     m_reply->abort();
-    m_reply->deleteLater();
-    m_reply = 0;
 }
 
 void QGeoMapReplyNokia::replyDestroyed()

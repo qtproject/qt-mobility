@@ -98,6 +98,10 @@ QContactDetail *CntTransformThumbnail::transformItemField(const CContactItemFiel
 
     if (field.ContentType().ContainsFieldType(KUidContactFieldPicture)
         || field.ContentType().ContainsFieldType(KUidContactFieldVCardMapJPEG)) {
+        // check storage type
+        if (field.StorageType() != KStorageTypeStore) {
+            User::Leave(KErrInvalidContactDetail);
+        }
         // use the existing QContactAvatar (if available) in case of a pixmap
         // field.
         CContactStoreField* storage = field.StoreStorage();

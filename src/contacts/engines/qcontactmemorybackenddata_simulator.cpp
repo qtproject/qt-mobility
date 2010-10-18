@@ -51,14 +51,6 @@
 #include <qcontactdetailfielddefinition_p.h>
 
 Q_DECLARE_METATYPE(QtMobility::QContactData)
-Q_DECLARE_METATYPE(QtMobility::QContactId)
-Q_DECLARE_METATYPE(QtMobility::QContactIdPrivate)
-Q_DECLARE_METATYPE(QtMobility::QContactDetail)
-Q_DECLARE_METATYPE(QtMobility::QContactDetailPrivate)
-Q_DECLARE_METATYPE(QtMobility::QContactDetailDefinition)
-Q_DECLARE_METATYPE(QtMobility::QContactDetailDefinitionData)
-Q_DECLARE_METATYPE(QtMobility::QContactDetailFieldDefinition)
-Q_DECLARE_METATYPE(QtMobility::QContactDetailFieldDefinitionPrivate)
 Q_DECLARE_METATYPE(QtMobility::QContactRelationshipPrivate)
 
 QTM_BEGIN_NAMESPACE
@@ -79,44 +71,10 @@ uint qHash(const QContactStringHolder &h)
 
 void qt_registerContactsTypes()
 {
-    qRegisterMetaTypeStreamOperators<QContact>("QtMobility::QContact");
-    qRegisterMetaTypeStreamOperators<QContactData>("QtMobility::QContactData");
-    qRegisterMetaTypeStreamOperators<QContactId>("QtMobility::QContactId");
-    qRegisterMetaTypeStreamOperators<QContactIdPrivate>("QtMobility::QContactIdPrivate");
-    qRegisterMetaTypeStreamOperators<QContactDetail>("QtMobility::QContactDetail");
-    qRegisterMetaTypeStreamOperators<QContactDetailPrivate>("QtMobility::QContactDetailPrivate");
-    qRegisterMetaTypeStreamOperators<QContactDetailDefinition>("QtMobility::QContactDetailDefinition");
-    qRegisterMetaTypeStreamOperators<QContactDetailDefinitionData>("QtMobility::QContactDetailDefinitionData");
-    qRegisterMetaTypeStreamOperators<QContactDetailFieldDefinition>("QtMobility::QContactDetailFieldDefinition");
-    qRegisterMetaTypeStreamOperators<QContactDetailFieldDefinitionPrivate>("QtMobility::QContactDetailFieldDefinitionPrivate");
-    qRegisterMetaTypeStreamOperators<QContactRelationship>("QtMobility::QContactRelationship");
-    qRegisterMetaTypeStreamOperators<QContactRelationshipPrivate>("QtMobility::QContactRelationshipPrivate");
     qRegisterMetaTypeStreamOperators<QContactSimulatorData>("QtMobility::QContactSimulatorData");
     qRegisterMetaTypeStreamOperators<QContactStringHolder>("QtMobility::QContactStringHolder");
     qRegisterMetaTypeStreamOperators<Simulator::SaveContactReply>("QtMobility::Simulator::SaveContactReply");
     qRegisterMetaTypeStreamOperators<Simulator::SaveRelationshipReply>("QtMobility::Simulator::SaveRelationshipReply");
-}
-
-QDataStream &operator<<(QDataStream &out, const QContactIdPrivate &s)
-{
-    out << s.m_localId << s.m_managerUri;
-    return out;
-}
-QDataStream &operator>>(QDataStream &in, QContactIdPrivate &s)
-{
-    in >> s.m_localId >> s.m_managerUri;
-    return in;
-}
-
-QDataStream &operator<<(QDataStream &out, const QContactId &s)
-{
-    out << *s.d;
-    return out;
-}
-QDataStream &operator>>(QDataStream &in, QContactId &s)
-{
-    in >> *s.d;
-    return in;
 }
 
 QDataStream &operator<<(QDataStream &out, const QContactStringHolder &s)
@@ -129,127 +87,6 @@ QDataStream &operator>>(QDataStream &in, QContactStringHolder &s)
     QString data;
     in >> data;
     s = QContactStringHolder(data);
-    return in;
-}
-
-QDataStream &operator<<(QDataStream &out, const QContactDetailPrivate &s)
-{
-    out << s.m_id << s.m_definitionName;
-    out << s.m_values;
-    out << static_cast<int>(s.m_access);
-    return out;
-}
-QDataStream &operator>>(QDataStream &in, QContactDetailPrivate &s)
-{
-    in >> s.m_id >> s.m_definitionName;
-    in >> s.m_values;
-    int access;
-    in >> access;
-    s.m_access = static_cast<QContactDetail::AccessConstraints>(access);
-    return in;
-}
-
-QDataStream &operator<<(QDataStream &out, const QContactDetail &s)
-{
-    out << *s.d;
-    return out;
-}
-QDataStream &operator>>(QDataStream &in, QContactDetail &s)
-{
-    in >> *s.d;
-    return in;
-}
-
-QDataStream &operator<<(QDataStream &out, const QContactDetailFieldDefinitionPrivate &s)
-{
-    out << s.m_allowableValues << s.m_dataType;
-    return out;
-}
-QDataStream &operator>>(QDataStream &in, QContactDetailFieldDefinitionPrivate &s)
-{
-    in >> s.m_allowableValues >> s.m_dataType;
-    return in;
-}
-
-QDataStream &operator<<(QDataStream &out, const QContactDetailFieldDefinition &s)
-{
-    out << *s.d;
-    return out;
-}
-QDataStream &operator>>(QDataStream &in, QContactDetailFieldDefinition &s)
-{
-    in >> *s.d;
-    return in;
-}
-
-QDataStream &operator<<(QDataStream &out, const QContactDetailDefinitionData &s)
-{
-    out << s.m_fields << s.m_name << s.m_unique;
-    return out;
-}
-QDataStream &operator>>(QDataStream &in, QContactDetailDefinitionData &s)
-{
-    in >> s.m_fields >> s.m_name >> s.m_unique;
-    return in;
-}
-
-QDataStream &operator<<(QDataStream &out, const QContactDetailDefinition &s)
-{
-    out << *s.d;
-    return out;
-}
-QDataStream &operator>>(QDataStream &in, QContactDetailDefinition &s)
-{
-    in >> *s.d;
-    return in;
-}
-
-QDataStream &operator<<(QDataStream &out, const QContactRelationshipPrivate &s)
-{
-    out << s.m_first << s.m_second;
-    out << s.m_relationshipType;
-    return out;
-}
-QDataStream &operator>>(QDataStream &in, QContactRelationshipPrivate &s)
-{
-    in >> s.m_first >> s.m_second;
-    in >> s.m_relationshipType;
-    return in;
-}
-
-QDataStream &operator<<(QDataStream &out, const QContactRelationship &s)
-{
-    out << *s.d;
-    return out;
-}
-QDataStream &operator>>(QDataStream &in, QContactRelationship &s)
-{
-    in >> *s.d;
-    return in;
-}
-
-
-QDataStream &operator<<(QDataStream &out, const QContactData &s)
-{
-    out << s.m_id << s.m_details;
-    out << s.m_relationshipsCache;
-    return out;
-}
-QDataStream &operator>>(QDataStream &in, QContactData &s)
-{
-    in >> s.m_id >> s.m_details;
-    in >> s.m_relationshipsCache;
-    return in;
-}
-
-QDataStream &operator<<(QDataStream &out, const QContact &s)
-{
-    out << *s.d;
-    return out;
-}
-QDataStream &operator>>(QDataStream &in, QContact &s)
-{
-    in >> *s.d;
     return in;
 }
 

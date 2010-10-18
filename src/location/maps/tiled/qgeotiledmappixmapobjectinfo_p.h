@@ -55,6 +55,8 @@
 
 #include "qgeotiledmapobjectinfo_p.h"
 
+#include <QPixmap>
+
 class QGraphicsPixmapItem;
 
 QTM_BEGIN_NAMESPACE
@@ -63,15 +65,23 @@ class QGeoMapPixmapObject;
 
 class QGeoTiledMapPixmapObjectInfo : public QGeoTiledMapObjectInfo
 {
+    Q_OBJECT
 public:
-    QGeoTiledMapPixmapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    QGeoTiledMapPixmapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapPixmapObjectInfo();
-
-    void objectUpdated();
-    void mapUpdated();
 
     QGeoMapPixmapObject* pixmap;
     QGraphicsPixmapItem *pixmapItem;
+
+    void updateValidity();
+
+public slots:
+    void coordinateChanged(const QGeoCoordinate &coordinate);
+    void pixmapChanged(const QPixmap &pixmap);
+    void offsetChanged(const QPoint &offset);
+    void zoomLevelChanged(qreal zoomLevel);
+private:
+    void updateOffset();
 };
 
 QTM_END_NAMESPACE

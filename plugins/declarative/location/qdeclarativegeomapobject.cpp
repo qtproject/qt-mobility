@@ -46,7 +46,7 @@ QTM_BEGIN_NAMESPACE
 
 
 QDeclarativeGeoMapObject::QDeclarativeGeoMapObject()
-        : QGeoMapObject() {}
+        : QGeoMapGroupObject() {}
 
 QDeclarativeGeoMapObject::~QDeclarativeGeoMapObject() {}
 

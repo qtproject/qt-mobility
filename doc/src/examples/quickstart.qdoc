@@ -120,9 +120,6 @@ corresponding values that can be assigned to \c MOBILITY.
     \o \l {Document Gallery}
     \o gallery
 \row
-    \o \l {Telephony Events}{Telephony Events}
-    \o telephonyapi
-\row
     \o \l {Organizer}
     \o organizer
 \row
@@ -181,9 +178,6 @@ on which parts of an API is utilized by an application.
     \o No additional capabilities required.
 \row
     \o \l {Document Gallery}
-    \o No capabilities at this stage.
-\row
-    \o \l {Telephony Events}{Telephony Events}
     \o No capabilities at this stage.
 \row
     \o \l {Organizer}

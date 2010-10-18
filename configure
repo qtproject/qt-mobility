@@ -103,7 +103,7 @@ LIB_PATH="lib"
 BIN_PATH="bin"
 PLUGIN_PATH="plugins"
 MAC_SDK=
-MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer telephony feedback"
+MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer feedback"
 MOBILITY_MODULES_UNPARSED=
 QMKSPEC=
 OS="other"
@@ -144,13 +144,14 @@ usage()
     echo "-no-tools ......... Do not build tools (build by default)"
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
     echo "                    Choose from: bearer contacts gallery location publishsubscribe"
-    echo "                    messaging multimedia systeminfo serviceframework telephony"
+    echo "                    messaging multimedia systeminfo serviceframework"
     echo "                    sensors versit organizer feedback"
     echo "                    Modules should be separated by a space and surrounded"
     echo "                    by double quotation. If a selected module depends on other modules"
     echo "                    those modules (and their dependencies) will automatically be enabled."
     echo "-maemo6 ........... Build Qt Mobility for Maemo6 (Harmattan)."
     echo "-maemo5 ........... Build Qt Mobility for Maemo5 (Fremantle)."
+    echo "-meego  ........... Build Qt Mobility for MeeGo."
     echo "-sdk <sdk> ........ Build using Apple provided SDK <path/to/sdk>."
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
     echo "-qmake-exec <name>  Sets custom binary name for qmake binary"
@@ -231,6 +232,9 @@ while [ "$#" -gt 0 ]; do
         -maemo6)
             LINUX_TARGET=maemo6
             ;;
+        -meego)
+            LINUX_TARGET=meego
+            ;;
         -sdk)
             MAC_SDK="$2"
             shift
@@ -245,7 +249,7 @@ while [ "$#" -gt 0 ]; do
             MOBILITY_MODULES=
             for m in $MOBILITY_MODULES_UNPARSED; do
                 case "$m" in
-                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|gallery|telephony|versit|feedback)
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|gallery|versit|feedback)
                         MOBILITY_MODULES="$MOBILITY_MODULES $m";
                         ;;
                     organizer)
@@ -341,6 +345,8 @@ if [ -n "$LINUX_TARGET" ]; then
         echo "CONFIG+=maemo5" >> "$CONFIG_IN"
     elif [ "$LINUX_TARGET" = "maemo6" ]; then
         echo "CONFIG+=maemo6" >> "$CONFIG_IN"
+    elif [ "$LINUX_TARGET" = "meego" ]; then
+        echo "CONFIG+=meego" >> "$CONFIG_IN"
     fi
 fi
 
@@ -548,10 +554,15 @@ compileTest "Maemo5 contacts dependencies" maemo5-contacts
 compileTest "Maemo5 organizer dependencies" maemo5-calendar
 compileTest "Bluez" bluez
 compileTest "Gstreamer Photography" gstreamer-photography
+compileTest "Blkid" blkid
+compileTest "Pulse Audio" pulseaudio
+compileTest "udev" udev
+
 if [ "$LINUX_TARGET" = maemo6 ]; then
     compileTest sensord sensord
 else
     echo "sensord_enabled = no" >> "$CONFIG_IN"
+    compileTest connman connman
 fi
 
 # It's a lot easier to make qmake do the dependency checking...
@@ -602,9 +613,6 @@ for module in $MOBILITY_MODULES; do
             ;;
         messaging)
             $relpath/bin/syncheaders $shadowpath/include/QtMessaging $relpath/src/messaging
-            ;;
-        telephony)
-            $relpath/bin/syncheaders $shadowpath/include/QtTelephony $relpath/src/telephony
             ;;
         versit)
             #versit implies contacts.  organizer includes might also be necessary

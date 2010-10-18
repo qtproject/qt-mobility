@@ -99,7 +99,9 @@ void QContactSaveRequest::setContacts(const QList<QContact>& contacts)
 }
 
 /*! Returns the list of contacts which will be saved if called prior to calling \c start(),
-    otherwise returns the list of contacts as they were saved in the contacts store */
+    otherwise returns the list of contacts with their ids set appropriately (successfully
+    saved new contacts will have an id assigned).
+*/
 QList<QContact> QContactSaveRequest::contacts() const
 {
     Q_D(const QContactSaveRequest);
@@ -107,12 +109,53 @@ QList<QContact> QContactSaveRequest::contacts() const
     return d->m_contacts;
 }
 
-/*! Returns the map of input definition list indices to errors which occurred */
+/*! Returns the map of input contact list indices to errors which occurred */
 QMap<int, QContactManager::Error> QContactSaveRequest::errorMap() const
 {
     Q_D(const QContactSaveRequest);
     QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
+}
+
+/*!
+    Set the list of definitions to restrict saving to \a definitionMask.  This allows you to perform
+    partial save (and remove) operations on existing contacts.
+
+    If \a definitionMask is empty (the default), no restrictions will apply, and the passed
+    in contacts will be saved as is.  Otherwise, only details whose definitions are in
+    the list will be saved.  If a definition name is present in the list, but there are no
+    corresponding details in the contact passed into this request, any existing details in
+    the manager for that contact will be removed.
+
+    This is useful if you've used a fetch hint to fetch a partial contact from a manager
+    so that you can save changes to the details you actually fetched without removing
+    the details you didn't.
+
+    Additionally, when performing synchronization operations with other managers that don't
+    support the full range of details, you can restrict the update operation to only those
+    details so that you don't lose the extra details that are supported in this manager.
+
+    \note Some managers do not support partial updates natively, in which case the QtContacts
+    framework will emulate the functionality (fetching the whole contact, applying the
+    new restricted details, and saving the contact back).
+*/
+void QContactSaveRequest::setDefinitionMask(const QStringList &definitionMask)
+{
+    Q_D(QContactSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
+    d->m_definitionMask = definitionMask;
+}
+
+/*!
+    Returns the list of definitions that this request will operate on.
+
+    If the list is empty, the request will operate on all details.
+ */
+QStringList QContactSaveRequest::definitionMask() const
+{
+    Q_D(const QContactSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
+    return d->m_definitionMask;
 }
 
 #include "moc_qcontactsaverequest.cpp"

@@ -319,7 +319,7 @@ QContactManager::~QContactManager()
 
 
 /*!
-   \variable QContactManager::ParameterKeySignalSources
+   \variable QContactManager::ParameterSignalSources
    The string constant for the parameter key which holds the value for signal sources.
    If a manager supports suppressing change signals depending on the value given for
    this construction parameter, clients can request that signals be suppressed if the
@@ -336,7 +336,7 @@ QContactManager::~QContactManager()
 Q_DEFINE_LATIN1_CONSTANT(QContactManager::ParameterSignalSources, "SignalSources");
 
 /*!
-   \variable QContactManager::ParameterKeySignalDefinitions
+   \variable QContactManager::ParameterSignalDefinitions
    The string constant for the parameter key which holds the names of detail definitions.
    If a manager supports suppressing change signals depending on the value given for
    this construction parameter, clients can request that signals be suppressed if the
@@ -491,6 +491,32 @@ QContact QContactManager::contact(const QContactLocalId& contactId, const QConta
 }
 
 /*!
+  Returns a list of contacts given a list of local ids (\a localIds).
+
+  Returns the list of contacts with the ids given by \a localIds.  There is a one-to-one
+  correspondence between the returned contacts and the supplied \a localIds.
+  
+  If there is an invalid id in \a localIds, then an empty QContact will take its place in the
+  returned list and an entry will be inserted into \a errorMap.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  in the matching contacts will be returned.  A client should not make changes to a contact which has
+  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
+  loss when saving the contact back to the manager (as the "new" restricted contact will
+  replace the previously saved contact in the backend).
+
+  \sa QContactFetchHint
+ */
+QList<QContact> QContactManager::contacts(const QList<QContactLocalId>& localIds, const QContactFetchHint &fetchHint, QMap<int, QContactManager::Error> *errorMap) const
+{
+    d->m_error = QContactManager::NoError;
+    if (errorMap)
+        errorMap->clear();
+    return d->m_engine->contacts(localIds, fetchHint, errorMap, &d->m_error);
+}
+
+/*!
   Adds the given \a contact to the database if \a contact has a
   default-constructed id, or an id with the manager URI set to the URI of
   this manager and a local id of zero.
@@ -576,6 +602,39 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
 
     d->m_error = QContactManager::NoError;
     return d->m_engine->saveContacts(contacts, errorMap, &d->m_error);
+}
+
+/*!
+  Adds the list of contacts given by \a contacts list to the database.
+  Returns true if the contacts were saved successfully, otherwise false.
+
+  This function accepts a \a definitionMask, which specifies which details of
+  the contacts should be updated.  Details with definition names not included in
+  the definitionMask will not be updated or added.
+
+  The manager might populate \a errorMap (the map of indices of the \a contacts list to
+  the error which occurred when saving the contact at that index) for
+  every index for which the contact could not be saved, if it is able.
+  The \l QContactManager::error() function will only return \c QContactManager::NoError
+  if all contacts were saved successfully.
+
+  For each newly saved contact that was successful, the id of the contact
+  in the \a contacts list will be updated with the new value.  If a failure occurs
+  when saving a new contact, the id will be cleared.
+
+  \sa QContactManager::saveContact()
+ */
+bool QContactManager::saveContacts(QList<QContact>* contacts, const QStringList& definitionMask, QMap<int, QContactManager::Error>* errorMap)
+{
+    if (errorMap)
+        errorMap->clear();
+    if (!contacts) {
+        d->m_error =QContactManager::BadArgumentError;
+        return false;
+    }
+
+    d->m_error = QContactManager::NoError;
+    return d->m_engine->saveContacts(contacts, definitionMask, errorMap, &d->m_error);
 }
 
 /*!

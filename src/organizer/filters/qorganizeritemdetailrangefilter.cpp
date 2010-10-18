@@ -94,11 +94,23 @@ void QOrganizerItemDetailRangeFilter::setRange(const QVariant& min, const QVaria
 
 /*!
  * Sets the match flags of the filter criterion to \a flags
+ *
+ * Not all flags are supported by a range filter.  The supported flags include:
+ *
+ * \list
+ * \o QOrganizerItemFilter::MatchExactly
+ * \o QOrganizerItemFilter::MatchFixedString
+ * \o QOrganizerItemFilter::MatchCaseSensitive
+ * \endlist
+ *
+ * Unsupported flags will be ignored.
+ *
  * \sa matchFlags()
  */
 void QOrganizerItemDetailRangeFilter::setMatchFlags(QOrganizerItemFilter::MatchFlags flags)
 {
     Q_D(QOrganizerItemDetailRangeFilter);
+    flags &= (QOrganizerItemFilter::MatchExactly | QOrganizerItemFilter::MatchFixedString | QOrganizerItemFilter::MatchCaseSensitive);
     d->m_flags = flags;
 }
 

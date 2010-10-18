@@ -67,19 +67,23 @@ void CntSymbianDatabase::initializeL()
     User::LeaveIfNull(m_engine);
 
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
-	// 10.x platforms do not need some of CContactDatabase's concepts, so
-	// they use the optimized OpenV2 and CreateV2.
+    // 10.x platforms do not need some of CContactDatabase's concepts, so
+    // they use the optimized OpenV2 and CreateV2.
     TRAPD(err, m_contactDatabase = CContactDatabase::OpenV2L());
     // Database not found, create it
     if (err == KErrNotFound) {
         m_contactDatabase = CContactDatabase::CreateV2L();
+    } else {
+        User::LeaveIfError(err);
     }
-#else		
+#else
     TRAPD(err, m_contactDatabase = CContactDatabase::OpenL());
 
     // Database not found, create it
     if (err == KErrNotFound) {
         m_contactDatabase = CContactDatabase::CreateL();
+    } else {
+        User::LeaveIfError(err);
     }
 #endif
 

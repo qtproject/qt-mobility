@@ -55,6 +55,10 @@
 
 #include "qgeotiledmapobjectinfo_p.h"
 
+#include <QFont>
+#include <QPen>
+#include <QBrush>
+
 class QGraphicsSimpleTextItem;
 
 QTM_BEGIN_NAMESPACE
@@ -63,16 +67,29 @@ class QGeoMapTextObject;
 
 class QGeoTiledMapTextObjectInfo : public QGeoTiledMapObjectInfo
 {
+    Q_OBJECT
 public:
-    QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    QGeoTiledMapTextObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapTextObjectInfo();
 
-    void objectUpdated();
-    void mapUpdated();
+    void updateValidity();
 
     QGeoMapTextObject* text;
     QGraphicsSimpleTextItem *textItem;
-    QPointF alignmentOffset;
+
+public slots:
+    void coordinateChanged(const QGeoCoordinate &coordinate);
+    void textChanged(const QString &text);
+    void fontChanged(const QFont &font);
+    void penChanged(const QPen &pen);
+    void brushChanged(const QBrush &brush);
+    void offsetChanged(const QPoint &offset);
+    void alignmentChanged(Qt::Alignment alignment);
+
+    void zoomLevelChanged(qreal zoomLevel);
+
+private:
+    void update();
 };
 
 QTM_END_NAMESPACE

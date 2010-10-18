@@ -62,7 +62,9 @@ CPplContactTable* CPplContactTable::NewLC(RSqlDatabase& aDatabase, CLplContactPr
 Set up the CCntSqlStatement objects held by the class.
 */
 void CPplContactTable::ConstructL()
-	{	
+	{
+	_LIT(KOwnCardInvariant, "((((%S>>%d==%d)*%d) | ((NOT(%S>>%d==%d))*%S))<<%d)| %S");
+	
 	iCardTemplateIds = CContactIdArray::NewL();
 	
 	// Statement types
@@ -90,9 +92,25 @@ void CPplContactTable::ConstructL()
 	//		(contact_id, template_id...[etc...], binary_fields) 
 	//		VALUES (NULL, 37, .......);
 	//
-	// Actual parameters are added when inserting a contact based
-	// in available fields
-	iInsertStmnt = TSqlProvider::GetSqlStatementL(insertType);
+	iInsertStmnt = TSqlProvider::GetSqlStatementL(insertType);	
+	iInsertStmnt->SetParamL(KContactId, KContactIdParam);//KNullText() );
+	iInsertStmnt->SetParamL(KContactTemplateId, KContactTemplateIdParam);
+	iInsertStmnt->SetParamL(KContactTypeFlags, KContactTypeFlagsParam);
+	iInsertStmnt->SetParamL(KContactAccessCount, KContactAccessCountParam);
+	iInsertStmnt->SetParamL(KContactCreationDate, KContactCreationDateParam);
+	iInsertStmnt->SetParamL(KContactLastModified, KContactLastModifiedParam);
+	iInsertStmnt->SetParamL(KContactGuidString, KContactGuidStringParam);
+	iInsertStmnt->SetParamL(KContactFirstName, KContactFirstNameParam);
+	iInsertStmnt->SetParamL(KContactLastName, KContactLastNameParam);
+	iInsertStmnt->SetParamL(KContactCompanyName, KContactCompanyNameParam);
+	iInsertStmnt->SetParamL(KContactFirstNamePrn, KContactFirstNamePrnParam);
+	iInsertStmnt->SetParamL(KContactLastNamePrn, KContactLastNamePrnParam);
+	iInsertStmnt->SetParamL(KContactCompanyNamePrn, KContactCompanyNamePrnParam);
+	iInsertStmnt->SetParamL(KContactFavoriteIndex, KContactFavoriteIndexParam);
+	iInsertStmnt->SetParamL(KContactTextFieldHeader, KContactTextFieldHeaderParam);
+	iInsertStmnt->SetParamL(KContactBinaryFieldHeader, KContactBinaryFieldHeaderParam);
+	iInsertStmnt->SetParamL(KContactTextFields, KContactTextFieldsParam);
+	iInsertStmnt->SetParamL(KContactBinaryFields, KContactBinaryFieldsParam);
 
 	// SELECT
 
@@ -116,7 +134,30 @@ void CPplContactTable::ConstructL()
 	//      binary_fields = [new binary fields value]
 	//		WHERE contact_id = [contact id value];
 	//
-	iUpdateStmnt = TSqlProvider::GetSqlStatementL(updateType);
+	iUpdateStmnt = TSqlProvider::GetSqlStatementL(updateType);	
+	iUpdateStmnt->SetParamL(KContactTemplateId, KContactTemplateIdParam);
+	
+	HBufC* typeFlagsParameter = HBufC::NewLC(KOwnCardInvariant().Size() + KContactTypeFlags().Size() + KContactTypeFlags().Size() + 
+			KContactTypeParam().Size() + KAttributesAndHintParam().Size() + 6*sizeof(TInt));
+	typeFlagsParameter->Des().AppendFormat(KOwnCardInvariant, &KContactTypeFlags, EContactType_Shift, EContactTypeFlags_OwnCard, EContactTypeFlags_OwnCard,
+			&KContactTypeFlags, EContactType_Shift, EContactTypeFlags_OwnCard, &KContactTypeParam, EContactType_Shift, &KAttributesAndHintParam);
+	
+	iUpdateStmnt->SetParamL(KContactTypeFlags, *typeFlagsParameter);
+	
+	iUpdateStmnt->SetParamL(KContactAccessCount, KContactAccessCountParam);
+	iUpdateStmnt->SetParamL(KContactLastModified, KContactLastModifiedParam);
+	iUpdateStmnt->SetParamL(KContactGuidString, KContactGuidStringParam);
+	iUpdateStmnt->SetParamL(KContactFirstName, KContactFirstNameParam);
+	iUpdateStmnt->SetParamL(KContactLastName, KContactLastNameParam);
+	iUpdateStmnt->SetParamL(KContactCompanyName, KContactCompanyNameParam);
+	iUpdateStmnt->SetParamL(KContactFirstNamePrn, KContactFirstNamePrnParam);
+	iUpdateStmnt->SetParamL(KContactLastNamePrn, KContactLastNamePrnParam);
+	iUpdateStmnt->SetParamL(KContactCompanyNamePrn, KContactCompanyNamePrnParam);
+	iUpdateStmnt->SetParamL(KContactFavoriteIndex, KContactFavoriteIndexParam);
+	iUpdateStmnt->SetParamL(KContactTextFieldHeader, KContactTextFieldHeaderParam);
+	iUpdateStmnt->SetParamL(KContactBinaryFieldHeader, KContactBinaryFieldHeaderParam);
+	iUpdateStmnt->SetParamL(KContactTextFields, KContactTextFieldsParam);
+	iUpdateStmnt->SetParamL(KContactBinaryFields, KContactBinaryFieldsParam);
 	iUpdateStmnt->SetConditionL(*whereIdClause);
 
 	// type_flags update
@@ -154,7 +195,7 @@ void CPplContactTable::ConstructL()
 	iFieldMap.InsertL(KUidContactFieldCompanyNameValue, KContactCompanyNameParam() );
 	iFieldMap.InsertL(KUidContactFieldCompanyNamePronunciationValue, KContactCompanyNamePrnParam() );
 
-	CleanupStack::PopAndDestroy(); //whereIdClause
+	CleanupStack::PopAndDestroy(2, whereIdClause); //whereIdClause, typeFlagsParameter
 	}
 
 /**
@@ -370,107 +411,28 @@ void CPplContactTable::WriteContactItemL(const CContactItem& aItem, TCntSqlState
 
 	// temporary reference to the CCntSqlStatements member variables to take advantage 
 	// of the commonality between update and insert operations.
-	CCntSqlStatement* tempCntStmnt;
+	CCntSqlStatement* tempCntStmnt = iUpdateStmnt;
 	if (aType == EInsert)
 		{
-        iInsertStmnt->ClearParams();
-        iInsertStmnt->SetParamL(KContactId, KContactIdParam);
-        iInsertStmnt->SetParamL(KContactTemplateId, KContactTemplateIdParam);
-        iInsertStmnt->SetParamL(KContactTypeFlags, KContactTypeFlagsParam);
-        iInsertStmnt->SetParamL(KContactAccessCount, KContactAccessCountParam);
-        iInsertStmnt->SetParamL(KContactCreationDate, KContactCreationDateParam);
-        iInsertStmnt->SetParamL(KContactLastModified, KContactLastModifiedParam);
-        iInsertStmnt->SetParamL(KContactGuidString, KContactGuidStringParam);
-        iInsertStmnt->SetParamL(KContactFirstNamePrn, KContactFirstNamePrnParam);
-        iInsertStmnt->SetParamL(KContactLastNamePrn, KContactLastNamePrnParam);
-        iInsertStmnt->SetParamL(KContactCompanyNamePrn, KContactCompanyNamePrnParam);
-        iInsertStmnt->SetParamL(KContactTextFieldHeader, KContactTextFieldHeaderParam);
-        iInsertStmnt->SetParamL(KContactBinaryFieldHeader, KContactBinaryFieldHeaderParam);
-        iInsertStmnt->SetParamL(KContactTextFields, KContactTextFieldsParam);
-        iInsertStmnt->SetParamL(KContactBinaryFields, KContactBinaryFieldsParam);
-        
-        for (TInt fieldNum = aItem.CardFields().Count() - 1; fieldNum >= 0; --fieldNum) 
-            {
-            const CContactItemField& field = aItem.CardFields()[fieldNum];
-            const TInt nameFieldUid = NameFieldUid(field);
-            
-            if (nameFieldUid != KErrNotFound && field.StorageType() == KStorageTypeText)
-                {
-                TInt length = field.TextStorage()->Text().Length();
-                // check if field should be stored in the Identity table.
-                if (nameFieldUid == TInt(KUidContactFieldGivenNameValue) && length)
-                    {
-                    iInsertStmnt->SetParamL(KContactFirstName, KContactFirstNameParam);
-                    }
-                if (nameFieldUid == TInt(KUidContactFieldFamilyNameValue) && length)
-                    {
-                    iInsertStmnt->SetParamL(KContactLastName, KContactLastNameParam);
-                    }
-                if (nameFieldUid == TInt(KUidContactFieldCompanyNameValue) && length)
-                    {
-                    iInsertStmnt->SetParamL(KContactCompanyName, KContactCompanyNameParam);
-                    }         
-                }
-            }
 		tempCntStmnt = iInsertStmnt;
 		}
-	else
-	    {
-        iUpdateStmnt->ClearParams();
-        iUpdateStmnt->SetParamL(KContactTemplateId, KContactTemplateIdParam);
-	    
-        _LIT(KOwnCardInvariant, "((((%S>>%d==%d)*%d) | ((NOT(%S>>%d==%d))*%S))<<%d)| %S");
-        
-	    HBufC* typeFlagsParameter = HBufC::NewLC(KOwnCardInvariant().Size() + KContactTypeFlags().Size() + KContactTypeFlags().Size() + 
-	            KContactTypeParam().Size() + KAttributesAndHintParam().Size() + 6*sizeof(TInt));
-	    typeFlagsParameter->Des().AppendFormat(KOwnCardInvariant, &KContactTypeFlags, EContactType_Shift, EContactTypeFlags_OwnCard, EContactTypeFlags_OwnCard,
-	            &KContactTypeFlags, EContactType_Shift, EContactTypeFlags_OwnCard, &KContactTypeParam, EContactType_Shift, &KAttributesAndHintParam);
-	    
-	    iUpdateStmnt->SetParamL(KContactTypeFlags, *typeFlagsParameter);
-	    
-	    iUpdateStmnt->SetParamL(KContactAccessCount, KContactAccessCountParam);
-	    iUpdateStmnt->SetParamL(KContactLastModified, KContactLastModifiedParam);
-	    iUpdateStmnt->SetParamL(KContactGuidString, KContactGuidStringParam);
-	    iUpdateStmnt->SetParamL(KContactFirstNamePrn, KContactFirstNamePrnParam);
-	    iUpdateStmnt->SetParamL(KContactLastNamePrn, KContactLastNamePrnParam);
-	    iUpdateStmnt->SetParamL(KContactCompanyNamePrn, KContactCompanyNamePrnParam);
-	    iUpdateStmnt->SetParamL(KContactTextFieldHeader, KContactTextFieldHeaderParam);
-	    iUpdateStmnt->SetParamL(KContactBinaryFieldHeader, KContactBinaryFieldHeaderParam);
-	    iUpdateStmnt->SetParamL(KContactTextFields, KContactTextFieldsParam);
-	    iUpdateStmnt->SetParamL(KContactBinaryFields, KContactBinaryFieldsParam);
-	    
-        for (TInt fieldNum = aItem.CardFields().Count() - 1; fieldNum >= 0; --fieldNum) 
-            {
-            const CContactItemField& field = aItem.CardFields()[fieldNum];
-            const TInt nameFieldUid = NameFieldUid(field);
-            
-            if (nameFieldUid != KErrNotFound && field.StorageType() == KStorageTypeText)
-                {
-                TInt length = field.TextStorage()->Text().Length();
-                // check if field should be stored in the Identity table.
-                if (nameFieldUid == TInt(KUidContactFieldGivenNameValue) && length)
-                    {
-                    iUpdateStmnt->SetParamL(KContactFirstName, KContactFirstNameParam);
-                    }
-                if (nameFieldUid == TInt(KUidContactFieldFamilyNameValue) && length)
-                    {
-                    iUpdateStmnt->SetParamL(KContactLastName, KContactLastNameParam);
-                    }
-                if (nameFieldUid == TInt(KUidContactFieldCompanyNameValue) && length)
-                    {
-                    iUpdateStmnt->SetParamL(KContactCompanyName, KContactCompanyNameParam);
-                    }         
-                }
-            }
-        
-        CleanupStack::PopAndDestroy(); //typeFlagsParameter
-	    tempCntStmnt = iUpdateStmnt;
-	    }
 	
 	RSqlStatement stmnt;
 	CleanupClosePushL(stmnt);
  	stmnt.PrepareL(iDatabase, tempCntStmnt->SqlStringL() );
 
+    // Default first_name, last_name && company_name with empty strings first
+    // If a value exists to be stored in this fields the empty string will
+	// be replaced
+    const TInt firstNameParam(User::LeaveIfError(stmnt.ParameterIndex(iFieldMap.FindL(TInt(KUidContactFieldGivenNameValue)) ) ) );
+    User::LeaveIfError(stmnt.BindText(firstNameParam, KNullDesC()));
+    
+    const TInt lastNameParam(User::LeaveIfError(stmnt.ParameterIndex(iFieldMap.FindL(TInt(KUidContactFieldFamilyNameValue)) ) ) );
+    User::LeaveIfError(stmnt.BindText(lastNameParam, KNullDesC()));
+    
+    const TInt companyNameParam(User::LeaveIfError(stmnt.ParameterIndex(iFieldMap.FindL(TInt(KUidContactFieldCompanyNameValue)) ) ) );
+    User::LeaveIfError(stmnt.BindText(companyNameParam, KNullDesC()));
+    
 	// get the identity-type fields and build the hint fields
 	THintField hint;
 	const RArray<TUid>* custFiltFields = NULL;
@@ -484,26 +446,25 @@ void CPplContactTable::WriteContactItemL(const CContactItem& aItem, TCntSqlState
 		{
 		const CContactItemField& field = aItem.CardFields()[fieldNum];
 		const TInt nameFieldUid = CPplContactTable::NameFieldUid(field);
-
+		
 		// check if field should be stored in the Identity table.
 		if (nameFieldUid != KErrNotFound)
-			{
+			{		    
 			TPtrC textToSet = field.TextStorage()->Text();
-			if(textToSet.Length() > 0)
+			if (textToSet.Length() > 0)
 			    {
 			    const TInt KParamIndex(User::LeaveIfError(stmnt.ParameterIndex(iFieldMap.FindL(nameFieldUid) ) ) );
-    			User::LeaveIfError(stmnt.BindText(KParamIndex, textToSet));
-			    }			}
-		else if (field.StorageType() == KStorageTypeText &&  // the field is textual
-				 field.TextStorage()->Text().Length() &&     // ignore empty fields
-				 custFiltFields != NULL)
-			{
-			// the field is not stored in contact table but potentially maps to a hint
-			hint.UpdateHintL(field, *custFiltFields);
+				User::LeaveIfError(stmnt.BindText(KParamIndex, textToSet));
+			    }
 			}
+        else if (field.StorageType() == KStorageTypeText &&  // the field is textual
+             field.TextStorage()->Text().Length() &&     // ignore empty fields
+             custFiltFields != NULL)
+            {
+            // the field is not stored in contact table but potentially maps to a hint
+            hint.UpdateHintL(field, *custFiltFields);
+            }
 		}
-
-	
 	
 	// bind other values to statement
 	if(aType == EInsert) 
@@ -540,6 +501,19 @@ void CPplContactTable::WriteContactItemL(const CContactItem& aItem, TCntSqlState
 	User::LeaveIfError(stmnt.BindInt(
 		User::LeaveIfError(stmnt.ParameterIndex(KContactIdParam() ) ), aItem.Id() ) );
 
+	//bind favorite index
+	TInt indexFavField = aItem.CardFields().Find(KUidContactFieldFavourite);
+	if (indexFavField >= KErrNone)
+	    {
+	    const CContactItemField& field = aItem.CardFields()[indexFavField];
+	    if (field.StorageType() == KStorageTypeContactItemId)
+	        {
+	        User::LeaveIfError(stmnt.BindInt(
+	            User::LeaveIfError(stmnt.ParameterIndex(KContactFavoriteIndexParam() ) ),
+	                field.AgentStorage()->Value() ) );
+	        }
+	    }
+	
 	// build the clob/blob parts of the update statement
 	RSqlParamWriteStream textHeader;
 	User::LeaveIfError(textHeader.BindBinary(stmnt, 
@@ -576,7 +550,7 @@ void CPplContactTable::WriteContactItemL(const CContactItem& aItem, TCntSqlState
 	binFields.CommitL();
 
 	// execute the statement
-	User::LeaveIfError(stmnt.Exec() );
+	User::LeaveIfError(stmnt.Exec());
 
 	textHeader.Close();
 	binHeader.Close();

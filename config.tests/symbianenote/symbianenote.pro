@@ -7,8 +7,10 @@ CONFIG -= qt
 CONFIG += console
 TEMPLATE = app
 TARGET =
-DEPENDPATH +=
+DEPENDPATH += .
 INCLUDEPATH += .
 
 SOURCES += main.cpp
+
+INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 LIBS += -lcalinterimapi

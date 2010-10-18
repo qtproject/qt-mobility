@@ -53,6 +53,8 @@ QTM_BEGIN_NAMESPACE
   \ingroup organizer-filters
   
   It may be used to select organizer items whose ids are contained in the given list of ids.
+
+  Note: a QOrganizerItemLocalIdFilter will not be preserved if streamed to a QDataStream.
  */
 
 Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemLocalIdFilter);

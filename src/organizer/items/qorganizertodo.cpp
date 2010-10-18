@@ -99,7 +99,9 @@ QDateTime QOrganizerTodo::dueDateTime() const
     return ttr.dueDateTime();
 }
 
-/*! Sets whether the time component of the start datetime or end datetime are significant. */
+/*! Passing in \a isTimeSpecified determines whether the time component of
+the start datetime or end datetime are significant.
+*/
 void QOrganizerTodo::setTimeSpecified(bool isTimeSpecified)
 {
     QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();

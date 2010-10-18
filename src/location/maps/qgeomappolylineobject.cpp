@@ -61,16 +61,25 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a new polyline object with the parent \a parent.
+    Constructs a new polyline object.
 */
-QGeoMapPolylineObject::QGeoMapPolylineObject(QGeoMapObject *parent)
-        : QGeoMapObject(new QGeoMapPolylineObjectPrivate(this, parent)) {}
+QGeoMapPolylineObject::QGeoMapPolylineObject()
+    : d_ptr(new QGeoMapPolylineObjectPrivate()) {}
 
 /*!
     Destroys this polyline object.
 */
 QGeoMapPolylineObject::~QGeoMapPolylineObject()
 {
+    delete d_ptr;
+}
+
+/*!
+    \reimp
+*/
+QGeoMapObject::Type QGeoMapPolylineObject::type() const
+{
+    return QGeoMapObject::PolylineType;
 }
 
 /*!
@@ -89,18 +98,15 @@ QGeoMapPolylineObject::~QGeoMapPolylineObject()
 */
 void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
 {
-    Q_D(QGeoMapPolylineObject);
-    if (d->path != path) {
-        d->path = path;
-        objectUpdated();
-        emit pathChanged(d->path);
+    if (d_ptr->path != path) {
+        d_ptr->path = path;
+        emit pathChanged(d_ptr->path);
     }
 }
 
 QList<QGeoCoordinate> QGeoMapPolylineObject::path() const
 {
-    Q_D(const QGeoMapPolylineObject);
-    return d->path;
+    return d_ptr->path;
 }
 
 /*!
@@ -114,30 +120,25 @@ QList<QGeoCoordinate> QGeoMapPolylineObject::path() const
 */
 void QGeoMapPolylineObject::setPen(const QPen &pen)
 {
-    Q_D(QGeoMapPolylineObject);
-
     QPen newPen = pen;
     newPen.setCosmetic(true);
 
-    if (d->pen == newPen)
+    if (d_ptr->pen == newPen)
         return;
 
-    d->pen = newPen;
-    objectUpdated();
-    emit penChanged(d->pen);
+    d_ptr->pen = newPen;
+    emit penChanged(d_ptr->pen);
 }
 
 QPen QGeoMapPolylineObject::pen() const
 {
-    Q_D(const QGeoMapPolylineObject);
-    return d->pen;
+    return d_ptr->pen;
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::PolylineType)
+QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate()
 {
     pen.setCosmetic(true);
 }

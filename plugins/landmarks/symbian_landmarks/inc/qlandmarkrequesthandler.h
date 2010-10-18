@@ -100,7 +100,6 @@ private:
     // for engine
     // not owned
     QLandmarkAbstractRequest *iQtRequest;
-    QLandmarkIdFetchRequest *iLmIdFetchRequest;
 
     // owned
     CPosLandmarkSearch *iLandmarkSearch;
@@ -157,8 +156,8 @@ public:
     TBool CancelRequest();
     TBool WaitForFinished(TInt);
     void SetOperation(CPosLmOperation *aOp = NULL);
-    void SetExportData(CPosLandmarkEncoder *aEncoder, RFs &aFileSystem, HBufC *aExportPath, CBufBase *aExportBuffer,
-        QList<QLandmarkId> lmIds = QList<QLandmarkId> ());
+    void SetExportData(CPosLandmarkEncoder *aEncoder, RFs &aFileSystem, HBufC *aExportPath,
+        CBufBase *aExportBuffer, QList<QLandmarkId> lmIds = QList<QLandmarkId> ());
     CPosLmOperation * GetOperation();
     static CLandmarkRequestAO* NewL(MLandmarkRequestObserver *, CPosLmOperation *aOp = NULL);
     inline void SetParent(CLandmarkRequestData *aData)
@@ -197,7 +196,7 @@ public:
     CLandmarkRequestData* FetchAsyncRequest(QLandmarkAbstractRequest *);
 
 private:
-    RArray<CLandmarkRequestData> iRequestList;
+    RPointerArray<CLandmarkRequestData> iRequestList;
     RFastLock iRequestListLock;
 };
 

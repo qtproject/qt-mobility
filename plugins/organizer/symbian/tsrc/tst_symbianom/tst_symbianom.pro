@@ -14,7 +14,9 @@ symbian:
     MOBILITY = organizer
 
     TARGET.CAPABILITY = ReadUserData \
-                        WriteUserData
+                        WriteUserData \
+                        WriteDeviceData # needed for User::SetUTCOffset()
+                        
 
     # TODO: max heap size? is default enough for this test module?
     #TARGET.EPOCHEAPSIZE = 0x200000 0x4000000

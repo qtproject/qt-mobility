@@ -44,7 +44,9 @@
 #include <QtCore>
 #include <QTextStream>
 #include <qservicemanager.h>
+#include <servicemetadata_p.h>
 #include <QString>
+#include <QDir>
 
 QT_USE_NAMESPACE
 
@@ -61,15 +63,18 @@ public:
     void execute(const QStringList &options, const QString &cmd, const QStringList &args);
     void showUsage();
     static void showUsage(QTextStream *stream);
+    int errorCode();
 
 public slots:
     void browse(const QStringList &args);
     void search(const QStringList &args);
     void add(const QStringList &args);
     void remove(const QStringList &args);
+    void dbusservice(const QStringList &args);
 
 private:
     bool setOptions(const QStringList &options);
+    void setErrorCode(int error);
     void showAllEntries();
     void showInterfaceInfo(const QServiceFilter &filter);
     void showInterfaceInfo(QList<QServiceInterfaceDescriptor> descriptors);
@@ -77,12 +82,14 @@ private:
 
     QServiceManager *serviceManager;
     QTextStream *stdoutStream;
+    int m_error;
 };
 
 CommandProcessor::CommandProcessor(QObject *parent)
     : QObject(parent),
       serviceManager(0),
-      stdoutStream(new QTextStream(stdout))
+      stdoutStream(new QTextStream(stdout)),
+      m_error(0)
 {
 }
 
@@ -122,16 +129,17 @@ void CommandProcessor::showUsage(QTextStream *stream)
 {
     *stream << "Usage: servicefw [options] <command> [command parameters]\n\n"
             "Commands:\n"
-            "\tbrowse     List all registered services\n"
-            "\tsearch     Search for a service or interface\n"
-            "\tadd        Register a service\n"
-            "\tremove     Unregister a service\n"
+            "\tbrowse         List all registered services\n"
+            "\tsearch         Search for a service or interface\n"
+            "\tadd            Register a service\n"
+            "\tremove         Unregister a service\n"
+            "\tdbusservice    Generates a .service file for D-Bus service autostart\n"
             "\n"
             "Options:\n"
-            "\t--system   Use the system-wide services database instead of the\n"
-            "\t           user-specific database\n"
-            "\t--user     Use the user-specific services database for add/remove.\n"
-            "\t           This is the default\n"
+            "\t--system       Use the system-wide services database instead of the\n"
+            "\t               user-specific database\n"
+            "\t--user         Use the user-specific services database for add/remove.\n"
+            "\t               This is the default\n"
             "\n";
 }
 
@@ -186,7 +194,7 @@ static const char * const errorTable[] = {
     "Loading of plug-in failed",
     "Service or interface not found",
     "Insufficient capabilities to access service",
-    "Unknown error"
+    "Unknown error",
 };
 
 void CommandProcessor::add(const QStringList &args)
@@ -199,6 +207,7 @@ void CommandProcessor::add(const QStringList &args)
     const QString &xmlPath = args[0];
     if (!QFile::exists(xmlPath)) {
         *stdoutStream << "Error: cannot find file " << xmlPath << '\n';
+        setErrorCode(11);
         return;
     }
 
@@ -206,10 +215,12 @@ void CommandProcessor::add(const QStringList &args)
         *stdoutStream << "Registered service at " << xmlPath << '\n';
     } else {
         int error = serviceManager->error();
-        if (error > 11) //map anything larger than 11 to 11
-            error = 11;
+        if (error > 10) //map anything larger than 10 to 10
+            error = 10;
         *stdoutStream << "Error: cannot register service at " << xmlPath
                 << " (" << errorTable[error] << ")" << '\n';
+    
+        setErrorCode(error);
     }
 }
 
@@ -227,39 +238,113 @@ void CommandProcessor::remove(const QStringList &args)
         *stdoutStream << "Error: cannot unregister service " << service << '\n';
 }
 
+void CommandProcessor::dbusservice(const QStringList &args)
+{
+    if (args.isEmpty() || args.size() == 1) {
+        *stdoutStream << "Usage:\n\tautostart <service-xml-file> <service-file>\n";
+        return;
+    }
+  
+#if defined(QT_NO_DBUS)
+    *stdoutStream << "Error: no D-Bus module found in Qt\n";
+    return;
+#endif
+
+    const QString &xmlPath = args[0];
+    if (!QFile::exists(xmlPath)) {
+        *stdoutStream << "Error: cannot find xml file at " << xmlPath << '\n';
+        return;
+    }
+
+    const QString &servicePath = args[1];
+    if (!QFile::exists(servicePath)) {
+        *stdoutStream << "Error: cannot find service file " << servicePath << '\n';
+        return;
+    }
+    
+    QFile *f = new QFile(xmlPath);
+    ServiceMetaData parser(f);
+    if (!parser.extractMetadata()) {
+        *stdoutStream << "Error: invalid service xml at " << xmlPath << '\n';
+        return;
+    }
+
+    const ServiceMetaDataResults results = parser.parseResults();
+    if (results.type != QService::InterProcess) {
+        *stdoutStream << "Error: not an inter-process service xml at " << xmlPath << '\n';
+        return;
+    }
+
+    QString path;
+    if (serviceManager->scope() == QService::UserScope) {
+        // the d-bus xdg environment variable for the local service paths
+        QString xdgPath = getenv("XDG_DATA_HOME");
+        if (xdgPath == "") {
+            // if not supplied generate in default
+            QDir dir(QDir::homePath());
+            dir.mkpath(".local/share/dbus-1/services/");
+            path = QDir::homePath() + "/.local/share/dbus-1/services/";    
+        } else {
+            path = xdgPath;
+        }
+    } else {
+        path = "/usr/share/dbus-1/services/";    
+    }
+
+    const QString &name = "com.nokia.qtmobility.sfw." + results.name;
+    const QString &exec = QFileInfo(args[1]).absoluteFilePath();
+
+    QStringList names;
+    foreach (const QServiceInterfaceDescriptor &interface, results.interfaces) {
+        names << interface.interfaceName();
+    }
+    names.removeDuplicates();
+
+    for (int i = 0; i < names.size(); i++) {
+        const QString &file = path + names.at(i) + ".service";
+        QFile data(file);
+        if (data.open(QFile::WriteOnly)) {
+            QTextStream out(&data);
+            out << "[D-BUS Service]\n"
+                << "Name=" << name << '\n'
+                << "Exec=" << exec;
+            data.close();
+        } else {
+            *stdoutStream << "Error: cannot write to " << file << " (insufficient permissions)" << '\n';
+            return;
+        }
+
+        *stdoutStream << "Generated D-Bus autostart file " << file << '\n';
+    }
+}
+
 bool CommandProcessor::setOptions(const QStringList &options)
 {
     if (serviceManager)
         delete serviceManager;
 
-    bool systemScope = false;
-    bool userScope = false;
+    QService::Scope scope = QService::UserScope;
 
     QStringList opts = options;
     QMutableListIterator<QString> i(opts);
     while (i.hasNext()) {
         QString option = i.next();
         if (option == "--system") {
-            systemScope = true;
+            scope = QService::SystemScope;
             i.remove();
         } else if (option == "--user") {
-            userScope = true;
+            scope = QService::UserScope;
             i.remove();
         }
     }
 
-    if (!userScope && systemScope)
-        serviceManager = new QServiceManager(QService::SystemScope, this);
-    
     if (!opts.isEmpty()) {
         *stdoutStream << "Bad options: " << opts.join(" ") << "\n\n";
         showUsage();
         return false;
     }
-
-    // other initialization, if not triggered by an option
-    if (!serviceManager)
-        serviceManager = new QServiceManager(this);
+    
+    serviceManager = new QServiceManager(scope, this);
 
     return true;
 }
@@ -306,65 +391,100 @@ void CommandProcessor::showServiceInfo(const QString &service)
         return;
     }
    
-    QList<QServiceInterfaceDescriptor> pluginDesc;
-    QList<QServiceInterfaceDescriptor> ipcDesc;
+    QList<QServiceInterfaceDescriptor> pluginDescs;
+    QList<QServiceInterfaceDescriptor> ipcDescs;
     foreach (const QServiceInterfaceDescriptor &desc, descriptors) {
         int serviceType = desc.attribute(QServiceInterfaceDescriptor::ServiceType).toInt();
         if (serviceType == QService::Plugin)
-            pluginDesc.append(desc);
+            pluginDescs.append(desc);
         else
-            ipcDesc.append(desc);
+            ipcDescs.append(desc);
     }
 
-    if (pluginDesc.size() > 0) {
+    if (pluginDescs.size() > 0) {
         *stdoutStream << service;
-        if (ipcDesc.size() > 0)
+        if (ipcDescs.size() > 0)
             *stdoutStream << " (Plugin):\n";
         else 
             *stdoutStream << ":\n";
 
-        QString description = pluginDesc[0].attribute(
+        QString description = pluginDescs[0].attribute(
                 QServiceInterfaceDescriptor::ServiceDescription).toString();
         if (!description.isEmpty())
             *stdoutStream << '\t' << description << '\n';
         
         *stdoutStream << "\tPlugin Library: ";
-        showInterfaceInfo(pluginDesc);
+        showInterfaceInfo(pluginDescs);
     }
    
-    if (ipcDesc.size() > 0) {
+    if (ipcDescs.size() > 0) {
         *stdoutStream << service;
-        if (pluginDesc.size() > 0)
+        if (pluginDescs.size() > 0)
             *stdoutStream << " (IPC):\n";
         else 
             *stdoutStream << ":\n";
         
-        QString description = ipcDesc[0].attribute(
+        QString description = ipcDescs[0].attribute(
                 QServiceInterfaceDescriptor::ServiceDescription).toString();
         if (!description.isEmpty())
             *stdoutStream << '\t' << description << '\n';
     
         *stdoutStream << "\tIPC Address: ";
-        showInterfaceInfo(ipcDesc);
+        showInterfaceInfo(ipcDescs);
     }
 }
 
 void CommandProcessor::showInterfaceInfo(QList<QServiceInterfaceDescriptor> descriptors)
 {
-    QService::Scope scope = descriptors[0].scope();
-
-    *stdoutStream << descriptors[0].attribute(QServiceInterfaceDescriptor::Location).toString() << '\n'
-                  << "\tScope: " << (scope == QService::SystemScope ? "All users" : "Current User") << '\n'
-                  << "\tImplements:\n";
+    QList<QServiceInterfaceDescriptor> systemList;
+    QList<QServiceInterfaceDescriptor> userList;
     
     foreach (const QServiceInterfaceDescriptor &desc, descriptors) {
-        QStringList capabilities = desc.attribute(
-            QServiceInterfaceDescriptor::Capabilities).toStringList();
-        
-        *stdoutStream << "\t    " << desc.interfaceName() << ' '
-                      << desc.majorVersion() << '.' << desc.minorVersion()
-                      << (capabilities.isEmpty() ? "" : "\t{" + capabilities.join(", ") + "}") << "\n";
+        if (desc.scope() == QService::SystemScope)
+            systemList.append(desc);
+        else
+            userList.append(desc);
     }
+    
+    if (userList.size() > 0) {
+        *stdoutStream << userList[0].attribute(QServiceInterfaceDescriptor::Location).toString() << '\n'
+                      << "\tUser Implements:\n";
+
+        foreach (const QServiceInterfaceDescriptor &desc, userList) {
+            QStringList capabilities = desc.attribute(
+                    QServiceInterfaceDescriptor::Capabilities).toStringList();
+
+            *stdoutStream << "\t    " << desc.interfaceName() << ' '
+                << desc.majorVersion() << '.' << desc.minorVersion()
+                << (capabilities.isEmpty() ? "" : "\t{" + capabilities.join(", ") + "}") << "\n";
+        }
+    }
+    
+    if (systemList.size() > 0) {
+        if (userList.size() < 1)
+            *stdoutStream << systemList[0].attribute(QServiceInterfaceDescriptor::Location).toString() << '\n';
+            
+        *stdoutStream << "\tSystem Implements:\n";
+
+        foreach (const QServiceInterfaceDescriptor &desc, systemList) {
+            QStringList capabilities = desc.attribute(
+                    QServiceInterfaceDescriptor::Capabilities).toStringList();
+
+            *stdoutStream << "\t    " << desc.interfaceName() << ' '
+                << desc.majorVersion() << '.' << desc.minorVersion()
+                << (capabilities.isEmpty() ? "" : "\t{" + capabilities.join(", ") + "}") << "\n";
+        }
+    }
+}
+
+int CommandProcessor::errorCode()
+{
+    return m_error;
+}
+
+void CommandProcessor::setErrorCode(int error)
+{
+    m_error = error;
 }
 
 int main(int argc, char *argv[])
@@ -391,7 +511,7 @@ int main(int argc, char *argv[])
 
     CommandProcessor processor;
     processor.execute(options, args.value(options.count() + 1), args.mid(options.count() + 2));
-    return 0;
+    return processor.errorCode();
 }
 
 #include "servicefw.moc"

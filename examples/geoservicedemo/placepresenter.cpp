@@ -141,13 +141,15 @@ void PlacePresenter::showAddress(QTreeWidgetItem* addrItem, const QGeoAddress& a
         streetNameItem->setText(1, s);
     }
 
-    s = address.streetNumber();
+    /* TODO: check on windows
+        s = address.streetNumber();
 
-    if (!s.isEmpty()) {
-        QTreeWidgetItem* streetNumberItem = new QTreeWidgetItem(addrItem);
-        streetNumberItem->setText(0, "street number");
-        streetNumberItem->setText(1, s);
-    }
+        if (!s.isEmpty()) {
+            QTreeWidgetItem* streetNumberItem = new QTreeWidgetItem(addrItem);
+            streetNumberItem->setText(0, "street number");
+            streetNumberItem->setText(1, s);
+        }
+    */
 
     s = address.postCode();
 

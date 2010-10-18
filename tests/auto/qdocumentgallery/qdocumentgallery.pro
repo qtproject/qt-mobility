@@ -10,3 +10,4 @@ SOURCES += tst_qdocumentgallery.cpp
 CONFIG += mobility
 MOBILITY = gallery
 
+symbian: TARGET.CAPABILITY = ReadDeviceData ReadUserData WriteDeviceData

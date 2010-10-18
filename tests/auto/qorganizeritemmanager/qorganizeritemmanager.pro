@@ -9,7 +9,8 @@ INCLUDEPATH += ../../../src/organizer \
                ../../../src/organizer/items \
                ../../../src/organizer/details \
                ../../../src/organizer/requests \
-               ../../../src/organizer/filters
+               ../../../src/organizer/filters \
+               ../../../src/organizer/engines
 INCLUDEPATH += ../
 
 CONFIG += mobility

@@ -57,7 +57,7 @@ class QGalleryResultSet;
 QTM_END_NAMESPACE
 
 
-QTM_USE_NAMESPACE;
+QTM_USE_NAMESPACE
 
 class DocumentPropertiesWidget : public QWidget
 {

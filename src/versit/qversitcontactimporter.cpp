@@ -309,7 +309,7 @@ void QVersitContactImporter::setPropertyHandler(QVersitContactImporterPropertyHa
 }
 
 /*!
- * \internal
+ * \deprecated
  * Gets the handler for processing QVersitProperties.
  */
 QVersitContactImporterPropertyHandler* QVersitContactImporter::propertyHandler() const

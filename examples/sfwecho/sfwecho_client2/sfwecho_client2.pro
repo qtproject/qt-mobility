@@ -13,5 +13,6 @@ symbian {
     TARGET.CAPABILITY = ALL \
         -TCB
     FORMS += ../sfwecho_client/sfwecho_client_mobile.ui
+    INCLUDEPATH += .
 }
 else:FORMS += ../sfwecho_client/sfwecho_client.ui

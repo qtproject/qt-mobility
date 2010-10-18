@@ -4,16 +4,21 @@ DEPENDPATH += .
 
 macx:CONFIG-=app_bundle
 
+QMF_INCLUDEDIR = $$(QMF_INCLUDEDIR)
+QMF_LIBDIR = $$(QMF_LIBDIR)
+
 # QMF headers must be located at $QMF_INCLUDEDIR
-INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
+!isEmpty(QMF_INCLUDEDIR): INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
 
 # QMF libraries must be located at $QMF_LIBDIR
 macx {
-    LIBS += -F$$(QMF_LIBDIR) -framework qmfclient
+    !isEmpty(QMF_LIBDIR): LIBS += -F$$(QMF_LIBDIR)
+    LIBS += -framework qmfclient
 } else {
-    LIBS += -L $$(QMF_LIBDIR) -lqmfclient
+    !isEmpty(QMF_LIBDIR): LIBS += -L $$(QMF_LIBDIR)
+    LIBS += -lqmfclient
 }
-QMAKE_RPATHDIR+= $$(QMF_LIBDIR)
+!isEmpty(QMF_LIBDIR): QMAKE_RPATHDIR+= $$(QMF_LIBDIR)
 
 # Input
 SOURCES += main.cpp

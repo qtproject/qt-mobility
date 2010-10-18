@@ -51,52 +51,50 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapPolylineObjectInfo::QGeoTiledMapPolylineObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject)
-        , pathItem(0)
+QGeoTiledMapPolylineObjectInfo::QGeoTiledMapPolylineObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
+    : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
     polyline = static_cast<QGeoMapPolylineObject*>(mapObject);
+
+    connect(polyline,
+            SIGNAL(pathChanged(QList<QGeoCoordinate>)),
+            this,
+            SLOT(pathChanged(QList<QGeoCoordinate>)));
+    connect(polyline,
+            SIGNAL(penChanged(QPen)),
+            this,
+            SLOT(penChanged(QPen)));
+
+    pathItem = new QGraphicsPathItem();
+    graphicsItem = pathItem;
+
+    penChanged(polyline->pen());
+    pathChanged(polyline->path());
 }
 
 QGeoTiledMapPolylineObjectInfo::~QGeoTiledMapPolylineObjectInfo() {}
 
-void QGeoTiledMapPolylineObjectInfo::objectUpdated()
+void QGeoTiledMapPolylineObjectInfo::pathChanged(const QList<QGeoCoordinate> &path)
 {
-    QList<QGeoCoordinate> path = polyline->path();
-
-    points = createPolygon(path, tiledMapData, false);
-    //makepoly(points, path, mapData, false);
-
-    if (points.size() < 2) {
-        if (pathItem) {
-            delete pathItem;
-            pathItem = 0;
-            graphicsItem = 0;
-        }
-        return;
+    points = createPolygon(polyline->path(), tiledMapData, false);
+    if (points.size() >= 2) {
+        QPainterPath painterPath;
+        painterPath.addPolygon(points);
+        pathItem->setPath(painterPath);
+        setValid(true);
+    } else {
+        setValid(false);
     }
-
-    QPainterPath painterPath;
-    painterPath.addPolygon(points);
-
-    if (!pathItem)
-        pathItem = new QGraphicsPathItem();
-
-    pathItem->setPath(painterPath);
-
-    mapUpdated();
-
-    graphicsItem = pathItem;
-
     updateItem();
 }
 
-void QGeoTiledMapPolylineObjectInfo::mapUpdated()
+void QGeoTiledMapPolylineObjectInfo::penChanged(const QPen &pen)
 {
-    if (pathItem) {
-        pathItem->setPen(polyline->pen());
-    }
+    pathItem->setPen(polyline->pen());
+    updateItem();
 }
+
+#include "moc_qgeotiledmappolylineobjectinfo_p.cpp"
 
 QTM_END_NAMESPACE
 

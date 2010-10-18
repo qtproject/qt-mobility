@@ -113,6 +113,7 @@ void S60MediaPlayerAudioEndpointSelector::setActiveEndpoint(const QString& name)
 
         if (m_control->session()) {
             m_control->session()->setActiveEndpoint(name);
+            emit activeEndpointChanged(name);
         }
         m_control->setAudioEndpoint(name);
     }

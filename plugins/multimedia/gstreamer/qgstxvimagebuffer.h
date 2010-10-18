@@ -100,6 +100,8 @@ private slots:
     void destroyBuffer(QGstXvImageBuffer *);
 
 private:
+    void doAlloc();
+
     struct XvShmImage {
         XvImage *xvImage;
         XShmSegmentInfo shmInfo;
@@ -114,6 +116,7 @@ private:
     QList<QGstXvImageBuffer*> m_pool;
     QList<QGstXvImageBuffer*> m_allBuffers;
     QList<XvShmImage> m_imagesToDestroy;
+    Qt::HANDLE m_threadId;
 };
 
 #endif //QT_NO_XVIDEO

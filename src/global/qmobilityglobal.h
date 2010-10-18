@@ -41,13 +41,13 @@
 #ifndef QMOBILITYGLOBAL_H
 #define QMOBILITYGLOBAL_H
 
-#define QTM_VERSION_STR   "1.1.0"
+#define QTM_VERSION_STR   "1.2.0"
 /*
    QTM_VERSION is (major << 16) + (minor << 8) + patch.
 */
-#define QTM_VERSION 0x010100
+#define QTM_VERSION 0x010200
 /*
-   can be used like #if (QTM_VERSION >= QTM_VERSION_CHECK(1, 1, 0))
+   can be used like #if (QTM_VERSION >= QTM_VERSION_CHECK(1, 2, 0))
 */
 #define QTM_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
@@ -110,11 +110,6 @@
 #    else
 #      define Q_MESSAGING_EXPORT Q_DECL_IMPORT
 #    endif
-#    if defined(QT_BUILD_TELEPHONY_LIB)
-#      define Q_TELEPHONY_EXPORT Q_DECL_EXPORT
-#    else
-#      define Q_TELEPHONY_EXPORT Q_DECL_IMPORT
-#    endif
 #    if defined(QT_BUILD_MULTIMEDIA_LIB)
 #        define Q_MULTIMEDIA_EXPORT Q_DECL_EXPORT
 #    else
@@ -159,7 +154,6 @@
 #    define Q_LOCATION_EXPORT Q_DECL_IMPORT
 #    define Q_MULTIMEDIA_EXPORT Q_DECL_IMPORT
 #    define Q_MESSAGING_EXPORT Q_DECL_IMPORT
-#    define Q_TELEPHONY_EXPORT Q_DECL_IMPORT
 #    if QTM_SERVICEFW_SYMBIAN_DATABASEMANAGER_SERVER
 #      define Q_SERVICEFW_EXPORT
 #    else
@@ -183,7 +177,6 @@
 #    define Q_LOCATION_EXPORT Q_DECL_EXPORT
 #    define Q_MULTIMEDIA_EXPORT Q_DECL_EXPORT
 #    define Q_MESSAGING_EXPORT Q_DECL_EXPORT
-#    define Q_TELEPHONY_EXPORT Q_DECL_EXPORT
 #    define Q_SERVICEFW_EXPORT Q_DECL_EXPORT
 #    define Q_SYSINFO_EXPORT Q_DECL_EXPORT
 #    define Q_SENSORS_EXPORT Q_DECL_EXPORT
@@ -199,7 +192,6 @@
 #    define Q_LOCATION_EXPORT
 #    define Q_MULTIMEDIA_EXPORT
 #    define Q_MESSAGING_EXPORT
-#    define Q_TELEPHONY_EXPORT
 #    define Q_SERVICEFW_EXPORT
 #    define Q_SYSINFO_EXPORT
 #    define Q_SENSORS_EXPORT

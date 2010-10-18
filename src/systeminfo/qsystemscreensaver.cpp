@@ -78,13 +78,14 @@ QSystemScreenSaver::~QSystemScreenSaver()
 }
 
 /*!
-  \fn bool QSystemScreenSaver::setScreenSaverInhibit()
   \brief Set the screensaver to be inhibited.
 
    Temporarily inhibits the screensaver.
 
-    Will be reverted upon destruction of the QSystemScreenSaver object.
-    Returns true on success, otherwise false.
+   The screensaver will be set to a non inhibited state only when this QSystemScreenSaver object gets destroyed.
+
+   This is a non blocking function that will return true if the inhibit procedure was successful, otherwise false.
+
 
     On platforms that support it, if screensaver is secure by policy, the policy will be honored
     and this will fail.

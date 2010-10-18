@@ -186,137 +186,58 @@ public:
 private slots:
     void testFilterAttribute() {
         QLandmark lm;
-        lm.setAttribute("capacity", 30);
+        QGeoAddress address;
+        address.setStreet("lm1 street");
+        address.setCountry("Australia");
+        lm.setAddress(address);
+        lm.setDescription("Down under");
 
         //test exact match
         QLandmarkAttributeFilter filter;
-        filter.setAttribute("capacity", 30);
+        filter.setAttribute("street", "lm1 street");
 
         QVERIFY(MockEngine::testFilter(filter,lm));
 
         //test no match
-        lm.setAttribute("capacity",29);
+        filter.setAttribute("street", "sesame street");
         QVERIFY(!MockEngine::testFilter(filter, lm));
 
-        //filter should match any value
-        filter.setAttribute("capacity", QVariant());
-        QVERIFY(MockEngine::testFilter(filter, lm));
+        //test no match with an empty qvariant
+        filter.setAttribute("street", QVariant());
+        QVERIFY(!MockEngine::testFilter(filter, lm));
 
-        lm.setAttribute("capacity", 45);
-        QVERIFY(MockEngine::testFilter(filter, lm));
 
         //test multiple manager attributes AND operation
-        lm.setAttribute("name", "LM1");
-        lm.setAttribute("capacity", 45);
-        lm.setAttribute("height", 10);
         filter.clearAttributes();
-        filter.setAttribute("name", "LM", QLandmarkFilter::MatchStartsWith);
-        filter.setAttribute("capacity", 45);
-        filter.setAttribute("height", QVariant());
+        filter.setAttribute("street", "lm", QLandmarkFilter::MatchStartsWith);
+        filter.setAttribute("country", "Australia");
+        filter.setAttribute("description", "Down under");
         QVERIFY(MockEngine::testFilter(filter, lm));
 
         //test that the AND operation fails when one attribute doesn't match
-        lm.clear();
-        lm.setAttribute("name", "LM1");
-        lm.setAttribute("capacity", 45);
-        lm.setAttribute("height", 10);
         filter.clearAttributes();
-        filter.setAttribute("name", "LM", QLandmarkFilter::MatchEndsWith);
-        filter.setAttribute("capacity", 45);
-        filter.setAttribute("height", QVariant());
+        filter.setAttribute("street", "lm", QLandmarkFilter::MatchEndsWith);
+        filter.setAttribute("country", "australia");
+        filter.setAttribute("description", "Down under");
         QVERIFY(!MockEngine::testFilter(filter, lm));
 
         //test multiple manager attributes OR operation
-        lm.clear();
-        lm.setAttribute("name", "LM1");
-        lm.setAttribute("capacity", 45);
-        lm.setAttribute("height", 10);
         filter.clearAttributes();
         filter.setOperationType(QLandmarkAttributeFilter::OrOperation);
-        filter.setAttribute("name", "LANDMARK", QLandmarkFilter::MatchStartsWith);
-        filter.setAttribute("capacity",45);
-        filter.setAttribute("height", 9);
+        filter.setAttribute("street", "sesame", QLandmarkFilter::MatchStartsWith);
+        filter.setAttribute("country", "Australia");
+        filter.setAttribute("description", "Up over");
         QVERIFY(MockEngine::testFilter(filter,lm));
 
         //test multiple manager with an OR operation that doesn't match
-        lm.clear();
-        lm.setAttribute("name", "LM1");
-        lm.setAttribute("capacity", 45);
-        lm.setAttribute("height", 10);
         filter.clearAttributes();
         filter.setOperationType(QLandmarkAttributeFilter::OrOperation);
-        filter.setAttribute("name", "LANDMARK", QLandmarkFilter::MatchStartsWith);
-        filter.setAttribute("capacity",46);
-        filter.setAttribute("height", 9);
+        filter.setAttribute("street", "sesame", QLandmarkFilter::MatchStartsWith);
+        filter.setAttribute("country","united state of america");
+        filter.setAttribute("description", "us");
         QVERIFY(!MockEngine::testFilter(filter,lm));
-
-
-        //test multiple custom attributes ,AND operation
-        QLandmark lm2;
-        lm2.setCustomAttribute("name", "LM1");
-        lm2.setCustomAttribute("capacity", 45);
-        lm2.setCustomAttribute("height", 10);
-        filter.clearAttributes();
-        filter.setOperationType(QLandmarkAttributeFilter::AndOperation);
-        filter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
-        filter.setAttribute("name", "LM", QLandmarkFilter::MatchStartsWith);
-        filter.setAttribute("capacity", 45);
-        filter.setAttribute("height", QVariant());
-        QVERIFY(MockEngine::testFilter(filter, lm2));
-
-        //test that the AND operation fails when one attribute doesn't match
-        lm2.clear();
-        lm2.setCustomAttribute("name", "LM1");
-        lm2.setCustomAttribute("capacity", 45);
-        lm2.setCustomAttribute("height", 10);
-        filter.clearAttributes();
-        filter.setOperationType(QLandmarkAttributeFilter::AndOperation);
-        filter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
-        filter.setAttribute("name", "LM", QLandmarkFilter::MatchEndsWith);
-        filter.setAttribute("capacity", 45);
-        filter.setAttribute("height", QVariant());
-        QVERIFY(!MockEngine::testFilter(filter, lm2));
-
-        //test multiple manager attributes OR operation
-        lm2.clear();
-        lm2.setCustomAttribute("name", "LM1");
-        lm2.setCustomAttribute("capacity", 45);
-        lm2.setCustomAttribute("height", 10);
-        filter.clearAttributes();
-        filter.setOperationType(QLandmarkAttributeFilter::OrOperation);
-        filter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
-        filter.setAttribute("name", "LANDMARK", QLandmarkFilter::MatchStartsWith);
-        filter.setAttribute("capacity",45);
-        filter.setAttribute("height", 9);
-        QVERIFY(MockEngine::testFilter(filter,lm2));
-
-        //test multiple manager with an OR operation that doesn't match
-        lm2.clear();
-        lm2.setCustomAttribute("name", "LM1");
-        lm2.setCustomAttribute("capacity", 45);
-        lm2.setCustomAttribute("height", 10);
-        filter.clearAttributes();
-        filter.setOperationType(QLandmarkAttributeFilter::OrOperation);
-        filter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
-        filter.setAttribute("name", "LANDMARK", QLandmarkFilter::MatchStartsWith);
-        filter.setAttribute("capacity",46);
-        filter.setAttribute("height", 9);
-        QVERIFY(!MockEngine::testFilter(filter,lm2));
-
-        //try landmark with the same key in both extended and custom attributes but values differ
-        //make sure the filter operates on the right attributes
-        QLandmark lm3;
-        lm3.setAttribute("capacity", 10);
-        lm3.setCustomAttribute("capcity", 5);
-        filter.clearAttributes();
-        filter.setAttribute("capacity", 10);
-        filter.setAttributeType(QLandmarkAttributeFilter::ManagerAttributes);
-        QVERIFY(MockEngine::testFilter(filter,lm3));
-        filter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
-        QVERIFY(!MockEngine::testFilter(filter,lm3));
-        filter.setAttribute("capcity", 5);
-        QVERIFY(MockEngine::testFilter(filter,lm3));
-    }
+        //TODO: expand attribute search on different attribute types
+            }
 
     void testFilterBox() {
         QLandmarkBoxFilter boxFilter(QGeoCoordinate(20,30),QGeoCoordinate(10,40));
@@ -446,9 +367,9 @@ private slots:
         QLandmarkCategoryFilter categoryFilter(cat1);
 
         QLandmarkAttributeFilter attributeFilter;
-        attributeFilter.setAttribute("eye","sharingan");
+        attributeFilter.setAttribute("description","sharingan");
 
-        lm.setAttribute("eye", "sharingan");
+        lm.setDescription("sharingan");
         lm.addCategoryId(cat1);
 
         intersectionFilter.clear();
@@ -569,20 +490,10 @@ private slots:
         QVERIFY(!MockEngine::testFilter(nameFilter,lm));
     }
 
-    void testNearestFilter()
-    {
-        QLandmarkProximityFilter nearestFilter;
-        nearestFilter.setCoordinate(QGeoCoordinate(30,30));
-        nearestFilter.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
-        QLandmark lm;
-        lm.setCoordinate(QGeoCoordinate(40,30));
-        QVERIFY(MockEngine::testFilter(nearestFilter,lm));
-    }
-
     void testProximityFilter()
     {
         QLandmarkProximityFilter proximityFilter;
-        proximityFilter.setCoordinate(QGeoCoordinate(30,30));
+        proximityFilter.setCenter(QGeoCoordinate(30,30));
         proximityFilter.setRadius( QGeoCoordinate(30,30).distanceTo(QGeoCoordinate(30,32)) );
 
         //test landmark in the centre

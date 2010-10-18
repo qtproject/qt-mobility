@@ -294,14 +294,14 @@ bool QLandmarkFileHandlerLmx::readLandmark(QLandmark &landmark)
         QString s = m_reader->readElementText();
 
         if ((s == "INF") || (s == "-INF") || (s == "NaN")) {
-            m_reader->raiseError(QString("The element \"coverageRadius\" expected a value convertable to type double (value was \"%1\").").arg(s));
+            m_reader->raiseError(QString("The element \"coverageRadius\" expected a value convertable to type real (value was \"%1\").").arg(s));
             return false;
         }
 
-        double rad = s.toDouble(&ok);
+        qreal rad = (qreal)(s.toDouble(&ok));
 
         if (!ok) {
-            m_reader->raiseError(QString("The element \"coverageRadius\" expected a value convertable to type double (value was \"%1\").").arg(s));
+            m_reader->raiseError(QString("The element \"coverageRadius\" expected a value convertable to type real (value was \"%1\").").arg(s));
             return false;
         }
 
@@ -799,7 +799,7 @@ bool QLandmarkFileHandlerLmx::writeLandmark(const QLandmark &landmark)
         if (!writeCoordinates(landmark))
             return false;
 
-    if (landmark.radius() != -1.0)
+    if (landmark.radius() > 0)
         m_writer->writeTextElement(m_ns, "coverageRadius", QString::number(landmark.radius()));
 
     if (!writeAddressInfo(landmark))
@@ -851,8 +851,7 @@ bool QLandmarkFileHandlerLmx::writeAddressInfo(const QLandmark &landmark)
 {
     QGeoAddress address = landmark.address();
 
-    if (address.streetNumber().isEmpty()
-            && address.street().isEmpty()
+    if (address.street().isEmpty()
             && address.city().isEmpty()
             && address.state().isEmpty()
             && address.country().isEmpty()

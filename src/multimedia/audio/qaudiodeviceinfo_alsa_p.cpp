@@ -252,37 +252,40 @@ bool QAudioDeviceInfoInternal::testSettings(const QAudioFormat& format) const
     // set the values!
     snd_pcm_hw_params_set_channels(handle,params,format.channels());
     snd_pcm_hw_params_set_rate(handle,params,format.frequency(),dir);
+
+    err = -1;
+
     switch(format.sampleSize()) {
         case 8:
             if(format.sampleType() == QAudioFormat::SignedInt)
-                snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_S8);
+                err = snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_S8);
             else if(format.sampleType() == QAudioFormat::UnSignedInt)
-                snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_U8);
+                err = snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_U8);
             break;
         case 16:
             if(format.sampleType() == QAudioFormat::SignedInt) {
                 if(format.byteOrder() == QAudioFormat::LittleEndian)
-                    snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_S16_LE);
+                    err = snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_S16_LE);
                 else if(format.byteOrder() == QAudioFormat::BigEndian)
-                    snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_S16_BE);
+                    err = snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_S16_BE);
             } else if(format.sampleType() == QAudioFormat::UnSignedInt) {
                 if(format.byteOrder() == QAudioFormat::LittleEndian)
-                    snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_U16_LE);
+                    err = snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_U16_LE);
                 else if(format.byteOrder() == QAudioFormat::BigEndian)
-                    snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_U16_BE);
+                    err = snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_U16_BE);
             }
             break;
         case 32:
             if(format.sampleType() == QAudioFormat::SignedInt) {
                 if(format.byteOrder() == QAudioFormat::LittleEndian)
-                    snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_S32_LE);
+                    err = snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_S32_LE);
                 else if(format.byteOrder() == QAudioFormat::BigEndian)
-                    snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_S32_BE);
+                    err = snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_S32_BE);
             } else if(format.sampleType() == QAudioFormat::UnSignedInt) {
                 if(format.byteOrder() == QAudioFormat::LittleEndian)
-                    snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_U32_LE);
+                    err = snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_U32_LE);
                 else if(format.byteOrder() == QAudioFormat::BigEndian)
-                    snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_U32_BE);
+                    err = snd_pcm_hw_params_set_format(handle,params,SND_PCM_FORMAT_U32_BE);
             }
     }
 
@@ -426,21 +429,24 @@ QList<QByteArray> QAudioDeviceInfoInternal::availableDevices(QAudio::Mode mode)
 
     while (*n != NULL) {
         name = snd_device_name_get_hint(*n, "NAME");
-        descr = snd_device_name_get_hint(*n, "DESC");
-        io = snd_device_name_get_hint(*n, "IOID");
-        if((name != NULL) && (descr != NULL) && ((io == NULL) || (io == filter))) {
-            QString deviceName = QLatin1String(name);
-            QString deviceDescription = QLatin1String(descr);
-            allDevices.append(deviceName.toLocal8Bit().constData());
-            if(deviceDescription.contains(QLatin1String("Default Audio Device")))
-                devices.append(deviceName.toLocal8Bit().constData());
-        }
-        if(name != NULL)
+        if (name != 0 && qstrcmp(name, "null") != 0) {
+            descr = snd_device_name_get_hint(*n, "DESC");
+            io = snd_device_name_get_hint(*n, "IOID");
+
+            if ((descr != NULL) && ((io == NULL) || (io == filter))) {
+                QString deviceName = QLatin1String(name);
+                QString deviceDescription = QLatin1String(descr);
+                allDevices.append(deviceName.toLocal8Bit().constData());
+                if (deviceDescription.contains(QLatin1String("Default Audio Device")))
+                    devices.append(deviceName.toLocal8Bit().constData());
+            }
+
             free(name);
-        if(descr != NULL)
-            free(descr);
-        if(io != NULL)
-            free(io);
+            if (descr != NULL)
+                free(descr);
+            if (io != NULL)
+                free(io);
+        }
         ++n;
     }
     snd_device_name_free_hint(hints);

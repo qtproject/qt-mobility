@@ -91,7 +91,7 @@ public: // transform functions
     CRecurrence* createCRecurrence(const QOrganizerItem *item, QOrganizerItemManager::Error *error);
 
     // alarm setting
-    void setAlarm(CCalendar *cal, QOrganizerItem *item, CComponent *component);
+    QPair<qint32, qint32> modifyAlarmEvent(CCalendar *cal, QOrganizerItem *item, CComponent *component);
 
     // error code conversion
     QOrganizerItemManager::Error calErrorToManagerError(int calError) const;

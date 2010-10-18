@@ -68,31 +68,28 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a new circle object with the parent \a parent.
+    Constructs a new circle object.
 */
-QGeoMapCircleObject::QGeoMapCircleObject(QGeoMapObject *parent)
-        : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent)) {}
+QGeoMapCircleObject::QGeoMapCircleObject()
+    : d_ptr(new QGeoMapCircleObjectPrivate()) {}
 
 /*!
-    Constructs a new circle object based on the circle \a circle, with
-    the parent \a parent.
+    Constructs a new circle object based on the circle \a circle.
 */
-QGeoMapCircleObject::QGeoMapCircleObject(const QGeoBoundingCircle &circle, QGeoMapObject *parent)
-        : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent))
+QGeoMapCircleObject::QGeoMapCircleObject(const QGeoBoundingCircle &circle)
+    : d_ptr(new QGeoMapCircleObjectPrivate())
 {
-    Q_D(QGeoMapCircleObject);
-    d->circle = circle;
+    d_ptr->circle = circle;
 }
 
 /*!
     Constructs a new circle object with a center at coordinate \a center
-    and a radius in meters of \a radius, with the parent \a parent.
+    and a radius in meters of \a radius.
 */
-QGeoMapCircleObject::QGeoMapCircleObject(const QGeoCoordinate &center, qreal radius, QGeoMapObject *parent)
-        : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent))
+QGeoMapCircleObject::QGeoMapCircleObject(const QGeoCoordinate &center, qreal radius)
+    : d_ptr(new QGeoMapCircleObjectPrivate())
 {
-    Q_D(QGeoMapCircleObject);
-    d->circle = QGeoBoundingCircle(center, radius);
+    d_ptr->circle = QGeoBoundingCircle(center, radius);
 }
 
 /*!
@@ -100,6 +97,15 @@ QGeoMapCircleObject::QGeoMapCircleObject(const QGeoCoordinate &center, qreal rad
 */
 QGeoMapCircleObject::~QGeoMapCircleObject()
 {
+    delete d_ptr;
+}
+
+/*!
+    \reimp
+*/
+QGeoMapObject::Type QGeoMapCircleObject::type() const
+{
+    return QGeoMapObject::CircleType;
 }
 
 /*!
@@ -114,23 +120,19 @@ QGeoMapCircleObject::~QGeoMapCircleObject()
 */
 void QGeoMapCircleObject::setPen(const QPen &pen)
 {
-    Q_D(QGeoMapCircleObject);
-
     QPen newPen = pen;
     newPen.setCosmetic(true);
 
-    if (d->pen == newPen)
+    if (d_ptr->pen == newPen)
         return;
 
-    d->pen = newPen;
-    objectUpdated();
-    emit penChanged(d->pen);
+    d_ptr->pen = newPen;
+    emit penChanged(d_ptr->pen);
 }
 
 QPen QGeoMapCircleObject::pen() const
 {
-    Q_D(const QGeoMapCircleObject);
-    return d->pen;
+    return d_ptr->pen;
 }
 
 /*!
@@ -144,18 +146,15 @@ QPen QGeoMapCircleObject::pen() const
 */
 void QGeoMapCircleObject::setBrush(const QBrush &brush)
 {
-    Q_D(QGeoMapCircleObject);
-    if (d->brush != brush) {
-        d->brush = brush;
-        objectUpdated();
-        emit brushChanged(d->brush);
+    if (d_ptr->brush != brush) {
+        d_ptr->brush = brush;
+        emit brushChanged(d_ptr->brush);
     }
 }
 
 QBrush QGeoMapCircleObject::brush() const
 {
-    Q_D(const QGeoMapCircleObject);
-    return d->brush;
+    return d_ptr->brush;
 }
 
 /*!
@@ -171,8 +170,7 @@ QBrush QGeoMapCircleObject::brush() const
 */
 QGeoBoundingCircle QGeoMapCircleObject::circle() const
 {
-    Q_D(const QGeoMapCircleObject);
-    return d->circle;
+    return d_ptr->circle;
 }
 
 /*!
@@ -188,22 +186,18 @@ QGeoBoundingCircle QGeoMapCircleObject::circle() const
 */
 void QGeoMapCircleObject::setCircle(const QGeoBoundingCircle &circle)
 {
-    Q_D(QGeoMapCircleObject);
-
-    QGeoBoundingCircle oldCircle = d->circle;
+    QGeoBoundingCircle oldCircle = d_ptr->circle;
 
     if (oldCircle == circle)
         return;
 
-    d->circle = circle;
+    d_ptr->circle = circle;
 
-    objectUpdated();
+    if (oldCircle.center() != d_ptr->circle.center())
+        emit centerChanged(d_ptr->circle.center());
 
-    if (oldCircle.center() != d->circle.center())
-        emit centerChanged(d->circle.center());
-
-    if (oldCircle.radius() != d->circle.radius())
-        emit radiusChanged(d->circle.radius());
+    if (oldCircle.radius() != d_ptr->circle.radius())
+        emit radiusChanged(d_ptr->circle.radius());
 }
 
 /*!
@@ -217,18 +211,15 @@ void QGeoMapCircleObject::setCircle(const QGeoBoundingCircle &circle)
 */
 void QGeoMapCircleObject::setCenter(const QGeoCoordinate &center)
 {
-    Q_D(QGeoMapCircleObject);
-    if (d->circle.center() != center) {
-        d->circle.setCenter(center);
-        objectUpdated();
+    if (d_ptr->circle.center() != center) {
+        d_ptr->circle.setCenter(center);
         emit centerChanged(center);
     }
 }
 
 QGeoCoordinate QGeoMapCircleObject::center() const
 {
-    Q_D(const QGeoMapCircleObject);
-    return d->circle.center();
+    return d_ptr->circle.center();
 }
 
 /*!
@@ -241,25 +232,21 @@ QGeoCoordinate QGeoMapCircleObject::center() const
 */
 void QGeoMapCircleObject::setRadius(qreal radius)
 {
-    Q_D(QGeoMapCircleObject);
-    if (d->circle.radius() != radius) {
-        d->circle.setRadius(radius);
-        objectUpdated();
+    if (d_ptr->circle.radius() != radius) {
+        d_ptr->circle.setRadius(radius);
         emit radiusChanged(radius);
     }
 }
 
 qreal QGeoMapCircleObject::radius() const
 {
-    Q_D(const QGeoMapCircleObject);
-    return d->circle.radius();
+    return d_ptr->circle.radius();
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::CircleType)
+QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate()
 {
     pen.setCosmetic(true);
 }

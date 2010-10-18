@@ -5,6 +5,7 @@ include(../features/basic_examples_setup.pri)
 } else {
     target.path = $${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
 }
+
 INSTALLS += target
 
 

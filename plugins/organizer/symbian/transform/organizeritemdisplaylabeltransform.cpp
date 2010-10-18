@@ -51,7 +51,7 @@ void OrganizerItemDisplayLabelTransform::transformToDetailL(const CCalEntry& ent
 
 void OrganizerItemDisplayLabelTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
-    if (QOrganizerItemType::TypeNote !=item.type()) {
+    if (QOrganizerItemType::TypeNote != item.type()) {
         if (!item.displayLabel().isEmpty())
             entry->SetSummaryL(toPtrC16(item.displayLabel()));  
     }

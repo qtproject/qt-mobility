@@ -54,9 +54,8 @@ Item {
     VisualDataModel {
         id: visualModel
 
-        model: GalleryQueryModel {
+        model: DocumentGalleryModel {
             id: categoryModel
-            gallery: documentGallery
             properties: [ "title" ]
             sortProperties: [ "title" ]
         }

@@ -1,3 +1,44 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+***************************************************************************/
+
 #include "qdeclarativelandmarkmodel_p.h"
 #include <QTimer>
 
@@ -7,12 +48,45 @@
 
 QTM_BEGIN_NAMESPACE
 
+
+/*!
+    \qmlclass LandmarkAbstractModel QDeclarativeLandmarkAbstractModel
+    \brief The LandmarkAbstractModel element is an uncreatable /
+    uninstantiable base element for LandmarkModel and LandmarkCategoryModel.
+    It defines many common properties for the two models.
+    \ingroup qml-location
+
+    The LandmarkAbstractModel element is an uncreatable /
+    uninstantiable base element for LandmarkModel and LandmarkCategoryModel.
+    It defines many common properties for the two models.
+
+    This element is part of the \bold{QtMobility.location 1.1} module.
+
+    \sa LandmarkModel, LandmarkCategoryModel
+*/
+
 QDeclarativeLandmarkAbstractModel::QDeclarativeLandmarkAbstractModel(QObject *parent) :
         QAbstractListModel(parent), m_manager(0),
         m_componentCompleted(false), m_updatePending(false), m_autoUpdate(true),
         m_limit(-1), m_offset(-1), m_sortingOrder(0), m_sortOrder(NoOrder), m_sortKey(NoSort)
 {
 }
+
+/*!
+    \qmlsignal LandmarkAbstractModel::modelChanged()
+
+    This handler is called when the model data has changed.
+
+*/
+
+/*!
+    \qmlsignal LandmarkAbstractModel::databaseChanged()
+
+    This handler is called when the data in the underlying data
+    storage has changed. If \l autoUpdate is true, model data
+    will be updated shortly afterwards.
+*/
+
 
 QDeclarativeLandmarkAbstractModel::~QDeclarativeLandmarkAbstractModel()
 {
@@ -56,7 +130,7 @@ void QDeclarativeLandmarkAbstractModel::categoriesChanged(const QList<QLandmarkC
     Q_UNUSED(ids)
     if (m_autoUpdate)
         update();
-    emit modelChanged();
+    emit databaseChanged();
 }
 
 void QDeclarativeLandmarkAbstractModel::landmarksChanged(const QList<QLandmarkId>& ids)
@@ -64,15 +138,31 @@ void QDeclarativeLandmarkAbstractModel::landmarksChanged(const QList<QLandmarkId
     Q_UNUSED(ids)
     if (m_autoUpdate)
         update();
-    emit modelChanged();
+    emit databaseChanged();
 }
 
 void QDeclarativeLandmarkAbstractModel::dataChanged()
 {
     if (m_autoUpdate)
         update();
-    emit modelChanged();
+    emit databaseChanged();
 }
+
+/*!
+    \qmlproperty bool LandmarkAbstractModel::autoUpdate
+
+    Controls whether the model data should be automatically updated when
+    appropriate events occur: limit changes, offset changes, filter changes,
+    filter contents change, or sorting rules change. Property also controls
+    whether the data is updated automatically once model instantiation is completed.
+
+    Note: while autoUpdate adds to development comfort, each change in appropriate parameters
+    cause full fetch from underlying database and therefore its use should be thought through.
+    E.g. if your application inherently behaves such that filters, their contents,
+    and underlying database change very frequently, it may be wiser to bind a manual
+    \l update call to a less hectic trigger source.
+
+*/
 
 void QDeclarativeLandmarkAbstractModel::setAutoUpdate(bool autoUpdate)
 {
@@ -95,6 +185,14 @@ void QDeclarativeLandmarkAbstractModel::scheduleUpdate()
     QMetaObject::invokeMethod(this, "startUpdate", Qt::QueuedConnection);
 }
 
+/*!
+    \qmlproperty string LandmarkAbstractModel::error
+
+    Human readable string of the last error that occured
+    (read-only).
+
+*/
+
 QString QDeclarativeLandmarkAbstractModel::error() const
 {
     return m_error;
@@ -112,12 +210,25 @@ void QDeclarativeLandmarkAbstractModel::setDbFileName(QString fileName)
         delete m_manager;
         m_manager = 0;
     }
-
     QMap<QString, QString> map;
     map["filename"] = m_dbFileName;
+#ifdef Q_OS_SYMBIAN
+    m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.symbian", map);
+#else
     m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
+#endif
     connectManager();
 }
+
+
+/*!
+    \qmlmethod LandmarkAbstractModel::update()
+
+    Updates the items represented by the model from the
+    underlying store.
+
+    \sa autoUpdate
+*/
 
 void QDeclarativeLandmarkAbstractModel::update()
 {
@@ -128,6 +239,12 @@ int QDeclarativeLandmarkAbstractModel::limit()
 {
     return m_limit;
 }
+
+/*!
+    \qmlproperty int LandmarkAbstractModel::limit
+
+    Sets the maximum amount of items held by the model.
+*/
 
 void QDeclarativeLandmarkAbstractModel::setLimit(int limit)
 {
@@ -145,6 +262,15 @@ int QDeclarativeLandmarkAbstractModel::offset()
     return m_offset;
 }
 
+/*!
+    \qmlproperty int LandmarkAbstractModel::offset
+
+    Sets the offset for the landmarks. For example if
+    one creates a tabbed / paged application, the offset
+    could be changed dynamically by a multiple of items per page.
+
+*/
+
 void QDeclarativeLandmarkAbstractModel::setOffset(int offset)
 {
     if (offset == m_offset)
@@ -160,6 +286,17 @@ QDeclarativeLandmarkAbstractModel::SortKey QDeclarativeLandmarkAbstractModel::so
 {
     return m_sortKey;
 }
+
+/*!
+    \qmlproperty enumeration LandmarkAbstractModel::sortBy
+
+    Specifies the role to sort the items by.
+
+    \list
+    \o LandmarkAbstractModel.None (default)
+    \o LandmarkAbstractModel.NameSort
+    \endlist
+*/
 
 void QDeclarativeLandmarkAbstractModel::setSortBy(QDeclarativeLandmarkAbstractModel::SortKey key)
 {
@@ -177,6 +314,17 @@ QDeclarativeLandmarkAbstractModel::SortOrder QDeclarativeLandmarkAbstractModel::
     return m_sortOrder;
 }
 
+/*!
+    \qmlproperty enumeration LandmarkAbstractModel::sortOrder
+
+    Specifies the sort order.
+
+    \list
+    \o LandmarkAbstractModel.AscendingOrder
+    \o LandmarkAbstractModel.DescendingOrder
+    \endlist
+*/
+
 void QDeclarativeLandmarkAbstractModel::setSortOrder(QDeclarativeLandmarkAbstractModel::SortOrder order)
 {
     if (order == m_sortOrder)
@@ -188,6 +336,35 @@ void QDeclarativeLandmarkAbstractModel::setSortOrder(QDeclarativeLandmarkAbstrac
     emit sortOrderChanged();
 }
 
+/*!
+    \qmlclass LandmarkModel QDeclarativeLandmarkModel
+    \brief The LandmarkModel element provides access to landmarks.
+    \inherits LandmarkAbstractModel
+    \ingroup qml-location
+
+    This element is part of the \bold{QtMobility.location 1.1} module.
+
+    LandmarkModel provides a model of landmarks from the landmarks store.
+    The contents of the model can be specified with a \l filter, and sorted
+    with the \l LandmarkAbstractModel::sortBy and \l LandmarkAbstractModel::sortOrder properties.
+    Whether the model is automatically updated when the store or filter changes, can be controlled
+    with \l LandmarkAbstractModel::autoUpdate property.
+
+    There are two ways of accessing the landmark data: through model by using views and delegates,
+    or alternatively via \l landmarks list property. Of the two, the model access is preferred.
+    Direct list access (i.e. non-model) is not guaranteed to be in order set by sortBy and
+    sortOrder.
+
+    At the moment only data role provided by the model is \c landmark (\l Landmark).
+    Through that one can access any data provided by the Landmark element.
+
+    The following example illustrates fetching of all landmarks in ascending name order.
+    Example illustrates both model access as well as direct list access.
+
+    \snippet doc/src/snippets/declarative/declarative-landmark.qml LandmarkModel example
+
+    \sa LandmarkAbstractModel, LandmarkCategoryModel, {QLandmarkManager}
+*/
 
 QDeclarativeLandmarkModel::QDeclarativeLandmarkModel(QObject *parent) :
         QDeclarativeLandmarkAbstractModel(parent),
@@ -247,6 +424,18 @@ QDeclarativeLandmarkFilterBase* QDeclarativeLandmarkModel::filter()
 {
     return m_filter;
 }
+
+/*!
+    \qmlproperty LandmarkFilterBase LandmarkModel::filter
+
+    The filter for filtering landmarks.
+
+    \sa LandmarkUnionFilter, LandmarkIntersectionFilter, LandmarkNameFilter,
+    LandmarkProximityFilter, LandmarkBoxFilter, LandmarkCategoryFilter
+
+    \snippet doc/src/snippets/declarative/declarative-landmark.qml LandmarkModel filter
+
+*/
 
 void QDeclarativeLandmarkModel::setFilter(QDeclarativeLandmarkFilterBase* filter)
 {
@@ -310,6 +499,12 @@ void QDeclarativeLandmarkModel::cancelUpdate()
     }
 }
 
+/*!
+    \qmlmethod LandmarkModel::importLandmarks()
+
+    Imports landmarks (and categories) in \l importFile.
+*/
+
 void QDeclarativeLandmarkModel::importLandmarks()
 {
     scheduleImport();
@@ -325,6 +520,14 @@ void QDeclarativeLandmarkModel::cancelImport()
         m_importRequest = 0;
     }
 }
+
+/*!
+    \qmlproperty int LandmarkAbstractModel::count
+
+    Indicates the number of items currently in the model
+    (landmarks/categories).
+
+*/
 
 int QDeclarativeLandmarkModel::count()
 {
@@ -343,7 +546,7 @@ void QDeclarativeLandmarkModel::setFetchRange()
 
 void QDeclarativeLandmarkModel::setFetchOrder()
 {
-    if (!m_fetchRequest || ((m_sortKey == NoSort) && (m_sortOrder = NoOrder)))
+    if (!m_fetchRequest || ((m_sortKey == NoSort) && (m_sortOrder == NoOrder)))
         return;
     if (m_sortingOrder)
         delete m_sortingOrder;
@@ -356,6 +559,17 @@ void QDeclarativeLandmarkModel::setFetchOrder()
         m_sortingOrder->setDirection((Qt::SortOrder)m_sortOrder);
     m_fetchRequest->setSorting(*m_sortingOrder);
 }
+
+/*!
+    \qmlproperty QDeclarativeListProperty LandmarkModel::landmarks
+
+    This element holds the list of \l Landmark elements that the model currently has.
+    Accessing landmarks by iterating over this list is not guaranteed to be in the
+    order set by \l LandmarkAbstractModel::sortBy or \l LandmarkAbstractModel::sortOrder
+
+    \snippet doc/src/snippets/declarative/declarative-landmark.qml LandmarkModel landmarks iteration
+
+*/
 
 void QDeclarativeLandmarkModel::landmarks_append(QDeclarativeListProperty<QDeclarativeLandmark>* prop, QDeclarativeLandmark* landmark)
 {
@@ -372,6 +586,7 @@ int QDeclarativeLandmarkModel::landmarks_count(QDeclarativeListProperty<QDeclara
 
 QDeclarativeLandmark* QDeclarativeLandmarkModel::landmarks_at(QDeclarativeListProperty<QDeclarativeLandmark>* prop, int index)
 {
+    //qDebug() << "landmarks_at returning index" << index;
     return static_cast<QDeclarativeLandmarkModel*>(prop->object)->m_landmarkMap.values().at(index);
 }
 
@@ -391,8 +606,7 @@ void QDeclarativeLandmarkModel::convertLandmarksToDeclarative()
 
     foreach(const QLandmark& landmark, m_landmarks) {
         if (!m_landmarkMap.contains(landmark.landmarkId().localId())) {
-            QDeclarativeLandmark* declarativeLandmark = new QDeclarativeLandmark(this);
-            declarativeLandmark->setLandmark(landmark);
+            QDeclarativeLandmark* declarativeLandmark = new QDeclarativeLandmark(landmark, this);
             m_landmarkMap.insert(landmark.landmarkId().localId(), declarativeLandmark);
         } else {
             // The landmark exists already, update it
@@ -412,6 +626,19 @@ QString QDeclarativeLandmarkModel::importFile() const
 {
     return m_importFile;
 }
+
+/*!
+  \qmlproperty string LandmarkModel::importFile
+
+  Landmarks and their related categories can be imported by setting
+  the import file. If \l LandmarkAbstractModel::autoUpdate is true, the import will be done
+  automatically and as a result model updates. Alternatively \l importLandmarks() can be invoked.
+
+  For supported file formats, refer to \l QLandmarkManager and \l QLandmarkImportRequest.
+
+  \snippet doc/src/snippets/declarative/declarative-landmark.qml LandmarkModel import file
+
+  */
 
 void QDeclarativeLandmarkModel::setImportFile(QString importFile)
 {
@@ -493,12 +720,12 @@ void QDeclarativeLandmarkModel::fetchRequestStateChanged(QLandmarkAbstractReques
         // Convert into declarative classes
         convertLandmarksToDeclarative();
         endResetModel();
+        if (!(oldCount == 0 && m_landmarks.count() == 0))
+            emit modelChanged();
         if (oldCount != m_landmarks.count())
             emit countChanged();
     } else if (m_error != m_fetchRequest->errorString()) {        
         m_error = m_fetchRequest->errorString();
-        // Convert into declarative classes
-        convertLandmarksToDeclarative();
         emit errorChanged();
     }
 }

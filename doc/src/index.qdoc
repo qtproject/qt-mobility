@@ -250,7 +250,7 @@
 
     For more details see the \l{Versit}{Versit API overview}.
 
-    \section1 Preview APIs
+    \section1 BETA APIs
 
     \section2 Organizer
 
@@ -263,7 +263,7 @@
 
     \section2 Versit (Organizer)
 
-    This is an continuation of the Versit API to interface the Organizer API
+    This is a continuation of the Versit API to interface the Organizer API
     with iCalendar documents using the same framework as for vCards.
 
     \section2 Camera
@@ -298,14 +298,6 @@
 
     For more details, see the \l {Feedback}{Feedback API Overview}.
 
-    \section2 Telephony
-
-    The Qt Telephony Events API enables access to the telephony event services to 
-    provide telephony call notification that other applications can use to 
-    be notified.
-
-    For more details, see the \l {Telephony Events}{Telephony Overview}.
-    
     \section1 The QtMobility Namespace 
 
     The QtMobility APIs are placed into the QtMobility namespace. This is
@@ -319,7 +311,7 @@
 
     \raw HTML
 
-    <table cellpadding="2" cellspacing="1" border="0">
+    <table cellpadding="2" cellspacing="1" border="1" width="90%">
     <tbody>
     <tr>
     <td>Color</td>
@@ -361,8 +353,8 @@
     <tr>
     <td rowspan="2">&nbsp;</td>
     <td rowspan="2"><b>API Maturity Level</b></td>
-    <td colspan="5" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
-    <td colspan="4" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
+    <td colspan="6" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
+    <td colspan="3" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
     </tr>
     <tr>
     <td><b>S60 3rd Edition, Feature Pack 1</b></td>
@@ -370,7 +362,7 @@
     <td><b>S60 5th Edition</b></td>
     <td><b>Symbian^3</b></td>
     <td nowrap="nowrap"><b>Maemo 5</b></td>
-    <td><b>Windows CE/Mobile<b></b></b></td>
+    <td><b>Harmattan</b></td>
     <td><b>Windows XP/Vista</b></td>
     <td><b>Linux</b></td>
     <td nowrap="nowrap"><b>Mac OS X</b></td>
@@ -396,7 +388,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
@@ -422,7 +414,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -435,7 +427,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -461,7 +453,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -487,7 +479,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -507,25 +499,25 @@
     </tr>
     <tr>
     <td>Versit(Organizer)</td>
-    <td>TP</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td>BETA</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     </tr>
     <tr>
     <td>Camera</td>
-    <td>TP</td>
+    <td>BETA</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -533,25 +525,25 @@
     </tr>
     <tr>
     <td nowrap="nowrap">Service Framework(OOP)</td>
-    <td>TP</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="gray"></td>
+    <td>BETA</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Organizer</td>
-    <td>TP</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td>BETA</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -559,25 +551,25 @@
     </tr>
     <tr>
     <td>Landmarks</td>
-    <td>TP</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td>BETA</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Document Gallery</td>
-    <td>TP</td>
+    <td>BETA</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -585,38 +577,25 @@
     </tr>
     <tr>
     <td>Maps/Navigation</td>
-    <td>TP</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td>BETA</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     </tr>
     <tr>
     <td>Feedback</td>
-    <td>TP</td>
-    <td bgcolor="yellow"></td>
+    <td>BETA</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    </tr>
-    <tr>
-    <td>Telephony Events</td>
-    <td>TP</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -627,6 +606,12 @@
     </tbody>
     </table>
     <br>
+
+    \endraw
+
+    \raw HTML
+
+    
 
     \endraw
 

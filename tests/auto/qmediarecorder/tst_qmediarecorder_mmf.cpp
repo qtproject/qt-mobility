@@ -96,7 +96,7 @@ void tst_QMediaRecorder_mmf::testAudioEndPointSelector()
 {
     QSignalSpy audioSignal(audioEndpoint,SIGNAL(activeEndpointChanged(QString)));
     QVERIFY(audioEndpoint->availableEndpoints().count() == 1);
-    QVERIFY(audioEndpoint->defaultEndpoint().compare("") == 0);
+    QVERIFY(audioEndpoint->defaultEndpoint().compare("default") == 0);
     audioEndpoint->setActiveEndpoint("device2");
     QVERIFY(audioEndpoint->activeEndpoint().compare("device2") == 0);
     QVERIFY(audioSignal.count() == 1);
@@ -122,7 +122,9 @@ void tst_QMediaRecorder_mmf::testAudioEncoderControl()
 void tst_QMediaRecorder_mmf::testMediaFormatsControl()
 {
     //audioocontainer types
-    QCOMPARE(audiocapture->supportedContainers(), QStringList() << "audio/wav" << "audio/amr");
+    // Containers supported are dynamically queried from MMF. We cannot guarentee that 2 platforms
+    // will support the same set.
+    //QCOMPARE(audiocapture->supportedContainers(), QStringList() << "audio/wav" << "audio/amr");
     QCOMPARE(audiocapture->containerDescription("audio/wav"), QString("WAV Write Format"));
     QCOMPARE(audiocapture->containerDescription("audio/amr"), QString("AMR Write Format"));
 }

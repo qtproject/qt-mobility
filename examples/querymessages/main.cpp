@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
                 } else if (arg == "body") {
                     result.append(message.find(message.bodyId()).textContent());
                 } else if (arg == "status") {
-                    result.append(QString("0x%1").arg(QString::number(message.status())));
+                    result.append(QString::number(message.status()));
                 } else if (arg == "attachments") {
                     QStringList fileNames;
                     foreach (const QMessageContentContainerId &id, message.attachmentIds()) {

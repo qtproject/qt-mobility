@@ -49,6 +49,7 @@
 #include "qtorganizerglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
+#include "qorganizeritemfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -81,6 +82,8 @@ public:
     void setPriority(Priority priority) {setValue(FieldPriority, static_cast<int>(priority));}
     Priority priority() const {return static_cast<Priority>(value<int>(FieldPriority));}
 
+    // Convenience filter
+    static QOrganizerItemFilter match(Priority priority);
 };
 
 QTM_END_NAMESPACE

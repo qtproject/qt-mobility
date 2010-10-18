@@ -140,6 +140,7 @@ these domains have dependencies and these are outlined below:
        Linux backend depends on QtDBus (auto-detected), HAL and \l {http://projects.gnome.org/NetworkManager/} {NetworkManager},
        although System Information will compile without them, there will be reduced functionality. It also depends on QtGui, and 
        on libbluetooth development headers.
+       As well, for Linux machines that have libblkid installed, this will be used as a last resort for discovering UUID of storage.
        
        The Mac backend depends on CoreWLAN (auto-detected) if the Mac OS X 10.6 SDK is available. It will compile
        with older SSDKsbut there will be reduced functionality.

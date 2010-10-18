@@ -58,6 +58,16 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+  \enum QContactActionTarget::Type
+  This enumerator defines the type of a QContactActionTarget.
+
+  \value Invalid The type is invalid.
+  \value WholeContact The type is a complete contact.
+  \value SingleDetail The type is only a single detail.
+  \value MultipleDetails The type contains multiple details.
+*/
+
+/*!
  * Constructs a new action target from the given \a contact and the given list of that contact's \a details.
  * If no \a contact is specified, the target will be invalid.  If a \a contact but no \a details are specified,
  * the target will be valid, but the action which operates on the target may fail (for example, if it requires

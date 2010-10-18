@@ -50,36 +50,121 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-        textItem(0)
+QGeoTiledMapTextObjectInfo::QGeoTiledMapTextObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
+    : QGeoTiledMapObjectInfo(mapData, mapObject),
+      textItem(0)
 
 {
     text = static_cast<QGeoMapTextObject*>(mapObject);
+
+    connect(text,
+            SIGNAL(coordinateChanged(QGeoCoordinate)),
+            this,
+            SLOT(coordinateChanged(QGeoCoordinate)));
+    connect(text,
+            SIGNAL(textChanged(QString)),
+            this,
+            SLOT(textChanged(QString)));
+    connect(text,
+            SIGNAL(fontChanged(QFont)),
+            this,
+            SLOT(fontChanged(QFont)));
+    connect(text,
+            SIGNAL(penChanged(QPen)),
+            this,
+            SLOT(penChanged(QPen)));
+    connect(text,
+            SIGNAL(brushChanged(QBrush)),
+            this,
+            SLOT(brushChanged(QBrush)));
+    connect(text,
+            SIGNAL(offsetChanged(QPoint)),
+            this,
+            SLOT(offsetChanged(QPoint)));
+    connect(text,
+            SIGNAL(alignmentChanged(Qt::Alignment)),
+            this,
+            SLOT(alignmentChanged(Qt::Alignment)));
+
+    textItem = new QGraphicsSimpleTextItem();
+    graphicsItem = textItem;
+
+    penChanged(text->pen());
+    brushChanged(text->brush());
+    coordinateChanged(text->coordinate());
+    fontChanged(text->font());
+    textChanged(text->text());
+
+    updateValidity();
+    if (valid())
+        update();
 }
 
 QGeoTiledMapTextObjectInfo::~QGeoTiledMapTextObjectInfo() {}
 
-void QGeoTiledMapTextObjectInfo::objectUpdated()
+void QGeoTiledMapTextObjectInfo::updateValidity()
 {
-    if (!text->coordinate().isValid()) {
-        if (textItem) {
-            delete textItem;
-            textItem = 0;
-            graphicsItem = 0;
-        }
-        return;
+    setValid((text->coordinate().isValid() && !text->text().isEmpty()));
+}
+
+void QGeoTiledMapTextObjectInfo::coordinateChanged(const QGeoCoordinate &coordinate)
+{
+    updateValidity();
+    if (text->coordinate().isValid())
+        textItem->setPos(tiledMapData->coordinateToWorldReferencePosition(text->coordinate()));
+    if (valid())
+        updateItem();
+}
+
+void QGeoTiledMapTextObjectInfo::textChanged(const QString &text)
+{
+    updateValidity();
+    if (!this->text->text().isEmpty()) {
+        textItem->setText(this->text->text());
+        update();
     }
+    if (valid())
+        updateItem();
+}
 
-    if (!textItem)
-        textItem = new QGraphicsSimpleTextItem();
-
-    textItem->setText(text->text());
+void QGeoTiledMapTextObjectInfo::fontChanged(const QFont &font)
+{
     textItem->setFont(text->font());
-    textItem->setBrush(text->brush());
+    update();
+}
 
+void QGeoTiledMapTextObjectInfo::offsetChanged(const QPoint &offset)
+{
+    update();
+}
+
+void QGeoTiledMapTextObjectInfo::alignmentChanged(Qt::Alignment alignment)
+{
+    update();
+}
+
+void QGeoTiledMapTextObjectInfo::penChanged(const QPen &pen)
+{
+    textItem->setPen(text->pen());
+    updateItem();
+}
+
+void QGeoTiledMapTextObjectInfo::brushChanged(const QBrush &brush)
+{
+    textItem->setBrush(text->brush());
+    updateItem();
+}
+
+void QGeoTiledMapTextObjectInfo::zoomLevelChanged(qreal zoomLevel)
+{
+    update();
+}
+
+void QGeoTiledMapTextObjectInfo::update()
+{
     QFontMetrics metrics(text->font());
     QRect bounds = metrics.boundingRect(text->text());
+    QPointF alignmentOffset;
 
     if (text->alignment() & Qt::AlignLeft) {
         alignmentOffset.setX(0);
@@ -97,29 +182,19 @@ void QGeoTiledMapTextObjectInfo::objectUpdated()
         alignmentOffset.setY(-bounds.height());
     }
 
-    QPointF position = tiledMapData->coordinateToWorldPixel(text->coordinate());
-    textItem->setPos(position);
-
-    mapUpdated();
-
-    graphicsItem = textItem;
+    int zoomFactor = tiledMapData->zoomFactor();
+    textItem->resetTransform();
+    textItem->setScale(zoomFactor);
+    QPointF offset = text->offset();
+    offset += alignmentOffset;
+    textItem->setTransform(QTransform::fromTranslate(
+                               offset.x() * zoomFactor,
+                               offset.y() * zoomFactor));
 
     updateItem();
 }
 
-void QGeoTiledMapTextObjectInfo::mapUpdated()
-{
-    if (textItem) {
-        int zoomFactor = tiledMapData->zoomFactor();
-        textItem->resetTransform();
-        textItem->setScale(zoomFactor);
-        QPointF offset = text->offset();
-        offset += alignmentOffset;
-        textItem->setTransform(QTransform::fromTranslate(
-                                   offset.x() * zoomFactor,
-                                   offset.y() * zoomFactor));
-    }
-}
+#include "moc_qgeotiledmaptextobjectinfo_p.cpp"
 
 QTM_END_NAMESPACE
 

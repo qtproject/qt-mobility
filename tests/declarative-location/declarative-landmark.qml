@@ -50,11 +50,26 @@ Rectangle {
     
     Text { id: title;  text: "Simple landmark test app"; font {pointSize: 12; bold: true}}
     
-    // Just to see everything instantiates
-    Landmark { }
-    //LandmarkModel { }
-    LandmarkCategory { }
-    //LandmarkCategoryModel { }
+    // Just to see everything instantiates, also used in docs.
+
+    //![User declared landmark]
+    Landmark { 
+        id: myLandmark
+	name: "Tangalooma wrecks"
+	coordinate: Coordinate {
+            latitude: -27.163238
+            longitude: 153.368373
+	}
+    }
+    //![User declared landmark]
+
+    //![User declared category]
+    LandmarkCategory {
+        id: myCategory
+        name: "Best dive sites"
+    }
+    //![User declared category]
+
     LandmarkNameFilter { }
     LandmarkProximityFilter { }
     LandmarkIntersectionFilter { }
@@ -68,7 +83,7 @@ Rectangle {
     // Example: landmark proximity filter
     LandmarkProximityFilter {
         id: landmarkFilterSpecificLocation
-	coordinate: Coordinate {
+	center: Coordinate {
 	        longitude: 10
 		latitude: 20
         }
@@ -81,7 +96,7 @@ Rectangle {
     }
     LandmarkProximityFilter {
         id: landmarkFilterMyCurrentLocation
-	coordinate: myPosition.position.coordinate
+	center: myPosition.position.coordinate
 	radius: 500
     }
     
@@ -92,7 +107,7 @@ Rectangle {
 	    name: "Darwin"
         }
 	LandmarkProximityFilter {
-	    coordinate: Coordinate {
+	    center: Coordinate {
 	        longitude:  10
 	        latitude: 20
 		}
@@ -108,7 +123,7 @@ Rectangle {
 	    name: "Nimbin"
         }
 	LandmarkProximityFilter {
-            coordinate: myPosition.position.coordinate
+            center: myPosition.position.coordinate
 	    radius: 50
 	}
     }
@@ -163,17 +178,19 @@ Rectangle {
     }
 
     // Example: landmark category model
+
+    //![Categories list iteration]
     LandmarkCategoryModel {
         id: categoriesOfGivenLandmark
 	autoUpdate: false
-	// You can assign a Landmark here. That causes the LandmarkCategoryModel to 
-	// provide the categories the landmark belongs to. However, the Landmark needs to come from
-	// LandmarkModel because it needs to have internal IDs set correctly. Preferably it should be assigned
-	// either by iterating list of landmarks from model, or by setting it in the landmark model's delegate.
-	// landmark: 
-	limit: 5
-	offset:0
+        onCategoriesChanged: {
+            console.log("log: Categories count is: "+ count);
+            for (var index = 0; index < categories.length; index++)  {
+                console.log("Index, name:" + index + " , " + categories[index].name);
+            }
+        }
     }
+    //![Category list iteration]
     
     // The view
     ListView {
@@ -233,8 +250,8 @@ Rectangle {
             landmarkModel.setDbFileName("generatedExampleLandmarkDb.db");
         }
         else if (action == "Set import file" ) {
-	    console.log("log: Setting import file to AUS-PublicToilet-Queensland.gpx")
-	    landmarkModel.importFile = "AUS-PublicToilet-Queensland.gpx"
+	    console.log("log: Setting import file to mylm.lmx")
+	    landmarkModel.importFile = "mylm.lmx"
         }
         else if (action == "Import" ) {
 	    console.log("log:Calling importLandmarks()")

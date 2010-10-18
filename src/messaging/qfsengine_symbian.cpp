@@ -68,13 +68,17 @@
 #include <memailcontent.h>
 #include <mmessageiterator.h>
 
+#include <QThreadStorage>
+#include <QCoreApplication>
+
 using namespace EmailInterface;
 
 QTM_BEGIN_NAMESPACE
 
 using namespace SymbianHelpers;
 
-Q_GLOBAL_STATIC(CFSEngine,fsEngine);
+Q_GLOBAL_STATIC(CFSEngine, applicationThreadFsEngine);
+Q_GLOBAL_STATIC(QThreadStorage<CFSEngine *>, fsEngineThreadStorage)
 
 CFSEngine::CFSEngine()
 {
@@ -95,32 +99,70 @@ CFSEngine::CFSEngine()
 
 CFSEngine::~CFSEngine()
 {
+    m_mtmAccountList.clear();
 
+    for (TInt i = 0; i < m_attachments.Count(); i++){
+        m_attachments[i]->Release();
+    }
+    m_attachments.Reset();
+
+    for (TInt i = 0; i < m_mailboxes.Count(); i++){
+        m_mailboxes[i]->Release();
+    }
+    m_mailboxes.Reset();
+
+    if (m_clientApi) {
+        m_clientApi->Release();
+        m_clientApi = NULL;
+    }
+
+    if (m_factory) {
+        delete m_factory;
+        m_factory = NULL;
+    }
 }
 
 void CFSEngine::cleanupFSBackend()
 {
     m_mtmAccountList.clear();
+
     for (TInt i = 0; i < m_attachments.Count(); i++){
         m_attachments[i]->Release();
     }
     m_attachments.Reset();
+
     for (TInt i = 0; i < m_mailboxes.Count(); i++){
         m_mailboxes[i]->Release();
     }
     m_mailboxes.Reset();
-    m_clientApi->Release();
-    delete m_factory;
+
+    if (m_clientApi) {
+        m_clientApi->Release();
+        m_clientApi = NULL;
+    }
+
+    if (m_factory) {
+        delete m_factory;
+        m_factory = NULL;
+    }
 }
 
 CFSEngine* CFSEngine::instance()
 {   
-    return fsEngine();
+    if (QCoreApplication::instance() && QCoreApplication::instance()->thread() == QThread::currentThread()) {
+        return applicationThreadFsEngine();
+    }
+
+    if (!fsEngineThreadStorage()->hasLocalData()) {
+        fsEngineThreadStorage()->setLocalData(new CFSEngine);
+    }
+    
+    return fsEngineThreadStorage()->localData();
 }
 
 bool CFSEngine::accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2)
 {
-    CFSEngine* freestyleEngine = fsEngine();
+    CFSEngine* freestyleEngine = instance();
     return QMessageAccountSortOrderPrivate::lessThan(freestyleEngine->m_currentAccountOrdering,
         freestyleEngine->account(accountId1),
         freestyleEngine->account(accountId2));
@@ -135,7 +177,7 @@ void CFSEngine::orderAccounts(QMessageAccountIdList& accountIds, const QMessageA
 
 bool CFSEngine::folderLessThan(const QMessageFolderId folderId1, const QMessageFolderId folderId2)
 {
-    CFSEngine* freestyleEngine = fsEngine();
+    CFSEngine* freestyleEngine = instance();
     return QMessageFolderSortOrderPrivate::lessThan(freestyleEngine->m_currentFolderOrdering,
             freestyleEngine->folder(folderId1),
             freestyleEngine->folder(folderId2));
@@ -149,7 +191,7 @@ void CFSEngine::orderFolders(QMessageFolderIdList& folderIds,  const QMessageFol
 
 bool CFSEngine::messageLessThan(const QMessage& message1, const QMessage& message2)
 {
-    CFSEngine* freestyleEngine = fsEngine();
+    CFSEngine* freestyleEngine = instance();
     return QMessageSortOrderPrivate::lessThan(freestyleEngine->m_currentMessageOrdering, message1, message2);
 }
 
@@ -1369,6 +1411,12 @@ void CFSEngine::applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, 
 QMessageManager::NotificationFilterId CFSEngine::registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
                                                                            const QMessageFilter &filter, QMessageManager::NotificationFilterId aId)
 {
+    if (QCoreApplication::instance() && QCoreApplication::instance()->thread() != QThread::currentThread()) {
+        if (this != applicationThreadFsEngine()) {
+            return applicationThreadFsEngine()->registerNotificationFilter(aPrivateStore, filter, aId);
+        }
+    }
+
     ipMessageStorePrivate = &aPrivateStore;
     iListenForNotifications = true;    
 
@@ -1381,6 +1429,12 @@ QMessageManager::NotificationFilterId CFSEngine::registerNotificationFilter(QMes
 
 void CFSEngine::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
 {
+    if (QCoreApplication::instance() && QCoreApplication::instance()->thread() != QThread::currentThread()) {
+        if (this != applicationThreadFsEngine()) {
+            return applicationThreadFsEngine()->unregisterNotificationFilter(notificationFilterId);
+        }
+    }
+
     m_filters.remove(notificationFilterId);
     if (m_filters.count() == 0) {
         iListenForNotifications = false;

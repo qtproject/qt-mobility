@@ -64,6 +64,12 @@ public:
     QGeoBoundingBox boundingBox() const;
     void setBoundingBox(const QGeoBoundingBox &boundingBox);
 
+    QGeoCoordinate topLeft();
+    void setTopLeft(const QGeoCoordinate &topLeft);
+
+    QGeoCoordinate bottomRight();
+    void setBottomRight(const QGeoCoordinate &bottomRight);
+
 private:
     Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkBoxFilter)
 };

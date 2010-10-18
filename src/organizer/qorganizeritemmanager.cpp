@@ -97,6 +97,21 @@ QTM_BEGIN_NAMESPACE
   This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
+ /*!
+  \fn QOrganizerItemManager::collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal is emitted at some point once some collections identified by \a collectionIds have been added from a datastore managed by this manager.
+ */
+
+ /*!
+  \fn QOrganizerItemManager::collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal is emitted at some point once some collections identified by \a collectionIds have been changed from a datastore managed by this manager.
+ */
+
+ /*!
+  \fn QOrganizerItemManager::collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal is emitted at some point once some collections identified by \a collectionIds have been removed from a datastore managed by this manager.
+ */
+
 
 
 #define makestr(x) (#x)
@@ -299,17 +314,18 @@ QOrganizerItemManager::~QOrganizerItemManager()
   \value NoError The most recent operation was successful
   \value DoesNotExistError The most recent operation failed because the requested organizer item or detail definition does not exist
   \value AlreadyExistsError The most recent operation failed because the specified organizer item or detail definition already exists
-  \value InvalidDetailError The most recent operation failed because the specified organizer item contains details which do not conform to their definition
-  \value InvalidItemTypeError The most recent operation failed because the organizer item type specified was not valid for the operation
+  \value InvalidDetailError The most recent operation failed because the specified organizer detail definition already exists
   \value LockedError The most recent operation failed because the datastore specified is currently locked
   \value DetailAccessError The most recent operation failed because a detail was modified or removed and its access method does not allow that
   \value PermissionsError The most recent operation failed because the caller does not have permission to perform the operation
   \value OutOfMemoryError The most recent operation failed due to running out of memory
-  \value VersionMismatchError The most recent operation failed because the backend of the manager is not of the required version
-  \value LimitReachedError The most recent operation failed because the limit for that type of object has been reached
   \value NotSupportedError The most recent operation failed because the requested operation is not supported in the specified store
   \value BadArgumentError The most recent operation failed because one or more of the parameters to the operation were invalid
   \value UnspecifiedError The most recent operation failed for an undocumented reason
+  \value VersionMismatchError The most recent operation failed because the backend of the manager is not of the required version
+  \value LimitReachedError The most recent operation failed because the limit for that type of object has been reached
+  \value InvalidItemTypeError The most recent operation failed for an undocumented reason
+  \value InvalidCollectionError The most recent operation failed because the collection is invalid
   \value InvalidOccurrenceError The most recent operation failed because it was an attempt to save an occurrence without a correct InstanceOrigin detail
  */
 
@@ -582,13 +598,18 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemManager::collectionIds() const
   Returns the collections managed by this manager which
   have an id contained in the list of collection ids \a collectionIds.
   If the list of collection ids \a collectionIds is empty or
-  not specified, this function will return
-  all collections managed by this manager.
+  not specified, this function will return an empty list of collections.
+
+  If any of the ids in the given list of \a collectionIds is invalid (does not
+  exist in the manager), an error will be inserted into the \a errorMap at that
+  index.
+
+  XXX TODO: does the return list get filled with "blank" collections for errors?
  */
-QList<QOrganizerCollection> QOrganizerItemManager::collections(const QList<QOrganizerCollectionLocalId>& collectionIds) const
+QList<QOrganizerCollection> QOrganizerItemManager::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->collections(collectionIds, &d->m_error);
+    return d->m_engine->collections(collectionIds, errorMap, &d->m_error);
 }
 
 /*!
@@ -609,8 +630,13 @@ QList<QOrganizerCollection> QOrganizerItemManager::collections(const QList<QOrga
  */
 bool QOrganizerItemManager::saveCollection(QOrganizerCollection* collection)
 {
-    d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->saveCollection(collection, &d->m_error);
+    if (collection) {
+        d->m_error = QOrganizerItemManager::NoError;
+        return d->m_engine->saveCollection(collection, &d->m_error);
+    } else {
+        d->m_error = QOrganizerItemManager::BadArgumentError;
+        return false;
+    }
 }
 
 /*!
@@ -618,11 +644,8 @@ bool QOrganizerItemManager::saveCollection(QOrganizerCollection* collection)
   from the manager if the given \a collectionId exists.
   Returns true on success, false on failure.
 
-  XXX TODO:
-  What happens if you attempt to remove the default collection?
-  Fails?  Or sets next collection to be the default?  Or..?
-  Do we need functions: setDefaultCollection(collection)?
-  etc.
+  Attempting to remove the default collection will fail and calling \l error() will return
+  QOrganizerItemManager::PermissionsError.
  */
 bool QOrganizerItemManager::removeCollection(const QOrganizerCollectionLocalId& collectionId)
 {
@@ -632,14 +655,22 @@ bool QOrganizerItemManager::removeCollection(const QOrganizerCollectionLocalId& 
 
 /*!
   Returns a pruned or modified version of the \a original organizer item which is valid and can be saved in the manager.
-  The returned organizer item might have entire details removed or arbitrarily changed.  The cache of relationships
-  in the organizer item are ignored entirely when considering compatibility with the backend, as they are
-  saved and validated separately.
+  The returned organizer item might have entire details removed or arbitrarily changed.
  */
 QOrganizerItem QOrganizerItemManager::compatibleItem(const QOrganizerItem& original)
 {
     d->m_error = QOrganizerItemManager::NoError;
     return d->m_engine->compatibleItem(original, &d->m_error);
+}
+
+/*!
+  Returns a pruned or modified version of the \a original organizer collection which is valid and can be saved in the manager.
+  The returned organizer collection might have meta data removed or arbitrarily changed.
+ */
+QOrganizerCollection QOrganizerItemManager::compatibleCollection(const QOrganizerCollection& original)
+{
+    d->m_error = QOrganizerItemManager::NoError;
+    return d->m_engine->compatibleCollection(original, &d->m_error);
 }
 
 /*!
@@ -712,7 +743,7 @@ bool QOrganizerItemManager::hasFeature(QOrganizerItemManager::ManagerFeature fea
 /*!
   Returns the list of data types supported by the manager
  */
-QList<QVariant::Type> QOrganizerItemManager::supportedDataTypes() const
+QList<int> QOrganizerItemManager::supportedDataTypes() const
 {
     return d->m_engine->supportedDataTypes();
 }

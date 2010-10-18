@@ -59,6 +59,7 @@ JournalEditPage::JournalEditPage(QWidget *parent)
     m_timeEdit = new QDateTimeEdit(this);
     QLabel *alarmLabel = new QLabel("Alarm:", this);
     m_alarmComboBox = new QComboBox(this);
+    QLabel *calendarLabel = new QLabel("Calendar:", this);
 
     QStringList alarmList;
     alarmList  << "None"
@@ -70,6 +71,9 @@ JournalEditPage::JournalEditPage(QWidget *parent)
     m_alarmComboBox->addItems(alarmList);
     connect(m_alarmComboBox, SIGNAL(currentIndexChanged(const QString)), this,
                         SLOT(handleAlarmIndexChanged(const QString)));
+
+    m_calendarComboBox = new QComboBox(this);
+    // the calendar names are not know here, fill the combo box later...
 
 #ifndef Q_OS_SYMBIAN
     // Add push buttons for Maemo as it does not support soft keys
@@ -89,6 +93,8 @@ JournalEditPage::JournalEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_timeEdit);
     scrollAreaLayout->addWidget(alarmLabel);
     scrollAreaLayout->addWidget(m_alarmComboBox);
+    scrollAreaLayout->addWidget(calendarLabel);
+    scrollAreaLayout->addWidget(m_calendarComboBox);
     scrollAreaLayout->addStretch();
 
 #ifndef Q_OS_SYMBIAN
@@ -128,6 +134,46 @@ void JournalEditPage::journalChanged(QOrganizerItemManager *manager, const QOrga
     m_organizerJournal = journal;
     m_subjectEdit->setText(journal.displayLabel());
     m_timeEdit->setDateTime(journal.dateTime());
+
+    // set calendar selection
+    m_calendarComboBox->clear();
+
+    // resolve metadata field that contains calendar name (if any)
+    QString calendarNameMetadataKey;
+    m_collections = m_manager->collections();
+    if (!m_collections.isEmpty()) {
+        QOrganizerCollection firstCollection = m_collections[0];
+        QVariantMap metadata = firstCollection.metaData();
+        QList<QString> metaDataKeys = metadata.keys();
+        foreach(QString key, metaDataKeys) {
+            if (key.indexOf("name", 0, Qt::CaseInsensitive) != -1) {
+                calendarNameMetadataKey = key;
+                break;
+            }
+        }
+    }
+    int index = 0;
+    int journalCalendarIndex = -1;
+    foreach(QOrganizerCollection collection, m_collections) {
+        // We currently have no way of stringifying ids
+        // QString visibleName = "Calendar id = " + QString::number(collection.id().localId());
+        QString visibleName = "Calendar " + QString::number(index);
+        if (!calendarNameMetadataKey.isNull())
+            visibleName = collection.metaData(calendarNameMetadataKey).toString();
+
+        m_calendarComboBox->addItem(visibleName);
+        if (collection.id().localId() == journal.collectionId().localId())
+            journalCalendarIndex = index;
+        ++index;
+    }
+
+    if (journalCalendarIndex > -1) {
+        m_calendarComboBox->setCurrentIndex(journalCalendarIndex);
+        m_calendarComboBox->setEnabled(false); // when modifying existing events, the calendar can't be changed anymore
+    }
+    else {
+        m_calendarComboBox->setEnabled(true);
+    }
 }
 
 
@@ -143,7 +189,10 @@ void JournalEditPage::saveClicked()
     m_organizerJournal.setDateTime(m_timeEdit->dateTime());
 
     // Save
-    m_manager->saveItem(&m_organizerJournal);
+    if (m_calendarComboBox->currentIndex() > -1)
+        m_manager->saveItem(&m_organizerJournal, m_collections[m_calendarComboBox->currentIndex()].localId());
+    else
+        m_manager->saveItem(&m_organizerJournal);
     if (m_manager->error())
         QMessageBox::warning(this, "Failed!", QString("Failed to save journal!\n(error code %1)").arg(m_manager->error()));
     else

@@ -58,7 +58,6 @@ public:
     QLandmarkAttributeFilter(const QLandmarkFilter &other);
     virtual ~QLandmarkAttributeFilter();
 
-    enum AttributeType{ManagerAttributes, CustomAttributes};
     enum OperationType{AndOperation, OrOperation};
 
     QVariant attribute(const QString &key) const;
@@ -69,9 +68,6 @@ public:
     QStringList attributeKeys() const;
 
     QLandmarkFilter::MatchFlags matchFlags(const QString &key) const;
-
-    AttributeType attributeType() const;
-    void setAttributeType(AttributeType attributeType);
 
     OperationType operationType() const;
     void setOperationType(OperationType operationType);

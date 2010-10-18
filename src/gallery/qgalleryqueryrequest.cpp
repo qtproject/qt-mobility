@@ -55,7 +55,7 @@ public:
         , offset(0)
         , limit(0)
         , scope(QGalleryQueryRequest::AllDescendants)
-        , live(false)
+        , autoUpdate(false)
         , resultSet(0)
         , internalResultSet(0)
     {
@@ -65,7 +65,7 @@ public:
     int offset;
     int limit;
     QGalleryQueryRequest::Scope scope;
-    bool live;
+    bool autoUpdate;
     QGalleryResultSet *resultSet;
     QGalleryResultSet *internalResultSet;
     QGalleryNullResultSet nullResultSet;
@@ -168,7 +168,7 @@ void QGalleryQueryRequest::setSortPropertyNames(const QStringList &names)
 }
 
 /*!
-    \property QGalleryQueryRequest::live
+    \property QGalleryQueryRequest::autoUpdate
 
     \brief Whether a the results of a request should be updated after a request
     has finished.
@@ -178,14 +178,14 @@ void QGalleryQueryRequest::setSortPropertyNames(const QStringList &names)
 */
 
 
-bool QGalleryQueryRequest::isLive() const
+bool QGalleryQueryRequest::autoUpdate() const
 {
-    return d_func()->live;
+    return d_func()->autoUpdate;
 }
 
-void QGalleryQueryRequest::setLive(bool live)
+void QGalleryQueryRequest::setAutoUpdate(bool enabled)
 {
-    d_func()->live = live;
+    d_func()->autoUpdate = enabled;
 }
 
 /*!

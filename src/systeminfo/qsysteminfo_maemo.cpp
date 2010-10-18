@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 #include "qsysteminfocommon_p.h"
-#include <qsysteminfo_maemo_p.h>
+#include "qsysteminfo_maemo_p.h"
 #include <QStringList>
 #include <QSize>
 #include <QFile>
@@ -55,7 +55,7 @@
 #include <QMapIterator>
 
 #if !defined(QT_NO_DBUS)
-#include "gconfitem_p.h" // Temporarily here.
+#include "linux/gconfitem_p.h" // Temporarily here.
 #endif
 
 #ifdef Q_WS_X11
@@ -99,7 +99,11 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QStringList languages;
 
+#if !defined(Q_WS_MAEMO_6)
     GConfItem languagesItem("/apps/osso/inputmethod/available_languages");
+#else
+    GConfItem languagesItem("/meegotouch/inputmethods/languages");
+#endif
     const QStringList locales = languagesItem.value().toStringList();
 
     foreach(const QString locale, locales) {
@@ -123,15 +127,11 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,
                                                "/com/nokia/SystemInfo",
                                                "com.nokia.SystemInfo",
                                                QDBusConnection::systemBus());
-            if(!connectionInterface.isValid()) {
-                qWarning() << "interfacenot valid";
-            } else {
-                QDBusReply< QByteArray > reply =
-                    connectionInterface.call("GetConfigValue",
-                                             "/device/sw-release-ver");
-                if(reply.isValid())
-                    return reply.value();
-            }
+            QDBusReply< QByteArray > reply =
+                connectionInterface.call("GetConfigValue",
+                                         "/device/sw-release-ver");
+            if(reply.isValid())
+                return reply.value();
             break;
         }
         default:
@@ -205,7 +205,8 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxComm
     csStatusMaemo6["NoCoverage"] = 10;  // Offline and in power save mode because of poor coverage.
     csStatusMaemo6["Rejected"]   = 11;  // Offline because SIM was rejected by the network.
 
-    setupNetworkInfo();
+    QTimer::singleShot(0,this,SLOT(setupNetworkInfo()));
+
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
@@ -817,6 +818,7 @@ void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar var1, ushort var
     }
     if (currentCellId != newCellId) {
         currentCellId = newCellId;
+        emit cellIdChanged(newCellId);
     }
     if (currentMCC != newMobileCountryCode) {
         currentMCC = newMobileCountryCode;
@@ -865,6 +867,13 @@ void QSystemNetworkInfoPrivate::usbCableAction()
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
+    if(networkStatus(QSystemNetworkInfo::EthernetMode) == QSystemNetworkInfo::Connected) {
+        return QSystemNetworkInfo::EthernetMode;
+    }
+    if(networkStatus(QSystemNetworkInfo::WlanMode) == QSystemNetworkInfo::Connected) {
+        return QSystemNetworkInfo::WlanMode;
+    }
+
     if (radioAccessTechnology == 1)
         return QSystemNetworkInfo::GsmMode;
     if (radioAccessTechnology == 2)
@@ -875,8 +884,10 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 
 void QSystemNetworkInfoPrivate::wlanSignalStrengthCheck()
 {
-    if (currentWlanSignalStrength != networkSignalStrength(QSystemNetworkInfo::WlanMode)) {
-        currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
+    int strength = 0;
+    strength =  networkSignalStrength(QSystemNetworkInfo::WlanMode);
+    if (currentWlanSignalStrength != strength) {
+        currentWlanSignalStrength = strength;
         emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, currentWlanSignalStrength);
     }
 }
@@ -931,6 +942,53 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
     return -1;
 }
 
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
+{
+    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+
+    return orientation;
+}
+
+
+float QSystemDisplayInfoPrivate::contrast(int screen)
+{
+    Q_UNUSED(screen);
+
+    return 0.0;
+}
+
+int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+        dpi = QDesktopWidget().screenGeometry().width() / (physicalWidth(0) / 25.4);
+    }
+    return dpi;
+}
+
+int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+        dpi = QDesktopWidget().screenGeometry().height() / (physicalHeight(0) / 25.4);
+    }
+    return dpi;
+}
+
+int QSystemDisplayInfoPrivate::physicalHeight(int screen)
+{
+    int height=0;
+
+    return height;
+}
+
+int QSystemDisplayInfoPrivate::physicalWidth(int screen)
+{
+    int width=0;
+
+    return width;
+}
+
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)
         : QSystemStorageInfoLinuxCommonPrivate(parent)
 {
@@ -943,11 +1001,9 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
         : QSystemDeviceInfoLinuxCommonPrivate(parent)
 {
-    setConnection();
     flightMode = false;
  #if !defined(QT_NO_DBUS)
     previousPowerState = QSystemDeviceInfo::UnknownPower;
-    setupBluetooth();
     setupProfile();
 #endif
 }
@@ -960,21 +1016,24 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 {
     for(int i=0; i < map.count(); i++) {
-//       qWarning() << __FUNCTION__ << map.at(i).toString();
+       qWarning() << __FUNCTION__ << map.at(i).toString();
        if(map.at(i).toString() == "battery.charge_level.percentage") {
             int level = batteryLevel();
             emit batteryLevelChanged(level);
+            QSystemDeviceInfo::BatteryStatus stat = QSystemDeviceInfo::NoBatteryLevel;
+
             if(level < 4) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
+                stat = QSystemDeviceInfo::BatteryCritical;
             } else if(level < 11) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryVeryLow);
+                stat = QSystemDeviceInfo::BatteryVeryLow;
             } else if(level < 41) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryLow);
+                stat = QSystemDeviceInfo::BatteryLow;
             } else if(level > 40) {
-                emit batteryStatusChanged(QSystemDeviceInfo::BatteryNormal);
+                stat = QSystemDeviceInfo::BatteryNormal;
             }
-            else {
-                emit batteryStatusChanged(QSystemDeviceInfo::NoBatteryLevel);
+            if(currentBatStatus != stat) {
+                currentBatStatus = stat;
+                Q_EMIT batteryStatusChanged(stat);
             }
         }
         if((map.at(i).toString() == "maemo.charger.connection_status")
@@ -983,7 +1042,8 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
             if (previousPowerState != state)
                 emit powerStateChanged(state);
             previousPowerState = state;
-       }} //end map
+       }
+    } //end map
 }
 #endif
 

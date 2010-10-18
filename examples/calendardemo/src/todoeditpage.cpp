@@ -68,6 +68,7 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     m_statusEdit = new QComboBox(this);
     QLabel *alarmLabel = new QLabel("Alarm:", this);
     m_alarmComboBox = new QComboBox(this);
+    QLabel *calendarLabel = new QLabel("Calendar:", this);
 
     QStringList alarmList;
     alarmList  << "None"
@@ -79,6 +80,9 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     m_alarmComboBox->addItems(alarmList);
     connect(m_alarmComboBox, SIGNAL(currentIndexChanged(const QString)), this,
                         SLOT(handleAlarmIndexChanged(const QString)));
+
+    m_calendarComboBox = new QComboBox(this);
+    // the calendar names are not know here, fill the combo box later...
 
 #ifndef Q_OS_SYMBIAN
     // Add push buttons for non-Symbian platforms as they do not support soft keys
@@ -104,6 +108,8 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_statusEdit);
     scrollAreaLayout->addWidget(alarmLabel);
     scrollAreaLayout->addWidget(m_alarmComboBox);
+    scrollAreaLayout->addWidget(calendarLabel);
+    scrollAreaLayout->addWidget(m_calendarComboBox);
     scrollAreaLayout->addStretch();
 #ifndef Q_OS_SYMBIAN
     scrollAreaLayout->addLayout(hbLayout);
@@ -164,6 +170,46 @@ void TodoEditPage::todoChanged(QOrganizerItemManager *manager, const QOrganizerT
     m_priorityEdit->setCurrentIndex(index);
     index = m_priorityEdit->findData(QVariant(todo.status()));
     m_statusEdit->setCurrentIndex(index);
+
+    // set calendar selection
+    m_calendarComboBox->clear();
+
+    // resolve metadata field that contains calendar name (if any)
+    QString calendarNameMetadataKey;
+    m_collections = m_manager->collections();
+    if (!m_collections.isEmpty()) {
+        QOrganizerCollection firstCollection = m_collections[0];
+        QVariantMap metadata = firstCollection.metaData();
+        QList<QString> metaDataKeys = metadata.keys();
+        foreach(QString key, metaDataKeys) {
+            if (key.indexOf("name", 0, Qt::CaseInsensitive) != -1) {
+                calendarNameMetadataKey = key;
+                break;
+            }
+        }
+    }
+    int counter = 0;
+    int todoCalendarIndex = -1;
+    foreach(QOrganizerCollection collection, m_collections) {
+        // We currently have no way of stringifying ids
+        // QString visibleName = "Calendar id = " + QString::number(collection.id().localId());
+        QString visibleName = "Calendar " + QString::number(counter);
+        if (!calendarNameMetadataKey.isNull())
+            visibleName = collection.metaData(calendarNameMetadataKey).toString();
+
+        m_calendarComboBox->addItem(visibleName);
+        if (collection.id().localId() == todo.collectionId().localId())
+            todoCalendarIndex = counter;
+        ++counter;
+    }
+
+    if (todoCalendarIndex > -1) {
+        m_calendarComboBox->setCurrentIndex(todoCalendarIndex);
+        m_calendarComboBox->setEnabled(false); // when modifying existing todos, the calendar can't be changed anymore
+    }
+    else {
+        m_calendarComboBox->setEnabled(true);
+    }
 }
 
 
@@ -195,9 +241,12 @@ void TodoEditPage::saveClicked()
     if (currentStatus == QOrganizerTodoProgress::StatusComplete && oldStatus.status() != QOrganizerTodoProgress::StatusComplete)
         m_organizerTodo.setFinishedDateTime(QDateTime::currentDateTime());
     m_organizerTodo.setStatus(currentStatus);
-    
+
     // Save
-    m_manager->saveItem(&m_organizerTodo);
+    if (m_calendarComboBox->currentIndex() > -1)
+        m_manager->saveItem(&m_organizerTodo, m_collections[m_calendarComboBox->currentIndex()].localId());
+    else
+        m_manager->saveItem(&m_organizerTodo);
     if (m_manager->error())
         QMessageBox::warning(this, "Failed!", QString("Failed to save todo!\n(error code %1)").arg(m_manager->error()));
     else

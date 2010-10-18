@@ -269,9 +269,10 @@ public:
         return QOrganizerItemAbstractRequest::CollectionFetchRequest;
     }
 
-    QList<QOrganizerCollectionId> m_collectionIds;
+    QList<QOrganizerCollectionLocalId> m_collectionIds;
 
     QList<QOrganizerCollection> m_collections;
+    QMap<int, QOrganizerItemManager::Error> m_errors;
 };
 
 class QOrganizerCollectionLocalIdFetchRequestPrivate : public QOrganizerItemAbstractRequestPrivate
@@ -311,7 +312,7 @@ public:
         return QOrganizerItemAbstractRequest::CollectionRemoveRequest;
     }
 
-    QList<QOrganizerCollectionId> m_collectionIds;
+    QList<QOrganizerCollectionLocalId> m_collectionIds;
     QMap<int, QOrganizerItemManager::Error> m_errors;
 };
 

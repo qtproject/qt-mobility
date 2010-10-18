@@ -92,9 +92,14 @@ source      cntpplviewsession.cpp
 source		cpcskeymap.cpp
 source		c12keykeymap.cpp
 source		cqwertykeymap.cpp
+source		ckoreankeymap.cpp
 //source		cntmetadataoperation.cpp
 source		cpplpresencetable.cpp
-source    cntsqlsearch.cpp
+source    	cntsqlsearch.cpp
+source 		cntsqlkoreanitut.cpp
+source		cntsqlsearchbase.cpp
+source		cntsqlfactory.cpp
+source		koreaninput.cpp
 
 LIBRARY         euser.lib 
 LIBRARY         efsrv.lib 
@@ -108,12 +113,10 @@ LIBRARY			qtcore.lib
 LIBRARY     	libstdcppv5.lib
 LIBRARY     	libc.lib
 LIBRARY     	libm.lib
+LIBRARY     	xqsettingsmanager
 
 OPTION ARMCC --visibility_inlines_hidden
-
 
 EPOCALLOWDLLDATA
 STDCPP
 SMPSAFE
-
-

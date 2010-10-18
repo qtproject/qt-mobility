@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgeoinstruction.h"
+#include "qgeomaneuver.h"
 
 #include <QSharedData>
 #include <QList>
@@ -72,10 +72,14 @@ public:
 
     bool operator ==(const QGeoRouteSegmentPrivate &other) const;
 
+    bool valid;
+
     int travelTime;
     qreal distance;
     QList<QGeoCoordinate> path;
-    QGeoInstruction instruction;
+    QGeoManeuver maneuver;
+
+    QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> nextSegment;
 };
 
 QTM_END_NAMESPACE

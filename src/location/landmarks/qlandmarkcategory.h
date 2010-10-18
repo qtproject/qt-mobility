@@ -77,22 +77,16 @@ public:
     QLandmarkCategoryId categoryId() const;
     void setCategoryId(const QLandmarkCategoryId &id);
 
-    QVariant attribute(const QString &key) const;
-    void setAttribute(const QString &key, const QVariant &value);
-    QStringList attributeKeys() const;
-    void removeAttribute(const QString &key);
-
-    QVariant customAttribute(const QString &key, const QVariant &defaultValue = QVariant()) const;
-    void setCustomAttribute(const QString &key, const QVariant &value);
-    QStringList customAttributeKeys() const;
-    void removeCustomAttribute(const QString &key);
-
     void clear();
 private:
     QSharedDataPointer<QLandmarkCategoryPrivate> d;
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QLandmarkCategory));
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QLandmarkCategory), Q_MOVABLE_TYPE);
 
 QT_END_HEADER
 

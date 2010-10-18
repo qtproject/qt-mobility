@@ -57,11 +57,37 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapCircleObjectInfo::QGeoTiledMapCircleObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-        polygonItem(0)
+QGeoTiledMapCircleObjectInfo::QGeoTiledMapCircleObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
+    : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
     circle = static_cast<QGeoMapCircleObject*>(mapObject);
+
+    connect(circle,
+            SIGNAL(centerChanged(QGeoCoordinate)),
+            this,
+            SLOT(centerChanged(QGeoCoordinate)));
+    connect(circle,
+            SIGNAL(radiusChanged(qreal)),
+            this,
+            SLOT(radiusChanged(qreal)));
+    connect(circle,
+            SIGNAL(penChanged(QPen)),
+            this,
+            SLOT(penChanged(QPen)));
+    connect(circle,
+            SIGNAL(brushChanged(QBrush)),
+            this,
+            SLOT(brushChanged(QBrush)));
+
+    polygonItem = new QGraphicsPolygonItem;
+    graphicsItem = polygonItem;
+
+    brushChanged(circle->brush());
+    penChanged(circle->pen());
+
+    updateValidity();
+    if (valid())
+        update();
 }
 
 QGeoTiledMapCircleObjectInfo::~QGeoTiledMapCircleObjectInfo() {}
@@ -77,7 +103,27 @@ inline static double qgeocoordinate_radToDeg(double rad)
     return rad * 180 / M_PI;
 }
 
-void QGeoTiledMapCircleObjectInfo::objectUpdated()
+void QGeoTiledMapCircleObjectInfo::updateValidity()
+{
+    setValid((circle->center().isValid() && (circle->radius() >= 0.0)));
+}
+
+void QGeoTiledMapCircleObjectInfo::centerChanged(const QGeoCoordinate &center)
+{
+    updateValidity();
+    if (valid())
+        update();
+
+}
+
+void QGeoTiledMapCircleObjectInfo::radiusChanged(qreal radius)
+{
+    updateValidity();
+    if (valid())
+        update();
+}
+
+void QGeoTiledMapCircleObjectInfo::update()
 {
     QList<QGeoCoordinate> path;
 
@@ -185,27 +231,26 @@ void QGeoTiledMapCircleObjectInfo::objectUpdated()
         path.append(QGeoCoordinate(lat, lng));
     }
 
-    points = createPolygon(path, tiledMapData, true, center.latitude() > 0 ? -100 : tiledMapData->maxZoomSize().height() + 100); // 100px beyond the closest pole
+    points = createPolygon(path, tiledMapData, true, center.latitude() > 0 ? -100 : tiledMapData->worldReferenceSize().height() + 100); // 100px beyond the closest pole
     //makepoly(points, path, mapData, true, center.latitude() > 0 ? -100 : mapData->maxZoomSize.height()+100); // 100px beyond the closest pole
 
-    if (!polygonItem)
-        polygonItem = new QGraphicsPolygonItem();
-
     polygonItem->setPolygon(points);
-    polygonItem->setBrush(circle->brush());
-
-    mapUpdated();
-
-    graphicsItem = polygonItem;
 
     updateItem();
 }
 
-void QGeoTiledMapCircleObjectInfo::mapUpdated()
+void QGeoTiledMapCircleObjectInfo::penChanged(const QPen &pen)
 {
-    if (polygonItem) {
-        polygonItem->setPen(circle->pen());
-    }
+    polygonItem->setPen(pen);
+    updateItem();
 }
+
+void QGeoTiledMapCircleObjectInfo::brushChanged(const QBrush &brush)
+{
+    polygonItem->setBrush(brush);
+    updateItem();
+}
+
+#include "moc_qgeotiledmapcircleobjectinfo_p.cpp"
 
 QTM_END_NAMESPACE

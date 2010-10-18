@@ -62,16 +62,17 @@ class QGalleryAbstractResponsePrivate
 public:
     QGalleryAbstractResponsePrivate()
         : q_ptr(0)
-        , result(QGalleryAbstractRequest::NoResult)
-        , idle(false)
+        , error(QGalleryAbstractRequest::NoError)
+        , status(QGalleryAbstractRequest::Active)
     {
     }
 
     virtual ~QGalleryAbstractResponsePrivate() {}
 
     QGalleryAbstractResponse *q_ptr;
-    int result;
-    bool idle;
+    int error;
+    QGalleryAbstractRequest::Status status;
+    QString errorString;
 };
 
 QTM_END_NAMESPACE

@@ -42,6 +42,7 @@
 #include "qgstreamercapturesession.h"
 #include "qgstreamerrecordercontrol.h"
 #include "qgstreamermediacontainercontrol.h"
+#include "qgstreamervideorendererinterface.h"
 #include "qgstreameraudioencode.h"
 #include "qgstreamervideoencode.h"
 #include "qgstreamerimageencode.h"
@@ -73,7 +74,8 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
      m_audioInputFactory(0),
      m_audioPreviewFactory(0),
      m_videoInputFactory(0),
-     m_videoPreviewFactory(0),
+     m_viewfinder(0),
+     m_viewfinderInterface(0),
      m_audioSrc(0),
      m_audioTee(0),
      m_audioPreviewQueue(0),
@@ -273,11 +275,11 @@ GstElement *QGstreamerCaptureSession::buildVideoPreview()
 {
     GstElement *previewElement = 0;
 
-    if (m_videoPreviewFactory) {
+    if (m_viewfinderInterface) {
         GstElement *bin = gst_bin_new("video-preview-bin");
         GstElement *colorspace = gst_element_factory_make("ffmpegcolorspace", "ffmpegcolorspace-preview");
         GstElement *capsFilter = gst_element_factory_make("capsfilter", "capsfilter-video-preview");
-        GstElement *preview = m_videoPreviewFactory->buildElement();
+        GstElement *preview = m_viewfinderInterface->videoSink();
 
         gst_bin_add_many(GST_BIN(bin), colorspace, capsFilter, preview,  NULL);
         gst_element_link(colorspace,capsFilter);
@@ -715,9 +717,41 @@ void QGstreamerCaptureSession::setVideoInput(QGstreamerVideoInput *videoInput)
     m_videoInputFactory = videoInput;
 }
 
-void QGstreamerCaptureSession::setVideoPreview(QGstreamerElementFactory *videoPreview)
+void QGstreamerCaptureSession::setVideoPreview(QObject *viewfinder)
 {
-    m_videoPreviewFactory = videoPreview;
+    m_viewfinderInterface = qobject_cast<QGstreamerVideoRendererInterface*>(viewfinder);
+    if (!m_viewfinderInterface)
+        viewfinder = 0;
+
+    if (m_viewfinder != viewfinder) {
+        bool oldReady = isReady();
+
+        if (m_viewfinder) {
+            disconnect(m_viewfinder, SIGNAL(sinkChanged()),
+                       this, SIGNAL(viewfinderChanged()));
+            disconnect(m_viewfinder, SIGNAL(readyChanged(bool)),
+                       this, SIGNAL(readyChanged(bool)));
+        }
+
+        m_viewfinder = viewfinder;
+        //m_viewfinderHasChanged = true;
+
+        if (m_viewfinder) {
+            connect(m_viewfinder, SIGNAL(sinkChanged()),
+                       this, SIGNAL(viewfinderChanged()));
+            connect(m_viewfinder, SIGNAL(readyChanged(bool)),
+                    this, SIGNAL(readyChanged(bool)));
+        }
+
+        emit viewfinderChanged();
+        if (oldReady != isReady())
+            emit readyChanged(isReady());
+    }
+}
+
+bool QGstreamerCaptureSession::isReady() const
+{
+    return m_viewfinderInterface != 0 && m_viewfinderInterface->isReady();
 }
 
 QGstreamerCaptureSession::State QGstreamerCaptureSession::state() const
@@ -886,8 +920,8 @@ bool QGstreamerCaptureSession::processSyncMessage(const QGstreamerMessage &messa
             if (m_audioPreviewFactory)
                 m_audioPreviewFactory->prepareWinId();
 
-            if (m_videoPreviewFactory)
-                m_videoPreviewFactory->prepareWinId();
+            if (m_viewfinderInterface)
+                m_viewfinderInterface->precessNewStream();
 
             return true;
         }

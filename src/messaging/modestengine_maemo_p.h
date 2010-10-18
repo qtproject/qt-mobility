@@ -72,6 +72,7 @@ static const int maxCacheSize = 100000;
 class QMessageService;
 class QMessageServicePrivate;
 class QMessageStorePrivate;
+class MessageQueryThread;
 
 struct MessageQueryInfo
 {
@@ -90,6 +91,8 @@ struct MessageQueryInfo
     QString realAccountId;
     bool isQuery;
     bool returnWithSingleShot;
+    bool allMessagesQuery;
+    MessageQueryThread *queryThread;
 };
 
 struct ModestUnreadMessageDBusStruct
@@ -311,7 +314,7 @@ public:
     bool retrieveBody(QMessageService& messageService, const QMessageId &id);
     bool retrieve(QMessageService& messageService, const QMessageId &messageId, const QMessageContentContainerId &id, QMessage *msg = 0);
 
-    void clearHeaderCache();
+    bool retrieveMessageMimeInformation(QMessage& message);
 
 private:
     QFileInfoList localFolders() const;
@@ -391,6 +394,10 @@ private:
 
     bool accountExists(const QMessageAccountId& accountId) const;
 
+    void mimeInformationFromModestMessageToMessage(const MessagingModestMessage& modestMessage,
+                                                   QMessage& message) const;
+
+
 private slots:
     void searchMessagesHeadersReceivedSlot(QDBusMessage msg);
     void searchMessagesHeadersFetchedSlot(QDBusMessage msg);
@@ -405,6 +412,7 @@ private slots:
     void stateChanged(QMessageService::State newState);
     void returnQueryResultsSlot();
     void modestFolderContentsChangedSlot(QDBusMessage msg);
+    void messageQueryFinishedSlot(void* queryThread, QList<QtMobility::QMessageId> ids);
 
 private: //Data
     GConfClient *m_gconfclient;
@@ -417,7 +425,6 @@ private: //Data
     mutable QHash<QString, QMessageAccount> iAccounts;
     mutable QMessageAccountId iDefaultEmailAccountId;
 
-    mutable int m_queryIds;
     mutable QList<MessageQueryInfo> m_pendingMessageQueries;
 
     QMap<QMessageManager::NotificationFilterId, QMessageFilter> m_filters;
@@ -429,11 +436,12 @@ private: //Data
     mutable QStringList m_latestAddOrRemoveNotifications;
 
     mutable QMap<QString, MessagingModestFolder> m_folderCache;
-    mutable QMap<QString, QMessage> m_messageCache;
 
     mutable QMap<int, QMessageServicePrivate*> m_pending_downloads;
 
     mutable QMessageFolderIdList m_observed_folders;
+
+    mutable bool m_allEmailMessagesInCache;
 
     // Following variables are used for sync queries
     mutable QMessageService m_service;
@@ -442,6 +450,24 @@ private: //Data
     mutable int             m_count;
     mutable bool            m_isSorted;
     mutable bool            m_isFiltered;
+};
+
+class MessageQueryThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    MessageQueryThread(const QMessageFilter &filter, const QMessageSortOrder &sortOrder);
+    ~MessageQueryThread();
+
+    void run();
+
+signals:
+    void queryFinished(void* queryThread, QList<QtMobility::QMessageId> ids);
+
+private:
+    QMessageFilter    m_filter;
+    QMessageSortOrder m_sortOrder;
 };
 
 QTM_END_NAMESPACE
@@ -460,6 +486,7 @@ Q_DECLARE_METATYPE(QtMobility::ModestAccountsUnreadMessagesDBusStruct);
 Q_DECLARE_METATYPE(QtMobility::ModestMessage);
 Q_DECLARE_METATYPE(QtMobility::MessagingModestMimePart);
 Q_DECLARE_METATYPE(QtMobility::MessagingModestFolder);
+Q_DECLARE_METATYPE(QList<QtMobility::QMessageId>);
 
 #endif // MODESTENGINE_MAEMO_H
 

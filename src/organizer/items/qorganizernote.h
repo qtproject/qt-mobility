@@ -49,7 +49,12 @@ QTM_BEGIN_NAMESPACE
 class Q_ORGANIZER_EXPORT QOrganizerNote : public QOrganizerItem
 {
 public:
+
+#ifdef Q_QDOC
+    static const QLatin1Constant QOrganizerNote;
+#else
     Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerNote, QOrganizerItemType::TypeNote)
+#endif
 };
 
 QTM_END_NAMESPACE

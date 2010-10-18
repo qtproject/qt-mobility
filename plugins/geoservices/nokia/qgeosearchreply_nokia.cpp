@@ -37,12 +37,19 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
+** plugin source code.
+**
 ****************************************************************************/
 
 #include "qgeosearchreply_nokia.h"
 #include "qgeocodexmlparser.h"
 
-QGeoSearchReplyNokia::QGeoSearchReplyNokia(QNetworkReply *reply, QObject *parent)
+QGeoSearchReplyNokia::QGeoSearchReplyNokia(QNetworkReply *reply, int limit, int offset, QGeoBoundingArea *viewport, QObject *parent)
         : QGeoSearchReply(parent),
         m_reply(reply)
 {
@@ -55,6 +62,10 @@ QGeoSearchReplyNokia::QGeoSearchReplyNokia(QNetworkReply *reply, QObject *parent
             SIGNAL(error(QNetworkReply::NetworkError)),
             this,
             SLOT(networkError(QNetworkReply::NetworkError)));
+
+    setLimit(limit);
+    setOffset(offset);
+    setViewport(viewport);
 }
 
 QGeoSearchReplyNokia::~QGeoSearchReplyNokia()
@@ -64,33 +75,57 @@ QGeoSearchReplyNokia::~QGeoSearchReplyNokia()
 
 void QGeoSearchReplyNokia::abort()
 {
+    if (!m_reply)
+        return;
+
     m_reply->abort();
+
     m_reply->deleteLater();
+    m_reply = 0;
 }
 
 void QGeoSearchReplyNokia::networkFinished()
 {
+    if (!m_reply)
+        return;
+
     if (m_reply->error() != QNetworkReply::NoError) {
-        setError(QGeoSearchReply::CommunicationError, m_reply->errorString());
-        m_reply->deleteLater();
+        // Removed because this is already done in networkError, which previously caused _two_ errors to be raised for every error.
+        //setError(QGeoSearchReply::CommunicationError, m_reply->errorString());
+        //m_reply->deleteLater();
+        //m_reply = 0;
         return;
     }
 
     QGeoCodeXmlParser parser;
     if (parser.parse(m_reply)) {
-        // TODO trim results based on bounds
-        setPlaces(parser.results());
+        QList<QGeoPlace> places = parser.results();
+        QGeoBoundingArea *bounds = viewport();
+        if (bounds) {
+            for (int i = places.size() - 1; i >= 0; --i) {
+                if (!bounds->contains(places[i].coordinate()))
+                    places.removeAt(i);
+            }
+        }
+        setPlaces(places);
         setFinished(true);
     } else {
-        setError(QGeoSearchReply::ParseError,parser.errorString());
+        setError(QGeoSearchReply::ParseError, parser.errorString());
     }
 
     m_reply->deleteLater();
+    m_reply = 0;
 }
 
 void QGeoSearchReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
     Q_UNUSED(error)
+
+    if (!m_reply)
+        return;
+
     setError(QGeoSearchReply::CommunicationError, m_reply->errorString());
+
     m_reply->deleteLater();
+    m_reply = 0;
 }

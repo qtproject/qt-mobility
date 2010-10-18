@@ -297,7 +297,7 @@ TBool CLandmarkRequestAO::WaitForFinished(TInt aTime)
     }
 
     RTimer timer;
-    TRequestStatus timestatus;// = KRequestPending;
+    TRequestStatus timestatus = KErrNone;
     if (aTime > 0) {
         if (timer.CreateLocal() != KErrNone) {
             return EFalse; // ???
@@ -469,11 +469,17 @@ CLandmarkRequestData::~CLandmarkRequestData()
         delete Ptr;
     }
 
-    if (iLandmarkSearch)
+    if (iLandmarkSearch) {
         delete iLandmarkSearch;
+        iLandmarkSearch = NULL;
+    }
 
-    if (iOwnerAO)
+    if (iOwnerAO) {
         delete iOwnerAO;
+        iOwnerAO = NULL;
+    }
+
+    Reset();
 
     iLock.Signal();
     iLock.Close();
@@ -524,12 +530,15 @@ LandmarkRequestHandler::~LandmarkRequestHandler()
     CLandmarkRequestData *current = NULL;
     iRequestListLock.Wait();
     for (TInt idx = 0; idx < iRequestList.Count(); idx++) {
-        current = const_cast<CLandmarkRequestData*> (&iRequestList[idx]);
-        if (current)
+        current = iRequestList[idx];
+        if (current) {
             delete current;
+            current = NULL;
+        }
     }
     iRequestList.Close();
     iRequestListLock.Signal();
+    iRequestListLock.Close();
 }
 
 TInt LandmarkRequestHandler::AddAsyncRequest(QLandmarkAbstractRequest *aQtReq,
@@ -538,11 +547,10 @@ TInt LandmarkRequestHandler::AddAsyncRequest(QLandmarkAbstractRequest *aQtReq,
     CLandmarkRequestData *currentRequestData = NULL;
     iRequestListLock.Wait();
     for (TInt idx = 0; idx < iRequestList.Count(); idx++) {
-        if (iRequestList[idx].iQtRequest == aQtReq) {
-            //TODO:             
-            //currentRequestData = const_cast<CLandmarkRequestData*> (&iRequestList[idx]);
-            //delete currentRequestData;
-            //currentRequestData = NULL;
+        if (iRequestList[idx]->iQtRequest == aQtReq) {
+            currentRequestData = iRequestList[idx];
+            delete currentRequestData;
+            currentRequestData = NULL;
             iRequestList.Remove(idx);
             break;
         }
@@ -552,7 +560,7 @@ TInt LandmarkRequestHandler::AddAsyncRequest(QLandmarkAbstractRequest *aQtReq,
         iRequestListLock.Signal();
         return err;
     }
-    TInt ret = iRequestList.Append(*currentRequestData);
+    TInt ret = iRequestList.Append(currentRequestData);
     iRequestListLock.Signal();
     return ret;
 }
@@ -560,22 +568,20 @@ TInt LandmarkRequestHandler::AddAsyncRequest(QLandmarkAbstractRequest *aQtReq,
 TBool LandmarkRequestHandler::RemoveAsyncRequest(QLandmarkAbstractRequest *aQtReq)
 {
     TBool flag = false;
-    //CLandmarkRequestData* Current = NULL;
+    CLandmarkRequestData* Current = NULL;
     iRequestListLock.Wait();
     for (TInt idx = 0; idx < iRequestList.Count(); idx++) {
-        if (iRequestList[idx].iQtRequest == aQtReq) {
-            //Current = const_cast<CLandmarkRequestData*> (&iRequestList[idx]);
+        if (iRequestList[idx]->iQtRequest == aQtReq) {
+            Current = iRequestList[idx];
+            if (Current) {
+                delete Current;
+                Current = NULL;
+                flag = true;
+            }
             iRequestList.Remove(idx);
             break;
         }
     }
-    //TODO: 
-    // This does not delete the QAR.
-    //if (Current) {
-    //delete Current;
-    //Current = NULL;
-    flag = true;
-    //}
     iRequestListLock.Signal();
     return flag;
 }
@@ -585,8 +591,8 @@ CLandmarkRequestData* LandmarkRequestHandler::FetchAsyncRequest(QLandmarkAbstrac
     CLandmarkRequestData *current = NULL;
     iRequestListLock.Wait();
     for (TInt idx = 0; idx < iRequestList.Count(); idx++) {
-        if (iRequestList[idx].iQtRequest == aQtReq) {
-            current = const_cast<CLandmarkRequestData*> (&iRequestList[idx]);
+        if (iRequestList[idx]->iQtRequest == aQtReq) {
+            current = iRequestList[idx];
             break;
         }
     }

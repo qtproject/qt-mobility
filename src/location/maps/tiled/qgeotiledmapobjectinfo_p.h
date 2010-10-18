@@ -55,6 +55,8 @@
 
 #include "qgeomapobject_p.h"
 
+#include <QRectF>
+
 class QGraphicsItem;
 class QRect;
 class QPolygonF;
@@ -68,8 +70,9 @@ class QGeoTiledMapDataPrivate;
 
 class QGeoTiledMapObjectInfo : public QGeoMapObjectInfo
 {
+    Q_OBJECT
 public:
-    QGeoTiledMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapObjectInfo();
 
     static QPolygonF createPolygon(const QList<QGeoCoordinate> & path,
@@ -77,14 +80,13 @@ public:
                                    bool closedPath,
                                    qreal ypole = -100);
 
-    void addToParent();
-    void removeFromParent();
-
-    void visibleChanged(bool visible);
-    void selectedChanged(bool selected);
+    virtual void init();
 
     QGeoBoundingBox boundingBox() const;
     bool contains(const QGeoCoordinate &coord) const;
+
+    void setValid(bool valid);
+    bool valid() const;
 
     void updateItem();
 
@@ -92,7 +94,16 @@ public:
 
     QGraphicsItem *graphicsItem;
     QGeoTiledMapData *tiledMapData;
-private:
+
+    bool isValid;
+    bool isVisible;
+
+public slots:
+    virtual void zValueChanged(int zValue);
+    virtual void visibleChanged(bool visible);
+    virtual void selectedChanged(bool selected);
+
+protected:
     QGeoTiledMapDataPrivate *tiledMapDataPrivate;
 };
 

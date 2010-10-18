@@ -49,7 +49,6 @@
     \row \o \l{QtSensors} \o Classes to provide access to sensors.
     \row \o \l{QtOrganizer} \o Classes for managing calendar and to-do entries.
     \row \o \l{QtFeedback} \o Classes to allow tactile feedback and vibration.
-    \row \o \l{QtTelephony} \o Classes for observing telephony events.
     \row \o \l{QtGallery} \o Classes for managing document galleries.
     \row \o \l{QtVersit}  \o Classes for managing Versit documents.
 
@@ -192,14 +191,6 @@ to change notifications.
     \ingroup modules
 
     \brief A set of APIs that supplies that supplies system information.
- */
-
-/*!
-    \module QtTelephony
-    \title Telephony Events Module
-    \ingroup modules
-
-    \brief Enables access to the telephony event services.
  */
 
 /*!

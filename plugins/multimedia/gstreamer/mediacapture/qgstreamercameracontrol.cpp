@@ -60,6 +60,10 @@ QGstreamerCameraControl::QGstreamerCameraControl(QGstreamerCaptureSession *sessi
 
     connect(m_session->imageEncodeControl(), SIGNAL(settingsChanged()),
             SLOT(reloadLater()));
+    connect(m_session, SIGNAL(viewfinderChanged()),
+            SLOT(reloadLater()));
+    connect(m_session, SIGNAL(readyChanged(bool)),
+            SLOT(reloadLater()));
 }
 
 QGstreamerCameraControl::~QGstreamerCameraControl()
@@ -96,8 +100,15 @@ void QGstreamerCameraControl::setState(QCamera::State state)
     case QCamera::LoadedState:
         m_session->setState(QGstreamerCaptureSession::StoppedState);
         break;
-    case QCamera::ActiveState:        
-        m_session->setState(QGstreamerCaptureSession::PreviewState);
+    case QCamera::ActiveState:
+        //postpone changing to Active if the session is nor ready yet
+        if (m_session->isReady()) {
+            m_session->setState(QGstreamerCaptureSession::PreviewState);
+        } else {
+#ifdef CAMEABIN_DEBUG
+            qDebug() << "Camera session is not ready yet, postpone activating";
+#endif
+        }
         break;
     default:
         emit error(QCamera::NotSupportedFeatureError, tr("State not supported."));
@@ -152,7 +163,7 @@ void QGstreamerCameraControl::reloadPipeline()
     //qDebug() << "reload pipeline";
     if (m_reloadPending) {
         m_reloadPending = false;
-        if (m_state == QCamera::ActiveState) {            
+        if (m_state == QCamera::ActiveState && m_session->isReady()) {
             m_session->setState(QGstreamerCaptureSession::PreviewState);
         }
     }

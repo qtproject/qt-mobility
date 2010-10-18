@@ -1,5 +1,17 @@
 include(../staticconfig.pri)
 
+symbian: {
+    vendorinfo = \
+        "; Localised Vendor name" \
+        "%{\"Nokia, Qt\"}" \
+        " " \
+        "; Unique Vendor name" \
+        ":\"Nokia, Qt\"" \
+        " "
+    examples_deployment.pkg_prerules += vendorinfo
+    DEPLOYMENT += examples_deployment
+}
+
 win32:contains(CONFIG_WIN32,build_all):Win32DebugAndRelease=yes
 mac | contains(Win32DebugAndRelease,yes) {
     #due to different debug/release library names we have to comply with 

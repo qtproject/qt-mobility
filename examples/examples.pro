@@ -13,11 +13,8 @@ contains(mobility_modules,serviceframework) {
     #These examples do not work on Symbian yet
     !symbian:SUBDIRS+= sfw-notes
     
-    !symbian:contains(QT_CONFIG, declarative) {
-        SUBDIRS += declarative-sfw-dialer
-
-        sources.files += declarative-sfw-notes \
-                         declarative-sfw-dialer/declarative-sfw-dialer
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative-sfw-dialer declarative-sfw-notes
     }
 }
 
@@ -36,24 +33,24 @@ contains(mobility_modules,location) {
         SUBDIRS += landmarkbrowser
     }
 
-    contains(QT_MAJOR_VERSION, 4):greaterThan(QT_MINOR_VERSION, 6) {
-    	SUBDIRS += geoservicedemo \
-                    mapviewer
-
-    } else {
-        contains(mobility_modules,bearer) {
-    	    SUBDIRS += geoservicedemo \
-                       mapviewer
-        }
-    }
+#    contains(QT_MAJOR_VERSION, 4):greaterThan(QT_MINOR_VERSION, 6) {
+#    	SUBDIRS += geoservicedemo \
+#                    mapviewer
+#
+#    } else {
+#        contains(mobility_modules,bearer) {
+#    	    SUBDIRS += geoservicedemo \
+#                       mapviewer
+#        }
+#    }
 
     contains(mobility_modules,bearer) {
-    	SUBDIRS += flickrdemo
-        
-        contains(QT_CONFIG, declarative) {
-            sources.files += declarative-location
-            sources.files += declarative_mapviewer
-        }
+    	SUBDIRS += flickrdemo \
+                    geoservicedemo \
+                    mapviewer
+      }  
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative-location
     }
 }
 
@@ -75,7 +72,12 @@ contains(mobility_modules,publishsubscribe) {
 }
 
 #System Information
-contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
+contains(mobility_modules,systeminfo) {
+ SUBDIRS += sysinfo
+   contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative-systeminfo
+   }
+}
 
 #Multimedia
 contains(mobility_modules,multimedia) {
@@ -89,6 +91,10 @@ contains(mobility_modules,multimedia) {
         audiooutput \
         videographicsitem \
         videowidget
+
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative-camera
+    }
 }
 
 
@@ -121,26 +127,20 @@ contains(mobility_modules,gallery) {
         mediabrowser
 
     contains(QT_CONFIG, declarative) {
-        sources.files += declarative-music-browser
+        SUBDIRS += \
+                declarative-music-browser
     }
 }
 
 # Organizer API examples
 contains(mobility_modules, organizer) {
     SUBDIRS += calendardemo
-}
-
-# Telephony API examples
-contains(mobility_modules,telephony) {
-    unix:!mac {SUBDIRS += telephony}
+	SUBDIRS += todo
 }
 
 # Feedback API examples
 contains(mobility_modules, feedback) {
-    #SUBDIRS += hapticsplayer # this not a good UI for mobile screens at the moment
-    contains(QT_CONFIG, declarative) {
-        SUBDIRS += hapticsquare
-    }
+    SUBDIRS += hapticsplayer hapticsquare # this not a good UI for mobile screens at the moment
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES

@@ -70,10 +70,10 @@
         \o \l {Service Framework QML Plugin}{Service Framework}
         \o A QML plugin for the Service Framework API for 
            discovering and connecting to services.
+    \row
+        \o \l {Messaging QML Plugin}{Messaging}
+        \o A QML plugin for the Messaging API.
     \endtable
-
-
-
 
 
 

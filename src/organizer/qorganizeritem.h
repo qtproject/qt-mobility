@@ -199,8 +199,8 @@ protected:
     friend class QOrganizerItemManager;
     friend class QOrganizerItemManagerData;
     friend class QOrganizerItemManagerEngine;
-    friend QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item);
-    friend QDataStream& operator>>(QDataStream& in, QOrganizerItem& item);
+    Q_ORGANIZER_EXPORT friend QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item);
+    Q_ORGANIZER_EXPORT friend QDataStream& operator>>(QDataStream& in, QOrganizerItem& item);
 
     QSharedDataPointer<QOrganizerItemData> d;
 };

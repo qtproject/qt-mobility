@@ -66,12 +66,10 @@ QTM_BEGIN_NAMESPACE
     Constructs a new tiled map request.
 */
 QGeoTiledMapRequest::QGeoTiledMapRequest()
-        : d_ptr(new QGeoTiledMapRequestPrivate()) {}
+    : d_ptr(new QGeoTiledMapRequestPrivate()) {}
 
 /*!
     Constructs a new tiled map request.
-
-    The request is associated with \a mapData
 
     At a zoom level of z the world is represented as a 2^z by 2^z grid
     of tiles.
@@ -83,23 +81,29 @@ QGeoTiledMapRequest::QGeoTiledMapRequest()
     The rectangle that the tile occupies on the map at the maximum zoom level
     is also given as \a tileRect.
 */
-QGeoTiledMapRequest::QGeoTiledMapRequest(QGeoTiledMapData *mapData, int row, int column, const QRect &tileRect)
-        : d_ptr(new QGeoTiledMapRequestPrivate())
+QGeoTiledMapRequest::QGeoTiledMapRequest(QGraphicsGeoMap::ConnectivityMode connectivityMode,
+        QGraphicsGeoMap::MapType mapType,
+        qreal zoomLevel,
+        int row,
+        int column,
+        const QRect &tileRect)
+    : d_ptr(new QGeoTiledMapRequestPrivate())
 {
-    d_ptr->mapData = mapData;
+    //d_ptr->mapData = mapData;
     d_ptr->row = row;
     d_ptr->column = column;
     d_ptr->tileRect = tileRect;
 
-    d_ptr->zoomLevel = mapData->zoomLevel();
-    d_ptr->mapType = mapData->mapType();
+    d_ptr->zoomLevel = zoomLevel;
+    d_ptr->mapType = mapType;
+    d_ptr->connectivityMode = connectivityMode;
 }
 
 /*!
     Constructs a tiled map request from the contents of \a other.
 */
 QGeoTiledMapRequest::QGeoTiledMapRequest(const QGeoTiledMapRequest &other)
-        : d_ptr(other.d_ptr) {}
+    : d_ptr(other.d_ptr) {}
 
 /*!
     Destroys this tiled map request.
@@ -125,19 +129,28 @@ bool QGeoTiledMapRequest::operator== (const QGeoTiledMapRequest &other) const
     return (d_ptr->row == other.d_ptr->row) &&
            (d_ptr->column == other.d_ptr->column) &&
            (d_ptr->zoomLevel == other.d_ptr->zoomLevel) &&
-           (d_ptr->mapType == other.d_ptr->mapType);
+           (d_ptr->mapType == other.d_ptr->mapType) &&
+           (d_ptr->connectivityMode == other.d_ptr->connectivityMode);
 }
 
-/*!
+/*
     Returns the QGeoMapData instance associated with this request.
 */
-QGeoTiledMapData* QGeoTiledMapRequest::mapData() const
+//QGeoTiledMapData* QGeoTiledMapRequest::mapData() const
+//{
+//    return d_ptr->mapData;
+//}
+
+/*!
+    Returns the connectivity mode of the tile request.
+*/
+QGraphicsGeoMap::ConnectivityMode QGeoTiledMapRequest::connectivityMode() const
 {
-    return d_ptr->mapData;
+    return d_ptr->connectivityMode;
 }
 
 /*!
-    Returns the map type of the request tile.
+    Returns the map type of the requested tile.
 */
 QGraphicsGeoMap::MapType QGeoTiledMapRequest::mapType() const
 {
@@ -210,23 +223,25 @@ uint qHash(const QGeoTiledMapRequest &key)
 *******************************************************************************/
 
 QGeoTiledMapRequestPrivate::QGeoTiledMapRequestPrivate()
-        : QSharedData(),
-        mapData(0) {}
+    : QSharedData() {}
+//mapData(0) {}
 
 QGeoTiledMapRequestPrivate::QGeoTiledMapRequestPrivate(const QGeoTiledMapRequestPrivate &other)
-        : QSharedData(other),
-        mapData(other.mapData),
-        mapType(other.mapType),
-        zoomLevel(other.zoomLevel),
-        row(other.row),
-        column(other.column),
-        tileRect(other.tileRect) {}
+    : QSharedData(other),
+//        mapData(other.mapData),
+      connectivityMode(other.connectivityMode),
+      mapType(other.mapType),
+      zoomLevel(other.zoomLevel),
+      row(other.row),
+      column(other.column),
+      tileRect(other.tileRect) {}
 
 QGeoTiledMapRequestPrivate::~QGeoTiledMapRequestPrivate() {}
 
 QGeoTiledMapRequestPrivate& QGeoTiledMapRequestPrivate::operator= (const QGeoTiledMapRequestPrivate & other)
 {
-    mapData = other.mapData;
+//    mapData = other.mapData;
+    connectivityMode = other.connectivityMode;
     mapType = other.mapType;
     zoomLevel = other.zoomLevel;
     row = other.row;

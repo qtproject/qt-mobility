@@ -64,14 +64,15 @@ class Q_LOCATION_EXPORT QGeoMapTextObject : public QGeoMapObject
     Q_PROPERTY(Qt::Alignment alignment READ alignment WRITE setAlignment NOTIFY alignmentChanged)
 
 public:
-    QGeoMapTextObject(QGeoMapObject *parent = 0);
+    QGeoMapTextObject();
     QGeoMapTextObject(const QGeoCoordinate &coordinate,
                       const QString &text = QString(),
                       const QFont &font = QFont(),
                       const QPoint &offset = QPoint(),
-                      Qt::Alignment alignment = Qt::AlignCenter,
-                      QGeoMapObject *parent = 0);
+                      Qt::Alignment alignment = Qt::AlignCenter);
     ~QGeoMapTextObject();
+
+    QGeoMapObject::Type type() const;
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
@@ -94,7 +95,7 @@ public:
     Qt::Alignment alignment() const;
     void setAlignment(Qt::Alignment alignment);
 
-signals:
+Q_SIGNALS:
     void coordinateChanged(const QGeoCoordinate &coordinate);
     void textChanged(const QString &text);
     void fontChanged(const QFont &font);
@@ -104,6 +105,7 @@ signals:
     void alignmentChanged(Qt::Alignment alignment);
 
 private:
+    QGeoMapTextObjectPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeoMapTextObject)
     Q_DISABLE_COPY(QGeoMapTextObject)
 };

@@ -44,6 +44,11 @@
 
 #include "qmobilityglobal.h"
 #include "mobilitysimulatorglobal.h"
+#ifdef SIMULATOR_APPLICATION
+#include "qsimulatordata_p.h"
+#elif defined(QT_SIMULATOR)
+#include "private/qsimulatordata_p.h"
+#endif
 
 #include <QtCore/QObject>
 #include <QtCore/QVector>
@@ -79,6 +84,7 @@ public:
     void addMessageHandler(QObject *handler);
     QLocalSocket *sendSocket();
     QLocalSocket *receiveSocket();
+    VersionStruct simulatorVersion() { return mSimulatorVersion; }
 
 public slots:
     void onReadyRead();
@@ -88,6 +94,8 @@ private:
     QLocalSocket *mReceiveSocket;
     QByteArray mReadBuffer;
     QVector<QObject *> mHandlers;
+
+    VersionStruct mSimulatorVersion;
 };
 
 } // end Simulator namespace

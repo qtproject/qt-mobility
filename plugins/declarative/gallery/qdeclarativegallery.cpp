@@ -44,13 +44,11 @@
 
 #include <qdocumentgallery.h>
 
+#include "qdeclarativedocumentgallery.h"
 #include "qdeclarativegalleryfilter.h"
 #include "qdeclarativegalleryitem.h"
 #include "qdeclarativegalleryquerymodel.h"
 #include "qdeclarativegallerytype.h"
-
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QAbstractGallery))
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDocumentGallery))
 
 QTM_BEGIN_NAMESPACE
 
@@ -62,15 +60,24 @@ public:
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.gallery"));
 
+        qRegisterMetaType<QDeclarativeDocumentGallery::ItemType>();
+
+        qmlRegisterUncreatableType<QDeclarativeDocumentGallery>(uri, 1, 1, "DocumentGallery", QDeclarativeDocumentGallery::tr("DocumentGallery is a namespace class"));
         qmlRegisterType<QDeclarativeGalleryFilterBase>();
-        qmlRegisterType<QDeclarativeGalleryFilter>(uri, 1, 1, "GalleryFilter");
+        qmlRegisterType<QDeclarativeGalleryEqualsFilter>(uri, 1, 1, "GalleryEqualsFilter");
+        qmlRegisterType<QDeclarativeGalleryLessThanFilter>(uri, 1, 1, "GalleryLessThanFilter");
+        qmlRegisterType<QDeclarativeGalleryLessThanEqualsFilter>(uri, 1, 1, "GalleryLessThanEqualsFilter");
+        qmlRegisterType<QDeclarativeGalleryGreaterThanFilter>(uri, 1, 1, "GalleryGreaterThanFilter");
+        qmlRegisterType<QDeclarativeGalleryGreaterThanEqualsFilter>(uri, 1, 1, "GalleryGreaterThanEqualsFilter");
+        qmlRegisterType<QDeclarativeGalleryContainsFilter>(uri, 1, 1, "GalleryContainsFilter");
+        qmlRegisterType<QDeclarativeGalleryStartsWithFilter>(uri, 1, 1, "GalleryStartsWithFilter");
+        qmlRegisterType<QDeclarativeGalleryEndsWithFilter>(uri, 1, 1, "GalleryEndsWithFilter");
+        qmlRegisterType<QDeclarativeGalleryWildcardFilter>(uri, 1, 1, "GalleryWildcardFilter");
         qmlRegisterType<QDeclarativeGalleryFilterUnion>(uri, 1, 1, "GalleryFilterUnion");
         qmlRegisterType<QDeclarativeGalleryFilterIntersection>(uri, 1, 1, "GalleryFilterIntersection");
-        qmlRegisterType<QDeclarativeGalleryItem>(uri, 1, 1, "GalleryItem");
-        qmlRegisterType<QDeclarativeGalleryQueryModel>(uri, 1, 1, "GalleryQueryModel");
-        qmlRegisterType<QDeclarativeGalleryType>(uri, 1, 1, "GalleryType");
-        qmlRegisterType<QAbstractGallery>();
-        qmlRegisterType<QDocumentGallery>(uri, 1, 1, "DocumentGallery");
+        qmlRegisterType<QDeclarativeDocumentGalleryItem>(uri, 1, 1, "DocumentGalleryItem");
+        qmlRegisterType<QDeclarativeDocumentGalleryModel>(uri, 1, 1, "DocumentGalleryModel");
+        qmlRegisterType<QDeclarativeDocumentGalleryType>(uri, 1, 1, "DocumentGalleryType");
     }
 };
 

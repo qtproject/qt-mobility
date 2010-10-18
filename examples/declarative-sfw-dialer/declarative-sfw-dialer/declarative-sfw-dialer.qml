@@ -40,12 +40,12 @@
 
 import Qt 4.7
 import QtMobility.serviceframework 1.1
-import "content"
+import "content-sfw-dialer"
 
 //Layout of the mainPage
 //----------------------------------------------  ____ mainPage
 //| ------------------- ---------------------- | /
-//| | dialerList     | | dialScreen         | |/
+//| | dialerList      | | dialScreen         | |/
 //| |                 | |                    | |
 //| |                 | |                    | |
 //| |                 | |                    | |
@@ -63,12 +63,12 @@ import "content"
 //----------------------------------------------
 
 Rectangle {
-    property variant dialerObject: defaultService.serviceObject
-    
     id: mainPage
+    color: "white"
+    
+    property variant dialerObject: 0 
     width: 500
     height: 250
-    color: "white"
 
     DialerList {
         id: dialerList
@@ -105,7 +105,8 @@ Rectangle {
 
         serviceDetails.text = "Selected dial service:" + "\n   " + 
                                dialerList.dialService.serviceName + 
-                               "\n   (" + dialerList.dialService.versionNumber + ")";
+                               " (" + dialerList.dialService.majorVersion + 
+                               "." + dialerList.dialService.minorVersion + ")";
     }
     
     Text {
@@ -120,9 +121,8 @@ Rectangle {
     
     Text {
         id: status
-        anchors.top: parent.bottom
+        anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.topMargin: -40
         anchors.leftMargin: 5
     }
     
@@ -168,10 +168,20 @@ Rectangle {
     }
     //! [0]
 
+    Service {
+        id: defaultService
+        interfaceName: "com.nokia.qt.examples.Dialer"
+
+        Component.onCompleted: {
+            dialerObject = defaultService.serviceObject;
+        }
+    }
+
     //! [1]
     Connections {
         target: dialerObject
-        
+        ignoreUnknownSignals: true
+
         onStateChanged: {
             if (dialScreen.currentDialer.state == 1) {
                 status.text += "\nRinging";
@@ -190,9 +200,4 @@ Rectangle {
         }
     }
     //! [1]
-
-    Service {
-        id: defaultService
-        interfaceName: "com.nokia.qt.examples.Dialer"
-    }
 }

@@ -114,16 +114,16 @@ QAudioInputPrivate::QAudioInputPrivate(const QByteArray &device)
     ,   m_pullMode(false)
     ,   m_sink(0)
     ,   m_pullTimer(new QTimer(this))
+    ,   m_devSound(0)
     ,   m_devSoundBuffer(0)
     ,   m_devSoundBufferSize(0)
     ,   m_totalBytesReady(0)
     ,   m_devSoundBufferPos(0)
     ,   m_totalSamplesRecorded(0)
 {
-    connect(m_notifyTimer.data(), SIGNAL(timeout()), this, SIGNAL(notify()));
+    qRegisterMetaType<CMMFBuffer *>("CMMFBuffer *");
 
-    //SymbianAudio::Utils::formatQtToNative(m_format, m_nativeFourCC,
-    //                                      m_nativeFormat);
+	connect(m_notifyTimer.data(), SIGNAL(timeout()), this, SIGNAL(notify()));
 
     m_pullTimer->setInterval(PushInterval);
     connect(m_pullTimer.data(), SIGNAL(timeout()), this, SLOT(pullData()));
@@ -131,9 +131,7 @@ QAudioInputPrivate::QAudioInputPrivate(const QByteArray &device)
 
 void QAudioInputPrivate::setFormat(const QAudioFormat& fmt)
 {
-    m_format = const_cast<QAudioFormat&>(fmt);
-    SymbianAudio::Utils::formatQtToNative(m_format, m_nativeFourCC,
-                                          m_nativeFormat);
+    m_format = fmt;
 }
 
 QAudioInputPrivate::~QAudioInputPrivate()
@@ -175,7 +173,7 @@ void QAudioInputPrivate::stop()
 void QAudioInputPrivate::reset()
 {
     m_totalSamplesRecorded += getSamplesRecorded();
-    m_devSound->Stop();
+    m_devSound->stop();
     startRecording();
 }
 
@@ -185,23 +183,33 @@ void QAudioInputPrivate::suspend()
         || SymbianAudio::IdleState == m_internalState) {
         m_notifyTimer->stop();
         m_pullTimer->stop();
-        m_devSound->Pause();
         const qint64 samplesRecorded = getSamplesRecorded();
         m_totalSamplesRecorded += samplesRecorded;
 
-        if (m_devSoundBuffer) {
-            m_devSoundBufferQ.append(m_devSoundBuffer);
+        const bool paused = m_devSound->pause();
+        if (paused) {
+            if (m_devSoundBuffer)
+                m_devSoundBufferQ.append(m_devSoundBuffer);
             m_devSoundBuffer = 0;
+            setState(SymbianAudio::SuspendedPausedState);
+        } else {
+            m_devSoundBuffer = 0;
+            m_devSoundBufferQ.clear();
+            m_devSoundBufferPos = 0;
+            setState(SymbianAudio::SuspendedStoppedState);
         }
-
-        setState(SymbianAudio::SuspendedState);
     }
 }
 
 void QAudioInputPrivate::resume()
 {
-    if (SymbianAudio::SuspendedState == m_internalState)
+    if (QAudio::SuspendedState == m_externalState) {
+        if (SymbianAudio::SuspendedPausedState == m_internalState)
+            m_devSound->resume();
+        else
+            m_devSound->start();
         startDataTransfer();
+    }
 }
 
 int QAudioInputPrivate::bytesReady() const
@@ -235,11 +243,14 @@ int QAudioInputPrivate::bufferSize() const
 
 void QAudioInputPrivate::setNotifyInterval(int ms)
 {
-    if (ms > 0) {
+    if (ms >= 0) {
         const int oldNotifyInterval = m_notifyInterval;
         m_notifyInterval = ms;
-        if (m_notifyTimer->isActive() && ms != oldNotifyInterval)
+        if (m_notifyInterval && (SymbianAudio::ActiveState == m_internalState ||
+                                 SymbianAudio::IdleState == m_internalState))
             m_notifyTimer->start(m_notifyInterval);
+        else
+            m_notifyTimer->stop();
     }
 }
 
@@ -251,7 +262,7 @@ int QAudioInputPrivate::notifyInterval() const
 qint64 QAudioInputPrivate::processedUSecs() const
 {
     int samplesPlayed = 0;
-    if (m_devSound && SymbianAudio::SuspendedState != m_internalState)
+    if (m_devSound && QAudio::SuspendedState != m_externalState)
         samplesPlayed = getSamplesRecorded();
 
     // Protect against division by zero
@@ -286,88 +297,6 @@ QAudioFormat QAudioInputPrivate::format() const
     return m_format;
 }
 
-//-----------------------------------------------------------------------------
-// MDevSoundObserver implementation
-//-----------------------------------------------------------------------------
-
-void QAudioInputPrivate::InitializeComplete(TInt aError)
-{
-    Q_ASSERT_X(SymbianAudio::InitializingState == m_internalState,
-        Q_FUNC_INFO, "Invalid state");
-
-    if (KErrNone == aError)
-        startRecording();
-}
-
-void QAudioInputPrivate::ToneFinished(TInt aError)
-{
-    Q_UNUSED(aError)
-    // This class doesn't use DevSound's tone playback functions, so should
-    // never receive this callback.
-    Q_ASSERT_X(false, Q_FUNC_INFO, "Unexpected callback");
-}
-
-void QAudioInputPrivate::BufferToBeFilled(CMMFBuffer *aBuffer)
-{
-    Q_UNUSED(aBuffer)
-    // This class doesn't use DevSound in play mode, so should never receive
-    // this callback.
-    Q_ASSERT_X(false, Q_FUNC_INFO, "Unexpected callback");
-}
-
-void QAudioInputPrivate::PlayError(TInt aError)
-{
-    Q_UNUSED(aError)
-    // This class doesn't use DevSound in play mode, so should never receive
-    // this callback.
-    Q_ASSERT_X(false, Q_FUNC_INFO, "Unexpected callback");
-}
-
-void QAudioInputPrivate::BufferToBeEmptied(CMMFBuffer *aBuffer)
-{
-    // Following receipt of this callback, DevSound should not provide another
-    // buffer until we have returned the current one.
-    Q_ASSERT_X(!m_devSoundBuffer, Q_FUNC_INFO, "Buffer already held");
-
-    CMMFDataBuffer *const buffer = static_cast<CMMFDataBuffer*>(aBuffer);
-
-    if (!m_devSoundBufferSize)
-        m_devSoundBufferSize = buffer->Data().MaxLength();
-
-    m_totalBytesReady += buffer->Data().Length();
-
-    if (SymbianAudio::SuspendedState == m_internalState) {
-        m_devSoundBufferQ.append(buffer);
-    } else {
-        // Will be returned to DevSound by bufferEmptied().
-        m_devSoundBuffer = buffer;
-        m_devSoundBufferPos = 0;
-
-        if (bytesReady() && !m_pullMode)
-            pushData();
-    }
-}
-
-void QAudioInputPrivate::RecordError(TInt aError)
-{
-    Q_UNUSED(aError)
-    setError(QAudio::IOError);
-}
-
-void QAudioInputPrivate::ConvertError(TInt aError)
-{
-    Q_UNUSED(aError)
-    // This class doesn't use DevSound's format conversion functions, so
-    // should never receive this callback.
-    Q_ASSERT_X(false, Q_FUNC_INFO, "Unexpected callback");
-}
-
-void QAudioInputPrivate::DeviceMessage(TUid aMessageType, const TDesC8 &aMsg)
-{
-    Q_UNUSED(aMessageType)
-    Q_UNUSED(aMsg)
-    // Ignore this callback.
-}
 
 //-----------------------------------------------------------------------------
 // Private functions
@@ -378,33 +307,30 @@ void QAudioInputPrivate::open()
     Q_ASSERT_X(SymbianAudio::ClosedState == m_internalState,
         Q_FUNC_INFO, "DevSound already opened");
 
-    QT_TRAP_THROWING( m_devSound.reset(CMMFDevSound::NewL()) )
+    Q_ASSERT(!m_devSound);
+    m_devSound = new SymbianAudio::DevSoundWrapper(QAudio::AudioInput, this);
 
-    QScopedPointer<SymbianAudio::DevSoundCapabilities> caps(
-        new SymbianAudio::DevSoundCapabilities(*m_devSound, QAudio::AudioInput));
+    connect(m_devSound, SIGNAL(initializeComplete(int)),
+            this, SLOT(devsoundInitializeComplete(int)));
+    connect(m_devSound, SIGNAL(bufferToBeProcessed(CMMFBuffer *)),
+            this, SLOT(devsoundBufferToBeEmptied(CMMFBuffer *)));
+    connect(m_devSound, SIGNAL(processingError(int)),
+            this, SLOT(devsoundRecordError(int)));
 
-    int err = SymbianAudio::Utils::isFormatSupported(m_format, *caps) ?
-                  KErrNone : KErrNotSupported;
-
-    if (KErrNone == err) {
-        setState(SymbianAudio::InitializingState);
-        TRAP(err, m_devSound->InitializeL(*this, m_nativeFourCC,
-                                          EMMFStateRecording));
-    }
-
-    if (KErrNone != err) {
-        setError(QAudio::OpenError);
-        m_devSound.reset();
-    }
+    setState(SymbianAudio::InitializingState);
+    m_devSound->initialize(m_format.codec());
 }
 
 void QAudioInputPrivate::startRecording()
 {
-    const int samplesRecorded = m_devSound->SamplesRecorded();
+    const int samplesRecorded = m_devSound->samplesProcessed();
     Q_ASSERT(samplesRecorded == 0);
 
-    TRAPD(err, startDevSoundL());
-    if (KErrNone == err) {
+    bool ok = m_devSound->setFormat(m_format);
+    if (ok)
+        ok = m_devSound->start();
+
+    if (ok) {
         startDataTransfer();
     } else {
         setError(QAudio::OpenError);
@@ -412,17 +338,10 @@ void QAudioInputPrivate::startRecording()
     }
 }
 
-void QAudioInputPrivate::startDevSoundL()
-{
-    TMMFCapabilities nativeFormat = m_devSound->Config();
-    m_nativeFormat.iBufferSize = nativeFormat.iBufferSize;
-    m_devSound->SetConfigL(m_nativeFormat);
-    m_devSound->RecordInitL();
-}
-
 void QAudioInputPrivate::startDataTransfer()
 {
-    m_notifyTimer->start(m_notifyInterval);
+    if (m_notifyInterval)
+        m_notifyTimer->start(m_notifyInterval);
 
     if (m_pullMode)
         m_pullTimer->start();
@@ -432,7 +351,7 @@ void QAudioInputPrivate::startDataTransfer()
         if (!m_pullMode)
             pushData();
     } else {
-        if (SymbianAudio::SuspendedState == m_internalState)
+        if (QAudio::SuspendedState == m_externalState)
             setState(SymbianAudio::ActiveState);
         else
             setState(SymbianAudio::IdleState);
@@ -470,7 +389,8 @@ qint64 QAudioInputPrivate::read(char *data, qint64 len)
 
         TDesC8 &inputBuffer = buffer->Data();
 
-        const qint64 inputBytes = bytesReady();
+        Q_ASSERT(inputBuffer.Length() >= m_devSoundBufferPos);
+        const qint64 inputBytes = inputBuffer.Length() - m_devSoundBufferPos;
         const qint64 outputBytes = len - bytesRead;
         const qint64 copyBytes = outputBytes < inputBytes ?
                                      outputBytes : inputBytes;
@@ -481,7 +401,7 @@ qint64 QAudioInputPrivate::read(char *data, qint64 len)
         data += copyBytes;
         bytesRead += copyBytes;
 
-        if (!bytesReady())
+        if (inputBytes == copyBytes)
             bufferEmptied();
     }
 
@@ -500,18 +420,61 @@ void QAudioInputPrivate::pullData()
 
         TDesC8 &inputBuffer = buffer->Data();
 
-        const qint64 inputBytes = bytesReady();
+        Q_ASSERT(inputBuffer.Length() >= m_devSoundBufferPos);
+        const qint64 inputBytes = inputBuffer.Length() - m_devSoundBufferPos;
         const qint64 bytesPushed = m_sink->write(
             (char*)inputBuffer.Ptr() + m_devSoundBufferPos, inputBytes);
 
         m_devSoundBufferPos += bytesPushed;
 
-        if (!bytesReady())
+        if (inputBytes == bytesPushed)
             bufferEmptied();
 
         if (!bytesPushed)
             break;
     }
+}
+
+void QAudioInputPrivate::devsoundInitializeComplete(int err)
+{
+    Q_ASSERT_X(SymbianAudio::InitializingState == m_internalState,
+        Q_FUNC_INFO, "Invalid state");
+
+    if (!err && m_devSound->isFormatSupported(m_format))
+        startRecording();
+    else
+        setError(QAudio::OpenError);
+}
+
+void QAudioInputPrivate::devsoundBufferToBeEmptied(CMMFBuffer *baseBuffer)
+{
+    // Following receipt of this signal, DevSound should not provide another
+    // buffer until we have returned the current one.
+    Q_ASSERT_X(!m_devSoundBuffer, Q_FUNC_INFO, "Buffer already held");
+
+    CMMFDataBuffer *const buffer = static_cast<CMMFDataBuffer*>(baseBuffer);
+
+    if (!m_devSoundBufferSize)
+        m_devSoundBufferSize = buffer->Data().MaxLength();
+
+    m_totalBytesReady += buffer->Data().Length();
+
+    if (SymbianAudio::SuspendedPausedState == m_internalState) {
+        m_devSoundBufferQ.append(buffer);
+    } else {
+        // Will be returned to DevSoundWrapper by bufferProcessed().
+        m_devSoundBuffer = buffer;
+        m_devSoundBufferPos = 0;
+
+        if (bytesReady() && !m_pullMode)
+            pushData();
+    }
+}
+
+void QAudioInputPrivate::devsoundRecordError(int err)
+{
+    Q_UNUSED(err)
+    setError(QAudio::IOError);
 }
 
 void QAudioInputPrivate::bufferEmptied()
@@ -521,7 +484,7 @@ void QAudioInputPrivate::bufferEmptied()
     if (m_devSoundBuffer) {
         m_totalBytesReady -= m_devSoundBuffer->Data().Length();
         m_devSoundBuffer = 0;
-        m_devSound->RecordData();
+        m_devSound->bufferProcessed();
     } else {
         Q_ASSERT(!m_devSoundBufferQ.empty());
         m_totalBytesReady -= m_devSoundBufferQ.front()->Data().Length();
@@ -529,7 +492,8 @@ void QAudioInputPrivate::bufferEmptied()
 
         // If the queue has been emptied, resume transfer from the hardware
         if (m_devSoundBufferQ.empty())
-            m_devSound->RecordInitL();
+            if (!m_devSound->start())
+                setError(QAudio::IOError);
     }
 
     Q_ASSERT(m_totalBytesReady >= 0);
@@ -543,8 +507,10 @@ void QAudioInputPrivate::close()
     m_error = QAudio::NoError;
 
     if (m_devSound)
-        m_devSound->Stop();
-    m_devSound.reset();
+        m_devSound->stop();
+    delete m_devSound;
+    m_devSound = 0;
+
     m_devSoundBuffer = 0;
     m_devSoundBufferSize = 0;
     m_totalBytesReady = 0;
@@ -565,7 +531,7 @@ qint64 QAudioInputPrivate::getSamplesRecorded() const
 {
     qint64 result = 0;
     if (m_devSound)
-        result = qint64(m_devSound->SamplesRecorded());
+        result = qint64(m_devSound->samplesProcessed());
     return result;
 }
 
@@ -576,30 +542,28 @@ void QAudioInputPrivate::setError(QAudio::Error error)
     // Although no state transition actually occurs here, a stateChanged event
     // must be emitted to inform the client that the call to start() was
     // unsuccessful.
-    if (QAudio::OpenError == error)
+    if (QAudio::OpenError == error) {
         emit stateChanged(QAudio::StoppedState);
-
-    // Close the DevSound instance.  This causes a transition to StoppedState.
-    // This must be done asynchronously in case the current function was called
-    // from a DevSound event handler, in which case deleting the DevSound
-    // instance may cause an exception.
-    QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
+    } else {
+        if (QAudio::UnderrunError == error)
+            setState(SymbianAudio::IdleState);
+        else
+            // Close the DevSound instance.  This causes a transition to
+            // StoppedState.  This must be done asynchronously in case the
+            // current function was called from a DevSound event handler, in which
+            // case deleting the DevSound instance may cause an exception.
+            QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
+    }
 }
 
 void QAudioInputPrivate::setState(SymbianAudio::State newInternalState)
 {
     const QAudio::State oldExternalState = m_externalState;
     m_internalState = newInternalState;
-    m_externalState = SymbianAudio::Utils::stateNativeToQt(
-                            m_internalState, initializingState());
+    m_externalState = SymbianAudio::Utils::stateNativeToQt(m_internalState);
 
     if (m_externalState != oldExternalState)
         emit stateChanged(m_externalState);
-}
-
-QAudio::State QAudioInputPrivate::initializingState() const
-{
-    return QAudio::IdleState;
 }
 
 QT_END_NAMESPACE

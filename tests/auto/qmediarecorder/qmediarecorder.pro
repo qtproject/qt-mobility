@@ -9,11 +9,11 @@ symbian {
         DEFINES += HAS_OPENMAXAL_MEDIARECORD_BACKEND
         HEADERS += tst_qmediarecorder_xa.h
         SOURCES += tst_qmediarecorder_xa.cpp
-        TARGET.CAPABILITY = ALL -TCB
     } else {
         HEADERS += tst_qmediarecorder_mmf.h
         SOURCES += tst_qmediarecorder_mmf.cpp
     }
+    TARGET.CAPABILITY = UserEnvironment ReadDeviceData WriteDeviceData AllFiles
 }
 HEADERS += tst_qmediarecorder.h
 SOURCES += main.cpp tst_qmediarecorder.cpp

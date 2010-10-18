@@ -141,14 +141,7 @@ public:
     virtual bool isReadOnly(const QLandmarkId &landmarkId, QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual bool isReadOnly(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error, QString *errorString) const = 0;
 
-    virtual QStringList landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
-    virtual QStringList categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
-
-    virtual bool isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const = 0;
-    virtual void setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString) = 0;
-
-    virtual bool isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const =  0;
-    virtual void setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString) = 0;
+    virtual QStringList searchableLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const = 0;
 
     /* Asynchronous Request Support */
     virtual void requestDestroyed(QLandmarkAbstractRequest* request) = 0;

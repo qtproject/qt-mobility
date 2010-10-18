@@ -41,7 +41,6 @@
 
 #include "mobilitysimulatorglobal.h"
 #include "mobilityconnection_p.h"
-#include "private/qsimulatordata_p.h"
 #include "private/qsimulatorconnection_p.h"
 
 #include <QtCore/QCoreApplication>
@@ -53,6 +52,8 @@ QTM_BEGIN_NAMESPACE
 using namespace QtSimulatorPrivate;
 
 namespace Simulator {
+
+static const VersionStruct mobilityVersion(1, 1, 0, 0);
 
 MobilityConnection::MobilityConnection(QObject *parent)
     : QObject(parent)
@@ -145,7 +146,10 @@ void MobilityConnection::connectToSimulator()
     ApplicationConnectCommand::Request &request = command.request;
     request.applicationPid = pid;
     request.applicationName[0] = 0;
+    request.version = mobilityVersion;
     qt_sendAndReceiveApplicationConnect(socket, command);
+
+    mSimulatorVersion = command.reply.version;
 
     // We usually want to get the initial state from the simulator directly, probably
     // before the event loop is started up. Hence we block until the simulator has established

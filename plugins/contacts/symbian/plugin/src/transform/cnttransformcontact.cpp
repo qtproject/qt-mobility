@@ -63,6 +63,7 @@
 #include "cnttransformnote.h"
 #include "cnttransformfamily.h"
 #include "cnttransformempty.h"
+#include "cnttransformfavorite.h"
 #include "cntsymbiantransformerror.h"
 #include "cntbackendsdefs.h"
 
@@ -131,6 +132,7 @@ void CntTransformContact::initializeCntTransformContactData()
     
     // not supported on pre-10.1
     m_transformContactData.insert(Presence, new CntTransformPresence);
+    m_transformContactData.insert(Favorite, new CntTransformFavorite);
 
 #else
     // Empty transform class for removing unsupported detail definitions

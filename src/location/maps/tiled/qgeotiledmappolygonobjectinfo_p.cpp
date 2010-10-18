@@ -49,50 +49,59 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapPolygonObjectInfo::QGeoTiledMapPolygonObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-        polygonItem(0)
+QGeoTiledMapPolygonObjectInfo::QGeoTiledMapPolygonObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
+    : QGeoTiledMapObjectInfo(mapData, mapObject)
 {
     polygon = static_cast<QGeoMapPolygonObject*>(mapObject);
+
+    connect(polygon,
+            SIGNAL(pathChanged(QList<QGeoCoordinate>)),
+            this,
+            SLOT(pathChanged(QList<QGeoCoordinate>)));
+    connect(polygon,
+            SIGNAL(penChanged(QPen)),
+            this,
+            SLOT(penChanged(QPen)));
+    connect(polygon,
+            SIGNAL(brushChanged(QBrush)),
+            this,
+            SLOT(brushChanged(QBrush)));
+
+    polygonItem = new QGraphicsPolygonItem();
+    graphicsItem = polygonItem;
+
+    penChanged(polygon->pen());
+    brushChanged(polygon->brush());
+    pathChanged(polygon->path());
 }
 
 QGeoTiledMapPolygonObjectInfo::~QGeoTiledMapPolygonObjectInfo() {}
 
-void QGeoTiledMapPolygonObjectInfo::objectUpdated()
+void QGeoTiledMapPolygonObjectInfo::pathChanged(const QList<QGeoCoordinate> &path)
 {
-    QList<QGeoCoordinate> path = polygon->path();
-
-    points = createPolygon(path, tiledMapData, true);
-    //makepoly(points, path, mapData, true);
-
-    if (points.size() < 3) {
-        if (polygonItem) {
-            delete polygonItem;
-            polygonItem = 0;
-            graphicsItem = 0;
-        }
-        return;
+    points = createPolygon(polygon->path(), tiledMapData, true);
+    if (points.size() >= 3) {
+        polygonItem->setPolygon(points);
+        setValid(true);
+    } else {
+        setValid(false);
     }
-
-    if (!polygonItem)
-        polygonItem = new QGraphicsPolygonItem();
-
-    polygonItem->setPolygon(points);
-    polygonItem->setBrush(polygon->brush());
-
-    mapUpdated();
-
-    graphicsItem = polygonItem;
-
     updateItem();
 }
 
-void QGeoTiledMapPolygonObjectInfo::mapUpdated()
+void QGeoTiledMapPolygonObjectInfo::penChanged(const QPen &pen)
 {
-    if (polygonItem) {
-        polygonItem->setPen(polygon->pen());
-    }
+    polygonItem->setPen(polygon->pen());
+    updateItem();
 }
+
+void QGeoTiledMapPolygonObjectInfo::brushChanged(const QBrush &brush)
+{
+    polygonItem->setBrush(polygon->brush());
+    updateItem();
+}
+
+#include "moc_qgeotiledmappolygonobjectinfo_p.cpp"
 
 QTM_END_NAMESPACE
 

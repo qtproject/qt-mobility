@@ -254,7 +254,7 @@ Creating still images and video.
 In order to capture an image we need to create a \l QCamera object and use
 it to initialize a \l QVideoWidget, so we can see where the camera is
 pointing - a viewfinder. The camera object is also used to initialize a new
-QCameraImageCapture object, \e imageCapture. All that is then needed is to start
+QCameraImageCapture object, \i imageCapture. All that is then needed is to start
 the camera, lock it so that the settings are not changed while the image
 capture occurs, capture the image, and finally unlock the camera ready for
 the next photo.

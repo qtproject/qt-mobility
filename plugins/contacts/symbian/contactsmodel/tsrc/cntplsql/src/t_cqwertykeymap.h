@@ -63,6 +63,9 @@ NONSHARABLE_CLASS(UT_CQwertyKeyMap): public CEUnitTestSuiteClass
 		void UT_GetNumericLimitsL();
 		void UT_GetNumericLimitsBeginsByFirstKeyL();
 		void UT_GetNumericLimitsLongValueL();
+		void UT_CheckDigitsAreMappedL();
+		void UT_CheckAmountOfMappedKeysL();
+		void UT_CheckSpecialCharactersL();
 
     private:    // Data
 

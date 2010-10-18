@@ -42,6 +42,8 @@
 #ifndef S60AUDIOENDPOINTSELECTOR_H
 #define S60AUDIOENDPOINTSELECTOR_H
 
+#include <QStringList>
+
 #include <qaudioendpointselector.h>
 
 QT_USE_NAMESPACE
@@ -50,6 +52,7 @@ class S60AudioCaptureSession;
 
 class S60AudioEndpointSelector : public QAudioEndpointSelector
 {
+
 Q_OBJECT
 
 public:
@@ -61,10 +64,17 @@ public:
     QString defaultEndpoint() const;
     QString activeEndpoint() const;
 
+private:    
+    void update();    
+    
 public Q_SLOTS:
     void setActiveEndpoint(const QString& name);
 
 private:
+    QString          m_audioInput;
+    QList<QString>   m_names;
+    QList<QString>   m_descriptions;
+
     S60AudioCaptureSession* m_session;
 };
 

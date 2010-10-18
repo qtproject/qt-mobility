@@ -87,39 +87,9 @@ QContactAction::~QContactAction()
  */
 
 /*!
-  \fn QContactAction::actionDescriptors(const QString& actionName) const
-  Returns the descriptor which uniquely identifies this action implementation.  A descriptor
-  consists of an action name, a vendor name and an implementation version.
-  The name of the action identifies the action provided; different implementations of an action
-  with the same name must provide the same functionality, but may differ in implementation semantics.
-  Hence, the action name includes the major version of the interface definition implemented.
-  The vendor name is the identification string of the vendor which has provided this implementation.
-  The implementation version is the (minor) version of the implementation, and is vendor-specific.
-
-  \sa QContactActionDescriptor
- */
-
-/*!
   \fn QContactAction::state() const
   Returns the current state of the action.
   \sa stateChanged()
- */
-
-/*!
-  \fn QContactAction::contactFilter() const
-  Returns a filter which may be used to filter contacts by the availability of this action implementation for them.
- */
-
-/*!
-  \fn QContactAction::isTargetSupported(const QContactActionTarget& target) const
-  Returns true if the provided \a target contains the information required for this action to be
-  performed on it; otherwise, returns false.
-  Some actions may require no details to be specified (e.g., serialize entire contact), some may require
-  exactly one detail (e.g., email this specific email account of the given contact), some may require
-  zero or one detail (e.g., email exactly on email account of the given contact, but the action can choose
-  which email account to email), some may require multiple details (e.g., email all specified email accounts
-  of the given contact).  In all cases, it is the action which decides how much information it needs.
-  If the target contains the required information, the function will return true; otherwise, returns false.
  */
 
 /*!

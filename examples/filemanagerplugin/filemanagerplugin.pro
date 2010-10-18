@@ -21,6 +21,11 @@ symbian {
     pluginDep.path = $$QT_PLUGINS_BASE_DIR    
     DEPLOYMENT += pluginDep
 
+    xmlautoimport.path = /private/2002AC7F/import/
+    xmlautoimport.sources = filemanagerservice.xml
+    DEPLOYMENT += xmlautoimport
+
+
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = LocalServices Location NetworkServices ReadUserData WriteUserData UserEnvironment
 }

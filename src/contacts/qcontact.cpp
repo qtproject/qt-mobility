@@ -902,4 +902,18 @@ QMap<QString, QContactDetail> QContact::preferredDetails() const
     return ret;
 }
 
+
+/* Helper functions for QContactData */
+void QContactData::removeOnly(const QSet<QString> &detailMask)
+{
+    QList<QContactDetail>::iterator dit = m_details.begin();
+    while (dit != m_details.end()) {
+        // XXX this doesn't check type or display label
+        if (detailMask.contains(dit->definitionName()))
+            dit = m_details.erase(dit);
+        else
+            ++dit;
+    }
+}
+
 QTM_END_NAMESPACE

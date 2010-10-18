@@ -313,7 +313,7 @@ bool QValueSpaceSubscriberPrivate::disconnect(QValueSpaceSubscriber * space)
     Constructs a QValueSpaceSubscriber with the specified \a parent that refers to the root path.
 
     The constructed Value Space subscriber will access all available
-    \l {QAbstractValueSpaceLayer}{layers}.
+    QAbstractValueSpaceLayer layers.
 */
 QValueSpaceSubscriber::QValueSpaceSubscriber(QObject *parent)
 :   QObject(parent)
@@ -325,7 +325,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(QObject *parent)
     Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.
 
     The constructed Value Space subscriber will access all available
-    \l {QAbstractValueSpaceLayer}{layers}.
+    QAbstractValueSpaceLayer layers.
 */
 QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path, QObject *parent)
 :   QObject(parent)

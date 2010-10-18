@@ -435,8 +435,6 @@ QFeedbackThemeInterface *QFeedbackThemeInterface::instance()
     Sets the state of the effect \a effect to be loaded or unloaded.
     Loading a file is asynchronous. Once the backend know if it has loaded or can't load the plugin, it must
     call the reportLoadFinished function.
-
-    \sa QFeedbackFileInterface::reportLoadFinished(QFeedbackFileEffect* effect, bool success)
 */
 
 /*!

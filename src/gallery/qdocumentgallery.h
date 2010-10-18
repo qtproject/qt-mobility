@@ -145,6 +145,17 @@ public:
     static const QGalleryProperty resumePosition;
     static const QGalleryProperty director;
 
+    enum Error
+    {
+        NoError = QGalleryAbstractRequest::NoError,
+        NoGallery = QGalleryAbstractRequest::NoGallery,
+        NotSupported = QGalleryAbstractRequest::NotSupported,
+        ConnectionError = QGalleryAbstractRequest::GalleryError,
+        ItemIdError,
+        ItemTypeError,
+        FilterError
+    };
+
     QDocumentGallery(QObject *parent = 0);
     ~QDocumentGallery();
 

@@ -49,7 +49,8 @@
 #include <qmediaplayer.h>
 #include <qmediaplaylist.h>
 
-#include <QtCore/qdebug.h>
+#include <QtCore/qcoreapplication.h>
+#include <QtCore/qcoreevent.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
@@ -59,7 +60,7 @@ QWmpPlayerControl::QWmpPlayerControl(IWMPCore3 *player, QWmpEvents *events, QObj
     , m_controls(0)
     , m_settings(0)
     , m_state(QMediaPlayer::StoppedState)
-    , m_duration(0)
+    , m_changes(0)
     , m_buffering(false)
     , m_audioAvailable(false)
     , m_videoAvailable(false)
@@ -108,16 +109,15 @@ qint64 QWmpPlayerControl::duration() const
     IWMPMedia *media = 0;
     if (m_controls && m_controls->get_currentItem(&media) == S_OK) {
         media->get_duration(&duration);
-
         media->Release();
     }
 
-    return m_duration * 1000;
+    return duration * 1000;
 }
 
 qint64 QWmpPlayerControl::position() const
 {
-    double position;
+    double position = 0.0;
 
     if (m_controls)
         m_controls->get_currentPosition(&position);
@@ -277,25 +277,49 @@ void QWmpPlayerControl::setMedia(const QMediaContent &content, QIODevice *stream
         setUrl(QUrl());
 }
 
-void QWmpPlayerControl::bufferingEvent(VARIANT_BOOL buffering)
+bool QWmpPlayerControl::event(QEvent *event)
 {
-    if (m_state != QMediaPlayer::StoppedState) {
-        emit mediaStatusChanged(m_status = buffering
-                ? QMediaPlayer::BufferingMedia
-                : QMediaPlayer::BufferedMedia);
+    if (event->type() == QEvent::UpdateRequest) {
+        const int changes = m_changes;
+        m_changes = 0;
+
+        if (changes & DurationChanged)
+            emit durationChanged(duration());
+        if (changes & PositionChanged)
+            emit positionChanged(position());
+        if (changes & StatusChanged)
+            emit mediaStatusChanged(m_status);
+        if (changes & StateChanged)
+            emit stateChanged(m_state);
+
+        return true;
+    } else {
+        return QMediaPlayerControl::event(event);
     }
 }
 
-void QWmpPlayerControl::currentItemChangeEvent(IDispatch *dispatch)
+void QWmpPlayerControl::scheduleUpdate(int change)
 {
-    IWMPMedia *media = 0;
-    if (dispatch && dispatch->QueryInterface(
-            __uuidof(IWMPMedia), reinterpret_cast<void **>(&media)) == S_OK) {
-        double duration = 0;
+    if (m_changes == 0)
+        QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
 
-        if (media->get_duration(&duration) == S_OK)
-            emit durationChanged(duration * 1000);
+    m_changes |= change;
+}
+
+void QWmpPlayerControl::bufferingEvent(VARIANT_BOOL buffering)
+{
+    if (m_state != QMediaPlayer::StoppedState) {
+        m_status = buffering
+                ? QMediaPlayer::BufferingMedia
+                : QMediaPlayer::BufferedMedia;
+
+        scheduleUpdate(StatusChanged);
     }
+}
+
+void QWmpPlayerControl::currentItemChangeEvent(IDispatch *)
+{
+    scheduleUpdate(DurationChanged);
 }
 
 void QWmpPlayerControl::mediaChangeEvent(IDispatch *dispatch)
@@ -306,23 +330,18 @@ void QWmpPlayerControl::mediaChangeEvent(IDispatch *dispatch)
         IWMPMedia *currentMedia = 0;
         if (m_controls && m_controls->get_currentItem(&currentMedia) == S_OK) {
             VARIANT_BOOL isEqual = VARIANT_FALSE;
-            if (media->get_isIdentical(currentMedia, &isEqual) == S_OK && isEqual) {
-                double duration = 0;
+            if (media->get_isIdentical(currentMedia, &isEqual) == S_OK && isEqual)
+                scheduleUpdate(DurationChanged);
 
-                if (media->get_duration(&duration) == S_OK)
-                    emit durationChanged(duration * 1000);
-            }
             currentMedia->Release();
         }
         media->Release();
     }
 }
 
-void QWmpPlayerControl::positionChangeEvent(double from, double to)
+void QWmpPlayerControl::positionChangeEvent(double , double)
 {
-    Q_UNUSED(from);
-
-    emit positionChanged(to * 1000);
+    scheduleUpdate(PositionChanged);
 }
 
 void QWmpPlayerControl::playStateChangeEvent(long state)
@@ -331,30 +350,31 @@ void QWmpPlayerControl::playStateChangeEvent(long state)
     case wmppsUndefined:
         m_state = QMediaPlayer::StoppedState;
         m_status = QMediaPlayer::UnknownMediaStatus;
-
-        emit stateChanged(m_state);
-        emit mediaStatusChanged(m_status);
+        scheduleUpdate(StatusChanged | StateChanged);
         break;
     case wmppsStopped:
         if (m_state != QMediaPlayer::StoppedState) {
             m_state = QMediaPlayer::StoppedState;
-            m_status = QMediaPlayer::LoadedMedia;
+            scheduleUpdate(StateChanged);
 
-            emit stateChanged(m_state);
-            emit mediaStatusChanged(m_status);
+            if (m_status != QMediaPlayer::EndOfMedia) {
+                m_status = QMediaPlayer::LoadedMedia;
+                scheduleUpdate(StatusChanged);
+            }
         }
         break;
     case wmppsPaused:
         if (m_state != QMediaPlayer::PausedState && m_status != QMediaPlayer::BufferedMedia) {
             m_state = QMediaPlayer::PausedState;
             m_status = QMediaPlayer::BufferedMedia;
-
-            emit stateChanged(m_state);
-            emit mediaStatusChanged(m_status);
+            scheduleUpdate(StatusChanged | StateChanged);
         } else if (m_state != QMediaPlayer::PausedState) {
-            emit stateChanged(m_state = QMediaPlayer::PausedState);
+            m_state = QMediaPlayer::PausedState;
+            scheduleUpdate(StateChanged);
         } else if (m_status != QMediaPlayer::BufferedMedia) {
-            emit mediaStatusChanged(m_status = QMediaPlayer::BufferedMedia);
+            m_status = QMediaPlayer::BufferedMedia;
+
+            scheduleUpdate(StatusChanged);
         }
         break;
     case wmppsPlaying:
@@ -363,49 +383,56 @@ void QWmpPlayerControl::playStateChangeEvent(long state)
         if (m_state != QMediaPlayer::PlayingState && m_status != QMediaPlayer::BufferedMedia) {
             m_state = QMediaPlayer::PlayingState;
             m_status = QMediaPlayer::BufferedMedia;
-
-            emit stateChanged(m_state);
-            emit mediaStatusChanged(m_status);
+            scheduleUpdate(StatusChanged | StateChanged);
         } else if (m_state != QMediaPlayer::PlayingState) {
-            emit stateChanged(m_state = QMediaPlayer::PlayingState);
+            m_state = QMediaPlayer::PlayingState;
+            scheduleUpdate(StateChanged);
         } else if (m_status != QMediaPlayer::BufferedMedia) {
-            emit mediaStatusChanged(m_status = QMediaPlayer::BufferedMedia);
+            m_status = QMediaPlayer::BufferedMedia;
+            scheduleUpdate(StatusChanged);
         }
 
-        if (m_state != QMediaPlayer::PlayingState)
-            emit stateChanged(m_state = QMediaPlayer::PlayingState);
-        if (m_status != QMediaPlayer::BufferedMedia)
-            emit mediaStatusChanged(m_status = QMediaPlayer::BufferedMedia);
+        if (m_state != QMediaPlayer::PlayingState) {
+            m_state = QMediaPlayer::PlayingState;
+            scheduleUpdate(StateChanged);
+        }
+        if (m_status != QMediaPlayer::BufferedMedia) {
+            m_status = QMediaPlayer::BufferedMedia;
+            scheduleUpdate(StatusChanged);
+        }
         break;
     case wmppsBuffering:
     case wmppsWaiting:
-        if (m_status != QMediaPlayer::StalledMedia && m_state != QMediaPlayer::StoppedState)
-            emit mediaStatusChanged(m_status = QMediaPlayer::StalledMedia);
+        if (m_status != QMediaPlayer::StalledMedia && m_state != QMediaPlayer::StoppedState) {
+            m_status = QMediaPlayer::StalledMedia;
+            scheduleUpdate(StatusChanged);
+        }
         break;
     case wmppsMediaEnded:
         if (m_status != QMediaPlayer::EndOfMedia && m_state != QMediaPlayer::StoppedState) {
             m_state = QMediaPlayer::StoppedState;
-            m_status = QMediaPlayer::StalledMedia;
-
-            emit stateChanged(m_state);
-            emit mediaStatusChanged(m_status);
+            m_status = QMediaPlayer::EndOfMedia;
+            scheduleUpdate(StatusChanged | StateChanged);
         }
         break;
     case wmppsTransitioning:
-        if (m_status != QMediaPlayer::LoadingMedia)
-            emit mediaStatusChanged(m_status = QMediaPlayer::LoadingMedia);
         break;
     case wmppsReady:
-        if (m_status != QMediaPlayer::LoadedMedia)
-            m_status = m_status = QMediaPlayer::LoadedMedia;
+        if (m_status != QMediaPlayer::LoadedMedia) {
+            m_status = QMediaPlayer::LoadedMedia;
+            scheduleUpdate(StatusChanged);
+        }
 
-            if (m_state != QMediaPlayer::StoppedState)
-                emit stateChanged(QMediaPlayer::StoppedState);
-            emit mediaStatusChanged(m_status);
+        if (m_state != QMediaPlayer::StoppedState) {
+            m_state = QMediaPlayer::StoppedState;
+            scheduleUpdate(StateChanged);
+        }
         break;
     case wmppsReconnecting:
-        if (m_status != QMediaPlayer::StalledMedia && m_state != QMediaPlayer::StoppedState)
-            emit mediaStatusChanged(m_status = QMediaPlayer::StalledMedia);
+        if (m_status != QMediaPlayer::StalledMedia && m_state != QMediaPlayer::StoppedState) {
+            m_status = QMediaPlayer::StalledMedia;
+            scheduleUpdate(StatusChanged);
+        }
         break;
     default:
         break;

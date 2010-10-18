@@ -53,7 +53,7 @@
 #include <QDialogButtonBox>
 
 GeocodingCoordinateInputDialog::GeocodingCoordinateInputDialog(QGeoCoordinate& location, QWidget *parent)
-    : QDialog(parent), m_location(location)
+        : QDialog(parent), m_location(location)
 {
     setWindowTitle(tr("Reverse Geocoding Coordinates"));
 
@@ -69,9 +69,9 @@ GeocodingCoordinateInputDialog::GeocodingCoordinateInputDialog(QGeoCoordinate& l
     firstrow->addWidget(m_locLat);
     firstrow->addWidget(m_locLong);
 
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,Qt::Horizontal);
-    connect(buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
-    connect(buttonBox,SIGNAL(rejected()),this,SLOT(reject()));
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal);
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSizeConstraint(QLayout::SetFixedSize);
@@ -146,8 +146,8 @@ void ReverseGeocodingTab::initialize(QGeoSearchManager *searchManager)
 void ReverseGeocodingTab::on_btnRequest_clicked()
 {
     if (m_searchManager) {
-        GeocodingCoordinateInputDialog dlg(m_location,this);
-        if(dlg.exec()==QDialog::Accepted) {
+        GeocodingCoordinateInputDialog dlg(m_location, this);
+        if (dlg.exec() == QDialog::Accepted) {
             m_resultTree->clear();
             QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
             top->setText(0, tr("Reverse Geocode"));

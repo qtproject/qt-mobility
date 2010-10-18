@@ -70,8 +70,8 @@ public:
     void setDeclarativeCenter(const QDeclarativeCoordinate *center);
     QDeclarativeCoordinate* declarativeCenter() const;
 
-    Q_INVOKABLE QPointF toScreenPosition(const QDeclarativeCoordinate *coordinate) const;
     Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(QPointF screenPosition) const;
+    Q_INVOKABLE QPointF toScreenPosition(QDeclarativeCoordinate* coordinate) const;
 
 private slots:
     void memberCenterChanged(const QGeoCoordinate &coordinate);

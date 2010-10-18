@@ -44,21 +44,84 @@
 #include "qgeotiledmapdata.h"
 #include "qgeotiledmapdata_p.h"
 
+#include "qgeoboundingbox.h"
+
 #include "qgeomaprectangleobject.h"
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapRectangleObjectInfo::QGeoTiledMapRectangleObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-        rectangleItem1(0),
-        rectangleItem2(0)
+QGeoTiledMapRectangleObjectInfo::QGeoTiledMapRectangleObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
+    : QGeoTiledMapObjectInfo(mapData, mapObject),
+      rectangleItem2(0)
 {
     rectangle = static_cast<QGeoMapRectangleObject*>(mapObject);
+
+    connect(rectangle,
+            SIGNAL(topLeftChanged(QGeoCoordinate)),
+            this,
+            SLOT(topLeftChanged(QGeoCoordinate)));
+    connect(rectangle,
+            SIGNAL(bottomRightChanged(QGeoCoordinate)),
+            this,
+            SLOT(bottomRightChanged(QGeoCoordinate)));
+    connect(rectangle,
+            SIGNAL(penChanged(QPen)),
+            this,
+            SLOT(penChanged(QPen)));
+    connect(rectangle,
+            SIGNAL(brushChanged(QBrush)),
+            this,
+            SLOT(brushChanged(QBrush)));
+
+    rectangleItem1 = new QGraphicsRectItem();
+    graphicsItem = rectangleItem1;
+
+    penChanged(rectangle->pen());
+    brushChanged(rectangle->brush());
+
+    updateValidity();
+    if (valid())
+        update();
 }
 
 QGeoTiledMapRectangleObjectInfo::~QGeoTiledMapRectangleObjectInfo() {}
 
-void QGeoTiledMapRectangleObjectInfo::objectUpdated()
+void QGeoTiledMapRectangleObjectInfo::updateValidity()
+{
+    setValid((rectangle->topLeft().isValid() && rectangle->bottomRight().isValid()));
+}
+
+void QGeoTiledMapRectangleObjectInfo::topLeftChanged(const QGeoCoordinate &topLeft)
+{
+    updateValidity();
+    if (valid())
+        update();
+}
+
+void QGeoTiledMapRectangleObjectInfo::bottomRightChanged(const QGeoCoordinate &bottomRight)
+{
+    updateValidity();
+    if (valid())
+        update();
+}
+
+void QGeoTiledMapRectangleObjectInfo::penChanged(const QPen &pen)
+{
+    rectangleItem1->setPen(pen);
+    if (rectangleItem2)
+        rectangleItem2->setPen(pen);
+    updateItem();
+}
+
+void QGeoTiledMapRectangleObjectInfo::brushChanged(const QBrush &brush)
+{
+    rectangleItem1->setBrush(brush);
+    if (rectangleItem2)
+        rectangleItem2->setBrush(brush);
+    updateItem();
+}
+
+void QGeoTiledMapRectangleObjectInfo::update()
 {
 #if 1
     QGeoCoordinate coord1 = rectangle->bounds().topLeft();
@@ -73,8 +136,8 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdated()
     const bool goesEast = crossesDateline != (lng2 > lng1);
 
     // calculate base points
-    QPointF point1 = tiledMapData->coordinateToWorldPixel(coord1);
-    QPointF point2 = tiledMapData->coordinateToWorldPixel(coord2);
+    QPointF point1 = tiledMapData->coordinateToWorldReferencePosition(coord1);
+    QPointF point2 = tiledMapData->coordinateToWorldReferencePosition(coord2);
 
     QRectF bounds1 = QRectF(point1, point2).normalized();
     QRectF bounds2;
@@ -84,7 +147,7 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdated()
         // direction = positive if east, negative otherwise
         const qreal dir = goesEast ? 1 : -1;
 
-        int width = tiledMapData->maxZoomSize().width();
+        int width = tiledMapData->worldReferenceSize().width();
 
         // lastPoint on the other side
         QPointF point1_ = point1 - QPointF(width * dir, 0);
@@ -112,9 +175,6 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdated()
     }
 #endif
 
-    if (!rectangleItem1)
-        rectangleItem1 = new QGraphicsRectItem();
-
     if (bounds2.isValid()) {
         if (!rectangleItem2)
             rectangleItem2 = new QGraphicsRectItem(rectangleItem1);
@@ -129,26 +189,10 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdated()
     if (rectangleItem2)
         rectangleItem2->setRect(bounds2);
 
-    rectangleItem1->setBrush(rectangle->brush());
-    if (rectangleItem2)
-        rectangleItem2->setBrush(rectangle->brush());
-
-    mapUpdated();
-
-    graphicsItem = rectangleItem1;
-
     updateItem();
 }
 
-void QGeoTiledMapRectangleObjectInfo::mapUpdated()
-{
-    if (rectangleItem1) {
-        QPen pen = rectangle->pen();
-        rectangleItem1->setPen(pen);
-        if (rectangleItem2)
-            rectangleItem2->setPen(pen);
-    }
-}
+#include "moc_qgeotiledmaprectangleobjectinfo_p.cpp"
 
 QTM_END_NAMESPACE
 

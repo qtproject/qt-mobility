@@ -144,8 +144,8 @@ void S60MediaPlayerSession::load(QUrl url)
         if(m_stream)
             doLoadUrlL(QString2TPtrC(url.toString()));
         else
-            doLoadL(QString2TPtrC(QDir::toNativeSeparators(url.toLocalFile()))));    
-    setError(err);    
+            doLoadL(QString2TPtrC(QDir::toNativeSeparators(url.toLocalFile()))));
+    setError(err);
 }
 
 void S60MediaPlayerSession::play()
@@ -192,6 +192,7 @@ void S60MediaPlayerSession::stop()
     doStop();
     emit positionChanged(0);
 }
+
 void S60MediaPlayerSession::reset()
 {
     m_play_requested = false;    
@@ -218,7 +219,6 @@ int S60MediaPlayerSession::bufferStatus()
     
     int progress = 0;
     TRAPD(err, progress = doGetBufferStatusL());
-    
     // If buffer status query not supported by codec return 100
     // do not set error
     if(err == KErrNotSupported)
@@ -238,9 +238,91 @@ QVariant S60MediaPlayerSession::metaData(const QString &key) const
     return m_metaDataMap.value(key);    
 }
 
-QMap<QString, QVariant> S60MediaPlayerSession::availableMetaData() const
+QVariant S60MediaPlayerSession::metaData(QtMultimediaKit::MetaData key) const
 {
-    return m_metaDataMap;
+    return metaData(metaDataKeyAsString(key));
+}
+
+QList<QtMultimediaKit::MetaData> S60MediaPlayerSession::availableMetaData() const
+{
+    QList<QtMultimediaKit::MetaData> metaDataTags;
+    if (isMetadataAvailable()) {
+        for (int i = QtMultimediaKit::Title; i <= QtMultimediaKit::DeviceSettingDescription; i++) {
+            QString metaDataItem = metaDataKeyAsString((QtMultimediaKit::MetaData)i);
+            if (!metaDataItem.isEmpty()) {
+                if (!metaData(metaDataItem).isNull()) {
+                    metaDataTags.append((QtMultimediaKit::MetaData)i);
+                }
+            }
+        }
+    }
+    return metaDataTags;
+}
+
+QStringList S60MediaPlayerSession::availableExtendedMetaData() const
+{
+    return m_metaDataMap.keys();
+}
+
+QString S60MediaPlayerSession::metaDataKeyAsString(QtMultimediaKit::MetaData key) const
+{
+    switch(key) {
+    case QtMultimediaKit::Title: return "title";
+    case QtMultimediaKit::AlbumArtist: return "artist";
+    case QtMultimediaKit::Comment: return "comment";
+    case QtMultimediaKit::Genre: return "genre";
+    case QtMultimediaKit::Year: return "year";
+    case QtMultimediaKit::Copyright: return "copyright";
+    case QtMultimediaKit::AlbumTitle: return "album";
+    case QtMultimediaKit::Composer: return "composer";
+    case QtMultimediaKit::TrackNumber: return "albumtrack";
+    case QtMultimediaKit::AudioBitRate: return "audiobitrate";
+    case QtMultimediaKit::VideoBitRate: return "videobitrate";
+    case QtMultimediaKit::Duration: return "duration";
+    case QtMultimediaKit::MediaType: return "contenttype";
+    case QtMultimediaKit::CoverArtImage: return "attachedpicture";
+    case QtMultimediaKit::SubTitle: // TODO: Find the matching metadata keys
+    case QtMultimediaKit::Description:
+    case QtMultimediaKit::Category:
+    case QtMultimediaKit::Date:
+    case QtMultimediaKit::UserRating:
+    case QtMultimediaKit::Keywords:
+    case QtMultimediaKit::Language:
+    case QtMultimediaKit::Publisher:
+    case QtMultimediaKit::ParentalRating:
+    case QtMultimediaKit::RatingOrganisation:
+    case QtMultimediaKit::Size:
+    case QtMultimediaKit::AudioCodec:
+    case QtMultimediaKit::AverageLevel:
+    case QtMultimediaKit::ChannelCount:
+    case QtMultimediaKit::PeakValue:
+    case QtMultimediaKit::SampleRate:
+    case QtMultimediaKit::Author:
+    case QtMultimediaKit::ContributingArtist:
+    case QtMultimediaKit::Conductor:
+    case QtMultimediaKit::Lyrics:
+    case QtMultimediaKit::Mood:
+    case QtMultimediaKit::TrackCount:
+    case QtMultimediaKit::CoverArtUrlSmall:
+    case QtMultimediaKit::CoverArtUrlLarge:
+    case QtMultimediaKit::Resolution:
+    case QtMultimediaKit::PixelAspectRatio:
+    case QtMultimediaKit::VideoFrameRate:
+    case QtMultimediaKit::VideoCodec:
+    case QtMultimediaKit::PosterUrl:
+    case QtMultimediaKit::ChapterNumber:
+    case QtMultimediaKit::Director:
+    case QtMultimediaKit::LeadPerformer:
+    case QtMultimediaKit::Writer:
+    case QtMultimediaKit::CameraManufacturer:
+    case QtMultimediaKit::CameraModel:
+    case QtMultimediaKit::Event:
+    case QtMultimediaKit::Subject:
+    default:
+        break;
+    }
+
+    return QString();
 }
 
 void S60MediaPlayerSession::setMuted(bool muted)
@@ -317,6 +399,7 @@ void S60MediaPlayerSession::loaded()
         emit durationChanged(duration());
         emit videoAvailableChanged(isVideoAvailable());
         emit audioAvailableChanged(isAudioAvailable());
+        emit mediaChanged();
     }
 }
 
@@ -472,19 +555,23 @@ void S60MediaPlayerSession::stopStalledTimer()
 {
     m_stalledTimer->stop();
 }
+
 QString S60MediaPlayerSession::TDesC2QString(const TDesC& aDescriptor)
 {
     return QString::fromUtf16(aDescriptor.Ptr(), aDescriptor.Length());
 }
+
 TPtrC S60MediaPlayerSession::QString2TPtrC( const QString& string )
 {
 	// Returned TPtrC is valid as long as the given parameter is valid and unmodified
     return TPtrC16(static_cast<const TUint16*>(string.utf16()), string.length());
 }
+
 QRect S60MediaPlayerSession::TRect2QRect(const TRect& tr)
 {
     return QRect(tr.iTl.iX, tr.iTl.iY, tr.Width(), tr.Height());
 }
+
 TRect S60MediaPlayerSession::QRect2TRect(const QRect& qr)
 {
     return TRect(TPoint(qr.left(), qr.top()), TSize(qr.width(), qr.height()));

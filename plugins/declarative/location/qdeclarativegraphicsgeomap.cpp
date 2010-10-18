@@ -41,6 +41,7 @@
 ****************************************************************************/
 
 #include "qdeclarativegraphicsgeomap_p.h"
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -101,7 +102,7 @@ void QDeclarativeGraphicsGeoMap::object_clear(QDeclarativeListProperty<QGeoMapOb
     static_cast<QDeclarativeGraphicsGeoMap*>(prop->object)->clearMapObjects();
 }
 
-QPointF QDeclarativeGraphicsGeoMap::toScreenPosition(const QDeclarativeCoordinate *coordinate) const
+QPointF QDeclarativeGraphicsGeoMap::toScreenPosition(QDeclarativeCoordinate* coordinate) const
 {
     return coordinateToScreenPosition(coordinate->coordinate());
 }

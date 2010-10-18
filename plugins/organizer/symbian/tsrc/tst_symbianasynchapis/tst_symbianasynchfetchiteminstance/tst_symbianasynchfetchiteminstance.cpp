@@ -223,8 +223,9 @@ void TestFetchItemInstances::fetchItemInstances()
 {
     QOrganizerItemLocalIdFilter localIdFilter;
     QList<QOrganizerItemLocalId> lUids;
-    lUids.append(3);
-    lUids.append(4);
+    // TODO: Disabled because of API change. REFACTOR!
+    //lUids.append(3);
+    //lUids.append(4);
     localIdFilter.setIds(lUids);
     //m_fetchItemInstanceRequest->setFilter(localIdFilter);
     // Set ItemDetailsFilter

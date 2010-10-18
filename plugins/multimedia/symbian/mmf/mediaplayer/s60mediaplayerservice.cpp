@@ -53,6 +53,7 @@
 #include "s60videooverlay.h"
 #include "s60videorenderer.h"
 #include "s60mediaplayeraudioendpointselector.h"
+#include "s60mediastreamcontrol.h"
 
 #include <qmediaplaylistnavigator.h>
 #include <qmediaplaylist.h>
@@ -64,21 +65,17 @@ S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     , m_audioPlayerSession(NULL)
     , m_metaData(NULL)
     , m_audioEndpointSelector(NULL)
-    , m_videoWidget(NULL)
-    , m_videoWindow(NULL)
-    , m_videoRenderer(NULL)
+    , m_streamControl(NULL)
     , m_videoOutput(NULL)
 {
     m_control = new S60MediaPlayerControl(*this, this);
-    m_metaData = new S60MediaMetaDataProvider(*this);
+    m_metaData = new S60MediaMetaDataProvider(m_control, this);
     m_audioEndpointSelector = new S60MediaPlayerAudioEndpointSelector(m_control, this);
+    m_streamControl = new S60MediaStreamControl(m_control, this);
 }
 
 S60MediaPlayerService::~S60MediaPlayerService()
 {
-    delete m_videoWidget;
-    delete m_videoRenderer;
-    delete m_videoWindow;
 }
 
 QMediaControl *S60MediaPlayerService::requestControl(const char *name)
@@ -92,18 +89,18 @@ QMediaControl *S60MediaPlayerService::requestControl(const char *name)
     if (qstrcmp(name, QAudioEndpointSelector_iid) == 0)
         return m_audioEndpointSelector;
 
+    if (qstrcmp(name, QMediaStreamsControl_iid) == 0)
+        return m_streamControl;
+
     if (!m_videoOutput) {
         if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
-            m_videoWidget = new S60VideoWidgetControl;
-            m_videoOutput = m_videoWidget;
+            m_videoOutput = new S60VideoWidgetControl(this);
         }
         else if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
-            m_videoRenderer = new S60VideoRenderer;
-            m_videoOutput = m_videoRenderer;
+            m_videoOutput = new S60VideoRenderer(this);
         }
         else if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
-            m_videoWindow = new S60VideoOverlay;
-            m_videoOutput = m_videoWindow;
+            m_videoOutput = new S60VideoOverlay(this);
         }
 
         if (m_videoOutput) {
@@ -124,7 +121,7 @@ void S60MediaPlayerService::releaseControl(QMediaControl *control)
 {
     if (control == m_videoOutput) {
         m_videoOutput = 0;
-        m_control->setVideoOutput(0);
+        m_control->setVideoOutput(m_videoOutput);
     }
 }
 
@@ -140,13 +137,20 @@ S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
     S60MediaRecognizer::MediaType mediaType = m_mediaRecognizer->mediaType(url);
 
     switch (mediaType) {
-    	case S60MediaRecognizer::Video:
-    	case S60MediaRecognizer::Url:
-            return VideoPlayerSession();
-    	case S60MediaRecognizer::Audio:
-            return AudioPlayerSession();
-        default:
-    		break;
+    case S60MediaRecognizer::Video:
+    case S60MediaRecognizer::Url:
+        {
+        m_control->setMediaType(S60MediaSettings::Video);
+        return VideoPlayerSession();
+        }
+    case S60MediaRecognizer::Audio:
+        {
+        m_control->setMediaType(S60MediaSettings::Audio);
+        return AudioPlayerSession();
+        }
+    default:
+        m_control->setMediaType(S60MediaSettings::Unknown);
+        break;
     }
 
     return NULL;
@@ -181,6 +185,8 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
                 m_metaData, SIGNAL(metaDataChanged()));
         connect(m_videoPlayerSession, SIGNAL(activeEndpointChanged(const QString&)),
                 m_audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)));
+        connect(m_videoPlayerSession, SIGNAL(mediaChanged()),
+                m_streamControl, SLOT(handleStreamsChanged()));
     }
 
     m_videoPlayerSession->setVolume(m_control->mediaControlSettings().volume());
@@ -218,6 +224,8 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
                 m_metaData, SIGNAL(metaDataChanged()));
         connect(m_audioPlayerSession, SIGNAL(activeEndpointChanged(const QString&)),
                 m_audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)));
+        connect(m_audioPlayerSession, SIGNAL(mediaChanged()),
+                m_streamControl, SLOT(handleStreamsChanged()));
     }
 
     m_audioPlayerSession->setVolume(m_control->mediaControlSettings().volume());

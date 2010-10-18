@@ -36,6 +36,7 @@ SOURCEPATH      ../src
 SOURCE          dllmain.cpp
 SOURCE          t_cpcskeymap.cpp
 SOURCE          t_cqwertykeymap.cpp
+SOURCE          t_ckoreankeymap.cpp
 SOURCE          t_cpplpredictivesearchtable.cpp
 SOURCE          t_cqwertypredictivesearchtable.cpp
 SOURCE          t_cpredictivesearchsettingstable.cpp
@@ -45,6 +46,7 @@ SOURCEPATH      ../../../cntplsql/src
 SOURCE          cpcskeymap.cpp
 SOURCE          c12keykeymap.cpp
 SOURCE          cqwertykeymap.cpp
+SOURCE          ckoreankeymap.cpp
 SOURCE          cpplpredictivesearchtable.cpp
 SOURCE          c12keypredictivesearchtable.cpp
 SOURCE          cqwertypredictivesearchtable.cpp
@@ -52,6 +54,7 @@ SOURCE          cpredictivesearchsettingstable.cpp
 SOURCE          cpredictivesearchsynchronizer.cpp
 // Other required code
 SOURCE          cntsqlprovider.cpp
+SOURCE          koreaninput.cpp
 
 USERINCLUDE     ../../../cntplsql/inc
 USERINCLUDE     ../../../cntsrv/inc
@@ -82,7 +85,8 @@ LIBRARY     	libstdcppv5.lib
 LIBRARY     	libc.lib
 LIBRARY     	libm.lib
 LIBRARY         efsrv.lib	 // For copying DB file
+LIBRARY         xqsettingsmanager
 
-OPTION ARMCC --visibility_inlines_hidden
+//OPTION ARMCC --visibility_inlines_hidden
 
 STDCPP

@@ -54,7 +54,7 @@
 //
 
 
-#include "qsoundeffect.h"
+#include "qsoundeffect_p.h"
 
 #include <QtCore/qobject.h>
 #include <QtCore/qdatetime.h>
@@ -68,7 +68,7 @@ QT_BEGIN_NAMESPACE
 
 class QNetworkReply;
 class QNetworkAccessManager;
-class WaveDecoder;
+class QWaveDecoder;
 
 class QSoundEffectPrivate : public QObject
 {
@@ -88,6 +88,7 @@ public:
 
 public Q_SLOTS:
     void play();
+    void stop();
 
 Q_SIGNALS:
     void volumeChanged();
@@ -111,6 +112,7 @@ private:
     static void play_callback(pa_context *c, int success, void *userdata);
 
     pa_stream *m_pulseStream;
+    int m_timerID;
 
     bool    m_retry;
     bool    m_muted;
@@ -125,7 +127,7 @@ private:
     QTime  m_playbackTime;
     QByteArray m_name;
     QNetworkReply *m_reply;
-    WaveDecoder *m_waveDecoder;
+    QWaveDecoder *m_waveDecoder;
     QIODevice *m_stream;
     QNetworkAccessManager *m_networkAccessManager;
 };

@@ -98,8 +98,11 @@ QTM_BEGIN_NAMESPACE
     to pass any implementation specific data to the engine.
 */
 QGeoSearchManagerEngine::QGeoSearchManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoSearchManagerEnginePrivate()) {}
+    : QObject(parent),
+      d_ptr(new QGeoSearchManagerEnginePrivate())
+{
+    Q_UNUSED(parameters)
+}
 
 /*!
     Destroys this engine.
@@ -303,6 +306,8 @@ QGeoSearchReply* QGeoSearchManagerEngine::search(const QString &searchString,
 {
     Q_UNUSED(searchString)
     Q_UNUSED(searchTypes)
+    Q_UNUSED(limit)
+    Q_UNUSED(offset)
     Q_UNUSED(bounds)
 
     return new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
@@ -491,10 +496,10 @@ QLocale QGeoSearchManagerEngine::locale() const
 *******************************************************************************/
 
 QGeoSearchManagerEnginePrivate::QGeoSearchManagerEnginePrivate()
-        : managerVersion(-1),
-        defaultLandmarkManager(0),
-        supportsGeocoding(false),
-        supportsReverseGeocoding(false) {}
+    : managerVersion(-1),
+      defaultLandmarkManager(0),
+      supportsGeocoding(false),
+      supportsReverseGeocoding(false) {}
 
 QGeoSearchManagerEnginePrivate::~QGeoSearchManagerEnginePrivate()
 {

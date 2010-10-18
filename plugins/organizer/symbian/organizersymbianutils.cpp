@@ -66,78 +66,89 @@ TPtrC16 toPtrC16(const QString &string)
     return TPtrC16(reinterpret_cast<const TUint16*>(string.utf16()), string.size());
 }
 
-TCalTime toTCalTimeL(QDateTime dateTime)
+TCalTime toTCalTimeL(const QDateTime &dateTime)
 {
     TCalTime calTime;
     calTime.SetTimeUtcL(Time::NullTTime());
-
-    if (dateTime.isValid()) {
-        uint secondsFrom1970 = dateTime.toTime_t();
-        quint64 usecondsFrom1970 = ((quint64) secondsFrom1970) * ((quint64) 1000000) + ((quint64) dateTime.time().msec() * (quint64)1000);
-        TTime time1970(_L("19700000:000000.000000"));
-        quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
-        quint64 useconds = usecondsBCto1970 + usecondsFrom1970;
-
-        TTime time(useconds);
-        calTime.SetTimeUtcL(time);
-    }
-
+    if (dateTime.isValid())      
+        calTime.SetTimeLocalL(toTTime(dateTime, Qt::LocalTime));
     return calTime;
 }
 
-TCalTime toTCalTimeL(QDate date)
+TCalTime toTCalTimeL(const QDate &date)
 {
     TCalTime calTime;
     calTime.SetTimeUtcL(Time::NullTTime());
-
-    if (date.isValid()) {
-        QDateTime dateTime(date);
-        calTime = toTCalTimeL(dateTime);
-    }
-
+    if (date.isValid())
+        calTime = toTCalTimeL(QDateTime(date));
     return calTime;
 }
 
-QDateTime toQDateTimeL(TCalTime calTime)
+QDateTime toQDateTimeL(const TCalTime &calTime)
 {
-    const TTime time1970(_L("19700000:000000.000000"));
-    quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
-    quint64 useconds = calTime.TimeUtcL().Int64() - usecondsBCto1970;
-    quint64 seconds = useconds / (quint64)1000000;
-    quint64 msecondscomponent = (useconds - seconds * (quint64)1000000) / (quint64)1000;
-    QDateTime dateTime;
-    dateTime.setTime_t(seconds);
-    dateTime.setTime(dateTime.time().addMSecs(msecondscomponent));
-    return dateTime;
+    // NOTE: 
+    // The calendar/agenda server has a problem with UTC times. It will move
+    // the UTC time with daylight saving time. UTC time should be fixed 
+    // always and the actual local time for a calendar entry should be 
+    // calculated from the UTC time. Fortunately local time's reported
+    // from the server are correct and using it with TCalTime/QDateTime
+    // conversions seems work as as workaround for this issue.
+    return toQDateTime(calTime.TimeLocalL(), Qt::LocalTime);
 }
 
-TTime toTTimeL(QDateTime dateTime)
+TTime toTTime(const QDateTime &dateTime, Qt::TimeSpec timeSpec)
 {
     TTime time = Time::NullTTime();
-
     if (dateTime.isValid()) {
-        uint secondsFrom1970 = dateTime.toTime_t();
-        quint64 usecondsFrom1970 = ((quint64) secondsFrom1970) * ((quint64) 1000000) + ((quint64) dateTime.time().msec() * (quint64)1000);
-        TTime time1970(_L("19700000:000000.000000"));
-        quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
-        quint64 useconds = usecondsBCto1970 + usecondsFrom1970;
-        time = useconds;
+        QDateTime qdt = dateTime.toTimeSpec(timeSpec);
+        // NOTE: TDateTime month & day start from zero
+        TDateTime tdt(qdt.date().year(), TMonth(qdt.date().month()-1), qdt.date().day()-1,
+            qdt.time().hour(), qdt.time().minute(), qdt.time().second(), qdt.time().msec()*1000);
+        time = TTime(tdt);
     }
-
     return time;
 }
 
-QDateTime toQDateTimeL(TTime time)
+QDateTime toQDateTime(const TTime &time, Qt::TimeSpec timeSpec)
 {
-    const TTime time1970(_L("19700000:000000.000000"));
-    quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
-    quint64 useconds = time.Int64() - usecondsBCto1970;
-    quint64 seconds = useconds / (quint64)1000000;
-    quint64 msecondscomponent = (useconds - seconds * (quint64)1000000) / (quint64)1000;
-    QDateTime dateTime;
-    dateTime.setTime_t(seconds);
-    dateTime.setTime(dateTime.time().addMSecs(msecondscomponent));
-    return dateTime;
+    QDateTime qdt;
+    if (time != Time::NullTTime()) {
+        TDateTime tdt = time.DateTime();
+        qdt.setTimeSpec(timeSpec);
+        // NOTE: TDateTime month & day start from zero
+        qdt.setDate(QDate(tdt.Year(), tdt.Month()+1, tdt.Day()+1));
+        qdt.setTime(QTime(tdt.Hour(), tdt.Minute(), tdt.Second(), tdt.MicroSecond()/1000));
+    }
+    return qdt.toTimeSpec(Qt::LocalTime); // return with default timespec set
+}
+
+QOrganizerCollectionLocalId toCollectionLocalId(quint64 collectionId)
+{
+    return QOrganizerCollectionLocalId(new QOrganizerCollectionSymbianEngineLocalId(collectionId));
+}
+
+QOrganizerItemLocalId toItemLocalId(quint64 collectionId, quint32 itemId)
+{
+    return QOrganizerItemLocalId(new QOrganizerItemSymbianEngineLocalId(collectionId, itemId));
+}
+
+TCalLocalUid toTCalLocalUid(const QOrganizerItemLocalId& itemLocalId)
+{
+    // TODO: should we have a check for engineLocalIdType here?
+    return static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemLocalId))->calLocalUid();
+}
+
+quint64 toTCalCollectionId(const QOrganizerItemLocalId& itemLocalId)
+{
+    // TODO: should we have a check for engineLocalIdType here?
+    return static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemLocalId))->calCollectionId();
+}
+
+QOrganizerCollectionLocalId getCollectionLocalId(const QOrganizerItemLocalId& itemLocalId)
+{
+    // TODO: should we have a check for engineLocalIdType here?
+    quint64 calCollectionId  = static_cast<QOrganizerItemSymbianEngineLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemLocalId))->calCollectionId();
+    return toCollectionLocalId(calCollectionId);
 }
 
 #ifdef SYMBIAN_CALENDAR_V2
@@ -191,11 +202,11 @@ QVariantMap toMetaDataL(const CCalCalendarInfo &calInfo)
         } else if (calenPropertyUid == ECreationTime) {
             TPckgBuf<TTime> value;
             value.Copy(propValue);
-            metaData.insert("CreationTime", toQDateTimeL(value()));
+            metaData.insert("CreationTime", toQDateTime(value(), Qt::UTC));
         } else if (calenPropertyUid == EModificationTime) {
             TPckgBuf<TTime> value;
             value.Copy(propValue);
-            metaData.insert("ModificationTime", toQDateTimeL(value()));
+            metaData.insert("ModificationTime", toQDateTime(value(), Qt::UTC));
         } else if (calenPropertyUid == ESyncStatus) {
             TPckgBuf<TBool> value;
             value.Copy(propValue);
@@ -280,9 +291,9 @@ CCalCalendarInfo* toCalInfoLC(QVariantMap metaData)
         if (key == "FolderLUID") {
             setCalInfoPropertyL(calInfo, EFolderLUID, (TUint) value.toUInt());
         } else if (key == "CreationTime") {
-            setCalInfoPropertyL(calInfo, ECreationTime, toTTimeL(value.toDateTime()));
+            setCalInfoPropertyL(calInfo, ECreationTime, toTTime(value.toDateTime(), Qt::UTC));
         } else if (key == "ModificationTime") {
-            setCalInfoPropertyL(calInfo, EModificationTime, toTTimeL(value.toDateTime()));
+            setCalInfoPropertyL(calInfo, EModificationTime, toTTime(value.toDateTime(), Qt::UTC));
         } else if (key == "SyncStatus") {
             setCalInfoPropertyL(calInfo, ESyncStatus, (TBool) value.toBool());
         } else if (key == "IsSharedFolder") {

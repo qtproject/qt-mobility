@@ -74,6 +74,31 @@ public:
 
 Q_GLOBAL_STATIC(QSensorManagerPrivate, sensorManagerPrivate)
 
+// The unit test needs to change the behaviour of the library. It does this
+// through an exported but undocumented function.
+static bool settings_use_user_scope = false;
+static bool load_external_plugins = true;
+Q_SENSORS_EXPORT void sensors_unit_test_hook(int index)
+{
+    switch (index) {
+    case 0:
+        Q_ASSERT(sensorManagerPrivate()->pluginsLoaded == false);
+        settings_use_user_scope = true;
+        load_external_plugins = false;
+        break;
+    case 1:
+        Q_ASSERT(load_external_plugins == false);
+        Q_ASSERT(sensorManagerPrivate()->pluginsLoaded == true);
+        SENSORLOG() << "initializing plugins";
+        Q_FOREACH (QSensorPluginInterface *plugin, pluginLoader()->plugins()) {
+            plugin->registerSensors();
+        }
+        break;
+    default:
+        break;
+    }
+}
+
 static void loadPlugins()
 {
     QSensorManagerPrivate *d = sensorManagerPrivate();
@@ -85,9 +110,11 @@ static void loadPlugins()
         plugin->registerSensors();
     }
 
-    SENSORLOG() << "initializing plugins";
-    Q_FOREACH (QSensorPluginInterface *plugin, pluginLoader()->plugins()) {
-        plugin->registerSensors();
+    if (load_external_plugins) {
+        SENSORLOG() << "initializing plugins";
+        Q_FOREACH (QSensorPluginInterface *plugin, pluginLoader()->plugins()) {
+            plugin->registerSensors();
+        }
     }
 }
 
@@ -241,13 +268,8 @@ QByteArray QSensor::defaultSensorForType(const QByteArray &type)
     if (!d->backendsByType.contains(type))
         return QByteArray();
 
-    QSettings::Scope scope;
-#ifdef QTM_BUILD_UNITTESTS
     // The unit test needs to modify Sensors.conf but it can't access the system directory
-    scope = QSettings::UserScope;
-#else
-    scope = QSettings::SystemScope;
-#endif
+    QSettings::Scope scope = settings_use_user_scope ? QSettings::UserScope : QSettings::SystemScope;
     QSettings settings(scope, QLatin1String("Nokia"), QLatin1String("Sensors"));
     QVariant value = settings.value(QString(QLatin1String("Default/%1")).arg(QString::fromLatin1(type)));
     if (!value.isNull()) {

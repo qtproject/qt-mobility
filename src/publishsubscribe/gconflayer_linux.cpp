@@ -133,6 +133,9 @@ bool GConfLayer::getValue(Handle handle, const QString &subPath, QVariant *data)
         value = path.mid(index + 1);
         path.truncate(index);
 
+        if (path.isEmpty())
+            path.append(QLatin1Char('/'));
+
         handle = getItem(handle, path);
         createdHandle = true;
     }
@@ -318,7 +321,7 @@ bool GConfLayer::setValue(QValueSpacePublisher */*creator*/,
     }
 
     QString fullPath(sh->path);
-    if (fullPath != QLatin1String("/"))
+    if (fullPath != QLatin1String("/") && !value.isEmpty())
         fullPath.append(QLatin1Char('/'));
 
     fullPath.append(value);
@@ -385,7 +388,7 @@ bool GConfLayer::removeValue(QValueSpacePublisher */*creator*/,
     }
 
     GConfItem gconfItem(fullPath);
-    gconfItem.unset();
+    gconfItem.recursiveUnset();
 
     return true;
 }

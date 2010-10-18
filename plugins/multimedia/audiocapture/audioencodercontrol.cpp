@@ -84,7 +84,7 @@ QStringList AudioEncoderControl::supportedAudioCodecs() const
 QString AudioEncoderControl::codecDescription(const QString &codecName) const
 {
     if (codecName.contains(QLatin1String("audio/pcm")))
-        return QString(tr("PCM audio data"));
+        return tr("PCM audio data");
 
     return QString();
 }

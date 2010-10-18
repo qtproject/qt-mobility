@@ -58,6 +58,19 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \enum QDocumentGallery::Error
+    This enum defines errors in a Gallery.
+
+    \value NoError No error.
+    \value NoGallery No Gallery defined or found.
+    \value NotSupported Gallery is not supported.
+    \value ConnectionError Connection to gallery is broken.
+    \value ItemIdError Id of a item is wrong.
+    \value ItemTypeError Type of an item is wrong.
+    \value FilterError Error in filter found.
+*/
+
+/*!
     \variable QDocumentGallery::File
 
     This type matches all files in the document gallery.

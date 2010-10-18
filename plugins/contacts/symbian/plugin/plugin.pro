@@ -55,8 +55,8 @@ symbian: {
         inc/transform/cnttransformnote.h \
         inc/transform/cnttransformfamily.h \
         inc/transform/cnttransformempty.h \
+        inc/transform/cnttransformfavorite.h \
         inc/filtering/cntfilterrelationship.h \
-        inc/filtering/cntfilterdetaildisplaylabel.h \
         inc/filtering/cntfilterdetail.h \
         inc/filtering/cntdbinfo.h \
         inc/filtering/cntfilterdefault.h \
@@ -68,8 +68,7 @@ symbian: {
         inc/filtering/cntsymbianfiltersql.h \
         inc/filtering/cntsymbiansorterdbms.h \
         inc/filtering/cntsymbiansrvconnection.h \
-        inc/filtering/cntdisplaylabelsqlfilter.h
-        
+                
     SOURCES += \
         src/transform/cnttransformcontact.cpp \
         src/transform/cnttransformcontactdata.cpp \
@@ -96,8 +95,8 @@ symbian: {
         src/transform/cnttransformnote.cpp \
         src/transform/cnttransformfamily.cpp \
         src/transform/cnttransformempty.cpp \
+        src/transform/cnttransformfavorite.cpp \
         src/filtering/cntfilterrelationship.cpp \
-        src/filtering/cntfilterdetaildisplaylabel.cpp \
         src/filtering/cntfilterdetail.cpp \
         src/filtering/cntdbinfo.cpp \
         src/filtering/cntfilterdefault.cpp \
@@ -107,7 +106,6 @@ symbian: {
         src/filtering/cntsymbianfiltersql.cpp \
         src/filtering/cntsymbiansorterdbms.cpp \
         src/filtering/cntsymbiansrvconnection.cpp \
-        src/filtering/cntdisplaylabelsqlfilter.cpp \
         src/cntsymbianengine.cpp \
         src/cntabstractrelationship.cpp \
         src/cntrelationshipgroup.cpp \
@@ -147,7 +145,6 @@ symbian: {
     DEPLOYMENT += symbianplugin
     
     # Public header
-    headers.path = epoc32/include
     headers.sources = inc/cntbackendsdefs.h
-    for(header, headers.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$headers.path/$$basename(header)"
+    for(header, headers.sources):BLD_INF_RULES.prj_exports += "$$header $$basename(header)"
 }

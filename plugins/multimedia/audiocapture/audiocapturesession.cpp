@@ -139,9 +139,9 @@ QString AudioCaptureSession::containerDescription(const QString &formatMimeType)
 {
     if(m_deviceInfo) {
         if (formatMimeType.contains(QLatin1String("audio/pcm")))
-            return QString(tr("RAW file format"));
+            return tr("RAW file format");
         if (formatMimeType.contains(QLatin1String("audio/x-wav")))
-            return QString(tr("WAV file format"));
+            return tr("WAV file format");
     }
     return QString();
 }

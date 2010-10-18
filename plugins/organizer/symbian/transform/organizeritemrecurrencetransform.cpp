@@ -70,14 +70,18 @@ void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalEntry& entry
         recurrence.setRecurrenceRules(toItemRecurrenceRulesL(calRRule));
 
     RArray<TCalTime> calRDateList;
+    CleanupClosePushL(calRDateList);
     entry.GetRDatesL(calRDateList);
     if (calRDateList.Count())
         recurrence.setRecurrenceDates(toQDatesL(calRDateList));
+    CleanupStack::PopAndDestroy(&calRDateList);
 
     RArray<TCalTime> calExDateList;
+    CleanupClosePushL(calExDateList);
     entry.GetExceptionDatesL(calExDateList);
     if (calExDateList.Count())
         recurrence.setExceptionDates(toQDatesL(calExDateList));
+    CleanupStack::PopAndDestroy(&calExDateList);
 
     // TODO: exceptionRules
     // There is no native support for this.
@@ -127,14 +131,18 @@ void OrganizerItemRecurrenceTransform::transformToEntryL(const QOrganizerItem& i
 
     if (recurrence.recurrenceDates().count()) {
         RArray<TCalTime> calRDates;
+        CleanupClosePushL(calRDates);
         toTCalTimesL(recurrence.recurrenceDates(), calRDates);
         entry->SetRDatesL(calRDates);
+        CleanupStack::PopAndDestroy(&calRDates);
     }
 
     if (recurrence.exceptionDates().count()) {
         RArray<TCalTime> calExDates;
+        CleanupClosePushL(calExDates);
         toTCalTimesL(recurrence.exceptionDates(), calExDates);
         entry->SetExceptionDatesL(calExDates);
+        CleanupStack::PopAndDestroy(&calExDates);
     }
 
     //  TODO: what about recurrence.exceptionRules()? there is no match in native API.

@@ -42,8 +42,6 @@
 #ifndef QGEOMAPCIRCLEOBJECT_P_H
 #define QGEOMAPCIRCLEOBJECT_P_H
 
-#include "qgeomapobject_p.h"
-
 #include <QPen>
 #include <QBrush>
 
@@ -51,10 +49,10 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapCircleObjectPrivate : public QGeoMapObjectPrivate
+class QGeoMapCircleObjectPrivate
 {
 public:
-    QGeoMapCircleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
+    QGeoMapCircleObjectPrivate();
     ~QGeoMapCircleObjectPrivate();
 
     QGeoBoundingCircle circle;

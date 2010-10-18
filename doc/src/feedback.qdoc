@@ -98,6 +98,8 @@ change.
 
 \section1 Usage
 
+On Symbian vibration feature needs to be enabled in user profile for API to work.
+
 The most common use of the API is to play system theme effects for user
 interface interaction notifications (e.g., button clicks, etc).  These types
 of system theme effects can be played instantaneously, but cannot be paused or

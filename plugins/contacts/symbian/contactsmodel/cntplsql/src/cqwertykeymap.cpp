@@ -18,79 +18,33 @@
 #include "cqwertykeymap.h"
 
 // This macro suppresses log writes
-//#define NO_PRED_SEARCH_LOGS
+// #define NO_PRED_SEARCH_LOGS
 #include "predictivesearchlog.h"
 
 #include <QChar>
 #include <QString>
+#include <QScopedPointer>
+#include <hbinputkeymap.h>
+#include <hbinputkeymapfactory.h>
 
 
 // Largest amount of keypresses that can be stored in QWERTY keyboard's
 // predictive search tables.
 // SQL BIGINT is a 64-bit signed integer and one bit is reserved for sign.
-// QWERTY's keys are identified by TKeyId that needs 6 bits.
+// QWERTY's keys are identified by an ID that needs 6 bits.
 // 63 / 6 = 10
 const TInt KMaxKeysStoredInDb = 10;
 
-// How many bits are needed to represent TKeyId
+// How many bits are needed to represent key's ID
 const TInt KBitsInKeyId = 6;
 
 
-const QChar KEY_Q_NAME = 'q';
-const QChar KEY_W_NAME = 'w';
-const QChar KEY_E_NAME = 'e';
-const QChar KEY_R_NAME = 'r';
-const QChar KEY_T_NAME = 't';
-const QChar KEY_Y_NAME = 'y';
-const QChar KEY_U_NAME = 'u';
-const QChar KEY_I_NAME = 'i';
-const QChar KEY_O_NAME = 'o';
-const QChar KEY_P_NAME = 'p';
-
-const QChar KEY_A_NAME = 'a';
-const QChar KEY_S_NAME = 's';
-const QChar KEY_D_NAME = 'd';
-const QChar KEY_F_NAME = 'f';
-const QChar KEY_G_NAME = 'g';
-const QChar KEY_H_NAME = 'h';
-const QChar KEY_J_NAME = 'j';
-const QChar KEY_K_NAME = 'k';
-const QChar KEY_L_NAME = 'l';
-
-const QChar KEY_Z_NAME = 'z';
-const QChar KEY_X_NAME = 'x';
-const QChar KEY_C_NAME = 'c';
-const QChar KEY_V_NAME = 'v';
-const QChar KEY_B_NAME = 'b';
-const QChar KEY_N_NAME = 'n';
-const QChar KEY_M_NAME = 'm';
-
-const QChar KEY_COLON_NAME = ',';
-const QChar KEY_DOT_NAME   = '.';
-const QChar KEY_DASH_NAME  = '-';
-const QChar KEY_AT_NAME	   = '@';
-const QChar KEY_QUOTE_NAME = '\'';
-const QChar KEY_QUESTION_MARK_NAME = '?';
-
-const QChar KEY_32_NAME = '1';
-const QChar KEY_33_NAME = '2';
-const QChar KEY_34_NAME = '3';
-const QChar KEY_35_NAME = '4';
-const QChar KEY_36_NAME = '5';
-const QChar KEY_37_NAME = '6';
-const QChar KEY_38_NAME = '7';
-const QChar KEY_39_NAME = '8';
-const QChar KEY_40_NAME = '9';
-const QChar KEY_41_NAME = '0';
-const QChar KEY_42_NAME = '+';
-const QChar KEY_43_NAME = '#';
-
-// Unmapped (unknown) characters are replaced with this
-const QChar PAD_CHAR = '!';
-
-// Must be the first key (EKeyQ) that has internal value 0
-const QChar KLowerLimitPadding = KEY_Q_NAME;
-const QChar KUpperLimitPadding = PAD_CHAR;
+// The internal names of the keys. String must contain a character for each key
+// and one character (last character) for the unmapped keys.
+const QString KKeyNames =
+	"qwertyuiopasdfghjklzxcvbnm,.-@&!#1234567890QWERTYUIOPASDFGHJKLZ?";
+const QChar KLowerLimitPadding = KKeyNames[0];
+const QChar KUpperLimitPadding = KKeyNames[CQwertyKeyMap::KPadCharValue];
 
 
 // ============================== MEMBER FUNCTIONS ============================
@@ -128,10 +82,10 @@ CQwertyKeyMap::~CQwertyKeyMap()
 // ----------------------------------------------------------------------------
 const QChar CQwertyKeyMap::ArrayIndexToMappedChar(TInt aArrayIndex) const
 	{
-	__ASSERT_DEBUG(aArrayIndex < EAmountOfKeysInQwertyKeypad,
+	__ASSERT_DEBUG(aArrayIndex < iAmountOfKeys,
 				   User::Panic(_L("CQwertyKeyMap::ArrayIndexToMappedChar"),
 				   KErrOverflow));
-	return iKeyNames.value(static_cast<TKeyId>(aArrayIndex), PAD_CHAR);
+	return iKeyNames.value(aArrayIndex, KUpperLimitPadding);
 	}
 
 // ----------------------------------------------------------------------------
@@ -181,7 +135,66 @@ TInt CQwertyKeyMap::ComputeValue(QString aString,
 	}
 
 // ----------------------------------------------------------------------------
-// CQwertyKeyMap::MapKeyNameToValue
+// CQwertyKeyMap::ReadExtraCharacters
+// Read the SCT landscape keymap. Map decimal numbers to individual keys and
+// the special characters that have not yet been read from virtual QWERTY keymap
+// to a single key.
+// ----------------------------------------------------------------------------
+TInt CQwertyKeyMap::ReadExtraCharacters(const HbInputLanguage& aLanguage)
+	{
+	PRINT(_L("CQwertyKeyMap::ReadExtraCharacters"));
+
+	TInt count(0); // How many new keys have been mapped
+	int key = FindNextFreeKey();
+
+#if defined(NEW_KEYMAP_FACTORY_API)
+	// Takes ownership
+	QScopedPointer<const HbKeymap> keymap(
+		HbKeymapFactory::instance()->keymap(aLanguage, HbKeymapFactory::NoCaching));
+#else
+	const HbKeymap* keymap =
+		HbKeymapFactory::instance()->keymap(aLanguage, HbKeymapFactory::Default);
+#endif
+
+	if (keymap)
+		{
+		TInt i(0);
+		int keyForSpecialChars(key++);
+		const HbMappedKey* mappedKey = keymap->keyForIndex(HbKeyboardSctLandscape, i);
+		while (mappedKey)
+			{
+			const QString mappedCharacters = mappedKey->characters(HbModifierNone);
+			if (mappedCharacters.length() > 0)
+				{
+				// Current HbKeyboardSctLandscape keymap has just one char per key
+				QString mappedChar = mappedCharacters[0];
+				if (mappedChar[0].isDigit())
+					{
+					if (AddNewKeyToMap(key, mappedChar, count))
+						{
+						++key; // Digit was added, reserve next key
+						}
+					}
+				else
+					{
+					AddNewKeyToMap(keyForSpecialChars, mappedChar, count);
+					}
+				}
+			mappedKey = keymap->keyForIndex(HbKeyboardSctLandscape, ++i);
+			}
+		}
+	else
+		{
+		PRINT1(_L("no keymap for language %d"), aLanguage.language());
+		}
+	SetActualNumberOfMappedKeys(key);
+
+    PRINT1(_L("End CQwertyKeyMap::ReadExtraCharacters added %d chars"), count);
+	return count;
+	}
+
+// ----------------------------------------------------------------------------
+// CQwertyKeyMap::IsValidChar
 // ----------------------------------------------------------------------------
 bool CQwertyKeyMap::IsValidChar(const QChar aChar) const
 	{
@@ -198,11 +211,21 @@ TInt CQwertyKeyMap::MapKeyNameToValue(const QChar aKeyName) const
     }
 
 // ----------------------------------------------------------------------------
+// CQwertyKeyMap::MappedKeyCount
+// ----------------------------------------------------------------------------
+TInt CQwertyKeyMap::MappedKeyCount() const
+	{
+	return iAmountOfKeys;
+	}
+
+// ----------------------------------------------------------------------------
 // CQwertyKeyMap::CQwertyKeyMap
 // Fill QList with empty strings
 // ----------------------------------------------------------------------------
 CQwertyKeyMap::CQwertyKeyMap() :
-	CPcsKeyMap(EAmountOfKeysInQwertyKeypad, PAD_CHAR, KMaxKeysStoredInDb)
+	CPcsKeyMap(EMaxAmountOfKeysInQwertyKeypad,
+			   KUpperLimitPadding,
+			   KMaxKeysStoredInDb)
 	{
 	}
 
@@ -229,55 +252,51 @@ void CQwertyKeyMap::ConstructL()
 // ----------------------------------------------------------------------------
 void CQwertyKeyMap::ConstructKeyNameMap()
 	{
-	iKeyNames.insert(EKeyQ, KEY_Q_NAME);
-	iKeyNames.insert(EKeyW, KEY_W_NAME);
-	iKeyNames.insert(EKeyE, KEY_E_NAME);
-	iKeyNames.insert(EKeyR, KEY_R_NAME);
-	iKeyNames.insert(EKeyT, KEY_T_NAME);
-	iKeyNames.insert(EKeyY, KEY_Y_NAME);
-	iKeyNames.insert(EKeyU, KEY_U_NAME);
-	iKeyNames.insert(EKeyI, KEY_I_NAME);
-	iKeyNames.insert(EKeyO, KEY_O_NAME);
-	iKeyNames.insert(EKeyP, KEY_P_NAME);
-	iKeyNames.insert(EKeyA, KEY_A_NAME);
-	iKeyNames.insert(EKeyS, KEY_S_NAME);
-	iKeyNames.insert(EKeyD, KEY_D_NAME);
-	iKeyNames.insert(EKeyF, KEY_F_NAME);
-	iKeyNames.insert(EKeyG, KEY_G_NAME);
-	iKeyNames.insert(EKeyH, KEY_H_NAME);
-	iKeyNames.insert(EKeyJ, KEY_J_NAME);
-	iKeyNames.insert(EKeyK, KEY_K_NAME);
-	iKeyNames.insert(EKeyL, KEY_L_NAME);
-	iKeyNames.insert(EKeyZ, KEY_Z_NAME);
-	iKeyNames.insert(EKeyX, KEY_X_NAME);
-	iKeyNames.insert(EKeyC, KEY_C_NAME);
-	iKeyNames.insert(EKeyV, KEY_V_NAME);
-	iKeyNames.insert(EKeyB, KEY_B_NAME);
-	iKeyNames.insert(EKeyN, KEY_N_NAME);
-	iKeyNames.insert(EKeyM, KEY_M_NAME);
-	iKeyNames.insert(EKeyColon, KEY_COLON_NAME);
-	iKeyNames.insert(EKeyDot,   KEY_DOT_NAME);
-	iKeyNames.insert(EKeyDash,  KEY_DASH_NAME);
-	iKeyNames.insert(EKeyAt,	KEY_AT_NAME);
-	iKeyNames.insert(EKeyQuote, KEY_QUOTE_NAME);
-	iKeyNames.insert(EKeyQuestionMark, KEY_QUESTION_MARK_NAME);
-	iKeyNames.insert(EKey32, KEY_32_NAME);
-	iKeyNames.insert(EKey33, KEY_33_NAME);
-	iKeyNames.insert(EKey34, KEY_34_NAME);
-	iKeyNames.insert(EKey35, KEY_35_NAME);
-	iKeyNames.insert(EKey36, KEY_36_NAME);
-	iKeyNames.insert(EKey37, KEY_37_NAME);
-	iKeyNames.insert(EKey38, KEY_38_NAME);
-	iKeyNames.insert(EKey39, KEY_39_NAME);
-	iKeyNames.insert(EKey40, KEY_40_NAME);
-	iKeyNames.insert(EKey41, KEY_41_NAME);
-	iKeyNames.insert(EKey42, KEY_42_NAME);
-	iKeyNames.insert(EKey43, KEY_43_NAME);
+	// The last char in KKeyNames (KUpperLimitPadding) is not inserted
+	int len = KKeyNames.length();
+	for (int keyId = 0; keyId < len; ++keyId)
+		{
+		iKeyNames.insert(keyId, KKeyNames[keyId]);
+		}
 
-
-	// Since reverse lookup in QMap is slow, collect all values into iKeyValues
-	// list, that can be searched.
+	// Reverse lookup in QMap is slow, so collect all values to iKeyValues,
+	// that can be searched.
 	iKeyValues = iKeyNames.values();
 	}
 
+// ----------------------------------------------------------------------------
+// CQwertyKeyMap::FindNextFreeKey
+// ----------------------------------------------------------------------------
+int CQwertyKeyMap::FindNextFreeKey() const
+	{
+	int key(iAmountOfKeys - 1);
+
+	while (key >= 0 && iKeyMapping[key].isEmpty())
+		{
+		--key;
+		}
+	++key;
+	PRINT1(_L("CQwertyKeyMap::FindNextFreeKey return %d"), key);
+	return key;
+	}
+
+// ----------------------------------------------------------------------------
+// CQwertyKeyMap::SetActualNumberOfMappedKeys
+// Set the real amount of keys to iAmountOfKeys and remove extra entries to
+// speed up searching.
+// ----------------------------------------------------------------------------
+void CQwertyKeyMap::SetActualNumberOfMappedKeys(int aAmountOfKeys)
+	{
+	PRINT1(_L("CQwertyKeyMap::SetActualNumberOfMappedKeys %d keys"), aAmountOfKeys);
+	iAmountOfKeys = aAmountOfKeys; 
+
+	// TODO: it is not necessary to remove excess entries also from iKeyMapping
+	// but that could be done here too.
+
+	for (int i = EMaxAmountOfKeysInQwertyKeypad; i >= aAmountOfKeys; --i)
+		{
+		iKeyNames.remove(i);
+		}
+	iKeyValues = iKeyNames.values();
+	}
 // End of file

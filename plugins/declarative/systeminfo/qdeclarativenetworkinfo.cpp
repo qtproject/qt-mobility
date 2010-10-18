@@ -40,7 +40,7 @@
 
 #include "qdeclarativenetworkinfo_p.h"
 
-#include <qsystemnetworkinfo.h>
+#include "qsystemnetworkinfo.h"
 #include <QMetaType>
 
 QT_BEGIN_NAMESPACE
@@ -279,7 +279,7 @@ void QDeclarativeNetworkInfo::startCurrentMobileNetworkCodeChanged()
 /*!
    \internal
 
-   This function is called when the client disconnects from the networkSignalStrengthChanged()
+   This function is called when the client connects from the networkSignalStrengthChanged()
    notification.
 
    \sa connectNotify()
@@ -335,6 +335,14 @@ QString QDeclarativeNetworkInfo::modeToString(QSystemNetworkInfo::NetworkMode mo
         return "Bluetooth";
     case QSystemNetworkInfo::WimaxMode:
         return "Wimax";
+    case QSystemNetworkInfo::GprsMode:
+        return "Gprs";
+    case QSystemNetworkInfo::EdgeMode:
+        return "Edge";
+    case QSystemNetworkInfo::HspaMode:
+        return "Hspa";
+    case QSystemNetworkInfo::LteMode:
+        return "Lte";
     };
     return QString();
 }
@@ -342,7 +350,7 @@ QString QDeclarativeNetworkInfo::modeToString(QSystemNetworkInfo::NetworkMode mo
 /*!
    \internal
 
-   This function is called when the client disconnects from the networkSignalStrengthChanged()
+   This function is called when the client connects from the networkSignalStrengthChanged()
    signal.
 
    \sa connectNotify()
@@ -358,7 +366,7 @@ void QDeclarativeNetworkInfo::networkSignalStrengthChanged(QSystemNetworkInfo::N
 /*!
    \internal
 
-   This function is called when the client disconnects from the networkSignalStrengthChanged()
+   This function is called when the client connects from the networkSignalStrengthChanged()
    signal.
 
    \sa connectNotify()
@@ -373,7 +381,7 @@ void QDeclarativeNetworkInfo::networkNameChanged(QSystemNetworkInfo::NetworkMode
 /*!
    \internal
 
-   This function is called when the client disconnects from the networkSignalStrengthChanged()
+   This function is called when the client connects from the networkSignalStrengthChanged()
    signal.
 
    \sa connectNotify()

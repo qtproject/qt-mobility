@@ -48,8 +48,6 @@ Rectangle {
     height: 480
     color: "black"
 
-    DocumentGallery { id: documentGallery }
-
     Flipable {
         property real angle: 0
 
@@ -64,7 +62,7 @@ Rectangle {
 
                 TypeDelegate {
                     icon: "MusicBrowserCore/images/albums.png"
-                    itemType: "Album"
+                    itemType: DocumentGallery.Album
                     text: qsTr("Albums")
                     onClicked: {
                         viewLoader.sourceComponent = albumView
@@ -75,7 +73,7 @@ Rectangle {
 
                 TypeDelegate {
                     icon: "MusicBrowserCore/images/artists.png"
-                    itemType: "Artist"
+                    itemType: DocumentGallery.Artist
                     text: qsTr("Artists")
                     onClicked: {
                         viewLoader.sourceComponent = artistView
@@ -86,7 +84,7 @@ Rectangle {
 
                 TypeDelegate {
                     icon: "MusicBrowserCore/images/genres.png"
-                    itemType: "AudioGenre"
+                    itemType: DocumentGallery.AudioGenre
                     text: qsTr("Genres")
                     onClicked: {
                         viewLoader.sourceComponent = genreView;
@@ -97,7 +95,7 @@ Rectangle {
 
                 TypeDelegate {
                     icon: "MusicBrowserCore/images/songs.png"
-                    itemType: "Audio"
+                    itemType: DocumentGallery.Audio
                     text: qsTr("Songs")
                     onClicked: {
                         viewLoader.sourceComponent = songView;
@@ -191,8 +189,8 @@ Rectangle {
         }
 
         Component { id: albumView; AlbumView {} }
-        Component { id: artistView; CategoryView { categoryType: "Artist" } }
-        Component { id: genreView; CategoryView { categoryType: "AudioGenre" } }
+        Component { id: artistView; CategoryView { categoryType: DocumentGallery.Artist } }
+        Component { id: genreView; CategoryView { categoryType: DocumentGallery.AudioGenre } }
         Component { id: songView; SongView {} }
 
         transform: Rotation {

@@ -61,24 +61,21 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a new pixmap object with the parent \a parent.
+    Constructs a new pixmap object.
 */
-QGeoMapPixmapObject::QGeoMapPixmapObject(QGeoMapObject *parent)
-        : QGeoMapObject(new QGeoMapPixmapObjectPrivate(this, parent)) {}
+QGeoMapPixmapObject::QGeoMapPixmapObject()
+    : d_ptr(new QGeoMapPixmapObjectPrivate()) {}
 
 /*!
     Constructs a new pixmap object which will draw the pixmap \a pixmap at an
-    offset of \a offset pixels from the coordinate \a coordinate, with the
-    parent \a parent.
+    offset of \a offset pixels from the coordinate \a coordinate.
 */
-QGeoMapPixmapObject::QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset, const QPixmap &pixmap, QGeoMapObject *parent)
-        : QGeoMapObject(new QGeoMapPixmapObjectPrivate(this, parent))
+QGeoMapPixmapObject::QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const QPoint &offset, const QPixmap &pixmap)
+    : d_ptr(new QGeoMapPixmapObjectPrivate())
 {
-    Q_D(QGeoMapPixmapObject);
-
-    d->coordinate = coordinate;
-    d->pixmap = pixmap;
-    d->offset = offset;
+    d_ptr->coordinate = coordinate;
+    d_ptr->pixmap = pixmap;
+    d_ptr->offset = offset;
 }
 
 /*!
@@ -86,6 +83,12 @@ QGeoMapPixmapObject::QGeoMapPixmapObject(const QGeoCoordinate &coordinate, const
 */
 QGeoMapPixmapObject::~QGeoMapPixmapObject()
 {
+    delete d_ptr;
+}
+
+QGeoMapObject::Type QGeoMapPixmapObject::type() const
+{
+    return QGeoMapObject::PixmapType;
 }
 
 /*!
@@ -98,17 +101,14 @@ QGeoMapPixmapObject::~QGeoMapPixmapObject()
 */
 QGeoCoordinate QGeoMapPixmapObject::coordinate() const
 {
-    Q_D(const QGeoMapPixmapObject);
-    return d->coordinate;
+    return d_ptr->coordinate;
 }
 
 void QGeoMapPixmapObject::setCoordinate(const QGeoCoordinate &coordinate)
 {
-    Q_D(QGeoMapPixmapObject);
-    if (d->coordinate != coordinate) {
-        d->coordinate = coordinate;
-        objectUpdated();
-        emit coordinateChanged(d->coordinate);
+    if (d_ptr->coordinate != coordinate) {
+        d_ptr->coordinate = coordinate;
+        emit coordinateChanged(d_ptr->coordinate);
     }
 }
 
@@ -126,23 +126,19 @@ void QGeoMapPixmapObject::setCoordinate(const QGeoCoordinate &coordinate)
 */
 QPixmap QGeoMapPixmapObject::pixmap() const
 {
-    Q_D(const QGeoMapPixmapObject);
-    return d->pixmap;
+    return d_ptr->pixmap;
 }
 
 void QGeoMapPixmapObject::setPixmap(const QPixmap &pixmap)
 {
-    Q_D(QGeoMapPixmapObject);
-
-    if (d->pixmap.isNull() && pixmap.isNull())
+    if (d_ptr->pixmap.isNull() && pixmap.isNull())
         return;
 
-    if ((d->pixmap.isNull() && !pixmap.isNull())
-            || (!d->pixmap.isNull() && pixmap.isNull())
-            || (d->pixmap.toImage() != pixmap.toImage())) {
-        d->pixmap = pixmap;
-        objectUpdated();
-        emit pixmapChanged(d->pixmap);
+    if ((d_ptr->pixmap.isNull() && !pixmap.isNull())
+            || (!d_ptr->pixmap.isNull() && pixmap.isNull())
+            || (d_ptr->pixmap.toImage() != pixmap.toImage())) {
+        d_ptr->pixmap = pixmap;
+        emit pixmapChanged(d_ptr->pixmap);
     }
 }
 
@@ -161,17 +157,14 @@ void QGeoMapPixmapObject::setPixmap(const QPixmap &pixmap)
 */
 QPoint QGeoMapPixmapObject::offset() const
 {
-    Q_D(const QGeoMapPixmapObject);
-    return d->offset;
+    return d_ptr->offset;
 }
 
 void QGeoMapPixmapObject::setOffset(const QPoint &offset)
 {
-    Q_D(QGeoMapPixmapObject);
-    if (d->offset != offset) {
-        d->offset = offset;
-        objectUpdated();
-        emit offsetChanged(d->offset);
+    if (d_ptr->offset != offset) {
+        d_ptr->offset = offset;
+        emit offsetChanged(d_ptr->offset);
     }
 }
 
@@ -180,8 +173,7 @@ void QGeoMapPixmapObject::setOffset(const QPoint &offset)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapPixmapObjectPrivate::QGeoMapPixmapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::PixmapType) {}
+QGeoMapPixmapObjectPrivate::QGeoMapPixmapObjectPrivate() {}
 
 QGeoMapPixmapObjectPrivate::~QGeoMapPixmapObjectPrivate() {}
 

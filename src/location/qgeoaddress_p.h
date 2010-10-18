@@ -74,7 +74,6 @@ public:
     QString sCity; //!< city field
     QString sDistrict; //!< district field
     QString sStreet; //!< street name field
-    QString sStreetNumber; //!< street number field
     QString sPostCode; //!< post code field
 };
 

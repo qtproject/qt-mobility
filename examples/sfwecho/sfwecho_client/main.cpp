@@ -156,7 +156,7 @@ private:
         QServiceManager manager;
         QList<QServiceInterfaceDescriptor> list = manager.findInterfaces("EchoService");
         if(list.count() < version+1){
-            echoBox->append("Unable to find a registered service");
+            echoBox->append("**Unable to find a registered service**");
             return false;
         }
 

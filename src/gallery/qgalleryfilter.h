@@ -168,6 +168,9 @@ private:
     friend class QGalleryFilter;
 };
 
+QGalleryIntersectionFilter Q_GALLERY_EXPORT operator &&(
+        const QGalleryIntersectionFilter &filter1, const QGalleryIntersectionFilter &filter2);
+
 class QGalleryUnionFilterPrivate;
 
 class Q_GALLERY_EXPORT QGalleryUnionFilter
@@ -211,6 +214,9 @@ private:
     friend class QGalleryFilter;
 };
 
+QGalleryUnionFilter Q_GALLERY_EXPORT operator ||(
+        const QGalleryUnionFilter &filter1, const QGalleryUnionFilter &filter2);
+
 class QGalleryMetaDataFilterPrivate;
 
 class Q_GALLERY_EXPORT QGalleryMetaDataFilter
@@ -220,8 +226,7 @@ public:
     QGalleryMetaDataFilter(
             const QString &propertyName,
             const QVariant &value,
-            QGalleryFilter::Comparator comparator = QGalleryFilter::Equals,
-            Qt::CaseSensitivity caseSensitivity = Qt::CaseSensitive);
+            QGalleryFilter::Comparator comparator = QGalleryFilter::Equals);
     QGalleryMetaDataFilter(const QGalleryMetaDataFilter &other);
     ~QGalleryMetaDataFilter();
 
@@ -238,11 +243,8 @@ public:
     QGalleryFilter::Comparator comparator() const;
     void setComparator(QGalleryFilter::Comparator comparator);
 
-    Qt::CaseSensitivity caseSensitivity() const;
-    void setCaseSensitivity(Qt::CaseSensitivity sensitivity);
-
-    bool isInverted() const;
-    void setInverted(bool inverted);
+    bool isNegated() const;
+    void setNegated(bool inverted);
 
     QGalleryMetaDataFilter operator !() const;
 
@@ -254,22 +256,6 @@ private:
 
     friend class QGalleryFilter;
 };
-
-template <typename T>
-QGalleryUnionFilter operator ||(const QGalleryUnionFilter &filter1, const T &filter2)
-{
-    QGalleryUnionFilter filter = filter1;
-    filter.append(filter2);
-    return filter;
-}
-
-template <typename T>
-QGalleryIntersectionFilter operator &&(const QGalleryIntersectionFilter &filter1, const T &filter2)
-{
-    QGalleryIntersectionFilter filter = filter1;
-    filter.append(filter2);
-    return filter;
-}
 
 QTM_END_NAMESPACE
 

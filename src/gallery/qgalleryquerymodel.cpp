@@ -69,13 +69,12 @@ public:
 
         QObject::connect(&query, SIGNAL(resultSetChanged(QGalleryResultSet*)),
                 q_ptr, SLOT(_q_resultSetChanged(QGalleryResultSet*)));
-        QObject::connect(&query, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
-                q_ptr, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
-        QObject::connect(&query, SIGNAL(resultChanged()), q_ptr, SIGNAL(resultChanged()));
-        QObject::connect(&query, SIGNAL(finished(int)), q_ptr, SIGNAL(finished(int)));
-        QObject::connect(&query, SIGNAL(succeeded()), q_ptr, SIGNAL(succeeded()));
+        QObject::connect(&query, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)),
+                q_ptr, SIGNAL(statusChanged(QGalleryAbstractRequest::Status)));
+        QObject::connect(&query, SIGNAL(finished()), q_ptr, SIGNAL(finished()));
         QObject::connect(&query, SIGNAL(cancelled()), q_ptr, SIGNAL(cancelled()));
-        QObject::connect(&query, SIGNAL(failed(int)), q_ptr, SIGNAL(failed(int)));
+        QObject::connect(&query, SIGNAL(errorChanged()), q_ptr, SIGNAL(errorChanged()));
+        QObject::connect(&query, SIGNAL(error(int,QString)), q_ptr, SIGNAL(error(int,QString)));
     }
 
     void updateRoles(int column);
@@ -487,20 +486,20 @@ void QGalleryQueryModel::setSortPropertyNames(const QStringList &names)
 }
 
 /*!
-    \property QGalleryQueryModel::live
+    \property QGalleryQueryModel::autoUpdate
 
     \brief Whether a query should continue to update its result set after the
     initial query succeeded.
 */
 
-bool QGalleryQueryModel::isLive() const
+bool QGalleryQueryModel::autoUpdate() const
 {
-    return d_ptr->query.isLive();
+    return d_ptr->query.autoUpdate();
 }
 
-void QGalleryQueryModel::setLive(bool live)
+void QGalleryQueryModel::setAutoUpdate(bool enabled)
 {
-    d_ptr->query.setLive(live);
+    d_ptr->query.setAutoUpdate(enabled);
 }
 
 /*!
@@ -647,27 +646,33 @@ void QGalleryQueryModel::clear()
 }
 
 /*!
-    \property QGalleryQueryModel::result
+    \property QGalleryQueryModel::error
 
-    \brief The result of a query.
+    \brief The error encountered by an unsuccessful query.
 */
 
-int QGalleryQueryModel::result() const
+int QGalleryQueryModel::error() const
 {
-    return d_ptr->query.result();
+    return d_ptr->query.error();
 }
 
-
 /*!
-    \fn QGalleryQueryModel::resultChanged()
+    \property QGalleryQueryModel::errorString
 
-    Signals that the result of the query has changed.
+    \brief A string describing the cause of an \l error in more detail.
+
+    This may be an empty string if more information is not known.
 */
 
-/*!
-    \fn QGalleryQueryModel::succeeded()
+QString QGalleryQueryModel::errorString() const
+{
+    return d_ptr->query.errorString();
+}
 
-    Signals that the query has finished successfully.
+/*!
+    \fn QGalleryQueryModel::errorChanged()
+
+    Signals that the \l error and \l errorString properties have changed.
 */
 
 /*!
@@ -677,32 +682,26 @@ int QGalleryQueryModel::result() const
 */
 
 /*!
-    \fn QGalleryQueryModel::failed(int result)
+    \fn QGalleryQueryModel::finished()
 
-    Signals that the query has failed with the given \a result.
+    Signals that the query has finished.
 */
 
 /*!
-    \fn QGalleryQueryModel::finished(int result)
+    \property QGalleryQueryModel::status
 
-    Signals that the query has finished with the given \a result.
+    \brief The status of a query.
 */
 
-/*!
-    \property QGalleryQueryModel::state
-
-    \brief The state of a query.
-*/
-
-QGalleryAbstractRequest::State QGalleryQueryModel::state() const
+QGalleryAbstractRequest::Status QGalleryQueryModel::status() const
 {
-    return d_ptr->query.state();
+    return d_ptr->query.status();
 }
 
 /*!
-    \fn QGalleryQueryModel::stateChanged(QGalleryAbstractRequest::State state)
+    \fn QGalleryQueryModel::statusChanged(QGalleryAbstractRequest::Status status)
 
-    Signals that the \a state of the query has changed.
+    Signals that the \a status of the query has changed.
 */
 
 

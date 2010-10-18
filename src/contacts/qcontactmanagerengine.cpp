@@ -63,13 +63,15 @@
 #include <QMutexLocker>
 #include <QWeakPointer>
 
+#include <QDebug>
+
 QTM_BEGIN_NAMESPACE
 
 static bool validateActionFilter(const QContactFilter& filter);
 
 /*!
   \class QContactManagerEngine
-  \brief The QContactManagerEngine class provides the interface for all
+  \brief The QContactManagerEngine class provides the interface for
   implementations of the contact manager backend functionality.
   \inmodule QtContacts
   
@@ -237,11 +239,13 @@ QList<QContactLocalId> QContactManagerEngine::contactIds(const QContactFilter& f
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
-  in the matching contacts will be returned.  A client should not make changes to a contact which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the contact back to the manager (as the "new" restricted contact will
-  replace the previously saved contact in the backend).
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and
+  action preferences in the matching contacts will be returned.
+
+  If a non-default fetch hint is supplied, and the client wishes to make changes to the contacts,
+  they should ensure that only a detail definition hint is supplied and that when saving it back, a
+  definition mask should be used which corresponds to the detail definition hint.  This is to ensure
+  that no data is lost by overwriting an existing contact with a restricted version of it.
 
   \sa QContactFetchHint
  */
@@ -727,12 +731,41 @@ QStringList QContactManagerEngine::supportedContactTypes() const
   Returns the engine backend implementation version number
  */
 
-/*! Returns the base schema definitions */
+/*!
+  Returns the schema definitions for version 1 of the API.
+  This function is provided for engine implementors and should not be called by clients.
+  Engine implementors using version 1.1 or later of the Qt Mobility project should use the related
+  function which takes a schema version as a parameter instead.
+ */
 QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::schemaDefinitions()
 {
-    // This implementation provides the base schema.
+    return schemaDefinitions(1); // returns version 1 of the schema.
+}
+
+/*!
+  Returns the schema definitions for the given \a schemaVersion version of the API.
+  Note that as of QtMobility 1.1 the current schema version is 2.
+
+  This function is provided for engine implementors and should not be called by clients.
+
+  Engine implementations using this function to build their supported detail definitions
+  should call this function with the \a schemaVersion number which corresponds to the
+  version of the Qt Mobility project which was used to develop the engine plugin.
+
+  The following schema versions are as follows:
+  \list
+    \o 1 Corresponds to version 1.0 of the Qt Mobility project
+    \o 2 Corresponds to version 1.1 of the Qt Mobility project
+  \endlist
+ */
+QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::schemaDefinitions(int schemaVersion)
+{
+    // This implementation provides the schema.
     // The schema documentation (contactsschema.qdoc)
     // MUST BE KEPT UP TO DATE as definitions are added here.
+
+    if (schemaVersion != 1 && schemaVersion != 2)
+        return QMap<QString, QMap<QString, QContactDetailDefinition> >();
 
     // the map we will eventually return
     QMap<QString, QContactDetailDefinition> retn;
@@ -953,21 +986,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     d.setUnique(false);
     retn.insert(d.name(), d);
 
-    // favorite
-    d.setName(QContactFavorite::DefinitionName);
-    fields.clear();
-    f.setAllowableValues(QVariantList());
-    f.setDataType(QVariant::Bool);
-    fields.insert(QContactFavorite::FieldFavorite, f);
-    f.setDataType(QVariant::Int);
-    fields.insert(QContactFavorite::FieldIndex, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QContactDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
     // gender
     d.setName(QContactGender::DefinitionName);
     fields.clear();
@@ -1173,6 +1191,52 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     d.setFields(fields);
     d.setUnique(false);
     retn.insert(d.name(), d);
+
+    // Over time, the schema will be updated.
+    // This will correspond to different releases of QtMobility.
+    // The default schema for each release will be documented in contactsschema.qdoc.
+    if (schemaVersion == 2) {
+        // family
+        d.setName(QContactFamily::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QContactFamily::FieldSpouse, f);
+        f.setDataType(QVariant::StringList);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QContactFamily::FieldChildren, f);
+        d.setFields(fields);
+        d.setUnique(false);
+        retn.insert(d.name(), d);
+
+        // favorite
+        d.setName(QContactFavorite::DefinitionName);
+        fields.clear();
+        f.setAllowableValues(QVariantList());
+        f.setDataType(QVariant::Bool);
+        fields.insert(QContactFavorite::FieldFavorite, f);
+        f.setDataType(QVariant::Int);
+        fields.insert(QContactFavorite::FieldIndex, f);
+        f.setDataType(QVariant::StringList);
+        f.setAllowableValues(contexts);
+        fields.insert(QContactDetail::FieldContext, f);
+        d.setFields(fields);
+        d.setUnique(false);
+        retn.insert(d.name(), d);
+
+        // hobby
+        d.setName(QContactHobby::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QContactHobby::FieldHobby, f);
+        f.setDataType(QVariant::StringList);
+        f.setAllowableValues(contexts);
+        fields.insert(QContactDetail::FieldContext, f);
+        d.setFields(fields);
+        d.setUnique(false);
+        retn.insert(d.name(), d);
+    }
 
     // in the default schema, we have two contact types: TypeContact, TypeGroup.
     // the entire default schema is valid for both types.
@@ -2552,6 +2616,33 @@ void QContactManagerEngine::updateRelationshipRemoveRequest(QContactRelationship
 }
 
 /*!
+  \class QContactManagerEngineV2
+  \brief The QContactManagerEngineV2 class provides the interface for
+  implementations of the contact manager backend functionality.
+  \inmodule QtContacts
+  
+  \ingroup contacts-backends
+
+  Instances of this class are usually provided by a
+  \l QContactManagerEngineFactory, which is loaded from a plugin.
+
+  The default implementation of this interface provides a basic
+  level of functionality for some functions so that specific engines
+  can simply implement the functionality that is supported by
+  the specific contacts engine that is being adapted.
+
+  More information on writing a contacts engine plugin is available in
+  the \l{Qt Contacts Manager Engines} documentation.
+
+  Engines that support the QContactManagerEngine interface but not the
+  QContactManagerEngineV2 interface will be wrapped by the QContactManager
+  by a class that emulates the extra functionality of the
+  QContactManagerEngineV2 interface.
+
+  \sa QContactManagerEngine, QContactManager, QContactManagerEngineFactory
+ */
+
+/*!
   Updates the given QContactRelationshipFetchRequest \a req with the latest results \a result, and operation error \a error.
   In addition, the state of the request will be changed to \a newState.
 
@@ -2567,6 +2658,228 @@ void QContactManagerEngine::updateRelationshipFetchRequest(QContactRelationshipF
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
         rd->m_relationships = result;
+        rd->m_error = error;
+        rd->m_state = newState;
+        ml.unlock();
+        emit ireq.data()->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
+}
+
+/*!
+  \fn QContactManagerEngineV2::QContactManagerEngineV2()
+  Constructs an empty QContactManagerEngineV2.
+ */
+
+/*! \reimp */
+bool QContactManagerEngineV2::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    return QContactManagerEngine::saveContacts(contacts, errorMap, error);
+}
+
+/*! \reimp */
+QList<QContact> QContactManagerEngineV2::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const
+{
+    return QContactManagerEngine::contacts(filter, sortOrders, fetchHint, error);
+}
+
+/*!
+  For each contact in \a contacts, either add it to the database or update an existing one.
+
+  This function accepts a \a definitionMask, which specifies which details of the contacts should be
+  updated.  Details with definition names not included in the definitionMask will not be updated
+  or added.
+
+  The manager should populate \a errorMap (the map of indices of the \a contacts list to the error
+  which occurred when saving the contact at that index) for every index for which the contact could
+  not be saved, if it is able.
+
+  The supplied \a errorMap parameter may be null, if the client does not desire detailed error information.
+  If supplied, it will be empty upon entry to this function.
+
+  The \l QContactManager::error() function will only return \c QContactManager::NoError if all
+  contacts were saved successfully.
+
+  For each newly saved contact that was successful, the id of the contact in the \a contacts list
+  will be updated with the new value.  If a failure occurs when saving a new contact, the id will be
+  cleared.
+
+  Any errors encountered during this operation should be stored to \a error.
+ */
+bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStringList &definitionMask, QMap<int, QContactManager::Error> *errorMap, QContactManager::Error *error)
+{
+    // TODO should the default implementation do the right thing, or return false?
+    if (definitionMask.isEmpty()) {
+        // Non partial, just pass it on
+        return saveContacts(contacts, errorMap, error);
+    } else {
+        // Partial contact save.
+        // Basically
+
+        // Need to:
+        // 1) fetch existing contacts
+        // 2) strip out details in definitionMask for existing contacts
+        // 3) copy the details from the passed in list for existing contacts
+        // 4) for any new contacts, copy the masked details to a blank contact
+        // 5) save the modified ones
+        // 6) update the id of any new contacts
+        // 7) transfer any errors from saving to errorMap
+
+        QList<QContactLocalId> existingContactIds;
+
+        // Error conditions:
+        // 1) bad id passed in (can't fetch)
+        // 2) bad fetch (can't save partial update)
+        // 3) bad save error
+        // all of which needs to be returned in the error map
+
+        QHash<int, int> existingIdMap; // contacts index to existingContacts index
+
+        // Try to figure out which of our arguments are new contacts
+        for(int i = 0; i < contacts->count(); i++) {
+            // See if there's a contactId that's not from this manager
+            const QContact c = contacts->at(i);
+            if (c.id().managerUri() == managerUri()) {
+                if (c.localId() != 0) {
+                    existingIdMap.insert(i, existingContactIds.count());
+                    existingContactIds.append(c.localId());
+                } else {
+                    // Strange. it's just a new contact
+                }
+            } else if (!c.id().managerUri().isEmpty() || c.localId() != 0) {
+                // Hmm, error (wrong manager)
+                errorMap->insert(i, QContactManager::DoesNotExistError);
+            } // else new contact
+        }
+
+        // Now fetch the existing contacts
+        QMap<int, QContactManager::Error> fetchErrors;
+        QContactManager::Error fetchError = QContactManager::NoError;
+        QList<QContact> existingContacts = this->contacts(existingContactIds, QContactFetchHint(), &fetchErrors, &fetchError);
+
+        // Prepare the list to save
+        QList<QContact> contactsToSave;
+        QList<int> savedToOriginalMap; // contactsToSave index to contacts index
+        QSet<QString> mask = definitionMask.toSet();
+
+        for (int i = 0; i < contacts->count(); i++) {
+            // See if this is an existing contact or a new one
+            const int fetchedIdx = existingIdMap.value(i, -1);
+            QContact contactToSave;
+            if (fetchedIdx >= 0) {
+                // See if we had an error
+                if (fetchErrors[fetchedIdx] != QContactManager::NoError) {
+                    errorMap->insert(i, fetchErrors[fetchedIdx]);
+                    continue;
+                }
+
+                // Existing contact we should have fetched
+                contactToSave = existingContacts.at(fetchedIdx);
+
+                QSharedDataPointer<QContactData>& cd = QContactData::contactData(contactToSave);
+                cd->removeOnly(mask);
+            } else if (errorMap->contains(i)) {
+                // A bad argument.  Leave it out of the contactsToSave list
+                continue;
+            } // else new contact
+
+            // Now copy in the details from the arguments
+            const QContact& c = contacts->at(i);
+
+            // Perhaps this could do this directly rather than through saveDetail
+            // but that would duplicate the checks for display label etc
+            foreach (const QString& name, mask) {
+                QList<QContactDetail> details = c.details(name);
+                foreach(QContactDetail detail, details) {
+                    contactToSave.saveDetail(&detail);
+                }
+            }
+
+            savedToOriginalMap.append(i);
+            contactsToSave.append(contactToSave);
+        }
+
+        // Now save them
+        QMap<int, QContactManager::Error> saveErrors;
+        QContactManager::Error saveError = QContactManager::NoError;
+        saveContacts(&contactsToSave, &saveErrors, &saveError);
+
+        // Now update the passed in arguments, where necessary
+
+        // Update IDs of the contacts list
+        for (int i = 0; i < contactsToSave.count(); i++) {
+            (*contacts)[savedToOriginalMap[i]].setId(contactsToSave[i].id());
+        }
+        // Populate the errorMap with the errorMap of the attempted save
+        QMap<int, QContactManager::Error>::iterator it(saveErrors.begin());
+        while (it != saveErrors.end()) {
+            if (it.value() != QContactManager::NoError) {
+                errorMap->insert(savedToOriginalMap[it.key()], it.value());
+            }
+            it++;
+        }
+
+        return errorMap->isEmpty();
+    }
+}
+
+/*!
+  Returns the list of contacts with the ids given by \a localIds.  There is a one-to-one
+  correspondence between the returned contacts and the supplied \a localIds.
+  
+  If there is an invalid id in \a localIds, then an empty QContact will take its place in the
+  returned list and an entry will be inserted into \a errorMap.
+
+  The overall operation error will be saved in \a error.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and
+  action preferences in the matching contacts will be returned.
+
+  If a non-default fetch hint is supplied, and the client wishes to make changes to the contacts,
+  they should ensure that only a detail definition hint is supplied and that when saving it back, a
+  definition mask should be used which corresponds to the detail definition hint.  This is to ensure
+  that no data is lost by overwriting an existing contact with a restricted version of it.
+
+  \sa QContactFetchHint
+ */
+QList<QContact> QContactManagerEngineV2::contacts(const QList<QContactLocalId> &localIds, const QContactFetchHint &fetchHint, QMap<int, QContactManager::Error> *errorMap, QContactManager::Error *error) const
+{
+    // Default implementation is to fetch one by one
+    QList<QContact> ret;
+
+    for (int i = 0; i < localIds.count(); i++) {
+        QContactManager::Error localError = QContactManager::NoError;
+        ret.append(contact(localIds.at(i), fetchHint, &localError));
+
+        if (localError != QContactManager::NoError) {
+            *error = localError;
+            if (errorMap)
+                errorMap->insert(i, localError);
+        }
+    }
+
+    return ret;
+}
+
+/*!
+  Updates the given QContactFetchByIdRequest \a req with the latest results \a result, and operation error \a error, and map of input index to individual error \a errorMap.
+  In addition, the state of the request will be changed to \a newState.
+
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+
+  If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+ */
+void QContactManagerEngineV2::updateContactFetchByIdRequest(QContactFetchByIdRequest* req, const QList<QContact>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
+{
+    if (req) {
+        QWeakPointer<QContactFetchByIdRequest> ireq(req); // Take this in case the first emit deletes us
+        QContactFetchByIdRequestPrivate* rd = static_cast<QContactFetchByIdRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->m_mutex);
+        bool emitState = rd->m_state != newState;
+        rd->m_contacts = result;
+        rd->m_errors = errorMap;
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();

@@ -38,8 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qremoteserviceclassregister.h>
-#include <qremoteservicecontrol.h>
+#include <qremoteserviceregister.h>
 #include "qservicemanager.h"
 #include <QCoreApplication>
 #include <QDateTime>
@@ -47,13 +46,12 @@
 
 QTM_USE_NAMESPACE
 
-class EchoSharedService : public QObject
+class EchoService : public QObject
 {
     Q_OBJECT
-    Q_SERVICE(EchoSharedService, "EchoService", "com.nokia.qt.example.sfwecho", "1.1")
 
 public:
-    EchoSharedService(QObject* parent = 0)
+    EchoService(QObject* parent = 0)
         : QObject(parent)
     {
     }
@@ -71,29 +69,6 @@ private:
 
 };
 
-class EchoUniqueService : public QObject
-{
-    Q_OBJECT
-    Q_SERVICE(EchoUniqueService, "EchoService", "com.nokia.qt.example.sfwecho", "1.0")
-
-public:
-    EchoUniqueService(QObject* parent = 0)
-        : QObject(parent)
-    {
-    }
-
-Q_SIGNALS:
-    void broadcastMessage(const QString &msg, const QDateTime &timestamp);
-
-public slots:
-    void sendMessage(const QString &msg)
-    {
-        emit broadcastMessage(msg, QDateTime::currentDateTime());
-    }
-
-private:
-
-};
 
 void unregisterExampleService()
 {
@@ -113,19 +88,38 @@ void registerExampleService()
 
 Q_DECLARE_METATYPE(QMetaType::Type);
 
+/*bool check(const void *p)
+{
+    const QRemoteServiceregisterLocalSocketCred *cr = (const struct QRemoteServiceiRegisterLocalSocketCred *)p;
+    if(cr->pid%2) {
+           qDebug() << "Failing client: " << cr->pid;
+        return false;
+    }
+    return true;
+}*/
+
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
 
     registerExampleService();
 
-    QRemoteServiceClassRegister::registerType<EchoSharedService>(QRemoteServiceClassRegister::SharedInstance);
-    QRemoteServiceClassRegister::registerType<EchoUniqueService>(QRemoteServiceClassRegister::UniqueInstance);
-    QRemoteServiceControl* control = new QRemoteServiceControl();
-    control->publishServices("sfwecho_service");
+    QRemoteServiceRegister* serviceRegister = new QRemoteServiceRegister();
+    //serviceRegister->setSecurityFilter(check);
+
+    QRemoteServiceRegister::Entry shared = serviceRegister->createEntry<EchoService>(
+        "EchoService", "com.nokia.qt.example.sfwecho", "1.1");
+    shared.setInstantiationType(QRemoteServiceRegister::GlobalInstance);
+
+    QRemoteServiceRegister::Entry unique = serviceRegister->createEntry<EchoService>(
+        "EchoService", "com.nokia.qt.example.sfwecho", "1.0");
+    unique.setInstantiationType(QRemoteServiceRegister::PrivateInstance);
+
+    serviceRegister->publishEntries("sfwecho_service");
+
     int res =  app.exec();
-    
-    delete control;    
+
+    delete serviceRegister;
     return res;
 }
 

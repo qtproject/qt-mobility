@@ -67,6 +67,7 @@ private slots:
     void testSendEmail();
     void testDescriptor();
     void testDescriptorHash();
+    void testTarget();
     void traits();
 };
 
@@ -275,6 +276,64 @@ void tst_QContactActions::testDescriptorHash()
         QVERIFY(qHash(qcad2) != qHash(qcad3));
         QVERIFY(qHash(qcad1) != qHash(qcad3));
     }
+}
+
+void tst_QContactActions::testTarget()
+{
+    // first, create a contact with some details
+    QContact c1;
+    QContactName n1;
+    n1.setFirstName("test");
+    n1.setLastName("contact");
+    c1.saveDetail(&n1);
+    QContactPhoneNumber p1;
+    p1.setNumber("12345");
+    c1.saveDetail(&p1);
+    QContactEmailAddress e1;
+    e1.setEmailAddress("test@example.com");
+    c1.saveDetail(&e1);
+
+    QList<QContactDetail> dl1;
+    dl1 << p1 << e1;
+
+    QContactActionTarget t1;          // default ctor
+    QContactActionTarget t2(c1);      // "whole contact" target
+    QContactActionTarget t3(c1, e1);  // "specific detail" target
+    QContactActionTarget t4(c1, dl1); // "detail list" target
+
+    QCOMPARE(t2.contact(), c1);
+    QCOMPARE(t3.contact(), c1);
+    QCOMPARE(t4.contact(), c1);
+
+    QCOMPARE(t2.details(), QList<QContactDetail>());
+    QCOMPARE(t3.details(), QList<QContactDetail>() << e1);
+    QCOMPARE(t4.details(), dl1);
+
+    QVERIFY(t1 != t2);
+    QVERIFY(t1 != t3);
+    QVERIFY(t1 != t4);
+    QVERIFY(t2 != t3);
+    QVERIFY(t2 != t4);
+    QVERIFY(t3 != t4);
+    QVERIFY(qHash(t2) != qHash(t3));
+    QVERIFY(qHash(t2) != qHash(t4));
+    QVERIFY(qHash(t3) != qHash(t4));
+
+    QVERIFY(!t1.isValid());
+    QVERIFY(t2.isValid());
+    QVERIFY(t3.isValid());
+    QVERIFY(t4.isValid());
+
+    t1.setContact(c1);
+    t1.setDetails(dl1);
+    QVERIFY(t1.isValid());
+    QVERIFY(t1 == t4);
+
+    t2 = t1;
+    QVERIFY(t2.isValid()); // check that assignment operator doesn't destroy validity.
+    QVERIFY(t1 == t2);
+    QVERIFY(t2 == t4);
+    QVERIFY(t2 != t3);
 }
 
 void tst_QContactActions::traits()

@@ -64,8 +64,7 @@ class QOrganizerCollectionIdPrivate : public QSharedData
 {
 public:
     QOrganizerCollectionIdPrivate()
-            : QSharedData(),
-            m_localId(0)
+            : QSharedData()
     {
     }
 

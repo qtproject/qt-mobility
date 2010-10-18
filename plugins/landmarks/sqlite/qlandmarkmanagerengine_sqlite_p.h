@@ -53,6 +53,7 @@
 // We mean it.
 //
 
+#include <qlandmarkmanager.h>
 #include <qlandmarkmanagerengine.h>
 #include "databasefilewatcher_p.h"
 
@@ -68,7 +69,7 @@ class QLandmarkManagerEngineSqlite : public QLandmarkManagerEngine
 {
     Q_OBJECT
 public:
-    QLandmarkManagerEngineSqlite(const QString &filename = QString());
+    QLandmarkManagerEngineSqlite(const QString &filename, QLandmarkManager::Error *error, QString *errorString);
     ~QLandmarkManagerEngineSqlite();
 
     /* URI reporting */
@@ -156,8 +157,7 @@ public:
     QStringList landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
     QStringList categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
 
-    bool isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;;
-    void setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString);
+    QStringList searchableLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
 
     bool isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
     void setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString);
@@ -219,11 +219,10 @@ private:
     QString m_dbConnectionName;
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;
     QHash<QLandmarkAbstractRequest *, unsigned int> m_activeRequestsRunIdHash;
+    bool m_isCustomAttributesEnabled;
     DatabaseFileWatcher *m_dbWatcher;
     qint64 m_latestLandmarkTimestamp;
     qint64 m_latestCategoryTimestamp;
-    volatile bool m_isExtendedAttributesEnabled;
-    volatile bool m_isCustomAttributesEnabled;
     DatabaseOperations m_databaseOperations;
     friend class QueryRun;
     QMutex m_mutex;//protects m_requestRunHash and m_activeRequests

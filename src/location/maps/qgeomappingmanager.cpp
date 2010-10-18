@@ -85,8 +85,8 @@ QTM_BEGIN_NAMESPACE
     QGeoServiceProvider::mappingManager();
 */
 QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoMappingManagerPrivate)
+    : QObject(parent),
+      d_ptr(new QGeoMappingManagerPrivate)
 {
     d_ptr->engine = engine;
     if (d_ptr->engine) {
@@ -113,9 +113,6 @@ QGeoMappingManager::~QGeoMappingManager()
 */
 QString QGeoMappingManager::managerName() const
 {
-//    if (!d_ptr->engine)
-//        return QString();
-
     return d_ptr->engine->managerName();
 }
 
@@ -128,9 +125,6 @@ QString QGeoMappingManager::managerName() const
 */
 int QGeoMappingManager::managerVersion() const
 {
-//    if (!d_ptr->engine)
-//        return -1;
-
     return d_ptr->engine->managerVersion();
 }
 
@@ -140,9 +134,6 @@ int QGeoMappingManager::managerVersion() const
 */
 QGeoMapData* QGeoMappingManager::createMapData(QGraphicsGeoMap *geoMap)
 {
-//    if (!d_ptr->engine)
-//        return 0;
-
     return d_ptr->engine->createMapData(geoMap);
 }
 
@@ -151,10 +142,15 @@ QGeoMapData* QGeoMappingManager::createMapData(QGraphicsGeoMap *geoMap)
 */
 QList<QGraphicsGeoMap::MapType> QGeoMappingManager::supportedMapTypes() const
 {
-//    if (!d_ptr->engine)
-//        return QList<QGraphicsGeoMap::MapType>();
-
     return d_ptr->engine->supportedMapTypes();
+}
+
+/*!
+    Returns a list of the connectivity modes supported by this manager.
+*/
+QList<QGraphicsGeoMap::ConnectivityMode> QGeoMappingManager::supportedConnectivityModes() const
+{
+    return d_ptr->engine->supportedConnectivityModes();
 }
 
 /*!
@@ -165,10 +161,6 @@ QList<QGraphicsGeoMap::MapType> QGeoMappingManager::supportedMapTypes() const
 */
 qreal QGeoMappingManager::minimumZoomLevel() const
 {
-//    // TODO document this behaviour
-//    if (!d_ptr->engine)
-//        return -1.0;
-
     return d_ptr->engine->minimumZoomLevel();
 }
 
@@ -180,41 +172,7 @@ qreal QGeoMappingManager::minimumZoomLevel() const
 */
 qreal QGeoMappingManager::maximumZoomLevel() const
 {
-//    // TODO document this behaviour
-//    if (!d_ptr->engine)
-//        return -1.0;
-
     return d_ptr->engine->maximumZoomLevel();
-}
-
-/*!
-    Returns the size of the smallest map image which is supported by this
-    manager.
-
-    An invalid size indicates that this manager places
-    no restrictions on the minimum size of the map image.
-*/
-QSize QGeoMappingManager::minimumImageSize() const
-{
-//    if (!d_ptr->engine)
-//        return QSize();
-
-    return d_ptr->engine->minimumImageSize();
-}
-
-/*!
-    Returns the size of the largest map image which is supported by this
-    manager.
-
-    An invalid size indicates that this manager places
-    no restrictions on the maximum size of the map image.
-*/
-QSize QGeoMappingManager::maximumImageSize() const
-{
-//    if (!d_ptr->engine)
-//        return QSize();
-
-    return d_ptr->engine->maximumImageSize();
 }
 
 /*!
@@ -243,7 +201,7 @@ QLocale QGeoMappingManager::locale() const
 *******************************************************************************/
 
 QGeoMappingManagerPrivate::QGeoMappingManagerPrivate()
-        : engine(0) {}
+    : engine(0) {}
 
 QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate()
 {

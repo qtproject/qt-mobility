@@ -47,6 +47,12 @@
 */
 
 /*!
+    \group qml-gallery-filters
+    \title Gallery Filters for QML
+    \brief Filter classes for the Doc Gallery QML Plugin.
+*/
+
+/*!
     \page qml-gallery.html
 
     \title Gallery QML Plugin
@@ -61,11 +67,15 @@
 
     \section2 Search Filters
 
-    Searching is performed by creating a filter based on a \l GalleryFilter
-    element. Search parameters can be set by specifying property values which
+    Searching is performed by creating a filter based on a gallery filter
+    class. Search parameters can be set by specifying property values which
     refer to meta-data relating to the documents. For example, a meta-data
-    key might be "author". Then by setting the filter property to "author" and
+    key might be "author". Then, for example, by setting the filter property to "author" and
     the value to "torvalds" the filter is ready to enable a search.
+
+    Available filters include
+
+    \annotatedlist qml-gallery-filters
 
     Other filters enable \l {GalleryFilter::caseSensitivity}{case sensitivity}
     options or the \l {GalleryFilter::comparator}{comparator} property can be

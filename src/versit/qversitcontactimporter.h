@@ -105,9 +105,9 @@ public:
     void setResourceHandler(QVersitResourceHandler* handler);
     QVersitResourceHandler* resourceHandler() const;
 
-    /* deprecated and internal */
-    void Q_DECL_DEPRECATED setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
-    Q_DECL_DEPRECATED QVersitContactImporterPropertyHandler* propertyHandler() const;
+    /* deprecated */
+    void setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
+    QVersitContactImporterPropertyHandler* propertyHandler() const;
 
 private:
     QVersitContactImporterPrivate* d;

@@ -52,7 +52,6 @@ class QXAPlaySession;
 class QXAMediaPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
-    Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
 public:
     QXAMediaPlayerControl(QXAPlaySession *session, QObject *parent = 0);
     ~QXAMediaPlayerControl();

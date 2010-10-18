@@ -48,46 +48,79 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapPixmapObjectInfo::QGeoTiledMapPixmapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
-        : QGeoTiledMapObjectInfo(mapData, mapObject),
-        pixmapItem(0)
+QGeoTiledMapPixmapObjectInfo::QGeoTiledMapPixmapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
+    : QGeoTiledMapObjectInfo(mapData, mapObject),
+      pixmapItem(0)
 
 {
     pixmap = static_cast<QGeoMapPixmapObject*>(mapObject);
+
+    connect(pixmap,
+            SIGNAL(coordinateChanged(QGeoCoordinate)),
+            this,
+            SLOT(coordinateChanged(QGeoCoordinate)));
+    connect(pixmap,
+            SIGNAL(pixmapChanged(QPixmap)),
+            this,
+            SLOT(pixmapChanged(QPixmap)));
+    connect(pixmap,
+            SIGNAL(offsetChanged(QPoint)),
+            this,
+            SLOT(offsetChanged(QPoint)));
+
+    pixmapItem = new QGraphicsPixmapItem();
+    graphicsItem = pixmapItem;
+    if (!this->pixmap->pixmap().isNull())
+        pixmapItem->setPixmap(pixmap->pixmap());
+    if (pixmap->coordinate().isValid())
+        pixmapItem->setPos(tiledMapData->coordinateToWorldReferencePosition(pixmap->coordinate()));
+    updateOffset();
 }
 
 QGeoTiledMapPixmapObjectInfo::~QGeoTiledMapPixmapObjectInfo() {}
 
-void QGeoTiledMapPixmapObjectInfo::objectUpdated()
+void QGeoTiledMapPixmapObjectInfo::updateValidity()
 {
-    if (!pixmap->coordinate().isValid()
-            || pixmap->pixmap().isNull()) {
-        if (pixmapItem) {
-            delete pixmapItem;
-            pixmapItem = 0;
-            graphicsItem = 0;
-        }
-        return;
-    }
+    setValid((pixmap->coordinate().isValid() && !pixmap->pixmap().isNull()));
+}
 
-    if (!pixmapItem)
-        pixmapItem = new QGraphicsPixmapItem();
+void QGeoTiledMapPixmapObjectInfo::coordinateChanged(const QGeoCoordinate &coordinate)
+{
+    updateValidity();
+    if (pixmap->coordinate().isValid())
+        pixmapItem->setPos(tiledMapData->coordinateToWorldReferencePosition(pixmap->coordinate()));
+    if (valid())
+        updateItem();
+}
 
-    pixmapItem->setPixmap(pixmap->pixmap());
-    pixmapItem->setPos(tiledMapData->coordinateToWorldPixel(pixmap->coordinate()));
-    mapUpdated();
-    graphicsItem = pixmapItem;
+void QGeoTiledMapPixmapObjectInfo::pixmapChanged(const QPixmap &pixmap)
+{
+    updateValidity();
+    if (!this->pixmap->pixmap().isNull())
+        pixmapItem->setPixmap(this->pixmap->pixmap());
+    if (valid())
+        updateItem();
+}
+
+void QGeoTiledMapPixmapObjectInfo::offsetChanged(const QPoint &offset)
+{
+    updateOffset();
+}
+
+void QGeoTiledMapPixmapObjectInfo::zoomLevelChanged(qreal zoomLevel)
+{
+    updateOffset();
+}
+
+void QGeoTiledMapPixmapObjectInfo::updateOffset()
+{
+    qreal zoomFactor = tiledMapData->zoomFactor();
+    pixmapItem->setScale(zoomFactor);
+    pixmapItem->setTransform(QTransform::fromTranslate(pixmap->offset().x() * zoomFactor, pixmap->offset().y() * zoomFactor));
     updateItem();
 }
 
-void QGeoTiledMapPixmapObjectInfo::mapUpdated()
-{
-    if (pixmapItem) {
-        qreal zoomFactor = tiledMapData->zoomFactor();
-        pixmapItem->setScale(zoomFactor);
-        pixmapItem->setTransform(QTransform::fromTranslate(pixmap->offset().x() * zoomFactor, pixmap->offset().y() * zoomFactor));
-    }
-}
+#include "moc_qgeotiledmappixmapobjectinfo_p.cpp"
 
 QTM_END_NAMESPACE
 

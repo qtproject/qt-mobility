@@ -55,13 +55,13 @@ void OrganizerItemInstanceOriginTransform::transformToEntryL(const QOrganizerIte
 
 void OrganizerItemInstanceOriginTransform::transformToDetailL(const CCalInstance& instance, QOrganizerItem *itemInstance)
 {
-    QOrganizerItemInstanceOrigin origin;
-    origin.setParentLocalId(instance.Entry().LocalUidL());
-    origin.setOriginalDate(toQDateTimeL(instance.StartTimeL()).date());
-    itemInstance->saveDetail(&origin);
+    Q_UNUSED(instance);
+    Q_UNUSED(itemInstance);
 }
 
 QString OrganizerItemInstanceOriginTransform::detailDefinitionName()
 {
+    // Note: the conversions are done elsewhere, this class exists only to
+    // indicate that we support instance origin detail
     return QOrganizerItemInstanceOrigin::DefinitionName;    
 }

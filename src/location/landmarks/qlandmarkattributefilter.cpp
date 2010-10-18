@@ -57,7 +57,6 @@ public:
         const QLandmarkAttributeFilterPrivate *od = static_cast<const QLandmarkAttributeFilterPrivate*>(other);
         return (attributes == od->attributes)
             && (flags == od->flags)
-            && (attributeType == od->attributeType)
             && (operationType == od->operationType);
     }
 
@@ -65,7 +64,6 @@ public:
 
     QHash<QString, QVariant> attributes;
     QHash<QString, QLandmarkFilter::MatchFlags> flags;
-    QLandmarkAttributeFilter::AttributeType attributeType;
     QLandmarkAttributeFilter::OperationType operationType;
 };
 
@@ -73,7 +71,6 @@ QLandmarkAttributeFilterPrivate::QLandmarkAttributeFilterPrivate()
     : QLandmarkFilterPrivate(),
     attributes(QHash<QString, QVariant>()),
     flags(QHash<QString, QLandmarkFilter::MatchFlags>()),
-    attributeType(QLandmarkAttributeFilter::ManagerAttributes),
     operationType(QLandmarkAttributeFilter::AndOperation)
 
 {
@@ -92,20 +89,37 @@ QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
 
     \ingroup landmarks-filter
 
-    The QLandmarkAttributeFilter class may be used to filter landmarks whose attributes match certain values.
-    If an invalid QVariant is provided as the value for an attribute, then any landmark that has that attribute is
-    considered a match, regardless of its value.  More than one attribute may be set in the filter and may be
-    combined using an AND or OR operation.  The filter may only be used to search through either manager attributes
-    (ie. common cross platform attributes and extended attributes specific to a manager) or custom attributes.
+    Filtering on various attributes is facilitated by the QLandmarkAttributeFilter.
+    You can provide various keys which describe the attribute(s) to search.
+    Precisely which keys may be used depends on the manager
+    and these can be retrieved by using QLandmarkManager::searchableLandmarkAttributeKeys().
+    The table below outlines some keys that may be used with the default managers on the
+    currently supported platforms.  The match flags may be used for attributes which are
+    of string type (typically most, if not all searchable attributes are string types).
+
+    \table
+    \header
+        \o {3,1} Searchable attributes
+    \row
+        \o "city"
+        \o "countryCode"
+        \o "country"
+    \row
+        \o "county"
+        \o "countryCode"
+        \o "description"
+
+    \row
+        \o "district"
+        \o "name"
+        \o "state"
+    \row
+        \o "phoneNumber"
+        \o "postCode"
+        \o "street"
+    \endtable
 */
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkAttributeFilter);
-
-/*!
-    \enum QLandmarkAttributeFilter::AttributeType
-    Defines type of landmark attributes this filter operates on.
-    \value ManagerAttributes The filter operates on standard cross platform attributes and extended attributes.
-    \value CustomAttributes The filter operates on custom attributes.
-*/
 
 /*!
     \enum QLandmarkAttributeFilter::OperationType
@@ -208,24 +222,6 @@ QStringList QLandmarkAttributeFilter::attributeKeys() const
 {
     Q_D(const QLandmarkAttributeFilter);
     return d->attributes.keys();
-}
-
-/*!
-    Returns the type of attribute this filter will operate on.
-*/
-QLandmarkAttributeFilter::AttributeType QLandmarkAttributeFilter::attributeType() const
-{
-    Q_D(const QLandmarkAttributeFilter);
-    return d->attributeType;
-}
-
-/*!
-    Sets the type of attribute this filter will operate on to \a attributeType.
-*/
-void QLandmarkAttributeFilter::setAttributeType(QLandmarkAttributeFilter::AttributeType attributeType)
-{
-    Q_D(QLandmarkAttributeFilter);
-    d->attributeType = attributeType;
 }
 
 /*!

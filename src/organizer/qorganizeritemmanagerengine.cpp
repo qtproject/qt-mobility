@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qorganizeritemmanagerengine.h"
+#include "qorganizeritemenginelocalid.h"
 
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemdetailfielddefinition.h"
@@ -141,6 +142,22 @@ QTM_BEGIN_NAMESPACE
   ids in the list.
 
   \sa dataChanged()
+ */
+
+
+  /*!
+  \fn QOrganizerItemManagerEngine::collectionsAdded(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal is emitted at some point once some collections identified by \a collectionIds have been added from a datastore managed by this manager.
+ */
+
+ /*!
+  \fn QOrganizerItemManagerEngine::collectionsChanged(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal is emitted at some point once some collections identified by \a collectionIds have been changed from a datastore managed by this manager.
+ */
+
+ /*!
+  \fn QOrganizerItemManagerEngine::collectionsRemoved(const QList<QOrganizerCollectionLocalId>& collectionIds)
+  This signal is emitted at some point once some collections identified by \a collectionIds have been removed from a datastore managed by this manager.
  */
 
 /*! Returns the manager name for this QOrganizerItemManagerEngine */
@@ -449,9 +466,9 @@ bool QOrganizerItemManagerEngine::isFilterSupported(const QOrganizerItemFilter& 
 /*!
   Returns the list of data types supported by this engine.
  */
-QList<QVariant::Type> QOrganizerItemManagerEngine::supportedDataTypes() const
+QList<int> QOrganizerItemManagerEngine::supportedDataTypes() const
 {
-    return QList<QVariant::Type>();
+    return QList<int>();
 }
 
 /*!
@@ -478,8 +495,11 @@ QStringList QOrganizerItemManagerEngine::supportedItemTypes() const
   Returns the engine backend implementation version number
  */
 
-/*! Returns the base schema definitions */
-QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemManagerEngine::schemaDefinitions()
+/*!
+   Returns the default schema definitions for the given \a version of the schema.
+   Version 1 of the schema corresponds to version 1.1 of the Qt Mobility APIs.
+ */
+QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemManagerEngine::schemaDefinitions(int version)
 {
     // This implementation provides the base schema.
     // The schema documentation (organizeritemsschema.qdoc)
@@ -832,7 +852,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     // instance origin
     d.setName(QOrganizerItemInstanceOrigin::DefinitionName);
     fields.clear();
-    f.setDataType(QVariant::Int);
+    f.setDataType(qMetaTypeId<QOrganizerItemLocalId>());
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
     f.setDataType(QVariant::Date);
@@ -1238,7 +1258,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     // instance origin
     d.setName(QOrganizerItemInstanceOrigin::DefinitionName);
     fields.clear();
-    f.setDataType(QVariant::Int);
+    f.setDataType(qMetaTypeId<QOrganizerItemLocalId>());
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
     f.setDataType(QVariant::Date);
@@ -1460,7 +1480,13 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
 
     retnSchema.insert(QOrganizerItemType::TypeJournal, retn);
 
-    return retnSchema;
+    if (version == 1) {
+        return retnSchema;
+    }
+
+    // the most recent version of the schema is version 1.
+    QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > empty;
+    return empty;
 }
 
 /*!
@@ -1546,6 +1572,19 @@ bool QOrganizerItemManagerEngine::validateItem(const QOrganizerItem& organizerit
 }
 
 /*!
+  Returns true if the \a collection is valid and can be saved in the engine.
+  By default, modifiable collections are not supported, so this function returns false,
+  and \a error is set to QOrganizerItemManager::NotSupportedError.
+  Engines which do implement mutable collections should reimplement this function.
+ */
+bool QOrganizerItemManagerEngine::validateCollection(const QOrganizerCollection& collection, QOrganizerItemManager::Error* error) const
+{
+    Q_UNUSED(collection);
+    *error = QOrganizerItemManager::NotSupportedError;
+    return false;
+}
+
+/*!
   Checks that the given detail definition \a definition seems valid,
   with a correct id, defined fields, and any specified value types
   are supported by this engine.  This function is called before
@@ -1570,7 +1609,7 @@ bool QOrganizerItemManagerEngine::validateDefinition(const QOrganizerItemDetailD
     }
 
     // Check each field now
-    QList<QVariant::Type> types = supportedDataTypes();
+    QList<int> types = supportedDataTypes();
     QMapIterator<QString, QOrganizerItemDetailFieldDefinition> it(definition.fields());
     while(it.hasNext()) {
         it.next();
@@ -1586,7 +1625,7 @@ bool QOrganizerItemManagerEngine::validateDefinition(const QOrganizerItemDetailD
 
         // Check that each allowed value is the same type
         for (int i=0; i < it.value().allowableValues().count(); i++) {
-            if (it.value().allowableValues().at(i).type() != it.value().dataType()) {
+            if (it.value().allowableValues().at(i).userType() != it.value().dataType()) {
                 *error = QOrganizerItemManager::BadArgumentError;
                 return false;
             }
@@ -1695,7 +1734,6 @@ void QOrganizerItemManagerEngine::setItemCollectionId(QOrganizerItem* item, cons
         QOrganizerItemData::setCollectionId(item, collectionId);
     }
 }
-
 
 /*!
   Adds the given \a organizeritem to the database if \a organizeritem has a
@@ -1850,14 +1888,21 @@ bool QOrganizerItemManagerEngine::removeItems(const QList<QOrganizerItemLocalId>
 }
 
 /*!
-  XXX TODO
- */
+    Returns the default collegtion Id.
+    Any errors encountered during this operation should be stored to
+   \a error.
+*/
 QOrganizerCollectionLocalId QOrganizerItemManagerEngine::defaultCollectionId(QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NotSupportedError;
     return QOrganizerCollectionLocalId();
 }
 
+/*!
+    Returns the collegtion Ids.
+    Any errors encountered during this operation should be stored to
+    \a error.
+ */
 QList<QOrganizerCollectionLocalId> QOrganizerItemManagerEngine::collectionIds(QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NotSupportedError;
@@ -1865,19 +1910,28 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemManagerEngine::collectionIds(QO
 }
 
 /*!
-  XXX TODO
- */
-QList<QOrganizerCollection> QOrganizerItemManagerEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+    Returns a list consisting of any collection whose id is contained in \a collectionIds.
+    Any errors encountered during this operation should be stored to \a error.
+    If \a collectionIds is empty, an empty list should be returned.
+    If any of the collection ids in \a collectionIds does not identify a valid collection in the manager,
+    an entry should be inserted into the \a errorMap for that index, with \c QOrganizerItemManager::DoesNotExistError specified.
+
+    XXX TODO: should it return a list of only the successful ones?  or fill the "empty" indices of the retn list with default constructed collections?
+*/
+QList<QOrganizerCollection> QOrganizerItemManagerEngine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(collectionIds);
+    Q_UNUSED(errorMap);
 
     *error = QOrganizerItemManager::NotSupportedError;
     return QList<QOrganizerCollection>();
 }
 
 /*!
-  XXX TODO
- */
+    Returns true if the saving of the \a collection was successfull otherwise false.
+    Any errors encountered during this operation should be stored to
+    \a error.
+*/
 bool QOrganizerItemManagerEngine::saveCollection(QOrganizerCollection* collection, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(collection);
@@ -1887,8 +1941,10 @@ bool QOrganizerItemManagerEngine::saveCollection(QOrganizerCollection* collectio
 }
 
 /*!
-  XXX TODO
- */
+    Returns true if the removing of the \a collectionId was successfull otherwise false.
+    Any errors encountered during this operation should be stored to
+    \a error.
+*/
 bool QOrganizerItemManagerEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(collectionId);
@@ -1978,6 +2034,19 @@ QOrganizerItem QOrganizerItemManagerEngine::compatibleItem(const QOrganizerItem&
     if (conforming.isEmpty())
         *error = QOrganizerItemManager::DoesNotExistError;
     return conforming;
+}
+
+/*!
+  Returns a pruned or modified version of the \a original collection which is valid and can be saved in the manager.
+  The returned item might have meta data removed or arbitrarily changed.  Any error which occurs will be saved to \a error.
+  By default, modifiable collections are not supported, and so this function always returns false.
+  Any engine which supports mutable collections should reimplement this function.
+ */
+QOrganizerCollection QOrganizerItemManagerEngine::compatibleCollection(const QOrganizerCollection& original, QOrganizerItemManager::Error* error) const
+{
+    Q_UNUSED(original);
+    *error = QOrganizerItemManager::NotSupportedError;
+    return QOrganizerCollection();
 }
 
 /*!
@@ -2432,6 +2501,24 @@ QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::sortItems(const QList<
 }
 
 /*!
+  Returns the engine local id from the given \a localId.
+  The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
+ */
+QOrganizerItemEngineLocalId* QOrganizerItemManagerEngine::engineLocalItemId(const QOrganizerItemLocalId& localId)
+{
+    return localId.d;
+}
+
+/*!
+  Returns the engine local id from the given \a localId.
+  The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
+ */
+QOrganizerCollectionEngineLocalId* QOrganizerItemManagerEngine::engineLocalCollectionId(const QOrganizerCollectionLocalId& localId)
+{
+    return localId.d;
+}
+
+/*!
   Notifies the manager engine that the given request \a req has been destroyed.
 
   This notifies the engine that:
@@ -2522,9 +2609,13 @@ bool QOrganizerItemManagerEngine::waitForRequestFinished(QOrganizerItemAbstractR
  */
 void QOrganizerItemManagerEngine::updateRequestState(QOrganizerItemAbstractRequest* req, QOrganizerItemAbstractRequest::State state)
 {
-    if (req->d_ptr->m_state != state) {
-        req->d_ptr->m_state = state;
-        emit req->stateChanged(state);
+    if (req) {
+        QMutexLocker ml(&req->d_ptr->m_mutex);
+        if (req->d_ptr->m_state != state) {
+            req->d_ptr->m_state = state;
+            ml.unlock();
+            emit req->stateChanged(state);
+        }
     }
 }
 
@@ -2538,14 +2629,19 @@ void QOrganizerItemManagerEngine::updateRequestState(QOrganizerItemAbstractReque
  */
 void QOrganizerItemManagerEngine::updateItemInstanceFetchRequest(QOrganizerItemInstanceFetchRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
 {
-    QOrganizerItemInstanceFetchRequestPrivate* rd = static_cast<QOrganizerItemInstanceFetchRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_organizeritems = result;
-    bool emitState = rd->m_state != newState;
-    rd->m_state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QOrganizerItemInstanceFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerItemInstanceFetchRequestPrivate* rd = static_cast<QOrganizerItemInstanceFetchRequestPrivate*>(req->d_ptr);
+        QMutexLocker ml(&rd->m_mutex);
+        bool emitState = rd->m_state != newState;
+        rd->m_organizeritems = result;
+        rd->m_error = error;
+        rd->m_state = newState;
+        ml.unlock();
+        emit ireq.data()->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
 }
 
 /*!
@@ -2558,14 +2654,19 @@ void QOrganizerItemManagerEngine::updateItemInstanceFetchRequest(QOrganizerItemI
  */
 void QOrganizerItemManagerEngine::updateItemLocalIdFetchRequest(QOrganizerItemLocalIdFetchRequest* req, const QList<QOrganizerItemLocalId>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
 {
-    QOrganizerItemLocalIdFetchRequestPrivate* rd = static_cast<QOrganizerItemLocalIdFetchRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_ids = result;
-    bool emitState = rd->m_state != newState;
-    rd->m_state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QOrganizerItemLocalIdFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerItemLocalIdFetchRequestPrivate* rd = static_cast<QOrganizerItemLocalIdFetchRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->m_mutex);
+        bool emitState = rd->m_state != newState;
+        rd->m_ids = result;
+        rd->m_error = error;
+        rd->m_state = newState;
+        ml.unlock();
+        emit ireq.data()->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
 }
 
 /*!
@@ -2578,14 +2679,19 @@ void QOrganizerItemManagerEngine::updateItemLocalIdFetchRequest(QOrganizerItemLo
  */
 void QOrganizerItemManagerEngine::updateItemFetchRequest(QOrganizerItemFetchRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
 {
-    QOrganizerItemFetchRequestPrivate* rd = static_cast<QOrganizerItemFetchRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_organizeritems = result;
-    bool emitState = rd->m_state != newState;
-    rd->m_state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QOrganizerItemFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerItemFetchRequestPrivate* rd = static_cast<QOrganizerItemFetchRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->m_mutex);
+        bool emitState = rd->m_state != newState;
+        rd->m_organizeritems = result;
+        rd->m_error = error;
+        rd->m_state = newState;
+        ml.unlock();
+        emit ireq.data()->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
 }
 
 /*!
@@ -2598,14 +2704,19 @@ void QOrganizerItemManagerEngine::updateItemFetchRequest(QOrganizerItemFetchRequ
  */
 void QOrganizerItemManagerEngine::updateItemRemoveRequest(QOrganizerItemRemoveRequest* req, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
 {
-    QOrganizerItemRemoveRequestPrivate* rd = static_cast<QOrganizerItemRemoveRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    bool emitState = rd->m_state != newState;
-    rd->m_state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QOrganizerItemRemoveRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerItemRemoveRequestPrivate* rd = static_cast<QOrganizerItemRemoveRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->m_mutex);
+        bool emitState = rd->m_state != newState;
+        rd->m_errors = errorMap;
+        rd->m_error = error;
+        rd->m_state = newState;
+        ml.unlock();
+        emit ireq.data()->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
 }
 
 /*!
@@ -2618,15 +2729,20 @@ void QOrganizerItemManagerEngine::updateItemRemoveRequest(QOrganizerItemRemoveRe
  */
 void QOrganizerItemManagerEngine::updateItemSaveRequest(QOrganizerItemSaveRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
 {
-    QOrganizerItemSaveRequestPrivate* rd = static_cast<QOrganizerItemSaveRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    rd->m_organizeritems = result;
-    bool emitState = rd->m_state != newState;
-    rd->m_state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QOrganizerItemSaveRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerItemSaveRequestPrivate* rd = static_cast<QOrganizerItemSaveRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->m_mutex);
+        bool emitState = rd->m_state != newState;
+        rd->m_organizeritems = result;
+        rd->m_errors = errorMap;
+        rd->m_error = error;
+        rd->m_state = newState;
+        ml.unlock();
+        emit ireq.data()->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
 }
 
 /*!
@@ -2639,15 +2755,20 @@ void QOrganizerItemManagerEngine::updateItemSaveRequest(QOrganizerItemSaveReques
  */
 void QOrganizerItemManagerEngine::updateDefinitionSaveRequest(QOrganizerItemDetailDefinitionSaveRequest* req, const QList<QOrganizerItemDetailDefinition>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
 {
-    QOrganizerItemDetailDefinitionSaveRequestPrivate* rd = static_cast<QOrganizerItemDetailDefinitionSaveRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    rd->m_definitions = result;
-    bool emitState = rd->m_state != newState;
-    rd->m_state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QOrganizerItemDetailDefinitionSaveRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerItemDetailDefinitionSaveRequestPrivate* rd = static_cast<QOrganizerItemDetailDefinitionSaveRequestPrivate*>(req->d_ptr);
+        QMutexLocker ml(&rd->m_mutex);
+        bool emitState = rd->m_state != newState;
+        rd->m_definitions = result;
+        rd->m_errors = errorMap;
+        rd->m_error = error;
+        rd->m_state = newState;
+        ml.unlock();
+        emit ireq.data()->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
 }
 
 /*!
@@ -2660,14 +2781,19 @@ void QOrganizerItemManagerEngine::updateDefinitionSaveRequest(QOrganizerItemDeta
  */
 void QOrganizerItemManagerEngine::updateDefinitionRemoveRequest(QOrganizerItemDetailDefinitionRemoveRequest* req, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
 {
-    QOrganizerItemDetailDefinitionRemoveRequestPrivate* rd = static_cast<QOrganizerItemDetailDefinitionRemoveRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    bool emitState = rd->m_state != newState;
-    rd->m_state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QOrganizerItemDetailDefinitionRemoveRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerItemDetailDefinitionRemoveRequestPrivate* rd = static_cast<QOrganizerItemDetailDefinitionRemoveRequestPrivate*>(req->d_ptr);
+        QMutexLocker ml(&rd->m_mutex);
+        bool emitState = rd->m_state != newState;
+        rd->m_errors = errorMap;
+        rd->m_error = error;
+        rd->m_state = newState;
+        ml.unlock();
+        emit ireq.data()->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
 }
 
 /*!
@@ -2680,34 +2806,45 @@ void QOrganizerItemManagerEngine::updateDefinitionRemoveRequest(QOrganizerItemDe
  */
 void QOrganizerItemManagerEngine::updateDefinitionFetchRequest(QOrganizerItemDetailDefinitionFetchRequest* req, const QMap<QString, QOrganizerItemDetailDefinition>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
 {
-    QOrganizerItemDetailDefinitionFetchRequestPrivate* rd = static_cast<QOrganizerItemDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    rd->m_definitions = result;
-    bool emitState = rd->m_state != newState;
-    rd->m_state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QOrganizerItemDetailDefinitionFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerItemDetailDefinitionFetchRequestPrivate* rd = static_cast<QOrganizerItemDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
+        QMutexLocker ml(&rd->m_mutex);
+        bool emitState = rd->m_state != newState;
+        rd->m_definitions = result;
+        rd->m_errors = errorMap;
+        rd->m_error = error;
+        rd->m_state = newState;
+        ml.unlock();
+        emit ireq.data()->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
 }
 
 /*!
-  Updates the given QOrganizerCollectionFetchRequest \a req with the latest results \a result, and operation error \a error.
+  Updates the given QOrganizerCollectionFetchRequest \a req with the latest results \a result, operation error \a error, and a error map list \a errorMap.
   In addition, the state of the request will be changed to \a newState.
 
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
  */
-void QOrganizerItemManagerEngine::updateCollectionFetchRequest(QOrganizerCollectionFetchRequest* req, const QList<QOrganizerCollection>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
+void QOrganizerItemManagerEngine::updateCollectionFetchRequest(QOrganizerCollectionFetchRequest* req, const QList<QOrganizerCollection>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
 {
-    QOrganizerCollectionFetchRequestPrivate* rd = static_cast<QOrganizerCollectionFetchRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_collections = result;
-    bool emitState = rd->m_state != newState;
-    rd->m_state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QOrganizerCollectionFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerCollectionFetchRequestPrivate* rd = static_cast<QOrganizerCollectionFetchRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->m_mutex);
+        bool emitState = rd->m_state != newState;
+        rd->m_collections = result;
+        rd->m_errors = errorMap;
+        rd->m_error = error;
+        rd->m_state = newState;
+        ml.unlock();
+        emit ireq.data()->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
 }
 
 /*!
@@ -2719,14 +2856,19 @@ void QOrganizerItemManagerEngine::updateCollectionFetchRequest(QOrganizerCollect
  */
 void QOrganizerItemManagerEngine::updateCollectionLocalIdFetchRequest(QOrganizerCollectionLocalIdFetchRequest* req, const QList<QOrganizerCollectionLocalId>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
 {
-    QOrganizerCollectionLocalIdFetchRequestPrivate* rd = static_cast<QOrganizerCollectionLocalIdFetchRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_collectionIds = result;
-    bool emitState = rd->m_state != newState;
-    rd->m_state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QOrganizerCollectionLocalIdFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerCollectionLocalIdFetchRequestPrivate* rd = static_cast<QOrganizerCollectionLocalIdFetchRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->m_mutex);
+        bool emitState = rd->m_state != newState;
+        rd->m_collectionIds = result;
+        rd->m_error = error;
+        rd->m_state = newState;
+        ml.unlock();
+        emit ireq.data()->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
 }
 
 /*!
@@ -2738,14 +2880,19 @@ void QOrganizerItemManagerEngine::updateCollectionLocalIdFetchRequest(QOrganizer
  */
 void QOrganizerItemManagerEngine::updateCollectionRemoveRequest(QOrganizerCollectionRemoveRequest* req, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
 {
-    QOrganizerCollectionRemoveRequestPrivate* rd = static_cast<QOrganizerCollectionRemoveRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    bool emitState = rd->m_state != newState;
-    rd->m_state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QOrganizerCollectionRemoveRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerCollectionRemoveRequestPrivate* rd = static_cast<QOrganizerCollectionRemoveRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->m_mutex);
+        bool emitState = rd->m_state != newState;
+        rd->m_errors = errorMap;
+        rd->m_error = error;
+        rd->m_state = newState;
+        ml.unlock();
+        emit ireq.data()->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
 }
 
 /*!
@@ -2757,15 +2904,20 @@ void QOrganizerItemManagerEngine::updateCollectionRemoveRequest(QOrganizerCollec
  */
 void QOrganizerItemManagerEngine::updateCollectionSaveRequest(QOrganizerCollectionSaveRequest* req, const QList<QOrganizerCollection>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
 {
-    QOrganizerCollectionSaveRequestPrivate* rd = static_cast<QOrganizerCollectionSaveRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    rd->m_collections = result;
-    bool emitState = rd->m_state != newState;
-    rd->m_state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
+    if (req) {
+        QWeakPointer<QOrganizerCollectionSaveRequest> ireq(req); // Take this in case the first emit deletes us
+        QOrganizerCollectionSaveRequestPrivate* rd = static_cast<QOrganizerCollectionSaveRequestPrivate*>(ireq.data()->d_ptr);
+        QMutexLocker ml(&rd->m_mutex);
+        bool emitState = rd->m_state != newState;
+        rd->m_collections = result;
+        rd->m_errors = errorMap;
+        rd->m_error = error;
+        rd->m_state = newState;
+        ml.unlock();
+        emit ireq.data()->resultsAvailable();
+        if (emitState && ireq)
+            emit ireq.data()->stateChanged(newState);
+    }
 }
 
 

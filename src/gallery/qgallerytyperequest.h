@@ -58,7 +58,7 @@ class Q_GALLERY_EXPORT QGalleryTypeRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
     Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
-    Q_PROPERTY(bool live READ isLive WRITE setLive)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate)
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType NOTIFY itemTypeChanged)
     Q_PROPERTY(bool valid READ isValid NOTIFY typeChanged)
 public:
@@ -69,8 +69,8 @@ public:
     QStringList propertyNames() const;
     void setPropertyNames(const QStringList &names);
 
-    bool isLive() const;
-    void setLive(bool live);
+    bool autoUpdate() const;
+    void setAutoUpdate(bool enabled);
 
     QString itemType() const;
     void setItemType(const QString &itemType);

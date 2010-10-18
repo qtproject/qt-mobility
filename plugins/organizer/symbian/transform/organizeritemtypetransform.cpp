@@ -77,8 +77,6 @@ void OrganizerItemTypeTransform::transformToDetailL(const CCalEntry& entry, QOrg
     else
         User::Leave(KErrUnknown); // unknown type
 
-    // TODO: CCalEntry::EReminder
-
     item->setType(itemType);
 }
 
@@ -97,8 +95,6 @@ void OrganizerItemTypeTransform::transformToDetailL(const CCalInstance& instance
         itemType = QLatin1String(QOrganizerItemType::TypeEventOccurrence);
     else
         User::Leave(KErrUnknown); // unknown type
-
-    // TODO: CCalEntry::EReminder
 
     itemInstance->setType(itemType);
 }

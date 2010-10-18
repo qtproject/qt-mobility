@@ -1,4 +1,4 @@
-TARGET = qservicemanager_ipc_service
+TARGET = qt_sfw_example_ipc_unittest
 INCLUDEPATH += ../../../../src/serviceframework
 DEPENDPATH += ../../../../src/serviceframework
 

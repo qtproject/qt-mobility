@@ -44,23 +44,13 @@
 #include <QtCore/qurl.h>
 #include <QDir>
 
-#include <Mda\Common\Audio.h>
-#include <Mda\Common\Resource.h>
 #include <Mda\Client\Utility.h>
 #include <MdaAudioSampleEditor.h>
 #include <mmf\common\mmfcontrollerpluginresolver.h>
 #include <mmf\common\mmfcontroller.h>
 #include <BADESCA.H>
 #include <BAUTILS.H>
-#include <coemain.h>
-
-_LIT(KAudioDummyFile, "c:\\data\\temp\\temp.wav");
-
-const QString S60AudioCaptureSession::defaultMic("Default Mic");
-const QString S60AudioCaptureSession::voiceCall("Voice Call");
-const QString S60AudioCaptureSession::fmRadio("FM Radio");
-const QString S60AudioCaptureSession::speaker("Speaker");
-const QString S60AudioCaptureSession::lineIn("Line In");
+#include <f32file.h>
 
 S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
     QObject(parent)
@@ -70,22 +60,20 @@ S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
     , m_audioCodeclist(QHash<QString, CodecData>())
     , m_error(QMediaRecorder::NoError)
     , m_isMuted(false)
-    , m_audioEndpoint(S60AudioCaptureSession::defaultMic)
 {
-#ifdef AUDIOINPUT_ROUTING
-    m_audioInput = NULL;
-#endif //AUDIOINPUT_ROUTING
     TRAPD(err, initializeSessionL());
     setError(err);
 }
 
 void S60AudioCaptureSession::initializeSessionL()
 {
-    m_recorderUtility = CMdaAudioRecorderUtility::NewL(*this, 0, 80,(TMdaPriorityPreference) 0x5210001);
+    m_recorderUtility = CMdaAudioRecorderUtility::NewL(*this, 0, EMdaPriorityNormal, EMdaPriorityPreferenceTimeAndQuality);
     updateAudioContainersL();
     populateAudioCodecsDataL();
     setDefaultSettings();
-    initAudioInputs();
+    User::LeaveIfError(m_fsSession.Connect());
+    m_captureState = EInitialized;
+    emit stateChanged(m_captureState);
 }
 
 void S60AudioCaptureSession::setError(TInt aError)
@@ -93,7 +81,6 @@ void S60AudioCaptureSession::setError(TInt aError)
     if (aError == KErrNone)
         return;
 
-    stop();
     m_error = aError;
     QMediaRecorder::Error recorderError = fromSymbianErrorToMultimediaError(m_error);
 
@@ -134,10 +121,8 @@ QMediaRecorder::Error S60AudioCaptureSession::fromSymbianErrorToMultimediaError(
 
 S60AudioCaptureSession::~S60AudioCaptureSession()
 {
-#ifdef AUDIOINPUT_ROUTING
-    delete m_audioInput;
-#endif //AUDIOINPUT_ROUTING
     delete m_recorderUtility;
+    m_fsSession.Close();
 }
 
 QAudioFormat S60AudioCaptureSession::format() const
@@ -214,10 +199,10 @@ QUrl S60AudioCaptureSession::outputLocation() const
 
 bool S60AudioCaptureSession::setOutputLocation(const QUrl& sink)
 {
-    QString filename = QDir::toNativeSeparators(m_sink.toString());
+    QString filename = QDir::toNativeSeparators(sink.toString());
     TPtrC16 path(reinterpret_cast<const TUint16*>(filename.utf16()));
-    TRAPD(err, BaflUtils::EnsurePathExistsL(CCoeEnv::Static()->FsSession(),path));
-    if (err==KErrNone) {
+    TRAPD(err, BaflUtils::EnsurePathExistsL(m_fsSession,path));
+    if (err == KErrNone) {
         m_sink = sink;
         setError(err);
         return true;
@@ -235,17 +220,34 @@ qint64 S60AudioCaptureSession::position() const
     return m_recorderUtility->Duration().Int64() / 1000;
 }
 
-QString S60AudioCaptureSession::initializeSinkL()
+void S60AudioCaptureSession::prepareSinkL()
 {
-    if (m_sink.isEmpty())
-        m_sink = generateAudioFilePath();
+    /* If m_outputLocation is null, set a default location */
+    if (m_sink.isEmpty()) {
+        QDir outputDir(QDir::rootPath());
+        int lastImage = 0;
+        int fileCount = 0;
+        foreach(QString fileName, outputDir.entryList(QStringList() << "recordclip_*")) {
+            int imgNumber = fileName.mid(5, fileName.size() - 9).toInt();
+            lastImage = qMax(lastImage, imgNumber);
+            if (outputDir.exists(fileName))
+                fileCount += 1;
+        }
+        lastImage += fileCount;
+        m_sink = QUrl(QDir::toNativeSeparators(outputDir.canonicalPath() + QString("/recordclip_%1").arg(lastImage + 1, 4, 10, QLatin1Char('0'))));
+    }
+
     QString sink = QDir::toNativeSeparators(m_sink.toString());
+    TPtrC16 path(reinterpret_cast<const TUint16*>(sink.utf16()));
+    if (BaflUtils::FileExists(m_fsSession, path))
+            BaflUtils::DeleteFile(m_fsSession, path);
+
     int index = sink.lastIndexOf('.');
     if (index != -1)
         sink.chop(sink.length()-index);
 
     sink.append(m_controllerIdMap.value(m_container).fileExtension);
-    return sink;
+    m_sink.setUrl(sink);
 }
 
 void S60AudioCaptureSession::record()
@@ -254,7 +256,8 @@ void S60AudioCaptureSession::record()
         return;
 
     if (m_captureState == EInitialized || m_captureState == ERecordComplete) {
-        QString filename = initializeSinkL();
+        prepareSinkL();
+        QString filename = m_sink.toString();
         TPtrC16 sink(reinterpret_cast<const TUint16*>(filename.utf16()));
         TUid controllerUid(TUid::Uid(m_controllerIdMap.value(m_container).controllerUid));
         TUid formatUid(TUid::Uid(m_controllerIdMap.value(m_container).destinationFormatUid));
@@ -335,100 +338,10 @@ void S60AudioCaptureSession::stop()
     emit stateChanged(m_captureState);
 }
 
-void S60AudioCaptureSession::initAudioInputs()
+void S60AudioCaptureSession::setCaptureDevice(const QString &deviceName)
 {
-    m_audioInputs[S60AudioCaptureSession::defaultMic] = QString("Microphone associated with the currently active speaker.");
-#ifdef AUDIOINPUT_ROUTING
-    m_audioInputs[S60AudioCaptureSession::voiceCall] = QString("Audio stream associated with the current phone call.");
-    m_audioInputs[S60AudioCaptureSession::fmRadio] = QString("Audio of the currently tuned FM radio station.");
-    m_audioInputs[S60AudioCaptureSession::lineIn] = QString("Audio being received from the line-in (if available).");
-    m_audioInputs[S60AudioCaptureSession::speaker] = QString("Audio currently being sent to the currently active speaker.");
-#endif //AUDIOINPUT_ROUTING
+    m_captureDevice = deviceName;
 }
-
-void S60AudioCaptureSession::setActiveEndpoint(const QString& audioEndpoint)
-{
-    if (!m_audioInputs.keys().contains(audioEndpoint))
-        return;
-
-    if (activeEndpoint().compare(audioEndpoint) != 0) {
-        m_audioEndpoint = audioEndpoint;
-        emit activeEndpointChanged(audioEndpoint);
-    }
-}
-
-QList<QString> S60AudioCaptureSession::availableEndpoints() const
-{
-    return m_audioInputs.keys();
-}
-
-QString S60AudioCaptureSession::endpointDescription(const QString& name) const
-{
-    if (m_audioInputs.keys().contains(name))
-        return m_audioInputs.value(name);
-    return QString();
-}
-
-QString S60AudioCaptureSession::activeEndpoint() const
-{
-    QString inputName = QString(S60AudioCaptureSession::defaultMic);
-#ifdef AUDIOINPUT_ROUTING
-    if (m_audioInput) {
-        CAudioInput::TAudioInputArray input = m_audioInput->AudioInput();
-        inputName = qStringFromTAudioInputPreference(input[0]);
-    }
-#endif //AUDIOINPUT_ROUTING
-    return inputName;
-}
-
-QString S60AudioCaptureSession::defaultEndpoint() const
-{
-    return QString(S60AudioCaptureSession::defaultMic);
-}
-
-void S60AudioCaptureSession::doSetActiveEndpointL(const QString& name)
-{
-#ifdef AUDIOINPUT_ROUTING
-    if (!m_recorderUtility)
-        return;
-
-    CAudioInput::TAudioInputPreference input = CAudioInput::EDefaultMic;
-
-    if (name.compare(S60AudioCaptureSession::voiceCall) == 0)
-        input = CAudioInput::EVoiceCall;
-    else if (name.compare(S60AudioCaptureSession::fmRadio) == 0)
-        input = CAudioInput::EFMRadio;
-    else if (name.compare(S60AudioCaptureSession::lineIn)== 0)
-        input = CAudioInput::ELineIn;
-    else if (name.compare(S60AudioCaptureSession::speaker) == 0)
-        input = CAudioInput::EOutputToSpeaker;
-    else // S60AudioCaptureSession::defaultMic
-        input = CAudioInput::EDefaultMic;
-
-    RArray<CAudioInput::TAudioInputPreference> inputArray;
-    inputArray.Append(input);
-
-    if (m_audioInput)
-        m_audioInput->SetAudioInputL(inputArray.Array());
-
-#endif //AUDIOINPUT_ROUTING
-}
-
-#ifdef AUDIOINPUT_ROUTING
-QString S60AudioCaptureSession::qStringFromTAudioInputPreference(CAudioInput::TAudioInputPreference input) const
-{
-    if (input == CAudioInput::EVoiceCall)
-        return S60AudioCaptureSession::voiceCall;
-    else if (input == CAudioInput::EFMRadio)
-        return S60AudioCaptureSession::fmRadio;
-    else if (input == CAudioInput::ELineIn)
-        return S60AudioCaptureSession::lineIn;
-    else if (input == CAudioInput::EOutputToSpeaker)
-        return S60AudioCaptureSession::speaker;
-    return S60AudioCaptureSession::defaultMic; // CAudioInput::EDefaultMic
-}
-#endif //AUDIOINPUT_ROUTING
-
 
 void S60AudioCaptureSession::MoscoStateChangeEvent(CBase* aObject,
         TInt aPreviousState, TInt aCurrentState, TInt aErrorCode)
@@ -449,20 +362,13 @@ void S60AudioCaptureSession::MoscoStateChangeEventL(CBase* aObject,
 		switch(aCurrentState) {
         case CMdaAudioClipUtility::EOpen: {
             if(aPreviousState == CMdaAudioClipUtility::ENotReady) {
-                if (m_captureState == EInitializing) {
-                    retrieveSupportedAudioSampleRatesL();
-                    m_recorderUtility->Close();
-                    m_captureState = EInitialized;
-                    emit stateChanged(m_captureState);
-                }else {
-                    applyAudioSettingsL();
-                    m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
-                    m_recorderUtility->RecordL();
-                    m_captureState = EOpenCompelete;
-                    emit stateChanged(m_captureState);
-                    }
-                break;
+                applyAudioSettingsL();
+                m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
+                m_recorderUtility->RecordL();
+                m_captureState = EOpenCompelete;
+                emit stateChanged(m_captureState);
             }
+            break;
         }
         case CMdaAudioClipUtility::ENotReady: {
             m_captureState = EInitialized;
@@ -534,7 +440,7 @@ void S60AudioCaptureSession::updateAudioContainersL()
 
 void S60AudioCaptureSession::retrieveSupportedAudioSampleRatesL()
 {
-    if (!m_recorderUtility || m_captureState != EInitializing)
+    if (!m_recorderUtility)
         return;
 
     m_supportedSampleRates.clear();
@@ -594,30 +500,11 @@ void S60AudioCaptureSession::populateAudioCodecsDataL()
 
     // default samplerates
     m_supportedSampleRates << 96000 << 88200 << 64000 << 48000 << 44100 << 32000 << 24000 << 22050 << 16000 << 12000 << 11025 << 8000;
-    m_captureState = EInitialized;
-    if (m_controllerIdMap.contains("audio/wav") && m_captureState != EInitialized) {
-        TMdaFileClipLocation location;
-        location.iName = KAudioDummyFile();
-        TMdaWavClipFormat format;
-        m_captureState = EInitializing;
-        m_recorderUtility->OpenL(&location, &format);
-    }
 }
 
 void S60AudioCaptureSession::applyAudioSettingsL()
 {
-    if (!m_recorderUtility)
-        return;
-#ifdef AUDIOINPUT_ROUTING
-    //CAudioInput needs to be re-initialized everytime recording starts
-    if (m_audioInput) {
-        delete m_audioInput;
-        m_audioInput = NULL;
-    }
-    m_audioInput = CAudioInput::NewL(*m_recorderUtility);
-    doSetActiveEndpointL(m_audioEndpoint);
-#endif //AUDIOINPUT_ROUTING
-    if (m_format.codec() == "AMR")
+    if (!m_recorderUtility || m_format.codec() == "AMR")
         return;
 
     TFourCC fourCC = m_audioCodeclist.value(m_format.codec()).fourCC;
@@ -706,21 +593,4 @@ TFourCC S60AudioCaptureSession::determinePCMFormat()
         }
     }
     return fourCC;
-}
-
-QUrl S60AudioCaptureSession::generateAudioFilePath()
-{
-    QDir outputDir(QDir::rootPath());
-
-    int lastImage = 0;
-    int fileCount = 0;
-    foreach(QString fileName, outputDir.entryList(QStringList() << "testclip_*")) {
-        int imgNumber = fileName.mid(5, fileName.size()-9).toInt();
-        lastImage = qMax(lastImage, imgNumber);
-        if (outputDir.exists(fileName))
-            fileCount+=1;
-    }
-    lastImage+=fileCount;
-    QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath()+QString("/testclip_%1").arg(lastImage+1,4,10,QLatin1Char('0'))));
-    return location;
 }

@@ -63,10 +63,9 @@ QTM_BEGIN_NAMESPACE
 
     The functions
     setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes),
-    setMinimumZoomLevel(qreal minimumZoom),
-    setMaximumZoomLevel(qreal maximumZoom),
-    setMinimumImageSize(const QSize &minimumSize) and
-    setMaximumImageSize(const QSize &maximumSize) should be used to
+    setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes),
+    setMinimumZoomLevel(qreal minimumZoom) and
+    setMaximumZoomLevel(qreal maximumZoom)
     configure the reported capabilities of the engine.
 
     It is important that this is done before createMapData() or any of the
@@ -79,15 +78,18 @@ QTM_BEGIN_NAMESPACE
     to pass any implementation specific data to the engine.
 */
 QGeoMappingManagerEngine::QGeoMappingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoMappingManagerEnginePrivate()) {}
+    : QObject(parent),
+      d_ptr(new QGeoMappingManagerEnginePrivate())
+{
+    Q_UNUSED(parameters)
+}
 
 /*!
   \internal
 */
 QGeoMappingManagerEngine::QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent)
-        : QObject(parent),
-        d_ptr(dd) {}
+    : QObject(parent),
+      d_ptr(dd) {}
 
 /*!
     Destroys this engine.
@@ -173,6 +175,15 @@ QList<QGraphicsGeoMap::MapType> QGeoMappingManagerEngine::supportedMapTypes() co
 }
 
 /*!
+    Returns a list of the connectivity modes supported by this engine.
+*/
+QList<QGraphicsGeoMap::ConnectivityMode> QGeoMappingManagerEngine::supportedConnectivityModes() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d->supportedConnectivityModes;
+}
+
+/*!
     Returns the minimum zoom level supported by this engine.
 
     Larger values of the zoom level correspond to more detailed views of the
@@ -198,30 +209,6 @@ qreal QGeoMappingManagerEngine::maximumZoomLevel() const
 }
 
 /*!
-    Returns the size of the smallest map image which is supported by this engine.
-
-    An invalid size indicates that this QGeoMappingManagerEngine instance places
-    no restrictions on the minimum size of the map image.
-*/
-QSize QGeoMappingManagerEngine::minimumImageSize() const
-{
-    Q_D(const QGeoMappingManagerEngine);
-    return d->minimumImageSize;
-}
-
-/*!
-    Returns the size of the largest map image which is supported by this engine.
-
-    An invalid size indicates that this QGeoMappingManagerEngine instance places
-    no restrictions on the maximum size of the map image.
-*/
-QSize QGeoMappingManagerEngine::maximumImageSize() const
-{
-    Q_D(const QGeoMappingManagerEngine);
-    return d->maximumImageSize;
-}
-
-/*!
     Sets the list of map types supported by this engine to \a mapTypes.
 
     Subclasses of QGeoMappingManagerEngine should use this function to ensure
@@ -231,6 +218,22 @@ void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<QGraphicsGeoMap:
 {
     Q_D(QGeoMappingManagerEngine);
     d->supportedMapTypes = mapTypes;
+}
+
+/*!
+    Sets the list of connectivity modes supported by this engine to \a connectivityModes.
+
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
+    that supportedConnectivityModes() provides accurate information.
+
+    If createMapData does not specify a connectivity mode the first mode from
+    \a connectivityModes will be used, or QGraphicsGeoMap::NoConnectivity will
+    be used if \a connectivityModes is empty.
+*/
+void QGeoMappingManagerEngine::setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes)
+{
+    Q_D(QGeoMappingManagerEngine);
+    d->supportedConnectivityModes = connectivityModes;
 }
 
 /*!
@@ -264,38 +267,6 @@ void QGeoMappingManagerEngine::setMaximumZoomLevel(qreal maximumZoom)
 }
 
 /*!
-    Sets the size of the smallest map image which is supported by this
-    engine.
-
-    An invalid size indicates that this engine places
-    no restrictions on the minimum size of the map image.
-
-    Subclasses of QGeoMappingManagerEngine should use this function to ensure
-    minimumImageSize() provides accurate information.
-*/
-void QGeoMappingManagerEngine::setMinimumImageSize(const QSize &minimumImageSize)
-{
-    Q_D(QGeoMappingManagerEngine);
-    d->minimumImageSize = minimumImageSize;
-}
-
-/*!
-    Sets the size of the largest map image which is supported by this
-    engine.
-
-    An invalid size indicates that this engine places
-    no restrictions on the maximum size of the map image.
-
-    Subclasses of QGeoMappingManagerEngine should use this function to ensure
-    maximumImageSize() provides accurate information.
-*/
-void QGeoMappingManagerEngine::setMaximumImageSize(const QSize &maximumImageSize)
-{
-    Q_D(QGeoMappingManagerEngine);
-    d->maximumImageSize = maximumImageSize;
-}
-
-/*!
     Sets the locale to be used by the this manager to \a locale.
 
     If this mapping manager supports returning map labels
@@ -321,7 +292,7 @@ QLocale QGeoMappingManagerEngine::locale() const
 *******************************************************************************/
 
 QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
-        : managerVersion(-1) {}
+    : managerVersion(-1) {}
 
 QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() {}
 

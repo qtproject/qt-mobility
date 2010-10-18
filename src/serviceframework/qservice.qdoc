@@ -67,6 +67,17 @@
 */
 
 /*!
+    \enum QService::UnrecoverableIPCError
+    Defines the unrecoverable IPC error ot the service 
+
+    \value    ErrorUnknown                  An unknown IPC error.
+    \value    ErrorServiceNoLongerAvailable Indicates that the service is no longer available.
+    \value    ErrorOutofMemory              Indicates that the service is out of memoruy.
+    \value    ErrorPermissionDenied         Indicates that the permission of this service is denied.
+    \value    ErrorInvalidArguments         User uses invalid argument for this service.
+*/
+
+/*!
     \enum QService::Type
     Defines the type of the service 
 

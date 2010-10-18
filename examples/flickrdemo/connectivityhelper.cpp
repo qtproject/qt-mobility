@@ -53,7 +53,7 @@ ConnectivityHelper::ConnectivityHelper(QNetworkSession *session, QWidget *parent
             SLOT(error(QNetworkSession::SessionError)));
 }
 
-void ConnectivityHelper::error(QtMobility::QNetworkSession::SessionError error)
+void ConnectivityHelper::error(QNetworkSession::SessionError error)
 {
     if (error == QNetworkSession::UnknownSessionError) {
         if (m_session->state() == QNetworkSession::Connecting) {

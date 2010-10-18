@@ -207,7 +207,7 @@
 
     Most of the differences will obviously be about video control and information. There are many properties associated with the \l {Video} element, most of them deal with meta-data, control of the video media and aspects of presentation.
     
-    
+   Note: This element is currently not supported on Symbian platforms.
     \annotatedlist qml-multimedia
 
 */

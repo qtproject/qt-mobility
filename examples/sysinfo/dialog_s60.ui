@@ -1016,12 +1016,12 @@
          <item>
           <widget class="QLabel" name="label_154">
            <property name="text">
-            <string>Contrast</string>
+            <string>Color Depth</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="contrastLabel">
+          <widget class="QLabel" name="colorDepthLabel">
            <property name="text">
             <string/>
            </property>
@@ -1457,7 +1457,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Current MMC:</string>
+            <string>Current MCC:</string>
            </property>
           </widget>
          </item>
@@ -1529,7 +1529,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Home MMC:</string>
+            <string>Home MCC:</string>
            </property>
           </widget>
          </item>

@@ -99,7 +99,19 @@ QTapReading::TapDirection QTapReading::tapDirection() const
 */
 void QTapReading::setTapDirection(QTapReading::TapDirection tapDirection)
 {
-    d->tapDirection = tapDirection;
+    switch (tapDirection) {
+    case X_Pos:
+    case Y_Pos:
+    case Z_Pos:
+    case X_Neg:
+    case Y_Neg:
+    case Z_Neg:
+        d->tapDirection = tapDirection;
+        break;
+    default:
+        d->tapDirection = Undefined;
+        break;
+    }
 }
 
 /*!

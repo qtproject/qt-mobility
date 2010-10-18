@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -207,7 +207,7 @@ public:
             (const QByteArray& _name, const QByteArray& _type, int notifierIdx=-1)
         : name(_name),
           type(QMetaObject::normalizedType(_type.constData())),
-          flags(Readable | Writable), notifySignal(-1)
+          flags(Readable | Writable | Scriptable), notifySignal(-1)
     {
         if (notifierIdx >= 0) {
             flags |= Notify;
@@ -501,9 +501,8 @@ QMetaMethodBuilder QMetaObjectBuilder::addMethod(const QMetaMethod& prototype)
     QMetaMethodBuilder method;
     if (prototype.methodType() == QMetaMethod::Method)
         method = addMethod(prototype.signature());
-    else if (prototype.methodType() == QMetaMethod::Signal) {        
+    else if (prototype.methodType() == QMetaMethod::Signal)
         method = addSignal(prototype.signature());
-    }
     else if (prototype.methodType() == QMetaMethod::Slot)
         method = addSlot(prototype.signature());
     else if (prototype.methodType() == QMetaMethod::Constructor)
@@ -641,7 +640,8 @@ QMetaPropertyBuilder QMetaObjectBuilder::addProperty(const QMetaProperty& protot
     \a name.  Returns an object that can be used to adjust
     the other attributes of the enumerator.
 
-    \sa enumerator(), enumeratorCount(), removeEnumerator(), indexOfEnumerator()
+    \sa enumerator(), enumeratorCount(), removeEnumerator(),
+    \sa indexOfEnumerator()
 */
 QMetaEnumBuilder QMetaObjectBuilder::addEnumerator(const QByteArray& name)
 {
@@ -656,7 +656,8 @@ QMetaEnumBuilder QMetaObjectBuilder::addEnumerator(const QByteArray& name)
     QMetaObject.  Returns an object that can be used to adjust the
     attributes of the enumerator.
 
-    \sa enumerator(), enumeratorCount(), removeEnumerator(), indexOfEnumerator()
+    \sa enumerator(), enumeratorCount(), removeEnumerator(),
+    \sa indexOfEnumerator()
 */
 QMetaEnumBuilder QMetaObjectBuilder::addEnumerator(const QMetaEnum& prototype)
 {
@@ -1143,7 +1144,7 @@ static QByteArray buildParameterNames
     if (!parameterNames.isEmpty()) {
         QByteArray names;
         bool first = true;
-        foreach (QByteArray name, parameterNames) {
+        foreach (const QByteArray &name, parameterNames) {
             if (first)
                 first = false;
             else
@@ -2188,7 +2189,7 @@ bool QMetaPropertyBuilder::isDesignable() const
 
 /*!
     Returns true if the property is scriptable; otherwise returns false.
-    This default value is false.
+    This default value is true.
 
     \sa setScriptable(), isDesignable(), isStored()
 */

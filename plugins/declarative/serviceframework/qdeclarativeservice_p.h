@@ -48,15 +48,14 @@
 #include <qdeclarative.h>
 #include <qdeclarativelist.h>
 
-//Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
-
 QTM_BEGIN_NAMESPACE
 
 class QDeclarativeService : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName)
-    Q_PROPERTY(QString serviceName READ serviceName)
-    Q_PROPERTY(QString versionNumber READ versionNumber)
+    Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName NOTIFY interfaceNameChanged)
+    Q_PROPERTY(QString serviceName READ serviceName NOTIFY serviceNameChanged)
+    Q_PROPERTY(int majorVersion READ majorVersion NOTIFY majorVersionChanged)
+    Q_PROPERTY(int minorVersion READ minorVersion NOTIFY minorVersionChanged)
     Q_PROPERTY(bool valid READ isValid NOTIFY validChanged)
     Q_PROPERTY(QObject* serviceObject READ serviceObject NOTIFY serviceObjectChanged)
 
@@ -70,7 +69,8 @@ public:
     void setInterfaceName(const QString& interface);
     QString interfaceName() const;
     QString serviceName() const;
-    QString versionNumber() const;
+    int majorVersion() const;
+    int minorVersion() const;
 
     bool isValid() const;
     QObject* serviceObject();
@@ -78,41 +78,72 @@ public:
 Q_SIGNALS:
     void validChanged();
     void serviceObjectChanged();
+    void interfaceNameChanged();
+    void serviceNameChanged();
+    void majorVersionChanged();
+    void minorVersionChanged();
 
 private:
-    QServiceManager* serviceManager;
-
-    QServiceInterfaceDescriptor m_descriptor;
     QObject* serviceInstance;
+    QServiceManager* serviceManager;
+    QServiceInterfaceDescriptor m_descriptor;
 };
 
 
 class QDeclarativeServiceList : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName)
-    Q_PROPERTY(QString minVersion READ minVersion WRITE setMinVersion)
+    Q_PROPERTY(QString serviceName READ serviceName WRITE setServiceName NOTIFY serviceNameChanged)
+    Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName NOTIFY interfaceNameChanged)
+    Q_PROPERTY(int majorVersion READ majorVersion WRITE setMajorVersion NOTIFY majorVersionChanged)
+    Q_PROPERTY(int minorVersion READ minorVersion WRITE setMinorVersion NOTIFY minorVersionChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeService> services READ services NOTIFY servicesChanged)
 
+    Q_PROPERTY(MatchRule versionMatch READ versionMatch WRITE setVersionMatch NOTIFY versionMatchChanged)
+    Q_ENUMS(MatchRule);
+
 public:
+    enum MatchRule {
+        Minimum = 0,
+        Exact
+    };
+
     QDeclarativeServiceList();
     ~QDeclarativeServiceList();
 
     QDeclarativeListProperty<QDeclarativeService> services();
     
+    void setServiceName(const QString& service);
+    QString serviceName() const;
+    
     void setInterfaceName(const QString& interface);
     QString interfaceName() const;
 
-    void setMinVersion(const QString& interface);
-    QString minVersion() const;
+    void setMinorVersion(int minor);
+    int minorVersion() const;
+    
+    void setMajorVersion(int major);
+    int majorVersion() const;
+    
+    void setVersionMatch(QDeclarativeServiceList::MatchRule match);
+    QDeclarativeServiceList::MatchRule versionMatch() const;
     
 private:
-    QServiceManager* serviceManager;
     QList<QDeclarativeService *> m_services;
+    QServiceManager* serviceManager;
+    QString m_service;
     QString m_interface;
-    QString m_version;
+    int m_major;
+    int m_minor;
+    QDeclarativeServiceList::MatchRule m_match;
 
 Q_SIGNALS:
     void servicesChanged(const QDeclarativeListProperty<QDeclarativeService>&);
+    void serviceNameChanged();
+    void interfaceNameChanged();
+    void minorVersionChanged();
+    void majorVersionChanged();
+    void versionMatchChanged();
+
 };
 
 QTM_END_NAMESPACE

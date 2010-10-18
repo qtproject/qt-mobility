@@ -37,6 +37,13 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
+** plugin source code.
+**
 ****************************************************************************/
 
 #include "qgeocodexmlparser.h"
@@ -109,7 +116,7 @@ bool QGeoCodeXmlParser::parseRootElement()
                 QStringRef result = m_reader->attributes().value("resultCode");
                 if (result == "FAILED") {
                     QString resultDesc = m_reader->attributes().value("resultDescription").toString();
-                    if(resultDesc.isEmpty())
+                    if (resultDesc.isEmpty())
                         resultDesc = "The attribute \"resultCode\" of the element \"places\" indicates that the request failed.";
 
                     m_reader->raiseError(resultDesc);
@@ -405,7 +412,7 @@ bool QGeoCodeXmlParser::parseAddress(QGeoAddress *address)
         }
 
         if (inThoroughfare && (m_reader->name() == "number")) {
-            address->setStreetNumber(m_reader->readElementText());
+            address->setStreet(m_reader->readElementText() + " " + address->street());
             if (!m_reader->readNextStartElement())
                 inThoroughfare = false;
         }

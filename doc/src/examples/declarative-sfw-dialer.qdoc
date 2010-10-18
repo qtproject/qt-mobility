@@ -44,7 +44,33 @@
 
 \title Service Framework using QML Example
 
-\bold {Explanation:}
+\bold {Execution}
+
+This example requires the example dialer services to be pre-registered in order 
+for the application to discover and load the services. This can be done by using the 
+service framework command line tool to add the corresponding service XML file:
+
+\list
+    \o ./servicefw add voipdialerservice.xml
+    \o ./servicefw add landlinedialerservice.xml
+    \o ./servicefw add remotedialerservice.xml
+    \o ./servicefw dbusservice removedialerservice.xml dialer_service
+\endlist
+
+These deployment commands will register the two plugin-based services as well as the remote
+IPC-based service. The last line features the ability to create an autostarting file for
+D-Bus if the platform supports the QtDBus module, typically avaiable on Linux systems.
+
+There are 2 ways to run the example:
+\list
+    \o ./qmldialer (only method for Symbian)
+    \o qmldialer declarative-sfw-dialer.qml
+\endlist
+
+The XML files for all example services can be found in the QtMobility build directory
+under install/bin/xmldata
+
+\bold {Explanation}
 
 This example should demonstrate how to use the Service Framework to 
 access a list of services in a QML context. A library plugin provides QML with elements
@@ -68,7 +94,7 @@ as per \l {Installation Guide}.
 
 To included the Service Framework QML plugin to our QML file we need to import it as follows:
 
-\snippet declarative-sfw-dialer/declarative-sfw-dialer/content/DialerList.qml 4
+\snippet declarative-sfw-dialer/declarative-sfw-dialer/content-sfw-dialer/DialerList.qml 4
 
 
 \bold {The Services:}
@@ -129,16 +155,16 @@ The QML elements are implemented in 4 different qml scripting files
 The first step is to use our ServiceWrapperList to specify the interface and minimum version (optional) through QML item
 context, which will produce a list of ServiceWrapper objects.
 
-\snippet declarative-sfw-dialer/declarative-sfw-dialer/content/DialerList.qml 5
+\snippet declarative-sfw-dialer/declarative-sfw-dialer/content-sfw-dialer/DialerList.qml 5
 
 In the DialerList.qml file the services property is assigned to the ListView model property. 
 
-\snippet declarative-sfw-dialer/declarative-sfw-dialer/content/DialerList.qml 0
+\snippet declarative-sfw-dialer/declarative-sfw-dialer/content-sfw-dialer/DialerList.qml 0
 
 To show the items of the model property we need to create a delegate component and assign it to the ListView
 Delegate property:
 
-\snippet declarative-sfw-dialer/declarative-sfw-dialer/content/DialerList.qml 1
+\snippet declarative-sfw-dialer/declarative-sfw-dialer/content-sfw-dialer/DialerList.qml 1
 
 In this component you can define how you want to draw one ListView item.
 You can access inside of this component the current ListWiew item by using the variable modelData.
@@ -146,11 +172,11 @@ In our example we are using two text lines. Furthermore we can define whats happ
 on a ListView item by using the MouseRegion.
 
 \target DialerList_qml_2
-\snippet declarative-sfw-dialer/declarative-sfw-dialer/content/DialerList.qml 2
+\snippet declarative-sfw-dialer/declarative-sfw-dialer/content-sfw-dialer/DialerList.qml 2
 
 Another component can be created for highliting a list item:
 
-\snippet declarative-sfw-dialer/declarative-sfw-dialer/content/DialerList.qml 3
+\snippet declarative-sfw-dialer/declarative-sfw-dialer/content-sfw-dialer/DialerList.qml 3
 
 \bold {Service signals and function calls on the QML site}
 
@@ -165,11 +191,11 @@ Both function are implemented in the service \l {voipdialer_h_0} { (see voipdial
 In DialScreen.qml the dial and the hangup signals are defined.
 The hangup signal will be emitted if the HangUpButton was clicked:
 
-\snippet declarative-sfw-dialer/declarative-sfw-dialer/content/DialScreen.qml 1
+\snippet declarative-sfw-dialer/declarative-sfw-dialer/content-sfw-dialer/DialScreen.qml 1
 
 The dial signal will be emitted if the CallButton was clicked:
 
-\snippet declarative-sfw-dialer/declarative-sfw-dialer/content/DialScreen.qml 2
+\snippet declarative-sfw-dialer/declarative-sfw-dialer/content-sfw-dialer/DialScreen.qml 2
 
 Now we need to connect the stateChanged signal form the services with an event handler on the QML site.
 This is done in our main declarative file:

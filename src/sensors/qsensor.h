@@ -43,11 +43,11 @@
 #define QSENSOR_H
 
 #include <qmobilityglobal.h>
-#include <QObject>
-#include <QByteArray>
-#include <QMetaType>
-#include <QVariant>
-#include <QPair>
+#include <QtCore/QObject>
+#include <QtCore/QByteArray>
+#include <QtCore/QMetaType>
+#include <QtCore/QVariant>
+#include <QtCore/QPair>
 
 QTM_BEGIN_NAMESPACE
 

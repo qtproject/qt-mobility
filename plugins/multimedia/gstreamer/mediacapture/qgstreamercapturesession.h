@@ -60,6 +60,7 @@ class QGstreamerVideoEncode;
 class QGstreamerImageEncode;
 class QGstreamerRecorderControl;
 class QGstreamerMediaContainerControl;
+class QGstreamerVideoRendererInterface;
 
 class QGstreamerElementFactory
 {
@@ -110,14 +111,16 @@ public:
     QGstreamerVideoInput *videoInput() const { return m_videoInputFactory; }
     void setVideoInput(QGstreamerVideoInput *videoInput);
 
-    QGstreamerElementFactory *videoPreview() const { return m_videoPreviewFactory; }
-    void setVideoPreview(QGstreamerElementFactory *videoPreview);
+    QObject *videoPreview() const { return m_viewfinder; }
+    void setVideoPreview(QObject *viewfinder);
 
     void captureImage(int requestId, const QString &fileName);
 
     State state() const;
     qint64 duration() const;
     bool isMuted() const { return m_muted; }
+
+    bool isReady() const;
 
     bool processSyncMessage(const QGstreamerMessage &message);
 
@@ -129,6 +132,8 @@ signals:
     void imageCaptured(int requestId, const QImage &img);
     void imageSaved(int requestId, const QString &path);
     void mutedChanged(bool);
+    void readyChanged(bool);
+    void viewfinderChanged();
 
 public slots:
     void setState(QGstreamerCaptureSession::State);
@@ -167,7 +172,8 @@ private:
     QGstreamerElementFactory *m_audioInputFactory;
     QGstreamerElementFactory *m_audioPreviewFactory;
     QGstreamerVideoInput *m_videoInputFactory;
-    QGstreamerElementFactory *m_videoPreviewFactory;
+    QObject *m_viewfinder;
+    QGstreamerVideoRendererInterface *m_viewfinderInterface;
 
     QGstreamerAudioEncode *m_audioEncodeControl;
     QGstreamerVideoEncode *m_videoEncodeControl;

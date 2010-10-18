@@ -1,8 +1,0 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-<file>hapticsquare.qml</file>
-<file>components/Button.qml</file>
-<file>components/images/toolbutton.png</file>
-<file>components/images/toolbutton.sci</file>
-</qresource>
-</RCC>

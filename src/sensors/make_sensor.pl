@@ -150,8 +150,7 @@ class Q_SENSORS_EXPORT '.$sensor.' : public QSensor
 {
     Q_OBJECT
 public:
-    explicit '.$sensor.'(QObject *parent = 0) : QSensor(parent)
-    { setType('.$sensor.'::type); }
+    explicit '.$sensor.'(QObject *parent = 0) : QSensor('.$sensor.'::type, parent) {}
     virtual ~'.$sensor.'() {}
     '.$reading.' *reading() const { return static_cast<'.$reading.'*>(QSensor::reading()); }
     static char const * const type;

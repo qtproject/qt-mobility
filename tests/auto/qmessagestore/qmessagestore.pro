@@ -11,12 +11,6 @@ CONFIG += mobility
 MOBILITY = messaging
 INCLUDEPATH += ../../../src/messaging
 
-symbian|wince*|maemo5|win32|mac {
-} else {
-# Temporarily link against local qtopiamail lib (should be part of the platform)
-LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
-}
-
 wince*|symbian*: {
     addFiles.sources = testdata/*
     addFiles.path = testdata

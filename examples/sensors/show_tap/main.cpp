@@ -100,6 +100,7 @@ int main(int argc, char **argv)
     }
 
     QTapSensor singlesensor;
+    singlesensor.setProperty("returnDoubleTapEvents", false);
     if (rate_val > 0) {
         singlesensor.setDataRate(rate_val);
     }

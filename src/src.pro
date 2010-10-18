@@ -26,7 +26,6 @@ contains(mobility_modules,versit) {
 }
 
 contains(mobility_modules,feedback): SUBDIRS += feedback
-contains(mobility_modules,telephony): SUBDIRS += telephony
 
 contains(mobility_modules,publishsubscribe) {
     SUBDIRS += publishsubscribe

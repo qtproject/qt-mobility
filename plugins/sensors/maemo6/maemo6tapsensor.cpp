@@ -50,6 +50,9 @@ maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
     const QString sensorName = "tapsensor";
     initSensor<TapSensorChannelInterface>(sensorName, m_initDone);
 
+//    addOutputRange(0, 4, 1); // axes only, no direction
+    sensor->setProperty("returnDoubleTapEvents", true); //by default doubles
+
     if (m_sensorInterface){
         if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Tap&)),
                                this, SLOT(slotDataAvailable(const Tap&)))))
@@ -57,6 +60,7 @@ maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
     }
     else
         qWarning() << "Unable to initialize "<<sensorName;
+
 
     setReading<QTapReading>(&m_reading);
 }

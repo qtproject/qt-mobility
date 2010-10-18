@@ -63,6 +63,7 @@
 #include "qcontactmanagerengine.h"
 #include "qcontactactionmanager_p.h"
 
+QTM_USE_NAMESPACE
 QTM_BEGIN_NAMESPACE
 
 class QContactManagerEngineFactory;
@@ -83,9 +84,9 @@ public:
     }
 
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
-    static QContactManagerEngine* engine(const QContactManager* manager);
+    static QContactManagerEngineV2* engine(const QContactManager* manager);
 
-    QContactManagerEngine* m_engine;
+    QContactManagerEngineV2* m_engine;
     QContactManager::Error m_error;
 
     /* Manager plugins */
@@ -100,7 +101,6 @@ public:
 private:
     Q_DISABLE_COPY(QContactManagerData)
 };
-
 
 QTM_END_NAMESPACE
 

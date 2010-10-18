@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup qml-location
 
-    The Coordinate element is part of the \bold{QtMobility.location 1.0} module.
+    The Coordinate element is part of the \bold{QtMobility.location 1.1} module.
 */
 
 QDeclarativeCoordinate::QDeclarativeCoordinate(QObject* parent)
@@ -77,10 +77,12 @@ void QDeclarativeCoordinate::setCoordinate(const QGeoCoordinate &coordinate)
         !(qIsNaN(coordinate.altitude()) && qIsNaN(previousCoordinate.altitude()))) {
         emit altitudeChanged(m_coordinate.altitude());
     }
-    if (coordinate.latitude() != previousCoordinate.latitude()) {
+    if (coordinate.latitude() != previousCoordinate.latitude() &&
+        !(qIsNaN(coordinate.latitude()) && qIsNaN(previousCoordinate.latitude()))) {
         emit latitudeChanged(m_coordinate.latitude());
     }
-    if (coordinate.longitude() != previousCoordinate.longitude()) {
+    if (coordinate.longitude() != previousCoordinate.longitude() &&
+        !(qIsNaN(coordinate.longitude()) && qIsNaN(previousCoordinate.longitude()))) {
         emit longitudeChanged(m_coordinate.longitude());
     }
 }
@@ -153,6 +155,12 @@ void QDeclarativeCoordinate::setLatitude(double latitude)
 double QDeclarativeCoordinate::latitude() const
 {
     return m_coordinate.latitude();
+}
+
+qreal QDeclarativeCoordinate::distanceTo(QObject* coordinate)
+{
+    QDeclarativeCoordinate* coord = static_cast<QDeclarativeCoordinate*>(coordinate);
+    return m_coordinate.distanceTo(coord->coordinate());
 }
 
 #include "moc_qdeclarativecoordinate_p.cpp"

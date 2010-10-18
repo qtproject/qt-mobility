@@ -165,16 +165,14 @@ public:
     QGalleryMetaDataFilterPrivate(QGalleryFilter::Type type = QGalleryFilter::MetaData)
         : QGalleryFilterPrivate(type)
         , comparator(QGalleryFilter::Equals)
-        , caseSensitivity(Qt::CaseSensitive)
-        , inverted(false)
+        , negated(false)
     {
     }
 
     QGalleryMetaDataFilterPrivate(const QGalleryMetaDataFilterPrivate &other)
         : QGalleryFilterPrivate(other)
         , comparator(other.comparator)
-        , caseSensitivity(other.caseSensitivity)
-        , inverted(other.inverted)
+        , negated(other.negated)
         , property(other.property)
         , value(other.value)
     {
@@ -187,8 +185,7 @@ public:
                     = static_cast<const QGalleryMetaDataFilterPrivate &>(other);
 
             return o.comparator == comparator
-                    && o.caseSensitivity == caseSensitivity
-                    && o.inverted == inverted
+                    && o.negated == negated
                     && o.property == property
                     && o.value == value;
         } else {
@@ -199,13 +196,12 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     void printDebug(QDebug &debug) const
     {
-        if (inverted)
+        if (negated)
             debug << "!";
         debug << "QGalleryMetaDataFilter(";
         if (!property.isNull())
             debug << "propertyName: " << property << " ";
-        debug << "comparator: " << comparator << " ";
-        debug << "case-sensitive: " << caseSensitivity;
+        debug << "comparator: " << comparator;
         if (!value.isNull())
             debug << " value: " << value;
         debug << ")";
@@ -213,8 +209,7 @@ public:
 #endif
 
     QGalleryFilter::Comparator comparator;
-    Qt::CaseSensitivity caseSensitivity;
-    bool inverted;
+    bool negated;
     QString property;
     QVariant value;
 };
@@ -445,13 +440,21 @@ void QGalleryIntersectionFilter::clear()
 }
 
 /*!
-    \fn QGalleryIntersectionFilter operator &&(const QGalleryIntersectionFilter &filter1, const T &filter2)
+    \fn QGalleryIntersectionFilter operator &&(const QGalleryIntersectionFilter &filter1, const QGalleryIntersectionFilter &filter2)
 
     Returns a gallery filter matches the intersection of \a filter1 and
     \a filter2.
 
     \relates QGalleryIntersectionFilter
 */
+
+QGalleryIntersectionFilter operator &&(
+        const QGalleryIntersectionFilter &filter1, const QGalleryIntersectionFilter &filter2)
+{
+    QGalleryIntersectionFilter filter = filter1;
+    filter.append(filter2);
+    return filter;
+}
 
 /*!
     \class QGalleryUnionFilter
@@ -673,13 +676,21 @@ void QGalleryUnionFilter::clear()
 }
 
 /*!
-    \fn QGalleryUnionFilter operator ||(const QGalleryUnionFilter &filter1, const T &filter2)
+    \fn QGalleryUnionFilter operator ||(const QGalleryUnionFilter &filter1, const QGalleryUnionFilter &filter2)
 
     Returns a gallery filter which matches the union of \a filter1 and
     \a filter2.
 
     \relates QGalleryUnionFilter
 */
+
+QGalleryUnionFilter operator ||(
+        const QGalleryUnionFilter &filter1, const QGalleryUnionFilter &filter2)
+{
+    QGalleryUnionFilter filter = filter1;
+    filter.append(filter2);
+    return filter;
+}
 
 /*!
     \class QGalleryMetaDataFilter
@@ -705,22 +716,17 @@ QGalleryMetaDataFilter::QGalleryMetaDataFilter()
 /*!
     Constructs a meta-data filter which tests if a meta-data \a property
     matches a \a value according to a \a comparison operator.
-
-    The \a caseSensitivity determines whether or not a case-sensitive
-    comparison is made.
 */
 
 QGalleryMetaDataFilter::QGalleryMetaDataFilter(
         const QString &property,
         const QVariant &value,
-        QGalleryFilter::Comparator comparison,
-        Qt::CaseSensitivity caseSensitivity)
+        QGalleryFilter::Comparator comparison)
             : d(new QGalleryMetaDataFilterPrivate)
 {
     d->property = property;
     d->value = value;
     d->comparator = comparison;
-    d->caseSensitivity = caseSensitivity;
 }
 
 /*!
@@ -840,49 +846,31 @@ void QGalleryMetaDataFilter::setComparator(QGalleryFilter::Comparator comparator
 }
 
 /*!
-    Returns whether a filter performs case-sensitive comparisons.
+    Returns whether the result of a meta-data filter should be negated.
 */
 
-Qt::CaseSensitivity QGalleryMetaDataFilter::caseSensitivity() const
+bool QGalleryMetaDataFilter::isNegated() const
 {
-    return d->caseSensitivity;
+    return d->negated;
 }
 
 /*!
-    Sets the case-\a{sensitivity} of a meta-data filter.
+    Sets whether the result of a meta-data filter should be \a negated.
 */
 
-void QGalleryMetaDataFilter::setCaseSensitivity(Qt::CaseSensitivity sensitivity)
+void QGalleryMetaDataFilter::setNegated(bool negated)
 {
-    d->caseSensitivity = sensitivity;
+    d->negated = negated;
 }
 
 /*!
-    Returns whether the result of a meta-data filter should be inverted.
-*/
-
-bool QGalleryMetaDataFilter::isInverted() const
-{
-    return d->inverted;
-}
-
-/*!
-    Sets whether the result of a meta-data filter should be \a inverted.
-*/
-
-void QGalleryMetaDataFilter::setInverted(bool inverted)
-{
-    d->inverted = inverted;
-}
-
-/*!
-    Returns a meta-data filter which tests the inverse of an existing filter.
+    Returns a meta-data filter which tests the negation of an existing filter.
 */
 
 QGalleryMetaDataFilter QGalleryMetaDataFilter::operator !() const
 {
     QGalleryMetaDataFilter filter(*this);
-    filter.setInverted(!d->inverted);
+    filter.setNegated(!d->negated);
     return filter;
 }
 

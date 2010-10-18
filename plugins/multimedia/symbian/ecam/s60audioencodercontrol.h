@@ -51,12 +51,16 @@ QT_USE_NAMESPACE
 
 class S60VideoCaptureSession;
 
+/*
+ * Control for audio settings when recording video using QMediaRecorder.
+ */
 class S60AudioEncoderControl : public QAudioEncoderControl
 {
     Q_OBJECT
     
 public: // Constructor & Destructor
     
+    S60AudioEncoderControl(QObject *parent = 0);
     S60AudioEncoderControl(S60VideoCaptureSession *session, QObject *parent = 0);
     virtual ~S60AudioEncoderControl();
 
@@ -71,7 +75,7 @@ public: // QAudioEncoderControl
 
     // Audio Settings
     QAudioEncoderSettings audioSettings() const;
-    void setAudioSettings(const QAudioEncoderSettings&);
+    void setAudioSettings(const QAudioEncoderSettings &settings);
 
     // Encoding Option
     QStringList supportedEncodingOptions(const QString &codec) const;

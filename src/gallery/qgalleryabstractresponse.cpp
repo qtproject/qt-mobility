@@ -68,19 +68,21 @@ QGalleryAbstractResponse::QGalleryAbstractResponse(QObject *parent)
 }
 
 /*!
-    Constructs a new gallery response, for a request that has finished with the
-    given \a result.
+    Constructs a new gallery response, for a request that has finished with an
+    \a error.  The optional \a errorString will describe the error in greater
+    detail.
 
     The \a parent is passed to QObject.
 */
 
-QGalleryAbstractResponse::QGalleryAbstractResponse(int result, QObject *parent)
+QGalleryAbstractResponse::QGalleryAbstractResponse(
+        int error, const QString &errorString, QObject *parent)
     : QObject(parent)
     , d_ptr(new QGalleryAbstractResponsePrivate)
 {
     d_ptr->q_ptr = this;
 
-    finish(result, false);
+    QGalleryAbstractResponse::error(error, errorString);
 }
 
 /*!
@@ -104,23 +106,49 @@ QGalleryAbstractResponse::~QGalleryAbstractResponse()
 }
 
 /*!
+    Identifies if a response is an an active state.
+
+    Returns true if a response is active, and false otherwise.
+*/
+
+bool QGalleryAbstractResponse::isActive() const
+{
+    return d_func()->status == QGalleryAbstractRequest::Active;
+}
+
+/*!
     Identifies if the items returned by a response are being monitored for
     changes.
 
     Returns true if a response is in an idle state, and false otherwise.
 */
+
 bool QGalleryAbstractResponse::isIdle() const
 {
-    return d_func()->idle;
+    return d_func()->status == QGalleryAbstractRequest::Idle;
 }
 
 /*!
-    Returns the result of a gallery request.
+    Returns an identifier describing an error condition encountered by a
+    response.
+
+    In the case of no error this will return QGalleryAbstractRequest::NoError.
+
+    \sa QGalleryAbstractRequest::Error, QDocumentGallery::Error
 */
 
-int QGalleryAbstractResponse::result() const
+int QGalleryAbstractResponse::error() const
 {
-    return d_func()->result;
+    return d_func()->error;
+}
+
+/*!
+    Returns a string describing the cause of an \l error() in more detail.
+*/
+
+QString QGalleryAbstractResponse::errorString() const
+{
+    return d_func()->errorString;
 }
 
 /*!
@@ -149,15 +177,11 @@ void QGalleryAbstractResponse::cancel()
 {
     Q_D(QGalleryAbstractResponse);
 
-    if (d->result == QGalleryAbstractRequest::NoResult) {
-        d->result = QGalleryAbstractRequest::Cancelled;
-        d->idle = false;
+    if (d->status == QGalleryAbstractRequest::Active
+            || d->status == QGalleryAbstractRequest::Idle) {
+        d->status = QGalleryAbstractRequest::Cancelled;
 
-        emit finished();
-    } else if (d->idle) {
-        d->idle = false;
-
-        emit finished();
+        emit cancelled();
     }
 }
 
@@ -169,20 +193,60 @@ void QGalleryAbstractResponse::cancel()
 */
 
 /*!
-    Finalizes a gallery response, and sets the \a result.
+    Finalizes a gallery response.
 
     If \a idle is true the items returned by a response will be monitored
     for changes and updated as appropriate.
 */
 
-void QGalleryAbstractResponse::finish(int result, bool idle)
+void QGalleryAbstractResponse::finish(bool idle)
 {
     Q_D(QGalleryAbstractResponse);
 
-    if (d->result == QGalleryAbstractRequest::NoResult
-            && result != QGalleryAbstractRequest::NoResult) {
-        d->result = result;
-        d->idle = idle;
+    if (d->status == QGalleryAbstractRequest::Active
+            || (d->status == QGalleryAbstractRequest::Idle && !idle)) {
+        d->status = idle
+                ? QGalleryAbstractRequest::Idle
+                : QGalleryAbstractRequest::Finished;
+
+        emit finished();
+    }
+}
+
+/*!
+    Returns a response to an active state.
+
+    An idle response can call this to indicate it has begun refreshing its
+    contents.
+*/
+
+void QGalleryAbstractResponse::resume()
+{
+    Q_D(QGalleryAbstractResponse);
+
+    if (d->status == QGalleryAbstractRequest::Idle) {
+        d->status = QGalleryAbstractRequest::Active;
+
+        emit resumed();
+    }
+}
+
+/*!
+    Finalizes a response in response to an error condition.
+
+    The \a error, and \a errorString are communicated to issuing request.
+*/
+
+void QGalleryAbstractResponse::error(int error, const QString &errorString)
+{
+    Q_D(QGalleryAbstractResponse);
+
+    if (d->status == QGalleryAbstractRequest::Active
+            || d->status == QGalleryAbstractRequest::Idle) {
+        d->status = QGalleryAbstractRequest::Finished;
+
+        d->error = error;
+        d->errorString = errorString;
 
         emit finished();
     }
@@ -192,6 +256,18 @@ void QGalleryAbstractResponse::finish(int result, bool idle)
     \fn QGalleryAbstractResponse::finished()
 
     Signals that a response has finished.
+*/
+
+/*!
+    \fn QGalleryAbstractResponse::resumed()
+
+    Signals that an idle response has resumed communications.
+*/
+
+/*!
+    \fn QGalleryAbstractResponse::cancelled()
+
+    Signals that a response was cancelled.
 */
 
 #include "moc_qgalleryabstractresponse.cpp"

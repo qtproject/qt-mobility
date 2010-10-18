@@ -55,7 +55,10 @@
 
 #include "qgeotiledmapobjectinfo_p.h"
 
+#include "qgeoroute.h"
+
 #include <QList>
+#include <QPen>
 
 class QGraphicsPathItem;
 class QPointF;
@@ -66,22 +69,29 @@ class QGeoMapRouteObject;
 
 class QGeoTiledMapRouteObjectInfo : public QGeoTiledMapObjectInfo
 {
+    Q_OBJECT
 public:
-    QGeoTiledMapRouteObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    QGeoTiledMapRouteObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject);
     ~QGeoTiledMapRouteObjectInfo();
-
-    void objectUpdated();
-    void mapUpdated();
-
-    //QLineF connectShortest(const QGeoCoordinate &point1, const QGeoCoordinate &point2) const;
 
     QGeoMapRouteObject *route;
     QGraphicsPathItem *pathItem;
-    //QGraphicsItemGroup *groupItem;
 
     QList<QPointF> points;
     QList<QPointF> distanceFilteredPoints;
-    qreal oldZoom;
+
+public slots:
+    void routeChanged(const QGeoRoute &route);
+    void penChanged(const QPen &pen);
+    void detailLevelChanged(quint32 detailLevel);
+
+    void zoomLevelChanged(qreal zoomLevel);
+    void windowSizeChanged(const QSizeF &windowSize);
+    void centerChanged(const QGeoCoordinate &coordinate);
+
+private:
+    void updateData();
+    void updateVisible();
 };
 
 QTM_END_NAMESPACE

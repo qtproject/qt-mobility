@@ -58,11 +58,11 @@
 #include <QSize>
 #include <QHash>
 
-#include "qsysteminfo_linux_common_p.h"
+#include "linux/qsysteminfo_linux_common_p.h"
 #include "qsysteminfo.h"
 #include <qmobilityglobal.h>
 #if !defined(QT_NO_DBUS)
-#include <qhalservice_linux_p.h>
+#include "linux/qhalservice_linux_p.h"
 
 typedef enum
 {
@@ -145,10 +145,10 @@ public:
     void setWlanSignalStrengthCheckEnabled(bool enabled);
 
 protected:
-    void setupNetworkInfo();
 
 private Q_SLOTS:
     void bluetoothNetworkStatusCheck();
+    void setupNetworkInfo();
 #if defined(Q_WS_MAEMO_6)
     // Slots only available in Maemo6
     void slotSignalStrengthChanged(int percent, int dbm);
@@ -207,7 +207,12 @@ public:
 
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
-
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
     int displayBrightness(int screen);
 };
 
@@ -259,6 +264,7 @@ private:
     bool silentProfile;
     bool vibratingAlertEnabled;
     int ringingAlertVolume;
+    QSystemDeviceInfo::BatteryStatus currentBatStatus;
 
     QSystemDeviceInfo::PowerState previousPowerState;
 #endif

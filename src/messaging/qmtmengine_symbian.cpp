@@ -2244,14 +2244,25 @@ bool CMTMEngine::storeMMS(QMessage &message)
     return true;
 }
 
-bool CMTMEngine::sendMMS(QMessage &message)
+bool CMTMEngine::sendMMS(QMessageServicePrivate& privateService, QMessage &message)
 {
     if (!iSessionReady) {
         return false;
     }
 
-    TRAPD(err, sendMMSL(message));
+    TRAPD(err, sendMMSL(privateService, message));
     if (err != KErrNone) {
+        // sendMMSL() function adds messageId to iPendingSends array
+        // just before message is tried to send. 
+        // => Make sure that messageId will be removed if sending fails
+        TMsvId messageId = SymbianHelpers::stripIdPrefix(message.id().toString()).toLong();
+        for (int index=0; index < iPendingSends.count(); index++) {
+            if (iPendingSends[index].messageId == messageId) {
+                iPendingSends.removeAt(index);
+                break;
+            }
+        }
+        
         return false;
     }
     
@@ -2272,14 +2283,25 @@ bool CMTMEngine::storeEmail(QMessage &message)
     return true;
 }
 
-bool CMTMEngine::sendEmail(QMessage &message)
+bool CMTMEngine::sendEmail(QMessageServicePrivate& privateService, QMessage &message)
 {
     if (!iSessionReady) {
         return false;
     }
 
-    TRAPD(err, sendEmailL(message));
+    TRAPD(err, sendEmailL(privateService, message));
     if (err != KErrNone) {
+        // sendEmailL() function adds messageId to iPendingSends array
+        // just before message is tried to send. 
+        // => Make sure that messageId will be removed if sending fails
+        TMsvId messageId = SymbianHelpers::stripIdPrefix(message.id().toString()).toLong();
+        for (int index=0; index < iPendingSends.count(); index++) {
+            if (iPendingSends[index].messageId == messageId) {
+                iPendingSends.removeAt(index);
+                break;
+            }
+        }
+
         return false;
     }
     
@@ -2420,14 +2442,25 @@ void CMTMEngine::storeSMSL(QMessage &message)
     privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(entry.Id()), SymbianHelpers::EngineTypeMTM));
 }
 
-bool CMTMEngine::sendSMS(QMessage &message)
+bool CMTMEngine::sendSMS(QMessageServicePrivate& privateService, QMessage &message)
 {
     if (!iSessionReady) {
         return false;
     }
     
-    TRAPD(err, sendSMSL(message));
+    TRAPD(err, sendSMSL(privateService, message));
     if (err != KErrNone) {
+        // sendSMSL() function adds messageId to iPendingSends array
+        // just before message is tried to send. 
+        // => Make sure that messageId will be removed if sending fails
+        TMsvId messageId = SymbianHelpers::stripIdPrefix(message.id().toString()).toLong();
+        for (int index=0; index < iPendingSends.count(); index++) {
+            if (iPendingSends[index].messageId == messageId) {
+                iPendingSends.removeAt(index);
+                break;
+            }
+        }
+        
         return false;
     }
     
@@ -2453,7 +2486,70 @@ bool CMTMEngine::validateSMS()
     return true;
 }
 
-void CMTMEngine::sendSMSL(QMessage &message)
+// Following array contains all unicode characters which can
+// be found from (unescaped) GSM 03.38 (7 bit) character set:
+const unsigned short int KSMS0338UnicodeChars[128] =
+    { 0x0040, 0x00A3, 0x0024, 0x00A5, 0x00E8, 0x00E9, 0x00F9, 0x00EC,
+      0x00F2, 0x00E7, 0x000A, 0x00D8, 0x00F8, 0x000D, 0x00C5, 0x00E5,
+      0x0394, 0x005F, 0x03A6, 0x0393, 0x039B, 0x03A9, 0x03A0, 0x03A8,
+      0x03A3, 0x0398, 0x039E, 0x00A0, 0x00C6, 0x00E6, 0x00DF, 0x00C9,
+      0x0020, 0x0021, 0x0022, 0x0023, 0x00A4, 0x0025, 0x0026, 0x0027,
+      0x0028, 0x0029, 0x002A, 0x002B, 0x002C, 0x002D, 0x002E, 0x002F,
+      0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035, 0x0036, 0x0037,
+      0x0038, 0x0039, 0x003A, 0x003B, 0x003C, 0x003D, 0x003E, 0x003F,
+      0x00A1, 0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047,
+      0x0048, 0x0049, 0x004A, 0x004B, 0x004C, 0x004D, 0x004E, 0x004F,
+      0x0050, 0x0051, 0x0052, 0x0053, 0x0054, 0x0055, 0x0056, 0x0057,
+      0x0058, 0x0059, 0x005A, 0x00C4, 0x00D6, 0x00D1, 0x00DC, 0x00A7,
+      0x00BF, 0x0061, 0x0062, 0x0063, 0x0064, 0x0065, 0x0066, 0x0067,
+      0x0068, 0x0069, 0x006A, 0x006B, 0x006C, 0x006D, 0x006E, 0x006F,
+      0x0070, 0x0071, 0x0072, 0x0073, 0x0074, 0x0075, 0x0076, 0x0077,
+      0x0078, 0x0079, 0x007A, 0x00E4, 0x00F6, 0x00F1, 0x00FC, 0x00E0 };
+
+// Following array contains all unicode characters which can
+// be found from escaped GSM 03.38 (7 bit) character set.
+// <Unicode> = <GSM 03.38>  = <character>
+//   0x000C  =    0x1B0A    = Form Feed
+//   0x005E  =    0x1B14    = ^
+//   0x007B  =    0x1B28    = {
+//   0x007D  =    0x1B29    = }
+//   0x005C  =    0x1B2F    = \
+//   0x005B  =    0x1B3C    = [
+//   0x007E  =    0x1B3D    = ~
+//   0x005D  =    0x1B3E    = ]
+//   0x007C  =    0x1B40    = |
+//   0x20AC  =    0x1B65    = €
+const unsigned short int KEscapedSMS0338UnicodeChars[10] =
+    { 0x000C, 0x005E, 0x007B, 0x007D, 0x005C, 0x005B, 0x007E, 0x005D,
+      0x007C, 0x20AC };
+
+bool CMTMEngine::isGsm0338CompatibleUnicodeCharacter(TUint16 aValue)
+{
+    for (int i=0; i < 128; i++) {
+        if (KSMS0338UnicodeChars[i] == aValue) {
+            if (aValue == 0x00A0) {
+                // Escape chatacter <=> character 0x1B in GSM 03.38
+                // character set
+                // => Can't be mapped to GSM 03.38 character set
+                // <=> KEscapedSMS0338UnicodeChars array contains
+                //     all Unicode characters which can be mapped
+                //     to GSM 03.38 character set using escaping
+                return false;
+            }
+            return true;
+        }
+    }
+
+    for (int i=0; i < 10; i++) {
+        if (KEscapedSMS0338UnicodeChars[i] == aValue) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+void CMTMEngine::sendSMSL(QMessageServicePrivate& privateService, QMessage &message)
 {
     if (!iSessionReady) {
         User::Leave(KErrNotReady);
@@ -2489,8 +2585,27 @@ void CMTMEngine::sendSMSL(QMessage &message)
     CSmsHeader& smsHeader = ipSmsMtm->SmsHeader();
     CSmsSettings* pSmsSettings = CSmsSettings::NewL();
     CleanupStack::PushL(pSmsSettings);
- 
+
+    TSmsDataCodingScheme::TSmsAlphabet dataCodingScheme = TSmsDataCodingScheme::ESmsAlphabet7Bit;
+    CRichText& body = ipSmsMtm->Body();
+    HBufC* bodyBuf = HBufC::NewLC(body.DocumentLength());
+    TPtr16 ptrBody = bodyBuf->Des();
+    body.Extract(ptrBody, 0, body.DocumentLength());
+
+    // Check if message body contains other than GSM 03.38 (7 bit)
+    // compatible Unicode characters.
+    // => If incompatible characters are found, UCS2 encoding will be used
+    for (TInt i = 0; i < ptrBody.Length(); i++) {
+        if (!isGsm0338CompatibleUnicodeCharacter(ptrBody[i])) {
+            dataCodingScheme = TSmsDataCodingScheme::ESmsAlphabetUCS2;
+            break;
+        }
+    }
+    
+    CleanupStack::PopAndDestroy(bodyBuf);
+    
     pSmsSettings->CopyL(ipSmsMtm->ServiceSettings());
+    pSmsSettings->SetCharacterSet(dataCodingScheme);
     pSmsSettings->SetDelivery(ESmsDeliveryImmediately);
     pSmsSettings->SetDeliveryReport(EFalse);
     smsHeader.SetSmsSettingsL(*pSmsSettings);
@@ -2520,6 +2635,11 @@ void CMTMEngine::sendSMSL(QMessage &message)
     ipSmsMtm->SaveMessageL();
     
     if (validateSMS()) {
+        PendingSend pendingSend;
+        pendingSend.privateService = &privateService;
+        pendingSend.messageId = messageId;
+        iPendingSends.append(pendingSend);
+        
         // Switch current SMS MTM context to SMS message parent folder entry
         ipSmsMtm->SwitchCurrentEntryL(ipSmsMtm->Entry().Entry().Parent());
         
@@ -3299,7 +3419,7 @@ void CMTMEngine::updateEmailL(QMessage &message)
     }
 }
 
-void CMTMEngine::sendMMSL(QMessage &message)
+void CMTMEngine::sendMMSL(QMessageServicePrivate& privateService, QMessage &message)
 {
     if (!iSessionReady) {
         User::Leave(KErrNotReady);
@@ -3317,6 +3437,11 @@ void CMTMEngine::sendMMSL(QMessage &message)
         User::Leave(KErrNotReady);
     }
 
+    PendingSend pendingSend;
+    pendingSend.privateService = &privateService;
+    pendingSend.messageId = messageId;
+    iPendingSends.append(pendingSend);
+    
     CMsvEntry* pMsvEntry = retrieveCMsvEntryAndPushToCleanupStack(messageId);
 
     QMTMWait mtmWait;
@@ -3650,7 +3775,7 @@ void CMTMEngine::storeEmailL(QMessage &message)
     privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(newMessageId),SymbianHelpers::EngineTypeMTM));
 }
 
-void CMTMEngine::sendEmailL(QMessage &message)
+void CMTMEngine::sendEmailL(QMessageServicePrivate& privateService, QMessage &message)
 {
     if (!iSessionReady) {
         User::Leave(KErrNotReady);
@@ -3681,6 +3806,11 @@ void CMTMEngine::sendEmailL(QMessage &message)
         User::Leave(KErrNotReady);
     }    
 
+    PendingSend pendingSend;
+    pendingSend.privateService = &privateService;
+    pendingSend.messageId = messageId;
+    iPendingSends.append(pendingSend);
+    
     CMsvEntry* pMsvEntry = retrieveCMsvEntryAndPushToCleanupStack(messageId);
     
     QMTMWait mtmWait;
@@ -4333,6 +4463,8 @@ CMsvEntry* CMTMEngine::retrieveCMsvEntryAndPushToCleanupStack(TMsvId id) const
         if (retVal != KErrNone) {
             delete pEntry;
             pEntry = NULL;
+        } else {
+            iCmsvEntryPoolFree.Remove(iCmsvEntryPoolFree.Count()-1);
         }
     } else {
         if (id == 0) {
@@ -4693,7 +4825,7 @@ void CMTMEngine::HandleSessionEventL(TMsvSessionEvent aEvent, TAny* aArg1,
     case EMsvEntriesChanged:
     case EMsvEntriesDeleted:
     case EMsvEntriesMoved:
-        if (aArg2 && iListenForNotifications) {
+        if (aArg2) {
             CMsvEntrySelection* entries = static_cast<CMsvEntrySelection*>(aArg1);
             
             if (entries != NULL) {
@@ -4701,14 +4833,59 @@ void CMTMEngine::HandleSessionEventL(TMsvSessionEvent aEvent, TAny* aArg1,
                while (count--) {
                    const TMsvId id = (*entries)[count];
                    if (aEvent == EMsvEntriesDeleted) {
-                       notification(aEvent, TUid(), *(static_cast<TMsvId*>(aArg2)), id);
+                       // Handle message status change
+                       QMessageServicePrivate* pPrivateService = NULL;
+                       for (int index=0; index < iPendingSends.count(); index++) {
+                           if (iPendingSends[index].messageId == id) {
+                               pPrivateService = iPendingSends[index].privateService;
+                               iPendingSends.removeAt(index);
+                               break;
+                           }
+                       }
+                       if (pPrivateService) {
+                           pPrivateService->setFinished(false);
+                       }
+                   
+                       // Handle message event
+                       if (iListenForNotifications) {
+                           notification(aEvent, TUid(), *(static_cast<TMsvId*>(aArg2)), id);
+                       }
                    } else {
                        CMsvEntry* pReceivedEntry = NULL;
                        TRAPD(err, pReceivedEntry = ipMsvSession->GetEntryL(id));
                        if (err == KErrNone) {
                            const TMsvEntry& entry = pReceivedEntry->Entry();
                            if (entry.iType == KUidMsvMessageEntry) {
-                               notification(aEvent, entry.iMtm, *(static_cast<TMsvId*>(aArg2)), id);
+                               // Handle message status change
+                               if (entry.SendingState() == KMsvSendStateFailed) {
+                                   QMessageServicePrivate* pPrivateService = NULL; 
+                                   for (int index=0; index < iPendingSends.count(); index++) {
+                                       if (iPendingSends[index].messageId == id) {
+                                           pPrivateService = iPendingSends[index].privateService;
+                                           iPendingSends.removeAt(index);
+                                           break;
+                                       }
+                                   }
+                                   if (pPrivateService) {
+                                       pPrivateService->setFinished(false);
+                                   }
+                               } else if (entry.SendingState() == KMsvSendStateSent) {
+                                   QMessageServicePrivate* pPrivateService = NULL; 
+                                   for (int index=0; index < iPendingSends.count(); index++) {
+                                       if (iPendingSends[index].messageId == id) {
+                                           pPrivateService = iPendingSends[index].privateService;
+                                           iPendingSends.removeAt(index);
+                                           break;
+                                       }
+                                   }
+                                   if (pPrivateService) {
+                                       pPrivateService->setFinished(true);
+                                   }
+                               }
+                               // Handle message event
+                               if (iListenForNotifications) {
+                                   notification(aEvent, entry.iMtm, *(static_cast<TMsvId*>(aArg2)), id);
+                               }
                            }
                            delete pReceivedEntry;
                        }
@@ -5928,6 +6105,6 @@ void CAsynchronousMTMOperation::DoCancel()
     ipMsvOperation->Cancel();
 }
 
-#include "..\..\build\Release\QtMessaging\moc\moc_qmtmengine_symbian_p.cpp";
+#include "moc_qmtmengine_symbian_p.cpp"
 
 QTM_END_NAMESPACE

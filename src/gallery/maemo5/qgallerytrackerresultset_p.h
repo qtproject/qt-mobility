@@ -141,7 +141,7 @@ class QM_AUTOTEST_EXPORT QGalleryTrackerResultSet : public QGalleryResultSet
 public:
     QGalleryTrackerResultSet(
             QGalleryTrackerResultSetArguments *arguments,
-            bool live,
+            bool autoUpdate,
             int cursorPosition,
             int minimumPagedItems,
             QObject *parent = 0);

@@ -41,6 +41,7 @@
 
 #include "qorganizermaemo6.h"
 #include "qtorganizer.h"
+#include "maemo6itemlocalid.h"
 
 //QTM_USE_NAMESPACE
 
@@ -58,9 +59,19 @@ QOrganizerItemManagerEngine* QOrganizerItemMaemo6Factory::engine(const QMap<QStr
 
 QString QOrganizerItemMaemo6Factory::managerName() const
 {
-    /* TODO - put your engine name here */
     return QLatin1String("maemo6");
 }
+
+QOrganizerItemEngineLocalId* QOrganizerItemMaemo6Factory::createItemEngineLocalId() const
+{
+    return new Maemo6ItemLocalId;
+}
+
+QOrganizerCollectionEngineLocalId* QOrganizerItemMaemo6Factory::createCollectionEngineLocalId() const
+{
+    return NULL;
+}
+
 Q_EXPORT_PLUGIN2(qtorganizer_maemo6, QOrganizerItemMaemo6Factory);
 
 
@@ -76,7 +87,6 @@ QOrganizerItemMaemo6Engine::~QOrganizerItemMaemo6Engine()
 
 QString QOrganizerItemMaemo6Engine::managerName() const
 {
-    /* TODO - put your engine name here */
     return QLatin1String("maemo6");
 }
 
@@ -115,12 +125,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo6Engine::itemInstances(const QOrganizer
     */
 
     QOrganizerItemLocalId generatorId = generator.localId();
-    if (!d->m_QIdToKId.contains(generatorId)) {
-        *error = QOrganizerItemManager::DoesNotExistError;
-        return QList<QOrganizerItem>();
-    }
-
-    QString kId = d->m_QIdToKId.value(generatorId);
+    QString kId = static_cast<Maemo6ItemLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(generatorId))->toString();
     Incidence* generatorIncidence = d->m_calendarBackend.incidence(kId);
     Incidence::List generatorList;
     generatorList.append(generatorIncidence);
@@ -149,7 +154,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo6Engine::itemInstances(const QOrganizer
             if (incidence == generatorIncidence) {
                 QOrganizerItemId id;
                 id.setManagerUri(managerUri());
-                id.setLocalId(0);
+                id.setLocalId(QOrganizerItemLocalId());
                 instance.setId(id);
             }
             instances << instance;
@@ -248,12 +253,11 @@ bool QOrganizerItemMaemo6Engine::saveItem(QOrganizerItem* item,  QOrganizerItemM
     if (theIncidence) {
         d->m_calendarBackend.save();
         QString kId = theIncidence->uid();
-        QOrganizerItemLocalId qLocalId = qHash(kId);
+        QOrganizerItemLocalId qLocalId = QOrganizerItemLocalId(new Maemo6ItemLocalId(kId));
         QOrganizerItemId qId;
         qId.setManagerUri(managerUri());
         qId.setLocalId(qLocalId);
         item->setId(qId);
-        d->m_QIdToKId.insert(qLocalId, kId);
         return true;
     }
     return false;
@@ -270,9 +274,7 @@ bool QOrganizerItemMaemo6Engine::removeItems(const QList<QOrganizerItemLocalId>&
             errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
             continue;
         }
-        if (d->m_calendarBackend.deleteIncidence(theIncidence)) {
-            d->m_QIdToKId.remove(id);
-        } else {
+        if (!d->m_calendarBackend.deleteIncidence(theIncidence)) {
             *error = QOrganizerItemManager::UnspecifiedError;
             errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
         }
@@ -318,8 +320,11 @@ QList<QOrganizerCollectionLocalId> QOrganizerItemMaemo6Engine::collectionIds(QOr
     return retn;
 }
 
-QList<QOrganizerCollection> QOrganizerItemMaemo6Engine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemMaemo6Engine::collections(const QList<QOrganizerCollectionLocalId>& collectionIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error) const
 {
+    Q_UNUSED(errorMap);
+    // XXX TODO: use error map, and fix implementation as per docs.
+
     *error = QOrganizerItemManager::NoError;
     QOrganizerCollection defaultCollection;
     defaultCollection.setId(QOrganizerCollectionId());
@@ -465,9 +470,9 @@ bool QOrganizerItemMaemo6Engine::isFilterSupported(const QOrganizerItemFilter& f
     return false;
 }
 
-QList<QVariant::Type> QOrganizerItemMaemo6Engine::supportedDataTypes() const
+QList<int> QOrganizerItemMaemo6Engine::supportedDataTypes() const
 {
-    QList<QVariant::Type> ret;
+    QList<int> ret;
     // TODO - tweak which data types this engine understands
     ret << QVariant::String;
     ret << QVariant::Date;
@@ -534,11 +539,8 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMaem
 
 Incidence* QOrganizerItemMaemo6Engine::incidence(const QOrganizerItemLocalId& itemId) const
 {
-    // TODO: check managerUri as well
-    if (!d->m_QIdToKId.contains(itemId))
-        return 0;
-    else
-        return d->m_calendarBackend.incidence(d->m_QIdToKId.value(itemId));
+    QString kId = static_cast<Maemo6ItemLocalId*>(QOrganizerItemManagerEngine::engineLocalItemId(itemId))->toString();
+    return d->m_calendarBackend.incidence(kId);
 }
 
 /*!
@@ -548,7 +550,7 @@ Incidence* QOrganizerItemMaemo6Engine::incidence(const QOrganizerItemLocalId& it
 Incidence* QOrganizerItemMaemo6Engine::softSaveItem(QOrganizerItem* item, QOrganizerItemManager::Error* error)
 {
     bool itemIsNew = (managerUri() != item->id().managerUri()
-            || item->localId() == 0);
+            || item->localId().isNull());
     bool itemIsOccurrence = (item->type() == QOrganizerItemType::TypeEventOccurrence) ||
                             (item->type() == QOrganizerItemType::TypeTodoOccurrence);
     Incidence* newIncidence = 0;
@@ -589,8 +591,6 @@ Incidence* QOrganizerItemMaemo6Engine::softSaveItem(QOrganizerItem* item, QOrgan
         if (itemIsOccurrence) {
             Incidence* parentIncidence = incidence(parentLocalId);
             if (!parentIncidence) {
-                qDebug() << parentLocalId;
-                qDebug() << d->m_QIdToKId;
                 *error = QOrganizerItemManager::InvalidOccurrenceError;
                 return 0;
             }
@@ -817,7 +817,7 @@ void QOrganizerItemMaemo6Engine::IncidenceToItemConverter::convertCommonDetails(
 {
     QOrganizerItemId id;
     id.setManagerUri(m_managerUri);
-    id.setLocalId(qHash(incidence->uid()));
+    id.setLocalId(QOrganizerItemLocalId(new Maemo6ItemLocalId(incidence->uid())));
     item->setId(id);
     item->setDisplayLabel(incidence->summary());
     item->setDescription(incidence->description());

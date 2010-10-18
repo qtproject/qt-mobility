@@ -54,7 +54,8 @@ MonthPage::MonthPage(QWidget *parent)
     m_manager(0),
     m_calendarWidget(0),
     m_dateLabel(0),
-    m_itemList(0)
+    m_itemList(0),
+    m_ignoreShowDayPageOnceFlag(false)
 {
     // Create widgets
     QFormLayout *mainlayout = new QFormLayout(this);
@@ -197,6 +198,7 @@ void MonthPage::refresh()
     	// Get the instances of the item for that month and collect those dates.
         instanceList.clear();
         instanceList.append(m_manager->itemInstances(item, startDateTime, endDateTime));
+        instanceList.append(item);
         for (int count = 0; count < instanceList.count(); count++) {
             QOrganizerEventTimeRange eventTimeRange = instanceList.at(count).detail<QOrganizerEventTimeRange>();
             QDate startDate(eventTimeRange.startDateTime().date());
@@ -231,7 +233,11 @@ void MonthPage::refresh()
         m_calendarWidget->setDateTextFormat(date, cf);
     }
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+    // As the day item list is not showed do not refresh
+    // the day items in Maemo5 or Maemo6 to improve performance
     refreshDayItems();
+#endif
 }
 
 void MonthPage::refreshDayItems()
@@ -300,11 +306,15 @@ void MonthPage::currentMonthChanged()
     int year = m_calendarWidget->yearShown();
     m_dateLabel->setText(QString("%1 %2").arg(QDate::longMonthName(month)).arg(year));
     refresh();
+    m_ignoreShowDayPageOnceFlag = true;
 }
 
 void MonthPage::dayDoubleClicked(QDate date)
 {
-    emit showDayPage(date);
+    if (!m_ignoreShowDayPageOnceFlag)
+        emit showDayPage(date);
+    else
+        m_ignoreShowDayPageOnceFlag = false;
 }
 
 void MonthPage::openDay()

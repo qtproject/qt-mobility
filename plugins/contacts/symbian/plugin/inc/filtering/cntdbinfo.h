@@ -85,7 +85,6 @@ public:
     QString getSortQuery(const QList<QContactSortOrder> &sortOrders,
                          const QString& selectQuery,
                          QContactManager::Error* error);
-    QContactManagerEngine* engine();
     bool isStringFieldType(const QString definitionName);
     void setDirAndCaseSensitivity(QContactSortOrder s, QString& str);
 

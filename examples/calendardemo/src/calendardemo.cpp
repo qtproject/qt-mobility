@@ -46,6 +46,8 @@
 #include "todoeditpage.h"
 #include "journaleditpage.h"
 #include "eventoccurrenceeditpage.h"
+#include "addcalendarpage.h"
+#include "editcalendarspage.h"
 #ifdef BUILD_VERSIT
 #include "qversitreader.h"
 #include "qversitwriter.h"
@@ -73,9 +75,12 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     m_todoEditPage = new TodoEditPage(m_stackedWidget);
     m_journalEditPage = new JournalEditPage(m_stackedWidget);
     m_eventOccurrenceEditPage = new EventOccurrenceEditPage(m_stackedWidget);
+    m_addCalendarPage = new AddCalendarPage(m_stackedWidget);
+    m_editCalendarsPage = new EditCalendarsPage(m_stackedWidget);
 
     //qRegisterMetaType<QOrganizerItemManager>("QOrganizerItemManager");
     qRegisterMetaType<QOrganizerItem>("QOrganizerItem");
+    qRegisterMetaType<QOrganizerCollection>("QOrganizerCollection");
 
     connect(m_monthPage, SIGNAL(showDayPage(QDate)), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_monthPage, SIGNAL(showEditPage(const QOrganizerItem &)), this, SLOT(activateEditPage(const QOrganizerItem &)), Qt::QueuedConnection);
@@ -92,7 +97,11 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     connect(m_todoEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_journalEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_eventOccurrenceEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
-    
+    connect(m_addCalendarPage, SIGNAL(showPreviousPage()), this, SLOT(activatePreviousPage()), Qt::QueuedConnection);
+    connect(m_editCalendarsPage, SIGNAL(showAddCalendarPage(QOrganizerItemManager*,QOrganizerCollection*)), this, SLOT(editExistingCalendar(QOrganizerItemManager*,QOrganizerCollection*)), Qt::QueuedConnection);
+    connect(m_editCalendarsPage, SIGNAL(showPreviousPage()), this, SLOT(activateMonthPage()), Qt::QueuedConnection);
+    connect(m_editCalendarsPage, SIGNAL(addClicked()), this, SLOT(addCalendar()), Qt::QueuedConnection);
+
     // Connect to the save and remove request status change signals
     connect(&m_saveReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
             this, SLOT(saveReqStateChanged(QOrganizerItemAbstractRequest::State)));
@@ -107,6 +116,8 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     m_stackedWidget->addWidget(m_todoEditPage);
     m_stackedWidget->addWidget(m_journalEditPage);
     m_stackedWidget->addWidget(m_eventOccurrenceEditPage);
+    m_stackedWidget->addWidget(m_addCalendarPage);
+    m_stackedWidget->addWidget(m_editCalendarsPage);
     m_stackedWidget->setCurrentIndex(0);
 
     setCentralWidget(m_stackedWidget);
@@ -159,6 +170,10 @@ void CalendarDemo::buildMenu()
     connect(exportItems, SIGNAL(triggered(bool)), this, SLOT(exportItems()));
     QAction* deleteAllEntries = optionsMenu->addAction("Delete All Items");
     connect(deleteAllEntries, SIGNAL(triggered(bool)), this, SLOT(deleteAllEntries()));
+    QAction* addCalendar = optionsMenu->addAction("New calendar");
+    connect(addCalendar, SIGNAL(triggered(bool)), this, SLOT(addCalendar()));
+    QAction* editCalendar = optionsMenu->addAction("Edit calendars");
+    connect(editCalendar, SIGNAL(triggered(bool)), this, SLOT(editCalendar()));
 
 #ifdef Q_OS_SYMBIAN
     // add the menu to the softkey for these pages
@@ -189,6 +204,7 @@ void CalendarDemo::activateDayPage()
 
 void CalendarDemo::activateEditPage(const QOrganizerItem &item)
 {
+    m_previousItem = item;
 #if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
     menuBar()->setVisible(false);
 #endif
@@ -218,6 +234,18 @@ void CalendarDemo::activateEditPage(const QOrganizerItem &item)
     }
     // TODO:
     //else if (item.type() == QOrganizerItemType::TypeNote)
+}
+
+void CalendarDemo::activatePreviousPage()
+{
+    if (m_previousPage == m_stackedWidget->indexOf(m_monthPage))
+        activateMonthPage();
+    else if (m_previousPage == m_stackedWidget->indexOf(m_dayPage))
+        activateDayPage();
+    else if (m_previousPage == m_stackedWidget->indexOf(m_editCalendarsPage))
+        editCalendar();
+    else
+        activateEditPage(m_previousItem);
 }
 
 void CalendarDemo::addNewEvent()
@@ -289,6 +317,7 @@ void CalendarDemo::addEvents()
         // Set the start date to index to add events to next 5000 days
         QOrganizerEventTimeRange timeRange;
         timeRange.setStartDateTime(QDateTime::currentDateTime().addDays(index));
+        timeRange.setEndDateTime(QDateTime::currentDateTime().addDays(index).addSecs(60 * 60));
         item.saveDetail(&timeRange);
         
         items.append(item);
@@ -297,6 +326,7 @@ void CalendarDemo::addEvents()
     // Now create a save request and execute it
     m_saveReq.setItems(items);
     m_saveReq.setManager(m_manager);
+    m_saveReq.setCollectionId(m_manager->defaultCollectionId());
     m_saveReq.start();
 }
 
@@ -311,27 +341,32 @@ void CalendarDemo::importItems()
        tr("Select iCalendar file"), ".", tr("iCalendar files (*.ics)"));
     QFile file(fileName);
     file.open(QIODevice::ReadOnly);
-    if (file.isReadable()) {
-        QVersitReader reader;
-        reader.setDevice(&file);
-        if (reader.startReading() && reader.waitForFinished()) {
-            QVersitOrganizerImporter importer;
-            foreach (const QVersitDocument& document, reader.results()) {
-                if (importer.importDocument(document)) {
-                    QList<QOrganizerItem> items = importer.items();
-                    QMap<int, QOrganizerItemManager::Error> errorMap;
-                    QList<QOrganizerItem>::iterator it = items.begin();
-                    while (it != items.end()) {
-                        *it = m_manager->compatibleItem(*it);
-                        it++;
-                    }
-                    m_manager->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap);
-                }
-            }
-            m_monthPage->refresh();
-            m_dayPage->refresh();
-        }
+    if (!file.isReadable()) {
+        qWarning() << "File is not readable";
+        return;
     }
+    QVersitReader reader;
+    reader.setDevice(&file);
+    if (!reader.startReading() || !reader.waitForFinished()) {
+        qWarning() << "Read failed, " << reader.error();
+    }
+    QVersitOrganizerImporter importer;
+    foreach (const QVersitDocument& document, reader.results()) {
+        if (!importer.importDocument(document)) {
+            qWarning() << "Import failed, " << importer.errors();
+            continue;
+        }
+        QList<QOrganizerItem> items = importer.items();
+        QMap<int, QOrganizerItemManager::Error> errorMap;
+        QList<QOrganizerItem>::iterator it = items.begin();
+        while (it != items.end()) {
+            *it = m_manager->compatibleItem(*it);
+            it++;
+        }
+        m_manager->saveItems(&items, QOrganizerCollectionLocalId(), &errorMap);
+    }
+    m_monthPage->refresh();
+    m_dayPage->refresh();
 #endif
 }
 
@@ -347,16 +382,22 @@ void CalendarDemo::exportItems()
                                                     tr("iCalendar files (*.ics)"));
     QFile file(fileName);
     file.open(QIODevice::WriteOnly);
-    if (file.isWritable()) {
-        QList<QOrganizerItem> items(m_manager->items());
-        QVersitOrganizerExporter exporter;
-        if(exporter.exportItems(items, QVersitDocument::ICalendar20Type)) {
-            QVersitDocument document = exporter.document();
-            QVersitWriter writer;
-            writer.setDevice(&file);
-            writer.startWriting(QList<QVersitDocument>() << document);
-            writer.waitForFinished();
-        }
+    if (!file.isWritable()) {
+        qWarning() << "File is not writable";
+        return;
+    }
+    QList<QOrganizerItem> items(m_manager->items());
+    QVersitOrganizerExporter exporter;
+    if (!exporter.exportItems(items, QVersitDocument::ICalendar20Type)) {
+        qWarning() << "Export failed, " << exporter.errors();
+        return;
+    }
+    QVersitDocument document = exporter.document();
+    QVersitWriter writer;
+    writer.setDevice(&file);
+    if (!writer.startWriting(QList<QVersitDocument>() << document)
+        || !writer.waitForFinished()) {
+        qWarning() << "Write failed, " << writer.error();
     }
 #endif
 }
@@ -371,6 +412,40 @@ void CalendarDemo::deleteAllEntries()
         m_remReq.setManager(m_manager);
         m_remReq.start();
     }
+}
+
+void CalendarDemo::addCalendar()
+{
+    // Get default collection
+    QList<QOrganizerCollection> defaultCollection = m_manager->collections(
+            QList<QOrganizerCollectionLocalId>() << m_manager->defaultCollectionId());
+
+    QOrganizerCollection newCollection;
+    if (!defaultCollection.isEmpty()) {
+        newCollection = defaultCollection.at(0);
+        newCollection.setId(QOrganizerCollectionId()); // reset collection id
+#if defined(Q_WS_MAEMO_5)
+        newCollection.setMetaData("Name", "New calendar");
+#endif
+    }
+    m_addCalendarPage->calendarChanged(m_manager, newCollection);
+
+    m_previousPage = m_stackedWidget->currentIndex();
+    m_stackedWidget->setCurrentWidget(m_addCalendarPage);
+}
+
+void CalendarDemo::editCalendar()
+{
+    m_editCalendarsPage->showPage(m_manager);
+    m_previousPage = m_stackedWidget->currentIndex();
+    m_stackedWidget->setCurrentWidget(m_editCalendarsPage);
+}
+
+void CalendarDemo::editExistingCalendar(QOrganizerItemManager *manager, QOrganizerCollection* calendar)
+{
+    m_addCalendarPage->calendarChanged(manager, *calendar);
+    m_previousPage = m_stackedWidget->currentIndex();
+    m_stackedWidget->setCurrentWidget(m_addCalendarPage);
 }
 
 void CalendarDemo::saveReqStateChanged(QOrganizerItemAbstractRequest::State reqState)

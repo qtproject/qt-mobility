@@ -346,7 +346,20 @@ private: // New pure virtual functions
 											 QStringList aTokens) = 0;
 
 private: // New virtual functions
-	virtual QStringList GetTableSpecificFields(const CContactItem& aItem) const;
+	/**
+	 * Obtain the table-specific fields from the contact data.
+	 *
+	 * aItem Contact's data
+	 * aRequiredFieldsExist OUT: true if contact contains the information
+	 *	that's mandatory for it to be stored into predictive search tables.
+	 * returns: list of table specific fields that could be mapped using the keymap.
+	 *  Note: even if list is empty, aRequiredFieldsExists can be true. E.g. in
+	 *  case of QWERTY table, all mail addresses begin by characters that are not
+	 *  recognized by the keymap.
+	 */
+	virtual QStringList
+		GetTableSpecificFields(const CContactItem& aItem,
+							   bool& aRequiredFieldsExist) const;
 
 public:
 	const CPcsKeyMap* KeyMap() const;
@@ -366,7 +379,8 @@ protected:
 	// aLastName ownership is not transferred
 	QStringList GetTokens(QStringList aNonTokenizedFields,
 						  HBufC* aFirstName,
-						  HBufC* aLastName) const;
+						  HBufC* aLastName,
+						  bool aIsKorea) const;
 
 private:
 	void WriteToDbL(const CContactItem& aItem);
@@ -379,11 +393,13 @@ private:
 	//			  	   pushed to cleanupstack. Ownership is transferred.
 	// aLastName OUT: Pointer to the first N characters of last name,
 	//			  	  pushed to cleanupstack. Ownership is transferred.
+	// aIsKorea OUT: true if contact contains Korean text
 	void GetFieldsLC(const CContactItem& aItem,
 					 HBufC** aFirstNameAsNbr,
 					 HBufC** aLastNameAsNbr,
 					 HBufC** aFirstName,
-					 HBufC** aLastName) const;
+					 HBufC** aLastName,
+					 bool& aIsKorea) const;
 
 	// aString ownership is not transferred
 	void AddTokens(HBufC* aString, QStringList& aTokens) const;
@@ -407,6 +423,10 @@ protected:
 
 	// Max length of a single token that can be stored into predictive search table
 	const TInt		  iMaxTokenLength;
+
+
+	// For unit testing
+	friend class UT_CPplPredictiveSearchTable;
 	};
 
 

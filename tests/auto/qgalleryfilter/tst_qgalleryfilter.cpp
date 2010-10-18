@@ -46,10 +46,10 @@
 
 #include <QtTest/QtTest>
 
-Q_DECLARE_METATYPE(Qt::CaseSensitivity);
 Q_DECLARE_METATYPE(QVariant);
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGalleryFilter))
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGalleryFilter::Comparator))
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGalleryMetaDataFilter))
 
 QTM_USE_NAMESPACE
 
@@ -68,6 +68,7 @@ private Q_SLOTS:
     void cast();
     void intersectionOperator();
     void unionOperator();
+    void propertyOperators_data();
     void propertyOperators();
     void equality_data();
     void equality();
@@ -93,21 +94,18 @@ void tst_QGalleryFilter::metaDataFilter_data()
     QTest::addColumn<QString>("propertyName");
     QTest::addColumn<QVariant>("value");
     QTest::addColumn<QGalleryFilter::Comparator>("comparator");
-    QTest::addColumn<Qt::CaseSensitivity>("caseSensitivity");
-    QTest::addColumn<bool>("inverted");
+    QTest::addColumn<bool>("negated");
 
     QTest::newRow("album title")
             << QString::fromLatin1("albumTitle")
             << QVariant(QString::fromLatin1("Greatest"))
             << QGalleryFilter::StartsWith
-            << Qt::CaseSensitive
             << false;
 
     QTest::newRow("not album title")
             << QString::fromLatin1("albumTitle")
             << QVariant(QString::fromLatin1("Greatest"))
             << QGalleryFilter::StartsWith
-            << Qt::CaseInsensitive
             << false;
 }
 
@@ -116,8 +114,7 @@ void tst_QGalleryFilter::metaDataFilter()
     QFETCH(QString, propertyName);
     QFETCH(QVariant, value);
     QFETCH(QGalleryFilter::Comparator, comparator);
-    QFETCH(Qt::CaseSensitivity, caseSensitivity);
-    QFETCH(bool, inverted);
+    QFETCH(bool, negated);
 
     {
         QGalleryMetaDataFilter filter;
@@ -126,26 +123,23 @@ void tst_QGalleryFilter::metaDataFilter()
         QCOMPARE(filter.propertyName(), QString());
         QCOMPARE(filter.value(), QVariant());
         QCOMPARE(filter.comparator(), QGalleryFilter::Equals);
-        QCOMPARE(filter.caseSensitivity(), Qt::CaseSensitive);
-        QCOMPARE(filter.isInverted(), false);
+        QCOMPARE(filter.isNegated(), false);
 
         filter.setPropertyName(propertyName);
         filter.setValue(value);
         filter.setComparator(comparator);
-        filter.setCaseSensitivity(caseSensitivity);
-        filter.setInverted(inverted);
+        filter.setNegated(negated);
 
         QCOMPARE(filter.propertyName(), propertyName);
         QCOMPARE(filter.value(), value);
         QCOMPARE(filter.comparator(), comparator);
-        QCOMPARE(filter.caseSensitivity(), caseSensitivity);
-        QCOMPARE(filter.isInverted(), inverted);
+        QCOMPARE(filter.isNegated(), negated);
     }
 
     {
-        QGalleryMetaDataFilter filter(propertyName, value, comparator, caseSensitivity);
+        QGalleryMetaDataFilter filter(propertyName, value, comparator);
 
-        if (inverted)
+        if (negated)
             filter = !filter;
 
         QCOMPARE(filter.isValid(), true);
@@ -153,8 +147,7 @@ void tst_QGalleryFilter::metaDataFilter()
         QCOMPARE(filter.propertyName(), propertyName);
         QCOMPARE(filter.value(), value);
         QCOMPARE(filter.comparator(), comparator);
-        QCOMPARE(filter.caseSensitivity(), caseSensitivity);
-        QCOMPARE(filter.isInverted(), inverted);
+        QCOMPARE(filter.isNegated(), negated);
     }
 }
 
@@ -410,8 +403,7 @@ void tst_QGalleryFilter::copyOnWrite()
         filter.setPropertyName(QLatin1String("albumTitle"));
         filter.setValue(QLatin1String("Greatest Hits"));
         filter.setComparator(QGalleryFilter::EndsWith);
-        filter.setCaseSensitivity(Qt::CaseInsensitive);
-        filter.setInverted(true);
+        filter.setNegated(true);
 
         metaDataFilter = filter;
 
@@ -423,14 +415,12 @@ void tst_QGalleryFilter::copyOnWrite()
         QCOMPARE(filterCopy.propertyName(), QLatin1String("albumTitle"));
         QCOMPARE(filterCopy.value(), QVariant(QLatin1String("Greatest Hits")));
         QCOMPARE(filterCopy.comparator(), QGalleryFilter::EndsWith);
-        QCOMPARE(filterCopy.caseSensitivity(), Qt::CaseInsensitive);
-        QCOMPARE(filterCopy.isInverted(), true);
+        QCOMPARE(filterCopy.isNegated(), true);
 
         QCOMPARE(filter.propertyName(), QLatin1String("artist"));
         QCOMPARE(filter.value(), QVariant(QLatin1String("Self Titled")));
         QCOMPARE(filter.comparator(), QGalleryFilter::StartsWith);
-        QCOMPARE(filter.caseSensitivity(), Qt::CaseInsensitive);
-        QCOMPARE(filter.isInverted(), true);
+        QCOMPARE(filter.isNegated(), true);
     } {
         QGalleryUnionFilter filter;
         filter.append(QGalleryMetaDataFilter());
@@ -474,8 +464,7 @@ void tst_QGalleryFilter::copyOnWrite()
     QCOMPARE(metaDataFilter.propertyName(), QLatin1String("albumTitle"));
     QCOMPARE(metaDataFilter.value(), QVariant(QLatin1String("Greatest Hits")));
     QCOMPARE(metaDataFilter.comparator(), QGalleryFilter::EndsWith);
-    QCOMPARE(metaDataFilter.caseSensitivity(), Qt::CaseInsensitive);
-    QCOMPARE(metaDataFilter.isInverted(), true);
+    QCOMPARE(metaDataFilter.isNegated(), true);
 
     filters = unionFilter.filters();
     QCOMPARE(filters.count(), 1);
@@ -615,45 +604,94 @@ void tst_QGalleryFilter::unionOperator()
     QCOMPARE(filters.at(2).type(), QGalleryFilter::MetaData);
 }
 
+void tst_QGalleryFilter::propertyOperators_data()
+{
+    QTest::addColumn<QGalleryMetaDataFilter>("filter");
+    QTest::addColumn<QString>("propertyName");
+    QTest::addColumn<QVariant>("value");
+    QTest::addColumn<QGalleryFilter::Comparator>("comparator");
+
+    const QGalleryProperty albumTitle("albumTitle");
+    const QGalleryProperty trackNumber("trackNumber");
+
+    QTest::newRow("albumTitle == Self Titled")
+            << (albumTitle == QLatin1String("Self Titled"))
+            << "albumTitle"
+            << QVariant(QLatin1String("Self Titled"))
+            << QGalleryFilter::Equals;
+
+    QTest::newRow("trackNumber >= 3")
+            << (trackNumber >= 3)
+            << "trackNumber"
+            << QVariant(3)
+            << QGalleryFilter::GreaterThanEquals;
+
+    QTest::newRow("trackNumber > 3")
+            << (trackNumber > 3)
+            << "trackNumber"
+            << QVariant(3)
+            << QGalleryFilter::GreaterThan;
+
+    QTest::newRow("trackNumber <= 3")
+            << (trackNumber <= 3)
+            << "trackNumber"
+            << QVariant(3)
+            << QGalleryFilter::LessThanEquals;
+
+    QTest::newRow("trackNumber < 3")
+            << (trackNumber < 3)
+            << "trackNumber"
+            << QVariant(3)
+            << QGalleryFilter::LessThan;
+
+    QTest::newRow("albumTitle.contains(lf Titl)")
+            << albumTitle.contains(QLatin1String("lf Titl"))
+            << "albumTitle"
+            << QVariant(QLatin1String("lf Titl"))
+            << QGalleryFilter::Contains;
+
+    QTest::newRow("albumTitle.startsWith(Self)")
+            << albumTitle.startsWith(QLatin1String("Self"))
+            << "albumTitle"
+            << QVariant(QLatin1String("Self"))
+            << QGalleryFilter::StartsWith;
+
+    QTest::newRow("albumTitle.endsWith(Self)")
+            << albumTitle.endsWith(QLatin1String("Titled"))
+            << "albumTitle"
+            << QVariant(QLatin1String("Titled"))
+            << QGalleryFilter::EndsWith;
+
+    QTest::newRow("albumTitle.wildcard(S*f T*d)")
+            << albumTitle.wildcard(QLatin1String("S*f T*d"))
+            << "albumTitle"
+            << QVariant(QLatin1String("S*f T*d"))
+            << QGalleryFilter::Wildcard;
+
+    QTest::newRow("albumTitle.regExp((Self Titled|Greatest Hits))")
+            << albumTitle.regExp(QLatin1String("(Self Titled|Greatest Hits)"))
+            << "albumTitle"
+            << QVariant(QLatin1String("(Self Titled|Greatest Hits)"))
+            << QGalleryFilter::RegExp;
+
+    QTest::newRow("albumTitle.regExp(QRegExp((Self Titled|Greatest Hits)))")
+            << albumTitle.regExp(QRegExp(QLatin1String("(Self Titled|Greatest Hits)")))
+            << "albumTitle"
+            << QVariant(QRegExp(QLatin1String("(Self Titled|Greatest Hits)")))
+            << QGalleryFilter::RegExp;
+}
+
 void tst_QGalleryFilter::propertyOperators()
 {
-    const QGalleryProperty albumProperty("albumTitle");
-    const QGalleryProperty trackProperty("trackNumber");
+    QFETCH(QGalleryMetaDataFilter, filter);
+    QFETCH(QString, propertyName);
+    QFETCH(QVariant, value);
+    QFETCH(QGalleryFilter::Comparator, comparator);
 
-    const QVariant albumTitle = QLatin1String("Self Titled");
-    const QVariant track = 3;
-
-    {
-        QGalleryMetaDataFilter filter = albumProperty == QLatin1String("Self Titled");
-        QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.propertyName(), albumProperty.name());
-        QCOMPARE(filter.value(), albumTitle);
-        QCOMPARE(filter.comparator(), QGalleryFilter::Equals);
-    } {
-        QGalleryMetaDataFilter filter = trackProperty >= 3;
-        QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.propertyName(), trackProperty.name());
-        QCOMPARE(filter.value(), track);
-        QCOMPARE(filter.comparator(), QGalleryFilter::GreaterThanEquals);
-    } {
-        QGalleryMetaDataFilter filter = trackProperty > 3;
-        QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.propertyName(), trackProperty.name());
-        QCOMPARE(filter.value(), track);
-        QCOMPARE(filter.comparator(), QGalleryFilter::GreaterThan);
-    } {
-        QGalleryMetaDataFilter filter = trackProperty <= 3;
-        QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.propertyName(), trackProperty.name());
-        QCOMPARE(filter.value(), track);
-        QCOMPARE(filter.comparator(), QGalleryFilter::LessThanEquals);
-    } {
-        QGalleryMetaDataFilter filter = trackProperty < 3;
-        QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.propertyName(), trackProperty.name());
-        QCOMPARE(filter.value(), track);
-        QCOMPARE(filter.comparator(), QGalleryFilter::LessThan);
-    }
+    QCOMPARE(filter.isValid(), true);
+    QCOMPARE(filter.propertyName(), propertyName);
+    QCOMPARE(filter.value(), value);
+    QCOMPARE(filter.comparator(), comparator);
 }
 
 void tst_QGalleryFilter::equality_data()
@@ -732,13 +770,11 @@ void tst_QGalleryFilter::equality_data()
             << QGalleryFilter(albumProperty == QLatin1String("Greatest Hits"))
             << false;
     QTest::newRow("unequal meta-data filter match flags")
-            << QGalleryFilter(QGalleryMetaDataFilter(
-                    albumProperty, QLatin1String("Self Titled"), QGalleryFilter::Contains))
+            << QGalleryFilter(albumProperty.contains(QLatin1String("Self Titled")))
             << QGalleryFilter(albumProperty == QLatin1String("Self Titled"))
             << false;
     QTest::newRow("unequal meta-data filters")
-            << QGalleryFilter(QGalleryMetaDataFilter(
-                    albumProperty, QLatin1String("Greatest Hits"), QGalleryFilter::Contains))
+            << QGalleryFilter(albumProperty.contains(QLatin1String("Greatest Hits")))
             << QGalleryFilter(artistProperty == QLatin1String("Self Titled"))
             << false;
 
@@ -778,19 +814,6 @@ void tst_QGalleryFilter::equality_data()
             << QGalleryFilter(metaDataFilter)
             << QGalleryFilter(!metaDataFilter)
             << false;
-    QTest::newRow("unequal meta-data filter (case-sensitivity")
-            << QGalleryFilter(QGalleryMetaDataFilter(
-                    albumProperty,
-                    QLatin1String("Self Titled"),
-                    QGalleryFilter::Equals,
-                    Qt::CaseSensitive))
-            << QGalleryFilter(QGalleryMetaDataFilter(
-                    albumProperty,
-                    QLatin1String("Self Titled"),
-                    QGalleryFilter::Equals,
-                    Qt::CaseInsensitive))
-            << false;
-
     QTest::newRow("unequal union filter count")
             << QGalleryFilter(unionFilter)
             << QGalleryFilter(unionFilter && metaDataFilter)
@@ -895,7 +918,6 @@ void tst_QGalleryFilter::inequality()
 #define TST_QGALLERYMETADATAFILTER_DEBUG_TEXT "QGalleryMetaDataFilter(" \
         "propertyName: \"title\" " \
         "comparator: 6 "  \
-        "case-sensitive: 1 " \
         "value: QVariant(QString, \"Greatest\") ) "
 
 void tst_QGalleryFilter::debugMessage_data()
@@ -908,7 +930,7 @@ void tst_QGalleryFilter::debugMessage_data()
             << QByteArray("QGalleryFilter()");
     QTest::newRow("null QGalleryMetaDataFilter")
             << QGalleryFilter(QGalleryMetaDataFilter())
-            << QByteArray("QGalleryMetaDataFilter(comparator: 0 case-sensitive: 1)");
+            << QByteArray("QGalleryMetaDataFilter(comparator: 0)");
     QTest::newRow("null QGalleryUnionFilter")
             << QGalleryFilter(QGalleryUnionFilter())
             << QByteArray("QGalleryUnionFilter()");

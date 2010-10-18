@@ -82,11 +82,6 @@ contains(MOBILITY, versit) {
     }
 }
 
-contains(MOBILITY, telephony) {
-    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtTelephony
-    qtAddLibrary(QtTelephony)
-}
-
 contains(MOBILITY, sensors) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtSensors
     qtAddLibrary(QtSensors)
@@ -113,6 +108,6 @@ contains(MOBILITY, organizer) {
 symbian:contains(CONFIG, mobility):!contains(TARGET.UID3, 0x2002AC89):!contains(TARGET.UID3, 0xE002AC89) {
     mobility_default_deployment.pkg_prerules += \
         "; Default dependency to QtMobility libraries" \
-        "(0x2002AC89), 1, 1, 0, {\"QtMobility\"}"
+        "(0x2002AC89), 1, 2, 0, {\"QtMobility\"}"
     DEPLOYMENT += mobility_default_deployment
 }

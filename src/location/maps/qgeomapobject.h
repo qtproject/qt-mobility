@@ -56,6 +56,7 @@ class QGeoCoordinate;
 class QGeoBoundingBox;
 class QGeoMapObjectPrivate;
 class QGeoMapContainer;
+class QGeoMapObjectInfo;
 
 class QGeoMapData;
 
@@ -68,7 +69,8 @@ class Q_LOCATION_EXPORT QGeoMapObject : public QObject
 
 public:
     enum Type {
-        ContainerType,
+        NullType,
+        GroupType,
         RectangleType,
         CircleType,
         PolylineType,
@@ -78,10 +80,10 @@ public:
         RouteType
     };
 
-    QGeoMapObject(QGeoMapObject *parent = 0);
+    QGeoMapObject(QGeoMapData *mapData = 0);
     virtual ~QGeoMapObject();
 
-    Type type() const;
+    virtual Type type() const;
 
     void setZValue(int zValue);
     int zValue() const;
@@ -92,36 +94,24 @@ public:
     void setSelected(bool selected);
     bool isSelected() const;
 
-    QGeoBoundingBox boundingBox() const;
-    bool contains(const QGeoCoordinate &coordinate) const;
-
-    QGeoMapObject* parentObject() const;
-
-    QList<QGeoMapObject*> childObjects() const;
-    void addChildObject(QGeoMapObject *childObject);
-    void removeChildObject(QGeoMapObject *childObject);
-    void clearChildObjects();
+    virtual QGeoBoundingBox boundingBox() const;
+    virtual bool contains(const QGeoCoordinate &coordinate) const;
 
     bool operator<(const QGeoMapObject &other) const;
     bool operator>(const QGeoMapObject &other) const;
 
-    void mapUpdated();
+    virtual void setMapData(QGeoMapData *mapData);
+    virtual QGeoMapData* mapData() const;
 
-signals:
+    QGeoMapObjectInfo* info() const;
+
+Q_SIGNALS:
     void zValueChanged(int zValue);
     void visibleChanged(bool visible);
     void selectedChanged(bool selected);
 
-protected:
-    QGeoMapObject(QGeoMapObjectPrivate *dd);
-
-    void objectUpdated();
-
-    QGeoMapObjectPrivate *d_ptr;
-
 private:
-    QGeoMapObject(QGeoMapData *mapData);
-
+    QGeoMapObjectPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeoMapObject)
     Q_DISABLE_COPY(QGeoMapObject)
 

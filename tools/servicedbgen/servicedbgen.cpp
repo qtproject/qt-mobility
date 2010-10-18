@@ -216,7 +216,7 @@ void CommandProcessor::execute(const QStringList &options, const QString &cmd, c
 
 void CommandProcessor::showUsage()
 {
-    *stdoutStream << "Service framework database management tool, version " << QString(TOOL_VERSION) << "\n"
+		*stdoutStream << "Service framework database management tool, version " << QString(TOOL_VERSION) << " with QtMobility " << QString(QTM_VERSION_STR) << "\n"
             "Usage: servicedbgen [options] <command> [command parameters]\n\n"
             "Commands:\n"
             "\tadd     Register or update a service\n"

@@ -57,7 +57,7 @@ public:
     QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGraphicsGeoMap *geoMap);
     virtual ~QGeoTiledMapData();
 
-    void setViewportSize(const QSizeF &size);
+    void setWindowSize(const QSizeF &size);
 
     void setZoomLevel(qreal zoomLevel);
 
@@ -68,23 +68,27 @@ public:
 
     void setMapType(QGraphicsGeoMap::MapType mapType);
 
-    QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
-    QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
+    virtual QGeoBoundingBox viewport() const;
+    virtual void fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter = false);
+
+    QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition) const;
+    QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect) const;
 
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
     QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    virtual QPoint coordinateToWorldReferencePosition(const QGeoCoordinate &coordinate) const;
+    virtual QGeoCoordinate worldReferencePositionToCoordinate(const QPoint &pixel) const;
 
-    virtual QPoint coordinateToWorldPixel(const QGeoCoordinate &coordinate) const;
-    virtual QGeoCoordinate worldPixelToCoordinate(const QPoint &pixel) const;
-
-    QPoint maxZoomCenter() const;
-    QSize maxZoomSize() const;
-    QRect maxZoomScreenRect() const;
+    QPoint worldReferenceViewportCenter() const;
+    QSize worldReferenceSize() const;
+    QRect worldReferenceViewportRect() const;
     int zoomFactor() const;
 
 protected:
+    void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    void paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
+
     QGeoMapObjectInfo* createMapObjectInfo(QGeoMapObject *mapObject);
 
 private Q_SLOTS:

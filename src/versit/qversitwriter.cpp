@@ -229,7 +229,7 @@ void QVersitWriter::cancel()
 /*!
  * If the state is ActiveState, blocks until the writer has finished writing or \a msec milliseconds
  * has elapsed, returning true if it successfully finishes or is cancelled by the user.
- * If \m msec is negative or zero, the function blocks until the writer has finished, regardless of
+ * If \a msec is negative or zero, the function blocks until the writer has finished, regardless of
  * how long it takes.
  * If the state is FinishedState, returns true immediately.
  * Otherwise, returns false immediately.

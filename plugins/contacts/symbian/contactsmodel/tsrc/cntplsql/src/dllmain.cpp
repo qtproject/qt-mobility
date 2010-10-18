@@ -20,6 +20,7 @@
 //  INTERNAL INCLUDES
 #include "t_cpcskeymap.h"
 #include "t_cqwertykeymap.h"
+#include "t_ckoreankeymap.h"
 #include "t_cpplpredictivesearchtable.h"
 #include "t_cqwertypredictivesearchtable.h"
 #include "t_cpredictivesearchsettingstable.h"
@@ -36,6 +37,9 @@ EXPORT_C MEUnitTest* CreateTestSuiteL()
 
 	rootSuite->AddL(UT_CQwertyKeyMap::NewLC());
     CleanupStack::Pop(); // UT_CQwertyKeyMap instance
+    
+    rootSuite->AddL(UT_CKoreanKeyMap::NewLC());
+    CleanupStack::Pop(); // UT_CKoreanKeyMap instance
  
     rootSuite->AddL(UT_CPplPredictiveSearchTable::NewLC());
     CleanupStack::Pop(); // UT_CPplPredictiveSearchTable instance

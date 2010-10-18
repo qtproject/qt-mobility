@@ -105,12 +105,12 @@
     (\l QGalleryAbstractRequest) classes which talk to the system file indexing
     service, this would be tracker on Maemo platforms, the meta-data system
     (MDS) on Symbian and potentially Windows Search, or Spotlight on macs.
-    There are four requests; \l QGalleryQueryRequest takes a type, a parent
+    There are three requests; \l QGalleryQueryRequest takes a type, a parent
     item, and some filtering criteria (\l QGalleryFilter) and returns
     meta-data for all matching items.
     \l QGalleryItemRequest takes an item ID and returns meta-data for just that
-    item.  And \l QGalleryRemoveRequest takes an item ID and removes that item
-    from the gallery.
+    item.  And \l QGalleryTypeRequest takes an item type and returns meta-data
+    describing that type.
 
     The requests operate on implementations of the \l QAbstractGallery.
     The default implementation is \l QDocumentGallery, but it's possible to

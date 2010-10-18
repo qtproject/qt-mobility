@@ -60,7 +60,7 @@
 #include "qgeosatelliteinfosource.h"
 #include "notificationsatellitecallback_s60_p.h"
 
-#define MAX_SIZE 5
+#define MAX_SIZE 25
 
 QTM_BEGIN_NAMESPACE
 

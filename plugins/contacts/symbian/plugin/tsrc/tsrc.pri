@@ -37,6 +37,7 @@ SYMBIAN_HEADERS += \
         ../../inc/transform/cnttransformnote.h \
         ../../inc/transform/cnttransformfamily.h \
         ../../inc/transform/cnttransformempty.h \
+        ../../inc/transform/cnttransformfavorite.h \
         ../../inc/filtering/cntabstractcontactfilter.h \
         ../../inc/filtering/cntsymbianfilterdbms.h \
         ../../inc/filtering/cntsymbianfiltersql.h \
@@ -49,14 +50,12 @@ SYMBIAN_HEADERS += \
         ../../inc/cntsymbiantransformerror.h \
         ../../inc/cntsymbiandatabase.h \
         ../../inc/cntdisplaylabel.h \
-        ../../inc/filtering/cntdisplaylabelsqlfilter.h \
         ../../inc/filtering/cntdbinfo.h \
         ../../inc/filtering/cntfilterdetail.h \
         ../../inc/filtering/cntfilterdefault.h \
         ../../inc/filtering/cntfilterintersection.h \
         ../../inc/filtering/cntfilterunion.h \
         ../../inc/filtering/cntfilterrelationship.h \
-        ../../inc/filtering/cntfilterdetaildisplaylabel.h \
         
 
 SYMBIAN_SOURCES += \
@@ -86,6 +85,7 @@ SYMBIAN_SOURCES += \
         ../../src/transform/cnttransformnote.cpp \
         ../../src/transform/cnttransformfamily.cpp \
         ../../src/transform/cnttransformempty.cpp \
+        ../../src/transform/cnttransformfavorite.cpp \
         ../../src/filtering/cntsymbianfilterdbms.cpp \
         ../../src/filtering/cntsymbiansorterdbms.cpp \
         ../../src/filtering/cntsymbianfiltersql.cpp \
@@ -96,14 +96,12 @@ SYMBIAN_SOURCES += \
         ../../src/cntsymbiantransformerror.cpp \
         ../../src/cntsymbiandatabase.cpp \
         ../../src/cntdisplaylabel.cpp \
-        ../../src/filtering/cntdisplaylabelsqlfilter.cpp \
         ../../src/filtering/cntdbinfo.cpp \
         ../../src/filtering/cntfilterdetail.cpp \
         ../../src/filtering/cntfilterdefault.cpp \
         ../../src/filtering/cntfilterintersection.cpp \
         ../../src/filtering/cntfilterunion.cpp \
         ../../src/filtering/cntfilterrelationship.cpp \
-        ../../src/filtering/cntfilterdetaildisplaylabel.cpp \
  
 SYMBIAN_LIBS += \
         -lcntmodel \

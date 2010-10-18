@@ -42,6 +42,7 @@
 #ifndef _QMFHELPERS_H_
 #define _QMFHELPERS_H_
 
+#include "qmobilityglobal.h"
 #include "qmessageglobal.h"
 #include "qmessage.h"
 #include "qmessageaccount.h"

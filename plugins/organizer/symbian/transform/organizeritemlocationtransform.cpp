@@ -80,7 +80,7 @@ void OrganizerItemLocationTransform::transformToDetailL(const CCalEntry& entry, 
 	CCalGeoValue *geoValue = entry.GeoValueL();
 	// Get the latitude and longitude values and store it in a string
 	// with default precision 6.
-	if (geoValue != NULL) {
+	if (geoValue) {
 		bool latLongValueSet = false;
 		latLongValueSet = geoValue->GetLatLong(latitude, longitude);
 		if(latLongValueSet) {

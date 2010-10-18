@@ -43,6 +43,7 @@
 #define QLANDMARKCATEGORYID_H
 
 #include "qmobilityglobal.h"
+#include <QMetaType>
 #include <QSharedDataPointer>
 
 QT_BEGIN_HEADER
@@ -76,4 +77,7 @@ QTM_END_NAMESPACE
 
 QT_END_HEADER
 
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QLandmarkCategoryId));
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QLandmarkCategoryId), Q_MOVABLE_TYPE);
 #endif

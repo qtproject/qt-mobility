@@ -16,3 +16,8 @@ SOURCES = \
         documentpropertieswidget.cpp \
         filebrowser.cpp \
         main.cpp
+
+symbian: {
+    load(data_caging_paths)
+    TARGET.CAPABILITY = ReadDeviceData ReadUserData WriteDeviceData
+}

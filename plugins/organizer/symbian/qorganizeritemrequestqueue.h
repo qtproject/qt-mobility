@@ -76,16 +76,10 @@ public:
 private:
     QOrganizerItemRequestQueue(
             QOrganizerItemSymbianEngine& aOrganizerItemManagerEngine);
-    
-public slots:
-    void exitLoop();
-    
+
 private:
     QOrganizerItemSymbianEngine&                m_organizerItemManagerEngine;
-    QMap<QOrganizerItemAbstractRequest*, COrganizerItemRequestsServiceProvider*>
-    m_abstractRequestMap;
-    QEventLoop*                                 m_eventLoop;
-    QTimer*                                     m_timer;
+    QMap<QOrganizerItemAbstractRequest*, COrganizerItemRequestsServiceProvider*>m_abstractRequestMap;
 };
 
 #endif /* QORGANIZERITEMREQUESTQUEUE_H_ */

@@ -69,8 +69,15 @@ int main(int argc, char**argv)
     tst_QMediaPlayer_xa test_xa;
     ret = QTest::qExec(&test_xa, 3, new_argv);
 #else
+    char *new_argv[3];
+    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";
+    QByteArray   bytes  = str.toAscii();
+    char arg1[] = "-o";
+    new_argv[0] = argv[0];
+    new_argv[1] = arg1;
+    new_argv[2] = bytes.data();
     tst_QMediaPlayer_s60 test_s60;
-    ret = QTest::qExec(&test_s60, argc, argv);
+    ret = QTest::qExec(&test_s60, 3, new_argv);
 #endif
 #endif
     return ret;

@@ -37,6 +37,13 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
+** plugin source code.
+**
 ****************************************************************************/
 
 #ifndef QGEOPLACESREPLY_NOKIA_H
@@ -51,7 +58,7 @@ class QGeoSearchReplyNokia : public QGeoSearchReply
 {
     Q_OBJECT
 public:
-    QGeoSearchReplyNokia(QNetworkReply *reply, QObject *parent = 0);
+    QGeoSearchReplyNokia(QNetworkReply *reply, int limit, int offset, QGeoBoundingArea *viewport, QObject *parent = 0);
     ~QGeoSearchReplyNokia();
 
     void abort();

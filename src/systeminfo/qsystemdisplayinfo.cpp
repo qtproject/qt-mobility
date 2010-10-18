@@ -41,6 +41,7 @@
 
 #include "qsystemdisplayinfo.h"
 #include "qsysteminfocommon_p.h"
+#include <QDesktopWidget>
 
 QTM_BEGIN_NAMESPACE
         Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
@@ -84,6 +85,10 @@ QSystemDisplayInfo::~QSystemDisplayInfo()
 */
 int QSystemDisplayInfo::displayBrightness(int screenNumber)
 {
+    QDesktopWidget wid;
+    if(wid.screenCount() < 1 || wid.screenCount() - 1 < screenNumber) {
+        return -1;
+    }
     return displayInfoPrivate()->displayBrightness(screenNumber);
 }
 
@@ -95,67 +100,72 @@ int QSystemDisplayInfo::displayBrightness(int screenNumber)
 */
 int QSystemDisplayInfo::colorDepth(int screenNumber)
 {
+    QDesktopWidget wid;
+    if(wid.screenCount() < 1 || wid.screenCount() - 1 < screenNumber) {
+        return -1;
+    }
     return displayInfoPrivate()->colorDepth(screenNumber);
 }
 
-// /*!
-//     Returns the orientation of the \a screen.
+/*!
+    Returns the orientation of the \a screen.
 
-//     \sa QDesktopWidget::screenCount()
-// */
-// QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::getOrientation(int screen)
-// {
-//     return displayInfoPrivate()->getOrientation(screen);
-// }
+    \sa QDesktopWidget::screenCount()
+*/
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::getOrientation(int screen)
+{
+    return displayInfoPrivate()->getOrientation(screen);
+}
 
 
-// /*!
-//     Returns the current contrast of the screen \a screen.
+/*!
+    Returns the current contrast of the screen \a screen, from 0 to 1.
 
-//     \sa QDesktopWidget::screenCount()
-// */
-// float QSystemDisplayInfo::contrast(int screen)
-// {
-//         return displayInfoPrivate()->contrast(screen);
-// }
+    \sa QDesktopWidget::screenCount()
+*/
+float QSystemDisplayInfo::contrast(int screen)
+{
+        return displayInfoPrivate()->contrast(screen);
+}
 
-// /*!
-//     Returns the current dots per inch (DPI) for the width of \a screen.
+/*!
+    Returns the current dots per inch (DPI) for the width of \a screen.
 
-//     \sa QDesktopWidget::screenCount()
-// */
-// int QSystemDisplayInfo::getDPIWidth(int screen)
-// {
-//         return displayInfoPrivate()->getDPIWidth(screen);
-// }
+    \sa QDesktopWidget::screenCount()
+*/
+int QSystemDisplayInfo::getDPIWidth(int screen)
+{
+        return displayInfoPrivate()->getDPIWidth(screen);
+}
 
-// /*!
-//     Returns the dpi (Dot Per Inch) of the height os \a screen.
+/*!
+    Returns the dpi (Dot Per Inch) of the height os \a screen.
 
-//     \sa QDesktopWidget::screenCount()
-// */
-// int QSystemDisplayInfo::getDPIHeight(int screen)
-// {
-//         return displayInfoPrivate()->getDPIHeight(screen);
-// }
+    \sa QDesktopWidget::screenCount()
+*/
+int QSystemDisplayInfo::getDPIHeight(int screen)
+{
+        return displayInfoPrivate()->getDPIHeight(screen);
+}
 
-// /*!
-//     Returns the physical height of the \a screen in millimeters.
-//     \sa QDesktopWidget::screenCount()
-// */
-// int QSystemDisplayInfo::physicalHeight(int screen)
-// {
-//         return displayInfoPrivate()->physicalHeight(screen);
-// }
+/*!
+    Returns the physical height of the \a screen in millimeters.
+    \sa QDesktopWidget::screenCount()
+*/
+int QSystemDisplayInfo::physicalHeight(int screen)
+{
+        return displayInfoPrivate()->physicalHeight(screen);
+}
 
-// /*!
-//     Returns the physical width of \a screen in millimeters.
-//     \sa QDesktopWidget::screenCount()
-// */
-// int QSystemDisplayInfo::physicalWidth(int screen)
-// {
-//         return displayInfoPrivate()->physicalWidth(screen);
-// }
+/*!
+    Returns the physical width of \a screen in millimeters.
+    \sa QDesktopWidget::screenCount()
+*/
+int QSystemDisplayInfo::physicalWidth(int screen)
+{
+        return displayInfoPrivate()->physicalWidth(screen);
+}
+
 
 
 

@@ -45,11 +45,28 @@ QTM_USE_NAMESPACE
 
 class Filter : public QSensorFilter
 {
+    int lastPercent;
 public:
+    Filter()
+        : QSensorFilter()
+        , lastPercent(0)
+    {
+    }
+
     bool filter(QSensorReading *reading)
     {
         int percent = reading->property("chanceOfBeingEaten").value<qreal>() * 100;
-        qDebug() << "Your chance of being eaten by a Grue:" << percent << "percent.";
+        if (percent == 0) {
+            qDebug() << "It is light. You are safe from Grues.";
+        } else if (lastPercent == 0) {
+            qDebug() << "It is dark. You are likely to be eaten by a Grue.";
+        }
+        if (percent == 100) {
+            qDebug() << "You have been eaten by a Grue!";
+            QCoreApplication::instance()->quit();
+        } else if (percent)
+            qDebug() << "Your chance of being eaten by a Grue:" << percent << "percent.";
+        lastPercent = percent;
         return false;
     }
 };
@@ -65,7 +82,7 @@ int main(int argc, char **argv)
     sensor.start();
 
     if (!sensor.isActive()) {
-        qWarning("Grue sensor didn't start!");
+        qWarning("The Grue sensor didn't start. You're on your own!");
         return 1;
     }
 

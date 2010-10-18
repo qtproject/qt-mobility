@@ -95,6 +95,9 @@ private slots:  // Test cases
     void testDefaultFilterWithPredictiveSearch9();
     void testFilterSupported();
     void testCreateSelectQuery();
+    void testFavoriteDetailFilter();
+    void testMatchFlags();
+    void testContactTypeFilter();
 private:
     void  testIntersectionFilter_1();
     void  testIntersectionFilter_2();
@@ -109,6 +112,8 @@ private:
     void  testContactDetailFilter_5();
     void  testContactDetailFilter_6();
     void  testContactDetailFilter_7();
+    void  testContactDetailFilter_8();
+    void  testContactDetailFilter_9();
 private:
     QHash<QContactFilter::FilterType, TFilter>  *mFilters;
     CContactDatabase *m_database;

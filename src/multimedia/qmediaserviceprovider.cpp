@@ -596,7 +596,7 @@ QString QMediaServiceProvider::deviceDescription(const QByteArray &serviceType, 
 }
 
 
-#ifdef QT_BUILD_INTERNAL
+#ifdef QTM_BUILD_UNITTESTS
 
 static QMediaServiceProvider *qt_defaultMediaServiceProvider = 0;
 
@@ -617,7 +617,7 @@ void QMediaServiceProvider::setDefaultServiceProvider(QMediaServiceProvider *pro
 */
 QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 {
-#ifdef QT_BUILD_INTERNAL
+#ifdef QTM_BUILD_UNITTESTS
     return qt_defaultMediaServiceProvider != 0
             ? qt_defaultMediaServiceProvider
             : static_cast<QMediaServiceProvider *>(pluginProvider());

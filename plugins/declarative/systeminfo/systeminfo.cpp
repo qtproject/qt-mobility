@@ -43,6 +43,9 @@
 #include <QtDeclarative/qdeclarative.h>
 
 #include "qdeclarativenetworkinfo_p.h"
+#include "qdeclarativescreensaver_p.h"
+#include "qdeclarativedeviceinfo_p.h"
+
 #include "qsysteminfo.h"
 QT_BEGIN_NAMESPACE
 
@@ -51,8 +54,8 @@ QTM_USE_NAMESPACE
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemInfo));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemNetworkInfo));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemDisplayInfo));
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemDeviceInfo));
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemScreenSaver));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeDeviceInfo));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeScreenSaver));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemStorageInfo));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeNetworkInfo));
 
@@ -66,9 +69,9 @@ public:
 
         qmlRegisterType<QSystemInfo>(uri, 1, 1, "GeneralInfo");
         qmlRegisterType<QSystemDisplayInfo>(uri, 1, 1, "DisplayInfo");
-        qmlRegisterType<QSystemDeviceInfo>(uri, 1, 1, "DeviceInfo");
+        qmlRegisterType<QDeclarativeDeviceInfo>(uri, 1, 1, "DeviceInfo");
         qmlRegisterType<QDeclarativeNetworkInfo>(uri,1, 1, "NetworkInfo");
-        qmlRegisterType<QSystemScreenSaver>(uri, 1, 1, "ScreenSaver");
+        qmlRegisterType<QDeclarativeScreenSaver>(uri, 1, 1, "ScreenSaver");
         qmlRegisterType<QSystemStorageInfo>(uri, 1, 1, "StorageInfo");
     }
 };

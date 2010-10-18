@@ -62,13 +62,6 @@ QContactActionFactory::~QContactActionFactory()
  */
 
 /*!
-  \fn QContactActionFactory::instance() const
-  Returns a pointer to an instance of the implementation of the action.
-  The caller takes ownership of the action instance returned from this function, and must delete it when
-  they are finished using it in order to avoid a memory leak.
- */
-
-/*!
   \fn QContactActionFactory::supportedTargets(const QContact& contact, const QContactActionDescriptor& which) const
   Returns the targets which are supported by the action which may be instantiated by this factory
   for the given \a contact.  If there are no supported targets for the \a contact, then that

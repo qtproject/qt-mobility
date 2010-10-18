@@ -102,6 +102,10 @@ QTM_BEGIN_NAMESPACE
   \value DetailDefinitionFetchRequest A request to fetch a collection of detail definitions
   \value DetailDefinitionRemoveRequest A request to remove a list of detail definitions
   \value DetailDefinitionSaveRequest A request to save a list of detail definitions
+  \value CollectionFetchRequest A request to fetch a collection.
+  \value CollectionLocalIdFetchRequest A request to collect a local id.
+  \value CollectionRemoveRequest A request to remove a collection.
+  \value CollectionSaveRequest A request to save a collection.
  */
 
 /*!
@@ -148,6 +152,7 @@ QOrganizerItemAbstractRequest::~QOrganizerItemAbstractRequest()
  */
 bool QOrganizerItemAbstractRequest::isInactive() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return (d_ptr->m_state == QOrganizerItemAbstractRequest::InactiveState);
 }
 
@@ -158,6 +163,7 @@ bool QOrganizerItemAbstractRequest::isInactive() const
  */
 bool QOrganizerItemAbstractRequest::isActive() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return (d_ptr->m_state == QOrganizerItemAbstractRequest::ActiveState);
 }
 
@@ -168,6 +174,7 @@ bool QOrganizerItemAbstractRequest::isActive() const
  */
 bool QOrganizerItemAbstractRequest::isFinished() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return (d_ptr->m_state == QOrganizerItemAbstractRequest::FinishedState);
 }
 
@@ -178,12 +185,14 @@ bool QOrganizerItemAbstractRequest::isFinished() const
  */
 bool QOrganizerItemAbstractRequest::isCanceled() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return (d_ptr->m_state == QOrganizerItemAbstractRequest::CanceledState);
 }
 
 /*! Returns the overall error of the most recent asynchronous operation */
 QOrganizerItemManager::Error QOrganizerItemAbstractRequest::error() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->m_error;
 }
 
@@ -192,6 +201,7 @@ QOrganizerItemManager::Error QOrganizerItemAbstractRequest::error() const
  */
 QOrganizerItemAbstractRequest::RequestType QOrganizerItemAbstractRequest::type() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->type();
 }
 
@@ -200,30 +210,38 @@ QOrganizerItemAbstractRequest::RequestType QOrganizerItemAbstractRequest::type()
  */
 QOrganizerItemAbstractRequest::State QOrganizerItemAbstractRequest::state() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->m_state;
 }
 
 /*! Returns a pointer to the manager of which this request instance requests operations */
 QOrganizerItemManager* QOrganizerItemAbstractRequest::manager() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->m_manager;
 }
 
 /*! Sets the manager of which this request instance requests operations to \a manager */
 void QOrganizerItemAbstractRequest::setManager(QOrganizerItemManager* manager)
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
+    // In theory we might have been active and the manager didn't cancel/finish us
+    if (d_ptr->m_state == QOrganizerItemAbstractRequest::ActiveState && d_ptr->m_manager)
+        return;
     d_ptr->m_manager = manager;
+    d_ptr->m_engine = QOrganizerItemManagerData::engine(d_ptr->m_manager);
 }
 
 /*! Attempts to start the request.  Returns false if the request is not in the \c QOrganizerItemAbstractRequest::Inactive, \c QOrganizerItemAbstractRequest::Finished or \c QOrganizerItemAbstractRequest::Cancelled states,
     or if the request was unable to be performed by the manager engine; otherwise returns true. */
 bool QOrganizerItemAbstractRequest::start()
 {
-    QOrganizerItemManagerEngine *engine = QOrganizerItemManagerData::engine(d_ptr->m_manager);
-    if (engine && (d_ptr->m_state == QOrganizerItemAbstractRequest::CanceledState
+    QMutexLocker ml(&d_ptr->m_mutex);
+    if (d_ptr->m_engine && (d_ptr->m_state == QOrganizerItemAbstractRequest::CanceledState
                    || d_ptr->m_state == QOrganizerItemAbstractRequest::FinishedState
                    || d_ptr->m_state == QOrganizerItemAbstractRequest::InactiveState)) {
-        return engine->startRequest(this);
+        ml.unlock();
+        return d_ptr->m_engine->startRequest(this);
     }
 
     return false; // unable to start operation; another operation already in progress or no engine.
@@ -233,9 +251,10 @@ bool QOrganizerItemAbstractRequest::start()
     or if the request is unable to be cancelled by the manager engine; otherwise returns true. */
 bool QOrganizerItemAbstractRequest::cancel()
 {
-    QOrganizerItemManagerEngine *engine = QOrganizerItemManagerData::engine(d_ptr->m_manager);
-    if (engine && state() == QOrganizerItemAbstractRequest::ActiveState) {
-        return engine->cancelRequest(this);
+    QMutexLocker ml(&d_ptr->m_mutex);
+    if (d_ptr->m_engine && d_ptr->m_state == QOrganizerItemAbstractRequest::ActiveState) {
+        ml.unlock();
+        return d_ptr->m_engine->cancelRequest(this);
     }
 
     return false; // unable to cancel operation; not in progress or no engine.
@@ -248,11 +267,12 @@ bool QOrganizerItemAbstractRequest::cancel()
  */
 bool QOrganizerItemAbstractRequest::waitForFinished(int msecs)
 {
-    QOrganizerItemManagerEngine *engine = QOrganizerItemManagerData::engine(d_ptr->m_manager);
-    if (engine) {
+    QMutexLocker ml(&d_ptr->m_mutex);
+    if (d_ptr->m_engine) {
         switch (d_ptr->m_state) {
         case QOrganizerItemAbstractRequest::ActiveState:
-            return engine->waitForRequestFinished(this, msecs);
+            ml.unlock();
+            return d_ptr->m_engine->waitForRequestFinished(this, msecs);
         case QOrganizerItemAbstractRequest::CanceledState:
         case QOrganizerItemAbstractRequest::FinishedState:
             return true;
@@ -261,7 +281,7 @@ bool QOrganizerItemAbstractRequest::waitForFinished(int msecs)
         }
     }
 
-    return false; // unable to wait for operation; not in progress or no engine.
+    return false; // unable to wait for operation; not in progress or no engine
 }
 
 #include "moc_qorganizeritemabstractrequest.cpp"

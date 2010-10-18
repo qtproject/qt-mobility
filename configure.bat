@@ -59,7 +59,7 @@ set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
-set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia gallery telephony organizer feedback
+set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia gallery organizer feedback
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
@@ -138,7 +138,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer contacts gallery location publishsubscribe
-    echo                     messaging multimedia systeminfo serviceframework telephony
+    echo                     messaging multimedia systeminfo serviceframework
     echo                     sensors versit organizer feedback
     echo                     Modules should be separated by a space and surrounded
     echo                     by double quotation. If a selected module depends on other modules
@@ -309,8 +309,6 @@ if %FIRST% == bearer (
     echo     Systeminfo selected
 ) else if %FIRST% == serviceframework (
     echo     ServiceFramework selected
-) else if %FIRST% == telephony (
-    echo     Telephony selected
 ) else if %FIRST% == versit (
     echo     Versit selected ^(implies Contacts^)
 ) else if %FIRST% == organizer (
@@ -551,7 +549,13 @@ call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
 call :compileTest callinformation_symbian callinformation_symbian
 call :compileTest IMMERSION immersion
-call :compileTest AdvancedTouchFeedback advancedtouchfeedback 
+call :compileTest Symbian_CamAutoFocus_31 symbian_camera_camautofocus
+call :compileTest Symbian_ECamAdvancedSettings_Post31 symbian_camera_ecamadvsettings
+call :compileTest Symbian_DevVideoRecord symbian_camera_devvideorecord
+call :compileTest AdvancedTouchFeedback advancedtouchfeedback
+call :compileTest MDS mds
+call :compileTest MDS_25 mds_25
+call :compileTest MDS_25_92MCL mds_25_92mcl
 goto noTests
 
 :windowsTests
@@ -608,8 +612,6 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSystemInfo %SOURCE_PATH%\src\systeminfo
 ) else if %FIRST% == serviceframework (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtServiceFramework %SOURCE_PATH%\src\serviceframework
-) else if %FIRST% == telephony (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtTelephony %SOURCE_PATH%\src\telephony
 ) else if %FIRST% == versit (
     REM versit implies contacts.  organizer includes might also be necessary
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersit %SOURCE_PATH%\src\versit

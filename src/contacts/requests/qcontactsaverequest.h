@@ -63,6 +63,9 @@ public:
     void setContact(const QContact& contact);
     void setContacts(const QList<QContact>& contacts);
 
+    void setDefinitionMask(const QStringList& definitionMask);
+    QStringList definitionMask() const;
+
     /* Results */
     QList<QContact> contacts() const;
     QMap<int, QContactManager::Error> errorMap() const;

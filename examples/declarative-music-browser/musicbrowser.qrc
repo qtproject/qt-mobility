@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>musicbrowser.qml</file>
+        <file>MusicBrowserCore/AlbumDelegate.qml</file>
+        <file>MusicBrowserCore/AlbumView.qml</file>
+        <file>MusicBrowserCore/CategoryDelegate.qml</file>
+        <file>MusicBrowserCore/CategoryView.qml</file>
+        <file>MusicBrowserCore/LineEdit.qml</file>
+        <file>MusicBrowserCore/MenuButton.qml</file>
+        <file>MusicBrowserCore/qmldir</file>
+        <file>MusicBrowserCore/SongDelegate.qml</file>
+        <file>MusicBrowserCore/SongProperties.qml</file>
+        <file>MusicBrowserCore/SongView.qml</file>
+        <file>MusicBrowserCore/TypeDelegate.qml</file>
+        <file>MusicBrowserCore/images/albums.png</file>
+        <file>MusicBrowserCore/images/arrow.png</file>
+        <file>MusicBrowserCore/images/artists.png</file>
+        <file>MusicBrowserCore/images/genres.png</file>
+        <file>MusicBrowserCore/images/nocover.png</file>
+        <file>MusicBrowserCore/images/songs.png</file>
+    </qresource>
+</RCC>

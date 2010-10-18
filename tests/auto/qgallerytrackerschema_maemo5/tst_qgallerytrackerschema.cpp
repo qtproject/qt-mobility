@@ -52,6 +52,7 @@
 
 QTM_USE_NAMESPACE
 
+Q_DECLARE_METATYPE(QDocumentGallery::Error)
 Q_DECLARE_METATYPE(QVariant)
 Q_DECLARE_METATYPE(QVector<QVariant>)
 Q_DECLARE_METATYPE(QGalleryDBusInterfacePointer)
@@ -138,6 +139,7 @@ private:
 
 void tst_QGalleryTrackerSchema::initTestCase()
 {
+    qRegisterMetaType<QDocumentGallery::Error>();
     qRegisterMetaType<QVariant>();
     qRegisterMetaType<QVector<QVariant> >();
     qRegisterMetaType<QGalleryDBusInterfacePointer>();
@@ -232,36 +234,36 @@ void tst_QGalleryTrackerSchema::uriFromItemId_data()
 {
     QTest::addColumn<QString>("itemId");
     QTest::addColumn<QString>("uri");
-    QTest::addColumn<int>("result");
+    QTest::addColumn<QDocumentGallery::Error>("expectedError");
 
     QTest::newRow("File")
             << QString::fromLatin1("file::/path/to/file.ext")
             << QString::fromLatin1("/path/to/file.ext")
-            << int(QGalleryQueryRequest::Succeeded);
+            << QDocumentGallery::NoError;
     QTest::newRow("Image")
             << QString::fromLatin1("file::/path/to/image.png")
             << QString::fromLatin1("/path/to/image.png")
-            << int(QGalleryQueryRequest::Succeeded);
+            << QDocumentGallery::NoError;
     QTest::newRow("Album")
             << QString::fromLatin1("album::Self Titled/Greatest Hits")
             << QString()
-            << int(QGalleryQueryRequest::InvalidItemError);
+            << QDocumentGallery::ItemIdError;
     QTest::newRow("Turtle")
             << QString::fromLatin1("turtle::its/a/turtle")
             << QString()
-            << int(QGalleryQueryRequest::InvalidItemError);
+            << QDocumentGallery::ItemIdError;
 }
 
 void tst_QGalleryTrackerSchema::uriFromItemId()
 {
     QFETCH(QString, itemId);
     QFETCH(QString, uri);
-    QFETCH(int, result);
+    QFETCH(QDocumentGallery::Error, expectedError);
 
-    int error = QGalleryQueryRequest::Succeeded;
+    QDocumentGallery::Error error = QDocumentGallery::NoError;
 
     QCOMPARE(QGalleryTrackerSchema::uriFromItemId(&error, itemId), uri);
-    QCOMPARE(error, result);
+    QCOMPARE(error, expectedError);
 }
 
 void tst_QGalleryTrackerSchema::serviceUpdateId_data()
@@ -473,7 +475,7 @@ void tst_QGalleryTrackerSchema::prepareValidTypeResponse()
     QGalleryTrackerTypeResultSetArguments arguments;
 
     QGalleryTrackerSchema schema(itemType);
-    QCOMPARE(schema.prepareTypeResponse(&arguments, this), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(schema.prepareTypeResponse(&arguments, this), QDocumentGallery::NoError);
 
     QCOMPARE(arguments.accumulative, accumulative);
     QCOMPARE(arguments.updateMask, updateMask);
@@ -485,22 +487,22 @@ void tst_QGalleryTrackerSchema::prepareValidTypeResponse()
 void tst_QGalleryTrackerSchema::prepareInvalidTypeResponse_data()
 {
     QTest::addColumn<QString>("itemType");
-    QTest::addColumn<int>("result");
+    QTest::addColumn<QDocumentGallery::Error>("error");
 
     QTest::newRow("Turtle")
             << QString::fromLatin1("Turtle")
-            << int(QGalleryAbstractRequest::ItemTypeError);
+            << QDocumentGallery::ItemTypeError;
 }
 
 void tst_QGalleryTrackerSchema::prepareInvalidTypeResponse()
 {
     QFETCH(QString, itemType);
-    QFETCH(int, result);
+    QFETCH(QDocumentGallery::Error, error);
 
     QGalleryTrackerTypeResultSetArguments arguments;
 
     QGalleryTrackerSchema schema(itemType);
-    QCOMPARE(schema.prepareTypeResponse(&arguments, this), result);
+    QCOMPARE(schema.prepareTypeResponse(&arguments, this), error);
 }
 
 void tst_QGalleryTrackerSchema::prepareValidItemResponse_data()
@@ -594,7 +596,7 @@ void tst_QGalleryTrackerSchema::prepareValidItemResponse()
     QGalleryTrackerSchema schema = QGalleryTrackerSchema::fromItemId(itemId.toString());
     QCOMPARE(
             schema.prepareItemResponse(&arguments, this, itemId.toString(), propertyNames),
-            int(QGalleryAbstractRequest::Succeeded));
+            QDocumentGallery::NoError);
 
     QVERIFY(arguments.idColumn != 0);
     QCOMPARE(arguments.idColumn->value(row.constBegin()), itemId);
@@ -620,34 +622,34 @@ void tst_QGalleryTrackerSchema::prepareInvalidItemResponse_data()
 {
     QTest::addColumn<QString>("itemId");
     QTest::addColumn<QStringList>("propertyNames");
-    QTest::addColumn<int>("result");
+    QTest::addColumn<QDocumentGallery::Error>("error");
 
     QTest::newRow("Invalid Type")
             << QString::fromLatin1("turtle::its/a/turtle")
             << QStringList()
-            << int(QGalleryAbstractRequest::InvalidItemError);
+            << QDocumentGallery::ItemIdError;
 
     QTest::newRow("Relative file path")
             << QString::fromLatin1("file::file.ext")
             << QStringList()
-            << int(QGalleryAbstractRequest::InvalidItemError);
+            << QDocumentGallery::ItemIdError;
 
     QTest::newRow("Relative file path")
             << QString::fromLatin1("album::Greatest Hits")
             << QStringList()
-            << int(QGalleryAbstractRequest::InvalidItemError);
+            << QDocumentGallery::ItemIdError;
 }
 
 void tst_QGalleryTrackerSchema::prepareInvalidItemResponse()
 {
     QFETCH(QString, itemId);
     QFETCH(QStringList, propertyNames);
-    QFETCH(int, result);
+    QFETCH(QDocumentGallery::Error, error);
 
     QGalleryTrackerResultSetArguments arguments;
 
     QGalleryTrackerSchema schema = QGalleryTrackerSchema::fromItemId(itemId);
-    QCOMPARE(schema.prepareItemResponse(&arguments, this, itemId, propertyNames), result);
+    QCOMPARE(schema.prepareItemResponse(&arguments, this, itemId, propertyNames), error);
 }
 
 void tst_QGalleryTrackerSchema::queryResponseRootType_data()
@@ -837,7 +839,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootType()
                     QGalleryFilter(),
                     QStringList(),
                     QStringList()),
-            int(QGalleryAbstractRequest::Succeeded));
+            QDocumentGallery::NoError);
 
     QCOMPARE(arguments.queryInterface, queryInterface);
     QCOMPARE(arguments.queryMethod, queryMethod);
@@ -1449,7 +1451,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilePropertyNames()
                     QGalleryFilter(),
                     propertyNames,
                     sortPropertyNames),
-            int(QGalleryAbstractRequest::Succeeded));
+            QDocumentGallery::NoError);
 
     QCOMPARE(arguments.tableWidth, tableWidth);
     QCOMPARE(arguments.valueOffset, 2);
@@ -1975,7 +1977,7 @@ void tst_QGalleryTrackerSchema::queryResponseAggregatePropertyNames()
                     QGalleryFilter(),
                     propertyNames,
                     sortPropertyNames),
-            int(QGalleryAbstractRequest::Succeeded));
+            QDocumentGallery::NoError);
 
     QCOMPARE(arguments.tableWidth, tableWidth);
     QCOMPARE(arguments.valueOffset, valueOffset);
@@ -2381,7 +2383,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem()
                     QGalleryFilter(),
                     QStringList(),
                     QStringList()),
-            int(QGalleryAbstractRequest::Succeeded));
+            QDocumentGallery::NoError);
 
     QCOMPARE(arguments.queryArguments.count(), argumentCount);
     QCOMPARE(arguments.queryArguments.at(queryStringIndex), QVariant(queryString));
@@ -2557,8 +2559,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:equals>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String("file."), QGalleryFilter::StartsWith);
+        QGalleryFilter filter = QDocumentGallery::fileName.startsWith(QLatin1String("file."));
 
         QTest::newRow("File.fileName.startsWith(file.)")
                 << QString::fromLatin1("File")
@@ -2575,8 +2576,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:startsWith>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String(".ext"), QGalleryFilter::EndsWith);
+        QGalleryFilter filter = QDocumentGallery::fileName.endsWith(QLatin1String(".ext"));
 
         QTest::newRow("File.fileName.endsWith(.ext)")
                 << QString::fromLatin1("File")
@@ -2593,8 +2593,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:equals>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String("ext"), QGalleryFilter::Contains);
+        QGalleryFilter filter = QDocumentGallery::fileName.contains(QLatin1String("ext"));
 
         QTest::newRow("File.fileName.contains(ext)")
                 << QString::fromLatin1("File")
@@ -2611,8 +2610,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:contains>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QGalleryMetaDataFilter(
-                QDocumentGallery::fileName, QLatin1String("file*ext"), QGalleryFilter::Wildcard);
+        QGalleryFilter filter = QDocumentGallery::fileName.wildcard(QLatin1String("file*ext"));
 
         QTest::newRow("File.fileName.wildcard(file*ext")
                 << QString::fromLatin1("File")
@@ -2629,12 +2627,10 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:equals>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QGalleryMetaDataFilter(
-                QDocumentGallery::fileName,
-                QLatin1String("(file|document).ext"),
-                QGalleryFilter::RegExp);
+        QGalleryFilter filter
+                = QDocumentGallery::fileName.regExp(QLatin1String("(file|document).ext"));
 
-        QTest::newRow("File.fileName.regExp((file|document).ext")
+        QTest::newRow("File.fileName.regExp((file|document).ext)")
                 << QString::fromLatin1("File")
                 << QString()
                 << QGalleryQueryRequest::AllDescendants
@@ -2649,7 +2645,26 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                             "</rdfq:regex>"
                         "</rdfq:Condition>");
     } {
-        QGalleryFilter filter = QDocumentGallery::description == QUrl(QLatin1String("http://example.com/index.html"));
+        QGalleryFilter filter
+                = QDocumentGallery::fileName.regExp(QRegExp(QLatin1String("(file|document).ext")));
+
+        QTest::newRow("File.fileName.regExp(QRegExp((file|document).ext))")
+                << QString::fromLatin1("File")
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                << QT_FILE_QUERY_ARGUMENTS_COUNT
+                << QT_FILE_QUERY_STRING_POSITION
+                << QString::fromLatin1(
+                        "<rdfq:Condition>"
+                            "<rdfq:regex>"
+                                "<rdfq:Property name=\"File:Name\"/>"
+                                "<rdf:String>(file|document).ext</rdf:String>"
+                            "</rdfq:regex>"
+                        "</rdfq:Condition>");
+    } {
+        QGalleryFilter filter
+                = QDocumentGallery::description == QUrl(QLatin1String("http://example.com/index.html"));
 
         QTest::newRow("Image.description == http://example.com/index.html")
                 << QString::fromLatin1("Image")
@@ -3049,7 +3064,7 @@ void tst_QGalleryTrackerSchema::queryResponseFilter()
                     filter,
                     QStringList(),
                     QStringList()),
-            int(QGalleryAbstractRequest::Succeeded));
+            QDocumentGallery::NoError);
 
     QCOMPARE(arguments.queryArguments.count(), argumentCount);
     QCOMPARE(arguments.queryArguments.at(queryStringIndex), QVariant(queryString));
@@ -3079,7 +3094,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootFileItems()
                     QGalleryFilter(),
                     QStringList(),
                     QStringList()),
-            int(QGalleryAbstractRequest::Succeeded));
+            QDocumentGallery::NoError);
 
     QCOMPARE(arguments.queryArguments.count(), QT_FILE_QUERY_ARGUMENTS_COUNT);
     QVERIFY(regExp.exactMatch(
@@ -3115,7 +3130,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootFileItemsWithFilter()
                     QDocumentGallery::fileName == QLatin1String("file.ext"),
                     QStringList(),
                     QStringList()),
-            int(QGalleryAbstractRequest::Succeeded));
+            QDocumentGallery::NoError);
 
     QCOMPARE(arguments.queryArguments.count(), QT_FILE_QUERY_ARGUMENTS_COUNT);
     QVERIFY(regExp.exactMatch(
@@ -3249,7 +3264,7 @@ void tst_QGalleryTrackerSchema::queryResponseValueColumnToVariant()
                     QGalleryFilter(),
                     QStringList() << propertyName,
                     QStringList()),
-            int(QGalleryAbstractRequest::Succeeded));
+            QDocumentGallery::NoError);
 
     QCOMPARE(arguments.valueColumns.count(), 1);
     QCOMPARE(arguments.valueColumns.at(0)->toVariant(string), value);
@@ -3376,7 +3391,7 @@ void tst_QGalleryTrackerSchema::queryResponseValueColumnToString()
                     QGalleryFilter(),
                     QStringList() << propertyName,
                     QStringList()),
-            int(QGalleryAbstractRequest::Succeeded));
+            QDocumentGallery::NoError);
 
     QCOMPARE(arguments.valueColumns.count(), 1);
     QCOMPARE(arguments.valueColumns.at(0)->toString(value), string);
@@ -3422,7 +3437,7 @@ void tst_QGalleryTrackerSchema::queryResponseCompositeColumn()
                     QGalleryFilter(),
                     QStringList() << propertyName,
                     QStringList()),
-            int(QGalleryAbstractRequest::Succeeded));
+            QDocumentGallery::NoError);
 
     QCOMPARE(arguments.compositeColumns.count(), 1);
     QCOMPARE(arguments.compositeColumns.at(0)->value(rowData.constBegin()), value);
@@ -3436,11 +3451,11 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
     QTest::addColumn<QGalleryFilter>("filter");
     QTest::addColumn<QStringList>("propertyNames");
     QTest::addColumn<QStringList>("sortPropertyNames");
-    QTest::addColumn<int>("result");
+    QTest::addColumn<QDocumentGallery::Error>("error");
 
     QTest::addColumn<QVariant>("itemId");
     QTest::addColumn<QStringList>("propertyNames");
-    QTest::addColumn<int>("result");
+    QTest::addColumn<QDocumentGallery::Error>("error");
 
     QTest::newRow("Invalid Type, No Filter")
             << QString()
@@ -3449,7 +3464,7 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
             << QGalleryFilter()
             << QStringList()
             << QStringList()
-            << int(QGalleryAbstractRequest::ItemTypeError);
+            << QDocumentGallery::ItemTypeError;
 
     QTest::newRow("Invalid Type, With Filter")
             << QString()
@@ -3458,7 +3473,7 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
             << QGalleryFilter(QDocumentGallery::fileName == QLatin1String("file.ext"))
             << QStringList()
             << QStringList()
-            << int(QGalleryAbstractRequest::ItemTypeError);
+            << QDocumentGallery::ItemTypeError;
 
     QTest::newRow("No Type")
             << QString()
@@ -3467,7 +3482,7 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
             << QGalleryFilter()
             << QStringList()
             << QStringList()
-            << int(QGalleryAbstractRequest::ItemTypeError);
+            << QDocumentGallery::ItemTypeError;
 
     QTest::newRow("Invalid Root Item Type")
             << QString::fromLatin1("turtle::/its/a/turtle")
@@ -3476,7 +3491,7 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
             << QGalleryFilter()
             << QStringList()
             << QStringList()
-            << int(QGalleryAbstractRequest::InvalidItemError);
+            << QDocumentGallery::ItemIdError;
 
     QTest::newRow("Invalid Album ID")
             << QString::fromLatin1("album::Greatest Hits")
@@ -3485,7 +3500,7 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
             << QGalleryFilter()
             << QStringList()
             << QStringList()
-            << int(QGalleryAbstractRequest::InvalidItemError);
+            << QDocumentGallery::ItemIdError;
 
     QTest::newRow("File.filePath > /path")
             << QString()
@@ -3494,7 +3509,7 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
             << QGalleryFilter(QDocumentGallery::filePath > QLatin1String("/path"))
             << QStringList()
             << QStringList()
-            << int(QGalleryAbstractRequest::UnsupportedFilterOptionError);
+            << QDocumentGallery::FilterError;
 
     QTest::newRow("File.url > file:///path")
             << QString()
@@ -3503,7 +3518,7 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
             << QGalleryFilter(QDocumentGallery::url > QUrl::fromLocalFile(QLatin1String("/path")))
             << QStringList()
             << QStringList()
-            << int(QGalleryAbstractRequest::UnsupportedFilterOptionError);
+            << QDocumentGallery::FilterError;
 
     QTest::newRow("File.filePath > /path (within union)")
             << QString()
@@ -3513,7 +3528,7 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
                     QDocumentGallery::filePath > QLatin1String("/path")))
             << QStringList()
             << QStringList()
-            << int(QGalleryAbstractRequest::UnsupportedFilterOptionError);
+            << QDocumentGallery::FilterError;
 
     QTest::newRow("File.filePath > /path (within intersection)")
             << QString()
@@ -3523,7 +3538,7 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
                     QDocumentGallery::filePath > QLatin1String("/path")))
             << QStringList()
             << QStringList()
-            << int(QGalleryAbstractRequest::UnsupportedFilterOptionError);
+            << QDocumentGallery::FilterError;
 
     QTest::newRow("File.fileName ? /path")
             << QString()
@@ -3535,7 +3550,7 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
                     QGalleryFilter::Comparator(1200)))
             << QStringList()
             << QStringList()
-            << int(QGalleryAbstractRequest::UnsupportedFilterOptionError);
+            << QDocumentGallery::FilterError;
 
     QTest::newRow("File.fileName == QPoint(12, 44)")
             << QString()
@@ -3544,7 +3559,7 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
             << QGalleryFilter(QDocumentGallery::fileName == QPoint(12, 44))
             << QStringList()
             << QStringList()
-            << int(QGalleryAbstractRequest::PropertyTypeError);
+            << QDocumentGallery::FilterError;
 
 
     QTest::newRow("File.url == 125")
@@ -3554,7 +3569,7 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse_data()
             << QGalleryFilter(QDocumentGallery::url == 125)
             << QStringList()
             << QStringList()
-            << int(QGalleryAbstractRequest::PropertyTypeError);
+            << QDocumentGallery::FilterError;
 }
 
 void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse()
@@ -3565,7 +3580,7 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse()
     QFETCH(QGalleryFilter, filter);
     QFETCH(QStringList, propertyNames);
     QFETCH(QStringList, sortPropertyNames);
-    QFETCH(int, result);
+    QFETCH(QDocumentGallery::Error, error);
 
     QGalleryTrackerResultSetArguments arguments;
 
@@ -3574,7 +3589,7 @@ void tst_QGalleryTrackerSchema::prepareInvalidQueryResponse()
     QCOMPARE(
             schema.prepareQueryResponse(
                     &arguments, this, scope, rootItem, filter, propertyNames, sortPropertyNames),
-            result);
+            error);
 }
 
 QTEST_MAIN(tst_QGalleryTrackerSchema)

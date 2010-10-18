@@ -52,7 +52,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
-class QGeoInstruction;
+class QGeoManeuver;
 class QGeoRouteSegmentPrivate;
 
 class Q_LOCATION_EXPORT QGeoRouteSegment
@@ -68,6 +68,11 @@ public:
     bool operator ==(const QGeoRouteSegment &other) const;
     bool operator !=(const QGeoRouteSegment &other) const;
 
+    bool isValid() const;
+
+    void setNextRouteSegment(const QGeoRouteSegment &routeSegment);
+    QGeoRouteSegment nextRouteSegment() const;
+
     void setTravelTime(int secs);
     int travelTime() const;
 
@@ -77,8 +82,11 @@ public:
     void setPath(const QList<QGeoCoordinate> &path);
     QList<QGeoCoordinate> path() const;
 
-    void setInstruction(const QGeoInstruction &instruction);
-    QGeoInstruction instruction() const;
+    void setManeuver(const QGeoManeuver &maneuver);
+    QGeoManeuver maneuver() const;
+
+protected:
+    QGeoRouteSegment(QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> &d_ptr);
 
 private:
     QExplicitlySharedDataPointer<QGeoRouteSegmentPrivate> d_ptr;

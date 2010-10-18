@@ -42,22 +42,23 @@
 #include <qradiotuner.h>
 #include "qxaradiosession.h"
 #include "xaradiosessionimpl.h"
+#include "qxacommon.h"
 
 QXARadioSession::QXARadioSession(QObject *parent)
 :QObject(parent)
 {
-    SF_TRACE_FN_ENT_PRINT;
+    QT_TRACE_FUNCTION_ENTRY;
     m_impl = new XARadioSessionImpl(*this);
     if (!m_impl) {
-        SF_PRINT1_LOG(_L("RadioSession::RadioSession(): ERROR creating RadioSessionImpl..."));
+        QT_TRACE1("RadioSession::RadioSession(): ERROR creating RadioSessionImpl...");
         return;
     }
     if (m_impl->PostConstruct() != QRadioTuner::NoError) {
-        SF_PRINT1_LOG(_L("RadioSession::RadioSession(): ERROR from RadioSessionImpl::PostContstruct..."));
+        QT_TRACE1("RadioSession::RadioSession(): ERROR from RadioSessionImpl::PostContstruct...");
         delete m_impl;
         m_impl = NULL;
     }
-    SF_TRACE_FN_EXT_PRINT;
+    QT_TRACE_FUNCTION_EXIT;
 }
 
 QXARadioSession::~QXARadioSession()

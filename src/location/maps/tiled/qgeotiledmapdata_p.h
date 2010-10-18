@@ -83,11 +83,13 @@ public:
     void clearRequests();
 
     void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
-    void paintMapObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    void paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
     void cleanupCaches();
 
     bool intersects(QGeoMapObject *mapObject, const QRectF &rect);
+
+    QRect screenRectForZoomFactor(int zoomFactor);
     void updateScreenRect();
 
     bool containedInScreen(const QPoint &point) const;
@@ -96,12 +98,12 @@ public:
 
     int zoomFactor;
 
-    QPoint maxZoomCenter;
-    QSize maxZoomSize;
-    QRect maxZoomScreenRect;
+    QPoint worldReferenceViewportCenter;
+    QSize worldReferenceSize;
+    QRect worldReferenceViewportRect;
 
-    QRect maxZoomScreenRectClippedLeft;
-    QRect maxZoomScreenRectClippedRight;
+    QRect worldReferenceViewportRectLeft;
+    QRect worldReferenceViewportRectRight;
 
     QSet<QRect> requestRects;
     QSet<QRect> replyRects;
@@ -109,7 +111,7 @@ public:
     QList<QGeoTiledMapRequest> requests;
     QSet<QGeoTiledMapReply*> replies;
 
-    QCache<QGeoTiledMapRequest, QPixmap> cache;
+    QCache<QGeoTiledMapRequest, QImage> cache;
     QCache<QGeoTiledMapRequest, QPixmap> zoomCache;
 
     QGraphicsScene *scene;
@@ -125,19 +127,24 @@ class QGeoTileIterator
 {
 public:
     QGeoTileIterator(const QGeoTiledMapDataPrivate *mapData);
-    QGeoTileIterator(QGeoTiledMapData *mapData, const QRect &screenRect, const QSize &tileSize, int zoomLevel);
+    QGeoTileIterator(QGraphicsGeoMap::ConnectivityMode connectivityMode,
+                     QGraphicsGeoMap::MapType mapType,
+                     const QRect &screenRect,
+                     const QSize &tileSize,
+                     int zoomLevel);
 
     bool hasNext();
     QGeoTiledMapRequest next();
 
 private:
-    QGeoTiledMapData *mapData;
     bool atEnd;
     int row;
     int col;
     int width;
     QRect screenRect;
     QSize tileSize;
+    QGraphicsGeoMap::MapType mapType;
+    QGraphicsGeoMap::ConnectivityMode connectivityMode;
     int zoomLevel;
     QPoint currTopLeft;
     QRect tileRect;

@@ -47,7 +47,9 @@
 #include <QtCore/qdatetime.h>
 #include <QtDBus/qdbusreply.h>
 
+#include <qdocumentgallery.h>
 #include <qgalleryresource.h>
+
 
 Q_DECLARE_METATYPE(QVector<QStringList>)
 
@@ -125,7 +127,7 @@ void QGalleryTrackerResultSetPrivate::queryFinished(const QDBusPendingCall &call
 
         flags &= ~Active;
 
-        q_func()->finish(QGalleryAbstractRequest::ConnectionError);
+        q_func()->finish(QDocumentGallery::ConnectionError);
     } else if (flags & Cancelled) {
         iCache.count = 0;
 
@@ -247,11 +249,11 @@ void QGalleryTrackerResultSetPrivate::correctRows(
 
 void QGalleryTrackerResultSetPrivate::synchronize()
 {
-    const row_iterator rEnd(rCache.values.end(), tableWidth);
-    const row_iterator iEnd(iCache.values.end(), tableWidth);
+    const const_row_iterator rEnd(rCache.values.constEnd(), tableWidth);
+    const const_row_iterator iEnd(iCache.values.constEnd(), tableWidth);
 
-    row_iterator rBegin(rCache.values.begin(), tableWidth);
-    row_iterator iBegin(iCache.values.begin(), tableWidth);
+    const_row_iterator rBegin(rCache.values.constBegin(), tableWidth);
+    const_row_iterator iBegin(iCache.values.constBegin(), tableWidth);
 
     const int rStep = qMax(64, rEnd - rBegin) / 16;
     const int iStep = qMax(64, iEnd - iBegin) / 16;
@@ -270,8 +272,8 @@ void QGalleryTrackerResultSetPrivate::synchronize()
         } while (iBegin != rEnd && iBegin != iEnd);
 
         if (changed) {
-            row_iterator rIt = rBegin;
-            row_iterator iIt = iBegin;
+            const_row_iterator rIt = rBegin;
+            const_row_iterator iIt = iBegin;
 
             do {    // Skip over rows with equal IDs but different values.
                 if ((equal = rIt.isEqual(iIt, identityWidth))
@@ -302,21 +304,21 @@ void QGalleryTrackerResultSetPrivate::synchronize()
             return;
         }
 
-        row_iterator rOuterEnd = rBegin + ((((rEnd - rBegin) + iStep - 1) / rStep) * rStep);
-        row_iterator iOuterEnd = iBegin + ((((iEnd - iBegin) + iStep - 1) / iStep) * iStep);
+        const_row_iterator rOuterEnd = rBegin + ((((rEnd - rBegin) + iStep - 1) / rStep) * rStep);
+        const_row_iterator iOuterEnd = iBegin + ((((iEnd - iBegin) + iStep - 1) / iStep) * iStep);
 
-        row_iterator rInnerEnd = qMin(rBegin + rStep, rEnd);
-        row_iterator iInnerEnd = qMin(iBegin + iStep, iEnd);
+        const_row_iterator rInnerEnd = qMin(rBegin + rStep * 2, rEnd);
+        const_row_iterator iInnerEnd = qMin(iBegin + iStep * 2, iEnd);
 
-        for (row_iterator rOuter = rBegin, iOuter = iBegin;
+        for (const_row_iterator rOuter = rBegin, iOuter = iBegin;
                 !equal && rOuter != rOuterEnd && iOuter != iOuterEnd;
-                rOuter += rStep / 2, iOuter += iStep / 2) {
-            for (row_iterator rInner = rBegin, iInner = iBegin;
+                rOuter += rStep, iOuter += iStep) {
+            for (const_row_iterator rInner = rBegin, iInner = iBegin;
                     rInner != rInnerEnd && iInner != iInnerEnd;
                     ++rInner, ++iInner) {
                 if ((equal = rInner.isEqual(iOuter, identityWidth))) {
-                    row_iterator rIt;
-                    row_iterator iIt;
+                    const_row_iterator rIt;
+                    const_row_iterator iIt;
 
                     do {
                         rIt = rInner;
@@ -336,8 +338,8 @@ void QGalleryTrackerResultSetPrivate::synchronize()
 
                     break;
                 } else if ((equal = iInner.isEqual(rOuter, identityWidth))) {
-                    row_iterator rIt;
-                    row_iterator iIt;
+                    const_row_iterator rIt;
+                    const_row_iterator iIt;
 
                     do {
                         rIt = rOuter;
@@ -531,7 +533,7 @@ void QGalleryTrackerResultSetPrivate::_q_parseFinished()
         else
             emit q_func()->progressChanged(progressMaximum, progressMaximum);
 
-        q_func()->finish(QGalleryAbstractRequest::Succeeded, flags & Live);
+        q_func()->finish(flags & Live);
     } else if (flags & Cancelled) {
         iCache.count = 0;
 
@@ -572,12 +574,13 @@ void QGalleryTrackerResultSetPrivate::_q_editFinished(QGalleryTrackerMetaDataEdi
 
 QGalleryTrackerResultSet::QGalleryTrackerResultSet(
         QGalleryTrackerResultSetArguments *arguments,
-        bool live,
+        bool autoUpdate,
         int cursorPosition,
         int minimumPagedItems,
         QObject *parent)
     : QGalleryResultSet(
-            *new QGalleryTrackerResultSetPrivate(arguments, live, cursorPosition, minimumPagedItems),
+            *new QGalleryTrackerResultSetPrivate(
+                    arguments, autoUpdate, cursorPosition, minimumPagedItems),
             parent)
 {
     Q_D(QGalleryTrackerResultSet);

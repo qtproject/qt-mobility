@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 import Qt 4.7
-import "common" as Common
-import "mobile" as Mobile
+import "flickrcommon" as Common
+import "flickrmobile" as Mobile
 
 Item {
     id: screen; width: 320; height: 480
@@ -51,7 +51,7 @@ Item {
         id: background
         anchors.fill: parent; color: "#343434";
 
-        Image { source: "mobile/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 0.3 }
+        Image { source: "flickrmobile/images/stripes.png"; fillMode: Image.Tile; anchors.fill: parent; opacity: 0.3 }
 
         Common.RestModel {
             id: restModel;

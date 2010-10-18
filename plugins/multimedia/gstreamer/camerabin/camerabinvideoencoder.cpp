@@ -50,7 +50,7 @@ CameraBinVideoEncoder::CameraBinVideoEncoder(CameraBinSession *session)
 {
     QList<QByteArray> codecCandidates;
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    codecCandidates << "video/h264" << "video/mpeg4" << "video/h263" << "video/theora"
+    codecCandidates << "video/mpeg4" << "video/h264" << "video/h263" << "video/theora"
                     << "video/mpeg2" << "video/mpeg1" << "video/mjpeg" << "video/VP8" << "video/h261";
 
     m_elementNames["video/h264"] = "dsph264enc";
@@ -117,7 +117,7 @@ QList<QSize> CameraBinVideoEncoder::supportedResolutions(const QVideoEncoderSett
 
     //select the closest supported rational rate to settings.frameRate()
 
-    return m_session->supportedResolutions(rate, continuous);
+    return m_session->supportedResolutions(rate, continuous, QCamera::CaptureVideo);
 }
 
 QList< qreal > CameraBinVideoEncoder::supportedFrameRates(const QVideoEncoderSettings &settings, bool *continuous) const
@@ -248,6 +248,15 @@ GstElement *CameraBinVideoEncoder::createEncoder()
                        elementName == "dspmp4venc" ||
                        elementName == "dsph263enc") {
                 //only bitrate parameter is supported
+                int qualityTable[] = {
+                    1000000, //VeryLow
+                    2000000, //Low
+                    4000000, //Normal
+                    8000000, //High
+                    16000000 //VeryHigh
+                };
+                int bitrate = qualityTable[qualityValue];
+                g_object_set(G_OBJECT(encoderElement), "bitrate", bitrate, NULL);
             }
         } else {
             int bitrate = m_videoSettings.bitRate();

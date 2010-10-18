@@ -41,6 +41,8 @@
 
 #include "eventloggerengine_maemo_p.h"
 #include "telepathyengine_maemo_p.h"
+#include "maemohelpers_p.h"
+#include "qmessageservice_maemo_p.h"
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
@@ -72,7 +74,12 @@ EventLoggerEngine::EventLoggerEngine(QObject *parent):QObject(parent), _filterId
 
 
     g_signal_connect(G_OBJECT(el), "new-event", G_CALLBACK(new_event_cb),(void*)this);
+    g_signal_connect(G_OBJECT(el), "event-deleted", G_CALLBACK(event_deleted_cb),(void*)this);
+    g_signal_connect(G_OBJECT(el), "event-updated", G_CALLBACK(event_updated_cb),(void*)this);
+
+    qRegisterMetaType<QMessageIdList>("QMessageIdList");
 }
+
 
 void EventLoggerEngine::new_event_cb(RTComEl *el,int event_id,
                                     const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
@@ -81,6 +88,23 @@ void EventLoggerEngine::new_event_cb(RTComEl *el,int event_id,
   Q_UNUSED(el);
   p->newEvent(event_id, local_uid,remote_uid ,remote_ebook_uid,group_uid,service);
 };
+
+void EventLoggerEngine::event_deleted_cb(RTComEl *el,int event_id,
+                                    const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                                    const char *group_uid,const char *service,EventLoggerEngine *p)
+{
+  Q_UNUSED(el);
+  p->deletedEvent(event_id, local_uid,remote_uid ,remote_ebook_uid,group_uid,service);
+};
+
+void EventLoggerEngine::event_updated_cb(RTComEl *el,int event_id,
+                                    const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                                    const char *group_uid,const char *service,EventLoggerEngine *p)
+{
+  Q_UNUSED(el);
+  p->updatedEvent(event_id, local_uid,remote_uid ,remote_ebook_uid,group_uid,service);
+};
+
 
 void EventLoggerEngine::newEvent(int event_id,
                                 const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
@@ -91,8 +115,34 @@ void EventLoggerEngine::newEvent(int event_id,
    QString eventIds=QString("el")+QString::number(event_id);
     QMessageId id(eventIds);
 
-
+ qDebug()  << "newEvent id=" << eventIds;
     notification(event_id,service,QMessageStorePrivate::Added);
+}
+
+void EventLoggerEngine::updatedEvent(int event_id,
+                                const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                                const char *group_uid,const char *service)
+{
+  Q_UNUSED(local_uid); Q_UNUSED(remote_uid);Q_UNUSED(remote_ebook_uid);
+  Q_UNUSED(group_uid);Q_UNUSED(service);
+   QString eventIds=QString("el")+QString::number(event_id);
+    QMessageId id(eventIds);
+
+ qDebug()  << "updatedEvent id=" << eventIds;
+    notification(event_id,service,QMessageStorePrivate::Updated);
+}
+
+void EventLoggerEngine::deletedEvent(int event_id,
+                                const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
+                                const char *group_uid,const char *service)
+{
+  Q_UNUSED(local_uid); Q_UNUSED(remote_uid);Q_UNUSED(remote_ebook_uid);
+  Q_UNUSED(group_uid);Q_UNUSED(service);
+   QString eventIds=QString("el")+QString::number(event_id);
+    QMessageId id(eventIds);
+
+    qDebug()  << "deletedEvent id=" << eventIds;
+    notification(event_id,service,QMessageStorePrivate::Removed);
 }
 
 QMessageManager::NotificationFilterId EventLoggerEngine::registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
@@ -143,7 +193,7 @@ QMessage EventLoggerEngine::eventToMessage(RTComElEvent & ev)
     QMessageAddressList messageAddresslist;
     messageAddresslist.append(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_local_uid)));
     message.setTo(messageAddresslist);
-    message.setBody(QString(ev.fld_free_text));
+    message.setBody(QString::fromUtf8(ev.fld_free_text));
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
     privateMessage->_id = QMessageId(QString("el")+QString::number(ev.fld_id));
     privateMessage->_modified = false;
@@ -239,7 +289,7 @@ additional_text=%s icon_name=%s pango_markup=%s\n",
          QMessageAddressList messageAddresslist;
          messageAddresslist.append(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_local_uid)));
          message.setTo(messageAddresslist);
-         message.setBody(QString(ev.fld_free_text));
+         message.setBody(QString::fromUtf8(ev.fld_free_text));
          QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
          privateMessage->_id = id;
          privateMessage->_modified = false;
@@ -248,6 +298,8 @@ additional_text=%s icon_name=%s pango_markup=%s\n",
     };
     if(iter) g_object_unref(iter);
     //    debugMessage(message);
+
+    MessageCache::instance()->insert(message);
 
     return message;
 
@@ -308,6 +360,15 @@ void EventLoggerEngine::notification(int eventId, QString service,QMessageStoreP
         }
     }
 
+    if (notificationType == QMessageStorePrivate::Updated) {
+        // Remove updated message from cache to make sure that message
+        // will be retrieved again from backend
+        MessageCache::instance()->remove(QMessageId(QString("el")+QString::number(eventId)));
+    } else if (notificationType == QMessageStorePrivate::Removed) {
+        // Remove removed message from cache
+        MessageCache::instance()->remove(QMessageId(QString("el")+QString::number(eventId)));
+    }
+
     if (matchingFilters.count() > 0) {
             ipMessageStorePrivate->messageNotification(notificationType,
                                                        QMessageId(QString("el")+QString::number(eventId)),
@@ -324,10 +385,11 @@ QMessageIdList EventLoggerEngine::filterAndOrderMessages(const QMessageFilter &f
 }
 #endif
 
-bool EventLoggerEngine::filterMessages(const QMessageFilter &filter,
-                                                    const QMessageSortOrder& sortOrder,
-                                                    QString body,
-                                                    QMessageDataComparator::MatchFlags matchFlags)
+bool EventLoggerEngine::filterMessages(QMessageServicePrivate* privateService,
+                                       const QMessageFilter &filter,
+                                       const QMessageSortOrder& sortOrder,
+                                       QString body,
+                                       QMessageDataComparator::MatchFlags matchFlags)
 {
 
   //  qDebug() << "EventLoggerEngine::filterMessages";
@@ -345,7 +407,7 @@ bool EventLoggerEngine::filterMessages(const QMessageFilter &filter,
     queryThread=new QueryThread();
     connect(queryThread, SIGNAL(completed()), this, SLOT(reportMatchingIds()), Qt::QueuedConnection);
   };
-  queryThread->setArgs(this, filter, body, matchFlags, sortOrder, 0,0);
+  queryThread->setArgs(privateService, this, filter, body, matchFlags, sortOrder, 0,0);
   queryThread->start();
 
     //  return queryThread.queryMessages(filter,sortOrder,body,matchFlags);
@@ -361,9 +423,14 @@ void EventLoggerEngine::messagesFound_(const QMessageIdList &ids)
 
 void EventLoggerEngine::reportMatchingIds()
 {
-  //  qDebug() << "EventLoggerEngine::messagesFound" << m_ids.count();
-  emit messagesFound(m_ids,true,false);
-  completed();
+    // qDebug() << "EventLoggerEngine::messagesFound" << m_ids.count();
+    QMetaObject::invokeMethod(queryThread->_privateService,
+                              "messagesFound",
+                              Qt::QueuedConnection,
+                              Q_ARG(const QMessageIdList, m_ids),
+                              Q_ARG(bool, true),
+                              Q_ARG(bool, false));
+    completed();
 }
 
 void EventLoggerEngine::completed()
@@ -434,6 +501,7 @@ QMessageIdList EventLoggerEngine::filterAndOrderMessages(const QMessageFilter &f
 	     if (pf->filter(message)) {
 	       //   qDebug() <<"Filter :filtering match" << message.id().toString();
 	       //matchingFilters.insert(it.key());
+               MessageCache::instance()->insert(message);
 	       idList.append(message.id());
 	     };
 	   };
@@ -452,8 +520,9 @@ QueryThread::QueryThread(): QThread()
 {
 }
 
-void QueryThread::setArgs(EventLoggerEngine *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+void QueryThread::setArgs(QMessageServicePrivate* privateService, EventLoggerEngine *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
+  _privateService = privateService;
   _parent=parent;
   _filter=filter;
   _body=body;

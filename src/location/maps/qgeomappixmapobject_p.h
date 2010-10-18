@@ -42,8 +42,6 @@
 #ifndef QGEOMAPPIXMAPOBJECT_P_H
 #define QGEOMAPPIXMAPOBJECT_P_H
 
-#include "qgeomapobject_p.h"
-
 #include "qgeocoordinate.h"
 
 #include <QPixmap>
@@ -51,10 +49,10 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapPixmapObjectPrivate : public QGeoMapObjectPrivate
+class QGeoMapPixmapObjectPrivate
 {
 public:
-    QGeoMapPixmapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
+    QGeoMapPixmapObjectPrivate();
     ~QGeoMapPixmapObjectPrivate();
 
     QGeoCoordinate coordinate;

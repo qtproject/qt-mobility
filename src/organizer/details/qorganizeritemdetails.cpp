@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qorganizeritemdetails.h"
+#include "qorganizeritemdetailfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -95,6 +96,21 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDescription::FieldDescription, "Descripti
    \inmodule QtOrganizer
    \ingroup organizer-details
 */
+
+/*!
+    Returns a filter suitable for finding items with a display label containing the specified
+    \a substring.
+*/
+QOrganizerItemFilter QOrganizerItemDisplayLabel::match(const QString &substring)
+{
+    QOrganizerItemDetailFilter f;
+    f.setDetailDefinitionName(QOrganizerItemDisplayLabel::DefinitionName,
+                              QOrganizerItemDisplayLabel::FieldLabel);
+    f.setValue(substring);
+    f.setMatchFlags(QOrganizerItemFilter::MatchContains);
+
+    return f;
+}
 
 /*!
    \fn void QOrganizerItemDisplayLabel::setLabel(const QString& label)
@@ -190,6 +206,15 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldTimeSpecified, "TimeSpec
     Sets the event timerange's due date and time to \a dueDateTime.
  */
 
+/*!
+    \fn QOrganizerEventTimeRange::setTimeSpecified(bool isTimeSpecified)
+    Sets the event should be specified through \a isTimeSpecified.
+ */
+
+/*!
+    \fn QOrganizerEventTimeRange::isTimeSpecified()
+    return true if the time is specified.
+ */
 /* ==================== QOrganizerItemGuid ======================= */
 
 /*!
@@ -267,7 +292,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldOriginalDate, "Origi
  */
 
 /*!
-   \fn QOrganizerItemInstanceOrigin::setParentLocalId(QOrganizerItemLocalId parentId)
+   \fn QOrganizerItemInstanceOrigin::setParentLocalId(const QOrganizerItemLocalId& parentId)
     Sets the parent id of this instance origin item to \a parentId.
  */
 
@@ -330,6 +355,23 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTimeRange::FieldEntryDateTime, "EntryD
    \inmodule QtOrganizer
    \ingroup organizer-details
  */
+
+
+/*!
+    Returns a filter suitable for finding items whose location matches the specified \a substring.
+    This filter matches location names only.  If you wish to match against address or geolocation
+    co-ordinates, use a QContactDetailFilter instead.
+*/
+QOrganizerItemFilter QOrganizerItemLocation::match(const QString &substring)
+{
+    QOrganizerItemDetailFilter f;
+    f.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName,
+                              QOrganizerItemLocation::FieldLocationName);
+    f.setValue(substring);
+    f.setMatchFlags(QOrganizerItemFilter::MatchContains);
+
+    return f;
+}
 
 /*!
 \variable QOrganizerItemLocation::DefinitionName
@@ -402,6 +444,21 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLocationName, "LocationNam
  */
 
 /*!
+    Returns a filter suitable for finding items with a comment containing the specified
+    \a substring.
+*/
+QOrganizerItemFilter QOrganizerItemComment::match(const QString &substring)
+{
+    QOrganizerItemDetailFilter f;
+    f.setDetailDefinitionName(QOrganizerItemComment::DefinitionName,
+                              QOrganizerItemComment::FieldComment);
+    f.setValue(substring);
+    f.setMatchFlags(QOrganizerItemFilter::MatchContains);
+
+    return f;
+}
+
+/*!
    \variable QOrganizerItemComment::DefinitionName
    The constant string which identifies the definition of details which are comments.
  */
@@ -434,6 +491,20 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemComment::FieldComment, "Comment");
    \inmodule QtOrganizer
    \ingroup organizer-details
  */
+
+/*!
+    Returns a filter suitable for finding items of the specified \a priority.
+*/
+QOrganizerItemFilter QOrganizerItemPriority::match(QOrganizerItemPriority::Priority priority)
+{
+    QOrganizerItemDetailFilter f;
+    f.setDetailDefinitionName(QOrganizerItemPriority::DefinitionName,
+                              QOrganizerItemPriority::FieldPriority);
+    f.setValue(priority);
+    f.setMatchFlags(QOrganizerItemFilter::MatchExactly);
+
+    return f;
+}
 
 /*!
    \enum QOrganizerItemPriority::Priority
@@ -600,7 +671,19 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "Excepti
    \value NoReminder This reminder is entirely unobtrusive
    \value AudibleReminder This reminder has an audible element
    \value VisualReminder This reminder has a visual element
-   \value TactileReminder This reminder has a tactile element
+   \value EmailReminder This reminder has a email element
+*/
+
+/*! 
+   \fn QOrganizerItemReminder::QOrganizerItemReminder(const char* definitionName)
+
+    Constructor of a QOrganizerItemReminder object by defining the \a definitionName. 
+*/
+
+/*! 
+    \fn QOrganizerItemReminder::QOrganizerItemReminder(const QOrganizerItemDetail& detail, const char* definitionName)
+
+    Constructor of a QOrganizerItemReminder object by defining the \a detail, and \a definitionName. 
 */
 
 /*!
@@ -656,6 +739,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
  */
 
 /*!
+   \fn void QOrganizerItemReminder::setRepetition(int count, int delaySeconds)
+
+   Sets the repetition by using \a count and, \a delaySeconds.
+ */
+
+/*!
    \fn QOrganizerItemReminder::setTimeDelta(int secondsBefore)
 
    Sets the number of seconds prior to the activation of the item
@@ -699,27 +788,11 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
 */
 
 /*!
-   \fn QOrganizerItemReminder::setRepetitionCount(int count)
-
-   Sets the number of times the user should be reminded of the item to \a count.
-
-   \sa setRepetitionDelay()
-*/
-
-/*!
    \fn int QOrganizerItemReminder::repetitionCount() const
 
    Returns the number of times the user should be reminded of the item.
 
    \sa repetitionDelay()
-*/
-
-/*!
-   \fn QOrganizerItemReminder::setRepetitionDelay(int delay)
-
-   Sets the delay (in seconds) between each repetition of the reminder to \a delay.
-
-   \sa setRepetitionCount()
 */
 
 /*!
@@ -768,7 +841,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::DefinitionName, "AudibleReminder");
 
 /*!
-   \variable QOrganizerItemAudibleReminder::DataUrl
+   \variable QOrganizerItemAudibleReminder::FieldDataUrl
    The constant key for which the value of the sound data url is stored.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldDataUrl, "DataUrl");
@@ -784,6 +857,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldDataUrl, "DataUrl")
 
    Returns the url of the audible data which should be played.
 */
+
 
 /* ==================== QOrganizerItemEmailReminder ======================= */
 
@@ -850,9 +924,9 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldRecipients, "Recipien
 */
 
 /*!
-   \fn QVariantList QOrganizerItemEmailReminder::attachments() const
+   \fn QOrganizerItemEmailReminder::attachments()
 
-   Retruns the attachments of the email.
+   Returns a list of attachments.
 */
 
 /*!
@@ -1113,6 +1187,17 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldTimeSpecified, "TimeSpeci
 /*!
     \fn QOrganizerTodoTimeRange::setDueDateTime(const QDateTime& dueDateTime)
     Sets the todo timerange's due date and time to \a dueDateTime.
+ */
+
+
+/*!
+    \fn QOrganizerTodoTimeRange::setTimeSpecified(bool isTimeSpecified)
+    Sets the time in specification mode through \a isTimeSpecified.
+ */
+
+/*!
+    \fn QOrganizerTodoTimeRange::isTimeSpecified()
+    Returns true if the time is specified.
  */
 
 /* ==================== QOrganizerItemType ======================= */

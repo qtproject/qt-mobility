@@ -60,8 +60,9 @@ public:
     QOrganizerCollectionRemoveRequest(QObject* parent = 0);
 
     /* Selection */
-    void setCollectionIds(const QList<QOrganizerCollectionId>& collectionIds);
-    QList<QOrganizerCollectionId> collectionIds() const;
+    void setCollectionId(const QOrganizerCollectionLocalId& collectionId);
+    void setCollectionIds(const QList<QOrganizerCollectionLocalId>& collectionIds);
+    QList<QOrganizerCollectionLocalId> collectionIds() const;
 
     /* Results */
     QMap<int, QOrganizerItemManager::Error> errorMap() const;

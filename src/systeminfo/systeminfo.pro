@@ -34,15 +34,16 @@ win32:!simulator {
     HEADERS += qsysteminfo_win_p.h 
 
     win32-msvc*: {
-        SOURCES += qwmihelper_win.cpp
-        HEADERS += qwmihelper_win_p.h
+        SOURCES += windows/qwmihelper_win.cpp
+        HEADERS += windows/qwmihelper_win_p.h
 
         LIBS += \
             -lOle32 \
             -lUser32 \
             -lGdi32 \
             -lIphlpapi \
-            -lOleaut32
+            -lOleaut32 \
+            -lDxva2
     }
 
     win32-g++ : {
@@ -59,37 +60,73 @@ unix:!simulator {
     QT += gui
     maemo5|maemo6|linux-*: {
         contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
-        SOURCES += qsysteminfo_linux_common.cpp
-        HEADERS += qsysteminfo_linux_common_p.h
-    }
-    !maemo5:!maemo6:linux-*: {
-LIBS+=-lX11 -lXrandr
-        SOURCES += qsysteminfo_linux.cpp
-        HEADERS += qsysteminfo_linux_p.h
-        contains(QT_CONFIG,dbus): {
-            QT += dbus
-            SOURCES += qhalservice_linux.cpp
-            HEADERS += qhalservice_linux_p.h
-                contains(networkmanager_enabled, yes): {
-                    SOURCES += qnetworkmanagerservice_linux.cpp qnmdbushelper.cpp
-                    HEADERS += qnetworkmanagerservice_linux_p.h qnmdbushelper_p.h
-                } else {
-                DEFINES += QT_NO_NETWORKMANAGER
-                }
-        } else {
-           DEFINES += QT_NO_NETWORKMANAGER
+        SOURCES += linux/qsysteminfo_linux_common.cpp
+        HEADERS += linux/qsysteminfo_linux_common_p.h
+
+        contains(blkid_enabled, yes): {
+            DEFINES += BLKID_SUPPORTED
+            LIBS += -lblkid
         }
     }
+
+    !maemo5:!maemo6:linux-*: {
+            LIBS +=  -lX11 -lXrandr
+            SOURCES += linux/qsysteminfo_linux.cpp
+            HEADERS += linux/qsysteminfo_linux_p.h
+            contains(QT_CONFIG,dbus): {
+                QT += dbus
+                SOURCES += linux/qhalservice_linux.cpp \
+                           linux/qsysteminfodbushelper.cpp
+
+                HEADERS += linux/qhalservice_linux_p.h \
+                           linux/qsysteminfodbushelper_p.h
+
+                SOURCES += linux/qdevicekitservice_linux.cpp
+                HEADERS += linux/qdevicekitservice_linux_p.h
+
+        # udev should not be enabled on maemo5 and maemo6
+        contains(udev_enabled, yes): {
+            DEFINES += UDEV_SUPPORTED
+            LIBS += -ludev
+            SOURCES += linux/qudevservice_linux.cpp
+            HEADERS += linux/qudevservice_linux_p.h
+        }
+
+        contains(networkmanager_enabled, yes): {
+                    SOURCES += linux/qnetworkmanagerservice_linux.cpp linux/qnmdbushelper.cpp
+                    HEADERS += linux/qnetworkmanagerservice_linux_p.h linux/qnmdbushelper_p.h
+                } else {
+                    DEFINES += QT_NO_NETWORKMANAGER
+                }
+                contains(CONFIG,meego): { #for now... udisks
+                } else {
+                    DEFINES += QT_NO_UDISKS QT_NO_MEEGO
+                    LIBS += -lX11 -lXrandr
+                   }
+                contains(connman_enabled, yes): {
+
+                    SOURCES+= linux/qconnmanservice_linux.cpp linux/qofonoservice_linux.cpp
+                    HEADERS+= linux/qconnmanservice_linux_p.h linux/qofonoservice_linux_p.h
+                } else {
+                    DEFINES += QT_NO_CONNMAN
+                }
+            } else {
+                DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN QT_NO_MEEGO
+                LIBS += -lX11 -lXrandr
+
+            }
+        }
+        
     maemo5|maemo6: {
             #Qt GConf wrapper added here until a proper place is found for it.
             CONFIG += link_pkgconfig
-          #  LIBS += -lXrandr
-            SOURCES += qsysteminfo_maemo.cpp gconfitem.cpp
-            HEADERS += qsysteminfo_maemo_p.h gconfitem_p.h
+            SOURCES += qsysteminfo_maemo.cpp linux/gconfitem.cpp
+            HEADERS += qsysteminfo_maemo_p.h linux/gconfitem_p.h
+            DEFINES += QT_NO_CONNMAN QT_NO_UDISKS  QT_NO_NETWORKMANAGER
         contains(QT_CONFIG,dbus): {
                 QT += dbus
-                SOURCES += qhalservice_linux.cpp
-                HEADERS += qhalservice_linux_p.h
+                SOURCES += linux/qhalservice_linux.cpp
+                HEADERS += linux/qhalservice_linux_p.h
        }
        PKGCONFIG += glib-2.0 gconf-2.0
        CONFIG += create_pc create_prl
@@ -132,6 +169,7 @@ LIBS+=-lX11 -lXrandr
         }        
 
         contains(hb_symbian_enabled,yes) {
+            ## for symbian ^4 
             CONFIG += qt hb
             DEFINES += HB_SUPPORTED
             message("s60_HbKeymap enabled")
@@ -173,6 +211,15 @@ LIBS+=-lX11 -lXrandr
             -lecom \
             -lplatformenv
 
+        contains(hb_symbian_enabled,yes) {
+                CONFIG += qt hb
+                DEFINES += HB_SUPPORTED
+                message("s60_HbKeymap enabled")
+                LIBS += -lhbcore
+        } else {
+            LIBS += -lptiengine
+        }
+
         TARGET.CAPABILITY = ALL -TCB
 #        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData TrustedUI
 
@@ -191,6 +238,8 @@ simulator {
     qtAddLibrary(QtMobilitySimulator)
 }
 
-HEADERS += $$PUBLIC_HEADERS 
+HEADERS += $$PUBLIC_HEADERS
 CONFIG += middleware
 include (../../features/deploy.pri)
+
+

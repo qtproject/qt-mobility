@@ -64,7 +64,7 @@
 #include "TranslationUnit.h"
 #include "Scope.h"
 #include "CoreTypes.h"
-#include "Control.h"
+#include "CppControl.h"
 #include "Symbols.h"
 #include "Names.h"
 #include "Literals.h"
